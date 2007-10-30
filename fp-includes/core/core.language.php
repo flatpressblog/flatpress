@@ -92,6 +92,7 @@
 	
 	function lang_getconf($id) {
 		global $lang;
+
 		$fpath=LANG_DIR."$id/lang.conf.php";
 	     	if (file_exists($fpath)) {
 		     	include ($fpath);
@@ -109,6 +110,7 @@
 		function _checkFile($directory, $file) {
 			
 			if (is_dir("$directory/$file")) {
+				if (!preg_match('![a-z]{2}-[a-z]{2}!', $file)) return 0;
 				$this->_list[$file] = lang_getconf($file);
 			}
 			
