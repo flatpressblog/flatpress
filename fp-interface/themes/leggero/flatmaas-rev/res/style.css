@@ -1,0 +1,27 @@
+/*
+===================
+FlatMaas CSS Styles
+===================
+Ispired by: http://csszengarden.com/?cssfile=http://maas-online.nl/zengarden/layout.css
+Home page: http://www.maas-online.nl
+-------------------
+
+Name: FlatMaas
+Author: Luciano Porro (drudo)
+Version: 0.0.1
+*/
+
+/* imports common style ruleset */
+@import url(common.css);
+
+/* defines rules specific to the front page */
+
+
+#comments li.comment-admin {
+	background: #eeeedd url(../imgs/fp-logo-crop.png) no-repeat bottom right;  
+	padding:1em
+}
+
+#comments li.comment-admin strong.comment-name {
+	font-size:140%
+}

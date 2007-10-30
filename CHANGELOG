@@ -1,0 +1,80 @@
+0703.1 Crescendo (July 10, 2007)
+===============================
+
+Small bug fixes
+FIXED:   bbcode: [u] tag missing
+FIXED:	 bbcode/syntaxhighlighter: [code=MY_SYNTAX] works again
+FIXED:	 fixed error handling with missing categories
+ 
+
+0.703 Crescendo Final (June 27, 2007)
+=====================================
+
+UPDATED: jsUtils : Mootools 1.11
+FIXED:	 URL issues with BBCODE
+FIXED:	 small issues with thumb plugin
+
+
+Crescendo RC2 (June 3, 2007)
+============================
+
+FIXED: spaces in file names are escaped as dashes "-" when uploaded
+FIXED: various bbcode issues
+FIXED: scale/width bbcode/thumb issues
+MDFD: now thumb creates a .thumb dir for each subdir of images/
+FIXED: leggero CSS
+FIXED: double entity encoding
+ADDED: (since RC1): when loggedin trying to open a non-existent
+        static page will bring you to the "add new static" panel
+
+
+Crescendo RC1 (May 29, 2007)
+============================
+
+FIXED: plugin/bbcode: broken non-local urls 
+FIXED: core/FPDB archive function: /?y=nn didn't work if a month wasn't specified
+FIXED: core/entry/cache : buggy workarounded function (see previous) is now fixed
+FIXED: core/users : session was not kept if user IP changed
+FIXED: core/rss : template now works, fixed core accordingly
+ADDED: core/rss : full content support
+UPDATED: plugin/jsUtils, upgraded to mootools 1.1
+UPDATED: plugin/lightbox updated accordingly to slimbox 1.4
+RMVD:	temporarily removed prettyurls plugin 
+	(todo: remove from default config); 
+	I'm working to a newer cooler version, but 
+	it will require probably some changes in core, so no-go for this
+	release
+	
+ADDED: Lang/it-it: added some strings I forgot
+
+Crescendo beta1 (May 17, 2007)
+============================
+
+added: 		some entry/cache hooks
+added:		many plugin translations thanx to cimangi (http://luielei.altervista.org/)
+added:		panel notifications for plugins
+added:		new theme, new icons (updated old admin css)
+fixed:		lightbox updated and fixed
+fixed:		removed quote escaping in entries (removed and added fix for old versions)
+fixed:		directory deletion under php5 (thx cimangi)
+fixed:		entry_delete did not remove visit counter (cimangi)  
+fixed:		session retaining in control panel under certain conditions (smartyvalidate)
+changed:	some behaviours in cache; need some rework as introduced a little bug... d'oh! 
+
+
+Crescendo alpha
+===============
+
+fixed:		utils_mail()
+fixed: 		bbcode url trim
+fixed:		bbcode remote image timeouts 
+changed:	WHOLE new POST behaviour (no longer "POSTDATA" messages)
+changed:	new theme tags (almost finished). support for old themes; soon deprecated
+changed:	graphics for the old theme (almost finished) 
+changed:	a whole bunch of graphic thingies
+changed:	plugin organization
+added: 		[video] tag support http://flatpress.nowhereland.it/index.php?entry=entry070210-211548
+added: 		update checker (experimental)
+added:		error/success notification system with fancy graphics :P
+
+NOTE: italian language is still there until the wiki is ready

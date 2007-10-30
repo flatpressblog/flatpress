@@ -1,0 +1,35 @@
+
+          ==========================================================
+          CONSIDERATIONS AROUND SIMPLEPHPBLOG AND ITS STORING SYSTEM
+          ==========================================================
+    
+    - SimplePHPBlog flat "db" structure
+
+    [$content]
+        |
+        |-- [$year] // two-digit year ID (05 stands for 2005)
+        |       |
+        |       |-- [$month]  //two-digit month ID (01 stands for January)
+	|               |
+	|               |-- entryYYMMDD-HHMMSS.txt
+	|               |-- [entryYYMMDD-HHMMSS]
+	|	                    |
+	|			    |-- rating.txt
+	|			    |-- view_counter.txt
+	|			    |-- [comments]
+	|			             |
+	|				     |-- commentYYMMDD-HHMMSS.txt
+	|
+	|-- [static]
+	        |
+		|-- $filename.txt
+    
+    
+    Due to its nature of name of a file, entryYYMMDD-HHMMSS.txt must be 
+    univocal, and therefore it can be considered as the ID field of a DB 
+    table.
+    
+    Comment DBs are associated to the entries using the file name (ID) of
+    the entry, deprived of its extension (.txt) as the name of the directory 
+    which will contain them.
+

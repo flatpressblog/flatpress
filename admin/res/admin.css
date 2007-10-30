@@ -1,0 +1,197 @@
+/*
+
+
+	compatibility for old themes, soon
+	this hackish and ugly css will be
+	DROPPED
+
+*/
+
+#admin-tabmenu {
+	text-align: left;
+      
+	padding-right: 0px;
+	padding-left: 0px;
+	z-index: 1;
+	padding-bottom: 0px;
+	margin: 12px 0px 0px;
+	padding-top: 0px;
+	
+	border-bottom: black 2px solid;
+	
+	
+	font-size: 80%;
+	_font-size: 90%;
+	font-weight: normal;
+	
+}
+
+
+#admin-tabmenu  li {
+	display: inline;
+	overflow: hidden;
+	list-style-type: none;
+	padding-left: -10px
+}
+
+
+#admin-tabmenu a {
+	border-right: black 2px solid;
+	padding-right: 5px;
+	border-top: black 2px solid;
+	padding-left: 5px;
+	background: #f9f9f9;
+	padding-bottom: 0px;
+	margin: 0px;
+	border-left: black 2px solid;
+	padding-top: 2px;
+	border-bottom: black 2px solid;
+	text-decoration: none
+}
+
+#cpmain ul, #main li{
+	list-style-type:none;
+}
+
+#cpmain ul li:before {
+	content: none;
+}
+
+
+#admin-tabmenu a#admin-tab-current {
+	background: #f9f9f9;
+	color: black;
+	border-bottom: #f9f9f9 3px solid;
+}
+
+.admin-mainmenu-item {
+	clear:both;
+	display:block;
+	padding:1em;
+}
+
+
+
+
+#admin-content {
+	border-right: black 2px solid;
+	padding-right: 20px;
+	border-top: black 2px;
+	padding-left: 20px;
+	z-index: 2;
+	padding-bottom: 20px;
+	border-left: black 2px solid;
+	padding-top: 20px;
+	border-bottom: black 2px solid;
+	_font-size: 1em;
+}
+
+#admin-content table {
+	border-collapse: collapse;
+	width: 100%;
+	_width: 470px;
+	_font-size:100%;
+	
+}
+
+#admin-content td {
+	border-bottom: solid 1px black;
+	width: 8px;
+	font-size: 0.8em;
+	_font-size:1em;
+	padding: 4px;
+}
+
+#admin-content td.main_cell {
+	text-align: left;
+	font-weight: bold;
+	width: 20%;
+	
+}
+
+#admin-content th {
+	border-bottom: solid 2px black;
+	
+	padding: 4px;
+	font-size: 0.75em;
+	_font-size: 100%;
+	font-style: italic;
+
+}
+
+#subject {
+	font-size: 18px;
+	font-weight: bold;
+	width: 99%;
+}
+
+.underOpt {
+	font-size: 80%;
+	font-style: oblique;
+	margin: .5em 0 0 0
+}
+
+.maxsize {
+	width: 99%;
+}
+
+input.maxsize { width: 99% }
+
+.msg {
+	font-weight: bold;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.disabled {
+	background-color: red;
+}
+
+.enabled {
+	background-color: green;
+}
+
+.locked {
+	background-color: grey;
+}
+
+.draft {
+	background-color: lightgrey;
+}
+
+
+/* ===== NOTIFICATION ===== */
+#main ul.msgs, ul.msgs {
+	margin-top: 1em;
+	margin-left: 0em;
+	padding: 1em 2em
+}
+
+.errors {
+	color: #901d1d;
+	border-top: 1px solid;
+	border-bottom: 1px solid;
+	border-color: #ffbbbb;
+	background: #ffdddd
+}
+
+.errors a {
+	color: #901d1d;
+	text-decoration: underline;
+	font-weight: normal
+}
+
+.notifications {
+	color : #1d901d;
+	border-top: 1px solid #bbffbb;
+	border-bottom: 1px solid #bbffbb;
+	background: #ddffdd
+}
+
+.field-error {
+	border: red 1px solid;
+	background: #fdd
+}

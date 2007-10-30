@@ -1,0 +1,279 @@
+/*
+===================
+Leggero CSS Styles
+===================
+Ispired by: http://pluxml.org theme default
+-------------------
+
+Name: Leggero
+Author: NoWhereMan & drudo
+Version: 0.1
+Module: common.css
+*/
+
+
+
+/* ===== GENERAL (redefinition HTML tag) ===== */
+html {
+	font-size: 85%;
+	font-family: 'Lucida Grande', 'Trebuchet MS', arial, Helvetica, sans-serif;
+	margin: 0;
+	padding: 0
+}
+
+body {
+	font-size: 100%;
+	padding: 0;
+	text-align:center;
+	background: white url(../imgs/backshade.png) repeat-x;
+	color: black;
+}
+
+hr { display: none }
+
+p { margin: .5em 0 }
+
+img { border: none }
+
+blockquote {
+	width: 90%;
+	color: #666;
+	margin: 1em 1em;
+	padding: 0 10px;
+	border-left: 5px solid #bbb
+}
+
+pre, code {
+	font-family: Lucida Console, Monaco, monospace;
+	font-size: 90%;
+}
+
+pre {
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	background-color: #efefef;
+
+	overflow: auto;
+	width: 90%;
+	margin: 1em 1em;
+	padding: 5px 10px;
+}
+
+ul, li, ol { margin: 0; padding: 0 }
+
+/* === Form === */
+form { margin: 1em 0 }
+
+fieldset {
+	margin: 0 0 1em 0;
+	padding: .5em;
+	border: #ddd solid 1px
+}
+
+legend {
+	color: #666666;
+	font-size: 80%;
+	font-style: oblique
+}
+
+input, textarea, select {
+	padding: .2em;
+	border: 1px solid #999;
+	color: #222;
+	background-color: #eee;
+}
+
+input:hover, input:focus, textarea:hover, textarea:focus {
+	border: 1px solid #AA1111;
+	background-color: #fff
+}
+
+textarea {
+	font-size: 100%;
+	font-family: 'Lucida Grande', 'Trebuchet MS', arial, Helvetica, sans-serif;
+	width: 99%;
+	margin-top: .1em;
+	margin-bottom: 1em
+}
+
+
+
+/* ===== LINKS GENERAL ===== */
+a:link, a:visited {
+	color: #aa4142;
+	font-weight: bold;
+	text-decoration: none
+}
+
+a:hover {
+	color: #c37676;
+	text-decoration: underline
+}
+
+
+
+/* ===== HEADERS TAGS ===== */
+h1 {
+	/* Title of the blog */
+	font-size: 2em;
+	letter-spacing: 2px;
+	margin: 2em 0 0 0
+}
+
+h2 { } /* see h2.date */
+
+h3 {
+	/* Titles of the entry */
+	font-family: 'book antiqua', georgia, garamond, times, 'times new roman', serif;
+	font-style: italic;
+	font-size: 1.5em;
+	color: #333333;
+	margin: 0
+}
+
+h4 { font-size: 1.2em; }
+
+
+
+/* ===== DIV CONTAINER ALL ELEMENTS BLOCK ===== */
+#body-container {
+	text-align: left;
+	width: 760px !important;
+	width: 748px; /* fix for I.E. */
+	margin: 0 auto 0 auto;
+	padding: 5px;
+	border: solid 1px #ccc;
+	background-color: white
+}
+
+
+
+/* ===== HEAD ===== */
+#head {
+	font-family: 'book antiqua', georgia, garamond,  times, 'times new roman', serif;
+	padding: 95px 10px 5px 5px;
+	margin: 10px;
+	background: #c37676 url('../imgs/shade.png') repeat-x;
+	border: #bbb 1px solid
+}
+
+#head a { color: white; text-decoration: none }
+
+	.subtitle {
+		font-size: 100%;
+		font-style: oblique;
+		color: #F1F1F1;
+		margin: .5em 0 0 0
+	}
+
+
+
+/* ===== DIV CONTAINER "MAIN" ===== */
+#outer-container {
+	position: relative;
+	height: 1%;
+	margin: 0px;
+	padding: 0px;
+	border-top: 1px solid white; /* problem with I.E. */
+	background-color: white
+}
+
+
+
+/* ===== MAIN ===== */
+#main h4 { margin: 0 0 1em 0 }
+
+#main {
+	float:left;
+	position: relative;
+	width: 508px !important;
+	width: 478px;
+	font-size: 100%;
+	margin: 12px;
+}
+
+#main p { line-height: 1.5em; margin-top: 1.2em; }
+
+#main img { margin: .5em }
+
+/* === List === */
+#main ul {
+	list-style-type: disc;
+	padding: 0 0 0 1.6em
+}
+
+#main ol {
+	list-style-position: inside;
+	padding: 0 1.6em 0 1.6em
+}
+
+	#commentform fieldset p { margin: 0 0 .5em 0 }
+	
+	#comments li {
+		margin: 0 0 1.5em 0;
+		padding: 5px;
+		border-top: 1px solid #ddd;
+		border-bottom: 1px solid #ddd;
+		background: #efefef
+	}
+	
+	/* === Class of main block === */
+	h2.date {
+		font-size: 0.5em;
+		color: #aaa;
+	}
+	
+	.date { /* date under titles of the entry */
+		font-size: 80%;
+		font-style: oblique;
+		color: gray;
+		margin: .2em 0 .8em 0
+	}
+	
+	.entry {
+		margin: 0 0 1.5em 0;
+		padding: 0;
+		overflow: hidden; /* floating images fix */
+		height:1% /* i.e. hack*/
+	}
+	
+	#main ul.entry-footer { /*  entry footer */
+		clear: both;
+		font-size: 80%;
+		color: gray;
+		margin: 2em 0 .5em 0;
+		text-align: right;
+	}
+	
+	.entry-footer li { 
+		display: block;
+	}
+	
+	
+	.admincontrols { /* [edit] and [delete] */
+		float: right;
+		font-size: 80%
+	}
+	
+	.buttonbar { text-align: center }
+	
+	.buttonbar input {
+		text-align: center;
+		margin: .1em .5em;
+		padding: 0 1em
+	}
+	
+	.navigation { /* next entries & previous entries link */
+		font-size: 80%;
+		margin-bottom: 5em
+	}
+
+
+/* ===== FOOTER ===== */
+#footer {
+	clear: both;
+	font-size: 80%;
+	color: #555;
+	padding: 5px;
+	border-top: #bbb 1px solid
+}

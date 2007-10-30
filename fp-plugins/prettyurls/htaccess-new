@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /~nowhereman/flatpress/branch/flatpress/
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+
+RewriteRule ^([a-zA-Z0-9_-]+)/$ ./static.php?page=$1 [L]
+RewriteRule ^.+/comments/$ ./comments.php [L]
+
+RewriteRule ^(.+)/$ blog.php [L]
+
+</IfModule>

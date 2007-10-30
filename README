@@ -1,0 +1,132 @@
+
+
+FLATPRESS README (or "the file that nobody reads except who writes") (draft 1)
+==============================================================================
+
+
+
+## 1. WHAT THE FLATPRESS?
+
+First of all, let me thank you for choosing my FlatPress. I hope you'll
+enjoy using it as I (almost) enjoyed writing it :)
+
+FlatPress is a brand new blogging platform under heavy development.
+
+Now, you may be like: «Another blog?? Who the heck would need that?».
+
+
+
+## 2. WHO THE HECK NEED THAT?
+
+Oh-kay, FP is flat-file based. This means *it doesn't require databases*.
+Actually all the content in stored in text files, so you don't need
+MySQL if you can't afford an hosting service which can provide that to you.
+
+
+
+## 3. COOL. I STILL DON'T SEE WHY I SHOULD USE IT
+
+«...as I could use SimplePHPBlog, Pivot, etc...».
+Good question. FlatPress was born as an extension to SPB.
+But let's clear the things out
+
+1. This is not a _fork_: we didn't take the SPB code and edited it;
+2. This is not a rewrite: we didn't take SPB concept and reinvented its wheel
+
+This is a *new* project, which inherits from SPB just its *storing system*.
+This means you can take your content/, images/ dirs from your SPB installation,
+put them in FP's fp-content/ dir as they are, and, once installed, it should
+almost work out-of-the-box. This is the aim.
+
+Note that we don't want every single SPB user to switch to FP, it's just
+that, as a SPB user myself, I wanted an easy way to switch from that to my project
+and by the way its storing system is not bad at all :)
+
+
+
+## 4. IF IT'S NOT THAT BAD, WHY THIS REWRITE?
+
+As I said, this *IS NOT* a rewrite. This is a new blog.
+At the time we (I) started this project SPB lacked some features, it
+wasn't W3C standard-compliant and, above all, it was obviously a pain 
+to upgrade if you had made many changes to the code.
+
+So the most important lacks were a plugin system and a little more
+flexible theming engine.
+
+FlatPress uses the same plugin system of WordPress.
+Beware: this doesn't mean you will be able to use any of the WordPress
+plugins without any effort. Only a few of the plugin "hooks" have been
+implemented (search the sources for apply_filters and do_action to know which ones).
+
+Also FlatPress uses the famous Smarty template engine for the themes (the
+same of PhpBB).
+
+Of course, this now will sound great (and quite conceited), then remember
+1. This is my first complete work in PHP
+2. It's unfinished :)
+
+
+
+## 5. ANYWAY, IT SOUNDS PRETTY DECENT, HOW DO I GET IT TO WORK?
+
+OK, let's see what it will take you to run the fruit of my sweat
+(sounds juicy, doesn't it? Yech!).
+
+A basic Apache+PHP system as a server should work. It has been small tested on IIS,
+too. If you experience any problem, just let me know (be detailed describing the problem).
+As I said, no need for databases. Anyway I must ask for a
+version of PHP >= 4.3.0. I can't tell if it will work on older versions
+so if it something is going wrong, first check this :)
+
+Unpack the .tar.bz2 you downloaded from the main site (probably 
+http://flatpress.nowhereland.it/) and http://flatpress.nowhereland.it/downloads/)
+and then upload it on your webserver (or test it locally).
+
+Point your browser to http://yoursite.com/flatpress/ and just follow 
+*carefully* the istructions :p
+
+
+
+## 6. FINAL WARNING AND GOODBYE
+
+This you're using (or you're about to use) is intended as a TEST version; 
+it should be very stable, but it if it ever blew your PC up, just
+remember you'd been told.
+
+Kidding.
+
+People tell me I'm quite unprofessional presenting this project.
+You'll see why when you'll install FlatPress for the first time...
+If that won't make your day, I just hope to make you smile :)
+
+Once you're ready tell us what you think on the main site; any
+feedback is appreciated!
+
+
+
+## CREDITS
+
+I want to thank here some people that helped (and are helping) me with
+this project.
+
+Hydra, betatester, small-coder, and official cheerleader :D
+drudo, theme designer, supporter, space and time provider 
+
+Other thanks to giulio and alcor for their precious advice.
+
+As an additional note, I'd like to thank also Tychondriax
+another friend of mine who occasionally helps me with betasting
+and bug-discovering :)
+
+Thank you all, guys, without you I would have already given up.
+
+
+
+Edoardo Vacchi (NoWhereMan), August, 2 2006
+
+email:		real_nowhereman at users dot sf dot net
+www:		http://www.nowhereland.it
+flatpress home:	http://flatpress.nowhereland.it
+
+

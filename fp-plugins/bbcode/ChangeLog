@@ -1,0 +1,58 @@
+-- Changes until version 0.2.5
+
+2005-08-14 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser.class.php: Added type () function for
+		StringParser_Node, small bugfix in StringParser_Node_Text
+		constructor, improved phpdoc comments a bit
+	* stringparser_bbcode.class.php: Added global case sensitive option,
+		improved inline documentation, added setFlag function to
+		StringParser_Node, fixed (PHP4 specific)  bug in validate
+
+-- Changes until version 0.2.4-beta2:
+
+2005-05-21 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		fixed some bugs
+
+-- Changes until version 0.2.4-beta1:
+
+2005-05-21 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		minor bugfix in paragraph handling, support of multiple
+		'usecontent?'-parameters, project version now specified in source
+		code
+	* stringparser.class.php: project version now specified in source code
+	* doc/de/kapitel2.html, doc/en/chapter2.html: updated documentation
+		to describe the use of multiple 'usecontent?'-parameters
+
+-- Changes until version 0.2.3:
+
+2005-03-14 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		fixed two bug, one could cause a fatal error
+
+2005-02-03 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		major bugfix regarding paragraph handling
+
+2004-12-25 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		minor bug fix, added case insensibility feature
+
+2004-11-13 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser.class.php, stringparser_bbcode.class.php:
+		minor bug fixes, added license information
+		to head
+
+2004-11-10 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		modified settype() calls to work with php < 4.2
+
+2004-11-08 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		changed require to require_once
+
+2004-11-03 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser.class.php, stringparser_bbcode.class.php:
+		removed every call-time pass-by-reference to ensure
+		the class works with PHP 5

@@ -1,0 +1,639 @@
+/*
+===================
+FlatMaas CSS Styles
+===================
+Ispired by: http://csszengarden.com/?cssfile=http://maas-online.nl/zengarden/layout.css
+Home page: http://www.maas-online.nl
+-------------------
+
+Name: FlatMaas
+Author: Luciano Porro (drudo)
+Version: 0.0.1
+Module: admin.css
+*/
+
+@import url(common.css);
+
+/* tab menu */
+
+ul#admin-tabmenu {
+	margin: 1em 0 0 0;
+        text-align: center;
+        background-color: #999977;
+        padding: 1em 1em 0 1em;
+        border: solid #999977;
+}
+
+ul#admin-tabmenu li {
+	display:inline;
+	color: #555533;
+	font-size: x-small;
+	font-weight: normal;
+	text-decoration: none;
+	background-color: #CCCCAA 
+}
+
+ul#admin-tabmenu li a {    
+        color: #555533;
+        padding: 0.5em;
+	line-height: 2em;
+	font-weight: normal;
+	text-decoration: none;
+	background-color: #CCCCAA 
+}
+
+
+ul#admin-tabmenu li a:hover {
+        color: #555533;
+	font-weight: normal;
+	background: #BBBB99 /*url('../imgs/arrow.gif') center right no-repeat}*/
+
+}
+
+ul#admin-tabmenu a#admin-tab-current {
+        font-weight: bold;
+        background-color: white
+}
+
+#admin-content {
+        border: 1px solid #999977;
+        padding: 1em;
+}
+
+
+.admin-mainmenu-item {
+	display: block;
+	padding: 1em;
+	clear: both;
+}
+
+.admin-mainmenu-item img {
+	padding-right: 1em; 
+}
+
+
+
+.admin-mainmenu-item .admin-icon-descr {
+	font-size: x-small;
+	font-style: italic
+}
+
+
+input#subject {
+        width:100%;
+        font-size: 1.3em;
+	color: #333333;
+        font-weight: bold;
+}
+
+/* panel container */
+
+#cpmain {
+	text-align: justify;
+	width: 100%;
+}
+
+
+#admin-entry-categories ul {
+	margin-right: 10px;
+	display:block;
+	padding-left: 1em;
+	list-style-type: none;
+}
+
+#admin-bbcode-toolbar p {
+	display:inline;
+}
+
+#admin-bbcode-toolbar select {width: 10em}
+
+
+#admin-content {
+	background: url(../imgs/fp-logo.png) bottom right no-repeat;
+}
+
+
+#admin-content table {
+	border-collapse: collapse;
+	width: 100%;	
+}
+
+#admin-content td {
+	border-bottom: solid 1px black;
+	width: 8px;
+	font-size: 0.8em;
+	padding: 4px;
+}
+
+#admin-content td.main_cell {
+	text-align: left;
+	font-weight: bold;
+	width: 30%;
+	
+}
+
+#admin-content th {
+	border-bottom: solid 2px black;
+	padding: 4px;
+	font-size: 0.75em;
+	font-style: italic;
+}
+
+input.maxsize, select.maxsize {width:100%}
+
+
+#admin-bbcode-toolbar{
+    border: none;
+    padding:0;
+    padding-right: 0.7%;
+    margin:0;
+}
+#admin-bbcode-toolbar legend{display:none}
+
+#admin-content ul {
+	margin-left: 2em
+}
+
+
+/* preview settings */
+
+#post-preview .entry {
+        padding:2em
+}
+
+#post-preview ul {
+	list-style: none;
+	padding: 0 0 0 1.6em;
+}
+
+#post-preview ul li:before {
+	content: "\00BB \0020"
+}
+
+#post-preview  ol {
+	list-style-position: inside;
+	padding: 0 1.6em 0 1.6em
+}
+
+/* notifications */
+
+.draft {background-color:lightgrey}
+
+/* (already defined in common, here we put just some tuning settings) */
+#admin-content ul.msgs {
+    margin-left: 0em;
+    padding: 1em 2em;
+    margin-bottom: 2em;
+}
+
+
+/* conflict with inner h1 */
+
+#admin-content h1 {
+	color: black
+}
+
+
+
+/* ===== submenu ====== */
+
+#admin-submenu {
+	background: #eee; 
+	border-top: 1px solid #ddd; 
+	border-bottom: 1px solid #ddd; 
+	text-align:center;
+	padding: .1em .3em .2em;
+}
+
+#admin-submenu li {
+	display:inline; 
+	font-size: 80%; 
+}
+
+#admin-submenu li a {
+	padding: 0 1em ;
+	color: #000;
+	border-left: 1px solid #eee;
+	border-right: 1px solid #eee;  
+	font-weight: normal;
+}
+
+#admin-submenu li a:hover {
+	padding: .1em 1em .3em; 
+	background: #fff;
+	border-bottom: 1px solid #fff;
+	border-top: 3px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;  
+	text-decoration:none;
+}
+
+#admin-submenu li a.active {
+	color: #000;
+	background: #fff;
+	font-weight: bold;
+	padding: .1em 1em .3em;
+	border: 1px solid #bbb;
+	border-top: 3px solid #bbb;
+	border-bottom: 1px solid #fff;
+}
+
+
+
+/* ===== MAIN MENU ITEM ===== */
+#admin-content { padding: 1em }
+
+.admin-mainmenu-item {
+	display: block;
+	padding: 1em;
+	clear: both
+}
+
+.admin-mainmenu-item img { padding-right: 1em }
+
+.admin-mainmenu-item .admin-icon-descr {
+	font-size: 80%;
+	font-style: italic
+}
+
+
+
+/* ===== ADMIN ENTRY ===== */
+input#subject {
+	width: 100%;
+	font-size: 1.3em;
+	color: #333333;
+	font-weight: bold
+}
+
+textarea.code {
+	font-family: Lucida Console, Monaco, monospace;
+	font-size: 90%
+}
+
+#admin-entry-categories ul {
+	display:block;
+	list-style-type: none;
+	margin-right: 10px;
+	padding-left: 1em
+}
+
+#admin-bbcode-toolbar p { display: inline }
+
+#admin-bbcode-toolbar select { width: 10em }
+
+
+
+/* #admin-content { background: url(../imgs/fp-logo.png) bottom right no-repeat } */
+
+#admin-content table { width: 100%; border-collapse: collapse }
+
+#admin-content td {
+	width: 8px;
+	font-size: 0.8em;
+	padding: 4px;
+	border-bottom: solid 1px black
+}
+
+#admin-content td.main_cell {
+	width: 30%;
+	text-align: left;
+	font-weight: bold
+}
+
+#admin-content th {
+	font-size: 0.75em;
+	font-style: italic;
+	border-bottom: solid 2px black;
+	padding: 4px
+}
+
+input.maxsize, select.maxsize { width: 100% }
+
+
+#admin-bbcode-toolbar {
+	margin: 0;
+	padding: 0;
+	padding-right: 0.7%;
+	border: none
+}
+
+#admin-bbcode-toolbar legend { display: none }
+
+#admin-content ul,
+#admin-content ol { margin-left: 2em }
+
+#admin-entry-uploader iframe {
+	border: none;
+	width: 99%;
+	margin: auto;
+	height: 11em;
+}
+
+
+#plugin-table-body td {
+	padding: 1em .6em;
+}
+
+#admin-drafts {
+	border-top: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	padding:  .4em;
+	color: #555;
+	background-color: #ddd;
+	overflow: auto;
+}
+
+#admin-drafts p {
+	font-weight: bold;
+	float: left;
+	padding: 0;
+	margin: 0;
+}
+
+#admin-content #admin-drafts ul {
+	margin: 0; padding: 0;
+}
+
+#admin-drafts li {
+	float:left;
+	list-style-position: inside;
+	margin: 0; padding-left: 1em;
+}
+
+
+/* ===== PREVIEW SETTINGS ===== */
+#post-preview .entry { padding: 2em }
+
+#post-preview ul { list-style: none; padding: 0 0 0 1.6em }
+
+#post-preview  ol { list-style-position: inside; Padding: 0 1.6em 0 1.6em }
+
+
+/* ===== UPLOAD PANEL ===== */
+#admin-uploader-filelist {
+	margin: 1em auto;
+}
+
+#admin-uploader-thumbs {
+	list-style-type: none;
+}
+
+#admin-uploader-thumbs li.thumb {
+	float:left;
+	width: 110px;
+	height: 110px;
+	padding: 1em 4px;
+	margin: 1em;
+}
+
+
+/* (applies only to the inline version */
+#upload {
+	margin-top: .5em
+}
+
+
+/* ===== THEME PANEL ===== */
+
+#current-theme h5, 
+#available-themes h5 {
+	font-size: 1em;
+}
+
+#current-theme {	
+	margin-bottom: 4em;
+	overflow:hidden;
+}
+
+
+#current-theme img { 
+	float:left;
+	border: 1px solid #ddd;
+	margin-right: 2em;
+}
+
+#available-themes {
+	clear: both;
+}
+
+
+#available-themes img {
+	border: 1px solid #eee
+}
+
+#available-themes ul {
+	list-style-type: none;
+}
+
+#available-themes ul li {
+	float:left;
+	padding: 1em;
+	border: 1px solid #fff;
+	text-align: center;
+	width: 300px;
+}
+
+#available-themes ul li:hover {
+	background: #eee;
+	border: 1px solid #ddd;
+}
+
+/* ===== WIDGET PANEL ====== */
+
+#admin-widgetset-list {
+	width: 30em;
+}
+
+#admin-widgetset-list ul {
+	list-style-type: none;
+	margin: 0;
+	margin-bottom: 2em;
+	text-align: left;
+}
+
+li.admin-widgetset {
+	padding: .5em;
+	margin-bottom: 2em;
+	border: 1px solid #ddd;
+}
+
+#available-widgets {
+	font-size: 80%;
+	float:right;
+	border: 1px solid #ddd;
+	background: #eee;
+	padding: 1em;
+	width: 30%;
+	z-index: 1000;
+	position: relative;
+	text-align: left;
+}
+
+#widget-trashcan {
+	background-color: #a22;
+	color: #ddd;
+	font-size: 120%;
+	font-weight: bold;
+	padding: 2em;
+	text-align: center;
+	border: 2px solid #f00;
+	margin: 2em;
+}
+
+#available-widgets ul, .admin-widgetset ul {
+	padding-left: 0;
+	margin-left: 0;
+}
+
+
+li.widget-instance,
+li.widget-class {
+	cursor: move;
+	border: 1px solid #bbb;
+	margin: 2px;
+	padding: .5em;
+	height: 30px;
+	background-color: white;
+	list-style-type: none;
+}
+
+
+.admin-widgetset h3 {
+	margin-bottom:1em;
+	padding: .3em;
+	background: #eee;
+	border: 1px solid #ddd;
+}
+
+#available-widgets h2 {
+	cursor: move;
+	color: white;
+	margin-bottom:1em;
+	padding: .3em;
+	border: 1px solid #eee;
+	background: #999;
+}
+
+.widget-instance .textinput {
+	padding: .4em;
+	background: transparent;
+	font-weight: bold;
+	font-style: oblique;
+	color: blue;
+	border: #fff 2px solid;
+	text-align: right;
+}
+
+.widget-instance .textinput:hover {
+	border: #d00 2px solid;
+	background-color:white;
+}
+
+
+.widget-instance .textinput:focus {
+	font-style: normal;
+	border: #f00 2px solid;
+	background-color:white;
+	text-align: left;
+}
+
+
+.widgetname a, 
+.widgetname a:link,
+.widgetname a:visited {
+	color: #ddd;
+}
+
+.widget-placeholder {
+	padding: .5em;
+	font-style: oblique;
+	text-align: center;
+	border: 1px dashed #ddd;
+}
+
+.widget-dragger {
+	text-align: left;
+	z-index: 1000;
+	padding: .5em;
+	height: 30px !important;
+}
+
+
+/* ===== CONFIG PANEL ===== */
+
+#admin-config dl {
+	margin-bottom: 4em;
+}
+
+#admin-config dt {
+    width: 33%;
+    text-align:right;
+    margin-top: 1.8em;
+    line-height: 1.5em;
+    font-weight: bold;
+}
+
+#admin-config dt label {
+	padding-top: .2em;
+}
+
+#admin-config dd {
+    margin-left: 35%;
+    margin-top: -1.7em;
+    line-height: 1.5em;
+}
+
+
+#admin-config dd p {
+    margin: 0;
+}
+
+
+#admin-config dd input{
+	margin-bottom: .2em;
+}
+
+#admin-config input.textinput ,
+#admin-config select.textinput {
+	width: 20em;
+}
+
+
+#admin-config input.bigtextinput {
+	width: 30em;
+}
+
+
+#admin-config input.smalltextinput {
+	width: 5em;
+}
+
+/* ===== SPECIAL HOVERS ====== */
+a.link-disable, a.link-enable{
+	padding: .9em;
+}
+a.link-disable:hover {
+	background-color: red;
+	color: white;
+}
+a.link-enable:hover {
+	background-color: green;
+	color: white;
+}
+
+
+
+/* ===== NOTIFICATIONS ===== */
+.hint {
+	cursor: help;
+}
+
+.draft { background-color: lightgrey }
+
+/* (already defined in common, here we put just some tuning settings) */
+#admin-content ul.msgs {
+	margin-left: 0em;
+	margin-bottom: 2em;
+	padding: 1em 2em
+}

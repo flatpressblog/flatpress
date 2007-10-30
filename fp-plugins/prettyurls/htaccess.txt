@@ -1,0 +1,19 @@
+AddType application/x-httpd-php .php .htm .html
+
+RewriteEngine On
+RewriteBase /~nowhereman/flatpress/
+
+#RewriteCond %{REQUEST_FILENAME} -f
+#RewriteCond %{REQUEST_FILENAME} -d 
+
+RewriteRule ^entry([0-9]{6})-([0-9]{6})\.html$ ./index.php?entry=entry$1-$2
+RewriteRule ^comments([0-9]{6})-([0-9]{6})\.html$ ./comments.php?entry=entry$1-$2
+#RewriteRule ^page-([-_0-9a-zA-Z]+)\.html$ static.php?page=$1
+
+
+RewriteRule ^index\.html$ index.php 
+
+
+#RewriteRule ^images/(.*) fp-content/images/$1
+#RewriteRule ^attachs/(.*) fp-content/attachs/$1 
+

@@ -1,0 +1,50 @@
+/*
+===================
+Leggero CSS Styles
+===================
+Ispired by: http://pluxml.org theme default
+-------------------
+
+Name: Leggero
+Author: NoWhereMan & drudo
+Version: 0.1
+Module: style.css
+*/
+
+
+
+/* ===== COLUMN ===== */
+#column {
+	float: right;
+	width: 195px !important;
+	width: 180px;
+	font-size: 80% !important;
+	font-size: 75%;
+	height:1%;
+	margin-bottom: 5px;
+	padding: 10px;
+	border-left: solid 1px #ccc
+}
+
+#column h4 {
+	/* Titles of the sections */
+	margin-bottom: .5em;
+}
+
+#column p, #column div { margin: 10px 5px }
+
+#column a:link, #column a:visited { color: gray }
+
+/* === List === */
+#column ul li table { font-size: 100% }
+
+#column ul {
+	list-style-type: none;
+	margin-right: 10px;
+	margin-bottom: .5em;
+	padding-left: 1em
+}
+
+#column fieldset { margin: 0 5px 0 5px }
+
+#column legend { font-size: 100% }

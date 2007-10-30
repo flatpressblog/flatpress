@@ -1,0 +1,432 @@
+/*
+===================
+FlatMaas CSS Styles
+===================
+Ispired by: http://csszengarden.com/?cssfile=http://maas-online.nl/zengarden/layout.css
+Home page: http://www.maas-online.nl
+-------------------
+
+Name: FlatMaas
+Author: Luciano Porro (drudo)
+Version: 0.0.1
+*/
+
+
+body { text-align:center; }
+
+/* ==== Structure with fixed width ==== */
+#body-container {
+	/* Simplified Box Model Hack */
+
+	width: 748px;
+	
+	text-align: justify;
+	
+	border: solid 1px #ccc;
+	
+	padding: 5px;
+	margin: 0 auto 0 auto;
+	background-color: white;
+	
+}
+
+body > div#body-container {
+	width: 760px;
+	
+}
+
+#head {
+	padding: 5px;
+	margin-bottom: 5px;
+	background: #AA1111 url('../imgs/shade.png') repeat-x;
+	
+}
+
+#subheader {
+	text-align: right;
+	font-size: 80%;
+	color: white;
+	padding: 2px 5px;
+	margin-bottom: 5px;
+	background: #999977
+}
+
+#outer-container {
+	padding: 0px;
+	margin: 0px;
+	border-top: 1px solid white; /* problem with I.E. */
+	background-color: white;
+	height: 1%;
+}
+
+#column {
+	float: right;
+	margin-bottom: 5px;
+	padding: 5px 0;
+	background-color: #DDDDBB;
+	border: solid 1px #ccc;
+	
+	width: 205px;
+	font-size: 75%;
+	height:1%;
+}
+
+#main + #column {
+	width: 195px;
+	font-size: 80%;	
+}
+
+	#column ul li table {
+		font-size: 100%;
+	}
+	
+	#column ul {
+		margin-right: 10px;
+		display:block;
+		padding-left: 1em;
+		list-style-type: none;
+	}
+	
+
+
+#main {
+	float:left;
+	text-align: justify;
+	position: relative;
+	/*padding: 5px 15px 5px 5px;*/
+	margin: 5px;
+	
+	width: 500px;
+	font-size: 100%;
+}
+
+#outer-container > #main {
+	width: 540px;
+}
+
+
+#footer {
+	clear: both;
+	font-size: 80%;
+	color: white;
+	padding: 5px;
+	background-color: #999977
+}
+
+
+/* ==== Redefinition HTML tag ==== */
+html {
+	font: 82.5% verdana, Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 0
+}
+
+body {
+	font-size: 100%;
+	color: #333333;
+	margin: 0;
+	padding: 0;
+	background: #EEEEDD
+}
+
+hr { display: none }
+
+p { 
+	margin: .5em 0 ;
+}
+	/* in the specific ID */
+	#column p, #column div { margin: 10px 5px }
+	#main p { line-height: 1.5em; margin-top: 1.2em; }
+	
+/* == Headers == */
+h1 {
+	/* Title of the blog */
+	font-size: 1.6em;
+	letter-spacing: 2px;
+	color: white;
+	margin: 2em 0 0 0
+}
+
+#head a {
+	color: white;
+	text-decoration: none;
+}
+
+
+h2 { /*  */ }
+
+h3 {
+	/* Titles of the entry */
+	font-size: 1.3em;
+	color: #333333;
+	margin: 0;
+	padding: 2px 0 2px 30px;
+	background: transparent url('../imgs/entry.png') center left no-repeat
+}
+
+
+h4 { font-size: 1.2em; }
+	/* in the specific ID */
+	#column h4 {
+		/* Titles of the sections in #column */
+		color: white;
+		font-family: 'Gill Sans', 'Trebuchet MS', Helvetica, sans-serif;
+		margin: 0 5px 5px 5px;
+		padding: .2em .5em;
+		background: #BBBB99 url('../imgs/sf_h4.png') bottom left repeat-x
+	}
+	#main h4 {
+		margin: 0 0 1em 0
+	}
+
+img { border: none }
+	/* in the specific ID */
+	#main img { margin: .5em }
+
+blockquote {
+	color: #666666;
+	margin: 1em 2em;
+	padding: 5px 5px 35px 5px;
+	background: #eeeeee url('../imgs/blockquote.png') bottom left no-repeat
+}
+	blockquote p { margin: 0 }
+
+pre, code {
+	color: #666666;
+	font-size: 1.1em;
+	font-family: Lucida Console, Monaco, monospace;
+	background-color: #f4f4f4
+}
+
+pre {
+	overflow: auto;
+	width: 90%;
+	/* hack min-height for i.e. */
+	min-height: 40px;
+	height: auto !important;
+	height: 40px;
+	margin: 1em auto;
+	padding: 5px
+}
+
+
+
+ul, li, ol { margin:0; padding:0}
+
+ul { padding-top: 0.3em; padding-bottom: 0.3em; }
+
+/* == List in MAIN == */
+#main ul {
+	list-style: none;
+	padding: 0 0 0 1.6em;
+}
+
+#main ul li:before {
+	content: "\00BB \0020"
+}
+
+#main ol {
+	list-style-position: inside;
+	padding: 0 1.6em 0 1.6em
+}
+
+/* == Links == */
+a:link {
+	color: #999977;
+	font-weight: bold;
+	text-decoration: none
+}
+
+a:visited{
+	color: #999977;
+	font-weight: bold;
+	text-decoration: none
+}
+
+a:hover {
+	color: #AA1111;
+	text-decoration: underline
+}
+
+h3 a, h3 a:link, h3 a:visited {
+	color: #333;
+}
+
+
+#subheader a:link, #subheader a:visited, #footer a:link, #footer a:visited  {
+	color: white;
+	text-decoration: none;
+	font-weight: bold
+}
+
+#subheader a:hover, #footer a:hover { color: white; text-decoration: underline }
+
+/* == Form == */
+form { margin: 1em 0 }
+
+fieldset {
+	margin: 0 0 1em 0;
+	padding: .5em;
+	border: 1px solid #999977;
+	/*background: url(../imgs/transp.gif)*/
+}
+	/* in the specific ID */
+	#column fieldset { margin: 0 5px 0 5px }
+
+legend {
+	color: #666666;
+	font-size: 80%;
+	font-style: oblique
+}
+	/* in the specific ID */
+	#column legend { font-size: 100%; }
+
+input {
+	margin-top: .1em;
+	border: 1px solid #999977;
+	background-color: #EEEEDD
+}
+
+input:hover {
+	border: 1px solid #AA1111;
+	background-color: #f9f9f9
+}
+
+
+select { background-color: #EEEEDD }
+
+textarea {
+	width: 99%;
+	font: 100% verdana, Helvetica, Arial, sans-serif;
+	margin-top: .1em;
+	border: 1px solid #999977;
+	background-color: #EEEEDD
+}
+
+textarea:hover {
+	border: 1px solid #AA1111;
+	background-color: #f9f9f9
+}
+
+
+/* ==== Classes ==== */
+.subtitle {
+	font-size: 80%;
+	font-style: oblique;
+	color: #F1F1F1;
+	margin: .5em 0 0 0
+}
+
+.date {
+	/* Date under titles of the entry */
+	font-size: 80%;
+	font-style: oblique;
+	color: gray;
+	margin: .2em 0 .8em 0
+}
+
+.entry {
+	margin: 0 0 1.5em 0;
+	padding: 0;
+	/* floating imgs fix */
+	overflow: hidden;
+	height:1%; /*ie hack*/
+}
+
+.entry-footer {
+	/* Paragraph under footer entry */
+	font-size: 80%;
+	text-align: center;
+	color: gray;
+	margin: .5em 0 0 0;
+	clear: both;
+}
+
+#comments li {
+	margin: 0 0 1.5em 0;
+	padding: 5px;
+	border-top: 1px solid #999977;
+	border-bottom: 1px solid #999977;
+	background: #EEEEDD
+}
+
+
+.floatLeft { float: left } /* don't touch this class!! */
+
+.floatRight { float: right } /* don't touch this class!! */
+
+
+.imageColumn { text-align: center }
+.imageColumn img { margin: 2px 0px }
+
+
+
+.admincontrols {
+	float: right;
+	font-size: 0.75em;
+}
+
+
+.navigation {
+	font-size: 80%;
+	margin-bottom: 5em;
+}
+
+.alignleft {
+	float: left;
+}
+
+
+.alignright {
+	float: right;
+}
+
+
+
+/* notifications */
+
+#main .msgs, .msgs {
+	margin-top: 1em;
+    margin-left: 0em;
+    padding: 1em 2em; 
+}
+
+.errors {
+	color: #901d1d;
+	border-top: 1px solid;
+    border-bottom: 1px solid;
+	border-color: #ffbbbb;
+	background: #ffdddd;
+}
+
+.errors a {
+	color: #901d1d;
+	text-decoration: underline;
+	font-weight: normal;
+}
+
+
+.notifications {
+	color : #1d901d;
+	border-top: 1px solid;
+    border-bottom: 1px solid;
+	border-color: #bbffbb;
+	background: #ddffdd;
+
+}
+
+.warnings {
+	color : #8a7802;
+	border-top: 1px solid;
+    border-bottom: 1px solid;
+	border-color: #f8e674;
+	background: #fffdd5;
+
+}
+
+.field-error {
+	border: red 1px solid;
+	background: #fdd;
+}
+
+
