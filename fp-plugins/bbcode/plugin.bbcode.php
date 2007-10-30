@@ -267,7 +267,7 @@ function do_bbcode_img ($action, $attributes, $content, $params, $node_object) {
 	
 	return $popup_start.'<img src="' .
 			($thumbpath ? (BLOG_BASEURL . $thumbpath) : ($absolutepath)). // $attributes['default'])
-		'" alt="'.$alt. ($popup_start? '' : '" title="'.$title.'" ' ).
+		'" alt="'.$alt. '" '. ($popup_start? '' : '" title="'.$title.'" ' ).
 		$float.$img_width.$img_height.' />'.$popup_end;
 }
 
