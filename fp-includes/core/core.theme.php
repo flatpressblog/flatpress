@@ -75,10 +75,13 @@
 		register_widgetset('top');
 		register_widgetset('bottom');
 	}
-	
+
+	function theme_getdir($id = THE_THEME) {
+		return THEMES_DIR . ($id) . '/';
+	}
 	
 	function theme_exists($id) {
-		$f = THEMES_DIR . ($id) . '/';
+		$f = theme_getdir($id); 
 		if (file_exists($f))
 			return $f;
 		

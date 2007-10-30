@@ -43,11 +43,14 @@
 	
 	function index_singlepost(&$params, &$module) {
 		
-		global $fpdb;
+		global $fpdb, $theme;
 		
 		$params['id'] = $_GET['entry'];
 		$params['fullparse']=true;
 		$fpdb->query($params);
+
+		if (@$theme['hassingle'])
+			$module='single.tpl';	
 		
 		add_filter('wp_title', 'index_permatitle', 10, 2);
 		
