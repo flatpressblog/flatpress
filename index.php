@@ -6,6 +6,12 @@
 	
 	define('MOD_INDEX', 1);
 
+
+	if (!file_exists(CONFIG_FILE))
+		utils_redirect('setup.php');
+
+
+
 	/* local function defines follow */
 	
 	function index_permatitle($val, $sep) {
@@ -121,7 +127,6 @@
 	function index_main() {
 	
 		global $fpdb, $smarty, $fp_config;
-
 		$params = array();
 		$module = 'index.tpl' ;
 		
