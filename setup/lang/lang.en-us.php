@@ -117,6 +117,7 @@ and 'code' displays your snippets in a monospaced fashion
 
 img and url tag have also special options. You can find out more on the [url=http://www.flatpress.org]FP official website[/url].
 
+
 [h4]Entries (posts) and Static pages[/h4]
 
 This is an entry, while [url=static.php?page=about]About[/url] is a [b]static page[/b]. A static page is an entry (a post) which cannot be commented, and which does not appear together with the normal posts of the blog.
@@ -130,6 +131,7 @@ FlatPress is very customizable, and supports [url=http://wiki.flatpress.org/doc:
 
 We have created some more sample content, to show you some of the FP well hidden functions and gems :) ; you can find two [b]static pages[/b] ready to accept your contents ([url=static.php?page=about]About me[/url]) and links ([url=static.php?page=menu]Menu[/url]): notice that your links will appear on your sidebar as well, this is the magic of the [b]blockparser widget[/b]: see the [url=http://wiki.flatpress.org/doc:faq]FAQ[/url] for this and more. 
 
+
 [h4]Widgets[/h4]
 
 There isn't a single fixed element in the sidebar(s). All the elements you can find in the bars sourrounding this text are completely ositionable, and most of them are customizable as well. Some of theme provide even a panel interface in the admin area.  
@@ -137,6 +139,7 @@ There isn't a single fixed element in the sidebar(s). All the elements you can f
 These elements are called [url=http://wiki.flatpress.org/doc:widgets]widgets[/url].
 
 For more on widgets and [url=http://wiki.flatpress.org/doc:tips:widgets]some tips[/url] to get nice effects, read the [url=http://wiki.flatpress.org/]wiki[/url]
+
 
 [h4]See more[/h4]
 
@@ -147,7 +150,21 @@ Want to see more?
 [*]Go to the [url=http://www.flatpress.org/forums/categories.php]forums[/url] for support and chit-chat
 [*]Get [b]great themes[/b] on the [url=http://themes.flatpress.org]editor's pick[/url] site or choose from [url=http://wiki.flatpress.org/res:themes]other users' submissions[/url]!
 [*]Check out the [url=http://wiki.flatpress.org/res:plugins]unofficial plugins[/url]
+[*]Get [url=http://wiki.flatpress.org/res:language]translation pack[/url] for your language 
 [/list]
+
+
+[h4]How can I help?[/h4]
+
+[list]
+[*]Support the project with a [url=http://www.flatpress.org/home/static.php?page=donate]small donation[/url]
+[*]Translate FlatPress or the documentation into [url=http://wiki.flatpress.org/res:language]your language[url]
+[*]Share your knowledge with other people on the [url=http://www.flatpress.org/forums/categories.php]forums[/url]
+[*]Spread the word!
+[/list]
+
+
+[h4]And what now?[/h4]
 
 Now you can [url=login.php]Login[/url] to get to the [url=admin.php]Control Panel[/url] and start posting!
 
