@@ -94,6 +94,9 @@
 				
 				$f = $d . '/theme.conf.php';
 				
+				if (!file_exists($f))
+					continue;
+				
 				$theme = admin_theme_data($d . '/theme.conf.php', $thm, $this->defprev);
 				
 				$info[] = $theme;

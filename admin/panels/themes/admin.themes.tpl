@@ -9,12 +9,14 @@
 </div>
 
 
+
+{if $available_themes}
+
 <div id="available-themes">
 
 <h2>{$panelstrings.head2}</h2>
 <p>{$panelstrings.descr}</p>
 
-{if $available_themes}
 
 <ul>
 {foreach from=$available_themes item=thm}
