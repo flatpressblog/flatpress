@@ -4,9 +4,7 @@
 {include file=shared:errorlist.tpl}
 
 	
-<form method="post"
-	action="{$smarty.const.BLOG_BASEURL}admin.php?{$smarty.server.QUERY_STRING|escape:"html"}"
-	enctype="multipart/form-data">
+{html_form}
 	
 	<p>	
 	<textarea id="htaccess" name="htaccess" cols="70" rows="16">{$htaccess|escape:'html'}</textarea>
@@ -20,4 +18,4 @@
 	{/if}
 	</div>
 		
-</form>
+{/html_form}

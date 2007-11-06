@@ -13,8 +13,8 @@
 		'submit'	=> 'Save'
 	);
 	$lang['admin']['plugin']['prettyurls']['msgs'] = array(
-		1		=> 'API key saved',
-		-1		=> 'API key is not valid'
+		1		=> '.htaccess saved successfully',
+		-1		=> '.htaccess could not be saved (do you have writing permissions on <code>'. BLOG_ROOT .'</code>)?'
 	);
 	
 ?>

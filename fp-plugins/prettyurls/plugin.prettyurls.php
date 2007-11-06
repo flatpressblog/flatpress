@@ -226,7 +226,11 @@ class Plugin_PrettyURLs {
 
 		
 		if (strpos($_SERVER['REQUEST_URI'], BLOG_ROOT)!==false) {
-			$url = substr($_SERVER['REQUEST_URI'], strlen(BLOG_ROOT)-1);
+			$url = $_SERVER['REQUEST_URI'];
+			$del = BLOG_ROOT;
+			if (strpos($url, 'index.php')!==false)
+				$del = $del . 'index.php/';
+			$url = substr($url, strlen($del)-1);
 		}
 		
 		if ($url=='/')
@@ -267,7 +271,6 @@ class Plugin_PrettyURLs {
 		$url = preg_replace_callback('|page/([0-9]+)/$|', array(&$this, 'handle_page'), $url);		
 		if ($this->status == 2)
 			return;	
-		
 		
 		if ($this->date_handled){
 			$url = preg_replace_callback('|^/([^/]+)|', array(&$this, 'handle_entry'), $url);
@@ -502,9 +505,7 @@ STR;
 		function onsubmit() {
 			global $fp_config;
 			
-			if ($_POST['wp-apikey']){
-				
-				
+			if (!empty($_POST['htaccess']) && io_write_file(ABS_PATH.'.htaccess', $_POST['htaccess'])){
 				$this->smarty->assign('success', 1);
 			} else {
 			 	$this->smarty->assign('success', -1);
