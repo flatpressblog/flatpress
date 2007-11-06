@@ -57,7 +57,10 @@ if (class_exists('AdminPanelAction')){
 			$this->smarty->assign('admin_resource', "plugin:akismet/admin.plugin.akismet");
 		}
 		
-		
+		function main() {
+			$akismetconf = plugin_getoptions('akismet');
+			$this->smarty->assign('akismetconf', $akismetconf);
+		}
 		
 		function onsubmit() {
 			global $fp_config;

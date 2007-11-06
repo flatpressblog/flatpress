@@ -169,14 +169,23 @@
 	 *
 	 */
 	
-	function plugin_getoption($plugin, $key) {
+	function plugin_getoptions($plugin, $key=null) {
 		global $fp_config;
-		return $fp_config['plugins'][ $plugin ][ $key ];
+		
+		if ($key)
+			return @$fp_config['plugins'][ $plugin ][ $key ];
+		
+		return @$fp_config['plugins'][ $plugin ];
 	}
 	
 	function plugin_addoption($plugin, $key, $val) {
 		global $fp_config;
-		return $fp_config['plugins'][ $plugin ][ $key ][ $val ];
+		if (!isset($fp_config['plugins']))
+			$fp_config['plugins'] = array();
+		if (!isset($fp_config['plugins'][$plugin]))
+			$fp_config['plugins'][$plugin] = array();
+		
+		return $fp_config['plugins'][ $plugin ][ $key ] = $val ;
 	}
 	
 	function plugin_saveoptions($null=null) {

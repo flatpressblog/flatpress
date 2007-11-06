@@ -44,8 +44,7 @@
 			global $fp_config;
 			$conf_arr=$fp_config;
 		}
-		//print_r($conf_arr);
-		
+	
 		$arr = array('fp_config' => $conf_arr);
 		return system_save($conffile, $arr);
 	}
