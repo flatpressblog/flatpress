@@ -127,7 +127,7 @@ Static pages are useful to create general information pages; with this new versi
 
 [h4]Plugins[/h4]
 
-FlatPress is very customizable, and supports [url=http://wiki.flatpress.org/doc:plugins]plugins[/url] to extend its power. This BBCode plugin is itself a plugin!
+FlatPress is very customizable, and supports [url=http://wiki.flatpress.org/doc:plugins]plugins[/url] to extend its power. BBCode is itself a plugin!
 
 We have created some more sample content, to show you some of the FP well hidden functions and gems :) ; you can find two [b]static pages[/b] ready to accept your contents ([url=static.php?page=about]About me[/url]) and links ([url=static.php?page=menu]Menu[/url]): notice that your links will appear on your sidebar as well, this is the magic of the [b]blockparser widget[/b]: see the [url=http://wiki.flatpress.org/doc:faq]FAQ[/url] for this and more. 
 
