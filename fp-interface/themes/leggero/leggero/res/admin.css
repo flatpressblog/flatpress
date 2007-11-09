@@ -191,14 +191,12 @@ textarea.code {
 
 
 
-/* #admin-content { background: url(../images/fp-logo.png) bottom right no-repeat } */
-
-#admin-content table { width: 100%; border-collapse: collapse }
+#admin-content table { width: 100%; }
 
 #admin-content td {
 	font-size: 0.8em;
 	padding: .9em;
-	border-bottom: solid 1px black;
+	background: #e6e6e6;
 	text-align: center;
 }
 
@@ -210,9 +208,9 @@ textarea.code {
 #admin-content th {
 	font-size: 0.75em;
 	font-style: italic;
-	border-bottom: solid 2px black;
+	background: #ccc;
 	text-align: center;
-	padding: 4px
+	padding: 8px
 }
 
 input.maxsize, select.maxsize { width: 100% }
@@ -533,7 +531,7 @@ a.link-enable:hover {
 }
 
 a.link-general:hover {
-	background-color: #ddd;
+	background-color: #aaa;
 	color: black;
 }
 
