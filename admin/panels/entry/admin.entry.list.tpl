@@ -56,7 +56,10 @@
 {if in_array('draft',$categories)}
 (<em class="entry-flag">{$lang.entry.flags.short.draft}</em>)
 {/if}
+<a class="link-general" 
+href="{$panel_url|action_link:write}&amp;entry={$id}">
 {$subject|truncate:70} 
+</a>
 </td>
 <td>{$author}</td>
 <td><a class="link-general" 

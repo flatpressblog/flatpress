@@ -21,7 +21,10 @@
 {*<td><input type="checkbox" /></td>*}
 <td>{$id}</td>
 <td class="main-cell">
+<a class="link-general"  
+href="{$panel_url|action_link:write}&amp;page={$id}">
 {$subject|truncate:70}
+</a>
 </td>
 <td>{$author}</td>
 <td>

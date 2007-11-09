@@ -195,7 +195,10 @@ textarea.code {
 
 #admin-content td {
 	font-size: 0.8em;
-	padding: .9em;
+	/* 
+		with display:block on the main-cell link, let's disable this
+		padding: .9em;
+	*/
 	background: #e6e6e6;
 	text-align: center;
 }
@@ -521,6 +524,9 @@ a.link-enable,
 a.link-general {
 	padding: .9em;
 }
+
+td.main-cell a.link-general {display:block}
+
 a.link-disable:hover, a.link-delete:hover {
 	background-color: red;
 	color: white;
@@ -530,11 +536,10 @@ a.link-enable:hover {
 	color: white;
 }
 
-a.link-general:hover {
+a.link-general:hover, .main-cell a:hover {
 	background-color: #aaa;
 	color: black;
 }
-
 
 
 
