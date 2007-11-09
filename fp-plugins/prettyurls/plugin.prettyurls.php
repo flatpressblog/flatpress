@@ -495,7 +495,7 @@ STR;
 			
 			
 			$this->smarty->assign('cantsave', 
-				( (file_exists($f) && !is_writable($f)) && !is_writable(ABS_PATH) )
+				( !is_writable(ABS_PATH) || (file_exists($f) && !is_writable($f)) )
 			);	
 			$this->smarty->assign('htaccess', $txt);		
 		}

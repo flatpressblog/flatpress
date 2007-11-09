@@ -7,7 +7,8 @@
 {html_form}
 	
 	<p>	
-	<textarea id="htaccess" name="htaccess" cols="70" rows="16">{$htaccess|escape:'html'}</textarea>
+	<textarea id="htaccess" name="htaccess" 
+	{if $cantsave}readonly="readonly" {/if}cols="70" rows="16">{$htaccess|escape:'html'}</textarea>
 	</p>
 	
 	<div class="buttonbar">
