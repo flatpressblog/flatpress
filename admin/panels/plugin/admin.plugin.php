@@ -41,7 +41,8 @@ SCP;
 			$this->pluginid = isset($_GET['plugin'])? $_GET['plugin'] : null;
 			
 			$pi =& new plugin_indexer;
-			$this->smarty->assign('pluginlist', $pi->getList());
+			$plist = $pi->getList();
+			$this->smarty->assign('pluginlist', $plist);
 			$this->errors = @$pi->getEnableds(true);
 			$this->fp_plugins = $pi->enabledlist;
 				
