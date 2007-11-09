@@ -26,7 +26,7 @@
 <td>{$author}</td>
 <td>
 <a class="link-general" 
-href="{$panel_url|link:page_link}&amp;page={$id}">
+href="{$id|link:page_link}">
 {$panelstrings.act_view}
 </a>
 <a 
