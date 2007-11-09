@@ -89,7 +89,7 @@ SCP;
 					
 				if (!in_array($id, $fp_plugins)) {
 					$fp_plugins[] = $id;
-					plugin_load($id, true, false);
+					plugin_load($id, false, false);
 					do_action('activate_'.$id);
 					$success = system_save(CONFIG_DIR . 'plugins.conf.php', compact('fp_plugins'));
 				} else {
