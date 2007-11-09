@@ -230,12 +230,17 @@ h4 { font-size: 1.2em; }
 		margin: .2em 0 .8em 0
 	}
 	
+	/* .entry class */
 	.entry {
 		margin: 0 0 1.5em 0;
 		padding: 0;
-		overflow: hidden; /* floating images fix */
-		height:1% /* i.e. hack*/
+		overflow: auto; /* floating images fix IE<7*/
 	}
+	
+	#main>.entry {
+		overflow: hidden; /* rest of the world :) */
+	}
+	/* end of .entry */
 	
 	#main ul.entry-footer { /*  entry footer */
 		clear: both;
@@ -251,8 +256,8 @@ h4 { font-size: 1.2em; }
 	
 	
 	.admincontrols { /* [edit] and [delete] */
-		float: right;
-		font-size: 80%
+		font-size: 80%;
+		text-align: right;
 	}
 	
 	.buttonbar { text-align: center }
