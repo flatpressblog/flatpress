@@ -1,7 +1,7 @@
 <?php
 
 /*
-Plugin Name: BlockParser
+Plugin Name: Thumbnails
 Plugin URI: http://www.nowhereland.it/
 Description: Thumbnail plugin. Part of the standard distribution ;) If this is loaded scale parameter of images will create a scaled version of your img
 Author: NoWhereMan real_nowhereman at user dot sf dot net
