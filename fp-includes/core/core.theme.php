@@ -52,17 +52,36 @@
 				theme_register_default_widgetsets();
 			} else {
 				define('THEME_LEGACY_MODE', false);
+ 
+				if (isset($theme['default_style'])) {
 				
-				if ($theme['version'] > 0.704) {
 					if (!isset($fp_config['general']['style']))
-							$fp_config['general']['style'] = $theme['default_style'];
+						$fp_config['general']['style'] = $theme['default_style'];
+
+
 					include(THEMES_DIR . THE_THEME . "/{$fp_config['general']['style']}/style.conf.php");
+
 					$theme['style'] = $style; 
+
 				} else {
-					theme_register_default_widgetsets();
+					
+					
+					$theme['style'] = array(
+						
+						'style_def' 	=> $theme['style_def']? $theme['style_def'] : 'style.css',
+						'style_admin'	=> $theme['style_admin']? $theme['style_admin'] : 'style.css',
+
+					);
+
+
 				}
 				
 			}
+
+			// no widgets registered, load default set	
+			if (!get_registered_widgets())
+				theme_register_default_widgetsets();
+
 		}
 				
 		return $theme;
@@ -151,7 +170,7 @@
 		echo BLOG_BASEURL . THEMES_DIR . THE_THEME;
 		
 		
-		$css = class_exists('adminpanel')?
+		$css = defined('MOD_ADMIN_PANEL')?
 			 $theme['style']['style_admin'] : $theme['style']['style_def'];
 		
 		$substyle = '/'. (isset($fp_config['general']['style'])? $fp_config['general']['style'].'/' : '');

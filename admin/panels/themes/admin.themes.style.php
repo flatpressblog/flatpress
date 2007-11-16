@@ -25,8 +25,9 @@
 			global $fp_config;
 			
 			$o =& new admin_themes_obj_style_idx;
-			
 			$list = $o->getList();
+			sort($list);
+
 			$info = array();
 			$based = THEMES_DIR . THE_THEME;
 			
