@@ -42,6 +42,7 @@ SCP;
 			
 			$pi =& new plugin_indexer;
 			$plist = $pi->getList();
+			sort($plist);
 			$this->smarty->assign('pluginlist', $plist);
 			$this->errors = @$pi->getEnableds(true);
 			$this->fp_plugins = $pi->enabledlist;
@@ -90,6 +91,7 @@ SCP;
 					
 				if (!in_array($id, $fp_plugins)) {
 					$fp_plugins[] = $id;
+					sort($fp_plugins);
 					plugin_load($id, false, false);
 					do_action('activate_'.$id);
 					$success = system_save(CONFIG_DIR . 'plugins.conf.php', compact('fp_plugins'));
