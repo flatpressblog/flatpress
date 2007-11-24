@@ -69,16 +69,14 @@ function plugin_calendar_widget() {
 		
 	global $fpdb;
 	
-	$queryId = $fpdb->query("fullparse:false,y:$y,m:$m,count:-1");
-	$fpdb->doquery($queryId);
+	$q =& new FPDB_Query(array('fullparse'=>false,'y'=>$y,'m'=>$m, 'count' => -1), null);
+	
 	
 	$days = array();
 	
-	$INDEX = system_getindex();
-	
-	while ($fpdb->hasmore($queryId)) {
+	while ($q->hasmore($queryId)) {
 		
-		list($id, $entry) = $fpdb->getEntry($queryId);
+		list($id, $entry) = $q->getEntry($queryId);
 		$date = date_from_id($id);
 		$d = (int)$date['d'];
 		
