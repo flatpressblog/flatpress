@@ -203,6 +203,10 @@ textarea.code {
 	text-align: center;
 }
 
+#admin-content .enabled td {
+	background: inherit;
+} 
+
 #admin-content td.main-cell {
 	width: 30%;
 	text-align: left;
