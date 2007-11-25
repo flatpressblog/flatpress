@@ -13,14 +13,13 @@ add_filter('the_excerpt', 'wptexturize');
 add_filter('bloginfo', 'wptexturize');
 
 // Comments, trackbacks, pingbacks
-add_filter('pre_comment_author_name', 'htmlentities');
 add_filter('pre_comment_author_name', 'trim');
 add_filter('pre_comment_author_name', 'wp_specialchars', 30);
 
 add_filter('pre_comment_author_email', 'trim');
 add_filter('pre_comment_fauthor_email', 'sanitize_email');
 
-add_filter('pre_comment_author_url', 'htmlentities');
+add_filter('pre_comment_author_name', 'wp_specialchars', 30);
 add_filter('pre_comment_author_url', 'trim');
 //add_filter('pre_comment_author_url', 'clean_url');
 
@@ -79,13 +78,13 @@ add_filter('get_the_excerpt', 'wp_trim_excerpt');
 add_filter('sanitize_title', 'sanitize_title_with_dashes');
 
 // RSS filters
-add_filter('the_title_rss', 'htmlentities');
+//add_filter('the_title_rss', 'htmlentities');
 add_filter('the_title_rss', 'ent2ncr', 8);
 add_filter('the_content_rss', 'ent2ncr', 8);
 add_filter('the_excerpt_rss', 'convert_chars');
 add_filter('the_excerpt_rss', 'ent2ncr', 8);
 add_filter('comment_author_rss', 'ent2ncr', 8);
-add_filter('comment_text_rss', 'htmlspecialchars');
+//add_filter('comment_text_rss', 'htmlspecialchars');
 add_filter('comment_text_rss', 'ent2ncr', 8);
 add_filter('bloginfo_rss', 'ent2ncr', 8);
 add_filter('the_author', 'ent2ncr', 8);
