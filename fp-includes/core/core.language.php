@@ -28,7 +28,7 @@
 			
 		}
 		
-		$fpath=LANG_DIR."{$fp_config['general']['lang']}/$file";
+		$fpath=LANG_DIR."{$fp_config['locale']['lang']}/$file";
 		$fallback=LANG_DIR.LANG_DEFAULT."/$file";
 		
 		

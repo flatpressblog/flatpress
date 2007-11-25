@@ -65,9 +65,7 @@
 				'theme'	=> $fp_config['general']['theme'],
 				'style'	=> @$fp_config['general']['style'],
 				'blogid' => $fp_config['general']['blogid'],
-				
-				 'lang'	=> 'en-us',
-				 'charset'=> 'utf-8',
+				'charset'=> 'utf-8',
 	
 			);
 			

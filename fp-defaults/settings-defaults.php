@@ -15,7 +15,6 @@ $fp_config = array (
     'theme' => 'leggero',
     'style' => 'leggero',
     'blogid' => 'fpdefid',
-    'lang' => 'en-us',
     'charset' => 'utf-8',
   ),
   'locale' => 
