@@ -502,6 +502,16 @@ function &plugin_bbcode_init() {
 					
 		$bbcode->setCodeFlag ('color', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
 		
+		$bbcode->addCode (
+					'size', 
+					'callback_replace', 
+					'do_bbcode_size', 
+					array('usecontent_param' => array ('default')),
+					'inline', 
+					array ('listitem', 'block', 'inline', 'link'), 
+					array ());
+					
+		$bbcode->setCodeFlag ('color', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
 		
 		
 		
