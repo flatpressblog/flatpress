@@ -19,7 +19,7 @@
 	{entry}
 	<entry>
 		<title>{$subject}</title>
-		<link href="{$id|link:permalink_link}" />
+		<link href="{$id|link:post_link}" />
 		<id>{$id|link:post_link}</id>
 		{assign var=the_date value=$date|date_rfc3339}
 		<published>{$the_date}</published>
