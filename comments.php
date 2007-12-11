@@ -87,8 +87,10 @@
 
 			}
 			$arr['content'] = $_POST['content'];
-			
-			$arr['ip-address'] = utils_ipget();
+
+			if ($v = utils_ipget()) {	
+				$arr['ip-address'] = $v;
+			}
 			
 			if (apply_filters('comment_validate', true, $arr))
 				return $arr;

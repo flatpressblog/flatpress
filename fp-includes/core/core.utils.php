@@ -309,6 +309,9 @@ if (!function_exists('fnmatch')) {
 	
 	// get client IP
 	function utils_ipget() {
+		
+		$ip = '';
+
 		if ( !empty ( $_SERVER[ 'HTTP_CLIENT_IP' ] ) ) {
 			$ip = $_SERVER[ 'HTTP_CLIENT_IP' ];
 		}
@@ -327,10 +330,14 @@ if (!function_exists('fnmatch')) {
 		elseif ( getenv( "REMOTE_ADDR") ) {
 			$ip = getenv( "REMOTE_ADDR" );
 		}
-		else { 
-			$ip = "UNKNOWN";
+
+		if (preg_match('/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/', $ip)) {
+			return $ip;
+		} else {
+			return '';
 		}
-		return( $ip );
+
+
 	}
 
 	function utils_nocache_headers() {
