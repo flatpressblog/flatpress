@@ -35,7 +35,12 @@
 	function static_save($entry, $id, $oldid=null) {
 		$fname = STATIC_DIR . $id . EXT;
 		
-		$str = utils_kimplode(array_change_key_case($entry, CASE_UPPER));
+		$entry = array_change_key_case($entry, CASE_UPPER);
+		$entry['CONTENT'] = apply_filters('content_save_pre', $entry['CONTENT']);
+		$entry['SUBJECT'] = apply_filters('title_save_pre', $entry['SUBJECT']);
+	
+		$str = utils_kimplode($entry);
+
 		if (io_write_file($fname, $str)) {
 			if ( $oldid && $id!=$oldid && $fname = static_exists($oldid)) {
 				$succ = static_delete($oldid) ;
