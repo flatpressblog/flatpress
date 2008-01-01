@@ -341,7 +341,7 @@ function wp_salt() {
 	global $fp_config;
 	static $salt = null;
 	if (!$salt)
-		$salt = $fp_config['general']['blogid'] . $fp_config['general']['author'] . ABS_PATH . BLOG_BASEURL ;
+		$salt = $fp_config['general']['blogid'] . ABS_PATH . BLOG_BASEURL ;
 	return $salt;
 }
 endif;

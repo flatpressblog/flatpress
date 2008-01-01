@@ -32,7 +32,7 @@
 	}
 
 	function user_pwd($userid, $pwd){
-		return md5($userid.$pwd);
+		return wp_hash($userid.$pwd);
 	}
 
 
@@ -43,13 +43,7 @@
 		$loggedin = false;
 		
 		$user = user_get($userid);
-		// $retval = 0;
-		
-		/*
-		print_r($user);
-		print_r(user_pwd($userid,$pwd));
-		*/
-		
+	
 		if (user_pwd($userid,$pwd) == $user['password']){
 		
 			$loggedin = true;
@@ -60,30 +54,7 @@
 	
 			setcookie(USER_COOKIE, $userid, $expire, COOKIEPATH, COOKIE_DOMAIN);
 			setcookie(PASS_COOKIE, $user['password'], $expire, COOKIEPATH, COOKIE_DOMAIN);
-		
-			/*
-			
-			$retval = 1;
-			
-			sess_close();
-		
-			sess_setup(60*60*24*7);
-			
-			$retval = 1;
-			
-			
-			sess_add('userid', $userid);
-			// sess_add('userhash', $user['PWD']);
-			sess_add('loggedin', true);
-			sess_add('ip', $_SERVER['REMOTE_ADDR']);
-			sess_add('host', $_SERVER['SERVER_ADDR']);
-			sess_add('path', ABS_PATH);
-			
-			$user = user_get($userid);
-			$user['LOGINTIME']=time();
-			system_save(USERS_DIR . $user['NAME'] . ".php", compact('user'));
-			*/
-			
+					
 		} 
 		
 		return $loggedin;
@@ -96,17 +67,7 @@
 			
 			setcookie(USER_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN);
 			setcookie(PASS_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN);
-	
-			
-			/*
-			
-			$user = user_get(sess_get('userid'));
-			unset($user['LOGINTIME']);
-			system_save(USERS_DIR . $user['NAME'] . ".php", compact('user'));
-			sess_close();
-		
-			*/
-			
+					
 		}
 		
 		$loggedin = false;
@@ -125,7 +86,6 @@
 			return $loggedin = false;
 		}
 		
-		// print_r($_COOKIE);
 		
 		$fp_user = user_get($_COOKIE[USER_COOKIE]);
 		
@@ -135,26 +95,6 @@
 		
 		return $fp_user; 
 		
-		/*
-		//return true;
-		if (!$loggedin && sess_get('loggedin')) {
-			$user = user_get(sess_get('userid'));
-			// removed: sess_get('ip') == $_SERVER['REMOTE_ADDR'] &&
-			// quite stupid, as people usually will disconnect sooner or later :D
-				if (sess_get('host') == $_SERVER['SERVER_ADDR'] &&
-						sess_get('path') == ABS_PATH ) {
-							@sess_setup(60*60*24*7);
-							
-							// may bug sometimes: 
-							// session_regenerate_id();
-							$loggedin = true;
-							
-				}
-		} 
-		*/
-							
-		
-		return $loggedin;
 	}
 
 

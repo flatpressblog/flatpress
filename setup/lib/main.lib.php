@@ -138,7 +138,6 @@ function validate() {
 		return false;
 	}
 	
-	user_add($user);
 	
 	$fp_config['general']['blogid'] = system_generate_id(	
 												BLOG_ROOT.
@@ -149,6 +148,7 @@ function validate() {
 													
 	config_save();
 	
+	user_add($user);
 	
 	return true;
 }
