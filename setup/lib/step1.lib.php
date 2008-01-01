@@ -1,7 +1,9 @@
 <?php
 	
 	function check_step() {
-	
+
+		global $err;
+
 		if(check_write(SETUPTEMP_FILE, 2)) {
 		
 			$r =	fs_mkdir(CACHE_DIR);
@@ -19,6 +21,8 @@
 			return true;
 		
 		}
+
+		$err[] = 'Write error';
 		
 		return false;
 	}
