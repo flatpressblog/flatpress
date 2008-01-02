@@ -289,7 +289,7 @@
 		
 		if (!isset($_GET['feed']) || empty($_GET['feed'])) {
 			$smarty->register_modifier('date_format_daily', 'theme_smarty_modifier_date_format_daily');
-			$smarty->register_modifier('date_format', 'theme_smarty_modifier_date_format');
+			$smarty->register_modifier('date_format', 'theme_date_format');
 		}
 		
 		$smarty->register_modifier('date_rfc3339', 'theme_smarty_modifier_date_rfc3339');
@@ -327,7 +327,7 @@
 			
 	}
 	
-	function theme_smarty_modifier_date_format(	$string,
+	function theme_date_format(	$string,
 											$format = null,
 											$default_date = ''
 											) {										
@@ -404,7 +404,7 @@
 	if (is_null($format))
 		$format = $fp_config['locale']['dateformat'];
 
-	$current_day = theme_smarty_modifier_date_format($string, $format, $default_date);
+	$current_day = theme_date_format($string, $format, $default_date);
     
     if (!isset($THEME_CURRENT_DAY) || $THEME_CURRENT_DAY != $current_day) {
 		$THEME_CURRENT_DAY = $current_day;
