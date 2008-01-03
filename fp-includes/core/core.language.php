@@ -45,7 +45,7 @@
 			
 			$dir = plugin_getdir($plugin);
 			 
-			$fpath    = $dir . "lang/lang.{$fp_config['general']['lang']}{$path}.php";
+			$fpath    = $dir . "lang/lang.{$fp_config['locale']['lang']}{$path}.php";
 			$fallback = $dir . "lang/lang.".LANG_DEFAULT."{$path}.php";
 			
 		}	
