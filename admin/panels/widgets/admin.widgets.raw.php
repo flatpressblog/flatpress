@@ -13,7 +13,7 @@
  *
  */
  
- 	class admin_widgets_raw extends AdminPanelActionValidated {
+ 	class admin_widgets_raw extends AdminPanelAction {
 	 
 		var $validators =  array(array('content', 'content', 'notEmpty', false, false));
 		var $events = array('save');
@@ -51,7 +51,7 @@
 			$this->smarty->assign('success', ( $success )? 1 : -1 );
 			$this->smarty->assign('pluginconf', $str);
 			
-			return $success;
+			return PANEL_REDIRECT_CURRENT;
 			
 		}
 	

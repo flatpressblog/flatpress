@@ -111,7 +111,7 @@
 
 			$this->smarty->assign('success', ( $success )? 1 : -1 );
 			
-			return 1;
+			return PANEL_REDIRECT_CURRENT;
 			
 		}
 	
