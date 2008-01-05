@@ -5,7 +5,7 @@
 		
 		{static_block}
 		{static}
-			<div id="{$id}" class="entry">
+			<div id="{$id}" class="entry page-{$id}">
 				<h3>{$subject}</h3>
 				<p class="date">Published by {$author} on {$date|date_format_daily}</p>
 				

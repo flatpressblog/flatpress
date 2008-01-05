@@ -1,4 +1,4 @@
-	<div id="{$id}" class="entry">
+	<div id="{$id}" class="entry {$date|date_format:"y-%Y m-%m d-%d"}">
 				{* 	using the following way to print the date, if more 	*} 
 				{*	than one entry have been written the same day,		*} 
 				{*	 the date will be printed only once 				*}
