@@ -40,9 +40,7 @@ plugin_bbcode_defines();
 
 function plugin_bbcode_style() {
 	echo "\n<!-- bbcode plugin -->\n";
-	echo '<link rel="stylesheet" type="text/css" href="'.plugin_geturl('bbcode') . '/res/bbcode.css" />', "\n";
-	if (BBCODE_USE_EDITOR)
-		echo '<script type="text/javascript" src="'.plugin_geturl('bbcode') . '/res/editor.js"></script>', "\n";
+	echo '<link rel="stylesheet" type="text/css" href="'.plugin_geturl('bbcode') . 'res/bbcode.css" />', "\n";
 	echo "<!-- end of bbcode plugin -->\n";
 }
 add_action('wp_head', 'plugin_bbcode_style');
@@ -649,8 +647,13 @@ function plugin_bbcode_toolbar() {
 	$_FP_SMARTY->assign('images_list', $imageslist);
 	$_FP_SMARTY->assign('attachs_list', $attachslist);
 
+	
+	echo "\n<!-- bbcode plugin -->\n";
+	
+	echo '<script type="text/javascript" src="'.plugin_geturl('bbcode') . 'res/editor.js"></script>', "\n";
 	echo $_FP_SMARTY->fetch('plugin:bbcode/toolbar');
-
+	
+	echo "<!-- end of bbcode plugin -->\n";
 
 }
 
