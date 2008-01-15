@@ -3,8 +3,17 @@
 	if (!defined('MOD_INDEX')) {
 		include 'defaults.php';
 		include INCLUDES_DIR . 'includes.php';
-		@utils_status_header(301);
-		@utils_redirect("?entry={$_GET['page']}&comments");
+		
+		/* backward compatibility */
+
+		if (!@$_GET['entry']) {
+			@utils_redirect();
+		} else {
+			@utils_status_header(301);
+			@utils_redirect(str_replace('&amp;','&', get_comments_link($_GET['entry'])), true);
+		}
+
+		
 	}
 
 		$module = comment_main($module);
