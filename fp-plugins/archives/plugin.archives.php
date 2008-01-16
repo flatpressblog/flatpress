@@ -74,12 +74,11 @@ class plugin_archives_monthlist extends fs_filelister {
 }
 
 
-global $PLUGIN_ARCHIVES_MONTHLIST;
-$PLUGIN_ARCHIVES_MONTHLIST = new plugin_archives_monthlist;
-
 function plugin_archives_head() {
 
 	global $PLUGIN_ARCHIVES_MONTHLIST;
+	$PLUGIN_ARCHIVES_MONTHLIST = new plugin_archives_monthlist;
+
 	echo "\n<!-- archives -->\n";
 	foreach($PLUGIN_ARCHIVES_MONTHLIST->getList() as $y => $months) {
 		foreach ($months as $ttl => $link)
