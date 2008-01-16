@@ -468,10 +468,12 @@ class Plugin_PrettyURLs {
 	add_filter('feed_link', 	array(&$plugin_prettyurls, 'feedlink'), 0, 2);
 	add_filter('post_comments_feed_link', array(&$plugin_prettyurls, 'commentsfeedlink'), 0, 3);
 	add_filter('category_link', array(&$plugin_prettyurls,'categorylink'), 0, 2);
+	add_filter('page_link', 	array(&$plugin_prettyurls, 'staticlink'), 0, 2);
+	
+	// date related functions
 	add_filter('year_link', 	array(&$plugin_prettyurls,'yearlink'), 0, 2);
 	add_filter('month_link', 	array(&$plugin_prettyurls,'monthlink'), 0, 3);
-	add_filter('day_link', 	array(&$plugin_prettyurls,'daylink'), 0, 4);
-	add_filter('page_link', 	array(&$plugin_prettyurls, 'staticlink'), 0, 2);
+	add_filter('day_link', 		array(&$plugin_prettyurls,'daylink'), 0, 4);
 
 	if (PRETTYURLS_TITLES) {
 		add_filter('publish_post', 	array(&$plugin_prettyurls, 'cache_add'), 5, 2);
