@@ -11,6 +11,7 @@ Author URI: http://www.nowhereland.it
 /**
  * Place where the index is stored
  */
+define('PRETTYURLS_TITLES', true);
 define('PRETTYURLS_CACHE', CACHE_DIR . '%%prettyurls-index.tmp');
 define('PRETTYURLS_CATS', CACHE_DIR . '%%prettyurls-cats.tmp');
 
@@ -70,8 +71,11 @@ class Plugin_PrettyURLs {
 	
 	function permalink($str, $id) {
 		global $fpdb, $post;
-		
-		$title = sanitize_title($post['subject']);
+
+		if (PRETTYURLS_TITLES)
+			$title = sanitize_title($post['subject']);
+		else 
+			$title = $id;
 		$date = date_from_id($id);
 					// yeah, hackish, I know...
 	
@@ -100,7 +104,11 @@ class Plugin_PrettyURLs {
 	
 
 	function categorylink($str, $catid) {
-		return BLOG_BASEURL . "category/{$this->categories[$catid]}/";
+		if (PRETTYURLS_TITLES) {
+			return BLOG_BASEURL . "category/{$this->categories[$catid]}/";
+		} else {
+			return BLOG_BASEURL . "category/{$catid}/";
+		}
 	}
 	
 	
@@ -144,9 +152,12 @@ class Plugin_PrettyURLs {
 		if (!$this->categories) 
 			return;
 			
-	
-		if ($c = array_search($matches[1], $this->categories))
-			$_GET['category'] = $c;
+		if (PRETTYURLS_TITLES) {	
+			if ($c = array_search($matches[1], $this->categories))
+				$_GET['category'] = $c;
+		} else {
+			$_GET['category'] = $matches[1];
+		}
 		
 	}
 	
@@ -172,9 +183,13 @@ class Plugin_PrettyURLs {
 	
 	function handle_entry($matches) {
 		
-		
-		if (isset($this->index[$_GET['y']][$_GET['m']][$_GET['d']][md5($matches[1])]))
+		if (PRETTYURLS_TITLES) {	
+			if (isset($this->index[$_GET['y']][$_GET['m']][$_GET['d']][md5($matches[1])]))
 				$_GET['entry'] = $this->index[$_GET['y']][$_GET['m']][$_GET['d']][md5($matches[1])];
+		} else {
+			$_GET['entry'] = $matches[1];
+		}
+
 			
 	}
 	
@@ -211,14 +226,17 @@ class Plugin_PrettyURLs {
 	
 	function cache_init() {
 	
-	
-		if ($f = io_load_file(PRETTYURLS_CACHE))
-			$this->index = unserialize($f);
+		if (PRETTYURLS_TITLES) {
+			if ($f = io_load_file(PRETTYURLS_CACHE))
+				$this->index = unserialize($f);
 			
-		if (!$this->index)
-			$this->cache_create();
-			
-		$this->categories(false);
+			if (!$this->index)
+				$this->cache_create();
+
+
+			$this->categories(false);
+		}
+
 		
 		if (!defined('MOD_INDEX'))
 			return;
@@ -450,18 +468,18 @@ class Plugin_PrettyURLs {
 	add_filter('feed_link', 	array(&$plugin_prettyurls, 'feedlink'), 0, 2);
 	add_filter('post_comments_feed_link', array(&$plugin_prettyurls, 'commentsfeedlink'), 0, 3);
 	add_filter('category_link', array(&$plugin_prettyurls,'categorylink'), 0, 2);
-	add_action('update_categories',  array(&$plugin_prettyurls, 'categories'));
 	add_filter('year_link', 	array(&$plugin_prettyurls,'yearlink'), 0, 2);
 	add_filter('month_link', 	array(&$plugin_prettyurls,'monthlink'), 0, 3);
 	add_filter('day_link', 	array(&$plugin_prettyurls,'daylink'), 0, 4);
-	
-	
-	
-	add_filter('publish_post', 	array(&$plugin_prettyurls, 'cache_add'), 5, 2);
 	add_filter('page_link', 	array(&$plugin_prettyurls, 'staticlink'), 0, 2);
+
+	if (PRETTYURLS_TITLES) {
+		add_filter('publish_post', 	array(&$plugin_prettyurls, 'cache_add'), 5, 2);
+		add_filter('delete_post', 	array(&$plugin_prettyurls, 'cache_delete'));
+		add_action('update_categories',  array(&$plugin_prettyurls, 'categories'));
+	}
+
 	add_filter('init', 			array(&$plugin_prettyurls, 'cache_init'));
-	// add_filter('cache_save', 	array(&$plugin_prettyurls, 'cache_save'));
-	add_filter('delete_post', 	array(&$plugin_prettyurls, 'cache_delete'));
 
 if (class_exists('AdminPanelAction')){
 
@@ -487,9 +505,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . {$blogroot}index.php [L]
 </IfModule>
-
-			
-				
 STR;
 			}
 			
