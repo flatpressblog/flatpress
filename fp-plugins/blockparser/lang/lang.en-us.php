@@ -14,7 +14,7 @@
 		'disable'	=> 'Disable',
 		
 	);
-	$lang['admin']['plugin']['akismet']['msgs'] = array(
+	$lang['admin']['plugin']['blockparser']['msgs'] = array(
 		1		=> 'The new widget is available. Activate it from the main panel!',
 		-1		=> 'Can\'t create the requested widget'
 	);
