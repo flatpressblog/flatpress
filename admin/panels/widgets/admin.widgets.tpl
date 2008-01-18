@@ -72,6 +72,7 @@
 	<h2>{$panelstrings.oldwdgs}</h2>
 	<p>{$panelstrings.oldwdgsdescr}</p>
 	
+	<ul>	
 	{foreach from=$oldwidgetlist key=widgetset item=widgetarr}
 	<li class="admin-widgetset">
 		<h3 class="widgetset-name"> 
@@ -96,6 +97,8 @@
 		</ul>
 	</li>
 	{/foreach}
+	</ul>
+
 	{/if}
 	
 	</div>
