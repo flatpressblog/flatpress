@@ -14,6 +14,20 @@ Module: admin.css
 
 @import url(common.css);
 
+/* small navigation on top */
+
+#admin-small-nav {
+	float: right;
+	font-size: 80%;
+}
+#admin-small-nav li {
+	display: inline;
+}
+
+h1 {
+	color: #000;
+}
+
 /* tab menu */
 
 ul#admin-tabmenu {
@@ -58,6 +72,7 @@ ul#admin-tabmenu a#admin-tab-current {
 #admin-content {
         border: 1px solid #999977;
         padding: 1em;
+	overflow: hidden;
 }
 
 
