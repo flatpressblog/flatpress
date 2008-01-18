@@ -506,6 +506,14 @@ li.widget-class {
 	margin-bottom: .2em;
 }
 
+.textinput, .bigtextinput, .smalltextinput {
+	padding: .5em;
+}
+
+.textinput:focus, .bigtextinput:focus, .smalltextinput:focus {
+	font-weight: bold;
+}
+
 #admin-config input.textinput ,
 #admin-config select.textinput {
 	width: 20em;
