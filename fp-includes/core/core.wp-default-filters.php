@@ -52,9 +52,9 @@ add_filter('comment_text', 'fmt_unescape_separator');
 add_filter('comment_excerpt', 'convert_chars');
 
 // Places to balance tags on input
-add_filter('content_save_pre', 'balanceTags', 50);
-add_filter('excerpt_save_pre', 'balanceTags', 50);
-add_filter('comment_save_pre', 'balanceTags', 50);
+//add_filter('content_save_pre', 'balanceTags', 50);
+//add_filter('excerpt_save_pre', 'balanceTags', 50);
+//add_filter('comment_save_pre', 'balanceTags', 50);
 
 
 add_filter('title_save_pre', 'fmt_escape_separator');
