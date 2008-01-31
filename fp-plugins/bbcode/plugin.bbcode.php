@@ -8,7 +8,7 @@ Author: Hydra, NoWhereMan
 Author URI: http://flatpress.sf.net
 */
 
-define('BBCODE_ESCAPE_HTML', 0);
+define('BBCODE_ESCAPE_HTML', true);
 define('BBCODE_ENABLE_COMMENTS', false);
 define('BBCODE_USE_EDITOR', true);
 define('BBCODE_URL_MAXLEN', 40);
