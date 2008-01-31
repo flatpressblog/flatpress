@@ -8,7 +8,7 @@ Author: Hydra, NoWhereMan
 Author URI: http://flatpress.sf.net
 */
 
-define('BBCODE_ESCAPE_HTML', true);
+define('BBCODE_ESCAPE_HTML', 0);
 define('BBCODE_ENABLE_COMMENTS', false);
 define('BBCODE_USE_EDITOR', true);
 define('BBCODE_URL_MAXLEN', 40);
@@ -339,6 +339,10 @@ function do_bbcode_code ($action, $attributes, $content, $params, $node_object) 
 	$temp_str = str_replace( '<br />', chr(10), $temp_str );
 	$temp_str = str_replace( chr(10).chr(10), chr(10), $temp_str );
 	$temp_str = str_replace( chr(32), '&nbsp;', $temp_str );
+	
+	if (!BBCODE_ESCAPE_HTML) {
+		$temp_str = wp_specialchars($temp_str);
+	}
 	
 	$a = '';
 	
