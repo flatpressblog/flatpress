@@ -50,7 +50,8 @@ if (!defined('MOD_INDEX')) {
 			if(isset($_GET['q']) && $kw = trim($_GET['q'])) {
 				$title = $lang['search']['head'];
 				$content = "shared:search_results.tpl"; 
-				
+
+				$kw = strtolower($kw);	
 				search_do($kw);
 				
 			} else {
