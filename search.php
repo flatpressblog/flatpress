@@ -145,9 +145,7 @@ if (!defined('MOD_INDEX')) {
 	
 		global $srchresults;
 		
-		
 		if ($srchresults) {
-		
 			return $content;
 		}
 		
@@ -168,7 +166,7 @@ if (!defined('MOD_INDEX')) {
 			return $content;
 		}
 	
-		
+		return	$content;
 	}
 
 	/*
