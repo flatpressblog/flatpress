@@ -40,6 +40,7 @@
 	// blog configurations files
 	define('CONFIG_DIR', FP_CONTENT . 'config/');  //must be chmodded to 0777
 	define('CONFIG_FILE', CONFIG_DIR . 'settings.conf.php'); 
+	define('HASHSALT_FILE', CONFIG_DIR . 'hashsalt.conf.php'); 
 	define('CONFIG_DEFAULT', FP_DEFAULTS. 'settings-defaults.php');
 	define('USERS_DIR', FP_CONTENT . 'users/');
 	

@@ -340,8 +340,13 @@ if ( !function_exists('wp_salt') ) :
 function wp_salt() {
 	global $fp_config;
 	static $salt = null;
-	if (!$salt)
-		$salt = $fp_config['general']['blogid'] . ABS_PATH . BLOG_BASEURL ;
+	if (!$salt) {
+		@include(HASHSALT_FILE);
+		if (!$fp_hashsalt)
+			trigger_error('Cannot load hash salt: reinstall FlatPress', E_USER_ERROR);
+			
+		$salt = $fp_hashsalt;
+	}
 	return $salt;
 }
 endif;

@@ -128,7 +128,7 @@ function validate() {
 	$fp_config['general']['author'] = $user['userid'] = $_POST['fpuser'];
 	$user['password'] = $_POST['fppwd'];
 	
-	$user['www'] = $_POST['www'];
+	$fp_config['general']['www'] = $user['www'] = $www;
 	$fp_config['general']['email'] = $user['email'] = $_POST['email'];
 	
 	
@@ -140,13 +140,15 @@ function validate() {
 	
 	
 	$fp_config['general']['blogid'] = system_generate_id(	
-												BLOG_ROOT.
-												$user['www'].
-												$user['email'].
-												$user['userid'] 
-									);
+								BLOG_ROOT.
+								$user['www'].
+								$user['email'].
+								$user['userid'] 
+							);
 													
 	config_save();
+
+	system_hashsalt_save();
 	
 	user_add($user);
 	
