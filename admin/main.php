@@ -56,6 +56,14 @@
 			$fp_admin =& new $panelclass($smarty);
 		
 		}
+
+		/* check if user is loggedin */
+		
+		if (!user_loggedin()) {
+			utils_redirect("login.php");
+			die();
+		}
+	
 		
 		$action = isset($_GET['action'])? $_GET['action'] : 'default';
 		if (!$fp_admin)
@@ -71,13 +79,7 @@
 		$smarty->assign('panel_url', $panel_url);
 		$smarty->assign('action_url', $action_url);
 				
-		/* check if user is loggedin */
-		
-		if (!user_loggedin()) {
-			utils_redirect("login.php");
-			die();
-		}
-		
+	
 		if (!empty($_POST))
 			check_admin_referer("admin_{$panel}_{$action}");
 				
