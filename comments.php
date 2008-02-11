@@ -160,7 +160,7 @@
 						$comm_mail = isset($arr['email'])? "<{$arr['email']}>" : '';
 						$from_mail = $comm_mail? $arr['email'] : $fp_config['general']['email'];
 						$q =& new FPDB_Query(array('entry'=>$_GET['entry'],'fullparse'=>false), null);
-						list($id, $e) = $q->getEntry();
+						list($entryid, $e) = $q->getEntry();
 
 
 						$lang = lang_load('comments');
@@ -181,7 +181,7 @@
 								$arr['name'],
 								$comm_mail,
 								$e['subject'],
-								get_comments_link($_GET['entry']) . '#'.$id,
+								get_comments_link($entryid) . '#'.$id,
 								$arr['content'],
 								$fp_config['general']['title']
 							),
@@ -201,7 +201,7 @@
 									apply_filters(
 										'comments_link', 
 										'', 
-										$_GET['entry'])
+										$entryid)
 									) . '#'.$id; 
 					
 					utils_redirect($location,true);
