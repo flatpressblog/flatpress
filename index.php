@@ -132,6 +132,7 @@
 		global $fpdb, $smarty, $fp_config;
 		$params = array();
 		$module = 'index.tpl' ;
+		$can404 = true;
 		
 		
 		if (!empty($_GET['entry'])) {
@@ -153,6 +154,8 @@
 		} else {
 		
 			if (!empty($_GET['feed'])){
+
+					$can404=false;
 				
 					switch($_GET['feed']) {
 						case 'atom':
@@ -181,7 +184,7 @@
 
 		/* no entry found : 404 */
 
-		if (!$e)
+		if (!$e && $can404)
 			$module = index_404error();
 		
 		return $module;
