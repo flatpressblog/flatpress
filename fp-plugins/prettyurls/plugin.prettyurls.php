@@ -260,6 +260,12 @@ class Plugin_PrettyURLs {
 		// removes querystrings
 		if ($i = strpos($url, '?'))
 			$url = substr($url, 0, $i);
+
+		// removes anchors
+		if ($i = strpos($url, '#'))
+			$url = substr($url, 0, $i);
+
+
 		
 		if (strrpos($url, '/') != (strlen($url)-1)) {
 			$url .= '/';
