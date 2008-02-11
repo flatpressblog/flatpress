@@ -242,7 +242,8 @@ class Plugin_PrettyURLs {
 			return;
 		
 
-		
+		# this is not working if you reach flatpress via symlink
+		# unless you don't edit manually defaults.php
 		if (strpos($_SERVER['REQUEST_URI'], BLOG_ROOT)!==false) {
 			$url = $_SERVER['REQUEST_URI'];
 			$del = BLOG_ROOT;
