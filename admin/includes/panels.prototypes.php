@@ -96,6 +96,7 @@
 		var $smarty = null;
 		var $events = array();
 		var $commands = array();
+		var $args = array();
 		
 		var $langres = ''; 
 		
@@ -108,6 +109,13 @@
 		}
 		
 		function exec() {
+			
+			foreach($this->args as $mandatory_argument) {
+				if (!isset($_GET[$mandatory_argument])) {
+					return PANEL_REDIRECT_DEFAULT;
+				}
+			}
+
 			
 			$this->setup();
 			$result = 0; // if !=0, defaultaction for this panel is called

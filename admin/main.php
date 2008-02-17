@@ -89,7 +89,7 @@
  		$smarty->assign('success', sess_remove("success_{$panel}"));
  		$retval = $fp_admin_action->exec();
 				
-		if ($retval > 0) {
+		if ($retval > 0) { // if has REDIRECT option
 			// clear postdata by a redirect
 			
 			sess_add("success_{$panel}", $smarty->get_template_vars('success'));
@@ -97,8 +97,17 @@
 			
 			$to_action = $retval > 1 ? ('&action=' . $action) : '';
 			$with_mod = isset($_GET['mod'])? ('&mod=' . $_GET['mod']) : ''; 
-			
-			utils_redirect("admin.php?p={$panel}{$to_action}{$with_mod}");
+			$with_arguments = '';
+
+			if ($retval == PANEL_REDIRECT_CURRENT) {
+				foreach ($fp_admin_action->args as $mandatory_argument) {
+					$with_arguments .= '&' . $mandatory_argument .
+								'=' . $_GET[$mandatory_argument];
+				}
+			}
+
+			$url = "admin.php?p={$panel}{$to_action}{$with_mod}{$with_arguments}";
+			utils_redirect($url);
 			
 		}
 		

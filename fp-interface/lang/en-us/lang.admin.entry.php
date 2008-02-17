@@ -63,9 +63,6 @@
 		2	=> 'Entry has been deleted successfully',
 		-2	=>	 'An error occurred while trying to delete 
 					the entry',
-		6	=> 'Comment has been deleted successfully',
-		-6	=> 'An error occurred while trying to delete 
-					the comment',
 	);
 
 	
@@ -98,6 +95,14 @@
 		'nocomments'	=> 'This entry have not been commented, yet.',
 		
 	
+	);
+
+	$lang['admin']['entry']['commentlist']['msgs'] =
+	array(
+		1	=> 'Comment has been deleted successfully',
+		-1	=> 'An error occurred while trying to delete 
+					the comment',
+		
 	);
 	
 	/* delete action */
