@@ -157,11 +157,15 @@
 					
 				
 					if ($fp_config['general']['notify'] && !user_loggedin()) {
+					
+						global $post;
+					
 						$comm_mail = isset($arr['email'])? "<{$arr['email']}>" : '';
 						$from_mail = $comm_mail? $arr['email'] : $fp_config['general']['email'];
 						$q =& new FPDB_Query(array('entry'=>$_GET['entry'],'fullparse'=>false), null);
 						list($entryid, $e) = $q->getEntry();
-
+						
+						$post = $e; // plugin such as prettyurls might need this...
 
 						$lang = lang_load('comments');
 
