@@ -184,8 +184,13 @@ class Plugin_PrettyURLs {
 	function handle_entry($matches) {
 		
 		if (PRETTYURLS_TITLES) {	
-			if (isset($this->index[$_GET['y']][$_GET['m']][$_GET['d']][md5($matches[1])]))
+			if (isset($this->index[$_GET['y']][$_GET['m']][$_GET['d']][md5($matches[1])])) {
 				$_GET['entry'] = $this->index[$_GET['y']][$_GET['m']][$_GET['d']][md5($matches[1])];
+			} else {
+				// a bit hackish: we make up a fake url when there is no match, 
+				// so that at the higher level the system will 404... 
+				$_GET['entry'] = 'entry000000-000000'; 
+			}
 		} else {
 			$_GET['entry'] = $matches[1];
 		}
