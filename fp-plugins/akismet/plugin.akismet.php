@@ -9,8 +9,6 @@ Author URI: http://flatpress.sf.net
 */
 
 
-// change 0 into your API key
-//define('AKISMET_API_KEY', '0');
 define('AKISMET_TIMEOUT', 10);
 
 require plugin_getdir('akismet') . '/inc/Akismet.class.php';
@@ -30,18 +28,18 @@ function plugin_akismet_validate(&$bool, $contents) {
 	
 	if (!$bool) return false;
 	
-	global $blog_config;
+	global $fp_config;
 	
 	
-	$akismet = new Akismet($blog_config['WWW'], AKISMET_API_KEY);
+	$akismet = new Akismet($fp_config['general']['www'], $fp_config['plugins']['akismet']['apikey']);
 	$akismet->setAuthor($contents['name']);
 	$akismet->setAuthorEmail(isset($contents['email'])? $contents['email'] : '');
 	$akismet->setAuthorURL(isset($contents['url'])? $contents['url'] : '');
 	$akismet->setContent($contents['content']);
 	
 	if ($v= $akismet->isSpam()){
-		global $_FP_SMARTY;
-		$_FP_SMARTY->assign('error', array('ERROR: Comment is invalid'));
+		global $smarty;
+		$smarty->assign('error', array('ERROR: Comment is invalid'));
 		return false;
 	} 
 	return true;
