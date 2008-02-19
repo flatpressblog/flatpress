@@ -14,7 +14,7 @@ Module: style.css
 
 
 /* ===== COLUMN ===== */
-.column {
+#column {
 	float: right;
 	width: 195px !important;
 	width: 180px;
@@ -26,25 +26,25 @@ Module: style.css
 	border-left: solid 1px #ccc
 }
 
-.column h4 {
+#column h4 {
 	/* Titles of the sections */
 	margin-bottom: .5em;
 }
 
-.column p, .column div { margin: 10px 5px }
+#column p, #column div { margin: 10px 5px }
 
-.column a:link, .column a:visited { color: gray }
+#column a:link, #column a:visited { color: gray }
 
 /* === List === */
-.column ul li table { font-size: 100% }
+#column ul li table { font-size: 100% }
 
-.column ul {
+#column ul {
 	list-style-type: none;
 	margin-right: 10px;
 	margin-bottom: .5em;
 	padding-left: 1em
 }
 
-.column fieldset { margin: 0 5px 0 5px }
+#column fieldset { margin: 0 5px 0 5px }
 
-.column legend { font-size: 100% }
+#column legend { font-size: 100% }
