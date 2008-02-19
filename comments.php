@@ -155,6 +155,9 @@
 					
 					do_action('comment_post', $_GET['entry'], array($id, $arr));
 					
+					$q =& new FPDB_Query(array('id'=>$_GET['entry'],'fullparse'=>false), null);
+					list($entryid, $e) = $q->getEntry();
+						
 				
 					if ($fp_config['general']['notify'] && !user_loggedin()) {
 					
@@ -162,9 +165,7 @@
 					
 						$comm_mail = isset($arr['email'])? "<{$arr['email']}>" : '';
 						$from_mail = $comm_mail? $arr['email'] : $fp_config['general']['email'];
-						$q =& new FPDB_Query(array('entry'=>$_GET['entry'],'fullparse'=>false), null);
-						list($entryid, $e) = $q->getEntry();
-						
+					
 						$post = $e; // plugin such as prettyurls might need this...
 
 						$lang = lang_load('comments');
@@ -202,11 +203,8 @@
 					// if comment is valid, this redirect will clean the postdata
 					$location = str_replace(
 									'&amp;', '&', 
-									apply_filters(
-										'comments_link', 
-										'', 
-										$entryid)
-									) . '#'.$id; 
+									get_comments_link($entryid)
+								) . '#'.$id; 
 					
 					utils_redirect($location,true);
 					exit();
