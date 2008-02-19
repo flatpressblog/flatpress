@@ -174,24 +174,26 @@
 
 	$lang['date']['weekday'] = array(
 		
-		1=>'Monday',
+		'Sunday',
+		'Monday',
 		'Tuesday',
 		'Wednesday',
 		'Thursday',
 		'Friday',
 		'Saturday',
-		'Sunday'
+		
 	);
 
 	$lang['date']['weekday_abbr'] = array(
 		
-		1=>'Mon',
+		'Sun',
+		'Mon',
 		'Tue',
 		'Wed',
 		'Thu',
 		'Fri',
 		'Sat',
-		'Sun'
+		
 	);
 
 

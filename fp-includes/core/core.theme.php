@@ -350,12 +350,12 @@
 			// D l day
 			
 			if ( strpos($format, '%a') !== false ) {
-				$i = strftime('%u', $timestamp);
+				$i = strftime('%w', $timestamp);
 				$format = str_replace('%a', $lang['date']['weekday_abbr'][$i], $format);
 			}
 			
 			if ( strpos($format, '%A') !== false  ) {
-				$i = strftime('%u', $timestamp);
+				$i = strftime('%w', $timestamp);
 				$format = str_replace('%A', $lang['date']['weekday'][$i], $format);
 			}
 			
