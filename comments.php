@@ -27,7 +27,10 @@
 								
 			$q =& $fpdb->getQuery();
 			
-			list($id, $entry) = $q->peekEntry();
+			list($id, $entry) = @$q->peekEntry();
+			if (!$entry)
+				return $module;
+			
 			
 			if (!empty($_GET['feed'])){
 			

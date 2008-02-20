@@ -17,8 +17,10 @@
 	function index_permatitle($val, $sep) {
 		global $fpdb;
 		$q =& $fpdb->getQuery();
-		list($id, $e) = $q->peekEntry();
-		return "$val {$sep} {$e['subject']}";
+		list($id, $e) = @$q->peekEntry();
+		if ($e)
+			return "$val {$sep} {$e['subject']}";
+		else return $val;
 	}
 
 	function index_gentitle($val, $sep) {
@@ -180,7 +182,7 @@
 		$fpdb->query($params);
 
 		$q =& $fpdb->getQuery();
-		list($id, $e) = $q->peekEntry();
+		list($id, $e) = @$q->peekEntry();
 
 		/* no entry found : 404 */
 
