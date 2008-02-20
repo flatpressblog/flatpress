@@ -354,12 +354,7 @@ endif;
 if ( !function_exists('wp_hash') ) :
 function wp_hash($data) {
 	$salt = wp_salt();
-
-	if ( function_exists('hash_hmac') ) {
-		return hash_hmac('md5', $data, $salt);
-	} else {
-		return md5($data . $salt);
-	}
+	return md5($data . $salt);
 }
 endif;
 
