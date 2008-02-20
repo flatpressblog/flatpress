@@ -105,7 +105,9 @@ class Plugin_PrettyURLs {
 
 	function categorylink($str, $catid) {
 		if (PRETTYURLS_TITLES) {
-			return BLOG_BASEURL . "category/{$this->categories[$catid]}/";
+			if (@$this->categories[$catid])
+				return BLOG_BASEURL . "category/{$this->categories[$catid]}/";
+			else return $str;
 		} else {
 			return BLOG_BASEURL . "category/{$catid}/";
 		}
@@ -408,15 +410,14 @@ class Plugin_PrettyURLs {
 		
 		// else, we build a complete url
 		
+		/* todo: clean up this mess... which means cleaning up the mess above. oh, my! */
+		
 		$l = BLOG_BASEURL;
 		
 		
-		if (isset($_GET['category']) && is_numeric($_GET['category'])) 
-			$c = $this->categories[$_GET['category']];
-		elseif (isset($_GET['cat']) && is_numeric($_GET['cat'])) 
-			$c = 'category-' . $_GET['cat'] .'/';
-		
-		$l .= $c;
+		if ( ( 	is_numeric($cid = @$_GET['category']) ) ||
+				is_numeric($cid = @$_GET['cat']) ) 
+			$l = $this->categorylink($l, $cid);
 		
 		if (isset($_GET['y']) && $_GET['y']) {
 			$l .= '20'. $_GET['y'] . '/';
