@@ -15,13 +15,16 @@ require plugin_getdir('akismet') . '/inc/Akismet.class.php';
 
 function plugin_akismet_setup() {
 	global $fp_config;
-	if (!isset($fp_config['plugins']['akismet']['apikey'])) {
+
+	if (!plugin_getoptions('akismet','apikey')) {
 		return -1;
 	}
-	
-	add_filter('comment_validate','plugin_akismet_validate', 1, 2);
-	
+
 	return 1;		
+}
+
+if (plugin_getoptions('akismet','apikey')) {
+	add_filter('comment_validate','plugin_akismet_validate', 1, 2);
 }
 
 function plugin_akismet_validate(&$bool, $contents) {
@@ -30,8 +33,7 @@ function plugin_akismet_validate(&$bool, $contents) {
 	
 	global $fp_config;
 	
-	
-	$akismet = new Akismet($fp_config['general']['www'], $fp_config['plugins']['akismet']['apikey']);
+	$akismet = new Akismet($fp_config['general']['www'], plugin_getoptions('akismet','apikey'));
 	$akismet->setAuthor($contents['name']);
 	$akismet->setAuthorEmail(isset($contents['email'])? $contents['email'] : '');
 	$akismet->setAuthorURL(isset($contents['url'])? $contents['url'] : '');
