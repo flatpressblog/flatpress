@@ -9,7 +9,7 @@ Version: 1.0
 Author URI: http://www.nowhereland.it/
 */ 
 
-define('THUMB_DIR', '.thumbs/');
+define('THUMB_DIR', '.thumbs');
 
 
 if (!function_exists('imagegd2'))
@@ -61,7 +61,7 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	
 	@fs_mkdir($thumbdir);
 	
-	$thumbpath = $thumbdir . $thumbname;
+	$thumbpath = $thumbdir .'/'. $thumbname;
 	
 	
 	
