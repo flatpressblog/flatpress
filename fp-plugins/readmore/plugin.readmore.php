@@ -77,7 +77,7 @@ function plugin_readmore_main($string) {
 		
 	}
 	
-	if (isset($_GET['entry'])) {
+	if ($q->single || isset($_GET['entry'])) {
 		$string = str_replace('[more]', "<a id=\"readmore-{$_GET['entry']}\"></a>", $string);
 	}
 	
