@@ -101,7 +101,7 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	imagejpeg($scaled, $thumbpath);
 	@chmod($thumbpath, 0777);
 	
-	return $thumbpath;
+	return array($thumbpath, $new_width, $new_height);
 	
 }
 
