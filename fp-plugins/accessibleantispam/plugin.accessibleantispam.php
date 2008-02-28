@@ -25,34 +25,19 @@ function plugin_aaspam_validate($bool) {
 	
 	// get the value and reset last saved, so that
 	// an attacker can't use the old one for multiple posting
-	$val = sess_remove('aaspam');
+	$v = sess_remove('aaspam');
 	
 	// we get the array stored in session:
 	// if it evaluated to false value (e.g. is null) test fails
-	if (!$val)
+	if (!$v)
 		return false;
-	
-	// we import the array keys into current scope
-	extract($val);
-	// execute the operation
-	switch($op) {
-		case '+' :
-			$v = $v1+$v2;
-			break;
-		case '-' :
-			$v = $v1-$v2;
-			break;
-		case '*' :
-			$v = $v1*$v2;
-			break;
-		}
 	
 	// we test the result wether match user input 
 	if (!($ret = $_POST['aaspam']==$v)) {
-		global $_FP_SMARTY;
+		global $smarty;
 		$lang = lang_load('plugin:accessibleantispam');
 			
-		$_FP_SMARTY->append('error', $lang['plugin']['accessibleantispam']['error']);
+		$smarty->append('error', $lang['plugin']['accessibleantispam']['error']);
 	}
 		
 	
@@ -86,9 +71,23 @@ function plugin_aaspam_comment_form() {
 		$v2 = $tmp;
 		
 	}
+
+	// execute the operation
+	switch($op) {
+		case '+' :
+			$v = $v1+$v2;
+			break;
+		case '-' :
+			$v = $v1-$v2;
+			break;
+		case '*' :
+			$v = $v1*$v2;
+			break;
+		}
 	
-	// save an array like this array(operand, operation, operand)
-	sess_add('aaspam', compact('v1','op','v2'));
+
+	
+	sess_add('aaspam', $v);
 		
 	// load plugin strings
 	// they're located under plugin.PLUGINNAME/lang/LANGID/
