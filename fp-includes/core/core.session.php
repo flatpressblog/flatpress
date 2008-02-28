@@ -2,23 +2,14 @@
 
 	
 
-	function sess_setup($lifetime=3600) {
+	function sess_setup() {
+	
 		if (SESSION_PATH != '')
 			session_save_path(SESSION_PATH);
-		global $fp_config;
-		
-		$cparams=session_get_cookie_params();
-		if ($cparams['lifetime']>0 && $lifetime==0 )
-			$lifetime = $cparams['lifetime'];
-		
-		session_set_cookie_params($lifetime);
 		
 		session_name(SESS_COOKIE);
 		
 		session_start();
-		
-		
-		// echo '<pre>', print_r($cparams,1), '</pre>';
 		
 	}
 	
