@@ -327,86 +327,41 @@
 			
 	}
 	
-	function theme_date_format(	$string,
-											$format = null,
-											$default_date = ''
-											) {										
-		global $lang;
-		
-		if ($string != '') {
+	function theme_date_format($string, $format = null, $default_date = '') {
+
+		$timestamp = 0;
+
+		if ($string) {
 			$timestamp = $string; // smarty_make_timestamp($string);
 		} elseif ($default_date != '') {
 			$timestamp = $default_date; // smarty_make_timestamp($default_date);
 		} else {
 			return;
 		}
-		
+
 		if (is_null($format)) {
 			global $fp_config;
 			$format = $fp_config['locale']['timeformat'];
 		}
 		
+	
+
+		return date_strformat($format, $timestamp);
 		
-			// D l day
-			
-			if ( strpos($format, '%a') !== false ) {
-				$i = strftime('%w', $timestamp);
-				$format = str_replace('%a', $lang['date']['weekday_abbr'][$i], $format);
-			}
-			
-			if ( strpos($format, '%A') !== false  ) {
-				$i = strftime('%w', $timestamp);
-				$format = str_replace('%A', $lang['date']['weekday'][$i], $format);
-			}
-			
-			
-			// F M month
-			
-			if ( strpos($format, '%b') !== false  ) {
-				$i = intval(strftime('%m', $timestamp))-1;
-				$format = str_replace('%b', $lang['date']['month_abbr'][$i], $format);
-			}
-			
-			
-			if ( strpos($format, '%B') !== false  ) {
-				$i = intval(strftime('%m', $timestamp))-1;
-				$format = str_replace('%B', $lang['date']['month'][$i], $format);
-			}
-			
-				if (DIRECTORY_SEPARATOR == '\\') {
-				$_win_from = array('%D',       '%h', '%n', '%r',          '%R',    '%t', '%T');
-				$_win_to   = array('%m/%d/%y', '%b', "\n", '%I:%M:%S %p', '%H:%M', "\t", '%H:%M:%S');
-					if (strpos($format, '%e') !== false) {
-						$_win_from[] = '%e';
-						$_win_to[]   = sprintf('%\' 2d', date('j', $timestamp));
-					}
-					if (strpos($format, '%l') !== false) {
-						$_win_from[] = '%l';
-						$_win_to[]   = sprintf('%\' 2d', date('h', $timestamp));
-					}
-					$format = str_replace($_win_from, $_win_to, $format);
-				}
-				
-			return strftime($format, $timestamp);
-			
-		
-    } 
+	} 
 	
 	
 	function theme_smarty_modifier_date_format_daily(
-												$string,
-												$format = null,
-												$default_date = ''
-												) {
+			$string, $format = null, $default_date = '' ) {
 	
-	global $THEME_CURRENT_DAY, $lang, $fp_config;
+		global $THEME_CURRENT_DAY, $lang, $fp_config;
 	
-	if (is_null($format))
-		$format = $fp_config['locale']['dateformat'];
+		if (is_null($format))
+			$format = $fp_config['locale']['dateformat'];
 
-	$current_day = theme_date_format($string, $format, $default_date);
+		$current_day = theme_date_format($string, $format, $default_date);
     
-    if (!isset($THEME_CURRENT_DAY) || $THEME_CURRENT_DAY != $current_day) {
+	if (!isset($THEME_CURRENT_DAY) || $THEME_CURRENT_DAY != $current_day) {
 		$THEME_CURRENT_DAY = $current_day;
 		
 		return $current_day;

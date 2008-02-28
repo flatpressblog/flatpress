@@ -1,22 +1,50 @@
 <?php
 
-	function date_strformat($timestamp=null, $offset=0, $format='l dS F Y h:i:s A') {
-		if ( strpos( $timestamp, ',' ) !== false ) {
-			// This is an hack for compatibility with the time
-			// format from versions < 0.3.3. In 0.3.3 spb switched
-			// to the unix timestamp for storing times.
-			//
-			// Before that it was in this format:
-			//   date( 'F j, Y, g:i a', $time_stamp );
-			//   'May 10, 2004, 3:57 pm'
-			$time_stamp = str_replace( ',', '', $time_stamp );
-			$time_stamp = strtotime( $time_stamp );
+	function date_strformat($format, $timestamp=0) {
+		global $lang;
+
+		// D l day
+		
+		if ( strpos($format, '%a') !== false ) {
+			$i = strftime('%w', $timestamp);
+			$format = str_replace('%a', $lang['date']['weekday_abbr'][$i], $format);
 		}
 		
-		$timestamp = ($timestamp != null) ? $timestamp : time();
-		$time_stamp = intval($timestamp) + intval($offset) * 60 * 60;
-		return date($format, $time_stamp);
+		if ( strpos($format, '%A') !== false  ) {
+			$i = strftime('%w', $timestamp);
+			$format = str_replace('%A', $lang['date']['weekday'][$i], $format);
+		}
 		
+		
+		// F M month
+		
+		if ( strpos($format, '%b') !== false  ) {
+			$i = intval(strftime('%m', $timestamp))-1;
+			$format = str_replace('%b', $lang['date']['month_abbr'][$i], $format);
+		}
+		
+		
+		if ( strpos($format, '%B') !== false  ) {
+			$i = intval(strftime('%m', $timestamp))-1;
+			$format = str_replace('%B', $lang['date']['month'][$i], $format);
+		}
+		
+			if (DIRECTORY_SEPARATOR == '\\') {
+			$_win_from = array('%D',       '%h', '%n', '%r',          '%R',    '%t', '%T');
+			$_win_to   = array('%m/%d/%y', '%b', "\n", '%I:%M:%S %p', '%H:%M', "\t", '%H:%M:%S');
+				if (strpos($format, '%e') !== false) {
+					$_win_from[] = '%e';
+					$_win_to[]   = sprintf('%\' 2d', date('j', $timestamp));
+				}
+				if (strpos($format, '%l') !== false) {
+					$_win_from[] = '%l';
+					$_win_to[]   = sprintf('%\' 2d', date('h', $timestamp));
+				}
+				$format = str_replace($_win_from, $_win_to, $format);
+			}
+		
+		return strftime($format, $timestamp);
+	
 		
 	}
 
