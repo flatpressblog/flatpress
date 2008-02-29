@@ -36,9 +36,10 @@
  */
 function smarty_validate_criteria_isValidEntryId($value, $empty, &$params, &$formvars) {
 
-    $fname = $params['field'];
+	if (!$value)
+		return false;
     
-    return @utils_validateinput($fname);
+	return !preg_match('/[^a-z0-9\-_]/i',$value);
 }
 
 ?>
