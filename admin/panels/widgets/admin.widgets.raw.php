@@ -35,7 +35,13 @@
 		
 		function onsave() {
 		
-			$str=stripslashes($_POST['content']);
+			$str=stripslashes(@$_POST['content']);
+
+			if (!$str) {
+				$this->smarty->assign('success', -1 );
+				return PANEL_REDIRECT_CURRENT;
+			}
+
 			
 			$tmp = $str;
 			
@@ -49,7 +55,6 @@
 				$success = false;
 				
 			$this->smarty->assign('success', ( $success )? 1 : -1 );
-			$this->smarty->assign('pluginconf', $str);
 			
 			return PANEL_REDIRECT_CURRENT;
 			

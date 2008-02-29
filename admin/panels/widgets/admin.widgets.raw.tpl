@@ -1,6 +1,3 @@
-{*assign var=panelstrings value=`$panelstrings.raw`*}
-{validate id="content" message=$panelstrings.error.content append="error"}
-
 <h2>{$panelstrings.head}</h2>
 <p>{$panelstrings.descr}</p>
 
