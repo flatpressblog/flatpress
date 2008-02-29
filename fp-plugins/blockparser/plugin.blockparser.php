@@ -27,7 +27,7 @@ function plugin_blockparser_parse($blockid) {
 	return false;
 }
 
-register_widget('blockparser', 'BlockParser', 'plugin_blockparser_widget', 1);
+# register_widget('blockparser', 'BlockParser', 'plugin_blockparser_widget', 1);
 
 function plugin_blockparser_widget($blockid) {
 	
@@ -44,8 +44,6 @@ function plugin_blockparser_widget($blockid) {
 
 
 function plugin_blockparser_init() {
-	global $fp_config;
-	
 	
 	// for instance: 
 	// $fp_config['plugins']['blockparser']['pages'] = array('menu');
@@ -57,57 +55,74 @@ function plugin_blockparser_init() {
 	// this would suggest to use an object, though :B
 	// anyway the result is the same...
 	
-	/*
-	if (isset($fp_config['plugins']['blockparser'])) {
-		$pgs = $fp_config['plugins']['blockparser']['pages'];
+	$pgs = plugin_getoptions('blockparser', 'pages');	
+	if (is_array($pgs)) {
 		foreach ($pgs as $page) {
-			register_widget($page, create_function('', "return plugin_blockparser_widget('$page');"));		
+			register_widget(
+				'blockparser:'.$page, // widget id 
+				'BlockParser: ' .$page, // widget name
+				create_function('', "return plugin_blockparser_widget('$page');") // lambda func
+			);
 		}
 	}
-	*/
+
 	
 }
 
 add_action('init', 'plugin_blockparser_init');
 
-if (false and class_exists('AdminPanelAction')){
+if (class_exists('AdminPanelAction')){
 
 	class admin_widgets_blockparser extends AdminPanelAction { 
 		
 		var $langres = 'plugin:blockparser';
+		var $commands = array('enable', 'disable');
+
+		function doenable($id) {
+			$success = -1;
+			$enabled =& $this->bp_enabled;
+			if (static_exists($id)) {
+				if (!$enabled) {
+					$enabled = array();
+				}
+				if (!in_array($id, $enabled)) {
+					$enabled[] = $id;
+					sort($enabled);
+					plugin_addoption('blockparser', 'pages', $enabled);
+					plugin_saveoptions();
+					$success = 1;
+				}
+			}
+			$this->smarty->assign('success', $success);
+			return PANEL_REDIRECT_CURRENT;
+		}
+
+		function dodisable($id) {
+			$success = -2;
+			$enabled =& $this->bp_enabled;
+			if ($enabled && is_numeric( $v = array_search($id, $enabled ) ) ) {
+				unset($enabled[$v]);
+				@sort($enabled);
+				@plugin_addoption('blockparser', 'pages', $enabled);
+				plugin_saveoptions();
+				$success = 2;
+			}
+			$this->smarty->assign('success', $success);
+			return PANEL_REDIRECT_CURRENT;
+		}
 		
 		function setup() {
 			$this->smarty->assign('admin_resource', "plugin:blockparser/admin.plugin.blockparser");
+			$this->smarty->assign('enabledlist', $this->bp_enabled = plugin_getoptions('blockparser', 'pages'));
 		}
+
 		
 		function main() {
 			global $fp_config;
-			$this->smarty->assign_by_ref('enabledpages', $fp_config['plugins']['blockparser']);
+			// $this->smarty->assign_by_ref('enabledpages', plugin_getoptions('blockparser'));
 			$this->smarty->assign('statics', $assign = static_getlist());
 		}
 		
-		
-		
-		function onsubmit() {
-			global $fp_config;
-			
-			if ($_POST['wp-apikey']){
-				
-				$fp_config['plugins']['akismet']['apikey'] = $_POST['wp-apikey'];
-				
-				config_save();
-				
-				$this->smarty->assign('success', 1);
-			} else {
-			 	$this->smarty->assign('success', -1);
-			}
-			
-			
-			// redirect to this panel (clears POSTDATA; 
-			// 1 would redirect to the default 'action' for widget panel)
-						
-			return 2;
-		}
 		
 	}
 

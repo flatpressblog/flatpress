@@ -24,7 +24,15 @@ $fp_config = array (
     'dateformat' => '%A, %B %e, %Y',
     'charset' => 'utf-8',
     'lang' => 'en-us',
-  )
+  ),
+  'plugins' =>
+  array (
+	'blockparser' =>
+	array (
+		'menu',
+		'about',
+	),
+  ),
 );
 
 ?>

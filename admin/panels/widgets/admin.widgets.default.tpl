@@ -47,7 +47,7 @@
 		
 		<ul id="widgetsetid-{$widgetset}">
 		{foreach from=$widgetarr item=widget}
-			<li class="widget-instance widget-id-{$widget.id}">
+			<li class="widget-instance widget-id-{$widget.id} {$widget.class}">
 				<input class="widget-id" type="hidden" name="widgets[{$widgetset}][]" 
 				value="{$widget.id}{if $widget.params}:{$widget.params}{/if}" />
 				{if $widget.params}

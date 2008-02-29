@@ -42,13 +42,13 @@
 		
 			global $fp_registered_widgets;
 		
-			$content = array();
-		
 			do {
+				$content = array();
+
 				list(,$id) = each($this->_list[$hor]);
 				
-				@list($newid, $params) = explode(":", $id);
-				if ($params) $params = explode(',', $params); else $params = array();
+				$newid=$id;# @list($newid, $params) = explode(":", $id);
+				if (@$params) $params = explode(',', $params); else $params = array();
 				// $var = 'plugin_' . $newid . '_widget';
 				$var = $fp_registered_widgets[ $newid ]['func'];
 				if (function_exists($var)) {
@@ -65,9 +65,9 @@
 					);
 					*/
 				
-			} while(!$content);
+			} while(!$content && $id);
 				
-				return array_change_key_case($content, CASE_LOWER);
+			return array_change_key_case($content, CASE_LOWER);
 				
 			
 			

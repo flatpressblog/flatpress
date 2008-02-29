@@ -22,7 +22,7 @@
 					
 					$widget_list[$wpos][$idx] = array();
 					
-					@list($newid, $params) = explode(":", $wdg);
+					$newid = $wdg; # @list($newid, $params) = explode(":", $wdg);
 					
 					$widget_list[$wpos][$idx]['id'] = $newid;
 					
@@ -45,9 +45,14 @@
 						 */
 					
 					} else {
+
+						global $lang;
 					
 						$widget_list[$wpos][$idx]['name'] = $newid;
-						$widget_list[$wpos][$idx]['class'] = 'warnings';
+						$widget_list[$wpos][$idx]['class'] = 'errors';
+							
+						$errs = sprintf($lang['admin']['widgets']['errors']['generic'], $newid);
+						$this->smarty->append('warnings', $errs); 
 						
 					}
 				}
@@ -63,7 +68,7 @@
 		
 		
 			lang_load('admin.widgets');
-			$this->smarty->assign('warnings', admin_widgets_checkall());
+			# $this->smarty->assign('warnings', admin_widgets_checkall());
 			global $fp_widgets;
 			
 			

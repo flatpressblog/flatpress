@@ -76,8 +76,8 @@
 	/* system errors */
 		
 	$lang['admin']['widgets']['errors'] = array(
-		'generic'	=> 'Could not find widget in plugin <strong>%s</strong>. '.
- 				'Check if it is enabled in the <a href="admin.php?p=plugin">plugin panel</a>'
+		'generic'	=> 'The widget called <strong>%s</strong> is not registered, and it might not work. '.
+ 				'Is the plugin enabled in the <a href="admin.php?p=plugin">plugin panel</a>?'
 
 	);
 	
