@@ -29,8 +29,11 @@ $fp_config = array (
   array (
 	'blockparser' =>
 	array (
-		'menu',
-		'about',
+		'pages' =>
+			array(
+				'menu',
+				'about',
+			),
 	),
   ),
 );
