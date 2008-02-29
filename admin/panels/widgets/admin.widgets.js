@@ -15,8 +15,7 @@
 				{'handle': $$('#available-widgets h3')[0]}
 		);
 		*/
-		
-		
+	
 		Drag.MultiDrop = Drag.Move.extend({
 			drag:       function(event) {
 				this.droppables = Widgets.droppables;
@@ -147,7 +146,7 @@
 						
 							
 							parentid = drop.getParent().id;
-							widgetsetid = /^widgetsetid-(.*)$/(parentid);
+							 widgetsetid = /^widgetsetid-(.*)$/.exec(parentid);
 							
 							input = dropped.getChildren().filterByClass('widget-id')[0];
 							input.set({

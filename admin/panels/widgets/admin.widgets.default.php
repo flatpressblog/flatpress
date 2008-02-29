@@ -105,8 +105,8 @@
 		
 
 		function onsave() {
-		
-			$fp_widgets = isset($_POST['widgets'])? $_POST['widgets'] : array(); 			
+
+			$fp_widgets = isset($_POST['widgets'])? $_POST['widgets'] : array(); 	
 			$success = system_save(CONFIG_DIR . 'widgets.conf.php', compact('fp_widgets'));
 
 			$this->smarty->assign('success', ( $success )? 1 : -1 );

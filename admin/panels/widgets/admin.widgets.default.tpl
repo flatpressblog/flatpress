@@ -4,7 +4,7 @@
 {include file='shared:errorlist.tpl'}
 
 
-{html_form}
+{html_form id="admin-widgets-default"}
 	
 	<div id="available-widgets">
 	<h2>{$panelstrings.availwdgs}</h2>
