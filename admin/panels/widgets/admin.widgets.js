@@ -47,7 +47,7 @@
 				input = this_input.getParent().getChildren().filterByClass('widget-id')[0];
 				
 				regex = /^([^:]+)/;
-				id = regex(input.value);
+				id = regex.exec(input.value);
 				if (this_input.value.trim() == ''){
 					this_input.value=Widgets.inputPlaceHld;
 					return;
@@ -177,7 +177,7 @@
 							
 							input = dropped.getChildren().filterByClass('widget-id')[0];
 							
-							widgetsetid = /^widgetsetid-(.*)$/(parentid);
+							widgetsetid = /^widgetsetid-(.*)$/.exec(parentid);
 							input.set({
 								'name' : 'widgets[' + widgetsetid[1] + '][]' 
 							}); 
