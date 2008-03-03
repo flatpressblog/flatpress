@@ -68,7 +68,7 @@
 		 *	capture this chars
 		 */
 		 
-		//ob_start(); 
+		ob_start(); 
 		
 		include_once ($fpath);
 		
@@ -78,11 +78,8 @@
 		}
 		
 		
-		//$v = ob_get_contents();
-		//ob_end_clean();
+		ob_end_clean();
 		
-		// if ($v)	trigger_error("[lang] <strong>$fpath</strong> produced output", E_USER_WARNING);
-
 		
 		$GLOBALS['lang'] = array_merge_recursive($lang, $old_lang);
 		

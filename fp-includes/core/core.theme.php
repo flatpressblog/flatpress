@@ -38,7 +38,9 @@
 		// new naming convention. Yeah, I know, just an underscore
 		// instead of the dot, so? It is more "consistent" :D
 		$conf2 = THEMES_DIR . THE_THEME . '/theme.conf.php';
-		
+
+		ob_start();
+
 		if (file_exists($conf2)) {
 			include($conf2);
 		} elseif (file_exists($conf1)) {
@@ -83,6 +85,8 @@
 				theme_register_default_widgetsets();
 
 		}
+
+		ob_end_clean();
 				
 		return $theme;
 		

@@ -99,7 +99,9 @@
 				
 				
 				if ($errno > 0){
+					ob_start();
 					include_once($f);
+					ob_end_clean();
 				}
 				
 				if ($langload)
