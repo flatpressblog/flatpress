@@ -47,7 +47,7 @@
 	
 	class admin_maintain_updates extends AdminPanelAction {
 		
-		var $web = 'http://www.nowhereland.it/fp/VERSION';
+		var $web = 'http://www.flatpress.org/fp/VERSION';
 		var $fpweb = 'http://flatpress.nowhereland.it/downloads.php';
 		var $sfweb = 'http://sourceforge.net/project/showfiles.php?group_id=157089';
 	
