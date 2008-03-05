@@ -1,3 +1,54 @@
+FlatPress 0.803 Vivace
+
+
+0.703.6.2 (2007-11-26)
+======================
+
+FIXED: removed /test.php 
+FIXED: version number
+
+
+0.703.6.1 (2007-10-23)
+======================
+
+FIXED: typo in admin.entry.delete.php
+
+
+0.703.6 (2007-10-19)
+====================
+
+FIXED:  XSS vulnerabilities in comments.tpl and contact.tpl
+FIXED: Backported from Crescendo+1 fix for XSS in $_GET fields
+FIXED: bug in static handling (THEME_LEGACY_MODE not checked)
+FIXED: Moved html escaping from default-filters to bbcode plugin
+FIXED: Added option to bbcode plugin to allow inline html! (no more ugly [html] tags! :)
+
+
+0.703.5 (2007-09-22)
+====================
+
+FIXED: severe bug with 
+FIXED: smaller one with commslock
+
+
+0.703.4 (2007-09-19)
+====================
+ 
+FIXED: several XSS vulnerabilities
+
+
+0.703.3 (2007-09-18)
+====================
+
+FIXED: XSS in search.php
+
+
+0.703.2 (2007-07-13)
+====================
+
+FIXED: input validation problems
+
+
 0703.1 Crescendo (July 10, 2007)
 ===============================
 
