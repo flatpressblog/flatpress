@@ -428,7 +428,7 @@
 		function getNextPage() {
 			
 			if ($this->single){
-				$id = $this->_getOffsetId(-1, $this->params->start);
+				$id = $this->_getOffsetId(1, $this->params->start);
 				
 				if ($id)
 					$label = $this->local_index[$id]['subject'];
@@ -451,7 +451,7 @@
 		function getPrevPage() {
 		
 			if ($this->single) {
-				$id = $this->_getOffsetId(1, $this->params->start);
+				$id = $this->_getOffsetId(-1, $this->params->start);
 				
 				if ($id)
 					$label = $this->local_index[$id]['subject'];
