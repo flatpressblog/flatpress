@@ -11,14 +11,12 @@
 		'descr'		=> 'A <a class="hint" '.
 						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">'.
 						'Widget</a> is a visual element of a <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="What is a plugin?">'.
+						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Plugin?">'.
 						'Plugin</a> that you can put in some special areas '.
 						'(the <em>widgetsets</em>) on your blog pages '.
 						'called <strong>widgetsets</strong> </p>'.
 						'<p><strong>Drag</strong> a widget from the left box and <strong>drop</strong> '.
-						'it to the position you prefer.</p>'.
-						'<p>Some Widgets may ask you for some <strong>parameters</strong>, '.
-						'refer to the widget\'s own guide',
+						'it to the position you prefer.</p>',
 						
 		'availwdgs'	=> 'Available Widgets',
 		'trashcan'	=> 'Drop here to delete',
@@ -76,7 +74,7 @@
 	/* system errors */
 		
 	$lang['admin']['widgets']['errors'] = array(
-		'generic'	=> 'The widget called <strong>%s</strong> is not registered, and it might not work. '.
+		'generic'	=> 'The widget called <strong>%s</strong> is not registered, and will be skipped. '.
  				'Is the plugin enabled in the <a href="admin.php?p=plugin">plugin panel</a>?'
 
 	);
