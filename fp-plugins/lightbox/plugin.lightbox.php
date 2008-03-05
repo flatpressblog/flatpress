@@ -21,12 +21,21 @@ function plugin_lightbox_head() {
 	echo <<<LBOXHEAD
 	<!-- start of lightbox -->
 	<link rel="stylesheet" type="text/css" href="{$pdir}res/slimbox.css" />
-	<script type="text/javascript" src="{$pdir}res/slimbox.js"></script>
-	
 	<!-- end of lightbox -->
 LBOXHEAD;
 }
 add_action('wp_head', 'plugin_lightbox_head');
+
+function plugin_lightbox_footer() {
+
+	$pdir=plugin_geturl('lightbox');
+	echo <<<LBOXHEAD
+	<!-- start of lightbox -->
+	<script type="text/javascript" src="{$pdir}res/slimbox.js"></script>
+	<!-- end of lightbox -->
+LBOXHEAD;
+}
+add_action('wp_footer', 'plugin_lightbox_footer');
 
 function plugin_lightbox_hook($popup, $abspath) {
 	// the other $popup is just dropped
