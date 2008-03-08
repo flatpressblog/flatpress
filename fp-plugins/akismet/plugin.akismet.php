@@ -24,7 +24,7 @@ function plugin_akismet_setup() {
 }
 
 if (plugin_getoptions('akismet','apikey')) {
-	add_filter('comment_validate','plugin_akismet_validate', 1, 2);
+	add_filter('comment_validate','plugin_akismet_validate', 10, 2);
 }
 
 function plugin_akismet_validate(&$bool, $contents) {
