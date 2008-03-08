@@ -104,7 +104,7 @@
 				$arr['ip-address'] = $v;
 			}
 			
-			if (apply_filters('comment_validate', true, $arr))
+			if ($loggedin || apply_filters('comment_validate', true, $arr))
 				return $arr;
 			else return false;
 					
