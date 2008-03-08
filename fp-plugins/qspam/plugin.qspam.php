@@ -8,34 +8,29 @@ Version: 3.0
 Author URI: http://www.nowhereland.it
 */
 
-add_action('comment_validate', 'plugin_qspam_validate');
+add_action('comment_validate', 'plugin_qspam_validate', 5, 2);
 
-function plugin_qspam_validate($bool) {
+function plugin_qspam_validate(&$bool, $contents) {
 
 	if (!$bool) return false;
 
 	$BAN_WORDS = array(
-		'href', '[url'
+		'href', '[url' // bans links 
 	);
 
-
-	$txt = isset($_POST['content'])? $_POST['content'] : null;
-	
-	if ($txt) {
-		$txt =  strtolower(trim($txt));
-		while (($w = array_pop($BAN_WORDS))
-							&& 
-					(($r = strpos ($txt, $w)) === false));
+	$txt =  strtolower(trim($contents['content']));
+	while (($w = array_pop($BAN_WORDS))
+				&& 
+				(($r = strpos ($txt, $w)) === false));
 		
-		if( strrchr($txt, ':')==':' ) $r=true;
+	# if( strrchr($txt, ':')==':' ) $r=true;
 					
-		if ($r!==false) {
-			global $_FP_SMARTY;
-			$_FP_SMARTY->assign('error', array('ERROR: The comment contained banned words'));
-			return false;
-		} 
-	}
-	
+	if ($r!==false) {
+		global $smarty;
+		$smarty->assign('error', array('ERROR: The comment contained banned words'));
+		return false;
+	} 
+		
 	return true;
 	
 	
