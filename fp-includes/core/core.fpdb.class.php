@@ -692,7 +692,8 @@
 					'ip-address'=>''
 					)
 				);
-		
+
+			
 		
 		if (isset($params['content']) && is_array($params['content']) && $params['content']) {
 			//foreach ($params['entry'] as $k => $val)
@@ -723,7 +724,8 @@
 				$smarty->assign_by_ref($k, $entry[$k]);
 			
 			$smarty->assign_by_ref('id', $id);
-			
+
+			$smarty->assign('entry_commslock', @in_array('commslock',$entry['categories']));
 			
 			do_action('entry_block');
 			

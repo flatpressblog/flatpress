@@ -1,4 +1,4 @@
-{if !in_array('commslock',$categories)}
+{if !$entry_commslock}
 {*<p><big><strong>{$lang.comments.commslock}</strong></big></p>else*}
 <h4>{$lang.comments.head}</h4>
 <p>{$lang.comments.descr}</p>
