@@ -8,11 +8,14 @@ Version: 3.0
 Author URI: http://www.nowhereland.it
 */
 
-add_action('comment_validate', 'plugin_aaspam_validate');
+define(AASPAM_DEBUG, true);
+define(AASPAM_LOG, CACHE_DIR . 'aaspamlog.txt');
+
+add_action('comment_validate', 'plugin_aaspam_validate', 5, 2);
 add_action('comment_form', 'plugin_aaspam_comment_form');
 
 
-function plugin_aaspam_validate($bool) {
+function plugin_aaspam_validate($bool, $arr) {
 	
 	// if boolean $bool==false
 	// the test is forced to fail
@@ -29,9 +32,9 @@ function plugin_aaspam_validate($bool) {
 	
 	// we get the array stored in session:
 	// if it evaluated to false value (e.g. is null) test fails
-	if (!$v)
+	if (!$v) {
 		return false;
-	
+	}
 	// we test the result wether match user input 
 	if (!($ret = $_POST['aaspam']==$v)) {
 		global $smarty;
@@ -39,7 +42,17 @@ function plugin_aaspam_validate($bool) {
 			
 		$smarty->append('error', $lang['plugin']['accessibleantispam']['error']);
 	}
-		
+	
+		if ( AASPAM_DEBUG && $f=@fopen(AASPAM_LOG, 'a') ) {
+			$arr['aaspam-q'] = $_POST['aaspam'];
+			$arr['aaspam-a'] = $v;
+			$arr['SUCCESS'] = $ret;
+			
+			$s = date('r'). "|" . session_id().'|'.utils_kimplode($arr)."\r\n";
+			@fwrite($f, $s);
+			@fclose($f);
+		}
+	
 	
 	return $ret;
 }
@@ -111,6 +124,11 @@ function plugin_aaspam_comment_form() {
 	// format the question with numbers at the proper positions
 	$question = sprintf($question, $v1, $v2);
 	
+	if ( AASPAM_DEBUG && $f=@fopen(AASPAM_LOG, 'a') ) {
+		$arr['aaspam-q'] = $v;
+		@fwrite($f, date('r'). '|'.session_id() .'|'. utils_kimplode($arr)."\r\n");
+		@fclose($f);
+	}
 	
 	// echoes the question and the form part
 	echo <<<STR
