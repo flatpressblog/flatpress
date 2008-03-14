@@ -1,5 +1,4 @@
 {if !$entry_commslock}
-{*<p><big><strong>{$lang.comments.commslock}</strong></big></p>else*}
 <h4>{$lang.comments.head}</h4>
 <p>{$lang.comments.descr}</p>
 	
@@ -7,12 +6,6 @@
 <form id="commentform" method="post"
 	action="{$smarty.server.REQUEST_URI|escape:'html'}#commentform"
 	enctype="multipart/form-data">
-
-	
-	{validate form=$comment_formid id="name" message=$lang.comments.error.name append="error"}
-	{validate form=$comment_formid id="email" message=$lang.comments.error.email append="error"}
-	{validate form=$comment_formid id="www" message=$lang.comments.error.www append="error"}
-	{validate form=$comment_formid id="comment" message=$lang.comments.error.comment append="error"}
 
 	
 	{include file='shared:errorlist.tpl'}

@@ -67,7 +67,74 @@
 		add_action('wp_head', 'comment_feed');
 
 		function comment_validate() {
+		
+			global $smarty, $lang;
+			
+			$lerr =& $lang['comments']['error'];
+			
+			$r = true;
+			
+	/*			$lang['comments']['error'] = array(
+		'name'		=> 'You must enter a name',
+		'email'		=> 'You must enter a valid email',
+		'www'		=> 'You must enter a valid URL',
+		'comment'	=> 'You must enter a comment',
+	);*/
+	
 
+			$name 	= trim(stripslashes(@$_POST['name']));
+			$email 	= isset($_POST['email'])? trim($_POST['email']) : null;
+			$url 	= isset($_POST['url'])? trim(stripslashes($_POST['url'])) : null;
+			$content= isset($_POST['content'])? trim(stripslashes($_POST['content'])) : null;
+			
+			$errors = array();
+			
+			/*
+			 * check name
+			 *
+			 */
+			
+			if (!$name) {
+				$errors['name'] = $lerr['name'];
+			}
+				
+			
+			/*
+			 * check email
+			 *
+			 */
+				
+			if ($email)	{
+				$_is_valid = !(preg_match('!@.*@|\.\.|\,|\;!', $email) ||
+				!preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $email));
+				
+				if (!$_is_valid) {
+					$errors['email'] = $lerr['email'];
+				}
+				
+			}
+			
+			/*
+			 * check url
+			 *
+			 */
+				
+			if ($url)	{
+				if (!preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $url)) {
+    			// || preg_match('!^http(s)?://localhost!', $value);
+					$errors['url'] = $lerr['www'];
+				}
+			}
+			
+			
+			if (!$content) {
+				$errors['content'] = $lerr['comment'];
+			}
+
+			if ($errors) {
+				$smarty->assign('error', $errors);
+				return false;
+			}
 			
 			$arr['version'] = system_ver();
 			$arr['name'] = $_POST['name'];
@@ -83,22 +150,23 @@
 				$arr['name'], time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
 
 			
-			if (!empty($_POST['email'])) {
-				($arr['email'] = $_POST['email']);
+			
+			if ($email) {
+				($arr['email'] = $email);
 				if (!$loggedin)
 					setcookie('comment_author_email_' . COOKIEHASH, 
 							$arr['email'], time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
 
 			}
-			if (!empty($_POST['url'])) {
-				($arr['url'] = ( $_POST['url'] )) ;
+			if ($url) {
+				($arr['url'] = ( $url )) ;
 				if (!$loggedin)
 					setcookie('comment_author_url_' . COOKIEHASH, 
 							$arr['url'], time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
 
 
 			}
-			$arr['content'] = $_POST['content'];
+			$arr['content'] = $content;
 
 			if ($v = utils_ipget()) {	
 				$arr['ip-address'] = $v;
@@ -119,28 +187,9 @@
 			$smarty->assign('comment_formid', $comment_formid);
 
 
-			if(empty($_POST)) {
+			if(!empty($_POST)) {    
 			
-				if(!SmartyValidate::is_registered_form($comment_formid)) {
-				
-					// new form, we (re)set the session data
-					
-					SmartyValidate::connect($smarty, true);
-					SmartyValidate::register_form($comment_formid, true);
-					
-					
-					// register our validators
-					
-					SmartyValidate::register_validator('name', 'name', 'notEmpty', false, false, 'trim,stripslashes', $comment_formid); 
-					SmartyValidate::register_validator('email','email', 'isEmail', true, false, 'trim,stripslashes', $comment_formid);
-					SmartyValidate::register_validator('www', 'url', 'isURL', true, false, 'trim,stripslashes', $comment_formid);
-					SmartyValidate::register_validator('comment', 'content', 'notEmpty', false, false, 'stripslashes', $comment_formid);
-				}
-				
-			} else {    
-				utils_nocache_headers();
-				// validate after a POST
-				SmartyValidate::connect($smarty, true);
+				# utils_nocache_headers();
 				
 				// add http to url
 				if (!empty($_POST['url']) && strpos($_POST['url'], 'http://')===false) 
@@ -148,12 +197,10 @@
 				
 				
 				// custom hook here!!
-				if( SmartyValidate::is_valid($_POST, $comment_formid) && ($arr=comment_validate())) {
-					//SmartyValidate::disconnect();
+				if($arr=comment_validate()) {
 					
 					global $fp_config;
-
-					
+	
 					$id = comment_save($_GET['entry'], $arr);
 					
 					do_action('comment_post', $_GET['entry'], array($id, $arr));
