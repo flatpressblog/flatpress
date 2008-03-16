@@ -18,12 +18,12 @@
 				
 				<ul class="entry-footer">
 			
-				<li>Posted by {$author} at
+				<li class="entry-info">Posted by {$author} at
 				{$date|date_format}
 				{if ($categories)} in {$categories|@filed}{/if}
 				</li> 
 				
-				<li>
+				<li class="link-comments">
 				<a href="{$id|link:comments_link}#comments">{$comments|tag:comments_number} 
 					{if isset($views)}(<strong>{$views}</strong> views){/if}
 				</a>
