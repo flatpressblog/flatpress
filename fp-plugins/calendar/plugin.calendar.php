@@ -31,10 +31,10 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 
 	#Begin calendar. Uses a real <caption>. See http://diveintomark.org/archives/2002/07/03
 	@list($p, $pl) = each($pn); @list($n, $nl) = each($pn); #previous and next links, if applicable
-	if($p) $p = '<span class="calendar-prev">'.($pl ? '<a href="'.htmlspecialchars($pl).'">'.$p.'</a>' : $p).'</span>&nbsp;';
-	if($n) $n = '&nbsp;<span class="calendar-next">'.($nl ? '<a href="'.htmlspecialchars($nl).'">'.$n.'</a>' : $n).'</span>';
+	if($p) $p = '<span class="calendar-prev">'.($pl ? '<a href="'.($pl).'">'.$p.'</a>' : $p).'</span>&nbsp;';
+	if($n) $n = '&nbsp;<span class="calendar-next">'.($nl ? '<a href="'.($nl).'">'.$n.'</a>' : $n).'</span>';
 	$calendar = '<table class="calendar">'."\n".
-		'<caption class="calendar-month">'.$p.($month_href ? '<a href="'.htmlspecialchars($month_href).'">'.$title.'</a>' : $title).$n."</caption>\n<tr>";
+		'<caption class="calendar-month">'.$p.($month_href ? '<a href="'.($month_href).'">'.$title.'</a>' : $title).$n."</caption>\n<tr>";
 
 	if($day_name_length){ #if the day names should be shown ($day_name_length > 0)
 		#if day_name_length is >3, the full name of the day will be printed
@@ -53,7 +53,7 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 			@list($link, $classes, $content) = $days[$day];
 			if(is_null($content))  $content  = $day;
 			$calendar .= '<td'.($classes ? ' class="'.htmlspecialchars($classes).'">' : '>').
-				($link ? '<a class="calendar-day" href="'.htmlspecialchars($link).'">'.$content.'</a>' : $content).'</td>';
+				($link ? '<a class="calendar-day" href="'.($link).'">'.$content.'</a>' : $content).'</td>';
 		}
 		else $calendar .= "<td>$day</td>";
 	}
