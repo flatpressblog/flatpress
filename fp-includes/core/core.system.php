@@ -135,19 +135,20 @@
 		
 		$GLOBALS['smarty'] =& $GLOBALS['_FP_SMARTY'];
 		$smarty =& $GLOBALS['smarty'];
-			
 		
 		$GLOBALS['fp_config'] =& config_load();
-		
-		$GLOBALS['theme'] =& theme_loadsettings();
-		
-		$GLOBALS['lang'] =& lang_load();
-		
 		
 		cookie_setup();
 		sess_setup();
 		user_loggedin();
 		
+		ob_start();
+		
+		$GLOBALS['theme'] =& theme_loadsettings();
+		
+		$GLOBALS['lang'] =& lang_load();
+		
+
 		plugin_loadall();
 		
 		// init smarty	
@@ -155,8 +156,9 @@
 		$smarty->cache_dir = SMARTY_DIR . 'cache/';
 		$smarty->caching = 0;
 	
-		do_action('init');	
-
+		do_action('init');
+		ob_end_clean();
+		
 	}
 
 	function system_seterr($module, $val) {
