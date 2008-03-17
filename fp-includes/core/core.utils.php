@@ -236,8 +236,8 @@ if (!function_exists('fnmatch')) {
 
 		if (!$absolute_path)
 			$location = BLOG_BASEURL . $location;
-
-		header("Location: $location");
+		
+		wp_redirect($location);
 		exit();
 
 	}

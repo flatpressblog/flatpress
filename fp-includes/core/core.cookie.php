@@ -26,37 +26,6 @@ if ( !defined('COOKIE_DOMAIN') )
 
 }
 
-// Cookie safe redirect.  Works around IIS Set-Cookie bug.
-// http://support.microsoft.com/kb/q176113/
-if ( !function_exists('wp_redirect') ) :
-function wp_redirect($location, $status = 302) {
-	global $is_IIS;
-
-	$location = apply_filters('wp_redirect', $location, $status);
-
-	if ( !$location ) // allows the wp_redirect filter to cancel a redirect
-		return false; 
-
-	$location = preg_replace('|[^a-z0-9-~+_.?#=&;,/:%]|i', '', $location);
-	# $location = wp_kses_no_null($location);
-	
-	$location = preg_replace('/\0+/', '', $location);
-    $location = preg_replace('/(\\\\0)+/', '', $location);
-
-
-	$strip = array('%0d', '%0a');
-	$location = str_replace($strip, '', $location);
-
-	if ( $is_IIS ) {
-		header("Refresh: 0;url=$location");
-	} else {
-		if ( php_sapi_name() != 'cgi-fcgi' )
-			status_header($status); // This causes problems on IIS and some FastCGI setups
-		header("Location: $location");
-	}
-}
-endif;
-
 if ( !function_exists('wp_get_cookie_login') ):
 function wp_get_cookie_login() {
 	if ( empty($_COOKIE[USER_COOKIE]) || empty($_COOKIE[PASS_COOKIE]) )
