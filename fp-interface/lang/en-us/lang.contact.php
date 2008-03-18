@@ -13,7 +13,6 @@
 		'fieldset3'	=> 'Send',
 		'submit'	=> 'Send',
 		'reset'		=> 'Reset',
-		'success'	=> 'Message was sent successfully',
 		
 	);
 	
@@ -22,6 +21,11 @@
 		'email'		=> 'You must enter a valid email',
 		'www'		=> 'You must enter a valid URL',
 		'content'	=> 'You must enter a message',
+	);
+	
+	$lang['contact']['msgs'] = array(
+		1	=> 'Message was sent successfully',
+		-1	=> 'Message could not be sent',
 	);
 	
 ?>

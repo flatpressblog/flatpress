@@ -28,11 +28,14 @@
 	
 	function contact_form() {
 		
-		global $smarty, $lang;
+		global $smarty, $lang, $fp_config;
 
-		$smarty->assign('notifications',system_geterr('contact'));
-		
 		if(empty($_POST)) {
+			
+			$smarty->assign('success', system_geterr('contact'));
+			$smarty->assign_by_ref('panelstrings', $lang['contact']);
+			
+		
 		// new form, we (re)set the session data
 			SmartyValidate::connect($smarty, true);
 		// register our validators
@@ -60,17 +63,17 @@
 					$msg .= "WWW: {$arr['url']}\n\n";
 				$msg .= "Content:\n{$arr['content']}\n";
 				
-					@utils_mail(
+					$success = @utils_mail(
 						(
 						isset($arr['email'])? 
 							$arr['email'] 
 							: 
-							$this->config['EMAIL']
+							$fp_config['general']['email']
 						), 
 						"Contact sent through {$fp_config['general']['title']} ", $msg );
 
-				system_seterr('contact', 1);			
-				utils_redirect();	
+				system_seterr('contact', $success? 1 : -1);			
+				utils_redirect(basename(__FILE__));	
 			} else {
 				$smarty->assign('values', $_POST);
 			}
