@@ -252,9 +252,19 @@ input, select {
 }
 
 
+dt {
+	width: 30%; 
+	margin-top: 1.8em; 
+	text-align: right; 
+	line-height: 1.5em;
+}
 
-dt {width: 30%; text-align: right; line-height: 3em}
-dd {margin-top: -2em; margin-left: 35%; }
+dd {
+	margin-top: -1.5em; 
+	margin-right: 10%; 
+	line-height: 2em;
+	float: right;
+}
 
 .info-notice {
 	padding: 1em;
