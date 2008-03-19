@@ -89,47 +89,56 @@
 			
 			$errors = array();
 			
-			/*
-			 * check name
-			 *
-			 */
-			
-			if (!$name) {
-				$errors['name'] = $lerr['name'];
-			}
+			$loggedin = false;
+
+			if (user_loggedin()) {
+				$loggedin = $arr['loggedin']=true;
+			} else {
 				
-			
-			/*
-			 * check email
-			 *
-			 */
+				/*
+				 * check name
+				 *
+				 */
 				
-			if ($email)	{
-				$_is_valid = !(preg_match('!@.*@|\.\.|\,|\;!', $email) ||
-				!preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $email));
+				if (!$name) {
+					$errors['name'] = $lerr['name'];
+				}
+					
 				
-				if (!$_is_valid) {
-					$errors['email'] = $lerr['email'];
+				/*
+				 * check email
+				 *
+				 */
+					
+				if ($email)	{
+					$_is_valid = !(preg_match('!@.*@|\.\.|\,|\;!', $email) ||
+					!preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $email));
+					
+					if (!$_is_valid) {
+						$errors['email'] = $lerr['email'];
+					}
+					
 				}
 				
-			}
-			
-			/*
-			 * check url
-			 *
-			 */
-				
-			if ($url)	{
-				if (!preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $url)) {
-    			// || preg_match('!^http(s)?://localhost!', $value);
-					$errors['url'] = $lerr['www'];
+				/*
+				 * check url
+				 *
+				 */
+					
+				if ($url)	{
+					if (!preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $url)) {
+	    			// || preg_match('!^http(s)?://localhost!', $value);
+						$errors['url'] = $lerr['www'];
+					}
 				}
+				
+		
 			}
-			
 			
 			if (!$content) {
 				$errors['content'] = $lerr['comment'];
 			}
+			
 
 			if ($errors) {
 				$smarty->assign('error', $errors);
@@ -139,11 +148,6 @@
 			$arr['version'] = system_ver();
 			$arr['name'] = $_POST['name'];
 
-			$loggedin = false;
-
-			if (user_loggedin()) {
-				$loggedin = $arr['loggedin']=true;
-			}
 
 			if (!$loggedin)
 			setcookie('comment_author_' . COOKIEHASH, 
