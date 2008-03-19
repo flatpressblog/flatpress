@@ -1,14 +1,17 @@
 {include file=shared:errorlist.tpl}
 
 <div id="current-theme">
+	<h2>{$panelstrings.head1}</h2>
+	<img src="{$current_theme.preview}" alt="{$current_theme.name}" />
+		<h5>
+			{$current_theme.title} &#8212; {$current_theme.author|default:$panelstrings.noauthor}
+		</h5>
+		
+		{$current_theme.description|default:$panelstrings.nodescr}
+		
+</div> <!-- end of #current-theme -->
 
-<h2>{$panelstrings.head1}</h2>
-<img src="{$current_theme.preview}" alt="{$current_theme.name}" />
-<h5>{$current_theme.title} &#8212; {$current_theme.author|default:$panelstrings.noauthor}</h5>
-{$current_theme.description|default:$panelstrings.nodescr}
-</div>
-
-
+{debug}
 
 {if $available_themes}
 
@@ -30,6 +33,6 @@
 {/foreach}
 </ul>
 
-{/if}
+</div> <!-- end of #available-themes -->
 
-</div>
+{/if}
