@@ -11,8 +11,6 @@
 		
 </div> <!-- end of #current-theme -->
 
-{debug}
-
 {if $available_themes}
 
 <div id="available-themes">
