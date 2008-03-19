@@ -25,7 +25,7 @@ add_filter('pre_comment_author_url', 'trim');
 
 
 add_filter('pre_comment_content', 'stripslashes', 1);
-add_filter('pre_comment_content', 'fmt_escape_separator', 1);
+add_filter('pre_comment_content', 'fmt_escape_separator', 100);
 //add_filter('pre_comment_content', 'wp_filter_kses');
 add_filter('pre_comment_content', 'wp_rel_nofollow', 15);
 add_filter('pre_comment_content', 'balanceTags', 30);
@@ -47,7 +47,7 @@ add_filter('comment_url', 'clean_url');
 add_filter('comment_text', 'convert_chars');
 add_filter('comment_text', 'make_clickable');
 add_filter('comment_text', 'wpautop', 30);
-add_filter('comment_text', 'fmt_unescape_separator');
+add_filter('comment_text', 'fmt_unescape_separator', 0);
 
 add_filter('comment_excerpt', 'convert_chars');
 
@@ -57,10 +57,10 @@ add_filter('comment_excerpt', 'convert_chars');
 //add_filter('comment_save_pre', 'balanceTags', 50);
 
 
-add_filter('title_save_pre', 'fmt_escape_separator');
-add_filter('content_save_pre', 'fmt_escape_separator');
-add_filter('excerpt_save_pre', 'fmt_escape_separator');
-add_filter('comment_save_pre', 'fmt_escape_separator');
+add_filter('title_save_pre', 'fmt_escape_separator', 100);
+add_filter('content_save_pre', 'fmt_escape_separator', 100);
+add_filter('excerpt_save_pre', 'fmt_escape_separator', 100);
+add_filter('comment_save_pre', 'fmt_escape_separator', 100);
 
 
 // Clean & add entities (delegated to plugins)
@@ -73,17 +73,17 @@ add_filter('comment_save_pre', 'wp_specialchars');
 // Misc. title, content, and excerpt filters
 add_filter('the_title', 'convert_chars');
 add_filter('the_title', 'trim');
-add_filter('the_title', 'fmt_unescape_separator');
+add_filter('the_title', 'fmt_unescape_separator', 0);
 
 //add_filter('the_content', 'convert_smilies');
 add_filter('the_content', 'convert_chars');
 add_filter('the_content', 'wpautop');
-add_filter('the_content', 'fmt_unescape_separator');
+add_filter('the_content', 'fmt_unescape_separator', 0);
 
 //add_filter('the_excerpt', 'convert_smilies');
 add_filter('the_excerpt', 'convert_chars');
 add_filter('the_excerpt', 'wpautop');
-add_filter('the_excerpt', 'fmt_unescape_separator');
+add_filter('the_excerpt', 'fmt_unescape_separator', 0);
 
 add_filter('get_the_excerpt', 'wp_trim_excerpt');
 
