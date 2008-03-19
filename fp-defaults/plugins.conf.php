@@ -26,6 +26,7 @@
 	'searchbox',
 	'blockparser',
 	'readmore',
+	'favicon',
 	);
 
 
