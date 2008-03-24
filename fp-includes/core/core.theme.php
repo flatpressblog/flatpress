@@ -239,9 +239,7 @@
 	
 	function theme_init(&$smarty) { /* &$mode */
 		
-		global $fp_config;
-		global $lang;
-		global $theme;
+		global $fp_config, $lang, $theme, $fp_params;
 		
 		// avoid compiled tpl collision (i.e. change theme without this and cry)
 		$smarty->compile_id = md5($fp_config['general']['theme']);
@@ -294,7 +292,7 @@
 		$smarty->register_modifier('filed', 'theme_entry_categories');
 		
 		
-		if (!isset($_GET['feed']) || empty($_GET['feed'])) {
+		if (!isset($fp_params['feed']) || empty($fp_params['feed'])) {
 			$smarty->register_modifier('date_format_daily', 'theme_smarty_modifier_date_format_daily');
 			$smarty->register_modifier('date_format', 'theme_date_format');
 		}
@@ -419,7 +417,7 @@
 	
 	add_filter('feed_link', 'theme_def_feed_link', 0, 2);
 	function theme_def_feed_link($str, $type) {
-		return BLOG_BASEURL . "?feed={$type}";
+		return BLOG_BASEURL . "?x=feed:{$type}";
 	}
 	function theme_feed_link ($feed='rss2') {
 		return apply_filters('feed_link', '', $feed);
@@ -427,7 +425,7 @@
 	
 	add_filter('post_comments_feed_link', 'theme_def_feed_comments_link', 0, 3);
 	function theme_def_feed_comments_link($str, $feed, $id) {
-		return BLOG_BASEURL . "?entry=$id&amp;comments&amp;feed={$feed}";
+		return BLOG_BASEURL . "?x=entry:$id;comments:1;feed:{$feed}";
 	}
 	function theme_comments_feed_link ($feed='rss2', $id) {
 		return apply_filters('post_comments_feed_link', '', $feed, $id);
@@ -436,7 +434,7 @@
 	 
 	add_filter('post_link', 'theme_def_permalink', 0, 2);
 	function theme_def_permalink($str, $id) {
-		return BLOG_BASEURL . "?entry=$id";
+		return BLOG_BASEURL . "?x=entry:$id";
 	}
 	function get_permalink ($id) {
 		return apply_filters('post_link', '', $id);
@@ -444,7 +442,7 @@
 	
 	add_filter('comments_link', 'theme_def_commentlink', 0, 2);
 	function theme_def_commentlink($str, $id) {
-		return BLOG_BASEURL . "?entry=$id&amp;comments";
+		return BLOG_BASEURL . "?x=entry:$id;comments:1";
 	}
 	function get_comments_link ($id) {
 		return apply_filters('comments_link', '', $id);
@@ -461,7 +459,7 @@
 	
 	add_filter('category_link', 'theme_def_catlink', 0, 2);
 	function theme_def_catlink($str, $catid) {
-		return BLOG_BASEURL . "?cat=$catid";
+		return BLOG_BASEURL . "?x=cat:$catid";
 	}
 	function get_category_link($catid) {
 		return apply_filters('category_link', '', $catid);
@@ -472,7 +470,7 @@
 		return wp_specialchars(
 			apply_filters(
 				'year_link', 
-				BLOG_BASEURL . '?y='. str_pad($year, 2, '0', STR_PAD_LEFT), 
+				BLOG_BASEURL . '?x=y:'. str_pad($year, 2, '0', STR_PAD_LEFT), 
 				$year)
 		);
 	}
@@ -481,8 +479,8 @@
 		return wp_specialchars(
 			apply_filters(
 				'month_link',  
-				BLOG_BASEURL . '?y='. str_pad($year, 2, '0', STR_PAD_LEFT) . 
-				'&m=' . str_pad($month, 2, '0', STR_PAD_LEFT),
+				BLOG_BASEURL . '?x=y:'. str_pad($year, 2, '0', STR_PAD_LEFT) . 
+				';m:' . str_pad($month, 2, '0', STR_PAD_LEFT),
 				$year, 
 				$month)
 			);
@@ -492,9 +490,9 @@
 		return wp_specialchars(
 			apply_filters(
 				'month_link',  
-				BLOG_BASEURL	. '?y='. str_pad($year, 2, '0', STR_PAD_LEFT) 
-								. '&m=' . str_pad($month, 2, '0', STR_PAD_LEFT) 
-								. '&d=' . str_pad($day, 2, '0', STR_PAD_LEFT),
+				BLOG_BASEURL	. '?y:'. str_pad($year, 2, '0', STR_PAD_LEFT) 
+								. ';m:' . str_pad($month, 2, '0', STR_PAD_LEFT) 
+								. ';d:' . str_pad($day, 2, '0', STR_PAD_LEFT),
 				$year, 
 				$month)
 		);

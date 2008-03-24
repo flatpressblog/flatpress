@@ -1,6 +1,7 @@
 <?php
 
 // Some default filters
+add_filter('init', 'system_init_action_params');
 add_filter('bloginfo','wp_specialchars');
 add_filter('category_description', 'wptexturize');
 add_filter('list_cats', 'wptexturize');

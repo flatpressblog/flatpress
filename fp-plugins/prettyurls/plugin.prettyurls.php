@@ -40,6 +40,7 @@ class Plugin_PrettyURLs {
 	var $status = 0;
 	var $date_handled = false;
 	var $categories = null;
+	var $fp_params;
 	
 	
 	function categories($force=true) {
@@ -156,9 +157,9 @@ class Plugin_PrettyURLs {
 			
 		if (PRETTYURLS_TITLES) {	
 			if ($c = array_search($matches[1], $this->categories))
-				$_GET['category'] = $c;
+				$this->fp_params['cat'] = $c;
 		} else {
-			$_GET['category'] = $matches[1];
+			$this->fp_params['cat'] = $matches[1];
 		}
 		
 	}
@@ -169,9 +170,9 @@ class Plugin_PrettyURLs {
 	
 	function handle_date($matches) {
 	
-		$_GET['y'] = $matches[1];
-		if (isset($matches[3])) $_GET['m'] = $matches[3] ;
-		if (isset($matches[5])) $_GET['d'] = $matches[5];
+		$this->fp_params['y'] = $matches[1];
+		if (isset($matches[3])) $this->fp_params['m'] = $matches[3] ;
+		if (isset($matches[5])) $this->fp_params['d'] = $matches[5];
 		
 		$this->date_handled = true;
 		
@@ -179,40 +180,40 @@ class Plugin_PrettyURLs {
 	
 	
 	function handle_static($matches) {
-		$_GET['page'] = $matches[1];
+		$this->fp_params['page'] = $matches[1];
 		$this->status = 2;	
 	}
 	
 	function handle_entry($matches) {
 		
 		if (PRETTYURLS_TITLES) {	
-			if (isset($this->index[$_GET['y']][$_GET['m']][$_GET['d']][md5($matches[1])])) {
-				$_GET['entry'] = $this->index[$_GET['y']][$_GET['m']][$_GET['d']][md5($matches[1])];
+			if (isset($this->index[$this->fp_params['y']][$this->fp_params['m']][$this->fp_params['d']][md5($matches[1])])) {
+				$this->fp_params['entry'] = $this->index[$this->fp_params['y']][$this->fp_params['m']][$this->fp_params['d']][md5($matches[1])];
 			} else {
 				// a bit hackish: we make up a fake url when there is no match, 
 				// so that at the higher level the system will 404... 
-				$_GET['entry'] = 'entry000000-000000'; 
+				$this->fp_params['entry'] = 'entry000000-000000'; 
 			}
 		} else {
-			$_GET['entry'] = $matches[1];
+			$this->fp_params['entry'] = $matches[1];
 		}
 
 			
 	}
 	
 	function handle_page($matches) {
-		$_GET['paged'] = $matches[1];
+		$this->fp_params['paged'] = $matches[1];
 		$this->status = 2;
 	}
 	
 	
 	function handle_comment($matches) {
-		$_GET['comments'] = true;
+		$this->fp_params['comments'] = true;
 	}
 	
 	function handle_feed($matches) {
 	
-		$_GET['feed'] = isset($matches[2])? $matches[2]:'rss2';
+		$this->fp_params['feed'] = isset($matches[2])? $matches[2]:'rss2';
 	}
 
 	
@@ -232,6 +233,10 @@ class Plugin_PrettyURLs {
 
 	
 	function cache_init() {
+	
+		global $fp_params;
+		
+		$this->fp_params =& $fp_params;
 	
 		if (PRETTYURLS_TITLES) {
 			if ($f = io_load_file(PRETTYURLS_CACHE))
@@ -415,18 +420,18 @@ class Plugin_PrettyURLs {
 		$l = BLOG_BASEURL;
 		
 		
-		if ( ( 	is_numeric($cid = @$_GET['category']) ) ||
-				is_numeric($cid = @$_GET['cat']) ) 
+		if ( ( 	is_numeric($cid = @$this->fp_params['category']) ) ||
+				is_numeric($cid = @$this->fp_params['cat']) ) 
 			$l = $this->categorylink($l, $cid);
 		
-		if (isset($_GET['y']) && $_GET['y']) {
-			$l .= '20'. $_GET['y'] . '/';
+		if (isset($this->fp_params['y']) && $this->fp_params['y']) {
+			$l .= '20'. $this->fp_params['y'] . '/';
 			
-			if (isset($_GET['m']) && $_GET['m']) {
-				$l .= $_GET['m']  . '/';
+			if (isset($this->fp_params['m']) && $this->fp_params['m']) {
+				$l .= $this->fp_params['m']  . '/';
 			
-				if (isset($_GET['d']) && $_GET['d'])
-					$l .= $_GET['d']  . '/';
+				if (isset($this->fp_params['d']) && $this->fp_params['d'])
+					$l .= $this->fp_params['d']  . '/';
 		
 			}
 			
@@ -434,7 +439,7 @@ class Plugin_PrettyURLs {
 		
 		$page = 1;
 		
-		if (isset($_GET['paged']) && $_GET['paged']>1) $page = $_GET['paged'];
+		if (isset($this->fp_params['paged']) && $this->fp_params['paged']>1) $page = $this->fp_params['paged'];
 	
 		$page += $v;
 		

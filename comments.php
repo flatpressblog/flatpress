@@ -5,7 +5,7 @@
 		include INCLUDES_DIR . 'includes.php';
 		
 		/* backward compatibility */
-
+		
 		if (!@$_GET['entry']) {
 			@utils_redirect();
 		} else {
@@ -20,7 +20,7 @@
 
 		function comment_main($module) {
 					
-			global $fpdb;
+			global $fpdb, $fp_params;
 			
 				
 			// hackish solution to get title before fullparse starts dunno, I don't like it
@@ -32,9 +32,9 @@
 				return $module;
 			
 			
-			if (!empty($_GET['feed'])){
+			if (!empty($fp_params['feed'])){
 			
-					switch($_GET['feed']) {
+					switch($fp_params['feed']) {
 					
 						case 'atom':
 							header('Content-type: application/atom+xml');
@@ -58,10 +58,10 @@
 		
 		function comment_feed() {
 			echo "\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get Comments RSS 2.0 Feed\" href=\"".
-					theme_comments_feed_link('rss2', $_GET['entry']) 
+					theme_comments_feed_link('rss2', $fp_params['entry']) 
 				."\" />";
 			echo "\n<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Comments Atom 1.0 Feed\" href=\"".
-					theme_comments_feed_link('atom', $_GET['entry']) 
+					theme_comments_feed_link('atom', $fp_params['entry']) 
 				."\" />\n";
 		}
 		add_action('wp_head', 'comment_feed');
@@ -185,7 +185,7 @@
 		
 		function commentform() {
 		
-			global $smarty, $lang, $fpdb;
+			global $smarty, $lang, $fpdb, $fp_params;
 			
 			$comment_formid = 'fp-comments';
 			$smarty->assign('comment_formid', $comment_formid);
@@ -205,11 +205,11 @@
 					
 					global $fp_config;
 	
-					$id = comment_save($_GET['entry'], $arr);
+					$id = comment_save($fp_params['entry'], $arr);
 					
-					do_action('comment_post', $_GET['entry'], array($id, $arr));
+					do_action('comment_post', $fp_params['entry'], array($id, $arr));
 					
-					$q =& new FPDB_Query(array('id'=>$_GET['entry'],'fullparse'=>false), null);
+					$q =& new FPDB_Query(array('id'=>$fp_params['entry'],'fullparse'=>false), null);
 					list($entryid, $e) = $q->getEntry();
 						
 				

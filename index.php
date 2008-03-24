@@ -45,9 +45,9 @@
 	
 	function index_singlepost(&$params, &$module) {
 		
-		global $fpdb, $theme;
+		global $fpdb, $theme, $fp_params;
 		
-		$params['id'] = $_GET['entry'];
+		$params['id'] = $fp_params['entry'];
 		$params['fullparse']=true;
 		$fpdb->query($params);
 
@@ -56,7 +56,7 @@
 		
 		add_filter('wp_title', 'index_permatitle', 10, 2);
 		
-		if (isset($_GET['comments'])) {
+		if (isset($fp_params['comments'])) {
 		
 			$module = 'comments.tpl';
 			$params['comments'] = true;
@@ -95,35 +95,37 @@
 	
 	function index_showposts(&$params, &$module) {
 	
-		if (isset($_GET['d']) && $_GET['d'])
-			$params['d'] = $_GET['d'];
+		global $fp_params;
 	
-		if (isset($_GET['m']) && $_GET['m']) 
-			$params['m'] = $_GET['m'];
+		if (isset($fp_params['d']) && $fp_params['d'])
+			$params['d'] = $fp_params['d'];
 	
-		if (isset($_GET['y']) && $_GET['y'])
-			$params['y'] = $_GET['y'];
+		if (isset($fp_params['m']) && $fp_params['m']) 
+			$params['m'] = $fp_params['m'];
 	
-		if (isset($_GET['start']) && $_GET['start'])
-			$params['start'] = intval($_GET['start']);
+		if (isset($fp_params['y']) && $fp_params['y'])
+			$params['y'] = $fp_params['y'];
 	
-		if (isset($_GET['count']) && $_GET['count'])
-			$params['count'] = intval($_GET['count']);
-		if (isset($_GET['category']) && is_numeric($_GET['category']))
-			$params['category'] = intval($_GET['category']);
+		if (isset($fp_params['start']) && $fp_params['start'])
+			$params['start'] = intval($fp_params['start']);
+	
+		if (isset($fp_params['count']) && $fp_params['count'])
+			$params['count'] = intval($fp_params['count']);
+		if (isset($fp_params['category']) && is_numeric($fp_params['category']))
+			$params['category'] = intval($fp_params['category']);
 			
-		if (isset($_GET['cat']) && is_numeric($_GET['cat']))
-			$params['category'] = intval($_GET['cat']);
+		if (isset($fp_params['cat']) && is_numeric($fp_params['cat']))
+			$params['category'] = intval($fp_params['cat']);
 		
-		if (isset($_GET['random'])) {
-			if (empty($_GET['random']))
+		if (isset($fp_params['random'])) {
+			if (empty($fp_params['random']))
 				$params['random'] = 1;
-			elseif (is_numeric($_GET['random'])) 
-				$params['random'] = intval($_GET['random']);
+			elseif (is_numeric($fp_params['random'])) 
+				$params['random'] = intval($fp_params['random']);
 		}
 		
-		if ((isset($_GET['paged'])) && is_numeric($_GET['paged']) && $_GET['paged']>0)
-			$params['page']=$_GET['paged'];
+		if ((isset($fp_params['paged'])) && is_numeric($fp_params['paged']) && $fp_params['paged']>0)
+			$params['page']=$fp_params['paged'];
 		else 
 			$params['page'] = 1;
 
@@ -131,20 +133,20 @@
 	
 	function index_main() {
 	
-		global $fpdb, $smarty, $fp_config;
+		global $fpdb, $smarty, $fp_config, $fp_params;
 		$params = array();
 		$module = 'index.tpl' ;
 		$can404 = true;
 		
 		
-		if (!empty($_GET['entry'])) {
+		if (!empty($fp_params['entry'])) {
 		
 			index_singlepost($params, $module);
 			
 		} elseif (
 			
-			($explicit_req = $page = @$_GET['page']) ||
-			(empty($_GET) && $page = @$fp_config['general']['startpage'])
+			($explicit_req = $page = @$fp_params['page']) ||
+			(empty($fp_params) && $page = @$fp_config['general']['startpage'])
 			
 			) {
 			
@@ -155,11 +157,11 @@
 			$module = search_main();
 		} else {
 		
-			if (!empty($_GET['feed'])){
+			if (!empty($fp_params['feed'])){
 
 					$can404=false;
 				
-					switch($_GET['feed']) {
+					switch($fp_params['feed']) {
 						case 'atom':
 							header('Content-type: application/atom+xml');
 							$module = SHARED_TPLS . 'atom.tpl';

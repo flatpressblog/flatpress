@@ -122,6 +122,21 @@
 			utils_redirect();
 		}
 	}
+	
+
+	function system_init_action_params() {
+		
+		global $fp_params;
+		
+		$fp_params = array();
+		
+		if ($x = @$_GET['x'])
+			$fp_params = utils_kexplode($x, ':;', false);
+		
+		$fp_params = array_merge($_GET, $fp_params);
+		
+	}
+
 
 	
 	function system_init() {

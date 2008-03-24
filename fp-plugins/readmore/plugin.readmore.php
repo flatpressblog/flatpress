@@ -33,6 +33,7 @@ Author URI: http://www.nowhereland.it/
 
 function plugin_readmore_main($string) {
 	
+	global $fp_params;
 	
 	$MODE = 'manual'; 
 			
@@ -77,8 +78,8 @@ function plugin_readmore_main($string) {
 		
 	}
 	
-	if ($q->single || isset($_GET['entry'])) {
-		$string = str_replace('[more]', "<a id=\"readmore-{$_GET['entry']}\"></a>", $string);
+	if ($q->single || isset($fp_params['entry'])) {
+		$string = str_replace('[more]', "<a id=\"readmore-{$fp_params['entry']}\"></a>", $string);
 	}
 	
 	return $string;
