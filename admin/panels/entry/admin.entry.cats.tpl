@@ -1,6 +1,3 @@
-{validate_init form=$admin_panel_id}
-{validate id="content" message=$panelstrings.error.content append="error"}
-
 <h2>{$panelstrings.head}</h2>
 {include file=shared:errorlist.tpl}
 

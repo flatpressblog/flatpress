@@ -194,61 +194,86 @@
 		
 		var $validators = array();
 		
-		function exec() {
-				
-			if (empty($_POST))
-				SmartyValidate::disconnect($this->smarty);
-			
-			$form_id = get_class($this);
-			
-			SmartyValidate::connect($this->smarty);
-			if (!SmartyValidate::is_registered_form($form_id))
-				SmartyValidate::register_form($form_id);
-				
-			$this->setup();
-			
-			$retval = 0;
-			
-			if (empty($_POST)) {
-				if ($validators =& $this->validators) {
-					foreach ($validators as $validator) {
-						$validator[6]=$form_id;
-						call_user_func_array(array('SmartyValidate', 'register_validator'), $validator);
-					}
-				}
-				
-				if ($this->commands) {
-					foreach($this->commands as $cmd) {
-						if (isset($_GET[ $cmd ])) {
-							return $this->docommand($cmd); 
-						}
-					}
-				}
-				
-				lang_load($this->langres);
-				$retval = $this->main();
-			} else {
-				$retval = $this->onsubmit();
-			}
-			
-			return $retval;
-			
+		function dummy() {
+		
 		}
 		
+		// just dummy, remove once transition is complete
+		function exec() {
+			$this->smarty->register_function('validate_init', array(&$this, 'dummy'));
+			$this->smarty->register_function('validate', array(&$this, 'dummy'));
+			return parent::exec();
+		}
 		
 		function onsubmit() {
+		
+			global $lang;
+				
 			$result = 0;
 			
-			if(SmartyValidate::is_valid($_POST, get_class($this))) {
+			$dummyarr = array();
+			$errors = array();
+			$lang_loaded = false;
+			$l = null;
+			
+			foreach ($this->validators as $valid_arr) {
+			
+				
+				# array('subject', 'subject', 'notEmpty', false, false, 'func1,func2');
+				
+				list($vid, $field, $validatorname, $empty, $halt, $funcs) = $valid_arr;
+				
+				$includepath = SMARTY_DIR . 'plugins/';
+				
+				$string = @$_POST[$field];
+				
+				// execute functions on string
+				if ($string) {
+					$func_arr = explode(',', $funcs);
+					foreach($func_arr as $f) {
+						$string = @$f($string);
+					}
+				}
+				
+				include_once (
+					$includepath . 
+					'validate_criteria.' . 
+					$validatorname . 
+					'.php'
+				);
+				
+				# smarty_validate_criteria_notEmpty
+				
+				$valid_f = 'smarty_validate_criteria_'  . $validatorname;
+				
+				if ( ! $valid_f($string, $empty, $dummyarr, $dummyarr ) ) {
+				
+					if (!$lang_loaded) {
+						$lang = lang_load('admin.'.ADMIN_PANEL);
+						$l =& $lang['admin'][ADMIN_PANEL][ADMIN_PANEL_ACTION];
+					}
+					
+					$errors[$field] = $l['error'][$field];
+					if ($halt)
+						break;
+				}
+				
+				
+			}
+			
+			if(!$errors) {
 				$result = parent::onsubmit();
-			} else $result = $this->onerror();
+			} else {
+				$this->smarty->assign('error', $errors);
+				$result = $this->onerror();
+			}
 			
 			return $result;
 			
 		}
 		
 		function onerror() {
-			return true;
+			return PANEL_NOREDIRECT;
 		}
 		
 		

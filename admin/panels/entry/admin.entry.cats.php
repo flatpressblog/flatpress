@@ -14,9 +14,8 @@
  */
  
  
- 	class admin_entry_cats extends AdminPanelActionValidated {
+ 	class admin_entry_cats extends AdminPanelAction {
 		
-		var $validators = array(array('content', 'content', 'notEmpty', false, false, 'trim,stripslashes'));
 		var $events = array('save');
 		
 		
@@ -45,13 +44,17 @@
 		
 		
 		function onsave() {
-				
-			$str=(stripslashes($_POST['content']));
-			$success = io_write_file(CONTENT_DIR . 'categories.txt', $str);
-			entry_categories_encode();
-			$this->smarty->assign('success', ( $success )? 1 : -1 );
-			$this->smarty->assign('catdefs', $str);
-
+			
+			$str = stripslashes( trim( @$_POST['content'] ) ) ;
+			
+			if ($str) {
+				$success = io_write_file(CONTENT_DIR . 'categories.txt', $str);
+				entry_categories_encode();
+				$this->smarty->assign('success', ( $success )? 1 : -1 );
+			} else {
+				$this->smarty->assign('success', -1 );
+			}
+			
 			return PANEL_REDIRECT_CURRENT;
 			
 		}
