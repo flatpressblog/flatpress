@@ -19,6 +19,7 @@ Author URI: http://www.flatpress.org/
 		
 	$style['style_def'] = 'style.css';
 	$style['style_admin'] = 'admin.css';
+	$style['style_print'] = 'print.css';
 	$style['style'] = 'default';
 	
 ?>

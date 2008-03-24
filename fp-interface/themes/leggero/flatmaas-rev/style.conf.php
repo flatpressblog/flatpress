@@ -2,14 +2,14 @@
 /*  
 Style Name: FlatMaas Revisited
 Style URI: http://www.flatpress.org/
-Description: (UNFINISHED) The old default of FlatPress, now coming as a Leggero style.
+Description: The old default of FlatPress, now coming as a Leggero style.
 Version: 0.705
 Author: Drudo
 Author URI: http://www.flatpress.org/
 */
 
 	
-	$style['name'] = 'leggero';
+	$style['name'] = 'flatmaas-rev';
 	$style['author'] = 'NoWhereMan';
 	$style['www'] = 'http://www.flatpress.org/';
 	
@@ -17,6 +17,7 @@ Author URI: http://www.flatpress.org/
 		
 	$style['style_def'] = 'style.css';
 	$style['style_admin'] = 'admin.css';
+	$style['style_print'] = '../../leggero/res/print.css';
 	$style['style'] = 'default';
 	
 ?>
