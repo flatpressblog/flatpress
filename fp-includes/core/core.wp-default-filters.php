@@ -14,15 +14,14 @@ add_filter('the_excerpt', 'wptexturize');
 add_filter('bloginfo', 'wptexturize');
 
 // Comments, trackbacks, pingbacks
+add_filter('pre_comment_author_name', 'stripslashes');
 add_filter('pre_comment_author_name', 'trim');
 add_filter('pre_comment_author_name', 'wp_specialchars', 30);
 
 add_filter('pre_comment_author_email', 'trim');
 add_filter('pre_comment_fauthor_email', 'sanitize_email');
 
-add_filter('pre_comment_author_name', 'wp_specialchars', 30);
 add_filter('pre_comment_author_url', 'trim');
-//add_filter('pre_comment_author_url', 'clean_url');
 
 
 add_filter('pre_comment_content', 'stripslashes', 1);
