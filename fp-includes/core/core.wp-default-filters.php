@@ -63,6 +63,8 @@ add_filter('content_save_pre', 'fmt_escape_separator', 100);
 add_filter('excerpt_save_pre', 'fmt_escape_separator', 100);
 add_filter('comment_save_pre', 'fmt_escape_separator', 100);
 
+add_filter('title_save_pre', 'stripslashes', 1);
+add_filter('content_save_pre', 'stripslashes', 1); 
 
 // Clean & add entities (delegated to plugins)
 /*
