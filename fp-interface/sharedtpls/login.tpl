@@ -1,15 +1,11 @@
-{validate id="userid" message=$lang.login.error.user append="error"}
-{validate id="pwd" message=$lang.login.error.pass append="error"}
-{validate id="password" message=$lang.login.error.match append="error"}
-
 {include file=shared:errorlist.tpl}
 
-<form id="login" method="post" action="{$smarty.server.PHP_SELF}?redirect={$smarty.request.redirect}" enctype="multipart/form-data">
+<form id="login" method="post" action="{$smarty.server.PHP_SELF}" enctype="multipart/form-data">
 	<fieldset><legend>{$lang.login.fieldset1}</legend>
 	<p><label for="user">{$lang.login.user}</label><br />
-	<input {$error.user|notempty:'class="field-error"'} type="text" name="user" id="user" /></p>
+	<input {$error.user|notempty:'class="field-error"'} type="text" name="user" id="user" {if $smarty.post.user}value="{$smarty.post.user}"{/if} /></p>
 	<p><label for="pass">{$lang.login.pass}</label><br />
-	<input type="password" {$error.pass|notempty:'class="field-error"'} name="pass" id="pass" /></p>
+	<input type="password" {$error.pass|notempty:'class="field-error"'} name="pass" id="pass" {if $smarty.post.pass}value="{$smarty.post.pass}"{/if} /></p>
 	</fieldset>
 	
 	<div class="buttonbar">

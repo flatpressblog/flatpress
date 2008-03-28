@@ -8,6 +8,36 @@
 	
 	
 	$tpl = 'default.tpl';
+
+	function login_validate() {
+		global $smarty, $lang;
+
+		$user = trim(@$_POST['user']);
+		$pass = trim(@$_POST['pass']);
+
+		$error = array();
+		$lerr =& $lang['login']['error'];
+
+		if (!$user) {
+			$error['user'] = $lerr['user']; 
+		}
+
+		if (!$pass) {
+                 	$error['pass'] = $lerr['pass'];
+		}
+
+		if (!$error && !user_login($user, $pass)) {
+			$error['match'] = $lerr['match']; 
+		}
+
+		if ($error) {
+			$smarty->assign('error', $error);
+			return  0;
+		}
+
+		return 1;
+
+	}
 		
 	function main() {
 		global $lang, $smarty;
@@ -54,26 +84,11 @@
 		
 		
 		} elseif(empty($_POST)) {
-		
-		// new form, we (re)set the session data
-			SmartyValidate::connect($smarty, true);
-		// register our validators
-			SmartyValidate::register_validator('userid', 'user', 'notEmpty', false, false, 'trim');
-			SmartyValidate::register_validator('pwd', 'pass', 'notEmpty', false, false, 'trim');
-			SmartyValidate::register_validator('password', 'user:pass', 'isValidPassword', false, false);
-			
-		// display form
-			$content = (SHARED_TPLS . 'login.tpl'); 
+		       $content = (SHARED_TPLS . 'login.tpl'); 
 		} else {    
 			// validate after a POST
-			SmartyValidate::connect($smarty);
-			if(SmartyValidate::is_valid($_POST)) {
-				SmartyValidate::disconnect();
-				
-				// sess_add('login_do', true);
-				// utils_redirect();
+			if(login_validate()) {
 				utils_redirect('login.php');
-								
 			} else {
 				$smarty->assign($_POST);
 				$content = (SHARED_TPLS . 'login.tpl');
