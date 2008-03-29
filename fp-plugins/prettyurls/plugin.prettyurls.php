@@ -298,7 +298,7 @@ class Plugin_PrettyURLs {
 			// static page
 			$url = preg_replace_callback('|^/([a-zA-Z0-9_-]+)/$|', array(&$this, 'handle_static'), $url);
 			if ($this->status == 2)
-				return;
+				return $this->check_url($url);
 		}
 		
 		
@@ -307,7 +307,7 @@ class Plugin_PrettyURLs {
 		
 		$url = preg_replace_callback('|page/([0-9]+)/$|', array(&$this, 'handle_page'), $url);		
 		if ($this->status == 2)
-			return;	
+			return $this->check_url($url);	
 		
 		if ($this->date_handled){
 			$url = preg_replace_callback('|^/([^/]+)|', array(&$this, 'handle_entry'), $url);
@@ -322,10 +322,14 @@ class Plugin_PrettyURLs {
 		
 		$url = preg_replace_callback('|^/feed(/([^/]*))?|', array(&$this, 'handle_feed'), $url);
 		
-			
+		$this->check_url($url);
 		
 	}
 
+	function check_url($url) {
+		if ($url != '/')
+			$this->fp_params = array('entry'=>'entry000000-000000');
+	}
 
 	function cache_delete_elem($id, $date) {
 	
