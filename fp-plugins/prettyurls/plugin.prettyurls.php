@@ -302,7 +302,7 @@ class Plugin_PrettyURLs {
 		}
 		
 		
-		$url = preg_replace_callback('{category/([^/]+)}', array(&$this, 'handle_categories'), $url);
+		$url = preg_replace_callback('{category/([^/]+)/}', array(&$this, 'handle_categories'), $url);
 		
 		
 		$url = preg_replace_callback('|page/([0-9]+)/$|', array(&$this, 'handle_page'), $url);		
@@ -327,8 +327,9 @@ class Plugin_PrettyURLs {
 	}
 
 	function check_url($url) {
-		if ($url != '/')
+		if (!empty($url) && $url != '/') {
 			$this->fp_params = array('entry'=>'entry000000-000000');
+		}
 	}
 
 	function cache_delete_elem($id, $date) {
