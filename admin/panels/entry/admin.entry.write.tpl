@@ -22,7 +22,7 @@
 			<p><label for="subject">{$panelstrings.subject}</label><br />
 			<input type="text" {$error.subject|notempty:'class="field-error"'} 
 				name="subject" id="subject" 
-				value="{$subject|default:$smarty.request.subject}" /><br />
+				value="{$subject|default:$smarty.request.subject|wp_specialchars:1}" /><br />
 			<input type="hidden" name="timestamp" value="{$date}" />
 			<input type="hidden" name="entry" value="{$id}" />
 			</p>
