@@ -100,22 +100,22 @@
 	}
 
 	function theme_getdir($id = THE_THEME) {
-		return THEMES_DIR . ($id) . '/';
+		return theme_exists($id);
 	}
 	
 	function theme_exists($id) {
-		$f = theme_getdir($id); 
+		// quick fix for win
+		$f = THEMES_DIR . ($id);
 		if (file_exists($f))
-			return $f;
+			return $f .'/';
 		
 		return '';
 	}
 	
 	function theme_style_exists($id, $themeid=THE_THEME) {
 		if ($f = theme_exists($themeid)) {
-			$fs = $f . ($id) . '/';
-			if (file_exists($fs))
-				return $fs;
+			if (file_exists($f))
+				return $f . '/';
 		}
 		return '';
 			
