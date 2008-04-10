@@ -26,9 +26,8 @@
 
 <p>{$panelstrings.descr}</p>
 
-{html_form}
-
-
+<form method="get" action="{$smarty.request.PHP_SELF}?p=entry">
+<p> <input type="hidden" name="p" value="entry" /> </p>
 <fieldset><legend>{$panelstrings.filter}</legend>
 	<select name="category" class="alignleft">
 	<option label="Unfiltered" value="all">{$panelstrings.nofilter}</option>
@@ -38,6 +37,7 @@
 	{html_submit name='filter' id='filter' class="alignright" value=$panelstrings.filterbtn}
 </fieldset>
 
+</form>
 
 {entry_block}
 
@@ -95,4 +95,3 @@ href="{$panel_url|action_link:delete}&amp;entry={$id}">
 {/entry_block}
 
 
-{/html_form}
