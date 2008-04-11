@@ -12,6 +12,7 @@ Author URI: http://www.nowhereland.it
  * Place where the index is stored
  */
 define('PRETTYURLS_TITLES', true);
+define('PRETTYURLS_PATHINFO', false);
 define('PRETTYURLS_CACHE', CACHE_DIR . '%%prettyurls-index.tmp');
 define('PRETTYURLS_CATS', CACHE_DIR . '%%prettyurls-cats.tmp');
 
@@ -80,7 +81,7 @@ class Plugin_PrettyURLs {
 		$date = date_from_id($id);
 					// yeah, hackish, I know...
 	
-		return BLOG_BASEURL . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
+		return $this->baseurl  . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
 	}
 	
 	function commentlink($str, $id) {
@@ -89,7 +90,7 @@ class Plugin_PrettyURLs {
 	}
 	
 	function feedlink($str, $type) {
-		return BLOG_BASEURL . "feed/{$type}/";
+		return $this->baseurl  . "feed/{$type}/";
 		
 	}
 	
@@ -100,23 +101,23 @@ class Plugin_PrettyURLs {
 
 
 	function staticlink($str, $id) {
-		return BLOG_BASEURL .  "$id/";
+		return $this->baseurl  .  "$id/";
 	}
 	
 
 	function categorylink($str, $catid) {
 		if (PRETTYURLS_TITLES) {
 			if (@$this->categories[$catid])
-				return BLOG_BASEURL . "category/{$this->categories[$catid]}/";
+				return $this->baseurl  . "category/{$this->categories[$catid]}/";
 			else return $str;
 		} else {
-			return BLOG_BASEURL . "category/{$catid}/";
+			return $this->baseurl  . "category/{$catid}/";
 		}
 	}
 	
 	
 	function yearlink($str, $y) {
-		return BLOG_BASEURL . "20$y/";
+		return $this->baseurl  . "20$y/";
 	}
 	
 	function monthlink($str, $y, $m) {
@@ -237,6 +238,7 @@ class Plugin_PrettyURLs {
 		global $fp_params;
 		
 		$this->fp_params =& $fp_params;
+		$this->baseurl = PRETTYURLS_PATHINFO? BLOG_BASEURL . 'index.php/' : BLOG_BASEURL;
 	
 		if (PRETTYURLS_TITLES) {
 			if ($f = io_load_file(PRETTYURLS_CACHE))
@@ -406,7 +408,7 @@ class Plugin_PrettyURLs {
 		if ($q->single) {
 			$date = date_from_id($id);
 			$title = sanitize_title($caption);
-			$url = BLOG_BASEURL . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
+			$url = $this->baseurl  . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
 			
 			if ($v>0) 
 				$caption = $caption . ' &raquo '; 
@@ -422,7 +424,7 @@ class Plugin_PrettyURLs {
 		
 		/* todo: clean up this mess... which means cleaning up the mess above. oh, my! */
 		
-		$l = BLOG_BASEURL;
+		$l = $this->baseurl ;
 		
 		
 		if ( ( 	is_numeric($cid = @$this->fp_params['category']) ) ||

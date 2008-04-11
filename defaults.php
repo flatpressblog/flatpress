@@ -101,7 +101,7 @@
 		$_SERVER['REQUEST_URI'] = 'http://localhost/flatpress/';
 	
 	#define('BLOG_ROOT', dirname($_SERVER['PHP_SELF']) . '/');
-	define('BLOG_ROOT', ('/'==($v=dirname($_SERVER['PHP_SELF']))? $v : $v.'/') ); 
+	define('BLOG_ROOT', ('/'==($v=dirname($_SERVER['SCRIPT_NAME']))? $v : $v.'/') ); 
 
 		
 	define('BLOG_BASEURL', 'http://'.$_SERVER['HTTP_HOST']. BLOG_ROOT);
