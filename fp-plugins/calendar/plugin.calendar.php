@@ -82,7 +82,7 @@ function plugin_calendar_widget() {
 		$date = date_from_id($id);
 		$d = (int)$date['d'];
 		
-		$days[$d] = array(get_day_link($y, $m, $d), 'linked-day');
+		$days[$d] = array(get_day_link($y, $m, str_pad($d, 2, '0', STR_PAD_LEFT)), 'linked-day');
 		
 		
 		$count++;
