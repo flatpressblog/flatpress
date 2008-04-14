@@ -125,7 +125,7 @@ class Plugin_PrettyURLs {
 	}
 	
 	function daylink($str, $y, $m, $d) {
-		return $this->daylink($str, $y, $m) . "$d/";
+		return $this->monthlink($str, $y, $m) . "$d/";
 	}
 	
 	

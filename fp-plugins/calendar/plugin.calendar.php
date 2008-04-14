@@ -63,9 +63,11 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 }
 
 function plugin_calendar_widget() {
+
+	global $fp_params;
 	
-	$y = isset($_GET['y'])? $_GET['y'] : date('y'); 
-	$m = isset($_GET['m'])? $_GET['m'] : date('m'); 
+	$y = isset($fp_params['y'])? $fp_params['y'] : date('y'); 
+	$m = isset($fp_params['m'])? $fp_params['m'] : date('m'); 
 		
 	global $fpdb;
 	

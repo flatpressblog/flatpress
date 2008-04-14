@@ -489,12 +489,13 @@
 	function get_day_link($year, $month, $day) {
 		return wp_specialchars(
 			apply_filters(
-				'month_link',  
-				BLOG_BASEURL	. '?y:'. str_pad($year, 2, '0', STR_PAD_LEFT) 
+				'day_link',  
+				BLOG_BASEURL	. '?x=y:'. str_pad($year, 2, '0', STR_PAD_LEFT) 
 								. ';m:' . str_pad($month, 2, '0', STR_PAD_LEFT) 
 								. ';d:' . str_pad($day, 2, '0', STR_PAD_LEFT),
 				$year, 
-				$month)
+				$month,
+				$day)
 		);
 	}
 
