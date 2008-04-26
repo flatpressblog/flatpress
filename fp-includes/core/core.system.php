@@ -122,6 +122,15 @@
 			utils_redirect();
 		}
 	}
+
+	function system_prepare_iis() {
+		if (!@$_SERVER['REQUEST_URI']) {
+			$_SERVER['REQUEST_URI'] = substr($_SERVER['PHP_SELF'],1 ); 
+	        if (isset($_SERVER['QUERY_STRING'])) { 
+			  	$_SERVER['REQUEST_URI'].='?'.$_SERVER['QUERY_STRING']; 
+			} 
+		  }
+	}
 	
 
 	function system_init_action_params() {
@@ -143,6 +152,7 @@
 		
 		system_sanitizequery();
 		system_unregister_globals();
+		system_prepare_iis();
 		
 		$GLOBALS['fpdb'] =& new FPDB;
 							

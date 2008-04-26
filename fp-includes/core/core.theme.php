@@ -270,6 +270,8 @@
 		}
 		
 		$flatpress['themeurl'] = $themeurl;
+
+		$flatpress['params'] = $fp_params;
 		
 		$flatpress_upper = array_change_key_case($flatpress, CASE_UPPER);
 		

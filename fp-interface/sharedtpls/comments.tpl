@@ -4,7 +4,7 @@
 	
 
 <form id="commentform" method="post"
-	action="{$smarty.server.REQUEST_URI|escape:'html'}#commentform"
+	action="{$flatpress.params.entry|link:comments_link}#commentform"
 	enctype="multipart/form-data">
 
 	
