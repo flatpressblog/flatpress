@@ -1,4 +1,46 @@
 FlatPress 0.803 Vivace
+======================
+GENERAL
+-------
++ Rewritten bootstrap, index centralized
++ New database backend (soon to be rewroked ;))
++ New draft system
++ New secure hashing algorhytms for passwords
++ New widget system
++ Post view count moved to plugin PostViews
++ Rewritten main config file
++ Allowing custom appearance for date/time
++ New URLs (still compatible)
++ Allow static pages as home
++ mysite.com/flatpress/?random post goodie :)
+
+
+PLUGINS
+-------
++ New PostViews plugin
++ New favicon plugin
++ New prettyurls plugin, supporting pathinfo! (check plugin for help)
++ Added GUI to BlockParser
++ Added GUI to Akismet
+F Fixed accessible antispam
+F BBCode now allows inline HTML (check plugin for help): this
+  allows WYSIWYG lovers to install their favourite editor (e.g.
+  TinyMCE, see the forum for more)
+F Modified and cleaned interactions of BBCode with thumbs and 
+  lightbox plugins
+F Lightbox shouldn't crash IE7 anymore
+F Akismet shouldn't timeout anymore
+U jsUtils is mootools 1.1 full (complete download)
+
+ADMIN PANEL
+-----------
++ New GUI
++ Allowing plugins to add panels
++ Validating now without sessions
++ New Widget GUI
++ New Plugin GUI
++ New Theme/Styles GUI
++ New Options (formerly config) GUI
 
 
 0.703.6.2 (2007-11-26)
