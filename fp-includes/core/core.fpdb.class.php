@@ -534,7 +534,7 @@
 				$this->_indexer =& new entry_indexer();
 				$this->_categories = entry_categories_get();
 				$obj =& $this->_indexer;
-				$this->entry_index =& $obj->getList();
+				$this->entry_index = $obj->getList();
 		
 			}
 		}

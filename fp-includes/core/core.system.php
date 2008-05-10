@@ -161,7 +161,7 @@
 		$GLOBALS['smarty'] =& $GLOBALS['_FP_SMARTY'];
 		$smarty =& $GLOBALS['smarty'];
 		
-		$GLOBALS['fp_config'] =& config_load();
+		$GLOBALS['fp_config'] = config_load();
 		
 		cookie_setup();
 		sess_setup();
