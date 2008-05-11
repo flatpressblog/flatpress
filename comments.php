@@ -57,6 +57,7 @@
 		}
 		
 		function comment_feed() {
+			global $fp_params;
 			echo "\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get Comments RSS 2.0 Feed\" href=\"".
 					theme_comments_feed_link('rss2', $fp_params['entry']) 
 				."\" />";
