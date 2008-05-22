@@ -37,7 +37,7 @@ function smarty_validate_criteria_isNumber($value, $empty, &$params, &$formvars)
     if(strlen($value) == 0)
         return $empty;        
 
-    return preg_match('!^\d+(\.\d+)?$!', $value);
+    return preg_match('!^-?\d+(\.\d+)?$!', $value);
 }
 
 ?>

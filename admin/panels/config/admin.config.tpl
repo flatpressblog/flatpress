@@ -91,7 +91,7 @@
 		
 		<dt><label for="timeoffset"> {$panelstrings.timeoffset} </label></dt>
 		<dd><input type="text" name="timeoffset" id="timeoffset" 
-			class="smalltextinput{$error.maxentries|notempty:" field-error"}" 
+			class="smalltextinput{$error.timeoffset|notempty:" field-error"}" 
 			value="{$fp_config.locale.timeoffset}" /> {$panelstrings.hours} 
 		</dd>
 
