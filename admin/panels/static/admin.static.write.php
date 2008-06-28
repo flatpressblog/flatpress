@@ -27,9 +27,11 @@
 		var $events = array('save', 'preview');
 		
 		function _makePreview($arr, $id=null) {
-			
-			$arr['subject'] = apply_filters('title_save_pre', $arr['subject']);
-			$arr['content'] = apply_filters('content_save_pre', $arr['content']);
+
+			if (!$id) {		
+				$arr['subject'] = apply_filters('title_save_pre', $arr['subject']);
+				$arr['content'] = apply_filters('content_save_pre', $arr['content']);
+			}
 			
 			
 			$this->smarty->assign('post', $arr);
