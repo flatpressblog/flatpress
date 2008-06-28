@@ -4,7 +4,7 @@
 	<title>{$flatpress.title}</title>
 	<subtitle>{$flatpress.subtitle}</subtitle>
 	<link href="{$smarty.const.BLOG_BASEURL}" />
-	<link rel="self" href="{$smarty.server.REQUEST_URI|escape}" />
+	<link rel="self" href="{'atom'|theme_feed_link}" />
 	<generator uri="http://www.flatpress.org/" version="{$flatpress.version}">
   		FlatPress
 	</generator>
