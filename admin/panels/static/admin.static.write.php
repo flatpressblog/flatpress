@@ -84,8 +84,8 @@
 		function _getposteddata() {
 
 			$arr['version'] = system_ver();
-			$arr['subject'] = stripslashes($_POST['subject']);
-			$arr['content'] = stripslashes($_POST['content']);
+			$arr['subject'] = ($_POST['subject']);
+			$arr['content'] = ($_POST['content']);
 			$author = user_get();
 			$arr['author'] = $author['userid'];
 			$arr['date'] = !empty($_POST['timestamp'])?$_POST['timestamp']:date_time();
