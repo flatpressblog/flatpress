@@ -19,7 +19,7 @@
 			{if ($categories)} <category><![CDATA[ {$categories|@filed:false} ]]></category>{/if}
 			<guid isPermaLink="true">{$id|link:post_link}</guid>
 
-			<author>{$flatpress.email} ($flatpress.author})</author>
+			<author>{$flatpress.email} ({$flatpress.author})</author>
 			<pubDate>{$date|date_format:"%a, %d %b %Y %H:%M:%S %z"}</pubDate>
 			<comments>{$id|link:comments_link}</comments>
 			
