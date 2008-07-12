@@ -219,7 +219,7 @@
 						global $post;
 					
 						$comm_mail = isset($arr['email'])? "<{$arr['email']}>" : '';
-						$from_mail = $comm_mail? $arr['email'] : $fp_config['general']['email'];
+						$from_mail = $fp_config['general']['email'];
 					
 						$post = $e; // plugin such as prettyurls might need this...
 
