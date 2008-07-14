@@ -38,8 +38,9 @@ LBOXHEAD;
 add_action('wp_footer', 'plugin_lightbox_footer');
 
 function plugin_lightbox_hook($popup, $abspath) {
+	global $lightbox_rel;
 	// the other $popup is just dropped
-	return ' rel="lightbox"';
+	return $lightbox_rel? "rel=\"lightbox[$lightbox_rel]\"" : ' rel="lightbox"';
 }
 add_action('bbcode_img_popup', 'plugin_lightbox_hook', 5, 2);
 
