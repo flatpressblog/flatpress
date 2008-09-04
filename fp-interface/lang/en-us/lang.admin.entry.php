@@ -109,14 +109,14 @@
 	
 	$lang['admin']['entry']['delete'] = 
 	array(
-		'head'		=> "Delete Entry", 
+		'head'		=> 'Delete Entry', 
 		'descr'		=> 'You\'re about to delete the following entry:',
 		'preview'	=> 'Preview',
 		'confirm'	=> 'Are you sure you want to proceed?',
 		'fset'		=> 'Delete',
 		'ok'		=> 'Yes, delete this entry',
 		'cancel'	=> 'No, take me back to the panel',
-		'err'		=> 'The specified entry does not exists',
+		'err'		=> 'The specified entry does not exist',
 	
 	);
 	

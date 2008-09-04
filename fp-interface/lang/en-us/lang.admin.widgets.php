@@ -15,7 +15,7 @@
 						'Plugin</a> that you can put in some special areas '.
 						'(the <em>widgetsets</em>) on your blog pages '.
 						'called <strong>widgetsets</strong> </p>'.
-						'<p><strong>Drag</strong> a widget from the left box and <strong>drop</strong> '.
+						'<p><strong>Drag</strong> a widget from the right box and <strong>drop</strong> '.
 						'it to the position you prefer.</p>',
 						
 		'availwdgs'	=> 'Available Widgets',

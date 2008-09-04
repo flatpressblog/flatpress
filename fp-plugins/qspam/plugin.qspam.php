@@ -2,7 +2,7 @@
 /*
 Plugin Name: QuickSpamFilter
 Plugin URI: http://flatpress.nowherland.it/
-Description: Antispam asking to answer a simple math question.
+Description: Quick ban words (edit the plugin to add more to the list) 
 Author: NoWhereMan  (E.Vacchi)
 Version: 3.0
 Author URI: http://www.nowhereland.it
