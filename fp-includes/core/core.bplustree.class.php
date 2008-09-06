@@ -2552,9 +2552,33 @@ class SBPlusWalker extends BPlusWalker {
 
 	function current_value() {
 		$id = parent::current_value();
-		return $this->tree->GETSTRING($id);
+		return $this->tree->getstring($id);
 	}
 
+}
+
+class caching_SBPT extends SBPlusTree {
+
+	var $cache = array();
+
+	function getitem($key) {
+		if (isset($cache[$key]))
+			return $cache[$key];
+		else	return ($cache[$key] = parent::getitem($key));
+	}
+
+	function resetcache() {
+		$this->cache = array();
+	}
+
+	function nope() {
+		trigger_error("operation not permitted in caching_BPT", E_USER_WARNING);
+	}
+
+	function setitem() { $this->nope(); }
+
+	function delitem() { $this->nope(); }
+	
 }
 
 class BPlusUtils {

@@ -33,7 +33,7 @@
 	require_once INCLUDES_DIR.'core.static.php';
 	require_once INCLUDES_DIR.'core.draft.php';
 	
-	
+	require_once INCLUDES_DIR.'core.bplustree.class.php';
 	require_once INCLUDES_DIR.'core.fpdb.class.php';
 	
 	require_once INCLUDES_DIR.'core.language.php';

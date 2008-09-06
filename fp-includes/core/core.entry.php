@@ -1,7 +1,18 @@
 <?php
-	
 
 	class entry_indexer extends cache_filelister {
+		
+		/**
+		 * opens the index belonging to a given category
+		 * @params int $id_cat	
+		 */
+		function entry_indexer($id_cat=0) {
+			$this->_cachefile = 'index-'.$id_cat;
+			parent::cache_filelister();
+		}
+	}
+
+	class _entry_indexer extends cache_filelister {
 		
 		var $_varname = 'cache';
 		var $_cachefile = null;

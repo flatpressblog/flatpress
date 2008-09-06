@@ -153,7 +153,7 @@
 			
 			$fpdb->init();
 			
-			$entry_index = $fpdb->entry_index;
+			$entry_index =& $fpdb->get_index($this->params->category);
 			
 			if ($this->single) {
 				$this->_prepare_single($entry_index);
@@ -202,21 +202,23 @@
 		}
 		
 		function _prepare_list(&$entry_index) {
-			//global $blog_config;
+
+
 			$qp =& $this->params;
 			
 			$entry_num = 0;
-			
+			$this->walker =& $entry_index->walker();
+
 			if (!$qp->y){
-			
-				$this->local_list = array_keys($entry_index);
-				$this->local_index =& $entry_index;
+				// searches the whole index
 				
-				/* @todo MUST CACHE THIS COUNT! (MUST STRUCT CACHE)*/
-				$index_count = count($entry_index);
+				#$this->local_list = array_keys($entry_index);
+				
+				$index_count = $entry_index->length(); 
 				
 			} else {
-						
+				// notice this won't work with cats (for now)
+				
 				$obj =& new entry_archives($qp->y, $qp->m, $qp->d); 
 				$filteredkeys = $obj->getList();
 				
@@ -227,53 +229,33 @@
 			}
 			
 			if ($qp->count < 0) {
+
+				// count<0 means 'all'
 				$qp->count = $index_count;
+
 			} elseif (($qp->start + $qp->count) > $index_count) {
+
 				if ($index_count > 0)
 					$qp->count = $index_count - $qp->start;
 				else
 					$index_count = $qp->start = $qp->count = 0;
 			}
 		
-			$this->pointer = $qp->start;
+			#$this->pointer = $qp->start;
+
+			// fills array
 			
+	
 			
-			if ($qp->category==0)
-				return;
-				
-			
-			/* category */
-			/* this just SUCKS. need a separate cache... */
-			
-			$relations = entry_categories_get('rels');
-			
-			if (!isset($relations[$qp->category]))
-				return;
-			
-			$catrel = $relations[$qp->category];
-			
-			/* need to search for one more to know if we need a nextpage link */
-			$fill = $qp->start + $qp->count + 1; 
-			$i = 0;
-			$tmp = array();
-			
-			while ($i <= $fill && (list($K, $V) = each($this->local_list))) {
-				
-				if (array_intersect($catrel, $this->local_index[$V]['categories'])) {
-					// in_array($qp->category, $this->local_index[$V]['categories']))
-					$tmp[] =& $this->local_list[$K];
-					
-					$i++;
-					
-				}
-				
-			}
-			
+			/*
+				stuff for cats, have a look
+
 			$this->local_list =& $tmp;
 			
 			if ($qp->start + $qp->count > $i) {
 				$qp->count = $i - $qp->start;
 			}
+			 */
 			
 		}
 		
@@ -331,14 +313,30 @@
 				$this->prepare();
 
 			
-			$this->_fillPrevId();
-			$this->_fillNextId();
+			#$this->_fillPrevId();
+			#$this->_fillNextId();
 						
-			$id = $this->_fillCurrentId();
-	
+			#$id = $this->_fillCurrentId();
+
 			
+			while ($this->walker->valid && $this->pointer<$qp->start) {
+
+				$this->previd = $this->currentid;
+				$id = $this->currentid = $this->walker->current_key();
+
+				$this->walker->next();
+				$this->pointer++;
+			}
+			
+			// pointer == start
+			
+			$this->previd = $this->currentid;
+			$id = $this->currentid = $this->walker->current_key();
+
+
 			if ($qp->fullparse && $this->counter <= 0) {
-			
+
+				// full parse: reads the whole array from file
 				$cont = array();
 				
 				$cont = entry_parse($id);
@@ -348,12 +346,13 @@
 					$cont['comments'] = $this->comments->getCount();
 			
 					/* index is updated with full-parsed entry */				
-					$this->local_index[$id] = $cont;
+					#$this->local_index[$id] = $cont;
 				}
 				
 			} else {
-				
-				$cont = $this->local_index[$id];
+
+				// only title
+				$cont = array('subject' => $this->walker->current_value());
 				
 			}
 			
@@ -373,9 +372,9 @@
 				return false;
 			
 			$var =& $this->peekEntry();
-			
 			$this->lastentry = $var;
 			
+			$this->walker->next();
 			$this->pointer++;
 			
 			return $var;		
@@ -521,7 +520,8 @@
 
 	class FPDB {
 		
-		var $_indexer = null;
+		var $_indexer = array();
+		var $_categories = array();
 		var $queries = array();
 		
 	
@@ -530,13 +530,21 @@
 		}
 		
 		function init() {
-			if (!$this->_indexer) {
-				$this->_indexer =& new entry_indexer();
+			#if (!$this->_indexer) {
+				#$this->_indexer =& new entry_indexer();
 				$this->_categories = entry_categories_get();
-				$obj =& $this->_indexer;
-				$this->entry_index = $obj->getList();
+				#$obj =& $this->_indexer;
+				#$this->entry_index = $obj->getList();
+				
 		
+			#}
+		}
+
+		function &get_index($cat_id = 0) {
+			if (!isset($this->_indexer[$cat_id])) {
+				$this->_indexer[$cat_id] =& new entry_indexer($cat_id);
 			}
+			return $this->_indexer[$cat_id];
 		}
 		
 		function reset($queryId=null) {

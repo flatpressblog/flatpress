@@ -5,51 +5,44 @@
 	class cache_filelister extends fs_filelister {
 		
 		var $_cachefile = null;
+		var $_offset = 0;
+		var $_nodesize = 30;
+		var $_keysize = 12;
 		
 		// sub-classes will fill the above variables on constructing
 		function cache_filelister() {
 		
 			if (!$this->_cachefile)
-				trigger_error('CACHE: no cache file specified');
+				trigger_error('CACHE: no cache file specified', E_USER_ERROR);
 		
 			$varname = $this->_varname;
-				
-			if (file_exists($this->_cachefile)) {
-				//include($this->_cachefile);
-				$var = io_load_file($this->_cachefile);
-				$this->_list = unserialize($var);
-			} else {
-				parent::fs_filelister();
-				
-				$this->save();
-			}
 			
-			return $this->_list;
+			if (!file_exists($this->_cachefile)) {
+				trigger_error  ("Can't find index '{$this->_cachefile}'", E_USER_ERROR);
+			}
+
+			$this->_tree = caching_SBPT(
+				fopen($this->_cachefile.'.dat', 'r'),
+				fopen($this->_cachefile.'.strings.dat', 'r'),
+				$this->_offset,
+				$this->_chunksize,
+				$this->_keysize
+			);
+			
+		
+			#return $this->_list;
 
 		}
-		
-		function checksorting() {
-		
-			list($k1) = each($this->_list);
-			list($k2) = each($this->_list);
-			
-			// decreasing order
-			
-			if ((FP_SORTING==SORT_DESC) & (strcmp($k1, $k2) < 0)) {
-				$this->save;
-			}
-			
-			
-			
-			
+
+		function walker() {
+			return $this->_tree->walker();
 		}
 		
 		function save() {
-		
-			
-			// TODO: re-think this :)
-			// reverse sorting on save is an acceptable overhead, 
-			// still this is quite an hack
+
+			trigger_error('Cannot save() a cache', E_USER_ERROR);
+
+			/*
 			
 			krsort($this->_list);
 			$succ = io_write_file($this->_cachefile, serialize($this->_list));
@@ -61,24 +54,29 @@
 			
 			
 			} else return $this->_list;
+			 */
 						
 		}
 		
 		function getList() {
-			return $this->_list;
+			trigger_error('Cannot getlist from cache', E_USER_WARNING);
+			#return $this->_list;
 		}
 		
 		function get($id) {
-			return isset($this->_list[$id])? $this->_list[$id] : false;
+			return $this->_tree->getitem($id);
+			#return isset($this->_list[$id])? $this->_list[$id] : false;
 		}
 		
 		function add($id, $val) {
+			trigger_error('Cannot add to a cache', E_USER_ERROR) ;
 			$this->_list[$id]=$val;
 			
 			return $this->save();
 		}
 		
 		function delete($entryid) {
+			trigger_error('Cannot delete from a cache', E_USER_ERROR) ;
 			$cache =& $this->_list;
 			unset($cache[$entryid]); // if id found, it is deleted
 			
@@ -86,6 +84,7 @@
 		}
 		
 		function purge() {
+			trigger_error('cannot purge', E_USER_ERROR);
 			return fs_delete($this->_cachefile);
 		}
 		
