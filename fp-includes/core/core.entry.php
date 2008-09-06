@@ -1,15 +1,98 @@
 <?php
 
-	class entry_indexer extends cache_filelister {
+	class entry_cached_index extends cache_filelister {
 		
 		/**
 		 * opens the index belonging to a given category
 		 * @params int $id_cat	
 		 */
 		function entry_indexer($id_cat=0) {
-			$this->_cachefile = 'index-'.$id_cat;
+			$this->_cachefile = INDEX_DIR.'index-'.$id_cat;
 			parent::cache_filelister();
 		}
+
+	}
+
+	class entry_index {
+		
+		var $indices = array();
+		var $_offset = 0;
+		var $_chunksize = 30;
+		var $_keysize = 12;
+
+
+		function entry_index() {
+
+			// only main index s a SBPlus (string BPlus): 
+			// the other (other categories) are managed 
+			// as if they were simple BPlus trees, so
+			// values in key,value pairs won't
+			// be strings but integers
+			//
+			// the integer will be the seek position 
+			// in the SBPlus' string file
+			//
+			// they'll be loaded back with the string file
+			// as SBPlus trees: the string-key, string-value pair
+			// will be returned
+			
+			$this->indices[0] = new SBPlusTree(
+				fopen(INDEX_DIR.'index-0.dat', 'r+'),
+				fopen(INDEX_DIR.'index.strings.dat', 'r+'),
+				$this->_offset,
+				$this->_chunksize,
+				$this->_keysize
+			);
+
+
+		}
+
+		function &get_index($cat=0) {
+			if (!isset($this->indices[$cat])) {
+				$this->indices[$cat] =& new BPlusTree(
+					fopen(INDEX_DIR.'index-'.$cat.'.dat', 'r+'),
+					$this->_offset,
+					$this->_chunksize,
+					$this->_keysize
+				);
+				$this->indices[$cat]->open();
+			}
+			return $this->indices[$cat];
+		}
+
+		function add($entry) {
+			$key =& entry_timetokey($entry['date']);
+			$val = $entry['subject'];
+
+			$main =& $this->get_index();
+			$seek = $main->setitem($key, $val);
+
+			if (isset($entry['categories']) && is_array($entry['categories']) {
+				foreach ($entry['categories'] as $cat) {
+					if (!is_numeric($cat) continue;
+					$this_index =& $this->get_index($cat);
+					$this_index->setitem($key, $seek);
+				}
+			}
+
+		}
+
+		function delete($id) {
+			$key = entry_idtokey($id);
+
+			$main =& $this->get_index();
+			$main->delitem($key);
+
+			if (isset($entry['categories']) && is_array($entry['categories']) {
+				foreach ($entry['categories'] as $cat) {
+					if (!is_numeric($cat) continue;
+					$this_index =& $this->get_index($cat);
+					$this_index->delitem($key);
+				}
+			}
+
+		}
+
 	}
 
 	class _entry_indexer extends cache_filelister {
@@ -216,7 +299,21 @@
 	function entry_get() {
 		$fpdb->get();
 	}
-	*/
+	 */
+
+	function entry_keytoid($key) {
+		$date = substr($key,0,6);
+		$time = substr($key,6);
+		return "entry{$date}-{$time}";
+	}
+
+	function entry_idtokey($id) {
+		return substr($id, 5, 6) . substr($id, 11);
+	}
+
+	function entry_timetokey($time) {
+		return date('ymdHis', $time);
+	}
 
 	function entry_list() {
 		

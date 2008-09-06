@@ -23,7 +23,7 @@
 
 			$this->_tree = caching_SBPT(
 				fopen($this->_cachefile.'.dat', 'r'),
-				fopen($this->_cachefile.'.strings.dat', 'r'),
+				fopen(INDEX_DIR.'index.strings.dat', 'r'),
 				$this->_offset,
 				$this->_chunksize,
 				$this->_keysize

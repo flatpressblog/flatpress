@@ -80,6 +80,8 @@
 	// cache file name and path.
 	define('CACHE_DIR', FP_CONTENT . 'cache/');
 	define('CACHE_FILE', '%%cached_list.php');
+
+	define('INDEX_DIR', FP_CONTENT.'index/');
 	
 	define('LOCKFILE', FP_CONTENT . '%%setup.lock');
 

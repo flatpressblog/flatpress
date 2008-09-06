@@ -322,7 +322,7 @@
 			while ($this->walker->valid && $this->pointer<$qp->start) {
 
 				$this->previd = $this->currentid;
-				$id = $this->currentid = $this->walker->current_key();
+				$id = $this->currentid = entry_keytoid($this->walker->current_key());
 
 				$this->walker->next();
 				$this->pointer++;
@@ -542,7 +542,7 @@
 
 		function &get_index($cat_id = 0) {
 			if (!isset($this->_indexer[$cat_id])) {
-				$this->_indexer[$cat_id] =& new entry_indexer($cat_id);
+				$this->_indexer[$cat_id] =& new entry_cached_index($cat_id);
 			}
 			return $this->_indexer[$cat_id];
 		}
@@ -643,6 +643,28 @@
 		}
 	}
 
+
+	class FPDB_transaction {
+
+		var $_index = null;
+		var $_offset = 0;
+		var $_nodesize = 30;
+		var $_keysize = 12;
+
+		function FPDB_transaction($id_cat=0) {
+			$this->_index = INDEX_DIR.'index-'.$id_cat;
+
+			$this->_tree = caching_SBPT(
+				fopen($this->_cachefile.'.dat', 'r'),
+				fopen($this->_cachefile.'.strings.dat', 'r'),
+				$this->_offset,
+				$this->_chunksize,
+				$this->_keysize
+			);
+	
+		}
+
+	}
 	
 	// SMARTY FUNCTIONS ----------------------------------------------------
 	
