@@ -42,8 +42,9 @@
 				$mode = 'w+b';
 
 			$this->indices[0] = new SBPlusTree(
-				fopen(INDEX_DIR.'index-0.dat', $mode),
+				fopen($f, $mode),
 				fopen(INDEX_DIR.'index.strings.dat', $mode),
+				256,
 				$this->_offset,
 				$this->_chunksize,
 				$this->_keysize

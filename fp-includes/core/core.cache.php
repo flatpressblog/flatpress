@@ -21,13 +21,16 @@
 				trigger_error  ("Can't find index '{$this->_cachefile}'", E_USER_ERROR);
 			}
 
-			$this->_tree = new caching_SBPT(
-				fopen($this->_cachefile.'.dat', 'r'),
-				fopen(INDEX_DIR.'index.strings.dat', 'r'),
+			$this->_tree =& new caching_SBPT(
+				fopen($this->_cachefile.'.dat', 'rb'),
+				fopen(INDEX_DIR.'index.strings.dat', 'rb'),
+				256,
 				$this->_offset,
 				$this->_chunksize,
 				$this->_keysize
 			);
+
+			$this->_tree->open();
 			
 		
 			#return $this->_list;

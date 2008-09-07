@@ -1500,7 +1500,7 @@ class BPlusTree {
 	 * @param int	$keylen maximum lenght of a key in bytes (unicode extended chars evaluate to two chars)
 	 */
 
-	function BplusTree($infile, $pos=null, $nodesize=null, $keylen=10) {
+	function BPlusTree($infile, $pos=null, $nodesize=null, $keylen=10) {
 		if (!is_null($keylen) && $keylen<=2) {
 			trigger_error("$keylen must be greater than 2", E_USER_ERROR);
 		}
@@ -2508,7 +2508,7 @@ class SBPlusTree extends BPlusTree {
 	function SBPlusTree($infile, $stringfile, 
 				$maxstring = 256, 
 				$pos=null, $nodesize=null, $keylen=null) {
-        	parent::BPlusTree($infile, $maxstring, $pos, $nodesize, $keylen);
+        	parent::BPlusTree($infile, $pos, $nodesize, $keylen);
 		$this->stringfile = $stringfile;
 		$this->maxstring = $maxstring;
 	}

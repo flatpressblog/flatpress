@@ -120,7 +120,7 @@
 		var $counter 	= -1;
 		var $params 	= null;
 		var $single 	= false;
-		var $pointer 	= 1;		/* pointer points always to NEXT element */
+		var $pointer 	= 0;		/* pointer points always to NEXT element */
 		var $processed 	= false;
 		var $ID 		= 0;		/* query id */
 		
@@ -318,7 +318,6 @@
 						
 			#$id = $this->_fillCurrentId();
 
-			
 			while ($this->walker->valid && $this->pointer<$qp->start) {
 
 				$this->previd = $this->currentid;
@@ -331,7 +330,7 @@
 			// pointer == start
 			
 			$this->previd = $this->currentid;
-			$id = $this->currentid = $this->walker->current_key();
+			$id = $this->currentid = entry_keytoid($this->walker->current_key());
 
 
 			if ($qp->fullparse && $this->counter <= 0) {
