@@ -2508,7 +2508,7 @@ class SBPlusTree extends BPlusTree {
 	function SBPlusTree($infile, $stringfile, 
 				$maxstring = 256, 
 				$pos=null, $nodesize=null, $keylen=null) {
-        	parent::BPlusTree();
+        	parent::BPlusTree($infile, $maxstring, $pos, $nodesize, $keylen);
 		$this->stringfile = $stringfile;
 		$this->maxstring = $maxstring;
 	}

@@ -6,7 +6,7 @@
 		 * opens the index belonging to a given category
 		 * @params int $id_cat	
 		 */
-		function entry_indexer($id_cat=0) {
+		function entry_cached_index($id_cat=0) {
 			$this->_cachefile = INDEX_DIR.'index-'.$id_cat;
 			parent::cache_filelister();
 		}
@@ -36,40 +36,57 @@
 			// as SBPlus trees: the string-key, string-value pair
 			// will be returned
 			
+			if ($oldfile = file_exists($f=INDEX_DIR.'index-0.dat')) 
+				$mode = 'r+b';
+			else 
+				$mode = 'w+b';
+
 			$this->indices[0] = new SBPlusTree(
-				fopen(INDEX_DIR.'index-0.dat', 'r+'),
-				fopen(INDEX_DIR.'index.strings.dat', 'r+'),
+				fopen(INDEX_DIR.'index-0.dat', $mode),
+				fopen(INDEX_DIR.'index.strings.dat', $mode),
 				$this->_offset,
 				$this->_chunksize,
 				$this->_keysize
 			);
+
+			if ($oldfile)
+				$this->indices[0]->open();
+			else 
+				$this->indices[0]->startup();
 
 
 		}
 
 		function &get_index($cat=0) {
 			if (!isset($this->indices[$cat])) {
+				$f = INDEX_DIR.'index-'.$cat.'.dat';
+				if ($oldfile = file_exists($f)) 
+					$mode = 'r+b';
+				else	$mode = 'w+b';
+
 				$this->indices[$cat] =& new BPlusTree(
-					fopen(INDEX_DIR.'index-'.$cat.'.dat', 'r+'),
+					fopen($f, $mode),
 					$this->_offset,
 					$this->_chunksize,
 					$this->_keysize
 				);
-				$this->indices[$cat]->open();
+				if ($oldfile)
+					$this->indices[$cat]->open();
+				else $this->indices[$cat]->startup();
 			}
 			return $this->indices[$cat];
 		}
 
-		function add($entry) {
-			$key =& entry_timetokey($entry['date']);
-			$val = $entry['subject'];
+		function add($id, $entry) {
+			$key =& entry_idtokey($id);
+			$val = $entry['SUBJECT'];
 
 			$main =& $this->get_index();
 			$seek = $main->setitem($key, $val);
 
-			if (isset($entry['categories']) && is_array($entry['categories']) {
-				foreach ($entry['categories'] as $cat) {
-					if (!is_numeric($cat) continue;
+			if (isset($entry['CATEGORIES']) && is_array($entry['CATEGORIES'])) {
+				foreach ($entry['CATEGORIES'] as $cat) {
+					if (!is_numeric($cat)) continue;
 					$this_index =& $this->get_index($cat);
 					$this_index->setitem($key, $seek);
 				}
@@ -83,9 +100,9 @@
 			$main =& $this->get_index();
 			$main->delitem($key);
 
-			if (isset($entry['categories']) && is_array($entry['categories']) {
+			if (isset($entry['categories']) && is_array($entry['categories'])) {
 				foreach ($entry['categories'] as $cat) {
-					if (!is_numeric($cat) continue;
+					if (!is_numeric($cat)) continue;
 					$this_index =& $this->get_index($cat);
 					$this_index->delitem($key);
 				}
@@ -274,9 +291,15 @@
 	*/
 	function &entry_init() {
 		
-		global $fpdb;
-		$fpdb->init();
-		return $fpdb->_indexer;
+		#global $fpdb;
+		#$fpdb->init();
+		
+		static $entry_index = null;
+
+		if (is_null($entry_index)) 
+			$entry_index=& new entry_index;
+
+		return $entry_index;
 		
 	}
 	
@@ -308,7 +331,7 @@
 	}
 
 	function entry_idtokey($id) {
-		return substr($id, 5, 6) . substr($id, 11);
+		return substr($id, 5, 6) . substr($id, 12);
 	}
 
 	function entry_timetokey($time) {
@@ -316,6 +339,8 @@
 	}
 
 	function entry_list() {
+
+		trigger_error('function deprecated', E_USER_ERROR);
 		
 		$obj =& entry_init();
 		

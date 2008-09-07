@@ -17,11 +17,11 @@
 		
 			$varname = $this->_varname;
 			
-			if (!file_exists($this->_cachefile)) {
+			if (!file_exists($this->_cachefile.'.dat')) {
 				trigger_error  ("Can't find index '{$this->_cachefile}'", E_USER_ERROR);
 			}
 
-			$this->_tree = caching_SBPT(
+			$this->_tree = new caching_SBPT(
 				fopen($this->_cachefile.'.dat', 'r'),
 				fopen(INDEX_DIR.'index.strings.dat', 'r'),
 				$this->_offset,
@@ -37,7 +37,11 @@
 		function walker() {
 			return $this->_tree->walker();
 		}
-		
+
+		function length() {
+			return $this->_tree->length();
+		}
+
 		function save() {
 
 			trigger_error('Cannot save() a cache', E_USER_ERROR);
