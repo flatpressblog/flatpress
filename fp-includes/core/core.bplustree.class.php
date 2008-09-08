@@ -1025,12 +1025,13 @@ class BPlusTree_Node {
 		$size = $this->size;
 		$position = $this->indices[$size];
 		if ($position == BPT_NULLSEEK) {
-			return null;
+			$neighbour = null;
 		} else {
 			$neighbour = $this->getclone($position);
 			$neighbour = $neighbour->materialize();
-			return $neighbour;
 		}
+
+		return $neighbour;
         
 	}
 	
@@ -2387,7 +2388,7 @@ class BPlusWalker {
 		} elseif (in_array($keylower, $keys) && $this->includelower) {
 			$this->node_index = array_search($keylower, $keys);
 			$index = $this->node_index;
-			if ($Index<$validkeys) {
+			if ($index<$validkeys) {
 				$this->valid = 1;
 			}
 		}
