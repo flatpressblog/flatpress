@@ -93,6 +93,8 @@
 				}
 			}
 
+			return true;
+
 		}
 
 		function delete($id) {

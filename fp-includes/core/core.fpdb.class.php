@@ -339,6 +339,7 @@
 				$cont = array();
 				
 				$cont = entry_parse($id);
+
 				if ($cont) {
 					$this->comments =& new FPDB_CommentList($id, comment_getlist($id));
 				
@@ -359,7 +360,7 @@
 			
 			$post = $cont;
 			$post['id'] = $id;
-			
+
 			$var = array(&$id, &$cont);
 			return $var;
 		
