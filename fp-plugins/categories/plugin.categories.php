@@ -13,6 +13,15 @@ Author URI: http://www.nowhereland.it/
 function plugin_categories_widget() {
 	
 	global $smarty;
+
+	// set this to true if you want show the number
+	// of categories for each category; please notice:
+	// not cheap on the server, it should be cached
+	// somewhere else
+	
+	// default: disabled
+	
+	$smarty->assign('categories_showcount', false);
 	
 	// load plugin strings
 	// they're located under plugin.PLUGINNAME/lang/LANGID/

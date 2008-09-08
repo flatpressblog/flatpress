@@ -44,7 +44,7 @@ function smarty_function_list_categories($params) //, &$smarty)
 
 function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 	
-	global $_FP_SMARTY;
+	global $smarty, $fpdb;
 	
 	extract($params);
 	
@@ -89,7 +89,7 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
                 array_push($result, $ild);
 		
 		
-		$cat_entry = $_FP_SMARTY->get_template_vars('categories');
+		$cat_entry = $smarty->get_template_vars('categories');
 		if (!$cat_entry) $cat_entry = array();
 		//list($catId) = each($categories);
 		
@@ -121,6 +121,11 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 			$after = $string;
 		}elseif(isset($params['type']) && $params['type']=='linked'){
 			$after='</a>';
+			if (isset($params['count']) && $params['count']) {
+				$index =& $fpdb->get_index($vid);
+				$count = ($index)? $index->length() : 0;
+				$after = " ($count) ". $after;
+			}
 		}
 		
 		array_push($result, $after);

@@ -1,1 +1,1 @@
-{list_categories type=linked} 
+{list_categories type=linked count=$categories_showcount} 
