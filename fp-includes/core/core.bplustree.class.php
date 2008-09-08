@@ -2521,7 +2521,8 @@ class SBPlusTree extends BPlusTree {
 	}
 
 	function setstring($s) {
-		$seek = fseek($this->stringfile, 0, SEEK_END);
+		fseek($this->stringfile, 0, SEEK_END);
+		$seek = ftell($this->stringfile);
 		// nul-pad string
 		$x = str_pad($s, $this->maxstring, chr(0));
 		fwrite($this->stringfile, $x);
