@@ -178,11 +178,16 @@
 				trigger_error("FPDB: no ID found for query {$this->ID}", E_USER_ERROR);
 						
 			$qp =& $this->params;
-							
-			if (!isset($entry_index[$qp->id])){
+
+			$key = entry_idtokey($qp->id);
+			if (!($entry_index->has_key($key))){
 				trigger_error("FPDB: no entry found for {$qp->id}", E_USER_WARNING);
 				return;
 			}
+
+			$this->walker =& $entry_index->walker($key, true);
+
+			/*
 			if ($this->counter < 0) { 
 			
 				$idlist = array_keys($entry_index);
@@ -198,7 +203,12 @@
 			}
 			
 			$this->pointer = $qp->start;
-			
+			 */
+
+			$qp->start = 0;
+			$qp->count = 1;
+			$this->pointer = 0;
+
 		}
 		
 		function _prepare_list(&$entry_index) {
@@ -345,8 +355,6 @@
 				
 					$cont['comments'] = $this->comments->getCount();
 			
-					/* index is updated with full-parsed entry */				
-					#$this->local_index[$id] = $cont;
 				}
 				
 			} else {
@@ -427,6 +435,7 @@
 		function getNextPage() {
 			
 			if ($this->single){
+				return false;
 				$id = $this->_getOffsetId(1, $this->params->start);
 				
 				if ($id)
@@ -450,6 +459,8 @@
 		function getPrevPage() {
 		
 			if ($this->single) {
+				return false;
+
 				$id = $this->_getOffsetId(-1, $this->params->start);
 				
 				if ($id)

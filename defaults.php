@@ -94,6 +94,7 @@
 		
 	
 	define('LANG_DEFAULT', 'en-us');
+	define('BPT_SORT', SORT_DESC);
 		
 	
 	set_include_path(ABS_PATH);

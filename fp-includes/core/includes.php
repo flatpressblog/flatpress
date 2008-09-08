@@ -22,8 +22,9 @@
 	require_once INCLUDES_DIR.'core.fileio.php';
 	require_once INCLUDES_DIR.'core.cache.php';
 	require_once INCLUDES_DIR.'core.blogdb.php';
-	
-	
+	require_once INCLUDES_DIR.'core.bplustree.class.php';
+
+
 	require_once INCLUDES_DIR.'core.administration.php';
 	require_once INCLUDES_DIR.'core.widgets.php';
 	require_once INCLUDES_DIR.'core.comment.php';
@@ -33,7 +34,6 @@
 	require_once INCLUDES_DIR.'core.static.php';
 	require_once INCLUDES_DIR.'core.draft.php';
 	
-	require_once INCLUDES_DIR.'core.bplustree.class.php';
 	require_once INCLUDES_DIR.'core.fpdb.class.php';
 	
 	require_once INCLUDES_DIR.'core.language.php';

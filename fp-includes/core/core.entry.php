@@ -1,14 +1,32 @@
 <?php
 
-	class entry_cached_index extends cache_filelister {
-		
+	class entry_cached_index extends caching_SBPT { #cache_filelister {
+
+		var $position = 0;
+		var $nodesize = 30;
+		var $keylen = 12;
+
 		/**
 		 * opens the index belonging to a given category
 		 * @params int $id_cat	
 		 */
 		function entry_cached_index($id_cat=0) {
-			$this->_cachefile = INDEX_DIR.'index-'.$id_cat;
-			parent::cache_filelister();
+			$F = INDEX_DIR.'index-'.$id_cat.'.dat';
+		
+			if (!file_exists($F)) {
+				trigger_error  ("Can't find index '{$F}'", E_USER_ERROR);
+			}
+
+			parent::caching_SBPT(
+				fopen($F, 'rb'),
+				fopen(INDEX_DIR.'index.strings.dat', 'rb'),
+				256,
+				$this->position,
+				$this->nodesize,
+				$this->keylen
+			);
+
+			$this->open();
 		}
 
 	}

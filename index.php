@@ -184,7 +184,7 @@
 		$fpdb->query($params);
 
 		$q =& $fpdb->getQuery();
-		list($id, $e) = @$q->peekEntry();
+		list($id, $e) = $q->peekEntry();
 
 		/* no entry found : 404 */
 
