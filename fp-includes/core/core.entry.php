@@ -526,7 +526,7 @@
 		
 		$categories = array();
 		
-		if (isset($fpdb->_categories)) {
+		if (!empty($fpdb->_categories)) {
 			$categories = $fpdb->_categories; 
 		} else { 
 			
