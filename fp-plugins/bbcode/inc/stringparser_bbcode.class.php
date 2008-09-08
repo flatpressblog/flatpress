@@ -950,7 +950,8 @@ class StringParser_BBCode extends StringParser {
 				return $this->_stack[$i];
 			}
 		}
-		return false;
+		$false = false; // workaround for notice
+		return $false;
 	}
 	
 	/**
