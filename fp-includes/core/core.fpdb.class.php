@@ -163,6 +163,15 @@
 			$fpdb->init();
 			
 			$entry_index =& $fpdb->get_index($this->params->category);
+
+			$this->counter++;
+
+			if (!$entry_index) {
+				$this->params->start = 0;
+				$this->params->count = 0;
+				$this->pointer = 0;
+				return;
+			}
 			
 			if ($this->single) {
 				$this->_prepare_single($entry_index);
@@ -173,7 +182,6 @@
 				}
 			}
 			
-			$this->counter++;
 			
 		
 		}
@@ -324,7 +332,12 @@
 		function &peekEntry() {
 		
 			global $post;
-		
+
+			if (!$this->hasMore()) {
+				$false = array(false, false);
+				return $false;
+			}
+
 			$qp =& $this->params;
 			
 			
@@ -368,7 +381,8 @@
 			}
 
 			if (!$cont) {
-				return false;
+				$cont = false;
+				return $cont;
 			}
 			
 			if ($qp->comments) {
@@ -563,7 +577,7 @@
 
 		function &get_index($cat_id = 0) {
 			if (!isset($this->_indexer[$cat_id])) {
-				$this->_indexer[$cat_id] =& new entry_cached_index($cat_id);
+				$this->_indexer[$cat_id] =& entry_cached_index($cat_id);
 			}
 			return $this->_indexer[$cat_id];
 		}

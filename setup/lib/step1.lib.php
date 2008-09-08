@@ -7,6 +7,8 @@
 		if(check_write(SETUPTEMP_FILE, 2)) {
 		
 			$r =	fs_mkdir(CACHE_DIR);
+
+			$r &=	fs_mkdir(INDEX_DIR);
 				
 			$r &=	fs_copy(CONFIG_DEFAULT, CONFIG_FILE);
 				

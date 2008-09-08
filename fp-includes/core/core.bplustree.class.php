@@ -2537,6 +2537,7 @@ class SBPlusTree extends BPlusTree {
 	function setitem($key, $val) {
 		$seek = $this->setstring($val);
 		parent::setitem($key, $seek);
+		return $seek;
 	}
 
 	function walker(

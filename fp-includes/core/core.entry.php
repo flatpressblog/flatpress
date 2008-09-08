@@ -6,6 +6,7 @@
 		var $nodesize = 30;
 		var $keylen = 12;
 
+
 		/**
 		 * opens the index belonging to a given category
 		 * @params int $id_cat	
@@ -15,6 +16,7 @@
 		
 			if (!file_exists($F)) {
 				trigger_error  ("Can't find index '{$F}'", E_USER_ERROR);
+				
 			}
 
 			parent::caching_SBPT(
@@ -121,8 +123,8 @@
 			$main =& $this->get_index();
 			$main->delitem($key);
 
-			if (isset($entry['categories']) && is_array($entry['categories'])) {
-				foreach ($entry['categories'] as $cat) {
+			if (isset($entry['CATEGORIES']) && is_array($entry['CATEGORIES'])) {
+				foreach ($entry['CATEGORIES'] as $cat) {
 					if (!is_numeric($cat)) continue;
 					$this_index =& $this->get_index($cat);
 					$this_index->delitem($key);
@@ -323,6 +325,21 @@
 		return $entry_index;
 		
 	}
+
+	function &entry_cached_index($id_cat) {
+
+		$F = INDEX_DIR.'index-'.$id_cat.'.dat';
+		
+		if (!file_exists($F)) {
+			$o = false;	
+		} else {
+			$o =& new entry_cached_index($id_cat);
+		}
+
+		return $o;
+
+	}
+
 	
 	/*
 	function entry_query($params=array()){
