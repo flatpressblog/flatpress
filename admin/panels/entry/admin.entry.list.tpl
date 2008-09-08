@@ -45,13 +45,13 @@
 <thead><tr>{*<th>{$panelstrings.sel}</th>*}
 <th>{$panelstrings.date}</th>
 <th class="main-cell">{$panelstrings.title}</th>
-<th>{$panelstrings.author}</th>
+<!-- <th>{$panelstrings.author}</th> -->
 <th>{$panelstrings.comms}</th>
 <th>{$panelstrings.action}</th></tr></thead>
 <tbody>
 {entry}
 <tr>
-<td>{$date|date_format:"%D, %T"}</td>
+<td>{$id|entry_idtotime|date_format:"%D, %T"}</td>
 <td class="main-cell">
 {if in_array('draft',$categories)}
 (<em class="entry-flag">{$lang.entry.flags.short.draft}</em>)
@@ -61,7 +61,7 @@ href="{$panel_url|action_link:write}&amp;entry={$id}">
 {$subject|truncate:70} 
 </a>
 </td>
-<td>{$author}</td>
+<!-- <td>{$author}</td> -->
 <td><a class="link-general" 
 href="{$panel_url|action_link:commentlist}&amp;entry={$id}">
 {* Compatibility with pre-0.702 *}

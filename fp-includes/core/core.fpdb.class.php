@@ -50,11 +50,16 @@
 			}
 			
 			if (isset($params['fullparse'])) {
+
 				$this->fullparse = 
 						is_string($params['fullparse'])?
 						($params['fullparse'] != 'false')
 						:
 						$params['fullparse'];
+
+				if ($this->fullparse)
+					$this->comments = true;
+
 			}
 			
 		
@@ -105,6 +110,10 @@
 			if (isset($params['category'])) {
 				$this->category = intval($params['category']);
 			}			
+
+			if (isset($params['comments'])) {
+				$this->comments = true;
+			}
 			
 		}
 		
@@ -350,12 +359,6 @@
 				
 				$cont = entry_parse($id);
 
-				if ($cont) {
-					$this->comments =& new FPDB_CommentList($id, comment_getlist($id));
-				
-					$cont['comments'] = $this->comments->getCount();
-			
-				}
 				
 			} else {
 
@@ -363,10 +366,17 @@
 				$cont = array('subject' => $this->walker->current_value());
 				
 			}
+
+			if (!$cont) {
+				return false;
+			}
 			
+			if ($qp->comments) {
+				$this->comments =& new FPDB_CommentList($id, comment_getlist($id));
+				$cont['comments'] = $this->comments->getCount();
+			}
 			
-			
-			$post = $cont;
+			$post =& $cont;
 			$post['id'] = $id;
 
 			$var = array(&$id, &$cont);

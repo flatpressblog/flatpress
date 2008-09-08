@@ -359,6 +359,11 @@
 		return date('ymdHis', $time);
 	}
 
+	function entry_idtotime($id) {
+		$date = date_from_id($id);
+		return $date['time'];
+	}
+
 	function entry_list() {
 
 		trigger_error('function deprecated', E_USER_ERROR);

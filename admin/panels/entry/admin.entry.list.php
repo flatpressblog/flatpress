@@ -64,7 +64,8 @@
 			$params['count'] = isset($_REQUEST['count'])? $_REQUEST['count'] : $defcount;
 			$params['page'] = isset($_REQUEST['paged'])? $_REQUEST['paged'] : 1; 
 			isset($_REQUEST['category'])? $params['category'] = $_REQUEST['category'] : $params['category'] = 'all';
-			$params['fullparse']=true;
+			$params['fullparse']=false;
+			$params['comments']=true;
 			$fpdb->query($params);
 			
 			return 0;

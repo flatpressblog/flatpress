@@ -74,7 +74,13 @@
 			//$this->_listFiles($this->_directory);
 			return $this->_list;
 		}
-		
+
+		function count() {
+			if (!isset ($this->count))
+				$this->count = count($this->_list);
+			return $this->count;
+		}
+
 	}
 	
 	class fs_pathlister extends fs_filelister {
