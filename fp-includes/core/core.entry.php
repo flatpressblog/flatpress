@@ -411,7 +411,7 @@
 	
 	}
 	
-	function entry_parse($id, $incrViews=false) {
+	function entry_parse($id, $raw=false) {
 		
 		$f = entry_exists($id);
 		if (!$f)
@@ -444,7 +444,8 @@
 			global $fp_config;
 			$arr['AUTHOR'] = $fp_config['general']['author'];
 		}
-	
+
+		if ($raw) return $arr;
 		return array_change_key_case($arr, CASE_LOWER);
 		
 	}
