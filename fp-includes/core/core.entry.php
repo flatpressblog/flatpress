@@ -79,6 +79,8 @@
 		}
 
 		function &get_index($cat=0) {
+			if (!is_numeric($cat)) 
+				trigger_error("CAT must be an integer ($cat was given)", E_USER_ERROR);
 			if (!isset($this->indices[$cat])) {
 				$f = INDEX_DIR.'index-'.$cat.'.dat';
 				if ($oldfile = file_exists($f)) 
