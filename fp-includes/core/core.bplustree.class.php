@@ -2466,9 +2466,9 @@ class BPlusWalker {
 			$testkey = $node->keys[$nextp];
 			$keyupper = $this->keyupper;
 			$this->valid =( is_null($keyupper) ||
-				BPT_keycmp($testkey,$upper)<0||
+				BPT_keycmp($testkey,$keyupper)<0||
 				#$testkey < $keyupper ||
-				($this->includeupper && $testkey == keyupper) );
+				($this->includeupper && $testkey == $keyupper) );
 			if ($this->valid) $this->node_index = $nextp;
 		}
 

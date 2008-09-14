@@ -12,6 +12,7 @@
 		var $category = 0;
 		var $page	= 1;
 		var $fullparse = false;
+		var $comments = false;
 		
 		function FPDB_QueryParams($params) {
 		
@@ -234,7 +235,7 @@
 			$qp =& $this->params;
 			
 			$entry_num = 0;
-			$this->walker =& $entry_index->walker();
+			
 
 			if (!$qp->y){
 				// searches the whole index
@@ -242,16 +243,21 @@
 				#$this->local_list = array_keys($entry_index);
 				
 				$index_count = $entry_index->length(); 
-				
+				$this->walker =& $entry_index->walker();	
+
 			} else {
 				// notice this won't work with cats (for now)
 				
 				$obj =& new entry_archives($qp->y, $qp->m, $qp->d); 
-				$filteredkeys = $obj->getList();
 				
+				$filteredkeys = $obj->getList();
 				$index_count = $obj->getCount();
+
+				$this->walker =& $entry_index->walker(
+					entry_idtokey($filteredkeys[0]), true,
+					entry_idtokey($filteredkeys[$index_count-1]), true
+				);
 			
-				$this->local_list =& $filteredkeys;
 				
 			}
 			
@@ -472,7 +478,8 @@
 			}
 			
 			if ($this->params->page) {
-				if ($this->_getOffsetId(0, ($this->params->start + $this->params->count)))
+				#if ($this->_getOffsetId(0, ($this->params->start + $this->params->count)))
+				if ($this->walker->valid)
 					return array($GLOBALS['lang']['main']['nextpage'], $this->params->page + 1);
 				
 			}
