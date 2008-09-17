@@ -56,10 +56,11 @@ function plugin_lastentries_widget() {
 	
 	$string .= '</ul>';
 
-	$entry['subject'] = $subject;
-	$entry['content'] = $string;
+	$widget = array();
+	$widget['subject'] = $subject;
+	$widget['content'] = $string;
 	
-	return $entry;
+	return $widget;
 }
 
 register_widget('lastentries', 'LastEntries', 'plugin_lastentries_widget');

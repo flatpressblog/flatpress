@@ -92,10 +92,11 @@ function plugin_calendar_widget() {
 	// they're located under plugin.PLUGINNAME/lang/LANGID/
 	$lang = lang_load('plugin:calendar');
 	
-	$entry['subject'] = $lang['plugin']['calendar']['subject'];
-	$entry['content'] = '<ul id="widget_calendar"><li>'.	generate_calendar($y,$m, $days).'</li></ul>';
+	$widget = array();
+	$widget['subject'] = $lang['plugin']['calendar']['subject'];
+	$widget['content'] = '<ul id="widget_calendar"><li>'.	generate_calendar($y,$m, $days).'</li></ul>';
 	
-	return $entry;
+	return $widget;
 }
 
 register_widget('calendar', 'Calendar', 'plugin_calendar_widget');
