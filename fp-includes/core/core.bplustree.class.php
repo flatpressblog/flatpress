@@ -2201,7 +2201,7 @@ class BPlusTree {
 	function divide_entries($firstindex, &$node1, &$node2, &$entries) {
 //{{{
         	#$middle = (int)(count($entries)/2);
-		$middle = (int)($entries->count/2);
+		$middle = ceil($entries->count/2);
 		d("divide entries at $middle");
 
        		#$left = array_slice($entries, 0, $middle);
