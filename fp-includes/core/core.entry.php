@@ -125,8 +125,9 @@
 			$main =& $this->get_index();
 			$main->delitem($key);
 
-			if (isset($entry['CATEGORIES']) && is_array($entry['CATEGORIES'])) {
-				foreach ($entry['CATEGORIES'] as $cat) {
+			$entry = entry_parse($id);
+			if (isset($entry['categories']) && is_array($entry['categories'])) {
+				foreach ($entry['categories'] as $cat) {
 					if (!is_numeric($cat)) continue;
 					$this_index =& $this->get_index($cat);
 					$this_index->delitem($key);
@@ -639,7 +640,7 @@
 				
 			if (!io_write_file($f, $str)) {
 				if ($update_index)
-					 $obj->delete($id);
+					 $obj->delete($id, $entry);
 				return false;
 			} else return $id;
 			
