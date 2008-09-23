@@ -266,27 +266,24 @@ class Plugin_PrettyURLs {
 			$url = substr($url, strlen($del)-1);
 		}
 		
-		if ($url=='/')
-			return;
-
-		
-		$matches = array();
-		
 		// removes querystrings
-		if ($i = strpos($url, '?'))
+		if (false !== $i = strpos($url, '?'))
 			$url = substr($url, 0, $i);
 
 		// removes anchors
-		if ($i = strpos($url, '#'))
+		if (false !== $i = strpos($url, '#'))
 			$url = substr($url, 0, $i);
 
-
-		
+	
 		if (strrpos($url, '/') != (strlen($url)-1)) {
 			$url .= '/';
 		}
-		
-		
+
+
+		if ($url=='/')
+			return;
+
+	
 		
 		//date
 		$url = preg_replace_callback(
