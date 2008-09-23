@@ -12,7 +12,7 @@ Author URI: http://www.nowhereland.it
  * Place where the index is stored
  */
 define('PRETTYURLS_TITLES', true);
-define('PRETTYURLS_PATHINFO', false);
+define('PRETTYURLS_PATHINFO', true);
 define('PRETTYURLS_CACHE', CACHE_DIR . '%%prettyurls-index.tmp');
 define('PRETTYURLS_CATS', CACHE_DIR . '%%prettyurls-cats.tmp');
 
@@ -132,18 +132,28 @@ class Plugin_PrettyURLs {
 	function cache_create() {
 		
 		$this->index = array();
-		
+
+		/*
 		$o =& entry_init();
 		
 		$entries = $o->getList();
+		 */
+
+		$o = new FPDB_Query(array('start'=>0,'count'=>-1,'fullparse'=>false), null);
 		
-		foreach ($entries as $id => $contents) {
+		
+		#foreach ($entries as $id => $contents) {
+		while ($o->hasMore()) {
+			list($id, $contents) = $o->getEntry();
 			$date = date_from_id($id);
+			echo $contents['subject'], "\n";
 			$md5 = md5(sanitize_title($contents['subject']));
 			$this->index[$date['y']][$date['m']][$date['d']][$md5] = $id;		
 		}
+		#}
 		
 		$this->cache_save();
+		io_write_file(PRETTYURLS_CACHE, 'dummy');
 		
 	}
 	
@@ -188,7 +198,9 @@ class Plugin_PrettyURLs {
 	function handle_entry($matches) {
 		
 		if (PRETTYURLS_TITLES) {	
-			if (isset($this->index[$this->fp_params['y']][$this->fp_params['m']][$this->fp_params['d']][md5($matches[1])])) {
+		
+			#isset($this->index[
+			if ($this->cache_get($this->fp_params['y'],$this->fp_params['m'], $this->fp_params['d'], md5($matches[1]))) {
 				$this->fp_params['entry'] = $this->index[$this->fp_params['y']][$this->fp_params['m']][$this->fp_params['d']][md5($matches[1])];
 			} else {
 				// a bit hackish: we make up a fake url when there is no match, 
@@ -241,10 +253,10 @@ class Plugin_PrettyURLs {
 		$this->baseurl = PRETTYURLS_PATHINFO? BLOG_BASEURL . 'index.php/' : BLOG_BASEURL;
 	
 		if (PRETTYURLS_TITLES) {
-			if ($f = io_load_file(PRETTYURLS_CACHE))
-				$this->index = unserialize($f);
+			#if ($f = io_load_file(PRETTYURLS_CACHE))
+			$this->index = array(); #unserialize($f);
 			
-			if (!$this->index)
+			if (!file_exists(PRETTYURLS_CACHE))
 				$this->cache_create();
 
 
@@ -334,8 +346,8 @@ class Plugin_PrettyURLs {
 	function cache_delete_elem($id, $date) {
 	
 		# is this a title change?
-		if (isset($this->index[ $date['y'] ] [ $date['m'] ][ $date['d'] ]))
-			$hash = array_search($id, $this->index[ $date['y'] ] [ $date['m'] ][ $date['d'] ]);
+		if (false !== ($ids = $this->cache_get( $date['y'] ,  $date['m'] ,  $date['d'] )))
+			$hash = array_search($id, $ids);
 		else
 			return;
 		
@@ -357,6 +369,8 @@ class Plugin_PrettyURLs {
 			}
 			
 		}
+
+		$this->cache_save();
 	
 	}
 	
@@ -375,6 +389,24 @@ class Plugin_PrettyURLs {
 		return true;
 		
 	}
+
+	function cache_get($y,$m,$d=null,$h=null) {
+		if (!isset($this->index[$y][$m])) {
+			$s = @io_load_file(PRETTYURLS_CACHE.$y.$m);
+			$this->index[$y][$m] = $s? unserialize($s) : false;
+		}
+
+		if (is_null($d))
+			return $this->index[$y][$m];
+
+		if (is_null($h))
+			return ($this->index[$y][$m][$d]);
+
+		if (isset($this->index[$y][$m][$d]))
+			return isset($this->index[$y][$m][$d][$h]);
+		else
+			return false;
+	}
 	
 	function cache_delete($id) {
 		$date = date_from_id($id);
@@ -384,8 +416,13 @@ class Plugin_PrettyURLs {
 	}
 
 	function cache_save() {
-		if ($this->index)
-			return io_write_file(PRETTYURLS_CACHE, serialize($this->index));
+		if ($this->index) {
+			foreach ($this->index as $year => $months) {
+				foreach ($months as $month => $days)
+				io_write_file(PRETTYURLS_CACHE.$year.$month, serialize($days));
+			}
+
+		}
 		
 		return true;
 		

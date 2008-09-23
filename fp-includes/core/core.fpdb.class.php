@@ -786,6 +786,8 @@
 			
 			$id =& $couplet[0];
 			$entry =& $couplet[1];
+
+			global $post; $post = $entry;
 			
 			if (THEME_LEGACY_MODE) {
 				$entry = theme_entry_filters($entry, $id);
