@@ -100,7 +100,7 @@
 			return $this->indices[$cat];
 		}
 
-		function add($id, $entry) {
+		function add($id, $entry, $del = array()) {
 			$key =& entry_idtokey($id);
 			$val = $entry['SUBJECT'];
 
@@ -112,6 +112,13 @@
 					if (!is_numeric($cat)) continue;
 					$this_index =& $this->get_index($cat);
 					$this_index->setitem($key, $seek);
+				}
+			}
+
+			if ($del) {
+				foreach($del as $cat) {
+					$this_index =& $this->get_index($cat);
+					$this_index->delitem($key);
 				}
 			}
 
@@ -620,8 +627,14 @@
 		
 		$entry['CONTENT'] = apply_filters('content_save_pre', $entry['CONTENT']);
 		$entry['SUBJECT'] = apply_filters('title_save_pre', $entry['SUBJECT']);
+
+		$del = array();
+		if ($arr = entry_parse($id)) {
+			if (isset($entry['CATEGORIES']) && is_array($entry['CATEGORIES']))
+				$del = array_diff($arr['categories'], $entry['CATEGORIES']);
+		}
 		
-		$ok = ($update_index) ? $obj->add($id, $entry) : true;
+		$ok = ($update_index) ? $obj->add($id, $entry, $del) : true;
 		
 		if ($ok) {
 		
