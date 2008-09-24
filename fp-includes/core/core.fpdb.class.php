@@ -396,7 +396,7 @@
 				$cont['comments'] = $this->comments->getCount();
 			}
 			
-			$post =& $cont;
+			$post = $cont;
 			$post['id'] = $id;
 
 			$var = array(&$id, &$cont);
@@ -787,8 +787,6 @@
 			$id =& $couplet[0];
 			$entry =& $couplet[1];
 
-			global $post; $post = $entry;
-			
 			if (THEME_LEGACY_MODE) {
 				$entry = theme_entry_filters($entry, $id);
 			}
