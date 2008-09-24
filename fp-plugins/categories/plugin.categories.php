@@ -1,10 +1,10 @@
 <?php
 
 /*
-Plugin Name: AdminArea
+Plugin Name: Categories
 Plugin URI: http://www.nowhereland.it/
 Type: Block
-Description: AdminArea plugin. Part of the standard distribution ;)
+Description: Lists your categories in a widget.
 Author: NoWhereMan
 Version: 1.0
 Author URI: http://www.nowhereland.it/
