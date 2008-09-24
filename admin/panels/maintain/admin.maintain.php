@@ -48,7 +48,7 @@
 	class admin_maintain_updates extends AdminPanelAction {
 		
 		var $web = 'http://www.flatpress.org/fp/VERSION';
-		var $fpweb = 'http://flatpress.nowhereland.it/downloads.php';
+		var $fpweb = 'http://www.flatpress.org/home/blog.php';
 		var $sfweb = 'http://sourceforge.net/project/showfiles.php?group_id=157089';
 	
 		function main() {
@@ -97,6 +97,8 @@
 		
 			switch ($do) {
 			case 'purgecache': {
+					$this->smarty->assign('phpinfo', 'This function has been removed.');
+					return PANEL_NOREDIRECT;
 					$obj =& entry_init();
 					$obj->purge();
 					if (!file_exists(CACHE_DIR))
