@@ -8,15 +8,21 @@
 	$lang['admin']['widgets']['default'] = array(
 		'head'		=> 'Manage Widgets (<em>experimental</em>)',
 		
-		'descr'		=> 'A <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">'.
-						'Widget</a> is a visual element of a <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Plugin?">'.
-						'Plugin</a> that you can put in some special areas '.
-						'(the <em>widgetsets</em>) on your blog pages '.
-						'called <strong>widgetsets</strong> </p>'.
-						'<p><strong>Drag</strong> a widget from the right box and <strong>drop</strong> '.
-						'it to the position you prefer.</p>',
+		'descr'		=> 	'A <a class="hint" '.
+						'href="http://wiki.flatpress.org/doc:widgets" title="What is a Widget?">'.
+						'Widget</a> is a dynamic component that can display data and interact with the user.
+						While <strong>Themes</strong> are meant to change how your blog looks like, Widgets 
+						<strong>extend</strong> looks and functionalities.</p>
+
+						<p>Widgets can be dragged to special areas of your theme called the 
+						<strong>WidgetSets</strong>. The number and the name of the  WidgetSets may vary with the 
+						theme you choose.</p>
+
+						<p>FlatPress comes with several widgets: there are widgets to help with the login, to 
+						display a search box, etc.</p>
+						
+						<p>Each Widget is defined by a <a class="hint" '.
+						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">plugin</a>.',
 						
 		'availwdgs'	=> 'Available Widgets',
 		'trashcan'	=> 'Drop here to delete',

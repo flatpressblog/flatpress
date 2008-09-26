@@ -23,7 +23,7 @@ LangId: English
 		'descr' => 
 		'Thank you for choosing <strong>FlatPress</strong>!
 		
-		Before you can start having fun with your brand new blog, we have ask you a very few questions. 
+		Before you can start having fun with your brand new blog, we have to ask you a very few questions. 
 		
 		Don\'t worry, it won\'t take you long!',
 		
@@ -66,7 +66,7 @@ LangId: English
 		
 		Unbelievable? 
 		
-		And you\'re right: <strong>the story has just begun</strong>, but <strong>writing it\'s up to you</strong>!
+		And you\'re right: <strong>the story has just begun</strong>, but <strong>writing is up to you</strong>!
 		
 		<ul>
 		<li>See <a href="%s">how the home page looks like</a></li>

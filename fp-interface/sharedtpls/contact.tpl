@@ -14,15 +14,15 @@
 	<fieldset><legend>{$lang.contact.fieldset1}</legend>
 		<p><label class="textlabel" for="name">{$lang.contact.name}</label><br />
 		<input type="text" name="name" id="name" {$error.name|notempty:'class="field-error"'} 
-		value="{$values.name|stripslashes}" /></p>
+		value="{$values.name|stripslashes|wp_specialchars:true}" /></p>
 		
 		<p><label class="textlabel" for="email">{$lang.contact.email}</label><br />
 		<input type="text" name="email" id="email" {$error.email|notempty:'class="field-error"'} 
-		value="{$values.email|stripslashes}" /></p>
+		value="{$values.email|stripslashes|wp_specialchars:true}" /></p>
 		
 		<p><label class="textlabel" for="url">{$lang.contact.www}</label><br />
 		<input type="text" name="url" id="url" {$error.url|notempty:'class="field-error"'} 
-		value="{$values.url|stripslashes}" /></p>
+		value="{$values.url|stripslashes|wp_specialchars:true}" /></p>
 		
 		{comment_form}
 		
@@ -31,7 +31,7 @@
 	<fieldset><legend>{$lang.contact.fieldset2}</legend>
 		<p><label for="content">{$lang.contact.comment}</label><br />
 		<textarea name="content" id="content" {$error.content|notempty:'class="field-error"'} 
-		rows="10" cols="74">{$values.content|stripslashes}</textarea></p>
+		rows="10" cols="74">{$values.content|stripslashes|wp_specialchars:true}</textarea></p>
 
 	</fieldset>
 	
