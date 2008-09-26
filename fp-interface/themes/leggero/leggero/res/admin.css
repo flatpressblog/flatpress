@@ -28,13 +28,15 @@ Module: admin.css
 /* ===== HEADERS TAGS ===== */
 h1,
 h2 { 
-	font-family: 'book antiqua', georgia, garamond, times, 'times new roman', serif 
+	font-family: 'book antiqua', georgia, garamond, times, 'times new roman', serif;
+	margin: auto;
 }
 
 h2 {
 	border-bottom: 1px solid #ddd;
 }
 
+body { background: #eee; }
 
 /* === Redefines some stuff in inline mode === */
 body#inline-body {
@@ -68,11 +70,11 @@ ul#admin-small-nav li { display: inline; margin: 5px }
 
 /* ===== TAB MENU ===== */
 ul#admin-tabmenu {
-	text-align: center;
 	margin: 1em 0 0 0;
 	padding: .5em;
-	border-top: 1px solid #bbb;
-	border-bottom: 1px solid #bbb
+	background: #000;
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-topright:3px;
 }
 
 ul#admin-tabmenu li {
@@ -83,33 +85,32 @@ ul#admin-tabmenu li {
 }
 
 ul#admin-tabmenu li a {
-	color: #222;
+	color: #fff;
 	line-height: 2em;
 	font-weight: normal;
 	text-decoration: none;
 	padding: 0.5em;
-	background-color: #fff
+	margin: .1em;
 }
 
+ul#admin-tabmenu li a.admin-tab-current,
 ul#admin-tabmenu li a:hover {
 	color: black;
 	font-weight: normal;
-	background-color: #ddd
+	background-color: #ddd;
+	-moz-border-radius: 2px;
 }
 
-ul#admin-tabmenu a#admin-tab-current {
+ul#admin-tabmenu li a.admin-tab-current {
 	font-weight: bold;
-	background-color: #ddd
 }
 
 /* ===== submenu ====== */
 
 #admin-submenu {
 	background: #eee; 
-	border-top: 1px solid #ddd; 
-	border-bottom: 1px solid #ddd; 
-	text-align:center;
-	padding: .1em .3em .2em;
+	padding: .5em;
+	border: 1px solid #ccc;
 }
 
 #admin-submenu li {
@@ -125,24 +126,17 @@ ul#admin-tabmenu a#admin-tab-current {
 	font-weight: normal;
 }
 
-#admin-submenu li a:hover {
-	padding: .1em 1em .3em; 
-	background: #fff;
-	border-bottom: 1px solid #fff;
-	border-top: 3px solid #ccc;
-	border-left: 1px solid #ccc;
-	border-right: 1px solid #ccc;  
-	text-decoration:none;
+#admin-submenu li a:hover,
+#admin-submenu li a.active {
+	color: #eee;
+	background: #555;
+	padding: .1em 1em .3em;
+	-moz-border-radius: 3px;
+	text-decoration: none;
 }
 
 #admin-submenu li a.active {
-	color: #000;
-	background: #fff;
 	font-weight: bold;
-	padding: .1em 1em .3em;
-	border: 1px solid #bbb;
-	border-top: 3px solid #bbb;
-	border-bottom: 1px solid #fff;
 }
 
 
