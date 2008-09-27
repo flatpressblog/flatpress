@@ -400,7 +400,7 @@ class Plugin_PrettyURLs {
 			return $this->index[$y][$m];
 
 		if (is_null($h))
-			return ($this->index[$y][$m][$d]);
+			return isset($this->index[$y][$m][$d])? $this->index[$y][$m][$d] : false;
 
 		if (isset($this->index[$y][$m][$d]))
 			return isset($this->index[$y][$m][$d][$h]);
