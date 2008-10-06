@@ -445,9 +445,9 @@ class Plugin_PrettyURLs {
 			$url = $this->baseurl  . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
 			
 			if ($v>0) 
-				$caption = $caption . ' &raquo '; 
+				$caption = $caption . ' &raquo; '; 
 			else
-				$caption = ' &laquo ' . $caption;
+				$caption = ' &laquo; ' . $caption;
 			
 			return array($caption,$url);
 			
