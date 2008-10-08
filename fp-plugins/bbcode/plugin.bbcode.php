@@ -158,14 +158,29 @@ function do_bbcode_img ($action, $attributes, $content, $params, $node_object) {
 	$float = '';
 	$popup_start = '';
 	$popup_end = '';
+	$alt = $title = basename($actualpath);
 	
 	$img_size = array();
 	
 	// let's disable socket functions for remote files
 	// slow remote servers may otherwise lockup the system
 	if ($image_is_local) {
-		$img_size = @getimagesize($actualpath);
+		$img_info = array();
+		$img_size = @getimagesize($actualpath, $img_info);
 		$absolutepath = BLOG_BASEURL . $actualpath;
+		
+		if (function_exists('iptcparse')) {
+			if ($img_size['mime'] == 'image/jpeg') {
+				// tiffs won't be supported
+				
+				if(is_array($img_info)) {   
+					$iptc = iptcparse($img_info["APP13"]);
+					$title = @$iptc["2#005"][0];
+					$alt = isset($iptc["2#120"][0])? $iptc["2#120"][0] : $title;
+				}  
+			
+			}
+		}
 	}
 	
 		
@@ -224,10 +239,6 @@ function do_bbcode_img ($action, $attributes, $content, $params, $node_object) {
 		);	
 	}
 
-	
-	
-	$alt = $title = basename($actualpath);
-	
 	
 	if (isset($attributes['popup']) && ($attributes['popup'])) {
 		$pop_width = ($orig_w) ? $orig_w : 800;
