@@ -98,6 +98,9 @@
 			$o->delete($id);
 	
 		}
+
+		$entry['content'] = apply_filters('content_save_pre', $entry['content']);
+		$entry['subject'] = apply_filters('title_save_pre', $entry['subject']);
 		
 		$entry = array_change_key_case($entry, CASE_UPPER);
 		if (isset($entry['CATEGORIES'])) {
