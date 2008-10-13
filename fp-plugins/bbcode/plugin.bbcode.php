@@ -155,7 +155,7 @@ function do_bbcode_img ($action, $attributes, $content, $params, $node_object) {
 	
 	
 	
-	$float = '';
+	$float = ' class="center" ';
 	$popup_start = '';
 	$popup_end = '';
 	$alt = $title = basename($actualpath);
@@ -175,8 +175,8 @@ function do_bbcode_img ($action, $attributes, $content, $params, $node_object) {
 				
 				if(is_array($img_info)) {   
 					$iptc = iptcparse($img_info["APP13"]);
-					$title = @$iptc["2#005"][0];
-					$alt = isset($iptc["2#120"][0])? $iptc["2#120"][0] : $title;
+					$title = @$iptc["2#005"][0]? wp_specialchars($iptc["2#005"][0]) : null;
+					$alt = isset($iptc["2#120"][0])? wp_specialchars($iptc["2#120"][0],1) : $title;
 				}  
 			
 			}
@@ -268,9 +268,9 @@ function do_bbcode_img ($action, $attributes, $content, $params, $node_object) {
 	$img_width = ($width)? ' width="'.$width.'"' : '';
 	$img_height = ($height) ? ' height="'.$height.'"' : '' ;
 	
-	if (isset ($attributes['float'])) {
-		$float = ($attributes['float']=='left' || $attributes['float']=='right') ? 
-				 ' class="float'.$attributes['float'].'"' : ' class="center"';
+	if (isset ($attributes['float'])
+		&& ($attributes['float']=='left' || $attributes['float']=='right')) {
+		$float = ' class="float'.$attributes['float'].'" ' ;
 	}
 	
 	
