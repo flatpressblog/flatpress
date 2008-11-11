@@ -92,7 +92,7 @@
 			$arr['HMS'] = $arr['H'] . $arr['M'] . $arr['S'];
 			
 			$arr['time'] = mktime($arr['H'], $arr['M'], $arr['S'],
-					$arr['y'], $arr['m'], $arr['d']);
+					$arr['m'], $arr['d'], $arr['y']);
 			
 		return $arr;
 		
