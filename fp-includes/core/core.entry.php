@@ -386,6 +386,19 @@
 		return date('ymdHis', $time);
 	}
 
+	function entry_keytotime($key) {
+		$arr[ 'y' ] = substr($key, 0, 2);
+		$arr[ 'm' ] = substr($key, 2, 2);
+		$arr[ 'd' ] = substr($key, 4, 2);
+			
+		$arr[ 'H' ] = substr($key, 6, 2);
+		$arr[ 'M' ] = substr($key, 8, 2);
+		$arr[ 'S' ] = substr($key, 10, 2);
+
+		return 	mktime($arr['H'], $arr['M'], $arr['S'],
+				$arr['m'], $arr['d'], $arr['y']);
+	}
+
 	function entry_idtotime($id) {
 		$date = date_from_id($id);
 		return $date['time'];
@@ -408,7 +421,7 @@
 	
 	function entry_exists($id) {
 		$f = entry_dir($id).EXT;
-		return $f;file_exists($f)? $f : false;
+		return file_exists($f)? $f : false;
 	}
 	
 	function entry_dir($id) {

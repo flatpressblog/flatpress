@@ -205,7 +205,7 @@ class Plugin_PrettyURLs {
 			} else {
 				// a bit hackish: we make up a fake url when there is no match, 
 				// so that at the higher level the system will 404... 
-				$this->fp_params['entry'] = 'entry000000-000000'; 
+				$this->fp_params['entry'] = 'a';
 			}
 		} else {
 			$this->fp_params['entry'] = $matches[1];

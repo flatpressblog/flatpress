@@ -978,13 +978,19 @@ class BPlusTree_Node {
 	 * @returns int|false corresponding integer or false if key is missing
 	 *
 	 */
-	function getvalue($key) {
+	function getvalue(&$key, $loose=false) {
 
 		#d(implode(",",$this->keys));
-		$place = array_search($key, $this->keys);
-		if ($place!==false) {
+		#$place = array_search($key, $this->keys);
+		$place = BPT_bisect($this->keys, $key, 0);
+		if (@$this->keys[$place-1] == $key) {
 			return $this->indices[$place];
 		} else {
+			if ($loose) {
+				if ($place>1) $place--;
+				$key = $this->keys[$place];
+				return $this->indices[$place];
+			}
 			trigger_error("key '$key' not found", E_USER_WARNING);
 			return false;
 		}
@@ -1522,12 +1528,17 @@ class BPlusTree {
 	/**
 	 * returns an iterator for the tree
 	 * @param string $keylower key lower limit of the iterator
-	 * @param bool	 $includelower if true $keylower is included in the iterator
+	 * @param bool|int	$includelower if true $keylower is included in the iterator;
+	 * 			if $includelower > 1 then 'loose' search is assumed:
+	 * 			the tree will be walked starting from
+	 * 			the key $k in the tree such as $k <= $keylower
+	 * 			and such as there are NO other keys $k' 
+	 * 			such as $k < $k' <= $keylower
 	 * @param string $keyupper key upper bound of the iterator
 	 * @param bool   $includeupper if true $keyupper is included in the iterator
 	 */
 	function walker(
-		$keylower	=null,
+		&$keylower	=null,
 		$includelower	=null,
 		$keyupper	=null,
 		$includeupper	=null
@@ -1694,14 +1705,16 @@ class BPlusTree {
 	}
 
 	/**
-	 * @param string $key key to find
+	 * @param string &$key key to find.
+	 * @param bool $loose if true searches the tree for the "nearest" key to $key; 
+	 * 		
 	 * @returns int associated value
 	 * 
 	 */
-	function getitem($key) {
+	function getitem(&$key, $loose=false) {
 		if (is_null($this->root))
 			trigger_error("not open!", E_USER_ERROR);
-		return $this->find($key, $this->root);
+		return $this->find($key, $this->root, $loose);
 	}
 	
 	/**
@@ -1712,7 +1725,7 @@ class BPlusTree {
 	 * @returns int|bool value at the leaf node containing key or false if key is missing
 	 *
 	 */
-	function find($key, &$node) {
+	function find(&$key, &$node, $loose=false) {
 		
 		while (($node->flag & BPT_FLAG_INTERIOR) == BPT_FLAG_INTERIOR) {
 
@@ -1736,7 +1749,7 @@ class BPlusTree {
 			$node =& $node->getnode($nodekey);
 		}
 
-		return $node->getvalue($key);
+		return $node->getvalue($key, $loose);
 	}
 
 	/**
@@ -1744,7 +1757,7 @@ class BPlusTree {
 	 * @returns bool false if key does not exists, true otherwise
 	 */
 	function has_key($key) {
-		if ($this->getitem($key)!==false) {
+		if (@$this->getitem($key)!==false) {
 			return true;
 		} else {
 			return false;
@@ -2331,7 +2344,7 @@ class BPlusWalker {
 
 	function BPlusWalker(
 			&$tree, 
-			$keylower=null, 
+			&$keylower=null, 
 			$includelower=null, 
 			$keyupper=null, 
 			$includeupper=null){
@@ -2371,6 +2384,7 @@ class BPlusWalker {
 		$this->node_index = null;
 		$this->valid = 0;
 		$this->first();
+		$keylower = $this->keylower;
 	}
 
 	function first() {
@@ -2395,7 +2409,11 @@ class BPlusWalker {
 		if (!$this->valid) {
 			$place = BPT_bisect($keys, $keylower, 0, $validkeys);
 			if ($place < $validkeys) {
-				$index = $this->node_index = $place;
+				if ($place > 0)
+					$index = $place - 1;
+				else	$index = $place;
+					
+				$this->node_index = $index;
 				$testk = $keys[$index];
 				/*
 				if ($testk>$keylower ||
@@ -2406,7 +2424,11 @@ class BPlusWalker {
 				}
 				*/
 				$this->valid = BPT_keycmp($testk,$keylower)<0||#$testk>$keylower ||
-					($this->includelower && $testk==$keylower);
+					($this->includelower && ($this->includelower>1 || $testk==$keylower) );
+
+
+				$this->keylower = $testk;
+
 			} else {
 				$next =& $node->nextneighbour();
 				if (!is_null($next)) {
@@ -2482,10 +2504,10 @@ class caching_BPT extends BPlusTree {
 
 	var $cache = array();
 
-	function getitem($key) {
+	function getitem(&$key, $loose=false) {
 		if (isset($cache[$key]))
 			return $cache[$key];
-		else	return ($cache[$key] = parent::getitem($key));
+		else	return ($cache[$key] = parent::getitem($key, $loose));
 	}
 
 	function resetcache() {
@@ -2529,9 +2551,9 @@ class SBPlusTree extends BPlusTree {
 		return $seek;
 	}
 
-	function getitem($key) {
-		$seek = parent::getitem($key);
-		return $this->getstring($seek);
+	function getitem(&$key, $loose=false) {
+		$seek = parent::getitem($key, $loose);
+		return $seek!==false? $this->getstring($seek) : false;
 	}
 
 	function setitem($key, $val) {
@@ -2541,7 +2563,7 @@ class SBPlusTree extends BPlusTree {
 	}
 
 	function walker(
-		$keylower	=null,
+		&$keylower	=null,
 		$includelower	=null,
 		$keyupper	=null,
 		$includeupper	=null
@@ -2564,10 +2586,10 @@ class caching_SBPT extends SBPlusTree {
 
 	var $cache = array();
 
-	function getitem($key) {
+	function getitem(&$key, $loose=false) {
 		if (isset($cache[$key]))
 			return $cache[$key];
-		else	return ($cache[$key] = parent::getitem($key));
+		else	return ($cache[$key] = parent::getitem($key, $loose));
 	}
 
 	function resetcache() {

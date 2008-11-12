@@ -45,7 +45,10 @@
 			
 				if (entry_exists($params['id'])) {
 					$this->id = $params['id'];
-					
+				} else {
+					// let it fail
+					$this->count = 0;
+					return;
 				}
 				
 			}
@@ -78,7 +81,7 @@
 				
 			}
 			
-			if (isset($params['random'])) {
+			if (isset($params['random']) && !$this->id) {
 				$this->random = intval($params['random']);
 				$this->count = $this->random;
 			}
@@ -148,7 +151,7 @@
 			$this->params =& new FPDB_QueryParams($params);
 			$this->ID = $ID;
 			
-			if ($this->params->id) {
+			if ($this->params->id || $this->params->random) {
 				$this->single = true;
 			}
 			
@@ -174,13 +177,13 @@
 				return;
 			}
 			
-			if ($this->single) {
+			if ($this->single || $this->params->random) {
+				if ($this->params->random>0) {
+					$this->_get_random_id($entry_index);
+				}
 				$this->_prepare_single($entry_index);
 			} else {
 				$this->_prepare_list($entry_index);
-				if ($this->params->random>0) {
-					$this->_randomize_list();
-				}
 			}
 			
 			
@@ -197,34 +200,41 @@
 						
 			$qp =& $this->params;
 
+			$time = entry_idtotime($qp->id);
+
+			// let's get a preceding key in the order relation.
+			// please notice this is hardcoded to $time+1, since
+			// order of the indices is not configurable by the user
+			$prevkey = entry_timetokey($time+1); 
+
 			$key = entry_idtokey($qp->id);
+			#print_r($key);
+
+			#$key = entry_idtokey($qp->id);
 			if (!($entry_index->has_key($key))){
-				trigger_error("FPDB: no entry found for {$qp->id}", E_USER_WARNING);
+				#trigger_error("FPDB: no entry found for {$qp->id}", E_USER_WARNING);
+				$qp->count = 0;
 				return;
 			}
 
-			$this->walker =& $entry_index->walker($key, true);
-
-			/*
-			if ($this->counter < 0) { 
-			
-				$idlist = array_keys($entry_index);
-				$fliplist = array_flip($idlist);
-				
-				$this->local_index =& $entry_index;
-				$this->local_list =& $idlist;
-				
-				$qp->start = $fliplist[$qp->id];
-				$qp->count = 1;
+			// if $includelower = 2 (second parameter) then assumes 'loose' inclusion
+			// i.e. includes the first key $newkey such as $newkey <= $prevkey
+			// also, if $prevkey != $newkey then $prevkey := $newkey
 		
 			
-			}
-			
-			$this->pointer = $qp->start;
-			 */
+			$this->walker =& $entry_index->walker($prevkey, 2, null, null);
+	
+			// since we're searching for $prevkey, i.e. a key preceding the target $id
+			// in the sequence, if $prevkey becomes equal to $key then it means 
+			// $key is the first post (the last in time)
 
-			$qp->start = 0;
+			if ($prevkey == $key) 
+				$qp->start = 0;
+			else 
+				$qp->start = 1;
+
 			$qp->count = 1;
+		
 			$this->pointer = 0;
 
 		}
@@ -291,34 +301,26 @@
 			 */
 			
 		}
-		
-		function _randomize_list() {
+
+		// not so great implementation... doesn't work well
+		function _get_random_id(&$entry_index) {
 			$qp =& $this->params;
-			
-			$i = $qp->random - 1;
-			$nums = array_keys($this->local_list);
-			
-			
-			if ($qp->random == 1) {
-				$i = mt_rand(0, end($nums));
-				$this->single = true;
-				$qp->id = $this->local_list[ $i ];
-				$this->_prepare_single($this->local_index);
-				return;
-			}
-			
-			shuffle($nums);
-			
-			$newlocal = array();
-			do {
-				$newlocal[ $i ] = $this->local_list[ $nums[$i] ]; 
-			} while($i--);
-			
-			$this->local_list = $newlocal;
-			
-			if ($qp->count > $qp->random) {
-				$qp->count = $qp->random;
-			}
+			$now = time();
+
+			$first = '999999999999';
+			$last = '000000000000';
+			$entry_index->getitem($first, true);
+			$entry_index->getitem($last, true);
+
+			$t1 = entry_keytotime($first);
+			$t2 = entry_keytotime($last);
+
+			$t = mt_rand($t2, $t1);
+
+			$random_key = entry_timetokey($t);
+			$entry_index->getitem($random_key, true);
+
+			$qp->id = entry_keytoid($random_key);
 		}
 		
 		/* reading functions */
@@ -361,14 +363,19 @@
 				$this->previd = $this->currentid;
 				$id = $this->currentid = entry_keytoid($this->walker->current_key());
 
+				if ($this->single) $this->preventry = array('subject' => $this->walker->current_value());
+
+
 				$this->walker->next();
 				$this->pointer++;
 			}
 			
 			// pointer == start
 			
-			$this->previd = $this->currentid;
+			$prevcurr = $this->currentid;
 			$id = $this->currentid = entry_keytoid($this->walker->current_key());
+			if ($id != $prevcurr) $this->previd = $prevcurr;
+
 
 
 			if ($qp->fullparse && $this->counter <= 0) {
@@ -465,14 +472,16 @@
 		function getNextPage() {
 			
 			if ($this->single){
-				return false;
-				$id = $this->_getOffsetId(1, $this->params->start);
+				#return false;
+				#$id = $this->_getOffsetId(1, $this->params->start);
+				$id = $this->walker->valid ? entry_keytoid($this->walker->current_key()) : false;
 				
-				if ($id)
-					$label = $this->local_index[$id]['subject'];
-				else
+				if ($id) {
+					$label = $this->walker->current_value();
+				} else {
 					return false;
-					
+				}
+
 				return array($label, $id);
 				 
 			}
@@ -490,14 +499,9 @@
 		function getPrevPage() {
 		
 			if ($this->single) {
-				return false;
 
-				$id = $this->_getOffsetId(-1, $this->params->start);
-				
-				if ($id)
-					$label = $this->local_index[$id]['subject'];
-				else
-					return false;
+				$id = $this->previd;
+				$label = $this->preventry['subject'];
 				
 				return array($label, $id);
 				
