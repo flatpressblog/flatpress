@@ -175,7 +175,7 @@ function do_bbcode_img ($action, $attributes, $content, $params, $node_object) {
 				
 				if(is_array($img_info)) {   
 					$iptc = iptcparse($img_info["APP13"]);
-					$title = @$iptc["2#005"][0]? wp_specialchars($iptc["2#005"][0]) : null;
+					$title = @$iptc["2#005"][0]? wp_specialchars($iptc["2#005"][0]) : $title;
 					$alt = isset($iptc["2#120"][0])? wp_specialchars($iptc["2#120"][0],1) : $title;
 				}  
 			
