@@ -1324,7 +1324,7 @@ class BPlusTree_Node {
 		$x = 'Cflag/Cvalidkeys/';
 		$n = $this->size+1;
 		for ($i = 0; $i<$n; $i++) {
-			$x .= "Lindices{$i}/";
+			$x .= "lindices{$i}/";
 		}
 		$arr = unpack($x, $s);
 
@@ -1426,7 +1426,7 @@ class BPlusTree_Node {
 		}
 		$is_o=true;
 		while((list(,$v)=each($ff)) && $is_o=is_object($v));
-		if (!$is_o) {d("CAPUTT");f();}
+		if (!$is_o) trigger_error('ERR', E_USER_ERROR);}
 	}
 
 	/**
