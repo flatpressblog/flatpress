@@ -1426,7 +1426,7 @@ class BPlusTree_Node {
 		}
 		$is_o=true;
 		while((list(,$v)=each($ff)) && $is_o=is_object($v));
-		if (!$is_o) trigger_error('ERR', E_USER_ERROR);}
+		if (!$is_o) {trigger_error('ERR', E_USER_ERROR);}
 	}
 
 	/**
@@ -1454,7 +1454,7 @@ class BPlusTree_Node {
 	}
 	
 
-
+}
 
 /**
  * main class BPlusTree
