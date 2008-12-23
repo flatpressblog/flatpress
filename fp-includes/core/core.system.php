@@ -73,7 +73,7 @@
 
 
 	
-	define('SYSTEM_VER', '0.805');
+	define('SYSTEM_VER', '0.812');
 	function system_ver() {
 		return 'fp-' . SYSTEM_VER;
 	}

@@ -107,6 +107,7 @@
 
 
 function d($s) {
+	return;	// disable debug output
 	if (is_array($s)) { $s = '{ '.implode(", ", $s) . ' }'; }
 
 	$x = debug_backtrace();

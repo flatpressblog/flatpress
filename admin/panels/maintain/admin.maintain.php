@@ -34,7 +34,37 @@
 			return 0;
 		}
 	
+		}
+
+	class s_entry_crawler extends fs_filelister {
+ 
+		var $_directory = CONTENT_DIR;
+ 
+		function __construct() {
+			$this->index =& entry_init();
+			parent::__construct();
+		}
+ 
+		function _checkFile($directory, $file) {
+			$f = "$directory/$file";
+				if ( is_dir($f) && ctype_digit($file)) {
+					return 1;
+				}
+ 
+				if (fnmatch('entry*'.EXT, $file)) {
+					$id=basename($file,EXT);
+					$arr=entry_parse($id, true);
+ 
+					echo "[POST] $id => {$arr['SUBJECT']}\n";
+					$this->index->add($id, $arr);
+ 
+					return 0;
+				}
+		}
+ 
 	}
+
+
 	/*********************/
 	
 	
@@ -96,16 +126,20 @@
 		function dodo($do) {
 		
 			switch ($do) {
-			case 'purgecache': {
-					$this->smarty->assign('phpinfo', 'This function has been removed.');
-					return PANEL_NOREDIRECT;
-					$obj =& entry_init();
-					$obj->purge();
-					if (!file_exists(CACHE_DIR))
-						fs_mkdir(CACHE_DIR);
+			case 'rebuild': {
+
+					fs_delete_recursive(INDEX_DIR);
+					if (!file_exists(INDEX_DIR))
+						fs_mkdir(INDEX_DIR);
+					
+					header('Content-Type: text/plain');
+					echo "ENTERING LOWRES MODE\n\n";
+					
+					new s_entry_crawler;
+					exit("\nDONE \nPlease, select the back arrow in your browser");
 						
-					$this->smarty->assign('success', 1);
-					return PANEL_REDIRECT_CURRENT;
+
+					return PANEL_NOREDIRECT;
 				}
 			case 'restorechmods': {
 					$this->smarty->assign('files',fs_chmod_recursive());

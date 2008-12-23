@@ -16,7 +16,7 @@
 {else}
 <p>{$panelstrings.descr}</p>
 <ul>
-<li><a href="{$action_url|cmd_link:do:purgecache}">{$panelstrings.opt1}</a></li>
+<li><a href="{$action_url|cmd_link:do:rebuild}">{$panelstrings.opt1}</a></li>
 <li><a href="{$action_url|cmd_link:do:purgetplcache}">{$panelstrings.opt2}</a></li>
 <li><a href="{$action_url|cmd_link:do:restorechmods}">{$panelstrings.opt3}</a></li>
 <li><a href="{$action_url|cmd_link:do:phpinfo}">{$panelstrings.opt4}</a></li>

@@ -8,7 +8,7 @@
 					'and maybe here you\'ll find a solution.
 					However this might not work.',
 		'opt0'		=> '&laquo; Back to main menu',
-		'opt1'		=> 'Purge entry cache',
+		'opt1'		=> 'Rebuild index',
 		'opt2'		=> 'Purge theme and templates cache',
 		'opt3'		=> 'Restore file permissions',
 		'opt4'		=> 'Show info about PHP',
