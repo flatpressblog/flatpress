@@ -206,7 +206,7 @@ class pairs {
 	 * @parma array $b array of the second elements of each pair
 	 *
 	 */
-	function pairs(array $a, array $b) { 
+	function pairs($a,  $b) { 
 		if (($v=count($a))!=count($b)) 
 			trigger_error("Size of params must match", E_USER_ERROR);
 		$this->a=$a; $this->b=$b; 
@@ -1538,14 +1538,14 @@ class BPlusTree {
 	 * @param string $keyupper key upper bound of the iterator
 	 * @param bool   $includeupper if true $keyupper is included in the iterator
 	 */
-	function walker(
-		&$keylower	=null,
+	function &walker(
+		&$keylower,
 		$includelower	=null,
 		$keyupper	=null,
 		$includeupper	=null
 		) {
 		
-                return new BPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
+                return $o =& new BPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
 
 	}
 	
@@ -2345,7 +2345,7 @@ class BPlusWalker {
 
 	function BPlusWalker(
 			&$tree, 
-			&$keylower=null, 
+			&$keylower, 
 			$includelower=null, 
 			$keyupper=null, 
 			$includeupper=null){
@@ -2563,14 +2563,14 @@ class SBPlusTree extends BPlusTree {
 		return $seek;
 	}
 
-	function walker(
-		&$keylower	=null,
+	function &walker(
+		&$keylower,
 		$includelower	=null,
 		$keyupper	=null,
 		$includeupper	=null
 		) {
 		
-                return new SBPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
+                return $o =& new SBPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
 	} 
 }
 

@@ -40,9 +40,9 @@
  
 		var $_directory = CONTENT_DIR;
  
-		function __construct() {
+		function s_entry_crawler() {
 			$this->index =& entry_init();
-			parent::__construct();
+			parent::fs_filelister();
 		}
  
 		function _checkFile($directory, $file) {

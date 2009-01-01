@@ -253,7 +253,7 @@
 				#$this->local_list = array_keys($entry_index);
 				
 				$index_count = $entry_index->length(); 
-				$this->walker =& $entry_index->walker();	
+				$this->walker =& $entry_index->walker($firstid=null);	
 
 			} else {
 				// notice this won't work with cats (for now)

@@ -101,7 +101,7 @@
 		}
 
 		function add($id, $entry, $del = array()) {
-			$key =& entry_idtokey($id);
+			$key = entry_idtokey($id);
 			$val = $entry['SUBJECT'];
 
 			$main =& $this->get_index();
