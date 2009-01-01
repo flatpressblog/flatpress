@@ -103,9 +103,14 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 			$string .=  'type="checkbox" />';
 			$before = $string;
 		}elseif (isset($params['type']) && $params['type']=='radio') {
-			$string = '<label><input name="cats" type="radio" value="'.$vid.'" />';
+			$string = '<label><input name="cats" type="radio" value="'.$vid.'"';
+			if ((bool) array_intersect(array($vid), $cat_entry))
+				$string .= 'checked="checked" ';
+	
+			$string .= ' />';
 			$before = $string;
-		
+			
+			
 		}elseif(isset($params['type']) && $params['type']=='linked'){
 			$before = '<a href="'.get_category_link($vid).'">';
 		}
