@@ -559,17 +559,17 @@ class BPlusTree_Node {
 	 * returns clone of the obect at position $position
 	 * @param long $position seek position
 	 */
-	function getclone($position) {
+	function &getclone($position) {
 		
 		if ($this->fifo) {
-			$dict = $this->fifo->fifo_dict;
+			$dict =& $this->fifo->fifo_dict;
 			if (isset($dict[$position])) {
 				return $dict[$position];
 			}
 		}
 		
 		
-		return new BPlusTree_Node(
+		$o =& new BPlusTree_Node(
 				$this->flag, 
 				$this->size, 
 				$this->keylen, 
@@ -577,6 +577,7 @@ class BPlusTree_Node {
 				$this->infile, 
 				$this
 		);
+		return $o;
 	}
 	
  	/**
