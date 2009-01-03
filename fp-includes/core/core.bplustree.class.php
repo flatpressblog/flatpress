@@ -1545,7 +1545,8 @@ class BPlusTree {
 		$includeupper	=null
 		) {
 		
-                return $o =& new BPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
+				$o =& new BPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
+				return $o;
 
 	}
 	
@@ -2569,8 +2570,8 @@ class SBPlusTree extends BPlusTree {
 		$keyupper	=null,
 		$includeupper	=null
 		) {
-		
-                return $o =& new SBPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
+			$o =& new SBPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
+			return $o;
 	} 
 }
 
