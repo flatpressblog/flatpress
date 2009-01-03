@@ -983,7 +983,7 @@ class BPlusTree_Node {
 
 		#d(implode(",",$this->keys));
 		#$place = array_search($key, $this->keys);
-		$place = BPT_bisect($this->keys, $key, 0);
+		$place = BPT_bisect($this->keys, $key, 0, $this->validkeys);
 		if (@$this->keys[$place-1] == $key) {
 			return $this->indices[$place];
 		} else {
@@ -1898,7 +1898,7 @@ class BPlusTree {
 
 					#$ki = array_slice($ki, 1);
 					$ki->remove(0);
-					print_r($ki);
+					#print_r($ki);
 					// insert new pair
 					#BPT_insort($ki, array($leftmost, $insertindex));
 					$ki->insort($leftmost, $insertindex);
@@ -2410,7 +2410,7 @@ class BPlusWalker {
 		}
 		if (!$this->valid) {
 			$place = BPT_bisect($keys, $keylower, 0, $validkeys);
-			if ($place < $validkeys) {
+			if ($place < $validkeys || ($place==$validkeys && $this->includelower>1)) {
 				if ($place > 0)
 					$index = $place - 1;
 				else	$index = $place;
