@@ -622,6 +622,8 @@
 	}
 	
 	function entry_save($entry_cont, $id=null, $update_index = true) {
+
+		global $post;
 		
 		$obj =& entry_init();
 		
@@ -629,6 +631,8 @@
 			$entry_cont['date']=date_time();
 		}
 		
+		$post = $entry_cont;
+
 		$entry = array_change_key_case($entry_cont, CASE_UPPER);
 		
 		if (!$id) {
