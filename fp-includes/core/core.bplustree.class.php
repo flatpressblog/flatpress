@@ -138,11 +138,11 @@ define('NOROOMERROR', -100);
 /**
  * @const int null node
  */
-define('BPT_NULL', -1);
+define('BPT_NULL', 0);
 /**
  * @const int null seek position
  */
-define('BPT_NULLSEEK', -1);
+define('BPT_NULLSEEK', 0);
 /**
  * @const string magic string for bplustree
  */
