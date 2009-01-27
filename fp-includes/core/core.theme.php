@@ -323,7 +323,19 @@
 	
 	
 	function theme_apply_filters_link_wrapper($var, $hook) {
-		return apply_filters($hook, '', $var);
+		// MODIFIER: id, type, feed
+		// FILTER: 	 type, oldlink, feed, id
+		$args = func_get_args();
+		
+		// delete id
+		$id = $args[0];
+		unset($args[0]);
+		// put it at the end
+		$args[] = $id;
+
+		// insert empty string between type and feed
+		array_splice($args, 1, 0, '');
+		return call_user_func_array('apply_filters', $args);
 	}
 	
 	
