@@ -20,6 +20,7 @@
 	<entry>
 		<title>{$subject}</title>
 		<link href="{$id|link:post_link}" />
+				
 		<id>{$id|link:post_link}</id>
 		{assign var=the_date value=$date|date_rfc3339}
 		<published>{$the_date}</published>
@@ -29,6 +30,15 @@
 				 {$content|tag:the_content} 
 			</div>
 		</content>
+		
+		{foreach from=$enclosure item=encl}
+		<link rel="enclosure" 
+			href="{$encl.url}" 
+			title="{$encl.title}"
+			length="{$encl.length}" 
+			type="{$encl.type}" />
+		{/foreach}
+	
 	</entry>
 	{/entry}
 	{/entry_block}

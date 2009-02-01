@@ -22,7 +22,11 @@
 			<author>{$flatpress.email} ({$flatpress.author})</author>
 			<pubDate>{$date|date_format:"%a, %d %b %Y %H:%M:%S %z"}</pubDate>
 			<comments>{$id|link:comments_link}</comments>
-			
+
+			{foreach from=$enclosure item=encl} 
+				<enclosure url="{$encl.url}" length="{$encl.length}" type="{$encl.type}" />
+			{/foreach}
+
 			</item>
 			{/entry}
 		

@@ -156,9 +156,12 @@ class StringParser_BBCode extends StringParser {
 	 * @return bool
 	 */
 	function addCode ($name, $callback_type, $callback_func, $callback_params, $content_type, $allowed_within, $not_allowed_within) {
+		// allow override
+		/*
 		if (isset ($this->_codes[$name])) {
 			return false; // already exists
 		}
+		 */
 		if (!preg_match ('/^[a-zA-Z0-9*_!+-]+$/', $name, $code)) {
 			return false; // invalid
 		}
