@@ -3,7 +3,7 @@
 		{foreach from=$menubar item=tab}
 		{if $tab eq $panel}
 		
-		<li id="admin-$tab">
+		<li id="admin-{$tab}">
 			<a class="admin-tab-current" href="{$smarty.const.BLOG_BASEURL}admin.php?p={$tab}">
 				{$lang.admin.panels[$tab]|default:$tab}
 			</a>
