@@ -74,8 +74,10 @@
 	$lang['admin']['entry']['write']['msgs'] = array(
 		1	=> 'Entry has been saved successfully',
 		-1	=> 'An error occurred while trying to save 
-					the entry',
+		the entry',
+		'draft'=> 'You are editing a <strong>draft</strong> entry'
 	);
+
 	
 	/* comments */
 	

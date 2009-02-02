@@ -558,7 +558,5 @@ a.link-general:hover, .main-cell a:hover {
 
 /* (already defined in common, here we put just some tuning settings) */
 #admin-content ul.msgs {
-	margin-left: 0em;
-	margin-bottom: 2em;
-	padding: 1em 2em
+	margin:0;
 }

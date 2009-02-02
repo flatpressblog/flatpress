@@ -19,8 +19,7 @@ Module: globals.css
 
 /* ===== NOTIFICATION ===== */
 #main ul.msgs, ul.msgs {
-	margin-top: 1em;
-	margin-left: 0em;
+	margin: 0;
 	padding: 1em 2em
 }
 
