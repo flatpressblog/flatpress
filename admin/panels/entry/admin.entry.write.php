@@ -24,6 +24,7 @@
 			); 
 		
 		var $events = array('save', 'preview', 'savecontinue');
+		var $draft = false;
 		
 		function _makePreview($arr, $id=null) {
 			
@@ -32,23 +33,42 @@
 				$arr['content'] = apply_filters('content_save_pre', $arr['content']);
 			}
 			
-			
+
+			if ($this->draft || $this->draft = draft_exists($this->id)) {
+					if (isset($arr['categories'])
+						&& is_array($arr['categories']) && !in_array('draft', $arr['categories']) ) {
+						$arr['categories'][] = 'draft';
+						} else {
+							$arr['categories'][] = 'draft';
+					}
+
+			}
+
+			// unfiltered content (for editing)		
 			$this->smarty->assign('post', $arr);
 			
 			if (THEME_LEGACY_MODE) {
 				theme_entry_filters($arr, $id);
 			}
-			
-			$arr = array_change_key_case($arr, CASE_LOWER);
-			
+		
+			// content for preview
 			$this->smarty->assign('entry', $arr);
 			$this->smarty->assign('preview', true);
-			
 		}
  	
 		function makePageTitle($title, $sep) {
-			global $lang;
+			global $lang, $panel;
+			if ($this->draft) {
+					$this->smarty->append(
+							'warnings', 
+							$lang['admin']['entry']['write']['msgs']['draft']
+					);
+			}
 			return "$title $sep {$lang['admin']['entry']['write']['head']}";
+		}
+
+		function draft_class($string) {
+			return "$string draft";
 		}
 	
 		function _getCatsFlags() {
@@ -90,6 +110,7 @@
 			
 			$this->_getCatsFlags();
 			add_filter('wp_title', array(&$this, 'makePageTitle'), 10, 2);
+			if ($this->draft) add_filter('admin_body_class', array(&$this, 'draft_class'));
 				
 		}
 		
@@ -101,12 +122,14 @@
 			$author = user_get();
 			$arr['author'] = $author['userid'];
 			$arr['date'] = !empty($_POST['timestamp'])?$_POST['timestamp']:date_time();
+
 			
 			$cats = !empty($_POST['cats'])?$_POST['cats']:array();
 			$flags = !empty($_POST['flags'])?$_POST['flags']:array();
 			
 			$catids = array_merge(array_keys($flags), array_keys($cats));
-			
+
+			$this->draft = isset($flags['draft']);
 			if ($catids)
 				$arr['categories'] = $catids;
 			
@@ -119,25 +142,25 @@
 			$id = $this->id;
 			$data = $this->_getposteddata();			
 			
-			if (isset($data['categories']) && in_array('draft', $data['categories'])) {
-				
-				$success=draft_save($data, $id);
+			if ($this->draft) {
+				$success=draft_save($data, $id, true);
+				$this->smarty->assign('success', $success? 1 : -1 );
 			} else {
-				
-				/* anyway issued */
-
-				draft_to_entry($id);
 				$success=entry_save($data, $id);
-				
+				$this->smarty->assign('success', is_numeric($success)? $success : 1 );
 			}
 			
-			if ($success) sess_remove('entry');
+			// if ($success) sess_remove('entry');
 			
-			$this->smarty->assign('success',$success? 1:-1);
-			
+	
 			if ($do_preview)
 				$this->_makePreview($data);
-			
+
+			if ($success<0) {
+				$this->main();
+				return PANEL_NOREDIRECT;
+			}
+
 			return 1;
 		}
 		
@@ -151,6 +174,7 @@
 			$this->_getCatsFlags();
 
 			add_filter('wp_title', array(&$this, 'makePageTitle'), 10, 2);
+			if ($this->draft) add_filter('admin_body_class', array(&$this, 'draft_class'));
 			
 			return 0;
 			
@@ -164,7 +188,7 @@
 			$this->_getCatsFlags();
 
 			add_filter('wp_title', array(&$this, 'makePageTitle'), 10, 2);
-			
+			if ($this->draft) add_filter('admin_body_class', array(&$this, 'draft_class'));
 		}
 		
 		

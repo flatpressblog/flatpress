@@ -985,7 +985,7 @@ class BPlusTree_Node {
 		#d(implode(",",$this->keys));
 		#$place = array_search($key, $this->keys);
 		$place = BPT_bisect($this->keys, $key, 0, $this->validkeys);
-		if (@$this->keys[$place-1] == $key) {
+		if ($this->keys[$place-1] == $key) {
 			return $this->indices[$place-1];
 		} else {
 			if ($loose) {
@@ -2539,28 +2539,48 @@ class SBPlusTree extends BPlusTree {
 		$this->maxstring = $maxstring;
 	}
 
+	function startup() {
+		fwrite($this->stringfile, 'BPTSTRINGS');
+		return parent::startup();
+	}
+
 	function getstring($seek) {
 		fseek($this->stringfile, $seek);
 		$s = fread($this->stringfile, $this->maxstring);
 		return rtrim($s);
 	}
 
-	function setstring($s) {
-		fseek($this->stringfile, 0, SEEK_END);
-		$seek = ftell($this->stringfile);
+	function setstring($s, $key) {
+		$seek = $this->has_key($key);
+		if (!is_numeric($seek)) {
+			fseek($this->stringfile, 0, SEEK_END);
+			$seek = ftell($this->stringfile);
+		} else {
+			fseek($this->stringfile, $seek);
+		}
 		// nul-pad string
+		if (strlen($s>$this->maxstring))
+			$x = substr($s, 0, $this->maxstring);
 		$x = str_pad($s, $this->maxstring, chr(0));
 		fwrite($this->stringfile, $x);
 		return $seek;
 	}
 
 	function getitem(&$key, $loose=false) {
-		$seek = parent::getitem($key, $loose);
-		return $seek!==false? $this->getstring($seek) : false;
+		$seek = $this->has_key($key, $loose);
+		return is_numeric($seek)? $this->getstring($seek) : false;
+	}
+
+	/**
+	 * @param $key target key
+	 * @returns int seek point if key exists, 0 otherwise
+	 */
+	function has_key($key, $loose=false) {
+			return @parent::getitem($key, $loose);
 	}
 
 	function setitem($key, $val) {
-		$seek = $this->setstring($val);
+		$seek = $this->setstring($val, $key);
 		parent::setitem($key, $seek);
 		return $seek;
 	}

@@ -26,7 +26,7 @@
 	function static_parse($id) {
 		if ($fname=static_exists($id)) {
 			$entry = io_load_file($fname);
-			return array_change_key_case(utils_kexplode($entry));
+			return (utils_kexplode($entry));
 		}
 		return array();
 	}
@@ -35,7 +35,6 @@
 	function static_save($entry, $id, $oldid=null) {
 		$fname = STATIC_DIR . $id . EXT;
 		
-		$entry = array_change_key_case($entry, CASE_UPPER);
 		$entry['CONTENT'] = apply_filters('content_save_pre', $entry['CONTENT']);
 		$entry['SUBJECT'] = apply_filters('title_save_pre', $entry['SUBJECT']);
 	
@@ -106,7 +105,7 @@
 				
 		if (isset($params['content']) && is_array($params['content']) && $params['content']) {
 			//foreach ($params['entry'] as $k => $val)
-			$smarty->assign(array_change_key_case($params['content'], CASE_LOWER));
+			$smarty->assign($params['content']);
 			return $content;
 		}
 		

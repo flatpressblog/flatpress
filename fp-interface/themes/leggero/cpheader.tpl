@@ -7,7 +7,7 @@
 	{action hook=admin_head}
 </head>
 
-<body class="{"admin-$panel-$action"|tag:body_class:adminpanel}">
+<body class="{"admin-$panel-$action"|tag:admin_body_class}">
 	<div id="body-container">
 	<div id="outer-container">
 	

@@ -55,7 +55,7 @@
 					$id=basename($file,EXT);
 					$arr=entry_parse($id, true);
  
-					echo "[POST] $id => {$arr['SUBJECT']}\n";
+					echo "[POST] $id => {$arr['subject']}\n";
 					$this->index->add($id, $arr);
  
 					return 0;

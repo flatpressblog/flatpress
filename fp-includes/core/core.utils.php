@@ -85,8 +85,9 @@ if (!function_exists('fnmatch')) {
 	function utils_kexplode($string, $delim='|', $keyupper=true) {
 		$arr = array();
 		$string = trim($string);
-			
-		$arr[strtok($string, $delim)] = strtok($delim);
+		
+		$k = strtolower(strtok($string, $delim));	
+		$arr[$k] = strtok($delim);
 		while (( $k = strtok($delim) ) !== false) {
 			if ($keyupper && !preg_match('/[A-Z-_]/',$k)){
 				/* 
@@ -100,7 +101,7 @@ if (!function_exists('fnmatch')) {
 				continue;
 			}
 			
-			$arr[$k] = strtok($delim);
+			$arr[strtolower($k)] = strtok($delim);
 		}
 		
 		return $arr;
@@ -156,10 +157,11 @@ if (!function_exists('fnmatch')) {
 	// $arr['key1'] = 'value1'; $arr['key2'] = 'value2'; etc.
 	
 	function utils_kimplode($arr, $delim='|') {
+		
 		$string = "";
 		foreach ($arr as $k => $val) {
 			if ($val)
-				$string .= $k . $delim . $val . $delim;
+				$string .= strtoupper($k) . $delim . ($val) . $delim;
 		}
 		return $string;
 	}

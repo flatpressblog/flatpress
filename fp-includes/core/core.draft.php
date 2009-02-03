@@ -64,7 +64,7 @@
 		
 			$entry = io_load_file($fname);
 			
-			$entry = array_change_key_case(utils_kexplode($entry));
+			$entry = utils_kexplode($entry);
 			if (!isset($entry['categories']))
 				$entry['categories'] = array();
 			else 
@@ -76,7 +76,7 @@
 	}
 
 	
-	function draft_save($entry, $id=null, $update_date=false) {
+	function draft_save($entry, $id=null, $update_index = false, $update_date=false) {
 	
 		if (!$id) {
 			$id = bdb_idfromtime('entry', $entry['date']);
@@ -90,28 +90,22 @@
 			// move collateral files
 			@rename($ed, $dd);
 			
-			// delete normal entry
-			fs_delete($ed.EXT);
+			if ($update_index) {
+				// delete normal entry
+				fs_delete($ed.EXT);
 			
-			// remove from normal flow
-			$o =& entry_init();
-			$o->delete($id);
+				// remove from normal flow
+				$o =& entry_init();
+				$o->delete($id, null);
+			}
 	
 		}
 
-		$entry['content'] = apply_filters('content_save_pre', $entry['content']);
-		$entry['subject'] = apply_filters('title_save_pre', $entry['subject']);
-		
-		$entry = array_change_key_case($entry, CASE_UPPER);
-		if (isset($entry['CATEGORIES'])) {
-			
-				if (is_array($entry['CATEGORIES']))
-					$entry['CATEGORIES'] = implode(',',$entry['CATEGORIES']);
-				else
-					trigger_error("Failed saving draft. Expected 'categories' to be
-							an array, found " . gettype($entry['CATEGORIES']), E_USER_ERROR);	
-		}
-		
+		$entry = entry_prepare($entry);
+		if ($entry['categories'])
+				$entry['categories']=implode(',', $entry['categories']);
+		else unset($entry['categories']);
+
 		$string = utils_kimplode($entry);
 		
 	
@@ -136,9 +130,6 @@
 	
 	function draft_exists($id) {
 	
-		if (!user_loggedin()) 
-			return false;
-		
 		$dir = draft_dir($id);
 		if (!$dir)
 			return false;

@@ -73,8 +73,10 @@
 	
 	$lang['admin']['entry']['write']['msgs'] = array(
 		1	=> 'Entry has been saved successfully',
-		-1	=> 'An error occurred while trying to save 
-		the entry',
+		-1	=> 'An error occurred: your entry could not be saved successfully',
+		-2	=> 'An error occurred: your entry has not been saved; index might have become corrupt',
+		-3	=> 'An error occurred: your entry has been saved as draft',
+		-4	=> 'An error occurred: your entry has been saved as draft; index might have become corrupt',
 		'draft'=> 'You are editing a <strong>draft</strong> entry'
 	);
 

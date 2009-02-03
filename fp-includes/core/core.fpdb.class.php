@@ -773,7 +773,7 @@
 		
 		if (isset($params['content']) && is_array($params['content']) && $params['content']) {
 			//foreach ($params['entry'] as $k => $val)
-			$smarty->assign(array_change_key_case($params['content'], CASE_LOWER));
+			$smarty->assign($params['content']);
 			return $content;
 		}
 		

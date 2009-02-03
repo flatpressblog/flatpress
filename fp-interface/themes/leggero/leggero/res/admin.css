@@ -554,7 +554,7 @@ a.link-general:hover, .main-cell a:hover {
 	cursor: help;
 }
 
-.draft { background-color: lightgrey }
+.draft { background-color: #333 }
 
 /* (already defined in common, here we put just some tuning settings) */
 #admin-content ul.msgs {

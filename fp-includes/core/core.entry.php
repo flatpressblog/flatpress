@@ -100,15 +100,19 @@
 			return $this->indices[$cat];
 		}
 
-		function add($id, $entry, $del = array()) {
+		function add($id, $entry, $del = array(), $update_title = true) {
 			$key = entry_idtokey($id);
-			$val = $entry['SUBJECT'];
+			$val = $entry['subject'];
 
 			$main =& $this->get_index();
-			$seek = $main->setitem($key, $val);
-
-			if (isset($entry['CATEGORIES']) && is_array($entry['CATEGORIES'])) {
-				foreach ($entry['CATEGORIES'] as $cat) {
+			$seek = null;
+			if (!$update_title) 
+				$seek = $main->has_key($key, $val);
+		
+			if (is_numeric($seek))
+				$seek = $main->setitem($key, $val);
+			if (isset($entry['categories']) && is_array($entry['categories'])) {
+				foreach ($entry['categories'] as $cat) {
 					if (!is_numeric($cat)) continue;
 					$this_index =& $this->get_index($cat);
 					$this_index->setitem($key, $seek);
@@ -117,6 +121,7 @@
 
 			if ($del) {
 				foreach($del as $cat) {
+					// echo 'DEL '. $cat,"\n";
 					$this_index =& $this->get_index($cat);
 					$this_index->delitem($key);
 				}
@@ -126,18 +131,19 @@
 
 		}
 
-		function delete($id) {
+		function delete($id, $entry) {
 			$key = entry_idtokey($id);
 
 			$main =& $this->get_index();
 			$main->delitem($key);
 
-			$entry = entry_parse($id);
+			
 			if (isset($entry['categories']) && is_array($entry['categories'])) {
 				foreach ($entry['categories'] as $cat) {
 					if (!is_numeric($cat)) continue;
 					$this_index =& $this->get_index($cat);
-					$this_index->delitem($key);
+					if ($this_index->has_key($key))
+						$this_index->delitem($key);
 				}
 			}
 
@@ -202,10 +208,10 @@
 		
 		function add($id, $val) {
 			
-			$this->_list[$id]=array('subject' => $val['SUBJECT'],
+			$this->_list[$id]=array('subject' => $val['subject'],
 						'categories' => 
-							(isset($val['CATEGORIES'])? 
-							$val['CATEGORIES'] : array()));
+							(isset($val['categories'])? 
+							$val['categories'] : array()));
 						
 			return $this->save();
 		}
@@ -424,11 +430,14 @@
 		return file_exists($f)? $f : false;
 	}
 	
-	function entry_dir($id) {
+	function entry_dir($id, $month_only = false) {
 		if (!preg_match('|^entry[0-9]{6}-[0-9]{6}$|', $id))
 			return false;
 		$date = date_from_id($id);
-		$f = CONTENT_DIR . "{$date['y']}/{$date['m']}/$id"; 
+		if ($month_only)
+			$f = CONTENT_DIR . "{$date['y']}/{$date['m']}/"; 
+		else
+			$f = CONTENT_DIR . "{$date['y']}/{$date['m']}/$id"; 
 		return $f;
 	
 	
@@ -450,18 +459,18 @@
 		// propagates the error if entry does not exist
 		
 		
-		if (isset($arr['CATEGORIES']) && // fix to bad old behaviour:
-					(trim($arr['CATEGORIES']) != '')) { 
+		if (isset($arr['categories']) && // fix to bad old behaviour:
+					(trim($arr['categories']) != '')) { 
 		 
 				
-				$cats = (array)explode(',',$arr['CATEGORIES']);
-				$arr['CATEGORIES'] = (array) $cats;
+				$cats = (array)explode(',',$arr['categories']);
+				$arr['categories'] = (array) $cats;
 				
 		
 				
-		} else $arr['CATEGORIES'] = array();
+		} else $arr['categories'] = array();
 		
-		// if (!is_array($arr['CATEGORIES'])) die();
+		// if (!is_array($arr['categories'])) die();
 		
 		if (!isset($arr['AUTHOR'])) {
 			global $fp_config;
@@ -469,7 +478,7 @@
 		}
 
 		if ($raw) return $arr;
-		return array_change_key_case($arr, CASE_LOWER);
+		return $arr;
 		
 	}
 	
@@ -620,62 +629,122 @@
 		
 		
 	}
-	
-	function entry_save($entry_cont, $id=null, $update_index = true) {
 
+	// @TODO : check against schema ?
+	function entry_prepare($entry) {		// prepare for serialization
 		global $post;
 		
-		$obj =& entry_init();
-		
-		if (!isset($entry_cont['date'])) {
-			$entry_cont['date']=date_time();
+		// fill in missing value
+		if (!isset($entry['date'])) {
+			$entry['date']=date_time();
 		}
-		
-		$post = $entry_cont;
 
-		$entry = array_change_key_case($entry_cont, CASE_UPPER);
+		// import into global scope
+		$post = $entry;
+
+		// apply *_pre filters
+		$entry['content'] = apply_filters('content_save_pre', $entry['content']);
+		$entry['subject'] = apply_filters('title_save_pre', $entry['subject']);
+
+
+		// prepare for serialization
+		if (isset($entry['categories'])) {
 		
+			if (!is_array($entry['categories'])) {
+				trigger_error("Expected 'categories' to be an array, found " 
+					. gettype($entry['categories']), E_USER_WARNING);
+				$entry['categories'] = array();
+			}
+
+		} else { $entry['categories'] = array(); }
+
+	
+
+		return $entry;
+	}
+	
+	function entry_save($entry, $id=null, $update_index = true) {
+
+		// PHASE 1 : prepare entry
 		if (!$id) {
-			$id = bdb_idfromtime(BDB_ENTRY, $entry['DATE']);
+			if (!@$entry['date']) $entry['date'] = date_time();
+			$id = bdb_idfromtime(BDB_ENTRY, $entry['date']);
 		}
-		do_action('publish_post', $id, $entry_cont);
-		
-		$f = bdb_idtofile($id);
-		
-		$entry['CONTENT'] = apply_filters('content_save_pre', $entry['CONTENT']);
-		$entry['SUBJECT'] = apply_filters('title_save_pre', $entry['SUBJECT']);
 
-		$del = array();
-		if ($arr = entry_parse($id)) {
-			if (isset($entry['CATEGORIES']) && is_array($entry['CATEGORIES']))
-				$del = array_diff($arr['categories'], $entry['CATEGORIES']);
+		do_action('publish_post', $id, $entry);
+
+		// PHASE 2 : Store
+	
+		// secure data as DRAFT
+		$ret = draft_save($entry, $id);
+		
+		if ($ret === false) {
+			return -1; // FAILURE: ABORT
 		}
-		
-		$ok = ($update_index) ? $obj->add($id, $entry, $del) : true;
-		
+
+
+		// PHASE 3 : Update index
+		$delete_cats = array();
+		$all_cats = @$entry['categories'];
+		$update_title = false;
+		if ($old_entry = entry_parse($id)) {
+			if ($all_cats) {
+				$delete_cats = array_diff($old_entry['categories'], $all_cats);
+			}
+			$all_cats = $all_cats? array_merge($all_cats, $old_entry['categories']) : $old_entry['categories'];
+			$update_title = $entry['subject'] != $old_entry['subject'];
+		} 
+
+		/*
+		echo 'old';
+		print_r($old_entry['categories']);
+		echo 'new';
+		print_r($entry['categories']);
+		echo 'del';
+		print_r($delete_cats);
+		echo 'all';
+		print_r($all_cats);
+		*/
+
+		$INDEX =& entry_init();
+		$ok = ($update_index) ? $INDEX->add($id, $entry, $delete_cats, $update_title) : true;
+
+		// PHASE 4 : index updated; let's move back the entry
 		if ($ok) {
+	
+			$entryd = entry_dir($id, true);
+			$entryf = $entryd.$id.EXT;
+			$draftf = draft_exists($id);
+			if ($draftf === false) { // this should never happen!
+				if ($update_index) {
+						$INDEX->delete($id, $all_cats);
+				}
+				return -2;
+			}
 		
-				
-			if (isset($entry['CATEGORIES'])) {
-			
-				if (is_array($entry['CATEGORIES']))
-					$entry['CATEGORIES'] = implode(',',$entry['CATEGORIES']);
-				else
-					trigger_error("Failed saving entry. Expected 'categories' to be
-							an array, found " . gettype($entry['CATEGORIES']), E_USER_ERROR);	
+			fs_delete($entryf);
+			fs_mkdir($entryd);
+			$ret = rename($draftf, $entryf);
+
+			if (!$ret) {
+				if (draft_exists($id)) {
+					// rollback changes in the index
+					// (keep the draft file)
+					if ($update_index) {
+						$INDEX->delete($id, $all_cats);
+					}
+					return -3;
+				} else { echo 'zomg bacon';
+					return -2;
+				}
+			} else {
+				// SUCCESS : delete draft, move comments along
+				draft_to_entry($id);
+				return $id;
 			}
 			
-			
-			$str = utils_kimplode($entry);
-				
-			if (!io_write_file($f, $str)) {
-				if ($update_index)
-					 $obj->delete($id, $entry);
-				return false;
-			} else return $id;
-			
 		} 
-		return false;
+		return -4;
 		
 	}
 
