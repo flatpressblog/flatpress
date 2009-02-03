@@ -986,7 +986,7 @@ class BPlusTree_Node {
 		#$place = array_search($key, $this->keys);
 		$place = BPT_bisect($this->keys, $key, 0, $this->validkeys);
 		if (@$this->keys[$place-1] == $key) {
-			return $this->indices[$place];
+			return $this->indices[$place-1];
 		} else {
 			if ($loose) {
 				if ($place>1) $place--;
