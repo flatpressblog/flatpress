@@ -35,8 +35,8 @@
 	function static_save($entry, $id, $oldid=null) {
 		$fname = STATIC_DIR . $id . EXT;
 		
-		$entry['CONTENT'] = apply_filters('content_save_pre', $entry['CONTENT']);
-		$entry['SUBJECT'] = apply_filters('title_save_pre', $entry['SUBJECT']);
+		$entry['content'] = apply_filters('content_save_pre', $entry['content']);
+		$entry['subject'] = apply_filters('title_save_pre', $entry['subject']);
 	
 		$str = utils_kimplode($entry);
 

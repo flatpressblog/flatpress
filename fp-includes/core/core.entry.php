@@ -109,7 +109,7 @@
 			if (!$update_title) 
 				$seek = $main->has_key($key, $val);
 		
-			if (is_numeric($seek))
+			if (!is_numeric($seek))
 				$seek = $main->setitem($key, $val);
 			if (isset($entry['categories']) && is_array($entry['categories'])) {
 				foreach ($entry['categories'] as $cat) {

@@ -1778,6 +1778,8 @@ class BPlusTree {
 	 */
 
 	function setitem($key, $val) {
+		if (!is_numeric($val))
+			trigger_error("Second parameter must be numeric", E_USER_ERROR);
 		$curr_length = $this->length;
 		$root =& $this->root;
 		if (is_null($root)) trigger_error("not open", E_USER_ERROR);
