@@ -106,11 +106,18 @@
 
 			$main =& $this->get_index();
 			$seek = null;
+
+			// title must not be updated, let's get the offset value from has_key
 			if (!$update_title) 
 				$seek = $main->has_key($key, $val);
-		
+
+			// if seek is null, then there is no such key, and we must set it
+			// in the main index
 			if (!is_numeric($seek))
 				$seek = $main->setitem($key, $val);
+
+			// key has been set, let's set the other indices (if any), and link them
+			// to the title string using $seek
 			if (isset($entry['categories']) && is_array($entry['categories'])) {
 				foreach ($entry['categories'] as $cat) {
 					if (!is_numeric($cat)) continue;
@@ -119,6 +126,7 @@
 				}
 			}
 
+			// if the set of indices changed, some might have to be deleted 
 			if ($del) {
 				foreach($del as $cat) {
 					// echo 'DEL '. $cat,"\n";
@@ -662,7 +670,27 @@
 
 		return $entry;
 	}
-	
+
+	/**
+	 *
+	 * @param array entry 	contents
+	 * @param string|null 	entry id, null if can be deducted from the date field of $entry; 
+	 * 						defaults to null
+	 *
+	 * @param bool 			updates entry index; defaults to true	
+	 *
+	 *
+	 * @return integer 		-1 failure while storing preliminar draft, abort. Index not touched.
+	 * 						-2 index updated succesfully, but draft doesn't exist anymore 
+	 * 						   (should never happen!) OR
+	 * 						   failure while trying to move draft to entry path, draft does not exist anymore
+	 * 						   index not touched
+	 * 						-3 error while moving draft still exists, index written succesfully but rolled back
+	 * 						-4 failure while saving to index, aborted (draft still exists)
+	 *
+	 *
+	 */
+		
 	function entry_save($entry, $id=null, $update_index = true) {
 
 		// PHASE 1 : prepare entry
@@ -734,7 +762,7 @@
 						$INDEX->delete($id, $all_cats);
 					}
 					return -3;
-				} else { echo 'zomg bacon';
+				} else {
 					return -2;
 				}
 			} else {
