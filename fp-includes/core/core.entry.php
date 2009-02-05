@@ -714,7 +714,7 @@
 		// PHASE 3 : Update index
 		$delete_cats = array();
 		$all_cats = @$entry['categories'];
-		$update_title = false;
+		$update_title = true;
 		if ($old_entry = entry_parse($id)) {
 			if ($all_cats) {
 				$delete_cats = array_diff($old_entry['categories'], $all_cats);
@@ -799,7 +799,7 @@
 		fs_delete_recursive($d);
 		
 		$obj =& entry_init();
-		$obj->delete($id);
+		$obj->delete($id, entry_parse($id));
 		
 		do_action('delete_post', $id);
 		
