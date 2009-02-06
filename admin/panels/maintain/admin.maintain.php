@@ -98,14 +98,10 @@
 				if ($file){
 					$ver = utils_kexplode($file);
 					
-					if (strcmp($ver['STABLE'], SYSTEM_VER)>0)
+					if (strcmp($ver['stable'], SYSTEM_VER)>0)
 						$success = 1;
 					else
 						$success = 2;
-					
-					
-					$ver = array_change_key_case($ver, CASE_LOWER);
-					
 				}
 			}
 			
