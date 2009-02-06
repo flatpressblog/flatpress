@@ -2368,7 +2368,7 @@ class BPlusWalker {
 			if (is_null($keylower)) {
 				$nkey = null;
 			} else {
-				$keys =& $node->get_keys();
+				$keys = $node->get_keys();
 				$n_keys = count($keys);
 				$place = BPT_bisect($keys, $keylower);
 				if ($place==0) {
