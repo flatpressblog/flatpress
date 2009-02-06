@@ -210,12 +210,12 @@ function do_bbcode_img ($action, $attributes, $content, $params, $node_object) {
 		$height = (int)$attributes['height'];
 	// if width or height are set we calc proportions
 	}elseif (isset($attributes['width'])) { 
-		$scalefact = ($attributes['width'] / $orig_w);
+		$scalefact = $orig_w? ($attributes['width'] / $orig_w) : 0;
 		$width = (int) $attributes['width'];
 		$height = (int) ($scalefact*$orig_h);
 		
 	}elseif (isset($attributes['height'])) {
-		$scalefact = ($attributes['height'] / $orig_h);
+		$scalefact = $orig_w? ($attributes['height'] / $orig_h) : 0;
 		$height = (int) $attributes['height'];
 		$width = (int) ($scalefact*$orig_w);
 	}
