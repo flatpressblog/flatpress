@@ -12,7 +12,7 @@ Author URI: http://www.nowhereland.it
  * Place where the index is stored
  */
 define('PRETTYURLS_TITLES', true);
-define('PRETTYURLS_PATHINFO', true);
+define('PRETTYURLS_PATHINFO', !file_exists(ABS_PATH . '.htaccess'));
 define('PRETTYURLS_CACHE', CACHE_DIR . '%%prettyurls-index.tmp');
 define('PRETTYURLS_CATS', CACHE_DIR . '%%prettyurls-cats.tmp');
 
