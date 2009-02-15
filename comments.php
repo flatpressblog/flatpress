@@ -38,12 +38,12 @@
 					
 						case 'atom':
 							header('Content-type: application/atom+xml');
-							$module = SHARED_TPLS . 'comment-atom.tpl';
+							$module = SHARED_TPLS . 'comment-atom';
 							break;
 						case 'rss2':
 						default:
 							header('Content-type: application/rss+xml');
-							$module = SHARED_TPLS . 'comment-rss.tpl';
+							$module = SHARED_TPLS . 'comment-rss';
 					}
 					
 					

@@ -10,6 +10,8 @@
 	if (!file_exists(CONFIG_FILE))
 		utils_redirect('setup.php');
 
+	
+
 
 
 	/* local function defines follow */
@@ -130,7 +132,82 @@
 			$params['page'] = 1;
 
 	}
+
+	$fp_uri_handlers = array();
+
+	function register_uri_param($handler, $function, $priority = 10) {
+		global $fp_uri_handlers;
+		if (is_callable($function))
+			$fp_uri_handlers[$priority][$handler][] = $function;
+	}
+
+	function unregister_uri_param($handler, $function) {
+		global $fp_uri_handlers;
+		foreach($fp_uri_handlers as $priority => $handler) {
+			if ($i = array_search($function, $hand)) {
+				unset($fp_uri_handlers[$priority][$handler][$i]);
+			}
+		}
+	}
+
+	function handle_uri_params() {
+		global $fp_uri_handlers, $fp_params;
+
+		$params	= array();
+		$module	= 'default';
+		
+		ksort($fp_uri_handlers);
+		foreach($fp_uri_handlers as $priority => $handler_group) {
+			foreach($handler_group as $handle_id => $func_group) {
+				if (empty($fp_params[$handle_id]))
+					continue;
+				foreach($func_group as $func) {
+					$continue = call_user_func_array($func, array(&$params, &$module));
+					if (!$continue) break;
+				}
+			}
+		}
+
+		return $module;
+		
+	}
+
+	register_uri_param('entry', 'handle_entry');
+	register_uri_param('comments', 'handle_comments');
+
+	function handle_entry(&$params, &$module/*&$handle*/) {
+		global $fpdb, $theme, $fp_params;
+
+		$params['id'] = $fp_params['entry'];
+		$params['fullparse']=true;
+		
+		$fpdb->query($params);
+
+		if (@$theme['hassingle'])
+			$module='single.tpl';	
+		
+		add_filter('wp_title', 'index_permatitle', 10, 2);
+		
+		$module = 'index';
+
+		return true;
+
+	}
+
+	function handle_comments(&$params, &$module) {
+		global $fpdb, $theme, $fp_params;
+		
+		$module = 'comments';
+		$params['comments'] = true;
+		
+		include('comments.php');
+		
+		return false;
 	
+	}
+		
+
+
 	function index_main() {
 	
 		global $fpdb, $smarty, $fp_config, $fp_params;
@@ -198,12 +275,13 @@
 	function index_display() {
 		global $smarty;
 		
+		$module = handle_uri_params();
 		
-		$module = index_main();
+		//$module = index_main();
 		
 		theme_init($smarty);
 		
-		$smarty->display($module);
+		$smarty->display($module.'.tpl');
 			
 		unset($smarty);
 			

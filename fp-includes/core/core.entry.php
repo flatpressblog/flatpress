@@ -130,6 +130,7 @@
 			if ($del) {
 				foreach($del as $cat) {
 					// echo 'DEL '. $cat,"\n";
+					if (!is_numeric($cat)) continue;
 					$this_index =& $this->get_index($cat);
 					$this_index->delitem($key);
 				}
