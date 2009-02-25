@@ -468,11 +468,11 @@ li.widget-class {
 
 /* ===== CONFIG PANEL ===== */
 
-#admin-config dl {
+.option-set dl {
 	margin-bottom: 4em;
 }
 
-#admin-config dt {
+.option-set dt {
     width: 33%;
     text-align:right;
     margin-top: 1.8em;
@@ -480,23 +480,23 @@ li.widget-class {
     font-weight: bold;
 }
 
-#admin-config dt label {
+.option-set dt label {
 	padding-top: .2em;
 }
 
-#admin-config dd {
+.option-set dd {
     margin-left: 35%;
     margin-top: -1.7em;
     line-height: 1.5em;
 }
 
 
-#admin-config dd p {
+.option-set dd p {
     margin: 0;
 }
 
 
-#admin-config dd input{
+.option-set dd input{
 	margin-bottom: .2em;
 }
 
@@ -508,18 +508,18 @@ li.widget-class {
 	font-weight: bold;
 }
 
-#admin-config input.textinput ,
-#admin-config select.textinput {
+.option-set input.textinput ,
+.option-set select.textinput {
 	width: 20em;
 }
 
 
-#admin-config input.bigtextinput {
+.option-set input.bigtextinput {
 	width: 30em;
 }
 
 
-#admin-config input.smalltextinput {
+.option-set input.smalltextinput {
 	width: 5em;
 }
 

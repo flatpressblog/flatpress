@@ -18,7 +18,7 @@
 {html_form}
 
 
-<div id="admin-config">
+<div id="admin-config" class="option-set">
 
 <div id="admin-config-general">
 
