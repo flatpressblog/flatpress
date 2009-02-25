@@ -3,10 +3,10 @@
 
 {include file=shared:errorlist.tpl}
 
-{html_form class="config-panel"}
+{html_form class=option-set}
 <h2>{$plang.editing}</h2>
 
-<dl>
+<dl class="option-list">
 	<dt><label for="bb-escape-html">
 		{$plang.allow_html}
 	</label></dt>
@@ -28,7 +28,7 @@
 
 <h2>{$plang.other}</h2>
 
-<dl>
+<dl class="option-list">
 	<dt><label for="bb-comments">
 		{$plang.comments}
 	</label></dt>

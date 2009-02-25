@@ -24,7 +24,7 @@
 
 <h2> {$panelstrings.gensetts} </h2>
 
-	<dl>
+	<dl class="option-list">
 	<dt><label for="title"> {$panelstrings.blogtitle} </label></dt>
 	<dd><input type="text" name="title" id="title" class="textinput{$error.title|notempty:' field-error'}" 
 	value="{$flatpress.TITLE|escape:"html"}" />
@@ -84,7 +84,7 @@
 
 <h2> {$panelstrings.intsetts}  </h2>
 
-	<dl>
+	<dl class="option-list">
 		<dt> {$panelstrings.utctime} </dt>
 		{assign var=temp_time value="%b %d %Y %H:%M:%S"}
 		<dd> <code> {"r"|date:$smarty.now} </code> </dd>

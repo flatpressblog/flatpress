@@ -237,7 +237,8 @@ input.maxsize, select.maxsize { width: 100% }
 }
 
 
-#plugin-table-body td {
+.admin-widgets-blockparser td ,
+.admin-plugin-default td {
 	padding: 1em .6em;
 }
 
@@ -468,7 +469,7 @@ li.widget-class {
 
 /* ===== CONFIG PANEL ===== */
 
-.option-set dl {
+.option-set .option-list {
 	margin-bottom: 4em;
 }
 

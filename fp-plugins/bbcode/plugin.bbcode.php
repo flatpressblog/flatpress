@@ -277,7 +277,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		// Plugin hook, here lightbox attachs
 		$popup = apply_filters('bbcode_img_popup', $popup, $absolutepath);
 		$popup_start = $attributes['popup'] == 'true'
-			? '<a title="View image \''. $title .'\'" href="'. /* BLOG_BASEURL . $actualpath.*/
+			? '<a title="'. $title .'" href="'. /* BLOG_BASEURL . $actualpath.*/
 				$absolutepath .'"'. $popup .'>'
 			: '';
 		$popup_end = $attributes['popup'] == 'true'
