@@ -32,7 +32,7 @@
 			{toolbar}
 			<p>
 			<textarea name="content" {$error.content|notempty:'class="field-error"'} 
-			id="content" rows="20" cols="74">{$content|default:$smarty.request.content}</textarea><br />
+			id="content" rows="20" cols="74">{$content|default:$smarty.request.content|htmlspecialchars}</textarea><br />
 			{*here will go a plugin hook*}
 			{action hook=simple_edit_form}
 
