@@ -108,7 +108,8 @@
 		
 		$comment_dir = bdb_idtofile($id,BDB_COMMENT);
 		
-		$comment['DATE'] = date_time();
+		if (!isset($comment['DATE']))
+				$comment['DATE'] = date_time();
 		$id = bdb_idfromtime(BDB_COMMENT, $comment['DATE']);
 		$f = $comment_dir . $id . EXT;
 		$str = utils_kimplode($comment);

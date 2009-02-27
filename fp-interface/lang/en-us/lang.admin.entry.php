@@ -94,6 +94,7 @@
 		'email'		=> 'Email',
 		'ip'		=> 'IP',
 		'actions'	=> 'Actions',
+		'act_edit'	=> 'Edit',
 		'act_del'	=> 'Delete',
 		'act_del_confirm' => 'Do you really want to delete this comment?',
 		'nocomments'	=> 'This entry have not been commented, yet.',
@@ -107,6 +108,26 @@
 		-1	=> 'An error occurred while trying to delete 
 					the comment',
 		
+	);
+
+	$lang['admin']['entry']['commedit'] = 
+	array(
+		'head'		=> "Edit comment for entry", 
+		'content'	=> 'Content',
+		'date'		=> 'Date',
+		'author'	=> 'Author',
+		'www'		=> 'Web Site',
+		'email'		=> 'Email',
+		'ip'		=> 'IP',
+		'submit'	=> 'Save'
+		
+	
+	);
+
+	$lang['admin']['entry']['commedit']['msgs'] =
+	array(
+		1	=> 'Comment has been edited',
+		-1	=> 'An error occurred while trying to edit the comment',
 	);
 	
 	/* delete action */

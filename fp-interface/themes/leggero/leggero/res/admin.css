@@ -237,6 +237,7 @@ input.maxsize, select.maxsize { width: 100% }
 }
 
 
+.admin-entry-commentlist td ,
 .admin-widgets-blockparser td ,
 .admin-plugin-default td {
 	padding: 1em .6em;

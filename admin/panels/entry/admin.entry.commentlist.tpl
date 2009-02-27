@@ -40,10 +40,16 @@ function admin_entry_comment_delete() { return confirm({/literal}'{$plang.act_de
 <td>{if $url}<a href="{$url}">{$name}</a>{else}{$name}{/if}</td>
 <td><a href="mailto:{$email}">{$email}</a></td>
 <td>{$ip_address}</td>
-<td><a class="link-delete" onclick="return admin_entry_comment_delete();"
+<td>
+<a class="link-general"
+href="{"`$panel_url`&entry=`$entryid`"|action_link:commedit|cmd_link:comment:$id}">
+{$plang.act_edit}
+</a>
+<a class="link-delete" onclick="return admin_entry_comment_delete();"
 href="{"`$action_url`&entry=`$entryid`"|cmd_link:delete:$id}">
 {$plang.act_del}
-</a></td>
+</a>
+</td>
 </tr>
 {/comment}
 </tbody></table>

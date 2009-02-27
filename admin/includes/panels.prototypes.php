@@ -111,7 +111,7 @@
 		function exec() {
 			
 			foreach($this->args as $mandatory_argument) {
-				if (!isset($_GET[$mandatory_argument])) {
+				if (!isset($_REQUEST[$mandatory_argument])) {
 					return PANEL_REDIRECT_DEFAULT;
 				}
 			}
@@ -159,7 +159,7 @@
 		 *
 		 */
 		
-		function onsubmit() {
+		function onsubmit($data = null) {
 			
 			$returnvalue = 1;
 			$valid_evts = array_intersect(array_keys($_POST), $this->events);
@@ -167,7 +167,7 @@
 			if ($the_event=array_pop($valid_evts)) {
 					$event = "on{$the_event}";
 					if (method_exists($this, $event))
-						$returnvalue = call_user_func(array(&$this, $event));
+						$returnvalue = call_user_func(array(&$this, $event), $data);
 			}
 			
 			return $returnvalue;
@@ -213,6 +213,7 @@
 			
 			$dummyarr = array();
 			$errors = array();
+			$content = array();
 			$lang_loaded = false;
 			$l = null;
 			
@@ -256,13 +257,15 @@
 					$errors[$field] = $l['error'][$field];
 					if ($halt)
 						break;
+				} else {
+					$content[$field] = $string;
 				}
 				
 				
 			}
 			
 			if(!$errors) {
-				$result = parent::onsubmit();
+				$result = parent::onsubmit($content);
 			} else {
 				$this->smarty->assign('error', $errors);
 				$result = $this->onerror();

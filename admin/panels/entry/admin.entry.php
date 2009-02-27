@@ -21,6 +21,7 @@
 					'list'			=> true,
 					'write'			=> true,	
 					'commentlist'	=> false,
+					'commedit'		=> false,
 					'delete'		=> false,
 					'cats'			=> true,
 					'stats'			=> false

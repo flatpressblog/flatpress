@@ -102,7 +102,7 @@
 			if ($retval == PANEL_REDIRECT_CURRENT) {
 				foreach ($fp_admin_action->args as $mandatory_argument) {
 					$with_arguments .= '&' . $mandatory_argument .
-								'=' . $_GET[$mandatory_argument];
+								'=' . $_REQUEST[$mandatory_argument];
 				}
 			}
 
