@@ -278,7 +278,7 @@
 
 			} elseif (($qp->start + $qp->count) > $index_count) {
 
-				if ($index_count > 0)
+				if ($index_count >= $qp->start)
 					$qp->count = $index_count - $qp->start;
 				else
 					$index_count = $qp->start = $qp->count = 0;
