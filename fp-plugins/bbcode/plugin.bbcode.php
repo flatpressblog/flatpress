@@ -14,7 +14,7 @@ require(plugin_getdir('bbcode') .'/panels/admin.plugin.panel.bbcode.php');
 /**
  * Setups the plugin.
  */
-function plugin_bbcode_init() {
+function plugin_bbcode_startup() {
 	// defintions part
 	// load options
 	$bbconf = plugin_getoptions('bbcode');
@@ -64,7 +64,7 @@ function plugin_bbcode_init() {
 		add_filter('comment_text', 'plugin_bbcode_comment', 1);
 	}
 }
-plugin_bbcode_init();
+plugin_bbcode_startup();
 
 /**
  * Adds special stlye definitions into the HTML head.
@@ -498,7 +498,7 @@ function do_bbcode_list ($action, $attributes, $content, $params, $node_object) 
  *
  * @return object
  */
-function &plugin_bbcode_filter() {
+function &plugin_bbcode_init() {
 	static $bbcode = null;
 	if (!defined('BBCODE_INIT_DONE')) {
 		$bbcode = new StringParser_BBCode();
@@ -710,7 +710,7 @@ function &plugin_bbcode_filter() {
  * @return string
  */
 function BBCode($text) {
-	$bbcode =& plugin_bbcode_filter();
+	$bbcode =& plugin_bbcode_init();
 	return $bbcode->parse($text);
 }
 
