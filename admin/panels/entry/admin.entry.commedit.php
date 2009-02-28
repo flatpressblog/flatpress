@@ -42,6 +42,7 @@ class admin_entry_commedit extends AdminPanelActionValidated {
 			if ($this->nosuchcomment) return PANEL_REDIRECT_DEFAULT;
 			
 			$comment = comment_parse($_REQUEST['entry'],$_REQUEST['comment']);
+			if (isset($comment['loggedin'])) $content['loggedin'] = $comment['loggedin'];
 			$content['ip-address']	= $comment['ip-address'];
 			$content['date'] = $comment['date'];
 			$success = comment_save($_REQUEST['entry'], $content);
