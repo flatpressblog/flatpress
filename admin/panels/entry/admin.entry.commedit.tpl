@@ -10,20 +10,40 @@
 	
 
 		<p><input type="hidden" name="entry" value="{$entryid}" /><input type="hidden" name="comment" value="{$id}" />
-		<label class="textlabel" for="name">{$plang.author}</label><br />
-		<input type="text" {$error.name|notempty:'class="field-error"'} name="name" id="name" value="{$values.name|default:$cookie.name}" /></p>
+
+		<div class="option-set">
+		<dl>
+		<dt><label class="textlabel" for="name">{$plang.author}</label></dt>
+		<dd>
+		<input type="text" class="bigtextinput {$error.name|notempty:'field-error'}" name="name" id="name" value="{$values.name}" />
+		</dd>
 		
-		<p><label class="textlabel" for="email">{$plang.email}</label><br />
-		<input type="text" {$error.email|notempty:'class="field-error"'} name="email" id="email" value="{$values.email|default:$cookie.email}" /></p>
+		<dt><label class="textlabel" for="email">{$plang.email}</label></dt>
+		<dd>
+		<input type="text" class="bigtextinput {$error.email|notempty:'field-error'}" name="email" id="email" value="{$values.email}" />
+		</dd>
 		
-		<p><label class="textlabel" for="url">{$plang.www}</label><br />
-		<input type="text" {$error.url|notempty:'class="field-error"'} name="url" id="url" value="{$values.url|default:$cookie.url}" /></p>
-		
+		<dt><label class="textlabel" for="www">{$plang.www}</label></dt>
+		<dd>
+		<input type="text" class="bigtextinput {$error.www|notempty:'field-error'}" name="www" id="www" value="{$values.www}" />
+		</dd>
+
+		<dt><label class="textlabel" for="ip">{$plang.ip}</label></dt>
+		<dd>
+		<input type="text" id="ip" name="ip" class="bigtextinput" value="{$values.ip_address}" disabled="disabled" />
+		</dd>
+
+		<dt><label class="textlabel" for"loggedin">{$plang.loggedin}</label></dt>
+		<dd>
+		<input type="checkbox" id="loggedin" name="loggedin" {if $values.loggedin} checked="checked" {/if} disabled="disabled" />
+		</dd>
+		</dl>
+		</div>
 	
-	
-		<p><label for="content">{$plang.content}</label><br />
+		<div class="option-set">	
 		<textarea name="content" {$error.content|notempty:'class="field-error"'}
-		id="content" rows="10" cols="74">{$values.content}</textarea></p>
+		id="content" rows="10" cols="74">{$values.content}</textarea>
+		</div>
 	
 	<div class="buttonbar">
 	<input type="submit" name="save" id="submit" value="{$plang.submit}" />
