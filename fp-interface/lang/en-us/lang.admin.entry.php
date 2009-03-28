@@ -119,6 +119,7 @@
 		'www'		=> 'Web Site',
 		'email'		=> 'Email',
 		'ip'		=> 'IP',
+		'loggedin'	=> 'Registered user',
 		'submit'	=> 'Save'
 		
 	
