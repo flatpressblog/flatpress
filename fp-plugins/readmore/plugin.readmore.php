@@ -78,7 +78,7 @@ function plugin_readmore_main($string) {
 		
 	}
 	
-	if ($q->single || isset($fp_params['entry'])) {
+	if (($q && $q->single) || isset($fp_params['entry'])) {
 		$string = str_replace('[more]', "<a id=\"readmore-{$fp_params['entry']}\"></a>", $string);
 	}
 	
