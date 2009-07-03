@@ -83,9 +83,6 @@
 	);*/
 	
 
-			$name 	= trim(stripslashes(@$_POST['name']));
-			$email 	= isset($_POST['email'])? trim($_POST['email']) : null;
-			$url 	= isset($_POST['url'])? trim(stripslashes($_POST['url'])) : null;
 			$content= isset($_POST['content'])? trim(stripslashes($_POST['content'])) : null;
 			
 			$errors = array();
@@ -93,8 +90,16 @@
 			$loggedin = false;
 
 			if (user_loggedin()) {
+				$user = user_get();
 				$loggedin = $arr['loggedin']=true;
+				$email 	= $user['email'];
+				$url 	= $user['www'];
+				$name 	= $user['userid'];
 			} else {
+
+				$name 	= trim(stripslashes(@$_POST['name']));
+				$email 	= isset($_POST['email'])? trim($_POST['email']) : null;
+				$url 	= isset($_POST['url'])? trim(stripslashes($_POST['url'])) : null;
 				
 				/*
 				 * check name
@@ -147,7 +152,7 @@
 			}
 			
 			$arr['version'] = system_ver();
-			$arr['name'] = $_POST['name'];
+			$arr['name'] = $name;
 
 
 			if (!$loggedin)

@@ -583,6 +583,68 @@
 }
 
 */
+	function entry_categories_list() {
+		if (!$string = io_load_file(CONTENT_DIR . 'categories.txt'))
+			return false;
+
+			$lines = explode("\n", trim($string));
+			$idstack = array(0);
+			$indentstack=array();
+
+
+			// $categories = array(0=>null);
+			$lastindent = 0;
+			$lastid = 0;
+			$parent = 0;
+
+			$NEST = 0;
+
+			foreach ($lines as $v) {
+
+				$vt = trim($v);
+
+				if (!$vt) continue;
+
+				$text='';
+				$indent = utils_countdashes($vt, $text);
+					
+				$val = explode(':', $text);
+				
+				$id     = trim($val[1]);
+				$label  = trim($val[0]);
+
+				// echo "PARSE: $id:$label\n";
+				if ($indent > $lastindent) {
+					// echo "INDENT ($indent, $id, $lastid)\n";
+					$parent = $lastid;
+					array_push($indentstack, $lastindent);
+					array_push($idstack, $lastid);
+					$lastindent = $indent;
+					$NEST++;
+				} elseif ($indent < $lastindent) {
+					// echo "DEDENT ($indent)\n";
+					do {
+						$dedent = array_pop($indentstack);
+						array_pop($idstack);
+						$NEST--;
+					} while ($dedent > $indent);
+					if ($dedent < $indent) return false; //trigger_error("failed parsing ($dedent<$indent)", E_USER_ERROR);
+					$parent = end($idstack);
+					$lastindent = $indent;
+					$lastid = $id;
+				}
+
+					$lastid = $id;
+					// echo "NEST: $NEST\n";
+				
+
+				$categories[ $id ] = $parent;
+			
+			}
+
+			return $categories;
+
+	}
 
 	function entry_categories_get($what=null) {
 		

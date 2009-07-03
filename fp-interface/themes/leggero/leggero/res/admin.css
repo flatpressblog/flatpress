@@ -161,7 +161,7 @@ ul#admin-tabmenu li a.admin-tab-current {
 
 /* ===== ADMIN ENTRY ===== */
 input#subject {
-	width: 100%;
+	width: 99%;
 	font-size: 1.3em;
 	color: #333333;
 	font-weight: bold
@@ -508,6 +508,12 @@ li.widget-class {
 
 .textinput:focus, .bigtextinput:focus, .smalltextinput:focus {
 	font-weight: bold;
+}
+
+.widetextinput {
+	width: 99%;
+	font-size: 1.3em;
+	color: #333333;
 }
 
 .option-set input.textinput ,

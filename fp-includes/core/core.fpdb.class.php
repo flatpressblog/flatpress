@@ -52,7 +52,7 @@
 				}
 				
 			}
-			
+
 			if (isset($params['fullparse'])) {
 
 				$this->fullparse = 
@@ -263,10 +263,11 @@
 				$filteredkeys = $obj->getList();
 				$index_count = $obj->getCount();
 
-				$this->walker =& $entry_index->walker(
-					entry_idtokey($filteredkeys[0]), true,
-					entry_idtokey($filteredkeys[$index_count-1]), true
-				);
+				if ($filteredkeys)
+					$this->walker =& $entry_index->walker(
+						entry_idtokey($filteredkeys[0]), true,
+						entry_idtokey($filteredkeys[$index_count-1]), true
+					);
 			
 				
 			}
@@ -389,7 +390,10 @@
 			} else {
 
 				// only title
-				$cont = array('subject' => $this->walker->current_value());
+				$cont = array(
+						'subject' => $this->walker->current_value(), 
+						'date' => entry_idtotime($id)
+				);
 				
 			}
 

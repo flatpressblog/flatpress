@@ -46,7 +46,7 @@
 
 		{/entry_block}
 		
-		{include file="shared:comments.tpl"}
+		{include file="shared:comment-form.tpl"}
 
 	
 		</div>
