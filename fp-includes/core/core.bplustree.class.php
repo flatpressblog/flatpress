@@ -2611,6 +2611,14 @@ class caching_SBPT extends SBPlusTree {
 
 	var $cache = array();
 
+		
+	function caching_SBPT($infile, $stringfile, 
+				$maxstring = 256, 
+				$pos=null, $nodesize=null, $keylen=null) {
+        	$this->SBPlusTree($infile, $stringfile, $maxstring, $pos, $nodesize, $keylen);
+	}
+
+
 	function getitem(&$key, $loose=false) {
 		if (isset($cache[$key]))
 			return $cache[$key];

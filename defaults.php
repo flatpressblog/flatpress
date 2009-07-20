@@ -109,4 +109,7 @@
 		
 	define('BLOG_BASEURL', 'http://'.$_SERVER['HTTP_HOST']. BLOG_ROOT);
 
+function dummy() {}
+set_error_handler('dummy');
+
 ?>
