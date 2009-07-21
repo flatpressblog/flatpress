@@ -40,7 +40,7 @@ SCP;
 		
 			$this->pluginid = isset($_GET['plugin'])? $_GET['plugin'] : null;
 			
-			$pi =& new plugin_indexer;
+			$pi = new plugin_indexer;
 			$plist = $pi->getList();
 			sort($plist);
 			$this->smarty->assign('pluginlist', $plist);

@@ -43,7 +43,7 @@
 		
 		function main() {
 			parent::main();
-			//$smarty =& $this->smarty;
+			//$smarty = $this->smarty;
 			
 			// parameters for the list
 			// start offset and count (now defaults to 8...)

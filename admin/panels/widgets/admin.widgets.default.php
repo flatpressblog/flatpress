@@ -28,7 +28,7 @@
 					
 					
 					if (isset($registered_w[$newid])){
-						$thiswdg =& $registered_w[$newid];
+						$thiswdg = $registered_w[$newid];
 						
 						$widget_list[$wpos][$idx]['name'] = $thiswdg['name'];
 						

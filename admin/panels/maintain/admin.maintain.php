@@ -41,7 +41,7 @@
 		var $_directory = CONTENT_DIR;
  
 		function s_entry_crawler() {
-			$this->index =& entry_init();
+			$this->index = entry_init();
 			parent::fs_filelister();
 		}
  

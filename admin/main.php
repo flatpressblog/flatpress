@@ -53,7 +53,7 @@
 			if (!class_exists($panelclass))
 				trigger_error("No class defined for requested panel", E_USER_ERROR);
 				
-			$fp_admin =& new $panelclass($smarty);
+			$fp_admin = new $panelclass($smarty);
 		
 		}
 
@@ -69,7 +69,7 @@
 		if (!$fp_admin)
 			return;
 		
-		$fp_admin_action =& $fp_admin->get_action($action);
+		$fp_admin_action = $fp_admin->get_action($action);
 		
 		
 		define('ADMIN_PANEL_ACTION', $action);
@@ -179,7 +179,7 @@
 	theme_init($smarty);
 	$smarty->register_function('controlpanel', 'showcontrolpanel');
 	
-	$v =& $lang['admin'][$panel][$action];
+	$v = $lang['admin'][$panel][$action];
 	
 	
 	$smarty->assign_by_ref('panelstrings',	$v);

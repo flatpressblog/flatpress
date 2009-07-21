@@ -24,7 +24,7 @@
 		function style_list() {
 			global $fp_config;
 			
-			$o =& new admin_themes_obj_style_idx;
+			$o = new admin_themes_obj_style_idx;
 			$list = $o->getList();
 			sort($list);
 
@@ -88,7 +88,7 @@
 		function cleartplcache() {
 				// if theme was switched, clear tpl cache
 			
-				$tpl =& new tpl_deleter();
+				$tpl = new tpl_deleter();
 				
 				$tpl->getList();
 				

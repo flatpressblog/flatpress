@@ -23,7 +23,7 @@
 		
 		
 		function AdminPanel(&$smarty) {
-			$this->smarty =& $smarty;
+			$this->smarty = $smarty;
 			if (!$this->panelname)
 				trigger_error("Variable \$panelname is not defined!", E_USER_ERROR);
 				
@@ -76,13 +76,13 @@
 						trigger_error("No classes for action $action.", E_USER_ERROR);
 					}
 					
-					$obj =& new $class($this->smarty);
+					$obj = new $class($this->smarty);
 					return $obj;
 					
 				} else trigger_error("No script found for action $action", E_USER_ERROR);
 				
 			} else {
-				$obj =& new $class($this->smarty);
+				$obj = new $class($this->smarty);
 			}
 				
 			return $obj;
@@ -101,7 +101,7 @@
 		var $langres = ''; 
 		
 		function AdminPanelAction(&$smarty) { 
-			$this->smarty =& $smarty;
+			$this->smarty = $smarty;
 			$the_action_panel = get_class($this);
 			$this->smarty->assign('admin_panel_id', $the_action_panel);
 			if (!$this->langres) 
@@ -251,7 +251,7 @@
 				
 					if (!$lang_loaded) {
 						$lang = lang_load('admin.'.ADMIN_PANEL);
-						$l =& $lang['admin'][ADMIN_PANEL][ADMIN_PANEL_ACTION];
+						$l = $lang['admin'][ADMIN_PANEL][ADMIN_PANEL_ACTION];
 					}
 					
 					$errors[$field] = $l['error'][$field];

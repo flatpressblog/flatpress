@@ -150,7 +150,7 @@
 		function cleartplcache() {
 				// if theme was switched, clear tpl cache
 			
-				$tpl =& new tpl_deleter();
+				$tpl = new tpl_deleter();
 				
 				$tpl->getList();
 				
