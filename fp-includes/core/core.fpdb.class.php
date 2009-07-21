@@ -148,14 +148,14 @@
 			global $current_query;
 			
 			
-			$this->params =& new FPDB_QueryParams($params);
+			$this->params = new FPDB_QueryParams($params);
 			$this->ID = $ID;
 			
 			if ($this->params->id || $this->params->random) {
 				$this->single = true;
 			}
 			
-			$GLOBALS['current_query'] =& $this;
+			$GLOBALS['current_query'] = $this;
 			
 		}
 		
@@ -166,7 +166,7 @@
 			
 			$fpdb->init();
 			
-			$entry_index =& $fpdb->get_index($this->params->category);
+			$entry_index = $fpdb->get_index($this->params->category);
 
 			$this->counter++;
 
@@ -198,7 +198,7 @@
 			if (!$this->params->id) 
 				trigger_error("FPDB: no ID found for query {$this->ID}", E_USER_ERROR);
 						
-			$qp =& $this->params;
+			$qp = $this->params;
 
 			$time = entry_idtotime($qp->id);
 
@@ -222,7 +222,7 @@
 			// also, if $prevkey != $newkey then $prevkey := $newkey
 		
 			
-			$this->walker =& $entry_index->walker($prevkey, 2, null, null);
+			$this->walker = $entry_index->walker($prevkey, 2, null, null);
 	
 			// since we're searching for $prevkey, i.e. a key preceding the target $id
 			// in the sequence, if $prevkey becomes equal to $key then it means 
@@ -242,7 +242,7 @@
 		function _prepare_list(&$entry_index) {
 
 
-			$qp =& $this->params;
+			$qp = $this->params;
 			
 			$entry_num = 0;
 			
@@ -253,18 +253,18 @@
 				#$this->local_list = array_keys($entry_index);
 				
 				$index_count = $entry_index->length(); 
-				$this->walker =& $entry_index->walker($firstid=null);	
+				$this->walker = $entry_index->walker($firstid=null);	
 
 			} else {
 				// notice this won't work with cats (for now)
 				
-				$obj =& new entry_archives($qp->y, $qp->m, $qp->d); 
+				$obj = new entry_archives($qp->y, $qp->m, $qp->d); 
 				
 				$filteredkeys = $obj->getList();
 				$index_count = $obj->getCount();
 
 				if ($filteredkeys)
-					$this->walker =& $entry_index->walker(
+					$this->walker = $entry_index->walker(
 						entry_idtokey($filteredkeys[0]), true,
 						entry_idtokey($filteredkeys[$index_count-1]), true
 					);
@@ -294,7 +294,7 @@
 			/*
 				stuff for cats, have a look
 
-			$this->local_list =& $tmp;
+			$this->local_list = $tmp;
 			
 			if ($qp->start + $qp->count > $i) {
 				$qp->count = $i - $qp->start;
@@ -305,7 +305,7 @@
 
 		// not so great implementation... doesn't work well
 		function _get_random_id(&$entry_index) {
-			$qp =& $this->params;
+			$qp = $this->params;
 			$now = time();
 
 			$first = '999999999999';
@@ -329,7 +329,7 @@
 		function hasMore() {
 		
 			
-			$GLOBALS['current_query'] =& $this;
+			$GLOBALS['current_query'] = $this;
 			
 			
 			if ($this->counter < 0)
@@ -347,7 +347,7 @@
 				return $false;
 			}
 
-			$qp =& $this->params;
+			$qp = $this->params;
 			
 			
 			if ($this->counter < 0)
@@ -403,7 +403,7 @@
 			}
 			
 			if ($qp->comments) {
-				$this->comments =& new FPDB_CommentList($id, comment_getlist($id));
+				$this->comments = new FPDB_CommentList($id, comment_getlist($id));
 				$cont['comments'] = $this->comments->getCount();
 			}
 			
@@ -420,7 +420,7 @@
 			if (!$this->hasMore())
 				return false;
 			
-			$var =& $this->peekEntry();
+			$var = $this->peekEntry();
 			$this->lastentry = $var;
 			
 			$this->walker->next();
@@ -581,9 +581,9 @@
 		
 		function init() {
 			#if (!$this->_indexer) {
-				#$this->_indexer =& new entry_indexer();
+				#$this->_indexer = new entry_indexer();
 				$this->_categories = entry_categories_get();
-				#$obj =& $this->_indexer;
+				#$obj = $this->_indexer;
 				#$this->entry_index = $obj->getList();
 				
 		
@@ -592,7 +592,7 @@
 
 		function &get_index($cat_id = 0) {
 			if (!isset($this->_indexer[$cat_id])) {
-				$this->_indexer[$cat_id] =& entry_cached_index($cat_id);
+				$this->_indexer[$cat_id] = entry_cached_index($cat_id);
 			}
 			return $this->_indexer[$cat_id];
 		}
@@ -653,7 +653,7 @@
 			static $queryId=-1;
 			$queryId++;
 			 
-			$this->queries[$queryId] =& new FPDB_Query($params, $queryId);
+			$this->queries[$queryId] = new FPDB_Query($params, $queryId);
 				
 			
 			$this->init();	
@@ -666,7 +666,7 @@
 		function doquery($queryId=0) {
 		
 			if (isset($this->queries[$queryId])) {
-				$q =& $this->queries[$queryId];
+				$q = $this->queries[$queryId];
 			} else {
 				return false;
 				trigger_error("FPDB: no such query ID ($queryId)", E_USER_WARNING);
@@ -688,7 +688,7 @@
 		function &getQuery($queryId=0) {
 			$o = null;
 			if (isset($this->queries[$queryId]))
-				$o =& $this->queries[$queryId];
+				$o = $this->queries[$queryId];
 			return $o;
 		}
 	}
@@ -785,15 +785,15 @@
 			return $content;
 		}
 		
-		$q =& $fpdb->getQuery();
+		$q = $fpdb->getQuery();
 		
 		if($repeat=$q->hasMore()) {
 			
 			
-			$couplet =& $q->getEntry() ;
+			$couplet = $q->getEntry() ;
 			
-			$id =& $couplet[0];
-			$entry =& $couplet[1];
+			$id = $couplet[0];
+			$entry = $couplet[1];
 
 			if (THEME_LEGACY_MODE) {
 				$entry = theme_entry_filters($entry, $id);
@@ -835,14 +835,14 @@
 					)
 				);
 		
-		$q =& $fpdb->getQuery();
+		$q = $fpdb->getQuery();
 		
 		if($repeat=$q->comments->hasMore()) {
 			
-			$couplet =& $q->comments->getComment();
+			$couplet = $q->comments->getComment();
 			
-			$id =& $couplet[0];
-			$comment =& $couplet[1];
+			$id = $couplet[0];
+			$comment = $couplet[1];
 
 			
 			foreach($comment as $k=>$v) {
@@ -870,7 +870,7 @@
 	function smarty_block_comments($params, $content, &$smarty, &$repeat) {
 		global $fpdb;
 		
-			$q =& $fpdb->getQuery();
+			$q = $fpdb->getQuery();
 			$show = $q->comments->getCount();
 			$smarty->assign('entryid', $q->comments->entryid);
 			

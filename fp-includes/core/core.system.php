@@ -154,12 +154,12 @@
 		system_unregister_globals();
 		system_prepare_iis();
 		
-		$GLOBALS['fpdb'] =& new FPDB;
+		$GLOBALS['fpdb'] = new FPDB;
 							
-		$GLOBALS['fp_widgets'] =& new widget_indexer;
+		$GLOBALS['fp_widgets'] = new widget_indexer;
 		
-		$GLOBALS['smarty'] =& $GLOBALS['_FP_SMARTY'];
-		$smarty =& $GLOBALS['smarty'];
+		$GLOBALS['smarty'] = $GLOBALS['_FP_SMARTY'];
+		$smarty = $GLOBALS['smarty'];
 		
 		$GLOBALS['fp_config'] = config_load();
 		
@@ -169,9 +169,9 @@
 		
 		ob_start();
 		
-		$GLOBALS['theme'] =& theme_loadsettings();
+		$GLOBALS['theme'] = theme_loadsettings();
 		
-		$GLOBALS['lang'] =& lang_load();
+		$GLOBALS['lang'] = lang_load();
 		
 
 		plugin_loadall();

@@ -8,7 +8,7 @@
 		
 		// checks if we already loaded this lang file
 		$vals = explode('.', $postfix); // my.file.name ---> my, file, name
-		$old_lang =& $GLOBALS['lang'];
+		$old_lang = $GLOBALS['lang'];
 		
 		if (!$old_lang)
 			$old_lang = array();
@@ -118,7 +118,7 @@
 	}
 	
 	function lang_list() {
-		$obj =& new lang_indexer();
+		$obj = new lang_indexer();
 		return $obj->getList();
 	}
 	

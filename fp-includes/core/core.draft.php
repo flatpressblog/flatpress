@@ -39,7 +39,7 @@
 	function &draft_init() {
 		global $draftdb;
 		if (!isset($draftdb))
-			$draftdb =& new draft_indexer;
+			$draftdb = new draft_indexer;
 		return $draftdb;
 	}
 	
@@ -49,7 +49,7 @@
 		static $list = array();
 		
 		if (!$list) {
-			$obj =& draft_init();
+			$obj = draft_init();
 			$list = $obj->getList();
 			krsort($list);
 		}
@@ -95,7 +95,7 @@
 				fs_delete($ed.EXT);
 			
 				// remove from normal flow
-				$o =& entry_init();
+				$o = entry_init();
 				$o->delete($id, null);
 			}
 	
@@ -148,7 +148,7 @@
 		if (!file_exists($f))
 			return false;
 		
-		//$draftdb =& draft_init();
+		//$draftdb = draft_init();
 		//$draftdb->delete($id);
 		fs_delete_recursive($dir);
 		
@@ -198,7 +198,7 @@
 					'id'=>''
 					)
 				);
-		$arr =& $smarty->get_template_vars('draft_list');
+		$arr = $smarty->get_template_vars('draft_list');
 		
 		list($id, $subject)=each($arr);
 		

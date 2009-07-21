@@ -17,7 +17,7 @@
 	
 	function static_getlist() {
 		
-		$obj =& new static_indexer;
+		$obj = new static_indexer;
 		$list = $obj->getList();
 		return $list;
 		
