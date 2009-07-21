@@ -39,7 +39,7 @@
 	 * @see bdb_idtofile()
 	 */
 	function comment_getlist($id) {
-		$obj = new comment_indexer($id); //todo change syntax
+		$obj =& new comment_indexer($id); //todo change syntax
 		return $obj->getList();
 		
 	}

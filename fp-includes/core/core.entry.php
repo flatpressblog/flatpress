@@ -87,7 +87,7 @@
 					$mode = 'r+b';
 				else	$mode = 'w+b';
 
-				$this->indices[$cat] = new BPlusTree(
+				$this->indices[$cat] =& new BPlusTree(
 					fopen($f, $mode),
 					$this->_offset,
 					$this->_chunksize,
@@ -104,7 +104,7 @@
 			$key = entry_idtokey($id);
 			$val = $entry['subject'];
 
-			$main = $this->get_index();
+			$main =& $this->get_index();
 			$seek = null;
 
 			// title must not be updated, let's get the offset value from has_key
@@ -121,7 +121,7 @@
 			if (isset($entry['categories']) && is_array($entry['categories'])) {
 				foreach ($entry['categories'] as $cat) {
 					if (!is_numeric($cat)) continue;
-					$this_index = $this->get_index($cat);
+					$this_index =& $this->get_index($cat);
 					$this_index->setitem($key, $seek);
 				}
 			}
@@ -131,7 +131,7 @@
 				foreach($del as $cat) {
 					// echo 'DEL '. $cat,"\n";
 					if (!is_numeric($cat)) continue;
-					$this_index = $this->get_index($cat);
+					$this_index =& $this->get_index($cat);
 					$this_index->delitem($key);
 				}
 			}
@@ -143,14 +143,14 @@
 		function delete($id, $entry) {
 			$key = entry_idtokey($id);
 
-			$main = $this->get_index();
+			$main =& $this->get_index();
 			$main->delitem($key);
 
 			
 			if (isset($entry['categories']) && is_array($entry['categories'])) {
 				foreach ($entry['categories'] as $cat) {
 					if (!is_numeric($cat)) continue;
-					$this_index = $this->get_index($cat);
+					$this_index =& $this->get_index($cat);
 					if ($this_index->has_key($key))
 						$this_index->delitem($key);
 				}
@@ -345,7 +345,7 @@
 		static $entry_index = null;
 
 		if (is_null($entry_index)) 
-			$entry_index= new entry_index;
+			$entry_index=& new entry_index;
 
 		return $entry_index;
 		
@@ -358,7 +358,7 @@
 		if (!file_exists($F)) {
 			$o = false;	
 		} else {
-			$o = new entry_cached_index($id_cat);
+			$o =& new entry_cached_index($id_cat);
 		}
 
 		return $o;
@@ -423,7 +423,7 @@
 
 		trigger_error('function deprecated', E_USER_ERROR);
 		
-		$obj = entry_init();
+		$obj =& entry_init();
 		
 		$entry_arr = $obj->getList();
 		
@@ -503,7 +503,7 @@
 	 */
 	 
 	function &entry_get_comments($id, &$count) {
-		$obj = new comment_indexer($id);
+		$obj =& new comment_indexer($id);
 
 		$count = count($obj->getList());
 		
@@ -797,7 +797,7 @@
 		print_r($all_cats);
 		*/
 
-		$INDEX = entry_init();
+		$INDEX =& entry_init();
 		$ok = ($update_index) ? $INDEX->add($id, $entry, $delete_cats, $update_title) : true;
 
 		// PHASE 4 : index updated; let's move back the entry
@@ -861,7 +861,7 @@
 		$d = entry_dir($id);
 		fs_delete_recursive($d);
 		
-		$obj = entry_init();
+		$obj =& entry_init();
 		$obj->delete($id, entry_parse($id));
 		
 		do_action('delete_post', $id);
@@ -870,7 +870,7 @@
 	}
 	
 	function entry_purge_cache() {
-		$obj = entry_init();
+		$obj =& entry_init();
 		$obj->purge();
 	}
 	//add_action('init', 

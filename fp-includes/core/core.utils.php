@@ -366,36 +366,6 @@ ERR;
 		}
 
 	}
-
-	class utils_array_walker {
-
-		var $_array;
-		var $valid;
-
-		function utils_array_walker(&$array) {
-			if (!is_array($array) || empty($array))
-					$this->valid = false;
-			$this->_array =& $array;
-			$this->first();
-		}
-		function first() {
-			return reset($this->_array);
-		}
-		function current_key() {
-			return key($this->_array);
-		}
-		function current_value() {
-			return current($this->_array);
-		}
-		function current() {
-			return array($this->current_key(),$this->current_value());
-		}
-		function next() {
-			$v = next($this->_array);
-			$this->valid = (bool) $v;
-			return $v;
-		}
-	}
 	
 	
 	function fplog($str) {

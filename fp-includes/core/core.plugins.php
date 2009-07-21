@@ -30,7 +30,7 @@
 		
 		function getEnableds($checkonly) {
 		
-			$lang = $GLOBALS['lang'];
+			$lang =& $GLOBALS['lang'];
 			$errors = array();
 		
 			if (!file_exists($this->_enabledlist))
@@ -59,7 +59,7 @@
 		// this is done during init process
 		// all the plugin are loaded
 		
-		$pluginlister = new plugin_indexer;
+		$pluginlister =& new plugin_indexer;
 		$enab = $pluginlister->getEnableds($check);
 		
 		include_once (INCLUDES_DIR . 'core.wp-pluggable-funcs.php');
@@ -70,7 +70,7 @@
 
 	function plugin_get($id=null){
 	
-		$pluginlister = new plugin_indexer;
+		$pluginlister =& new plugin_indexer;
 		return $pluginlister->getList();
 		
 	}
