@@ -63,7 +63,7 @@ if (!function_exists('fnmatch')) {
 		/* // NoWhereMan note: why splitting this in two? :)
 				if(count($out)==1) return(eregi("^$out[0]$",$string)); else*/
 		foreach($out as $tester) {
-			if (eregi("^$tester$",$string))
+			if (preg_match("/^$tester$/i",$string))
 				return true;
 		}
 				

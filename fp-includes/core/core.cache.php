@@ -21,7 +21,7 @@
 				trigger_error  ("Can't find index '{$this->_cachefile}'", E_USER_ERROR);
 			}
 
-			$this->_tree =& new caching_SBPT(
+			$this->_tree = new caching_SBPT(
 				fopen($this->_cachefile.'.dat', 'rb'),
 				fopen(INDEX_DIR.'index.strings.dat', 'rb'),
 				256,

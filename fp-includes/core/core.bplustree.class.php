@@ -224,7 +224,7 @@ class pairs {
 	function &slice($offset, $count=null) {
 		if (is_null($count)) $count = $this->count;
 
-		$a =& new pairs(
+		$a = new pairs(
 			array_slice($this->a, $offset, $count),
 			array_slice($this->b, $offset, $count)
 		);
@@ -569,7 +569,7 @@ class BPlusTree_Node {
 		}
 		
 		
-		$o =& new BPlusTree_Node(
+		$o = new BPlusTree_Node(
 				$this->flag, 
 				$this->size, 
 				$this->keylen, 
@@ -751,7 +751,7 @@ class BPlusTree_Node {
 	 * @returns object {@link pairs}
 	 */
 	function &_pairs($a, $b) {
-		$x =& new pairs($a,$b);
+		$x = new pairs($a,$b);
 		return $x;
 
 	}
@@ -1546,7 +1546,7 @@ class BPlusTree {
 		$includeupper	=null
 		) {
 		
-				$o =& new BPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
+				$o = new BPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
 				return $o;
 
 	}
@@ -1594,7 +1594,7 @@ class BPlusTree {
 		$file = $this->file;
 		fseek($file, 0, SEEK_END);
 		$this->root_seek = ftell($file);
-		$this->root =& new BplusTree_Node(
+		$this->root = new BplusTree_Node(
 			BPT_FLAG_LEAFANDROOT, 
 			$this->nodesize, $this->keylen, $this->root_seek, $file
 		);
@@ -1609,7 +1609,7 @@ class BPlusTree {
 		$file = $this->file;
 		if ($this->get_parameters()===false)
 			return false;
-		$this->root =& new BplusTree_Node(
+		$this->root = new BplusTree_Node(
 			BPT_FLAG_LEAFANDROOT, 
 			$this->nodesize, 
 			$this->keylen, 
@@ -2593,7 +2593,7 @@ class SBPlusTree extends BPlusTree {
 		$keyupper	=null,
 		$includeupper	=null
 		) {
-			$o =& new SBPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
+			$o = new SBPlusWalker($this, $keylower, $includelower, $keyupper, $includeupper);
 			return $o;
 	} 
 }

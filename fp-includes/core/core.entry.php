@@ -87,7 +87,7 @@
 					$mode = 'r+b';
 				else	$mode = 'w+b';
 
-				$this->indices[$cat] =& new BPlusTree(
+				$this->indices[$cat] = new BPlusTree(
 					fopen($f, $mode),
 					$this->_offset,
 					$this->_chunksize,
@@ -345,7 +345,7 @@
 		static $entry_index = null;
 
 		if (is_null($entry_index)) 
-			$entry_index=& new entry_index;
+			$entry_index= new entry_index;
 
 		return $entry_index;
 		
@@ -358,7 +358,7 @@
 		if (!file_exists($F)) {
 			$o = false;	
 		} else {
-			$o =& new entry_cached_index($id_cat);
+			$o = new entry_cached_index($id_cat);
 		}
 
 		return $o;
@@ -503,7 +503,7 @@
 	 */
 	 
 	function &entry_get_comments($id, &$count) {
-		$obj =& new comment_indexer($id);
+		$obj = new comment_indexer($id);
 
 		$count = count($obj->getList());
 		

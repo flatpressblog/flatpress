@@ -6,7 +6,7 @@
 	require_once INCLUDES_DIR.'core.utils.php';
 	utils_checksmarty();
 	require(SMARTY_DIR . 'Smarty.class.php');
-	$smarty =& new Smarty;
+	$smarty = new Smarty;
 	$_FP_SMARTY =& $smarty;
 
 
@@ -42,7 +42,7 @@
 	require_once INCLUDES_DIR.'core.cookie.php';
 	require_once INCLUDES_DIR.'core.system.php';
 	require_once INCLUDES_DIR.'core.theme.php';
-	require_once INCLUDES_DIR.'core.layout.php';
+	// require_once INCLUDES_DIR.'core.layout.php';
 	require_once INCLUDES_DIR.'core.users.php';
 	
 ?>

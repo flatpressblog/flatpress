@@ -73,7 +73,7 @@
 
 
 	
-	define('SYSTEM_VER', '0.812.1');
+	define('SYSTEM_VER', '0.907');
 	function system_ver() {
 		return 'fp-' . SYSTEM_VER;
 	}
@@ -154,9 +154,9 @@
 		system_unregister_globals();
 		system_prepare_iis();
 		
-		$GLOBALS['fpdb'] =& new FPDB;
+		$GLOBALS['fpdb'] = new FPDB;
 							
-		$GLOBALS['fp_widgets'] =& new widget_indexer;
+		$GLOBALS['fp_widgets'] = new widget_indexer;
 		
 		$GLOBALS['smarty'] =& $GLOBALS['_FP_SMARTY'];
 		$smarty =& $GLOBALS['smarty'];

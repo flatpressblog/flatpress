@@ -260,7 +260,7 @@
 	function fs_delete_recursive($path) {
 		if (file_exists($path)) {
 		
-			$obj =& new fs_pathlister($path);
+			$obj = new fs_pathlister($path);
 			$list = ($obj->getList());
 			
 			unset($obj);

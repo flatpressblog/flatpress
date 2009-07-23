@@ -22,7 +22,7 @@
 
 	
 	function user_list(){
-		$obj =& new user_lister;
+		$obj = new user_lister;
 		if ($users = $obj->getList()) {
 			return $entry_arr;
 		} else	return false;

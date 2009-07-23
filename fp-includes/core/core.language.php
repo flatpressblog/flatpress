@@ -118,7 +118,7 @@
 	}
 	
 	function lang_list() {
-		$obj =& new lang_indexer();
+		$obj = new lang_indexer();
 		return $obj->getList();
 	}
 	

@@ -39,7 +39,7 @@
 	function &draft_init() {
 		global $draftdb;
 		if (!isset($draftdb))
-			$draftdb =& new draft_indexer;
+			$draftdb = new draft_indexer;
 		return $draftdb;
 	}
 	

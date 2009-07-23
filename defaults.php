@@ -109,6 +109,6 @@
 		
 	define('BLOG_BASEURL', 'http://'.$_SERVER['HTTP_HOST']. BLOG_ROOT);
 
-function _dummy() {}
-set_error_handler('_dummy');
+#function _dummy() {}
+#set_error_handler('_dummy');
 

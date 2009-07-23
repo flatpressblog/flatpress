@@ -148,7 +148,7 @@
 			global $current_query;
 			
 			
-			$this->params =& new FPDB_QueryParams($params);
+			$this->params = new FPDB_QueryParams($params);
 			$this->ID = $ID;
 			
 			if ($this->params->id || $this->params->random) {
@@ -258,7 +258,7 @@
 			} else {
 				// notice this won't work with cats (for now)
 				
-				$obj =& new entry_archives($qp->y, $qp->m, $qp->d); 
+				$obj = new entry_archives($qp->y, $qp->m, $qp->d); 
 				
 				$filteredkeys = $obj->getList();
 				$index_count = $obj->getCount();
@@ -403,7 +403,7 @@
 			}
 			
 			if ($qp->comments) {
-				$this->comments =& new FPDB_CommentList($id, comment_getlist($id));
+				$this->comments = new FPDB_CommentList($id, comment_getlist($id));
 				$cont['comments'] = $this->comments->getCount();
 			}
 			
@@ -581,7 +581,7 @@
 		
 		function init() {
 			#if (!$this->_indexer) {
-				#$this->_indexer =& new entry_indexer();
+				#$this->_indexer = new entry_indexer();
 				$this->_categories = entry_categories_get();
 				#$obj =& $this->_indexer;
 				#$this->entry_index = $obj->getList();
@@ -653,7 +653,7 @@
 			static $queryId=-1;
 			$queryId++;
 			 
-			$this->queries[$queryId] =& new FPDB_Query($params, $queryId);
+			$this->queries[$queryId] = new FPDB_Query($params, $queryId);
 				
 			
 			$this->init();	
