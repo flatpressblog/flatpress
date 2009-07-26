@@ -26,6 +26,12 @@
 			return array(number_format((int)$num), $i);
 			
 		}
+
+		function setup() {
+			global $lang;
+			$lang['admin']['entry']['stats'] = array();
+			$this->smarty->assign('warnings', '[Dev Notice] Panel lang strings are currently hardcoded.');
+		}
 		
 		function main() {
 		

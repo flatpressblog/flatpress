@@ -1,5 +1,7 @@
 <h2>{"Statistics"}</h2>
 
+{include file='shared:errorlist.tpl'}
+
 <h3>{"Entries"}</h3>
 {"<p>You have <strong>%s</strong> 
 entries using <strong>%s</strong> characters
