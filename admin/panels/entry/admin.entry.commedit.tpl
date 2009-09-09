@@ -25,7 +25,7 @@
 		
 		<dt><label class="textlabel" for="www">{$plang.www}</label></dt>
 		<dd>
-		<input type="text" class="bigtextinput {$error.www|notempty:'field-error'}" name="www" id="www" value="{$values.www}" />
+		<input type="text" class="bigtextinput {$error.www|notempty:'field-error'}" name="url" id="url" value="{$values.url}" />
 		</dd>
 
 		<dt><label class="textlabel" for="ip">{$plang.ip}</label></dt>

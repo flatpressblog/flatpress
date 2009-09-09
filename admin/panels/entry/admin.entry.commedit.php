@@ -5,7 +5,7 @@ class admin_entry_commedit extends AdminPanelActionValidated {
 		var $validators = array(
 				array('name', 'name', 'notEmpty', false, false, 'trim,stripslashes'),
 				array('email', 'email', 'isEmail', true, false, 'trim,stripslashes'),
-				array('www', 'www', 'isURL', true, false, 'trim,stripslashes'),
+				array('url', 'url', 'isURL', true, false, 'trim,stripslashes'),
 				array('content', 'content', 'notEmpty', false, false, 'stripslashes'),
 		); 
 
