@@ -55,8 +55,12 @@
 			global $fp_config;
 			$this->defprev = BLOG_BASEURL . ADMIN_DIR . 'panels/'. ADMIN_PANEL .'/preview-default.png';
 			
-			$this->smarty->assign('current_style', 
-				admin_theme_data(THEMES_DIR . THE_THEME . '/' .$fp_config['general']['style'] .'/style.conf.php', THE_THEME, $this->defprev));
+			if (isset($fp_config['general']['style']))
+				$this->smarty->assign('current_style', 
+					admin_theme_data(THEMES_DIR . THE_THEME . '/' 
+					.$fp_config['general']['style'] .'/style.conf.php', 
+					THE_THEME, $this->defprev));
+
 			$this->smarty->assign('available_styles', $this->style_list());
 		}
 		
