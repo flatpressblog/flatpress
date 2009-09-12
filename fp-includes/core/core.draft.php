@@ -200,7 +200,9 @@
 				);
 		$arr =& $smarty->get_template_vars('draft_list');
 		
-		list($id, $subject)=each($arr);
+		$id = $subject = null;
+		if ($arr)
+			list($id, $subject)=each($arr);
 		
 		if ($id){
 			$smarty->assign('subject', $subject);
