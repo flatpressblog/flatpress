@@ -103,6 +103,13 @@
 			<p> {$panelstrings.output}:   {$smarty.now|date_format:$fp_config.locale.dateformat}  </p>
 		</dd>
 
+		<dt><label for="dateformatshort"> {$panelstrings.dateformatshort} </label></dt>
+		<dd>	<p> <input type="text" name="dateformatshort" id="dateformatshort" 
+			class="textinput{$error.dateformatshort|notempty:" field-error"}" 
+			value="{$fp_config.locale.dateformatshort}" /> </p>
+			<p> {$panelstrings.output}:   {$smarty.now|date_format:$fp_config.locale.dateformatshort}  </p>
+		</dd>
+
 		<dt><label for="timeformat"> {$panelstrings.timeformat} </label></dt>
 		<dd>	<p> <input type="text" name="timeformat" id="timeformat" 
 			class="textinput{$error.timeformat|notempty:" field-error"}" 

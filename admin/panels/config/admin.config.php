@@ -20,6 +20,7 @@
 			array('timeoffset', 'timeoffset', 'isNumber', false, false, 'trim'),
 			array('timeformat', 'timeformat', 'notEmpty', false, false, 'trim'),
 			array('dateformat', 'dateformat', 'notEmpty', false, false, 'trim'),
+			array('dateformatshort', 'dateformatshort', 'notEmpty', false, false, 'trim'),
 			
 			array('lang', 'lang', 'notEmpty', false, false, 'trim'),
 			array('charset', 'charset', 'notEmpty', false, false, 'trim'),
@@ -73,6 +74,7 @@
 				'timeoffset' => $_POST['timeoffset'],
 				'timeformat' => $_POST['timeformat'],
 				'dateformat' => $_POST['dateformat'],
+				'dateformatshort' => $_POST['dateformatshort'],
 				'charset'	 => $_POST['charset'],
 				'lang'		 => $_POST['lang']
 			);

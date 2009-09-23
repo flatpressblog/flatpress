@@ -39,6 +39,7 @@
 		'hours'			=> 'hours',
 		'timeformat'		=> 'Default format for time',
 		'dateformat'		=> 'Default format for date',
+		'dateformatshort'	=> 'Default format for date (short)',
 		'output'		=> 'Output',
 		'charset'		=> 'Character set',
 		'charsettip'	=> 'The character set you write your blog in (UTF-8 is '.

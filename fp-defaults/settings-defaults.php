@@ -22,6 +22,7 @@ $fp_config = array (
     'timeoffset' => '2',
     'timeformat' => '%H:%M:%S',
     'dateformat' => '%A, %B %e, %Y',
+    'dateformatshort' => '%Y-%m-%d',
     'charset' => 'utf-8',
     'lang' => 'en-us',
   ),
