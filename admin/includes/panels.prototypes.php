@@ -254,7 +254,7 @@
 						$l = $lang['admin'][ADMIN_PANEL][ADMIN_PANEL_ACTION];
 					}
 					
-					$errors[$field] = $l['error'][$field];
+					$errors[$field] = isset($l['error'][$field])? $l['error'][$field] : htmlspecialchars($field);
 					if ($halt)
 						break;
 				} else {

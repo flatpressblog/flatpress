@@ -10,6 +10,7 @@
 {validate id="timeoffset" message=$panelstrings.error.maxentries append="error"}
 {validate id="timeformat" message=$panelstrings.error.maxentries append="error"}
 {validate id="dateformat" message=$panelstrings.error.maxentries append="error"}
+{validate id="dateformatshort" message=$panelstrings.error.maxentries append="error"}
 {validate id="lang" message=$panelstrings.error.maxentries append="error"}
 {validate id="charset" message=$panelstrings.error.maxentries append="error"}
 
@@ -132,7 +133,7 @@
 		
 		<dt> <label for="charset"> {$panelstrings.charset} </label></dt>
 		<dd> <p><input type="text" name="charset" id="charset" 
-			class="smalltextinput{$error.dateformat|notempty:" field-error"}" 
+			class="smalltextinput{$error.charset|notempty:" field-error"}" 
 			value="{$fp_config.locale.charset}" /></p>
 			<p>{$panelstrings.charsettip}</p>
 		</dd>

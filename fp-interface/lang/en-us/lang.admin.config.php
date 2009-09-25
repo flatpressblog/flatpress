@@ -63,6 +63,7 @@
 						'You can use floating point (e.g. 2h30" => 2.5)',
 		'timeformat'=>	'You must insert a format string for time',
 		'dateformat'=>	'You must insert a format string for date',
+		'dateformatshort'=>	'You must insert a format string for date (short)',
 		'charset'	=>	'You must insert a charset id',
 		'lang'		=>	'The language you chose is not available'
 		);		
