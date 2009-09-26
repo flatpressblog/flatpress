@@ -103,7 +103,8 @@
 		if ($userid == null && ($user = user_loggedin())) {
 			return $user;
 		} 
-		if (file_exists($f = USERS_DIR . $userid.".php")) {
+		if (!preg_match('![/\\.]!', $userid) &&
+			file_exists($f = USERS_DIR . $userid.".php")) {
 			include($f);
 			
 			return $user;

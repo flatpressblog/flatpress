@@ -99,7 +99,7 @@
 
 				$name 	= trim(stripslashes(@$_POST['name']));
 				$email 	= isset($_POST['email'])? trim($_POST['email']) : null;
-				$url 	= isset($_POST['url'])? trim(stripslashes($_POST['url'])) : null;
+				$url 	= isset($_POST['url'])? trim(stripslashes(htmlspecialchars($_POST['url']))) : null;
 				
 				/*
 				 * check name
