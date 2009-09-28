@@ -1,6 +1,6 @@
 <?php
 
-	$o =& new fs_filelister('./setup/lang/');
+	$o = new fs_filelister('./setup/lang/');
 	$languages = $o->getList();
 	
 ?>
