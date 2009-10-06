@@ -19,7 +19,7 @@ function plugin_bbcode_startup() {
 	// load options
 	$bbconf = plugin_getoptions('bbcode');
 	// get defaults if not configured
-	define('BBCODE_ESCAPE_HTML', isset($bbconf['escape-html'])
+	define('BBCODE_ALLOW_HTML', isset($bbconf['escape-html'])
 		? $bbconf['escape-html']
 		: true
 	);
@@ -49,7 +49,7 @@ function plugin_bbcode_startup() {
 	// filter part
 	#add_filter('comment_text', 'plugin_bbcode_comment');
 	add_filter('title_save_pre', 'wp_specialchars', 1);
-	if (BBCODE_ESCAPE_HTML) {
+	if (!BBCODE_ALLOW_HTML) {
 		add_filter('content_save_pre', 'wp_specialchars', 1);
 	}
 	add_filter('pre_comment_author_name', 'wp_specialchars');
@@ -380,7 +380,7 @@ function do_bbcode_code ($action, $attributes, $content, $params, $node_object) 
 	$temp_str = str_replace('<br />', chr(10), $temp_str);
 	$temp_str = str_replace(chr(10). chr(10), chr(10), $temp_str);
 	$temp_str = str_replace(chr(32), '&nbsp;', $temp_str);
-	if (!BBCODE_ESCAPE_HTML) {
+	if (BBCODE_ALLOW_HTML) {
 		$temp_str = wp_specialchars($temp_str);
 	}
 	$a = '';
