@@ -215,7 +215,7 @@
 					
 					do_action('comment_post', $fp_params['entry'], array($id, $arr));
 					
-					$q =& new FPDB_Query(array('id'=>$fp_params['entry'],'fullparse'=>false), null);
+					$q = new FPDB_Query(array('id'=>$fp_params['entry'],'fullparse'=>false), null);
 					list($entryid, $e) = $q->getEntry();
 						
 				

@@ -17,7 +17,7 @@ Author URI: http://www.nowhereland.it
  * @param string $contents The comment
  * @return unknown
  */
-function plugin_qspam_validate(&$bool, $contents) {
+function plugin_qspam_validate($bool, $contents) {
 	if (!$bool) {
 		return false;
 	}
