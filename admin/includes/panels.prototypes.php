@@ -23,7 +23,7 @@
 		
 		
 		function AdminPanel(&$smarty) {
-			$this->smarty = $smarty;
+			$this->smarty =& $smarty;
 			if (!$this->panelname)
 				trigger_error("Variable \$panelname is not defined!", E_USER_ERROR);
 				
@@ -101,7 +101,7 @@
 		var $langres = ''; 
 		
 		function AdminPanelAction(&$smarty) { 
-			$this->smarty = $smarty;
+			$this->smarty =& $smarty;
 			$the_action_panel = get_class($this);
 			$this->smarty->assign('admin_panel_id', $the_action_panel);
 			if (!$this->langres) 
