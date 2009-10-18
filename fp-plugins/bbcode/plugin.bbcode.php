@@ -270,8 +270,8 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 			? $orig_h
 			: 600;
 		$popup = ' onclick="Popup=window.open("'. $absolutepath
-			.'","Popup","toolbar=no,location=no,status=no,"
-			."menubar=no,scrollbars=yes,resizable=yes,width='
+			.'","Popup","toolbar=no,location=no,status=no,"'
+			.'"menubar=no,scrollbars=yes,resizable=yes,width='
 			. $pop_width .',height='. $pop_height .'"); return false;"';
 
 		// Plugin hook, here lightbox attachs
