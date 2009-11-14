@@ -1,19 +1,4 @@
 
-{validate_init form=$admin_panel_id}
-
-{validate id="www" message=$panelstrings.error.www append="error"}
-
-{validate id="title" message=$panelstrings.error.title append="error"}
-{validate id="email" message=$panelstrings.error.email append="error"}
-{validate id="maxentries" message=$panelstrings.error.maxentries append="error"}
-
-{validate id="timeoffset" message=$panelstrings.error.maxentries append="error"}
-{validate id="timeformat" message=$panelstrings.error.maxentries append="error"}
-{validate id="dateformat" message=$panelstrings.error.maxentries append="error"}
-{validate id="dateformatshort" message=$panelstrings.error.maxentries append="error"}
-{validate id="lang" message=$panelstrings.error.maxentries append="error"}
-{validate id="charset" message=$panelstrings.error.maxentries append="error"}
-
 {include file='shared:errorlist.tpl'}
 
 {html_form}
