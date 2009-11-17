@@ -1759,8 +1759,8 @@ class BPlusTree {
 	 * @param $key target key
 	 * @returns bool false if key does not exists, true otherwise
 	 */
-	function has_key($key) {
-		if (@$this->getitem($key)!==false) {
+	function has_key(&$key, $loose=false) {
+		if (@$this->getitem($key, $loose)!==false) {
 			return true;
 		} else {
 			return false;
@@ -2510,9 +2510,12 @@ class caching_BPT extends BPlusTree {
 	var $cache = array();
 
 	function getitem(&$key, $loose=false) {
-		if (isset($cache[$key]))
-			return $cache[$key];
-		else	return ($cache[$key] = parent::getitem($key, $loose));
+		if (isset($this->cache[$key])) 
+			return $this->cache[$key];
+		else { 
+			$this->cache[$key] = parent::getitem($key, $loose); 
+			return $this->cache[$key];
+		}
 	}
 
 	function resetcache() {
@@ -2577,7 +2580,7 @@ class SBPlusTree extends BPlusTree {
 	 * @param $key target key
 	 * @returns int seek point if key exists, 0 otherwise
 	 */
-	function has_key($key, $loose=false) {
+	function has_key(&$key, $loose=false) {
 			return @parent::getitem($key, $loose);
 	}
 
@@ -2628,9 +2631,13 @@ class caching_SBPT extends SBPlusTree {
 	}
 
 	function getitem(&$key, $loose=false) {
-		if (isset($cache[$key]))
-			return $cache[$key];
-		else	return ($cache[$key] = parent::getitem($key, $loose));
+		if (isset($this->cache[$key]))
+			return $this->cache[$key];
+		else {
+			$item = parent::getitem($key, $loose);
+			$this->cache[$key] = $item;
+			return $item;
+		}
 	}
 
 	function resetcache() {
