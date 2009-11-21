@@ -123,13 +123,25 @@
 		
 			switch ($do) {
 			case 'rebuild': {
-
-					fs_delete_recursive(INDEX_DIR);
-					if (!file_exists(INDEX_DIR))
-						fs_mkdir(INDEX_DIR);
+					
+					if (substr(INDEX_DIR, -1) == '/')
+						$oldidx = substr(INDEX_DIR,0,-1);	
+					
+					$movedir = $oldidx.time();
 					
 					header('Content-Type: text/plain');
 					echo "ENTERING LOWRES MODE\n\n";
+					
+					if (file_exists(INDEX_DIR)) {
+						
+						echo "BACKUP INDEX to $movedir\n";
+						$ret = @rename($oldidx, $movedir);
+						if (!$ret) trigger_error('Cannot backup old index. STOP.', E_USER_ERROR);
+							
+					}
+					fs_mkdir(INDEX_DIR);
+					
+					 
 					
 					new s_entry_crawler;
 					exit("\nDONE \nPlease, select the back arrow in your browser");
