@@ -42,6 +42,7 @@
 
 
 		function entry_index() {
+			$this->catlist = entry_categories_list();
 
 			// only main index s a SBPlus (string BPlus): 
 			// the other (other categories) are managed 
@@ -118,9 +119,31 @@
 
 			// key has been set, let's set the other indices (if any), and link them
 			// to the title string using $seek
+			
 			if (isset($entry['categories']) && is_array($entry['categories'])) {
+				
+				$categories = array();
+				
 				foreach ($entry['categories'] as $cat) {
+					
+					// skip non-numeric special categories (such as 'draft')
 					if (!is_numeric($cat)) continue;
+					
+					$categories[] = $cat;
+					
+					// traverse the full cat tree (in linearized form)
+					// to update categories which eventually aren't
+					// explicitly listed
+					while ($parent = $this->catlist[ $cat ]) {
+						$categories[] = $parent;
+						$cat = $parent;
+					}
+				}
+				
+				// delete any duplicate
+				$categories = array_unique($categories);
+				
+				foreach ($categories as $cat) {
 					$this_index =& $this->get_index($cat);
 					$this_index->setitem($key, $seek);
 				}
