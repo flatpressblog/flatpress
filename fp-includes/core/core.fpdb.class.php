@@ -10,6 +10,7 @@
 		var $count	= -1;
 		var $random = 0;
 		var $category = 0;
+		var $exclude  = null;
 		var $page	= 1;
 		var $fullparse = false;
 		var $comments = false;
@@ -119,6 +120,10 @@
 				$this->comments = true;
 			}
 			
+			if (isset($params['exclude'])) {
+				$this->not = intval($params['exclude']);
+			}
+			
 		}
 		
 		function parse_string($str) {
@@ -142,6 +147,9 @@
 		var $nextid		= '';
 		var $previd		= '';
 		var $currentid	= '';		
+		var $main_idx = null;
+		var $secondary_idx = null;
+		var $walker = null;
 	
 		function FPDB_Query($params, $ID) {
 			
@@ -166,7 +174,8 @@
 			
 			$fpdb->init();
 			
-			$entry_index =& $fpdb->get_index($this->params->category);
+			$this->main_idx =& $fpdb->get_index($this->params->category);		
+			$entry_index =& $this->main_idx;
 
 			$this->counter++;
 
@@ -184,7 +193,16 @@
 				$this->_prepare_single($entry_index);
 			} else {
 				$this->_prepare_list($entry_index);
+				
+				if ($this->params->exclude) {
+					$o =& $fpdb->get_index($this->params->exclude);
+					if ($o !== false)
+						$this->secondary_idx =& $o;
+				}
 			}
+			
+			// force first entry to be loaded: updates count, pointer
+			$this->peekEntry();
 			
 			
 		
@@ -284,22 +302,6 @@
 				else
 					$index_count = $qp->start = $qp->count = 0;
 			}
-		
-			#$this->pointer = $qp->start;
-
-			// fills array
-			
-	
-			
-			/*
-				stuff for cats, have a look
-
-			$this->local_list =& $tmp;
-			
-			if ($qp->start + $qp->count > $i) {
-				$qp->count = $i - $qp->start;
-			}
-			 */
 			
 		}
 
@@ -327,49 +329,75 @@
 		/* reading functions */
 		
 		function hasMore() {
-		
 			
 			$GLOBALS['current_query'] =& $this;
 			
-			
-			if ($this->counter < 0)
+			// if system init has not been done (filling pointer variable etc.)
+			// call prepare()
+			if ($this->counter < 0) {
 				$this->prepare();
+			}
 			
-			return $this->pointer < $this->params->start + $this->params->count;
+			// hasMore() returns false either if pointer exceeded the count
+			// or peekEntry returns false
+			return ((bool) $this->peekEntry()
+				&&	$this->pointer < $this->params->start + $this->params->count );
 		}
 		
 		function &peekEntry() {
 		
 			global $post;
 
-			if (!$this->hasMore()) {
+			/*if (!$this->hasMore()) {
 				$false = array(false, false);
 				return $false;
-			}
-
+			}*/
+			
 			$qp =& $this->params;
 			
 			
 			if ($this->counter < 0)
 				$this->prepare();
 
+			if (!$this->walker) {
+				$false = array(false, false);
+				return $false;
+			}
+		
 			
-			#$this->_fillPrevId();
-			#$this->_fillNextId();
-						
-			#$id = $this->_fillCurrentId();
-
+			// search first eligible post
 			while ($this->walker->valid && $this->pointer<$qp->start) {
+				
 
 				$this->previd = $this->currentid;
-				$id = $this->currentid = entry_keytoid($this->walker->current_key());
+				$key = $this->walker->current_key();
+				$id = $this->currentid = entry_keytoid($key);
 
-				if ($this->single) $this->preventry = array('subject' => $this->walker->current_value());
+				if ($this->single) 
+					$this->preventry = array('subject' => $this->walker->current_value());
 
 
 				$this->walker->next();
 				$this->pointer++;
 			}
+			
+			// if there is a secondary (not) idx
+			if ($this->secondary_idx) {
+				
+				// skips posts until we find one which is not in the secondary idx
+				while (  $this->walker->valid 
+				         && ($key = $this->walker->current_key())
+					&& $this->secondary_idx->has_key($key)) {
+					$this->walker->next();
+					$qp->count--;
+				
+				}
+			}
+			
+			if (!$this->walker->valid) {
+				$cont = false; return $cont; 
+			}
+ 				
 			
 			// pointer == start
 			
@@ -638,6 +666,8 @@
 		 * y		(string) two digit year (06 means 2006)
 		 * m		(string) two digit month (06 means June); 'y' must be set
 		 * d		(string) two digit for day; 'y' and 'm' must be set
+		 *
+		 * exclude	(int) experimental: excludes category ID given as argument from listing
 		 *
 		 *
 		 * fullparse	(bool) non-full-parsed entries get their values 
