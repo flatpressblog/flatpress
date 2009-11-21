@@ -117,6 +117,10 @@
 		if (isset($fp_params['cat']) && is_numeric($fp_params['cat']))
 			$params['category'] = intval($fp_params['cat']);
 		
+		if (isset($fp_params['not']) && is_numeric($fp_params['not']))
+			$params['exclude'] = intval($fp_params['not']);
+		
+		
 		if (isset($fp_params['random'])) {
 			if (empty($fp_params['random']))
 				$params['random'] = 1;
