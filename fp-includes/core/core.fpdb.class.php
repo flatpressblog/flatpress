@@ -121,7 +121,7 @@
 			}
 			
 			if (isset($params['exclude'])) {
-				$this->not = intval($params['exclude']);
+				$this->exclude = intval($params['exclude']);
 			}
 			
 		}
