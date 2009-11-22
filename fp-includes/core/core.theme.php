@@ -284,7 +284,7 @@
 		$smarty->assign('blogtitle', $fp_config['general']['title']);
 
 		$smarty->assign('pagetitle', 
-				apply_filters('wp_title', "", '&raquo;'));
+				apply_filters('wp_title', "", '&laquo;'));
 				
 		$smarty->assign_by_ref('fp_config', $fp_config);
 				

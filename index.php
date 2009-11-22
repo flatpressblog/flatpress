@@ -19,7 +19,7 @@
 		$q =& $fpdb->getQuery();
 		list($id, $e) = @$q->peekEntry();
 		if ($e)
-			return "$val {$sep} {$e['subject']}";
+			return "{$e['subject']} {$sep} $val ";
 		else return $val;
 	}
 
