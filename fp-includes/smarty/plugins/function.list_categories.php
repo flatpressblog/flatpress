@@ -71,6 +71,8 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 	$vt = $val[0];
 	$vid = trim($val[1]);
 	
+	$catname = isset($params['name'])? $params['name'] : '';
+	
         if ($indent > $indent_old) {
                 array_push($indentstack, $indent);
 		
@@ -89,13 +91,12 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
                 array_push($result, $ild);
 		
 		
-		$cat_entry = $smarty->get_template_vars('categories');
-		if (!$cat_entry) $cat_entry = array();
+		$cat_entry = isset($params['selected'])? $params['selected'] : array(); 
 		//list($catId) = each($categories);
 		
 		
 		if (isset($params['type']) && ($params['type']=='form' || $params['type']=='check')) {
-			$string = '<label><input name="cats['.$vid.']" ';
+			$string = '<label><input name="'.$catname.'cats['.$vid.']" ';
 			
 			if ((bool) array_intersect(array($vid), $cat_entry))
 				$string .= 'checked="checked" ';
@@ -103,7 +104,7 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 			$string .=  'type="checkbox" />';
 			$before = $string;
 		}elseif (isset($params['type']) && $params['type']=='radio') {
-			$string = '<label><input name="cats" type="radio" value="'.$vid.'"';
+			$string = '<label><input name="'.$catname.'cats" type="radio" value="'.$vid.'"';
 			if ((bool) array_intersect(array($vid), $cat_entry))
 				$string .= 'checked="checked" ';
 	

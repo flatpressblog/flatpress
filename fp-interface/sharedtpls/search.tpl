@@ -14,7 +14,7 @@
 	</fieldset>
 	
 	<fieldset><legend>{$lang.search.fset3}</legend>
-	{list_categories type="radio"}
+	{list_categories type="radio" selected=$categories}
 	<p>{$lang.search.catdescr}</p>
 	</fieldset>
 	
