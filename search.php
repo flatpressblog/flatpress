@@ -62,7 +62,7 @@ if (!defined('MOD_INDEX')) {
 			}
 		}
 		
-		$smarty->assign(array('title'=>$title, 'content'=>$content));
+		$smarty->assign(array('subject'=>$title, 'content'=>$content));
 		return 'default.tpl';
 	}
 	
