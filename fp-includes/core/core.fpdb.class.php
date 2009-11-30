@@ -389,7 +389,7 @@
 				         && ($key = $this->walker->current_key())
 					&& $this->secondary_idx->has_key($key)) {
 					$this->walker->next();
-					$qp->count--;
+					//$qp->count--;
 				
 				}
 			}
