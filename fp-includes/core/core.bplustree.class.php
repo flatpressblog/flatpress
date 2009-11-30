@@ -2614,18 +2614,11 @@ class caching_SBPT extends SBPlusTree {
 
 	var $cache = array();
 
-	function __construct($infile, $stringfile, 
-				$maxstring = 256, 
-				$pos=null, $nodesize=null, $keylen=null) {
-		$this->SBPlusTree($infile, $stringfile, 
-				$maxstring, 
-				$pos, $nodesize, $keylen);
-	}
-
 	function caching_SBPT($infile, $stringfile, 
 				$maxstring = 256, 
 				$pos=null, $nodesize=null, $keylen=null) {
-		$this->__construct($infile, $stringfile, 
+
+		parent::SBPlusTree($infile, $stringfile, 
 				$maxstring, 
 				$pos, $nodesize, $keylen);
 	}
