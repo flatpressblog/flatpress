@@ -13,10 +13,18 @@
  */
 function smarty_function_list_categories($params) //, &$smarty)
 {
-	$cat_params = array('ild'=>'<li>','ird'=>"</li>\n",
-				'old'=>"<ul>\n",'ord'=>"</ul>\n");
+	$cat_params = array(
+				'ild'=>'<li>','ird'=>"</li>\n",
+				'old'=>"<ul>\n",'ord'=>"</ul>\n",
+				'name' => isset($params['name'])? $params['name'] : '',
+				'selected' => array()
+				);
 	
+		//list($catId) = each($categories);
 	$cat_params = array_merge($cat_params, $params);
+
+	// makese 'selected' an arr
+	$cat_params['selected'] = (array)$params['selected'];
 
 	//echo "<pre>" . print_r(entry_categories_get()) . "</pre>";
 	
@@ -71,7 +79,7 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 	$vt = $val[0];
 	$vid = trim($val[1]);
 	
-	$catname = isset($params['name'])? $params['name'] : '';
+	$catname = $params['name'];
 	
         if ($indent > $indent_old) {
                 array_push($indentstack, $indent);
@@ -91,7 +99,7 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
                 array_push($result, $ild);
 		
 		
-		$cat_entry = isset($params['selected'])? $params['selected'] : array(); 
+		$cat_entry = $params['selected']; 
 		//list($catId) = each($categories);
 		
 		
