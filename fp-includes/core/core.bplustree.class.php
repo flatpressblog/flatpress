@@ -2526,9 +2526,9 @@ class caching_BPT extends BPlusTree {
 		trigger_error("operation not permitted in caching_BPT", E_USER_WARNING);
 	}
 
-	function setitem() { $this->nope(); }
+	function setitem($key, $val) { $this->nope(); }
 
-	function delitem() { $this->nope(); }
+	function delitem($key) { $this->nope(); }
 	
 }
 
@@ -2648,9 +2648,9 @@ class caching_SBPT extends SBPlusTree {
 		trigger_error("operation not permitted in caching_BPT", E_USER_WARNING);
 	}
 
-	function setitem() { $this->nope(); }
+	function setitem($key, $val) { $this->nope(); }
 
-	function delitem() { $this->nope(); }
+	function delitem($key) { $this->nope(); }
 	
 }
 
