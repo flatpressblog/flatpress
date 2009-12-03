@@ -246,14 +246,28 @@
 			// in the sequence, if $prevkey becomes equal to $key then it means 
 			// $key is the first post (the last in time)
 
-			if ($prevkey == $key) 
-				$qp->start = 0;
-			else 
-				$qp->start = 1;
-
+			$qp->start = 0;
 			$qp->count = 1;
-		
 			$this->pointer = 0;
+			
+			if ($prevkey == $key) { 
+				$this->prevkey = null;
+				if ($this->walker->valid) { 
+					$this->walker->next(); 
+					$this->nextkey = $this->walker->current_key(); 
+				} 
+			} else { 
+				$this->prevkey = $prevkey;
+				if ($this->walker->valid) {
+					$this->walker->next();
+					if ($this->walker->valid) {
+						$this->walker->next();
+						$this->nextkey = $this->walker->valid? $this->walker->current_key() : null;
+					}
+				}
+			}
+			
+			
 
 		}
 		
@@ -348,16 +362,29 @@
 		
 			global $post;
 
-			/*if (!$this->hasMore()) {
-				$false = array(false, false);
-				return $false;
-			}*/
-			
 			$qp =& $this->params;
-			
+			$return = array(false, false);
 			
 			if ($this->counter < 0)
 				$this->prepare();
+			
+			
+			if ($qp->id) {
+				$idx = $this->main_idx;
+				$key = entry_idtokey($qp->id);
+				
+				$v = $idx->getitem($key);
+				if ($qp->fullparse) {
+					$entry = entry_parse($qp->id);
+					if (!$entry)  return $return;
+				} else {
+				 	$entry = array('subject' => $v);
+				}
+				
+				$return = array($this->params->id, $entry);
+				return $return;
+			}
+			
 
 			if (!$this->walker) {
 				$false = array(false, false);
@@ -504,17 +531,15 @@
 		function getNextPage() {
 			
 			if ($this->single){
-				#return false;
-				#$id = $this->_getOffsetId(1, $this->params->start);
-				$id = $this->walker->valid ? entry_keytoid($this->walker->current_key()) : false;
-				
-				if ($id) {
-					$label = $this->walker->current_value();
-				} else {
-					return false;
+				$key = $this->nextkey;
+				if (!$key)
+					return array(null, null);
+				else {
+					$val = $this->main_idx->getitem($key); 
+					return array($val, entry_keytoid($key));
 				}
-
-				return array($label, $id);
+				
+				
 				 
 			}
 			
@@ -530,12 +555,14 @@
 		
 		function getPrevPage() {
 		
-			if ($this->single) {
-
-				$id = $this->previd;
-				$label = $this->preventry['subject'];
-				
-				return array($label, $id);
+			if ($this->single){
+				$key = $this->prevkey;
+				if (!$key)
+					return array(null, null);
+				else {
+					$val = $this->main_idx->getitem($key); 
+					return array($val, entry_keytoid($key));
+				}
 				
 			}
 			

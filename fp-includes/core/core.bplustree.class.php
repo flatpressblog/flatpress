@@ -2455,12 +2455,12 @@ class BPlusWalker {
 
 	function current_key() {
 		if ($this->valid) return $this->node->keys[$this->node_index];
-		else trigger_error("Not a valid index ({$this->node_index})");
+		else trigger_error("WALKER: Not a valid index ({$this->node_index})");
 	}
 
 	function current_value() {
 		if ($this->valid) return $this->node->indices[$this->node_index];
-		else trigger_error("Not a valid index ({$this->node_index})");
+		else trigger_error("WALKER: Not a valid index ({$this->node_index})");
 	}
 
 	function current() {
@@ -2470,7 +2470,7 @@ class BPlusWalker {
 				$this->node->indices[$this->node_index]
 			);
 		} else {
-		       	trigger_error("Not a valid index ({$this->node_index})"); 
+		       	trigger_error("WALKER: Not a valid index ({$this->node_index})"); 
 		}
 	}
 
