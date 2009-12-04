@@ -53,7 +53,7 @@
 		{* end of inline form *}
 		
 		<fieldset id="admin-entry-categories"><legend>{$panelstrings.archive}</legend>
-			{list_categories type=form}
+			{list_categories type=form selected=$categories}
 		</fieldset>
 		
 		<fieldset id="admin-entry-saveopts"><legend>{$panelstrings.saveopts}</legend>
