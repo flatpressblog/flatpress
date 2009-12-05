@@ -376,6 +376,11 @@
 				$v = $idx->getitem($key);
 				if ($qp->fullparse) {
 					$entry = entry_parse($qp->id);
+					if ($entry && $qp->comments) {
+						$this->comments = new FPDB_CommentList($qp->id, comment_getlist($qp->id));
+						$entry['comments'] = $this->comments->getCount();
+					}
+			
 					if (!$entry)  return $return;
 				} else {
 				 	$entry = array('subject' => $v);
