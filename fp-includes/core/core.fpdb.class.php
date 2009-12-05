@@ -380,10 +380,13 @@
 						$this->comments = new FPDB_CommentList($qp->id, comment_getlist($qp->id));
 						$entry['comments'] = $this->comments->getCount();
 					}
+					
+					$post = $entry;
 			
 					if (!$entry)  return $return;
 				} else {
 				 	$entry = array('subject' => $v);
+				 	$post = $entry;
 				}
 				
 				$return = array($this->params->id, $entry);
