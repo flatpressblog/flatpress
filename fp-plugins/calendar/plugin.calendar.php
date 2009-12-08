@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Calendar
-Version: 1.0
+Version: 1.1
 Plugin URI: http://flatpress.sf.net
 Type: Block
 Description: Adds a Calendar block level element 
@@ -23,9 +23,9 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 
 	$day_names = array(); #generate all the day names according to the current locale
 	for($n=0,$t=(3+$first_day)*86400; $n<7; $n++,$t+=86400) #January 4, 1970 was a Sunday
-		$day_names[$n] = ucfirst(gmstrftime('%A',$t)); #%A means full textual day name
+		$day_names[$n] = ucfirst(date_strformat('%A',$t)); #%A means full textual day name
 
-	list($month, $year, $month_name, $weekday) = explode(',',gmstrftime('%m,%Y,%B,%w',$first_of_month));
+	list($month, $year, $month_name, $weekday) = explode(',',date_strformat('%m,%Y,%B,%w',$first_of_month));
 	$weekday = ($weekday + 7 - $first_day) % 7; #adjust for $first_day
 	$title   = htmlentities(ucfirst($month_name)).'&nbsp;'.$year;  #note that some locales don't capitalize month and day names
 
@@ -101,4 +101,3 @@ function plugin_calendar_widget() {
 
 register_widget('calendar', 'Calendar', 'plugin_calendar_widget');
 
-?>
