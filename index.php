@@ -155,6 +155,7 @@
 			) {
 			
 				index_staticpage($page, $explicit_req, $params, $module);
+				return $module;
 		
 		} elseif (!empty($_GET['q'])) {
 			include('search.php');
