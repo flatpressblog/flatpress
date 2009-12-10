@@ -1590,10 +1590,10 @@ class BPlusTree {
 	       		trigger_error("cannot initialize without nodesize, keylen specified\n") ;
 		}
 		$this->length = 0;
+		$this->root_seek = 22; //pack('a5LCL3',...)
 		$this->reset_header();
 		$file = $this->file;
 		fseek($file, 0, SEEK_END);
-		$this->root_seek = ftell($file);
 		$this->root = new BplusTree_Node(
 			BPT_FLAG_LEAFANDROOT, 
 			$this->nodesize, $this->keylen, $this->root_seek, $file
