@@ -20,7 +20,7 @@
 	</ul>
 {/if}
 
-{html_form}
+{html_form enctype='multipart/form-data'}
 	
 	
 	{if $smarty.request.mod != 'inline'}

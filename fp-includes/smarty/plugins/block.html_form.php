@@ -46,7 +46,7 @@ function smarty_block_html_form($params, $content, &$smarty)
 		$params['action']=BLOG_BASEURL . "admin.php?p=". ADMIN_PANEL.'&amp;action=' .ADMIN_PANEL_ACTION;
 		
 	if (!isset($params['enctype']))
-		$params['enctype']="multipart/form-data";
+		$params['enctype']="application/x-www-form-urlencoded"; // multipart/form-data
 
 	
 	foreach ($params as $key => $val) {
