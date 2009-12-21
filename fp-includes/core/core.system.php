@@ -169,9 +169,9 @@
 		
 		ob_start();
 		
-		$GLOBALS['theme'] =& theme_loadsettings();
+		$GLOBALS['theme'] = theme_loadsettings();
 		
-		$GLOBALS['lang'] =& lang_load();
+		$GLOBALS['lang'] = lang_load();
 		
 
 		plugin_loadall();

@@ -174,10 +174,12 @@
 	function plugin_getoptions($plugin, $key=null) {
 		global $fp_config;
 		
-		if ($key)
-			return @$fp_config['plugins'][ $plugin ][ $key ];
+		if ($key && isset($fp_config['plugins'][ $plugin ][ $key ]))
+			return $fp_config['plugins'][ $plugin ][ $key ];
 		
-		return @$fp_config['plugins'][ $plugin ];
+		return isset($fp_config['plugins'][ $plugin ])?
+			$fp_config['plugins'][ $plugin ]
+			: null;
 	}
 	
 	function plugin_addoption($plugin, $key, $val) {
