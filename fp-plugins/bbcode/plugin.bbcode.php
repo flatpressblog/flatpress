@@ -355,7 +355,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 		$float = isset($attr['float'])
 			? "style=\"float: {$attr['float']}\" "
 			: '';
-		return '<object type="application/x-shockwave-flash" height="$height" width="$width" '
+		return '<object type="application/x-shockwave-flash" height="'.$height.'" width="'.$width.'" '
 			. $float .'data="'. $the_url .'"><param name="movie" value="'. $the_url .'" />'
 			. $others .'</object>';
 	}
