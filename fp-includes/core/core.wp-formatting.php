@@ -61,7 +61,12 @@
 	
 	
 	
-	function clean_pre($text) {
+	function clean_pre($matches) {
+		if ( is_array($matches) )
+			$text = $matches[1] . $matches[2] . "</pre>";
+		else
+			$text = $matches;
+
 		/* NWM: a bit hackish? where are the slashes for double quotes added? */
 		$text = str_replace('\"', '"', $text);  
 		$text = str_replace('<br />', '', $text);
