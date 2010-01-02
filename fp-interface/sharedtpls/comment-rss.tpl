@@ -9,7 +9,7 @@
 		<link>{$the_comment_link}</link>
 		<description><![CDATA[{$flatpress.subtitle}]]></description>
 		<copyright>Copyright {$smarty.now|date_format:"$Y"}, {$flatpress.author}</copyright>
- 		<managingEditor>{$flatpress.email} ({$flatpress.author})</managingEditor>
+ 		{*<managingEditor>{$flatpress.email} ({$flatpress.author})</managingEditor>*}
 		<language>{$fp_config.locale.lang}</language>
 		<atom:link rel="self" href="{'rss2'|theme_comments_feed_link:$id}" type="application/rss+xml" />
 
@@ -26,7 +26,7 @@
 			<guid isPermaLink="true">{$the_comment_link}#{$id}</guid>
 
 			<dc:creator>{$name}</dc:creator>
-			<pubDate>{$date|date_format:"%a, %d %b %Y %H:%M:%S %z"}</pubDate>
+			<pubDate>{'r'|date:$date}</pubDate>
 			
 			
 			</item>
