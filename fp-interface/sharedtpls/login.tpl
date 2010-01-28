@@ -1,6 +1,6 @@
 {include file=shared:errorlist.tpl}
 
-<form id="login" method="post" action="{$smarty.server.PHP_SELF}" enctype="multipart/form-data">
+<form id="login" method="post" action="{$smarty.const.BLOG_BASEURL}login.php" enctype="multipart/form-data">
 	<fieldset><legend>{$lang.login.fieldset1}</legend>
 	<p><label for="user">{$lang.login.user}</label><br />
 	<input {$error.user|notempty:'class="field-error"'} type="text" name="user" id="user" {if $smarty.post.user}value="{$smarty.post.user|wp_specialchars:true}"{/if} /></p>

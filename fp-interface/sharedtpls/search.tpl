@@ -1,5 +1,5 @@
 {include file=shared:errorlist.tpl}
-<form id="search" method="get" action="{$smarty.server.PHP_SELF}" enctype="multipart/form-data">
+<form id="search" method="get" action="{$smarty.const.BLOG_BASEURL}search.php" enctype="multipart/form-data">
 		
 	<fieldset><legend>{$lang.search.fset1}</legend>
 	<p><label for="keywords">{$lang.search.keywords}</label><br />

@@ -6,7 +6,7 @@
 {validate id="content" message=$lang.contact.error.content append="error"}
 
 <form id="contactform" method="post"
-	action="{$smarty.server.PHP_SELF}"
+	action="{$smarty.const.BLOG_BASEURL}contact.php"
 	enctype="multipart/form-data">
 	
 	{include file='shared:errorlist.tpl'}
