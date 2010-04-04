@@ -48,6 +48,8 @@ function plugin_lastcomments_widget() {
 					$update = true;
 				continue;
 			}
+
+			comment_clean($arr);
 			
 			$content .=	
 			"<li>
