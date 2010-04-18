@@ -49,8 +49,6 @@ function plugin_lastcomments_widget() {
 				continue;
 			}
 
-			comment_clean($arr);
-			
 			$content .=	
 			"<li>
 			<blockquote class=\"comment-quote\" cite=\"comments.php?entry={$arr['entry']}#{$arr['id']}\">
@@ -101,6 +99,8 @@ function plugin_lastcomments_cache($entryid, $comment) {
 	
 
 	list($id, $content) = $comment;
+	
+	comment_clean($content);
 	
 	
 	if (false===($f = io_load_file(LASTCOMMENTS_CACHE_FILE))) {
