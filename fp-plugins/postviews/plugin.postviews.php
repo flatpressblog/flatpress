@@ -13,6 +13,7 @@ add_action('entry_block', 'plugin_postviews_do');
 function plugin_postviews_calc($id, $calc) {
 
 	$dir = entry_dir($id);
+	if (!$dir) return;
 	
 	$f = $dir . '/view_counter' .EXT;
 	
@@ -36,13 +37,12 @@ function plugin_postviews_calc($id, $calc) {
 	return $v;
 }
 
-function plugin_postviews_do() {
+function plugin_postviews_do($id) {
 	
 	global $fpdb, $smarty;
 	
 	$q = $fpdb->getQuery();
 	$calc = $q->single;
-	$id = $q->currentid;
 	
 	$v = plugin_postviews_calc($id, $calc);
 	

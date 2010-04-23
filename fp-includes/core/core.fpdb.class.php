@@ -872,7 +872,7 @@
 
 			$smarty->assign('entry_commslock', @in_array('commslock',$entry['categories']));
 			
-			do_action('entry_block');
+			do_action('entry_block', $id);
 			
 		}
 		
