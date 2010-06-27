@@ -374,7 +374,7 @@ class Plugin_PrettyURLs {
 	
 	}
 	
-	function cache_add($id, &$arr) {
+	function cache_add($id, $arr) {
 		
 		$date = date_from_id($id);
 		$title = sanitize_title($arr['subject']);
