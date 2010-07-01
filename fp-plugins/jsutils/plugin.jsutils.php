@@ -17,8 +17,7 @@ function plugin_jsutils_head() {
 	$pdir=plugin_geturl('jsutils');
 	echo <<<JSUTILS
 	<!-- start of jsUtils -->
-	<script type="text/javascript" src="{$pdir}res/mootools-1.2.4-with-1.1-classes.txt"></script>
-	<script type="text/javascript" src="{$pdir}res/mootools-1.1-to-1.2-upgrade-helper.txt"></script>
+	<script type="text/javascript" src="{$pdir}res/mootools.js"></script>
 	<!-- end of jsUtils -->
 JSUTILS;
 }
