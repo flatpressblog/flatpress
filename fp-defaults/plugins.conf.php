@@ -5,8 +5,8 @@
   	// to disable put // or # before the plugin name
   	// remove it to enable :)
   	
-	'jsutils',	//needed by ligthbox (quite heavy in size)
-	'lightbox', //fancy usable img overlay effect, needs jsutils
+	'jquery',	//needed by ligthbox2 (quite heavy in size)
+	'lightbox2', //fancy usable img overlay effect, needs jquery
 	'thumb',	//creates thumbnails adding scale=NN% to [img] tags :)
   	'bbcode', 	// bbcode-style formatting; if you disable this 
   				// you'll loose some features, but you will be able to use xhtml 

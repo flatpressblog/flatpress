@@ -340,6 +340,7 @@ class Plugin_PrettyURLs {
 	function check_url($url) {
 		if (!empty($url) && $url != '/') {
 			$this->fp_params = array('entry'=>'entry000000-000000');
+			$url = apply_filters('prettyurls_unhandled_url', $url);
 		}
 	}
 

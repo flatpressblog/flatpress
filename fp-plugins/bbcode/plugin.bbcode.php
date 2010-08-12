@@ -393,7 +393,7 @@ function do_bbcode_code ($action, $attributes, $content, $params, $node_object) 
 		}
 	}
 	if ($a) {
-		$a = ' class="'. $a;
+		$a = ' class="'. $a .'"';
 	}
 	return '<pre'. $a .'>'. $temp_str .'</pre>';
 }
