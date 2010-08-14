@@ -51,7 +51,7 @@
 				if (@$params) $params = explode(',', $params); else $params = array();
 				// $var = 'plugin_' . $newid . '_widget';
 				$var = $fp_registered_widgets[ $newid ]['func'];
-				if (function_exists($var)) {
+				if (is_callable($var)) {
 					$content = call_user_func_array($var, $params); 
 					if (!isset($content['id'])) {
 						$content['id'] = "widget-$newid";
