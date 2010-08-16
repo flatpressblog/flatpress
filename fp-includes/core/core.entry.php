@@ -40,8 +40,12 @@
 		var $_chunksize = 30;
 		var $_keysize = 12;
 
+		var $_lock_file = null;
+
 
 		function entry_index() {
+			$this->_lock_file = CACHE_DIR.'bpt.lock';
+
 			$this->catlist = entry_categories_list();
 
 			// only main index s a SBPlus (string BPlus): 
@@ -79,6 +83,36 @@
 
 		}
 
+		function _lock_acquire($exclusive=true, $cat=0) {
+			if (file_exists($this->_lock_file)) {
+				trigger_error("Could not acquire write lock on INDEX. ".
+				"Didn't I told you FlatPress is not designed for concurrency, already? ;) ".
+				"Don't worry: your entry has been saved as draft!", E_USER_WARNING);
+				return false;
+			}
+
+			// simulates atomic write by writing to a file, then moving in place
+			$tmp = $this->_lock_file.".tmp";
+			if (io_write_file($tmp, 'dummy')) {
+				if (rename($tmp, $this->_lock_file)) {
+					return true;
+				}
+			}
+
+			return false;
+
+		}
+
+		function _lock_release($cat=0) {
+			if (file_exists($this->_lock_file)) {
+				return @unlink($this->_lock_file);
+			} else {
+				trigger_error("Lock file did not exist: ignoring (index was already unlocked.)", E_USER_NOTICE);
+				return 2;
+			}
+	
+		}
+
 		function &get_index($cat=0) {
 			if (!is_numeric($cat)) 
 				trigger_error("CAT must be an integer ($cat was given)", E_USER_ERROR);
@@ -104,6 +138,8 @@
 		function add($id, $entry, $del = array(), $update_title = true) {
 			$key = entry_idtokey($id);
 			$val = $entry['subject'];
+
+			if (!$this->_lock_acquire()) return false; // we're DOOMED!
 
 			$main =& $this->get_index();
 			$seek = null;
@@ -159,13 +195,15 @@
 				}
 			}
 
-			return true;
+			return $this->_lock_release();
 
 		}
 
 		function delete($id, $entry) {
 			$key = entry_idtokey($id);
 
+			if (!$this->_lock_acquire()) return false; // we're DOOMED!
+			
 			$main =& $this->get_index();
 			$main->delitem($key);
 
@@ -179,87 +217,12 @@
 				}
 			}
 
+			return $this->_lock_release();
+
 		}
 
 	}
 
-	class _entry_indexer extends cache_filelister {
-		
-		var $_varname = 'cache';
-		var $_cachefile = null;
-		var $_directory = CONTENT_DIR;
-		
-		function entry_indexer() {
-			$this->_cachefile = CACHE_DIR . CACHE_FILE;
-			
-			return parent::cache_filelister();
-		}
-		
-		function _checkFile($directory, $file) {
-			$f = "$directory/$file";
-				if ( is_dir($f) && ctype_digit($file)) {
-					return 1;
-				}
-				
-				if (fnmatch('entry*'.EXT, $file)) {
-					$id=basename($file,EXT);
-					$arr=entry_parse($id);
-		
-					$this->addEntry($id, $arr);
-					
-					return 0;
-				}
-		}
-		
-		
-		function addEntry($id, $arr) {
-		
-		
-			if ($arr) {
-						// do_action('publish_post', $id, $arr);
-						$this->_list[$id]=array(
-							'subject' => $arr['subject'],
-							'categories' => 
-								(
-								isset($arr['categories'])? 
-									$arr['categories'] 
-									: 
-									array()
-								)
-							);
-					
-					}
-					
-			}
-		
-		
-		function save() {
-			do_action('cache_save');
-			return parent::save();
-		}
-		
-		function add($id, $val) {
-			
-			$this->_list[$id]=array('subject' => $val['subject'],
-						'categories' => 
-							(isset($val['categories'])? 
-							$val['categories'] : array()));
-						
-			return $this->save();
-		}
-		
-		function get($id) {
-			if (isset($this->_list[$id]))
-				return $this->_list[$id];
-			else {
-				//trigger_error("entry_lister: No such element \"$id\" in
-					//list", E_USER_WARNING);
-				return false;
-			}
-		}
-	
-		
-	}
 	class entry_archives extends fs_filelister {
 		
 		var $_directory = CONTENT_DIR;
