@@ -367,7 +367,8 @@
 			
 			if ($this->counter < 0)
 				$this->prepare();
-			
+
+			if ($this->pointer == $this->params->start + $this->params->count) return $return;
 			
 			if ($qp->id) {
 				$idx = $this->main_idx;
