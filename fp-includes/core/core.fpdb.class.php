@@ -254,7 +254,7 @@
 				$this->prevkey = null;
 				if ($this->walker->valid) { 
 					$this->walker->next(); 
-					$this->nextkey = $this->walker->current_key(); 
+					$this->nextkey = $this->walker->valid? $this->walker->current_key() : null;
 				} 
 			} else { 
 				$this->prevkey = $prevkey;
