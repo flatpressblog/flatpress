@@ -185,7 +185,21 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	$float = ' class="center" ';
 	$popup_start = '';
 	$popup_end = '';
+
 	$alt = $title = basename($actualpath);
+	$useimageinfo = true; // use IPTC info
+
+	if (isset($attributes['alt'])) {
+		$alt = wp_specialchars($attributes['alt']);
+		$useimageinfo = false;
+	}
+
+	if (isset($attributes['title'])) {
+		$title = wp_specialchars($attributes['title']);
+		$useimageinfo = false;
+	}
+
+
 	
 	$img_size = array();
 	// let's disable socket functions for remote files
@@ -195,7 +209,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		$img_size = @getimagesize($actualpath, $img_info);
 		$absolutepath = BLOG_BASEURL . $actualpath;
 		
-		if (function_exists('iptcparse')) {
+		if ($useimageinfo && function_exists('iptcparse')) {
 			if ($img_size['mime'] == 'image/jpeg') {
 				// tiffs won't be supported
 				
