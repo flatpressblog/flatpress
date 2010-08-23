@@ -45,8 +45,9 @@ function wplaceholder() {
 			$(this).animate({'background-color' : '#fff'})
 		},
 		'drop' : function(event, ui) {
-			parent=ui.draggable.parent();
-			where=$(this).parent().attr('id').split('-')[1];
+			var parent=ui.draggable.parent();
+			var where=$(this).parent().attr('id').split('-')[1];
+			var replace = null;
 			if(ui.draggable.hasClass('widget-instance')) {
 				replace=ui.draggable;
 			} else {
@@ -72,8 +73,9 @@ function winstancedrop() {
 			$(this).animate({'background-color' : '#fff'})
 		},
 		'drop' : function(event, ui) {
-			parent=ui.draggable.parent();
-			where=$(this).parent().attr('id').split('-')[1];
+			var parent=ui.draggable.parent();
+			var where=$(this).parent().attr('id').split('-')[1];
+			var replace = null;
 			if(ui.draggable.hasClass('widget-instance')) {
 				replace=ui.draggable;
 			} else {
@@ -100,8 +102,9 @@ function wtrash() {
 			$(this).animate({'background-color' : '#a22'})
 		},
 		'drop' : function(event, ui) {
-			parent=ui.draggable.parent();
-			$(ui.draggable).fadeOut().remove();;
+			var parent=ui.draggable.parent();
+			$(ui.draggable).fadeOut().remove(); 	// error in IE8
+			// $(ui.draggable).fadeOut(); 		// will fade, will remove, graphic glitches
 			$('.widget-dragger').remove();
 			if(parent.children().length<1) {
 				parent.append('<li class="widget-placeholder">Drop here</li>');
