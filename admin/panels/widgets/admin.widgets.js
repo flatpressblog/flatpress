@@ -103,13 +103,26 @@ function wtrash() {
 		},
 		'drop' : function(event, ui) {
 			var parent=ui.draggable.parent();
-			$(ui.draggable).fadeOut().remove(); 	// error in IE8
-			// $(ui.draggable).fadeOut(); 		// will fade, will remove, graphic glitches
+			var draggable = $(ui.draggable);
+
+			// we can't remove() draggable here, because of a bug with jquery UI + IE8
+			// we'll defer it
+			draggable.fadeOut();
 			$('.widget-dragger').remove();
-			if(parent.children().length<1) {
+
+			// last element has not been removed, 
+			// so there is still one in the list, soon to be deleted '
+			// (parent.children().lenght==1)
+			if(parent.children().length<2) {
 				parent.append('<li class="widget-placeholder">Drop here</li>');
 			}
 			$(this).animate({'background-color' : '#a22'});
+
+			// deferred removal takes place here
+			setTimeout(function() {
+				draggable.remove();
+			});
+
 			wreload();
 		}
 	});
@@ -119,6 +132,7 @@ function wreload(){
 	winstancedrag();
 	wplaceholder();
 	winstancedrop();
-	wtrash();
+	//wtrash();
 }
-$(document).ready(wreload);
+//$(document).ready(wreload);
+wreload();wtrash();
