@@ -110,30 +110,37 @@
 		
 		function exec() {
 			
+			global $panel,$action;
+			
 			foreach($this->args as $mandatory_argument) {
 				if (!isset($_REQUEST[$mandatory_argument])) {
 					return PANEL_REDIRECT_DEFAULT;
 				}
 			}
-
 			
 			$this->setup();
+			do_action("admin_{$panel}_{$action}_setup");
+			
 			$result = 0; // if !=0, defaultaction for this panel is called
 			
 			if (empty($_POST)) {
 				if ($this->commands) {
 					foreach($this->commands as $cmd) {
 						if (isset($_GET[ $cmd ])) {
-							return $this->docommand($cmd, $_GET[ $cmd ]); 
+							$result = $this->docommand($cmd, $_GET[ $cmd ]);
+							return apply_filters("admin_{$panel}_{$action}_{$cmd}_{$_GET[ $cmd ]}", $result);
+							//return $result;
 						}
 					}
 				}
 				
 				$result = $this->main();
+				do_action("admin_{$panel}_{$action}_main");
 				lang_load($this->langres);
 				
 			} else {
-				$result = $this->onsubmit();
+				$data = apply_filters("admin_{$panel}_{$action}_onsubmit", null);
+				$result = $this->onsubmit($data);	
 			}
 			
 			return $result;
@@ -161,13 +168,17 @@
 		
 		function onsubmit($data = null) {
 			
+			global $panel,$action;
+			
 			$returnvalue = 1;
 			$valid_evts = array_intersect(array_keys($_POST), $this->events);
 			
 			if ($the_event=array_pop($valid_evts)) {
 					$event = "on{$the_event}";
-					if (method_exists($this, $event))
+					if (method_exists($this, $event)) {
+						$data = apply_filters("admin_{$panel}_{$action}_{$event}", $data);
 						$returnvalue = call_user_func(array(&$this, $event), $data);
+					}
 			}
 			
 			return $returnvalue;
@@ -207,7 +218,7 @@
 		
 		function onsubmit() {
 		
-			global $lang;
+			global $lang, $panel, $action;
 				
 			$result = 0;
 			
@@ -268,7 +279,8 @@
 				$result = parent::onsubmit($content);
 			} else {
 				$this->smarty->assign('error', $errors);
-				$result = $this->onerror();
+				
+				$result = apply_filters("admin_{$panel}_{$action}_onerror", $this->onerror());
 			}
 			
 			return $result;

@@ -116,6 +116,7 @@
 
 	}
 	
+	// smarty tag
 	function admin_filter_action($string, $action) {
 		if (strpos($string, '?')===false)
 			return $string .= "?action={$action}";
@@ -123,6 +124,7 @@
 			return $string .= wp_specialchars("&action={$action}");
 	}
 	
+	// smarty tag
 	function admin_filter_command($string, $cmd, $val) {
 	
 		global $panel, $action;
@@ -170,6 +172,14 @@
 	}
 	
 	add_filter('wp_title', 'admin_title', 10, 2);
+
+
+	// setup admin_header
+	function admin_header_default_action() {
+		global $panel, $action;
+		do_action("admin_{$panel}_{$action}_head");
+	}
+	add_filter('admin_head', 'admin_header_default_action');
 	
 	
 	$fp_config = config_load();
