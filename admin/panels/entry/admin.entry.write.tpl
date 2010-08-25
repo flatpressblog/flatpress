@@ -8,11 +8,13 @@
 	{include file='shared:errorlist.tpl'}
 
 	{entry_block}
+	<div id="admin-post-preview">
 	{if $preview}
 	<fieldset id="post-preview"><legend>{$panelstrings.preview}</legend>
 	{include file=preview.tpl}
 	</fieldset>
 	{/if}
+	</div>
 
 		
 	

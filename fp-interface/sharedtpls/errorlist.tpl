@@ -1,4 +1,4 @@
-
+<div id="errorlist">
 		{if $error}
 		<ul class="msgs errors">
 			{foreach from=$error key=field item=msg}
@@ -46,4 +46,4 @@
 			<li>{$panelstrings.msgs[$success]}</li>
 		</ul>
 		{/if}
-		
+</div>
