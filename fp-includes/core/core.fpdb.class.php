@@ -144,6 +144,7 @@
 		
 		
 		var $lastentry  = array(null, array()); 
+		var $localcache  = array(); 
 		var $nextid		= '';
 		var $previd		= '';
 		var $currentid	= '';		
@@ -376,7 +377,7 @@
 				
 				$v = $idx->getitem($key);
 				if ($qp->fullparse) {
-					$entry = entry_parse($qp->id);
+					$entry = isset($this->localcache[ $qp->id ]) ? $this->localcache[ $qp->id ] : entry_parse($qp->id);
 					if ($entry && $qp->comments) {
 						$this->comments = new FPDB_CommentList($qp->id, comment_getlist($qp->id));
 						$entry['comments'] = $this->comments->getCount();
@@ -448,7 +449,7 @@
 				// full parse: reads the whole array from file
 				$cont = array();
 				
-				$cont = entry_parse($id);
+				$cont = isset($this->localcache[ $id ]) ? $this->localcache[ $id ] : entry_parse($id);
 
 				
 			} else {
