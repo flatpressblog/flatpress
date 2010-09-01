@@ -9,10 +9,11 @@ Author URI: http://www.nowhereland.it/
 */ 
  
 function plugin_favicon_head() {
-	// your file *must* be named favicon.ext, 
-	// where ext is an image extension (such as gif, png, ico...)
+	// your file *must* be named favicon.ico 
+	// and be a ICO file (not a renamed png, jpg, gif, etc...)
+	// or it won't work in IE
 	echo '<link rel="shortcut icon" href="' .  
-		plugin_geturl('favicon') .'imgs/favicon.gif" />';
+		plugin_geturl('favicon') .'imgs/favicon.ico" />';
 }
  
 add_action('wp_head', 'plugin_favicon_head');
