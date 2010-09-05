@@ -67,6 +67,17 @@
 		}
 		add_action('wp_head', 'comment_feed');
 
+		function comment_pagetitle($val, $sep) {
+			global $fpdb, $lang;
+			$q =& $fpdb->getQuery();
+			list($id, $e) = @$q->peekEntry();
+			if ($e)
+				return "{$e['subject']} : {$lang['main']['comments']} {$sep} $val ";
+			else return $val;
+		}
+		remove_filter('wp_title', 'index_permatitle');
+		add_filter('wp_title', 'comment_pagetitle', 10, 2);
+
 		function comment_validate() {
 		
 			global $smarty, $lang;
