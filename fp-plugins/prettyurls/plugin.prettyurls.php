@@ -169,6 +169,7 @@ class Plugin_PrettyURLs {
 		if (PRETTYURLS_TITLES) {	
 			if ($c = array_search($matches[1], $this->categories))
 				$this->fp_params['cat'] = $c;
+			else return $matches[0];
 		} else {
 			$this->fp_params['cat'] = $matches[1];
 		}
