@@ -748,13 +748,14 @@
 			$id = bdb_idfromtime(BDB_ENTRY, $entry['date']);
 		}
 
-		do_action('publish_post', $id, $entry);
 
 		// PHASE 2 : Store
 	
 		// secure data as DRAFT
+		// (entry is also implicitly entry_prepare()'d here)
 		$ret = draft_save($entry, $id);
-		
+		do_action('publish_post', $id, $entry);
+
 		if ($ret === false) {
 			return -1; // FAILURE: ABORT
 		}
