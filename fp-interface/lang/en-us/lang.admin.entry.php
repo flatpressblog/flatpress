@@ -175,6 +175,7 @@ Technology :6
 		-1	=> 'An error occurred while trying to save categories',
 		2	=> 'Categories cleared',
 		-2	=> 'An error occurred while trying to clear categories',
+		-3 	=> 'Category IDs must be strictly positive (0 is not allowed)'
 
 	);
 	

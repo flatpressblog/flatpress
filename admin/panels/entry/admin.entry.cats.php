@@ -48,9 +48,19 @@
 			$str = stripslashes( trim( @$_POST['content'] ) ) ;
 			
 			if ($str) {
-				$success = io_write_file(CONTENT_DIR . 'categories.txt', $str);
-				entry_categories_encode();
-				$this->smarty->assign('success', ( $success )? 1 : -1 );
+				//$success = io_write_file(CONTENT_DIR . 'categories.txt', $str);
+				$success = entry_categories_encode($str);
+
+				$ret = 1 ;
+				if ($success <= 0) {
+					if ($success == -1) $ret = -3;
+					elseif ($success == 0) $ret = -1;
+				} else { 
+					$success = io_write_file(CONTENT_DIR . 'categories.txt', $str) ? -1 : 1;
+				}
+
+				$this->smarty->assign('success', $ret);
+
 			} else {
 				$this->smarty->assign('success', -1 );
 			}

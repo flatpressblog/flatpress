@@ -498,10 +498,11 @@
 	}
 
 
-	function entry_categories_encode() {
+	function entry_categories_encode($cat_file) {
 	
-		if ($string = io_load_file(CONTENT_DIR . 'categories.txt')) {
-			$lines = explode("\n", trim($string));
+	
+		//if ($string = io_load_file(CONTENT_DIR . 'categories.txt')) {
+			$lines = explode("\n", trim($cat_file));
 			$idstack = $result = $indentstack=array();
 		
 			while (!empty($lines)) {
@@ -519,6 +520,12 @@
 				
 					$id     = trim($val[1]);
 					$label  = trim($val[0]);
+
+					// IDs must be strictly positive
+					
+					if ($label && $id <= 0) return -1;
+
+
 			
 					if (empty($indentstack)) {
 						array_push($indentstack,$indent);
@@ -554,7 +561,7 @@
 			
 			return io_write_file(CONTENT_DIR . 'categories_encoded.dat', serialize($result));
 			
-		}
+		//}
 	
 		return false;
 	
