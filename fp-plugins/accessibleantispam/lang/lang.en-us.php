@@ -1,17 +1,15 @@
 <?php
 
-	$lang['plugin']['accessibleantispam'] = array(
+$lang['plugin']['accessibleantispam'] = array(
 		
-		'prefix'	=> 'As a way to prevent abuses of this commenting system, '.
-				'we must ask you to give the result of this simple mathematical '.
-				'operation: please, ',
+	'prefix'	=> 'In order to help eliminate automated spam attacks '.
+		'we must ask you to prove you are human. What is ',
 		
-		'sum'		=> 'sum %s to %s',
-		'sub'		=> 'subtract %2$s from %1$s',
-		'prod'		=> '%s times %s',
+	'sum'		=> '%s plus %s ?',
+	'sub'		=> '%2$s subtracted from %1$s ?',
+	'prod'		=> '%s times %s ?',
 		
-		'error'		=> 'Result was incorrect, please retry.'
+	'error'		=> 'Sorry, you gave the wrong answer. Please try again.'
 	
 	);
 
-?>
