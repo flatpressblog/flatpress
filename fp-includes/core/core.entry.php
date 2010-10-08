@@ -695,7 +695,7 @@
 	}
 
 	// @TODO : check against schema ?
-	function entry_prepare($entry) {		// prepare for serialization
+	function entry_prepare(&$entry) {		// prepare for serialization
 		global $post;
 		
 		// fill in missing value

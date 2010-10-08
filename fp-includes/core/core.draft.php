@@ -76,7 +76,7 @@
 	}
 
 	
-	function draft_save($entry, $id=null, $update_index = false, $update_date=false) {
+	function draft_save(&$entry, $id=null, $update_index = false, $update_date=false) {
 	
 		if (!$id) {
 			$id = bdb_idfromtime('entry', $entry['date']);
