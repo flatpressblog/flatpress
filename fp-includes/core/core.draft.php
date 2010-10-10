@@ -101,9 +101,9 @@
 	
 		}
 
-		$entry = entry_prepare($entry);
-		if ($entry['categories'])
-				$entry['categories']=implode(',', $entry['categories']);
+		$new_entry = entry_prepare($entry);
+		if ($new_entry['categories'])
+				$new_entry['categories']=implode(',', $entry['categories']);
 		else unset($entry['categories']);
 
 		$string = utils_kimplode($entry);
