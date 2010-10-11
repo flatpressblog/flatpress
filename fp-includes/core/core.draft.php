@@ -104,9 +104,9 @@
 		$new_entry = entry_prepare($entry);
 		if ($new_entry['categories'])
 				$new_entry['categories']=implode(',', $entry['categories']);
-		else unset($entry['categories']);
+		else unset($new_entry['categories']);
 
-		$string = utils_kimplode($entry);
+		$string = utils_kimplode($new_entry);
 		
 	
 		if (!io_write_file($dd.EXT, $string)) {
