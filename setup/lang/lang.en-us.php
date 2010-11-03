@@ -134,7 +134,7 @@ We have created some more sample content, to show you some of the FP well hidden
 
 [h4]Widgets[/h4]
 
-There isn't a single fixed element in the sidebar(s). All the elements you can find in the bars sourrounding this text are completely ositionable, and most of them are customizable as well. Some of theme provide even a panel interface in the admin area.  
+There isn't a single fixed element in the sidebar(s). All the elements you can find in the bars sourrounding this text are completely positionable, and most of them are customizable as well. Some themes even provide a panel interface in the admin area.  
 
 These elements are called [url=http://wiki.flatpress.org/doc:widgets]widgets[/url].
 
