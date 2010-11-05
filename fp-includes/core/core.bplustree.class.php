@@ -638,8 +638,8 @@ class BPlusTree_Node {
 			// there are nodes
 			$keys =& $this->keys;
 			// is the key there already?
-			if (in_array($key, $keys)) {
-				if (array_search($key, $keys) < $validkeys)
+			if (in_array($key, $keys, true)) {
+				if (array_search($key, $keys, true) < $validkeys)
 					trigger_error("reinsert of node for existing key ($key)",
 							E_USER_ERROR);
 			}
@@ -686,7 +686,7 @@ class BPlusTree_Node {
 			$place = 0;
 			$indexplace = 0;
 		} else {
-			$place = array_search($key, $keys);
+			$place = array_search($key, $keys, true);
 			$indexplace = $place+1;
 		}
 		
@@ -795,7 +795,7 @@ class BPlusTree_Node {
 		if (is_null($key))
 			$index = 0;
 		else 
-			$index = array_search($key, $this->keys)+1;
+			$index = array_search($key, $this->keys, true)+1;
 
 		$place = $this->indices[$index];
 		if ($place<0) {
@@ -888,8 +888,8 @@ class BPlusTree_Node {
 			$this->validkeys = 1;
 		} else {
 			$place = null;
-			if (in_array($key, $keys)) {
-				$place = array_search($key, $keys);
+			if (in_array($key, $keys, true)) {
+				$place = array_search($key, $keys, true);
 				if ($place >= $validkeys) {
 					$place = null;
 				}
@@ -1089,11 +1089,11 @@ class BPlusTree_Node {
  	function delvalue($key) {
 		$keys =& $this->keys;
 		$indices =& $this->indices;
-		if (!in_array($key, $keys)) {
+		if (!in_array($key, $keys, true)) {
 			d($keys);
 			trigger_error ("missing key, can't delete", E_USER_ERROR);
 		}
-		$place = array_search($key, $keys);
+		$place = array_search($key, $keys, true);
 		$validkeys = $this->validkeys;
 		$prev = $validkeys-1;
 
@@ -1929,8 +1929,8 @@ class BPlusTree {
 			// leaf
 			d("FOUND LEAF:");
 			d($keys);
-			if (!in_array($key, $keys) 
-					|| array_search($key, $keys) >= $validkeys) {
+			if (!in_array($key, $keys, true) 
+					|| array_search($key, $keys, true) >= $validkeys) {
 				$newlength = $this->length +1;
 			} else {
 				$newlength = $this->length;
@@ -2241,7 +2241,7 @@ class BPlusTree {
 			d($node2->keys);
 			if (in_array(
 				array_fill(0,$node1->size,''), 
-				array($node1->keys,$node2->keys))
+				array($node1->keys,$node2->keys), true)
 			) {
 				trigger_error("splitting an empty node!", E_USER_ERROR);
 			}
@@ -2404,8 +2404,8 @@ class BPlusWalker {
 		if ($keylower==null) {
 			$this->node_index = 0;
 			$this->valid=1;
-		} elseif (in_array($keylower, $keys) && $this->includelower) {
-			$this->node_index = array_search($keylower, $keys);
+		} elseif (in_array($keylower, $keys, true) && $this->includelower) {
+			$this->node_index = array_search($keylower, $keys, true);
 			$index = $this->node_index;
 			if ($index<$validkeys) {
 				$this->valid = 1;
