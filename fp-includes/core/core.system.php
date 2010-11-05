@@ -77,7 +77,28 @@
 	function system_ver() {
 		return 'fp-' . SYSTEM_VER;
 	}
-	
+
+	function system_ver_compare($newver, $oldver) {
+		$nv_arr = explode('.', $newver);
+		$ov_arr = explode('.', $oldver);
+		$cn = count($nv_arr);
+		$co = count($ov_arr);
+		$max = min($cn, $co);
+
+		// let's compare if one of the first version numbers differs
+		// from new version, being greater
+		for ($i=0; $i<$max; $i++) {
+			if ( $nv_arr[ $i ] > $ov_arr[ $i ] ) { return 1; }
+			if ( $nv_arr[ $i ] < $ov_arr[ $i ] ) { return 0; }
+		}
+
+		// if they equals, but still new version has more digits
+		// then old-version is still outdated
+		if ($cn > $co) return 1;
+
+		
+	}
+
 	function system_generate_id($string) {
 		return 'fp-'.dechex(crc32($string) ^ mt_rand());
 	}

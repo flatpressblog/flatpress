@@ -77,9 +77,9 @@
 	
 	class admin_maintain_updates extends AdminPanelAction {
 		
-		var $web = 'http://www.flatpress.org/fp/VERSION';
+		var $web = 'http://flatpress.org/fp/VERSION';
 		var $fpweb = 'http://www.flatpress.org/home/blog.php';
-		var $sfweb = 'http://sourceforge.net/project/showfiles.php?group_id=157089';
+		var $sfweb = 'http://sourceforge.net/projects/flatpress/files/';
 	
 		function main() {
 			$success = -1;
@@ -88,21 +88,19 @@
 					'unstable'=>'unknown',
 				);
 		
-			$f = @fopen($this->web, 'r');
+			$file = utils_geturl($this->web);
+
 			
-			if ($f) {
-				$file='';
-				while(!feof($f)) {
-					$file .= fgets($f);
+			if ($file) {
+				$ver = utils_kexplode($file['content']);
+				if (!isset($ver['stable']))  { $success = -1; }
+				elseif (system_ver_compare($ver['stable'], SYSTEM_VER)) {
+					$success = 1;
+				} else {
+					$success = 2;
 				}
-				if ($file){
-					$ver = utils_kexplode($file);
-					
-					if (strcmp($ver['stable'], SYSTEM_VER)>0)
-						$success = 1;
-					else
-						$success = 2;
-				}
+			} else {
+				$success = -1;
 			}
 			
 			
