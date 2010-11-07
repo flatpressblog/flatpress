@@ -13,6 +13,13 @@
 
 {html_form}
 
+<script type="text/javascript">
+{literal}
+
+function admin_entry_comment_delete() { return confirm({/literal}'{$plang.act_del_confirm}'{literal}); }
+
+{/literal}
+</script>
 <table class="entrylist">
 <thead><tr>
 <th>{$panelstrings.date}</th>
@@ -38,7 +45,7 @@
 href="{"`$panel_url`&entry=`$entryid`"|action_link:commedit|cmd_link:comment:$id}">
 {$plang.act_edit}
 </a>
-<a class="link-delete" href="{"`$panel_url`&entry=`$entryid`"|action_link:commentlist|cmd_link:delete:$id}">
+<a class="link-delete" onclick="return admin_entry_comment_delete();" href="{"`$panel_url`&entry=`$entryid`"|action_link:commentlist|cmd_link:delete:$id}">
 {$plang.act_del}
 </a>
 </td>
