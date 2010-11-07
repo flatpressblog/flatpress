@@ -38,7 +38,7 @@
 href="{"`$panel_url`&entry=`$entryid`"|action_link:commedit|cmd_link:comment:$id}">
 {$plang.act_edit}
 </a>
-<a class="link-delete" href="{"`$panel_url`&entry=`$entryid`"|action_link:commdelete|cmd_link:comment:$id}">
+<a class="link-delete" href="{"`$panel_url`&entry=`$entryid`"|action_link:commentlist|cmd_link:delete:$id}">
 {$plang.act_del}
 </a>
 </td>
