@@ -74,6 +74,7 @@
 		
 	}
 
+
 	function user_loggedin(){
 	
 		global $loggedin, $fp_user;
@@ -89,14 +90,19 @@
 		
 		$fp_user = user_get($_COOKIE[USER_COOKIE]);
 		
-		if ($fp_user) {
-				$loggedin = ($_COOKIE[PASS_COOKIE] == $fp_user['password']);
+		if (!$fp_user) {
+			return false;
+		}
+
+		if($_COOKIE[PASS_COOKIE] == $fp_user['password']) {
+			$loggedin = true;
+			return $fp_user;
 		}
 		
-		return $fp_user; 
+		$loggedin = false;
+		return false; 
 		
 	}
-
 
 
 	function user_get($userid=null){
