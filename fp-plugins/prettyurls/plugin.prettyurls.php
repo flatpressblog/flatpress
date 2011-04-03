@@ -251,7 +251,8 @@ class Plugin_PrettyURLs {
 		global $fp_params;
 		
 		$this->fp_params =& $fp_params;
-		$this->baseurl = PRETTYURLS_PATHINFO? BLOG_BASEURL . 'index.php/' : BLOG_BASEURL;
+		// $this->baseurl = PRETTYURLS_PATHINFO? BLOG_BASEURL . 'index.php/' : BLOG_BASEURL;
+		$this->baseurl = BLOG_BASEURL . '?u=/';
 	
 		if (PRETTYURLS_TITLES) {
 			#if ($f = io_load_file(PRETTYURLS_CACHE))
@@ -271,13 +272,16 @@ class Plugin_PrettyURLs {
 
 		# this is not working if you reach flatpress via symlink
 		# unless you don't edit manually defaults.php
-		if (strpos($_SERVER['REQUEST_URI'], BLOG_ROOT)!==false) {
-			$url = $_SERVER['REQUEST_URI'];
-			$del = BLOG_ROOT;
-			if (strpos($url, 'index.php')!==false)
-				$del = $del . 'index.php/';
-			$url = substr($url, strlen($del)-1);
-		}
+		//if (strpos($_SERVER['REQUEST_URI'], BLOG_ROOT)!==false) {
+		//	$url = $_SERVER['REQUEST_URI'];
+		//	$del = BLOG_ROOT;
+		//	if (strpos($url, 'index.php')!==false)
+		//		$del = $del . 'index.php/';
+		//	$url = substr($url, strlen($del)-1);
+		//}
+		
+		$url = $_GET['u'];
+
 		
 		// removes querystrings
 		if (false !== $i = strpos($url, '?'))
