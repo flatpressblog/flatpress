@@ -99,6 +99,7 @@
 			return $fp_user;
 		}
 		
+		$fp_user = null;
 		$loggedin = false;
 		return false; 
 		
