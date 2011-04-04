@@ -230,6 +230,34 @@ class Plugin_PrettyURLs {
 		$this->fp_params['feed'] = isset($matches[2])? $matches[2]:'rss2';
 	}
 
+
+	function get_url() {
+		$baseurl = BLOG_BASEURL;
+		$opt = plugin_getoptions('prettyurls', 'mode');
+		$url = substr($_SERVER['REQUEST_URI'], strlen(BLOG_ROOT)-1);
+
+		switch($opt) {
+			case null:
+			case 0:
+				$opt = file_exists(ABS_PATH . '.htaccess') ? 3 : 1;	
+			case 1:
+				$baseurl .= 'index.php/'; 
+				$url = $_SERVER['PATH_INFO'];
+				break;
+			case 2:
+				$baseurl .= '?u=/'; 
+				$url = @$_GET['u'];
+			/* case 3: do nothing, it's BLOG_BASEURL */
+		}
+
+		$this->baseurl = $baseurl;
+		$this->mode = $opt;
+
+		return $url;	
+
+	}
+
+
 	
 	/*
 	 * here is where the real work is done.
@@ -251,7 +279,7 @@ class Plugin_PrettyURLs {
 		global $fp_params;
 		
 		$this->fp_params =& $fp_params;
-		$this->baseurl = PRETTYURLS_PATHINFO? BLOG_BASEURL . 'index.php/' : BLOG_BASEURL;
+		$url = $this->get_url();
 	
 		if (PRETTYURLS_TITLES) {
 			#if ($f = io_load_file(PRETTYURLS_CACHE))
@@ -264,21 +292,21 @@ class Plugin_PrettyURLs {
 			$this->categories(false);
 		}
 
-		
 		if (!defined('MOD_INDEX'))
 			return;
 		
-
-		# this is not working if you reach flatpress via symlink
-		# unless you don't edit manually defaults.php
-		if (strpos($_SERVER['REQUEST_URI'], BLOG_ROOT)!==false) {
-			$url = $_SERVER['REQUEST_URI'];
-			$del = BLOG_ROOT;
-			if (strpos($url, 'index.php')!==false)
-				$del = $del . 'index.php/';
-			$url = substr($url, strlen($del)-1);
-		}
 		
+
+//		# this is not working if you reach flatpress via symlink
+//		# unless you don't edit manually defaults.php
+//		if (strpos($_SERVER['REQUEST_URI'], BLOG_ROOT)!==false) {
+//			$url = $_SERVER['REQUEST_URI'];
+//			$del = BLOG_ROOT;
+//			if (strpos($url, 'index.php')!==false)
+//				$del = $del . 'index.php/';
+//			$url = substr($url, strlen($del)-1);
+//		}
+
 		// removes querystrings
 		if (false !== $i = strpos($url, '?'))
 			$url = substr($url, 0, $i);
@@ -549,9 +577,12 @@ if (class_exists('AdminPanelAction')){
 	class admin_plugin_prettyurls extends AdminPanelAction { 
 		
 		var $langres = 'plugin:prettyurls';
+		var $_config = array('mode'=>0);
 		
 		function setup() {
 			$this->smarty->assign('admin_resource', "plugin:prettyurls/admin.plugin.prettyurls");
+			$this->_config['mode'] = plugin_getoptions('prettyurls', 'mode');
+			$this->smarty->assign('pconfig', $this->_config);
 			$blogroot = BLOG_ROOT;
 			$f = ABS_PATH . '.htaccess';
 			$txt = io_load_file($f);
@@ -582,11 +613,21 @@ STR;
 		
 		function onsubmit() {
 			global $fp_config;
+
+			if (isset($_POST['saveopt'])) {
+				$this->_config['mode'] = (int) $_POST['mode'] ;
+				plugin_addoption('prettyurls', 'mode', $this->_config['mode']);
+				if( plugin_saveoptions() )
+					$this->smarty->assign('success', 2);
+				else	$this->smarty->assign('success', -2); 
+			}
 			
-			if (!empty($_POST['htaccess']) && io_write_file(ABS_PATH.'.htaccess', $_POST['htaccess'])){
-				$this->smarty->assign('success', 1);
-			} else {
-			 	$this->smarty->assign('success', -1);
+			if (isset($_POST['htaccess-submit'])) {
+					if (!empty($_POST['htaccess']) && io_write_file(ABS_PATH.'.htaccess', $_POST['htaccess'])){
+						$this->smarty->assign('success', 1);
+					} else {
+						$this->smarty->assign('success', -1);
+					}
 			}
 			
 			return 2;
