@@ -6,7 +6,7 @@
 {html_form}
 	
 
-	<h3>{$plang.mode} </h3>{debug}
+	<h3>{$plang.mode} </h3>
 	<dl>
 		<dt><label><input type="radio" name="mode" value="0" {if $pconfig.mode == 0 }checked=checked{/if}> 
 						{$plang.auto} 	</label>	</dt>
