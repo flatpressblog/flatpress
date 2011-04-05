@@ -471,7 +471,9 @@ class Plugin_PrettyURLs {
 		
 		if ($q->single) {
 			$date = date_from_id($id);
-			$title = sanitize_title($caption);
+			if (PRETTYURLS_TITLES)
+				$title = sanitize_title($caption);
+			else $title = $id;
 			$url = $this->baseurl  . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
 			
 			if ($v>0) 
