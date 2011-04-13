@@ -5,7 +5,12 @@
  * Coded by Piero VDFN <vogliadifarniente@gmail.com>
  * Released under GNU GPL v2
  */
-function wclass() {
+
+// HOTFIX: We can't upgrade to jQuery UI 1.8.6 (yet)
+// This hotfix makes older versions of jQuery UI drag-and-drop work in IE9
+(function($){var a=$.ui.mouse.prototype._mouseMove;$.ui.mouse.prototype._mouseMove=function(b){if($.browser.msie&&document.documentMode>=9){b.button=1};a.apply(this,[b]);}}(jQuery));
+var FlatPress = {
+wclass: function() {
 	$('.widget-class').draggable({
 		'scroll' : true,
 		'helper':function(event) {
@@ -20,8 +25,9 @@ function wclass() {
 			}).addClass('widget-dragger');
 		}
 	});
-}
-function winstancedrag() {
+},
+
+winstancedrag: function() {
 	$('.widget-instance').draggable({
 		'scroll' : true,
 		'helper':function(event) {
@@ -34,8 +40,8 @@ function winstancedrag() {
 			}).addClass('widget-dragger');
 		}
 	});
-}
-function wplaceholder() {
+},
+wplaceholder: function() {
 	$('.widget-placeholder').droppable({
 		'accept' : '.widget-class, .widget-dragger, .widget-instance',
 		'over' : function(event, ui) {
@@ -59,11 +65,11 @@ function wplaceholder() {
 			if(parent.children().length<1) {
 				parent.append('<li class="widget-placeholder">Drop here</li>');
 			}
-			wreload();
+			FlatPress.wreload();
 		}
 	});
-}
-function winstancedrop() {
+},
+winstancedrop: function() {
 	$('.widget-instance').droppable({	
 		'accept' : '.widget-class, .widget-dragger, .widget-instance',
 		'over' : function(event, ui) {
@@ -88,11 +94,11 @@ function winstancedrop() {
 			if(parent.children().length<1) {
 				parent.append('<li class="widget-placeholder">Drop here</li>');
 			}
-			wreload();
+			FlatPress.wreload();
 		}
 	});
-}
-function wtrash() {
+},
+wtrash: function() {
 	$('#widget-trashcan').droppable({
 		'accept' : '.widget-instance',
 		'over' : function(event, ui) {
@@ -123,16 +129,18 @@ function wtrash() {
 				draggable.remove();
 			});
 
-			wreload();
+			FlatPress.wreload();
 		}
 	});
-}
-function wreload(){
-	wclass();
-	winstancedrag();
-	wplaceholder();
-	winstancedrop();
+},
+wreload: function(){
+	this.wclass();
+	this.winstancedrag();
+	this.wplaceholder();
+	this.winstancedrop();
 	//wtrash();
 }
+}
 //$(document).ready(wreload);
-wreload();wtrash();
+FlatPress.wreload();FlatPress.wtrash();
+
