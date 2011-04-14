@@ -18,8 +18,8 @@ function plugin_jquery_head() {
 	$pdir=plugin_geturl('jquery');
 	echo <<<JSUTILS
 	<!-- start of jsUtils -->
-	<script type="text/javascript" src="{$pdir}res/jquery-1.4.2.min.js"></script>
-	<script type="text/javascript" src="{$pdir}res/jquery-ui-1.8.2.custom.min.js"></script>
+	<script type="text/javascript" src="{$pdir}res/jquery-1.5.2.min.js"></script>
+	<script type="text/javascript" src="{$pdir}res/jquery-ui-1.8.11.custom.min.js"></script>
 	<!-- end of jsUtils -->
 JSUTILS;
 }
