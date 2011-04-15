@@ -11,7 +11,7 @@ Author URI: http://www.nowhereland.it
 /**
  * Place where the index is stored
  */
-define('PRETTYURLS_TITLES', false);
+define('PRETTYURLS_TITLES', true);
 define('PRETTYURLS_PATHINFO', !file_exists(ABS_PATH . '.htaccess'));
 define('PRETTYURLS_CACHE', CACHE_DIR . '%%prettyurls-index.tmp');
 define('PRETTYURLS_CATS', CACHE_DIR . '%%prettyurls-cats.tmp');
@@ -576,7 +576,67 @@ class Plugin_PrettyURLs {
 
 if (class_exists('AdminPanelAction')){
 
-	include plugin_getdir('prettyurls').'panels/admin.plugin.prettyurls.php';
+	class admin_plugin_prettyurls extends AdminPanelAction { 
+		
+		var $langres = 'plugin:prettyurls';
+		var $_config = array('mode'=>0);
+		
+		function setup() {
+			$this->smarty->assign('admin_resource', "plugin:prettyurls/admin.plugin.prettyurls");
+			$this->_config['mode'] = plugin_getoptions('prettyurls', 'mode');
+			$this->smarty->assign('pconfig', $this->_config);
+			$blogroot = BLOG_ROOT;
+			$f = ABS_PATH . '.htaccess';
+			$txt = io_load_file($f);
+			if (!$txt) {
+		
+$txt =<<<STR
+
+# Thanks again WP :)
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase {$blogroot}
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . {$blogroot}index.php [L]
+</IfModule>
+STR;
+			}
+			
+			
+			$this->smarty->assign('cantsave', 
+				( !is_writable(ABS_PATH) || (file_exists($f) && !is_writable($f)) )
+			);	
+			$this->smarty->assign('htaccess', $txt);		
+		}
+		
+		
+		
+		function onsubmit() {
+			global $fp_config;
+
+			if (isset($_POST['saveopt'])) {
+				$this->_config['mode'] = (int) $_POST['mode'] ;
+				plugin_addoption('prettyurls', 'mode', $this->_config['mode']);
+				if( plugin_saveoptions() )
+					$this->smarty->assign('success', 2);
+				else	$this->smarty->assign('success', -2); 
+			}
+			
+			if (isset($_POST['htaccess-submit'])) {
+					if (!empty($_POST['htaccess']) && io_write_file(ABS_PATH.'.htaccess', $_POST['htaccess'])){
+						$this->smarty->assign('success', 1);
+					} else {
+						$this->smarty->assign('success', -1);
+					}
+			}
+			
+			return 2;
+		}
+		
+	}
+
 	admin_addpanelaction('plugin', 'prettyurls', true);
 
 }
