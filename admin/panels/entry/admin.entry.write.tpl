@@ -1,9 +1,5 @@
 <h2>{$panelstrings.head}</h2>
 
-{html_form}	
-		{validate_init form=$admin_panel_id}
-		{validate id="subject" message=$panelstrings.error.subject append="error"}
-		{validate id="content" message=$panelstrings.error.content append="error"}
 	
 	{include file='shared:errorlist.tpl'}
 
@@ -17,6 +13,7 @@
 	</div>
 
 		
+{html_form}	
 	
 	{entry content=$post alwaysshow=true}
 	
@@ -78,8 +75,8 @@
 
 	
 	{/entry}
-	{/entry_block}
 {/html_form}
+	{/entry_block}
 
 {if $smarty.get.entry }
 

@@ -1,10 +1,5 @@
 <h2>{$panelstrings.head}</h2>
 
-	{validate_init form=$admin_panel_id}
-	{validate id="subject" message=$panelstrings.error.subject append="error"}
-	{validate id="content" message=$panelstrings.error.content append="error"}
-	{validate id="id" message=$panelstrings.error.id append="error"}
-
 	{include file='shared:errorlist.tpl'}	
 
 
