@@ -19,17 +19,17 @@
 	<div id="comment-userdata">
 	
 		<p>
-		<input type="text" {$error.name|notempty:'class="field-error"'} name="name" id="name" value="{$values.name|default:$cookie.name}" />
+		<input type="text" {$error.name|notempty:'class="field-error"'} name="name" id="name" value="{$values.name|wp_specialchars:1|default:$cookie.name}" />
 		<label class="textlabel" for="name">{$lang.comments.name}</label>
 		</p>
 		
 		<p>
-		<input type="text" {$error.email|notempty:'class="field-error"'} name="email" id="email" value="{$values.email|default:$cookie.email}" />
+		<input type="text" {$error.email|notempty:'class="field-error"'} name="email" id="email" value="{$values.email|wp_specialchars:1|default:$cookie.email}" />
 		<label class="textlabel" for="email">{$lang.comments.email}</label>
 		</p>
 		
 		<p>
-		<input type="text" {$error.url|notempty:'class="field-error"'} name="url" id="url" value="{$values.url|default:$cookie.url}" />
+		<input type="text" {$error.url|notempty:'class="field-error"'} name="url" id="url" value="{$values.url|wp_specialchars:1|default:$cookie.url}" />
 		<label class="textlabel" for="url">{$lang.comments.www}</label>
 		</p>
 		
