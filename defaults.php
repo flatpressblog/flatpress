@@ -17,6 +17,11 @@
 	
 	// legacy mode; needed with some ill-formed spb files
 	define('DUMB_MODE_ENABLED', false);
+	// default file permissions
+	// change file to 644 and dir to 755 if your webserver "complains"
+	define('FILE_PERMISSIONS', 0777);
+	define('DIR_PERMISSIONS', 0777);
+
 	
 	// first some webserver setup...
 	

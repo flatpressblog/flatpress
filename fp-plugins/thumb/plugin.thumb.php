@@ -99,7 +99,7 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	imagecopyresampled($scaled, $image, 0, 0, 0, 0, $new_width, $new_height, $infos[0], $infos[1]);
 	
 	imagejpeg($scaled, $thumbpath);
-	@chmod($thumbpath, 0777);
+	@chmod($thumbpath, FILE_PERMISSIONS);
 	
 	return array($thumbpath, $new_width, $new_height);
 	
@@ -115,4 +115,3 @@ function plugin_thumb_bbcodehook($actualpath, $props, $newsize){
 
 add_filter('bbcode_img_scale', 'plugin_thumb_bbcodehook', 0, 3);
 
-?>

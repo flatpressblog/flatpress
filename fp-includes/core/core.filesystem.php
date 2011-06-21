@@ -125,7 +125,7 @@
 	 * @todo cleanup & check bool return value
 	 *
 	 */
-        function fs_mkdir($dir, $mode=0777) {
+        function fs_mkdir($dir, $mode=DIR_PERMISSIONS) {
                 if (is_dir($dir) || (@mkdir($dir,$mode))) {@chmod($dir, $mode); return TRUE;}
                 if (!fs_mkdir(dirname($dir),$mode)) return FALSE;
                 return (@mkdir($dir,$mode) && @chmod($dir, $mode));               
@@ -181,11 +181,13 @@
 	
 	 class fs_chmodder extends fs_filelister {
 		 
-		 var $_chmod=0777;
-		 
-		function fs_chmodder($directory, $octal=0777) {
+		 var $_chmod_dir;
+		 var $_chmod_file;
+
+		function fs_chmodder($directory, $ch_file=FILE_PERMISSIONS, $ch_dir=DIR_PERMISSIONS) {
 			$this->_directory = $directory;
-			$this->_chmod = $octal;
+			$this->_chmod_file = $ch_file;
+			$this->_chmod_dir = $ch_dir;
 			parent::fs_filelister();
 		}
 		
@@ -194,7 +196,7 @@
 			$path = "$directory/$file";
 			if (is_dir($path))
 				$retval = 1;
-			if (!@chmod($path, $this->_chmod))
+			if ( !@chmod($path, ($retval? $this->_chmod_dir : $this->_chmod_file ) ) )
 				array_push($this->_list, $path);
 			
 			return $retval;
