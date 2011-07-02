@@ -314,6 +314,44 @@ if (!function_exists('fnmatch')) {
 		return mail($fp_config['general']['email'], $subject, $message, $headers);
 	}
 	
+/*
+ * props: http://crisp.tweakblogs.net/blog/2031
+ */
+	function utils_validateIPv4($IP) { 
+	    return $IP == long2ip(ip2long($IP)); 
+	} 
+	
+	function utils_validateIPv6($IP) { 
+	    // fast exit for localhost 
+	    if (strlen($IP) < 3) 
+	        return $IP == '::'; 
+	
+	    // Check if part is in IPv4 format 
+	    if (strpos($IP, '.')) 
+	    { 
+	        $lastcolon = strrpos($IP, ':'); 
+	        if (!($lastcolon && validateIPv4(substr($IP, $lastcolon + 1)))) 
+	            return false; 
+	
+	        // replace IPv4 part with dummy 
+	        $IP = substr($IP, 0, $lastcolon) . ':0:0'; 
+	    } 
+	
+	    // check uncompressed 
+	    if (strpos($IP, '::') === false) 
+	    { 
+	        return preg_match('/^(?:[a-f0-9]{1,4}:){7}[a-f0-9]{1,4}$/i', $IP); 
+	    } 
+	
+	    // check colon-count for compressed format 
+	    if (substr_count($IP, ':') < 8) 
+	    { 
+	        return preg_match('/^(?::|(?:[a-f0-9]{1,4}:)+):(?:(?:[a-f0-9]{1,4}:)*[a-f0-9]{1,4})?$/i', $IP); 
+	    } 
+	
+	    return false; 
+	} 
+
 	// get client IP
 	function utils_ipget() {
 		
@@ -338,7 +376,7 @@ if (!function_exists('fnmatch')) {
 			$ip = getenv( "REMOTE_ADDR" );
 		}
 
-		if (preg_match('/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/', $ip)) {
+		if (utils_validateIPv4($ip) || utils_validateIPv6($ip)) {
 			return $ip;
 		} else {
 			return '';
