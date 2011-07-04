@@ -20,7 +20,7 @@
 				
 				fclose($f);
 				
-				@chmod($filename, 0666);
+				@chmod($filename, FILE_PERMISSIONS);
 				
 				//returns true on success
 
@@ -55,4 +55,4 @@
 		return false;
 	}	
 	
-?>
+
