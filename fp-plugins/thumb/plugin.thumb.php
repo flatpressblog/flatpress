@@ -56,21 +56,8 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	
 	$thumbname = basename($fpath);
 	$thumbdir  = dirname($fpath) . '/' . THUMB_DIR ;
-	
-	
-	
-	@fs_mkdir($thumbdir);
-	
 	$thumbpath = $thumbdir .'/'. $thumbname;
-	
-	
-	
-	/*
-	$new_width = (int)($infos[0] * $scalefact);    
-	$new_height = (int)($infos[1] * $scalefact);
-	*/
-	
-	
+
 	
 	if (file_exists($thumbpath)) {
 		$oldthumbinfo = getimagesize($thumbpath);
@@ -79,6 +66,9 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 			return array($thumbpath, $new_width, $new_height);
 		}
 	}
+
+	@fs_mkdir($thumbdir);
+	
 
 	// we support only jpeg's, png's and gif's
 	
@@ -97,10 +87,30 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	
 	$scaled = imagecreatetruecolor($new_width, $new_height);
 	imagecopyresampled($scaled, $image, 0, 0, 0, 0, $new_width, $new_height, $infos[0], $infos[1]);
+	/*
+	 * If gif or png preserve the alpha channel
+	 *
+	 * Added by Piero VDFN
+	 * Kudos to http://www.php.net/manual/en/function.imagecopyresampled.php#104028
+	 */
+	if($infos[2]==1 || $infos[2]==3) {
+		imagecolortransparent($scaled, imagecolorallocatealpha($scaled, 0, 0, 0, 127));
+		imagealphablending($scaled, false);
+		imagesavealpha($scaled, true);
+		$output=$infos[2]==3 ? 'png' : 'gif';
+	} else {
+		$output='jpg';
+	}
+
+	if($output=='png') {
+		imagepng($scaled, $thumbpath);
+	} elseif($output=='gif') {
+		imagegif($scaled, $thumbpath);
+	} else {
+		imagejpeg($scaled, $thumbpath);
+	}
 	
-	imagejpeg($scaled, $thumbpath);
 	@chmod($thumbpath, FILE_PERMISSIONS);
-	
 	return array($thumbpath, $new_width, $new_height);
 	
 }
