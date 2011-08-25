@@ -86,7 +86,6 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	
 	
 	$scaled = imagecreatetruecolor($new_width, $new_height);
-	imagecopyresampled($scaled, $image, 0, 0, 0, 0, $new_width, $new_height, $infos[0], $infos[1]);
 	/*
 	 * If gif or png preserve the alpha channel
 	 *
@@ -101,6 +100,8 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	} else {
 		$output='jpg';
 	}
+
+	imagecopyresampled($scaled, $image, 0, 0, 0, 0, $new_width, $new_height, $infos[0], $infos[1]);
 
 	if($output=='png') {
 		imagepng($scaled, $thumbpath);
