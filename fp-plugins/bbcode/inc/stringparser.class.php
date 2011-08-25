@@ -6,35 +6,33 @@
  * memory structure. It would e.g. be possible to create an HTML parser based
  * upon this class.
  * 
- * Preview Version (20060220)
+ * Version: 0.3.3
  *
  * @author Christian Seiler <spam@christian-seiler.de>
- * @copyright Christian Seiler 2005
+ * @copyright Christian Seiler 2004-2008
  * @package stringparser
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of either:
+ * The MIT License
  *
- *  a) the GNU General Public License as published by the Free
- *  Software Foundation; either version 1, or (at your option) any
- *  later version, or
+ * Copyright (c) 2004-2009 Christian Seiler
  *
- *  b) the Artistic License as published by Larry Wall, either version 2.0,
- *     or (at your option) any later version.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See either
- *  the GNU General Public License or the Artistic License for more details.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- *  You should have received a copy of the Artistic License with this Kit,
- *  in the file named "Artistic.clarified".  If not, I'll be glad to provide
- *  one.
- *
- *  You should also have received a copy of the GNU General Public License
- *  along with this program in the file named "COPYING"; if not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- *  MA 02111-1307, USA.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /**
@@ -81,7 +79,7 @@ class StringParser {
 	 * The subclass that does the string parsing itself will define which
 	 * mode it will implement.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var int
 	 * @see STRINGPARSER_MODE_SEARCH, STRINGPARSER_MODE_LOOP
 	 */
@@ -89,35 +87,35 @@ class StringParser {
 	
 	/**
 	 * Raw text
-	 * @access private
+	 * @access protected
 	 * @var string
 	 */
 	var $_text = '';
 	
 	/**
 	 * Parse stack
-	 * @access private
+	 * @access protected
 	 * @var array
 	 */
 	var $_stack = array ();
 	
 	/**
 	 * Current position in raw text
-	 * @access private
+	 * @access protected
 	 * @var integer
 	 */
 	var $_cpos = -1;
 	
 	/**
 	 * Root node
-	 * @access private
+	 * @access protected
 	 * @var mixed
 	 */
 	var $_root = null;
 	
 	/**
 	 * Length of the text
-	 * @access private
+	 * @access protected
 	 * @var integer
 	 */
 	var $_length = -1;
@@ -128,7 +126,7 @@ class StringParser {
 	 * This flag is to prevent recursive calls to the parse() function that
 	 * would cause very nasty things.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var boolean
 	 */
 	var $_parsing = false;
@@ -145,7 +143,7 @@ class StringParser {
 	
 	/**
 	 * Characters or strings to look for
-	 * @access private
+	 * @access protected
 	 * @var array
 	 */
 	var $_charactersSearch = array ();
@@ -163,35 +161,35 @@ class StringParser {
 	 * allowed is encountered. If not in strict mode, the character is
 	 * simply ignored.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var array
 	 */
 	var $_charactersAllowed = array ();
 	
 	/**
 	 * Current parser status
-	 * @access private
+	 * @access protected
 	 * @var int
 	 */
 	var $_status = 0;
 	
 	/**
 	 * Prefilters
-	 * @access private
+	 * @access protected
 	 * @var array
 	 */
 	var $_prefilters = array ();
 	
 	/**
 	 * Postfilters
-	 * @access private
+	 * @access protected
 	 * @var array
 	 */
 	var $_postfilters = array ();
 	
 	/**
 	 * Recently reparsed?
-	 * @access private
+	 * @access protected
 	 * @var bool
 	 */
 	var $_recentlyReparsed = false;
@@ -284,8 +282,8 @@ class StringParser {
 			StringParser_Node::destroyNode ($this->_root);
 		}
 		unset ($this->_root);
-		$this->_root =& new StringParser_Node_Root ();
-		$this->_stack[0] =& $this->_root;
+		$this->_root = new StringParser_Node_Root ();
+		$this->_stack[0] = $this->_root;
 		
 		$this->_parserInit ();
 		
@@ -344,7 +342,7 @@ class StringParser {
 		}
 		
 		if (is_null ($this->_output)) {
-			$root =& $this->_root;
+			$root = $this->_root;
 			unset ($this->_root);
 			$this->_root = null;
 			while (count ($this->_stack)) {
@@ -409,7 +407,7 @@ class StringParser {
 	
 	/**
 	 * Abstract method: Manipulate the tree
-	 * @access private
+	 * @access protected
 	 * @return bool
 	 */
 	function _modifyTree () {
@@ -418,7 +416,7 @@ class StringParser {
 	
 	/**
 	 * Abstract method: Output tree
-	 * @access private
+	 * @access protected
 	 * @return bool
 	 */
 	function _outputTree () {
@@ -440,9 +438,9 @@ class StringParser {
 		if (($stack_count = count ($this->_stack)) < 2) {
 			return false;
 		}
-		$topelem =& $this->_stack[$stack_count-1];
+		$topelem = $this->_stack[$stack_count-1];
 		
-		$node_parent =& $topelem->_parent;
+		$node_parent = $topelem->_parent;
 		// remove the child from the tree
 		$res = $node_parent->removeChild ($topelem, false);
 		if (!$res) {
@@ -474,7 +472,7 @@ class StringParser {
 	
 	/**
 	 * Abstract method: Close remaining blocks
-	 * @access private
+	 * @access protected
 	 */
 	function _closeRemainingBlocks () {
 		// everything closed
@@ -496,7 +494,7 @@ class StringParser {
 	
 	/**
 	 * Abstract method: Initialize the parser
-	 * @access private
+	 * @access protected
 	 */
 	function _parserInit () {
 		$this->_setStatus (0);
@@ -504,7 +502,7 @@ class StringParser {
 	
 	/**
 	 * Abstract method: Set a specific status
-	 * @access private
+	 * @access protected
 	 */
 	function _setStatus ($status) {
 		if ($status != 0) {
@@ -518,7 +516,7 @@ class StringParser {
 	
 	/**
 	 * Abstract method: Handle status
-	 * @access private
+	 * @access protected
 	 * @param int $status The current status
 	 * @param string $needle The needle that was found
 	 * @return bool
@@ -531,7 +529,7 @@ class StringParser {
 	
 	/**
 	 * Search mode loop
-	 * @access private
+	 * @access protected
 	 * @return bool
 	 */
 	function _searchLoop () {
@@ -566,7 +564,7 @@ class StringParser {
 			}
 			$this->_cpos = $offset;
 			$res = $this->_handleStatus ($this->_status, $needle);
-			if (!$res && $strict) {
+			if (!$res && $this->strict) {
 				return false;
 			}
 			if (!$res) {
@@ -599,7 +597,7 @@ class StringParser {
 	/**
 	 * Loop mode loop
 	 *
-	 * @access private
+	 * @access protected
 	 * @return bool
 	 */
 	function _loop () {
@@ -660,7 +658,7 @@ class StringParser {
 	
 	/**
 	 * Abstract method Append text depending on current status
-	 * @access private
+	 * @access protected
 	 * @param string $text The text to append
 	 * @return bool On success, the function returns true, else false
 	 */
@@ -674,7 +672,7 @@ class StringParser {
 	
 	/**
 	 * Append text to last text child of current top parser stack node
-	 * @access private
+	 * @access protected
 	 * @param string $text The text to append
 	 * @return bool On success, the function returns true, else false
 	 */
@@ -696,7 +694,7 @@ class StringParser {
 	 * element is <code>false</code> and the <code>'offset'</code> element
 	 * is <code>-1</code>.
 	 *
-	 * @access private
+	 * @access protected
 	 * @param array $needles
 	 * @param int $offset
 	 * @return array
@@ -722,7 +720,7 @@ class StringParser {
 	/**
 	 * Detects a string at the current position
 	 *
-	 * @access private
+	 * @access protected
 	 * @param array $needles The strings that are to be detected
 	 * @param int $offset The current offset
 	 * @return mixed The string that was detected or the needle
@@ -741,25 +739,25 @@ class StringParser {
 	/**
 	 * Adds a node to the current parse stack
 	 *
-	 * @access private
+	 * @access protected
 	 * @param object $node The node that is to be added
 	 * @return bool True on success, else false.
 	 * @see StringParser_Node, StringParser::_stack
 	 */
 	function _pushNode (&$node) {
 		$stack_count = count ($this->_stack);
-		$max_node =& $this->_stack[$stack_count-1];
+		$max_node = $this->_stack[$stack_count-1];
 		if (!$max_node->appendChild ($node)) {
 			return false;
 		}
-		$this->_stack[$stack_count] =& $node;
+		$this->_stack[$stack_count] = $node;
 		return true;
 	}
 	
 	/**
 	 * Removes a node from the current parse stack
 	 *
-	 * @access private
+	 * @access protected
 	 * @return bool True on success, else false.
 	 * @see StringParser_Node, StringParser::_stack
 	 */
@@ -772,7 +770,7 @@ class StringParser {
 	/**
 	 * Execute a method on the top element
 	 *
-	 * @access private
+	 * @access protected
 	 * @return mixed
 	 */
 	function _topNode () {
@@ -792,7 +790,7 @@ class StringParser {
 	/**
 	 * Get a variable of the top element
 	 *
-	 * @access private
+	 * @access protected
 	 * @return mixed
 	 */
 	function _topNodeVar ($var) {
@@ -845,7 +843,7 @@ class StringParser_Node {
 	 * node. All node types are integer constants. Any node type of a
 	 * subclass must be at least 32 to allow future developements.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var int
 	 * @see STRINGPARSER_NODE_ROOT, STRINGPARSER_NODE_TEXT
 	 * @see STRINGPARSER_NODE_UNKNOWN
@@ -861,7 +859,7 @@ class StringParser_Node {
 	 * subclasses and especially not in external data structures. This ID
 	 * has nothing to do with any type of ID in HTML oder XML.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var int
 	 * @see StringParser_Node::_children
 	 */
@@ -872,7 +870,7 @@ class StringParser_Node {
 	 *
 	 * It is either null (root node) or a reference to the parent object.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var mixed
 	 * @see StringParser_Node::_children
 	 */
@@ -884,7 +882,7 @@ class StringParser_Node {
 	 * It contains an array of references to all the children nodes of this
 	 * node.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var array
 	 * @see StringParser_Node::_parent
 	 */
@@ -949,8 +947,8 @@ class StringParser_Node {
 		// if node already has a parent
 		if ($node->_parent !== false) {
 			// remove node from there
-			$parent =& $node->_parent;
-			if (!$parent->_removeChild ($node, false)) {
+			$parent = $node->_parent;
+			if (!$parent->removeChild ($node, false)) {
 				return false;
 			}
 			unset ($parent);
@@ -960,15 +958,15 @@ class StringParser_Node {
 		// move all nodes to a new index
 		while ($index >= 0) {
 			// save object
-			$object =& $this->_children[$index];
+			$object = $this->_children[$index];
 			// we have to unset it because else it will be
 			// overridden in in the loop
 			unset ($this->_children[$index]);
 			// put object to new position
-			$this->_children[$index+1] =& $object;
+			$this->_children[$index+1] = $object;
 			$index--;
 		}
-		$this->_children[0] =& $node;
+		$this->_children[0] = $node;
 		return true;
 	}
 	
@@ -981,7 +979,7 @@ class StringParser_Node {
 	function appendToLastTextChild ($text) {
 		$ccount = count ($this->_children);
 		if ($ccount == 0 || $this->_children[$ccount-1]->_type != STRINGPARSER_NODE_TEXT) {
-			$ntextnode =& new StringParser_Node_Text ($text);
+			$ntextnode = new StringParser_Node_Text ($text);
 			return $this->appendChild ($ntextnode);
 		} else {
 			$this->_children[$ccount-1]->appendText ($text);
@@ -1013,7 +1011,7 @@ class StringParser_Node {
 		// if node already has a parent
 		if ($node->_parent !== null) {
 			// remove node from there
-			$parent =& $node->_parent;
+			$parent = $node->_parent;
 			if (!$parent->removeChild ($node, false)) {
 				return false;
 			}
@@ -1022,8 +1020,8 @@ class StringParser_Node {
 		
 		// append it to current node
 		$new_index = count ($this->_children);
-		$this->_children[$new_index] =& $node;
-		$node->_parent =& $this;
+		$this->_children[$new_index] = $node;
+		$node->_parent = $this;
 		return true;
 	}
 	
@@ -1056,8 +1054,8 @@ class StringParser_Node {
 		// if node already has a parent
 		if ($node->_parent !== null) {
 			// remove node from there
-			$parent =& $node->_parent;
-			if (!$parent->_removeChild ($node, false)) {
+			$parent = $node->_parent;
+			if (!$parent->removeChild ($node, false)) {
 				return false;
 			}
 			unset ($parent);
@@ -1067,15 +1065,15 @@ class StringParser_Node {
 		// move all nodes to a new index
 		while ($index >= $child) {
 			// save object
-			$object =& $this->_children[$index];
+			$object = $this->_children[$index];
 			// we have to unset it because else it will be
 			// overridden in in the loop
 			unset ($this->_children[$index]);
 			// put object to new position
-			$this->_children[$index+1] =& $object;
+			$this->_children[$index+1] = $object;
 			$index--;
 		}
-		$this->_children[$child] =& $node;
+		$this->_children[$child] = $node;
 		return true;
 	}
 	
@@ -1108,8 +1106,8 @@ class StringParser_Node {
 		// if node already has a parent
 		if ($node->_parent !== false) {
 			// remove node from there
-			$parent =& $node->_parent;
-			if (!$parent->_removeChild ($node, false)) {
+			$parent = $node->_parent;
+			if (!$parent->removeChild ($node, false)) {
 				return false;
 			}
 			unset ($parent);
@@ -1119,15 +1117,15 @@ class StringParser_Node {
 		// move all nodes to a new index
 		while ($index >= $child + 1) {
 			// save object
-			$object =& $this->_children[$index];
+			$object = $this->_children[$index];
 			// we have to unset it because else it will be
 			// overridden in in the loop
 			unset ($this->_children[$index]);
 			// put object to new position
-			$this->_children[$index+1] =& $object;
+			$this->_children[$index+1] = $object;
 			$index--;
 		}
-		$this->_children[$child + 1] =& $node;
+		$this->_children[$child + 1] = $node;
 		return true;
 	}
 	
@@ -1149,15 +1147,23 @@ class StringParser_Node {
 	function removeChild (&$child, $destroy = false) {
 		if (is_object ($child)) {
 			// if object: get index
-			$object =& $child;
+			$object = $child;
 			unset ($child);
 			$child = $this->_findChild ($object);
 			if ($child === false) {
 				return false;
 			}
 		} else {
+			// remove reference on $child
+			$save = $child;
+			unset($child);
+			$child = $save;
+			
 			// else: get object
-			$object =& $this->_children[$child];
+			if (!isset($this->_children[$child])) {
+				return false;
+			}
+			$object = $this->_children[$child];
 		}
 		
 		// store count for later use
@@ -1183,17 +1189,16 @@ class StringParser_Node {
 		// we have to unset it because else it will be overridden in
 		// in the loop
 		unset ($this->_children[$child]);
-		unset ($obj);
 		
 		// move all remaining objects one index higher
 		while ($child < $ccount - 1) {
 			// save object
-			$obj =& $this->_children[$child+1];
+			$obj = $this->_children[$child+1];
 			// we have to unset it because else it will be
 			// overridden in in the loop
 			unset ($this->_children[$child+1]);
 			// put object to new position
-			$this->_children[$child] =& $obj;
+			$this->_children[$child] = $obj;
 			// UNSET THE OBJECT!
 			unset ($obj);
 			$child++;
@@ -1201,6 +1206,7 @@ class StringParser_Node {
 		
 		if ($destroy) {
 			return StringParser_Node::destroyNode ($object);
+			unset ($object);
 		}
 		return true;
 	}
@@ -1243,9 +1249,12 @@ class StringParser_Node {
 	 * @return bool True on success, else false.
 	 */
 	function destroyNode (&$node) {
+		if ($node === null) {
+			return false;
+		}
 		// if parent exists: remove node from tree!
 		if ($node->_parent !== null) {
-			$parent =& $node->_parent;
+			$parent = $node->_parent;
 			// directly return that result because the removeChild
 			// method will call destroyNode again
 			return $parent->removeChild ($node, true);
@@ -1258,6 +1267,7 @@ class StringParser_Node {
 			if (!$node->removeChild ($child, true)) {
 				return false;
 			}
+			unset($child);
 		}
 		
 		// now call the nodes destructor
@@ -1276,7 +1286,7 @@ class StringParser_Node {
 	 * Destroy this node
 	 *
 	 *
-	 * @access private
+	 * @access protected
 	 * @return bool True on success, else false.
 	 */
 	function _destroy () {
@@ -1290,7 +1300,7 @@ class StringParser_Node {
 	 * the index of the node or false if the node is not a child of this
 	 * node.
 	 *
-	 * @access private
+	 * @access protected
 	 * @param mixed $child The node to look for.
 	 * @return mixed The index of the child node on success, else false.
 	 */
@@ -1347,13 +1357,13 @@ class StringParser_Node {
 		$node_ctr = 0;
 		for ($i = 0; $i < count ($this->_children); $i++) {
 			if ($this->_children[$i]->matchesCriterium ($criterium, $value)) {
-				$nodes[$node_ctr++] =& $this->_children[$i];
+				$nodes[$node_ctr++] = $this->_children[$i];
 			}
 			$subnodes = $this->_children[$i]->getNodesByCriterium ($criterium, $value);
 			if (count ($subnodes)) {
 				$subnodes_count = count ($subnodes);
 				for ($j = 0; $j < $subnodes_count; $j++) {
-					$nodes[$node_ctr++] =& $subnodes[$j];
+					$nodes[$node_ctr++] = $subnodes[$j];
 					unset ($subnodes[$j]);
 				}
 			}
@@ -1428,7 +1438,7 @@ class StringParser_Node_Root extends StringParser_Node {
 	 * 
 	 * This node is a root node.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var int
 	 * @see STRINGPARSER_NODE_ROOT
 	 */
@@ -1446,7 +1456,7 @@ class StringParser_Node_Text extends StringParser_Node {
 	 * 
 	 * This node is a text node.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var int
 	 * @see STRINGPARSER_NODE_TEXT
 	 */
@@ -1455,7 +1465,7 @@ class StringParser_Node_Text extends StringParser_Node {
 	/**
 	 * Node flags
 	 * 
-	 * @access private
+	 * @access protected
 	 * @var array
 	 */
 	var $_flags = array ();

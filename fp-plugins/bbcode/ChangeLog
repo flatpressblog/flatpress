@@ -1,3 +1,45 @@
+-- Changes until version 0.3.3
+
+2008-03-27 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		fixed regression in handling of case insensitive codes
+
+-- Changes until version 0.3.2b
+
+2007-12-27 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		removed forgotten debug output
+
+-- Changes until version 0.3.2
+
+2007-12-10 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		fixed bug in handling of case insensitive codes,
+		fixed nasty bug that made [list][*][*][/list] misbehave
+	* Documentation: Changed example to prevent XSS attacks.
+	* Changed license to MIT license
+
+-- Changes until version 0.3.1
+
+2006-04-23 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser_bbcode.class.php:
+		fixed nasty bug in _findNamedNode(),
+		fixed really nasty bug that newly occured in 0.3.0
+		(usecontent? and callback_replace? were swapped)
+
+-- Changes until version 0.3.0
+
+2006-04-23 Christian Seiler <webmaster@christian-seiler.de>
+	* stringparser.class.php:
+		corrected several phpdoc comments, made removeChild method
+		public, fixed nasty bug in removeChild, fixed notice that
+		occurs in new PHP versions
+	* stringparser_bbcode.class.php:
+		corrected several phpdoc comments, added support for mixed
+		attribute types ([code=foo attr=bar]), added support for
+		code revalidation on close tag occurrence, added support
+		for usecontent? the other way round (callback_replace?)
+
 -- Changes until version 0.2.5
 
 2005-08-14 Christian Seiler <webmaster@christian-seiler.de>
