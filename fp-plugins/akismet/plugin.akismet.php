@@ -27,7 +27,7 @@ if (plugin_getoptions('akismet','apikey')) {
 	add_filter('comment_validate','plugin_akismet_validate', 10, 2);
 }
 
-function plugin_akismet_validate(&$bool, $contents) {
+function plugin_akismet_validate($bool, $contents) {
 	
 	if (!$bool) return false;
 	
