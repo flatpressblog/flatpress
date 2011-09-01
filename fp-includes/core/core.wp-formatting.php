@@ -9,11 +9,11 @@
 		$output = '';
 		// Capture tags and everything inside them
 		$textarr = preg_split("/(<.*>)/Us", $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-		$stop = count($textarr); $next = true; // loop stuff
+		$stop = count($textarr); $skip = 0; // loop stuff
 		for ($i = 0; $i < $stop; $i++) {
 			$curl = $textarr[$i];
 	
-			if (isset($curl{0}) && '<' != $curl{0} && $next) { // If it's not a tag
+			if (isset($curl{0}) && '<' != $curl{0} && $skip == 0) { // If it's not a tag
 				$curl = str_replace('---', '&#8212;', $curl);
 				$curl = str_replace(' -- ', ' &#8212; ', $curl);
 				$curl = str_replace('--', '&#8211;', $curl);
@@ -46,12 +46,13 @@
 				$curl = str_replace("''", '&#8221;', $curl);
 				
 				$curl = preg_replace('/(\d+)x(\d+)/', "$1&#215;$2", $curl);
-	
+			} elseif (strstr($curl, '</') || strstr($curl, '/>')) {
+				if ($skip > 0) $skip--;
 			} elseif (strstr($curl, '<code') || strstr($curl, '<pre') || strstr($curl, '<kbd' || strstr($curl, '<style') || strstr($curl, '<script'))) {
 				// strstr is fast
-				$next = false;
+				$skip++;
 			} else {
-				$next = true;
+				if (isset($curl{0}) && $curl{0} == "<" && $skip > 0) $skip++;
 			}
 			$curl = preg_replace('/&([^#])(?![a-z12]{1,8};)/', '&#038;$1', $curl);
 			$output .= $curl;
