@@ -27,7 +27,7 @@ function plugin_lastentries_widget() {
 	$fpdb->getQuery
 	*/
 	
-	$q =& new FPDB_Query(array('fullparse'=>false,'start'=>0,'count'=>$num), null);
+	$q = new FPDB_Query(array('fullparse'=>false,'start'=>0,'count'=>$num), null);
 	
 	$string = '<ul>';
 	
