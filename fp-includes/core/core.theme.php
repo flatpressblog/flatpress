@@ -303,7 +303,8 @@
 		
 		$smarty->register_function('action', 'theme_smarty_function_action');
 		
-		
+		do_action('theme_init');
+
 	}
 	
 	
