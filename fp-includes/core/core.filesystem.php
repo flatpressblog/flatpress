@@ -99,7 +99,7 @@
 		$dh  = opendir($dir);
 		while (false !== ($filename = readdir($dh))) {
 		if ( ($filename[0] != '.') ) {
-			$id = lang_id($filename);
+		//	$id = lang_id($filename);
 			$files[] = $filename;
 		}
 		 
@@ -160,7 +160,7 @@
 		
 		// in our particular implementation
 		// you can always delete a non existent file;
-		// anyway, we'll return a value != true
+		// anyway, we'll return a value != false
 		// so that we can anyway track it back
 		
 		return 2;
@@ -290,4 +290,4 @@
 		return false;
 	}
 
-?>
+
