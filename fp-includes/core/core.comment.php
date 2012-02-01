@@ -138,6 +138,7 @@
 	 * @see entry_delete()
 	 */
 	function comment_delete($id, $comment_id) {
+		do_action('comment_delete', $id, $comment_id);
 		$comment_dir = bdb_idtofile($id,BDB_COMMENT);
 		$f = $comment_dir . $comment_id .EXT;
 		return fs_delete($f);
