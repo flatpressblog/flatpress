@@ -284,9 +284,10 @@
 				// searches the whole index
 				
 				#$this->local_list = array_keys($entry_index);
-				
+				$firstid=null;
+
 				$index_count = $entry_index->length(); 
-				$this->walker =& $entry_index->walker($firstid=null);	
+				$this->walker =& $entry_index->walker($firstid);	
 
 			} else {
 				// notice this won't work with cats (for now)
