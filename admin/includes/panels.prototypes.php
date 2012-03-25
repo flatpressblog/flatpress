@@ -216,7 +216,7 @@
 			return parent::exec();
 		}
 		
-		function onsubmit() {
+		function onsubmit($data=null) {
 		
 			global $lang, $panel, $action;
 				
