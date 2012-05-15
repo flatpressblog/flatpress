@@ -412,7 +412,7 @@ function utils_geturl($url) {
     $options = array(
         CURLOPT_RETURNTRANSFER => true,     // return web page
         CURLOPT_HEADER         => false,    // don't return headers
-        CURLOPT_FOLLOWLOCATION => true,     // follow redirects
+        CURLOPT_FOLLOWLOCATION => false,    // don't follow redirects
         CURLOPT_ENCODING       => "",       // handle all encodings
         CURLOPT_USERAGENT      => "spider", // who am i
         CURLOPT_AUTOREFERER    => true,     // set referer on redirect
