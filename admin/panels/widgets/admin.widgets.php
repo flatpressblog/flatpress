@@ -17,7 +17,10 @@
  	class admin_widgets extends AdminPanel {
 		
 		var $panelname = "widgets";
-		var $actions = array('default' => true, 'raw' => true);
+		var $actions = array(
+			'default' => true
+			//, 'raw' => true
+		);
 			
 	}
 	
