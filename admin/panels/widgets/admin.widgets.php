@@ -19,7 +19,7 @@
 		var $panelname = "widgets";
 		var $actions = array(
 			'default' => true
-			//, 'raw' => true
+			, 'raw' => true
 		);
 			
 	}
