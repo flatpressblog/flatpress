@@ -33,7 +33,10 @@
 		}
 		
 		
-		function onsubmit() {
+		function onsubmit($data = null) {
+        /* we needs the $data variable for compliance
+         * but just don't actually use it when we call parent, so will be discarded here. 
+         */
 			parent::onsubmit();
 			return $this->main();
 		}
