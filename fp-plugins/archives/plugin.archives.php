@@ -34,8 +34,11 @@ class plugin_archives_monthlist extends fs_filelister {
 			}
 		}
 		
-		function _exitingDir() {
-			
+		function _exitingDir($directory = null, $file=null) {
+			/* Added param ($directory, $file) to adhere to strict conventions 
+			 * defaulted both params to null to fit previous structure. 
+			 * both params not actually used here
+			 */
 			$y = $this->_year;
 			
 			if ($mos =& $this->_months) {

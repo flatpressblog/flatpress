@@ -46,7 +46,11 @@ if (class_exists('AdminPanelAction')){
 		 *
 		 * @return int
 		 */
-		function onsubmit() {
+		function onsubmit($data = null) {
+			/* Added param ($data) to adhere to strict conventions 
+			 * defaulted param to null to fit previous structure. 
+			 * param not actually used here
+			 */
 			if (isset($_POST['bb-conf'])){
 				$maxlen = isset($_POST['bb-maxlen']) && is_numeric($_POST['bb-maxlen'])
 					? (int)$_POST['bb-maxlen']
