@@ -60,13 +60,9 @@ function plugin_readmore_main($string) {
 		
 		if ($MODE == 'manual' || $MODE == 'semiauto' ) {
 			if (($p = strpos($string, '[more]'))!==false){
-				/*return substr($string, 0, $p).
-				"<span class=\"readmore\"><a href=\""
-					.get_permalink($id)."#readmore-{$id}\">[Read More...]</a></span>";*/
-                    
 				return substr($string, 0, $p).
 				"<span class=\"readmore\"><a href=\""
-					.get_permalink($id)."#readmore-{$id}\">Read More</a></span>";
+					.get_permalink($id)."#readmore-{$id}\">[Read More...]</a></span>";
 			}
 		} elseif ($MODE == 'sentence') {
 			$matches = array();
