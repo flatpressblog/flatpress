@@ -72,7 +72,10 @@
 		}
 		
 		
-		function onsubmit() {
+		function onsubmit($data=null) {
+        /* standardize the parameter with the parent. 
+         * but just don't use it when calling parent
+         */
 			parent::onsubmit();
 			return $this->main();
 		}
