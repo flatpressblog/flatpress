@@ -72,8 +72,8 @@
 		}
 		
 		
-		function onsubmit() {
-			parent::onsubmit();
+		function onsubmit($data=null) {
+			parent::onsubmit($data);
 			return $this->main();
 		}
 	
