@@ -1,4 +1,6 @@
 <?php
+	
+	date_default_timezone_set('UTC');
 
 	function date_strformat($format, $timestamp=0) {
 		global $lang;
