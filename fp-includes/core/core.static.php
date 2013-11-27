@@ -34,7 +34,7 @@
 	}
 	
 	function static_isvalid($id) {
-		return !preg_match('[^./\\\\]+', $id);
+		return !preg_match('/[^./\\\\]+/', $id);
 	}
 		
 	
