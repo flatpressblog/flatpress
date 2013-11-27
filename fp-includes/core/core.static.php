@@ -24,15 +24,23 @@
 	}	
 	
 	function static_parse($id) {
+		if (!static_isvalid($id)) return false;
+		
 		if ($fname=static_exists($id)) {
 			$entry = io_load_file($fname);
 			return (utils_kexplode($entry));
 		}
 		return array();
 	}
+	
+	function static_isvalid($id) {
+		return !preg_match('/[^./\\\\]+/', $id);
+	}
 		
 	
 	function static_save($entry, $id, $oldid=null) {
+		if (!static_isvalid($id)) return false;
+		
 		$fname = STATIC_DIR . $id . EXT;
 		
 		$entry['content'] = apply_filters('content_save_pre', $entry['content']);
@@ -51,6 +59,8 @@
 	}
 	
 	function static_exists($id) {
+		if (!static_isvalid($id)) return false;
+		
 		$fname = STATIC_DIR . $id . EXT;
 		
 		if (file_exists($fname))
@@ -60,6 +70,8 @@
 	}
 
 	function static_delete($id) {
+		if (!static_isvalid($id)) return false;
+		
 		return fs_delete(STATIC_DIR . $id . EXT);
 	}
 	
