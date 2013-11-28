@@ -81,7 +81,7 @@ if (class_exists('AdminPanelAction')){
 		 *
 		 * @return int
 		 */
-		function onsubmit() {
+		function onsubmit($data = null) {
 			if ($_POST['qs-wordlist']){
 				$wordlist = isset($_POST['qs-wordlist'])
 					? stripslashes($_POST['qs-wordlist'])

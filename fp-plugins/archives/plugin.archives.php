@@ -34,7 +34,7 @@ class plugin_archives_monthlist extends fs_filelister {
 			}
 		}
 		
-		function _exitingDir() {
+		function _exitingDir($directory = null, $file=null) {
 			
 			$y = $this->_year;
 			
