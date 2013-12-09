@@ -34,7 +34,7 @@
 	}
 	
 	function static_isvalid($id) {
-		return !preg_match('![^./\\\\]+!', $id);
+		return preg_match('![^./\\\\]+!', $id);
 	}
 		
 	
@@ -59,6 +59,7 @@
 	}
 	
 	function static_exists($id) {
+		print_r("aaa".static_isvalid($id));
 		if (!static_isvalid($id)) return false;
 		
 		$fname = STATIC_DIR . $id . EXT;
