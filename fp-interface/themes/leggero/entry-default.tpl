@@ -18,14 +18,14 @@
 				
 				<ul class="entry-footer">
 			
-				<li class="entry-info">Posted by {$author} at
+				<li class="entry-info">Δημοσιεύθηκε από τον {$author} στα
 				{$date|date_format}
 				{if ($categories)} in {$categories|@filed}{/if}
 				</li> 
 				
 				{if !(in_array('commslock', $categories) && !$comments)}
 				<li class="link-comments">
-				<a href="{$id|link:comments_link}#comments">{$comments|tag:comments_number} 
+<a href="http://www.addtoany.com/share_save" target="_blank">Μοιραστείτε το άρθρο</a> | <a href="{$id|link:comments_link}#comments">{$comments|tag:comments_number} 
 					{if isset($views)}(<strong>{$views}</strong> views){/if}
 				</a>
 				</li>

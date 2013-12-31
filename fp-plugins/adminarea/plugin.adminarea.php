@@ -26,7 +26,7 @@ function plugin_adminarea_widget() {
 		</ul>
 END;
 	} else
-		$string = '<ul><li><a href="'.$baseurl.'login.php">Login</a></li></ul>';
+		$string = '<ul><li><a href="'.$baseurl.'login.php">Σύνδεση</a></li></ul>';
 	
 	$entry['subject'] = $lang['plugin']['adminarea']['subject'];
 	$entry['content'] = $string;
