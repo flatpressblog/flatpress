@@ -9,7 +9,7 @@
  *     hardcoded values to a variable that is stored and recalled so that the
  *     users stylesheet is used for styling.  Colors were hardcoded so I fixed
  *     this to be styled from the users admin.css.  Available widgets now
- *     accepts drag and drop from installed widgets to remove.
+ *     accepts drag and drop from installed widgets to remove from panels.
  * Released under GNU GPL v2
  */
 var FlatPress = {
