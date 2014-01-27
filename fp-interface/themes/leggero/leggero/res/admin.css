@@ -20,7 +20,7 @@ Module: admin.css
 	padding: .3em;
 	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x;
 }
-.buttonbar input:hover
+.buttonbar input:hover {
 	padding: .3em;
 	background: #d3d3d3 url(../imgs/buttonsh2.png) repeat-x;
 }
