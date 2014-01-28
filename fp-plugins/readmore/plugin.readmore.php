@@ -53,8 +53,8 @@ function plugin_readmore_main($string) {
 			if (strlen($string) > $CHOP_AT) {
 				
 				return substr($string, 0, $CHOP_AT).
-				"&hellip; <span class=\"readmore\"><a href=\"".
-					get_permalink($id)."#readmore-{$id}\">[Read More...]</a></span>";
+				"&hellip; <span class=\"readmore\"><a href=\""
+					.get_permalink($id)."#readmore-{$id}\">Read More...</a></span>";
 			}
 		} 
 		
@@ -62,7 +62,7 @@ function plugin_readmore_main($string) {
 			if (($p = strpos($string, '[more]'))!==false){
 				return substr($string, 0, $p).
 				"<span class=\"readmore\"><a href=\""
-					.get_permalink($id)."#readmore-{$id}\">[Read More...]</a></span>";
+					.get_permalink($id)."#readmore-{$id}\">Read More...</a></span>";
 			}
 		} elseif ($MODE == 'sentence') {
 			$matches = array();
@@ -71,7 +71,7 @@ function plugin_readmore_main($string) {
 				if (count($matches[0]) > $CHOP_AT) {
 					$string = substr($string, 0, $matches[0][$CHOP_AT-1][1]).
 					". <span class=\"readmore\"><a href=\""
-					.get_permalink($id)."#readmore-{$id}\">[Read More...]</a></span>";
+					.get_permalink($id)."#readmore-{$id}\">Read More...</a></span>";
 				}
 			}
 		}

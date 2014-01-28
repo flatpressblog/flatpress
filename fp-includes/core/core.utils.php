@@ -93,7 +93,7 @@ if (!function_exists('fnmatch')) {
 				/* 
 				trigger_error("Failed parsing <pre>$string</pre>
 				keys were supposed to be UPPERCASE but <strong>\"$k\"</strong> was found; file may be corrupted
-				or in an expected format. <br /> 
+				or in an expected format. <br> 
 				Some SimplePHPBlog files may raise this error: set DUMB_MODE_ENABLED 
 				to true in your defaults.php to force parsing of the offending keys.", 
 				E_USER_WARNING);

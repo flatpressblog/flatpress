@@ -1,5 +1,5 @@
-/* 
- * Flatpress widget js admin v0.2
+/*
+ * Flatpress widget js admin
  * Based on original flatpress' code
  * Require jQuery and jQuery UI (Core, Draggable, Droppable and Effects Core)
  * Coded by Piero VDFN <vogliadifarniente@gmail.com>
@@ -9,7 +9,7 @@
  *     hardcoded values to a variable that is stored and recalled so that the
  *     users stylesheet is used for styling.  Colors were hardcoded so I fixed
  *     this to be styled from the users admin.css.  Available widgets now
- *     accepts drag and drop from installed widgets to remove from panels.
+ *     accepts drag and drop from installed widgets to remove.
  * Released under GNU GPL v2
  */
 var FlatPress = {

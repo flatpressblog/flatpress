@@ -48,7 +48,8 @@
 				user_logout();
 				
 				function myredirect() {
-					login_redirect('index.php');
+					// login_redirect('index.php'); /*changed by liquibyte because this doesn't work with prettyURLs*/
+					login_redirect(@BLOG_BASEURL);
 				}
 					
 				add_filter('wp_head', 'myredirect');
@@ -58,7 +59,8 @@
 			} elseif (user_loggedin()) {
 			
 				function myredirect() {
-					login_redirect('index.php');
+					// login_redirect('index.php'); /*changed by liquibyte because this doesn't work with prettyURLs*/
+					login_redirect(@BLOG_BASEURL);
 				}
 					
 				add_filter('wp_head', 'myredirect');
@@ -74,7 +76,8 @@
 		} elseif (sess_remove('logout_done')) {
 				
 				function myredirect() {
-					login_redirect('index.php');
+					// login_redirect('index.php'); /*changed by liquibyte because this doesn't work with prettyURLs*/
+					login_redirect(@BLOG_BASEURL);
 				}
 					
 				add_filter('wp_head', 'myredirect');
@@ -109,7 +112,7 @@
 	
 	
 	function login_redirect($url, $secs=5){
-		echo '<meta http-equiv="refresh" content="'."$secs;url=$url".'" />';
+		echo '<meta http-equiv="refresh" content="'."$secs; url=$url".'">';
 	}
 	
 	function login_title($title, $sep) {

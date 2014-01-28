@@ -2,7 +2,7 @@
 
 #lbOverlay {
 	position: fixed;
-	z-index: 9999;
+
 	left: 0;
 	top: 0;
 	width: 100%;
@@ -13,9 +13,14 @@
 
 #lbCenter, #lbBottomContainer {
 	position: absolute;
-	z-index: 9999;
+	/*z-index: 9999;*/
 	overflow: hidden;
-	background-color: #fff;
+	background-color: #40382a;
+}
+
+lbBottom {
+	float: right;
+	clear: left;
 }
 
 .lbLoading {
@@ -26,8 +31,10 @@
 	position: absolute;
 	left: 0;
 	top: 0;
-	border: 10px solid #fff;
+	width: 600px;
+	border: 10px solid #40382a;
 	background-repeat: no-repeat;
+	z-index: 10;
 }
 
 #lbPrevLink, #lbNextLink {
@@ -56,26 +63,34 @@
 
 #lbBottom {
 	font-family: Verdana, Arial, Geneva, Helvetica, sans-serif;
-	font-size: 10px;
+	font-size: 18px;
+	width: auto;
 	color: #666;
 	line-height: 1.4em;
 	text-align: left;
-	border: 10px solid #fff;
+	border: 10px solid #40382a;
 	border-top-style: none;
 }
 
 #lbCloseLink {
 	display: block;
+	font-family: Verdana, Arial, Geneva, Helvetica, sans-serif;
+	font-size: 16px;
 	float: right;
-	width: 66px;
-	height: 22px;
-	background: transparent url(../imgs/closelabel.gif) no-repeat center;
+	padding: 2px;
+	top: 100%;
+	color: #000;
+	z-index: 100;
+	border: 1px solid #000;
+	/*background: #40382a url(../imgs/closelabel.gif) no-repeat center;*/
 	margin: 5px 0;
+	text-decoration: none;
 	outline: none;
 }
 
 #lbCaption, #lbNumber {
 	margin-right: 71px;
+
 }
 
 #lbCaption {

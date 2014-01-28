@@ -157,7 +157,7 @@
 		}
 		
 		/**
-	 	 * Method onsubmit <br />
+	 	 * Method onsubmit <br>
 		 *
 		 * @return int values: 
 		 *	1. if you want main() method to be called;

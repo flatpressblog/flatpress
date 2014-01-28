@@ -23,7 +23,7 @@
 	</dl>
 
 	<div class="buttonbar">
-		<input type="submit" name="saveopt" value="{$plang.saveopt}" />
+		<input type="submit" name="saveopt" value="{$plang.saveopt}">
 	</div>
 
 

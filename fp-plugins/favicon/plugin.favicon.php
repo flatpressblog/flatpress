@@ -13,7 +13,7 @@ function plugin_favicon_head() {
 	// and be a ICO file (not a renamed png, jpg, gif, etc...)
 	// or it won't work in IE
 	echo '<link rel="shortcut icon" href="' .  
-		plugin_geturl('favicon') .'imgs/favicon.ico" />';
+		plugin_geturl('favicon') .'imgs/favicon.ico">';
 }
  
 add_action('wp_head', 'plugin_favicon_head');

@@ -14,7 +14,7 @@
 	generally you won\'t have to edit this, anyway be careful, because we can\'t
 	check whether is correct or not.',
 		'www'		=>'<strong>Blog root</strong>. URL to your blog, complete of 
-	subdirectories. <br />
+	subdirectories. <br>
 	e.g.: http://www.mydomain.com/flatpress/ (trailing slash needed)',
 		
 		// ------
@@ -34,7 +34,7 @@
 		'langchoice'		=> 'Language',
 
 		'intsetts'		=> 'International settings',
-		'utctime'		=> '<acronym title="Universal Coordinated Time">UTC</acronym> time is',
+		'utctime'		=> '<abbr title="Universal Coordinated Time">UTC</abbr> time is',
 		'timeoffset'		=> 'Time should differ by',
 		'hours'			=> 'hours',
 		'timeformat'		=> 'Default format for time',

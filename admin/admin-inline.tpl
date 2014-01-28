@@ -1,13 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-loose.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<title>{$flatpress.title}{$pagetitle}</title>
-	<meta http-equiv="Content-Type" content="text/html; charset={$flatpress.CHARSET}" />
+	<meta http-equiv="Content-Type" content="text/html; charset={$flatpress.CHARSET}">
 	{action hook=wp_head}
 </head>
-
 <body id="inline-body">
-
 	{if $submenu}
 	<ul id="admin-submenu">
 		{foreach from=$submenu key=subtab item=item}
@@ -25,9 +23,6 @@
 		{/foreach}
 	</ul>
 	{/if}
-	
-	
 	{include file=$admin_resource|default:"admin:$panel/$action"}
-	
 </body>
 </html>

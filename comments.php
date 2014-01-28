@@ -60,10 +60,10 @@
 			global $fp_params;
 			echo "\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get Comments RSS 2.0 Feed\" href=\"".
 					theme_comments_feed_link('rss2', $fp_params['entry']) 
-				."\" />";
+				."\">";
 			echo "\n<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Comments Atom 1.0 Feed\" href=\"".
 					theme_comments_feed_link('atom', $fp_params['entry']) 
-				."\" />\n";
+				."\">\n";
 		}
 		add_action('wp_head', 'comment_feed');
 

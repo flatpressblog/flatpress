@@ -66,12 +66,10 @@
 					*/
 				
 			} while(!$content && $id);
-				
+
+
 			return array_change_key_case($content, CASE_LOWER);
-				
-			
-			
-			
+
 		}
 
 	}
@@ -152,7 +150,6 @@
 	}
 
 
-
 	function smarty_block_widgets($params, $content, &$smarty, &$repeat) {
 		global $fp_widgets;
 		
@@ -161,12 +158,11 @@
 			$entry = $fp_widgets->get(($params['pos']));
 			$smarty->assign($entry);
 		}
-
-		return $content;
 		
-	}		
-	
-	
+		return $content;
+
+	}
+
 	$smarty->register_block('widgets','smarty_block_widgets');
 	
 	

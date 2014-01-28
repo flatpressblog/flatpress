@@ -9,8 +9,7 @@
 	 
 		//var $validators =  array(array('content', 'content', 'notEmpty', false, false));
 		var $events = array('save');
-		
-		
+
 		function get_widget_lists($wlist, $wpos, &$widget_list, $registered_w, $add_empties) {
 		
 			if (!isset($wlist[$wpos]))
@@ -43,7 +42,7 @@
 						 * 	in the template
 						 *
 						 */
-					
+	
 					} else {
 
 						global $lang;
@@ -60,7 +59,6 @@
 			
 			if (!$widget_list[$wpos] && !$add_empties)	
 				unset($widget_list[$wpos]);
-			
 		
 		}
 		
@@ -71,7 +69,8 @@
 			# $this->smarty->assign('warnings', admin_widgets_checkall());
 			global $fp_widgets;
 			
-			
+			$positions = array_keys($fp_widgets->_list); //Piero
+
 			$registered_w = get_registered_widgets();
 			$registered_ws = get_registered_widgetsets(null);
 			$this->smarty->assign('fp_registered_widgets', $registered_w);
@@ -93,6 +92,10 @@
 			$oldwidget_list = array();
 			foreach($wlist as $wpos => $c){
 				$this->get_widget_lists($wlist, $wpos, $oldwidget_list, $registered_w, false);
+			}
+			
+			foreach($positions as $key) { //Piero
+				@reset($fp_widgets->_list[$key]);
 			}
 			
 			$this->smarty->assign('widgetlist', $widget_list);

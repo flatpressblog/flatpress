@@ -114,6 +114,8 @@
 		
 	define('BLOG_BASEURL', 'http://'.$_SERVER['HTTP_HOST']. BLOG_ROOT);
 
+ini_set('display_errors', 'on');
+#error_reporting(E_ALL);
+error_reporting('E_NONE'); /*added by liquibyte*/
 #function _dummy() {}
 #set_error_handler('_dummy');
-

@@ -17,7 +17,7 @@
 	<dt><label>{$plang.desc3}</label></dt>
 	<dd>
 		{$plang.desc3pre}
-		<input type="text" class="smalltextinput" id="qs-number" name="qs-number" value="{$qscfg.number}" />
+		<input type="text" class="smalltextinput" id="qs-number" name="qs-number" value="{$qscfg.number}">
 		{$plang.desc3post}
 	</dd>
 	

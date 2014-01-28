@@ -1,0 +1,197 @@
+@import url(colors.css);
+#liquibyte {
+	display: block;
+	position: absolute;
+	color: #86858c;
+	background-color: rgba(41, 36, 27, 0.9); /*#29241b; medium brown*/
+	border: 1px solid black;
+	top: 0;
+	left: 15%;
+	right: 15%;
+	width: 70%;
+}
+/*
+ * DON'T HACK ON THIS FILE.  IF YOU WANT TO CHANGE SOMETHING, REDEFINE IT IN
+ * YOUR THEMES STYLESHEETS.  THE MOST YOU SHOULD WANT TO DO IS CHANGE COLORS.
+ * */
+/* ===== WIDGET PANEL ====== */
+.admin-widgets-default {
+	display: block;
+	position: relative;
+}
+.admin-widgets-default .buttonbar {
+	display: block;
+	position: relative;
+	width: 0;
+	text-align: center;
+}
+#admin-widgetset-list h2, #admin-widgetset-list>p:nth-of-type(1) {
+	display: block;
+	position: relative;
+	top: 0;
+	left: 0;
+	margin: 0;
+	padding-left: 1em;
+	float: left;
+	clear: left;
+}
+#admin-widgetset-list>p:nth-of-type(1) {
+	padding-bottom: 1em;
+}
+#admin-widgetset-list {
+	width: 50%;
+}
+#admin-widgetset-list ul {
+	list-style-type: none;
+
+}
+#admin-widgetset-list ul li {
+	display: block;
+	float: left;
+	width: 95%;
+}
+#admin-widgetset-list ul li ul {
+	display: block;
+	list-style-type: none;
+}
+#admin-widgetset-list ul li ul li {
+	display: block;
+	float: left;
+}
+#available-widgets {
+	display: block;
+	position: relative;
+	float: right;
+	clear: right;
+	width: 50%;
+	text-align: center;
+}
+#available-widgets h2 {
+	display: block;
+	margin-top: 0;
+	padding: 0.5em;
+}
+#available-widgets ul {
+	display: table;
+	position: relative;
+	top: -2.2em;
+	height: 100%;
+	bottom: 0;
+	margin-bottom: 0;
+	padding-top: 1em;
+	padding-bottom: 1em;
+	text-align: left;
+}
+#available-widgets ul li {
+	display: block;
+	float: left;
+	width: 95%;
+}
+#widget-adminarea {
+
+}
+#widget-adminarea p {
+
+}
+#widget-adminarea ul li {
+
+}
+#widget-trashcan {
+	display: block;
+	position: relative;
+	top: -0.6em;
+	font-size: 2em;
+	padding: 0.5em;
+}
+.ui.droppable#widget-trashcan {
+
+}
+.admin-widgetset {
+	display: block;
+	position: relative;
+	clear: left;
+	margin-bottom: 1em;
+	padding-bottom: 1em;
+	width: 100%;
+}
+.admin-widgetset h3{
+	display: block;
+	margin-top: 0;
+	padding: 0.5em;
+}
+.admin-widgetset ul {
+	display: table;
+}
+.admin-widgetset ul li {
+	float: left;
+}
+.widgetset-name{
+
+}
+.widget-class, .widget-instance {
+	cursor: move;
+	list-style-type: none;
+	width: 100%;
+}
+.widget-class {
+
+}
+.widget-class p {
+	margin-left: 1em;
+}
+.widget-instance {
+
+}
+.widget-instance p {
+	margin-left: 1em;
+}
+.widget-available {
+	position: fixed;
+	cursor: move;
+	list-style-type: none;
+}
+.widget-available p {
+	position: absolute;
+	float: left;
+	margin-left: 1em;
+}
+.widget-installed {
+	position: fixed;
+	cursor: move;
+	list-style-type: none;
+}
+.widget-installed p {
+	position: absolute;
+	float: left;
+	margin-left: 1em;
+}
+#admin-widgetset-list ul .admin-widgetset ul .widget-placeholder {
+	display: block;
+	padding-top: 1em;
+	padding-bottom: 1em;
+	text-align: center;
+}
+.widget-placeholder:hover {
+
+}
+.widget-instance p {
+
+}
+.widget-instance .textinput {
+
+}
+.widget-instance .textinput:hover {
+
+}
+.widget-instance .textinput:focus {
+
+}
+.widgetname a, .widgetname a:link, .widgetname a:visited {
+
+}
+li h3.widgetset-name {
+	text-align: left;
+}
+.ui-draggable, .ui.droppable {
+
+}

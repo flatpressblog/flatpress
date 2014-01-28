@@ -21,7 +21,7 @@ function plugin_lightbox2_head() {
 	$pdir=plugin_geturl('lightbox2');
 	echo <<<LBOXHEAD
 	<!-- start of lightbox -->
-	<link rel="stylesheet" type="text/css" href="{$pdir}res/slimbox2.css" />
+	<link rel="stylesheet" type="text/css" href="{$pdir}res/slimbox2.css">
 	<!-- end of lightbox -->
 LBOXHEAD;
 }

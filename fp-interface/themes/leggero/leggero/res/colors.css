@@ -1,0 +1,168 @@
+/*
+ * DON'T HACK ON THIS FILE.  IF YOU WANT TO CHANGE SOMETHING, REDEFINE IT IN
+ * YOUR THEMES STYLESHEETS.  THE MOST YOU SHOULD WANT TO DO IS CHANGE COLORS.
+ * */
+/* ===== WIDGET PANEL ====== */
+
+.admin-widgets-default {
+
+}
+.admin-widgets-default .buttonbar {
+
+}
+#admin-widgetset-list h2, #admin-widgetset-list>p:nth-of-type(1) {
+
+}
+#admin-widgetset-list {
+
+}
+#admin-widgetset-list ul {
+	color: #86858c;
+	background-color: #807054;
+}
+#admin-widgetset-list ul li {
+
+}
+#admin-widgetset-list ul li ul {
+	color: #86858c;
+	background-color: #807054;
+}
+#admin-widgetset-list ul li ul li {
+	color: #86858c;
+	background-color: #241f16;
+}
+#available-widgets {
+	border: 1px solid #86858c;
+	background-color: #807054;
+}
+#available-widgets h2 {
+	color: #86858c;
+	border: 1px solid #40382a;
+	background-color: #241f16; /*dark brown*/
+}
+#available-widgets ul {
+	color: #86858c;
+	background-color: #807054;
+}
+#available-widgets ul li {
+	color: #86858c;
+	background-color: #241f16;
+}
+#widget-adminarea {
+	border: 1px solid #807054; /*medium brown*/
+}
+#widget-adminarea p {
+
+}
+#widget-adminarea ul li {
+
+}
+#widget-trashcan {
+	background-color: #801919;
+	color: #ff8080;
+	border: 2px solid #e60000;
+}
+.ui.droppable#widget-trashcan {
+	color: #f00;
+	background-color: #ff8080;
+}
+.admin-widgetset {
+	border: 1px solid #40382a;
+	background-color: #807054;
+}
+.admin-widgetset h3{
+	color: #86858c;
+	background-color: #241f16;
+	border: 1px solid #40382a;
+}
+.admin-widgetset ul {
+	color: #86858c;
+	background-color: #807054;
+}
+.admin-widgetset ul li {
+
+}
+.widgetset-name{
+	background-color: #241f16;
+}
+.widget-class, .widget-instance {
+	border: 1px solid #40382a;
+	background-color: #241f16; /*dark brown*/
+}
+.widget-class {
+	border: 1px solid #807054;
+}
+.widget-class p {
+}
+.widget-instance {
+	color: #86858c;
+	background-color: #807054;
+	border: 1px solid #807054;
+}
+.widget-instance p {
+
+}
+.widget-available { /*colors for available widgets while dragging*/
+/*transition: width 2s, height 2s, transform 2s;
+transform: scaleX(0.86);*/
+
+	color: #fff;
+	/*background-color: #260;*/
+	background-color: rgba(34, 102, 0, 0.7);
+	border: 2px solid #0f0;
+}
+.widget-installed { /*colors for installed widgets while dragging*/
+/*transition: width 2s, height 2s, transform 2s;
+transform: scaleX(1.15);*/
+	color: #fff;
+	/*background-color: #026;*/
+	background-color: rgba(0, 34, 102, 0.7);
+	border: 2px solid #00f;
+}
+.widget-installed p {
+
+}
+/*#admin-widgetset-list ul .admin-widgetset ul */.widget-placeholder {
+	color: #86858c;
+	background-color: #473d2c; /*dark brown*/
+	border: 1px dashed #ddd;
+}
+/*.widget-placeholder {
+	border: 1px dashed #ddd;
+	background-color: #473d2c;
+}*/
+.widget-placeholder:hover {
+
+}
+.widget-instance p {
+
+}
+.widget-instance .textinput {
+	color: #00f;
+	background-color: transparent;
+	border: #00f 2px solid;
+}
+.widget-instance .textinput:hover {
+	border: #d00 2px solid;
+	background-color: #241f16;
+}
+.widget-instance .textinput:focus {
+	border: #f00 2px solid;
+	background-color: #241f16;
+}
+.widgetname a, .widgetname a:link, .widgetname a:visited {
+	color: #ddd;
+}
+li h3.widgetset-name {
+
+}
+.ui-draggable, .ui.droppable {
+
+}
+.ui-draggable {
+background-color: #241f16;
+}
+/*
+ * DON'T HACK ON THIS FILE.  IF YOU WANT TO CHANGE SOMETHING, REDEFINE IT IN
+ * YOUR THEMES STYLESHEETS.  THE MOST YOU SHOULD WANT TO DO IS CHANGE COLORS.
+ * */

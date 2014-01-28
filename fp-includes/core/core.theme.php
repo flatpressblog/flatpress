@@ -149,14 +149,14 @@
 		
 		echo "\n<!-- FP STD HEADER -->\n";
 		
-		echo "\n<meta name=\"generator\" content=\"FlatPress ". system_ver() ."\" />\n";
+		echo "\n<meta name=\"generator\" content=\"FlatPress ". system_ver() ."\">\n";
 		echo "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get RSS 2.0 Feed\" href=\"".
 			theme_feed_link('rss2') 
-			."\" />\n";
+			."\">\n";
 
 		echo "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Atom 1.0 Feed\" href=\"".
 			theme_feed_link('atom') 
-			."\" />\n";
+			."\">\n";
 	
 		echo "<!-- EOF FP STD HEADER -->\n";
 	}
@@ -176,12 +176,12 @@
 		
 		$substyle = '/'. (isset($fp_config['general']['style'])? $fp_config['general']['style'].'/' : '');
 		
-		echo $substyle . 'res/'. $css .'" type="text/css" rel="stylesheet" />';
+		echo $substyle . 'res/'. $css .'" type="text/css" rel="stylesheet">';
 
 		if (@$theme['style']['style_print']) {
 			echo '<link media="print" href="';
 			echo BLOG_BASEURL . THEMES_DIR . THE_THEME;
-			echo $substyle . 'res/'. $theme['style']['style_print'] .'" type="text/css" rel="stylesheet" />';
+			echo $substyle . 'res/'. $theme['style']['style_print'] .'" type="text/css" rel="stylesheet">';
 		}
 		
 		echo "\n<!-- FP STD STYLESHEET -->\n";
@@ -192,7 +192,7 @@
 	function admin_head_action() {
 		global $theme;
 		if (!$theme['admin_custom_interface'])
-			echo '<link media="screen" href="'.BLOG_BASEURL.'admin/res/admin.css" type="text/css" rel="stylesheet" />';
+			echo '<link media="screen" href="'.BLOG_BASEURL.'admin/res/admin.css" type="text/css" rel="stylesheet">';
 	}
 		
 	add_filter('admin_head', 'admin_head_action');

@@ -4,7 +4,7 @@
 {include file='shared:errorlist.tpl'}
 
 
-{html_form id="admin-widgets-default"}
+{html_form class="admin-widgets-default"}
 	
 	<div id="available-widgets">
 	<h2>{$panelstrings.availwdgs}</h2>
@@ -17,10 +17,10 @@
 	{foreach from=$fp_registered_widgets key=widgetid item=widget}
 		<li class="widget-class widget-id-{$widgetid}"> 
 			{* those are actually dummies just to have two inputs ready, but they might come handy *}
-			<input class="widget-id" type="hidden" name="avalwidg[]" value="{$widgetid}" />
+			<input class="widget-id" type="hidden" name="avalwidg[]" value="{$widgetid}">
 			{if $widget.nparams > 0}
 			{* class is for javascript: this input will be converted into a type="text" :) *}
-			<input class="textinput" style="float:right" type="hidden" />
+			<input class="textinput" style="float:right" type="hidden">
 			{/if} 
 			<p>{$widget.name}</p> 
 		</li>
@@ -28,7 +28,7 @@
 	</ul>
 	
 	<div class="buttonbar">
-	<input type="submit" name="save" value="{$panelstrings.submit}" />
+	<input type="submit" name="save" value="{$panelstrings.submit}">
 	</div>
 
 	</div>
@@ -49,7 +49,7 @@
 		{foreach from=$widgetarr item=widget}
 			<li class="widget-instance widget-id-{$widget.id} {$widget.class}">
 				<input class="widget-id" type="hidden" name="widgets[{$widgetset}][]" 
-				value="{$widget.id}{if $widget.params}:{$widget.params}{/if}" />
+				value="{$widget.id}{if $widget.params}:{$widget.params}{/if}">
 				{if $widget.params}
 				{* this will be hooked from javascript *}
 				<input class="textinput" style="float:right"  
@@ -83,7 +83,7 @@
 		{foreach from=$widgetarr item=widget}
 			<li class="widget-instance widget-id-{$widget.id}">
 				<input class="widget-id" type="hidden" name="widgets[{$widgetset}][]" 
-				value="{$widget.id}{if $widget.params}:{$widget.params}{/if}" />
+				value="{$widget.id}{if $widget.params}:{$widget.params}{/if}">
 				{if $widget.params}
 				{* this will be hooked from javascript *}
 				<input class="textinput" style="float:right"  

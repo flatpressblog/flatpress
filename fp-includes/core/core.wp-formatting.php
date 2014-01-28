@@ -70,7 +70,7 @@
 
 		/* NWM: a bit hackish? where are the slashes for double quotes added? */
 		$text = str_replace('\"', '"', $text);  
-		$text = str_replace('<br />', '', $text);
+		$text = str_replace('<br>', '', $text);
 		$text = str_replace('<p>', "\n", $text);
 		$text = str_replace('</p>', '', $text);
 		return $text;
@@ -81,7 +81,7 @@
  *
  * A group of regex replaces used to identify text formatted with newlines and
  * replace double line-breaks with HTML paragraph tags. The remaining
- * line-breaks after conversion become <<br />> tags, unless $br is set to '0'
+ * line-breaks after conversion become <<br>> tags, unless $br is set to '0'
  * or 'false'.
  *
  * @since 0.71
@@ -95,7 +95,7 @@ function wpautop($pee, $br = 1) {
 	if ( trim($pee) === '' )
 		return '';
 	$pee = $pee . "\n"; // just to make things a little easier, pad the end
-	$pee = preg_replace('|<br />\s*<br />|', "\n\n", $pee);
+	$pee = preg_replace('|<br>\s*<br>|', "\n\n", $pee);
 	// Space things out a little
 	$allblocks = '(?:table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|select|option|form|map|area|blockquote|address|math|style|input|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)';
 	$pee = preg_replace('!(<' . $allblocks . '[^>]*>)!', "\n$1", $pee);
@@ -121,11 +121,11 @@ function wpautop($pee, $br = 1) {
 	$pee = preg_replace('!(</?' . $allblocks . '[^>]*>)\s*</p>!', "$1", $pee);
 	if ($br) {
 		$pee = preg_replace_callback('/<(script|style).*?<\/\\1>/s', '_autop_newline_preservation_helper', $pee);
-		$pee = preg_replace('|(?<!<br />)\s*\n|', "<br />\n", $pee); // optionally make line breaks
-		$pee = str_replace('<WPPreserveNewline />', "\n", $pee);
+		$pee = preg_replace('|(?<!<br>)\s*\n|', "<br>\n", $pee); // optionally make line breaks
+		$pee = str_replace('<WPPreserveNewline>', "\n", $pee);
 	}
-	$pee = preg_replace('!(</?' . $allblocks . '[^>]*>)\s*<br />!', "$1", $pee);
-	$pee = preg_replace('!<br />(\s*</?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)[^>]*>)!', '$1', $pee);
+	$pee = preg_replace('!(</?' . $allblocks . '[^>]*>)\s*<br>!', "$1", $pee);
+	$pee = preg_replace('!<br>(\s*</?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)[^>]*>)!', '$1', $pee);
 	if (strpos($pee, '<pre') !== false)
 		$pee = preg_replace_callback('!(<pre[^>]*>)(.*?)</pre>!is', 'clean_pre', $pee );
 	$pee = preg_replace( "|\n</p>$|", '</p>', $pee );
@@ -142,7 +142,7 @@ function wpautop($pee, $br = 1) {
  * @returns string
  */
 function _autop_newline_preservation_helper( $matches ) {
-	return str_replace("\n", "<WPPreserveNewline />", $matches[0]);
+	return str_replace("\n", "<WPPreserveNewline>", $matches[0]);
 }
 	
 	function seems_utf8($Str) { # by bmorel at ssi dot fr
@@ -432,8 +432,8 @@ function _autop_newline_preservation_helper( $matches ) {
 		$content = strtr($content, $wp_htmltranswinuni);
 	
 		// Just a little XHTML help
-		$content = str_replace('<br>', '<br />', $content);
-		$content = str_replace('<hr>', '<hr />', $content);
+		$content = str_replace('<br>', '<br>', $content);
+		$content = str_replace('<hr>', '<hr>', $content);
 	
 		return $content;
 	}

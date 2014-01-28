@@ -3,8 +3,8 @@
 
 	<title>{$flatpress.title}</title>
 	<subtitle>{$flatpress.subtitle}</subtitle>
-	<link href="{$smarty.const.BLOG_BASEURL}" />
-	<link rel="self" href="{'atom'|theme_feed_link}" />
+	<link href="{$smarty.const.BLOG_BASEURL}">
+	<link rel="self" href="{'atom'|theme_feed_link}">
 	<generator uri="http://www.flatpress.org/" version="{$flatpress.version}">
   		FlatPress
 	</generator>
@@ -19,7 +19,7 @@
 	{entry}
 	<entry>
 		<title>{$subject}</title>
-		<link href="{$id|link:post_link}" />
+		<link href="{$id|link:post_link}">
 				
 		<id>{$id|link:post_link}</id>
 		{assign var=the_date value=$date|date_rfc3339}
@@ -36,7 +36,7 @@
 			href="{$encl.url}" 
 			title="{$encl.title}"
 			length="{$encl.length}" 
-			type="{$encl.type}" />
+			type="{$encl.type}">
 		{/foreach}
 	
 	</entry>

@@ -34,8 +34,6 @@
 			{/foreach}
 		</ul>
 		{/if}
-
-		
 		{if $success}
 		{if $success < 0}
 			{assign var=class value=errors}

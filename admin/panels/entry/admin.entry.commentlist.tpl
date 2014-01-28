@@ -32,7 +32,7 @@ function admin_entry_comment_delete() { return confirm({/literal}'{$plang.act_de
 <tbody>
 {comment}
 <tr>
-{*<td><input type="checkbox" /></td>*}
+{*<td><input type="checkbox"></td>*}
 <td>{$date|date_format:"%D, %T"}</td>
 <td class="main_cell">
 {$content|strip_tags|truncate:70}

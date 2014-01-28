@@ -11,7 +11,7 @@
 	
 	
 	{*<fieldset><legend>{$panelstrings.fset1}</legend>
-		<input type="file" name="upload[]" />
+		<input type="file" name="upload[]">
 	
 	<div class="alignright">
 	{html_submit name="upload" id="upload" value=$panelstrings.submit}	
@@ -31,7 +31,7 @@
 	{foreach from=$files item=filepath key=filename}
 			<li class="thumb"> 
 				<h5>{$filename}</h5>
-				<a href="{$filepath}"><img src="{$filepath}" alt="{$filename}" /></a> 
+				<a href="{$filepath}"><img src="{$filepath}" alt="{$filename}"></a> 
 			</li>
 	{/foreach}
 	</ul>
