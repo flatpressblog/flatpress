@@ -82,7 +82,7 @@
 
 	$lang['404error'] = array(
 		'subject'	=> 'Not Found',
-		'content'	=> '<p>Sorry, we could not find the page you requested</p>'
+		'content'	=> '<p>Sorry, we could not find the page you requested</p></div>'
 	);
 		
 	// Login

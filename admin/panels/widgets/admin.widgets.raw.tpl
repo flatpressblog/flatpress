@@ -7,7 +7,7 @@
 		
 		<p>
 		<textarea name="content" id="content"
-		class="code" rows="20" cols="74">{$pluginconf|escape}</textarea><br />
+		class="code" rows="20" cols="74">{$pluginconf|escape}</textarea><br>
 		</p>
 	
 	

@@ -15,7 +15,7 @@
 	array(
 		'head'		=> 'Manage Entries',
 		'descr'		=> 'Please select an entry to edit or <a href="admin.php?p=entry&amp;action=write">add new</a>'.
-					'<br /><a href="admin.php?p=entry&amp;action=cats">Edit the categories</a>',
+					'<br><a href="admin.php?p=entry&amp;action=cats">Edit the categories</a>',
 		'filter'	=> 'Filter: ',
 		'nofilter'	=> 'Show all',
 		'filterbtn'	=> 'Apply filter',

@@ -4,12 +4,13 @@
 	{statics}
 	<fieldset><legend>{$panelstrings.preview}</legend>
 	{include file=previewstatic.tpl}
+	</div>
 	</fieldset>
 	{/statics}
 	<p>{$panelstrings.confirm}</p>
 	
 	{html_form}
-		<input type="hidden" name="page" value="{$pageid}" />
+		<input type="hidden" name="page" value="{$pageid}">
 		<div class="buttonbar">
 		{html_submit name="delete" id="delete" value=$panelstrings.ok}
 		{html_submit name="cancel" id="cancel" value=$panelstrings.cancel}

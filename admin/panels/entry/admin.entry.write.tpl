@@ -8,6 +8,7 @@
 	{if $preview}
 	<fieldset id="post-preview"><legend>{$panelstrings.preview}</legend>
 	{include file=preview.tpl}
+	</div>
 	</fieldset>
 	{/if}
 	</div>
@@ -18,20 +19,22 @@
 	{entry content=$post alwaysshow=true}
 	
 		<div id="admin-editor">
-			<p><label for="subject">{$panelstrings.subject}</label><br />
+			<p><label for="subject">{$panelstrings.subject}</label><br>
 			<input type="text" {$error.subject|notempty:'class="field-error"'} 
 				name="subject" id="subject" 
-				value="{$subject|default:$smarty.request.subject|wp_specialchars:1}" /><br />
-			<input type="hidden" name="timestamp" value="{$date}" />
-			<input type="hidden" name="entry" value="{$id}" />
+				value="{$subject|default:$smarty.request.subject|wp_specialchars:1}"><br>
+			<input type="hidden" name="timestamp" value="{$date}">
+			<input type="hidden" name="entry" value="{$id}">
 			</p>
 			<p>
 			<label for="content">{$panelstrings.content}</label>
-			</p>
+			<p>Use the example below for the images in your posts, you can copy and paste this and change the bold parts to the needed values.  I've formatted these for best practices so they validate HTML5 strict.  The <strong><em>single quotes</em></strong> are required.</p>
+			<span id="pre">&lt;a href=<span class="double">"</span><strong><span class="bold">URL</span></strong><span class="double">"</span>&gt;&lt;img src=<span class="double">"</span><strong><span class="bold">IMAGE</span></strong><span class="double">"</span> alt=<span class="double">"</span><strong><span class="single">'</span><span class="bold">BOOK</span><span class="single">'</span> by <span class="bold">AUTHOR</span></strong><span class="double">"</span> title=<span class="double">"</span><strong><span class="single">'</span><span class="bold">BOOK</span><span class="single">'</span></strong><span class="double">"</span>&gt;&lt;/a&gt;</span><br>
+
 			{toolbar}
 			<p>
 			<textarea name="content" {$error.content|notempty:'class="field-error"'} 
-			id="content" rows="20" cols="74">{$content|default:$smarty.request.content|htmlspecialchars}</textarea><br />
+			id="content" rows="20" cols="74">{$content|default:$smarty.request.content|htmlspecialchars}</textarea><br>
 			{*here will go a plugin hook*}
 			{action hook=simple_edit_form}
 
@@ -59,7 +62,7 @@
 			
 			<p>
 			{foreach from=$saved_flags item=flag}
-			<label><input name="flags[{$flag}]" {if $categories and (bool)array_intersect(array($flag),$categories) }checked="checked"{/if} type="checkbox" /> {$lang.entry.flags.long[$flag]} </label><br />
+			<label><input name="flags[{$flag}]" {if $categories and (bool)array_intersect(array($flag),$categories) }checked="checked"{/if} type="checkbox"> {$lang.entry.flags.long[$flag]} </label><br>
 			{/foreach}
 			</p>
 			

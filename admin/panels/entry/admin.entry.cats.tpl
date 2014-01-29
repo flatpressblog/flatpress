@@ -11,7 +11,7 @@
 {html_form}
 	
 		<p>
-		<textarea name="content" id="content" rows="20" cols="74">{$catdefs|escape}</textarea><br />
+		<textarea name="content" id="content" rows="20" cols="74">{$catdefs|escape}</textarea><br>
 		</p>
 	
 	

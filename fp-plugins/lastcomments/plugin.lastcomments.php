@@ -51,7 +51,8 @@ function plugin_lastcomments_widget() {
 
 			$content .=	
 			"<li>
-			<blockquote class=\"comment-quote\" cite=\"comments.php?entry={$arr['entry']}#{$arr['id']}\">
+			<blockquote class=\"comment-quote\">
+			<cite><a href=\"comments.php?entry={$arr['entry']}#{$arr['id']}\"></a></cite>
 			{$arr['content']}
 			<p><a href=\"".get_comments_link($arr['entry']).
 			"#{$arr['id']}\">{$arr['name']} - {$entry['subject']}</a></p>
@@ -170,7 +171,7 @@ add_action('wp_head', 'plugin_lastcomments_rsshead');
 function plugin_lastcomments_rsshead() {
 	echo "\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get RSS 2.0 Feed\" href=\"".
 			plugin_lastcomments_rss_link() 
-		."\" />\n";
+		."\">\n";
 }
 
 add_action('init', 'plugin_lastcomments_rssinit');

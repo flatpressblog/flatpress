@@ -18,7 +18,7 @@
 <tbody>
 {static}
 <tr>
-{*<td><input type="checkbox" /></td>*}
+{*<td><input type="checkbox"></td>*}
 <td>{$id}</td>
 <td class="main-cell">
 <a class="link-general"  

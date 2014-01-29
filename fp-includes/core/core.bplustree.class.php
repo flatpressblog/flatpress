@@ -118,7 +118,7 @@ function d($s) {
 	#echo "---[{$x[2]['function']}:{$x[2]['line']}]\n";
 }
 
-error_reporting(E_ALL);
+/*error_reporting(E_ALL);*/ /*removed liquibyte*/
 
 
 if (!defined('BPT_SORT')) {

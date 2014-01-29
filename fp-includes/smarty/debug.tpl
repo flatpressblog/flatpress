@@ -106,7 +106,7 @@ td {
         {if %templates.index% eq 0}(total){/if}
         </span>
     {/if}
-    <br />
+    <br>
 {sectionelse}
     <p>no templates included</p>
 {/section}

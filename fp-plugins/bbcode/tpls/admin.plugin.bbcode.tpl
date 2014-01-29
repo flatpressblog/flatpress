@@ -7,11 +7,11 @@
 <h2>{$plang.editing}</h2>
 
 <dl class="option-list">
-	<dt><label for="bb-escape-html">
+	<dt><label for="bb-allow-html">
 		{$plang.allow_html}
 	</label></dt>
 	<dd> 
-		<p><input type="checkbox" name="bb-allow-html" id="bb-allow-html" {if $bbchecked[0]}checked="checked"{/if} /> 
+		<p><input type="checkbox" name="bb-allow-html" id="bb-allow-html" {if $bbchecked[0]}checked="checked"{/if}> 
 		{$plang.allow_html_long}</p>
 	</dd>
 
@@ -19,7 +19,7 @@
 		{$plang.toolbar}
 	</label></dt>
 	<dd> 
-		<p><input type="checkbox" name="bb-toolbar" id="bb-toolbar" {if $bbchecked[2]}checked="checked"{/if} />
+		<p><input type="checkbox" name="bb-toolbar" id="bb-toolbar" {if $bbchecked[2]}checked="checked"{/if}>
 		{$plang.toolbar_long}</p>
 	</dd>
 
@@ -33,11 +33,11 @@
 		{$plang.comments}
 	</label></dt>
 	<dd> 
-		<p><input type="checkbox" name="bb-comments" id="bb-comments" {if $bbchecked[1]}checked="checked"{/if} />
+		<p><input type="checkbox" name="bb-comments" id="bb-comments" {if $bbchecked[1]}checked="checked"{/if}>
 		{$plang.comments_long} </p>
 	</dd>
 
-	<dt><label for="bb-urlmaxlen">
+	<dt><label>
 		{$plang.urlmaxlen}
 	</label></dt>
 	<dd> 

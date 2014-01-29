@@ -11,6 +11,7 @@
 </ol>
 {/search_result_block}
 {/if}
-
-
-<p><a href="{$smarty.const.BLOG_BASEURL}search.php">{$lang.search.searchag}</a></p>
+<p>
+	<a href="{$smarty.const.BLOG_BASEURL}search.php">{$lang.search.searchag}</a>
+</p>
+</div>

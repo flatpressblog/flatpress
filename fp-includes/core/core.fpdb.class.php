@@ -289,7 +289,7 @@
 				$index_count = $entry_index->length(); 
 				$this->walker =& $entry_index->walker($firstid);	
 
-			} else {
+			} else { // this is not working right (liquibyte)
 				// notice this won't work with cats (for now)
 				
 				$obj = new entry_archives($qp->y, $qp->m, $qp->d); 
@@ -678,7 +678,7 @@
 		 * @param mixed params
 		 * $params may be an associative array or a query string with the following syntax:
 		 * 'key:val,key:val,key:val';
-		 * example: <code>$params = 'start:0,count:5';<br />
+		 * example: <code>$params = 'start:0,count:5';<br>
 		 *			is a convenient way to express 
 		 *			$params = array('start'=>0,'count'=>5);</code>
 		 *

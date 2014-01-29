@@ -42,7 +42,7 @@ function smarty_function_list_categories($params) //, &$smarty)
 	
 	//<label><input name="cats[{$catId}]" 
 	//{if (bool)array_intersect(array($catId),$categories) }
-	//checked="checked"{/if} type="checkbox" /> {$cat} </label><br />
+	//checked="checked"{/if} type="checkbox"> {$cat} </label><br>
 			
 }
 
@@ -109,14 +109,14 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 			if ((bool) array_intersect(array($vid), $cat_entry))
 				$string .= 'checked="checked" ';
 			
-			$string .=  'type="checkbox" />';
+			$string .=  'type="checkbox">';
 			$before = $string;
 		}elseif (isset($params['type']) && $params['type']=='radio') {
 			$string = '<label><input name="'.$catname.'cats" type="radio" value="'.$vid.'"';
 			if ((bool) array_intersect(array($vid), $cat_entry))
 				$string .= 'checked="checked" ';
 	
-			$string .= ' />';
+			$string .= '>';
 			$before = $string;
 			
 			
@@ -194,7 +194,7 @@ function print_list_categories(&$lines, &$indentstack, $result, $params) {
 			if ((bool)array_intersect(array($catId),$cats)) {
 				$the_after .='checked="checked" ';
 			}
-			$the_after.='type="checkbox" />';
+			$the_after.='type="checkbox">';
 		}
 		
 			//array_push($result, $the_after);

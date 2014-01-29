@@ -82,7 +82,7 @@ function plugin_archives_head() {
 	echo "\n<!-- archives -->\n";
 	foreach($PLUGIN_ARCHIVES_MONTHLIST->getList() as $y => $months) {
 		foreach ($months as $ttl => $link)
-			echo "<link rel=\"archives\" title=\"{$ttl}\" href=\"{$link}\" />\n";
+			echo "<link rel=\"archives\" title=\"{$ttl}\" href=\"{$link}\">\n";
 	}
 
 	echo "\n<!-- end of archives -->\n";

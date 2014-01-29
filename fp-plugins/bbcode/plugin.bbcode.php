@@ -72,7 +72,7 @@ plugin_bbcode_startup();
  */
 function plugin_bbcode_style() {
 	echo "	<!-- bbcode plugin -->\n";
-	echo '	<link rel="stylesheet" type="text/css" href="'. plugin_geturl('bbcode') ."res/bbcode.css\" />\n";
+	echo '	<link rel="stylesheet" type="text/css" href="'. plugin_geturl('bbcode') ."res/bbcode.css\">\n";
 	echo "	<!-- end of bbcode plugin -->\n";
 }
 add_action('wp_head', 'plugin_bbcode_style');
@@ -316,7 +316,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		? ''
 		: ' title="'.$title.'" ';
 	return $popup_start .'<img src="'. $src .'" alt="'. $alt. '" '.
-		$pop.$float.$img_width.$img_height .' />'. $popup_end;
+		$pop.$float.$img_width.$img_height .'>'. $popup_end;
 }
 
 /**
@@ -350,7 +350,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	switch ($type) {
 		case 'google':
 			$the_url = "http://video.google.com/googleplayer.swf?docid={$query['docid']}";
-			$others = '<param name="FlashVars" value="playerMode=embedded" />';
+			$others = '<param name="FlashVars" value="playerMode=embedded">';
 			break;
 		case 'youtube':
 			$the_url = "http://youtube.com/v/{$query['v']}";
@@ -371,7 +371,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 			: '';
 		return '<object type="application/x-shockwave-flash" height="'.$height.'" width="'.$width.'" '
 			. $float .'data="'. $the_url .'">'
-			.'<param name="movie" value="'. $the_url .'" />'
+			.'<param name="movie" value="'. $the_url .'">'
 			. $others .'</object>';
 	}
 	return '[unsupported video]';
@@ -392,7 +392,7 @@ function do_bbcode_code ($action, $attributes, $content, $params, $node_object) 
 		return true;
 	}
 	$temp_str = $content;
-	$temp_str = str_replace('<br />', chr(10), $temp_str);
+	$temp_str = str_replace('<br>', chr(10), $temp_str);
 	$temp_str = str_replace(chr(10). chr(10), chr(10), $temp_str);
 	$temp_str = str_replace(chr(32), '&nbsp;', $temp_str);
 	if (BBCODE_ALLOW_HTML) {
