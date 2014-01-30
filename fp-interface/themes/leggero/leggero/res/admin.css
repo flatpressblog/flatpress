@@ -14,10 +14,6 @@ Module: admin.css
 @import url(common.css);
 @import url(globals.css);
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 109664842ba0aaec1b8e462a3fdcee470110a499
 /* ===== VARIOUS ===== */
 .buttonbar input {
 	padding: .3em;
@@ -381,13 +377,8 @@ li.admin-widgetset {
 	text-align: left;
 }
 
-<<<<<<< HEAD
 #widget-trashcan { /*colors for trashcan/uninstall widgets while dragging*/
 	background-color: rgba(170, 34, 34, 0.7);
-=======
-#widget-trashcan {
-	background-color: #a22;
->>>>>>> 109664842ba0aaec1b8e462a3fdcee470110a499
 	color: #ddd;
 	font-size: 120%;
 	font-weight: bold;
@@ -397,7 +388,6 @@ li.admin-widgetset {
 	margin: 2em;
 }
 
-<<<<<<< HEAD
 .widget-available { /*colors for available widgets while dragging*/
 	cursor: move;
 	color: #fff;
@@ -414,8 +404,6 @@ li.admin-widgetset {
 	z-index: 2000;
 }
 
-=======
->>>>>>> 109664842ba0aaec1b8e462a3fdcee470110a499
 #available-widgets ul, .admin-widgetset ul {
 	padding-left: 0;
 	margin-left: 0;
