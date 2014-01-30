@@ -1,6 +1,6 @@
 /*
- * nibble widget js admin
- * Based on original nibble' code
+ * FlatPress widget js admin
+ * Based on original FlatPress' code
  * Require jQuery and jQuery UI (Core, Draggable, Droppable and Effects Core)
  * Coded by Piero VDFN <vogliadifarniente@gmail.com>
  * Re-Coded by liquibyte <liquibyte@gmail.com>
@@ -12,7 +12,7 @@
  *     accepts drag and drop from installed widgets to remove.
  * Released under GNU GPL v2
  */
-var nibble = {
+var FlatPress = {
 	winstancedrag : function() {
 		$('.widget-class').draggable({
 			'scroll' : true,
@@ -67,7 +67,7 @@ var nibble = {
 				if (parent.children().length < 1) {
 					parent.append('<li class="widget-placeholder">Drop here</li>');
 				}
-				nibble.wreload();
+				FlatPress.wreload();
 			}
 		});
 	},
@@ -94,7 +94,7 @@ var nibble = {
 				if (parent.children().length < 1) {
 					parent.append('<li class="widget-placeholder">Drop here</li>');
 				}
-				nibble.wreload();
+				FlatPress.wreload();
 			}
 		});
 	},
@@ -120,7 +120,7 @@ var nibble = {
 				setTimeout(function() {
 					draggable.remove();
 				});
-				nibble.wreload();
+				FlatPress.wreload();
 			}
 		});
 		$('.widget-class').droppable({
@@ -144,7 +144,7 @@ var nibble = {
 				setTimeout(function() {
 					draggable.remove();
 				});
-				nibble.wreload();
+				FlatPress.wreload();
 			}
 		});
 
@@ -155,4 +155,4 @@ var nibble = {
 		this.wplaceholder();
 	}
 }
-nibble.wreload();nibble.wtrash();
+FlatPress.wreload();FlatPress.wtrash();
