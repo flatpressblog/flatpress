@@ -7,7 +7,7 @@ Home page: http://www.maas-online.nl
 -------------------
 
 Name: FlatMaas
-Author: Luciano Porro (drudo)
+Author: liquibyte
 Version: 0.0.1
 Module: admin.css
 */
@@ -124,7 +124,7 @@ input#subject {
 
 
 #admin-content {
-	background: url(../imgs/fp-logo.png) bottom right no-repeat;
+	background: url(../imgs/nib-logo.png) bottom right no-repeat;
 }
 
 
@@ -299,7 +299,7 @@ textarea.code {
 
 
 
-/* #admin-content { background: url(../imgs/fp-logo.png) bottom right no-repeat } */
+/* #admin-content { background: url(../imgs/nib-logo.png) bottom right no-repeat } */
 
 #admin-content table { width: 100%; border-collapse: collapse }
 
@@ -511,7 +511,6 @@ li.admin-widgetset {
 	border: 2px solid #00f;
 	z-index: 2000;
 }
-
 #available-widgets ul, .admin-widgetset ul {
 	padding-left: 0;
 	margin-left: 0;
