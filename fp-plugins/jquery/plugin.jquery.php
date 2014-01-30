@@ -6,6 +6,7 @@ Plugin URI: http://www.vdfn.altervista.org/
 Description: provides <a href="http://jquery.com/" title="jQuery">jQuery</a>
 Author: Piero VDFN
 Author URI: http://www.vdfn.altervista.org/
+JQuery and JQueryUI version bump by liquibyte
 */
 
 ## Original author: NoWhereMan (http://www.nowhereland.it)
