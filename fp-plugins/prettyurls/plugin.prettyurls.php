@@ -3,8 +3,8 @@
 Plugin Name: PrettyURLs
 Plugin URI: http://flatpress.nowherland.it/
 Description: Url prettifier (powered by htaccess)
-Author: NoWhereMan  (E.Vacchi)
-Version: 3.0
+Author: NoWhereMan  (E.Vacchi), small fix by moortaube (Julian Rademacher)
+Version: 3.0.1
 Author URI: http://www.nowhereland.it
 */
 
