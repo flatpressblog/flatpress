@@ -78,8 +78,9 @@ class Plugin_PrettyURLs {
 			$title = sanitize_title($post['subject']);
 		else 
 			$title = $id;
-		$date = date_from_id($id);
-					// yeah, hackish, I know...
+		
+		$date = date_from_id($id);	// yeah, hackish, I know...
+		$title = preg_replace('/(%e2%80%9e)|(%e2%80%9c)|(%E2%80%9E)|(%E2%80%9C)|[„“]/', '', $title);
 	
 		return $this->baseurl  . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
 	}
@@ -147,8 +148,8 @@ class Plugin_PrettyURLs {
 			list($id, $contents) = $o->getEntry();
 			$date = date_from_id($id);
 			echo $contents['subject'], "\n";
-			$md5 = md5(sanitize_title($contents['subject']));
-			$this->index[$date['y']][$date['m']][$date['d']][$md5] = $id;		
+			$md5 = md5(preg_replace('/(%e2%80%9e)|(%e2%80%9c)|(%E2%80%9E)|(%E2%80%9C)|[„“]/', '', sanitize_title($contents['subject'])));
+			$this->index[$date['y']][$date['m']][$date['d']][$md5] = $id;
 		}
 		#}
 		
