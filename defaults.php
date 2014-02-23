@@ -110,9 +110,14 @@
 	
 	#define('BLOG_ROOT', dirname($_SERVER['PHP_SELF']) . '/');
 	define('BLOG_ROOT', ('/'==($v=dirname($_SERVER['SCRIPT_NAME']))? $v : $v.'/') ); 
-
-		
-	define('BLOG_BASEURL', 'http://'.$_SERVER['HTTP_HOST']. BLOG_ROOT);
+	
+	
+	if($_SERVER['SERVER_PORT'] == '443') {
+        	define('BLOG_BASEURL', 'https://'.$_SERVER['HTTP_HOST']. BLOG_ROOT);
+	}
+	else if($_SERVER['SERVER_PORT'] == '80') {
+		define('BLOG_BASEURL', 'http://'.$_SERVER['HTTP_HOST']. BLOG_ROOT);
+	}
 
 #function _dummy() {}
 #set_error_handler('_dummy');
