@@ -51,7 +51,7 @@
 		
 		{* end of inline form *}
 		
-		<fieldset id="admin-entry-categories"><legend>{$panelstrings.archive}</legend>
+		<fieldset id="admin-entry-categories"><legend>{$panelstrings.categories}</legend>
 			{list_categories type=form selected=$categories}
 		</fieldset>
 		
