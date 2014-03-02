@@ -115,6 +115,8 @@ a:hover {
 	text-decoration: underline
 }
 
+a.share {
+	vertical-align: middle;}
 
 
 /* ===== HEADERS TAGS ===== */
@@ -201,6 +203,10 @@ h4 { font-size: 1.2em; }
 
 #main img { margin: .5em }
 
+img.share {
+	vertical-align: top;
+	margin: 0;}
+
 /* === List === */
 #main ul {
 	list-style-type: disc;
@@ -278,6 +284,15 @@ h4 { font-size: 1.2em; }
 		margin-bottom: 5em
 	}
 
+	#main ul.share {
+		clear: both;
+		margin: 0.5em;
+		font-size: 0.8em;
+		list-style-type: none;
+		text-align: right;}
+		
+	#main span.share {
+		margin-left:10px;}
 
 /* ===== FOOTER ===== */
 #footer {
