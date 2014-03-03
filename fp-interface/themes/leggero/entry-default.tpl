@@ -32,6 +32,14 @@
 				{/if}
 				
 				</ul>
+				
+				<ul class="share">
+					<li>
+					<span class="share"><a id="share" href="https://www.facebook.com/sharer/sharer.php?u={$id|link:post_link}&t={$subject}" target="_blank" title="Share on Facebook"><img class="share" src="/fp-content/images/Social/facebook-16x16.png">Facebook</a></span>
+					<span class="share"><a id="share" href="https://twitter.com/intent/tweet?source=webclient&text={$subject}&via=MarcThibeault&url={$id|link:post_link}" target="_blank" title="Share on Twitter"><img class="share" src="/fp-content/images/Social/twitter-16x16.png">Twitter</a> </span>
+					<span class="share"><a id="share" href="https://plusone.google.com/_/+1/confirm?url={$id|link:post_link}&title={$subject}" target="_blank" title="Share on Google+"><img class="share" src="/fp-content/images/Social/google+-16x16.png">Google+</a> </span>
+					</li>
+				</ul>
 			
 				
 	</div>
