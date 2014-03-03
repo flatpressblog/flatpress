@@ -203,9 +203,9 @@ h4 { font-size: 1.2em; }
 
 #main img { margin: .5em }
 
-img.share {
+#share img {
 	vertical-align: top;
-	margin: 0;}
+	margin: 0 5px 0 0;}
 
 /* === List === */
 #main ul {
