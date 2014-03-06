@@ -201,10 +201,6 @@ h4 { font-size: 1.2em; }
 
 #main img { margin: .5em }
 
-#share img {
-	vertical-align: top;
-	margin: 0 5px 0 0;}
-
 /* === List === */
 #main ul {
 	list-style-type: disc;
