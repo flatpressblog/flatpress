@@ -43,7 +43,7 @@
 		'submit'	=> 'Publish',
 		'preview'	=> 'Preview',
 		'savecontinue'	=> 'Save&amp;Continue',
-		'archive'	=> 'Archive',
+		'categories'	=> 'Categories',
 		'nocategories'	=> 'No categories set. <a href="admin.php?p=entry&amp;action=cats">Create your own '. 
 					'categories</a> from the main entry panel. '.
 					'<a href="#save">Save</a> your entry first.',
