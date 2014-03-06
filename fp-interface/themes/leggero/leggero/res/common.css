@@ -115,8 +115,6 @@ a:hover {
 	text-decoration: underline
 }
 
-a.share {
-	vertical-align: middle;}
 
 
 /* ===== HEADERS TAGS ===== */
@@ -291,8 +289,20 @@ h4 { font-size: 1.2em; }
 		list-style-type: none;
 		text-align: right;}
 		
-	#main span.share {
-		margin-left:10px;}
+	#main span.facebook {
+		margin-left:10px;
+		background: url(../imgs//social/facebook-16x16.png) no-repeat;
+		padding-left:20px;}
+		
+	#main span.twitter {
+		margin-left:10px;
+		background: url(../imgs//social/twitter-16x16.png) no-repeat;
+		padding-left:20px;}
+	
+	#main span.googleplus {
+		margin-left:10px;
+		background: url(../imgs//social/google+-16x16.png) no-repeat;
+		padding-left:20px;}
 
 /* ===== FOOTER ===== */
 #footer {
