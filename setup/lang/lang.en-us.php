@@ -158,6 +158,7 @@ Want to see more?
 
 [list]
 [*]Support the project with a [url=http://www.flatpress.org/home/static.php?page=donate]small donation[/url]
+[*]Contribute to the development of Flatpress on [url="https://github.com/evacchi/flatpress"]GitHub[/url]!
 [*]Translate FlatPress or the documentation into [url=http://wiki.flatpress.org/res:language]your language[/url]
 [*]Share your knowledge with other people on the [url=http://www.flatpress.org/forums/categories.php]forums[/url]
 [*]Spread the word!
