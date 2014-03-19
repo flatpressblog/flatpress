@@ -62,6 +62,7 @@
 				'maxentries' => $_POST['maxentries'],
 				// 'voting' => $_POST['voting'],
 				'notify' => isset($_POST['notify']),
+				'sharebuttons' => isset($_POST['sharebuttons']),
 				/* preserve the following */
 				'theme'	=> $fp_config['general']['theme'],
 				'style'	=> @$fp_config['general']['style'],

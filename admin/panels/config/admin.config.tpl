@@ -60,6 +60,14 @@
 	<dt><label for="maxentries"> {$panelstrings.blogmaxentries} </label></dt>
 	<dd><input type="text" name="maxentries" id="maxentries" 
 	class="smalltextinput{$error.maxentries|notempty:" field-error"}" value="{$flatpress.maxentries}" /></dd>
+
+	<dt> {$panelstrings.sharebuttons} </dt>
+	<dd>
+	<label for="sharebuttons">
+	<input type="checkbox" name="sharebuttons" id="sharebuttons"{if $flatpress.SHAREBUTTONS}checked="checked"{/if} />
+	{$panelstrings.sharebuttonstext}
+	</label>
+	</dd>
 	
 	
 	</dl>

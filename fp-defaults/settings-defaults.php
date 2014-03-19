@@ -12,6 +12,7 @@ $fp_config = array (
     'startpage' => NULL,
     'maxentries' => '5',
     'notify' => true,
+    'sharebuttons' => true,
     'theme' => 'leggero',
     'style' => 'leggero',
     'blogid' => 'fpdefid',
