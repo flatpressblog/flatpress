@@ -31,7 +31,7 @@
 		'notifications'		=> 'Notifications',
 		'mailnotify'		=> 'Enable email notification for comments',
 		'blogmaxentries'	=> 'Number of posts per page',
-		'sharebuttons'		=> 'Share buttons',
+		'sharebuttons'		=> 'Share entry buttons',
 		'sharebuttonstext'	=> 'Enable share buttons for Facebook, Twitter and Google+.',
 		'langchoice'		=> 'Language',
 
