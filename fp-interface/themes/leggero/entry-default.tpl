@@ -25,7 +25,7 @@
 				
 				{if !(in_array('commslock', $categories) && !$comments)}
 				<li class="link-comments">
-				<a href="{$id|link:comments_link}#comments">{$comments|tag:comments_number} 
+				<a href="http://www.addtoany.com/share_save" target="_blank">Share this post</a> | <a href="{$id|link:comments_link}#comments">{$comments|tag:comments_number} 
 					{if isset($views)}(<strong>{$views}</strong> views){/if}
 				</a>
 				</li>
