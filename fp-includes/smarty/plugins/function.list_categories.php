@@ -30,7 +30,9 @@ function smarty_function_list_categories($params) //, &$smarty)
 	
 	if (file_exists(CONTENT_DIR . 'categories.txt')) {
 		$cats = trim(io_load_file(CONTENT_DIR . 'categories.txt'));
-		return '<ul>'.do_print_categories_list(explode("\n", $cats), $stack=array(0), $arr=array(), $cat_params).'</ul>';
+		$stack=array(0);
+		$arr=array();
+		return '<ul>'.do_print_categories_list(explode("\n", $cats), $stack, $arr, $cat_params).'</ul>';
 	} else {
 		global $lang;
 			
@@ -152,70 +154,3 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
         return implode($result);
 
 }
-
-/*
-function print_list_categories(&$lines, &$indentstack, $result, $params) {
-
-	global $fpdb;
-	
-
-	if (empty($lines))
-		return '';
-	
-	$str = '';
-	$v = reset($lines);
-	$vt = ltrim($v);
-	
-	$indent = strlen($v) - strlen($vt);
-	$indent_old = end($indentstack);
-	
-	extract($params);
-	
-	if ($indent > $indent_old) {
-		array_push($indentstack, $indent);
-		array_pop($result);
-		array_push($result, $old);
-		array_push($result, $ild);
-		array_push($result, $vt);
-		print_list_categories($lines, $indentstack, $result, $params);
-	}elseif($indent < $indent_old) {
-		array_pop($indentstack);
-		array_push($result, $ord);
-		print_list_categories($lines, $indentstack, $result, $params);	
-	}else{
-
-		
-		array_push($result, $ild);
-		
-		/*if (isset($after)) {
-			eval('$the_after = "'.$after.'";');	
-		} else {
-			$the_after = "<label><input name=\"cats[{$catId}]\" ";
-			if ((bool)array_intersect(array($catId),$cats)) {
-				$the_after .='checked="checked" ';
-			}
-			$the_after.='type="checkbox" />';
-		}
-		
-			//array_push($result, $the_after);
-			
-			array_push($result, $vt);
-			
-		/*if (isset($before)) {
-			eval('$the_before = "'.$before.'";');
-			
-		}else{
-			$the_before='</label>';
-		}
-		//array_push($result, $the_before);
-		
-		array_push($result, $ird);
-		array_shift($lines);
-		print_list_categories($lines, $indentstack, $result, $params);
-	}
-	
-	return implode($result);	
-}
-*/
-
-?> 
