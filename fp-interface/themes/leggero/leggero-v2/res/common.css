@@ -35,11 +35,15 @@ p { margin: .5em 0 }
 img { border: none }
 
 blockquote {
-	width: 90%;
-	color: #666;
+	width: 80%;
+	color: #444;
+	background-color: #ddd;
 	margin: 1em 1em;
 	padding: 0 10px;
-	border-left: 5px solid #bbb
+	border-left: 5px solid #aaa;
+	border-right: 1px solid #aaa;
+	border-top: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
 }
 
 pre, code {
@@ -48,8 +52,7 @@ pre, code {
 }
 
 pre {
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
+	border: 1px dashed #555;
 	background-color: #efefef;
 
 	overflow: auto;
@@ -118,7 +121,7 @@ h1 {
 	/* Title of the blog */
 	font-size: 2.2em;
 	letter-spacing: 2px;
-	margin: 2em 0 0 0;
+	margin: 1em 0 1em 0;
 }
 
 h2 { } /* see h2.date */
@@ -133,29 +136,14 @@ h3 {
 
 h4 { font-size: 1.2em; }
 
-
-
-/* ===== DIV CONTAINER ALL ELEMENTS BLOCK ===== */
-#body-container {
-	text-align: left;
-	width: 1000px !important;
-	width: 1000px; /* fix for I.E. */
-	margin: 0 auto 0 auto;
-	padding: 5px;
-	background-color: rgba(0,0,0,0.8);
-	border-radius: 3px;
-}
-
-
-
 /* ===== HEAD ===== */
 #head {
 	font-family: 'book antiqua', georgia, garamond,  times, 'times new roman', serif;
 	padding: 25px 25px 25px 25px;
 	margin: 10px;
 	/*background: #aa4142 url('../imgs/shade.png1') repeat-x;*/
-	background: rgba(184,60,50,0.7);
-	border: #bbb 1px solid;
+	background: rgba(184,60,50,0.4);
+	border: black 1px solid;
 	border-radius: 10px ;
 }
 
@@ -170,6 +158,7 @@ h4 { font-size: 1.2em; }
 
 
 
+
 /* ===== DIV CONTAINER "MAIN" ===== */
 #outer-container {
 	position: relative;
@@ -178,21 +167,63 @@ h4 { font-size: 1.2em; }
 	padding: 0px;
 }
 
+/* ===== NORMAL DESIGN ===== */
+@media (min-width: 720px) {
 
+	body { margin: 10px 0 10px 0 }
 
-/* ===== MAIN ===== */
-#main h4 { margin: 2em 0 0 0}
+	/* ===== BODY CONTAINER ===== */
+	#body-container {
+		text-align: left;
+		max-width: 1000px;
+		width: 100%;
+		margin: 0 auto 0 auto;
+		padding: 5px;
+		background-color: rgba(0,0,0,0.8);
+		border-radius: 3px;
+	}
 
-#main {
-	float:left;
-	position: relative;
-	width: 65% !important;
-	width: 65%;
-	font-size: 100%;
-	padding: 25px;
-	margin: 20px;
-	background-color: rgba(255,255,255,0.8);
-	border-radius: 3px;
+	/* ===== MAIN ===== */
+	#main h4 { margin: 2em 0 0 0}
+
+	#main {
+		float:left;
+		position: relative;
+		width: 65%;
+		font-size: 100%;
+		padding: 25px;
+		margin: 20px;
+		background-color: rgba(255,255,255,0.9);
+		border-radius: 3px;
+	}
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 719px) {
+
+	body { margin: 0 0 0 0 }
+
+	/* ===== BODY CONTAINER ===== */
+	#body-container {
+		text-align: left;
+		width: 100%;
+		margin: 0 auto 0 auto;
+		padding-top: 5px;
+		background-color: rgba(0,0,0,0.8);
+	}
+
+	/* ===== MAIN ===== */
+	#main h4 { margin: 2em 0 0 0}
+
+	#main {
+		float: center;
+		width: 90%;
+		font-size: 100%;
+		padding: 15px;
+		margin: 10px auto;
+		background-color: rgba(255,255,255,0.9);
+		border-radius: 3px;
+	}
 }
 
 #main p { line-height: 1.5em; margin-top: 1.2em; }
@@ -280,10 +311,10 @@ h4 { font-size: 1.2em; }
 /* ===== FOOTER ===== */
 #footer {
 	clear: both;
+	text-align: center;
 	font-size: 80%;
-	color: #555;
+	color: white;
 	padding: 5px;
-	border-top: #bbb 1px solid
 }
 
 * {

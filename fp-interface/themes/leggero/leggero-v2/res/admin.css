@@ -52,8 +52,9 @@ body#inline-body input {
 
 #body-container {
 	text-align: left;
+	font-size: 0.85em;
 	width: 80% !important;
-	width: 80%px; /* fix for I.E. */
+	min-width: 1000px;
 	margin: 0 auto 0 auto;
 	padding: 5px;
 	background-color: rgba(255,255,255,1);

@@ -12,18 +12,32 @@ Module: style.css
 */
 
 
+/* ===== NORMAL DESIGN ===== */
+@media (min-width: 720px) {
+	/* ===== COLUMN ===== */
+	#column {
+		width: 20%;
+		display: inline-block;
+		font-size: 75%;
+		height:1%;
+		margin-bottom: 5px;
+		color: white;
+	}
+}
 
-/* ===== COLUMN ===== */
-#column {
-	float: right;
-	width: 230px !important;
-	width: 230px;
-	font-size: 80% !important;
-	font-size: 75%;
-	height:1%;
-	margin-bottom: 5px;
-	padding: 10px;
-	color: white;
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 719px) {
+	/* ===== COLUMN ===== */
+	#column {
+		text-align: center;
+		float: center;
+		width: 100%;
+		display: inline-block;
+		font-size: 100%;
+		height:1%;
+		margin: 5px auto;
+		color: white;
+	}
 }
 
 #column h4 {
