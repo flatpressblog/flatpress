@@ -1,0 +1,34 @@
+/*
+===================
+Leggero CSS Styles
+===================
+Ispired by: http://pluxml.org theme default
+-------------------
+
+Name: Leggero
+Author: NoWhereMan, drudo & Marc Thibeault
+Version: 0.1
+Module: style.css
+*/
+
+
+
+/* imports common style ruleset */
+@import url(common.css);
+@import url(globals.css);
+
+/* imports column (where widgets usually go) rules */
+@import url(column.css);
+
+/* defines rules specific to the front page */
+body { margin: 10px 0 0 0 }
+
+#comments li.comment-admin {
+	padding:1em
+}
+
+#comments li.comment-admin strong.comment-name { font-size:140% }
+
+#widget-searchbox form {
+	text-align: center;
+}

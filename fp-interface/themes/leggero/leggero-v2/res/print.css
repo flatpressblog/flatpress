@@ -1,0 +1,102 @@
+/*
+===================
+Leggero CSS Styles
+===================
+Ispired by: http://pluxml.org theme default
+-------------------
+
+Name: Leggero
+Author: Laborix
+Version: 0.1
+Module: print.css
+*/
+
+body {
+  color: #333;
+  background-color: transparent;
+}
+
+a {
+  color: #333;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 130%; 
+}
+
+h2 {
+  font-size: 130%; 
+}
+
+h3 {
+  font-size: 100%; 
+}
+
+h4 {
+  font-size: 100%; 
+}
+
+.date {
+  font-size: 100%;
+}
+
+#column {
+  display: none;
+}
+
+.admincontrols {
+  display: none;
+}
+
+.readmore {
+  display: none;
+}
+
+.navigation {
+  display: none;
+}
+
+.entry-footer {
+  clear: both;
+  font-size: 80%;
+  margin: 2em 0 3em 0;
+}
+
+blockquote {
+	margin: 1em 1em;
+	padding: 0 10px;
+	width: 90%;
+	color: #333;
+	background-color: transparent;
+	font-style: italic;
+	border-left: 5px solid #bbb;
+}
+
+pre {
+  clear: both;
+  margin: 0.5em 0 0.5em 0;
+  padding: 0.5em;
+  width: 90%;
+  color: #333;
+  background-color: #eee;
+  font-size: 70%;
+  border: 1px dotted #333;
+}
+
+.link-comments {
+  display: none;
+}
+
+hr {
+  display: none;
+}
+
+#footer {
+  display: none;
+}
+
+#commentform {
+  display: none;
+}
