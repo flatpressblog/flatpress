@@ -5,7 +5,7 @@ Leggero CSS Styles
 Ispired by: http://pluxml.org theme default
 -------------------
 mod by liquibyte
-Name: Leggero
+Name: Leggero v2
 Author: NoWhereMan, drudo & Marc Thibeault
 Version: 0.1
 Module: admin.css
@@ -1167,4 +1167,8 @@ a.link-general:hover, .main-cell a:hover {
 /* (already defined in common, here we put just some tuning settings) */
 #admin-content ul.msgs {
 	margin:0;
+}
+
+#footer {
+	color: black;
 }

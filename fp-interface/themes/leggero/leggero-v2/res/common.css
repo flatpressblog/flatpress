@@ -5,7 +5,7 @@ Leggero CSS Styles
 Ispired by: http://pluxml.org theme default
 -------------------
 
-Name: Leggero
+Name: Leggero v2
 Author: NoWhereMan, drudo & Marc Thibeault
 Version: 0.1
 Module: common.css
@@ -24,7 +24,7 @@ body {
 	font-size: 100%;
 	padding: 0;
 	text-align:center;
-	background: url('../imgs/backbw.png') no-repeat fixed top center;
+	background: url('../imgs/back.png') no-repeat fixed top center;
 	color: black;
 }
 
@@ -36,18 +36,19 @@ img { border: none }
 
 blockquote {
 	width: 80%;
+	font-style: italic;
 	color: #444;
 	background-color: #ddd;
 	margin: 1em 1em;
 	padding: 0 10px;
-	border-left: 5px solid #aaa;
-	border-right: 1px solid #aaa;
-	border-top: 1px solid #aaa;
-	border-bottom: 1px solid #aaa;
+	border-left: 5px solid #888;
+	border-right: 1px solid #888;
+	border-top: 1px solid #888;
+	border-bottom: 1px solid #888;
 }
 
 pre, code {
-	font-family: Lucida Console, Monaco, monospace;
+	font-family: Lucida Console, Monaco, monospace !IMPORTANT;
 	font-size: 90%;
 }
 
@@ -97,7 +98,6 @@ input:hover, input:focus, textarea:hover, textarea:focus {
 
 textarea {
 	font-size: 100%;
-	font-family: 'Lucida Grande', 'Trebuchet MS', arial, Helvetica, sans-serif;
 	width: 99%;
 	margin-top: .1em;
 	margin-bottom: 1em
@@ -119,16 +119,15 @@ a:hover {
 /* ===== HEADERS TAGS ===== */
 h1 {
 	/* Title of the blog */
-	font-size: 2.2em;
+	font-size: 2.3em;
 	letter-spacing: 2px;
-	margin: 1em 0 1em 0;
+	margin: 1em 0 0.5em 0;
 }
 
 h2 { } /* see h2.date */
 
 h3 {
 	/* Titles of the entry */
-	font-family: 'book antiqua', georgia, garamond, times, 'times new roman', serif;
 	font-style: normal;
 	font-size: 1.6em;
 	margin: 0
@@ -138,9 +137,8 @@ h4 { font-size: 1.2em; }
 
 /* ===== HEAD ===== */
 #head {
-	font-family: 'book antiqua', georgia, garamond,  times, 'times new roman', serif;
 	padding: 25px 25px 25px 25px;
-	margin: 10px;
+	margin: 5px;
 	/*background: #aa4142 url('../imgs/shade.png1') repeat-x;*/
 	background: rgba(184,60,50,0.4);
 	border: black 1px solid;
@@ -179,7 +177,7 @@ h4 { font-size: 1.2em; }
 		width: 100%;
 		margin: 0 auto 0 auto;
 		padding: 5px;
-		background-color: rgba(0,0,0,0.8);
+		background-color: rgba(0,0,0,0.85);
 		border-radius: 3px;
 	}
 
@@ -226,7 +224,7 @@ h4 { font-size: 1.2em; }
 	}
 }
 
-#main p { line-height: 1.5em; margin-top: 1.2em; }
+#main p { line-height: 1.4em; margin-top: 1em; }
 
 #main img { margin: .5em }
 
@@ -267,8 +265,9 @@ h4 { font-size: 1.2em; }
 	/* .entry class */
 	.entry {
 		margin: 0 0 1.5em 0;
-		padding: 0;
+		padding: 0 0 1.5em 0;
 		overflow: auto; /* floating images fix IE<7*/
+		border-bottom: solid 1px #999;
 	}
 	
 	#main>.entry {
@@ -303,8 +302,8 @@ h4 { font-size: 1.2em; }
 	}
 	
 	.navigation { /* next entries & previous entries link */
-		font-size: 80%;
-		margin-bottom: 5em
+		font-size: 90%;
+		margin-bottom: 3em
 	}
 
 
@@ -312,7 +311,7 @@ h4 { font-size: 1.2em; }
 #footer {
 	clear: both;
 	text-align: center;
-	font-size: 80%;
+	font-size: 90%;
 	color: white;
 	padding: 5px;
 }

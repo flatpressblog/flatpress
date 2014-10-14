@@ -5,7 +5,7 @@ Leggero CSS Styles
 Ispired by: http://pluxml.org theme default
 -------------------
 
-Name: Leggero
+Name: Leggero v2
 Author: NoWhereMan, drudo & Marc Thibeault
 Version: 0.1
 Module: style.css
@@ -16,9 +16,9 @@ Module: style.css
 @media (min-width: 720px) {
 	/* ===== COLUMN ===== */
 	#column {
-		width: 20%;
+		width: 22%;
 		display: inline-block;
-		font-size: 75%;
+		font-size: 90%;
 		height:1%;
 		margin-bottom: 5px;
 		color: white;
@@ -46,7 +46,7 @@ Module: style.css
 	color: white;
 }
 
-#column p, #column div { margin: 10px 5px }
+#column p, #column div { margin: 5px 0px }
 
 
 
