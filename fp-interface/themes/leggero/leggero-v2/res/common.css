@@ -139,8 +139,7 @@ h4 { font-size: 1.2em; }
 #head {
 	padding: 25px 25px 25px 25px;
 	margin: 5px;
-	/*background: #aa4142 url('../imgs/shade.png1') repeat-x;*/
-	background: rgba(184,60,50,0.4);
+	background: rgba(184,60,50,0.6);
 	border: black 1px solid;
 	border-radius: 10px ;
 }

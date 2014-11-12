@@ -2,7 +2,7 @@
 /*  
 Style Name: Leggero V2
 Style URI: http://www.flatpress.org/
-Description: Modern and actual version of the default FlatPress theme. 
+Description: A modern version of the default FlatPress theme.
 Version: 0.705
 Author: NoWhereMan, Drudo and Marc Thibeault
 Author URI: http://www.flatpress.org/
