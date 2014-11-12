@@ -7,9 +7,6 @@ Version: 0.705
 Author: NoWhereMan, Drudo and Marc Thibeault
 Author URI: http://www.flatpress.org/
 */
-
-
-
 	
 	$style['name'] = 'leggero-v2';
 	$style['author'] = 'NoWhereMan';
