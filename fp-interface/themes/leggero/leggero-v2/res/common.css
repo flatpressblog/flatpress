@@ -22,10 +22,14 @@ html {
 
 body {
 	font-size: 100%;
+	color: black;
 	padding: 0;
 	text-align:center;
 	background: url('../imgs/back.png') no-repeat fixed top center;
-	color: black;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+  	-o-background-size: cover;
+  	background-size: cover;
 }
 
 hr { display: none }
