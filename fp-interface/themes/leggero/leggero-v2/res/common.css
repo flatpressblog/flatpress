@@ -153,9 +153,6 @@ h4 { font-size: 1.2em; }
 		margin: .5em 0 0 0
 	}
 
-
-
-
 /* ===== DIV CONTAINER "MAIN" ===== */
 #outer-container {
 	position: relative;
@@ -206,7 +203,7 @@ h4 { font-size: 1.2em; }
 		width: 100%;
 		margin: 0 auto 0 auto;
 		padding-top: 5px;
-		background-color: rgba(0,0,0,0.8);
+		background-color: rgba(0,0,0,0.85);
 	}
 
 	/* ===== MAIN ===== */
@@ -221,6 +218,45 @@ h4 { font-size: 1.2em; }
 		background-color: rgba(255,255,255,0.9);
 		border-radius: 3px;
 	}
+}
+
+/* ===== INTERNET EXPLORER ===== */
+@media \0screen\,screen\9{
+
+	body { margin: 10px 0 10px 0 }
+
+	/* ===== BODY CONTAINER ===== */
+	#body-container {
+		text-align: left;
+		max-width: 1000px;
+		width: 100%;
+		margin: 0 auto 0 auto;
+		padding: 5px;
+		background-color: black;
+		-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+		border-radius: 3px;
+	}
+
+	/* ===== MAIN ===== */
+	#main h4 { margin: 2em 0 0 0}
+
+	#main {
+		float:left;
+		position: relative;
+		width: 65%;
+		font-size: 100%;
+		padding: 25px;
+		margin: 20px;
+		background-color: white;
+		-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+		border-radius: 3px;
+	}
+
+	#head {
+		background: rgb(184,60,50);
+		-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+	}
+
 }
 
 #main p { line-height: 1.4em; margin-top: 1em; }
