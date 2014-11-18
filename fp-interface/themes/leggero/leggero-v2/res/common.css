@@ -139,7 +139,7 @@ h4 { font-size: 1.2em; }
 #head {
 	padding: 25px 25px 25px 25px;
 	margin: 5px;
-	background: rgba(184,60,50,0.6);
+	background: rgba(184,60,50,0.7);
 	border: black 1px solid;
 	border-radius: 10px ;
 }
@@ -149,7 +149,7 @@ h4 { font-size: 1.2em; }
 	.subtitle {
 		font-size: 100%;
 		font-style: oblique;
-		color: #F1F1F1;
+		color: white;
 		margin: .5em 0 0 0
 	}
 
@@ -173,7 +173,7 @@ h4 { font-size: 1.2em; }
 		width: 100%;
 		margin: 0 auto 0 auto;
 		padding: 5px;
-		background-color: rgba(0,0,0,0.85);
+		background-color: rgba(0,0,0,0.75);
 		border-radius: 3px;
 	}
 
@@ -203,7 +203,7 @@ h4 { font-size: 1.2em; }
 		width: 100%;
 		margin: 0 auto 0 auto;
 		padding-top: 5px;
-		background-color: rgba(0,0,0,0.85);
+		background-color: rgba(0,0,0,0.75);
 	}
 
 	/* ===== MAIN ===== */
@@ -233,7 +233,7 @@ h4 { font-size: 1.2em; }
 		margin: 0 auto 0 auto;
 		padding: 5px;
 		background-color: black;
-		-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+		-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=75)";
 		border-radius: 3px;
 	}
 
