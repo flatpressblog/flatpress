@@ -1,0 +1,55 @@
+/*
+===================
+Leggero CSS Styles
+===================
+
+Name: Leggero v2
+Author: NoWhereMan, drudo & Marc Thibeault
+Version: 0.1
+Module: globals.css
+*/
+
+.alignleft { float: left }
+
+.alignright { float: right }
+
+/* ===== NOTIFICATION ===== */
+#main ul.msgs, ul.msgs {
+	margin: 0;
+	padding: 1em 2em
+}
+
+.errors {
+	color: #901d1d;
+	border-top: 1px solid;
+	border-bottom: 1px solid;
+	border-color: #ffbbbb;
+	background: #ffdddd
+}
+
+.errors a {
+	color: #901d1d;
+	text-decoration: underline;
+	font-weight: normal
+}
+
+.notifications,.enabled {
+	color : #1d901d;
+	border-top: 1px solid #bbffbb;
+	border-bottom: 1px solid #bbffbb;
+	background: #ddffdd
+}
+
+.warnings {
+	color : #8a7802;
+	border-top: 1px solid;
+    border-bottom: 1px solid;
+	border-color: #f8e674;
+	background: #fffdd5;
+
+}
+
+.field-error {
+	border: red 1px solid;
+	background: #fdd
+}

@@ -1,0 +1,1173 @@
+/*
+===================
+Leggero CSS Styles
+===================
+
+mod by liquibyte
+Name: Leggero v2
+Author: NoWhereMan, drudo & Marc Thibeault
+Version: 0.1
+Module: admin.css
+*/
+
+@import url(common.css);
+@import url(globals.css);
+
+<<<<<<< HEAD
+=======
+
+>>>>>>> 109664842ba0aaec1b8e462a3fdcee470110a499
+/* ===== VARIOUS ===== */
+.buttonbar input {
+	padding: .3em;
+	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x;
+}
+.buttonbar input:hover {
+	padding: .3em;
+	background: #d3d3d3 url(../imgs/buttonsh2.png) repeat-x;
+}
+
+/* ===== HEADERS TAGS ===== */
+h1,
+h2 { 
+	font-family: 'book antiqua', georgia, garamond, times, 'times new roman', serif;
+	margin: auto;
+}
+
+h2 {
+	border-bottom: 1px solid #ddd;
+}
+
+body { background: #eee; }
+
+/* === Redefines some stuff in inline mode === */
+body#inline-body {
+	background: white;
+}
+
+body#inline-body input {
+
+}
+
+#body-container {
+	text-align: left;
+	font-size: 0.85em;
+	width: 80% !important;
+	min-width: 1000px;
+	margin: 0 auto 0 auto;
+	padding: 5px;
+	background-color: rgba(255,255,255,1);
+	border-radius: 3px;
+}
+
+/* === Conflict with inner h1 === */
+#admin-content h1 { color: black }
+
+
+
+/* DIV CONTAINER ALL ADMIN DIV BLOCK */
+#cpmain { padding: 10px }
+
+
+
+/* ===== SMALL NAVBAR (home and logout links) ===== */
+ul#admin-small-nav {
+	font-size: 80%;
+	float: right;
+	list-style-type: none
+}
+
+ul#admin-small-nav li { display: inline; margin: 5px }
+
+
+
+/* ===== TAB MENU ===== */
+ul#admin-tabmenu {
+	margin: 1em 0 0 0;
+	padding: .5em;
+	background: #000;
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-topright:3px;
+}
+
+ul#admin-tabmenu li {
+	display: inline;
+	font-size: 85%;
+	font-weight: normal;
+	text-decoration: none
+}
+
+ul#admin-tabmenu li a {
+	color: #fff;
+	line-height: 2em;
+	font-weight: normal;
+	text-decoration: none;
+	padding: 0.5em;
+	margin: .1em;
+}
+
+ul#admin-tabmenu li a.admin-tab-current,
+ul#admin-tabmenu li a:hover {
+	color: black;
+	font-weight: normal;
+	background-color: #ddd;
+	-moz-border-radius: 2px;
+}
+
+ul#admin-tabmenu li a.admin-tab-current {
+	font-weight: bold;
+}
+
+/* ===== submenu ====== */
+
+#admin-submenu {
+	background: #eee; 
+	padding: .5em;
+	border: 1px solid #ccc;
+}
+
+#admin-submenu li {
+	display:inline; 
+	font-size: 80%; 
+}
+
+#admin-submenu li a {
+	padding: 0 1em ;
+	color: #000;
+	border-left: 1px solid #eee;
+	border-right: 1px solid #eee;  
+	font-weight: normal;
+}
+
+#admin-submenu li a:hover,
+#admin-submenu li a.active {
+	color: #eee;
+	background: #555;
+	padding: .1em 1em .3em;
+	-moz-border-radius: 3px;
+	text-decoration: none;
+}
+
+#admin-submenu li a.active {
+	font-weight: bold;
+}
+
+
+
+/* ===== MAIN MENU ITEM ===== */
+#admin-content { padding: 1em }
+
+.admin-mainmenu-item {
+	display: block;
+	padding: 1em;
+	clear: both
+}
+
+.admin-mainmenu-item img { padding-right: 1em }
+
+.admin-mainmenu-item .admin-icon-descr {
+	font-size: 80%;
+	font-style: italic
+}
+
+
+
+/* ===== ADMIN ENTRY ===== */
+input#subject {
+	width: 99%;
+	font-size: 1.3em;
+	color: #333333;
+	font-weight: bold
+}
+
+textarea.code {
+	font-family: Lucida Console, Monaco, monospace;
+	font-size: 90%
+}
+
+#admin-entry-categories ul {
+	display:block;
+	list-style-type: none;
+	margin-right: 10px;
+	padding-left: 1em
+}
+
+#admin-bbcode-toolbar p { display: inline }
+
+#admin-bbcode-toolbar select { width: 10em }
+
+
+
+#admin-content table { width: 100%; }
+
+#admin-content td {
+	font-size: 0.8em;
+	/* 
+		with display:block on the main-cell link, let's disable this
+		padding: .9em;
+	*/
+	background: #e6e6e6;
+	text-align: center;
+}
+
+#admin-content .enabled td {
+	background: inherit;
+} 
+
+#admin-content td.main-cell {
+	width: 30%;
+	text-align: left;
+}
+
+#admin-content th {
+	font-size: 0.75em;
+	font-style: italic;
+	background: #ccc;
+	text-align: center;
+	padding: 8px
+}
+
+input.maxsize, select.maxsize { width: 100% }
+
+
+#admin-bbcode-toolbar {
+	margin: 0;
+	padding: 0;
+	padding-right: 0.7%;
+	border: none
+}
+
+#admin-bbcode-toolbar legend { display: none }
+
+#admin-content ul,
+#admin-content ol { margin-left: 2em }
+
+#admin-entry-uploader iframe {
+	border: none;
+	width: 99%;
+	margin: auto;
+	height: 11em;
+}
+
+
+.admin-entry-commentlist td ,
+.admin-widgets-blockparser td ,
+.admin-plugin-default td {
+	padding: 1em .6em;
+}
+
+#admin-drafts {
+	border-top: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	padding:  .4em;
+	color: #555;
+	background-color: #ddd;
+	overflow: auto;
+}
+
+#admin-drafts p {
+	font-weight: bold;
+	float: left;
+	padding: 0;
+	margin: 0;
+}
+
+#admin-content #admin-drafts ul {
+	margin: 0; padding: 0;
+}
+
+#admin-drafts li {
+	float:left;
+	list-style-position: inside;
+	margin: 0; padding-left: 1em;
+}
+
+
+/* ===== PREVIEW SETTINGS ===== */
+#post-preview .entry { padding: 2em; max-height: 20em; overflow: auto  }
+
+#post-preview ul { list-style: none; padding: 0 0 0 1.6em }
+
+#post-preview  ol { list-style-position: inside; Padding: 0 1.6em 0 1.6em }
+
+
+/* ===== UPLOAD PANEL ===== */
+#admin-uploader-filelist {
+	margin: 1em auto;
+}
+
+#admin-uploader-thumbs {
+	list-style-type: none;
+}
+
+#admin-uploader-thumbs li.thumb {
+	float:left;
+	width: 110px;
+	height: 110px;
+	padding: 1em 4px;
+	margin: 1em;
+}
+
+
+/* (applies only to the inline version */
+#upload {
+	margin-top: .5em
+}
+
+
+/* ===== THEME PANEL ===== */
+
+#current-theme h5, 
+#available-themes h5 {
+	font-size: 1em;
+}
+
+#current-theme {	
+	margin-bottom: 4em;
+	overflow:hidden;
+}
+
+
+#current-theme img { 
+	float:left;
+	border: 1px solid #ddd;
+	margin-right: 2em;
+}
+
+#available-themes {
+	clear: both;
+}
+
+
+#available-themes img {
+	border: 1px solid #eee
+}
+
+#available-themes ul {
+	list-style-type: none;
+}
+
+#available-themes ul li {
+	float:left;
+	padding: 1em;
+	border: 1px solid #fff;
+	text-align: center;
+	width: 300px;
+}
+
+#available-themes ul li:hover {
+	background: #eee;
+	border: 1px solid #ddd;
+}
+
+/* ===== WIDGET PANEL ====== */
+
+#admin-widgetset-list {
+	width: 30em;
+}
+
+#admin-widgetset-list ul {
+	list-style-type: none;
+	margin: 0;
+	margin-bottom: 2em;
+	text-align: left;
+}
+
+li.admin-widgetset {
+	padding: .5em;
+	margin-bottom: 2em;
+	border: 1px solid #ddd;
+}
+
+#available-widgets {
+	font-size: 80%;
+	float:right;
+	border: 1px solid #ddd;
+	background: #eee;
+	padding: 1em;
+	width: 30%;
+	z-index: 1000;
+	position: relative;
+	text-align: left;
+}
+
+#widget-trashcan { /*colors for trashcan/uninstall widgets while dragging*/
+	background-color: rgba(170, 34, 34, 0.7);
+	color: #ddd;
+	font-size: 120%;
+	font-weight: bold;
+	padding: 2em;
+	text-align: center;
+	border: 2px solid #f00;
+	margin: 2em;
+}
+
+.widget-available { /*colors for available widgets while dragging*/
+	cursor: move;
+	color: #fff;
+	background-color: rgba(34, 102, 0, 0.7);
+	border: 2px solid #2f0;
+	z-index: 2000;
+}
+
+.widget-installed { /*colors for installed widgets while dragging*/
+	cursor: move;
+	color: #fff;
+	background-color: rgba(0, 34, 102, 0.7);
+	border: 2px solid #00f;
+	z-index: 2000;
+}
+
+#available-widgets ul, .admin-widgetset ul {
+	padding-left: 0;
+	margin-left: 0;
+}
+
+
+li.widget-instance,
+li.widget-class {
+	cursor: move;
+	border: 1px solid #bbb;
+	margin: 2px;
+	padding: .5em;
+	height: 30px;
+	background-color: white;
+	list-style-type: none;
+}
+
+
+.admin-widgetset h3 {
+	margin-bottom:1em;
+	padding: .3em;
+	background: #eee;
+	border: 1px solid #ddd;
+}
+
+#available-widgets h2 {
+	cursor: move;
+	color: white;
+	margin-bottom:1em;
+	padding: .3em;
+	border: 1px solid #eee;
+	background: #999;
+}
+
+.widget-instance .textinput {
+	padding: .4em;
+	background: transparent;
+	font-weight: bold;
+	font-style: oblique;
+	color: blue;
+	border: #fff 2px solid;
+	text-align: right;
+}
+
+.widget-instance .textinput:hover {
+	border: #d00 2px solid;
+	background-color:white;
+}
+
+
+.widget-instance .textinput:focus {
+	font-style: normal;
+	border: #f00 2px solid;
+	background-color:white;
+	text-align: left;
+}
+
+
+.widgetname a, 
+.widgetname a:link,
+.widgetname a:visited {
+	color: #ddd;
+}
+
+.widget-placeholder {
+	padding: .5em;
+	font-style: oblique;
+	text-align: center;
+	border: 1px dashed #ddd;
+}
+
+.widget-dragger {
+	text-align: left;
+	z-index: 1000;
+	padding: .5em;
+	height: 30px !important;
+}
+
+
+/* ===== CONFIG PANEL ===== */
+
+.option-set .option-list {
+	margin-bottom: 4em;
+}
+
+.option-set dt {
+    width: 33%;
+    text-align:right;
+    margin-top: 1.8em;
+    line-height: 1.5em;
+    font-weight: bold;
+}
+
+.option-set dt label {
+	padding-top: .2em;
+}
+
+.option-set dd {
+    margin-left: 35%;
+    margin-top: -1.7em;
+    line-height: 1.5em;
+}
+
+
+.option-set dd p {
+    margin: 0;
+}
+
+
+.option-set dd input{
+	margin-bottom: .2em;
+}
+
+.textinput, .bigtextinput, .smalltextinput {
+	padding: .5em;
+}
+
+.textinput:focus, .bigtextinput:focus, .smalltextinput:focus {
+	font-weight: bold;
+}
+
+.widetextinput {
+	width: 99%;
+	font-size: 1.3em;
+	color: #333333;
+}
+
+.option-set input.textinput ,
+.option-set select.textinput {
+	width: 20em;
+}
+
+
+.option-set input.bigtextinput {
+	width: 30em;
+}
+
+
+.option-set input.smalltextinput {
+	width: 5em;
+}
+
+/* ===== SPECIAL HOVERS ====== */
+a.link-disable, 
+a.link-delete, 
+a.link-enable,
+a.link-general {
+	padding: .9em;
+}
+
+td.main-cell a.link-general {display:block}
+
+a.link-disable:hover, a.link-delete:hover {
+	background-color: red;
+	color: white;
+}
+a.link-enable:hover {
+	background-color: green;
+	color: white;
+}
+
+a.link-general:hover, .main-cell a:hover {
+	background-color: #aaa;
+	color: black;
+}
+
+
+
+/* ===== NOTIFICATIONS ===== */
+.hint {
+	cursor: help;
+}
+
+.draft { background-color: #333 }
+
+/* (already defined in common, here we put just some tuning settings) */
+#admin-content ul.msgs {
+	margin:0;
+}
+/*
+===================
+Leggero CSS Styles
+===================
+Ispired by: http://pluxml.org theme default
+-------------------
+
+Name: Leggero
+Author: NoWhereMan & drudo
+Version: 0.1
+Module: admin.css
+*/
+
+@import url(common.css);
+@import url(globals.css);
+
+
+/* ===== VARIOUS ===== */
+.buttonbar input {
+	padding: .3em;
+	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x;
+}
+.buttonbar input:hover {
+	padding: .3em;
+	background: #d3d3d3 url(../imgs/buttonsh2.png) repeat-x;
+}
+
+/* ===== HEADERS TAGS ===== */
+h1,
+h2 { 
+	font-family: 'book antiqua', georgia, garamond, times, 'times new roman', serif;
+	margin: auto;
+}
+
+h2 {
+	border-bottom: 1px solid #ddd;
+}
+
+body { background: #eee; }
+
+/* === Redefines some stuff in inline mode === */
+body#inline-body {
+	background: white;
+}
+
+body#inline-body input {
+
+}
+
+/* === Conflict with inner h1 === */
+#admin-content h1 { color: black }
+
+
+
+/* DIV CONTAINER ALL ADMIN DIV BLOCK */
+#cpmain { padding: 10px }
+
+
+
+/* ===== SMALL NAVBAR (home and logout links) ===== */
+ul#admin-small-nav {
+	font-size: 80%;
+	float: right;
+	list-style-type: none
+}
+
+ul#admin-small-nav li { display: inline; margin: 5px }
+
+
+
+/* ===== TAB MENU ===== */
+ul#admin-tabmenu {
+	margin: 1em 0 0 0;
+	padding: .5em;
+	background: #000;
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-topright:3px;
+}
+
+ul#admin-tabmenu li {
+	display: inline;
+	font-size: 85%;
+	font-weight: normal;
+	text-decoration: none
+}
+
+ul#admin-tabmenu li a {
+	color: #fff;
+	line-height: 2em;
+	font-weight: normal;
+	text-decoration: none;
+	padding: 0.5em;
+	margin: .1em;
+}
+
+ul#admin-tabmenu li a.admin-tab-current,
+ul#admin-tabmenu li a:hover {
+	color: black;
+	font-weight: normal;
+	background-color: #ddd;
+	-moz-border-radius: 2px;
+}
+
+ul#admin-tabmenu li a.admin-tab-current {
+	font-weight: bold;
+}
+
+/* ===== submenu ====== */
+
+#admin-submenu {
+	background: #eee; 
+	padding: .5em;
+	border: 1px solid #ccc;
+}
+
+#admin-submenu li {
+	display:inline; 
+	font-size: 80%; 
+}
+
+#admin-submenu li a {
+	padding: 0 1em ;
+	color: #000;
+	border-left: 1px solid #eee;
+	border-right: 1px solid #eee;  
+	font-weight: normal;
+}
+
+#admin-submenu li a:hover,
+#admin-submenu li a.active {
+	color: #eee;
+	background: #555;
+	padding: .1em 1em .3em;
+	-moz-border-radius: 3px;
+	text-decoration: none;
+}
+
+#admin-submenu li a.active {
+	font-weight: bold;
+}
+
+
+
+/* ===== MAIN MENU ITEM ===== */
+#admin-content { padding: 1em }
+
+.admin-mainmenu-item {
+	display: block;
+	padding: 1em;
+	clear: both
+}
+
+.admin-mainmenu-item img { padding-right: 1em }
+
+.admin-mainmenu-item .admin-icon-descr {
+	font-size: 80%;
+	font-style: italic
+}
+
+
+
+/* ===== ADMIN ENTRY ===== */
+input#subject {
+	width: 99%;
+	font-size: 1.3em;
+	color: #333333;
+	font-weight: bold
+}
+
+textarea.code {
+	font-family: Lucida Console, Monaco, monospace;
+	font-size: 90%
+}
+
+#admin-entry-categories ul {
+	display:block;
+	list-style-type: none;
+	margin-right: 10px;
+	padding-left: 1em
+}
+
+#admin-bbcode-toolbar p { display: inline }
+
+#admin-bbcode-toolbar select { width: 10em }
+
+
+
+#admin-content table { width: 100%; }
+
+#admin-content td {
+	font-size: 0.8em;
+	/* 
+		with display:block on the main-cell link, let's disable this
+		padding: .9em;
+	*/
+	background: #e6e6e6;
+	text-align: center;
+}
+
+#admin-content .enabled td {
+	background: inherit;
+} 
+
+#admin-content td.main-cell {
+	width: 30%;
+	text-align: left;
+}
+
+#admin-content th {
+	font-size: 0.75em;
+	font-style: italic;
+	background: #ccc;
+	text-align: center;
+	padding: 8px
+}
+
+input.maxsize, select.maxsize { width: 100% }
+
+
+#admin-bbcode-toolbar {
+	margin: 0;
+	padding: 0;
+	padding-right: 0.7%;
+	border: none
+}
+
+#admin-bbcode-toolbar legend { display: none }
+
+#admin-content ul,
+#admin-content ol { margin-left: 2em }
+
+#admin-entry-uploader iframe {
+	border: none;
+	width: 99%;
+	margin: auto;
+	height: 11em;
+}
+
+
+.admin-entry-commentlist td ,
+.admin-widgets-blockparser td ,
+.admin-plugin-default td {
+	padding: 1em .6em;
+}
+
+#admin-drafts {
+	border-top: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	padding:  .4em;
+	color: #555;
+	background-color: #ddd;
+	overflow: auto;
+}
+
+#admin-drafts p {
+	font-weight: bold;
+	float: left;
+	padding: 0;
+	margin: 0;
+}
+
+#admin-content #admin-drafts ul {
+	margin: 0; padding: 0;
+}
+
+#admin-drafts li {
+	float:left;
+	list-style-position: inside;
+	margin: 0; padding-left: 1em;
+}
+
+
+/* ===== PREVIEW SETTINGS ===== */
+#post-preview .entry { padding: 2em; max-height: 20em; overflow: auto  }
+
+#post-preview ul { list-style: none; padding: 0 0 0 1.6em }
+
+#post-preview  ol { list-style-position: inside; Padding: 0 1.6em 0 1.6em }
+
+
+/* ===== UPLOAD PANEL ===== */
+#admin-uploader-filelist {
+	margin: 1em auto;
+}
+
+#admin-uploader-thumbs {
+	list-style-type: none;
+}
+
+#admin-uploader-thumbs li.thumb {
+	float:left;
+	width: 110px;
+	height: 110px;
+	padding: 1em 4px;
+	margin: 1em;
+}
+
+
+/* (applies only to the inline version */
+#upload {
+	margin-top: .5em
+}
+
+
+/* ===== THEME PANEL ===== */
+
+#current-theme h5, 
+#available-themes h5 {
+	font-size: 1em;
+}
+
+#current-theme {	
+	margin-bottom: 4em;
+	overflow:hidden;
+}
+
+
+#current-theme img { 
+	float:left;
+	border: 1px solid #ddd;
+	margin-right: 2em;
+}
+
+#available-themes {
+	clear: both;
+}
+
+
+#available-themes img {
+	border: 1px solid #eee
+}
+
+#available-themes ul {
+	list-style-type: none;
+}
+
+#available-themes ul li {
+	float:left;
+	padding: 1em;
+	border: 1px solid #fff;
+	text-align: center;
+	width: 300px;
+}
+
+#available-themes ul li:hover {
+	background: #eee;
+	border: 1px solid #ddd;
+}
+
+/* ===== WIDGET PANEL ====== */
+
+#admin-widgetset-list {
+	width: 30em;
+}
+
+#admin-widgetset-list ul {
+	list-style-type: none;
+	margin: 0;
+	margin-bottom: 2em;
+	text-align: left;
+}
+
+li.admin-widgetset {
+	padding: .5em;
+	margin-bottom: 2em;
+	border: 1px solid #ddd;
+}
+
+#available-widgets {
+	font-size: 80%;
+	float:right;
+	border: 1px solid #ddd;
+	background: #eee;
+	padding: 1em;
+	width: 30%;
+	z-index: 1000;
+	position: relative;
+	text-align: left;
+}
+
+#widget-trashcan {
+	background-color: #a22;
+	color: #ddd;
+	font-size: 120%;
+	font-weight: bold;
+	padding: 2em;
+	text-align: center;
+	border: 2px solid #f00;
+	margin: 2em;
+}
+
+#available-widgets ul, .admin-widgetset ul {
+	padding-left: 0;
+	margin-left: 0;
+}
+
+
+li.widget-instance,
+li.widget-class {
+	cursor: move;
+	border: 1px solid #bbb;
+	margin: 2px;
+	padding: .5em;
+	height: 30px;
+	background-color: white;
+	list-style-type: none;
+}
+
+
+.admin-widgetset h3 {
+	margin-bottom:1em;
+	padding: .3em;
+	background: #eee;
+	border: 1px solid #ddd;
+}
+
+#available-widgets h2 {
+	cursor: move;
+	color: white;
+	margin-bottom:1em;
+	padding: .3em;
+	border: 1px solid #eee;
+	background: #999;
+}
+
+.widget-instance .textinput {
+	padding: .4em;
+	background: transparent;
+	font-weight: bold;
+	font-style: oblique;
+	color: blue;
+	border: #fff 2px solid;
+	text-align: right;
+}
+
+.widget-instance .textinput:hover {
+	border: #d00 2px solid;
+	background-color:white;
+}
+
+
+.widget-instance .textinput:focus {
+	font-style: normal;
+	border: #f00 2px solid;
+	background-color:white;
+	text-align: left;
+}
+
+
+.widgetname a, 
+.widgetname a:link,
+.widgetname a:visited {
+	color: #ddd;
+}
+
+.widget-placeholder {
+	padding: .5em;
+	font-style: oblique;
+	text-align: center;
+	border: 1px dashed #ddd;
+}
+
+.widget-dragger {
+	text-align: left;
+	z-index: 1000;
+	padding: .5em;
+	height: 30px !important;
+}
+
+
+/* ===== CONFIG PANEL ===== */
+
+.option-set .option-list {
+	margin-bottom: 4em;
+}
+
+.option-set dt {
+    width: 33%;
+    text-align:right;
+    margin-top: 1.8em;
+    line-height: 1.5em;
+    font-weight: bold;
+}
+
+.option-set dt label {
+	padding-top: .2em;
+}
+
+.option-set dd {
+    margin-left: 35%;
+    margin-top: -1.7em;
+    line-height: 1.5em;
+}
+
+
+.option-set dd p {
+    margin: 0;
+}
+
+
+.option-set dd input{
+	margin-bottom: .2em;
+}
+
+.textinput, .bigtextinput, .smalltextinput {
+	padding: .5em;
+}
+
+.textinput:focus, .bigtextinput:focus, .smalltextinput:focus {
+	font-weight: bold;
+}
+
+.widetextinput {
+	width: 99%;
+	font-size: 1.3em;
+	color: #333333;
+}
+
+.option-set input.textinput ,
+.option-set select.textinput {
+	width: 20em;
+}
+
+
+.option-set input.bigtextinput {
+	width: 30em;
+}
+
+
+.option-set input.smalltextinput {
+	width: 5em;
+}
+
+/* ===== SPECIAL HOVERS ====== */
+a.link-disable, 
+a.link-delete, 
+a.link-enable,
+a.link-general {
+	padding: .9em;
+}
+
+td.main-cell a.link-general {display:block}
+
+a.link-disable:hover, a.link-delete:hover {
+	background-color: red;
+	color: white;
+}
+a.link-enable:hover {
+	background-color: green;
+	color: white;
+}
+
+a.link-general:hover, .main-cell a:hover {
+	background-color: #aaa;
+	color: black;
+}
+
+
+
+/* ===== NOTIFICATIONS ===== */
+.hint {
+	cursor: help;
+}
+
+.draft { background-color: #333 }
+
+/* (already defined in common, here we put just some tuning settings) */
+#admin-content ul.msgs {
+	margin:0;
+}
+
+#footer {
+	color: black;
+}
