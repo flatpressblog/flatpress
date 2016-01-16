@@ -33,6 +33,7 @@
 		<label class="textlabel" for="url">{$lang.comments.www}</label>
 		</p>
 		
+		{* do action *}
 		{comment_form}
 		
 	</div>
@@ -42,7 +43,7 @@
 	
 	<div class="comment-content">
 			<p><textarea name="content" {$error.content|notempty:'class="field-error"'}
-			id="content" rows="10" cols="74">{$values.content}</textarea></p>
+			id="content" rows="10" cols="74">{$values.content|wp_specialchars:1}</textarea></p>
 			{*here will go a plugin hook*}
 	</div>
 	

@@ -1,0 +1,62 @@
+/*
+===================
+Leggero CSS Styles
+===================
+
+Name: Leggero v2
+Author: NoWhereMan, drudo & Marc Thibeault
+Version: 0.1
+Module: style.css
+*/
+
+/* ===== NORMAL DESIGN ===== */
+@media (min-width: 720px) {
+	/* ===== COLUMN ===== */
+	#column {
+		width: 22%;
+		display: inline-block;
+		font-size: 90%;
+		height:1%;
+		margin-bottom: 5px;
+		color: white;
+	}
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 719px) {
+	/* ===== COLUMN ===== */
+	#column {
+		text-align: center;
+		float: center;
+		width: 100%;
+		display: inline-block;
+		font-size: 100%;
+		height:1%;
+		margin: 5px auto;
+		color: white;
+	}
+}
+
+#column h4 {
+	/* Titles of the sections */
+	margin-bottom: .5em;
+	color: white;
+}
+
+#column p, #column div { margin: 5px 0px }
+
+
+
+/* === List === */
+#column ul li table { font-size: 100% }
+
+#column ul {
+	list-style-type: none;
+	margin-right: 10px;
+	margin-bottom: .5em;
+	padding-left: 1em
+}
+
+#column fieldset { margin: 0 5px 0 5px }
+
+#column legend { font-size: 100% }

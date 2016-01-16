@@ -18,7 +18,7 @@
 			-->
 			
 			<p>
-			This blog is powered by <a href="http://www.flatpress.org/">FlatPress</a>.
+			This blog is proudly powered by <a href="http://www.flatpress.org/">FlatPress</a>.
 			</p>
 		</div> <!-- end of #footer -->
 
