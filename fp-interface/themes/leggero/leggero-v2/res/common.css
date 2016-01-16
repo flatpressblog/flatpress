@@ -1,0 +1,366 @@
+/*
+===================
+Leggero CSS Styles
+===================
+
+Name: Leggero v2
+Author: NoWhereMan, drudo & Marc Thibeault
+Version: 0.1
+Module: common.css
+*/
+
+/* ===== GENERAL (redefinition HTML tag) ===== */
+html {
+	font-size: 100%;
+	margin: 0;
+	padding: 0
+}
+
+body {
+	font-size: 100%;
+	color: black;
+	padding: 0;
+	text-align:center;
+	background: url('../imgs/back.jpg') no-repeat fixed top center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+  	-o-background-size: cover;
+  	background-size: cover;
+}
+
+hr { display: none }
+
+p { margin: .5em 0 }
+
+img { border: none }
+
+blockquote {
+	width: 80%;
+	font-style: italic;
+	color: #444;
+	background-color: #ddd;
+	margin: 1em 1em;
+	padding: 0 10px;
+	border-left: 5px solid #888;
+	border-right: 1px solid #888;
+	border-top: 1px solid #888;
+	border-bottom: 1px solid #888;
+}
+
+pre, code {
+	font-family: Lucida Console, Monaco, monospace !IMPORTANT;
+	font-size: 90%;
+}
+
+pre {
+	border: 1px dashed #555;
+	background-color: #efefef;
+
+	overflow: auto;
+	width: 90%;
+	margin: 1em 1em;
+	padding: 5px 10px;
+	
+	/* fix overflow in IE */
+	min-height: 40px; 
+	height: auto !important; 
+	height: 40px; 
+}
+
+ul, li, ol { margin: 0; padding: 0 }
+
+/* === Form === */
+form { margin: 1em 0 }
+
+fieldset {
+	margin: 0 0 1em 0;
+	padding: .5em;
+	border: #ddd solid 1px
+}
+
+legend {
+	color: #666666;
+	font-size: 80%;
+	font-style: oblique
+}
+
+input, textarea, select {
+	padding: .2em;
+	border: 1px solid #999;
+	color: #222;
+	background-color: #eee;
+}
+
+input:hover, input:focus, textarea:hover, textarea:focus {
+	border: 1px solid #AA1111;
+	background-color: #fff
+}
+
+textarea {
+	font-size: 100%;
+	width: 99%;
+	margin-top: .1em;
+	margin-bottom: 1em
+}
+
+
+
+/* ===== LINKS GENERAL ===== */
+a:link, a:visited {
+	color: #B83C32;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+/* ===== HEADERS TAGS ===== */
+h1 {
+	/* Title of the blog */
+	font-size: 2.3em;
+	letter-spacing: 2px;
+	margin: 1em 0 0.5em 0;
+}
+
+h2 { } /* see h2.date */
+
+h3 {
+	/* Titles of the entry */
+	font-style: normal;
+	font-size: 1.6em;
+	margin: 0
+}
+
+h4 { font-size: 1.2em; }
+
+/* ===== HEAD ===== */
+#head {
+	padding: 25px 25px 25px 25px;
+	margin: 5px;
+	background: rgba(184,60,50,0.7);
+	border: black 1px solid;
+	border-radius: 10px ;
+}
+
+#head a { color: white; text-decoration: none }
+
+	.subtitle {
+		font-size: 100%;
+		font-style: oblique;
+		color: white;
+		margin: .5em 0 0 0
+	}
+
+/* ===== DIV CONTAINER "MAIN" ===== */
+#outer-container {
+	position: relative;
+	height: 1%;
+	margin: 0px;
+	padding: 0px;
+}
+
+/* ===== NORMAL DESIGN ===== */
+@media (min-width: 720px) {
+
+	body { margin: 10px 0 10px 0 }
+
+	/* ===== BODY CONTAINER ===== */
+	#body-container {
+		text-align: left;
+		max-width: 1000px;
+		width: 100%;
+		margin: 0 auto 0 auto;
+		padding: 5px;
+		background-color: rgba(0,0,0,0.75);
+		border-radius: 3px;
+	}
+
+	/* ===== MAIN ===== */
+	#main h4 { margin: 2em 0 0 0}
+
+	#main {
+		float:left;
+		position: relative;
+		width: 65%;
+		font-size: 100%;
+		padding: 25px;
+		margin: 20px;
+		background-color: rgba(255,255,255,0.9);
+		border-radius: 3px;
+	}
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 719px) {
+
+	body { margin: 0 0 0 0 }
+
+	/* ===== BODY CONTAINER ===== */
+	#body-container {
+		text-align: left;
+		width: 100%;
+		margin: 0 auto 0 auto;
+		padding-top: 5px;
+		background-color: rgba(0,0,0,0.75);
+	}
+
+	/* ===== MAIN ===== */
+	#main h4 { margin: 2em 0 0 0}
+
+	#main {
+		float: center;
+		width: 90%;
+		font-size: 100%;
+		padding: 15px;
+		margin: 10px auto;
+		background-color: rgba(255,255,255,0.9);
+		border-radius: 3px;
+	}
+}
+
+/* ===== INTERNET EXPLORER ===== */
+@media \0screen\,screen\9{
+
+	body { margin: 10px 0 10px 0 }
+
+	/* ===== BODY CONTAINER ===== */
+	#body-container {
+		text-align: left;
+		max-width: 1000px;
+		width: 100%;
+		margin: 0 auto 0 auto;
+		padding: 5px;
+		background:none;
+		background-color:rgba(0,0,0,0.75);
+		-ms-filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#BF000000,endColorstr=#BF000000);
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#BF000000,endColorstr=#BF000000);
+		zoom:1;
+		border-radius: 3px;
+	}
+
+	/* ===== MAIN ===== */
+	#main h4 { margin: 2em 0 0 0}
+
+	#main {
+		float:left;
+		position: relative;
+		width: 65%;
+		font-size: 100%;
+		padding: 25px;
+		margin: 20px;
+		background:none;
+		background-color:rgba(255,255,255,0.9);
+		-ms-filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#E6FFFFFF,endColorstr=#E6FFFFFF);
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#E6FFFFFF,endColorstr=#E6FFFFFF);
+		zoom:1;
+		border-radius: 3px;
+	}
+
+	#head {
+		background:none;
+		background-color:rgba(184,60,46,0.7);
+		-ms-filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#B3b83c2e,endColorstr=#B3b83c2e);
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#B3b83c2e,endColorstr=#B3b83c2e);
+		zoom:1;
+	}
+
+}
+
+#main p { line-height: 1.4em; margin-top: 1em; }
+
+#main img { margin: .5em }
+
+/* === List === */
+#main ul {
+	list-style-type: disc;
+	padding: 0 0 0 1.6em
+}
+
+#main ol {
+	list-style-position: inside;
+	padding: 0 1.6em 0 1.6em
+}
+
+	#commentform fieldset p { margin: 0 0 .5em 0 }
+	
+	#comments li {
+		margin: 0 0 1.5em 0;
+		padding: 5px;
+		border-top: 1px solid #ddd;
+		border-bottom: 1px solid #ddd;
+		background: #efefef
+	}
+	
+	/* === Class of main block === */
+	h2.date {
+		font-size: 0.8em;
+		color: #444;
+	}
+	
+	.date { /* date under titles of the entry */
+		font-size: 80%;
+		font-style: oblique;
+		color: black;
+		margin: .2em 0 .8em 0
+	}
+	
+	/* .entry class */
+	.entry {
+		margin: 0 0 1.5em 0;
+		padding: 0 0 1.5em 0;
+		overflow: auto; /* floating images fix IE<7*/
+		border-bottom: solid 1px #999;
+	}
+	
+	#main>.entry {
+		overflow: hidden; /* rest of the world :) */
+	}
+	/* end of .entry */
+	
+	#main ul.entry-footer { /*  entry footer */
+		clear: both;
+		font-size: 80%;
+		color: black;
+		margin: 2em 0 .5em 0;
+		text-align: right;
+	}
+	
+	.entry-footer li { 
+		display: block;
+	}
+	
+	
+	.admincontrols { /* [edit] and [delete] */
+		font-size: 80%;
+		text-align: right;
+	}
+	
+	.buttonbar { text-align: center }
+	
+	.buttonbar input {
+		text-align: center;
+		margin: .1em .5em;
+		padding: 0 1em
+	}
+	
+	.navigation { /* next entries & previous entries link */
+		font-size: 90%;
+		margin-bottom: 3em
+	}
+
+
+/* ===== FOOTER ===== */
+#footer {
+	clear: both;
+	text-align: center;
+	font-size: 90%;
+	color: white;
+	padding: 5px;
+}
+
+* {
+   font-family: 'Open Sans', sans-serif;
+   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
+  }
