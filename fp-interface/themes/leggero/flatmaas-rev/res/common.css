@@ -254,8 +254,9 @@ h3 a, h3 a:link, h3 a:visited {
 
 #emoticon { 
 		margin: 0em !IMPORTANT;
-		height: 17px;
-		width: 17px;
+		height: 18px;
+		width: 18px;
+		vertical-align: text-top;
 		}
 
 

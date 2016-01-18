@@ -274,8 +274,9 @@ h4 { font-size: 1.2em; }
 
 #emoticon { 
 		margin: 0em !IMPORTANT;
-		height: 17px;
-		width: 17px;
+		height: 20px;
+		width: 20px;
+		vertical-align: text-top;
 		}
 
 /* === List === */
