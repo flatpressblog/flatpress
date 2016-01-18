@@ -252,6 +252,12 @@ h3 a, h3 a:link, h3 a:visited {
 	color: #333;
 }
 
+#emoticon { 
+		margin: 0em !IMPORTANT;
+		height: 17px;
+		width: 17px;
+		}
+
 
 #subheader a:link, #subheader a:visited, #footer a:link, #footer a:visited  {
 	color: white;
