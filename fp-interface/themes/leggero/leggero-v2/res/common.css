@@ -272,6 +272,13 @@ h4 { font-size: 1.2em; }
 
 #main img { margin: .5em }
 
+#emoticon { 
+		margin: 0em !IMPORTANT;
+		height: 20px;
+		width: 20px;
+		vertical-align: text-top;
+		}
+
 /* === List === */
 #main ul {
 	list-style-type: disc;
