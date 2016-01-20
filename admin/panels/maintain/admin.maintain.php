@@ -78,8 +78,8 @@
 	class admin_maintain_updates extends AdminPanelAction {
 		
 		var $web = 'http://flatpress.org/fp/VERSION';
-		var $fpweb = 'http://www.flatpress.org/home/blog.php';
-		var $sfweb = 'http://sourceforge.net/projects/flatpress/files/';
+		var $fpweb = 'https://github.com/evacchi/flatpress';
+		var $sfweb = 'https://github.com/evacchi/flatpress/releases';
 	
 		function main() {
 			$success = -1;
