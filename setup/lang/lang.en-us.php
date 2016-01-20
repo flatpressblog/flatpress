@@ -147,8 +147,8 @@ Want to see more?
 
 [list]
 [*]Follow the [url=http://www.flatpress.org/home/blog.php]official blog[/url] to know what's going on in the FlatPress world
-[*]Go to the [url=http://www.flatpress.org/forums/categories.php]forums[/url] for support and chit-chat
-[*]Get [b]great themes[/b] on the [url=http://themes.flatpress.org]editor's pick[/url] site or choose from [url=http://wiki.flatpress.org/res:themes]other users' submissions[/url]!
+[*]Go to the [url=http://flatpress.org/vanilla2/]forums[/url] for support and chit-chat
+[*]Get [b]great themes[/b] from [url=http://wiki.flatpress.org/res:themes]other users' submissions[/url]!
 [*]Check out the [url=http://wiki.flatpress.org/res:plugins]unofficial plugins[/url]
 [*]Get [url=http://wiki.flatpress.org/res:language]translation pack[/url] for your language 
 [/list]
@@ -160,7 +160,7 @@ Want to see more?
 [*]Support the project with a [url=http://www.flatpress.org/home/static.php?page=donate]small donation[/url]
 [*]Contribute to the development of Flatpress on [url="https://github.com/evacchi/flatpress"]GitHub[/url]!
 [*]Translate FlatPress or the documentation into [url=http://wiki.flatpress.org/res:language]your language[/url]
-[*]Share your knowledge with other people on the [url=http://www.flatpress.org/forums/categories.php]forums[/url]
+[*]Share your knowledge with other people on the [url=http://flatpress.org/vanilla2/]forums[/url]
 [*]Spread the word!
 [/list]
 
