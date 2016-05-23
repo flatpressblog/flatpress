@@ -32,7 +32,8 @@ function smarty_function_list_categories($params) //, &$smarty)
 		$cats = trim(io_load_file(CONTENT_DIR . 'categories.txt'));
 		$stack=array(0);
 		$arr=array();
-		return '<ul>'.do_print_categories_list(explode("\n", $cats), $stack, $arr, $cat_params).'</ul>';
+		$explode_result=explode("\n", $cats);
+		return '<ul>'.do_print_categories_list($explode_result, $stack, $arr, $cat_params).'</ul>';
 	} else {
 		global $lang;
 			
