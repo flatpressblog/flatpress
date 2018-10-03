@@ -159,6 +159,15 @@ if (!defined('MOD_INDEX')) {
 	}
 	
 	function smarty_search_result($params, $content, &$smarty, &$repeat) {
+		/* 
+		// FIXME AZI: each() ersetzen.
+		Gelernt bisher: 
+		- Diese Funktion wird für jedes Suchergebnis aufgerufen.
+		- $srchresults ist global und wird vom each() durchlaufen - bei jedem Aufruf geht der Zeiger ein Element weiter
+		  - Frage: Wie kann man das emulieren? Globale Counter-Variable einführen? Oder mit next() das nächste Element von $srchresults holen?
+		
+		siehe https://secure.php.net/manual/en/function.each.php
+		*/
 		
 		global $srchresults, $post;
 		

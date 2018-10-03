@@ -30,9 +30,15 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 	$title   = htmlentities(ucfirst($month_name)).'&nbsp;'.$year;  #note that some locales don't capitalize month and day names
 
 	#Begin calendar. Uses a real <caption>. See http://diveintomark.org/archives/2002/07/03
+	// PHP7 compatibility: Since $pn is never passed, we do not need to create "previous" and "next" elements. 
+	// Commented out to prevent deprecated each() function from being executed.
+	$p = '';
+	$n = '';
+/*
 	@list($p, $pl) = each($pn); @list($n, $nl) = each($pn); #previous and next links, if applicable
 	if($p) $p = '<span class="calendar-prev">'.($pl ? '<a href="'.($pl).'">'.$p.'</a>' : $p).'</span>&nbsp;';
 	if($n) $n = '&nbsp;<span class="calendar-next">'.($nl ? '<a href="'.($nl).'">'.$n.'</a>' : $n).'</span>';
+*/
 	$calendar = '<table class="calendar">'."\n".
 		'<caption class="calendar-month">'.$p.($month_href ? '<a href="'.($month_href).'">'.$title.'</a>' : $title).$n."</caption>\n<tr>";
 
