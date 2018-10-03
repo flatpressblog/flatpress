@@ -21,7 +21,7 @@
 			//$this->smarty = $GLOBALS['_FP_SMARTY'];
 			
 			$this->_directory = CACHE_DIR;
-			parent::fs_filelister();
+			parent::__construct();
 		}
 	
 		function _checkFile($directory, $file) {
@@ -42,7 +42,7 @@
  
 		function __construct() {
 			$this->index = entry_init();
-			parent::fs_filelister();
+			parent::__construct();
 		}
  
 		function _checkFile($directory, $file) {

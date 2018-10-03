@@ -4,7 +4,7 @@
 
 		function __construct() {
 			$this->_directory = THEMES_DIR . THE_THEME;
-			parent::fs_filelister();
+			parent::__construct();
 		}
 		
 		function _checkFile($d, $f) {

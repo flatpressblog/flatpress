@@ -194,7 +194,7 @@ if (!defined('MOD_INDEX')) {
 			if ($searchjusthese) {
 				$this->_constrained_list = $searchjusthese;
 			}
-			return parent::fs_filelister();
+			return parent::__construct();
 			
 		}
 		

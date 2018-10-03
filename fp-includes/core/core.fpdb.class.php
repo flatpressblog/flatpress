@@ -624,7 +624,7 @@
 			if (!$this->hasMore())
 				return false;
 		
-			list($k,$id) = each($this->list);
+			$id = array_shift($this->list);
 			
 			$comment = comment_parse($this->entryid, $id);
 			$couplet = array(&$id, &$comment);

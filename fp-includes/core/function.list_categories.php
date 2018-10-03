@@ -20,7 +20,6 @@ function smarty_function_list_categories($params) //, &$smarty)
 				'selected' => array()
 				);
 	
-		//list($catId) = each($categories);
 	$cat_params = array_merge($cat_params, $params);
 
 	// makese 'selected' an arr
@@ -106,8 +105,6 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 		
 		
 		$cat_entry = $params['selected']; 
-		//list($catId) = each($categories);
-		
 		
 		if (isset($params['type']) && ($params['type']=='form' || $params['type']=='check')) {
 			$string = '<label><input name="'.$catname.'cats['.$vid.']" ';

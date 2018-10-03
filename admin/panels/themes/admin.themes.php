@@ -10,7 +10,7 @@
 			if ($theme['version'] > 0.703)
 				$this->actions['style'] = true;
 			
-			parent::AdminPanel($smarty);
+			parent::__construct($smarty);
 				
 		}
 		

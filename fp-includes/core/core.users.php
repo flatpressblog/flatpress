@@ -8,7 +8,7 @@
 		
 		function bdb_entrylister() {
 			$this->_cachefile = CACHE_DIR . 'userlist.php';
-			parent::cache_filelister();
+			parent::__construct();
 		}
 		
 		function _checkFile($directory, $file) {

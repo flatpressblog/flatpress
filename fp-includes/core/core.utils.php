@@ -175,7 +175,7 @@ if (!function_exists('fnmatch')) {
 
 		$string .= $outerldelim;
 
-		while (list(,$val) = each($array)) {
+		while ($val = array_shift($array)) {
 			
 			$string .= $rdelim;
 			if (is_array($val)) {

@@ -45,7 +45,7 @@
 			do {
 				$content = array();
 
-				list(,$id) = each($this->_list[$hor]);
+				$id = array_shift($this->_list[$hor]);
 				
 				$newid=$id;# @list($newid, $params) = explode(":", $id);
 				if (@$params) $params = explode(',', $params); else $params = array();

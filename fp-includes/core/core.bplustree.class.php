@@ -721,26 +721,6 @@ class BPlusTree_Node {
 	}
 	
 	
-	/*
-	 * mimics python's map(None, a, b)
-	 * returns the list of (a,b) pairs 
-	 * where a is in list $a and b is in list $b
-	 *
-	 *
-	 
-	function _oldpairs($a, $b) {
-		$c = array();
-		reset($a);
-		reset($b);
-		while((list(,$v1) = each($a)) &&
-			(list(,$v2) = each($b))) {
-			$c[] = array($v1, $v2);
-		}
-		return $c;
-	}
-	 */
-
-	
 	/**
 	 * mimic's python's map(None, a, b); 
 	 * a, b must be of the same size
@@ -1383,7 +1363,7 @@ class BPlusTree_Node {
 		echo $indent, "seeks {", implode(", ", $this->indices),"}\n";
 		if (($flag & BPT_FLAG_INTERIOR) == BPT_FLAG_INTERIOR) {
 			reset($this->indices);
-			while(list(,$i) = each($this->indices)) {
+			while($i = array_shift($this->indices)) {
 				if ($i!=BPT_NULLSEEK) {
 					// interior
 					$n =& $this->getclone($i);
