@@ -16,7 +16,7 @@
 		
 		
 		//constructor
-		function fs_filelister($directory = null) {
+		function __construct($directory = null) {
 			if ($directory) $this->_directory = $directory; 
 			$this->_listFiles($this->_directory);
 		}
@@ -184,11 +184,11 @@
 		 var $_chmod_dir;
 		 var $_chmod_file;
 
-		function fs_chmodder($directory, $ch_file=FILE_PERMISSIONS, $ch_dir=DIR_PERMISSIONS) {
+		function __construct($directory, $ch_file=FILE_PERMISSIONS, $ch_dir=DIR_PERMISSIONS) {
 			$this->_directory = $directory;
 			$this->_chmod_file = $ch_file;
 			$this->_chmod_dir = $ch_dir;
-			parent::fs_filelister();
+			parent::__construct();
 		}
 		
 		function _checkFile($directory, $file) {
@@ -221,7 +221,7 @@
 		
 		function fs_deleter($directory) {
 			$this->_directory = $directory;
-			parent::fs_filelister();
+			parent::__construct();
 		}
 		
 		function _checkFile($directory, $file) {

@@ -11,7 +11,7 @@
 		 * opens the index belonging to a given category
 		 * @params int $id_cat	
 		 */
-		function entry_cached_index($id_cat=0) {
+		function __construct($id_cat=0) {
 			$F = INDEX_DIR.'index-'.$id_cat.'.dat';
 		
 			if (!file_exists($F)) {
@@ -19,7 +19,7 @@
 				
 			}
 
-			parent::caching_SBPT(
+			parent::__construct(
 				fopen($F, 'rb'),
 				fopen(INDEX_DIR.'index.strings.dat', 'rb'),
 				256,
@@ -43,7 +43,7 @@
 		var $_lock_file = null;
 
 
-		function entry_index() {
+		function __construct() {
 			$this->_lock_file = CACHE_DIR.'bpt.lock';
 
 			$this->catlist = entry_categories_list();
@@ -234,7 +234,7 @@
 		
 		var $_filter = 'entry*';
 		
-		function entry_archives($y, $m = null, $d = null) {
+		function __construct($y, $m = null, $d = null) {
 			
 			$this->_y = $y;
 			$this->_m = $m;
@@ -252,7 +252,7 @@
 			
 			}	
 			
-			return parent::fs_filelister();
+			return parent::__construct();
 		}
 		
 		function _checkFile($directory, $file) {

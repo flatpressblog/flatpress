@@ -53,7 +53,7 @@
 					
 				add_filter('wp_head', 'myredirect');
 				
-				$content = (SHARED_TPLS . 'login_success.tpl');
+        $content = (SHARED_TPLS . 'login.tpl');
 				
 			} elseif (user_loggedin()) {
 			

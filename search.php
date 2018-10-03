@@ -82,14 +82,19 @@ if (!defined('MOD_INDEX')) {
 			isset($_GET['Date_Month']) && ($_GET['Date_Month']!='--')? $params['m'] = $_GET['Date_Month'] : null;
 			!empty($_GET['Date_Year']) && ($_GET['Date_Year']!='--')? $params['y'] = substr($_GET['Date_Year'], 2) : null;
 			
-			isset($_GET['cats'])? $params = $_GET['cats']: null;
-			
+			// isset($_GET['cats'])? $params = $_GET['cats']: null;
+			isset($_GET['cats'])? $params['cats'] = $_GET['cats']: null;
+      
 			
 			$params['fullparse'] = false;
 				
 			if(!empty($_GET['stype']) && $_GET['stype']=='full') {
 				$params['fullparse'] = true;
-			}
+        $fts = "yes";
+			} else {
+				$params['fullparse'] = false;
+        $fts = "no";        
+      }
 			
 			$srchparams = $params;
 			
@@ -113,7 +118,8 @@ if (!defined('MOD_INDEX')) {
 									$keywords
 							) !== false;
 					
-					if (!$match && $params['fullparse']) {
+					// if (!$match && $params['fullparse']) {
+          if (!$match && ($fts === "yes")) {
 						
 						$match = strpos(
 									strtolower($e['content']),

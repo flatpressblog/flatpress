@@ -15,7 +15,7 @@
 		var $fullparse = false;
 		var $comments = false;
 		
-		function FPDB_QueryParams($params) {
+		function __construct($params) {
 		
 			if (is_string($params)) {
 				$this->parse_string($params);
@@ -152,7 +152,7 @@
 		var $secondary_idx = null;
 		var $walker = null;
 	
-		function FPDB_Query($params, $ID) {
+		function __construct($params, $ID) {
 			
 			global $current_query;
 			
@@ -297,13 +297,13 @@
 				$filteredkeys = $obj->getList();
 				$index_count = $obj->getCount();
 
-				if ($filteredkeys)
-					$this->walker =& $entry_index->walker(
-						entry_idtokey($filteredkeys[0]), true,
-						entry_idtokey($filteredkeys[$index_count-1]), true
-					);
-			
-				
+				if ($filteredkeys) {
+          $error302var1 = entry_idtokey($filteredkeys[0]);
+
+          $this->walker = $entry_index->walker(
+	        $error302var1, true,
+	        entry_idtokey($filteredkeys[$index_count-1]), true);             
+        }
 			}
 			
 			if ($qp->count < 0) {
@@ -595,7 +595,7 @@
 		var $current = '';
 		var $entryid = '';
 		
-		function FPDB_CommentList($ID, $array) {
+		function __construct($ID, $array) {
 			
 			if (is_array($array)) {
 				$this->list = $array;
@@ -641,7 +641,7 @@
 		var $queries = array();
 		
 	
-		function FPDB() {
+		function __construct() {
 			// constructor
 		}
 		
@@ -769,7 +769,7 @@
 		var $_nodesize = 30;
 		var $_keysize = 12;
 
-		function FPDB_transaction($id_cat=0) {
+		function __construct($id_cat=0) {
 			$this->_index = INDEX_DIR.'index-'.$id_cat;
 
 			$this->_tree = caching_SBPT(

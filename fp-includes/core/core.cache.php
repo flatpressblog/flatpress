@@ -10,7 +10,7 @@
 		var $_keysize = 12;
 		
 		// sub-classes will fill the above variables on constructing
-		function cache_filelister() {
+		function __construct() {
 		
 			if (!$this->_cachefile)
 				trigger_error('CACHE: no cache file specified', E_USER_ERROR);

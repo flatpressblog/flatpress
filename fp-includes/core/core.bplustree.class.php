@@ -206,7 +206,7 @@ class pairs {
 	 * @parma array $b array of the second elements of each pair
 	 *
 	 */
-	function pairs($a,  $b) { 
+	function __construct($a,  $b) { 
 		if (($v=count($a))!=count($b)) 
 			trigger_error("Size of params must match", E_USER_ERROR);
 		$this->a=$a; $this->b=$b; 
@@ -388,7 +388,7 @@ class BPlusTree_Node_Fifo {
 	 * constructor
 	 * @param int $size specifies size (defaults to 30)
 	 */
-	function BPlusTree_Node_Fifo($size=30) {
+	function __construct($size=30) {
 		$this->fifosize=$size;
 	}
 
@@ -491,7 +491,7 @@ class BPlusTree_Node {
 	 * @param resource resource stream (opened file)
 	 * @param BPlusTree_Node object from which cloning properties
 	 */
-	function BPlusTree_Node($flag, 
+	function __construct($flag, 
 				$size, 
 				$keylen,
 				$position, 
@@ -1509,7 +1509,7 @@ class BPlusTree {
 	 * @param int	$keylen maximum lenght of a key in bytes (unicode extended chars evaluate to two chars)
 	 */
 
-	function BPlusTree($infile, $pos=null, $nodesize=null, $keylen=10) {
+	function __construct($infile, $pos=null, $nodesize=null, $keylen=10) {
 		if (!is_null($keylen) && $keylen<=2) {
 			trigger_error("$keylen must be greater than 2", E_USER_ERROR);
 		}
@@ -2347,7 +2347,7 @@ class BPlusWalker {
 	var $includeupper;
 
 
-	function BPlusWalker(
+	function __construct(
 			&$tree, 
 			&$keylower, 
 			$includelower=null, 
@@ -2536,10 +2536,10 @@ class SBPlusTree extends BPlusTree {
 	
 	var $maxstring; var $stringfile;
 	
-	function SBPlusTree($infile, $stringfile, 
+	function __construct($infile, $stringfile, 
 				$maxstring = 256, 
 				$pos=null, $nodesize=null, $keylen=null) {
-        	parent::BPlusTree($infile, $pos, $nodesize, $keylen);
+        	parent::__construct($infile, $pos, $nodesize, $keylen);
 		$this->stringfile = $stringfile;
 		$this->maxstring = $maxstring;
 	}
@@ -2614,11 +2614,11 @@ class caching_SBPT extends SBPlusTree {
 
 	var $cache = array();
 
-	function caching_SBPT($infile, $stringfile, 
+	function __construct($infile, $stringfile, 
 				$maxstring = 256, 
 				$pos=null, $nodesize=null, $keylen=null) {
 
-		parent::SBPlusTree($infile, $stringfile, 
+		parent::__construct($infile, $stringfile, 
 				$maxstring, 
 				$pos, $nodesize, $keylen);
 	}

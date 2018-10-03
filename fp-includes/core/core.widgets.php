@@ -11,7 +11,7 @@
 		var $_varname = 'fp_widgets';
 		var $_enabledlist = null;
 		
-		function widget_indexer() {
+		function __construct() {
 			if (!file_exists(CONFIG_DIR. 'widgets.conf.php')) 
 				trigger_error('widgets.conf.php not found. Blog may not work as expected, create a widgetlist.conf.php 
 					or reinstall completely FlatPress. If you have just installed FlatPress, the package you

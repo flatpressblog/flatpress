@@ -71,7 +71,7 @@ function plugin_calendar_widget() {
 		
 	global $fpdb;
 	
-	$q =& new FPDB_Query(array('fullparse'=>false,'y'=>$y,'m'=>$m, 'count' => -1), null);
+	$q = new FPDB_Query(array('fullparse'=>false,'y'=>$y,'m'=>$m, 'count' => -1), null);
 	
 	
 	$days = array();

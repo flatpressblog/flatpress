@@ -16,7 +16,7 @@
 	/* utility class */
 		class tpl_deleter extends fs_filelister {
 		
-		function tpl_deleter() {
+		function __construct() {
 			
 			//$this->smarty = $GLOBALS['_FP_SMARTY'];
 			
@@ -40,7 +40,7 @@
  
 		var $_directory = CONTENT_DIR;
  
-		function s_entry_crawler() {
+		function __construct() {
 			$this->index = entry_init();
 			parent::fs_filelister();
 		}

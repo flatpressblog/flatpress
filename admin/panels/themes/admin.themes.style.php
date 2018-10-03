@@ -2,7 +2,7 @@
 
 	class admin_themes_obj_style_idx extends fs_filelister {
 
-		function admin_themes_obj_style_idx() {
+		function __construct() {
 			$this->_directory = THEMES_DIR . THE_THEME;
 			parent::fs_filelister();
 		}

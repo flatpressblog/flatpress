@@ -9,9 +9,9 @@
 		var $_enabledlist = null;
 		var $_directory = PLUGINS_DIR;
 		
-		function plugin_indexer() {
+		function __construct() {
 			$this->_enabledlist = CONFIG_DIR . 'plugins.conf.php';
-			parent::fs_filelister();
+			parent::__construct();
 		}
 		
 		function _checkFile($directory, $file) {

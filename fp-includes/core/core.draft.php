@@ -9,9 +9,9 @@
 		var $_cachefile = null;
 		var $_directory = DRAFT_DIR;
 		
-		function draft_indexer() {
+		function __construct() {
 			$this->_cachefile = CACHE_DIR . 'draft_index.php';	
-			return parent::fs_filelister();
+			return parent::__construct();
 		}
 		
 		

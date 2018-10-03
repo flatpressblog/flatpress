@@ -103,16 +103,69 @@
 		
 	
 	set_include_path(ABS_PATH);
-	
+  
+  //
+  // original Flatpress 1.0.3 coding disabled
+  //
 	// compatibility with ISS
+	// if (!isset($_SERVER['REQUEST_URI']))
+	//   $_SERVER['REQUEST_URI'] = 'http://localhost/flatpress/';
+	
+	// #define('BLOG_ROOT', dirname($_SERVER['PHP_SELF']) . '/');
+	// define('BLOG_ROOT', ('/'==($v=dirname($_SERVER['SCRIPT_NAME']))? $v : $v.'/') ); 
+
+	// define('BLOG_BASEURL', 'http://'.$_SERVER['HTTP_HOST']. BLOG_ROOT);
+
+  //
+  // Adding security and HTTPS support
+  //
+
+  ini_set('session.cookie_httponly', 1);
+  ini_set('session.use_only_cookies', 1);  
+
+  if (isset($_SERVER['HTTPS'])) {
+    $_SERVER['HTTPS'] = htmlspecialchars($_SERVER['HTTPS'], ENT_QUOTES, "UTF-8");
+  } 
+  $serverport = "false";
+  // Unterstützung für Apache und IIS 
+  if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == '1' || strtolower($_SERVER['HTTPS'])=='on')) {	 
+    $serverport = "https://";
+    // Uses a secure connection (HTTPS) if possible 
+    ini_set('session.cookie_secure', 1);
+  } else {		 
+    $serverport = "http://";
+  }
+
+	// compatibility with ISS
+  $_SERVER["REQUEST_URI"] = htmlspecialchars($_SERVER["REQUEST_URI"], ENT_QUOTES, "UTF-8");
 	if (!isset($_SERVER['REQUEST_URI']))
-		$_SERVER['REQUEST_URI'] = 'http://localhost/flatpress/';
+		$_SERVER['REQUEST_URI'] = $serverport . 'localhost/flatpress/';
 	
 	#define('BLOG_ROOT', dirname($_SERVER['PHP_SELF']) . '/');
 	define('BLOG_ROOT', ('/'==($v=dirname($_SERVER['SCRIPT_NAME']))? $v : $v.'/') ); 
 
 		
-	define('BLOG_BASEURL', 'http://'.$_SERVER['HTTP_HOST']. BLOG_ROOT);
+	define('BLOG_BASEURL', $serverport . $_SERVER['HTTP_HOST'] . BLOG_ROOT);
+
+  //
+  // OWASP - Browser Cache - How can the browser cache be used in attacks?
+  // https://www.owasp.org/index.php/OWASP_Application_Security_FAQ#How_can_the_browser_cache_be_used_in_attacks.3F
+  //
+  // http://stackoverflow.com/questions/13640109/how-to-prevent-browser-cache-for-php-site
+  //
+  header('Expires: Sun, 01 Jan 2015 00:00:00 GMT');
+  header('Cache-Control: no-store, no-cache, must-revalidate');
+  header('Cache-Control: post-check=0, pre-check=0', FALSE);
+  header('Pragma: no-cache');
+  //
+  // http://de.wikipedia.org/wiki/Liste_der_HTTP-Headerfelder 
+  //
+  header('X-Frame-Options: SAMEORIGIN');
+  header('X-XSS-Protection: 1; mode=block');
+  header('X-Content-Type-Options: nosniff');
+  //
+  // End of send header
+  // 
 
 #function _dummy() {}
 #set_error_handler('_dummy');
