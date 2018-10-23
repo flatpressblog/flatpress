@@ -431,6 +431,9 @@ function fplog($str) {
  * @return unknown the shifted value, or NULL if array is empty or is not an array
  */
 function utils_array_kshift(&$arr) {
+	if (!is_array($arr) || count($arr) === 0) {
+		return null;
+	}
 	list ($k) = array_keys($arr);
 	$r = array(
 		$k => $arr [$k]
