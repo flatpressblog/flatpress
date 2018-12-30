@@ -1,4 +1,21 @@
-FlatPress 0.803 Vivace
+# 2015-06-12: FlatPress 1.0.3
+- This release fixes an XSS (CVE-2014-100036).
+- Bonus: a new style for Leggero theme by @MarcThibeault and other UI enhancements by @MarcThibeault and @liquibyte
+
+# 2013-12-11: FlatPress 1.0.2
+Another bugfix release.
+- Fixes errors in the rushed patched vulnerability in v1.0.1.
+- Clears some issues with strict standards.
+- Timezone now defaults to UTC. You can set your own time offset in the configuration panel of the admin area
+
+# 2013-11-21: FlatPress 1.0.1
+Bugfix release. 
+- Addresses Issue #3 http://www.exploit-db.com/exploits/29515/
+
+# 2011-xx-xx: FlatPress 1.0
+- ...
+
+2008-05-07: FlatPress 0.803 Vivace
 ======================
 GENERAL
 -------
