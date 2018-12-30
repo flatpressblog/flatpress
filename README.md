@@ -1,12 +1,22 @@
-# flatpress
-Unofficial FlatPress version to be run in PHP 7.2<br>
+# Welcome to FlatPress!
+FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, just PHP. No database needed!
 <br>
 Official FlatPress site: http://flatpress.org/<br>
-Official FlatPress GitHub project: https://github.com/evacchi/flatpress
+Official FlatPress GitHub project: https://github.com/flatpressblog/flatpress
 
-## What is this?
-The development of FlatPress was discontinued by its author [Edoardo Vacchi](https://github.com/evacchi/). A big salute to your years of effort on this really great flatfile blogging system, Sir!<br>
-The last FlatPress version 1.0.3 works nicely in PHP 5, but fails in PHP 7. The goal of this fork is to keep it running in current PHP versions. It starts with version 1.0.3.php7.
+## Requirements
+FlatPress runs on any web server (e.g. Apache or IIS) with PHP 5.6 or higher. Since all data is stored in files, no database is needed.
 
-## What can you expect?
-We'll try to keep FlatPress and its plugins in its feature set of version 1.0.3 usable with current PHP versions. Even if incidentally some bugs may be fixed, this fork is not supposed to build new features and functions into FlatPress.
+## Installation
+Installing FlatPress is really easy!
+- Unzip FlatPress package
+- Upload to your web server
+- Browse to your web server, FlatPress installer appears
+- Enter your desired user name, password etc.
+- Enjoy blogging with FlatPress!
+
+## Credits
+FlatPress was initially developed by Edoardo Vacchi (NoWhereMan): http://www.nowhereland.it<br>
+Edoardo was supported by Hydra, drudo, giulio, alcor, and Tychondriax.<br>
+<br>
+Since 2018, FlatPress is taken care of by Arvid Zimmermann: https://arvidzimmermann.de
