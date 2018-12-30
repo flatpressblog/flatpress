@@ -26,7 +26,7 @@
 			$this->thumburl =
 				BLOG_BASEURL .
 				'admin.php?p=uploader&amp;action=thumb&amp;f='; 
-			return parent::fs_filelister($d);
+			return parent::__construct($d);
 		}
 	
 		function _checkFile($d, $f) {

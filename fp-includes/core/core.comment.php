@@ -2,10 +2,10 @@
 
 	class comment_indexer extends fs_filelister {
 		
-		function comment_indexer($id) {
+		function __construct($id) {
 			$f = bdb_idtofile($id,BDB_COMMENT); //todo change
 			$this->_directory = $f; 
-			parent::fs_filelister();
+			parent::__construct();
 			//substr(bdb_idtofile($id), -strlen(EXT)); 
 		}
 		

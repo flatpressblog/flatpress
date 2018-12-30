@@ -1,0 +1,18 @@
+.type-attachs a {
+    padding-left: 25px;
+    background-image: url('unknown.gif');
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+.type-images a {
+    padding-left: 25px;
+    background-image: url('image2.gif');
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+.type-gallery a {
+    padding-left: 25px;
+    background-image: url('folder.gif');
+    background-repeat: no-repeat;
+    background-position: left center;
+}

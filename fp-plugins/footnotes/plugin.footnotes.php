@@ -38,14 +38,16 @@ class footnotes_class {
 		
 		$lines = preg_split('|\[([0-9]+)\]|', $matches[1], -1, PREG_SPLIT_DELIM_CAPTURE);
 		
+		// first array element is always empty - remove
 		array_shift($lines);
 		
-		while ((list (,$n) = each($lines)) && (list (,$s) = each($lines)))
+		// get each footnote's number ($n) and content ($s) from the array ...
+		while (($n = array_shift($lines)) && ($s = array_shift($lines))) {
+			// ... and add it to the result string
 			$str .=$this->note($n, $s);
-		
+		}
 		
 		$str .= '</ol></div>';
-		
 		return $str;
 		
 	}

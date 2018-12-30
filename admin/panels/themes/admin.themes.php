@@ -4,13 +4,13 @@
 		var $panelname = 'themes';
 		var $actions = array('default' => true);
 		
-		function admin_themes(&$smarty) {
+		function __construct(&$smarty) {
 			global $theme;
 			
 			if ($theme['version'] > 0.703)
 				$this->actions['style'] = true;
 			
-			parent::AdminPanel($smarty);
+			parent::__construct($smarty);
 				
 		}
 		

@@ -236,13 +236,26 @@ class Plugin_PrettyURLs {
 		$opt = plugin_getoptions('prettyurls', 'mode');
 		$url = substr($_SERVER['REQUEST_URI'], strlen(BLOG_ROOT)-1);
 
+    $urllenght = strlen($url);
+    
+    if (isset($_SERVER['PATH_INFO'])) {
+      $pathinfo = $_SERVER['PATH_INFO'];
+    } else {
+      $pathinfo = '';
+    }
+
 		switch($opt) {
 			case null:
 			case 0:
 				$opt = file_exists(ABS_PATH . '.htaccess') ? 3 : 1;	
 			case 1:
 				$baseurl .= 'index.php/'; 
-				$url = $_SERVER['PATH_INFO'];
+        if ($urllenght < 2) {
+          $url = "/";
+        } else {
+          // $url = $_SERVER['PATH_INFO'];
+          $url = $pathinfo;
+        }
 				break;
 			case 2:
 				$baseurl .= '?u=/'; 
@@ -613,7 +626,7 @@ STR;
 		
 		
 		
-		function onsubmit() {
+		function onsubmit($data = null) {
 			global $fp_config;
 
 			if (isset($_POST['saveopt'])) {

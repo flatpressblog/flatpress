@@ -167,7 +167,8 @@
 		
 		echo "\n<!-- FP STD STYLESHEET -->\n";
 		
-		echo '<link media="screen,projection,handheld" href="';
+		// echo '<link media="screen,projection,handheld" href="';
+		echo '<link media="screen" href="';
 		echo BLOG_BASEURL . THEMES_DIR . THE_THEME;
 		
 		

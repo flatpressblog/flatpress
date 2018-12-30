@@ -1,0 +1,29 @@
+Flatpress 1.0.3 Patch for PHP 7.1
+=================================
+
+You can use this patch for this Flatpress version:
+- Flatpress 1.0.3
+
+This developer snapshot isn't full tested with all 
+available Flatpress plugins from third party developers. 
+So it is possible that some plugins not run.
+
+
+Please note!
+------------
+
+Do a full backup of your Flatpress Blog before making any changes!
+
+For instructions how to backup please refer the Flatpress Basics Wiki article
+-> http://wiki.flatpress.org/en:doc:basic:backup
+
+
+Instructions:
+-------------
+
+You need a FTP program to transfer the patch files to your webspace. 
+Override the files on your flatpress installation, 
+then login and clear the cache. That's all.
+ 
+
+date: 03/26/2017

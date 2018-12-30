@@ -16,12 +16,12 @@
 	/* utility class */
 		class tpl_deleter extends fs_filelister {
 		
-		function tpl_deleter() {
+		function __construct() {
 			
 			//$this->smarty = $GLOBALS['_FP_SMARTY'];
 			
 			$this->_directory = CACHE_DIR;
-			parent::fs_filelister();
+			parent::__construct();
 		}
 	
 		function _checkFile($directory, $file) {
@@ -40,9 +40,9 @@
  
 		var $_directory = CONTENT_DIR;
  
-		function s_entry_crawler() {
+		function __construct() {
 			$this->index = entry_init();
-			parent::fs_filelister();
+			parent::__construct();
 		}
  
 		function _checkFile($directory, $file) {
