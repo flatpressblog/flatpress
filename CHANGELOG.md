@@ -1,3 +1,9 @@
+# 2019-xx-xx: FlatPress 1.1
+First release after Edoardo handed over the project ownership to Arvid.
+- Runs under PHP7
+- HTTPS support
+- Plugins added: Last comments admin, Media manager
+
 # 2015-06-12: FlatPress 1.0.3
 - This release fixes an XSS (CVE-2014-100036).
 - Bonus: a new style for Leggero theme by @MarcThibeault and other UI enhancements by @MarcThibeault and @liquibyte
@@ -12,8 +18,12 @@ Another bugfix release.
 Bugfix release. 
 - Addresses Issue #3 http://www.exploit-db.com/exploits/29515/
 
-# 2011-xx-xx: FlatPress 1.0
-- ...
+# 2012-01-11: FlatPress 1.0 "Solenne"
+- ...still to be documented...
+
+# 2010-11-07: 0.10xxx
+# 2009-10-10: 0.9xx Arioso
+# 2008-12-24: 0.8xx Fortissimo
 
 2008-05-07: FlatPress 0.803 Vivace
 ======================
