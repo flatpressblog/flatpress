@@ -1,0 +1,8 @@
+/fp-content/cache
+/fp-content/config
+/fp-content/content
+/fp-content/index*
+/fp-content/users
+/fp-content/%%setup.lock
+/.buildpath
+/.project
