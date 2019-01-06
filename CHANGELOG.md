@@ -4,6 +4,7 @@ First release after Edoardo handed over the project ownership to Arvid.
 - HTTPS support
 - Plugins added: Last comments admin, Media manager, Protected Mail Links
 - Languages added: Greek, German
+- Admin: Fancyfied editor toolbar with more BBCode elements
 - Security fix prevents possible CSFR attack
 - Bugfix: Correct handling of special characters in URLs (see https://github.com/flatpressblog/flatpress/pull/11)
 - Bugfix: HTTPS allowed in comments' URLs
