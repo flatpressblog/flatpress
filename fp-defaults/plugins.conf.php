@@ -27,6 +27,9 @@
 	'blockparser',
 	'readmore',
 	'favicon',
+	'protectedmaillinks',
+	'lastcommentsadmin',
+	'mediamanager',
 	);
 
 
