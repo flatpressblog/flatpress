@@ -5,7 +5,7 @@
 		<link href="setup/res/setup.css" type="text/css" rel="stylesheet" /></head>
 <body>
 	<div id="rap">
-		<h1 id="header">FlatPress Installer (experimental)</h1>
+		<h1 id="header">FlatPress Installer</h1>
 		</div>
 
 		<div id="main">

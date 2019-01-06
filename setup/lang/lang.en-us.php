@@ -19,9 +19,9 @@ LangId: English
 	);
 
 	$lang['step1'] = array (
-		'head'	=> 'Welcome to FlatPress',
+		'head'	=> 'Welcome to FlatPress!',
 		'descr' => 
-		'Thank you for choosing <strong>FlatPress</strong>!
+		'Thank you for choosing <strong>FlatPress</strong>.
 		
 		Before you can start having fun with your brand new blog, we have to ask you a very few questions. 
 		
