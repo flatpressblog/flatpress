@@ -2,7 +2,7 @@
 First release after Edoardo handed over the project ownership to Arvid.
 - Runs under PHP7
 - HTTPS support
-- Plugins added: Last comments admin, Media manager
+- Plugins added: Last comments admin, Media manager, Protected Mail Links
 - Languages added: Greek, German
 - Security fix prevents possible CSFR attack
 - Bugfix: Correct handling of special characters in URLs (see https://github.com/flatpressblog/flatpress/pull/11)
