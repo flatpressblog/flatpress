@@ -41,6 +41,26 @@ function insBBCode(code) {
 	insertAtCursor('content', '[' + code + ']','[/' + code + ']');
 }
 
+function insBBCodeWithParams(code, params) {
+	insertAtCursor('content', '[' + code + '='+params+']','[/' + code + ']');
+}
+
+function insBBCodeWithParamsAndContent(code, params, content) {
+	insertAtCursor('content', '[' + code + '='+params+']'+content,'[/' + code + ']');
+}
+
+function insBBCodeWithContent(code, content) {
+	insertAtCursor('content', '[' + code +']'+content,'[/' + code + ']');
+}
+
+function insBBCodeWithoutClosingTag(code) {
+	insertAtCursor('content', '[' + code +']','');
+}
+
+function insBBCodeWithParamsWithoutClosingTag(code, params) {
+	insertAtCursor('content', '[' + code + '='+params+']','');
+}
+
 function insImage(val) {
 	if (val != '--') {
 		insertAtCursor('content', '[img=images/'+val+']',' ');
