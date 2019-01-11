@@ -114,7 +114,7 @@ function comment_validate() {
 		 */
 		
 		if ($email) {
-			if (!filter_var($url, FILTER_VALIDATE_EMAIL)) {
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 				$errors ['email'] = $lerr ['email'];
 			}
 		}

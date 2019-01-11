@@ -66,7 +66,7 @@ function wptexturize($text) {
 		} elseif (strstr($curl, '</') || strstr($curl, '/>')) {
 			if ($skip > 0)
 				$skip--;
-		} elseif (strstr($curl, '<code') || strstr($curl, '<pre') || strstr($curl, '<kbd' || strstr($curl, '<style') || strstr($curl, '<script'))) {
+		} elseif (strstr($curl, '<code') || strstr($curl, '<pre') || strstr($curl, '<kbd') || strstr($curl, '<style') || strstr($curl, '<script')) {
 			// strstr is fast
 			$skip++;
 		} else {
