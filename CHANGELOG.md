@@ -5,6 +5,7 @@
 - Security fix prevents possible CSFR attack
 - Bugfix: Correct handling of special characters in URLs (see https://github.com/flatpressblog/flatpress/pull/11)
 - Bugfix: HTTPS allowed in comments' URLs
+- jQuery Plugin loads jQuery files locally
 - Changelog: Missing releases added
 
 # 2018-12-16: [FlatPress 1.0.3.php7](https://github.com/flatpressblog/flatpress/releases/tag/v1.0.3.php7)
