@@ -1,8 +1,5 @@
 # 2019-xx-xx: FlatPress 1.1
-First release after Edoardo handed over the project ownership to Arvid.
-- Runs under PHP7
-- HTTPS support
-- Plugins added: Last comments admin, Media manager, Protected Mail Links
+- Plugin added: Protected Mail Links
 - Languages added: Greek, German
 - Admin: Fancyfied editor toolbar with more BBCode elements
 - Security fix prevents possible CSFR attack
@@ -10,17 +7,23 @@ First release after Edoardo handed over the project ownership to Arvid.
 - Bugfix: HTTPS allowed in comments' URLs
 - Changelog: Missing releases added
 
-# 2015-06-12: FlatPress 1.0.3
+# 2018-12-16: [FlatPress 1.0.3.php7](https://github.com/flatpressblog/flatpress/releases/tag/v1.0.3.php7)
+First release after Edoardo handed over the project ownership to Arvid.
+- Runs under PHP7
+- HTTPS support
+- Plugins added: Last comments admin, Media manager
+
+# 2015-06-12: [FlatPress 1.0.3](https://github.com/flatpressblog/flatpress/releases/tag/v1.0.3)
 - This release fixes an XSS (CVE-2014-100036).
 - Bonus: a new style for Leggero theme by @MarcThibeault and other UI enhancements by @MarcThibeault and @liquibyte
 
-# 2013-12-11: FlatPress 1.0.2
+# 2013-12-11: [FlatPress 1.0.2](https://github.com/flatpressblog/flatpress/releases/tag/v1.0.2)
 Another bugfix release.
 - Fixes errors in the rushed patched vulnerability in v1.0.1.
 - Clears some issues with strict standards.
 - Timezone now defaults to UTC. You can set your own time offset in the configuration panel of the admin area
 
-# 2013-11-21: FlatPress 1.0.1
+# 2013-11-21: [FlatPress 1.0.1](https://github.com/flatpressblog/flatpress/releases/tag/v1.0.1)
 Bugfix release. 
 - Addresses Issue #3 http://www.exploit-db.com/exploits/29515/
 
