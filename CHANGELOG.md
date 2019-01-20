@@ -5,6 +5,7 @@
 - Security fix prevents possible CSFR attack
 - Bugfix: Correct handling of special characters in URLs (see https://github.com/flatpressblog/flatpress/pull/11)
 - Bugfix: HTTPS allowed in comments' URLs
+- Bugfix: BBCode element "video" serves Youtube videos in iFrame instead of Object
 - jQuery Plugin loads jQuery files locally
 - Changelog: Missing releases added
 
