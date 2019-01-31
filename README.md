@@ -16,6 +16,6 @@ Installing FlatPress is really easy!
 - Enjoy blogging with FlatPress!
 
 ## Credits
-FlatPress was initially developed by [Edoardo Vacchi (NoWhereMan)](http://www.nowhereland.it "nowhereland.it"). Edoardo was supported by Hydra, drudo, giulio, alcor, and Tychondriax.<br>
+FlatPress was initially developed by [Edoardo Vacchi (NoWhereMan)](http://www.nowhereland.it "nowhereland.it"). Edoardo was supported by [Hydra](http://hydra.clans.it/ "hydra.clans.it"), [drudo](https://drudotec.wordpress.com/ "drudotec.wordpress.com"), giulio, [alcor](http://alcor.altervista.org/ "alcor.altervista.org"), and Tychondriax.<br>
 <br>
 Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://arvidzimmermann.de "arvidzimmermann.de").
