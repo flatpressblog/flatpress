@@ -1,21 +1,21 @@
-# 2019-xx-xx: FlatPress 1.1
+# 2019-02-xx: FlatPress 1.1 "Da capo"
 ## General
-- Languages added: Greek, German, Czech (feel free to send us *your* language file!)
+- Languages added: Greek, German, Czech (feel free to send us *your* language packs!)
 - Admin: Fancyfied editor toolbar with more BBCode elements
 - Changelog: Missing releases added
 ## Plugins
 - Plugin added: Protected Mail Links
-- jQuery Plugin: jQuery files are loaded locally now
+- jQuery plugin: jQuery files are loaded locally now
 - Readmore plugin: Now localized (feel free to send us *your* language file!)
 - Searchbox plugin: Searches in the full entry content, not only in the title
-- Footnotes plugin: Documentation on how to use added
+- Footnotes plugin: Usage how-to added
 - Lightbox plugin: Updated Slimbox version, fixed broken overlay
 ## Security
-- Security fix: Possible CSFR attack prevented
+- Security fix: Possible CSFR attack prevented (see [details](https://www.exploit-db.com/exploits/39870 "exploit-db.com/exploits/39870"))
 ## Bugfixes
-- Correct handling of special characters in URLs (see https://github.com/flatpressblog/flatpress/pull/11)
-- HTTPS allowed in comments' URLs
-- BBCode element "video" serves Youtube videos in iFrame instead of Object
+- Correct handling of special characters in URLs (see [PR11](https://github.com/flatpressblog/flatpress/pull/11 "Pull request #11"))
+- HTTPS allowed in comment URLs
+- BBCode element "video" serves Youtube videos in iFrame instead of SWF object
 
 # 2018-12-16: [FlatPress 1.0.3.php7](https://github.com/flatpressblog/flatpress/releases/tag/v1.0.3.php7)
 First release after Edoardo handed over the project ownership to Arvid.
