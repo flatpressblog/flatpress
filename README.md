@@ -1,13 +1,13 @@
-# Welcome to FlatPress!
+# Welcome to FlatPress! ![](https://img.shields.io/github/release/flatpressblog/flatpress.svg?label=Latest%20stable&style=flat) ![](https://img.shields.io/github/license/flatpressblog/flatpress.svg?style=flat) ![](https://img.shields.io/twitter/follow/flatpress.svg?style=social)
 FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, just PHP. No database needed!
-<br>
-Official FlatPress site: http://flatpress.org/<br>
-Official FlatPress GitHub project: https://github.com/flatpressblog/flatpress
+
+* Official FlatPress site: [flatpress.org](http://flatpress.org/)<br>
+* Official FlatPress GitHub project: [github.com/flatpressblog/flatpress](https://github.com/flatpressblog/flatpress)
 
 ## Requirements
 FlatPress runs on any web server (e.g. Apache or IIS) with PHP 5.6 or higher. Since all data is stored in files, no database is needed.
 
-## Installation
+## Getting started
 Installing FlatPress is really easy!
 - Unzip FlatPress package
 - Upload to your web server
