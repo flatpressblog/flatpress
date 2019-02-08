@@ -1,4 +1,4 @@
-# Welcome to FlatPress! ![](https://img.shields.io/github/release/flatpressblog/flatpress.svg?label=Latest%20stable&style=flat) ![](https://img.shields.io/github/license/flatpressblog/flatpress.svg?style=flat) ![](https://img.shields.io/twitter/follow/flatpress.svg?style=social)
+# Welcome to FlatPress! <a href="https://github.com/flatpressblog/flatpress/releases" title="See releases"><img alt="See releases" src="https://img.shields.io/github/release/flatpressblog/flatpress.svg?label=Latest%20release&style=plastic"></a> <a href="https://github.com/flatpressblog/flatpress/blob/master/LICENSE.md" title="License"><img alt="License" src="https://img.shields.io/github/license/flatpressblog/flatpress.svg?style=plastic"></a> <a href="https://twitter.com/intent/follow?screen_name=flatpress" title="Follow on Twitter"><img src="https://img.shields.io/twitter/follow/flatpress.svg?style=social&logo=twitter" alt="Follow on Twitter"></a>
 FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, just PHP. No database needed!
 
 * Official FlatPress site: [flatpress.org](http://flatpress.org/)<br>
