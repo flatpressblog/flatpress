@@ -43,7 +43,7 @@ if (!function_exists('fnmatch')) {
 	function fnmatch($pattern, $string) {
 		if ($pattern == null)
 			return false;
-		
+
 		// basically prepare a regular expression
 		$out = null;
 		$chunks = explode(';', $pattern);
@@ -62,7 +62,7 @@ if (!function_exists('fnmatch')) {
 			);
 			while (strpos($pattern, '**') !== false)
 				$pattern = str_replace('**', '*', $pattern);
-			
+
 			foreach ($escape as $probe)
 				$pattern = str_replace($probe, "\\$probe", $pattern);
 			$pattern = str_replace('?*', '*', str_replace('*?', '*', str_replace('*', ".*", str_replace('?', '.{1,1}', $pattern))));
@@ -76,7 +76,7 @@ if (!function_exists('fnmatch')) {
 			if (preg_match("/^$tester$/i", $string))
 				return true;
 		}
-		
+
 		return false;
 	}
 }
@@ -93,7 +93,7 @@ if (!function_exists('fnmatch')) {
 function utils_kexplode($string, $delim = '|', $keyupper = true) {
 	$arr = array();
 	$string = trim($string);
-	
+
 	$k = strtolower(strtok($string, $delim));
 	$arr [$k] = strtok($delim);
 	while (($k = strtok($delim)) !== false) {
@@ -108,10 +108,10 @@ function utils_kexplode($string, $delim = '|', $keyupper = true) {
 			 */
 			continue;
 		}
-		
+
 		$arr [strtolower($k)] = strtok($delim);
 	}
-	
+
 	return $arr;
 }
 
@@ -177,19 +177,19 @@ function utils_kimplode($arr, $delim = '|') {
  */
 function &utils_explode_recursive($array, &$string, $rdelim, $ldelim = '', $outerldelim = '', $outerrdelim = '') {
 	$string .= $outerldelim;
-	
+
 	while ($val = array_shift($array)) {
-		
+
 		$string .= $rdelim;
 		if (is_array($val)) {
 			$string .= utils_explode_recursive($val, $string, $rdelim, $ldelim, $outerldelim, $outerrdelim);
 		} else {
 			$string .= $val;
 		}
-		
+
 		$string .= $ldelim;
 	}
-	
+
 	$string .= $outerrdelim;
 }
 
@@ -229,13 +229,13 @@ function utils_status_header($status) {
 function utils_redirect($location = "", $absolute_path = false, $red_type = null) {
 	if (!$absolute_path)
 		$location = BLOG_BASEURL . $location;
-	
+
 	if (function_exists('wp_redirect')) {
 		wp_redirect($location);
 	} else {
 		header("Location: $location");
 	}
-	
+
 	exit();
 }
 
@@ -258,10 +258,10 @@ function utils_geturlstring() {
 // do a quick & dirty solution :)
 function utils_array_merge($arr1, $arr2) {
 	$len = count($arr1 [0]);
-	
+
 	foreach ($arr2 as $k => $v)
 		$arr2 [$k] = array_pad((array) $v, $len, null);
-	
+
 	return array_merge($arr1, $arr2);
 }
 
@@ -283,7 +283,7 @@ function utils_countdashes($string, &$rest) {
 		$rest = substr($string, $i);
 	else
 		$rest = $string;
-	
+
 	return $i;
 }
 
@@ -292,7 +292,7 @@ function utils_mail($from, $subject, $message, $headers = '') {
 	if ($headers == '') {
 		$headers = "MIME-Version: 1.0\n" . "From: " . $from . "\n" . "Content-Type: text/plain; charset=\"" . $fp_config ['general'] ['charset'] . "\"\n";
 	}
-	
+
 	return mail($fp_config ['general'] ['email'], $subject, $message, $headers);
 }
 
@@ -307,34 +307,34 @@ function utils_validateIPv6($IP) {
 	// fast exit for localhost
 	if (strlen($IP) < 3)
 		return $IP == '::';
-	
+
 	// Check if part is in IPv4 format
 	if (strpos($IP, '.')) {
 		$lastcolon = strrpos($IP, ':');
 		if (!($lastcolon && validateIPv4(substr($IP, $lastcolon + 1))))
 			return false;
-		
+
 		// replace IPv4 part with dummy
 		$IP = substr($IP, 0, $lastcolon) . ':0:0';
 	}
-	
+
 	// check uncompressed
 	if (strpos($IP, '::') === false) {
 		return preg_match('/^(?:[a-f0-9]{1,4}:){7}[a-f0-9]{1,4}$/i', $IP);
 	}
-	
+
 	// check colon-count for compressed format
 	if (substr_count($IP, ':') < 8) {
 		return preg_match('/^(?::|(?:[a-f0-9]{1,4}:)+):(?:(?:[a-f0-9]{1,4}:)*[a-f0-9]{1,4})?$/i', $IP);
 	}
-	
+
 	return false;
 }
 
 // get client IP
 function utils_ipget() {
 	$ip = '';
-	
+
 	if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
 		$ip = $_SERVER ['HTTP_CLIENT_IP'];
 	} elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
@@ -348,7 +348,7 @@ function utils_ipget() {
 	} elseif (getenv("REMOTE_ADDR")) {
 		$ip = getenv("REMOTE_ADDR");
 	}
-	
+
 	if (utils_validateIPv4($ip) || utils_validateIPv6($ip)) {
 		return $ip;
 	} else {
@@ -380,19 +380,19 @@ function utils_geturl($url) {
 		trigger_error('curl extension is not installed');
 		return array();
 	}
-	
+
 	$options = array(
 		CURLOPT_RETURNTRANSFER => true, // return web page
 		CURLOPT_HEADER => false, // don't return headers
-		CURLOPT_FOLLOWLOCATION => false, // don't follow redirects
 		CURLOPT_ENCODING => "", // handle all encodings
 		CURLOPT_USERAGENT => "spider", // who am i
 		CURLOPT_AUTOREFERER => true, // set referer on redirect
 		CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 		CURLOPT_TIMEOUT => 120, // timeout on response
+		CURLOPT_FOLLOWLOCATION => true, // follow redirects
 		CURLOPT_MAXREDIRS => 10 // stop after 10 redirects
 	);
-	
+
 	$ch = curl_init($url);
 	curl_setopt_array($ch, $options);
 	$content = curl_exec($ch);
@@ -400,7 +400,7 @@ function utils_geturl($url) {
 	$errmsg = curl_error($ch);
 	$header = curl_getinfo($ch);
 	curl_close($ch);
-	
+
 	$header ['errno'] = $err;
 	$header ['errmsg'] = $errmsg;
 	$header ['content'] = $content;
