@@ -26,7 +26,7 @@ $lang ['step1'] = array(
 		Don\'t worry, it won\'t take you long!',
 	'descrl1' => 'Select your language.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Not in the list?</a>',
-	'descrlang' => 'If you don\'t see your language in this list, you might want to see if there is <a href="http://wiki.flatpress.org/res:language">a language pack</a> for this version:
+	'descrlang' => 'If you don\'t see your language in this list, you might want to see if there is <a href="https://wiki.flatpress.org/res:language">a language pack</a> for this version:
 		
 		<pre>%s</pre>
 		
@@ -57,7 +57,7 @@ $lang ['step3'] = array(
 		<ul>
 		<li>See <a href="%s">how the home page looks like</a></li>
 		<li>Have fun! <a href="%s">Login now!</a></li>
-		<li>Do you feel like dropping us a line? <a href="http://www.flatpress.org/">Go to FlatPress.org!</a></li>
+		<li>Do you feel like dropping us a line? <a href="https://www.flatpress.org/">Go to FlatPress.org!</a></li>
 		</ul>
 		
 		And thank you for choosing FlatPress!'
@@ -81,7 +81,7 @@ MENU;
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Welcome to FlatPress!';
 $lang ['samplecontent'] ['entry'] ['content'] = <<<CONT
-This is a sample entry, posted to show you some of the features of [url=http://www.flatpress.org]FlatPress[/url].
+This is a sample entry, posted to show you some of the features of [url=https://www.flatpress.org]FlatPress[/url].
 
 The more tag allows you to create a "jump" between an excerpt and the complete article.
 
@@ -98,7 +98,7 @@ The default way to style and format your content is [url=http://wiki.flatpress.o
 It also supports
    indented content.[/code]
 
-img and url tag have also special options. You can find out more on the [url=http://wiki.flatpress.org/doc:plugins:bbcode]FP wiki[/url].
+img and url tag have also special options. You can find out more on the [url=https://wiki.flatpress.org/doc:plugins:bbcode]FP wiki[/url].
 
 
 [h4]Entries (posts) and Static pages[/h4]
@@ -110,7 +110,7 @@ Static pages are useful to create general information pages. You can also make o
 
 [h4]Plugins[/h4]
 
-FlatPress is very customizable, and supports [url=http://wiki.flatpress.org/doc:plugins:standard]plugins[/url] to extend its power. BBCode is a plugin itself.
+FlatPress is very customizable, and supports [url=https://wiki.flatpress.org/doc:plugins:standard]plugins[/url] to extend its power. BBCode is a plugin itself.
 
 We have created some more sample content, to show you some of the FP well hidden functions and gems :) 
 You can find two [b]static pages[/b] ready to accept your contents:
@@ -124,7 +124,7 @@ You can find two [b]static pages[/b] ready to accept your contents:
 
 There isn't a single fixed element in the sidebar(s). All the elements you can find in the bars sourrounding this text are completely positionable, and most of them are customizable as well. Some themes even provide a panel interface in the admin area.  
 
-These elements are called [b]widgets[/b]. For more on widgets and [url=http://wiki.flatpress.org/doc:tips:widgets]some tips[/url] to get nice effects, take a look at the [url=http://wiki.flatpress.org/]wiki[/url].
+These elements are called [b]widgets[/b]. For more on widgets and [url=https://wiki.flatpress.org/doc:tips:widgets]some tips[/url] to get nice effects, take a look at the [url=https://wiki.flatpress.org/]wiki[/url].
 
 
 [h4]See more[/h4]
@@ -132,21 +132,21 @@ These elements are called [b]widgets[/b]. For more on widgets and [url=http://wi
 Want to see more?
 
 [list]
-[*]Follow the [url=http://www.flatpress.org/home/blog.php]official blog[/url] to know what's going on in the FlatPress world
-[*]Go to the [url=http://flatpress.org/vanilla2/]forums[/url] for support and chit-chat
-[*]Get [b]great themes[/b] from [url=http://wiki.flatpress.org/res:themes]other users' submissions[/url]!
-[*]Check out the [url=http://wiki.flatpress.org/res:plugins]unofficial plugins[/url]
-[*]Get [url=http://wiki.flatpress.org/res:language]translation pack[/url] for your language 
+[*]Follow the [url=https://www.flatpress.org/?x]official blog[/url] to know what's going on in the FlatPress world
+[*]Visit the [url=https://forum.flatpress.org/]forum[/url] for support and chit-chat
+[*]Get [b]great themes[/b] from [url=https://wiki.flatpress.org/res:themes]other users' submissions[/url]!
+[*]Check out the [url=https://wiki.flatpress.org/res:plugins]unofficial plugins[/url]
+[*]Get [url=https://wiki.flatpress.org/res:language]translation pack[/url] for your language 
 [/list]
 
 
 [h4]How can I help?[/h4]
 
 [list]
-[*][url=http://www.flatpress.org/home/static.php?page=contact]Contact us[/url] to report bugs or suggest improvements.
+[*][url=https://www.flatpress.org/contact/]Contact us[/url] to report bugs or suggest improvements.
 [*]Contribute to the development of Flatpress on [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
-[*]Translate FlatPress or the documentation into [url=http://wiki.flatpress.org/res:language]your language[/url].
-[*]Share your knowledge and get connected with other FlatPress users on the [url=http://flatpress.org/vanilla2/]forums[/url].
+[*]Translate FlatPress or the documentation into [url=https://wiki.flatpress.org/res:language]your language[/url].
+[*]Share your knowledge and get connected with other FlatPress users on the [url=https://forum.flatpress.org/]forum[/url].
 [*]Spread the word! :)
 [/list]
 
@@ -157,7 +157,7 @@ Now you can [url=login.php]Login[/url] to get to the [url=admin.php]Control Pane
 
 Have fun! :) 
 
-[i]The [url=http://www.flatpress.org]FlatPress[/url] Team[/i]
+[i]The [url=https://www.flatpress.org]FlatPress[/url] Team[/i]
 	
 CONT;
 
