@@ -1,9 +1,8 @@
-# Welcome to FlatPress!
-<a href="https://github.com/flatpressblog/flatpress/releases" title="See releases"><img alt="See releases" src="https://img.shields.io/github/release/flatpressblog/flatpress.svg?label=Latest%20release&style=plastic"></a> <a href="https://github.com/flatpressblog/flatpress/blob/master/LICENSE.md" title="License"><img alt="License" src="https://img.shields.io/github/license/flatpressblog/flatpress.svg?style=plastic"></a>
-
-FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, just PHP. No database needed!
-
+<a href="https://github.com/flatpressblog/flatpress/releases" title="See releases"><img alt="See releases" src="https://img.shields.io/github/release/flatpressblog/flatpress.svg?label=Latest%20release&style=plastic"></a> <a href="https://github.com/flatpressblog/flatpress/blob/master/LICENSE.md" title="License"><img alt="License" src="https://img.shields.io/github/license/flatpressblog/flatpress.svg?style=plastic"></a><br>
 [[flatpress.org](https://www.flatpress.org/)] [[Support forum](https://forum.flatpress.org/)] [[GitHub](https://github.com/flatpressblog/flatpress)] [[Twitter](https://www.twitter.com/FlatPress)] [[Changelog](https://github.com/flatpressblog/flatpress/blob/master/CHANGELOG.md)]
+
+# Welcome to FlatPress!
+FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, just PHP. No database needed!
 
 ## Getting started
 Installing and running FlatPress is really easy!
