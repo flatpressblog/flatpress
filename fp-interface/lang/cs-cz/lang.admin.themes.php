@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	
 	$lang['admin']['themes']['submenu'] = array(

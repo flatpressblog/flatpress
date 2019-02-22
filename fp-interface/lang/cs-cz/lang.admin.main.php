@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	$lang['admin']['panel']['main'] = 'Hlavní';
 	

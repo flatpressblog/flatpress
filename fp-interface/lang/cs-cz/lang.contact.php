@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	$lang['contact'] = array(
 		'head'		=> 'Kontaktujte nás',

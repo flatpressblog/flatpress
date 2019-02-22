@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	
 	$lang['admin']['panel']['maintain'] = 'Údržba';
 

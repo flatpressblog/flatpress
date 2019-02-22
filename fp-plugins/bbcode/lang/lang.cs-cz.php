@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $lang['admin']['plugin']['submenu']['bbcode'] = 'BBCode';
 $lang['admin']['plugin']['bbcode'] = array(

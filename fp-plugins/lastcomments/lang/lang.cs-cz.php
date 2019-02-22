@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	// cimangi Aggiunta traduzione stringhe
 	$lang['plugin']['lastcomments'] = array(
 		

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	$lang['plugin']['akismet']['errors'] = array (
 		-1	=> 'Kľíč API není nastavený. Otevřte plugin a nastavte klíč API. Zaregistrujte sa na <a href="http://wordpress.com">Wordpress.com</a> a získejte nějaký'
 	);

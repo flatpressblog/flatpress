@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $lang ['plugin'] ['prettyurls'] ['errors'] = array(
 	-2 => 'Nelze najít nebo vytvořit soubor <code>.htaccess</code> ve Vašem kořenovém ' . 'adresáři. PrettyURLs nemusí fungovat správně, viz Nastavení PretyURLs.'
 );

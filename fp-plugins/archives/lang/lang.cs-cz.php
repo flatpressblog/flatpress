@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	$lang['plugin']['archives'] = array(
 		
 		'subject'			=> 'Archív',

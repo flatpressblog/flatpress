@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	$lang['admin']['widgets']['submenu']['default'] = 'Správa Widgetů';
 	$lang['admin']['widgets']['submenu']['raw'] 	= 'Správa Widgetů (raw)';

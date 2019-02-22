@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	$lang['comments']['mail'] = <<<MAIL
 "%fromname%" %frommail% přidal komentář k příspěvku "%entrytitle%".

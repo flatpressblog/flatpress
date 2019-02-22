@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	$lang['admin']['static']['submenu'] = array(
 		'list'		=> 'Správa statických stránek',

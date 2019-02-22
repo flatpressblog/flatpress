@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $lang['plugin']['qspam'] = array(
 	'error' => 'ERROR: Komentář obsahoval zakázané výrazy'

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 
 	$lang['admin']['uploader']['default'] = array(

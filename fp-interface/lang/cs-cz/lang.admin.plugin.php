@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	$lang['admin']['plugin']['submenu'] = array (
 		'default'		=> 'Správa Pluginů'

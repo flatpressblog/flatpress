@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	
 	$langconf = array();
 	$langconf['id'] = 'Čeština (CZ)';
