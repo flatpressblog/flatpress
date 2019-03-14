@@ -1,4 +1,4 @@
-# 2019-02-22: FlatPress 1.1 "Da capo"
+# 2019-02-22: [FlatPress 1.1 "Da capo"](https://github.com/flatpressblog/flatpress/releases/tag/1.1)
 ## General
 - Languages added: Greek, German, Czech (feel free to send in *your* language packs!)
 - Admin: Fancyfied editor toolbar with more BBCode elements
