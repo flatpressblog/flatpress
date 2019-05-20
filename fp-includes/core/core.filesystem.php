@@ -23,7 +23,8 @@
 		
 		function _checkFile($directory, $file) {
 			if (!is_dir("$directory/$file"))
-				array_push($this->_list, $file);
+				// array_push($this->_list, $file);
+				$this->_list[filemtime("$directory/$file").'--'.$file]=$file;
 			return 0;
 		}
 		
@@ -72,6 +73,7 @@
 		
 		function getList() {
 			//$this->_listFiles($this->_directory);
+			krsort($this->_list);
 			return $this->_list;
 		}
 
