@@ -669,11 +669,15 @@ function plugin_bbcode_toolbar() {
 	// get all available images
 	$indexer = new fs_filelister(IMAGES_DIR);
 	$imageslist = $indexer->getList();
+	// sort by name
+	sort($imageslist);
 	array_unshift($imageslist, '--');
 	$_FP_SMARTY->assign('images_list', $imageslist);
 	// get all available attachements
 	$indexer = new fs_filelister(ATTACHS_DIR);
 	$attachslist = $indexer->getList();
+	// sort by name
+	sort($attachslist);
 	array_unshift($attachslist, '--');
 	$_FP_SMARTY->assign('attachs_list', $attachslist);
 	// DMKE: does not work
