@@ -276,7 +276,7 @@ function utils_microtime() {
 function utils_countdashes($string, &$rest) {
 	trim($string);
 	$i = 0;
-	while ($string {$i} == '-') {
+	while ($string [$i] == '-') {
 		$i++;
 	}
 	if ($i)

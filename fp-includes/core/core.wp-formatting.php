@@ -8,15 +8,15 @@ function wptexturize($text) {
 	$skip = 0; // loop stuff
 	for($i = 0; $i < $stop; $i++) {
 		$curl = $textarr [$i];
-		
-		if (isset($curl {0}) && '<' != $curl {0} && $skip == 0) { // If it's not a tag
+
+		if (isset($curl [0]) && '<' != $curl [0] && $skip == 0) { // If it's not a tag
 			$curl = str_replace('---', '&#8212;', $curl);
 			$curl = str_replace(' -- ', ' &#8212; ', $curl);
 			$curl = str_replace('--', '&#8211;', $curl);
 			$curl = str_replace('xn&#8211;', 'xn--', $curl);
 			$curl = str_replace('...', '&#8230;', $curl);
 			$curl = str_replace('``', '&#8220;', $curl);
-			
+
 			// This is a hack, look at this more later. It works pretty well though.
 			$cockney = array(
 				"'tain't",
@@ -43,25 +43,25 @@ function wptexturize($text) {
 				"&#8217;cause"
 			);
 			$curl = str_replace($cockney, $cockneyreplace, $curl);
-			
+
 			$curl = preg_replace("/'s/", '&#8217;s', $curl);
 			$curl = preg_replace("/'(\d\d(?:&#8217;|')?s)/", "&#8217;$1", $curl);
 			$curl = preg_replace('/(\s|\A|")\'/', '$1&#8216;', $curl);
 			// $curl = preg_replace('/(\d+)"/', '$1&#8243;', $curl);
-			
+
 			$curl = preg_replace('/(\s|\A)("|&quot;)(?!\s)/', '$1&#8220;$3', $curl);
-			
+
 			$curl = preg_replace("/(\d+)'/", '$1&#8242;', $curl);
 			$curl = preg_replace("/(\S)'([^'\s])/", "$1&#8217;$2", $curl);
 			// $curl = preg_replace('/(\s|\A)"(?!\s)/', '$1&#8220;$2', $curl);
-			
+
 			$curl = preg_replace('/(\s|\A)("|&quot;)(?!\s)/', '$1&#8220;$3', $curl);
-			
+
 			$curl = preg_replace('/("|&quot;)(\s|\S|\Z)/', '&#8221;$2', $curl);
 			$curl = preg_replace("/'([\s.]|\Z)/", '&#8217;$1', $curl);
 			$curl = preg_replace("/ \(tm\)/i", ' &#8482;', $curl);
 			$curl = str_replace("''", '&#8221;', $curl);
-			
+
 			$curl = preg_replace('/(\d+)x(\d+)/', "$1&#215;$2", $curl);
 		} elseif (strstr($curl, '</') || strstr($curl, '/>')) {
 			if ($skip > 0)
@@ -70,7 +70,7 @@ function wptexturize($text) {
 			// strstr is fast
 			$skip++;
 		} else {
-			if (isset($curl {0}) && $curl {0} == "<" && $skip > 0)
+			if (isset($curl [0]) && $curl [0] == "<" && $skip > 0)
 				$skip++;
 		}
 		$curl = preg_replace('/&([^#])(?![a-z12]{1,8};)/', '&#038;$1', $curl);
@@ -84,7 +84,7 @@ function clean_pre($matches) {
 		$text = $matches [1] . $matches [2] . "</pre>";
 	else
 		$text = $matches;
-	
+
 	/* NWM: a bit hackish? where are the slashes for double quotes added? */
 	$text = str_replace('\"', '"', $text);
 	$text = str_replace('<br />', '', $text);
@@ -150,7 +150,7 @@ function wpautop($pee, $br = 1) {
 	if (strpos($pee, '<pre') !== false)
 		$pee = preg_replace_callback('!(<pre[^>]*>)(.*?)</pre>!is', 'clean_pre', $pee);
 	$pee = preg_replace("|\n</p>$|", '</p>', $pee);
-	
+
 	return $pee;
 }
 
@@ -208,7 +208,7 @@ function wp_specialchars($text, $quotes = 0) {
 		$text = str_replace('"', '&quot;', $text);
 		$text = str_replace("'", '&#039;', $text);
 	}
-	
+
 	return $text;
 }
 
@@ -216,32 +216,32 @@ function utf8_uri_encode($utf8_string) {
 	$unicode = '';
 	$values = array();
 	$num_octets = 1;
-	
+
 	for($i = 0; $i < strlen($utf8_string); $i++) {
-		
+
 		$value = ord($utf8_string [$i]);
-		
+
 		if ($value < 128) {
 			$unicode .= chr($value);
 		} else {
 			if (count($values) == 0)
 				$num_octets = ($value < 224) ? 2 : 3;
-			
+
 			$values [] = $value;
-			
+
 			if (count($values) == $num_octets) {
 				if ($num_octets == 3) {
 					$unicode .= '%' . dechex($values [0]) . '%' . dechex($values [1]) . '%' . dechex($values [2]);
 				} else {
 					$unicode .= '%' . dechex($values [0]) . '%' . dechex($values [1]);
 				}
-				
+
 				$values = array();
 				$num_octets = 1;
 			}
 		}
 	}
-	
+
 	return $unicode;
 }
 
@@ -436,14 +436,14 @@ function remove_accents($string) {
 			// Euro Sign
 			chr(226) . chr(130) . chr(172) => 'E'
 		);
-		
+
 		$string = strtr($string, $chars);
 	} else {
 		// Assume ISO-8859-1 if not UTF-8
 		$chars ['in'] = chr(128) . chr(131) . chr(138) . chr(142) . chr(154) . chr(158) . chr(159) . chr(162) . chr(165) . chr(181) . chr(192) . chr(193) . chr(194) . chr(195) . chr(196) . chr(197) . chr(199) . chr(200) . chr(201) . chr(202) . chr(203) . chr(204) . chr(205) . chr(206) . chr(207) . chr(209) . chr(210) . chr(211) . chr(212) . chr(213) . chr(214) . chr(216) . chr(217) . chr(218) . chr(219) . chr(220) . chr(221) . chr(224) . chr(225) . chr(226) . chr(227) . chr(228) . chr(229) . chr(231) . chr(232) . chr(233) . chr(234) . chr(235) . chr(236) . chr(237) . chr(238) . chr(239) . chr(241) . chr(242) . chr(243) . chr(244) . chr(245) . chr(246) . chr(248) . chr(249) . chr(250) . chr(251) . chr(252) . chr(253) . chr(255);
-		
+
 		$chars ['out'] = "EfSZszYcYuAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy";
-		
+
 		$string = strtr($string, $chars ['in'], $chars ['out']);
 		$double_chars ['in'] = array(
 			chr(140),
@@ -469,32 +469,32 @@ function remove_accents($string) {
 		);
 		$string = str_replace($double_chars ['in'], $double_chars ['out'], $string);
 	}
-	
+
 	return $string;
 }
 
 function sanitize_title($title, $fallback_title = '') {
 	$title = strip_tags($title);
-	
+
 	$title = apply_filters('sanitize_title', $title);
-	
+
 	if (empty($title)) {
 		$title = $fallback_title;
 	}
-	
+
 	return $title;
 }
 
 function sanitize_title_with_dashes($title) {
 	$title = strip_tags($title);
-	
+
 	if (seems_utf8($title)) {
 		if (function_exists('mb_strtolower')) {
 			$title = mb_strtolower($title, 'UTF-8');
 		}
 		$title = utf8_uri_encode($title);
 	}
-	
+
 	// Preserve escaped octets.
 	$title = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '---$1---', $title);
 	// Remove percent signs that are not part of an octet.
@@ -503,26 +503,26 @@ function sanitize_title_with_dashes($title) {
 	$title = preg_replace('|---([a-fA-F0-9][a-fA-F0-9])---|', '%$1', $title);
 	// and finally: Kill octets
 	$title = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $title);
-	
+
 	// remove accents
 	$title = remove_accents($title);
-	
+
 	// title is in lower case always
 	$title = strtolower($title);
-	
+
 	// kill entities
 	$title = preg_replace('/&.+?;/', '', $title);
-	
+
 	// kill special chars
 	$title = preg_replace('/[^%a-z0-9 _-]/', '', $title);
-	
+
 	// replace spaces by dash
 	$title = preg_replace('/\s+/', '-', $title);
 	// Kill multiple dashes
 	$title = preg_replace('|-+|', '-', $title);
 	// kill dashes at beginning and end of string
 	$title = trim($title, '-');
-	
+
 	return $title;
 }
 
@@ -562,31 +562,31 @@ function convert_chars($content, $flag = 'obsolete') {
 		'&#158;' => '',
 		'&#159;' => '&#376;'
 	);
-	
+
 	// Remove metadata tags
 	$content = preg_replace('/<title>(.+?)<\/title>/', '', $content);
 	$content = preg_replace('/<category>(.+?)<\/category>/', '', $content);
-	
+
 	// Converts lone & characters into &#38; (a.k.a. &amp;)
 	$content = preg_replace('/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $content);
-	
+
 	// Fix Word pasting
 	$content = strtr($content, $wp_htmltranswinuni);
-	
+
 	// Just a little XHTML help
 	$content = str_replace('<br>', '<br />', $content);
 	$content = str_replace('<hr>', '<hr />', $content);
-	
+
 	return $content;
 }
 
 function funky_javascript_fix($text) {
 	// Fixes for browsers' javascript bugs
 	global $is_macIE, $is_winIE;
-	
+
 	if ($is_winIE || $is_macIE)
 		$text = preg_replace("/\%u([0-9A-F]{4,4})/e", "'&#'.base_convert('\\1',16,10).';'", $text);
-	
+
 	return $text;
 }
 
@@ -610,7 +610,7 @@ function funky_javascript_fix($text) {
  * 1.0 First Version
  */
 function balanceTags($text, $is_comment = 0) {
-	
+
 	/*
 	 * if (get_settings('use_balanceTags') == 0) {
 	 * return $text;
@@ -620,18 +620,18 @@ function balanceTags($text, $is_comment = 0) {
 	$stacksize = 0;
 	$tagqueue = '';
 	$newtext = '';
-	
+
 	// WP bug fix for comments - in case you REALLY meant to type '< !--'
 	$text = str_replace('< !--', '<    !--', $text);
 	// WP bug fix for LOVE <3 (and other situations with '<' before a number)
 	$text = preg_replace('#<([0-9]{1})#', '&lt;$1', $text);
-	
+
 	while (preg_match("/<(\/?\w*)\s*([^>]*)>/", $text, $regex)) {
 		$newtext .= $tagqueue;
-		
+
 		$i = strpos($text, $regex [0]);
 		$l = strlen($regex [0]);
-		
+
 		// clear the shifter
 		$tagqueue = '';
 		// Pop or Push
@@ -662,9 +662,9 @@ function balanceTags($text, $is_comment = 0) {
 			}
 		} else { // Begin Tag
 			$tag = strtolower($regex [1]);
-			
+
 			// Tag Cleaning
-			
+
 			// If self-closing or '', don't do anything.
 			if ((substr($regex [2], -1) == '/') || ($tag == '')) {
 			} // ElseIf it's a known single-entity tag but it doesn't close itself, do so
@@ -678,7 +678,7 @@ function balanceTags($text, $is_comment = 0) {
 				}
 				$stacksize = array_push($tagstack, $tag);
 			}
-			
+
 			// Attributes
 			$attributes = $regex [2];
 			if ($attributes) {
@@ -694,22 +694,22 @@ function balanceTags($text, $is_comment = 0) {
 		$newtext .= substr($text, 0, $i) . $tag;
 		$text = substr($text, $i + $l);
 	}
-	
+
 	// Clear Tag Queue
 	$newtext .= $tagqueue;
-	
+
 	// Add Remaining text
 	$newtext .= $text;
-	
+
 	// Empty Stack
 	while ($x = array_pop($tagstack)) {
 		$newtext .= '</' . $x . '>'; // Add remaining tags to close
 	}
-	
+
 	// WP fix for the bug with HTML comments
 	$newtext = str_replace("< !--", "<!--", $newtext);
 	$newtext = str_replace("<    !--", "< !--", $newtext);
-	
+
 	return $newtext;
 }
 
@@ -1203,7 +1203,7 @@ function ent2ncr($text) {
 		'&hearts;' => '&#9829;',
 		'&diams;' => '&#9830;'
 	);
-	
+
 	foreach ($to_ncr as $entity => $ncr) {
 		$text = str_replace($entity, $ncr, $text);
 	}
