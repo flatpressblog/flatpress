@@ -40,10 +40,10 @@
  *     
  */
 function system_save($file, $array) {
-	
+
 	// if ( ( $numargs = func_num_args() ) > 1) {
 	$string = "<?php\n\n";
-	
+
 	// $arg_list = func_get_args();
 	foreach ($array as $key => $arg) {
 		// $vname = utils_vname ($arg);
@@ -51,11 +51,11 @@ function system_save($file, $array) {
 		$s = /*"  global {$key};\n*/  "\${$key} = " . var_export($arg, true) . ";\n";
 		$string .= $s;
 	}
-	
+
 	$string .= "\n?>";
-	
+
 	return io_write_file($file, $string);
-	
+
 	// } else die('Wrong number of parameters!');
 }
 
@@ -68,7 +68,7 @@ function system_hashsalt_save($force = false) {
 	return true;
 }
 
-define('SYSTEM_VER', '1.1');
+define('SYSTEM_VER', '1.2.dev');
 
 function system_ver() {
 	return 'fp-' . SYSTEM_VER;
@@ -80,7 +80,7 @@ function system_ver_compare($newver, $oldver) {
 	$cn = count($nv_arr);
 	$co = count($ov_arr);
 	$max = min($cn, $co);
-	
+
 	// let's compare if one of the first version numbers differs
 	// from new version, being greater
 	for($i = 0; $i < $max; $i++) {
@@ -91,7 +91,7 @@ function system_ver_compare($newver, $oldver) {
 			return 0;
 		}
 	}
-	
+
 	// if they equals, but still new version has more digits
 	// then old-version is still outdated
 	if ($cn > $co)
@@ -119,7 +119,7 @@ function system_getindex() {
 
 function system_unregister_globals() {
 	$v = @ini_get('register_globals');
-	
+
 	// on error we unregister anyway
 	if ($v || is_null($v)) {
 		foreach ($_REQUEST as $var => $val) {
@@ -153,12 +153,12 @@ function system_prepare_iis() {
 
 function system_init_action_params() {
 	global $fp_params;
-	
+
 	$fp_params = array();
-	
+
 	if ($x = @$_GET ['x'])
 		$fp_params = utils_kexplode($x, ':;', false);
-	
+
 	$fp_params = array_merge($_GET, $fp_params);
 }
 
@@ -166,33 +166,33 @@ function system_init() {
 	system_sanitizequery();
 	system_unregister_globals();
 	system_prepare_iis();
-	
+
 	$GLOBALS ['fpdb'] = new FPDB();
-	
+
 	$GLOBALS ['fp_widgets'] = new widget_indexer();
-	
+
 	$GLOBALS ['smarty'] = & $GLOBALS ['_FP_SMARTY'];
 	$smarty = & $GLOBALS ['smarty'];
-	
+
 	$GLOBALS ['fp_config'] = config_load();
-	
+
 	cookie_setup();
 	sess_setup();
 	user_loggedin();
-	
+
 	ob_start();
-	
+
 	$GLOBALS ['theme'] = theme_loadsettings();
-	
+
 	$GLOBALS ['lang'] = lang_load();
-	
+
 	plugin_loadall();
-	
+
 	// init smarty
 	$smarty->compile_dir = CACHE_DIR;
 	$smarty->cache_dir = SMARTY_DIR . 'cache/';
 	$smarty->caching = 0;
-	
+
 	do_action('init');
 	ob_end_clean();
 }
