@@ -153,7 +153,7 @@ Want to see more?
 
 [h4]And what now?[/h4]
 
-Now you can [url=login.php]Login[/url] to get to the [url=admin.php]Control Panel[/url] and start posting!
+Now you can [url=login.php]Login[/url] to get to the [url=admin.php]Administration Area[/url] and start posting!
 
 Have fun! :) 
 
