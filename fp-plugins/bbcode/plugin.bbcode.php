@@ -266,6 +266,36 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 }
 
 /**
+ * Function for email links
+ *
+ * @param string $action
+ * @param array $attr
+ * @param string $content
+ * @param mixed $params
+ *        	Not used
+ * @param mixed $node_object
+ *        	Not used
+ * @return string
+ */
+function do_bbcode_mail($action, $attributes, $content, $params, $node_object) {
+	if ($action == 'validate') {
+		// not used for now
+		return true;
+	}
+
+	// obfuscation mode: decimal/hexadecimal ASCII randomly mixed
+	$mode = 3;
+
+	// the code was specified as follows: [mail]user@example.org[/mail]
+	if (!isset($attributes ['default'])) {
+		return "<a href=\"" . obfuscateEmailAddress("mailto:" . $content, $mode) . "\" class=\"maillink\">" . obfuscateEmailAddress($content, $mode) . "</a>";
+	} else {
+		// else the code was specified as follows: [mail=user@example.org]link text[/url]
+		return "<a href=\"" . obfuscateEmailAddress("mailto:" . $attributes ['default'], $mode) . "\" class=\"maillink\">" . $content . "</a>";
+	}
+}
+
+/**
  * Function for embedding videos
  *
  * @param string $action
@@ -482,169 +512,221 @@ function do_bbcode_list($action, $attributes, $content, $params, $node_object) {
  */
 function &plugin_bbcode_init() {
 	static $bbcode = null;
-	if (!defined('BBCODE_INIT_DONE')) {
-		$bbcode = new StringParser_BBCode();
-		// If you set it to false the case-sensitive will be ignored for all codes
-		$bbcode->setGlobalCaseSensitive(false);
-		$bbcode->setMixedAttributeTypes(true);
-		$BBCODE_TAGS_SIMPLE = array(
-			'b' => 'strong',
-			'i' => 'em',
-			'quote' => 'blockquote',
-			'blockquote',
-			'strong',
-			'em',
-			'ins',
-			'del',
-			'hr',
-			'h2',
-			'h3',
-			'h4',
-			'h5',
-			'h6'
-			// u for underlined: see below
-		);
-		foreach ($BBCODE_TAGS_SIMPLE as $key => $val) {
-			if (!is_numeric($key)) {
-				$bbtag = $key;
-				$htmltag = $val;
-			} else {
-				$htmltag = $bbtag = $val;
-			}
-			$bbcode->addCode($bbtag, 'simple_replace', null, array(
-				'start_tag' => "<$htmltag>",
-				'end_tag' => "</$htmltag>"
-			), 'inline', array(
-				'listitem',
-				'block',
-				'inline',
-				'link'
-			), array());
-			$bbcode->setCodeFlag($bbtag, 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
-		}
 
-		/* other tags */
-		$bbcode->addCode('u', 'simple_replace', null, array(
-			'start_tag' => '<span style="text-decoration: underline">',
-			'end_tag' => '</span>'
-		), 'inline', array(
-			'listitem',
-			'block',
-			'inline',
-			'link'
-		), array());
-		$bbcode->addCode('color', 'callback_replace', 'do_bbcode_color', array(
-			'usecontent_param' => array(
-				'default'
-			)
-		), 'inline', array(
-			'listitem',
-			'block',
-			'inline',
-			'link'
-		), array());
-		$bbcode->setCodeFlag('color', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
-		$bbcode->addCode('size', 'callback_replace', 'do_bbcode_size', array(
-			'usecontent_param' => array(
-				'default'
-			)
-		), 'inline', array(
-			'listitem',
-			'block',
-			'inline',
-			'link'
-		), array());
-		$bbcode->setCodeFlag('color', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
-		$bbcode->addCode('code', 'usecontent', 'do_bbcode_code', array(), 'inline', array(
-			'listitem',
-			'block',
-			'inline',
-			'link'
-		), array());
-		$bbcode->setCodeFlag('code', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
-		$bbcode->addCode('html', 'usecontent', 'do_bbcode_html', array(), 'inline', array(
-			'listitem',
-			'block',
-			'inline',
-			'link'
-		), array());
-		$bbcode->setCodeFlag('html', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
-		$bbcode->addCode('url', 'callback_replace', 'do_bbcode_url', array(
-			'usecontent_param' => array(
-				'default',
-				'new'
-			)
-		), 'link', array(
-			'listitem',
-			'block',
-			'inline'
-		), array(
-			'link'
-		));
-		$bbcode->addCode('img', 'callback_replace_single', 'do_bbcode_img', array(
-			'usecontent_param' => array(
-				'default',
-				'float',
-				'alt',
-				'popup',
-				'width',
-				'height',
-				'title'
-			)
-		), 'image', array(
-			'listitem',
-			'block',
-			'inline',
-			'link'
-		), array());
-		$bbcode->setCodeFlag('img', 'closetag', 'BBCODE_CLOSETAG_FORBIDDEN');
-		$bbcode->addCode('video', 'callback_replace_single', 'do_bbcode_video', array(
-			'usecontent_param' => array(
-				'default',
-				'float',
-				'width',
-				'height'
-			)
-		), 'image', array(
-			'listitem',
-			'block',
-			'inline',
-			'link'
-		), array());
-		$bbcode->setCodeFlag('video', 'closetag', 'BBCODE_CLOSETAG_FORBIDDEN');
-		$bbcode->addCode('list', 'callback_replace', 'do_bbcode_list', array(
-			'start_tag' => '<ul>',
-			'end_tag' => '</ul>'
-		), 'list', array(
-			'block',
-			'listitem'
-		), array());
-		$bbcode->setCodeFlag('list', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
-		$bbcode->setCodeFlag('list', 'paragraph_type', BBCODE_PARAGRAPH_BLOCK_ELEMENT);
-		$bbcode->setCodeFlag('list', 'opentag.before.newline', BBCODE_NEWLINE_DROP);
-		$bbcode->setCodeFlag('list', 'closetag.before.newline', BBCODE_NEWLINE_DROP);
-		$bbcode->addCode('*', 'simple_replace', null, array(
-			'start_tag' => '<li>',
-			'end_tag' => '</li>'
-		), 'listitem', array(
-			'list'
-		), array());
-		$bbcode->setCodeFlag('*', 'closetag', BBCODE_CLOSETAG_OPTIONAL);
-		$bbcode->setCodeFlag('*', 'paragraphs', false);
-		$bbcode->addCode('align', 'callback_replace', 'do_bbcode_align', array(
-			'usecontent_param' => array(
-				'default'
-			)
-		), 'block', array(
-			'listitem',
-			'block',
-			'inline',
-			'link'
-		), array());
-		define('BBCODE_INIT_DONE', true);
-		// DMKE: there's no bbcode_init filter defined
-		$bbcode = apply_filters('bbcode_init', $bbcode);
+	// have been here already - get outta here :)
+	if (defined('BBCODE_INIT_DONE')) {
+		return $bbcode;
 	}
+
+	// get the BBCode parser
+	$bbcode = new StringParser_BBCode();
+	$bbcode->setGlobalCaseSensitive(false); // don't care about case sensitivity: img == IMG == Img
+	$bbcode->setMixedAttributeTypes(true);
+
+	/*
+	 * Tags that are same in BBCode and HTML ([i]...[/i] => <i>...</i>)
+	 */
+	$bbcode_tags_simple = array(
+		'b' => 'strong',
+		'i' => 'em',
+		'quote' => 'blockquote',
+		'blockquote',
+		'strong',
+		'em',
+		'ins',
+		'del',
+		'hr',
+		'h2',
+		'h3',
+		'h4',
+		'h5',
+		'h6'
+		// u for underlined: see below
+	);
+	foreach ($bbcode_tags_simple as $key => $val) {
+		if (!is_numeric($key)) {
+			$bbtag = $key;
+			$htmltag = $val;
+		} else {
+			$htmltag = $bbtag = $val;
+		}
+		$bbcode->addCode($bbtag, 'simple_replace', null, array(
+			'start_tag' => "<$htmltag>",
+			'end_tag' => "</$htmltag>"
+		), 'inline', array(
+			'listitem',
+			'block',
+			'inline',
+			'link'
+		), array());
+		$bbcode->setCodeFlag($bbtag, 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
+	}
+
+	/*
+	 * other tags
+	 */
+	// underlined text
+	$bbcode->addCode('u', 'simple_replace', null, array(
+		'start_tag' => '<span style="text-decoration: underline">',
+		'end_tag' => '</span>'
+	), 'inline', array(
+		'listitem',
+		'block',
+		'inline',
+		'link'
+	), array());
+
+	// colored text
+	$bbcode->addCode('color', 'callback_replace', 'do_bbcode_color', array(
+		'usecontent_param' => array(
+			'default'
+		)
+	), 'inline', array(
+		'listitem',
+		'block',
+		'inline',
+		'link'
+	), array());
+	$bbcode->setCodeFlag('color', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
+
+	// sized text
+	$bbcode->addCode('size', 'callback_replace', 'do_bbcode_size', array(
+		'usecontent_param' => array(
+			'default'
+		)
+	), 'inline', array(
+		'listitem',
+		'block',
+		'inline',
+		'link'
+	), array());
+	$bbcode->setCodeFlag('size', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
+
+	// code
+	$bbcode->addCode('code', 'usecontent', 'do_bbcode_code', array(), 'inline', array(
+		'listitem',
+		'block',
+		'inline',
+		'link'
+	), array());
+	$bbcode->setCodeFlag('code', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
+
+	// plain html content
+	$bbcode->addCode('html', 'usecontent', 'do_bbcode_html', array(), 'inline', array(
+		'listitem',
+		'block',
+		'inline',
+		'link'
+	), array());
+	$bbcode->setCodeFlag('html', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
+
+	// links
+	$bbcode->addCode('url', 'callback_replace', 'do_bbcode_url', array(
+		'usecontent_param' => array(
+			'default',
+			'new'
+		)
+	), 'link', array(
+		'listitem',
+		'block',
+		'inline'
+	), array(
+		'link'
+	));
+
+	// images
+	$bbcode->addCode('img', 'callback_replace_single', 'do_bbcode_img', array(
+		'usecontent_param' => array(
+			'default',
+			'float',
+			'alt',
+			'popup',
+			'width',
+			'height',
+			'title'
+		)
+	), 'image', array(
+		'listitem',
+		'block',
+		'inline',
+		'link'
+	), array());
+	$bbcode->setCodeFlag('img', 'closetag', 'BBCODE_CLOSETAG_FORBIDDEN');
+
+	// email links
+	$bbcode->addCode('mail', // tag name: this will go between square brackets
+	'callback_replace', // type of action: we'll use a callback function
+	'do_bbcode_mail', // name of the callback function
+	array(
+		'usecontent_param' => array(
+			'default'
+		)
+	), // supported parameters: "default" is [acronym=valore]
+	'inline', // type of the tag, inline or block, etc
+	array(
+		'listitem',
+		'block',
+		'inline',
+		'link'
+	), // type of elements in which you can use this tag
+	array()); // type of elements where this tag CAN'T go (in this case, none, so it can go everywhere)
+	$bbcode->setCodeFlag('mail', 'closetag', BBCODE_CLOSETAG_MUSTEXIST); // a closing tag must exist [/tag]
+
+	// video
+	$bbcode->addCode('video', 'callback_replace_single', 'do_bbcode_video', array(
+		'usecontent_param' => array(
+			'default',
+			'float',
+			'width',
+			'height'
+		)
+	), 'image', array(
+		'listitem',
+		'block',
+		'inline',
+		'link'
+	), array());
+	$bbcode->setCodeFlag('video', 'closetag', 'BBCODE_CLOSETAG_FORBIDDEN');
+
+	// unordered and ordered list
+	$bbcode->addCode('list', 'callback_replace', 'do_bbcode_list', array(
+		'start_tag' => '<ul>',
+		'end_tag' => '</ul>'
+	), 'list', array(
+		'block',
+		'listitem'
+	), array());
+	$bbcode->setCodeFlag('list', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
+	$bbcode->setCodeFlag('list', 'paragraph_type', BBCODE_PARAGRAPH_BLOCK_ELEMENT);
+	$bbcode->setCodeFlag('list', 'opentag.before.newline', BBCODE_NEWLINE_DROP);
+	$bbcode->setCodeFlag('list', 'closetag.before.newline', BBCODE_NEWLINE_DROP);
+
+	// list items
+	$bbcode->addCode('*', 'simple_replace', null, array(
+		'start_tag' => '<li>',
+		'end_tag' => '</li>'
+	), 'listitem', array(
+		'list'
+	), array());
+	$bbcode->setCodeFlag('*', 'closetag', BBCODE_CLOSETAG_OPTIONAL);
+	$bbcode->setCodeFlag('*', 'paragraphs', false);
+
+	// aligned text
+	$bbcode->addCode('align', 'callback_replace', 'do_bbcode_align', array(
+		'usecontent_param' => array(
+			'default'
+		)
+	), 'block', array(
+		'listitem',
+		'block',
+		'inline',
+		'link'
+	), array());
+
+	// aaaand we're done!
+	define('BBCODE_INIT_DONE', true);
+	$bbcode = apply_filters('bbcode_init', $bbcode);
+
 	return $bbcode;
 }
 
@@ -693,7 +775,7 @@ function plugin_bbcode_toolbar() {
  * Simplified codes for comments.
  *
  * @param string $text
- * @return strng
+ * @return string
  */
 function plugin_bbcode_comment($text) {
 	$bbcode = new StringParser_BBCode();
@@ -839,4 +921,41 @@ function plugin_bbcode_undoHtml($text) {
 	return $text;
 }
 
-?>
+// ------------------------------------------------------------------------------
+// obfuscate mail adresses
+// ------------------------------------------------------------------------------
+/**
+ * Obfuscates the given email adress with the given mode.
+ * Thanks for spam-me-not.php to Rolf Offermanns!
+ * Spam-me-not in JavaScript: http://www.zapyon.de
+ *
+ * @param string $originalString
+ *        	the email adress to obfuscate
+ * @param int $mode
+ *        	the mode (1: decimal ASCII; 2: hexadecimal ASCII; 3: decimal/hexadecimal ASCII randomly mixed)
+ * @return string
+ */
+function obfuscateEmailAddress($originalString, $mode) {
+	$encodedString = "";
+	$nowCodeString = "";
+
+	$originalLength = strlen($originalString);
+	$encodeMode = $mode;
+
+	for($i = 0; $i < $originalLength; $i++) {
+		if ($mode == 3)
+			$encodeMode = rand(1, 2);
+		switch ($encodeMode) {
+			case 1: // Decimal code
+				$nowCodeString = "&#" . ord($originalString [$i]) . ";";
+				break;
+			case 2: // Hexadecimal code
+				$nowCodeString = "&#x" . dechex(ord($originalString [$i])) . ";";
+				break;
+			default:
+				return "ERROR: wrong encoding mode.";
+		}
+		$encodedString .= $nowCodeString;
+	}
+	return $encodedString;
+}
