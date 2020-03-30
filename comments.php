@@ -100,7 +100,7 @@ function comment_validate() {
 	 */
 	
 	if (isset($_POST['content'])) {
-	    $content = comment_backslashFix($_POST['content'], true);
+	    $content = comment_backslashFix($_POST['content'], false);
 	}
 	
 	$errors = array();
