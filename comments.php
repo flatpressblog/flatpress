@@ -68,11 +68,17 @@ add_filter('wp_title', 'comment_pagetitle', 10, 2);
 
 
 /**
- * @author Illevyard
+ * Fix for being able to comment an empty comment when typing a single backslash.</br>
+ * This function replaces every backslash '\' in the given string with an escaped backslash '\\'.</br>
+ * We need to escape the backslash here in PHP-Code aswell, so '\\' equals '\' and '\\\\' equals '\\'.</br>
+ * </br>
+ * If you want any previous backslash to be stripped from the string, just call this function with <code>$stripSlash = true</code>.</br>
  * 
  * @param string $string
  * @param boolean $escapeSlashes
  * @return string
+ * 
+ * @author Illevyard
  */
 function comment_backslashFix($string, $stripSlash) {
     if ($stripSlash == true) {
