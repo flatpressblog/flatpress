@@ -66,28 +66,20 @@ function comment_pagetitle($val, $sep) {
 remove_filter('wp_title', 'index_permatitle');
 add_filter('wp_title', 'comment_pagetitle', 10, 2);
 
+
 /**
- * Bugfix: Empty comments no longer can be posted by typing a single backslash ('\') into the formular.
- * 
- * This function replaces every single backslash '\' with an escaped one '\\'.
- * Due to the fact, that PHP already escapes the backslashes in the code we have to replace '\\' with '\\\\'.
- * 
- * When the function is called with '$escapeSlashes = TRUE' the backslahes in the printed comment area are escaped aswell, 
- * so when typing a single one '\' it wont post a comment because of "You must enter a comment". and when typing in '\\' it will print only '\'.
- * 
- * Default is '$escapeSlashes = false'.
- * This way every backslash is commented in the very exact way it was written into the formular.
- * 
  * @author Illevyard
+ * 
  * @param string $string
- * @param boolean $mode
+ * @param boolean $escapeSlashes
+ * @return string
  */
-function comment_backslashFix($string, $escapeSlashes = false) {
+function comment_backslashFix($string, $escapeSlashes) {
     $content = $string;
-    if ($escapeSlashes === true) {
-        stripslashes($content);
+    if ($escapeSlashes == true) {
+       $content = stripslashes($content);
     }
-    $fixedContent = trim(str_replace('\\', '\\\\', $content));
+    $fixedContent = str_replace('\\', '\\\\', $content);
     return $fixedContent;
 }
 
@@ -108,8 +100,7 @@ function comment_validate() {
 	 */
 	
 	if (isset($_POST['content'])) {
-	    $content = $_POST['content'];
-	    $content = comment_backslashFix($content);
+	    $content = comment_backslashFix($_POST['content'], true);
 	}
 	
 	$errors = array();
