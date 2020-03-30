@@ -74,9 +74,9 @@ add_filter('wp_title', 'comment_pagetitle', 10, 2);
  * @param boolean $escapeSlashes
  * @return string
  */
-function comment_backslashFix($string, $escapeSlashes) {
+function comment_backslashFix($string, $stripSlash) {
     $content = $string;
-    if ($escapeSlashes == true) {
+    if ($stripSlash == true) {
        $content = stripslashes($content);
     }
     $fixedContent = str_replace('\\', '\\\\', $content);
