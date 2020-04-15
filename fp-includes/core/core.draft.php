@@ -183,7 +183,8 @@ function smarty_block_draft($params, $content, &$smarty, &$repeat) {
 	if ($arr) {
 		$firstElement = utils_array_kshift($arr);
 		$id = array_keys($firstElement);
-		$subject = $firstElement [$id [0]];
+		$id = $id [0];
+		$subject = $firstElement [$id];
 	}
 
 	if ($id) {
