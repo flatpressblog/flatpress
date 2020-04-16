@@ -1,5 +1,5 @@
 # FlatPress contributors
-FlatPress wouldn't be the great blogging system it ist without the help of many volunteers. Here is a list of people who contributed to FlatPress. __Thank you all very much!__
+FlatPress wouldn't be the great blogging system it is without the help of many volunteers. Here is a list of people who contributed to FlatPress. __Thank you all very much!__
 
 If you think someone's missing here, please let us know.
 
@@ -9,7 +9,7 @@ FlatPress was initially developed by [Edoardo Vacchi (NoWhereMan)](http://www.no
 Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://arvidzimmermann.de "arvidzimmermann.de").
 
 ## Coding
-- [Julian Rademacher](https://moortaube.de/) filed some useful pull requests (and donated his Twitter account [@FlatPress](https://twitter.com/FlatPress))
+- [Julian Rademacher](https://moortaube.de/) filed some useful pull requests (and donated his Twitter account [@FlatPress](https://twitter.com/FlatPress)).
 - [Matthias Mauch](http://www.aadmm.org/)'s [FP-Patch](http://www.aadmm.org/fp-patch/) initially brought FlatPress to PHP 7.
 
 ## Translation
