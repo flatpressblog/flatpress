@@ -13,6 +13,7 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://arvidzimmer
 - [Matthias Mauch](http://www.aadmm.org/)'s [FP-Patch](http://www.aadmm.org/fp-patch/) initially brought FlatPress to PHP 7.
 
 ## Translation
+- Brazilian Portuguese: randy
 - Czech: [Lubomír Ludvík](http://flatpress.cz/)
 - French: [Marc Thibeault](https://github.com/MarcThibeault) and Dimitri Soufflet, fixed by Gee
 - German: [Matthias Mauch (laborix)](http://www.aadmm.org/)
