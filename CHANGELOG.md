@@ -202,7 +202,7 @@ Crescendo beta1 (May 17, 2007)
 - changed:	some behaviours in cache; need some rework as introduced a little bug... d'oh! 
 
 
-Crescendo alpha
+Crescendo alpha (Feb 10, 2007)
 ===============
 
 - fixed:		utils_mail()
