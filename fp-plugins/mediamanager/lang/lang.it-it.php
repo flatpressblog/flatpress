@@ -1,42 +1,42 @@
 <?php
-    /* MediaManager IT-IT language file by Fabrix Xm */
-
+    /* MediaManager IT-IT language file by Giacomo Margarito */
+    
 	/* THIS LINE SHOULDN'T BE HERE! */
 	$lang['admin']['uploader']['submenu']['default'] = 'Caricatore';
 	
-	$lang['admin']['uploader']['submenu']['mediamanager'] = 'Gestore media';
+	$lang['admin']['uploader']['submenu']['mediamanager'] = 'Media manager';
 	
 
 	$lang['admin']['uploader']['mediamanager'] = array(
-		'head'		=> 'Gestore media',
-		'description'=>'Gestisci i tuoi file',
+		'head'		=> 'Media manager',
+		'description'=>'Gestisci i file mulltimediali',
         
-		'delete'	=> 'cancella',
+		'delete'	=> 'elimina',
 		'up'		=> 'Indietro',
 		'page'		=> 'Pagina',
 		'colname'	=> 'Nome',
-		'colsize'	=> 'Dim.',
-		'coltype'	=> 'Tipo',
+		'colsize'	=> 'Dimensione',
+		'coltype'	=> 'Estensione',
 		'colmtime'	=> 'Caricato il',
-		'colusecount'=>'usato n.',
+		'colusecount'=>'# use',
 		'nofiles'	=> 'Nessun file caricato.',
-		'loadfile'	=> 'Carica file.',
+		'loadfile'	=> 'Carica file',
 		
-		'selected'		=> 'Selezionati',
-		'selectaction'	=> '-- seleziona azione --',
+		'selected'		=> 'Selezionato',
+		'selectaction' 	=> '-- seleziona azione --',
 		'addtogallery'	=> 'Aggiungi alla galleria',
 		'newgallery'	=> 'Nuova galleria',
-		'go'			=> 'Vai',
+	    'go' 			=> 'Vai',
 		'add'			=> 'Aggiungi'
 		
 	);
 	$lang['admin']['uploader']['mediamanager']['msgs'] = array(
-		3		=> 'Nuova galleria creata',
-	    2       => 'Immagini aggiunte alla galleria',
-		1		=> 'File cancellato',
-		-1		=> 'Errore cancellando il file',
-		-2		=> 'Errore creando la nuova galleria',
-		-3		=> 'Perfavore specifica il nome della nuova galleria'
+		3		=> 'La nuva galleria è stata creata',
+	    2       => 'Immagini spostate nella galleria',
+		1		=> 'File eliminato',
+		-1		=> 'Errore durante l\'eliminazione del file',
+		-2		=> 'Errore durante la creazione della nuova galleria',
+		-3		=> 'Specifica il nome della nuova galleria'
 	);
 	
 
