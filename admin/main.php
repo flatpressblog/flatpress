@@ -7,6 +7,28 @@
 	include(ADMIN_DIR.'panels/admin.defaultpanels.php');
 	include(ADMIN_DIR.'includes/panels.prototypes.php');
 	require(SMARTY_DIR . 'SmartyValidate.class.php');
+	
+	// SCEditor Config
+    // In this file will check if SCEditor use BBCODE or HTML
+    // BBCode = 0 and HTML = 1
+    function get_sceditor_option() {
+		global $fp_config;
+		if (!isset($fp_config['general']['sceditor_display'])) {
+			$fp_config['general']['sceditor_display'] = 0; // BBCode as default
+			config_save();
+		}
+		return $fp_config['general']['sceditor_display'];
+    }
+
+    function get_sceditor_display_value() {
+		switch (get_sceditor_option()) {
+			case 0 : return 'bbcode';
+			case 1 : return 'xhtml';
+			case 2 : return 'disable';
+			default : return 'bbcode';
+		}
+	}
+	// End SCEditor Config
  
 	utils_nocache_headers();
 	
@@ -195,20 +217,32 @@
 	$smarty->assign_by_ref('panelstrings',	$v);
 	$smarty->assign_by_ref('plang',			$v);
 
-	
-	if (isset($_GET['mod'])) {
-	
-		switch ($_GET['mod']) {
-			case 'inline' :
-				$smarty->display(ABS_PATH . ADMIN_DIR . 'admin-inline.tpl');
-				break;
-			case 'ajax' :
-				echo $smarty->get_template_vars('success');
-		}
-		
+	// We create a varible to write user name in tpls
+	if($user = user_loggedin()) {
+		$smarty->assign("username", $user['userid']);
 	} else {
-		$smarty->display('admin.tpl');
+		$smarty->assign("username", "#NAME#");
+	}
+	
+	// Custom lang message for admin panel
+	$smarty->assign("help_top", $lang['admin']['general']['help_top']);
+	$smarty->assign("logout", $lang['admin']['general']['logout_top']);
+	$smarty->assign("close", $lang['admin']['general']['close']);
+	$smarty->assign("blog", $lang['admin']['general']['blog']);
+	$smarty->assign("footer", $lang['admin']['general']['footer']);
+
+	if (isset($_GET['mod'])) {
+
+	switch ($_GET['mod']) {
+		case 'inline' :
+			$smarty->display(ABS_PATH . ADMIN_DIR . 'admin-inline.tpl');
+			break;
+		case 'ajax' :
+			echo $smarty->get_template_vars('success');
 	}
 
-	
+	} else {
+		#$smarty->display('admin.tpl');
+		$smarty->display(ABS_PATH . ADMIN_DIR . 'admin.tpl');
+	}
 ?>

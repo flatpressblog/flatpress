@@ -17,7 +17,12 @@
 		'chmod_info'	=> "The following file permissions <strong>could not</strong>
 					be reset to 0777; probably file owner is not the same as the
 					webserver's. Usually you can ignore this notice.",
-		
+		'help' => 'Help',
+		'useful_links' => 'Here are some useful links:',
+		'fp_home' => 'FlatPress Home',
+		'fp_blog' => 'FlatPress Blog',
+		'fp_forums' => 'FlatPress Forums',
+		'fp_wiki' => 'FlatPress Wiki'
 	);
 	
 	$lang['admin']['maintain']['default']['msgs'] = array(
@@ -31,8 +36,9 @@
 		<li>Last stable version for FlatPress is <big><a href="%s">%s</a></big></li>
 		<li>Last unstable version for FlatPress is <big><a href="%s">%s</a></big></li>
 		</ul>',
-		'notice'=>'Notice:'
-		
+		'notice'=>'Notice:',
+		// New admin theme
+		'no_news' => 'There is not new flatpress notices :('
 	);
 	
 	

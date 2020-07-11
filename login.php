@@ -6,7 +6,7 @@ require_once (INCLUDES_DIR . 'includes.php');
 
 require (SMARTY_DIR . 'SmartyValidate.class.php');
 
-$tpl = 'default.tpl';
+//$tpl = 'default.tpl';
 
 function login_validate() {
 	global $smarty, $lang;
@@ -46,7 +46,7 @@ function main() {
 			user_logout();
 
 			function myredirect() {
-				// login_redirect('.');
+				login_redirect('index.php');
 			}
 
 			add_filter('wp_head', 'myredirect');
@@ -68,7 +68,7 @@ function main() {
 	} elseif (sess_remove('logout_done')) {
 
 		function myredirect() {
-			// login_redirect('.');
+			login_redirect('index.php');
 		}
 
 		add_filter('wp_head', 'myredirect');
@@ -109,6 +109,8 @@ add_filter('wp_title', 'login_title', 10, 2);
 system_init();
 main();
 theme_init($smarty);
-$smarty->display('default.tpl');
+//$smarty->display('default.tpl');
+// We change for the new admin template
+$smarty->display(SHARED_TPLS . 'login_page.tpl');
 
 ?>

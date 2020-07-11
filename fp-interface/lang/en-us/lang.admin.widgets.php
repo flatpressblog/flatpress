@@ -42,6 +42,8 @@
 		'bottom'	=> 'Bottom bar',
 		'left'		=> 'Left bar',
 		'right'		=> 'Right bar',
+		// New admin panel
+		'drophere' 	=> 'Drop here'
 	);
 	
 	$lang['admin']['widgets']['default']['msgs'] = array(

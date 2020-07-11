@@ -20,7 +20,6 @@
 		
 		
 		function main() {
-			
 			if (isset($_GET['do']) && $_GET['do'] == 'clear') {
 				$ret1 = fs_delete(CONTENT_DIR . 'categories_encoded.dat') &&
 				$ret2 = fs_delete(CONTENT_DIR . 'categories.txt');

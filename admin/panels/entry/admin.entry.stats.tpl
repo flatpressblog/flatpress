@@ -1,6 +1,6 @@
 <h2>{"Statistics"}</h2>
 
-{include file='shared:errorlist.tpl'}
+{include file='shared:admin_errorlist'}
 
 <h3>{"Entries"}</h3>
 {"<p>You have <strong>%s</strong> 

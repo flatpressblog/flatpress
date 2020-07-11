@@ -34,6 +34,7 @@
 		function setup() {
 			$this->smarty->assign('themes', theme_list());
 			$this->smarty->assign('lang_list', lang_list());
+			$this->smarty->assign("sceditor_display", get_sceditor_display_value());
 			
 			$static_list = array();
 			
@@ -67,7 +68,7 @@
 				'style'	=> @$fp_config['general']['style'],
 				'blogid' => $fp_config['general']['blogid'],
 				'charset'=> 'utf-8',
-	
+				'sceditor_display' => $_POST['sceditor_format']
 			);
 			
 			$fp_config['locale'] = array(

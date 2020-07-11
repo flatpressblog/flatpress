@@ -62,6 +62,10 @@
 			global $lang;
 			
 			$this->smarty->assign('static_id', 'static'.date_time());
+
+			$this->smarty->assign("sceditor_display", get_sceditor_display_value());
+			global $fp_config;
+			$this->smarty->assign("lang_locale", $fp_config['locale']['lang']);
 			
 			if (isset($_GET['page'])) {
 				$id = $_GET['page'];
