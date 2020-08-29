@@ -39,6 +39,7 @@
 						<script src="{$smarty.const.BLOG_BASEURL}/fp-includes/bootstrap/js/bootstrap.min.js"></script>
 						
 						<!-- Here is the SCEditor -->
+						<link rel="stylesheet" type="text/css" href="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/themes/square.min.css">
 						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/sceditor.min.js"></script>
 						{if $sce_display=='bbcode'}
 							<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/formats/bbcode.js"></script>
@@ -46,22 +47,22 @@
 							<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/formats/xhtml.js"></script>
 						{/if}
 						<script src="{$smarty.const.BLOG_BASEURL}/fp-interface/lang/{$lang_locale}/sceditor.js"></script>
+						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/plugins/flatPressFileManager.js"></script>
 						<script>
 						// Replace the textarea #example with SCEditor
 						var sce_display = "{$sceditor_display}";
 						var lang_editor = "{$lang_locale}";
 						var eRoot = "admin/res/sceditor/";
-						var FileManagerDir = "{$smarty.const.BLOG_BASEURL}/fp-plugins/sceditorfilemanager";
 						{literal}
 						var textarea = document.getElementById('content_textarea');
 						sceditor.create(textarea, {
+							plugins: 'flatPressFileManager',
+							toolbar: 'bold,italic,underline,strike,subscript,superscript|left,center,right,justify|font,size,color,removeformat|cut,copy,pastetext|bulletlist,orderedlist,indent,outdent|table|code,quote|horizontalrule,flatPressFileManager,email,link,unlink|emoticon,youtube,date,time|ltr,rtl|print,maximize,source',
 							emoticonsRoot: eRoot,
 							format: sce_display,
 							height: "400px",
 							locale: lang_editor
-							//style: '../../res/sceditor/themes/content/default.min.css'
 						});
-						set_media_button(FileManagerDir);
 						</script>
 						{/literal}
 						{/if}
@@ -139,7 +140,7 @@
 
 <!-- Bootstrap Modal (Open the editor) -->
 <div class="modal fade" id="flatpress-files-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">File Manager</h5>

@@ -714,3 +714,7 @@ img {
   background-color: #aa4142;
   color: #fff;
 }
+
+.sceditor-button-flatPressFileManager div {
+  background-position: 0px -416px !important;
+}
