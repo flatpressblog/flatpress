@@ -17,7 +17,7 @@ sceditor.command.set('flatPressFileManager', {
 			An a open bootstrap modal function
 			The modal html is in the .tpl file, where sceditor is included
 		*/
-		$('#flatpress-files-modal').modal('show');
+		open_media_manager();
 	},
 	tooltip: 'Open FlatPress File Manager'
 });

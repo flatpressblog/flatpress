@@ -149,7 +149,23 @@
         </button>
       </div>
       <div class="modal-body">
-        NOT WORKING YEY :(
+	  	<div class="row">
+		  <div class="col-12" id="currentDirectory">
+		  	<input class="form-control mw-100" id="directoryInput" readonly>
+		  </div>
+		</div>
+	  	<div class="row visualizator">
+		  <div class="p-2 col-6 h-100">
+		  	<div class="flatpress-files-modal-box h-100 p-3" id="mediaDirectory"></div>
+		  </div>
+		  <div class="p-2 col-6 h-100">
+			<div class="flatpress-files-modal-box h-100" id="mediaPreview"></div>
+		  </div>
+		</div>
+      </div>
+	  <div class="modal-footer">
+	  	<div class="w-100 text-center" id="FilesModalFooter">
+		</div>
       </div>
     </div>
   </div>

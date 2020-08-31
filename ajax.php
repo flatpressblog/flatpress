@@ -59,9 +59,6 @@ foreach($AjaxFunctionMap as $currentName => $currentFunction) {
 
 /* Recibe $POST to access ajax Function */
 
-$_POST['Operation'] = 'Hello World'; // Test
-$_POST['Arguments'] = 'BLa bLa bLa'; // Test
-
 if(isset($_POST)) {
 
     if(!isset($_POST['Operation'])) {
