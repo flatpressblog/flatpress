@@ -64,12 +64,6 @@
 								<dt><label for="maxentries"> {$panelstrings.blogmaxentries} </label></dt>
 								<dd><input type="text" name="maxentries" id="maxentries" 
 								class="form-control input_gray smalltextinput{$error.maxentries|notempty:" field-error"}" value="{$flatpress.maxentries}" /></dd>
-								<dt><label for="maxentries">{$panelstrings.editor} </label></dt>
-								<dd><select name="sceditor_format" id="sceditor_format" class="textinput form-control input_gray">
-									<option value="0" {if $sceditor_display == 'bbcode' }selected{/if}>BBCode</option>
-									<option value="1" {if $sceditor_display == 'xhtml' }selected{/if}>HTML</option>
-									<option value="2" {if $sceditor_display == 'disable' }selected{/if}>Disable Editor</option>
-									</select></dd>
 								</dl>
 
 							</div>

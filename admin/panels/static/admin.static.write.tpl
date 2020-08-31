@@ -33,15 +33,17 @@
 						<script src="{$smarty.const.BLOG_BASEURL}/fp-includes/bootstrap/js/bootstrap.min.js"></script>
 						<!-- Here is the SCEditor -->
 						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/sceditor.min.js"></script>
+						<!--
 						{if $sce_display=='bbcode'}
 							<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/formats/bbcode.js"></script>
 						{else}
 							<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/formats/xhtml.js"></script>
 						{/if}
+						-->
+						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/formats/bbcode.js"></script>
 						<script src="{$smarty.const.BLOG_BASEURL}/fp-interface/lang/{$lang_locale}/sceditor.js"></script>
 						<script>
 						// Replace the textarea #example with SCEditor
-						var sce_display = "{$sceditor_display}";
 						var lang_editor = "{$lang_locale}";
 						var eRoot = "admin/res/sceditor/";
 						var FileManagerDir = "{$smarty.const.BLOG_BASEURL}/fp-plugins/sceditorfilemanager";
@@ -49,12 +51,11 @@
 						var textarea = document.getElementById('content_textarea');
 						sceditor.create(textarea, {
 							emoticonsRoot: eRoot,
-							format: sce_display,
+							format: 'bbcode',
 							height: "400px",
 							locale: lang_editor
 							//style: '../../res/sceditor/themes/content/default.min.css'
 						});
-						set_media_button(FileManagerDir);
 						</script>
 						{/literal}
 						{/if}

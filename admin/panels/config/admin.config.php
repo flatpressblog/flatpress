@@ -34,7 +34,6 @@
 		function setup() {
 			$this->smarty->assign('themes', theme_list());
 			$this->smarty->assign('lang_list', lang_list());
-			$this->smarty->assign("sceditor_display", get_sceditor_display_value());
 			
 			$static_list = array();
 			

@@ -31,18 +31,14 @@ function mobile_open_button() {
 }
 // End Responsive functions
 
-// Editor media functions
-// Create the button
-function set_media_button() {
-	let button = '<div class="sceditor-group"><a class="sceditor-button flatpress-media" onclick="open_media(FileManagerDir);"></a></div>';
-	$( ".sceditor-toolbar" ).append(button);
-}
-
 let mediaManagerRoute = '';
+
+let insertSCEditorFunction;
 
 /* Functions of FileManager */
 // Open the botton
-function open_media_manager() {
+function open_media_manager(insertSCEditor) {
+	insertSCEditorFunction = insertSCEditor;
 	mediaManagerRoute = '';
 	$('#flatpress-files-modal').modal('show');
 	$.post('ajax.php', {Operation : 'ListMediaDirectory', Arguments : mediaManagerRoute}, function(data) {
@@ -122,6 +118,8 @@ function openNewDirectory(DirectoryName) {
 function openNewFile(FileName) {
 	const fileType = detectTypeFile(FileName);
 	const functionType = FUNCTION_BY_FILE_FORMAT.get(fileType);
+	selectedFile = FileName;
+	selectedURL = mediaManagerRoute;
 	functionType(FileName);
 }
 
@@ -158,7 +156,7 @@ function detectTypeFile(FileName) {
 
 const FUNCTION_BY_FILE_FORMAT = new Map();
 
-const INSERT_MEDIA_BUTTON = '<button type="button" class="btn btn-primary" onclick="insertMediaInScedito()">Insert Media</button>';
+const INSERT_MEDIA_BUTTON = '<button type="button" class="btn btn-primary" onclick="insertMediaInSceditor()">Insert Media</button>';
 
 FUNCTION_BY_FILE_FORMAT.set(IMAGE, function(imageURL) {
 	const img = '<img src="' + 'fp-content/' + mediaManagerRoute + imageURL + '" class="img-fluid">';
@@ -176,6 +174,19 @@ function changeMediaPreviewContent(content) {
 	modalFooter.innerHTML = INSERT_MEDIA_BUTTON;
 }
 
+let selectedURL;
+let selectedFile;
+
 function insertMediaInSceditor() {
-	
+	/* Onyl bbcode at the moment */
+	const fileType = detectTypeFile(selectedFile);
+	switch(fileType) {
+		case IMAGE: {
+			insertSCEditorFunction('[img]' + selectedURL + selectedFile + '[/img]')
+			break;
+		}
+		default: { /* Other files = url link */
+			insertSCEditorFunction('[url=' + selectedURL + selectedFile + ']' + selectedFile +'[/url]')
+		}
+	}
 }

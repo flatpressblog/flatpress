@@ -41,16 +41,18 @@
 						<!-- Here is the SCEditor -->
 						<link rel="stylesheet" type="text/css" href="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/themes/square.min.css">
 						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/sceditor.min.js"></script>
+						<!--
 						{if $sce_display=='bbcode'}
 							<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/formats/bbcode.js"></script>
 						{else}
 							<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/formats/xhtml.js"></script>
 						{/if}
+						-->
+						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/formats/bbcode.js"></script>
 						<script src="{$smarty.const.BLOG_BASEURL}/fp-interface/lang/{$lang_locale}/sceditor.js"></script>
 						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/plugins/flatPressFileManager.js"></script>
 						<script>
 						// Replace the textarea #example with SCEditor
-						var sce_display = "{$sceditor_display}";
 						var lang_editor = "{$lang_locale}";
 						var eRoot = "admin/res/sceditor/";
 						{literal}
@@ -59,7 +61,7 @@
 							plugins: 'flatPressFileManager',
 							toolbar: 'bold,italic,underline,strike,subscript,superscript|left,center,right,justify|font,size,color,removeformat|cut,copy,pastetext|bulletlist,orderedlist,indent,outdent|table|code,quote|horizontalrule,flatPressFileManager,email,link,unlink|emoticon,youtube,date,time|ltr,rtl|print,maximize,source',
 							emoticonsRoot: eRoot,
-							format: sce_display,
+							format: 'bbcode',
 							height: "400px",
 							locale: lang_editor
 						});

@@ -17,11 +17,11 @@ sceditor.command.set('flatPressFileManager', {
 			An a open bootstrap modal function
 			The modal html is in the .tpl file, where sceditor is included
 		*/
-		open_media_manager();
+		open_media_manager(this.insert); 
 	},
-	tooltip: 'Open FlatPress File Manager'
+	tooltip: 'Open FlatPress File Manager',
 });
- 
+
 (function (sceditor) {
 	'use strict';
 

@@ -7,28 +7,6 @@
 	include(ADMIN_DIR.'panels/admin.defaultpanels.php');
 	include(ADMIN_DIR.'includes/panels.prototypes.php');
 	require(SMARTY_DIR . 'SmartyValidate.class.php');
-	
-	// SCEditor Config
-    // In this file will check if SCEditor use BBCODE or HTML
-    // BBCode = 0 and HTML = 1
-    function get_sceditor_option() {
-		global $fp_config;
-		if (!isset($fp_config['general']['sceditor_display'])) {
-			$fp_config['general']['sceditor_display'] = 0; // BBCode as default
-			config_save();
-		}
-		return $fp_config['general']['sceditor_display'];
-    }
-
-    function get_sceditor_display_value() {
-		switch (get_sceditor_option()) {
-			case 0 : return 'bbcode';
-			case 1 : return 'xhtml';
-			case 2 : return 'disable';
-			default : return 'bbcode';
-		}
-	}
-	// End SCEditor Config
  
 	utils_nocache_headers();
 	

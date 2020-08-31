@@ -79,8 +79,6 @@
 		
 				$this->id = @$_REQUEST['entry'];		
 				$this->smarty->assign('id', $this->id);
-				// SCEditor Smarty
-				$this->smarty->assign("sceditor_display", get_sceditor_display_value());
 				global $fp_config;
 				$this->smarty->assign("lang_locale", $fp_config['locale']['lang']);
 		}

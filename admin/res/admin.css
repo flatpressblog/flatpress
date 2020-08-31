@@ -712,6 +712,10 @@ img {
   background-position: 0px -416px !important;
 }
 
+.sceditor-container textarea {
+  color: #111 !important;
+}
+
 /* Modal to upload files */
 
 #flatpress-files-modal .modal-header {
