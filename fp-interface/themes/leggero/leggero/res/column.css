@@ -7,8 +7,11 @@ Ispired by: http://pluxml.org theme default
 
 Name: Leggero
 Author: NoWhereMan & drudo
-Version: 0.1
+Version: 0.2
 Module: style.css
+
+last change: 2020-08-08
+
 */
 
 
@@ -16,14 +19,17 @@ Module: style.css
 /* ===== COLUMN ===== */
 #column {
 	float: right;
-	width: 195px !important;
-	width: 180px;
+	/* width: 195px !important;
+	width: 180px; */
+    width: 28%;
 	font-size: 80% !important;
 	font-size: 75%;
 	height:1%;
-	margin-bottom: 5px;
-	padding: 10px;
-	border-left: solid 1px #ccc
+    margin: 1em;
+    padding: 0.7em;
+	/* margin-bottom: 5px;
+	padding: 10px; */
+	/* border-left: solid 1px #ccc */
 }
 
 #column h4 {

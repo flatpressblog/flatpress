@@ -7,8 +7,11 @@ Ispired by: http://pluxml.org theme default
 
 Name: Leggero
 Author: NoWhereMan & drudo
-Version: 0.1
+Version: 0.2
 Module: common.css
+
+last change: 2020-08-08
+
 */
 
 
@@ -24,9 +27,10 @@ html {
 body {
 	font-size: 100%;
 	padding: 0;
-	text-align:center;
+	/* text-align: center; */
 	background: white url(../imgs/backshade.png) repeat-x;
 	color: black;
+    width: 100%
 }
 
 hr { display: none }
@@ -34,6 +38,12 @@ hr { display: none }
 p { margin: .5em 0 }
 
 img { border: none }
+
+/* Responsive Design img */
+img {
+  max-width: 100%;
+  height: auto;
+}
 
 blockquote {
 	width: 90%;
@@ -122,7 +132,7 @@ h1 {
 	/* Title of the blog */
 	font-size: 2em;
 	letter-spacing: 2px;
-	margin: 2em 0 0 0
+	margin: 2em 0 0 0.5em
 }
 
 h2 { } /* see h2.date */
@@ -133,7 +143,8 @@ h3 {
 	font-style: italic;
 	font-size: 1.5em;
 	color: #333333;
-	margin: 0
+	margin: 0;
+    padding: 1em 0 1em 0;
 }
 
 h4 { font-size: 1.2em; }
@@ -143,10 +154,13 @@ h4 { font-size: 1.2em; }
 /* ===== DIV CONTAINER ALL ELEMENTS BLOCK ===== */
 #body-container {
 	text-align: left;
-	width: 760px !important;
+	/*width: 760px !important;
 	width: 748px; /* fix for I.E. */
-	margin: 0 auto 0 auto;
-	padding: 5px;
+    width: 85%;
+	margin: 0 auto;
+    max-width: 68em;
+	/* padding: 5px; */
+    padding: 0.3em;
 	border: solid 1px #ccc;
 	background-color: white
 }
@@ -155,31 +169,40 @@ h4 { font-size: 1.2em; }
 
 /* ===== HEAD ===== */
 #head {
+    clear: both;
 	font-family: 'book antiqua', georgia, garamond,  times, 'times new roman', serif;
-	padding: 95px 10px 5px 5px;
+	/* padding: 95px 10px 5px 5px;
 	margin: 10px;
 	background: #c37676 url('../imgs/shade.png') repeat-x;
-	border: #bbb 1px solid
+	border: #bbb 1px solid */
+    margin: 1em;
+    padding: 7em 0.6em 0.5em 0.5em;
+    border-radius: 1em;
+    border: 0;
+    background-image: linear-gradient( #aa4142, #c37576);
+    /* background: #aa4142 */
 }
 
 #head a { color: white; text-decoration: none }
+#head a:hover { color: white; text-decoration: underline }
 
-	.subtitle {
-		font-size: 100%;
-		font-style: oblique;
-		color: #F1F1F1;
-		margin: .5em 0 0 0
-	}
+.subtitle {
+	font-size: 100%;
+	font-style: oblique;
+	color: #F1F1F1;
+	margin: .5em 0 1em 1.2em
+}
 
 
 
 /* ===== DIV CONTAINER "MAIN" ===== */
 #outer-container {
-	position: relative;
+	/* position: relative;
 	height: 1%;
 	margin: 0px;
 	padding: 0px;
 	border-top: 1px solid white; /* problem with I.E. */
+    width: 100%;
 	background-color: white
 }
 
@@ -189,17 +212,20 @@ h4 { font-size: 1.2em; }
 #main h4 { margin: 2em 0 0 0}
 
 #main {
-	float:left;
-	position: relative;
+	float: left;
+	/* position: relative;
 	width: 508px !important;
-	width: 478px;
+	width: 478px; */
+    width: 62%;
 	font-size: 100%;
-	margin: 12px;
+	margin: 1em;
 }
 
 #main p { line-height: 1.5em; margin-top: 1.2em; }
 
-#main img { margin: .5em }
+#main img { margin: 0.5em }
+
+#main img.emoticon { margin: 0; padding: 0 }
 
 /* === List === */
 #main ul {
@@ -224,7 +250,7 @@ h4 { font-size: 1.2em; }
 	
 	/* === Class of main block === */
 	h2.date {
-		font-size: 0.5em;
+		font-size: 80%;
 		color: #aaa;
 	}
 	
@@ -232,7 +258,7 @@ h4 { font-size: 1.2em; }
 		font-size: 80%;
 		font-style: oblique;
 		color: gray;
-		margin: .2em 0 .8em 0
+		margin: .2em 0 0 0
 	}
 	
 	/* .entry class */
@@ -284,6 +310,9 @@ h4 { font-size: 1.2em; }
 	clear: both;
 	font-size: 80%;
 	color: #555;
-	padding: 5px;
+    background-color: #dcdcdc;
+	padding: 1em;
+    margin: 0 1em 1em 1em;
+    text-align: center;
 	border-top: #bbb 1px solid
 }

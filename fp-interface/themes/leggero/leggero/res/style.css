@@ -7,8 +7,11 @@ Ispired by: http://pluxml.org theme default
 
 Name: Leggero
 Author: NoWhereMan & drudo
-Version: 0.1
+Version: 0.2
 Module: style.css
+
+last change: 2020-08-08
+
 */
 
 
@@ -30,5 +33,67 @@ body { margin: 80px 0 0 0 }
 #comments li.comment-admin strong.comment-name { font-size:140% }
 
 #widget-searchbox form {
-	text-align: center;
+	/* text-align: center; */
 }
+
+/* 800er Bildschirme zum Beispiel iPad Hochformat */
+@media only screen and (max-width: 768px) { 
+
+#outer-container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+#main {
+  width: 100%;
+  padding: 0.5em;
+  /* border: 1px solid yellow; */
+}
+
+#column {
+  width: 100%;
+  font-size: 80%;
+  margin-bottom: 2em;
+  padding: 0.5em;
+  /* border: 1px solid red; */
+  overflow: auto;   /* shit, bei 84% Bildbreite wird es eng! */
+}
+
+}
+   
+/* Kleinbildschirme */
+@media only screen and (max-width: 480px) { 
+
+#body-container {
+  margin: 0;
+  padding: 0;
+  width: 98%;
+}
+
+#head {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+#outer-container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+#main {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+#column {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+
+}      
