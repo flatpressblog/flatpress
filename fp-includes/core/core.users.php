@@ -41,7 +41,7 @@ function user_login($userid, $pwd, $params = null) {
 
 	$user = user_get($userid);
 
-	if (user_pwd($userid, $pwd) == $user ['password']) {
+	if (isset($user) && user_pwd($userid, $pwd) == $user ['password']) {
 
 		$loggedin = true;
 
