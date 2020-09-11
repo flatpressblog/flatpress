@@ -216,8 +216,10 @@ function system_geterr($module = '') {
 /* delayed print */
 function system_dpr($action, $content) {
 	$p = print_r($content, 1);
-	$f = create_function('', "echo '<pre style=\'position:absolute\'>$p</pre>';");
-	add_action($action, $f);
+
+	add_action($action, function() use ($p) {
+		echo "<pre style='position:absolute'>$p</pre>";
+	});
 }
 
 ?>
