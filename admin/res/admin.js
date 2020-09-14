@@ -34,11 +34,14 @@ function mobile_open_button() {
 /* Functions of uploaderFiles */
 /* This function is called in the admin.uploader.tpl */
 function startUploadEvent() {
-	document.querySelector('.custom-file-input').addEventListener('change', function(e){ /* Change namefile when user select it */
-		const currentInputFileID = e.srcElement.id;
-		const fileName = document.getElementById(currentInputFileID).files[0].name;
-		const nextSibling = e.target.nextElementSibling
-		nextSibling.innerText = fileName
+	const uploadInputs = document.querySelectorAll('.custom-file-input');
+	uploadInputs.forEach(function(currentInput) {
+		currentInput.addEventListener('change', function(e){ // Change namefile when user select it
+			const currentInputFileID = e.srcElement.id;
+			const fileName = document.getElementById(currentInputFileID).files[0].name;
+			const nextSibling = e.target.nextElementSibling
+			nextSibling.innerText = fileName
+		});
 	});
 }
 /* Functions of FileManager */
