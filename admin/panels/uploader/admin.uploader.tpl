@@ -25,40 +25,40 @@
 						<div class="row">
 							<div class="col-lg-6 mb-4">
 								<div class="input-group mb-3">
-								  <div class="input-group-prepend">
-									<span class="input-group-text ti-folder"></span>
-								  </div>
-								  <div class="custom-file">
-									<input type="file" class="custom-file-input" name="upload[]" />
-									<label class="custom-file-label" for="inputGroupFile01">{$panelstrings.choose_file}</label>
-								  </div>
+									<div class="input-group-prepend">
+										<span class="input-group-text ti-folder" id="inputGroupFileAddon01"></span>
+									</div>
+									<div class="custom-file">
+										<input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+										<label class="custom-file-label" for="inputGroupFile01" id="inputGroupFile01Label">Choose file</label>
+									</div>
 								</div>
 								<div class="input-group mb-3">
-								  <div class="input-group-prepend">
-									<span class="input-group-text ti-folder"></span>
-								  </div>
-								  <div class="custom-file">
-									<input type="file" class="custom-file-input" name="upload[]" />
-									<label class="custom-file-label" for="inputGroupFile01">{$panelstrings.choose_file}</label>
-								  </div>
+									<div class="input-group-prepend">
+										<span class="input-group-text ti-folder" id="inputGroupFileAddon02"></span>
+									</div>
+									<div class="custom-file">
+										<input type="file" class="custom-file-input" id="inputGroupFile02" aria-describedby="inputGroupFileAddon02">
+										<label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+									</div>
 								</div>
 								<div class="input-group mb-3">
-								  <div class="input-group-prepend">
-									<span class="input-group-text ti-folder"></span>
-								  </div>
-								  <div class="custom-file">
-									<input type="file" class="custom-file-input" name="upload[]" />
-									<label class="custom-file-label" for="inputGroupFile01">{$panelstrings.choose_file}</label>
-								  </div>
+									<div class="input-group-prepend">
+										<span class="input-group-text ti-folder" id="inputGroupFileAddon03"></span>
+									</div>
+									<div class="custom-file">
+										<input type="file" class="custom-file-input" id="inputGroupFile03" aria-describedby="inputGroupFileAddon03">
+										<label class="custom-file-label" for="inputGroupFile03">Choose file</label>
+									</div>
 								</div>
 								<div class="input-group mb-3">
-								  <div class="input-group-prepend">
-									<span class="input-group-text ti-folder"></span>
-								  </div>
-								  <div class="custom-file">
-									<input type="file" class="custom-file-input" name="upload[]" />
-									<label class="custom-file-label" for="inputGroupFile01">{$panelstrings.choose_file}</label>
-								  </div>
+									<div class="input-group-prepend">
+										<span class="input-group-text ti-folder" id="inputGroupFileAddon04"></span>
+									</div>
+									<div class="custom-file">
+										<input type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+										<label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+									</div>
 								</div>
 							</div>
 							<div class="col-lg-6 mb-4">
@@ -109,3 +109,10 @@
 	</div>
 		
 {/html_form}
+
+{literal}
+	<script>
+	/* This event to change name to namesfiles */
+	startUploadEvent();
+	</script>
+{/literal}

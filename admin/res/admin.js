@@ -31,22 +31,47 @@ function mobile_open_button() {
 }
 // End Responsive functions
 
+/* Functions of uploaderFiles */
+/* This function is called in the admin.uploader.tpl */
+function startUploadEvent() {
+	document.querySelector('.custom-file-input').addEventListener('change', function(e){ /* Change namefile when user select it */
+		const currentInputFileID = e.srcElement.id;
+		const fileName = document.getElementById(currentInputFileID).files[0].name;
+		const nextSibling = e.target.nextElementSibling
+		nextSibling.innerText = fileName
+	});
+}
+/* Functions of FileManager */
+
 let mediaManagerRoute = '';
 
-let insertSCEditorFunction;
+let currentPromiseResolve;
+let currentPromiseReject; // Called in Ajax errors
 
-/* Functions of FileManager */
+function openMediaManagerAndGetMediaUrl(callback) {
+	return new Promise(function(resolvePromise, rejectPromise) {
+		currentPromiseResolve = resolvePromise;
+		currentPromiseReject = rejectPromise;
+		open_media_manager();
+	}).then(function(value) {
+		$('#flatpress-files-modal').modal('hide');
+		callback(value);
+	}).catch(function(err) {
+		$('#flatpress-files-modal').modal('hide');
+		console.log(err);
+	});
+}
+
 // Open the botton
-function open_media_manager(insertSCEditor) {
-	insertSCEditorFunction = insertSCEditor;
+function open_media_manager() {
 	mediaManagerRoute = '';
 	$('#flatpress-files-modal').modal('show');
 	$.post('ajax.php', {Operation : 'ListMediaDirectory', Arguments : mediaManagerRoute}, function(data) {
 		data = JSON.parse(data);
 		if(data.result) {
-			showDirectory(data.content);
+			showDirectory(data.content); // data.content = Array of pairs: dirname + isdirectory
 		} else {
-			//throw new Error(data.content);
+			currentPromiseReject(data.content);
 		}
 	});
 }
@@ -58,6 +83,7 @@ function showDirectory(DirectoryList) {
 		let currentMediaDirectoryLI = document.createElement('li');
 		currentMediaDirectoryLI.innerHTML = "..";
 		currentMediaDirectoryLI.onclick = () => openNewDirectory('..');
+		writeLiContent(currentMediaDirectoryLI, '..', true);
 		mediaDirectoryULDOM.appendChild(currentMediaDirectoryLI);
 	}
 	for(let i = 0; i < DirectoryList.length; ++i) {
@@ -68,7 +94,7 @@ function showDirectory(DirectoryList) {
 		} else { // It is a file
 			currentMediaDirectoryLI.onclick = () => openNewFile(DirectoryList[i][0]); // File name 
 		}
-		writeLiContent(currentMediaDirectoryLI,DirectoryList[i][0], DirectoryList[i][1]); // Content = Icon + fileName
+		writeLiContent(currentMediaDirectoryLI, DirectoryList[i][0], DirectoryList[i][1]); // Content = Icon + fileName
 		mediaDirectoryULDOM.appendChild(currentMediaDirectoryLI);
 	}
 	mediaDirectoryModal.innerHTML = '';
@@ -110,6 +136,7 @@ function openNewDirectory(DirectoryName) {
 		if(data.result) {
 			showDirectory(data.content);
 		} else {
+			currentPromiseReject(data.content);
 			//throw new Error(data.content);
 		}
 	});
@@ -164,7 +191,7 @@ FUNCTION_BY_FILE_FORMAT.set(IMAGE, function(imageURL) {
 });
 
 FUNCTION_BY_FILE_FORMAT.set(FILE, function(fileURL) {
-	changeMediaPreviewContent('<p>No file preview</p>');
+	changeMediaPreviewContent('<p class="text-center">No file preview</p>');
 });
 
 function changeMediaPreviewContent(content) {
@@ -182,11 +209,13 @@ function insertMediaInSceditor() {
 	const fileType = detectTypeFile(selectedFile);
 	switch(fileType) {
 		case IMAGE: {
-			insertSCEditorFunction('[img]' + selectedURL + selectedFile + '[/img]')
+			//insertSCEditorFunction('[img]' + selectedURL + selectedFile + '[/img]')
+			currentPromiseResolve('[img]' + selectedURL + selectedFile + '[/img]');
 			break;
 		}
 		default: { /* Other files = url link */
-			insertSCEditorFunction('[url=' + selectedURL + selectedFile + ']' + selectedFile +'[/url]')
+			currentPromiseResolve('[url=' + selectedURL + selectedFile + ']' + selectedFile +'[/url]');
+			//insertSCEditorFunction('[url=' + selectedURL + selectedFile + ']' + selectedFile +'[/url]')
 		}
 	}
 }
