@@ -3,7 +3,7 @@
 	$lang['comments']['mail'] = <<<MAIL
 Hallo %toname%,
 
-"%fromname%" %frommail% hat ein Kommentar zu dem Thema "%entrytitle%" geschrieben.
+"%fromname%" %frommail% hat einen Kommentar zu dem Thema "%entrytitle%" geschrieben.
 
 Der Link zum diesem Kommentar:
 %commentlink%

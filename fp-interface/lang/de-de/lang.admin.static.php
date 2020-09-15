@@ -27,9 +27,9 @@
 	
 	$lang['admin']['static']['list']['msgs'] = array(
 		1	=> 'Statische Seite erfolgreich gespeichert',
-		-1	=> 'Ein Fehler ist beim speichern der Seite aufgetreten',
+		-1	=> 'Ein Fehler ist beim Speichern der Seite aufgetreten',
 		2	=> 'Seite wurde erfolgreich gelöscht',
-		-2	=>	 'Ein Fehler ist beim löschen der Seite aufgetreten',
+		-2	=>	 'Ein Fehler ist beim Löschen der Seite aufgetreten',
 	);
 
 	/* write panel */
@@ -37,7 +37,7 @@
 	$lang['admin']['static']['write'] = 
 	array(
 		'head'		=> 'Statische Seite erstellen',
-		'descr'		=> 'Bearbeiten der Parameter um diese Seite zu erstellen',
+		'descr'		=> 'Bearbeiten der Parameter, um diese Seite zu erstellen',
 		'fieldset1'	=> 'Bearbeiten',
 		'subject'	=> 'Titel (*):',
 		'content'	=> 'Inhalt (*):',

@@ -41,7 +41,7 @@
 		'fset3' 	=> 'In Kategorien suchen',
 		'catdescr'	=> 'Es muss mindestens eine Kategorie angegeben werden.',
 		
-		'fset4'	=> 'Suche starten',
+		'fset4'     => 'Suche starten',
 		'submit'	=> 'Suche starten',
 		
 		'headres'	=> 'Suchergebnisse',
@@ -64,7 +64,7 @@
 	$lang['entry']['flags'] = array();
 	
 	$lang['entry']['flags']['long'] = array(
-		'draft' => '<strong>Beitrag als Entwurf speichern</strong>: wird erst sichtbar nachdem er veröffentlicht wurde.',
+		'draft' => '<strong>Beitrag als Entwurf speichern</strong>: wird erst sichtbar, wenn er veröffentlicht wird.',
 		//'static' => '<strong>Static entry</strong>: normally hidden, to reach the entry put ?page=title-of-the-entry in url (experimental)',
 		'commslock' => '<strong>Kommentare sperren</strong>: Keine Kommentare für diesen Beitrag zulassen.'
 	);
@@ -116,7 +116,7 @@
 		'email'		=> 'E-Mail Adresse (wird nicht veröffentlicht):',
 		'www'		=> 'Website (optional):',
 		'cookie'	=> 'Daten für das nächste Mal merken',
-		'fieldset2'	=> 'Ein Kommentar schreiben',
+		'fieldset2'	=> 'Einen Kommentar schreiben',
 		'comment'	=> 'Kommentar:',
 		'fieldset3'	=> 'Senden',
 		'submit'	=> 'Abschicken',
@@ -130,7 +130,7 @@
 		'name'		=> 'Bitte einen Namen eingeben',
 		'email'		=> 'Bitte eine gültige E-Mail Adresse eingeben',
 		'www'		=> 'Bitte eine gültige URL eingeben',
-		'comment'	=> 'Bitte ein Kommentar schreiben',
+		'comment'	=> 'Bitte einen Kommentar schreiben',
 	);
 	
 	$lang['date']['month'] = array(

@@ -25,14 +25,14 @@
 		'themewdgsdescr' => 'In diesem Theme stehen folgende Widgets zur Verfügung',
 		'oldwdgs'	=> 'Andere Widget Sets',
 		'oldwdgsdescr' =>'Das folgende Widget Set scheint zu keinem der oben gelisteten '.
-						'Widget Sets zu gehören. Eventuell ist war es ein Teil eines anderen Themes.',
+						'Widget Sets zu gehören. Eventuell ist es Teil eines anderen Themes.',
 		
 		'submit'	=> 'Änderungen speichern',
 
 	);
 	
 	$lang['admin']['widgets']['default']['stdsets'] = array(
-		'top'		=> 'Top Leiste',
+		'top'		=> 'Kopfleiste',
 		'bottom'	=> 'Fussleiste',
 		'left'		=> 'Linke Leiste',
 		'right'		=> 'Rechte Leiste',
