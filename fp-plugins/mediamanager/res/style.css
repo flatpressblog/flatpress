@@ -1,18 +1,22 @@
 .type-attachs a {
     padding-left: 25px;
-    background-image: url('unknown.gif');
+    background-image: url('unknown.png');
     background-repeat: no-repeat;
     background-position: left center;
 }
 .type-images a {
     padding-left: 25px;
-    background-image: url('image2.gif');
+    background-image: url('image.png');
     background-repeat: no-repeat;
     background-position: left center;
 }
 .type-gallery a {
     padding-left: 25px;
-    background-image: url('folder.gif');
+    background-image: url('folder.png');
     background-repeat: no-repeat;
     background-position: left center;
+}
+
+.btn {
+    margin-bottom: 0.2rem !important;
 }

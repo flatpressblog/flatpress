@@ -42,6 +42,8 @@
 						-->
 						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/formats/bbcode.js"></script>
 						<script src="{$smarty.const.BLOG_BASEURL}/fp-interface/lang/{$lang_locale}/sceditor.js"></script>
+						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/plugins/flatPressFileManager.js"></script>
+						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/plugins/flatPressCustomBBCodes.js"></script>
 						<script>
 						// Replace the textarea #example with SCEditor
 						var lang_editor = "{$lang_locale}";
@@ -50,11 +52,12 @@
 						{literal}
 						var textarea = document.getElementById('content_textarea');
 						sceditor.create(textarea, {
+							plugins: 'flatPressFileManager',
+							toolbar: 'bold,italic,underline,strike,subscript,superscript|left,center,right,justify|font,size,color,removeformat|cut,copy,pastetext|bulletlist,orderedlist,indent,outdent|table|code,quote|horizontalrule,flatPressFileManager,email,link,unlink|emoticon,youtube,date,time|ltr,rtl|print,maximize,source',
 							emoticonsRoot: eRoot,
 							format: 'bbcode',
 							height: "400px",
 							locale: lang_editor
-							//style: '../../res/sceditor/themes/content/default.min.css'
 						});
 						</script>
 						{/literal}
@@ -87,7 +90,7 @@
 
 <!-- Bootstrap Modal (Open the editor) -->
 <div class="modal fade" id="flatpress-files-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">File Manager</h5>
@@ -96,7 +99,23 @@
         </button>
       </div>
       <div class="modal-body">
-        NOT WORKING YEY :(
+	  	<div class="row">
+		  <div class="col-12" id="currentDirectory">
+		  	<input class="form-control mw-100" id="directoryInput" readonly>
+		  </div>
+		</div>
+	  	<div class="row visualizator">
+		  <div class="p-2 col-6 h-100">
+		  	<div class="flatpress-files-modal-box h-100 p-3" id="mediaDirectory"></div>
+		  </div>
+		  <div class="p-2 col-6 h-100">
+			<div class="flatpress-files-modal-box h-100" id="mediaPreview"></div>
+		  </div>
+		</div>
+      </div>
+	  <div class="modal-footer">
+	  	<div class="w-100 text-center" id="FilesModalFooter">
+		</div>
       </div>
     </div>
   </div>

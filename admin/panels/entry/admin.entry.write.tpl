@@ -51,6 +51,7 @@
 						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/formats/bbcode.js"></script>
 						<script src="{$smarty.const.BLOG_BASEURL}/fp-interface/lang/{$lang_locale}/sceditor.js"></script>
 						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/plugins/flatPressFileManager.js"></script>
+						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/plugins/flatPressCustomBBCodes.js"></script>
 						<script>
 						// Replace the textarea #example with SCEditor
 						var lang_editor = "{$lang_locale}";
