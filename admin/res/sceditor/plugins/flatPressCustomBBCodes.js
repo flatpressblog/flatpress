@@ -68,3 +68,16 @@ sceditor.formats.bbcode.set('img', {
         }
     }
 });
+
+// Header tag (From h1 to h6)
+
+for(let i = 1; i < 7; ++i) { // Headers: h1 to h6
+    sceditor.formats.bbcode.set('h' + i, {
+        tags: {
+            ['h' + i] : null,
+        },
+        isInline: false,
+        format: '[h'+ i +']{0}[/h' + i + ']',
+        html: '<h' + i + '>{0}</h' + i + '>',
+    });
+}

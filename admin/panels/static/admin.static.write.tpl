@@ -44,6 +44,7 @@
 						<script src="{$smarty.const.BLOG_BASEURL}/fp-interface/lang/{$lang_locale}/sceditor.js"></script>
 						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/plugins/flatPressFileManager.js"></script>
 						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/plugins/flatPressCustomBBCodes.js"></script>
+						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/plugins/flatPressEmojis.js"></script>
 						<script>
 						// Replace the textarea #example with SCEditor
 						var lang_editor = "{$lang_locale}";
@@ -53,7 +54,7 @@
 						var textarea = document.getElementById('content_textarea');
 						sceditor.create(textarea, {
 							plugins: 'flatPressFileManager',
-							toolbar: 'bold,italic,underline,strike,subscript,superscript|left,center,right,justify|font,size,color,removeformat|cut,copy,pastetext|bulletlist,orderedlist,indent,outdent|table|code,quote|horizontalrule,flatPressFileManager,email,link,unlink|emoticon,youtube,date,time|ltr,rtl|print,maximize,source',
+							toolbar: 'bold,italic,underline,strike,subscript,superscript|left,center,right,justify|font,size,color,removeformat|cut,copy,pastetext|bulletlist,orderedlist,indent,outdent|table|code,quote|horizontalrule,flatPressFileManager,email,link,unlink|emojis,youtube,date,time|ltr,rtl|print,maximize,source',
 							emoticonsRoot: eRoot,
 							format: 'bbcode',
 							height: "400px",

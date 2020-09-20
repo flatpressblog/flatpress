@@ -716,6 +716,20 @@ img {
   color: #111 !important;
 }
 
+#sceditor-Emojis {
+  text-align: center;
+}
+
+#sceditor-Emojis a {
+  margin: 0.2rem;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.sceditor-button-emojis div {
+  background-position: 0px -480px !important;
+}
+
 /* Modal to upload files */
 
 #flatpress-files-modal .modal-header {
