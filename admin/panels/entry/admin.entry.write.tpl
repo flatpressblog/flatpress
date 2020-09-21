@@ -71,7 +71,6 @@
 						{/literal}
 						{/if}
 						{*here will go a plugin hook*}
-						{action hook=simple_edit_form}
 						</p>
 					</div>
                 </div>
@@ -120,6 +119,15 @@
 						</ul>
 				 	</p>
               </div>
+			<div class="card shadow mb-4 plugin_options">
+				<div class="card-header">
+				  <h6 class="m-0 font-weight-bold text-primary">Plugins Options</h6>
+				</div>
+				<div class="m-4">
+					{toolbar}
+					{action hook=simple_edit_form}
+				</div>
+			 </div>
             </div>
           </div>
 		

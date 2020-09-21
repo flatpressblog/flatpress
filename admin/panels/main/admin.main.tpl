@@ -36,14 +36,19 @@
 			</div>
 	</div>
 	<div class="col-lg-6 mb-4">
-		<div class="card shadow mb-4">
-		<div class="card-header">
-			<h6 class="m-0 font-weight-bold text-primary">{$panelstrings.last_comments}</h6>
-		</div>
-		<div class="card-body lc_table">
-			{$last_comments_table}
-		</div>
-		</div>
+		
+			<div class="card shadow mb-4">
+			<div class="card-header">
+				<h6 class="m-0 font-weight-bold text-primary">{$panelstrings.last_comments}</h6>
+			</div>
+			<div class="card-body lc_table">
+				{if $last_comments_table}
+					{$last_comments_table}
+				{else}
+					<h2 class="text-center font-italic">No comments yet :(</h2>
+				{/if}
+			</div>
+			</div>
 	</div>
 </div>
 <div class="row">
