@@ -1,11 +1,11 @@
 <?php
 /*
  * Plugin Name: BBCode
- * Version: 1.5
- * Plugin URI: http://flatpress.sf.net
- * Description: Allows using <a href="http://www.phpbb.com/phpBB/faq.php?mode=bbcode">BBCode</a> markup; provides automatic integration with lightbox.
- * Author: Hydra, NoWhereMan
- * Author URI: http://flatpress.sf.net
+ * Version: 1.6
+ * Plugin URI: https://www.flatpress.org
+ * Author: FlatPress
+ * Author URI: https://www.flatpress.org
+ * Description: Allows using <a href="http://www.phpbb.com/phpBB/faq.php?mode=bbcode">BBCode</a> markup; provides automatic integration with lightbox. Part of the standard distribution.
  */
 require (plugin_getdir('bbcode') . '/inc/stringparser_bbcode.class.php');
 require (plugin_getdir('bbcode') . '/panels/admin.plugin.panel.bbcode.php');

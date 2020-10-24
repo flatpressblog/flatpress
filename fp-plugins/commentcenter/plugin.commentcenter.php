@@ -4,9 +4,9 @@
  * Plugin Name: Comment Center
  * Version: 1.1.2
  * Plugin URI: https://www.flatpress.org
- * Description: Manage your blog's comments: Set policies, publish or reject comments.
- * Author: FlatPress (credits to Piero VDFN)
+ * Author: FlatPress
  * Author URI: https://www.flatpress.org
+ * Description: Manage your blog's comments: Set policies, publish or reject comments. Part of the standard distribution.
  */
 
 /**

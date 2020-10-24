@@ -2,10 +2,10 @@
 /*
  * Plugin Name: SearchBox
  * Version: 1.0
- * Plugin URI: http://flatpress.sf.net
- * Description: SearchBox which interfaces with standard search function
- * Author: NoWhereMan
- * Author URI: http://flatpress.sf.net
+ * Plugin URI: https://www.flatpress.org
+ * Author: FlatPress
+ * Author URI: https://www.flatpress.org
+ * Description: Adds a search box widget. Part of the standard distribution.
  */
 define('SEARCHBOX_BIG', false);
 
