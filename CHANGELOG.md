@@ -27,7 +27,6 @@
 - Fixed "syntax error, unexpected '\['" bug under PHP 5.3, reported [here](https://forum.flatpress.org/viewtopic.php?f=2&t=131)
 - Setup sets date and FP version for the freshly created static pages
 - Annoying translation error in German language pack fixed
-- Installer did not work properly with HTTPS (see [#52](https://github.com/flatpressblog/flatpress/issues/52))
 ## Translations
 - Added French language pack by Marc Thibeault and Dimitri Soufflet, reworked by Gee
 - Added Jananese Language Pack by [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
