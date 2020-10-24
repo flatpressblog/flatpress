@@ -29,7 +29,7 @@
 - Annoying translation error in German language pack fixed
 ## Translations
 - Added French language pack by Marc Thibeault and Dimitri Soufflet, reworked by Gee
-- Added Jananese Language Pack by [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
+- Added Japanese Language Pack by [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
 - Added Brazilian Portuguese language pack by randy
 - Added Italian language pack by Giacomo Margarito
 - Reworked German language pack by Detlef 
