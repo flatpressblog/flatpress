@@ -17,9 +17,10 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://arvidzimmer
 ## Translation
 - Brazilian Portuguese: randy
 - Czech: [Lubomír Ludvík](http://flatpress.cz/)
-- French: [Marc Thibeault](https://github.com/MarcThibeault) and Dimitri Soufflet, fixed by Gee
-- German: [Matthias Mauch (laborix)](http://www.aadmm.org/)
+- French: [Marc Thibeault](https://github.com/MarcThibeault) and Dimitri Soufflet, reworked by Gee
+- German: [Matthias Mauch (laborix)](http://www.aadmm.org/), reworked by Detlef
 - Greek: An unknown, since deleted GitHub user :(
+- Italian: Giacomo Margarito
 - Japanese: [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
 
 ## Other contributions
