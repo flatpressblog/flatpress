@@ -10,13 +10,14 @@
 - Added [CONTRIBUTORS.md](https://github.com/flatpressblog/flatpress/blob/master/CONTRIBUTORS.md)
 ## Plugins
 - BBCode plugin:
+  - Added image attribute "loading", default is "lazy"
   - Enhanced \[video\] element accepts video URLs for YouTube, Vimeo and Facebook
   - Added "mail" tag (replaces the Protected Mail Links plugin)
-  - Added image attribute "loading", default is "lazy"
   - Selectboxes of attachments and images in the editor toolbar are sorted by name
-- Protected Mail Links plugin removed
+- jQuery plugin: Updated jQuery and jQuery UI to their current versions
 - CommentCenter plugin is part of the FP standard distribution
 - PrettyUrls and Comment Center are activated by default, LastComments and LastCommentsAdmin are not
+- Protected Mail Links plugin removed
 ## Security
 - Overhauled v0.812.2 fix for local file inclusion vulnerability ([more details](http://www.guanting.com/security/exploit/information/27269.html))
 - Comments are sanitized properly (see [#62](https://github.com/flatpressblog/flatpress/issues/62))
