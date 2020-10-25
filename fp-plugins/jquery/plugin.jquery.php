@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: jQuery
- * Version: 2.0.1
+ * Version: 2.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
