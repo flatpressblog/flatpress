@@ -3,7 +3,7 @@
 - FlatPress now runs smoothly with PHP 7.4, prepared for PHP 8
 - Performance: Lazy loading for images
 - GDPR compatibility: Data of commenters are not stored in cookies any more
-- SEO: Added sitemap for search engines ([details](https://forum.flatpress.org/viewtopic.php?f=4&t=126))
+- SEO: Added XML sitemap for search engines ([details](https://forum.flatpress.org/viewtopic.php?f=4&t=126))
 - Leggero v2 is default theme (see [#57](https://github.com/flatpressblog/flatpress/issues/57))
 - Leggero v1 is now responsive
 - Updated Smarty to release 2.6.31
