@@ -1,18 +1,19 @@
 # Under development: FlatPress 1.2
 ## General
-- FlatPress now runs smoothly with PHP 7.4
+- FlatPress now runs smoothly with PHP 7.4, prepared for PHP 8
 - Performance: Lazy loading for images
 - GDPR compatibility: Data of commenters are not stored in cookies any more
 - SEO: Added sitemap for search engines ([details](https://forum.flatpress.org/viewtopic.php?f=4&t=126))
-- Leggero V2 is default theme (see [#57](https://github.com/flatpressblog/flatpress/issues/57))
+- Leggero v2 is default theme (see [#57](https://github.com/flatpressblog/flatpress/issues/57))
 - Leggero v1 is now responsive
 - Updated Smarty to release 2.6.31
 - Added [CONTRIBUTORS.md](https://github.com/flatpressblog/flatpress/blob/master/CONTRIBUTORS.md)
 ## Plugins
-- BBCode plugin: Enhanced \[video\] element accepts video URLs from YouTube, Vimeo and Facebook
-- BBCode plugin: Added "mail" tag (replaces the Protected Mail Links plugin)
-- BBCode plugin: Added image attribute "loading", default is "lazy"
-- BBCode plugin: Selectboxes of attachments and images in the editor toolbar are sorted by name
+- BBCode plugin:
+  - Enhanced \[video\] element accepts video URLs for YouTube, Vimeo and Facebook
+  - Added "mail" tag (replaces the Protected Mail Links plugin)
+  - Added image attribute "loading", default is "lazy"
+  - Selectboxes of attachments and images in the editor toolbar are sorted by name
 - Protected Mail Links plugin removed
 - CommentCenter plugin is part of the FP standard distribution
 - PrettyUrls and Comment Center are activated by default, LastComments and LastCommentsAdmin are not
@@ -24,7 +25,7 @@
 - Mail adresses are accepted in a broader range (see [#48](https://github.com/flatpressblog/flatpress/issues/48))
 - HTTPS URLs in the contact form are now handled correctly (see [#55](https://github.com/flatpressblog/flatpress/issues/55))
 - Fixed redirects after login
-- Fixed "syntax error, unexpected '\['" bug under PHP 5.3, reported [here](https://forum.flatpress.org/viewtopic.php?f=2&t=131)
+- Fixed "syntax error, unexpected '\['" bug, reported [here](https://forum.flatpress.org/viewtopic.php?f=2&t=131)
 - Setup sets date and FP version for the freshly created static pages
 - Annoying translation error in German language pack fixed
 ## Translations
