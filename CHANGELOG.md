@@ -49,7 +49,7 @@
 - Footnotes plugin: Usage how-to added
 - Lightbox plugin: Slimbox version updated, broken overlay fixed
 ## Security
-- Security fix: Possible CSFR attack prevented (see [details](https://www.exploit-db.com/exploits/39870 "exploit-db.com/exploits/39870"))
+- Security fix: Possible CSRF attack prevented (see [details](https://www.exploit-db.com/exploits/39870 "exploit-db.com/exploits/39870"))
 ## Bugfixes
 - Correct handling of special characters in URLs (see [PR11](https://github.com/flatpressblog/flatpress/pull/11 "Pull request #11"))
 - HTTPS allowed in comment URLs
