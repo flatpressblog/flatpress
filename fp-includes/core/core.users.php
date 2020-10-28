@@ -31,20 +31,38 @@ function user_list() {
 }
 
 function user_pwd($userid, $pwd) {
-	return wp_hash($userid . $pwd);
+        // FIX issue #59
+        return password_hash($userid.$pwd, PASSWORD_DEFAULT);
 }
 
 function user_login($userid, $pwd, $params = null) {
 	global $loggedin;
-
+        
 	$loggedin = false;
 
 	$user = user_get($userid);
 
-	if (isset($user) && user_pwd($userid, $pwd) == $user ['password']) {
+        // FIX issue #59
+        if (isset($user['password'])) {
+            if (password_verify($userid.$pwd, $user['password'] )) {
+                $loggedin = true;
+            } else {
+                 // check old, unsafe hashing with wp_hash() that uses md5()
+                if (wp_hash($userid . $pwd) == $user ['password']) {
 
-		$loggedin = true;
+                    $loggedin = true;
 
+                    // update password entry
+                    $user['password']=$pwd;
+                    user_add($user);
+
+                    // reread user data
+                    $user = user_get($userid);
+                }
+            }
+        }
+        if($loggedin){
+                
 		// session_regenerate_id();
 
 		$expire = time() + 31536000;
@@ -116,5 +134,3 @@ function user_add($user) {
 
 	return system_save(USERS_DIR . $user ['userid'] . ".php", compact('user'));
 }
-
-?>
