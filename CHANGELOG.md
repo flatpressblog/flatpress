@@ -23,6 +23,7 @@
 - Overhauled v0.812.2 fix for local file inclusion vulnerability ([more details](http://www.guanting.com/security/exploit/information/27269.html))
 - Comments are sanitized properly (see [#62](https://github.com/flatpressblog/flatpress/issues/62))
 - Uploader checks for forbidden files more carefully
+- User password isn't hashed with MD5 any more (see [#59](https://github.com/flatpressblog/flatpress/issues/59))
 ## Bugfixes
 - Mail adresses are accepted in a broader range (see [#48](https://github.com/flatpressblog/flatpress/issues/48))
 - HTTPS URLs in the contact form are now handled correctly (see [#55](https://github.com/flatpressblog/flatpress/issues/55))
