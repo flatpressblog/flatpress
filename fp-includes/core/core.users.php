@@ -31,24 +31,42 @@ function user_list() {
 }
 
 function user_pwd($userid, $pwd) {
-	return wp_hash($userid . $pwd);
+	return password_hash($userid . $pwd, PASSWORD_DEFAULT);
 }
 
 function user_login($userid, $pwd, $params = null) {
 	global $loggedin;
-
 	$loggedin = false;
 
+	// get user data
 	$user = user_get($userid);
+	// user not found? get outta here
+	if (!isset($user) || !isset($user ['password'])) {
+		return $loggedin;
+	}
 
-	if (isset($user) && user_pwd($userid, $pwd) == $user ['password']) {
-
+	// check the password
+	if (password_verify($userid . $pwd, $user ['password'])) {
+		$loggedin = true;
+	} //
+	  // for FP instances updated from 1.1 to 1.2: check password the old-fashioned way (with wp_hash() which uses md5)
+	elseif (wp_hash($userid . $pwd) == $user ['password']) {
 		$loggedin = true;
 
+		// re-hash password with current algorithm, ...
+		$user ['password'] = $pwd;
+		// ... save in user file ...
+		user_add($user);
+		// ... and update user data from re-read user file
+		$user = user_get($userid);
+
+		// after updating the user, we don't need the password hash file any more
+		io_delete_file(HASHSALT_FILE);
+	}
+
+	if ($loggedin) {
 		// session_regenerate_id();
-
 		$expire = time() + 31536000;
-
 		setcookie(USER_COOKIE, $userid, $expire, COOKIEPATH, COOKIE_DOMAIN);
 		setcookie(PASS_COOKIE, $user ['password'], $expire, COOKIEPATH, COOKIE_DOMAIN);
 	}
@@ -116,5 +134,3 @@ function user_add($user) {
 
 	return system_save(USERS_DIR . $user ['userid'] . ".php", compact('user'));
 }
-
-?>

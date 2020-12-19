@@ -59,15 +59,6 @@ function system_save($file, $array) {
 	// } else die('Wrong number of parameters!');
 }
 
-function system_hashsalt_save($force = false) {
-	global $fp_config;
-	if ($force || !file_exists(HASHSALT_FILE))
-		return system_save(HASHSALT_FILE, array(
-			'fp_hashsalt' => $fp_config ['general'] ['blogid'] . ABS_PATH . BLOG_BASEURL . mt_rand()
-		));
-	return true;
-}
-
 define('SYSTEM_VER', '1.2.dev');
 
 function system_ver() {
@@ -217,7 +208,7 @@ function system_geterr($module = '') {
 function system_dpr($action, $content) {
 	$p = print_r($content, 1);
 
-	add_action($action, function() use ($p) {
+	add_action($action, function () use ($p) {
 		echo "<pre style='position:absolute'>$p</pre>";
 	});
 }
