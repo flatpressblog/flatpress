@@ -5,7 +5,7 @@
 
 	{entry_block}
 	<div id="admin-post-preview">
-	{if $preview}
+	{if isset($preview)}
 	<fieldset id="post-preview"><legend>{$panelstrings.preview}</legend>
 	{include file=preview.tpl}
 	</fieldset>
@@ -13,9 +13,11 @@
 	</div>
 
 		
-{html_form}	
-	
-	{entry content=$post alwaysshow=true}
+{html_form}
+	{if !isset($post)}
+		{assign var=post value=""}
+	{/if}
+		{entry content=$post alwaysshow=true}
 	
 		<div id="admin-editor">
 			<p><label for="subject">{$panelstrings.subject}</label><br />

@@ -62,8 +62,8 @@ class plugin_commentcenter {
 	function lock() {
 		global $fp_params, $post, $smarty;
 		$this->loadPolicies();
-		$cats = is_array($post ['categories']) ? $post ['categories'] : array();
-		$behavoir = $this->behavoirFromPolicies($fp_params ['entry'], $cats);
+		$cats = array_key_exists('categories', $post) && is_array($post ['categories']) ? $post ['categories'] : array();
+		$behavoir = array_key_exists('entry', $fp_params) ? $this->behavoirFromPolicies($fp_params ['entry'], $cats) : 1;
 		if ($behavoir == -1 && !user_loggedin()) {
 			$smarty->assign('entry_commslock', true);
 		}

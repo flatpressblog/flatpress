@@ -8,6 +8,9 @@
 
 
 
+{if !isset($catdefs)}
+	{assign var=catdefs value=""}
+{/if}
 {html_form}
 	
 		<p>

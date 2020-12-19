@@ -18,7 +18,7 @@
 		{/foreach}
 	</ul>
 	
-	{if $submenu}
+	{if isset($submenu)}
 	<ul id="admin-submenu">
 		{foreach from=$submenu key=subtab item=item}
 		{if $item}
@@ -34,6 +34,9 @@
 	{/if}
 	
 	<div id="admin-content">
-	{include file=$admin_resource|default:"admin:$panel/$action"}
-	
+	{if isset($action)}
+		{include file=$admin_resource|default:"admin:$panel/$action"}
+	{else}
+		{include file=$admin_resource|default:"admin:$panel"}
+	{/if}
 	</div>
