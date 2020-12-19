@@ -59,9 +59,6 @@ function user_login($userid, $pwd, $params = null) {
 		user_add($user);
 		// ... and update user data from re-read user file
 		$user = user_get($userid);
-
-		// after updating the user, we don't need the password hash file any more
-		io_delete_file(HASHSALT_FILE);
 	}
 
 	if ($loggedin) {

@@ -131,6 +131,8 @@ function validate() {
 
 	config_save();
 
+	system_hashsalt_save();
+
 	user_add($user);
 
 	return true;
