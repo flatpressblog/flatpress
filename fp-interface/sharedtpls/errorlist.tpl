@@ -36,7 +36,7 @@
 		{/if}
 
 		
-		{if $success}
+		{if isset($success)}
 		{if $success < 0}
 			{assign var=class value=errors}
 		{else}
