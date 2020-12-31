@@ -2,6 +2,9 @@
 {html_form}
 <h2>{$plang.configure}</h2>
 <p>{$plang.desc_conf}</p>
+{if !isset($pl_conf)}
+	{assign var=pl_conf value=""}
+{/if}
 
 <dl class="option-set">
 	<dt><label for="log_all">{$plang.log_all}</label></dt>
@@ -25,12 +28,22 @@
 	</dd>
 	<dt class="akismet_opts"><label for="akismet_key">{$plang.akismet_key}</label></dt>
 	<dd class="akismet_opts">
-		<input type="text" name="akismet_key" id="akismet_key" value="{$pl_conf.akismet_key}" /><br />
+		{if isset($pl_conf.akismet_key)}
+			{assign var=akismet_key value=$pl_conf.akismet_key}
+		{else}
+			{assign var=akismet_key value=""}
+		{/if}
+		<input type="text" name="akismet_key" id="akismet_key" value="{$akismet_key}" /><br />
 		{$plang.akismet_key_long}
 	</dd>
 	<dt class="akismet_opts"><label for="akismet_url">{$plang.akismet_url}</label></dt>
 	<dd class="akismet_opts">
-		<input type="text" name="akismet_url" id="akismet_url" value="{$pl_conf.akismet_url}" /><br />
+		{if isset($pl_conf.akismet_url)}
+			{assign var=akismet_url value=$pl_conf.akismet_url}
+		{else}
+			{assign var=akismet_url value=""}
+		{/if}
+		<input type="text" name="akismet_url" id="akismet_url" value="{$akismet_url}" /><br />
 		{$plang.akismet_url_long|sprintf:$smarty.const.BLOG_BASEURL}
 	</dd>
 </dl>

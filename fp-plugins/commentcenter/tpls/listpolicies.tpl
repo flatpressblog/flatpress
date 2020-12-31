@@ -1,18 +1,18 @@
 <table id="commencenter-table">
 	<thead id="commencenter-table-head">
 		<tr>
-{if !$delete}			<th style="width: 10%;">{$plang.select}</th>{/if}
+{if !isset($delete)}			<th style="width: 10%;">{$plang.select}</th>{/if}
 			<th class="main-cell">{$plang.criteria}</th>
 			<th style="width: 20%;">{$plang.behavoir}</th>
-{if !$delete}			<th style="width: 25%;">{$plang.options}</th>{/if}
+{if !isset($delete)}			<th style="width: 25%;">{$plang.options}</th>{/if}
 		</tr>
 	</thead>
 	<tbody id="commencenter-table-body">
 {foreach name=policies from=$policies key=id item=policy}
 <tr class="tr_policy{$id}">
-{if !$delete}	<td class="td_select"><input type="checkbox" name="select[{$id}]" /></td>{/if}
+{if !isset($delete)}	<td class="td_select"><input type="checkbox" name="select[{$id}]" /></td>{/if}
 	<td class="main-cell">
-{if $delete}<input type="hidden" name="del_policy[]" value="{$id}" />
+{if isset($delete)}<input type="hidden" name="del_policy[]" value="{$id}" />
 {/if}
 {if $policy.is_all}
 		{$plang.all_entries}
@@ -45,7 +45,7 @@
 {elseif $policy.do==-1}
 	<td>{$plang.block}</td>
 {/if}
-{if !$delete}	<td>
+{if !isset($delete)}	<td>
 <a href="{$action_url|cmd_link:polup:$id}" title="{$plang.up}" rel="polup[{$id}]"><img src="{$plugin_url}imgs/up.png" alt="{$plang.up}" /></a>
 <a href="{$action_url|cmd_link:poldown:$id}" title="{$plang.down}" rel="poldown[{$id}]"><img src="{$plugin_url}imgs/down.png" alt="{$plang.down}" /></a>
 <a href="{$action_url|cmd_link:poledit:$id}" title="{$plang.edit}"><img src="{$plugin_url}imgs/edit.png" alt="{$plang.edit}" /></a>
@@ -54,7 +54,7 @@
 </tr>
 {foreachelse}
 <tr>
-	<td colspan="{if $delete}2{else}4{/if}">{$plang.nopolicies}</td>
+	<td colspan="{if isset($delete)}2{else}4{/if}">{$plang.nopolicies}</td>
 </tr>
 {/foreach}
 	</tbody>

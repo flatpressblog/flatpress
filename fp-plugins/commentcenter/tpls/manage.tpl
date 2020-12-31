@@ -2,6 +2,9 @@
 {html_form}
 <h2>{$plang.man_searcht}</h2>
 <p>{$plang.man_searchd}</p>
+{if !isset($entry_id)}
+	{assign var=entry_id value=""}
+{/if}
 <p><input type="text" name="entry" value="{$entry_id}" />
 {html_submit name="entry_search" id="entry_search" value=$plang.man_search}</p>
 

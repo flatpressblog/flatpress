@@ -122,7 +122,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 		$smarty->assign('pl_conf', $conf);
 
 		$conf=$plugin->getConf();
-		if($conf['akismet_check']) {
+		if(isset($conf) && array_key_exists('akismet_check', $conf) && $conf['akismet_check']) {
 			$akismet=$plugin->akismetLoad();
 			if(is_numeric($akismet)) {
 				$error=$lang['admin']['entry']['commentcenter']['akismet_errors'][$akismet];
