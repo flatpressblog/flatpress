@@ -13,23 +13,36 @@
 	
 	{if not $flatpress.loggedin}
 	
-	
-
 	{*<fieldset id="comment-userdata">*}
 	<div id="comment-userdata">
 	
 		<p>
-		<input type="text" {$error.name|notempty:'class="field-error"'} name="name" id="name" value="{$values.name|wp_specialchars:1|default:$cookie.name}" />
+		{if isset($error) && isset($error.name) && !empty($error.name)}
+			{assign var=class value="field-error"}
+		{else}
+			{assign var=class value=""}
+		{/if}
+		<input type="text" class="{$class}" name="name" id="name" value="{$values.name|wp_specialchars:1|default:$cookie.name}" />
 		<label class="textlabel" for="name">{$lang.comments.name}</label>
 		</p>
 		
 		<p>
-		<input type="text" {$error.email|notempty:'class="field-error"'} name="email" id="email" value="{$values.email|wp_specialchars:1|default:$cookie.email}" />
+		{if isset($error) && isset($error.email) && !empty($error.email)}
+			{assign var=class value="field-error"}
+		{else}
+			{assign var=class value=""}
+		{/if}
+		<input type="text" class="{$class}" name="email" id="email" value="{$values.email|wp_specialchars:1|default:$cookie.email}" />
 		<label class="textlabel" for="email">{$lang.comments.email}</label>
 		</p>
 		
 		<p>
-		<input type="text" {$error.url|notempty:'class="field-error"'} name="url" id="url" value="{$values.url|wp_specialchars:1|default:$cookie.url}" />
+		{if isset($error) && isset($error.url) && !empty($error.url)}
+			{assign var=class value="field-error"}
+		{else}
+			{assign var=class value=""}
+		{/if}
+		<input type="text" class="{$class}" name="url" id="url" value="{$values.url|wp_specialchars:1|default:$cookie.url}" />
 		<label class="textlabel" for="url">{$lang.comments.www}</label>
 		</p>
 		
@@ -42,7 +55,12 @@
 	
 	
 	<div class="comment-content">
-			<p><textarea name="content" {$error.content|notempty:'class="field-error"'}
+			{if isset($error) && isset($error.content) && !empty($error.content)}
+				{assign var=class value="field-error"}
+			{else}
+				{assign var=class value=""}
+			{/if}
+			<p><textarea name="content" class="{$class}" 
 			id="content" rows="10" cols="74">{$values.content|wp_specialchars:1}</textarea></p>
 			{*here will go a plugin hook*}
 	</div>

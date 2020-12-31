@@ -21,7 +21,12 @@
 	
 		<div id="admin-editor">
 			<p><label for="subject">{$panelstrings.subject}</label><br />
-			<input type="text" {$error.subject|notempty:'class="field-error"'} 
+			{if isset($error) && isset($error.subject) && !empty($error.subject)}
+				{assign var=class value="field-error"}
+			{else}
+				{assign var=class value=""}
+			{/if}
+			<input type="text" class="{$class}" 
 				name="subject" id="subject" 
 				value="{$subject|default:$smarty.request.subject|wp_specialchars:1}" /><br />
 			<input type="hidden" name="timestamp" value="{$date}" />
@@ -32,7 +37,7 @@
 			</p>
 			{toolbar}
 			<p>
-			<textarea name="content" {$error.content|notempty:'class="field-error"'} 
+			<textarea name="content" class="{$class}" 
 			id="content" rows="20" cols="74">{$content|default:$smarty.request.content|htmlspecialchars}</textarea><br />
 			{*here will go a plugin hook*}
 			{action hook=simple_edit_form}
@@ -80,13 +85,13 @@
 {/html_form}
 	{/entry_block}
 
-{if $smarty.get.entry }
+{if isset($smarty.get.entry) }
 
 <div id="admin-otheroptions">	
 
 <h2>{$panelstrings.otheropts}</h2>
 	<ul>
-		{if !$draft}
+		{if !isset($draft)}
 		<li><a href="admin.php?p=entry&amp;entry={$smarty.get.entry}&amp;action=commentlist">
 			{$panelstrings.commmsg}</a></li>
 		{/if}
