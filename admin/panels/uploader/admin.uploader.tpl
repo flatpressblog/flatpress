@@ -1,4 +1,4 @@
-{if $smarty.request.mod != 'inline'}
+{if !isset($smarty.request.mod) || $smarty.request.mod != 'inline'}
 <h2>{$panelstrings.head}</h2>
 <p>{$panelstrings.descr}</p>
 {/if}
@@ -23,7 +23,7 @@
 {html_form enctype='multipart/form-data'}
 	
 	
-	{if $smarty.request.mod != 'inline'}
+	{if !isset($smarty.request.mod) || $smarty.request.mod != 'inline'}
 	<fieldset><legend>{$panelstrings.fset1}</legend>
 	{/if}
 		<input type="file" name="upload[]" />
@@ -35,7 +35,7 @@
 		<input type="file" name="upload[]" />
 		<input type="file" name="upload[]" />
 	
-	{if $smarty.request.mod != 'inline'}
+	{if !isset($smarty.request.mod) || $smarty.request.mod != 'inline'}
 	</fieldset>
 	{/if}
 	

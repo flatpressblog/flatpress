@@ -6,7 +6,7 @@
 	/* default action */
 	
 	$lang['admin']['widgets']['default'] = array(
-		'head'		=> 'G&eacute;rer les Widgets (<em>exp&eacute;rimental</em>)',
+		'head'		=> 'G&eacute;rer les Widgets',
 		
 		'descr'		=> 	'Un <a class="hint" '.
 						'href="http://wiki.flatpress.org/doc:widgets" title="C\'est quoi un Widget?">'.

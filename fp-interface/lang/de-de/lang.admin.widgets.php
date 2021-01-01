@@ -6,9 +6,9 @@
 	/* default action */
 	
 	$lang['admin']['widgets']['default'] = array(
-		'head'		=> 'Verwaltung Widgets (<em>experimentell</em>)',
+		'head'		=> 'Widget-Verwaltung',
 		
-		'descr'		=> 'Flatpress hat verschiedene Widgets mit an Bord, wie zum Beispiel die Login- oder die Suchefunktion. Ein <a class="hint" '.
+		'descr'		=> 'Flatpress hat verschiedene Widgets mit an Bord, wie zum Beispiel die Login- oder die Suchfunktion. Ein <a class="hint" '.
 						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">'.
 						'Widget</a> ist ein dynamisches Steuerelement eines <a class="hint" '.
 						'href="http://wiki.flatpress.org/doc:plugins" title="What is a plugin?">'.

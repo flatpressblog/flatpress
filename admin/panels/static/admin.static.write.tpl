@@ -4,14 +4,17 @@
 
 
 	{static_block}
-	{if $preview}
-	<fieldset id="post-preview"><legend>{$panelstrings.preview}</legend>
-	{include file=preview.tpl}
-	</fieldset>
+	{if isset($preview)}
+		<fieldset id="post-preview"><legend>{$panelstrings.preview}</legend>
+		{include file=preview.tpl}
+		</fieldset>
 	{/if}
 
 {html_form}		
 
+	{if !isset($post)}
+		{assign var=post value=""}
+	{/if}
 	{static content=$post alwaysshow=true}
 	
 			<p><label for="subject">{$panelstrings.subject}</label><br />
