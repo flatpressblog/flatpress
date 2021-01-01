@@ -16,7 +16,7 @@
 					{$plang.allow_html}
 				</label></dt>
 				<dd> 
-					<p><input type="checkbox" name="bb-allow-html" id="bb-allow-html" {if $bbchecked[0]}checked="checked"{/if} /> 
+					<p><input type="checkbox" class="form-check-input" name="bb-allow-html" id="bb-allow-html" {if $bbchecked[0]}checked="checked"{/if} /> 
 					{$plang.allow_html_long}</p>
 				</dd>
 
@@ -24,7 +24,7 @@
 					{$plang.toolbar}
 				</label></dt>
 				<dd> 
-					<p><input type="checkbox" name="bb-toolbar" id="bb-toolbar" {if $bbchecked[2]}checked="checked"{/if} />
+					<p><input type="checkbox" class="form-check-input" name="bb-toolbar" id="bb-toolbar" {if $bbchecked[2]}checked="checked"{/if} />
 					{$plang.toolbar_long}</p>
 				</dd>
 
@@ -38,7 +38,7 @@
 					{$plang.comments}
 				</label></dt>
 				<dd> 
-					<p><input type="checkbox" name="bb-comments" id="bb-comments" {if $bbchecked[1]}checked="checked"{/if} />
+					<p><input type="checkbox" class="form-check-input" name="bb-comments" id="bb-comments" {if $bbchecked[1]}checked="checked"{/if} />
 					{$plang.comments_long} </p>
 				</dd>
 
@@ -47,7 +47,7 @@
 				</label></dt>
 				<dd> 
 					<p>{$plang.urlmaxlen_long_pre}
-					<input class="form-control input_gray bbcode_input" type="text" name="bb-maxlen" size="3" value="{$bbconf.number}">
+					<input class="form-control input_gray bbcode_input" type="text" name="bb-maxlen" size="3" value="{$bbconf.number}" style="display: inline-block;">
 					{$plang.urlmaxlen_long_post}</p>
 				</dd>
 

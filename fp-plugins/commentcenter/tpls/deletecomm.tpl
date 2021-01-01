@@ -14,10 +14,11 @@
 {assign var="button_suff" value=""}
 {/if}
 {if $single}
-	{html_submit name="commdelok$button_suff" id="commdelok$button_suff" value=$plang.del_subs}
+	{html_submit name="commdelok$button_suff" class="btn btn-primary" id="commdelok$button_suff" value=$plang.del_subs}
 {else}
-	{html_submit name="commdelok$button_suff" id="commdelok$button_suff" value=$plang.del_subm}
+	{html_submit name="commdelok$button_suff" class="btn btn-primary" id="commdelok$button_suff" value=$plang.del_subm}
 {/if}
-	{html_submit name="ccancel$button_suff" id="ccancel$button_suff" value=$plang.del_cancel}
+	{html_submit name="ccancel$button_suff" class="btn btn-secondary" id="ccancel$button_suff" value=$plang.del_cancel}
 </div>
 {/html_form}
+{include file=plugin:commentcenter/footer}

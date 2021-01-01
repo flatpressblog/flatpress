@@ -1,4 +1,4 @@
-<table class="entrylist">
+<table class="entrylist table">
 <thead><tr>
 {if !$delete}<th></th>{/if}
 <th>{$plang.app_date}</th>
@@ -16,7 +16,7 @@
 {foreach from=$entry.$fetch item=comm key=comm_id}
 {assign var="i" value=$i+1}
 <tr>
-{if !$delete}<td class="td_select_{$fetch}"><input type="checkbox" name="select[e{$entryid}_c{$comm_id}]" /></td>{/if}
+{if !$delete}<td class="td_select_{$fetch}"><input type="checkbox" class="form-check-input" name="select[e{$entryid}_c{$comm_id}]" /></td>{/if}
 <td>{$comm.date|date_format:"%D, %T"}</td>
 <td class="main_cell">
 {$comm.content|strip_tags}
@@ -41,7 +41,7 @@
 {else}
 {assign var="rm_url" value=$action_url|cmd_link:deletecomm:"e`$entryid`_c`$comm_id`"}
 {/if}
-<a href="{$rm_url}" title="{$plang.app_delete}"><img src="{$plugin_url}imgs/delete.png" alt="{$plang.app_delete}" /></a>
+<a href="{$rm_url}" title="{$plang.app_delete}"><img src="{$plugin_url}imgs/delete.png" alt="{$plang.app_delete}" style="margin-top: 4px;"/></a>
 </td>
 {/if}
 </tr>

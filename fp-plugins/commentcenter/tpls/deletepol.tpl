@@ -7,10 +7,11 @@
 <p>{$plang.sure}</p>
 <div class="buttonbar">
 {if $single}
-	{html_submit name="delok" id="delok" value=$plang.del_subs}
+	{html_submit class="btn btn-primary" name="delok" id="delok" value=$plang.del_subs}
 {else}
-	{html_submit name="delok" id="delok" value=$plang.del_subm}
+	{html_submit class="btn btn-primary" name="delok" id="delok" value=$plang.del_subm}
 {/if}
-	{html_submit name="cancel" id="cancel" value=$plang.del_cancel}
+	{html_submit class="btn btn-secondary" name="cancel" id="cancel" value=$plang.del_cancel}
 </div>
 {/html_form}
+{include file=plugin:commentcenter/footer}

@@ -1,4 +1,4 @@
-<table id="commencenter-table">
+<table id="commencenter-table"class="table">
 	<thead id="commencenter-table-head">
 		<tr>
 {if !$delete}			<th style="width: 10%;">{$plang.select}</th>{/if}
@@ -10,7 +10,7 @@
 	<tbody id="commencenter-table-body">
 {foreach name=policies from=$policies key=id item=policy}
 <tr class="tr_policy{$id}">
-{if !$delete}	<td class="td_select"><input type="checkbox" name="select[{$id}]" /></td>{/if}
+{if !$delete}	<td class="td_select"><input type="checkbox" class="form-check-input" name="select[{$id}]" /></td>{/if}
 	<td class="main-cell">
 {if $delete}<input type="hidden" name="del_policy[]" value="{$id}" />
 {/if}
