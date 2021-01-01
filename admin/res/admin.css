@@ -8,6 +8,7 @@ body {
   background-color: #f2f2f2;
 }
 
+
 .left-sidebar {
   background-color: #fff !important;
 }
@@ -265,6 +266,8 @@ a:hover {
 
 .card-header .text-primary {
   color: #212529 !important;
+  font-weight: bold;
+  padding: 0.2rem;
 }
 
 .shadow {
@@ -421,6 +424,14 @@ input, textarea, select {
   list-style: none;
   padding: 0px;
   text-align: center;
+}
+
+#admin-content .card-body a {
+  text-decoration: none;
+}
+
+#admin-content .card-body a:hover {
+  text-decoration: underline !important;
 }
 
 .admin-widgetset p {
