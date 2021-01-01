@@ -13,7 +13,7 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://arvidzimmer
 - [Fabrix.xm](https://kirgroup.com/) contributed the Media Manager and Last Comments Admin.
 - The SEO Meta Tag Info plugin was built by Don Prince.
 - [Matthias Mauch](http://www.aadmm.org/)'s [FP-Patch](http://www.aadmm.org/fp-patch/) initially brought FlatPress to PHP 7. Also, he regularly tests FlatPress against new PHP versions.
-- The XML sitema for search engines was [initially introduced](https://www.igorkromin.net/index.php/2013/02/18/adding-a-google-compatible-sitemap-to-flatpress/) by [Igor Kromin](https://www.igorkromin.net/).
+- The XML sitemap for search engines was [initially introduced](https://www.igorkromin.net/index.php/2013/02/18/adding-a-google-compatible-sitemap-to-flatpress/) by [Igor Kromin](https://www.igorkromin.net/).
 
 ## Translation
 - Brazilian Portuguese: randy
