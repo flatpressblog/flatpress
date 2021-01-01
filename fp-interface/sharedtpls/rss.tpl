@@ -4,7 +4,7 @@
 		<title>{$flatpress.title}</title>
 		<link>{$flatpress.www}</link>
 		<description><![CDATA[{$flatpress.subtitle}]]></description>
-		<copyright>Copyright {$smarty.now|date_format:"$Y"}, {$flatpress.author}</copyright>
+		<copyright>Copyright {'Y'|date}, {$flatpress.author}</copyright>
 		{*<managingEditor>{$flatpress.email} ({$flatpress.author})</managingEditor>*}
 		<language>{$fp_config.locale.lang}</language>
 		<atom:link rel="self" href="{'rss2'|theme_feed_link}" type="application/rss+xml" />
@@ -23,9 +23,11 @@
 			<pubDate>{'r'|date:$date}</pubDate>
 			<comments>{$id|link:comments_link}</comments>
 
-			{foreach from=$enclosure item=encl} 
-				<enclosure url="{$encl.url}" length="{$encl.length}" type="{$encl.type}" />
-			{/foreach}
+			{if isset($enclosure)}
+				{foreach from=$enclosure item=encl} 
+					<enclosure url="{$encl.url}" length="{$encl.length}" type="{$encl.type}" />
+				{/foreach}
+			{/if}
 
 			</item>
 			{/entry}

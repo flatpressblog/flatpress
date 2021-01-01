@@ -14,6 +14,7 @@
 	</fieldset>
 	
 	<fieldset><legend>{$lang.search.fset3}</legend>
+	{if !isset($categories)} {assign var=categories value=""} {/if}
 	{list_categories type="radio" selected=$categories}
 	<p>{$lang.search.catdescr}</p>
 	</fieldset>

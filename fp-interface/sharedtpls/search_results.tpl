@@ -1,4 +1,4 @@
-{if $noresults}
+{if isset($noresults)}
 <p>{$smarty.request.q|string_format:$lang.search.descrnores}</p>
 {else}
 <p>{$smarty.request.q|string_format:$lang.search.descrres}</p>
