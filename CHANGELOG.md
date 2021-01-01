@@ -1,7 +1,7 @@
 # Under development: FlatPress 1.2
 [Download latest snapshot](https://github.com/flatpressblog/flatpress/archive/master.zip)
 ## General
-- FlatPress now runs smoothly with PHP 7.4, prepared for PHP 8
+- FlatPress now runs smoothly with PHP 7.4 and PHP 8
 - Performance: Lazy loading for images
 - GDPR compatibility: Data of commenters are not stored in cookies any more
 - SEO: Added XML sitemap for search engines ([details](https://forum.flatpress.org/viewtopic.php?f=4&t=126))
