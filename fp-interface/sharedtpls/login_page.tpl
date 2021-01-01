@@ -9,19 +9,22 @@
   <link href="{$smarty.const.BLOG_BASEURL}admin/res/admin.css" rel="stylesheet">
   <link href="{$smarty.const.BLOG_BASEURL}fp-includes/themify-icons/themify-icons.css" rel="stylesheet">
 </head>
-<body class="login-background">
-  <div class="container">
-    <div class="row justify-content-center">
+<body class="bg-light">
+  <div class="container h-100">
+    <div class="row justify-content-center h-100 align-items-center">
       <div class="col-lg-6">
       {include file=shared:admin_errorlist.tpl}
-        <div class="card o-hidden border-0 shadow-lg my-5 shadow-lg">
-          <div class="card-body p-0">
+        <div class="card o-hidden border-0 shadow-lg my-5 shadow mx-auto login">
+          <div class="card-body p-0 border rounded">
                 <div class="p-5">
-					<div class="login_logo text-center">
-						<img src="{$smarty.const.BLOG_BASEURL}admin/res/fp-logo.png" class="img-fluid">
-					</div>
-					{if $rawcontent} {$content}
-				{else}	{include file=$content}{/if}
+                  <div class="login_logo text-center">
+                    <img src="{$smarty.const.BLOG_BASEURL}admin/res/fp-logo.png" class="img-fluid">
+                  </div>
+                  {if $rawcontent} 
+                    {$content}
+                  {else}	
+                    {include file=$content}
+                  {/if}
                 </div>
           </div>
         </div>

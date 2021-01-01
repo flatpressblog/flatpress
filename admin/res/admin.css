@@ -612,25 +612,9 @@ img {
   color: #fff !important;
 }
 
-.login-background {
-  background-color: #aa4142;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 100 100'%3E%3Crect x='0' y='0' width='51' height='51' fill='%23a13e3f'/%3E%3C/svg%3E");
-}
-
-.login-background input {
-  max-width: 100%;
-}
-
-.login-background img {
-  width: 50%;
-}
-
-.login-background .input-group {
-  margin: 1rem 0;
-}
-
-.login-background #errorlist {
-  margin-top: 3rem !important;
+.login {
+  display: flex;
+  align-items: center;
 }
 
 .msgs.errors {
@@ -772,4 +756,8 @@ img {
 .managerTypeFile {
   width: 16px;
   height: 16px;
+}
+
+.login {
+  max-width: 400px;
 }

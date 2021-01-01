@@ -61,6 +61,7 @@ function main() {
 			add_filter('wp_head', 'myredirect');
 
 			$content = (SHARED_TPLS . 'login_success.tpl');
+			myredirect();
 		} else {
 
 			utils_redirect();
