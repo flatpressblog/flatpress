@@ -47,13 +47,7 @@
 	</dd>
 
 </dl>
-		
 
-	<label>
-		{$plang.opn4pre}
-		
-		{$plang.opn4post}
-	</label>
 <p class="buttonbar">
 	<input type="submit" name="bb-conf" value="{$plang.submit}"/>
 </p>
