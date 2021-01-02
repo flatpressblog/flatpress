@@ -36,6 +36,7 @@
 - Added Japanese Language Pack by [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
 - Added Brazilian Portuguese language pack by randy
 - Added Italian language pack by Giacomo Margarito
+- Added Spansh language pack by karelv
 - Reworked German language pack by Detlef 
 
 # 2019-02-22: [FlatPress 1.1 "Da capo"](https://github.com/flatpressblog/flatpress/releases/tag/1.1)
