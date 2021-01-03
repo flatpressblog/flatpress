@@ -23,6 +23,7 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://arvidzimmer
 - Greek: An unknown, since deleted GitHub user :(
 - Italian: Giacomo Margarito
 - Japanese: [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
+- Spanish: karelv
 
 ## Other contributions
 - [Julian Rademacher](https://moortaube.de/) generously donated his Twitter account [@FlatPress](https://twitter.com/FlatPress). Also thanks for your useful pull requests!
