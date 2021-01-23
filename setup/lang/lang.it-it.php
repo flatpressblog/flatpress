@@ -74,7 +74,7 @@ $lang ['samplecontent'] ['menu'] ['content'] = <<<MENU
 [list]
 [*][url=?]Home[/url]
 [*][url=?paged=1]Blog[/url]
-[*][url=static.php?page=about]Informazioni su[/url]
+[*][url=static.php?page=about]Informazioni sul sito[/url]
 [*][url=contact.php]Contatti[/url]
 [/list]
 MENU;

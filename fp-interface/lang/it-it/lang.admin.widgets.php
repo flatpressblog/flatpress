@@ -11,14 +11,14 @@
 		'descr'		=> 	'Un <a class="hint" '.
 						'href="http://wiki.flatpress.org/doc:widgets" title="What is a Widget?">'.
 						'Widget</a> è un componente dinamico che può visualizzare dati e interagire con l\'utente.
-						Mentre i <strong>Temi</strong> sono fatti per cambiare l\'aspetto del blog, Widgets 
-						<strong>extend</strong> cambiano l\'aspetto e le funzionalità.</p>
+						Mentre i <strong>Temi</strong> sono fatti per cambiare l\'aspetto del blog, i Widgets 
+						ne <strong>estendono</strong>, cambiano l\'aspetto e le funzionalità.</p>
 
 						<p>I Widget possono essere trascinati in aree specifiche del tuo tema chiamate 
 						<strong>WidgetSets</strong>. Il numero e il nome dei WidgetSets possono variare a seconda 
-						de tema che hai scelto.</p>
+						del tema che hai scelto.</p>
 
-						<p>FlatPress viene fornito con parecchi widget: ci sono widget cheaiutano con la connessione, per 
+						<p>FlatPress viene fornito con parecchi widget: ci sono widget che aiutano con la connessione, per 
 						visualizzare una casella di ricerca, ecc.</p>
 						
 						<p>Ogni Widget è definito da un <a class="hint" '.
@@ -30,7 +30,7 @@
 		'themewdgs' => 'Widgetset per questo tema',
 		'themewdgsdescr' => 'Il tema che hai attualmente selezionato ti consente di avere i seguenti widgetset',
 		'oldwdgs'	=> 'Altri widgetset',
-		'oldwdgsdescr' =>'I seguenti widgetset sembrano non appartenere ad alcunoo dei '.
+		'oldwdgsdescr' =>'I seguenti widgetset sembrano non appartenere ad alcuno dei '.
 						'widgetset elencati qui sopra. Potrebbero essere dei rimasugli di un altro tema.',
 		
 		'submit'	=> 'Salva le modifiche',

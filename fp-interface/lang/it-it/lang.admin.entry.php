@@ -45,7 +45,7 @@
 		'savecontinue'	=> 'Salva e continua',
 		'categories'	=> 'Categorie',
 		'nocategories'	=> 'Nessuna categoria impostata. <a href="admin.php?p=entry&amp;action=cats">Creane una '. 
-					'categories</a> dal pannelo principale degli articoli. '.
+					'categories</a> dal pannello principale degli articoli. '.
 					'<a href="#save">Salva</a> prima l\'articolo.',
 		'saveopts'	=> 'Opzioni di salvataggio',
 		'success'	=> 'L\'articolo è stato pubblicato con successo',
@@ -162,7 +162,7 @@ Notizie :2
 ----Varie :5
 Tecnologia :6
 	</pre>',
-		'clear'		=> 'Elimina tutti i dati dele categorie',
+		'clear'		=> 'Elimina tutti i dati delle categorie',
 	
 		'fset1'		=> 'Editor',
 		'fset2'		=> 'Applica le modifiche',

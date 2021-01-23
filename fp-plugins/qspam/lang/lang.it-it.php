@@ -10,7 +10,7 @@ $lang['admin']['plugin']['qspam'] = array(
 	'desc1' => 'Non consentire commenti che contengono queste parole (scrivine una per riga) :',
 	'desc2' => '<strong>Attenzione:</strong> Un commento verrà vietato anche quando una parola fa parte di un\'altra parola. 
 	
-	(ad esempio. "gomma" corrisponde anche a "s<em>gommata</em>" too)',
+	(ad esempio. "gomma" corrisponde anche a "s<em>gommata</em>" )',
 	'options' => 'Altre opzioni',
 	'desc3' => 'Conteggio parolacce',
 	'desc3pre' => 'Blocca i commenti che contengono più di ',
