@@ -85,9 +85,9 @@ function plugin_calendar_widget() {
 
 	$days = array();
 
-	while ($q->hasmore($queryId)) {
+	while ($q->hasmore()) {
 
-		list ($id, $entry) = $q->getEntry($queryId);
+		list ($id, $entry) = $q->getEntry();
 		$date = date_from_id($id);
 		$d = (int) $date ['d'];
 
@@ -95,8 +95,6 @@ function plugin_calendar_widget() {
 			get_day_link($y, $m, str_pad($d, 2, '0', STR_PAD_LEFT)),
 			'linked-day'
 		);
-
-		$count++;
 	}
 
 	// load plugin strings

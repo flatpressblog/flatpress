@@ -32,7 +32,8 @@
 	<select name="category" class="alignleft">
 	<option label="Unfiltered" value="all">{$panelstrings.nofilter}</option>
 	{*html_options options=$lang.entry.flags.short selected=$smarty.request.cat*}
-	{html_options options=$categories_all selected=$smarty.request.category}
+	{if isset($smarty.request.category)} {assign var=category value=$smarty.request.category} {else} {assign var=category value=""}{/if}
+	{html_options options=$categories_all selected=$category}
 	</select>
 	{html_submit name='filter' id='filter' class="alignright" value=$panelstrings.filterbtn}
 </fieldset>
