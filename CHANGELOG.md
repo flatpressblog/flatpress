@@ -1,5 +1,5 @@
-# Under development: FlatPress 1.2
-[Download latest snapshot](https://github.com/flatpressblog/flatpress/archive/master.zip)
+# In beta testing: FlatPress 1.2 "Legato"
+[Release info and download](https://github.com/flatpressblog/flatpress/releases/tag/1.2.beta1)
 ## General
 - FlatPress now runs smoothly with PHP 7.4 and PHP 8
 - Performance: Lazy loading for images
