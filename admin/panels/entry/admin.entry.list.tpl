@@ -19,7 +19,7 @@
 						<tr>
 						<td>{$id|entry_idtotime|date_format:"`$fp_config.locale.dateformatshort`, `$fp_config.locale.timeformat`"}</td>
 						<td class="main-cell">
-						{if in_array('draft',$categories)}
+						{if isset($categories) && in_array('draft',$categories)}
 						(<em class="entry-flag">{$lang.entry.flags.short.draft}</em>)
 						{/if}
 						<a class="link-general" 
@@ -62,7 +62,7 @@
 					</br>
 					{/entry_block}
 				  	<div class="entry_filter">
-						<form method="get" action="{$smarty.request.PHP_SELF}?p=entry">
+					<form method="get" action="{if isset($smarty.request.PHP_SELF)}{$smarty.request.PHP_SELF}{/if}?p=entry">
 						<p> <input type="hidden" name="p" value="entry" /> </p>
 							<select name="category" class="alignleft form-control select_filter">
 							<option label="Unfiltered" value="all">{$panelstrings.nofilter}</option>

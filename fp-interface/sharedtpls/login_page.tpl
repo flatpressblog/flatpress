@@ -20,7 +20,7 @@
                   <div class="login_logo text-center">
                     <img src="{$smarty.const.BLOG_BASEURL}admin/res/fp-logo.png" class="img-fluid">
                   </div>
-                  {if $rawcontent} 
+                  {if isset($rawcontent)} 
                     {$content}
                   {else}	
                     {include file=$content}

@@ -12,8 +12,11 @@
 	<script src="{$smarty.const.BLOG_BASEURL}/admin/res/admin.js" ></script>
 	<link rel="stylesheet" href="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/themes/default.min.css" />
 </head>
-
+{if isset($action)}
 <body class="{"admin-$panel-$action"|tag:admin_body_class}">
+{else}
+<body class="{"admin-$panel"|tag:admin_body_class}">
+{/if}
 	<nav class="navbar navbar-dark flex-md-nowrap top-nav top-color">
 	<div class="container-fluid">
 		<div class="row master-row top-row mobile_menu_hide">
@@ -58,19 +61,19 @@
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
 						{foreach from=$menubar item=tab}
-						{if $tab eq $panel}
+						{if isset($tab) && isset($panel) && $tab eq $panel}
 						
 						<li id="admin-{$tab}" class="nav-item">
 							<a id="admin-link-{$tab}" class="admin-tab-current nav-link active" href="{$smarty.const.BLOG_BASEURL}admin.php?p={$tab}">
 								{$lang.admin.panels[$tab]|default:$tab}
 							</a>
 						</li>
-						{if $submenu}
+						{if isset($submenu)}
 						<ul class="nav flex-column submenu">
 							{foreach from=$submenu key=subtab item=item}
-							{if $item}
+							{if isset($item)}
 							<li id="admin-{$panel}-{$subtab}" class="nav-item">
-								<a class="nav-link{if $action == $subtab} sub-active{/if}"
+								<a class="nav-link{if isset($action) && isset($subtab) && $action == $subtab} sub-active{/if}"
 									href="{$smarty.const.BLOG_BASEURL}admin.php?p={$panel}&amp;action={$subtab}">
 									<span class="ti-arrow-circle-right"></span>
 								{$lang.admin[$panel].submenu[$subtab]|default:$subtab}

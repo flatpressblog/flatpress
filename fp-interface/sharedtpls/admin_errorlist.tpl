@@ -1,9 +1,9 @@
 <div id="errorlist">
-		{if $error}
+		{if isset($error)}
 		<ul class="msgs errors">
 			{foreach from=$error key=field item=msg}
 			<li class="alert alert-danger" role="alert">
-			{if is_numeric($field)}
+			{if isset($field) && is_numeric($field)}
 				{$msg} 
 			{else}
 				<a href="#{$field}" class="alert-link">{$msg}</a>
@@ -13,11 +13,11 @@
 		</ul>
 		{/if}
 		
-		{if $warnings}
+		{if isset($warnings)}
 		<ul class="msgs warnings">
 			{foreach from=$warnings key=field item=msg}
 			<li class="alert alert-warning" role="alert">
-			{if is_numeric($field)}
+			{if isset($field) && is_numeric($field)}
 				{$msg} 
 			{else}
 				<a href="#{$field}" class="alert-link">{$msg}</a>
@@ -27,7 +27,7 @@
 		</ul>
 		{/if}
 		
-		{if $notifications}
+		{if isset($notifications)}
 		<ul class="msgs notifications alert alert-info">
 			{foreach from=$notifications item=msg}
 			<li>{$msg}</li>
@@ -36,7 +36,7 @@
 		{/if}
 
 		
-		{if $success}
+		{if isset($success)}
 		{if $success < 0}
 			{assign var=class value="alert alert-danger"}
 		{else}

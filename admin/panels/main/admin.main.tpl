@@ -42,7 +42,7 @@
 				<h6 class="m-0 font-weight-bold text-primary">{$panelstrings.last_comments}</h6>
 			</div>
 			<div class="card-body lc_table">
-				{if $last_comments_table}
+				{if isset($last_comments_table)}
 					{$last_comments_table}
 				{else}
 					<h2 class="text-center font-italic">No comments yet :(</h2>
