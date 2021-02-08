@@ -1,9 +1,9 @@
 <?php
 
-$lang['admin']['entry']['submenu']['commentcenter']='Comment Center';
+$lang['admin']['entry']['submenu']['commentcenter']='Centro commenti';
 $lang['admin']['entry']['commentcenter']=array(
 	# Header of the panel
-	'title'=>'Comment Center',
+	'title'=>'Centro commenti',
 	'desc1'=>'Questo pannello ti consente di gestire i commenti del tuo blog.',
 	'desc2'=>'Qui puoi fare numerose cose:',
 
@@ -20,8 +20,8 @@ $lang['admin']['entry']['commentcenter']=array(
 	'criteria'=>'Criteri',
 	'behavoir'=>'Comportamento',
 	'options'=>'Opzioni',
-	'entry'=>'Post',
-	'entries'=>'Post',
+	'entry'=>'Articolo',
+	'entries'=>'Articoli',
 	'categories'=>'Categorie',
 	'nopolicies'=>'Non c\'è nessuna regola.',
 	'all_entries'=>'Tutti i post',

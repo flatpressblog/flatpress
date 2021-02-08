@@ -19,7 +19,7 @@
 	
 	$lang['admin']['uploader']['browse'] = array(
 		'head'		=> 'Durchsuchen',
-		'descr'		=> 'Datei(en) auswählen zum hochladen.',
+		'descr'		=> 'Datei(en) auswählen zum Hochladen.',
 		'fset1'		=> 'Durchsuchen',
 		'submit'	=> 'Hochladen',
 

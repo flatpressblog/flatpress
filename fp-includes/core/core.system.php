@@ -68,7 +68,7 @@ function system_hashsalt_save($force = false) {
 	return true;
 }
 
-define('SYSTEM_VER', '1.2.dev');
+define('SYSTEM_VER', '1.2.beta1');
 
 function system_ver() {
 	return 'fp-' . SYSTEM_VER;
@@ -216,8 +216,10 @@ function system_geterr($module = '') {
 /* delayed print */
 function system_dpr($action, $content) {
 	$p = print_r($content, 1);
-	$f = create_function('', "echo '<pre style=\'position:absolute\'>$p</pre>';");
-	add_action($action, $f);
+
+	add_action($action, function () use ($p) {
+		echo "<pre style='position:absolute'>$p</pre>";
+	});
 }
 
 ?>

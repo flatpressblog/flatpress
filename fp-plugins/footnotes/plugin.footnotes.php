@@ -1,11 +1,11 @@
 <?php
 /*
  * Plugin Name: FootNotes
- * Version: 0.1
- * Plugin URI: http://flatpress.nowhereland.it
- * Description: footnotes in your entry
- * Author: NoWhereMan
- * Author URI: http://flatpress.nowhereland.it
+ * Version: 1.0
+ * Plugin URI: https://www.flatpress.org
+ * Author: FlatPress
+ * Author URI: https://www.flatpress.org
+ * Description: Enables footnotes in your entries. Part of the standard distribution.
  */
 define('FOOTNOTES_START', '[footnotes]');
 

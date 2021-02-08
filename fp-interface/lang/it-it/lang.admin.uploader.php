@@ -12,7 +12,7 @@
 
 	$lang['admin']['uploader']['default']['msgs'] = array(
 		1	=> 'File caricato(i)',
-		-1	=> 'S è verificato un errore durante il caricamento.',
+		-1	=> 'Si è verificato un errore durante il caricamento.',
 	);
 	
 	

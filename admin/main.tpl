@@ -1,5 +1,8 @@
 
 	<div id="admin-content">
-	{include file=$admin_resource|default:"admin:$panel/$action"}
-	
+	{if isset($action)}
+		{include file=$admin_resource|default:"admin:$panel/$action"}
+	{else}
+		{include file=$admin_resource|default:"admin:$panel"}
+	{/if}
 	</div>

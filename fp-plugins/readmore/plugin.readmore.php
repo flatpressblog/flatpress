@@ -2,11 +2,11 @@
 
 /*
  * Plugin Name: ReadMore
- * Plugin URI: http://www.nowhereland.it/
- * Description: ReadMore plugin. Chops a lengthy entry and appends a "read more" link :)
- * Author: NoWhereMan
- * Version: 0.703
- * Author URI: http://www.nowhereland.it/
+ * Version: 1.0
+ * Plugin URI: https://www.flatpress.org
+ * Author: FlatPress
+ * Author URI: https://www.flatpress.org
+ * Description: Chops lengthy entries in the overview and appends a "read more" link. Part of the standard distribution.
  */
 
 // $MODE specifies when you want to chop your entry

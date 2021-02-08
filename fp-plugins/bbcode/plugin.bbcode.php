@@ -1,11 +1,11 @@
 <?php
 /*
  * Plugin Name: BBCode
- * Version: 1.5
- * Plugin URI: http://flatpress.sf.net
- * Description: Allows using <a href="http://www.phpbb.com/phpBB/faq.php?mode=bbcode">BBCode</a> markup; provides automatic integration with lightbox.
- * Author: Hydra, NoWhereMan
- * Author URI: http://flatpress.sf.net
+ * Version: 1.6
+ * Plugin URI: https://www.flatpress.org
+ * Author: FlatPress
+ * Author URI: https://www.flatpress.org
+ * Description: Allows using <a href="http://www.phpbb.com/phpBB/faq.php?mode=bbcode">BBCode</a> markup; provides automatic integration with lightbox. Part of the standard distribution.
  */
 require (plugin_getdir('bbcode') . '/inc/stringparser_bbcode.class.php');
 require (plugin_getdir('bbcode') . '/panels/admin.plugin.panel.bbcode.php');
@@ -191,9 +191,11 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 				// tiffs won't be supported
 
 				if (is_array($img_info)) {
-					$iptc = iptcparse($img_info ["APP13"]);
-					$title = @$iptc ["2#005"] [0] ? wp_specialchars($iptc ["2#005"] [0]) : $title;
-					$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
+					if (isset($img_info ["APP13"])) {
+						$iptc = iptcparse($img_info ["APP13"]);
+						$title = @$iptc ["2#005"] [0] ? wp_specialchars($iptc ["2#005"] [0]) : $title;
+						$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
+					}
 				}
 			}
 		}
@@ -244,6 +246,17 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		));
 	}
 
+	// Calculating the "loading" attribute of the image.
+	// For details, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-loading
+	// -> "lazy" is default (see https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading)
+	$loadingValue = 'lazy';
+	// Use img attribute value if explicitly set
+	if (isset($attributes ['loading'])) {
+		$loadingValue = $attributes ['loading'];
+	}
+	$loading = ' loading="' . $loadingValue . '"';
+
+	// JS for popup
 	if (isset($attributes ['popup']) && ($attributes ['popup'])) {
 		$pop_width = $orig_w ? $orig_w : 800;
 		$pop_height = $orig_h ? $orig_h : 600;
@@ -251,8 +264,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 
 		// Plugin hook, here lightbox attachs
 		$popup = apply_filters('bbcode_img_popup', $popup, $absolutepath);
-		$popup_start = $attributes ['popup'] == 'true' ? '<a title="' . $title . '" href="'. /* BLOG_BASEURL . $actualpath.*/
-				$absolutepath . '"' . $popup . '>' : '';
+		$popup_start = $attributes ['popup'] == 'true' ? '<a title="' . $title . '" href="' . $absolutepath . '"' . $popup . '>' : '';
 		$popup_end = $attributes ['popup'] == 'true' ? '</a>' : '';
 	}
 	$img_width = $width ? ' width="' . $width . '"' : '';
@@ -260,9 +272,11 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	if (isset($attributes ['float'])) {
 		$float = ($attributes ['float'] == 'left' || $attributes ['float'] == 'right') ? ' class="float' . $attributes ['float'] . '"' : ' class="center"';
 	}
-	$src = $thumbpath ? (BLOG_BASEURL . $thumbpath) : $absolutepath; // $attributes['default'])
+	$src = $thumbpath ? (BLOG_BASEURL . $thumbpath) : $absolutepath;
 	$pop = $popup_start ? '' : ' title="' . $title . '" ';
-	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '" ' . $pop . $float . $img_width . $img_height . ' />' . $popup_end;
+
+	// Finally: Put together the whole img tag with all its attributes and return it
+	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '" ' . $pop . $float . $img_width . $img_height . $loading . ' />' . $popup_end;
 }
 
 /**

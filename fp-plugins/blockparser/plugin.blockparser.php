@@ -2,12 +2,12 @@
 
 /*
  * Plugin Name: BlockParser
- * Plugin URI: http://www.nowhereland.it/
  * Type: Block
- * Description: BlockParser plugin. Part of the standard distribution ;) This allow you to use simple non-plugin custom blocks :)
- * Author: NoWhereMan real_nowhereman at user dot sf dot net
  * Version: 1.0
- * Author URI: http://www.nowhereland.it/
+ * Plugin URI: https://www.flatpress.org
+ * Author: FlatPress
+ * Author URI: https://www.flatpress.org
+ * Description: Allows you to use simple non-plugin custom blocks. Part of the standard distribution.
  */
 
 // define('BLOCKS_DIR', CONTENT_DIR . 'blocks/');

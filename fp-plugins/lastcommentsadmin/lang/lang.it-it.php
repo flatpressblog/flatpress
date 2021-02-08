@@ -3,10 +3,10 @@
 		-1	=> 'La chiave API non è stata impostata. Apri il plugin per impostare la tua chiave API. Registrati su <a href="http://wordpress.com">Wordpress.com</a> per riceverne una'
 	);
 
-	$lang['admin']['plugin']['submenu']['lastcommentsadmin'] = 'Last Comments Admin';
+	$lang['admin']['plugin']['submenu']['lastcommentsadmin'] = 'Amministrazione Ultimi commenti';
 
 	$lang['admin']['plugin']['lastcommentsadmin'] = array(
-		'head'		=> 'Last Comments Admin',
+		'head'		=> 'Amministrazione ultimi commenti',
 		'description'=>'Svuota e ricostruisci la cache degli ultimi commenti',
 		'clear'	=> 'Svuota la cache',
 		'cleardescription' => 'Elimina il file della cache degli ultimi commenti. Il nuovo file della cache verrà creato quando verrà inserito un nuovo commento.',

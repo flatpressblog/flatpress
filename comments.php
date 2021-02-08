@@ -143,18 +143,11 @@ function comment_validate() {
 	$arr ['version'] = system_ver();
 	$arr ['name'] = $name;
 
-	if (!$loggedin)
-		setcookie('comment_author_' . COOKIEHASH, $arr ['name'], time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
-
 	if ($email) {
 		($arr ['email'] = $email);
-		if (!$loggedin)
-			setcookie('comment_author_email_' . COOKIEHASH, $arr ['email'], time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
 	}
 	if ($url) {
 		($arr ['url'] = ($url));
-		if (!$loggedin)
-			setcookie('comment_author_url_' . COOKIEHASH, $arr ['url'], time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
 	}
 	$arr ['content'] = $content;
 
@@ -241,13 +234,6 @@ function commentform() {
 			$smarty->assign('values', $_POST);
 		}
 	}
-
-	// Cookies
-	$smarty->assign('cookie', array(
-		'name' => @$_COOKIE ['comment_author_' . COOKIEHASH],
-		'email' => @$_COOKIE ['comment_author_email_' . COOKIEHASH],
-		'url' => @$_COOKIE ['comment_author_url_' . COOKIEHASH]
-	));
 }
 
 ?>

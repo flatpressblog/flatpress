@@ -2,6 +2,9 @@
 {html_form}
 <h2>{$plang.configure}</h2>
 <p>{$plang.desc_conf}</p>
+{if !isset($pl_conf)}
+	{assign var=pl_conf value=""}
+{/if}
 
 <dl class="option-set">
 	<dt><label for="log_all">{$plang.log_all}</label></dt>

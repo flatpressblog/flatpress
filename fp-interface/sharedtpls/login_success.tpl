@@ -1,6 +1,6 @@
-{if $smarty.request.do.logout}
+{if isset($smarty.request.do) && $smarty.request.do.logout}
 <p>{$lang.login.success.logout}</p>
-{if $smarty.request.redirect}
+{if isset($smarty.request.redirect)}
 <p>{$lang.login.success.redirect} <a href="{$smarty.request.redirect}">{$smarty.request.redirect}</a>
 {/if}
 

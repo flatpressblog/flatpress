@@ -1,5 +1,5 @@
 <div id="errorlist">
-		{if $error}
+		{if isset($error)}
 		<ul class="msgs errors">
 			{foreach from=$error key=field item=msg}
 			<li>
@@ -13,7 +13,7 @@
 		</ul>
 		{/if}
 		
-		{if $warnings}
+		{if isset($warnings)}
 		<ul class="msgs warnings">
 			{foreach from=$warnings key=field item=msg}
 			<li>
@@ -27,7 +27,7 @@
 		</ul>
 		{/if}
 		
-		{if $notifications}
+		{if isset($notifications)}
 		<ul class="msgs notifications">
 			{foreach from=$notifications item=msg}
 			<li>{$msg}</li>
@@ -36,7 +36,7 @@
 		{/if}
 
 		
-		{if $success}
+		{if isset($success)}
 		{if $success < 0}
 			{assign var=class value=errors}
 		{else}

@@ -1,3 +1,44 @@
+# In beta testing: FlatPress 1.2 "Legato"
+[Release info and download](https://github.com/flatpressblog/flatpress/releases/tag/1.2.beta1)
+## General
+- FlatPress now runs smoothly with PHP 7.4 and PHP 8
+- Performance: Lazy loading for images
+- GDPR compatibility: Data of commenters are not stored in cookies any more
+- SEO: Added XML sitemap for search engines ([details](https://forum.flatpress.org/viewtopic.php?f=4&t=126))
+- Leggero v2 is default theme (see [#57](https://github.com/flatpressblog/flatpress/issues/57))
+- Leggero v1 is now responsive
+- Updated Smarty to release 2.6.31
+- Added [CONTRIBUTORS.md](https://github.com/flatpressblog/flatpress/blob/master/CONTRIBUTORS.md)
+## Plugins
+- BBCode plugin:
+  - Added image attribute "loading", default is "lazy"
+  - Enhanced \[video\] element accepts video URLs for YouTube, Vimeo and Facebook
+  - Added "mail" tag (replaces the Protected Mail Links plugin)
+  - Selectboxes of attachments and images in the editor toolbar are sorted by name
+- jQuery plugin: Updated jQuery and jQuery UI to their current versions
+- CommentCenter plugin is part of the FP standard distribution
+- PrettyUrls and Comment Center are activated by default, LastComments and LastCommentsAdmin are not
+- Protected Mail Links plugin removed
+## Security
+- Overhauled v0.812.2 fix for local file inclusion vulnerability ([more details](http://www.guanting.com/security/exploit/information/27269.html))
+- Comments are sanitized properly (see [#62](https://github.com/flatpressblog/flatpress/issues/62))
+- Uploader checks for forbidden files more carefully
+- User password isn't hashed with MD5 any more (see [#59](https://github.com/flatpressblog/flatpress/issues/59))
+## Bugfixes
+- Mail adresses are accepted in a broader range (see [#48](https://github.com/flatpressblog/flatpress/issues/48))
+- HTTPS URLs in the contact form are now handled correctly (see [#55](https://github.com/flatpressblog/flatpress/issues/55))
+- Fixed redirects after login
+- Fixed "syntax error, unexpected '\['" bug, reported [here](https://forum.flatpress.org/viewtopic.php?f=2&t=131)
+- Setup sets date and FP version for the freshly created static pages
+- Annoying translation error in German language pack fixed
+## Translations
+- Added French language pack by Marc Thibeault and Dimitri Soufflet, reworked by Gee
+- Added Japanese Language Pack by [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
+- Added Brazilian Portuguese language pack by randy
+- Added Italian language pack by Giacomo Margarito
+- Added Spansh language pack by karelv
+- Reworked German language pack by Detlef 
+
 # 2019-02-22: [FlatPress 1.1 "Da capo"](https://github.com/flatpressblog/flatpress/releases/tag/1.1)
 ## General
 - Languages added: Greek, German, Czech (feel free to send in *your* language packs!)
@@ -11,7 +52,7 @@
 - Footnotes plugin: Usage how-to added
 - Lightbox plugin: Slimbox version updated, broken overlay fixed
 ## Security
-- Security fix: Possible CSFR attack prevented (see [details](https://www.exploit-db.com/exploits/39870 "exploit-db.com/exploits/39870"))
+- Security fix: Possible CSRF attack prevented (see [details](https://www.exploit-db.com/exploits/39870 "exploit-db.com/exploits/39870"))
 ## Bugfixes
 - Correct handling of special characters in URLs (see [PR11](https://github.com/flatpressblog/flatpress/pull/11 "Pull request #11"))
 - HTTPS allowed in comment URLs

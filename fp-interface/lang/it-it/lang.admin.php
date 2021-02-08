@@ -1,6 +1,6 @@
 <?php
 
-	$lang['admin']['head'] = 'Pannello di amministrazione';
+	$lang['admin']['head'] = 'Pannello di controllo';
 	
 	$lang['admin']['panels'] = array(
 		'main'		=> 'Principale',

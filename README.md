@@ -5,7 +5,7 @@
 FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, just PHP. No database needed!
 
 ## Getting started
-Installing and running FlatPress is really easy!
+Installing and running FlatPress is really easy:
 - [Download FlatPress](https://www.flatpress.org/download), unzip, upload
 - Browse to your web server, run FlatPress installer
 - Enjoy blogging with FlatPress!

@@ -383,7 +383,10 @@ function theme_def_feed_comments_link($str, $feed, $id) {
 	return BLOG_BASEURL . "?x=entry:$id;comments:1;feed:{$feed}";
 }
 
-function theme_comments_feed_link($feed = 'rss2', $id) {
+function theme_comments_feed_link($feed, $id) {
+	if (empty($feed)) {
+		$feed = 'rss2';
+	}
 	return apply_filters('post_comments_feed_link', '', $feed, $id);
 }
 

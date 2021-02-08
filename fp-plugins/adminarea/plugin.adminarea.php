@@ -2,11 +2,11 @@
 
 /*
  * Plugin Name: AdminArea
- * Plugin URI: http://www.nowhereland.it/
- * Description: AdminArea plugin. Part of the standard distribution ;)
- * Author: NoWhereMan
+ * Plugin URI: https://www.flatpress.org
+ * Author: FlatPress
+ * Author URI: https://www.flatpress.org
+ * Description: AdminArea plugin. Part of the standard distribution.
  * Version: 1.0
- * Author URI: http://www.nowhereland.it/
  */
 function plugin_adminarea_widget() {
 

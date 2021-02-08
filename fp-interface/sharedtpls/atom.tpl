@@ -5,10 +5,10 @@
 	<subtitle>{$flatpress.subtitle}</subtitle>
 	<link href="{$smarty.const.BLOG_BASEURL}" />
 	<link rel="self" href="{'atom'|theme_feed_link}" />
-	<generator uri="http://www.flatpress.org/" version="{$flatpress.version}">
+	<generator uri="http://www.flatpress.org/" version="{$smarty.const.SYSTEM_VER}">
   		FlatPress
 	</generator>
-	<rights> {$flatpress.author} {$smarty.now|date_format:'%Y'} </rights>
+	<rights> {$flatpress.author} {'Y'|date} </rights>
 	<updated>{$smarty.now|date_rfc3339}</updated>
 	<author>
 		<name>{$flatpress.author}</name>
@@ -31,14 +31,16 @@
 			</div>
 		</content>
 		
-		{foreach from=$enclosure item=encl}
-		<link rel="enclosure" 
-			href="{$encl.url}" 
-			title="{$encl.title}"
-			length="{$encl.length}" 
-			type="{$encl.type}" />
-		{/foreach}
-	
+		{if isset($enclosure)}
+			{foreach from=$enclosure item=encl}
+			<link rel="enclosure" 
+				href="{$encl.url}" 
+				title="{$encl.title}"
+				length="{$encl.length}" 
+				type="{$encl.type}" />
+			{/foreach}
+		{/if}
+
 	</entry>
 	{/entry}
 	{/entry_block}

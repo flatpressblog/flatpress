@@ -243,8 +243,7 @@
         			  'title' => $plugin, 
         			  'description' => $description, 
         			  'author' => $author, 
-        			  'version' => $version, 
-        			  'template' => $template[1]
+        			  'version' => $version
         			  )
         	);
 

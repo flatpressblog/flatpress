@@ -4,9 +4,9 @@
  * Plugin Name: Comment Center
  * Version: 1.1.2
  * Plugin URI: https://www.flatpress.org
- * Description: Manage your blog's comments: Set policies, publish or reject comments.
- * Author: FlatPress (credits to Piero VDFN)
+ * Author: FlatPress
  * Author URI: https://www.flatpress.org
+ * Description: Manage your blog's comments: Set policies, publish or reject comments. Part of the standard distribution.
  */
 
 /**
@@ -62,8 +62,8 @@ class plugin_commentcenter {
 	function lock() {
 		global $fp_params, $post, $smarty;
 		$this->loadPolicies();
-		$cats = is_array($post ['categories']) ? $post ['categories'] : array();
-		$behavoir = $this->behavoirFromPolicies($fp_params ['entry'], $cats);
+		$cats = array_key_exists('categories', $post) && is_array($post ['categories']) ? $post ['categories'] : array();
+		$behavoir = array_key_exists('entry', $fp_params) ? $this->behavoirFromPolicies($fp_params ['entry'], $cats) : 1;
 		if ($behavoir == -1 && !user_loggedin()) {
 			$smarty->assign('entry_commslock', true);
 		}

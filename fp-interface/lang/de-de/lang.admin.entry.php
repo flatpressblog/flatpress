@@ -60,7 +60,7 @@
 		1	=> 'Beitrag wurde erfolgreich gespeichert',
 		-1	=> 'Ein Fehler ist beim Speichern des Beitrags aufgetreten',
 		2	=> 'Beitrag wurde erfolgreich gelöscht',
-		-2	=>	 'Ein Fehler ist beim löschen des Beitrags aufgetreten',
+		-2	=> 'Ein Fehler ist beim löschen des Beitrags aufgetreten',
 	);
 
 	
@@ -75,7 +75,7 @@
 		-2	=> 'Ein Fehler ist aufgetreten: Der Beitrag wurde nicht gespeichert; eventuell ist der Index beschädigt',
 		-3	=> 'Ein Fehler ist aufgetreten: Der Beitrag wurde zur Sicherheit als Entwurf abgelegt',
 		-4	=> 'Ein Fehler ist aufgetreten: Der Beitrag wurde zur Sicherheit als Entwurf abgelegt; möglicherweise ist der Index beschädigt worden',
-		'draft'=> 'Du bearbeitest gerade einen Beitrag im <strong>Entwurfs</strong> Modus'		
+		'draft'=> 'Du bearbeitest gerade einen Beitrag im <strong>Entwurfs</strong>-Modus'		
 	);
 	
 	/* comments */
@@ -83,7 +83,7 @@
 	$lang['admin']['entry']['commentlist'] = 
 	array(
 		'head'		=> "Kommentare für den Beitrag: ", 
-		'descr'		=> 'Bitte Kommentar auswählen, das gelöscht werden soll',
+		'descr'		=> 'Bitte Kommentar auswählen, der gelöscht werden soll',
 		'sel'		=> 'Sel',
 		'content'	=> 'Inhalt',
 		'date'		=> 'Datum',
@@ -93,7 +93,7 @@
 		'actions'	=> 'Aktion',
 		'act_edit'	=> 'Bearbeiten',		
 		'act_del'	=> 'Löschen',
-		'act_del_confirm' => 'Willst du dieses Kommentar wirklich löschen?',
+		'act_del_confirm' => 'Willst du diesen Kommentar wirklich löschen?',
 		'nocomments'	=> 'Dieser Beitrag enthält zur Zeit keine Kommentare.',
 		
 	
@@ -108,7 +108,7 @@
 	
 	$lang['admin']['entry']['commedit'] = 
 	array(
-		'head'		=> "Bearbeite das Kommentar für Beitrag", 
+		'head'		=> "Bearbeite den Kommentar für Beitrag", 
 		'content'	=> 'Kommentarinhalt',
 		'date'		=> 'Datum',
 		'author'	=> 'Autor',
@@ -123,7 +123,7 @@
 
 	$lang['admin']['entry']['commedit']['msgs'] =
 	array(
-		1	=> 'Das Kommentar wurde geändert',
+		1	=> 'Der Kommentar wurde geändert',
 		-1	=> 'Ein Fehler ist beim Ändern des Kommentars aufgetreten',
 	);	
 	
@@ -147,7 +147,7 @@
 	$lang['admin']['entry']['cats'] =
 	array(
 		'head'		=> 'Kategorien verwalten',
-		'descr'		=> '<p>Jede Kategorie sollte im Schema "Kategorie Name: <em>id_nummer</em>" angelegt werden. Die "<em>id_nummer</em>" ist <strong>eindeutig</strong> den Beiträgen zugeordnet, darf <strong>nicht</strong> mehr verändert werden und muss größer <strong>0</strong> sein. Der Kategorie Name hingegen kann auch später noch umbenannt werden.</p><p>Ein späteres Umstellen der Kategorienreihenfolge ist zu jeder Zeit möglich. Mit Bindestriche kann man Unterkategorien anlegen.</p>
+		'descr'		=> '<p>Jede Kategorie sollte im Schema "Kategorie Name <em>:id_nummer</em>" angelegt werden. Die "<em>id_nummer</em>" ist <strong>eindeutig</strong> den Beiträgen zugeordnet, darf <strong>nicht</strong> mehr verändert werden und muss größer <strong>0</strong> sein. Der Kategoriename hingegen kann auch später noch geändert werden.</p><p>Ein späteres Umstellen der Kategorienreihenfolge ist zu jeder Zeit möglich. Mit Bindestrichen kann man Unterkategorien anlegen.</p>
 		
 	<p>Beispiel:</p>
 	<pre>

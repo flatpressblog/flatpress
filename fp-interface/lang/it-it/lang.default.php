@@ -35,7 +35,7 @@
 		'fulltext'	=> 'Testo completo',
 		
 		'fset2'	=> 'Data',
-		'datedescr'	=> 'Puoi collegare la tua ricerca ad una data specifica. Puoi selezionare un anno, un annno e un mese o una data completa. '.
+		'datedescr'	=> 'Puoi collegare la tua ricerca ad una data specifica. Puoi selezionare un anno, un anno e un mese o una data completa. '.
 					'Lascia in bianco se vuoi cercare nell\'intero database.',
 		
 		'fset3' 	=> 'Cerca nelle categorie',
@@ -89,7 +89,7 @@
 	$lang['login'] = array(
 		
 		'head'		=> 'Login',
-		'fieldset1'	=> 'Inserisci nome tuetnte e password',
+		'fieldset1'	=> 'Inserisci nome utente e password',
 		'user'		=> 'Nome utente:',
 		'pass'		=> 'Password:',
 		'fieldset2'	=> 'Connettiti',
