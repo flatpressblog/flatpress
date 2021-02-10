@@ -16,7 +16,7 @@
 {foreach from=$entry.$fetch item=comm key=comm_id}
 {assign var="i" value=$i+1}
 <tr>
-{if !$delete}<td class="td_select_{$fetch}"><input type="checkbox" class="form-check-input" name="select[e{$entryid}_c{$comm_id}]" /></td>{/if}
+{if isset($delete) && !$delete}<td class="td_select_{$fetch}"><input type="checkbox" class="form-check-input" name="select[e{$entryid}_c{$comm_id}]" /></td>{/if}
 <td>{$comm.date|date_format:"%D, %T"}</td>
 <td class="main_cell">
 {$comm.content|strip_tags}
@@ -38,7 +38,7 @@
 <a href="{$action_url|cmd_link:pubnoham:"e`$entryid`_c`$comm.id`"}" title="{$plang.app_pubnotham}"><img src="{$plugin_url}imgs/publish.png" alt="{$plang.app_pubnotham}" /></a>
 {/if}
 {/if}
-{if $is_managing}
+{if isset($is_managing)}
 {assign var="rm_url" value=$action_url|cmd_link:deletecomm2:"e`$entryid`_c`$comm_id`"}
 {else}
 {assign var="rm_url" value=$action_url|cmd_link:deletecomm:"e`$entryid`_c`$comm_id`"}

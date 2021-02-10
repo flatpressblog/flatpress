@@ -75,10 +75,10 @@
 
 								<ul id="widgetsetid-{$widgetset}">
 								{foreach from=$widgetarr item=widget}
-									<li class="widget-instance widget-id-{$widget.id} {$widget.class}">
+									<li class="widget-instance widget-id-{$widget.id} {if isset($widget.class)}{$widget.class}{/if}">
 										<input class="widget-id" type="hidden" name="widgets[{$widgetset}][]" 
-										value="{$widget.id}{if $widget.params}:{$widget.params}{/if}" />
-										{if $widget.params}
+										value="{$widget.id}{if isset($widget.params)}:{$widget.params}{/if}" />
+										{if isset($widget.params)}
 										{* this will be hooked from javascript *}
 										<input class="textinput" style="float:right"  
 											type="text" value="{$widget.params}"/>
@@ -116,8 +116,8 @@
 							{foreach from=$widgetarr item=widget}
 								<li class="widget-instance widget-id-{$widget.id}">
 									<input class="widget-id" type="hidden" name="widgets[{$widgetset}][]" 
-									value="{$widget.id}{if $widget.params}:{$widget.params}{/if}" />
-									{if $widget.params}
+									value="{$widget.id}{if isset($widget.params)}:{$widget.params}{/if}" />
+									{if isset($widget.params)}
 									{* this will be hooked from javascript *}
 									<input class="textinput" style="float:right"  
 										type="text" value="{$widget.params}"/>

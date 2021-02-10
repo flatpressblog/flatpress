@@ -1,6 +1,6 @@
 {include file='shared:admin_errorlist.tpl'}
 {static_block}
-{if $preview}
+{if isset($preview)}
 	<div class="row">
 		<div class="col-xl-12 col-lg-12">
 			<div class="card shadow mb-4">
@@ -21,15 +21,18 @@
 					<h6 class="m-0 font-weight-bold text-primary">{$panelstrings.head}</h6>
 				</div>
 				<div class="card-body">
-					{html_form}		
+					{html_form}
+					{if !isset($post)}
+						{assign var="post" value=""}
+					{/if}		
 					{static content=$post alwaysshow=true}
-						<input type="text" name="subject" id="subject" class="form-control input_gray input-max-width" placeholder="{$panelstrings.subject}" {$error.subject|notempty:'class="field-error"'} 
+						<input type="text" name="subject" id="subject" class="form-control input_gray input-max-width" placeholder="{$panelstrings.subject}" {if isset($error)}{$error.subject|notempty:'class="field-error"'}{/if} 
 						value="{$subject|default:$smarty.request.subject|default:$smarty.request.page|wp_specialchars:1}" />
 						<input type="hidden" name="timestamp" value="{$date}" />
 						<p>
 						<label for="content"></label>
-						<textarea name="content" {$error.content|notempty:'class="field-error"'} id="content_textarea" placeholder="{$panelstrings.content}" class="form-control">{$content|default:$smarty.request.content|htmlspecialchars}</textarea><br />
-						{if $sceditor_display!='disable'}
+						<textarea name="content" {if isset($error)}{$error.content|notempty:'class="field-error"'}{/if} id="content_textarea" placeholder="{$panelstrings.content}" class="form-control">{$content|default:$smarty.request.content|htmlspecialchars}</textarea><br />
+						{if $sceditor_display != 'disable'}
 						<script src="{$smarty.const.BLOG_BASEURL}/fp-includes/bootstrap/js/bootstrap.min.js"></script>
 						<!-- Here is the SCEditor -->
 						<script src="{$smarty.const.BLOG_BASEURL}/admin/res/sceditor/sceditor.min.js"></script>
@@ -75,7 +78,7 @@
                 </div>
                 <div class="card-body">
 					<input type="hidden" name="oldid" id="oldid" class="form-control input_gray" value="{$id|default:$smarty.request.oldid}" />
-					<input type="text" name="id" id="id" class="maxsize{$error.id|notempty:' field-error'} form-control input_gray "
+					<input type="text" name="id" id="id" class="maxsize{if isset($error)}{$error.id|notempty:' field-error'}{/if} form-control input_gray "
 					value="{$smarty.request.id|default:$smarty.request.page|default:$static_id}"  /></p>
 					{html_submit name="save" id="save" class="btn btn-primary" value=$panelstrings.submit accesskey=s}
 					{html_submit name="preview" id="preview" class="btn btn-primary" value=$panelstrings.preview accesskey=p}

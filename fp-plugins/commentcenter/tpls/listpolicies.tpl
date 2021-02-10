@@ -10,13 +10,13 @@
 	<tbody id="commencenter-table-body">
 {foreach name=policies from=$policies key=id item=policy}
 <tr class="tr_policy{$id}">
-{if !$delete}	<td class="td_select"><input type="checkbox" class="form-check-input" name="select[{$id}]" /></td>{/if}
+{if isset($delete) && !$delete}	<td class="td_select"><input type="checkbox" class="form-check-input" name="select[{$id}]" /></td>{/if}
 	<td class="main-cell">
 {if isset($delete)}<input type="hidden" name="del_policy[]" value="{$id}" />
 {/if}
-{if $policy.is_all}
+{if isset($policy.is_all) && $policy.is_all}
 		{$plang.all_entries}
-{elseif is_array($policy.entry) && count($policy.entry)>0}
+{elseif isset($policy.entry) && is_array($policy.entry) && count($policy.entry)>0}
 {$plang.fol_entries}
 <ul>
 {foreach from=$policy.entry item=entry}

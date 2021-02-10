@@ -4,7 +4,7 @@
 <p>{$plang.man_searchd}</p>
 
 <div class="form-row">
-	<input type="text" class="form-control" name="entry" value="{$entry_id}" style="display: inline-block;"/>
+	<input type="text" class="form-control" name="entry" value="{if isset($entry_id)}{$entry_id}{/if}" style="display: inline-block;"/>
 	{html_submit name="entry_search" class="btn btn-primary mt-1" id="entry_search" value=$plang.man_search}
 </div>
 

@@ -4,7 +4,7 @@
 <p>{$plang.app_desc}</p>
 {assign var="fetch" value="confirm"}
 {include file=plugin:commentcenter/listcomments}
-{if $use_akismet}
+{if isset($use_akismet)}
 <h3>{$plang.app_akismet}</h3>
 <p>{$plang.app_spamdesc}</p>
 {assign var="fetch" value="akismet"}
@@ -12,7 +12,7 @@
 <p><input type="checkbox" class="form-check-input" name="submitham" id="submitham" checked="checked" />
 <label for="submitham">{$plang.app_hamsubmit}</label></p>
 {/if}
-{if $other}
+{if isset($other)}
 <h3>{$plang.app_other}</h3>
 {assign var="fetch" value="denided"}
 {include file=plugin:commentcenter/listcomments}
