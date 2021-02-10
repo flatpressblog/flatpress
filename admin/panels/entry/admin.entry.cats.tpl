@@ -9,7 +9,7 @@
 					<div class="card-body">
 						{html_form}
 								<p>
-									<textarea name="content" id="content" class="form-control cat-textarea" rows="20" cols="74">{$catdefs|escape}</textarea>
+									<textarea name="content" id="content" class="form-control cat-textarea" rows="20" cols="74">{if isset($catdefs)}{$catdefs|escape}{/if}</textarea>
 								</p>
 							<div class="buttonbar text-center">
 							{html_submit name="save" id="save" class="btn btn-primary" value=$panelstrings.submit}

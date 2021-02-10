@@ -174,7 +174,8 @@ Technology :6
 	
 		'fset1'		=> 'Editor',
 		'fset2'		=> 'Apply Changes',
-		'submit'	=> 'Save'
+		'submit'	=> 'Save',
+		'cats_info' => 'Categories information'
 	);
 	
 	$lang['admin']['entry']['cats']['msgs'] = array(

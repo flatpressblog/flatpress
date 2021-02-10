@@ -20,7 +20,7 @@
 	<nav class="navbar navbar-dark flex-md-nowrap top-nav top-color">
 	<div class="container-fluid">
 		<div class="row master-row top-row mobile_menu_hide">
-			<div class="col-lg-6"><a href="#" onclick="mobile_open_button()"><span class="ti-menu mobile-menu" style="color: #fff;"></span></a><h3><span class="ti-arrow-circle-right"></span> {$panelstrings.head}</h3></div>
+<div class="col-lg-6"><a href="#" onclick="mobile_open_button()"><span class="ti-menu mobile-menu" style="color: #fff;"></span></a><h3><span class="ti-arrow-circle-right"></span> {if isset($panelstrings.head)}{$panelstrings.head}{/if}</h3></div>
 			<div class="col-lg-6 top-right-bar">
 			    <ul class="navbar-nav ml-auto">
 					<li class="nav-item">
@@ -71,7 +71,7 @@
 						{if isset($submenu)}
 						<ul class="nav flex-column submenu">
 							{foreach from=$submenu key=subtab item=item}
-							{if isset($item)}
+							{if isset($item) && $item}
 							<li id="admin-{$panel}-{$subtab}" class="nav-item">
 								<a class="nav-link{if isset($action) && isset($subtab) && $action == $subtab} sub-active{/if}"
 									href="{$smarty.const.BLOG_BASEURL}admin.php?p={$panel}&amp;action={$subtab}">

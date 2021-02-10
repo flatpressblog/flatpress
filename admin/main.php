@@ -209,6 +209,8 @@
 	$smarty->assign("blog", $lang['admin']['general']['blog']);
 	$smarty->assign("footer", $lang['admin']['general']['footer']);
 
+	$smarty->assign("sceditor_display", "bbcode");
+
 	if (isset($_GET['mod'])) {
 
 	switch ($_GET['mod']) {

@@ -1,6 +1,6 @@
 	{include file='shared:admin_errorlist.tpl'}
 	{entry_block}
-	{if $preview}
+	{if isset($preview)}
 	<div class="row">
 		<div class="col-xl-12 col-lg-12">
 			<div class="card shadow mb-4">
@@ -16,7 +16,9 @@
 	{/if}
 		
 {html_form}	
-	
+	{if !isset($post)}
+		{assign var="post" value=""}
+	{/if}
 	{entry content=$post alwaysshow=true}
 
 		<div class="row">
@@ -27,15 +29,15 @@
                 </div>
                 <div class="card-body">
 					<div id="admin-editor">
-						<input type="text" {$error.subject|notempty:'class="field-error form-control input_gray input-max-width"'} 
+						<input type="text" {if isset($error)}{$error.subject|notempty:'class="field-error form-control input_gray input-max-width"'}{/if} 
 							name="subject" id="subject" 
 							value="{$subject|default:$smarty.request.subject|wp_specialchars:1}" placeholder="{$panelstrings.subject}"/ class="form-control input_gray input-max-width"><br />
 						<input type="hidden" name="timestamp" value="{$date}" />
 						<input type="hidden" name="entry" value="{$id}" />
 						<p>
-						<textarea name="content" class="{$error.content|notempty:'field-error'} form-control" 
+						<textarea name="content" class="{if isset($error)}{$error.content|notempty:'field-error'}{/if} form-control" 
 						id="content_textarea" placeholder="{$panelstrings.content}">{$content|default:$smarty.request.content|htmlspecialchars}</textarea><br />
-						{if $sceditor_display!='disable'}
+						{if isset($sceditor_display) && $sceditor_display != 'disable'}
 						<script src="{$smarty.const.BLOG_BASEURL}/fp-includes/bootstrap/js/bootstrap.min.js"></script>
 						
 						<!-- Here is the SCEditor -->
@@ -104,21 +106,25 @@
 					{list_categories type=form selected=$categories}
                 </div>
               </div>
-			 <div class="card shadow mb-4 other_options">
-                <div class="card-header">
-                  <h6 class="m-0 font-weight-bold text-primary">{$panelstrings.otheropts}</h6>
-                </div>
-				 	<p>
-						<ul>
-							{if !$draft}
-							<li><a href="admin.php?p=entry&amp;entry={$smarty.get.entry}&amp;action=commentlist">
-								{$panelstrings.commmsg}</a></li>
-							{/if}
-							<li><a href="admin.php?p=entry&amp;entry={$smarty.get.entry}&amp;action=delete">
-								{$panelstrings.delmsg}</a></li>
-						</ul>
-				 	</p>
-              </div>
+			{if isset($draft) && !$draft || isset($entry)}
+				<div class="card shadow mb-4 other_options">
+					<div class="card-header">
+					<h6 class="m-0 font-weight-bold text-primary">{$panelstrings.otheropts}</h6>
+					</div>
+						<p>
+							<ul>
+								{if isset($draft) && !$draft}
+								<li><a href="admin.php?p=entry&amp;entry={$smarty.get.entry}&amp;action=commentlist">
+									{$panelstrings.commmsg}</a></li>
+								{/if}
+								{if isset($entry)}
+								<li><a href="admin.php?p=entry&amp;entry={$smarty.get.entry}&amp;action=delete">
+									{$panelstrings.delmsg}</a></li>
+								{/if}
+							</ul>
+						</p>
+				</div>
+			{/if}
 			<div class="card shadow mb-4 plugin_options">
 				<div class="card-header">
 				  <h6 class="m-0 font-weight-bold text-primary">Plugins Options</h6>
@@ -180,10 +186,3 @@
     </div>
   </div>
 </div>
-
-{if $smarty.get.entry }
-
-{/if}
-
-
-
