@@ -9,7 +9,7 @@
 </ul>
 {else}
 <p class="text-center">Redirecting...</p>
-{if $redirect}
+{if isset($redirect)}
 <p>{$lang.login.success.redirect}
 {/if}
 

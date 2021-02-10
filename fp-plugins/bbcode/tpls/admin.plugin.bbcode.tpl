@@ -53,12 +53,6 @@
 
 			</dl>
 
-
-				<label>
-					{$plang.opn4pre}
-
-					{$plang.opn4post}
-				</label>
 			<p class="buttonbar">
 				<input type="submit" name="bb-conf" class="btn btn-primary" value="{$plang.submit}"/>
 			</p>

@@ -7,7 +7,7 @@
 	</div>
 	<div class="card-body">
 		{include file=shared:admin_errorlist.tpl}
-		{if $files}
+		{if isset($files)}
 		<p>{$panelstrings.chmod_info}</p>
 		<p><a href="admin.php?p=maintain">{$panelstrings.opt0}</a></p>
 		<ul> 
@@ -16,7 +16,7 @@
 		{/foreach}
 		</ul>
 		<p><a href="admin.php?p=maintain">{$panelstrings.opt0}</a></p>
-		{elseif $phpinfo}
+		{elseif isset($phpinfo)}
 		<p><a href="admin.php?p=maintain">{$panelstrings.opt0}</a></p>
 		{$phpinfo}
 		<p><a href="admin.php?p=maintain">{$panelstrings.opt0}</a></p>
