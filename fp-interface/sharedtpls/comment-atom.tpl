@@ -5,7 +5,7 @@
 	<subtitle>{$flatpress.subtitle}</subtitle>
 	<link href="{$smarty.const.BLOG_BASEURL}" />
 	<link rel="self" href="{$smarty.server.REQUEST_URI|escape}" />
-	<generator uri="http://www.flatpress.org/" version="{$flatpress.version}">
+	<generator uri="http://www.flatpress.org/" version="{$smarty.const.SYSTEM_VER}">
   		FlatPress
 	</generator>
 	<rights> {$flatpress.author} {$smarty.now|date_format:'%Y'} </rights>

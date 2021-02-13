@@ -71,7 +71,7 @@ class Plugin_PrettyURLs {
 	function permalink($str, $id) {
 		global $fpdb, $post;
 
-		if (PRETTYURLS_TITLES)
+		if (isset($post) && PRETTYURLS_TITLES)
 			$title = sanitize_title($post ['subject']);
 		else
 			$title = $id;
@@ -499,7 +499,7 @@ class Plugin_PrettyURLs {
 		if (isset($this->fp_params ['paged']) && $this->fp_params ['paged'] > 1)
 			$page = $this->fp_params ['paged'];
 
-		$page += $v;
+		$page += ($v . '');
 
 		if ($page > 0) {
 			$l .= 'page/' . $page . '/';
