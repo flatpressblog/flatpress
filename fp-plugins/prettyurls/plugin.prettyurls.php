@@ -613,7 +613,7 @@ if (class_exists('AdminPanelAction')) {
 			$txt = io_load_file($f);
 			if (!$txt) {
 
-				$txt = <<<STR
+				$txt = '
 				
 				# Thanks again WP :)
 				
@@ -624,7 +624,7 @@ if (class_exists('AdminPanelAction')) {
 				RewriteCond %{REQUEST_FILENAME} !-d
 				RewriteRule . {$blogroot}index.php [L]
 				</IfModule>
-				STR;
+				';
 			}
 
 			$this->smarty->assign('cantsave', (!is_writable(ABS_PATH) || (file_exists($f) && !is_writable($f))));

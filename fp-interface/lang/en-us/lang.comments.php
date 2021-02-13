@@ -1,7 +1,5 @@
 <?php
-
-	$lang['comments']['mail'] = <<<MAIL
-Dear %toname%,
+$lang ['comments'] ['mail'] = 'Dear %toname%,
 
 "%fromname%" %frommail% has just posted a comment to the entry entitled "%entrytitle%".
 
@@ -16,6 +14,6 @@ Here is the comment that has just been posted:
 All the best,
 %blogtitle%
 
-MAIL;
+';
 
 ?>

@@ -1,7 +1,5 @@
 <?php
-
-	$lang['comments']['mail'] = <<<MAIL
-Hallo %toname%,
+$lang ['comments'] ['mail'] = 'Hallo %toname%,
 
 "%fromname%" %frommail% hat einen Kommentar zu dem Thema "%entrytitle%" geschrieben.
 
@@ -16,6 +14,6 @@ Folgendes wurde als Kommentar geschrieben:
 Automatisch generiert von,
 %blogtitle%
 
-MAIL;
+';
 
 ?>

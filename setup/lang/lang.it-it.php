@@ -70,18 +70,15 @@ $lang ['buttonbar'] = array(
 $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Menu';
-$lang ['samplecontent'] ['menu'] ['content'] = <<<MENU
-[list]
+$lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=?]Home[/url]
 [*][url=?paged=1]Blog[/url]
 [*][url=static.php?page=about]Informazioni sul sito[/url]
 [*][url=contact.php]Contatti[/url]
-[/list]
-MENU;
+[/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Benvenuto su FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = <<<CONT
-Questo è un articolo di prova, inserito mer mostrarti alcune delle funzioni di [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Questo è un articolo di prova, inserito mer mostrarti alcune delle funzioni di [url=https://www.flatpress.org]FlatPress[/url].
 
 Il tag more ti consente di crare un "salto" tra un estratto e l\'articolo completo.
 
@@ -94,7 +91,7 @@ Il modo predefinito dell\'aspetto e del contenuto dell\'articolo è [url=http://
 
 [quote]Ci sono anche i blocchi [b]citazione[/b] per mostrare le tue citazioni preferite. [/quote]
 
-[code]E il tag 'code' mmostra dei pezzetti di codice in uno stile monospaziale.
+[code]E il tag \'code\' mmostra dei pezzetti di codice in uno stile monospaziale.
 Inoltre supporta
    il contenuto indentato.[/code]
 
@@ -159,7 +156,7 @@ Buon divertimento! :)
 
 [i]Il Team di [url=https://www.flatpress.org]FlatPress[/url][/i]
 	
-CONT;
+';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Chi sono';
 $lang ['samplecontent'] ['about'] ['content'] = "Scrivi qui qualcosa su di te. ([url=admin.php?p=static&action=write&page=about]Modificami![/url])";
