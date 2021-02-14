@@ -18,16 +18,18 @@ function plugin_lightbox2_setup() {
 
 function plugin_lightbox2_head() {
 	$pdir = plugin_geturl('lightbox2');
-	echo '<!-- start of lightbox -->
-		<link rel="stylesheet" type="text/css" href="{$pdir}res/slimbox2.css" />
+	echo '
+		<!-- start of lightbox -->
+		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/slimbox2.css" />
 		<!-- end of lightbox -->';
 }
 add_action('wp_head', 'plugin_lightbox2_head');
 
 function plugin_lightbox2_footer() {
 	$pdir = plugin_geturl('lightbox2');
-	echo '<!-- start of lightbox -->
-		<script type="text/javascript" src="{$pdir}res/slimbox2.js"></script>
+	echo '
+		<!-- start of lightbox -->
+		<script type="text/javascript" src="' . $pdir . 'res/slimbox2.js"></script>
 		<!-- end of lightbox -->';
 }
 add_action('wp_footer', 'plugin_lightbox2_footer');

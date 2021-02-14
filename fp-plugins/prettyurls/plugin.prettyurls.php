@@ -619,10 +619,10 @@ if (class_exists('AdminPanelAction')) {
 				
 				<IfModule mod_rewrite.c>
 				RewriteEngine On
-				RewriteBase {$blogroot}
+				RewriteBase ' . $blogroot . '
 				RewriteCond %{REQUEST_FILENAME} !-f
 				RewriteCond %{REQUEST_FILENAME} !-d
-				RewriteRule . {$blogroot}index.php [L]
+				RewriteRule . ' . $blogroot . 'index.php [L]
 				</IfModule>
 				';
 			}
