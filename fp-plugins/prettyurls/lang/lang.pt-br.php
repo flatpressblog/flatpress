@@ -8,8 +8,8 @@
 		'head'		=> 'PrettyURLs Configuração',
 		'htaccess'	=> '.htaccess',
 		'description'=>'Este editor bruto permite editar o seu '.
-						'<code><a class="hint" href="http://wiki.flatpress.org/doc:plugins:prettyurls#htaccess">.htaccess</a></code>.',
-		'cantsave'	=> 'Você não pode editar este arquivo, porque ele não é <strong>gravável</strong>. Você pode conceder permissão de gravação ou copiar e colar em um arquivo e fazer o upload como <a class="hint" href="http://wiki.flatpress.org/doc:plugins:prettyurls#manual_upload">explicado aqui.</a>',
+						'<code>.htaccess</code>.',
+		'cantsave'	=> 'Você não pode editar este arquivo, porque ele não é <strong>gravável</strong>. Você pode conceder permissão de gravação ou copiar e colar em um arquivo e fazer o upload.',
 		'mode'		=> 'Modo',
 		'auto'		=> 'Automático',
 			'autodescr'	=> 'Tente adivinhar a melhor opção para mim.',

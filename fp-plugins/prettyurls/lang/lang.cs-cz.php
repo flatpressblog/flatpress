@@ -7,7 +7,7 @@ $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLs Config';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'Nastavení PrettyURLs',
 	'htaccess' => '.htaccess',
-	'description' => 'Tímto editorem můžete editovat Váš soubor' . '<code><a class="hint" href="https://notepad-plus-plus.org/">.htaccess</a></code>.',
+	'description' => 'Tímto editorem můžete editovat Váš soubor <code>.htaccess</code>.',
 	'cantsave' => 'Nemůžete editovat tento soubor, protože není <strong>zapisovatelný</strong>. Můžete nastavit povolení k zapisování nebo kopírovat a vložit do souboru a poté nahrát.',
 	'mode' => 'Režim',
 	'auto' => 'Automatický',

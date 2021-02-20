@@ -9,9 +9,9 @@
 		'head'		=> 'PrettyURLsの設定',
 		'htaccess'	=> '.htaccess',
 		'description'=>'This raw editor let you edit your '.
-						'<code><a class="hint" href="http://wiki.flatpress.org/doc:plugins:prettyurls#htaccess">.htaccess</a></code>.',
+						'<code>.htaccess</code>.',
 		'cantsave'	=> 'このファイルを編集できません、なぜなら <strong>書き込み許可</strong>されてないからです。'.
-						'You can give writing permission or copy and paste to a file and then upload as <a class="hint" href="http://wiki.flatpress.org/doc:plugins:prettyurls#manual_upload">described here</a>',
+						'You can give writing permission or copy and paste to a file and then upload.',
 		'mode'		=> 'モード',
 		'auto'		=> '自動',
 			'autodescr'	=> '最良の選択を推定します。',
