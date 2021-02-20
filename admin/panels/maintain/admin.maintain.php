@@ -91,12 +91,14 @@ class admin_maintain_updates extends AdminPanelAction {
 		$success = -1;
 		$ver = array(
 			'stable' => 'unknown',
-			'unstable' => 'unknown'
+			'unstable' => 'unknown',
+			'notice' => ''
 		);
 
+		// retrieve content of update file
 		$file = utils_geturl($this->web);
 
-		if ($file) {
+		if (!$file ['errno'] && $file ['http_code'] < 400) {
 			$ver = utils_kexplode($file ['content']);
 			if (!isset($ver ['stable'])) {
 				$success = -1;

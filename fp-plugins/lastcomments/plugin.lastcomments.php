@@ -31,6 +31,8 @@ function plugin_lastcomments_widget() {
 	// they're located under plugin.PLUGINNAME/lang/LANGID/
 	$lang = lang_load('plugin:lastcomments');
 
+	$update = false;
+
 	if ($count = count($list)) {
 		while ($arr = array_pop($list)) {
 			theme_comments_filters($arr, $id);
