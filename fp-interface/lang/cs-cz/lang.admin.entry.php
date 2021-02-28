@@ -43,7 +43,7 @@
 		'submit'	=> 'Publikovat',
 		'preview'	=> 'Zobrazit',
 		'savecontinue'	=> 'Uložit&amp;Pokračovat',
-		'archive'	=> 'Archív',
+		'categories'	=> 'Kategorie',
 		'nocategories'	=> 'Kategorie nenastavená. <a href="admin.php?p=entry&amp;action=cats">Vytvořte si vlastní '. 
 					'kategorii</a> v Správě kategorií. '.
 					'<a href="#save">Uložit</a> nejdřív Váš příspěvek.',
