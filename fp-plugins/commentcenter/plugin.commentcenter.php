@@ -333,6 +333,10 @@ class plugin_commentcenter {
 	 */
 	function behavoirFromPolicies($entry, $cats = array()) {
 		$date = date_from_id($entry);
+		// check if $date is in expected format
+		if (!array_key_exists('time', $date)) {
+			return -1;
+		}
 		$time = $date ['time'];
 		$return = 1;
 		$pols = &$this->policies;

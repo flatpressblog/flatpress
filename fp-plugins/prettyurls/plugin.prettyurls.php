@@ -190,7 +190,7 @@ class Plugin_PrettyURLs {
 		}
 
 		// data is not as expected
-		if (!array_karray_key_exists('y', $this->fp_params) || !array_karray_key_exists('m', $this->fp_params) || !array_karray_key_exists('d', $this->fp_params)) {
+		if (!array_key_exists('y', $this->fp_params) || !array_key_exists('m', $this->fp_params) || !array_key_exists('d', $this->fp_params)) {
 			// a bit hackish: we make up a fake url when there is no match,
 			// so that at the higher level the system will 404...
 			$this->fp_params ['entry'] = 'a';
