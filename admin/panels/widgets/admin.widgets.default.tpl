@@ -48,12 +48,12 @@
 		<ul id="widgetsetid-{$widgetset}">
 		{foreach from=$widgetarr item=widget}
 			{if isset($widget.class)}
-				{assign var=widgetclass value="$widget.class"}
+				{assign var=widgetclass value=$widget.class}
 			{else}
 				{assign var=widgetclass value=""}
 			{/if}
 			{if isset($widget.params)}
-				{assign var=widgetparams value="$widget.params"}
+				{assign var=widgetparams value=$widget.params}
 			{else}
 				{assign var=widgetparams value=""}
 			{/if}
