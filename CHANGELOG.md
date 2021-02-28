@@ -31,6 +31,7 @@
 - Fixed "syntax error, unexpected '\['" bug, reported [here](https://forum.flatpress.org/viewtopic.php?f=2&t=131)
 - Setup sets date and FP version for the freshly created static pages
 - Annoying translation error in German language pack fixed
+- ... and many more!
 ## Translations
 - Added French language pack by Marc Thibeault and Dimitri Soufflet, reworked by Gee
 - Added Japanese Language Pack by [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
