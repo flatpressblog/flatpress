@@ -58,22 +58,22 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'apply_to' => 'Applica a',
 	'editpol' => 'Modifica una regola',
 	'createpol' => 'Crea una regola',
-	'some_entries' => 'Alcuni post',
-	'properties' => 'Post con precise caratteristiche',
-	'se_desc' => 'Se hai selezionato l\'opzione %s, per favore inserisci i post a cui la vuoi applicare.',
-	'se_fill' => 'Per favore riempi i campi con gli id dei post (<code>entryYYMMDD-HHMMSS</code>).',
+	'some_entries' => 'Alcuni articoli',
+	'properties' => 'Articoli con precise caratteristiche',
+	'se_desc' => 'Se hai selezionato l\'opzione %s, per favore inserisci gli articoli ai quali la vuoi applicare.',
+	'se_fill' => 'Per favore riempi i campi con gli id degli articoli (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Caratteristiche',
 	'po_desc' => 'Se hai selezionato l\'opzione %s, per seleziona le caratteristiche.',
-	'po_comp' => 'I campi non sono obbligatori ma ne devi selezionare almeno uno, altrimenti la regola ' . 'sarà applicata a tutti i post.',
+	'po_comp' => 'I campi non sono obbligatori ma ne devi selezionare almeno uno, altrimenti la regola ' . 'sarà applicata a tutti gli articoli.',
 	'po_time' => 'Opzioni sulle date',
-	'po_older' => 'Applica ai post più vecchi di ',
+	'po_older' => 'Applica agli articoli più vecchi di ',
 	'days' => 'giorni.',
 	'save_policy' => 'Salva regola',
 
 	// Delete policies page
 	'del_policies' => 'Elimina regole',
 	'del_descs' => 'Stai per eliminare la seguente regola: ',
-	'del_descm' => 'Stai per eliminare la seguenti regoli: ',
+	'del_descm' => 'Stai per eliminare la seguenti regola: ',
 	'sure' => 'Sei sicuro?',
 	'del_subs' => 'Sì, continua l\'eliminazione',
 	'del_subm' => 'Sì, continua l\'eliminazione',
@@ -106,17 +106,17 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Manage comments page
 	'man_searcht' => 'Cerca un post',
-	'man_searchd' => 'Inserisci l\'id del post di cui vuoi gestire i commenti.',
+	'man_searchd' => 'Inserisci l\'id dell\'articolo di cui vuoi gestire i commenti.',
 	'man_search' => 'Cerca',
 	'man_commfor' => 'Commenti di %s',
 	'man_spam' => 'Segnala come spam ad Akismet',
 
 	// The simple edit
-	'simple_pre' => 'In questo post i commenti ',
+	'simple_pre' => 'In questo articolo i commenti ',
 	'simple_1' => 'sono ammessi.',
 	'simple_0' => 'richiedono la tua approvazione.',
 	'simple_-1' => 'sono bloccati.',
-	'simple_manage' => 'Gestisci i commenti di questo post.',
+	'simple_manage' => 'Gestisci i commenti di questo articolo.',
 	'simple_edit' => 'Modifica le regole',
 
 	// Akismet warnings
@@ -154,12 +154,12 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	// Errors
 	'errors' => array(
 		'pol_nonex' => 'La regola che vuoi modificare non esiste.',
-		'entry_nf' => 'Il post da te selezionato non esiste.'
+		'entry_nf' => 'L\'articolo da te selezionato non esiste.'
 	)
 );
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Akismet ha rilevato il tuo commento come SPAM.',
-	'lock' => 'Siamo spiacenti ma i commenti per questo post sono chiusi.',
+	'lock' => 'Siamo spiacenti ma i commenti per questo articolo sono chiusi.',
 	'approvation' => 'Il commento è stato salvato ma l\'Amministratore lo deve approvare prima di farlo vedere.',
 
 	// Mail for comments

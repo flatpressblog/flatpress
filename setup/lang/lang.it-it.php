@@ -31,7 +31,7 @@ $lang ['step1'] = array(
 		<pre>%s</pre>
 		
 		Per installare il pacchetto di lingua, carica il contenuto del pacchetto nela tua copia di <code>flatpress/</code>, e sovrascrivi tutto, poi <a href="./setup.php">riavvia questa installazione</a>.',
-	'descrw' => 'L\'<strong>unica cosa</strong> di cui ha bisogno FlatPress per funzionare è una  cartella <em>scrivibile</em>. 
+	'descrw' => 'L\'<strong>unica cosa</strong> di cui ha bisogno FlatPress per funzionare è una cartella <em>scrivibile</em>. 
 		
 		<pre>%s</pre>'
 );
@@ -100,9 +100,9 @@ I tag img e url tag hanno inoltre delle opzioni speciali. Puoi saperne di più s
 
 [h4]Articoli e Pagine statiche[/h4]
 
-Queto è un articolo, mentre [url=static.php?page=about]Informazioni suAbout[/url] è una [b]pagina statica[/b]. Una pagina statica è un articolo che non può essere commentato e che non compare insieme agl altri articoli del blog.
+Queto è un articolo, mentre [url=static.php?page=about]Informazioni su[/url] è una [b]pagina statica[/b]. Una pagina statica è un articolo che non può essere commentato e che non compare insieme agli altri articoli del blog.
 
-Le pagine statiche sono utili per creare pagine di informazioni generali. Puoi anche rendere una di queste pagine la [b]pagina di apertura[/b] per i tuoi visitatori. Questo vuol dire che con FlatPress puoi anche costruire un sito completo che non sia un blog. L\'opzione per reendere una pagina statica la pagina iniziale del tuo sito si trova nel [b]pannello delle opzioni[/b] dell\'[url=admin.php]area di amministrazione[/url].
+Le pagine statiche sono utili per creare pagine di informazioni generali. Puoi anche rendere una di queste pagine la [b]pagina di apertura[/b] per i tuoi visitatori. Questo vuol dire che con FlatPress puoi anche costruire un sito completo che non sia un blog. L\'opzione per rendere una pagina statica la pagina iniziale del tuo sito si trova nel [b]pannello delle opzioni[/b] del [url=admin.php]pannello di controllo[/url].
 
 
 [h4]Plugins[/h4]

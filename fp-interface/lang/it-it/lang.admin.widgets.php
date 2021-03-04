@@ -12,7 +12,7 @@
 						'href="http://wiki.flatpress.org/doc:widgets" title="What is a Widget?">'.
 						'Widget</a> è un componente dinamico che può visualizzare dati e interagire con l\'utente.
 						Mentre i <strong>Temi</strong> sono fatti per cambiare l\'aspetto del blog, i Widgets 
-						ne <strong>estendono</strong>, cambiano l\'aspetto e le funzionalità.</p>
+						ne <strong>estendono</strong> le funzionalità e ne cambiano l\'aspetto.</p>
 
 						<p>I Widget possono essere trascinati in aree specifiche del tuo tema chiamate 
 						<strong>WidgetSets</strong>. Il numero e il nome dei WidgetSets possono variare a seconda 
@@ -54,7 +54,7 @@
 	/* "raw" panel */	
 	
 	$lang['admin']['widgets']['raw'] = array(
-		'head'		=> 'Gestione Widget (<em>raw editor</em>)',
+		'head'		=> 'Gestione Widget (<em>editor grezzo</em>)',
 		'descr'		=> 'Un <a class="hint" '.
 						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">'.
 						'Widget</a> è un elemento visuale di un <a class="hint" '.
