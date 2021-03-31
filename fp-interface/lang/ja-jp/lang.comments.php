@@ -1,7 +1,5 @@
 <?php
-
-	$lang['comments']['mail'] = <<<MAIL
-%toname% さま,
+$lang ['comments'] ['mail'] = '%toname% さま,
 
 "%fromname%" %frommail% さんが、次の記事にコメントを書きました。
 
@@ -19,6 +17,6 @@
 以上,
 %blogtitle%
 
-MAIL;
+';
 
 ?>

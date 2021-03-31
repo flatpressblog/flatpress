@@ -3,10 +3,9 @@
  * LangId: English
  */
 
-//TERMINADO!
-
+// TERMINADO!
 $lang ['locked'] = array(
-	'head' 	=> 'A instalação foi bloqueada.',
+	'head' => 'A instalação foi bloqueada.',
 	'descr' => 'Parece que você já executou a instalação, porque
 encontramos o arquivo de bloqueio. <code>%s</code>.
 		
@@ -21,7 +20,7 @@ encontramos o arquivo de bloqueio. <code>%s</code>.
 );
 
 $lang ['step1'] = array(
-	'head' 	=> 'Bem-vindo ao FlatPress!',
+	'head' => 'Bem-vindo ao FlatPress!',
 	'descr' => 'Obrigado por escolher <strong>o FlatPress</strong>.
 		
 		Antes de começar a se divertir com seu novo blog, precisamos fazer algumas perguntas. 
@@ -40,17 +39,17 @@ $lang ['step1'] = array(
 );
 
 $lang ['step2'] = array(
-	'head' 	=> 'Crie usário',
+	'head' => 'Crie usário',
 	'descr' => 'Você já está quase pronto, preencha os seguintes detalhes:',
-	'fpuser'=> 'Nome de usário',
+	'fpuser' => 'Nome de usário',
 	'fppwd' => 'Senha',
-	'fppwd2'=> 'Digite a senha de novo.',
-	'www' 	=> 'Website',
+	'fppwd2' => 'Digite a senha de novo.',
+	'www' => 'Website',
 	'email' => 'E-Mail'
 );
 
 $lang ['step3'] = array(
-	'head' 	=> 'Pronto!',
+	'head' => 'Pronto!',
 	'descr' => '<strong>Fim da história!</strong>. 
 		
 		Inacreditável? 
@@ -67,26 +66,23 @@ $lang ['step3'] = array(
 );
 
 $lang ['buttonbar'] = array(
-	'next' 	=> 'Próximo >'
+	'next' => 'Próximo >'
 );
 
 $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Menu';
-$lang ['samplecontent'] ['menu'] ['content'] = <<<MENU
-[list]
+$lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=?]Início[/url]
 [*][url=?paged=1]Blog[/url]
 [*][url=static.php?page=about]Sobre[/url]
 [*][url=contact.php]Contato[/url]
-[/list]
-MENU;
+[/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Bem vindo ao FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = <<<CONT
-Esta é uma entrada de amostra, postada para mostrar alguns dos recursos do [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Esta é uma entrada de amostra, postada para mostrar alguns dos recursos do [url=https://www.flatpress.org]FlatPress[/url].
 
-A tag 'more' permite criar um "salto" entre um trecho e o artigo completo.
+A tag \'more\' permite criar um "salto" entre um trecho e o artigo completo.
 
 [more] 
 
@@ -97,7 +93,7 @@ A maneira padrão de estilizar e formatar seu conteúdo é [url=http://wiki.flat
 
 [quote]Também existem[b]quote[/b] blocos para exibir suas cotações favoritas. [/quote]
 
-[code] E 'code' exibe seus trechos de maneira monoespaçada. Também suporta conteúdo recuado. [/code]
+[code] E \'code\' exibe seus trechos de maneira monoespaçada. Também suporta conteúdo recuado. [/code]
 
 img e url tag têm opções especiais. Pode descobrir mais no [url=https://wiki.flatpress.org/doc:plugins:bbcode]FP wiki[/url].
 
@@ -160,7 +156,7 @@ Diverta-se! :-)
 
 [i]A Tripulação de [url=https://www.flatpress.org]FlatPress[/url][/i]
 	
-CONT;
+';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Sobre';
 $lang ['samplecontent'] ['about'] ['content'] = "Escreva algo sobre você aqui. ([url=admin.php?p=static&action=write&page=about]Me edite![/url])";

@@ -17,14 +17,12 @@ function plugin_adminarea_widget() {
 
 	if ($user = user_loggedin()) {
 		$userid = $user ['userid'];
-		$string = <<<END
-				<p>{$lang['plugin']['adminarea']['welcome']} <strong>{$userid}</strong>!</p>
+		$string = '<p>' . $lang ['plugin'] ['adminarea'] ['welcome'] . '<strong>' . $userid . '</strong>!</p>
 				<ul>
-				<li><a href="{$baseurl}admin.php">{$lang['plugin']['adminarea']['admin_panel']}</a></li>
-				<li><a href="{$baseurl}admin.php?p=entry&amp;action=write">{$lang['plugin']['adminarea']['add_entry']}</a></li>
-				<li><a href="{$baseurl}login.php?do=logout">{$lang['plugin']['adminarea']['logout']}</a></li>
-				</ul>
-		END;
+				<li><a href="' . $baseurl . 'admin.php">' . $lang ['plugin'] ['adminarea'] ['admin_panel'] . '</a></li>
+				<li><a href="' . $baseurl . 'admin.php?p=entry&amp;action=write">' . $lang ['plugin'] ['adminarea'] ['add_entry'] . '</a></li>
+				<li><a href="' . $baseurl . 'login.php?do=logout">' . $lang ['plugin'] ['adminarea'] ['logout'] . '</a></li>
+				</ul>';
 	} else
 		$string = '<ul><li><a href="' . $baseurl . 'login.php">Login</a></li></ul>';
 

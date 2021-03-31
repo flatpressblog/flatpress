@@ -1,8 +1,6 @@
 <?php
-//Terminado 15 de fevereiro de 2020.
-
-	$lang['comments']['mail'] = <<<MAIL
-Querido(a) %toname%,
+// Terminado 15 de fevereiro de 2020.
+$lang ['comments'] ['mail'] = 'Querido(a) %toname%,
 
 "%fromname%" %frommail% acabou de publicar um comentário na entrada intitulada "%entrytitle%".
 
@@ -17,6 +15,6 @@ Aqui está o comentário que acabou de ser postado:
 Um abraço,
 %blogtitle%
 
-MAIL;
+';
 
 ?>

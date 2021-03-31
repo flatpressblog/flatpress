@@ -18,21 +18,19 @@ function plugin_lightbox2_setup() {
 
 function plugin_lightbox2_head() {
 	$pdir = plugin_geturl('lightbox2');
-	echo <<<LBOXHEAD
+	echo '
 		<!-- start of lightbox -->
-		<link rel="stylesheet" type="text/css" href="{$pdir}res/slimbox2.css" />
-		<!-- end of lightbox -->
-	LBOXHEAD;
+		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/slimbox2.css" />
+		<!-- end of lightbox -->';
 }
 add_action('wp_head', 'plugin_lightbox2_head');
 
 function plugin_lightbox2_footer() {
 	$pdir = plugin_geturl('lightbox2');
-	echo <<<LBOXHEAD
+	echo '
 		<!-- start of lightbox -->
-		<script type="text/javascript" src="{$pdir}res/slimbox2.js"></script>
-		<!-- end of lightbox -->
-	LBOXHEAD;
+		<script type="text/javascript" src="' . $pdir . 'res/slimbox2.js"></script>
+		<!-- end of lightbox -->';
 }
 add_action('wp_footer', 'plugin_lightbox2_footer');
 
@@ -42,4 +40,3 @@ function plugin_lightbox2_hook($popup, $abspath) {
 	return $lightbox_rel ? "rel=\"lightbox[$lightbox_rel]\"" : ' rel="lightbox"';
 }
 add_action('bbcode_img_popup', 'plugin_lightbox2_hook', 5, 2);
-

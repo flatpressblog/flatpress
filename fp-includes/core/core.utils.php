@@ -409,10 +409,7 @@ function utils_geturl($url) {
 
 function utils_checksmarty() {
 	if (!file_exists(SMARTY_DIR . 'Smarty.class.php')) {
-		$err = <<<ERR
-		Fatal error: Smarty is not installed; please download it from <a href="http://smarty.php.net">http://smarty.php.net</a>; you will 
-	probably need <a href="http://www.phpinsider.com/php/code/SmartyValidate/">SmartyValidate</a> as well; unpack them to <b>fp-includes/core/smarty</b>: please do not overwrite files in fp-includes/core/smarty/plugins/
-ERR;
+		$err = 'Fatal error: Smarty is not installed; please download it from <a href="http://smarty.php.net">http://smarty.php.net</a>; you will probably need <a href="http://www.phpinsider.com/php/code/SmartyValidate/">SmartyValidate</a> as well; unpack them to <b>fp-includes/core/smarty</b>: please do not overwrite files in fp-includes/core/smarty/plugins/';
 		trigger_error($err, E_USER_ERROR);
 	}
 }

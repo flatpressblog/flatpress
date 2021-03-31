@@ -9,8 +9,8 @@
 		'head'		=> 'Configuration de PrettyURLs',
 		'htaccess'	=> '.htaccess',
 		'description'=>'Cet &eacute;diteur vous permet de modifier le fichier .htaccess '.
-						'<code><a class="hint" href="http://wiki.flatpress.org/doc:plugins:prettyurls#htaccess" target="_blank">.htaccess</a></code>.',
-		'cantsave'	=> 'Vous ne pouvez pas &eacute;diter ce fichier, parce qu\'il n\'est pas autoris&eacute; en <strong>&eacute;criture</strong>. Vous devez autoriser l\'&eacute;criture du fichier ou copier-coller vers un fichier &agrave; transf&eacute;rer comme <a class="hint" href="http://wiki.flatpress.org/doc:plugins:prettyurls#manual_upload">d&eacute;crit ici</a>',
+						'<code>.htaccess</code>.',
+		'cantsave'	=> 'Vous ne pouvez pas &eacute;diter ce fichier, parce qu\'il n\'est pas autoris&eacute; en <strong>&eacute;criture</strong>. Vous devez autoriser l\'&eacute;criture du fichier ou copier-coller vers un fichier &agrave; transf&eacute;rer.',
 		'mode'		=> 'Mode',
 		'auto'		=> 'Automatique',
 			'autodescr'	=> 'PrettyURLs va tenter de trouver la meilleur configuration',

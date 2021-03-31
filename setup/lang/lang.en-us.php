@@ -70,18 +70,15 @@ $lang ['buttonbar'] = array(
 $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Menu';
-$lang ['samplecontent'] ['menu'] ['content'] = <<<MENU
-[list]
+$lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=?]Home[/url]
 [*][url=?paged=1]Blog[/url]
 [*][url=static.php?page=about]About[/url]
 [*][url=contact.php]Contact[/url]
-[/list]
-MENU;
+[/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Welcome to FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = <<<CONT
-This is a sample entry, posted to show you some of the features of [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'This is a sample entry, posted to show you some of the features of [url=https://www.flatpress.org]FlatPress[/url].
 
 The more tag allows you to create a "jump" between an excerpt and the complete article.
 
@@ -94,7 +91,7 @@ The default way to style and format your content is [url=http://wiki.flatpress.o
 
 [quote]There are also [b]quote[/b] blocks to display your favourite quotations. [/quote]
 
-[code]And 'code' displays your snippets in a monospaced fashion.
+[code]And \'code\' displays your snippets in a monospaced fashion.
 It also supports
    indented content.[/code]
 
@@ -122,7 +119,7 @@ You can find two [b]static pages[/b] ready to accept your contents:
 
 [h4]Widgets[/h4]
 
-There isn't a single fixed element in the sidebar(s). All the elements you can find in the bars sourrounding this text are completely positionable, and most of them are customizable as well. Some themes even provide a panel interface in the admin area.  
+There isn\'t a single fixed element in the sidebar(s). All the elements you can find in the bars sourrounding this text are completely positionable, and most of them are customizable as well. Some themes even provide a panel interface in the admin area.  
 
 These elements are called [b]widgets[/b]. For more on widgets and [url=https://wiki.flatpress.org/doc:tips:widgets]some tips[/url] to get nice effects, take a look at the [url=https://wiki.flatpress.org/]wiki[/url].
 
@@ -132,9 +129,9 @@ These elements are called [b]widgets[/b]. For more on widgets and [url=https://w
 Want to see more?
 
 [list]
-[*]Follow the [url=https://www.flatpress.org/?x]official blog[/url] to know what's going on in the FlatPress world
+[*]Follow the [url=https://www.flatpress.org/?x]official blog[/url] to know what\'s going on in the FlatPress world
 [*]Visit the [url=https://forum.flatpress.org/]forum[/url] for support and chit-chat
-[*]Get [b]great themes[/b] from [url=https://wiki.flatpress.org/res:themes]other users' submissions[/url]!
+[*]Get [b]great themes[/b] from [url=https://wiki.flatpress.org/res:themes]other users\' submissions[/url]!
 [*]Check out the [url=https://wiki.flatpress.org/res:plugins]unofficial plugins[/url]
 [*]Get [url=https://wiki.flatpress.org/res:language]translation pack[/url] for your language 
 [/list]
@@ -159,7 +156,7 @@ Have fun! :)
 
 [i]The [url=https://www.flatpress.org]FlatPress[/url] Team[/i]
 	
-CONT;
+';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'About';
 $lang ['samplecontent'] ['about'] ['content'] = "Write something about yourself here. ([url=admin.php?p=static&action=write&page=about]Edit me![/url])";

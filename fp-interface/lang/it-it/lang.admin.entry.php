@@ -85,7 +85,7 @@
 	
 	$lang['admin']['entry']['commentlist'] = 
 	array(
-		'head'		=> "Commenti per l\'articolo", 
+		'head'		=> "Commenti per l'articolo", 
 		'descr'		=> 'Seleziona un commento da eliminare',
 		'sel'		=> 'Seleziona',
 		'content'	=> 'Contenuto',
@@ -112,7 +112,7 @@
 
 	$lang['admin']['entry']['commedit'] = 
 	array(
-		'head'		=> "Modifica commento per l\'articolo", 
+		'head'		=> "Modifica commento per l'articolo", 
 		'content'	=> 'Contenuto',
 		'date'		=> 'Data',
 		'author'	=> 'Autore',

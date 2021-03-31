@@ -1,7 +1,5 @@
 <?php
-
-	$lang['comments']['mail'] = <<<MAIL
-Estimado %toname%,
+$lang ['comments'] ['mail'] = 'Estimado %toname%,
 
 "%fromname%" %frommail% acaba de publicar un comentario en la entrada titulada "%entrytitle%".
 
@@ -16,6 +14,6 @@ Aquí está el comentario que se acaba de publicar:
 Todo lo mejor,
 %blogtitle%
 
-MAIL;
+';
 
 ?>

@@ -31,7 +31,7 @@ $lang ['step1'] = array(
 		<pre>%s</pre>
 		
 		Per installare il pacchetto di lingua, carica il contenuto del pacchetto nela tua copia di <code>flatpress/</code>, e sovrascrivi tutto, poi <a href="./setup.php">riavvia questa installazione</a>.',
-	'descrw' => 'L\'<strong>unica cosa</strong> di cui ha bisogno FlatPress per funzionare è una  cartella <em>scrivibile</em>. 
+	'descrw' => 'L\'<strong>unica cosa</strong> di cui ha bisogno FlatPress per funzionare è una cartella <em>scrivibile</em>. 
 		
 		<pre>%s</pre>'
 );
@@ -70,18 +70,15 @@ $lang ['buttonbar'] = array(
 $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Menu';
-$lang ['samplecontent'] ['menu'] ['content'] = <<<MENU
-[list]
+$lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=?]Home[/url]
 [*][url=?paged=1]Blog[/url]
 [*][url=static.php?page=about]Informazioni sul sito[/url]
 [*][url=contact.php]Contatti[/url]
-[/list]
-MENU;
+[/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Benvenuto su FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = <<<CONT
-Questo è un articolo di prova, inserito mer mostrarti alcune delle funzioni di [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Questo è un articolo di prova, inserito mer mostrarti alcune delle funzioni di [url=https://www.flatpress.org]FlatPress[/url].
 
 Il tag more ti consente di crare un "salto" tra un estratto e l\'articolo completo.
 
@@ -94,7 +91,7 @@ Il modo predefinito dell\'aspetto e del contenuto dell\'articolo è [url=http://
 
 [quote]Ci sono anche i blocchi [b]citazione[/b] per mostrare le tue citazioni preferite. [/quote]
 
-[code]E il tag 'code' mmostra dei pezzetti di codice in uno stile monospaziale.
+[code]E il tag \'code\' mmostra dei pezzetti di codice in uno stile monospaziale.
 Inoltre supporta
    il contenuto indentato.[/code]
 
@@ -103,9 +100,9 @@ I tag img e url tag hanno inoltre delle opzioni speciali. Puoi saperne di più s
 
 [h4]Articoli e Pagine statiche[/h4]
 
-Queto è un articolo, mentre [url=static.php?page=about]Informazioni suAbout[/url] è una [b]pagina statica[/b]. Una pagina statica è un articolo che non può essere commentato e che non compare insieme agl altri articoli del blog.
+Queto è un articolo, mentre [url=static.php?page=about]Informazioni su[/url] è una [b]pagina statica[/b]. Una pagina statica è un articolo che non può essere commentato e che non compare insieme agli altri articoli del blog.
 
-Le pagine statiche sono utili per creare pagine di informazioni generali. Puoi anche rendere una di queste pagine la [b]pagina di apertura[/b] per i tuoi visitatori. Questo vuol dire che con FlatPress puoi anche costruire un sito completo che non sia un blog. L\'opzione per reendere una pagina statica la pagina iniziale del tuo sito si trova nel [b]pannello delle opzioni[/b] dell\'[url=admin.php]area di amministrazione[/url].
+Le pagine statiche sono utili per creare pagine di informazioni generali. Puoi anche rendere una di queste pagine la [b]pagina di apertura[/b] per i tuoi visitatori. Questo vuol dire che con FlatPress puoi anche costruire un sito completo che non sia un blog. L\'opzione per rendere una pagina statica la pagina iniziale del tuo sito si trova nel [b]pannello delle opzioni[/b] del [url=admin.php]pannello di controllo[/url].
 
 
 [h4]Plugins[/h4]
@@ -159,7 +156,7 @@ Buon divertimento! :)
 
 [i]Il Team di [url=https://www.flatpress.org]FlatPress[/url][/i]
 	
-CONT;
+';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Chi sono';
 $lang ['samplecontent'] ['about'] ['content'] = "Scrivi qui qualcosa su di te. ([url=admin.php?p=static&action=write&page=about]Modificami![/url])";

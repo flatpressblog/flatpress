@@ -71,7 +71,7 @@ class Plugin_PrettyURLs {
 	function permalink($str, $id) {
 		global $fpdb, $post;
 
-		if (PRETTYURLS_TITLES)
+		if (isset($post) && PRETTYURLS_TITLES)
 			$title = sanitize_title($post ['subject']);
 		else
 			$title = $id;
@@ -184,18 +184,24 @@ class Plugin_PrettyURLs {
 	}
 
 	function handle_entry($matches) {
-		if (PRETTYURLS_TITLES) {
-
-			// isset($this->index[
-			if ($this->cache_get($this->fp_params ['y'], $this->fp_params ['m'], $this->fp_params ['d'], md5($matches [1]))) {
-				$this->fp_params ['entry'] = $this->index [$this->fp_params ['y']] [$this->fp_params ['m']] [$this->fp_params ['d']] [md5($matches [1])];
-			} else {
-				// a bit hackish: we make up a fake url when there is no match,
-				// so that at the higher level the system will 404...
-				$this->fp_params ['entry'] = 'a';
-			}
-		} else {
+		if (!PRETTYURLS_TITLES) {
 			$this->fp_params ['entry'] = $matches [1];
+			return;
+		}
+
+		// data is not as expected
+		if (!array_key_exists('y', $this->fp_params) || !array_key_exists('m', $this->fp_params) || !array_key_exists('d', $this->fp_params)) {
+			// a bit hackish: we make up a fake url when there is no match,
+			// so that at the higher level the system will 404...
+			$this->fp_params ['entry'] = 'a';
+		}
+
+		if ($this->cache_get($this->fp_params ['y'], $this->fp_params ['m'], $this->fp_params ['d'], md5($matches [1]))) {
+			$this->fp_params ['entry'] = $this->index [$this->fp_params ['y']] [$this->fp_params ['m']] [$this->fp_params ['d']] [md5($matches [1])];
+		} else {
+			// a bit hackish: we make up a fake url when there is no match,
+			// so that at the higher level the system will 404...
+			$this->fp_params ['entry'] = 'a';
 		}
 	}
 
@@ -499,7 +505,7 @@ class Plugin_PrettyURLs {
 		if (isset($this->fp_params ['paged']) && $this->fp_params ['paged'] > 1)
 			$page = $this->fp_params ['paged'];
 
-		$page += $v;
+		$page += ($v . '');
 
 		if ($page > 0) {
 			$l .= 'page/' . $page . '/';
@@ -613,18 +619,18 @@ if (class_exists('AdminPanelAction')) {
 			$txt = io_load_file($f);
 			if (!$txt) {
 
-				$txt = <<<STR
+				$txt = '
 				
 				# Thanks again WP :)
 				
 				<IfModule mod_rewrite.c>
 				RewriteEngine On
-				RewriteBase {$blogroot}
+				RewriteBase ' . $blogroot . '
 				RewriteCond %{REQUEST_FILENAME} !-f
 				RewriteCond %{REQUEST_FILENAME} !-d
-				RewriteRule . {$blogroot}index.php [L]
+				RewriteRule . ' . $blogroot . 'index.php [L]
 				</IfModule>
-				STR;
+				';
 			}
 
 			$this->smarty->assign('cantsave', (!is_writable(ABS_PATH) || (file_exists($f) && !is_writable($f))));

@@ -9,8 +9,8 @@
 		'head'		=> 'PrettyURLs Konfiguration',
 		'htaccess'	=> '.htaccess',
 		'description'=>'Dieser Editor ermöglicht die für das PrettyUrls Plugin benötigte '.
-						'<code><a class="hint" href="http://wiki.flatpress.org/doc:plugins:prettyurls#htaccess">.htaccess</a></code> direkt zu bearbeiten.',
-		'cantsave'	=> 'Diese Datei kann nicht bearbeitet werden, weil sie schreibgeschützt ist. Ändere die Zugriffsrechte oder kopiere diese Zeilen, füge sie in eine lokale Datei ein und lade diese dann hoch. Lies hierzu bitte die <a class="hint" href="http://wiki.flatpress.org/doc:plugins:prettyurls#manual_upload">Anleitung</a>',
+						'<code>.htaccess</code> direkt zu bearbeiten.',
+		'cantsave'	=> 'Diese Datei kann nicht bearbeitet werden, weil sie schreibgeschützt ist. Ändere die Zugriffsrechte oder kopiere diese Zeilen, füge sie in eine lokale Datei ein und lade diese dann hoch.',
 		'mode'		=> 'Modus',
 		'auto'		=> 'Automatisch',
 			'autodescr'	=> 'Ermittle die beste Möglichkeit automatisch',

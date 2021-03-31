@@ -1,7 +1,5 @@
 <?php
-
-	$lang['comments']['mail'] = <<<MAIL
-Αγαπητέ/η %toname%,
+$lang ['comments'] ['mail'] = 'Αγαπητέ/η %toname%,
 
 Ο/Η "%fromname%" %frommail% μόλις πρόσθεσε ένα σχόλιο στην καταχώρηση με τίτλο "%entrytitle%".
 
@@ -16,6 +14,6 @@
 Ευχές για τα καλύτερα,
 %blogtitle%
 
-MAIL;
+';
 
 ?>

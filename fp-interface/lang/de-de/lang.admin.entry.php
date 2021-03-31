@@ -43,7 +43,7 @@
 		'submit'	=> 'Veröffentlichen',
 		'preview'	=> 'Vorschau',
 		'savecontinue'	=> 'Speichern &amp; weiter',
-		'archive'	=> 'Kategorie für den Beitrag auswählen',
+		'categories'	=> 'Kategorie für den Beitrag auswählen',
 		'nocategories'	=> 'Keine Kategorie ausgewählt. <a href="admin.php?p=entry&amp;action=cats">Erstelle eine '. 
 					'Kategorie</a> im Verwaltungsbereich. '.
 					'Bitte Beitrag vorher <a href="#save">speichern</a>.',

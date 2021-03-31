@@ -23,7 +23,7 @@
 		'nofiles'	=> 'Keine Mediendaten vorhanden.',
 		'loadfile'	=> 'Datei/en hochladen',
 		
-		'seòected'		=> 'Ausgewählt',
+		'selected'		=> 'Ausgewählt',
 		'selectaction' 	=> '-- auswahl --',
 		'addtogallery'	=> 'Zur Gallery hinzufügen',
 		'newgallery'	=> 'Neue Gallery',

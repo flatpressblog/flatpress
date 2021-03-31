@@ -9,8 +9,8 @@
 		'head'		=> 'Configurazione di PrettyURLs',
 		'htaccess'	=> '.htaccess',
 		'description'=>'Questo editor grezzo ti permette di modificare il tuo '.
-						'<code><a class="hint" href="http://wiki.flatpress.org/doc:plugins:prettyurls#htaccess">.htaccess</a></code>.',
-		'cantsave'	=> 'Non puoi modificare questo file, perché non è <strong>scrivibile</strong>. Puoi dargli i permessi di scrittura o copiarlo e incollarlo in un file e poi caricarlo come <a class="hint" href="http://wiki.flatpress.org/doc:plugins:prettyurls#manual_upload">viene descritto qui</a>',
+						'<code>.htaccess</code>.',
+		'cantsave'	=> 'Non puoi modificare questo file, perché non è <strong>scrivibile</strong>. Puoi dargli i permessi di scrittura o copiarlo e incollarlo in un file e poi caricarlo.',
 		'mode'		=> 'Modalità',
 		'auto'		=> 'Automatica',
 			'autodescr'	=> 'prova a cercare la migliore scelta per me',
