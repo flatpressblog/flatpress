@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	
 	$langconf = array();
 	$langconf['id'] = 'Fran&ccedil;ais (FR)';
