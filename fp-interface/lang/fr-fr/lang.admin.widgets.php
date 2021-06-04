@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	$lang['admin']['widgets']['submenu']['default'] = 'G&eacute;rer les Widgets';
 	$lang['admin']['widgets']['submenu']['raw'] 	= 'G&eacute;rer les Widgets (raw)';

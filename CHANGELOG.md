@@ -1,3 +1,10 @@
+# 2021-xx-xx: FlatPress 1.2.1
+## Bugfixes
+- BOM in French language files lead to blank page in admin area (see [#82](https://github.com/flatpressblog/flatpress/issues/82))
+## Translations
+- Added Dutch language pack by Macmee
+
+
 # 2021-03-20: [FlatPress 1.2 "Legato"](https://github.com/flatpressblog/flatpress/releases/tag/1.2)
 ## General
 - FlatPress now runs smoothly with PHP 7.4 and PHP 8
@@ -36,7 +43,7 @@
 - Added Japanese Language Pack by [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
 - Added Brazilian Portuguese language pack by randy
 - Added Italian language pack by Giacomo Margarito
-- Added Spansh language pack by karelv
+- Added Spanish language pack by karelv
 - Reworked German language pack by Detlef 
 
 # 2019-02-22: [FlatPress 1.1 "Da capo"](https://github.com/flatpressblog/flatpress/releases/tag/1.1)

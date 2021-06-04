@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	$lang['admin']['static']['submenu'] = array(
 		'list'		=> 'G&eacute;rer pages statiques',
