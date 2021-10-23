@@ -120,10 +120,9 @@ if (isset($_SERVER ['HTTPS'])) {
 }
 $serverport = "false";
 // Unterstützung für Apache und IIS
+ini_set('session.cookie_secure', 1);
 if (isset($_SERVER ['HTTPS']) && ($_SERVER ['HTTPS'] == '1' || strtolower($_SERVER ['HTTPS']) == 'on')) {
 	$serverport = "https://";
-	// Uses a secure connection (HTTPS) if possible
-	ini_set('session.cookie_secure', 1);
 } else {
 	$serverport = "http://";
 }
