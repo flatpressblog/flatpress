@@ -10,6 +10,11 @@ Installing and running FlatPress is really easy:
 - Browse to your web server, run simple FlatPress installer
 - Enjoy blogging with FlatPress!
 
+## Help and support
+Visit our [wiki](https://wiki.flatpress.org) to learn everything about blogging with FlatPress, how to work with themes and plugins and where to find them. The wiki also has the [general FAQ](https://wiki.flatpress.org/doc:faq) and the [tech FAQ](https://wiki.flatpress.org/doc:techfaq).
+
+Ask your questions, show off your FlatPress blog and meet fellow FlatPressers at the [support forum](https://forum.flatpress.org).
+
 ## Requirements
 FlatPress runs on any web server (e.g. Apache or IIS) with PHP 5.6 or higher. Since all data is stored in files, no database is needed.
 
