@@ -4,19 +4,19 @@
 <dl class="option-set">
 	<dt>{$plang.apply_to}</dt>
 	<dd>
-		<input type="radio" name="apply_to" id="all_entries" value="all_entries"{if $policy.is_all} checked="checked"{/if} />
+		<input type="radio" name="apply_to" id="all_entries" value="all_entries"{if isset($policy.is_all) and $policy.is_all} checked="checked"{/if} />
 		<label for="all_entries">{$plang.all_entries}</label><br />
-		<input type="radio" name="apply_to" id="some_entries" value="some_entries"{if !empty($policy.entry)} checked="checked"{/if} />
+		<input type="radio" name="apply_to" id="some_entries" value="some_entries"{if isset($policy.entry) and !empty($policy.entry)} checked="checked"{/if} />
 		<label for="some_entries">{$plang.some_entries}</label><br />
-		<input type="radio" name="apply_to" id="properties" value="properties"{if !$polnew && !$policy.is_all & empty($policy.entry)} checked="checked"{/if} />
+		<input type="radio" name="apply_to" id="properties" value="properties"{if !$polnew && isset($policy.is_all) & !$policy.is_all & isset($policy.entry) & empty($policy.entry)} checked="checked"{/if} />
 		<label for="properties">{$plang.properties}</label><br />
 	</dd>
 	<dt><label for="behavoir">{$plang.behavoir}</label></dt>
 	<dd>
 		<select name="behavoir" id="behavoir">
-			<option value="1"{if $policy.do==1} selected="selected"{/if}>{$plang.allow}</option>
-			<option value="0"{if $policy.do==0 && !$polnew} selected="selected"{/if}>{$plang.approvation}</option>
-			<option value="-1"{if $policy.do==-1} selected="selected"{/if}>{$plang.block}</option>
+			<option value="1"{if isset($policy.do) and $policy.do==1} selected="selected"{/if}>{$plang.allow}</option>
+			<option value="0"{if isset($policy.do) and $policy.do==0 && !$polnew} selected="selected"{/if}>{$plang.approvation}</option>
+			<option value="-1"{if isset($policy.do) and $policy.do==-1} selected="selected"{/if}>{$plang.block}</option>
 		</select>
 	</dd>
 </dl>
@@ -27,16 +27,16 @@
 <p>{$plang.se_desc|sprintf:"<i>`$plang.some_entries`</i>"}</p>
 <p>{$plang.se_fill}</p>
 
-{if !empty($policy.entry) && !is_array($policy.entry)}
+{if isset($policy.entry) && !empty($policy.entry) && !is_array($policy.entry)}
 {assign var="parity" value=1}
 <input type="text" name="entries[]" value="{$policy.entry|wp_specialchars}" />
-{elseif !empty($policy.entry)}
+{elseif isset($policy.entry) && !empty($policy.entry)}
 {foreach name=entries_foreach from=$policy.entry item=entry}
 <input type="text" name="entries[]" value="{$entry|wp_specialchars}" /> {if ($smarty.foreach.entries_foreach.iteration % 2)==0}<br />{/if}
 {if ($smarty.foreach.entries_foreach.iteration % 2)==1 && $smarty.foreach.entries_foreach.last}{assign var="parity" value=1}{/if}
 {/foreach}
 {/if}
-{if $parity==1} <input type="text" name="entries[]" value="" /><br />{/if}
+{if isset($parity) && $parity==1} <input type="text" name="entries[]" value="" /><br />{/if}
 
 <input type="text" name="entries[]" value="" />
 <input type="text" name="entries[]" value="" /><br />
@@ -52,7 +52,11 @@
 <!-- That isn't the real id but... -->
 <fieldset id="admin-entry-categories">
 <legend>{$plang.categories}</legend>
+{if isset($policy.categories)}
 {list_categories type=form selected=$policy.categories}
+{else}
+{list_categories type=form}
+{/if}
 </fieldset>
 
 <fieldset>
