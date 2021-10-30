@@ -9,13 +9,13 @@
 <dl class="option-set">
 	<dt><label for="log_all">{$plang.log_all}</label></dt>
 	<dd>
-		<input type="checkbox" name="log_all" id="log_all"{if $pl_conf.log_all} checked="checked"{/if} /><br />
+		<input type="checkbox" name="log_all" id="log_all"{if isset($pl_conf.log_all) and $pl_conf.log_all} checked="checked"{/if} /><br />
 		{$plang.log_all_long}
 	</dd>
 
 	<dt><label for="email_alert">{$plang.email_alert}</label></dt>
 	<dd>
-		<input type="checkbox" name="email_alert" id="email_alert"{if $pl_conf.email_alert} checked="checked"{/if} /><br />
+		<input type="checkbox" name="email_alert" id="email_alert"{if isset($pl_conf.email_alert) and $pl_conf.email_alert} checked="checked"{/if} /><br />
 		{$plang.email_alert_long}
 	</dd>
 </dl>
@@ -24,7 +24,7 @@
 <dl class="option-set">
 	<dt><label for="akismet_check">{$plang.akismet_use}</label></dt>
 	<dd>
-		<input type="checkbox" name="akismet_check" id="akismet_check"{if $pl_conf.akismet_check} checked="checked"{/if} />
+		<input type="checkbox" name="akismet_check" id="akismet_check"{if isset($pl_conf.akismet_check) and $pl_conf.akismet_check} checked="checked"{/if} />
 	</dd>
 	<dt class="akismet_opts"><label for="akismet_key">{$plang.akismet_key}</label></dt>
 	<dd class="akismet_opts">
