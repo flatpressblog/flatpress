@@ -21,7 +21,7 @@ FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, ju
 - Easy to setup, easy to backup
 - Powerful __plugin system__ with widget support
 - Easy to customize with __themes__, powered by [Smarty](http://www.smarty.net/)
-- Comments function with spam protection
+- __Comments__ function with spam protection
 - __Free software__ under [GNU GPLv2](LICENSE.md)
 
 
