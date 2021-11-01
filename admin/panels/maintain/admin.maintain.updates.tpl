@@ -7,7 +7,7 @@
 		<h6 class="m-0 font-weight-bold text-primary">{$panelstrings.head}</h6>
 		</div>
 		<div class="card-body">
-			{$panelstrings.list|sprintf:$smarty.const.SYSTEM_VER:$sfweb:$updates.stable:$fpweb:$updates.unstable}	
+{$panelstrings.list|sprintf:$smarty.const.SYSTEM_VER:$sfweb:$stableversion:$fpweb:$unstableversion}
 		</div>
 	</div>
 	</div>
@@ -18,8 +18,8 @@
 			<h6 class="m-0 font-weight-bold text-primary">{$panelstrings.notice}</h6>
 			</div>
 			<div class="card-body">
-				{if $updates && $updates.notice}
-				<p>{$updates.notice}</p>
+				{if isset($panelstrings) && isset($panelstrings.notice)}
+				<p>{$notice}</p>
 				{else}
 					<p>{$panelstrings.no_news}</p>
 				{/if}
