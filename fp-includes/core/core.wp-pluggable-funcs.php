@@ -290,12 +290,12 @@ if (!function_exists('wp_setcookie')) :
 			$cookiehash = md5($siteurl);
 		}
 
-		setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $cookiepath);
-		setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $cookiepath);
+		setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $cookiepath, COOKIE_SECURE);
+		setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $cookiepath, COOKIE_SECURE);
 
 		if ($cookiepath != $sitecookiepath) {
-			setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $sitecookiepath);
-			setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $sitecookiepath);
+			setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $sitecookiepath, COOKIE_SECURE);
+			setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $sitecookiepath, COOKIE_SECURE);
 		}
 	}
 endif;
@@ -303,10 +303,10 @@ endif;
 if (!function_exists('wp_clearcookie')) :
 
 	function wp_clearcookie() {
-		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH);
-		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH);
-		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH);
-		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH);
+		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH, COOKIE_SECURE);
+		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH, COOKIE_SECURE);
+		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_SECURE);
+		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_SECURE);
 	}
 endif;
 

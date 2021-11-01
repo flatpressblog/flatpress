@@ -6,7 +6,7 @@ If you think someone's missing here, please let us know.
 ## The team
 FlatPress was initially developed by [Edoardo Vacchi (NoWhereMan)](https://github.com/evacchi "github.com/evacchi"). Edoardo was supported by [Hydra](http://hydra.clans.it/ "hydra.clans.it"), [drudo](https://drudotec.wordpress.com/ "drudotec.wordpress.com"), giulio, [alcor](http://alcor.altervista.org/ "alcor.altervista.org"), and [Tychondriax](http://tychondriax.altervista.org/blog/ "tychondriax.altervista.org").<br>
 <br>
-Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://arvidzimmermann.de "arvidzimmermann.de").
+Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/azett "github.com/azett").
 
 ## Coding
 - Piero VDFN introduced the plugins Comment Center, jQuery, and LightBox2.

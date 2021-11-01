@@ -35,14 +35,12 @@ function plugin_lastcomments_widget() {
 
 	if ($count = count($list)) {
 		while ($arr = array_pop($list)) {
-			theme_comments_filters($arr, $id);
-
 			$q = new FPDB_Query(array(
 				'id' => $arr ['entry']
 			), null);
 			// first element of the array is dropped, as it is the ID, which
 			// we already know
-			@list (, $entry) = $q->getEntry($query);
+			@list (, $entry) = $q->getEntry();
 
 			if (!$entry) {
 				$count--;

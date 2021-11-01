@@ -52,7 +52,11 @@
 <!-- That isn't the real id but... -->
 <fieldset id="admin-entry-categories">
 <legend>{$plang.categories}</legend>
+{if isset($policy.categories)}
 {list_categories type=form selected=$policy.categories}
+{else}
+{list_categories type=form}
+{/if}
 </fieldset>
 
 <fieldset>

@@ -25,7 +25,7 @@
 {/if}
 </td>
 <td>{if isset($comm.url)}<a href="{$comm.url|wp_specialchars}">{$comm.name|wp_specialchars}</a>{else}{$comm.name|wp_specialchars}{/if}</td>
-<td><a href="mailto:{$comm.email|wp_specialchars}">{$comm.email|wp_specialchars}</a></td>
+<td>{if isset($comm.email)}<a href="mailto:{$comm.email|wp_specialchars}">{$comm.email|wp_specialchars}</a>{else} {/if}</td>
 {* a bit hackish: {$comm.ip-adress} would lead to $this->_tpl_vars['comm']['ip']-$this->_tpl_vars['ddress']; *}
 {assign var=ipadress value="ip-address"}
 <td>{$comm.$ipadress}</td>
