@@ -5,7 +5,7 @@
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
- * Description: Provides <a href="http://jquery.com/" title="jQuery">jQuery</a> locally. Part of the standard distribution.
+ * Description: Provides <a href="https://jquery.com/" title="jQuery">jQuery</a> and <a href="https://jqueryui.com/" title="jQueryUI">jQueryUI</a> locally. Part of the standard distribution.
  */
 add_action('wp_head', 'plugin_jquery_head', 0);
 
