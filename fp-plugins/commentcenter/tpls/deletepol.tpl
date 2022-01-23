@@ -1,9 +1,9 @@
-{include file=plugin:commentcenter/header}
+{include file="plugin:commentcenter/header"}
 <h2>{$plang.del_policies}</h2>
 <p>{if $single}{$plang.del_descs}{else}{$plang.del_descm}{/if}</p>
 {html_form}
 {assign var="delete" value=true}
-{include file=plugin:commentcenter/listpolicies}
+{include file="plugin:commentcenter/listpolicies"}
 <p>{$plang.sure}</p>
 <div class="buttonbar">
 {if $single}

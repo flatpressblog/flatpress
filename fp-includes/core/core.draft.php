@@ -197,7 +197,7 @@ function smarty_block_draft($params, $content, &$smarty, &$repeat) {
 	return $content;
 }
 
-$smarty->register_block('draft_block', 'smarty_block_draftlist');
-$smarty->register_block('draft', 'smarty_block_draft');
+$smarty->registerPlugin('block', 'draft_block', 'smarty_block_draftlist');
+$smarty->registerPlugin('block', 'draft', 'smarty_block_draft');
 
 ?>

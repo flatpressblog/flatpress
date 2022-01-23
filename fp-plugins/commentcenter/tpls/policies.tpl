@@ -1,8 +1,8 @@
-{include file=plugin:commentcenter/header}
+{include file="plugin:commentcenter/header"}
 <h2>{$plang.policies}</h2>
 <p>{$plang.desc_pol}</p>
 {html_form}
-{include file=plugin:commentcenter/listpolicies}
+{include file="plugin:commentcenter/listpolicies"}
 <div class="commentcenter_select" style="display: none;">
 	<a href="#" rel="selectAll[td_select]">{$plang.select_all}</a> 
 	<a href="#" rel="deselectAll[td_select]">{$plang.deselect_all}</a>

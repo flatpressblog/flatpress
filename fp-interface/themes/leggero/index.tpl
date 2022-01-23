@@ -1,4 +1,4 @@
-{include file=header.tpl}
+{include file="header.tpl"}
 
 		<div id="main">
 		
@@ -18,6 +18,6 @@
 		</div>
 			
 
-		{include file=widgets.tpl}
+		{include file="widgets.tpl"}
 				
-{include file=footer.tpl}
+{include file="footer.tpl"}

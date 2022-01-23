@@ -1,4 +1,4 @@
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 <form id="search" method="get" action="{$smarty.const.BLOG_BASEURL}search.php" enctype="multipart/form-data">
 		
 	<fieldset><legend>{$lang.search.fset1}</legend>

@@ -1,4 +1,4 @@
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 
 <div id="current-theme">
 	<h2>{$panelstrings.head1}</h2>

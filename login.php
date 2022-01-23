@@ -4,8 +4,6 @@
 require_once 'defaults.php';
 require_once (INCLUDES_DIR . 'includes.php');
 
-require (SMARTY_DIR . 'SmartyValidate.class.php');
-
 $tpl = 'default.tpl';
 
 function login_validate() {

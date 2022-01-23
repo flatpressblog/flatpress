@@ -1,7 +1,7 @@
 <h2>{$plang.head}</h2>
 <p>{$plang.desc1}</p>
 
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 
 {html_form class=option-set}
 <h2>{$plang.editing}</h2>

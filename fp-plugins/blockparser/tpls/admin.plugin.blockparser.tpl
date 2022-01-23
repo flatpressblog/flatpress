@@ -1,7 +1,7 @@
 <h2>{$plang.head}</h2>
 <p>{$plang.description}</p>
 
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 {static_block}
 
 <form method="post"

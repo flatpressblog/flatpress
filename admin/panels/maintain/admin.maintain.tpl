@@ -1,5 +1,5 @@
 <h2>{$panelstrings.head}</h2>
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 {if isset($files)}
 <p>{$panelstrings.chmod_info}</p>
 <p><a href="admin.php?p=maintain">{$panelstrings.opt0}</a></p>

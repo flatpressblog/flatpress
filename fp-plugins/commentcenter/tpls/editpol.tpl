@@ -1,4 +1,4 @@
-{include file=plugin:commentcenter/header}
+{include file="plugin:commentcenter/header"}
 {html_form}
 <h2>{if $polnew}{$plang.newpol}{else}{$plang.editpol}{/if}</h2>
 <dl class="option-set">

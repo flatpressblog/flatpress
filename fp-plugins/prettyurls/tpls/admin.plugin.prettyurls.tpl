@@ -1,6 +1,6 @@
 <h2>{$plang.head}</h2>
 
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 
 	
 {html_form}

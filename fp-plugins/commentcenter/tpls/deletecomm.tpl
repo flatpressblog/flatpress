@@ -1,10 +1,10 @@
-{include file=plugin:commentcenter/header}
+{include file="plugin:commentcenter/header"}
 <h2>{$plang.delc_title}</h2>
 <p>{if $single}{$plang.delc_descs}{else}{$plang.delc_descm}{/if}</p>
 {html_form}
 {assign var="delete" value=true}
 {assign var="fetch" value="del"}
-{include file=plugin:commentcenter/listcomments}
+{include file="plugin:commentcenter/listcomments"}
 <p>{$plang.sure}</p>
 <div class="buttonbar">
 {if $is_managing}

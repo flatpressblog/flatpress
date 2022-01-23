@@ -10,7 +10,7 @@
 				{$subject|tag:the_title}
 				</a>
 				</h3>
-				{include file=shared:entryadminctrls.tpl}
+				{include file="shared:entryadminctrls.tpl"}
 				
 				<span itemprop="articleBody">
 				{$content|tag:the_content}

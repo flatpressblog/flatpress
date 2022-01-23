@@ -1,4 +1,4 @@
-{include file=cpheader.tpl}
+{include file="cpheader.tpl"}
 
 		<div id="cpmain">
 			
@@ -18,7 +18,7 @@
 		
 		</div>
 	
-{include file=footer.tpl}
+{include file="footer.tpl"}
 
 
 

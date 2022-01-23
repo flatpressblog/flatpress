@@ -838,9 +838,9 @@ function smarty_block_entry($params, $content, &$smarty, &$repeat) {
 		}
 
 		foreach ($entry as $k => $v)
-			$smarty->assign_by_ref($k, $entry [$k]);
+			$smarty->assignByRef($k, $entry [$k]);
 
-		$smarty->assign_by_ref('id', $id);
+		$smarty->assignByRef('id', $id);
 
 		if (array_key_exists('categories', $entry)) {
 			$smarty->assign('entry_commslock', in_array('commslock', $entry ['categories']));
@@ -880,7 +880,7 @@ function smarty_block_comment($params, $content, &$smarty, &$repeat) {
 
 		foreach ($comment as $k => $v) {
 			$kk = str_replace('-', '_', $k);
-			$smarty->assign_by_ref($kk, $comment [$k]);
+			$smarty->assignByRef($kk, $comment [$k]);
 		}
 
 		if (THEME_LEGACY_MODE) {
@@ -945,16 +945,16 @@ function smarty_function_prevpage($params) {
 	return "<div class=\"alignleft\"><a href=\"$link\">$caption</a></div>";
 }
 
-$_FP_SMARTY->register_block('comment', 'smarty_block_comment');
-$_FP_SMARTY->register_block('comments', 'smarty_block_comments');
-$_FP_SMARTY->register_block('comment_block', 'smarty_block_comments');
+$_FP_SMARTY->registerPlugin('block', 'comment', 'smarty_block_comment');
+$_FP_SMARTY->registerPlugin('block', 'comments', 'smarty_block_comments');
+$_FP_SMARTY->registerPlugin('block', 'comment_block', 'smarty_block_comments');
 
-$_FP_SMARTY->register_block('entries', 'smarty_block_entries');
-$_FP_SMARTY->register_block('entry_block', 'smarty_block_entries');
+$_FP_SMARTY->registerPlugin('block', 'entries', 'smarty_block_entries');
+$_FP_SMARTY->registerPlugin('block', 'entry_block', 'smarty_block_entries');
 
-$_FP_SMARTY->register_block('entry', 'smarty_block_entry');
+$_FP_SMARTY->registerPlugin('block', 'entry', 'smarty_block_entry');
 
-$_FP_SMARTY->register_function('nextpage', 'smarty_function_nextpage');
-$_FP_SMARTY->register_function('prevpage', 'smarty_function_prevpage');
+$_FP_SMARTY->registerPlugin('function', 'nextpage', 'smarty_function_nextpage');
+$_FP_SMARTY->registerPlugin('function', 'prevpage', 'smarty_function_prevpage');
 
 ?>

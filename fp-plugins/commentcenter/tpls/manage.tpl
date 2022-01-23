@@ -1,4 +1,4 @@
-{include file=plugin:commentcenter/header}
+{include file="plugin:commentcenter/header"}
 {html_form}
 <h2>{$plang.man_searcht}</h2>
 <p>{$plang.man_searchd}</p>
@@ -11,7 +11,7 @@
 {if !empty($entry_id)}
 {assign var="titleok" value=$entry_id|idToSubject|wp_specialchars}
 <h2>{$plang.man_commfor|sprintf:$titleok}</h2>
-{include file=plugin:commentcenter/listcomments}
+{include file="plugin:commentcenter/listcomments"}
 <input type="hidden" name="entry_hid" value="{$entry_id}" />
 <div class="buttonbar">
 	{html_submit name="mdelcomm_2" id="mdelcomm_2" value=$plang.app_dselected}

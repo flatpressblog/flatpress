@@ -22,7 +22,7 @@
 
 
 
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 
 <p>{$panelstrings.descr}</p>
 

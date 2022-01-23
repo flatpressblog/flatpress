@@ -137,6 +137,6 @@ function smarty_block_widgets($params, $content, &$smarty, &$repeat) {
 	return $content;
 }
 
-$smarty->register_block('widgets', 'smarty_block_widgets');
+$smarty->registerPlugin('block', 'widgets', 'smarty_block_widgets');
 
 ?>

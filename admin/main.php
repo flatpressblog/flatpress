@@ -3,7 +3,6 @@
 // aggiungere nuovo protocollo per template
 include (ADMIN_DIR . 'panels/admin.defaultpanels.php');
 include (ADMIN_DIR . 'includes/panels.prototypes.php');
-require (SMARTY_DIR . 'SmartyValidate.class.php');
 
 utils_nocache_headers();
 
@@ -98,8 +97,8 @@ function main() {
 		utils_redirect($url);
 	}
 
-	$smarty->register_modifier('action_link', 'admin_filter_action');
-	$smarty->register_modifier('cmd_link', 'admin_filter_command');
+	$smarty->registerPlugin('modifier', 'action_link', 'admin_filter_action');
+	$smarty->registerPlugin('modifier', 'cmd_link', 'admin_filter_command');
 }
 
 // smarty tag
@@ -139,7 +138,7 @@ function admin_panel_title($title, $sep) {
 	return $title;
 }
 
-function showcontrolpanel($params, &$smarty) {
+function showcontrolpanel($params, $smarty) {
 	$smarty->display(ABS_PATH . ADMIN_DIR . 'main.tpl');
 }
 
@@ -163,12 +162,12 @@ system_init();
 main();
 admin_panelstrings('admin.' . ADMIN_PANEL);
 theme_init($smarty);
-$smarty->register_function('controlpanel', 'showcontrolpanel');
+$smarty->registerPlugin('function', 'controlpanel', 'showcontrolpanel');
 
 $v = $lang ['admin'] [$panel] [$action];
 
-$smarty->assign_by_ref('panelstrings', $v);
-$smarty->assign_by_ref('plang', $v);
+$smarty->assignByRef('panelstrings', $v);
+$smarty->assignByRef('plang', $v);
 
 if (isset($_GET ['mod'])) {
 

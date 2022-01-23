@@ -1,5 +1,5 @@
 <h2>{$panelstrings.head}</h2>
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 
 
 {$panelstrings.descr}

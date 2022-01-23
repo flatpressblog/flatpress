@@ -182,7 +182,7 @@ function get_wp_head() {
 		do_action('admin_head');
 }
 
-$smarty->register_function('header', 'get_wp_head');
+$smarty->registerPlugin('function', 'header', 'get_wp_head');
 
 function theme_wp_footer() {
 	global $fp_config;
@@ -195,7 +195,7 @@ function get_wp_footer() {
 	do_action('wp_footer');
 }
 
-$smarty->register_function('footer', 'get_wp_footer');
+$smarty->registerPlugin('function', 'footer', 'get_wp_footer');
 
 function theme_charset() {
 	global $fp_config;
@@ -250,20 +250,20 @@ function theme_init(&$smarty) { /* &$mode */
 
 	$smarty->assign('pagetitle', apply_filters('wp_title', "", '&laquo;'));
 
-	$smarty->assign_by_ref('fp_config', $fp_config);
+	$smarty->assignByRef('fp_config', $fp_config);
 
-	$smarty->register_modifier('tag', 'theme_apply_filters_wrapper');
-	$smarty->register_modifier('link', 'theme_apply_filters_link_wrapper');
-	$smarty->register_modifier('filed', 'theme_entry_categories');
+	$smarty->registerPlugin('modifier', 'tag', 'theme_apply_filters_wrapper');
+	$smarty->registerPlugin('modifier', 'link', 'theme_apply_filters_link_wrapper');
+	$smarty->registerPlugin('modifier', 'filed', 'theme_entry_categories');
 
 	if (!isset($fp_params ['feed']) || empty($fp_params ['feed'])) {
-		$smarty->register_modifier('date_format_daily', 'theme_smarty_modifier_date_format_daily');
-		$smarty->register_modifier('date_format', 'theme_date_format');
+		$smarty->registerPlugin('modifier', 'date_format_daily', 'theme_smarty_modifier_date_format_daily');
+		$smarty->registerPlugin('modifier', 'date_format', 'theme_date_format');
 	}
 
-	$smarty->register_modifier('date_rfc3339', 'theme_smarty_modifier_date_rfc3339');
+	$smarty->registerPlugin('modifier', 'date_rfc3339', 'theme_smarty_modifier_date_rfc3339');
 
-	$smarty->register_function('action', 'theme_smarty_function_action');
+	$smarty->registerPlugin('function', 'action', 'theme_smarty_function_action');
 
 	do_action('theme_init');
 }
@@ -272,7 +272,7 @@ function smarty_block_page($params, $content) {
 	return $content;
 }
 
-$smarty->register_block('page', 'smarty_block_page');
+$smarty->registerPlugin('block', 'page', 'smarty_block_page');
 
 function theme_apply_filters_wrapper($var, $hook) {
 	$args = func_get_args();
@@ -298,7 +298,7 @@ function theme_apply_filters_link_wrapper($var, $hook) {
 	return call_user_func_array('apply_filters', $args);
 }
 
-function theme_smarty_function_action($params, &$smarty) {
+function theme_smarty_function_action($params, $smarty) {
 	if (isset($params ['hook']))
 		do_action($params ['hook']);
 }

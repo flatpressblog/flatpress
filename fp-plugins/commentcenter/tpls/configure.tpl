@@ -1,4 +1,4 @@
-{include file=plugin:commentcenter/header}
+{include file="plugin:commentcenter/header"}
 {html_form}
 <h2>{$plang.configure}</h2>
 <p>{$plang.desc_conf}</p>

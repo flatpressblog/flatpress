@@ -3,7 +3,7 @@
 {entry}
 
 <h2>{$panelstrings.head} <a href="admin.php?p=entry&amp;action=write&amp;entry={$id}">{$subject}</a></h2>
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 
 <p>{$panelstrings.descr}</p>
 

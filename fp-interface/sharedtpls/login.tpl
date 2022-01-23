@@ -1,4 +1,4 @@
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 
 <form id="login" method="post" action="{$smarty.const.BLOG_BASEURL}login.php" enctype="multipart/form-data">
 	<fieldset><legend>{$lang.login.fieldset1}</legend>

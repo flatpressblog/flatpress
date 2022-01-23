@@ -128,7 +128,7 @@ class Abstract_LayoutDialog extends LayoutDefault {
 	}
 
 	function display() {
-		$this->smarty->register_block('page', array(
+		$this->smarty->registerPlugin('block', 'pagecontent', array(
 			&$this,
 			'pagecontent'
 		));

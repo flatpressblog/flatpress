@@ -1,7 +1,6 @@
 <?php
 require_once 'defaults.php';
 require_once (INCLUDES_DIR . 'includes.php');
-require SMARTY_DIR . 'SmartyValidate.class.php';
 
 function contact_form_validate() {
 	$arr ['version'] = system_ver();
@@ -27,7 +26,7 @@ function contact_form() {
 	if (empty($_POST)) {
 
 		$smarty->assign('success', system_geterr('contact'));
-		$smarty->assign_by_ref('panelstrings', $lang ['contact']);
+		$smarty->assignByRef('panelstrings', $lang ['contact']);
 
 		// new form, we (re)set the session data
 		SmartyValidate::connect($smarty, true);
