@@ -1,39 +1,25 @@
 <?php
-/*
- * Smarty plugin
- * ------------------------------------------------------------- 
- * File:     resource.shared.php
- * Type:     shared tpls
- * Name:     shared
- * Purpose:  convenient way to call stored tpls in SHARED_TPLS
- * -------------------------------------------------------------
+
+/**
+ * Resoure plugin that conveniently allows to include templates from the shared templates folder via {include file="shared:example.tpl"}
+ *
+ * @author FlatPress
+ * @see https://www.smarty.net/docs/en/plugins.resources.tpl
  */
-function smarty_resource_shared_source($tpl_name, &$tpl_source, &$smarty)
-{
-    if ($tpl_source = io_load_file(SHARED_TPLS . $tpl_name)) {
-        return true;
-    } else {
-        return false;
-    }
-}
+class Smarty_Resource_Shared extends Smarty_Resource_Custom {
 
-function smarty_resource_shared_timestamp($tpl_name, &$tpl_timestamp, &$smarty)
-{
-    if (file_exists(SHARED_TPLS . $tpl_name)) {
-        $tpl_timestamp = filemtime(SHARED_TPLS . $tpl_name);
-        return true;
-    } else {
-        return false;
-    }
-}
+	/**
+	 *
+	 * {@inheritdoc}
+	 * @see Smarty_Resource_Custom::fetch()
+	 */
+	protected function fetch($name, &$source, &$mtime) {
+		if ($source = io_load_file(SHARED_TPLS . $name)) {
+			$mtime = filemtime(SHARED_TPLS . $name);
+		} else {
+			$source = null;
+			$mtime = null;
+		}
+	}
 
-function smarty_resource_shared_secure($tpl_name, &$smarty)
-{
-    return true;
 }
-
-function smarty_resource_shared_trusted($tpl_name, &$smarty)
-{
-    
-}
-?> 
