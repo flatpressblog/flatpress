@@ -66,7 +66,7 @@ class footnotes_class {
 function plugin_footnotes_filter($text) {
 	global $smarty;
 
-	$footnotes_obj = new footnotes_class($id = $smarty->get_template_vars('id'));
+	$footnotes_obj = new footnotes_class($id = $smarty->getTemplateVars('id'));
 
 	// *STRONG* emphasis
 	$text = preg_replace('|(?<!\S)\*(?=\S) (?! \*) (.+?) (?<=\S) \*(?!>\w)|xs', '<strong>$1</strong>', $text);

@@ -80,8 +80,8 @@ function main() {
 	if ($retval > 0) { // if has REDIRECT option
 	                   // clear postdata by a redirect
 
-		sess_add("success_{$panel}", $smarty->get_template_vars('success'));
-		$smarty->get_template_vars('success');
+		sess_add("success_{$panel}", $smarty->getTemplateVars('success'));
+		$smarty->getTemplateVars('success');
 
 		$to_action = $retval > 1 ? ('&action=' . $action) : '';
 		$with_mod = isset($_GET ['mod']) ? ('&mod=' . $_GET ['mod']) : '';
@@ -176,7 +176,7 @@ if (isset($_GET ['mod'])) {
 			$smarty->display(ABS_PATH . ADMIN_DIR . 'admin-inline.tpl');
 			break;
 		case 'ajax':
-			echo $smarty->get_template_vars('success');
+			echo $smarty->getTemplateVars('success');
 	}
 } else {
 	$smarty->display('admin.tpl');

@@ -101,8 +101,8 @@ function smarty_block_static($params, $content, &$smarty, &$repeat) {
 		'id' => ''
 	));
 
-	if ($arr = $smarty->get_template_vars('static_page')) {
-		$smarty->assign('id', $smarty->get_template_vars('static_id'));
+	if ($arr = $smarty->getTemplateVars('static_page')) {
+		$smarty->assign('id', $smarty->getTemplateVars('static_id'));
 		if (THEME_LEGACY_MODE)
 			theme_entry_filters($arr);
 		$smarty->assign($arr);
@@ -119,7 +119,7 @@ function smarty_block_static($params, $content, &$smarty, &$repeat) {
 		return $content;
 	}
 
-	$list = $smarty->get_template_vars('statics');
+	$list = $smarty->getTemplateVars('statics');
 
 	if (isset($list [$pointer])) {
 		// foreach ($entry as $k => $val)

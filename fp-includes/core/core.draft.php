@@ -177,7 +177,7 @@ function smarty_block_draft($params, $content, &$smarty, &$repeat) {
 		'version' => '',
 		'id' => ''
 	));
-	$arr = & $smarty->get_template_vars('draft_list');
+	$arr = & $smarty->getTemplateVars('draft_list');
 
 	$id = $subject = null;
 	if ($arr) {

@@ -35,6 +35,7 @@
 			<p>
 			<label for="content">{$panelstrings.content}</label>
 			</p>
+			{* FIXME AZI: Smarty compiler error "unknown tag 'toolbar'". How did this ever work? Should that be better {include file='plugin:bbcode/toolbar'}? *}
 			{toolbar}
 			<p>
 			<textarea name="content" class="{$class}" 

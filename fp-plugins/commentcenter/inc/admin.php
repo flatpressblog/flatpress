@@ -135,9 +135,9 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	function _redirect($cmd, $cmdval = 1, $nosuccess = false) {
 		global $panel;
 		$smarty = &$this->smarty;
-		sess_add("success_{$panel}", $smarty->get_template_vars('success'));
+		sess_add("success_{$panel}", $smarty->getTemplateVars('success'));
 
-		$action_url = $smarty->get_template_vars('action_url');
+		$action_url = $smarty->getTemplateVars('action_url');
 		$url = admin_filter_command($action_url, $cmd, $cmdval);
 		$url = html_entity_decode($url);
 		$url = substr($url, strlen(BLOG_BASEURL));

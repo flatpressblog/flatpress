@@ -20,7 +20,7 @@
 // ---------------------------------------------------------------------
 function smarty_function_flag_classes($params, &$smarty) {
 	$flags = entry_flags_get();
-	($active_flags = array_intersect($smarty->get_template_vars('categories'), $flags));
+	($active_flags = array_intersect($smarty->getTemplateVars('categories'), $flags));
 	return implode(' ', $active_flags);
 }
 
