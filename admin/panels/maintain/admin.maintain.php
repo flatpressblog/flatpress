@@ -166,8 +166,8 @@ class admin_maintain_default extends AdminPanelAction {
 					unset($tpldel);
 					$this->smarty->cache_dir = CACHE_DIR . 'cache/';
 					$this->smarty->caching = 0;
-					$this->smarty->clear_all_cache();
-					$this->smarty->clear_compiled_tpl();
+					$this->smarty->clearAllCache();
+					$this->smarty->clearCompiledTemplate();
 					$this->smarty->compile_check = true;
 					$this->smarty->force_compile = true;
 					$this->smarty->assign('success', 1);
