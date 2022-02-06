@@ -1,9 +1,9 @@
 <link rel="stylesheet" type="text/css" href="{$mmurl}res/style.css" />
 <h2>{$plang.head}</h2>
 <p>{$plang.description}</p>
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 
-{html_form class=option-set}
+{html_form class="option-set"}
 {$plang.page}: {$paginator.current} /  {$paginator.total}</br>
 {if $currentgallery!=""}<h3>gallery '{$currentgallery}'</h3>{/if}
 <table class="entrylist">
