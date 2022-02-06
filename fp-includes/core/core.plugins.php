@@ -213,14 +213,13 @@ function plugin_getinfo($plugin) {
 		$author = '<a href="' . trim($author_uri [1]) . '">' . trim($author_name [1]) . '</a>';
 	}
 
-	global $smarty;
-	$smarty->assign(array(
+	return array(
 		'name' => $name,
 		'title' => $plugin,
 		'description' => $description,
 		'author' => $author,
 		'version' => $version
-	));
+	);
 }
 
 $_FP_SMARTY->registerPlugin('function', 'plugin_getdir', 'smarty_function_plugin_getdir');

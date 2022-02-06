@@ -19,26 +19,26 @@
 	</thead>
 	<tbody id="plugin-table-body">
 	{foreach from=$pluginlist item=plugin}
-	{assign var=inarr value=$plugin|in_array:$enabledlist}
-	{$plugin|plugin_getinfo}
-	<tr{if $inarr} class="enabled" {/if}>
-		<td> {$name} </td>
-		<td class="main-cell"> {$description} </td>
-		<td> {$author} </td>
-		<td> {$version} </td>
-		<td> {if $inarr} 
-			<a class="link-disable"
-			href="{$action_url|cmd_link:disable:$plugin}"> 
-				{$panelstrings.disable}
-			</a> 
-			{else}
-			<a class="link-enable" 
-			href="{$action_url|cmd_link:enable:$plugin}"> 
-				{$panelstrings.enable}
-			</a> 
-			{/if}
-		</td>
-	</tr>
+		{assign var=inarr value=$plugin|in_array:$enabledlist}
+		{assign var=plugininfo value=$plugin|plugin_getinfo}
+		<tr{if $inarr} class="enabled" {/if}>
+			<td> {$plugininfo.name} </td>
+			<td class="main-cell"> {$plugininfo.description} </td>
+			<td> {$plugininfo.author} </td>
+			<td> {$plugininfo.version} </td>
+			<td> {if $inarr} 
+				<a class="link-disable"
+				href="{$action_url|cmd_link:disable:$plugin}"> 
+					{$panelstrings.disable}
+				</a> 
+				{else}
+				<a class="link-enable" 
+				href="{$action_url|cmd_link:enable:$plugin}"> 
+					{$panelstrings.enable}
+				</a> 
+				{/if}
+			</td>
+		</tr>
 	{/foreach}
 	</tbody>
 	</table>
