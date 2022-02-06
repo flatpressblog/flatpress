@@ -2,7 +2,7 @@
 
 {include file="shared:errorlist.tpl"}
 
-{html_form class=option-set}
+{html_form class="option-set"}
 
 <div class="option-list">
 <p>{$plang.desc1|wptexturize}</p>

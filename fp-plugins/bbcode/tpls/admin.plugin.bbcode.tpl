@@ -3,7 +3,7 @@
 
 {include file="shared:errorlist.tpl"}
 
-{html_form class=option-set}
+{html_form class="option-set"}
 <h2>{$plang.editing}</h2>
 
 <dl class="option-list">
