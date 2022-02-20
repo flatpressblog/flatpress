@@ -7,7 +7,7 @@
 {include file=plugin:commentcenter/listcomments}
 <p>{$plang.sure}</p>
 <div class="buttonbar">
-{if $is_managing}
+{if isset($is_managing) && $is_managing}
 <input type="hidden" name="entry" value="{$entry}" />
 {assign var="button_suff" value="_2"}
 {else}
