@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BBCode
- * Version: 1.6
+ * Version: 1.7
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -45,23 +45,27 @@ function plugin_bbcode_startup() {
 	add_filter('the_excerpt', 'BBCode', 1);
 	add_filter('the_content', 'plugin_bbcode_undoHtml', 30);
 	if (BBCODE_USE_EDITOR) {
+		// initialize the toolbar
 		add_filter('editor_toolbar', 'plugin_bbcode_toolbar');
+		plugin_bbcode_init_toolbar();
 	}
 	if (BBCODE_ENABLE_COMMENTS) {
 		add_filter('comment_text', 'plugin_bbcode_comment', 1);
 	}
 }
-plugin_bbcode_startup();
+// plugin_bbcode_startup();
+add_action('wp_head', 'plugin_bbcode_startup');
 
 /**
- * Adds special stlye definitions into the HTML head.
+ * Adds the plugin's CSS and JS to the HTML head.
  */
-function plugin_bbcode_style() {
+function plugin_bbcode_head() {
 	echo "	<!-- bbcode plugin -->\n";
 	echo '	<link rel="stylesheet" type="text/css" href="' . plugin_geturl('bbcode') . "res/bbcode.css\" />\n";
+	echo '	<script type="text/javascript" src="' . plugin_geturl('bbcode') . "res/editor.js\"></script>\n";
 	echo "	<!-- end of bbcode plugin -->\n";
 }
-add_action('wp_head', 'plugin_bbcode_style');
+add_action('wp_head', 'plugin_bbcode_head');
 
 /**
  * Remaps the URL so that there's no hint to your attachs/ directory.
@@ -760,7 +764,7 @@ function BBCode($text) {
  *
  * @global $_FP_SMARTY
  */
-function plugin_bbcode_toolbar() {
+function plugin_bbcode_init_toolbar() {
 	global $_FP_SMARTY;
 	// get all available images
 	$indexer = new fs_filelister(IMAGES_DIR);
@@ -776,13 +780,6 @@ function plugin_bbcode_toolbar() {
 	sort($attachslist);
 	array_unshift($attachslist, '--');
 	$_FP_SMARTY->assign('attachs_list', $attachslist);
-	// DMKE: does not work
-	// $bblang = lang_load('plugin:bbcode');
-	// $_FP_SMARTY->assign('bblang', $bblang);
-	echo "<!-- bbcode plugin -->\n";
-	echo '<script type="text/javascript" src="' . plugin_geturl('bbcode') . 'res/editor.js"></script>' . "\n";
-	echo $_FP_SMARTY->fetch('plugin:bbcode/toolbar');
-	echo "<!-- end of bbcode plugin -->\n";
 }
 
 /**
