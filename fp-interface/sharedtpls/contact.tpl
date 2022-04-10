@@ -54,8 +54,6 @@
 		<input type="text" name="url" id="url" class="{$class}" 
 		value="{$urlvalue|stripslashes|wp_specialchars:true}" /></p>
 		
-		{comment_form}
-		
 	</fieldset>
 	
 	<fieldset><legend>{$lang.contact.fieldset2}</legend>

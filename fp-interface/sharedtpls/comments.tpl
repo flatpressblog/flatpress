@@ -26,8 +26,6 @@
 		<p><label class="textlabel" for="url">{$lang.comments.www}</label><br />
 		<input type="text" {$error.url|notempty:'class="field-error"'} name="url" id="url" value="{$values.url|default:$cookie.url}" /></p>
 		
-		{comment_form}
-		
 	</fieldset>
 	{else}
 		<p><input type="hidden" name="name" id="name" value="{$flatpress.user.userid}" />
