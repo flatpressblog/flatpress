@@ -61,6 +61,9 @@
 		<label class="textlabel" for="url">{$lang.comments.www}</label>
 		</p>
 		
+		{* do action *}
+		{comment_form}
+		
 	</div>
 	
 	{/if}
