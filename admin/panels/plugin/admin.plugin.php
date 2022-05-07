@@ -16,7 +16,7 @@
 /*
  * function admin_plugin_adminheader() {
  * $f = ADMIN_DIR . '/panels/plugin/admin.plugin.js';
- * echo '<script src="$f" type="text/javascript"></script>
+ * echo '<script src="$f"></script>
  * ';
  *
  * }

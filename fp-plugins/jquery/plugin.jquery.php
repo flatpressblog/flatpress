@@ -13,8 +13,8 @@ function plugin_jquery_head() {
 	$pdir = plugin_geturl('jquery');
 	echo '
 		<!-- start of jsUtils -->
-		<script type="text/javascript" src="' . $pdir . 'res/jquery/3.6/jquery-3.6.0.min.js"></script>
-		<script type="text/javascript" src="' . $pdir . 'res/jqueryui/1.13.0/jquery-ui.min.js"></script>
+		<script src="' . $pdir . 'res/jquery/3.6/jquery-3.6.0.min.js"></script>
+		<script src="' . $pdir . 'res/jqueryui/1.13.0/jquery-ui.min.js"></script>
 		<!-- end of jsUtils -->';
 }
 
