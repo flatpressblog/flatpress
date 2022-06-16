@@ -4,8 +4,8 @@
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 
 ## Plugins
-- Gallery captions plugin added
-- PhotoSwipe plugin added
+- Gallery captions plugin added (see [#108](https://github.com/flatpressblog/flatpress/issues/108))
+- PhotoSwipe plugin added (see [#109](https://github.com/flatpressblog/flatpress/issues/109))
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6) and jQueryUI (1.12.1 => 1.13)
 
 ## Bugfixes
