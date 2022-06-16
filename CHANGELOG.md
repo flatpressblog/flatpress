@@ -1,3 +1,23 @@
+# Under development: [FlatPress 1.3](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
+## General
+- Added [SECURITY.md](https://github.com/flatpressblog/flatpress/blob/master/SECURITY.md)
+- [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
+
+## Plugins
+- Gallery captions plugin added
+- PhotoSwipe plugin added
+- jQuery plugin: Updated jQuery (3.5.1 => 3.6) and jQueryUI (1.12.1 => 1.13)
+
+## Bugfixes
+- Comment Center config page threw errors (see [#90](https://github.com/flatpressblog/flatpress/issues/90))
+- Fixed glitches in Spanish an Portuguese language files
+- Invalid HTML output fixed (see [#106](https://github.com/flatpressblog/flatpress/issues/106))
+- CSS of the Leggero style had some glitches on mobile devices
+- Plugin management page: Removed empty warning messages box
+
+## Security
+- Fixed security issue reported by huntr.dev: Session cookie missed the "secure" flag
+
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes
 - BOM in French language files lead to blank page in admin area (see [#82](https://github.com/flatpressblog/flatpress/issues/82))
