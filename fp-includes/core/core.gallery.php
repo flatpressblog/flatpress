@@ -19,6 +19,36 @@ const GALLERY_CAPTIONS_FILENAME = 'captions.conf';
 const GALLERY_CAPTIONS_LEGACYFILENAME = 'texte.conf';
 
 /**
+ * Fetches all gallery directories from the images directory and returns their names as iterative array.
+ *
+ * @return string[] the gallery names
+ */
+function gallery_fetch_galleries() {
+	$galleries = array();
+
+	// return empty array if there is no image dir
+	if (!file_exists(ABS_PATH . IMAGES_DIR)) {
+		return $galleries;
+	}
+
+	// read folder names from image dir
+	$dir = opendir(ABS_PATH . IMAGES_DIR);
+	while (false !== ($file = readdir($dir))) {
+		$fullpath = ABS_PATH . IMAGES_DIR . $file;
+		if (!in_array($file, array(
+			".",
+			"..",
+			".thumbs"
+		)) && is_dir($fullpath)) {
+			$galleries [] = $file;
+		}
+	}
+
+	// return result
+	return $galleries;
+}
+
+/**
  * Reads the images from the gallery directory and returns their names as iterative array
  *
  * @param string $galleryDir
