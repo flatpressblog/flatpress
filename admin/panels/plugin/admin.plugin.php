@@ -105,7 +105,9 @@ class admin_plugin_default extends AdminPanelAction {
 	function main() {
 
 		// $conf = io_load_file(CONFIG_DIR . 'plugins.conf.php');
-		$this->smarty->assign('warnings', $this->errors);
+		if (!empty($this->errors)) {
+			$this->smarty->assign('warnings', $this->errors);
+		}
 		$this->smarty->assign('enabledlist', $this->fp_plugins);
 
 		lang_load('admin.plugin');
