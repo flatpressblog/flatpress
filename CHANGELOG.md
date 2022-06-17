@@ -8,12 +8,17 @@
 - PhotoSwipe plugin added (see [#109](https://github.com/flatpressblog/flatpress/issues/109))
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6) and jQueryUI (1.12.1 => 1.13)
 
+## Themes
+- Leggero theme: Fixed searchbox glitch in FlatMaas revisited style (see [#97](https://github.com/flatpressblog/flatpress/issues/97))
+- Leggero theme: Fixed missing bullets in preview (see [#98](https://github.com/flatpressblog/flatpress/issues/98))
+- Leggero theme: CSS of the Leggero style had some glitches on mobile devices
+- Leggero theme: Invalid HTML output fixed (see [#106](https://github.com/flatpressblog/flatpress/issues/106))
+
 ## Bugfixes
 - Comment Center config page threw errors (see [#90](https://github.com/flatpressblog/flatpress/issues/90))
 - Fixed glitches in Spanish an Portuguese language files
-- Invalid HTML output fixed (see [#106](https://github.com/flatpressblog/flatpress/issues/106))
-- CSS of the Leggero style had some glitches on mobile devices
 - Plugin management page: Removed empty warning messages box
+- Fixed wrong pt-br country code (see [#100](https://github.com/flatpressblog/flatpress/issues/100))
 
 ## Security
 - Fixed security issue reported by huntr.dev: Session cookie missed the "secure" flag
