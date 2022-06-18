@@ -1,5 +1,7 @@
 # Under development: [FlatPress 1.3](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## General
+- Template engine Smarty updated to version 4.1.0 (see [#94](https://github.com/flatpressblog/flatpress/issues/94))
+  - From now on, FlatPress requires at least PHP 7.1!
 - Added [SECURITY.md](https://github.com/flatpressblog/flatpress/blob/master/SECURITY.md)
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 
