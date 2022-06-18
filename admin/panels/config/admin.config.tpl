@@ -140,7 +140,10 @@
 		<dd>	<p> <input type="text" name="timeformat" id="timeformat" 
 			class="textinput {$class}" 
 			value="{$fp_config.locale.timeformat}" /> </p>
-			<p> {$panelstrings.output}:  {$smarty.now|date_format:$fp_config.locale.timeformat}  </p>
+			{assign var=currentTime value=$smarty.now}
+			{assign var=timeDiff value=$fp_config.locale.timeoffset}
+			{assign var=TimeDiffUTC value=$currentTime+$timeDiff*3600}
+			<p> {$panelstrings.output}:  {$TimeDiffUTC|date_format:$fp_config.locale.timeformat}  </p>
 		</dd>
 
 	
