@@ -13,7 +13,7 @@
 
 {html_form}
 
-<script type="text/javascript">
+<script>
 {literal}
 
 function admin_entry_comment_delete() { return confirm({/literal}'{$plang.act_del_confirm}'{literal}); }

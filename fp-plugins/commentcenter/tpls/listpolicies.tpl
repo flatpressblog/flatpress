@@ -14,9 +14,9 @@
 	<td class="main-cell">
 {if isset($delete)}<input type="hidden" name="del_policy[]" value="{$id}" />
 {/if}
-{if $policy.is_all}
+{if isset($policy.is_all) && $policy.is_all}
 		{$plang.all_entries}
-{elseif is_array($policy.entry) && count($policy.entry)>0}
+{elseif isset($policy.entry) && is_array($policy.entry) && count($policy.entry)>0}
 {$plang.fol_entries}
 <ul>
 {foreach from=$policy.entry item=entry}
@@ -29,7 +29,7 @@
 <li><span title="{$policy.entry}">{$policy.entry|idToSubject}</span></li>
 </ul>
 {else}
-	{if count($policy.categories)>0}
+	{if isset($policy.categories) && count($policy.categories)>0}
 		<p>{$plang.fol_cats}
 		{$policy.categories|@filed}</p>
 	{/if}

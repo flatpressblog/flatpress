@@ -430,3 +430,9 @@ textarea:hover {
 }
 
 
+div#widget-searchbox ul,
+div#widget-searchbox li {
+	margin:0px;
+	padding:0px;
+}
+}

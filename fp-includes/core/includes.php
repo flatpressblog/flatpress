@@ -40,5 +40,6 @@ require_once INCLUDES_DIR . 'core.system.php';
 require_once INCLUDES_DIR . 'core.theme.php';
 // require_once INCLUDES_DIR.'core.layout.php';
 require_once INCLUDES_DIR . 'core.users.php';
+require_once INCLUDES_DIR . 'core.gallery.php';
 
 ?>
