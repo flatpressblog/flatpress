@@ -12,9 +12,9 @@
 				</h3>
 				{include file=shared:entryadminctrls.tpl}
 				
-				<span itemprop="articleBody">
+				<div itemprop="articleBody">
 				{$content|tag:the_content}
-				</span>
+				</div>
 				
 				<ul class="entry-footer">
 			
