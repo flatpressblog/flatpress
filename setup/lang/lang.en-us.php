@@ -119,7 +119,7 @@ You can find two [b]static pages[/b] ready to accept your contents:
 
 [h4]Widgets[/h4]
 
-There isn\'t a single fixed element in the sidebar(s). All the elements you can find in the bars sourrounding this text are completely positionable, and most of them are customizable as well. Some themes even provide a panel interface in the admin area.  
+There isn\'t a single fixed element in the sidebar(s). All the elements you can find in the bars surrounding this text are completely positionable, and most of them are customizable as well. Some themes even provide a panel interface in the admin area.  
 
 These elements are called [b]widgets[/b]. For more on widgets and [url=https://wiki.flatpress.org/doc:tips:widgets]some tips[/url] to get nice effects, take a look at the [url=https://wiki.flatpress.org/]wiki[/url].
 
