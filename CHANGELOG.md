@@ -19,6 +19,7 @@
 - Fixed glitches in Spanish an Portuguese language files
 - Plugin management page: Removed empty warning messages box
 - Fixed wrong pt-br country code (see [#100](https://github.com/flatpressblog/flatpress/issues/100))
+- Fixed error at prev link on first / next link on last entry (see [#95](https://github.com/flatpressblog/flatpress/issues/95))
 
 ## Security
 - Fixed security issue reported by huntr.dev: Session cookie missed the "secure" flag
