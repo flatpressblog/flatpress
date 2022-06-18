@@ -62,7 +62,7 @@ add_action('wp_head', 'plugin_bbcode_startup');
 function plugin_bbcode_head() {
 	echo "	<!-- bbcode plugin -->\n";
 	echo '	<link rel="stylesheet" type="text/css" href="' . plugin_geturl('bbcode') . "res/bbcode.css\" />\n";
-	echo '	<script type="text/javascript" src="' . plugin_geturl('bbcode') . "res/editor.js\"></script>\n";
+	echo '	<script src="' . plugin_geturl('bbcode') . "res/editor.js\"></script>\n";
 	echo "	<!-- end of bbcode plugin -->\n";
 }
 add_action('wp_head', 'plugin_bbcode_head');
