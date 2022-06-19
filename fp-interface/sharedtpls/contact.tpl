@@ -1,10 +1,5 @@
 <p>{$lang.contact.descr}</p>
 	
-{validate id="name" message=$lang.contact.error.name append="error"}
-{validate id="email" message=$lang.contact.error.email append="error"}
-{validate id="www" message=$lang.contact.error.www append="error"}
-{validate id="content" message=$lang.contact.error.content append="error"}
-
 <form id="contactform" method="post"
 	action="{$smarty.const.BLOG_BASEURL}contact.php"
 	enctype="multipart/form-data">
@@ -53,8 +48,6 @@
 		{/if}
 		<input type="text" name="url" id="url" class="{$class}" 
 		value="{$urlvalue|stripslashes|wp_specialchars:true}" /></p>
-		
-		{comment_form}
 		
 	</fieldset>
 	
