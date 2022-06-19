@@ -29,8 +29,9 @@ class admin_uploader_default extends AdminPanelAction {
 	);
 
 	function main() {
-		if ($f = sess_remove('admin_uploader_files'))
+		if ($f = sess_remove('admin_uploader_files')) {
 			$this->smarty->assign('uploaded_files', $f);
+		}
 	}
 
 	function onupload() {
@@ -97,6 +98,7 @@ class admin_uploader_default extends AdminPanelAction {
 		// I've not put BMPs
 
 		$uploaded_files = array();
+		$this->smarty->assign('uploaded_files', $uploaded_files);
 
 		foreach ($_FILES ["upload"] ["error"] as $key => $error) {
 
