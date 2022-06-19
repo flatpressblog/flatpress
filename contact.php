@@ -1,69 +1,119 @@
 <?php
 require_once 'defaults.php';
-require_once (INCLUDES_DIR . 'includes.php');
+require_once INCLUDES_DIR . 'includes.php';
 
+// contact form fields
+$contactform_inputs = array(
+	'name',
+	'email',
+	'url',
+	'content'
+);
+
+/**
+ * Validates the POST data and returns a validated array (key=>value) - or <code>false</code> if validation failed
+ *
+ * @return boolean|array
+ */
 function contact_form_validate() {
-	$arr ['version'] = system_ver();
-	$arr ['name'] = $_POST ['name'];
+	global $smarty, $contactform_inputs, $lang;
 
-	if (!empty($_POST ['email']))
-		($arr ['email'] = $_POST ['email']);
-	if (!empty($_POST ['url']))
-		($arr ['url'] = $_POST ['url']);
-	$arr ['content'] = $_POST ['content'];
+	// if the request does not contain all input fields, it might be forged
+	foreach ($contactform_inputs as $input) {
+		if (!array_key_exists($input, $_POST)) {
+			return false;
+		}
+	}
 
-	$arr ['ip-address'] = utils_ipget();
+	$errors = array();
 
-	if (apply_filters('comment_validate', true, $arr))
-		return $arr;
-	else
+	$name = trim(htmlspecialchars($_POST ['name']));
+	$email = trim(htmlspecialchars($_POST ['email']));
+	$url = trim(stripslashes(htmlspecialchars($_POST ['url'])));
+	$content = trim(addslashes($_POST ['content']));
+
+	// check name
+	if (empty($name)) {
+		$errors ['name'] = $lang ['contact'] ['error'] ['name'];
+	}
+
+	// check email
+	if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		$errors ['email'] = $lang ['contact'] ['error'] ['email'];
+	}
+
+	// check url
+	if (!empty($url) && !filter_var($url, FILTER_VALIDATE_URL)) {
+		$errors ['url'] = $lang ['contact'] ['error'] ['www'];
+	}
+
+	// check content
+	if (empty($content)) {
+		$errors ['content'] = $lang ['contact'] ['error'] ['content'];
+	}
+
+	// assign error messages to template
+	if (!empty($errors)) {
+		$smarty->assign('error', $errors);
 		return false;
+	}
+
+	$arr ['version'] = system_ver();
+	$arr ['name'] = $name;
+
+	if (!empty($email)) {
+		($arr ['email'] = $email);
+	}
+	if (!empty($url)) {
+		($arr ['url'] = ($url));
+	}
+	$arr ['content'] = $content;
+
+	if ($v = utils_ipget()) {
+		$arr ['ip-address'] = $v;
+	}
+
+	return $arr;
 }
 
 function contact_form() {
-	global $smarty, $lang, $fp_config;
+	global $smarty, $lang, $fp_config, $contactform_inputs;
 
+	// initial call of the contact form
 	if (empty($_POST)) {
-
 		$smarty->assign('success', system_geterr('contact'));
 		$smarty->assignByRef('panelstrings', $lang ['contact']);
-
-		// new form, we (re)set the session data
-		SmartyValidate::connect($smarty, true);
-		// register our validators
-		SmartyValidate::register_validator('name', 'name', 'notEmpty', false, false, 'trim');
-		SmartyValidate::register_validator('email', 'email', 'isEmail', true, false, 'trim');
-		SmartyValidate::register_validator('www', 'url', 'isURL', true, false, 'trim');
-		SmartyValidate::register_validator('content', 'content', 'notEmpty', false, false);
-	} else {
-		utils_nocache_headers();
-		// validate after a POST
-		SmartyValidate::connect($smarty);
-
-		// add http to url if not given
-		if (!empty($_POST ['url']) && strpos($_POST ['url'], 'http://') === false && strpos($_POST ['url'], 'https://') === false)
-			$_POST ['url'] = 'http://' . $_POST ['url'];
-
-		// custom hook here!!
-		// we'll use comment actions, anyway
-		if (SmartyValidate::is_valid($_POST) && $arr = contact_form_validate()) {
-
-			$msg = "Name: \n{$arr['name']} \n\n";
-
-			if (isset($arr ['email']))
-				$msg .= "Email: {$arr['email']}\n\n";
-			if (isset($arr ['url']))
-				$msg .= "WWW: {$arr['url']}\n\n";
-			$msg .= "Content:\n{$arr['content']}\n";
-
-			$success = @utils_mail((isset($arr ['email']) ? $arr ['email'] : $fp_config ['general'] ['email']), "Contact sent through {$fp_config['general']['title']} ", $msg);
-
-			system_seterr('contact', $success ? 1 : -1);
-			utils_redirect(basename(__FILE__));
-		} else {
-			$smarty->assign('values', $_POST);
-		}
+		return;
 	}
+
+	// new form, we (re)set the session data
+	utils_nocache_headers();
+
+	$validationResult = contact_form_validate();
+
+	// if validation failed
+	if ($validationResult === false) {
+		// assign given input values to the template, so they're prefilled again
+		$smarty->assign('values', $_POST);
+		return;
+	}
+
+	// okay, validation returned validated values
+	// now build the mail content
+	$msg = "Name: \n{$validationResult['name']} \n\n";
+
+	if (isset($validationResult ['email'])) {
+		$msg .= "Email: {$validationResult['email']}\n\n";
+	}
+	if (isset($validationResult ['url'])) {
+		$msg .= "WWW: {$validationResult['url']}\n\n";
+	}
+	$msg .= "Content:\n{$validationResult['content']}\n";
+
+	// send notification mail to site admin
+	$success = @utils_mail((isset($validationResult ['email']) ? $validationResult ['email'] : $fp_config ['general'] ['email']), "Contact sent through {$fp_config['general']['title']} ", $msg);
+	system_seterr('contact', $success ? 1 : -1);
+	utils_redirect(basename(__FILE__));
 }
 
 function contact_main() {
@@ -92,5 +142,3 @@ function contact_display() {
 
 system_init();
 contact_display();
-
-?>
