@@ -26,6 +26,12 @@ if (class_exists('AdminPanelAction')) {
 		function onsubmit($data = NULL) {
 			global $fp_config;
 
+			// No action possible if LastComments plugin isn't activated!
+			if (!function_exists('plugin_lastcomments_cache')) {
+				$this->smarty->assign('success', -2);
+				return;
+			}
+
 			if (isset($_POST ['lastcommentadmin_clear'])) {
 				fs_delete(LASTCOMMENTS_CACHE_FILE);
 				$this->smarty->assign('success', 1);
