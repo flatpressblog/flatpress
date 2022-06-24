@@ -286,7 +286,7 @@ function fs_copy($source, $dest) {
  * @return boolean <code>true</code> if the file is a directory component; otherwise <code>false</code>
  */
 function fs_is_directorycomponent($filename) {
-	return strlen($filename) > 0 && ($filename === '.' || $filename === '..');
+	return $filename === '.' || $filename === '..';
 }
 
 /**
