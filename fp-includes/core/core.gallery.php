@@ -35,11 +35,7 @@ function gallery_fetch_galleries() {
 	$dir = opendir(ABS_PATH . IMAGES_DIR);
 	while (false !== ($file = readdir($dir))) {
 		$fullpath = ABS_PATH . IMAGES_DIR . $file;
-		if (!in_array($file, array(
-			".",
-			"..",
-			".thumbs"
-		)) && is_dir($fullpath)) {
+		if (!fs_is_directorycomponent($file) && !fs_is_hidden_file($file) && is_dir($fullpath)) {
 			$galleries [] = $file;
 		}
 	}
