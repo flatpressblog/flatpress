@@ -9,7 +9,7 @@
  *
  * @var string
  */
-const GALLERY_CAPTIONS_FILENAME = 'captions.conf';
+const GALLERY_CAPTIONS_FILENAME = '.captions.conf';
 
 /**
  * The name of the captions file (legacy mode for galleries managed with PhotoSwipe plugin version < 1.1)
