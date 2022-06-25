@@ -222,7 +222,6 @@ class PhotoSwipeFunctions {
 		echo '
 	<script src="' . $pdir . 'res/photoswipe-4.1.1/photoswipe-ui-default.min.js"></script>
 	<script src="' . $pdir . 'res/photoswipe-4.1.1/photoswipe.min.js"></script>
-	<scripst src="' . $pdir . 'res/photoswipe.js.php">
 	<script>';
 		include_once (dirname(__FILE__) . '/res/photoswipe.js.php');
 		echo '

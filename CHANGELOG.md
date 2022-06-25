@@ -8,7 +8,7 @@
 ## Plugins
 - Gallery captions plugin added (see [#108](https://github.com/flatpressblog/flatpress/issues/108))
 - PhotoSwipe plugin added (see [#109](https://github.com/flatpressblog/flatpress/issues/109))
-- jQuery plugin: Updated jQuery (3.5.1 => 3.6) and jQueryUI (1.12.1 => 1.13)
+- jQuery plugin: Updated jQuery (3.5.1 => 3.6) and jQueryUI (1.12.1 => 1.13.1)
 
 ## Themes
 - Leggero theme: Fixed searchbox glitch in FlatMaas revisited style (see [#97](https://github.com/flatpressblog/flatpress/issues/97))
