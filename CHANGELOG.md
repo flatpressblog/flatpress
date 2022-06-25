@@ -7,12 +7,14 @@
 - Gallery captions plugin added (see [#108](https://github.com/flatpressblog/flatpress/issues/108))
 - PhotoSwipe plugin added (see [#109](https://github.com/flatpressblog/flatpress/issues/109))
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6) and jQueryUI (1.12.1 => 1.13.1)
+- Media Manager plugin shows 50 items per page, not 10
 
 ## Themes
 - Leggero theme: Fixed searchbox glitch in FlatMaas revisited style (see [#97](https://github.com/flatpressblog/flatpress/issues/97))
 - Leggero theme: Fixed missing bullets in preview (see [#98](https://github.com/flatpressblog/flatpress/issues/98))
 - Leggero theme: CSS of the Leggero style had some glitches on mobile devices
 - Leggero theme: Invalid HTML output fixed (see [#106](https://github.com/flatpressblog/flatpress/issues/106))
+- Leggero theme: Removed unneccessary external font resource (see [#112](https://github.com/flatpressblog/flatpress/issues/112))
 
 ## Bugfixes
 - Comment Center config page threw errors (see [#90](https://github.com/flatpressblog/flatpress/issues/90))
@@ -20,6 +22,7 @@
 - Plugin management page: Removed empty warning messages box
 - Fixed wrong pt-br country code (see [#100](https://github.com/flatpressblog/flatpress/issues/100))
 - Fixed error at prev link on first / next link on last entry (see [#95](https://github.com/flatpressblog/flatpress/issues/95))
+- LastComments plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available (see [#43](https://github.com/flatpressblog/flatpress/issues/43))
 
 ## Security
 - Fixed security issue reported by huntr.dev: Session cookie missed the "secure" flag
