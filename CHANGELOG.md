@@ -1,5 +1,6 @@
 # Under development: [FlatPress 1.3](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## General
+- New responsive Admin Area: All the functions you know, but fresh'n'clean, and adapts to your screen size
 - Added [SECURITY.md](https://github.com/flatpressblog/flatpress/blob/master/SECURITY.md)
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 
