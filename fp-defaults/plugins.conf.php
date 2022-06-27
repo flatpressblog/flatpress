@@ -28,5 +28,7 @@ $fp_plugins = array(
 	'readmore',
 	'favicon',
 	'commentcenter',
-	'mediamanager'
+	'mediamanager',
+	'gallerycaptions',
+	'photoswipe'
 );

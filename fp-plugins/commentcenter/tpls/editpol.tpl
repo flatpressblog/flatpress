@@ -1,14 +1,15 @@
 {include file=plugin:commentcenter/header}
 {html_form}
-<h2>{if isset($polnew)}{$plang.newpol}{else}{$plang.editpol}{/if}</h2>
+{if !isset($polnew)}{assign var="polnew" value=false}{/if}
+<h2>{if $polnew}{$plang.newpol}{else}{$plang.editpol}{/if}</h2>
 <dl class="option-set">
 	<dt>{$plang.apply_to}</dt>
 	<dd>
-		<input type="radio" class="form-check-input" name="apply_to" id="all_entries" value="all_entries"{if isset($policy.is_all)} checked="checked"{/if} />
+		<input type="radio" class="form-check-input" name="apply_to" id="all_entries" value="all_entries"{if isset($policy.is_all) and $policy.is_all} checked="checked"{/if} />
 		<label for="all_entries">{$plang.all_entries}</label><br />
 		<input type="radio" class="form-check-input" name="apply_to" id="some_entries" value="some_entries"{if isset($policy.entry) && !empty($policy.entry)} checked="checked"{/if} />
 		<label for="some_entries">{$plang.some_entries}</label><br />
-		<input type="radio" class="form-check-input" name="apply_to" id="properties" value="properties"{if isset($polnew) && !$polnew && isset($policy.is_all) && !$policy.is_all && isset($policy.entry) && empty($policy.entry)} checked="checked"{/if} />
+		<input type="radio" class="form-check-input" name="apply_to" id="properties" value="properties"{if !$polnew && isset($policy.is_all) && !$policy.is_all && isset($policy.entry) && empty($policy.entry)} checked="checked"{/if} />
 		<label for="properties">{$plang.properties}</label><br />
 	</dd>
 	<dt><label for="behavoir">{$plang.behavoir}</label></dt>

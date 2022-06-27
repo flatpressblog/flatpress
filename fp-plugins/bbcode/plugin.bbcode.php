@@ -780,7 +780,7 @@ function plugin_bbcode_toolbar() {
 	// $bblang = lang_load('plugin:bbcode');
 	// $_FP_SMARTY->assign('bblang', $bblang);
 	echo "<!-- bbcode plugin -->\n";
-	echo '<script type="text/javascript" src="' . plugin_geturl('bbcode') . 'res/editor.js"></script>' . "\n";
+	echo '<script src="' . plugin_geturl('bbcode') . 'res/editor.js"></script>' . "\n";
 	echo $_FP_SMARTY->fetch('plugin:bbcode/toolbar');
 	echo "<!-- end of bbcode plugin -->\n";
 }

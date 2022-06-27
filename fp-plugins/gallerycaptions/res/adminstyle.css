@@ -1,0 +1,3 @@
+table.plugin_gallerycaptions_captionstable tr td { padding:1em; }
+table.plugin_gallerycaptions_captionstable tr td:first-child { width:18% !important; text-align:center !important;}
+table.plugin_gallerycaptions_captionstable input {width:95%;}

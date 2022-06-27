@@ -177,20 +177,6 @@ input.maxsize, select.maxsize {width:100%}
         padding:2em
 }
 
-#post-preview ul {
-	list-style: none;
-	padding: 0 0 0 1.6em;
-}
-
-#post-preview ul li:before {
-	content: "\00BB \0020"
-}
-
-#post-preview  ol {
-	list-style-position: inside;
-	padding: 0 1.6em 0 1.6em
-}
-
 /* notifications */
 
 .draft {background-color:lightgrey}

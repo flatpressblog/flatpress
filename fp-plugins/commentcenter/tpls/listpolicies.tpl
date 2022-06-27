@@ -29,7 +29,7 @@
 <li><span title="{$policy.entry}">{$policy.entry|idToSubject}</span></li>
 </ul>
 {else}
-	{if count($policy.categories)>0}
+	{if isset($policy.categories) && count($policy.categories)>0}
 		<p>{$plang.fol_cats}
 		{$policy.categories|@filed}</p>
 	{/if}

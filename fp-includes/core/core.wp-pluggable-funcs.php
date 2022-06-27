@@ -46,7 +46,8 @@ if (!function_exists('get_nextpage_link')) :
 
 		$a = _get_nextprev_link('NextPage');
 
-		if ($q->single) {
+		// show next entry link only if there actually is a next entry - and only if one single entry is displayed
+		if (isset($a) && $q->single) {
 			$a [0] .= ' &raquo; ';
 		}
 
@@ -62,7 +63,8 @@ if (!function_exists('get_prevpage_link')) :
 
 		$a = _get_nextprev_link('PrevPage');
 
-		if ($q->single) {
+		// show previous entry link only if there actually is a previous entry - and only if one single entry is displayed
+		if (isset($a) && $q->single) {
 			$a [0] = ' &laquo; ' . $a [0];
 		}
 

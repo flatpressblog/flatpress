@@ -1,0 +1,3 @@
+table.photoswipecaptions tr td { padding:1em; }
+table.photoswipecaptions tr td:first-child { width:1%; }
+table.photoswipecaptions input {width:95%;}

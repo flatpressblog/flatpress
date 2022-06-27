@@ -28,11 +28,12 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/
 
 ## Libraries
 FlatPress utilizes the following free frameworks and libraries. Thanks to their authors!
-- [jQuery](https://jquery.com/)
-- [jQuery UI](https://jqueryui.com/)
 - [Smarty Template Engine](https://www.smarty.net/) by Monte Ohrt and Uwe Tews
 - [BBCode Parser](http://christian-seiler.de/projekte/php/bbcode/) by Christian Seiler
+- [jQuery](https://jquery.com/)
+- [jQuery UI](https://jqueryui.com/)
 - [SlimBox2](https://www.digitalia.be/software/slimbox2/) by Christophe Beyls
+- [PhotoSwipe](https://photoswipe.com/) by Dmytro Semenov
 
 ## Other contributions
 - [Julian Rademacher](https://moortaube.de/) generously donated his Twitter account [@FlatPress](https://twitter.com/FlatPress). Also thanks for your useful pull requests!

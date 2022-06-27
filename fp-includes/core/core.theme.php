@@ -120,7 +120,7 @@ function theme_list() {
 	$dh = opendir($dir);
 	$i = 0;
 	while (false !== ($filename = readdir($dh))) {
-		if (($filename != '.') && ($filename != '..')) {
+		if (!fs_is_directorycomponent($filename)) {
 			$files [$i++] = $filename;
 		}
 	}

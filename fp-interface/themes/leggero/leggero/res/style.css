@@ -10,7 +10,7 @@ Author: NoWhereMan & drudo
 Version: 0.2
 Module: style.css
 
-last change: 2020-08-08
+last change: 2022-03-12
 
 */
 
@@ -39,23 +39,24 @@ body { margin: 80px 0 0 0 }
 /* 800er Bildschirme zum Beispiel iPad Hochformat */
 @media only screen and (max-width: 768px) { 
 
-#outer-container {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-
 #main {
   width: 100%;
-  padding: 0.5em;
-  /* border: 1px solid yellow; */
+  margin: 0;
+  padding: 1em 0.5em 0 0.5em;
+}
+
+#main ul.entry-footer {
+  margin: 0;
+  padding: 2em 0 1em 0 ;
+  width: 98%;
+  text-align: right;
 }
 
 #column {
   width: 100%;
   font-size: 80%;
-  margin-bottom: 2em;
-  padding: 0.5em;
+  margin: 0;
+  padding: 1em 0.5em 2em 0.5em;
   /* border: 1px solid red; */
   overflow: auto;   /* shit, bei 84% Bildbreite wird es eng! */
 }
@@ -65,10 +66,17 @@ body { margin: 80px 0 0 0 }
 /* Kleinbildschirme */
 @media only screen and (max-width: 480px) { 
 
+body {
+  margin: 1px 0 0 0;
+  padding: 0;
+  width: 100%;
+}
+
 #body-container {
   margin: 0;
-  padding: 0;
-  width: 98%;
+  padding: 0.5em;
+  width: 96%;
+  border: none;
 }
 
 #head {
@@ -77,16 +85,37 @@ body { margin: 80px 0 0 0 }
   width: 100%;
 }
 
-#outer-container {
+h1 {
   margin: 0;
-  padding: 0;
-  width: 100%;
+  padding: 0.5em 0 0 0.2em;
+}
+
+.subtitle {
+  margin: 0;
+  padding: 0.5em 0.5em 1em 0.5em;
 }
 
 #main {
   margin: 0;
-  padding: 0;
+  padding: 1em 0.4em 0 0;
   width: 100%;
+}
+
+.entry {
+  margin: 0;
+  padding: 0 0.5em 1em 0.5em 
+}
+
+#main ul.entry-footer {
+  margin: 0;
+  padding: 2em 0 1em 0;
+  width: 98%;
+  text-align: right;
+}
+
+#main pre {
+  margin: 0;
+  padding: 0 0 0 1.5em;
 }
 
 #column {
