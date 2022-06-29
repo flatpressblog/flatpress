@@ -186,37 +186,41 @@ background: transparent url(../img/play.png) no-repeat scroll 16px 14px !importa
 background-image: url(../img/stop.png) !important;
 }
 
+div.photoswipe {
+}
 div.photoswipe figure {
+	display:inline-block;
+	margin:.5em 1em 0 0;
+}
+div.photoswipe figure img {
+	margin: 0 !important;
+}
+div.photoswipe figcaption {
 	text-align:center;
 }
+
 div.photoswipe figure.floatleft {
 	float:left;
 	margin:0 1em 1em 0;
+}
+div.photoswipe figure.floatleft img.floatleft {
+	float:none;
 }
 div.photoswipe figure.floatright {
 	float:right;
 	margin:0 0 1em 1em;
 }
-
+div.photoswipe figure.floatright img.floatright {
+	float:none;
+}
 .img-gallery div.photoswipe figure {
 	display:inline-block;
 	width:140px;
 	vertical-align: top;
+	text-align:center;
 	margin:.5em 1em 0 0;
 }
-div.photoswipe figure figcaption {
-	width:200px;
-}
-.img-gallery div.photoswipe figure figcaption {
-	width:140px;
-}
-div.photoswipe figure.nofloat figcaption {
-	width:inherit;
-}
 
-div.photoswipe figure img {
-	margin: 0 0 .5em 0;
-}
 
 button.pswp__button--share {
 	display:none;
@@ -229,14 +233,5 @@ div.img-gallery div.photoswipe
 	display: inline;
 }
 
-/*
-Fixes FP standard behaviour: If no float attribute is given, the image will get float attribute "center"
-*/
-figure.nofloat,
-figure.nofloat figcaption,
-figure.nofloat img.center {
-	display:inline-block;
-	text-align:left !important;
-}
 
 .pswp__img { margin: 0px !important; }
