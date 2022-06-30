@@ -199,23 +199,22 @@ div.photoswipe figcaption {
 	text-align:center;
 }
 
-div.photoswipe figure.floatleft {
+div.floatleft {
 	float:left;
 	margin:0 1em 1em 0;
 }
-div.photoswipe figure.floatleft img.floatleft {
+div.floatleft img.floatleft {
 	float:none;
 }
-div.photoswipe figure.floatright {
+div.floatright {
 	float:right;
 	margin:0 0 1em 1em;
 }
-div.photoswipe figure.floatright img.floatright {
+div.floatright img.floatright {
 	float:none;
 }
 .img-gallery div.photoswipe figure {
 	display:inline-block;
-	width:140px;
 	vertical-align: top;
 	text-align:center;
 	margin:.5em 1em 0 0;
