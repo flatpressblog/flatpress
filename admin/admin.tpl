@@ -4,9 +4,8 @@
 	<title>{$flatpress.title}{$pagetitle}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset={$flatpress.charset}" />
 	<meta name="viewport" content="width=device-width, user-scalable=no">
-	<link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet"> 
 	<link rel="stylesheet" href="{$smarty.const.BLOG_BASEURL}/fp-includes/bootstrap/css/bootstrap.min.css"> 
-	<script src="{$smarty.const.BLOG_BASEURL}/fp-includes/jquery/jquery.min.js"></script>
+	<script src="{$smarty.const.BLOG_BASEURL}/admin/includes/jquery/3.6/jquery-3.6.0.min.js"></script>
 	<link rel="stylesheet" href="{$smarty.const.BLOG_BASEURL}/admin/res/admin.css">
 	<link rel="stylesheet" href="{$smarty.const.BLOG_BASEURL}/fp-includes/themify-icons/themify-icons.css"> 
 	<script src="{$smarty.const.BLOG_BASEURL}/admin/res/admin.js" ></script>

@@ -1,3 +1,9 @@
+/* Nunito font */
+@font-face {
+font-family: Nunito;
+src: url(fonts/nunito/Nunito-Light.ttf);
+}
+
 html {
   height: 100%;
 }

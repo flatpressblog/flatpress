@@ -4,7 +4,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>{$flatpress.title}{$pagetitle}</title>
-  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
   <link href="{$smarty.const.BLOG_BASEURL}fp-includes/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="{$smarty.const.BLOG_BASEURL}admin/res/admin.css" rel="stylesheet">
   <link href="{$smarty.const.BLOG_BASEURL}fp-includes/themify-icons/themify-icons.css" rel="stylesheet">
