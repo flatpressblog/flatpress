@@ -17,7 +17,7 @@ $theme ['version'] = 0.705;
 $theme ['style_def'] = 'style.css';
 $theme ['style_admin'] = 'admin.css';
 
-$theme ['default_style'] = 'leggero';
+$theme ['default_style'] = 'leggero-v2';
 
 // Other theme settings
 
