@@ -1,9 +1,9 @@
 {include file='shared:admin_errorlist.tpl'}
 
 <!-- Jquery and Jqueryui (For widgets) -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-
+<script src="{$smarty.const.BLOG_BASEURL}/admin/includes/jquery/3.6/jquery-3.6.0.min.js"></script>
+<script src="{$smarty.const.BLOG_BASEURL}/admin/includes/jqueryui/1.13.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="{$smarty.const.BLOG_BASEURL}/admin/includes/jqueryui/1.13.1/jquery-ui.min.css">
 	<div class="row">
 		<div class="col-xl-12 col-lg-12">
 			<div class="card shadow mb-4">
