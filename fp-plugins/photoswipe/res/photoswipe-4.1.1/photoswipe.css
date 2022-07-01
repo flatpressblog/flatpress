@@ -234,3 +234,9 @@ div.img-gallery div.photoswipe
 
 
 .pswp__img { margin: 0px !important; }
+
+.pswp__caption__center {
+  text-align: center;
+  margin: 0 auto;
+  max-width:90%;
+}
