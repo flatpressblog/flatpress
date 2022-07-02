@@ -142,7 +142,7 @@ function smarty_search_result($params, $content, &$smarty, &$repeat) {
 		// assign values to template
 		$smarty->assign('id', $id);
 		$post = $e;
-		+$smarty->assign($e);
+		$smarty->assign($e);
 		$repeat = true;
 		// advance pointer to next search result element
 		next($srchresults);
