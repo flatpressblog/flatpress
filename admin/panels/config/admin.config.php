@@ -67,7 +67,7 @@
 				'style'	=> @$fp_config['general']['style'],
 				'blogid' => $fp_config['general']['blogid'],
 				'charset'=> 'utf-8',
-				'sceditor_display' => $_POST['sceditor_format']
+	
 			);
 			
 			$fp_config['locale'] = array(

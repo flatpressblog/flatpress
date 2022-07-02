@@ -62,9 +62,6 @@
 			global $lang;
 			
 			$this->smarty->assign('static_id', 'static'.date_time());
-
-			global $fp_config;
-			$this->smarty->assign("lang_locale", $fp_config['locale']['lang']);
 			
 			if (isset($_GET['page'])) {
 				$id = $_GET['page'];

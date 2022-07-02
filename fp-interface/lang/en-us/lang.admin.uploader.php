@@ -7,8 +7,7 @@
 		'fset1'		=> 'File Picker',
 		'fset2'		=> 'Upload',
 		'submit'	=> 'Upload',
-		// New admin panel
-		'choose_file' => 'Choose file'
+
 	);
 
 	$lang['admin']['uploader']['default']['msgs'] = array(

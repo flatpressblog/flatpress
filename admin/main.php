@@ -170,22 +170,6 @@ $v = $lang ['admin'] [$panel] [$action];
 $smarty->assign_by_ref('panelstrings', $v);
 $smarty->assign_by_ref('plang', $v);
 
-// We create a varible to write user name in tpls
-if($user = user_loggedin()) {
-	$smarty->assign("username", $user['userid']);
-} else {
-	$smarty->assign("username", "#NAME#");
-}
-
-// Custom lang message for admin panel
-$smarty->assign("help_top", $lang['admin']['general']['help_top']);
-$smarty->assign("logout", $lang['admin']['general']['logout_top']);
-$smarty->assign("close", $lang['admin']['general']['close']);
-$smarty->assign("blog", $lang['admin']['general']['blog']);
-$smarty->assign("footer", $lang['admin']['general']['footer']);
-
-$smarty->assign("sceditor_display", "bbcode");
-
 if (isset($_GET ['mod'])) {
 
 	switch ($_GET ['mod']) {
@@ -196,8 +180,7 @@ if (isset($_GET ['mod'])) {
 			echo $smarty->get_template_vars('success');
 	}
 } else {
-	#$smarty->display('admin.tpl');
-	$smarty->display(ABS_PATH . ADMIN_DIR . 'admin.tpl');
+	$smarty->display('admin.tpl');
 }
 
 ?>

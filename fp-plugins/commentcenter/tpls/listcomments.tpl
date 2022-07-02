@@ -1,7 +1,7 @@
 {if !isset($is_managing)}
 	{assign var="is_managing" value=false}
 {/if}
-<table class="entrylist table">
+<table class="entrylist">
 <thead><tr>
 {if !isset($delete)}<th></th>{/if}
 <th>{$plang.app_date}</th>
@@ -21,7 +21,7 @@
 		{foreach from=$entry.$fetch item=comm key=comm_id}
 			{assign var="i" value=$i+1}
 			<tr>
-{if isset($delete) && !$delete}<td class="td_select_{$fetch}"><input type="checkbox" class="form-check-input" name="select[e{$entryid}_c{$comm_id}]" /></td>{/if}
+			{if !isset($delete)}<td class="td_select_{$fetch}"><input type="checkbox" name="select[e{$entryid}_c{$comm_id}]" /></td>{/if}
 			<td>{$comm.date|date_format:"%D, %T"}</td>
 			<td class="main_cell">
 			{$comm.content|strip_tags}
@@ -43,12 +43,12 @@
 			<a href="{$action_url|cmd_link:pubnoham:"e`$entryid`_c`$comm.id`"}" title="{$plang.app_pubnotham}"><img src="{$plugin_url}imgs/publish.png" alt="{$plang.app_pubnotham}" /></a>
 			{/if}
 			{/if}
-{if isset($is_managing)}
+			{if $is_managing}
 			{assign var="rm_url" value=$action_url|cmd_link:deletecomm2:"e`$entryid`_c`$comm_id`"}
 			{else}
 			{assign var="rm_url" value=$action_url|cmd_link:deletecomm:"e`$entryid`_c`$comm_id`"}
 			{/if}
-<a href="{$rm_url}" title="{$plang.app_delete}"><img src="{$plugin_url}imgs/delete.png" alt="{$plang.app_delete}" style="margin-top: 4px;"/></a>
+			<a href="{$rm_url}" title="{$plang.app_delete}"><img src="{$plugin_url}imgs/delete.png" alt="{$plang.app_delete}" /></a>
 			</td>
 			{/if}
 			</tr>

@@ -43,8 +43,7 @@
 		'output'		=> 'Output',
 		'charset'		=> 'Character set',
 		'charsettip'	=> 'The character set you write your blog in (UTF-8 is '.
-						'<a href="http://wiki.flatpress.org/doc:charsets">recommended</a>)',
-		'editor'		=> 'Entry/Static Editor'
+						'<a href="http://wiki.flatpress.org/doc:charsets">recommended</a>)'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 

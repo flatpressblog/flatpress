@@ -26,13 +26,7 @@ $lang ['admin'] ['general'] = array(
 	'actdel' => 'Delete',
 	'actedit' => 'Edit',
 	'actenable' => 'Enable',
-	'actdisable' => 'Disable',
-	// New admin panel
-	'help_top'  => 'Help',
-	'logout_top'    => 'Logout',
-	'close'		=> 'Close',
-	'blog'		=> 'Blog',
-	'footer'	=> 'This blog is proudly powered by'
+	'actdisable' => 'Disable'
 );
 
 ?>

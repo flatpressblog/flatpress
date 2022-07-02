@@ -27,14 +27,7 @@
 		'action'	=> 'Action',
 		'act_del'	=> 'Delete',
 		'act_view'	=> 'View',
-		'act_edit'	=> 'Edit',
-		// New admin theme
-		'add_new_entry' => 'Add new entry',
-		'your_drafts' => 'Your drafts',
-		'no_drafts' => 'You havent drafts yet',
-		'entry' => 'Entry',
-		'sorry' => 'Sorry',
-		'last_comments_disable' => 'To show Last Comments, <a href="admin.php?p=plugin">we need LastComments plugin enabled.</a>'
+		'act_edit'	=> 'Edit'
 	);
 	
 	/* write action */
@@ -127,9 +120,8 @@
 		'email'		=> 'Email',
 		'ip'		=> 'IP',
 		'loggedin'	=> 'Registered user',
-		'submit'	=> 'Save',
-		// New admin theme
-		'cats_info' => 'Categories info',
+		'submit'	=> 'Save'
+		
 	
 	);
 
@@ -174,8 +166,7 @@ Technology :6
 	
 		'fset1'		=> 'Editor',
 		'fset2'		=> 'Apply Changes',
-		'submit'	=> 'Save',
-		'cats_info' => 'Categories information'
+		'submit'	=> 'Save'
 	);
 	
 	$lang['admin']['entry']['cats']['msgs'] = array(
