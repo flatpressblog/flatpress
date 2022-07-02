@@ -58,10 +58,10 @@ class PhotoSwipeFunctions {
 		// for usage in HTML attributes, we need to remove quotes and HTML tags from the title
 		$titleForAttributes = isset($attr ['title']) ? htmlentities(strip_tags($attr ['title'])) : '';
 
-		// image may float, according the the given float attribute
-		$float = ' class="thumbnail nofloat" ';
+		// image may float, according the the given float attribute - if not given, use "nofloat" class
+		$floatClasses = 'thumbnail nofloat';
 		if (isset($attr ['float'])) {
-			$float = ' class="thumbnail float' . $attr ['float'] . '"';
+			$floatClasses = 'float' . $attr ['float'];
 		}
 
 		// to get the HTML code for preview image, we use the Flatpress standard function do_bbcode_img()
@@ -78,28 +78,34 @@ class PhotoSwipeFunctions {
 		$previewHtml .= ' itemprop="thumbnail" title="' . $titleForAttributes . '">';
 
 		// PhotoSwipe needs to know the dimensions of the image - so we read them
-		$imgsize = getimagesize($imgPathRel);
+		$imgsize = @getimagesize($imgPathRel);
+		$datasizeAttr = ($imgsize === false) ? '' : 'data-size="' . $imgsize [0] . 'x' . $imgsize [1] . '" ';
+
+		// set max width of the figure according to the width attribute
+		$styleAttr = isset($attr ['width']) ? ' style="width:' . $attr ['width'] . 'px" ' : '';
 
 		// now lets assemble the whole HTML code - including the overlay HTML, if not inserted into the DOM before
 		$imgHtml = self::getPhotoSwipeOverlay() . //
-		'<div class="photoswipe">
-				<figure ' . //
+		'<div ' . //
+		'class="photoswipe ' . $floatClasses . '"' . $styleAttr . //
+		'>' . //
+		'<figure ' . //
 		'itemprop="associatedMedia" ' . //
 		'itemscope ' . //
 		'itemtype="http://schema.org/ImageObject" ' . //
 		'data-index="' . self::$lastusedDataIndex . '" ' . //
-		$float . ' ' . //
+		'class="' . $floatClasses . '" ' . //
 		'>' . //
 		'<a ' . //
 		'href="' . $imgUrl . '" ' . //
 		'itemprop="contentUrl" ' . //
-		'data-size="' . $imgsize [0] . 'x' . $imgsize [1] . '" ' . //
+		$datasizeAttr . //
 		'data-index="' . self::$lastusedDataIndex . '" ' . //
 		'title="' . htmlentities($title) . '" ' . //
 		'>' . //
 		$previewHtml . //
 		'</a>' . //
-		'<figcaption>' . $title . '</figcaption>' . //
+		'<figcaption' . $styleAttr . '>' . $title . '</figcaption>' . //
 		'</figure>' . //
 		'</div>';
 
