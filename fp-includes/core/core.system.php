@@ -68,7 +68,7 @@ function system_hashsalt_save($force = false) {
 	return true;
 }
 
-define('SYSTEM_VER', '1.3.dev');
+define('SYSTEM_VER', '1.3.dev [master]');
 
 function system_ver() {
 	return 'fp-' . SYSTEM_VER;
@@ -171,8 +171,8 @@ function system_init() {
 
 	$GLOBALS ['fp_widgets'] = new widget_indexer();
 
-	$GLOBALS ['smarty'] = & $GLOBALS ['_FP_SMARTY'];
-	$smarty = & $GLOBALS ['smarty'];
+	$GLOBALS ['smarty'] = &$GLOBALS ['_FP_SMARTY'];
+	$smarty = &$GLOBALS ['smarty'];
 
 	$GLOBALS ['fp_config'] = config_load();
 

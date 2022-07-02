@@ -8,8 +8,8 @@
  * Description: Manage uploaded files and photo galleries. Part of the standard distribution.
  */
 
-// config
-define('ITEMSPERPAGE', 10);
+// FIXME: Add a config option in the plugin panel to set this value
+define('ITEMSPERPAGE', 50);
 
 //
 function mediamanager_updateUseCountArr(&$files, $fupd) {
@@ -56,5 +56,3 @@ function mediamanager_invalidatecount($arg) {
 }
 add_filter('delete_post', 'mediamanager_invalidatecount', 1);
 add_filter('content_save_pre', 'mediamanager_invalidatecount', 1);
-
-?>

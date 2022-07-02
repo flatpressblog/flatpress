@@ -272,7 +272,7 @@ class Plugin_PrettyURLs {
 	function cache_init() {
 		global $fp_params;
 
-		$this->fp_params = & $fp_params;
+		$this->fp_params = &$fp_params;
 		$url = $this->get_url();
 
 		if (PRETTYURLS_TITLES) {
@@ -407,6 +407,10 @@ class Plugin_PrettyURLs {
 
 		$this->cache_delete_elem($id, $date);
 
+		if ($this->index [$date ['y']] [$date ['m']] === false) {
+			$this->index [$date ['y']] [$date ['m']] = array();
+		}
+
 		$this->index [$date ['y']] [$date ['m']] [$date ['d']] [md5($title)] = $id;
 
 		$this->cache_save();
@@ -451,7 +455,7 @@ class Plugin_PrettyURLs {
 
 	function nextprevlink($nextprev, $v) {
 		global $fpdb;
-		$q = & $fpdb->getQuery();
+		$q = &$fpdb->getQuery();
 
 		list ($caption, $id) = call_user_func(array(
 			&$q,
