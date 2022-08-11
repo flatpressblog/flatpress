@@ -220,54 +220,6 @@ h4 { font-size: 1.2em; }
 	}
 }
 
-/* ===== INTERNET EXPLORER ===== */
-@media \0screen\,screen\9{
-
-	body { margin: 10px 0 10px 0 }
-
-	/* ===== BODY CONTAINER ===== */
-	#body-container {
-		text-align: left;
-		max-width: 1000px;
-		width: 100%;
-		margin: 0 auto 0 auto;
-		padding: 5px;
-		background:none;
-		background-color:rgba(0,0,0,0.75);
-		-ms-filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#BF000000,endColorstr=#BF000000);
-		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#BF000000,endColorstr=#BF000000);
-		zoom:1;
-		border-radius: 3px;
-	}
-
-	/* ===== MAIN ===== */
-	#main h4 { margin: 2em 0 0 0}
-
-	#main {
-		float:left;
-		position: relative;
-		width: 65%;
-		font-size: 100%;
-		padding: 25px;
-		margin: 20px;
-		background:none;
-		background-color:rgba(255,255,255,0.9);
-		-ms-filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#E6FFFFFF,endColorstr=#E6FFFFFF);
-		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#E6FFFFFF,endColorstr=#E6FFFFFF);
-		zoom:1;
-		border-radius: 3px;
-	}
-
-	#head {
-		background:none;
-		background-color:rgba(184,60,46,0.7);
-		-ms-filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#B3b83c2e,endColorstr=#B3b83c2e);
-		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#B3b83c2e,endColorstr=#B3b83c2e);
-		zoom:1;
-	}
-
-}
-
 #main p { line-height: 1.4em; margin-top: 1em; }
 
 #main img { margin: .5em }
