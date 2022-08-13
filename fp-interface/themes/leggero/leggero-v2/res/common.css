@@ -234,6 +234,8 @@ h4 { font-size: 1.2em; }
 	padding: 0 1.6em 0 1.6em
 }
 
+h4#addcomment {clear:both;}
+
 	#commentform fieldset p { margin: 0 0 .5em 0 }
 	
 	#comments li {
