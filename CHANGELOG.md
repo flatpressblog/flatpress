@@ -18,7 +18,7 @@
   - Removed unneccessary external font resource (see [#112](https://github.com/flatpressblog/flatpress/issues/112))
   - "Add comment" link has its own line (see [#135](https://github.com/flatpressblog/flatpress/issues/135))
   - Removed legacy/invalid CSS (see [#133](https://github.com/flatpressblog/flatpress/issues/133), [#134](https://github.com/flatpressblog/flatpress/issues/134))
-  - Fixed description of Leggero and Leggero v2 styles (see [#137](https://github.com/flatpressblog/flatpress/issues/137)
+  - Fixed description of Leggero and Leggero v2 styles (see [#137](https://github.com/flatpressblog/flatpress/issues/137))
 
 ## Bugfixes
 - Comment Center config page threw errors (see [#90](https://github.com/flatpressblog/flatpress/issues/90))
