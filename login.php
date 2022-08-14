@@ -15,7 +15,7 @@ function login_validate() {
 	$pass = trim(@$_POST ['pass']);
 
 	$error = array();
-	$lerr = & $lang ['login'] ['error'];
+	$lerr = &$lang ['login'] ['error'];
 
 	if (!$user) {
 		$error ['user'] = $lerr ['user'];
@@ -46,7 +46,8 @@ function main() {
 			user_logout();
 
 			function myredirect() {
-				// login_redirect('.');
+				// logout redirects to home page
+				login_redirect('.');
 			}
 
 			add_filter('wp_head', 'myredirect');
@@ -55,6 +56,7 @@ function main() {
 		} elseif (user_loggedin()) {
 
 			function myredirect() {
+				// login redirects to Admin Area
 				login_redirect('admin.php');
 			}
 
