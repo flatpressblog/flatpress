@@ -19,6 +19,7 @@
   - "Add comment" link has its own line (see [#135](https://github.com/flatpressblog/flatpress/issues/135))
   - Removed legacy/invalid CSS (see [#133](https://github.com/flatpressblog/flatpress/issues/133), [#134](https://github.com/flatpressblog/flatpress/issues/134))
   - Fixed description of Leggero and Leggero v2 styles (see [#137](https://github.com/flatpressblog/flatpress/issues/137))
+  - Obsolete bullet points removed (see [#136](https://github.com/flatpressblog/flatpress/issues/136))
 
 ## Bugfixes
 - Comment Center config page threw errors (see [#90](https://github.com/flatpressblog/flatpress/issues/90))
@@ -27,6 +28,7 @@
 - Fixed wrong pt-br country code (see [#100](https://github.com/flatpressblog/flatpress/issues/100))
 - Fixed error at prev link on first / next link on last entry (see [#95](https://github.com/flatpressblog/flatpress/issues/95))
 - LastComments plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available (see [#43](https://github.com/flatpressblog/flatpress/issues/43))
+- Logout redirects to home page again (see [#119](https://github.com/flatpressblog/flatpress/issues/119))
 
 ## Security
 - Fixed security issue reported by huntr.dev: Session cookie missed the "secure" flag
