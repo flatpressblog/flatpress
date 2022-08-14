@@ -303,6 +303,9 @@ h4#addcomment {clear:both;}
 		margin-bottom: 3em
 	}
 
+	form#search ul { 
+		list-style-type: none;
+	}
 
 /* ===== FOOTER ===== */
 #footer {

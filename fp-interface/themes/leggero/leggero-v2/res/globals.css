@@ -16,7 +16,8 @@ Module: globals.css
 /* ===== NOTIFICATION ===== */
 #main ul.msgs, ul.msgs {
 	margin: 0;
-	padding: 1em 2em
+	padding: 1em 2em;
+	list-style-type: none;
 }
 
 .errors {
