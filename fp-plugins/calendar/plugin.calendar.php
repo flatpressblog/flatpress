@@ -31,8 +31,9 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 	// Begin calendar. Uses a real <caption>. See http://diveintomark.org/archives/2002/07/03
 
 	// PHP7 compatibility: Since $pn is never passed, we do not need to create "previous" and "next" elements.
-	$p = '';
-	$n = '';
+
+	$p = '<span class="calendar-prev"><a href="' . get_month_link($year, $month - 1) . '">&laquo;</a></span>&nbsp;';
+	$n = '&nbsp;<span class="calendar-next"><a href="' . get_month_link($year, $month + 1) . '">&raquo;</a></span>';
 	// Commented out to prevent deprecated each() function from being executed.
 	// @list($p, $pl) = each($pn); @list($n, $nl) = each($pn); #previous and next links, if applicable
 	// if($p) $p = '<span class="calendar-prev">'.($pl ? '<a href="'.($pl).'">'.$p.'</a>' : $p).'</span>&nbsp;';
