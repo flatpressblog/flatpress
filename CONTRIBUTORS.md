@@ -14,7 +14,6 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/
 - The SEO Meta Tag Info plugin was built by Don Prince.
 - [Matthias Mauch](http://www.aadmm.org/)'s [FP-Patch](http://www.aadmm.org/fp-patch/) initially brought FlatPress to PHP 7. Also, he regularly tests FlatPress against new PHP versions.
 - The XML sitemap for search engines was [initially introduced](https://www.igorkromin.net/index.php/2013/02/18/adding-a-google-compatible-sitemap-to-flatpress/) by [Igor Kromin](https://www.igorkromin.net/).
-- [Fraenkiman](https://github.com/Fraenkiman) tests FlatPress to its very core and creates a metric ton of very helpful issues.
 
 ## Translation
 - Brazilian Portuguese: randy
@@ -38,3 +37,4 @@ FlatPress utilizes the following free frameworks and libraries. Thanks to their 
 
 ## Other contributions
 - [Julian Rademacher](https://moortaube.de/) generously donated his Twitter account [@FlatPress](https://twitter.com/FlatPress). Also thanks for your useful pull requests!
+- [Fraenkiman](https://github.com/Fraenkiman) tests FlatPress to its very core and creates a metric ton of very helpful [issues](https://github.com/flatpressblog/flatpress/issues).
