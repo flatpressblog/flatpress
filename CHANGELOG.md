@@ -38,6 +38,7 @@
 ## Security
 - Fixed security issue reported by huntr.dev: Session cookie missed the "secure" flag
 - Possible path traversal in Media Manager plugin prevented
+- Uploaded files wheren't checked properly ([#152](https://github.com/flatpressblog/flatpress/issues/152))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes
