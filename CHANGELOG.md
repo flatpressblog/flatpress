@@ -36,7 +36,7 @@
 - Fixed disappearing non-Latin characters in page title ([#49](https://github.com/flatpressblog/flatpress/issues/49) and [#91](https://github.com/flatpressblog/flatpress/issues/91))
 
 ## Security
-- Fixed security issue reported by huntr.dev: Session cookie missed the "secure" flag
+- Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
 - Possible path traversal in Media Manager plugin prevented
 - Uploaded files wheren't checked properly ([#152](https://github.com/flatpressblog/flatpress/issues/152))
 
