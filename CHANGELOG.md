@@ -9,6 +9,7 @@
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6) and jQueryUI (1.12.1 => 1.13.1)
 - Media Manager plugin shows 50 items per page, not 10
 - LastComments plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
+- Comment Center config page threw errors ([#90](https://github.com/flatpressblog/flatpress/issues/90))
 
 ## Themes
 - Leggero
@@ -29,7 +30,6 @@
 - Search page: Month names displayed in configured frontend language ([#132](https://github.com/flatpressblog/flatpress/issues/132))
 
 ## Other bugfixes
-- Comment Center config page threw errors ([#90](https://github.com/flatpressblog/flatpress/issues/90))
 - Plugin management page: Removed empty warning messages box
 - Fixed error at prev link on first / next link on last entry ([#95](https://github.com/flatpressblog/flatpress/issues/95))
 - Logout redirects to home page again ([#119](https://github.com/flatpressblog/flatpress/issues/119))
