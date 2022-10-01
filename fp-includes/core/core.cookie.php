@@ -23,6 +23,8 @@ function cookie_setup() {
 		define('COOKIE_DOMAIN', false);
 	if (!defined('COOKIE_SECURE'))
 		define('COOKIE_SECURE', true);
+	if (!defined('COOKIE_HTTPONLY'))
+		define('COOKIE_HTTPONLY', true);
 }
 
 if (!function_exists('wp_get_cookie_login')) :
@@ -62,20 +64,20 @@ function cookie_set($username, $password, $already_md5 = false, $home = '', $sit
 	else
 		$expire = 0;
 
-	setcookie(USER_COOKIE, $username, $expire, $cookiepath, COOKIE_DOMAIN, COOKIE_SECURE);
-	setcookie(PASS_COOKIE, $password, $expire, $cookiepath, COOKIE_DOMAIN, COOKIE_SECURE);
+	setcookie(USER_COOKIE, $username, $expire, $cookiepath, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+	setcookie(PASS_COOKIE, $password, $expire, $cookiepath, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
 
 	if ($cookiepath != $sitecookiepath) {
-		setcookie(USER_COOKIE, $username, $expire, $sitecookiepath, COOKIE_DOMAIN, COOKIE_SECURE);
-		setcookie(PASS_COOKIE, $password, $expire, $sitecookiepath, COOKIE_DOMAIN, COOKIE_SECURE);
+		setcookie(USER_COOKIE, $username, $expire, $sitecookiepath, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+		setcookie(PASS_COOKIE, $password, $expire, $sitecookiepath, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
 	}
 }
 
 function cookie_clear() {
-	setcookie(USER_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE);
-	setcookie(PASS_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE);
-	setcookie(USER_COOKIE, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE);
-	setcookie(PASS_COOKIE, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE);
+	setcookie(USER_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+	setcookie(PASS_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+	setcookie(USER_COOKIE, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+	setcookie(PASS_COOKIE, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
 }
 
 if (!function_exists('wp_login')) :

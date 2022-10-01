@@ -64,8 +64,8 @@ function user_login($userid, $pwd, $params = null) {
 	if ($loggedin) {
 		// session_regenerate_id();
 		$expire = time() + 31536000;
-		setcookie(USER_COOKIE, $userid, $expire, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE);
-		setcookie(PASS_COOKIE, $user ['password'], $expire, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE);
+		setcookie(USER_COOKIE, $userid, $expire, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+		setcookie(PASS_COOKIE, $user ['password'], $expire, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
 	}
 
 	return $loggedin;
@@ -76,8 +76,8 @@ function user_logout() {
 
 	if (user_loggedin()) {
 
-		setcookie(USER_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE);
-		setcookie(PASS_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE);
+		setcookie(USER_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+		setcookie(PASS_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
 	}
 
 	$loggedin = false;

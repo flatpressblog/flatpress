@@ -5,7 +5,7 @@ function sess_setup() {
 		session_save_path(SESSION_PATH);
 
 	session_name(SESS_COOKIE);
-	setcookie(SESS_COOKIE, '', 0, '', COOKIE_DOMAIN, COOKIE_SECURE);
+	setcookie(SESS_COOKIE, '', 0, '', COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
 
 	session_start();
 }
@@ -32,7 +32,7 @@ function sess_get($key) {
 function sess_close() {
 	unset($_SESSION);
 	if (isset($_COOKIE [session_name()])) {
-		setcookie(session_name(), '', time() - 42000, '/', COOKIE_SECURE);
+		setcookie(session_name(), '', time() - 42000, '/', COOKIE_SECURE, COOKIE_HTTPONLY);
 		session_set_cookie_params(-42000);
 	}
 	session_destroy();

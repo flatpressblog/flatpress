@@ -6,7 +6,7 @@
  */
 function _get_nextprev_link($nextprev) {
 	global $fpdb;
-	$q = & $fpdb->getQuery();
+	$q = &$fpdb->getQuery();
 
 	list ($caption, $id) = call_user_func(array(
 		&$q,
@@ -42,7 +42,7 @@ if (!function_exists('get_nextpage_link')) :
 
 	function get_nextpage_link() {
 		global $fpdb;
-		$q = & $fpdb->getQuery();
+		$q = &$fpdb->getQuery();
 
 		$a = _get_nextprev_link('NextPage');
 
@@ -59,7 +59,7 @@ if (!function_exists('get_prevpage_link')) :
 
 	function get_prevpage_link() {
 		global $fpdb;
-		$q = & $fpdb->getQuery();
+		$q = &$fpdb->getQuery();
 
 		$a = _get_nextprev_link('PrevPage');
 
@@ -292,12 +292,12 @@ if (!function_exists('wp_setcookie')) :
 			$cookiehash = md5($siteurl);
 		}
 
-		setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $cookiepath, COOKIE_SECURE);
-		setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $cookiepath, COOKIE_SECURE);
+		setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $cookiepath, COOKIE_SECURE, COOKIE_HTTPONLY);
+		setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $cookiepath, COOKIE_SECURE, COOKIE_HTTPONLY);
 
 		if ($cookiepath != $sitecookiepath) {
-			setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $sitecookiepath, COOKIE_SECURE);
-			setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $sitecookiepath, COOKIE_SECURE);
+			setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $sitecookiepath, COOKIE_SECURE, COOKIE_HTTPONLY);
+			setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $sitecookiepath, COOKIE_SECURE, COOKIE_HTTPONLY);
 		}
 	}
 endif;
@@ -305,10 +305,10 @@ endif;
 if (!function_exists('wp_clearcookie')) :
 
 	function wp_clearcookie() {
-		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH, COOKIE_SECURE);
-		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH, COOKIE_SECURE);
-		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_SECURE);
-		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_SECURE);
+		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH, COOKIE_SECURE, COOKIE_HTTPONLY);
+		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH, COOKIE_SECURE, COOKIE_HTTPONLY);
+		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_SECURE, COOKIE_HTTPONLY);
+		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_SECURE, COOKIE_HTTPONLY);
 	}
 endif;
 
