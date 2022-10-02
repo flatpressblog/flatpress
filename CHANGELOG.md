@@ -28,6 +28,7 @@
 - Fixed glitches in Spanish an Portuguese language files
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - Search page: Month names displayed in configured frontend language ([#132](https://github.com/flatpressblog/flatpress/issues/132))
+- German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
 
 ## Other bugfixes
 - Plugin management page: Removed empty warning messages box
