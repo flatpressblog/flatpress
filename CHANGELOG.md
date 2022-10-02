@@ -16,7 +16,7 @@
   - Fixed searchbox glitch in FlatMaas revisited style ([#97](https://github.com/flatpressblog/flatpress/issues/97))
   - Fixed missing bullets in preview ([#98](https://github.com/flatpressblog/flatpress/issues/98))
   - CSS of the Leggero style had some glitches on mobile devices
-  - Invalid HTML output fixed ([#106](https://github.com/flatpressblog/flatpress/issues/106))
+  - Invalid HTML output fixed ([#106](https://github.com/flatpressblog/flatpress/issues/106), [#156](https://github.com/flatpressblog/flatpress/issues/156))
   - Removed unneccessary external font resource ([#112](https://github.com/flatpressblog/flatpress/issues/112))
   - "Add comment" link has its own line ([#135](https://github.com/flatpressblog/flatpress/issues/135))
   - Removed legacy/invalid CSS ([#133](https://github.com/flatpressblog/flatpress/issues/133), [#134](https://github.com/flatpressblog/flatpress/issues/134))
