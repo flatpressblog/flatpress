@@ -3,17 +3,17 @@
 	$lang['admin']['config']['default'] = 
 	array(
 		'head'		=> 'Opties',
-		'descr'		=> 'Aanpassen en configureren jouw FlatPress
+		'descr'		=> 'Aanpassen en configureren van de FlatPress
 					installatie.',
 		'submit'		=> 'Bewaar aanpassingen',
 		
 		'sysfset'		=> 'Algemene systeeminformatie',
 		'syswarning'	=> '<big>Warschuwing!</big> Deze informatie is van cruciaal belang en moet correct zijn,
-	anders FlatPress zal (waarschijnlijk) weigeren om goed te werken.',
+	anders zal FlatPress  (waarschijnlijk) weigeren om goed te werken.',
 		'blog_root'		=> '<strong>Absoluut pad naar flatpress</strong>. Opmerking: 
 	over het algemeen hoeft u dit niet te bewerken, wees hoe dan ook voorzichtig, want we kunnen niet
 	controleren of het correct is of niet.',
-		'www'		=>'<strong>Blog root</strong>. URL naar je blog, compleet met 
+		'www'		=>'<strong>Blog root</strong>. URL naar de blog, compleet met 
 	subdirectories. <br />
 	VB: https://www.mydomain.com/flatpress/ (voorwaard slash is nodig)',
 		
@@ -24,10 +24,10 @@
 		'blogsubtitle'		=> 'Blog subtitel',
 		'blogfooter'		=> 'Blog voettekst',
 		'blogauthor'		=> 'Blog auteur',
-		'startpage'		=> 'De home page van deze web site is',
+		'startpage'		=> 'De home page van deze website is',
 		'stdstartpage'		=> 'mijn blog (default)',
 		'blogurl'			=> 'Blog URL',
-		'blogemail'			=> 'Blog email',
+		'blogemail'			=> 'Blog e-mail',
 		'notifications'		=> 'Notificaties',
 		'mailnotify'		=> 'E-mailmelding inschakelen voor opmerkingen',
 		'blogmaxentries'	=> 'Aantal berichten per pagina',
