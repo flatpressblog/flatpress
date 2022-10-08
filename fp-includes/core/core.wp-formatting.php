@@ -487,25 +487,21 @@ function sanitize_title($title, $fallback_title = '') {
 
 function sanitize_title_with_dashes($title) {
 	$title = strip_tags($title);
-
-	if (seems_utf8($title)) {
-		if (function_exists('mb_strtolower')) {
-			$title = mb_strtolower($title, 'UTF-8');
-		}
-		$title = utf8_uri_encode($title);
-	}
-
 	// Preserve escaped octets.
 	$title = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '---$1---', $title);
 	// Remove percent signs that are not part of an octet.
 	$title = str_replace('%', '', $title);
 	// Restore octets.
 	$title = preg_replace('|---([a-fA-F0-9][a-fA-F0-9])---|', '%$1', $title);
-	// and finally: Kill octets
-	$title = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $title);
 
 	// remove accents
 	$title = remove_accents($title);
+	if (seems_utf8($title)) {
+		if (function_exists('mb_strtolower')) {
+			$title = mb_strtolower($title, 'UTF-8');
+		}
+		$title = utf8_uri_encode($title);
+	}
 
 	// title is in lower case always
 	$title = strtolower($title);

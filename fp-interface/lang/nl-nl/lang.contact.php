@@ -1,14 +1,16 @@
 <?php
 
 	$lang['contact'] = array(
-		'head'		=> 'Contact mij',
-		'descr'		=> 'Vuk het formulier hieronder in om een feedback te sturen. Vul je email als je een antwoord wilt.',
-		'fieldset1'	=> 'Gebruiker gegevens',
+		'head'		=> 'Neem contact op',
+		'descr'		=> 'Vul het formulier hieronder in. 
+		Om een antwoord te krijgen is een e-mail adres nodig.
+		(*) verplicht in te vullen velden',
+		'fieldset1'	=> 'Gegevens gebruiker',
 		'name'		=> 'Naam (*)',
 		'email'		=> 'Email:',
 		'www'		=> 'Web:',
-		'cookie'	=> 'Herinner mij',
-		'fieldset2'	=> 'Jouw bericht',
+		'cookie'	=> 'Stuur herinnering',
+		'fieldset2'	=> 'Bericht',
 		'comment'	=> 'Bericht (*):',
 		'fieldset3'	=> 'Stuur',
 		'submit'	=> 'Stuur',
@@ -17,10 +19,10 @@
 	);
 	
 	$lang['contact']['error'] = array(
-		'name'		=> 'Je moet een naam invullen',
-		'email'		=> 'Je moet een geldig email invullen',
-		'www'		=> 'Je moet een geldig URL invullen',
-		'content'	=> 'Je moet een bericht invullen',
+		'name'		=> 'Er dient een naam ingevuld te worden',
+		'email'		=> 'Geen geldig e-mail adres',
+		'www'		=> 'Geen geldige URL ',
+		'content'	=> 'Het bericht mag niet blanko zijn',
 	);
 	
 	$lang['contact']['msgs'] = array(

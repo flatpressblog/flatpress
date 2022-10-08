@@ -129,56 +129,56 @@ $lang ['comments'] ['error'] = array(
 
 $lang ['date'] ['month'] = array(
 
-	'Januari',
-	'Februari',
-	'Maart',
-	'April',
-	'Mei',
-	'Juni',
-	'July',
-	'Augustus',
-	'September',
-	'October',
-	'November',
-	'December'
+	'januari',
+	'februari',
+	'maart',
+	'april',
+	'mei',
+	'juni',
+	'juli',
+	'augustus',
+	'september',
+	'oktober',
+	'november',
+	'december'
 );
 
 $lang ['date'] ['month_abbr'] = array(
 
-	'Jan',
-	'Feb',
-	'Mrt',
-	'Apr',
-	'Mei',
-	'Jun',
-	'Jul',
-	'Aug',
-	'Sep',
-	'Oct',
-	'Nov',
-	'Dec'
+	'jan',
+	'feb',
+	'mrt',
+	'apr',
+	'mei',
+	'jun',
+	'jul',
+	'aug',
+	'sep',
+	'okt',
+	'nov',
+	'dec'
 );
 
 $lang ['date'] ['weekday'] = array(
 
-	'Zondag',
-	'Maandag',
-	'Dinsdag',
-	'Woensdag',
-	'Donderdag',
-	'Vrijdag',
-	'Zaterdag'
+	'zondag',
+	'maandag',
+	'dinsdag',
+	'woensdag',
+	'donderdag',
+	'vrijdag',
+	'zaterdag'
 );
 
 $lang ['date'] ['weekday_abbr'] = array(
 
-	'Zo',
-	'Ma',
-	'Di',
-	'Wo',
-	'Do',
-	'Vr',
-	'Za'
+	'zo',
+	'ma',
+	'di',
+	'wo',
+	'do',
+	'vr',
+	'za'
 );
 
 ?>

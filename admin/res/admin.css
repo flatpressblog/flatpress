@@ -167,7 +167,7 @@ input.maxsize { width: 99% }
 #main ul.msgs, ul.msgs {
 	margin-top: 1em;
 	margin-left: 0em;
-	padding: 1em 2em
+	padding: 1em 2em;
 }
 
 .errors {

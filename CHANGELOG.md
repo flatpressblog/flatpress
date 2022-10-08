@@ -7,29 +7,42 @@
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 
 ## Plugins
-- Gallery captions plugin added (see [#108](https://github.com/flatpressblog/flatpress/issues/108))
-- PhotoSwipe plugin added (see [#109](https://github.com/flatpressblog/flatpress/issues/109))
+- Gallery captions plugin added ([#108](https://github.com/flatpressblog/flatpress/issues/108))
+- PhotoSwipe plugin added ([#109](https://github.com/flatpressblog/flatpress/issues/109))
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6) and jQueryUI (1.12.1 => 1.13.1)
 - Media Manager plugin shows 50 items per page, not 10
+- LastComments plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
+- Comment Center config page threw errors ([#90](https://github.com/flatpressblog/flatpress/issues/90))
 
 ## Themes
-- Leggero theme: Fixed searchbox glitch in FlatMaas revisited style (see [#97](https://github.com/flatpressblog/flatpress/issues/97))
-- Leggero theme: Fixed missing bullets in preview (see [#98](https://github.com/flatpressblog/flatpress/issues/98))
-- Leggero theme: CSS of the Leggero style had some glitches on mobile devices
-- Leggero theme: Invalid HTML output fixed (see [#106](https://github.com/flatpressblog/flatpress/issues/106))
-- Leggero theme: Removed unneccessary external font resource (see [#112](https://github.com/flatpressblog/flatpress/issues/112))
+- Leggero
+  - Fixed searchbox glitch in FlatMaas revisited style ([#97](https://github.com/flatpressblog/flatpress/issues/97))
+  - Fixed missing bullets in preview ([#98](https://github.com/flatpressblog/flatpress/issues/98))
+  - CSS of the Leggero style had some glitches on mobile devices
+  - Invalid HTML output fixed ([#106](https://github.com/flatpressblog/flatpress/issues/106), [#156](https://github.com/flatpressblog/flatpress/issues/156))
+  - Removed unneccessary external font resource ([#112](https://github.com/flatpressblog/flatpress/issues/112))
+  - "Add comment" link has its own line ([#135](https://github.com/flatpressblog/flatpress/issues/135))
+  - Removed legacy/invalid CSS ([#133](https://github.com/flatpressblog/flatpress/issues/133), [#134](https://github.com/flatpressblog/flatpress/issues/134))
+  - Fixed description of Leggero and Leggero v2 styles ([#137](https://github.com/flatpressblog/flatpress/issues/137))
+  - Obsolete bullet points removed ([#136](https://github.com/flatpressblog/flatpress/issues/136))
+  - Updated preview image ([#139](https://github.com/flatpressblog/flatpress/issues/139))
 
-## Bugfixes
-- Comment Center config page threw errors (see [#90](https://github.com/flatpressblog/flatpress/issues/90))
+## Internationalization
 - Fixed glitches in Spanish an Portuguese language files
+- Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
+- Search page: Month names displayed in configured frontend language ([#132](https://github.com/flatpressblog/flatpress/issues/132))
+- German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
+
+## Other bugfixes
 - Plugin management page: Removed empty warning messages box
-- Fixed wrong pt-br country code (see [#100](https://github.com/flatpressblog/flatpress/issues/100))
-- Fixed error at prev link on first / next link on last entry (see [#95](https://github.com/flatpressblog/flatpress/issues/95))
-- LastComments plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available (see [#43](https://github.com/flatpressblog/flatpress/issues/43))
+- Fixed error at prev link on first / next link on last entry ([#95](https://github.com/flatpressblog/flatpress/issues/95))
+- Logout redirects to home page again ([#119](https://github.com/flatpressblog/flatpress/issues/119))
+- Fixed disappearing non-Latin characters in page title ([#49](https://github.com/flatpressblog/flatpress/issues/49) and [#91](https://github.com/flatpressblog/flatpress/issues/91))
 
 ## Security
-- Fixed security issue reported by huntr.dev: Session cookie missed the "secure" flag
+- Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
 - Possible path traversal in Media Manager plugin prevented
+- Uploaded files wheren't checked properly ([#152](https://github.com/flatpressblog/flatpress/issues/152))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes

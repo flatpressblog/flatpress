@@ -11,7 +11,7 @@
 	$lang['admin']['static']['list'] = array(
 	
 		'head'		=> 'Statische paginas',
-		'descr'		=> 'Selecteer een pagina om te bewerken of <a href="admin.php?p=static&amp;action=write">voeg nieuw toe</a>.',
+		'descr'		=> 'Selecteer een pagina om te bewerken of <a href="admin.php?p=static&amp;action=write">voeg een nieuwe toe</a>.',
 	
 		'sel'		=> 'Selecteer', // checkbox
 		'date'		=> 'Datum',

@@ -37,3 +37,4 @@ FlatPress utilizes the following free frameworks and libraries. Thanks to their 
 
 ## Other contributions
 - [Julian Rademacher](https://moortaube.de/) generously donated his Twitter account [@FlatPress](https://twitter.com/FlatPress). Also thanks for your useful pull requests!
+- [Fraenkiman](https://github.com/Fraenkiman) tests FlatPress to its very core and creates a metric ton of very helpful [issues](https://github.com/flatpressblog/flatpress/issues).

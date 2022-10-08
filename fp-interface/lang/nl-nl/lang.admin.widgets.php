@@ -19,19 +19,19 @@
 						thema dat u kiest.</p>
 
 						<p>FlatPress komt met verschillende widgets: zo zijn er widgets om je met inloggen te helpen, om 
-						deen zoek box te tonen, etc.</p>
+						een zoekbox te tonen, etc.</p>
 						
-						<p>Elke Widget is gedefineert door een <a class="hint" '.
+						<p>Elke Widget is gedefineerd door een <a class="hint" '.
 						'href="https://wiki.flatpress.org/res:plugins" title="Wat is een Widget?">plugin</a>.',
 						
 		'availwdgs'	=> 'Beschikbare Widgets',
-		'trashcan'	=> 'Sleep het hier om te verwijderen',
+		'trashcan'	=> 'Sleep het hierheen om te verwijderen',
 		
 		'themewdgs' => 'Widgetsets voor dit thema',
-		'themewdgsdescr' => 'Het thema wat je nu hebt geslekteerd heeft de volgende widgetsets',
+		'themewdgsdescr' => 'Het thema wat je nu hebt geselekteerd heeft de volgende widgetsets',
 		'oldwdgs'	=> '\\\andere widgetsets',
-		'oldwdgsdescr' =>'De volgende widgetsets lijkt niet behoren tot elke andere van de '.
-						'widgetsets als boven getoond. Dit kan herinneringen zijn van andere thema.',
+		'oldwdgsdescr' =>'De volgende widgetsets lijken niet te behoren tot elke  van de andere '.
+						'widgetsets als boven getoond. Dit kan een overblijfsel zijn van een ander thema.',
 		
 		'submit'	=> 'Bewaar veranderingen',
 

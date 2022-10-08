@@ -2,7 +2,7 @@
 /*
  * Style Name: Leggero
  * Style URI: http://www.flatpress.org/
- * Description: The default FlatPress theme which brings a breath of fresh mint air. Responsive and a great start for own themes!
+ * Description: A responsive and more flat version of the default FlatPress theme.
  * Version: 1.2
  * Author: NoWhereMan and Drudo, optimised by Laborix
  * Author URI: https://www.flatpress.org/

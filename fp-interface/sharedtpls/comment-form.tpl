@@ -1,5 +1,5 @@
 {if !$entry_commslock}
-<h4>{$lang.comments.head}</h4>
+<h4 id="addcomment">{$lang.comments.head}</h4>
 <p>{$lang.comments.descr}</p>
 	
 

@@ -435,4 +435,9 @@ div#widget-searchbox li {
 	margin:0px;
 	padding:0px;
 }
+form#search ul { 
+	list-style-type: none;
+}
+form#search ul li:before {
+ content: none	
 }
