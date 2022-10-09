@@ -315,11 +315,9 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
         }
         for ($i = 1; $i <= 12; $i++) {
             $_val = sprintf('%02d', $i);
-			// FlatPress: replaces strftime() with strftime_replacement in order to be PHP 8.1 compatible
             $_text = isset($month_names) ? smarty_function_escape_special_chars($month_names[ $i ]) :
-                ($month_format === '%m' ? $_val : strftime_replacement($month_format, $_month_timestamps[ $i ]));
-            $_value = $month_value_format === '%m' ? $_val : strftime_replacement($month_value_format, $_month_timestamps[ $i ]);
-			// /FlatPress
+                ($month_format === '%m' ? $_val : strftime($month_format, $_month_timestamps[ $i ]));
+            $_value = $month_value_format === '%m' ? $_val : strftime($month_value_format, $_month_timestamps[ $i ]);
             $_html_months .= '<option value="' . $_value . '"' . ($_val == $_month ? ' selected="selected"' : '') .
                              '>' . $_text . '</option>' . $option_separator;
         }
