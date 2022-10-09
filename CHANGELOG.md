@@ -1,8 +1,7 @@
 # Under development: [FlatPress 1.3](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
+FlatPress 1.3 runs under PHP up to **8.1**; minimum required PHP version increases to **7.1**. Also, the PHP extension **intl** becomes mandatory.
 ## General
-- Template engine Smarty updated to version 4.2.1 (see [#94](https://github.com/flatpressblog/flatpress/issues/94))
-  - From now on, FlatPress requires at least PHP 7.1!
-  - Please make sure your themes and plugins continue to work with the new Smarty version
+- Template engine Smarty updated to version 4.2.1 (see [#94](https://github.com/flatpressblog/flatpress/issues/94))<br><sub><i>The Smarty API has changed significantly from v3 to v4 - please make sure your themes and plugins continue to work with the new Smarty version!</i></sub>
 - Added [SECURITY.md](https://github.com/flatpressblog/flatpress/blob/master/SECURITY.md)
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 
@@ -12,7 +11,7 @@
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6) and jQueryUI (1.12.1 => 1.13.1)
 - Media Manager plugin shows 50 items per page, not 10
 - LastComments plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
-- Comment Center config page threw errors ([#90](https://github.com/flatpressblog/flatpress/issues/90))
+- Fixed erros on the Comment Center config page ([#90](https://github.com/flatpressblog/flatpress/issues/90))
 
 ## Themes
 - Leggero
@@ -28,12 +27,12 @@
   - Updated preview image ([#139](https://github.com/flatpressblog/flatpress/issues/139))
 
 ## Internationalization
-- Fixed glitches in Spanish an Portuguese language files
+- Fixed glitches in Spanish and Portuguese language files
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - Search page: Month names displayed in configured frontend language ([#132](https://github.com/flatpressblog/flatpress/issues/132))
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
 
-## Other bugfixes
+## Bugfixes
 - Plugin management page: Removed empty warning messages box
 - Fixed error at prev link on first / next link on last entry ([#95](https://github.com/flatpressblog/flatpress/issues/95))
 - Logout redirects to home page again ([#119](https://github.com/flatpressblog/flatpress/issues/119))
@@ -43,7 +42,7 @@
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
 - Possible path traversal in Media Manager plugin prevented
-- Uploaded files wheren't checked properly ([#152](https://github.com/flatpressblog/flatpress/issues/152))
+- Uploaded files weren't checked properly ([#152](https://github.com/flatpressblog/flatpress/issues/152))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes
