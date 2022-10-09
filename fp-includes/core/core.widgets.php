@@ -45,6 +45,9 @@ class widget_indexer extends fs_filelister {
 			else
 				$params = array();
 			// $var = 'plugin_' . $newid . '_widget';
+			if (!array_key_exists($newid, $fp_registered_widgets)) {
+				continue;
+			}
 			$var = $fp_registered_widgets [$newid] ['func'];
 			if (is_callable($var)) {
 				$content = call_user_func_array($var, $params);
