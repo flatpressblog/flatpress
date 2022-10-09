@@ -44,7 +44,7 @@ function draft_getlist() {
 	static $list = array();
 
 	if (!$list) {
-		$obj = & draft_init();
+		$obj = &draft_init();
 		$list = $obj->getList();
 		krsort($list);
 	}
@@ -86,7 +86,7 @@ function draft_save(&$entry, $id = null, $update_index = false, $update_date = f
 			fs_delete($ed . EXT);
 
 			// remove from normal flow
-			$o = & entry_init();
+			$o = &entry_init();
 			$o->delete($id, null);
 		}
 	}
@@ -177,7 +177,7 @@ function smarty_block_draft($params, $content, &$smarty, &$repeat) {
 		'version' => '',
 		'id' => ''
 	));
-	$arr = & $smarty->getTemplateVars('draft_list');
+	$arr = $smarty->getTemplateVars('draft_list');
 
 	$id = $subject = null;
 	if ($arr) {
