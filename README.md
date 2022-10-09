@@ -32,7 +32,7 @@ Installing and running FlatPress is really easy:
 - Enjoy blogging with FlatPress!
 
 ## Help and support
-Visit our [wiki](https://wiki.flatpress.org) to learn everything about blogging with FlatPress, how to work with themes and plugins and where to find them. The wiki also has the [general FAQ](https://wiki.flatpress.org/doc:faq) and the [tech FAQ](https://wiki.flatpress.org/doc:techfaq).
+Visit our [wiki](https://wiki.flatpress.org) to learn everything about blogging with FlatPress, how to work with themes and plugins and where to find them. The wiki also has the [General FAQ](https://wiki.flatpress.org/doc:faq) and the [Tech FAQ](https://wiki.flatpress.org/doc:techfaq).
 
 Ask your questions, show off your FlatPress blog and meet fellow FlatPressers at the [support forum](https://forum.flatpress.org).
 
