@@ -8,7 +8,7 @@
 {html_form}
 	
 	<h4><label for="wp-apikey">{$plang.apikey}</label></h4>
-	<p><input id="wp-apikey" type="text" name="wp-apikey" value="{$akismetconf.apikey}" /> 
+	<p><input id="wp-apikey" type="text" name="wp-apikey" value="{$akismetconf.apikey|default:''}" /> 
 	<input type="submit" value="{$plang.submit}"/> </p>
 	<p> {$plang.whatis} </p>
 		

@@ -62,7 +62,7 @@ if (class_exists('AdminPanelAction')) {
 			$this->smarty->assign('akismetconf', $akismetconf);
 		}
 
-		function onsubmit() {
+		function onsubmit($data = null) {
 			global $fp_config;
 
 			if ($_POST ['wp-apikey']) {
