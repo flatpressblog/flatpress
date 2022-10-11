@@ -74,6 +74,10 @@ add_action('wp_head', 'plugin_bbcode_head');
  * @return boolean
  */
 function bbcode_remap_url(&$d) {
+	// nothing to remap if given string is empty
+	if (empty($d)) {
+		return;
+	}
 	// NWM: "attachs/" is interpreted as a keyword, and it is translated to the actual path of ATTACHS_DIR
 	// CHANGE! we use the getfile.php script to mask the actual path of the attachs dir!
 	// DMKE: I got an idea about an integer-id based download/media manager... work-in-progress
@@ -755,7 +759,7 @@ function &plugin_bbcode_init() {
  * @return string
  */
 function BBCode($text) {
-	$bbcode = & plugin_bbcode_init();
+	$bbcode = &plugin_bbcode_init();
 	return $bbcode->parse($text);
 }
 
