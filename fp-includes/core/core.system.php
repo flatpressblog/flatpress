@@ -68,7 +68,7 @@ function system_hashsalt_save($force = false) {
 	return true;
 }
 
-define('SYSTEM_VER', '1.3.dev [smartyupdate]');
+define('SYSTEM_VER', '1.3.dev [master]');
 
 function system_ver() {
 	return 'fp-' . SYSTEM_VER;
