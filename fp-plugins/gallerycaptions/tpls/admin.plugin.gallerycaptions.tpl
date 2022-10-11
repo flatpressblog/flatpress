@@ -1,13 +1,13 @@
 <link rel="stylesheet" type="text/css" href="{$pluginurl}res/adminstyle.css" />
 <h2>{$plang.head}</h2>
 
-{include file=shared:errorlist.tpl}
+{include file="shared:errorlist.tpl"}
 
-{html_form class=option-set}
+{html_form class="option-set"}
 <p>
-    {$plang.label_selectgallery} 
+    {$plang.label_selectgallery}
     <select name='gallerycaptions-gallery'>
-        {foreach from="$galleries" item="galleryname"}
+        {foreach from=$galleries item=galleryname}
             <option value="{$galleryname}" {if $galleryname == $currentgallery} selected="selected"{/if}>{$galleryname}</option>
         {/foreach}
     </select>
@@ -17,14 +17,14 @@
 
 {if !empty($currentgallery)}
 	<h4>{$plang.label_editcaptionsforgallery} {$currentgallery}</h4>
-	{html_form class=option-set}
+	{html_form class="option-set"}
 	<p>
 	{if count($currentgalleryimages) == 0}
 		{$plang.label_noimagesingallery}
 	{else}
 		<input type="hidden" name="galleryname" value="{$currentgallery}">
 		<table class="entrylist plugin_gallerycaptions_captionstable">
-		{foreach from="$currentgalleryimages" item="currentfilename"}
+		{foreach from=$currentgalleryimages item=currentfilename}
 			<tr>
 				<td>
 					<a href="{$smarty.const.BLOG_BASEURL}{$smarty.const.IMAGES_DIR}{$currentgallery}/{$currentfilename}">

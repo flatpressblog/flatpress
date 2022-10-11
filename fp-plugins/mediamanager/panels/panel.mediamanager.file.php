@@ -240,6 +240,11 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 			}
 			$newgallery = str_replace("/", "", $newgallery);
 			$newgallery = str_replace(".", "", $newgallery);
+			// create images folder if not existant
+			if (!file_exists(ABS_PATH . IMAGES_DIR)) {
+				mkdir(ABS_PATH . IMAGES_DIR);
+			}
+			// now create gallery folder
 			if (mkdir(ABS_PATH . IMAGES_DIR . $newgallery)) {
 				$this->smarty->assign('success', 3);
 			} else {
