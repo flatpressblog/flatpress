@@ -3,18 +3,20 @@
 
 
 
-{draft_block}
-<div id="admin-drafts">
-<p>Your drafts:</p>
-<ul>
-{foreach from=$draft_list key=draftid item=draft}
-	<li>
-		<a href="admin.php?p=entry&amp;entry={$draftid}&amp;action=write">{$draft|truncate:50}</a>
-	</li>
-{/foreach}
-</ul>
-</div>
 
+{draft_block}
+{if isset($draft_list)}
+	<div id="admin-drafts">
+		<p>Your drafts:</p>
+		<ul>
+		{foreach from=$draft_list key=draftid item=draft}
+			<li>
+				<a href="admin.php?p=entry&amp;entry={$draftid}&amp;action=write">{$draft|truncate:50}</a>
+			</li>
+		{/foreach}
+		</ul>
+	</div>
+{/if}
 {/draft_block}
 
 

@@ -24,7 +24,7 @@
 				{assign var=class value=""}
 			{/if}
 			<input type="text" name="subject" id="subject" class="{$class}" 
-			value="{$subject|default:$smarty.request.subject|default:$smarty.request.page|wp_specialchars:1}" /><br />
+			value="{$subject|default:$smarty.request.subject|default:{$smarty.request.page|default:''}|wp_specialchars:1}" /><br />
 			<input type="hidden" name="timestamp" value="{$date}" />
 			</p>
 			<p>
@@ -40,7 +40,7 @@
 				{assign var=class value=""}
 			{/if}
 			<textarea name="content" class="{$class}" id="content" 
-			rows="20" cols="74">{$content|default:$smarty.request.content|htmlspecialchars}</textarea><br />
+			rows="20" cols="74">{$content|default:{$smarty.request.content|default:''}|htmlspecialchars}</textarea><br />
 		{*here will go a plugin hook*}
 			</p>
 		
