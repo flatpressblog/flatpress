@@ -168,36 +168,6 @@ function smarty_block_draftlist($params, $content, &$smarty, &$repeat) {
 	}
 }
 
-function smarty_block_draft($params, $content, &$smarty, &$repeat) {
-	$smarty->assign(array(
-		'subject' => '',
-		'content' => '',
-		'date' => '',
-		'author' => '',
-		'version' => '',
-		'id' => ''
-	));
-	$arr = $smarty->getTemplateVars('draft_list');
-
-	$id = $subject = null;
-	if ($arr) {
-		$firstElement = utils_array_kshift($arr);
-		$id = array_keys($firstElement);
-		$id = $id [0];
-		$subject = $firstElement [$id];
-	}
-
-	if ($id) {
-		$smarty->assign('subject', $subject);
-		$smarty->assign('id', $id);
-	}
-
-	$repeat = (bool) $id;
-
-	return $content;
-}
-
 $smarty->registerPlugin('block', 'draft_block', 'smarty_block_draftlist');
-$smarty->registerPlugin('block', 'draft', 'smarty_block_draft');
 
 ?>

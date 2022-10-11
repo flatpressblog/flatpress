@@ -7,14 +7,11 @@
 <div id="admin-drafts">
 <p>Your drafts:</p>
 <ul>
-
-{draft}
-<li>
-<a href="admin.php?p=entry&amp;entry={$id}&amp;action=write">{$subject|truncate:70}</a>
-
-</li>
-{/draft}
-
+{foreach from=$draft_list key=draftid item=draft}
+	<li>
+		<a href="admin.php?p=entry&amp;entry={$draftid}&amp;action=write">{$draft|truncate:50}</a>
+	</li>
+{/foreach}
 </ul>
 </div>
 

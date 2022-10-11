@@ -170,7 +170,7 @@ class FPDB_Query {
 			$this->single = true;
 		}
 
-		$GLOBALS ['current_query'] = & $this;
+		$GLOBALS ['current_query'] = &$this;
 	}
 
 	function prepare() {
@@ -178,8 +178,8 @@ class FPDB_Query {
 
 		$fpdb->init();
 
-		$this->main_idx = & $fpdb->get_index($this->params->category);
-		$entry_index = & $this->main_idx;
+		$this->main_idx = &$fpdb->get_index($this->params->category);
+		$entry_index = &$this->main_idx;
 
 		$this->counter++;
 
@@ -199,9 +199,9 @@ class FPDB_Query {
 			$this->_prepare_list($entry_index);
 
 			if ($this->params->exclude) {
-				$o = & $fpdb->get_index($this->params->exclude);
+				$o = &$fpdb->get_index($this->params->exclude);
 				if ($o !== false)
-					$this->secondary_idx = & $o;
+					$this->secondary_idx = &$o;
 			}
 		}
 
@@ -217,7 +217,7 @@ class FPDB_Query {
 		if (!$this->params->id)
 			trigger_error("FPDB: no ID found for query {$this->ID}", E_USER_ERROR);
 
-		$qp = & $this->params;
+		$qp = &$this->params;
 
 		$time = entry_idtotime($qp->id);
 
@@ -240,7 +240,7 @@ class FPDB_Query {
 		// i.e. includes the first key $newkey such as $newkey <= $prevkey
 		// also, if $prevkey != $newkey then $prevkey := $newkey
 
-		$this->walker = & $entry_index->walker($prevkey, 2, null, null);
+		$this->walker = &$entry_index->walker($prevkey, 2, null, null);
 
 		// since we're searching for $prevkey, i.e. a key preceding the target $id
 		// in the sequence, if $prevkey becomes equal to $key then it means
@@ -269,7 +269,7 @@ class FPDB_Query {
 	}
 
 	function _prepare_list(&$entry_index) {
-		$qp = & $this->params;
+		$qp = &$this->params;
 
 		$entry_num = 0;
 
@@ -280,7 +280,7 @@ class FPDB_Query {
 			$firstid = null;
 
 			$index_count = $entry_index->length();
-			$this->walker = & $entry_index->walker($firstid);
+			$this->walker = &$entry_index->walker($firstid);
 		} else {
 			// notice this won't work with cats (for now)
 
@@ -311,7 +311,7 @@ class FPDB_Query {
 
 	// not so great implementation... doesn't work well
 	function _get_random_id(&$entry_index) {
-		$qp = & $this->params;
+		$qp = &$this->params;
 		$now = time();
 
 		$first = '999999999999';
@@ -332,7 +332,7 @@ class FPDB_Query {
 
 	/* reading functions */
 	function hasMore() {
-		$GLOBALS ['current_query'] = & $this;
+		$GLOBALS ['current_query'] = &$this;
 
 		// if system init has not been done (filling pointer variable etc.)
 		// call prepare()
@@ -348,7 +348,7 @@ class FPDB_Query {
 	function &peekEntry() {
 		global $post;
 
-		$qp = & $this->params;
+		$qp = &$this->params;
 		$return = array(
 			false,
 			false
@@ -475,7 +475,7 @@ class FPDB_Query {
 		if (!$this->hasMore())
 			return false;
 
-		$var = & $this->peekEntry();
+		$var = &$this->peekEntry();
 		$this->lastentry = $var;
 
 		$this->walker->next();
@@ -543,7 +543,7 @@ class FPDB_Query {
 
 		if ($this->params->page) {
 			// if ($this->_getOffsetId(0, ($this->params->start + $this->params->count)))
-			if ($this->walker->valid)
+			if ($this->walker && $this->walker->valid)
 				return array(
 					$GLOBALS ['lang'] ['main'] ['nextpage'],
 					$this->params->page + 1
@@ -648,7 +648,7 @@ class FPDB {
 
 	function &get_index($cat_id = 0) {
 		if (!isset($this->_indexer [$cat_id])) {
-			$this->_indexer [$cat_id] = & entry_cached_index($cat_id);
+			$this->_indexer [$cat_id] = &entry_cached_index($cat_id);
 		}
 		return $this->_indexer [$cat_id];
 	}
@@ -720,7 +720,7 @@ class FPDB {
 
 	function doquery($queryId = 0) {
 		if (isset($this->queries [$queryId])) {
-			$q = & $this->queries [$queryId];
+			$q = &$this->queries [$queryId];
 		} else {
 			return false;
 			trigger_error("FPDB: no such query ID ($queryId)", E_USER_WARNING);
@@ -742,7 +742,7 @@ class FPDB {
 	function &getQuery($queryId = 0) {
 		$o = null;
 		if (isset($this->queries [$queryId]))
-			$o = & $this->queries [$queryId];
+			$o = &$this->queries [$queryId];
 		return $o;
 	}
 
@@ -824,14 +824,14 @@ function smarty_block_entry($params, $content, &$smarty, &$repeat) {
 		return $content;
 	}
 
-	$q = & $fpdb->getQuery();
+	$q = &$fpdb->getQuery();
 
 	if ($repeat = $q->hasMore()) {
 
-		$couplet = & $q->getEntry();
+		$couplet = &$q->getEntry();
 
-		$id = & $couplet [0];
-		$entry = & $couplet [1];
+		$id = &$couplet [0];
+		$entry = &$couplet [1];
 
 		if (THEME_LEGACY_MODE) {
 			$entry = theme_entry_filters($entry, $id);
@@ -869,14 +869,14 @@ function smarty_block_comment($params, $content, &$smarty, &$repeat) {
 		'loggedin' => ''
 	));
 
-	$q = & $fpdb->getQuery();
+	$q = &$fpdb->getQuery();
 
 	if ($repeat = $q->comments->hasMore()) {
 
-		$couplet = & $q->comments->getComment();
+		$couplet = &$q->comments->getComment();
 
-		$id = & $couplet [0];
-		$comment = & $couplet [1];
+		$id = &$couplet [0];
+		$comment = &$couplet [1];
 
 		foreach ($comment as $k => $v) {
 			$kk = str_replace('-', '_', $k);
@@ -896,7 +896,7 @@ function smarty_block_comment($params, $content, &$smarty, &$repeat) {
 function smarty_block_comments($params, $content, &$smarty, &$repeat) {
 	global $fpdb;
 
-	$q = & $fpdb->getQuery();
+	$q = &$fpdb->getQuery();
 	$show = $q->comments->getCount();
 	$smarty->assign('entryid', $q->comments->entryid);
 
