@@ -12,6 +12,7 @@ FlatPress 1.3 runs under PHP up to **8.1**; minimum required PHP version increas
 - Media Manager plugin shows 50 items per page, not 10
 - LastComments plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
 - Fixed erros on the Comment Center config page ([#90](https://github.com/flatpressblog/flatpress/issues/90))
+- Fixed PHP warnings in Akismet plugin ([#83](https://github.com/flatpressblog/flatpress/issues/83))
 
 ## Themes
 - Leggero
@@ -27,7 +28,7 @@ FlatPress 1.3 runs under PHP up to **8.1**; minimum required PHP version increas
   - Updated preview image ([#139](https://github.com/flatpressblog/flatpress/issues/139))
 
 ## Internationalization
-- Fixed glitches in Spanish and Portuguese language files
+- Reworked translations: Spanish, Portuguese, and Dutch
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - Search page: Month names displayed in configured frontend language ([#132](https://github.com/flatpressblog/flatpress/issues/132))
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
