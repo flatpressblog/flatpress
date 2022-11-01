@@ -52,7 +52,7 @@
 		'otheropts'	=> 'Altre opzioni',
 		'commmsg'	=> 'Gestisci i commenti per questo articolo',
 		'delmsg'	=> 'Elimina questo articolo',
-		//'back'		=> 'Back discarding changes',
+		//'back'		=> 'Indietro ignorando le modifiche',
 	);
 	
 

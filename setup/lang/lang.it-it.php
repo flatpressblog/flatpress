@@ -78,9 +78,9 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Benvenuto su FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Questo è un articolo di prova, inserito mer mostrarti alcune delle funzioni di [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Questo è un articolo di prova, inserito per mostrarti alcune delle funzioni di [url=https://www.flatpress.org]FlatPress[/url].
 
-Il tag more ti consente di crare un "salto" tra un estratto e l\'articolo completo.
+Il tag more ti consente di creare un "salto" tra un estratto e l\'articolo completo.
 
 [more] 
 
@@ -130,7 +130,7 @@ Vuoi saperne di più?
 
 [list]
 [*]Segui il [url=https://www.flatpress.org/?x]blog ufficiale[/url] per sapere cosa succede nel mondo di FlatPress
-[*]Visita il [url=https://forum.flatpress.org/]forum[/url] per asistenza e chiacchierare un po\'
+[*]Visita il [url=https://forum.flatpress.org/]forum[/url] per assistenza e chiacchierare un po\'
 [*]Scarica [b]magnifici temi[/b] dagli [url=https://wiki.flatpress.org/res:themes]invii di altri utenti[/url]!
 [*]Dai un\'occhiata ai [url=https://wiki.flatpress.org/res:plugins]plugin non ufficiali[/url]
 [*]Scarica [url=https://wiki.flatpress.org/res:language]il pacchetto di traduzione[/url] per la tua lingua 
@@ -150,7 +150,7 @@ Vuoi saperne di più?
 
 [h4]E ora che faccio?[/h4]
 
-Ora puoi [url=login.php]connetterti[/url]per andare al [url=admin.php]Pannello di Controllo[/url] e inizire a scrivere!
+Ora puoi [url=login.php]connetterti[/url]per andare al [url=admin.php]Pannello di Controllo[/url] e iniziare a scrivere!
 
 Buon divertimento! :) 
 
