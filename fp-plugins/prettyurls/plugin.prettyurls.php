@@ -407,7 +407,8 @@ class Plugin_PrettyURLs {
 
 		$this->cache_delete_elem($id, $date);
 
-		if ($this->index [$date ['y']] [$date ['m']] === false) {
+		// Add year and month keys to index, if not present already
+		if (!array_key_exists($date ['y'], $this->index) || !array_key_exists($date ['m'], $this->index [$date ['y']]) || $this->index [$date ['y']] [$date ['m']] === false) {
 			$this->index [$date ['y']] [$date ['m']] = array();
 		}
 
