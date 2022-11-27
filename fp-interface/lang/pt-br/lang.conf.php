@@ -1,5 +1,5 @@
 <?php
-// Terminado 15 de fevereiro de 2020.
+// Terminado 27 de Novembro de 2022.
 $langconf = array();
 $langconf ['id'] = 'Português (BR)';
 $langconf ['locale'] = 'pt-br';

@@ -1,5 +1,5 @@
 <?php
-//Terminado - 15 de fevereiro de 2020.
+// Terminado 27 de Novembro de 2022.
 
 	$lang['admin']['widgets']['submenu']['default'] = 'Administre Widgets';
 	$lang['admin']['widgets']['submenu']['raw'] 	= 'Administre Widgets (cru)';
@@ -7,13 +7,13 @@
 	/* default action */
 	
 	$lang['admin']['widgets']['default'] = array(
-		'head'		=> 'Administre Widgets',
+		'head'		=> 'Administre os Widgets',
 		
 		'descr'		=> 	'Um <a class="hint" '.
 						'href="http://wiki.flatpress.org/doc:widgets" title="O que é um Widget?">'.
 						'Widget</a>  é um componente dinâmico que pode exibir dados e interagir com o usuário.
 						Embora <strong>Temas</strong> tenham como objetivo alterar a aparência do seu blog, os Widgets 
-						<strong>estenda</strong> aparência e funcionalidades.</p>
+						<strong>estendem</strong> a aparência e funcionalidades.</p>
 
 						<p>Os widgets podem ser arrastados para áreas especiais do seu tema, chamadas de <strong>WidgetSets</strong>. O número e o nome dos WidgetSets podem variar de acordo com o
 tema que você escolher.</p>
@@ -24,7 +24,7 @@ tema que você escolher.</p>
 						'href="http://wiki.flatpress.org/doc:plugins" title="O que é um Plugin?">plugin</a>.',
 						
 		'availwdgs'	=> 'Widgets disponíveis',
-		'trashcan'	=> 'Coloque aqui para excluir',
+		'trashcan'	=> 'Arraste aqui para excluir',
 		
 		'themewdgs' 	=> 'Conjunto de widgets para este tema.',
 		'themewdgsdescr' => 'O tema que você selecionou atualmente permite que você tenha os seguintes WidgetSets.',

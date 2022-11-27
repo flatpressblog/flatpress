@@ -1,5 +1,5 @@
 <?php
-//Terminado 15 de fevereiro de 2020.
+//Terminado 27 de Novembro de 2022.
 
 	$lang['admin']['config']['default'] = 
 	array(
@@ -29,16 +29,16 @@
 		'langchoice'		=> 'Idioma',
 
 		'intsetts'		=> 'Configurações internacionais',
-		'utctime'		=> '<acronym title="Universal Coordinated Time">UTC</acronym> hora está',
-		'timeoffset'		=> 'Diferença de hora de UTC hora',
+		'utctime'		=> '<acronym title="Universal Coordinated Time">UTC</acronym> hora é:',
+		'timeoffset'		=> 'Diferença em horas com relação ao UTC:',
 		'hours'			=> 'horas',
 		'timeformat'		=> 'Formato padrão para a hora',
 		'dateformat'		=> 'Formato padrão para a data',
 		'dateformatshort'	=> 'Formato padrão para a data (curta)',
 		'output'		=> 'Resultado',
-		'charset'		=> 'Repertório de caracteres',
-		'charsettip'	=> 'O repertório de caracteres em que você escreve seu blog. (UTF-8 é '.
-						'<a href="http://wiki.flatpress.org/doc:charsets">recomendado.</a>)'
+		'charset'		=> 'Conjunto de caracteres',
+		'charsettip'	=> 'O conjunto de caracteres em que você escreve seu blog (UTF-8 é '.
+						'<a href="http://wiki.flatpress.org/doc:charsets">recomendado</a>)'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 
@@ -50,18 +50,16 @@
 			
 	$lang['admin']['config']['default']['error'] = 
 	array(
-		'www' 		=>	'A raiz do blog deve ser um URL válido.',
+		'www' 		=>	'A raiz do blog deve ser uma URL válida.',
 		'title'		=>	'Você deve especificar um título.',
 		'email'		=>	'Você não inseriu um email válido.',
 		'maxentries'	=>	'Você não inseriu um número válido de entradas.',
-		'timeoffset'	=>	'Você não inseriu um deslocamento de hora válido. '.
+		'timeoffset'	=>	'Você não inseriu um range de hora válido. '.
 						'Você pode usar ponto flutuante (e.g. 2h30" => 2.5).',
 		'timeformat'	=>	'Você deve inserir uma string de formato para a hora.',
 		'dateformat'	=>	'Você deve inserir uma string de formato para a data.',
 		'dateformatshort'=>	'Você deve inserir uma string de formato para a data (curta).',
-		'charset'	=>	'Você deve inserir um repertório de caracteres.',
+		'charset'	=>	'Você deve inserir um conjunto de caracteres.',
 		'lang'		=>	'O idioma que você escolheu não está disponível.'
 		);		
-			
-		
 ?>

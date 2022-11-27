@@ -8,7 +8,7 @@
 		'config'	=> 'Opções',
 		//'users'		=> 'Users',
 		'entry'		=> 'Posts',
-		'static'	=> 'Estáveis',
+		'static'	=> 'Estáticas',
 		'uploader'	=> 'Carregador',
 		'widgets'	=> 'Widgets',
 		//'add'		=> 'Add',
