@@ -16,7 +16,7 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/
 - The XML sitemap for search engines was [initially introduced](https://www.igorkromin.net/index.php/2013/02/18/adding-a-google-compatible-sitemap-to-flatpress/) by [Igor Kromin](https://www.igorkromin.net/).
 
 ## Translation
-- Brazilian Portuguese: randy
+- Brazilian Portuguese: randy, reworked by [Fabiano Santos](https://github.com/fabianosantosnet)
 - Czech: [Lubomír Ludvík](http://flatpress.cz/)
 - Dutch: Macmee
 - French: [Marc Thibeault](https://github.com/MarcThibeault) and Dimitri Soufflet, reworked by Gee
