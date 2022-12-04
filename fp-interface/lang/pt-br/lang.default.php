@@ -1,5 +1,5 @@
 <?php
-//Terminado 15 de fevereiro de 2020.
+//Terminado 27 de Novembro de 2022.
 
 	$lang = array();
 
@@ -49,8 +49,7 @@
 		'descrres'	=> 'A pesquisa de <strong>%s</strong> retornou os seguintes resultados:',
 		'descrnores'	=> 'A pesquisa de <strong>%s</strong> não retornou resultados.',
 		
-		'moreopts'	=> 'Mais opções',
-		
+		'moreopts'	=> 'Mais opções',		
 		
 		'searchag'	=> 'Pesquise de novo',
 		
@@ -60,11 +59,7 @@
 	
 		'keywords'	=> 'Você deve especificar pelo menos uma palavra-chave.'
 	
-	);
-	
-	
-	
-	
+	);	
 	
 	$lang['entry'] = array();
 	$lang['entry']['flags'] = array();
@@ -93,9 +88,9 @@
 		'fieldset1'	=> 'Insira seu nome de usuário e senha.',
 		'user'		=> 'Nome de usuário:',
 		'pass'		=> 'Senha:',
-		'fieldset2'	=> 'Faça login',
+		'fieldset2'	=> 'Efetuar login',
 		'submit'	=> 'Login',
-		'forgot'	=> 'Senha perdida'
+		'forgot'	=> 'Esqueci a senha'
 	);
 		
 	$lang['login']['success'] = array(
@@ -112,12 +107,11 @@
 		'pass'		=> 'Você deve inserir uma senha.',
 		'match'		=> 'Você deve inserir um nome de usuário incorreta.'
 	);
-	
-	
+		
 	$lang['comments'] = array(
-		'head'		=> 'Adicione comentário.',
+		'head'		=> 'Adicione comentário',
 		'descr'		=> 'Preencha o formulário abaixo para adicionar seus próprios comentários.',
-		'fieldset1'	=> 'Dados do usário',
+		'fieldset1'	=> 'Dados do usuário',
 		'name'		=> 'Nome (*)',
 		'email'		=> 'Email:',
 		'www'		=> 'Website:',
@@ -125,8 +119,8 @@
 		'fieldset2'	=> 'Adicione seu comentário',
 		'comment'	=> 'Comentário (*):',
 		'fieldset3'	=> 'Envie',
-		'submit'	=> 'Comente',
-		'reset'		=> 'Reinicialize',
+		'submit'	=> 'Comentar',
+		'reset'		=> 'Resetar',
 		'success'	=> 'Seu comentário foi adicionado com sucesso.',
 		'nocomments'	=> 'Esta entrada ainda não foi comentada.',
 		'commslock'	=> 'Os comentários foram desativados para esta entrada.',
@@ -135,7 +129,7 @@
 	$lang['comments']['error'] = array(
 		'name'		=> 'Você deve inserir um nome.',
 		'email'		=> 'Você deve inserir um email válido.',
-		'www'		=> 'Você deve inserir um URL válido.',
+		'www'		=> 'Você deve inserir uma URL válida.',
 		'comment'	=> 'Você deve inserir um comentário.',
 	);
 	
@@ -166,7 +160,7 @@
 		'Jun',
 		'Jul',
 		'Ago',
-		'Sep',
+		'Set',
 		'Out',
 		'Nov',
 		'Dez'
@@ -196,7 +190,5 @@
 		'Sab',
 		
 	);
-
-
 
 ?>

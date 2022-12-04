@@ -1,18 +1,17 @@
 <?php
-//Terminado 15 de fevereiro de 2020.
+// Terminado 27 de Novembro de 2022.
 
 	$lang['admin']['static']['submenu'] = array(
-		'list'		=> 'Administre páginas estáveis',
-		'write'		=> 'Crie uma página estável'
+		'list'		=> 'Administre páginas estáticas',
+		'write'		=> 'Crie uma página estática'
 	);
-
 	
 	/* main panel */
 		
 	$lang['admin']['static']['list'] = array(
 	
-		'head'		=> 'Páginas estáveis',
-		'descr'		=> 'Por favor, selecione uma página para editar ou <a href="admin.php?p=static&amp;action=write">crie nova</a>.',
+		'head'		=> 'Páginas estáticas',
+		'descr'		=> 'Por favor, selecione uma página para editar ou <a href="admin.php?p=static&amp;action=write">crie nova</a>',
 	
 		'sel'		=> 'Sel', // checkbox
 		'date'		=> 'Data',
@@ -37,15 +36,15 @@
 
 	$lang['admin']['static']['write'] = 
 	array(
-		'head'		=> 'Publique página estável',
+		'head'		=> 'Publique página estática',
 		'descr'		=> 'Edite o formulário para publicar a página.',
 		'fieldset1'	=> 'Edite',
 		'subject'	=> 'Assunto (*):',
 		'content'	=> 'Conteúdo (*):',
 		'fieldset2'	=> 'Publique',
 		'pagename'	=> 'Nome da página (*):',
-		'submit'	=> 'Publique',
-		'preview'	=> 'Visualize',
+		'submit'	=> 'Publicar',
+		'preview'	=> 'Visualizar',
 
 		'delfset'	=> 'Exclua',
 		'deletemsg'	=> 'Exclua esta página',
@@ -63,17 +62,15 @@
 	
 	/* delete action */	
 	$lang['admin']['static']['delete'] = array(
-		'head'		=> "Exclua página", 
+		'head'		=> "Exclua a página", 
 		'descr'		=> 'Você está prestes a excluir a seguinte página:',
-		'preview'	=> 'Visualize',
+		'preview'	=> 'Visualizar',
 		'confirm'	=> 'Com certeza quer continuar?',
-		'fset'		=> 'Exclua',
+		'fset'		=> 'Excluir',
 		'ok'		=> 'Sim, exclua esta página.',
 		'cancel'	=> 'Não, leve-me de volta ao painel.',
 		'err'		=> 'A página especificada não existe.',
 	
 	);
-	
-	
 		
 ?>

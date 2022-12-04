@@ -44,5 +44,4 @@
 		-2 => 'O estilo que você escolheu não existe.'
 	);
 	
-	
 ?>
