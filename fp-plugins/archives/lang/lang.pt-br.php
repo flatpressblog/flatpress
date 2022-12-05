@@ -1,7 +1,7 @@
 <?php
 	$lang['plugin']['archives'] = array(
 		
-		'subject'			=> 'Arquivo de posts',
+		'subject'			=> 'Arquivos',
 		'no_posts'		=> 'Sem posts',
 	
 	);

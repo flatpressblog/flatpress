@@ -3,7 +3,7 @@
 
 $lang['plugin']['accessibleantispam'] = array(
 		
-	'prefix'	=> 'Para ajudar a eliminar ataques de spam automatizados, precisamos pedir que você prove que é humano. O que é ',
+	'prefix'	=> 'Para ajudar a prevenir ataques de spam, prove que você é humano respondendo quanto é ',
 		
 	'sum'		=> '%s mais %s ?',
 	'sub'		=> '%1$s menos %2$s ?',

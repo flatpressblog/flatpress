@@ -2,25 +2,25 @@
 
 $lang['admin']['plugin']['submenu']['bbcode'] = 'BBCode';
 $lang['admin']['plugin']['bbcode'] = array(
-	'head' => 'BBCode Configuração',
+	'head' => 'Configuração do BBCode',
 	'desc1' => 'Este plugin permite o uso de <a href="http://www.phpbb.com/'.
 		'phpBB/faq.php?mode=bbcode">BBCode</a> markup e fornece '.
 		'integração automática com o lightbox (quando também ativado).',
 	
 	'options' => 'Opções',
 
-	'editing'	=> 'Editing',
+	'editing'	=> 'Editar',
 	'allow_html'=> 'HTML embutido',
 	'allow_html_long' => 'Ativar o uso de HTML junto com o BBCode',
 	'toolbar' => 'Barra de ferramentas',
-	'toolbar_long' => 'Ativar a barra de ferramentas do editor.',
+	'toolbar_long' => 'Ativar a barra de ferramentas do editor',
 
 	'other'	=>	'Outras opções',
 	'comments' => 'Comentários',
 	'comments_long' => 'Permitir BBCode nos comentários',
 	'urlmaxlen' => 'comprimento máximo do URL',
 	'urlmaxlen_long_pre' => 'Encurte URLs maiores que ',
-	'urlmaxlen_long_post'=>' caracteres.',
+	'urlmaxlen_long_post'=>' caracteres',
 	'submit' => 'Salvar configuração',
 	'msgs' => array(
 		1 => 'Configuração do BBCode salva com sucesso',
@@ -49,7 +49,7 @@ $lang['admin']['plugin']['bbcode'] = array(
 		'help'           => 'Ajuda do BBCode',
 		// currently not used
 		'status'         => 'Barra de status',
-		'statusbar'      => 'Moda normal. Pressionar &lt;Esc&gt; para mudar o modo de edição'
+		'statusbar'      => 'Modo normal. Pressione &lt;Esc&gt; para mudar o modo de edição'
 	)
 );
 
