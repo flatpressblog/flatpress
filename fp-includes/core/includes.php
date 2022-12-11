@@ -3,10 +3,14 @@
 // includes.php
 // this is just a list of all the standard includes
 require_once INCLUDES_DIR . 'core.utils.php';
+
+// intialize Smarty
 utils_checksmarty();
 require (SMARTY_DIR . 'Smarty.class.php');
 $smarty = new Smarty();
 $_FP_SMARTY = &$smarty;
+// add plugin dir for FlatPress-specific Smarty plugins
+$smarty->addPluginsDir(FP_SMARTYPLUGINS_DIR);
 
 // WordPress plugin system
 require_once INCLUDES_DIR . 'core.wp-plugin-interface.php';

@@ -23,7 +23,7 @@ class AdminPanel {
 	var $actionpanel = null;
 
 	function __construct(&$smarty) {
-		$this->smarty = & $smarty;
+		$this->smarty = &$smarty;
 		if (!$this->panelname)
 			trigger_error("Variable \$panelname is not defined!", E_USER_ERROR);
 
@@ -96,7 +96,7 @@ class AdminPanelAction {
 	var $langres = '';
 
 	function __construct(&$smarty) {
-		$this->smarty = & $smarty;
+		$this->smarty = &$smarty;
 		$the_action_panel = get_class($this);
 		$this->smarty->assign('admin_panel_id', $the_action_panel);
 		if (!$this->langres)
@@ -229,7 +229,7 @@ class AdminPanelActionValidated extends AdminPanelAction {
 
 			list ($vid, $field, $validatorname, $empty, $halt, $funcs) = $valid_arr;
 
-			$includepath = SMARTY_DIR . 'plugins/';
+			$includepath = FP_SMARTYPLUGINS_DIR;
 
 			$string = @$_POST [$field];
 
