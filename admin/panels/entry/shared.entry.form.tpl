@@ -15,7 +15,7 @@
 		<input type="text" name="subject" id="subject" value="{$subject|default:$smarty.request.subject}" /><br />
 		<input type="hidden" name="timestamp" value="{$date}" />
 		</p>
-	{toolbar}
+		{toolbar}
 		<p>
 		<label for="content">{$panelstrings.content}</label><br />
 		<textarea name="content" id="content" rows="20" cols="74"{$content|default:$smarty.request.content}</textarea><br />

@@ -30,9 +30,7 @@
 			<p>
 			<label for="content">{$panelstrings.content}</label>
 			</p>
-			{if function_exists('plugin_bbcode_init')}
-				{include file='plugin:bbcode/toolbar'}
-			{/if}
+			{toolbar}
 			<p>
 			{if isset($error) && isset($error.content) && !empty($error.content)}
 				{assign var=class value=" field-error"}

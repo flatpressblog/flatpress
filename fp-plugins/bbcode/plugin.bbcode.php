@@ -46,8 +46,7 @@ function plugin_bbcode_startup() {
 	add_filter('the_content', 'plugin_bbcode_undoHtml', 30);
 	if (BBCODE_USE_EDITOR) {
 		// initialize the toolbar
-		add_filter('editor_toolbar', 'plugin_bbcode_toolbar');
-		plugin_bbcode_init_toolbar();
+		add_filter('editor_toolbar', 'plugin_bbcode_init_toolbar');
 	}
 	if (BBCODE_ENABLE_COMMENTS) {
 		add_filter('comment_text', 'plugin_bbcode_comment', 1);
@@ -784,6 +783,8 @@ function plugin_bbcode_init_toolbar() {
 	sort($attachslist);
 	array_unshift($attachslist, '--');
 	$_FP_SMARTY->assign('attachs_list', $attachslist);
+
+	echo $_FP_SMARTY->fetch('plugin:bbcode/toolbar');
 }
 
 /**

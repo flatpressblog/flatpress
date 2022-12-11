@@ -35,9 +35,7 @@
 			<p>
 			<label for="content">{$panelstrings.content}</label>
 			</p>
-			{if function_exists('plugin_bbcode_init')}
-				{include file='plugin:bbcode/toolbar'}
-			{/if}
+			{toolbar}
 			<p>
 			<textarea name="content" class="{$class}" 
 			id="content" rows="20" cols="74">{$content|default:{$smarty.request.content|default:''}|htmlspecialchars}</textarea><br />
