@@ -104,6 +104,9 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 		array_push($result, $ild);
 
 		$cat_entry = $params ['selected'];
+		if (!is_array($cat_entry)) {
+			$cat_entry = array();
+		}
 
 		if (isset($params ['type']) && ($params ['type'] == 'form' || $params ['type'] == 'check')) {
 			$string = '<label><input name="' . $catname . 'cats[' . $vid . ']" ';
@@ -138,7 +141,7 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 		} elseif (isset($params ['type']) && $params ['type'] == 'linked') {
 			$after = '</a>';
 			if (isset($params ['count']) && $params ['count']) {
-				$index = & $fpdb->get_index($vid);
+				$index = &$fpdb->get_index($vid);
 				$count = ($index) ? $index->length() : 0;
 				$after = " ($count) " . $after;
 			}

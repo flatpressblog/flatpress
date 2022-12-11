@@ -332,6 +332,9 @@ class plugin_commentcenter {
 	 * @return integer: The behavoir
 	 */
 	function behavoirFromPolicies($entry, $cats = array()) {
+		if (!is_array($cats)) {
+			$cats = array();
+		}
 		$date = date_from_id($entry);
 		// check if $date is in expected format
 		if (!array_key_exists('time', $date)) {

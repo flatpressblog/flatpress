@@ -97,8 +97,17 @@ function main() {
 		utils_redirect($url);
 	}
 
+	// register all Smarty modifier functions used by the admin templates
 	$smarty->registerPlugin('modifier', 'action_link', 'admin_filter_action');
 	$smarty->registerPlugin('modifier', 'cmd_link', 'admin_filter_command');
+	$smarty->registerPlugin('modifier', 'date', 'date');
+	$smarty->registerPlugin('modifier', 'entry_idtotime', 'entry_idtotime');
+	$smarty->registerPlugin('modifier', 'in_array', 'in_array');
+	$smarty->registerPlugin('modifier', 'htmlspecialchars', 'htmlspecialchars');
+	$smarty->registerPlugin('modifier', 'plugin_getinfo', 'plugin_getinfo');
+	$smarty->registerPlugin('modifier', 'sprintf', 'sprintf');
+	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
+	$smarty->registerPlugin('modifier', 'wptexturize', 'wptexturize');
 }
 
 // smarty tag
