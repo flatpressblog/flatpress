@@ -6,7 +6,7 @@
 		'welcome'		=> 'Bem vindo, ',
 		'admin_panel'	=> 'Painel do administrador',
 		'add_entry'		=> 'Crie um post',
-		'add_static'	=> 'Crie uma página estável',
+		'add_static'	=> 'Crie uma página estática',
 		'logout'		=> 'Sair'
 	
 	);
