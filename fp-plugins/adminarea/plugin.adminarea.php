@@ -23,8 +23,9 @@ function plugin_adminarea_widget() {
 				<li><a href="' . $baseurl . 'admin.php?p=entry&amp;action=write">' . $lang ['plugin'] ['adminarea'] ['add_entry'] . '</a></li>
 				<li><a href="' . $baseurl . 'login.php?do=logout">' . $lang ['plugin'] ['adminarea'] ['logout'] . '</a></li>
 				</ul>';
-	} else
-		$string = '<ul><li><a href="' . $baseurl . 'login.php">Login</a></li></ul>';
+	} else {
+		$string = '<ul><li><a href="' . $baseurl . 'login.php">' . $lang ['plugin'] ['adminarea'] ['login'] . '</a></li></ul>';
+	}
 
 	$entry ['subject'] = $lang ['plugin'] ['adminarea'] ['subject'];
 	$entry ['content'] = $string;
