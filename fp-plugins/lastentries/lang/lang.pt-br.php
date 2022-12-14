@@ -4,9 +4,9 @@
 		
 		'subject_before_count'	=> 'Últimos ',
 		'subject_after_count'	=> ' posts',
-		'edit'			=> 'Edite',
-		'add_entry'		=> 'Adicione post',
-		'no_entries'	=> 'Sem Posts'
+		'edit'			=> 'Editar',
+		'add_entry'		=> 'Adicionar um post',
+		'no_entries'	=> 'Não há posts'
 	
 	
 	);

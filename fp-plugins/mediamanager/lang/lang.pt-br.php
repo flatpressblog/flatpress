@@ -4,12 +4,13 @@
 	/* THIS LINE SHOULDN'T BE HERE! */
 	$lang['admin']['uploader']['submenu']['default'] = 'Uploader';
 	
-	$lang['admin']['uploader']['submenu']['mediamanager'] = 'Administrador de meios';
+	$lang['admin']['uploader']['submenu']['mediamanager'] = 'Media Manager';
 	
 
-	$lang['admin']['uploader']['mediamanager'] = array(
-		'head'		=> 'Administrador de meios',
-		'description'=>'Administre seus meios',
+	$lang['admin']['uploader']['mediamanager'] = array
+	(
+		'head'		=> 'Administrador de mídias',
+		'description'=>'Administre suas mídias',
         
 		'delete'	=> 'Excluir',
 		'up'		=> 'Voltar',
@@ -18,7 +19,8 @@
 		'colsize'	=> 'Tamanho',
 		'coltype'	=> 'Tipo',
 		'colmtime'	=> 'Carregado em',
-		'colusecount'=>'# use',
+		
+		'colusecount'=>'Usos',
 		'nofiles'	=> 'Nenhum arquivo carregado',
 		'loadfile'	=> 'Carregar arquivo',
 		
@@ -26,7 +28,7 @@
 		'selectaction' 	=> '-- Selecionar ação --',
 		'addtogallery'	=> 'Adicionar à galeria',
 		'newgallery'	=> 'Nova galeria',
-	    'go' 			=> 'Vá',
+	    'go' 			=> 'Ir',
 		'add'			=> 'Adicionar'
 		
 	);
