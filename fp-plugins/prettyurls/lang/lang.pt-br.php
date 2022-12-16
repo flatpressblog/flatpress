@@ -3,12 +3,12 @@
 		-2	=> 'Não consigo encontrar ou criar um arquivo <code>.htaccess</code>  na sua raiz. Pode ser que PrettyURLs não funciona corretamente.  Consulte o painel de configuração.'
 	);
 	
-	$lang['admin']['plugin']['submenu']['prettyurls'] = 'Config de PrettyURLs';
+	$lang['admin']['plugin']['submenu']['prettyurls'] = 'Configurar PrettyURLs';
 	$lang['admin']['plugin']['prettyurls'] = array(
-		'head'		=> 'PrettyURLs Configuração',
+		'head'		=> 'Configurar PrettyURLs',
 		'htaccess'	=> '.htaccess',
-		'description'=>'Este editor bruto permite editar o seu '.
-						'<code>.htaccess</code>.',
+		
+		'description'=>'Este editor bruto permite editar o seu <code>.htaccess</code>.',
 		'cantsave'	=> 'Você não pode editar este arquivo, porque ele não é <strong>gravável</strong>. Você pode conceder permissão de gravação ou copiar e colar em um arquivo e fazer o upload.',
 		'mode'		=> 'Modo',
 		'auto'		=> 'Automático',
