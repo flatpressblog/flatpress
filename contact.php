@@ -119,6 +119,10 @@ function contact_form() {
 function contact_main() {
 	global $smarty;
 
+	// Initialize modifier functions
+	$smarty->registerPlugin('modifier', 'stripslashes', 'stripslashes');
+	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
+
 	$lang = lang_load('contact');
 
 	$smarty->assign('subject', $lang ['contact'] ['head']);
