@@ -34,6 +34,7 @@
 - Reworked translations: Spanish, Portuguese, Dutch, and Italian
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
+- Fixed not-yet-translated phrases in Admin Area ([#171](https://github.com/flatpressblog/flatpress/issues/171))
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
@@ -45,7 +46,8 @@
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
 - Possible path traversal in Media Manager plugin prevented
-- Uploaded files weren't checked properly ([#152](https://github.com/flatpressblog/flatpress/issues/152))
+- Uploaded files weren't checked properly ([#152](https://github.com/flatpressblog/flatpress/issues/152), [#170](https://github.com/flatpressblog/flatpress/issues/170))
+- Possible XSS prevented ([#153](https://github.com/flatpressblog/flatpress/issues/153))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes
