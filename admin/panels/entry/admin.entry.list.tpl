@@ -7,7 +7,7 @@
 {draft_block}
 {if isset($draft_list)}
 	<div id="admin-drafts">
-		<p>Your drafts:</p>
+		<p>{$lang.admin.entry.list.drafts}</p>
 		<ul>
 		{foreach from=$draft_list key=draftid item=draft}
 			<li>
@@ -29,7 +29,7 @@
 <p> <input type="hidden" name="p" value="entry" /> </p>
 <fieldset><legend>{$panelstrings.filter}</legend>
 	<select name="category" class="alignleft">
-	<option label="Unfiltered" value="all">{$panelstrings.nofilter}</option>
+	<option label="{$lang.admin.entry.list.nofilter}" value="all">{$panelstrings.nofilter}</option>
 	{*html_options options=$lang.entry.flags.short selected=$smarty.request.cat*}
 	{if isset($smarty.request.category)} {assign var=category value=$smarty.request.category} {else} {assign var=category value=""}{/if}
 	{html_options options=$categories_all selected=$category}
