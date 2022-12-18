@@ -46,9 +46,10 @@
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
 - Possible path traversal in Media Manager plugin prevented
-- Proper check of uploaded files ([#152](https://github.com/flatpressblog/flatpress/issues/152), [#170](https://github.com/flatpressblog/flatpress/issues/170), )
+- Proper check of uploaded files ([#152](https://github.com/flatpressblog/flatpress/issues/152), [#170](https://github.com/flatpressblog/flatpress/issues/170))
 - Possible XSS prevented: Admin Area URL ([#153](https://github.com/flatpressblog/flatpress/issues/153))
 - Possible XSS prevented: SVG upload ([#172](https://github.com/flatpressblog/flatpress/issues/172))
+- Directory browsing prevented ([#174](https://github.com/flatpressblog/flatpress/issues/174))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes
