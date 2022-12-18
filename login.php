@@ -38,6 +38,9 @@ function login_validate() {
 function main() {
 	global $lang, $smarty;
 
+	// Initialize modifier functions
+	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
+
 	if (user_loggedin()) {
 
 		if (isset($_GET ['do']) && ($_GET ['do'] == 'logout')) {
