@@ -132,8 +132,9 @@ class admin_maintain_default extends AdminPanelAction {
 			case 'rebuild':
 				{
 
-					if (substr(INDEX_DIR, -1) == '/')
+					if (substr(INDEX_DIR, -1) == '/') {
 						$oldidx = substr(INDEX_DIR, 0, -1);
+					}
 
 					$movedir = $oldidx . time();
 
@@ -141,11 +142,11 @@ class admin_maintain_default extends AdminPanelAction {
 					echo "ENTERING LOWRES MODE\n\n";
 
 					if (file_exists(INDEX_DIR)) {
-
 						echo "BACKUP INDEX to $movedir\n";
 						$ret = @rename($oldidx, $movedir);
-						if (!$ret)
-							trigger_error('Cannot backup old index. STOP.', E_USER_ERROR);
+						if (!$ret) {
+							die("Cannot backup old index. STOP. \nDid you just purge the cache? If so, the index was in use to create a new cache. This is done now, please simply reload the current page.");
+						}
 					}
 					fs_mkdir(INDEX_DIR);
 
