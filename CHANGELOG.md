@@ -48,8 +48,11 @@
 - Possible path traversal in Media Manager plugin prevented
 - Proper check of uploaded files ([#152](https://github.com/flatpressblog/flatpress/issues/152), [#170](https://github.com/flatpressblog/flatpress/issues/170))
 - Possible XSS prevented: Admin Area URL ([#153](https://github.com/flatpressblog/flatpress/issues/153))
-- Possible XSS prevented: SVG upload ([#172](https://github.com/flatpressblog/flatpress/issues/172))
+- Possible XSS prevented: SVG/XML/MD upload ([#172](https://github.com/flatpressblog/flatpress/issues/172), [#178](https://github.com/flatpressblog/flatpress/issues/178))
 - Directory browsing prevented ([#174](https://github.com/flatpressblog/flatpress/issues/174))
+- Possible XSS in setup prevented ([#176](https://github.com/flatpressblog/flatpress/issues/176))
+- Possible XSS in Media Manager plugin prevented ([#177](https://github.com/flatpressblog/flatpress/issues/177))
+- Possible path traversal in file deletion prevented ([#179](https://github.com/flatpressblog/flatpress/issues/179))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes
