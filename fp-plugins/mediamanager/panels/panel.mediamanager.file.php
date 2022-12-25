@@ -77,6 +77,8 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		/* delete file */
 		if (isset($_GET ['deletefile'])) {
 			list ($type, $name) = explode("-", $_GET ['deletefile'], 2);
+			// prevent path traversal: remove ".." and "/" resp. "\"
+			$name = preg_replace('(\.\.|\/|\\\\)', '', $name);
 			switch ($type) {
 				case 'attachs':
 					$type = ABS_PATH . ATTACHS_DIR;
