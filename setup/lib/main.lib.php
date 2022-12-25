@@ -95,32 +95,37 @@ function getstep(&$id) {
 }
 
 function validate() {
-	if (!ctype_alnum($_POST ['fpuser']))
-		$err [] = "{$_POST['fpuser']} is not a valid username. 
+	$fpuser = strip_tags($_POST ['fpuser']);
+	$fppwd = $_POST ['fppwd'];
+	$fppwd2 = $_POST ['fppwd2'];
+	$email = strip_tags($_POST ['email']);
+	$www = strip_tags($_POST ['www']);
+	if (!ctype_alnum($fpuser)) {
+		$err [] = $fpuser . " is not a valid username. 
 		Username must be alphanumeric and should not contain spaces.";
-
-	if (strlen(trim(($_POST ['fppwd']))) < 6)
+	}
+	if (strlen(trim(($fppwd))) < 6) {
 		$err [] = "Password must contain at least 6 non-space characters";
-
-	if (($_POST ['fppwd']) != ($_POST ['fppwd2']))
+	}
+	if (($fppwd) != ($fppwd2)) {
 		$err [] = "Passwords did not match";
-
-	if (!(preg_match('!@.*@|\.\.|\,|\;!', $_POST ['email']) || preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $_POST ['email'])))
-		$err [] = "{$_POST['email']} is not a valid email address";
-
-	$www = $_POST ['www'];
+	}
+	if (!(preg_match('!@.*@|\.\.|\,|\;!', $email) || preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $email))) {
+		$err [] = $email . " is not a valid email address";
+	}
 	if (!(preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $www) || preg_match('!^http(s)?://localhost!', $www)))
-		$err [] = "$www is not a valid URL";
-	if ($www && $www [strlen($www) - 1] != '/')
+		$err [] = $www . " is not a valid URL";
+	if ($www && $www [strlen($www) - 1] != '/') {
 		$www .= '/';
+	}
 
 	global $fp_config;
 
-	$fp_config ['general'] ['author'] = $user ['userid'] = $_POST ['fpuser'];
-	$user ['password'] = $_POST ['fppwd'];
+	$fp_config ['general'] ['author'] = $user ['userid'] = $fpuser;
+	$user ['password'] = $fppwd;
 
 	$fp_config ['general'] ['www'] = $user ['www'] = $www;
-	$fp_config ['general'] ['email'] = $user ['email'] = $_POST ['email'];
+	$fp_config ['general'] ['email'] = $user ['email'] = $email;
 
 	if (isset($err)) {
 		$GLOBALS ['err'] = $err;
