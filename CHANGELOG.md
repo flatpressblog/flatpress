@@ -52,7 +52,7 @@
 - Directory browsing prevented ([#174](https://github.com/flatpressblog/flatpress/issues/174))
 - Possible XSS in setup prevented ([#176](https://github.com/flatpressblog/flatpress/issues/176))
 - Possible XSS in Media Manager plugin prevented ([#177](https://github.com/flatpressblog/flatpress/issues/177))
-- Possible path traversal in file deletion prevented ([#179](https://github.com/flatpressblog/flatpress/issues/179))
+- Possible path traversal in Media Manager plugin prevented ([#179](https://github.com/flatpressblog/flatpress/issues/179))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes
