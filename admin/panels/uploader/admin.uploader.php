@@ -96,7 +96,9 @@ class admin_uploader_default extends AdminPanelAction {
 			'htm',
 			'html',
 			'wml',
-			'svg'
+			'svg',
+			'xml',
+			'md'
 		);
 
 		$imgs = array(
