@@ -39,6 +39,7 @@ class admin_entry_list extends AdminPanelActionValidated {
 		// parameters for the list
 		// start offset and count (now defaults to 8...)
 
+		$this->smarty->assign('formtarget', strip_tags($_SERVER ['PHP_SELF']));
 		$this->smarty->assign('categories_all', entry_categories_get('defs'));
 		$this->smarty->assign('saved_flags', entry_flags_get());
 
@@ -46,8 +47,9 @@ class admin_entry_list extends AdminPanelActionValidated {
 
 		global $fpdb;
 
-		if (!empty($_REQUEST ['entry']))
+		if (!empty($_REQUEST ['entry'])) {
 			utils_redirect('admin.php?p=entry&action=write&entry=' . $_REQUEST ['entry']);
+		}
 
 		isset($_REQUEST ['m']) ? $params ['m'] = $_REQUEST ['m'] : null;
 		isset($_REQUEST ['y']) ? $params ['y'] = $_REQUEST ['y'] : null;

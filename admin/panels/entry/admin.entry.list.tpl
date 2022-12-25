@@ -25,7 +25,7 @@
 
 <p>{$panelstrings.descr}</p>
 
-<form method="get" action="{$smarty.server.PHP_SELF}?p=entry">
+<form method="get" action="{$formtarget}?p=entry">
 <p> <input type="hidden" name="p" value="entry" /> </p>
 <fieldset><legend>{$panelstrings.filter}</legend>
 	<select name="category" class="alignleft">
