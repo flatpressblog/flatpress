@@ -1,4 +1,5 @@
 AddType application/x-httpd-php .php .htm .html
+Options -Indexes
 
 RewriteEngine On
 RewriteBase /~nowhereman/flatpress/
