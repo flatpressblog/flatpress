@@ -222,7 +222,7 @@ function commentform() {
 					$fp_config ['general'] ['title']
 				), $lang ['comments'] ['mail']);
 
-				@utils_mail($from_mail, "New comment on {$fp_config['general']['title']}", $mail);
+				@utils_mail($from_mail, "{$lang ['comments'] ['newcomment']} {$lang ['comments'] ['newcomment']} {$fp_config['general']['title']}", $mail);
 			}
 
 			// if comment is valid, this redirect will clean the postdata

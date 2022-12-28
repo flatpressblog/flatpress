@@ -628,6 +628,8 @@ if (class_exists('AdminPanelAction')) {
 				
 				# Thanks again WP :)
 				
+				Options -Indexes
+				
 				<IfModule mod_rewrite.c>
 				RewriteEngine On
 				RewriteBase ' . $blogroot . '
