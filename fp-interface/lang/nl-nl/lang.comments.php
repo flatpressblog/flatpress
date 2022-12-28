@@ -16,4 +16,6 @@ Groeten,
 
 ';
 
+$lang ['comments'] ['newcomment'] = 'Nieuw commentaar op';
+
 ?>
