@@ -331,7 +331,8 @@ if (!function_exists('wp_verify_nonce')) :
 		$user = user_get();
 		$uid = $user ['userid'];
 
-		$i = ceil(time() / 43200);
+		// new nonce each 12 hours
+		$i = ceil(time() / (60 * 60 * 12));
 
 		// Allow for expanding range, but only do one check if we can
 		if (substr(wp_hash($i . $action . $uid), -12, 10) == $nonce || substr(wp_hash(($i - 1) . $action . $uid), -12, 10) == $nonce)
@@ -342,11 +343,20 @@ endif;
 
 if (!function_exists('wp_create_nonce')) :
 
+	/**
+	 * Creates and returns the valid nonce.
+	 *
+	 * @param int $action
+	 *        	optional: the action
+	 * @return string the nonce
+	 */
 	function wp_create_nonce($action = -1) {
+		// get the info array of the user currenty logged in
 		$user = user_get();
 		$uid = $user ['userid'];
 
-		$i = ceil(time() / 43200);
+		// new nonce each 12 hours
+		$i = ceil(time() / (60 * 60 * 12));
 
 		return substr(wp_hash($i . $action . $uid), -12, 10);
 	}
@@ -355,18 +365,20 @@ endif;
 if (!function_exists('wp_salt')) :
 
 	/**
+	 * Returns a salt for hashing.<br>
+	 * The salt is unique for each FlatPress installation; see <code>fp-content/config/hashsalt.conf.php</code>
 	 *
-	 * @return NULL|unknown
-	 * @deprecated as of FlatPress 1.2 - still here only to be able to update pre-1.2 credentials
+	 * @return string the salt
 	 */
 	function wp_salt() {
 		global $fp_config;
 		static $salt = null;
 		if (!$salt) {
+			// get the salt from the hashsalt file
 			@include (HASHSALT_FILE);
-			if (!$fp_hashsalt)
+			if (!$fp_hashsalt) {
 				trigger_error('Cannot load hash salt: reinstall FlatPress', E_USER_ERROR);
-
+			}
 			$salt = $fp_hashsalt;
 		}
 		return $salt;
@@ -376,10 +388,11 @@ endif;
 if (!function_exists('wp_hash')) :
 
 	/**
+	 * Creates a salted MD5 hash of the given string.
 	 *
-	 * @param unknown $data
-	 * @return string
-	 * @deprecated as of FlatPress 1.2 - still here only to be able to update pre-1.2 credentials
+	 * @param string $data
+	 *        	the string to hash
+	 * @return string the hash
 	 */
 	function wp_hash($data) {
 		$salt = wp_salt();

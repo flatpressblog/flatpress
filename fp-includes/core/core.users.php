@@ -49,7 +49,8 @@ function user_login($userid, $pwd, $params = null) {
 	if (password_verify($userid . $pwd, $user ['password'])) {
 		$loggedin = true;
 	} //
-	  // for FP instances updated from 1.1 to 1.2: check password the old-fashioned way (with wp_hash() which uses md5)
+	  // If this didn't work, the passwords may have been created with FlatPress 1.1 or earlier.
+	  // So we check the password the old-fashioned way (with wp_hash() which uses md5):
 	elseif (wp_hash($userid . $pwd) == $user ['password']) {
 		$loggedin = true;
 
@@ -110,6 +111,13 @@ function user_loggedin() {
 	return false;
 }
 
+/**
+ * Returns the user information as associative array
+ *
+ * @param string $userid
+ *        	optional: The ID (shortname) of a specific user
+ * @return array the user information array
+ */
 function user_get($userid = null) {
 	if ($userid == null && ($user = user_loggedin())) {
 		return $user;
