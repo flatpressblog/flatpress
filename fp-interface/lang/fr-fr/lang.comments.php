@@ -16,4 +16,6 @@ Cordialement,
 
 ';
 
+$lang ['comments'] ['newcomment'] = 'Nouveau commentaire sur';
+
 ?>

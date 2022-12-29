@@ -43,7 +43,7 @@
 			<td>{$v.size}</td>
 			<td>{$v.mtime}</td>
 			<td>
-				<a class="link-delete" href="{$mmbaseurl}&deletefile={$v.type}-{$v.name}">{$plang.delete}</a>
+				<a class="link-delete" href="{wp_nonce_url("{$mmbaseurl}&deletefile={$v.type}-{$v.name}", 'mediamanager_deletefile')}">{$plang.delete}</a>
 			</td>
 		</tr>
 	{/foreach}
@@ -70,7 +70,7 @@
 			<td>{$v.size}</td>
 			<td>{$v.mtime}</td>
 			<td>
-				<a class="link-delete" href="{$mmbaseurl}&deletefile={$v.type}-{$v.name}">{$plang.delete}</a>
+				<a class="link-delete" href="{wp_nonce_url("{$mmbaseurl}&deletefile={$v.type}-{$v.name}", 'mediamanager_deletefile')}">{$plang.delete}</a>
 			</td>
 		</tr>
 	{/foreach}

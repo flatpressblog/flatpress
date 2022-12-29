@@ -17,4 +17,6 @@ Um abraço,
 
 ';
 
+$lang ['comments'] ['newcomment'] = 'Novo comentário em';
+
 ?>

@@ -10,7 +10,7 @@ if (!file_exists(CONFIG_FILE))
 /* local function defines follow */
 function index_permatitle($val, $sep) {
 	global $fpdb;
-	$q = & $fpdb->getQuery();
+	$q = &$fpdb->getQuery();
 	list ($id, $e) = @$q->peekEntry();
 	if ($e)
 		return "{$e['subject']} {$sep} $val ";
@@ -126,12 +126,12 @@ function index_main() {
 	$module = 'index.tpl';
 	$can404 = true;
 
-	if (!empty($fp_params ['entry'])) {
+	// register all Smarty modifier functions used by the templates
+	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
 
+	if (!empty($fp_params ['entry'])) {
 		index_singlepost($params, $module);
-	} elseif (
-	($explicit_req = $page = @$fp_params ['page']) || (empty($fp_params) && $page = @$fp_config ['general'] ['startpage'])) 
-	{
+	} elseif (($explicit_req = $page = @$fp_params ['page']) || (empty($fp_params) && $page = @$fp_config ['general'] ['startpage'])) {
 
 		index_staticpage($page, $explicit_req, $params, $module);
 		return $module;
@@ -163,7 +163,7 @@ function index_main() {
 
 	$fpdb->query($params);
 
-	$q = & $fpdb->getQuery();
+	$q = &$fpdb->getQuery();
 	list ($id, $e) = $q->peekEntry();
 
 	/* no entry found : 404 */

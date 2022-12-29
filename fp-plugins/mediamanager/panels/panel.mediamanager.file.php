@@ -74,8 +74,13 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 	}
 
 	function doItemActions($folder, $mmbaseurl) {
+
 		/* delete file */
 		if (isset($_GET ['deletefile'])) {
+			// at first: check if nonce was given correctly
+			check_admin_referer('mediamanager_deletefile');
+
+			// now get the file to be deleted
 			list ($type, $name) = explode("-", $_GET ['deletefile'], 2);
 			// prevent path traversal: remove ".." and "/" resp. "\"
 			$name = preg_replace('(\.\.|\/|\\\\)', '', $name);
