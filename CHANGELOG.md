@@ -53,7 +53,7 @@
 - Possible XSS in setup prevented ([#176](https://github.com/flatpressblog/flatpress/issues/176))
 - Possible XSS in Media Manager plugin prevented ([#177](https://github.com/flatpressblog/flatpress/issues/177))
 - Possible path traversal in Media Manager plugin prevented ([#179](https://github.com/flatpressblog/flatpress/issues/179))
-- Possible XSS in Admin Area prevented ([#180](https://github.com/flatpressblog/flatpress/issues/180))
+- Possible XSSs in Admin Area prevented ([#180](https://github.com/flatpressblog/flatpress/issues/180), [#183](https://github.com/flatpressblog/flatpress/issues/183))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes
