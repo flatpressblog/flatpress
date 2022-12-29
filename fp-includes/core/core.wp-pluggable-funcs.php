@@ -335,7 +335,8 @@ if (!function_exists('wp_verify_nonce')) :
 		$i = ceil(time() / (60 * 60 * 12));
 
 		// Allow for expanding range, but only do one check if we can
-		if (substr(wp_hash($i . $action . $uid), -12, 10) == $nonce || substr(wp_hash(($i - 1) . $action . $uid), -12, 10) == $nonce)
+		$expectedNonce = substr(wp_hash($i . $action . $uid), -12, 10);
+		if ($expectedNonce == $nonce || substr(wp_hash(($i - 1) . $action . $uid), -12, 10) == $nonce)
 			return true;
 		return false;
 	}
