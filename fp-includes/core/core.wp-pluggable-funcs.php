@@ -327,6 +327,15 @@ endif;
 
 if (!function_exists('wp_verify_nonce')) :
 
+	/**
+	 * Verifies the given nonce for the given action string.
+	 *
+	 * @param string $nonce
+	 *        	the nonce to verify
+	 * @param string $action
+	 *        	the action
+	 * @return boolean <code>true</code> if the nonce is valid; <code>false</code> otherwise
+	 */
 	function wp_verify_nonce($nonce, $action = -1) {
 		$user = user_get();
 		$uid = $user ['userid'];
@@ -334,11 +343,13 @@ if (!function_exists('wp_verify_nonce')) :
 		// new nonce each 12 hours
 		$i = ceil(time() / (60 * 60 * 12));
 
-		// Allow for expanding range, but only do one check if we can
+		// The nonce we expect for the given action at the current time
 		$expectedNonce = substr(wp_hash($i . $action . $uid), -12, 10);
-		if ($expectedNonce == $nonce || substr(wp_hash(($i - 1) . $action . $uid), -12, 10) == $nonce)
-			return true;
-		return false;
+		// The nonce we expect for the given action in the previous time period
+		$expectedPreviousNonce = substr(wp_hash(($i - 1) . $action . $uid), -12, 10);
+
+		// given nonce must match the current or the previous nonce
+		return $nonce == $expectedNonce || $nonce == $expectedPreviousNonce;
 	}
 endif;
 

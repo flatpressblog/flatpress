@@ -45,6 +45,9 @@ class admin_entry_delete extends AdminPanelAction {
 	}
 
 	function ondelete() {
+		// at first: check if nonce was given correctly
+		check_admin_referer('admin_entry_delete');
+
 		$id = $_REQUEST ['entry'];
 		$ok = draft_delete($id) || entry_delete($id);
 
