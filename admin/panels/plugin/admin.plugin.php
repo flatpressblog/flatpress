@@ -53,6 +53,9 @@ class admin_plugin_default extends AdminPanelAction {
 	}
 
 	function dodisable($id) {
+		// at first: check if nonce was given correctly
+		check_admin_referer('admin_plugin_default_disable_' . $id);
+
 		$fp_plugins = $this->fp_plugins;
 
 		$success = -1;
@@ -78,6 +81,9 @@ class admin_plugin_default extends AdminPanelAction {
 	}
 
 	function doenable($id) {
+		// at first: check if nonce was given correctly
+		check_admin_referer('admin_plugin_default_enable_' . $id);
+
 		$success = -1;
 		$fp_plugins = $this->fp_plugins;
 
