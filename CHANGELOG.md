@@ -47,7 +47,7 @@
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
 - Proper check of uploaded files ([#152](https://github.com/flatpressblog/flatpress/issues/152), [#170](https://github.com/flatpressblog/flatpress/issues/170))
 - Possible XSS prevented: Admin Area URL ([#153](https://github.com/flatpressblog/flatpress/issues/153))
-- Possible XSS prevented: SVG/XML/MD upload ([#172](https://github.com/flatpressblog/flatpress/issues/172), [#178](https://github.com/flatpressblog/flatpress/issues/178))
+- Possible XSS prevented: Upload of misc. XML file types ([#172](https://github.com/flatpressblog/flatpress/issues/172), [#178](https://github.com/flatpressblog/flatpress/issues/178), [#188](https://github.com/flatpressblog/flatpress/issues/188))
 - Directory browsing prevented ([#174](https://github.com/flatpressblog/flatpress/issues/174))
 - Possible XSS in setup prevented ([#176](https://github.com/flatpressblog/flatpress/issues/176))
 - Possible XSS in Media Manager plugin prevented ([#177](https://github.com/flatpressblog/flatpress/issues/177))
