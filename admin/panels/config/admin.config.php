@@ -124,14 +124,14 @@ class admin_config_default extends AdminPanelActionValidated {
 			'title' => wp_specialchars(stripslashes($_POST ['title'])),
 			'subtitle' => wp_specialchars(stripslashes($_POST ['subtitle'])),
 			'footer' => wp_specialchars(stripslashes($_POST ['blogfooter'])),
-			'author' => $_POST ['author'],
-			'email' => $_POST ['email'],
+			'author' => wp_specialchars($_POST ['author']),
+			'email' => wp_specialchars($_POST ['email']),
 			'startpage' => ($_POST ['startpage'] == ':NULL:') ? null : $_POST ['startpage'],
 			'maxentries' => $_POST ['maxentries'],
 			// 'voting' => $_POST['voting'],
 			'notify' => isset($_POST ['notify']),
-				/* preserve the following */
-				'theme' => $fp_config ['general'] ['theme'],
+			// preserve the following
+			'theme' => $fp_config ['general'] ['theme'],
 			'style' => @$fp_config ['general'] ['style'],
 			'blogid' => $fp_config ['general'] ['blogid'],
 			'charset' => 'utf-8'
