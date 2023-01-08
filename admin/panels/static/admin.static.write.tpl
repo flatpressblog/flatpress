@@ -1,6 +1,6 @@
 <h2>{$panelstrings.head}</h2>
 
-	{include file='shared:errorlist.tpl'}	
+	{include file="shared:errorlist.tpl"}	
 
 
 	{static_block}
@@ -19,7 +19,7 @@
 	
 			<p><label for="subject">{$panelstrings.subject}</label><br />
 			{if isset($error) && isset($error.subject) && !empty($error.subject)}
-				{assign var=class value=" field-error"}
+				{assign var=class value="field-error"}
 			{else}
 				{assign var=class value=""}
 			{/if}
@@ -33,7 +33,7 @@
 			{toolbar}
 			<p>
 			{if isset($error) && isset($error.content) && !empty($error.content)}
-				{assign var=class value=" field-error"}
+				{assign var=class value="field-error"}
 			{else}
 				{assign var=class value=""}
 			{/if}
@@ -46,12 +46,12 @@
 		<input type="hidden" name="oldid" id="oldid" value="{$id|default:$smarty.request.oldid}" />
 		<p><label for="id">{$panelstrings.pagename}</label><br />
 		{if isset($error) && isset($error.id) && !empty($error.id)}
-			{assign var=class value=" field-error"}
+			{assign var=class value="field-error"}
 		{else}
 			{assign var=class value=""}
 		{/if}
 		<input type="text" name="id" id="id" class="maxsize{$class}"
-		value="{$smarty.request.id|default:$smarty.request.page|default:$static_id}"  /></p>
+		value="{$smarty.request.id|default:$smarty.request.page|default:$static_id}" /></p>
 		{html_submit name="save" id="save" value=$panelstrings.submit accesskey=s}
 		{html_submit name="preview" id="preview" value=$panelstrings.preview accesskey=p}
 		
