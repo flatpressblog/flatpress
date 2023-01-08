@@ -73,12 +73,14 @@ function comment_exists($entryid, $id) {
 }
 
 function comment_clean(&$arr) {
-	$arr ['name'] = apply_filters('pre_comment_author_name', stripslashes($arr ['name']));
-	if (isset($arr ['email']))
-		$arr ['email'] = apply_filters('pre_comment_author_email', $arr ['email']);
-	if (isset($arr ['url']))
-		$arr ['url'] = apply_filters('pre_comment_author_url', $arr ['url']);
-	$arr ['content'] = apply_filters('pre_comment_content', $arr ['content']);
+	$arr ['name'] = strip_tags(apply_filters('pre_comment_author_name', stripslashes($arr ['name'])));
+	if (isset($arr ['email'])) {
+		$arr ['email'] = strip_tags(apply_filters('pre_comment_author_email', $arr ['email']));
+	}
+	if (isset($arr ['url'])) {
+		$arr ['url'] = strip_tags(apply_filters('pre_comment_author_url', $arr ['url']));
+	}
+	$arr ['content'] = strip_tags(apply_filters('pre_comment_content', $arr ['content']));
 	return $arr;
 }
 
