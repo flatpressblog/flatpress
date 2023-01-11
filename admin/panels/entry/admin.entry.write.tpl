@@ -41,6 +41,7 @@
 			id="content" rows="20" cols="74">{$content|default:{$smarty.request.content|default:''}|htmlspecialchars}</textarea><br />
 			{*here will go a plugin hook*}
 			{action hook=simple_edit_form}
+			{action hook=simple_metatag_info}
 
 			</p>
 		</div>

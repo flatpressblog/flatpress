@@ -1,0 +1,5 @@
+SEO-Metatag Plugin
+==================
+
+This plugin helps to better present your FlatPress posts and static pages on social media and make them more readable for search engine queries.
+Enter a suitable description and keywords for your created static page or post.
