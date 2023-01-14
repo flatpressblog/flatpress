@@ -28,7 +28,9 @@
 		'actdel'	=> 'Effacer',
 		'actedit'	=> '&Eacute;diter',
 		'actenable'	=> 'Activer',
-		'actdisable'=> 'D&eacute;sactiver'
+		'actdisable'=> 'D&eacute;sactiver',
+		'startpage'	=> 'Page d\'accueil',
+		'logout'	=> 'Déconnexion',
 	);
 
 ?>

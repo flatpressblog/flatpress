@@ -28,7 +28,9 @@
 		'actdel'	=> 'Eliminar',
 		'actedit'	=> 'Editar',
 		'actenable'	=> 'Habilitar',
-		'actdisable'	=> 'Inhabilitar'
+		'actdisable'	=> 'Inhabilitar',
+		'startpage'	=> 'Página inicial',
+		'logout'	=> 'Cerrar sesión',
 	);
 
 ?>

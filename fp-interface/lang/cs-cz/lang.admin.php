@@ -28,7 +28,9 @@
 		'actdel'	=> 'Smazat',
 		'actedit'	=> 'Upravit',
 		'actenable'	=> 'Zapnout',
-		'actdisable'=> 'Vypnout'
+		'actdisable'=> 'Vypnout',
+		'startpage'	=> 'Úvodní stránka',
+		'logout'	=> 'Odhlášení',
 	);
 
 ?>

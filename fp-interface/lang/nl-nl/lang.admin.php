@@ -26,7 +26,9 @@ $lang ['admin'] ['general'] = array(
 	'actdel' => 'Verwijder',
 	'actedit' => 'Bewerk',
 	'actenable' => 'Inschakelen',
-	'actdisable' => 'Uitschakelen'
+	'actdisable' => 'Uitschakelen',
+	'startpage'	=> 'Startpagina',
+	'logout'	=> 'Afmelden',
 );
 
 ?>

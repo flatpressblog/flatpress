@@ -28,7 +28,9 @@
 		'actdel'	=> 'Eliimina',
 		'actedit'	=> 'Modifica',
 		'actenable'	=> 'Abilita',
-		'actdisable'=> 'Disabilita'
+		'actdisable'=> 'Disabilita',
+		'startpage'	=> 'Pagina iniziale',
+		'logout'	=> 'Disconnessione',
 	);
 
 ?>
