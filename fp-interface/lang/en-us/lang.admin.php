@@ -27,8 +27,8 @@ $lang ['admin'] ['general'] = array(
 	'actedit' => 'Edit',
 	'actenable' => 'Enable',
 	'actdisable' => 'Disable',
-	'startpage'	=> 'Startpage',
-	'logout'	=> 'Logout',
+	'startpage' => 'Startpage',
+	'logout' => 'Logout'
 );
 
 ?>
