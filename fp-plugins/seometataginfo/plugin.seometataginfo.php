@@ -231,7 +231,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 		 * This function adds some functions to filters system.
 		 */
 		function __construct() {
-			//add_filter('simple_edit_form', array( // is already used by the tag-plugin and is not intended for static pages
+			// add_filter('simple_edit_form', array( // is already used by the tag-plugin and is not intended for static pages
 			add_filter('simple_metatag_info', array(
 				&$this,
 				'simple'
@@ -266,11 +266,11 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	$string = $lang ['plugin'] ['seometataginfo'];
 
 	echo '
-	<!-- beginning of SEO Metatag Info -->'."\n";
+	<!-- beginning of SEO Metatag Info -->' . "\n";
 
 	if (SEOMETA_GEN_TITLE_META) {
 		$metatitle = apply_filters('wp_title', $fp_config ['general'] ['title'], trim($string ['sep']));
-		echo "\n" . '    <meta name="Title" content="' . $metatitle . '">' . "\n";
+		echo "\n" . '    <meta name="title" content="' . $metatitle . '">' . "\n";
 	}
 
 	$count = 0;
@@ -293,7 +293,7 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	# Now write the tags
 	echo '    <meta name="description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
 	echo '    <meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
-	echo '    <meta name="author" content="'.$fp_config['general']['author'].'">'."\n";
+	echo '    <meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
 
 	if ($count > 0) {
 		echo '    <meta name="robots" content="';
@@ -313,7 +313,7 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		}
 		echo '    <link rel="canonical" href="' . $url . '">' . "\n";
 	}
-	echo '    <!-- end of SEO Metatag Info -->'."\n";
+	echo '    <!-- end of SEO Metatag Info -->' . "\n";
 }
 
 function process_meta($file_meta, $type, $id, $sep) {
