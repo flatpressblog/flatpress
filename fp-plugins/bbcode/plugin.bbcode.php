@@ -355,7 +355,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	switch ($type) {
 		// YouTube
 		case 'youtube':
-			$output = '<iframe class="bbcode_video bbcode_video_youtube" src="https://www.youtube.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" frameborder="0" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" ' . $float . '></iframe>';
+			$output = '<iframe class="bbcode_video bbcode_video_youtube" src="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" frameborder="0" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" ' . $float . '></iframe>';
 			break;
 		// Vimeo
 		case 'vimeo':

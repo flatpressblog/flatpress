@@ -6,8 +6,8 @@
 		<div class="entry">
 		
 		<ul id="admin-small-nav">
-			<li><a href="{$smarty.const.BLOG_BASEURL}">Home</a></li>
-			<li><a href="{$smarty.const.BLOG_BASEURL}login.php?do=logout">Logout</a></li>
+			<li><a href="{$smarty.const.BLOG_BASEURL}">{$lang.admin.general.startpage}</a></li>
+			<li><a href="{$smarty.const.BLOG_BASEURL}login.php?do=logout">{$lang.admin.general.logout}</a></li>
 		</ul>
 		
 		{page}

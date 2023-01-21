@@ -29,7 +29,9 @@
 		'actdel'	=> 'Exclua',
 		'actedit'	=> 'Edite',
 		'actenable'	=> 'Ative',
-		'actdisable'	=> 'Desative'
+		'actdisable'	=> 'Desative',
+		'startpage'	=> 'Página inicial',
+		'logout'	=> 'Sair',
 	);
 
 ?>

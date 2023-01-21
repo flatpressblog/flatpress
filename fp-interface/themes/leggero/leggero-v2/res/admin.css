@@ -223,7 +223,7 @@ textarea.code {
 	padding: 8px
 }
 
-input.maxsize, select.maxsize { width: 100% }
+input.maxsize, select.maxsize { width: 99% }
 
 
 #admin-bbcode-toolbar {

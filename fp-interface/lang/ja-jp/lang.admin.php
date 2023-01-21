@@ -28,7 +28,9 @@
 		'actdel'	=> '削除',
 		'actedit'	=> '編集',
 		'actenable'	=> '有効',
-		'actdisable'	=> '無効'
+		'actdisable'	=> '無効',
+		'startpage'	=> 'スタートページ',
+		'logout'	=> 'ログアウト',
 	);
 
 ?>
