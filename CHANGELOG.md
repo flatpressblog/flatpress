@@ -11,6 +11,7 @@
 ## Plugins
 - Gallery captions plugin added ([#108](https://github.com/flatpressblog/flatpress/issues/108))
 - PhotoSwipe plugin added ([#109](https://github.com/flatpressblog/flatpress/issues/109))
+- SEO Meta Tag Info plugin added ([#145](https://github.com/flatpressblog/flatpress/issues/145))
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
 - Media Manager plugin shows 50 items per page, not 10
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
