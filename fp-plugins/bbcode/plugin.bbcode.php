@@ -346,7 +346,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	// Check the [video] element's attributes width, height and float
 	$width = isset($attr ['width']) ? $attr ['width'] : '560';
 	$height = isset($attr ['height']) ? $attr ['height'] : '315';
-	$float = isset($attr ['float']) ? 'align="' . $attr ['float'] . '" ' : 'style="margin: 0 auto; display:block;" ';
+	$float = isset($attr ['float']) ? 'id="' . $attr ['float'] . '" ' : 'style="margin: 0 auto; display:block;" ';
 
 	$query = utils_kexplode($vurl ['query'], '=&');
 	$output = null;
@@ -355,12 +355,12 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	switch ($type) {
 		// YouTube
 		case 'youtube':
-			$output = '<iframe class="bbcode_video bbcode_video_youtube" src="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" frameborder="0" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" ' . $float . '></iframe>';
+			$output = '<iframe class="bbcode_video bbcode_video_youtube" src="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" ' . $float . '></iframe>';
 			break;
 		// Vimeo
 		case 'vimeo':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/', '', $vurl ['path']);
-			$output = '<iframe class="bbcode_video bbcode_video_vimeo" src="https://player.vimeo.com/video/' . $vid . '?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" allow="autoplay; fullscreen;" allowfullscreen ' . $float . '></iframe>';
+			$output = '<iframe class="bbcode_video bbcode_video_vimeo" src="https://player.vimeo.com/video/' . $vid . '?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" allow="autoplay; fullscreen;" allowfullscreen ' . $float . '></iframe>';
 			break;
 		// Facebook
 		case 'facebook':
