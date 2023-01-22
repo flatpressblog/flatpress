@@ -17,6 +17,7 @@
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
 - Fixed errors on the Comment Center config page ([#90](https://github.com/flatpressblog/flatpress/issues/90))
 - Fixed PHP warnings in Akismet plugin ([#83](https://github.com/flatpressblog/flatpress/issues/83))
+- BBCode plugin: Allows local video files ("attachs/video.mp4") and outputs valid HTML ([#192](https://github.com/flatpressblog/flatpress/issues/192))
 
 ## Themes
 - Leggero

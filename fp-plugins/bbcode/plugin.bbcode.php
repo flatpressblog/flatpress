@@ -378,12 +378,11 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 			<div class="fb-video bbcode_video bbcode_video_facebook ' . $floatClass . '" data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '"></div>';
 			break;
 		// Any video file that can be played with HTML5 <video> element
-		// FIXME: support of uploaded video files ($attr ['default'] is like "attachs/video.mp4") still to be implemented!
 		case 'html5':
 		default:
 			// get the video path from the default attribute
 			$videoPath = $attr ['default'];
-			// if it's local ("/attachs/video.mp4") ...
+			// if it's local ("attachs/video.mp4") ...
 			$video_is_local = bbcode_remap_url($videoPath);
 			if ($video_is_local) {
 				// ... we need to prepend it with the blog base URL
