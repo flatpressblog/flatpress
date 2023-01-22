@@ -128,6 +128,8 @@ function index_main() {
 
 	// register all Smarty modifier functions used by the templates
 	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
+	$smarty->registerPlugin('modifier', 'date', 'date');
+	$smarty->registerPlugin('modifier', 'theme_feed_link', 'theme_feed_link');
 
 	if (!empty($fp_params ['entry'])) {
 		index_singlepost($params, $module);
