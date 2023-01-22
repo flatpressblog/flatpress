@@ -1,0 +1,25 @@
+.button-center {
+	text-align: center;
+}
+
+.button-subscribe {
+    margin: 0.1em 0.5em;
+    padding: 0.2em 1em;
+    cursor: pointer;
+    border: 1px solid #999;
+    color: #222;
+    background-color: #eee;
+    border-radius: 3px;
+}
+
+.button-subscribe:hover {
+	background-color: #fff;
+	border: 1px solid #AA1111;
+}
+
+
+.rss-img {
+    margin: 0px !IMPORTANT;
+    height: 13px;
+    width: 13px;
+}
