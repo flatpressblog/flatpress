@@ -7,3 +7,13 @@ img.floatright {
 	float:right;
 	padding-left:10px;
 }
+
+#right.bbcode_video {
+	float:right;
+	border:0px;
+}
+
+#left.bbcode_video {
+	float:left;
+	border:0px;
+}
