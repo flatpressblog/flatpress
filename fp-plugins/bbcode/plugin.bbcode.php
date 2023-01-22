@@ -367,7 +367,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/video/', '', $vurl ['path']);
 			$output = '<div id="fb-root" ' . $float . '></div>
 			<script async defer src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2"></script>
-			<div class="fb-video bbcode_video bbcode_video_facebook" " data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '" ' . $float . '></div>';
+			<div class="fb-video bbcode_video bbcode_video_facebook" data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '" ' . $float . '></div>';
 			break;
 		// Any video file that can be played with HTML5 <video> element
 		// FIXME: support of uploaded video files ($attr ['default'] is like "attachs/video.mp4") still to be implemented!
