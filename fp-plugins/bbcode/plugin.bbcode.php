@@ -1,11 +1,11 @@
 <?php
 /*
  * Plugin Name: BBCode
- * Version: 1.7
+ * Version: 1.7.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
- * Description: Allows using <a href="http://www.phpbb.com/phpBB/faq.php?mode=bbcode">BBCode</a> markup; provides automatic integration with lightbox. Part of the standard distribution.
+ * Description: Allows using <a href="http://www.phpbb.com/phpBB/faq.php?mode=bbcode">BBCode</a> markup. Part of the standard distribution.
  */
 require (plugin_getdir('bbcode') . '/inc/stringparser_bbcode.class.php');
 require (plugin_getdir('bbcode') . '/panels/admin.plugin.panel.bbcode.php');
@@ -337,43 +337,59 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	if (isset($attr ['type'])) {
 		$type = $attr ['type'];
 	} else {
-		// is it http://www.MYSITE.com or http://MYSITE.com ?
-		$web = explode('.', $vurl ['host']);
-		array_pop($web);
-		$type = isset($web [1]) ? $web [1] : $web [0];
+		// no host: must be local file
+		if (!array_key_exists('host', $vurl)) {
+			$type = 'html5';
+		} else {
+			// is it http://www.MYSITE.com or http://MYSITE.com ?
+			$web = explode('.', $vurl ['host']);
+			array_pop($web);
+			$type = isset($web [1]) ? $web [1] : $web [0];
+		}
 	}
 
 	// Check the [video] element's attributes width, height and float
 	$width = isset($attr ['width']) ? $attr ['width'] : '560';
 	$height = isset($attr ['height']) ? $attr ['height'] : '315';
-	$float = isset($attr ['float']) ? 'id="' . $attr ['float'] . '" ' : 'style="margin: 0 auto; display:block;" ';
+	$floatClass = isset($attr ['float']) ? $attr ['float'] : 'nofloat';
 
-	$query = utils_kexplode($vurl ['query'], '=&');
+	$query = array();
+	if (array_key_exists('query', $vurl)) {
+		$query = utils_kexplode($vurl ['query'], '=&');
+	}
 	$output = null;
 
 	// We recognize different video providers by the given video URL.
 	switch ($type) {
 		// YouTube
 		case 'youtube':
-			$output = '<iframe class="bbcode_video bbcode_video_youtube" src="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" ' . $float . '></iframe>';
+			$output = '<iframe class="bbcode_video bbcode_video_youtube ' . $floatClass . '" src="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture"></iframe>';
 			break;
 		// Vimeo
 		case 'vimeo':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/', '', $vurl ['path']);
-			$output = '<iframe class="bbcode_video bbcode_video_vimeo" src="https://player.vimeo.com/video/' . $vid . '?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" allow="autoplay; fullscreen;" allowfullscreen ' . $float . '></iframe>';
+			$output = '<iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" src="https://player.vimeo.com/video/' . $vid . '?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" allow="autoplay; fullscreen;" allowfullscreen></iframe>';
 			break;
 		// Facebook
 		case 'facebook':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/video/', '', $vurl ['path']);
-			$output = '<div id="fb-root" ' . $float . '></div>
+			$output = '<div id="fb-root"></div>
 			<script async defer src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2"></script>
-			<div class="fb-video bbcode_video bbcode_video_facebook" data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '" ' . $float . '></div>';
+			<div class="fb-video bbcode_video bbcode_video_facebook ' . $floatClass . '" data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '"></div>';
 			break;
 		// Any video file that can be played with HTML5 <video> element
 		// FIXME: support of uploaded video files ($attr ['default'] is like "attachs/video.mp4") still to be implemented!
 		case 'html5':
 		default:
-			$output = '<video class="bbcode_video bbcode_video_html5" width="' . $width . '" height="' . $height . '" controls ' . $float . '><source src="' . $attr ['default'] . '">Your browser does not support the video tag</video>';
+			// get the video path from the default attribute
+			$videoPath = $attr ['default'];
+			// if it's local ("/attachs/video.mp4") ...
+			$video_is_local = bbcode_remap_url($videoPath);
+			if ($video_is_local) {
+				// ... we need to prepend it with the blog base URL
+				$videoPath = BLOG_BASEURL . $videoPath;
+			}
+			$output = '<video class="bbcode_video bbcode_video_html5 ' . $floatClass . '" width="' . $width . '" height="' . $height . '" controls><source src="' . $videoPath . '">Your browser does not support the video tag</video>';
 			break;
 			$output = null;
 	}

@@ -8,12 +8,19 @@ img.floatright {
 	padding-left:10px;
 }
 
-#right.bbcode_video {
+.bbcode_video.right {
 	float:right;
 	border:0px;
 }
 
-#left.bbcode_video {
+.bbcode_video.left {
 	float:left;
 	border:0px;
+}
+
+.bbcode_video.nofloat {
+	display:block;
+	border:none;
+	/* disable next line if you do NOT want videos to be displayed centered */
+	margin: 0 auto;
 }
