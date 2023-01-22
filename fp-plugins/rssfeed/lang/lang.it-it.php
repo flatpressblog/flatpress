@@ -1,7 +1,7 @@
 <?php
 $lang ['plugin'] ['rssfeed'] = array(
-	'subject'			=> 'Rimanete aggiornati!',
-	'subscribe' 		=> 'Abbonarsi ',
+	'subject' => 'Rimanete aggiornati!',
+	'subscribe' => 'Abbonarsi ',
 	);
 
 ?>
