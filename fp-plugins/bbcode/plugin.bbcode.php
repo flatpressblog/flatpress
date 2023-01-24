@@ -122,6 +122,8 @@ function bbcode_remap_url(&$d) {
  * @return string
  */
 function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
+	global $lang;
+	lang_load('plugin:bbcode');
 	if ($action == 'validate') {
 		return true;
 	}
@@ -142,7 +144,7 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	// DMKE: uh?
 	$content = $content;
 	$rel = isset($attributes ['rel']) ? ' rel="' . $attributes ['rel'] . '"' : '';
-	$extern = !$local ? ' class="externlink" title="Go to ' . $the_url . '"' : '';
+	$extern = !$local ? ' class="externlink" title="' . $lang ['plugin'] ['bbcode'] ['go_to'] . ' ' . $the_url . '"' : '';
 	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . '>' . $content . '</a>';
 }
 
