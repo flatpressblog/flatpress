@@ -787,7 +787,7 @@ function BBCode($text) {
 function plugin_bbcode_init_toolbar() {
 	global $_FP_SMARTY;
 	$lang = lang_load('plugin:bbcode');
-	$selection = $lang ['admin']['plugin']['bbcode']['editor']['selection'];
+	$selection = $lang ['admin'] ['plugin'] ['bbcode'] ['editor'] ['selection'];
 	// get all available images
 	$indexer = new fs_filelister(IMAGES_DIR);
 	$imageslist = $indexer->getList();
