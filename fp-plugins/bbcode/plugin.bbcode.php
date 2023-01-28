@@ -786,19 +786,21 @@ function BBCode($text) {
  */
 function plugin_bbcode_init_toolbar() {
 	global $_FP_SMARTY;
+	$lang = lang_load('plugin:bbcode');
+	$selection = $lang ['admin']['plugin']['bbcode']['editor']['selection'];
 	// get all available images
 	$indexer = new fs_filelister(IMAGES_DIR);
 	$imageslist = $indexer->getList();
 	// sort by name
 	sort($imageslist);
-	array_unshift($imageslist, '--');
+	array_unshift($imageslist, $selection);
 	$_FP_SMARTY->assign('images_list', $imageslist);
 	// get all available attachements
 	$indexer = new fs_filelister(ATTACHS_DIR);
 	$attachslist = $indexer->getList();
 	// sort by name
 	sort($attachslist);
-	array_unshift($attachslist, '--');
+	array_unshift($attachslist, $selection);
 	$_FP_SMARTY->assign('attachs_list', $attachslist);
 
 	echo $_FP_SMARTY->fetch('plugin:bbcode/toolbar');

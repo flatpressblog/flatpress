@@ -47,6 +47,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'code' => 'Code',
 		'codetitle' => 'Κώδικας',
 		'help' => 'Βοήθεια σχετικά με το BBCode',
+		'file' => 'Φάκελος: ',
+		'image' => 'Εικόνα: ',
+		'selection' => '-- Επιλογή --',
 		// currently not used
 		'status' => 'Μπάρα κατάστασης',
 		'statusbar' => 'Κανονική λειτουργία. Πατήστε &lt;Esc&gt; για εναλλαγή σε λειτουργία επεξεργασίας.'

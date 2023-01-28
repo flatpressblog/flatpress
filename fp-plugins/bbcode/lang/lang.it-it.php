@@ -47,6 +47,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'code' => 'Codice',
 		'codetitle' => 'Codice',
 		'help' => 'Guida  di BBCode',
+		'file' => 'File: ',
+		'image' => 'Immagine: ',
+		'selection' => '-- Selezione --',
 		// currently not used
 		'status' => 'Barra di stato',
 		'statusbar' => 'Modalità normale. Premi &lt;Esc&gt; per passare da una modalità all\'altra.'

@@ -47,6 +47,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'code' => 'Code',
 		'codetitle' => 'Code',
 		'help' => 'BBCode Help',
+		'file' => 'File: ',
+		'image' => 'Beeld: ',
+		'selection' => '-- Selectie --',
 		// currently not used
 		'status' => 'Statusbalk',
 		'statusbar' => 'Normale modus. Druk &lt;Esc&gt; om van bewerkingsmodus te wisselen.'

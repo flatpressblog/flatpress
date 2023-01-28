@@ -46,6 +46,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'code' => 'Kód',
 		'codetitle' => 'Kód',
 		'help' => 'BBCode Pomoc',
+		'file' => 'Soubor: ',
+		'image' => 'Obrázek: ',
+		'selection' => '-- Výběr --',
 		// currently not used
 		'status' => 'Status bar',
 		'statusbar' => 'Normalní mód. Stiskni &lt;Esc&gt; pro přepnutí módu.'

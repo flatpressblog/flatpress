@@ -47,6 +47,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'code' => 'Code',
 		'codetitle' => 'プログラムコードとして領域指定',
 		'help' => 'BBCode Help',
+		'file' => 'ファイル: ',
+		'image' => '画像: ',
+		'selection' => '-- セレクション --',
 		// currently not used
 		'status' => 'ステータスバー',
 		'statusbar' => 'ノーマルモードです。&lt;Esc&gt;キーで編集モードに切り替えられます。'

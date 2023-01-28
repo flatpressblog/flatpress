@@ -47,6 +47,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'code' => 'Code',
 		'codetitle' => 'Code Beispiel',
 		'help' => 'BBCode Hilfe',
+		'file' => 'Datei: ',
+		'image' => 'Bild: ',
+		'selection' => '-- Auswahl --',
 		// currently not used
 		'status' => 'Status bar',
 		'statusbar' => 'Normal mode. Press &lt;Esc&gt; to switch editing mode.'
