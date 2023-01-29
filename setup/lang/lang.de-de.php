@@ -63,7 +63,7 @@ $lang ['step3'] = array(
 );
 
 $lang ['buttonbar'] = array(
-	'next' => 'Next >'
+	'next' => 'Weiter >'
 );
 
 $lang ['samplecontent'] = array();
