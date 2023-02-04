@@ -1,7 +1,7 @@
 <?php
 
-$lang['admin']['plugin']['submenu']['bbcode'] = 'BBCode';
-$lang['admin']['plugin']['bbcode'] = array(
+$lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
+$lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Configurazione BBCode',
 	'desc1' => 'Questo plugin ti consente di usare <a href="http://www.phpbb.com/'.
 		'phpBB/faq.php?mode=bbcode">BBCode</a> come markup e fornisce '.
@@ -9,13 +9,13 @@ $lang['admin']['plugin']['bbcode'] = array(
 	
 	'options' => 'Opzioni',
 
-	'editing'	=> 'Modifica',
-	'allow_html'=> 'Inline HTML',
+	'editing' => 'Modifica',
+	'allow_html' => 'Inline HTML',
 	'allow_html_long' => 'Consente di usare l\'HTML insieme a BBCode',
 	'toolbar' => 'Barra strumenti',
 	'toolbar_long' => 'Abilita la barra strumenti dell\'editor.',
 
-	'other'	=>	'Altre opzioni',
+	'other'	=> 'Altre opzioni',
 	'comments' => 'Commenti',
 	'comments_long' => 'Consenti di usare BBCode nei commenti',
 	'urlmaxlen' => 'Lunghezza massima degli URL',
@@ -28,29 +28,36 @@ $lang['admin']['plugin']['bbcode'] = array(
 	),
 
 	'editor' => array(
-		'formatting'     => 'Formattazione',
-		'textarea'       => 'Casella di testo: ',
-		'expand'         => 'Espandi',
-		'expandtitle'    => 'Espandi l\'altezza della casella di testo',
-		'reduce'         => 'Riduci',
-		'reducetitle'    => 'Riduci l\'altezza della casella di testo',
+		'formatting' => 'Formattazione',
+		'textarea' => 'Casella di testo: ',
+		'expand' => 'Espandi',
+		'expandtitle' => 'Espandi l\'altezza della casella di testo',
+		'reduce' => 'Riduci',
+		'reducetitle' => 'Riduci l\'altezza della casella di testo',
 		// note: accesskeys are not internationalized...
 		// btw. why not :-D
-		'bold'           => 'G',
-		'boldtitle'      => 'Grassetto',
-		'italic'         => 'C',
-		'italictitle'    => 'Corsivo',
-		'underline'      => 'S',
+		'bold' => 'G',
+		'boldtitle' => 'Grassetto',
+		'italic' => 'C',
+		'italictitle' => 'Corsivo',
+		'underline' => 'S',
 		'underlinetitle' => 'Sottolineato',
-		'quote'          => 'Cita',
-		'quotetitle'     => 'Citazione',
-		'code'           => 'Codice',
-		'codetitle'      => 'Codice',
-		'help'           => 'Guida  di BBCode',
+		'quote' => 'Cita',
+		'quotetitle' => 'Citazione',
+		'code' => 'Codice',
+		'codetitle' => 'Codice',
+		'help' => 'Guida  di BBCode',
+		'file' => 'File: ',
+		'image' => 'Immagine: ',
+		'selection' => '-- Selezione --',
 		// currently not used
-		'status'         => 'Barra di stato',
-		'statusbar'      => 'Modalità normale. Premi &lt;Esc&gt; per passare da una modalità all\'altra.'
+		'status' => 'Barra di stato',
+		'statusbar' => 'Modalità normale. Premi &lt;Esc&gt; per passare da una modalità all\'altra.'
 	)
+);
+
+$lang ['plugin'] ['bbcode'] = array (
+		'go_to' => 'Vai a'
 );
 
 ?>

@@ -6,7 +6,7 @@
 	{static_block}
 	{if isset($preview)}
 		<fieldset id="post-preview"><legend>{$panelstrings.preview}</legend>
-		{include file="preview.tpl"}
+		{include file="previewstatic.tpl"}
 		</fieldset>
 	{/if}
 

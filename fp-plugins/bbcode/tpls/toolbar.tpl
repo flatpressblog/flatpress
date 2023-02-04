@@ -28,8 +28,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;
 	</p>
 	<p>
-		{html_options name=attachselect values=$attachs_list output=$attachs_list onchange="insAttach(this.form.attachselect.value)"}
-		{html_options name=imageselect values=$images_list output=$images_list onchange="insImage(this.form.imageselect.value)"}
+		{$lang.admin.plugin.bbcode.editor.file}{html_options name=attachselect values=$attachs_list output=$attachs_list onchange="insAttach(this.form.attachselect.value)"}&nbsp;
+		{$lang.admin.plugin.bbcode.editor.image}{html_options name=imageselect values=$images_list output=$images_list onchange="insImage(this.form.imageselect.value)"}
 	</p>
 </fieldset>
 

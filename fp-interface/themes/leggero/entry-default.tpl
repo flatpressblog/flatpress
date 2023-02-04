@@ -18,18 +18,18 @@
 				
 				<ul class="entry-footer">
 			
-				<li class="entry-info">Posted by <span itemprop="author">{$author}</span> at
+				<li class="entry-info">{$lang.entryauthor.posted_by} <span itemprop="author">{$author}</span> {$lang.entryauthor.at}
 				{$date|date_format}
 
 				<span itemprop="articleSection">
-				{if ($categories)} in {$categories|@filed}{/if}
+				{if ($categories)} {$lang.plugin.categories.in} {$categories|@filed}{/if}
 				</span>
 				</li> 
 				
 				{if !(in_array('commslock', $categories) && !$comments)}
 				<li class="link-comments">
 				<a href="{$id|link:comments_link}#comments">{$comments|tag:comments_number} 
-					{if isset($views)}(<strong>{$views}</strong> views){/if}
+					{if isset($views)}(<strong>{$views}</strong> {$lang.postviews.views}){/if}
 				</a>
 				</li>
 				{/if}

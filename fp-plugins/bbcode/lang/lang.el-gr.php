@@ -1,7 +1,7 @@
 <?php
 
-$lang['admin']['plugin']['submenu']['bbcode'] = 'BBCode';
-$lang['admin']['plugin']['bbcode'] = array(
+$lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
+$lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Ρύθμιση του BBCode',
 	'desc1' => 'Το πρόσθετο αυτό επιτρέπει τη χρήση σύνταξης <a href="http://www.phpbb.com/'.
 		'phpBB/faq.php?mode=bbcode">BBCode</a> και παρέχει '.
@@ -9,13 +9,13 @@ $lang['admin']['plugin']['bbcode'] = array(
 	
 	'options' => 'Επιλογές',
 
-	'editing'	=> 'Επεξεργασία',
-	'allow_html'=> 'Χρήση HTML',
+	'editing' => 'Επεξεργασία',
+	'allow_html' => 'Χρήση HTML',
 	'allow_html_long' => 'Επιτρέπεται χρήση HTML παράλληλα με το BBCode',
 	'toolbar' => 'Μπάρα συντομεύσεων',
 	'toolbar_long' => 'Ενεργοποιείται η μπάρα συντομεύσεων κατά την καταχώρηση.',
 
-	'other'	=>	'Άλλες επιλογές',
+	'other'	=> 'Άλλες επιλογές',
 	'comments' => 'Σχόλια',
 	'comments_long' => 'Επιτρέπεται η χρήση BBCode στα σχόλια',
 	'urlmaxlen' => 'Μέγιστο μήκος συνδέσμων',
@@ -28,29 +28,36 @@ $lang['admin']['plugin']['bbcode'] = array(
 	),
 
 	'editor' => array(
-		'formatting'     => 'Formatting',
-		'textarea'       => 'Textarea: ',
-		'expand'         => 'Expand',
-		'expandtitle'    => 'Expand Textarea Height',
-		'reduce'         => 'Reduce',
-		'reducetitle'    => 'Reduce Textarea Height',
+		'formatting' => 'Formatting',
+		'textarea' => 'Textarea: ',
+		'expand' => 'Expand',
+		'expandtitle' => 'Expand Textarea Height',
+		'reduce' => 'Reduce',
+		'reducetitle' => 'Reduce Textarea Height',
 		// note: accesskeys are not internationalized...
 		// btw. why not :-D
-		'bold'           => 'B',
-		'boldtitle'      => 'Έντονα',
-		'italic'         => 'I',
-		'italictitle'    => 'Πλάγια',
-		'underline'      => 'U',
+		'bold' => 'B',
+		'boldtitle' => 'Έντονα',
+		'italic' => 'I',
+		'italictitle' => 'Πλάγια',
+		'underline' => 'U',
 		'underlinetitle' => 'Υπογραμμισμένα',
-		'quote'          => 'Quote',
-		'quotetitle'     => 'Παράθεση',
-		'code'           => 'Code',
-		'codetitle'      => 'Κώδικας',
-		'help'           => 'Βοήθεια σχετικά με το BBCode',
+		'quote' => 'Quote',
+		'quotetitle' => 'Παράθεση',
+		'code' => 'Code',
+		'codetitle' => 'Κώδικας',
+		'help' => 'Βοήθεια σχετικά με το BBCode',
+		'file' => 'Φάκελος: ',
+		'image' => 'Εικόνα: ',
+		'selection' => '-- Επιλογή --',
 		// currently not used
-		'status'         => 'Μπάρα κατάστασης',
-		'statusbar'      => 'Κανονική λειτουργία. Πατήστε &lt;Esc&gt; για εναλλαγή σε λειτουργία επεξεργασίας.'
+		'status' => 'Μπάρα κατάστασης',
+		'statusbar' => 'Κανονική λειτουργία. Πατήστε &lt;Esc&gt; για εναλλαγή σε λειτουργία επεξεργασίας.'
 	)
+);
+
+$lang ['plugin'] ['bbcode'] = array (
+		'go_to' => 'Πηγαίνετε στον'
 );
 
 ?>
