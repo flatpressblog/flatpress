@@ -124,13 +124,22 @@ h1 {
 	margin: 1em 0 0.5em 0;
 }
 
-h2 { } /* see h2.date */
-
-h3 {
+h2 {
 	/* Titles of the entry */
 	font-style: normal;
 	font-size: 1.6em;
-	margin: 0
+	margin: 0.83em 0;
+}
+
+h2.entry-title,
+h2.title {
+	margin: 0 !IMPORTANT;
+}
+
+h3 {
+	font-style: normal;
+	font-size: 1.4em;
+	margin: 0;
 }
 
 h4 { font-size: 1.2em; }
@@ -247,7 +256,7 @@ h4#addcomment {clear:both;}
 	}
 	
 	/* === Class of main block === */
-	h2.date {
+	h6.date {
 		font-size: 0.8em;
 		color: #444;
 	}
@@ -300,7 +309,8 @@ h4#addcomment {clear:both;}
 	
 	.navigation { /* next entries & previous entries link */
 		font-size: 90%;
-		margin-bottom: 3em
+		/* margin-bottom: 3em; */
+		display: flow-root;
 	}
 
 	form#search ul { 

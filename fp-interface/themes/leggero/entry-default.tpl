@@ -5,11 +5,11 @@
 				
 		{$date|date_format_daily:"<h2 class=\"date\">`$fp_config.locale.dateformat`</h2>"}
 		
-				<h3 itemprop="name">
+				<h2 itemprop="name" class="entry-title">
 				<a href="{$id|link:post_link}">
 				{$subject|tag:the_title}
 				</a>
-				</h3>
+				</h2>
 				{include file="shared:entryadminctrls.tpl"}
 				
 				<div itemprop="articleBody">

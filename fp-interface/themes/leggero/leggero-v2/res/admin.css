@@ -282,6 +282,16 @@ input.maxsize, select.maxsize { width: 99% }
 /* ===== PREVIEW SETTINGS ===== */
 #post-preview .entry { padding: 2em; max-height: 20em; overflow: auto  }
 
+#post-preview div.entry h2 {
+	font-family: sans-serif;
+	border-bottom: none;
+	margin: 0.83em 0;
+}
+
+#post-preview div.entry h4 {
+	margin: 2em 0 0 0;
+}
+
 .entry-footer {
 	margin: 2em 0 0.5em 0;
     text-align: right;
@@ -433,7 +443,7 @@ li.widget-class {
 
 
 .admin-widgetset h3 {
-	margin-bottom:1em;
+	margin-bottom: 1em;
 	padding: .3em;
 	background: #eee;
 	border: 1px solid #ddd;
@@ -596,4 +606,8 @@ a.link-general:hover, .main-cell a:hover {
 
 #footer {
 	color: black;
+}
+
+form {
+    margin: auto;
 }

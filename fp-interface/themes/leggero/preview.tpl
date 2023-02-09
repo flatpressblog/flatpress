@@ -1,7 +1,7 @@
 			{entry content=$entry}
 			<div class="entry">
-			{$date|date_format_daily:"<h2 class=\"date\">`$fp_config.locale.dateformat`</h2>"}
-				<h3>{$subject|tag:the_title}</h3>
+			{$date|date_format_daily:"<h6 class=\"date\">`$fp_config.locale.dateformat`</h6>"}
+				<h2 class="entry-title">{$subject|tag:the_title}</h2>
 				{$content|tag:the_content}
 				<ul class="entry-footer">
 					<li class="entry-info">

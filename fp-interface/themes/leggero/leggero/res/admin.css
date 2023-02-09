@@ -38,6 +38,12 @@ h2 {
 	border-bottom: 1px solid #ddd;
 }
 
+#admin-content h2,
+#admin-content form h2 {
+    font-style: normal;
+    padding: unset;
+}
+
 body { background: #eee; }
 
 /* === Redefines some stuff in inline mode === */
@@ -279,6 +285,24 @@ input.maxsize, select.maxsize { width: 100% }
 /* ===== PREVIEW SETTINGS ===== */
 #post-preview .entry { padding: 2em; max-height: 20em; overflow: auto  }
 
+#post-preview div.entry h2,
+#post-preview div.entry h3 {
+	border-bottom: none;
+}
+
+#post-preview div.entry h2 {
+	font-style: italic;
+	margin: 0;
+	padding: 1em 0 1em 0;
+}
+
+#post-preview div.entry h4 {
+	margin: 2em 0 0 0;
+}
+
+.entry-footer {
+	text-align: right;
+}
 
 /* ===== UPLOAD PANEL ===== */
 #admin-uploader-filelist {
@@ -426,6 +450,7 @@ li.widget-class {
 
 
 .admin-widgetset h3 {
+	font-style: italic;
 	margin-bottom:1em;
 	padding: .3em;
 	background: #eee;
@@ -490,6 +515,10 @@ li.widget-class {
 
 .option-set .option-list {
 	margin-bottom: 4em;
+}
+
+.option-list ul li {
+	list-style-type: none;
 }
 
 .option-set dt {
@@ -585,4 +614,8 @@ a.link-general:hover, .main-cell a:hover {
 /* (already defined in common, here we put just some tuning settings) */
 #admin-content ul.msgs {
 	margin:0;
+}
+
+form {
+    margin: auto;
 }

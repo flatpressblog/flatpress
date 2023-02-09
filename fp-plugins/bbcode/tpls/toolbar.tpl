@@ -15,6 +15,7 @@
 		<img src="fp-plugins/bbcode/res/toolbaricons/mail.png" id="bb_mail" accesskey="" alt="mail" title="mail" onclick="insBBCode('mail');" />
 		<img src="fp-plugins/bbcode/res/toolbaricons/h2.png" id="bb_h2" accesskey="" alt="h2" title="h2" onclick="insBBCode('h2');" />
 		<img src="fp-plugins/bbcode/res/toolbaricons/h3.png" id="bb_h3" accesskey="" alt="h3" title="h3" onclick="insBBCode('h3');" />
+		<img src="fp-plugins/bbcode/res/toolbaricons/h4.png" id="bb_h4" accesskey="" alt="h4" title="h4" onclick="insBBCode('h4');" />
 		<img src="fp-plugins/bbcode/res/toolbaricons/ul.png" id="bb_ul" accesskey="" alt="ul" title="unordered list" onclick="insBBCodeWithContent('list', '\n[*]\n[*]\n');" />
 		<img src="fp-plugins/bbcode/res/toolbaricons/ol.png" id="bb_ol" accesskey="" alt="ol" title="ordered list" onclick="insBBCodeWithParamsAndContent('list', '#', '\n[*]\n[*]\n');" />
 		<img src="fp-plugins/bbcode/res/toolbaricons/quote.png" id="bb_quote" accesskey="" alt="quote" title="{$lang.admin.plugin.bbcode.editor.quotetitle}" onclick="insBBCode('quote');" />
