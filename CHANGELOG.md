@@ -36,7 +36,7 @@
 - Reworked translations: Spanish, Portuguese, Dutch, and Italian
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
-- Fixed not-yet-translated phrases in Admin Area ([#171](https://github.com/flatpressblog/flatpress/issues/171))
+- Fixed not-yet-translated phrases in Blog view and Admin Area ([#171](https://github.com/flatpressblog/flatpress/issues/171))
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box

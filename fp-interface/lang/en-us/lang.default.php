@@ -2,7 +2,6 @@
 $lang = array();
 
 $lang ['main'] = array(
-
 	'nextpage' => 'Next Page &raquo;',
 	'prevpage' => '&laquo; Previous Page',
 	'entry' => 'Entry',
@@ -25,7 +24,6 @@ $lang ['main'] = array(
 );
 
 $lang ['search'] = array(
-
 	'head' => 'Search',
 	'fset1' => 'Insert search criteria',
 	'keywords' => 'Phrase',
@@ -55,6 +53,18 @@ $lang ['search'] ['error'] = array(
 	'keywords' => 'You must specify at least one keyword'
 );
 
+$lang ['staticauthor'] = array(
+	// "Published by" in static pages
+	'published_by'	=> 'Published by',
+	'on' => 'on'
+);
+
+$lang ['entryauthor'] = array(
+	// "Posted by" in entry pages
+	'posted_by'	=> 'Posted by',
+	'at' => 'at'
+);
+
 $lang ['entry'] = array();
 $lang ['entry'] ['flags'] = array();
 
@@ -77,7 +87,6 @@ $lang ['404error'] = array(
 
 // Login
 $lang ['login'] = array(
-
 	'head' => 'Login',
 	'fieldset1' => 'Insert your user name and password',
 	'user' => 'Username:',
@@ -127,8 +136,12 @@ $lang ['comments'] ['error'] = array(
 	'comment' => 'You must enter a comment'
 );
 
-$lang ['date'] ['month'] = array(
+$lang ['postviews'] = array(
+	// PostView-Plugin
+	'views'	=> 'views',
+);
 
+$lang ['date'] ['month'] = array(
 	'January',
 	'February',
 	'March',
@@ -144,7 +157,6 @@ $lang ['date'] ['month'] = array(
 );
 
 $lang ['date'] ['month_abbr'] = array(
-
 	'Jan',
 	'Feb',
 	'Mar',
@@ -160,7 +172,6 @@ $lang ['date'] ['month_abbr'] = array(
 );
 
 $lang ['date'] ['weekday'] = array(
-
 	'Sunday',
 	'Monday',
 	'Tuesday',
@@ -171,7 +182,6 @@ $lang ['date'] ['weekday'] = array(
 );
 
 $lang ['date'] ['weekday_abbr'] = array(
-
 	'Sun',
 	'Mon',
 	'Tue',
@@ -180,5 +190,4 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Fri',
 	'Sat'
 );
-
 ?>

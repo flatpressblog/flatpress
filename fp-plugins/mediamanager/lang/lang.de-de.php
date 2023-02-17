@@ -22,7 +22,7 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'loadfile' => 'Datei/en hochladen',
 
 	'selected' => 'Ausgewählt',
-	'selectaction' => '-- auswahl --',
+	'selectaction' => '-- Auswahl --',
 	'addtogallery' => 'Zur Galerie hinzufügen',
 	'newgallery' => 'Neue Galerie',
 	'go' => 'Anlegen',
