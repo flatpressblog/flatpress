@@ -282,6 +282,11 @@ input.maxsize, select.maxsize { width: 99% }
 /* ===== PREVIEW SETTINGS ===== */
 #post-preview .entry { padding: 2em; max-height: 20em; overflow: auto  }
 
+.entry-footer {
+	margin: 2em 0 0.5em 0;
+    text-align: right;
+}
+
 /* ===== UPLOAD PANEL ===== */
 #admin-uploader-filelist {
 	margin: 1em auto;
