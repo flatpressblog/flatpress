@@ -222,7 +222,8 @@ function commentform() {
 					$fp_config ['general'] ['title']
 				), $lang ['comments'] ['mail']);
 
-				@utils_mail($from_mail, "{$lang ['comments'] ['newcomment']} {$lang ['comments'] ['newcomment']} {$fp_config['general']['title']}", $mail);
+				// for non-ASCII characters in the e-mail header, use RFC 1342 — Encodes data with MIME base64
+				@utils_mail($from_mail, "=?utf-8?B?" . base64_encode($lang ['comments'] ['newcomment']) . "?= =?utf-8?B?" . base64_encode($fp_config ['general'] ['title']) . "?=", $mail);
 			}
 
 			// if comment is valid, this redirect will clean the postdata
