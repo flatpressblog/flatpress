@@ -16,6 +16,6 @@ All the best,
 
 ';
 
-$lang ['comments'] ['newcomment'] = 'New comment on';
+$lang ['comments'] ['newcomment'] = 'New comment on ';
 
 ?>
