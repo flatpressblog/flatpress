@@ -438,7 +438,8 @@ class plugin_commentcenter {
 			$fp_config ['general'] ['title']
 		), $text);
 
-		return @utils_mail($from_mail, $subject, $text);
+		// for non-ASCII characters in the e-mail header use RFC 1342 — Encodes data with MIME base64
+		return @utils_mail($from_mail, "=?utf-8?B?" . base64_encode($subject) . "?=", $text);
 	}
 
 }
