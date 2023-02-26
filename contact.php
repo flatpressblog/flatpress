@@ -111,8 +111,8 @@ function contact_form() {
 	$msg .= "{$lang['contact']['notification']['content']} \n{$validationResult['content']}\n";
 
 	// send notification mail to site admin
-	// for non-ASCII characters in the e-mail header, use RFC 1342 — Encodes data with MIME base64
-	$success = @utils_mail((isset($validationResult ['email']) ? $validationResult ['email'] : $fp_config ['general'] ['email']), "=?utf-8?B?" . base64_encode($lang ['contact'] ['notification'] ['subject']) . "?= =?utf-8?B?" . base64_encode($fp_config ['general'] ['title']) . "?=", $msg);
+	// for non-ASCII characters in the e-mail header use RFC 1342 — Encodes data with MIME base64 and splits the encrypted subject
+	$success = @utils_mail((isset($validationResult ['email']) ? $validationResult ['email'] : $fp_config ['general'] ['email']), "=?utf-8?B?" . base64_encode($lang ['contact'] ['notification'] ['subject']) . "=?= =?utf-8?B?" . base64_encode($fp_config ['general'] ['title']) . "==?=", $msg);
 	system_seterr('contact', $success ? 1 : -1);
 	utils_redirect(basename(__FILE__));
 }
