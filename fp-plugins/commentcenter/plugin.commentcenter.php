@@ -439,7 +439,7 @@ class plugin_commentcenter {
 		), $text);
 
 		// for non-ASCII characters in the e-mail header use RFC 1342 — Encodes data with MIME base64
-		return @utils_mail($from_mail, "=?utf-8?B?" . base64_encode($subject) . "?=", $text);
+		return @utils_mail($from_mail, '=?utf-8?B?' . base64_encode($subject) . '?=', $text);
 	}
 
 }
