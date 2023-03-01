@@ -23,10 +23,10 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'entries' => 'Articoli',
 	'categories' => 'Categorie',
 	'nopolicies' => 'Non c\'è nessuna regola.',
-	'all_entries' => 'Tutti i post',
-	'fol_entries' => 'La regola è applicata ai seguenti post:',
+	'all_entries' => 'Tutti gli articoli',
+	'fol_entries' => 'La regola è applicata ai seguenti articoli:',
 	'fol_cats' => 'La regola è applicata ai post nelle seguenti categorie:',
-	'older' => 'La regola è applicata ai post più vecchi di %d giorno/i.',
+	'older' => 'La regola è applicata agli articoli più vecchi di %d giorno/i.',
 	'allow' => 'Permetti di commentare',
 	'block' => 'Blocca i commenti',
 	'approvation' => 'I commenti devono essere approvati',
@@ -105,7 +105,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'delc_descm' => 'Stai per eliminare questi commenti: ',
 
 	// Manage comments page
-	'man_searcht' => 'Cerca un post',
+	'man_searcht' => 'Cerca un articolo',
 	'man_searchd' => 'Inserisci l\'id dell\'articolo di cui vuoi gestire i commenti.',
 	'man_search' => 'Cerca',
 	'man_commfor' => 'Commenti di %s',
@@ -136,7 +136,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		-2 => 'Si è verificato un errore durante il salvataggio della regola (forse le tue opzioni sono scorrette).',
 
 		3 => 'Regola spostata.',
-		-3 => 'Si è verificato un errore nello spostamento della regola (o non la si può muovere).',
+		-3 => 'Si è verificato un errore nello spostamento della regola (o non la si può spostare).',
 
 		4 => 'Regole rimosse.',
 		-4 => 'Si è verificato un errore durante la rimozione delle regole (o non hai selezionato nessuna regola).',
