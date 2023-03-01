@@ -1,6 +1,6 @@
 <?php
 /*
- * LangId: Italian
+ * LangId: English
  */
 $lang ['locked'] = array(
 	'head' => 'L\'installazione è stata bloccata',
