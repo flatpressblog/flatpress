@@ -11,6 +11,6 @@ S pozdravem %blogtitle%
 
 ';
 
-$lang ['comments'] ['newcomment'] = 'Nový komentář k';
+$lang ['comments'] ['newcomment'] = 'Nový komentář k ';
 
 ?>
