@@ -17,6 +17,7 @@
 - Media Manager plugin shows 50 items per page, not 10
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
 - Comment Center plugin: Fixed errors on the config page ([#90](https://github.com/flatpressblog/flatpress/issues/90))
+- Comment Center plugin: Fixed error on sending mails with umlaut subjects ([#208](https://github.com/flatpressblog/flatpress/issues/208))
 - Akismet plugin: Fixed PHP warnings ([#83](https://github.com/flatpressblog/flatpress/issues/83))
 - BBCode plugin: Allows local video files ("attachs/video.mp4") and outputs valid HTML ([#192](https://github.com/flatpressblog/flatpress/issues/192))
 
