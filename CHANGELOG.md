@@ -46,6 +46,7 @@
 - Logout redirects to home page again ([#119](https://github.com/flatpressblog/flatpress/issues/119))
 - Fixed disappearing non-Latin characters in page title ([#49](https://github.com/flatpressblog/flatpress/issues/49) and [#91](https://github.com/flatpressblog/flatpress/issues/91))
 - Worked around strftime() marked as deprecated as of PHP 8.1 ([#92](https://github.com/flatpressblog/flatpress/issues/92)) - thx @bohwaz
+- Comments: Fixed error on sending mails with umlaut subjects ([#209](https://github.com/flatpressblog/flatpress/issues/209))
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
