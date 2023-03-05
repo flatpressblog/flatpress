@@ -124,6 +124,7 @@ $serverport = "false";
 // Unterstützung für Apache und IIS
 ini_set('session.cookie_secure', 1);
 ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_samesite', 'Lax');
 if (isset($_SERVER ['HTTPS']) && ($_SERVER ['HTTPS'] == '1' || strtolower($_SERVER ['HTTPS']) == 'on')) {
 	$serverport = "https://";
 } else {
