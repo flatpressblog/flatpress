@@ -1,0 +1,16 @@
+FlatPress Protect
+=================
+
+Description
+-----------
+Protect your blog with additional fetures in the HTTP response header
+
+ * Content Security Policy is an effective measure to protect your site from XSS attacks. By whitelisting sources for approved content, you can prevent the browser from loading malicious content.
+ * Permissions Policy is a new header that allows a site to control which features and APIs can be used in the browser.
+ * HTTP Strict Transport Security is an excellent feature to support on your site and strengthens your implementation of TLS by getting the User Agent to enforce the use of HTTPS.
+ * The X-Download-Options response header instructs the browser not to open the file directly but to offer it for download first. This mitigates some potential Social Engineering attacks.
+ * HTTP Strict Transport Security (HSTS for short) is a security mechanism for HTTPS connections that protects against both connection encryption downgrade attack and session hijacking.
+ * The referrer policy directive determines whether, and if so which, referrer information for requests triggered by the current web page is sent by the web browser in HTTP requests.
+
+Here you can check the security of your Flatpress blog
+https://securityheaders.com/
