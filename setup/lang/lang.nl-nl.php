@@ -115,6 +115,9 @@ Je kunt twee [b]statische paginas[/b] vinden die klaar zijn om in je inhoud te a
 [*][url=static.php?page=menu]Menu[/url] (merk dat de links op deze pagina ook in jouw zijbalk verschijnen - dit is de magie van de [b]blockparser widget[/b]. Zie de [url=http://wiki.flatpress.org/doc:faq]FAQ[/url] voor dit en meer!)
 [/list]
 
+Met de [b]PhotoSwipe plugin[/b] kunt u nu nog gemakkelijker uw afbeeldingen plaatsen, hetzij als float="left"- of float="right" uitgelijnde enkele afbeelding, omgeven door de tekst.
+Je kunt zelfs het element "galerij" gebruiken om hele galerijen aan je bezoekers te presenteren. U kunt hier [url="https://wiki.flatpress.org/res:plugins:photoswipe"]zien hoe eenvoudig het is[/url].
+
 
 [h4]Widgets[/h4]
 
@@ -123,11 +126,18 @@ Er is geen enkel vast element in de zijbalk(en). Alle elementen die je kunt vind
 Deze elementen worden genoemd [b]widgets[/b]. Voor meer over widgets en [url=https://wiki.flatpress.org/doc:tips:widgets]some tips[/url] om leuke effecten te krijgen, kijk dan eens naar de [url=https://wiki.flatpress.org/]wiki[/url].
 
 
+[h4]Thema\'s[/h4]
+
+[gallery="images/Leggero-Themepreview/" width="140"]
+Met het FlatPress-Leggero thema heb je 3 stijlsjablonen tot je beschikking - van klassiek tot modern. Deze templates zijn een prachtige start om iets van jezelf te maken.
+
+
 [h4]Zie meer[/h4]
 
 Wil je meer zien?
 
 [list]
+[*]Steun het project met een [url=http://www.flatpress.org/home/static.php?page=donate]kleine donatie
 [*]Volg de [url=https://www.flatpress.org/?x]official blog[/url] om te weten wat is gaande in de FlatPress wereld
 [*]Bezoek de [url=https://forum.flatpress.org/]forum[/url] voor ondersteuning
 [*]Krijg [b]mooie themas[/b] van [url=https://wiki.flatpress.org/res:themes]other users\' submissions[/url]!

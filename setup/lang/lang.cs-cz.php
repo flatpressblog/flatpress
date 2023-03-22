@@ -117,6 +117,9 @@ Můžete zde najít dvě statické stránky připravené pro váš obsah:
 [*][url=static.php?page=menu]Menu[/url] (všimněte si, že odkazy na této stránce se objeví také na vašem bočním panelu - to je kouzlo [b]blockparser widgetu[/b]. Podívejte se na [url=http://wiki.flatpress.org/doc:faq]FAQ[/url] pro podrobnosti!)
 [/list]
 
+Pomocí pluginu [b]PhotoSwipe[/b] můžete nyní své obrázky umístit ještě snadněji, a to buď jako float="left"- nebo float="right" zarovnané jednotlivé obrázky obklopené textem.
+Pomocí prvku \'gallery\' můžete dokonce návštěvníkům prezentovat celé galerie. Jak je to snadné, se můžete přesvědčit [url="https://wiki.flatpress.org/res:plugins:photoswipe"]zde[/url].
+
 
 [h4]Widgety[/h4]
 
@@ -124,9 +127,16 @@ V postranním panelu není jediný pevný prvek. Všechny prvky jsou zcela poloh
 Tyto prvky se nazývají widgety. Další informace o [url=https://wiki.flatpress.org/doc:tips:widgets]widgetech[/url] a několik tipů, jak získat pěkné efekty, najdete na [url=https://wiki.flatpress.org/]wiki[/url].
 
 
+[h4]Témata[/h4]
+
+[gallery="images/Leggero-Themepreview/" width="140"]
+S tématem FlatPress-Leggero máte k dispozici 3 šablony stylů - od klasických po moderní. Tyto šablony jsou skvělým začátkem pro vytvoření něčeho vlastního.
+
+
 [h4]Chcete vědět víc?[/h4]
 
 [list]
+[*]Podpořte projekt [url=http://www.flatpress.org/home/static.php?page=donate]malým příspěvkem
 [*]Jděte na [url=https://www.flatpress.org/?x]oficiální blog[/url] dozvědět se, co se děje ve světě FlatPressu
 [*]Navštivte [url=https://forum.flatpress.org/]fórum[/url] kde vám poradíme a pomůžeme
 [*]Stáhněte si [b]šablony vzhledu[/b] od [url=https://wiki.flatpress.org/res:themes]našich uživatelů[/url]!
