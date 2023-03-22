@@ -1,11 +1,11 @@
 img.floatleft {
 	float:left;
-	padding-right:10px;
+	/* padding-right:10px; */
 }
 
 img.floatright {
 	float:right;
-	padding-left:10px;
+	/* padding-left:10px; */
 }
 
 .bbcode_video.right {
