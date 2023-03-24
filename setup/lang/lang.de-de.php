@@ -63,7 +63,7 @@ $lang ['step3'] = array(
 );
 
 $lang ['buttonbar'] = array(
-	'next' => 'Next >'
+	'next' => 'Weiter >'
 );
 
 $lang ['samplecontent'] = array();
@@ -140,7 +140,7 @@ Du möchtest gern mehr über FlatPress wissen?
 
 [list]
 [*]Unterstütze das Projekt mit einer [url=http://www.flatpress.org/home/static.php?page=donate]kleinen Spende[/url].
-[*]Im  [url=https://www.flatpress.org/?x]Projekt-Blog[/url] erfährst du, was im FlatPress-Projekt aktuell los ist.
+[*]Im [url=https://www.flatpress.org/?x]Projekt-Blog[/url] erfährst du, was im FlatPress-Projekt aktuell los ist.
 [*]Besuche das [url=https://forum.flatpress.org/]Supportforum[/url] für Unterstützung und den Kontakt zu anderen FlatPress-Benutzern.
 [*]Lade dir großartige von der Community erstellte [b]Themes[/b] aus dem [url=https://wiki.flatpress.org/res:themes]Wiki[/url] herunter.
 [*]Dort gibt es auch tolle [url=https://wiki.flatpress.org/res:plugins]Plugins[/url].
