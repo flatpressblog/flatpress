@@ -12,7 +12,8 @@ function check_step() {
 			'subject' => $vl ['entry'] ['subject'],
 			'content' => $vl ['entry'] ['content'],
 			'date' => time(),
-			'version' => system_ver()
+			'version' => system_ver(),
+			'author' => 'FlatPress'
 		));
 
 		if (!static_exists('menu')) {
@@ -20,7 +21,8 @@ function check_step() {
 				'subject' => $vl ['menu'] ['subject'],
 				'content' => $vl ['menu'] ['content'],
 				'date' => time(),
-				'version' => system_ver()
+				'version' => system_ver(),
+				'author' => 'FlatPress'
 			), 'menu');
 		}
 		if (!static_exists('about')) {
@@ -28,7 +30,8 @@ function check_step() {
 				'subject' => $vl ['about'] ['subject'],
 				'content' => $vl ['about'] ['content'],
 				'date' => time(),
-				'version' => system_ver()
+				'version' => system_ver(),
+				'author' => 'FlatPress'
 			), 'about');
 		}
 	}
