@@ -9,8 +9,8 @@
 <table class="entrylist">
 	<thead>
 		<tr>
-		    <th>&nbsp;</th>
-		    <th class="colname">{$plang.colname}</th>
+			<th>&nbsp;</th>
+			<th class="colname">{$plang.colname}</th>
 			<th>{$plang.colusecount}</th>
 			<th>{$plang.colsize}</th>
 			<th>{$plang.colmtime}</th>
