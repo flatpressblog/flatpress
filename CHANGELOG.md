@@ -9,14 +9,16 @@
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 
 ## Plugins
-- Gallery captions plugin added ([#108](https://github.com/flatpressblog/flatpress/issues/108))
-- PhotoSwipe plugin added ([#109](https://github.com/flatpressblog/flatpress/issues/109))
-- SEO Meta Tag Info plugin added ([#145](https://github.com/flatpressblog/flatpress/issues/145))
+- PhotoSwipe plugin added: Displays images and galleries with [PhotoSwipe](https://photoswipe.com/) ([#109](https://github.com/flatpressblog/flatpress/issues/109))
+- Gallery captions plugin added: Manages image captions for gallery images ([#108](https://github.com/flatpressblog/flatpress/issues/108))
+- SEO Meta Tag Info plugin added: Manages SEO meta tags ([#145](https://github.com/flatpressblog/flatpress/issues/145))
+- FlatPress Protect plugin added: Adds HTTP headers for hardening your blog ([#146](https://github.com/flatpressblog/flatpress/issues/146))
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
 - Media Manager plugin shows 50 items per page, not 10
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
-- Fixed errors on the Comment Center config page ([#90](https://github.com/flatpressblog/flatpress/issues/90))
-- Fixed PHP warnings in Akismet plugin ([#83](https://github.com/flatpressblog/flatpress/issues/83))
+- Comment Center plugin: Fixed errors on the config page ([#90](https://github.com/flatpressblog/flatpress/issues/90))
+- Comment Center plugin: Fixed error on sending mails with umlaut subjects ([#211](https://github.com/flatpressblog/flatpress/issues/211))
+- Akismet plugin: Fixed PHP warnings ([#83](https://github.com/flatpressblog/flatpress/issues/83))
 - BBCode plugin: Allows local video files ("attachs/video.mp4") and outputs valid HTML ([#192](https://github.com/flatpressblog/flatpress/issues/192))
 
 ## Themes
@@ -44,6 +46,7 @@
 - Logout redirects to home page again ([#119](https://github.com/flatpressblog/flatpress/issues/119))
 - Fixed disappearing non-Latin characters in page title ([#49](https://github.com/flatpressblog/flatpress/issues/49) and [#91](https://github.com/flatpressblog/flatpress/issues/91))
 - Worked around strftime() marked as deprecated as of PHP 8.1 ([#92](https://github.com/flatpressblog/flatpress/issues/92)) - thx @bohwaz
+- Comments: Fixed error on sending mails with umlaut subjects ([#209](https://github.com/flatpressblog/flatpress/issues/209))
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
