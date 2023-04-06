@@ -29,7 +29,7 @@
 		1		=> '.htaccess è stato salvato con successo',
 		-1		=> '.htaccess non può essere salvato (hai i permessi di scrittura su <code>'. BLOG_ROOT .'</code>)?',
 
-		2		=> 'Opzioni salvate con successo',
+		2		=> 'Impostazioni salvate con successo',
 		-2		=> 'Si è verificato un errore durante il salvataggio delle impostazioni',
 	);
 	
