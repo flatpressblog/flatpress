@@ -4,14 +4,13 @@
 {include file="shared:errorlist.tpl"}
 
 {html_form class="option-set"}
-{$plang.page}: {$paginator.current} /  {$paginator.total}</br>
+{$plang.page}: {$paginator.current} /  {$paginator.total}<br>
 {if $currentgallery!=""}<h3>gallery '{$currentgallery}'</h3>{/if}
 <table class="entrylist">
 	<thead>
-		<colgroup><col/><col width="50%"/><col/><col/><col/></colgroup>
 		<tr>
-		    <th>&nbsp;</th>
-		    <th>{$plang.colname}</th>
+			<th>&nbsp;</th>
+			<th class="colname">{$plang.colname}</th>
 			<th>{$plang.colusecount}</th>
 			<th>{$plang.colsize}</th>
 			<th>{$plang.colmtime}</th>
@@ -95,7 +94,7 @@
     {$plang.selected}:
     <select name='action'>
         <option value='-'>{$plang.selectaction}</option>
-        <{foreach from=$dwgalleries item=v}
+        {foreach from=$dwgalleries item=v}
             <option value='atg-{$v.name}'>{$plang.addtogallery} '{$v.name}'</option>
         {/foreach}
     </select>
