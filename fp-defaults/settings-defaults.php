@@ -28,7 +28,13 @@ $fp_config = array(
 			'pages' => array(
 				'menu',
 				'about'
-			)
-		)
-	)
+			),
+		),
+		'bbcode' => array (
+			'escape-html' => true,
+			'comments' => false,
+			'editor' => true,
+			'url-maxlen' => 40,
+		),
+	),
 );
