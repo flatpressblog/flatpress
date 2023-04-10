@@ -6,7 +6,7 @@ $lang['plugin']['accessibleantispam'] = array(
 		'dobbiamo chiederti di provare che sei una persona vera. Quanto fa ',
 		
 	'sum'		=> '%s più %s ?',
-	'sub'		=> '%2$s meno %1$s ?',
+	'sub'		=> '%1$s meno %2$s ?',
 	'prod'		=> '%s per %s ?',
 		
 	'error'		=> 'Spiacenti, hai sbagliato. Riprova.'
