@@ -26,7 +26,7 @@
 		'submit'	=> '.htaccess speichern'
 	);
 	$lang['admin']['plugin']['prettyurls']['msgs'] = array(
-		1		=> 'Die Datei wurde .htaccess erfolgreich gespeichert',
+		1		=> 'Die Datei .htaccess wurde erfolgreich gespeichert',
 		-1		=> 'Die Datei .htaccess konnte nicht gespeichert werden (Keine Schreibrechte im <code>'. BLOG_ROOT .'</code>)?',
 
 		2		=> 'Einstellungen wurden erfolgreich gespeichert',
