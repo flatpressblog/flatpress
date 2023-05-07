@@ -3,7 +3,8 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Lista de posts',
 	'write' => 'Criar um post',
-	'cats' => 'Administrar as categorias'
+	'cats' => 'Administrar as categorias',
+	'stats' => 'Estatísticas'
 );
 
 /* default action */
@@ -151,6 +152,21 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'As Categorias foram apagadas.',
 	-2 => 'Ocorreu um erro ao tentar apagar as categorias.',
 	-3 => 'Os IDs da categoria devem ser apenas positivos. (0 não é permitido.)'
+);
+
+/* stats */
+$lang ['admin'] ['entry'] ['stats'] = array(
+	'head' => 'Estatísticas',
+	'entries' => 'Entradas',
+	'you_have' => 'Você tem',
+	'entries_using' => 'entradas com',
+	'characters_in' => 'caracteres em',
+	'words' => 'palavras',
+	'total_disk_space_is' => 'O espaço total de armazenamento é de',
+	'comments' => 'Comentários',
+	'comments_using' => 'comentários com',
+	'the' => 'As',
+	'most_commented_entries' => 'entradas mais comentadas'
 );
 
 ?>

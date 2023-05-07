@@ -2,7 +2,8 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Gestione Articoli',
 	'write' => 'Scrivi Articolo',
-	'cats' => 'Gestione Categorie'
+	'cats' => 'Gestione Categorie',
+	'stats' => 'Statistica'
 );
 
 /* default action */
@@ -153,6 +154,21 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'Categorie eliminate',
 	-2 => 'Si è verificato un errore durante l\'eliminazione delle categorie',
 	-3 => 'Gli ID delle categorie devono essere assolutamente positivi (lo 0 non è consentito)'
+);
+
+/* stats */
+$lang ['admin'] ['entry'] ['stats'] = array(
+	'head' => 'Statistica',
+	'entries' => 'Entrate',
+	'you_have' => 'Hai',
+	'entries_using' => 'voci con',
+	'characters_in' => 'caratteri in',
+	'words' => 'parole',
+	'total_disk_space_is' => 'Lo spazio di archiviazione totale è di',
+	'comments' => 'Commenti',
+	'comments_using' => 'commenti con',
+	'the' => 'Le',
+	'most_commented_entries' => 'voci più commentate'
 );
 
 ?>

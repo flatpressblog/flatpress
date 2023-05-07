@@ -24,7 +24,7 @@
 					'commedit'		=> false,
 					'delete'		=> false,
 					'cats'			=> true,
-					'stats'			=> false
+					'stats'			=> true
 					);
 		var $defaultaction = 'list';
 			
