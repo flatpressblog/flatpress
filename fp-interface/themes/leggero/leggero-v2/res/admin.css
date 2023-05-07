@@ -34,6 +34,10 @@ h2 {
 	border-bottom: 1px solid #ddd;
 }
 
+.head-link {
+	font-size: 0.83em;
+}
+
 body { background: #eee; }
 
 /* === Redefines some stuff in inline mode === */
