@@ -10,7 +10,7 @@
 [![License](https://img.shields.io/github/license/flatpressblog/flatpress.svg?style=plastic)](./LICENSE.md "License")
 [![Open issues](https://img.shields.io/github/issues-raw/flatpressblog/flatpress?style=plastic)](https://github.com/flatpressblog/flatpress/issues "See open issues")
 [![Last commit](https://img.shields.io/github/last-commit/flatpressblog/flatpress?style=plastic)](https://github.com/flatpressblog/flatpress/commits/ "Last commit")
-<a href="https://fosstodon.org/users/flatpress/remote_follow" title="Follow on Mastodon"><img alt="Mastodon Follow" src="https://img.shields.io/mastodon/follow/326815?domain=https%3A%2F%2Ffosstodon.org&style=social" alt="Follow on Mastodon"></a> <a href="https://twitter.com/intent/follow?screen_name=flatpress" title="Follow on Twitter"><img src="https://img.shields.io/twitter/follow/flatpress.svg?style=social&logo=twitter" alt="Follow on Twitter"></a>
+<a href="https://fosstodon.org/@flatpress" title="Follow on Mastodon"><img src="https://img.shields.io/mastodon/follow/326815?domain=https%3A%2F%2Ffosstodon.org&style=social" alt="Follow on Mastodon"></a> <a href="https://twitter.com/flatpress" title="Follow on Twitter"><img src="https://img.shields.io/twitter/follow/flatpress.svg?style=social&logo=twitter" alt="Follow on Twitter"></a>
 
 # Welcome to FlatPress!
 FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, just PHP. No database needed!
