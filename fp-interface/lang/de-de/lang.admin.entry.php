@@ -3,7 +3,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Beiträge verwalten',
 	'write' => 'Beitrag schreiben',
 	'cats' => 'Kategorien verwalten',
-	'stats' => 'Statiskiken'
+	'stats' => 'Statistiken'
 );
 
 /* default action */
