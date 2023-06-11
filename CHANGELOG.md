@@ -18,6 +18,7 @@
 ### Changes
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
 - Media Manager plugin shows 50 items per page, not 10
+- BBCode plugin: Added "h4" icon to editor toolbar ([#201](https://github.com/flatpressblog/flatpress/issues/201))
 ### Bugfixes
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
 - Comment Center plugin: Fixed errors on the config page ([#90](https://github.com/flatpressblog/flatpress/issues/90))
@@ -39,6 +40,7 @@
   - Obsolete bullet points removed ([#136](https://github.com/flatpressblog/flatpress/issues/136))
   - Updated preview image ([#139](https://github.com/flatpressblog/flatpress/issues/139))
   - Fixed comments date format ([#237](https://github.com/flatpressblog/flatpress/issues/237))
+  - Fixed several layout/CSS glitches ([#140](https://github.com/flatpressblog/flatpress/issues/140), [#144](https://github.com/flatpressblog/flatpress/issues/144), [#201](https://github.com/flatpressblog/flatpress/issues/201))
 
 ## Internationalization
 - Reworked translations: Spanish, Portuguese, Dutch, and Italian
