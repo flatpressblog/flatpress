@@ -100,18 +100,19 @@ function contact_form() {
 
 	// okay, validation returned validated values
 	// now build the mail content
-	$msg = "Name: \n{$validationResult['name']} \n\n";
+	$msg = "{$lang['contact']['notification']['name']} \n{$validationResult['name']}\n\n";
 
 	if (isset($validationResult ['email'])) {
-		$msg .= "Email: {$validationResult['email']}\n\n";
+		$msg .= "{$lang['contact']['notification']['email']} \n{$validationResult['email']}\n\n";
 	}
 	if (isset($validationResult ['url'])) {
-		$msg .= "WWW: {$validationResult['url']}\n\n";
+		$msg .= "{$lang['contact']['notification']['www']} \n{$validationResult['url']}\n\n";
 	}
-	$msg .= "Content:\n{$validationResult['content']}\n";
+	$msg .= "{$lang['contact']['notification']['content']} \n{$validationResult['content']}\n";
 
 	// send notification mail to site admin
-	$success = @utils_mail((isset($validationResult ['email']) ? $validationResult ['email'] : $fp_config ['general'] ['email']), "Contact sent through {$fp_config['general']['title']} ", $msg);
+	// for non-ASCII characters in the e-mail header use RFC 1342 — Encodes data with MIME base64 and splits the encrypted subject
+	$success = @utils_mail((isset($validationResult ['email']) ? $validationResult ['email'] : $fp_config ['general'] ['email']), '=?utf-8?B?' . base64_encode($lang ['contact'] ['notification'] ['subject']) . '=?= =?utf-8?B?' . base64_encode($fp_config ['general'] ['title']) . '==?=', $msg);
 	system_seterr('contact', $success ? 1 : -1);
 	utils_redirect(basename(__FILE__));
 }
