@@ -16,7 +16,7 @@
 
 						<p>Widget lze přetáhnout do speciální oblasti, která se může lišit podle tématu vzhledu.</p>
 
-						<p>FlatPress příchází s několika widgety, které pomáhají s přihlášením, zobrazením, vyhledáváním, atd. </p>',
+						<p>FlatPress příchází s několika widgety, které pomáhají s přihlášením, zobrazením, vyhledáváním, atd.',
 						
 		'availwdgs'	=> 'Dostupné Widgety',
 		'trashcan'	=> 'Přetáhněte sem pro smazání',

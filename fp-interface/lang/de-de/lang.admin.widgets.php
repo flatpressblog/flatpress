@@ -16,7 +16,7 @@
 						'(<em>Widgetsets</em>) des Blogs frei positioniert werden kann'.
 						'</p>'.
 						'<p><strong>Schiebe</strong> mit der Maus das Widget Element aus der Auswahl <strong>Verfügbare Widgets</strong> '.
-						'in die gewünschte Position der Widget Leiste.</p>',
+						'in die gewünschte Position der Widget Leiste.',
 						
 		'availwdgs'	=> 'Verfügbare Widgets',
 		'trashcan'	=> 'Zum Löschen hierher schieben',
