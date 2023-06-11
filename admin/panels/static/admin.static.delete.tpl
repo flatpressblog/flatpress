@@ -2,7 +2,7 @@
 	
 <p>{$panelstrings.descr}</p>
 	{statics}
-	<fieldset><legend>{$panelstrings.preview}</legend>
+	<fieldset id="post-preview"><legend>{$panelstrings.preview}</legend>
 	{include file="previewstatic.tpl"}
 	</fieldset>
 	{/statics}

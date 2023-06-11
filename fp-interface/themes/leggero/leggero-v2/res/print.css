@@ -81,6 +81,9 @@ pre {
   background-color: #eee;
   font-size: 70%;
   border: 1px dotted #333;
+  white-space: pre-line;
+  overflow: auto;
+  text-overflow: ellipsis;
 }
 
 .link-comments {

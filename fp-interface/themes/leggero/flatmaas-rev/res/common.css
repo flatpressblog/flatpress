@@ -153,17 +153,23 @@ h1 {
 }
 
 
-h2 { /*  */ }
-
-h3 {
+h2 {
 	/* Titles of the entry */
-	font-size: 1.3em;
+	font-size: 1.4em;
 	color: #333333;
 	margin: 0;
+}
+
+.entry-title {
 	padding: 2px 0 2px 30px;
 	background: transparent url('../imgs/entry.png') center left no-repeat
 }
 
+.entry-title a {
+	color: #333333 !IMPORTANT;
+}
+
+h3 { margin: 0; font-size: 1.3em; }
 
 h4 { font-size: 1.2em; }
 	/* in the specific ID */

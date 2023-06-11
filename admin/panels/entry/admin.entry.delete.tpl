@@ -4,7 +4,7 @@
 	
 	{entry_block}
 	{html_form}
-	<fieldset><legend>{$panelstrings.preview}</legend>
+	<fieldset id="post-preview"><legend>{$panelstrings.preview}</legend>
 	{include file="preview.tpl"}
 	</fieldset>
 	<p>{$panelstrings.confirm}</p>

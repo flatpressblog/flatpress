@@ -4,7 +4,7 @@
 				
 
 			<div class="entry">
-				<h3 class="title">{$subject}</h3>
+				<h2 class="title">{$subject}</h2>
 				<div class="body">
 				
 				{if isset($rawcontent) and $rawcontent} {$content}

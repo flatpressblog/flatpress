@@ -124,11 +124,6 @@ input#subject {
 #admin-bbcode-toolbar select {width: 10em}
 
 
-#admin-content {
-	background: url(../imgs/nib-logo.png) bottom right no-repeat;
-}
-
-
 #admin-content table {
 	border-collapse: collapse;
 	width: 100%;	
@@ -366,6 +361,8 @@ input.maxsize, select.maxsize { width: 100% }
 
 /* ===== PREVIEW SETTINGS ===== */
 #post-preview .entry { padding: 2em }
+
+#post-preview div.entry h3 { font-size: 1.3em }
 
 #post-preview ul { list-style: none; padding: 0 0 0 1.6em }
 
@@ -654,3 +651,8 @@ a.link-enable:hover {
 	margin-bottom: 2em;
 	padding: 1em 2em
 }
+
+form {
+    margin: auto;
+}
+
