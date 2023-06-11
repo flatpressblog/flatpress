@@ -47,6 +47,7 @@
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
 - Fixed not-yet-translated phrases in Blog view and Admin Area ([#171](https://github.com/flatpressblog/flatpress/issues/171))
+- Contact form: Admin notification mail is now localized ([#205](https://github.com/flatpressblog/flatpress/issues/205))
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
@@ -54,7 +55,7 @@
 - Logout redirects to home page again ([#119](https://github.com/flatpressblog/flatpress/issues/119))
 - Fixed disappearing non-Latin characters in page title ([#49](https://github.com/flatpressblog/flatpress/issues/49) and [#91](https://github.com/flatpressblog/flatpress/issues/91))
 - Worked around strftime() marked as deprecated as of PHP 8.1 ([#92](https://github.com/flatpressblog/flatpress/issues/92)) - thx @bohwaz
-- Comments: Fixed error on sending mails with umlaut subjects ([#209](https://github.com/flatpressblog/flatpress/issues/209))
+- Comments and contact form: Fixed error on sending mails with umlaut subjects ([#207](https://github.com/flatpressblog/flatpress/issues/207), [#209](https://github.com/flatpressblog/flatpress/issues/209))
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
