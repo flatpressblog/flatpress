@@ -1,6 +1,5 @@
-<?php 
-
-$language = @$_POST['language']? $_POST['language'] :'en-us';
+<?php
+$language = @$_POST ['language']? $_POST ['language'] : $browserLang;
 
 $lf = "lang.$language.php";
 if (!preg_match('|^lang\.[a-z]{2}-[a-z]{2}\.php$|', $lf))
@@ -13,12 +12,10 @@ $step = null;
 
 $id = getstep($step);
 
-$l =& $lang[$step];
-
+$l =& $lang [$step];
 
 include("./setup/tpls/header.tpl.php");
 include("./setup/tpls/{$step}.tpl.php");
 include("./setup/tpls/footer.tpl.php");
-
 
 ?>

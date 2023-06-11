@@ -93,7 +93,8 @@ define('IMAGES_DIR', FP_CONTENT . 'images/');
 // here is where all the attachments will be saved
 define('ATTACHS_DIR', FP_CONTENT . 'attachs/');
 
-define('LANG_DEFAULT', 'en-us');
+include(LANG_DIR . 'browserlang.php');
+define('LANG_DEFAULT', $browserLang);
 define('BPT_SORT', SORT_DESC);
 
 set_include_path(ABS_PATH);
