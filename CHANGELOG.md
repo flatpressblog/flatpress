@@ -38,6 +38,7 @@
   - Fixed description of Leggero and Leggero v2 styles ([#137](https://github.com/flatpressblog/flatpress/issues/137))
   - Obsolete bullet points removed ([#136](https://github.com/flatpressblog/flatpress/issues/136))
   - Updated preview image ([#139](https://github.com/flatpressblog/flatpress/issues/139))
+  - Fixed comments date format ([#237](https://github.com/flatpressblog/flatpress/issues/237))
 
 ## Internationalization
 - Reworked translations: Spanish, Portuguese, Dutch, and Italian
