@@ -2,7 +2,8 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Beiträge verwalten',
 	'write' => 'Beitrag schreiben',
-	'cats' => 'Kategorien verwalten'
+	'cats' => 'Kategorien verwalten',
+	'stats' => 'Statiskiken'
 );
 
 /* default action */
@@ -150,6 +151,21 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'Alle Kategorien gelöscht',
 	-2 => 'Ein Fehler ist beim Löschen der Kategorien aufgetreten',
 	-3 => 'Die Kategorie ID <strong>muss größer als 0 sein</strong>. Der Wert <strong>0</strong> ist nicht erlaubt.'
+);
+
+/* stats */
+$lang ['admin'] ['entry'] ['stats'] = array(
+	'head' => 'Statistiken',
+	'entries' => 'Beiträge',
+	'you_have' => 'Du hast',
+	'entries_using' => 'Beiträge mit',
+	'characters_in' => 'Zeichen in',
+	'words' => 'Wörtern',
+	'total_disk_space_is' => 'Der gesamte Speicherplatz beträgt',
+	'comments' => 'Kommentare',
+	'comments_using' => 'Kommentare mit',
+	'the' => 'Die',
+	'most_commented_entries' => 'meist kommentierten Beiträge'
 );
 
 ?>
