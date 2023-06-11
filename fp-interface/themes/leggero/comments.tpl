@@ -25,7 +25,7 @@
 				{include file="shared:commentadminctrls.tpl"} {* this shows edit/delete links*}
 				
 				<p class="date">
-				<a href="{$entryid|link:comments_link}#{$id}" title="Permalink to {$name}'s comment">{$date|date_format:"%A, %B %e, %Y - %H:%M:%S"}</a>
+				<a href="{$entryid|link:comments_link}#{$id}" title="Permalink to {$name}'s comment">{$date|date_format_daily} {$lang.entryauthor.at} {$date|date_format}</a>
 				</p>
 				
 				{$content|tag:comment_text}
