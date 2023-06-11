@@ -54,6 +54,8 @@ $lang ['step3'] = array(
 		
 		E hai ragione: <strong>la storia è appena cominciata</strong>, ma <strong>sta a te scriverla</strong>!
 		
+		<p style="color:#cc0000">Attenzione: per maggiore comodità e sicurezza, si consiglia di configurare le istruzioni per il proprio server nell\'area di amministrazione con il plugin PrettyURL.</p>
+		
 		<ul>
 		<li>Guarda <a href="%s">come appare la home page</a></li>
 		<li>Buon divertimento! <a href="%s">Connettiti ora!</a></li>
@@ -116,6 +118,9 @@ Puoi trovare due [b]pagine statiche[/b] pronte per accettare i tuoi contenuti:
 [*][url=static.php?page=menu]Menu[/url] (nota che i collegamenti in questa pagine appariranno anche sulla barra laterale - questa è una magia del [b]widget blockparser[/b]. Consulta le [url=http://wiki.flatpress.org/doc:faq]FAQ[/url] per questo e altro!)
 [/list]
 
+Con il plugin [b]PhotoSwipe[/b] è ora possibile posizionare le immagini in modo ancora più semplice, sia come float="left"- che come float="right" allineate a una singola immagine, circondata dal testo.
+È anche possibile utilizzare l\'elemento 'gallery' per presentare intere gallerie ai visitatori. Potete scoprire quanto sia facile [url="https://wiki.flatpress.org/res:plugins:photoswipe"]qui[/url].
+
 
 [h4]Widget[/h4]
 
@@ -124,11 +129,18 @@ Non c\'è un singolo elemento fisso nelle barre laterali. Tutti gli elementi che
 Questi elementi si chiamano [b]widget[/b]. Per saperne di più sui widget e [url=https://wiki.flatpress.org/doc:tips:widgets]alcuni consigli[/url] per ottenere dei bellissimi effetti, dai un\'occhiata sul [url=https://wiki.flatpress.org/]wiki[/url].
 
 
+[h4]Temi[/h4]
+
+[gallery="images/Leggero-Themepreview/" width="140"]
+Con il tema FlatPress-Leggero avete a disposizione 3 modelli di stile, dal classico al moderno. Questi modelli sono un ottimo inizio per creare qualcosa di proprio.
+
+
 [h4]Saperne di più[/h4]
 
 Vuoi saperne di più?
 
 [list]
+[*]Sostenete il progetto con una [url=http://www.flatpress.org/home/static.php?page=donate]piccola donazione
 [*]Segui il [url=https://www.flatpress.org/?x]blog ufficiale[/url] per sapere cosa succede nel mondo di FlatPress
 [*]Visita il [url=https://forum.flatpress.org/]forum[/url] per assistenza e chiacchierare un po\'
 [*]Scarica [b]magnifici temi[/b] dagli [url=https://wiki.flatpress.org/res:themes]invii di altri utenti[/url]!

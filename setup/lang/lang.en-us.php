@@ -54,6 +54,8 @@ $lang ['step3'] = array(
 		
 		And you\'re right: <strong>the story has just begun</strong>, but <strong>writing is up to you</strong>!
 		
+		<p style="color:#cc0000">Note: For more convenience and security, we recommend configuring the instructions for your server in the Administration Area using the PrettyURL plugin.</p>
+		
 		<ul>
 		<li>See <a href="%s">how the home page looks like</a></li>
 		<li>Have fun! <a href="%s">Login now!</a></li>
@@ -116,12 +118,21 @@ You can find two [b]static pages[/b] ready to accept your contents:
 [*][url=static.php?page=menu]Menu[/url] (notice that the links in this page will appear on your sidebar as well - this is the magic of the [b]blockparser widget[/b]. See the [url=http://wiki.flatpress.org/doc:faq]FAQ[/url] for this and more!)
 [/list]
 
+With the [b]PhotoSwipe plugin[/b] you can now place your images even easier, either as float="left"- or float="right" aligned single image, enclosed by the text.
+You can even use the \'gallery\' element to present entire galleries to your visitors. How easy it works, [url="https://wiki.flatpress.org/res:plugins:photoswipe"]you can learn here[/url].
+
 
 [h4]Widgets[/h4]
 
 There isn\'t a single fixed element in the sidebar(s). All the elements you can find in the bars surrounding this text are completely positionable, and most of them are customizable as well. Some themes even provide a panel interface in the admin area.  
 
 These elements are called [b]widgets[/b]. For more on widgets and [url=https://wiki.flatpress.org/doc:tips:widgets]some tips[/url] to get nice effects, take a look at the [url=https://wiki.flatpress.org/]wiki[/url].
+
+
+[h4]Themes[/h4]
+
+[gallery="images/Leggero-Themepreview/" width="140"]
+With the FlatPress-Leggero theme you have 3 style templates at your disposal - from classic to modern. These templates are a wonderful start to create something of your own.
 
 
 [h4]See more[/h4]
@@ -140,6 +151,7 @@ Want to see more?
 [h4]How can I help?[/h4]
 
 [list]
+[*]Support the project with a [url=http://www.flatpress.org/home/static.php?page=donate]small donation[/url]
 [*][url=https://www.flatpress.org/contact/]Contact us[/url] to report bugs or suggest improvements.
 [*]Contribute to the development of Flatpress on [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
 [*]Translate FlatPress or the documentation into [url=https://wiki.flatpress.org/res:language]your language[/url].

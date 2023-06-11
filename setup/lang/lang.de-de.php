@@ -53,6 +53,8 @@ $lang ['step3'] = array(
 		
 		Nein, tatsächlich <strong>geht es jetzt erst richtig los</strong>! Aber das Bloggen ist nun <em>deine</em> Aufgabe ;)
 		
+		<p style="color:#cc0000">Achtung: Für mehr Kompfort und Sicherheit empfehlen wir im Administrationsbereich die Anweisungen für deinen Server mithilfe des PrettyURL-Plugins zu konfigurieren.</p>
+		
 		<ul>
 		<li>Zur <a href="%s">Hauptseite deines Blogs</a></li>
 		<li>Viel Spaß beim Bloggen! <a href="%s">Jetzt einloggen</a></li>
@@ -63,7 +65,7 @@ $lang ['step3'] = array(
 );
 
 $lang ['buttonbar'] = array(
-	'next' => 'Next >'
+	'next' => 'Weiter >'
 );
 
 $lang ['samplecontent'] = array();
@@ -111,11 +113,15 @@ Im [url=admin.php]Administrationsbereich[/url] kannst du Einträge und statische
 Du kannst FlatPress umfassend an deine Bedürfnisse anpassen, indem du es mit [url=https://wiki.flatpress.org/doc:plugins:standard]Plugins[/url] erweiterst. BBCode ist z.B. ein Plugin.
 
 Es folgt noch etwas mehr Beispiel-Inhalt, der dir noch mehr FlatPress-Funktionen zeigt :)
+
 Zwei statische Seiten sind für dich schon vorbereitet:
 [list]
 [*][url=static.php?page=about]Über[/url]
 [*][url=static.php?page=menu]Menü[/url] (Der Inhalt dieser statischen Seite taucht auch in der Seitenleiste deines Blogs auf - das ist die Magie des [b]Blockparser-Widgets[/b]. Das [url=http://wiki.flatpress.org/]FlatPress-Wiki[/url] hat Informationen dazu, und noch viel mehr!)
 [/list]
+
+Mit dem [b]PhotoSwipe-Plugin[/b] platzierst du jetzt noch einfacher deine Bilder, wahlweise als  float="left"-  oder  float="right" ausgerichtetes Einzelbild, vom Text umschlossen.
+Du kannst sogar mit dem Element \'gallery\' deinen Besuchern ganze Galerien präsentieren. Wie einfach es funktioniert, [url="https://wiki.flatpress.org/res:plugins:photoswipe"]erfährst du hier[/url].
 
 
 [h4]Widgets[/h4]
@@ -125,12 +131,18 @@ Keines der Elemente in der Seitenleiste deines Blogs ist fest vorgegeben, du kan
 Diese Elemente werden [b]Widgets[/b] genannt. Natürlich hat das FlatPress-Wiki auch zu diesem Thema [url=https://wiki.flatpress.org/doc:tips:widgets]viele hilfreiche Informationen[/url].
 
 
+[h4]Themes[/h4]
+
+[gallery="images/Leggero-Themepreview/" width="140"]
+Mit dem FlatPress-Leggero-Theme stehen dir 3 Stil-Vorlagen zur Verfügung - von Klassisch bis Modern. Diese Vorlagen sind ein wunderbarer Start etwas eigenes zu kreieren.
+
 [h4]Noch mehr[/h4]
 
 Du möchtest gern mehr über FlatPress wissen?
 
 [list]
-[*]Im  [url=https://www.flatpress.org/?x]Projekt-Blog[/url] erfährst du, was im FlatPress-Projekt aktuell los ist.
+[*]Unterstütze das Projekt mit einer [url=http://www.flatpress.org/home/static.php?page=donate]kleinen Spende[/url].
+[*]Im [url=https://www.flatpress.org/?x]Projekt-Blog[/url] erfährst du, was im FlatPress-Projekt aktuell los ist.
 [*]Besuche das [url=https://forum.flatpress.org/]Supportforum[/url] für Unterstützung und den Kontakt zu anderen FlatPress-Benutzern.
 [*]Lade dir großartige von der Community erstellte [b]Themes[/b] aus dem [url=https://wiki.flatpress.org/res:themes]Wiki[/url] herunter.
 [*]Dort gibt es auch tolle [url=https://wiki.flatpress.org/res:plugins]Plugins[/url].
