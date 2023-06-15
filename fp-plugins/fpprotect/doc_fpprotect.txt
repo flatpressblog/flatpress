@@ -12,5 +12,11 @@ Protect your blog with additional fetures in the HTTP response header
  * HTTP Strict Transport Security (HSTS for short) is a security mechanism for HTTPS connections that protects against both connection encryption downgrade attack and session hijacking.
  * The referrer policy directive determines whether, and if so which, referrer information for requests triggered by the current web page is sent by the web browser in HTTP requests.
 
+Important note: HTTPS should have been mandatory long ago!
+----------------------------------------------------------
+The CSP directives enforce the use of HTTPS.
+Therefore we recommend you to encrypt the HTTP data stream. For this, the web server needs an SSL certificate.
+These are usually chargeable, but since Mozilla launched the "Let's encrypt!" initiative, such certificates are now also available for free, depending on the hosting partner.
+
 Here you can check the security of your Flatpress blog
 https://securityheaders.com/
