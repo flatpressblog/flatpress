@@ -283,6 +283,10 @@ input.maxsize, select.maxsize { width: 100% }
 
 
 /* ===== PREVIEW SETTINGS ===== */
+#post-preview {
+	min-width: 39em;
+}
+
 #post-preview .entry { padding: 2em; max-height: 20em; overflow: auto  }
 
 #post-preview div.entry h2,
