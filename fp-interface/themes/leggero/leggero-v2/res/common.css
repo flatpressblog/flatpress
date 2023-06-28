@@ -61,10 +61,7 @@ pre {
 	margin: 1em 1em;
 	padding: 5px 10px;
 	
-	/* fix overflow in IE */
-	min-height: 40px; 
 	height: auto !important; 
-	height: 40px; 
 }
 
 ul, li, ol { margin: 0; padding: 0 }
