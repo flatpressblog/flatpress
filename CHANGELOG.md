@@ -40,7 +40,7 @@
   - Obsolete bullet points removed ([#136](https://github.com/flatpressblog/flatpress/issues/136))
   - Updated preview image ([#139](https://github.com/flatpressblog/flatpress/issues/139))
   - Fixed comments date format ([#237](https://github.com/flatpressblog/flatpress/issues/237))
-  - Fixed several layout/CSS glitches ([#140](https://github.com/flatpressblog/flatpress/issues/140), [#144](https://github.com/flatpressblog/flatpress/issues/144), [#201](https://github.com/flatpressblog/flatpress/issues/201))
+  - Fixed several layout/CSS glitches ([#140](https://github.com/flatpressblog/flatpress/issues/140), [#144](https://github.com/flatpressblog/flatpress/issues/144), [#201](https://github.com/flatpressblog/flatpress/issues/201), [#247](https://github.com/flatpressblog/flatpress/issues/247), [#249](https://github.com/flatpressblog/flatpress/issues/249))
 
 ## Internationalization
 - Reworked translations: Spanish, Portuguese, Dutch, and Italian
