@@ -13,7 +13,9 @@ Module: common.css
 html {
 	font-size: 100%;
 	margin: 0;
-	padding: 0
+	padding: 0;
+	font-family: sans-serif;
+	text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2)
 }
 
 body {
@@ -25,7 +27,7 @@ body {
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
   	-o-background-size: cover;
-  	background-size: cover;
+  	background-size: cover
 }
 
 hr { display: none }
@@ -45,26 +47,33 @@ blockquote {
 	border-right: 1px solid #888;
 	border-top: 1px solid #888;
 	border-bottom: 1px solid #888;
+	border-radius: 3px
+}
+
+blockquote p {
+    margin: 0.5em 0 0.5em 0 !IMPORTANT;
 }
 
 pre, code {
-	font-family: Lucida Console, Monaco, monospace !IMPORTANT;
-	font-size: 90%;
+	font-family: "Lucida Console", Monaco, monospace !IMPORTANT;
+	font-size: 90%
 }
 
 pre {
-	border: 1px dashed #555;
+	border-left: 5px solid #b83c32;
+	border-right: 1px solid #b83c32;
+	border-top: 1px solid #b83c32;
+	border-bottom: 1px solid #b83c32;
+	border-radius: 3px;
+
 	background-color: #efefef;
 
 	overflow: auto;
-	width: 90%;
+	width: auto;
 	margin: 1em 1em;
 	padding: 5px 10px;
 	
-	/* fix overflow in IE */
-	min-height: 40px; 
-	height: auto !important; 
-	height: 40px; 
+	height: auto !important
 }
 
 ul, li, ol { margin: 0; padding: 0 }
@@ -75,7 +84,8 @@ form { margin: 1em 0 }
 fieldset {
 	margin: 0 0 1em 0;
 	padding: .5em;
-	border: #ddd solid 1px
+	border: #ddd solid 1px;
+	border-radius: 3px
 }
 
 legend {
@@ -89,6 +99,7 @@ input, textarea, select {
 	border: 1px solid #999;
 	color: #222;
 	background-color: #eee;
+	border-radius: 3px
 }
 
 input:hover, input:focus, textarea:hover, textarea:focus {
@@ -97,10 +108,10 @@ input:hover, input:focus, textarea:hover, textarea:focus {
 }
 
 textarea {
-	font-size: 100%;
 	width: 99%;
 	margin-top: .1em;
-	margin-bottom: 1em
+	margin-bottom: 1em;
+	font-family: sans-serif
 }
 
 
@@ -109,11 +120,11 @@ textarea {
 a:link, a:visited {
 	color: #B83C32;
 	font-weight: bold;
-	text-decoration: none;
+	text-decoration: none
 }
 
 a:hover {
-	text-decoration: underline;
+	text-decoration: underline
 }
 
 /* ===== HEADERS TAGS ===== */
@@ -121,28 +132,28 @@ h1 {
 	/* Title of the blog */
 	font-size: 2.3em;
 	letter-spacing: 2px;
-	margin: 1em 0 0.5em 0;
+	margin: 1em 0 0.5em 0
 }
 
 h2 {
 	/* Titles of the entry */
 	font-style: normal;
 	font-size: 1.6em;
-	margin: 0.83em 0;
+	margin: 0.83em 0
 }
 
 h2.entry-title,
 h2.title {
-	margin: 0 !IMPORTANT;
+	margin: 0 !IMPORTANT
 }
 
 h3 {
 	font-style: normal;
 	font-size: 1.4em;
-	margin: 0;
+	margin: 0
 }
 
-h4 { font-size: 1.2em; }
+h4 { font-size: 1.2em }
 
 /* ===== HEAD ===== */
 #head {
@@ -150,7 +161,7 @@ h4 { font-size: 1.2em; }
 	margin: 5px;
 	background: rgba(184,60,50,0.7);
 	border: black 1px solid;
-	border-radius: 10px ;
+	border-radius: 10px
 }
 
 #head a { color: white; text-decoration: none }
@@ -167,7 +178,7 @@ h4 { font-size: 1.2em; }
 	position: relative;
 	height: 1%;
 	margin: 0px;
-	padding: 0px;
+	padding: 0px
 }
 
 /* ===== NORMAL DESIGN ===== */
@@ -183,11 +194,11 @@ h4 { font-size: 1.2em; }
 		margin: 0 auto 0 auto;
 		padding: 5px;
 		background-color: rgba(0,0,0,0.75);
-		border-radius: 3px;
+		border-radius: 3px
 	}
 
 	/* ===== MAIN ===== */
-	#main h4 { margin: 2em 0 0 0}
+	#main h4 { margin: 2em 0 0 0 }
 
 	#main {
 		float:left;
@@ -197,7 +208,15 @@ h4 { font-size: 1.2em; }
 		padding: 25px;
 		margin: 20px;
 		background-color: rgba(255,255,255,0.9);
-		border-radius: 3px;
+		border-radius: 3px
+	}
+	
+	div.floatleft { /* PhotoSwipe; SET new margin left for shadow */
+		margin: 0.5em 1em 1em 0.5em;
+	}
+
+	div.floatright { /* PhotoSwipe; SET new margin right for shadow */
+		margin: 0.5em 0.5em 1em 1em;
 	}
 }
 
@@ -212,11 +231,11 @@ h4 { font-size: 1.2em; }
 		width: 100%;
 		margin: 0 auto 0 auto;
 		padding-top: 5px;
-		background-color: rgba(0,0,0,0.75);
+		background-color: rgba(0,0,0,0.75)
 	}
 
 	/* ===== MAIN ===== */
-	#main h4 { margin: 2em 0 0 0}
+	#main h4 { margin: 2em 0 0 0 }
 
 	#main {
 		width: 90%;
@@ -224,11 +243,28 @@ h4 { font-size: 1.2em; }
 		padding: 15px;
 		margin: 10px auto;
 		background-color: rgba(255,255,255,0.9);
-		border-radius: 3px;
+		border-radius: 3px
+	}
+	
+	div.floatleft, div.floatright { /* PhotoSwipe; unsetSET float */
+		float: unset
+	}
+	
+	div.floatright, div.floatleft, div.photoswipe { /* PhotoSwipe; center */
+		margin-left: auto !IMPORTANT;
+		margin-right: auto !IMPORTANT
+	}
+
+	div.img-gallery { /* PhotoSwipe; center */
+		text-align: center
+	}
+
+	.img-gallery div.photoswipe figure { /* PhotoSwipe; SET new margin */
+		margin: 0.5em 0 0 0 !IMPORTANT
 	}
 }
 
-#main p { line-height: 1.4em; margin-top: 1em; }
+#main p { line-height: 1.4em; margin-top: 1em }
 
 #main img { margin: .5em }
 
@@ -243,7 +279,7 @@ h4 { font-size: 1.2em; }
 	padding: 0 1.6em 0 1.6em
 }
 
-h4#addcomment {clear:both;}
+h4#addcomment {clear: both}
 
 	#commentform fieldset p { margin: 0 0 .5em 0 }
 	
@@ -258,7 +294,7 @@ h4#addcomment {clear:both;}
 	/* === Class of main block === */
 	h6.date {
 		font-size: 0.8em;
-		color: #444;
+		color: #444
 	}
 	
 	.date { /* date under titles of the entry */
@@ -273,11 +309,11 @@ h4#addcomment {clear:both;}
 		margin: 0 0 1.5em 0;
 		padding: 0 0 1.5em 0;
 		overflow: auto; /* floating images fix IE<7*/
-		border-bottom: solid 1px #999;
+		border-bottom: solid 1px #999
 	}
 	
 	#main>.entry {
-		overflow: hidden; /* rest of the world :) */
+		overflow: hidden /* rest of the world :) */
 	}
 	/* end of .entry */
 	
@@ -286,35 +322,42 @@ h4#addcomment {clear:both;}
 		font-size: 80%;
 		color: black;
 		margin: 2em 0 .5em 0;
-		text-align: right;
+		text-align: right
 	}
 	
 	.entry-footer li { 
-		display: block;
+		display: block
 	}
 	
 	
 	.admincontrols { /* [edit] and [delete] */
 		font-size: 80%;
-		text-align: right;
+		text-align: right
 	}
 	
 	.buttonbar { text-align: center }
 	
-	.buttonbar input {
-		text-align: center;
-		margin: .1em .5em;
-		padding: 0 1em
+	.buttonbar input[type=submit], /* Send-Message-Button */
+	.buttonbar input[type=reset], /* Reset-Message-Button */
+	.buttonbar input[type=button] {
+		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+		margin: 0.1em 0.5em;
+		padding: 0.2em 1em
+	}
+	
+	.buttonbar input[type=submit]:hover,
+	.buttonbar input[type=reset]:hover,
+	.buttonbar input[type=button]:hover {
+		box-shadow: none
 	}
 	
 	.navigation { /* next entries & previous entries link */
 		font-size: 90%;
-		/* margin-bottom: 3em; */
-		display: flow-root;
+		display: flow-root
 	}
 
 	form#search ul { 
-		list-style-type: none;
+		list-style-type: none
 	}
 
 /* ===== FOOTER ===== */
@@ -323,10 +366,10 @@ h4#addcomment {clear:both;}
 	text-align: center;
 	font-size: 90%;
 	color: white;
-	padding: 5px;
+	padding: 5px
 }
 
 * {
    font-family: sans-serif;
-   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
+   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2)
   }

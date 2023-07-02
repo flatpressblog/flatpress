@@ -15,19 +15,17 @@ Module: admin.css
 
 /* ===== VARIOUS ===== */
 .buttonbar input {
-	padding: .3em;
+	box-shadow: none !IMPORTANT;
 	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x;
 }
 .buttonbar input:hover {
-	padding: .3em;
 	background: #d3d3d3 url(../imgs/buttonsh2.png) repeat-x;
 }
 
 /* ===== HEADERS TAGS ===== */
 h1,
 h2 { 
-	font-family: 'book antiqua', georgia, garamond, times, 'times new roman', serif;
-	margin: auto;
+	margin: auto
 }
 
 h2 {
@@ -37,8 +35,6 @@ h2 {
 .head-link {
 	font-size: 0.83em;
 }
-
-body { background: #eee; }
 
 /* === Redefines some stuff in inline mode === */
 body#inline-body {
@@ -178,11 +174,6 @@ input#subject {
 	font-size: 1.3em;
 	color: #333333;
 	font-weight: bold
-}
-
-textarea.code {
-	font-family: Lucida Console, Monaco, monospace;
-	font-size: 90%
 }
 
 #admin-entry-categories ul {
