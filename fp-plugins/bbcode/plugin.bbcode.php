@@ -331,6 +331,10 @@ function do_bbcode_mail($action, $attributes, $content, $params, $node_object) {
  * @return string
  */
 function do_bbcode_video($action, $attr, $content, $params, $node_object) {
+	
+	global $lang;
+	lang_load('plugin:bbcode');
+
 	if ($action == 'validate') {
 		return true;
 	}
@@ -365,19 +369,20 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	switch ($type) {
 		// YouTube
 		case 'youtube':
-			$output = '<iframe class="bbcode_video bbcode_video_youtube ' . $floatClass . '" src="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture"></iframe>';
+			$output = '<div class="responsive_bbcode_video"><iframe class="bbcode_video bbcode_video_youtube ' . $floatClass . '" src="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture"></iframe></div>';
 			break;
 		// Vimeo
 		case 'vimeo':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/', '', $vurl ['path']);
-			$output = '<iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" src="https://player.vimeo.com/video/' . $vid . '?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" allow="autoplay; fullscreen;" allowfullscreen></iframe>';
+			$output = '<div class="responsive_bbcode_video"><iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" src="https://player.vimeo.com/video/' . $vid . '?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" allow="autoplay; fullscreen;" allowfullscreen></iframe></div>';
 			break;
 		// Facebook
 		case 'facebook':
+			$langtag = $lang ['plugin'] ['bbcode'] ['langtag'];
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/video/', '', $vurl ['path']);
 			$output = '<div id="fb-root"></div>
-			<script async defer src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2"></script>
-			<div class="fb-video bbcode_video bbcode_video_facebook ' . $floatClass . '" data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '"></div>';
+			<script async defer src="https://connect.facebook.net/' . $langtag . '/sdk.js#xfbml=1&version=v3.2"></script>
+			<div class="responsive_bbcode_video"><div class="fb-video bbcode_video bbcode_video_facebook ' . $floatClass . '" data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '"></div></div>';
 			break;
 		// Any video file that can be played with HTML5 <video> element
 		case 'html5':
@@ -390,7 +395,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 				// ... we need to prepend it with the blog base URL
 				$videoPath = BLOG_BASEURL . $videoPath;
 			}
-			$output = '<video class="bbcode_video bbcode_video_html5 ' . $floatClass . '" width="' . $width . '" height="' . $height . '" controls><source src="' . $videoPath . '">Your browser does not support the video tag</video>';
+			$output = '<div class="responsive_bbcode_video"><video class="bbcode_video bbcode_video_html5 ' . $floatClass . '" width="' . $width . '" height="' . $height . '" controls><source src="' . $videoPath . '">Your browser does not support the video tag</video></div>';
 			break;
 			$output = null;
 	}

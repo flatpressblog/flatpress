@@ -4,8 +4,7 @@ $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'BBCodeの設定',
 	'desc1' => 'このプラグインは <a href="http://www.phpbb.com/'.
-		'phpBB/faq.php?mode=bbcode">BBCode</a> を使用できるようにし、'.
-		'lightbox(プラグインが有効であれば)も自動的に組み込みます。',
+		'phpBB/faq.php?mode=bbcode">BBCode</a> の使用を可能にします。',
 	
 	'options' => 'オプション',
 
@@ -57,7 +56,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'に行く'
+		'go_to' => 'に行く',
+		// language tag for Facebook Video
+		'langtag' => 'ja_JP'
 );
 
 

@@ -88,6 +88,7 @@ class PhotoSwipeFunctions {
 		$imgHtml = self::getPhotoSwipeOverlay() . //
 		'<div ' . //
 		'class="photoswipe ' . $floatClasses . '"' . $styleAttr . //
+		'itemscope itemtype="http://schema.org/ImageGallery"' . //
 		'>' . //
 		'<figure ' . //
 		'itemprop="associatedMedia" ' . //
