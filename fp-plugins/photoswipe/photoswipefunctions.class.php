@@ -227,14 +227,14 @@ class PhotoSwipeFunctions {
 ';
 		}
 		echo '
-	<script src="' . $pdir . 'res/photoswipe-4.1.1/photoswipe-ui-default.min.js"></script>
-	<script src="' . $pdir . 'res/photoswipe-4.1.1/photoswipe.min.js"></script>
+	<script src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe-ui-default.min.js"></script>
+	<script src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe.min.js"></script>
 	<script>';
 		include_once (dirname(__FILE__) . '/res/photoswipe.js.php');
 		echo '
 	</script>
-	<link rel="stylesheet" property="stylesheet" href="' . $pdir . 'res/photoswipe-4.1.1/default-skin/default-skin.css">
-	<link media="screen" href="' . $pdir . 'res/photoswipe-4.1.1/photoswipe.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" property="stylesheet" href="' . $pdir . 'res/photoswipe-4.1.3/default-skin/default-skin.css">
+	<link media="screen" href="' . $pdir . 'res/photoswipe-4.1.3/photoswipe.css" type="text/css" rel="stylesheet">
 	<!-- /PhotoSwipe -->';
 	}
 
