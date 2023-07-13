@@ -505,34 +505,47 @@ li.widget-class {
 /* ===== CONFIG PANEL ===== */
 
 .option-set .option-list {
-	margin-bottom: 4em
+	margin-bottom: 3em;
+    margin-top: 2em
+}
+
+.option-set dd {
+    margin-left: 35%;
+    bottom: 1.75em;
+    line-height: 1.5em;
+    position: relative
+}
+
+.option-list dd label {
+    position: relative;
+    top: 0.25em
+}
+
+.option-list dd code {
+	position: relative;
+	font-size: 0.85em;
+    top: 0.3em
 }
 
 .option-set dt {
     width: 33%;
     text-align:right;
-    margin-top: 1.8em;
+    margin-top: 0.5em;
     line-height: 1.5em;
     font-weight: bold
 }
 
 .option-set dt label {
-	padding-top: .2em
+    bottom: 0.25em;
+    position: relative
 }
-
-.option-set dd {
-    margin-left: 35%;
-    margin-top: -1.7em;
-    line-height: 1.5em
-}
-
 
 .option-set dd p {
-	margin: 0.2em
+	margin: 0
 }
 
 .textinput, .bigtextinput, .smalltextinput {
-	padding: .5em
+	padding: 0.2em
 }
 
 .textinput:focus, .bigtextinput:focus, .smalltextinput:focus {
@@ -547,7 +560,8 @@ li.widget-class {
 
 .option-set input.textinput ,
 .option-set select.textinput {
-	width: 20em
+	width: 20em;
+	margin-top: -2px
 }
 
 
