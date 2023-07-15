@@ -185,11 +185,14 @@ input#subject {
 
 #admin-bbcode-toolbar p { display: inline }
 
+#admin-bbcode-toolbar p img,
+#admin-bbcode-toolbar select {
+	vertical-align: middle
+}
+
 #admin-bbcode-toolbar select { width: 10em }
 
-
-
-#admin-content table { width: 100%; }
+#admin-content table { width: 100% }
 
 #admin-content td {
 	font-size: 0.8em;
