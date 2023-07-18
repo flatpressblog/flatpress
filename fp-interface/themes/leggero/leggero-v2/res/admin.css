@@ -183,12 +183,20 @@ input#subject {
 	padding-left: 1em
 }
 
-#admin-bbcode-toolbar p { display: inline }
+#admin-bbcode-toolbar {
+	display: table
+}
 
-#admin-bbcode-toolbar p img,
-#admin-bbcode-toolbar select {
+#admin-bbcode-toolbar p {
+	display: table-cell;
+	vertical-align: middle;
+	line-height: 1em
+}
+
+#admin-bbcode-toolbar p img {
 	vertical-align: middle
 }
+
 
 #admin-bbcode-toolbar select { width: 10em }
 

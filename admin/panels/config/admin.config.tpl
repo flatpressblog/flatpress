@@ -51,7 +51,7 @@
 	<dd><input type="text" name="email" id="email" class="textinput {$class}" 
 	value="{$flatpress.email}" /></dd>
 	
-	<dt> {$panelstrings.notifications} </dt>
+	<dt><label> {$panelstrings.notifications} </label></dt>
 	<dd> 
 	<label for="notify"> 
 	<input type="checkbox" name="notify" id="notify"{if $flatpress.NOTIFY}checked="checked"{/if} /> 
@@ -91,7 +91,7 @@
 <h2> {$panelstrings.intsetts}  </h2>
 
 	<dl class="option-list">
-		<dt> {$panelstrings.utctime} </dt>
+		<dt><label> {$panelstrings.utctime} </label></dt>
 		{assign var=temp_time value="%b %d %Y %H:%M:%S"}
 		<dd> <code> {"r"|date:$smarty.now} </code> </dd>
 		
