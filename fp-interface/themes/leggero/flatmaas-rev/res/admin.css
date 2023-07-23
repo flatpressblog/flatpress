@@ -167,6 +167,9 @@ input.maxsize, select.maxsize {width:100%}
 
 
 /* preview settings */
+#post-preview {
+	min-width: 54.4em
+}
 
 #post-preview .entry {
         padding:2em
