@@ -114,7 +114,9 @@ textarea {
 	font-family: sans-serif
 }
 
-
+input#name, input#email, input#url {
+    width: 200px
+}
 
 /* ===== LINKS GENERAL ===== */
 a:link, a:visited {
