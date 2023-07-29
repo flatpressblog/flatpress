@@ -31,7 +31,7 @@
 		'langchoice'		=> 'Γλώσσα',
 
 		'intsetts'		=> 'Ρυθμίσεις εντοπιότητας',
-		'utctime'		=> '<acronym title="Universal Coordinated Time">Η UTC</acronym> ώρα είναι',
+		'utctime'		=> '<abbr title="Universal Coordinated Time">Η UTC</abbr> ώρα είναι',
 		'timeoffset'		=> 'Ο χρόνος θα πρέπει να διαφέρει κατά',
 		'hours'			=> 'ώρες',
 		'timeformat'		=> 'Προεπιλεγμένη μορφή ώρας',

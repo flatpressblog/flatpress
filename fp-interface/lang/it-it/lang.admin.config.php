@@ -34,7 +34,7 @@
 		'langchoice'		=> 'Lingua',
 
 		'intsetts'		=> 'Impostazioni internazionali',
-		'utctime'		=> 'L\'orario <acronym title="Universal Coordinated Time">UTC</acronym> è',
+		'utctime'		=> 'L\'orario <abbr title="Universal Coordinated Time">UTC</abbr> è',
 		'timeoffset'		=> 'Le ore dovrebbero differire di',
 		'hours'			=> 'ore',
 		'timeformat'		=> 'Formato predefinito per l\'orario',

@@ -34,7 +34,7 @@
 		'langchoice'		=> 'Taal',
 
 		'intsetts'		=> 'Internationale instellingen',
-		'utctime'		=> '<acronym title="Universal Coordinated Time">UTC</acronym> time is',
+		'utctime'		=> '<abbr title="Universal Coordinated Time">UTC</abbr> time is',
 		'timeoffset'		=> 'De tijd moet verschuiven per',
 		'hours'			=> 'uren',
 		'timeformat'		=> 'Default format voor tijd',

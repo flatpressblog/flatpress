@@ -14,6 +14,12 @@ Module: admin.css
 @import url(globals.css);
 
 /* ===== VARIOUS ===== */
+@media screen and (max-device-width: 480px){
+  #body-container {
+    -webkit-text-size-adjust: none;
+  }
+}
+
 .buttonbar input {
 	box-shadow: none !IMPORTANT;
 	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x;
@@ -59,12 +65,8 @@ body#inline-body input {
 /* === Conflict with inner h1 === */
 #admin-content h1 { color: black }
 
-
-
 /* DIV CONTAINER ALL ADMIN DIV BLOCK */
 #cpmain { padding: 10px }
-
-
 
 /* ===== SMALL NAVBAR (home and logout links) ===== */
 ul#admin-small-nav {
@@ -74,8 +76,6 @@ ul#admin-small-nav {
 }
 
 ul#admin-small-nav li { display: inline; margin: 5px }
-
-
 
 /* ===== TAB MENU ===== */
 ul#admin-tabmenu {
@@ -148,8 +148,6 @@ ul#admin-tabmenu li a.admin-tab-current {
 	font-weight: bold
 }
 
-
-
 /* ===== MAIN MENU ITEM ===== */
 #admin-content { padding: 1em }
 
@@ -165,8 +163,6 @@ ul#admin-tabmenu li a.admin-tab-current {
 	font-size: 80%;
 	font-style: italic
 }
-
-
 
 /* ===== ADMIN ENTRY ===== */
 input#subject {
@@ -231,7 +227,6 @@ input#subject {
 
 input.maxsize, select.maxsize { width: 99% }
 
-
 #admin-bbcode-toolbar {
 	margin: 0;
 	padding: 0;
@@ -250,7 +245,6 @@ input.maxsize, select.maxsize { width: 99% }
 	margin: auto;
 	height: 11em
 }
-
 
 .admin-entry-commentlist td ,
 .admin-widgets-blockparser td ,
@@ -283,7 +277,6 @@ input.maxsize, select.maxsize { width: 99% }
 	list-style-position: inside;
 	margin: 0; padding-left: 1em
 }
-
 
 /* ===== PREVIEW SETTINGS ===== */
 #post-preview {
@@ -324,12 +317,10 @@ input.maxsize, select.maxsize { width: 99% }
 	margin: 1em
 }
 
-
 /* (applies only to the inline version */
 #upload {
 	margin-top: .5em
 }
-
 
 /* ===== THEME PANEL ===== */
 
@@ -342,7 +333,6 @@ input.maxsize, select.maxsize { width: 99% }
 	margin-bottom: 4em;
 	overflow:hidden
 }
-
 
 #current-theme img { 
 	float:left;
@@ -439,7 +429,6 @@ li.admin-widgetset {
 	margin-left: 0
 }
 
-
 li.widget-instance,
 li.widget-class {
 	cursor: move;
@@ -450,7 +439,6 @@ li.widget-class {
 	background-color: white;
 	list-style-type: none
 }
-
 
 .admin-widgetset h3 {
 	margin-bottom: 1em;
@@ -491,7 +479,6 @@ li.widget-class {
 	text-align: left
 }
 
-
 .widgetname a, 
 .widgetname a:link,
 .widgetname a:visited {
@@ -512,10 +499,9 @@ li.widget-class {
 	height: 30px !important
 }
 
-
 /* ===== CONFIG PANEL ===== */
 
-.option-set .option-list {
+.option-set, .option-list {
 	margin-bottom: 3em;
     margin-top: 2em
 }
@@ -527,15 +513,24 @@ li.widget-class {
     position: relative
 }
 
+.option-set dd p {
+	margin: 0
+}
+
+.option-set dd p.text {
+    display: inline;
+    vertical-align: middle
+}
+
 .option-list dd label {
     position: relative;
-    top: 0.25em
+    vertical-align: middle;
+    display: flex
 }
 
 .option-list dd code {
 	position: relative;
-	font-size: 0.85em;
-    top: 0.3em
+	font-size: 0.85em
 }
 
 .option-set dt {
@@ -549,10 +544,6 @@ li.widget-class {
 .option-set dt label {
     bottom: 0.25em;
     position: relative
-}
-
-.option-set dd p {
-	margin: 0
 }
 
 .textinput, .bigtextinput, .smalltextinput {
@@ -575,11 +566,9 @@ li.widget-class {
 	margin-top: -2px
 }
 
-
 .option-set input.bigtextinput {
 	width: 30em
 }
-
 
 .option-set input.smalltextinput {
 	width: 5em
@@ -593,7 +582,7 @@ a.link-general {
 	padding: .9em
 }
 
-td.main-cell a.link-general {display:block}
+td.main-cell a.link-general { display:block }
 
 a.link-disable:hover, a.link-delete:hover {
 	background-color: red;
@@ -608,8 +597,6 @@ a.link-general:hover, .main-cell a:hover {
 	background-color: #aaa;
 	color: black
 }
-
-
 
 /* ===== NOTIFICATIONS ===== */
 .hint {
