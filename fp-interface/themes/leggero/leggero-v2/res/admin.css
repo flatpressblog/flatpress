@@ -17,7 +17,8 @@ Module: admin.css
 @media screen and (max-device-width: 480px){
   #body-container {
 	-webkit-text-size-adjust: none;
-	-moz-text-size-adjust: none
+	-moz-text-size-adjust: none;
+	text-size-adjust: none
   }
 }
 
