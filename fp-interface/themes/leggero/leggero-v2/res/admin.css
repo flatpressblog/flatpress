@@ -57,7 +57,7 @@ body#inline-body input {
 	text-align: left;
 	font-size: 0.85em;
 	width: 80% !important;
-	min-width: 1000px;
+	min-width: 720px;
 	margin: 0 auto 0 auto;
 	padding: 5px;
 	background-color: rgba(255,255,255,1);
