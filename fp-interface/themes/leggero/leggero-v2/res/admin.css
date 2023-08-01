@@ -14,7 +14,7 @@ Module: admin.css
 @import url(globals.css);
 
 /* ===== VARIOUS ===== */
-@media screen and (max-device-width: 480px){
+@media screen and (max-device-width: 768px){
   #body-container {
 	-webkit-text-size-adjust: none;
 	-moz-text-size-adjust: none;
