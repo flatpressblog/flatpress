@@ -14,12 +14,8 @@ Module: admin.css
 @import url(globals.css);
 
 /* ===== VARIOUS ===== */
-@media screen and (max-device-width: 768px){
-  #body-container {
-	-webkit-text-size-adjust: none;
-	-moz-text-size-adjust: none;
-	text-size-adjust: none
-  }
+@viewport {
+   width: device-width
 }
 
 .buttonbar input {
@@ -617,4 +613,16 @@ a.link-general:hover, .main-cell a:hover {
 
 form {
     margin: auto
+}
+
+/* ===== Smartphone and Tablet ===== */
+@media screen and (max-device-width: 768px) {
+	body { margin: 0 0 0 0; background: #eee }
+
+	#body-container {
+		min-width: 100%;
+		-webkit-text-size-adjust: none;
+		-moz-text-size-adjust: none;
+		text-size-adjust: none
+	}  		
 }
