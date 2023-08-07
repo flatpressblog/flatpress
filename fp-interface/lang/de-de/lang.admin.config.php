@@ -32,7 +32,7 @@
 		'langchoice'		=> 'Sprache',
 
 		'intsetts'		=> 'Internationale Einstellungen',
-		'utctime'		=> '<acronym title="Universal Coordinated Time">UTC</acronym> Zeitzone',
+		'utctime'		=> '<abbr title="Universal Coordinated Time">UTC</abbr> Zeitzone',
 		'timeoffset'		=> 'Uhrzeit soll korrigiert werden um',
 		'hours'			=> 'Stunden',
 		'timeformat'		=> 'Standard Zeitformat',

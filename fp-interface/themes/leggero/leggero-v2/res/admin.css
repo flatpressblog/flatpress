@@ -14,60 +14,74 @@ Module: admin.css
 @import url(globals.css);
 
 /* ===== VARIOUS ===== */
+@viewport {
+   width: device-width
+}
+
 .buttonbar input {
-	padding: .3em;
-	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x;
+	box-shadow: none !IMPORTANT;
+	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x
 }
+
 .buttonbar input:hover {
-	padding: .3em;
-	background: #d3d3d3 url(../imgs/buttonsh2.png) repeat-x;
+	background: #d3d3d3 url(../imgs/buttonsh2.png) repeat-x
 }
+
 
 /* ===== HEADERS TAGS ===== */
 h1,
 h2 { 
-	font-family: 'book antiqua', georgia, garamond, times, 'times new roman', serif;
-	margin: auto;
+	margin: auto
 }
 
 h2 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #ddd
 }
 
 .head-link {
-	font-size: 0.83em;
+	font-size: 0.83em
 }
 
-body { background: #eee; }
 
 /* === Redefines some stuff in inline mode === */
 body#inline-body {
-	background: white;
-}
-
-body#inline-body input {
-
+	background: white
 }
 
 #body-container {
 	text-align: left;
 	font-size: 0.85em;
-	width: 80% !important;
-	min-width: 1000px;
 	margin: 0 auto 0 auto;
-	padding: 5px;
 	background-color: rgba(255,255,255,1);
-	border-radius: 3px;
+	border-radius: 3px
 }
+
+
+/* ===== Smartphone and Tablet ===== */
+@media (max-width: 1920px) { /* prevents too large font size on mobile devices */
+	#body-container {
+		-webkit-text-size-adjust: none;
+		-moz-text-size-adjust: none;
+		text-size-adjust: none
+	}
+
+	@media (max-width: 768px) { /* and stretch to the complete width on small devices */
+		body { margin: 0 0 0 0; background: #eee }
+
+		#body-container {
+			padding: unset;
+			padding-top: 5px;
+			min-width: 100%
+		}
+	}
+}
+
 
 /* === Conflict with inner h1 === */
 #admin-content h1 { color: black }
 
-
-
 /* DIV CONTAINER ALL ADMIN DIV BLOCK */
 #cpmain { padding: 10px }
-
 
 
 /* ===== SMALL NAVBAR (home and logout links) ===== */
@@ -80,14 +94,13 @@ ul#admin-small-nav {
 ul#admin-small-nav li { display: inline; margin: 5px }
 
 
-
 /* ===== TAB MENU ===== */
 ul#admin-tabmenu {
 	margin: 1em 0 0 0;
 	padding: .5em;
 	background: #000;
 	-moz-border-radius-topleft:3px;
-	-moz-border-radius-topright:3px;
+	-moz-border-radius-topright:3px
 }
 
 ul#admin-tabmenu li {
@@ -103,7 +116,7 @@ ul#admin-tabmenu li a {
 	font-weight: normal;
 	text-decoration: none;
 	padding: 0.5em;
-	margin: .1em;
+	margin: .1em
 }
 
 ul#admin-tabmenu li a.admin-tab-current,
@@ -111,24 +124,25 @@ ul#admin-tabmenu li a:hover {
 	color: black;
 	font-weight: normal;
 	background-color: #ddd;
-	-moz-border-radius: 2px;
+	-moz-border-radius: 2px
 }
 
 ul#admin-tabmenu li a.admin-tab-current {
-	font-weight: bold;
+	font-weight: bold
 }
+
 
 /* ===== submenu ====== */
 
 #admin-submenu {
 	background: #eee; 
 	padding: .5em;
-	border: 1px solid #ccc;
+	border: 1px solid #ccc
 }
 
 #admin-submenu li {
 	display:inline; 
-	font-size: 80%; 
+	font-size: 80%
 }
 
 #admin-submenu li a {
@@ -136,7 +150,7 @@ ul#admin-tabmenu li a.admin-tab-current {
 	color: #000;
 	border-left: 1px solid #eee;
 	border-right: 1px solid #eee;  
-	font-weight: normal;
+	font-weight: normal
 }
 
 #admin-submenu li a:hover,
@@ -145,13 +159,12 @@ ul#admin-tabmenu li a.admin-tab-current {
 	background: #555;
 	padding: .1em 1em .3em;
 	-moz-border-radius: 3px;
-	text-decoration: none;
+	text-decoration: none
 }
 
 #admin-submenu li a.active {
-	font-weight: bold;
+	font-weight: bold
 }
-
 
 
 /* ===== MAIN MENU ITEM ===== */
@@ -171,18 +184,12 @@ ul#admin-tabmenu li a.admin-tab-current {
 }
 
 
-
 /* ===== ADMIN ENTRY ===== */
 input#subject {
 	width: 99%;
 	font-size: 1.3em;
 	color: #333333;
 	font-weight: bold
-}
-
-textarea.code {
-	font-family: Lucida Console, Monaco, monospace;
-	font-size: 90%
 }
 
 #admin-entry-categories ul {
@@ -192,13 +199,23 @@ textarea.code {
 	padding-left: 1em
 }
 
-#admin-bbcode-toolbar p { display: inline }
+#admin-bbcode-toolbar {
+	display: table
+}
+
+#admin-bbcode-toolbar p {
+	display: table-cell;
+	vertical-align: middle;
+	line-height: 1em
+}
+
+#admin-bbcode-toolbar p img {
+	vertical-align: middle
+}
 
 #admin-bbcode-toolbar select { width: 10em }
 
-
-
-#admin-content table { width: 100%; }
+#admin-content table { width: 100% }
 
 #admin-content td {
 	font-size: 0.8em;
@@ -207,16 +224,16 @@ textarea.code {
 		padding: .9em;
 	*/
 	background: #e6e6e6;
-	text-align: center;
+	text-align: center
 }
 
 #admin-content .enabled td {
-	background: inherit;
+	background: inherit
 } 
 
 #admin-content td.main-cell {
 	width: 30%;
-	text-align: left;
+	text-align: left
 }
 
 #admin-content th {
@@ -228,7 +245,6 @@ textarea.code {
 }
 
 input.maxsize, select.maxsize { width: 99% }
-
 
 #admin-bbcode-toolbar {
 	margin: 0;
@@ -246,14 +262,13 @@ input.maxsize, select.maxsize { width: 99% }
 	border: none;
 	width: 99%;
 	margin: auto;
-	height: 11em;
+	height: 11em
 }
-
 
 .admin-entry-commentlist td ,
 .admin-widgets-blockparser td ,
 .admin-plugin-default td {
-	padding: 1em .6em;
+	padding: 1em .6em
 }
 
 #admin-drafts {
@@ -262,24 +277,24 @@ input.maxsize, select.maxsize { width: 99% }
 	padding:  .4em;
 	color: #555;
 	background-color: #ddd;
-	overflow: auto;
+	overflow: auto
 }
 
 #admin-drafts p {
 	font-weight: bold;
 	float: left;
 	padding: 0;
-	margin: 0;
+	margin: 0
 }
 
 #admin-content #admin-drafts ul {
-	margin: 0; padding: 0;
+	margin: 0; padding: 0
 }
 
 #admin-drafts li {
 	float:left;
 	list-style-position: inside;
-	margin: 0; padding-left: 1em;
+	margin: 0; padding-left: 1em
 }
 
 
@@ -293,25 +308,26 @@ input.maxsize, select.maxsize { width: 99% }
 #post-preview div.entry h2 {
 	font-family: sans-serif;
 	border-bottom: none;
-	margin: 0.83em 0;
+	margin: 0.83em 0
 }
 
 #post-preview div.entry h4 {
-	margin: 2em 0 0 0;
+	margin: 2em 0 0 0
 }
 
 .entry-footer {
 	margin: 2em 0 0.5em 0;
-    text-align: right;
+    text-align: right
 }
+
 
 /* ===== UPLOAD PANEL ===== */
 #admin-uploader-filelist {
-	margin: 1em auto;
+	margin: 1em auto
 }
 
 #admin-uploader-thumbs {
-	list-style-type: none;
+	list-style-type: none
 }
 
 #admin-uploader-thumbs li.thumb {
@@ -319,9 +335,8 @@ input.maxsize, select.maxsize { width: 99% }
 	width: 110px;
 	height: 110px;
 	padding: 1em 4px;
-	margin: 1em;
+	margin: 1em
 }
-
 
 /* (applies only to the inline version */
 #upload {
@@ -333,23 +348,23 @@ input.maxsize, select.maxsize { width: 99% }
 
 #current-theme h5, 
 #available-themes h5 {
-	font-size: 1em;
+	font-size: 1em
 }
 
 #current-theme {	
 	margin-bottom: 4em;
-	overflow:hidden;
+	overflow:hidden
 }
 
 
 #current-theme img { 
 	float:left;
 	border: 1px solid #ddd;
-	margin-right: 2em;
+	margin-right: 2em
 }
 
 #available-themes {
-	clear: both;
+	clear: both
 }
 
 
@@ -358,7 +373,7 @@ input.maxsize, select.maxsize { width: 99% }
 }
 
 #available-themes ul {
-	list-style-type: none;
+	list-style-type: none
 }
 
 #available-themes ul li {
@@ -366,31 +381,32 @@ input.maxsize, select.maxsize { width: 99% }
 	padding: 1em;
 	border: 1px solid #fff;
 	text-align: center;
-	width: 300px;
+	width: 300px
 }
 
 #available-themes ul li:hover {
 	background: #eee;
-	border: 1px solid #ddd;
+	border: 1px solid #ddd
 }
+
 
 /* ===== WIDGET PANEL ====== */
 
 #admin-widgetset-list {
-	width: 30em;
+	width: 30em
 }
 
 #admin-widgetset-list ul {
 	list-style-type: none;
 	margin: 0;
 	margin-bottom: 2em;
-	text-align: left;
+	text-align: left
 }
 
 li.admin-widgetset {
 	padding: .5em;
 	margin-bottom: 2em;
-	border: 1px solid #ddd;
+	border: 1px solid #ddd
 }
 
 #available-widgets {
@@ -402,7 +418,7 @@ li.admin-widgetset {
 	width: 30%;
 	z-index: 1000;
 	position: relative;
-	text-align: left;
+	text-align: left
 }
 
 #widget-trashcan { /*colors for trashcan/uninstall widgets while dragging*/
@@ -413,7 +429,7 @@ li.admin-widgetset {
 	padding: 2em;
 	text-align: center;
 	border: 2px solid #f00;
-	margin: 2em;
+	margin: 2em
 }
 
 .widget-available { /*colors for available widgets while dragging*/
@@ -421,7 +437,7 @@ li.admin-widgetset {
 	color: #fff;
 	background-color: rgba(34, 102, 0, 0.7);
 	border: 2px solid #2f0;
-	z-index: 2000;
+	z-index: 2000
 }
 
 .widget-installed { /*colors for installed widgets while dragging*/
@@ -429,14 +445,13 @@ li.admin-widgetset {
 	color: #fff;
 	background-color: rgba(0, 34, 102, 0.7);
 	border: 2px solid #00f;
-	z-index: 2000;
+	z-index: 2000
 }
 
 #available-widgets ul, .admin-widgetset ul {
 	padding-left: 0;
-	margin-left: 0;
+	margin-left: 0
 }
-
 
 li.widget-instance,
 li.widget-class {
@@ -446,15 +461,14 @@ li.widget-class {
 	padding: .5em;
 	height: 30px;
 	background-color: white;
-	list-style-type: none;
+	list-style-type: none
 }
-
 
 .admin-widgetset h3 {
 	margin-bottom: 1em;
 	padding: .3em;
 	background: #eee;
-	border: 1px solid #ddd;
+	border: 1px solid #ddd
 }
 
 #available-widgets h2 {
@@ -463,7 +477,7 @@ li.widget-class {
 	margin-bottom:1em;
 	padding: .3em;
 	border: 1px solid #eee;
-	background: #999;
+	background: #999
 }
 
 .widget-instance .textinput {
@@ -473,149 +487,164 @@ li.widget-class {
 	font-style: oblique;
 	color: blue;
 	border: #fff 2px solid;
-	text-align: right;
+	text-align: right
 }
 
 .widget-instance .textinput:hover {
 	border: #d00 2px solid;
-	background-color:white;
+	background-color:white
 }
-
 
 .widget-instance .textinput:focus {
 	font-style: normal;
 	border: #f00 2px solid;
 	background-color:white;
-	text-align: left;
+	text-align: left
 }
-
 
 .widgetname a, 
 .widgetname a:link,
 .widgetname a:visited {
-	color: #ddd;
+	color: #ddd
 }
 
 .widget-placeholder {
 	padding: .5em;
 	font-style: oblique;
 	text-align: center;
-	border: 1px dashed #ddd;
+	border: 1px dashed #ddd
 }
 
 .widget-dragger {
 	text-align: left;
 	z-index: 1000;
 	padding: .5em;
-	height: 30px !important;
+	height: 30px !important
 }
 
 
 /* ===== CONFIG PANEL ===== */
 
-.option-set .option-list {
-	margin-bottom: 4em;
-}
-
-.option-set dt {
-    width: 33%;
-    text-align:right;
-    margin-top: 1.8em;
-    line-height: 1.5em;
-    font-weight: bold;
-}
-
-.option-set dt label {
-	padding-top: .2em;
+.option-set, .option-list {
+	margin-bottom: 3em;
+    margin-top: 2em
 }
 
 .option-set dd {
-    margin-left: 35%;
-    margin-top: -1.7em;
+    margin-left: 38%;
+    bottom: 1.75em;
     line-height: 1.5em;
+    position: relative
 }
-
 
 .option-set dd p {
-    margin: 0;
+	margin: 0
 }
 
+.option-set dd p.text {
+    display: inline;
+    vertical-align: middle
+}
 
-.option-set dd input{
-	margin-bottom: .2em;
+.option-list dd label {
+    position: relative;
+    vertical-align: middle;
+    display: flex
+}
+
+.option-list dd code {
+	position: relative;
+	font-size: 0.85em
+}
+
+.option-set dt {
+    width: 36%;
+    text-align:right;
+    margin-top: 0.5em;
+    line-height: 1.5em;
+    font-weight: bold
+}
+
+.option-set dt label {
+    bottom: 0.25em;
+    position: relative
 }
 
 .textinput, .bigtextinput, .smalltextinput {
-	padding: .5em;
+	padding: 0.2em
 }
 
 .textinput:focus, .bigtextinput:focus, .smalltextinput:focus {
-	font-weight: bold;
+	font-weight: bold
 }
 
 .widetextinput {
 	width: 99%;
 	font-size: 1.3em;
-	color: #333333;
+	color: #333333
 }
 
 .option-set input.textinput ,
 .option-set select.textinput {
 	width: 20em;
+	margin-top: -2px
 }
-
 
 .option-set input.bigtextinput {
-	width: 30em;
+	width: 26em
 }
-
 
 .option-set input.smalltextinput {
-	width: 5em;
+	width: 5em
 }
+
 
 /* ===== SPECIAL HOVERS ====== */
 a.link-disable, 
 a.link-delete, 
 a.link-enable,
 a.link-general {
-	padding: .9em;
+	padding: .9em
 }
 
 td.main-cell a.link-general {display:block}
 
 a.link-disable:hover, a.link-delete:hover {
 	background-color: red;
-	color: white;
+	color: white
 }
+
 a.link-enable:hover {
 	background-color: green;
-	color: white;
+	color: white
 }
 
 a.link-general:hover, .main-cell a:hover {
 	background-color: #aaa;
-	color: black;
+	color: black
 }
-
 
 
 /* ===== NOTIFICATIONS ===== */
 .hint {
-	cursor: help;
+	cursor: help
 }
 
 .draft { background-color: #333 }
 
 /* (already defined in common, here we put just some tuning settings) */
 #admin-content ul.msgs {
-	margin:0;
+	margin:0
 }
 
 #footer {
-	color: black;
+	color: black
 }
 
 form {
-    margin: auto;
+    margin: auto
 }
+
+
+/* ===== Smartphone and Tablet ===== */
+

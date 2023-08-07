@@ -27,7 +27,7 @@ function plugin_searchbox_widget() {
 		$content .= '<p><label><input type="radio" 
 					name="stype" value="titles" checked="checked" />' . $lang ['search'] ['onlytitles'] . '</label><br />' . '<label><input type="radio" name="stype" value="full" />' . $lang ['search'] ['fulltext'] . '</label></p>';
 
-	$content .= '<p><input name="search" type="submit" value="' . $lang ['search'] ['submit'] . '" /> </p>		
+	$content .= '<div class="buttonbar"><p><input name="search" type="submit" value="' . $lang ['search'] ['submit'] . '" /> </p></div>
 		</form>
 		</li></ul>';
 

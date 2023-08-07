@@ -29,7 +29,7 @@
 		'langchoice'		=> 'Idioma',
 
 		'intsetts'		=> 'Configurações internacionais',
-		'utctime'		=> '<acronym title="Universal Coordinated Time">UTC</acronym> hora é:',
+		'utctime'		=> '<abbr title="Universal Coordinated Time">UTC</abbr> hora é:',
 		'timeoffset'		=> 'Diferença em horas com relação ao UTC:',
 		'hours'			=> 'horas',
 		'timeformat'		=> 'Formato padrão para a hora',

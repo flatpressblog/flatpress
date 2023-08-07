@@ -4,8 +4,7 @@ $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Ρύθμιση του BBCode',
 	'desc1' => 'Το πρόσθετο αυτό επιτρέπει τη χρήση σύνταξης <a href="http://www.phpbb.com/'.
-		'phpBB/faq.php?mode=bbcode">BBCode</a> και παρέχει '.
-		'αυτόματη αλληλεπίδραση με το lightbox (όταν είναι κι αυτό ενεργοποιημένο).',
+		'phpBB/faq.php?mode=bbcode">BBCode</a>.',
 	
 	'options' => 'Επιλογές',
 
@@ -57,7 +56,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'Πηγαίνετε στον'
+		'go_to' => 'Πηγαίνετε στον',
+		// language tag for Facebook Video
+		'langtag' => 'el_GR'
 );
 
 ?>
