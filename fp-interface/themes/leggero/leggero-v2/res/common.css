@@ -114,7 +114,7 @@ textarea {
 	font-family: sans-serif
 }
 
-input#name, input#email, input#url {
+input#name, input#email, input#url { /* comment and contact textfield */
     width: 200px
 }
 
@@ -191,7 +191,7 @@ h4 { font-size: 1.2em }
 	/* ===== BODY CONTAINER ===== */
 	#body-container {
 		text-align: left;
-		max-width: 1000px;
+		max-width: 690px;
 		width: 100%;
 		margin: 0 auto 0 auto;
 		padding: 5px;
@@ -205,7 +205,7 @@ h4 { font-size: 1.2em }
 	#main {
 		float:left;
 		position: relative;
-		width: 65%;
+		width: 365px;
 		font-size: 100%;
 		padding: 25px;
 		margin: 20px;
@@ -213,7 +213,7 @@ h4 { font-size: 1.2em }
 		border-radius: 3px
 	}
 	
-	div.floatleft { /* PhotoSwipe; no responsive */
+	div.floatleft { /* PhotoSwipe; normal */
 		margin: 0.5em 1em 1em 0.5em
 	}
 
@@ -221,7 +221,7 @@ h4 { font-size: 1.2em }
 		margin: 0.5em 0.5em 1em 1em
 	}
 	
-	.responsive_bbcode_video { /* BBcode; no responsive */
+	.responsive_bbcode_video { /* BBcode; normal */
 		display: block
 	}
 
@@ -229,20 +229,46 @@ h4 { font-size: 1.2em }
 		max-width: 460px !IMPORTANT;
 		width: 100%
 	}
-
-	@media screen and (max-device-width: 768px) { /* Smartphone and Tablet */
-		body { margin: 0 0 0 0 }
-
-		#body-container { max-width: 758px }
-
-		#main { width: 56% }
-
-		#column { width: 30% !IMPORTANT }
-	}
 }
 
+@media (min-width: 768px) { /* Smartphone landscape and Tablet */
+
+	#body-container { max-width: 738px }
+		
+	#main { width: 413px }
+}
+
+@media (min-width: 820px) { /* Tablet */
+
+	#body-container { max-width: 790px }
+		
+	#main { width: 465px }
+}
+
+@media (min-width: 960px) { /* Tablet landscape and Netbook*/
+
+	#body-container { max-width: 930px }
+		
+	#main { width: 605px }
+}
+
+@media (min-width: 1024px) { /* Laptop and small Desktop-PC */
+
+	#body-container { max-width: 994px }
+		
+	#main { width: 669px }
+}
+
+@media (min-width: 1440px) { /* Desktop-PC and TV*/
+
+	#body-container { max-width: 1250px }
+		
+	#main { width: 925px }
+}
+
+
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 719px) {
+@media (max-width: 719px) { /* Smartphone */
 
 	body { margin: 0 0 0 0 }
 
@@ -255,6 +281,10 @@ h4 { font-size: 1.2em }
 		background-color: rgba(0,0,0,0.75)
 	}
 
+	#outer-container {
+		margin: 5px
+	}
+	
 	/* ===== MAIN ===== */
 	#main h4 { margin: 2em 0 0 0 }
 
@@ -346,7 +376,7 @@ h4#addcomment {clear: both}
 	.entry {
 		margin: 0 0 1.5em 0;
 		padding: 0 0 1.5em 0;
-		overflow: auto; /* floating images fix IE<7*/
+		overflow: auto;
 		border-bottom: solid 1px #999
 	}
 	
@@ -366,7 +396,6 @@ h4#addcomment {clear: both}
 	.entry-footer li { 
 		display: block
 	}
-	
 	
 	.admincontrols { /* [edit] and [delete] */
 		font-size: 80%;

@@ -20,11 +20,13 @@ Module: admin.css
 
 .buttonbar input {
 	box-shadow: none !IMPORTANT;
-	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x;
+	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x
 }
+
 .buttonbar input:hover {
-	background: #d3d3d3 url(../imgs/buttonsh2.png) repeat-x;
+	background: #d3d3d3 url(../imgs/buttonsh2.png) repeat-x
 }
+
 
 /* ===== HEADERS TAGS ===== */
 h1,
@@ -40,30 +42,47 @@ h2 {
 	font-size: 0.83em
 }
 
+
 /* === Redefines some stuff in inline mode === */
 body#inline-body {
 	background: white
 }
 
-body#inline-body input {
-
-}
-
 #body-container {
 	text-align: left;
 	font-size: 0.85em;
-	width: 80% !important;
 	margin: 0 auto 0 auto;
-	padding: 5px;
 	background-color: rgba(255,255,255,1);
 	border-radius: 3px
 }
+
+
+/* ===== Smartphone and Tablet ===== */
+@media (max-width: 1920px) { /* prevents too large font size on mobile devices */
+	#body-container {
+		-webkit-text-size-adjust: none;
+		-moz-text-size-adjust: none;
+		text-size-adjust: none
+	}
+
+	@media (max-width: 768px) { /* and stretch to the complete width on small devices */
+		body { margin: 0 0 0 0; background: #eee }
+
+		#body-container {
+			padding: unset;
+			padding-top: 5px;
+			min-width: 100%
+		}
+	}
+}
+
 
 /* === Conflict with inner h1 === */
 #admin-content h1 { color: black }
 
 /* DIV CONTAINER ALL ADMIN DIV BLOCK */
 #cpmain { padding: 10px }
+
 
 /* ===== SMALL NAVBAR (home and logout links) ===== */
 ul#admin-small-nav {
@@ -73,6 +92,7 @@ ul#admin-small-nav {
 }
 
 ul#admin-small-nav li { display: inline; margin: 5px }
+
 
 /* ===== TAB MENU ===== */
 ul#admin-tabmenu {
@@ -111,6 +131,7 @@ ul#admin-tabmenu li a.admin-tab-current {
 	font-weight: bold
 }
 
+
 /* ===== submenu ====== */
 
 #admin-submenu {
@@ -145,6 +166,7 @@ ul#admin-tabmenu li a.admin-tab-current {
 	font-weight: bold
 }
 
+
 /* ===== MAIN MENU ITEM ===== */
 #admin-content { padding: 1em }
 
@@ -160,6 +182,7 @@ ul#admin-tabmenu li a.admin-tab-current {
 	font-size: 80%;
 	font-style: italic
 }
+
 
 /* ===== ADMIN ENTRY ===== */
 input#subject {
@@ -189,7 +212,6 @@ input#subject {
 #admin-bbcode-toolbar p img {
 	vertical-align: middle
 }
-
 
 #admin-bbcode-toolbar select { width: 10em }
 
@@ -275,6 +297,7 @@ input.maxsize, select.maxsize { width: 99% }
 	margin: 0; padding-left: 1em
 }
 
+
 /* ===== PREVIEW SETTINGS ===== */
 #post-preview {
 	min-width: 68em
@@ -296,6 +319,7 @@ input.maxsize, select.maxsize { width: 99% }
 	margin: 2em 0 0.5em 0;
     text-align: right
 }
+
 
 /* ===== UPLOAD PANEL ===== */
 #admin-uploader-filelist {
@@ -319,6 +343,7 @@ input.maxsize, select.maxsize { width: 99% }
 	margin-top: .5em
 }
 
+
 /* ===== THEME PANEL ===== */
 
 #current-theme h5, 
@@ -330,6 +355,7 @@ input.maxsize, select.maxsize { width: 99% }
 	margin-bottom: 4em;
 	overflow:hidden
 }
+
 
 #current-theme img { 
 	float:left;
@@ -362,6 +388,7 @@ input.maxsize, select.maxsize { width: 99% }
 	background: #eee;
 	border: 1px solid #ddd
 }
+
 
 /* ===== WIDGET PANEL ====== */
 
@@ -468,7 +495,6 @@ li.widget-class {
 	background-color:white
 }
 
-
 .widget-instance .textinput:focus {
 	font-style: normal;
 	border: #f00 2px solid;
@@ -496,6 +522,7 @@ li.widget-class {
 	height: 30px !important
 }
 
+
 /* ===== CONFIG PANEL ===== */
 
 .option-set, .option-list {
@@ -504,7 +531,7 @@ li.widget-class {
 }
 
 .option-set dd {
-    margin-left: 35%;
+    margin-left: 38%;
     bottom: 1.75em;
     line-height: 1.5em;
     position: relative
@@ -531,7 +558,7 @@ li.widget-class {
 }
 
 .option-set dt {
-    width: 33%;
+    width: 36%;
     text-align:right;
     margin-top: 0.5em;
     line-height: 1.5em;
@@ -564,12 +591,13 @@ li.widget-class {
 }
 
 .option-set input.bigtextinput {
-	width: 30em
+	width: 26em
 }
 
 .option-set input.smalltextinput {
 	width: 5em
 }
+
 
 /* ===== SPECIAL HOVERS ====== */
 a.link-disable, 
@@ -579,12 +607,13 @@ a.link-general {
 	padding: .9em
 }
 
-td.main-cell a.link-general { display:block }
+td.main-cell a.link-general {display:block}
 
 a.link-disable:hover, a.link-delete:hover {
 	background-color: red;
 	color: white
 }
+
 a.link-enable:hover {
 	background-color: green;
 	color: white
@@ -594,6 +623,7 @@ a.link-general:hover, .main-cell a:hover {
 	background-color: #aaa;
 	color: black
 }
+
 
 /* ===== NOTIFICATIONS ===== */
 .hint {
@@ -615,14 +645,6 @@ form {
     margin: auto
 }
 
-/* ===== Smartphone and Tablet ===== */
-@media screen and (max-device-width: 768px) {
-	body { margin: 0 0 0 0; background: #eee }
 
-	#body-container {
-		min-width: 100%;
-		-webkit-text-size-adjust: none;
-		-moz-text-size-adjust: none;
-		text-size-adjust: none
-	}  		
-}
+/* ===== Smartphone and Tablet ===== */
+
