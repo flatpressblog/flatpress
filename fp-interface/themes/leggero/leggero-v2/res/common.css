@@ -264,6 +264,12 @@ h4 { font-size: 1.2em }
 	#body-container { max-width: 1250px }
 		
 	#main { width: 925px }
+	
+	.bbcode_video {
+	max-width: unset !IMPORTANT;
+	width: 560px !IMPORTANT;
+	height: 315px !IMPORTANT
+	}
 }
 
 
