@@ -381,8 +381,8 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 			$langtag = $lang ['plugin'] ['bbcode'] ['langtag'];
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/video/', '', $vurl ['path']);
 			$output = '<div id="fb-root"></div>
-			<script async defer src="https://connect.facebook.net/' . $langtag . '/sdk.js#xfbml=1&version=v3.2"></script>
-			<div class="responsive_bbcode_video"><div class="fb-video bbcode_video bbcode_video_facebook ' . $floatClass . '" data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '"></div></div>';
+			<script async defer crossorigin="anonymous" src="https://connect.facebook.net/' . $langtag . '/sdk.js#xfbml=1&version=v17.0"></script>
+			<div class="responsive_bbcode_video"><div class="fb-video bbcode_video bbcode_video_facebook ' . $floatClass . '" data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '" data-lazy="true"></div></div>';
 			break;
 		// Any video file that can be played with HTML5 <video> element
 		case 'html5':
