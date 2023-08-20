@@ -5,7 +5,7 @@ Leggero CSS Styles
 
 Name: Leggero v2
 Author: NoWhereMan, drudo & Marc Thibeault
-Version: 0.1
+Version: 1.0
 Module: common.css
 */
 
@@ -18,16 +18,26 @@ html {
 	text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2)
 }
 
+html::before { /* background-attachment: fix workaround for mobile devices */
+	content: ' ';
+	display: block;
+	background-image: url("../imgs/back.jpg");
+	background-position: center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	height: 100vh; width: 100vw;
+	top: 0; bottom: 0; left: 0; right: 0;
+	position: fixed;
+	z-index: -10
+}
+
 body {
 	font-size: 100%;
 	color: black;
 	padding: 0;
-	text-align:center;
-	background: url('../imgs/back.jpg') no-repeat fixed top center;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-  	-o-background-size: cover;
-  	background-size: cover
+	text-align: center
 }
 
 hr { display: none }
@@ -50,14 +60,9 @@ blockquote {
 	border-radius: 3px
 }
 
-blockquote p {
-    margin: 0.5em 0 0.5em 0 !IMPORTANT
-}
+blockquote p { margin: 0.5em 0 0.5em 0 !IMPORTANT }
 
-pre, code {
-	font-family: "Lucida Console", Monaco, monospace !IMPORTANT;
-	font-size: 90%
-}
+pre, code { font-family: "Lucida Console", Monaco, monospace !IMPORTANT; font-size: 90% }
 
 pre {
 	border-left: 5px solid #b83c32;
@@ -65,14 +70,11 @@ pre {
 	border-top: 1px solid #b83c32;
 	border-bottom: 1px solid #b83c32;
 	border-radius: 3px;
-
 	background-color: #efefef;
-
 	overflow: auto;
 	width: auto;
 	margin: 1em 1em;
 	padding: 5px 10px;
-	
 	height: auto !important
 }
 
@@ -125,9 +127,7 @@ a:link, a:visited {
 	text-decoration: none
 }
 
-a:hover {
-	text-decoration: underline
-}
+a:hover { text-decoration: underline }
 
 /* ===== HEADERS TAGS ===== */
 h1 {
@@ -145,9 +145,7 @@ h2 {
 }
 
 h2.entry-title,
-h2.title {
-	margin: 0 !IMPORTANT
-}
+h2.title { margin: 0 !IMPORTANT }
 
 h3 {
 	font-style: normal;
@@ -228,7 +226,8 @@ h4 { font-size: 1.2em }
 		text-align: center
 	}
 
-	.bbcode_video {
+	.bbcode_video,
+	.fb_iframe_widget_fluid_desktop iframe {
 		max-width: 320px !IMPORTANT;
 		width: 100%;
 		height: 180px !IMPORTANT
@@ -268,13 +267,13 @@ h4 { font-size: 1.2em }
 		
 	#main { width: 669px }
 
-	.bbcode_video {
+	.bbcode_video,
+	.fb_iframe_widget_fluid_desktop iframe {
 		max-width: 480px !IMPORTANT;
 		width: 100%;
 		height: 270px !IMPORTANT
 	}
 }
-
 
 @media (min-width: 1440px) { /* Desktop-PC and TV*/
 
@@ -282,7 +281,8 @@ h4 { font-size: 1.2em }
 		
 	#main { width: 925px }
 	
-	.bbcode_video {
+	.bbcode_video,
+	.fb_iframe_widget_fluid_desktop iframe {
 	max-width: 560px !IMPORTANT;
 	width: 100%;
 	height: 315px !IMPORTANT
@@ -326,10 +326,8 @@ h4 { font-size: 1.2em }
 
 	div.img-gallery { text-align: center }
 
-	.img-gallery div.photoswipe figure {
-		margin: 0.5em 0 0 0 !IMPORTANT
-	}
-	
+	.img-gallery div.photoswipe figure { margin: 0.5em 0 0 0 !IMPORTANT }
+
 	.responsive_bbcode_video { /* BBcode; responsive */
 		position: relative;
 		padding-bottom: 56.25%;  /* 16:9 */
@@ -345,7 +343,7 @@ h4 { font-size: 1.2em }
 		width: 100%;
 		height: 100%
 	}
-			
+
 	.bbcode_video.nofloat { text-align: center }
 }
 
@@ -354,20 +352,14 @@ h4 { font-size: 1.2em }
 #main img { margin: .5em }
 
 /* === List === */
-#main ul {
-	list-style-type: disc;
-	padding: 0 0 0 1.6em
-}
+#main ul { list-style-type: disc; padding: 0 0 0 1.6em }
 
-#main ol {
-	list-style-position: inside;
-	padding: 0 1.6em 0 1.6em
-}
+#main ol { list-style-position: inside; padding: 0 1.6em 0 1.6em }
 
 h4#addcomment { clear: both }
 
 	#commentform fieldset p { margin: 0 0 .5em 0 }
-	
+
 	#comments li {
 		margin: 0 0 1.5em 0;
 		padding: 5px;
@@ -375,20 +367,17 @@ h4#addcomment { clear: both }
 		border-bottom: 1px solid #ddd;
 		background: #efefef
 	}
-	
+
 	/* === Class of main block === */
-	h6.date {
-		font-size: 0.8em;
-		color: #444
-	}
-	
+	h6.date { font-size: 0.8em; color: #444 }
+
 	.date { /* date under titles of the entry */
 		font-size: 80%;
 		font-style: oblique;
 		color: black;
 		margin: .2em 0 .8em 0
 	}
-	
+
 	/* .entry class */
 	.entry {
 		margin: 0 0 1.5em 0;
@@ -396,12 +385,12 @@ h4#addcomment { clear: both }
 		overflow: auto;
 		border-bottom: solid 1px #999
 	}
-	
+
 	#main>.entry {
 		overflow: hidden /* rest of the world :) */
 	}
 	/* end of .entry */
-	
+
 	#main ul.entry-footer { /*  entry footer */
 		clear: both;
 		font-size: 80%;
@@ -409,18 +398,16 @@ h4#addcomment { clear: both }
 		margin: 2em 0 .5em 0;
 		text-align: right
 	}
-	
-	.entry-footer li { 
-		display: block
-	}
-	
+
+	.entry-footer li { display: block }
+
 	.admincontrols { /* [edit] and [delete] */
 		font-size: 80%;
 		text-align: right
 	}
-	
+
 	.buttonbar { text-align: center }
-	
+
 	.buttonbar input[type=submit], /* Send-Message-Button */
 	.buttonbar input[type=reset], /* Reset-Message-Button */
 	.buttonbar input[type=button] {
@@ -428,53 +415,46 @@ h4#addcomment { clear: both }
 		margin: 0.1em 0.5em;
 		padding: 0.2em 1em
 	}
-	
+
 	.buttonbar input[type=submit]:hover,
 	.buttonbar input[type=reset]:hover,
 	.buttonbar input[type=button]:hover {
 		box-shadow: none
 	}
-	
+
 	input[type=radio],	
 	input[type=checkbox] {
 		vertical-align: middle;
 		margin-bottom: 0.4em;
 		cursor: pointer
 	}
-	
+
 	.photoswipe figure img { /* PhotoSwipe */
 		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
 		border-radius: 3px
 	}
 
-	.photoswipe figure img:hover {
-		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3)
-	}
-	
-	.photoswipe figure figcaption {
-		font-size: 12px !IMPORTANT
-	}
+	.photoswipe figure img:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
 
-	.fb_iframe_widget_fluid_desktop iframe,
+	.photoswipe figure figcaption { font-size: 12px !IMPORTANT }
+
 	.bbcode_video { /* BBCode [video] */
 		background-color: rgba(0,0,0,0.3);
 		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
 		border-radius: 3px;
 		margin: 0px 3px 0px 0px
 	}
+	
+	.bbcode_video:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
 
-	.bbcode_video:hover {
-		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3)
-	}
+	.fb_iframe_widget_fluid_desktop iframe { border-radius: 3px }
 
 	.navigation { /* next entries & previous entries link */
 		font-size: 90%;
 		display: flow-root
 	}
 
-	form#search ul { 
-		list-style-type: none
-	}
+	form#search ul { list-style-type: none }
 
 /* ===== FOOTER ===== */
 #footer {
@@ -485,7 +465,5 @@ h4#addcomment { clear: both }
 	padding: 5px
 }
 
-* {
-   font-family: sans-serif;
-   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2)
-  }
+* { font-family: sans-serif; text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2) }
+

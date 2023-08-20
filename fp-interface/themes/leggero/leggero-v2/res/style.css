@@ -5,16 +5,16 @@ Leggero CSS Styles
 
 Name: Leggero v2
 Author: NoWhereMan, drudo & Marc Thibeault
-Version: 0.1
+Version: 1.0
 Module: style.css
 */
 
 /* imports common style ruleset */
-@import url(common.css);
-@import url(globals.css);
+@import url("common.css");
+@import url("globals.css");
 
 /* imports column (where widgets usually go) rules */
-@import url(column.css);
+@import url("column.css");
 
 #comments li.comment-admin {
 	padding: 1em
@@ -28,15 +28,20 @@ Module: style.css
 .comment-quote {
 	margin-left: auto;
 	margin-right: auto;
-	width: auto;
 	border-radius: 3px
+}
+
+@media (min-width: 720px) {
+	.comment-quote { width: auto }
 }
 
 /* Calendar-Widget */
 .calendar {
 	margin-left: auto;
 	margin-right: auto;
-	text-align: center;
-	font-size: small !IMPORTANT
+	text-align: center
 }
 
+@media (min-width: 720px) {
+	.calendar { font-size: small !IMPORTANT }
+}

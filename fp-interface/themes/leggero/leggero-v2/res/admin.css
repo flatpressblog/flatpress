@@ -6,47 +6,37 @@ Leggero CSS Styles
 mod by liquibyte
 Name: Leggero v2
 Author: NoWhereMan, drudo & Marc Thibeault
-Version: 0.1
+Version: 1.0
 Module: admin.css
 */
 
-@import url(common.css);
-@import url(globals.css);
+@import url("common.css");
+@import url("globals.css");
 
 /* ===== VARIOUS ===== */
-@viewport {
-   width: device-width
-}
+@viewport { width: device-width }
 
 .buttonbar input {
 	box-shadow: none !IMPORTANT;
-	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x
+	background: #bdbdbd url("../imgs/buttonsh.png") repeat-x
 }
 
 .buttonbar input:hover {
-	background: #d3d3d3 url(../imgs/buttonsh2.png) repeat-x
+	background: #d3d3d3 url("../imgs/buttonsh2.png") repeat-x
 }
 
 
 /* ===== HEADERS TAGS ===== */
 h1,
-h2 { 
-	margin: auto
-}
+h2 { margin: auto }
 
-h2 {
-	border-bottom: 1px solid #ddd
-}
+h2 { border-bottom: 1px solid #ddd }
 
-.head-link {
-	font-size: 0.83em
-}
+.head-link { font-size: 0.83em }
 
 
 /* === Redefines some stuff in inline mode === */
-body#inline-body {
-	background: white
-}
+body#inline-body { background: white }
 
 #body-container {
 	text-align: left;
@@ -100,7 +90,8 @@ ul#admin-tabmenu {
 	padding: .5em;
 	background: #000;
 	-moz-border-radius-topleft:3px;
-	-moz-border-radius-topright:3px
+	-moz-border-radius-topright:3px;
+	border-radius: 3px 3px 0 0
 }
 
 ul#admin-tabmenu li {
@@ -124,32 +115,28 @@ ul#admin-tabmenu li a:hover {
 	color: black;
 	font-weight: normal;
 	background-color: #ddd;
-	-moz-border-radius: 2px
+	-moz-border-radius: 2px;
+	border-radius: 2px
 }
 
-ul#admin-tabmenu li a.admin-tab-current {
-	font-weight: bold
-}
+ul#admin-tabmenu li a.admin-tab-current { font-weight: bold }
 
 
 /* ===== submenu ====== */
-
 #admin-submenu {
 	background: #eee; 
 	padding: .5em;
-	border: 1px solid #ccc
+	border: 1px solid #ccc;
+	border-radius: 0 0 3px 3px
 }
 
-#admin-submenu li {
-	display:inline; 
-	font-size: 80%
-}
+#admin-submenu li { display:inline; font-size: 80% }
 
 #admin-submenu li a {
 	padding: 0 1em ;
 	color: #000;
 	border-left: 1px solid #eee;
-	border-right: 1px solid #eee;  
+	border-right: 1px solid #eee;
 	font-weight: normal
 }
 
@@ -157,14 +144,13 @@ ul#admin-tabmenu li a.admin-tab-current {
 #admin-submenu li a.active {
 	color: #eee;
 	background: #555;
-	padding: .1em 1em .3em;
+	padding: .3em 1em .3em;
 	-moz-border-radius: 3px;
+	border-radius: 3px;
 	text-decoration: none
 }
 
-#admin-submenu li a.active {
-	font-weight: bold
-}
+#admin-submenu li a.active { font-weight: bold }
 
 
 /* ===== MAIN MENU ITEM ===== */
@@ -178,10 +164,7 @@ ul#admin-tabmenu li a.admin-tab-current {
 
 .admin-mainmenu-item img { padding-right: 1em }
 
-.admin-mainmenu-item .admin-icon-descr {
-	font-size: 80%;
-	font-style: italic
-}
+.admin-mainmenu-item .admin-icon-descr { font-size: 80%; font-style: italic }
 
 
 /* ===== ADMIN ENTRY ===== */
@@ -199,9 +182,7 @@ input#subject {
 	padding-left: 1em
 }
 
-#admin-bbcode-toolbar {
-	display: table
-}
+#admin-bbcode-toolbar { display: table }
 
 #admin-bbcode-toolbar p {
 	display: table-cell;
@@ -209,9 +190,7 @@ input#subject {
 	line-height: 1em
 }
 
-#admin-bbcode-toolbar p img {
-	vertical-align: middle
-}
+#admin-bbcode-toolbar p img { vertical-align: middle }
 
 #admin-bbcode-toolbar select { width: 10em }
 
@@ -227,14 +206,9 @@ input#subject {
 	text-align: center
 }
 
-#admin-content .enabled td {
-	background: inherit
-} 
+#admin-content .enabled td { background: inherit } 
 
-#admin-content td.main-cell {
-	width: 30%;
-	text-align: left
-}
+#admin-content td.main-cell { width: 30%; text-align: left }
 
 #admin-content th {
 	font-size: 0.75em;
@@ -243,6 +217,14 @@ input#subject {
 	text-align: center;
 	padding: 8px
 }
+
+#admin-content tr:first-child th:last-child { border-top-right-radius: 3px }
+
+#admin-content tr:first-child th:first-child { border-top-left-radius: 3px }
+
+#admin-content tr:last-child td:last-child { border-bottom-right-radius: 3px }
+
+#admin-content tr:last-child td:first-child { border-bottom-left-radius: 3px }
 
 input.maxsize, select.maxsize { width: 99% }
 
@@ -267,9 +249,7 @@ input.maxsize, select.maxsize { width: 99% }
 
 .admin-entry-commentlist td ,
 .admin-widgets-blockparser td ,
-.admin-plugin-default td {
-	padding: 1em .6em
-}
+.admin-plugin-default td { padding: 1em .6em }
 
 #admin-drafts {
 	border-top: 1px solid #bbb;
@@ -287,9 +267,7 @@ input.maxsize, select.maxsize { width: 99% }
 	margin: 0
 }
 
-#admin-content #admin-drafts ul {
-	margin: 0; padding: 0
-}
+#admin-content #admin-drafts ul { margin: 0; padding: 0 }
 
 #admin-drafts li {
 	float:left;
@@ -299,9 +277,7 @@ input.maxsize, select.maxsize { width: 99% }
 
 
 /* ===== PREVIEW SETTINGS ===== */
-#post-preview {
-	min-width: 40em
-}
+#post-preview { min-width: 40em }
 
 #post-preview .entry { padding: 2em; max-height: 20em; overflow: auto  }
 
@@ -311,24 +287,15 @@ input.maxsize, select.maxsize { width: 99% }
 	margin: 0.83em 0
 }
 
-#post-preview div.entry h4 {
-	margin: 2em 0 0 0
-}
+#post-preview div.entry h4 { margin: 2em 0 0 0 }
 
-.entry-footer {
-	margin: 2em 0 0.5em 0;
-    text-align: right
-}
+.entry-footer { margin: 2em 0 0.5em 0; text-align: right }
 
 
 /* ===== UPLOAD PANEL ===== */
-#admin-uploader-filelist {
-	margin: 1em auto
-}
+#admin-uploader-filelist { margin: 1em auto }
 
-#admin-uploader-thumbs {
-	list-style-type: none
-}
+#admin-uploader-thumbs { list-style-type: none }
 
 #admin-uploader-thumbs li.thumb {
 	float:left;
@@ -339,49 +306,35 @@ input.maxsize, select.maxsize { width: 99% }
 }
 
 /* (applies only to the inline version */
-#upload {
-	margin-top: .5em
-}
+#upload { margin-top: .5em }
 
 
 /* ===== THEME PANEL ===== */
-
 #current-theme h5, 
-#available-themes h5 {
-	font-size: 1em
-}
+#available-themes h5 { font-size: 1em }
 
-#current-theme {	
-	margin-bottom: 4em;
-	overflow:hidden
-}
-
+#current-theme { margin-bottom: 4em; overflow:hidden }
 
 #current-theme img { 
 	float:left;
 	border: 1px solid #ddd;
-	margin-right: 2em
+	margin-right: 2em;
+	border-radius: 3px
 }
 
-#available-themes {
-	clear: both
-}
+#available-themes { clear: both }
 
+#available-themes img { border: 1px solid #eee; border-radius: 3px }
 
-#available-themes img {
-	border: 1px solid #eee
-}
-
-#available-themes ul {
-	list-style-type: none
-}
+#available-themes ul { list-style-type: none }
 
 #available-themes ul li {
 	float:left;
 	padding: 1em;
 	border: 1px solid #fff;
 	text-align: center;
-	width: 300px
+	width: 300px;
+	border-radius: 3px
 }
 
 #available-themes ul li:hover {
@@ -391,10 +344,7 @@ input.maxsize, select.maxsize { width: 99% }
 
 
 /* ===== WIDGET PANEL ====== */
-
-#admin-widgetset-list {
-	width: 30em
-}
+#admin-widgetset-list { width: 30em }
 
 #admin-widgetset-list ul {
 	list-style-type: none;
@@ -406,7 +356,8 @@ input.maxsize, select.maxsize { width: 99% }
 li.admin-widgetset {
 	padding: .5em;
 	margin-bottom: 2em;
-	border: 1px solid #ddd
+	border: 1px solid #ddd;
+	border-radius: 3px
 }
 
 #available-widgets {
@@ -418,10 +369,13 @@ li.admin-widgetset {
 	width: 30%;
 	z-index: 1000;
 	position: relative;
-	text-align: left
+	text-align: left;
+	border-radius: 3px
 }
 
-#widget-trashcan { /*colors for trashcan/uninstall widgets while dragging*/
+.widgetset-name { border-radius: 2px }
+
+#widget-trashcan { /* colors for trashcan/uninstall widgets while dragging */
 	background-color: rgba(170, 34, 34, 0.7);
 	color: #ddd;
 	font-size: 120%;
@@ -429,10 +383,11 @@ li.admin-widgetset {
 	padding: 2em;
 	text-align: center;
 	border: 2px solid #f00;
-	margin: 2em
+	margin: 2em;
+	border-radius: 2px
 }
 
-.widget-available { /*colors for available widgets while dragging*/
+.widget-available { /* colors for available widgets while dragging */
 	cursor: move;
 	color: #fff;
 	background-color: rgba(34, 102, 0, 0.7);
@@ -440,7 +395,7 @@ li.admin-widgetset {
 	z-index: 2000
 }
 
-.widget-installed { /*colors for installed widgets while dragging*/
+.widget-installed { /* colors for installed widgets while dragging */
 	cursor: move;
 	color: #fff;
 	background-color: rgba(0, 34, 102, 0.7);
@@ -448,10 +403,8 @@ li.admin-widgetset {
 	z-index: 2000
 }
 
-#available-widgets ul, .admin-widgetset ul {
-	padding-left: 0;
-	margin-left: 0
-}
+#available-widgets ul,
+.admin-widgetset ul { padding-left: 0; margin-left: 0 }
 
 li.widget-instance,
 li.widget-class {
@@ -461,7 +414,8 @@ li.widget-class {
 	padding: .5em;
 	height: 30px;
 	background-color: white;
-	list-style-type: none
+	list-style-type: none;
+	border-radius: 2px
 }
 
 .admin-widgetset h3 {
@@ -477,7 +431,8 @@ li.widget-class {
 	margin-bottom:1em;
 	padding: .3em;
 	border: 1px solid #eee;
-	background: #999
+	background: #999;
+	border-radius: 2px
 }
 
 .widget-instance .textinput {
@@ -504,9 +459,7 @@ li.widget-class {
 
 .widgetname a, 
 .widgetname a:link,
-.widgetname a:visited {
-	color: #ddd
-}
+.widgetname a:visited { color: #ddd }
 
 .widget-placeholder {
 	padding: .5em;
@@ -524,11 +477,8 @@ li.widget-class {
 
 
 /* ===== CONFIG PANEL ===== */
-
-.option-set, .option-list {
-	margin-bottom: 3em;
-    margin-top: 2em
-}
+.option-set,
+.option-list { margin-bottom: 3em; margin-top: 2em }
 
 .option-set dd {
     margin-left: 38%;
@@ -537,14 +487,9 @@ li.widget-class {
     position: relative
 }
 
-.option-set dd p {
-	margin: 0
-}
+.option-set dd p { margin: 0 }
 
-.option-set dd p.text {
-    display: inline;
-    vertical-align: middle
-}
+.option-set dd p.text { display: inline; vertical-align: middle }
 
 .option-list dd label {
     position: relative;
@@ -552,10 +497,7 @@ li.widget-class {
     display: flex
 }
 
-.option-list dd code {
-	position: relative;
-	font-size: 0.85em
-}
+.option-list dd code { position: relative; font-size: 0.85em }
 
 .option-set dt {
     width: 36%;
@@ -565,18 +507,15 @@ li.widget-class {
     font-weight: bold
 }
 
-.option-set dt label {
-    bottom: 0.25em;
-    position: relative
-}
+.option-set dt label { bottom: 0.25em; position: relative }
 
-.textinput, .bigtextinput, .smalltextinput {
-	padding: 0.2em
-}
+.textinput,
+.bigtextinput,
+.smalltextinput { padding: 0.2em }
 
-.textinput:focus, .bigtextinput:focus, .smalltextinput:focus {
-	font-weight: bold
-}
+.textinput:focus,
+.bigtextinput:focus,
+.smalltextinput:focus { font-weight: bold }
 
 .widetextinput {
 	width: 99%;
@@ -585,29 +524,20 @@ li.widget-class {
 }
 
 .option-set input.textinput ,
-.option-set select.textinput {
-	width: 20em;
-	margin-top: -2px
-}
+.option-set select.textinput { width: 20em; margin-top: -2px }
 
-.option-set input.bigtextinput {
-	width: 26em
-}
+.option-set input.bigtextinput { width: 26em }
 
-.option-set input.smalltextinput {
-	width: 5em
-}
+.option-set input.smalltextinput { width: 5em }
 
 
 /* ===== SPECIAL HOVERS ====== */
 a.link-disable, 
 a.link-delete, 
 a.link-enable,
-a.link-general {
-	padding: .9em
-}
+a.link-general { padding: .9em; border-radius: 2px }
 
-td.main-cell a.link-general {display:block}
+td.main-cell a.link-general { display:block }
 
 a.link-disable:hover, a.link-delete:hover {
 	background-color: red;
@@ -626,25 +556,13 @@ a.link-general:hover, .main-cell a:hover {
 
 
 /* ===== NOTIFICATIONS ===== */
-.hint {
-	cursor: help
-}
+.hint { cursor: help }
 
 .draft { background-color: #333 }
 
 /* (already defined in common, here we put just some tuning settings) */
-#admin-content ul.msgs {
-	margin:0
-}
+#admin-content ul.msgs { margin:0 }
 
-#footer {
-	color: black
-}
+#footer { color: black }
 
-form {
-    margin: auto
-}
-
-
-/* ===== Smartphone and Tablet ===== */
-
+form { margin: auto }
