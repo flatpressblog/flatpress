@@ -4,8 +4,7 @@ $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Configuración de BBCode',
 	'desc1' => 'Este Plugin permite usar <a href="http://www.phpbb.com/'.
-		'phpBB/faq.php?mode=bbcode">BBCode</a> markup y proporciona '.
-		'integración automática con lightbox (cuando también está habilitado).',
+		'phpBB/faq.php?mode=bbcode">BBCode</a> markup.',
 	
 	'options' => 'Opciones',
 
@@ -57,7 +56,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'Ir a'
+		'go_to' => 'Ir a',
+		// language tag for Facebook Video
+		'langtag' => 'es_ES'
 );
 
 ?>
