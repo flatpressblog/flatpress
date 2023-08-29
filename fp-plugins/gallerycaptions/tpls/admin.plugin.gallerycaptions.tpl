@@ -43,7 +43,9 @@
 			</tr>
 		{/foreach}
 		</table>
-		<input type="submit" name="gallerycaptions-savecaptions" value="{$plang.button_savecaptions}"/>
+		<div class="buttonbar">
+			<input type="submit" name="gallerycaptions-savecaptions" value="{$plang.button_savecaptions}"/>
+		</div>
 	{/if}
 	</p>
 	{/html_form}

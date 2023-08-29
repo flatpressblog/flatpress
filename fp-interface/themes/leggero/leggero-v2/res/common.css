@@ -96,6 +96,13 @@ legend {
 	font-style: oblique
 }
 
+select,
+input[type=submit],
+input[type=reset],
+input[type=button],
+input[type=radio],	
+input[type=checkbox] { cursor: pointer }
+
 input, textarea, select {
 	padding: .2em;
 	border: 1px solid #999;
@@ -194,7 +201,7 @@ h4 { font-size: 1.2em }
 		margin: 0 auto 0 auto;
 		padding: 5px;
 		background-color: rgba(0,0,0,0.75);
-		border-radius: 3px
+		border-radius: 12px
 	}
 
 	/* ===== MAIN ===== */
@@ -425,8 +432,7 @@ h4#addcomment { clear: both }
 	input[type=radio],	
 	input[type=checkbox] {
 		vertical-align: middle;
-		margin-bottom: 0.4em;
-		cursor: pointer
+		margin-bottom: 0.4em
 	}
 
 	.photoswipe figure img { /* PhotoSwipe */

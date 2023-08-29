@@ -43,7 +43,7 @@ body#inline-body { background: white }
 	font-size: 0.85em;
 	margin: 0 auto 0 auto;
 	background-color: rgba(255,255,255,1);
-	border-radius: 3px
+	border-radius: 12px
 }
 
 
@@ -61,7 +61,8 @@ body#inline-body { background: white }
 		#body-container {
 			padding: unset;
 			padding-top: 5px;
-			min-width: 100%
+			min-width: 100%;
+			border-radius: unset
 		}
 	}
 }
@@ -89,9 +90,7 @@ ul#admin-tabmenu {
 	margin: 1em 0 0 0;
 	padding: .5em;
 	background: #000;
-	-moz-border-radius-topleft:3px;
-	-moz-border-radius-topright:3px;
-	border-radius: 3px 3px 0 0
+	border-radius: 5px
 }
 
 ul#admin-tabmenu li {
@@ -124,13 +123,17 @@ ul#admin-tabmenu li a.admin-tab-current { font-weight: bold }
 
 /* ===== submenu ====== */
 #admin-submenu {
-	background: #eee; 
-	padding: .5em;
-	border: 1px solid #ccc;
-	border-radius: 0 0 3px 3px
+	background: #e6e6e6;
+	padding: 0.5em;
+	width: 95%;
+	max-width: fit-content;
+	display: inline-block;
+	border-radius: 0 0 5px 5px;
+	position: relative;
+	left: 5px
 }
 
-#admin-submenu li { display:inline; font-size: 80% }
+#admin-submenu li { display: inline; font-size: 80% }
 
 #admin-submenu li a {
 	padding: 0 1em ;
@@ -190,11 +193,11 @@ input#subject {
 	line-height: 1em
 }
 
-#admin-bbcode-toolbar p img { vertical-align: middle }
+#admin-bbcode-toolbar p img { vertical-align: middle; cursor: pointer }
 
 #admin-bbcode-toolbar select { width: 10em }
 
-#admin-content table { width: 100% }
+#admin-content table { width: 100%; margin-bottom: 2em }
 
 #admin-content td {
 	font-size: 0.8em;
@@ -218,13 +221,13 @@ input#subject {
 	padding: 8px
 }
 
-#admin-content tr:first-child th:last-child { border-top-right-radius: 3px }
+#admin-content tr:first-child th:last-child { border-top-right-radius: 5px }
 
-#admin-content tr:first-child th:first-child { border-top-left-radius: 3px }
+#admin-content tr:first-child th:first-child { border-top-left-radius: 5px }
 
-#admin-content tr:last-child td:last-child { border-bottom-right-radius: 3px }
+#admin-content tr:last-child td:last-child { border-bottom-right-radius: 5px }
 
-#admin-content tr:last-child td:first-child { border-bottom-left-radius: 3px }
+#admin-content tr:last-child td:first-child { border-bottom-left-radius: 5px }
 
 input.maxsize, select.maxsize { width: 99% }
 
@@ -277,7 +280,7 @@ input.maxsize, select.maxsize { width: 99% }
 
 
 /* ===== PREVIEW SETTINGS ===== */
-#post-preview { min-width: 40em }
+#post-preview { min-width: 28em }
 
 #post-preview .entry { padding: 2em; max-height: 20em; overflow: auto  }
 
@@ -304,6 +307,14 @@ input.maxsize, select.maxsize { width: 99% }
 	padding: 1em 4px;
 	margin: 1em
 }
+
+input[type=file]::file-selector-button { cursor: pointer }
+
+table.plugin_gallerycaptions_captionstable tr:first-child td:first-child { border-top-left-radius: 5px }
+
+table.plugin_gallerycaptions_captionstable tr:first-child td:last-child { border-top-right-radius: 5px }
+
+table.plugin_gallerycaptions_captionstable img { border-radius: 3px }
 
 /* (applies only to the inline version */
 #upload { margin-top: .5em }
@@ -344,7 +355,7 @@ input.maxsize, select.maxsize { width: 99% }
 
 
 /* ===== WIDGET PANEL ====== */
-#admin-widgetset-list { width: 30em }
+#admin-widgetset-list { width: 30em; max-width: 55% }
 
 #admin-widgetset-list ul {
 	list-style-type: none;
@@ -362,11 +373,12 @@ li.admin-widgetset {
 
 #available-widgets {
 	font-size: 80%;
-	float:right;
+	float: right;
 	border: 1px solid #ddd;
 	background: #eee;
 	padding: 1em;
 	width: 30%;
+	min-width: 20em;
 	z-index: 1000;
 	position: relative;
 	text-align: left;
