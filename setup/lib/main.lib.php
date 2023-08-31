@@ -110,6 +110,10 @@ function validate() {
 	if (($fppwd) != ($fppwd2)) {
 		$err [] = "Passwords did not match";
 	}
+	if (!(preg_match('/^[a-zA-Z0-9]+_?[a-zA-Z0-9]+$/D', $fpuser) || preg_match('/^[a-zA-Z0-9]+_?[a-zA-Z0-9]+$/D', $fpuser))) {
+		$err [] = $fpuser . " is not a valid username.
+		Username can only contain letters, numbers and 1 underscore.";
+	}
 	if (!(preg_match('!@.*@|\.\.|\,|\;!', $email) || preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $email))) {
 		$err [] = $email . " is not a valid email address";
 	}
