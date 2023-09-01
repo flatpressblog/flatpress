@@ -16,6 +16,25 @@ $lang ['locked'] = array(
 		</ul>'
 );
 
+$lang ['err'] = array(
+	'setuprun1' => 'Die Installation läuft.',
+	
+	'setuprun2' => 'Die Installation läuft bereits: Wenn du der Administrator bist, kannst du ',
+	'setuprun3' => ' löschen, um neu zu starten.',
+	'writeerror' => 'Fehler beim Schreiben',
+
+	'fpuser1' => ' ist kein gültiger Benutzer.
+		Der Benutzername muss alphanumerisch sein und darf keine Leerzeichen enthalten.',
+	'fpuser2' => ' ist kein gültiger Benutzer.
+		Der Benutzername darf nur Buchstaben, Zahlen und 1 Unterstrich enthalten.',
+	'fppwd' => 'Das Passwort muss mindestens 6 Zeichen darf keine Leerzeichen enthalten.',
+	'fppwd2' => 'Die Passwörter stimmen nicht überein.',
+	'email' => ' ist keine gültige E-Mail Adresse.',
+	'www' => ' ist keine gültige URL.',
+	'error' => '<p><big>Fehler!</big> 
+		Bei der Bearbeitung des Formulars sind die folgenden Fehler aufgetreten:</p><ul>'
+);
+
 $lang ['step1'] = array(
 	'head' => 'Willkommen bei FlatPress!',
 	'descr' => 'Danke, dass du dich für <strong>FlatPress</strong> entschieden hast.

@@ -2,7 +2,7 @@
 $err = array();
 
 function print_done_fail($label, $bool) {
-	echo "<li>", $label . ' <strong style="color :' . (($bool) ? 'green;">DONE' : 'red;">FAILED') . '</strong><br />', "</li>\n";
+	echo "<li>", $label . ' <strong style="color :' . (($bool) ? 'green;">DONE' : 'red;">FAILED') . '</strong><br>', "</li>\n";
 }
 
 function config_exist() {
@@ -35,7 +35,7 @@ function setupid() {
 }
 
 function getstep(&$id) {
-	global $err;
+	global $err, $lang;
 
 	$STEPS = array(
 		'locked',
@@ -54,7 +54,7 @@ function getstep(&$id) {
 		$setupid = setupid();
 
 		if (!$setupid)
-			die('Setup is running');
+			die($lang ['err'] ['setuprun1']);
 
 		if (!file_exists(SETUPTEMP_FILE)) {
 			if (empty($_POST))
@@ -64,7 +64,7 @@ function getstep(&$id) {
 		} else {
 			$x = explode(',', io_load_file(SETUPTEMP_FILE));
 			if ($x [0] != $setupid)
-				die('Setup is running: if you are the owner, you can delete ' . SETUPTEMP_FILE . ' to restart');
+				die($lang ['err'] ['setuprun2'] . SETUPTEMP_FILE . $lang ['err'] ['setuprun3']);
 			$i = intval($x [1]);
 		}
 
@@ -83,7 +83,7 @@ function getstep(&$id) {
 				io_write_file(LOCKFILE, "locked");
 			} else {
 				if ($i > 0 && !@io_write_file(SETUPTEMP_FILE, "$setupid,$i")) {
-					$err [] = 'Write error';
+					$err [] = $lang ['err'] ['writeerror'];
 				}
 			}
 		}
@@ -95,30 +95,29 @@ function getstep(&$id) {
 }
 
 function validate() {
+	global $lang;
 	$fpuser = strip_tags($_POST ['fpuser']);
 	$fppwd = $_POST ['fppwd'];
 	$fppwd2 = $_POST ['fppwd2'];
 	$email = strip_tags($_POST ['email']);
 	$www = strip_tags($_POST ['www']);
 	if (!ctype_alnum($fpuser)) {
-		$err [] = $fpuser . " is not a valid username. 
-		Username must be alphanumeric and should not contain spaces.";
+		$err [] = $fpuser . $lang ['err'] ['fpuser1'];
 	}
 	if (!(preg_match('/^[a-zA-Z0-9]+_?[a-zA-Z0-9]+$/D', $fpuser) || preg_match('/^[a-zA-Z0-9]+_?[a-zA-Z0-9]+$/D', $fpuser))) {
-		$err [] = $fpuser . " is not a valid username.
-		Username can only contain letters, numbers and 1 underscore.";
+		$err [] = $fpuser . $lang ['err'] ['fpuser2'];
 	}
 	if (strlen(trim(($fppwd))) < 6) {
-		$err [] = "Password must contain at least 6 non-space characters";
+		$err [] = $lang ['err'] ['fppwd'];
 	}
 	if (($fppwd) != ($fppwd2)) {
-		$err [] = "Passwords did not match";
+		$err [] = $lang ['err'] ['fppwd2'];
 	}
 	if (!(preg_match('!@.*@|\.\.|\,|\;!', $email) || preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $email))) {
-		$err [] = $email . " is not a valid email address";
+		$err [] = $email . $lang ['err'] ['email'];
 	}
 	if (!(preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $www) || preg_match('!^http(s)?://localhost!', $www)))
-		$err [] = $www . " is not a valid URL";
+		$err [] = $www . $lang ['err'] ['www'];
 	if ($www && $www [strlen($www) - 1] != '/') {
 		$www .= '/';
 	}
@@ -149,9 +148,9 @@ function validate() {
 
 function print_err() {
 	global $err;
+	global $lang;
 	if (isset($err)) {
-		echo "<p><big>Error!</big> 
-		The following errors have been encountered processing the form:</p><ul>";
+		echo $lang ['err'] ['www'];
 		foreach ($err as $val) {
 			echo "<li>$val</li>";
 		}
