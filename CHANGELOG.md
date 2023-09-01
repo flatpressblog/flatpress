@@ -32,6 +32,8 @@
   - Fixed searchbox glitch in FlatMaas revisited style ([#97](https://github.com/flatpressblog/flatpress/issues/97))
   - Fixed missing bullets in preview ([#98](https://github.com/flatpressblog/flatpress/issues/98))
   - CSS of the Leggero style had some glitches on mobile devices
+  - CSS of the Leggero-v2 style had some glitches on mobile devices
+  - The Leggero-v2 style CSS has received a more contemporary design in the blog and administration area
   - Invalid HTML output fixed ([#106](https://github.com/flatpressblog/flatpress/issues/106), [#156](https://github.com/flatpressblog/flatpress/issues/156))
   - Removed unneccessary external font resource ([#112](https://github.com/flatpressblog/flatpress/issues/112))
   - "Add comment" link has its own line ([#135](https://github.com/flatpressblog/flatpress/issues/135))
@@ -49,6 +51,8 @@
 - Fixed not-yet-translated phrases in Blog view and Admin Area ([#171](https://github.com/flatpressblog/flatpress/issues/171))
 - Contact form: Admin notification mail is now localized ([#205](https://github.com/flatpressblog/flatpress/issues/205))
 - Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216))
+- Setup: Error messages are now localized ([#262](https://github.com/flatpressblog/flatpress/issues/262))
+- A Facebook video embedded with BBCode is now localized ([#252](https://github.com/flatpressblog/flatpress/issues/252))
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
@@ -60,11 +64,11 @@
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
-- Proper check of uploaded files ([#152](https://github.com/flatpressblog/flatpress/issues/152), [#170](https://github.com/flatpressblog/flatpress/issues/170))
+- Proper check of uploaded files ([#152](https://github.com/flatpressblog/flatpress/issues/152), [#170](https://github.com/flatpressblog/flatpress/issues/170), [#217](https://github.com/flatpressblog/flatpress/issues/217))
 - Possible XSS prevented: Admin Area URL ([#153](https://github.com/flatpressblog/flatpress/issues/153))
 - Possible XSS prevented: Upload of misc. XML file types ([#172](https://github.com/flatpressblog/flatpress/issues/172), [#178](https://github.com/flatpressblog/flatpress/issues/178), [#188](https://github.com/flatpressblog/flatpress/issues/188))
 - Directory browsing prevented ([#174](https://github.com/flatpressblog/flatpress/issues/174))
-- Possible XSS in setup prevented ([#176](https://github.com/flatpressblog/flatpress/issues/176))
+- Possible XSS in setup prevented ([#176](https://github.com/flatpressblog/flatpress/issues/176), [#220](https://github.com/flatpressblog/flatpress/issues/220))
 - Possible XSS in Media Manager plugin prevented ([#177](https://github.com/flatpressblog/flatpress/issues/177))
 - Possible path traversal in Media Manager plugin prevented ([#179](https://github.com/flatpressblog/flatpress/issues/179))
 - Possible XSSs in Admin Area prevented ([#180](https://github.com/flatpressblog/flatpress/issues/180), [#183](https://github.com/flatpressblog/flatpress/issues/183), [#187](https://github.com/flatpressblog/flatpress/issues/187))
