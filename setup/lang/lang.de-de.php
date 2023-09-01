@@ -27,7 +27,7 @@ $lang ['err'] = array(
 		Der Benutzername muss alphanumerisch sein und darf keine Leerzeichen enthalten.',
 	'fpuser2' => ' ist kein gültiger Benutzer.
 		Der Benutzername darf nur Buchstaben, Zahlen und 1 Unterstrich enthalten.',
-	'fppwd' => 'Das Passwort muss mindestens 6 Zeichen darf keine Leerzeichen enthalten.',
+	'fppwd' => 'Das Passwort muss mindestens 6 Zeichen und darf keine Leerzeichen enthalten.',
 	'fppwd2' => 'Die Passwörter stimmen nicht überein.',
 	'email' => ' ist keine gültige E-Mail Adresse.',
 	'www' => ' ist keine gültige URL.',
