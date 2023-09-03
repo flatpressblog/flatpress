@@ -30,7 +30,9 @@ Module: admin.css
 h1,
 h2 { margin: auto }
 
-h2 { border-bottom: 1px solid #ddd }
+h2 { border-bottom: 1px solid #ddd; margin: 0.5em 0 }
+
+h3 { margin: 0.5em 0 0 0 }
 
 .head-link { font-size: 0.83em }
 
@@ -255,8 +257,8 @@ input.maxsize, select.maxsize { width: 99% }
 .admin-plugin-default td { padding: 1em .6em }
 
 #admin-drafts {
-	border-top: 1px solid #bbb;
-	border-bottom: 1px solid #bbb;
+	border-radius: 5px;
+	margin-top: 0.5em;
 	padding:  .4em;
 	color: #555;
 	background-color: #ddd;
@@ -490,7 +492,7 @@ li.widget-class {
 
 /* ===== CONFIG PANEL ===== */
 .option-set,
-.option-list { margin-bottom: 3em; margin-top: 2em }
+.option-list { margin-bottom: 3em }
 
 .option-set dd {
     margin-left: 38%;
@@ -573,7 +575,7 @@ a.link-general:hover, .main-cell a:hover {
 .draft { background-color: #333 }
 
 /* (already defined in common, here we put just some tuning settings) */
-#admin-content ul.msgs { margin:0 }
+#admin-content ul.msgs { margin: 0.5em 0 0.5em 0 }
 
 #footer { color: black }
 
