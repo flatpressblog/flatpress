@@ -30,7 +30,7 @@
 		'langchoice'		=> '言語の選択',
 
 		'intsetts'		=> 'ローカルの設定',
-		'utctime'		=> '<acronym title="Universal Coordinated Time">UTC</acronym>の時刻：',
+		'utctime'		=> '<abbr title="Universal Coordinated Time">UTC</abbr>の時刻：',
 		'timeoffset'		=> '投稿時に加算する時間',
 		'hours'			=> '時間',
 		'timeformat'		=> '時刻表示のデフォルト形式',

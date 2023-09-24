@@ -14,8 +14,8 @@ header('X-Content-Security-Policy: default-src https: data:; frame-src https: da
 header('X-WebKit-CSP: default-src https: data:; frame-src https: data:; base-uri \'self\'; font-src https: data:; script-src https: \'unsafe-inline\' \'unsafe-eval\' blob:; style-src https: \'unsafe-inline\'; img-src https: data: blob:; frame-ancestors \'self\'; manifest-src \'self\'; worker-src \'self\' blob:; connect-src https: blob:; media-src \'self\' blob:; child-src \'self\' blob:; form-action \'self\'; object-src \'self\'');
 
 // End of Content Security Policy rules
-header('Feature-Policy: interest-cohort \'none\'; autoplay \'self\'; camera \'self\'; fullscreen \'self\'; geolocation \'self\'; microphone \'self\'; payment \'none\''); // Goodbye Feature Policy! // thx Nextcloud-Maps-App, github.com/nextcloud
-header('Permissions-Policy: interest-cohort=(), autoplay=(self), camera=(self), fullscreen=(self), geolocation=(self), microphone=(self), payment=()'); // Hello Permissions Policy! // thx Nextcloud-Maps-App, github.com/nextcloud
+header('Feature-Policy: interest-cohort \'none\'; autoplay \'self\'; camera \'self\'; fullscreen *; geolocation \'self\'; microphone \'self\'; payment \'none\''); // Goodbye Feature Policy! // thx Nextcloud-Maps-App, github.com/nextcloud
+header('Permissions-Policy: interest-cohort=(), autoplay=(self), camera=(self), fullscreen=*, geolocation=(self), microphone=(self), payment=()'); // Hello Permissions Policy! // thx Nextcloud-Maps-App, github.com/nextcloud
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('Strict-Transport-Security: max-age=15552000; includeSubDomains');
 header('X-Permitted-Cross-Domain-Policies: none');

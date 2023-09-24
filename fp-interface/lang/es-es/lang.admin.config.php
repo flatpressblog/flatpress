@@ -34,7 +34,7 @@ subdirectorios. <br />
 		'langchoice'		=> 'Idioma',
 
 		'intsetts'		=> 'Configuración internacional',
-		'utctime'		=> '<acronym title="Hora Universal Coordinado">UTC</acronym> la hora es',
+		'utctime'		=> '<abbr title="Hora Universal Coordinado">UTC</abbr> la hora es',
 		'timeoffset'		=> 'La diferencia de hora es',
 		'hours'			=> 'hours',
 		'timeformat'		=> 'Formato inicial para la hora',
