@@ -28,7 +28,30 @@
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
 
 ## Themes
-- Leggero
+- Reworked "Leggero" theme, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
+  - Adjusted the alignment of the calendar widget and the search widget
+  - The theme now adapts better at screen widths between 720px and 768px
+  - Media queries were created for individual device classes (smartphone, netbook, laptop and PC) in order to achieve a better display, especially for mobile devices
+  - The overall appearance is now not so angular/edgy
+  - A single PhotoSwipe image or a whole gallery is now centered in the responsive design  ([#150](https://github.com/flatpressblog/flatpress/issues/150))
+  - BBcode videos are no longer chopped off in responsive design, but adjusted to the width and center aligned
+  - BBcode-Facebook-Video now uses the latest video player API and the lazy loading mechanism of the browser
+  - A left or right aligned BBcode video will now be centered if the screen < 960 px
+  - A BBcode embedded Facebook video now has localized languages with language tag ([#252](https://github.com/flatpressblog/flatpress/issues/252)) - see also https://developers.facebook.com/docs/javascript/internationalization
+  - BBcode: Removed reference to an active lightbox plugin, as PhotoSwipe can be used as an alternative
+  - Fixed an error in the HTML code of PhotoSwipe-Plugin ([#253](https://github.com/flatpressblog/flatpress/issues/253))
+  - [PhotoSwipe 4.1.3 (2019)](https://github.com/dimsemenov/PhotoSwipe/tree/v4.1.3) included ([#255](https://github.com/flatpressblog/flatpress/issues/255))
+  - In the admin area, the configuration panel has been revised
+  - fixed vertical alignment of BBCode toolbar in write panel
+  - The BBcode toolbar adapted for a better display at the screen width of 640px
+  - The menu and submenu in the administration area now also has a "slightly" more modern design
+  - Template and CSS from Uploader > Gallery: image texts; button and table adapted to Leggero V2 style
+  - Lucida Console [code] ... [/code] is now correct as a font in the CSS file
+  - Removes obsolete acronym element in the language files and replaces it with the abbr element
+  - Fixes a problem in the admin area when rendering font-sizes in Safari, Chrome and Firefox (iPhone/iPad) ([#256](https://github.com/flatpressblog/flatpress/issues/256))
+  - Added "background-attachment: fix" -workaround for mobile devices.
+  - Admin area now has Leggero-v2 style background instead of white background.
+- Further fixes in "Leggero" theme
   - Fixed searchbox glitch in FlatMaas revisited style ([#97](https://github.com/flatpressblog/flatpress/issues/97))
   - Fixed missing bullets in preview ([#98](https://github.com/flatpressblog/flatpress/issues/98))
   - CSS of the Leggero style had some glitches on mobile devices
