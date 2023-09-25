@@ -11,14 +11,17 @@
 
 ## Plugins
 ### Additions
-- PhotoSwipe plugin added: Displays images and galleries with [PhotoSwipe](https://photoswipe.com/) ([#109](https://github.com/flatpressblog/flatpress/issues/109))
+- PhotoSwipe plugin added: Displays images and galleries with [PhotoSwipe](https://photoswipe.com/) ([#109](https://github.com/flatpressblog/flatpress/issues/109), [#253](https://github.com/flatpressblog/flatpress/issues/253), [#255](https://github.com/flatpressblog/flatpress/issues/255))
 - Gallery captions plugin added: Manages image captions for gallery images ([#108](https://github.com/flatpressblog/flatpress/issues/108))
 - SEO Meta Tag Info plugin added: Manages SEO meta tags ([#145](https://github.com/flatpressblog/flatpress/issues/145))
 - FlatPress Protect plugin added: Adds HTTP headers for hardening your blog ([#146](https://github.com/flatpressblog/flatpress/issues/146))
+
 ### Changes
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
 - Media Manager plugin shows 50 items per page, not 10
 - BBCode plugin: Added "h4" icon to editor toolbar ([#201](https://github.com/flatpressblog/flatpress/issues/201))
+- BBCode plugin: Facebook-Video now uses the latest video player API and the lazy loading mechanism of the browser; also now has localized languages with language tag ([#252](https://github.com/flatpressblog/flatpress/issues/252)) - see also https://developers.facebook.com/docs/javascript/internationalization
+
 ### Bugfixes
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
 - Comment Center plugin: Fixed errors on the config page ([#90](https://github.com/flatpressblog/flatpress/issues/90))
@@ -35,12 +38,7 @@
   - The overall appearance is now not so angular/edgy
   - A single PhotoSwipe image or a whole gallery is now centered in the responsive design  ([#150](https://github.com/flatpressblog/flatpress/issues/150))
   - BBcode videos are no longer chopped off in responsive design, but adjusted to the width and center aligned
-  - BBcode-Facebook-Video now uses the latest video player API and the lazy loading mechanism of the browser
   - A left or right aligned BBcode video will now be centered if the screen < 960 px
-  - A BBcode embedded Facebook video now has localized languages with language tag ([#252](https://github.com/flatpressblog/flatpress/issues/252)) - see also https://developers.facebook.com/docs/javascript/internationalization
-  - BBcode: Removed reference to an active lightbox plugin, as PhotoSwipe can be used as an alternative
-  - Fixed an error in the HTML code of PhotoSwipe-Plugin ([#253](https://github.com/flatpressblog/flatpress/issues/253))
-  - [PhotoSwipe 4.1.3 (2019)](https://github.com/dimsemenov/PhotoSwipe/tree/v4.1.3) included ([#255](https://github.com/flatpressblog/flatpress/issues/255))
   - In the admin area, the configuration panel has been revised
   - fixed vertical alignment of BBCode toolbar in write panel
   - The BBcode toolbar adapted for a better display at the screen width of 640px
