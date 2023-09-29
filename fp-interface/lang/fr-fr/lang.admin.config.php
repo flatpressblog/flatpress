@@ -32,7 +32,7 @@
 		'langchoice'		=> 'Langage',
 
 		'intsetts'		=> 'R&eacute;glages Internationaux',
-		'utctime'		=> '<acronym title="Universal Coordinated Time">L\'heure (UTC) </acronym>actuelle est',
+		'utctime'		=> '<abbr title="Universal Coordinated Time">L\'heure (UTC) </abbr>actuelle est',
 		'timeoffset'		=> 'Fuseau horaire (GMT+)',
 		'hours'			=> 'heures',
 		'timeformat'		=> 'Format par d&eacute;faut pour l\'heure',

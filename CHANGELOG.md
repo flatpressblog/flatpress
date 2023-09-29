@@ -11,14 +11,17 @@
 
 ## Plugins
 ### Additions
-- PhotoSwipe plugin added: Displays images and galleries with [PhotoSwipe](https://photoswipe.com/) ([#109](https://github.com/flatpressblog/flatpress/issues/109))
+- PhotoSwipe plugin added: Displays images and galleries with [PhotoSwipe](https://photoswipe.com/) ([#109](https://github.com/flatpressblog/flatpress/issues/109), [#253](https://github.com/flatpressblog/flatpress/issues/253), [#255](https://github.com/flatpressblog/flatpress/issues/255))
 - Gallery captions plugin added: Manages image captions for gallery images ([#108](https://github.com/flatpressblog/flatpress/issues/108))
 - SEO Meta Tag Info plugin added: Manages SEO meta tags ([#145](https://github.com/flatpressblog/flatpress/issues/145))
 - FlatPress Protect plugin added: Adds HTTP headers for hardening your blog ([#146](https://github.com/flatpressblog/flatpress/issues/146))
+
 ### Changes
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
 - Media Manager plugin shows 50 items per page, not 10
 - BBCode plugin: Added "h4" icon to editor toolbar ([#201](https://github.com/flatpressblog/flatpress/issues/201))
+- BBCode plugin: Facebook-Video now uses the latest video player API and the lazy loading mechanism of the browser; also now has localized languages with language tag ([#252](https://github.com/flatpressblog/flatpress/issues/252)) - see also https://developers.facebook.com/docs/javascript/internationalization
+
 ### Bugfixes
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
 - Comment Center plugin: Fixed errors on the config page ([#90](https://github.com/flatpressblog/flatpress/issues/90))
@@ -28,7 +31,25 @@
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
 
 ## Themes
-- Leggero
+- Reworked "Leggero" theme, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
+  - Adjusted the alignment of the calendar widget and the search widget
+  - The theme now adapts better at screen widths between 720px and 768px
+  - Media queries were created for individual device classes (smartphone, netbook, laptop and PC) in order to achieve a better display, especially for mobile devices
+  - The overall appearance is now not so angular/edgy
+  - A single PhotoSwipe image or a whole gallery is now centered in the responsive design  ([#150](https://github.com/flatpressblog/flatpress/issues/150))
+  - BBcode videos are no longer chopped off in responsive design, but adjusted to the width and center aligned
+  - A left or right aligned BBcode video will now be centered if the screen < 960 px
+  - In the admin area, the configuration panel has been revised
+  - fixed vertical alignment of BBCode toolbar in write panel
+  - The BBcode toolbar adapted for a better display at the screen width of 640px
+  - The menu and submenu in the administration area now also has a "slightly" more modern design
+  - Template and CSS from Uploader > Gallery: image texts; button and table adapted to Leggero V2 style
+  - Lucida Console [code] ... [/code] is now correct as a font in the CSS file
+  - Removes obsolete acronym element in the language files and replaces it with the abbr element
+  - Fixes a problem in the admin area when rendering font-sizes in Safari, Chrome and Firefox (iPhone/iPad) ([#256](https://github.com/flatpressblog/flatpress/issues/256))
+  - Added "background-attachment: fix" -workaround for mobile devices.
+  - Admin area now has Leggero-v2 style background instead of white background.
+- Further fixes in "Leggero" theme
   - Fixed searchbox glitch in FlatMaas revisited style ([#97](https://github.com/flatpressblog/flatpress/issues/97))
   - Fixed missing bullets in preview ([#98](https://github.com/flatpressblog/flatpress/issues/98))
   - CSS of the Leggero style had some glitches on mobile devices

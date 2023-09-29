@@ -5,7 +5,7 @@ Leggero CSS Styles
 
 Name: Leggero v2
 Author: NoWhereMan, drudo & Marc Thibeault
-Version: 0.1
+Version: 1.0
 Module: common.css
 */
 
@@ -13,19 +13,31 @@ Module: common.css
 html {
 	font-size: 100%;
 	margin: 0;
-	padding: 0
+	padding: 0;
+	font-family: sans-serif;
+	text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2)
+}
+
+html::before { /* background-attachment: fix workaround for mobile devices */
+	content: ' ';
+	display: block;
+	background-image: url("../imgs/back.jpg");
+	background-position: center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	height: 100vh; width: 100vw;
+	top: 0; bottom: 0; left: 0; right: 0;
+	position: fixed;
+	z-index: -10
 }
 
 body {
 	font-size: 100%;
 	color: black;
 	padding: 0;
-	text-align:center;
-	background: url('../imgs/back.jpg') no-repeat fixed top center;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-  	-o-background-size: cover;
-  	background-size: cover;
+	text-align: center
 }
 
 hr { display: none }
@@ -45,23 +57,25 @@ blockquote {
 	border-right: 1px solid #888;
 	border-top: 1px solid #888;
 	border-bottom: 1px solid #888;
+	border-radius: 3px
 }
 
-pre, code {
-	font-family: Lucida Console, Monaco, monospace !IMPORTANT;
-	font-size: 90%;
-}
+blockquote p { margin: 0.5em 0 0.5em 0 !IMPORTANT }
+
+pre, code { font-family: "Lucida Console", Monaco, monospace !IMPORTANT; font-size: 90% }
 
 pre {
-	border: 1px dashed #555;
+	border-left: 5px solid #b83c32;
+	border-right: 1px solid #b83c32;
+	border-top: 1px solid #b83c32;
+	border-bottom: 1px solid #b83c32;
+	border-radius: 3px;
 	background-color: #efefef;
-
 	overflow: auto;
-	width: 90%;
+	width: auto;
 	margin: 1em 1em;
 	padding: 5px 10px;
-	
-	height: auto !important; 
+	height: auto !important
 }
 
 ul, li, ol { margin: 0; padding: 0 }
@@ -72,7 +86,8 @@ form { margin: 1em 0 }
 fieldset {
 	margin: 0 0 1em 0;
 	padding: .5em;
-	border: #ddd solid 1px
+	border: #ddd solid 1px;
+	border-radius: 3px
 }
 
 legend {
@@ -81,11 +96,19 @@ legend {
 	font-style: oblique
 }
 
+select,
+input[type=submit],
+input[type=reset],
+input[type=button],
+input[type=radio],	
+input[type=checkbox] { cursor: pointer }
+
 input, textarea, select {
 	padding: .2em;
 	border: 1px solid #999;
 	color: #222;
 	background-color: #eee;
+	border-radius: 3px
 }
 
 input:hover, input:focus, textarea:hover, textarea:focus {
@@ -94,52 +117,50 @@ input:hover, input:focus, textarea:hover, textarea:focus {
 }
 
 textarea {
-	font-size: 100%;
 	width: 99%;
 	margin-top: .1em;
-	margin-bottom: 1em
+	margin-bottom: 1em;
+	font-family: sans-serif
 }
 
-
+input#name, input#email, input#url { /* comment and contact textfield */
+    width: 200px
+}
 
 /* ===== LINKS GENERAL ===== */
 a:link, a:visited {
 	color: #B83C32;
 	font-weight: bold;
-	text-decoration: none;
+	text-decoration: none
 }
 
-a:hover {
-	text-decoration: underline;
-}
+a:hover { text-decoration: underline }
 
 /* ===== HEADERS TAGS ===== */
 h1 {
 	/* Title of the blog */
 	font-size: 2.3em;
 	letter-spacing: 2px;
-	margin: 1em 0 0.5em 0;
+	margin: 1em 0 0.5em 0
 }
 
 h2 {
 	/* Titles of the entry */
 	font-style: normal;
 	font-size: 1.6em;
-	margin: 0.83em 0;
+	margin: 0.83em 0
 }
 
 h2.entry-title,
-h2.title {
-	margin: 0 !IMPORTANT;
-}
+h2.title { margin: 0 !IMPORTANT }
 
 h3 {
 	font-style: normal;
 	font-size: 1.4em;
-	margin: 0;
+	margin: 0
 }
 
-h4 { font-size: 1.2em; }
+h4 { font-size: 1.2em }
 
 /* ===== HEAD ===== */
 #head {
@@ -147,7 +168,7 @@ h4 { font-size: 1.2em; }
 	margin: 5px;
 	background: rgba(184,60,50,0.7);
 	border: black 1px solid;
-	border-radius: 10px ;
+	border-radius: 10px
 }
 
 #head a { color: white; text-decoration: none }
@@ -164,7 +185,7 @@ h4 { font-size: 1.2em; }
 	position: relative;
 	height: 1%;
 	margin: 0px;
-	padding: 0px;
+	padding: 0px
 }
 
 /* ===== NORMAL DESIGN ===== */
@@ -175,31 +196,109 @@ h4 { font-size: 1.2em; }
 	/* ===== BODY CONTAINER ===== */
 	#body-container {
 		text-align: left;
-		max-width: 1000px;
+		max-width: 690px;
 		width: 100%;
 		margin: 0 auto 0 auto;
 		padding: 5px;
 		background-color: rgba(0,0,0,0.75);
-		border-radius: 3px;
+		border-radius: 12px
 	}
 
 	/* ===== MAIN ===== */
-	#main h4 { margin: 2em 0 0 0}
+	#main h4 { margin: 2em 0 0 0 }
 
 	#main {
 		float:left;
 		position: relative;
-		width: 65%;
+		width: 365px;
 		font-size: 100%;
 		padding: 25px;
 		margin: 20px;
 		background-color: rgba(255,255,255,0.9);
-		border-radius: 3px;
+		border-radius: 3px
+	}
+	
+	div.floatleft { /* PhotoSwipe; normal */
+		margin: 0.5em 1em 1em 0.5em
+	}
+
+	div.floatright {
+		margin: 0.5em 0.5em 1em 1em
+	}
+	
+	.bbcode_video.right, .bbcode_video.left { float: unset !IMPORTANT }	
+	
+	.responsive_bbcode_video { /* BBcode; normal and center BBcode video if screen < 960px */
+		display: block;
+		text-align: center
+	}
+
+	.bbcode_video,
+	.fb_iframe_widget_fluid_desktop iframe {
+		max-width: 320px !IMPORTANT;
+		width: 100%;
+		height: 180px !IMPORTANT
 	}
 }
 
+@media (min-width: 768px) { /* Smartphone landscape and Tablet */
+
+	#body-container { max-width: 738px }
+		
+	#main { width: 413px }
+}
+
+@media (min-width: 820px) { /* Tablet */
+
+	#body-container { max-width: 790px }
+		
+	#main { width: 465px }
+}
+
+@media (min-width: 960px) { /* Tablet landscape and Netbook*/
+
+	#body-container { max-width: 930px }
+		
+	#main { width: 605px }
+	
+	.responsive_bbcode_video { text-align: unset }
+	
+	.bbcode_video.right { float: right !IMPORTANT }
+	
+	.bbcode_video.left { float: left !IMPORTANT }
+}
+
+@media (min-width: 1024px) { /* Laptop and small Desktop-PC */
+
+	#body-container { max-width: 994px }
+		
+	#main { width: 669px }
+
+	.bbcode_video,
+	.fb_iframe_widget_fluid_desktop iframe {
+		max-width: 480px !IMPORTANT;
+		width: 100%;
+		height: 270px !IMPORTANT
+	}
+}
+
+@media (min-width: 1440px) { /* Desktop-PC and TV*/
+
+	#body-container { max-width: 1250px }
+		
+	#main { width: 925px }
+	
+	.bbcode_video,
+	.fb_iframe_widget_fluid_desktop iframe {
+	max-width: 560px !IMPORTANT;
+	width: 100%;
+	height: 315px !IMPORTANT
+	}
+}
+
+
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 719px) {
+@media (max-width: 719px) { /* Smartphone */
 
 	body { margin: 0 0 0 0 }
 
@@ -209,11 +308,13 @@ h4 { font-size: 1.2em; }
 		width: 100%;
 		margin: 0 auto 0 auto;
 		padding-top: 5px;
-		background-color: rgba(0,0,0,0.75);
+		background-color: rgba(0,0,0,0.75)
 	}
 
+	#outer-container { margin: 5px }
+	
 	/* ===== MAIN ===== */
-	#main h4 { margin: 2em 0 0 0}
+	#main h4 { margin: 2em 0 0 0 }
 
 	#main {
 		width: 90%;
@@ -221,29 +322,51 @@ h4 { font-size: 1.2em; }
 		padding: 15px;
 		margin: 10px auto;
 		background-color: rgba(255,255,255,0.9);
-		border-radius: 3px;
+		border-radius: 3px
 	}
+	
+	div.floatright, div.floatleft, div.photoswipe { /* PhotoSwipe; responsive */
+		float: unset;
+		margin-left: auto !IMPORTANT;
+		margin-right: auto !IMPORTANT
+	}
+
+	div.img-gallery { text-align: center }
+
+	.img-gallery div.photoswipe figure { margin: 0.5em 0 0 0 !IMPORTANT }
+
+	.responsive_bbcode_video { /* BBcode; responsive */
+		position: relative;
+		padding-bottom: 56.25%;  /* 16:9 */
+		height: 0;
+		overflow: hidden
+	}
+
+	.bbcode_video {
+		float: unset !IMPORTANT;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%
+	}
+
+	.bbcode_video.nofloat { text-align: center }
 }
 
-#main p { line-height: 1.4em; margin-top: 1em; }
+#main p { line-height: 1.4em; margin-top: 1em }
 
 #main img { margin: .5em }
 
 /* === List === */
-#main ul {
-	list-style-type: disc;
-	padding: 0 0 0 1.6em
-}
+#main ul { list-style-type: disc; padding: 0 0 0 1.6em }
 
-#main ol {
-	list-style-position: inside;
-	padding: 0 1.6em 0 1.6em
-}
+#main ol { list-style-position: inside; padding: 0 1.6em 0 1.6em }
 
-h4#addcomment {clear:both;}
+h4#addcomment { clear: both }
 
 	#commentform fieldset p { margin: 0 0 .5em 0 }
-	
+
 	#comments li {
 		margin: 0 0 1.5em 0;
 		padding: 5px;
@@ -251,68 +374,93 @@ h4#addcomment {clear:both;}
 		border-bottom: 1px solid #ddd;
 		background: #efefef
 	}
-	
+
 	/* === Class of main block === */
-	h6.date {
-		font-size: 0.8em;
-		color: #444;
-	}
-	
+	h6.date { font-size: 0.8em; color: #444 }
+
 	.date { /* date under titles of the entry */
 		font-size: 80%;
 		font-style: oblique;
 		color: black;
 		margin: .2em 0 .8em 0
 	}
-	
+
 	/* .entry class */
 	.entry {
 		margin: 0 0 1.5em 0;
 		padding: 0 0 1.5em 0;
-		overflow: auto; /* floating images fix IE<7*/
-		border-bottom: solid 1px #999;
+		overflow: auto;
+		border-bottom: solid 1px #999
 	}
-	
+
 	#main>.entry {
-		overflow: hidden; /* rest of the world :) */
+		overflow: hidden /* rest of the world :) */
 	}
 	/* end of .entry */
-	
+
 	#main ul.entry-footer { /*  entry footer */
 		clear: both;
 		font-size: 80%;
 		color: black;
 		margin: 2em 0 .5em 0;
-		text-align: right;
-	}
-	
-	.entry-footer li { 
-		display: block;
-	}
-	
-	
-	.admincontrols { /* [edit] and [delete] */
-		font-size: 80%;
-		text-align: right;
-	}
-	
-	.buttonbar { text-align: center }
-	
-	.buttonbar input {
-		text-align: center;
-		margin: .1em .5em;
-		padding: 0 1em
-	}
-	
-	.navigation { /* next entries & previous entries link */
-		font-size: 90%;
-		/* margin-bottom: 3em; */
-		display: flow-root;
+		text-align: right
 	}
 
-	form#search ul { 
-		list-style-type: none;
+	.entry-footer li { display: block }
+
+	.admincontrols { /* [edit] and [delete] */
+		font-size: 80%;
+		text-align: right
 	}
+
+	.buttonbar { text-align: center }
+
+	.buttonbar input[type=submit], /* Send-Message-Button */
+	.buttonbar input[type=reset], /* Reset-Message-Button */
+	.buttonbar input[type=button] {
+		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+		margin: 0.1em 0.5em;
+		padding: 0.2em 1em
+	}
+
+	.buttonbar input[type=submit]:hover,
+	.buttonbar input[type=reset]:hover,
+	.buttonbar input[type=button]:hover {
+		box-shadow: none
+	}
+
+	input[type=radio],	
+	input[type=checkbox] {
+		vertical-align: middle;
+		margin-bottom: 0.4em
+	}
+
+	.photoswipe figure img { /* PhotoSwipe */
+		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+		border-radius: 3px
+	}
+
+	.photoswipe figure img:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
+
+	.photoswipe figure figcaption { font-size: 12px !IMPORTANT }
+
+	.bbcode_video { /* BBCode [video] */
+		background-color: rgba(0,0,0,0.3);
+		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+		border-radius: 3px;
+		margin: 0px 3px 0px 0px
+	}
+	
+	.bbcode_video:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
+
+	.fb_iframe_widget_fluid_desktop iframe { border-radius: 3px }
+
+	.navigation { /* next entries & previous entries link */
+		font-size: 90%;
+		display: flow-root
+	}
+
+	form#search ul { list-style-type: none }
 
 /* ===== FOOTER ===== */
 #footer {
@@ -320,10 +468,8 @@ h4#addcomment {clear:both;}
 	text-align: center;
 	font-size: 90%;
 	color: white;
-	padding: 5px;
+	padding: 5px
 }
 
-* {
-   font-family: sans-serif;
-   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
-  }
+* { font-family: sans-serif; text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2) }
+
