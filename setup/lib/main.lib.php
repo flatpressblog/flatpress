@@ -104,7 +104,7 @@ function validate() {
 	if (!ctype_alnum($fpuser)) {
 		$err [] = $fpuser . $lang ['err'] ['fpuser1'];
 	}
-	if (!(preg_match('/^[a-zA-Z0-9]+_?[a-zA-Z0-9]+$/D', $fpuser) || preg_match('/^[a-zA-Z0-9]+_?[a-zA-Z0-9]+$/D', $fpuser))) {
+	if (!(preg_match('/^[a-zA-Z0-9]+_?[a-zA-Z0-9]+$/D', $fpuser)) {
 		$err [] = $fpuser . $lang ['err'] ['fpuser2'];
 	}
 	if (strlen(trim(($fppwd))) < 6) {
