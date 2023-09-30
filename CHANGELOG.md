@@ -31,7 +31,7 @@
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
 
 ## Themes
-- Reworked "Leggero" theme, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
+- Reworked "Leggero v2" style, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
   - Adjusted the alignment of the calendar widget and the search widget
   - The theme now adapts better at screen widths between 720px and 768px
   - Media queries were created for individual device classes (smartphone, netbook, laptop and PC) in order to achieve a better display, especially for mobile devices
