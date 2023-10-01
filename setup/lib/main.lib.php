@@ -2,7 +2,7 @@
 $err = array();
 
 function print_done_fail($label, $bool) {
-	echo "<li>", $label . ' <strong style="color :' . (($bool) ? 'green;">DONE' : 'red;">FAILED') . '</strong><br>', "</li>\n";
+	echo "<li>", $label . ' <strong style="color: ' . (($bool) ? 'green;">DONE' : 'red;">FAILED') . '</strong><br>', "</li>\n";
 }
 
 function config_exist() {
