@@ -101,10 +101,7 @@ function validate() {
 	$fppwd2 = $_POST ['fppwd2'];
 	$email = strip_tags($_POST ['email']);
 	$www = strip_tags($_POST ['www']);
-	if (!ctype_alnum($fpuser)) {
-		$err [] = $fpuser . $lang ['err'] ['fpuser1'];
-	}
-	if (!(preg_match('/^[a-zA-Z0-9]+_?[a-zA-Z0-9]+$/D', $fpuser)) {
+	if (!(preg_match('/^[\w]+$/u', $fpuser))) {
 		$err [] = $fpuser . $lang ['err'] ['fpuser2'];
 	}
 	if (strlen(trim(($fppwd))) < 6) {
