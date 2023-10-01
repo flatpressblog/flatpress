@@ -2,7 +2,7 @@
 /**
  * Get the language code from the browser
  *
- * @param array Allowed Languages "array('cs-cz','de-de','en-us','it-it','ja-jp','nl-nl','pt-br')"
+ * @param array Allowed Languages "array('cs-cz','de-de','en-us','it-it','ja-jp','nl-nl','pt-br','sl-si')"
  * @param string Default language
  * @param string Language string from HTTP-Header
  * @param bool Strict-Mode
@@ -59,6 +59,6 @@ function getBrowserLanguage($arrAllowedLanguages, $strDefaultLanguage, $strLangV
 }
 
 // accept the following languages, otherwise fall back to "en-us"
-$browserLang = getBrowserLanguage(array('cs-cz', 'de-de', 'en-us', 'it-it', 'ja-jp', 'nl-nl', 'pt-br'), 'en-us');
+$browserLang = getBrowserLanguage(array('cs-cz', 'de-de', 'en-us', 'it-it', 'ja-jp', 'nl-nl', 'pt-br', 'sl-si'), 'en-us');
 
 ?>

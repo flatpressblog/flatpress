@@ -26,6 +26,7 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/
 - Italian: Giacomo Margarito
 - Japanese: [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
 - Spanish: karelv
+- Slovenian: [Sergio](https://github.com/developersorli)
 
 ## Libraries
 FlatPress utilizes the following free frameworks and libraries. Thanks to their authors!

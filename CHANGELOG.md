@@ -64,6 +64,7 @@
   - Fixed several layout/CSS glitches ([#140](https://github.com/flatpressblog/flatpress/issues/140), [#144](https://github.com/flatpressblog/flatpress/issues/144), [#201](https://github.com/flatpressblog/flatpress/issues/201), [#247](https://github.com/flatpressblog/flatpress/issues/247), [#249](https://github.com/flatpressblog/flatpress/issues/249))
 
 ## Internationalization
+- Added translation: Slovenian
 - Reworked translations: Spanish, Portuguese, Dutch, and Italian
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
