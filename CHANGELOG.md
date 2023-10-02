@@ -70,7 +70,7 @@
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
 - Fixed not-yet-translated phrases in Blog view and Admin Area ([#171](https://github.com/flatpressblog/flatpress/issues/171))
 - Contact form: Admin notification mail is now localized ([#205](https://github.com/flatpressblog/flatpress/issues/205))
-- Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216))
+- Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216), [#262](https://github.com/flatpressblog/flatpress/issues/262))
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
@@ -92,6 +92,7 @@
 - Possible XSSs in Admin Area prevented ([#180](https://github.com/flatpressblog/flatpress/issues/180), [#183](https://github.com/flatpressblog/flatpress/issues/183), [#187](https://github.com/flatpressblog/flatpress/issues/187))
 - Possible XSS in comments prevented ([#186](https://github.com/flatpressblog/flatpress/issues/186))
 - Possible CSRFs in Admin Area prevented ([#64](https://github.com/flatpressblog/flatpress/issues/64))
+- Possible XSS in FlatPress Installer prevented ([#220](https://github.com/flatpressblog/flatpress/issues/220))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes

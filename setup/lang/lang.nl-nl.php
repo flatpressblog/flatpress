@@ -17,6 +17,25 @@ $lang ['locked'] = array(
 		</ul>'
 );
 
+$lang ['err'] = array(
+	'setuprun1' => 'De installatie wordt uitgevoerd.',
+	
+	'setuprun2' => 'De installatie loopt al: Als je de beheerder bent, kun je ',
+	'setuprun3' => ' verwijderen om opnieuw te starten.',
+	'writeerror' => 'Fout in schrijven',
+
+	'fpuser1' => ' is geen geldige gebruiker.
+		De gebruikersnaam moet alfanumeriek zijn en mag geen spaties bevatten.',
+	'fpuser2' => ' is geen geldige gebruiker.
+		De gebruikersnaam mag alleen letters, cijfers en 1 underscore bevatten.',
+	'fppwd' => 'Het wachtwoord moet minstens 6 tekens en geen spaties bevatten.',
+	'fppwd2' => 'De wachtwoorden komen niet overeen.',
+	'email' => ' is geen geldig e-mailadres.',
+	'www' => ' is geen geldige URL.',
+	'error' => '<p><big>Fout!</big> 
+		De volgende fouten zijn opgetreden tijdens het verwerken van het formulier:</p><ul>'
+);
+
 $lang ['step1'] = array(
 	'head' => 'Welkom bij FlatPress!',
 	'descr' => 'Bedankt dat je gekozen hebt voor <strong>FlatPress</strong>.

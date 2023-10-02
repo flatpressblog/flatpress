@@ -1,6 +1,6 @@
 <?php
 /*
- * LangId: English
+ * LangId: Czechiscg
  */
 $lang ['locked'] = array(
 	'head' => 'Setup je uzamčen',
@@ -15,6 +15,25 @@ $lang ['locked'] = array(
 		<li><a href="%s">Ok, zpět na můj blog</a></li>
 		<li><a href="%s">Po smazání souboru znovu spustit setup</a></li>
 		</ul>'
+);
+
+$lang ['err'] = array(
+	'setuprun1' => 'Instalace probíhá.',
+	
+	'setuprun2' => 'Nastavení je spuštěno: Pokud jste správce, můžete odstranit ',
+	'setuprun3' => ' restartovat.',
+	'writeerror' => 'Chyba při psaní',
+
+	'fpuser1' => ' není platný uživatel. 
+		Uživatelské jméno musí být alfanumerické a nesmí obsahovat žádné mezery.',
+	'fpuser2' => ' není platný uživatel.
+		Uživatelské jméno může obsahovat pouze písmena, číslice a 1 podtržítko.',
+	'fppwd' => 'Heslo musí obsahovat alespoň 6 znaků a žádné mezery.',
+	'fppwd2' => 'Hesla se neshodují.',
+	'email' => ' není platná e-mailová adresa.',
+	'www' => ' není platná adresa URL.',
+	'error' => '<p><big>Chyba!</big> 
+		Při zpracování formuláře došlo k následujícím chybám:</p><ul>'
 );
 
 $lang ['step1'] = array(
