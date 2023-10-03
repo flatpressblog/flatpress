@@ -1,6 +1,6 @@
 <?php
 /*
- * LangId: Czechiscg
+ * LangId: Czech
  */
 $lang ['locked'] = array(
 	'head' => 'Setup je uzamčen',
