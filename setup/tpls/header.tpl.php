@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head><title>Flatpress installer</title>
-		<link href="setup/res/setup.css" type="text/css" rel="stylesheet" /></head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<?php echo LANG_DEFAULT; ?>">
+<head><title>FlatPress Installer</title>
+		<link href="setup/res/setup.css" type="text/css" rel="stylesheet"></head>
 <body>
 	<div id="rap">
-		<h1 id="header">FlatPress Installer</h1>
+		<h1 id="header"><img src="<?php echo BLOG_BASEURL; ?>setup/imgs/logo-small.gif" alt="logo-small.gif" title="logo-small.gif"><span> Flat</span><span>Press</span> Installer</h1>
+
 		</div>
 
 		<div id="main">
 		
 	
-<form class="storycontent" method="post" action="<?php
-
-echo BLOG_BASEURL?>setup.php"> 
+<form class="storycontent" method="post" action="<?php echo BLOG_BASEURL; ?>setup.php">

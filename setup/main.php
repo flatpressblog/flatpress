@@ -1,4 +1,7 @@
 <?php
+error_reporting($_SERVER ["SERVER_NAME"] == "localhost" ? E_ALL : 0);
+chmod("./fp-content/", 0775);
+
 $language = @$_POST ['language']? $_POST ['language'] : $browserLang;
 
 $lf = "lang.$language.php";

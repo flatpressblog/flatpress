@@ -21,7 +21,7 @@ $fp_config = array(
 		'dateformat' => '%A, %B %e, %Y',
 		'dateformatshort' => '%Y-%m-%d',
 		'charset' => 'utf-8',
-		'lang' => LANG_DEFAULT . $browserLang
+		'lang' => LANG_DEFAULT
 	),
 	'plugins' => array(
 		'blockparser' => array(
