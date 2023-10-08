@@ -2,9 +2,13 @@
 /*
  * LangId: Italian
  */
+$lang ['setup'] = array(
+	'setup' => 'Impostazioni'
+);
+
 $lang ['locked'] = array(
 	'head' => 'L\'installazione è stata bloccata',
-	'descr' => 'Sembra che tu abbia già avviato l\'installazione, perché 
+	'descr' => 'Sembra che tu abbia già avviato l\'installazione, perché
 		abbiamo trovato il lockfile <code>%s</code>.
 		
 		Se vuoi far ripartire l\'installazione, elimina prima questo file.
@@ -50,7 +54,7 @@ $lang ['step1'] = array(
 		<pre>%s</pre>
 		
 		Per installare il pacchetto di lingua, carica il contenuto del pacchetto nela tua copia di <code>flatpress/</code>, e sovrascrivi tutto, poi <a href="./setup.php">riavvia questa installazione</a>.',
-	'descrw' => 'L\'<strong>unica cosa</strong> di cui ha bisogno FlatPress per funzionare è una cartella <em>scrivibile</em>. 
+	'descrw' => 'L\'<strong>unica cosa</strong> di cui ha bisogno FlatPress per funzionare è una cartella <em>scrivibile</em>.
 		
 		<pre>%s</pre>'
 );
@@ -67,7 +71,7 @@ $lang ['step2'] = array(
 
 $lang ['step3'] = array(
 	'head' => 'Finito',
-	'descr' => '<strong>Fine della storia</strong>. 
+	'descr' => '<strong>Fine della storia</strong>.
 		
 		Non ci credi? 
 		
@@ -103,7 +107,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Questo è un articolo di prova,
 
 Il tag more ti consente di creare un "salto" tra un estratto e l\'articolo completo.
 
-[more] 
+[more]
 
 
 [h4]Aspetto[/h4]
@@ -130,7 +134,7 @@ Le pagine statiche sono utili per creare pagine di informazioni generali. Puoi a
 
 FlatPress è molto personalizzabile e supporta dei [url=https://wiki.flatpress.org/doc:plugins:standard]plugins[/url] per estenderne le funzioni. BBCode stesso è un plugin.
 
-Abbiamo creato altri contenuti di esempio per mostrarvi alcune delle funzioni ben nascoste di FP e chicche :) 
+Abbiamo creato altri contenuti di esempio per mostrarvi alcune delle funzioni ben nascoste di FP e chicche :)
 Puoi trovare due [b]pagine statiche[/b] pronte per accettare i tuoi contenuti:
 [list]
 [*][url=static.php?page=about]Chi sono[/url]
@@ -143,7 +147,7 @@ Con il plugin [b]PhotoSwipe[/b] è ora possibile posizionare le immagini in modo
 
 [h4]Widget[/h4]
 
-Non c\'è un singolo elemento fisso nelle barre laterali. Tutti gli elementi che si trovano nelle barre circondando questo testo sono completamente riposizionabili, e molti di loro sono personalizzabili. Alcun temi forniscono anche uno specifico pannello nel pannello di controllo.  
+Non c\'è un singolo elemento fisso nelle barre laterali. Tutti gli elementi che si trovano nelle barre circondando questo testo sono completamente riposizionabili, e molti di loro sono personalizzabili. Alcun temi forniscono anche uno specifico pannello nel pannello di controllo.
 
 Questi elementi si chiamano [b]widget[/b]. Per saperne di più sui widget e [url=https://wiki.flatpress.org/doc:tips:widgets]alcuni consigli[/url] per ottenere dei bellissimi effetti, dai un\'occhiata sul [url=https://wiki.flatpress.org/]wiki[/url].
 
@@ -164,7 +168,7 @@ Vuoi saperne di più?
 [*]Visita il [url=https://forum.flatpress.org/]forum[/url] per assistenza e chiacchierare un po\'
 [*]Scarica [b]magnifici temi[/b] dagli [url=https://wiki.flatpress.org/res:themes]invii di altri utenti[/url]!
 [*]Dai un\'occhiata ai [url=https://wiki.flatpress.org/res:plugins]plugin non ufficiali[/url]
-[*]Scarica [url=https://wiki.flatpress.org/res:language]il pacchetto di traduzione[/url] per la tua lingua 
+[*]Scarica [url=https://wiki.flatpress.org/res:language]il pacchetto di traduzione[/url] per la tua lingua
 [/list]
 
 
@@ -183,7 +187,7 @@ Vuoi saperne di più?
 
 Ora puoi [url=login.php]connetterti[/url]per andare al [url=admin.php]Pannello di Controllo[/url] e iniziare a scrivere!
 
-Buon divertimento! :) 
+Buon divertimento! :)
 
 [i]Il Team di [url=https://www.flatpress.org]FlatPress[/url][/i]
 	

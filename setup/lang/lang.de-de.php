@@ -2,24 +2,28 @@
 /*
  * LangId: Deutsch
  */
+$lang ['setup'] = array(
+	'setup' => 'Einrichtung'
+);
+
 $lang ['locked'] = array(
-	'head' => 'Installation ist gesperrt',
-	'descr' => 'Sieht so aus, als würde die Installation bereits laufen: Die Sperr-Datei <code>%s</code> existiert bereits.
+	'head' => 'Die Einrichtung ist gesperrt',
+	'descr' => 'Sieht so aus, als würde die Einrichtung bereits laufen: Die Sperr-Datei <code>%s</code> existiert bereits.
 		
-		Wenn du die Installation noch einmal neu starten möchtest, lösche bitte zuerst diese Datei.
+		Wenn du die Einrichtung noch einmal neu starten möchtest, lösche bitte zuerst diese Datei.
 		
-		<strong >Achtung!</strong> Die Datei <code>setup.php</code> und das Verzeichnis <code>setup/</code> sollten nicht auf dem Server bleiben, bitte lösche sie nach Abschluss der Installation!
+		<strong >Achtung!</strong> Die Datei <code>setup.php</code> und das Verzeichnis <code>setup/</code> sollten nicht auf dem Server bleiben. Bitte lösche sie nach Abschluss der Einrichtung!
 		
 		<ul>
 		<li><a href="%s">Ok, bring mich zu meinem Blog</a></li>
-		<li><a href="%s">Ich habe die Datei gelöscht, Installation neu starten</a></li>
+		<li><a href="%s">Ich habe die Datei gelöscht. Einrichtung neu starten.</a></li>
 		</ul>'
 );
 
 $lang ['err'] = array(
-	'setuprun1' => 'Die Installation läuft.',
+	'setuprun1' => 'Die Einrichtung läuft.',
 	
-	'setuprun2' => 'Die Installation läuft bereits: Wenn du der Administrator bist, kannst du ',
+	'setuprun2' => 'Die Einrichtung läuft bereits: Wenn du der Administrator bist, kannst du ',
 	'setuprun3' => ' löschen, um neu zu starten.',
 	'writeerror' => 'Fehler beim Schreiben',
 
@@ -31,7 +35,7 @@ $lang ['err'] = array(
 	'fppwd2' => 'Die Passwörter stimmen nicht überein.',
 	'email' => ' ist keine gültige E-Mail Adresse.',
 	'www' => ' ist keine gültige URL.',
-	'error' => '<p><big>Fehler!</big> 
+	'error' => '<p><big>Fehler!</big>
 		Bei der Bearbeitung des Formulars sind die folgenden Fehler aufgetreten:</p><ul>'
 );
 
@@ -49,7 +53,7 @@ $lang ['step1'] = array(
 		<pre>%s</pre>
 		
 		Für die Installation eines Sprachpakets lade dessen Inhalt einfach in dein <code>flatpress/</code>-Verzeichnis. Dann <a href="./setup.php">starte die Installation erneut</a>.',
-	'descrw' => '<strong>Das Einzige</strong>, was du für den Betrieb von FlatPress benötigst, ist ein <em>beschreibbares</em> Verzeichnis. 
+	'descrw' => '<strong>Das Einzige</strong>, was du für den Betrieb von FlatPress benötigst, ist ein <em>beschreibbares</em> Verzeichnis.
 		
 		<pre>%s</pre>'
 );
@@ -66,7 +70,7 @@ $lang ['step2'] = array(
 
 $lang ['step3'] = array(
 	'head' => 'Fertig',
-	'descr' => '<strong>Das war\'s schon.</strong> 
+	'descr' => '<strong>Das war\'s schon.</strong>
 		
 		Nicht zu glauben? 
 		
@@ -98,11 +102,11 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Willkommen bei FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Das ist ein Beispiel-Beitrag, er zeigt dir einige Funktionen von [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Das ist ein Beispiel-Beitrag. Er zeigt dir einige Funktionen von [url=https://www.flatpress.org]FlatPress[/url].
 
 Das "more"-Element erlaubt es dir, vom Anriss des Beitrags zum kompletten Artikel zu springen.
 
-[more] 
+[more]
 
 
 [h4]Textformatierung[/h4]

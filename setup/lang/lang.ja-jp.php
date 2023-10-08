@@ -2,6 +2,10 @@
 /*
  * LangId: Japanese
  */
+$lang ['setup'] = array(
+	'setup' => '機関'
+);
+
 $lang ['locked'] = array(
 	'head' => 'セットアップは中断されました.',
 	'descr' => 'ロックファイル「<code>%s</code>」がサーバ上に存在しますので,

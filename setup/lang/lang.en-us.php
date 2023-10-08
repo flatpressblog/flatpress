@@ -2,6 +2,10 @@
 /*
  * LangId: English
  */
+$lang ['setup'] = array(
+	'setup' => 'Setup'
+);
+
 $lang ['locked'] = array(
 	'head' => 'Setup has been locked',
 	'descr' => 'It looks like you already run setup, because 
@@ -31,7 +35,7 @@ $lang ['step1'] = array(
 		<pre>%s</pre>
 		
 		To install the language pack, upload the content of the package in your <code>flatpress/</code>, and overwrite all, then <a href="./setup.php">restart this setup</a>.',
-	'descrw' => 'The <strong>only thing</strong> you need for FlatPress to work is a <em>writable</em> directory. 
+	'descrw' => 'The <strong>only thing</strong> you need for FlatPress to work is a <em>writable</em> directory.
 		
 		<pre>%s</pre>'
 );
@@ -48,7 +52,7 @@ $lang ['step2'] = array(
 
 $lang ['step3'] = array(
 	'head' => 'Done',
-	'descr' => '<strong>End of the story</strong>. 
+	'descr' => '<strong>End of the story</strong>.
 		
 		Unbelievable? 
 		
@@ -84,7 +88,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'This is a sample entry, posted 
 
 The more tag allows you to create a "jump" between an excerpt and the complete article.
 
-[more] 
+[more]
 
 
 [h4]Styling[/h4]
@@ -111,7 +115,7 @@ Static pages are useful to create general information pages. You can also make o
 
 FlatPress is very customizable, and supports [url=https://wiki.flatpress.org/doc:plugins:standard]plugins[/url] to extend its power. BBCode is a plugin itself.
 
-We have created some more sample content, to show you some of the FP well hidden functions and gems :) 
+We have created some more sample content, to show you some of the FP well hidden functions and gems :)
 You can find two [b]static pages[/b] ready to accept your contents:
 [list]
 [*][url=static.php?page=about]About me[/url]
@@ -144,7 +148,7 @@ Want to see more?
 [*]Visit the [url=https://forum.flatpress.org/]forum[/url] for support and chit-chat
 [*]Get [b]great themes[/b] from [url=https://wiki.flatpress.org/res:themes]other users\' submissions[/url]!
 [*]Check out the [url=https://wiki.flatpress.org/res:plugins]unofficial plugins[/url]
-[*]Get [url=https://wiki.flatpress.org/res:language]translation pack[/url] for your language 
+[*]Get [url=https://wiki.flatpress.org/res:language]translation pack[/url] for your language
 [/list]
 
 
@@ -164,7 +168,7 @@ Want to see more?
 
 Now you can [url=login.php]Login[/url] to get to the [url=admin.php]Administration Area[/url] and start posting!
 
-Have fun! :) 
+Have fun! :)
 
 [i]The [url=https://www.flatpress.org]FlatPress[/url] Team[/i]
 	

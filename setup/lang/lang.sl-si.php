@@ -2,6 +2,10 @@
 /*
  * LangId: Slovenian
  */
+$lang ['setup'] = array(
+	'setup' => 'Nastavitev'
+);
+
 $lang ['locked'] = array(
 	'head' => 'Namestitev je zaklenjena',
 	'descr' => 'Zdi se, da se namestitev že izvaja: Datoteka zaklepa <code>%s</code> že obstaja.
@@ -47,7 +51,7 @@ $lang ['step2'] = array(
 
 $lang ['step3'] = array(
 	'head' => 'Pripravljen',
-	'descr' => '<strong>To je to.</strong> 
+	'descr' => '<strong>To je to.</strong>
 		
 		Ne gre verjeti?
 		
@@ -71,7 +75,7 @@ $lang ['buttonbar'] = array(
 $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Meni';
-$lang ['samplecontent'] ['menu'] ['content'] = '[seznam]
+$lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=?]Domača stran[/url]
 [*][url=?paged=1]Blog[/url]
 [*][url=static.php?page=about]O[/url]
@@ -83,7 +87,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'To je vzorčna objava, ki vam p
 
 Element "more" vam omogoča preskok z osnutka članka na celoten članek.
 
-[more] 
+[more]
 
 
 [h4]Oblikovanje besedila[/h4]
@@ -165,7 +169,7 @@ S temo FlatPress Leggero imate na voljo 3 slogovne predloge - od klasične do mo
 
 [url=login.php]Prijavite se[/url] in začnite pisati blog v [url=admin.php]Administrativno poročilo[/url].
 
-Zabavajte se! :) 
+Zabavajte se! :)
 
 [i]Ekipa podjetja [url=https://www.flatpress.org]FlatPress[/url][/i]
 	
