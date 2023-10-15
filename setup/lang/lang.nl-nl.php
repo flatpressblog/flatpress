@@ -162,12 +162,13 @@ Met het FlatPress-Leggero thema heb je 3 stijlsjablonen tot je beschikking - van
 Wil je meer zien?
 
 [list]
-[*]Steun het project met een [url=http://www.flatpress.org/home/static.php?page=donate]kleine donatie
-[*]Volg de [url=https://www.flatpress.org/?x]official blog[/url] om te weten wat is gaande in de FlatPress wereld
-[*]Bezoek de [url=https://forum.flatpress.org/]forum[/url] voor ondersteuning
+[*]Steun het project met een [url=http://www.flatpress.org/home/static.php?page=donate]kleine donatie.
+[*]Volg de [url=https://www.flatpress.org/?x]official blog[/url] om te weten wat is gaande in de FlatPress wereld.
+[*]Bezoek de [url=https://forum.flatpress.org/]forum[/url] voor ondersteuning.
 [*]Krijg [b]mooie themas[/b] van [url=https://wiki.flatpress.org/res:themes]other users\' submissions[/url]!
-[*]Bekijk de [url=https://wiki.flatpress.org/res:plugins]unofficial plugins[/url]
-[*]Krijg [url=https://wiki.flatpress.org/res:language]translation pack[/url] voor jouw taal
+[*]Bekijk de [url=https://wiki.flatpress.org/res:plugins]plugins[/url].
+[*]Krijg [url=https://wiki.flatpress.org/res:language]translation pack[/url] voor jouw taal.
+[*]Je kunt FlatPress ook volgen op [url=https://twitter.com/FlatPress]X (Twitter)[/url] en [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 
@@ -186,7 +187,7 @@ Wil je meer zien?
 
 Nu kan je [url=login.php]Login[/url] om bij de [url=admin.php]Administration Area[/url] en begin met vermeldingen maken!
 
-Veel plezier! :) 
+Veel plezier! :)
 
 [i]The [url=https://www.flatpress.org]FlatPress[/url] Team[/i]
 	
