@@ -44,7 +44,7 @@ $lang ['step1'] = array(
 	'head' => 'Benvenuto in FlatPress!',
 	'descr' => 'Grazie per aver scelto <strong>FlatPress</strong>.
 		
-		Prima che tu ti diverta con il tuo blog nuovo di zecca, dobbiamo farti qualche domanda. 
+		Prima che tu ti diverta con il tuo blog nuovo di zecca, dobbiamo farti qualche domanda.
 		
 		Non preoccuparti, non ci vorrà molto!',
 	'descrl1' => 'Seleziona la tua lingua.',
@@ -73,7 +73,7 @@ $lang ['step3'] = array(
 	'head' => 'Finito',
 	'descr' => '<strong>Fine della storia</strong>.
 		
-		Non ci credi? 
+		Non ci credi?
 		
 		E hai ragione: <strong>la storia è appena cominciata</strong>, ma <strong>sta a te scriverla</strong>!
 		
@@ -114,7 +114,7 @@ Il tag more ti consente di creare un "salto" tra un estratto e l\'articolo compl
 
 Il modo predefinito dell\'aspetto e del contenuto dell\'articolo è [url=http://wiki.flatpress.org/doc:plugins:bbcode]BBcode[/url] (bulletin board code). BBCode è un modo facile per dare un aspetto elegante ai tuoi articoli. Sono consentiti i codici più comuni, come [b] per [b]grassetto[/b] (html: strong), [i] per [i]corsivo[/i] (html: em), ecc.
 
-[quote]Ci sono anche i blocchi [b]citazione[/b] per mostrare le tue citazioni preferite. [/quote]
+[quote]Ci sono anche i blocchi [b]citazione[/b] per mostrare le tue citazioni preferite.[/quote]
 
 [code]E il tag \'code\' mmostra dei pezzetti di codice in uno stile monospaziale.
 Inoltre supporta
@@ -163,12 +163,13 @@ Con il tema FlatPress-Leggero avete a disposizione 3 modelli di stile, dal class
 Vuoi saperne di più?
 
 [list]
-[*]Sostenete il progetto con una [url=http://www.flatpress.org/home/static.php?page=donate]piccola donazione
-[*]Segui il [url=https://www.flatpress.org/?x]blog ufficiale[/url] per sapere cosa succede nel mondo di FlatPress
-[*]Visita il [url=https://forum.flatpress.org/]forum[/url] per assistenza e chiacchierare un po\'
+[*]Sostenete il progetto con una [url=http://www.flatpress.org/home/static.php?page=donate]piccola donazione.
+[*]Segui il [url=https://www.flatpress.org/?x]blog ufficiale[/url] per sapere cosa succede nel mondo di FlatPress.
+[*]Visita il [url=https://forum.flatpress.org/]forum[/url] per assistenza e chiacchierare un po\'.
 [*]Scarica [b]magnifici temi[/b] dagli [url=https://wiki.flatpress.org/res:themes]invii di altri utenti[/url]!
-[*]Dai un\'occhiata ai [url=https://wiki.flatpress.org/res:plugins]plugin non ufficiali[/url]
-[*]Scarica [url=https://wiki.flatpress.org/res:language]il pacchetto di traduzione[/url] per la tua lingua
+[*]Dai un\'occhiata ai [url=https://wiki.flatpress.org/res:plugins]plugin[/url].
+[*]Scarica [url=https://wiki.flatpress.org/res:language]il pacchetto di traduzione[/url] per la tua lingua.
+[*]Potete seguire FlatPress anche su [url=https://twitter.com/FlatPress]X (Twitter)[/url] e [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 

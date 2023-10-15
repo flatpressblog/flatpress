@@ -72,7 +72,7 @@ $lang ['step3'] = array(
 	'head' => 'Fertig',
 	'descr' => '<strong>Das war\'s schon.</strong>
 		
-		Nicht zu glauben? 
+		Nicht zu glauben?
 		
 		Nein, tatsächlich <strong>geht es jetzt erst richtig los</strong>! Aber das Bloggen ist nun <em>deine</em> Aufgabe ;)
 		
@@ -113,7 +113,7 @@ Das "more"-Element erlaubt es dir, vom Anriss des Beitrags zum kompletten Artike
 
 In FlatPress formatierst du deine Inhalte mit [url=http://wiki.flatpress.org/doc:plugins:bbcode]BBcode[/url] (Bulletin-Board-Code). Mit BBCode geht das sehr einfach. Beispiele gefällig? [b] macht [b]fetten Text[/b], [i] [i]kursiven[/i].
 
-[quote]Mit dem [b]quote[/b]-Element lassen sich Zitate auszeichnen. [/quote]
+[quote]Mit dem [b]quote[/b]-Element lassen sich Zitate auszeichnen.[/quote]
 
 [code]Das \'code\'-Element erzeugt einen Abschnitt mit fester Zeichenbreite.
 Es kann auch
@@ -169,7 +169,7 @@ Du möchtest gern mehr über FlatPress wissen?
 [*]Besuche das [url=https://forum.flatpress.org/]Supportforum[/url] für Unterstützung und den Kontakt zu anderen FlatPress-Benutzern.
 [*]Lade dir großartige von der Community erstellte [b]Themes[/b] aus dem [url=https://wiki.flatpress.org/res:themes]Wiki[/url] herunter.
 [*]Dort gibt es auch tolle [url=https://wiki.flatpress.org/res:plugins]Plugins[/url].
-[*]FlatPress kannst du auch [url=https://twitter.com/FlatPress]auf Twitter folgen[/url]. 
+[*]FlatPress kannst du auch auf [url=https://twitter.com/FlatPress]X (Twitter)[/url] und [url=https://fosstodon.org/@flatpress]Mastodon[/url] folgen.
 [/list]
 
 
@@ -188,7 +188,7 @@ Du möchtest gern mehr über FlatPress wissen?
 
 [url=login.php]Logge dich ein[/url], um im [url=admin.php]Administrationsbereicht[/url] mit dem Bloggen zu beginnen.
 
-Viel Spaß! :) 
+Viel Spaß! :)
 
 [i]Das [url=https://www.flatpress.org]FlatPress[/url]-Team[/i]
 	

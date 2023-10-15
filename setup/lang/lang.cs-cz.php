@@ -167,6 +167,7 @@ S tématem FlatPress-Leggero máte k dispozici 3 šablony stylů - od klasickýc
 [*]Stáhněte si [b]šablony vzhledu[/b] od [url=https://wiki.flatpress.org/res:themes]našich uživatelů[/url]!
 [*]Podívejte se na [url=https://wiki.flatpress.org/res:plugins]neoficiální pluginy[/url]
 [*]Stáhněte si [url=https://wiki.flatpress.org/res:language]překlady[/url] do dalších jazyků
+[*]FlatPress můžete sledovat také na [url=https://twitter.com/FlatPress]X (Twitter)[/url] a [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 

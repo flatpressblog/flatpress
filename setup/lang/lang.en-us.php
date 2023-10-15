@@ -25,7 +25,7 @@ $lang ['step1'] = array(
 	'head' => 'Welcome to FlatPress!',
 	'descr' => 'Thank you for choosing <strong>FlatPress</strong>.
 		
-		Before you can start having fun with your brand new blog, we have to ask you a very few questions. 
+		Before you can start having fun with your brand new blog, we have to ask you a very few questions.
 		
 		Don\'t worry, it won\'t take you long!',
 	'descrl1' => 'Select your language.',
@@ -54,7 +54,7 @@ $lang ['step3'] = array(
 	'head' => 'Done',
 	'descr' => '<strong>End of the story</strong>.
 		
-		Unbelievable? 
+		Unbelievable?
 		
 		And you\'re right: <strong>the story has just begun</strong>, but <strong>writing is up to you</strong>!
 		
@@ -95,7 +95,7 @@ The more tag allows you to create a "jump" between an excerpt and the complete a
 
 The default way to style and format your content is [url=http://wiki.flatpress.org/doc:plugins:bbcode]BBcode[/url] (bulletin board code). BBCode is an easy way to style your posts. Most common codes are allowed. Like [b] for [b]bold[/b] (html: strong), [i] for [i]italics[/i] (html: em), etc.
 
-[quote]There are also [b]quote[/b] blocks to display your favourite quotations. [/quote]
+[quote]There are also [b]quote[/b] blocks to display your favourite quotations.[/quote]
 
 [code]And \'code\' displays your snippets in a monospaced fashion.
 It also supports
@@ -144,11 +144,12 @@ With the FlatPress-Leggero theme you have 3 style templates at your disposal - f
 Want to see more?
 
 [list]
-[*]Follow the [url=https://www.flatpress.org/?x]official blog[/url] to know what\'s going on in the FlatPress world
-[*]Visit the [url=https://forum.flatpress.org/]forum[/url] for support and chit-chat
+[*]Follow the [url=https://www.flatpress.org/?x]official blog[/url] to know what\'s going on in the FlatPress world.
+[*]Visit the [url=https://forum.flatpress.org/]forum[/url] for support and chit-chat.
 [*]Get [b]great themes[/b] from [url=https://wiki.flatpress.org/res:themes]other users\' submissions[/url]!
-[*]Check out the [url=https://wiki.flatpress.org/res:plugins]unofficial plugins[/url]
-[*]Get [url=https://wiki.flatpress.org/res:language]translation pack[/url] for your language
+[*]Check out the [url=https://wiki.flatpress.org/res:plugins]plugins[/url].
+[*]Get [url=https://wiki.flatpress.org/res:language]translation pack[/url] for your language.
+[*]You can also follow FlatPress on [url=https://twitter.com/FlatPress]X (Twitter)[/url] and [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 

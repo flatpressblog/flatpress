@@ -137,7 +137,7 @@ O FlatPress é muito personalizável e suporta [url=https://wiki.flatpress.org/d
 Criamos mais conteúdo de amostra, para mostrar algumas das funções e gemas bem escondidas do FP. :)
 Pode encontrar duas [b]páginas estáticas[/b] prontas para aceitar seu conteúdo:
 [list]
-[*][url=static.php?page=about]Sobree[/url]
+[*][url=static.php?page=about]Sobre[/url]
 [*][url=static.php?page=menu]Menu[/url] (observe que os links nesta página também aparecerão na sua barra lateral - esta é a mágica do widget [b]blockparser[/b]. Consulte [url=http://wiki.flatpress.org/doc: faq ]o FAQ[/url] para isso e muito mais!)
 [/list]
 
@@ -151,7 +151,7 @@ Não há um único elemento fixo nos sidebar(s). Todos os elementos que você po
 
 Esses elementos são chamados de [b]widgets[/b]. Para mais informações sobre widgets e [url=https://wiki.flatpress.org/doc: tips: widgets]algumas dicas[/url] para obter bons efeitos, dê uma olhada no [url=https://wiki.flatpress .org/]FP wiki[/url].
 
-[h4] Temas[/h4]
+[h4]Temas[/h4]
 
 [galeria="images/Leggero-Themepreview/" width="140"]
 Com o tema FlatPress-Leggero você tem à sua disposição 3 modelos de estilo - do clássico ao moderno. Estes modelos são um começo maravilhoso para criar algo próprio.
@@ -168,6 +168,7 @@ Want to see more?
 [*]Obtenha [b]ótimos temas[/b] em [url=https://wiki.flatpress.org/res: themes] enviadas de outros usuários[/url]!
 [*]Confira [url=https://wiki.flatpress.org/res: plugins]os plugins não oficiais.[/url]!
 [*]Obtenha [url=https://wiki.flatpress.org/res: language]o pacote de tradução[/url] para o seu idioma.
+[*]Você também pode seguir o FlatPress em [url=https://twitter.com/FlatPress]X (Twitter)[/url] e [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 

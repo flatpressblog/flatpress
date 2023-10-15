@@ -150,7 +150,7 @@ S temo FlatPress Leggero imate na voljo 3 slogovne predloge - od klasične do mo
 [*]Obiščite [url=https://forum.flatpress.org/]podporni forum[/url] za podporo in stik z drugimi uporabniki FlatPress.
 [*]Iz [url=https://wiki.flatpress.org/res:themes]wikija[/url] lahko prenesete odlične [b]teme[/b], ki jih je ustvarila skupnost.
 [*]Obstajajo tudi odlični [url=https://wiki.flatpress.org/res:plugins]vtičniki[/url] tam.
-[*]FlatPressu lahko sledite tudi [url=https://twitter.com/FlatPress]na Twitterju[/url].
+[*]FlatPressu lahko sledite tudi na [url=https://twitter.com/FlatPress]X (Twitterju)[/url] in [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 

@@ -169,7 +169,7 @@ Desea obtener más información sobre FlatPress?
 [*]Visite el [url=https://forum.flatpress.org/]foro de soporte[/url] para obtener soporte y contactar con otros usuarios de FlatPress.
 [*]Descargue magníficos [b]temas[/b] creados por la comunidad desde la [url=https://wiki.flatpress.org/res:themes]Wiki[/url].
 [*]También hay grandes [url=https://wiki.flatpress.org/res:plugins]Plugins[/url] allí.
-[*]También puede seguir a FlatPress [url=https://twitter.com/FlatPress]en Twitter[/url].
+[*]También puede seguir a FlatPress en [url=https://twitter.com/FlatPress]X (Twitter)[/url] y [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 
