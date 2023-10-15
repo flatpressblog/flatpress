@@ -35,6 +35,7 @@
   - Image files, which are not used by the installer, were removed.
   - In the setup CSS, unused IDs, classes and incorrect references to fonts have been removed.
   - The installer header now shines in a simple FlatPress style.
+  - Added missing language files for Spanish and French ([#214](https://github.com/flatpressblog/flatpress/issues/214))
 
 ## Themes
 - Reworked "Leggero v2" style, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
