@@ -36,6 +36,7 @@
   - In the setup CSS, unused IDs, classes and incorrect references to fonts have been removed.
   - The installer header now shines in a simple FlatPress style.
   - Added missing language files for Greek, Spanish and French ([#214](https://github.com/flatpressblog/flatpress/issues/214))
+  - The installer tries to write permissions to the fp-content directory recursively for owners and groups, which had to be done manually before.
 
 ## Themes
 - Reworked "Leggero v2" style, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
