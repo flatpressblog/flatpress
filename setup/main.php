@@ -1,8 +1,37 @@
 <?php
 error_reporting($_SERVER ["SERVER_NAME"] == "localhost" ? E_ALL : 0);
-chmod("./fp-content/", 0775);
 
-$language = @$_POST ['language']? $_POST ['language'] : $browserLang;
+// Changing file/directory permissions recursively
+$start_dir = FP_CONTENT; // Starting directory
+$perms ['file'] = FILE_PERMISSIONS; // chmod value for files
+$perms ['folder'] = DIR_PERMISSIONS; // chmod value for folders
+
+function chmod_file_folder($dir) {
+	global $perms;
+
+	$dh = @opendir($dir);
+
+	if ($dh) {
+
+		while (false !== ($file = readdir($dh))) {
+
+			if ($file != "." && $file != "..") {
+
+				$fullpath = $dir . '/' . $file;
+				if (!is_dir($fullpath)) {
+
+					chmod($fullpath, $perms ['file']);
+				} else {
+					chmod($fullpath, $perms ['folder']);
+					chmod_file_folder($fullpath);
+				}
+			}
+		}
+		closedir($dh);
+	}
+}
+
+$language = @$_POST ['language'] ?$_POST ['language'] : $browserLang;
 
 $lf = "lang.$language.php";
 if (!preg_match('|^lang\.[a-z]{2}-[a-z]{2}\.php$|', $lf))
