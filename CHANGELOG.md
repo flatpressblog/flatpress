@@ -8,6 +8,7 @@
 - Added [SECURITY.md](https://github.com/flatpressblog/flatpress/blob/master/SECURITY.md)
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 - Re-activated useful "Stats" panel in Admin Area / Entries
+- "Follow on Mastodon" added as an alternative to X (Twitter) in the welcome entry
 
 ## Plugins
 ### Additions
@@ -31,7 +32,7 @@
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
 
 ## Setup
-- Reworked Installer style ([#266](https://github.com/flatpressblog/flatpress/issues/266))
+- Reworked Installer ([#266](https://github.com/flatpressblog/flatpress/issues/266))
   - Image files, which are not used by the installer, were removed.
   - In the setup CSS, unused IDs, classes and incorrect references to fonts have been removed.
   - The installer header now shines in a simple FlatPress style.
