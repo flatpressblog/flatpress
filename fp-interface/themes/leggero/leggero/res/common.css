@@ -10,10 +10,9 @@ Author: NoWhereMan & drudo
 Version: 0.2
 Module: common.css
 
-last change: 2022-03-13
+last change: 2023-10-23
 
 */
-
 
 
 /* ===== GENERAL (redefinition HTML tag) ===== */
@@ -27,7 +26,6 @@ html {
 body {
 	font-size: 100%;
 	padding: 0;
-	/* text-align: center; */
 	background: white url(../imgs/backshade.png) repeat-x;
 	color: black;
     width: 100%
@@ -42,7 +40,7 @@ img { border: none }
 /* Responsive Design img */
 img {
   max-width: 100%;
-  height: auto;
+  height: auto
 }
 
 /*
@@ -59,14 +57,12 @@ img {
 
 .img-gallery img {
   display: inline;
-  margin: 0.4em;
+  margin: 0.4em
 }
 
 /* Plugin: QuickGallery */
 
-.img-gallery img .center {
-  display: inline;
-}
+.img-gallery img .center { display: inline }
 
 blockquote {
 	width: 90%;
@@ -77,24 +73,19 @@ blockquote {
 }
 
 pre, code {
-	font-family: Lucida Console, Monaco, monospace;
-	font-size: 90%;
+	font-family: 'Lucida Console', Monaco, monospace;
+	font-size: 90%
 }
 
 pre {
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 	background-color: #efefef;
-
 	overflow: auto;
 	width: 90%;
 	margin: 1em 1em 2em 1em;
 	padding: 1em 0.5em;
-	
-	/* fix overflow in IE */
-	min-height: 40px; 
-	height: auto !important; 
-	height: 40px; 
+	height: auto !important
 }
 
 ul, li, ol { margin: 0; padding: 0 }
@@ -118,7 +109,7 @@ input, textarea, select {
 	padding: .2em;
 	border: 1px solid #999;
 	color: #222;
-	background-color: #eee;
+	background-color: #eee
 }
 
 input:hover, input:focus, textarea:hover, textarea:focus {
@@ -133,7 +124,6 @@ textarea {
 	margin-top: .1em;
 	margin-bottom: 1em
 }
-
 
 
 /* ===== LINKS GENERAL ===== */
@@ -165,49 +155,39 @@ h2 {
 	font-size: 1.5em;
 	color: #333333;
 	margin: 0;
-    padding: 1em 0 1em 0;
+    padding: 1em 0 1em 0
 }
 
 h3 {
 	margin: 0;
 	font-size: 1.3em;
-	padding: 1em 0 1em 0;
+	padding: 1em 0 1em 0
 }
 
-h4 { font-size: 1.2em; }
-
+h4 { font-size: 1.2em }
 
 
 /* ===== DIV CONTAINER ALL ELEMENTS BLOCK ===== */
 #body-container {
 	text-align: left;
-	/*width: 760px !important;
-	width: 748px; /* fix for I.E. */
     width: 85%;
 	margin: 0 auto;
     max-width: 68em;
-	/* padding: 5px; */
     padding: 0.3em;
 	border: solid 1px #ccc;
 	background-color: white
 }
 
 
-
 /* ===== HEAD ===== */
 #head {
     clear: both;
 	font-family: 'book antiqua', georgia, garamond,  times, 'times new roman', serif;
-	/* padding: 95px 10px 5px 5px;
-	margin: 10px;
-	background: #c37676 url('../imgs/shade.png') repeat-x;
-	border: #bbb 1px solid */
     margin: 1em;
     padding: 7em 0.6em 0.5em 0.5em;
     border-radius: 1em;
     border: 0;
-    background-image: linear-gradient( #aa4142, #c37576);
-    /* background: #aa4142 */
+    background-image: linear-gradient( #aa4142, #c37576)
 }
 
 #head a { color: white; text-decoration: none }
@@ -224,11 +204,6 @@ h4 { font-size: 1.2em; }
 
 /* ===== DIV CONTAINER "MAIN" ===== */
 #outer-container {
-	/* position: relative;
-	height: 1%;
-	margin: 0px;
-	padding: 0px;
-	border-top: 1px solid white; /* problem with I.E. */
     width: 100%;
 	background-color: white
 }
@@ -240,17 +215,12 @@ h4 { font-size: 1.2em; }
 
 #main {
 	float: left;
-	/* position: relative;
-	width: 508px !important;
-	width: 478px; */
     width: 62%;
 	font-size: 100%;
-	margin: 1em;
+	margin: 1em
 }
 
-#main p { line-height: 1.5em; margin-top: 1.2em; }
-
-/* #main img { margin: 0.5em } */
+#main p { line-height: 1.5em; margin-top: 1.2em }
 
 #main img.emoticon { margin: 0; padding: 0 }
 
@@ -278,7 +248,7 @@ h4 { font-size: 1.2em; }
 	/* === Class of main block === */
 	h6.date {
 		font-size: 80%;
-		color: #aaa;
+		color: #aaa
 	}
 	
 	.date { /* date under titles of the entry */
@@ -292,7 +262,7 @@ h4 { font-size: 1.2em; }
 	.entry {
 		margin: 0 0 1.5em 0;
 		padding: 0;
-		overflow: auto; /* floating images fix IE<7*/
+		overflow: auto
 	}
 	
 	#main>.entry {
@@ -305,17 +275,14 @@ h4 { font-size: 1.2em; }
 		font-size: 80%;
 		color: gray;
 		margin: 2em 0 .5em 0;
-		text-align: right;
+		text-align: right
 	}
 	
-	.entry-footer li { 
-		display: block;
-	}
-	
+	.entry-footer li { display: block }
 	
 	.admincontrols { /* [edit] and [delete] */
 		font-size: 80%;
-		text-align: right;
+		text-align: right
 	}
 	
 	.buttonbar { text-align: center }
@@ -331,9 +298,7 @@ h4 { font-size: 1.2em; }
 		margin-bottom: 5em
 	}
 
-	form#search ul { 
-		list-style-type: none;
-	}
+	form#search ul { list-style-type: none }
 
 
 /* ===== FOOTER ===== */
