@@ -18,6 +18,8 @@ last change: 2022-02-19
 @import url(globals.css);
 
 /* ===== VARIOUS ===== */
+@viewport { width: device-width }
+
 .buttonbar input {
 	padding: .3em;
 	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x;
@@ -55,14 +57,22 @@ body#inline-body input {
 
 }
 
+/* ===== Smartphone and Tablet ===== */
+@media (max-width: 1920px) { /* prevents too large font size on mobile devices */
+	#body-container {
+		-webkit-text-size-adjust: none;
+		-moz-text-size-adjust: none;
+		text-size-adjust: none
+	}
+}
+
+
 /* === Conflict with inner h1 === */
 #admin-content h1 { color: black }
 
 
-
 /* DIV CONTAINER ALL ADMIN DIV BLOCK */
 #cpmain { padding: 10px }
-
 
 
 /* ===== SMALL NAVBAR (home and logout links) ===== */
@@ -73,7 +83,6 @@ ul#admin-small-nav {
 }
 
 ul#admin-small-nav li { display: inline; margin: 5px }
-
 
 
 /* ===== TAB MENU ===== */
@@ -113,8 +122,8 @@ ul#admin-tabmenu li a.admin-tab-current {
 	font-weight: bold;
 }
 
-/* ===== submenu ====== */
 
+/* ===== submenu ====== */
 #admin-submenu {
 	background: #eee; 
 	padding: .5em;
@@ -148,7 +157,6 @@ ul#admin-tabmenu li a.admin-tab-current {
 }
 
 
-
 /* ===== MAIN MENU ITEM ===== */
 #admin-content { padding: 1em }
 
@@ -164,7 +172,6 @@ ul#admin-tabmenu li a.admin-tab-current {
 	font-size: 80%;
 	font-style: italic
 }
-
 
 
 /* ===== ADMIN ENTRY ===== */
@@ -190,8 +197,6 @@ textarea.code {
 #admin-bbcode-toolbar p { display: inline }
 
 #admin-bbcode-toolbar select { width: 10em }
-
-
 
 #admin-content table { width: 100%; }
 
@@ -224,7 +229,6 @@ textarea.code {
 
 input.maxsize, select.maxsize { width: 100% }
 
-
 #admin-bbcode-toolbar {
 	margin: 0;
 	padding: 0;
@@ -243,7 +247,6 @@ input.maxsize, select.maxsize { width: 100% }
 	margin: auto;
 	height: 11em;
 }
-
 
 #plugin-table td {
   padding: 1em .6em;
@@ -308,6 +311,7 @@ input.maxsize, select.maxsize { width: 100% }
 	text-align: right;
 }
 
+
 /* ===== UPLOAD PANEL ===== */
 #admin-uploader-filelist {
 	margin: 1em auto;
@@ -333,7 +337,6 @@ input.maxsize, select.maxsize { width: 100% }
 
 
 /* ===== THEME PANEL ===== */
-
 #current-theme h5, 
 #available-themes h5 {
 	font-size: 1em;
@@ -344,7 +347,6 @@ input.maxsize, select.maxsize { width: 100% }
 	overflow:hidden;
 }
 
-
 #current-theme img { 
 	float:left;
 	border: 1px solid #ddd;
@@ -354,7 +356,6 @@ input.maxsize, select.maxsize { width: 100% }
 #available-themes {
 	clear: both;
 }
-
 
 #available-themes img {
 	border: 1px solid #eee
@@ -440,7 +441,6 @@ li.admin-widgetset {
 	margin-left: 0;
 }
 
-
 li.widget-instance,
 li.widget-class {
 	cursor: move;
@@ -451,7 +451,6 @@ li.widget-class {
 	background-color: white;
 	list-style-type: none;
 }
-
 
 .admin-widgetset h3 {
 	font-style: italic;
@@ -485,14 +484,12 @@ li.widget-class {
 	background-color:white;
 }
 
-
 .widget-instance .textinput:focus {
 	font-style: normal;
 	border: #f00 2px solid;
 	background-color:white;
 	text-align: left;
 }
-
 
 .widgetname a, 
 .widgetname a:link,
@@ -516,7 +513,6 @@ li.widget-class {
 
 
 /* ===== CONFIG PANEL ===== */
-
 .option-set .option-list {
 	margin-bottom: 4em;
 }
@@ -543,11 +539,9 @@ li.widget-class {
     line-height: 1.5em;
 }
 
-
 .option-set dd p {
     margin: 0;
 }
-
 
 .option-set dd input{
 	margin-bottom: .2em;
@@ -572,11 +566,9 @@ li.widget-class {
 	width: 20em;
 }
 
-
 .option-set input.bigtextinput {
 	width: 30em;
 }
-
 
 .option-set input.smalltextinput {
 	width: 5em;
@@ -596,6 +588,7 @@ a.link-disable:hover, a.link-delete:hover {
 	background-color: red;
 	color: white;
 }
+
 a.link-enable:hover {
 	background-color: green;
 	color: white;
@@ -605,7 +598,6 @@ a.link-general:hover, .main-cell a:hover {
 	background-color: #aaa;
 	color: black;
 }
-
 
 
 /* ===== NOTIFICATIONS ===== */
