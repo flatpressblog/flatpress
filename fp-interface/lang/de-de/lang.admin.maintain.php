@@ -12,7 +12,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt5' => 'Prüfe auf neue Versionen',
 
 	'chmod_info' => "Die Dateizugriffsrechte <strong>konnten nicht</strong>
-					auf die Default Werte von 0777 zurückgesetzt werden. 
+					auf die Default Werte von 0775 zurückgesetzt werden. 
           Normalerweise kann man diesen Hinweis ignorieren."
 );
 

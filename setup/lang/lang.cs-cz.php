@@ -2,9 +2,13 @@
 /*
  * LangId: Czech
  */
+$lang ['setup'] = array(
+	'setup' => '- Nastavení aplikace'
+);
+
 $lang ['locked'] = array(
 	'head' => 'Setup je uzamčen',
-	'descr' => 'Vypadá to, že jste již spustili instalaci, protože 
+	'descr' => 'Vypadá to, že jste již spustili instalaci, protože
 		jsme našli zamčený soubor <code>%s</code>.
 		
 		Pokud chcete znovu spustit setup, prosím smažte nejdříve tento soubor.
@@ -40,7 +44,7 @@ $lang ['step1'] = array(
 	'head' => 'Vítejte ve FlatPressu!',
 	'descr' => 'Děkujeme, že jste si vybrali <strong>FlatPress</strong>.
 		
-		Než se začnete bavit na svém zbrusu novém blogu, položíme Vám několik otázek.  
+		Než se začnete bavit na svém zbrusu novém blogu, položíme Vám několik otázek.
 		
 		Nebojte se, nezabere to moc času.',
 	'descrl1' => 'Vyberte Váš jazyk.',
@@ -50,7 +54,7 @@ $lang ['step1'] = array(
 		<pre>%s</pre>
 		
 		Chcete-li nainstalovat jazykovou sadu, nahrajte obsah balíčku do <code>flatpress/</code>, vše přepište a <a href="./setup.php">spusťte znovu instalaci.</a>.',
-	'descrw' => '<strong>Jediná věc</strong> kterou FlatPress potřebuje k práci, je <em>zapisovatelný</em> adresář. 
+	'descrw' => '<strong>Jediná věc</strong> kterou FlatPress potřebuje k práci, je <em>zapisovatelný</em> adresář.
 		
 		<pre>%s</pre>'
 );
@@ -131,7 +135,7 @@ Statické stránky jsou užitečné při vytváření stránek s obecnými infor
 
 FlatPress je velmi přizpůsobitelný a podporuje [url=https://wiki.flatpress.org/doc:plugins:standard]pluginy[/url] pro rozšíření jeho výkonu. BBCode je jeden z pluginů.
 
-Vytvořili jsme další ukázkový obsah, abychom vám ukázali některé skryté funkce a vychytávky FlatPressu :) 
+Vytvořili jsme další ukázkový obsah, abychom vám ukázali některé skryté funkce a vychytávky FlatPressu :)
 Můžete zde najít dvě statické stránky připravené pro váš obsah:
 [list]
 [*][url=static.php?page=about]O mně[/url]
@@ -144,7 +148,7 @@ Pomocí prvku \'gallery\' můžete dokonce návštěvníkům prezentovat celé g
 
 [h4]Widgety[/h4]
 
-V postranním panelu není jediný pevný prvek. Všechny prvky jsou zcela polohovatelné a většina z nich je také přizpůsobitelná. 
+V postranním panelu není jediný pevný prvek. Všechny prvky jsou zcela polohovatelné a většina z nich je také přizpůsobitelná.
 Tyto prvky se nazývají widgety. Další informace o [url=https://wiki.flatpress.org/doc:tips:widgets]widgetech[/url] a několik tipů, jak získat pěkné efekty, najdete na [url=https://wiki.flatpress.org/]wiki[/url].
 
 
@@ -162,7 +166,8 @@ S tématem FlatPress-Leggero máte k dispozici 3 šablony stylů - od klasickýc
 [*]Navštivte [url=https://forum.flatpress.org/]fórum[/url] kde vám poradíme a pomůžeme
 [*]Stáhněte si [b]šablony vzhledu[/b] od [url=https://wiki.flatpress.org/res:themes]našich uživatelů[/url]!
 [*]Podívejte se na [url=https://wiki.flatpress.org/res:plugins]neoficiální pluginy[/url]
-[*]Stáhněte si [url=https://wiki.flatpress.org/res:language]překlady[/url] do dalších jazyků 
+[*]Stáhněte si [url=https://wiki.flatpress.org/res:language]překlady[/url] do dalších jazyků
+[*]FlatPress můžete sledovat také na [url=https://twitter.com/FlatPress]X (Twitter)[/url] a [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 
