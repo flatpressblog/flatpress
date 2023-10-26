@@ -15,7 +15,7 @@
 		'opt5'		=> 'Buscar actualizaciones',
 
 		'chmod_info'	=> "Los siguientes permisos de archivo <strong>no pudieron</strong>
-					ser reiniciados a 0777; probablemente el propietario del archivo no sea el mismo que el
+					ser reiniciados a 0775; probablemente el propietario del archivo no sea el mismo que el
 					del servidor web. Por lo general, puede ignorar este aviso.",
 		
 	);
