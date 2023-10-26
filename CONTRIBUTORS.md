@@ -4,13 +4,13 @@ FlatPress wouldn't be the great blogging system it is without the help of many v
 If you think someone's missing here, please let us know.
 
 ## The team
-FlatPress was initially developed by [Edoardo Vacchi (NoWhereMan)](https://github.com/evacchi "github.com/evacchi"). Edoardo was supported by [Hydra](http://hydra.clans.it/ "hydra.clans.it"), [drudo](https://drudotec.wordpress.com/ "drudotec.wordpress.com"), giulio, [alcor](http://alcor.altervista.org/ "alcor.altervista.org"), and [Tychondriax](http://tychondriax.altervista.org/blog/ "tychondriax.altervista.org").<br>
+FlatPress was initially developed by [Edoardo Vacchi (NoWhereMan)](https://github.com/evacchi "github.com/evacchi"). Edoardo was supported by Hydra, [drudo](https://drudotec.wordpress.com/ "drudotec.wordpress.com"), giulio, alcor, and Tychondriax.<br>
 <br>
 Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/azett "github.com/azett").
 
 ## Coding
 - Piero VDFN introduced the plugins Comment Center, jQuery, and LightBox2.
-- [Fabrix.xm](https://kirgroup.com/) contributed the Media Manager and Last Comments Admin.
+- Fabrix.xm contributed the Media Manager and Last Comments Admin.
 - The SEO Meta Tag Info plugin was built by Don Prince.
 - [Matthias Mauch](http://www.aadmm.org/)'s [FP-Patch](http://www.aadmm.org/fp-patch/) initially brought FlatPress to PHP 7. Also, he regularly tests FlatPress against new PHP versions.
 - The XML sitemap for search engines was [initially introduced](https://www.igorkromin.net/index.php/2013/02/18/adding-a-google-compatible-sitemap-to-flatpress/) by [Igor Kromin](https://www.igorkromin.net/).
