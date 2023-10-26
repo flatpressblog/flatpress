@@ -13,7 +13,7 @@
 		'opt4'		=> 'Mostre as informações sobre o PHP',
 		'opt5'		=> 'Procure atualizações',
 
-		'chmod_info'	=> "As seguintes permissões de arquivo <strong>não puderam</strong> ser redefinidas para 0777; provavelmente o proprietário do arquivo não é o mesmo do servidor da web. Geralmente você pode ignorar este aviso.",
+		'chmod_info'	=> "As seguintes permissões de arquivo <strong>não puderam</strong> ser redefinidas para 0775; provavelmente o proprietário do arquivo não é o mesmo do servidor da web. Geralmente você pode ignorar este aviso.",
 		
 	);
 	

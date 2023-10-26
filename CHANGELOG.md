@@ -8,6 +8,7 @@
 - Added [SECURITY.md](https://github.com/flatpressblog/flatpress/blob/master/SECURITY.md)
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 - Re-activated useful "Stats" panel in Admin Area / Entries
+- "Follow on Mastodon" added as an alternative to X (Twitter) in the welcome entry
 
 ## Plugins
 ### Additions
@@ -29,6 +30,14 @@
 - Akismet plugin: Fixed PHP warnings ([#83](https://github.com/flatpressblog/flatpress/issues/83))
 - BBCode plugin: Allows local video files ("attachs/video.mp4") and outputs valid HTML ([#192](https://github.com/flatpressblog/flatpress/issues/192))
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
+
+## Setup
+- Reworked Installer ([#266](https://github.com/flatpressblog/flatpress/issues/266))
+  - Image files, which are not used by the installer, were removed.
+  - In the setup CSS, unused IDs, classes and incorrect references to fonts have been removed.
+  - The installer header now shines in a simple FlatPress style.
+  - Added missing language files for Greek, Spanish and French ([#214](https://github.com/flatpressblog/flatpress/issues/214))
+  - The installer tries to write permissions to the fp-content directory recursively for owners and groups, which had to be done manually before.
 
 ## Themes
 - Reworked "Leggero v2" style, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
@@ -71,6 +80,7 @@
 - Fixed not-yet-translated phrases in Blog view and Admin Area ([#171](https://github.com/flatpressblog/flatpress/issues/171))
 - Contact form: Admin notification mail is now localized ([#205](https://github.com/flatpressblog/flatpress/issues/205))
 - Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216), [#262](https://github.com/flatpressblog/flatpress/issues/262))
+- The HTML of the installer now has a lang attribute in the html start tag to specify the language.
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
@@ -93,6 +103,7 @@
 - Possible XSS in comments prevented ([#186](https://github.com/flatpressblog/flatpress/issues/186))
 - Possible CSRFs in Admin Area prevented ([#64](https://github.com/flatpressblog/flatpress/issues/64))
 - Possible XSS in FlatPress Installer prevented ([#220](https://github.com/flatpressblog/flatpress/issues/220))
+- Write permission for others removed by default ([#173](https://github.com/flatpressblog/flatpress/issues/173))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes
