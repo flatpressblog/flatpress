@@ -1,6 +1,6 @@
 <?php
 /*
- * LangId: English
+ * LangId: Português (BR)
  */
 
 // TERMINADO!
@@ -17,6 +17,25 @@ encontramos o arquivo de bloqueio. <code>%s</code>.
 		<li><a href="%s">Ok, leve-me de volta ao meu blog.</a></li>
 		<li><a href="%s">Excluí o arquivo, reinicie a instalação.</a></li>
 		</ul>'
+);
+
+$lang ['err'] = array(
+	'setuprun1' => 'A instalação está sendo executada.',
+	
+	'setuprun2' => 'A instalação já está em execução: se você for o administrador, poderá excluir ',
+	'setuprun3' => ' para reiniciar.',
+	'writeerror' => 'Erro de escrita',
+
+	'fpuser1' => ' não é um usuário válido.
+		O nome de usuário deve ser alfanumérico e não deve conter espaços.',
+	'fpuser2' => ' não é um usuário válido.
+		O nome de usuário só pode conter letras, números e um sublinhado.',
+	'fppwd' => 'A senha deve conter pelo menos 6 caracteres e nenhum espaço.',
+	'fppwd2' => 'As senhas não correspondem.',
+	'email' => ' não é um endereço de e-mail válido.',
+	'www' => ' não é um URL válido.',
+	'error' => '<p><big>Erro!</big> 
+		Os seguintes erros ocorreram durante o processamento do formulário:</p><ul>'
 );
 
 $lang ['step1'] = array(

@@ -31,7 +31,7 @@
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
 
 ## Themes
-- Reworked "Leggero" theme, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
+- Reworked "Leggero v2" style, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
   - Adjusted the alignment of the calendar widget and the search widget
   - The theme now adapts better at screen widths between 720px and 768px
   - Media queries were created for individual device classes (smartphone, netbook, laptop and PC) in order to achieve a better display, especially for mobile devices
@@ -53,8 +53,6 @@
   - Fixed searchbox glitch in FlatMaas revisited style ([#97](https://github.com/flatpressblog/flatpress/issues/97))
   - Fixed missing bullets in preview ([#98](https://github.com/flatpressblog/flatpress/issues/98))
   - CSS of the Leggero style had some glitches on mobile devices
-  - CSS of the Leggero-v2 style had some glitches on mobile devices
-  - The Leggero-v2 style CSS has received a more contemporary design in the blog and administration area
   - Invalid HTML output fixed ([#106](https://github.com/flatpressblog/flatpress/issues/106), [#156](https://github.com/flatpressblog/flatpress/issues/156))
   - Removed unneccessary external font resource ([#112](https://github.com/flatpressblog/flatpress/issues/112))
   - "Add comment" link has its own line ([#135](https://github.com/flatpressblog/flatpress/issues/135))
@@ -66,14 +64,13 @@
   - Fixed several layout/CSS glitches ([#140](https://github.com/flatpressblog/flatpress/issues/140), [#144](https://github.com/flatpressblog/flatpress/issues/144), [#201](https://github.com/flatpressblog/flatpress/issues/201), [#247](https://github.com/flatpressblog/flatpress/issues/247), [#249](https://github.com/flatpressblog/flatpress/issues/249))
 
 ## Internationalization
+- Added translation: Slovenian
 - Reworked translations: Spanish, Portuguese, Dutch, and Italian
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
 - Fixed not-yet-translated phrases in Blog view and Admin Area ([#171](https://github.com/flatpressblog/flatpress/issues/171))
 - Contact form: Admin notification mail is now localized ([#205](https://github.com/flatpressblog/flatpress/issues/205))
-- Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216))
-- Setup: Error messages are now localized ([#262](https://github.com/flatpressblog/flatpress/issues/262))
-- A Facebook video embedded with BBCode is now localized ([#252](https://github.com/flatpressblog/flatpress/issues/252))
+- Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216), [#262](https://github.com/flatpressblog/flatpress/issues/262))
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
@@ -89,12 +86,13 @@
 - Possible XSS prevented: Admin Area URL ([#153](https://github.com/flatpressblog/flatpress/issues/153))
 - Possible XSS prevented: Upload of misc. XML file types ([#172](https://github.com/flatpressblog/flatpress/issues/172), [#178](https://github.com/flatpressblog/flatpress/issues/178), [#188](https://github.com/flatpressblog/flatpress/issues/188))
 - Directory browsing prevented ([#174](https://github.com/flatpressblog/flatpress/issues/174))
-- Possible XSS in setup prevented ([#176](https://github.com/flatpressblog/flatpress/issues/176), [#220](https://github.com/flatpressblog/flatpress/issues/220))
+- Possible XSS in setup prevented ([#176](https://github.com/flatpressblog/flatpress/issues/176))
 - Possible XSS in Media Manager plugin prevented ([#177](https://github.com/flatpressblog/flatpress/issues/177))
 - Possible path traversal in Media Manager plugin prevented ([#179](https://github.com/flatpressblog/flatpress/issues/179))
 - Possible XSSs in Admin Area prevented ([#180](https://github.com/flatpressblog/flatpress/issues/180), [#183](https://github.com/flatpressblog/flatpress/issues/183), [#187](https://github.com/flatpressblog/flatpress/issues/187))
 - Possible XSS in comments prevented ([#186](https://github.com/flatpressblog/flatpress/issues/186))
 - Possible CSRFs in Admin Area prevented ([#64](https://github.com/flatpressblog/flatpress/issues/64))
+- Possible XSS in FlatPress Installer prevented ([#220](https://github.com/flatpressblog/flatpress/issues/220))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes
