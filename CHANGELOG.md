@@ -1,6 +1,6 @@
 # Under development: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## Changed requirements
-- FlatPress 1.3 runs under PHP up to **8.1**; minimum required PHP version increases to **7.1**.
+- FlatPress 1.3 runs under PHP up to **8.2**; minimum required PHP version increases to **7.1**.
 - Also, the PHP extension [**intl**](https://www.php.net/manual/book.intl.php) becomes mandatory.
 
 ## General
@@ -89,6 +89,7 @@
 - Fixed disappearing non-Latin characters in page title ([#49](https://github.com/flatpressblog/flatpress/issues/49) and [#91](https://github.com/flatpressblog/flatpress/issues/91))
 - Worked around strftime() marked as deprecated as of PHP 8.1 ([#92](https://github.com/flatpressblog/flatpress/issues/92)) - thx @bohwaz
 - Comments and contact form: Fixed error on sending mails with umlaut subjects ([#207](https://github.com/flatpressblog/flatpress/issues/207), [#209](https://github.com/flatpressblog/flatpress/issues/209))
+- Added missing properties in order to prevent "Dynamic properties are deprecated" error under PHP 8.2 ([#115](https://github.com/flatpressblog/flatpress/issues/115))
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
