@@ -14,7 +14,7 @@
 		'opt5'		=> 'Preveri posodobitve',
 
 		'chmod_info'	=> "Naslednja dovoljenja za datoteke <strong>ni mogoče</strong>
-					povrniti na 0777; verjetno lastnik datoteke ni isti kot
+					povrniti na 0775; verjetno lastnik datoteke ni isti kot
 					spletne strežnik. Običajno lahko to obvestilo prezrete.",
 	);
 	

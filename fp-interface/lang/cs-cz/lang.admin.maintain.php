@@ -15,7 +15,7 @@
 		'opt5'		=> 'Zjistit aktualizace',
 
 		'chmod_info'	=> "Následující oprávnění <strong>nemůžou být</strong>
-					resetované na 0777; pravděpodobně vlastník souborů není stejná osoba jako vlastník webu. Případně můžete ignorovat toto oznámení.",
+					resetované na 0775; pravděpodobně vlastník souborů není stejná osoba jako vlastník webu. Případně můžete ignorovat toto oznámení.",
 		
 	);
 	
