@@ -150,6 +150,11 @@ class StringParser_BBCode extends StringParser {
 	 * @var bool
 	 */
 	var $_validateAgain = false;
+	
+	var $_savedName;
+	var $_quoting;
+	var $_savedCloseCount;
+	var $_savedValue;
 
 	/**
 	 * Add a code
@@ -1634,6 +1639,8 @@ class StringParser_BBCode_Node_Element extends StringParser_Node {
 	 * @var bool
 	 */
 	var $_paragraphHandled = false;
+	
+	var $_codeInfo = null;
 
 	// ////////////////////////////////////////////////
 

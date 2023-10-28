@@ -542,6 +542,8 @@ class BPlusTree_Node {
 	 * @var int number of valid keys in $keys
 	 */
 	var $validkeys;
+	
+	var $storage;
 
 	/**
 	 * constructor
@@ -1558,6 +1560,8 @@ class BPlusTree {
 	 * @var bool true if fifo is enabled
 	 */
 	var $fifo_enabled = false;
+	
+	var $file = null;
 
 	/**
 	 * constructor
@@ -2376,14 +2380,14 @@ class BPlusTree {
 class BPlusWalker {
 
 	var $tree;
-
 	var $keylower;
-
 	var $includelower;
-
 	var $keyupper;
-
 	var $includeupper;
+	var $startnode;
+	var $node;
+	var $node_index;
+	var $valid;
 
 	function __construct(&$tree, &$keylower, $includelower = null, $keyupper = null, $includeupper = null) {
 		$this->tree = & $tree;
@@ -2572,8 +2576,10 @@ class caching_BPT extends BPlusTree {
 class SBPlusTree extends BPlusTree {
 
 	var $maxstring;
-
 	var $stringfile;
+	var $nodesize;
+	var $keylen;
+	var $position;
 
 	function __construct($infile, $stringfile, $maxstring = 256, $pos = null, $nodesize = null, $keylen = null) {
 		parent::__construct($infile, $pos, $nodesize, $keylen);
