@@ -40,6 +40,8 @@ class admin_entry_write extends AdminPanelActionValidated {
 	);
 
 	var $draft = false;
+	
+	var $id = null;
 
 	function _makePreview($arr, $id = null) {
 		if (!$id) {

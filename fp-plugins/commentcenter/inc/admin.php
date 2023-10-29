@@ -43,6 +43,8 @@ class admin_entry_commentcenter extends AdminPanelAction {
 		'commdelok_2',
 		'ccancel_2'
 	);
+	
+	var $plugin;
 
 	/**
 	 * This function is used as a callback when the panel is loaded.

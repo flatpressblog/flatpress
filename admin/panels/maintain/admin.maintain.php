@@ -37,6 +37,7 @@ class tpl_deleter extends fs_filelister {
 class s_entry_crawler extends fs_filelister {
 
 	var $_directory = CONTENT_DIR;
+	var $index;
 
 	function __construct() {
 		$this->index = entry_init();

@@ -77,9 +77,11 @@ if (class_exists('AdminPanelAction')) {
 			'disable'
 		);
 
+		var $bp_enabled;
+
 		function doenable($id) {
 			$success = -1;
-			$enabled = & $this->bp_enabled;
+			$enabled = &$this->bp_enabled;
 			if (static_exists($id)) {
 				if (!$enabled) {
 					$enabled = array();
@@ -98,7 +100,7 @@ if (class_exists('AdminPanelAction')) {
 
 		function dodisable($id) {
 			$success = -2;
-			$enabled = & $this->bp_enabled;
+			$enabled = &$this->bp_enabled;
 			if ($enabled && is_numeric($v = array_search($id, $enabled))) {
 				unset($enabled [$v]);
 				@sort($enabled);
