@@ -159,6 +159,13 @@ class FPDB_Query {
 	var $secondary_idx = null;
 
 	var $walker = null;
+	
+	var $prevkey = null;
+	
+	var $nextkey = null;
+	
+	var $comments = null;
+	
 
 	function __construct($params, $ID) {
 		global $current_query;

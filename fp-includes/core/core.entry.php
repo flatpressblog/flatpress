@@ -38,6 +38,8 @@ class entry_index {
 	var $_keysize = 12;
 
 	var $_lock_file = null;
+	
+	var $catlist = null;
 
 	function __construct() {
 		$this->_lock_file = CACHE_DIR . 'bpt.lock';

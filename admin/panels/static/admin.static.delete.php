@@ -17,6 +17,7 @@
  	class admin_static_delete extends AdminPanelAction {
 	
 		var $events = array('delete', 'cancel');
+		var $page;
 		
 		function setup() {
 			$this->page = @($_REQUEST['page']);
