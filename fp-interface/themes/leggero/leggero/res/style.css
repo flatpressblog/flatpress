@@ -38,39 +38,39 @@ body { margin: 80px 0 10px 0 }
 @media (max-width: 768px) { 
 
   #main {
-    width: 97%;
-    margin: 0;
-    padding: 1em 0.5em 0 0.5em
+	width: 97%;
+	margin: 0;
+	padding: 1em 0.5em 0 0.5em
   }
 
   #main ul.entry-footer {
-    margin: 0;
-    padding: 2em 0 1em 0 ;
-    width: 98%;
-    text-align: right
+	margin: 0;
+	padding: 2em 0 1em 0 ;
+	width: 98%;
+	text-align: right
   }
 
   #column {
-    width: 100%;
-    font-size: 80%;
-    margin: 0;
-    padding: 1em 0.5em 2em 0.5em;
-    overflow: auto;
-    text-align: center
+	width: 100%;
+	font-size: 80%;
+	margin: 0;
+	padding: 1em 0.5em 2em 0.5em;
+	overflow: auto;
+	text-align: center
   }
 
   #widget-searchbox div.buttonbar {
-    text-align: center
+	text-align: center
   }
   
   #widget_calendar table.calendar {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center
   }
 
   blockquote {
-    border-left: unset !IMPORTANT
+	border-left: unset !IMPORTANT
   }
 }
    
@@ -78,60 +78,60 @@ body { margin: 80px 0 10px 0 }
 @media (max-width: 480px) { 
 
   body {
-    margin: 1px 0 0 0;
-    padding: 0;
-    width: 100%
+	margin: 1px 0 0 0;
+	padding: 0;
+	width: 100%
   }
 
   #body-container {
-    margin: 0;
-    padding: 0.5em;
-    width: 96%;
-    border: none
+	margin: 0;
+	padding: 0.5em;
+	width: 96%;
+	border: none
   }
 
   #head {
-    margin: 0;
-    padding: 0;
-    width: 100%
+	margin: 0;
+	padding: 0;
+	width: 100%
   }
 
   h1 {
-    margin: 0;
-    padding: 0.5em 0 0 0.2em
+	margin: 0;
+	padding: 0.5em 0 0 0.2em
   }
 
   .subtitle {
-    margin: 0;
-    padding: 0.5em 0.5em 1em 0.5em;
+	margin: 0;
+	padding: 0.5em 0.5em 1em 0.5em;
   }
 
   #main {
-    margin: 0;
-    padding: 1em 0.4em 0 0;
-    width: 100%
+	margin: 0;
+	padding: 1em 0.4em 0 0;
+	width: 100%
   }
 
   .entry {
-    margin: 0;
-    padding: 0 0.5em 1em 0.5em 
+	margin: 0;
+	padding: 0 0.5em 1em 0.5em 
   }
 
   #main ul.entry-footer {
-    margin: 0;
-    padding: 2em 0 1em 0;
-    width: 98%;
-    text-align: right
+	margin: 0;
+	padding: 2em 0 1em 0;
+	width: 98%;
+	text-align: right
   }
 
   #main pre {
-    margin: 0;
-    padding: 0 0 0 1.5em
+	margin: 0;
+	padding: 0 0 0 1.5em
   }
 
   #column {
-    margin: 0;
-    padding: 0;
-    width: 100%
+	margin: 0;
+	padding: 0;
+	width: 100%
   }
-}      
+}	  
