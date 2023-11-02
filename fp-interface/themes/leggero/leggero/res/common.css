@@ -17,18 +17,18 @@ last change: 2023-11-01
 
 /* ===== GENERAL (redefinition HTML tag) ===== */
 html {
-    font-size: 85%;
-    font-family: 'Lucida Grande', 'Trebuchet MS', arial, Helvetica, sans-serif;
-    margin: 0;
-    padding: 0
+	font-size: 85%;
+	font-family: 'Lucida Grande', 'Trebuchet MS', arial, Helvetica, sans-serif;
+	margin: 0;
+	padding: 0
 }
 
 body {
-    font-size: 100%;
-    padding: 0;
-    background: white url(../imgs/backshade.png) repeat-x;
-    color: black;
-    width: 100%
+	font-size: 100%;
+	padding: 0;
+	background: white url(../imgs/backshade.png) repeat-x;
+	color: black;
+	width: 100%
 }
 
 hr { display: none }
@@ -39,8 +39,8 @@ img { border: none }
 
 /* Responsive Design img */
 img {
-    max-width: 100%;
-    height: auto
+	max-width: 100%;
+	height: auto
 }
 
 /*
@@ -48,48 +48,48 @@ img {
  */
  
 .center {
-    display: block;
-    margin-left: auto;
-    margin-right: auto
+	display: block;
+	margin-left: auto;
+	margin-right: auto
 }
 
 /* Plugin: QuickGallery */
 
 .img-gallery img {
-    display: inline;
-    margin: 0.4em
+	display: inline;
+	margin: 0.4em
 }
 
 /* Plugin: QuickGallery */
 
 .img-gallery img .center {
-    display: inline
+	display: inline
 }
 
 blockquote {
-    width: 90%;
-    color: #666;
-    margin: 1em 1em;
-    padding: 0 10px;
-    border-left: 5px solid #bbb
+	width: 90%;
+	color: #666;
+	margin: 1em 1em;
+	padding: 0 10px;
+	border-left: 5px solid #bbb
 }
 
 pre, code {
-    font-family: 'Lucida Console', Monaco, monospace;
-    font-size: 90%
+	font-family: 'Lucida Console', Monaco, monospace;
+	font-size: 90%
 }
 
 pre {
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    background-color: #efefef;
-    overflow: auto;
-    width: 90%;
-    margin: 1em 1em 2em 1em;
-    padding: 1em 0.5em;
-    min-height: 40px; 
-    height: auto !important; 
-    height: 40px
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	background-color: #efefef;
+	overflow: auto;
+	width: 90%;
+	margin: 1em 1em 2em 1em;
+	padding: 1em 0.5em;
+	min-height: 40px; 
+	height: auto !important; 
+	height: 40px
 }
 
 ul, li, ol { margin: 0; padding: 0 }
@@ -158,7 +158,7 @@ h2 {
 	font-size: 1.5em;
 	color: #333333;
 	margin: 0;
-    padding: 1em 0 1em 0
+	padding: 1em 0 1em 0
 }
 
 h3 {
@@ -173,10 +173,10 @@ h4 { font-size: 1.2em }
 /* ===== DIV CONTAINER ALL ELEMENTS BLOCK ===== */
 #body-container {
 	text-align: left;
-    width: 85%;
+	width: 85%;
 	margin: 0 auto;
-    max-width: 68em;
-    padding: 0.3em;
+	max-width: 68em;
+	padding: 0.3em;
 	border: solid 1px #ccc;
 	background-color: white
 }
@@ -184,13 +184,13 @@ h4 { font-size: 1.2em }
 
 /* ===== HEAD ===== */
 #head {
-    clear: both;
+	clear: both;
 	font-family: 'book antiqua', georgia, garamond,  times, 'times new roman', serif;
-    margin: 1em;
-    padding: 7em 0.6em 0.5em 0.5em;
-    border-radius: 1em;
-    border: 0;
-    background-image: linear-gradient( #aa4142, #c37576)
+	margin: 1em;
+	padding: 7em 0.6em 0.5em 0.5em;
+	border-radius: 1em;
+	border: 0;
+	background-image: linear-gradient( #aa4142, #c37576)
 }
 
 #head a { color: white; text-decoration: none }
@@ -206,7 +206,7 @@ h4 { font-size: 1.2em }
 
 /* ===== DIV CONTAINER "MAIN" ===== */
 #outer-container {
-    width: 100%;
+	width: 100%;
 	background-color: white
 }
 
@@ -216,7 +216,7 @@ h4 { font-size: 1.2em }
 
 #main {
 	float: left;
-    width: 62%;
+	width: 62%;
 	font-size: 100%;
 	margin: 1em
 }
@@ -307,9 +307,9 @@ form#search ul { list-style-type: none
 	clear: both;
 	font-size: 80%;
 	color: #555;
-    background-color: #dcdcdc;
+	background-color: #dcdcdc;
 	padding: 1em;
-    margin: 0 1em 1em 1em;
-    text-align: center;
+	margin: 0 1em 1em 1em;
+	text-align: center;
 	border-top: #bbb 1px solid
 }
