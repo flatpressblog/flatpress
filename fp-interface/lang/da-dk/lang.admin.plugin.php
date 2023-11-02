@@ -12,8 +12,8 @@
 		'enable'	=> 'Aktivér',
 		'disable'	=> 'Deaktiver',
 		'descr'		=> 'Denne administration gør det muligt at aktivere eller deaktivere <a class="hint" href="http://wiki.flatpress.org/doc:plugins" title="Hvad er et plugin?">plugins</a>, som gør funktionaliteten i FlatPress meget fleksibel.</p>'.
-						'<p>For at integrere et nyt plugin i FlatPress, skal dette plugin indlæses i biblioteket <code>fp-plugins/</code> '.
-						'Hvis der findes et navn og en beskrivelse i det nye plug-in på det relevante sted, vises disse tekster også her.',
+						'<p>For at integrere et nyt plugin i FlatPress, skal dette plugin indlæses i <code>fp-plugins/</code> -biblioteket. '.
+						'Hvis der er et navn og en beskrivelse i det nye plugin på det relevante sted, vises disse tekster også her.',
 		'name'		=> 'Navn',
 		'description'=>'Beskrivelse',
 		'author'	=> 'Forfatter',
