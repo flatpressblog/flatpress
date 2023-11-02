@@ -10,10 +10,9 @@ Author: NoWhereMan & drudo
 Version: 0.2
 Module: style.css
 
-last change: 2022-03-12
+last change: 2023-11-01
 
 */
-
 
 
 /* imports common style ruleset */
@@ -24,105 +23,115 @@ last change: 2022-03-12
 @import url(column.css);
 
 /* defines rules specific to the front page */
-body { margin: 80px 0 0 0 }
+body { margin: 80px 0 10px 0 }
 
-#comments li.comment-admin {
-	padding:1em
-}
+#comments li.comment-admin { padding: 1em }
 
 #comments li.comment-admin strong.comment-name { font-size:140% }
 
-#widget-searchbox form {
-	/* text-align: center; */
+#widget-searchbox div.buttonbar {
+  margin: 10px -5px;
+	text-align: left
 }
 
 /* 800er Bildschirme zum Beispiel iPad Hochformat */
-@media only screen and (max-width: 768px) { 
+@media (max-width: 768px) { 
 
-#main {
-  width: 100%;
-  margin: 0;
-  padding: 1em 0.5em 0 0.5em;
-}
+  #main {
+    width: 97%;
+    margin: 0;
+    padding: 1em 0.5em 0 0.5em
+  }
 
-#main ul.entry-footer {
-  margin: 0;
-  padding: 2em 0 1em 0 ;
-  width: 98%;
-  text-align: right;
-}
+  #main ul.entry-footer {
+    margin: 0;
+    padding: 2em 0 1em 0 ;
+    width: 98%;
+    text-align: right
+  }
 
-#column {
-  width: 100%;
-  font-size: 80%;
-  margin: 0;
-  padding: 1em 0.5em 2em 0.5em;
-  /* border: 1px solid red; */
-  overflow: auto;   /* shit, bei 84% Bildbreite wird es eng! */
-}
+  #column {
+    width: 100%;
+    font-size: 80%;
+    margin: 0;
+    padding: 1em 0.5em 2em 0.5em;
+    overflow: auto;
+    text-align: center
+  }
 
+  #widget-searchbox div.buttonbar {
+    text-align: center
+  }
+  
+  #widget_calendar table.calendar {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center
+  }
+
+  blockquote {
+    border-left: unset !IMPORTANT
+  }
 }
    
 /* Kleinbildschirme */
-@media only screen and (max-width: 480px) { 
+@media (max-width: 480px) { 
 
-body {
-  margin: 1px 0 0 0;
-  padding: 0;
-  width: 100%;
-}
+  body {
+    margin: 1px 0 0 0;
+    padding: 0;
+    width: 100%
+  }
 
-#body-container {
-  margin: 0;
-  padding: 0.5em;
-  width: 96%;
-  border: none;
-}
+  #body-container {
+    margin: 0;
+    padding: 0.5em;
+    width: 96%;
+    border: none
+  }
 
-#head {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
+  #head {
+    margin: 0;
+    padding: 0;
+    width: 100%
+  }
 
-h1 {
-  margin: 0;
-  padding: 0.5em 0 0 0.2em;
-}
+  h1 {
+    margin: 0;
+    padding: 0.5em 0 0 0.2em
+  }
 
-.subtitle {
-  margin: 0;
-  padding: 0.5em 0.5em 1em 0.5em;
-}
+  .subtitle {
+    margin: 0;
+    padding: 0.5em 0.5em 1em 0.5em;
+  }
 
-#main {
-  margin: 0;
-  padding: 1em 0.4em 0 0;
-  width: 100%;
-}
+  #main {
+    margin: 0;
+    padding: 1em 0.4em 0 0;
+    width: 100%
+  }
 
-.entry {
-  margin: 0;
-  padding: 0 0.5em 1em 0.5em 
-}
+  .entry {
+    margin: 0;
+    padding: 0 0.5em 1em 0.5em 
+  }
 
-#main ul.entry-footer {
-  margin: 0;
-  padding: 2em 0 1em 0;
-  width: 98%;
-  text-align: right;
-}
+  #main ul.entry-footer {
+    margin: 0;
+    padding: 2em 0 1em 0;
+    width: 98%;
+    text-align: right
+  }
 
-#main pre {
-  margin: 0;
-  padding: 0 0 0 1.5em;
-}
+  #main pre {
+    margin: 0;
+    padding: 0 0 0 1.5em
+  }
 
-#column {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-
-
+  #column {
+    margin: 0;
+    padding: 0;
+    width: 100%
+  }
 }      

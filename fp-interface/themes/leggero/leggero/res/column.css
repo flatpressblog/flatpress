@@ -10,27 +10,25 @@ Author: NoWhereMan & drudo
 Version: 0.2
 Module: style.css
 
-last change: 2022-03-17
+last change: 2023-11-01
 
 */
 
 
-
 /* ===== COLUMN ===== */
 #column {
-	float: right;
+  float: right;
   width: 28%;
-	font-size: 80% !important;
-	font-size: 75%;
-	height:1%;
+  font-size: 80% !important;
+  font-size: 75%;
+  height:1%;
   margin: 1em;
-  padding: 0.7em;
-	/* border-left: solid 1px #ccc; */
+  padding: 0.7em
 }
 
 #column h4 {
-	/* Titles of the sections */
-	margin-bottom: .5em;
+  /* Titles of the sections */
+  margin-bottom: .5em
 }
 
 #column p, #column div { margin: 10px 5px }
@@ -41,10 +39,10 @@ last change: 2022-03-17
 #column ul li table { font-size: 100% }
 
 #column ul {
-	list-style-type: none;
-	margin-right: 10px;
-	margin-bottom: .5em;
-	padding-left: 1em
+  list-style-type: none;
+  margin-right: 10px;
+  margin-bottom: .5em;
+  padding-left: 1em
 }
 
 #column fieldset { margin: 0 5px 0 5px }
@@ -55,10 +53,14 @@ last change: 2022-03-17
 The following definitions take care of the Calendar plugin
 ======================================================= */
 
+#widget_calendar table.calendar {
+  font-size: 85%
+}
+
 .calendar {
   margin: 0;
   padding: 0 0 2em 0;
-  font-size: 80%;
+  font-size: 80%
 }
 
 .calendar-month {
@@ -67,24 +69,24 @@ The following definitions take care of the Calendar plugin
   color: #333;
   background-color: transparent;
   font-weight: bold;
-  border-bottom: 0.1em solid #333;
+  border-bottom: 0.1em solid #333
 }
 
 .calendar th {
   padding: 0.4em; 
   color: #fff;
-  background-color: #c37576;
+  background-color: #c37576
 }
 
 .calendar td {
   padding: 0.4em;
-  text-align: center;
+  text-align: center
 }
 
 .current-day {
   color: #333;
   background-color: transparent;
-  border: 2px solid #c37576;
+  border: 2px solid #c37576
 }
 /* =======================================================
 End of Calendar plugin

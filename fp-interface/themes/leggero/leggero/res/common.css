@@ -10,24 +10,24 @@ Author: NoWhereMan & drudo
 Version: 0.2
 Module: common.css
 
-last change: 2023-10-23
+last change: 2023-11-01
 
 */
 
 
 /* ===== GENERAL (redefinition HTML tag) ===== */
 html {
-	font-size: 85%;
-	font-family: 'Lucida Grande', 'Trebuchet MS', arial, Helvetica, sans-serif;
-	margin: 0;
-	padding: 0
+    font-size: 85%;
+    font-family: 'Lucida Grande', 'Trebuchet MS', arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0
 }
 
 body {
-	font-size: 100%;
-	padding: 0;
-	background: white url(../imgs/backshade.png) repeat-x;
-	color: black;
+    font-size: 100%;
+    padding: 0;
+    background: white url(../imgs/backshade.png) repeat-x;
+    color: black;
     width: 100%
 }
 
@@ -39,8 +39,8 @@ img { border: none }
 
 /* Responsive Design img */
 img {
-  max-width: 100%;
-  height: auto
+    max-width: 100%;
+    height: auto
 }
 
 /*
@@ -48,44 +48,48 @@ img {
  */
  
 .center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto
+    display: block;
+    margin-left: auto;
+    margin-right: auto
 }
 
 /* Plugin: QuickGallery */
 
 .img-gallery img {
-  display: inline;
-  margin: 0.4em
+    display: inline;
+    margin: 0.4em
 }
 
 /* Plugin: QuickGallery */
 
-.img-gallery img .center { display: inline }
+.img-gallery img .center {
+    display: inline
+}
 
 blockquote {
-	width: 90%;
-	color: #666;
-	margin: 1em 1em;
-	padding: 0 10px;
-	border-left: 5px solid #bbb
+    width: 90%;
+    color: #666;
+    margin: 1em 1em;
+    padding: 0 10px;
+    border-left: 5px solid #bbb
 }
 
 pre, code {
-	font-family: 'Lucida Console', Monaco, monospace;
-	font-size: 90%
+    font-family: 'Lucida Console', Monaco, monospace;
+    font-size: 90%
 }
 
 pre {
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
-	background-color: #efefef;
-	overflow: auto;
-	width: 90%;
-	margin: 1em 1em 2em 1em;
-	padding: 1em 0.5em;
-	height: auto !important
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background-color: #efefef;
+    overflow: auto;
+    width: 90%;
+    margin: 1em 1em 2em 1em;
+    padding: 1em 0.5em;
+    min-height: 40px; 
+    height: auto !important; 
+    height: 40px
 }
 
 ul, li, ol { margin: 0; padding: 0 }
@@ -137,7 +141,6 @@ a:hover {
 	color: #c37676;
 	text-decoration: underline
 }
-
 
 
 /* ===== HEADERS TAGS ===== */
@@ -201,7 +204,6 @@ h4 { font-size: 1.2em }
 }
 
 
-
 /* ===== DIV CONTAINER "MAIN" ===== */
 #outer-container {
     width: 100%;
@@ -209,9 +211,8 @@ h4 { font-size: 1.2em }
 }
 
 
-
 /* ===== MAIN ===== */
-#main h4 { margin: 2em 0 0 0}
+#main h4 { margin: 2em 0 0 0 }
 
 #main {
 	float: left;
@@ -235,70 +236,70 @@ h4 { font-size: 1.2em }
 	padding: 0 1.6em 0 1.6em
 }
 
-	#commentform fieldset p { margin: 0 0 .5em 0 }
+#commentform fieldset p { margin: 0 0 .5em 0 }
 	
-	#comments li {
-		margin: 0 0 1.5em 0;
-		padding: 5px;
-		border-top: 1px solid #ddd;
-		border-bottom: 1px solid #ddd;
-		background: #efefef
-	}
+#comments li {
+	margin: 0 0 1.5em 0;
+	padding: 5px;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	background: #efefef
+}
 	
 	/* === Class of main block === */
-	h6.date {
-		font-size: 80%;
-		color: #aaa
-	}
+h6.date {
+	font-size: 80%;
+	color: #aaa
+}
 	
-	.date { /* date under titles of the entry */
-		font-size: 80%;
-		font-style: oblique;
-		color: gray;
-		margin: .2em 0 0 0
-	}
+.date { /* date under titles of the entry */
+	font-size: 80%;
+	font-style: oblique;
+	color: gray;
+	margin: .2em 0 0 0
+}
 	
 	/* .entry class */
-	.entry {
-		margin: 0 0 1.5em 0;
-		padding: 0;
-		overflow: auto
-	}
+.entry {
+	margin: 0 0 1.5em 0;
+	padding: 0;
+	overflow: auto
+}
 	
-	#main>.entry {
-		overflow: hidden; /* rest of the world :) */
-	}
+#main>.entry {
+	overflow: hidden; /* rest of the world :) */
+}
 	/* end of .entry */
 	
-	#main ul.entry-footer { /*  entry footer */
-		clear: both;
-		font-size: 80%;
-		color: gray;
-		margin: 2em 0 .5em 0;
-		text-align: right
-	}
+#main ul.entry-footer { /*  entry footer */
+	clear: both;
+	font-size: 80%;
+	color: gray;
+	margin: 2em 0 .5em 0;
+	text-align: right
+}
 	
-	.entry-footer li { display: block }
+.entry-footer li { display: block }
 	
-	.admincontrols { /* [edit] and [delete] */
-		font-size: 80%;
-		text-align: right
-	}
+.admincontrols { /* [edit] and [delete] */
+	font-size: 80%;
+	text-align: right
+}
 	
-	.buttonbar { text-align: center }
+.buttonbar { text-align: center }
 	
-	.buttonbar input {
-		text-align: center;
-		margin: .1em .5em;
-		padding: 0 1em
-	}
+.buttonbar input {
+	text-align: center;
+	margin: .1em .5em;
+	padding: 0 1em
+}
 	
-	.navigation { /* next entries & previous entries link */
-		font-size: 80%;
-		margin-bottom: 5em
-	}
+.navigation { /* next entries & previous entries link */
+	font-size: 80%;
+	margin-bottom: 5em }
 
-	form#search ul { list-style-type: none }
+form#search ul { list-style-type: none
+}
 
 
 /* ===== FOOTER ===== */
