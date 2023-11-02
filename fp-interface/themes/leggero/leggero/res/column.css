@@ -17,18 +17,18 @@ last change: 2023-11-01
 
 /* ===== COLUMN ===== */
 #column {
-  float: right;
-  width: 28%;
-  font-size: 80% !important;
-  font-size: 75%;
-  height:1%;
-  margin: 1em;
-  padding: 0.7em
+	float: right;
+	width: 28%;
+	font-size: 80% !important;
+	font-size: 75%;
+	height:1%;
+	margin: 1em;
+	padding: 0.7em
 }
 
 #column h4 {
-  /* Titles of the sections */
-  margin-bottom: .5em
+	/* Titles of the sections */
+	margin-bottom: .5em
 }
 
 #column p, #column div { margin: 10px 5px }
@@ -39,10 +39,10 @@ last change: 2023-11-01
 #column ul li table { font-size: 100% }
 
 #column ul {
-  list-style-type: none;
-  margin-right: 10px;
-  margin-bottom: .5em;
-  padding-left: 1em
+	list-style-type: none;
+	margin-right: 10px;
+	margin-bottom: .5em;
+	padding-left: 1em
 }
 
 #column fieldset { margin: 0 5px 0 5px }
@@ -54,39 +54,39 @@ The following definitions take care of the Calendar plugin
 ======================================================= */
 
 #widget_calendar table.calendar {
-  font-size: 85%
+	font-size: 85%
 }
 
 .calendar {
-  margin: 0;
-  padding: 0 0 2em 0;
-  font-size: 80%
+	margin: 0;
+	padding: 0 0 2em 0;
+	font-size: 80%
 }
 
 .calendar-month {
-  margin: 0;
-  padding: 0.4em 0 0.4em 0;  
-  color: #333;
-  background-color: transparent;
-  font-weight: bold;
-  border-bottom: 0.1em solid #333
+	margin: 0;
+	padding: 0.4em 0 0.4em 0;	
+	color: #333;
+	background-color: transparent;
+	font-weight: bold;
+	border-bottom: 0.1em solid #333
 }
 
 .calendar th {
-  padding: 0.4em; 
-  color: #fff;
-  background-color: #c37576
+	padding: 0.4em; 
+	color: #fff;
+	background-color: #c37576
 }
 
 .calendar td {
-  padding: 0.4em;
-  text-align: center
+	padding: 0.4em;
+	text-align: center
 }
 
 .current-day {
-  color: #333;
-  background-color: transparent;
-  border: 2px solid #c37576
+	color: #333;
+	background-color: transparent;
+	border: 2px solid #c37576
 }
 /* =======================================================
 End of Calendar plugin
