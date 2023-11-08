@@ -144,9 +144,7 @@ ul#admin-tabmenu a#admin-tab-current {
 
 #admin-content ul li::before,
 #admin-content fieldset p.date::before,
-#admin-content fieldset ul li::before {
-	content: "\00BB \0020";
-}
+#admin-content fieldset ul li::before { content: "\00BB \0020" }
 
 #admin-bbcode-toolbar {
 	border: none;
@@ -204,7 +202,7 @@ ul#admin-tabmenu a#admin-tab-current {
 	border-top: 3px solid #ccc;
 	border-left: 1px solid #ccc;
 	border-right: 1px solid #ccc;  
-	text-decoration:none
+	text-decoration: none
 }
 
 #admin-submenu li a.active {
@@ -499,7 +497,7 @@ li.widget-class {
 .widget-instance .textinput:focus {
 	font-style: normal;
 	border: #f00 2px solid;
-	background-color:white;
+	background-color: white;
 	text-align: left
 }
 
