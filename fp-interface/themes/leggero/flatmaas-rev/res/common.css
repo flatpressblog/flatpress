@@ -57,7 +57,7 @@ body > div#body-container { width: 760px }
 	border: solid 1px #ccc;
 	width: 205px;
 	font-size: 75%;
-	height:1%
+	height: 1%
 }
 
 #main + #column { width: 195px; font-size: 80% }
