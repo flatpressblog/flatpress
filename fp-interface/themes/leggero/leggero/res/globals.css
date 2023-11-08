@@ -12,6 +12,7 @@ Module: globals.css
 */
 
 
+
 .alignleft { float: left }
 
 .alignright { float: right }
@@ -47,9 +48,10 @@ Module: globals.css
 .warnings {
 	color : #8a7802;
 	border-top: 1px solid;
-	border-bottom: 1px solid;
+    border-bottom: 1px solid;
 	border-color: #f8e674;
-	background: #fffdd5
+	background: #fffdd5;
+
 }
 
 .field-error {

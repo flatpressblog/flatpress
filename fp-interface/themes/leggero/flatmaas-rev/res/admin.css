@@ -33,10 +33,10 @@ h1 {
 
 ul#admin-tabmenu {
 	margin: 1em 0 0 0;
-        text-align: center;
-        background-color: #999977;
-        padding: 1em 1em 0 1em;
-        border: solid #999977;
+	text-align: center;
+	background-color: #999977;
+	padding: 1em 1em 0 1em;
+	border: solid #999977;
 }
 
 ul#admin-tabmenu li {
@@ -48,9 +48,9 @@ ul#admin-tabmenu li {
 	background-color: #CCCCAA 
 }
 
-ul#admin-tabmenu li a {    
-        color: #555533;
-        padding: 0.5em;
+ul#admin-tabmenu li a {	
+	color: #555533;
+	padding: 0.5em;
 	line-height: 2em;
 	font-weight: normal;
 	text-decoration: none;
@@ -59,20 +59,20 @@ ul#admin-tabmenu li a {
 
 
 ul#admin-tabmenu li a:hover {
-        color: #555533;
+	color: #555533;
 	font-weight: normal;
 	background: #BBBB99 /*url('../imgs/arrow.gif') center right no-repeat}*/
 
 }
 
 ul#admin-tabmenu a#admin-tab-current {
-        font-weight: bold;
-        background-color: white
+	font-weight: bold;
+	background-color: white
 }
 
 #admin-content {
-        border: 1px solid #999977;
-        padding: 1em;
+	border: 1px solid #999977;
+	padding: 1em;
 	overflow: hidden;
 }
 
@@ -96,10 +96,10 @@ ul#admin-tabmenu a#admin-tab-current {
 
 
 input#subject {
-        width:100%;
-        font-size: 1.3em;
+	width:100%;
+	font-size: 1.3em;
 	color: #333333;
-        font-weight: bold;
+	font-weight: bold
 }
 
 /* panel container */
@@ -126,38 +126,37 @@ input#subject {
 
 #admin-content table {
 	border-collapse: collapse;
-	width: 100%;	
+	width: 100%;
 }
 
 #admin-content td {
 	border-bottom: solid 1px black;
 	width: 8px;
 	font-size: 0.8em;
-	padding: 4px;
+	padding: 4px
 }
 
 #admin-content td.main_cell {
 	text-align: left;
 	font-weight: bold;
-	width: 30%;
-	
+	width: 30%
 }
 
 #admin-content th {
 	border-bottom: solid 2px black;
 	padding: 4px;
 	font-size: 0.75em;
-	font-style: italic;
+	font-style: italic
 }
 
 input.maxsize, select.maxsize {width:100%}
 
 
 #admin-bbcode-toolbar{
-    border: none;
-    padding:0;
-    padding-right: 0.7%;
-    margin:0;
+	border: none;
+	padding:0;
+	padding-right: 0.7%;
+	margin:0;
 }
 #admin-bbcode-toolbar legend{display:none}
 
@@ -172,42 +171,38 @@ input.maxsize, select.maxsize {width:100%}
 }
 
 #post-preview .entry {
-        padding:2em
+		padding:2em
 }
 
 /* notifications */
-
 .draft {background-color:lightgrey}
 
 /* (already defined in common, here we put just some tuning settings) */
 #admin-content ul.msgs {
-    margin-left: 0em;
-    padding: 1em 2em;
-    margin-bottom: 2em;
+	margin-left: 0em;
+	padding: 1em 2em;
+	margin-bottom: 2em
 }
 
 
 /* conflict with inner h1 */
-
 #admin-content h1 {
 	color: black
 }
 
 
-
 /* ===== submenu ====== */
-
 #admin-submenu {
 	background: #eee; 
 	border-top: 1px solid #ddd; 
 	border-bottom: 1px solid #ddd; 
 	text-align:center;
-	padding: .1em .3em .2em;
+	padding: .1em .3em .2em
 }
 
 #admin-submenu li {
 	display:inline; 
-	font-size: 80%; 
+	font-size: 80%;
 }
 
 #admin-submenu li a {
@@ -215,7 +210,7 @@ input.maxsize, select.maxsize {width:100%}
 	color: #000;
 	border-left: 1px solid #eee;
 	border-right: 1px solid #eee;  
-	font-weight: normal;
+	font-weight: normal
 }
 
 #admin-submenu li a:hover {
@@ -239,7 +234,6 @@ input.maxsize, select.maxsize {width:100%}
 }
 
 
-
 /* ===== MAIN MENU ITEM ===== */
 #admin-content { padding: 1em }
 
@@ -255,7 +249,6 @@ input.maxsize, select.maxsize {width:100%}
 	font-size: 80%;
 	font-style: italic
 }
-
 
 
 /* ===== ADMIN ENTRY ===== */
@@ -331,9 +324,7 @@ input.maxsize, select.maxsize { width: 100% }
 }
 
 
-#plugin-table-body td {
-	padding: 1em .6em;
-}
+#plugin-table-body td { padding: 1em .6em }
 
 #admin-drafts {
 	border-top: 1px solid #bbb;
@@ -341,24 +332,22 @@ input.maxsize, select.maxsize { width: 100% }
 	padding:  .4em;
 	color: #555;
 	background-color: #ddd;
-	overflow: auto;
+	overflow: auto
 }
 
 #admin-drafts p {
 	font-weight: bold;
 	float: left;
 	padding: 0;
-	margin: 0;
+	margin: 0
 }
 
-#admin-content #admin-drafts ul {
-	margin: 0; padding: 0;
-}
+#admin-content #admin-drafts ul { margin: 0; padding: 0 }
 
 #admin-drafts li {
 	float:left;
 	list-style-position: inside;
-	margin: 0; padding-left: 1em;
+	margin: 0; padding-left: 1em
 }
 
 
@@ -399,65 +388,53 @@ input.maxsize, select.maxsize { width: 100% }
 /* ===== THEME PANEL ===== */
 
 #current-theme h5, 
-#available-themes h5 {
-	font-size: 1em;
-}
+#available-themes h5 { font-size: 1em }
 
 #current-theme {	
 	margin-bottom: 4em;
-	overflow:hidden;
+	overflow:hidden
 }
-
 
 #current-theme img { 
 	float:left;
 	border: 1px solid #ddd;
-	margin-right: 2em;
+	margin-right: 2em
 }
 
-#available-themes {
-	clear: both;
-}
+#available-themes { clear: both }
 
+#available-themes img { border: 1px solid #eee }
 
-#available-themes img {
-	border: 1px solid #eee
-}
-
-#available-themes ul {
-	list-style-type: none;
-}
+#available-themes ul { list-style-type: none }
 
 #available-themes ul li {
 	float:left;
 	padding: 1em;
 	border: 1px solid #fff;
 	text-align: center;
-	width: 300px;
+	width: 300px
 }
 
 #available-themes ul li:hover {
 	background: #eee;
-	border: 1px solid #ddd;
+	border: 1px solid #ddd
 }
+
 
 /* ===== WIDGET PANEL ====== */
-
-#admin-widgetset-list {
-	width: 30em;
-}
+#admin-widgetset-list { width: 30em }
 
 #admin-widgetset-list ul {
 	list-style-type: none;
 	margin: 0;
 	margin-bottom: 2em;
-	text-align: left;
+	text-align: left
 }
 
 li.admin-widgetset {
 	padding: .5em;
 	margin-bottom: 2em;
-	border: 1px solid #ddd;
+	border: 1px solid #ddd
 }
 
 #available-widgets {
@@ -469,7 +446,7 @@ li.admin-widgetset {
 	width: 30%;
 	z-index: 1000;
 	position: relative;
-	text-align: left;
+	text-align: left
 }
 
 #widget-trashcan { /*colors for trashcan/uninstall widgets while dragging*/
@@ -480,7 +457,7 @@ li.admin-widgetset {
 	padding: 2em;
 	text-align: center;
 	border: 2px solid #f00;
-	margin: 2em;
+	margin: 2em
 }
 
 .widget-available { /*colors for available widgets while dragging*/
@@ -488,7 +465,7 @@ li.admin-widgetset {
 	color: #fff;
 	background-color: rgba(34, 102, 0, 0.7);
 	border: 2px solid #2f0;
-	z-index: 2000;
+	z-index: 2000
 }
 
 .widget-installed { /*colors for installed widgets while dragging*/
@@ -496,13 +473,12 @@ li.admin-widgetset {
 	color: #fff;
 	background-color: rgba(0, 34, 102, 0.7);
 	border: 2px solid #00f;
-	z-index: 2000;
+	z-index: 2000
 }
 #available-widgets ul, .admin-widgetset ul {
 	padding-left: 0;
-	margin-left: 0;
+	margin-left: 0
 }
-
 
 li.widget-instance,
 li.widget-class {
@@ -512,15 +488,14 @@ li.widget-class {
 	padding: .5em;
 	height: 30px;
 	background-color: white;
-	list-style-type: none;
+	list-style-type: none
 }
-
 
 .admin-widgetset h3 {
 	margin-bottom:1em;
 	padding: .3em;
 	background: #eee;
-	border: 1px solid #ddd;
+	border: 1px solid #ddd
 }
 
 #available-widgets h2 {
@@ -529,7 +504,7 @@ li.widget-class {
 	margin-bottom:1em;
 	padding: .3em;
 	border: 1px solid #eee;
-	background: #999;
+	background: #999
 }
 
 .widget-instance .textinput {
@@ -539,112 +514,89 @@ li.widget-class {
 	font-style: oblique;
 	color: blue;
 	border: #fff 2px solid;
-	text-align: right;
+	text-align: right
 }
 
 .widget-instance .textinput:hover {
 	border: #d00 2px solid;
-	background-color:white;
+	background-color: white
 }
 
 
 .widget-instance .textinput:focus {
 	font-style: normal;
 	border: #f00 2px solid;
-	background-color:white;
-	text-align: left;
+	background-color: white;
+	text-align: left
 }
 
 
 .widgetname a, 
 .widgetname a:link,
-.widgetname a:visited {
-	color: #ddd;
-}
+.widgetname a:visited { color: #ddd }
 
 .widget-placeholder {
 	padding: .5em;
 	font-style: oblique;
 	text-align: center;
-	border: 1px dashed #ddd;
+	border: 1px dashed #ddd
 }
 
 .widget-dragger {
 	text-align: left;
 	z-index: 1000;
 	padding: .5em;
-	height: 30px !important;
+	height: 30px !important
 }
 
 
 /* ===== CONFIG PANEL ===== */
-
-#admin-config dl {
-	margin-bottom: 4em;
-}
+#admin-config dl { margin-bottom: 4em }
 
 #admin-config dt {
-    width: 33%;
-    text-align:right;
-    margin-top: 1.8em;
-    line-height: 1.5em;
-    font-weight: bold;
+	width: 33%;
+	text-align:right;
+	margin-top: 1.8em;
+	line-height: 1.5em;
+	font-weight: bold;
 }
 
-#admin-config dt label {
-	padding-top: .2em;
-}
+#admin-config dt label { padding-top: .2em }
 
 #admin-config dd {
-    margin-left: 35%;
-    margin-top: -1.7em;
-    line-height: 1.5em;
+	margin-left: 35%;
+	margin-top: -1.7em;
+	line-height: 1.5em
 }
 
+#admin-config dd p { margin: 0 }
 
-#admin-config dd p {
-    margin: 0;
-}
-
-
-#admin-config dd input{
-	margin-bottom: .2em;
-}
+#admin-config dd input { margin-bottom: .2em }
 
 #admin-config input.textinput ,
-#admin-config select.textinput {
-	width: 20em;
-}
+#admin-config select.textinput { width: 20em }
 
+#admin-config input.bigtextinput { width: 30em }
 
-#admin-config input.bigtextinput {
-	width: 30em;
-}
+#admin-config input.smalltextinput { width: 5em }
 
-
-#admin-config input.smalltextinput {
-	width: 5em;
-}
 
 /* ===== SPECIAL HOVERS ====== */
-a.link-disable, a.link-enable{
-	padding: .9em;
-}
+a.link-disable, a.link-enable { padding: .9em }
+
 a.link-disable:hover {
 	background-color: red;
-	color: white;
-}
-a.link-enable:hover {
-	background-color: green;
-	color: white;
+	color: white
 }
 
+a.link-enable:hover {
+	background-color: green;
+	color: white
+}
 
 
 /* ===== NOTIFICATIONS ===== */
-.hint {
-	cursor: help;
-}
+.hint { cursor: help }
 
 .draft { background-color: lightgrey }
 
@@ -655,7 +607,4 @@ a.link-enable:hover {
 	padding: 1em 2em
 }
 
-form {
-    margin: auto;
-}
-
+form { margin: auto }

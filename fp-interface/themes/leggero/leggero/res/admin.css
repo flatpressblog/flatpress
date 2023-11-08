@@ -41,8 +41,8 @@ h2 { border-bottom: 1px solid #ddd; margin: 0.5em 0 }
 
 #admin-content h2,
 #admin-content form h2 {
-    font-style: normal;
-    padding: unset
+	font-style: normal;
+	padding: unset
 }
 
 body { background: #eee }
@@ -215,19 +215,19 @@ input.maxsize, select.maxsize { width: 99% }
 	margin: 0;
 	padding: 0;
 	padding-right: 0.7%;
-    display: table;
+	display: table;
 	border: none
 }
 
 #admin-bbcode-toolbar p {
-    display: table-cell;
-    vertical-align: middle;
-    line-height: 1em
+	display: table-cell;
+	vertical-align: middle;
+	line-height: 1em
 }
 
 #admin-bbcode-toolbar p img {
-    vertical-align: middle;
-    cursor: pointer
+	vertical-align: middle;
+	cursor: pointer
 }
 
 #admin-bbcode-toolbar legend { display: none }
@@ -311,7 +311,6 @@ input.maxsize, select.maxsize { width: 99% }
 
 
 /* ===== THEME PANEL ===== */
-
 #current-theme h5, 
 #available-themes h5 { font-size: 1em }
 
@@ -347,7 +346,6 @@ input.maxsize, select.maxsize { width: 99% }
 
 
 /* ===== WIDGET PANEL ====== */
-
 #admin-widgetset-list { width: 30em }
 
 #admin-widgetset-list ul {
@@ -450,7 +448,6 @@ li.widget-class {
 	background-color: white
 }
 
-
 .widget-instance .textinput:focus {
 	font-style: normal;
 	border: #f00 2px solid;
@@ -484,38 +481,38 @@ li.widget-class {
 .option-list ul li { list-style-type: none }
 
 .option-set dt {
-    width: 33%;
-    text-align:right;
-    margin-top: 0.5em;
-    line-height: 1em;
-    font-weight: bold
+	width: 33%;
+	text-align:right;
+	margin-top: 0.5em;
+	line-height: 1em;
+	font-weight: bold;
 }
 
 .option-set dt label { padding-top: .2em }
 
 .option-list dd label {
-    position: relative;
-    vertical-align: middle;
-    display: flex
+	position: relative;
+	vertical-align: middle;
+	display: flex
 }
 
 .option-set dd {
-    margin-left: 35%;
-    bottom: 1.24em;
-    line-height: 1.5em;
-    position: relative
+	margin-left: 35%;
+	bottom: 1.24em;
+	line-height: 1.5em;
+	position: relative
 }
 
 .option-set dd p { margin: 0 }
 
 .option-set dd p.text {
-    display: inline;
-    vertical-align: middle
+	display: inline;
+	vertical-align: middle
 }
 
 .option-list dd code {
-    position: relative;
-    font-size: 1em
+	position: relative;
+	font-size: 1em
 }
 
 .option-set dd input{ margin-bottom: .2em }
@@ -525,9 +522,9 @@ li.widget-class {
 .textinput:focus, .bigtextinput:focus, .smalltextinput:focus { font-weight: bold }
 
 .widetextinput {
-    width: 99%;
-    font-size: 1.3em;
-    color: #333333
+	width: 99%;
+	font-size: 1.3em;
+	color: #333333
 }
 
 .option-set input.textinput ,
@@ -546,20 +543,20 @@ a.link-general {
 	padding: .9em
 }
 
-td.main-cell a.link-general {display:block}
+td.main-cell a.link-general { display: block }
 
 a.link-disable:hover, a.link-delete:hover {
-    background-color: red;
-    color: white
+	background-color: red;
+	color: white
 }
 a.link-enable:hover {
-    background-color: green;
-    color: white
+	background-color: green;
+	color: white
 }
 
 a.link-general:hover, .main-cell a:hover {
-    background-color: #aaa;
-    color: black
+	background-color: #aaa;
+	color: black
 }
 
 
@@ -569,6 +566,6 @@ a.link-general:hover, .main-cell a:hover {
 .draft { background-color: #333 }
 
 /* (already defined in common, here we put just some tuning settings) */
-#admin-content ul.msgs { margin:0 }
+#admin-content ul.msgs { margin: 0 }
 
 form { margin: auto }
