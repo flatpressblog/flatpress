@@ -88,7 +88,7 @@ ul#admin-tabmenu a#admin-tab-current {
 
 #admin-entry-categories ul {
 	margin-right: 10px;
-	display:block;
+	display: block;
 	padding-left: 1em;
 	list-style-type: none
 }
@@ -144,9 +144,7 @@ ul#admin-tabmenu a#admin-tab-current {
 
 #admin-content ul li::before,
 #admin-content fieldset p.date::before,
-#admin-content fieldset ul li::before {
-	content: "\00BB \0020";
-}
+#admin-content fieldset ul li::before { content: "\00BB \0020" }
 
 #admin-bbcode-toolbar {
 	border: none;
