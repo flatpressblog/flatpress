@@ -553,7 +553,7 @@ li.widget-class {
 
 
 /* ===== SPECIAL HOVERS ====== */
-a.link-disable, a.link-enable{ padding: .9em }
+a.link-disable, a.link-enable { padding: .9em }
 
 a.link-disable:hover {
 	background-color: red;
