@@ -144,8 +144,9 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	// DMKE: uh?
 	$content = $content;
 	$rel = isset($attributes ['rel']) ? ' rel="' . $attributes ['rel'] . '"' : '';
+	$target = isset($attributes['target']) ? ' target="'.$attributes['target'] . '"' : '';
 	$extern = !$local ? ' class="externlink" title="' . $lang ['plugin'] ['bbcode'] ['go_to'] . ' ' . $the_url . '"' : '';
-	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . '>' . $content . '</a>';
+	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target .'>' . $content . '</a>';
 }
 
 /**
