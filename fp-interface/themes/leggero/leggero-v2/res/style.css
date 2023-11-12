@@ -10,11 +10,11 @@ Module: style.css
 */
 
 /* imports common style ruleset */
-@import url("common.css");
-@import url("globals.css");
+@import url('common.css');
+@import url('globals.css');
 
 /* imports column (where widgets usually go) rules */
-@import url("column.css");
+@import url('column.css');
 
 #comments li.comment-admin {
 	padding: 1em
