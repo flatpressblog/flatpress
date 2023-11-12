@@ -18,7 +18,7 @@ last change: 2023-11-01
 /* ===== GENERAL (redefinition HTML tag) ===== */
 html {
 	font-size: 85%;
-	font-family: 'Lucida Grande', 'Trebuchet MS', arial, Helvetica, sans-serif;
+	font-family: "Lucida Grande", "Trebuchet MS", arial, Helvetica, sans-serif;
 	margin: 0;
 	padding: 0
 }
@@ -27,7 +27,7 @@ body {
 	font-size: 100%;
 	padding: 0;
 	/* text-align: center; */
-	background: white url(../imgs/backshade.png) repeat-x;
+	background: white url('../imgs/backshade.png') repeat-x;
 	color: black;
 		width: 100%
 }
@@ -74,7 +74,7 @@ blockquote {
 }
 
 pre, code {
-	font-family: 'Lucida Console', Monaco, monospace;
+	font-family: "Lucida Console", Monaco, monospace;
 	font-size: 90%
 }
 
@@ -122,7 +122,7 @@ input:hover, input:focus, textarea:hover, textarea:focus {
 
 textarea {
 	font-size: 100%;
-	font-family: 'Lucida Grande', 'Trebuchet MS', arial, Helvetica, sans-serif;
+	font-family: "Lucida Grande", "Trebuchet MS", arial, Helvetica, sans-serif;
 	width: 99%;
 	margin-top: .1em;
 	margin-bottom: 1em
@@ -152,7 +152,7 @@ h1 {
 
 h2 {
 	/* Titles of the entry */
-	font-family: 'book antiqua', georgia, garamond, times, 'times new roman', serif;
+	font-family: "book antiqua", georgia, garamond, times, "times new roman", serif;
 	font-style: italic;
 	font-size: 1.5em;
 	color: #333333;
@@ -184,7 +184,7 @@ h4 { font-size: 1.2em }
 /* ===== HEAD ===== */
 #head {
 	clear: both;
-	font-family: 'book antiqua', georgia, garamond,	times, 'times new roman', serif;
+	font-family: "book antiqua", georgia, garamond,	times, "times new roman", serif;
 	margin: 1em;
 	padding: 7em 0.6em 0.5em 0.5em;
 	border-radius: 1em;

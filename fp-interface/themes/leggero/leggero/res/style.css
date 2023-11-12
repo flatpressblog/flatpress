@@ -16,11 +16,11 @@ last change: 2023-11-01
 
 
 /* imports common style ruleset */
-@import url(common.css);
-@import url(globals.css);
+@import url('common.css');
+@import url('globals.css');
 
 /* imports column (where widgets usually go) rules */
-@import url(column.css);
+@import url('column.css#);
 
 /* defines rules specific to the front page */
 body { margin: 80px 0 10px 0 }

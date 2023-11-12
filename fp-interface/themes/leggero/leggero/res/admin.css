@@ -14,26 +14,26 @@ last change: 2023-11-01
 
 */
 
-@import url(common.css);
-@import url(globals.css);
+@import url('common.css');
+@import url('globals.css');
 
 /* ===== VARIOUS ===== */
 @viewport { width: device-width }
 
 .buttonbar input {
 	padding: .3em;
-	background: #bdbdbd url(../imgs/buttonsh.png) repeat-x
+	background: #bdbdbd url('../imgs/buttonsh.png') repeat-x
 }
 
 .buttonbar input:hover {
 	padding: .3em;
-	background: #d3d3d3 url(../imgs/buttonsh2.png) repeat-x
+	background: #d3d3d3 url('../imgs/buttonsh2.png') repeat-x
 }
 
 /* ===== HEADERS TAGS ===== */
 h1,
 h2 { 
-	font-family: 'book antiqua', georgia, garamond, times, 'times new roman', serif;
+	font-family: "book antiqua", georgia, garamond, times, "times new roman", serif;
 	margin: auto
 }
 
@@ -169,7 +169,7 @@ input#subject {
 }
 
 textarea.code {
-	font-family: 'Lucida Console', Monaco, monospace;
+	font-family: "Lucida Console", Monaco, monospace;
 	font-size: 90%
 }
 
