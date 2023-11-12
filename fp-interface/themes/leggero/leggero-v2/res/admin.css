@@ -9,19 +9,19 @@ Version: 1.0
 Module: admin.css
 */
 
-@import url("common.css");
-@import url("globals.css");
+@import url('common.css');
+@import url('globals.css');
 
 /* ===== VARIOUS ===== */
 @viewport { width: device-width }
 
 .buttonbar input {
 	box-shadow: none !IMPORTANT;
-	background: #bdbdbd url("../imgs/buttonsh.png") repeat-x
+	background: #bdbdbd url('../imgs/buttonsh.png') repeat-x
 }
 
 .buttonbar input:hover {
-	background: #d3d3d3 url("../imgs/buttonsh2.png") repeat-x
+	background: #d3d3d3 url('../imgs/buttonsh2.png') repeat-x
 }
 
 
