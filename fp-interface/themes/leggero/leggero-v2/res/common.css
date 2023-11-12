@@ -21,7 +21,7 @@ html {
 html::before { /* background-attachment: fix workaround for mobile devices */
 	content: ' ';
 	display: block;
-	background-image: url("../imgs/back.jpg");
+	background-image: url('../imgs/back.jpg');
 	background-position: center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -398,7 +398,7 @@ h4#addcomment { clear: both }
 	}
 	/* end of .entry */
 
-	#main ul.entry-footer { /*  entry footer */
+	#main ul.entry-footer { /* entry footer */
 		clear: both;
 		font-size: 80%;
 		color: black;
