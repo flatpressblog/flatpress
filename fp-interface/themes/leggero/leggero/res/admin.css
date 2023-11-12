@@ -18,8 +18,6 @@ last change: 2023-11-01
 @import url('globals.css');
 
 /* ===== VARIOUS ===== */
-@viewport { width: device-width }
-
 .buttonbar input {
 	padding: .3em;
 	background: #bdbdbd url('../imgs/buttonsh.png') repeat-x

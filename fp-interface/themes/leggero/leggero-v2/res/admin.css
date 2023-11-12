@@ -13,8 +13,6 @@ Module: admin.css
 @import url('globals.css');
 
 /* ===== VARIOUS ===== */
-@viewport { width: device-width }
-
 .buttonbar input {
 	box-shadow: none !IMPORTANT;
 	background: #bdbdbd url('../imgs/buttonsh.png') repeat-x
