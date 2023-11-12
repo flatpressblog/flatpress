@@ -13,7 +13,7 @@ Version: 0.0.1
 Module: admin.css
 */
 
-@import url(common.css);
+@import url('common.css');
 
 /* small navigation on top */
 #admin-small-nav {
@@ -36,7 +36,7 @@ ul#admin-tabmenu {
 }
 
 ul#admin-tabmenu li {
-	display:inline;
+	display: inline;
 	color: #555533;
 	font-size: x-small;
 	font-weight: normal;
@@ -150,7 +150,7 @@ ul#admin-tabmenu a#admin-tab-current {
 	border: none;
 	padding: 0;
 	padding-right: 0.7%;
-	margin:0
+	margin: 0
 }
 
 #admin-bbcode-toolbar legend { display: none }
@@ -181,7 +181,7 @@ ul#admin-tabmenu a#admin-tab-current {
 	background: #eee; 
 	border-top: 1px solid #ddd; 
 	border-bottom: 1px solid #ddd; 
-	text-align:center;
+	text-align: center;
 	padding: .1em .3em .2em
 }
 
@@ -202,7 +202,7 @@ ul#admin-tabmenu a#admin-tab-current {
 	border-top: 3px solid #ccc;
 	border-left: 1px solid #ccc;
 	border-right: 1px solid #ccc;  
-	text-decoration:none
+	text-decoration: none
 }
 
 #admin-submenu li a.active {
@@ -242,12 +242,12 @@ input#subject {
 }
 
 textarea.code {
-	font-family: 'Lucida Console', Monaco, monospace;
+	font-family: "Lucida Console", Monaco, monospace;
 	font-size: 90%
 }
 
 #admin-entry-categories ul {
-	display:block;
+	display: block;
 	list-style-type: none;
 	margin-right: 10px;
 	padding-left: 1em
@@ -256,8 +256,6 @@ textarea.code {
 #admin-bbcode-toolbar p { display: inline }
 
 #admin-bbcode-toolbar select { width: 10em }
-
-/* #admin-content { background: url(../imgs/nib-logo.png) bottom right no-repeat } */
 
 #admin-content table { width: 100%; border-collapse: collapse }
 
@@ -323,7 +321,7 @@ input.maxsize, select.maxsize { width: 99% }
 #admin-content #admin-drafts ul {margin: 0; padding: 0 }
 
 #admin-drafts li {
-	float:left;
+	float: left;
 	list-style-position: inside;
 	margin: 0; padding-left: 1em
 }
@@ -349,7 +347,7 @@ input.maxsize, select.maxsize { width: 99% }
 #admin-uploader-thumbs { list-style-type: none }
 
 #admin-uploader-thumbs li.thumb {
-	float:left;
+	float: left;
 	width: 110px;
 	height: 110px;
 	padding: 1em 4px;
@@ -464,7 +462,7 @@ li.widget-class {
 }
 
 .admin-widgetset h3 {
-	margin-bottom:1em;
+	margin-bottom: 1em;
 	padding: .3em;
 	background: #eee;
 	border: 1px solid #ddd
@@ -491,13 +489,13 @@ li.widget-class {
 
 .widget-instance .textinput:hover {
 	border: #d00 2px solid;
-	background-color:white
+	background-color: white
 }
 
 .widget-instance .textinput:focus {
 	font-style: normal;
 	border: #f00 2px solid;
-	background-color:white;
+	background-color: white;
 	text-align: left
 }
 
@@ -525,7 +523,7 @@ li.widget-class {
 
 #admin-config dt {
 	width: 33%;
-	text-align:right;
+	text-align: right;
 	margin-top: 1.8em;
 	line-height: 1.5em;
 	font-weight: bold
@@ -553,7 +551,7 @@ li.widget-class {
 
 
 /* ===== SPECIAL HOVERS ====== */
-a.link-disable, a.link-enable{ padding: .9em }
+a.link-disable, a.link-enable { padding: .9em }
 
 a.link-disable:hover {
 	background-color: red;
