@@ -13,7 +13,7 @@ Version: 0.0.1
 Module: admin.css
 */
 
-@import url(common.css);
+@import url('common.css');
 
 /* small navigation on top */
 #admin-small-nav {
@@ -242,7 +242,7 @@ input#subject {
 }
 
 textarea.code {
-	font-family: 'Lucida Console', Monaco, monospace;
+	font-family: "Lucida Console", Monaco, monospace;
 	font-size: 90%
 }
 
@@ -256,8 +256,6 @@ textarea.code {
 #admin-bbcode-toolbar p { display: inline }
 
 #admin-bbcode-toolbar select { width: 10em }
-
-/* #admin-content { background: url(../imgs/nib-logo.png) bottom right no-repeat } */
 
 #admin-content table { width: 100%; border-collapse: collapse }
 

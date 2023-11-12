@@ -154,7 +154,7 @@ h4 { font-size: 1.2em }
 	#column h4 {
 		/* Titles of the sections in #column */
 		color: white;
-		font-family: 'Gill Sans', 'Trebuchet MS', Helvetica, sans-serif;
+		font-family: "Gill Sans", "Trebuchet MS", Helvetica, sans-serif;
 		margin: 0 5px 5px 5px;
 		padding: .2em .5em;
 		background: #BBBB99 url('../imgs/sf_h4.png') bottom left repeat-x
@@ -179,7 +179,7 @@ blockquote p { margin: 0; margin-top: unset !IMPORTANT }
 pre, code {
 	color: #666666;
 	font-size: 1.1em;
-	font-family: 'Lucida Console', Monaco, monospace;
+	font-family: "Lucida Console", Monaco, monospace;
 	background-color: #f4f4f4
 }
 
