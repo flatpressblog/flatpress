@@ -48,17 +48,16 @@
   - A single PhotoSwipe image or a whole gallery is now centered in the responsive design  ([#150](https://github.com/flatpressblog/flatpress/issues/150))
   - BBcode videos are no longer chopped off in responsive design, but adjusted to the width and center aligned
   - A left or right aligned BBcode video will now be centered if the screen < 960 px
-  - In the admin area, the configuration panel has been revised
-  - fixed vertical alignment of BBCode toolbar in write panel
   - The BBcode toolbar adapted for a better display at the screen width of 640px
   - The menu and submenu in the administration area now also has a "slightly" more modern design
   - Template and CSS from Uploader > Gallery: image texts; button and table adapted to Leggero V2 style
-  - Lucida Console [code] ... [/code] is now correct as a font in the CSS file
-  - Removes obsolete acronym element in the language files and replaces it with the abbr element
+  - Text within the pre element is now printed completely by line break
   - Fixes a problem in the admin area when rendering font-sizes in Safari, Chrome and Firefox (iPhone/iPad) ([#256](https://github.com/flatpressblog/flatpress/issues/256))
   - Added "background-attachment: fix" -workaround for mobile devices.
   - Admin area now has Leggero-v2 style background instead of white background.
+
 - Further fixes in "Leggero" theme
+  - All Leggero theme css files now comply with [CSS level 3](https://jigsaw.w3.org/css-validator/)
   - Fixed searchbox glitch in FlatMaas revisited style ([#97](https://github.com/flatpressblog/flatpress/issues/97))
   - Fixed missing bullets in preview ([#98](https://github.com/flatpressblog/flatpress/issues/98))
   - CSS of the Leggero style had some glitches on mobile devices
@@ -71,6 +70,11 @@
   - Updated preview image ([#139](https://github.com/flatpressblog/flatpress/issues/139))
   - Fixed comments date format ([#237](https://github.com/flatpressblog/flatpress/issues/237))
   - Fixed several layout/CSS glitches ([#140](https://github.com/flatpressblog/flatpress/issues/140), [#144](https://github.com/flatpressblog/flatpress/issues/144), [#201](https://github.com/flatpressblog/flatpress/issues/201), [#247](https://github.com/flatpressblog/flatpress/issues/247), [#249](https://github.com/flatpressblog/flatpress/issues/249))
+  - Lucida Console [code] ... [/code] is now correct as a font in the CSS file
+  - In the admin area, the configuration panel has been revised
+  - Fixed vertical alignment of BBCode toolbar in write panel
+  - Removes obsolete acronym element in the language files and replaces it with the abbr element
+  - The menu bar in Leggero style is now centered if the screen width is less than 768px
 
 ## Internationalization
 - Added translation: Slovenian
