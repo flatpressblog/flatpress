@@ -2,10 +2,10 @@
 $lang ['admin'] ['panel'] ['maintain'] = 'Verwaltung';
 
 $lang ['admin'] ['maintain'] ['default'] = array(
-	'head' => 'Flatpress-Wartung',
+	'head' => 'FlatPress-Wartung',
 	'descr' => 'Dieses Menü bietet verschiedene Möglichkeiten für das FlatPress-Blog, um einige Dinge zu korrigieren oder einfach nur nach Updates zu suchen.',
 	'opt0' => '&laquo; Zurück zur Wartung',
-	'opt1' => 'Den Flatpress-Index neu erstellen',
+	'opt1' => 'Den FlatPress-Index neu erstellen',
 	'opt2' => 'Den Theme- und Template-Cache leeren',
 	'opt3' => 'Wiederherstellen der Dateizugriffsrechte',
 	'opt4' => 'Zeige PHP-Informationen des Webservers',
