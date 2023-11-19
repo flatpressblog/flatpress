@@ -77,7 +77,7 @@
   - The menu bar in Leggero style is now centered if the screen width is less than 768px
 
 ## Internationalization
-- Added translation: Slovenian
+- Added translation: Slovenian, Danish
 - Reworked translations: Spanish, Portuguese, Dutch, and Italian
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
