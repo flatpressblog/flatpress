@@ -22,6 +22,8 @@
 		<img src="fp-plugins/bbcode/res/toolbaricons/code.png" id="bb_code" accesskey="" alt="code" title="{$lang.admin.plugin.bbcode.editor.codetitle}" onclick="insBBCode('code');" />
 		<img src="fp-plugins/bbcode/res/toolbaricons/html.png" id="bb_html" accesskey="" alt="html" title="html" onclick="insBBCode('html');" />
 &nbsp;&nbsp;&nbsp;&nbsp;
+	</p>
+	<p>
 		<img src="fp-plugins/bbcode/res/toolbaricons/bold.png" id="bb_b" accesskey="" alt="b" title="{$lang.admin.plugin.bbcode.editor.boldtitle}" onclick="insBBCode('b');" />
 		<img src="fp-plugins/bbcode/res/toolbaricons/italic.png" id="bb_i" accesskey="" alt="i" title="{$lang.admin.plugin.bbcode.editor.italictitle}" onclick="insBBCode('i');" />
 		<img src="fp-plugins/bbcode/res/toolbaricons/underlined.png" id="bb_u" accesskey="" alt="u" title="{$lang.admin.plugin.bbcode.editor.underlinetitle}" onclick="insBBCode('u');" />
@@ -30,6 +32,8 @@
 	</p>
 	<p>
 		{$lang.admin.plugin.bbcode.editor.file}{html_options name=attachselect values=$attachs_list output=$attachs_list onchange="insAttach(this.form.attachselect.value)"}&nbsp;
+	</p>
+	<p>
 		{$lang.admin.plugin.bbcode.editor.image}{html_options name=imageselect values=$images_list output=$images_list onchange="insImage(this.form.imageselect.value)"}
 	</p>
 </fieldset>

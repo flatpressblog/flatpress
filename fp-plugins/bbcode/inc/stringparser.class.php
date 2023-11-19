@@ -208,6 +208,8 @@ class StringParser {
 	 * @var bool
 	 */
 	var $_recentlyReparsed = false;
+	
+	var $_output;
 
 	/**
 	 * Constructor

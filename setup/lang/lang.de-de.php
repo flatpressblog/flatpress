@@ -2,18 +2,41 @@
 /*
  * LangId: Deutsch
  */
+$lang ['setup'] = array(
+	'setup' => 'Einrichtung'
+);
+
 $lang ['locked'] = array(
-	'head' => 'Installation ist gesperrt',
-	'descr' => 'Sieht so aus, als würde die Installation bereits laufen: Die Sperr-Datei <code>%s</code> existiert bereits.
+	'head' => 'Die Einrichtung ist gesperrt',
+	'descr' => 'Sieht so aus, als würde die Einrichtung bereits laufen: Die Sperr-Datei <code>%s</code> existiert bereits.
 		
-		Wenn du die Installation noch einmal neu starten möchtest, lösche bitte zuerst diese Datei.
+		Wenn du die Einrichtung noch einmal neu starten möchtest, lösche bitte zuerst diese Datei.
 		
-		<strong >Achtung!</strong> Die Datei <code>setup.php</code> und das Verzeichnis <code>setup/</code> sollten nicht auf dem Server bleiben, bitte lösche sie nach Abschluss der Installation!
+		<strong >Achtung!</strong> Die Datei <code>setup.php</code> und das Verzeichnis <code>setup/</code> sollten nicht auf dem Server bleiben. Bitte lösche sie nach Abschluss der Einrichtung!
 		
 		<ul>
 		<li><a href="%s">Ok, bring mich zu meinem Blog</a></li>
-		<li><a href="%s">Ich habe die Datei gelöscht, Installation neu starten</a></li>
+		<li><a href="%s">Ich habe die Datei gelöscht. Einrichtung neu starten.</a></li>
 		</ul>'
+);
+
+$lang ['err'] = array(
+	'setuprun1' => 'Die Einrichtung läuft.',
+	
+	'setuprun2' => 'Die Einrichtung läuft bereits: Wenn du der Administrator bist, kannst du ',
+	'setuprun3' => ' löschen, um neu zu starten.',
+	'writeerror' => 'Fehler beim Schreiben',
+
+	'fpuser1' => ' ist kein gültiger Benutzer.
+		Der Benutzername muss alphanumerisch sein und darf keine Leerzeichen enthalten.',
+	'fpuser2' => ' ist kein gültiger Benutzer.
+		Der Benutzername darf nur Buchstaben, Zahlen und 1 Unterstrich enthalten.',
+	'fppwd' => 'Das Passwort muss mindestens 6 Zeichen und darf keine Leerzeichen enthalten.',
+	'fppwd2' => 'Die Passwörter stimmen nicht überein.',
+	'email' => ' ist keine gültige E-Mail Adresse.',
+	'www' => ' ist keine gültige URL.',
+	'error' => '<p><big>Fehler!</big>
+		Bei der Bearbeitung des Formulars sind die folgenden Fehler aufgetreten:</p><ul>'
 );
 
 $lang ['step1'] = array(
@@ -30,7 +53,7 @@ $lang ['step1'] = array(
 		<pre>%s</pre>
 		
 		Für die Installation eines Sprachpakets lade dessen Inhalt einfach in dein <code>flatpress/</code>-Verzeichnis. Dann <a href="./setup.php">starte die Installation erneut</a>.',
-	'descrw' => '<strong>Das Einzige</strong>, was du für den Betrieb von FlatPress benötigst, ist ein <em>beschreibbares</em> Verzeichnis. 
+	'descrw' => '<strong>Das Einzige</strong>, was du für den Betrieb von FlatPress benötigst, ist ein <em>beschreibbares</em> Verzeichnis.
 		
 		<pre>%s</pre>'
 );
@@ -47,9 +70,9 @@ $lang ['step2'] = array(
 
 $lang ['step3'] = array(
 	'head' => 'Fertig',
-	'descr' => '<strong>Das war\'s schon.</strong> 
+	'descr' => '<strong>Das war\'s schon.</strong>
 		
-		Nicht zu glauben? 
+		Nicht zu glauben?
 		
 		Nein, tatsächlich <strong>geht es jetzt erst richtig los</strong>! Aber das Bloggen ist nun <em>deine</em> Aufgabe ;)
 		
@@ -79,18 +102,18 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Willkommen bei FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Das ist ein Beispiel-Beitrag, er zeigt dir einige Funktionen von [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Das ist ein Beispiel-Beitrag. Er zeigt dir einige Funktionen von [url=https://www.flatpress.org]FlatPress[/url].
 
 Das "more"-Element erlaubt es dir, vom Anriss des Beitrags zum kompletten Artikel zu springen.
 
-[more] 
+[more]
 
 
 [h4]Textformatierung[/h4]
 
 In FlatPress formatierst du deine Inhalte mit [url=http://wiki.flatpress.org/doc:plugins:bbcode]BBcode[/url] (Bulletin-Board-Code). Mit BBCode geht das sehr einfach. Beispiele gefällig? [b] macht [b]fetten Text[/b], [i] [i]kursiven[/i].
 
-[quote]Mit dem [b]quote[/b]-Element lassen sich Zitate auszeichnen. [/quote]
+[quote]Mit dem [b]quote[/b]-Element lassen sich Zitate auszeichnen.[/quote]
 
 [code]Das \'code\'-Element erzeugt einen Abschnitt mit fester Zeichenbreite.
 Es kann auch
@@ -146,7 +169,7 @@ Du möchtest gern mehr über FlatPress wissen?
 [*]Besuche das [url=https://forum.flatpress.org/]Supportforum[/url] für Unterstützung und den Kontakt zu anderen FlatPress-Benutzern.
 [*]Lade dir großartige von der Community erstellte [b]Themes[/b] aus dem [url=https://wiki.flatpress.org/res:themes]Wiki[/url] herunter.
 [*]Dort gibt es auch tolle [url=https://wiki.flatpress.org/res:plugins]Plugins[/url].
-[*]FlatPress kannst du auch [url=https://twitter.com/FlatPress]auf Twitter folgen[/url]. 
+[*]FlatPress kannst du auch auf [url=https://twitter.com/FlatPress]X (Twitter)[/url] und [url=https://fosstodon.org/@flatpress]Mastodon[/url] folgen.
 [/list]
 
 
@@ -165,7 +188,7 @@ Du möchtest gern mehr über FlatPress wissen?
 
 [url=login.php]Logge dich ein[/url], um im [url=admin.php]Administrationsbereicht[/url] mit dem Bloggen zu beginnen.
 
-Viel Spaß! :) 
+Viel Spaß! :)
 
 [i]Das [url=https://www.flatpress.org]FlatPress[/url]-Team[/i]
 	

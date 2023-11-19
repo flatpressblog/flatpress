@@ -40,6 +40,10 @@ class admin_plugin_default extends AdminPanelAction {
 	);
 
 	var $errors = array();
+	
+	var $pluginid;
+	
+	var $fp_plugins;
 
 	function setup() {
 		$this->pluginid = isset($_GET ['plugin']) ? $_GET ['plugin'] : null;

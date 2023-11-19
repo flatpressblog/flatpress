@@ -4,8 +4,8 @@ Leggero CSS Styles
 ===================
 
 Name: Leggero v2
-Author: NoWhereMan, drudo & Marc Thibeault
-Version: 0.1
+Author: NoWhereMan, Drudo, Marc Thibeault and Fraenkiman
+Version: 1.0
 Module: globals.css
 */
 
@@ -17,13 +17,13 @@ Module: globals.css
 #main ul.msgs, ul.msgs {
 	margin: 0;
 	padding: 1em 2em;
-	list-style-type: none;
+	list-style-type: none
 }
 
 .errors {
 	color: #901d1d;
-	border-top: 1px solid;
-	border-bottom: 1px solid;
+	border: 1px solid;
+	border-radius: 3px;
 	border-color: #ffbbbb;
 	background: #ffdddd
 }
@@ -36,18 +36,17 @@ Module: globals.css
 
 .notifications,.enabled {
 	color : #1d901d;
-	border-top: 1px solid #bbffbb;
-	border-bottom: 1px solid #bbffbb;
+    border: 1px solid;
+	border-radius: 3px;
 	background: #ddffdd
 }
 
 .warnings {
-	color : #8a7802;
-	border-top: 1px solid;
-    border-bottom: 1px solid;
+	color: #8a7802;
+	border: 1px solid;
+	border-radius: 3px;
 	border-color: #f8e674;
-	background: #fffdd5;
-
+	background: #fffdd5
 }
 
 .field-error {

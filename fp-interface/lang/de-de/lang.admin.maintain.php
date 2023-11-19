@@ -2,17 +2,17 @@
 $lang ['admin'] ['panel'] ['maintain'] = 'Verwaltung';
 
 $lang ['admin'] ['maintain'] ['default'] = array(
-	'head' => 'Flatpress-Wartung',
-	'descr' => 'Dieses Menü bietet verschiedene Möglichkeiten für das Flatpress-Blog, um einige Dinge zu korrigieren oder einfach nur nach Updates zu suchen.',
+	'head' => 'FlatPress-Wartung',
+	'descr' => 'Dieses Menü bietet verschiedene Möglichkeiten für das FlatPress-Blog, um einige Dinge zu korrigieren oder einfach nur nach Updates zu suchen.',
 	'opt0' => '&laquo; Zurück zur Wartung',
-	'opt1' => 'Den Flatpress-Index neu erstellen',
+	'opt1' => 'Den FlatPress-Index neu erstellen',
 	'opt2' => 'Den Theme- und Template-Cache leeren',
 	'opt3' => 'Wiederherstellen der Dateizugriffsrechte',
 	'opt4' => 'Zeige PHP-Informationen des Webservers',
 	'opt5' => 'Prüfe auf neue Versionen',
 
 	'chmod_info' => "Die Dateizugriffsrechte <strong>konnten nicht</strong>
-					auf die Default Werte von 0777 zurückgesetzt werden. 
+					auf die Default Werte von 0775 zurückgesetzt werden. 
           Normalerweise kann man diesen Hinweis ignorieren."
 );
 
@@ -24,8 +24,8 @@ $lang ['admin'] ['maintain'] ['updates'] = array(
 	'head' => 'Updates',
 	'list' => '<ul>
 		<li>Du hast die FlatPress-Version <big>%s</big></li>
-		<li>Die letzte stabile Flatpress-Version ist <big><a href="%s">%s</a></big></li>
-		<li>Letzte Entwicklungsversion von Flatpress ist <big><a href="%s">%s</a></big></li>
+		<li>Die letzte stabile FlatPress-Version ist <big><a href="%s">%s</a></big></li>
+		<li>Letzte Entwicklungsversion von FlatPress ist <big><a href="%s">%s</a></big></li>
 		</ul>',
 	'notice' => 'Hinweis:'
 );

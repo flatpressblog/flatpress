@@ -4,7 +4,7 @@ $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Nastavení BBCode',
 	'desc1' => 'Tento plugin umožňuje používat <a href="http://www.phpbb.com/'.
-		'phpBB/faq.php?mode=bbcode">BBCode</a> na vašem blogu. ',
+		'phpBB/faq.php?mode=bbcode">BBCode</a> na vašem blogu.',
 	
 	'options' => 'Nastavení',
 
@@ -56,7 +56,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'Přejít na'
+		'go_to' => 'Přejít na',
+		// language tag for Facebook Video
+		'langtag' => 'cs_CZ'
 );
 
 ?>

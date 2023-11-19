@@ -37,7 +37,7 @@ Visit our [wiki](https://wiki.flatpress.org) to learn everything about blogging 
 Ask your questions, show off your FlatPress blog and meet fellow FlatPressers at the [support forum](https://forum.flatpress.org).
 
 ## Requirements
-FlatPress runs on any web server (e.g. Apache or IIS) with PHP 7.1 to PHP 8.1 (more details [on the wiki](https://wiki.flatpress.org/doc:techfaq#what_is_required_to_run_flatpress)). Since all data is stored in files, no database is needed.
+FlatPress runs on any web server (e.g. Apache or IIS) with PHP 7.1 to PHP 8.2 (more details [on the wiki](https://wiki.flatpress.org/doc:techfaq#what_is_required_to_run_flatpress)). Since all data is stored in files, no database is needed.
 
 ## Credits
 There are many people who contributed to FlatPress over the years. [See them here.](./CONTRIBUTORS.md)

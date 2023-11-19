@@ -2,7 +2,7 @@
 /**
  * Get the language code from the browser
  *
- * @param array Allowed Languages "array('cs-cz','de-de','en-us','it-it','ja-jp','nl-nl','pt-br')"
+ * @param array Allowed Languages "array('cs-cz','da-dk','de-de','en-us','es-es',fr-fr','el-gr','it-it','ja-jp','nl-nl','pt-br','sl-si')"
  * @param string Default language
  * @param string Language string from HTTP-Header
  * @param bool Strict-Mode
@@ -58,7 +58,8 @@ function getBrowserLanguage($arrAllowedLanguages, $strDefaultLanguage, $strLangV
 	return $strCurrentLanguage;
 }
 
+// Only enter another language abbreviation here, if the language files are available for FlatPress, the plugins, the admin area and for the setup!
 // accept the following languages, otherwise fall back to "en-us"
-$browserLang = getBrowserLanguage(array('cs-cz', 'de-de', 'en-us', 'it-it', 'ja-jp', 'nl-nl', 'pt-br'), 'en-us');
+$browserLang = getBrowserLanguage(array('cs-cz', 'da-dk', 'de-de', 'en-us', 'es-es', 'fr-fr', 'el-gr', 'it-it', 'ja-jp', 'nl-nl', 'pt-br', 'sl-si'), 'en-us');
 
 ?>

@@ -2,6 +2,10 @@
 /*
  * LangId: Japanese
  */
+$lang ['setup'] = array(
+	'setup' => '機関'
+);
+
 $lang ['locked'] = array(
 	'head' => 'セットアップは中断されました.',
 	'descr' => 'ロックファイル「<code>%s</code>」がサーバ上に存在しますので,
@@ -15,6 +19,25 @@ $lang ['locked'] = array(
 		<li><a href="%s">ブログに戻ります</a></li>
 		<li><a href="%s">ロックファイルを削除しましたので, セットアップを再開します</a></li>
 		</ul>'
+);
+
+$lang ['err'] = array(
+	'setuprun1' => 'インストールは実行中です。',
+	
+	'setuprun2' => 'インストールがすでに実行されています: 管理者であれば、 ',
+	'setuprun3' => ' を削除して再起動できます。',
+	'writeerror' => '書き込みエラー',
+
+	'fpuser1' => ' は有効なユーザーではありません。
+		ユーザー名は英数字でなければならず、スペースを含んではならない。',
+	'fpuser2' => ' は有効なユーザーではありません。
+		ユーザー名にはアルファベット、数字、アンダースコア1文字のみを使用することができます。',
+	'fppwd' => 'パスワードは6文字以上で、スペースは使用しないでください。',
+	'fppwd2' => 'パスワードが一致しない。',
+	'email' => ' は有効なメールアドレスではありません。',
+	'www' => ' は有効なURLではありません。',
+	'error' => '<p><big>エラー！</big> 
+		フォームの処理中に以下のエラーが発生しました：</p><ul>'
 );
 
 $lang ['step1'] = array(
@@ -91,14 +114,14 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'This is a sample entry, posted 
 
 The more tag allows you to create a "jump" between an excerpt and the complete article.
 
-[more] 
+[more]
 
 
 [h4]Styling[/h4]
 
 The default way to style and format your content is [url=http://wiki.flatpress.org/doc:plugins:bbcode]BBcode[/url] (bulletin board code). BBCode is an easy way to style your posts. Most common codes are allowed. Like [b] for [b]bold[/b] (html: strong), [i] for [i]italics[/i] (html: em), etc.
 
-[quote]There are also [b]quote[/b] blocks to display your favourite quotations. [/quote]
+[quote]There are also [b]quote[/b] blocks to display your favourite quotations.[/quote]
 
 [code]And \'code\' displays your snippets in a monospaced fashion.
 It also supports
@@ -147,12 +170,13 @@ With the FlatPress-Leggero theme you have 3 style templates at your disposal - f
 Want to see more?
 
 [list]
-[*]Support the project with a [url=http://www.flatpress.org/home/static.php?page=donate]small donation[/url]
-[*]Follow the [url=https://www.flatpress.org/?x]official blog[/url] to know what\'s going on in the FlatPress world
-[*]Visit the [url=https://forum.flatpress.org/]forum[/url] for support and chit-chat
+[*]Support the project with a [url=http://www.flatpress.org/home/static.php?page=donate]small donation[/url].
+[*]Follow the [url=https://www.flatpress.org/?x]official blog[/url] to know what\'s going on in the FlatPress world.
+[*]Visit the [url=https://forum.flatpress.org/]forum[/url] for support and chit-chat.
 [*]Get [b]great themes[/b] from [url=https://wiki.flatpress.org/res:themes]other users\' submissions[/url]!
-[*]Check out the [url=https://wiki.flatpress.org/res:plugins]unofficial plugins[/url]
-[*]Get [url=https://wiki.flatpress.org/res:language]translation pack[/url] for your language 
+[*]Check out the [url=https://wiki.flatpress.org/res:plugins]plugins[/url].
+[*]Get [url=https://wiki.flatpress.org/res:language]translation pack[/url] for your language.
+[*]You can also follow FlatPress on [url=https://twitter.com/FlatPress]X (Twitter)[/url] and [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 

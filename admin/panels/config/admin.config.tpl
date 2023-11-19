@@ -44,18 +44,18 @@
 	
 	<dt><label for="email"> {$panelstrings.blogemail} </label></dt>
 	{if isset($error) && isset($error.email) && !empty($error.email)}
-		{assign var=class value=" field-error"}
+		{assign var=class value="field-error"}
 	{else}
 		{assign var=class value=""}
 	{/if}
 	<dd><input type="text" name="email" id="email" class="textinput {$class}" 
 	value="{$flatpress.email}" /></dd>
 	
-	<dt> {$panelstrings.notifications} </dt>
+	<dt><label> {$panelstrings.notifications} </label></dt>
 	<dd> 
 	<label for="notify"> 
-	<input type="checkbox" name="notify" id="notify"{if $flatpress.NOTIFY}checked="checked"{/if} /> 
-	{$panelstrings.mailnotify} 
+	<input type="checkbox" name="notify" id="notify" {if $flatpress.NOTIFY}checked="checked"{/if} /> 
+	{$panelstrings.mailnotify}
 	</label> 
 	</dd>
 	
@@ -74,12 +74,12 @@
 	
 	<dt><label for="maxentries"> {$panelstrings.blogmaxentries} </label></dt>
 	{if isset($error) && isset($error.maxentries) && !empty($error.maxentries)}
-		{assign var=class value=" field-error"}
+		{assign var=class value="field-error"}
 	{else}
 		{assign var=class value=""}
 	{/if}
 	<dd><input type="text" name="maxentries" id="maxentries" 
-	class="smalltextinput {$class}" value="{$flatpress.maxentries}" /></dd>
+	class="smalltextinput{$class}" value="{$flatpress.maxentries}" /></dd>
 	
 	
 	</dl>
@@ -91,7 +91,7 @@
 <h2> {$panelstrings.intsetts}  </h2>
 
 	<dl class="option-list">
-		<dt> {$panelstrings.utctime} </dt>
+		<dt><label> {$panelstrings.utctime} </label></dt>
 		{assign var=temp_time value="%b %d %Y %H:%M:%S"}
 		<dd> <code> {"r"|date:$smarty.now} </code> </dd>
 		
@@ -102,21 +102,21 @@
 			{assign var=class value=""}
 		{/if}
 		<dd><input type="text" name="timeoffset" id="timeoffset" 
-			class="smalltextinput {$class}" 
-			value="{$fp_config.locale.timeoffset}" /> {$panelstrings.hours} 
+			class="smalltextinput{$class}" 
+			value="{$fp_config.locale.timeoffset}" /><p class="text"> {$panelstrings.hours} </p>
 		</dd>
 
 
 		<dt><label for="dateformat"> {$panelstrings.dateformat} </label></dt>
 		{if isset($error) && isset($error.dateformat) && !empty($error.dateformat)}
-			{assign var=class value=" field-error"}
+			{assign var=class value="field-error"}
 		{else}
 			{assign var=class value=""}
 		{/if}
 		<dd>	<p> <input type="text" name="dateformat" id="dateformat" 
-			class="textinput {$class}" 
+			class="textinput{$class}" 
 			value="{$fp_config.locale.dateformat}" /> </p>
-			<p> {$panelstrings.output}:   {$smarty.now|date_format:$fp_config.locale.dateformat}  </p>
+			<p class="output"> {$panelstrings.output}:   {$smarty.now|date_format:$fp_config.locale.dateformat}</p>
 		</dd>
 
 		<dt><label for="dateformatshort"> {$panelstrings.dateformatshort} </label></dt>
@@ -126,24 +126,24 @@
 			{assign var=class value=""}
 		{/if}
 		<dd>	<p> <input type="text" name="dateformatshort" id="dateformatshort" 
-			class="textinput {$class}" 
+			class="textinput{$class}" 
 			value="{$fp_config.locale.dateformatshort}" /> </p>
-			<p> {$panelstrings.output}:   {$smarty.now|date_format:$fp_config.locale.dateformatshort}  </p>
+			<p class="output"> {$panelstrings.output}:   {$smarty.now|date_format:$fp_config.locale.dateformatshort}</p>
 		</dd>
 
 		<dt><label for="timeformat"> {$panelstrings.timeformat} </label></dt>
 		{if isset($error) && isset($error.timeformat) && !empty($error.timeformat)}
-			{assign var=class value=" field-error"}
+			{assign var=class value="field-error"}
 		{else}
 			{assign var=class value=""}
 		{/if}
 		<dd>	<p> <input type="text" name="timeformat" id="timeformat" 
-			class="textinput {$class}" 
+			class="textinput{$class}" 
 			value="{$fp_config.locale.timeformat}" /> </p>
 			{assign var=currentTime value=$smarty.now}
 			{assign var=timeDiff value=$fp_config.locale.timeoffset}
 			{assign var=TimeDiffUTC value=$currentTime+$timeDiff*3600}
-			<p> {$panelstrings.output}:  {$TimeDiffUTC|date_format:$fp_config.locale.timeformat}  </p>
+			<p class="output"> {$panelstrings.output}:  {$TimeDiffUTC|date_format:$fp_config.locale.timeformat}</p>
 		</dd>
 
 	
@@ -161,14 +161,14 @@
 		
 		<dt> <label for="charset"> {$panelstrings.charset} </label></dt>
 		{if isset($error) && isset($error.charset) && !empty($error.charset)}
-			{assign var=class value=" field-error"}
+			{assign var=class value="field-error"}
 		{else}
 			{assign var=class value=""}
 		{/if}
 		<dd> <p><input type="text" name="charset" id="charset" 
-			class="smalltextinput {$class}" 
+			class="smalltextinput{$class}" 
 			value="{$fp_config.locale.charset}" /></p>
-			<p>{$panelstrings.charsettip}</p>
+			<p class="output">{$panelstrings.charsettip}</p>
 		</dd>
 	
 

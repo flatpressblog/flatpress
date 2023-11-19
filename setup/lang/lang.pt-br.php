@@ -1,9 +1,13 @@
 <?php
 /*
- * LangId: English
+ * LangId: Português (BR)
  */
 
 // TERMINADO!
+$lang ['setup'] = array(
+	'setup' => '- Configuração'
+);
+
 $lang ['locked'] = array(
 	'head' => 'A instalação foi bloqueada.',
 	'descr' => 'Parece que você já executou a instalação, porque
@@ -17,6 +21,25 @@ encontramos o arquivo de bloqueio. <code>%s</code>.
 		<li><a href="%s">Ok, leve-me de volta ao meu blog.</a></li>
 		<li><a href="%s">Excluí o arquivo, reinicie a instalação.</a></li>
 		</ul>'
+);
+
+$lang ['err'] = array(
+	'setuprun1' => 'A instalação está sendo executada.',
+	
+	'setuprun2' => 'A instalação já está em execução: se você for o administrador, poderá excluir ',
+	'setuprun3' => ' para reiniciar.',
+	'writeerror' => 'Erro de escrita',
+
+	'fpuser1' => ' não é um usuário válido.
+		O nome de usuário deve ser alfanumérico e não deve conter espaços.',
+	'fpuser2' => ' não é um usuário válido.
+		O nome de usuário só pode conter letras, números e um sublinhado.',
+	'fppwd' => 'A senha deve conter pelo menos 6 caracteres e nenhum espaço.',
+	'fppwd2' => 'As senhas não correspondem.',
+	'email' => ' não é um endereço de e-mail válido.',
+	'www' => ' não é um URL válido.',
+	'error' => '<p><big>Erro!</big> 
+		Os seguintes erros ocorreram durante o processamento do formulário:</p><ul>'
 );
 
 $lang ['step1'] = array(
@@ -33,7 +56,7 @@ $lang ['step1'] = array(
 		<pre>%s</pre>
 		
 		Para instalar o pacote de idiomas, faça o upload do conteúdo do pacote no seu <code>flatpress/</code>, e substitua tudo, depois <a href="./setup.php">reinicie esse setup</a>.',
-	'descrw' => 'A <strong>única coisa</strong> que você precisa para o FlatPress funcionar é uma pasta <em>gravável</em>. 
+	'descrw' => 'A <strong>única coisa</strong> que você precisa para o FlatPress funcionar é uma pasta <em>gravável</em>.
 		
 		<pre>%s</pre>'
 );
@@ -50,7 +73,7 @@ $lang ['step2'] = array(
 
 $lang ['step3'] = array(
 	'head' => 'Pronto!',
-	'descr' => '<strong>Fim da história!</strong>. 
+	'descr' => '<strong>Fim da história!</strong>.
 		
 		Inacreditável? 
 		
@@ -86,7 +109,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Esta é uma entrada de amostra,
 
 A tag \'more\' permite criar um "salto" entre um trecho e o artigo completo.
 
-[more] 
+[more]
 
 
 [h4]Estilo[/h4]
@@ -104,17 +127,17 @@ img e url tag têm opções especiais. Pode descobrir mais no [url=https://wiki.
 
 Isso e um post, enquanto [url=static.php?page=about]Sobre[/url] é uma [b]página estática[/b]. Uma página estática é uma página que não pode ser comentada e que não aparece junto com os posts normais do blog.
 
-Páginas estáticas são úteis para criar páginas de informações gerais. Você também pode tornar uma dessas páginas a [b]página inicial[/b] para seus visitantes. Isso significa que, com o FlatPress, você também pode executar um site completo que não seja de blog. A opção de tornar uma página estática sua página inicial está no [b]painel de opções[/b] da  [url=admin.php]área de administração[/ url].
+Páginas estáticas são úteis para criar páginas de informações gerais. Você também pode tornar uma dessas páginas a [b]página inicial[/b] para seus visitantes. Isso significa que, com o FlatPress, você também pode executar um site completo que não seja de blog. A opção de tornar uma página estática sua página inicial está no [b]painel de opções[/b] da [url=admin.php]área de administração[/ url].
 
 
 [h4]Plugins[/h4]
 
 O FlatPress é muito personalizável e suporta [url=https://wiki.flatpress.org/doc:plugins:standard]plugins[/url] para ampliar seu poder. BBCode é um plugin em si.
 
-Criamos mais conteúdo de amostra, para mostrar algumas das funções e gemas bem escondidas do FP. :) 
+Criamos mais conteúdo de amostra, para mostrar algumas das funções e gemas bem escondidas do FP. :)
 Pode encontrar duas [b]páginas estáticas[/b] prontas para aceitar seu conteúdo:
 [list]
-[*][url=static.php?page=about]Sobree[/url]
+[*][url=static.php?page=about]Sobre[/url]
 [*][url=static.php?page=menu]Menu[/url] (observe que os links nesta página também aparecerão na sua barra lateral - esta é a mágica do widget [b]blockparser[/b]. Consulte [url=http://wiki.flatpress.org/doc: faq ]o FAQ[/url] para isso e muito mais!)
 [/list]
 
@@ -124,11 +147,11 @@ Você pode até mesmo usar o elemento "galeria" para apresentar galerias inteira
 
 [h4]Widgets[/h4]
 
-Não há um único elemento fixo nos sidebar(s). Todos os elementos que você pode encontrar nos sidebar nesta página são completamente posicionáveis e a maioria deles também é personalizável. Alguns temas ainda fornecem uma interface de painel na área de administração.  
+Não há um único elemento fixo nos sidebar(s). Todos os elementos que você pode encontrar nos sidebar nesta página são completamente posicionáveis e a maioria deles também é personalizável. Alguns temas ainda fornecem uma interface de painel na área de administração.
 
 Esses elementos são chamados de [b]widgets[/b]. Para mais informações sobre widgets e [url=https://wiki.flatpress.org/doc: tips: widgets]algumas dicas[/url] para obter bons efeitos, dê uma olhada no [url=https://wiki.flatpress .org/]FP wiki[/url].
 
-[h4] Temas[/h4]
+[h4]Temas[/h4]
 
 [galeria="images/Leggero-Themepreview/" width="140"]
 Com o tema FlatPress-Leggero você tem à sua disposição 3 modelos de estilo - do clássico ao moderno. Estes modelos são um começo maravilhoso para criar algo próprio.
@@ -144,7 +167,8 @@ Want to see more?
 [*]Visite [url=https://forum.flatpress.org/]o forum[/url] para obter suporte e bate-papo.
 [*]Obtenha [b]ótimos temas[/b] em [url=https://wiki.flatpress.org/res: themes] enviadas de outros usuários[/url]!
 [*]Confira [url=https://wiki.flatpress.org/res: plugins]os plugins não oficiais.[/url]!
-[*]Obtenha [url=https://wiki.flatpress.org/res: language]o pacote de tradução[/url] para o seu idioma. 
+[*]Obtenha [url=https://wiki.flatpress.org/res: language]o pacote de tradução[/url] para o seu idioma.
+[*]Você também pode seguir o FlatPress em [url=https://twitter.com/FlatPress]X (Twitter)[/url] e [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 
@@ -163,7 +187,7 @@ Want to see more?
 
 Agora pode [url=login.php]entrar[/url] para acessar [url=admin.php]o painel de controle[/url] e comece a postar!!
 
-Diverta-se! :-) 
+Diverta-se! :-)
 
 [i]A Tripulação de [url=https://www.flatpress.org]FlatPress[/url][/i]
 	

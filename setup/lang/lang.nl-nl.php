@@ -2,6 +2,10 @@
 /*
  * LangId: Nederlands
  */
+$lang ['setup'] = array(
+	'setup' => 'Instelling'
+);
+
 $lang ['locked'] = array(
 	'head' => 'Setup is vergrendeld',
 	'descr' => 'Het lijkt erop dat je de installatie al hebt uitgevoerd, omdat 
@@ -17,11 +21,30 @@ $lang ['locked'] = array(
 		</ul>'
 );
 
+$lang ['err'] = array(
+	'setuprun1' => 'De installatie wordt uitgevoerd.',
+	
+	'setuprun2' => 'De installatie loopt al: Als je de beheerder bent, kun je ',
+	'setuprun3' => ' verwijderen om opnieuw te starten.',
+	'writeerror' => 'Fout in schrijven',
+
+	'fpuser1' => ' is geen geldige gebruiker.
+		De gebruikersnaam moet alfanumeriek zijn en mag geen spaties bevatten.',
+	'fpuser2' => ' is geen geldige gebruiker.
+		De gebruikersnaam mag alleen letters, cijfers en 1 underscore bevatten.',
+	'fppwd' => 'Het wachtwoord moet minstens 6 tekens en geen spaties bevatten.',
+	'fppwd2' => 'De wachtwoorden komen niet overeen.',
+	'email' => ' is geen geldig e-mailadres.',
+	'www' => ' is geen geldige URL.',
+	'error' => '<p><big>Fout!</big> 
+		De volgende fouten zijn opgetreden tijdens het verwerken van het formulier:</p><ul>'
+);
+
 $lang ['step1'] = array(
 	'head' => 'Welkom bij FlatPress!',
 	'descr' => 'Bedankt dat je gekozen hebt voor <strong>FlatPress</strong>.
 		
-		Voordat je plezier kunt maken met je gloednieuwe blog, moeten we je een paar vragen stellen. 
+		Voordat je plezier kunt maken met je gloednieuwe blog, moeten we je een paar vragen stellen.
 		
 		Maak je geen zorgen, het zal niet lang duren!',
 	'descrl1' => 'Kies je taal.',
@@ -31,7 +54,7 @@ $lang ['step1'] = array(
 		<pre>%s</pre>
 		
 		Als je het taalpakket wilt installeren, uploadt de inhoud van het pakket in jouw <code>flatpress/</code>, en overschrijf alles, dan <a href="./setup.php">herstart de setup</a>.',
-	'descrw' => 'Het <strong>enige</strong> wat je nodig hebt voor FlatPress om mee te werken <em>beschrijfbare</em> directorie. 
+	'descrw' => 'Het <strong>enige</strong> wat je nodig hebt voor FlatPress om mee te werken <em>beschrijfbare</em> directorie.
 		
 		<pre>%s</pre>'
 );
@@ -48,7 +71,7 @@ $lang ['step2'] = array(
 
 $lang ['step3'] = array(
 	'head' => 'Klaar',
-	'descr' => '<strong>Einde van dit verhaal</strong>. 
+	'descr' => '<strong>Einde van dit verhaal</strong>.
 		
 		Ongelofelijk? 
 		
@@ -84,7 +107,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Dit is een voorbeeld vermelding
 
 Hoe met een tag je in staat stelt om een "sprong" te maken tussen een fragment en het volledige artikel.
 
-[more] 
+[more]
 
 
 [h4]Styling[/h4]
@@ -110,7 +133,7 @@ Statische pagina zijn nuttig om algemene informatie te geven. Je kunt van een va
 
 FlatPress is zeer aanpasbaar en ondersteunt [url=https://wiki.flatpress.org/doc:plugins:standard]plugins[/url] om zijn kracht uit te breiden. BBCode is een plugin op zich zelf.
 
-We hebben wat meer voorbeeld inhoud gemaakt, om je enkele van de FP goed verborgen functies en bouwstenen te laten zien :) 
+We hebben wat meer voorbeeld inhoud gemaakt, om je enkele van de FP goed verborgen functies en bouwstenen te laten zien :)
 Je kunt twee [b]statische paginas[/b] vinden die klaar zijn om in je inhoud te accepteren:
 [list]
 [*][url=static.php?page=about]About me[/url]
@@ -123,7 +146,7 @@ Je kunt zelfs het element "galerij" gebruiken om hele galerijen aan je bezoekers
 
 [h4]Widgets[/h4]
 
-Er is geen enkel vast element in de zijbalk(en). Alle elementen die je kunt vinden in de balken die deze tekst aansturen, zijn volledig positioneerbaar en de meeste zijn ook aanpasbaar. Sommige thema\'s bieden zelfs een paneelinterface in het beheergebied.  
+Er is geen enkel vast element in de zijbalk(en). Alle elementen die je kunt vinden in de balken die deze tekst aansturen, zijn volledig positioneerbaar en de meeste zijn ook aanpasbaar. Sommige thema\'s bieden zelfs een paneelinterface in het beheergebied.
 
 Deze elementen worden genoemd [b]widgets[/b]. Voor meer over widgets en [url=https://wiki.flatpress.org/doc:tips:widgets]some tips[/url] om leuke effecten te krijgen, kijk dan eens naar de [url=https://wiki.flatpress.org/]wiki[/url].
 
@@ -139,12 +162,13 @@ Met het FlatPress-Leggero thema heb je 3 stijlsjablonen tot je beschikking - van
 Wil je meer zien?
 
 [list]
-[*]Steun het project met een [url=http://www.flatpress.org/home/static.php?page=donate]kleine donatie
-[*]Volg de [url=https://www.flatpress.org/?x]official blog[/url] om te weten wat is gaande in de FlatPress wereld
-[*]Bezoek de [url=https://forum.flatpress.org/]forum[/url] voor ondersteuning
+[*]Steun het project met een [url=http://www.flatpress.org/home/static.php?page=donate]kleine donatie.
+[*]Volg de [url=https://www.flatpress.org/?x]official blog[/url] om te weten wat is gaande in de FlatPress wereld.
+[*]Bezoek de [url=https://forum.flatpress.org/]forum[/url] voor ondersteuning.
 [*]Krijg [b]mooie themas[/b] van [url=https://wiki.flatpress.org/res:themes]other users\' submissions[/url]!
-[*]Bekijk de [url=https://wiki.flatpress.org/res:plugins]unofficial plugins[/url]
-[*]Krijg [url=https://wiki.flatpress.org/res:language]translation pack[/url] voor jouw taal 
+[*]Bekijk de [url=https://wiki.flatpress.org/res:plugins]plugins[/url].
+[*]Krijg [url=https://wiki.flatpress.org/res:language]translation pack[/url] voor jouw taal.
+[*]Je kunt FlatPress ook volgen op [url=https://twitter.com/FlatPress]X (Twitter)[/url] en [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
 
@@ -163,7 +187,7 @@ Wil je meer zien?
 
 Nu kan je [url=login.php]Login[/url] om bij de [url=admin.php]Administration Area[/url] en begin met vermeldingen maken!
 
-Veel plezier! :) 
+Veel plezier! :)
 
 [i]The [url=https://www.flatpress.org]FlatPress[/url] Team[/i]
 	

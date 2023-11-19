@@ -31,7 +31,7 @@
 		'langchoice'		=> 'Jazyk',
 
 		'intsetts'		=> 'Mezinárodní nastavení',
-		'utctime'		=> '<acronym title="Universal Coordinated Time">UTC</acronym> čas je',
+		'utctime'		=> '<abbr title="Universal Coordinated Time">UTC</abbr> čas je',
 		'timeoffset'		=> 'Čas bude oddělený: ',
 		'hours'			=> 'hodiny',
 		'timeformat'		=> 'Přednastavený formát času',

@@ -1,6 +1,6 @@
 # Under development: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## Changed requirements
-- FlatPress 1.3 runs under PHP up to **8.1**; minimum required PHP version increases to **7.1**.
+- FlatPress 1.3 runs under PHP up to **8.2**; minimum required PHP version increases to **7.1**.
 - Also, the PHP extension [**intl**](https://www.php.net/manual/book.intl.php) becomes mandatory.
 
 ## General
@@ -8,17 +8,21 @@
 - Added [SECURITY.md](https://github.com/flatpressblog/flatpress/blob/master/SECURITY.md)
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 - Re-activated useful "Stats" panel in Admin Area / Entries
+- "Follow on Mastodon" added as an alternative to X (Twitter) in the welcome entry
 
 ## Plugins
 ### Additions
-- PhotoSwipe plugin added: Displays images and galleries with [PhotoSwipe](https://photoswipe.com/) ([#109](https://github.com/flatpressblog/flatpress/issues/109))
+- PhotoSwipe plugin added: Displays images and galleries with [PhotoSwipe](https://photoswipe.com/) ([#109](https://github.com/flatpressblog/flatpress/issues/109), [#253](https://github.com/flatpressblog/flatpress/issues/253), [#255](https://github.com/flatpressblog/flatpress/issues/255))
 - Gallery captions plugin added: Manages image captions for gallery images ([#108](https://github.com/flatpressblog/flatpress/issues/108))
 - SEO Meta Tag Info plugin added: Manages SEO meta tags ([#145](https://github.com/flatpressblog/flatpress/issues/145))
 - FlatPress Protect plugin added: Adds HTTP headers for hardening your blog ([#146](https://github.com/flatpressblog/flatpress/issues/146))
+
 ### Changes
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
 - Media Manager plugin shows 50 items per page, not 10
 - BBCode plugin: Added "h4" icon to editor toolbar ([#201](https://github.com/flatpressblog/flatpress/issues/201))
+- BBCode plugin: Facebook-Video now uses the latest video player API and the lazy loading mechanism of the browser; also now has localized languages with language tag ([#252](https://github.com/flatpressblog/flatpress/issues/252)) - see also https://developers.facebook.com/docs/javascript/internationalization
+
 ### Bugfixes
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
 - Comment Center plugin: Fixed errors on the config page ([#90](https://github.com/flatpressblog/flatpress/issues/90))
@@ -27,8 +31,33 @@
 - BBCode plugin: Allows local video files ("attachs/video.mp4") and outputs valid HTML ([#192](https://github.com/flatpressblog/flatpress/issues/192))
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
 
+## Setup
+- Reworked Installer ([#266](https://github.com/flatpressblog/flatpress/issues/266))
+  - Image files, which are not used by the installer, were removed.
+  - In the setup CSS, unused IDs, classes and incorrect references to fonts have been removed.
+  - The installer header now shines in a simple FlatPress style.
+  - Added missing language files for Greek, Spanish and French ([#214](https://github.com/flatpressblog/flatpress/issues/214))
+  - The installer tries to write permissions to the fp-content directory recursively for owners and groups, which had to be done manually before.
+
 ## Themes
-- Leggero
+- Reworked "Leggero v2" style, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
+  - Adjusted the alignment of the calendar widget and the search widget
+  - The theme now adapts better at screen widths between 720px and 768px
+  - Media queries were created for individual device classes (smartphone, netbook, laptop and PC) in order to achieve a better display, especially for mobile devices
+  - The overall appearance is now not so angular/edgy
+  - A single PhotoSwipe image or a whole gallery is now centered in the responsive design  ([#150](https://github.com/flatpressblog/flatpress/issues/150))
+  - BBcode videos are no longer chopped off in responsive design, but adjusted to the width and center aligned
+  - A left or right aligned BBcode video will now be centered if the screen < 960 px
+  - The BBcode toolbar adapted for a better display at the screen width of 640px
+  - The menu and submenu in the administration area now also has a "slightly" more modern design
+  - Template and CSS from Uploader > Gallery: image texts; button and table adapted to Leggero V2 style
+  - Text within the pre element is now printed completely by line break
+  - Fixes a problem in the admin area when rendering font-sizes in Safari, Chrome and Firefox (iPhone/iPad) ([#256](https://github.com/flatpressblog/flatpress/issues/256))
+  - Added "background-attachment: fix" -workaround for mobile devices.
+  - Admin area now has Leggero-v2 style background instead of white background.
+
+- Further fixes in "Leggero" theme
+  - All Leggero theme css files now comply with [CSS level 3](https://jigsaw.w3.org/css-validator/)
   - Fixed searchbox glitch in FlatMaas revisited style ([#97](https://github.com/flatpressblog/flatpress/issues/97))
   - Fixed missing bullets in preview ([#98](https://github.com/flatpressblog/flatpress/issues/98))
   - CSS of the Leggero style had some glitches on mobile devices
@@ -41,14 +70,21 @@
   - Updated preview image ([#139](https://github.com/flatpressblog/flatpress/issues/139))
   - Fixed comments date format ([#237](https://github.com/flatpressblog/flatpress/issues/237))
   - Fixed several layout/CSS glitches ([#140](https://github.com/flatpressblog/flatpress/issues/140), [#144](https://github.com/flatpressblog/flatpress/issues/144), [#201](https://github.com/flatpressblog/flatpress/issues/201), [#247](https://github.com/flatpressblog/flatpress/issues/247), [#249](https://github.com/flatpressblog/flatpress/issues/249))
+  - Lucida Console [code] ... [/code] is now correct as a font in the CSS file
+  - In the admin area, the configuration panel has been revised
+  - Fixed vertical alignment of BBCode toolbar in write panel
+  - Removes obsolete acronym element in the language files and replaces it with the abbr element
+  - The menu bar in Leggero style is now centered if the screen width is less than 768px
 
 ## Internationalization
+- Added translation: Slovenian, Danish
 - Reworked translations: Spanish, Portuguese, Dutch, and Italian
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))
 - Fixed not-yet-translated phrases in Blog view and Admin Area ([#171](https://github.com/flatpressblog/flatpress/issues/171))
 - Contact form: Admin notification mail is now localized ([#205](https://github.com/flatpressblog/flatpress/issues/205))
-- Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216))
+- Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216), [#262](https://github.com/flatpressblog/flatpress/issues/262))
+- The HTML of the installer now has a lang attribute in the html start tag to specify the language.
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
@@ -57,6 +93,7 @@
 - Fixed disappearing non-Latin characters in page title ([#49](https://github.com/flatpressblog/flatpress/issues/49) and [#91](https://github.com/flatpressblog/flatpress/issues/91))
 - Worked around strftime() marked as deprecated as of PHP 8.1 ([#92](https://github.com/flatpressblog/flatpress/issues/92)) - thx @bohwaz
 - Comments and contact form: Fixed error on sending mails with umlaut subjects ([#207](https://github.com/flatpressblog/flatpress/issues/207), [#209](https://github.com/flatpressblog/flatpress/issues/209))
+- Added missing properties in order to prevent "Dynamic properties are deprecated" error under PHP 8.2 ([#115](https://github.com/flatpressblog/flatpress/issues/115))
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
@@ -70,6 +107,8 @@
 - Possible XSSs in Admin Area prevented ([#180](https://github.com/flatpressblog/flatpress/issues/180), [#183](https://github.com/flatpressblog/flatpress/issues/183), [#187](https://github.com/flatpressblog/flatpress/issues/187))
 - Possible XSS in comments prevented ([#186](https://github.com/flatpressblog/flatpress/issues/186))
 - Possible CSRFs in Admin Area prevented ([#64](https://github.com/flatpressblog/flatpress/issues/64))
+- Possible XSS in FlatPress Installer prevented ([#220](https://github.com/flatpressblog/flatpress/issues/220))
+- Write permission for others removed by default ([#173](https://github.com/flatpressblog/flatpress/issues/173))
 
 # 2021-06-19: [FlatPress 1.2.1](https://github.com/flatpressblog/flatpress/releases/tag/1.2.1)
 ## Bugfixes

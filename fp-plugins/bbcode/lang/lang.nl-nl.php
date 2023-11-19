@@ -3,9 +3,8 @@
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'BBCode Configuratie',
-	'desc1' => 'Deze plugin staat gebruik toe <a href="http://www.phpbb.com/'.
-		'phpBB/faq.php?mode=bbcode">BBCode</a> voor opmaak en biedt '.
-		'automatische integratie met lightbox (wanneer ook ingeschakeld).',
+	'desc1' => 'Deze plugin maakt het gebruik van <a href="http://www.phpbb.com/'.
+		'phpBB/faq.php?mode=bbcode">BBCode</a> mogelijk.',
 	
 	'options' => 'Opties',
 
@@ -57,7 +56,9 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'Ga naar'
+		'go_to' => 'Ga naar',
+		// language tag for Facebook Video
+		'langtag' => 'nl_NL'
 );
 
 ?>

@@ -10,9 +10,9 @@
 		'syswarning'	=> '<big>Warnung!</big> Diese Einstellungen sollten sorgfältig eingegeben werden,
 	                    sonst könnte Flatpress nicht richtig funktionieren.',
 		'blog_root'		=> '<strong>Absoluter Pfad zu Flatpress</strong>. Hinweis: 
-	                    Normalerweise muss hier nichts geändert werden. Flatpress bietet keine interne
+	                    Normalerweise muss hier nichts geändert werden. FlatPress bietet keine interne
 	                    Funktion um eventuelle Änderungen von sich aus zu prüfen.',
-		'www'		=>'<strong>Blog Root</strong>. URL deines Blogs mit Angabe des Verzeichnisses. <br />
+		'www'		=>'<strong>Blog Root</strong>. URL deines Blogs mit Angabe des Verzeichnisses. <br>
 	             Beispiel: http://www.mydomain.com/flatpress/ (abschließender Slash wird benötigt)',
 		
 		// ------
@@ -32,7 +32,7 @@
 		'langchoice'		=> 'Sprache',
 
 		'intsetts'		=> 'Internationale Einstellungen',
-		'utctime'		=> '<acronym title="Universal Coordinated Time">UTC</acronym> Zeitzone',
+		'utctime'		=> '<abbr title="Universal Coordinated Time">UTC</abbr> Zeitzone',
 		'timeoffset'		=> 'Uhrzeit soll korrigiert werden um',
 		'hours'			=> 'Stunden',
 		'timeformat'		=> 'Standard Zeitformat',
@@ -40,7 +40,7 @@
     'dateformatshort'	=> 'Standard Datumformat (kurz)',
 		'output'		=> 'Ausgabe',
 		'charset'		=> 'Zeichensatz',
-		'charsettip'	=> 'Der empfohlene Zeichensatz für Flatpress ist '.
+		'charsettip'	=> 'Der empfohlene Zeichensatz für FlatPress ist '.
 						'<a href="http://wiki.flatpress.org/doc:charsets">UTF-8</a>.'
 		);
 		
