@@ -20,6 +20,25 @@ $lang ['locked'] = array(
 		</ul>'
 );
 
+$lang ['err'] = array(
+	'setuprun1' => 'Namestitev se izvaja.',
+	
+	'setuprun2' => 'Namestitev je že v teku: Če ste skrbnik, lahko izbrišete ',
+	'setuprun3' => ' za ponovni zagon.',
+	'writeerror' => 'Napake pri pisanju',
+
+	'fpuser1' => ' ni veljaven uporabnik.
+		Uporabniško ime mora biti alfanumerično in ne sme vsebovati presledkov.',
+	'fpuser2' => ' ni veljaven uporabnik.
+		Uporabniško ime lahko vsebuje samo črke, številke in en podčrtaj.',
+	'fppwd' => 'Geslo mora vsebovati vsaj 6 znakov in ne sme vsebovati presledkov.',
+	'fppwd2' => 'Gesla se ne ujemajo.',
+	'email' => ' ni veljaven e-poštni naslov.',
+	'www' => ' ni veljaven URL.',
+	'error' => '<p><big>Napaka!</big>
+		Med obdelavo obrazca je prišlo do naslednjih napak:</p><ul>'
+);
+
 $lang ['step1'] = array(
 	'head' => 'Dobrodošli v FlatPress!',
 	'descr' => 'Hvala, ker ste izbrali <strong>FlatPress</strong>.
