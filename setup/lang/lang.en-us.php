@@ -21,6 +21,25 @@ $lang ['locked'] = array(
 		</ul>'
 );
 
+$lang ['err'] = array(
+	'setuprun1' => 'The installation is running.',
+	
+	'setuprun2' => 'The installation is already underway: If you are the administrator, you can delete ',
+	'setuprun3' => ' to restart.',
+	'writeerror' => 'Writing errors',
+
+	'fpuser1' => ' is not a valid user.
+		The user name must be alphanumeric and must not contain any spaces.',
+	'fpuser2' => ' is not a valid user.
+		The user name may only contain letters, numbers and 1 underscore.',
+	'fppwd' => 'The password must contain at least 6 characters and must not contain any spaces.',
+	'fppwd2' => 'The passwords do not match.',
+	'email' => ' is not a valid e-mail address.',
+	'www' => ' is not a valid URL.',
+	'error' => '<p><big>Error!</big>
+		The following errors occurred while processing the form:</p><ul>'
+);
+
 $lang ['step1'] = array(
 	'head' => 'Welcome to FlatPress!',
 	'descr' => 'Thank you for choosing <strong>FlatPress</strong>.
