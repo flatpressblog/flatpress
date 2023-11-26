@@ -11,6 +11,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'lapprove' => 'Mostrar comentários bloqueados',
 	'lmanage' => 'Gerenciar comentários',
 	'lconfig' => 'Configurar o plugin',
+	'faq_spamcomments' => 'Obtenha ajuda sobre como lidar com comentários de spam',
 
 	// Policies
 	'policies' => 'Políticas',
@@ -48,8 +49,9 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'email_alert_long' => 'Marque para ser informado via email quando houver um comentário para aprovar',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Ativar verificação do Akismet',
+	'akismet_use_long' => 'Com o <a href="https://akismet.com/">Akismet</a>, você pode reduzir o spam nos comentários.',
 	'akismet_key' => 'Akismet Key',
-	'akismet_key_long' => 'O serviço Akismet fornece uma chave para usá-lo. Insira aqui',
+	'akismet_key_long' => 'O serviço <a href="https://akismet.com/signup/" target="_blank">Akismet</a> fornece a você uma <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">chave</a>. Insira-a aqui.',
 	'akismet_url' => 'URL base do blog para o Akismet',
 	'akismet_url_long' => 'Acho que para o serviço gratuito Akismet você deve usar apenas um domínio. Você pode deixar este campo em branco, <code>%s</code> será usado',
 	'save_conf' => 'Salvar configuração',
@@ -61,7 +63,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'some_entries' => 'Algumas entradas',
 	'properties' => 'Entrada com certas propriedades',
 	'se_desc' => 'Se você selecionou a opção %s, insira as entradas que deseja aplicar a esta política',
-	'se_fill' => 'Por favor, preencha os campos com o id das entradas (<code>entryYYMMDD-HHMMSS</code>)',
+	'se_fill' => 'Por favor, preencha os campos com o <a href="admin.php?p=entry">ID</a> das entradas (<code>entryYYMMDD-HHMMSS</code>)',
 	'po_title' => 'Propriedades',
 	'po_desc' => 'Se você selecionou a opção %s, preencha as propriedades',
 	'po_comp' => 'Os campos não são obrigatórios, mas você deve preencher pelo menos um ou a política será aplicada em todas as entradas',
@@ -106,7 +108,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Manage comments page
 	'man_searcht' => 'Pesquisar uma entrada',
-	'man_searchd' => 'Insira o id da entrada cujos comentários você deseja gerenciar',
+	'man_searchd' => 'Insira o <a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>) da entrada cujos comentários você deseja gerenciar',
 	'man_search' => 'Procurar',
 	'man_commfor' => 'Comentários para %s',
 	'man_spam' => 'Enviar como spam para Akismet',

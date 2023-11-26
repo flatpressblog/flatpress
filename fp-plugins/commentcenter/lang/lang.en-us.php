@@ -11,6 +11,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'lapprove' => 'Show blocked comments',
 	'lmanage' => 'Manage comments',
 	'lconfig' => 'Configure the plugin',
+	'faq_spamcomments' => 'Get help dealing with spam comments',
 
 	// Policies
 	'policies' => 'Policies',
@@ -48,8 +49,9 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'email_alert_long' => 'Check it if you want that when there is a comment to approve you want to be ' . 'informed via email.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Enable Akismet check',
+	'akismet_use_long' => 'With <a href="https://akismet.com/">Akismet</a> you can reduce spam in comments.',
 	'akismet_key' => 'Akismet Key',
-	'akismet_key_long' => 'The Akismet service provide you a key to use it. Insert here.',
+	'akismet_key_long' => 'The <a href="https://akismet.com/signup/" target="_blank">Akismet service</a> provides you with a <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">key</a>. Insert it here.',
 	'akismet_url' => 'Blog base URL for Akismet',
 	'akismet_url_long' => 'I think for Akismet free service you should use just a domain. ' . 'You can leave blank this field, <code>%s</code> will be used.',
 	'save_conf' => 'Save Configuration',
@@ -61,7 +63,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'some_entries' => 'Some Entries',
 	'properties' => 'Entry with certain properties',
 	'se_desc' => 'If you selected the %s option, please insert entries you want to apply to this policy.',
-	'se_fill' => 'Please fill the fields with the id of the entries (<code>entryYYMMDD-HHMMSS</code>).',
+	'se_fill' => 'Please fill the fields with the <a href="admin.php?p=entry">ID</a> of the entries (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Properties',
 	'po_desc' => 'If you selected the %s option, please fill the properties.',
 	'po_comp' => 'The fields aren\'t compulsory but you must fill at least one or the policy ' . 'will apply on all entries.',
@@ -106,7 +108,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Manage comments page
 	'man_searcht' => 'Search an entry',
-	'man_searchd' => 'Insert the id of the entry whose you want to manage comments.',
+	'man_searchd' => 'Insert the <a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>) of the entry whose you want to manage comments.',
 	'man_search' => 'Search',
 	'man_commfor' => 'Comments for %s',
 	'man_spam' => 'Submit as spam to Akismet',
