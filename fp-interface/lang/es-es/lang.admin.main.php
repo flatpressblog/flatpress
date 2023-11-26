@@ -15,9 +15,9 @@
 		'op4'		=> 'Plugins',
 		'op4d'		=> 'Instalar, habilitar, deshabilitar plugins',
 		'op5'		=> 'Configuración',
-		'op5d'		=> 'Personalice su flatpress',
+		'op5d'		=> 'Personalice su FlatPress',
 		'op6'		=> 'Mantención',
-		'op6d'		=> 'Limpiar y restablecer flatpress',
+		'op6d'		=> 'Limpiar y restablecer FlatPress',
 		
 	);
 ?>

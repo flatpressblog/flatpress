@@ -31,7 +31,7 @@ h2 { border-bottom: 1px solid #ddd; margin: 0.5em 0 }
 
 h3 { margin: 0.5em 0 0 0 }
 
-.head-link { font-size: 0.83em }
+.head-link { font-size: 1em }
 
 
 /* === Redefines some stuff in inline mode === */
@@ -137,8 +137,7 @@ ul#admin-tabmenu li a.admin-tab-current { font-weight: bold }
 #admin-submenu li a {
 	padding: 0 1em ;
 	color: #000;
-	border-left: 1px solid #eee;
-	border-right: 1px solid #eee;
+	margin: 0.1em;
 	font-weight: normal
 }
 
@@ -508,7 +507,7 @@ li.widget-class {
     display: flex
 }
 
-.option-list dd code { position: relative; font-size: 0.85em }
+.option-list dd code { position: relative; font-size: 0.98em }
 
 .option-set dt {
     width: 36%;
@@ -573,6 +572,9 @@ a.link-general:hover, .main-cell a:hover {
 
 /* (already defined in common, here we put just some tuning settings) */
 #admin-content ul.msgs { margin: 0.5em 0 0.5em 0 }
+
+#admin-content big,
+#admin-content code { font-size: 0.98em }
 
 #footer { color: black }
 

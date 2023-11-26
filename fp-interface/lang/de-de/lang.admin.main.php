@@ -3,7 +3,7 @@
 	$lang['admin']['panel']['main'] = 'Zentrale';
 	
 	$lang['admin']['main']['default'] = array(
-		'head'		=> 'Willkommen im Kontrollzentrum von Flatpress!',
+		'head'		=> 'Willkommen im Kontrollzentrum von FlatPress!',
 		'descr'		=> 'Bitte wähle eine Aktion',
 		
 		'op1'		=> 'Neuer Beitrag',
@@ -17,7 +17,7 @@
 		'op5'		=> 'Konfiguration',
 		'op5d'		=> 'Grundlegende Einstellungen wie Titel, Blog-URL, Datum, Zeitzone und Sprache',
 		'op6'		=> 'Wartung',
-		'op6d'		=> 'Den Flatpress Index (neu) erstellen, PHP Informationen anzeigen oder Updates abfragen',
+		'op6d'		=> 'Den FlatPress Index (neu) erstellen, PHP Informationen anzeigen oder Updates abfragen',
 		
 	);
 ?>
