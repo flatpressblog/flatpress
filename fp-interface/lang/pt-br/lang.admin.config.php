@@ -9,8 +9,8 @@
 		
 		'sysfset'		=> 'Informações Gerais do Sistema',
 		'syswarning'	=> '<big>Aviso!</big> Essas informações são críticas e precisam estar corretas ou o FlatPress (provavelmente) não funcionará corretamente.',
-		'blog_root'		=> '<strong>Caminho absoluto para o Flatpress</strong>. Nota: Geralmente, você não precisará editar isso. De qualquer forma, tenha cuidado, porque não podemos verificar se está correto ou não.',
-		'www'		=>'<strong>Raiz do blog</strong>. URL para o seu blog, completo com subdiretórios. <br/> por exemplo: http://www.mydomain.com/flatpress/ (barra final necessária),',
+		'blog_root'		=> '<strong>Caminho absoluto para o FlatPress</strong>. Nota: Geralmente, você não precisará editar isso. De qualquer forma, tenha cuidado, porque não podemos verificar se está correto ou não.',
+		'www'		=> '<strong>Raiz do blog</strong>. URL para o seu blog, completo com subdiretórios. <br/> por exemplo: http://www.mydomain.com/flatpress/ (barra final necessária),',
 		
 		// ------
 		
@@ -37,8 +37,8 @@
 		'dateformatshort'	=> 'Formato padrão para a data (curta)',
 		'output'		=> 'Resultado',
 		'charset'		=> 'Conjunto de caracteres',
-		'charsettip'	=> 'O conjunto de caracteres em que você escreve seu blog (UTF-8 é '.
-						'<a href="http://wiki.flatpress.org/doc:charsets">recomendado</a>)'
+		'charsettip'	=> 'O conjunto de caracteres em que você escreve seu blog (UTF-8 é ' .
+						'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Quais padrões de codificação de caracteres são compatíveis com o FlatPress?">recomendado</a>)'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 

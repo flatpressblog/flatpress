@@ -3,8 +3,8 @@
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Ρύθμιση του BBCode',
-	'desc1' => 'Το πρόσθετο αυτό επιτρέπει τη χρήση σύνταξης <a href="http://www.phpbb.com/'.
-		'phpBB/faq.php?mode=bbcode">BBCode</a>.',
+	'desc1' => 'Το πρόσθετο αυτό επιτρέπει τη χρήση σύνταξης <a href="https://wiki.flatpress.org/'.
+		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a>.',
 	
 	'options' => 'Επιλογές',
 

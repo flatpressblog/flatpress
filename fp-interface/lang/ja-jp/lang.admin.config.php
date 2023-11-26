@@ -8,8 +8,8 @@
 		
 		'sysfset'		=> '一般設定',
 		'syswarning'	=> '<big>警告!</big> この設定には慎重さと正確さが必要です。さもないとFlatPressの動作に(おそらく)支障が出るでしょう。',
-		'blog_root'		=> '<strong>flatpressへの絶対パス</strong> Note: 
-	普通は、これを編集する必要がないでしょう。flatpressは正しいかどうかチェックできませんから注意深く編集してください。',
+		'blog_root'		=> '<strong>FlatPressへの絶対パス</strong> Note: 
+	普通は、これを編集する必要がないでしょう。FlatPressは正しいかどうかチェックできませんから注意深く編集してください。',
 		'www'		=>'<strong>ブログのURL</strong>. サブディレクトリで終わるブログのURL <br />
 	例: http://www.mydomain.com/flatpress/ (末尾のスラッシュが必要)',
 		
@@ -38,8 +38,8 @@
 		'dateformatshort'	=> '日付短縮表示のデフォルト形式',
 		'output'		=> '現在の設定での表示例',
 		'charset'		=> '使用する文字コード',
-		'charsettip'	=> '(使用する文字コードは、utf-8を '.
-						'<a href="http://wiki.flatpress.org/doc:charsets">推奨します</a>。)'
+		'charsettip'	=> '(使用する文字コードは、utf-8を ' .
+						'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="FlatPressはどの文字エンコーディングに対応していますか？">推奨します</a>。)'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 

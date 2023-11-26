@@ -8,11 +8,11 @@
 		'submit'		=> 'Salva le modifiche',
 		
 		'sysfset'		=> 'Informazioni generali di sistema',
-		'syswarning'	=> '<big>Attenzione!</big> Queste informazioni sono critiche e devono essere corrette,
-	oppure FlatPress (probabilmente) si rifiuterà di funzionare.',
-		'blog_root'		=> '<strong>Percorso assoluto di Flatpress</strong>. N.B.: 
-	generalmente non dovrai modificarlo, ma comunque fai attenzione, perché non è possibile
-	controllare se è corretto oppure no.',
+		'syswarning'	=> '<big>Attenzione!</big> Queste informazioni sono critiche e devono essere corrette, ' .
+							'oppure FlatPress (probabilmente) si rifiuterà di funzionare.',
+		'blog_root'		=> '<strong>Percorso assoluto di FlatPress</strong>. N.B.: ' .
+							'generalmente non dovrai modificarlo, ma comunque fai attenzione, perché non è possibile ' .
+							'controllare se è corretto oppure no.',
 		'www'		=>'<strong>Root del Blog</strong>. L\'URL al tuo blog, completo di 
 	sottocartelle. <br />
 	ad es.: http://www.ilmiosito.it/flatpress/ (sono necesssarie anche le slash /)',
@@ -42,8 +42,8 @@
 		'dateformatshort'	=> 'Formato predefinito per la data (breve)',
 		'output'		=> 'Output',
 		'charset'		=> 'Set di caratterit',
-		'charsettip'	=> 'Il set di caratteri che userai per scrivere nel blog (UTF-8 è quello '.
-						'<a href="http://wiki.flatpress.org/doc:charsets">raccomandato</a>)'
+		'charsettip'	=> 'Il set di caratteri che userai per scrivere nel blog (UTF-8 è quello ' .
+						'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Quali standard di codifica dei caratteri sono supportati da FlatPress?">raccomandato</a>).'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 

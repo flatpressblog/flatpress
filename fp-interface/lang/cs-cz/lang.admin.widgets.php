@@ -9,7 +9,7 @@
 		'head'		=> 'Správa Widgetů',
 		
 		'descr'		=> 	'<a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:tips:widgets" title="Co je Widget?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Co je Widget?">'.
 						'Widget</a> je dynamická položka, která může zobrazovat data a působí na užívatele.
 						Zatím co <strong>motivy vzhledu</strong> jsou určené pro změnu vzhledu Vašeho blogu, widgety 
 						<strong>rozšiřují</strong> vzhled a funkce.</p>

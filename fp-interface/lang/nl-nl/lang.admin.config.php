@@ -8,11 +8,11 @@
 		'submit'		=> 'Bewaar aanpassingen',
 		
 		'sysfset'		=> 'Algemene systeeminformatie',
-		'syswarning'	=> '<big>Warschuwing!</big> Deze informatie is van cruciaal belang en moet correct zijn,
-	anders zal FlatPress  (waarschijnlijk) weigeren om goed te werken.',
-		'blog_root'		=> '<strong>Absoluut pad naar flatpress</strong>. Opmerking: 
-	over het algemeen hoeft u dit niet te bewerken, wees hoe dan ook voorzichtig, want we kunnen niet
-	controleren of het correct is of niet.',
+		'syswarning'	=> '<big>Warschuwing!</big> Deze informatie is van cruciaal belang en moet correct zijn, ' .
+							'anders zal FlatPress  (waarschijnlijk) weigeren om goed te werken.',
+		'blog_root'		=> '<strong>Absoluut pad naar FlatPress</strong>. Opmerking: ' .
+							'over het algemeen hoeft u dit niet te bewerken, wees hoe dan ook voorzichtig, want we kunnen niet ' .
+							'controleren of het correct is of niet.',
 		'www'		=>'<strong>Blog root</strong>. URL naar de blog, compleet met 
 	subdirectories. <br />
 	VB: https://www.mydomain.com/flatpress/ (voorwaard slash is nodig)',
@@ -42,8 +42,8 @@
 		'dateformatshort'	=> 'Default format voor datum kort',
 		'output'		=> 'Output',
 		'charset'		=> 'Character set',
-		'charsettip'	=> 'De tekenset waarin je je blog schrijft (UTF-8 is '.
-						'<a href="https://wiki.flatpress.org/">aanbevolen</a>)'
+		'charsettip'	=> 'De tekenset waarin je je blog schrijft (UTF-8 is ' .
+						'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Welke tekencoderingsstandaarden worden ondersteund door FlatPress?">aanbevolen</a>).'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 

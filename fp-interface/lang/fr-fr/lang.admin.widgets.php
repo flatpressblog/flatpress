@@ -9,20 +9,20 @@
 		'head'		=> 'G&eacute;rer les Widgets',
 		
 		'descr'		=> 	'Un <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:widgets" title="C\'est quoi un Widget?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="C\'est quoi un Widget?">'.
 						'Widget</a> est un composant dynamique qui peut afficher des donn&eacute;es et interagir avec l\'utilisateur.
 						Bien que les<strong> Th&egrave;mes</strong> ont pour but de modifier l\'apparence de votre blog, les widgets 
 						<strong>&eacute;tendent</strong> les possibilit&eacute;s et les fonctions.</p>
 
 						<p>Les Widgets peuvent &ecirc;tre d&eacute;plac&eacute;s vers des zones sp&eacute;ciales de votre th&egrave;me appel&eacute;es 
 						<strong>WidgetSets</strong>. Le nombre et le nom des WidgetSets peuvent varier avec le
-th&egrave;me que vous choisissez.</p>
+						th&egrave;me que vous choisissez.</p>
 
 						<p>FlatPress est fourni avec plusieurs widgets: il y a des widgets pour aider &agrave; la connexion, pour
-afficher une bo&icirc;te de recherche, etc</p>
+						afficher une bo&icirc;te de recherche, etc</p>
 						
 						<p>Chaque widget est d&eacute;fini par un <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="Aide Widget?">plugin</a>.',
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Aide Widget?">plugin</a>.',
 						
 		'availwdgs'	=> 'Widgets disponibles',
 		'trashcan'	=> 'D&eacute;placer ici pour supprimer',

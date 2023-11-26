@@ -12,7 +12,7 @@
 		'enable'	=> 'Zapnout',
 		'disable'	=> 'Vypnout',
 		'descr'		=> '<a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins:standard" title="Co je Plugin?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Co je Plugin?">'.
 						'Plugin</a> je součást, která umožňuje rozšířit možnosti FlatPressu.</p>'.
 						'<p>Pluginy je možno instalovat nahráním do složky <code>fp-plugins/</code></p> '.
 						'<p>Tento panel umožňuje zapnout a vypnout pluginy.',

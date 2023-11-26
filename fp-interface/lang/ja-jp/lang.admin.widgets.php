@@ -9,7 +9,7 @@
 		'head'		=> 'ウィジェットの管理 (<em>試験的運用中</em>)',
 		
 		'descr'		=> 	'<a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:widgets" title="What is a Widget?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="What is a Widget?">'.
 						'ウィジェット</a>は、情報の表示や閲覧者とのやり取りをダイナミックにできる部品です。
 						<strong>テーマ</strong>はサイトの見かけを変えますが、ウィジェットは
 						見かけと機能を<strong>拡張</strong>します。</p>
@@ -22,7 +22,7 @@
 						検索窓のウィジェットなどです。</p>
 						
 						<p>各々のウィジェットは、<a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">プラグイン</a>で定義されます。',
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a Widget?">プラグイン</a>で定義されます。',
 						
 		'availwdgs'	=> '使用できるウィジェット',
 		'trashcan'	=> 'バーから削除したい場合は、ここにドロップします',
