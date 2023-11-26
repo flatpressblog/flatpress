@@ -20,10 +20,10 @@
 		'op4d'		=> 'Instale, ative, desative plugins',
 		
 		'op5'		=> 'Configuração',
-		'op5d'		=> 'Personalize seu Flatpress',
+		'op5d'		=> 'Personalize seu FlatPress',
 		
 		'op6'		=> 'Manutenção',
-		'op6d'		=> 'Limpe e restaure o flatpress',
+		'op6d'		=> 'Limpe e restaure o FlatPress',
 		
 	);
 ?>

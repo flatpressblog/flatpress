@@ -11,6 +11,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'lapprove' => 'Elencare i commenti bloccati',
 	'lmanage' => 'Gestire i commenti',
 	'lconfig' => 'Configurare il plugin',
+	'faq_spamcomments' => 'Ottenere assistenza su come gestire i commenti di spam',
 
 	// Policies
 	'policies' => 'Regole',
@@ -48,8 +49,9 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'email_alert_long' => 'Selezionala se vuoi essere informato via email quando c\'è un nuovo commento ' . 'da approvare.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Abilita il controllo di Akismet',
+	'akismet_use_long' => 'Con <a href="https://akismet.com/">Akismet</a> è possibile ridurre lo spam nei commenti.',
 	'akismet_key' => 'Chiave di Akismet',
-	'akismet_key_long' => 'Per usare Akismet ti viene fornita una chiave. Inseriscila qui.',
+	'akismet_key_long' => 'Il servizio <a href="https://akismet.com/signup/" target="_blank">Akismet</a> fornisce una <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">chiave</a>. Inseritela qui.',
 	'akismet_url' => 'Indirizzo di base per Akismet',
 	'akismet_url_long' => 'Penso che per il servizio gratuito di Akismet si possa usare un solo indirizzo. ' . 'Puoi anche lasciare vuoto questo campo, al suo posto si utilizzerà <code>%s</code>.',
 	'save_conf' => 'Salva configurazione',
@@ -61,7 +63,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'some_entries' => 'Alcuni articoli',
 	'properties' => 'Articoli con precise caratteristiche',
 	'se_desc' => 'Se hai selezionato l\'opzione %s, per favore inserisci gli articoli ai quali la vuoi applicare.',
-	'se_fill' => 'Per favore riempi i campi con gli id degli articoli (<code>entryYYMMDD-HHMMSS</code>).',
+	'se_fill' => 'Per favore riempi i campi con gli <a href="admin.php?p=entry">ID</a> degli articoli (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Caratteristiche',
 	'po_desc' => 'Se hai selezionato l\'opzione %s, per favore seleziona le caratteristiche.',
 	'po_comp' => 'I campi non sono obbligatori ma ne devi selezionare almeno uno, altrimenti la regola ' . 'sarà applicata a tutti gli articoli.',
@@ -106,7 +108,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Manage comments page
 	'man_searcht' => 'Cerca un articolo',
-	'man_searchd' => 'Inserisci l\'id dell\'articolo di cui vuoi gestire i commenti.',
+	'man_searchd' => 'Inserisci l\'<a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>) dell\'articolo di cui vuoi gestire i commenti.',
 	'man_search' => 'Cerca',
 	'man_commfor' => 'Commenti di %s',
 	'man_spam' => 'Segnala come spam ad Akismet',

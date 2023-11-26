@@ -11,6 +11,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'lapprove' => 'Vis blokerede kommentarer',
 	'lmanage' => 'Administrer kommentarer',
 	'lconfig' => 'Konfigurer plugin\'et',
+	'faq_spamcomments' => 'Få hjælp til at håndtere spamkommentarer',
 
 	// Policies
 	'policies' => 'Retningslinjer',
@@ -48,8 +49,9 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'email_alert_long' => 'Hvis du skal kontrollere en kommentar for godkendelse, kan du ' . 'blive informeret via e-mail.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Kontrol af kommentarer med Akismet',
+	'akismet_use_long' => 'Med <a href="https://akismet.com/">Akismet</a> kan du reducere spam i kommentarer.',
 	'akismet_key' => 'Akismet-nøgle',
-	'akismet_key_long' => 'Akismet-tjenesten giver dig en nøgle. Indsæt den her.',
+	'akismet_key_long' => 'Tjenesten <a href="https://akismet.com/signup/" target="_blank">Akismet</a> giver dig en <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">nøgle</a>. Indsæt den her.',
 	'akismet_url' => 'Blog-URL til Akismet',
 	'akismet_url_long' => 'Du bør kun bruge ét domæne til den gratis Akismet-tjeneste. ' . 'Du kan lade dette felt stå tomt. <code>%s</code> vil så blive brugt.',
 	'save_conf' => 'Gem indstillinger',
@@ -61,7 +63,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'some_entries' => 'Visse poster',
 	'properties' => 'Indgang med visse egenskaber',
 	'se_desc' => 'Hvis du har valgt %s, bedes du indsætte de poster, du ønsker at anvende på denne police.',
-	'se_fill' => 'Udfyld venligst felterne med posternes ID (<code>entryYYMMDD-HHMMSS</code>).',
+	'se_fill' => 'Udfyld venligst felterne med posternes <a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Ejendomme',
 	'po_desc' => 'Hvis du har valgt %s -indstillingen, skal du udfylde egenskaberne.',
 	'po_comp' => 'Felterne er ikke obligatoriske, men du skal udfylde mindst ét, ellers vil politikken ' . ' vil gælde for alle indtastninger.',
@@ -106,7 +108,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Manage comments page
 	'man_searcht' => 'Søg efter en post',
-	'man_searchd' => 'Indsæt ID\'et for den post, hvis kommentarer du vil administrere.',
+	'man_searchd' => 'Indsæt <a href="admin.php?p=entry">ID</a>\'et (<code>entryYYMMDD-HHMMSS</code>) for den post, hvis kommentarer du vil administrere.',
 	'man_search' => 'Søgning',
 	'man_commfor' => 'Bemærkninger til %s',
 	'man_spam' => 'Rapporter som spam til Akismet',

@@ -3,8 +3,8 @@
  * Admin area phrases for Comment Center plugin
  */
 
-$lang['admin']['entry']['submenu']['commentcenter'] = 'Center za komentarje';
-$lang['admin']['entry']['commentcenter'] = array(
+$lang ['admin'] ['entry'] ['submenu'] ['commentcenter'] = 'Center za komentarje';
+$lang ['admin'] ['entry'] ['commentcenter'] = array(
     'title' => 'Center za komentarje',
     'desc1' => 'Ta plošča vam omogoča upravljanje komentarjev na vašem blogu.',
     'desc2' => 'Tukaj lahko izvedete več stvari:',
@@ -13,6 +13,7 @@ $lang['admin']['entry']['commentcenter'] = array(
     'lapprove' => 'Prikaži blokirane komentarje',
     'lmanage' => 'Upravljanje komentarjev',
     'lconfig' => 'Nastavi vtičnik',
+	'faq_spamcomments' => 'Pridobite pomoč, kako ravnati s spam komentarji',
 
     'policies' => 'Pravila',
     'desc_pol' => 'Tu lahko uredite pravila komentarjev.',
@@ -48,8 +49,9 @@ $lang['admin']['entry']['commentcenter'] = array(
     'email_alert_long' => 'Označite to možnost, če želite biti obveščeni preko e-pošte, ko je potrebno odobriti komentar.',
     'akismet' => 'Akismet',
     'akismet_use' => 'Omogoči preverjanje z Akismet',
+	'akismet_use_long' => 'S <a href="https://akismet.com/">Akismetom</a> lahko zmanjšate količino neželene pošte v komentarjih.',
     'akismet_key' => 'Ključ Akismet',
-    'akismet_key_long' => 'Storitev Akismet vam zagotovi ključ za uporabo. Vnesite ga tukaj.',
+    'akismet_key_long' => 'Storitev <a href="https://akismet.com/signup/" target="_blank">Akismet</a> vam zagotavlja <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">ključ</a>. Vstavite ga tukaj.',
     'akismet_url' => 'Osnovni URL bloga za Akismet',
     'akismet_url_long' => 'Za brezplačno storitev Akismet verjetno potrebujete samo domeno. ' . 'To polje lahko pustite prazno, uporabil se bo <code>%s</code>.',
     'save_conf' => 'Shrani nastavitve',
@@ -60,7 +62,7 @@ $lang['admin']['entry']['commentcenter'] = array(
     'some_entries' => 'Nekateri vnosi',
     'properties' => 'Vnosi s specifičnimi lastnostmi',
     'se_desc' => 'Če ste izbrali možnost %s, prosim, vnesite vnose, za katere želite uporabiti to pravilo.',
-    'se_fill' => 'Prosimo, izpolnite polja z ID-jem vnosov (<code>entryYYMMDD-HHMMSS</code>).',
+    'se_fill' => 'Prosimo, izpolnite polja z <a href="admin.php?p=entry">ID</a>-jem vnosov (<code>entryYYMMDD-HHMMSS</code>).',
     'po_title' => 'Lastnosti',
     'po_desc' => 'Če ste izbrali možnost %s, prosim, izpolnite lastnosti.',
     'po_comp' => 'Polja niso obvezna, vendar morate izpolniti vsaj eno, sicer se bo pravilo uporabilo za vse vnose.',
@@ -101,7 +103,7 @@ $lang['admin']['entry']['commentcenter'] = array(
     'delc_descm' => 'Izbrisali boste te komentarje: ',
 
     'man_searcht' => 'Išči vnos',
-    'man_searchd' => 'Vnesite ID vnosa, ki ga želite upravljati komentarje.',
+    'man_searchd' => 'Vnesite ID (<code>entryYYMMDD-HHMMSS</code>) vnosa, ki ga želite upravljati komentarje.',
     'man_search' => 'Išči',
     'man_commfor' => 'Komentarji za %s',
     'man_spam' => 'Označi kot spam za Akismet',
@@ -149,7 +151,7 @@ $lang['admin']['entry']['commentcenter'] = array(
     )
 );
 
-$lang['plugin']['commentcenter'] = array(
+$lang['plugin'] ['commentcenter'] = array(
     'akismet_error' => 'Opravičujemo se, prihaja do tehničnih težav.',
     'lock' => 'Komentarji za ta vnos so blokirani, žal.',
     'approvation' => 'Komentar je bil shranjen, vendar ga mora administrator odobriti, preden se prikaže.',
@@ -157,7 +159,7 @@ $lang['plugin']['commentcenter'] = array(
     'mail_subj' => 'Nov komentar za odobritev na %s'
 );
 
-$lang['plugin']['commentcenter']['mail_text'] = 'Spoštovani %toname%,
+$lang['plugin'] ['commentcenter'] ['mail_text'] = 'Spoštovani %toname%,
 
 "%fromname%" %frommail% je pravkar objavil komentar na vnos z naslovom "%entrytitle%"
 vendar ga je potrebno odobriti, preden se prikaže na strani.

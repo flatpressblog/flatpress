@@ -15,9 +15,9 @@
 		'op4'		=> 'Správa pluginů',
 		'op4d'		=> 'Instalace, zapnutí, vypnutí pluginů',
 		'op5'		=> 'Nastavení',
-		'op5d'		=> 'Základní nastavení Vašeho Flatpressu',
+		'op5d'		=> 'Základní nastavení Vašeho FlatPressu',
 		'op6'		=> 'Údržba',
-		'op6d'		=> 'Vyčištění, obnova, aktualizace Flatpressu',
+		'op6d'		=> 'Vyčištění, obnova, aktualizace FlatPressu',
 		
 	);
 ?>

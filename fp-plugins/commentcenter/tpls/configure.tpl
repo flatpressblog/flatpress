@@ -24,7 +24,8 @@
 <dl class="option-set">
 	<dt><label for="akismet_check">{$plang.akismet_use}</label></dt>
 	<dd>
-		<input type="checkbox" name="akismet_check" id="akismet_check"{if isset($pl_conf.akismet_check) and $pl_conf.akismet_check} checked="checked"{/if} />
+		<input type="checkbox" name="akismet_check" id="akismet_check"{if isset($pl_conf.akismet_check) and $pl_conf.akismet_check} checked="checked"{/if} /><br />
+		{$plang.akismet_use_long}
 	</dd>
 	<dt class="akismet_opts"><label for="akismet_key">{$plang.akismet_key}</label></dt>
 	<dd class="akismet_opts">
