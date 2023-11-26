@@ -45,6 +45,7 @@
 <thead><tr>{*<th>{$panelstrings.sel}</th>*}
 <th>{$panelstrings.date}</th>
 <th class="main-cell">{$panelstrings.title}</th>
+<th>ID</th>
 <!-- <th>{$panelstrings.author}</th> -->
 <th>{$panelstrings.comms}</th>
 <th>{$panelstrings.action}</th></tr></thead>
@@ -61,6 +62,7 @@ href="{$panel_url|action_link:write}&amp;entry={$id}">
 {$subject|truncate:70} 
 </a>
 </td>
+<td>{$id}</td>
 <!-- <td>{$author}</td> -->
 <td><a class="link-general" 
 href="{$panel_url|action_link:commentlist}&amp;entry={$id}">

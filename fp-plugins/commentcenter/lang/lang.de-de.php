@@ -11,6 +11,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'lapprove' => 'Blockierte Kommentare anzeigen',
 	'lmanage' => 'Kommentare verwalten',
 	'lconfig' => 'Konfigurieren des Plugins',
+	'faq_spamcomments' => 'Hilfe zum Umgang mit Spam-Kommentaren erhalten',
 
 	// Policies
 	'policies' => 'Richtlinien',
@@ -48,8 +49,9 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'email_alert_long' => 'Wenn du einen Kommentar zum Genehmigen prüfen sollst, kannst du ' . 'über E-Mail informiert werden.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Kommentar-Prüfung mit Akismet',
+	'akismet_use_long' => 'Mit <a href="https://akismet.com/">Akismet</a> kann man Spam in Kommentaren reduzieren.',
 	'akismet_key' => 'Akismet-Schlüssel',
-	'akismet_key_long' => 'Der Akismet-Dienst stellt dir einen Schlüssel zur Verfügung. Füge diesen hier ein.',
+	'akismet_key_long' => 'Der <a href="https://akismet.com/signup/" target="_blank">Akismet-Dienst</a> stellt dir einen <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">Schlüssel</a> zur Verfügung. Füge diesen hier ein.',
 	'akismet_url' => 'Blog-URL für Akismet',
 	'akismet_url_long' => 'Für den kostenlosen Service von Akismet solltest du nur eine Domain verwenden. ' . 'Du kannst dieses Feld leer lassen. Es wird dann <code>%s</code> verwendet.',
 	'save_conf' => 'Einstellungen speichern',
@@ -61,7 +63,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'some_entries' => 'Bestimmte Einträge',
 	'properties' => 'Eintrag mit bestimmten Eigenschaften',
 	'se_desc' => 'Wenn du die Option %s ausgewählt habst, füge bitte Einträge ein, die du auf diese Richtlinie anwenden möchtest.',
-	'se_fill' => 'Bitte fülle die Felder mit der ID der Einträge aus (<code>entryYYMMDD-HHMMSS</code>).',
+	'se_fill' => 'Bitte fülle die Felder mit der <a href="admin.php?p=entry">ID</a> der Einträge aus (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Eigenschaften',
 	'po_desc' => 'Wenn du die Option %s ausgewählt hast, fülle bitte die Eigenschaften aus.',
 	'po_comp' => 'Die Felder sind nicht obligatorisch, aber du musst mindestens eines ausfüllen oder die Richtlinie ' . 'wird auf alle Einträge gelten.',
@@ -106,7 +108,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Manage comments page
 	'man_searcht' => 'Einen Eintrag suchen',
-	'man_searchd' => 'Füge die ID des Eintrags ein, dessen Kommentare du verwalten möchten.',
+	'man_searchd' => 'Füge die <a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>) des Eintrags ein, dessen Kommentare du verwalten möchten.',
 	'man_search' => 'Suche',
 	'man_commfor' => 'Bemerkungen für %s',
 	'man_spam' => 'Als Spam an Akismet melden',
@@ -133,19 +135,19 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		-1 => 'Beim Speichern der Konfiguration ist ein Fehler aufgetreten.',
 
 		2 => 'Richtlinie gespeichert.',
-		-2 => 'Beim Speichern der Richtlinie ist ein Fehler aufgetreten (vielleicht sind Ihre Einstellungen falsch).',
+		-2 => 'Beim Speichern der Richtlinie ist ein Fehler aufgetreten (vielleicht sind deine Einstellungen falsch).',
 
 		3 => 'Richtlinie verschoben.',
 		-3 => 'Beim Versuch, die Richtlinie zu verschieben, ist ein Fehler aufgetreten (oder sie kann nicht verschoben werden).',
 
 		4 => 'Richtlinie (n) entfernt.',
-		-4 => 'Beim Versuch, die Richtlinie (n) zu entfernen, ist ein Fehler aufgetreten (oder Sie haben keine Richtlinie ausgewählt).',
+		-4 => 'Beim Versuch, die Richtlinie (n) zu entfernen, ist ein Fehler aufgetreten (oder du hast keine Richtlinie ausgewählt).',
 
 		5 => 'Kommentar (e) veröffentlicht.',
 		-5 => 'Beim Versuch, die Kommentare zu veröffentlichen, ist ein Fehler aufgetreten.',
 
 		6 => 'Kommentar (e) entfernt.',
-		-6 => 'Beim Versuch, die Kommentare zu entfernen, ist ein Fehler aufgetreten (oder Sie haben keinen Kommentar ausgewählt).',
+		-6 => 'Beim Versuch, die Kommentare zu entfernen, ist ein Fehler aufgetreten (oder du hast keinen Kommentar ausgewählt).',
 
 		7 => 'Kommentar eingereicht.',
 		-7 => 'Beim Absenden des Kommentars ist ein Fehler aufgetreten.'

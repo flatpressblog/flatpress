@@ -14,7 +14,7 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op4' => 'Plugins',
 	'op4d' => 'Plug-ins installeren, inschakelen, uitschakelen',
 	'op5' => 'Configuratie',
-	'op5d' => 'Bewerk je flatpress',
+	'op5d' => 'Bewerk je FlatPress',
 	'op6' => 'Onderhoud',
-	'op6d' => 'Opschonen en herstel flatpress'
+	'op6d' => 'Opschonen en herstel FlatPress'
 );
