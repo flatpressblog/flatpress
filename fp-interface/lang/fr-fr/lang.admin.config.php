@@ -41,7 +41,7 @@
 		'output'		=> 'Pr&eacute;visualisation',
 		'charset'		=> 'Encodage',
 		'charsettip'	=> 'L\'encodage de votre blog est en UTF-8 ' .
-						'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Quelles sont les normes d\'encodage de caractères prises en charge par FlatPress ?">(recommand&eacute;</a>.'
+						'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Quelles sont les normes d\'encodage de caractères prises en charge par FlatPress ?">(recommand&eacute;)</a>.'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 
