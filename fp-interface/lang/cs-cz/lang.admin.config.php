@@ -39,7 +39,7 @@
 		'dateformatshort'	=> 'Formát datumu (krátký)',
 		'output'		=> 'Výstup',
 		'charset'		=> 'Znaková sada',
-		'charsettip'	=> 'Doporučená znaková sada na blogu je' .
+		'charsettip'	=> 'Doporučená znaková sada na blogu je ' .
 						'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Které standardy kódování znaků podporuje FlatPress?">UTF-8</a>.'
 		);
 		
