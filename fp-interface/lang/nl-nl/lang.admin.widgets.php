@@ -9,7 +9,7 @@
 		'head'		=> 'Beheer Widgets',
 		
 		'descr'		=> 	'Een <a class="hint" '.
-						'href="https://wiki.flatpress.org/doc:plugins:standard" title="Wat is een Widget?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Wat is een Widget?">'.
 						'Widget</a> is een dynamisch onderdeel dat gegevens kan weergeven en kan communiceren met de gebruiker.
 						Hoewel <strong>Themas</strong> bedoeld zijn om te veranderen hoe je blog eruit ziet, Widgets zal looks en functionaliteiten
 						<strong>uitbreiden</strong>.</p>
@@ -22,7 +22,7 @@
 						een zoekbox te tonen, etc.</p>
 						
 						<p>Elke Widget is gedefineerd door een <a class="hint" '.
-						'href="https://wiki.flatpress.org/res:plugins" title="Wat is een Widget?">plugin</a>.',
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Wat is een Plugin?">plugin</a>.',
 						
 		'availwdgs'	=> 'Beschikbare Widgets',
 		'trashcan'	=> 'Sleep het hierheen om te verwijderen',

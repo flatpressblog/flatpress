@@ -3,8 +3,8 @@
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Configuração do BBCode',
-	'desc1' => 'Esse plug-in permite o uso de marcação <a href="http://www.phpbb.com/'.
-		'phpBB/faq.php?mode=bbcode">BBCode</a>.',
+	'desc1' => 'Esse plug-in permite o uso de marcação <a href="https://wiki.flatpress.org/'.
+		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a>.',
 	
 	'options' => 'Opções',
 

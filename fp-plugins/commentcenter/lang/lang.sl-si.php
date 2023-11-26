@@ -49,7 +49,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
     'email_alert_long' => 'Označite to možnost, če želite biti obveščeni preko e-pošte, ko je potrebno odobriti komentar.',
     'akismet' => 'Akismet',
     'akismet_use' => 'Omogoči preverjanje z Akismet',
-	'akismet_use_long' => 'S <a href="https://akismet.com/">Akismetom</a> lahko zmanjšate količino neželene pošte v komentarjih.',
+	'akismet_use_long' => 'S <a href="https://akismet.com/" target="_blank">Akismetom</a> lahko zmanjšate količino neželene pošte v komentarjih.',
     'akismet_key' => 'Ključ Akismet',
     'akismet_key_long' => 'Storitev <a href="https://akismet.com/signup/" target="_blank">Akismet</a> vam zagotavlja <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">ključ</a>. Vstavite ga tukaj.',
     'akismet_url' => 'Osnovni URL bloga za Akismet',

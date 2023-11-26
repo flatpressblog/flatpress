@@ -9,7 +9,7 @@
 		'head'		=> 'Διαχείριση στοιχείων (<em>πειραματικό στάδιο</em>)',
 		
 		'descr'		=> 	'Ένα <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:widgets" title="Τι είναι ένα στοιχείο;">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Τι είναι ένα στοιχείο;">'.
 						'Στοιχείο</a> είναι ένα δυναμικό αντικείμενο προβολής διαφόρων δεδομένων και διάδρασης με τον χρήστη.
 						Ενώ τα <strong>Θέματα</strong> αλλάζουν την εμφάνιση του ιστολογίου σας, τα Στοιχεία 
 						<strong>επεκτείνουν</strong> την εμφάνιση και την λειτουργικότητα.</p>
@@ -22,7 +22,7 @@
 						εμφανίζουν ένα πεδίο αναζήτησης, και άλλα.</p>
 						
 						<p>Κάθε Στοιχείο ορίζεται από κάποιο <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="Τι είναι ένα πρόσθετο;">πρόσθετο</a>.',
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Τι είναι ένα πρόσθετο;">πρόσθετο</a>.',
 						
 		'availwdgs'	=> 'Διαθέσιμα Στοιχεία',
 		'trashcan'	=> 'Σύρετε εδώ για διαγραφή',

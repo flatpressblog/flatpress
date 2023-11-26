@@ -49,7 +49,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'email_alert_long' => 'Zaškrtněte, pokud chcete být informováni emailem o komentáři ke schválení.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Povolit Akismet',
-	'akismet_use_long' => 'Pomocí <a href="https://akismet.com/">Akismet</a> můžete omezit spam v komentářích.',
+	'akismet_use_long' => 'Pomocí <a href="https://akismet.com/" target="_blank">Akismet</a> můžete omezit spam v komentářích.',
 	'akismet_key' => 'Akismet klíč',
 	'akismet_key_long' => 'Služba <a href="https://akismet.com/signup/" target="_blank">Akismet</a> vám poskytne <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">klíč</a>. Vložte jej sem.',
 	'akismet_url' => 'URL blogu',
