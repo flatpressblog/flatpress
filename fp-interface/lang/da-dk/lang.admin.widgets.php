@@ -9,9 +9,9 @@
 		'head'		=> 'Widget-styring',
 		
 		'descr'		=> 'FlatPress har forskellige widgets ombord, f.eks. login- eller søgefunktionen. En <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="What is a Widget?">'.
 						'Widget</a> er et dynamisk kontrolelement i en <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="What is a plugin?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a plugin?">'.
 						'plugin</a>, der placeres i widgetområdet'.
 						'(<em>Widgetsets</em>) widget-området på bloggen.'.
 						'</p>'.

@@ -49,7 +49,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'email_alert_long' => 'Wenn du einen Kommentar zum Genehmigen prüfen sollst, kannst du ' . 'über E-Mail informiert werden.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Kommentar-Prüfung mit Akismet',
-	'akismet_use_long' => 'Mit <a href="https://akismet.com/">Akismet</a> kann man Spam in Kommentaren reduzieren.',
+	'akismet_use_long' => 'Mit <a href="https://akismet.com/" target="_blank">Akismet</a> kann man Spam in Kommentaren reduzieren.',
 	'akismet_key' => 'Akismet-Schlüssel',
 	'akismet_key_long' => 'Der <a href="https://akismet.com/signup/" target="_blank">Akismet-Dienst</a> stellt dir einen <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">Schlüssel</a> zur Verfügung. Füge diesen hier ein.',
 	'akismet_url' => 'Blog-URL für Akismet',

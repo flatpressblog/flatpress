@@ -49,7 +49,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'email_alert_long' => 'Controleer het als u wilt dat wanneer er een opmerking is om goed te keuren, je ' . 'geïnformeerd wordt via e-mail.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Akismet-controle inschakelen',
-	'akismet_use_long' => 'Met <a href="https://akismet.com/">Akismet</a> kun je spam in reacties verminderen.',
+	'akismet_use_long' => 'Met <a href="https://akismet.com/" target="_blank">Akismet</a> kun je spam in reacties verminderen.',
 	'akismet_key' => 'Akismet Key',
 	'akismet_key_long' => 'De <a href="https://akismet.com/signup/" target="_blank">Akismet-service</a> geeft je een <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">sleutel</a>. Voeg deze hier in.',
 	'akismet_url' => 'Url van blogbasis voor Akismet',

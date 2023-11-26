@@ -11,7 +11,7 @@
 		'head'		=> 'Plugin Verwaltung',
 		'enable'	=> 'Aktivieren',
 		'disable'	=> 'Deaktivieren',
-		'descr'		=> 'Diese Verwaltung ermöglicht es <a class="hint" href="http://wiki.flatpress.org/doc:plugins" title="Was ist ein Plugin?">Plugins</a> zu aktivieren oder deaktivieren, die die Funktionalität von FlatPress sehr flexibel gestalten.</p>'.
+		'descr'		=> 'Diese Verwaltung ermöglicht es <a class="hint" href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Was ist ein Plugin?">Plugins</a> zu aktivieren oder deaktivieren, die die Funktionalität von FlatPress sehr flexibel gestalten.</p>'.
 						'<p>Um ein neues Plugin in FlatPress zu integrieren, muss dieses Plugin in das Verzeichnis <code>fp-plugins/</code> '.
 						'geladen werden. Ist ein Name und eine Beschreibung im neuen Plugin an entsprechender Stelle vorhanden, dann werden diese Texte hier mit angezeigt.',
 		'name'		=> 'Name',

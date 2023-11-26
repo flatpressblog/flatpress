@@ -12,7 +12,7 @@
 		'enable'	=> 'Ενεργοποίηση',
 		'disable'	=> 'Απενεργοποίηση',
 		'descr'		=> 'Ένα <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="Τι είναι ένα πρόσθετο;">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Τι είναι ένα πρόσθετο;">'.
 						'πρόσθετο</a> είναι ένα στοιχείο το οποίο μπορεί να επεκτείνει τις δυνατότητες του FlatPress.</p>'.
 						'<p>Μπορείτε να εγκαταστήσετε πρόσθετα ανεβάζοντας τα στον φάκελο <code>fp-plugins/</code> '.
 						'.</p>'.

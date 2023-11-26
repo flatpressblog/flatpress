@@ -10,7 +10,7 @@
 		'sysfset'		=> 'Informations g&eacute;n&eacute;rales du syst&egrave;me',
 		'syswarning'	=> '<big>Attention!</big> Ces informations sont indispensables et doivent &ecirc;tre correctes ou
 	FlatPress ne pourra pas fonctionner correctement.',
-		'blog_root'		=> '<strong>Chemin absolu de flatpress</strong>. Note: 
+		'blog_root'		=> '<strong>Chemin absolu de FlatPress</strong>. Note: 
 	vous ne devez g&eacute;n&eacute;ralement pas modifier ceci, n&eacute;anmoins il est recommand&eacute; de v&eacute;rifier si le chemin est correct.',
 		'www'		=>'<strong>Adresse du blog (root)</strong>. Adresse de votre blog, en incluant les sous-r&eacute;pertoires. <br />
 	e.g.: http://www.mondomaine.be/flatpress/ (le slash de fin est requis)',
@@ -40,8 +40,8 @@
 		'dateformatshort'	=> 'Format par d&eacute;faut pour la date (court)',
 		'output'		=> 'Pr&eacute;visualisation',
 		'charset'		=> 'Encodage',
-		'charsettip'	=> 'L\'encodage de votre blog est en UTF-8 '.
-						'<a href="http://wiki.flatpress.org/doc:charsets">(recommand&eacute;)</a>'
+		'charsettip'	=> 'L\'encodage de votre blog est en UTF-8 ' .
+						'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Quelles sont les normes d\'encodage de caractères prises en charge par FlatPress ?">(recommand&eacute;</a>.'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 

@@ -49,7 +49,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'email_alert_long' => 'Check it if you want that when there is a comment to approve you want to be ' . 'informed via email.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Enable Akismet check',
-	'akismet_use_long' => 'With <a href="https://akismet.com/">Akismet</a> you can reduce spam in comments.',
+	'akismet_use_long' => 'With <a href="https://akismet.com/" target="_blank">Akismet</a> you can reduce spam in comments.',
 	'akismet_key' => 'Akismet Key',
 	'akismet_key_long' => 'The <a href="https://akismet.com/signup/" target="_blank">Akismet service</a> provides you with a <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">key</a>. Insert it here.',
 	'akismet_url' => 'Blog base URL for Akismet',
