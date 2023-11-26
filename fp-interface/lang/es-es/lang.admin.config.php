@@ -10,7 +10,7 @@
 		'sysfset'		=> 'Información general del sistema',
 		'syswarning'	=> '<big>¡Advertencia!</big> Estas informaciones son críticas y deben ser correctas,
 	o FlatPress (probablemente) se negará a funcionar correctamente.',
-		'blog_root'		=> '<strong>Path absoluto a flatpress</strong>. Nota: 
+		'blog_root'		=> '<strong>Path absoluto a FlatPress</strong>. Nota: 
 	generalmente no tendrá que editar esto, de todos modos tenga cuidado, porque no podemos
 	verificar si es correcto o no.',
 		'www'		=>'<strong>Blog root</strong>. URL hacia su blog, completo con
@@ -43,7 +43,7 @@ subdirectorios. <br />
 		'output'		=> 'Resulta',
 		'charset'		=> 'Conjunto de caracteres',
 		'charsettip'		=> 'Conjunto de caracteres en el que usted escribe su blog (UTF-8 is '.
-						'<a href="http://wiki.flatpress.org/doc:charsets">recomendado</a>)'
+						'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="¿Qué normas de codificación de caracteres admite FlatPress?">recomendado</a>).'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 

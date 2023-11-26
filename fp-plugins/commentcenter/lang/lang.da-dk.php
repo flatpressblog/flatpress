@@ -49,7 +49,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'email_alert_long' => 'Hvis du skal kontrollere en kommentar for godkendelse, kan du ' . 'blive informeret via e-mail.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Kontrol af kommentarer med Akismet',
-	'akismet_use_long' => 'Med <a href="https://akismet.com/">Akismet</a> kan du reducere spam i kommentarer.',
+	'akismet_use_long' => 'Med <a href="https://akismet.com/" target="_blank">Akismet</a> kan du reducere spam i kommentarer.',
 	'akismet_key' => 'Akismet-nøgle',
 	'akismet_key_long' => 'Tjenesten <a href="https://akismet.com/signup/" target="_blank">Akismet</a> giver dig en <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">nøgle</a>. Indsæt den her.',
 	'akismet_url' => 'Blog-URL til Akismet',

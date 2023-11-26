@@ -9,7 +9,7 @@
 		'head'		=> 'Manage Widgets',
 		
 		'descr'		=> 	'A <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:widgets" title="What is a Widget?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="What is a Widget?">'.
 						'Widget</a> is a dynamic component that can display data and interact with the user.
 						While <strong>Themes</strong> are meant to change how your blog looks like, Widgets 
 						<strong>extend</strong> looks and functionalities.</p>
@@ -22,7 +22,7 @@
 						display a search box, etc.</p>
 						
 						<p>Each Widget is defined by a <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">plugin</a>.',
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a Widget?">plugin</a>.',
 						
 		'availwdgs'	=> 'Available Widgets',
 		'trashcan'	=> 'Drop here to delete',

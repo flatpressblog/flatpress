@@ -9,7 +9,7 @@ $lang['admin']['widgets']['default'] = array(
     'head' => 'Upravljanje gradniki',
 
     'descr' => ' <a class="hint" '.
-        'href="http://wiki.flatpress.org/doc:widgets" title="Kaj je gradnik?">'.
+        'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Kaj je gradnik?">'.
         'Gradnik</a> je dinamična komponenta, ki lahko prikaže podatke in interakcijo z uporabnikom.
 						Čeprav <strong>Teme</strong> spreminjajo, kako izgleda vaš blog, gradniki 
 						<strong>razširijo</strong> videz in funkcionalnosti.</p>
@@ -21,7 +21,7 @@ $lang['admin']['widgets']['default'] = array(
 						<p>FlatPress vključuje več gradnikov: obstajajo gradniki, ki pomagajo pri prijavi, prikazujejo iskalno polje itd.</p>
 						
 						<p>Vsak gradnik je določen z <a class="hint" '.
-        'href="http://wiki.flatpress.org/doc:plugins" title="Kaj je gradnik?">vstavkom</a>.',
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Kaj je gradnik?">vstavkom</a>.',
 						
     'availwdgs' => 'Dostopni gradniki',
     'trashcan' => 'Povlecite sem za brisanje',

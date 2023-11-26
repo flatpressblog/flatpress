@@ -9,9 +9,9 @@
 		'head'		=> 'Widget-Verwaltung',
 		
 		'descr'		=> 'FlatPress hat verschiedene Widgets mit an Bord, wie zum Beispiel die Login- oder die Suchfunktion. Ein <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Was ist ein Widget?">'.
 						'Widget</a> ist ein dynamisches Steuerelement eines <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="What is a plugin?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Was ist ein Plugin?">'.
 						'Plugins</a>, das im Widget Bereich '.
 						'(<em>Widgetsets</em>) des Blogs frei positioniert werden kann'.
 						'</p>'.

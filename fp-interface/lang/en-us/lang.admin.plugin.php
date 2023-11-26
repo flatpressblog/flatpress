@@ -12,7 +12,7 @@
 		'enable'	=> 'Enable',
 		'disable'	=> 'Disable',
 		'descr'		=> 'A <a class="hint" '.
-						'href="http://wiki.flatpress.org/doc:plugins" title="What is a plugin?">'.
+						'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a plugin?">'.
 						'Plugin</a> is a component which can expand the capabilities of FlatPress.</p>'.
 						'<p>You can install plugins by uploading them in your <code>fp-plugins/</code> '.
 						'directory.</p>'.

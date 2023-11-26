@@ -3,13 +3,13 @@
 	$lang['admin']['config']['default'] = 
 	array(
 		'head'		=> 'Konfiguration',
-		'descr'		=> 'Flatpress konfigurieren und anpassen.',
+		'descr'		=> 'FlatPress konfigurieren und anpassen.',
 		'submit'		=> 'Einstellungen übernehmen',
 		
 		'sysfset'		=> 'Allgemeine Einstellungen',
 		'syswarning'	=> '<big>Warnung!</big> Diese Einstellungen sollten sorgfältig eingegeben werden,
-	                    sonst könnte Flatpress nicht richtig funktionieren.',
-		'blog_root'		=> '<strong>Absoluter Pfad zu Flatpress</strong>. Hinweis: 
+	                    sonst könnte FlatPress nicht richtig funktionieren.',
+		'blog_root'		=> '<strong>Absoluter Pfad zu FlatPress</strong>. Hinweis: 
 	                    Normalerweise muss hier nichts geändert werden. FlatPress bietet keine interne
 	                    Funktion um eventuelle Änderungen von sich aus zu prüfen.',
 		'www'		=>'<strong>Blog Root</strong>. URL deines Blogs mit Angabe des Verzeichnisses. <br>
@@ -40,8 +40,8 @@
     'dateformatshort'	=> 'Standard Datumformat (kurz)',
 		'output'		=> 'Ausgabe',
 		'charset'		=> 'Zeichensatz',
-		'charsettip'	=> 'Der empfohlene Zeichensatz für FlatPress ist '.
-						'<a href="http://wiki.flatpress.org/doc:charsets">UTF-8</a>.'
+		'charsettip'	=> 'Der empfohlene Zeichensatz für FlatPress ist ' .
+						'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Welche Zeichenkodierungsstandards werden von FlatPress unterstützt?">UTF-8</a>.'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 
