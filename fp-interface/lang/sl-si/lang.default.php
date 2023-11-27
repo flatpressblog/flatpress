@@ -79,6 +79,10 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Zaklenjeni komentarji'
 );
 
+$lang ['entry'] ['categories'] = array(
+	'unfiled' => 'Ni deponirano'
+);
+
 $lang ['404error'] = array(
 	'subject' => 'Ni najdeno',
 	'content' => '<p>Oprostite, zahtevane strani nismo našli</p>'
