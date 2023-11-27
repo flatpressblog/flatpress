@@ -80,6 +80,10 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Commenti bloccati'
 );
 
+$lang ['entry'] ['categories'] = array(
+	'unfiled' => 'Non depositato'
+);
+
 $lang ['404error'] = array(
 	'subject' => 'Non Trovato',
 	'content' => '<p>Spiacenti, non è possibile trovare la pagina che stavi cercando</p>'

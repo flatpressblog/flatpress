@@ -80,6 +80,10 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Comments locked'
 );
 
+$lang ['entry'] ['categories'] = array(
+	'unfiled' => 'Unfiled'
+);
+
 $lang ['404error'] = array(
 	'subject' => 'Not Found',
 	'content' => '<p>Sorry, we could not find the page you requested</p>'

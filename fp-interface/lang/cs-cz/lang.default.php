@@ -80,6 +80,11 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Komentáře zamknuté'
 );
 
+$lang ['entry'] ['categories'] = array(
+	'unfiled' => 'Není uloženo'
+);
+
+
 $lang ['404error'] = array(
 	'subject' => 'Nenalezeno',
 	'content' => '<p>Stránka kterou hledáte, nebyla nalezena</p>'

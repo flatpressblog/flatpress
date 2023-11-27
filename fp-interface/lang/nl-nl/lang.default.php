@@ -80,6 +80,10 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Commentaar geblokt'
 );
 
+$lang ['entry'] ['categories'] = array(
+	'unfiled' => 'Niet gestort'
+);
+
 $lang ['404error'] = array(
 	'subject' => 'Niet gevonden',
 	'content' => '<p>Sorry, we konden de door u gevraagde pagina niet vinden</p>'

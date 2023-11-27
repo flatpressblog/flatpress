@@ -80,7 +80,11 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Commentaires d&eacute;sactiv&eacute;s'
 );
 
-$lang['404error'] = array(
+$lang ['entry'] ['categories'] = array(
+	'unfiled' => 'Non déposé'
+);
+
+$lang ['404error'] = array(
 	'subject' => 'Pas trouv&eacute;',
 	'content' => '<p>D&eacute;sol&eacute;, la page demand&eacute;e n\'a pas &eacute;t&eacute; trouv&eacute;e!</p>'
 );

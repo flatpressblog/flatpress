@@ -80,6 +80,10 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Kommentare gesperrt.'
 );
 
+$lang ['entry'] ['categories'] = array(
+	'unfiled' => 'Nicht hinterlegt'
+);
+
 $lang ['404error'] = array(
 	'subject' => 'Nicht gefunden',
 	'content' => '<p>Sorry, es wurde nichts passendes für diese Anfrage gefunden.</p>'
