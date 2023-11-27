@@ -80,6 +80,10 @@ $lang['entry']['flags']['short'] = array(
 	'commslock' => 'コメント保護'
 );
 
+$lang ['entry'] ['categories'] = array(
+	'unfiled' => '未預託'
+);
+
 $lang['404error'] = array(
 	'subject' => 'ページが見つかりません',
 	'content' => '<p>要求されたページを見つけることができませんでした。</p>'
