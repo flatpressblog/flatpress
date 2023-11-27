@@ -46,7 +46,7 @@ function smarty_function_list_categories($params) // , &$smarty)
 	} else {
 		global $lang;
 
-		$content = '<a href="' . BLOG_BASEURL . '">Unfiled</a>';
+		$content = '<a href="' . BLOG_BASEURL . '">' . $lang ['entry'] ['categories'] ['unfiled'] . '</a>';
 		if (isset($lang ['admin'] ['entry'] ['publish'] ['nocategories']))
 			$content = $lang ['admin'] ['entry'] ['publish'] ['nocategories'];
 		return '<ul><li>' . $content . '</li></ul>';

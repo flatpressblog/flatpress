@@ -79,6 +79,10 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Κλειδωμένα σχόλια'
 );
 
+$lang ['entry'] ['categories'] = array(
+	'unfiled' => 'Δεν έχει κατατεθεί'
+);
+
 $lang ['404error'] = array(
 	'subject' => 'Δεν βρέθηκε',
 	'content' => '<p>Λυπούμαστε, δεν μπορέσαμε να βρούμε την σελίδα που ζητήσατε</p>'

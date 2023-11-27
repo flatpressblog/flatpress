@@ -80,6 +80,10 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Kommentarer blokeret.'
 );
 
+$lang ['entry'] ['categories'] = array(
+	'unfiled' => 'Ikke deponeret'
+);
+
 $lang ['404error'] = array(
 	'subject' => 'Ikke fundet',
 	'content' => '<p>Beklager, der blev ikke fundet noget passende til denne anmodning.</p>'
