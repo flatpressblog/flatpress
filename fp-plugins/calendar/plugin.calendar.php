@@ -44,7 +44,7 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 	if ($day_name_length) { // if the day names should be shown ($day_name_length > 0)
 	                        // if day_name_length is >3, the full name of the day will be printed
 		foreach ($day_names as $d)
-			$calendar .= '<th abbr="' . htmlentities($d) . '">' . htmlentities($day_name_length < 4 ? substr($d, 0, $day_name_length) : $d) . '</th>';
+			$calendar .= '<th abbr="' . htmlentities($d) . '">' . htmlentities($day_name_length < 4 ? mb_substr($d, 0, $day_name_length, 'UTF-8') : $d) . '</th>';
 		$calendar .= "</tr>\n<tr>";
 	}
 
