@@ -1,6 +1,6 @@
 <?php
 /*
- * LangId: English
+ * LangId: Russian
  */
 $lang ['setup'] = array(
 	'setup' => 'Установка'
