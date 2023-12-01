@@ -31,6 +31,7 @@
 - Akismet plugin: Fixed PHP warnings ([#83](https://github.com/flatpressblog/flatpress/issues/83))
 - BBCode plugin: Allows local video files ("attachs/video.mp4") and outputs valid HTML ([#192](https://github.com/flatpressblog/flatpress/issues/192))
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
+- Calendar plugin: Fixed incorrect text output when Russian is set as language
 - Fixed broken links in the administration area
 
 ## Setup
