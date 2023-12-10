@@ -41,7 +41,7 @@ $lang ['admin'] ['static'] ['write'] = array(
 	'preview' => 'Voorbeeld',
 
 	'delfset' => 'Verwijder',
-	'deletemsg'	=> 'Verwijder deze pagina',
+	'deletemsg' => 'Verwijder deze pagina',
 	'del' => 'Verwijder',
 	'success' => 'Uw pagina is succesvol gepubliceerd',
 	'otheropts' => 'Andere opties'

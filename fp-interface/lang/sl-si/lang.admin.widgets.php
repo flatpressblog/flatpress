@@ -26,7 +26,7 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'themewdgs' => 'GradnikSets za to temo',
 	'themewdgsdescr' => 'Tema, ki jo trenutno imate izbrano, vam omogoča naslednje gradniksets',
 	'oldwdgs' => 'Druge gradniksets',
-	'oldwdgsdescr' =>' Naslednji gradnikSets se zdi, da ne pripadajo nobenemu od zgoraj navedenih ' .
+	'oldwdgsdescr' => ' Naslednji gradnikSets se zdi, da ne pripadajo nobenemu od zgoraj navedenih ' .
 		'gradniksets. Morda so ostanek od druge teme.',
 
 	'submit' => 'Shrani Spremembe'

@@ -8,7 +8,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'syswarning' => '<big>Attention!</big> Ces informations sont indispensables et doivent &ecirc;tre correctes ou FlatPress ne pourra pas fonctionner correctement.',
 	'blog_root' => '<strong>Chemin absolu de FlatPress</strong>. Note: ' .
 		'vous ne devez g&eacute;n&eacute;ralement pas modifier ceci, n&eacute;anmoins il est recommand&eacute; de v&eacute;rifier si le chemin est correct.',
-	'www' =>'<strong>Adresse du blog (root)</strong>. Adresse de votre blog, en incluant les sous-r&eacute;pertoires.<br>' .
+	'www' => '<strong>Adresse du blog (root)</strong>. Adresse de votre blog, en incluant les sous-r&eacute;pertoires.<br>' .
 		'e.g.: http://www.mondomaine.be/flatpress/ (le slash de fin est requis)',
 
 	// ------

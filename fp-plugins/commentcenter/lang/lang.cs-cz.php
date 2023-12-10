@@ -171,8 +171,7 @@ $lang ['plugin'] ['commentcenter'] = array(
 	'mail_subj' => 'Nový komentář ke schválení %s',
 );
 
-$lang ['plugin'] ['commentcenter'] ['mail_text'] = 'MAIL
-Vážený %toname%,
+$lang ['plugin'] ['commentcenter'] ['mail_text'] = 'Vážený %toname%,
 
 "%fromname%" %frommail% právě přidal komentář k záznamu s názvem "%entrytitle%"
 ale před zobrazením je vyžadován váš souhlas.
@@ -184,8 +183,6 @@ Zde je komentář, který byl právě odeslán:
 
 S pozdravem,
 %blogtitle%
-
-MAIL
 
 ';
 ?>
