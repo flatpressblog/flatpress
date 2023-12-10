@@ -8,17 +8,17 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 
 	'descr' => ' <a class="hint" ' .
 		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Kaj je gradnik?">' .
-		'Gradnik</a> je dinamična komponenta, ki lahko prikaže podatke in interakcijo z uporabnikom. '.
-			'Čeprav <strong>Teme</strong> spreminjajo, kako izgleda vaš blog, gradniki ' .
-			'<strong>razširijo</strong> videz in funkcionalnosti.</p>' .
+		'Gradnik</a> je dinamična komponenta, ki lahko prikaže podatke in interakcijo z uporabnikom. ' .
+		'Čeprav <strong>Teme</strong> spreminjajo, kako izgleda vaš blog, gradniki ' .
+		'<strong>razširijo</strong> videz in funkcionalnosti.</p>' .
 
-			'<p>Gradnike lahko povlečete na posebna območja vaše teme, imenovana ' .
-			'<strong>GradnikSets</strong>. Število in ime GradnikSets se lahko razlikujeta glede na izbrano temo.</p>' .
+		'<p>Gradnike lahko povlečete na posebna območja vaše teme, imenovana ' .
+		'<strong>GradnikSets</strong>. Število in ime GradnikSets se lahko razlikujeta glede na izbrano temo.</p>' .
 
-			'<p>FlatPress vključuje več gradnikov: obstajajo gradniki, ki pomagajo pri prijavi, prikazujejo iskalno polje itd.</p>' .
+		'<p>FlatPress vključuje več gradnikov: obstajajo gradniki, ki pomagajo pri prijavi, prikazujejo iskalno polje itd.</p>' .
 
-			'<p>Vsak gradnik je določen z <a class="hint" ' .
-			'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Kaj je gradnik?">vstavkom</a>.',
+		'<p>Vsak gradnik je določen z <a class="hint" ' .
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Kaj je gradnik?">vstavkom</a>.',
 
 	'availwdgs' => 'Dostopni gradniki',
 	'trashcan' => 'Povlecite sem za brisanje',
