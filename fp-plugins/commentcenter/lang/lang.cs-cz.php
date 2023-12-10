@@ -53,7 +53,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'akismet_key' => 'Akismet klíč',
 	'akismet_key_long' => 'Služba <a href="https://akismet.com/signup/" target="_blank">Akismet</a> vám poskytne <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">klíč</a>. Vložte jej sem.',
 	'akismet_url' => 'URL blogu',
-	'akismet_url_long' => 'Pro bezplatný Akismet byste měli používat pouze doménu. ' .
+	'akismet_url_long' => 'Pro bezplatný Akismet byste měli používat pouze doménu. ' . //
 		'Toto pole můžete nechat prázdné, <code>%s</code> bude použito.',
 	'save_conf' => 'Uložit nastavení',
 
@@ -67,7 +67,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'se_fill' => 'Vyplňte pole s <a href="admin.php?p=entry">identifikací</a> záznamu (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Vlastnosti',
 	'po_desc' => 'Když vyberete %s, vyplňte prosím vlastnosti.',
-	'po_comp' => 'Pole nejsou povinná, ale musíte vyplnit alespoň jedno pravidlo, ' .
+	'po_comp' => 'Pole nejsou povinná, ale musíte vyplnit alespoň jedno pravidlo, ' . //
 		'které bude použito na všechny záznamy.',
 	'po_time' => 'Nastavení času',
 	'po_older' => 'Použito pro záznamy starší než ',

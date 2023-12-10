@@ -6,9 +6,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 	
 	'sysfset' => 'Allgemeine Einstellungen',
 	'syswarning' => '<big>Warnung!</big> Diese Einstellungen sollten sorgfältig eingegeben werden, sonst könnte FlatPress nicht richtig funktionieren.',
-	'blog_root' => '<strong>Absoluter Pfad zu FlatPress</strong>. Hinweis: ' .
+	'blog_root' => '<strong>Absoluter Pfad zu FlatPress</strong>. Hinweis: ' . //
 		'Normalerweise muss hier nichts geändert werden. FlatPress bietet keine interne Funktion um eventuelle Änderungen von sich aus zu prüfen.',
-	'www' => '<strong>Blog Root</strong>. URL deines Blogs mit Angabe des Verzeichnisses.<br>' .
+	'www' => '<strong>Blog Root</strong>. URL deines Blogs mit Angabe des Verzeichnisses.<br>' . //
 		'Beispiel: http://www.mydomain.com/flatpress/ (abschließender Slash wird benötigt)',
 		
 	// ------
@@ -35,7 +35,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'dateformatshort' => 'Standard Datumformat (kurz)',
 	'output' => 'Ausgabe',
 	'charset' => 'Zeichensatz',
-	'charsettip' => 'Der empfohlene Zeichensatz für FlatPress ist ' .
+	'charsettip' => 'Der empfohlene Zeichensatz für FlatPress ist ' . //
 		'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Welche Zeichenkodierungsstandards werden von FlatPress unterstützt?">UTF-8</a>.'
 );
 
@@ -49,7 +49,7 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'title' => 'Du must einen Titel angeben',
 	'email' => 'Die E-Mail Adresse benötigt ein gültiges Format',
 	'maxentries' => 'Du hast eine ungültige Anzahl für die Beiträge eingegeben',
-	'timeoffset' => 'Du hast eine ungültige Zeitkorrektur eingegeben! ' .
+	'timeoffset' => 'Du hast eine ungültige Zeitkorrektur eingegeben! ' . //
 		'Es werden auch Kommas akzeptiert (Beispiel: 2h30" => 2.5)',
 	'timeformat' => 'Das Format für die Uhrzeit ist ungültig',
 	'dateformat' => 'Das Format für das Datum ist ungültig',

@@ -8,8 +8,8 @@ $lang ['admin'] ['plugin'] ['default'] = array(
 	'head' => 'プラグインの管理',
 	'enable' => '有効にする',
 	'disable' => '無効にする',
-	'descr' => '<a class="hint" ' .
-		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a plugin?">プラグイン</a>は、FlatPressに機能を追加・変更するような部品です。</p>' .
+	'descr' => '<a class="hint" ' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a plugin?">プラグイン</a>は、FlatPressに機能を追加・変更するような部品です。</p>' . //
 		'<p>新たにプラグインをインストールするには、<code>fp-plugins/</code> ディレクトリにアップロードしてください。</p><p>このパネルでは、プラグインの有効／無効を切り替えることができます。',
 	'name' => 'プラグイン名',
 	'description' => '説明',

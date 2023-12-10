@@ -1,6 +1,6 @@
 <?php
 $lang ['plugin'] ['prettyurls'] ['errors'] = array (
-	-2 => 'Non è possibile trovare o creare un file <code>.htaccess</code> nella tua cartella ' .
+	-2 => 'Non è possibile trovare o creare un file <code>.htaccess</code> nella tua cartella ' . //
 		'root. PrettyURLs potrebbe non funzionare correttamente, vai al pannello di controllo.'
 );
 

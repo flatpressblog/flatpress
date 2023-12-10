@@ -1,6 +1,6 @@
 <?php
 $lang['plugin']['accessibleantispam'] = array(
-	'prefix' => 'Om geautomatiseerde spam aanvallen te helpen elimineren ' .
+	'prefix' => 'Om geautomatiseerde spam aanvallen te helpen elimineren ' . //
 		'moeten wij je vragen om te bewijzen dat je een mens bent. Wat is ',
 
 	'sum' => '%s plus %s ?',

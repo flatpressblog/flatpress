@@ -6,18 +6,18 @@ $lang ['admin'] ['widgets'] ['submenu'] ['raw'] = 'Upravljanje gradniki (surovo)
 $lang ['admin'] ['widgets'] ['default'] = array(
 	'head' => 'Upravljanje gradniki',
 
-	'descr' => ' <a class="hint" ' .
-		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Kaj je gradnik?">' .
-		'Gradnik</a> je dinamična komponenta, ki lahko prikaže podatke in interakcijo z uporabnikom. ' .
-		'Čeprav <strong>Teme</strong> spreminjajo, kako izgleda vaš blog, gradniki ' .
-		'<strong>razširijo</strong> videz in funkcionalnosti.</p>' .
+	'descr' => ' <a class="hint" ' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Kaj je gradnik?">' . //
+		'Gradnik</a> je dinamična komponenta, ki lahko prikaže podatke in interakcijo z uporabnikom. ' . //
+		'Čeprav <strong>Teme</strong> spreminjajo, kako izgleda vaš blog, gradniki ' . //
+		'<strong>razširijo</strong> videz in funkcionalnosti.</p>' . //
 
-		'<p>Gradnike lahko povlečete na posebna območja vaše teme, imenovana ' .
-		'<strong>GradnikSets</strong>. Število in ime GradnikSets se lahko razlikujeta glede na izbrano temo.</p>' .
+		'<p>Gradnike lahko povlečete na posebna območja vaše teme, imenovana ' . //
+		'<strong>GradnikSets</strong>. Število in ime GradnikSets se lahko razlikujeta glede na izbrano temo.</p>' . //
 
-		'<p>FlatPress vključuje več gradnikov: obstajajo gradniki, ki pomagajo pri prijavi, prikazujejo iskalno polje itd.</p>' .
+		'<p>FlatPress vključuje več gradnikov: obstajajo gradniki, ki pomagajo pri prijavi, prikazujejo iskalno polje itd.</p>' . //
 
-		'<p>Vsak gradnik je določen z <a class="hint" ' .
+		'<p>Vsak gradnik je določen z <a class="hint" ' . //
 		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Kaj je gradnik?">vstavkom</a>.',
 
 	'availwdgs' => 'Dostopni gradniki',
@@ -26,7 +26,7 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'themewdgs' => 'GradnikSets za to temo',
 	'themewdgsdescr' => 'Tema, ki jo trenutno imate izbrano, vam omogoča naslednje gradniksets',
 	'oldwdgs' => 'Druge gradniksets',
-	'oldwdgsdescr' => ' Naslednji gradnikSets se zdi, da ne pripadajo nobenemu od zgoraj navedenih ' .
+	'oldwdgsdescr' => ' Naslednji gradnikSets se zdi, da ne pripadajo nobenemu od zgoraj navedenih ' . //
 		'gradniksets. Morda so ostanek od druge teme.',
 
 	'submit' => 'Shrani Spremembe'
@@ -47,12 +47,12 @@ $lang ['admin'] ['widgets'] ['default'] ['msgs'] = array(
 /* "surovi" panel */
 $lang ['admin'] ['widgets'] ['raw'] = array(
 	'head' => 'Upravljanje gradniki (<em>surov urejevalnik</em>)',
-	'descr' => ' <a class="hint" ' .
-		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Kaj je gradnik?">' .
-		'Gradnik</a> je vizualni element <a class="hint" ' .
-		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Kaj je vstavek?">' .
-		'Vstavka</a>, ki ga lahko postavite na posebna območja (gradniksets) na straneh vašega bloga.</p>' .
-		'<p>To je <strong>surov</strong> urejevalnik; nekateri napredni uporabniki ali ljudje, ki ne ' .
+	'descr' => ' <a class="hint" ' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Kaj je gradnik?">' . //
+		'Gradnik</a> je vizualni element <a class="hint" ' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Kaj je vstavek?">' . //
+		'Vstavka</a>, ki ga lahko postavite na posebna območja (gradniksets) na straneh vašega bloga.</p>' . //
+		'<p>To je <strong>surov</strong> urejevalnik; nekateri napredni uporabniki ali ljudje, ki ne ' . //
 		'morejo uporabljati JavaScripta, ga morda raje uporabljajo.',
 
 	'fset1' => 'Urejevalnik',
@@ -67,7 +67,7 @@ $lang ['admin'] ['widgets'] ['raw'] ['msgs'] = array(
 
 /* sistemske napake */
 $lang ['admin'] ['widgets'] ['errors'] = array(
-	'generic' => 'Gradnik z imenom <strong>%s</strong> ni registriran in bo izpuščen. ' .
+	'generic' => 'Gradnik z imenom <strong>%s</strong> ni registriran in bo izpuščen. ' . //
 		'Ali je vtičnik omogočen v <a href="admin.php?p=plugin">panelu vtičnikov</a>?'
 );
 ?>

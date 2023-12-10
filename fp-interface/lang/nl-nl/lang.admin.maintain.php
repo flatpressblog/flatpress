@@ -11,7 +11,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Toon info over PHP',
 	'opt5' => 'Controleren op updates',
 
-	'chmod_info' => 'De volgende bestandsmachtigingen <strong>kan niet</strong> worden teruggezet naar 0775; waarschijnlijk is de bestandseigenaar niet hetzelfde als de webserver\'s. ' .
+	'chmod_info' => 'De volgende bestandsmachtigingen <strong>kan niet</strong> worden teruggezet naar 0775; waarschijnlijk is de bestandseigenaar niet hetzelfde als de webserver\'s. ' . //
 		'Meestal kunt u deze kennisgeving negeren.'
 );
 

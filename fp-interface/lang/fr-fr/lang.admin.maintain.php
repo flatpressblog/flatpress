@@ -11,7 +11,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Afficher info.php',
 	'opt5' => 'V&eacute;rifier les mises &agrave; jour',
 
-	'chmod_info' => 'Les permissions de fichiers (chmod) <strong>ne sont peut-&ecirc;tre pas</strong> &agrave; 0775; propri&eacute;taire du fichier peut-&ecirc;' .
+	'chmod_info' => 'Les permissions de fichiers (chmod) <strong>ne sont peut-&ecirc;tre pas</strong> &agrave; 0775; propri&eacute;taire du fichier peut-&ecirc;' . //
 		'tre diff&eacute;rent du serveur web.'
 );
 

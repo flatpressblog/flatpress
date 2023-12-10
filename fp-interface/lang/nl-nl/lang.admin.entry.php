@@ -9,7 +9,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 /* default action */
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Vermeldingen beheren',
-	'descr' => 'Selecteer een vermelding om te bewerken of<a href="admin.php?p=entry&amp;action=write"> voeg nieuw toe</a><br>' .
+	'descr' => 'Selecteer een vermelding om te bewerken of<a href="admin.php?p=entry&amp;action=write"> voeg nieuw toe</a><br>' . //
 		'<a href="admin.php?p=entry&amp;action=cats">De categorie bewerken</a>',
 	'drafts' => 'Concepten: ',
 	'filter' => 'Filter: ',
@@ -39,7 +39,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Voorbeeld',
 	'savecontinue' => 'Opslaan en doorgaan',
 	'categories' => 'Categorie',
-	'nocategories' => 'Geen categorie set. <a href="admin.php?p=entry&amp;action=cats">Maak je eigen categorie</a> vanuit het hoofdinvoerpaneel. ' .
+	'nocategories' => 'Geen categorie set. <a href="admin.php?p=entry&amp;action=cats">Maak je eigen categorie</a> vanuit het hoofdinvoerpaneel. ' . //
 		'<a href="#save">Bewaar</a> uw vermelding eerst.',
 	'saveopts' => 'Opties voor opslaan',
 	'success' => 'Uw bericht is succesvol gepubliceerd',
@@ -124,7 +124,7 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 /* category mgmt */
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Categorie bewerken',
-	'descr' => '<p>Gebruik het onderstaande formulier om uw categorie toe te voegen en te bewerken.</p>' .
+	'descr' => '<p>Gebruik het onderstaande formulier om uw categorie toe te voegen en te bewerken.</p>' . //
 		'<p>Elk categorie-item moet in deze indeling zijn "categorie naam: <em>id_number</em>". Items met streepjes springen in.</p>
 		
 	<p>Example:</p>

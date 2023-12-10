@@ -8,8 +8,8 @@ $lang ['admin'] ['plugin'] ['default'] = array(
 	'head' => 'Správa Pluginů',
 	'enable' => 'Zapnout',
 	'disable' => 'Vypnout',
-	'descr' => '<a class="hint" ' .
-		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Co je Plugin?">Plugin</a> je součást, která umožňuje rozšířit možnosti FlatPressu.</p>' .
+	'descr' => '<a class="hint" ' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Co je Plugin?">Plugin</a> je součást, která umožňuje rozšířit možnosti FlatPressu.</p>' . //
 		'<p>Pluginy je možno instalovat nahráním do složky <code>fp-plugins/</code></p><p>Tento panel umožňuje zapnout a vypnout pluginy.',
 	'name' => 'Název',
 	'description' => 'Popis',

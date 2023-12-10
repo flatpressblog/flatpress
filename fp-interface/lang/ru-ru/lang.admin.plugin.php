@@ -8,8 +8,8 @@ $lang ['admin'] ['plugin'] ['default'] = array(
 	'head' => 'Управление плагинами',
 	'enable' => 'Включить',
 	'disable' => 'Отключить',
-	'descr' => '<a class="hint" ' .
-		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Что такое плагин?">Плагин</a> это компонент, позволяющий расширить возможности FlatPress.</p>' .
+	'descr' => '<a class="hint" ' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Что такое плагин?">Плагин</a> это компонент, позволяющий расширить возможности FlatPress.</p>' . //
 		'<p>Вы можете установить плагины, загрузив их в директорию <code>fp-plugins/</code><p>Эта панель позволяет включать и отключать плагины',
 	'name' => 'Название',
 	'description' => 'Описание',

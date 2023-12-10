@@ -1,6 +1,6 @@
 <?php
 $lang ['plugin'] ['accessibleantispam'] = array(
-	'prefix' => 'Afin d\'&eacute;liminer le spam ' .
+	'prefix' => 'Afin d\'&eacute;liminer le spam ' . //
 		'vous devez prouver que vous &ecirc;tes un humain. Combien font ',
 
 	'sum' => '%s plus %s ?',

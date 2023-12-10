@@ -1,6 +1,6 @@
 <?php
 $lang ['plugin'] ['prettyurls'] ['errors'] = array (
-	-2 => 'Ik vind geen of kan geen <code>.htaccess</code> bestand maken in jouw root ' .
+	-2 => 'Ik vind geen of kan geen <code>.htaccess</code> bestand maken in jouw root ' . //
 		'directorie. PrettyURLs might not work properly, ie het configuratie menu.'
 );
 

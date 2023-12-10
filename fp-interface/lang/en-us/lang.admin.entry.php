@@ -9,7 +9,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 /* default action */
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Manage Entries',
-	'descr' => 'Please select an entry to edit or <a href="admin.php?p=entry&amp;action=write">add new</a><br>' .
+	'descr' => 'Please select an entry to edit or <a href="admin.php?p=entry&amp;action=write">add new</a><br>' . //
 		'<a href="admin.php?p=entry&amp;action=cats">Edit the categories</a>',
 	'drafts' => 'Drafts: ',
 	'filter' => 'Filter: ',
@@ -39,7 +39,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Preview',
 	'savecontinue' => 'Save&amp;Continue',
 	'categories' => 'Categories',
-	'nocategories' => 'No categories set. <a href="admin.php?p=entry&amp;action=cats">Create your own categories</a> from the main entry panel. ' .
+	'nocategories' => 'No categories set. <a href="admin.php?p=entry&amp;action=cats">Create your own categories</a> from the main entry panel. ' . //
 		'<a href="#save">Save</a> your entry first.',
 	'saveopts' => 'Saving options',
 	'success' => 'Your entry was published succesfully',
@@ -124,7 +124,7 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 /* category mgmt */
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Edit categories',
-	'descr' => '<p>Use the form below to add and edit your categories.</p>' .
+	'descr' => '<p>Use the form below to add and edit your categories.</p>' . //
 		'<p>Each category item should be in this format "category name: <em>id_number</em>". Indent items with dashes to create hierarchies.</p>
 		
 	<p>Example:</p>

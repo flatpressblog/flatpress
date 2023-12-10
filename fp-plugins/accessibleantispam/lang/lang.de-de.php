@@ -1,6 +1,6 @@
 <?php
 $lang ['plugin'] ['accessibleantispam'] = array(
-	'prefix' => 'Um Spammern den Missbrauch zu erschweren, ' .
+	'prefix' => 'Um Spammern den Missbrauch zu erschweren, ' . //
 		'fragen wir nach dem Ergebnis einer einfachen mathematischen Operation. Bitte ',
 
 	'sum' => 'addiere %s zu %s',

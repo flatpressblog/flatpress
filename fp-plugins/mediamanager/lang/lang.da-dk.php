@@ -5,7 +5,7 @@ $lang ['admin'] ['uploader'] ['submenu'] ['mediamanager'] = 'Media Manager';
 
 $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Media Manager',
-	'description' => 'Media Manager skaber et overblik over de filer og billeder, der er uploadet til Flatpress.',
+	'description' => 'Media Manager skaber et overblik over de filer og billeder, der er uploadet til FlatPress.',
 
 	'delete' => 'Slet',
 	'up' => 'Tilbage',

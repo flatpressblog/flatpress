@@ -1,6 +1,6 @@
 <?php
 $lang ['plugin'] ['prettyurls'] ['errors'] = array (
-	-2 => 'Es ist keine <code>.htaccess</code> vorhanden oder es kann keine <code>.htaccess</code> im Blog Root angelegt werden. ' .
+	-2 => 'Es ist keine <code>.htaccess</code> vorhanden oder es kann keine <code>.htaccess</code> im Blog Root angelegt werden. ' . //
 		'Das PrettyURLs Plugin wird dann unter Umständen nicht korrekt arbeiten.'
 );
 
@@ -14,11 +14,11 @@ $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'auto' => 'Automatisch',
 	'autodescr' => 'Ermittle die beste Möglichkeit automatisch',
 	'pathinfo' => 'Path Info',
-	'pathinfodescr' => 'e.g. /index.php/2011/01/01/hello-world/',
+	'pathinfodescr' => 'Beispiel: /index.php/2011/01/01/hello-world/',
 	'httpget' => 'HTTP Get',
-	'httpgetdescr' => 'e.g. /?u=/2011/01/01/hello-world/',
+	'httpgetdescr' => 'Beispiel: /?u=/2011/01/01/hello-world/',
 	'pretty' => 'Pretty',
-	'prettydescr' => 'e.g. /2011/01/01/hello-world/',
+	'prettydescr' => 'Beispiel: /2011/01/01/hello-world/',
 
 	'saveopt' => 'Einstellungen speichern',
 

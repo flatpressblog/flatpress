@@ -6,9 +6,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	'sysfset' => 'General System Informations',
 	'syswarning' => '<big>Warning!</big> These informations are critical and need to be correct, or FlatPress will (probably) refuse to work properly.',
-	'blog_root' => '<strong>Absolute path to FlatPress</strong>. Note: ' .
+	'blog_root' => '<strong>Absolute path to FlatPress</strong>. Note: ' . //
 		'generally you won\'t have to edit this, anyway be careful, because we can\'t check whether is correct or not.',
-	'www' => '<strong>Blog root</strong>. URL to your blog, complete of subdirectories.<br>' .
+	'www' => '<strong>Blog root</strong>. URL to your blog, complete of subdirectories.<br>' . //
 		'e.g.: http://www.mydomain.com/flatpress/ (trailing slash needed)',
 
 	// ------
@@ -35,7 +35,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'dateformatshort' => 'Default format for date (short)',
 	'output' => 'Output',
 	'charset' => 'Character set',
-	'charsettip' => 'The character set you write your blog in (UTF-8 is ' .
+	'charsettip' => 'The character set you write your blog in (UTF-8 is ' . //
 		'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Which character encoding standards are supported by FlatPress?">recommended</a>).'
 );
 

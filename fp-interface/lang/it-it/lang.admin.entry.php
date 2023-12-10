@@ -9,7 +9,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 /* default action */
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Gestione Articoli',
-	'descr' => 'Seleziona un articolo da modificare o <a href="admin.php?p=entry&amp;action=write">aggiungine uno nuovo</a><br>' .
+	'descr' => 'Seleziona un articolo da modificare o <a href="admin.php?p=entry&amp;action=write">aggiungine uno nuovo</a><br>' . //
 		'<a href="admin.php?p=entry&amp;action=cats">Modifica le categorie</a>',
 	'drafts' => 'Bozze: ',
 	'filter' => 'Filtro: ',
@@ -39,7 +39,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Anteprima',
 	'savecontinue' => 'Salva e continua',
 	'categories' => 'Categorie',
-	'nocategories' => 'Nessuna categoria impostata. <a href="admin.php?p=entry&amp;action=cats">Creane una categories</a> dal pannello principale degli articoli. ' .
+	'nocategories' => 'Nessuna categoria impostata. <a href="admin.php?p=entry&amp;action=cats">Creane una categories</a> dal pannello principale degli articoli. ' . //
 		'<a href="#save">Salva</a> prima l\'articolo.',
 	'saveopts' => 'Opzioni di salvataggio',
 	'success' => 'L\'articolo è stato pubblicato con successo',
@@ -124,7 +124,7 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 /* category mgmt */
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Modifica categorie',
-	'descr' => '<p>Usa il modulo qui sotto per aggiungere e modificare le tue categorie.</p>' .
+	'descr' => '<p>Usa il modulo qui sotto per aggiungere e modificare le tue categorie.</p>' . //
 		'<p>Ogni elemento della categoria deve avere questo formato "nome categoria: <em>numero_id</em>". Indicizza gli elementi con dei trattini per creare delle gerarchie.</p>
 
 	<p>Ad esempio:</p>

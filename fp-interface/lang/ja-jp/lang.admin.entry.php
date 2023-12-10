@@ -9,7 +9,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 /* default action */
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => '記事の管理',
-	'descr' => '編集する記事の作業を選んでください。<a href="admin.php?p=entry&amp;action=write">記事の新規作成は、ここをクリック</a>します。' .
+	'descr' => '編集する記事の作業を選んでください。<a href="admin.php?p=entry&amp;action=write">記事の新規作成は、ここをクリック</a>します。' . //
 		'あるいは<a href="admin.php?p=entry&amp;action=cats">カテゴリの編集</a>へ移動します。',
 	'drafts' => 'ドラフト: ',
 	'filter' => 'カテゴリフィルタ(カテゴリ名で記事をしぼり込むことができます): ',
@@ -39,7 +39,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'プレビュー',
 	'savecontinue' => '保存して継続',
 	'categories' => 'カテゴリ',
-	'nocategories' => 'カテゴリは未作成です。 <a href="admin.php?p=entry&amp;action=cats">カテゴリの管理</a>ページに移動して作成してください。 ' .
+	'nocategories' => 'カテゴリは未作成です。 <a href="admin.php?p=entry&amp;action=cats">カテゴリの管理</a>ページに移動して作成してください。 ' . //
 		'必要なら、まず<a href="#save">保存</a>してください。',
 	'saveopts' => '保存オプション',
 	'success' => '記事は公開されました。',

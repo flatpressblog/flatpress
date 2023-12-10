@@ -6,9 +6,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	'sysfset' => 'Informace o systému',
 	'syswarning' => '<big>Varování!</big> Tyto informace jsou důležité a musí být správné, jinak nemusí Flatpress fungovat správně.',
-	'blog_root' => '<strong>Absolutní cesta k FlatPressu</strong>. Poznámka: ' .
+	'blog_root' => '<strong>Absolutní cesta k FlatPressu</strong>. Poznámka: ' . //
 		'většinou to nebudeš potřebovaa měnit, každopádně buď opatrný, protože neumíme ověřit správnost',
-	'www' => '<strong>Blog root</strong>. URL tvého blogu, kompletní cesta i s podadresáři.<br>' .
+	'www' => '<strong>Blog root</strong>. URL tvého blogu, kompletní cesta i s podadresáři.<br>' . //
 		'např.: http://www.mydomain.com/flatpress/ (koncové lomítko je potřebné)',
 
 	// ------
@@ -35,7 +35,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'dateformatshort' => 'Formát datumu (krátký)',
 	'output' => 'Výstup',
 	'charset' => 'Znaková sada',
-	'charsettip' => 'Doporučená znaková sada na blogu je ' .
+	'charsettip' => 'Doporučená znaková sada na blogu je ' . //
 		'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Které standardy kódování znaků podporuje FlatPress?">UTF-8</a>.'
 );
 
@@ -49,7 +49,7 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'title' => 'Musíš zadat nadpis',
 	'email' => 'Email musí mít správný formát',
 	'maxentries' =>	'Nezadal jsi správny počet položek',
-	'timeoffset' =>	'Nezadal jsi správný čas! ' .
+	'timeoffset' =>	'Nezadal jsi správný čas! ' . //
 		'Můžeš používat celé čísla (např. 2h30" => 2.5)',
 	'timeformat' => 'Musíš zadat řetězec s formátem času ',
 	'dateformat' => 'Musíš zadat řetězec s formátem datumu',

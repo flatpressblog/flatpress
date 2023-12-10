@@ -9,7 +9,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 /* action par défaut */
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'G&eacute;rer les billets',
-	'descr' => 'S&eacute;lectionner un billet &agrave; &eacute;diter ou<a href="admin.php?p=entry&amp;action=write"> ajouter un nouveau billet</a><br>' .
+	'descr' => 'S&eacute;lectionner un billet &agrave; &eacute;diter ou<a href="admin.php?p=entry&amp;action=write"> ajouter un nouveau billet</a><br>' . //
 		'<a href="admin.php?p=entry&amp;action=cats">&Eacute;diter les cat&eacute;gories</a>',
 	'drafts' => 'Brouillons: ',
 	'filter' => 'Filtrer: ',
@@ -39,7 +39,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Aper&ccedil;u',
 	'savecontinue' => 'enregistrer et continuer',
 	'categories' => 'Cat&eacute;gories',
-	'nocategories' => 'Pas de cat&eacute;gories d&eacute;finies. <a href="admin.php?p=entry&amp;action=cats"> Cr&eacute;er cat&eacute;gories</a>  &agrave; partir de du menu des cat&eacute;gories. ' .
+	'nocategories' => 'Pas de cat&eacute;gories d&eacute;finies. <a href="admin.php?p=entry&amp;action=cats"> Cr&eacute;er cat&eacute;gories</a> &agrave; partir de du menu des cat&eacute;gories. ' . //
 		'<a href="#save">Enregistrer</a> votre premi&egrave;re entr&eacute;e.',
 	'saveopts' => 'Enregistrer options',
 	'success' => 'Votre billet a &eacute;t&eacute; publi&eacute;',
@@ -127,7 +127,7 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => '&Eacute;diter cat&eacute;gories',
-	'descr' => '<p>Utilisez le formulaire pour ajouter et &eacute;diter vos cat&eacute;gories.</p>' .
+	'descr' => '<p>Utilisez le formulaire pour ajouter et &eacute;diter vos cat&eacute;gories.</p>' . //
 		'<p>Chaque item doit &ecirc;tre au format "nom cat&eacute;gorie: <em>num&eacute;ro de cat&eacute;gorie</em>". Placez des tirets devant les articles pour cr&eacute;er des hi&eacute;rarchies.</p>
 		
 	<p>Exemple:</p>

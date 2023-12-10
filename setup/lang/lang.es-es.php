@@ -27,15 +27,15 @@ $lang ['err'] = array(
 	'setuprun3' => ' para reiniciar.',
 	'writeerror' => 'Error de escritura',
 
-	'fpuser1' => ' no es un usuario válido. ' .
+	'fpuser1' => ' no es un usuario válido. ' . //
 		'El nombre de usuario debe ser alfanumérico y no debe contener espacios.',
-	'fpuser2' => ' no es un usuario válido. ' .
+	'fpuser2' => ' no es un usuario válido. ' . //
 		'El nombre de usuario sólo puede contener letras, números y un guión bajo.',
 	'fppwd' => 'La contraseña debe contener al menos 6 caracteres y ningún espacio.',
 	'fppwd2' => 'Las contraseñas no coinciden.',
 	'email' => ' no es una dirección de correo electrónico válida.',
 	'www' => ' no es una URL válida.',
-	'error' => '<p><big>Error!</big> ' . 
+	'error' => '<p><big>Error!</big> ' . // 
 		'Se han producido los siguientes errores al procesar el formulario:</p><ul>'
 );
 

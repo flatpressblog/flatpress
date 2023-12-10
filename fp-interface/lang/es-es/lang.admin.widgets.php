@@ -6,18 +6,18 @@ $lang ['admin'] ['widgets'] ['submenu'] ['raw'] = 'Administrar widgets (raw)';
 $lang ['admin'] ['widgets'] ['default'] = array(
 	'head' => 'Administrar widgets (<em>experimental</em>)',
 
-	'descr' => 'A <a class="hint" ' .
-		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Que es un Widget?">' .
-		'Widget</a> es un componente dinámico que puede mostrar datos e interactuar con el usuario. ' .
-		'Mientras <strong>Temas</strong> están destinados a cambiar el aspecto de tu blog, Widgets ' .
-		'<strong>Amplían</strong> apariencia y funcionalidades.</p>' .
+	'descr' => 'A <a class="hint" ' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Que es un Widget?">' . //
+		'Widget</a> es un componente dinámico que puede mostrar datos e interactuar con el usuario. ' . //
+		'Mientras <strong>Temas</strong> están destinados a cambiar el aspecto de tu blog, Widgets ' . //
+		'<strong>Amplían</strong> apariencia y funcionalidades.</p>' . //
 
-		'<p>Widgets pueden ser puestos en areas especiales de su tema llamado el ' .
-		'<strong>WidgetSets</strong>. El número y el nombre de los WidgetSets pueden variar según el tema que elija.</p>' .
+		'<p>Widgets pueden ser puestos en areas especiales de su tema llamado el ' . //
+		'<strong>WidgetSets</strong>. El número y el nombre de los WidgetSets pueden variar según el tema que elija.</p>' . //
 
-		'<p>FlatPress viene con varios widgets: hay widgets para ayudar con el inicio de sesión, para mostrar un cuadro de búsqueda, etc.</p>' .
+		'<p>FlatPress viene con varios widgets: hay widgets para ayudar con el inicio de sesión, para mostrar un cuadro de búsqueda, etc.</p>' . //
 
-		'<p>Cada Widget está definido por un <a class="hint" ' .
+		'<p>Cada Widget está definido por un <a class="hint" ' . //
 		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a Widget?">plugin</a>.',
 
 	'availwdgs' => 'Widgets Disponibles',
@@ -26,7 +26,7 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'themewdgs' => 'Widgetsets para este tema',
 	'themewdgsdescr' => 'El tema que ha seleccionado le permite tener los siguientes conjuntos de widgets',
 	'oldwdgs' => 'Otros widgetsets',
-	'oldwdgsdescr' => 'Los siguientes set de widgets parecen no pertenecer a ninguno de los ' .
+	'oldwdgsdescr' => 'Los siguientes set de widgets parecen no pertenecer a ninguno de los ' . //
 		'widgetsets listados arriba. Pueden ser restantes de otro tema.',
 
 	'submit' => 'Guardar Cambios'
@@ -47,11 +47,11 @@ $lang ['admin'] ['widgets'] ['default'] ['msgs'] = array(
 /* "raw" panel */
 $lang ['admin'] ['widgets'] ['raw'] = array(
 	'head' => 'Administrar widgets (<em>editor raw</em>)',
-	'descr' => 'A <a class="hint" ' .
-		'href="http://wiki.flatpress.org/doc:plugins" title="Que es un Widget?">' .
-		'Widget</a> is a visual element of a <a class="hint" ' .
-		'href="http://wiki.flatpress.org/doc:plugins" title="Que es un plugin?">' .
-		'Plugin</a> que puede poner en algunas áreas especiales (los <em>widgetsets</em>) en las páginas de su blog. </p>' .
+	'descr' => 'A <a class="hint" ' . //
+		'href="http://wiki.flatpress.org/doc:plugins" title="Que es un Widget?">' . //
+		'Widget</a> is a visual element of a <a class="hint" ' . //
+		'href="http://wiki.flatpress.org/doc:plugins" title="Que es un plugin?">' . //
+		'Plugin</a> que puede poner en algunas áreas especiales (los <em>widgetsets</em>) en las páginas de su blog. </p>' . //
 		'<p>Este es el editor <strong>raw</strong> ; algunos usuarios avanzados o personas que no deseen JavaScript tal vez lo prefieran',
 
 	'fset1' => 'Editor',
@@ -66,7 +66,7 @@ $lang ['admin'] ['widgets'] ['raw'] ['msgs'] = array(
 
 /* system errors */
 $lang ['admin'] ['widgets'] ['errors'] = array(
-	'generic' => 'El widget llamado <strong>%s</strong> no está registrado y sera omitido. ' .
+	'generic' => 'El widget llamado <strong>%s</strong> no está registrado y sera omitido. ' . //
  		'Está el plugin habilitado en el <a href="admin.php?p=plugin"> panel de plugin</a>?'
 );
 ?>

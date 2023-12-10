@@ -27,15 +27,15 @@ $lang ['err'] = array(
 	'setuprun3' => ' za ponovni zagon.',
 	'writeerror' => 'Napake pri pisanju',
 
-	'fpuser1' => ' ni veljaven uporabnik. ' .
+	'fpuser1' => ' ni veljaven uporabnik. ' . //
 		'Uporabniško ime mora biti alfanumerično in ne sme vsebovati presledkov.',
-	'fpuser2' => ' ni veljaven uporabnik. ' .
+	'fpuser2' => ' ni veljaven uporabnik. ' . //
 		'Uporabniško ime lahko vsebuje samo črke, številke in en podčrtaj.',
 	'fppwd' => 'Geslo mora vsebovati vsaj 6 znakov in ne sme vsebovati presledkov.',
 	'fppwd2' => 'Gesla se ne ujemajo.',
 	'email' => ' ni veljaven e-poštni naslov.',
 	'www' => ' ni veljaven URL.',
-	'error' => '<p><big>Napaka!</big> ' .
+	'error' => '<p><big>Napaka!</big> ' . //
 		'Med obdelavo obrazca je prišlo do naslednjih napak:</p><ul>'
 );
 
@@ -196,5 +196,4 @@ Zabavajte se! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'O';
 $lang ['samplecontent'] ['about'] ['content'] = 'Tukaj napišite nekaj o sebi in tem blogu. ([url=admin.php?p=static&action=write&page=about]Delajte z mano![/url])';
-
 ?>

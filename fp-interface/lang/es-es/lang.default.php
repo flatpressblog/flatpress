@@ -31,7 +31,8 @@ $lang ['search'] = array(
 	'fulltext' => 'Text Completo',
 
 	'fset2'	=> 'Date',
-	'datedescr'	=> 'Puede vincular su búsqueda a una fecha específica. Puede seleccionar un año, un año y un mes o una fecha completa. ' . 'Déjelo en blanco para buscar en toda la base de datos.',
+	'datedescr'	=> 'Puede vincular su búsqueda a una fecha específica. Puede seleccionar un año, un año y un mes o una fecha completa. ' . //
+		'Déjelo en blanco para buscar en toda la base de datos.',
 
 	'fset3' => 'Buscar en categorías',
 	'catdescr' => 'No seleccione ninguno para buscar todos',

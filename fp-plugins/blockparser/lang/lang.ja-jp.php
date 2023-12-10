@@ -3,8 +3,8 @@ $lang ['admin'] ['widgets'] ['submenu'] ['blockparser'] = 'BlockParserウィジ�
 
 $lang ['admin'] ['widgets'] ['blockparser'] = array(
 	'head' => 'BlockParserウィジェット',
-	'description' => 'BlockParserプラグインが、固定ページをウィジェット化します。</p>' .
-		'<p>リストから1つ以上の固定ページを選び、利用可能なウィジェットを作りましょう。</p>' .
+	'description' => 'BlockParserプラグインが、固定ページをウィジェット化します。</p>' . //
+		'<p>リストから1つ以上の固定ページを選び、利用可能なウィジェットを作りましょう。</p>' . //
 		'<p><a href="?p=static&amp;action=write">固定ページの新規作成</a>をすれば、このリストに並びます。',
 
 	'id' => '固定ページ',

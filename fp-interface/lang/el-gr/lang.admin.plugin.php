@@ -8,8 +8,8 @@ $lang ['admin'] ['plugin'] ['default'] = array(
 	'head' => 'Διαχειριστείτε τα πρόσθετα',
 	'enable' => 'Ενεργοποίηση',
 	'disable' => 'Απενεργοποίηση',
-	'descr' => 'Ένα <a class="hint" ' .
-		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Τι είναι ένα πρόσθετο;">πρόσθετο</a> είναι ένα στοιχείο το οποίο μπορεί να επεκτείνει τις δυνατότητες του FlatPress.</p>' .
+	'descr' => 'Ένα <a class="hint" ' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Τι είναι ένα πρόσθετο;">πρόσθετο</a> είναι ένα στοιχείο το οποίο μπορεί να επεκτείνει τις δυνατότητες του FlatPress.</p>' . //
 		'<p>Μπορείτε να εγκαταστήσετε πρόσθετα ανεβάζοντας τα στον φάκελο <code>fp-plugins/</code></p><p>Αυτός ο πίνακας ελέγχου σας επιτρέπει να ενεργοποιήσετε και να απενεργοποιήσετε πρόσθετα ',
 	'name' => 'Όνομα',
 	'description' => 'Περιγραφή',

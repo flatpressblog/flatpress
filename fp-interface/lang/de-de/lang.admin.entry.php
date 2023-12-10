@@ -9,7 +9,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 /* default action */
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Beiträge und Kategorien verwalten',
-	'descr' => 'An dieser Stelle kann man Beiträge zum Bearbeiten auswählen, einen <a href="admin.php?p=entry&amp;action=write">neuen Beitrag</a> schreiben oder ' .
+	'descr' => 'An dieser Stelle kann man Beiträge zum Bearbeiten auswählen, einen <a href="admin.php?p=entry&amp;action=write">neuen Beitrag</a> schreiben oder ' . //
 		'<a href="admin.php?p=entry&amp;action=cats">Kategorien bearbeiten</a>. Ebenfalls besteht die Möglichkeit Kommentare von Beiträgen zu löschen.',
 	'filter' => 'Filter: ',
 	'drafts' => 'Entwürfe: ',
@@ -39,7 +39,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Vorschau',
 	'savecontinue' => 'Speichern &amp; weiter',
 	'categories' => 'Kategorie für den Beitrag auswählen',
-	'nocategories' => 'Keine Kategorie ausgewählt. <a href="admin.php?p=entry&amp;action=cats">Erstelle eine Kategorie</a> im Verwaltungsbereich. ' .
+	'nocategories' => 'Keine Kategorie ausgewählt. <a href="admin.php?p=entry&amp;action=cats">Erstelle eine Kategorie</a> im Verwaltungsbereich. ' . //
 		'Bitte Beitrag vorher <a href="#save">speichern</a>.',
 	'saveopts' => 'Speicheroptionen',
 	'success' => 'Dein Beitrag wurde erfolgreich veröffentlicht',
@@ -124,8 +124,8 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 /* category mgmt */
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Kategorien verwalten',
-	'descr' => '<p>Jede Kategorie sollte im Schema "Kategorie Name <em>:id_nummer</em>" angelegt werden. Die "<em>id_nummer</em>" ist <strong>eindeutig</strong> den Beiträgen zugeordnet, darf <strong>nicht</strong> mehr verändert werden und muss größer <strong>0</strong> sein. ' .
-		'Der Kategoriename hingegen kann auch später noch geändert werden.</p>' .
+	'descr' => '<p>Jede Kategorie sollte im Schema "Kategorie Name <em>:id_nummer</em>" angelegt werden. Die "<em>id_nummer</em>" ist <strong>eindeutig</strong> den Beiträgen zugeordnet, darf <strong>nicht</strong> mehr verändert werden und muss größer <strong>0</strong> sein. ' . //
+		'Der Kategoriename hingegen kann auch später noch geändert werden.</p>' . //
 		'<p>Ein späteres Umstellen der Kategorienreihenfolge ist zu jeder Zeit möglich. Mit Bindestrichen kann man Unterkategorien anlegen.</p>
 		
 	<p>Beispiel:</p>

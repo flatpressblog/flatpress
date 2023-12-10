@@ -6,9 +6,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	'sysfset' => 'Generelle indstillinger',
 	'syswarning' => '<big>Advarsel!</big> Disse indstillinger skal indtastes omhyggeligt, ellers fungerer FlatPress muligvis ikke korrekt.',
-	'blog_root' => '<strong>Absolut sti til FlatPress</strong>. Et tip: ' .
+	'blog_root' => '<strong>Absolut sti til FlatPress</strong>. Et tip: ' . //
 		'Normalt er der ikke noget, der skal ændres her. FlatPress tilbyder ikke en intern funktion til selv at tjekke mulige ændringer.',
-	'www' => '<strong>Blog Root</strong>. URL på din blog med angivelse af katalog.<br>' .
+	'www' => '<strong>Blog Root</strong>. URL på din blog med angivelse af katalog.<br>' . //
 		'Eksempel: http://www.mydomain.com/flatpress/ (sidste skråstreg er påkrævet)',
 
 	// ------
@@ -35,7 +35,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'dateformatshort' => 'Standard datoformat (kort)',
 	'output' => 'Output',
 	'charset' => 'Tegnsæt',
-	'charsettip' => 'Det anbefalede tegnsæt til FlatPress er ' .
+	'charsettip' => 'Det anbefalede tegnsæt til FlatPress er ' . //
 		'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Hvilke tegnkodningsstandarder understøttes af FlatPress?">UTF-8</a>.'
 );
 

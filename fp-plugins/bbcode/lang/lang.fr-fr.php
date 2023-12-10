@@ -2,7 +2,7 @@
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Configuration du BBCode',
-	'desc1' => 'Ce plugin autorise l\'usage du <a href="https://wiki.flatpress.org/' .
+	'desc1' => 'Ce plugin autorise l\'usage du <a href="https://wiki.flatpress.org/' . //
 		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a>.',
 
 	'options' => 'Options',

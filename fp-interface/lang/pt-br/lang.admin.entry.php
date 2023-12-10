@@ -9,7 +9,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 /* default action */
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Administre seus posts',
-	'descr' => 'Selecione um post para editar ou <a href="admin.php?p=entry&amp;action=write">adicione um novo</a><br>' .
+	'descr' => 'Selecione um post para editar ou <a href="admin.php?p=entry&amp;action=write">adicione um novo</a><br>' . //
 		'<a href="admin.php?p=entry&amp;action=cats">Edite os categorias</a>',
 	'drafts' => 'Rascunhos: ',
 	'filter' => 'Filtro: ',
@@ -39,7 +39,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Visualizar',
 	'savecontinue' => 'Salve e continue',
 	'categories' => 'Categorias',
-	'nocategories' => 'Nenhuma categoria definida. <a href="admin.php?p=entry&amp;action=cats">Crie o seu próprio categorias</a> do painel de posts principal. ' .
+	'nocategories' => 'Nenhuma categoria definida. <a href="admin.php?p=entry&amp;action=cats">Crie o seu próprio categorias</a> do painel de posts principal. ' . //
 		'<a href="#save">Salve</a> seu post antes.',
 	'saveopts' => 'Opções de salvar',
 	'success' => 'Seu post foi publicado com sucesso.',
@@ -124,7 +124,7 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 /* category mgmt */
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Edite as categorias',
-	'descr' => '<p>Use o formulário abaixo para adicionar e editar suas categorias. </p>' .
+	'descr' => '<p>Use o formulário abaixo para adicionar e editar suas categorias. </p>' . //
 		'<p>Cada item de categoria deve estar neste formato "nome da categoria: <em>número de id</em>". Recue itens com traços para criar hierarquias.</p>
 
 	<p>Examplo:</p>

@@ -31,7 +31,8 @@ $lang ['search'] = array(
 	'fulltext' => 'Volltextsuche',
 
 	'fset2'	=> 'Suche nach Datum',
-	'datedescr'	=> 'Du kannst nach einem beliebigen Datum suchen. Kriterien können sein: Jahr, Jahr und Monat oder als komplettes Datum. ' . 'Ohne Angaben wird alles durchsucht.',
+	'datedescr'	=> 'Du kannst nach einem beliebigen Datum suchen. Kriterien können sein: Jahr, Jahr und Monat oder als komplettes Datum. ' . //
+		'Ohne Angaben wird alles durchsucht.',
 
 	'fset3' => 'In Kategorien suchen',
 	'catdescr' => 'Es muss mindestens eine Kategorie angegeben werden.',

@@ -6,9 +6,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	'sysfset' => 'Splošne Informacije o Sistemu',
 	'syswarning' => '<big>Opozorilo!</big> Te informacije so ključnega pomena in morajo biti pravilne, sicer FlatPress morda ne bo deloval pravilno.',
-	'blog_root' => '<strong>Absolutna pot do FlatPress</strong>. Opomba: ' .
+	'blog_root' => '<strong>Absolutna pot do FlatPress</strong>. Opomba: ' . //
 		'Navadno tega ne boste morali urejati, vendar bodite previdni, saj ne moremo preveriti, ali je pravilno ali ne.',
-	'www' => '<strong>Koren spletnega dnevnika</strong>. URL vašega spletnega dnevnika, vključno z podmapami.<br>' .
+	'www' => '<strong>Koren spletnega dnevnika</strong>. URL vašega spletnega dnevnika, vključno z podmapami.<br>' . //
 		'Npr.: http://www.mojadomena.com/flatpress/ (končnica poševnice je potrebna)',
 
 	// ------
@@ -35,7 +35,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'dateformatshort' => 'Privzeti format za datum (kratko)',
 	'output' => 'Izhod',
 	'charset' => 'Nabor znakov',
-	'charsettip' => 'Nabor znakov, v katerem pišete svoj blog (UTF-8 je ' .
+	'charsettip' => 'Nabor znakov, v katerem pišete svoj blog (UTF-8 je ' . //
 		'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Katere standarde kodiranja znakov podpira FlatPress?">priporočeno</a>)'
 );
 

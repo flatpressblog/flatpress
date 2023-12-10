@@ -31,7 +31,8 @@ $lang ['search'] = array(
 	'fulltext' => 'Fuldtekstsøgning',
 
 	'fset2'	=> 'Søg efter dato',
-	'datedescr'	=> 'Du kan søge efter en hvilken som helst dato. Kriterierne kan være: År, år og måned eller som en komplet dato. ' . 'Uden information bliver alt gennemsøgt.',
+	'datedescr'	=> 'Du kan søge efter en hvilken som helst dato. Kriterierne kan være: År, år og måned eller som en komplet dato. ' . //
+		'Uden information bliver alt gennemsøgt.',
 
 	'fset3' => 'Søg i kategorier',
 	'catdescr' => 'Der skal angives mindst én kategori.',

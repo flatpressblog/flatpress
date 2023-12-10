@@ -1,8 +1,8 @@
 <?php
 $lang ['plugin'] ['thumb'] ['errors'] = array (
-	-1 => 'Could not find ' .
-		'<a href="http://www.php.net/manual/en/ref.image.php" class="hint" target="_blank">PHP GD2 extension</a> ' .
-		'required for <strong>thumb</strong> to work. Please disable thumb from this panel ' .
+	-1 => 'Could not find ' . //
+		'<a href="http://www.php.net/manual/en/ref.image.php" class="hint" target="_blank">PHP GD2 extension</a> ' . //
+		'required for <strong>thumb</strong> to work. Please disable thumb from this panel ' . //
 		'or enable this extension.'
 );
 ?>

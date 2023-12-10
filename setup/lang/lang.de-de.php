@@ -27,15 +27,15 @@ $lang ['err'] = array(
 	'setuprun3' => ' löschen, um neu zu starten.',
 	'writeerror' => 'Fehler beim Schreiben',
 
-	'fpuser1' => ' ist kein gültiger Benutzer. ' .
+	'fpuser1' => ' ist kein gültiger Benutzer. ' . //
 		'Der Benutzername muss alphanumerisch sein und darf keine Leerzeichen enthalten.',
-	'fpuser2' => ' ist kein gültiger Benutzer. ' .
+	'fpuser2' => ' ist kein gültiger Benutzer. ' . //
 		'Der Benutzername darf nur Buchstaben, Zahlen und 1 Unterstrich enthalten.',
 	'fppwd' => 'Das Passwort muss mindestens 6 Zeichen und darf keine Leerzeichen enthalten.',
 	'fppwd2' => 'Die Passwörter stimmen nicht überein.',
 	'email' => ' ist keine gültige E-Mail Adresse.',
 	'www' => ' ist keine gültige URL.',
-	'error' => '<p><big>Fehler!</big> ' .
+	'error' => '<p><big>Fehler!</big> ' . //
 		'Bei der Bearbeitung des Formulars sind die folgenden Fehler aufgetreten:</p><ul>'
 );
 

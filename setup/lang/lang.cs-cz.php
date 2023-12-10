@@ -27,15 +27,15 @@ $lang ['err'] = array(
 	'setuprun3' => ' restartovat.',
 	'writeerror' => 'Chyba při psaní',
 
-	'fpuser1' => ' není platný uživatel. ' .
+	'fpuser1' => ' není platný uživatel. ' . //
 		'Uživatelské jméno musí být alfanumerické a nesmí obsahovat žádné mezery.',
-	'fpuser2' => ' není platný uživatel. ' .
+	'fpuser2' => ' není platný uživatel. ' . //
 		'Uživatelské jméno může obsahovat pouze písmena, číslice a 1 podtržítko.',
 	'fppwd' => 'Heslo musí obsahovat alespoň 6 znaků a žádné mezery.',
 	'fppwd2' => 'Hesla se neshodují.',
 	'email' => ' není platná e-mailová adresa.',
 	'www' => ' není platná adresa URL.',
-	'error' => '<p><big>Chyba!</big> ' .
+	'error' => '<p><big>Chyba!</big> ' . //
 		'Při zpracování formuláře došlo k následujícím chybám:</p><ul>'
 );
 

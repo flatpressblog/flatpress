@@ -31,7 +31,8 @@ $lang ['search'] = array(
 	'fulltext' => 'Texte en entier',
 
 	'fset2'	=> 'Date',
-	'datedescr'	=> 'Vous pouvez affiner votre recherche &agrave; une date sp&eacute;cifique. Vous pouvez s&eacute;lectionner une ann&eacute;e, une ann&eacute;e et un mois, ou une date compl&egrave;te. ' . 'Laissez vide pour chercher dans l\'ensemble de la base de donn&eacute;es.',
+	'datedescr'	=> 'Vous pouvez affiner votre recherche &agrave; une date sp&eacute;cifique. Vous pouvez s&eacute;lectionner une ann&eacute;e, une ann&eacute;e et un mois, ou une date compl&egrave;te. ' . //
+		'Laissez vide pour chercher dans l\'ensemble de la base de donn&eacute;es.',
 
 	'fset3' => 'Rechercher dans les cat&eacute;gories',
 	'catdescr' => 'Laissez vide pour rechercher dans la totalit&eacute;',

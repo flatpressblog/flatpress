@@ -1,6 +1,6 @@
 <?php
 $lang ['plugin'] ['prettyurls'] ['errors'] = array (
-	-2 => 'ルートディレクトリに<code>.htaccess</code>ファイルが見つけられないか、作成することができません。' .
+	-2 => 'ルートディレクトリに<code>.htaccess</code>ファイルが見つけられないか、作成することができません。' . //
 		'PrettyURLsは適切に動作できないかもしれません。PrettyURLsの設定を見てください。'
 );
 

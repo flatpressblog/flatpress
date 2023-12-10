@@ -9,7 +9,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 /* privzeta dejanja */
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Upravljanje Vnosov',
-	'descr' => 'Izberite vnos za urejanje ali <a href="admin.php?p=entry&amp;action=write">dodajte novega</a><br>' .
+	'descr' => 'Izberite vnos za urejanje ali <a href="admin.php?p=entry&amp;action=write">dodajte novega</a><br>' . //
 		'<a href="admin.php?p=entry&amp;action=cats">Uredi kategorije</a>',
 	'drafts' => 'Osnutki: ',
 	'filter' => 'Filter: ',
@@ -39,7 +39,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Predogled',
 	'savecontinue' => 'Shrani in Nadaljuj',
 	'categories' => 'Kategorije',
-	'nocategories' => 'Niso nastavljene kategorije. <a href="admin.php?p=entry&amp;action=cats">Ustvarite svoje kategorije</a> iz glavnega upravljalskega okna vnosa. ' .
+	'nocategories' => 'Niso nastavljene kategorije. <a href="admin.php?p=entry&amp;action=cats">Ustvarite svoje kategorije</a> iz glavnega upravljalskega okna vnosa. ' . //
 		'<a href="#save">Najprej shranite</a> svoj vnos.',
 	'saveopts' => 'Možnosti shranjevanja',
 	'success' => 'Vaš vnos je bil uspešno objavljen',
@@ -124,7 +124,7 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 /* upravljanje kategorij */
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Uredi kategorije',
-	'descr' => '<p>Uporabite obrazec spodaj za dodajanje in urejanje vaših kategorij.</p>' .
+	'descr' => '<p>Uporabite obrazec spodaj za dodajanje in urejanje vaših kategorij.</p>' . //
 		'<p>Vsaka postavka kategorije mora biti v tem formatu "ime kategorije: <em>številka_id</em>". Indentirajte elemente z vezaji, da ustvarite hierarhije.</p>
 
 	<p>Primer:</p>

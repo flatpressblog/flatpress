@@ -2,7 +2,7 @@
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Nastavení BBCode',
-	'desc1' => 'Tento plugin umožňuje používat <a href="https://wiki.flatpress.org/' .
+	'desc1' => 'Tento plugin umožňuje používat <a href="https://wiki.flatpress.org/' . //
 		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a> na vašem blogu.',
 
 	'options' => 'Nastavení',

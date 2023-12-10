@@ -1,6 +1,6 @@
 <?php
 $lang ['plugin'] ['prettyurls'] ['errors'] = array (
-	-2 => 'Ne morem najti ali ustvariti datoteke <code>.htaccess</code> v vašem korenskem ' .
+	-2 => 'Ne morem najti ali ustvariti datoteke <code>.htaccess</code> v vašem korenskem ' . //
 		'direktoriju. PrettyURLs morda ne bo pravilno deloval, glejte konfiguracijsko ploščo.'
 );
 

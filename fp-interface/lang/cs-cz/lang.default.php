@@ -31,7 +31,8 @@ $lang ['search'] = array(
 	'fulltext' => 'Full-text',
 
 	'fset2'	=> 'Datum',
-	'datedescr'	=> 'Můžete si přiřadit Vaše hledání ke konkrétnímu datu. Můžete zvolit rok, rok a měsíc, nebo přesné datum. ' . 'Nechat prázdné pro hledání v celé databází.',
+	'datedescr'	=> 'Můžete si přiřadit Vaše hledání ke konkrétnímu datu. Můžete zvolit rok, rok a měsíc, nebo přesné datum. ' . // 
+		'Nechat prázdné pro hledání v celé databází.',
 
 	'fset3' => 'Hleda v kategoriích',
 	'catdescr' => 'Nechat prázdné pro hledání v celé databází.',

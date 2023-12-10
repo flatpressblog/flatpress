@@ -8,8 +8,8 @@ $lang ['admin'] ['plugin'] ['default'] = array(
 	'head' => 'Upravljanje vtičnikov',
 	'enable' => 'Omogoči',
 	'disable' => 'Onemogoči',
-	'descr' => '<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Kaj je vtičnik?">Vtičnik</a> je komponenta, ki lahko razširi zmogljivosti FlatPressa.</p>' .
-		'<p>Vtičnike lahko namestite tako, da jih naložite v svojo <code>fp-plugins/</code> mapo.</p>'.
+	'descr' => '<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Kaj je vtičnik?">Vtičnik</a> je komponenta, ki lahko razširi zmogljivosti FlatPressa.</p>' . //
+		'<p>Vtičnike lahko namestite tako, da jih naložite v svojo <code>fp-plugins/</code> mapo.</p>' . //
 		'<p>Ta plošča vam omogoča omogočanje in onemogočanje vtičnikov',
 	'name' => 'Ime',
 	'description' => 'Opis',

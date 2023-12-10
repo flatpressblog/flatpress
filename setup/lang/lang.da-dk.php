@@ -27,15 +27,15 @@ $lang ['err'] = array(
 	'setuprun3' => ' for at genstarte.',
 	'writeerror' => 'Skrivefejl',
 
-	'fpuser1' => ' er ikke en gyldig bruger. ' .
+	'fpuser1' => ' er ikke en gyldig bruger. ' . //
 		'Brugernavnet skal være alfanumerisk og må ikke indeholde mellemrum.',
-	'fpuser2' => ' er ikke en gyldig bruger. ' .
+	'fpuser2' => ' er ikke en gyldig bruger. ' . //
 		'Brugernavnet må kun indeholde bogstaver, tal og 1 understregning.',
 	'fppwd' => 'Adgangskoden skal indeholde mindst 6 tegn og ingen mellemrum.',
 	'fppwd2' => 'Adgangskoderne stemmer ikke overens.',
 	'email' => ' er ikke en gyldig e-mailadresse.',
 	'www' => ' er ikke en gyldig URL.',
-	'error' => '<p><big>Fejl!</big> ' .
+	'error' => '<p><big>Fejl!</big> ' . //
 		'Følgende fejl opstod under behandlingen af formularen:</p><ul>'
 );
 

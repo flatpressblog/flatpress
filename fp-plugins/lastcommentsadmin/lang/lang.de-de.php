@@ -18,6 +18,6 @@ $lang ['admin'] ['plugin'] ['lastcommentsadmin'] ['msgs'] = array(
 	1 => 'Cache wurde erfolgreich gelöscht',
 	2 => 'Cache wurde erfolgreich erneuert',
 	-1 => 'Fehler!',
-	-2 => 'Dieses Plugin benötigt das in Flatpress integrierte LastComment Plugin. Bitte dieses vorher im Plugin Bereich aktivieren!'
+	-2 => 'Dieses Plugin benötigt das in FlatPress integrierte LastComment Plugin. Bitte dieses vorher im Plugin Bereich aktivieren!'
 );
 ?>
