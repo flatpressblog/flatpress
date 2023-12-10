@@ -7,10 +7,10 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 );
 
 /* default action */
-
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Beiträge und Kategorien verwalten',
-	'descr' => 'An dieser Stelle kann man Beiträge zum Bearbeiten auswählen, einen <a href="admin.php?p=entry&amp;action=write">neuen Beitrag</a> schreiben oder ' . '<a href="admin.php?p=entry&amp;action=cats">Kategorien bearbeiten</a>. Ebenfalls besteht die Möglichkeit Kommentare von Beiträgen zu löschen.',
+	'descr' => 'An dieser Stelle kann man Beiträge zum Bearbeiten auswählen, einen <a href="admin.php?p=entry&amp;action=write">neuen Beitrag</a> schreiben oder ' .
+		'<a href="admin.php?p=entry&amp;action=cats">Kategorien bearbeiten</a>. Ebenfalls besteht die Möglichkeit Kommentare von Beiträgen zu löschen.',
 	'filter' => 'Filter: ',
 	'drafts' => 'Entwürfe: ',
 	'nofilter' => 'Zeige alle',
@@ -19,7 +19,7 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'date' => 'Datum',
 	'title' => 'Titel',
 	'author' => 'Autor',
-	'comms' => '#Kommentare', // comments
+	'comms' => 'Kommentare', // comments
 	'action' => 'Aktion',
 	'act_del' => 'Löschen',
 	'act_view' => 'Anzeigen',
@@ -39,7 +39,8 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Vorschau',
 	'savecontinue' => 'Speichern &amp; weiter',
 	'categories' => 'Kategorie für den Beitrag auswählen',
-	'nocategories' => 'Keine Kategorie ausgewählt. <a href="admin.php?p=entry&amp;action=cats">Erstelle eine ' . 'Kategorie</a> im Verwaltungsbereich. ' . 'Bitte Beitrag vorher <a href="#save">speichern</a>.',
+	'nocategories' => 'Keine Kategorie ausgewählt. <a href="admin.php?p=entry&amp;action=cats">Erstelle eine Kategorie</a> im Verwaltungsbereich. ' .
+		'Bitte Beitrag vorher <a href="#save">speichern</a>.',
 	'saveopts' => 'Speicheroptionen',
 	'success' => 'Dein Beitrag wurde erfolgreich veröffentlicht',
 	'otheropts' => 'Andere Optionen',
@@ -70,9 +71,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 );
 
 /* comments */
-
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => "Kommentare für den Beitrag: ",
+	'head' => 'Kommentare für den Beitrag: ',
 	'descr' => 'Bitte Kommentar auswählen, der gelöscht werden soll',
 	'sel' => 'Sel',
 	'content' => 'Inhalt',
@@ -93,7 +93,7 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => "Bearbeite den Kommentar für Beitrag",
+	'head' => 'Bearbeite den Kommentar für Beitrag',
 	'content' => 'Kommentarinhalt',
 	'date' => 'Datum',
 	'author' => 'Autor',
@@ -110,7 +110,6 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 );
 
 /* delete action */
-
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Beitrag löschen',
 	'descr' => 'Du hast diesen Beitrag zum löschen ausgewählt:',
@@ -123,10 +122,11 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 );
 
 /* category mgmt */
-
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Kategorien verwalten',
-	'descr' => '<p>Jede Kategorie sollte im Schema "Kategorie Name <em>:id_nummer</em>" angelegt werden. Die "<em>id_nummer</em>" ist <strong>eindeutig</strong> den Beiträgen zugeordnet, darf <strong>nicht</strong> mehr verändert werden und muss größer <strong>0</strong> sein. Der Kategoriename hingegen kann auch später noch geändert werden.</p><p>Ein späteres Umstellen der Kategorienreihenfolge ist zu jeder Zeit möglich. Mit Bindestrichen kann man Unterkategorien anlegen.</p>
+	'descr' => '<p>Jede Kategorie sollte im Schema "Kategorie Name <em>:id_nummer</em>" angelegt werden. Die "<em>id_nummer</em>" ist <strong>eindeutig</strong> den Beiträgen zugeordnet, darf <strong>nicht</strong> mehr verändert werden und muss größer <strong>0</strong> sein. ' .
+		'Der Kategoriename hingegen kann auch später noch geändert werden.</p>' .
+		'<p>Ein späteres Umstellen der Kategorienreihenfolge ist zu jeder Zeit möglich. Mit Bindestrichen kann man Unterkategorien anlegen.</p>
 		
 	<p>Beispiel:</p>
 	<pre>
@@ -145,7 +145,6 @@ Technik :4
 );
 
 $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
-
 	1 => 'Kategorien gespeichert',
 	-1 => 'Ein Fehler ist beim Speichern der Kategorien aufgetreten',
 	2 => 'Alle Kategorien gelöscht',
@@ -167,5 +166,4 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'the' => 'Die',
 	'most_commented_entries' => 'meist kommentierten Beiträge'
 );
-
 ?>

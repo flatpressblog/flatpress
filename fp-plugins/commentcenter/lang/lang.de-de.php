@@ -46,14 +46,14 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'log_all' => 'Blockierte Kommentare protokollieren',
 	'log_all_long' => 'Aktiviere diese Option, wenn du auch blockierte Kommentare protokollieren möchtest.',
 	'email_alert' => 'Benachrichtigung per E-Mail',
-	'email_alert_long' => 'Wenn du einen Kommentar zum Genehmigen prüfen sollst, kannst du ' . 'über E-Mail informiert werden.',
+	'email_alert_long' => 'Wenn du einen Kommentar zum Genehmigen prüfen sollst, kannst du über E-Mail informiert werden.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Kommentar-Prüfung mit Akismet',
 	'akismet_use_long' => 'Mit <a href="https://akismet.com/" target="_blank">Akismet</a> kann man Spam in Kommentaren reduzieren.',
 	'akismet_key' => 'Akismet-Schlüssel',
 	'akismet_key_long' => 'Der <a href="https://akismet.com/signup/" target="_blank">Akismet-Dienst</a> stellt dir einen <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">Schlüssel</a> zur Verfügung. Füge diesen hier ein.',
 	'akismet_url' => 'Blog-URL für Akismet',
-	'akismet_url_long' => 'Für den kostenlosen Service von Akismet solltest du nur eine Domain verwenden. ' . 'Du kannst dieses Feld leer lassen. Es wird dann <code>%s</code> verwendet.',
+	'akismet_url_long' => 'Für den kostenlosen Service von Akismet solltest du nur eine Domain verwenden. Du kannst dieses Feld leer lassen. Es wird dann <code>%s</code> verwendet.',
 	'save_conf' => 'Einstellungen speichern',
 
 	// Edit policy page
@@ -66,7 +66,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'se_fill' => 'Bitte fülle die Felder mit der <a href="admin.php?p=entry">ID</a> der Beiträge aus (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Eigenschaften',
 	'po_desc' => 'Wenn du die Option %s ausgewählt hast, fülle bitte die Eigenschaften aus.',
-	'po_comp' => 'Die Felder sind nicht obligatorisch, aber du musst mindestens eines ausfüllen oder die Richtlinie ' . 'wird auf alle Beiträge gelten.',
+	'po_comp' => 'Die Felder sind nicht obligatorisch, aber du musst mindestens eines ausfüllen oder die Richtlinie wird auf alle Beiträge gelten.',
 	'po_time' => 'Zeiteinstellungen',
 	'po_older' => 'Auf Beiträge anwenden, die älter sind als ',
 	'days' => 'Tage.',
@@ -159,6 +159,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'Der gewählte Beitrag existiert nicht.'
 	)
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Sorry, wir stossen auf technische Schwierigkeiten.',
 	'lock' => 'Dieser Beitrag kann leider nicht kommentiert werden.',

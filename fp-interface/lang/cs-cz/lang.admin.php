@@ -18,9 +18,9 @@ $lang ['admin'] ['panels'] = array(
 );
 
 $lang ['admin'] ['general'] = array(
-	'id' => 'Id', # for entry ids
-	'name' => 'Jméno', # for file names
-	'title' => 'Nadpis', # for entry/posts/static titles
+	'id' => 'Id', // for entry ids
+	'name' => 'Jméno', // for file names
+	'title' => 'Nadpis', // for entry/posts/static titles
 	'comments' => '#Komentáře',
 	'author' => 'Autor',
 	'actdel' => 'Smazat',
@@ -30,5 +30,4 @@ $lang ['admin'] ['general'] = array(
 	'startpage' => 'Úvodní stránka',
 	'logout' => 'Odhlášení'
 );
-
 ?>

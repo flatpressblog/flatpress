@@ -159,6 +159,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'Den valgte post findes ikke.'
 	)
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Beklager, vi oplever tekniske problemer.',
 	'lock' => 'Beklager, dette indlæg kan ikke kommenteres.',
@@ -182,3 +183,4 @@ Genereres automatisk af
 %blogtitle%
 
 ';
+?>

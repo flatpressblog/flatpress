@@ -9,7 +9,7 @@ $lang['main'] = array(
 	'comment' => 'コメント',
 	'preview' => '編集/プレビュー',
 
-	'filed_under' => 'Filed under ',	
+	'filed_under' => 'Filed under ',
 
 	'add_entry' => 'ブログ記事の新規作成',
 	'add_comment' => 'コメントの追加',
@@ -22,7 +22,7 @@ $lang['main'] = array(
 	'comment' => '1コメントあります',
 	'comments' => 'コメントあります'
 );
-	
+
 $lang['search'] = array(
 	'head' => '検索',
 	'fset1'	=> '検索キーワードの指定',

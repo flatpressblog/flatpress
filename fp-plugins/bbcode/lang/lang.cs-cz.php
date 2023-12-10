@@ -1,11 +1,10 @@
 <?php
-
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Nastavení BBCode',
-	'desc1' => 'Tento plugin umožňuje používat <a href="https://wiki.flatpress.org/'.
+	'desc1' => 'Tento plugin umožňuje používat <a href="https://wiki.flatpress.org/' .
 		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a> na vašem blogu.',
-	
+
 	'options' => 'Nastavení',
 
 	'editing' => 'Úprava',
@@ -57,8 +56,6 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 		'go_to' => 'Přejít na',
-		// language tag for Facebook Video
-		'langtag' => 'cs_CZ'
+		'langtag' => 'cs_CZ' // language tag for Facebook Video
 );
-
 ?>

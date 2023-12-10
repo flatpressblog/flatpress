@@ -49,7 +49,6 @@ $lang ['search'] = array(
 );
 
 $lang ['search'] ['error'] = array(
-
 	'keywords' => 'Вы должны указать хотя бы одно ключевое слово'
 );
 
@@ -83,7 +82,6 @@ $lang ['entry'] ['flags'] ['short'] = array(
 $lang ['entry'] ['categories'] = array(
 	'unfiled' => 'Отсутствуют'
 );
-
 
 $lang ['404error'] = array(
 	'subject' => 'Не найдено',

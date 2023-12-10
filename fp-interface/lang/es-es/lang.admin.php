@@ -18,9 +18,9 @@ $lang ['admin'] ['panels'] = array(
 );
 
 $lang ['admin'] ['general'] = array(
-	'id' => 'Id', # for entry ids
-	'name' => 'Nombre', # for file names
-	'title' => 'Titulo', # for entry/posts/static titles
+	'id' => 'Id', // for entry ids
+	'name' => 'Nombre', // for file names
+	'title' => 'Titulo', // for entry/posts/static titles
 	'comments' => '#Comms',
 	'author' => 'Autor',
 	'actdel' => 'Eliminar',
@@ -30,5 +30,4 @@ $lang ['admin'] ['general'] = array(
 	'startpage' => 'Página inicial',
 	'logout' => 'Cerrar sesión'
 );
-
 ?>

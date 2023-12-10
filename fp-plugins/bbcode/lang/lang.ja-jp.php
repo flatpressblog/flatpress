@@ -1,5 +1,4 @@
 <?php
-
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'BBCodeの設定',
@@ -57,9 +56,6 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 		'go_to' => 'に行く',
-		// language tag for Facebook Video
-		'langtag' => 'ja_JP'
+		'langtag' => 'ja_JP' // language tag for Facebook Video
 );
-
-
 ?>

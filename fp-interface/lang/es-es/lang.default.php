@@ -8,48 +8,47 @@ $lang ['main'] = array(
 	'static' => 'Pagina Estatica',
 	'comment' => 'Comentario',
 	'preview' => 'Editar/Vista previa',
-	
+
 	'filed_under' => 'Archivado bajo ',	
-	
+
 	'add_entry' => 'Agregar Entrada',
 	'add_comment' => 'Agregar Comentario',
 	'add_static' => 'Agregar Pagina Estatica',
-	
+
 	'btn_edit' => 'Editar',
 	'btn_delete' => 'Borrar',
-	
+
 	'nocomments' => 'Agregar un Comentario',
 	'comment' => '1 comentario',
 	'comments' => 'comentarios'
 );
-	
+
 $lang ['search'] = array(
 	'head' => 'Buscar',
 	'fset1' => 'Insertar criterios de búsqueda',
 	'keywords' => 'Frase',
 	'onlytitles' => 'Solo Títulos',
 	'fulltext' => 'Text Completo',
-	
+
 	'fset2'	=> 'Date',
 	'datedescr'	=> 'Puede vincular su búsqueda a una fecha específica. Puede seleccionar un año, un año y un mes o una fecha completa. ' . 'Déjelo en blanco para buscar en toda la base de datos.',
-	
+
 	'fset3' => 'Buscar en categorías',
 	'catdescr' => 'No seleccione ninguno para buscar todos',
-	
+
 	'fset4' => 'Empezar a buscar',
 	'submit' => 'Buscar',
-	
+
 	'headres' => 'Resultados de la búsqueda',
 	'descrres' => 'Searching for <strong>%s</strong> returned the following results:',
 	'descrnores' => 'Buscando <strong>%s</strong> no devolvió ningún resultado.',
-	
+
 	'moreopts' => 'Más Opciones',
-	
+
 	'searchag' => 'Busca de nuevo'
 );
 
 $lang ['search'] ['error'] = array(
-
 	'keywords' => 'Debe especificar al menos una palabra clave'
 );
 
@@ -88,14 +87,14 @@ $lang ['404error'] = array(
 	'subject' => 'No encontrado',
 	'content' => '<p>Lo sentimos, no pudimos encontrar la página solicitada</p>'
 );
-	
+
 // Login
 $lang ['login'] = array(
 	'head' => 'Iniciar sesión',
-	'fieldset1'	=> 'Inserte su nombre de usuario y contraseña',
+	'fieldset1' => 'Inserte su nombre de usuario y contraseña',
 	'user' => 'Usuario:',
 	'pass' => 'Contraseña:',
-	'fieldset2'	=> 'Inicie sesión',
+	'fieldset2' => 'Inicie sesión',
 	'submit' => 'Iniciar sesión',
 	'forgot' => 'Contraseña perdida'
 );
@@ -118,19 +117,19 @@ $lang ['login'] ['error'] = array(
 $lang ['comments'] = array(
 	'head' => 'Agregar comentario',
 	'descr' => 'Complete el siguiente formulario para agregar sus propios comentarios',
-	'fieldset1'	=> 'Datos del usuario',
+	'fieldset1' => 'Datos del usuario',
 	'name' => 'Nombre (*)',
 	'email' => 'Email:',
 	'www' => 'Web:',
 	'cookie' => 'Recuérdame',
-	'fieldset2'	=> 'Añade tu comentario',
+	'fieldset2' => 'Añade tu comentario',
 	'comment' => 'Comentario (*):',
-	'fieldset3'	=> 'Enviar',
+	'fieldset3' => 'Enviar',
 	'submit' => 'Agregar',
 	'reset' => 'Reiniciar',
 	'success' => 'Tu comentario fue agregado exitosamente',
 	'nocomments' => 'Esta entrada aún no ha sido comentada',
-	'commslock'	=> 'Los comentarios han sido desactivados para esta entrada.'
+	'commslock' => 'Los comentarios han sido desactivados para esta entrada.'
 );
 
 $lang ['comments'] ['error'] = array(
@@ -139,7 +138,7 @@ $lang ['comments'] ['error'] = array(
 	'www' => 'Debes ingresar una URL válida',
 	'comment' => 'Debes ingresar un comentario'
 );
-	
+
 $lang ['postviews'] = array(
 	// PostView-Plugin
 	'views' => 'Llamadas'

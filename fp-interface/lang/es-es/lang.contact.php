@@ -11,7 +11,7 @@ $lang ['contact'] = array(
 	'comment' => 'Mensaje (*):',
 	'fieldset3' => 'Enviar',
 	'submit' => 'Enviar',
-	'reset' => 'Reiniciar',	
+	'reset' => 'Reiniciar',
 );
 
 $lang ['contact'] ['notification'] = array(

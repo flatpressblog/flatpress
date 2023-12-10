@@ -49,13 +49,12 @@ $lang ['search'] = array(
 );
 
 $lang ['search'] ['error'] = array(
-
 	'keywords' => 'You must specify at least one keyword'
 );
 
 $lang ['staticauthor'] = array(
 	// "Published by" in static pages
-	'published_by'	=> 'Published by',
+	'published_by' => 'Published by',
 	'on' => 'on'
 );
 

@@ -49,7 +49,6 @@ $lang ['search'] = array(
 );
 
 $lang ['search'] ['error'] = array(
-
 	'keywords' => 'Je moet tenminste 1 zoekwoord invullen'
 );
 

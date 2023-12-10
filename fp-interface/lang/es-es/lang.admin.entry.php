@@ -7,10 +7,10 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 );
 
 /* default action */
-
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Administrar entradas',
-	'descr' => 'Seleccione una entrada para editar o <a href="admin.php?p=entry&amp;action=write">Añadir nueva</a>' . '<br /><a href="admin.php?p=entry&amp;action=cats">Editar las categorías</a>',
+	'descr' => 'Seleccione una entrada para editar o <a href="admin.php?p=entry&amp;action=write">Añadir nueva</a><br>' .
+		'<a href="admin.php?p=entry&amp;action=cats">Editar las categorías</a>',
 	'drafts' => 'Borradores: ',
 	'filter' => 'Filtrar: ',
 	'nofilter' => 'Mostrar todo',
@@ -19,7 +19,7 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'date' => 'Fecha',
 	'title' => 'Título',
 	'author' => 'Autor',
-	'comms' => '#Comms', // comments
+	'comms' => 'Comms', // comments
 	'action' => 'Action',
 	'act_del' => 'Eliminar',
 	'act_view' => 'Ver',
@@ -39,7 +39,8 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'vista previa',
 	'savecontinue' => 'Guardar&amp;Continuar',
 	'categories' => 'Categorias',
-	'nocategories' => 'categorías no establecidas. <a href="admin.php?p=entry&amp;action=cats">Cree sus propias' . 'categorias</a> desde el panel de entrada principal. ' . '<a href="#save">Guarde</a> primero su entrada.',
+	'nocategories' => 'categorías no establecidas. <a href="admin.php?p=entry&amp;action=cats">Cree sus propias categorias</a> desde el panel de entrada principal. ' .
+		'<a href="#save">Guarde</a> primero su entrada.',
 	'saveopts' => 'Guardar opciones',
 	'success' => 'Su entrada fue publicada correctamente',
 	'otheropts' => 'Otras opciones',
@@ -50,11 +51,9 @@ $lang ['admin'] ['entry'] ['write'] = array(
 
 $lang ['admin'] ['entry'] ['list'] ['msgs'] = array(
 	1 => 'La entrada se ha guardado correctamente',
-	-1 => 'Se produjo un error al intentar guardar 
-					la entrada',
+	-1 => 'Se produjo un error al intentar guardar la entrada',
 	2 => 'La entrada se eliminó correctamente',
-	-2 => 'Se produjo un error al intentar eliminar 
-					la entrada'
+	-2 => 'Se produjo un error al intentar eliminar la entrada'
 );
 
 $lang ['admin'] ['entry'] ['write'] ['error'] = array(
@@ -72,9 +71,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 );
 
 /* comments */
-
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => "Comentarios para la entrada ",
+	'head' => 'Comentarios para la entrada ',
 	'descr' => 'Seleccione un comentario para eliminar',
 	'sel' => 'Sel',
 	'content' => 'Contenido',
@@ -91,12 +89,11 @@ $lang ['admin'] ['entry'] ['commentlist'] = array(
 
 $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 	1 => 'El comentario se ha eliminado correctamente',
-	-1 => 'Ocurrió un error al intentar eliminar 
-					el comentario'
+	-1 => 'Ocurrió un error al intentar eliminar el comentario'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => "Editar comentario para entrada",
+	'head' => 'Editar comentario para entrada',
 	'content' => 'Contenido',
 	'date' => 'Fecha',
 	'author' => 'Autor',
@@ -113,7 +110,6 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 );
 
 /* delete action */
-
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Eliminar entrada',
 	'descr' => 'Estás a punto de eliminar la siguiente entrada:',
@@ -126,10 +122,10 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 );
 
 /* category mgmt */
-
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Editar categorias',
-	'descr' => '<p>Utilice el formulario a continuación para agregar y editar sus categorías. </p><p>Cada elemento de categoría debe tener este formato "nombre de categoría: <em>id_number</em>". Indentar los elementos con guiones para crear jerarquías.</p>
+	'descr' => '<p>Utilice el formulario a continuación para agregar y editar sus categorías.</p>' .
+		'<p>Cada elemento de categoría debe tener este formato "nombre de categoría: <em>id_number</em>". Indentar los elementos con guiones para crear jerarquías.</p>
 		
 	<p>Ejemplo:</p>
 	<pre>
@@ -148,7 +144,6 @@ Technology :6
 );
 
 $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
-
 	1 => 'Categorías guardadas',
 	-1 => 'Se produjo un error al intentar guardar categorías',
 	2 => 'Categorías vacías',
@@ -170,5 +165,4 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'the' => 'Las',
 	'most_commented_entries' => 'entradas más comentadas'
 );
-
 ?>

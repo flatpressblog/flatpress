@@ -1,5 +1,5 @@
 <?php
-$lang['admin']['entry']['submenu'] = array(
+$lang ['admin'] ['entry'] ['submenu'] = array(
     'list' => 'Upravljanje Vnosov',
     'write' => 'Napiši Vnos',
     'cats' => 'Upravljanje Kategorij',
@@ -7,10 +7,10 @@ $lang['admin']['entry']['submenu'] = array(
 );
 
 /* privzeta dejanja */
-
-$lang['admin']['entry']['list'] = array(
+$lang ['admin'] ['entry'] ['list'] = array(
     'head' => 'Upravljanje Vnosov',
-    'descr' => 'Izberite vnos za urejanje ali <a href="admin.php?p=entry&amp;action=write">dodajte novega</a>' . '<br /><a href="admin.php?p=entry&amp;action=cats">Uredi kategorije</a>',
+    'descr' => 'Izberite vnos za urejanje ali <a href="admin.php?p=entry&amp;action=write">dodajte novega</a><br>' .
+		'<a href="admin.php?p=entry&amp;action=cats">Uredi kategorije</a>',
     'drafts' => 'Osnutki: ',
     'filter' => 'Filter: ',
     'nofilter' => 'Prikaži vse',
@@ -27,8 +27,7 @@ $lang['admin']['entry']['list'] = array(
 );
 
 /* dejanje pisanja */
-
-$lang['admin']['entry']['write'] = array(
+$lang ['admin'] ['entry'] ['write'] = array(
     'head' => 'Napiši Vnos',
     'descr' => 'Uredi obrazec za pisanje vnosa',
     'uploader' => 'Nalagalnik',
@@ -40,7 +39,8 @@ $lang['admin']['entry']['write'] = array(
     'preview' => 'Predogled',
     'savecontinue' => 'Shrani in Nadaljuj',
     'categories' => 'Kategorije',
-    'nocategories' => 'Niso nastavljene kategorije. <a href="admin.php?p=entry&amp;action=cats">Ustvarite svoje ' . 'kategorije</a> iz glavnega upravljalskega okna vnosa. ' . '<a href="#save">Najprej shranite</a> svoj vnos.',
+    'nocategories' => 'Niso nastavljene kategorije. <a href="admin.php?p=entry&amp;action=cats">Ustvarite svoje kategorije</a> iz glavnega upravljalskega okna vnosa. ' .
+		'<a href="#save">Najprej shranite</a> svoj vnos.',
     'saveopts' => 'Možnosti shranjevanja',
     'success' => 'Vaš vnos je bil uspešno objavljen',
     'otheropts' => 'Druge možnosti',
@@ -49,19 +49,19 @@ $lang['admin']['entry']['write'] = array(
     // 'back' => 'Nazaj, zavrzi spremembe',
 );
 
-$lang['admin']['entry']['list']['msgs'] = array(
+$lang ['admin'] ['entry'] ['list'] ['msgs'] = array(
     1 => 'Vnos je bil uspešno shranjen',
     -1 => 'Prišlo je do napake med poskusom shranjevanja vnosa',
     2 => 'Vnos je bil uspešno izbrisan',
     -2 => 'Prišlo je do napake med poskusom brisanja vnosa'
 );
 
-$lang['admin']['entry']['write']['error'] = array(
+$lang ['admin'] ['entry'] ['write'] ['error'] = array(
     'subject' => 'Ne morete poslati prazne zadeve',
     'content' => 'Ne morete objaviti praznega vnosa'
 );
 
-$lang['admin']['entry']['write']['msgs'] = array(
+$lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
     1 => 'Vnos je bil uspešno shranjen',
     -1 => 'Prišlo je do napake: vaš vnos ni bil uspešno shranjen',
     -2 => 'Prišlo je do napake: vaš vnos ni bil shranjen; indeks bi se lahko pokvaril',
@@ -71,9 +71,8 @@ $lang['admin']['entry']['write']['msgs'] = array(
 );
 
 /* komentarji */
-
-$lang['admin']['entry']['commentlist'] = array(
-    'head' => "Komentarji za vnos ",
+$lang ['admin'] ['entry'] ['commentlist'] = array(
+    'head' => 'Komentarji za vnos ',
     'descr' => 'Izberite komentar za izbris',
     'sel' => 'Izberi',
     'content' => 'Vsebina',
@@ -88,13 +87,13 @@ $lang['admin']['entry']['commentlist'] = array(
     'nocomments' => 'Za ta vnos še ni komentarjev.'
 );
 
-$lang['admin']['entry']['commentlist']['msgs'] = array(
+$lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
     1 => 'Komentar je bil uspešno izbrisan',
     -1 => 'Prišlo je do napake med poskusom brisanja komentarja'
 );
 
-$lang['admin']['entry']['commedit'] = array(
-    'head' => "Uredi komentar za vnos",
+$lang ['admin'] ['entry'] ['commedit'] = array(
+    'head' => 'Uredi komentar za vnos',
     'content' => 'Vsebina',
     'date' => 'Datum',
     'author' => 'Avtor',
@@ -105,14 +104,13 @@ $lang['admin']['entry']['commedit'] = array(
     'submit' => 'Shrani'
 );
 
-$lang['admin']['entry']['commedit']['msgs'] = array(
+$lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
     1 => 'Komentar je bil urejen',
     -1 => 'Prišlo je do napake med poskusom urejanja komentarja'
 );
 
 /* brisanje dejanja */
-
-$lang['admin']['entry']['delete'] = array(
+$lang ['admin'] ['entry'] ['delete'] = array(
     'head' => 'Izbriši Vnos',
     'descr' => 'Izbrisali boste naslednji vnos:',
     'preview' => 'Predogled',
@@ -124,10 +122,10 @@ $lang['admin']['entry']['delete'] = array(
 );
 
 /* upravljanje kategorij */
-
-$lang['admin']['entry']['cats'] = array(
+$lang ['admin'] ['entry'] ['cats'] = array(
     'head' => 'Uredi kategorije',
-    'descr' => '<p>Uporabite obrazec spodaj za dodajanje in urejanje vaših kategorij. </p><p>Vsaka postavka kategorije mora biti v tem formatu "ime kategorije: <em>številka_id</em>". Indentirajte elemente z vezaji, da ustvarite hierarhije.</p>
+    'descr' => '<p>Uporabite obrazec spodaj za dodajanje in urejanje vaših kategorij.</p>' .
+		'<p>Vsaka postavka kategorije mora biti v tem formatu "ime kategorije: <em>številka_id</em>". Indentirajte elemente z vezaji, da ustvarite hierarhije.</p>
 
     <p>Primer:</p>
     <pre>
@@ -145,7 +143,7 @@ Tehnologija :6
     'submit' => 'Shrani'
 );
 
-$lang['admin']['entry']['cats']['msgs'] = array(
+$lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
     1 => 'Kategorije so bile shranjene',
     -1 => 'Prišlo je do napake med poskusom shranjevanja kategorij',
     2 => 'Kategorije so bile izbrisane',
@@ -154,7 +152,7 @@ $lang['admin']['entry']['cats']['msgs'] = array(
 );
 
 /* statistika */
-$lang['admin']['entry']['stats'] = array(
+$lang ['admin'] ['entry'] ['stats'] = array(
     'head' => 'Statistika',
     'vnosi' => 'Vnosi',
     'imate' => 'Imate',
@@ -167,5 +165,4 @@ $lang['admin']['entry']['stats'] = array(
     'naj' => 'Naj',
     'najbolj_komentirani_vnosi' => 'najbolj komentirani vnosi'
 );
-
 ?>

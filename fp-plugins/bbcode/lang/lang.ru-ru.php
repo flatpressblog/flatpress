@@ -1,10 +1,9 @@
 <?php
-
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Конфигурация BBCode',
 	'desc1' => 'Этот плагин позволяет использовать разметку <a href="https://wiki.flatpress.org/doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a>.',
-	
+
 	'options' => 'Опции',
 
 	'editing' => 'Редактирование',
@@ -56,8 +55,6 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 		'go_to' => 'Перейти к',
-		// language tag for Facebook Video
-		'langtag' => 'ru_RU'
+		'langtag' => 'ru_RU' // language tag for Facebook Video
 );
-
 ?>

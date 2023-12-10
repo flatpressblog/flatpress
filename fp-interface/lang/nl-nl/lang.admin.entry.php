@@ -7,10 +7,10 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 );
 
 /* default action */
-
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Vermeldingen beheren',
-	'descr' => 'Selecteer een vermelding om te bewerken of<a href="admin.php?p=entry&amp;action=write"> voeg nieuw toe</a>' . '<br /><a href="admin.php?p=entry&amp;action=cats">De categorie bewerken</a>',
+	'descr' => 'Selecteer een vermelding om te bewerken of<a href="admin.php?p=entry&amp;action=write"> voeg nieuw toe</a><br>' .
+		'<a href="admin.php?p=entry&amp;action=cats">De categorie bewerken</a>',
 	'drafts' => 'Concepten: ',
 	'filter' => 'Filter: ',
 	'nofilter' => 'Alles weergeven',
@@ -19,7 +19,7 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'date' => 'Datum',
 	'title' => 'Titel',
 	'author' => 'Auteur',
-	'comms' => '#Comm', // comments
+	'comms' => 'Comm', // comments
 	'action' => 'Actie',
 	'act_del' => 'Verwijder',
 	'act_view' => 'Toon',
@@ -39,7 +39,8 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Voorbeeld',
 	'savecontinue' => 'Opslaan en doorgaan',
 	'categories' => 'Categorie',
-	'nocategories' => 'Geen categorie set. <a href="admin.php?p=entry&amp;action=cats">Maak je eigen ' . 'categorie</a> vanuit het hoofdinvoerpaneel. ' . '<a href="#save">Bewaar</a> uw vermelding eerst.',
+	'nocategories' => 'Geen categorie set. <a href="admin.php?p=entry&amp;action=cats">Maak je eigen categorie</a> vanuit het hoofdinvoerpaneel. ' .
+		'<a href="#save">Bewaar</a> uw vermelding eerst.',
 	'saveopts' => 'Opties voor opslaan',
 	'success' => 'Uw bericht is succesvol gepubliceerd',
 	'otheropts' => 'Andere opties',
@@ -50,11 +51,9 @@ $lang ['admin'] ['entry'] ['write'] = array(
 
 $lang ['admin'] ['entry'] ['list'] ['msgs'] = array(
 	1 => 'Vermelding is opgeslagen',
-	-1 => 'Er is een fout opgetreden tijdens het opslaan 
-					van de vermelding',
+	-1 => 'Er is een fout opgetreden tijdens het opslaan van de vermelding',
 	2 => 'Vermelding is verwijderd',
-	-2 => 'Er is een fout opgetreden tijdens het verwijderen 
-					van de vermelding'
+	-2 => 'Er is een fout opgetreden tijdens het verwijderen van de vermelding'
 );
 
 $lang ['admin'] ['entry'] ['write'] ['error'] = array(
@@ -72,7 +71,6 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 );
 
 /* comments */
-
 $lang ['admin'] ['entry'] ['commentlist'] = array(
 	'head' => 'Commentaar voor vermelding',
 	'descr' => 'Selecteer een commentaar die je wilt verwijderen',
@@ -91,8 +89,7 @@ $lang ['admin'] ['entry'] ['commentlist'] = array(
 
 $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 	1 => 'Commentaar is verwijderd',
-	-1 => 'Er is een fout opgetreden tijdens het verwijderen 
-					van het commentaar'
+	-1 => 'Er is een fout opgetreden tijdens het verwijderen van het commentaar'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
@@ -113,7 +110,6 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 );
 
 /* delete action */
-
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Verwijder vermelding',
 	'descr' => 'U staat op het punt de volgende vermelding te verwijderen:',
@@ -126,10 +122,10 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 );
 
 /* category mgmt */
-
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Categorie bewerken',
-	'descr' => '<p>Gebruik het onderstaande formulier om uw categorie toe te voegen en te bewerken. </p><p>Elk categorie-item moet in deze indeling zijn "categorie naam: <em>id_number</em>". Items met streepjes springen in.</p>
+	'descr' => '<p>Gebruik het onderstaande formulier om uw categorie toe te voegen en te bewerken.</p>' .
+		'<p>Elk categorie-item moet in deze indeling zijn "categorie naam: <em>id_number</em>". Items met streepjes springen in.</p>
 		
 	<p>Example:</p>
 	<pre>
@@ -148,7 +144,6 @@ Technology :6
 );
 
 $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
-
 	1 => 'Categorie bewaard',
 	-1 => 'Er is een fout opgetreden tijdens het opslaan van categorie',
 	2 => 'Categorie gewist',
@@ -170,5 +165,4 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'the' => 'De',
 	'most_commented_entries' => 'meest becommentarieerde inzendingen'
 );
-
 ?>

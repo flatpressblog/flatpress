@@ -1,13 +1,12 @@
 <?php
-
-$lang['plugin']['qspam'] = array(
+$lang ['plugin'] ['qspam'] = array(
 	'error' => 'ОШИБКА: Комментарий содержит запрещенные слова'
 );
 
-$lang['admin']['plugin']['submenu']['qspam'] = 'QuickSpamFilter';
-$lang['admin']['plugin']['qspam'] = array(
+$lang ['admin'] ['plugin'] ['submenu'] ['qspam'] = 'QuickSpamFilter';
+$lang ['admin'] ['plugin'] ['qspam'] = array(
 	'head' => 'Конфигурация QuickSpam',
-	'desc1' => 'Не допускаются комментарии, содержащие эти слова (пишите по одному в строке) :',
+	'desc1' => 'Не допускаются комментарии, содержащие эти слова (пишите по одному в строке):',
 	'desc2' => '<strong>Предупреждение:</strong> Комментарий будет запрещен даже в том случае, если одно слово является частью другого. 
 	
 	(Например, "ток" содержится в "ка<em>ток</em>")',
@@ -21,5 +20,4 @@ $lang['admin']['plugin']['qspam'] = array(
 		-1 => 'Плохие слова не сохранены.'
 	)
 );
-
 ?>

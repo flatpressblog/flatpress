@@ -1,6 +1,6 @@
 <?php
-$lang['plugin']['categories'] = array(
-	'subject'	=> 'Kategorie',
-	'in' => 'v'	
-	);
+$lang ['plugin'] ['categories'] = array(
+	'subject' => 'Kategorie',
+	'in' => 'v'
+);
 ?>

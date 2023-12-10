@@ -46,14 +46,14 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'log_all' => 'Registrar comentarios bloqueados',
 	'log_all_long' => 'Active esta opción si también desea registrar los comentarios bloqueados.',
 	'email_alert' => 'Notificación por correo electrónico',
-	'email_alert_long' => 'Si necesita comprobar un comentario para su aprobación, puede ' . ' por correo electrónico.',
+	'email_alert_long' => 'Si necesita comprobar un comentario para su aprobación, puede por correo electrónico.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Comprobación de comentarios con Akismet',
 	'akismet_use_long' => 'Con <a href="https://akismet.com/" target="_blank">Akismet</a> puedes reducir el spam en los comentarios.',
 	'akismet_key' => 'Clave Akismet',
 	'akismet_key_long' => 'El servicio <a href="https://akismet.com/signup/" target="_blank">Akismet</a> le proporciona una <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">clave</a>. Insértalo aquí.',
 	'akismet_url' => 'URL del blog para Akismet',
-	'akismet_url_long' => 'Sólo debe utilizar un dominio para el servicio gratuito Akismet. ' . 'Puede dejar este campo vacío. A continuación se utiliza el <code>%s</code>.',
+	'akismet_url_long' => 'Sólo debe utilizar un dominio para el servicio gratuito Akismet. Puede dejar este campo vacío. A continuación se utiliza el <code>%s</code>.',
 	'save_conf' => 'Guardar ajustes',
 
 	// Edit policy page
@@ -66,7 +66,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'se_fill' => 'Por favor, rellene los campos con el <a href="admin.php?p=entry">ID</a> de las entradas (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Propiedades',
 	'po_desc' => 'Si ha seleccionado la opción %s, rellene las propiedades.',
-	'po_comp' => 'Los campos no son obligatorios, pero debe rellenar al menos uno o la política ' . 'se aplicará a todos los mensajes.',
+	'po_comp' => 'Los campos no son obligatorios, pero debe rellenar al menos uno o la política se aplicará a todos los mensajes.',
 	'po_time' => 'Ajustes de tiempo',
 	'po_older' => 'Se aplica a los mensajes con más de ',
 	'days' => 'días de antigüedad.',
@@ -159,6 +159,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'La entrada seleccionada no existe.'
 	)
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Lo sentimos, estamos experimentando dificultades técnicas.',
 	'lock' => 'Lo sentimos, este post no se puede comentar.',

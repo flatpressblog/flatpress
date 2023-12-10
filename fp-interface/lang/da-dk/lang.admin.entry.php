@@ -72,7 +72,7 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 /* comments */
 
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => "Kommentarer til indlægget: ",
+	'head' => 'Kommentarer til indlægget: ',
 	'descr' => 'Vælg venligst kommentar, der skal slettes',
 	'sel' => 'Sel',
 	'content' => 'Indhold',
@@ -93,7 +93,7 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => "Rediger kommentar til indlæg",
+	'head' => 'Rediger kommentar til indlæg',
 	'content' => 'Kommentar indhold',
 	'date' => 'Dato',
 	'author' => 'Forfatter',

@@ -9,3 +9,4 @@ $lang ['plugin'] ['adminarea'] = array(
 	'login' => 'Connexion',
 	'logout' => 'Déconnexion'
 );
+?>

@@ -1,11 +1,10 @@
 <?php
-
 $lang['admin']['plugin']['submenu']['bbcode'] = 'BBCode';
 $lang['admin']['plugin']['bbcode'] = array(
 	'head' => 'Konfiguracija BBCode',
-	'desc1' => 'Ta vtičnik omogoča uporabo <a href="https://wiki.flatpress.org/'.
+	'desc1' => 'Ta vtičnik omogoča uporabo <a href="https://wiki.flatpress.org/' .
 		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a> označevanja.',
-	
+
 	'options' => 'Možnosti',
 
 	'editing' => 'Urejanje',
@@ -56,5 +55,4 @@ $lang['plugin']['bbcode'] = array (
 	'go_to' => 'Pojdi na',
 	'langtag' => 'sl_SI' // Language tag for Facebook Video
 );
-
 ?>

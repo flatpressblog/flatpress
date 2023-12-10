@@ -9,7 +9,7 @@ $lang ['main'] = array(
 	'comment' => 'Komentář',
 	'preview' => 'Upravit/Náhled',
 
-	'filed_under' => 'Pole pod ',	
+	'filed_under' => 'Pole pod ',
 
 	'add_entry' => 'Přidat příspěvek',
 	'add_comment' => 'Přidat komentář',
@@ -47,12 +47,11 @@ $lang ['search'] = array(
 
 	'searchag' => 'Hledej znovu',
 );
-	
+
 $lang ['search'] ['error'] = array(
-	
 	'keywords' => 'Musíš zadat aspoň jedno klíčové slovo'
 );
-	
+
 $lang ['staticauthor'] = array(
 	// "Published by" in static pages
 	'published_by' => 'Vydal',
@@ -61,7 +60,7 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by'	=> 'Vložil',
+	'posted_by' => 'Vložil',
 	'at' => 'na'
 );
 
@@ -84,7 +83,6 @@ $lang ['entry'] ['categories'] = array(
 	'unfiled' => 'Není uloženo'
 );
 
-
 $lang ['404error'] = array(
 	'subject' => 'Nenalezeno',
 	'content' => '<p>Stránka kterou hledáte, nebyla nalezena</p>'
@@ -93,10 +91,10 @@ $lang ['404error'] = array(
 // Login
 $lang ['login'] = array(
 	'head' => 'Přihlásit',
-	'fieldset1'	=> 'Zadej svoje přihlašovací jméno a heslo',
+	'fieldset1' => 'Zadej svoje přihlašovací jméno a heslo',
 	'user' => 'Přihlašovací jméno:',
 	'pass' => 'Heslo:',
-	'fieldset2'	=> 'Přihlaš',
+	'fieldset2' => 'Přihlaš',
 	'submit' => 'Přihlásit',
 	'forgot' => 'Zapomenuté heslo'
 );
@@ -119,19 +117,19 @@ $lang ['login'] ['error'] = array(
 $lang ['comments'] = array(
 	'head' => 'Přidat komentář',
 	'descr' => 'Pro přidání komentáře vyplňte formulář níže',
-	'fieldset1'	=> 'Uživatelova data',
+	'fieldset1' => 'Uživatelova data',
 	'name' => 'Jméno (*)',
 	'email' => 'Email:',
 	'www' => 'Web:',
 	'cookie' => 'Pamatovat si',
-	'fieldset2'	=> 'Přidat komentář',
+	'fieldset2' => 'Přidat komentář',
 	'comment' => 'Komentář (*):',
-	'fieldset3'	=> 'Poslat',
+	'fieldset3' => 'Poslat',
 	'submit' => 'Přidat',
 	'reset' => 'Reset',
 	'success' => 'Váš komentář byl úspěšně přidaný',
 	'nocomments' => 'Tento příspěvek ještě nebyl okomentovaný',
-	'commslock'	=> 'Pro tento příspěvek byli komentáře vypnuté.'
+	'commslock' => 'Pro tento příspěvek byli komentáře vypnuté.'
 );
 
 $lang ['comments'] ['error'] = array(
