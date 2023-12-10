@@ -8,7 +8,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'syswarning' => '<big>¡Advertencia!</big> Estas informaciones son críticas y deben ser correctas, o FlatPress (probablemente) se negará a funcionar correctamente.',
 	'blog_root' => '<strong>Path absoluto a FlatPress</strong>. Nota: ' .
 		'generalmente no tendrá que editar esto, de todos modos tenga cuidado, porque no podemos verificar si es correcto o no.',
-	'www' =>'<strong>Blog root</strong>. URL hacia su blog, completo con subdirectorios. <br>' .
+	'www' => '<strong>Blog root</strong>. URL hacia su blog, completo con subdirectorios. <br>' .
 		'e.g.: http://www.mydomain.com/flatpress/ (trailing slash needed)',
 
 	// ------
@@ -54,6 +54,6 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => 'Debe insertar el formato para la fecha',
 	'dateformatshort' => 'Debe insertar el formato para la fecha (corto)',
 	'charset' => 'Debe insertar un ID de set de caracteres',
-	'lang' => 'El idioma que eligió no está disponible
+	'lang' => 'El idioma que eligió no está disponible'
 );
 ?>
