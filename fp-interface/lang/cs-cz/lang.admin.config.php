@@ -8,7 +8,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'syswarning' => '<big>Varování!</big> Tyto informace jsou důležité a musí být správné, jinak nemusí Flatpress fungovat správně.',
 	'blog_root' => '<strong>Absolutní cesta k FlatPressu</strong>. Poznámka: ' .
 		'většinou to nebudeš potřebovaa měnit, každopádně buď opatrný, protože neumíme ověřit správnost',
-	'www' =>'<strong>Blog root</strong>. URL tvého blogu, kompletní cesta i s podadresáři.<br>' .
+	'www' => '<strong>Blog root</strong>. URL tvého blogu, kompletní cesta i s podadresáři.<br>' .
 		'např.: http://www.mydomain.com/flatpress/ (koncové lomítko je potřebné)',
 
 	// ------
