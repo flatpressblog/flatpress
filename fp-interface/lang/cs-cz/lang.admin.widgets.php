@@ -22,7 +22,7 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'themewdgs' => 'Widgety pro tento motiv',
 	'themewdgsdescr' => 'K motivu, který jste právě vybrali, patří tyto widgety',
 	'oldwdgs' => 'Salší widgety',
-	'oldwdgsdescr' => 'Tento widget zřejmě nepatří mezi widgety uvedené výše.' .
+	'oldwdgsdescr' => 'Tento widget zřejmě nepatří mezi widgety uvedené výše. ' .
 		'Může to být pozůstatek z jiného motivu.',
 
 	'submit' => 'Uložit změny'
