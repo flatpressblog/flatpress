@@ -3,11 +3,11 @@
 /* http://ingeniebrios.com/fp-content/attachs/mediamanager_es-la.zip */
 
 /* ¡Esta línea no debería estar aquí! */
-$lang['admin']['uploader']['submenu']['default'] = 'Subir archivos';
+$lang ['admin'] ['uploader'] ['submenu'] ['default'] = 'Subir archivos';
 
-$lang['admin']['uploader']['submenu']['mediamanager'] = 'Administrar Media';
+$lang ['admin'] ['uploader'] ['submenu'] ['mediamanager'] = 'Administrar Media';
 
-$lang['admin']['uploader']['mediamanager'] = array(
+$lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Administrar Media',
 	'description' => 'Administrador de media',
 
@@ -30,7 +30,7 @@ $lang['admin']['uploader']['mediamanager'] = array(
 	'add' => 'Agregar'
 );
 
-$lang['admin']['uploader']['mediamanager']['msgs'] = array(
+$lang ['admin'] ['uploader'] ['mediamanager'] ['msgs'] = array(
 	3 => 'Nueva galería creada',
 	2 => 'Imágenes movidas a galería',
 	1 => 'Archivo eliminado',

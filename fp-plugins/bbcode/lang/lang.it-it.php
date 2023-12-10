@@ -4,7 +4,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Configurazione BBCode',
 	'desc1' => 'Questo plugin ti consente di usare <a href="https://wiki.flatpress.org/' .
 		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a> come markup.',
-	
+
 	'options' => 'Opzioni',
 
 	'editing' => 'Modifica',
@@ -55,7 +55,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'Vai a',
-		'langtag' => 'it_IT' // language tag for Facebook Video
+	'go_to' => 'Vai a',
+	'langtag' => 'it_IT' // language tag for Facebook Video
 );
 ?>

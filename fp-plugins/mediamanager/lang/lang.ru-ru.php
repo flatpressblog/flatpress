@@ -1,9 +1,9 @@
 <?php
-$lang['admin']['uploader']['submenu']['default'] = 'Загрузка файлов';
+$lang ['admin'] ['uploader'] ['submenu'] ['default'] = 'Загрузка файлов';
 
-$lang['admin']['uploader']['submenu']['mediamanager'] = 'Медиа-менеджер';
+$lang ['admin'] ['uploader'] ['submenu'] ['mediamanager'] = 'Медиа-менеджер';
 
-$lang['admin']['uploader']['mediamanager'] = array(
+$lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Медиа-менеджер',
 	'description' => 'Управление Вашими медиа-файлами',
 
@@ -26,7 +26,7 @@ $lang['admin']['uploader']['mediamanager'] = array(
 	'add' => 'Добавить'
 );
 
-$lang['admin']['uploader']['mediamanager']['msgs'] = array(
+$lang ['admin'] ['uploader'] ['mediamanager'] ['msgs'] = array(
 	3 => 'Создана новая галерея',
 	2 => 'Изображения перемещены в галерею',
 	1 => 'Файл удален',

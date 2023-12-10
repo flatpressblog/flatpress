@@ -3,7 +3,7 @@ $lang ['plugin'] ['prettyurls'] ['errors'] = array (
 	-2 => 'Я не могу найти или создать файл <code>.htaccess</code> в вашем корневом каталоге ' .
 		'PrettyURLs может работать некорректно, см. панель конфигурации.'
 );
-	
+
 $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'Конфигурация PrettyURLs';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'Конфигурация PrettyURLs',

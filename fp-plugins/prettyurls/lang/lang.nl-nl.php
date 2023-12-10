@@ -1,11 +1,11 @@
 <?php
-$lang['plugin']['prettyurls']['errors'] = array (
+$lang ['plugin'] ['prettyurls'] ['errors'] = array (
 	-2 => 'Ik vind geen of kan geen <code>.htaccess</code> bestand maken in jouw root ' .
 		'directorie. PrettyURLs might not work properly, ie het configuratie menu.'
 );
 
-$lang['admin']['plugin']['submenu']['prettyurls'] = 'PrettyURLs Configuratie';
-$lang['admin']['plugin']['prettyurls'] = array(
+$lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLs Configuratie';
+$lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'PrettyURLs Configuratie',
 	'htaccess' => '.htaccess',
 	'description' => 'Met deze onbewerkte editor kunt u uw <code>.htaccess</code>.',
@@ -25,7 +25,7 @@ $lang['admin']['plugin']['prettyurls'] = array(
 	'submit' => 'Bewaar .htaccess'
 );
 
-$lang['admin']['plugin']['prettyurls']['msgs'] = array(
+$lang ['admin'] ['plugin'] ['prettyurls'] ['msgs'] = array(
 	1 => '.htaccess opgeslagen',
 	-1 => '.htaccess kon niet worden opgeslagen (heb je schrijfrechten op <code>' . BLOG_ROOT . '</code>)?',
 

@@ -55,7 +55,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'に行く',
-		'langtag' => 'ja_JP' // language tag for Facebook Video
+	'go_to' => 'に行く',
+	'langtag' => 'ja_JP' // language tag for Facebook Video
 );
 ?>

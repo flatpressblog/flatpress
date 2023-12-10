@@ -1,11 +1,11 @@
 <?php
-$lang['plugin']['prettyurls']['errors'] = array (
+$lang ['plugin'] ['prettyurls'] ['errors'] = array (
 	-2 => 'Ne morem najti ali ustvariti datoteke <code>.htaccess</code> v vašem korenskem ' .
 		'direktoriju. PrettyURLs morda ne bo pravilno deloval, glejte konfiguracijsko ploščo.'
-	);
+);
 
-$lang['admin']['plugin']['submenu']['prettyurls'] = 'Nastavitve PrettyURLs';
-$lang['admin']['plugin']['prettyurls'] = array(
+$lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'Nastavitve PrettyURLs';
+$lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'Nastavitve PrettyURLs',
 	'htaccess' => '.htaccess',
 	'description' => 'Ta urejevalnik vam omogoča urejanje vaše <code>.htaccess</code> datoteke.',
@@ -25,7 +25,7 @@ $lang['admin']['plugin']['prettyurls'] = array(
 	'submit' => 'Shrani .htaccess'
 );
 
-$lang['admin']['plugin']['prettyurls']['msgs'] = array(
+$lang ['admin'] ['plugin'] ['prettyurls'] ['msgs'] = array(
 	1 => '.htaccess uspešno shranjen',
 	-1 => '.htaccess ni bilo mogoče shraniti (ali imate dovoljenja za pisanje v <code>' . BLOG_ROOT . '</code>)?',
 

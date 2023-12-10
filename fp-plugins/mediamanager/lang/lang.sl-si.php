@@ -1,9 +1,9 @@
 <?php
-$lang['admin']['uploader']['submenu']['default'] = 'Uploader';
+$lang ['admin'] ['uploader'] ['submenu'] ['default'] = 'Uploader';
 
-$lang['admin']['uploader']['submenu']['mediamanager'] = 'Upravitelj medijskih vsebin';
+$lang ['admin'] ['uploader'] ['submenu'] ['mediamanager'] = 'Upravitelj medijskih vsebin';
 
-$lang['admin']['uploader']['mediamanager'] = array(
+$lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Upravitelj medijskih vsebin',
 	'description' => 'Upravljajte svoje medijske vsebine',
 
@@ -26,7 +26,7 @@ $lang['admin']['uploader']['mediamanager'] = array(
 	'add' => 'Dodaj'
 );
 
-$lang['admin']['uploader']['mediamanager']['msgs'] = array(
+$lang ['admin'] ['uploader'] ['mediamanager'] ['msgs'] = array(
 	3 => 'Nova galerija ustvarjena',
 	2 => 'Slike premaknjene v galerijo',
 	1 => 'Datoteka izbrisana',

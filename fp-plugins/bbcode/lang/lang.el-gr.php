@@ -55,7 +55,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'Πηγαίνετε στον',
-		'langtag' => 'el_GR' // language tag for Facebook Video
+	'go_to' => 'Πηγαίνετε στον',
+	'langtag' => 'el_GR' // language tag for Facebook Video
 );
 ?>

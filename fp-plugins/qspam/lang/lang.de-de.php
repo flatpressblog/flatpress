@@ -18,5 +18,4 @@ $lang ['admin'] ['plugin'] ['qspam'] = array(
 		-1 => 'Hinweis: Verbotene Wörter wurden nicht gespeichert.'
 	)
 );
-
 ?>
