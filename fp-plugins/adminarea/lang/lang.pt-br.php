@@ -9,3 +9,4 @@ $lang ['plugin'] ['adminarea'] = array(
 	'login' => 'Conecte',
 	'logout' => 'Sair'
 );
+?>

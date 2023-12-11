@@ -31,7 +31,8 @@ $lang ['search'] = array(
 	'fulltext' => 'Celoten besedilo',
 
 	'fset2' => 'Datum',
-	'datedescr' => 'Lahko omejite iskanje na določen datum. Lahko izberete leto, leto in mesec ali celotni datum. ' . 'Pustite prazno, da iščete po celotni zbirki.',
+	'datedescr' => 'Lahko omejite iskanje na določen datum. Lahko izberete leto, leto in mesec ali celotni datum. ' . //
+		'Pustite prazno, da iščete po celotni zbirki.',
 
 	'fset3' => 'Iskanje v kategorijah',
 	'catdescr' => 'Če ne izberete nobene, bo iskanje zajeto v vseh kategorijah',

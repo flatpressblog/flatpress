@@ -9,3 +9,4 @@ $lang ['plugin'] ['adminarea'] = array(
 	'login' => 'Войти',
 	'logout' => 'Выйти'
 );
+?>

@@ -9,7 +9,7 @@ $lang['main'] = array(
 	'comment' => 'コメント',
 	'preview' => '編集/プレビュー',
 
-	'filed_under' => 'Filed under ',	
+	'filed_under' => 'Filed under ',
 
 	'add_entry' => 'ブログ記事の新規作成',
 	'add_comment' => 'コメントの追加',
@@ -22,7 +22,7 @@ $lang['main'] = array(
 	'comment' => '1コメントあります',
 	'comments' => 'コメントあります'
 );
-	
+
 $lang['search'] = array(
 	'head' => '検索',
 	'fset1'	=> '検索キーワードの指定',
@@ -31,7 +31,8 @@ $lang['search'] = array(
 	'fulltext' => '全文から検索',
 
 	'fset2'	=> '日付の指定',
-	'datedescr'	=> '日付で絞り込み指定できます。年、年月、年月日を指定できます。 ' . '日付の指定をしない場合は、空欄にしてください。',
+	'datedescr'	=> '日付で絞り込み指定できます。年、年月、年月日を指定できます。 ' . //
+		'日付の指定をしない場合は、空欄にしてください。',
 
 	'fset3' => 'カテゴリで検索',
 	'catdescr' => '全カテゴリから検索する場合は、いずれも選ばないでください。',

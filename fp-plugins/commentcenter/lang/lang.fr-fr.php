@@ -46,14 +46,14 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'log_all' => 'Consigner les commentaires bloqués',
 	'log_all_long' => 'Active cette option si tu souhaites également consigner les commentaires bloqués.',
 	'email_alert' => 'Notification par e-mail',
-	'email_alert_long' => 'Si tu dois examiner un commentaire pour approbation, tu peux ' . 'être informé par e-mail.',
+	'email_alert_long' => 'Si tu dois examiner un commentaire pour approbation, tu peux être informé par e-mail.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Vérification des commentaires avec Akismet',
 	'akismet_use_long' => 'Avec <a href="https://akismet.com/" target="_blank">Akismet</a>, il est possible de réduire le spam dans les commentaires.',
 	'akismet_key' => 'Clé Akismet',
 	'akismet_key_long' => 'Le service <a href="https://akismet.com/signup/" target="_blank">Akismet</a> met à ta disposition une <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">clé</a>. Colle celui-ci.',
 	'akismet_url' => 'URL du blog pour Akismet',
-	'akismet_url_long' => 'Pour bénéficier du service gratuit d\'Akismet, tu ne dois utiliser qu\'un seul domaine. ' . 'Tu peux laisser ce champ vide. On utilise alors <code>%s</code>.',
+	'akismet_url_long' => 'Pour bénéficier du service gratuit d\'Akismet, tu ne dois utiliser qu\'un seul domaine. Tu peux laisser ce champ vide. On utilise alors <code>%s</code>.',
 	'save_conf' => 'Enregistrer les paramètres',
 
 	// Edit policy page
@@ -66,7 +66,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'se_fill' => 'Remplis les champs avec le <a href="admin.php?p=entry">ID</a> des inscriptions (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Caractéristiques',
 	'po_desc' => 'Si tu as choisi l\'option %s, remplis les propriétés.',
-	'po_comp' => 'Les champs ne sont pas obligatoires, mais tu dois en remplir au moins un ou la directive ' . ' s\'appliquera à tous les messages.',
+	'po_comp' => 'Les champs ne sont pas obligatoires, mais tu dois en remplir au moins un ou la directive s\'appliquera à tous les messages.',
 	'po_time' => 'Réglages de l\'heure',
 	'po_older' => 'Appliquer aux entrées datant de plus de ',
 	'days' => 'jours.',
@@ -159,6 +159,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'Le message sélectionné n\'existe pas.'
 	)
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Désolé, nous rencontrons des difficultés techniques.',
 	'lock' => 'Il n\'est malheureusement pas possible de commenter cet article.',

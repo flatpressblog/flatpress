@@ -8,16 +8,16 @@ $lang ['main'] = array(
 	'static' => 'Στατική σελίδα',
 	'comment' => 'Σχόλιο',
 	'preview' => 'Επεξεργασία/Προεπισκόπηση',
-	
-	'filed_under' => 'Καταχωρημένο στο ',	
-	
+
+	'filed_under' => 'Καταχωρημένο στο ',
+
 	'add_entry' => 'Προσθήκη καταχώρησης',
 	'add_comment' => 'Προσθήκη σχολίου',
 	'add_static' => 'Προσθήκη στατικής σελίδας',
-	
+
 	'btn_edit' => 'Επεξεργασία',
 	'btn_delete' => 'Διαγραφή',
-	
+
 	'nocomments' => 'Προσθήκη σχολίου',
 	'comment' => '1 σχόλιο',
 	'comments' => 'σχόλια'
@@ -29,26 +29,26 @@ $lang ['search'] = array(
 	'keywords' => 'Φράση',
 	'onlytitles' => 'Μόνο τίτλοι',
 	'fulltext' => 'Πλήρες κείμενο',
-	
+
 	'fset2'	=> 'Ημερομηνία',
-	'datedescr'	=> 'Μπορείτε να περιορίσετε την αναζήτηση σας σε μια συγκεκριμένη ημερομηνία. Μπορείτε να επιλέξετε χρόνο, μήνα και χρόνο ή ολόκληρη ημερομηνία. ' . 'Αφήστε το κενό για αναζήτηση σε ολόκληρη τη βάση δεδομένων.',
-	
+	'datedescr'	=> 'Μπορείτε να περιορίσετε την αναζήτηση σας σε μια συγκεκριμένη ημερομηνία. Μπορείτε να επιλέξετε χρόνο, μήνα και χρόνο ή ολόκληρη ημερομηνία. ' . //
+		'Αφήστε το κενό για αναζήτηση σε ολόκληρη τη βάση δεδομένων.',
+
 	'fset3' => 'Αναζήτηση σε κατηγορίες',
 	'catdescr' => 'Μην επιλέξετε καμία αν επιθυμείτε να ψάξει σε όλες',
-	
+
 	'fset4'	=> 'Ξεκινήστε την αναζήτηση',
 	'submit' => 'Αναζήτηση',
-	
+
 	'headres' => 'Αποτελέσματα αναζήτησης',
 	'descrres' => 'Η αναζήτηση για <strong>%s</strong> επέστρεψε τα εξής αποτελέσματα:',
 	'descrnores'=> 'Η αναζήτηση για <strong>%s</strong> δεν επέστρεψε αποτελέσματα.',
-	
-	'moreopts' => 'Περισσότερες επιλογές',	
+
+	'moreopts' => 'Περισσότερες επιλογές',
 	'searchag' => 'Αναζήτηση ξανά'
 );
-	
-$lang ['search']['error'] = array(
 
+$lang ['search']['error'] = array(
 	'keywords' => 'Πρέπει να προσδιορίσετε τουλάχιστον μία λέξη κλειδί'
 );
 
@@ -66,7 +66,7 @@ $lang ['entryauthor'] = array(
 
 $lang ['entry'] = array();
 $lang ['entry'] ['flags'] = array();
-	
+
 $lang ['entry'] ['flags'] ['long'] = array(
 	'draft' => '<strong>Πρόχειρη καταχώρηση</strong>: κρυμένη, αναμένει δημοσίευση',
 	//'static' => '<strong>Static entry</strong>: normally hidden, to reach the entry put ?page=title-of-the-entry in url (experimental)',
@@ -87,7 +87,7 @@ $lang ['404error'] = array(
 	'subject' => 'Δεν βρέθηκε',
 	'content' => '<p>Λυπούμαστε, δεν μπορέσαμε να βρούμε την σελίδα που ζητήσατε</p>'
 );
-	
+
 // Login
 $lang ['login'] = array(
 	'head' => 'Σύνδεση',
@@ -107,7 +107,7 @@ $lang ['login'] ['success'] = array(
 	'opt2' => 'Πίνακας ελέγχου',
 	'opt3' => 'Προσθήκη καταχώρησης'
 );
-	
+
 $lang ['login'] ['error'] = array(
 	'user' => 'Πρέπει να εισάγετε ένα όνομα χρήστη.',
 	'pass' => 'Πρέπει να εισάγετε έναν κωδικό.',
@@ -138,13 +138,13 @@ $lang ['comments'] ['error'] = array(
 	'www' => 'Πρέπει να προσθέσετε μια ισχύουσα σελίδα',
 	'comment' => 'Πρέπει να εισάγετε ένα σχόλιο'
 );
-	
+
 $lang ['postviews'] = array(
 	// PostView-Plugin
 	'views' => 'προβολές'
 );
 
-$lang ['date'] ['month'] = array(		
+$lang ['date'] ['month'] = array(
 	'Ιανουαρίου',
 	'Φεβρουαρίου',
 	'Μαρτίου',
@@ -156,10 +156,10 @@ $lang ['date'] ['month'] = array(
 	'Σεπτεμβρίου',
 	'Οκτωβρίου',
 	'Νοεμβρίου',
-	'Δεκεμβρίου'	
+	'Δεκεμβρίου'
 );
 
-$lang ['date'] ['month_abbr'] = array(		
+$lang ['date'] ['month_abbr'] = array(
 	'Jan',
 	'Feb',
 	'Mar',
@@ -171,7 +171,7 @@ $lang ['date'] ['month_abbr'] = array(
 	'Sep',
 	'Oct',
 	'Nov',
-	'Dec'	
+	'Dec'
 );
 
 $lang ['date'] ['weekday'] = array(	

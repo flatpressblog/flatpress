@@ -27,16 +27,16 @@ $lang ['err'] = array(
 	'setuprun3' => ' za ponovni zagon.',
 	'writeerror' => 'Napake pri pisanju',
 
-	'fpuser1' => ' ni veljaven uporabnik.
-		Uporabniško ime mora biti alfanumerično in ne sme vsebovati presledkov.',
-	'fpuser2' => ' ni veljaven uporabnik.
-		Uporabniško ime lahko vsebuje samo črke, številke in en podčrtaj.',
+	'fpuser1' => ' ni veljaven uporabnik. ' . //
+		'Uporabniško ime mora biti alfanumerično in ne sme vsebovati presledkov.',
+	'fpuser2' => ' ni veljaven uporabnik. ' . //
+		'Uporabniško ime lahko vsebuje samo črke, številke in en podčrtaj.',
 	'fppwd' => 'Geslo mora vsebovati vsaj 6 znakov in ne sme vsebovati presledkov.',
 	'fppwd2' => 'Gesla se ne ujemajo.',
 	'email' => ' ni veljaven e-poštni naslov.',
 	'www' => ' ni veljaven URL.',
-	'error' => '<p><big>Napaka!</big>
-		Med obdelavo obrazca je prišlo do naslednjih napak:</p><ul>'
+	'error' => '<p><big>Napaka!</big> ' . //
+		'Med obdelavo obrazca je prišlo do naslednjih napak:</p><ul>'
 );
 
 $lang ['step1'] = array(
@@ -164,7 +164,6 @@ S temo FlatPress Leggero imate na voljo 3 slogovne predloge - od klasične do mo
 Želite izvedeti več o platformi FlatPress?
 
 [list]
-[*]Podprite projekt z [url=http://www.flatpress.org/home/static.php?page=donate]majhno donacijo[/url].
 [*]V [url=https://www.flatpress.org/?x]projektnem blogu[/url] lahko izveste, kaj se trenutno dogaja v projektu FlatPress.
 [*]Obiščite [url=https://forum.flatpress.org/]podporni forum[/url] za podporo in stik z drugimi uporabniki FlatPress.
 [*]Iz [url=https://wiki.flatpress.org/res:themes]wikija[/url] lahko prenesete odlične [b]teme[/b], ki jih je ustvarila skupnost.
@@ -176,6 +175,7 @@ S temo FlatPress Leggero imate na voljo 3 slogovne predloge - od klasične do mo
 [h4]Kako lahko podpiram FlatPress?[/h4]
 
 [list]
+[*]Podprite projekt z [url=http://www.flatpress.org/home/static.php?page=donate]majhno donacijo[/url].
 [*][url=https://www.flatpress.org/contact/]Prijavite[/url] nastale napake ali nam pošljite predloge za izboljšave.
 [*]Programerji nas lahko podpirajo na [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
 [*]Prevedite FlatPress in njegovo dokumentacijo v [url=https://wiki.flatpress.org/res:language]vaš jezik[/url].
@@ -191,10 +191,9 @@ S temo FlatPress Leggero imate na voljo 3 slogovne predloge - od klasične do mo
 Zabavajte se! :)
 
 [i]Ekipa podjetja [url=https://www.flatpress.org]FlatPress[/url][/i]
-	
+
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'O';
-$lang ['samplecontent'] ['about'] ['content'] = "Tukaj napišite nekaj o sebi in tem blogu. ([url=admin.php?p=static&action=write&page=about]Delajte z mano![/url])";
-
+$lang ['samplecontent'] ['about'] ['content'] = 'Tukaj napišite nekaj o sebi in tem blogu. ([url=admin.php?p=static&action=write&page=about]Delajte z mano![/url])';
 ?>

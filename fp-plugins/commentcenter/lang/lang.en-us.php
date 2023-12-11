@@ -46,14 +46,14 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'log_all' => 'Log blocked comments',
 	'log_all_long' => 'Check it if you want to log also comments that are blocked.',
 	'email_alert' => 'Notify comments via email',
-	'email_alert_long' => 'Check it if you want that when there is a comment to approve you want to be ' . 'informed via email.',
+	'email_alert_long' => 'Check it if you want that when there is a comment to approve you want to be informed via email.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Enable Akismet check',
 	'akismet_use_long' => 'With <a href="https://akismet.com/" target="_blank">Akismet</a> you can reduce spam in comments.',
 	'akismet_key' => 'Akismet Key',
 	'akismet_key_long' => 'The <a href="https://akismet.com/signup/" target="_blank">Akismet service</a> provides you with a <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">key</a>. Insert it here.',
 	'akismet_url' => 'Blog base URL for Akismet',
-	'akismet_url_long' => 'I think for Akismet free service you should use just a domain. ' . 'You can leave blank this field, <code>%s</code> will be used.',
+	'akismet_url_long' => 'I think for Akismet free service you should use just a domain. You can leave blank this field, <code>%s</code> will be used.',
 	'save_conf' => 'Save Configuration',
 
 	// Edit policy page
@@ -66,7 +66,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'se_fill' => 'Please fill the fields with the <a href="admin.php?p=entry">ID</a> of the entries (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Properties',
 	'po_desc' => 'If you selected the %s option, please fill the properties.',
-	'po_comp' => 'The fields aren\'t compulsory but you must fill at least one or the policy ' . 'will apply on all entries.',
+	'po_comp' => 'The fields aren\'t compulsory but you must fill at least one or the policy will apply on all entries.',
 	'po_time' => 'Time options',
 	'po_older' => 'Apply to entries older than ',
 	'days' => 'days.',
@@ -159,6 +159,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'The entry you have selected does not exist.'
 	)
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Sorry, we\'re encountering technical difficulties.',
 	'lock' => 'Comments for this entry are blocked, sorry.',
@@ -182,3 +183,4 @@ All the best,
 %blogtitle%
 
 ';
+?>

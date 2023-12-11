@@ -32,5 +32,5 @@ $lang ['contact'] ['error'] = array(
 $lang ['contact'] ['msgs'] = array(
 	1 => 'Zpráva byla úspěšně odeslána',
 	-1 => 'Zpráva nemohla být odeslána',
-);	
+);
 ?>

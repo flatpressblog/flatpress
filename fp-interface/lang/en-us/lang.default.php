@@ -31,7 +31,8 @@ $lang ['search'] = array(
 	'fulltext' => 'Full-text',
 
 	'fset2' => 'Date',
-	'datedescr' => 'You can bind your search to a specific date. You may select an year, an year and a month, or a full date. ' . 'Leave blank to search the entire database.',
+	'datedescr' => 'You can bind your search to a specific date. You may select an year, an year and a month, or a full date. ' . //
+		'Leave blank to search the entire database.',
 
 	'fset3' => 'Search in categories',
 	'catdescr' => 'Don\'t select any to search all',
@@ -49,13 +50,12 @@ $lang ['search'] = array(
 );
 
 $lang ['search'] ['error'] = array(
-
 	'keywords' => 'You must specify at least one keyword'
 );
 
 $lang ['staticauthor'] = array(
 	// "Published by" in static pages
-	'published_by'	=> 'Published by',
+	'published_by' => 'Published by',
 	'on' => 'on'
 );
 

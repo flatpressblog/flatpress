@@ -9,11 +9,11 @@ $lang ['setup'] = array(
 $lang ['locked'] = array(
 	'head' => 'Die Einrichtung ist gesperrt',
 	'descr' => 'Sieht so aus, als würde die Einrichtung bereits laufen: Die Sperr-Datei <code>%s</code> existiert bereits.
-		
+
 		Wenn du die Einrichtung noch einmal neu starten möchtest, lösche bitte zuerst diese Datei.
 		
 		<strong >Achtung!</strong> Die Datei <code>setup.php</code> und das Verzeichnis <code>setup/</code> sollten nicht auf dem Server bleiben. Bitte lösche sie nach Abschluss der Einrichtung!
-		
+
 		<ul>
 		<li><a href="%s">Ok, bring mich zu meinem Blog</a></li>
 		<li><a href="%s">Ich habe die Datei gelöscht. Einrichtung neu starten.</a></li>
@@ -22,39 +22,39 @@ $lang ['locked'] = array(
 
 $lang ['err'] = array(
 	'setuprun1' => 'Die Einrichtung läuft.',
-	
+
 	'setuprun2' => 'Die Einrichtung läuft bereits: Wenn du der Administrator bist, kannst du ',
 	'setuprun3' => ' löschen, um neu zu starten.',
 	'writeerror' => 'Fehler beim Schreiben',
 
-	'fpuser1' => ' ist kein gültiger Benutzer.
-		Der Benutzername muss alphanumerisch sein und darf keine Leerzeichen enthalten.',
-	'fpuser2' => ' ist kein gültiger Benutzer.
-		Der Benutzername darf nur Buchstaben, Zahlen und 1 Unterstrich enthalten.',
+	'fpuser1' => ' ist kein gültiger Benutzer. ' . //
+		'Der Benutzername muss alphanumerisch sein und darf keine Leerzeichen enthalten.',
+	'fpuser2' => ' ist kein gültiger Benutzer. ' . //
+		'Der Benutzername darf nur Buchstaben, Zahlen und 1 Unterstrich enthalten.',
 	'fppwd' => 'Das Passwort muss mindestens 6 Zeichen und darf keine Leerzeichen enthalten.',
 	'fppwd2' => 'Die Passwörter stimmen nicht überein.',
 	'email' => ' ist keine gültige E-Mail Adresse.',
 	'www' => ' ist keine gültige URL.',
-	'error' => '<p><big>Fehler!</big>
-		Bei der Bearbeitung des Formulars sind die folgenden Fehler aufgetreten:</p><ul>'
+	'error' => '<p><big>Fehler!</big> ' . //
+		'Bei der Bearbeitung des Formulars sind die folgenden Fehler aufgetreten:</p><ul>'
 );
 
 $lang ['step1'] = array(
 	'head' => 'Willkommen bei FlatPress!',
 	'descr' => 'Danke, dass du dich für <strong>FlatPress</strong> entschieden hast.
-		
+
 		Bevor du mit deinem brandneuen Blog loslegen kannst, musst du noch ein paar Kleinigkeiten angeben.
-		
+
 		Aber keine Sorge, es dauert nicht lange!',
 	'descrl1' => 'Wähle deine Sprache.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Nicht in der Liste?</a>',
 	'descrlang' => 'Wenn du deine Sprache nicht in der Liste findest, schau einmal nach, ob es <a href="https://wiki.flatpress.org/res:language">ein passendes Sprachpaket</a> gibt:
-		
+
 		<pre>%s</pre>
-		
+
 		Für die Installation eines Sprachpakets lade dessen Inhalt einfach in dein <code>flatpress/</code>-Verzeichnis. Dann <a href="./setup.php">starte die Installation erneut</a>.',
 	'descrw' => '<strong>Das Einzige</strong>, was du für den Betrieb von FlatPress benötigst, ist ein <em>beschreibbares</em> Verzeichnis.
-		
+
 		<pre>%s</pre>'
 );
 
@@ -71,19 +71,19 @@ $lang ['step2'] = array(
 $lang ['step3'] = array(
 	'head' => 'Fertig',
 	'descr' => '<strong>Das war\'s schon.</strong>
-		
+
 		Nicht zu glauben?
-		
+
 		Nein, tatsächlich <strong>geht es jetzt erst richtig los</strong>! Aber das Bloggen ist nun <em>deine</em> Aufgabe ;)
-		
+
 		<p style="color:#cc0000">Achtung: Für mehr Kompfort und Sicherheit empfehlen wir im Administrationsbereich die Anweisungen für deinen Server mithilfe des PrettyURL-Plugins zu konfigurieren.</p>
-		
+
 		<ul>
 		<li>Zur <a href="%s">Hauptseite deines Blogs</a></li>
 		<li>Viel Spaß beim Bloggen! <a href="%s">Jetzt einloggen</a></li>
 		<li>Du möchtest Lob oder Kritik loswerden? Besuche uns auf <a href="https://www.flatpress.org/">FlatPress.org</a>!</li>
 		</ul>
-		
+
 		Danke, dass du dich für FlatPress entschieden hast!'
 );
 
@@ -159,23 +159,25 @@ Diese Elemente werden [b]Widgets[/b] genannt. Natürlich hat das FlatPress-Wiki 
 [gallery="images/Leggero-Themepreview/" width="140"]
 Mit dem FlatPress-Leggero-Theme stehen dir 3 Stil-Vorlagen zur Verfügung - von Klassisch bis Modern. Diese Vorlagen sind ein wunderbarer Start etwas eigenes zu kreieren.
 
+
 [h4]Noch mehr[/h4]
 
 Du möchtest gern mehr über FlatPress wissen?
 
 [list]
-[*]Unterstütze das Projekt mit einer [url=http://www.flatpress.org/home/static.php?page=donate]kleinen Spende[/url].
 [*]Im [url=https://www.flatpress.org/?x]Projekt-Blog[/url] erfährst du, was im FlatPress-Projekt aktuell los ist.
 [*]Besuche das [url=https://forum.flatpress.org/]Supportforum[/url] für Unterstützung und den Kontakt zu anderen FlatPress-Benutzern.
 [*]Lade dir großartige von der Community erstellte [b]Themes[/b] aus dem [url=https://wiki.flatpress.org/res:themes]Wiki[/url] herunter.
 [*]Dort gibt es auch tolle [url=https://wiki.flatpress.org/res:plugins]Plugins[/url].
+[*]Hole dir das [url=https://wiki.flatpress.org/res:language]Übersetzungspaket[/url] für deine Sprache.
 [*]FlatPress kannst du auch auf [url=https://twitter.com/FlatPress]X (Twitter)[/url] und [url=https://fosstodon.org/@flatpress]Mastodon[/url] folgen.
 [/list]
 
 
-[h4]Wie kannst ich FlatPress unterstützen?[/h4]
+[h4]Wie kann ich FlatPress unterstützen?[/h4]
 
 [list]
+[*]Unterstütze das Projekt mit einer [url=http://www.flatpress.org/home/static.php?page=donate]kleinen Spende[/url].
 [*][url=https://www.flatpress.org/contact/]Melde[/url] aufgetretene Fehler oder schick uns Verbesserungsvorschläge.
 [*]Programmierer sind herzlich eingeladen, uns auf [url="https://github.com/flatpressblog/flatpress"]GitHub[/url] zu unterstützen.
 [*]Übersetze FlatPress und seine Dokumentation in [url=https://wiki.flatpress.org/res:language]deine Sprache[/url].
@@ -191,10 +193,9 @@ Du möchtest gern mehr über FlatPress wissen?
 Viel Spaß! :)
 
 [i]Das [url=https://www.flatpress.org]FlatPress[/url]-Team[/i]
-	
+
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Über';
-$lang ['samplecontent'] ['about'] ['content'] = "Schreib hier etwas über dich und diesen Blog. ([url=admin.php?p=static&action=write&page=about]Bearbeite mich![/url])";
-
+$lang ['samplecontent'] ['about'] ['content'] = 'Schreib hier etwas über dich und diesen Blog. ([url=admin.php?p=static&action=write&page=about]Bearbeite mich![/url])';
 ?>

@@ -1,13 +1,11 @@
 <?php
-
-/* THIS LINE SHOULDN'T BE HERE! */
 $lang ['admin'] ['uploader'] ['submenu'] ['default'] = 'Uploader';
 
 $lang ['admin'] ['uploader'] ['submenu'] ['mediamanager'] = 'Media Manager';
 
 $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Media Manager',
-	'description' => 'Media Manager skaber et overblik over de filer og billeder, der er uploadet til Flatpress.',
+	'description' => 'Media Manager skaber et overblik over de filer og billeder, der er uploadet til FlatPress.',
 
 	'delete' => 'Slet',
 	'up' => 'Tilbage',
@@ -36,5 +34,4 @@ $lang ['admin'] ['uploader'] ['mediamanager'] ['msgs'] = array(
 	-2 => 'Fejl ved oprettelse af et nyt galleri',
 	-3 => 'Indtast venligst et navn til det nye galleri'
 );
-
 ?>

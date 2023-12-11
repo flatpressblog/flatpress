@@ -9,11 +9,11 @@ $lang ['setup'] = array(
 $lang ['locked'] = array(
 	'head' => 'La configuration est verrouillée',
 	'descr' => 'On dirait que la configuration est déjà en place: Le fichier de blocage <code>%s</code> existe déjà.
-		
-		Si tu veux redémarrer l'installation, supprime d'abord ce fichier.
-		
+
+		Si tu veux redémarrer l\'installation, supprime d\'abord ce fichier.
+
 		<strong>Attention!</strong> Le fichier <code>setup.php</code> et le répertoire <code>setup/</code> ne doivent pas rester sur le serveur. Merci de les supprimer une fois la configuration terminée!
-		
+
 		<ul>
 		<li><a href="%s">Ok, amène-moi à mon blog</a></li>
 		<li><a href="%s">J\'ai supprimé le fichier. Redémarrer le setup.</a></li>
@@ -22,39 +22,39 @@ $lang ['locked'] = array(
 
 $lang ['err'] = array(
 	'setuprun1' => 'La configuration est en cours.',
-	
+
 	'setuprun2' => 'La configuration est déjà en cours: si tu es l\'administrateur, tu peux supprimer ',
 	'setuprun3' => ' pour redémarrer.',
 	'writeerror' => 'Erreur d\'écriture',
 
-	'fpuser1' => ' n\'est pas un utilisateur valide.
-		Le nom d\'utilisateur doit être alphanumérique et ne doit pas contenir d\'espaces.',
-	'fpuser2' => ' n\'est pas un utilisateur valide.
-		Le nom d\'utilisateur ne peut contenir que des lettres, des chiffres et 1 trait de soulignement.',
+	'fpuser1' => ' n\'est pas un utilisateur valide. ' . //
+		'Le nom d\'utilisateur doit être alphanumérique et ne doit pas contenir d\'espaces.',
+	'fpuser2' => ' n\'est pas un utilisateur valide. ' . //
+		'Le nom d\'utilisateur ne peut contenir que des lettres, des chiffres et 1 trait de soulignement.',
 	'fppwd' => 'Le mot de passe doit contenir au moins 6 caractères et ne doit pas comporter d\'espaces.',
 	'fppwd2' => 'Les mots de passe ne correspondent pas.',
 	'email' => ' n\'est pas une adresse e-mail valide.',
 	'www' => ' n\'est pas une URL valide',
-	'error' => '<p><big>Erreur!</big>
-		Les erreurs suivantes sont survenues lors du traitement du formulaire :</p><ul>'
+	'error' => '<p><big>Erreur!</big> ' . //
+		'Les erreurs suivantes sont survenues lors du traitement du formulaire :</p><ul>'
 );
 
 $lang ['step1'] = array(
 	'head' => 'Bienvenue chez FlatPress!',
 	'descr' => 'Merci d\'avoir choisi <strong>FlatPress</strong>.
-		
+
 		Avant de pouvoir commencer ton tout nouveau blog, tu dois encore indiquer quelques petites choses.
-		
+
 		Mais ne t\'inquiète pas, ça ne durera pas longtemps !',
 	'descrl1' => 'Choisis ta langue.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Pas dans la liste ?</a>',
 	'descrlang' => 'Si tu ne trouves pas ta langue dans la liste, regarde s\'il existe <a href="https://wiki.flatpress.org/res:language">un pack de langue correspondant</a>:
-		
+
 		<pre>%s</pre>
-		
+
 		Pour installer un pack de langue, il suffit de télécharger son contenu dans ton répertoire <code>flatpress/</code>. Puis <a href="./setup.php">redémarre la configuration</a>.',
 	'descrw' => '<strong>La seule</strong> chose dont tu as besoin pour faire fonctionner FlatPress est un répertoire <em>inscriptible</em>.
-		
+
 		<pre>%s</pre>'
 );
 
@@ -71,19 +71,19 @@ $lang ['step2'] = array(
 $lang ['step3'] = array(
 	'head' => 'Prêt',
 	'descr' => '<strong>C\'est tout.</strong>
-		
+
 		Pas croyable?
-		
+
 		Non, en fait, <strong>c\'est maintenant que ça commence vraiment</strong>! Mais le blogging est maintenant <em>ton</em> devoir ;)
-		
+
 		<p style="color:#cc0000">Attention: pour plus de confort et de sécurité, nous recommandons de configurer les instructions pour ton serveur dans la zone d\'administration à l\'aide du plug-in PrettyURL.</p>
-		
+
 		<ul>
 		<li>Vers la <a href="%s">page principale de ton blog</a></li>
 		<li>Bon blog! <a href="%s">Connectez-vous maintenant</a></li>
 		<li>Tu souhaites faire part de tes compliments ou de tes critiques? Visite-nous sur <a href="https://www.flatpress.org/">FlatPress.org</a>!</li>
 		</ul>
-		
+
 		Merci d\'avoir choisi FlatPress!'
 );
 
@@ -159,16 +159,17 @@ Ces éléments sont appelés [b]Widgets[/b]. Bien entendu, le wiki FlatPress dis
 [gallery="images/Leggero-Themepreview/" width="140"]
 Avec le thème FlatPress Leggero, tu disposes de 3 modèles de style - du classique au moderne. Ces modèles sont un excellent point de départ pour créer quelque chose de personnel.
 
+
 [h4]Encore plus[/h4]
 
 Tu souhaites en savoir plus sur FlatPress?
 
 [list]
-[*]Soutenez le projet avec un [url=http://www.flatpress.org/home/static.php?page=donate]petit don[/url].
 [*]Le [url=https://www.flatpress.org/?x]blog du projet[/url] te permet de savoir ce qui se passe actuellement dans le projet FlatPress.
 [*]Visite le [url=https://forum.flatpress.org/]forum de support[/url] pour obtenir de l\'aide et entrer en contact avec d\'autres utilisateurs de FlatPress.
 [*]Télécharge de superbes [b]thèmes[/b] créés par la communauté à partir du [url=https://wiki.flatpress.org/res:themes]Wiki[/url].
 [*]On y trouve également de superbes [url=https://wiki.flatpress.org/res:plugins]plugins[/url].
+[*]Obtenez [url=https://wiki.flatpress.org/res:language]translation pack[/url] pour votre langue.
 [*]Tu peux aussi suivre FlatPress sur [url=https://twitter.com/FlatPress]X (Twitter)[/url] et [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
@@ -176,6 +177,7 @@ Tu souhaites en savoir plus sur FlatPress?
 [h4]Comment puis-je soutenir FlatPress?[/h4]
 
 [list]
+[*]Soutenez le projet avec un [url=http://www.flatpress.org/home/static.php?page=donate]petit don[/url].
 [*][url=https://www.flatpress.org/contact/]Signale[/url] les erreurs survenues ou envoie-nous des propositions d\'amélioration.
 [*]Les programmeurs sont invités à nous rejoindre sur [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
 [*]Traduis FlatPress et sa documentation dans [url=https://wiki.flatpress.org/res:language]ta langue[/url].
@@ -188,13 +190,12 @@ Tu souhaites en savoir plus sur FlatPress?
 
 [url=login.php]Connecte-toi[/url] pour commencer à bloguer dans [url=admin.php]Rapport d\'administration[/url].
 
-Amusez-vous bien! :) 
+Amusez-vous bien! :)
 
 [i]L\'équipe de [url=https://www.flatpress.org]FlatPress[/url][/i]
-	
+
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Sur';
-$lang ['samplecontent'] ['about'] ['content'] = "Écris ici quelque chose sur toi et sur ce blog. ([url=admin.php?p=static&action=write&page=about]Travaille-moi![/url])";
-
+$lang ['samplecontent'] ['about'] ['content'] = 'Écris ici quelque chose sur toi et sur ce blog. ([url=admin.php?p=static&action=write&page=about]Travaille-moi![/url])';
 ?>

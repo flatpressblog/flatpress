@@ -9,11 +9,11 @@ $lang ['setup'] = array(
 $lang ['locked'] = array(
 	'head' => 'La instalación está bloqueada',
 	'descr' => 'Parece que la instalación ya está en marcha: El fichero de bloqueo <code>%s</code> ya existe.
-		
+
 		Si desea reiniciar la instalación, borre primero este fichero.
-		
+
 		<strong >Atención!</strong> El fichero <code>setup.php</code> y el directorio <code>setup/</code> no deben permanecer en el servidor. Por favor, elimínelos después de completar la instalación.
-		
+
 		<ul>
 		<li><a href="%s">Ok, llévame a mi blog</a></li>
 		<li><a href="%s">He borrado el archivo. Reinicie la instalación.</a></li>
@@ -22,39 +22,39 @@ $lang ['locked'] = array(
 
 $lang ['err'] = array(
 	'setuprun1' => 'La instalación está en marcha.',
-	
+
 	'setuprun2' => 'La instalación ya está en marcha: Si eres el administrador, puedes borrar ',
 	'setuprun3' => ' para reiniciar.',
 	'writeerror' => 'Error de escritura',
 
-	'fpuser1' => ' no es un usuario válido.
-		El nombre de usuario debe ser alfanumérico y no debe contener espacios.',
-	'fpuser2' => ' no es un usuario válido.
-		El nombre de usuario sólo puede contener letras, números y un guión bajo.',
+	'fpuser1' => ' no es un usuario válido. ' . //
+		'El nombre de usuario debe ser alfanumérico y no debe contener espacios.',
+	'fpuser2' => ' no es un usuario válido. ' . //
+		'El nombre de usuario sólo puede contener letras, números y un guión bajo.',
 	'fppwd' => 'La contraseña debe contener al menos 6 caracteres y ningún espacio.',
 	'fppwd2' => 'Las contraseñas no coinciden.',
 	'email' => ' no es una dirección de correo electrónico válida.',
 	'www' => ' no es una URL válida.',
-	'error' => '<p><big>Error!</big> 
-		Se han producido los siguientes errores al procesar el formulario:</p><ul>'
+	'error' => '<p><big>Error!</big> ' . // 
+		'Se han producido los siguientes errores al procesar el formulario:</p><ul>'
 );
 
 $lang ['step1'] = array(
 	'head' => 'Bienvenido a FlatPress!',
 	'descr' => 'Gracias por haber elegido el <strong>FlatPress</strong>.
-		
+
 		Antes de empezar con su flamante blog, debe concretar algunas pequeñas cosas.
-		
+
 		Pero no se preocupe, no tardará mucho.',
 	'descrl1' => 'Elige tu idioma.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">No está en la lista?</a>',
 	'descrlang' => 'Si no encuentras tu idioma en la lista, comprueba si existe <a href="https://wiki.flatpress.org/res:language">un paquete de idiomas adecuado</a> :
-		
+
 		<pre>%s</pre>
-		
+
 		Para instalar un paquete de idioma, simplemente carga su contenido en tu directorio <code>flatpress/</code>. A continuación, <a href="./setup.php">inicie de nuevo la instalación</a>.',
 	'descrw' => '<strong>Lo único</strong> que necesita para ejecutar FlatPress es un directorio <em>escribible</em>.
-		
+
 		<pre>%s</pre>'
 );
 
@@ -71,19 +71,19 @@ $lang ['step2'] = array(
 $lang ['step3'] = array(
 	'head' => 'Fertig',
 	'descr' => '<strong>Eso fue todo.</strong>
-		
+
 		No es creíble?
-		
+
 		No, en <strong>realidad acaba de empezar</strong>! Pero bloguear es <em>tu</em> trabajo ahora ;)
-		
+
 		<p style="color:#cc0000">Atención: Para mayor comodidad y seguridad, le recomendamos configurar las instrucciones para su servidor en el área de administración utilizando el plugin PrettyURL.</p>
-		
+
 		<ul>
 		<li>A la <a href="%s">página principal de su blog</a></li>
 		<li>Diviértete blogueando! <a href="%s">Conectarse ahora</a></li>
 		<li>Quiere alabar o criticar? Visítenos en el <a href="https://www.flatpress.org/">FlatPress.org</a>!</li>
 		</ul>
-		
+
 		Gracias por elegir FlatPress!'
 );
 
@@ -159,16 +159,17 @@ Estos elementos se denominan [b]Widgets[/b]. Por supuesto, la Wiki de FlatPress 
 [gallery="images/Leggero-Themepreview/" width="140"]
 Con el tema Leggero de FlatPress tiene a su disposición 3 plantillas de estilo, desde clásico hasta moderno. Estas plantillas son un magnífico comienzo para crear algo propio.
 
+
 [h4]Más información[/h4]
 
 Desea obtener más información sobre FlatPress?
 
 [list]
-[*]Apoye el proyecto con una [url=http://www.flatpress.org/home/static.php?page=donate]pequeña donación[/url].
 [*]En el [url=https://www.flatpress.org/?x]blog del proyecto[/url] podrá enterarse de lo que ocurre actualmente en el proyecto FlatPress.
 [*]Visite el [url=https://forum.flatpress.org/]foro de soporte[/url] para obtener soporte y contactar con otros usuarios de FlatPress.
 [*]Descargue magníficos [b]temas[/b] creados por la comunidad desde la [url=https://wiki.flatpress.org/res:themes]Wiki[/url].
 [*]También hay grandes [url=https://wiki.flatpress.org/res:plugins]Plugins[/url] allí.
+[*]Consigue [url=https://wiki.flatpress.org/res:language]paquete de traducción[/url] para tu idioma.
 [*]También puede seguir a FlatPress en [url=https://twitter.com/FlatPress]X (Twitter)[/url] y [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
@@ -176,6 +177,7 @@ Desea obtener más información sobre FlatPress?
 [h4]Cómo puedo apoyar a FlatPress?[/h4]
 
 [list]
+[*]Apoye el proyecto con una [url=http://www.flatpress.org/home/static.php?page=donate]pequeña donación[/url].
 [*][url=https://www.flatpress.org/contact/]Informe[/url] de los errores que se hayan producido o envíenos sugerencias de mejora.
 [*]Invitamos a los programadores a que nos apoyen en [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
 [*]Traduzca FlatPress y su documentación a [url=https://wiki.flatpress.org/res:language]su idioma[/url].
@@ -191,10 +193,9 @@ Desea obtener más información sobre FlatPress?
 Que te diviertas! :)
 
 [i]El equipo [url=https://www.flatpress.org]FlatPress[/url][/i]
-	
+
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Acerca de';
-$lang ['samplecontent'] ['about'] ['content'] = "Escribe aquí algo sobre ti y sobre este blog. ([url=admin.php?p=static&action=write&page=about]Edítame![/url])";
-
+$lang ['samplecontent'] ['about'] ['content'] = 'Escribe aquí algo sobre ti y sobre este blog. ([url=admin.php?p=static&action=write&page=about]Edítame![/url])';
 ?>

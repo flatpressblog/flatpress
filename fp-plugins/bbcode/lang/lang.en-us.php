@@ -1,11 +1,10 @@
 <?php
-
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'BBCode Configuration',
-	'desc1' => 'This plugin allows using <a href="https://wiki.flatpress.org/'.
+	'desc1' => 'This plugin allows using <a href="https://wiki.flatpress.org/' . //
 		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a> markup.',
-	
+
 	'options' => 'Options',
 
 	'editing' => 'Editing',
@@ -56,9 +55,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'Go to',
-		// language tag for Facebook Video
-		'langtag' => 'en_US'
+	'go_to' => 'Go to',
+	'langtag' => 'en_US' // language tag for Facebook Video
 );
-
 ?>

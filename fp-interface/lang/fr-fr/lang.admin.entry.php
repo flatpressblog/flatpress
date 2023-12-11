@@ -7,10 +7,10 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 );
 
 /* action par défaut */
-
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'G&eacute;rer les billets',
-	'descr' => 'S&eacute;lectionner un billet &agrave; &eacute;diter ou<a href="admin.php?p=entry&amp;action=write"> ajouter un nouveau billet</a>' . '<br /><a href="admin.php?p=entry&amp;action=cats">&Eacute;diter les cat&eacute;gories</a>',
+	'descr' => 'S&eacute;lectionner un billet &agrave; &eacute;diter ou<a href="admin.php?p=entry&amp;action=write"> ajouter un nouveau billet</a><br>' . //
+		'<a href="admin.php?p=entry&amp;action=cats">&Eacute;diter les cat&eacute;gories</a>',
 	'drafts' => 'Brouillons: ',
 	'filter' => 'Filtrer: ',
 	'nofilter' => 'Tout Afficher',
@@ -39,7 +39,8 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Aper&ccedil;u',
 	'savecontinue' => 'enregistrer et continuer',
 	'categories' => 'Cat&eacute;gories',
-	'nocategories' => 'Pas de cat&eacute;gories d&eacute;finies. <a href="admin.php?p=entry&amp;action=cats"> Cr&eacute;er ' . 'cat&eacute;gories</a>  &agrave; partir de du menu des cat&eacute;gories. ' . '<a href="#save">Enregistrer</a> votre premi&egrave;re entr&eacute;e.',
+	'nocategories' => 'Pas de cat&eacute;gories d&eacute;finies. <a href="admin.php?p=entry&amp;action=cats"> Cr&eacute;er cat&eacute;gories</a> &agrave; partir de du menu des cat&eacute;gories. ' . //
+		'<a href="#save">Enregistrer</a> votre premi&egrave;re entr&eacute;e.',
 	'saveopts' => 'Enregistrer options',
 	'success' => 'Votre billet a &eacute;t&eacute; publi&eacute;',
 	'otheropts' => 'Autres options',
@@ -72,7 +73,7 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 /* comments */
 
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => "Commentaires du billet ",
+	'head' => 'Commentaires du billet ',
 	'descr' => 'S&eacute;lectionner un commentaire &agrave; effacer',
 	'sel' => 'Sel',
 	'content' => 'Contenu',
@@ -93,7 +94,7 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => "&Eacute;diter commentaire du billet",
+	'head' => '&Eacute;diter commentaire du billet',
 	'content' => 'Contenu',
 	'date' => 'Date',
 	'author' => 'Auteur',
@@ -126,7 +127,8 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => '&Eacute;diter cat&eacute;gories',
-	'descr' => '<p>Utilisez le formulaire pour ajouter et &eacute;diter vos cat&eacute;gories. </p><p>Chaque item doit &ecirc;tre au format "nom cat&eacute;gorie: <em>num&eacute;ro de cat&eacute;gorie</em>". Placez des tirets devant les articles pour cr&eacute;er des hi&eacute;rarchies.</p>
+	'descr' => '<p>Utilisez le formulaire pour ajouter et &eacute;diter vos cat&eacute;gories.</p>' . //
+		'<p>Chaque item doit &ecirc;tre au format "nom cat&eacute;gorie: <em>num&eacute;ro de cat&eacute;gorie</em>". Placez des tirets devant les articles pour cr&eacute;er des hi&eacute;rarchies.</p>
 		
 	<p>Exemple:</p>
 	<pre>
@@ -145,7 +147,6 @@ Technologie :6
 );
 
 $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
-
 	1 => 'Cat&eacute;gories enregistr&eacute;es',
 	-1 => 'Une erreur est survenue pendant l\'enregistrement des cat&eacute;gories',
 	2 => 'Cat&eacute;gories effac&eacute;es',
@@ -167,5 +168,4 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'the' => 'Les',
 	'most_commented_entries' => 'entrées les plus commentées'
 );
-
 ?>

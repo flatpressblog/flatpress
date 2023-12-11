@@ -1,13 +1,12 @@
 <?php
-
-$lang['plugin']['qspam'] = array(
+$lang ['plugin'] ['qspam'] = array(
 	'error' => 'ERROR: Komentář obsahoval zakázané výrazy'
 );
 
-$lang['admin']['plugin']['submenu']['qspam'] = 'QuickSpamFilter';
-$lang['admin']['plugin']['qspam'] = array(
+$lang ['admin'] ['plugin'] ['submenu'] ['qspam'] = 'QuickSpamFilter';
+$lang ['admin'] ['plugin'] ['qspam'] = array(
 	'head' => 'Nastavení QuickSpam',
-	'desc1' => 'Nepovolit komentáře, které obsahují tato slova (napsat jedno na řádek) :',
+	'desc1' => 'Nepovolit komentáře, které obsahují tato slova (napsat jedno na řádek):',
 	'desc2' => '<strong>Výstraha:</strong> Komentář bude zakázán i když jedno slovo je součástí druhého.', 
 	'options' => 'Ostatní volby',
 	'desc3' => 'Počet zakázaných slov',
@@ -19,5 +18,4 @@ $lang['admin']['plugin']['qspam'] = array(
 		-1 => 'Zakázaná slova neuložena.'
 	)
 );
-
 ?>

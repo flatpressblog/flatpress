@@ -9,11 +9,11 @@ $lang ['setup'] = array(
 $lang ['locked'] = array(
 	'head' => 'Opsætningen er låst',
 	'descr' => 'Det ser ud til, at opsætningen allerede kører: Låsefilen <code>%s</code> findes allerede.
-		
+
 		Hvis du vil genstarte opsætningen, skal du slette denne fil først.
-		
+
 		<strong >Giv agt!</strong> Filen <code>setup.php</code> og mappen <code>setup/</code> bør ikke forblive på serveren. Slet dem, når du er færdig med opsætningen!
-		
+
 		<ul>
 		<li><a href="%s">Ok, tag mig til min blog</a></li>
 		<li><a href="%s">Jeg har slettet filen. Genstart opsætningen.</a></li>
@@ -22,39 +22,39 @@ $lang ['locked'] = array(
 
 $lang ['err'] = array(
 	'setuprun1' => 'Opsætningen er i gang.',
-	
+
 	'setuprun2' => 'Opsætningen kører allerede: Hvis du er administrator, kan du slette ',
 	'setuprun3' => ' for at genstarte.',
 	'writeerror' => 'Skrivefejl',
 
-	'fpuser1' => ' er ikke en gyldig bruger.
-		Brugernavnet skal være alfanumerisk og må ikke indeholde mellemrum.',
-	'fpuser2' => ' er ikke en gyldig bruger.
-		Brugernavnet må kun indeholde bogstaver, tal og 1 understregning.',
+	'fpuser1' => ' er ikke en gyldig bruger. ' . //
+		'Brugernavnet skal være alfanumerisk og må ikke indeholde mellemrum.',
+	'fpuser2' => ' er ikke en gyldig bruger. ' . //
+		'Brugernavnet må kun indeholde bogstaver, tal og 1 understregning.',
 	'fppwd' => 'Adgangskoden skal indeholde mindst 6 tegn og ingen mellemrum.',
 	'fppwd2' => 'Adgangskoderne stemmer ikke overens.',
 	'email' => ' er ikke en gyldig e-mailadresse.',
 	'www' => ' er ikke en gyldig URL.',
-	'error' => '<p><big>Fejl!</big>
-		Følgende fejl opstod under behandlingen af formularen:</p><ul>'
+	'error' => '<p><big>Fejl!</big> ' . //
+		'Følgende fejl opstod under behandlingen af formularen:</p><ul>'
 );
 
 $lang ['step1'] = array(
 	'head' => 'Velkommen til FlatPress!',
 	'descr' => 'Tak, fordi du valgte <strong>FlatPress</strong>.
-		
+
 		Før du kan komme i gang med din helt nye blog, er du nødt til at specificere et par småting.
-		
+
 		Men bare rolig, det tager ikke lang tid!',
 	'descrl1' => 'Vælg dit sprog.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Ikke på listen?</a>',
 	'descrlang' => 'Hvis du ikke kan finde dit sprog på listen, kan du se, om der findes <a href="https://wiki.flatpress.org/res:language">en passende sprogpakke</a>:
-		
+
 		<pre>%s</pre>
-		
+
 		For at installere en sprogpakke skal du blot indlæse dens indhold i din <code>flatpress/</code>-mappe. Derefter <a href="./setup.php">kør opsætningen igen</a>.',
 	'descrw' => '<strong>Det eneste</strong>, du skal bruge for at køre FlatPress, er en <em>skrivbar</em> mappe.
-		
+
 		<pre>%s</pre>'
 );
 
@@ -71,11 +71,11 @@ $lang ['step2'] = array(
 $lang ['step3'] = array(
 	'head' => 'Klar',
 	'descr' => '<strong>Det var det.</strong>
-		
+
 		Skal man ikke tro på det?
-		
+
 		Nej, faktisk er <strong>det kun lige begyndt</strong>! Men blogging er nu <em>dit</em> job. ;)
-		
+
 		<p style="color:#cc0000">OBS: For mere komfort og sikkerhed anbefaler vi, at du konfigurerer instruktionerne til din server i administrationsområdet ved hjælp af PrettyURL-pluginet.</p>
 		
 		<ul>
@@ -159,16 +159,17 @@ Disse elementer kaldes [b]widgets[/b]. Selvfølgelig har FlatPress Wiki også en
 [gallery="images/Leggero-Themepreview/" width="140"]
 Med FlatPress Leggero-temaet har du 3 stilskabeloner til din rådighed - fra klassisk til moderne. Disse skabeloner er en vidunderlig start på at skabe noget af dit eget.
 
+
 [h4]Endnu mere[/h4]
 
 Vil du gerne vide mere om FlatPress?
 
 [list]
-[*]Støt projektet med en [url=http://www.flatpress.org/home/static.php?page=donate]lille donation[/url].
 [*]I [url=https://www.flatpress.org/?x]projektbloggen[/url] kan du finde ud af, hvad der i øjeblikket foregår i FlatPress-projektet.
 [*]Besøg [url=https://forum.flatpress.org/]support forum[/url] for support og kontakt med andre FlatPress-brugere.
 [*]Download fantastiske [b]temaer[/b] skabt af fællesskabet fra [url=https://wiki.flatpress.org/res:themes]Wiki[/url].
 [*]Der er også gode [url=https://wiki.flatpress.org/res:plugins]plugins[/url] der.
+[*]Få [url=https://wiki.flatpress.org/res:language]oversættelsespakken[/url] til dit sprog.
 [*]Du kan også følge FlatPress på [url=https://twitter.com/FlatPress]X (Twitter)[/url] og [url=https://fosstodon.org/@flatpress]Mastodon[/url].
 [/list]
 
@@ -176,6 +177,7 @@ Vil du gerne vide mere om FlatPress?
 [h4]Hvordan kan jeg støtte FlatPress?[/h4]
 
 [list]
+[*]Støt projektet med en [url=http://www.flatpress.org/home/static.php?page=donate]lille donation[/url].
 [*][url=https://www.flatpress.org/contact/]Rapporter[/url] fejl, der er opstået, eller send os forslag til forbedringer.
 [*]Programmører er velkomne til at støtte os på [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
 [*]Oversæt FlatPress og dens dokumentation til [url=https://wiki.flatpress.org/res:language]dit sprog[/url].
@@ -191,10 +193,9 @@ Vil du gerne vide mere om FlatPress?
 God fornøjelse! :)
 
 [i][url=https://www.flatpress.org]FlatPress[/url]-teamet[/i]
-	
+
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Om';
-$lang ['samplecontent'] ['about'] ['content'] = "Skriv noget om dig selv og denne blog her. ([url=admin.php?p=static&action=write&page=about]Arbejd med mig![/url])";
-
+$lang ['samplecontent'] ['about'] ['content'] = 'Skriv noget om dig selv og denne blog her. ([url=admin.php?p=static&action=write&page=about]Arbejd med mig![/url])';
 ?>

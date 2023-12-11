@@ -53,7 +53,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'akismet_key' => 'Akismet キー',
 	'akismet_key_long' => '<a href="https://akismet.com/signup/" target="_blank">Akismetサービス</a>は、<a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">キー</a>を提供します。 ここに挿入してください。',
 	'akismet_url' => 'Akismet 用ブログURL',
-	'akismet_url_long' => '無料の Akismet サービスには、1つのドメインしか使用しないでください。 ' . 'このフィールドは空欄のままでも構いません。 そして<code>%s</code>が使われる。',
+	'akismet_url_long' => '無料の Akismet サービスには、1つのドメインしか使用しないでください。 このフィールドは空欄のままでも構いません。 そして<code>%s</code>が使われる。',
 	'save_conf' => '設定の保存',
 
 	// Edit policy page
@@ -66,7 +66,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'se_fill' => 'エントリーの<a href="admin.php?p=entry">ID</a>を記入してください。 (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'プロパティ',
 	'po_desc' => 'オプション %s を選択した場合は、プロパティを入力してください。',
-	'po_comp' => 'フィールドは必須ではありませんが、少なくとも1つは記入しなければ、ポリシー ' . 'がすべての献金に適用されます。',
+	'po_comp' => 'フィールドは必須ではありませんが、少なくとも1つは記入しなければ、ポリシー がすべての献金に適用されます。',
 	'po_time' => '時間設定',
 	'po_older' => 'より古いエントリーに適用 ',
 	'days' => '日数.',
@@ -159,6 +159,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => '選択された貢献は存在しない。'
 	)
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => '申し訳ございません。',
 	'lock' => '申し訳ありませんが、この投稿にはコメントできません。',

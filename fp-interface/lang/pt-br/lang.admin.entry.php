@@ -1,5 +1,4 @@
 <?php
-// Terminado 15 de fevereiro de 2020.
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Lista de posts',
 	'write' => 'Criar um post',
@@ -8,10 +7,10 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 );
 
 /* default action */
-
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Administre seus posts',
-	'descr' => 'Selecione um post para editar ou <a href="admin.php?p=entry&amp;action=write">adicione um novo</a>' . '<br /><a href="admin.php?p=entry&amp;action=cats">Edite os categorias</a>',
+	'descr' => 'Selecione um post para editar ou <a href="admin.php?p=entry&amp;action=write">adicione um novo</a><br>' . //
+		'<a href="admin.php?p=entry&amp;action=cats">Edite os categorias</a>',
 	'drafts' => 'Rascunhos: ',
 	'filter' => 'Filtro: ',
 	'nofilter' => 'Mostrar tudo',
@@ -40,7 +39,8 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Visualizar',
 	'savecontinue' => 'Salve e continue',
 	'categories' => 'Categorias',
-	'nocategories' => 'Nenhuma categoria definida. <a href="admin.php?p=entry&amp;action=cats">Crie o seu próprio ' . 'categories</a> do painel de posts principal. ' . '<a href="#save">Salve</a> seu post antes.',
+	'nocategories' => 'Nenhuma categoria definida. <a href="admin.php?p=entry&amp;action=cats">Crie o seu próprio categorias</a> do painel de posts principal. ' . //
+		'<a href="#save">Salve</a> seu post antes.',
 	'saveopts' => 'Opções de salvar',
 	'success' => 'Seu post foi publicado com sucesso.',
 	'otheropts' => 'Outras opções',
@@ -71,9 +71,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 );
 
 /* comments */
-
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => "Comentários para o post",
+	'head' => 'Comentários para o post',
 	'descr' => 'Selecione um comentário para excluir',
 	'sel' => 'Sel',
 	'content' => 'Conteúdo',
@@ -94,7 +93,7 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => "Edite o comentário para o post.",
+	'head' => 'Edite o comentário para o post.',
 	'content' => 'Conteúdo',
 	'date' => 'Data',
 	'author' => 'Autor',
@@ -111,7 +110,6 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 );
 
 /* delete action */
-
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Exclua o post',
 	'descr' => 'Você está prestes a excluir o seguinte post:',
@@ -124,11 +122,11 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 );
 
 /* category mgmt */
-
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Edite as categorias',
-	'descr' => '<p>Use o formulário abaixo para adicionar e editar suas categorias. </p><p>Cada item de categoria deve estar neste formato "nome da categoria: <em>número de id</em>". Recue itens com traços para criar hierarquias.</p>
-		
+	'descr' => '<p>Use o formulário abaixo para adicionar e editar suas categorias. </p>' . //
+		'<p>Cada item de categoria deve estar neste formato "nome da categoria: <em>número de id</em>". Recue itens com traços para criar hierarquias.</p>
+
 	<p>Examplo:</p>
 	<pre>
 Geral: 1
@@ -146,7 +144,6 @@ Tecnologia: 6
 );
 
 $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
-
 	1 => 'Categorias salvas',
 	-1 => 'Ocorreu um erro ao tentar salvar as categorias.',
 	2 => 'As Categorias foram apagadas.',
@@ -168,5 +165,4 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'the' => 'As',
 	'most_commented_entries' => 'entradas mais comentadas'
 );
-
 ?>

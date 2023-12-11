@@ -7,10 +7,10 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 );
 
 /* default action */
-
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => '記事の管理',
-	'descr' => '編集する記事の作業を選んでください。<a href="admin.php?p=entry&amp;action=write">記事の新規作成は、ここをクリック</a>します。' . 'あるいは<a href="admin.php?p=entry&amp;action=cats">カテゴリの編集</a>へ移動します。',
+	'descr' => '編集する記事の作業を選んでください。<a href="admin.php?p=entry&amp;action=write">記事の新規作成は、ここをクリック</a>します。' . //
+		'あるいは<a href="admin.php?p=entry&amp;action=cats">カテゴリの編集</a>へ移動します。',
 	'drafts' => 'ドラフト: ',
 	'filter' => 'カテゴリフィルタ(カテゴリ名で記事をしぼり込むことができます): ',
 	'nofilter' => 'すべてを表示',
@@ -39,7 +39,8 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'プレビュー',
 	'savecontinue' => '保存して継続',
 	'categories' => 'カテゴリ',
-	'nocategories' => 'カテゴリは未作成です。 <a href="admin.php?p=entry&amp;action=cats">カテゴリの管理' . '</a>ページに移動して作成してください。 ' . '必要なら、まず<a href="#save">保存</a>してください。',
+	'nocategories' => 'カテゴリは未作成です。 <a href="admin.php?p=entry&amp;action=cats">カテゴリの管理</a>ページに移動して作成してください。 ' . //
+		'必要なら、まず<a href="#save">保存</a>してください。',
 	'saveopts' => '保存オプション',
 	'success' => '記事は公開されました。',
 	'otheropts' => 'その他のオプション',
@@ -70,9 +71,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 );
 
 /* comments */
-
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => "記事へのコメント一覧",
+	'head' => '記事へのコメント一覧',
 	'descr' => '削除したいコメントを選んでください。',
 	'sel' => 'Sel',
 	'content' => '内容',
@@ -93,7 +93,7 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => "コメントを編集します",
+	'head' => 'コメントを編集します',
 	'content' => '内容',
 	'date' => '日付',
 	'author' => '著者',
@@ -110,7 +110,6 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 );
 
 /* delete action */
-
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => '記事の削除',
 	'descr' => '次の記事を削除しようとしています:',
@@ -123,11 +122,10 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 );
 
 /* category mgmt */
-
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => '記事カテゴリの編集',
 	'descr' => '<p>カテゴリの追加・編集は、次のフォームで行ないます。 </p><p>それぞれのカテゴリ項目は、"カテゴリ名: <em>ID番号</em>"という形式で指定します。 ハイフンでインデントすることで、階層を作ることができます。</p>
-		
+
 	<p>指定例:</p>
 	<pre>
 一般 :1
@@ -145,7 +143,6 @@ $lang ['admin'] ['entry'] ['cats'] = array(
 );
 
 $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
-
 	1 => 'カテゴリデータを保存しました。',
 	-1 => 'カテゴリデータを保存できませんでした。',
 	2 => 'カテゴリデータは消去されました。',
@@ -167,5 +164,4 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'the' => 'コメント数が多かった',
 	'most_commented_entries' => '作品'
 );
-
 ?>

@@ -18,3 +18,4 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op6' => 'Maintenance',
 	'op6d' => 'Clean and restore FlatPress'
 );
+?>

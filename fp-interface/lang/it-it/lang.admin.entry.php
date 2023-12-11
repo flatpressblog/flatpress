@@ -7,10 +7,10 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 );
 
 /* default action */
-
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Gestione Articoli',
-	'descr' => 'Seleziona un articolo da modificare o <a href="admin.php?p=entry&amp;action=write">aggiungine uno nuovo</a>' . '<br /><a href="admin.php?p=entry&amp;action=cats">Modifica le categorie</a>',
+	'descr' => 'Seleziona un articolo da modificare o <a href="admin.php?p=entry&amp;action=write">aggiungine uno nuovo</a><br>' . //
+		'<a href="admin.php?p=entry&amp;action=cats">Modifica le categorie</a>',
 	'drafts' => 'Bozze: ',
 	'filter' => 'Filtro: ',
 	'nofilter' => 'Visualizza tutto',
@@ -39,7 +39,8 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Anteprima',
 	'savecontinue' => 'Salva e continua',
 	'categories' => 'Categorie',
-	'nocategories' => 'Nessuna categoria impostata. <a href="admin.php?p=entry&amp;action=cats">Creane una ' . 'categories</a> dal pannello principale degli articoli. ' . '<a href="#save">Salva</a> prima l\'articolo.',
+	'nocategories' => 'Nessuna categoria impostata. <a href="admin.php?p=entry&amp;action=cats">Creane una categories</a> dal pannello principale degli articoli. ' . //
+		'<a href="#save">Salva</a> prima l\'articolo.',
 	'saveopts' => 'Opzioni di salvataggio',
 	'success' => 'L\'articolo è stato pubblicato con successo',
 	'otheropts' => 'Altre opzioni',
@@ -50,11 +51,9 @@ $lang ['admin'] ['entry'] ['write'] = array(
 
 $lang ['admin'] ['entry'] ['list'] ['msgs'] = array(
 	1 => 'L\'articolo è stato salvato con successo',
-	-1 => 'Si è verificato un errore durante il salvataggio 
-					dell\'articolo',
+	-1 => 'Si è verificato un errore durante il salvataggio dell\'articolo',
 	2 => 'L\'articolo è stato elminato con successo',
-	-2 => 'Si è verificato un errore durante l\'eliminazione 
-					dell\'articolo'
+	-2 => 'Si è verificato un errore durante l\'eliminazione dell\'articolo'
 );
 
 $lang ['admin'] ['entry'] ['write'] ['error'] = array(
@@ -72,9 +71,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 );
 
 /* comments */
-
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => "Commenti per l'articolo",
+	'head' => 'Commenti per l\'articolo',
 	'descr' => 'Seleziona un commento da eliminare',
 	'sel' => 'Seleziona',
 	'content' => 'Contenuto',
@@ -91,12 +89,11 @@ $lang ['admin'] ['entry'] ['commentlist'] = array(
 
 $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 	1 => 'Il commento è stato eliminato con successo',
-	-1 => 'Si è verificato un errore durante l\'eliminazione 
-					del commento'
+	-1 => 'Si è verificato un errore durante l\'eliminazione del commento'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => "Modifica commento per l'articolo",
+	'head' => 'Modifica commento per l\'articolo',
 	'content' => 'Contenuto',
 	'date' => 'Data',
 	'author' => 'Autore',
@@ -113,7 +110,6 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 );
 
 /* delete action */
-
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Elimina articolo',
 	'descr' => 'Stai per eliminare il seguente articolo:',
@@ -126,11 +122,11 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 );
 
 /* category mgmt */
-
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Modifica categorie',
-	'descr' => '<p>Usa il modulo qui sotto per aggiungere e modificare le tue categorie. </p><p>Ogni elemento della categoria deve avere questo formato "nome categoria: <em>numero_id</em>". Indicizza gli elementi con dei trattini per creare delle gerarchie.</p>
-		
+	'descr' => '<p>Usa il modulo qui sotto per aggiungere e modificare le tue categorie.</p>' . //
+		'<p>Ogni elemento della categoria deve avere questo formato "nome categoria: <em>numero_id</em>". Indicizza gli elementi con dei trattini per creare delle gerarchie.</p>
+
 	<p>Ad esempio:</p>
 	<pre>
 Generali :1
@@ -170,5 +166,4 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'the' => 'Le',
 	'most_commented_entries' => 'voci più commentate'
 );
-
 ?>

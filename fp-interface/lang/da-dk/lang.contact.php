@@ -21,16 +21,16 @@ $lang ['contact'] ['notification'] = array(
 	'content' => 'Besked:',
 	'subject' => 'Kontakt via ',
 );
-	
+
 $lang ['contact'] ['error'] = array(
 	'name' => 'Indtast venligst et navn',
 	'email' => 'Indtast venligst en gyldig e-mailadresse',
 	'www' => 'Indtast venligst en gyldig URL',
 	'content' => 'Skriv venligst en besked',
 );
-	
+
 $lang ['contact'] ['msgs'] = array(
 	1 => 'Beskeden blev sendt med succes',
 	-1 => 'Fejl: Beskeden kunne ikke sendes',
-);	
+);
 ?>

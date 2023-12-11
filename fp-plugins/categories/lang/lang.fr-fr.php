@@ -1,6 +1,6 @@
 <?php
-$lang['plugin']['categories'] = array(
+$lang ['plugin'] ['categories'] = array(
 	'subject' => 'Cat&eacute;gories',
-	'in' => 'dans'	
+	'in' => 'dans'
 );
 ?>
