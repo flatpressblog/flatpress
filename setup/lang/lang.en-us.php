@@ -8,13 +8,12 @@ $lang ['setup'] = array(
 
 $lang ['locked'] = array(
 	'head' => 'Setup has been locked',
-	'descr' => 'It looks like you already run setup, because 
-		we found the lockfile <code>%s</code>.
-		
+	'descr' => 'It looks like you already run setup, because we found the lockfile <code>%s</code>.
+
 		If you need to restart setup, please delete this file first.
-		
+
 		<strong >Remember!</strong> It\'s not safe keeping <code>setup.php</code> and the <code>setup/</code> directory on your server, we suggest you to delete it!
-		
+
 		<ul>
 		<li><a href="%s">Ok, take me back to my blog</a></li>
 		<li><a href="%s">I\'ve deleted the file, restart the setup</a></li>
@@ -23,39 +22,39 @@ $lang ['locked'] = array(
 
 $lang ['err'] = array(
 	'setuprun1' => 'The installation is running.',
-	
+
 	'setuprun2' => 'The installation is already underway: If you are the administrator, you can delete ',
 	'setuprun3' => ' to restart.',
 	'writeerror' => 'Writing errors',
 
-	'fpuser1' => ' is not a valid user.
-		The user name must be alphanumeric and must not contain any spaces.',
-	'fpuser2' => ' is not a valid user.
-		The user name may only contain letters, numbers and 1 underscore.',
+	'fpuser1' => ' is not a valid user. ' . //
+		'The user name must be alphanumeric and must not contain any spaces.',
+	'fpuser2' => ' is not a valid user. ' . //
+		'The user name may only contain letters, numbers and 1 underscore.',
 	'fppwd' => 'The password must contain at least 6 characters and must not contain any spaces.',
 	'fppwd2' => 'The passwords do not match.',
 	'email' => ' is not a valid e-mail address.',
 	'www' => ' is not a valid URL.',
-	'error' => '<p><big>Error!</big>
-		The following errors occurred while processing the form:</p><ul>'
+	'error' => '<p><big>Error!</big> ' . //
+		'The following errors occurred while processing the form:</p><ul>'
 );
 
 $lang ['step1'] = array(
 	'head' => 'Welcome to FlatPress!',
 	'descr' => 'Thank you for choosing <strong>FlatPress</strong>.
-		
+
 		Before you can start having fun with your brand new blog, we have to ask you a very few questions.
-		
+
 		Don\'t worry, it won\'t take you long!',
 	'descrl1' => 'Select your language.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Not in the list?</a>',
 	'descrlang' => 'If you don\'t see your language in this list, you might want to see if there is <a href="https://wiki.flatpress.org/res:language">a language pack</a> for this version:
-		
+
 		<pre>%s</pre>
-		
+
 		To install the language pack, upload the content of the package in your <code>flatpress/</code>, and overwrite all, then <a href="./setup.php">restart this setup</a>.',
 	'descrw' => 'The <strong>only thing</strong> you need for FlatPress to work is a <em>writable</em> directory.
-		
+
 		<pre>%s</pre>'
 );
 
@@ -72,19 +71,19 @@ $lang ['step2'] = array(
 $lang ['step3'] = array(
 	'head' => 'Done',
 	'descr' => '<strong>End of the story</strong>.
-		
+
 		Unbelievable?
-		
+
 		And you\'re right: <strong>the story has just begun</strong>, but <strong>writing is up to you</strong>!
-		
+
 		<p style="color:#cc0000">Note: For more convenience and security, we recommend configuring the instructions for your server in the Administration Area using the PrettyURL plugin.</p>
-		
+
 		<ul>
 		<li>See <a href="%s">how the home page looks like</a></li>
 		<li>Have fun! <a href="%s">Login now!</a></li>
 		<li>Do you feel like dropping us a line? <a href="https://www.flatpress.org/">Go to FlatPress.org!</a></li>
 		</ul>
-		
+
 		And thank you for choosing FlatPress!'
 );
 
@@ -175,7 +174,7 @@ Want to see more?
 [h4]How can I help?[/h4]
 
 [list]
-[*]Support the project with a [url=http://www.flatpress.org/home/static.php?page=donate]small donation[/url]
+[*]Support the project with a [url=http://www.flatpress.org/home/static.php?page=donate]small donation[/url].
 [*][url=https://www.flatpress.org/contact/]Contact us[/url] to report bugs or suggest improvements.
 [*]Contribute to the development of Flatpress on [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
 [*]Translate FlatPress or the documentation into [url=https://wiki.flatpress.org/res:language]your language[/url].
@@ -191,10 +190,9 @@ Now you can [url=login.php]Login[/url] to get to the [url=admin.php]Administrati
 Have fun! :)
 
 [i]The [url=https://www.flatpress.org]FlatPress[/url] Team[/i]
-	
+
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'About';
-$lang ['samplecontent'] ['about'] ['content'] = "Write something about yourself here. ([url=admin.php?p=static&action=write&page=about]Edit me![/url])";
-
+$lang ['samplecontent'] ['about'] ['content'] = 'Write something about yourself here. ([url=admin.php?p=static&action=write&page=about]Edit me![/url])';
 ?>

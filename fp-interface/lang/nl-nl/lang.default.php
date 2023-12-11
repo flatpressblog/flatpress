@@ -31,7 +31,8 @@ $lang ['search'] = array(
 	'fulltext' => 'Volledige tekst',
 
 	'fset2' => 'Datum',
-	'datedescr' => 'Je kan zoeken op een specifieke datum. Je kan een jaar, een jaar en maand, of een volledige datum invoeren. ' . 'Laat het leeg om alle data invoer uit de database te tonen.',
+	'datedescr' => 'Je kan zoeken op een specifieke datum. Je kan een jaar, een jaar en maand, of een volledige datum invoeren. ' . //
+		'Laat het leeg om alle data invoer uit de database te tonen.',
 
 	'fset3' => 'Zoek op categorie',
 	'catdescr' => 'Selecteer niets om alles te zoeken',
@@ -49,7 +50,6 @@ $lang ['search'] = array(
 );
 
 $lang ['search'] ['error'] = array(
-
 	'keywords' => 'Je moet tenminste 1 zoekwoord invullen'
 );
 

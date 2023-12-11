@@ -8,51 +8,51 @@ $lang ['main'] = array(
 	'static' => 'Statisk side',
 	'comment' => 'Kommentar',
 	'preview' => 'Rediger/gennemse',
-		
-	'filed_under' => 'Arkiveret under ',	
-		
+
+	'filed_under' => 'Arkiveret under ',
+
 	'add_entry' => 'Tilføj bidrag',
 	'add_comment' => 'Tilføj kommentar',
 	'add_static' => 'Tilføj statisk side',
-		
+
 	'btn_edit' => 'Rediger',
 	'btn_delete' => 'Slet',
-		
+
 	'nocomments' => 'Tilføj kommentar',
 	'comment' => '1 Kommentar',
 	'comments' => 'Kommentarer'
 );
-	
+
 $lang ['search'] = array(
 	'head' => 'Søgning',
 	'fset1'	=> 'Indsæt søgekriterier',
 	'keywords' => 'Søg på ord',
 	'onlytitles' => 'Søg kun i titler',
 	'fulltext' => 'Fuldtekstsøgning',
-		
+
 	'fset2'	=> 'Søg efter dato',
-	'datedescr'	=> 'Du kan søge efter en hvilken som helst dato. Kriterierne kan være: År, år og måned eller som en komplet dato. ' . 'Uden information bliver alt gennemsøgt.',
-		
+	'datedescr'	=> 'Du kan søge efter en hvilken som helst dato. Kriterierne kan være: År, år og måned eller som en komplet dato. ' . //
+		'Uden information bliver alt gennemsøgt.',
+
 	'fset3' => 'Søg i kategorier',
 	'catdescr' => 'Der skal angives mindst én kategori.',
-		
+
 	'fset4' => 'Start søgning',
 	'submit' => 'Start søgning',
-		
+
 	'headres' => 'Søgeresultater',
 	'descrres' => 'Søgningen efter <strong>%s</strong> gav følgende resultater:',
 	'descrnores' => 'Søgningen efter <strong>%s</strong> var resultatløs.',
-		
+
 	'moreopts' => 'Flere muligheder',
-		
+
 	'searchag' => 'Gentag søgning'
 );
-	
-$lang ['search'] ['error'] = array(
 
+$lang ['search'] ['error'] = array(
 	'keywords' => 'Der skal angives mindst ét søgekriterium.'
 );
-	
+
 $lang ['staticauthor'] = array(
 	// "Published by" in static pages
 	'published_by' => 'Udgivet af',
@@ -67,13 +67,13 @@ $lang ['entryauthor'] = array(
 
 $lang ['entry'] = array();
 $lang ['entry'] ['flags'] = array();
-	
+
 $lang ['entry'] ['flags'] ['long'] = array(
 	'draft' => '<strong>Gem indlæg som kladde</strong>: Vil kun være synlig, når den er offentliggjort.',
 	//'static' => '<strong>Static entry</strong>: normally hidden, to reach the entry put ?page=title-of-the-entry in url (experimental)',
 	'commslock' => '<strong>Lås kommentarer</strong>: Tillad ikke kommentarer til dette indlæg.'
 );
-	
+
 $lang ['entry'] ['flags'] ['short'] = array(
 	'draft' => 'Kladder',
 	//'static' => 'Static',
@@ -88,10 +88,9 @@ $lang ['404error'] = array(
 	'subject' => 'Ikke fundet',
 	'content' => '<p>Beklager, der blev ikke fundet noget passende til denne anmodning.</p>'
 );
-		
+
 // Login
 $lang ['login'] = array(
-		
 	'head' => 'Log ind',
 	'fieldset1'	=> 'Indtast venligst bruger og adgangskode',
 	'user' => 'Bruger:',
@@ -100,7 +99,7 @@ $lang ['login'] = array(
 	'submit' => 'Log ind',
 	'forgot' => 'Glemt adgangskode'
 );
-		
+
 $lang ['login'] ['success'] = array(
 	'success' => 'Du er logget ind.',
 	'logout' => 'Du er logget ud.',
@@ -109,13 +108,13 @@ $lang ['login'] ['success'] = array(
 	'opt2' => 'Til administrationsmenuen',
 	'opt3' => 'Opret nyt indlæg'
 );
-	
+
 $lang ['login'] ['error'] = array(
 	'user' => 'Angiv venligst bruger.',
 	'pass' => 'Indtast venligst adgangskode.',
 	'match' => 'Bruger eller adgangskode er forkert.'
 );
-	
+
 $lang ['comments'] = array(
 	'head' => 'Tilføj kommentar',
 	'descr' => 'Felterne Navn og Kommentar er obligatoriske.',
@@ -133,20 +132,20 @@ $lang ['comments'] = array(
 	'nocomments' => 'Ingen kommentarer tilgængelige endnu',
 	'commslock'	=> 'Ingen kommentarer er mulige til denne post'
 );
-	
+
 $lang ['comments'] ['error'] = array(
 	'name' => 'Indtast venligst et navn',
 	'email' => 'Indtast venligst en gyldig e-mailadresse',
 	'www' => 'Indtast venligst en gyldig URL',
 	'comment' => 'Skriv venligst en kommentar'
 );
-	
+
 $lang ['postviews'] = array(
 	// PostView-Plugin
 	'views' => 'Opkald(er)'
 );
 
-$lang ['date'] ['month'] = array(		
+$lang ['date'] ['month'] = array(
 	'Januar',
 	'Februar',
 	'Marts',
@@ -177,17 +176,17 @@ $lang ['date'] ['month_abbr'] = array(
 );
 
 $lang ['date'] ['weekday'] = array(
-	'Søndag',		
+	'Søndag',
 	'Mandag',
 	'Tirsdag',
 	'Onsdag',
 	'Torsdag',
 	'Fredag',
-	'Lørdag'		
+	'Lørdag'
 );
 
 $lang ['date'] ['weekday_abbr'] = array(
-	'Sø',		
+	'Sø',
 	'Ma',
 	'Ti',
 	'On',

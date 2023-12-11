@@ -18,9 +18,9 @@ $lang ['admin'] ['panels'] = array(
 );
 
 $lang ['admin'] ['general'] = array(
-	'id' => 'Id', # for entry ids
-	'name' => 'Όνομα', # for file names
-	'title' => 'Τιτλος', # for entry/posts/static titles
+	'id' => 'Id', // for entry ids
+	'name' => 'Όνομα', // for file names
+	'title' => 'Τιτλος', // for entry/posts/static titles
 	'comments' => 'Σχόλια',
 	'author' => 'Συγγραφέας',
 	'actdel' => 'Διαγραφή',
@@ -30,5 +30,4 @@ $lang ['admin'] ['general'] = array(
 	'startpage' => 'Αρχική σελίδα',
 	'logout' => 'Αποσύνδεση'
 );
-
 ?>

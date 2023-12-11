@@ -1,11 +1,10 @@
 <?php
-
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'Ρύθμιση του BBCode',
-	'desc1' => 'Το πρόσθετο αυτό επιτρέπει τη χρήση σύνταξης <a href="https://wiki.flatpress.org/'.
+	'desc1' => 'Το πρόσθετο αυτό επιτρέπει τη χρήση σύνταξης <a href="https://wiki.flatpress.org/' . //
 		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a>.',
-	
+
 	'options' => 'Επιλογές',
 
 	'editing' => 'Επεξεργασία',
@@ -56,9 +55,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'Πηγαίνετε στον',
-		// language tag for Facebook Video
-		'langtag' => 'el_GR'
+	'go_to' => 'Πηγαίνετε στον',
+	'langtag' => 'el_GR' // language tag for Facebook Video
 );
-
 ?>

@@ -11,3 +11,4 @@ $lang ['plugin'] ['photoswipe'] = array(
 	'label_gallerydoesntexist' => 'Галерея не существует:',
 	'label_imagedoesntexist' => 'Изображение не существует:'
 );
+?>

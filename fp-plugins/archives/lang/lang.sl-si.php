@@ -1,6 +1,6 @@
 <?php
-	$lang['plugin']['archives'] = array(
-		'subject' => 'Arhivi',
-		'no_posts' => 'Ni objav',
-	);
+$lang ['plugin'] ['archives'] = array(
+	'subject' => 'Arhivi',
+	'no_posts' => 'Ni objav'
+);
 ?>

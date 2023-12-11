@@ -30,5 +30,4 @@ $lang ['admin'] ['general'] = array(
 	'startpage' => 'Startpage',
 	'logout' => 'Logout'
 );
-
 ?>

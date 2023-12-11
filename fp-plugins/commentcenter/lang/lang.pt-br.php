@@ -159,6 +159,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'A entrada que você selecionou não existe.'
 	)
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Desculpe, estamos encontrando dificuldades técnicas.',
 	'lock' => 'Desculpe, comentários para esta entrada estão bloqueados.',
@@ -182,3 +183,4 @@ Atenciosamente,
 %blogtitle%
 
 ';
+?>

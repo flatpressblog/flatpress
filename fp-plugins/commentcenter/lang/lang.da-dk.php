@@ -46,14 +46,15 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'log_all' => 'Loggede blokerede kommentarer',
 	'log_all_long' => 'Aktivér denne indstilling, hvis du også vil logge blokerede kommentarer.',
 	'email_alert' => 'Meddelelse via e-mail',
-	'email_alert_long' => 'Hvis du skal kontrollere en kommentar for godkendelse, kan du ' . 'blive informeret via e-mail.',
+	'email_alert_long' => 'Hvis du skal kontrollere en kommentar for godkendelse, kan du blive informeret via e-mail.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Kontrol af kommentarer med Akismet',
 	'akismet_use_long' => 'Med <a href="https://akismet.com/" target="_blank">Akismet</a> kan du reducere spam i kommentarer.',
 	'akismet_key' => 'Akismet-nøgle',
 	'akismet_key_long' => 'Tjenesten <a href="https://akismet.com/signup/" target="_blank">Akismet</a> giver dig en <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">nøgle</a>. Indsæt den her.',
 	'akismet_url' => 'Blog-URL til Akismet',
-	'akismet_url_long' => 'Du bør kun bruge ét domæne til den gratis Akismet-tjeneste. ' . 'Du kan lade dette felt stå tomt. <code>%s</code> vil så blive brugt.',
+	'akismet_url_long' => 'Du bør kun bruge ét domæne til den gratis Akismet-tjeneste. ' . //
+		'Du kan lade dette felt stå tomt. <code>%s</code> vil så blive brugt.',
 	'save_conf' => 'Gem indstillinger',
 
 	// Edit policy page
@@ -66,7 +67,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'se_fill' => 'Udfyld venligst felterne med posternes <a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Ejendomme',
 	'po_desc' => 'Hvis du har valgt %s -indstillingen, skal du udfylde egenskaberne.',
-	'po_comp' => 'Felterne er ikke obligatoriske, men du skal udfylde mindst ét, ellers vil politikken ' . ' vil gælde for alle indtastninger.',
+	'po_comp' => 'Felterne er ikke obligatoriske, men du skal udfylde mindst ét, ellers vil politikken vil gælde for alle indtastninger.',
 	'po_time' => 'Tidsindstillinger',
 	'po_older' => 'Gælder for poster, der er ældre end ',
 	'days' => 'dage.',
@@ -159,6 +160,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'Den valgte post findes ikke.'
 	)
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Beklager, vi oplever tekniske problemer.',
 	'lock' => 'Beklager, dette indlæg kan ikke kommenteres.',
@@ -182,3 +184,4 @@ Genereres automatisk af
 %blogtitle%
 
 ';
+?>
