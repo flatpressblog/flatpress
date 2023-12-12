@@ -101,7 +101,7 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]Επικοινωνία[/url]
 [/list]';
 
-$lang ['samplecontent'] ['entry'] ['subject'] = 'Καλώς ήρθατε στην FlatPress!';
+$lang ['samplecontent'] ['entry'] ['subject'] = 'Welcome to FlatPress!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δείγμα ανάρτησης. Σας δείχνει μερικές από τις λειτουργίες του [url=https://www.flatpress.org]FlatPress[/url].
 
 Το στοιχείο "more" σας επιτρέπει να μεταβείτε από το περίγραμμα του άρθρου στο πλήρες άρθρο.
