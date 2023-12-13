@@ -52,7 +52,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 $lang ['admin'] ['entry'] ['list'] ['msgs'] = array(
 	1 => 'L\'articolo è stato salvato con successo',
 	-1 => 'Si è verificato un errore durante il salvataggio dell\'articolo',
-	2 => 'L\'articolo è stato elminato con successo',
+	2 => 'L\'articolo è stato eliminato con successo',
 	-2 => 'Si è verificato un errore durante l\'eliminazione dell\'articolo'
 );
 
