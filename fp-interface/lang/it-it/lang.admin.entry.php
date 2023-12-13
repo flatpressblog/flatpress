@@ -164,6 +164,6 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'comments' => 'Commenti',
 	'comments_using' => 'commenti con',
 	'the' => 'Le',
-	'most_commented_entries' => 'voci più commentate'
+	'most_commented_entries' => 'articoli più commentati'
 );
 ?>
