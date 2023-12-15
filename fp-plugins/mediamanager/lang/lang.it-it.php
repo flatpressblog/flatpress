@@ -7,7 +7,7 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Media manager',
 	'description' => 'Gestisci i file mulltimediali',
 
-	'delete' => 'elimina',
+	'delete' => 'Elimina',
 	'up' => 'Indietro',
 	'page' => 'Pagina',
 	'colname' => 'Nome',

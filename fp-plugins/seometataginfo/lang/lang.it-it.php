@@ -14,8 +14,8 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 
 $lang ['plugin'] ['seometataginfo'] = array(
 	'sep' => ' - ',
-	'home' => 'Casa',
-	'blog_home' => 'Casa del blog',
+	'home' => 'Pagina principale',
+	'blog_home' => 'Pagina principale del blog',
 	'blog_page' => 'Blog',
 	'archive' => 'Archivio',
 	'category' => 'Categoria',

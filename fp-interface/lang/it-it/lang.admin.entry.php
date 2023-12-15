@@ -52,7 +52,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 $lang ['admin'] ['entry'] ['list'] ['msgs'] = array(
 	1 => 'L\'articolo è stato salvato con successo',
 	-1 => 'Si è verificato un errore durante il salvataggio dell\'articolo',
-	2 => 'L\'articolo è stato elminato con successo',
+	2 => 'L\'articolo è stato eliminato con successo',
 	-2 => 'Si è verificato un errore durante l\'eliminazione dell\'articolo'
 );
 
@@ -164,6 +164,6 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'comments' => 'Commenti',
 	'comments_using' => 'commenti con',
 	'the' => 'Le',
-	'most_commented_entries' => 'voci più commentate'
+	'most_commented_entries' => 'articoli più commentati'
 );
 ?>
