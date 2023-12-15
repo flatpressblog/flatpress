@@ -2,7 +2,7 @@
 
 /**
  * Project:     SmartyValidate: Form Validator for the Smarty Template Engine
- * File:        validate_criteria.isFloat.php
+ * File:        function.validate_init.php
  * Author:      Monte Ohrt <monte at newdigitalgroup dot com>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,19 +25,15 @@
  * @package SmartyValidate
  */
 
-/**
- * test if a value is a float
+ /**
+ * initialize validate parameters
  *
- * @param string $value the value being tested
- * @param boolean $empty if field can be empty
- * @param array params validate parameter values
- * @param array formvars form var values
+ * @param array  $params the parameters passed to initialize
+ * @param object $smarty the smarty object
  */
-function smarty_validate_criteria_isFloat($value, $empty, &$params, &$formvars) {
-    if(strlen($value) == 0)
-        return $empty;
 
-    return preg_match('!^\-?\d+\.\d+?$!', $value);
+function smarty_function_validate_init($params, &$smarty) {
+    $smarty->assign('validate_init', $params);
 }
 
 ?>

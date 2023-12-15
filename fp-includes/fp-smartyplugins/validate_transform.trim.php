@@ -2,7 +2,7 @@
 
 /**
  * Project:     SmartyValidate: Form Validator for the Smarty Template Engine
- * File:        validate_criteria.isFloat.php
+ * File:        validate_transform.trim.php
  * Author:      Monte Ohrt <monte at newdigitalgroup dot com>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,19 +25,16 @@
  * @package SmartyValidate
  */
 
-/**
- * test if a value is a float
+ /**
+ * transform fuction, trim a value
  *
- * @param string $value the value being tested
- * @param boolean $empty if field can be empty
- * @param array params validate parameter values
- * @param array formvars form var values
+ * @param string $value the value being trimmed
+ * @param array  $params the parameters passed to the transform function
+ * @param array  $formvars the form variables
  */
-function smarty_validate_criteria_isFloat($value, $empty, &$params, &$formvars) {
-    if(strlen($value) == 0)
-        return $empty;
 
-    return preg_match('!^\-?\d+\.\d+?$!', $value);
+function smarty_validate_transform_trim($value, $params, &$formvars) {
+    return trim($value);
 }
 
 ?>

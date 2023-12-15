@@ -37,7 +37,7 @@ function smarty_validate_criteria_isInt($value, $empty, &$params, &$formvars) {
         if(strlen($value) == 0)
             return $empty;        
         
-        return preg_match('!^\d+$!', $value);
+        return preg_match('!^-?\d+$!', $value);
 }
 
 ?>
