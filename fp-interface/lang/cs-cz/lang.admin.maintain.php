@@ -11,7 +11,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Ukázat informace o PHP',
 	'opt5' => 'Zjistit aktualizace',
 
-	'chmod_info' => 'Následující oprávnění <strong>nemůžou být</strong> resetované na 0775; pravděpodobně vlastník souborů není stejná osoba jako vlastník webu. ' . //
+	'chmod_info' => 'Následující oprávnění <strong>nemůžou být</strong> resetované na 0776; pravděpodobně vlastník souborů není stejná osoba jako vlastník webu. ' . //
 		'Případně můžete ignorovat toto oznámení.'
 );
 
