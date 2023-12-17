@@ -11,7 +11,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Vis PHP-information om webserveren',
 	'opt5' => 'Tjek for nye versioner',
 
-	'chmod_info' => 'Filadgangsrettighederne <strong>kunne ikke være nulstilles til standardværdierne på 0775.' . //
+	'chmod_info' => 'Filadgangsrettighederne <strong>kunne ikke være nulstilles til standardværdierne på 0776.' . //
 		'Normalt kan du ignorere dette tip.'
 );
 
