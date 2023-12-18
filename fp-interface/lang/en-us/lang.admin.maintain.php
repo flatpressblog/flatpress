@@ -11,7 +11,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Show info about PHP',
 	'opt5' => 'Check for updates',
 
-	'chmod_info' => 'The following file permissions <strong>could not</strong> be reset to 0775; probably file owner is not the same as the webserver\'s. ' . //
+	'chmod_info' => 'The following file permissions <strong>could not</strong> be reset to 0776; probably file owner is not the same as the webserver\'s. ' . //
 		'Usually you can ignore this notice.'
 );
 	

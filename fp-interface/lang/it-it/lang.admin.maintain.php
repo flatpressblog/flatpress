@@ -11,7 +11,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Visualizza informazioni su PHP',
 	'opt5' => 'Controllo aggiornamenti',
 
-	'chmod_info' => 'I seguenti permessi dei file <strong>non possono</strong> essere ripristinati a 0775; probabilmente il proprietario non è lo stesso del server web. ' . //
+	'chmod_info' => 'I seguenti permessi dei file <strong>non possono</strong> essere ripristinati a 0776; probabilmente il proprietario non è lo stesso del server web. ' . //
 		'Di solito puoi ignorare questo avviso.'
 );
 

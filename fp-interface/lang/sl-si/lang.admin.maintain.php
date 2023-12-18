@@ -11,7 +11,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Prikaži informacije o PHP',
 	'opt5' => 'Preveri posodobitve',
 
-	'chmod_info' => 'Naslednja dovoljenja za datoteke <strong>ni mogoče</strong> povrniti na 0775; verjetno lastnik datoteke ni isti kot spletne strežnik. ' . //
+	'chmod_info' => 'Naslednja dovoljenja za datoteke <strong>ni mogoče</strong> povrniti na 0776; verjetno lastnik datoteke ni isti kot spletne strežnik. ' . //
 		'Običajno lahko to obvestilo prezrete.'
 );
 
