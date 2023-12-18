@@ -81,7 +81,7 @@ $lang ['entry'] ['flags'] ['short'] = array(
 );
 
 $lang ['entry'] ['categories'] = array(
-	'unfiled' => 'Non depositato'
+	'unfiled' => 'Non classificato'
 );
 
 $lang ['404error'] = array(
