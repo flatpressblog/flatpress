@@ -6,10 +6,10 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'sample_desc' => 'FlatPress related articles, guides and plugins',
 	'input_keywords' => 'Insert the keywords:',
 	'sample_keywords' => 'flatpress, flatpress articles, flatpress guides, flatpress plugins',
-	'input_noindex' => 'Disallow Indexing (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noindex" target="_blank" title="Read more about noindex">noindex</a>):',
-	'input_nofollow' => 'Disallow Following (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nofollow" target="_blank" title="Read more about nofollow">nofollow</a>):',
-	'input_noarchive' => 'Disallow Archiving (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noarchive" target="_blank" title="Read more about noarchive">noarchive</a>):',
-	'input_nosnippet' => 'Disallow snippets (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nosnippet" target="_blank" title="Read more about nosnippet">nosnippet</a>):'
+	'input_noindex' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noindex" target="_blank" title="Read more about noindex">Disallow Indexing</a>:',
+	'input_nofollow' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nofollow" target="_blank" title="Read more about nofollow">Disallow Following</a>:',
+	'input_noarchive' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noarchive" target="_blank" title="Read more about noarchive">Disallow Archiving</a>:',
+	'input_nosnippet' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nosnippet" target="_blank" title="Read more about nosnippet">Disallow snippets</a>:'
 );
 
 $lang ['plugin'] ['seometataginfo'] = array(

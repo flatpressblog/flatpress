@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{$fp_config.locale.lang}">
 <head>
 	<title>{$flatpress.title}{$pagetitle}</title>
-	<meta http-equiv="Content-Type" content="text/html; charset={$flatpress.charset}" />
+	<meta http-equiv="Content-Type" content="text/html; charset={$flatpress.charset}">
 	{action hook=wp_head}
 	{action hook=admin_head}
 </head>
