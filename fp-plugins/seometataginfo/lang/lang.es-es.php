@@ -6,10 +6,10 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'sample_desc' => 'FlatPress artículos relacionados, guías y plugins',
 	'input_keywords' => 'Introduzca las palabras clave:',
 	'sample_keywords' => 'flatpress, flatpress artículos, flatpress guías, flatpress plugins',
-	'input_noindex' => 'No permitir la indexación (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=es#noindex" target="_blank" title="Más información sobre noindex">noindex</a>):',
-	'input_nofollow' => 'No permitir lo siguiente (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=es#nofollow" target="_blank" title="Más información sobre nofollow">nofollow</a>):',
-	'input_noarchive' => 'No permitir el archivo (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=es#noarchive" target="_blank" title="Más información sobre noarchive">noarchive</a>):',
-	'input_nosnippet' => 'No permitir fragmentos (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=es#nosnippet" target="_blank" title="Más información sobre nosnippet">nosnippet</a>):'
+	'input_noindex' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=es#noindex" target="_blank" title="Más información sobre noindex">No permitir la indexación</a>:',
+	'input_nofollow' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=es#nofollow" target="_blank" title="Más información sobre nofollow">No permitir lo siguiente</a>:',
+	'input_noarchive' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=es#noarchive" target="_blank" title="Más información sobre noarchive">No permitir el archivo</a>:',
+	'input_nosnippet' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=es#nosnippet" target="_blank" title="Más información sobre nosnippet">No permitir fragmentos</a>:'
 );
 
 $lang ['plugin'] ['seometataginfo'] = array(

@@ -6,10 +6,10 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'sample_desc' => 'Artigos, guias e plug-ins relacionados ao FlatPress',
 	'input_keywords' => 'Insira as palavras-chave:',
 	'sample_keywords' => 'flatpress, artigos sobre flatpress, guias flatpress, flatpress plugins',
-	'input_noindex' => 'Não permitir a indexação (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=pt-br#noindex" target="_blank" title="Leia mais sobre o noindex">noindex</a>):',
-	'input_nofollow' => 'Não permitir o seguinte (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=pt-br#nofollow" target="_blank" title="Leia mais sobre o nofollow">nofollow</a>):',
-	'input_noarchive' => 'Não permitir o arquivamento (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=pt-br#noarchive" target="_blank" title="Leia mais sobre o noarchive">noarchive</a>):',
-	'input_nosnippet' => 'Não permitir snippets (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=pt-br#nosnippet" target="_blank" title="Leia mais sobre o nosnippet">nosnippet</a>):'
+	'input_noindex' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=pt-br#noindex" target="_blank" title="Leia mais sobre o noindex">Não permitir a indexação</a>:',
+	'input_nofollow' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=pt-br#nofollow" target="_blank" title="Leia mais sobre o nofollow">Não permitir o seguinte</a>:',
+	'input_noarchive' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=pt-br#noarchive" target="_blank" title="Leia mais sobre o noarchive">Não permitir o arquivamento</a>:',
+	'input_nosnippet' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=pt-br#nosnippet" target="_blank" title="Leia mais sobre o nosnippet">Não permitir snippets</a>:'
 );
 
 $lang ['plugin'] ['seometataginfo'] = array(

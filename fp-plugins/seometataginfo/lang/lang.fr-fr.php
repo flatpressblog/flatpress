@@ -6,10 +6,10 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'sample_desc' => 'Articles, guides et plugins relatifs à FlatPress',
 	'input_keywords' => 'Insérez les mots-clés :',
 	'sample_keywords' => 'flatpress, flatpress articles, flatpress guides, flatpress plugins',
-	'input_noindex' => 'Désactiver l\'indexation (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=fr#noindex" target="_blank" title="En savoir plus sur noindex">noindex</a>):',
-	'input_nofollow' => 'Désactiver suivant (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=fr#nofollow" target="_blank" title="En savoir plus sur nofollow">nofollow</a>):',
-	'input_noarchive' => 'Désactiver l\'archivage (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=fr#noarchive" target="_blank" title="En savoir plus sur noarchive">noarchive</a>):',
-	'input_nosnippet' => 'Désactiver les snippets (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=fr#nosnippet" target="_blank" title="En savoir plus sur nosnippet">nosnippet</a>):'
+	'input_noindex' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=fr#noindex" target="_blank" title="En savoir plus sur noindex">Désactiver l\'indexation</a>:',
+	'input_nofollow' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=fr#nofollow" target="_blank" title="En savoir plus sur nofollow">Désactiver suivant</a>:',
+	'input_noarchive' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=fr#noarchive" target="_blank" title="En savoir plus sur noarchive">Désactiver l\'archivage</a>:',
+	'input_nosnippet' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=fr#nosnippet" target="_blank" title="En savoir plus sur nosnippet">Désactiver les snippets</a>:'
 );
 
 $lang ['plugin'] ['seometataginfo'] = array(

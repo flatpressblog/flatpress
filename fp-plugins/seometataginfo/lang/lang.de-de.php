@@ -6,10 +6,10 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'sample_desc' => 'FlatPress-bezogene Artikel, Anleitungen und Plugins',
 	'input_keywords' => 'Füge die Schlüsselwörter ein:',
 	'sample_keywords' => 'flatpress, flatpress artikel, flatpress anleitungen, flatpress plugins',
-	'input_noindex' => 'Indizieren verbieten (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=de#noindex" target="_blank" title="Lese mehr über noindex">noindex</a>):',
-	'input_nofollow' => 'Link-Following verbieten (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=de#nofollow" target="_blank" title="Lese mehr über nofollow">nofollow</a>):',
-	'input_noarchive' => 'Archivierung verbieten (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=de#noarchive" target="_blank" title="Lese mehr über noarchive">noarchive</a>):',
-	'input_nosnippet' => 'Ausschnitte verbieten (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=de#nosnippet" target="_blank" title="Lese mehr über nosnippet">nosnippet</a>):'
+	'input_noindex' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=de#noindex" target="_blank" title="Lese mehr über noindex">Indizieren verbieten</a>:',
+	'input_nofollow' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=de#nofollow" target="_blank" title="Lese mehr über nofollow">Link-Following verbieten</a>:',
+	'input_noarchive' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=de#noarchive" target="_blank" title="Lese mehr über noarchive">Archivierung verbieten</a>:',
+	'input_nosnippet' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=de#nosnippet" target="_blank" title="Lese mehr über nosnippet">Ausschnitte verbieten</a>:'
 );
 
 $lang ['plugin'] ['seometataginfo'] = array(

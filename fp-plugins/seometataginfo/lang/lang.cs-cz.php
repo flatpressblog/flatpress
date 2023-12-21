@@ -6,10 +6,10 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'sample_desc' => 'FlatPress související články, průvodci a pluginy',
 	'input_keywords' => 'Vložte klíčová slova:',
 	'sample_keywords' => 'flatpress, flatpress články, flatpress průvodci, flatpress pluginy',
-	'input_noindex' => 'Zakázat indexování (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noindex" target="_blank" title="Přečtěte si více o noindex">noindex</a>):',
-	'input_nofollow' => 'Zakázat sledování (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nofollow" target="_blank" title="Přečtěte si více o nofollow">nofollow</a>):',
-	'input_noarchive' => 'Zakázat archivaci (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noarchive" target="_blank" title="Přečtěte si více o noarchive">noarchive</a>):',
-	'input_nosnippet' => 'Zakázat úryvky (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nosnippet" target="_blank" title="Přečtěte si více o nosnippet">nosnippet</a>):'
+	'input_noindex' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noindex" target="_blank" title="Přečtěte si více o noindex">Zakázat indexování</a>:',
+	'input_nofollow' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nofollow" target="_blank" title="Přečtěte si více o nofollow">Zakázat sledování</a>:',
+	'input_noarchive' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noarchive" target="_blank" title="Přečtěte si více o noarchive">Zakázat archivaci</a>:',
+	'input_nosnippet' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nosnippet" target="_blank" title="Přečtěte si více o nosnippet">Zakázat úryvky</a>:'
 );
 
 $lang ['plugin'] ['seometataginfo'] = array(
