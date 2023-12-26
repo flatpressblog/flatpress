@@ -7,8 +7,11 @@ $lang ['plugin'] ['prettyurls'] ['errors'] = array (
 $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'Nastavitve PrettyURLs';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'Nastavitve PrettyURLs',
+	'description1' => 'Tu lahko standardne URL-je iz FlatPressa spremenite v čudovite, SEO prijazne URL-je.',
 	'htaccess' => '.htaccess',
-	'description' => 'Ta urejevalnik vam omogoča urejanje vaše <code>.htaccess</code> datoteke.',
+	'description2' => 'Ta urejevalnik vam omogoča neposredno urejanje <code>.htaccess</code>, potrebnega za vtičnik PrettyURLs.<br>' . //
+		'<strong>Opomba:</strong> Koncept datotek .htaccess poznajo samo spletni strežniki, ki so združljivi z NCSA, kot je Apache. ' . //
+		'Programska oprema vašega strežnika je: <strong>' . $_SERVER["SERVER_SOFTWARE"] . '</strong>',
 	'cantsave' => 'Datoteke ne morete urejati, ker ni <strong>zapisljiva</strong>. Lahko podelite dovoljenja za pisanje ali kopirate in prilepite v datoteko ter jo nato naložite ročno.',
 	'mode' => 'Način',
 	'auto' => 'Avtomatski',

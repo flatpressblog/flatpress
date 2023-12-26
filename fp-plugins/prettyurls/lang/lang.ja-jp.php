@@ -7,8 +7,11 @@ $lang ['plugin'] ['prettyurls'] ['errors'] = array (
 $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLsの設定';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'PrettyURLsの設定',
+	'description1' => 'FlatPressの標準的なURLを、SEOに配慮した美しいURLに変換することができます。',
 	'htaccess' => '.htaccess',
-	'description' => 'この生エディタは、<code>.htaccess</code>を編集することができます。',
+	'description2' => 'このエディタでは、PrettyUrlsプラグインに必要な<code>.htaccess</code>を直接編集することができます。<br>' . //
+		'<strong>注:</strong> .htaccessファイルの概念を認識するのは、ApacheのようなNCSA互換のウェブサーバーだけです。 ' . //
+		'サーバーソフトウェアは. <strong>' . $_SERVER["SERVER_SOFTWARE"] . '</strong>',
 	'cantsave' => 'このファイルを編集できません、なぜなら <strong>書き込み許可</strong>されてないからです。' .
 		'書き込み許可を与えたり、ファイルにコピー＆ペーストしてアップロードすることもできる。',
 	'mode' => 'モード',

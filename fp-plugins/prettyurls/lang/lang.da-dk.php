@@ -7,9 +7,11 @@ $lang ['plugin'] ['prettyurls'] ['errors'] = array (
 $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLs';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'PrettyURLs Konfiguration',
+	'description1' => 'Her kan du forvandle FlatPress\' standard-URL\'er til smukke, SEO-venlige URL\'er.',
 	'htaccess' => '.htaccess',
-	'description' => 'Denne editor giver dig mulighed for direkte at redigere de ' . //
-		'<code>.htaccess</code> der er nødvendige for PrettyUrls plugin.',
+	'description2' => 'Denne editor giver dig mulighed for direkte at redigere den <code>.htaccess</code>, der kræves til PrettyUrls-pluginet.<br>' . //
+		'<strong>Bemærk:</strong> Kun webservere, der er NCSA-kompatible, såsom Apache, anerkender begrebet .htaccess-filer. ' . //
+		'Din serversoftware er: <strong>' . $_SERVER["SERVER_SOFTWARE"] . '</strong>',
 	'cantsave' => 'Denne fil kan ikke redigeres, fordi den er skrivebeskyttet. Ændr adgangsrettighederne, eller kopier disse linjer, indsæt dem i en lokal fil, og upload den derefter.',
 	'mode' => 'Tilstand',
 	'auto' => 'Automatisk',

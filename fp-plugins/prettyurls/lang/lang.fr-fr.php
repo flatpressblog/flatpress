@@ -7,8 +7,11 @@ $lang ['plugin'] ['prettyurls'] ['errors'] = array (
 $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLs Config';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'Configuration de PrettyURLs',
+	'description1' => 'Ici, tu peux transformer les URL standard de FlatPress en de jolies URL adaptées au SEO.',
 	'htaccess' => '.htaccess',
-	'description' => 'Cet &eacute;diteur vous permet de modifier le fichier .htaccess <code>.htaccess</code>.',
+	'description2' => 'Cet éditeur permet d\'éditer directement le <code>.htaccess</code> nécessaire au plugin PrettyUrls.<br>' . //
+		'<strong>Remarque:</strong> Seuls les serveurs web compatibles avec NCSA, comme Apache, connaissent le concept des fichiers .htaccess. ' . //
+		'Ton logiciel serveur est: <strong>' . $_SERVER["SERVER_SOFTWARE"] . '</strong>',
 	'cantsave' => 'Vous ne pouvez pas &eacute;diter ce fichier, parce qu\'il n\'est pas autoris&eacute; en <strong>&eacute;criture</strong>. Vous devez autoriser l\'&eacute;criture du fichier ou copier-coller vers un fichier &agrave; transf&eacute;rer.',
 	'mode' => 'Mode',
 	'auto' => 'Automatique',
