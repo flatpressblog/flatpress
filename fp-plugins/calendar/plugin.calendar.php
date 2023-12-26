@@ -17,7 +17,7 @@
 function generate_calendar($year, $month, $days = array(), $day_name_length = 3, $month_href = NULL, $first_day = 0, $pn = array()) {
 	
 	global $fp_config;
-	$characterset = $config ['charset'];
+	$characterset = $fp_config ['general'] ['charset'];
 	
 	$first_of_month = gmmktime(0, 0, 0, $month, 1, $year);
 	// remember that mktime will automatically correct if invalid dates are entered
