@@ -1,4 +1,5 @@
 <h2>{$plang.head}</h2>
+<p>{$plang.description1}</p>
 
 {include file="shared:errorlist.tpl"}
 
@@ -6,7 +7,7 @@
 {html_form}
 	
 
-	<h3>{$plang.mode} </h3>
+	<h3>{$plang.mode}</h3>
 	<dl>
 		<dt><label><input type="radio" name="mode" value="0" {if $pconfig.mode == 0 }checked=checked{/if}> 
 						{$plang.auto} 	</label>	</dt>
@@ -30,7 +31,7 @@
 
 	<h3>{$plang.htaccess}</h3>
 
-	<p>{$plang.description}</p>
+	<p>{$plang.description2}</p>
 	<p>	
 	<textarea id="htaccess" name="htaccess" 
 	{if $cantsave}readonly="readonly" {/if}cols="70" rows="16">{$htaccess|escape:'html'}</textarea>

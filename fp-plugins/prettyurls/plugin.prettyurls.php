@@ -625,9 +625,6 @@ if (class_exists('AdminPanelAction')) {
 			if (!$txt) {
 
 				$txt = '
-				
-				# Thanks again WP :)
-
 				AddType application/x-httpd-php .php .htm .html
 				Options -Indexes
 
@@ -635,7 +632,6 @@ if (class_exists('AdminPanelAction')) {
 				RewriteEngine On
 				RewriteBase ' . $blogroot . '
 
-				# Protects the .htacces file from external access, status code 403 "Forbidden" is output
 				RewriteRule ^\.htaccess$ - [F]
 
 				RewriteCond %{REQUEST_FILENAME} !-f

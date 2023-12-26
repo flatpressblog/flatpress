@@ -76,8 +76,6 @@ $lang ['step3'] = array(
 		
 		Ne, pravzaprav se šele začenja! Toda bloganje je zdaj vaše delo. ;)
 		
-		<p style="color:#cc0000">Opozorilo: Zaradi večjega udobja in varnosti priporočamo, da navodila za strežnik konfigurirate v območju za upravljanje z vtičnikom PrettyURL.</p>
-		
 		<ul>
 		<li>Na <a href="%s">glavno stran vašega bloga</a></li>
 		<li>Zabavajte se z bloganjem! <a href="%s">Prijavite se zdaj</a></li>

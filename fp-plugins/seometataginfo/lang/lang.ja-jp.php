@@ -6,10 +6,10 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'sample_desc' => 'FlatPress 関連記事, ガイドとプラグイン',
 	'input_keywords' => 'キーワードを挿入します。',
 	'sample_keywords' => 'flatpress, flatpress 物品, flatpress ガイド, flatpress プラグイン',
-	'input_noindex' => 'インデックスを禁止する。(<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=ja#noindex" target="_blank" title="noindex についてもっと読む">noindex</a>)',
-	'input_nofollow' => 'フォローを拒否する。 (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=ja#nofollow" target="_blank" title="nofollow についてもっと読む">nofollow</a>)',
-	'input_noarchive' => 'アーカイブを禁止する。 (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=ja#noarchive" target="_blank" title="noarchive についてもっと読む">noarchive</a>)',
-	'input_nosnippet' => 'スニペットを禁止する。 (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=ja#nosnippet" target="_blank" title="nosnippet についてもっと読む">nosnippet</a>)'
+	'input_noindex' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=ja#noindex" target="_blank" title="noindex についてもっと読む">インデックスを禁止する。</a>',
+	'input_nofollow' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=ja#nofollow" target="_blank" title="nofollow についてもっと読む">フォローを拒否する。</a>',
+	'input_noarchive' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=ja#noarchive" target="_blank" title="noarchive についてもっと読む">アーカイブを禁止する。</a>',
+	'input_nosnippet' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=ja#nosnippet" target="_blank" title="nosnippet についてもっと読む">スニペットを禁止する。</a>'
 );
 
 $lang ['plugin'] ['seometataginfo'] = array(

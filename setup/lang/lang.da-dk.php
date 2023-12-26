@@ -75,8 +75,6 @@ $lang ['step3'] = array(
 		Skal man ikke tro på det?
 
 		Nej, faktisk er <strong>det kun lige begyndt</strong>! Men blogging er nu <em>dit</em> job. ;)
-
-		<p style="color:#cc0000">OBS: For mere komfort og sikkerhed anbefaler vi, at du konfigurerer instruktionerne til din server i administrationsområdet ved hjælp af PrettyURL-pluginet.</p>
 		
 		<ul>
 		<li>Til <a href="%s">hovedsiden på din blog</a></li>

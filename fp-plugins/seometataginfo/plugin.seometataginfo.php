@@ -136,7 +136,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 			echo "\n<fieldset id=\"plugin_seometataginfo\">\n";
 			echo " <legend>{$string['legend_desc']}</legend>\n";
 			echo "  <p>{$string['description']}</p>\n";
-			echo "  <p>\n";
+			echo "  <div>\n";
 			echo '    <input id="pl_file_meta" type="hidden" name="pl_file_meta" value="' . $file_meta . '">' . "\n";
 			echo "    <p><label for=\"pl_description\">{$string['input_desc']}</label>\n";
 			echo '       <input placeholder="' . $lang ['admin'] ['plugin'] ['seometataginfo'] ['sample_desc'] . '" class="maxsize" id="pl_description" type="text" name="pl_description" value="' . $old_desc . '"></p>' . "\n";
@@ -156,7 +156,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 			echo "    <label for=\"pl_nosnippet\">{$string['input_nosnippet']}</label>\n";
 			echo '       <input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_nosnippet" type="checkbox"' . $checked . ' name="pl_nosnippet" value="1"' . '>';
 			echo '    </p>' . "\n";
-			echo "  </p>\n";
+			echo "  </div>\n";
 			echo "</fieldset>\n";
 
 			return true;

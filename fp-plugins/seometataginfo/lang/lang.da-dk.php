@@ -6,10 +6,10 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'sample_desc' => 'FlatPress-relaterede artikler, vejledninger og plugins',
 	'input_keywords' => 'Indsæt nøgleordene:',
 	'sample_keywords' => 'flatpress, flatpress-artikler, flatpress-guider, flatpress-plugins',
-	'input_noindex' => 'Forbyd indeksering (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noindex" target="_blank" title="Læs mere om noindex">noindex</a>):',
-	'input_nofollow' => 'Forbyd at følge links (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nofollow" target="_blank" title="Læs mere om nofollow">nofollow</a>):',
-	'input_noarchive' => 'Forbyd arkivering (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noarchive" target="_blank" title="Læs mere om noarchive">noarchive</a>):',
-	'input_nosnippet' => 'Forbyd udskæringer (<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nosnippet" target="_blank" title="Læs mere om nosnippet">nosnippet</a>):'
+	'input_noindex' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noindex" target="_blank" title="Læs mere om noindex">Forbyd indeksering</a>:',
+	'input_nofollow' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nofollow" target="_blank" title="Læs mere om nofollow">Forbyd at følge links</a>:',
+	'input_noarchive' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#noarchive" target="_blank" title="Læs mere om noarchive">Forbyd arkivering</a>:',
+	'input_nosnippet' => '<a class="hint" href="https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=en#nosnippet" target="_blank" title="Læs mere om nosnippet">Forbyd udskæringer</a>:'
 );
 
 $lang ['plugin'] ['seometataginfo'] = array(
