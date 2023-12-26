@@ -1,14 +1,17 @@
 <?php
 $lang ['plugin'] ['prettyurls'] ['errors'] = array (
-	-2 => 'Não consigo encontrar ou criar um arquivo <code>.htaccess</code>  na sua raiz. Pode ser que PrettyURLs não funciona corretamente.  Consulte o painel de configuração.'
+	-2 => 'Não consigo encontrar ou criar um arquivo <code>.htaccess</code>  na sua raiz. Pode ser que PrettyURLs não funciona corretamente. ' . //
+		'Consulte o painel de configuração.'
 );
 
 $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'Configurar PrettyURLs';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'Configurar PrettyURLs',
+	'description1' => 'Aqui, você pode transformar os URLs padrão do FlatPress em URLs bonitos e compatíveis com SEO.',
 	'htaccess' => '.htaccess',
-
-	'description' => 'Este editor bruto permite editar o seu <code>.htaccess</code>.',
+	'description2' => 'Esse editor permite que você edite diretamente o <code>.htaccess</code> necessário para o plug-in PrettyURLs.<br>' . //
+		'<strong>Observação:</strong> Somente os servidores da Web compatíveis com a NCSA, como o Apache, reconhecem o conceito de arquivos .htaccess. ' . //
+		'Seu software de servidor é: <strong>' . $_SERVER["SERVER_SOFTWARE"] . '</strong>',
 	'cantsave' => 'Você não pode editar este arquivo, porque ele não é <strong>gravável</strong>. Você pode conceder permissão de gravação ou copiar e colar em um arquivo e fazer o upload.',
 	'mode' => 'Modo',
 	'auto' => 'Automático',

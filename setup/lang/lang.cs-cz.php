@@ -76,8 +76,6 @@ $lang ['step3'] = array(
 
 		A máte pravdu: <strong>příběh právě začíná</strong>, ale <strong>psaní je jen na vás</strong>!
 
-		<p style="color:#cc0000">Upozornění: Pro větší pohodlí a bezpečnost doporučujeme nakonfigurovat pokyny pro váš server v oblasti administrace pomocí pluginu PrettyURL.</p>
-
 		<ul>
 		<li>Podívejte se <a href="%s"> jak vypadá vaše stránka.</a></li>
 		<li>Bavte se! <a href="%s">Nyní se přihlašte!</a></li>

@@ -7,8 +7,11 @@ $lang ['plugin'] ['prettyurls'] ['errors'] = array (
 $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLs Configuratie';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'PrettyURLs Configuratie',
+	'description1' => 'Hier kun je de standaard FlatPress URL\'s omzetten in mooie, SEO-vriendelijke URL\'s.',
 	'htaccess' => '.htaccess',
-	'description' => 'Met deze onbewerkte editor kunt u uw <code>.htaccess</code>.',
+	'description2' => 'Met deze editor kun je direct de <code>.htaccess</code> bewerken die nodig is voor de PrettyURLs plugin.<br>' . //
+		'<strong>Opmerking:</strong> Alleen webservers die NCSA-compatibel zijn, zoals Apache, herkennen het concept van .htaccess-bestanden. ' . //
+		'Uw serversoftware is: <strong>' . $_SERVER["SERVER_SOFTWARE"] . '</strong>',
 	'cantsave' => 'U kunt dit bestand niet bewerken omdat het niet <strong>schrijfbaar</strong> is. U kunt schrijfmachtigingen geven of een kopie maken en plakken in een bestand en vervolgens handmatig uploaden.',
 	'mode' => 'Modus',
 	'auto' => 'Automatisch',

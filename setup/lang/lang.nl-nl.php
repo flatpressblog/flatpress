@@ -75,8 +75,6 @@ $lang ['step3'] = array(
 		Ongelofelijk? 
 
 		En je hebt gelijk: <strong>het verhaal is net begonnen</strong>, maar <strong>schrijven is aan jou</strong>!
-
-		<p style="color:#cc0000">Let op: Voor meer comfort en veiligheid raden wij aan de instructies voor uw server te configureren in het beheergebied met de PrettyURL plugin.</p>
 		
 		<ul>
 		<li>Zie <a href="%s">hoe de startpagina eruit ziet</a></li>
