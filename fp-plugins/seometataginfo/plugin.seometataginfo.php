@@ -20,7 +20,7 @@ global $prepend_keywords;
 
 // IMPORTANT: For non LATIN-1 countries
 // ADD additional characters that you want to allow in your meta tags here
-$keep_char = "ășțîâÄäÜüÖößſ£¢ÆæëïŒœËÏÁáÉéÍíÓóÚúĲĳÅåØøÀàÂÈèÉéÊêÎïÔôÙùÛûÇçÿŸÌìÒò¡¿ªºÑñÃãÕõŠšŽžČčĎďĚěŇňŘřŤťŮůŐőŰűĞğİıŞş";
+$keep_char = "€ƒ†‡‰™ŠŒŽ‘’“”•–—˜™š›œžŸ¡¢£¤¥¦ª§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇČĎÈÉÊËĞÌÍÎİÏĲÐŇÑÒÓÔÕÖŘŞŤ×ØÙÚÛŰÜŮÝÞßàáâãäåăæçďčèéêëſğìíîïıĳðňñòóôõöřşțť÷øùúûűüůýþÿ✓✔➤➔→➥▶⇒➨★❤♥✘✖✆✈";
 
 $seo_default = array(
 	'description' => '', // the page description
@@ -423,7 +423,7 @@ function seometa_category_id_exists($cat_id) {
 	return false;
 }
 
-function plugin_seometataginfo_head() {
+function plugin_seometataginfo_head($file_meta) {
 	global $fpdb, $fp_params, $fp_config, $smarty;
 
 	if (defined('ADMIN_PANEL'))
