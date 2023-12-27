@@ -223,7 +223,7 @@ function commentform() {
 				), $lang ['comments'] ['mail']);
 
 				// for non-ASCII characters in the e-mail header use RFC RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
-				@utils_mail($from_mail, "{$lang['comments']['newcomment']} {$lang['comments']['newcomment']} {$fp_config['general']['title']}", $mail);
+				@utils_mail($from_mail, "{$lang['comments']['newcomment']} {$fp_config['general']['title']}", $mail);
 			}
 
 			// if comment is valid, this redirect will clean the postdata
