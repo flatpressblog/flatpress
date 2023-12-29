@@ -178,10 +178,15 @@ if (!function_exists('wp_mail')) :
 
 	function wp_mail($to, $subject, $message, $headers = '') {
 		if ($headers == '') {
-			$headers = "MIME-Version: 1.0\n" . "From: " . get_settings('admin_email') . "\n" . "Content-Type: text/plain; charset=\"" . get_settings('blog_charset') . "\"\n";
+			$headers = "MIME-Version: 1.0\r\n" . //
+				"From: " . get_settings('admin_email') . "\r\n" . //
+				"Content-Type: text/plain; charset=\"" . get_settings('blog_charset') . "\"\r\n";
 		}
-
-		return @mail($to, $subject, $message, $headers);
+		/*
+		* for non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64
+		* https://ncona.com/2011/06/using-utf-8-characters-on-an-e-mail-subject/
+		*/
+		return @mail($to, '=?' . get_settings('blog_charset') . '?B?' . base64_encode($subject) . '?=', $message, $headers);
 	}
 endif;
 
