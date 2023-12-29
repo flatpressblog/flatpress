@@ -4,7 +4,7 @@ $lang ['admin'] ['widgets'] ['submenu'] ['raw'] = 'Administrar widgets (raw)';
 
 /* default action */
 $lang ['admin'] ['widgets'] ['default'] = array(
-	'head' => 'Administrar widgets (<em>experimental</em>)',
+	'head' => 'Administrar widgets',
 
 	'descr' => 'A <a class="hint" ' . //
 		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="Que es un Widget?">' . //

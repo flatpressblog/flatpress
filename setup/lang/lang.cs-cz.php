@@ -93,10 +93,10 @@ $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Menu';
 $lang ['samplecontent'] ['menu'] ['content'] = '[list]
-[*][url=?]Home[/url]
+[*][url=?]Domů[/url]
 [*][url=?paged=1]Blog[/url]
-[*][url=static.php?page=about]About[/url]
-[*][url=contact.php]Contact[/url]
+[*][url=static.php?page=about]O mně[/url]
+[*][url=contact.php]Kontakt[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Vítejte ve FlatPressu!';
@@ -113,9 +113,11 @@ K formátování textu se používají tzv. [url=http://wiki.flatpress.org/doc:p
 
 [quote]K dispozici je tag "quote" k zobrazení vašich oblíbených citátů.[/quote]
 
-[code]A také tag "code" k zobrazení zdrojových kódů programu.[/code]
+[code]Element \'code\' vytvoří sekci s pevnou šířkou znaku.
+Může také
+   zobrazit odsazení.[/code]
 
-[b]img a url[/b] tagy mají speciální parametry, jejich podrobný popis najdete na [url=https://wiki.flatpress.org/doc:plugins:bbcode]FP wiki[/url].
+[b]img a url[/b] tagy mají speciální parametry, jejich podrobný popis najdete na [url=https://wiki.flatpress.org/doc:plugins:bbcode]FlatPress-Wiki[/url].
 
 
 [h4]Příspěvky a statické stránky[/h4]
