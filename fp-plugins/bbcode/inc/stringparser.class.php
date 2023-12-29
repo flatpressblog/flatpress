@@ -296,6 +296,10 @@ class StringParser {
 			return false;
 		}
 		$this->_parsing = true;
+		{
+		$text = $text ?? '';  // If the value passed into function is null set $text to a blank string
+		return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false); // Return escaped string
+		}
 		$this->_text = $this->_applyPrefilters($text);
 		$this->_output = null;
 		$this->_length = strlen($this->_text);
