@@ -19,6 +19,7 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/
 ## Translation
 - 🇧🇷 Brazilian Portuguese: randy, reworked by [Fabiano Santos](https://github.com/fabianosantosnet)
 - 🇨🇿 Czech: [Lubomír Ludvík](http://flatpress.cz/)
+- 🇩🇰 Danish: [Fraenkiman](https://github.com/Fraenkiman) and [Carl Andersen](https://linuxcarl.dk/)
 - 🇳🇱 Dutch: Macmee
 - 🇫🇷 French: [Marc Thibeault](https://github.com/MarcThibeault) and Dimitri Soufflet, reworked by Gee
 - 🇩🇪 German: [Matthias Mauch (laborix)](http://www.aadmm.org/), reworked by Detlef
