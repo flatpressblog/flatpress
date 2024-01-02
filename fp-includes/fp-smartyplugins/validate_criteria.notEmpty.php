@@ -36,7 +36,7 @@
 function smarty_validate_criteria_notEmpty($value, $empty, &$params, &$formvars) {
 // Return a message if value is empty
 	if(empty($value)) {
-		echo "Smarty plugin: value is empty!";
+		echo "Smarty plugin: value is empty!\n";
 	} else {
 		return strlen($value) > 0;
 	}
