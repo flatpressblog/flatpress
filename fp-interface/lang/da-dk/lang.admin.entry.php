@@ -94,13 +94,14 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
 	'head' => 'Rediger kommentar til indlæg',
+	'descr' => 'Her kan du redigere en forfatters kommentar, hans navn, hans e-mailadresse, hans hjemmeside og hans IP-adresse, som du vil.<br><br>',
 	'content' => 'Kommentar indhold',
 	'date' => 'Dato',
 	'author' => 'Forfatter',
 	'www' => 'Hjemmeside',
 	'email' => 'E-Mail',
 	'ip' => 'IP-adresse',
-	'loggedin' => 'Registreret bruger',
+	'loggedin' => 'Logget ind som administrator',
 	'submit' => 'Gem ændringer'
 );
 

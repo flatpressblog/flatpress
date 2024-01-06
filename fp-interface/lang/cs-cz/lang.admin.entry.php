@@ -94,13 +94,14 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
 	'head' => 'Uprav komentář příspěvku',
+	'descr' => 'Zde můžete upravit komentář autora, jeho jméno, e-mailovou adresu, webové stránky a IP adresu podle libosti.<br><br>',
 	'content' => 'Obsah',
 	'date' => 'Datum',
 	'author' => 'Autor',
 	'www' => 'WWW',
 	'email' => 'Email',
 	'ip' => 'IP',
-	'loggedin' => 'Registrovaný užívatel',
+	'loggedin' => 'Přihlášený správce',
 	'submit' => 'Ulož'
 );
 

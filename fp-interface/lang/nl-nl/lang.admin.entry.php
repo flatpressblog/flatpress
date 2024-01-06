@@ -94,13 +94,14 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
 	'head' => 'Commentaar bewerken voor invoer',
+	'descr' => 'Hier kun je het commentaar van een auteur, zijn naam, zijn e-mailadres, zijn website en zijn IP-adres naar wens bewerken.<br><br>',
 	'content' => 'Inhoud',
 	'date' => 'Datum',
 	'author' => 'Auteur',
 	'www' => 'Web Site',
 	'email' => 'Email',
 	'ip' => 'IP',
-	'loggedin' => 'Geregistreerde gebruiker',
+	'loggedin' => 'Ingelogde administrator',
 	'submit' => 'Bewaar'
 );
 

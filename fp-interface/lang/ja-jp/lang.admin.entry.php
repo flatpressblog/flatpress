@@ -94,13 +94,14 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
 	'head' => 'コメントを編集します',
+	'descr' => 'ここでは、作者のコメント、名前、メールアドレス、ウェブサイト、IPアドレスを自由に編集することができます。<br><br>',
 	'content' => '内容',
 	'date' => '日付',
 	'author' => '著者',
 	'www' => 'webサイト',
 	'email' => 'メールアドレス',
 	'ip' => 'IPアドレス',
-	'loggedin' => '登録済みユーザ',
+	'loggedin' => 'ログインした管理者',
 	'submit' => '保存します'
 );
 
