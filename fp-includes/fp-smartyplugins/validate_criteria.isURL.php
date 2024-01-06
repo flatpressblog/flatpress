@@ -38,7 +38,7 @@ function smarty_validate_criteria_isURL($value, $empty, &$params, &$formvars) {
 	if (empty($value))
 		return $empty;	
 
-	if(strlen($value) == 0)
+	if (strlen($value) == 0)
 		return $empty;
 
 	return preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $value)
