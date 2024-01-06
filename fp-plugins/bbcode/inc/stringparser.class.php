@@ -298,6 +298,7 @@ class StringParser {
 		$this->_parsing = true;
 		$this->_text = $this->_applyPrefilters($text);
 		$this->_output = null;
+		$this->_text = $this->_text ?? '';
 		$this->_length = strlen($this->_text);
 		$this->_cpos = 0;
 		unset($this->_stack);
