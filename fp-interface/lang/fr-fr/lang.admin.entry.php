@@ -95,13 +95,14 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
 	'head' => '&Eacute;diter commentaire du billet',
+	'descr' => 'Ici, tu peux modifier le commentaire d\'un auteur, son nom, son adresse e-mail, son site web et son adresse IP comme tu le souhaites.<br><br>',
 	'content' => 'Contenu',
 	'date' => 'Date',
 	'author' => 'Auteur',
 	'www' => 'Site Web',
 	'email' => 'Email',
 	'ip' => 'IP',
-	'loggedin' => 'Utilisateur enregistr&eacute;',
+	'loggedin' => 'Administrateur connecté',
 	'submit' => 'Enregistrer'
 );
 

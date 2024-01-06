@@ -34,7 +34,7 @@
  * @param array formvars form var values
  */
 function smarty_validate_criteria_notEmpty($value, $empty, &$params, &$formvars) {
-	if(empty($value)) { 
+	if (empty($value)) { 
 		return false;
 	} else { 
 		return strlen($value) > 0;
