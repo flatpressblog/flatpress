@@ -94,13 +94,14 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
 	'head' => 'Bearbeite den Kommentar für Beitrag',
+	'descr' => 'Hier kannst du den Kommentar eines Authors, sein Name, seine E-Mail-Adresse, seine Webseite und seine IP-Adresse nach belieben bearbeiten.<br><br>',
 	'content' => 'Kommentarinhalt',
 	'date' => 'Datum',
 	'author' => 'Autor',
 	'www' => 'Website',
 	'email' => 'E-Mail',
 	'ip' => 'IP-Adresse',
-	'loggedin' => 'Eingetragener Benutzer',
+	'loggedin' => 'Eingeloggter Administrator',
 	'submit' => 'Änderungen speichern'
 );
 
