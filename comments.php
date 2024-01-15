@@ -171,9 +171,9 @@ function commentform() {
 
 		// utils_nocache_headers();
 
-		// add http to url if not given
+		// add https to url if not given
 		if (!empty($_POST ['url']) && strpos($_POST ['url'], 'http://') === false && strpos($_POST ['url'], 'https://') === false)
-			$_POST ['url'] = 'http://' . $_POST ['url'];
+			$_POST ['url'] = 'https://' . $_POST ['url'];
 
 		// custom hook here!!
 		if ($arr = comment_validate()) {
@@ -222,7 +222,7 @@ function commentform() {
 					$fp_config ['general'] ['title']
 				), $lang ['comments'] ['mail']);
 
-				// for non-ASCII characters in the e-mail header use RFC RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
+				// for non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
 				@utils_mail($from_mail, "{$lang['comments']['newcomment']} {$fp_config['general']['title']}", $mail);
 			}
 
