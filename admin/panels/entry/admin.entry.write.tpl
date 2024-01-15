@@ -46,7 +46,7 @@
 					rows="20" cols="74">{$content|default:{$smarty.request.content|default:''}|htmlspecialchars}</textarea><br>
 			</p>
 			{* here will go a plugin hook *}
-			<!-- BOF CommentCenter and Tag- Plugin -->{action hook=simple_edit_form}<!-- EOF CommentCenter and Tag- Plugin -->
+			<!-- BOF CommentCenter, Datechanger and Tag- Plugin -->{action hook=simple_edit_form}<!-- EOF CommentCenter, Datechanger and Tag- Plugin -->
 			<!-- BOF SEO-Metataginfo- Plugin -->{action hook=simple_metatag_info}<!-- EOF SEO-Metataginfo- Plugin -->
 		</div>
 

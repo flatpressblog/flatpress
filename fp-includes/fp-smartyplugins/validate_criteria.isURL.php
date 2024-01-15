@@ -35,11 +35,14 @@
  * @param array formvars form var values
  */
 function smarty_validate_criteria_isURL($value, $empty, &$params, &$formvars) {
-    if(strlen($value) == 0)
-        return $empty;        
+	if (empty($value))
+		return $empty;	
 
-    return preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $value)
-    			|| preg_match('!^http(s)?://localhost!', $value);
+	if (strlen($value) == 0)
+		return $empty;
+
+	return preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $value)
+		|| preg_match('!^http(s)?://localhost!', $value);
 			// quick and dirty hack: review  --NoWhereMan
 }
 

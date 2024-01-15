@@ -12,6 +12,7 @@ $lang ['contact'] = array(
 	'fieldset3' => 'Envoyer',
 	'submit' => 'Envoyer',
 	'reset' => 'Réinitialiser',
+	'loggedin' => 'Vous êtes connecté 😉. <a href="' . $baseurl . 'login.php?do=logout">Se déconnecter</a> ou accéder à <a href="' . $baseurl . 'admin.php">Espace d\'administration</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(
@@ -19,18 +20,18 @@ $lang ['contact'] ['notification'] = array(
 	'email' => 'Courriel:',
 	'www' => 'Web:',
 	'content' => 'Message:',
-	'subject' => 'Contact envoyé par ',
+	'subject' => 'Contact envoyé par '
 );
 
 $lang ['contact'] ['error'] = array(
 	'name' => 'Vous devez entrer un nom',
 	'email' => 'Vous devez entrer une adresse email valide',
 	'www' => 'Vous devez entrer une URL correcte',
-	'content' => 'Vous devez écrire un message',
+	'content' => 'Vous devez écrire un message'
 );
 
 $lang ['contact'] ['msgs'] = array(
 	1 => 'Message envoyé avec succ&egrave;s',
-	-1 => 'Echec d\'envoi du message',
+	-1 => 'Echec d\'envoi du message'
 );
 ?>

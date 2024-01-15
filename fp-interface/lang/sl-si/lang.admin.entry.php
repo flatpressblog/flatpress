@@ -94,13 +94,14 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
 	'head' => 'Uredi komentar za vnos',
+	'descr' => 'Tu lahko poljubno urejate komentar avtorja, njegovo ime, e-poštni naslov, spletno stran in naslov IP.<br><br>',
 	'content' => 'Vsebina',
 	'date' => 'Datum',
 	'author' => 'Avtor',
 	'www' => 'Spletna stran',
 	'email' => 'E-pošta',
 	'ip' => 'IP',
-	'loggedin' => 'Prijavljen uporabnik',
+	'loggedin' => 'Prijavljen skrbnik',
 	'submit' => 'Shrani'
 );
 
