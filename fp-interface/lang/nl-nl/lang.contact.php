@@ -14,6 +14,7 @@ $lang ['contact'] = array(
 	'fieldset3' => 'Stuur',
 	'submit' => 'Stuur',
 	'reset' => 'Reset',
+	'loggedin' => 'U bent ingelogd 😉. <a href="' . $baseurl . 'login.php?do=logout">Uitloggen</a> of naar het <a href="' . $baseurl . 'admin.php">administratiegedeelte</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(
@@ -21,18 +22,18 @@ $lang ['contact'] ['notification'] = array(
 	'email' => 'Email:',
 	'www' => 'Web:',
 	'content' => 'Boodschap:',
-	'subject' => 'Contact verzonden via ',
+	'subject' => 'Contact verzonden via '
 );
 
 $lang ['contact'] ['error'] = array(
 	'name' => 'Er dient een naam ingevuld te worden',
 	'email' => 'Geen geldig e-mail adres',
 	'www' => 'Geen geldige URL ',
-	'content' => 'Het bericht mag niet blanko zijn',
+	'content' => 'Het bericht mag niet blanko zijn'
 );
 
 $lang ['contact'] ['msgs'] = array(
 	1 => 'Bericht is succesvol verstuurd',
-	-1 => 'Bericht kon niet verstuurd worden',
+	-1 => 'Bericht kon niet verstuurd worden'
 );
 ?>

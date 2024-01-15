@@ -73,8 +73,7 @@ function plugin_aaspam_comment_form() {
 	$v1 = mt_rand(1, 10);
 	// we rand $v2 until it differs from $v1
 	// (otherwise result for subtractions is zero)
-	while (($v2 = mt_rand(1, 10)) == $v1)
-		;
+	while (($v2 = mt_rand(1, 10)) == $v1);
 
 	// if operation is subtraction
 	// the higher number must always come first
@@ -129,8 +128,8 @@ function plugin_aaspam_comment_form() {
 	}
 
 	// echoes the question and the form part
-	echo '<p><label class="textlabel" for="aaspam">' . $lang ['plugin'] ['accessibleantispam'] ['prefix'] . ' <strong>' . $question . ' (*)</strong></label><br />
-			<input type="text" name="aaspam" id="aaspam" /></p>';
+	echo '<p><label class="textlabel" for="aaspam">' . $lang ['plugin'] ['accessibleantispam'] ['prefix'] . ' <strong>' . $question . ' </strong>(*)</label><br>
+		<input type="text" name="aaspam" id="aaspam"></p>';
 }
 
 ?>

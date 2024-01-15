@@ -12,6 +12,7 @@ $lang ['contact'] = array(
 	'fieldset3' => '送信',
 	'submit' => '送信する',
 	'reset' => 'キャンセル',
+	'loggedin' => 'あなたはログインしています 😉. <a href="' . $baseurl . 'login.php?do=logout">ログアウト</a>または <a href="' . $baseurl . 'admin.php">管理エリアに移動します</a>。'
 );
 
 $lang ['contact'] ['notification'] = array(
@@ -19,18 +20,18 @@ $lang ['contact'] ['notification'] = array(
 	'email' => '電子メール:',
 	'www' => 'ウェブ:',
 	'content' => 'メッセージ:',
-	'subject' => 'で送信した連絡先 ',
+	'subject' => 'で送信した連絡先 '
 );
 
 $lang ['contact'] ['error'] = array(
 	'name' => 'お名前をご記入ください。',
 	'email' => 'メールアドレスを正しくご記入ください。',
 	'www' => 'URLを正しくご記入ください。',
-	'content' => 'メッセージをご記入ください。',
+	'content' => 'メッセージをご記入ください。'
 );
 
 $lang ['contact'] ['msgs'] = array(
 	1 => 'メッセージを送信しました。',
-	-1 => 'メッセージを送信できませんでした。',
+	-1 => 'メッセージを送信できませんでした。'
 );
 ?>

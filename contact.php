@@ -10,13 +10,20 @@ $contactform_inputs = array(
 	'content'
 );
 
-/**
- * Validates the POST data and returns a validated array (key=>value) - or <code>false</code> if validation failed
- *
- * @return boolean|array
- */
-function contact_form_validate() {
+// Validates the POST data
+function contact_validate() {
 	global $smarty, $contactform_inputs, $lang;
+
+	$lerr = & $lang ['contact'] ['error'];
+
+	$r = true;
+
+	$name = trim(htmlspecialchars(@$_POST ['name']));
+	$email = isset($_POST ['email']) ? trim(htmlspecialchars($_POST ['email'])) : null;
+	$url = isset($_POST ['url']) ? trim(stripslashes(htmlspecialchars($_POST ['url']))) : null;
+	$content = isset($_POST ['content']) ? trim(addslashes($_POST ['content'])) : null;
+
+	$errors = array();
 
 	// if the request does not contain all input fields, it might be forged
 	foreach ($contactform_inputs as $input) {
@@ -25,35 +32,32 @@ function contact_form_validate() {
 		}
 	}
 
-	$errors = array();
-
-	$name = trim(htmlspecialchars($_POST ['name']));
-	$email = trim(htmlspecialchars($_POST ['email']));
-	$url = trim(stripslashes(htmlspecialchars($_POST ['url'])));
-	$content = trim(addslashes($_POST ['content']));
-
 	// check name
-	if (empty($name)) {
-		$errors ['name'] = $lang ['contact'] ['error'] ['name'];
+	if (!$name) {
+		$errors ['name'] = $lerr ['name'];
 	}
 
 	// check email
-	if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-		$errors ['email'] = $lang ['contact'] ['error'] ['email'];
+	if ($email) {
+		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			$errors ['email'] = $lerr ['email'];
+		}
 	}
 
 	// check url
-	if (!empty($url) && !filter_var($url, FILTER_VALIDATE_URL)) {
-		$errors ['url'] = $lang ['contact'] ['error'] ['www'];
+	if ($url) {
+		if (!filter_var($url, FILTER_VALIDATE_URL)) {
+			$errors ['url'] = $lerr ['www'];
+		}
 	}
 
 	// check content
-	if (empty($content)) {
-		$errors ['content'] = $lang ['contact'] ['error'] ['content'];
+	if (!$content) {
+		$errors ['content'] = $lerr ['content'];
 	}
 
 	// assign error messages to template
-	if (!empty($errors)) {
+	if ($errors) {
 		$smarty->assign('error', $errors);
 		return false;
 	}
@@ -61,22 +65,28 @@ function contact_form_validate() {
 	$arr ['version'] = system_ver();
 	$arr ['name'] = $name;
 
-	if (!empty($email)) {
+	if ($email) {
 		($arr ['email'] = $email);
 	}
-	if (!empty($url)) {
+
+	if ($url) {
 		($arr ['url'] = ($url));
 	}
+
 	$arr ['content'] = $content;
 
 	if ($v = utils_ipget()) {
 		$arr ['ip-address'] = $v;
 	}
 
-	return $arr;
+	// check aaspam if active
+	if (apply_filters('comment_validate', true, $arr))
+		return $arr;
+	else
+		return false;
 }
 
-function contact_form() {
+function contactform() {
 	global $smarty, $lang, $fp_config, $contactform_inputs;
 
 	// initial call of the contact form
@@ -89,13 +99,18 @@ function contact_form() {
 	// new form, we (re)set the session data
 	utils_nocache_headers();
 
-	$validationResult = contact_form_validate();
+	$validationResult = contact_validate();
 
 	// if validation failed
 	if ($validationResult === false) {
 		// assign given input values to the template, so they're prefilled again
 		$smarty->assign('values', $_POST);
 		return;
+	}
+
+	// add https to url if not given
+	if (!empty($_POST ['url']) && strpos($_POST ['url'], 'http://') === false && strpos($_POST ['url'], 'https://') === false) {
+		$_POST ['url'] = 'https://' . $_POST ['url'];
 	}
 
 	// okay, validation returned validated values
@@ -111,7 +126,7 @@ function contact_form() {
 	$msg .= "{$lang['contact']['notification']['content']} \n{$validationResult['content']}\n";
 
 	// send notification mail to site admin
-	// for non-ASCII characters in the e-mail header use RFC RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
+	// for non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
 	$success = @utils_mail((isset($validationResult ['email']) ? $validationResult ['email'] : $fp_config ['general'] ['email']), "{$lang['contact']['notification']['subject']} {$fp_config['general']['title']}", $msg);
 	system_seterr('contact', $success ? 1 : -1);
 	utils_redirect(basename(__FILE__));
@@ -128,8 +143,9 @@ function contact_main() {
 
 	$smarty->assign('subject', $lang ['contact'] ['head']);
 	$smarty->assign('content', 'shared:contact.tpl');
-	contact_form();
+	contactform();
 }
+
 
 function contact_display() {
 	global $smarty;
@@ -147,3 +163,4 @@ function contact_display() {
 
 system_init();
 contact_display();
+?>
