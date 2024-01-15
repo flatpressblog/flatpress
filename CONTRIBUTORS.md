@@ -17,16 +17,18 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/
 - [Fraenkiman](https://github.com/Fraenkiman) tests FlatPress to its very core and creates a metric ton of very helpful [issues](https://github.com/flatpressblog/flatpress/issues) and Pull Requests.
 
 ## Translation
-- Brazilian Portuguese: randy, reworked by [Fabiano Santos](https://github.com/fabianosantosnet)
-- Czech: [Lubomír Ludvík](http://flatpress.cz/)
-- Dutch: Macmee
-- French: [Marc Thibeault](https://github.com/MarcThibeault) and Dimitri Soufflet, reworked by Gee
-- German: [Matthias Mauch (laborix)](http://www.aadmm.org/), reworked by Detlef
-- Greek: An unknown, since deleted GitHub user :(
-- Italian: Giacomo Margarito
-- Japanese: [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
-- Spanish: karelv
-- Slovenian: [Sergio](https://github.com/developersorli)
+- 🇧🇷 Brazilian Portuguese: randy, reworked by [Fabiano Santos](https://github.com/fabianosantosnet)
+- 🇨🇿 Czech: [Lubomír Ludvík](http://flatpress.cz/)
+- 🇩🇰 Danish: [Fraenkiman](https://github.com/Fraenkiman) and [Carl Andersen](https://linuxcarl.dk/)
+- 🇳🇱 Dutch: Macmee
+- 🇫🇷 French: [Marc Thibeault](https://github.com/MarcThibeault) and Dimitri Soufflet, reworked by Gee
+- 🇩🇪 German: [Matthias Mauch (laborix)](http://www.aadmm.org/), reworked by Detlef
+- 🇬🇷 Greek: An unknown, since deleted GitHub user :(
+- 🇮🇹 Italian: Giacomo Margarito
+- 🇯🇵 Japanese: [NORTH HILL WORK STUDIO](https://nhws.localinfo.jp/)
+- 🇷🇺 Russian: [Mark](https://github.com/cosmopolityan)
+- 🇪🇸 Spanish: karelv
+- 🇸🇮 Slovenian: [Sergio](https://github.com/developersorli)
 
 ## Libraries
 FlatPress utilizes the following free frameworks and libraries. Thanks to their authors!

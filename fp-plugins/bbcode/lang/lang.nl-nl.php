@@ -1,11 +1,10 @@
 <?php
-
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'BBCode Configuratie',
-	'desc1' => 'Deze plugin maakt het gebruik van <a href="https://wiki.flatpress.org/'.
+	'desc1' => 'Deze plugin maakt het gebruik van <a href="https://wiki.flatpress.org/' . //
 		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a> mogelijk.',
-	
+
 	'options' => 'Opties',
 
 	'editing' => 'Bewerken',
@@ -19,7 +18,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'comments_long' => 'Sta BBCode toe in opmerkingen',
 	'urlmaxlen' => 'URL max lengte',
 	'urlmaxlen_long_pre' => 'Verkort URL langer dan ',
-	'urlmaxlen_long_post'=>' karakters.',
+	'urlmaxlen_long_post' => ' karakters.',
 	'submit' => 'Bewaar de configuratie',
 	'msgs' => array(
 		1 => 'BBCode-configuratie succesvol opgeslagen.',
@@ -57,8 +56,6 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 		'go_to' => 'Ga naar',
-		// language tag for Facebook Video
-		'langtag' => 'nl_NL'
+		'langtag' => 'nl_NL' // language tag for Facebook Video
 );
-
 ?>

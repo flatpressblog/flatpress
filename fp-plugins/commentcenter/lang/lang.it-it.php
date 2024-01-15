@@ -46,14 +46,14 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'log_all' => 'Registra i commenti bloccati',
 	'log_all_long' => 'Selezionala se vuoi registrare anche i commenti che sono bloccati.',
 	'email_alert' => 'Notifica commenti via email',
-	'email_alert_long' => 'Selezionala se vuoi essere informato via email quando c\'è un nuovo commento ' . 'da approvare.',
+	'email_alert_long' => 'Selezionala se vuoi essere informato via email quando c\'è un nuovo commento da approvare.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Abilita il controllo di Akismet',
 	'akismet_use_long' => 'Con <a href="https://akismet.com/" target="_blank">Akismet</a> è possibile ridurre lo spam nei commenti.',
 	'akismet_key' => 'Chiave di Akismet',
 	'akismet_key_long' => 'Il servizio <a href="https://akismet.com/signup/" target="_blank">Akismet</a> fornisce una <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">chiave</a>. Inseritela qui.',
 	'akismet_url' => 'Indirizzo di base per Akismet',
-	'akismet_url_long' => 'Penso che per il servizio gratuito di Akismet si possa usare un solo indirizzo. ' . 'Puoi anche lasciare vuoto questo campo, al suo posto si utilizzerà <code>%s</code>.',
+	'akismet_url_long' => 'Penso che per il servizio gratuito di Akismet si possa usare un solo indirizzo. Puoi anche lasciare vuoto questo campo, al suo posto si utilizzerà <code>%s</code>.',
 	'save_conf' => 'Salva configurazione',
 
 	// Edit policy page
@@ -66,7 +66,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'se_fill' => 'Per favore riempi i campi con gli <a href="admin.php?p=entry">ID</a> degli articoli (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Caratteristiche',
 	'po_desc' => 'Se hai selezionato l\'opzione %s, per favore seleziona le caratteristiche.',
-	'po_comp' => 'I campi non sono obbligatori ma ne devi selezionare almeno uno, altrimenti la regola ' . 'sarà applicata a tutti gli articoli.',
+	'po_comp' => 'I campi non sono obbligatori ma ne devi selezionare almeno uno, altrimenti la regola sarà applicata a tutti gli articoli.',
 	'po_time' => 'Opzioni sulle date',
 	'po_older' => 'Applica agli articoli più vecchi di ',
 	'days' => 'giorni.',
@@ -159,6 +159,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'L\'articolo da te selezionato non esiste.'
 	)
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Akismet ha rilevato il tuo commento come SPAM.',
 	'lock' => 'Siamo spiacenti ma i commenti per questo articolo sono chiusi.',
@@ -182,3 +183,4 @@ Cordiali saluti,
 %blogtitle%
 
 ';
+?>

@@ -11,7 +11,8 @@ $lang ['contact'] = array(
 	'comment' => 'Mensaje (*):',
 	'fieldset3' => 'Enviar',
 	'submit' => 'Enviar',
-	'reset' => 'Reiniciar',	
+	'reset' => 'Reiniciar',
+	'loggedin' => 'Ha iniciado sesión 😉. <a href="' . $baseurl . 'login.php?do=logout">Cerrar sesión</a> o al <a href="' . $baseurl . 'admin.php">área de administración</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(
@@ -19,18 +20,18 @@ $lang ['contact'] ['notification'] = array(
 	'email' => 'Correo electrónico:',
 	'www' => 'Web:',
 	'content' => 'Mensaje:',
-	'subject' => 'Contacto enviado a través de ',
+	'subject' => 'Contacto enviado a través de '
 );
 
 $lang['contact'] ['error'] = array(
 	'name' => 'Debes ingresar un nombre',
 	'email' => 'Debes ingresar un correo electrónico válido',
 	'www' => 'Debes ingresar una URL válida',
-	'content' => 'Debes ingresar un mensaje',
+	'content' => 'Debes ingresar un mensaje'
 );
 
 $lang ['contact'] ['msgs'] = array(
 	1 => 'El mensaje se envió con éxito',
-	-1 => 'No se pudo enviar el mensaje',
+	-1 => 'No se pudo enviar el mensaje'
 );
 ?>

@@ -46,7 +46,8 @@ function plugin_bbcode_startup() {
 	add_filter('the_content', 'plugin_bbcode_undoHtml', 30);
 	if (BBCODE_USE_EDITOR) {
 		// initialize the toolbar
-		add_filter('editor_toolbar', 'plugin_bbcode_init_toolbar');
+		add_filter('editor_toolbar', 'plugin_bbcode_toolbar');
+		plugin_bbcode_init_toolbar();
 	}
 	if (BBCODE_ENABLE_COMMENTS) {
 		add_filter('comment_text', 'plugin_bbcode_comment', 1);
@@ -144,8 +145,9 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	// DMKE: uh?
 	$content = $content;
 	$rel = isset($attributes ['rel']) ? ' rel="' . $attributes ['rel'] . '"' : '';
+	$target = isset($attributes['target']) ? ' target="'.$attributes['target'] . '"' : '';
 	$extern = !$local ? ' class="externlink" title="' . $lang ['plugin'] ['bbcode'] ['go_to'] . ' ' . $the_url . '"' : '';
-	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . '>' . $content . '</a>';
+	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target .'>' . $content . '</a>';
 }
 
 /**
@@ -807,8 +809,6 @@ function plugin_bbcode_init_toolbar() {
 	sort($attachslist);
 	array_unshift($attachslist, $selection);
 	$_FP_SMARTY->assign('attachs_list', $attachslist);
-
-	echo $_FP_SMARTY->fetch('plugin:bbcode/toolbar');
 }
 
 /**

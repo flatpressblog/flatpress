@@ -16,10 +16,12 @@
 
 // legacy mode; needed with some ill-formed spb files
 define('DUMB_MODE_ENABLED', false);
+
 // default file permissions
-// change file to 644 and dir to 755 if your webserver "complains"
-define('FILE_PERMISSIONS', 0775);
-define('DIR_PERMISSIONS', 0775);
+// change file to 776 and dir to 776 if your webserver "complains"
+// Note: Lowering the directory and file permissions may result in FlatPress or some additional plugins not working correctly.
+define('FILE_PERMISSIONS', 0776);
+define('DIR_PERMISSIONS', 0776);
 
 // first some webserver setup...
 
@@ -36,10 +38,10 @@ define('ABS_PATH', dirname(__FILE__) . '/');
 define('FP_DEFAULTS', 'fp-defaults/');
 
 // all writable directories go here.
-define('FP_CONTENT', 'fp-content/'); // must be chmodded to 0775
+define('FP_CONTENT', 'fp-content/'); // must be chmodded to 0776
 
 // blog configurations files
-define('CONFIG_DIR', FP_CONTENT . 'config/'); // must be chmodded to 0775
+define('CONFIG_DIR', FP_CONTENT . 'config/'); // must be chmodded to 0776
 define('CONFIG_FILE', CONFIG_DIR . 'settings.conf.php');
 
 /**
@@ -80,7 +82,7 @@ define('PLUGINS_DIR', 'fp-plugins/');
 define('ADMIN_DIR', 'admin/');
 
 // cache file name and path.
-define('CACHE_DIR', FP_CONTENT . 'cache/');
+define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0776
 define('CACHE_FILE', '%%cached_list.php');
 
 define('INDEX_DIR', FP_CONTENT . 'index/');

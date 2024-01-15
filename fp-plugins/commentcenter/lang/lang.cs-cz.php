@@ -53,7 +53,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'akismet_key' => 'Akismet klíč',
 	'akismet_key_long' => 'Služba <a href="https://akismet.com/signup/" target="_blank">Akismet</a> vám poskytne <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">klíč</a>. Vložte jej sem.',
 	'akismet_url' => 'URL blogu',
-	'akismet_url_long' => 'Pro bezplatný Akismet byste měli používat pouze doménu. '.
+	'akismet_url_long' => 'Pro bezplatný Akismet byste měli používat pouze doménu. ' . //
 		'Toto pole můžete nechat prázdné, <code>%s</code> bude použito.',
 	'save_conf' => 'Uložit nastavení',
 
@@ -67,7 +67,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'se_fill' => 'Vyplňte pole s <a href="admin.php?p=entry">identifikací</a> záznamu (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Vlastnosti',
 	'po_desc' => 'Když vyberete %s, vyplňte prosím vlastnosti.',
-	'po_comp' => 'Pole nejsou povinná, ale musíte vyplnit alespoň jedno pravidlo, '.
+	'po_comp' => 'Pole nejsou povinná, ale musíte vyplnit alespoň jedno pravidlo, ' . //
 		'které bude použito na všechny záznamy.',
 	'po_time' => 'Nastavení času',
 	'po_older' => 'Použito pro záznamy starší než ',
@@ -161,6 +161,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'Záznam který jste vybral neexistuje.',
 	),
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Je nám líto, ale máme technické potíže.',
 	'lock' => 'Komentáře k tomuto zýznamu jsou blokovány.',
@@ -170,8 +171,7 @@ $lang ['plugin'] ['commentcenter'] = array(
 	'mail_subj' => 'Nový komentář ke schválení %s',
 );
 
-$lang ['plugin'] ['commentcenter'] ['mail_text']=<<<MAIL
-Vážený %toname%,
+$lang ['plugin'] ['commentcenter'] ['mail_text'] = 'Vážený %toname%,
 
 "%fromname%" %frommail% právě přidal komentář k záznamu s názvem "%entrytitle%"
 ale před zobrazením je vyžadován váš souhlas.
@@ -184,4 +184,5 @@ Zde je komentář, který byl právě odeslán:
 S pozdravem,
 %blogtitle%
 
-MAIL;
+';
+?>

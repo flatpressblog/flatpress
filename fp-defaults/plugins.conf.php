@@ -21,7 +21,7 @@ $fp_plugins = array(
 	// 'lastcomments', // cache-based last-comments block
 	// 'lastcommentsadmin',
 	'lastentries',
-	'prettyurls',
+	// 'prettyurls', // The use of Apache web servers will be less than 50% worldwide in 2023
 	'categories',
 	'searchbox',
 	'blockparser',

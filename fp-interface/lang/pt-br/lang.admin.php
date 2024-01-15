@@ -1,5 +1,4 @@
 <?php
-// Terminado 15 de fevereiro de 2020.
 $lang ['admin'] ['head'] = 'Área de administração';
 
 $lang ['admin'] ['panels'] = array(
@@ -19,9 +18,9 @@ $lang ['admin'] ['panels'] = array(
 );
 
 $lang ['admin'] ['general'] = array(
-	'id' => 'Id', # for entry ids
-	'name' => 'Nome', # for file names
-	'title' => 'Título', # for entry/posts/static titles
+	'id' => 'Id', // for entry ids
+	'name' => 'Nome', // for file names
+	'title' => 'Título', // for entry/posts/static titles
 	'comments' => 'Comentários',
 	'author' => 'Autor',
 	'actdel' => 'Exclua',

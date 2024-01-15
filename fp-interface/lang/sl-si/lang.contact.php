@@ -12,6 +12,7 @@ $lang ['contact'] = array(
 	'fieldset3' => 'Pošlji',
 	'submit' => 'Pošlji',
 	'reset' => 'Ponastavi',
+	'loggedin' => 'Prijavljeni ste 😉. <a href="' . $baseurl . 'login.php?do=logout">Odjavi se</a> ali na <a href="' . $baseurl . 'admin.php">upravno območje</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(
@@ -19,18 +20,18 @@ $lang ['contact'] ['notification'] = array(
 	'email' => 'E-pošta:',
 	'www' => 'Spletna stran:',
 	'content' => 'Sporočilo:',
-	'subject' => 'Stik poslan prek ',
+	'subject' => 'Stik poslan prek '
 );
 
 $lang ['contact'] ['error'] = array(
 	'name' => 'Vnesti morate ime',
 	'email' => 'Vnesti morate veljaven e-poštni naslov',
 	'www' => 'Vnesti morate veljavno spletno stran',
-	'content' => 'Vnesti morate sporočilo',
+	'content' => 'Vnesti morate sporočilo'
 );
 
 $lang ['contact'] ['msgs'] = array(
 	1 => 'Sporočilo je bilo uspešno poslano',
-	-1 => 'Sporočilo ni bilo mogoče poslati',
+	-1 => 'Sporočilo ni bilo mogoče poslati'
 );
 ?>

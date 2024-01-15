@@ -7,10 +7,10 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 );
 
 /* default action */
-
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Správa příspěvků',
-	'descr' => 'Prosím vyberte příspěvek, který chcete upravit nebo <a href="admin.php?p=entry&amp;action=write">přidejte nový</a>' . '<br /><a href="admin.php?p=entry&amp;action=cats">Upravit kategorie</a>',
+	'descr' => 'Prosím vyberte příspěvek, který chcete upravit nebo <a href="admin.php?p=entry&amp;action=write">přidejte nový</a><br>' . //
+		'<a href="admin.php?p=entry&amp;action=cats">Upravit kategorie</a>',
 	'filter' => 'Filtr: ',
 	'drafts' => 'Návrhy: ',
 	'nofilter' => 'Zobrazit vše',
@@ -19,7 +19,7 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'date' => 'Datum',
 	'title' => 'Nadpis',
 	'author' => 'Autor',
-	'comms' => '#Komentářů', // comments
+	'comms' => 'Komentářů', // comments
 	'action' => 'Akce',
 	'act_del' => 'Smazat',
 	'act_view' => 'Zobrazit',
@@ -39,7 +39,8 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Zobrazit',
 	'savecontinue' => 'Uložit&amp;Pokračovat',
 	'categories' => 'Kategorie',
-	'nocategories' => 'Kategorie nenastavená. <a href="admin.php?p=entry&amp;action=cats">Vytvořte si vlastní ' . 'kategorii</a> v Správě kategorií. ' . '<a href="#save">Uložit</a> nejdřív Váš příspěvek.',
+	'nocategories' => 'Kategorie nenastavená. <a href="admin.php?p=entry&amp;action=cats">Vytvořte si vlastní kategorii</a> v Správě kategorií. ' . //
+		'<a href="#save">Uložit</a> nejdřív Váš příspěvek.',
 	'saveopts' => 'Uložit nastavení',
 	'success' => 'Váš příspěvek byl úspěšně publikovaný',
 	'otheropts' => 'Ostatní nastavení',
@@ -70,9 +71,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 );
 
 /* comments */
-
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => "Komentáře k přispěvkům ",
+	'head' => 'Komentáře k přispěvkům ',
 	'descr' => 'Vybrat komentář na vymazání',
 	'sel' => 'Sel',
 	'content' => 'Obsah',
@@ -93,14 +93,15 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => "Uprav komentář příspěvku",
+	'head' => 'Uprav komentář příspěvku',
+	'descr' => 'Zde můžete upravit komentář autora, jeho jméno, e-mailovou adresu, webové stránky a IP adresu podle libosti.<br><br>',
 	'content' => 'Obsah',
 	'date' => 'Datum',
 	'author' => 'Autor',
 	'www' => 'WWW',
 	'email' => 'Email',
 	'ip' => 'IP',
-	'loggedin' => 'Registrovaný užívatel',
+	'loggedin' => 'Přihlášený správce',
 	'submit' => 'Ulož'
 );
 
@@ -110,7 +111,6 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 );
 
 /* delete action */
-
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Smazat příspěvek',
 	'descr' => 'Chystáte sa smazat tyto příspěvky:',
@@ -123,10 +123,10 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 );
 
 /* category mgmt */
-
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Upravit kategorie',
-	'descr' => '<p>Použijte formulář (dole) pro úpravu kategorií. </p><p>Každá kategorie by měla být v tomto formátu - "jméno kategorie: <em>id_number</em>". Položky odsazené pomlčkami tvoří hierarchii.</p>
+	'descr' => '<p>Použijte formulář (dole) pro úpravu kategorií. </p>' . //
+		'<p>Každá kategorie by měla být v tomto formátu - "jméno kategorie: <em>id_number</em>". Položky odsazené pomlčkami tvoří hierarchii.</p>
 		
 	<p>Příklad:</p>
 	<pre>
@@ -145,7 +145,6 @@ Různé :5
 );
 
 $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
-
 	1 => 'Kategorie byli úspěšně uložené',
 	-1 => 'Při pokusu uložit kategorie nastala chyba',
 	2 => 'Kategorie byly smazané',

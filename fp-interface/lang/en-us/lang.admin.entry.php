@@ -7,10 +7,10 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 );
 
 /* default action */
-
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Manage Entries',
-	'descr' => 'Please select an entry to edit or <a href="admin.php?p=entry&amp;action=write">add new</a>' . '<br /><a href="admin.php?p=entry&amp;action=cats">Edit the categories</a>',
+	'descr' => 'Please select an entry to edit or <a href="admin.php?p=entry&amp;action=write">add new</a><br>' . //
+		'<a href="admin.php?p=entry&amp;action=cats">Edit the categories</a>',
 	'drafts' => 'Drafts: ',
 	'filter' => 'Filter: ',
 	'nofilter' => 'Show all',
@@ -19,7 +19,7 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'date' => 'Date',
 	'title' => 'Title',
 	'author' => 'Author',
-	'comms' => '#Comms', // comments
+	'comms' => 'Comms', // comments
 	'action' => 'Action',
 	'act_del' => 'Delete',
 	'act_view' => 'View',
@@ -39,7 +39,8 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Preview',
 	'savecontinue' => 'Save&amp;Continue',
 	'categories' => 'Categories',
-	'nocategories' => 'No categories set. <a href="admin.php?p=entry&amp;action=cats">Create your own ' . 'categories</a> from the main entry panel. ' . '<a href="#save">Save</a> your entry first.',
+	'nocategories' => 'No categories set. <a href="admin.php?p=entry&amp;action=cats">Create your own categories</a> from the main entry panel. ' . //
+		'<a href="#save">Save</a> your entry first.',
 	'saveopts' => 'Saving options',
 	'success' => 'Your entry was published succesfully',
 	'otheropts' => 'Other options',
@@ -50,11 +51,9 @@ $lang ['admin'] ['entry'] ['write'] = array(
 
 $lang ['admin'] ['entry'] ['list'] ['msgs'] = array(
 	1 => 'Entry has been saved successfully',
-	-1 => 'An error occurred while trying to save 
-					the entry',
+	-1 => 'An error occurred while trying to save the entry',
 	2 => 'Entry has been deleted successfully',
-	-2 => 'An error occurred while trying to delete 
-					the entry'
+	-2 => 'An error occurred while trying to delete the entry'
 );
 
 $lang ['admin'] ['entry'] ['write'] ['error'] = array(
@@ -72,9 +71,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 );
 
 /* comments */
-
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => "Comments for entry ",
+	'head' => 'Comments for entry ',
 	'descr' => 'Select a comment to delete',
 	'sel' => 'Sel',
 	'content' => 'Content',
@@ -91,19 +89,19 @@ $lang ['admin'] ['entry'] ['commentlist'] = array(
 
 $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 	1 => 'Comment has been deleted successfully',
-	-1 => 'An error occurred while trying to delete 
-					the comment'
+	-1 => 'An error occurred while trying to delete the comment'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => "Edit comment for entry",
+	'head' => 'Edit comment for entry',
+	'descr' => 'Here you can edit the comment of an author, his name, his e-mail address, his website and his IP address as you wish.<br><br>',
 	'content' => 'Content',
 	'date' => 'Date',
 	'author' => 'Author',
 	'www' => 'Web Site',
 	'email' => 'Email',
 	'ip' => 'IP',
-	'loggedin' => 'Registered user',
+	'loggedin' => 'Logged in administrator',
 	'submit' => 'Save'
 );
 
@@ -113,7 +111,6 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 );
 
 /* delete action */
-
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Delete Entry',
 	'descr' => 'You\'re about to delete the following entry:',
@@ -126,10 +123,10 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 );
 
 /* category mgmt */
-
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Edit categories',
-	'descr' => '<p>Use the form below to add and edit your categories. </p><p>Each category item should be in this format "category name: <em>id_number</em>". Indent items with dashes to create hierarchies.</p>
+	'descr' => '<p>Use the form below to add and edit your categories.</p>' . //
+		'<p>Each category item should be in this format "category name: <em>id_number</em>". Indent items with dashes to create hierarchies.</p>
 		
 	<p>Example:</p>
 	<pre>
@@ -148,7 +145,6 @@ Technology :6
 );
 
 $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
-
 	1 => 'Categories saved',
 	-1 => 'An error occurred while trying to save categories',
 	2 => 'Categories cleared',
@@ -170,5 +166,4 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'the' => 'The',
 	'most_commented_entries' => 'most commented entries'
 );
-
 ?>

@@ -22,6 +22,7 @@
 - Media Manager plugin shows 50 items per page, not 10
 - BBCode plugin: Added "h4" icon to editor toolbar ([#201](https://github.com/flatpressblog/flatpress/issues/201))
 - BBCode plugin: Facebook-Video now uses the latest video player API and the lazy loading mechanism of the browser; also now has localized languages with language tag ([#252](https://github.com/flatpressblog/flatpress/issues/252)) - see also https://developers.facebook.com/docs/javascript/internationalization
+- BBCode plugin: Added optional "target" attribute to the "url" element - ([PR270](https://github.com/flatpressblog/flatpress/pull/270) by [@sjustesen](https://github.com/sjustesen))
 - Akismet and comment center plugin revised to enable a more understandable operation ([#273](https://github.com/flatpressblog/flatpress/issues/273))
 
 ### Bugfixes
@@ -31,6 +32,7 @@
 - Akismet plugin: Fixed PHP warnings ([#83](https://github.com/flatpressblog/flatpress/issues/83))
 - BBCode plugin: Allows local video files ("attachs/video.mp4") and outputs valid HTML ([#192](https://github.com/flatpressblog/flatpress/issues/192))
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
+- Calendar plugin: Fixed incorrect text output when Russian is set as language
 - Fixed broken links in the administration area
 
 ## Setup
@@ -79,7 +81,7 @@
   - The menu bar in Leggero style is now centered if the screen width is less than 768px
 
 ## Internationalization
-- Added translation: Slovenian, Danish
+- Added translation: Slovenian, Danish and Russian ([#278](https://github.com/flatpressblog/flatpress/issues/278))
 - Reworked translations: Spanish, Portuguese, Dutch, and Italian
 - Fixed wrong pt-br country code ([#100](https://github.com/flatpressblog/flatpress/issues/100))
 - German translation for Comment Center plugin added ([#148](https://github.com/flatpressblog/flatpress/issues/148))

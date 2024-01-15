@@ -1,5 +1,5 @@
 <?php
-$lang['plugin']['readmore'] = array(
-    'readmore' => '[Preberi več...]'
+$lang ['plugin'] ['readmore'] = array(
+	'readmore' => '[Preberi več...]'
 );
 ?>

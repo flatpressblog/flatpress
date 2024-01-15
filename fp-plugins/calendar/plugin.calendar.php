@@ -15,6 +15,10 @@
 // see example at http://keithdevens.com/weblog
 // License: http://keithdevens.com/software/license
 function generate_calendar($year, $month, $days = array(), $day_name_length = 3, $month_href = NULL, $first_day = 0, $pn = array()) {
+	
+	global $fp_config;
+	$characterset = $fp_config ['general'] ['charset'];
+	
 	$first_of_month = gmmktime(0, 0, 0, $month, 1, $year);
 	// remember that mktime will automatically correct if invalid dates are entered
 	// for instance, mktime(0,0,0,12,32,1997) will be the date for Jan 1, 1998
@@ -44,7 +48,7 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 	if ($day_name_length) { // if the day names should be shown ($day_name_length > 0)
 	                        // if day_name_length is >3, the full name of the day will be printed
 		foreach ($day_names as $d)
-			$calendar .= '<th abbr="' . htmlentities($d) . '">' . htmlentities($day_name_length < 4 ? substr($d, 0, $day_name_length) : $d) . '</th>';
+			$calendar .= '<th abbr="' . htmlentities($d) . '">' . htmlentities($day_name_length < 4 ? mb_substr($d, 0, $day_name_length, $characterset) : $d) . '</th>';
 		$calendar .= "</tr>\n<tr>";
 	}
 

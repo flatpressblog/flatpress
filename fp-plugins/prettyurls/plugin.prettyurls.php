@@ -625,14 +625,15 @@ if (class_exists('AdminPanelAction')) {
 			if (!$txt) {
 
 				$txt = '
-				
-				# Thanks again WP :)
-				
+				AddType application/x-httpd-php .php .htm .html
 				Options -Indexes
-				
+
 				<IfModule mod_rewrite.c>
 				RewriteEngine On
 				RewriteBase ' . $blogroot . '
+
+				RewriteRule ^\.htaccess$ - [F]
+
 				RewriteCond %{REQUEST_FILENAME} !-f
 				RewriteCond %{REQUEST_FILENAME} !-d
 				RewriteRule . ' . $blogroot . 'index.php [L]

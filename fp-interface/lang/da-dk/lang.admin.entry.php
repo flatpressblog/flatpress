@@ -7,10 +7,10 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 );
 
 /* default action */
-
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => 'Administrer indlæg og kategorier',
-	'descr' => 'På dette tidspunkt kan du vælge indlæg at redigere, skrive et <a href="admin.php?p=entry&amp;action=write">nyt indlæg</a> eller ' . '<a href="admin.php?p=entry&amp;action=cats">Rediger kategorier</a>. Det er også muligt at slette kommentarer fra indlæg.',
+	'descr' => 'På dette tidspunkt kan du vælge indlæg at redigere, skrive et <a href="admin.php?p=entry&amp;action=write">nyt indlæg</a> eller ' . //
+		'<a href="admin.php?p=entry&amp;action=cats">Rediger kategorier</a>. Det er også muligt at slette kommentarer fra indlæg.',
 	'filter' => 'Filter: ',
 	'drafts' => 'Design: ',
 	'nofilter' => 'Vis alle',
@@ -39,7 +39,8 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Forhåndsvisning',
 	'savecontinue' => 'Spar og mere',
 	'categories' => 'Vælg kategori for posten',
-	'nocategories' => 'Ingen kategori valgt. <a href="admin.php?p=entry&amp;action=cats">Opret en ' . 'kategori</a> i administrationsområdet. ' . '<a href="#save">gem venligst indlægget på forhånd</a>.',
+	'nocategories' => 'Ingen kategori valgt. <a href="admin.php?p=entry&amp;action=cats">Opret en kategori</a> i administrationsområdet. ' . //
+		'<a href="#save">gem venligst indlægget på forhånd</a>.',
 	'saveopts' => 'Opbevaringsmuligheder',
 	'success' => 'Dit bidrag blev offentliggjort med succes',
 	'otheropts' => 'Andre muligheder',
@@ -70,9 +71,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 );
 
 /* comments */
-
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => "Kommentarer til indlægget: ",
+	'head' => 'Kommentarer til indlægget: ',
 	'descr' => 'Vælg venligst kommentar, der skal slettes',
 	'sel' => 'Sel',
 	'content' => 'Indhold',
@@ -93,14 +93,15 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => "Rediger kommentar til indlæg",
+	'head' => 'Rediger kommentar til indlæg',
+	'descr' => 'Her kan du redigere en forfatters kommentar, hans navn, hans e-mailadresse, hans hjemmeside og hans IP-adresse, som du vil.<br><br>',
 	'content' => 'Kommentar indhold',
 	'date' => 'Dato',
 	'author' => 'Forfatter',
 	'www' => 'Hjemmeside',
 	'email' => 'E-Mail',
 	'ip' => 'IP-adresse',
-	'loggedin' => 'Registreret bruger',
+	'loggedin' => 'Logget ind som administrator',
 	'submit' => 'Gem ændringer'
 );
 
@@ -110,7 +111,6 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 );
 
 /* delete action */
-
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Slet indlæg',
 	'descr' => 'Du har valgt at slette dette indlæg:',
@@ -123,10 +123,10 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 );
 
 /* category mgmt */
-
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Administrer kategorier',
-	'descr' => '<p>Hver kategori skal oprettes i skemaet "Category Name <em>:id_number</em>". "<em>id_nummer</em>" er <strong>unikt</strong> tildelt bidragene, må <strong>ikke</strong> ændres og skal være større end <strong>0</strong>. Kategorinavnet kan derimod stadig ændres senere.</p><p>En senere ændring af kategorirækkefølgen er til enhver tid mulig. Bindestreger kan bruges til at oprette underkategorier.</p>
+	'descr' => '<p>Hver kategori skal oprettes i skemaet "Category Name <em>:id_number</em>". "<em>id_nummer</em>" er <strong>unikt</strong> tildelt bidragene, må <strong>ikke</strong> ændres og skal være større end <strong>0</strong>. Kategorinavnet kan derimod stadig ændres senere.</p>' . //
+		'<p>En senere ændring af kategorirækkefølgen er til enhver tid mulig. Bindestreger kan bruges til at oprette underkategorier.</p>
 		
 	<p>Eksempel:</p>
 	<pre>
@@ -167,5 +167,4 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'the' => 'De',
 	'most_commented_entries' => 'mest kommenterede indlæg'
 );
-
 ?>

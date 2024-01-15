@@ -20,14 +20,14 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'criteria' => 'Kriterien',
 	'behavoir' => 'Verhalten',
 	'options' => 'Einstellungen',
-	'entry' => 'Eintrag',
-	'entries' => 'Einträge',
+	'entry' => 'Beitrag',
+	'entries' => 'Beiträge',
 	'categories' => 'Kategorien',
 	'nopolicies' => 'Es gibt keine Richtlinien',
-	'all_entries' => 'Alle Einträge',
-	'fol_entries' => 'Die Richtlinie gilt für die folgenden Einträge:',
-	'fol_cats' => 'Die Richtlinie gilt für Einträge in den folgenden Kategorien:',
-	'older' => 'Die Richtlinie gilt für Einträge, die älter als %d Tag (e) sind.',
+	'all_entries' => 'Alle Beiträge',
+	'fol_entries' => 'Die Richtlinie gilt für die folgenden Beiträge:',
+	'fol_cats' => 'Die Richtlinie gilt für Beiträge in den folgenden Kategorien:',
+	'older' => 'Die Richtlinie gilt für Beiträge, die älter als %d Tag (e) sind.',
 	'allow' => 'Kommentare erlauben',
 	'block' => 'Kommentare verbieten',
 	'approvation' => 'Kommentare müssen genehmigt werden',
@@ -46,29 +46,29 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'log_all' => 'Blockierte Kommentare protokollieren',
 	'log_all_long' => 'Aktiviere diese Option, wenn du auch blockierte Kommentare protokollieren möchtest.',
 	'email_alert' => 'Benachrichtigung per E-Mail',
-	'email_alert_long' => 'Wenn du einen Kommentar zum Genehmigen prüfen sollst, kannst du ' . 'über E-Mail informiert werden.',
+	'email_alert_long' => 'Wenn du einen Kommentar zum Genehmigen prüfen sollst, kannst du über E-Mail informiert werden.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Kommentar-Prüfung mit Akismet',
 	'akismet_use_long' => 'Mit <a href="https://akismet.com/" target="_blank">Akismet</a> kann man Spam in Kommentaren reduzieren.',
 	'akismet_key' => 'Akismet-Schlüssel',
 	'akismet_key_long' => 'Der <a href="https://akismet.com/signup/" target="_blank">Akismet-Dienst</a> stellt dir einen <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">Schlüssel</a> zur Verfügung. Füge diesen hier ein.',
 	'akismet_url' => 'Blog-URL für Akismet',
-	'akismet_url_long' => 'Für den kostenlosen Service von Akismet solltest du nur eine Domain verwenden. ' . 'Du kannst dieses Feld leer lassen. Es wird dann <code>%s</code> verwendet.',
+	'akismet_url_long' => 'Für den kostenlosen Service von Akismet solltest du nur eine Domain verwenden. Du kannst dieses Feld leer lassen. Es wird dann <code>%s</code> verwendet.',
 	'save_conf' => 'Einstellungen speichern',
 
 	// Edit policy page
 	'apply_to' => 'Anwenden auf',
 	'editpol' => 'Bearbeiten einer Richtlinie',
 	'createpol' => 'Erstellen einer Richtlinie',
-	'some_entries' => 'Bestimmte Einträge',
-	'properties' => 'Eintrag mit bestimmten Eigenschaften',
-	'se_desc' => 'Wenn du die Option %s ausgewählt habst, füge bitte Einträge ein, die du auf diese Richtlinie anwenden möchtest.',
-	'se_fill' => 'Bitte fülle die Felder mit der <a href="admin.php?p=entry">ID</a> der Einträge aus (<code>entryYYMMDD-HHMMSS</code>).',
+	'some_entries' => 'Bestimmte Beiträge',
+	'properties' => 'Beitrag mit bestimmten Eigenschaften',
+	'se_desc' => 'Wenn du die Option %s ausgewählt hast, füge bitte Beiträge ein, die du auf diese Richtlinie anwenden möchtest.',
+	'se_fill' => 'Bitte fülle die Felder mit der <a href="admin.php?p=entry">ID</a> der Beiträge aus (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Eigenschaften',
 	'po_desc' => 'Wenn du die Option %s ausgewählt hast, fülle bitte die Eigenschaften aus.',
-	'po_comp' => 'Die Felder sind nicht obligatorisch, aber du musst mindestens eines ausfüllen oder die Richtlinie ' . 'wird auf alle Einträge gelten.',
+	'po_comp' => 'Die Felder sind nicht obligatorisch, aber du musst mindestens eines ausfüllen oder die Richtlinie wird auf alle Beiträge gelten.',
 	'po_time' => 'Zeiteinstellungen',
-	'po_older' => 'Auf Einträge anwenden, die älter sind als ',
+	'po_older' => 'Auf Beiträge anwenden, die älter sind als ',
 	'days' => 'Tage.',
 	'save_policy' => 'Richtlinie speichern',
 
@@ -77,8 +77,8 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'del_descs' => 'Du wirst diese Richtlinie löschen: ',
 	'del_descm' => 'Du wirst diese Richtlinien löschen: ',
 	'sure' => 'Bist du sicher?',
-	'del_subs' => 'Ja, bitte löschen',
-	'del_subm' => 'Ja, bitte alle löschen',
+	'del_subs' => 'Ja, bitte löschen.',
+	'del_subm' => 'Ja, bitte alle löschen.',
 	'del_cancel' => 'Nein, zurück zu den Einstellungen.',
 
 	// Approve comments page
@@ -86,7 +86,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'app_desc' => 'Hier kannst du Kommentare genehmigen.',
 	'app_date' => 'Datum',
 	'app_content' => 'Kommentar',
-	'app_author' => 'Verfasser',
+	'app_author' => 'Autor',
 	'app_email' => 'Email',
 	'app_ip' => 'IP',
 	'app_actions' => 'Maßnahmen',
@@ -107,25 +107,25 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'delc_descm' => 'Du wirst diese Kommentare löschen: ',
 
 	// Manage comments page
-	'man_searcht' => 'Einen Eintrag suchen',
-	'man_searchd' => 'Füge die <a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>) des Eintrags ein, dessen Kommentare du verwalten möchten.',
+	'man_searcht' => 'Einen Beitrag suchen',
+	'man_searchd' => 'Füge die <a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>) des Beitrags ein, dessen Kommentare du verwalten möchtest.',
 	'man_search' => 'Suche',
 	'man_commfor' => 'Bemerkungen für %s',
 	'man_spam' => 'Als Spam an Akismet melden',
 
 	// The simple edit
-	'simple_pre' => 'Die Kommentare zu diesem Eintrag ',
+	'simple_pre' => 'Die Kommentare zu diesem Beitrag ',
 	'simple_1' => 'werden erlaubt.',
 	'simple_0' => 'benötigen deine Zustimmung.',
 	'simple_-1' => 'werden geblockt.',
-	'simple_manage' => 'Verwalte die Kommentare zu diesem Eintrag.',
+	'simple_manage' => 'Verwalte die Kommentare zu diesem Beitrag.',
 	'simple_edit' => 'Richtlinien bearbeiten',
 
 	// Akismet warnings
 	'akismet_errors' => array(
 		-1 => 'Der Akismet-Schlüssel ist leer. Bitte gebe diesen ein.',
 		-2 => 'Wir konnten die Akismet-Server nicht erreichen.',
-		-3 => 'Die Reaktion von Akismet schlug fehl.',
+		-3 => 'Die Akismet-Antwort ist gescheitert.',
 		-4 => 'Der Akismet-Schlüssel ist ungültig.'
 	),
 
@@ -149,19 +149,20 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		6 => 'Kommentar (e) entfernt.',
 		-6 => 'Beim Versuch, die Kommentare zu entfernen, ist ein Fehler aufgetreten (oder du hast keinen Kommentar ausgewählt).',
 
-		7 => 'Kommentar eingereicht.',
+		7 => 'Kommentar abgesendet.',
 		-7 => 'Beim Absenden des Kommentars ist ein Fehler aufgetreten.'
 	),
 
 	// Errors
 	'errors' => array(
-		'pol_nonex' => 'Die Richtlinie, die Sie bearbeiten möchten, existiert nicht.',
-		'entry_nf' => 'Der gewählte Eintrag existiert nicht.'
+		'pol_nonex' => 'Die Richtlinie, die du bearbeiten möchtest, existiert nicht.',
+		'entry_nf' => 'Der gewählte Beitrag existiert nicht.'
 	)
 );
+
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Sorry, wir stossen auf technische Schwierigkeiten.',
-	'lock' => 'Dieser Eintrag kann leider nicht kommentiert werden.',
+	'lock' => 'Dieser Beitrag kann leider nicht kommentiert werden.',
 	'approvation' => 'Der Kommentar wurde gespeichert, aber der Administrator muss ihn freischalten, bevor er angezeigt wird.',
 
 	// Mail for comments
@@ -170,7 +171,7 @@ $lang ['plugin'] ['commentcenter'] = array(
 
 $lang ['plugin'] ['commentcenter'] ['mail_text'] = 'Hallo %toname%,
 
-"%fromname%" %frommail% hat einen Kommentar zu dem Eintrag geschrieben mit dem Titel "%entrytitle%"
+"%fromname%" %frommail% hat einen Kommentar zu dem Beitrag geschrieben mit dem Titel "%entrytitle%"
 Aber dieser braucht deine Zustimmung, bevor dieser veröffentlicht wird.
 
 Folgendes wurde als Kommentar geschrieben:
@@ -182,3 +183,4 @@ Automatisch generiert von
 %blogtitle%
 
 ';
+?>

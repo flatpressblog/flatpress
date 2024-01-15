@@ -12,6 +12,7 @@ $lang ['contact'] = array(
 	'fieldset3' => 'Poslat',
 	'submit' => 'Poslat',
 	'reset' => 'Resetovat',
+	'loggedin' => 'Jste přihlášen 😉. <a href="' . $baseurl . 'login.php?do=logout">Odhlásit se</a> nebo na <a href="' . $baseurl . 'admin.php">administrativní oblasti</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(
@@ -19,18 +20,18 @@ $lang ['contact'] ['notification'] = array(
 	'email' => 'E-mail:',
 	'www' => 'Web:',
 	'content' => 'Zpráva:',
-	'subject' => 'Kontakt zaslaný prostřednictvím ',
+	'subject' => 'Kontakt zaslaný prostřednictvím '
 );
 
 $lang ['contact'] ['error'] = array(
 	'name' => 'Musíte vložit jméno',
 	'email' => 'Musíte vložit správný email',
 	'www' => 'Musíte vložit správné URL',
-	'content' => 'Musíte vložit zprávu',
+	'content' => 'Musíte vložit zprávu'
 );
 
 $lang ['contact'] ['msgs'] = array(
 	1 => 'Zpráva byla úspěšně odeslána',
-	-1 => 'Zpráva nemohla být odeslána',
-);	
+	-1 => 'Zpráva nemohla být odeslána'
+);
 ?>

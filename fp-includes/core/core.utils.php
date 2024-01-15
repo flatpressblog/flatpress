@@ -287,13 +287,28 @@ function utils_countdashes($string, &$rest) {
 	return $i;
 }
 
-function utils_mail($from, $subject, $message, $headers = '') {
+function utils_mail($from = '', $subject, $message, $headers = '') {
 	global $fp_config;
-	if ($headers == '') {
-		$headers = "MIME-Version: 1.0\n" . "From: " . $from . "\n" . "Content-Type: text/plain; charset=\"" . $fp_config ['general'] ['charset'] . "\"\n";
+	/*
+	 * Fraenkiman: Many e-mail providers only allow e-mail addresses from domains that are known to the mail server via their mail server (SMTP host).
+	 * As a rule, these are all e-mail addresses for domains that are registered with the provider.
+	 * In some cases, however, there may be further restrictions, which you should ask your mail provider about.
+	 * When using the PHP mail() function, clarify directly with your provider what restrictions and regulations there are for sending e-mails.
+	 * For this reason, you should have set a sender e-mail address that is permitted for sending by the mail system used (e.g. SMTP).
+	 */
+	if ($from == '') {
+		$from = $fp_config ['general'] ['email'];
 	}
-
-	return mail($fp_config ['general'] ['email'], $subject, $message, $headers);
+	if ($headers == '') {
+		$headers = "MIME-Version: 1.0\r\n" . //
+			"From: " . $from . "\r\n" . //
+			"Content-Type: text/plain; charset=\"" . $fp_config ['general'] ['charset'] . "\"\r\n";
+	}
+	/*
+	 * for non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64
+	 * https://ncona.com/2011/06/using-utf-8-characters-on-an-e-mail-subject/
+	 */	 
+	return mail($fp_config ['general'] ['email'], '=?' . $fp_config ['general'] ['charset'] . '?B?' . base64_encode($subject) . '?=', $message, $headers);
 }
 
 /*

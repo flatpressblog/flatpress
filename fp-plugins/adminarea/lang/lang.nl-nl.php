@@ -8,4 +8,4 @@ $lang ['plugin'] ['adminarea'] = array(
 	'add_static' => 'Statische pagina toevoegen',
 	'login' => 'Inloggen',
 	'logout' => 'Uitloggen'
-);
+);?>

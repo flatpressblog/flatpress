@@ -1,9 +1,8 @@
 <?php
-
 $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'BBCodeの設定',
-	'desc1' => 'このプラグインは <a href="https://wiki.flatpress.org/'.
+	'desc1' => 'このプラグインは <a href="https://wiki.flatpress.org/' . //
 		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a> の使用を可能にします。',
 
 	'options' => 'オプション',
@@ -56,10 +55,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'に行く',
-		// language tag for Facebook Video
-		'langtag' => 'ja_JP'
+	'go_to' => 'に行く',
+	'langtag' => 'ja_JP' // language tag for Facebook Video
 );
-
-
 ?>

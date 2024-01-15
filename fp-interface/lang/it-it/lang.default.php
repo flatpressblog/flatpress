@@ -8,7 +8,7 @@ $lang ['main'] = array(
 	'static' => 'Pagina statica',
 	'comment' => 'Commento',
 	'preview' => 'Modifica/Anteprima',
-	
+
 	'filed_under' => 'Inserito sotto ',	
 
 	'add_entry' => 'Aggiungi articolo',
@@ -30,13 +30,14 @@ $lang ['search'] = array(
 	'onlytitles' => 'Solo i titoli',
 	'fulltext' => 'Testo completo',
 
-	'fset2'	=> 'Data',
-	'datedescr'	=> 'Puoi collegare la tua ricerca ad una data specifica. Puoi selezionare un anno, un anno e un mese o una data completa. ' . 'Lascia in bianco se vuoi cercare nell\'intero database.',
+	'fset2' => 'Data',
+	'datedescr' => 'Puoi collegare la tua ricerca ad una data specifica. Puoi selezionare un anno, un anno e un mese o una data completa. ' . //
+		'Lascia in bianco se vuoi cercare nell\'intero database.',
 
 	'fset3' => 'Cerca nelle categorie',
 	'catdescr' => 'Non selezionare nulla per la ricerca completa',
 
-	'fset4'	=> 'Inizia la ricerca',
+	'fset4' => 'Inizia la ricerca',
 	'submit' => 'Cerca',
 
 	'headres' => 'Risultati della ricerca',
@@ -49,7 +50,6 @@ $lang ['search'] = array(
 );
 
 $lang ['search'] ['error'] = array(
-
 	'keywords' => 'Devi specificare almeno una parola chiave'
 );
 
@@ -61,13 +61,13 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by'	=> 'Pubblicato da',
+	'posted_by' => 'Pubblicato da',
 	'at' => 'a'
 );
 
 $lang ['entry'] = array();
 $lang ['entry'] ['flags'] = array();
-	
+
 $lang ['entry'] ['flags'] ['long'] = array(
 	'draft' => '<strong>Bozza di articolo</strong>: nascosta, in attesa di pubblicazione',
 	//'static' => '<strong>Static entry</strong>: normally hidden, to reach the entry put ?page=title-of-the-entry in url (experimental)',
@@ -81,7 +81,7 @@ $lang ['entry'] ['flags'] ['short'] = array(
 );
 
 $lang ['entry'] ['categories'] = array(
-	'unfiled' => 'Non depositato'
+	'unfiled' => 'Non classificato'
 );
 
 $lang ['404error'] = array(
@@ -92,10 +92,10 @@ $lang ['404error'] = array(
 // Login
 $lang ['login'] = array(
 	'head' => 'Login',
-	'fieldset1'	=> 'Inserisci nome utente e password',
+	'fieldset1' => 'Inserisci nome utente e password',
 	'user' => 'Nome utente:',
 	'pass' => 'Password:',
-	'fieldset2'	=> 'Connettiti',
+	'fieldset2' => 'Connettiti',
 	'submit' => 'Login',
 	'forgot' => 'Password dimenticata'
 );
@@ -123,14 +123,14 @@ $lang ['comments'] = array(
 	'email' => 'Email:',
 	'www' => 'Web:',
 	'cookie' => 'Ricordami',
-	'fieldset2'	=> 'Aggiungi il tuo commento',
+	'fieldset2' => 'Aggiungi il tuo commento',
 	'comment' => 'Commento (*):',
-	'fieldset3'	=> 'Invia',
+	'fieldset3' => 'Invia',
 	'submit' => 'Aggiungi',
 	'reset' => 'Azzera',
 	'success' => 'Il tuo commento è stato aggiunto con successo',
 	'nocomments' => 'Questo articolo non è stato ancora commentato',
-	'commslock'	=> 'I commenti sono stati disabilitati per questo articolo'
+	'commslock' => 'I commenti sono stati disabilitati per questo articolo'
 );
 
 $lang ['comments'] ['error'] = array(
@@ -139,7 +139,7 @@ $lang ['comments'] ['error'] = array(
 	'www' => 'Devi inserire un URL valido',
 	'comment' => 'Devi inserire un commento'
 );
-	
+
 $lang ['postviews'] = array(
 	// PostView-Plugin
 	'views' => 'visite'

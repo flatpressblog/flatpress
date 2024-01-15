@@ -18,9 +18,9 @@ $lang ['admin'] ['panels'] = array(
 );
 
 $lang ['admin'] ['general'] = array(
-	'id' => 'ID', # for entry ids
-	'name' => '名前', # for file names
-	'title' => 'タイトル', # for entry/posts/static titles
+	'id' => 'ID', // for entry ids
+	'name' => '名前', // for file names
+	'title' => 'タイトル', // for entry/posts/static titles
 	'comments' => 'コメント数',
 	'author' => '作成者',
 	'actdel' => '削除',
@@ -30,5 +30,4 @@ $lang ['admin'] ['general'] = array(
 	'startpage' => 'スタートページ',
 	'logout' => 'ログアウト'
 );
-
 ?>

@@ -12,6 +12,7 @@ $lang ['contact'] = array(
 	'fieldset3' => 'Send',
 	'submit' => 'Send',
 	'reset' => 'Nulstil',
+	'loggedin' => 'Du er logget ind 😉. <a href="' . $baseurl . 'login.php?do=logout">Log ud</a> eller til <a href="' . $baseurl . 'admin.php">administrationsområdet</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(
@@ -19,18 +20,18 @@ $lang ['contact'] ['notification'] = array(
 	'email' => 'E-Mail Adresse:',
 	'www' => 'Hjemmeside:',
 	'content' => 'Besked:',
-	'subject' => 'Kontakt via ',
+	'subject' => 'Kontakt via '
 );
-	
+
 $lang ['contact'] ['error'] = array(
 	'name' => 'Indtast venligst et navn',
 	'email' => 'Indtast venligst en gyldig e-mailadresse',
 	'www' => 'Indtast venligst en gyldig URL',
-	'content' => 'Skriv venligst en besked',
+	'content' => 'Skriv venligst en besked'
 );
-	
+
 $lang ['contact'] ['msgs'] = array(
 	1 => 'Beskeden blev sendt med succes',
-	-1 => 'Fejl: Beskeden kunne ikke sendes',
-);	
+	-1 => 'Fejl: Beskeden kunne ikke sendes'
+);
 ?>

@@ -12,6 +12,7 @@ $lang ['contact'] = array(
 	'fieldset3' => 'Senden',
 	'submit' => 'Abschicken',
 	'reset' => 'Zurücksetzen',
+	'loggedin' => 'Du bist angemeldet 😉. <a href="' . $baseurl . 'login.php?do=logout">Abmelden</a> oder zum <a href="' . $baseurl . 'admin.php">Administrationsbereich</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(
@@ -19,18 +20,18 @@ $lang ['contact'] ['notification'] = array(
 	'email' => 'E-Mail Adresse:',
 	'www' => 'Website:',
 	'content' => 'Nachricht:',
-	'subject' => 'Kontaktaufnahme über ',
+	'subject' => 'Kontaktaufnahme über '
 );
-	
+
 $lang ['contact'] ['error'] = array(
 	'name' => 'Bitte einen Namen eingeben',
 	'email' => 'Bitte eine gültige E-Mail Adresse eingeben',
 	'www' => 'Bitte eine gültige URL eingeben',
-	'content' => 'Bitte eine Nachricht schreiben',
+	'content' => 'Bitte eine Nachricht schreiben'
 );
-	
+
 $lang ['contact'] ['msgs'] = array(
 	1 => 'Die Nachricht wurde erfolgreich versendet',
-	-1 => 'Fehler: Die Nachricht konnte nicht versendet werden',
-);	
+	-1 => 'Fehler: Die Nachricht konnte nicht versendet werden'
+);
 ?>

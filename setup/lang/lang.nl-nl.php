@@ -8,13 +8,12 @@ $lang ['setup'] = array(
 
 $lang ['locked'] = array(
 	'head' => 'Setup is vergrendeld',
-	'descr' => 'Het lijkt erop dat je de installatie al hebt uitgevoerd, omdat 
-		we een lockfile hebben gevonden <code>%s</code>.
-		
+	'descr' => 'Het lijkt erop dat je de installatie al hebt uitgevoerd, omdat we een lockfile hebben gevonden <code>%s</code>.
+
 		Als je de installatie opnieuw moet starten, verwijder dan eerst dit bestand.
-		
+
 		<strong >Denk eraan!</strong> Het is niet veilig om <code>setup.php</code> te bewaren en ook de <code>setup/</code> directorie op jouw server, we adviseren om dit te verwijderen!
-		
+
 		<ul>
 		<li><a href="%s">Breng me terug naar mijn blog</a></li>
 		<li><a href="%s">Ik heb het bestand verwijderd, start de installatie opnieuw</a></li>
@@ -23,39 +22,39 @@ $lang ['locked'] = array(
 
 $lang ['err'] = array(
 	'setuprun1' => 'De installatie wordt uitgevoerd.',
-	
+
 	'setuprun2' => 'De installatie loopt al: Als je de beheerder bent, kun je ',
 	'setuprun3' => ' verwijderen om opnieuw te starten.',
 	'writeerror' => 'Fout in schrijven',
 
-	'fpuser1' => ' is geen geldige gebruiker.
-		De gebruikersnaam moet alfanumeriek zijn en mag geen spaties bevatten.',
-	'fpuser2' => ' is geen geldige gebruiker.
-		De gebruikersnaam mag alleen letters, cijfers en 1 underscore bevatten.',
+	'fpuser1' => ' is geen geldige gebruiker. ' . //
+		'De gebruikersnaam moet alfanumeriek zijn en mag geen spaties bevatten.',
+	'fpuser2' => ' is geen geldige gebruiker. ' . //
+		'De gebruikersnaam mag alleen letters, cijfers en 1 underscore bevatten.',
 	'fppwd' => 'Het wachtwoord moet minstens 6 tekens en geen spaties bevatten.',
 	'fppwd2' => 'De wachtwoorden komen niet overeen.',
 	'email' => ' is geen geldig e-mailadres.',
 	'www' => ' is geen geldige URL.',
-	'error' => '<p><big>Fout!</big> 
-		De volgende fouten zijn opgetreden tijdens het verwerken van het formulier:</p><ul>'
+	'error' => '<p><big>Fout!</big> ' . //
+		'De volgende fouten zijn opgetreden tijdens het verwerken van het formulier:</p><ul>'
 );
 
 $lang ['step1'] = array(
 	'head' => 'Welkom bij FlatPress!',
 	'descr' => 'Bedankt dat je gekozen hebt voor <strong>FlatPress</strong>.
-		
+
 		Voordat je plezier kunt maken met je gloednieuwe blog, moeten we je een paar vragen stellen.
-		
+
 		Maak je geen zorgen, het zal niet lang duren!',
 	'descrl1' => 'Kies je taal.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Niet in de lijst?</a>',
 	'descrlang' => 'Als je jouw taal niet in deze lijst ziet, wilt je misschien zien of er <a href="https://wiki.flatpress.org/res:language"> een taal pack is</a> voor deze versie:
-		
+
 		<pre>%s</pre>
-		
+
 		Als je het taalpakket wilt installeren, uploadt de inhoud van het pakket in jouw <code>flatpress/</code>, en overschrijf alles, dan <a href="./setup.php">herstart de setup</a>.',
 	'descrw' => 'Het <strong>enige</strong> wat je nodig hebt voor FlatPress om mee te werken <em>beschrijfbare</em> directorie.
-		
+
 		<pre>%s</pre>'
 );
 
@@ -72,19 +71,17 @@ $lang ['step2'] = array(
 $lang ['step3'] = array(
 	'head' => 'Klaar',
 	'descr' => '<strong>Einde van dit verhaal</strong>.
-		
+
 		Ongelofelijk? 
-		
+
 		En je hebt gelijk: <strong>het verhaal is net begonnen</strong>, maar <strong>schrijven is aan jou</strong>!
-		
-		<p style="color:#cc0000">Let op: Voor meer comfort en veiligheid raden wij aan de instructies voor uw server te configureren in het beheergebied met de PrettyURL plugin.</p>
 		
 		<ul>
 		<li>Zie <a href="%s">hoe de startpagina eruit ziet</a></li>
 		<li>Veel pleier! <a href="%s">Log nu in!</a></li>
 		<li>Heb je zin om ons een bericht te sturen? <a href="https://www.flatpress.org/">Ga naar FlatPress.org!</a></li>
 		</ul>
-		
+
 		En bedankt dat je gekoen hebt voor FlatPress!'
 );
 
@@ -162,7 +159,6 @@ Met het FlatPress-Leggero thema heb je 3 stijlsjablonen tot je beschikking - van
 Wil je meer zien?
 
 [list]
-[*]Steun het project met een [url=http://www.flatpress.org/home/static.php?page=donate]kleine donatie.
 [*]Volg de [url=https://www.flatpress.org/?x]official blog[/url] om te weten wat is gaande in de FlatPress wereld.
 [*]Bezoek de [url=https://forum.flatpress.org/]forum[/url] voor ondersteuning.
 [*]Krijg [b]mooie themas[/b] van [url=https://wiki.flatpress.org/res:themes]other users\' submissions[/url]!
@@ -175,6 +171,7 @@ Wil je meer zien?
 [h4]Hoe kan ik helpen?[/h4]
 
 [list]
+[*]Steun het project met een [url=http://www.flatpress.org/home/static.php?page=donate]kleine donatie.
 [*][url=https://www.flatpress.org/contact/]Contact ons[/url] om bugs en aanpassingen te melden.
 [*]Draag bij aan de ontwikkeling van Flatpress op [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
 [*]Vertaal FlatPress in de documentatie in [url=https://wiki.flatpress.org/res:language]your language[/url].
@@ -190,10 +187,9 @@ Nu kan je [url=login.php]Login[/url] om bij de [url=admin.php]Administration Are
 Veel plezier! :)
 
 [i]The [url=https://www.flatpress.org]FlatPress[/url] Team[/i]
-	
+
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'About';
-$lang ['samplecontent'] ['about'] ['content'] = "Schrijf hier iets over jezelf. ([url=admin.php?p=static&action=write&page=about]Edit me![/url])";
-
+$lang ['samplecontent'] ['about'] ['content'] = 'Schrijf hier iets over jezelf. ([url=admin.php?p=static&action=write&page=about]Edit me![/url])';
 ?>
