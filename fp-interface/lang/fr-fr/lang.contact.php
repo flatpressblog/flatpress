@@ -1,4 +1,6 @@
 <?php
+$baseurl = BLOG_BASEURL;
+
 $lang ['contact'] = array(
 	'head' => 'Nous Contacter',
 	'descr' => 'Remplissez le formulaire ci-dessous pour nous envoyer vos commentaires. Merci d\'ajouter votre e-mail si vous souhaitez une r&eacute;ponse.',

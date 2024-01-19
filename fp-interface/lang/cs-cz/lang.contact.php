@@ -1,4 +1,6 @@
 <?php
+$baseurl = BLOG_BASEURL;
+
 $lang ['contact'] = array(
 	'head' => 'Kontaktujte nás',
 	'descr' => 'Vyplňte prosím formulář (níže) pro zaslání dotazu. Napište email, pokud chcete, aby Vám přišla odpověď.',
