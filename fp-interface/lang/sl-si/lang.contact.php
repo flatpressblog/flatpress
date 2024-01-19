@@ -1,4 +1,6 @@
 <?php
+$baseurl = BLOG_BASEURL;
+
 $lang ['contact'] = array(
 	'head' => 'Kontaktirajte nas',
 	'descr' => 'Izpolnite spodnji obrazec, da nam pošljete povratne informacije. Če želite prejeti odgovor, dodajte svoj e-poštni naslov.',

@@ -1,4 +1,6 @@
 <?php
+$baseurl = BLOG_BASEURL;
+
 $lang ['contact'] = array(
 	'head' => 'Kontakt',
 	'descr' => 'Felterne Navn og Besked er obligatoriske. For at kunne svare dig, har jeg brug for din e-mailadresse.',

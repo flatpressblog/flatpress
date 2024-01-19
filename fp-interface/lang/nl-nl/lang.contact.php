@@ -1,4 +1,6 @@
 <?php
+$baseurl = BLOG_BASEURL;
+
 $lang ['contact'] = array(
 	'head' => 'Neem contact op',
 	'descr' => 'Vul het formulier hieronder in. 
