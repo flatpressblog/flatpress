@@ -73,7 +73,7 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 /* comments */
 $lang ['admin'] ['entry'] ['commentlist'] = array(
 	'head' => 'Kommentare für den Beitrag: ',
-	'descr' => 'Bitte Kommentar auswählen, der gelöscht werden soll',
+	'descr' => 'Hier kannst du Kommentare bearbeiten oder löschen.',
 	'sel' => 'Sel',
 	'content' => 'Inhalt',
 	'date' => 'Datum',
@@ -93,8 +93,8 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => 'Bearbeite den Kommentar für Beitrag',
-	'descr' => 'Hier kannst du den Kommentar eines Authors, sein Name, seine E-Mail-Adresse, seine Webseite und seine IP-Adresse nach belieben bearbeiten.<br><br>',
+	'head' => 'Bearbeite den Kommentar für Beitrag: ',
+	'descr' => 'Hier kannst du den Kommentar eines Authors, sein Name, seine E-Mail-Adresse und seine Website nach belieben bearbeiten.<br><br>',
 	'content' => 'Kommentarinhalt',
 	'date' => 'Datum',
 	'author' => 'Autor',
@@ -102,7 +102,8 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'email' => 'E-Mail',
 	'ip' => 'IP-Adresse',
 	'loggedin' => 'Eingeloggter Administrator',
-	'submit' => 'Änderungen speichern'
+	'submit' => 'Änderungen speichern',
+	'commentlist' => 'zurück zur Kommentarübersicht'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
@@ -113,7 +114,7 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 /* delete action */
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Beitrag löschen',
-	'descr' => 'Du hast diesen Beitrag zum löschen ausgewählt:',
+	'descr' => 'Du hast diesen Beitrag zum löschen ausgewählt: ',
 	'preview' => 'Vorschau',
 	'confirm' => 'Willst du diesen Beitrag wirklich löschen?',
 	'fset' => 'Löschen',

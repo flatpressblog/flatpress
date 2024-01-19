@@ -73,7 +73,7 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 /* comments */
 $lang ['admin'] ['entry'] ['commentlist'] = array(
 	'head' => 'Kommentarer til indlægget: ',
-	'descr' => 'Vælg venligst kommentar, der skal slettes',
+	'descr' => 'Her kan du redigere eller slette kommentarer.',
 	'sel' => 'Sel',
 	'content' => 'Indhold',
 	'date' => 'Dato',
@@ -93,8 +93,8 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => 'Rediger kommentar til indlæg',
-	'descr' => 'Her kan du redigere en forfatters kommentar, hans navn, hans e-mailadresse, hans hjemmeside og hans IP-adresse, som du vil.<br><br>',
+	'head' => 'Rediger kommentar til indlæg: ',
+	'descr' => 'Her kan du redigere en forfatters kommentar, navn, e-mailadresse og hjemmeside, som du ønsker.<br><br>',
 	'content' => 'Kommentar indhold',
 	'date' => 'Dato',
 	'author' => 'Forfatter',
@@ -102,7 +102,8 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'email' => 'E-Mail',
 	'ip' => 'IP-adresse',
 	'loggedin' => 'Logget ind som administrator',
-	'submit' => 'Gem ændringer'
+	'submit' => 'Gem ændringer',
+	'commentlist' => 'tilbage til kommentaroversigten'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
@@ -113,7 +114,7 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 /* delete action */
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Slet indlæg',
-	'descr' => 'Du har valgt at slette dette indlæg:',
+	'descr' => 'Du har valgt at slette dette indlæg: ',
 	'preview' => 'Forhåndsvisning',
 	'confirm' => 'Vil du virkelig slette dette indlæg?',
 	'fset' => 'Slet',

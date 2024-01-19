@@ -73,7 +73,7 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 /* comments */
 
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => 'Commentaires du billet ',
+	'head' => 'Commentaires du billet: ',
 	'descr' => 'S&eacute;lectionner un commentaire &agrave; effacer',
 	'sel' => 'Sel',
 	'content' => 'Contenu',
@@ -94,8 +94,8 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => '&Eacute;diter commentaire du billet',
-	'descr' => 'Ici, tu peux modifier le commentaire d\'un auteur, son nom, son adresse e-mail, son site web et son adresse IP comme tu le souhaites.<br><br>',
+	'head' => '&Eacute;diter commentaire du billet: ',
+	'descr' => 'Ici, tu peux modifier à ta guise le commentaire, le nom, l\'adresse e-mail et le site web d\'un auteur.<br><br>',
 	'content' => 'Contenu',
 	'date' => 'Date',
 	'author' => 'Auteur',
@@ -103,7 +103,8 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'email' => 'Email',
 	'ip' => 'IP',
 	'loggedin' => 'Administrateur connecté',
-	'submit' => 'Enregistrer'
+	'submit' => 'Enregistrer',
+	'commentlist' => 'retour à l\'aperçu des commentaires'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
@@ -112,10 +113,9 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 );
 
 /* delete action */
-
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Supprimer ce billet',
-	'descr' => 'Vous allez supprimer le billet suivant:',
+	'descr' => 'Vous allez supprimer le billet suivant: ',
 	'preview' => 'Aper&ccedil;u',
 	'confirm' => 'Confirmez-vous l\'action?',
 	'fset' => 'Effacer',
