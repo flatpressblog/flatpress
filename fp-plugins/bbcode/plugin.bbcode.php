@@ -53,8 +53,9 @@ function plugin_bbcode_startup() {
 		add_filter('comment_text', 'plugin_bbcode_comment', 1);
 	}
 }
-// plugin_bbcode_startup();
-add_action('wp_head', 'plugin_bbcode_startup');
+plugin_bbcode_startup();
+// Fraenkiman: RSS-feed returns bbcode if add_action(), see #225
+//add_action('wp_head', 'plugin_bbcode_startup');
 
 /**
  * Adds the plugin's CSS and JS to the HTML head.

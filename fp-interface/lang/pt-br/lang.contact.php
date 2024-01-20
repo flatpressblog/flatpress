@@ -1,5 +1,6 @@
 <?php
-//Terminado 27 de Novembro de 2022
+$baseurl = BLOG_BASEURL;
+
 $lang ['contact'] = array(
 	'head' => 'Contato',
 	'descr' => 'Por favor, preencha o formulário abaixo para nos enviar um feedback. Adicione seu email se desejar uma resposta.',

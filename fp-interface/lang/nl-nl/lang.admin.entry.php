@@ -72,8 +72,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 
 /* comments */
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => 'Commentaar voor vermelding',
-	'descr' => 'Selecteer een commentaar die je wilt verwijderen',
+	'head' => 'Commentaar voor vermelding: ',
+	'descr' => 'Hier kun je opmerkingen bewerken of verwijderen.',
 	'sel' => 'Sel',
 	'content' => 'Inhoud',
 	'date' => 'Datum',
@@ -93,8 +93,8 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => 'Commentaar bewerken voor invoer',
-	'descr' => 'Hier kun je het commentaar van een auteur, zijn naam, zijn e-mailadres, zijn website en zijn IP-adres naar wens bewerken.<br><br>',
+	'head' => 'Commentaar bewerken voor invoer: ',
+	'descr' => 'Hier kun je het commentaar, de naam, het e-mailadres en de website van een auteur naar wens bewerken.<br><br>',
 	'content' => 'Inhoud',
 	'date' => 'Datum',
 	'author' => 'Auteur',
@@ -102,7 +102,8 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'email' => 'Email',
 	'ip' => 'IP',
 	'loggedin' => 'Ingelogde administrator',
-	'submit' => 'Bewaar'
+	'submit' => 'Wijzigingen opslaan',
+	'commentlist' => 'Terug naar het commentaaroverzicht'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
@@ -113,7 +114,7 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 /* delete action */
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Verwijder vermelding',
-	'descr' => 'U staat op het punt de volgende vermelding te verwijderen:',
+	'descr' => 'U staat op het punt de volgende vermelding te verwijderen: ',
 	'preview' => 'Voorbeeld',
 	'confirm' => 'Weet u zeker dat u door wilt gaan?',
 	'fset' => 'Verwijder',

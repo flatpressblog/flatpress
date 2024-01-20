@@ -1,4 +1,6 @@
 <?php
+$baseurl = BLOG_BASEURL;
+
 $lang ['contact'] = array(
 	'head' => 'メッセージの送信',
 	'descr' => '次のフォームにご記入のうえ、送信してください。返信を希望される方は、必ずメールアドレス欄にもご記入ください。',

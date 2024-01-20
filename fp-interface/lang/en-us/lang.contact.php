@@ -1,4 +1,6 @@
 <?php
+$baseurl = BLOG_BASEURL;
+
 $lang ['contact'] = array(
 	'head' => 'Contact Us',
 	'descr' => 'Fill out the form below to send us feedback. Please add your email if you wish to be answered.',
