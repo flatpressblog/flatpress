@@ -72,8 +72,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 
 /* komentarji */
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => 'Komentarji za vnos ',
-	'descr' => 'Izberite komentar za izbris',
+	'head' => 'Komentarji za vnos: ',
+	'descr' => 'Tu lahko uredite ali izbrišete komentarje.',
 	'sel' => 'Izberi',
 	'content' => 'Vsebina',
 	'date' => 'Datum',
@@ -93,8 +93,8 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => 'Uredi komentar za vnos',
-	'descr' => 'Tu lahko poljubno urejate komentar avtorja, njegovo ime, e-poštni naslov, spletno stran in naslov IP.<br><br>',
+	'head' => 'Uredi komentar za vnos: ',
+	'descr' => 'Tu lahko po želji uredite avtorjev komentar, ime, e-poštni naslov in spletno stran.<br><br>',
 	'content' => 'Vsebina',
 	'date' => 'Datum',
 	'author' => 'Avtor',
@@ -102,7 +102,8 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'email' => 'E-pošta',
 	'ip' => 'IP',
 	'loggedin' => 'Prijavljen skrbnik',
-	'submit' => 'Shrani'
+	'submit' => 'Shrani',
+	'commentlist' => 'Nazaj na pregled komentarjev'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
@@ -113,7 +114,7 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 /* brisanje dejanja */
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Izbriši Vnos',
-	'descr' => 'Izbrisali boste naslednji vnos:',
+	'descr' => 'Izbrisali boste naslednji vnos: ',
 	'preview' => 'Predogled',
 	'confirm' => 'Ali ste prepričani, da želite nadaljevati?',
 	'fset' => 'Izbriši',
