@@ -72,8 +72,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 
 /* comments */
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => 'Comments for entry ',
-	'descr' => 'Select a comment to delete',
+	'head' => 'Comments for entry: ',
+	'descr' => 'You can edit or delete comments here.',
 	'sel' => 'Sel',
 	'content' => 'Content',
 	'date' => 'Date',
@@ -93,8 +93,8 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => 'Edit comment for entry',
-	'descr' => 'Here you can edit the comment of an author, his name, his e-mail address, his website and his IP address as you wish.<br><br>',
+	'head' => 'Edit the comment for this entry: ',
+	'descr' => 'Here you can edit the comment of an author, his name, his e-mail address and his website as you wish.<br><br>',
 	'content' => 'Content',
 	'date' => 'Date',
 	'author' => 'Author',
@@ -102,7 +102,8 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'email' => 'Email',
 	'ip' => 'IP',
 	'loggedin' => 'Logged in administrator',
-	'submit' => 'Save'
+	'submit' => 'Save changes',
+	'commentlist' => 'back to the comment overview'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
@@ -113,7 +114,7 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 /* delete action */
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Delete Entry',
-	'descr' => 'You\'re about to delete the following entry:',
+	'descr' => 'You\'re about to delete the following entry: ',
 	'preview' => 'Preview',
 	'confirm' => 'Are you sure you want to proceed?',
 	'fset' => 'Delete',

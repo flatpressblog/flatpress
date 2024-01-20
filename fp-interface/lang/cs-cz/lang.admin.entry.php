@@ -72,8 +72,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 
 /* comments */
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => 'Komentáře k přispěvkům ',
-	'descr' => 'Vybrat komentář na vymazání',
+	'head' => 'Komentáře k přispěvkům: ',
+	'descr' => 'Zde můžete komentáře upravovat nebo mazat.',
 	'sel' => 'Sel',
 	'content' => 'Obsah',
 	'date' => 'Datum',
@@ -93,8 +93,8 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => 'Uprav komentář příspěvku',
-	'descr' => 'Zde můžete upravit komentář autora, jeho jméno, e-mailovou adresu, webové stránky a IP adresu podle libosti.<br><br>',
+	'head' => 'Uprav komentář příspěvku: ',
+	'descr' => 'Zde můžete libovolně upravovat komentář autora, jeho jméno, e-mailovou adresu a webové stránky.<br><br>',
 	'content' => 'Obsah',
 	'date' => 'Datum',
 	'author' => 'Autor',
@@ -102,7 +102,8 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'email' => 'Email',
 	'ip' => 'IP',
 	'loggedin' => 'Přihlášený správce',
-	'submit' => 'Ulož'
+	'submit' => 'Uložení změn',
+	'commentlist' => 'zpět na přehled komentářů'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
@@ -113,7 +114,7 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 /* delete action */
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Smazat příspěvek',
-	'descr' => 'Chystáte sa smazat tyto příspěvky:',
+	'descr' => 'Chystáte sa smazat tyto příspěvky: ',
 	'preview' => 'Zobrazit',
 	'confirm' => 'Opravdu chcete pokračovat?',
 	'fset' => 'Smazat',
