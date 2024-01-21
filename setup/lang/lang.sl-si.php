@@ -48,7 +48,7 @@ $lang ['step1'] = array(
 		Toda brez skrbi, to ne bo trajalo dolgo!',
 	'descrl1' => 'Izberite jezik.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Ni na seznamu?</a>',
-	'descrlang' => 'Če na seznamu ne najdete svojega jezika, preverite, ali je na voljo ustrezen <a href="https://wiki.flatpress.org/res:language">jezikovni paket</a> :
+	'descrlang' => 'Če na seznamu ne najdete svojega jezika, preverite, ali je na voljo ustrezen <a href="https://wiki.flatpress.org/res:language" target="_blank" rel="external">jezikovni paket</a> :
 		
 		<pre>%s</pre>
 		
@@ -79,7 +79,7 @@ $lang ['step3'] = array(
 		<ul>
 		<li>Na <a href="%s">glavno stran vašega bloga</a></li>
 		<li>Zabavajte se z bloganjem! <a href="%s">Prijavite se zdaj</a></li>
-		<li>Želite pohvaliti ali kritizirati? Obiščite nas na <a href="https://www.flatpress.org/">FlatPress.org</a>!</li>
+		<li>Želite pohvaliti ali kritizirati? Obiščite nas na <a href="https://www.flatpress.org/" target="_blank" rel="external">FlatPress.org</a>!</li>
 		</ul>
 		
 		Hvala, ker ste izbrali FlatPress!'
@@ -100,7 +100,7 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Dobrodošli v FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'To je vzorčna objava, ki vam prikazuje nekatere funkcije [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'To je vzorčna objava, ki vam prikazuje nekatere funkcije [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
 Element "more" vam omogoča preskok z osnutka članka na celoten članek.
 
@@ -109,7 +109,7 @@ Element "more" vam omogoča preskok z osnutka članka na celoten članek.
 
 [h4]Oblikovanje besedila[/h4]
 
-V programu FlatPress vsebino oblikujete s kodo [url=http://wiki.flatpress.org/doc:plugins:bbcode]BBcode[/url] (Bulletin-Board-Code). To je zelo enostavno z uporabo kode BBCode. Primeri? [b] naredi [b]krepko besedilo[/b], [i] [i]besedilo v poševnem tisku[/i].
+V programu FlatPress vsebino oblikujete s kodo [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (Bulletin-Board-Code). To je zelo enostavno z uporabo kode BBCode. Primeri? [b] naredi [b]krepko besedilo[/b], [i] [i]besedilo v poševnem tisku[/i].
 
 [quote]Element [b]quote[/b] lahko uporabite za označevanje citatov. [/quote]
 
@@ -117,7 +117,7 @@ V programu FlatPress vsebino oblikujete s kodo [url=http://wiki.flatpress.org/do
 Lahko tudi
    predstavlja vdolbine.[/code]
 
-Elementa \'img\' (slike) in \'url\' (povezave) imata posebne možnosti. Več o tem si lahko preberete v [url=https://wiki.flatpress.org/doc:plugins:bbcode]FlatPress-Wiki[/url].
+Elementa \'img\' (slike) in \'url\' (povezave) imata posebne možnosti. Več o tem si lahko preberete v [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki[/url].
 
 
 [h4]Vnosi (blog članki) in statične strani[/h4]
@@ -131,25 +131,25 @@ V [url=admin.php]upravnem območju[/url] lahko ustvarite vnose in statične stra
 
 [h4]Vtičniki[/h4]
 
-FlatPress lahko v veliki meri prilagodite svojim potrebam tako, da ga razširite z [url=https://wiki.flatpress.org/doc:plugins:standard]vtičniki[/url]. BBCode je na primer vtičnik.
+FlatPress lahko v veliki meri prilagodite svojim potrebam tako, da ga razširite z [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]vtičniki[/url]. BBCode je na primer vtičnik.
 
 Tukaj je še nekaj vzorčne vsebine, ki vam pokaže še več funkcij FlatPress :)
 
 Za vas sta že pripravljeni dve statični strani:
 [list]
 [*][url=static.php?page=about]O[/url]
-[*][url=static.php?page=menu]Meni[/url] (Vsebina te statične strani se prikaže tudi v stranski vrstici vašega bloga - v tem je čar gradnika [b]Blockparser-Widgets[/b]. Na [url=http://wiki.flatpress.org/]FlatPress-Wiki[/url] najdete informacije o tem in še veliko več!)
+[*][url=static.php?page=menu]Meni[/url] (Vsebina te statične strani se prikaže tudi v stranski vrstici vašega bloga - v tem je čar gradnika [b]Blockparser-Widgets[/b]. Na [url=https://wiki.flatpress.org/ target=_blank rel=external]FlatPress-Wiki[/url] najdete informacije o tem in še veliko več!)
 [/list]
 
 Z vtičnikom [b]PhotoSwipe-Plugin[/b] lahko zdaj še lažje postavite svoje slike, bodisi kot float="left"-  ali  float="right" poravnano posamezno sliko, obdano z besedilom.
-Element \'gallery\' lahko uporabite tudi za predstavitev celotnih galerij obiskovalcem. Kako enostavno je to [url="https://wiki.flatpress.org/res:plugins:photoswipe"]tukaj[/url].
+Element \'gallery\' lahko uporabite tudi za predstavitev celotnih galerij obiskovalcem. Kako enostavno je to [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]tukaj[/url].
 
 
 [h4]Gradniki[/h4]
 
 Nobeden od elementov v stranski vrstici vašega bloga ni fiksiran, lahko jih premikate, odstranjujete in dodajate nove v območju za upravljanje.
 
-Ti elementi se imenujejo [b]Gradniki[/b]. Seveda je tudi na FlatPress Wiki veliko koristnih informacij [url=https://wiki.flatpress.org/doc:tips:widgets]o tej temi[/url].
+Ti elementi se imenujejo [b]Gradniki[/b]. Seveda je tudi na FlatPress Wiki veliko koristnih informacij [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]o tej temi[/url].
 
 
 [h4]Teme[/h4]
@@ -162,22 +162,22 @@ S temo FlatPress Leggero imate na voljo 3 slogovne predloge - od klasične do mo
 Želite izvedeti več o platformi FlatPress?
 
 [list]
-[*]V [url=https://www.flatpress.org/?x]projektnem blogu[/url] lahko izveste, kaj se trenutno dogaja v projektu FlatPress.
-[*]Obiščite [url=https://forum.flatpress.org/]podporni forum[/url] za podporo in stik z drugimi uporabniki FlatPress.
-[*]Iz [url=https://wiki.flatpress.org/res:themes]wikija[/url] lahko prenesete odlične [b]teme[/b], ki jih je ustvarila skupnost.
-[*]Obstajajo tudi odlični [url=https://wiki.flatpress.org/res:plugins]vtičniki[/url] tam.
-[*]FlatPressu lahko sledite tudi na [url=https://twitter.com/FlatPress]X (Twitterju)[/url] in [url=https://fosstodon.org/@flatpress]Mastodon[/url].
+[*]V [url=https://www.flatpress.org/?x target=_blank rel=external]projektnem blogu[/url] lahko izveste, kaj se trenutno dogaja v projektu FlatPress.
+[*]Obiščite [url=https://forum.flatpress.org/ target=_blank rel=external]podporni forum[/url] za podporo in stik z drugimi uporabniki FlatPress.
+[*]Iz [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]wikija[/url] lahko prenesete odlične [b]teme[/b], ki jih je ustvarila skupnost.
+[*]Obstajajo tudi odlični [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]vtičniki[/url] tam.
+[*]FlatPressu lahko sledite tudi na [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitterju)[/url] in [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]Kako lahko podpiram FlatPress?[/h4]
 
 [list]
-[*]Podprite projekt z [url=http://www.flatpress.org/home/static.php?page=donate]majhno donacijo[/url].
-[*][url=https://www.flatpress.org/contact/]Prijavite[/url] nastale napake ali nam pošljite predloge za izboljšave.
-[*]Programerji nas lahko podpirajo na [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
-[*]Prevedite FlatPress in njegovo dokumentacijo v [url=https://wiki.flatpress.org/res:language]vaš jezik[/url].
-[*]Bodite del skupnosti FlatPress na [url=https://forum.flatpress.org/]forumu podpore[/url].
+[*]Podprite projekt z [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]majhno donacijo[/url].
+[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Prijavite[/url] nastale napake ali nam pošljite predloge za izboljšave.
+[*]Programerji nas lahko podpirajo na [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
+[*]Prevedite FlatPress in njegovo dokumentacijo v [url=https://wiki.flatpress.org/res:language target=_blank rel=external]vaš jezik[/url].
+[*]Bodite del skupnosti FlatPress na [url=https://forum.flatpress.org/ target=_blank rel=external]forumu podpore[/url].
 [*]Povejte svetu, kako odličen je FlatPress! :)
 [/list]
 
@@ -188,7 +188,7 @@ S temo FlatPress Leggero imate na voljo 3 slogovne predloge - od klasične do mo
 
 Zabavajte se! :)
 
-[i]Ekipa podjetja [url=https://www.flatpress.org]FlatPress[/url][/i]
+[i]Ekipa podjetja [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url][/i]
 
 ';
 

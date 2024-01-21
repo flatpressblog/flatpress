@@ -27,7 +27,7 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 );
 
 $lang ['admin'] ['uploader'] ['mediamanager'] ['msgs'] = array(
-	3 => 'La nuva galleria è stata creata',
+	3 => 'La nuova galleria è stata creata',
 	2 => 'Immagini spostate nella galleria',
 	1 => 'File eliminato',
 	-1 => 'Errore durante l\'eliminazione del file',
