@@ -48,7 +48,7 @@ $lang ['step1'] = array(
 		Αλλά μην ανησυχείτε, δεν θα πάρει πολύ χρόνο!',
 	'descrl1' => 'Επιλέξτε τη γλώσσα σας.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Δεν υπάρχει στη λίστα;</a>',
-	'descrlang' => 'Αν δεν βρείτε τη γλώσσα σας στη λίστα, δείτε αν υπάρχει <a href="https://wiki.flatpress.org/res:language">κατάλληλο πακέτο γλώσσας</a>:
+	'descrlang' => 'Αν δεν βρείτε τη γλώσσα σας στη λίστα, δείτε αν υπάρχει <a href="https://wiki.flatpress.org/res:language" target="_blank" rel="external">κατάλληλο πακέτο γλώσσας</a>:
 
 		<pre>%s</pre>
 
@@ -79,7 +79,7 @@ $lang ['step3'] = array(
 		<ul>
 		<li>Στην <a href="%s">κυρίως σελίδα του ιστολογίου σας</a></li>
 		<li>Καλή διασκέδαση στο blogging! <a href="%s">Συνδεθείτε τώρα</a></li>
-		<li>Θέλετε να μας επαινέσετε ή να μας επικρίνετε? Επισκεφθείτε μας στη διεύθυνση <a href="https://www.flatpress.org/">FlatPress.org</a>!</li>
+		<li>Θέλετε να μας επαινέσετε ή να μας επικρίνετε? Επισκεφθείτε μας στη διεύθυνση <a href="https://www.flatpress.org/" target="_blank" rel="external">FlatPress.org</a>!</li>
 		</ul>
 
 		Σας ευχαριστούμε που επιλέξατε την FlatPress!'
@@ -100,7 +100,7 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Welcome to FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δείγμα ανάρτησης. Σας δείχνει μερικές από τις λειτουργίες του [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δείγμα ανάρτησης. Σας δείχνει μερικές από τις λειτουργίες του [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
 Το στοιχείο "more" σας επιτρέπει να μεταβείτε από το περίγραμμα του άρθρου στο πλήρες άρθρο.
 
@@ -109,7 +109,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 
 [h4]Μορφοποίηση κειμένου[/h4]
 
-Στο FlatPress μορφοποιείτε το περιεχόμενό σας με [url=http://wiki.flatpress.org/doc:plugins:bbcode]BBcode[/url] (Bulletin-Board-Code). Αυτό είναι πολύ εύκολο με το BBCode. Θέλετε μερικά παραδείγματα; [b] κάνει [b]έντονο κείμενο[/b], [i] [i]πλάγιο[/i].
+Στο FlatPress μορφοποιείτε το περιεχόμενό σας με [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (Bulletin-Board-Code). Αυτό είναι πολύ εύκολο με το BBCode. Θέλετε μερικά παραδείγματα; [b] κάνει [b]έντονο κείμενο[/b], [i] [i]πλάγιο[/i].
 
 [quote]Το στοιχείο [b]quote[/b] μπορεί να χρησιμοποιηθεί για τη σήμανση εισαγωγικών.[/quote]
 
@@ -117,7 +117,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 Μπορεί επίσης να
    να αναπαριστά εσοχές.[/code]
 
-Τα στοιχεία \'img\' (εικόνες) και \'url\' (σύνδεσμοι) έχουν ειδικές επιλογές. Μπορείτε να μάθετε περισσότερα σχετικά με αυτό στο [url=https://wiki.flatpress.org/doc:plugins:bbcode]FlatPress-Wiki[/url].
+Τα στοιχεία \'img\' (εικόνες) και \'url\' (σύνδεσμοι) έχουν ειδικές επιλογές. Μπορείτε να μάθετε περισσότερα σχετικά με αυτό στο [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki[/url].
 
 
 [h4]Καταχωρήσεις (άρθρα ιστολογίου) και στατικές σελίδες[/h4]
@@ -131,25 +131,25 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 
 [h4]Plugins[/h4]
 
-Μπορείτε να προσαρμόσετε εκτενώς το FlatPress στις ανάγκες σας επεκτείνοντάς το με [url=https://wiki.flatpress.org/doc:plugins:standard]Plugins[/url]. Το BBCode, για παράδειγμα, είναι ένα plugin.
+Μπορείτε να προσαρμόσετε εκτενώς το FlatPress στις ανάγκες σας επεκτείνοντάς το με [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]Plugins[/url]. Το BBCode, για παράδειγμα, είναι ένα plugin.
 
 Εδώ είναι μερικά ακόμα δείγματα περιεχομένου που σας δείχνουν ακόμα περισσότερα χαρακτηριστικά του FlatPress :)
 
 Δύο στατικές σελίδες είναι ήδη έτοιμες για εσάς:
 [list]
 [*][url=static.php?page=about]Σχετικά με το[/url]
-[*][url=static.php?page=menu]Μενού[/url] (Το περιεχόμενο αυτής της στατικής σελίδας εμφανίζεται επίσης στην πλαϊνή μπάρα του ιστολογίου σας - αυτή είναι η μαγεία του [b]blockparser widget[/b]. Το [url=http://wiki.flatpress.org/]FlatPress-Wiki[/url] έχει πληροφορίες σχετικά με αυτό, και πολλά άλλα!)
+[*][url=static.php?page=menu]Μενού[/url] (Το περιεχόμενο αυτής της στατικής σελίδας εμφανίζεται επίσης στην πλαϊνή μπάρα του ιστολογίου σας - αυτή είναι η μαγεία του [b]blockparser widget[/b]. Το [url=https://wiki.flatpress.org/ target=_blank rel=external]FlatPress-Wiki[/url] έχει πληροφορίες σχετικά με αυτό, και πολλά άλλα!)
 [/list]
 
 Με το πρόσθετο [b]PhotoSwipe-Plugin[/b] μπορείτε τώρα να τοποθετήσετε τις εικόνες σας ακόμα πιο εύκολα, είτε ως float="left"- είτε ως float="right" ευθυγραμμισμένη μεμονωμένη εικόνα, που περιβάλλεται από το κείμενο.
-Μπορείτε ακόμη και να παρουσιάσετε ολόκληρες γκαλερί στους επισκέπτες σας με το στοιχείο \'gallery\'. Μπορείτε να μάθετε πόσο εύκολο είναι [url="https://wiki.flatpress.org/res:plugins:photoswipe"]εδώ[/url].
+Μπορείτε ακόμη και να παρουσιάσετε ολόκληρες γκαλερί στους επισκέπτες σας με το στοιχείο \'gallery\'. Μπορείτε να μάθετε πόσο εύκολο είναι [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]εδώ[/url].
 
 
 [h4]Widgets[/h4]
 
 Κανένα από τα στοιχεία στην πλαϊνή μπάρα του ιστολογίου σας δεν είναι σταθερό, μπορείτε να τα μετακινήσετε, να τα αφαιρέσετε και να προσθέσετε νέα στην περιοχή διαχείρισης.
 
-Αυτά τα στοιχεία ονομάζονται [b]widgets[/b]. Φυσικά, το FlatPress Wiki έχει πολλές χρήσιμες πληροφορίες σχετικά με αυτό το θέμα [url=https://wiki.flatpress.org/doc:tips:widgets]επίσης[/url].
+Αυτά τα στοιχεία ονομάζονται [b]widgets[/b]. Φυσικά, το FlatPress Wiki έχει πολλές χρήσιμες πληροφορίες σχετικά με αυτό το θέμα [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]επίσης[/url].
 
 
 [h4]Θέματα[/h4]
@@ -163,23 +163,23 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 Θα θέλατε να μάθετε περισσότερα για το FlatPress?
 
 [list]
-[*]Στο [url=https://www.flatpress.org/?x]blog του έργου[/url] μπορείτε να μάθετε τι συμβαίνει αυτή τη στιγμή στο έργο FlatPress.
-[*]Επισκεφθείτε το [url=https://forum.flatpress.org/]Φόρουμ υποστήριξης[/url] για υποστήριξη και επικοινωνία με άλλους χρήστες του FlatPress.
-[*]Κατεβάστε σπουδαία θέματα [b]δημιουργημένα από την κοινότητα[/b] από το [url=https://wiki.flatpress.org/res:themes]Wiki[/url].
-[*]Υπάρχουν επίσης σπουδαία [url=https://wiki.flatpress.org/res:plugins]plugins[/url] εκεί.
-[*]Αποκτήστε [url=https://wiki.flatpress.org/res:language]πακέτο μεταφράσεων[/url] για τη γλώσσα σας.
-[*]Μπορείτε επίσης να ακολουθήσετε την FlatPress στα [url=https://twitter.com/FlatPress]X (Twitter)[/url] και [url=https://fosstodon.org/@flatpress]Mastodon[/url].
+[*]Στο [url=https://www.flatpress.org/?x target=_blank rel=external]blog του έργου[/url] μπορείτε να μάθετε τι συμβαίνει αυτή τη στιγμή στο έργο FlatPress.
+[*]Επισκεφθείτε το [url=https://forum.flatpress.org/ target=_blank rel=external]Φόρουμ υποστήριξης[/url] για υποστήριξη και επικοινωνία με άλλους χρήστες του FlatPress.
+[*]Κατεβάστε σπουδαία θέματα [b]δημιουργημένα από την κοινότητα[/b] από το [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]Wiki[/url].
+[*]Υπάρχουν επίσης σπουδαία [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url] εκεί.
+[*]Αποκτήστε [url=https://wiki.flatpress.org/res:language target=_blank rel=external]πακέτο μεταφράσεων[/url] για τη γλώσσα σας.
+[*]Μπορείτε επίσης να ακολουθήσετε την FlatPress στα [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] και [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]Πώς μπορώ να υποστηρίξω το FlatPress?[/h4]
 
 [list]
-[*]Υποστηρίξτε το έργο με μια [url=http://www.flatpress.org/home/static.php?page=donate]μικρή δωρεά[/url].
-[*][url=https://www.flatpress.org/contact/]Αναφέρετε[/url] σφάλματα που έχουν εμφανιστεί ή στείλτε μας προτάσεις για βελτίωση.
-[*]Οι προγραμματιστές είναι ευπρόσδεκτοι να μας υποστηρίξουν στο [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
-[*]Μεταφράστε το FlatPress και την τεκμηρίωσή του στη [url=https://wiki.flatpress.org/res:language]γλώσσα σας[/url].
-[*]Γίνετε μέλος της κοινότητας του FlatPress στο [url=https://forum.flatpress.org/]Φόρουμ υποστήριξης[/url].
+[*]Υποστηρίξτε το έργο με μια [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]μικρή δωρεά[/url].
+[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Αναφέρετε[/url] σφάλματα που έχουν εμφανιστεί ή στείλτε μας προτάσεις για βελτίωση.
+[*]Οι προγραμματιστές είναι ευπρόσδεκτοι να μας υποστηρίξουν στο [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
+[*]Μεταφράστε το FlatPress και την τεκμηρίωσή του στη [url=https://wiki.flatpress.org/res:language target=_blank rel=external]γλώσσα σας[/url].
+[*]Γίνετε μέλος της κοινότητας του FlatPress στο [url=https://forum.flatpress.org/ target=_blank rel=external]Φόρουμ υποστήριξης[/url].
 [*]Πείτε στον κόσμο πόσο σπουδαίο είναι το FlatPress! :)
 [/list]
 
@@ -190,7 +190,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 
 Καλή διασκέδαση! :)
 
-[i]Η ομάδα [url=https://www.flatpress.org]FlatPress[/url][/i]
+[i]Η ομάδα [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url][/i]
 
 ';
 
