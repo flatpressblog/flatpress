@@ -42,6 +42,10 @@ class Plugin_PrettyURLs {
 	var $date_handled = false;
 
 	var $categories = null;
+	
+	var $baseurl = null;
+	
+	var $mode = null;
 
 	var $fp_params;
 
