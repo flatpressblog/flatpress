@@ -3,7 +3,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Gestione Articoli',
 	'write' => 'Scrivi Articolo',
 	'cats' => 'Gestione Categorie',
-	'stats' => 'Statistica'
+	'stats' => 'Statistiche'
 );
 
 /* default action */
@@ -39,7 +39,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Anteprima',
 	'savecontinue' => 'Salva e continua',
 	'categories' => 'Categorie',
-	'nocategories' => 'Nessuna categoria impostata. <a href="admin.php?p=entry&amp;action=cats">Creane una categories</a> dal pannello principale degli articoli. ' . //
+	'nocategories' => 'Nessuna categoria impostata. <a href="admin.php?p=entry&amp;action=cats">Crea una categoria</a> dal pannello principale degli articoli. ' . //
 		'<a href="#save">Salva</a> prima l\'articolo.',
 	'saveopts' => 'Opzioni di salvataggio',
 	'success' => 'L\'articolo è stato pubblicato con successo',
@@ -156,7 +156,7 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 
 /* stats */
 $lang ['admin'] ['entry'] ['stats'] = array(
-	'head' => 'Statistica',
+	'head' => 'Statistiche',
 	'entries' => 'Entrate',
 	'you_have' => 'Hai',
 	'entries_using' => 'voci con',
