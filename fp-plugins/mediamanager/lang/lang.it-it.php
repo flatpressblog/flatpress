@@ -14,7 +14,7 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'colsize' => 'Dimensione',
 	'coltype' => 'Estensione',
 	'colmtime' => 'Caricato il',
-	'colusecount' => '# use',
+	'colusecount' => '# uso',
 	'nofiles' => 'Nessun file caricato.',
 	'loadfile' => 'Carica file',
 
