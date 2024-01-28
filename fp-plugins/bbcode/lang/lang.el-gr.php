@@ -32,25 +32,22 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'expandtitle' => 'Expand Textarea Height',
 		'reduce' => 'Reduce',
 		'reducetitle' => 'Reduce Textarea Height',
-		// note: accesskeys are not internationalized...
-		// btw. why not :-D
-		'bold' => 'B',
+		'urltitle' => 'URL/ Σύνδεσμος',
+		'mailtitle' => 'Διεύθυνση ηλεκτρονικού ταχυδρομείου',
 		'boldtitle' => 'Έντονα',
-		'italic' => 'I',
 		'italictitle' => 'Πλάγια',
-		'underline' => 'U',
+		'headlinetitle' => 'Επικεφαλής',
 		'underlinetitle' => 'Υπογραμμισμένα',
-		'quote' => 'Quote',
+		'crossouttitle' => 'Διαγραμμένο',
+		'unorderedlisttitle' => 'Μη ταξινομημένος κατάλογος',
+		'orderedlisttitle' => 'Ταξινομημένος κατάλογος',
 		'quotetitle' => 'Παράθεση',
-		'code' => 'Code',
 		'codetitle' => 'Κώδικας',
+		'htmltitle' => 'Εισαγωγή ως κώδικας HTML',
 		'help' => 'Βοήθεια σχετικά με το BBCode',
 		'file' => 'Φάκελος: ',
 		'image' => 'Εικόνα: ',
-		'selection' => '-- Επιλογή --',
-		// currently not used
-		'status' => 'Μπάρα κατάστασης',
-		'statusbar' => 'Κανονική λειτουργία. Πατήστε &lt;Esc&gt; για εναλλαγή σε λειτουργία επεξεργασίας.'
+		'selection' => '-- Επιλογή --'
 	)
 );
 

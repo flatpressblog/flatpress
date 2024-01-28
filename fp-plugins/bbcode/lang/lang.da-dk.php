@@ -32,25 +32,22 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'expandtitle' => 'Forstør inputfeltet',
 		'reduce' => 'Reducer',
 		'reducetitle' => 'Reducer størrelsen på inputfeltet',
-		// note: accesskeys are not internationalized...
-		// btw. why not :-D
-		'bold' => 'B',
+		'urltitle' => 'URL/ Link',
+		'mailtitle' => 'E-mail-adresse',
 		'boldtitle' => 'Fedt',
-		'italic' => 'I',
 		'italictitle' => 'Kursiv',
-		'underline' => 'U',
+		'headlinetitle' => 'Overskrift',
 		'underlinetitle' => 'Understregning',
-		'quote' => 'Quote',
+		'crossouttitle' => 'Streget ud',
+		'unorderedlisttitle' => 'Usorteret liste',
+		'orderedlisttitle' => 'Sorteret liste',
 		'quotetitle' => 'Kommentar/citation',
-		'code' => 'Code',
 		'codetitle' => 'Eksempel på kode',
+		'htmltitle' => 'Indsæt som HTML-kode',
 		'help' => 'Hjælp til BBCode',
 		'file' => 'Fil: ',
 		'image' => 'Billede: ',
-		'selection' => '-- Udvælgelse --',
-		// currently not used
-		'status' => 'Statusbjælke',
-		'statusbar' => 'Normal tilstand. Tryk på &lt;Esc&gt; for at skifte til redigeringstilstand.'
+		'selection' => '-- Udvælgelse --'
 	)
 );
 

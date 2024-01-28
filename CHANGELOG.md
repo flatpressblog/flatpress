@@ -1,6 +1,8 @@
-# Under development: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
+# Currently betatesting: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3.beta1)
+- [Please help us testing](https://forum.flatpress.org/viewtopic.php?t=709) :)
+
 ## Changed requirements
-- FlatPress 1.3 runs under PHP up to **8.2**; minimum required PHP version increases to **7.1**.
+- FlatPress 1.3 runs under PHP up to **8.3**; minimum required PHP version increases to **7.1**.
 - Also, the PHP extension [**intl**](https://www.php.net/manual/book.intl.php) becomes mandatory.
 
 ## General
@@ -79,6 +81,8 @@
   - Fixed vertical alignment of BBCode toolbar in write panel
   - Removes obsolete acronym element in the language files and replaces it with the abbr element
   - The menu bar in Leggero style is now centered if the screen width is less than 768px
+  - URLs to the wiki or other external pages are now opened in a second tab in the administration area
+  - External URLs in the administration area are now exclusively HTTPS
 
 ## Internationalization
 - Added translation: Slovenian, Danish and Russian ([#278](https://github.com/flatpressblog/flatpress/issues/278))
@@ -89,6 +93,7 @@
 - Contact form: Admin notification mail is now localized ([#205](https://github.com/flatpressblog/flatpress/issues/205))
 - Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216), [#262](https://github.com/flatpressblog/flatpress/issues/262))
 - The HTML of the installer now has a lang attribute in the html start tag to specify the language.
+- BBcode toolbar: Internationalized button titles translated to the end
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box

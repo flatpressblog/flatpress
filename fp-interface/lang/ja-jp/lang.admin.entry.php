@@ -72,7 +72,7 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 
 /* comments */
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => '記事へのコメント一覧',
+	'head' => '記事へのコメント一覧: ',
 	'descr' => '削除したいコメントを選んでください。',
 	'sel' => 'Sel',
 	'content' => '内容',
@@ -93,8 +93,8 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => 'コメントを編集します',
-	'descr' => 'ここでは、作者のコメント、名前、メールアドレス、ウェブサイト、IPアドレスを自由に編集することができます。<br><br>',
+	'head' => 'コメントを編集します: ',
+	'descr' => 'ここでは、著者のコメント、名前、Eメールアドレス、ウェブサイトを自由に編集することができます。<br><br>',
 	'content' => '内容',
 	'date' => '日付',
 	'author' => '著者',
@@ -102,7 +102,8 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'email' => 'メールアドレス',
 	'ip' => 'IPアドレス',
 	'loggedin' => 'ログインした管理者',
-	'submit' => '保存します'
+	'submit' => '保存します',
+	'commentlist' => 'コメント一覧へ戻る'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
@@ -113,7 +114,7 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 /* delete action */
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => '記事の削除',
-	'descr' => '次の記事を削除しようとしています:',
+	'descr' => '次の記事を削除しようとしています: ',
 	'preview' => 'プレビュー',
 	'confirm' => 'この作業を続行しますか?',
 	'fset' => '削除',

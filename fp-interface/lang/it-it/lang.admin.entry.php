@@ -3,7 +3,7 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Gestione Articoli',
 	'write' => 'Scrivi Articolo',
 	'cats' => 'Gestione Categorie',
-	'stats' => 'Statistica'
+	'stats' => 'Statistiche'
 );
 
 /* default action */
@@ -39,7 +39,7 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => 'Anteprima',
 	'savecontinue' => 'Salva e continua',
 	'categories' => 'Categorie',
-	'nocategories' => 'Nessuna categoria impostata. <a href="admin.php?p=entry&amp;action=cats">Creane una categories</a> dal pannello principale degli articoli. ' . //
+	'nocategories' => 'Nessuna categoria impostata. <a href="admin.php?p=entry&amp;action=cats">Crea una categoria</a> dal pannello principale degli articoli. ' . //
 		'<a href="#save">Salva</a> prima l\'articolo.',
 	'saveopts' => 'Opzioni di salvataggio',
 	'success' => 'L\'articolo è stato pubblicato con successo',
@@ -72,8 +72,8 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 
 /* comments */
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => 'Commenti per l\'articolo',
-	'descr' => 'Seleziona un commento da eliminare',
+	'head' => 'Commenti per l\'articolo: ',
+	'descr' => 'Qui è possibile modificare o eliminare i commenti.',
 	'sel' => 'Seleziona',
 	'content' => 'Contenuto',
 	'date' => 'Data',
@@ -93,8 +93,8 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => 'Modifica commento per l\'articolo',
-	'descr' => 'Qui è possibile modificare a piacere il commento di un autore, il suo nome, il suo indirizzo e-mail, il suo sito web e il suo indirizzo IP.<br><br>',
+	'head' => 'Modifica commento per l\'articolo: ',
+	'descr' => 'Qui è possibile modificare a piacere il commento, il nome, l\'indirizzo e-mail e il sito web di un autore.<br><br>',
 	'content' => 'Contenuto',
 	'date' => 'Data',
 	'author' => 'Autore',
@@ -102,7 +102,8 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'email' => 'Email',
 	'ip' => 'IP',
 	'loggedin' => 'Amministratore collegato',
-	'submit' => 'Salva'
+	'submit' => 'Salva le modifiche',
+	'commentlist' => 'Torna alla panoramica dei commenti'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
@@ -113,7 +114,7 @@ $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 /* delete action */
 $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => 'Elimina articolo',
-	'descr' => 'Stai per eliminare il seguente articolo:',
+	'descr' => 'Stai per eliminare il seguente articolo: ',
 	'preview' => 'Anteprima',
 	'confirm' => 'Sei sicuro di voler continuare?',
 	'fset' => 'Elimina',
@@ -155,7 +156,7 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 
 /* stats */
 $lang ['admin'] ['entry'] ['stats'] = array(
-	'head' => 'Statistica',
+	'head' => 'Statistiche',
 	'entries' => 'Entrate',
 	'you_have' => 'Hai',
 	'entries_using' => 'voci con',

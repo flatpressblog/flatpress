@@ -32,22 +32,22 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'expandtitle' => 'Razširi višino polja za besedilo',
 		'reduce' => 'Skrči',
 		'reducetitle' => 'Skrči višino polja za besedilo',
-		'bold' => 'Krepko',
+		'urltitle' => 'URL/povezava',
+		'mailtitle' => 'E-poštni naslov',
 		'boldtitle' => 'Krepko',
-		'italic' => 'Ležeče',
 		'italictitle' => 'Ležeče',
-		'underline' => 'Podčrtano',
+		'headlinetitle' => 'Naslov',
 		'underlinetitle' => 'Podčrtano',
-		'quote' => 'Citat',
+		'crossouttitle' => 'Prečrtano',
+		'unorderedlisttitle' => 'Nesortiran seznam',
+		'orderedlisttitle' => 'Razvrščeni seznam',
 		'quotetitle' => 'Citat',
-		'code' => 'Koda',
 		'codetitle' => 'Koda',
+		'htmltitle' => 'Vstavite kot kodo HTML',
 		'help' => 'BBCode Pomoč',
 		'file' => 'Datoteka: ',
 		'image' => 'Slika: ',
-		'selection' => '-- Izbor --',
-		'status' => 'Statusna vrstica',
-		'statusbar' => 'Običajni način. Pritisnite &lt;Esc&gt; za preklop na način urejanja.'
+		'selection' => '-- Izbor --'
 	)
 );
 

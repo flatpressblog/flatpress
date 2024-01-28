@@ -48,7 +48,7 @@ $lang ['step1'] = array(
 		Non preoccuparti, non ci vorrà molto!',
 	'descrl1' => 'Seleziona la tua lingua.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Non è in elenco?</a>',
-	'descrlang' => 'Se non vedi la tua lingua in questo elenco, potresti vedere se qui c\'è <a href="https://wiki.flatpress.org/res:language">un pacchetto di lingua</a> per questa versione:
+	'descrlang' => 'Se non vedi la tua lingua in questo elenco, potresti vedere se qui c\'è <a href="https://wiki.flatpress.org/res:language" target="_blank" rel="external">un pacchetto di lingua</a> per questa versione:
 
 		<pre>%s</pre>
 
@@ -79,7 +79,7 @@ $lang ['step3'] = array(
 		<ul>
 		<li>Guarda <a href="%s">come appare la home page</a></li>
 		<li>Buon divertimento! <a href="%s">Connettiti ora!</a></li>
-		<li>Ti va di scriverci un messaggio? <a href="https://www.flatpress.org/">Vai su FlatPress.org!</a></li>
+		<li>Ti va di scriverci un messaggio? <a href="https://www.flatpress.org/" target="_blank" rel="external">Vai su FlatPress.org!</a></li>
 		</ul>
 
 		E grazie per aver scelto FlatPress!'
@@ -100,7 +100,7 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Benvenuto su FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Questo è un articolo di prova, inserito per mostrarti alcune delle funzioni di [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Questo è un articolo di prova, inserito per mostrarti alcune delle funzioni di [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
 Il tag more ti consente di creare un "salto" tra un estratto e l\'articolo completo.
 
@@ -109,7 +109,7 @@ Il tag more ti consente di creare un "salto" tra un estratto e l\'articolo compl
 
 [h4]Aspetto[/h4]
 
-Il modo predefinito dell\'aspetto e del contenuto dell\'articolo è [url=http://wiki.flatpress.org/doc:plugins:bbcode]BBcode[/url] (bulletin board code). BBCode è un modo facile per dare un aspetto elegante ai tuoi articoli. Sono consentiti i codici più comuni, come [b] per [b]grassetto[/b] (html: strong), [i] per [i]corsivo[/i] (html: em), ecc.
+Il modo predefinito dell\'aspetto e del contenuto dell\'articolo è [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (bulletin board code). BBCode è un modo facile per dare un aspetto elegante ai tuoi articoli. Sono consentiti i codici più comuni, come [b] per [b]grassetto[/b] (html: strong), [i] per [i]corsivo[/i] (html: em), ecc.
 
 [quote]Ci sono anche i blocchi [b]citazione[/b] per mostrare le tue citazioni preferite.[/quote]
 
@@ -117,7 +117,7 @@ Il modo predefinito dell\'aspetto e del contenuto dell\'articolo è [url=http://
 Inoltre supporta
    il contenuto indentato.[/code]
 
-I tag img e url tag hanno inoltre delle opzioni speciali. Puoi saperne di più sul [url=https://wiki.flatpress.org/doc:plugins:bbcode]Wiki di FlatPress[/url].
+I tag img e url tag hanno inoltre delle opzioni speciali. Puoi saperne di più sul [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]Wiki di FlatPress[/url].
 
 
 [h4]Articoli e Pagine statiche[/h4]
@@ -129,24 +129,24 @@ Le pagine statiche sono utili per creare pagine di informazioni generali. Puoi a
 
 [h4]Plugins[/h4]
 
-FlatPress è molto personalizzabile e supporta dei [url=https://wiki.flatpress.org/doc:plugins:standard]plugins[/url] per estenderne le funzioni. BBCode stesso è un plugin.
+FlatPress è molto personalizzabile e supporta dei [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]plugins[/url] per estenderne le funzioni. BBCode stesso è un plugin.
 
 Abbiamo creato altri contenuti di esempio per mostrarvi alcune delle funzioni ben nascoste di FP e chicche :)
 Puoi trovare due [b]pagine statiche[/b] pronte per accettare i tuoi contenuti:
 [list]
 [*][url=static.php?page=about]Chi sono[/url]
-[*][url=static.php?page=menu]Menu[/url] (nota che i collegamenti in questa pagine appariranno anche sulla barra laterale - questa è una magia del [b]widget blockparser[/b]. Consulta le [url=http://wiki.flatpress.org/doc:faq]FAQ[/url] per questo e altro!)
+[*][url=static.php?page=menu]Menu[/url] (nota che i collegamenti in questa pagine appariranno anche sulla barra laterale - questa è una magia del [b]widget blockparser[/b]. Consulta le [url=https://wiki.flatpress.org/doc:faq target=_blank rel=external]FAQ[/url] per questo e altro!)
 [/list]
 
 Con il plugin [b]PhotoSwipe[/b] è ora possibile posizionare le immagini in modo ancora più semplice, sia come float="left"- che come float="right" allineate a una singola immagine, circondata dal testo.
-È anche possibile utilizzare l\'elemento \'gallery\' per presentare intere gallerie ai visitatori. Potete scoprire quanto sia facile [url="https://wiki.flatpress.org/res:plugins:photoswipe"]qui[/url].
+È anche possibile utilizzare l\'elemento \'gallery\' per presentare intere gallerie ai visitatori. Potete scoprire quanto sia facile [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]qui[/url].
 
 
 [h4]Widget[/h4]
 
 Non c\'è un singolo elemento fisso nelle barre laterali. Tutti gli elementi che si trovano nelle barre circondando questo testo sono completamente riposizionabili, e molti di loro sono personalizzabili. Alcun temi forniscono anche uno specifico pannello nel pannello di controllo.
 
-Questi elementi si chiamano [b]widget[/b]. Per saperne di più sui widget e [url=https://wiki.flatpress.org/doc:tips:widgets]alcuni consigli[/url] per ottenere dei bellissimi effetti, dai un\'occhiata sul [url=https://wiki.flatpress.org/]wiki[/url].
+Questi elementi si chiamano [b]widget[/b]. Per saperne di più sui widget e [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]alcuni consigli[/url] per ottenere dei bellissimi effetti, dai un\'occhiata sul [url=https://wiki.flatpress.org/ target=_blank rel=external]wiki[/url].
 
 
 [h4]Temi[/h4]
@@ -160,34 +160,34 @@ Con il tema FlatPress-Leggero avete a disposizione 3 modelli di stile, dal class
 Vuoi saperne di più?
 
 [list]
-[*]Segui il [url=https://www.flatpress.org/?x]blog ufficiale[/url] per sapere cosa succede nel mondo di FlatPress.
-[*]Visita il [url=https://forum.flatpress.org/]forum[/url] per assistenza e chiacchierare un po\'.
-[*]Scarica [b]magnifici temi[/b] dagli [url=https://wiki.flatpress.org/res:themes]invii di altri utenti[/url]!
-[*]Dai un\'occhiata ai [url=https://wiki.flatpress.org/res:plugins]plugin[/url].
-[*]Scarica [url=https://wiki.flatpress.org/res:language]il pacchetto di traduzione[/url] per la tua lingua.
-[*]Potete seguire FlatPress anche su [url=https://twitter.com/FlatPress]X (Twitter)[/url] e [url=https://fosstodon.org/@flatpress]Mastodon[/url].
+[*]Segui il [url=https://www.flatpress.org/?x target=_blank rel=external]blog ufficiale[/url] per sapere cosa succede nel mondo di FlatPress.
+[*]Visita il [url=https://forum.flatpress.org/ target=_blank rel=external]forum[/url] per assistenza e chiacchierare un po\'.
+[*]Scarica [b]magnifici temi[/b] dagli [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]invii di altri utenti[/url]!
+[*]Dai un\'occhiata ai [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugin[/url].
+[*]Scarica [url=https://wiki.flatpress.org/res:language target=_blank rel=external]il pacchetto di traduzione[/url] per la tua lingua.
+[*]Potete seguire FlatPress anche su [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] e [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]Come posso aiutare?[/h4]
 
 [list]
-[*]Sostenete il progetto con una [url=http://www.flatpress.org/home/static.php?page=donate]piccola donazione.
-[*][url=https://www.flatpress.org/contact/]Contattaci[/url] per segnalare dei bug o suggerirci dei miglioramenti.
-[*]Contribuisci allo sviluppo di Flatpress su [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
-[*]Traduci FlatPress o la documentazione nella [url=https://wiki.flatpress.org/res:language]tua lingua[/url].
-[*]Condividi la tua conoscenza e rimani in contatto con altri utenti di FlatPress sul [url=https://forum.flatpress.org/]forum[/url].
+[*]Sostenete il progetto con una [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]piccola donazione.
+[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Contattaci[/url] per segnalare dei bug o suggerirci dei miglioramenti.
+[*]Contribuisci allo sviluppo di Flatpress su [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
+[*]Traduci FlatPress o la documentazione nella [url=https://wiki.flatpress.org/res:language target=_blank rel=external]tua lingua[/url].
+[*]Condividi la tua conoscenza e rimani in contatto con altri utenti di FlatPress sul [url=https://forum.flatpress.org/ target=_blank rel=external]forum[/url].
 [*]Parlane con chi vuoi! :)
 [/list]
 
 
 [h4]E ora che faccio?[/h4]
 
-Ora puoi [url=login.php]connetterti[/url]per andare al [url=admin.php]Pannello di Controllo[/url] e iniziare a scrivere!
+Ora puoi [url=login.php]connetterti[/url] per andare al [url=admin.php]Pannello di Controllo[/url] e iniziare a scrivere!
 
 Buon divertimento! :)
 
-[i]Il Team di [url=https://www.flatpress.org]FlatPress[/url][/i]
+[i]Il Team di [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url][/i]
 
 ';
 

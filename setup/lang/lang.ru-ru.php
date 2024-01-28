@@ -48,7 +48,7 @@ $lang ['step1'] = array(
 		Не волнуйтесь, это не займет у Вас много времени!',
 	'descrl1' => 'Выберите Ваш язык.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Нет в списке?</a>',
-	'descrlang' => 'Если вы не видите своего языка в этом списке, посмотрите, есть ли <a href="https://wiki.flatpress.org/res:language">языковой пакет</a> для этой версии:
+	'descrlang' => 'Если вы не видите своего языка в этом списке, посмотрите, есть ли <a href="https://wiki.flatpress.org/res:language" target="_blank" rel="external">языковой пакет</a> для этой версии:
 
 		<pre>%s</pre>
 
@@ -79,7 +79,7 @@ $lang ['step3'] = array(
 		<ul>
 		<li>Посмотрите <a href="%s">как выглядит главная страница</a></li>
 		<li>Развлекайтесь! <a href="%s">Войдите в систему сейчас!</a></li>
-		<li>Не хотите ли Вы написать нам пару строчек? <a href="https://www.flatpress.org/">Переходите на FlatPress.org!</a></li>
+		<li>Не хотите ли Вы написать нам пару строчек? <a href="https://www.flatpress.org/" target="_blank" rel="external">Переходите на FlatPress.org!</a></li>
 		</ul>
 
 		И спасибо, что выбрали FlatPress!'
@@ -100,7 +100,7 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'FlatPress';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Добро пожаловать во FlatPress! Это примерная запись, опубликованная для того, чтобы показать вам некоторые возможности [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Добро пожаловать во FlatPress! Это примерная запись, опубликованная для того, чтобы показать вам некоторые возможности [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
 Тег more позволяет создать "переход" между отрывком и полным текстом статьи.
 
@@ -109,7 +109,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Добро пожаловать
 
 [h4]Стилизация[/h4]
 
-По умолчанию стилизация и форматирование содержимого выполняется с помощью [url=https://wiki.flatpress.org/doc:plugins:bbcode]BBcode-разметки[/url] (bulletin board code). BBCode — это простой способ стилизовать ваши сообщения. Допускается использование наиболее распространенных кодов. Например, [b] для [b]жирного[/b] (html: strong), [i] для [i]курсива[/i] (html: em), etc.
+По умолчанию стилизация и форматирование содержимого выполняется с помощью [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode-разметки[/url] (bulletin board code). BBCode — это простой способ стилизовать ваши сообщения. Допускается использование наиболее распространенных кодов. Например, [b] для [b]жирного[/b] (html: strong), [i] для [i]курсива[/i] (html: em), etc.
 
 [quote]Также есть [b]quote[/b] для отображения ваших любимых цитат.[/quote]
 
@@ -117,7 +117,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Добро пожаловать
 Он также поддерживает
    отступы.[/code]
 
-Теги img и url также имеют специальные опции. Подробнее об этом можно узнать в разделе на [url=https://wiki.flatpress.org/doc:plugins:bbcode]FP wiki[/url].
+Теги img и url также имеют специальные опции. Подробнее об этом можно узнать в разделе на [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki[/url].
 
 
 [h4]Записи (посты) и статические страницы[/h4]
@@ -129,24 +129,24 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Добро пожаловать
 
 [h4]Плагины[/h4]
 
-FlatPress очень хорошо настраивается и поддерживает [url=https://wiki.flatpress.org/doc:plugins:standard]плагины[/url] для расширения своих возможностей. BBCode является самостоятельным плагином.
+FlatPress очень хорошо настраивается и поддерживает [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]плагины[/url] для расширения своих возможностей. BBCode является самостоятельным плагином.
 
 Мы создали еще несколько примеров контента, чтобы показать вам некоторые из скрытых функций и жемчужин FP :)
 Вы можете найти две [b]статические страницы[/b], готовые к наполнению Вашим контентом:
 [list]
 [*][url=static.php?page=about]Обо мне[/url]
-[*][url=static.php?page=menu]Меню[/url] (обратите внимание, что ссылки на этой странице будут появляться и в боковой панели — такова магия [b]виджета blockparser[/b]. Об этом и о многом другом читайте в разделе [url=https://wiki.flatpress.org/doc:faq]FAQ[/url]!)
+[*][url=static.php?page=menu]Меню[/url] (обратите внимание, что ссылки на этой странице будут появляться и в боковой панели — такова магия [b]виджета blockparser[/b]. Об этом и о многом другом читайте в разделе [url=https://wiki.flatpress.org/doc:faq target=_blank rel=external]FAQ[/url]!)
 [/list]
 
 С помощью плагина [b]PhotoSwipe[/b] вы можете размещать свои изображения еще проще, либо как float="left", либо как float="right", выровненные по одному изображению, заключенному в текст.
-Вы даже можете использовать элемент \'gallery\', чтобы представить посетителям целые галереи. Как это работает, [url="https://wiki.flatpress.org/res:plugins:photoswipe"]вы можете узнать здесь[/url].
+Вы даже можете использовать элемент \'gallery\', чтобы представить посетителям целые галереи. Как это работает, [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]вы можете узнать здесь[/url].
 
 
 [h4]Виджеты[/h4]
 
 В боковой панели нет ни одного фиксированного элемента. Все элементы, которые вы можете найти в полосах, окружающих этот текст, полностью позиционируются, и большинство из них также настраиваются. Некоторые темы даже предоставляют интерфейс панели в области администрирования.  
 
-Эти элементы называются [b]виджетами[/b]. Подробнее о виджетах и [url=https://wiki.flatpress.org/doc:tips:widgets]некоторых советах[/url] по получению красивых эффектов вы можете узнать на [url=https://wiki.flatpress.org/]wiki[/url].
+Эти элементы называются [b]виджетами[/b]. Подробнее о виджетах и [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]некоторых советах[/url] по получению красивых эффектов вы можете узнать на [url=https://wiki.flatpress.org/ target=_blank rel=external]wiki[/url].
 
 
 [h4]Темы[/h4]
@@ -160,23 +160,23 @@ FlatPress очень хорошо настраивается и поддержи
 Хотите узнать больше?
 
 [list]
-[*]Следите за [url=https://www.flatpress.org/?x]официальным блогом[/url], чтобы знать, что происходит в мире FlatPress.
-[*]Посетите [url=https://forum.flatpress.org/]форум[/url], чтобы получить поддержку и пообщаться.
-[*]Используйте [b]отличные темы[/b], [url=https://wiki.flatpress.org/res:themes] созданные другими пользователями[/url]!
-[*]Посмотрите [url=https://wiki.flatpress.org/res:plugins]плагины[/url].
-[*]Используйте [url=https://wiki.flatpress.org/res:language]языковой пакет[/url] для Вашего языка.
-[*]Вы также можете следить за FlatPress на [url=https://twitter.com/FlatPress]X (Twitter)[/url] и [url=https://fosstodon.org/@flatpress]Mastodon[/url].
+[*]Следите за [url=https://www.flatpress.org/?x target=_blank rel=external]официальным блогом[/url], чтобы знать, что происходит в мире FlatPress.
+[*]Посетите [url=https://forum.flatpress.org/ target=_blank rel=external]форум[/url], чтобы получить поддержку и пообщаться.
+[*]Используйте [b]отличные темы[/b], [url=https://wiki.flatpress.org/res:themes target=_blank rel=external] созданные другими пользователями[/url]!
+[*]Посмотрите [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]плагины[/url].
+[*]Используйте [url=https://wiki.flatpress.org/res:language target=_blank rel=external]языковой пакет[/url] для Вашего языка.
+[*]Вы также можете следить за FlatPress на [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] и [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]Как я могу помочь?[/h4]
 
 [list]
-[*]Поддержите проект [url=https://www.flatpress.org/home/static.php?page=donate]небольшим пожертвованием[/url]
-[*][url=https://www.flatpress.org/contact/]Свяжитесь с нами[/url], чтобы сообщить об ошибках или предложить улучшения.
-[*]Участвуйте в разработке FlatPress на [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
-[*]Переведите FlatPress или документацию на [url=https://wiki.flatpress.org/res:language]Ваш язык[/url].
-[*]Делитесь своими знаниями и общайтесь с другими пользователями FlatPress на [url=https://forum.flatpress.org/]форуме[/url].
+[*]Поддержите проект [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]небольшим пожертвованием[/url]
+[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Свяжитесь с нами[/url], чтобы сообщить об ошибках или предложить улучшения.
+[*]Участвуйте в разработке FlatPress на [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
+[*]Переведите FlatPress или документацию на [url=https://wiki.flatpress.org/res:language target=_blank rel=external]Ваш язык[/url].
+[*]Делитесь своими знаниями и общайтесь с другими пользователями FlatPress на [url=https://forum.flatpress.org/ target=_blank rel=external]форуме[/url].
 [*]Распространяйте информацию! :)
 [/list]
 
@@ -187,7 +187,7 @@ FlatPress очень хорошо настраивается и поддержи
 
 Развлекайтесь! :)
 
-[i]Команда [url=https://www.flatpress.org]FlatPress[/url][/i]
+[i]Команда [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url][/i]
 
 ';
 

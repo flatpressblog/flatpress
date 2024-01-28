@@ -48,7 +48,7 @@ $lang ['step1'] = array(
 		Maak je geen zorgen, het zal niet lang duren!',
 	'descrl1' => 'Kies je taal.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Niet in de lijst?</a>',
-	'descrlang' => 'Als je jouw taal niet in deze lijst ziet, wilt je misschien zien of er <a href="https://wiki.flatpress.org/res:language"> een taal pack is</a> voor deze versie:
+	'descrlang' => 'Als je jouw taal niet in deze lijst ziet, wilt je misschien zien of er <a href="https://wiki.flatpress.org/res:language" target="_blank" rel="external"> een taal pack is</a> voor deze versie:
 
 		<pre>%s</pre>
 
@@ -79,7 +79,7 @@ $lang ['step3'] = array(
 		<ul>
 		<li>Zie <a href="%s">hoe de startpagina eruit ziet</a></li>
 		<li>Veel pleier! <a href="%s">Log nu in!</a></li>
-		<li>Heb je zin om ons een bericht te sturen? <a href="https://www.flatpress.org/">Ga naar FlatPress.org!</a></li>
+		<li>Heb je zin om ons een bericht te sturen? <a href="https://www.flatpress.org/" target="_blank" rel="external">Ga naar FlatPress.org!</a></li>
 		</ul>
 
 		En bedankt dat je gekoen hebt voor FlatPress!'
@@ -100,7 +100,7 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Welkom bij FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Dit is een voorbeeld vermelding, om je enkele functies te tonen van [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Dit is een voorbeeld vermelding, om je enkele functies te tonen van [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
 Hoe met een tag je in staat stelt om een "sprong" te maken tussen een fragment en het volledige artikel.
 
@@ -109,14 +109,14 @@ Hoe met een tag je in staat stelt om een "sprong" te maken tussen een fragment e
 
 [h4]Styling[/h4]
 
-De standaard manier om jouw inhoud te stijlen en op te maken is [url=http://wiki.flatpress.org/doc:plugins:bbcode]BBcode[/url] (bulletin board code). BBCode is een eenvoudige manier om je berichten te stijlen. De meest voorkomende codes zijn toegestaan. Zoals [b] voor [b]bold[/b] (html: strong), [i] voor [i]italics[/i] (html: em), etc.
+De standaard manier om jouw inhoud te stijlen en op te maken is [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (bulletin board code). BBCode is een eenvoudige manier om je berichten te stijlen. De meest voorkomende codes zijn toegestaan. Zoals [b] voor [b]bold[/b] (html: strong), [i] voor [i]italics[/i] (html: em), etc.
 
 [quote]Er zijn ook [b]citaten[/b] blocks om je favoriete citaten te tonen. [/quote]
 
 [code]And \'code\' geeft jouw fragmenten op een monospaced manier weer.
 Het ondersteunt ook ingesprongen inhoud.[/code]
 
-img en url tag hebben ook speciale opties. Je kunt meer te weten komen over de [url=https://wiki.flatpress.org/doc:plugins:bbcode]FP wiki[/url].
+img en url tag hebben ook speciale opties. Je kunt meer te weten komen over de [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FP wiki[/url].
 
 
 [h4]Vermeldingen (berichten) en statische pagina[/h4]
@@ -128,24 +128,24 @@ Statische pagina zijn nuttig om algemene informatie te geven. Je kunt van een va
 
 [h4]Plugins[/h4]
 
-FlatPress is zeer aanpasbaar en ondersteunt [url=https://wiki.flatpress.org/doc:plugins:standard]plugins[/url] om zijn kracht uit te breiden. BBCode is een plugin op zich zelf.
+FlatPress is zeer aanpasbaar en ondersteunt [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]plugins[/url] om zijn kracht uit te breiden. BBCode is een plugin op zich zelf.
 
 We hebben wat meer voorbeeld inhoud gemaakt, om je enkele van de FP goed verborgen functies en bouwstenen te laten zien :)
 Je kunt twee [b]statische paginas[/b] vinden die klaar zijn om in je inhoud te accepteren:
 [list]
 [*][url=static.php?page=about]About me[/url]
-[*][url=static.php?page=menu]Menu[/url] (merk dat de links op deze pagina ook in jouw zijbalk verschijnen - dit is de magie van de [b]blockparser widget[/b]. Zie de [url=http://wiki.flatpress.org/doc:faq]FAQ[/url] voor dit en meer!)
+[*][url=static.php?page=menu]Menu[/url] (merk dat de links op deze pagina ook in jouw zijbalk verschijnen - dit is de magie van de [b]blockparser widget[/b]. Zie de [url=https://wiki.flatpress.org/doc:faq target=_blank rel=external]FAQ[/url] voor dit en meer!)
 [/list]
 
 Met de [b]PhotoSwipe plugin[/b] kunt u nu nog gemakkelijker uw afbeeldingen plaatsen, hetzij als float="left"- of float="right" uitgelijnde enkele afbeelding, omgeven door de tekst.
-Je kunt zelfs het element "galerij" gebruiken om hele galerijen aan je bezoekers te presenteren. U kunt hier [url="https://wiki.flatpress.org/res:plugins:photoswipe"]zien hoe eenvoudig het is[/url].
+Je kunt zelfs het element "galerij" gebruiken om hele galerijen aan je bezoekers te presenteren. U kunt hier [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]zien hoe eenvoudig het is[/url].
 
 
 [h4]Widgets[/h4]
 
 Er is geen enkel vast element in de zijbalk(en). Alle elementen die je kunt vinden in de balken die deze tekst aansturen, zijn volledig positioneerbaar en de meeste zijn ook aanpasbaar. Sommige thema\'s bieden zelfs een paneelinterface in het beheergebied.
 
-Deze elementen worden genoemd [b]widgets[/b]. Voor meer over widgets en [url=https://wiki.flatpress.org/doc:tips:widgets]some tips[/url] om leuke effecten te krijgen, kijk dan eens naar de [url=https://wiki.flatpress.org/]wiki[/url].
+Deze elementen worden genoemd [b]widgets[/b]. Voor meer over widgets en [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]some tips[/url] om leuke effecten te krijgen, kijk dan eens naar de [url=https://wiki.flatpress.org/ target=_blank rel=external]wiki[/url].
 
 
 [h4]Thema\'s[/h4]
@@ -159,23 +159,23 @@ Met het FlatPress-Leggero thema heb je 3 stijlsjablonen tot je beschikking - van
 Wil je meer zien?
 
 [list]
-[*]Volg de [url=https://www.flatpress.org/?x]official blog[/url] om te weten wat is gaande in de FlatPress wereld.
-[*]Bezoek de [url=https://forum.flatpress.org/]forum[/url] voor ondersteuning.
-[*]Krijg [b]mooie themas[/b] van [url=https://wiki.flatpress.org/res:themes]other users\' submissions[/url]!
-[*]Bekijk de [url=https://wiki.flatpress.org/res:plugins]plugins[/url].
-[*]Krijg [url=https://wiki.flatpress.org/res:language]translation pack[/url] voor jouw taal.
-[*]Je kunt FlatPress ook volgen op [url=https://twitter.com/FlatPress]X (Twitter)[/url] en [url=https://fosstodon.org/@flatpress]Mastodon[/url].
+[*]Volg de [url=https://www.flatpress.org/?x target=_blank rel=external]official blog[/url] om te weten wat is gaande in de FlatPress wereld.
+[*]Bezoek de [url=https://forum.flatpress.org/ target=_blank rel=external]forum[/url] voor ondersteuning.
+[*]Krijg [b]mooie themas[/b] van [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]other users\' submissions[/url]!
+[*]Bekijk de [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url].
+[*]Krijg [url=https://wiki.flatpress.org/res:language target=_blank rel=external]translation pack[/url] voor jouw taal.
+[*]Je kunt FlatPress ook volgen op [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] en [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]Hoe kan ik helpen?[/h4]
 
 [list]
-[*]Steun het project met een [url=http://www.flatpress.org/home/static.php?page=donate]kleine donatie.
-[*][url=https://www.flatpress.org/contact/]Contact ons[/url] om bugs en aanpassingen te melden.
-[*]Draag bij aan de ontwikkeling van Flatpress op [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
-[*]Vertaal FlatPress in de documentatie in [url=https://wiki.flatpress.org/res:language]your language[/url].
-[*]Deel jouw kennis en maak contact met andere FlatPress-gebruikers op de [url=https://forum.flatpress.org/]forum[/url].
+[*]Steun het project met een [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]kleine donatie.
+[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Contact ons[/url] om bugs en aanpassingen te melden.
+[*]Draag bij aan de ontwikkeling van FlatPress op [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
+[*]Vertaal FlatPress in de documentatie in [url=https://wiki.flatpress.org/res:language target=_blank rel=external]your language[/url].
+[*]Deel jouw kennis en maak contact met andere FlatPress-gebruikers op de [url=https://forum.flatpress.org/ target=_blank rel=external]forum[/url].
 [*]Verspreid het woord! :)
 [/list]
 
@@ -186,7 +186,7 @@ Nu kan je [url=login.php]Login[/url] om bij de [url=admin.php]Administration Are
 
 Veel plezier! :)
 
-[i]The [url=https://www.flatpress.org]FlatPress[/url] Team[/i]
+[i]The [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url] Team[/i]
 
 ';
 

@@ -1,4 +1,6 @@
 <?php
+$baseurl = BLOG_BASEURL;
+
 $lang ['contact'] = array(
 	'head' => 'Kontakt',
 	'descr' => 'Die Felder Name und Nachricht sind Pflichtfelder. Um dir eventuell antworten zu können, benötigen wir deine E-Mail Adresse.',

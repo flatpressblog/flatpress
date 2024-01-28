@@ -32,25 +32,22 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'expandtitle' => 'Zvětšit výšku textového pole',
 		'reduce' => 'Zmenšit',
 		'reducetitle' => 'Zmenšit výšku textového pole',
-		// note: accesskeys are not internationalized...
-		// btw. why not :-D
-		'bold' => 'B',
+		'urltitle' => 'URL/ Odkaz',
+		'mailtitle' => 'E-mailová adresa',
 		'boldtitle' => 'Tučné',
-		'italic' => 'I',
 		'italictitle' => 'Kurzíva',
-		'underline' => 'U',
+		'headlinetitle' => 'Hlavička',
 		'underlinetitle' => 'Podtržené',
-		'quote' => 'Citovat',
+		'crossouttitle' => 'Přeškrtnuto',
+		'unorderedlisttitle' => 'Netříděný seznam',
+		'orderedlisttitle' => 'Tříděný seznam',
 		'quotetitle' => 'Citace',
-		'code' => 'Kód',
 		'codetitle' => 'Kód',
+		'htmltitle' => 'Vložit jako kód HTML',
 		'help' => 'BBCode Pomoc',
 		'file' => 'Soubor: ',
 		'image' => 'Obrázek: ',
-		'selection' => '-- Výběr --',
-		// currently not used
-		'status' => 'Status bar',
-		'statusbar' => 'Normalní mód. Stiskni &lt;Esc&gt; pro přepnutí módu.'
+		'selection' => '-- Výběr --'
 	)
 );
 

@@ -17,7 +17,8 @@
 		{assign var=post value=""}
 	{/if}
 		{entry content=$post alwaysshow=true}
-
+		{* here will go a plugin hook *}
+		<!-- BOF DateChanger- Plugin -->{action hook=simple_datechanger_form}<!-- EOF DateChanger- Plugin -->
 		<div id="admin-editor">
 			<p><label for="subject">{$panelstrings.subject}</label><br>
 			{if isset($error) && isset($error.subject) && !empty($error.subject)}
@@ -46,8 +47,9 @@
 					rows="20" cols="74">{$content|default:{$smarty.request.content|default:''}|htmlspecialchars}</textarea><br>
 			</p>
 			{* here will go a plugin hook *}
-			<!-- BOF CommentCenter, Datechanger and Tag- Plugin -->{action hook=simple_edit_form}<!-- EOF CommentCenter, Datechanger and Tag- Plugin -->
 			<!-- BOF SEO-Metataginfo- Plugin -->{action hook=simple_metatag_info}<!-- EOF SEO-Metataginfo- Plugin -->
+			<!-- BOF Tag- Plugin -->{action hook=simple_tag_form}<!-- EOF Tag- Plugin -->
+			<!-- BOF Show categories -->{action hook=simple_edit_form}<!-- EOF Show categories -->
 		</div>
 
 		<div id="admin-options">

@@ -31,25 +31,22 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'expandtitle' => 'Увеличить высоту текстовой области',
 		'reduce' => 'Уменьшить',
 		'reducetitle' => 'Уменьшить высоту текстовой области',
-		// note: accesskeys are not internationalized...
-		// btw. why not :-D
-		'bold' => 'B',
+		'urltitle' => 'URL/Ссылка',
+		'mailtitle' => 'Адрес электронной почты',
 		'boldtitle' => 'Жирный',
-		'italic' => 'I',
 		'italictitle' => 'Курсив',
-		'underline' => 'U',
+		'headlinetitle' => 'Направление',
 		'underlinetitle' => 'Подчеркнутый',
-		'quote' => 'Quote',
+		'crossouttitle' => 'Зачеркнуто',
+		'unorderedlisttitle' => 'Неотсортированный список',
+		'orderedlisttitle' => 'Сортированный список',
 		'quotetitle' => 'Цитата',
-		'code' => 'Code',
 		'codetitle' => 'Код',
+		'htmltitle' => 'Вставка в виде HTML-кода',
 		'help' => 'Подсказки BBCode',
 		'file' => 'Файл: ',
 		'image' => 'Изображение: ',
-		'selection' => '-- Выбрать --',
-		// currently not used
-		'status' => 'Статус',
-		'statusbar' => 'Обычный режим. Нажмите &lt;Esc&gt; для переключения режима редактирования.'
+		'selection' => '-- Выбрать --'
 	)
 );
 

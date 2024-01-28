@@ -1,4 +1,6 @@
 <?php
+$baseurl = BLOG_BASEURL;
+
 $lang ['contact'] = array(
 	'head' => 'Contattaci',
 	'descr' => 'Compila il modulo qui sotto per dirci cosa ne pensi. Aggiungi il tuo indirizzo email se vuoi avere una risposta.',
@@ -12,7 +14,7 @@ $lang ['contact'] = array(
 	'fieldset3' => 'Invia',
 	'submit' => 'Invia',
 	'reset' => 'Azzera',
-	'loggedin' => 'Sei connesso 😉. <a href="' . $baseurl . 'login.php?do=logout">Uscire</a> o accedere <a href="' . $baseurl . 'admin.php">all\'area amministrativa</a>.'
+	'loggedin' => 'Sei connesso 😉. <a href="' . $baseurl . 'login.php?do=logout">Uscire</a> o accedere <a href="' . $baseurl . 'admin.php">al pannello di controllo</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(
