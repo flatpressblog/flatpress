@@ -32,25 +32,22 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'expandtitle' => 'Expandir altura da área de texto',
 		'reduce' => 'Reduzir',
 		'reducetitle' => 'Reduzir altura da área de texto',
-		// note: accesskeys are not internationalized...
-		// btw. why not :-D
-		'bold' => 'N',
+		'urltitle' => 'URL/ Link',
+		'mailtitle' => 'Endereço de e-mail',
 		'boldtitle' => 'Negrito',
-		'italic' => 'I',
 		'italictitle' => 'Itálico',
-		'underline' => 'S',
+		'headlinetitle' => 'Título',
 		'underlinetitle' => 'Sublinhado',
-		'quote' => 'Citação',
+		'crossouttitle' => 'Riscado',
+		'unorderedlisttitle' => 'Lista não classificada',
+		'orderedlisttitle' => 'Lista ordenada',
 		'quotetitle' => 'Citação',
-		'code' => 'Código',
 		'codetitle' => 'Código',
+		'htmltitle' => 'Inserir como código HTML',
 		'help' => 'Ajuda do BBCode',
 		'file' => 'Arquivo: ',
 		'image' => 'Imagem: ',
-		'selection' => '-- Seleção --',
-		// currently not used
-		'status' => 'Barra de status',
-		'statusbar' => 'Modo normal. Pressione &lt;Esc&gt; para mudar o modo de edição'
+		'selection' => '-- Seleção --'
 	)
 );
 
