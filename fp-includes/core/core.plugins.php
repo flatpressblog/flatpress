@@ -6,7 +6,8 @@ class plugin_indexer extends fs_filelister {
 	var $_varname = 'fp_plugins';
 
 	var $_enabledlist = null;
-
+	var $enabledlist = null;
+	
 	var $_directory = PLUGINS_DIR;
 
 	function __construct() {

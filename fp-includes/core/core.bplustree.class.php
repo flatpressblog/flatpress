@@ -1562,6 +1562,9 @@ class BPlusTree {
 	var $fifo_enabled = false;
 	
 	var $file = null;
+	var $nodesize = null;
+	var $keylen = null;
+	var $position = null;
 
 	/**
 	 * constructor

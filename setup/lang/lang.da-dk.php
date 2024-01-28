@@ -48,7 +48,7 @@ $lang ['step1'] = array(
 		Men bare rolig, det tager ikke lang tid!',
 	'descrl1' => 'Vælg dit sprog.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Ikke på listen?</a>',
-	'descrlang' => 'Hvis du ikke kan finde dit sprog på listen, kan du se, om der findes <a href="https://wiki.flatpress.org/res:language">en passende sprogpakke</a>:
+	'descrlang' => 'Hvis du ikke kan finde dit sprog på listen, kan du se, om der findes <a href="https://wiki.flatpress.org/res:language" target="_blank" rel="external">en passende sprogpakke</a>:
 
 		<pre>%s</pre>
 
@@ -79,7 +79,7 @@ $lang ['step3'] = array(
 		<ul>
 		<li>Til <a href="%s">hovedsiden på din blog</a></li>
 		<li>God fornøjelse med bloggen! <a href="%s">Log ind nu</a></li>
-		<li>Vil du rose eller kritisere os? Besøg os på <a href="https://www.flatpress.org/">FlatPress.org</a>!</li>
+		<li>Vil du rose eller kritisere os? Besøg os på <a href="https://www.flatpress.org/" target="_blank" rel="external">FlatPress.org</a>!</li>
 		</ul>
 		
 		Tak, fordi du valgte FlatPress!'
@@ -100,7 +100,7 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Velkommen til FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Dette er et eksempel på et indlæg. Det viser dig nogle af [url=https://www.flatpress.org]FlatPress[/url]\' funktioner.
+$lang ['samplecontent'] ['entry'] ['content'] = 'Dette er et eksempel på et indlæg. Det viser dig nogle af [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url]\' funktioner.
 
 "more"-elementet giver dig mulighed for at springe fra artikeloversigten til den komplette artikel.
 
@@ -109,7 +109,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Dette er et eksempel på et ind
 
 [h4]Formatering af tekst[/h4]
 
-I FlatPress formaterer du dit indhold med [url=http://wiki.flatpress.org/doc:plugins:bbcode]BBcode[/url] (bulletin board code). Det er meget nemt med BBCode. Vil du have nogle eksempler? [b] laver [b]fed tekst[/b], [i] [i]kursiv[/i].
+I FlatPress formaterer du dit indhold med [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (bulletin board code). Det er meget nemt med BBCode. Vil du have nogle eksempler? [b] laver [b]fed tekst[/b], [i] [i]kursiv[/i].
 
 [quote]Elementet [b]quote[/b] kan bruges til at markere citater.[/quote]
 
@@ -117,7 +117,7 @@ I FlatPress formaterer du dit indhold med [url=http://wiki.flatpress.org/doc:plu
 Den kan også
    repræsentere indrykninger.[/code]
 
-Elementerne \'img\' (billeder) og \'url\' (links) har særlige muligheder. Du kan finde ud af mere om dette i [url=https://wiki.flatpress.org/doc:plugins:bbcode]FlatPress-Wiki.[/url].
+Elementerne \'img\' (billeder) og \'url\' (links) har særlige muligheder. Du kan finde ud af mere om dette i [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki.[/url].
 
 
 [h4]Indlæg (blogartikler) og statiske sider[/h4]
@@ -131,25 +131,25 @@ I [url=admin.php]administrationsområdet[/url] kan du oprette poster og statiske
 
 [h4]Plugins[/h4]
 
-Du kan i vid udstrækning tilpasse FlatPress til dine behov ved at udvide det med [url=https://wiki.flatpress.org/doc:plugins:standard]Plugins[/url]. BBCode er for eksempel et plugin.
+Du kan i vid udstrækning tilpasse FlatPress til dine behov ved at udvide det med [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]Plugins[/url]. BBCode er for eksempel et plugin.
 
 Her er nogle flere eksempler på indhold, der viser dig endnu flere FlatPress-funktioner :)
 
 To statiske sider er allerede forberedt til dig:
 [list]
 [*][url=static.php?page=about]Om[/url]
-[*][url=static.php?page=menu]Menu[/url] (Indholdet af denne statiske side vises også i sidebjælken på din blog - det er magien ved [b]blockparser-widget[/b]. [url=http://wiki.flatpress.org/]FlatPress-Wiki[/url] har oplysninger om dette og meget mere!)
+[*][url=static.php?page=menu]Menu[/url] (Indholdet af denne statiske side vises også i sidebjælken på din blog - det er magien ved [b]blockparser-widget[/b]. [url=https://wiki.flatpress.org/ target=_blank rel=external]FlatPress-Wiki[/url] har oplysninger om dette og meget mere!)
 [/list]
 
 Med [b]PhotoSwipe-pluginet[/b] kan du nu placere dine billeder endnu nemmere, enten som et float="left"- eller float="right"-justeret enkeltbillede, omgivet af teksten.
-Du kan endda præsentere hele gallerier for dine besøgende med elementet \'gallery\'. Du kan finde ud af, hvor nemt det er [url="https://wiki.flatpress.org/res:plugins:photoswipe"]her.[/url].
+Du kan endda præsentere hele gallerier for dine besøgende med elementet \'gallery\'. Du kan finde ud af, hvor nemt det er [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]her.[/url].
 
 
 [h4]Widgets[/h4]
 
 Ingen af elementerne i sidepanelet på din blog er faste, du kan flytte dem, fjerne dem og tilføje nye i administrationsområdet.
 
-Disse elementer kaldes [b]widgets[/b]. Selvfølgelig har FlatPress Wiki også en masse nyttige oplysninger om dette emne [url=https://wiki.flatpress.org/doc:tips:widgets].[/url].
+Disse elementer kaldes [b]widgets[/b]. Selvfølgelig har [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]FlatPress Wiki[/url] også en masse nyttige oplysninger om dette emne.
 
 
 [h4]Temaer[/h4]
@@ -163,23 +163,23 @@ Med FlatPress Leggero-temaet har du 3 stilskabeloner til din rådighed - fra kla
 Vil du gerne vide mere om FlatPress?
 
 [list]
-[*]I [url=https://www.flatpress.org/?x]projektbloggen[/url] kan du finde ud af, hvad der i øjeblikket foregår i FlatPress-projektet.
-[*]Besøg [url=https://forum.flatpress.org/]support forum[/url] for support og kontakt med andre FlatPress-brugere.
-[*]Download fantastiske [b]temaer[/b] skabt af fællesskabet fra [url=https://wiki.flatpress.org/res:themes]Wiki[/url].
-[*]Der er også gode [url=https://wiki.flatpress.org/res:plugins]plugins[/url] der.
+[*]I [url=https://www.flatpress.org/?x target=_blank rel=external]projektbloggen[/url] kan du finde ud af, hvad der i øjeblikket foregår i FlatPress-projektet.
+[*]Besøg [url=https://forum.flatpress.org/ target=_blank rel=external]support forum[/url] for support og kontakt med andre FlatPress-brugere.
+[*]Download fantastiske [b]temaer[/b] skabt af fællesskabet fra [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]Wiki[/url].
+[*]Der er også gode [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url] der.
 [*]Få [url=https://wiki.flatpress.org/res:language]oversættelsespakken[/url] til dit sprog.
-[*]Du kan også følge FlatPress på [url=https://twitter.com/FlatPress]X (Twitter)[/url] og [url=https://fosstodon.org/@flatpress]Mastodon[/url].
+[*]Du kan også følge FlatPress på [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] og [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]Hvordan kan jeg støtte FlatPress?[/h4]
 
 [list]
-[*]Støt projektet med en [url=http://www.flatpress.org/home/static.php?page=donate]lille donation[/url].
-[*][url=https://www.flatpress.org/contact/]Rapporter[/url] fejl, der er opstået, eller send os forslag til forbedringer.
-[*]Programmører er velkomne til at støtte os på [url="https://github.com/flatpressblog/flatpress"]GitHub[/url].
-[*]Oversæt FlatPress og dens dokumentation til [url=https://wiki.flatpress.org/res:language]dit sprog[/url].
-[*]Vær en del af FlatPress-fællesskabet i [url=https://forum.flatpress.org/]supportforummet[/url].
+[*]Støt projektet med en [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]lille donation[/url].
+[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Rapporter[/url] fejl, der er opstået, eller send os forslag til forbedringer.
+[*]Programmører er velkomne til at støtte os på [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
+[*]Oversæt FlatPress og dens dokumentation til [url=https://wiki.flatpress.org/res:language target=_blank rel=external]dit sprog[/url].
+[*]Vær en del af FlatPress-fællesskabet i [url=https://forum.flatpress.org/ target=_blank rel=external]supportforummet[/url].
 [*]Fortæl verden, hvor fantastisk FlatPress er! :)
 [/list]
 
@@ -190,7 +190,7 @@ Vil du gerne vide mere om FlatPress?
 
 God fornøjelse! :)
 
-[i][url=https://www.flatpress.org]FlatPress[/url]-teamet[/i]
+[i][url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url]-teamet[/i]
 
 ';
 
