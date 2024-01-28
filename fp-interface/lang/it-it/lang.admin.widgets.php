@@ -41,7 +41,7 @@ $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(
 
 $lang ['admin'] ['widgets'] ['default'] ['msgs'] = array(
 	1 => 'La configurazione è stata salvata',
-	-1 => 'Si è verficato un errore durante il salvataggio, riprova'
+	-1 => 'Si è verificato un errore durante il salvataggio, riprova'
 );
 
 /* "raw" panel */

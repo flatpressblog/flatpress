@@ -26,7 +26,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'nopolicies' => 'Non c\'è nessuna regola.',
 	'all_entries' => 'Tutti gli articoli',
 	'fol_entries' => 'La regola è applicata ai seguenti articoli:',
-	'fol_cats' => 'La regola è applicata ai post nelle seguenti categorie:',
+	'fol_cats' => 'La regola è applicata agli articoli nelle seguenti categorie:',
 	'older' => 'La regola è applicata agli articoli più vecchi di %d giorno/i.',
 	'allow' => 'Permetti di commentare',
 	'block' => 'Blocca i commenti',
@@ -62,10 +62,10 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'createpol' => 'Crea una regola',
 	'some_entries' => 'Alcuni articoli',
 	'properties' => 'Articoli con precise caratteristiche',
-	'se_desc' => 'Se hai selezionato l\'opzione %s, per favore inserisci gli articoli ai quali la vuoi applicare.',
-	'se_fill' => 'Per favore riempi i campi con gli <a href="admin.php?p=entry">ID</a> degli articoli (<code>entryYYMMDD-HHMMSS</code>).',
+	'se_desc' => 'Se hai selezionato l\'opzione %s, inserisci gli articoli ai quali la vuoi applicare.',
+	'se_fill' => 'Riempi i campi con gli <a href="admin.php?p=entry">ID</a> degli articoli (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Caratteristiche',
-	'po_desc' => 'Se hai selezionato l\'opzione %s, per favore seleziona le caratteristiche.',
+	'po_desc' => 'Se hai selezionato l\'opzione %s, seleziona le caratteristiche.',
 	'po_comp' => 'I campi non sono obbligatori ma ne devi selezionare almeno uno, altrimenti la regola sarà applicata a tutti gli articoli.',
 	'po_time' => 'Opzioni sulle date',
 	'po_older' => 'Applica agli articoli più vecchi di ',
@@ -123,7 +123,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Akismet warnings
 	'akismet_errors' => array(
-		-1 => 'La chiave di Akismet è vuota. Per favore inseriscila.',
+		-1 => 'La chiave di Akismet è vuota. Inseriscila adesso.',
 		-2 => 'Non abbiamo potuto chiamare i server di Akismet.',
 		-3 => 'La risposta di Akismet è fallita.',
 		-4 => 'La chiave di Akismet non è valida.'
@@ -135,7 +135,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		-1 => 'Si è verificato un errore durante il salvataggio della configurazione.',
 
 		2 => 'Regola salvata.',
-		-2 => 'Si è verificato un errore durante il salvataggio della regola (forse le tue opzioni sono scorrette).',
+		-2 => 'Si è verificato un errore durante il salvataggio della regola (forse le tue opzioni non sono corrette).',
 
 		3 => 'Regola spostata.',
 		-3 => 'Si è verificato un errore nello spostamento della regola (o non la si può spostare).',

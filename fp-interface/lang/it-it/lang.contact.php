@@ -14,7 +14,7 @@ $lang ['contact'] = array(
 	'fieldset3' => 'Invia',
 	'submit' => 'Invia',
 	'reset' => 'Azzera',
-	'loggedin' => 'Sei connesso 😉. <a href="' . $baseurl . 'login.php?do=logout">Uscire</a> o accedere <a href="' . $baseurl . 'admin.php">all\'area amministrativa</a>.'
+	'loggedin' => 'Sei connesso 😉. <a href="' . $baseurl . 'login.php?do=logout">Uscire</a> o accedere <a href="' . $baseurl . 'admin.php">al pannello di controllo</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(

@@ -32,25 +32,22 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'expandtitle' => 'テキストエリアの高さを増やします。',
 		'reduce' => '縮小',
 		'reducetitle' => 'テキストエリアの高さを減らします。',
-		// note: accesskeys are not internationalized...
-		// btw. why not :-D
-		'bold' => 'B',
+		'urltitle' => 'URL/リンク',
+		'mailtitle' => 'Eメールアドレス',
 		'boldtitle' => 'ボールド体',
-		'italic' => 'I',
 		'italictitle' => 'イタリック体',
-		'underline' => 'U',
+		'headlinetitle' => '見出し',
 		'underlinetitle' => '下線',
-		'quote' => 'Quote',
+		'crossouttitle' => 'クロスアウト',
+		'unorderedlisttitle' => 'ソートされていないリスト',
+		'orderedlisttitle' => '並べ替えリスト',
 		'quotetitle' => '引用文として領域指定',
-		'code' => 'Code',
 		'codetitle' => 'プログラムコードとして領域指定',
-		'help' => 'BBCode Help',
+		'htmltitle' => 'HTMLコードとして挿入',
+		'help' => 'BBcode ヘルプ',
 		'file' => 'ファイル: ',
 		'image' => '画像: ',
-		'selection' => '-- セレクション --',
-		// currently not used
-		'status' => 'ステータスバー',
-		'statusbar' => 'ノーマルモードです。&lt;Esc&gt;キーで編集モードに切り替えられます。'
+		'selection' => '-- セレクション --'
 	)
 );
 
