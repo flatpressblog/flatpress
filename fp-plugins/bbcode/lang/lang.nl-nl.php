@@ -32,30 +32,27 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'expandtitle' => 'Breid hoogte Textgebied uit',
 		'reduce' => 'Verminder',
 		'reducetitle' => 'Verminder hoogte Textgebied',
-		// note: accesskeys are not internationalized...
-		// btw. why not :-D
-		'bold' => 'B',
+		'urltitle' => 'URL/ Link',
+		'mailtitle' => 'E-mailadres',
 		'boldtitle' => 'Bold',
-		'italic' => 'I',
 		'italictitle' => 'Italic',
-		'underline' => 'U',
+		'headlinetitle' => 'Rubriek',
 		'underlinetitle' => 'Underlined',
-		'quote' => 'Quote',
+		'crossouttitle' => 'Doorgestreept',
+		'unorderedlisttitle' => 'Ongesorteerde lijst',
+		'orderedlisttitle' => 'Gesorteerde lijst',
 		'quotetitle' => 'Quote',
-		'code' => 'Code',
 		'codetitle' => 'Code',
+		'htmltitle' => 'Invoegen als HTML-code',
 		'help' => 'BBCode Help',
 		'file' => 'File: ',
 		'image' => 'Beeld: ',
-		'selection' => '-- Selectie --',
-		// currently not used
-		'status' => 'Statusbalk',
-		'statusbar' => 'Normale modus. Druk &lt;Esc&gt; om van bewerkingsmodus te wisselen.'
+		'selection' => '-- Selectie --'
 	)
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-		'go_to' => 'Ga naar',
-		'langtag' => 'nl_NL' // language tag for Facebook Video
+	'go_to' => 'Ga naar',
+	'langtag' => 'nl_NL' // language tag for Facebook Video
 );
 ?>

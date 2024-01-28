@@ -81,6 +81,8 @@
   - Fixed vertical alignment of BBCode toolbar in write panel
   - Removes obsolete acronym element in the language files and replaces it with the abbr element
   - The menu bar in Leggero style is now centered if the screen width is less than 768px
+  - URLs to the wiki or other external pages are now opened in a second tab in the administration area
+  - External URLs in the administration area are now exclusively HTTPS
 
 ## Internationalization
 - Added translation: Slovenian, Danish and Russian ([#278](https://github.com/flatpressblog/flatpress/issues/278))
@@ -91,6 +93,7 @@
 - Contact form: Admin notification mail is now localized ([#205](https://github.com/flatpressblog/flatpress/issues/205))
 - Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216), [#262](https://github.com/flatpressblog/flatpress/issues/262))
 - The HTML of the installer now has a lang attribute in the html start tag to specify the language.
+- BBcode toolbar: Internationalized button titles translated to the end
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box

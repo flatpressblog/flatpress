@@ -32,25 +32,22 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'expandtitle' => 'Das Eingabefeld vergrößern',
 		'reduce' => 'Verkleinern',
 		'reducetitle' => 'Das Eingabefeld verkleinern',
-		// note: accesskeys are not internationalized...
-		// btw. why not :-D
-		'bold' => 'B',
+		'urltitle' => 'URL/ Link',
+		'mailtitle' => 'E-Mail-Adresse',
 		'boldtitle' => 'Fett',
-		'italic' => 'I',
 		'italictitle' => 'Kursiv',
-		'underline' => 'U',
+		'headlinetitle' => 'Überschrift',
 		'underlinetitle' => 'Unterstreichen',
-		'quote' => 'Quote',
+		'crossouttitle' => 'Durchgestrichen',
+		'unorderedlisttitle' => 'Unsortierte Liste',
+		'orderedlisttitle' => 'Sortierte Liste',
 		'quotetitle' => 'Bemerkung/Zitat',
-		'code' => 'Code',
 		'codetitle' => 'Code Beispiel',
+		'htmltitle' => 'Als HTML-Code einfügen',
 		'help' => 'BBCode Hilfe',
 		'file' => 'Datei: ',
 		'image' => 'Bild: ',
-		'selection' => '-- Auswahl --',
-		// currently not used
-		'status' => 'Status bar',
-		'statusbar' => 'Normal mode. Press &lt;Esc&gt; to switch editing mode.'
+		'selection' => '-- Auswahl --'
 	)
 );
 
