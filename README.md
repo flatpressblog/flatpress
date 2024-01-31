@@ -31,6 +31,11 @@ Installing and running FlatPress is really easy:
 - Browse to your web server, run simple FlatPress installer
 - Enjoy blogging with FlatPress!
 
+## Demo
+You can view live demo here:
+
+https://softaculous.com/demos/flatpress
+
 ## Help and support
 Visit our [wiki](https://wiki.flatpress.org) to learn everything about blogging with FlatPress, how to work with themes and plugins and where to find them. The wiki also has the [General FAQ](https://wiki.flatpress.org/doc:faq) and the [Tech FAQ](https://wiki.flatpress.org/doc:techfaq).
 
