@@ -4,7 +4,7 @@
  * Plugin URI: https://www.flatpress.org
  * Type: Block
  * Author: FlatPress
- * Description: Allows to change the date and time for <a href="./admin.php?p=entry&action=write" title="Write Entry">new entries</a> via a drop-down menu. <a href="./fp-plugins/datechanger/doc_datechanger.txt" title="Instructions" target="_blank">[Instructions]</a>
+ * Description: Allows to change the date and time for <a href="./admin.php?p=entry&action=write" title="Write Entry">new entries</a> via a drop-down menu. Part of the standard distribution. <a href="./fp-plugins/datechanger/doc_datechanger.txt" title="Instructions" target="_blank">[Instructions]</a>
  * Version: 1.0.4
  * Author URI: https://www.flatpress.org
  */
