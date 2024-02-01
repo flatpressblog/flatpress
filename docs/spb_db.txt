@@ -1,7 +1,7 @@
 
-          ==========================================================
-          CONSIDERATIONS AROUND SIMPLEPHPBLOG AND ITS STORING SYSTEM
-          ==========================================================
+          ======================================================
+          CONSIDERATIONS AROUND FLATPRESS AND ITS STORING SYSTEM
+          ======================================================
     
     - FlatPress "db" structure
 
