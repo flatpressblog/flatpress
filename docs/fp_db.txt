@@ -1,9 +1,9 @@
 
-          ==========================================================
-          CONSIDERATIONS AROUND SIMPLEPHPBLOG AND ITS STORING SYSTEM
-          ==========================================================
+          ======================================================
+          CONSIDERATIONS AROUND FLATPRESS AND ITS STORING SYSTEM
+          ======================================================
     
-    - SimplePHPBlog flat "db" structure
+    - FlatPress "db" structure
 
     [$content]
         |
@@ -32,4 +32,5 @@
     Comment DBs are associated to the entries using the file name (ID) of
     the entry, deprived of its extension (.txt) as the name of the directory 
     which will contain them.
+
 
