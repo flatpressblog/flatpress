@@ -32,25 +32,22 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'expandtitle' => 'Expand Textarea Height',
 		'reduce' => 'Reduce',
 		'reducetitle' => 'Reduce Textarea Height',
-		// note: accesskeys are not internationalized...
-		// btw. why not :-D
-		'bold' => 'B',
+		'urltitle' => 'URL/ Link',
+		'mailtitle' => 'E-mail address',
 		'boldtitle' => 'Bold',
-		'italic' => 'I',
 		'italictitle' => 'Italic',
-		'underline' => 'U',
-		'underlinetitle' => 'Underlined',
-		'quote' => 'Quote',
+		'headlinetitle' => 'Headline',
+		'underlinetitle' => 'Unterstreichen',
+		'crossouttitle' => 'Crossed out',
+		'unorderedlisttitle' => 'Unsorted list',
+		'orderedlisttitle' => 'Sorted list',
 		'quotetitle' => 'Quote',
-		'code' => 'Code',
 		'codetitle' => 'Code',
+		'htmltitle' => 'Als HTML-Code einfügen',
 		'help' => 'BBCode Help',
 		'file' => 'File: ',
 		'image' => 'Image: ',
-		'selection' => '-- Selection --',
-		// currently not used
-		'status' => 'Status bar',
-		'statusbar' => 'Normal mode. Press &lt;Esc&gt; to switch editing mode.'
+		'selection' => '-- Selection --'
 	)
 );
 
