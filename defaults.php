@@ -18,10 +18,11 @@
 define('DUMB_MODE_ENABLED', false);
 
 // default file permissions
-// change file to 776 and dir to 776 if your webserver "complains"
+// https://binary-butterfly.de/artikel/dateirechte-wie-stelle-ich-das-bei-meinem-hoster-ein/
+// change file to 666 and dir to 777 if your webserver "complains"
 // Note: Lowering the directory and file permissions may result in FlatPress or some additional plugins not working correctly.
-define('FILE_PERMISSIONS', 0776);
-define('DIR_PERMISSIONS', 0776);
+define('FILE_PERMISSIONS', 0666);
+define('DIR_PERMISSIONS', 0777);
 
 // first some webserver setup...
 
@@ -33,6 +34,9 @@ define('SESSION_PATH', '');
 // you can leave this as it is
 define('ABS_PATH', dirname(__FILE__) . '/');
 // here was blog root in earlier versions. This has been moved to config_load()
+
+// Is required so that the file and directory permissions can be set when executing the setup
+define('BASE_DIR', dirname(__FILE__));
 
 // here are default config files
 define('FP_DEFAULTS', 'fp-defaults/');
