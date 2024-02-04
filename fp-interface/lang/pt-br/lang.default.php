@@ -20,7 +20,10 @@ $lang ['main'] = array(
 
 	'nocomments' => 'Adicione comentário',
 	'comment' => '1 comentário',
-	'comments' => 'comentários'
+	'comments' => 'comentários',
+
+	'rss' => 'Assine o RSS Feed',
+	'atom' => 'Assine o Atom Feed'
 );
 
 $lang ['search'] = array(
