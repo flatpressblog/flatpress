@@ -20,7 +20,10 @@ $lang ['main'] = array(
 
 	'nocomments' => 'Dodajte komentar',
 	'comment' => '1 komentar',
-	'comments' => 'komentarji'
+	'comments' => 'komentarji',
+
+	'rss' => 'Naročite se na vir RSS',
+	'atom' => 'Naročite se na vir Atom'
 );
 
 $lang ['search'] = array(
