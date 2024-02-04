@@ -11,12 +11,13 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Toon info over PHP',
 	'opt5' => 'Controleren op updates',
 
-	'chmod_info' => 'De volgende bestandsmachtigingen <strong>kan niet</strong> worden teruggezet naar 0776; waarschijnlijk is de bestandseigenaar niet hetzelfde als de webserver\'s. ' . //
+	'chmod_info' => 'Als de bestandsrechten niet konden worden teruggezet naar ' . decoct(FILE_PERMISSIONS) . ', is de eigenaar van het bestand waarschijnlijk niet dezelfde als de eigenaar van de webserver.<br>' . //
 		'Meestal kunt u deze kennisgeving negeren.'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
-	1 => 'Operation completed'
+	1 => 'Operation completed',
+	-1 => 'Operatie mislukt'
 );
 
 $lang ['admin'] ['maintain'] ['updates'] = array(
