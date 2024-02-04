@@ -11,12 +11,13 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Afficher info.php',
 	'opt5' => 'V&eacute;rifier les mises &agrave; jour',
 
-	'chmod_info' => 'Les permissions de fichiers (chmod) <strong>ne sont peut-&ecirc;tre pas</strong> &agrave; 0776; propri&eacute;taire du fichier peut-&ecirc;' . //
+	'chmod_info' => 'Si les permissions du fichier <strong>n\'ont pas pu être remises à ' . decoct(FILE_PERMISSIONS) . '</strong>, il est probable que le propriétaire du fichier ne soit pas le même que celui du serveur web.<br>' . //
 		'tre diff&eacute;rent du serveur web.'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
-	1 => 'Op&eacute;ration effectu&eacute;e'
+	1 => 'Op&eacute;ration effectu&eacute;e',
+	-1 => '&Eacute;chec de l\'op&eacute;ration'
 );
 	
 $lang ['admin'] ['maintain'] ['updates'] = array(
