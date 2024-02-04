@@ -11,12 +11,13 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Show info about PHP',
 	'opt5' => 'Check for updates',
 
-	'chmod_info' => 'The following file permissions <strong>could not</strong> be reset to 0776; probably file owner is not the same as the webserver\'s. ' . //
-		'Usually you can ignore this notice.'
+	'chmod_info' => 'If the file permissions <strong>could not</strong> be reset to ' . decoct(FILE_PERMISSIONS) . ', the owner of the file is probably not the same as the owner of the web server.<br>' . //
+		'Normalement, tu peux ignorer cette remarque.'
 );
 	
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
-	1 => 'Operation completed'
+	1 => 'Operation completed',
+	-1 => 'Operation failed'
 );
 
 $lang ['admin'] ['maintain'] ['updates'] = array(
