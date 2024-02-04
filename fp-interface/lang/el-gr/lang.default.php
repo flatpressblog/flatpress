@@ -20,7 +20,10 @@ $lang ['main'] = array(
 
 	'nocomments' => 'Προσθήκη σχολίου',
 	'comment' => '1 σχόλιο',
-	'comments' => 'σχόλια'
+	'comments' => 'σχόλια',
+
+	'rss' => 'Εγγραφείτε στο RSS Feed',
+	'atom' => 'Εγγραφείτε στο Atom Feed'
 );
 
 $lang ['search'] = array(

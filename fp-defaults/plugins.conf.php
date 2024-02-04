@@ -26,8 +26,9 @@ $fp_plugins = array(
 	'favicon',
 	'commentcenter',
 	'mediamanager',
-	// 'datechanger' // Lets you change the publish date for (new) entries.
+	'datechanger', // Lets you change the publish date for (new) entries.
 	'gallerycaptions',
-	'photoswipe'
+	'photoswipe',
+	'feed' // Shows the RSS and Atom feed in the header and activates the widget
 );
 ?>
