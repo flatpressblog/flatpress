@@ -11,12 +11,13 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Prikaži informacije o PHP',
 	'opt5' => 'Preveri posodobitve',
 
-	'chmod_info' => 'Naslednja dovoljenja za datoteke <strong>ni mogoče</strong> povrniti na 0776; verjetno lastnik datoteke ni isti kot spletne strežnik. ' . //
+	'chmod_info' => 'Če pravic datoteke ni bilo mogoče ponastaviti na ' . decoct(FILE_PERMISSIONS) . ', lastnik datoteke verjetno ni isti kot lastnik spletnega strežnika.<br>' . //
 		'Običajno lahko to obvestilo prezrete.'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
-	1 => 'Operacija je končana'
+	1 => 'Operacija je končana',
+	-1 => 'Operacija ni uspela'
 );
 
 $lang ['admin'] ['maintain'] ['updates'] = array(

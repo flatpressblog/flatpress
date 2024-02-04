@@ -159,7 +159,17 @@ class admin_maintain_default extends AdminPanelAction {
 			case 'restorechmods':
 				{
 					$this->smarty->assign('files', fs_chmod_recursive());
-					$this->smarty->assign('success', 1);
+
+					// Test whether writing is possible in the fp-content directory
+					$test_file = @fopen(CONTENT_DIR . 'chmod-test-file', "a+");
+					if ($test_file) {
+						$this->smarty->assign('success', 1);
+					} else {
+						$this->smarty->assign('success', -1);
+					}
+					@fclose($test_file);
+					@unlink(CONTENT_DIR . 'chmod-test-file');
+
 					return PANEL_NOREDIRECT;
 				}
 			case 'purgetplcache':

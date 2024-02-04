@@ -117,7 +117,7 @@ Il modo predefinito dell\'aspetto e del contenuto dell\'articolo è [url=https:/
 Inoltre supporta
    il contenuto indentato.[/code]
 
-I tag img e url tag hanno inoltre delle opzioni speciali. Puoi saperne di più sul [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]Wiki di FlatPress[/url].
+I tag img e url hanno inoltre delle opzioni speciali. Puoi saperne di più sul [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]Wiki di FlatPress[/url].
 
 
 [h4]Articoli e Pagine statiche[/h4]

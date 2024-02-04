@@ -11,12 +11,13 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Vis PHP-information om webserveren',
 	'opt5' => 'Tjek for nye versioner',
 
-	'chmod_info' => 'Filadgangsrettighederne <strong>kunne ikke være nulstilles til standardværdierne på 0776.' . //
+	'chmod_info' => 'Hvis filrettighederne <strong>ikke</strong> kunne nulstilles til ' . decoct(FILE_PERMISSIONS) . ', er ejeren af filen sandsynligvis ikke den samme som ejeren af webserveren.<br>' . //
 		'Normalt kan du ignorere dette tip.'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
-	1 => 'Handling udført.'
+	1 => 'Handling udført.',
+	-1 => 'Handling mislukt.'
 );
 
 $lang ['admin'] ['maintain'] ['updates'] = array(
