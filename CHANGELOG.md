@@ -93,7 +93,7 @@
 - Contact form: Admin notification mail is now localized ([#205](https://github.com/flatpressblog/flatpress/issues/205))
 - Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216), [#262](https://github.com/flatpressblog/flatpress/issues/262))
 - The HTML of the installer now has a lang attribute in the html start tag to specify the language.
-- BBcode toolbar: Internationalized button titles translated to the end
+- BBCode plugin: Localized toolbar button tooltips
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box

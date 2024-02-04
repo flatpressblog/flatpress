@@ -11,12 +11,13 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'PHP情報を表示します',
 	'opt5' => 'アップデートをチェックします',
 
-	'chmod_info' => '次のファイルのパーミッションを 0776 にリセット<strong>できません</strong>; おそらく、ファイルの所有権者とウェブサーバの権限が異なるのでしょう。' . //
+	'chmod_info' => 'ファイルのパーミッションを' . decoct(FILE_PERMISSIONS) . 'にリセットできなかった場合、ファイルの所有者がウェブサーバーの所有者と同じでない可能性があります。<br>' . //
 		'でも通常、この通知を無視することができます。'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
-	1 => '作業を完了しました。'
+	1 => '作業を完了しました。',
+	-1 => '操作が正常に完了しなかった。'
 );
 
 $lang ['admin'] ['maintain'] ['updates'] = array(

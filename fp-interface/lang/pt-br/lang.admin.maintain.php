@@ -11,12 +11,13 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Mostre as informações sobre o PHP',
 	'opt5' => 'Procure atualizações',
 
-	'chmod_info' => 'As seguintes permissões de arquivo <strong>não puderam</strong> ser redefinidas para 0776; provavelmente o proprietário do arquivo não é o mesmo do servidor da web. ' . //
+	'chmod_info' => 'Se não for possível redefinir as permissões do arquivo para ' . decoct(FILE_PERMISSIONS) . ', o proprietário do arquivo provavelmente não é o mesmo que o proprietário do servidor Web.<br>' . //
 		'Geralmente você pode ignorar este aviso.'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
-	1 => 'Operação concluída'
+	1 => 'Operação concluída',
+	-1 => 'Falha na operação'
 );
 
 $lang ['admin'] ['maintain'] ['updates'] = array(
