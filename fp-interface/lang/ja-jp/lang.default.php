@@ -20,7 +20,10 @@ $lang['main'] = array(
 
 	'nocomments' => 'コメントを追加する',
 	'comment' => '1コメントあります',
-	'comments' => 'コメントあります'
+	'comments' => 'コメントあります',
+
+	'rss' => 'RSSフィードを購読する',
+	'atom' => 'Atomフィードを購読する'
 );
 
 $lang['search'] = array(

@@ -180,6 +180,12 @@ h4 { font-size: 1.2em }
 		margin: .5em 0 0 0
 	}
 
+#head a img.feed {
+	float: right;
+	margin: 0px !IMPORTANT;
+	height: 16px
+}
+
 /* ===== DIV CONTAINER "MAIN" ===== */
 #outer-container {
 	position: relative;
