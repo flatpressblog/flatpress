@@ -11,12 +11,13 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Ukázat informace o PHP',
 	'opt5' => 'Zjistit aktualizace',
 
-	'chmod_info' => 'Následující oprávnění <strong>nemůžou být</strong> resetované na 0776; pravděpodobně vlastník souborů není stejná osoba jako vlastník webu. ' . //
+	'chmod_info' => 'Pokud se oprávnění souboru <strong>nepodařilo</strong> obnovit na ' . decoct(FILE_PERMISSIONS) . ', vlastník souboru pravděpodobně není stejný jako vlastník webového serveru.<br>' . //
 		'Případně můžete ignorovat toto oznámení.'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
-	1 => 'Operace kompletní'
+	1 => 'Operace kompletní',
+	-1 => 'Operace se nezdařila'
 );
 
 $lang ['admin'] ['maintain'] ['updates'] = array(

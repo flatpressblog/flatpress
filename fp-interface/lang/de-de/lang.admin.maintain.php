@@ -11,12 +11,13 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Zeige PHP-Informationen des Webservers',
 	'opt5' => 'Prüfe auf neue Versionen',
 
-	'chmod_info' => 'Die Dateizugriffsrechte <strong>konnten nicht</strong> auf die Default Werte von 0776 zurückgesetzt werden. ' . //
+	'chmod_info' => 'Wenn die Dateiberechtigungen <strong>nicht</strong> auf ' . decoct(FILE_PERMISSIONS) . ' zurückgesetzt werden konnten, ist wahrscheinlich der Eigentümer der Datei nicht derselbe wie der des Webservers.<br>' . //
 		'Normalerweise kann man diesen Hinweis ignorieren.'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
-	1 => 'Aktion ausgeführt.'
+	1 => 'Aktion ausgeführt.',
+	-1 => 'Aktion fehlgeschlagen.'
 );
 
 $lang ['admin'] ['maintain'] ['updates'] = array(
