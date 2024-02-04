@@ -103,6 +103,7 @@
 - Worked around strftime() marked as deprecated as of PHP 8.1 ([#92](https://github.com/flatpressblog/flatpress/issues/92)) - thx @bohwaz
 - Comments and contact form: Fixed error on sending mails with umlaut subjects ([#207](https://github.com/flatpressblog/flatpress/issues/207), [#209](https://github.com/flatpressblog/flatpress/issues/209))
 - Added missing properties in order to prevent "Dynamic properties are deprecated" error under PHP 8.2 ([#115](https://github.com/flatpressblog/flatpress/issues/115))
+- Admin maintenance panel: Check file access rights after reset
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
