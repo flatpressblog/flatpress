@@ -416,3 +416,6 @@ form#search ul li:before { content: none }
 
 /* Calendar-widget */
 #widget_calendar table.calendar { font-size: 90% }
+
+/* Feed-widget */
+.feed-widget { height: 14px !IMPORTANT; }
