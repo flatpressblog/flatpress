@@ -10,7 +10,7 @@ Author: NoWhereMan & drudo
 Version: 0.2
 Module: style.css
 
-last change: 2023-11-01
+last change: 2024-02-05
 
 */
 
@@ -31,6 +31,13 @@ body { margin: 80px 0 10px 0 }
 #widget-searchbox div.buttonbar {
 	margin: 10px -5px;
 	text-align: left
+}
+
+#head a img.feed {
+	float: right;
+	height: 16px;
+	position: relative;
+	top: -6.3em
 }
 
 /* 800er Bildschirme zum Beispiel iPad Hochformat */
@@ -94,6 +101,8 @@ body { margin: 80px 0 10px 0 }
 		padding: 0;
 		width: 100%
 	}
+
+	#head a img.feed { display: none }
 
 	h1 {
 		margin: 0;
