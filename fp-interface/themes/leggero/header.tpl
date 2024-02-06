@@ -11,7 +11,7 @@
 	<div id="body-container">
 
 		<div id="head">
-			{if function_exists('plugin_feed_head')}
+			{if not function_exists('plugin_feed_head')}
 			<a href="{$smarty.const.BLOG_BASEURL}?x=feed:atom" title="{$lang.main.atom}" target="_blank"><img class="feed" src="{$smarty.const.BLOG_BASEURL}fp-content/images/atom-white.png" alt="atom-feed"></a>
 			<a href="{$smarty.const.BLOG_BASEURL}?x=feed:rss2" title="{$lang.main.rss}" target="_blank"><img class="feed" src="{$smarty.const.BLOG_BASEURL}fp-content/images/rss-white.png" alt="rss-feed"></a>
 			{/if}
