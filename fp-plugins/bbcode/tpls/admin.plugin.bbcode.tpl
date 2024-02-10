@@ -15,6 +15,7 @@
 		{$plang.allow_html_long}</p>
 	</dd>
 
+	{* <!-- BBcode toolbar cannot be deactivated since commit 733a2bb (FP 1.3 Beta1). -->
 	<dt><label for="bb-toolbar">
 		{$plang.toolbar}
 	</label></dt>
@@ -22,7 +23,7 @@
 		<p><input type="checkbox" name="bb-toolbar" id="bb-toolbar" {if $bbchecked[2]}checked="checked"{/if} />
 		{$plang.toolbar_long}</p>
 	</dd>
-
+	*}
 </dl>
 		
 
