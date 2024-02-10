@@ -1,11 +1,11 @@
 <?php
 /*
  * Plugin Name: FootNotes
- * Version: 1.0
+ * Version: 1.0.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
- * Description: Enables footnotes in your entries. Part of the standard distribution.
+ * Description: Enables footnotes in your entries. Part of the standard distribution. <a href="./fp-plugins/footnotes/doc_footnotes.txt" title="Instructions" target="_blank">[Instructions]</a>
  */
 define('FOOTNOTES_START', '[footnotes]');
 
@@ -21,16 +21,22 @@ class footnotes_class {
 	}
 
 	function note($n, $s) {
+		$lang = lang_load('plugin:footnotes');
+		$back = $lang ['plugin'] ['footnotes'] ['back'];
+		
 		$id = $this->id;
 		$this->refs = true;
 
-		return '<li>' . trim($s) . " <a id=\"$id-fn-{$n}\" href=\"#$id-rel-{$n}\" " . "title=\"Back {$n}\">^top</a>" . '</li>';
+		return '<li>' . trim($s) . " <a id=\"$id-fn-{$n}\" href=\"#$id-rel-{$n}\" " . "title=\"{$back} {$n}\">&#8617;</a>" . '</li>';
 	}
 
 	function footnotes($matches) {
-		$str = '<div class="footnotes"><h4>Footnotes</h4><ol>';
+		$lang = lang_load('plugin:footnotes');
+		$footnotes = $lang ['plugin'] ['footnotes'] ['footnotes'];
 
-		$lines = preg_split('|\[([0-9]+)\]|', $matches [1], -1, PREG_SPLIT_DELIM_CAPTURE);
+		$str = '<div class="footnotes"><h4>' . $footnotes . '</h4><ol>';
+
+		$lines = preg_split('|\[\^([0-9]+)\]\:|', $matches [1], -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		// first array element is always empty - remove
 		array_shift($lines);
@@ -46,6 +52,9 @@ class footnotes_class {
 	}
 
 	function references($matches) {
+		$lang = lang_load('plugin:footnotes');
+		$footnote = $lang ['plugin'] ['footnotes'] ['footnote'];
+
 		$n = $matches [1];
 
 		$id = $this->id;
@@ -53,7 +62,7 @@ class footnotes_class {
 		$href_rel = "{$id}-rel-{$n}";
 		$href_note = "{$id}-fn-{$n}";
 
-		return "<sup><a id=\"$href_rel\" href=\"#$href_note\" title=\"note {$n}\">{$n}</a></sup>";
+		return "<sup><a id=\"$href_rel\" href=\"#$href_note\" title=\"{$footnote} {$n}\">{$n}</a></sup>";
 	}
 
 	function headings($matches) {
@@ -92,7 +101,7 @@ function plugin_footnotes_filter($text) {
 	if (!$footnotes_obj->refs)
 		return $text;
 
-	$text = preg_replace_callback('|\[([0-9]+)\]|', array(
+	$text = preg_replace_callback('|\[\^([0-9]+)\]|', array(
 		&$footnotes_obj,
 		'references'
 	), $text);
