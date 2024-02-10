@@ -39,6 +39,7 @@
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
 - Calendar plugin: Fixed incorrect text output when Russian is set as language
 - Fixed broken links in the administration area
+- Footnotes plugin: Compatibility with [Markdown plugin](https://github.com/flatpressblog/flatpress-extras/tree/master/fp-plugins/markdown) established ([#322](https://github.com/flatpressblog/flatpress/issues/322))
 
 ## Setup
 - Reworked Installer ([#266](https://github.com/flatpressblog/flatpress/issues/266))
@@ -97,6 +98,7 @@
 - Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216), [#262](https://github.com/flatpressblog/flatpress/issues/262))
 - The HTML of the installer now has a lang attribute in the html start tag to specify the language.
 - BBCode plugin: Localized toolbar button tooltips
+- Footnotes plugin: Hard-coded output now localized ([#322](https://github.com/flatpressblog/flatpress/issues/322))
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
