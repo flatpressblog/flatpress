@@ -192,4 +192,14 @@ Bavte se! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'O mně';
 $lang ['samplecontent'] ['about'] ['content'] = 'Sem napište něco o sobě. ([url=admin.php?p=static&action=write&page=about]Editovat![/url])';
+
+$lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Zásady ochrany osobních údajů';
+$lang ['samplecontent'] ['privacy-policy'] ['content'] = 'V některých zemích, například pokud používáte službu Akismet Antispam, je nutné poskytnout návštěvníkům zásady ochrany osobních údajů. Zásady ochrany osobních údajů mohou být nezbytné také v případě, že návštěvník může použít kontaktní formulář nebo funkci komentáře.
+
+[b]Tip:[/b] Na internetu existuje spousta šablon a generátorů.
+
+Můžete je vložit zde. ([url=admin.php?p=static&action=write&page=privacy-policy]Upravte mě![/url])
+
+Pokud aktivujete doplněk CookieBanner, budou moci vaši návštěvníci přejít přímo na tuto stránku v kontaktním formuláři a ve funkci komentáře.
+';
 ?>

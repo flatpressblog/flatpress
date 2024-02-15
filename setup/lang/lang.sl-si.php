@@ -194,4 +194,14 @@ Zabavajte se! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'O';
 $lang ['samplecontent'] ['about'] ['content'] = 'Tukaj napišite nekaj o sebi in tem blogu. ([url=admin.php?p=static&action=write&page=about]Delajte z mano![/url])';
+
+$lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Politika zasebnosti';
+$lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Če uporabljate na primer storitev Akismet Antispam, je treba v nekaterih državah svojim obiskovalcem zagotoviti pravilnik o zasebnosti. Pravilnik o zasebnosti je morda potreben tudi, če lahko obiskovalec uporabi kontaktni obrazec ali funkcijo za komentiranje.
+
+[b]Nasvet:[/b] Na spletu je na voljo veliko predlog in generatorjev.
+
+Lahko jih vstavite tukaj. ([url=admin.php?p=static&action=write&page=privacy-policy]Uredi me![/url])
+
+Če aktivirate vtičnik CookieBanner, bodo lahko vaši obiskovalci v kontaktnem obrazcu in v funkciji za komentiranje prešli neposredno na to stran.
+';
 ?>

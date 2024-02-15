@@ -196,4 +196,14 @@ Amusez-vous bien! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Sur';
 $lang ['samplecontent'] ['about'] ['content'] = 'Écris ici quelque chose sur toi et sur ce blog. ([url=admin.php?p=static&action=write&page=about]Travaille-moi![/url])';
+
+$lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Déclaration de confidentialité';
+$lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Dans certains pays, si tu utilises par exemple le service d\'Akismet Antispam, il est nécessaire de fournir à tes visiteurs une déclaration de confidentialité. Une déclaration de confidentialité peut également être nécessaire si le visiteur peut utiliser le formulaire de contact ou la fonction de commentaire.
+
+[b]Conseil:[/b] il existe de nombreux modèles et générateurs sur Internet.
+
+Tu peux les insérer à cet endroit. ([url=admin.php?p=static&action=write&page=privacy-policy]Modifie-moi![/url])
+
+Si tu actives le plugin CookieBanner, le formulaire de contact et la fonction de commentaire permettront à tes visiteurs d\'accéder directement à cette page.
+';
 ?>

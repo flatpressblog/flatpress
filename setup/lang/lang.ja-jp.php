@@ -198,4 +198,14 @@ Have fun! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'About';
 $lang ['samplecontent'] ['about'] ['content'] = 'Write something about yourself here ([url=admin.php?p=static&action=write&page=about]Edit me![/url])';
+
+$lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'プライバシーポリシー';
+$lang ['samplecontent'] ['privacy-policy'] ['content'] = '国によっては、例えばAkismet Antispamサービスを利用する場合、訪問者にプライバシーポリシーを提供する必要があります。また、訪問者がコンタクトフォームやコメント機能を利用する場合にも、プライバシーポリシーが必要になることがあります。
+
+[b]ヒント:[/b] インターネット上にはたくさんのテンプレートやジェネレーターがあります。
+
+ここにそれらを挿入することができます。 ([url=admin.php?p=static&action=write&page=privacy-policy]編集する[/url])
+
+CookieBannerプラグインを有効にすると、訪問者はコンタクトフォームやコメント機能から直接このページにアクセスできるようになります。
+';
 ?>
