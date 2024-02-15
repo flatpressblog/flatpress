@@ -190,4 +190,14 @@ Diverta-se! :-)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Sobre';
 $lang ['samplecontent'] ['about'] ['content'] = 'Escreva algo sobre você aqui. ([url=admin.php?p=static&action=write&page=about]Me edite![/url])';
+
+$lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Política de privacidade';
+$lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Em alguns países, se você usar o serviço Akismet Antispam, por exemplo, é necessário fornecer aos visitantes uma política de privacidade. Uma política de privacidade também pode ser necessária se o visitante puder usar o formulário de contato ou a função de comentário.
+
+[b]Dica:[/b] Há muitos modelos e geradores na Internet.
+
+Você pode inseri-los aqui. ([url=admin.php?p=static&action=write&page=privacy-policy]Edite-me![/url])
+
+Se você ativar o plug-in CookieBanner, seus visitantes poderão ir diretamente para essa página no formulário de contato e na função de comentários.
+';
 ?>
