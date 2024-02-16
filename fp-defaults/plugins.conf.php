@@ -27,7 +27,7 @@ $fp_plugins = array(
 	'commentcenter', // including Akismet interface
 	'mediamanager',
 	'datechanger', // Lets you change the publish date for (new) entries.
-	// 'feed', // Activates the RSS and Atom feed widget, deactivates the feed links in the header in the Leggero theme
+	'feed', // Activates the RSS and Atom feed widget
 	'gallerycaptions',
 	'photoswipe'
 );
