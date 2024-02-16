@@ -24,9 +24,6 @@ function plugin_cookiebanner_footer() {
 	lang_load('plugin:cookiebanner');
 
 	$bannertext = $lang ['plugin'] ['cookiebanner'] ['bannertext'];
-	$more = $lang ['plugin'] ['cookiebanner'] ['more'];
-	$more_url = $lang ['plugin'] ['cookiebanner'] ['more_url'];
-	$more_url_title = $lang ['plugin'] ['cookiebanner'] ['more_url_title'];
 	$ok = $lang ['plugin'] ['cookiebanner'] ['ok'];
 
 	echo '
