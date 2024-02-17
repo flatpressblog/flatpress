@@ -20,6 +20,7 @@
 - FlatPress Protect plugin added: Adds HTTP headers for hardening your blog ([#146](https://github.com/flatpressblog/flatpress/issues/146))
 - DateChanger plugin added: Allows you to change the publication date for (new) entries.
 - Feed plugin added: Shows the RSS and Atom feed in the header and activates the widget. The buttons can be easily swapped via the upload manager ([#317](https://github.com/flatpressblog/flatpress/issues/317))
+- CookieBanner plugin added: Discreet reference to the use of cookies ([#325](https://github.com/flatpressblog/flatpress/issues/325))
 
 ### Changes
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)

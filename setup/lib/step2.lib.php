@@ -34,6 +34,15 @@ function check_step() {
 				'author' => 'FlatPress'
 			), 'about');
 		}
+		if (!static_exists('privacy-policy')) {
+			static_save(array(
+				'subject' => $vl ['privacy-policy'] ['subject'],
+				'content' => $vl ['privacy-policy'] ['content'],
+				'date' => time(),
+				'version' => system_ver(),
+				'author' => 'FlatPress'
+			), 'privacy-policy');
+		}
 	}
 
 	return $validate;
