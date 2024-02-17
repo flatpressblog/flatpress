@@ -24,7 +24,7 @@ function plugin_feed_widget() {
 
 	$lang = lang_load('plugin:feed');
 	$baseurl = BLOG_BASEURL;
-	$imgdir = IMAGES_DIR;
+	$imgdir = plugin_geturl('feed');
 
 	$widget ['subject'] = $lang ['plugin'] ['feed'] ['subject'];
 
@@ -32,11 +32,11 @@ function plugin_feed_widget() {
 	$atom = $lang ['plugin'] ['feed'] ['atom'];
 
 	$widget ['content'] = '
-		<!-- BEOF Feed-Buttons -->
+		<!-- BOF Feed-Buttons -->
 		<ul>
 			<li>
-				<a href="' . $baseurl . '?x=feed:rss2" title="' . $rss . '" target="_blank"><img class="feed-widget" src="' . $imgdir . 'rss.png" alt="RSS"></a>
-				<a href="' . $baseurl . '?x=feed:atom" title="' . $atom . '" target="_blank"><img class="feed-widget" src="' . $imgdir . 'atom.png" alt="Atom"></a>
+				<a href="' . $baseurl . '?x=feed:rss2" title="' . $rss . '" target="_blank"><img class="feed-widget" src="' . $imgdir . 'img/rss.png" alt="RSS"></a>
+				<a href="' . $baseurl . '?x=feed:atom" title="' . $atom . '" target="_blank"><img class="feed-widget" src="' . $imgdir . 'img/atom.png" alt="Atom"></a>
 			</li>
 		</ul>
 		<!-- EOF Feed-Buttons -->

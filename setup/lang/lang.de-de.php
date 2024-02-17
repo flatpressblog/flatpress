@@ -196,4 +196,14 @@ Viel Spaß! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Über';
 $lang ['samplecontent'] ['about'] ['content'] = 'Schreib hier etwas über dich und diesen Blog. ([url=admin.php?p=static&action=write&page=about]Bearbeite mich![/url])';
+
+$lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Datenschutzerklärung';
+$lang ['samplecontent'] ['privacy-policy'] ['content'] = 'In einigen Ländern ist es notwendig, wenn du zum Beispiel den Dienst von Akismet Antispam nutzt, deinen Besucherns eine Datenschutzerklärung bereitzustellen. Eine Datenschutzerklärung kann ebenfalls notwendig sein, wenn der Besucher das Kontaktformular oder die Kommentarfunktion nutzen kann.
+
+[b]Tipp:[/b] Es gibt im Internet jede Menge Vorlagen und Generatoren.
+
+An dieser Stelle kannst du diese dann einfügen. ([url=admin.php?p=static&action=write&page=privacy-policy]Bearbeite mich![/url])
+
+Wenn du das CookieBanner Plugin aktivierst, wird im Kontaktformular und in der Kommentarfunktion deinen Besuchern es möglich sein, direkt zu dieser Seite zu gelangen.
+';
 ?>
