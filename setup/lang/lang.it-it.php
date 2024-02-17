@@ -117,7 +117,7 @@ Il modo predefinito dell\'aspetto e del contenuto dell\'articolo è [url=https:/
 Inoltre supporta
    il contenuto indentato.[/code]
 
-I tag img e url tag hanno inoltre delle opzioni speciali. Puoi saperne di più sul [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]Wiki di FlatPress[/url].
+I tag img e url hanno inoltre delle opzioni speciali. Puoi saperne di più sul [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]Wiki di FlatPress[/url].
 
 
 [h4]Articoli e Pagine statiche[/h4]
@@ -193,4 +193,14 @@ Buon divertimento! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Chi sono';
 $lang ['samplecontent'] ['about'] ['content'] = 'Scrivi qui qualcosa su di te. ([url=admin.php?p=static&action=write&page=about]Modificami![/url])';
+
+$lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Informativa sulla privacy';
+$lang ['samplecontent'] ['privacy-policy'] ['content'] = 'In alcuni Paesi, se si utilizza il servizio Akismet Antispam, ad esempio, è necessario fornire ai visitatori un\'informativa sulla privacy. Un\'informativa sulla privacy può essere necessaria anche se il visitatore può utilizzare il modulo di contatto o la funzione di commento.
+
+[b]Suggerimento:[/b] su Internet si trovano molti modelli e generatori.
+
+Potete inserirli qui. ([url=admin.php?p=static&action=write&page=privacy-policy]Modificatemi![/url])
+
+Se attivate il plugin CookieBanner, i vostri visitatori potranno accedere direttamente a questa pagina nel modulo di contatto e nella funzione dei commenti.
+';
 ?>

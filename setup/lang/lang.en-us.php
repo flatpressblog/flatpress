@@ -193,4 +193,14 @@ Have fun! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'About';
 $lang ['samplecontent'] ['about'] ['content'] = 'Write something about yourself here. ([url=admin.php?p=static&action=write&page=about]Edit me![/url])';
+
+$lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Privacy policy';
+$lang ['samplecontent'] ['privacy-policy'] ['content'] = 'In some countries, if you use the Akismet Antispam service, for example, it is necessary to provide your visitors with a privacy policy. A privacy policy may also be necessary if the visitor can use the contact form or the comment function.
+
+[b]Tip:[/b] There are lots of templates and generators on the Internet.
+
+You can insert them here. ([url=admin.php?p=static&action=write&page=privacy-policy]Edit me![/url])
+
+If you activate the CookieBanner plugin, your visitors will be able to go directly to this page in the contact form and in the comment function.
+';
 ?>

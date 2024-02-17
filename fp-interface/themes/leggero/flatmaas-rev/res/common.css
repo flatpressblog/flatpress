@@ -129,6 +129,12 @@ h1 { /* Title of the blog */
 	text-decoration: none
 }
 
+#head a img.feed {
+	float: right;
+	margin: 0px !IMPORTANT;
+	height: 12px
+}
+
 h2 { /* Titles of the entry */
 	font-size: 1.4em;
 	color: #333333;
@@ -410,3 +416,6 @@ form#search ul li:before { content: none }
 
 /* Calendar-widget */
 #widget_calendar table.calendar { font-size: 90% }
+
+/* Feed-widget */
+.feed-widget { height: 12px !IMPORTANT; }

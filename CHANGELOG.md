@@ -18,6 +18,9 @@
 - Gallery captions plugin added: Manages image captions for gallery images ([#108](https://github.com/flatpressblog/flatpress/issues/108))
 - SEO Meta Tag Info plugin added: Manages SEO meta tags ([#145](https://github.com/flatpressblog/flatpress/issues/145))
 - FlatPress Protect plugin added: Adds HTTP headers for hardening your blog ([#146](https://github.com/flatpressblog/flatpress/issues/146))
+- DateChanger plugin added: Allows you to change the publication date for (new) entries.
+- Feed plugin added: Shows the RSS and Atom feed in the header and activates the widget. The buttons can be easily swapped via the upload manager ([#317](https://github.com/flatpressblog/flatpress/issues/317))
+- CookieBanner plugin added: Discreet reference to the use of cookies ([#325](https://github.com/flatpressblog/flatpress/issues/325))
 
 ### Changes
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
@@ -25,7 +28,8 @@
 - BBCode plugin: Added "h4" icon to editor toolbar ([#201](https://github.com/flatpressblog/flatpress/issues/201))
 - BBCode plugin: Facebook-Video now uses the latest video player API and the lazy loading mechanism of the browser; also now has localized languages with language tag ([#252](https://github.com/flatpressblog/flatpress/issues/252)) - see also https://developers.facebook.com/docs/javascript/internationalization
 - BBCode plugin: Added optional "target" attribute to the "url" element - ([PR270](https://github.com/flatpressblog/flatpress/pull/270) by [@sjustesen](https://github.com/sjustesen))
-- Akismet and comment center plugin revised to enable a more understandable operation ([#273](https://github.com/flatpressblog/flatpress/issues/273))
+- Comment center plugin (Akismet) revised to enable a more understandable operation ([#273](https://github.com/flatpressblog/flatpress/issues/273))
+- Akismet-Pluin removed: is already included in the comment center plugin
 
 ### Bugfixes
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
@@ -36,6 +40,7 @@
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
 - Calendar plugin: Fixed incorrect text output when Russian is set as language
 - Fixed broken links in the administration area
+- Footnotes plugin: Compatibility with [Markdown plugin](https://github.com/flatpressblog/flatpress-extras/tree/master/fp-plugins/markdown) established ([#322](https://github.com/flatpressblog/flatpress/issues/322))
 
 ## Setup
 - Reworked Installer ([#266](https://github.com/flatpressblog/flatpress/issues/266))
@@ -43,7 +48,7 @@
   - In the setup CSS, unused IDs, classes and incorrect references to fonts have been removed.
   - The installer header now shines in a simple FlatPress style.
   - Added missing language files for Greek, Spanish and French ([#214](https://github.com/flatpressblog/flatpress/issues/214))
-  - The installer tries to write permissions to the fp-content directory recursively for owners and groups, which had to be done manually before.
+  - The installer tries to write permissions recursively for owners and groups, which had to be done manually before.
 
 ## Themes
 - Reworked "Leggero v2" style, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
@@ -93,7 +98,8 @@
 - Contact form: Admin notification mail is now localized ([#205](https://github.com/flatpressblog/flatpress/issues/205))
 - Setup tries to determine local language automatically ([#197](https://github.com/flatpressblog/flatpress/issues/197), [#216](https://github.com/flatpressblog/flatpress/issues/216), [#262](https://github.com/flatpressblog/flatpress/issues/262))
 - The HTML of the installer now has a lang attribute in the html start tag to specify the language.
-- BBcode toolbar: Internationalized button titles translated to the end
+- BBCode plugin: Localized toolbar button tooltips
+- Footnotes plugin: Hard-coded output now localized ([#322](https://github.com/flatpressblog/flatpress/issues/322))
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
@@ -103,6 +109,7 @@
 - Worked around strftime() marked as deprecated as of PHP 8.1 ([#92](https://github.com/flatpressblog/flatpress/issues/92)) - thx @bohwaz
 - Comments and contact form: Fixed error on sending mails with umlaut subjects ([#207](https://github.com/flatpressblog/flatpress/issues/207), [#209](https://github.com/flatpressblog/flatpress/issues/209))
 - Added missing properties in order to prevent "Dynamic properties are deprecated" error under PHP 8.2 ([#115](https://github.com/flatpressblog/flatpress/issues/115))
+- Admin maintenance panel: Check file access rights after reset
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags

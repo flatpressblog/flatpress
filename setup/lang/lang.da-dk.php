@@ -196,4 +196,14 @@ God fornøjelse! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Om';
 $lang ['samplecontent'] ['about'] ['content'] = 'Skriv noget om dig selv og denne blog her. ([url=admin.php?p=static&action=write&page=about]Arbejd med mig![/url])';
+
+$lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Privatlivspolitik';
+$lang ['samplecontent'] ['privacy-policy'] ['content'] = 'I nogle lande, f.eks. hvis du bruger Akismet Antispam-tjenesten, er det nødvendigt at give dine besøgende en privatlivspolitik. En privatlivspolitik kan også være nødvendig, hvis den besøgende kan bruge kontaktformularen eller kommentarfunktionen.
+
+[b]Tip:[/b] Der findes masser af skabeloner og generatorer på internettet.
+
+Du kan indsætte dem her. ([url=admin.php?p=static&action=write&page=privacy-policy]Rediger mig![/url])
+
+Hvis du aktiverer CookieBanner-pluginet, vil dine besøgende kunne gå direkte til denne side i kontaktformularen og i kommentarfunktionen.
+';
 ?>

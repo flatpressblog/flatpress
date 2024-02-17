@@ -8,13 +8,10 @@ $fp_plugins = array(
 	'lightbox2', // fancy usable img overlay effect, needs jquery
 	'thumb', // creates thumbnails adding scale=NN% to [img] tags :)
 	'bbcode', // bbcode-style formatting; if you disable this
-	           // you'll loose some features, but you will be able to use xhtml
-	           // as a default
-	           // 'syntaxhighlighter',//fancy js to color code
+		// you'll loose some features, but you will be able to use html
+		// as a default
 	'accessibleantispam',
 	'qspam', // quick spam filter
-	          // 'akismet', // powerful antispam; requires you to have a wordpress api key
-	          // open the plugin file to set your key
 	'adminarea',
 	'archives',
 	// 'calendar', //time consuming, not really recommended :p
@@ -27,8 +24,11 @@ $fp_plugins = array(
 	'blockparser',
 	'readmore',
 	'favicon',
-	'commentcenter',
+	'commentcenter', // including Akismet interface
 	'mediamanager',
+	'datechanger', // Lets you change the publish date for (new) entries.
+	'feed', // Activates the RSS and Atom feed widget
 	'gallerycaptions',
 	'photoswipe'
 );
+?>
