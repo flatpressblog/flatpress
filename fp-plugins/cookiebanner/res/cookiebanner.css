@@ -1,0 +1,31 @@
+/* prevents too large font size on mobile devices */
+@media (max-width: 1920px) {
+	#cookie_banner {
+		-webkit-text-size-adjust: none;
+		-moz-text-size-adjust: none;
+		text-size-adjust: none
+	}
+}
+
+/* Cookie-Banner */
+#cookie_banner { 
+	background: #cccdcd;
+	color: #000000;
+	position: fixed;
+	bottom: 0px;
+	left: 0;
+	z-index: 10000;
+	opacity: 0.9;
+	width: 100%;
+}
+
+.text-center {
+	text-align: center;
+}
+
+/* OK-Button */
+.btn.btn-primary.btn-sm {
+	color: #ffffff;
+	background: #008A17;
+}
+

@@ -192,4 +192,14 @@ Veel plezier! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'About';
 $lang ['samplecontent'] ['about'] ['content'] = 'Schrijf hier iets over jezelf. ([url=admin.php?p=static&action=write&page=about]Edit me![/url])';
+
+$lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Privacybeleid';
+$lang ['samplecontent'] ['privacy-policy'] ['content'] = 'In sommige landen, als u bijvoorbeeld de Akismet Antispam-service gebruikt, is het noodzakelijk om uw bezoekers te voorzien van een privacybeleid. Een privacybeleid kan ook nodig zijn als de bezoeker het contactformulier of de commentaarfunctie kan gebruiken.
+
+[b]Tip:[/b] Er zijn veel sjablonen en generatoren te vinden op internet.
+
+Je kunt ze hier invoegen. ([url=admin.php?p=static&action=write&page=privacy-policy]Bewerk mij![/url])
+
+Als je de CookieBanner plugin activeert, kunnen je bezoekers direct naar deze pagina gaan in het contactformulier en in de commentaarfunctie.
+';
 ?>
