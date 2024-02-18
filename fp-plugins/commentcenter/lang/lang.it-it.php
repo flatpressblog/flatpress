@@ -175,9 +175,11 @@ $lang ['plugin'] ['commentcenter'] ['mail_text'] = 'Caro %toname%,
 ma tu devi approvarlo.
 
 Questo è il suo contenuto:
-***************
+__________________________________________
 %content%
-***************
+__________________________________________
+
+Accedere all\'area amministrativa del blog FlatPress e controllare i commenti bloccati nel centro commenti.
 
 Cordiali saluti,
 %blogtitle%
