@@ -36,6 +36,13 @@ $fp_config = array(
 			'editor' => true,
 			'url-maxlen' => 40,
 		),
+		'commentcenter' => array (
+			'log_all' => false,
+			'email_alert' => true,
+			'akismet_check' => false,
+			'akismet_key' => '',
+			'akismet_url' => '',
+		),
 	),
 );
 
