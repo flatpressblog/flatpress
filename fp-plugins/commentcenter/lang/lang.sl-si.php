@@ -165,11 +165,13 @@ $lang['plugin'] ['commentcenter'] ['mail_text'] = 'Spoštovani %toname%,
 vendar ga je potrebno odobriti, preden se prikaže na strani.
 
 Tukaj je komentar, ki je bil pravkar objavljen:
-***************
+__________________________________________
 %content%
-***************
+__________________________________________
 
-Vse najboljše,
+Prijavite se v upravno območje svojega bloga FlatPress in preverite blokiran komentar v središču za komentarje.
+
+Samodejno ustvari
 %blogtitle%
 
 ';

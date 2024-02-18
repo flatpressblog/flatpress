@@ -179,6 +179,8 @@ __________________________________________
 %content%
 __________________________________________
 
+Connectez-vous à la zone administrative de votre blog FlatPress et vérifiez le commentaire bloqué dans le centre de commentaires.
+
 Généré automatiquement par
 %blogtitle%
 

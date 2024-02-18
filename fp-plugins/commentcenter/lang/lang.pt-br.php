@@ -175,11 +175,13 @@ $lang ['plugin'] ['commentcenter'] ['mail_text'] = 'Querido(a) %toname%,
 mas precisa de sua aprovação antes de mostrá-lo.
 
 Aqui está o comentário que acabou de ser postado:
-***************
+__________________________________________
 %content%
-***************
+__________________________________________
 
-Atenciosamente,
+Faça login na área administrativa do seu blog FlatPress e verifique o comentário bloqueado no centro de comentários.
+
+Gerado automaticamente por
 %blogtitle%
 
 ';
