@@ -29,8 +29,8 @@
 - BBCode plugin: Facebook-Video now uses the latest video player API and the lazy loading mechanism of the browser; also now has localized languages with language tag ([#252](https://github.com/flatpressblog/flatpress/issues/252)) - see also https://developers.facebook.com/docs/javascript/internationalization
 - BBCode plugin: Added optional "target" attribute to the "url" element - ([PR270](https://github.com/flatpressblog/flatpress/pull/270) by [@sjustesen](https://github.com/sjustesen))
 - Comment center plugin (Akismet) revised to enable a more understandable operation ([#273](https://github.com/flatpressblog/flatpress/issues/273))
+- Comment center plugin: The admin must authorize comments (set as default) ([#101](https://github.com/flatpressblog/flatpress/issues/101))
 - Akismet-Pluin removed: is already included in the comment center plugin
-- The admin must authorize comments (set as default) ([#101](https://github.com/flatpressblog/flatpress/issues/101))
 
 ### Bugfixes
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
