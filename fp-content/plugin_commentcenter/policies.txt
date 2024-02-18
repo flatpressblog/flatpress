@@ -1,0 +1,11 @@
+<?php
+
+$policies = array (
+  0 => 
+  array (
+    'do' => '0',
+    'is_all' => true,
+  ),
+);
+
+?>
