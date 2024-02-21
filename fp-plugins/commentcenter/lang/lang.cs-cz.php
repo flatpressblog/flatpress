@@ -177,11 +177,13 @@ $lang ['plugin'] ['commentcenter'] ['mail_text'] = 'Vážený %toname%,
 ale před zobrazením je vyžadován váš souhlas.
 
 Zde je komentář, který byl právě odeslán:
-***************
+__________________________________________
 %content%
-***************
+__________________________________________
 
-S pozdravem,
+Přihlaste se do administrační oblasti svého blogu FlatPress a zkontrolujte zablokovaný komentář v centru komentářů.
+
+Automaticky vygenerováno
 %blogtitle%
 
 ';

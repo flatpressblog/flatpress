@@ -19,7 +19,7 @@
 - SEO Meta Tag Info plugin added: Manages SEO meta tags ([#145](https://github.com/flatpressblog/flatpress/issues/145))
 - FlatPress Protect plugin added: Adds HTTP headers for hardening your blog ([#146](https://github.com/flatpressblog/flatpress/issues/146))
 - DateChanger plugin added: Allows you to change the publication date for (new) entries.
-- Feed plugin added: Shows the RSS and Atom feed in the header and activates the widget. The buttons can be easily swapped via the upload manager ([#317](https://github.com/flatpressblog/flatpress/issues/317))
+- Feed plugin added: Displays the RSS and Atom feed via a widget ([#317](https://github.com/flatpressblog/flatpress/issues/317))
 - CookieBanner plugin added: Discreet reference to the use of cookies ([#325](https://github.com/flatpressblog/flatpress/issues/325))
 
 ### Changes
@@ -29,7 +29,8 @@
 - BBCode plugin: Facebook-Video now uses the latest video player API and the lazy loading mechanism of the browser; also now has localized languages with language tag ([#252](https://github.com/flatpressblog/flatpress/issues/252)) - see also https://developers.facebook.com/docs/javascript/internationalization
 - BBCode plugin: Added optional "target" attribute to the "url" element - ([PR270](https://github.com/flatpressblog/flatpress/pull/270) by [@sjustesen](https://github.com/sjustesen))
 - Comment center plugin (Akismet) revised to enable a more understandable operation ([#273](https://github.com/flatpressblog/flatpress/issues/273))
-- Akismet-Pluin removed: is already included in the comment center plugin
+- Comment center plugin: The admin must authorize comments (set as default) ([#101](https://github.com/flatpressblog/flatpress/issues/101))
+- Akismet-Plugin removed: is already included in the comment center plugin
 
 ### Bugfixes
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))

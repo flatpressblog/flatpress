@@ -106,6 +106,13 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'commentlist' => 'zpět na přehled komentářů'
 );
 
+$lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
+	'name' => 'Název nesmí chybět.',
+	'email' => 'E-mailová adresa je nesprávná.',
+	'url' => 'Webová stránka je nesprávná a musí začínat na <strong>http://</strong> nebo <strong>https://</strong>.',
+	'content' => 'Nesmí chybět komentář.'
+);
+
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 	1 => 'Komentář byl upravený',
 	-1 => 'Nastala chyba při úpravě příspěvku'

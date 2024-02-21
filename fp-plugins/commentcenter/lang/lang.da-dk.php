@@ -180,6 +180,8 @@ ___________________________________________
 %content%
 ___________________________________________
 
+Log ind på det administrative område på din FlatPress-blog, og tjek den blokerede kommentar i kommentarcentret.
+
 Genereres automatisk af
 %blogtitle%
 

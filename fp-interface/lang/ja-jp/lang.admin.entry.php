@@ -106,6 +106,13 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'commentlist' => 'コメント一覧へ戻る'
 );
 
+$lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
+	'name' => '名前に誤りがあってはならない。',
+	'email' => 'メールアドレスが間違っている。',
+	'url' => 'ウェブサイトが正しくありません。 <strong>http://</strong>または<strong>https://</strong>で始まる必要があります。',
+	'content' => 'コメントがない。'
+);
+
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 	1 => 'コメント編集を完了しました。',
 	-1 => 'コメント編集ができませんでした。'
