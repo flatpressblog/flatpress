@@ -106,6 +106,13 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'commentlist' => 'tilbage til kommentaroversigten'
 );
 
+$lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
+	'name' => 'Navnet må ikke mangle.',
+	'email' => 'E-mailadressen er forkert.',
+	'url' => 'Hjemmesiden er forkert og skal begynde med <strong>http://</strong> eller <strong>https://</strong>.',
+	'content' => 'Kommentaren må ikke mangle.'
+);
+
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 	1 => 'Kommentaren blev ændret',
 	-1 => 'Der opstod en fejl ved ændring af kommentaren'
