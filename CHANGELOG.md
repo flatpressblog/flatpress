@@ -101,6 +101,7 @@
 - The HTML of the installer now has a lang attribute in the html start tag to specify the language.
 - BBCode plugin: Localized toolbar button tooltips
 - Footnotes plugin: Hard-coded output now localized ([#322](https://github.com/flatpressblog/flatpress/issues/322))
+- Admin comment edit panel: Error messages localized ([#304](https://github.com/flatpressblog/flatpress/issues/304))
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
@@ -111,6 +112,7 @@
 - Comments and contact form: Fixed error on sending mails with umlaut subjects ([#207](https://github.com/flatpressblog/flatpress/issues/207), [#209](https://github.com/flatpressblog/flatpress/issues/209))
 - Added missing properties in order to prevent "Dynamic properties are deprecated" error under PHP 8.2 ([#115](https://github.com/flatpressblog/flatpress/issues/115))
 - Admin maintenance panel: Check file access rights after reset
+- Admin comment edit panel: Validation added ([#304](https://github.com/flatpressblog/flatpress/issues/304))
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
