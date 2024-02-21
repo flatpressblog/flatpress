@@ -4,7 +4,7 @@
  *
  * Type:
  * Name:
- * Date: 18.01.2024
+ * Date: 21.02.2024
  * Purpose: Provides the option to edit comments
  * Input:
  *
@@ -58,6 +58,41 @@ class admin_entry_commedit extends AdminPanelActionValidated {
 	);
 
 	var $nosuchcomment = false;
+
+	function commedit_validate() {
+		$lerr = & $lang ['admin'] ['entry'] ['commedit'] ['error'];
+		$errors = array();
+
+		// check name
+		if (!$name) {
+			$errors ['name'] = $lerr ['name'];
+		}
+
+		// check email
+		if ($email) {
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+				$errors ['email'] = $lerr ['email'];
+			}
+		}
+
+		// check url
+		if ($url) {
+			if (!filter_var($url, FILTER_VALIDATE_URL)) {
+				$errors ['url'] = $lerr ['url'];
+			}
+		}
+
+		// check content
+		if (!$content) {
+			$errors ['content'] = $lerr ['content'];
+		}
+
+		// assign error messages to template
+		if ($errors) {
+			$smarty->assign('error', $errors);
+			return false;
+		}
+	}
 
 	function setup() {
 		$this->nosuchcomment = !comment_exists($_REQUEST ['entry'], $_REQUEST ['comment']);

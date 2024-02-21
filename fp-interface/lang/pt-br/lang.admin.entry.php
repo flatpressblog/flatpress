@@ -106,6 +106,13 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'commentlist' => 'Voltar à visão geral dos comentários'
 );
 
+$lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
+	'name' => 'O nome não pode estar faltando.',
+	'email' => 'O endereço de e-mail está incorreto.',
+	'url' => 'O site está incorreto e deve começar com <strong>http://</strong> ou <strong>https://</strong>.',
+	'content' => 'O comentário não pode estar faltando.'
+);
+
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 	1 => 'O comentário foi editado',
 	-1 => 'Ocorreu um erro ao tentar editar o comentário'

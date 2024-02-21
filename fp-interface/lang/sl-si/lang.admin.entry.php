@@ -106,6 +106,13 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'commentlist' => 'Nazaj na pregled komentarjev'
 );
 
+$lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
+	'name' => 'Ime ne sme manjkati.',
+	'email' => 'E-poštni naslov je napačen.',
+	'url' => 'Spletna stran je napačna in se mora začeti s <strong>http://</strong> ali <strong>https://</strong>.',
+	'content' => 'Komentar ne sme manjkati.'
+);
+
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 	1 => 'Komentar je bil urejen',
 	-1 => 'Prišlo je do napake med poskusom urejanja komentarja'
