@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Wiederherstellen der Dateizugriffsrechte',
 	'opt4' => 'Zeige PHP-Informationen des Webservers',
 	'opt5' => 'Prüfe auf neue Versionen',
+	'opt6' => 'Zeige Supportdaten',
 
 	'chmod_info' => 'Wenn die Dateiberechtigungen <strong>nicht</strong> auf ' . decoct(FILE_PERMISSIONS) . ' zurückgesetzt werden konnten, ist wahrscheinlich der Eigentümer der Datei nicht derselbe wie der des Webservers.<br>' . //
 		'Normalerweise kann man diesen Hinweis ignorieren.'

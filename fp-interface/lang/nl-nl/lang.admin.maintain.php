@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Bestandsmachtigingen herstellen',
 	'opt4' => 'Toon info over PHP',
 	'opt5' => 'Controleren op updates',
+	'opt6' => 'Toon ondersteuningsgegevens',
 
 	'chmod_info' => 'Als de bestandsrechten niet konden worden teruggezet naar ' . decoct(FILE_PERMISSIONS) . ', is de eigenaar van het bestand waarschijnlijk niet dezelfde als de eigenaar van de webserver.<br>' . //
 		'Meestal kunt u deze kennisgeving negeren.'
