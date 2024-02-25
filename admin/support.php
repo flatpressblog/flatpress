@@ -47,11 +47,12 @@
 
 			$BASE_DIR = BASE_DIR;
 
-			//$path = ABS_PATH . ADMIN_DIR . "panels/$panel/admin.$panel.$action.tpl";
+			$BLOG_BASEURL = null;
+			$BLOG_BASEURL = $fp_config ['general'] ['www'];
 
 			echo '<p class="output"><strong>FlatPress version:</strong> ' . SYSTEM_VER . '</p>';
 			echo '<p class="output"><strong>Basis directory:</strong> ' . BASE_DIR . '</p>';
-			echo '<p class="output"><strong>Blog base URL:</strong> ' . BLOG_BASEURL . '</p>';
+			echo '<p class="output"><strong>Blog base URL:</strong> ' . $BLOG_BASEURL . '</p>';
 
 			if ($LANG_DEFAULT) {
 				echo '<p class="output"><strong>Language (automatic):</strong> ' . $LANG_DEFAULT . '</p>';
