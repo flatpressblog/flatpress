@@ -11,6 +11,7 @@
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 - Re-activated useful "Stats" panel in Admin Area / Entries
 - "Follow on Mastodon" added as an alternative to X (Twitter) in the welcome entry
+- Support data for the community can be called via the admin maintain panel or via the URL `http(s)://your-flatpress-blog.ltd/admin/support.php` to solve problems ([#331](https://github.com/flatpressblog/flatpress/issues/331))
 
 ## Plugins
 ### Additions
