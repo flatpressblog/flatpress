@@ -91,7 +91,7 @@
 			if (file_exists($setupfile)) {
 				echo '<p class="error"><strong>&#33;</strong> The setup file is located in the main directory!</p>';
 			} else {
-				echo '<p class="success"><strong>&#10003;</strong> No .htaccess file was found in the main directory.</p>';
+				echo '<p class="success"><strong>&#10003;</strong> The setup file was not found in the main directory.</p>';
 			}
 		?>
 
