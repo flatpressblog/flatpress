@@ -24,6 +24,7 @@
 
 	<body>
 		<p>For bug reports and help, visit the <a href="https://forum.flatpress.org" target="_blank">FlatPress forum</a>, report the bug on <a href="https://github.com/flatpressblog/flatpress/issues" target="_blank">GitHub</a> or <a href="mailto:hello@flatpress.org">send an email</a>.<br>Include these outputs (copy &#38; paste) in English with the following information: bug description, steps to reproduce.</p>
+		<p>[code]</p>
 		<h1>FlatPress general</h1>
 		<h2>Setup</h2>
 		<?php
@@ -299,5 +300,6 @@
 		<p class="attention"><strong>&#8505;</strong> Does not restrict functionality, but requires attention</p>
 		<p class="error"><strong>&#33;</strong> Action urgently needed</p>
 		<p>Powered by <a href="https://flatpress.org" target="_blank">FlatPress</a>.</p>
+		<p>[/code]</p>
 	</body>
 </html>
