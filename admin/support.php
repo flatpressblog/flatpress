@@ -14,18 +14,22 @@
 		<meta charset="UTF-8">
 		<title>FlatPress - Create support data</title>
 		<style type="text/css">
-			body { font-family: Arial }
+			body { font-family: Arial; background-color: #ffffff }
+			h1 { margin-bottom: 0 }
 			.error { color: #990000; padding-left: 10px }
 			.attention { color: #D35400; padding-left: 10px }
 			.success { color: #0E7924; padding-left: 10px }
 			.output { padding-left: 10px }
+			/* hidden code block - only becomes visible when pasted - onion juice ink - magic */
+			h1 { margin-bottom: 0 }
+			.codeblock { background-color: #ffffff; margin: 0; font-size: 0px }
 		</style>
 	</head>
 
 	<body>
 		<p>For bug reports and help, visit the <a href="https://forum.flatpress.org" target="_blank">FlatPress forum</a>, report the bug on <a href="https://github.com/flatpressblog/flatpress/issues" target="_blank">GitHub</a> or <a href="mailto:hello@flatpress.org">send an email</a>.<br>Include these outputs (copy &#38; paste) in English with the following information: bug description, steps to reproduce.</p>
 		<h1>FlatPress general</h1>
-		<p>[code]</p> <!-- for forum code block -->
+		<p class="codeblock">[code]</p>
 		<h2>Setup</h2>
 		<?php
 			require_once '../defaults.php';
@@ -83,10 +87,10 @@
 			echo '</p>';
 		?>
 		</p>
-		<p>[/code]</p> <!-- for forum code block -->
+		<p class="codeblock">[/code]</p>
 
 		<h1>FlatPress file and directory permissions</h1>
-		<p>[code]</p> <!-- for forum code block -->
+		<p class="codeblock">[code]</p>
 		<h2>Core files</h2>
 		<p>As soon as the setup has been successfully executed, the setup.php file should be deleted before productive operation.</p>
 		<?php
@@ -235,10 +239,10 @@
 				echo '<p class="success"><strong>&#33;</strong> The directory cache does not exist.</p>';
 			}
 		?>
-		<p>[/code]</p> <!-- for forum code block -->
+		<p class="codeblock">[/code]</p>
 
 		<h1>PHP</h1>
-		<p>[code]</p> <!-- for forum code block -->
+		<p class="codeblock">[code]</p>
 		<p>The PHP version is <strong><?php echo phpversion();?></strong></p>
 		<h2>Extensions</h2>
 		<p>The PHP-Intl extension must be activated.</p>
@@ -258,10 +262,10 @@
 				echo '<p class="success"><strong>&#10003;</strong> The GD Extension is activated.</p>';
 			} 
 		?>
-		<p>[/code]</p> <!-- for forum code block -->
+		<p class="codeblock">[/code]</p>
 
 		<h1>Other</h1>
-		<p>[code]</p> <!-- for forum code block -->
+		<p class="codeblock">[code]</p>
 		<p>The browser used is of interest if there are display errors.</p>
 		<?php
 			// Browser recognition does not always work correctly.
@@ -299,13 +303,12 @@
 		@cookie_setup();
 		echo '<p class="output"><strong>FlatPress Session cookie: </strong>' . SESS_COOKIE . '</p>';
 		?>
-
+		<p class="codeblock">[/code]</p>
 		<h2>Output completed!</h2>
 		<p class="output"><strong>Symbols:</strong></p>
 		<p class="success"><strong>&#10003;</strong> No action necessary</p>
 		<p class="attention"><strong>&#8505;</strong> Does not restrict functionality, but requires attention</p>
 		<p class="error"><strong>&#33;</strong> Action urgently needed</p>
 		<p>Powered by <a href="https://flatpress.org" target="_blank">FlatPress</a>.</p>
-		<p>[/code]</p> <!-- for forum code block -->
 	</body>
 </html>
