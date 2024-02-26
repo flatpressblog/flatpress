@@ -24,8 +24,8 @@
 
 	<body>
 		<p>For bug reports and help, visit the <a href="https://forum.flatpress.org" target="_blank">FlatPress forum</a>, report the bug on <a href="https://github.com/flatpressblog/flatpress/issues" target="_blank">GitHub</a> or <a href="mailto:hello@flatpress.org">send an email</a>.<br>Include these outputs (copy &#38; paste) in English with the following information: bug description, steps to reproduce.</p>
-		<p>[code]</p> <!-- for forum code block -->
 		<h1>FlatPress general</h1>
+		<p>[code]</p> <!-- for forum code block -->
 		<h2>Setup</h2>
 		<?php
 			require_once '../defaults.php';
@@ -83,8 +83,10 @@
 			echo '</p>';
 		?>
 		</p>
+		<p>[/code]</p> <!-- for forum code block -->
 
 		<h1>FlatPress file and directory permissions</h1>
+		<p>[code]</p> <!-- for forum code block -->
 		<h2>Core files</h2>
 		<p>As soon as the setup has been successfully executed, the setup.php file should be deleted before productive operation.</p>
 		<?php
@@ -92,7 +94,7 @@
 			if (file_exists($setupfile)) {
 				echo '<p class="error"><strong>&#33;</strong> The setup file is located in the main directory!</p>';
 			} else {
-				echo '<p class="success"><strong>&#10003;</strong> The setup file was not found in the main directory.</p>';
+				echo '<p class="success"><strong>&#10003;</strong> The setup file was not found in the root directory.</p>';
 			}
 		?>
 
@@ -233,8 +235,10 @@
 				echo '<p class="success"><strong>&#33;</strong> The directory cache does not exist.</p>';
 			}
 		?>
+		<p>[/code]</p> <!-- for forum code block -->
 
 		<h1>PHP</h1>
+		<p>[code]</p> <!-- for forum code block -->
 		<p>The PHP version is <strong><?php echo phpversion();?></strong></p>
 		<h2>Extensions</h2>
 		<p>The PHP-Intl extension must be activated.</p>
@@ -254,8 +258,10 @@
 				echo '<p class="success"><strong>&#10003;</strong> The GD Extension is activated.</p>';
 			} 
 		?>
+		<p>[/code]</p> <!-- for forum code block -->
 
 		<h1>Other</h1>
+		<p>[code]</p> <!-- for forum code block -->
 		<p>The browser used is of interest if there are display errors.</p>
 		<?php
 			// Browser recognition does not always work correctly.
