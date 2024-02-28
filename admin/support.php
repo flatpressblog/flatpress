@@ -2,7 +2,7 @@
 /*
  * Name: Create support data
  * Autor: FlatPress
- * Version: 1.0.0
+ * Version: 1.0.1
  * Purpose: The FlatPress admin is thus able to provide the community with all relevant data to solve a problem quickly and specifically.
  * Hint: The output is in English only, so that the project supervisor or the community do not have to translate it.
  */
@@ -34,30 +34,48 @@
 		<?php
 			require_once '../defaults.php';
 			require_once INCLUDES_DIR . 'includes.php';
-			require_once CONFIG_FILE;
-			require_once CONFIG_DIR . 'plugins.conf.php';
 
-			global $fp_config, $fp_plugins;
+			$BASE_DIR = BASE_DIR;
+			$setupfile = BASE_DIR . '/setup.php';
 
 			$LANG_DEFAULT = null;
 			$LANG_DEFAULT = LANG_DEFAULT;
 
 			$lang = null;
-			$lang = $fp_config ['locale'] ['lang'];
 
-			$theme = $fp_config ['general'] ['theme'];
+			$charset = null;
+
+			$theme = null;
 
 			$style = null;
-			$style = $fp_config ['general'] ['style'];
-
-			$BASE_DIR = BASE_DIR;
 
 			$BLOG_BASEURL = null;
-			$BLOG_BASEURL = $fp_config ['general'] ['www'];
+
+			if (file_exists("{$BASE_DIR}/fp-content/config/")) {
+				require_once CONFIG_DIR . 'plugins.conf.php';
+				require_once CONFIG_FILE;
+				$lang = $fp_config ['locale'] ['lang'];
+				$charset = $fp_config ['locale'] ['charset'];
+				$theme = $fp_config ['general'] ['theme'];
+				$style = $fp_config ['general'] ['style'];
+				$BLOG_BASEURL = $fp_config ['general'] ['www'];
+			} else {
+				$fp_plugins = array();
+			}
 
 			echo '<p class="output"><strong>FlatPress version:</strong> ' . SYSTEM_VER . '</p>';
 			echo '<p class="output"><strong>Basis directory:</strong> ' . BASE_DIR . '</p>';
-			echo '<p class="output"><strong>Blog base URL:</strong> ' . $BLOG_BASEURL . '</p>';
+
+			if ($BLOG_BASEURL) {
+				echo '<p class="output"><strong>Blog base URL:</strong> ' . $BLOG_BASEURL . '</p>';
+			} else {
+				echo '<p class="output"><strong>Blog base URL:</strong> Could not be determined. ';
+				if (file_exists($setupfile)) {
+					echo '<a href="../setup.php" target="_blank">Start setup</a></p>';
+				} else {
+					echo '</p>';
+				}
+			}
 
 			if ($LANG_DEFAULT) {
 				echo '<p class="output"><strong>Language (automatic):</strong> ' . $LANG_DEFAULT . '</p>';
@@ -71,7 +89,22 @@
 				echo '<p class="output"><strong>Language (set):</strong> not set</p>';
 			}
 
-			echo '<p class="output"><strong>Theme:</strong> ' . $theme . '</p>';
+			if ($charset) {
+				echo '<p class="output"><strong>Character set:</strong> ' . $charset . '</p>';
+			} else {
+				echo '<p class="output"><strong>Character set:</strong> not set (default is utf-8)</p>';
+			}
+
+			if ($theme) {
+				echo '<p class="output"><strong>Theme:</strong> ' . $theme . '</p>';
+			} else {
+				echo '<p class="output"><strong>Theme:</strong> not set (default is leggero) ';
+				if (file_exists($setupfile)) {
+					echo '<a href="../setup.php" target="_blank">Start setup</a></p>';
+				} else {
+					echo '</p>';
+				}
+			}
 
 			if ($style) {
 				echo '<p class="output"><strong>Stil:</strong> ' . $style . '</p>';
@@ -79,12 +112,16 @@
 				echo '<p class="output"><strong>Stil:</strong> default style</p>';
 			}
 
-			echo '<p class="output"><strong>Activated plugins:</strong></p>';
-			echo '<p class="output">';
-				for($i = 0; $i < count($fp_plugins); $i++) {
-					echo ', ' . $fp_plugins [$i];
-				}
-			echo '</p>';
+			if ($BLOG_BASEURL) {
+				echo '<p class="output"><strong>Activated plugins:</strong></p>';
+				echo '<p class="output">';
+					for($i = 0; $i < count($fp_plugins); $i++) {
+						echo ', ' . $fp_plugins [$i];
+					}
+				echo '</p>';
+			} else {
+				echo '<p class="output"><strong>Activated plugins:</strong> Could not be determined.</p>';
+			}
 		?>
 		</p>
 		<p class="codeblock">[/code]</p>
@@ -94,12 +131,22 @@
 		<h2>Core files</h2>
 		<p>As soon as the setup has been successfully executed, the setup.php file should be deleted before productive operation.</p>
 		<?php
-			$setupfile = BASE_DIR . '/setup.php';
 			if (file_exists($setupfile)) {
 				echo '<p class="error"><strong>&#33;</strong> The setup file is located in the main directory!</p>';
 			} else {
-				echo '<p class="success"><strong>&#10003;</strong> The setup file was not found in the root directory.</p>';
+				echo '<p class="success"><strong>&#10003;</strong> The setup file was not found in the main directory.</p>';
 			}
+		?>
+
+		<p>The defaults.php file should only be read-only for productive operation.</p>
+		<?php
+			$test_file = @fopen("{$BASE_DIR}/defaults.php", "a+");
+			if ($test_file) {
+				echo '<p class="attention"><strong>&#8505;</strong> The defaults.php file can be changed!</p>';
+			} else {
+				echo '<p class="success"><strong>&#10003;</strong> The defaults.php file cannot be changed.</p>';
+			}
+			@fclose($test_file);
 		?>
 
 		<p>The admin directory should be read-only for productive operation.</p>
@@ -126,45 +173,8 @@
 			@unlink("{$BASE_DIR}/fp-includes/chmod-test-file");
 		?>
 
-		<h2>Themes and plugins</h2>
-		<p>The fp-content directory must be writable for FlatPress to work.</p>
-		<?php
-			$test_file = @fopen("{$BASE_DIR}/fp-content/chmod-test-file", "a+");
-			if ($test_file) {
-				echo '<p class="success"><strong>&#10003;</strong> The fp-content directory is writable.</p>';
-			} else {
-				echo '<p class="error"><strong>&#33;</strong> The directory fp-content is not writable!</p>';
-			}
-			@fclose($test_file);
-			@unlink("{$BASE_DIR}/fp-content/chmod-test-file");
-		?>
-
-		<p>The fp-plugin directory should be read-only for productive operation.</p>
-		<?php
-			$test_file = @fopen("{$BASE_DIR}/fp-plugins/chmod-test-file", "a+");
-			if ($test_file) {
-				echo '<p class="attention"><strong>&#8505;</strong> The plugin directory fp-plugins writable!</p>';
-			} else {
-				echo '<p class="success"><strong>&#10003;</strong> The plugin directory fp-plugins is not writable.</p>';
-			}
-			@fclose($test_file);
-			@unlink("{$BASE_DIR}/fp-plugins/chmod-test-file");
-		?>
-
-		<p>The fp-interface directory should be read-only for productive operation.</p>
-		<?php
-			$test_file = @fopen("{$BASE_DIR}/fp-interface/chmod-test-file", "a+");
-			if ($test_file) {
-				echo '<p class="attention"><strong>&#8505;</strong> The theme directory fp-interface writable!</p>';
-			} else {
-				echo '<p class="success"><strong>&#10003;</strong> The theme directory fp-interface is not writable.</p>';
-			}
-			@fclose($test_file);
-			@unlink("{$BASE_DIR}/fp-interface/chmod-test-file");
-		?>
-
-		<h2>.htaccess und defaults.php</h2>
-		<p>The root directory must be writable in order to be able to create or modify an .htaccess file with the PrettyURLs plugin.</p>
+		<h2>Configuration file for the webserver</h2>
+		<p>The main directory must be writable in order to be able to create or modify an .htaccess file with the PrettyURLs plugin.</p>
 		<p><strong>Note:</strong> Only web servers that are NCSA compatible, such as Apache, are familiar with the concept of .htaccess files.</p>
 		<?php
 			echo '<p>The server software is <strong>' . $_SERVER["SERVER_SOFTWARE"] . '</strong>.</p>';
@@ -195,19 +205,73 @@
 			}
 		?>
 
-		<p>The defaults.php file should only be read-only for productive operation.</p>
+		<h2>Themes and plugins</h2>
+		<p>The fp-interface directory should be read-only for productive operation.</p>
 		<?php
-			$test_file = @fopen("{$BASE_DIR}/defaults.php", "a+");
+			$test_file = @fopen("{$BASE_DIR}/fp-interface/chmod-test-file", "a+");
 			if ($test_file) {
-				echo '<p class="attention"><strong>&#8505;</strong> The defaults.php file can be changed!</p>';
+				echo '<p class="attention"><strong>&#8505;</strong> The directory fp-interface writable!</p>';
 			} else {
-				echo '<p class="success"><strong>&#10003;</strong> The defaults.php file cannot be changed.</p>';
+				echo '<p class="success"><strong>&#10003;</strong> The directory fp-interface is not writable.</p>';
 			}
 			@fclose($test_file);
+			@unlink("{$BASE_DIR}/fp-interface/chmod-test-file");
 		?>
 
-		<h2>Upload directory (fp-content/attachs)</h2>
-		<p>This directory must have write permissions so that you can upload something.</p>
+		<p>The themes directory should be read-only for productive operation.</p>
+		<?php
+			$test_file = @fopen("{$BASE_DIR}/fp-interface/themes/chmod-test-file", "a+");
+			if ($test_file) {
+				echo '<p class="attention"><strong>&#8505;</strong> The theme directory is writable!</p>';
+			} else {
+				echo '<p class="success"><strong>&#10003;</strong> The theme directory is not writable.</p>';
+			}
+			@fclose($test_file);
+			@unlink("{$BASE_DIR}/fp-interface/themes/chmod-test-file");
+		?>
+
+		<p>The fp-plugin directory should be read-only for productive operation.</p>
+		<?php
+			$test_file = @fopen("{$BASE_DIR}/fp-plugins/chmod-test-file", "a+");
+			if ($test_file) {
+				echo '<p class="attention"><strong>&#8505;</strong> The plugin directory fp-plugins writable!</p>';
+			} else {
+				echo '<p class="success"><strong>&#10003;</strong> The plugin directory fp-plugins is not writable.</p>';
+			}
+			@fclose($test_file);
+			@unlink("{$BASE_DIR}/fp-plugins/chmod-test-file");
+		?>
+
+		<h2>Content directory</h2>
+		<p>The fp-content directory must be writable for FlatPress to work.</p>
+		<?php
+			$test_file = @fopen("{$BASE_DIR}/fp-content/chmod-test-file", "a+");
+			if ($test_file) {
+				echo '<p class="success"><strong>&#10003;</strong> The fp-content directory is writable.</p>';
+			} else {
+				echo '<p class="error"><strong>&#33;</strong> The fp-content directory is not writable!</p>';
+			}
+			@fclose($test_file);
+			@unlink("{$BASE_DIR}/fp-content/chmod-test-file");
+		?>
+
+		<p>This images directory must have write permissions so that you can upload images.</p>
+		<?php
+			if (file_exists("{$BASE_DIR}/fp-content/images/")) {
+				$test_file = @fopen("{$BASE_DIR}/fp-content/images/chmod-test-file", "a+");
+				if ($test_file) {
+					echo '<p class="success"><strong>&#10003;</strong> The images directory is writable.</p>';
+				} else {
+					echo '<p class="error"><strong>&#33;</strong> The images directory is not writable!</p>';
+				}
+				@fclose($test_file);
+				@unlink("{$BASE_DIR}/fp-content/images/chmod-test-file");
+			} else {
+				echo '<p class="attention"><strong>&#8505;</strong> The images directory does not exist.</p>';
+			}
+		?>
+
+		<p>This upload directory must have write permissions so that you can upload something.</p>
 		<?php
 			if (file_exists("{$BASE_DIR}/fp-content/attachs/")) {
 				$test_file = @fopen("{$BASE_DIR}/fp-content/attachs/chmod-test-file", "a+");
@@ -219,12 +283,11 @@
 				@fclose($test_file);
 				@unlink("{$BASE_DIR}/fp-content/attachs/chmod-test-file");
 			} else {
-				echo '<p class="attention"><strong>&#8505;</strong> The upload directory does not exist.</p>';
+				echo '<p class="attention"><strong>&#8505;</strong> The upload directory does not exist, but is created automatically with the first upload.</p>';
 			}
 		?>
 
-		<h2>Cache directory (fp-content/cache)</h2>
-		<p>This directory must have write permission for the cache to function correctly.</p>
+		<p>This cache directory must have write permission for the cache to function correctly.</p>
 		<?php
 			if (file_exists("{$BASE_DIR}/fp-content/cache/")) {
 				$test_file = @fopen("{$BASE_DIR}/fp-content/cache/chmod-test-file", "a+");
@@ -236,7 +299,7 @@
 				@fclose($test_file);
 				@unlink("{$BASE_DIR}/fp-content/cache/chmod-test-file");
 			} else {
-				echo '<p class="success"><strong>&#33;</strong> The directory cache does not exist.</p>';
+				echo '<p class="error"><strong>&#33;</strong> The directory cache does not exist!</p>';
 			}
 		?>
 		<p class="codeblock">[/code]</p>
@@ -272,7 +335,7 @@
 			// This also depends on whether a current browscap has been set in php.ini or not.
 			function browser() {
 				$user_agent = $_SERVER ['HTTP_USER_AGENT'];
-				$browser = "not recognized";
+				$browser = "Not recognized";
 
 				$browsers = [
 					'/msie/i' => 'Internet explorer',
@@ -300,8 +363,12 @@
 		<p>If visitors to the FlatPress blog are to be informed about cookies, this is the cookie.</p>
 		<p><strong>Hint:</strong> The name of the cookie changes each time FlatPress is reinstalled.</p>
 		<?php
-		@cookie_setup();
-		echo '<p class="output"><strong>FlatPress Session cookie: </strong>' . SESS_COOKIE . '</p>';
+		if ($BLOG_BASEURL) {
+			@cookie_setup();
+			echo '<p class="output"><strong>FlatPress Session cookie: </strong>' . SESS_COOKIE . '</p>';
+		} else {
+			echo '<p class="output"><strong>FlatPress Session cookie: </strong> Could not be determined.</p>';
+		}
 		?>
 		<p class="codeblock">[/code]</p>
 		<h2>Output completed!</h2>
