@@ -1,21 +1,21 @@
 {if !$entry_commslock}
 <h4 id="addcomment">{$lang.comments.head}</h4>
 <p>{$lang.comments.descr}</p>
-	
+
 
 <form id="commentform" method="post"
 	action="{$flatpress.params.entry|link:comments_link}#commentform"
 	enctype="multipart/form-data">
 
-	
+
 	{include file='shared:errorlist.tpl'}
-	
-	
+
+
 	{if not $flatpress.loggedin}
-	
+
 	{*<fieldset id="comment-userdata">*}
 	<div id="comment-userdata">
-	
+
 		<p>
 		{if isset($error) && isset($error.name) && !empty($error.name)}
 			{assign var=class value="field-error"}
@@ -30,7 +30,7 @@
 		<input type="text" class="{$class}" name="name" id="name" value="{$namevalue|wp_specialchars:1|default:$cookie.name}" />
 		<label class="textlabel" for="name">{$lang.comments.name}</label>
 		</p>
-		
+
 		<p>
 		{if isset($error) && isset($error.email) && !empty($error.email)}
 			{assign var=class value="field-error"}
@@ -45,7 +45,7 @@
 		<input type="text" class="{$class}" name="email" id="email" value="{$emailvalue|wp_specialchars:1|default:$cookie.email}" />
 		<label class="textlabel" for="email">{$lang.comments.email}</label>
 		</p>
-		
+
 		<p>
 		{if isset($error) && isset($error.url) && !empty($error.url)}
 			{assign var=class value="field-error"}
@@ -60,15 +60,15 @@
 		<input type="text" class="{$class}" name="url" id="url" value="{$urlvalue|wp_specialchars:1|default:$cookie.url}" />
 		<label class="textlabel" for="url">{$lang.comments.www}</label>
 		</p>
-		
+
 		{* do action *}
 		{comment_form}
-		
+
 	</div>
-	
+
 	{/if}
-	
-	
+
+	<!-- BOF Custom toolbar -->{action hook=simple_toolbar_form}<!-- EOF Custom toolbar -->
 	<div class="comment-content">
 			{if isset($error) && isset($error.content) && !empty($error.content)}
 				{assign var=class value="field-error"}
@@ -84,7 +84,7 @@
 			id="content" rows="10" cols="74">{$contentvalue|wp_specialchars:1}</textarea></p>
 			{*here will go a plugin hook*}
 	</div>
-	
+
 	<div class="buttonbar">
 	<input type="submit" name="submit" id="submit" value="{$lang.comments.submit}" />
 	</div>
