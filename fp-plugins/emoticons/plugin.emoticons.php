@@ -37,7 +37,6 @@ function plugin_emoticons() {
 	global $plugin_emoticons;
 	if (!count($plugin_emoticons))
 		return true;
-	echo '<script src="' . plugin_geturl('emoticons') . 'res/emoticons.js"></script>';
 	echo '<div class="emoticons">';
 	foreach ($plugin_emoticons as $text => $emoticon) {
 		echo '<a href="#content" title="' . htmlentities($text) . '" onclick="emoticons(unescape(\'' . urlencode($text) . '\')); return false;">';
@@ -63,16 +62,17 @@ function plugin_emoticons_filter ($emostring) {
 }
 
 // css file
-function plugin_emoticons_css() {
+function plugin_emoticons_head() {
 	$pdir = plugin_geturl('emoticons');
 	echo '
-		<!-- BOF Emoticons css file -->
+		<!-- BOF Emoticons -->
 		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/emoticons.css">
-		<!-- EOF Emoticons css file -->';
+		<script src="' . plugin_geturl('emoticons') . 'res/emoticons.js"></script>
+		<!-- EOF Emoticons -->';
 }
 
-// register css file
-add_action('wp_head', 'plugin_emoticons_css', 0);
+// register emoticon head
+add_action('wp_head', 'plugin_emoticons_head', 10);
 // register editor toolbar
 add_filter('simple_toolbar_form', 'plugin_emoticons',);
 // register to the hook
