@@ -54,8 +54,8 @@ function plugin_emoticons_filter ($emostring) {
 
 	foreach ($plugin_emoticons as $text => $emoticon) {
 		$emostring = str_replace(
-			["$text"],
-			"{$emoticon}",
+			$text,
+			$emoticon,
 			$emostring
 		);
 	}
