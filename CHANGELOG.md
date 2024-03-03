@@ -22,7 +22,7 @@
 - DateChanger plugin added: Allows you to change the publication date for (new) entries.
 - Feed plugin added: Displays the RSS and Atom feed via a widget ([#317](https://github.com/flatpressblog/flatpress/issues/317))
 - CookieBanner plugin added: Discreet reference to the use of cookies ([#325](https://github.com/flatpressblog/flatpress/issues/325))
-- Emonticons plugin added: Allows emoticons via an editor toolbar. Suggestion from [@DeltaLima](https://github.com/DeltaLima)
+- Emonticons plugin added: Allows accessible emoticons via an editor toolbar. Suggestion from [@DeltaLima](https://github.com/DeltaLima)
 
 ### Changes
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
