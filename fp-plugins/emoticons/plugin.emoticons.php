@@ -19,13 +19,15 @@ $plugin_emoticons = array(
 	':heart_eyes:' => '&#128525;',
 	':sunglasses:' => '&#128526;',
 	':laughing:' => '&#128518;',
+	':joy:' => '&#128514;',
 	':neutral_face:' => '&#128528;',
 	':flushed:' => '&#128563;',
+	':hushed:' => '&#128558;',
 	':dizzy_face:' => '&#128565;',
 	':cry:' => '&#128546;',
 	':persevere:' => '&#128547;',
 	':worried:' => '&#128543;',
-	':hushed:' => '&#128558;',
+	':angry:' => '&#128544;',
 	':mag:' => '&#128269;',
 	':hot_beverage:' => '&#9749;',
 	':exclamation:' => '&#10071;',
@@ -54,7 +56,8 @@ function plugin_emoticons_filter ($emostring) {
 	foreach ($plugin_emoticons as $text => $emoticon) {
 		$emostring = str_replace(
 			$text,
-			$emoticon,
+			// Is better for screen readers
+			'<span role="img" aria-label="Emoji ' . htmlentities($text) . '">' . $emoticon . '</span>',
 			$emostring
 		);
 	}
