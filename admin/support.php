@@ -271,6 +271,22 @@
 			}
 		?>
 
+		<p>This thump directory must have write permissions so that scalable images can be created.</p>
+		<?php
+			if (file_exists("{$BASE_DIR}/fp-content/images/.thumbs")) {
+				$test_file = @fopen("{$BASE_DIR}/fp-content/images/.thumbs/chmod-test-file", "a+");
+				if ($test_file) {
+					echo '<p class="success"><strong>&#10003;</strong> The images/.thump directory is writable.</p>';
+				} else {
+					echo '<p class="error"><strong>&#33;</strong> The images/.thump directory is not writable!</p>';
+				}
+				@fclose($test_file);
+				@unlink("{$BASE_DIR}/fp-content/images/chmod-test-file");
+			} else {
+				echo '<p class="attention"><strong>&#8505;</strong> The .thump directory does not exist, but is created automatically as soon as a thumbnail has been created with the Thumbnails plugin</p>';
+			}
+		?>
+
 		<p>This upload directory must have write permissions so that you can upload something.</p>
 		<?php
 			if (file_exists("{$BASE_DIR}/fp-content/attachs/")) {
