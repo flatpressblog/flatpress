@@ -1,7 +1,7 @@
 /*
  * Emoticons Plugin
  */
-function insertAtCursor(myField, myValue) {
+function insertEmoticon(myField, myValue) {
 	if(document.selection) {
 		myField.focus();
 		sel = document.selection.createRange();
@@ -17,5 +17,5 @@ function insertAtCursor(myField, myValue) {
 }
 
 function emoticons(value) {
-	return insertAtCursor(document.getElementById('content'), value);
+	return insertEmoticon(document.getElementById('content'), value);
 }
