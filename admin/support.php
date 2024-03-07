@@ -271,7 +271,7 @@
 			}
 		?>
 
-		<p>This thump directory must have write permissions so that scalable images can be created.</p>
+		<p>This thumbs directory must have write permissions so that scalable images can be created.</p>
 		<?php
 			if (file_exists("{$BASE_DIR}/fp-content/images/.thumbs")) {
 				$test_file = @fopen("{$BASE_DIR}/fp-content/images/.thumbs/chmod-test-file", "a+");
