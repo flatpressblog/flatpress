@@ -283,7 +283,7 @@
 				@fclose($test_file);
 				@unlink("{$BASE_DIR}/fp-content/images/chmod-test-file");
 			} else {
-				echo '<p class="attention"><strong>&#8505;</strong> The .thumbs directory does not exist, but is created automatically as soon as a thumbnail has been created with the Thumbnails plugin</p>';
+				echo '<p class="attention"><strong>&#8505;</strong> The .thumbs directory does not exist, but is created automatically as soon as a thumbnail has been created with the Thumbnails plugin.</p>';
 			}
 		?>
 
