@@ -11,6 +11,7 @@
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 - Re-activated useful "Stats" panel in Admin Area / Entries
 - "Follow on Mastodon" added as an alternative to X (Twitter) in the welcome entry
+- Support data for the community can be called via the admin maintain panel or via the URL `http(s)://your-flatpress-blog.ltd/admin/support.php` to solve problems ([#331](https://github.com/flatpressblog/flatpress/issues/331))
 
 ## Plugins
 ### Additions
@@ -19,8 +20,9 @@
 - SEO Meta Tag Info plugin added: Manages SEO meta tags ([#145](https://github.com/flatpressblog/flatpress/issues/145))
 - FlatPress Protect plugin added: Adds HTTP headers for hardening your blog ([#146](https://github.com/flatpressblog/flatpress/issues/146))
 - DateChanger plugin added: Allows you to change the publication date for (new) entries.
-- Feed plugin added: Shows the RSS and Atom feed in the header and activates the widget. The buttons can be easily swapped via the upload manager ([#317](https://github.com/flatpressblog/flatpress/issues/317))
+- Feed plugin added: Displays the RSS and Atom feed via a widget ([#317](https://github.com/flatpressblog/flatpress/issues/317))
 - CookieBanner plugin added: Discreet reference to the use of cookies ([#325](https://github.com/flatpressblog/flatpress/issues/325))
+- Emonticons plugin added: Allows accessible emoticons via an editor toolbar. Suggestion from [@DeltaLima](https://github.com/DeltaLima)
 
 ### Changes
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
@@ -29,7 +31,8 @@
 - BBCode plugin: Facebook-Video now uses the latest video player API and the lazy loading mechanism of the browser; also now has localized languages with language tag ([#252](https://github.com/flatpressblog/flatpress/issues/252)) - see also https://developers.facebook.com/docs/javascript/internationalization
 - BBCode plugin: Added optional "target" attribute to the "url" element - ([PR270](https://github.com/flatpressblog/flatpress/pull/270) by [@sjustesen](https://github.com/sjustesen))
 - Comment center plugin (Akismet) revised to enable a more understandable operation ([#273](https://github.com/flatpressblog/flatpress/issues/273))
-- Akismet-Pluin removed: is already included in the comment center plugin
+- Comment center plugin: The admin must authorize comments (set as default) ([#101](https://github.com/flatpressblog/flatpress/issues/101))
+- Akismet-Plugin removed: is already included in the comment center plugin
 
 ### Bugfixes
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
@@ -100,6 +103,7 @@
 - The HTML of the installer now has a lang attribute in the html start tag to specify the language.
 - BBCode plugin: Localized toolbar button tooltips
 - Footnotes plugin: Hard-coded output now localized ([#322](https://github.com/flatpressblog/flatpress/issues/322))
+- Admin comment edit panel: Error messages localized ([#304](https://github.com/flatpressblog/flatpress/issues/304))
 
 ## Bugfixes
 - Plugin management page: Removed empty warning messages box
@@ -110,6 +114,7 @@
 - Comments and contact form: Fixed error on sending mails with umlaut subjects ([#207](https://github.com/flatpressblog/flatpress/issues/207), [#209](https://github.com/flatpressblog/flatpress/issues/209))
 - Added missing properties in order to prevent "Dynamic properties are deprecated" error under PHP 8.2 ([#115](https://github.com/flatpressblog/flatpress/issues/115))
 - Admin maintenance panel: Check file access rights after reset
+- Admin comment edit panel: Validation added ([#304](https://github.com/flatpressblog/flatpress/issues/304))
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags

@@ -106,6 +106,13 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'commentlist' => 'Torna alla panoramica dei commenti'
 );
 
+$lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
+	'name' => 'Il nome non deve mancare.',
+	'email' => 'L\'indirizzo e-mail non è corretto.',
+	'url' => 'Il sito web non è corretto e deve iniziare con <strong>http://</strong> o <strong>https://</strong>.',
+	'content' => 'Il commento non deve mancare.'
+);
+
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 	1 => 'Il commento è stato modificato',
 	-1 => 'Si è verifcato un errore durante la modifica del commento'

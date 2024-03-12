@@ -179,6 +179,8 @@ __________________________________________
 %content%
 __________________________________________
 
+Logge dich im administrativen Bereich deines FlatPress-Blogs ein und prüfe im Comment-Center den blockierten Kommentar.
+
 Automatisch generiert von
 %blogtitle%
 

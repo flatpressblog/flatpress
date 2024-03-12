@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Obnovit oprávnění souborů',
 	'opt4' => 'Ukázat informace o PHP',
 	'opt5' => 'Zjistit aktualizace',
+	'opt6' => 'Zobrazit údaje o podpoře',
 
 	'chmod_info' => 'Pokud se oprávnění souboru <strong>nepodařilo</strong> obnovit na ' . decoct(FILE_PERMISSIONS) . ', vlastník souboru pravděpodobně není stejný jako vlastník webového serveru.<br>' . //
 		'Případně můžete ignorovat toto oznámení.'

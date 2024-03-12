@@ -71,7 +71,6 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 );
 
 /* comments */
-
 $lang ['admin'] ['entry'] ['commentlist'] = array(
 	'head' => 'Commentaires du billet: ',
 	'descr' => 'S&eacute;lectionner un commentaire &agrave; effacer',
@@ -105,6 +104,13 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'loggedin' => 'Administrateur connecté',
 	'submit' => 'Enregistrer',
 	'commentlist' => 'retour à l\'aperçu des commentaires'
+);
+
+$lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
+	'name' => 'Le nom ne doit pas manquer.',
+	'email' => 'L\'adresse e-mail est erronée.',
+	'url' => 'L\'indication du site web est erronée et doit commencer par <strong>http://</strong> ou <strong>https://</strong>.',
+	'content' => 'Le commentaire ne doit pas manquer.'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(

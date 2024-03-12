@@ -10,9 +10,10 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Restore file permissions',
 	'opt4' => 'Show info about PHP',
 	'opt5' => 'Check for updates',
+	'opt6' => 'Show support data',
 
 	'chmod_info' => 'If the file permissions <strong>could not</strong> be reset to ' . decoct(FILE_PERMISSIONS) . ', the owner of the file is probably not the same as the owner of the web server.<br>' . //
-		'Normalement, tu peux ignorer cette remarque.'
+		'Normally, you can ignore this warning.'
 );
 	
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
