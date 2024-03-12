@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Gendan rettigheder til filadgang',
 	'opt4' => 'Vis PHP-information om webserveren',
 	'opt5' => 'Tjek for nye versioner',
+	'opt6' => 'Vis supportdata',
 
 	'chmod_info' => 'Hvis filrettighederne <strong>ikke</strong> kunne nulstilles til ' . decoct(FILE_PERMISSIONS) . ', er ejeren af filen sandsynligvis ikke den samme som ejeren af webserveren.<br>' . //
 		'Normalt kan du ignorere dette tip.'

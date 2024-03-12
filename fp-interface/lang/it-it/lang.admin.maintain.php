@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Ripristina i permessi dei file',
 	'opt4' => 'Visualizza informazioni su PHP',
 	'opt5' => 'Controllo aggiornamenti',
+	'opt6' => 'Mostra i dati di supporto',
 
 	'chmod_info' => 'Se non è stato possibile reimpostare i permessi del file a ' . decoct(FILE_PERMISSIONS) . ', probabilmente il proprietario del file non è lo stesso del server web.<br>' . //
 		'Di solito puoi ignorare questo avviso.'
