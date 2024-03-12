@@ -106,6 +106,13 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'commentlist' => 'zurück zur Kommentarübersicht'
 );
 
+$lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
+	'name' => 'Der Name darf nicht fehlen.',
+	'email' => 'Die E-Mail-Adresse ist fehlerhaft.',
+	'url' => 'Die Angabe der Website ist fehlerhaft und muss mit <strong>http://</strong> oder <strong>https://</strong> beginnen.',
+	'content' => 'Der Kommentar darf nicht fehlen.'
+);
+
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 	1 => 'Der Kommentar wurde geändert',
 	-1 => 'Ein Fehler ist beim Ändern des Kommentars aufgetreten'

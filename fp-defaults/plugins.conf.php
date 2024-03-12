@@ -28,6 +28,7 @@ $fp_plugins = array(
 	'mediamanager',
 	'datechanger', // Lets you change the publish date for (new) entries.
 	'feed', // Activates the RSS and Atom feed widget
+	'emoticons', // // Activates an emoticons toolbar for entries and static pages
 	'gallerycaptions',
 	'photoswipe'
 );

@@ -106,6 +106,13 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'commentlist' => 'Terug naar het commentaaroverzicht'
 );
 
+$lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
+	'name' => 'De naam mag niet ontbreken.',
+	'email' => 'Het e-mailadres is onjuist.',
+	'url' => 'De website is onjuist en moet beginnen met <strong>http://</strong> of <strong>https://</strong>.',
+	'content' => 'Het commentaar mag niet ontbreken.'
+);
+
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
 	1 => 'Commentaar is bewerkt',
 	-1 => 'Er is een fout opgetreden tijdens het bewerken van het commentaar'

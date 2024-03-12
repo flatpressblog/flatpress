@@ -37,6 +37,7 @@
 			{if function_exists('plugin_bbcode_init')}
 				{include file="plugin:bbcode/toolbar"}
 			{/if}
+			<!-- BOF Custom toolbar -->{action hook=simple_toolbar_form}<!-- EOF Custom toolbar -->
 			<p>
 			{if isset($error) && isset($error.content) && !empty($error.content)}
 				{assign var=class value="field-error"}

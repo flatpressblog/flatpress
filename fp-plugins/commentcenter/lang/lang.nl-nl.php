@@ -175,11 +175,13 @@ $lang ['plugin'] ['commentcenter'] ['mail_text'] = 'Beste %toname%,
 maar het heeft uw goedkeuring nodig voordat het wordt getoond.
 
 Hier is de opmerking die zojuist is geplaatst:
-***************
+__________________________________________
 %content%
-***************
+__________________________________________
 
-Het beste,
+Log in bij het beheer van je FlatPress-blog en controleer de geblokkeerde opmerking in het opmerkingencentrum.
+
+Automatisch gegenereerd door
 %blogtitle%
 
 ';
