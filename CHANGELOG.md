@@ -42,8 +42,8 @@
 - BBCode plugin: Allows local video files ("attachs/video.mp4") and outputs valid HTML ([#192](https://github.com/flatpressblog/flatpress/issues/192))
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
 - Calendar plugin: Fixed incorrect text output when Russian is set as language
-- Fixed broken links in the administration area
 - Footnotes plugin: Compatibility with [Markdown plugin](https://github.com/flatpressblog/flatpress-extras/tree/master/fp-plugins/markdown) established ([#322](https://github.com/flatpressblog/flatpress/issues/322))
+- PrettyURLs plugin: Works properly again with non-Latin characters in entry titles and category names ([#281](https://github.com/flatpressblog/flatpress/issues/281))
 
 ## Setup
 - Reworked Installer ([#266](https://github.com/flatpressblog/flatpress/issues/266))
@@ -115,6 +115,7 @@
 - Added missing properties in order to prevent "Dynamic properties are deprecated" error under PHP 8.2 ([#115](https://github.com/flatpressblog/flatpress/issues/115))
 - Admin maintenance panel: Check file access rights after reset
 - Admin comment edit panel: Validation added ([#304](https://github.com/flatpressblog/flatpress/issues/304))
+- Fixed broken links in the administration area
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
