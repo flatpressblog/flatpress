@@ -42,9 +42,9 @@ class Plugin_PrettyURLs {
 	var $date_handled = false;
 
 	var $categories = null;
-	
+
 	var $baseurl = null;
-	
+
 	var $mode = null;
 
 	var $fp_params;
@@ -159,13 +159,16 @@ class Plugin_PrettyURLs {
 		if (!$this->categories)
 			return;
 
+		// $this->categories contains sanitized category names, so we have to sanitize before the search
+		$sanitizedtitle = sanitize_title($matches [1]);
+
 		if (PRETTYURLS_TITLES) {
-			if ($c = array_search($matches [1], $this->categories))
+			if ($c = array_search($sanitizedtitle, $this->categories))
 				$this->fp_params ['cat'] = $c;
 			else
 				return $matches [0];
 		} else {
-			$this->fp_params ['cat'] = $matches [1];
+			$this->fp_params ['cat'] = $sanitizedtitle;
 		}
 	}
 
@@ -188,8 +191,11 @@ class Plugin_PrettyURLs {
 	}
 
 	function handle_entry($matches) {
+		// the cache contains (md5'ed) sanitized entry names, so we have to sanitize before handling it
+		$sanitizedtitle = sanitize_title($matches [1]);
+
 		if (!PRETTYURLS_TITLES) {
-			$this->fp_params ['entry'] = $matches [1];
+			$this->fp_params ['entry'] = $sanitizedtitle;
 			return;
 		}
 
@@ -200,8 +206,8 @@ class Plugin_PrettyURLs {
 			$this->fp_params ['entry'] = 'a';
 		}
 
-		if ($this->cache_get($this->fp_params ['y'], $this->fp_params ['m'], $this->fp_params ['d'], md5($matches [1]))) {
-			$this->fp_params ['entry'] = $this->index [$this->fp_params ['y']] [$this->fp_params ['m']] [$this->fp_params ['d']] [md5($matches [1])];
+		if ($this->cache_get($this->fp_params ['y'], $this->fp_params ['m'], $this->fp_params ['d'], md5($sanitizedtitle))) {
+			$this->fp_params ['entry'] = $this->index [$this->fp_params ['y']] [$this->fp_params ['m']] [$this->fp_params ['d']] [md5($sanitizedtitle)];
 		} else {
 			// a bit hackish: we make up a fake url when there is no match,
 			// so that at the higher level the system will 404...
