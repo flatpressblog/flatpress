@@ -9,11 +9,11 @@ function cookie_setup() {
 		define('COOKIEHASH', $fp_config ['general'] ['blogid']);
 
 	if (!defined('USER_COOKIE'))
-		define('USER_COOKIE', 'fpuser_' . COOKIEHASH);
+		define('USER_COOKIE', '__secure-fpuser_' . COOKIEHASH);
 	if (!defined('PASS_COOKIE'))
-		define('PASS_COOKIE', 'fppass_' . COOKIEHASH);
+		define('PASS_COOKIE', '__secure-fppass_' . COOKIEHASH);
 	if (!defined('SESS_COOKIE'))
-		define('SESS_COOKIE', 'fpsess_' . COOKIEHASH);
+		define('SESS_COOKIE', '__secure-fpsess_' . COOKIEHASH);
 
 	if (!defined('COOKIEPATH'))
 		define('COOKIEPATH', preg_replace('|https?://[^/]+|i', '', BLOG_BASEURL));
