@@ -10,7 +10,6 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Restaurer les permissions de fichiers',
 	'opt4' => 'Afficher info.php',
 	'opt5' => 'V&eacute;rifier les mises &agrave; jour',
-	'opt6' => 'Afficher les données de support',
 
 	'chmod_info' => 'Si les permissions du fichier <strong>n\'ont pas pu être remises à ' . decoct(FILE_PERMISSIONS) . '</strong>, il est probable que le propriétaire du fichier ne soit pas le même que celui du serveur web.<br>' . //
 		'tre diff&eacute;rent du serveur web.'
