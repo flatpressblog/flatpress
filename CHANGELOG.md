@@ -22,7 +22,7 @@
 - DateChanger plugin added: Allows you to change the publication date for (new) entries.
 - Feed plugin added: Displays the RSS and Atom feed via a widget ([#317](https://github.com/flatpressblog/flatpress/issues/317))
 - CookieBanner plugin added: Discreet reference to the use of cookies ([#325](https://github.com/flatpressblog/flatpress/issues/325))
-- Emonticons plugin added: Allows accessible emoticons via an editor toolbar. Suggestion from [@DeltaLima](https://github.com/DeltaLima)
+- Emoticons plugin added: Allows accessible emoticons via an editor toolbar. Suggested by [@DeltaLima](https://github.com/DeltaLima)
 
 ### Changes
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
@@ -42,8 +42,8 @@
 - BBCode plugin: Allows local video files ("attachs/video.mp4") and outputs valid HTML ([#192](https://github.com/flatpressblog/flatpress/issues/192))
 - BBCode plugin: Initial settings after fresh install shown correctly ([#102](https://github.com/flatpressblog/flatpress/issues/102))
 - Calendar plugin: Fixed incorrect text output when Russian is set as language
-- Fixed broken links in the administration area
 - Footnotes plugin: Compatibility with [Markdown plugin](https://github.com/flatpressblog/flatpress-extras/tree/master/fp-plugins/markdown) established ([#322](https://github.com/flatpressblog/flatpress/issues/322))
+- PrettyURLs plugin: Works properly again with non-Latin characters in entry titles and category names ([#281](https://github.com/flatpressblog/flatpress/issues/281))
 
 ## Setup
 - Reworked Installer ([#266](https://github.com/flatpressblog/flatpress/issues/266))
@@ -115,6 +115,7 @@
 - Added missing properties in order to prevent "Dynamic properties are deprecated" error under PHP 8.2 ([#115](https://github.com/flatpressblog/flatpress/issues/115))
 - Admin maintenance panel: Check file access rights after reset
 - Admin comment edit panel: Validation added ([#304](https://github.com/flatpressblog/flatpress/issues/304))
+- Fixed broken links in the administration area
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
