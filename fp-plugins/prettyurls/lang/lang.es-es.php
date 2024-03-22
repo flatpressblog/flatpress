@@ -8,20 +8,22 @@ $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'Configuración de Prett
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'Configuración de PrettyURLs',
 	'description1' => 'Aquí puedes transformar las URLs estándar de FlatPress en URLs bonitas y SEO-friendly.',
+	'nginx' => 'PrettyURLs con NGINX',
+	'wiki_nginx' => 'https://wiki.flatpress.org/res:plugins:prettyurls#nginx',
 	'htaccess' => '.htaccess',
 	'description2' => 'Este editor le permite editar directamente el <code>.htaccess</code> necesario para el plugin PrettyUrls.<br>' . //
 		'<strong>Nota:</strong> Sólo los servidores web compatibles con NCSA, como Apache, reconocen el concepto de archivos .htaccess. ' . //
-		'El software de tu servidor lo es: <strong>' . $_SERVER["SERVER_SOFTWARE"] . '</strong>',
+		'El software de tu servidor lo es: <strong>' . $_SERVER ['SERVER_SOFTWARE'] . '</strong>',
 	'cantsave' => 'No puede editar este archivo, porque no es <strong>writable</strong>. Puede otorgar permiso de escritura o copiar y pegar en un archivo y luego cargarlo.',
 	'mode' => 'Modo',
 	'auto' => 'Automático',
 	'autodescr' => 'trata de adivinar la mejor opción para mí',
 	'pathinfo' => 'Información de path',
-	'pathinfodescr' => 'e.g. /index.php/2011/01/01/hello-world/',
+	'pathinfodescr' => 'e.g. /index.php/2024/01/01/hello-world/',
 	'httpget' => 'HTTP Get',
-	'httpgetdescr' => 'e.g. /?u=/2011/01/01/hello-world/',
+	'httpgetdescr' => 'e.g. /?u=/2024/01/01/hello-world/',
 	'pretty' => 'Pretty',
-	'prettydescr' => 'e.g. /2011/01/01/hello-world/',
+	'prettydescr' => 'e.g. /2024/01/01/hello-world/',
 
 	'saveopt' => 'Guardar la configuración',
 

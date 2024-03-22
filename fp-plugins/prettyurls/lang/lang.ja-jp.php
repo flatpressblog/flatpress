@@ -8,21 +8,23 @@ $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLsの設定';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'PrettyURLsの設定',
 	'description1' => 'FlatPressの標準的なURLを、SEOに配慮した美しいURLに変換することができます。',
+	'nginx' => 'NGINXによるPrettyURLs',
+	'wiki_nginx' => 'https://wiki.flatpress.org/res:plugins:prettyurls#nginx',
 	'htaccess' => '.htaccess',
 	'description2' => 'このエディタでは、PrettyUrlsプラグインに必要な<code>.htaccess</code>を直接編集することができます。<br>' . //
 		'<strong>注:</strong> .htaccessファイルの概念を認識するのは、ApacheのようなNCSA互換のウェブサーバーだけです。 ' . //
-		'サーバーソフトウェアは. <strong>' . $_SERVER["SERVER_SOFTWARE"] . '</strong>',
+		'サーバーソフトウェアは. <strong>' . $_SERVER ['SERVER_SOFTWARE'] . '</strong>',
 	'cantsave' => 'このファイルを編集できません、なぜなら <strong>書き込み許可</strong>されてないからです。' .
 		'書き込み許可を与えたり、ファイルにコピー＆ペーストしてアップロードすることもできる。',
 	'mode' => 'モード',
 	'auto' => '自動',
 	'autodescr' => '最良の選択を推定します。',
 	'pathinfo' => 'Path Info',
-	'pathinfodescr' => '例. /index.php/2011/01/01/hello-world/',
+	'pathinfodescr' => '例. /index.php/2024/01/01/hello-world/',
 	'httpget' => 'HTTP Get',
-	'httpgetdescr' => '例. /?u=/2011/01/01/hello-world/',
+	'httpgetdescr' => '例. /?u=/2024/01/01/hello-world/',
 	'pretty' => 'Pretty',
-	'prettydescr'=> '例. /2011/01/01/hello-world/',
+	'prettydescr'=> '例. /2024/01/01/hello-world/',
 
 	'saveopt' => '設定の変更を保存する',
 

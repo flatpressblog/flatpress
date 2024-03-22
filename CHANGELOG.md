@@ -11,7 +11,6 @@
 - [README](https://github.com/flatpressblog/flatpress/blob/master/README.md): added "help and support" section
 - Re-activated useful "Stats" panel in Admin Area / Entries
 - "Follow on Mastodon" added as an alternative to X (Twitter) in the welcome entry
-- Support data for the community can be called via the admin maintain panel or via the URL `http(s)://your-flatpress-blog.ltd/admin/support.php` to solve problems ([#331](https://github.com/flatpressblog/flatpress/issues/331))
 
 ## Plugins
 ### Additions
@@ -23,6 +22,7 @@
 - Feed plugin added: Displays the RSS and Atom feed via a widget ([#317](https://github.com/flatpressblog/flatpress/issues/317))
 - CookieBanner plugin added: Discreet reference to the use of cookies ([#325](https://github.com/flatpressblog/flatpress/issues/325))
 - Emoticons plugin added: Allows accessible emoticons via an editor toolbar. Suggested by [@DeltaLima](https://github.com/DeltaLima)
+- Support plugin added: Support data for the FlatPress admin and the community can be accessed via the admin maintenance menu.
 
 ### Changes
 - jQuery plugin: Updated jQuery (3.5.1 => 3.6.1) and jQueryUI (1.12.1 => 1.13.2)
