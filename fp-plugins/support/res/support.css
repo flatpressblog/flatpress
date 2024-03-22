@@ -1,0 +1,46 @@
+.support-data {
+	background-color: #ffffff
+}
+
+.support-data ul li {
+	list-style-type: none
+}
+
+.support-data .error {
+	color: #990000
+}
+
+.support-data .attention {
+	color: #D35400
+}
+
+.support-data .success {
+	color: #0E7924
+}
+
+/* hidden code block - only becomes visible when pasted - onion juice ink - magic */
+.support-data h2 {
+	margin-bottom: 0
+}
+
+.support-data .codeblock {
+	background-color: #ffffff;
+	margin: 0;
+	font-size: 0px
+}
+
+/* Compatibility */ 
+.support-data p {
+	line-height: unset !IMPORTANT;
+	margin-top: unset !IMPORTANT
+}
+
+.support-data ul li::before {
+	content: unset !IMPORTANT
+}
+
+.support-data ul {
+	margin-left: 2em !IMPORTANT;
+	padding-top: unset;
+	padding-bottom: unset
+}

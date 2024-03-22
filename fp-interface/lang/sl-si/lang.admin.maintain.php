@@ -10,7 +10,6 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Obnovi dovoljenja datotek',
 	'opt4' => 'Prikaži informacije o PHP',
 	'opt5' => 'Preveri posodobitve',
-	'opt6' => 'Prikaži podatke o podpori',
 
 	'chmod_info' => 'Če pravic datoteke ni bilo mogoče ponastaviti na ' . decoct(FILE_PERMISSIONS) . ', lastnik datoteke verjetno ni isti kot lastnik spletnega strežnika.<br>' . //
 		'Običajno lahko to obvestilo prezrete.'

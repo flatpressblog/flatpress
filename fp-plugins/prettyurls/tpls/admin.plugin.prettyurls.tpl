@@ -29,6 +29,9 @@
 
 
 
+	<p class="alignright">
+		<a class="hint externlink" href="{$lang.admin.plugin.prettyurls.wiki_nginx}" target="_blank">{$lang.admin.plugin.prettyurls.nginx}</a>
+	</p>
 	<h3>{$plang.htaccess}</h3>
 
 	<p>{$plang.description2}</p>
