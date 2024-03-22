@@ -8,20 +8,22 @@ $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLs';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'PrettyURLs Konfiguration',
 	'description1' => 'Hier kannst du die Standard-URL\'s von FlatPress in schöne, SEO-freundliche URL\'s verwandeln.',
+	'nginx' => 'PrettyURLs mit NGINX',
+	'wiki_nginx' => 'https://wiki.flatpress.org/res:plugins:prettyurls#nginx',
 	'htaccess' => '.htaccess',
 	'description2' => 'Dieser Editor ermöglicht die für das PrettyURLs Plugin benötigte <code>.htaccess</code> direkt zu bearbeiten.<br>' . //
 		'<strong>Hinweis:</strong> Nur Webserver, die NCSA kompatibel sind, wie beispielsweise Apache, kennen das Konzept der .htaccess Dateien. ' . //
-		'Deine Serversoftware ist: <strong>' . $_SERVER["SERVER_SOFTWARE"] . '</strong>',
+		'Deine Serversoftware ist: <strong>' . $_SERVER ['SERVER_SOFTWARE'] . '</strong>',
 	'cantsave' => 'Diese Datei kann nicht bearbeitet werden, weil sie schreibgeschützt ist. Ändere die Zugriffsrechte oder kopiere diese Zeilen, füge sie in eine lokale Datei ein und lade diese dann hoch.',
 	'mode' => 'Modus',
 	'auto' => 'Automatisch',
 	'autodescr' => 'Ermittle die beste Möglichkeit automatisch',
 	'pathinfo' => 'Path Info',
-	'pathinfodescr' => 'Beispiel: /index.php/2011/01/01/hello-world/',
+	'pathinfodescr' => 'Beispiel: /index.php/2024/01/01/hello-world/',
 	'httpget' => 'HTTP Get',
-	'httpgetdescr' => 'Beispiel: /?u=/2011/01/01/hello-world/',
+	'httpgetdescr' => 'Beispiel: /?u=/2024/01/01/hello-world/',
 	'pretty' => 'Pretty',
-	'prettydescr' => 'Beispiel: /2011/01/01/hello-world/',
+	'prettydescr' => 'Beispiel: /2024/01/01/hello-world/',
 
 	'saveopt' => 'Einstellungen speichern',
 
