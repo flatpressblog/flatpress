@@ -18,7 +18,7 @@ $fp_plugins = array(
 	// 'lastcomments', // cache-based last-comments block
 	// 'lastcommentsadmin',
 	'lastentries',
-	// 'prettyurls', // The use of Apache web servers will be less than 50% worldwide in 2023
+	'prettyurls', // PrettyURLs with NGINX? see https://wiki.flatpress.org/res:plugins:prettyurls#nginx
 	'categories',
 	'searchbox',
 	'blockparser',
