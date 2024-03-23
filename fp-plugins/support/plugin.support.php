@@ -28,7 +28,8 @@ if (class_exists('AdminPanelAction')) {
 		}
 
 		function main() {
-			global $fp_config, $fp_plugins;
+ 			require CONFIG_DIR . 'plugins.conf.php';
+			global $fp_config;
 
 			$BASE_DIR = BASE_DIR;
 			$setupfile = BASE_DIR . '/setup.php';
@@ -92,9 +93,7 @@ if (class_exists('AdminPanelAction')) {
 
 			if ($BLOG_BASEURL) {
 				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['pos_plugins'];
-				$support ['output_plugins'] = 'Meh!';
-				// echo @implode(', ', $fp_plugins);
-				// echo '</p>';
+				$support ['output_plugins'] = implode(', ', $fp_plugins);
 			} else {
 				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['neg_plugins'];
 			}
