@@ -2,7 +2,7 @@
 $lang ['admin'] ['panel'] ['maintain'] = 'Maintainance';
 
 $lang ['admin'] ['maintain'] ['default'] = array(
-	'head' => 'Maintenaince',
+	'head' => 'Maintenance',
 	'descr' => 'Come here when you think something got messed, and maybe here you\'ll find a solution. However this might not work.',
 	'opt0' => '&laquo; Back to main menu',
 	'opt1' => 'Rebuild index',
