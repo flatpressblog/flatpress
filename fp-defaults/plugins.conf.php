@@ -24,6 +24,7 @@ $fp_plugins = array(
 	'blockparser',
 	'readmore',
 	'favicon',
+	'postviews', // Counts and displays entry views
 	'commentcenter', // including Akismet interface
 	'mediamanager',
 	'datechanger', // Lets you change the publish date for (new) entries.
