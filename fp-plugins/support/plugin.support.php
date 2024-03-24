@@ -9,7 +9,6 @@
  */
 require_once ABS_PATH . 'defaults.php';
 require_once INCLUDES_DIR . 'includes.php';
-require_once CONFIG_DIR . 'plugins.conf.php';
 
 if (class_exists('AdminPanelAction')) {
 
@@ -31,7 +30,10 @@ if (class_exists('AdminPanelAction')) {
  			require CONFIG_DIR . 'plugins.conf.php';
 			global $fp_config;
 
+			$BASE_DIR = null;
 			$BASE_DIR = BASE_DIR;
+
+			$setupfile = null;
 			$setupfile = BASE_DIR . '/setup.php';
 
 			$LANG_DEFAULT = null;
@@ -61,39 +63,50 @@ if (class_exists('AdminPanelAction')) {
 
 			$support ['h3_setup'] = $lang ['admin'] ['maintain'] ['support'] ['h3_setup'];
 
+			$support ['output_SYSTEM_VER'] = SYSTEM_VER . '</p>';
+
+			$support ['output_BASE_DIR'] = BASE_DIR . '</p>';
+
+			$support ['output_www'] = $fp_config ['general'] ['www'] . '</p>';
+
 			if ($LANG_DEFAULT) {
 				$support ['LANG_DEFAULT'] = $lang ['admin'] ['maintain'] ['support'] ['pos_LANG_DEFAULT'];
+				$support ['output_LANG_DEFAULT'] = $LANG_DEFAULT . '</p>';
 			} else {
 				$support ['LANG_DEFAULT'] = $lang ['admin'] ['maintain'] ['support'] ['neg_LANG_DEFAULT'];
 			}
 
 			if ($lang) {
 				$support ['lang'] = $lang ['admin'] ['maintain'] ['support'] ['pos_lang'];
+				$support ['output_lang'] = $fp_config ['locale'] ['lang'] . '</p>';
 			} else {
 				$support ['lang'] = $lang ['admin'] ['maintain'] ['support'] ['neg_lang'];
 			}
 
 			if ($charset) {
 				$support ['charset'] = $lang ['admin'] ['maintain'] ['support'] ['pos_charset'];
+				$support ['output_charset'] = $fp_config ['locale'] ['charset'] . '</p>';
 			} else {
 				$support ['charset'] = $lang ['admin'] ['maintain'] ['support'] ['neg_charset'];
 			}
 
 			if ($theme) {
 				$support ['theme'] = $lang ['admin'] ['maintain'] ['support'] ['pos_theme'];
+				$support ['output_theme'] = $fp_config ['general'] ['theme'] . '</p>';
 			} else {
 				$support ['theme'] = $lang ['admin'] ['maintain'] ['support'] ['neg_theme'];
 			}
 
 			if ($style) {
 				$support ['style'] = $lang ['admin'] ['maintain'] ['support'] ['pos_style'];
+				$support ['output_style'] = $fp_config ['general'] ['style'] . '</p>';
 			} else {
 				$support ['style'] = $lang ['admin'] ['maintain'] ['support'] ['neg_style'];
 			}
 
-			if ($BLOG_BASEURL) {
+			if ($fp_plugins) {
 				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['pos_plugins'];
-				$support ['output_plugins'] = implode(', ', $fp_plugins);
+				$support ['output_plugins'] = implode(', ', $fp_plugins) . '</p>';
 			} else {
 				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['neg_plugins'];
 			}
