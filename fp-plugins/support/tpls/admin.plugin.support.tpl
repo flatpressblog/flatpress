@@ -11,28 +11,30 @@
 	</h3>
 	<ul>
 		<li>
-			{$plang.version}
+			{$plang.version}{$support.output_SYSTEM_VER}
+		</li>
+		{*
+		<li>
+			{$plang.basedir}{$support.output_BASE_DIR}
+		</li>
+		*}
+		<li>
+			{$plang.blogbaseurl}{$support.output_www}
 		</li>
 		<li>
-			{$plang.basedir}
+			{$support.LANG_DEFAULT}{$support.output_LANG_DEFAULT}
 		</li>
 		<li>
-			{$plang.blogbaseurl}
+			{$support.lang}{$support.output_lang}
 		</li>
 		<li>
-			{$support.LANG_DEFAULT}
+			{$support.charset}{$support.output_charset}
 		</li>
 		<li>
-			{$support.lang}
+			{$support.theme}{$support.output_theme}
 		</li>
 		<li>
-			{$support.charset}
-		</li>
-		<li>
-			{$support.theme}
-		</li>
-		<li>
-			{$support.style}
+			{$support.style}{$support.output_style}
 		</li>
 		<li>
 			{$support.plugins}{$support.output_plugins}
