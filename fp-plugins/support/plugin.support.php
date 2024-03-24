@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Support
- * Description: Show support data. Part of the standard distribution.
+ * Description: Shows support data in the Maintain menu. Part of the standard distribution.
  * Version: 1.1.0
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
