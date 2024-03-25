@@ -111,6 +111,10 @@ if (class_exists('AdminPanelAction')) {
 				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['neg_plugins'];
 			}
 
+			if (function_exists("plugin_datechanger_toolbar")) {
+				$support ['output_datechanger'] = $lang ['admin'] ['maintain'] ['support'] ['output_datechanger'];
+			}
+
 			/**
 			 * prepare output "Core files"
 			 */

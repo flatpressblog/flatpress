@@ -39,6 +39,9 @@
 		<li>
 			{$support.plugins}{$support.output_plugins}
 		</li>
+		<li>
+			{$support.output_datechanger}
+		</li>
 	</ul>
 	<p class="codeblock">[/code]</p>
 
