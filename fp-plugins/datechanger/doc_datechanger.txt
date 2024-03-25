@@ -4,7 +4,7 @@ Lets you change the publish date for (new) entries. Therefore, it adds the edit 
 
 This plugin only works for NEW entries. Once published, the date cannot be changed again!
 
-Attention: The plugin skips a time correction, which can be set in the options menu.
+Attention: The plugin skips a time correction, which can be set in the configuration menu.
  
 About
 -----
