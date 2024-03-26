@@ -24,7 +24,8 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'oldwdgsdescr' => 'Das folgende Widget Set scheint zu keinem der oben gelisteten ' . //
 		'Widget Sets zu gehören. Eventuell ist es Teil eines anderen Themes.',
 
-	'submit' => 'Änderungen speichern'
+	'submit' => 'Änderungen speichern',
+	'drop_here' => 'Hier ablegen'
 );
 
 $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(
@@ -43,9 +44,9 @@ $lang ['admin'] ['widgets'] ['default'] ['msgs'] = array(
 $lang ['admin'] ['widgets'] ['raw'] = array(
 	'head' => 'Verwaltung Widgets (<em>raw editor</em>)',
 	'descr' => 'Ein <a class="hint" ' . //
-		'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="What is a Widget?">' . //
 		'Widget</a> ist ein dynamisches Steuerelement eines <a class="hint" ' . //
-		'href="http://wiki.flatpress.org/doc:plugins" title="What is a plugin?">' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a plugin?">' . //
 		'Plugins</a>, das im Widget Bereich (<em>Widgetsets</em>) des Blogs frei positioniert werden kann. ' . //
 		'Nur Widgets/Plugins eintragen die auch in der <a href="admin.php?p=plugin">Plugin Verwaltung</a> aktiviert worden sind.</p>' . //
 

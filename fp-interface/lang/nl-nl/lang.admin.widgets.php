@@ -29,6 +29,7 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 		'widgetsets als boven getoond. Dit kan een overblijfsel zijn van een ander thema.',
 
 	'submit' => 'Bewaar veranderingen',
+	'drop_here' => 'Hier plaatsen'
 );
 
 $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(
