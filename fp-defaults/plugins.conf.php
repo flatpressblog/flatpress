@@ -27,9 +27,7 @@ $fp_plugins = array(
 	'postviews', // Counts and displays entry views
 	'commentcenter', // including Akismet interface
 	'mediamanager',
-	// 'datechanger', // Lets you change the publish date for (new) entries.
-			// DateChanger uses UTC. The time correction in the admin area is skipped
-			// Therefore deactivated by default
+	'datechanger', // Lets you change the publish date for (new) entries.
 	'feed', // Activates the RSS and Atom feed widget
 	'emoticons', // Activates an emoticons toolbar for entries and static pages
 	'support', // Provides the FlatPress admin and the community with all relevant data in case of problems.

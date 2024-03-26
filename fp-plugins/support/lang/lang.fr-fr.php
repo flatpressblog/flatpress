@@ -34,8 +34,6 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	'pos_plugins' => '<p class="output"><strong>Activated plugins:</strong> </p>',
 	'neg_plugins' => '<p class="output"><strong>Activated plugins:</strong> Could not be determined.</p>',
 
-	'output_datechanger' => '<p class="attention"><strong>&#8505;</strong> The active DateChanger plugin skips the corrected timezone in the configuration menu.</p>',
-
 	// output "Core files"
 	'h2_permissions' => 'File and directory permissions',
 	'h3_core_files' => 'Core',
