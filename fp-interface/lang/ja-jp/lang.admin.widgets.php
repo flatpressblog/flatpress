@@ -27,7 +27,8 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'oldwdgsdescr' => 'The following widgetsets seems not to belong to any of the ' . //
 		'widgetsets listed above. They might be remainders from another theme.',
 
-	'submit' => '変更を保存する'
+	'submit' => '変更を保存する',
+	'drop_here' => 'ここに置く'
 );
 
 $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(

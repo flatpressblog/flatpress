@@ -24,7 +24,8 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'oldwdgsdescr' => 'Følgende widget-sæt ser ikke ud til at passe til nogen af de ovennævnte ' . //
 		'widget-sæt, der er anført ovenfor. Det kan være en del af et andet tema.',
 
-	'submit' => 'Gem ændringer'
+	'submit' => 'Gem ændringer',
+	'drop_here' => 'Fil her'
 );
 
 $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(
