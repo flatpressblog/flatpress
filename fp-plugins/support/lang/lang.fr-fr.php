@@ -16,6 +16,18 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	'basedir' => '<p class="output"><strong>Base directory:</strong> ',
 	'blogbaseurl' => '<p class="output"><strong>Blog base URL:</strong> ',
 
+	'pos_theme' => '<p class="output"><strong>Theme:</strong> ',
+	'neg_theme' => '<p class="output"><strong>Theme:</strong> not set (default is leggero)</p>',
+
+	'pos_style' => '<p class="output"><strong>Style:</strong> ',
+	'neg_style' => '<p class="output"><strong>Style:</strong> default style</p>',
+
+	'pos_plugins' => '<p class="output"><strong>Activated plugins:</strong> ',
+	'neg_plugins' => '<p class="output"><strong>Activated plugins:</strong> Could not be determined.</p>',
+
+	// output "International"
+	'h3_international' => 'International',
+
 	'pos_LANG_DEFAULT' => '<p class="output"><strong>Language (automatic):</strong> ',
 	'neg_LANG_DEFAULT' => '<p class="output"><strong>Language (automatic): &#8505;</strong> not recognized</p>',
 
@@ -25,14 +37,14 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	'pos_charset' => '<p class="output"><strong>Character set:</strong> ',
 	'neg_charset' => '<p class="output"><strong>Character set:</strong> not set (default is utf-8)</p>',
 
-	'pos_theme' => '<p class="output"><strong>Theme:</strong> ',
-	'neg_theme' => '<p class="output"><strong>Theme:</strong> not set (default is leggero)</p>',
+	'global_date_time' => '<p class="output"><strong>UTC date, time:</strong> ',
+	'neg_global_date_time' => 'Could not be determined.</p>',
 
-	'pos_style' => '<p class="output"><strong>Style:</strong> ',
-	'neg_style' => '<p class="output"><strong>Style:</strong> default style</p>',
+	'local_date_time' => '<p class="output"><strong>LCL date, time:</strong> ',
+	'neg_local_date_time' => 'Could not be determined.</p>',
 
-	'pos_plugins' => '<p class="output"><strong>Activated plugins:</strong> </p>',
-	'neg_plugins' => '<p class="output"><strong>Activated plugins:</strong> Could not be determined.</p>',
+	'time_offset' => '<p class="output"><strong>Time offset:</strong> ',
+
 
 	// output "Core files"
 	'h2_permissions' => 'File and directory permissions',

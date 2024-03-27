@@ -69,6 +69,32 @@ if (class_exists('AdminPanelAction')) {
 
 			$support ['output_www'] = $fp_config ['general'] ['www'] . '</p>';
 
+			if ($theme) {
+				$support ['theme'] = $lang ['admin'] ['maintain'] ['support'] ['pos_theme'];
+				$support ['output_theme'] = $fp_config ['general'] ['theme'] . '</p>';
+			} else {
+				$support ['theme'] = $lang ['admin'] ['maintain'] ['support'] ['neg_theme'];
+			}
+
+			if ($style) {
+				$support ['style'] = $lang ['admin'] ['maintain'] ['support'] ['pos_style'];
+				$support ['output_style'] = $fp_config ['general'] ['style'] . '</p>';
+			} else {
+				$support ['style'] = $lang ['admin'] ['maintain'] ['support'] ['neg_style'];
+			}
+
+			if ($fp_plugins) {
+				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['pos_plugins'];
+				$support ['output_plugins'] = implode(', ', $fp_plugins) . '</p>';
+			} else {
+				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['neg_plugins'];
+			}
+
+			/**
+			 * prepare output "International"
+			 */
+			$support ['h3_international'] = $lang ['admin'] ['maintain'] ['support'] ['h3_international'];
+
 			if ($LANG_DEFAULT) {
 				$support ['LANG_DEFAULT'] = $lang ['admin'] ['maintain'] ['support'] ['pos_LANG_DEFAULT'];
 				$support ['output_LANG_DEFAULT'] = $LANG_DEFAULT . '</p>';
@@ -90,26 +116,24 @@ if (class_exists('AdminPanelAction')) {
 				$support ['charset'] = $lang ['admin'] ['maintain'] ['support'] ['neg_charset'];
 			}
 
-			if ($theme) {
-				$support ['theme'] = $lang ['admin'] ['maintain'] ['support'] ['pos_theme'];
-				$support ['output_theme'] = $fp_config ['general'] ['theme'] . '</p>';
+			$support ['global_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['global_date_time'];
+			if (function_exists("gmdate")) {
+				$support ['output_global_date_time'] = gmdate('Y-m-d H:i:s') . '</p>';
 			} else {
-				$support ['theme'] = $lang ['admin'] ['maintain'] ['support'] ['neg_theme'];
+				$support ['output_local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['neg_global_date_time'];
 			}
 
-			if ($style) {
-				$support ['style'] = $lang ['admin'] ['maintain'] ['support'] ['pos_style'];
-				$support ['output_style'] = $fp_config ['general'] ['style'] . '</p>';
+			$support ['local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['local_date_time'];
+			if (function_exists("date_time") && function_exists("gmdate")) {
+				$timestamp = date_time();
+				$date_time = gmdate('Y-m-d H:i:s', $timestamp);
+				$support ['output_local_date_time'] = $date_time . '</p>';
 			} else {
-				$support ['style'] = $lang ['admin'] ['maintain'] ['support'] ['neg_style'];
+				$support ['output_local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['neg_local_date_time'];
 			}
 
-			if ($fp_plugins) {
-				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['pos_plugins'];
-				$support ['output_plugins'] = implode(', ', $fp_plugins) . '</p>';
-			} else {
-				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['neg_plugins'];
-			}
+			$support ['time_offset'] = $lang ['admin'] ['maintain'] ['support'] ['time_offset'];
+			$support ['timeoffset'] = $fp_config ['locale'] ['timeoffset'] . ' hours</p>';
 
 			/**
 			 * prepare output "Core files"
