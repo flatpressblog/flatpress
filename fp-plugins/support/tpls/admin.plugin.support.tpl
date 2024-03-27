@@ -22,6 +22,20 @@
 			{$plang.blogbaseurl}{$support.output_www}
 		</li>
 		<li>
+			{$support.theme}{$support.output_theme}
+		</li>
+		<li>
+			{$support.style}{$support.output_style}
+		</li>
+		<li>
+			{$support.plugins}{$support.output_plugins}
+		</li>
+	</ul>
+	<h3>
+		{$support.h3_international}
+	</h3>
+	<ul>
+		<li>
 			{$support.LANG_DEFAULT}{$support.output_LANG_DEFAULT}
 		</li>
 		<li>
@@ -31,13 +45,13 @@
 			{$support.charset}{$support.output_charset}
 		</li>
 		<li>
-			{$support.theme}{$support.output_theme}
+			{$support.global_date_time}{$support.output_global_date_time}
 		</li>
 		<li>
-			{$support.style}{$support.output_style}
+			{$support.local_date_time}{$support.output_local_date_time}
 		</li>
 		<li>
-			{$support.plugins}{$support.output_plugins}
+			{$support.time_offset}{$support.timeoffset}
 		</li>
 	</ul>
 	<p class="codeblock">[/code]</p>
