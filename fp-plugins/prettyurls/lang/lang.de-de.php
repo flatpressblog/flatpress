@@ -27,6 +27,7 @@ $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 
 	'saveopt' => 'Einstellungen speichern',
 
+	'location' => '<strong>Speicherort:</strong> ' . ABS_PATH . '',
 	'submit' => '.htaccess speichern'
 );
 
