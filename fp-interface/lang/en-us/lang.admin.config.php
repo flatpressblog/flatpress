@@ -1,6 +1,6 @@
 <?php
 $lang ['admin'] ['config'] ['default'] = array(
-	'head' => 'Options',
+	'head' => 'Configuration',
 	'descr' => 'Customize and configure your FlatPress installation.',
 	'submit' => 'Save Changes',
 

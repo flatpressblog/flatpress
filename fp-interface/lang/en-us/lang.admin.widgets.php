@@ -29,7 +29,8 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'oldwdgsdescr' => 'The following widgetsets seems not to belong to any of the ' . //
 		'widgetsets listed above. They might be remainders from another theme.',
 
-	'submit' => 'Save Changes'
+	'submit' => 'Save Changes',
+	'drop_here' => 'Drop here'
 );
 	
 $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(
@@ -48,9 +49,9 @@ $lang ['admin'] ['widgets'] ['default'] ['msgs'] = array(
 $lang ['admin'] ['widgets'] ['raw'] = array(
 	'head' => 'Manage Widgets (<em>raw editor</em>)',
 	'descr' => 'A <a class="hint" ' . //
-		'href="http://wiki.flatpress.org/doc:plugins" title="What is a Widget?">' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="What is a Widget?">' . //
 		'Widget</a> is a visual element of a <a class="hint" ' . //
-		'href="http://wiki.flatpress.org/doc:plugins" title="What is a plugin?">' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a plugin?">' . //
 		'Plugin</a> that you can put in some special areas (the <em>widgetsets</em>) on your blog pages.</p>' . //
 		'<p>This is the <strong>raw</strong> editor; some advanced users or people who can\'t have JavaScript might prefer it.',
 

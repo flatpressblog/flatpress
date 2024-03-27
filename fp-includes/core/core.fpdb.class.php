@@ -159,13 +159,12 @@ class FPDB_Query {
 	var $secondary_idx = null;
 
 	var $walker = null;
-	
+
 	var $prevkey = null;
-	
+
 	var $nextkey = null;
-	
+
 	var $comments = null;
-	
 
 	function __construct($params, $ID) {
 		global $current_query;
@@ -848,6 +847,13 @@ function smarty_block_entry($params, $content, &$smarty, &$repeat) {
 			$smarty->assignByRef($k, $entry [$k]);
 
 		$smarty->assignByRef('id', $id);
+
+		// If PostViews plugin is active: Trigger view counter!
+		// This seems a bit hackish; please fix if possible.
+		// See also commented line "// add_action('entry_block', 'plugin_postviews_do');" in plugin.postviews.php
+		if (function_exists('plugin_postviews_do')) {
+			plugin_postviews_do($smarty, $id);
+		}
 
 		if (array_key_exists('categories', $entry)) {
 			$smarty->assign('entry_commslock', in_array('commslock', $entry ['categories']));

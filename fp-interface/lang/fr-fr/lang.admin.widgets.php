@@ -29,7 +29,8 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'oldwdgsdescr' => 'Les widgetsets suivantes semblent ne pas appartenir &agrave; l\'un des ' . //
 		'widgetsets list&eacute;s ici. Ceux-ci proviennent peut-&ecirc;tre d\'un autre th&egrave;me.',
 
-	'submit' => 'Enregistrer modifications'
+	'submit' => 'Enregistrer modifications',
+	'drop_here' => 'Placer ici'
 );
 
 $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(

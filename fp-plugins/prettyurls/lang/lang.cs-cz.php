@@ -26,6 +26,7 @@ $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 
 	'saveopt' => 'Uložit nastavení',
 
+	'location' => '<strong>Místo uložení:</strong> ' . ABS_PATH . '',
 	'submit' => 'Uložit .htaccess'
 );
 
