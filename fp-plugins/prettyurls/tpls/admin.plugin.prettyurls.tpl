@@ -44,6 +44,7 @@
 	{if $cantsave}
 	<p><em>{$plang.cantsave}</em></p>
 	{else}
+	<p>{$lang.admin.plugin.prettyurls.location}</p>
 	<input type="submit" name="htaccess-submit" value="{$plang.submit}"/>
 	{/if}
 	</div>

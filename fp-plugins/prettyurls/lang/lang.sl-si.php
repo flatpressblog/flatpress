@@ -27,6 +27,7 @@ $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 
 	'saveopt' => 'Shrani nastavitve',
 
+	'location' => '<strong>Lokacija shranjevanja:</strong> ' . ABS_PATH . '',
 	'submit' => 'Shrani .htaccess'
 );
 

@@ -27,6 +27,7 @@ $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 
 	'saveopt' => 'Gem indstillinger',
 
+	'location' => '<strong>Opbevaringssted:</strong> ' . ABS_PATH . '',
 	'submit' => '.htaccess gem'
 );
 
