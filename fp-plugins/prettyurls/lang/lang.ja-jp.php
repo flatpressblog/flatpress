@@ -28,6 +28,7 @@ $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 
 	'saveopt' => '設定の変更を保存する',
 
+	'location' => '<strong>保管場所:</strong> ' . ABS_PATH . '',
 	'submit' => '.htaccess を保存する'
 );
 

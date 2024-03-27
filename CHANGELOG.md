@@ -91,6 +91,7 @@
   - The menu bar in Leggero style is now centered if the screen width is less than 768px
   - URLs to the wiki or other external pages are now opened in a second tab in the administration area
   - External URLs in the administration area are now exclusively HTTPS
+  - The number of views is now also displayed for the active PostViews plugin when comments are locked ([#346](https://github.com/flatpressblog/flatpress/issues/346))
 
 ## Internationalization
 - Added translation: Slovenian, Danish and Russian ([#278](https://github.com/flatpressblog/flatpress/issues/278))

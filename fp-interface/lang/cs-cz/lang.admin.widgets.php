@@ -25,7 +25,8 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'oldwdgsdescr' => 'Tento widget zřejmě nepatří mezi widgety uvedené výše. ' . //
 		'Může to být pozůstatek z jiného motivu.',
 
-	'submit' => 'Uložit změny'
+	'submit' => 'Uložit změny',
+	'drop_here' => 'Soubor zde'
 );
 
 $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(

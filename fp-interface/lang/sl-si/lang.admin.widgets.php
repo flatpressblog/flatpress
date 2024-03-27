@@ -29,7 +29,8 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'oldwdgsdescr' => ' Naslednji gradnikSets se zdi, da ne pripadajo nobenemu od zgoraj navedenih ' . //
 		'gradniksets. Morda so ostanek od druge teme.',
 
-	'submit' => 'Shrani Spremembe'
+	'submit' => 'Shrani Spremembe',
+	'drop_here' => 'Postavite tukaj'
 );
 
 $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(

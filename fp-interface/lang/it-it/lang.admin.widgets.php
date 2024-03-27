@@ -30,6 +30,7 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 		'widgetset elencati qui sopra. Potrebbero essere dei rimasugli di un altro tema.',
 
 	'submit' => 'Salva le modifiche',
+	'drop_here' => 'Posto qui'
 );
 
 $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(
