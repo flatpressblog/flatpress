@@ -3,7 +3,7 @@ $lang ['admin'] ['head'] = 'Administration area';
 
 $lang ['admin'] ['panels'] = array(
 	'main' => 'Main',
-	'config' => 'Options',
+	'config' => 'Configuration',
 	// 'users' => 'Users',
 	'entry' => 'Entries',
 	'static' => 'Statics',

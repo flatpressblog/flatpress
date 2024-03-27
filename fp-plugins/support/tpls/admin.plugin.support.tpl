@@ -11,31 +11,47 @@
 	</h3>
 	<ul>
 		<li>
-			{$plang.version}
+			{$plang.version}{$support.output_SYSTEM_VER}
+		</li>
+		{*
+		<li>
+			{$plang.basedir}{$support.output_BASE_DIR}
+		</li>
+		*}
+		<li>
+			{$plang.blogbaseurl}{$support.output_www}
 		</li>
 		<li>
-			{$plang.basedir}
+			{$support.theme}{$support.output_theme}
 		</li>
 		<li>
-			{$plang.blogbaseurl}
-		</li>
-		<li>
-			{$support.LANG_DEFAULT}
-		</li>
-		<li>
-			{$support.lang}
-		</li>
-		<li>
-			{$support.charset}
-		</li>
-		<li>
-			{$support.theme}
-		</li>
-		<li>
-			{$support.style}
+			{$support.style}{$support.output_style}
 		</li>
 		<li>
 			{$support.plugins}{$support.output_plugins}
+		</li>
+	</ul>
+	<h3>
+		{$support.h3_international}
+	</h3>
+	<ul>
+		<li>
+			{$support.LANG_DEFAULT}{$support.output_LANG_DEFAULT}
+		</li>
+		<li>
+			{$support.lang}{$support.output_lang}
+		</li>
+		<li>
+			{$support.charset}{$support.output_charset}
+		</li>
+		<li>
+			{$support.global_date_time}{$support.output_global_date_time}
+		</li>
+		<li>
+			{$support.local_date_time}{$support.output_local_date_time}
+		</li>
+		<li>
+			{$support.time_offset}{$support.timeoffset}
 		</li>
 	</ul>
 	<p class="codeblock">[/code]</p>

@@ -27,6 +27,7 @@ $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 
 	'saveopt' => 'Instellingen opslaan',
 
+	'location' => '<strong>Opslaglocatie:</strong> ' . ABS_PATH . '',
 	'submit' => 'Bewaar .htaccess'
 );
 

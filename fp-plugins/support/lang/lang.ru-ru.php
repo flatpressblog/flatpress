@@ -9,33 +9,44 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 		'языке со следующей информацией: Описание ошибки, шаги для воспроизведения.',
 
 	// output "Setup"
-	'h2_general' => 'FlatPress general',
+	'h2_general' => 'General',
 	'h3_setup' => 'Setup',
 	
-	'version' => '<p class="output"><strong>FlatPress version:</strong> ' . SYSTEM_VER . '</p>',
-	'basedir' => '<p class="output"><strong>Base directory:</strong> ' . BASE_DIR . '</p>',
-	'blogbaseurl' => '<p class="output"><strong>Blog base URL:</strong> ' . $fp_config ['general'] ['www'] . '</p>',
+	'version' => '<p class="output"><strong>FlatPress version:</strong> ',
+	'basedir' => '<p class="output"><strong>Base directory:</strong> ',
+	'blogbaseurl' => '<p class="output"><strong>Blog base URL:</strong> ',
 
-	'pos_LANG_DEFAULT' => '<p class="output"><strong>Language (automatic):</strong> ' . LANG_DEFAULT . '</p>',
-	'neg_LANG_DEFAULT' => '<p class="output"><strong>Language (automatic): &#8505;</strong> not recognized</p>',
-
-	'pos_lang' => '<p class="output"><strong>Language (set):</strong> ' . $fp_config ['locale'] ['lang'] . '</p>',
-	'neg_lang' => '<p class="output"><strong>Language (set):</strong> not set</p>',
-
-	'pos_charset' => '<p class="output"><strong>Character set:</strong> ' . $fp_config ['locale'] ['charset'] . '</p>',
-	'neg_charset' => '<p class="output"><strong>Character set:</strong> not set (default is utf-8)</p>',
-
-	'pos_theme' => '<p class="output"><strong>Theme:</strong> ' . $fp_config ['general'] ['theme'] . '</p>',
+	'pos_theme' => '<p class="output"><strong>Theme:</strong> ',
 	'neg_theme' => '<p class="output"><strong>Theme:</strong> not set (default is leggero)</p>',
 
-	'pos_style' => '<p class="output"><strong>Style:</strong> ' . $fp_config ['general'] ['style'] . '</p>',
+	'pos_style' => '<p class="output"><strong>Style:</strong> ',
 	'neg_style' => '<p class="output"><strong>Style:</strong> default style</p>',
 
-	'pos_plugins' => '<p class="output"><strong>Activated plugins:</strong> </p>',
+	'pos_plugins' => '<p class="output"><strong>Activated plugins:</strong> ',
 	'neg_plugins' => '<p class="output"><strong>Activated plugins:</strong> Could not be determined.</p>',
 
+	// output "International"
+	'h3_international' => 'International',
+
+	'pos_LANG_DEFAULT' => '<p class="output"><strong>Language (automatic):</strong> ',
+	'neg_LANG_DEFAULT' => '<p class="output"><strong>Language (automatic): &#8505;</strong> not recognized</p>',
+
+	'pos_lang' => '<p class="output"><strong>Language (set):</strong> ',
+	'neg_lang' => '<p class="output"><strong>Language (set):</strong> not set</p>',
+
+	'pos_charset' => '<p class="output"><strong>Character set:</strong> ',
+	'neg_charset' => '<p class="output"><strong>Character set:</strong> not set (default is utf-8)</p>',
+
+	'global_date_time' => '<p class="output"><strong>UTC date, time:</strong> ',
+	'neg_global_date_time' => 'Could not be determined.</p>',
+
+	'local_date_time' => '<p class="output"><strong>LCL date, time:</strong> ',
+	'neg_local_date_time' => 'Could not be determined.</p>',
+
+	'time_offset' => '<p class="output"><strong>Time offset:</strong> ',
+
 	// output "Core files"
-	'h2_permissions' => 'FlatPress file and directory permissions',
+	'h2_permissions' => 'File and directory permissions',
 	'h3_core_files' => 'Core',
 
 	'desc_setupfile' => '<p>As soon as the setup has been successfully executed, the setup.php file should be deleted before productive operation.</p>',

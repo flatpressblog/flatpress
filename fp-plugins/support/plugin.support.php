@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Support
- * Description: Show support data. Part of the standard distribution.
+ * Description: Shows support data in the Maintain menu. Part of the standard distribution.
  * Version: 1.1.0
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
@@ -9,7 +9,6 @@
  */
 require_once ABS_PATH . 'defaults.php';
 require_once INCLUDES_DIR . 'includes.php';
-require_once CONFIG_DIR . 'plugins.conf.php';
 
 if (class_exists('AdminPanelAction')) {
 
@@ -31,7 +30,10 @@ if (class_exists('AdminPanelAction')) {
  			require CONFIG_DIR . 'plugins.conf.php';
 			global $fp_config;
 
+			$BASE_DIR = null;
 			$BASE_DIR = BASE_DIR;
+
+			$setupfile = null;
 			$setupfile = BASE_DIR . '/setup.php';
 
 			$LANG_DEFAULT = null;
@@ -61,42 +63,77 @@ if (class_exists('AdminPanelAction')) {
 
 			$support ['h3_setup'] = $lang ['admin'] ['maintain'] ['support'] ['h3_setup'];
 
-			if ($LANG_DEFAULT) {
-				$support ['LANG_DEFAULT'] = $lang ['admin'] ['maintain'] ['support'] ['pos_LANG_DEFAULT'];
-			} else {
-				$support ['LANG_DEFAULT'] = $lang ['admin'] ['maintain'] ['support'] ['neg_LANG_DEFAULT'];
-			}
+			$support ['output_SYSTEM_VER'] = SYSTEM_VER . '</p>';
 
-			if ($lang) {
-				$support ['lang'] = $lang ['admin'] ['maintain'] ['support'] ['pos_lang'];
-			} else {
-				$support ['lang'] = $lang ['admin'] ['maintain'] ['support'] ['neg_lang'];
-			}
+			$support ['output_BASE_DIR'] = BASE_DIR . '</p>';
 
-			if ($charset) {
-				$support ['charset'] = $lang ['admin'] ['maintain'] ['support'] ['pos_charset'];
-			} else {
-				$support ['charset'] = $lang ['admin'] ['maintain'] ['support'] ['neg_charset'];
-			}
+			$support ['output_www'] = $fp_config ['general'] ['www'] . '</p>';
 
 			if ($theme) {
 				$support ['theme'] = $lang ['admin'] ['maintain'] ['support'] ['pos_theme'];
+				$support ['output_theme'] = $fp_config ['general'] ['theme'] . '</p>';
 			} else {
 				$support ['theme'] = $lang ['admin'] ['maintain'] ['support'] ['neg_theme'];
 			}
 
 			if ($style) {
 				$support ['style'] = $lang ['admin'] ['maintain'] ['support'] ['pos_style'];
+				$support ['output_style'] = $fp_config ['general'] ['style'] . '</p>';
 			} else {
 				$support ['style'] = $lang ['admin'] ['maintain'] ['support'] ['neg_style'];
 			}
 
-			if ($BLOG_BASEURL) {
+			if ($fp_plugins) {
 				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['pos_plugins'];
-				$support ['output_plugins'] = implode(', ', $fp_plugins);
+				$support ['output_plugins'] = implode(', ', $fp_plugins) . '</p>';
 			} else {
 				$support ['plugins'] = $lang ['admin'] ['maintain'] ['support'] ['neg_plugins'];
 			}
+
+			/**
+			 * prepare output "International"
+			 */
+			$support ['h3_international'] = $lang ['admin'] ['maintain'] ['support'] ['h3_international'];
+
+			if ($LANG_DEFAULT) {
+				$support ['LANG_DEFAULT'] = $lang ['admin'] ['maintain'] ['support'] ['pos_LANG_DEFAULT'];
+				$support ['output_LANG_DEFAULT'] = $LANG_DEFAULT . '</p>';
+			} else {
+				$support ['LANG_DEFAULT'] = $lang ['admin'] ['maintain'] ['support'] ['neg_LANG_DEFAULT'];
+			}
+
+			if ($lang) {
+				$support ['lang'] = $lang ['admin'] ['maintain'] ['support'] ['pos_lang'];
+				$support ['output_lang'] = $fp_config ['locale'] ['lang'] . '</p>';
+			} else {
+				$support ['lang'] = $lang ['admin'] ['maintain'] ['support'] ['neg_lang'];
+			}
+
+			if ($charset) {
+				$support ['charset'] = $lang ['admin'] ['maintain'] ['support'] ['pos_charset'];
+				$support ['output_charset'] = $fp_config ['locale'] ['charset'] . '</p>';
+			} else {
+				$support ['charset'] = $lang ['admin'] ['maintain'] ['support'] ['neg_charset'];
+			}
+
+			$support ['global_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['global_date_time'];
+			if (function_exists("gmdate")) {
+				$support ['output_global_date_time'] = gmdate('Y-m-d H:i:s') . '</p>';
+			} else {
+				$support ['output_local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['neg_global_date_time'];
+			}
+
+			$support ['local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['local_date_time'];
+			if (function_exists("date_time") && function_exists("gmdate")) {
+				$timestamp = date_time();
+				$date_time = gmdate('Y-m-d H:i:s', $timestamp);
+				$support ['output_local_date_time'] = $date_time . '</p>';
+			} else {
+				$support ['output_local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['neg_local_date_time'];
+			}
+
+			$support ['time_offset'] = $lang ['admin'] ['maintain'] ['support'] ['time_offset'];
+			$support ['timeoffset'] = $fp_config ['locale'] ['timeoffset'] . ' hours</p>';
 
 			/**
 			 * prepare output "Core files"
