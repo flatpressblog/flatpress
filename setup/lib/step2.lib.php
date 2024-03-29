@@ -11,7 +11,7 @@ function check_step() {
 		entry_save(array(
 			'subject' => $vl ['entry'] ['subject'],
 			'content' => $vl ['entry'] ['content'],
-			'date' => time(),
+			'date' => date_time(),
 			'version' => system_ver(),
 			'author' => 'FlatPress'
 		));

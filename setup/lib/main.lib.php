@@ -127,6 +127,19 @@ function validate() {
 	$fp_config ['general'] ['www'] = $user ['www'] = $www;
 	$fp_config ['general'] ['email'] = $user ['email'] = $email;
 
+	// Set UTC offset according to time zone set in php.ini
+	$timezoneFromIni = new DateTimeZone('UTC'); // UTC as fallback value
+	try {
+		$timezoneFromIni = new DateTimeZone(ini_get('date.timezone'));
+	} catch (Exception $e) {
+		// ignore "Unknown or bad timezone" exceptions - just move on with UTC
+	}
+	// calculate the offset from local time zon to UTC...
+	$now = new DateTime('now', $timezoneFromIni);
+	$timeOffset = $timezoneFromIni->getOffset($now) / 3600;
+	// ... and set it to the FlatPress config
+	$fp_config ['locale'] ['timeoffset'] = $timeOffset;
+
 	if (isset($err)) {
 		$GLOBALS ['err'] = $err;
 		return false;
