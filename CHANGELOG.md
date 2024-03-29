@@ -52,6 +52,7 @@
   - The installer header now shines in a simple FlatPress style.
   - Added missing language files for Greek, Spanish and French ([#214](https://github.com/flatpressblog/flatpress/issues/214))
   - The installer tries to write permissions recursively for owners and groups, which had to be done manually before.
+  - Setup determines local time zone and UTC offset automatically ([#99](https://github.com/flatpressblog/flatpress/issues/99)).
 
 ## Themes
 - Reworked "Leggero v2" style, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
