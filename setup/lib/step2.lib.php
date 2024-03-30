@@ -20,7 +20,7 @@ function check_step() {
 			static_save(array(
 				'subject' => $vl ['menu'] ['subject'],
 				'content' => $vl ['menu'] ['content'],
-				'date' => time(),
+				'date' => date_time(),
 				'version' => system_ver(),
 				'author' => 'FlatPress'
 			), 'menu');
@@ -29,7 +29,7 @@ function check_step() {
 			static_save(array(
 				'subject' => $vl ['about'] ['subject'],
 				'content' => $vl ['about'] ['content'],
-				'date' => time(),
+				'date' => date_time(),
 				'version' => system_ver(),
 				'author' => 'FlatPress'
 			), 'about');
@@ -38,7 +38,7 @@ function check_step() {
 			static_save(array(
 				'subject' => $vl ['privacy-policy'] ['subject'],
 				'content' => $vl ['privacy-policy'] ['content'],
-				'date' => time(),
+				'date' => date_time(),
 				'version' => system_ver(),
 				'author' => 'FlatPress'
 			), 'privacy-policy');
