@@ -1,5 +1,5 @@
-# Currently betatesting: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3.beta1)
-- [Please help us testing](https://forum.flatpress.org/viewtopic.php?t=709) :)
+# Currently testing the Release Candidate: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3.rc1)
+- [Please help us testing](https://forum.flatpress.org/viewtopic.php?t=735) :)
 
 ## Changed requirements
 - FlatPress 1.3 runs under PHP up to **8.3**; minimum required PHP version increases to **7.1**.
