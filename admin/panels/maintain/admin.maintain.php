@@ -196,7 +196,7 @@ class admin_maintain_default extends AdminPanelAction {
 					$info = ob_get_contents();
 					ob_end_clean();
 
-					$this->smarty->assign('phpinfo', preg_replace('%^.*<body>(.*)</body>.*$%ms', '$1', $info));
+					$this->smarty->assign('phpinfo', preg_replace('%^.*<body>(.*)</body>.*$%ms', '<div id="phpinfo">$1<div>', $info));
 				}
 
 				return PANEL_NOREDIRECT;
