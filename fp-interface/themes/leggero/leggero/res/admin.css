@@ -579,7 +579,7 @@ form { margin: auto }
 #phpinfo .center { text-align: center }
 #phpinfo .center table { margin: 1em auto; text-align: left }
 #phpinfo .center th { text-align: center !IMPORTANT }
-#phpinfo td, th { border: 1px solid #666; font-size: 75%; vertical-align: baseline; padding: 4px 5px }
+#phpinfo td, #phpinfo th { border: 1px solid #666; font-size: 75%; vertical-align: baseline; padding: 4px 5px }
 #phpinfo th { position: sticky; top: 0; background: inherit }
 #phpinfo h1 { font-size: 150% }
 #phpinfo h2 { font-size: 125% }
