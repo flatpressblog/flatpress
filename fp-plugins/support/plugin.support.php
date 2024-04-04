@@ -319,6 +319,15 @@ if (class_exists('AdminPanelAction')) {
 			 */
 			$support ['h2_php'] = $lang ['admin'] ['maintain'] ['support'] ['h2_php'];
 			$support ['php_ver'] = $lang ['admin'] ['maintain'] ['support'] ['php_ver'];
+			$support ['output_php_ver'] = phpversion();
+
+			$support ['php_timezone'] = $lang ['admin'] ['maintain'] ['support'] ['php_timezone'];
+			if (ini_get('date.timezone')) {
+				$timezone = ini_get('date.timezone');
+				$support ['output_timezone'] = $timezone;
+			} else {
+				$support ['output_timezone'] = $lang ['admin'] ['maintain'] ['support'] ['php_timezone_neg'];
+			}
 
 			$support ['h3_extensions'] = $lang ['admin'] ['maintain'] ['support'] ['h3_extensions'];
 

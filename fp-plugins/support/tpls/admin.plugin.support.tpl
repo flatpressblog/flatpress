@@ -205,8 +205,13 @@
 	</h2>
 	<p class="codeblock">[code]</p>
 	<p>
-		{$support.php_ver}
+		{$support.php_ver}{$support.output_php_ver}
 	</p>
+
+	<p>
+		{$support.php_timezone}{$support.output_timezone}
+	</p>
+
 	<h3>
 		{$support.h3_extensions}
 	</h3>

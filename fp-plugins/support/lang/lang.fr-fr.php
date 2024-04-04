@@ -2,8 +2,8 @@
 $lang ['admin'] ['maintain'] ['submenu'] ['support'] = 'Afficher les données de support';
 
 $lang ['admin'] ['maintain'] ['support'] = array(
-    'title' => 'Données de support',
-    'intro' => 'Pour les rapports de bug et l\'aide, visitez le <a href="https://forum.flatpress.org" target="_blank">FlatPress Forum</a>, ' . //
+		'title' => 'Données de support',
+		'intro' => 'Pour les rapports de bug et l\'aide, visitez le <a href="https://forum.flatpress.org" target="_blank">FlatPress Forum</a>, ' . //
 		'signalez le bug sur <a href="https://github.com/flatpressblog/flatpress/issues" target="_blank">GitHub</a> ' . //
 		'ou <a href="mailto:hello@flatpress.org">envoyez un e-mail</a>.<br>Insérez ces sorties (copy &#38 ; paste) en anglais ' . //
 		'avec les informations suivantes : Description de l\'erreur, étapes pour la reproduire.',
@@ -11,7 +11,7 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	// output "Setup"
 	'h2_general' => 'General',
 	'h3_setup' => 'Setup',
-	
+
 	'version' => '<p class="output"><strong>FlatPress version:</strong> ',
 	'basedir' => '<p class="output"><strong>Base directory:</strong> ',
 	'blogbaseurl' => '<p class="output"><strong>Blog base URL:</strong> ',
@@ -129,7 +129,11 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	// output "PHP"
 	'h2_php' => 'PHP',
 
-	'php_ver' => 'The PHP version is <strong>' . phpversion() . '</strong>',
+	'php_ver' => '<strong>Version: </strong>',
+
+	'php_timezone' => '<strong>Timezone: </strong>',
+	'php_timezone_neg' => 'Not available. UTC is used.',
+
 	'h3_extensions' => 'Extensions',
 
 	'desc_php_intl' => 'The PHP-Intl extension must be activated.',
