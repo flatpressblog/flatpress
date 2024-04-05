@@ -118,6 +118,7 @@
 - Admin maintenance panel: Check file access rights after reset
 - Admin comment edit panel: Validation added ([#304](https://github.com/flatpressblog/flatpress/issues/304))
 - Fixed broken links in the administration area
+- After clearing the theme and template cache, the list of recent comments is rebuilt ([#85](https://github.com/flatpressblog/flatpress/issues/85))
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags
