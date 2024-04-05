@@ -187,6 +187,33 @@ class admin_maintain_default extends AdminPanelAction {
 					if (!file_exists(CACHE_DIR))
 						fs_mkdir(CACHE_DIR);
 
+					// rebuilds the list of recent comments if LastComments plugin is active
+					if (function_exists('plugin_lastcomments_cache')) {
+						$coms = Array();
+
+						$q = new FPDB_Query(array(
+							'fullparse' => false,
+							'start' => 0,
+							'count' => -1
+						), null);
+						while ($q->hasmore()) {
+							list ($id, $e) = $q->getEntry();
+							$obj = new comment_indexer($id);
+							foreach ($obj->getList() as $value) {
+								$coms [$value] = $id;
+							}
+							ksort($coms);
+							$coms = array_slice($coms, -LASTCOMMENTS_MAX);
+						}
+						foreach ($coms as $cid => $eid) {
+							$c = comment_parse($eid, $cid);
+							plugin_lastcomments_cache($eid, array(
+								$cid,
+								$c
+							));
+						}
+					}
+
 					return PANEL_NOREDIRECT;
 				}
 			case 'phpinfo':
