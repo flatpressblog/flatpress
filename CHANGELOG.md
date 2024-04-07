@@ -93,6 +93,7 @@
   - URLs to the wiki or other external pages are now opened in a second tab in the administration area
   - External URLs in the administration area are now exclusively HTTPS
   - The number of views is now also displayed for the active PostViews plugin when comments are locked ([#346](https://github.com/flatpressblog/flatpress/issues/346))
+  - Comments: "The Name and Comment fields are mandatory fields." should not be displayed if the admin is logged in. ([#367](https://github.com/flatpressblog/flatpress/issues/367))
 
 ## Internationalization
 - Added translation: Slovenian, Danish and Russian ([#278](https://github.com/flatpressblog/flatpress/issues/278))
