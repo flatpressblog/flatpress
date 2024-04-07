@@ -1,6 +1,4 @@
-# Currently testing the Release Candidate: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3.rc1)
-- [Please help us testing](https://forum.flatpress.org/viewtopic.php?t=735) :)
-
+# 2024-04-07: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## Changed requirements
 - FlatPress 1.3 runs under PHP up to **8.3**; minimum required PHP version increases to **7.1**.
 - Also, the PHP extension [**intl**](https://www.php.net/manual/book.intl.php) becomes mandatory.
