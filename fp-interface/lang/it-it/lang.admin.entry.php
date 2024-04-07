@@ -172,7 +172,7 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'total_disk_space_is' => 'Lo spazio di archiviazione totale è di',
 	'comments' => 'Commenti',
 	'comments_using' => 'commenti con',
-	'the' => 'Le',
+	'the' => 'Gli',
 	'most_commented_entries' => 'articoli più commentati'
 );
 ?>
