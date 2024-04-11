@@ -2,8 +2,7 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Upravljanje Vnosov',
 	'write' => 'Napiši Vnos',
-	'cats' => 'Upravljanje Kategorij',
-	'stats' => 'Statistika'
+	'cats' => 'Upravljanje Kategorij'
 );
 
 /* privzeta dejanja */
@@ -158,20 +157,5 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'Kategorije so bile izbrisane',
 	-2 => 'Prišlo je do napake med poskusom brisanja kategorij',
 	-3 => 'ID-ji kategorij morajo biti strogo pozitivni (0 ni dovoljeno)'
-);
-
-/* statistika */
-$lang ['admin'] ['entry'] ['stats'] = array(
-	'head' => 'Statistika',
-	'entries' => 'Vnosi',
-	'you_have' => 'Imate',
-	'entries_using' => 'vnosov, ki uporabljajo',
-	'characters_in' => 'znakov v',
-	'words' => 'besedah',
-	'total_disk_space_is' => 'Skupna velikost diska je',
-	'comments' => 'Komentarji',
-	'comments_using' => 'komentarjev, ki uporabljajo',
-	'the' => 'Naj',
-	'most_commented_entries' => 'najbolj komentirani vnosi'
 );
 ?>

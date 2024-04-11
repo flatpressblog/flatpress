@@ -2,8 +2,7 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Administrar entradas',
 	'write' => 'Escribir entrada',
-	'cats' => 'Administrar Categorías',
-	'stats' => 'Estadísticas'
+	'cats' => 'Administrar Categorías'
 );
 
 /* default action */
@@ -158,20 +157,5 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'Categorías vacías',
 	-2 => 'Se produjo un error al intentar vaciar categorías',
 	-3 => 'Los ID de categoría deben ser estrictamente positivos (0 is not allowed)'
-);
-
-/* stats */
-$lang ['admin'] ['entry'] ['stats'] = array(
-	'head' => 'Estadísticas',
-	'entries' => 'Entradas',
-	'you_have' => 'Tiene',
-	'entries_using' => 'entradas con',
-	'characters_in' => 'caracteres en',
-	'words' => 'palabras',
-	'total_disk_space_is' => 'El espacio de almacenamiento total es de',
-	'comments' => 'Comentarios',
-	'comments_using' => 'comentarios con',
-	'the' => 'Las',
-	'most_commented_entries' => 'entradas más comentadas'
 );
 ?>

@@ -2,8 +2,7 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Spravovat příspěvky',
 	'write' => 'Přidat nový příspěvek',
-	'cats' => 'Manage Categories',
-	'stats' => 'Statistiky'
+	'cats' => 'Manage Categories'
 );
 
 /* default action */
@@ -158,20 +157,5 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'Kategorie byly smazané',
 	-2 => 'Při pokusu smazat kategorie nastala chyba.',
 	-3 => 'ID kategorií musí být KLADNÉ!!'
-);
-
-/* stats */
-$lang ['admin'] ['entry'] ['stats'] = array(
-	'head' => 'Statistiky',
-	'entries' => 'Záznamy',
-	'you_have' => 'Máte',
-	'entries_using' => 'záznamů s',
-	'characters_in' => 'znaky v',
-	'words' => 'slovech',
-	'total_disk_space_is' => 'Celkový prostor v paměti je',
-	'comments' => 'Komentáře',
-	'comments_using' => 'komentářů s',
-	'the' => '',
-	'most_commented_entries' => 'nejkomentovanější příspěvky'
 );
 ?>

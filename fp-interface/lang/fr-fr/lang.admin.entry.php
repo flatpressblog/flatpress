@@ -2,8 +2,7 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'G&eacute;rer les billets',
 	'write' => '&Eacute;crire un billet',
-	'cats' => 'G&eacute;rer les cat&eacute;gories',
-	'stats' => 'Statistiques'
+	'cats' => 'G&eacute;rer les cat&eacute;gories'
 );
 
 /* action par défaut */
@@ -159,20 +158,5 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'Cat&eacute;gories effac&eacute;es',
 	-2 => 'Une erreur est survenue pendant la suppression des cat&eacute;gories',
 	-3 => 'Le num&eacute;ro de cat&eacute;gorie doit &ecirc;tre positif (0 pas permis)'
-);
-
-/* stats */
-$lang ['admin'] ['entry'] ['stats'] = array(
-	'head' => 'Statistiques',
-	'entries' => 'Entrées',
-	'you_have' => 'Tu as',
-	'entries_using' => 'entrées avec',
-	'characters_in' => 'caractères dans',
-	'words' => 'mots',
-	'total_disk_space_is' => 'L\'espace mémoire total est de',
-	'comments' => 'Commentaires',
-	'comments_using' => 'commentaires avec',
-	'the' => 'Les',
-	'most_commented_entries' => 'entrées les plus commentées'
 );
 ?>

@@ -2,8 +2,7 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Administrer bidrag',
 	'write' => 'Skriv et bidrag',
-	'cats' => 'Administrer kategorier',
-	'stats' => 'Statistik'
+	'cats' => 'Administrer kategorier'
 );
 
 /* default action */
@@ -159,20 +158,5 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'Alle kategorier slettet',
 	-2 => 'Der opstod en fejl ved sletning af kategorierne',
 	-3 => 'Kategori ID <strong>skal være større end 0</strong>. Værdien <strong>0</strong> er ikke tilladt.'
-);
-
-/* stats */
-$lang ['admin'] ['entry'] ['stats'] = array(
-	'head' => 'Statistik',
-	'entries' => 'Bidrag',
-	'you_have' => 'Du har',
-	'entries_using' => 'indlæg med',
-	'characters_in' => 'tegn i',
-	'words' => 'ord',
-	'total_disk_space_is' => 'Den samlede lagerplads er',
-	'comments' => 'Kommentarer',
-	'comments_using' => 'Kommentarer med',
-	'the' => 'De',
-	'most_commented_entries' => 'mest kommenterede indlæg'
 );
 ?>
