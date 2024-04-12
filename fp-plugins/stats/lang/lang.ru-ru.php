@@ -1,5 +1,5 @@
 <?php
-$lang ['admin'] ['entry'] ['submenu'] = 'Статистика';
+$lang ['admin'] ['entry'] ['submenu'] ['stats'] = 'Статистика';
 
 $lang ['admin'] ['entry'] ['stats'] = array(
 	'head' => 'Статистика',
