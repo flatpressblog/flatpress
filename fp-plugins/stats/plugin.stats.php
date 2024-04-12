@@ -7,16 +7,12 @@
  * Author: FlatPress
  * Author URI: https://flatpress.org
  */
-require_once ABS_PATH . 'defaults.php';
-require_once INCLUDES_DIR . 'includes.php';
-
 if (class_exists('AdminPanelAction')) {
 
 
 	class admin_entry_stats extends AdminPanelAction {
 
 		var $lang = 'plugin:stats';
-
 
 		function format_number($num, $sep) {
 			$ss = $sep * $sep;
@@ -34,22 +30,21 @@ if (class_exists('AdminPanelAction')) {
 			global $lang;
 
 			$lang = lang_load('plugin:stats');
-			$lang ['admin'] ['entry'] ['stats'] = array();
 			$this->smarty->assign('admin_resource', 'plugin:stats/admin.plugin.stats');
 		}
 
 		function main() {
 
-			global $fpdb;
+			global $fpdb, $lang;
 			$lang = lang_load('plugin:stats');
-		
+
 			$fpdb->query(array(
 				'count' => -1, // show all
 				'fullparse' => true
 			));
-			
+
 			$q = $fpdb->getQuery();
-			
+
 			$comments = 
 			$entries = array(
 				'count'	=> 0,
@@ -58,15 +53,15 @@ if (class_exists('AdminPanelAction')) {
 				'size' => 0,
 				'topten' => array()
 			);
-			
+
 			$entries ['comments'] = 0;
-			
+
 			$toplist = array();
-			
+
 			while ($q->hasMore()) {
-			
+
 				list($id, $e) = $q->getEntry();
-				
+
 				$entries ['count'] ++;
 				$entries ['words'] += str_word_count($e ['subject']) + str_word_count($e ['content']);
 
