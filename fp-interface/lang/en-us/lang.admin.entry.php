@@ -2,8 +2,7 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Manage Entries',
 	'write' => 'Write Entry',
-	'cats' => 'Manage Categories',
-	'stats' => 'Stats'
+	'cats' => 'Manage Categories'
 );
 
 /* default action */
@@ -158,20 +157,5 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'Categories cleared',
 	-2 => 'An error occurred while trying to clear categories',
 	-3 => 'Category IDs must be strictly positive (0 is not allowed)'
-);
-
-/* stats */
-$lang ['admin'] ['entry'] ['stats'] = array(
-	'head' => 'Stats',
-	'entries' => 'Entries',
-	'you_have' => 'You have',
-	'entries_using' => 'entries using',
-	'characters_in' => 'characters in',
-	'words' => 'words',
-	'total_disk_space_is' => 'Total disk space is',
-	'comments' => 'Comments',
-	'comments_using' => 'comments using',
-	'the' => 'The',
-	'most_commented_entries' => 'most commented entries'
 );
 ?>

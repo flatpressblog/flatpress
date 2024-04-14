@@ -2,8 +2,7 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => '記事の管理',
 	'write' => '記事の作成',
-	'cats' => '記事カテゴリの管理',
-	'stats' => '統計情報'
+	'cats' => '記事カテゴリの管理'
 );
 
 /* default action */
@@ -157,20 +156,5 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'カテゴリデータは消去されました。',
 	-2 => 'カテゴリデータの消去ができませんでした。',
 	-3 => 'Category IDs must be strictly positive (0 is not allowed)'
-);
-
-/* stats */
-$lang ['admin'] ['entry'] ['stats'] = array(
-	'head' => '統計情報',
-	'entries' => 'エントリー',
-	'you_have' => '',
-	'entries_using' => '件、',
-	'characters_in' => '文字、',
-	'words' => '語。',
-	'total_disk_space_is' => '総収納容量は',
-	'comments' => 'コメント',
-	'comments_using' => '件',
-	'the' => 'コメント数が多かった',
-	'most_commented_entries' => '作品'
 );
 ?>

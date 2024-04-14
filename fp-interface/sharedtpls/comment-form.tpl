@@ -1,7 +1,8 @@
 {if !$entry_commslock}
 <h4 id="addcomment">{$lang.comments.head}</h4>
+{if not $flatpress.loggedin}
 <p>{$lang.comments.descr}</p>
-
+{/if}
 
 <form id="commentform" method="post"
 	action="{$flatpress.params.entry|link:comments_link}#commentform"

@@ -77,7 +77,7 @@ function plugin_emoticons_head() {
 // register emoticon head
 add_action('wp_head', 'plugin_emoticons_head', 10);
 // register editor toolbar
-add_filter('simple_toolbar_form', 'plugin_emoticons',);
+add_filter('simple_toolbar_form', 'plugin_emoticons');
 // register to the hook
 add_filter('the_content','plugin_emoticons_filter');
 // register for emoticon in comment
