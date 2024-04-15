@@ -139,7 +139,7 @@ if (isset($_SERVER ['HTTPS']) && ($_SERVER ['HTTPS'] == '1' || strtolower($_SERV
 } else {
 	$serverport = "http://";
 	ini_set('session.cookie_httponly', 0);
-	define('COOKIE_PREFIX', null);
+	define('COOKIE_PREFIX', '');
 	ini_set('session.cookie_secure', 0);
 }
 
