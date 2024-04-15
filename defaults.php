@@ -99,7 +99,7 @@ define('IMAGES_DIR', FP_CONTENT . 'images/');
 // here is where all the attachments will be saved
 define('ATTACHS_DIR', FP_CONTENT . 'attachs/');
 
-include(LANG_DIR . 'browserlang.php');
+include (LANG_DIR . 'browserlang.php');
 define('LANG_DEFAULT', $browserLang);
 define('BPT_SORT', SORT_DESC);
 
@@ -127,15 +127,22 @@ ini_set('session.use_only_cookies', 1);
 if (isset($_SERVER ['HTTPS'])) {
 	$_SERVER ['HTTPS'] = htmlspecialchars($_SERVER ['HTTPS'], ENT_QUOTES, "UTF-8");
 }
-$serverport = "false";
-// Unterstützung für Apache und IIS
-ini_set('session.cookie_secure', 1);
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_samesite', 'Lax');
+
+// supports Apache and IIS
+$serverport = '';
 if (isset($_SERVER ['HTTPS']) && ($_SERVER ['HTTPS'] == '1' || strtolower($_SERVER ['HTTPS']) == 'on')) {
+	// HTTPS enabled
 	$serverport = "https://";
+	ini_set('session.cookie_httponly', 1);
+	define('COOKIE_PREFIX', '__secure-');
+	ini_set('session.cookie_secure', 1);
+	ini_set('session.cookie_samesite', 'Lax');
 } else {
+	// HTTP only
 	$serverport = "http://";
+	ini_set('session.cookie_httponly', 0);
+	define('COOKIE_PREFIX', '');
+	ini_set('session.cookie_secure', 0);
 }
 
 // compatibility with ISS
