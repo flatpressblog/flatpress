@@ -130,7 +130,7 @@ if (isset($_SERVER ['HTTPS'])) {
 
 $serverport = "false";
 // Apache and IIS support
-if (isset($_SERVER ['HTTPS']) && ($_SERVER ['HTTPS'] == '1' || strtolower($_SERVER ['HTTPS']) == 'on')) {
+if(!empty($_SERVER ['HTTPS']) && $_SERVER ['HTTPS'] != 'off' or $_SERVER ['SERVER_PORT'] == 443) {
 	$serverport = "https://";
 	ini_set('session.cookie_httponly', 1);
 	define('COOKIE_PREFIX', '__secure-');
