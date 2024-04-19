@@ -1,6 +1,15 @@
-# Currently betatesting: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3.beta1)
-- [Please help us testing](https://forum.flatpress.org/viewtopic.php?t=709) :)
+# Under development: FlatPress 1.3.1 "Andante"
+## Changed requirements
+- FlatPress 1.3.1 runs under PHP up to **8.3**; minimum required PHP version increases to **7.1**.
+- Also, the PHP extension [**intl**](https://www.php.net/manual/book.intl.php) becomes mandatory.
 
+## General
+- Template engine Smarty updated to version 4.4.1 ([#376](https://github.com/flatpressblog/flatpress/pull/376))
+- <sub><i>The Smarty API has changed significantly from v2 to v4 - [please make sure your themes and plugins continue to work with the new Smarty version](https://wiki.flatpress.org/doc:tips:smarty2to4)!</i></sub>
+- The fixed "Stats" panel has been converted into a plugin. ([#373](https://github.com/flatpressblog/flatpress/pull/373), [#374](https://github.com/flatpressblog/flatpress/pull/374))
+
+
+# 2024-04-07: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## Changed requirements
 - FlatPress 1.3 runs under PHP up to **8.3**; minimum required PHP version increases to **7.1**.
 - Also, the PHP extension [**intl**](https://www.php.net/manual/book.intl.php) becomes mandatory.
@@ -32,7 +41,7 @@
 - BBCode plugin: Added optional "target" attribute to the "url" element - ([PR270](https://github.com/flatpressblog/flatpress/pull/270) by [@sjustesen](https://github.com/sjustesen))
 - Comment center plugin (Akismet) revised to enable a more understandable operation ([#273](https://github.com/flatpressblog/flatpress/issues/273))
 - Comment center plugin: The admin must authorize comments (set as default) ([#101](https://github.com/flatpressblog/flatpress/issues/101))
-- Akismet-Plugin removed: is already included in the comment center plugin
+- Removed Akismet plugin: Akismet spam check is already included in the comment center plugin.<br><sub><i>Before updating FlatPress to 1.3, enter your Akismet key into the Comment Center plugin, and delete the Akismet plugin.</i></sub>
 
 ### Bugfixes
 - LastCommentsAdmin plugin will not even attempt to delete or rebuild LastComments caches if LastComments plugin is not available ([#43](https://github.com/flatpressblog/flatpress/issues/43))
@@ -52,6 +61,7 @@
   - The installer header now shines in a simple FlatPress style.
   - Added missing language files for Greek, Spanish and French ([#214](https://github.com/flatpressblog/flatpress/issues/214))
   - The installer tries to write permissions recursively for owners and groups, which had to be done manually before.
+  - Setup determines local time zone and UTC offset automatically ([#99](https://github.com/flatpressblog/flatpress/issues/99)).
 
 ## Themes
 - Reworked "Leggero v2" style, Admin Area now responsive ([#259](https://github.com/flatpressblog/flatpress/issues/259))
@@ -92,6 +102,7 @@
   - URLs to the wiki or other external pages are now opened in a second tab in the administration area
   - External URLs in the administration area are now exclusively HTTPS
   - The number of views is now also displayed for the active PostViews plugin when comments are locked ([#346](https://github.com/flatpressblog/flatpress/issues/346))
+  - Comments: "The Name and Comment fields are mandatory fields." should not be displayed if the admin is logged in. ([#367](https://github.com/flatpressblog/flatpress/issues/367))
 
 ## Internationalization
 - Added translation: Slovenian, Danish and Russian ([#278](https://github.com/flatpressblog/flatpress/issues/278))
@@ -117,6 +128,7 @@
 - Admin maintenance panel: Check file access rights after reset
 - Admin comment edit panel: Validation added ([#304](https://github.com/flatpressblog/flatpress/issues/304))
 - Fixed broken links in the administration area
+- After clearing the theme and template cache, the list of recent comments is rebuilt ([#85](https://github.com/flatpressblog/flatpress/issues/85))
 
 ## Security
 - Possible XSS prevented: Session cookie missed the "secure" and "httponly" flags

@@ -2,8 +2,7 @@
 $lang ['admin'] ['entry'] ['submenu'] = array(
 	'list' => 'Vermeldingen beheren',
 	'write' => 'Schrijf vermelding',
-	'cats' => 'Categorie beheren',
-	'stats' => 'Statistieken'
+	'cats' => 'Categorie beheren'
 );
 
 /* default action */
@@ -158,20 +157,5 @@ $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
 	2 => 'Categorie gewist',
 	-2 => 'Er is een fout opgetreden tijdens het wissen van categorie',
 	-3 => 'Categorie ID moeten strikt positief zijn (0 is niet toegestaan)'
-);
-
-/* stats */
-$lang ['admin'] ['entry'] ['stats'] = array(
-	'head' => 'Statistieken',
-	'entries' => 'Vermeldingen',
-	'you_have' => 'Je hebt',
-	'entries_using' => 'berichten met',
-	'characters_in' => 'tekens in',
-	'words' => 'woorden',
-	'total_disk_space_is' => 'De totale opslagruimte is',
-	'comments' => 'Reacties',
-	'comments_using' => 'reacties met',
-	'the' => 'De',
-	'most_commented_entries' => 'meest becommentarieerde inzendingen'
 );
 ?>

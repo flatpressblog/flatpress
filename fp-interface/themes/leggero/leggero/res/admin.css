@@ -567,3 +567,31 @@ a.link-general:hover, .main-cell a:hover {
 #admin-content ul.msgs { margin: 0 }
 
 form { margin: auto }
+
+
+/* ===== PHP Info ===== */
+/* unset Leggero -style */
+#phpinfo, #phpinfo h1, #phpinfo h2, #phpinfo tr, #phpinfo td, #phpinfo .e, #phpinfo .h, #phpinfo .v  { margin: unset; text-align: unset; letter-spacing: unset; background: unset; font-family: unset }
+#phpinfo h2 { border-bottom: unset }
+
+/* set phpinfo()/ php.net -style */
+#phpinfo, #phpinfo h2, #phpinfo h2 a { font-family: sans-serif; font-size: 16px }
+#phpinfo body { background-color: #fff; color: #222; font-family: sans-serif }
+#phpinfo pre { margin: 0; font-family: monospace }
+#phpinfo a:link { color: #009; text-decoration: none; background-color: #fff }
+#phpinfo a:hover { text-decoration: underline }
+#phpinfo table { border-collapse: collapse; border: 0; width: 100%; box-shadow: 1px 2px 3px #ccc }
+#phpinfo .center { text-align: center }
+#phpinfo .center table { margin: 1em auto; text-align: left }
+#phpinfo .center th { text-align: center !IMPORTANT }
+#phpinfo td, #phpinfo th { border: 1px solid #666; font-size: 75%; vertical-align: baseline; padding: 4px 5px }
+#phpinfo th { position: sticky; top: 0; background: inherit }
+#phpinfo h1 { font-size: 150% }
+#phpinfo h2 { font-size: 125% }
+#phpinfo .p { text-align: left }
+#phpinfo .e { background-color: #ccf; width: 33.33%; font-weight: bold }
+#phpinfo .h { background-color: #99c; font-weight: bold }
+#phpinfo .v { background-color: #ddd; max-width: 33.33%; overflow-x: auto; word-wrap: break-word }
+#phpinfo .v i { color: #999 }
+#phpinfo img { float: right; border: 0 }
+#phpinfo hr { width: 100%; background-color: #ccc; border: 0; height: 1px }

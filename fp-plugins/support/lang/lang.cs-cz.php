@@ -2,8 +2,8 @@
 $lang ['admin'] ['maintain'] ['submenu'] ['support'] = 'Zobrazit údaje o podpoře';
 
 $lang ['admin'] ['maintain'] ['support'] = array(
-    'title' => 'Podpůrné údaje',
-    'intro' => 'Pro hlášení chyb a pomoc navštivte <a href="https://forum.flatpress.org" target="_blank">FlatPress fórum</a>, ' . //
+	'title' => 'Podpůrné údaje',
+	'intro' => 'Pro hlášení chyb a pomoc navštivte <a href="https://forum.flatpress.org" target="_blank">FlatPress fórum</a>, ' . //
 		'nahlaste chybu na <a href="https://github.com/flatpressblog/flatpress/issues" target="_blank">GitHub</a> nebo ' . //
 		'<a href="mailto:hello@flatpress.org">pošlete e-mail</a>.<br>Vložte tyto problémy (copy &#38; paste) v angličtině ' . //
 		's následujícími informacemi: Popis chyby, kroky k reprodukci.',
@@ -128,7 +128,11 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	// output "PHP"
 	'h2_php' => 'PHP',
 
-	'php_ver' => 'The PHP version is <strong>' . phpversion() . '</strong>',
+	'php_ver' => '<strong>Version: </strong>',
+
+	'php_timezone' => '<strong>Timezone: </strong>',
+	'php_timezone_neg' => 'Not available. UTC is used.',
+
 	'h3_extensions' => 'Extensions',
 
 	'desc_php_intl' => 'The PHP-Intl extension must be activated.',
