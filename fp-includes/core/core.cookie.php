@@ -3,6 +3,7 @@
 function cookie_setup() {
 	global $fp_config;
 
+
 	// md5(BLOG_BASEURL);
 
 	if (!defined('COOKIEHASH'))
@@ -22,7 +23,7 @@ function cookie_setup() {
 	if (!defined('COOKIE_DOMAIN'))
 		define('COOKIE_DOMAIN', false);
 	if (!defined('COOKIE_SECURE'))
-		define('COOKIE_SECURE', true);
+		define('COOKIE_SECURE', is_https());
 	if (!defined('COOKIE_HTTPONLY'))
 		define('COOKIE_HTTPONLY', true);
 }

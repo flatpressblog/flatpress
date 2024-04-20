@@ -130,7 +130,7 @@ if (isset($_SERVER ['HTTPS'])) {
 
 // supports Apache and IIS
 $serverport = '';
-if (isset($_SERVER ['HTTPS']) && ($_SERVER ['HTTPS'] == '1' || strtolower($_SERVER ['HTTPS']) == 'on')) {
+if (is_https()) {
 	// HTTPS enabled
 	$serverport = "https://";
 	ini_set('session.cookie_httponly', 1);
@@ -178,3 +178,14 @@ header('X-Content-Type-Options: nosniff');
 #function _dummy() {}
 #set_error_handler('_dummy');
 
+
+
+
+/**
+ * Checks if FlatPress is called via HTTPS.
+ *
+ * @return boolean <code>true</code> when FlatPress is called via HTTPS; <code>false</code> otherwise.
+ */
+function is_https() {
+	return (isset($_SERVER ['HTTPS']) && ($_SERVER ['HTTPS'] == '1' || strtolower($_SERVER ['HTTPS']) == 'on'));
+}
