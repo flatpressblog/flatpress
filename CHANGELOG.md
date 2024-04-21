@@ -1,3 +1,9 @@
+# Under delevopment: [FlatPress 1.3.1](https://github.com/flatpressblog/flatpress/releases/tag/1.3.1)
+## Bugfixes
+- HTTP-only Login wasn't possible under some circumstances ([#371](https://github.com/flatpressblog/flatpress/issues/371), [#378](https://github.com/flatpressblog/flatpress/issues/378))
+- added secure prefix for cookies ([#155](https://github.com/flatpressblog/flatpress/issues/155))
+
+
 # 2024-04-07: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## Changed requirements
 - FlatPress 1.3 runs under PHP up to **8.3**; minimum required PHP version increases to **7.1**.
