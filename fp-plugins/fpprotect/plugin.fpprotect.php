@@ -25,4 +25,8 @@ if (function_exists('is_https')) {
 	}
 
 }
+
+function hidde_input_field() {
+	// If active, the input field and the save button of the PrettyURLs plugin are hidden
+}
 ?>
