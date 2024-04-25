@@ -3,9 +3,9 @@
 
 {include file="shared:errorlist.tpl"}
 
-	
+
 {html_form}
-	
+
 
 	<h3>{$plang.mode}</h3>
 	<dl>
@@ -24,7 +24,7 @@
 	</dl>
 
 	<div class="buttonbar">
-		<input type="submit" name="saveopt" value="{$plang.saveopt}" />
+		<input type="submit" name="saveopt" value="{$plang.saveopt}">
 	</div>
 
 
@@ -39,15 +39,15 @@
 		<textarea id="htaccess" name="htaccess" 
 		{if $cantsave}readonly="readonly" {/if}cols="70" rows="16">{$htaccess|escape:'html'}</textarea>
 		</p>
-
-		<div class="buttonbar">
-		{if $cantsave}
-		<p><em>{$plang.cantsave}</em></p>
-		{else}
-		<p>{$lang.admin.plugin.prettyurls.location}</p>
-		<input type="submit" name="htaccess-submit" value="{$plang.submit}"/>
-		{/if}
-		</div>
 	{/if}
+
+	<div class="buttonbar">
+	{if $cantsave}
+		<p><em>{$plang.cantsave}</em></p>
+	{else}
+		<p>{$lang.admin.plugin.prettyurls.location}</p>
+		<input type="submit" name="htaccess-submit" value="{$plang.submit}">
+	{/if}
+	</div>
 
 {/html_form}
