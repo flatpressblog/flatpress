@@ -35,19 +35,19 @@
 		<h3>{$plang.htaccess}</h3>
 
 		<p>{$plang.description2}</p>
-		<p>	
+		<p>
 		<textarea id="htaccess" name="htaccess" 
 		{if $cantsave}readonly="readonly" {/if}cols="70" rows="16">{$htaccess|escape:'html'}</textarea>
 		</p>
-	{/if}
 
-	<div class="buttonbar">
-	{if $cantsave}
-		<p><em>{$plang.cantsave}</em></p>
-	{else}
-		<p>{$lang.admin.plugin.prettyurls.location}</p>
-		<input type="submit" name="htaccess-submit" value="{$plang.submit}">
+		<div class="buttonbar">
+		{if $cantsave}
+			<p><em>{$plang.cantsave}</em></p>
+		{else}
+			<p>{$lang.admin.plugin.prettyurls.location}</p>
+			<input type="submit" name="htaccess-submit" value="{$plang.submit}">
+		{/if}
+		</div>
 	{/if}
-	</div>
 
 {/html_form}
