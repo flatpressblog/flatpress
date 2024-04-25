@@ -2,7 +2,7 @@
 /*
  * Plugin Name: FlatPress Protect
  * Plugin URI: http://www.flatpress.org/
- * Description: Protect your blog with additional fetures in the HTTP response header. <a href="./fp-plugins/fpprotect/doc_fpprotect.txt" title="More information" target="_blank">[More information]</a>
+ * Description: Protect your blog with additional fetures in the HTTP response header. <a href="./fp-plugins/fpprotect/doc_fpprotect.txt" title="More information" target="_blank">[More information]</a><br>Protect the .htaccess file from unintentional changes.
  * Author: FlatPress
  * Version: 1.0
  * Author URI: https://www.flatpress.org
