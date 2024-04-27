@@ -1,4 +1,4 @@
-# Under delevopment: [FlatPress 1.3.1](https://github.com/flatpressblog/flatpress/releases/tag/1.3.1)
+# Under development: [FlatPress 1.3.1](https://github.com/flatpressblog/flatpress/releases/tag/1.3.1)
 ## Bugfixes
 - HTTP-only Login wasn't possible under some circumstances ([#371](https://github.com/flatpressblog/flatpress/issues/371), [#378](https://github.com/flatpressblog/flatpress/issues/378))
 

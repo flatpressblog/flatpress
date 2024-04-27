@@ -130,6 +130,7 @@ if (isset($_SERVER ['HTTPS'])) {
 
 // supports Apache and IIS
 $serverport = '';
+var_dump(is_https());
 if (is_https()) {
 	// HTTPS enabled
 	$serverport = "https://";
@@ -171,15 +172,10 @@ header('Pragma: no-cache');
 header('X-Frame-Options: SAMEORIGIN');
 header('X-XSS-Protection: 1; mode=block');
 header('X-Content-Type-Options: nosniff');
-  //
-  // End of send header
-  // 
 
-#function _dummy() {}
-#set_error_handler('_dummy');
-
-
-
+//
+// End of send header
+//
 
 /**
  * Checks if FlatPress is called via HTTPS.
@@ -187,5 +183,14 @@ header('X-Content-Type-Options: nosniff');
  * @return boolean <code>true</code> when FlatPress is called via HTTPS; <code>false</code> otherwise.
  */
 function is_https() {
-	return (isset($_SERVER ['HTTPS']) && ($_SERVER ['HTTPS'] == '1' || strtolower($_SERVER ['HTTPS']) == 'on'));
+	// HTTPS called web server
+	if (isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS'])) {
+		return true;
+	}
+	// HTTPS called reverse proxy / load balancer 
+	if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+		$isSecure = true;
+	}
+	// none of the above: must be HTTP
+	return false;
 }
