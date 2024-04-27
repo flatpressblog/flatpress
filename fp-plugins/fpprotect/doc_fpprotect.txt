@@ -3,7 +3,7 @@ FlatPress Protect
 
 Description
 -----------
-Protect the .htaccess file of the PrettyURLs plugin from unintentional changes.
+Removes the htaccess editor from the PrettyURLs plugin to protect the .htaccess file from unintentional changes.
 Protect your blog with additional fetures in the HTTP response header
 
  * Content Security Policy is an effective measure to protect your site from XSS attacks. By whitelisting sources for approved content, you can prevent the browser from loading malicious content.

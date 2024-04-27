@@ -33,6 +33,8 @@ $fp_plugins = array(
 	'emoticons', // Activates an emoticons toolbar for entries and static pages
 	'support', // Provides the FlatPress admin and the community with all relevant data in case of problems.
 	'gallerycaptions',
-	'photoswipe'
+	'photoswipe',
+	'fpprotect' // Hardens your blog with additional features in the HTTP response header.
+		// Removes the htaccess editor from the PrettyURLs plugin.
 );
 ?>
