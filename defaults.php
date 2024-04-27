@@ -130,7 +130,6 @@ if (isset($_SERVER ['HTTPS'])) {
 
 // supports Apache and IIS
 $serverport = '';
-var_dump(is_https());
 if (is_https()) {
 	// HTTPS enabled
 	$serverport = "https://";
