@@ -7,6 +7,10 @@ $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLs Config';
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'Nastavení PrettyURLs',
 	'description1' => 'Zde můžete přeměnit standardní adresy URL FlatPressu na krásné adresy URL vhodné pro SEO.',
+	'fpprotect_is_on' => 'Zásuvný modul PrettyURLs vyžaduje soubor .htaccess. ' . //
+		'Chcete-li tento soubor vytvořit nebo změnit, <a href="admin.php?p=plugin&action=default" title="Přejděte do administrace zásuvného modulu">deaktivujte</a> zásuvný modul FlatPress Protect. ',
+	'fpprotect_is_off' => 'Zásuvný modul FlatPress Protect chrání soubor .htaccess před nechtěnými změnami. ' . //
+		'Zásuvný modul můžete aktivovat <a href="admin.php?p=plugin&action=default" title="Přejděte do administrace zásuvného modulu">zde</a>!',
 	'nginx' => 'PrettyURLs se službou NGINX',
 	'wiki_nginx' => 'https://wiki.flatpress.org/res:plugins:prettyurls#nginx',
 	'htaccess' => '.htaccess',

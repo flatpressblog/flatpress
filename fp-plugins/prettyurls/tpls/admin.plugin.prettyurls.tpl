@@ -1,6 +1,14 @@
 <h2>{$plang.head}</h2>
 <p>{$plang.description1}</p>
 
+{if function_exists('fpprotect_harden_prettyurls_plugin')}
+<p>{$lang.admin.plugin.prettyurls.fpprotect_is_on}</p>
+{/if}
+
+{if not function_exists('fpprotect_harden_prettyurls_plugin')}
+<p>{$lang.admin.plugin.prettyurls.fpprotect_is_off}</p>
+{/if}
+
 {include file="shared:errorlist.tpl"}
 
 

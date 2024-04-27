@@ -8,6 +8,10 @@ $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLs Configuratie
 $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'PrettyURLs Configuratie',
 	'description1' => 'Hier kun je de standaard FlatPress URL\'s omzetten in mooie, SEO-vriendelijke URL\'s.',
+	'fpprotect_is_on' => 'De PrettyURLs plugin heeft een .htaccess bestand nodig. ' . //
+		'Om dit bestand aan te maken of te wijzigen moet je de FlatPress Protect plugin <a href="admin.php?p=plugin&action=default" title="Ga naar de plugin administratie">deactiveren</a>. ',
+	'fpprotect_is_off' => 'De FlatPress Protect plugin beschermt het .htaccess bestand tegen onbedoelde wijzigingen. ' . //
+		'U kunt de plugin <a href="admin.php?p=plugin&action=default" title="Ga naar de plugin administratie">hier</a> activeren!',
 	'nginx' => 'PrettyURLs met NGINX',
 	'wiki_nginx' => 'https://wiki.flatpress.org/res:plugins:prettyurls#nginx',
 	'htaccess' => '.htaccess',
