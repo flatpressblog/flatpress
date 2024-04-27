@@ -188,7 +188,7 @@ function is_https() {
 	}
 	// HTTPS called reverse proxy / load balancer 
 	if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
-		$isSecure = true;
+		return true;
 	}
 	// none of the above: must be HTTP
 	return false;
