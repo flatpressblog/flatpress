@@ -42,10 +42,10 @@ define('BASE_DIR', dirname(__FILE__));
 define('FP_DEFAULTS', 'fp-defaults/');
 
 // all writable directories go here.
-define('FP_CONTENT', 'fp-content/'); // must be chmodded to 0776
+define('FP_CONTENT', 'fp-content/'); // must be chmodded to 0777
 
 // blog configurations files
-define('CONFIG_DIR', FP_CONTENT . 'config/'); // must be chmodded to 0776
+define('CONFIG_DIR', FP_CONTENT . 'config/'); // must be chmodded to 0777
 define('CONFIG_FILE', CONFIG_DIR . 'settings.conf.php');
 
 /**
