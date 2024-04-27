@@ -127,15 +127,20 @@ ini_set('session.use_only_cookies', 1);
 if (isset($_SERVER ['HTTPS'])) {
 	$_SERVER ['HTTPS'] = htmlspecialchars($_SERVER ['HTTPS'], ENT_QUOTES, "UTF-8");
 }
+
 $serverport = "false";
-// Unterstützung für Apache und IIS
-ini_set('session.cookie_secure', 1);
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_samesite', 'Lax');
-if (isset($_SERVER ['HTTPS']) && ($_SERVER ['HTTPS'] == '1' || strtolower($_SERVER ['HTTPS']) == 'on')) {
+// Apache and IIS support
+if (is_https()) {
 	$serverport = "https://";
+	ini_set('session.cookie_httponly', 1);
+	define('COOKIE_PREFIX', '__secure-');
+	ini_set('session.cookie_secure', 1);
+	ini_set('session.cookie_samesite', 'None');
 } else {
 	$serverport = "http://";
+	ini_set('session.cookie_httponly', 0);
+	define('COOKIE_PREFIX', '');
+	ini_set('session.cookie_secure', 0);
 }
 
 // compatibility with ISS
@@ -167,6 +172,14 @@ header('X-Content-Type-Options: nosniff');
   //
   // End of send header
   // 
+
+function is_https() {
+	if ($_SERVER ['HTTP_X_FORWARDED_PROTO'] == 'https' && $_SERVER ['SERVER_PORT'] != 443) {
+		return true;
+	} else {
+		return (!empty($_SERVER ['HTTPS']) && $_SERVER ['HTTPS'] != 'off' or $_SERVER ['SERVER_PORT'] == 443);
+	}
+}
 
 #function _dummy() {}
 #set_error_handler('_dummy');

@@ -3,17 +3,18 @@
 function cookie_setup() {
 	global $fp_config;
 
+
 	// md5(BLOG_BASEURL);
 
 	if (!defined('COOKIEHASH'))
 		define('COOKIEHASH', $fp_config ['general'] ['blogid']);
 
 	if (!defined('USER_COOKIE'))
-		define('USER_COOKIE', 'fpuser_' . COOKIEHASH);
+		define('USER_COOKIE', COOKIE_PREFIX . 'fpuser_' . COOKIEHASH);
 	if (!defined('PASS_COOKIE'))
-		define('PASS_COOKIE', 'fppass_' . COOKIEHASH);
+		define('PASS_COOKIE', COOKIE_PREFIX . 'fppass_' . COOKIEHASH);
 	if (!defined('SESS_COOKIE'))
-		define('SESS_COOKIE', 'fpsess_' . COOKIEHASH);
+		define('SESS_COOKIE', COOKIE_PREFIX . 'fpsess_' . COOKIEHASH);
 
 	if (!defined('COOKIEPATH'))
 		define('COOKIEPATH', preg_replace('|https?://[^/]+|i', '', BLOG_BASEURL));
@@ -22,7 +23,7 @@ function cookie_setup() {
 	if (!defined('COOKIE_DOMAIN'))
 		define('COOKIE_DOMAIN', false);
 	if (!defined('COOKIE_SECURE'))
-		define('COOKIE_SECURE', true);
+		define('COOKIE_SECURE', is_https());
 	if (!defined('COOKIE_HTTPONLY'))
 		define('COOKIE_HTTPONLY', true);
 }
