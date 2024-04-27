@@ -1,5 +1,5 @@
 # Under development: FlatPress 1.3.1 "Andante"
-## Changed requirements
+## Changed requirements as of FlatPress 1.3 "Andante"
 - FlatPress 1.3.1 runs under PHP up to **8.3**; minimum required PHP version increases to **7.1**.
 - Also, the PHP extension [**intl**](https://www.php.net/manual/book.intl.php) becomes mandatory.
 
@@ -8,6 +8,10 @@
 - <sub><i>The Smarty API has changed significantly from v2 to v4 - [please make sure your themes and plugins continue to work with the new Smarty version](https://wiki.flatpress.org/doc:tips:smarty2to4)!</i></sub>
 - The fixed "Stats" panel has been converted into a plugin. ([#373](https://github.com/flatpressblog/flatpress/pull/373), [#374](https://github.com/flatpressblog/flatpress/pull/374))
 
+## Bugfixes
+
+## Security
+- PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379](https://github.com/flatpressblog/flatpress/issues/379)
 
 # 2024-04-07: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## Changed requirements
