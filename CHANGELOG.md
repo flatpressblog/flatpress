@@ -11,7 +11,7 @@
 ## Bugfixes
 
 ## Security
-- PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379])(https://github.com/flatpressblog/flatpress/issues/379)
+- PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
 
 # 2024-04-07: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## Changed requirements
