@@ -9,9 +9,15 @@
 - The fixed "Stats" panel has been converted into a plugin. ([#373](https://github.com/flatpressblog/flatpress/pull/373), [#374](https://github.com/flatpressblog/flatpress/pull/374))
 
 ## Bugfixes
+- HTTP-only Login wasn't possible under some circumstances ([#371](https://github.com/flatpressblog/flatpress/issues/371), [#378](https://github.com/flatpressblog/flatpress/issues/378))
+- HTTPS was not possible if a proxy/ load balancer was used ([#251](https://github.com/flatpressblog/flatpress/issues/251))
 
 ## Security
+- added secure prefix for cookies ([#155](https://github.com/flatpressblog/flatpress/issues/155))
 - PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
+
+## Plugins
+- SEO Meta Tag Info plugin: Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
 
 # 2024-04-07: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## Changed requirements
