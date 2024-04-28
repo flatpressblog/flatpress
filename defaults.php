@@ -42,10 +42,10 @@ define('BASE_DIR', dirname(__FILE__));
 define('FP_DEFAULTS', 'fp-defaults/');
 
 // all writable directories go here.
-define('FP_CONTENT', 'fp-content/'); // must be chmodded to 0777
+define('FP_CONTENT', 'fp-content/'); // must be chmodded to 0776
 
 // blog configurations files
-define('CONFIG_DIR', FP_CONTENT . 'config/'); // must be chmodded to 0777
+define('CONFIG_DIR', FP_CONTENT . 'config/'); // must be chmodded to 0776
 define('CONFIG_FILE', CONFIG_DIR . 'settings.conf.php');
 
 /**
@@ -68,7 +68,7 @@ define('FP_INCLUDES', 'fp-includes/');
 // core include scripts
 define('INCLUDES_DIR', FP_INCLUDES . 'core/');
 // smarty engine
-define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-4.3.1/libs/');
+define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-4.4.1/libs/');
 // FlatPress specific Smarty plugins
 define('FP_SMARTYPLUGINS_DIR', ABS_PATH . FP_INCLUDES . 'fp-smartyplugins/');
 
@@ -86,7 +86,7 @@ define('PLUGINS_DIR', 'fp-plugins/');
 define('ADMIN_DIR', 'admin/');
 
 // cache file name and path.
-define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0777
+define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0776
 define('CACHE_FILE', '%%cached_list.php');
 
 define('INDEX_DIR', FP_CONTENT . 'index/');
@@ -99,7 +99,7 @@ define('IMAGES_DIR', FP_CONTENT . 'images/');
 // here is where all the attachments will be saved
 define('ATTACHS_DIR', FP_CONTENT . 'attachs/');
 
-include (LANG_DIR . 'browserlang.php');
+include(LANG_DIR . 'browserlang.php');
 define('LANG_DEFAULT', $browserLang);
 define('BPT_SORT', SORT_DESC);
 
@@ -128,17 +128,15 @@ if (isset($_SERVER ['HTTPS'])) {
 	$_SERVER ['HTTPS'] = htmlspecialchars($_SERVER ['HTTPS'], ENT_QUOTES, "UTF-8");
 }
 
-// supports Apache and IIS
-$serverport = '';
+$serverport = "false";
+// Apache and IIS support
 if (is_https()) {
-	// HTTPS enabled
 	$serverport = "https://";
 	ini_set('session.cookie_httponly', 1);
 	define('COOKIE_PREFIX', '__secure-');
 	ini_set('session.cookie_secure', 1);
-	ini_set('session.cookie_samesite', 'Lax');
+	ini_set('session.cookie_samesite', 'None');
 } else {
-	// HTTP only
 	$serverport = "http://";
 	ini_set('session.cookie_httponly', 0);
 	define('COOKIE_PREFIX', '');
@@ -171,10 +169,9 @@ header('Pragma: no-cache');
 header('X-Frame-Options: SAMEORIGIN');
 header('X-XSS-Protection: 1; mode=block');
 header('X-Content-Type-Options: nosniff');
-
-//
-// End of send header
-//
+  //
+  // End of send header
+  // 
 
 /**
  * Checks if FlatPress is called via HTTPS.
