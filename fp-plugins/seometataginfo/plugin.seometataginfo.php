@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: SEO Meta Tag Info
- * Version: 2.2.3
+ * Version: 2.2.4
  * Plugin URI: https://www.flatpress.org
  * Description: This plugin allows editing of SEO meta tags description, keywords and robots for Entries, Statics and Categories. Part of the standard distribution. <a href="./fp-plugins/seometataginfo/doc_seometataginfo.txt" title="Anleitung" target="_blank">[Instructions]</a>
  * Author: FlatPress
@@ -44,6 +44,9 @@ $prepend_keywords = $fp_config ['general'] ['title'] . ', ';
 // create a new entry to force data migration.
 define('SEOMETA_MIGRATE_DATA', false);
 
+// generate Open Graph <meta property="og:".. true/false
+define('SEOMETA_GEN_OPEN_GRAPH', true);
+
 // generate pretty titles e.g.
 // 'Blog Title - Archive - 2011/06' or
 // 'Blog Title - Category - Something Cool'
@@ -51,6 +54,10 @@ define('SEOMETA_GEN_TITLE', true);
 
 // generate <meta name='title'.. true/false
 define('SEOMETA_GEN_TITLE_META', true);
+
+// Before the crawler selects any image, we give it the style/ theme preview
+// generate <meta property="og:image".. true/false
+define('SEOMETA_GEN_IMAGE_META', true);
 
 // generate <link rel="canonical".. true/false
 define('SEOMETA_GEN_CANONICAL', true);
@@ -265,12 +272,34 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	$lang = lang_load('plugin:seometataginfo');
 	$string = $lang ['plugin'] ['seometataginfo'];
 
+	$site_title = $fp_config ['general'] ['title'];
+	$BLOG_BASEURL = $fp_config ['general'] ['www'];
+	$theme = $fp_config ['general'] ['theme'];
+	$style = ''; // if no style can be read out
+	$style = $fp_config ['general'] ['style'];
+	$lang = $fp_config ['locale'] ['lang'];
+
 	echo '
 	<!-- beginning of SEO Metatag Info -->' . "\n";
 
 	if (SEOMETA_GEN_TITLE_META) {
 		$metatitle = apply_filters('wp_title', $fp_config ['general'] ['title'], trim($string ['sep']));
-		echo "\n" . '    <meta name="title" content="' . $metatitle . '">' . "\n";
+		echo '    <meta name="title" content="' . $metatitle . '">' . "\n";
+		if (SEOMETA_GEN_OPEN_GRAPH) {
+			echo '    <meta property="og:title" content="' . $metatitle . '">' . "\n";
+		}
+	}
+
+	if (SEOMETA_GEN_IMAGE_META) {
+		// The minimum permitted image size is 200 x 200 pixels.
+		// The size of the image file must not exceed 8 MB.
+		// Meh, the recommended aspect ratio is 1.91:1 otherwise parts will be cut off
+		if (SEOMETA_GEN_OPEN_GRAPH) {
+			echo '    <meta property="og:image" content="'. $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png">' . "\n";
+			echo '    <meta property="og:image:url" content="'. $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png">' . "\n";
+			echo '    <meta property="og:image:width" content="300">' . "\n";
+			echo '    <meta property="og:image:height" content="225">' . "\n";
+		}
 	}
 
 	$count = 0;
@@ -293,7 +322,23 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	# Now write the tags
 	echo '    <meta name="description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
 	echo '    <meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
-	echo '    <meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
+	if (SEOMETA_GEN_OPEN_GRAPH) {
+		echo '    <meta property="og:description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
+	}
+	if (is_single()) {
+		echo '    <meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
+		if (SEOMETA_GEN_OPEN_GRAPH) {
+			echo '    <meta property="og:type" content="article">' . "\n";
+		}
+	} else {
+		if (SEOMETA_GEN_OPEN_GRAPH) {
+			echo '    <meta property="og:type" content="website">' . "\n";
+		}
+	}
+	if (SEOMETA_GEN_OPEN_GRAPH) {
+		echo '    <meta property="og:locale" content="' . $lang . '">' . "\n";
+		echo '    <meta property="og:site_name" content="' . $site_title . '">' . "\n";
+	}
 
 	if ($count > 0) {
 		echo '    <meta name="robots" content="';
@@ -312,6 +357,9 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 			$url = preg_replace('/comments\//', '', $url);
 		}
 		echo '    <link rel="canonical" href="' . $url . '">' . "\n";
+		if (SEOMETA_GEN_OPEN_GRAPH) {
+			echo '    <meta property="og:url" content="' . $url . '">' . "\n";
+		}
 	}
 	echo '    <!-- end of SEO Metatag Info -->' . "\n";
 }
