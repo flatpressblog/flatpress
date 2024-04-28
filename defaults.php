@@ -68,7 +68,7 @@ define('FP_INCLUDES', 'fp-includes/');
 // core include scripts
 define('INCLUDES_DIR', FP_INCLUDES . 'core/');
 // smarty engine
-define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-4.4.1/libs/');
+define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-4.3.1/libs/');
 // FlatPress specific Smarty plugins
 define('FP_SMARTYPLUGINS_DIR', ABS_PATH . FP_INCLUDES . 'fp-smartyplugins/');
 
@@ -86,7 +86,7 @@ define('PLUGINS_DIR', 'fp-plugins/');
 define('ADMIN_DIR', 'admin/');
 
 // cache file name and path.
-define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0776
+define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0777
 define('CACHE_FILE', '%%cached_list.php');
 
 define('INDEX_DIR', FP_CONTENT . 'index/');
@@ -99,7 +99,7 @@ define('IMAGES_DIR', FP_CONTENT . 'images/');
 // here is where all the attachments will be saved
 define('ATTACHS_DIR', FP_CONTENT . 'attachs/');
 
-include(LANG_DIR . 'browserlang.php');
+include (LANG_DIR . 'browserlang.php');
 define('LANG_DEFAULT', $browserLang);
 define('BPT_SORT', SORT_DESC);
 
@@ -128,15 +128,17 @@ if (isset($_SERVER ['HTTPS'])) {
 	$_SERVER ['HTTPS'] = htmlspecialchars($_SERVER ['HTTPS'], ENT_QUOTES, "UTF-8");
 }
 
-$serverport = "false";
-// Apache and IIS support
+// supports Apache and IIS
+$serverport = '';
 if (is_https()) {
+	// HTTPS enabled
 	$serverport = "https://";
 	ini_set('session.cookie_httponly', 1);
 	define('COOKIE_PREFIX', '__secure-');
 	ini_set('session.cookie_secure', 1);
-	ini_set('session.cookie_samesite', 'None');
+	ini_set('session.cookie_samesite', 'Lax');
 } else {
+	// HTTP only
 	$serverport = "http://";
 	ini_set('session.cookie_httponly', 0);
 	define('COOKIE_PREFIX', '');
@@ -169,17 +171,25 @@ header('Pragma: no-cache');
 header('X-Frame-Options: SAMEORIGIN');
 header('X-XSS-Protection: 1; mode=block');
 header('X-Content-Type-Options: nosniff');
-  //
-  // End of send header
-  // 
 
+//
+// End of send header
+//
+
+/**
+ * Checks if FlatPress is called via HTTPS.
+ *
+ * @return boolean <code>true</code> when FlatPress is called via HTTPS; <code>false</code> otherwise.
+ */
 function is_https() {
-	if ($_SERVER ['HTTP_X_FORWARDED_PROTO'] == 'https' && $_SERVER ['SERVER_PORT'] != 443) {
+	// HTTPS called web server
+	if (isset($_SERVER ['HTTPS']) && !empty($_SERVER ['HTTPS'])) {
 		return true;
-	} else {
-		return (!empty($_SERVER ['HTTPS']) && $_SERVER ['HTTPS'] != 'off' or $_SERVER ['SERVER_PORT'] == 443);
 	}
+	// HTTPS called reverse proxy / load balancer 
+	if (!empty($_SERVER ['HTTP_X_FORWARDED_PROTO']) && $_SERVER ['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER ['HTTP_X_FORWARDED_SSL']) && $_SERVER ['HTTP_X_FORWARDED_SSL'] == 'on') {
+		return true;
+	}
+	// none of the above: must be HTTP
+	return false;
 }
-
-#function _dummy() {}
-#set_error_handler('_dummy');
