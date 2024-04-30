@@ -10,7 +10,7 @@
 - Soften FlatPress cookies for non-HTTPS connections. ([#375](https://github.com/flatpressblog/flatpress/pull/375))
 
 ## Bugfixes
-- HTTP-only Login wasn't possible under some circumstances ([#371](https://github.com/flatpressblog/flatpress/issues/371) waiting for feedback), [#378](https://github.com/flatpressblog/flatpress/issues/378) waiting for feedback)
+- HTTP-only Login wasn't possible under some circumstances ([#371](https://github.com/flatpressblog/flatpress/issues/371)), [#378](https://github.com/flatpressblog/flatpress/issues/378) waiting for feedback)
 - HTTPS was not possible if a reverse proxy / load balancer  was used ([#251](https://github.com/flatpressblog/flatpress/issues/251))
 
 ## Security
