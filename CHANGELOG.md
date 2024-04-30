@@ -20,6 +20,9 @@
 ## Plugins
 - SEO Meta Tag Info plugin: Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
 
+## Internationalization
+- Reworked translations: Japanese (Thanks to [NHWS](https://nhws.localinfo.jp/))
+
 # 2024-04-07: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## Changed requirements
 - FlatPress 1.3 runs under PHP up to **8.3**; minimum required PHP version increases to **7.1**.
