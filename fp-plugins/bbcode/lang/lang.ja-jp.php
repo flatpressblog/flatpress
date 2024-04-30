@@ -3,7 +3,7 @@ $lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
 $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'head' => 'BBCodeの設定',
 	'desc1' => 'このプラグインは <a href="https://wiki.flatpress.org/' . //
-		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a> の使用を可能にします。',
+		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a> を使用できるようにします。',
 
 	'options' => 'オプション',
 
@@ -38,21 +38,21 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'italictitle' => 'イタリック体',
 		'headlinetitle' => '見出し',
 		'underlinetitle' => '下線',
-		'crossouttitle' => 'クロスアウト',
-		'unorderedlisttitle' => 'ソートされていないリスト',
-		'orderedlisttitle' => '並べ替えリスト',
+		'crossouttitle' => '取り消し線',
+		'unorderedlisttitle' => '順序なしリスト',
+		'orderedlisttitle' => '順序付きリスト',
 		'quotetitle' => '引用文として領域指定',
 		'codetitle' => 'プログラムコードとして領域指定',
 		'htmltitle' => 'HTMLコードとして挿入',
-		'help' => 'BBcode ヘルプ',
+		'help' => 'BBCode ヘルプ',
 		'file' => 'ファイル: ',
 		'image' => '画像: ',
-		'selection' => '-- セレクション --'
+		'selection' => '-- 選択して挿入 --'
 	)
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-	'go_to' => 'に行く',
+	'go_to' => 'へ移動',
 	'langtag' => 'ja_JP' // language tag for Facebook Video
 );
 ?>

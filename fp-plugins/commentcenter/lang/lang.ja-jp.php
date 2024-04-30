@@ -3,185 +3,185 @@ $lang ['admin'] ['entry'] ['submenu'] ['commentcenter'] = 'コメントセンタ
 $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	// Header of the panel
 	'title' => 'コメントセンター',
-	'desc1' => 'このパネルでは、ブログのコメントを管理できます。',
-	'desc2' => 'ここでいくつかのことができます。',
+	'desc1' => 'このパネルでは,ブログ記事へのコメントを管理します.',
+	'desc2' => '次のようなことができます:',
 
 	// Links
 	'lpolicies' => 'ポリシーの管理',
-	'lapprove' => 'ブロックされたコメントを表示する',
-	'lmanage' => 'コメントの管理',
-	'lconfig' => 'プラグインの設定',
-	'faq_spamcomments' => 'スパムコメントへの対処に関するサポートを受ける',
+	'lapprove' => '承認待ち(ブロック中)のコメントの操作',
+	'lmanage' => '公開中のコメントの管理',
+	'lconfig' => 'コメントセンターの設定',
+	'faq_spamcomments' => 'スパムコメントへの対処に関するよくある質問(FAQ)ページを開く',
 
 	// Policies
-	'policies' => 'ガイドライン',
-	'desc_pol' => 'ここでコメントガイドラインを編集できます。',
-	'select' => '選ぶ',
-	'criteria' => '基準',
-	'behavoir' => '振る舞う',
-	'options' => '設定',
-	'entry' => 'エントリ',
-	'entries' => 'エントリー',
-	'categories' => 'カテゴリー',
-	'nopolicies' => 'ガイドラインはありません',
-	'all_entries' => 'すべてのエントリー',
-	'fol_entries' => 'このポリシーは次の投稿に適用されます。',
-	'fol_cats' => 'このポリシーは、次のカテゴリの投稿に適用されます。',
-	'older' => 'このポリシーは、%d 日より古い投稿に適用されます。',
+	'policies' => 'ポリシーの管理',
+	'desc_pol' => 'ここではコメントポリシーの編集等ができます.',
+	'select' => '選択',
+	'criteria' => '対象となる記事',
+	'behavoir' => '動作の指定',
+	'options' => 'オプション',
+	'entry' => '記事',
+	'entries' => '記事',
+	'categories' => '記事カテゴリー',
+	'nopolicies' => 'ポリシーがひとつもありません',
+	'all_entries' => 'すべての記事',
+	'fol_entries' => '次の記事に対してポリシーを適用します:',
+	'fol_cats' => '次の記事カテゴリに対してポリシーを適用します:',
+	'older' => '%d 日以上経過した記事に対してポリシーを適用します.',
 	'allow' => 'コメントを許可します',
-	'block' => 'コメント禁止',
-	'approvation' => 'コメントは承認が必要です',
-	'up' => '上',
-	'down' => '下向き',
-	'edit' => '編集',
-	'delete' => '消去',
-	'newpol' => '新しいポリシーを追加する',
-	'del_selected' => '選択したポリシーを削除します。',
-	'select_all' => 'すべて選択',
-	'deselect_all' => '何も選択しない',
+	'block' => 'コメントをブロックします',
+	'approvation' => 'コメントに承認を必要とします',
+	'up' => '上へ移動する',
+	'down' => '下へ移動する',
+	'edit' => '編集する',
+	'delete' => '消去する',
+	'newpol' => '新しいポリシーを追加します',
+	'del_selected' => '選択したポリシーを消去します',
+	'select_all' => 'すべてを選択します',
+	'deselect_all' => 'すべての選択を解除します',
 
 	// Configuration page
-	'configure' => 'プラグインの設定',
-	'desc_conf' => 'ここでプラグインのオプションを変更できます。',
-	'log_all' => 'ブロックされたコメントをログに記録する',
-	'log_all_long' => 'ブロックされたコメントもログに記録したい場合は、このオプションを有効にします。',
-	'email_alert' => 'メールによる通知',
-	'email_alert_long' => '承認のためにコメントをチェックする必要がある場合は、' . 'を電子メールで送ることができる。',
+	'configure' => 'コメントセンターの設定',
+	'desc_conf' => 'ここではコメントセンターのオプションを設定します.',
+	'log_all' => 'ブロックしたコメントを記録',
+	'log_all_long' => 'ブロックしたコメントを記録するにはチェックを入れます.',
+	'email_alert' => 'emailでコメントを通知',
+	'email_alert_long' => '承認が必要なコメントが投稿されたことをemailで通知させるにはチェックを入れます.',
 	'akismet' => 'Akismet',
-	'akismet_use' => 'Akismet によるコメントチェック',
+	'akismet_use' => 'Akismetチェックを有効化',
 	'akismet_use_long' => '<a href="https://akismet.com/" target="_blank">Akismet</a>を使えば、コメントのスパムを減らすことができます。',
-	'akismet_key' => 'Akismet キー',
-	'akismet_key_long' => '<a href="https://akismet.com/signup/" target="_blank">Akismetサービス</a>は、<a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">キー</a>を提供します。 ここに挿入してください。',
-	'akismet_url' => 'Akismet 用ブログURL',
-	'akismet_url_long' => '無料の Akismet サービスには、1つのドメインしか使用しないでください。 このフィールドは空欄のままでも構いません。 そして<code>%s</code>が使われる。',
-	'save_conf' => '設定の保存',
+	'akismet_key' => 'Akismet Key',
+	'akismet_key_long' => '<a href="https://akismet.com/signup/" target="_blank">Akismetサービス</a>から提供された<a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">Akismet Key</a>をここに記入してください.',
+	'akismet_url' => 'Akismetチェックの対象ブログのベースURL',
+	'akismet_url_long' => 'Akismetの無料サービスでは,1つのドメイン名だけで利用できるようです. 空欄のままにすれば, <code>%s</code> が使用されるでしょう.',
+	'save_conf' => '設定を保存します',
 
 	// Edit policy page
-	'apply_to' => '応募する',
-	'editpol' => 'ガイドラインの編集',
-	'createpol' => 'ガイドラインの作成',
-	'some_entries' => '一定の貢献',
-	'properties' => '特定の特性を持つ貢献',
-	'se_desc' => 'sオプションを選択した場合、このポリシーに適用したい投稿を追加してください。',
-	'se_fill' => 'エントリーの<a href="admin.php?p=entry">ID</a>を記入してください。 (<code>entryYYMMDD-HHMMSS</code>).',
-	'po_title' => 'プロパティ',
-	'po_desc' => 'オプション %s を選択した場合は、プロパティを入力してください。',
-	'po_comp' => 'フィールドは必須ではありませんが、少なくとも1つは記入しなければ、ポリシー がすべての献金に適用されます。',
-	'po_time' => '時間設定',
-	'po_older' => 'より古いエントリーに適用 ',
-	'days' => '日数.',
-	'save_policy' => 'ポリシーを保存',
+	'apply_to' => '適用の対象',
+	'editpol' => 'ポリシーの編集',
+	'createpol' => 'ポリシーの作成',
+	'some_entries' => '指定する記事',
+	'properties' => '指定するプロパティを持つ記事',
+	'se_desc' => '適用の対象に「%s」を選びました, ポリシーを適用する記事をIDで指定してください.',
+	'se_fill' => '指定する記事の<a href="admin.php?p=entry">ID</a>を記入してください, 記入形式: (<code>entryYYMMDD-HHMMSS</code>).',
+	'po_title' => 'プロパティの指定',
+	'po_desc' => '適用の対象に「%s」を選びました, ポリシーを適用する記事のプロパティを指定してください.',
+	'po_comp' => '以下で1つ以上を指定してください. いずれも指定しない場合すべての記事を適用の対象とします.',
+	'po_time' => '日数で指定',
+	'po_older' => '',
+	'days' => '日以上経過した記事に対してポリシーを適用します.',
+	'save_policy' => 'ポリシーを保存します',
 
 	// Delete policies page
-	'del_policies' => 'ガイドラインの削除',
-	'del_descs' => 'このポリシーは削除されます： ',
-	'del_descm' => 'このガイドラインは削除する： ',
-	'sure' => '本当か？',
-	'del_subs' => 'はい、削除してください。',
-	'del_subm' => 'はい、すべて削除してください。',
-	'del_cancel' => 'いや、セッティングに戻る。',
+	'del_policies' => 'ポリシーの削除',
+	'del_descs' => 'このポリシーを削除しようとしてます： ',
+	'del_descm' => 'これらのポリシーを削除しようとしてます： ',
+	'sure' => 'いいですか?',
+	'del_subs' => 'はい, 削除してください',
+	'del_subm' => 'はい, それらすべてを削除してください',
+	'del_cancel' => 'いいえ, 削除せずにもどってください',
 
 	// Approve comments page
-	'app_title' => 'コメントを承認する',
-	'app_desc' => 'ここでコメントを承認することができる。',
+	'app_title' => '承認待ち(ブロック中)のコメントの操作',
+	'app_desc' => 'コメントの承認をします.',
 	'app_date' => '日付',
 	'app_content' => 'コメント',
-	'app_author' => '著者',
-	'app_email' => '電子メール',
-	'app_ip' => 'IP',
-	'app_actions' => '対策',
-	'app_publish' => '出版',
-	'app_delete' => '削除',
-	'app_nocomms' => 'コメントはない。',
-	'app_pselected' => '選択したコメントを公開する',
-	'app_dselected' => '選択したコメントを削除する',
-	'app_other' => 'その他の発言',
-	'app_akismet' => 'スパムとして認識される',
-	'app_spamdesc' => 'これらのコメントは Akismet によってブロックされています。',
-	'app_hamsubmit' => '公開する際、AkismetにもHamと報告する。',
-	'app_pubnotham' => '公開するが、Akismet には転送しない',
+	'app_author' => '投稿者',
+	'app_email' => 'Email',
+	'app_ip' => 'IPアドレス',
+	'app_actions' => '操作',
+	'app_publish' => '承認して公開します',
+	'app_delete' => '削除します',
+	'app_nocomms' => 'コメントがひとつもありません.',
+	'app_pselected' => '選択したコメントを承認して公開します',
+	'app_dselected' => '選択したコメントを消去します',
+	'app_other' => 'その他のコメント',
+	'app_akismet' => 'スパムの印',
+	'app_spamdesc' => 'Akismetでブロックされたコメント',
+	'app_hamsubmit' => 'Akismetに非スパムと通知し, 承認して公開します.',
+	'app_pubnotham' => 'Akismetに非スパムと通知せずに, 承認だけして公開します.',
 
 	// Delete comments page
 	'delc_title' => 'コメント削除',
-	'delc_descs' => 'このコメントは削除してください： ',
-	'delc_descm' => 'これらのコメントは削除してください： ',
+	'delc_descs' => 'このコメントを削除しようとしています： ',
+	'delc_descm' => 'これらのコメントを削除しようとしています： ',
 
 	// Manage comments page
-	'man_searcht' => '寄付の検索',
-	'man_searchd' => 'コメントを管理したい投稿の <a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>) を入力してください。',
-	'man_search' => '検索',
-	'man_commfor' => '備考 %s',
-	'man_spam' => 'Akismet にスパムとして報告する',
+	'man_searcht' => '記事を検索(公開中のコメントの管理)',
+	'man_searchd' => 'コメントを管理したい記事の<a href="admin.php?p=entry">ID</a>を記入してください, 記入形式: (<code>entryYYMMDD-HHMMSS</code>).',
+	'man_search' => '検索します',
+	'man_commfor' => '%s のコメント',
+	'man_spam' => 'Akismetにスパムとして提出します',
 
 	// The simple edit
-	'simple_pre' => 'このエントリーへのコメント ',
-	'simple_1' => '可',
-	'simple_0' => 'あなたの承認が必要です。',
-	'simple_-1' => 'ブロックされています。',
-	'simple_manage' => 'この記事のコメントを管理する',
-	'simple_edit' => '編集ガイドライン',
+	'simple_pre' => 'この記事へのコメントは',
+	'simple_1' => '許可されてます',
+	'simple_0' => '承認が必要です。',
+	'simple_-1' => 'ブロックされてます。',
+	'simple_manage' => 'この記事のコメントを管理します',
+	'simple_edit' => 'ポリシーを編集します',
 
 	// Akismet warnings
 	'akismet_errors' => array(
-		-1 => 'Akismet キーが空です。入力してください。',
-		-2 => 'Akismet のサーバーにアクセスできませんでした。',
-		-3 => 'Akismet の応答に失敗しました。',
-		-4 => 'Akismet のキーが無効です。'
+		-1 => 'Akismet Key欄が空欄です. 記入してください.',
+		-2 => 'Akismetサービスに接続できません.',
+		-3 => 'Akismetからの返答がありません.',
+		-4 => 'Akismet Keyが無効です.'
 	),
 
 	// Messages
 	'msgs' => array(
-		1 => '設定が保存された。',
-		-1 => '設定の保存中にエラーが発生しました。',
+		1 => '設定を保存しました.',
+		-1 => '設定を保存しようとしましたがエラーがありました.',
 
-		2 => '政策が救われた。',
-		-2 => 'ポリシーの保存中にエラーが発生しました（設定が間違っている可能性があります）。',
+		2 => 'ポリシーを保存しました.',
+		-2 => 'ポリシーを保存しようとしましたがエラーがありました(誤りがないか確認して下さい).',
 
-		3 => '指令は延期された。',
-		-3 => 'ポリシーを移動しようとしてエラーが発生しました (または移動できません)。',
+		3 => 'ポリシーは移動しました.',
+		-3 => 'ポリシーを移動しようとしましたがエラーがありました(あるいは移動不可です).',
 
-		4 => '指令を削除した。',
-		-4 => 'ポリシーを削除しようとしてエラーが発生しました。',
+		4 => 'ポリシーは削除されました.',
+		-4 => 'ポリシーを削除しようとしましたがエラーがありました(あるいはいずれも選択されてませんでした).',
 
-		5 => 'コメントを発表した。',
-		-5 => 'コメントを公開しようとしてエラーが発生しました。',
+		5 => 'コメントは公開されました.',
+		-5 => 'コメントを公開しようとしましたがエラーがありました.',
 
-		6 => 'コメントは削除された。',
-		-6 => 'コメントを削除しようとしてエラーが発生しました。',
+		6 => 'コメントは削除されました.',
+		-6 => 'コメントを削除しようとしましたがエラーがありました(あるいはいずれも選択されてませんでした).',
 
-		7 => 'コメントを提出した。',
-		-7 => 'コメント送信中にエラーが発生しました。'
+		7 => 'コメントは送信されました.',
+		-7 => 'コメントを送信しようとしましたがエラーがありました.'
 	),
 
 	// Errors
 	'errors' => array(
-		'pol_nonex' => '編集したいポリシーが存在しません。',
-		'entry_nf' => '選択された貢献は存在しない。'
+		'pol_nonex' => '編集しようとしたポリシーは存在しません.',
+		'entry_nf' => '選択した記事は存在しません.'
 	)
 );
 
 $lang ['plugin'] ['commentcenter'] = array(
-	'akismet_error' => '申し訳ございません。',
-	'lock' => '申し訳ありませんが、この投稿にはコメントできません。',
-	'approvation' => 'コメントは保存されましたが、表示するには管理者の承認が必要です。',
+	'akismet_error' => 'ごめんなさい,技術的な問題が発生してます.',
+	'lock' => 'この記事へのコメントはブロックされてます,ごめんなさい.',
+	'approvation' => 'コメントは保存されました, 管理者が承認すると表示されます.',
 
 	// Mail for comments
-	'mail_subj' => '新規承認コメント %s'
+	'mail_subj' => '%s ：承認する新しいコメント'
 );
 
-$lang ['plugin'] ['commentcenter'] ['mail_text'] = 'こんにちは %toname%,
+$lang ['plugin'] ['commentcenter'] ['mail_text'] = '%toname% さん,
 
-"%fromname%" %frommail% はコメントを受け付けていません "%entrytitle%"
-しかし、これは掲載前にあなたの承認が必要だ。
+"%fromname%" %frommail% さんが 記事"%entrytitle%"にコメントを投稿しましたが
+表示されるためにはあなたの承認が必要です.
 
-以下はコメントとして書いたものである：
-___________________________________
+以下が投稿されたコメントです:
+―――――――――――――――――
 %content%
-___________________________________
+―――――――――――――――――
 
-FlatPressブログの管理エリアにログインし、コメントセンターでブロックされているコメントを確認してください。
+FlatPressの管理エリアにログインし, コメントセンターでブロックされているコメントを確認してください.
+以上, よろしくお願いします.
 
-によって自動的に生成される
 %blogtitle%
 
 ';
