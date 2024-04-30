@@ -14,15 +14,15 @@ $lang ['contact'] = array(
 	'fieldset3' => '送信',
 	'submit' => '送信する',
 	'reset' => 'キャンセル',
-	'loggedin' => 'あなたはログインしています 😉. <a href="' . $baseurl . 'login.php?do=logout">ログアウト</a>または <a href="' . $baseurl . 'admin.php">管理エリアに移動します</a>。'
+	'loggedin' => 'あなたはログインしています 😉 ⇒ <a href="' . $baseurl . 'login.php?do=logout">ログアウト</a>または <a href="' . $baseurl . 'admin.php">管理エリアに移動</a>。'
 );
 
 $lang ['contact'] ['notification'] = array(
-	'name' => '名称:',
-	'email' => '電子メール:',
-	'www' => 'ウェブ:',
+	'name' => '名前:',
+	'email' => 'メールアドレス:',
+	'www' => 'URL:',
 	'content' => 'メッセージ:',
-	'subject' => 'で送信した連絡先 '
+	'subject' => 'メッセージ送信: '
 );
 
 $lang ['contact'] ['error'] = array(

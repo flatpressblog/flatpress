@@ -85,7 +85,7 @@ $lang['entry']['flags']['short'] = array(
 );
 
 $lang ['entry'] ['categories'] = array(
-	'unfiled' => '未預託'
+	'unfiled' => 'カテゴリが指定されていません'
 );
 
 $lang['404error'] = array(
@@ -146,7 +146,7 @@ $lang['comments']['error'] = array(
 
 $lang ['postviews'] = array(
 	// PostView-Plugin
-	'views' => 'コール'
+	'views' => '呼び出す'
 );
 
 $lang['date']['month'] = array(

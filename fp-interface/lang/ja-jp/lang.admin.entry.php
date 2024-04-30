@@ -10,7 +10,7 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => '記事の管理',
 	'descr' => '編集する記事の作業を選んでください。<a href="admin.php?p=entry&amp;action=write">記事の新規作成は、ここをクリック</a>します。' . //
 		'あるいは<a href="admin.php?p=entry&amp;action=cats">カテゴリの編集</a>へ移動します。',
-	'drafts' => 'ドラフト: ',
+	'drafts' => '下書き記事: ',
 	'filter' => 'カテゴリフィルタ(カテゴリ名で記事をしぼり込むことができます): ',
 	'nofilter' => 'すべてを表示',
 	'filterbtn' => 'フィルタを適用する',
@@ -72,11 +72,11 @@ $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
 /* comments */
 $lang ['admin'] ['entry'] ['commentlist'] = array(
 	'head' => '記事へのコメント一覧: ',
-	'descr' => '削除したいコメントを選んでください。',
+	'descr' => '編集/削除したいコメントを選んでください。',
 	'sel' => 'Sel',
 	'content' => '内容',
 	'date' => '日付',
-	'author' => '著者',
+	'author' => '記入者',
 	'email' => 'メールアドレス',
 	'ip' => 'IPアドレス',
 	'actions' => 'Actions',
@@ -93,23 +93,23 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
 	'head' => 'コメントを編集します: ',
-	'descr' => 'ここでは、著者のコメント、名前、Eメールアドレス、ウェブサイトを自由に編集することができます。<br><br>',
+	'descr' => 'ここでは、コメントの記入者名、メールアドレス、webサイトurlを自由に編集することができます。<br><br>',
 	'content' => '内容',
 	'date' => '日付',
-	'author' => '著者',
+	'author' => '記入者名',
 	'www' => 'webサイト',
 	'email' => 'メールアドレス',
 	'ip' => 'IPアドレス',
-	'loggedin' => 'ログインした管理者',
+	'loggedin' => '管理者による記入',
 	'submit' => '保存します',
 	'commentlist' => 'コメント一覧へ戻る'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
-	'name' => '名前に誤りがあってはならない。',
-	'email' => 'メールアドレスが間違っている。',
-	'url' => 'ウェブサイトが正しくありません。 <strong>http://</strong>または<strong>https://</strong>で始まる必要があります。',
-	'content' => 'コメントがない。'
+	'name' => '名前を記入してください。',
+	'email' => '正しくメールアドレスを記入してください。',
+	'url' => 'webサイトurlを確認してください。 <strong>http://</strong>または<strong>https://</strong>で始めてください。',
+	'content' => 'コメントがありません。'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
