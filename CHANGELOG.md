@@ -1,4 +1,4 @@
-# Under development: [FlatPress 1.3.1](https://github.com/flatpressblog/flatpress/releases/tag/1.3.1)
+# 2024-05-04: [FlatPress 1.3.1](https://github.com/flatpressblog/flatpress/releases/tag/1.3.1)
 ## Bugfixes
 - fixed incorrent HTTP/HTTPS differentiation ([#251](https://github.com/flatpressblog/flatpress/issues/251), [#371](https://github.com/flatpressblog/flatpress/issues/371), [#378](https://github.com/flatpressblog/flatpress/issues/378))
 
