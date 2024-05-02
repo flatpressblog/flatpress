@@ -1,5 +1,5 @@
 <?php
-@error_reporting($_SERVER ["SERVER_NAME"] == "localhost" ? E_ALL : 0);
+//@error_reporting($_SERVER ['SERVER_NAME'] == "localhost" ? E_ALL : 0);
 
 // Changing file/directory permissions recursively
 $start_dir = BASE_DIR; // Starting directory
