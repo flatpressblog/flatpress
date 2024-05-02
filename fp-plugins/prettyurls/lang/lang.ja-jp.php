@@ -1,7 +1,7 @@
 <?php
 $lang ['plugin'] ['prettyurls'] ['errors'] = array (
 	-2 => 'ルートディレクトリに<code>.htaccess</code>ファイルが見つけられないか、作成することができません。' . //
-		'PrettyURLsは適切に動作できないかもしれません。PrettyURLsの設定を見てください。'
+		'PrettyURLsは適切に動作できないかもしれません。PrettyURLsの設定を確認してください。'
 );
 
 $lang ['admin'] ['plugin'] ['submenu'] ['prettyurls'] = 'PrettyURLsの設定';
@@ -17,9 +17,9 @@ $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'htaccess' => '.htaccess',
 	'description2' => 'このエディタでは、PrettyUrlsプラグインに必要な<code>.htaccess</code>を直接編集することができます。<br>' . //
 		'<strong>注:</strong> .htaccessファイルの概念を認識するのは、ApacheのようなNCSA互換のウェブサーバーだけです。 ' . //
-		'サーバーソフトウェアは. <strong>' . $_SERVER ['SERVER_SOFTWARE'] . '</strong>',
+		'このウェブサーバーは <strong>' . $_SERVER ['SERVER_SOFTWARE'] . '</strong> です.',
 	'cantsave' => 'このファイルを編集できません、なぜなら <strong>書き込み許可</strong>されてないからです。' .
-		'書き込み許可を与えたり、ファイルにコピー＆ペーストしてアップロードすることもできる。',
+		'書き込み許可を与えたり、ファイルにコピー＆ペーストしてアップロードすることもできます。',
 	'mode' => 'モード',
 	'auto' => '自動',
 	'autodescr' => '最良の選択を推定します。',
@@ -38,9 +38,9 @@ $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 
 $lang ['admin'] ['plugin'] ['prettyurls'] ['msgs'] = array(
 	1 => '.htaccess を保存しました。',
-	-1 => '.htaccess を保存できませんでした。(<code>' . BLOG_ROOT . '</code>への書き込みパーミッションが設定されていますか)?',
+	-1 => '.htaccess を保存できませんでした。(<code>' . BLOG_ROOT . '</code>への書き込みパーミッションが設定されていますか?)',
 
-	2 => 'オプションの保存に成功',
-	-2 => '設定を保存しようとしてエラーが発生しました'
+	2 => '設定の保存に成功しました',
+	-2 => '設定を保存しようとしましたがエラーが発生しました'
 );
 ?>

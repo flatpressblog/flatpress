@@ -4,7 +4,7 @@ $lang ['admin'] ['widgets'] ['submenu'] ['raw'] = 'ウィジェットの管理 (
 
 /* default action */
 $lang ['admin'] ['widgets'] ['default'] = array(
-	'head' => 'ウィジェットの管理 (<em>試験的運用中</em>)',
+	'head' => 'ウィジェットの管理',
 
 	'descr' => '<a class="hint" ' . //
 		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="What is a Widget?">' . //
@@ -19,16 +19,16 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a plugin?">プラグイン</a>で定義されます。',
 
 	'availwdgs' => '使用できるウィジェット',
-	'trashcan' => 'バーから削除したい場合は、ここにドロップします',
+	'trashcan' => 'ウィジェットセットから削除したい場合は、ここにドロップします',
 
-	'themewdgs' => 'このテーマのためのウィジェット',
-	'themewdgsdescr' => 'The theme you have currently selected let you have the following widgetsets',
+	'themewdgs' => '現在のテーマのウィジェットセット',
+	'themewdgsdescr' => '現在選んでるテーマには、次のウィジェットセットが用意されてます。',
 	'oldwdgs' => 'その他のウィジェット',
 	'oldwdgsdescr' => 'The following widgetsets seems not to belong to any of the ' . //
 		'widgetsets listed above. They might be remainders from another theme.',
 
 	'submit' => '変更を保存する',
-	'drop_here' => 'ここに置く'
+	'drop_here' => 'ここにドロップします'
 );
 
 $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(
@@ -65,7 +65,7 @@ $lang ['admin'] ['widgets'] ['raw'] ['msgs'] = array(
 
 /* system errors */
 $lang ['admin'] ['widgets'] ['errors'] = array(
-	'generic' => 'The widget called <strong>%s</strong> is not registered, and will be skipped. ' . //
- 		'Is the plugin enabled in the <a href="admin.php?p=plugin">plugin panel</a>?'
+	'generic' => 'ウィジェットセットにある <strong>%s</strong> という名前のウィジェットは見つかりません, スキップされます. ' . //
+ 		'それは<a href="admin.php?p=plugin">プラグイン</a>のパネルで有効になってますか?'
 );
 ?>
