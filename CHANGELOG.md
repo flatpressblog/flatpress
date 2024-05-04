@@ -1,8 +1,8 @@
 # Under development: FlatPress 1.4
 
 ## General
-- Template engine Smarty updated to version 4.4.1 ([#376](https://github.com/flatpressblog/flatpress/pull/376))
-- The fixed "Stats" panel has been converted into a plugin. ([#373](https://github.com/flatpressblog/flatpress/pull/373), [#374](https://github.com/flatpressblog/flatpress/pull/374))
+- Template engine Smarty updated to version 4.5.2 ([#376](https://github.com/flatpressblog/flatpress/pull/376), [#390](https://github.com/flatpressblog/flatpress/issues/390))
+- The fixed "Stats" panel has been converted into a plugin ([#363](https://github.com/flatpressblog/flatpress/issues/363))
 
 ## Bugfixes
 
