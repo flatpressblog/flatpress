@@ -2,34 +2,43 @@
 //@error_reporting($_SERVER ['SERVER_NAME'] == "localhost" ? E_ALL : 0);
 
 // Changing file/directory permissions recursively
-$start_dir = BASE_DIR; // Starting directory
-$perms ['file'] = FILE_PERMISSIONS; // chmod value for files
-$perms ['folder'] = DIR_PERMISSIONS; // chmod value for folders
-
-function chmod_r($dir) {
-	global $perms;
-
-	$dp = @opendir($dir);
-	while($file = readdir($dp)) {
-		if (($file == ".") || ($file == ".."))
-		continue;
-
-		$fullPath = $dir . '/' . $file;
-
-		if(is_dir($fullPath)) {
-			// echo('DIR:' . $fullPath . "\n");
-			@chmod($fullPath, $perms ['folder']);
-			chmod_r($fullPath, $perms ['folder'], $perms ['file']);
-		} else {
-			// echo('FILE:' . $fullPath . "\n");
-			@chmod($fullPath, $perms ['file']);
-		}
+function chmod_r($path, $filemode, $dirmode) {
+	if (!file_exists($path)) {
+		trigger_error('Failed file not exists ' . $path, E_USER_WARNING);
+		return false;
 	}
-	closedir($dp);
+	if (is_dir($path)) {
+		if (!chmod($path, $dirmode)) {
+			$dirmode_str = decoct($dirmode);
+			trigger_error('Failed applying filemode ' . $dirmode_str . ' on directory ' . $path, E_USER_WARNING);
+			trigger_error('  `-> the directory ' . $path . ' will be skipped from recursive chmod', E_USER_WARNING);
+			return false;
+		}
+		$dh = opendir($path);
+		while (($file = readdir($dh)) !== false) {
+			if ($file != '.' && $file != '..') {
+				// skip self and parent pointing directories
+				$fullpath = $path . '/' . $file;
+				chmod_r($fullpath, $filemode, $dirmode);
+			}
+		}
+		closedir($dh);
+	} elseif (is_file($path)) {
+		if (!chmod($path, $filemode)) {
+			$filemode_str = decoct($filemode);
+			trigger_error('Failed applying filemode ' . $filemode_str . ' on file ' . $path, E_USER_WARNING);
+			return false;
+		}
+	} elseif (is_link($path)) {
+		trigger_error('link ' . $path . ' is skipped', E_USER_WARNING);
+		return false;
+	}
+	//var_dump($path); var_dump(decoct($filemode)); var_dump(decoct($dirmode)); 
 }
 
-chmod_r($start_dir, $perms ['folder'], $perms ['file']);
-  
+// is defined in the defaults.php file
+chmod_r(BASE_DIR, FILE_PERMISSIONS, DIR_PERMISSIONS);
+
 // Sets the local language based on the browser
 $language = @$_POST ['language'] ? $_POST ['language'] : $browserLang;
 
