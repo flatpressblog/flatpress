@@ -3,7 +3,7 @@
 
 // Changing file/directory permissions recursively
 function chmod_r($path, $filemode, $dirmode) {
-	if (!file_exists($path) ) {
+	if (!file_exists($path)) {
 		trigger_error('Failed file not exists ' . $path, E_USER_WARNING);
 		return false;
 	}
@@ -15,7 +15,7 @@ function chmod_r($path, $filemode, $dirmode) {
 			return false;
 		}
 		$dh = opendir($path);
-		while (($file = readdir($dh)) !== false ) {
+		while (($file = readdir($dh)) !== false) {
 			if($file != '.' && $file != '..') {
 				// skip self and parent pointing directories
 				$fullpath = $path . '/' . $file;
