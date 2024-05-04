@@ -1,20 +1,13 @@
-# Under development: FlatPress 1.3.1 "Andante"
-## Changed requirements as of FlatPress 1.3 "Andante"
-- FlatPress 1.3.1 runs under PHP up to **8.3**; minimum required PHP version increases to **7.1**.
-- Also, the PHP extension [**intl**](https://www.php.net/manual/book.intl.php) becomes mandatory.
+# Under development: FlatPress 1.4
 
 ## General
-- Template engine Smarty updated to version 4.4.1 ([#376](https://github.com/flatpressblog/flatpress/pull/376))
-- <sub><i>The Smarty API has changed significantly from v2 to v4 - [please make sure your themes and plugins continue to work with the new Smarty version](https://wiki.flatpress.org/doc:tips:smarty2to4)!</i></sub>
-- The fixed "Stats" panel has been converted into a plugin. ([#373](https://github.com/flatpressblog/flatpress/pull/373), [#374](https://github.com/flatpressblog/flatpress/pull/374))
-- Soften FlatPress cookies for non-HTTPS connections. ([#375](https://github.com/flatpressblog/flatpress/pull/375))
+- Template engine Smarty updated to version 4.5.2 ([#376](https://github.com/flatpressblog/flatpress/pull/376), [#390](https://github.com/flatpressblog/flatpress/issues/390))
+- The fixed "Stats" panel has been converted into a plugin ([#363](https://github.com/flatpressblog/flatpress/issues/363))
 
 ## Bugfixes
-- HTTP-only Login wasn't possible under some circumstances ([#371](https://github.com/flatpressblog/flatpress/issues/371)), [#378](https://github.com/flatpressblog/flatpress/issues/378) waiting for feedback)
-- HTTPS was not possible if a reverse proxy / load balancer  was used ([#251](https://github.com/flatpressblog/flatpress/issues/251))
+
 
 ## Security
-- added secure prefix for cookies ([#155](https://github.com/flatpressblog/flatpress/issues/155))
 - PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379](https://github.com/flatpressblog/flatpress/issues/379) waiting for feedback)
 
 ## Plugins
@@ -22,6 +15,13 @@
 
 ## Internationalization
 - Reworked translations: Japanese (Thanks to [NHWS](https://nhws.localinfo.jp/))
+
+# 2024-05-04: [FlatPress 1.3.1](https://github.com/flatpressblog/flatpress/releases/tag/1.3.1)
+## Bugfixes
+- fixed incorrent HTTP/HTTPS differentiation ([#251](https://github.com/flatpressblog/flatpress/issues/251), [#371](https://github.com/flatpressblog/flatpress/issues/371), [#378](https://github.com/flatpressblog/flatpress/issues/378))
+
+## Security
+- added secure prefix for cookies ([#155](https://github.com/flatpressblog/flatpress/issues/155))
 
 # 2024-04-07: [FlatPress 1.3 "Andante"](https://github.com/flatpressblog/flatpress/releases/tag/1.3)
 ## Changed requirements

@@ -68,7 +68,7 @@ define('FP_INCLUDES', 'fp-includes/');
 // core include scripts
 define('INCLUDES_DIR', FP_INCLUDES . 'core/');
 // smarty engine
-define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-4.4.1/libs/');
+define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-4.5.2/libs/');
 // FlatPress specific Smarty plugins
 define('FP_SMARTYPLUGINS_DIR', ABS_PATH . FP_INCLUDES . 'fp-smartyplugins/');
 
@@ -186,7 +186,7 @@ function is_https() {
 	if (isset($_SERVER ['HTTPS']) && !empty($_SERVER ['HTTPS'])) {
 		return true;
 	}
-	// HTTPS called reverse proxy / load balancer 
+	// HTTPS called reverse proxy / load balancer
 	if (!empty($_SERVER ['HTTP_X_FORWARDED_PROTO']) && $_SERVER ['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER ['HTTP_X_FORWARDED_SSL']) && $_SERVER ['HTTP_X_FORWARDED_SSL'] == 'on') {
 		return true;
 	}
