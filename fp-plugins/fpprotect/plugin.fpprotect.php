@@ -7,7 +7,6 @@
  * Version: 1.0
  * Author URI: https://www.flatpress.org
  */
-
 if (function_exists('is_https')) {
 
 	if (is_https()) {
@@ -23,7 +22,6 @@ if (function_exists('is_https')) {
 		header('X-Permitted-Cross-Domain-Policies: none');
 		header('X-Download-Options: noopen');
 	}
-
 }
 
 function fpprotect_harden_prettyurls_plugin() {
