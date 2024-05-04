@@ -7,7 +7,7 @@ function chmod_r($path, $filemode, $dirmode) {
 		trigger_error('Failed file not exists ' . $path, E_USER_WARNING);
 		return false;
 	}
-	if (is_dir( $path ) ) {
+	if (is_dir($path)) {
 		if (!chmod($path, $dirmode)) {
 			$dirmode_str = decoct($dirmode);
 			trigger_error('Failed applying filemode ' . $dirmode_str . ' on directory ' . $path, E_USER_WARNING);
