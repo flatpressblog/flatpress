@@ -16,7 +16,7 @@ function chmod_r($path, $filemode, $dirmode) {
 		}
 		$dh = opendir($path);
 		while (($file = readdir($dh)) !== false) {
-			if($file != '.' && $file != '..') {
+			if ($file != '.' && $file != '..') {
 				// skip self and parent pointing directories
 				$fullpath = $path . '/' . $file;
 				chmod_r($fullpath, $filemode, $dirmode);
