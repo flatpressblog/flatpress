@@ -173,6 +173,7 @@ function admin_register_smartyplugins() {
 		'wptexturize',
 		// PHP functions
 		'array_intersect',
+		'array_key_exists',
 		'count',
 		'date',
 		'defined',
