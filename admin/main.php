@@ -98,16 +98,7 @@ function main() {
 	}
 
 	// register all Smarty modifier functions used by the admin templates
-	$smarty->registerPlugin('modifier', 'action_link', 'admin_filter_action');
-	$smarty->registerPlugin('modifier', 'cmd_link', 'admin_filter_command');
-	$smarty->registerPlugin('modifier', 'date', 'date');
-	$smarty->registerPlugin('modifier', 'entry_idtotime', 'entry_idtotime');
-	$smarty->registerPlugin('modifier', 'in_array', 'in_array');
-	$smarty->registerPlugin('modifier', 'htmlspecialchars', 'htmlspecialchars');
-	$smarty->registerPlugin('modifier', 'plugin_getinfo', 'plugin_getinfo');
-	$smarty->registerPlugin('modifier', 'sprintf', 'sprintf');
-	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
-	$smarty->registerPlugin('modifier', 'wptexturize', 'wptexturize');
+	admin_register_smartyplugins();
 }
 
 // smarty tag
@@ -165,6 +156,36 @@ function admin_header_default_action() {
 	do_action("admin_{$panel}_{$action}_head");
 }
 add_filter('admin_head', 'admin_header_default_action');
+
+/**
+ * Registers all Smarty modifier functions used by the admin templates
+ */
+function admin_register_smartyplugins() {
+	global $smarty;
+	$smarty->registerPlugin('modifier', 'action_link', 'admin_filter_action');
+	$smarty->registerPlugin('modifier', 'cmd_link', 'admin_filter_command');
+	$functionsToRegister = array(
+		// FlatPress functions
+		'entry_idtotime',
+		'plugin_getinfo',
+		'wp_specialchars',
+		'wp_nonce_url',
+		'wptexturize',
+		// PHP functions
+		'array_intersect',
+		'count',
+		'date',
+		'defined',
+		'function_exists',
+		'htmlspecialchars',
+		'in_array',
+		'is_numeric',
+		'sprintf'
+	);
+	foreach ($functionsToRegister as $functionToRegister) {
+		$smarty->registerPlugin('modifier', $functionToRegister, $functionToRegister);
+	}
+}
 
 $fp_config = config_load();
 system_init();
