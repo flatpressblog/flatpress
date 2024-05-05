@@ -8,7 +8,7 @@
 
 
 ## Security
-- PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379](https://github.com/flatpressblog/flatpress/issues/379) waiting for feedback)
+- PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
 
 ## Plugins
 - SEO Meta Tag Info plugin: Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
