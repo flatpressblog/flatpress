@@ -127,9 +127,7 @@ function index_main() {
 	$can404 = true;
 
 	// register all Smarty modifier functions used by the templates
-	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
-	$smarty->registerPlugin('modifier', 'date', 'date');
-	$smarty->registerPlugin('modifier', 'theme_feed_link', 'theme_feed_link');
+	register_smartyplugins();
 
 	if (!empty($fp_params ['entry'])) {
 		index_singlepost($params, $module);
@@ -174,6 +172,21 @@ function index_main() {
 		$module = index_404error();
 
 	return $module;
+}
+
+function register_smartyplugins() {
+	global $smarty;
+	$functionsToRegister = array(
+		// FlatPress functions
+		'theme_feed_link',
+		'wp_specialchars',
+		// PHP functions
+		'date',
+		'function_exists'
+	);
+	foreach ($functionsToRegister as $functionToRegister) {
+		$smarty->registerPlugin('modifier', $functionToRegister, $functionToRegister);
+	}
 }
 
 function index_display() {
