@@ -41,7 +41,7 @@
 		title="{$panelstrings.op8}">
 		<a href="admin.php?p=themes">{$panelstrings.op8}</a>
 	</dt>
-	<dd class="admin-icon-descr">{$panelstrings.op5d}</dd>
+	<dd class="admin-icon-descr">{$panelstrings.op8d}</dd>
 
 	<dt class="admin-mainmenu-item">
 		<img src="{$smarty.const.ADMIN_DIR}imgs/config.png" class="alignleft" alt="{$panelstrings.op5}"
