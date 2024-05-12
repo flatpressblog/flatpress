@@ -17,5 +17,9 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op5d' => 'Grundlæggende indstillinger som titel, blog-URL, dato, tidszone og sprog',
 	'op6' => 'Vedligeholdelse',
 	'op6d' => '(Gen)opret FlatPress-indekset, vis PHP-information eller anmod om opdateringer.',
+	'op7' => 'Uploader',
+	'op7d' => 'Upload og administrer billeder og filer',
+	'op8' => 'Temaer',
+	'op8d' => 'Skift mellem temaer og stilarter'
 );
 ?>

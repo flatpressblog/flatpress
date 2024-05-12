@@ -17,5 +17,9 @@ $lang['admin']['main']['default'] = array(
 	'op5d' => 'Personalizza il tuo FlatPress',
 	'op6' => 'Manutenzione',
 	'op6d' => 'Pulisci e ripristina FlatPress',
+	'op7' => 'Uploader',
+	'op7d' => 'Caricare e gestire immagini e file',
+	'op8' => 'Temi',
+	'op8d' => 'Passare da un tema all\'altro e da uno stile all\'altro'
 );
 ?>

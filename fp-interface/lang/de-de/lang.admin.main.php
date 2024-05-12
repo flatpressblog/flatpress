@@ -17,5 +17,9 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op5d' => 'Grundlegende Einstellungen wie Titel, Blog-URL, Datum, Zeitzone und Sprache',
 	'op6' => 'Wartung',
 	'op6d' => 'Den FlatPress Index (neu) erstellen, PHP Informationen anzeigen oder Updates abfragen',
+	'op7' => 'Uploader',
+	'op7d' => 'Bilder und Dateien hochladen und verwalten',
+	'op8' => 'Themes',
+	'op8d' => 'Zwischen Themes und Stile wechseln'
 );
 ?>
