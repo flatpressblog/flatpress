@@ -44,6 +44,7 @@
 		'charset'		=> 'Set di caratterit',
 		'charsettip'	=> 'Il set di caratteri che userai per scrivere nel blog (UTF-8 è quello '.
 						'<a href="http://wiki.flatpress.org/doc:charsets">raccomandato</a>)'
+		'editor'		=> 'Editor Articolo/Pagina Statica'
 		);
 		
 	$lang['admin']['config']['default']['msgs'] = 
