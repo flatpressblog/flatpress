@@ -56,7 +56,7 @@
 	);
 	
 	$lang['admin']['static']['write']['error'] = array(
-		'subject'	=> 'Non è possinbile lasciare un titolo in bianco',
+		'subject'	=> 'Non è possibile lasciare un titolo in bianco',
 		'content'	=> 'Non è possibile inserire un contenuto in bianco',
 		'id'		=> 'Devi inviare un id valido'
 	);
