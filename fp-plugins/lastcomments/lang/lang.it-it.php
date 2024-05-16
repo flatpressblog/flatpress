@@ -1,6 +1,5 @@
 <?php
-	// cimangi Aggiunta traduzione stringhe
-	$lang['plugin']['lastcomments'] = array(
+		$lang['plugin']['lastcomments'] = array(
 		
 		'last'				=> 'Ultimi',
 		'comments'			=> 'commenti',
