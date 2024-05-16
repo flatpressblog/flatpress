@@ -1,24 +1,23 @@
 <?php
     /* MediaManager IT-IT language file by Giacomo Margarito */
     
-	/* THIS LINE SHOULDN'T BE HERE! */
 	$lang['admin']['uploader']['submenu']['default'] = 'Caricatore';
 	
-	$lang['admin']['uploader']['submenu']['mediamanager'] = 'Media manager';
+	$lang['admin']['uploader']['submenu']['mediamanager'] = 'Gestore multimediale';
 	
 
 	$lang['admin']['uploader']['mediamanager'] = array(
-		'head'		=> 'Media manager',
-		'description'=>'Gestisci i file mulltimediali',
+		'head'		=> 'Gestore multimediale',
+		'description'=>'Gestisci i file multimediali',
         
-		'delete'	=> 'elimina',
+		'delete'	=> 'Elimina',
 		'up'		=> 'Indietro',
 		'page'		=> 'Pagina',
 		'colname'	=> 'Nome',
 		'colsize'	=> 'Dimensione',
 		'coltype'	=> 'Estensione',
 		'colmtime'	=> 'Caricato il',
-		'colusecount'=>'# use',
+		'colusecount'=>'# usa',
 		'nofiles'	=> 'Nessun file caricato.',
 		'loadfile'	=> 'Carica file',
 		
