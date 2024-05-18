@@ -1,0 +1,13 @@
+<?php
+// Phrases for the frontend
+$lang ['plugin'] ['photoswipe'] = array(
+	'tooltip_closebutton' => 'Chiudi (Tasto Esc)',
+	'tooltip_sharebutton' => 'Condividi',
+	'tooltip_fullscreenbutton' => 'Schermo  intero',
+	'tooltip_zoombutton' => 'Ingrandimento',
+	'tooltip_autoplaybutton' => 'Avvia presentazione',
+	'tooltip_prevbutton' => 'Immagine precedente (tasto freccia sinistra)',
+	'tooltip_nextbutton' => 'Immagine successiva (tasto freccia destra)',
+	'label_gallerydoesntexist' => 'La galleria non esiste:',
+	'label_imagedoesntexist' => 'L\'immagine non esiste:'
+);
