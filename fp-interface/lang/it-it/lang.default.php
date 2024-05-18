@@ -70,13 +70,13 @@
 	
 	$lang['entry']['flags']['long'] = array(
 		'draft' => '<strong>Bozza di articolo</strong>: nascosta, in attesa di pubblicazione',
-		//'static' => '<strong>Static entry</strong>: normally hidden, to reach the entry put ?page=title-of-the-entry in url (experimental)',
+		//'static' => '<strong>Articolo statico</strong>: normalmente nascosto, per raggiungere l\'articolo inserisci ?page=titolo-del-tuo-articolo nell\'url (sperimentale)',
 		'commslock' => '<strong>Commenti bloccati</strong>: i commenti non sono permessi per questo articolo'
 	);
 	
 	$lang['entry']['flags']['short'] = array(
 		'draft' => 'Bozza',
-		//'static' => 'Static',
+		//'static' => 'Statico',
 		'commslock' => 'Commenti bloccati'
 	);
 
@@ -88,12 +88,12 @@
 	// Login
 	$lang['login'] = array(
 		
-		'head'		=> 'Login',
+		'head'		=> 'Connettiti',
 		'fieldset1'	=> 'Inserisci nome utente e password',
 		'user'		=> 'Nome utente:',
 		'pass'		=> 'Password:',
 		'fieldset2'	=> 'Connettiti',
-		'submit'	=> 'Login',
+		'submit'	=> 'Connettiti',
 		'forgot'	=> 'Password dimenticata'
 	);
 		
