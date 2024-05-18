@@ -28,6 +28,13 @@
 		'act_del'	=> 'Elimina',
 		'act_view'	=> 'Visualizza',
 		'act_edit'	=> 'Modifica'
+		// New admin theme
+		'add_new_entry' => 'Aggiungi un nuovo articolo',
+		'your_drafts' => 'Le tue bozze',
+		'no_drafts' => 'Non ancora delle bozze',
+		'entry' => 'Articolo',
+		'sorry' => 'Spiacenti',
+		'last_comments_disable' => 'Per visualizzare Gli ultimi commenti, <a href="admin.php?p=plugin">è necessario abilitare il plugin LastComments.</a>'
 	);
 	
 	/* write action */
@@ -52,7 +59,7 @@
 		'otheropts'	=> 'Altre opzioni',
 		'commmsg'	=> 'Gestisci i commenti per questo articolo',
 		'delmsg'	=> 'Elimina questo articolo',
-		//'back'		=> 'Back discarding changes',
+		//'back'		=> 'Indietro ignorando le modifiche',
 	);
 	
 
@@ -121,7 +128,8 @@
 		'ip'		=> 'IP',
 		'loggedin'	=> 'Utente registrato',
 		'submit'	=> 'Salva'
-		
+		// New admin theme
+		'cats_info' => 'Informazioni sulle Categorie',
 	
 	);
 
@@ -167,6 +175,7 @@ Tecnologia :6
 		'fset1'		=> 'Editor',
 		'fset2'		=> 'Applica le modifiche',
 		'submit'	=> 'Salva'
+		'cats_info' => 'Informazioni sulle Categorie'
 	);
 	
 	$lang['admin']['entry']['cats']['msgs'] = array(
