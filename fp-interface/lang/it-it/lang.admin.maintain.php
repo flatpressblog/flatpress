@@ -17,7 +17,12 @@
 		'chmod_info'	=> "I seguenti permessi dei file <strong>non possono</strong>
 					essere ripristinati a 0777; probabilmente il proprietario non è lo stesso del
 					server web. Di solito puoi ignorare questo avviso.",
-		
+		'help' => 'Guida',
+		'useful_links' => 'Qui ci sono alcuni link utili:',
+		'fp_home' => 'Sito web di FlatPress',
+		'fp_blog' => 'Blog di FlatPress',
+		'fp_forums' => 'Forum di FlatPress',
+		'fp_wiki' => 'Wiki di FlatPress'
 	);
 	
 	$lang['admin']['maintain']['default']['msgs'] = array(
@@ -32,7 +37,8 @@
 		<li>L\'ultima versione non stabile di FlatPress è la <big><a href="%s">%s</a></big></li>
 		</ul>',
 		'notice'=>'Avviso:'
-		
+		// New admin theme
+		'no_news' => 'Non ci sono nuovi avvisi di flatpress :('
 	);
 	
 	
