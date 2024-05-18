@@ -13,6 +13,7 @@
 ## Plugins
 ### Changes
 - SEO Meta Tag Info plugin: Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
+- FavIcon plugin: Support for iOS Safari, Android Chrome, Windows 10 and Mac OS Safari added ([#416](https://github.com/flatpressblog/flatpress/pull/416))
 
 ### Bugfixes
 - BBcode plugin: No file or image selection possible after activating the "Allow BBcode in comments" option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
