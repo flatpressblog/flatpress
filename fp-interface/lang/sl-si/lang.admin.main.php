@@ -16,6 +16,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op5' => 'Konfiguracija',
 	'op5d' => 'Prilagodite svoj FlatPress',
 	'op6' => 'Vzdrževanje',
-	'op6d' => 'Počisti in obnovi FlatPress'
+	'op6d' => 'Počisti in obnovi FlatPress',
+	'op7' => 'Naložite',
+	'op7d' => 'Prenašanje in upravljanje slik in datotek',
+	'op8' => 'Motive',
+	'op8d' => 'Preklapljanje med temami in slogi'
 );
 ?>

@@ -16,6 +16,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op5' => 'Configuratie',
 	'op5d' => 'Bewerk je FlatPress',
 	'op6' => 'Onderhoud',
-	'op6d' => 'Opschonen en herstel FlatPress'
+	'op6d' => 'Opschonen en herstel FlatPress',
+	'op7' => 'Uploader',
+	'op7d' => 'Afbeeldingen en bestanden uploaden en beheren',
+	'op8' => 'Thema\'s',
+	'op8d' => 'Schakel tussen thema\'s en stijlen'
 );
 ?>

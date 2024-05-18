@@ -17,5 +17,9 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op5d' => 'Základní nastavení Vašeho FlatPressu',
 	'op6' => 'Údržba',
 	'op6d' => 'Vyčištění, obnova, aktualizace FlatPressu',
+	'op7' => 'Nahrávač',
+	'op7d' => 'Nahrávání a správa obrázků a souborů',
+	'op8' => 'Motivy',
+	'op8d' => 'Přepínejte mezi motivy a styly'
 );
 ?>
