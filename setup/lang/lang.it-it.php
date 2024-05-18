@@ -1,6 +1,6 @@
 <?php
 /*
- * LangId: English
+ * LangId: Italian
  */
 $lang ['locked'] = array(
 	'head' => 'L\'installazione è stata bloccata',
@@ -18,7 +18,7 @@ $lang ['locked'] = array(
 );
 
 $lang ['step1'] = array(
-	'head' => 'Benvenuto in FlatPress!',
+	'head' => 'Benvenuto su FlatPress!',
 	'descr' => 'Grazie per aver scelto <strong>FlatPress</strong>.
 		
 		Prima che tu ti diverta con il tuo blog nuovo di zecca, dobbiamo farti qualche domanda. 
@@ -26,11 +26,11 @@ $lang ['step1'] = array(
 		Non preoccuparti, non ci vorrà molto!',
 	'descrl1' => 'Seleziona la tua lingua.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Non è in elenco?</a>',
-	'descrlang' => 'Se non vedi la tua lingua in questo elenco, potresti vedere se qui c\'è <a href="https://wiki.flatpress.org/res:language">un pacchetto di lingua</a> per questa versione:
+	'descrlang' => 'Se non trovi la tua lingua in questo elenco, potresti vedere se qui c\'è <a href="https://wiki.flatpress.org/res:language">un pacchetto di lingua</a> per questa versione:
 		
 		<pre>%s</pre>
 		
-		Per installare il pacchetto di lingua, carica il contenuto del pacchetto nela tua copia di <code>flatpress/</code>, e sovrascrivi tutto, poi <a href="./setup.php">riavvia questa installazione</a>.',
+		Per installare il pacchetto di lingua, carica il contenuto del pacchetto nella tua copia di <code>flatpress/</code>, e sovrascrivi tutto, poi <a href="./setup.php">riavvia questa installazione</a>.',
 	'descrw' => 'L\'<strong>unica cosa</strong> di cui ha bisogno FlatPress per funzionare è una cartella <em>scrivibile</em>. 
 		
 		<pre>%s</pre>'
@@ -78,9 +78,9 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Benvenuto su FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Questo è un articolo di prova, inserito mer mostrarti alcune delle funzioni di [url=https://www.flatpress.org]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Questo è un articolo di prova, inserito per mostrarti alcune delle funzioni di [url=https://www.flatpress.org]FlatPress[/url].
 
-Il tag more ti consente di crare un "salto" tra un estratto e l\'articolo completo.
+Il tag more ti consente di creare un "salto" tra un estratto e l\'articolo completo.
 
 [more] 
 
@@ -91,16 +91,16 @@ Il modo predefinito dell\'aspetto e del contenuto dell\'articolo è [url=http://
 
 [quote]Ci sono anche i blocchi [b]citazione[/b] per mostrare le tue citazioni preferite. [/quote]
 
-[code]E il tag \'code\' mmostra dei pezzetti di codice in uno stile monospaziale.
+[code]E il tag \'code\' mostra dei pezzetti di codice in uno stile monospaziale.
 Inoltre supporta
    il contenuto indentato.[/code]
 
-I tag img e url tag hanno inoltre delle opzioni speciali. Puoi saperne di più sul [url=https://wiki.flatpress.org/doc:plugins:bbcode]Wiki di FlatPress[/url].
+I tag img e url hanno inoltre delle opzioni speciali. Puoi saperne di più sul [url=https://wiki.flatpress.org/doc:plugins:bbcode]Wiki di FlatPress[/url].
 
 
 [h4]Articoli e Pagine statiche[/h4]
 
-Queto è un articolo, mentre [url=static.php?page=about]Informazioni su[/url] è una [b]pagina statica[/b]. Una pagina statica è un articolo che non può essere commentato e che non compare insieme agli altri articoli del blog.
+Questo è un articolo, mentre [url=static.php?page=about]Informazioni su[/url] è una [b]pagina statica[/b]. Una pagina statica è un articolo che non può essere commentato e che non compare insieme agli altri articoli del blog.
 
 Le pagine statiche sono utili per creare pagine di informazioni generali. Puoi anche rendere una di queste pagine la [b]pagina di apertura[/b] per i tuoi visitatori. Questo vuol dire che con FlatPress puoi anche costruire un sito completo che non sia un blog. L\'opzione per rendere una pagina statica la pagina iniziale del tuo sito si trova nel [b]pannello delle opzioni[/b] del [url=admin.php]pannello di controllo[/url].
 
@@ -109,11 +109,11 @@ Le pagine statiche sono utili per creare pagine di informazioni generali. Puoi a
 
 FlatPress è molto personalizzabile e supporta dei [url=https://wiki.flatpress.org/doc:plugins:standard]plugins[/url] per estenderne le funzioni. BBCode stesso è un plugin.
 
-Abbiamo creato altri contenuti di esempio per mostrarvi alcune delle funzioni ben nascoste di FP e chicche :) 
+Abbiamo creato altri contenuti di esempio per mostrarti alcune delle funzioni ben nascoste di FP e alcune chicche :) 
 Puoi trovare due [b]pagine statiche[/b] pronte per accettare i tuoi contenuti:
 [list]
 [*][url=static.php?page=about]Chi sono[/url]
-[*][url=static.php?page=menu]Menu[/url] (nota che i collegamenti in questa pagine appariranno anche sulla barra laterale - questa è una magia del [b]widget blockparser[/b]. Consulta le [url=http://wiki.flatpress.org/doc:faq]FAQ[/url] per questo e altro!)
+[*][url=static.php?page=menu]Menu[/url] (nota che i collegamenti in questa pagina appariranno anche sulla barra laterale - questa è una magia del [b]widget blockparser[/b]. Consulta le [url=http://wiki.flatpress.org/doc:faq]FAQ[/url] per questo e altro!)
 [/list]
 
 
