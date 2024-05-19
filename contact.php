@@ -135,9 +135,8 @@ function contactform() {
 function contact_main() {
 	global $smarty;
 
-	// Initialize modifier functions
-	$smarty->registerPlugin('modifier', 'stripslashes', 'stripslashes');
-	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
+	// register all Smarty modifier functions used by the templates
+	register_smartyplugins();
 
 	$lang = lang_load('contact');
 
@@ -146,6 +145,20 @@ function contact_main() {
 	contactform();
 }
 
+function register_smartyplugins() {
+	global $smarty;
+	$functionsToRegister = array(
+		// FlatPress functions
+		'stripslashes',
+		'wp_specialchars',
+		// PHP functions
+		'function_exists',
+		'is_numeric'
+	);
+	foreach ($functionsToRegister as $functionToRegister) {
+		$smarty->registerPlugin('modifier', $functionToRegister, $functionToRegister);
+	}
+}
 
 function contact_display() {
 	global $smarty;
