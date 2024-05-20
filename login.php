@@ -40,6 +40,8 @@ function main() {
 
 	// Initialize modifier functions
 	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
+	$smarty->registerPlugin('modifier', 'function_exists', 'function_exists');
+	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
 
 	if (user_loggedin()) {
 
