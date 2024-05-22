@@ -16,7 +16,10 @@ if (!defined('MOD_INDEX')) {
 $module = comment_main($module);
 
 function comment_main($module) {
-	global $fpdb, $fp_params;
+	global $fpdb, $fp_params, $smarty;
+
+	// register Smarty modifier function for errorlist.tpl
+	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
 
 	// hackish solution to get title before fullparse starts dunno, I don't like it
 
