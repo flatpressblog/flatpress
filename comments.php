@@ -18,7 +18,7 @@ $module = comment_main($module);
 function comment_main($module) {
 	global $fpdb, $fp_params, $smarty;
 
-	// register Smarty modifier function for errorlist.tpl
+	// register Smarty modifier function
 	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
 
 	// hackish solution to get title before fullparse starts dunno, I don't like it
@@ -26,8 +26,9 @@ function comment_main($module) {
 	$q = & $fpdb->getQuery();
 
 	list ($id, $entry) = @$q->peekEntry();
-	if (!$entry)
+	if (empty($entry)) {
 		return $module;
+	}
 
 	if (!empty($fp_params ['feed'])) {
 
@@ -52,8 +53,8 @@ function comment_main($module) {
 
 function comment_feed() {
 	global $fp_params;
-	echo "\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get Comments RSS 2.0 Feed\" href=\"" . theme_comments_feed_link('rss2', $fp_params ['entry']) . "\" />";
-	echo "\n<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Comments Atom 1.0 Feed\" href=\"" . theme_comments_feed_link('atom', $fp_params ['entry']) . "\" />\n";
+	echo "\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get Comments RSS 2.0 Feed\" href=\"" . theme_comments_feed_link('rss2', $fp_params ['entry']) . "\">";
+	echo "\n<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Comments Atom 1.0 Feed\" href=\"" . theme_comments_feed_link('atom', $fp_params ['entry']) . "\">\n";
 }
 add_action('wp_head', 'comment_feed');
 
@@ -61,10 +62,11 @@ function comment_pagetitle($val, $sep) {
 	global $fpdb, $lang;
 	$q = & $fpdb->getQuery();
 	list ($id, $e) = @$q->peekEntry();
-	if ($e)
+	if (!empty($e)) {
 		return "{$e['subject']} : {$lang['main']['comments']} {$sep} $val ";
-	else
+	} else {
 		return $val;
+	}
 }
 remove_filter('wp_title', 'index_permatitle');
 add_filter('wp_title', 'comment_pagetitle', 10, 2);
@@ -106,8 +108,7 @@ function comment_validate() {
 		 * check name
 		 *
 		 */
-
-		if (!$name) {
+		if (empty($name)) {
 			$errors ['name'] = $lerr ['name'];
 		}
 
@@ -115,30 +116,29 @@ function comment_validate() {
 		 * check email
 		 *
 		 */
-
-		if ($email) {
-			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-				$errors ['email'] = $lerr ['email'];
-			}
+		if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			$errors ['email'] = $lerr ['email'];
 		}
 
 		/*
-		 * check url
+		 * add https to url if not given and check url
 		 *
 		 */
-
-		if ($url) {
+		if (!empty($url) && strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
+			$url = 'https://' . $url;
 			if (!filter_var($url, FILTER_VALIDATE_URL)) {
 				$errors ['url'] = $lerr ['www'];
 			}
 		}
 	}
 
-	if (!$content) {
+	// check content
+	if (empty($content)) {
 		$errors ['content'] = $lerr ['comment'];
 	}
 
-	if ($errors) {
+	// assign error messages to template
+	if (!empty($errors)) {
 		$smarty->assign('error', $errors);
 		return false;
 	}
@@ -146,22 +146,25 @@ function comment_validate() {
 	$arr ['version'] = system_ver();
 	$arr ['name'] = $name;
 
-	if ($email) {
+	if (!empty($email)) {
 		($arr ['email'] = $email);
 	}
-	if ($url) {
+
+	if (!empty($url)) {
 		($arr ['url'] = ($url));
 	}
+
 	$arr ['content'] = $content;
 
 	if ($v = utils_ipget()) {
 		$arr ['ip-address'] = $v;
 	}
 
-	if ($loggedin || apply_filters('comment_validate', true, $arr))
+	if ($loggedin || apply_filters('comment_validate', true, $arr)) {
 		return $arr;
-	else
+	} else {
 		return false;
+	}
 }
 
 function commentform() {
@@ -172,11 +175,8 @@ function commentform() {
 
 	if (!empty($_POST)) {
 
+		// new form, we (re)set the session data
 		// utils_nocache_headers();
-
-		// add https to url if not given
-		if (!empty($_POST ['url']) && strpos($_POST ['url'], 'http://') === false && strpos($_POST ['url'], 'https://') === false)
-			$_POST ['url'] = 'https://' . $_POST ['url'];
 
 		// custom hook here!!
 		if ($arr = comment_validate()) {
