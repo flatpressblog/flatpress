@@ -10,11 +10,15 @@ $contactform_inputs = array(
 	'content'
 );
 
-// Validates the POST data
+/**
+ * Validates the POST data and returns a validated array (key=>value) - or <code>false</code> if validation failed
+ *
+ * @return boolean|array
+ */
 function contact_validate() {
 	global $smarty, $contactform_inputs, $lang;
 
-	$lerr = & $lang ['contact'] ['error'];
+	$lerr = &$lang ['contact'] ['error'];
 
 	$r = true;
 
@@ -33,31 +37,30 @@ function contact_validate() {
 	}
 
 	// check name
-	if (!$name) {
+	if (empty($name)) {
 		$errors ['name'] = $lerr ['name'];
 	}
 
 	// check email
-	if ($email) {
-		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			$errors ['email'] = $lerr ['email'];
-		}
+	if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		$errors ['email'] = $lerr ['email'];
 	}
 
-	// check url
-	if ($url) {
+	// add https to url if not given and check url
+	if (!empty($url) && strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
+		$url = 'https://' . $url;
 		if (!filter_var($url, FILTER_VALIDATE_URL)) {
 			$errors ['url'] = $lerr ['www'];
 		}
 	}
 
 	// check content
-	if (!$content) {
+	if (empty($content)) {
 		$errors ['content'] = $lerr ['content'];
 	}
 
 	// assign error messages to template
-	if ($errors) {
+	if (!empty($errors)) {
 		$smarty->assign('error', $errors);
 		return false;
 	}
@@ -65,11 +68,11 @@ function contact_validate() {
 	$arr ['version'] = system_ver();
 	$arr ['name'] = $name;
 
-	if ($email) {
+	if (!empty($email)) {
 		($arr ['email'] = $email);
 	}
 
-	if ($url) {
+	if (!empty($url)) {
 		($arr ['url'] = ($url));
 	}
 
@@ -80,10 +83,11 @@ function contact_validate() {
 	}
 
 	// check aaspam if active
-	if (apply_filters('comment_validate', true, $arr))
+	if (apply_filters('comment_validate', true, $arr)) {
 		return $arr;
-	else
+	} else {
 		return false;
+	}
 }
 
 function contactform() {
@@ -108,11 +112,6 @@ function contactform() {
 		return;
 	}
 
-	// add https to url if not given
-	if (!empty($_POST ['url']) && strpos($_POST ['url'], 'http://') === false && strpos($_POST ['url'], 'https://') === false) {
-		$_POST ['url'] = 'https://' . $_POST ['url'];
-	}
-
 	// okay, validation returned validated values
 	// now build the mail content
 	$msg = "{$lang['contact']['notification']['name']} \n{$validationResult['name']}\n\n";
@@ -128,8 +127,10 @@ function contactform() {
 	// send notification mail to site admin
 	// for non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
 	$success = @utils_mail((isset($validationResult ['email']) ? $validationResult ['email'] : $fp_config ['general'] ['email']), "{$lang['contact']['notification']['subject']} {$fp_config['general']['title']}", $msg);
+
 	system_seterr('contact', $success ? 1 : -1);
-	utils_redirect(basename(__FILE__));
+	utils_redirect(basename(__FILE__), true);
+	exit();
 }
 
 function contact_main() {
