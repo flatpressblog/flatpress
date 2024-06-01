@@ -1,9 +1,10 @@
 <?php
 
 function admin_widgets_head() {
-	global $lang;
+	global $fp_config, $lang;
+	$random_hex = $fp_config ['plugins'] ['fpprotect'] ['random_hex'];
 	echo '
-		<script>
+		<script nonce="' . $random_hex . '">
 			/**
 			 * FlatPress widget js admin
 			 */

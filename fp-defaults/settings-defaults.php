@@ -43,6 +43,9 @@ $fp_config = array(
 			'akismet_key' => '',
 			'akismet_url' => '',
 		),
+		'fpprotect' => array (
+			'random_hex' => bin2hex(random_bytes(18))
+		),
 	),
 );
 
