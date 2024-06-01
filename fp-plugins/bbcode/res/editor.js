@@ -12,7 +12,7 @@ function insertAtCursor(element, start, end) {
 		}
 		element.focus(caretPos);    
 	} else if (element.selectionStart || element.selectionStart == '0') {
-	    // MOZILLA
+		// MOZILLA
 		element.focus();
 		var startPos = element.selectionStart;
 		var endPos = element.selectionEnd;
@@ -126,8 +126,8 @@ function checkTab(evt) {
 			t.selectionStart = ss + tab.length;
 			t.selectionEnd = se + tab.length;
 		}
-        // "Normal" case (no selection or selection on one line only)
-        else {
+		// "Normal" case (no selection or selection on one line only)
+		else {
 			t.value = t.value.slice(0, ss).concat(tab).concat(t.value.slice(ss, t.value.length));
 			if (ss == se) {
 				t.selectionStart = t.selectionEnd = ss + tab.length;
@@ -136,11 +136,276 @@ function checkTab(evt) {
 				t.selectionStart = ss + tab.length;
 				t.selectionEnd = se + tab.length;
 			}
-        }
-    }
+		}
+	}
 }
 
 if (typeof(Event.observe) == 'function') {
 	//prototype is loaded
 	Event.observe(window, 'load', tabKeyOverrider, false)
+}
+
+/**
+ * Replacement section for href onclick HTML method
+ */
+// url
+if (document.getElementById('bb_url')) {
+	bb_url();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_url);
+}
+function bb_url() {
+	const bb = document.getElementById('bb_url');
+	if (bb) {
+		document.getElementById('bb_url').addEventListener('click', onClick_bb_url, false);
+	}
+}
+function onClick_bb_url() {
+	insBBCode('url');
+}
+
+// mail
+if (document.getElementById('bb_mail')) {
+	bb_mail();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_mail);
+}
+function bb_mail() {
+	const bb = document.getElementById('bb_mail');
+	if (bb) {
+		document.getElementById('bb_mail').addEventListener('click', onClick_bb_mail, false);
+	}
+}
+function onClick_bb_mail() {
+	insBBCode('mail');
+}
+
+// h2
+if (document.getElementById('bb_h2')) {
+	bb_h2();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_h2);
+}
+function bb_h2() {
+	const bb = document.getElementById('bb_h2');
+	if (bb) {
+		document.getElementById('bb_h2').addEventListener('click', onClick_bb_h2, false);
+	}
+}
+function onClick_bb_h2() {
+	insBBCode('h2');
+}
+
+// h3
+if (document.getElementById('bb_h3')) {
+	bb_h3();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_h3);
+}
+function bb_h3() {
+	const bb = document.getElementById('bb_h3');
+	if (bb) {
+		document.getElementById('bb_h3').addEventListener('click', onClick_bb_h3, false);
+	}
+}
+function onClick_bb_h3() {
+	insBBCode('h3');
+}
+
+// h4
+if (document.getElementById('bb_h4')) {
+	bb_h4();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_h4);
+}
+function bb_h4() {
+	const bb = document.getElementById('bb_h4');
+	if (bb) {
+		document.getElementById('bb_h4').addEventListener('click', onClick_bb_h4, false);
+	}
+}
+function onClick_bb_h4() {
+	insBBCode('h4');
+}
+
+// ul
+if (document.getElementById('bb_ul')) {
+	bb_ul();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_ul);
+}
+function bb_ul() {
+	const bb = document.getElementById('bb_ul');
+	if (bb) {
+		document.getElementById('bb_ul').addEventListener('click', onClick_bb_ul, false);
+	}
+}
+function onClick_bb_ul() {
+	insBBCodeWithContent('list', '\n[*]\n[*]\n');
+}
+
+// ol
+if (document.getElementById('bb_ol')) {
+	bb_ol();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_ol);
+}
+function bb_ol() {
+	const bb = document.getElementById('bb_ol');
+	if (bb) {
+		document.getElementById('bb_ol').addEventListener('click', onClick_bb_ol, false);
+	}
+}
+function onClick_bb_ol() {
+	insBBCodeWithParamsAndContent('list', '#', '\n[*]\n[*]\n');
+}
+
+// quote
+if (document.getElementById('bb_quote')) {
+	bb_quote();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_quote);
+}
+function bb_quote() {
+	const bb = document.getElementById('bb_quote');
+	if (bb) {
+		document.getElementById('bb_quote').addEventListener('click', onClick_bb_quote, false);
+	}
+}
+function onClick_bb_quote() {
+	insBBCode('quote');
+}
+
+// code
+if (document.getElementById('bb_code')) {
+	bb_code();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_code);
+}
+function bb_code() {
+	const bb = document.getElementById('bb_code');
+	if (bb) {
+		document.getElementById('bb_code').addEventListener('click', onClick_bb_code, false);
+	}
+}
+function onClick_bb_code() {
+	insBBCode('code');
+}
+
+// html
+if (document.getElementById('bb_html')) {
+	bb_html();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_html);
+}
+function bb_html() {
+	const bb = document.getElementById('bb_html');
+	if (bb) {
+		document.getElementById('bb_html').addEventListener('click', onClick_bb_html, false);
+	}
+}
+function onClick_bb_html() {
+	insBBCode('html');
+}
+
+// b
+if (document.getElementById('bb_b')) {
+	bb_b();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_b);
+}
+function bb_b() {
+	const bb = document.getElementById('bb_b');
+	if (bb) {
+		document.getElementById('bb_b').addEventListener('click', onClick_bb_b, false);
+	}
+}
+function onClick_bb_b() {
+	insBBCode('b');
+}
+
+// i
+if (document.getElementById('bb_i')) {
+	bb_i();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_i);
+}
+function bb_i() {
+	const bb = document.getElementById('bb_i');
+	if (bb) {
+		document.getElementById('bb_i').addEventListener('click', onClick_bb_i, false);
+	}
+}
+function onClick_bb_i() {
+	insBBCode('i');
+}
+
+// u
+if (document.getElementById('bb_u')) {
+	bb_u();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_u);
+}
+function bb_u() {
+	const bb = document.getElementById('bb_u');
+	if (bb) {
+		document.getElementById('bb_u').addEventListener('click', onClick_bb_u, false);
+	}
+}
+function onClick_bb_u() {
+	insBBCode('u');
+}
+
+// del
+if (document.getElementById('bb_del')) {
+	bb_del();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_del);
+}
+function bb_del() {
+	const bb = document.getElementById('bb_del');
+	if (bb) {
+		document.getElementById('bb_del').addEventListener('click', onClick_bb_del, false);
+	}
+}
+function onClick_bb_del() {
+	insBBCode('del');
+}
+
+// contentfield expand-button
+if (document.getElementById('expand')) {
+	bb_expand();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_expand);
+}
+function bb_expand() {
+	const bb = document.getElementById('expand');
+	if (bb) {
+		document.getElementById('expand').addEventListener('click', contentFieldExpand, false);
+	}
+}
+function contentFieldExpand() {
+	const bb = document.getElementById('content');
+	if (bb) {
+		document.getElementById('content').form.content.rows += 5;
+	}
+}
+
+// contentfield reduce-button
+if (document.getElementById('reduce')) {
+	bb_reduce();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_reduce);
+}
+function bb_reduce() {
+	const bb = document.getElementById('reduce');
+	if (bb) {
+		document.getElementById('reduce').addEventListener('click', contentFieldReduce, false);
+	}
+}
+function contentFieldReduce() {
+	const bb = document.getElementById('content');
+	if (bb) {
+		document.getElementById('content').form.content.rows -= 5;
+	}
 }

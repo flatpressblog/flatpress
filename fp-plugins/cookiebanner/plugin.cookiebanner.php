@@ -20,7 +20,8 @@ add_action('wp_head', 'plugin_cookiebanner_head', 0);
 
 function plugin_cookiebanner_footer() {
 
-	global $lang;
+	global $fp_config, $lang;
+	$random_hex = $fp_config ['plugins'] ['fpprotect'] ['random_hex'];
 	lang_load('plugin:cookiebanner');
 
 	$bannertext = $lang ['plugin'] ['cookiebanner'] ['bannertext'];
@@ -37,7 +38,7 @@ function plugin_cookiebanner_footer() {
 		<!-- EOF Cookie-Banner HTML -->
 
 		<!-- BOF Cookie-Banner JS -->
-		<script>
+		<script nonce="' . $random_hex . '">
 			/**
 			 * Initializes the CookieBanner plugin.
 			 */
