@@ -27,7 +27,7 @@ function plugin_favicon_head() {
 		<link rel="icon" type="image/png" sizes="16x16" href="' . plugin_geturl('favicon') . 'imgs/favicon-16x16.png">
 		<link rel="manifest" href="' . plugin_geturl('favicon') . 'res/site.webmanifest">
 		<link rel="mask-icon" href="' . plugin_geturl('favicon') . 'imgs/safari-pinned-tab.svg" color="#aa4142">
-		<link rel="shortcut icon" href="' . plugin_geturl('favicon') . 'imgs/favicon.ico">
+		<link rel="icon" href="' . plugin_geturl('favicon') . 'imgs/favicon.ico">
 		<meta name="msapplication-TileColor" content="#da532c">
 		<meta name="msapplication-config" content="' . plugin_geturl('favicon') . 'res/browserconfig.xml">
 		<meta name="msapplication-TileImage" content="' . plugin_geturl('favicon') . 'imgs/mstile-70x70.png">
