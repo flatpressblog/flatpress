@@ -1,0 +1,15 @@
+FavIcon
+=======
+
+FlatPress comes with a complete icon set as part of the standard distribution.
+The icon set covers iOS, Android, Mac OS, Windows 10 or higher and classic/ desktop browsers.
+All icons can be found in the plugin directory /fp-plugins/favicon/imgs.
+
+If you want to use your own favicon, please make sure that the favicon is a multiple of 48px, e.g. 48x48px, 96x96px, 144x144px (or an SVG file with an aspect ratio of 1:1).
+The favicon.ico file should be a multi-layered icon with the sizes 16x16, 32x32 and 48x48.
+
+To display the favicon correctly on mobile Android devices, the path in the site.webmanifest.json.php file must refer to the favicon.
+The same applies to Windows 10 devices or higher.  The path to the matching icons is specified in the browserconfig.xml.php file.
+
+Google Search, for example, only supports one favicon per website, whereby a website is defined by the host name.
+If you activate the FavIcon plugin, a request for the favicon in the main directory will be answered with 404.
