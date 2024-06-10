@@ -10,8 +10,7 @@
 
 if (function_exists('is_https')) {
 
-	global $fp_config;
-	$random_hex = $fp_config ['plugins'] ['fpprotect'] ['random_hex'];
+	$random_hex = RANDOM_HEX;
 
 	if (is_https()) {
 		/**

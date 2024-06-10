@@ -26,8 +26,7 @@ function plugin_lightbox2_head() {
 add_action('wp_head', 'plugin_lightbox2_head');
 
 function plugin_lightbox2_footer() {
-	global $fp_config;
-	$random_hex = $fp_config ['plugins'] ['fpprotect'] ['random_hex'];
+	$random_hex = RANDOM_HEX;
 
 	$pdir = plugin_geturl('lightbox2');
 	echo '

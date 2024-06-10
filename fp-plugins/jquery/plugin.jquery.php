@@ -10,8 +10,7 @@
 add_action('wp_head', 'plugin_jquery_head', 0);
 
 function plugin_jquery_head() {
-	global $fp_config;
-	$random_hex = $fp_config ['plugins'] ['fpprotect'] ['random_hex'];
+	$random_hex = RANDOM_HEX;
 
 	$pdir = plugin_geturl('jquery');
 	echo '
