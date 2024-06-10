@@ -1,8 +1,8 @@
 <?php
 
 function admin_widgets_head() {
-	global $fp_config, $lang;
-	$random_hex = $fp_config ['plugins'] ['fpprotect'] ['random_hex'];
+	global $lang;
+	$random_hex = RANDOM_HEX;
 	echo '
 		<script nonce="' . $random_hex . '">
 			/**

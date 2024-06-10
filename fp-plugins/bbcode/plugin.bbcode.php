@@ -61,9 +61,11 @@ plugin_bbcode_startup();
  * Adds the plugin's CSS and JS to the HTML head.
  */
 function plugin_bbcode_head() {
+	$random_hex = RANDOM_HEX;
+
 	echo "	<!-- bbcode plugin -->\n";
 	echo '	<link rel="stylesheet" type="text/css" href="' . plugin_geturl('bbcode') . "res/bbcode.css\" />\n";
-	echo '	<script src="' . plugin_geturl('bbcode') . "res/editor.js\"></script>\n";
+	echo '	<script nonce="' . $random_hex . '" src="' . plugin_geturl('bbcode') . "res/editor.js\"></script>\n";
 	echo "	<!-- end of bbcode plugin -->\n";
 }
 add_action('wp_head', 'plugin_bbcode_head');

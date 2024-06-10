@@ -36,8 +36,8 @@ $plugin_emoticons = array(
 
 // outputs the editor toolbar
 function plugin_emoticons() {
-	global $fp_config, $plugin_emoticons;
-	$random_hex = $fp_config ['plugins'] ['fpprotect'] ['random_hex'];
+	global $plugin_emoticons;
+	$random_hex = RANDOM_HEX;
 
 	if (!count($plugin_emoticons)) {
 		return true;
@@ -103,8 +103,7 @@ function plugin_emoticons_filter ($emostring) {
 
 // css file
 function plugin_emoticons_head() {
-	global $fp_config;
-	$random_hex = $fp_config ['plugins'] ['fpprotect'] ['random_hex'];
+	$random_hex = RANDOM_HEX;
 	$pdir = plugin_geturl('emoticons');
 	echo '
 		<!-- BOF Emoticons -->

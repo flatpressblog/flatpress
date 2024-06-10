@@ -219,8 +219,7 @@ class PhotoSwipeFunctions {
 	 * Echoes the <script> tags.
 	 */
 	static function echoScriptTags() {
-		global $fp_config;
-		$random_hex = $fp_config ['plugins'] ['fpprotect'] ['random_hex'];
+		$random_hex = RANDOM_HEX;
 		$pdir = plugin_geturl('photoswipe');
 		echo '<!-- PhotoSwipe -->
 ';

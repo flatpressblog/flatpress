@@ -103,6 +103,11 @@ include (LANG_DIR . 'browserlang.php');
 define('LANG_DEFAULT', $browserLang);
 define('BPT_SORT', SORT_DESC);
 
+// generates for your scripts in plugins and templates
+// a random hexadecimal value for the nonce attribute
+// https://wiki.selfhtml.org/wiki/HTML/Attribute/nonce
+define('RANDOM_HEX', bin2hex(random_bytes(18)));
+
 set_include_path(ABS_PATH);
 
 //
