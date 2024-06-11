@@ -2,8 +2,9 @@
 
 function admin_widgets_head() {
 	global $lang;
+	$random_hex = RANDOM_HEX;
 	echo '
-		<script>
+		<script nonce="' . $random_hex . '">
 			/**
 			 * FlatPress widget js admin
 			 */

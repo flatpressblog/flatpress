@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Emoticons
- * Version: 1.1.0
+ * Version: 1.1.1
  * Plugin URI: https://flatpress.org
  * Description: Allows use of emoticons. Part of the standard distribution.
  * Author: FlatPress
@@ -37,16 +37,53 @@ $plugin_emoticons = array(
 // outputs the editor toolbar
 function plugin_emoticons() {
 	global $plugin_emoticons;
-	if (!count($plugin_emoticons))
+	$random_hex = RANDOM_HEX;
+
+	if (!count($plugin_emoticons)) {
 		return true;
-	echo '<div class="emoticons">';
-	foreach ($plugin_emoticons as $text => $emoticon) {
-		echo '<a href="#content" title="' . htmlentities($text) . '" onclick="emoticons(unescape(\'' . urlencode($text) . '\')); return false;">';
-		echo $emoticon;
-		echo '</a> ';
 	}
-	echo '</div>';
+	echo '
+		<!-- BOF Emoticons -->
+		<div class="emoticons">';
+	foreach ($plugin_emoticons as $emoText => $emoticon) {
+
+		$elementById = randomChar(8);
+		echo '
+		<script nonce="' . $random_hex . '">
+			if (document.getElementById(\'' . $elementById . '\')) { // Button already available?
+				BTN_' . $elementById . '(); // Call the registration function
+			} else { // Register as EventHandler
+				document.addEventListener(\'DOMContentLoaded\', BTN_' . $elementById . ');
+			}
+			// Registration function
+			function BTN_' . $elementById . '() {
+				const em = document.getElementById(\'' . $elementById . '\');
+				if (em) {
+					document.getElementById(\'' . $elementById . '\').addEventListener(\'click\', onClick_' . $elementById . ', false);
+				}
+			}
+			// Replacement for href onclick HTML method
+			function onClick_' . $elementById . '() {
+				emoticons(unescape(\'' . urlencode($emoText) . '\')); return false;
+			}
+		</script>
+		<a href="#!" title="' . htmlentities($emoText) . '" id="' . $elementById . '">';
+		echo $emoticon;
+		echo '</a>
+		';
+
+	}
+	echo '
+		</div>
+		<!-- EOF Emoticons -->
+		';
 	return true;
+}
+
+
+// generates a random string for elementById with $length characters
+function randomChar($length = 10) {
+	return substr(str_shuffle(str_repeat(implode('', range('a','z')), $length)), 0, $length);
 }
 
 // replaces the text with an utf-8 emoticon
@@ -66,11 +103,12 @@ function plugin_emoticons_filter ($emostring) {
 
 // css file
 function plugin_emoticons_head() {
+	$random_hex = RANDOM_HEX;
 	$pdir = plugin_geturl('emoticons');
 	echo '
 		<!-- BOF Emoticons -->
 		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/emoticons.css">
-		<script src="' . plugin_geturl('emoticons') . 'res/emoticons.js"></script>
+		<script nonce="' . $random_hex . '" src="' . plugin_geturl('emoticons') . 'res/emoticons.js"></script>
 		<!-- EOF Emoticons -->';
 }
 

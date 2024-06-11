@@ -26,10 +26,12 @@ function plugin_lightbox2_head() {
 add_action('wp_head', 'plugin_lightbox2_head');
 
 function plugin_lightbox2_footer() {
+	$random_hex = RANDOM_HEX;
+
 	$pdir = plugin_geturl('lightbox2');
 	echo '
 		<!-- start of lightbox -->
-		<script src="' . $pdir . 'res/slimbox2.js"></script>
+		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/slimbox2.js"></script>
 		<!-- end of lightbox -->';
 }
 add_action('wp_footer', 'plugin_lightbox2_footer');

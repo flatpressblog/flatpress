@@ -28,6 +28,10 @@ function search_display() {
 function search_main() {
 	global $lang, $smarty;
 
+	// Initialize modifier functions
+	$smarty->registerPlugin('modifier', 'function_exists', 'function_exists');
+	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
+
 	add_action('wp_title', 'search_title', 0, 2);
 
 	if (empty($_GET)) {

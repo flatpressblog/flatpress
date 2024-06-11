@@ -219,17 +219,18 @@ class PhotoSwipeFunctions {
 	 * Echoes the <script> tags.
 	 */
 	static function echoScriptTags() {
+		$random_hex = RANDOM_HEX;
 		$pdir = plugin_geturl('photoswipe');
 		echo '<!-- PhotoSwipe -->
 ';
 		if (!function_exists('plugin_jquery_head')) {
-			echo '<script src="' . $pdir . 'res/jquery-2.2.2/jquery-2.2.2.min.js"></script>
+			echo '<script nonce="' . $random_hex . '" src="' . $pdir . 'res/jquery-2.2.2/jquery-2.2.2.min.js"></script>
 ';
 		}
 		echo '
-	<script src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe-ui-default.min.js"></script>
-	<script src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe.min.js"></script>
-	<script>';
+	<script nonce="' . $random_hex . '" src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe-ui-default.min.js"></script>
+	<script nonce="' . $random_hex . '" src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe.min.js"></script>
+	<script nonce="' . $random_hex . '">';
 		include_once (dirname(__FILE__) . '/res/photoswipe.js.php');
 		echo '
 	</script>
