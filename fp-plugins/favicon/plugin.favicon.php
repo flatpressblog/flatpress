@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Plugin Name: FavIcon
  * Version: 1.1.0
@@ -26,16 +25,11 @@ function plugin_favicon_head() {
 	echo '
 		<!-- BOF FavIcon -->
 		' . // Smartphone iOS Safari
-		'<link rel="apple-touch-icon" sizes="180x180" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon.png">' . //
-		'<link rel="apple-touch-icon-precomposed" sizes="180x180" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-precomposed.png">' . //
+		'<link rel="apple-touch-icon" sizes="180x180" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-180x180.png">' . //
 		'<link rel="apple-touch-icon" sizes="152x152" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-152x152.png">' . //
-		'<link rel="apple-touch-icon-precomposed" sizes="152x152" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-152x152-precomposed.png">' . //
 		'<link rel="apple-touch-icon" sizes="120x120" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-120x120.png">' . //
-		'<link rel="apple-touch-icon-precomposed" sizes="120x120" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-120x120-precomposed.png">' . //
 		'<link rel="apple-touch-icon" sizes="76x76" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-76x76.png">' . //
-		'<link rel="apple-touch-icon-precomposed" sizes="76x76" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-76x76-precomposed.png">' . //
 		'<link rel="apple-touch-icon" sizes="60x60" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-60x60.png">' . //
-		'<link rel="apple-touch-icon-precomposed" sizes="60x60" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-60x60-precomposed.png">' . //
 			// Smartphone Android Chrome
 		'<link rel="icon" type="image/png" sizes="256x256" href="' . plugin_geturl('favicon') . 'imgs/android-chrome-256x256.png">' . // For Android home screen
 		'<link rel="icon" type="image/png" sizes="192x192" href="' . plugin_geturl('favicon') . 'imgs/android-chrome-192x192.png">' . //
