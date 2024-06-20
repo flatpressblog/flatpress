@@ -1,5 +1,15 @@
 <?php
+$lang ['admin'] ['plugin'] ['submenu'] ['seometataginfo'] = 'SEO';
 $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
+
+	// SEO robots.txt part 1
+	'head' => 'SEO robots.txt',
+	'description1' => 'Le fichier <code>robots.txt</code> contrôle les robots d\'un moteur de recherche et le comportement des robots sur ton blog FlatPress. ' . //
+		'Ici, tu peux créer et modifier un fichier <code>rotots.txt</code> pour l\'optimisation des moteurs de recherche.',
+	'location' => '<strong>Emplacement de stockage :</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
+	'submit' => 'Enregistrer robots.txt',
+
+	// SEO Metatags part
 	'legend_desc' => 'Description et mots-clés Descripción y palabras clave',
 	'description' => 'Ces détails permettent de les retrouver plus facilement avec les moteurs de recherche et de les afficher sur les médias sociaux. <a class="hint" href="https://fr.wikipedia.org/wiki/Élément_meta" title="Wikipedia" target="_blank">Wikipedia</a>',
 	'input_desc' => 'Insérez la description :',
@@ -23,5 +33,18 @@ $lang ['plugin'] ['seometataginfo'] = array(
 	'contact' => 'Nous contacter',
 	'comments' => 'Commentaires',
 	'pagenum' => 'Page #'
+);
+
+// SEO robots.txt part 2
+$lang ['admin'] ['plugin'] ['seometataginfo'] ['msgs'] = array(
+	1 => 'Le fichier <code>robots.txt</code> a été enregistré avec succès',
+	-1 => 'Le fichier <code>robots.txt</code> n\'a pas pu être enregistré (pas de droits d\'écriture dans le <code>' . $_SERVER ['DOCUMENT_ROOT'] . '</code>) ?',
+
+	2 => 'Les paramètres ont été enregistrés avec succès',
+	-2 => 'Une erreur est survenue lors de l\'enregistrement'
+);
+
+$lang ['plugin'] ['seometataginfo'] ['errors'] = array (
+	-2 => 'Il n\'y a pas de <code>robots.txt</code> ou il n\'est pas possible de créer un <code>robots.txt</code> le répertoire principal du document HTTP.'
 );
 ?>
