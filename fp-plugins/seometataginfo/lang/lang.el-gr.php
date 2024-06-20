@@ -1,5 +1,15 @@
 <?php
+$lang ['admin'] ['plugin'] ['submenu'] ['seometataginfo'] = 'SEO';
 $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
+
+	// SEO robots.txt part 1
+	'head' => 'SEO robots.txt',
+	'description1' => 'Το αρχείο <code>robots.txt</code> ελέγχει τους ανιχνευτές μιας μηχανής αναζήτησης και τη συμπεριφορά των ανιχνευτών στο ιστολόγιό σας FlatPress. ' . //
+		'Εδώ μπορείτε να δημιουργήσετε και να επεξεργαστείτε ένα αρχείο <code>rotots.txt</code> για τη βελτιστοποίηση των μηχανών αναζήτησης.',
+	'location' => '<strong>Τοποθεσία αποθήκευσης:</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
+	'submit' => 'Αποθήκευση του robots.txt',
+
+	// SEO Metatags part
 	'legend_desc' => 'Περιγραφή και λέξεις-κλειδιά',
 	'description' => 'Αυτά τα στοιχεία διευκολύνουν την εύρεσή τους από τις μηχανές αναζήτησης και την ανάρτησή τους στα μέσα κοινωνικής δικτύωσης. <a class="hint" href="https://en.wikipedia.org/wiki/Meta_element" title="Wikipedia" target="_blank">Wikipedia</a>',
 	'input_desc' => 'Εισάγετε την περιγραφή:',
@@ -23,5 +33,18 @@ $lang ['plugin'] ['seometataginfo'] = array(
 	'contact' => 'Επικοινωνήστε μαζί μας',
 	'comments' => 'Σχόλια',
 	'pagenum' => 'Σελίδα #'
+);
+
+// SEO robots.txt part 2
+$lang ['admin'] ['plugin'] ['seometataginfo'] ['msgs'] = array(
+	1 => 'Το αρχείο <code>robots.txt</code> αποθηκεύτηκε με επιτυχία',
+	-1 => 'Το αρχείο <code>robots.txt</code> δεν μπόρεσε να αποθηκευτεί (Δεν υπάρχει εξουσιοδότηση εγγραφής στο <code>' . $_SERVER ['DOCUMENT_ROOT'] . '</code>)?',
+
+	2 => 'Οι ρυθμίσεις αποθηκεύτηκαν με επιτυχία',
+	-2 => 'Εμφανίστηκε σφάλμα κατά την αποθήκευση'
+);
+
+$lang ['plugin'] ['seometataginfo'] ['errors'] = array (
+	-2 => 'Δεν υπάρχει <code>robots.txt</code> ή δεν μπορεί να δημιουργηθεί <code>robots.txt</code> στο ριζικό κατάλογο του εγγράφου HTTP.'
 );
 ?>
