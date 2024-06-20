@@ -126,8 +126,9 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 				$file_meta = SEOMETA_DEFAULT_DIR . 'metatags.ini';
 			}
 
-			if (!empty($file_meta) && !file_exists($file_meta))
+			if (!empty($file_meta) && !file_exists($file_meta)) {
 				@io_write_file($file_meta, '');
+			}
 
 			$cfg = new iniParser($file_meta);
 			$old_desc = $cfg->get("meta", "description") != false ? wp_specialchars(trim($cfg->get("meta", "description"))) : (!empty($_REQUEST ['pl_description']) ? $_REQUEST ['pl_description'] : '');
@@ -170,8 +171,9 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 		}
 
 		function do_save() {
-			if (empty($_POST ['pl_file_meta']))
+			if (empty($_POST ['pl_file_meta'])) {
 				return;
+			}
 			global $keep_char;
 			$metatags = "description=" . (isset($_POST ['pl_description']) ? trim($_POST ['pl_description']) : "") . "\n";
 			$metatags .= "keywords=" . (isset($_POST ['pl_keywords']) ? trim($_POST ['pl_keywords']) : "") . "\n";
@@ -181,10 +183,10 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 			$metatags .= "nosnippet=" . (isset($_POST ['pl_nosnippet']) ? trim($_POST ['pl_nosnippet']) : "0") . "\n";
 			$metatags = preg_replace("/[^0-9a-zA-Z- =,\r\n" . $keep_char . "]/", "", $metatags);
 
-			if (!empty($_POST ['pl_file_meta']) && $_POST ['pl_file_meta'] !== SEOMETA_DEFAULT_DIR . 'metatags.ini')
+			if (!empty($_POST ['pl_file_meta']) && $_POST ['pl_file_meta'] !== SEOMETA_DEFAULT_DIR . 'metatags.ini') {
 				// existing blog entry or static page (got file name already)
 				@io_write_file($_POST ['pl_file_meta'], "[meta]\n" . $metatags);
-			elseif ($_REQUEST ['p'] === "entry") {
+			} elseif ($_REQUEST ['p'] === "entry") {
 				// this was a new blog entry
 				$new_id = bdb_idfromtime(BDB_ENTRY, $_POST ['timestamp']);
 				$file_meta = SEOMETA_ENTRY_DIR . $new_id . '_metatags.ini';
@@ -260,8 +262,9 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 	}
 
 	# Init the class
-	if (SEOMETA_MIGRATE_DATA)
+	if (SEOMETA_MIGRATE_DATA) {
 		migrate_old(); // migrate old data from previous version of plugin
+	}
 	new plugin_seometatags_entry();
 }
 
@@ -297,8 +300,8 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		if (SEOMETA_GEN_OPEN_GRAPH) {
 			echo '    <meta property="og:image" content="'. $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png">' . "\n";
 			echo '    <meta property="og:image:url" content="'. $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png">' . "\n";
-			echo '    <meta property="og:image:width" content="300">' . "\n";
-			echo '    <meta property="og:image:height" content="225">' . "\n";
+			echo '    <meta property="og:image:width" content="800">' . "\n";
+			echo '    <meta property="og:image:height" content="600">' . "\n";
 		}
 	}
 
@@ -368,18 +371,24 @@ function process_meta($file_meta, $type, $id, $sep) {
 	global $fp_params;
 	global $seo_default;
 
-	if (empty($seo_default ['description']))
+	if (empty($seo_default ['description'])) {
 		$seo_default ['description'] = $type . $sep . $id;
-	if (empty($seo_default ['keywords']))
+	}
+	if (empty($seo_default ['keywords'])) {
 		$seo_default ['keywords'] = $type;
-	if (!isset($seo_default ['noindex']))
+	}
+	if (!isset($seo_default ['noindex'])) {
 		$seo_default ['noindex'] = '0';
-	if (!isset($seo_default ['nofollow']))
+	}
+	if (!isset($seo_default ['nofollow'])) {
 		$seo_default ['nofollow'] = '0';
-	if (!isset($seo_default ['noarchive']))
+	}
+	if (!isset($seo_default ['noarchive'])) {
 		$seo_default ['noarchive'] = '0';
-	if (!isset($seo_default ['nosnippet']))
+	}
+	if (!isset($seo_default ['nosnippet'])) {
 		$seo_default ['nosnippet'] = '0';
+	}
 
 	if (!file_exists($file_meta)) {
 		$metatags = "[meta]\n";
@@ -474,8 +483,9 @@ function seometa_category_id_exists($cat_id) {
 function plugin_seometataginfo_head($file_meta) {
 	global $fpdb, $fp_params, $fp_config, $smarty;
 
-	if (defined('ADMIN_PANEL'))
+	if (defined('ADMIN_PANEL')) {
 		return;
+	}
 
 	if (is_tag()) { // Am I in a tag?
 		process_tag_meta();
@@ -503,8 +513,9 @@ function plugin_seometataginfo_head($file_meta) {
 			}
 		}
 
-		if (!file_exists($file_meta))
+		if (!file_exists($file_meta)) {
 			return;
+		}
 
 		$cfg = new iniParser($file_meta);
 		$seo_desc = $cfg->get("meta", "description") != false ? wp_specialchars(trim($cfg->get("meta", "description"))) : '';
@@ -558,13 +569,100 @@ function makePageTitle($title, $sep) {
 }
 
 function plugin_seometataginfo_init() {
-	if (defined('ADMIN_PANEL'))
+	if (defined('ADMIN_PANEL')) {
 		return;
+	}
 
-	if (SEOMETA_GEN_TITLE)
+	if (SEOMETA_GEN_TITLE) {
 		add_filter('wp_title', 'makePageTitle', 10, 2);
+	}
 }
 
 add_action('init', 'plugin_seometataginfo_init');
+
+
+/**
+ * SEO robots.txt part
+ */
+define('ROBOTS_PATHINFO', !file_exists($_SERVER ['DOCUMENT_ROOT'] . '/robots.txt'));
+
+// File existance check
+function plugin_seometatags_setup() {
+	if (file_exists($_SERVER ['DOCUMENT_ROOT'] . '/robots.txt')) {
+		return 1;
+	}
+
+	if (!is_writable($_SERVER ['DOCUMENT_ROOT'])) {
+		return -2;
+	}
+
+	return 1;
+}
+
+// The SEO robots.txt admin panel
+// The root directory must be defined in the server configuration file!
+if (class_exists('AdminPanelAction') && !empty($_SERVER ['DOCUMENT_ROOT'])) {
+
+	class admin_plugin_seometataginfo extends AdminPanelAction {
+
+		var $lang = 'plugin:seometataginfo';
+
+		function setup() {
+			$this->smarty->assign('admin_resource', 'plugin:seometataginfo/admin.plugin.seometataginfo');
+			$blogroot = BLOG_ROOT;
+			$f = $_SERVER ['DOCUMENT_ROOT'] . '/robots.txt';
+			$txt = io_load_file($f);
+			if (!$txt) {
+
+				$txt = '
+User-Agent: *
+
+# Be careful with these settings related to FlatPress
+# ===================================================
+
+# Block indexing backend files
+Disallow: ' . $blogroot . 'admin.php
+Disallow: ' . $blogroot . 'login.php
+Disallow: ' . $blogroot . 'setup.php
+
+# Block indexing setup and admin directories
+Disallow: ' . $blogroot . 'admin/
+Disallow: ' . $blogroot . 'setup/
+
+# Block indexing attachs directory
+Disallow: ' . $blogroot . 'fp-content/attachs/
+';
+			}
+
+			$this->smarty->assign('cantsave', (!is_writable($_SERVER ['DOCUMENT_ROOT']) || (file_exists($f) && !is_writable($f))));
+			$this->smarty->assign('robots', $txt);
+		}
+
+		function onsubmit($data = null) {
+			global $fp_config;
+
+			if (isset($_POST ['saveopt'])) {
+				if (plugin_saveoptions()) {
+					$this->smarty->assign('success', 2);
+				} else {
+					$this->smarty->assign('success', -2);
+				}
+			}
+
+			if (isset($_POST ['robots-submit'])) {
+				if (!empty($_POST ['robots']) && io_write_file($_SERVER ['DOCUMENT_ROOT'] . '/robots.txt', $_POST ['robots'])) {
+					$this->smarty->assign('success', 1);
+				} else {
+					$this->smarty->assign('success', -1);
+				}
+			}
+
+			return 2;
+		}
+
+	}
+
+	admin_addpanelaction('plugin', 'seometataginfo', true);
+}
 
 ?>

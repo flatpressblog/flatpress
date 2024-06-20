@@ -3,7 +3,7 @@
 <div id="current-theme">
 
 <h2>{$panelstrings.head1}</h2>
-<img src="{$current_style.preview}" alt="{$current_style.name}" />
+<img src="{$current_style.preview}" alt="{$current_style.name}" height="225" width="300">
 <h5>{$current_style.title} &#8212; {$current_style.author|default:$panelstrings.noauthor}</h5>
 {$current_style.description|default:$panelstrings.nodescr}
 </div>
@@ -20,7 +20,7 @@
 {foreach from=$available_styles item=thm}
 	<li>
 		<h5><a href="{$action_url|cmd_link:select:$thm.id}">{$thm.title}</a></h5>
-		<a href="{$action_url|cmd_link:select:$thm.id}"><img src="{$thm.preview}" alt="{$thm.name}" /></a>
+		<a href="{$action_url|cmd_link:select:$thm.id}"><img src="{$thm.preview}" alt="{$thm.name}" height="225" width="300"></a>
 		
 		<p>{$thm.description|default:$panelstrings.nodescr}</p>
 		

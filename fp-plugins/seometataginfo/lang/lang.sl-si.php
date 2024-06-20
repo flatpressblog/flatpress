@@ -1,5 +1,15 @@
 <?php
+$lang ['admin'] ['plugin'] ['submenu'] ['seometataginfo'] = 'SEO';
 $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
+
+	// SEO robots.txt part 1
+	'head' => 'SEO robots.txt',
+	'description1' => 'Datoteka <code>robots.txt</code> nadzira brskalnike iskalnikov in njihovo obnašanje na vašem blogu FlatPress. ' . //
+		'Tu lahko ustvarite in urejate datoteko <code>rotots.txt</code> za optimizacijo za iskalnike.',
+	'location' => '<strong>Lokacija shranjevanja:</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
+	'submit' => 'Shranite robots.txt',
+
+	// SEO Metatags part
 	'legend_desc' => 'Opis in ključne besede',
 	'description' => 'Ti podatki olajšajo iskanje spletnega mesta s spletnimi iskalniki in omogočajo deljenje na družbenih omrežjih. <a class="hint" href="https://en.wikipedia.org/wiki/Meta_element" title="Wikipedia" target="_blank">Wikipedia</a>',
 	'input_desc' => 'Vnesite opis:',
@@ -25,4 +35,16 @@ $lang ['plugin'] ['seometataginfo'] = array(
 	'pagenum' => 'Stran #'
 );
 
+// SEO robots.txt part 2
+$lang ['admin'] ['plugin'] ['seometataginfo'] ['msgs'] = array(
+	1 => 'Datoteka <code>robots.txt</code> je bila uspešno shranjena',
+	-1 => 'Datoteke <code>robots.txt</code> ni bilo mogoče shraniti (v <code>' . $_SERVER ['DOCUMENT_ROOT'] . '</code> ni dovoljenja za pisanje)?',
+
+	2 => 'Nastavitve so bile uspešno shranjene',
+	-2 => 'Pri shranjevanju je prišlo do napake'
+);
+
+$lang ['plugin'] ['seometataginfo'] ['errors'] = array (
+	-2 => 'V korenskem imeniku dokumenta HTTP ni na voljo <code>robots.txt</code> ali pa ga ni mogoče ustvariti.'
+);
 ?>
