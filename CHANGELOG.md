@@ -13,6 +13,7 @@
 ## Plugins
 ### Changes
 - SEO Meta Tag Info plugin: Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
+- SEO Meta Tag Info plugin: If an HTTP root directory is stored in the server configuration file and is not empty, a predefined robots.txt can be created and edited via the SEO panel in the admin area. ([#427](https://github.com/flatpressblog/flatpress/pull/427))
 - FavIcon plugin: Support for iOS Safari, Android Chrome, Windows 10 and Mac OS Safari added ([#416](https://github.com/flatpressblog/flatpress/pull/416))
 
 ### Bugfixes
