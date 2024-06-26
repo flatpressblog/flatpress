@@ -10,7 +10,7 @@
 
 
 The specified file is not intended for direct display in the browser, but solely for the configuration of your newsreader.
-To receive my Atom-feed, enter the address {if function_exists('plugin_prettyurls_setup')}{$smarty.const.BLOG_BASEURL}feed/atom{else}{$smarty.const.BLOG_BASEURL}/rss.php{/if} in your newsreader.
+To receive my Atom-feed, enter the address {if function_exists('plugin_prettyurls_setup')}{$smarty.const.BLOG_BASEURL}feed/atom/{else}{$smarty.const.BLOG_BASEURL}/rss.php{/if} in your newsreader.
 
 Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It's free.
 
