@@ -1,4 +1,21 @@
-<?xml version="1.0" encoding="{$fp_config.locale.charset}" ?>
+<?xml version="1.0" encoding="{$fp_config.locale.charset}"?>
+<!--
+
+  _____     _____    _____   ___             ______                     _ 
+ |  __ \   / ____|  / ____| |__ \           |  ____|                   | |
+ | |__) | | (___   | (___      ) |  ______  | |__      ___    ___    __| |
+ |  _  /   \___ \   \___ \    / /  |______| |  __|    / _ \  / _ \  / _` |
+ | | \ \   ____) |  ____) |  / /_           | |      |  __/ |  __/ | (_| |
+ |_|  \_\ |_____/  |_____/  |____|          |_|       \___|  \___|  \__,_|
+                                                                          
+
+The specified file is not intended for direct display in the browser, but solely for the configuration of your newsreader.
+To receive my RSS2-feed, enter the address {if function_exists('plugin_prettyurls_setup')}{$smarty.const.BLOG_BASEURL}feed/rss2{else}{$smarty.const.BLOG_BASEURL}/rss.php{/if} in your newsreader.
+
+Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It's free.
+
+
+-->
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 		<title>{$flatpress.title}</title>
@@ -12,7 +29,7 @@
 		{entry_block}
 			{entry}
 			<item>
-		
+
 			<title>{$subject}</title>
 			<link>{$id|link:post_link}</link>
 			<description><![CDATA[{$content|tag:the_content}]]></description>
@@ -31,8 +48,8 @@
 
 			</item>
 			{/entry}
-		
+
 		{/entry_block}
-		
+
 	</channel>
 </rss>
