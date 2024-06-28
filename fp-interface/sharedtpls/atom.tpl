@@ -44,7 +44,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 		<updated>{$the_date}</updated>
 		<content type="xhtml">
 			<div xmlns="http://www.w3.org/1999/xhtml"> 
-				 {$content|tag:the_content} 
+				<![CDATA[{$content|tag:the_content}]]>
 			</div>
 		</content>
 
