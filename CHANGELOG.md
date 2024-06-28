@@ -6,6 +6,7 @@
 
 ## Bugfixes
 - Contact form / comment function: Entering the website is now correct without http(s):// ([#419](https://github.com/flatpressblog/flatpress/issues/419))
+- Atom feed: Fixes parsing error ([#429](https://github.com/flatpressblog/flatpress/issues/429))
 
 ## Security
 - PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
