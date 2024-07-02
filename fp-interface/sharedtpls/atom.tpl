@@ -19,7 +19,11 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 <feed xmlns="http://www.w3.org/2005/Atom">
 
 	<title>{$flatpress.title}</title>
+
+	{if $flatpress.subtitle!=""}
 	<subtitle>{$flatpress.subtitle}</subtitle>
+	{/if}
+
 	<link href="{$smarty.const.BLOG_BASEURL}" />
 	<link rel="self" href="{'atom'|theme_feed_link}" />
 	<generator uri="https://www.flatpress.org/" version="{$smarty.const.SYSTEM_VER}">
