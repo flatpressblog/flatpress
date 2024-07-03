@@ -2,7 +2,11 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
 	<title>{$flatpress.title|tag:wp_title:':'}</title>
+
+	{if $flatpress.subtitle!=""}
 	<subtitle>{$flatpress.subtitle}</subtitle>
+	{/if}
+
 	<link href="{$smarty.const.BLOG_BASEURL}" />
 	<link rel="self" href="{$smarty.server.REQUEST_URI|escape}" />
 	<generator uri="http://www.flatpress.org/" version="{$smarty.const.SYSTEM_VER}">
@@ -36,7 +40,9 @@
 		<updated>{$the_date}</updated>
 		<content type="xhtml">
 			<div xmlns="http://www.w3.org/1999/xhtml"> 
-				 {$content|tag:the_content} 
+				<![CDATA[
+				{$content|tag:the_content}
+				]]>
 			</div>
 		</content>
 	</entry>
