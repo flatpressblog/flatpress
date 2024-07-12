@@ -20,11 +20,16 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 
 -->
-<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
 	<channel>
 
-		<title>{$flatpress.title} » {$subject}</title>
+		<title>
+			<![CDATA[
+			{$flatpress.title} » {$subject}
+			]]>
+		</title>
 		<link>{$the_comment_link}</link>
+
 		{if $flatpress.subtitle!=""}
 		<description>
 			<![CDATA[
@@ -32,10 +37,11 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 			]]>
 		</description>
 		{/if}
+
 		<copyright>Copyright {'Y'|date}, {$flatpress.author}</copyright>
 		{*<managingEditor>{$flatpress.email} ({$flatpress.author})</managingEditor>*}
 		<language>{$fp_config.locale.lang}</language>
-		<atom:link rel="self" href="{'rss2'|theme_comments_feed_link:$id}" type="application/rss+xml">
+		<atom:link rel="self" href="{'rss2'|theme_comments_feed_link:$id}" type="application/rss+xml" />
 
 		<generator>FlatPress</generator>
 
@@ -59,8 +65,8 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 			</item>
 			{/comment}
 		{/comment_block}
-		{/entry}
 
+		{/entry}
 	{/entry_block}
 
 	</channel>
