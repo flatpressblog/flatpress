@@ -10,7 +10,7 @@
 
 
 The specified file is not intended for direct display in the browser, but solely for the configuration of your newsreader.
-To receive my Atom-feed, enter the address {if function_exists('plugin_prettyurls_setup')}{$smarty.const.BLOG_BASEURL}feed/atom/{else}{$smarty.const.BLOG_BASEURL}/rss.php{/if} in your newsreader.
+To receive my Atom-feed, enter the address {'atom'|theme_feed_link} in your newsreader.
 
 Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It's free.
 
@@ -39,6 +39,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 	{entry_block}
 	{entry}
 	<entry>
+
 		<title>{$subject}</title>
 		<link href="{$id|link:post_link}" />
 
@@ -47,18 +48,16 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 		<published>{$the_date}</published>
 		<updated>{$the_date}</updated>
 		<content type="xhtml">
-			<div xmlns="http://www.w3.org/1999/xhtml"> 
-				<![CDATA[{$content|tag:the_content}]]>
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<![CDATA[
+				{$content|tag:the_content}
+				]]>
 			</div>
 		</content>
 
 		{if isset($enclosure)}
 			{foreach from=$enclosure item=encl}
-			<link rel="enclosure" 
-				href="{$encl.url}" 
-				title="{$encl.title}"
-				length="{$encl.length}" 
-				type="{$encl.type}" />
+			<link rel="enclosure" href="{$encl.url}" title="{$encl.title}" length="{$encl.length}" type="{$encl.type}" />
 			{/foreach}
 		{/if}
 

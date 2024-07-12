@@ -10,7 +10,7 @@
                                                                           
 
 The specified file is not intended for direct display in the browser, but solely for the configuration of your newsreader.
-To receive my RSS2-feed, enter the address {if function_exists('plugin_prettyurls_setup')}{$smarty.const.BLOG_BASEURL}feed/rss2/{else}{$smarty.const.BLOG_BASEURL}/rss.php{/if} in your newsreader.
+To receive my RSS2-feed, enter the address {'rss2'|theme_feed_link} in your newsreader.
 
 Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It's free.
 
@@ -18,37 +18,55 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 -->
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
+
 		<title>{$flatpress.title}</title>
 		<link>{$flatpress.www}</link>
-		<description><![CDATA[{$flatpress.subtitle}]]></description>
+
+		{if $flatpress.subtitle!=""}
+		<description>
+			<![CDATA[
+			{$flatpress.subtitle}
+			]]>
+		</description>
+		{/if}
+
 		<copyright>Copyright {'Y'|date}, {$flatpress.author}</copyright>
 		{*<managingEditor>{$flatpress.email} ({$flatpress.author})</managingEditor>*}
 		<language>{$fp_config.locale.lang}</language>
 		<atom:link rel="self" href="{'rss2'|theme_feed_link}" type="application/rss+xml" />
 		<generator>FlatPress</generator>
+
 		{entry_block}
 			{entry}
 			<item>
 
-			<title>{$subject}</title>
-			<link>{$id|link:post_link}</link>
-			<description><![CDATA[{$content|tag:the_content}]]></description>
-			{if ($categories)} <category><![CDATA[ {$categories|@filed:false} ]]></category>{/if}
-			<guid isPermaLink="true">{$id|link:post_link}</guid>
+				<title>{$subject}</title>
+				<link>{$id|link:post_link}</link>
+				<description>
+					<![CDATA[
+					{$content|tag:the_content}
+					]]>
+				</description>
+				{if ($categories)}
+				<category>
+					<![CDATA[
+					{$categories|@filed:false}
+					]]></category>
+				{/if}
+				<guid isPermaLink="true">{$id|link:post_link}</guid>
 
-			{*<author>{$flatpress.email} ({$flatpress.author})</author>*}
-			<pubDate>{'r'|date:$date}</pubDate>
-			<comments>{$id|link:comments_link}</comments>
+				{*<author>{$flatpress.email} ({$flatpress.author})</author>*}
+				<pubDate>{'r'|date:$date}</pubDate>
+				<comments>{$id|link:comments_link}</comments>
 
-			{if isset($enclosure)}
-				{foreach from=$enclosure item=encl} 
+				{if isset($enclosure)}
+					{foreach from=$enclosure item=encl} 
 					<enclosure url="{$encl.url}" length="{$encl.length}" type="{$encl.type}" />
-				{/foreach}
-			{/if}
+					{/foreach}
+				{/if}
 
 			</item>
 			{/entry}
-
 		{/entry_block}
 
 	</channel>
