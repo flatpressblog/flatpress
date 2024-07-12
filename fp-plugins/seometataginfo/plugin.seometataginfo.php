@@ -610,7 +610,13 @@ if (class_exists('AdminPanelAction') && !empty($_SERVER ['DOCUMENT_ROOT'])) {
 		function setup() {
 			$this->smarty->assign('admin_resource', 'plugin:seometataginfo/admin.plugin.seometataginfo');
 			$blogroot = BLOG_ROOT;
+			$blogbase = BLOG_BASEURL;
 			$f = $_SERVER ['DOCUMENT_ROOT'] . '/robots.txt';
+			if (file_exists(ABS_PATH . '.htaccess')) {
+				$sitemap = 'Sitemap: ' . $blogbase . 'sitemap.xml';
+			} else {
+				$sitemap = '';
+			}
 			$txt = io_load_file($f);
 			if (!$txt) {
 
@@ -620,17 +626,16 @@ User-Agent: *
 # Be careful with these settings related to FlatPress
 # ===================================================
 
-# Block indexing backend files
 Disallow: ' . $blogroot . 'admin.php
 Disallow: ' . $blogroot . 'login.php
 Disallow: ' . $blogroot . 'setup.php
 
-# Block indexing setup and admin directories
 Disallow: ' . $blogroot . 'admin/
 Disallow: ' . $blogroot . 'setup/
 
-# Block indexing attachs directory
 Disallow: ' . $blogroot . 'fp-content/attachs/
+
+' . $sitemap . '
 ';
 			}
 
