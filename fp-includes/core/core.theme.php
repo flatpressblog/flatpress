@@ -209,7 +209,7 @@ function theme_init(&$smarty) { /* &$mode */
 
 	// avoid compiled tpl collision (i.e. change theme without this and cry)
 	$smarty->compile_id = md5($fp_config ['general'] ['theme']);
-	$smarty->template_dir = ABS_PATH . THEMES_DIR . $fp_config ['general'] ['theme'] . '/';
+	$smarty->setTemplateDir = ABS_PATH . THEMES_DIR . $fp_config ['general'] ['theme'] . '/';
 
 	$loggedin = user_loggedin();
 
@@ -250,7 +250,7 @@ function theme_init(&$smarty) { /* &$mode */
 
 	$smarty->assign('pagetitle', apply_filters('wp_title', "", '&laquo;'));
 
-	$smarty->assignByRef('fp_config', $fp_config);
+	$$smarty->assign('fp_config', $fp_config);
 
 	$smarty->registerPlugin('modifier', 'tag', 'theme_apply_filters_wrapper');
 	$smarty->registerPlugin('modifier', 'link', 'theme_apply_filters_link_wrapper');

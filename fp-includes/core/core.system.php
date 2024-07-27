@@ -189,8 +189,8 @@ function system_init() {
 	plugin_loadall();
 
 	// init smarty
-	$smarty->compile_dir = CACHE_DIR;
-	$smarty->cache_dir = SMARTY_DIR . 'cache/';
+	$smarty->setCompileDir = CACHE_DIR;
+	$smarty->setCacheDir = SMARTY_DIR . 'cache/';
 	$smarty->caching = 0;
 
 	do_action('init');
