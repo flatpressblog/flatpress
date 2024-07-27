@@ -119,7 +119,7 @@ if (class_exists('AdminPanelAction')) {
 
 		function main() {
 			global $fp_config;
-			// $this->smarty->assignByRef('enabledpages', plugin_getoptions('blockparser'));
+			// $this->$smarty->assign('enabledpages', plugin_getoptions('blockparser'));
 			$this->smarty->assign('statics', $assign = static_getlist());
 		}
 
