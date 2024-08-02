@@ -19,7 +19,8 @@ function plugin_favicon_head() {
 	$v = '?v=2';
 
 	echo '
-		<!-- BOF FavIcon -->' . //
+		<!-- BOF FavIcon -->
+		' . //
 
 		// Smartphone iOS Safari
 		'<link rel="apple-touch-icon" sizes="180x180" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon.png' . $v . '">' . //
@@ -40,7 +41,7 @@ function plugin_favicon_head() {
 		'<link rel="mask-icon" href="' . plugin_geturl('favicon') . 'imgs/safari-pinned-tab.svg' . $v . '" color="#aa4142">' . // Mask icon for Safari pinned tabs
 
 		// Classic/, desktop browsers
-		'<link rel="icon" sizes="16x16 32x32 48x48" href="' . plugin_geturl('favicon') . 'favicon.ico' . $v . '">' . // FlatPress multilayer icon
+		'<link rel="icon" sizes="16x16 32x32 48x48" href="' . plugin_geturl('favicon') . 'imgs/favicon.ico' . $v . '">' . // FlatPress multilayer icon
 
 		// Windows 10 or higher
 		'<meta name="msapplication-TileColor" content="#b77b7b">' . //
@@ -48,23 +49,29 @@ function plugin_favicon_head() {
 		'<meta name="msapplication-TileImage" content="' . plugin_geturl('favicon') . 'imgs/mstile-144x144.png' . $v . '">' . //
 
 		'<meta name="theme-color" content="#b77b7b">' . // Specify a color for the browser toolbar and the status bar on mobile devices
-		'<!-- EOF FavIcon -->
+		'
+		<!-- EOF FavIcon -->
 		';
 }
 
 function redir_favicon() {
 
-	$requestUri = $_SERVER ['REQUEST_URI'];
 	$favicons = array (
 		'favicon.ico',
 		'apple-touch-icon.png',
 		'apple-touch-icon-precomposed.png'
 	);
 
-	foreach($favicons as $favicon) {
+	if (isset ($_SERVER ['REQUEST_URI'])) { // Check whether the server array element is set
+		$requestUri = $_SERVER ['REQUEST_URI'];
+	} else {
+		$requestUri = false;
+	}
+
+	foreach ($favicons as $favicon) {
 		if (strpos($requestUri, $favicon) !== false) {
-			http_response_code(307); // Temporary Redirect
-			header('Location: ' . plugin_geturl('favicon') . 'imgs/' . $favicon);
+			@http_response_code(307); // Temporary Redirect
+			@header('Location: ' . plugin_geturl('favicon') . 'imgs/' . $favicon);
 			return true;
 		}
 	}

@@ -51,6 +51,8 @@ function plugin_bbcode_startup() {
 	}
 	if (BBCODE_ENABLE_COMMENTS) {
 		add_filter('comment_text', 'plugin_bbcode_comment', 1);
+		// converts BBCode [url] and [list] tags to HTML
+		add_filter('comment_text', 'bbcode2html', 10);
 	}
 }
 plugin_bbcode_startup();
@@ -931,6 +933,27 @@ function plugin_bbcode_comment($text) {
 		'link'
 	), array());
 	return $bbcode->parse($text);
+}
+
+/**
+ * Modifier BBcode to HTML for comments
+ */
+function bbcode2html($html) {
+	$preg = array(
+		// [url]
+		'/(?<!\\\\)\[url(?::\w+)?\]www\.(.*?)\[\/url(?::\w+)?\]/si' => '<a href="https://www.\\1" target="_blank" class="externlink" rel="external">\\1</a>',
+		'/(?<!\\\\)\[url(?::\w+)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\1</a>',
+		'/(?<!\\\\)\[url(?::\w+)?=(.*?)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\2</a>',
+
+		// [list]
+		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\*(?::\w+)?\](.*?)(?=(?:\s*<br\s*\/?>\s*)?\[\*|(?:\s*<br\s*\/?>\s*)?\[\/?list)/si' => '<li>\\1</li>',
+		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\/list(:(?!u|o)\w+)?\](?:<br\s*\/?>)?/si' => '</ul>',
+		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\/list:o(:\w+)?\](?:<br\s*\/?>)?/si' => '</ol>',
+		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[list(:(?!u|o)\w+)?\]\s*(?:<br\s*\/?>)?/si' => '<ul class="list-unordered">',
+		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[list(?::o)?(:\w+)?=#\]\s*(?:<br\s*\/?>)?/si' => '<ol class="list-ordered">',
+	);
+	$html = preg_replace(array_keys($preg), array_values($preg), $html);
+	return $html;
 }
 
 /**

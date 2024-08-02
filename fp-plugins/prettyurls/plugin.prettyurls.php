@@ -635,20 +635,23 @@ if (class_exists('AdminPanelAction')) {
 			if (!$txt) {
 
 				$txt = '
-				AddType application/x-httpd-php .php .htm .html
-				Options -Indexes
+AddType application/x-httpd-php .php .htm .html
+Options -Indexes
 
-				<IfModule mod_rewrite.c>
-				RewriteEngine On
-				RewriteBase ' . $blogroot . '
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase ' . $blogroot . '
 
-				RewriteRule ^\.htaccess$ - [F]
+	RewriteRule ^\.htaccess$ - [F]
 
-				RewriteCond %{REQUEST_FILENAME} !-f
-				RewriteCond %{REQUEST_FILENAME} !-d
-				RewriteRule . ' . $blogroot . 'index.php [L]
-				</IfModule>
-				';
+	RewriteRule ^sitemap\.xml$ ' . $blogroot . 'sitemap.php [L]
+	RewriteRule ^sitemap$ ' . $blogroot . 'sitemap.php [L]
+
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+
+	RewriteRule . ' . $blogroot . 'index.php [L]
+</IfModule>';
 			}
 
 			$this->smarty->assign('cantsave', (!is_writable(ABS_PATH) || (file_exists($f) && !is_writable($f))));

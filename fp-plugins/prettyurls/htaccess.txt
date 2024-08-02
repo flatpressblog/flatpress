@@ -2,21 +2,15 @@ AddType application/x-httpd-php .php .htm .html
 Options -Indexes
 
 <IfModule mod_rewrite.c>
-RewriteEngine On
-RewriteBase /your_subdirectory/
+	RewriteEngine On
+	RewriteBase /your_subdirectory/
 
-# Protects the .htacces file from external access, status code 403 "Forbidden" is output
-#RewriteRule ^\.htaccess$ - [F]
+	RewriteRule ^\.htaccess$ - [F]
 
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /your_subdirectory/index.php [L]
+	RewriteRule ^sitemap\.xml$ /your_subdirectory/sitemap.php [L]
+	RewriteRule ^sitemap$ /your_subdirectory/sitemap.php [L]
 
-#RewriteRule ^entry([0-9]{6})-([0-9]{6})/$ ./index.php?entry=entry$1-$2 [L]
-#RewriteRule ^comments([0-9]{6})-([0-9]{6})/$ ./comments.php?entry=entry$1-$2 [L]
-#RewriteRule ^.+/comments/$ ./comments.php [L]
-#RewriteRule ^([a-zA-Z0-9_-]+)/$ ./static.php?page=$1 [L]
-#RewriteRule ^(.+)/$ ./blog.php [L]
-
-#RewriteRule ^index\.html$ index.php [NC,R]
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule . /your_subdirectory/index.php [L]
 </IfModule>

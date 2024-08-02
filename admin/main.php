@@ -168,10 +168,12 @@ function admin_register_smartyplugins() {
 		// FlatPress functions
 		'entry_idtotime',
 		'plugin_getinfo',
+		'plugin_geturl',
 		'wp_specialchars',
 		'wp_nonce_url',
 		'wptexturize',
 		// PHP functions
+		'addslashes',
 		'array_intersect',
 		'array_key_exists',
 		'count',
