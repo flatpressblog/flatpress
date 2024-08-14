@@ -9,13 +9,39 @@ Version: 1.0
 Module: common.css
 */
 
+/* ===== the right Scrollbar ===== */
+:root {
+	color-scheme: light dark
+}
+
+/* Chrome, Edge and Safari */
+@supports selector(::-webkit-scrollbar) {
+	body::-webkit-scrollbar {
+		width: 6px;
+	}
+	body::-webkit-scrollbar-thumb {
+		background-color: #82271f;
+		border-radius: 3px;
+	}
+}
+
+/* Firefox */
+@supports (-moz-appearance:button) and (contain:paint) {
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: #82271f #333C43;
+	}
+}
+
+
 /* ===== GENERAL (redefinition HTML tag) ===== */
 html {
 	font-size: 100%;
 	margin: 0;
 	padding: 0;
 	font-family: sans-serif;
-	text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2)
+	text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
+	background-color: #333C43
 }
 
 html::before { /* background-attachment: fix workaround for mobile devices */
@@ -34,6 +60,7 @@ html::before { /* background-attachment: fix workaround for mobile devices */
 }
 
 body {
+	color-scheme: normal;
 	font-size: 100%;
 	color: black;
 	padding: 0;
@@ -96,11 +123,19 @@ legend {
 	font-style: oblique
 }
 
+select { height: 23.33px }
+
+input { height: 16px }
+
+input[type=submit],
+input[type=reset],
+input[type=button] { height: 22px }
+
 select,
 input[type=submit],
 input[type=reset],
 input[type=button],
-input[type=radio],	
+input[type=radio],
 input[type=checkbox] { cursor: pointer }
 
 input, textarea, select {
@@ -124,7 +159,7 @@ textarea {
 }
 
 input#name, input#email, input#url { /* comment and contact textfield */
-    width: 200px
+	width: 200px
 }
 
 /* ===== LINKS GENERAL ===== */
@@ -218,7 +253,7 @@ h4 { font-size: 1.2em }
 		background-color: rgba(255,255,255,0.9);
 		border-radius: 3px
 	}
-	
+
 	div.floatleft { /* PhotoSwipe; normal */
 		margin: 0.5em 1em 1em 0.5em
 	}
@@ -226,9 +261,9 @@ h4 { font-size: 1.2em }
 	div.floatright {
 		margin: 0.5em 0.5em 1em 1em
 	}
-	
+
 	.bbcode_video.right, .bbcode_video.left { float: unset !IMPORTANT }	
-	
+
 	.responsive_bbcode_video { /* BBcode; normal and center BBcode video if screen < 960px */
 		display: block;
 		text-align: center
@@ -251,27 +286,27 @@ h4 { font-size: 1.2em }
 @media (min-width: 768px) { /* Smartphone landscape and Tablet */
 
 	#body-container { max-width: 738px }
-		
+
 	#main { width: 413px }
 }
 
 @media (min-width: 820px) { /* Tablet */
 
 	#body-container { max-width: 790px }
-		
+
 	#main { width: 465px }
 }
 
 @media (min-width: 960px) { /* Tablet landscape and Netbook */
 
 	#body-container { max-width: 930px }
-		
+
 	#main { width: 605px }
-	
+
 	.responsive_bbcode_video { text-align: unset }
-	
+
 	.bbcode_video.right { float: right !IMPORTANT; margin: 0.5em 0.5em 1em 1em }
-	
+
 	.bbcode_video.left { float: left !IMPORTANT; margin: 0.5em 1em 1em 0.5em }
 
 	#head a img.feed { height: 16px }
@@ -280,7 +315,7 @@ h4 { font-size: 1.2em }
 @media (min-width: 1024px) { /* Laptop and small Desktop-PC */
 
 	#body-container { max-width: 994px }
-		
+
 	#main { width: 669px }
 
 	.bbcode_video,
@@ -294,9 +329,9 @@ h4 { font-size: 1.2em }
 @media (min-width: 1440px) { /* Desktop-PC and TV */
 
 	#body-container { max-width: 1250px }
-		
+
 	#main { width: 925px }
-	
+
 	.bbcode_video,
 	.fb_iframe_widget_fluid_desktop iframe {
 	max-width: 560px !IMPORTANT;
@@ -321,7 +356,7 @@ h4 { font-size: 1.2em }
 	}
 
 	#outer-container { margin: 5px }
-	
+
 	/* ===== MAIN ===== */
 	#main h4 { margin: 2em 0 0 0 }
 
@@ -333,7 +368,7 @@ h4 { font-size: 1.2em }
 		background-color: rgba(255,255,255,0.9);
 		border-radius: 3px
 	}
-	
+
 	div.floatright, div.floatleft, div.photoswipe { /* PhotoSwipe; responsive */
 		float: unset;
 		margin-left: auto !IMPORTANT;
@@ -444,10 +479,11 @@ h4#addcomment { clear: both }
 		box-shadow: none
 	}
 
-	input[type=radio],	
+	input[type=radio],
 	input[type=checkbox] {
 		vertical-align: middle;
-		margin-bottom: 0.4em
+		margin-bottom: 7px;
+		height: 16px
 	}
 
 	.photoswipe figure img { /* PhotoSwipe */
@@ -465,7 +501,7 @@ h4#addcomment { clear: both }
 		border-radius: 3px;
 		margin: 0px 3px 0px 0px
 	}
-	
+
 	.bbcode_video:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
 
 	.fb_iframe_widget_fluid_desktop iframe { border-radius: 3px }
@@ -476,6 +512,50 @@ h4#addcomment { clear: both }
 	}
 
 	form#search ul { list-style-type: none }
+
+/* BBcode toolbar for comments */
+.bb-btn-tlb p { display: table-cell }
+
+.emoticons { margin-top: 0.5em }
+
+.bb-btn-tlb p button,
+.emoticons button {
+	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+	border: 1px solid #999;
+	cursor: pointer;
+	background-color: #eee;
+	border-radius: 3px;
+	margin-top: 0.3em;
+	padding: 1px;
+	height: 23px;
+	width: 32px
+}
+
+.bb-btn-tlb p button:hover,
+.emoticons button:hover {
+	box-shadow: none;
+	border: 1px solid #AA1111;
+	background-color: #fff
+}
+
+#bb_url img,
+#bb_mail img,
+#bb_h2 img,
+#bb_h3 img,
+#bb_h4 img,
+#bb_ul img,
+#bb_ol img,
+#bb_quote img,
+#bb_code img,
+#bb_html img,
+#bb_b img,
+#bb_i img,
+#bb_u img,
+#bb_del img {
+	margin: 0;
+	vertical-align: middle;
+	padding: 0.06em 0
+}
 
 /* ===== FOOTER ===== */
 #footer {
