@@ -20,9 +20,13 @@
 - SEO Meta Tag Info plugin: If an HTTP root directory is stored in the server configuration file and is not empty, a predefined robots.txt can be created and edited via the SEO panel in the admin area. ([#427](https://github.com/flatpressblog/flatpress/pull/427))
 - FavIcon plugin: Support for iOS Safari, Android Chrome, Windows 10 and Mac OS Safari added ([#416](https://github.com/flatpressblog/flatpress/pull/416), [#28](https://github.com/flatpressblog/flatpress/pull/428))
 - BBcode plugin/ Admin area: The editor toolbar can be deactivated again as in version 1.2.1 when using an alternative editor (e.g. [Wysiwyg editor](https://wiki.flatpress.org/res:plugins:ckeditor)). ([#436](https://github.com/flatpressblog/flatpress/pull/436))
+- BBcode plugin: BBcode toolbar, if BBcode for comments is allowed ([#437](https://github.com/flatpressblog/flatpress/pull/437))
 
 ### Bugfixes
 - BBcode plugin: No file or image selection possible after activating the "Allow BBcode in comments" option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
+
+## Themes
+- invidual scrollbar for the Leggero v2 style
 
 ## Internationalization
 - Reworked translations: Japanese (Thanks to [NHWS](https://nhws.localinfo.jp/))
