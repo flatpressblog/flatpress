@@ -32,7 +32,7 @@ $fp_config = array(
 		),
 		'bbcode' => array (
 			'escape-html' => true,
-			'comments' => false,
+			'comments' => true,
 			'editor' => true,
 			'url-maxlen' => 40,
 		),
