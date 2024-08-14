@@ -9,7 +9,7 @@
 	enctype="multipart/form-data">
 
 
-	{include file='shared:errorlist.tpl'}
+	{include file="shared:errorlist.tpl"}
 
 
 	{if not $flatpress.loggedin}
@@ -28,7 +28,7 @@
 		{else}
 			{assign var=namevalue value=""}
 		{/if}
-		<input type="text" class="{$class}" name="name" id="name" value="{$namevalue|wp_specialchars:1|default:$cookie.name}" />
+		<input type="text" class="{$class}" name="name" id="name" value="{$namevalue|wp_specialchars:1|default:$cookie.name}">
 		<label class="textlabel" for="name">{$lang.comments.name}</label>
 		</p>
 
@@ -43,7 +43,7 @@
 		{else}
 			{assign var=emailvalue value=""}
 		{/if}
-		<input type="text" class="{$class}" name="email" id="email" value="{$emailvalue|wp_specialchars:1|default:$cookie.email}" />
+		<input type="text" class="{$class}" name="email" id="email" value="{$emailvalue|wp_specialchars:1|default:$cookie.email}">
 		<label class="textlabel" for="email">{$lang.comments.email}</label>
 		</p>
 
@@ -58,7 +58,7 @@
 		{else}
 			{assign var=urlvalue value=""}
 		{/if}
-		<input type="text" class="{$class}" name="url" id="url" value="{$urlvalue|wp_specialchars:1|default:$cookie.url}" />
+		<input type="text" class="{$class}" name="url" id="url" value="{$urlvalue|wp_specialchars:1|default:$cookie.url}">
 		<label class="textlabel" for="url">{$lang.comments.www}</label>
 		</p>
 
@@ -69,7 +69,12 @@
 
 	{/if}
 
+	{if function_exists('plugin_bbcode_init') && $fp_config.plugins.bbcode.comments == true}
+		{include file="plugin:bbcode/comment_toolbar"}
+	{/if}
+
 	<!-- BOF Custom toolbar -->{action hook=simple_toolbar_form}<!-- EOF Custom toolbar -->
+
 	<div class="comment-content">
 			{if isset($error) && isset($error.content) && !empty($error.content)}
 				{assign var=class value="field-error"}
@@ -87,7 +92,7 @@
 	</div>
 
 	<div class="buttonbar">
-	<input type="submit" name="submit" id="submit" value="{$lang.comments.submit}" />
+	<input type="submit" name="submit" id="submit" value="{$lang.comments.submit}">
 	</div>
 
 </form>

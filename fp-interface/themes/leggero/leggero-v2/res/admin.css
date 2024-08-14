@@ -191,6 +191,23 @@ input#subject {
 	line-height: 1em
 }
 
+#admin-bbcode-toolbar button,
+.emoticons button {
+	border: 1px solid #999;
+	background-color: #eee;
+	border-radius: 3px;
+	padding: 1px;
+	margin-top: 0;
+	box-shadow: none;
+	height: 23px;
+	width: 32px
+}
+
+#admin-bbcode-toolbar button:hover {
+	border: 1px solid #AA1111;
+	background-color: #fff
+}
+
 #admin-bbcode-toolbar p img { vertical-align: middle; cursor: pointer }
 
 #admin-bbcode-toolbar select { width: 10em }
@@ -280,7 +297,7 @@ input.maxsize, select.maxsize { width: 99% }
 /* ===== PREVIEW SETTINGS ===== */
 #post-preview { min-width: 28em }
 
-#post-preview .entry { padding: 2em; max-height: 20em; overflow: auto  }
+#post-preview .entry { padding: 2em; max-height: 20em; overflow: auto }
 
 #post-preview div.entry h2 {
 	font-family: sans-serif;
@@ -306,7 +323,14 @@ input.maxsize, select.maxsize { width: 99% }
 	margin: 1em
 }
 
+input[type=file] { height: 21.2px }
+
 input[type=file]::file-selector-button { cursor: pointer }
+
+div#admin-content input[type=submit] { height: 23px }
+
+div#admin-content select,
+div#admin-content input { vertical-align: middle }
 
 table.plugin_gallerycaptions_captionstable tr:first-child td:first-child { border-top-left-radius: 5px }
 
@@ -421,8 +445,8 @@ li.widget-class {
 	cursor: move;
 	border: 1px solid #bbb;
 	margin: 2px;
-	padding: .5em;
-	height: 30px;
+	padding: 4px 8px 0 8px;
+	height: 36px;
 	background-color: white;
 	list-style-type: none;
 	border-radius: 2px
@@ -491,10 +515,10 @@ li.widget-class {
 .option-list { margin-bottom: 3em }
 
 .option-set dd {
-    margin-left: 38%;
-    bottom: 1.75em;
-    line-height: 1.5em;
-    position: relative
+	margin-left: 38%;
+	bottom: 1.75em;
+	line-height: 1.5em;
+	position: relative
 }
 
 .option-set dd p { margin: 0 }
@@ -502,19 +526,19 @@ li.widget-class {
 .option-set dd p.text { display: inline; vertical-align: middle }
 
 .option-list dd label {
-    position: relative;
-    vertical-align: middle;
-    display: flex
+	position: relative;
+	vertical-align: middle;
+	display: flex
 }
 
 .option-list dd code { position: relative; font-size: 0.98em }
 
 .option-set dt {
-    width: 36%;
-    text-align:right;
-    margin-top: 0.5em;
-    line-height: 1.5em;
-    font-weight: bold
+	width: 36%;
+	text-align:right;
+	margin-top: 0.5em;
+	line-height: 1.5em;
+	font-weight: bold
 }
 
 .option-set dt label { bottom: 0.25em; position: relative }
