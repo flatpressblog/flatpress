@@ -381,7 +381,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 		// Vimeo
 		case 'vimeo':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/', '', $vurl ['path']);
-			$output = '<div class="responsive_bbcode_video"><iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" src="https://player.vimeo.com/video/' . $vid . '?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" allow="autoplay; fullscreen;" allowfullscreen></iframe></div>';
+			$output = '<div class="responsive_bbcode_video"><iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" src="https://player.vimeo.com/video/' . $vid . '?dnt=1?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" allow="autoplay; fullscreen;" allowfullscreen></iframe></div>';
 			break;
 		// Facebook
 		case 'facebook':
