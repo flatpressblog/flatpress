@@ -15,6 +15,9 @@
 - Admin area widget management: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 
 ## Plugins
+### Additions
+- GDPR Video embed: Simple two-click solution for GDPR-compliant embedding of YouTube and Vimeo videos. ([#260](https://github.com/flatpressblog/flatpress/issues/260))
+
 ### Changes
 - SEO Meta Tag Info plugin: Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
 - SEO Meta Tag Info plugin: If an HTTP root directory is stored in the server configuration file and is not empty, a predefined robots.txt can be created and edited via the SEO panel in the admin area. ([#427](https://github.com/flatpressblog/flatpress/pull/427))
