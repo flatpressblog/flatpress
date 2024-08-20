@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BBCode
- * Version: 1.8.1
+ * Version: 1.8.2
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -63,12 +63,14 @@ plugin_bbcode_startup();
  * Adds the plugin's CSS and JS to the HTML head.
  */
 function plugin_bbcode_head() {
+	$plugindir = plugin_geturl('bbcode');
 	$random_hex = RANDOM_HEX;
 
-	echo "	<!-- bbcode plugin -->\n";
-	echo '	<link rel="stylesheet" type="text/css" href="' . plugin_geturl('bbcode') . "res/bbcode.css\" />\n";
-	echo '	<script nonce="' . $random_hex . '" src="' . plugin_geturl('bbcode') . "res/editor.js\"></script>\n";
-	echo "	<!-- end of bbcode plugin -->\n";
+	echo '
+		<!-- bbcode plugin -->
+		<link rel="stylesheet" type="text/css" href="' . $plugindir . 'res/bbcode.css">
+		<script nonce="' . $random_hex . '" src="' . $plugindir . 'res/editor.js"></script>
+		<!-- end of bbcode plugin -->';
 }
 add_action('wp_head', 'plugin_bbcode_head');
 
@@ -338,7 +340,7 @@ function do_bbcode_mail($action, $attributes, $content, $params, $node_object) {
  * @return string
  */
 function do_bbcode_video($action, $attr, $content, $params, $node_object) {
-	
+
 	global $lang;
 	lang_load('plugin:bbcode');
 
@@ -372,24 +374,37 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	}
 	$output = null;
 
+	// Set the video source from YouTube and Vimeo to data-scr if the GDPR-video-embed plugin is active
+	if (function_exists('plugin_gdprvideoembed_head')) {
+		$src = 'data-src';
+	} else {
+		$src = 'src';
+	}
+
 	// We recognize different video providers by the given video URL.
 	switch ($type) {
 		// YouTube
 		case 'youtube':
-			$output = '<div class="responsive_bbcode_video"><iframe class="bbcode_video bbcode_video_youtube ' . $floatClass . '" src="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture"></iframe></div>';
+			$output = '<div class="responsive_bbcode_video"><iframe class="bbcode_video bbcode_video_youtube ' . $floatClass . '" ' . $src . '="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture"></iframe></div>';
 			break;
 		// Vimeo
 		case 'vimeo':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/', '', $vurl ['path']);
-			$output = '<div class="responsive_bbcode_video"><iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" src="https://player.vimeo.com/video/' . $vid . '?dnt=1?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" allow="autoplay; fullscreen;" allowfullscreen></iframe></div>';
+			$output = '<div class="responsive_bbcode_video"><iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" ' . $src . '="https://player.vimeo.com/video/' . $vid . '?dnt=1?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" allow="autoplay; fullscreen"></iframe></div>';
 			break;
 		// Facebook
 		case 'facebook':
-			$langtag = $lang ['plugin'] ['bbcode'] ['langtag'];
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/video/', '', $vurl ['path']);
-			$output = '<div id="fb-root"></div>
-			<script async defer crossorigin="anonymous" src="https://connect.facebook.net/' . $langtag . '/sdk.js#xfbml=1&version=v17.0"></script>
-			<div class="responsive_bbcode_video"><div class="fb-video bbcode_video bbcode_video_facebook ' . $floatClass . '" data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '" data-lazy="true"></div></div>';
+			$output = '
+				<div class="responsive_bbcode_fb-video">' . //
+					'<iframe class="bbcode_video bbcode_video_facebook ' . $floatClass . '" ' . //
+						'src="https://www.facebook.com/plugins/video.php?height=' . $height . '&href=https://www.facebook.com' . $vid . '&show_text=false&width=' . $width . '&t=0" ' . //
+						'width="' . $width . '" ' . //
+						'height="' . $height . '" ' . //
+						'style="border: none; overflow: hidden" ' . //
+						'allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen">' . //
+					'</iframe>' . //
+				'</div>';
 			break;
 		// Any video file that can be played with HTML5 <video> element
 		case 'html5':
