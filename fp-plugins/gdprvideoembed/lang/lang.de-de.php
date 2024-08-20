@@ -4,7 +4,7 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 	// for translated content in script file
 	'head_youtube' => 'Eingebettetes YouTube-Video',
 
-	'hint_youtube' => '<p><b>Hinweis:</b> Dieses eingebettete Video wird von YouTube, LLC, 901 Cherry Ave., San Bruno, CA 94066, USA bereitgestellt.<br>' .//
+	'hint_youtube' => '<p><b>Hinweis:</b> Dieses eingebettete Video wird von YouTube, LLC, 901 Cherry Ave., San Bruno, CA 94066, USA bereitgestellt.<br>' . //
 		'Beim Abspielen wird eine Verbindung zu den Servern von YouTube hergestellt. Dabei wird YouTube mitgeteilt, welche Seiten du besuchst. ' . //
 		'Wenn du in deinem YouTube-Account eingeloggt bist, kann YouTube dein Surfverhalten dir persönlich zuzuordnen. ' . //
 		'Dies verhinderst du, indem du dich vorher aus deinem YouTube-Account ausloggst.</p>' . //
