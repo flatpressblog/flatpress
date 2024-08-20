@@ -12,7 +12,7 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 		'<p>If you have deactivated the storage of cookies for the Google Ads program, you will not have to expect any such cookies when watching YouTube videos. ' . //
 		'However, YouTube also stores non-personal usage information in other cookies. ' . //
 		'If you want to prevent this, you must block the storage of cookies in your browser.</p>' . //
-		'<p>You can find further information on data protection at „YouTube“ in the provider\'s privacy policy at: ' . //
+		'<p>You can find further information on data protection at „YouTube“ in the provider´s privacy policy at: ' . //
 		'<a href="https://policies.google.com/privacy?hl=en&gl=us" title="Go to https://policies.google.com/privacy?hl=en&gl=us" rel="noopener" target="_blank">https://policies.google.com/privacy?hl=en&gl=us</a></p>',
 	'link_title_youtube' => 'Watch the video on YouTube',
 
@@ -22,7 +22,7 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 		'If you are logged into your Vimeo account, Vimeo can assign your surfing behavior to you personally. ' . //
 		'You can prevent this by logging out of your Vimeo account beforehand.</p>' . //
 		'<p>When a Vimeo video is started, the provider uses cookies that collect information about user behavior.</p>' . //
-		'<p>You can find further information on data protection at „Vimeo“ in the provider\'s privacy policy at: ' . //
+		'<p>You can find further information on data protection at „Vimeo“ in the provider´s privacy policy at: ' . //
 		'<a href="https://vimeo.com/privacy" title="Go to https://vimeo.com/privacy" rel="noopener" target="_blank">https://vimeo.com/privacy</a></p>',
 	'link_title_vimeo' => 'Watch the video on Vimeo',
 

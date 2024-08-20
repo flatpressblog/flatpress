@@ -37,6 +37,6 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 );
 
 $lang ['plugin'] ['gdprvideoembed'] ['errors'] = array (
-	-1 => 'BBcode-plugin\'et skal være aktivt for at kunne bruge dette plugin.'
+	-1 => 'BBcode-plugin´et skal være aktivt for at kunne bruge dette plugin.'
 );
 ?>
