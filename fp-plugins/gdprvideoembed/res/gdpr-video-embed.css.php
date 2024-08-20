@@ -82,7 +82,8 @@ require_once $langFile;
 }
 
 /* === the right Scrollbar === */
-/* Chrome, Edge, and Safari */@supports selector(::-webkit-scrollbar) {
+/* Chrome, Edge, and Safari */
+@supports selector(::-webkit-scrollbar) {
 	.responsive_bbcode_video div::-webkit-scrollbar {
 		width: 6px
 	}
