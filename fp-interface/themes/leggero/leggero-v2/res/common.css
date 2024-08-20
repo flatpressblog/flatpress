@@ -17,11 +17,11 @@ Module: common.css
 /* Chrome, Edge and Safari */
 @supports selector(::-webkit-scrollbar) {
 	body::-webkit-scrollbar {
-		width: 6px;
+		width: 6px
 	}
 	body::-webkit-scrollbar-thumb {
 		background-color: #82271f;
-		border-radius: 3px;
+		border-radius: 3px
 	}
 }
 
@@ -29,7 +29,7 @@ Module: common.css
 @supports (-moz-appearance:button) and (contain:paint) {
 	* {
 		scrollbar-width: thin;
-		scrollbar-color: #82271f #333C43;
+		scrollbar-color: #82271f #333C43
 	}
 }
 
@@ -264,13 +264,13 @@ h4 { font-size: 1.2em }
 
 	.bbcode_video.right, .bbcode_video.left { float: unset !IMPORTANT }	
 
-	.responsive_bbcode_video { /* BBcode; normal and center BBcode video if screen < 960px */
+	.responsive_bbcode_video,
+	.responsive_bbcode_fb-video { /* BBcode; normal and center BBcode video if screen < 960px */
 		display: block;
 		text-align: center
 	}
 
-	.bbcode_video,
-	.fb_iframe_widget_fluid_desktop iframe {
+	.bbcode_video {
 		max-width: 320px !IMPORTANT;
 		width: 100%;
 		height: 180px !IMPORTANT
@@ -303,7 +303,8 @@ h4 { font-size: 1.2em }
 
 	#main { width: 605px }
 
-	.responsive_bbcode_video { text-align: unset }
+	.responsive_bbcode_video,
+	.responsive_bbcode_fb-video { text-align: unset }
 
 	.bbcode_video.right { float: right !IMPORTANT; margin: 0.5em 0.5em 1em 1em }
 
@@ -318,8 +319,7 @@ h4 { font-size: 1.2em }
 
 	#main { width: 669px }
 
-	.bbcode_video,
-	.fb_iframe_widget_fluid_desktop iframe {
+	.bbcode_video {
 		max-width: 480px !IMPORTANT;
 		width: 100%;
 		height: 270px !IMPORTANT
@@ -332,8 +332,7 @@ h4 { font-size: 1.2em }
 
 	#main { width: 925px }
 
-	.bbcode_video,
-	.fb_iframe_widget_fluid_desktop iframe {
+	.bbcode_video {
 	max-width: 560px !IMPORTANT;
 	width: 100%;
 	height: 315px !IMPORTANT
@@ -379,11 +378,11 @@ h4 { font-size: 1.2em }
 
 	.img-gallery div.photoswipe figure { margin: 0.5em 0 0 0 !IMPORTANT }
 
-	.responsive_bbcode_video { /* BBcode; responsive */
+	.responsive_bbcode_video,
+	.responsive_bbcode_fb-video { /* BBcode; responsive */
 		position: relative;
-		padding-bottom: 56.25%;  /* 16:9 */
-		height: 0;
-		overflow: hidden
+		max-width: 99%;
+		aspect-ratio: 1.777 / 1
 	}
 
 	.bbcode_video {
@@ -504,7 +503,8 @@ h4#addcomment { clear: both }
 
 	.bbcode_video:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
 
-	.fb_iframe_widget_fluid_desktop iframe { border-radius: 3px }
+	.responsive_bbcode_video,
+	.responsive_bbcode_fb-video { margin: 0 auto }
 
 	.navigation { /* next entries & previous entries link */
 		font-size: 90%;
@@ -567,4 +567,3 @@ h4#addcomment { clear: both }
 }
 
 * { font-family: sans-serif; text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2) }
-
