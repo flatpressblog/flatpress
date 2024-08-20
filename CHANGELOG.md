@@ -10,7 +10,7 @@
 
 ## Security
 - PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
-- BBcode and emoticons plugin: removed unsafe href onclick HTML method ([#422](https://github.com/flatpressblog/flatpress/issues/422))
+- BBcode, Cookiebanner and Emoticons plugin: removed unsafe href onclick HTML method ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 - BBcode, PhotoSwipe and Emoticons plugin: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 - Admin area widget management: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 
