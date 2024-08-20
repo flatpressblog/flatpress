@@ -4,14 +4,16 @@
  * Plugin URI: https://flatpress.org
  * Description: Displays a discreet banner that informs the visitor about the use of cookies and provides a link to the <a href="./admin.php?p=static&action=write&page=privacy-policy" title="Edit me!" >privacy policy</a>. Part of the standard distribution. <a href="#" id="DeleteCookie" title="Reset CookieBanner">[Reset]</a>
  * Author: FlatPress
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author URI: http://flatpress.org
  */ 
 function plugin_cookiebanner_head() {
 	$pdir = plugin_geturl('cookiebanner');
+	$random_hex = RANDOM_HEX;
 	echo '
 		<!-- BOF CookieBanner CSS -->
 		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/cookiebanner.css">
+		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/cookiebanner.js"></script>
 		<!-- EOF Cookiebanner CSS -->
 ';
 }
@@ -32,7 +34,7 @@ function plugin_cookiebanner_footer() {
 		<div id="cookie_banner">
 			<div class="buttonbar">
 				' . $bannertext . '
-				<input type="submit" value="' . $ok . '" class="btn btn-primary btn-sm " onclick="cookie_ok()"></input>
+				<input type="submit" value="' . $ok . '" class="btn btn-primary btn-sm" id="btn-primary" onclick="cookie_ok()"></input>
 			</div>
 		</div>
 		<!-- EOF Cookie-Banner HTML -->
@@ -59,6 +61,11 @@ function plugin_cookiebanner_footer() {
 				document.cookie = \'cookiebanner\' + \'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;\'; // delete CookieBanner -Cookie
 				jQuery(\'#cookie_banner\').show(); // shows banner
 			})
+
+			// Replacement for OK button onclick HTML method
+			function onClick_btn_primary() {
+				onclick = cookie_ok(); return false;
+			}
 		</script>
 		<!-- EOF Cookie-Banner JS -->
 ';
@@ -66,7 +73,7 @@ function plugin_cookiebanner_footer() {
 
 add_action('wp_footer', 'plugin_cookiebanner_footer', 0);
 
-  
+
 function plugin_cookiebanner_privacypolicy() {
 	global $lang;
 	$lang = lang_load('plugin:cookiebanner');
@@ -78,4 +85,3 @@ function plugin_cookiebanner_privacypolicy() {
 
 add_action('comment_form', 'plugin_cookiebanner_privacypolicy', 0);
 ?>
-
