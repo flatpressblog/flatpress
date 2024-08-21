@@ -190,7 +190,7 @@ function system_init() {
 
 	// init smarty
 	$smarty->setCompileDir = CACHE_DIR;
-	$smarty->setCacheDir = SMARTY_DIR . 'cache/';
+	$smarty->setCacheDir('./fp-includes/smarty-5.3.1/libs/cache');
 	$smarty->caching = 0;
 
 	do_action('init');
