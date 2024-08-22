@@ -172,6 +172,7 @@ function system_init() {
 	$GLOBALS ['fp_widgets'] = new widget_indexer();
 
 	$GLOBALS ['smarty'] = &$GLOBALS ['_FP_SMARTY'];
+
 	$smarty = &$GLOBALS ['smarty'];
 
 	$GLOBALS ['fp_config'] = config_load();
@@ -190,10 +191,18 @@ function system_init() {
 
 	// init smarty
 	$smarty->setCompileDir = CACHE_DIR;
-	$smarty->setCacheDir = SMARTY_DIR . 'cache/';
-	$smarty->caching = 0;
 
-	do_action('init');
+	// FlatPress does not use the Smarty cache, only the compiler
+	$smarty->setCacheDir = CACHE_DIR . 'smatry-cache/';
+	$smarty->caching = false;
+
+	// enabled smarty debug console
+	@ini_set('display_errors', 'on'); // on or off
+	@error_reporting(E_ALL); // E_ALL or 0
+	$smarty->debugging = true; // true or false
+	$smarty->testInstall();
+
+	do_action('init'); // core.wp-plugin-interface.php
 	ob_end_clean();
 }
 

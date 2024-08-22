@@ -36,7 +36,7 @@
 	</div>
 
 
-	{if not function_exists('fpprotect_harden_prettyurls_plugin')} {* If the FlatPress Protect plugin is deactivated, the .htaccess file can be edited and saved. *}
+	{if function_exists('fpprotect_harden_prettyurls_plugin')} {* If the FlatPress Protect plugin is deactivated, the .htaccess file can be edited and saved. *}
 		<p class="alignright">
 			<a class="hint externlink" href="{$lang.admin.plugin.prettyurls.wiki_nginx}" target="_blank">{$lang.admin.plugin.prettyurls.nginx}</a>
 		</p>

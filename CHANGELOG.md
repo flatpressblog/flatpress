@@ -10,18 +10,26 @@
 
 ## Security
 - PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
-- BBcode and emoticons plugin: removed unsafe href onclick HTML method ([#422](https://github.com/flatpressblog/flatpress/issues/422))
+- BBcode, Cookiebanner and Emoticons plugin: removed unsafe href onclick HTML method ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 - BBcode, PhotoSwipe and Emoticons plugin: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 - Admin area widget management: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 
 ## Plugins
+### Additions
+- GDPR Video embed: Simple two-click solution for GDPR-compliant embedding of YouTube and Vimeo videos. ([#260](https://github.com/flatpressblog/flatpress/issues/260))
+
 ### Changes
 - SEO Meta Tag Info plugin: Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
 - SEO Meta Tag Info plugin: If an HTTP root directory is stored in the server configuration file and is not empty, a predefined robots.txt can be created and edited via the SEO panel in the admin area. ([#427](https://github.com/flatpressblog/flatpress/pull/427))
 - FavIcon plugin: Support for iOS Safari, Android Chrome, Windows 10 and Mac OS Safari added ([#416](https://github.com/flatpressblog/flatpress/pull/416), [#28](https://github.com/flatpressblog/flatpress/pull/428))
+- BBcode plugin/ Admin area: The editor toolbar can be deactivated again as in version 1.2.1 when using an alternative editor (e.g. [Wysiwyg editor](https://wiki.flatpress.org/res:plugins:ckeditor)). ([#436](https://github.com/flatpressblog/flatpress/pull/436))
+- BBcode plugin: BBcode toolbar, if BBcode for comments is allowed ([#437](https://github.com/flatpressblog/flatpress/pull/437))
 
 ### Bugfixes
 - BBcode plugin: No file or image selection possible after activating the "Allow BBcode in comments" option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
+
+## Themes
+- invidual scrollbar for the Leggero v2 style
 
 ## Internationalization
 - Reworked translations: Japanese (Thanks to [NHWS](https://nhws.localinfo.jp/))

@@ -67,8 +67,10 @@ define('FP_INCLUDES', 'fp-includes/');
 
 // core include scripts
 define('INCLUDES_DIR', FP_INCLUDES . 'core/');
+
 // smarty engine
-define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-5.3.1/libs/');
+define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-5.4.0/src/');
+
 // FlatPress specific Smarty plugins
 define('FP_SMARTYPLUGINS_DIR', ABS_PATH . FP_INCLUDES . 'fp-smartyplugins/');
 
@@ -86,7 +88,7 @@ define('PLUGINS_DIR', 'fp-plugins/');
 define('ADMIN_DIR', 'admin/');
 
 // cache file name and path.
-define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0776
+define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0777
 define('CACHE_FILE', '%%cached_list.php');
 
 define('INDEX_DIR', FP_CONTENT . 'index/');
@@ -198,3 +200,46 @@ function is_https() {
 	// none of the above: must be HTTP
 	return false;
 }
+
+/**
+ * START OF hoop jumping to load Smarty without Composer
+ */
+require_once SMARTY_DIR . 'functions.php';
+
+spl_autoload_register(function (string $class) {
+	// Class prefix
+	$prefix = 'Smarty\\';
+
+	// Does the class use the namespace prefix?
+	$len = strlen($prefix);
+	if (strncmp($prefix, $class, $len) !== 0) {
+		// If not, move to the next registered autoloader
+		return;
+	}
+
+	// Hack off the prefix part
+	$relative_class = substr($class, $len);
+
+	// Build a path to the include file
+	// 1 with namespaces
+	// 2 without
+	$fileName = [
+		SMARTY_DIR . str_replace('\\', '/', $relative_class . '.php'),
+		SMARTY_DIR . $relative_class . '.php'
+	];
+	foreach ($fileName as $file) {
+		if (file_exists($file)) {
+			require_once $file;
+			break;
+		}
+	}
+});
+
+# END OF hoop jumping to load Smarty without Composer
+
+$GLOBALS ['smarty'] = new Smarty\Smarty();
+
+$smarty->setCacheDir = CACHE_DIR . 'smatry-cache/';
+$smarty->setCompileDir = CACHE_DIR;
+$smarty->caching = false;
+$smarty->testInstall();

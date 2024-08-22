@@ -844,9 +844,9 @@ function smarty_block_entry($params, $content, &$smarty, &$repeat) {
 		}
 
 		foreach ($entry as $k => $v)
-			$$smarty->assign($k, $entry [$k]);
+			$smarty->assign($k, $entry [$k]);
 
-		$$smarty->assign('id', $id);
+		$smarty->assign('id', $id);
 
 		// If PostViews plugin is active: Trigger view counter!
 		// This seems a bit hackish; please fix if possible.
@@ -893,7 +893,7 @@ function smarty_block_comment($params, $content, &$smarty, &$repeat) {
 
 		foreach ($comment as $k => $v) {
 			$kk = str_replace('-', '_', $k);
-			$$smarty->assign($kk, $comment [$k]);
+			$smarty->assign($kk, $comment [$k]);
 		}
 
 		if (THEME_LEGACY_MODE) {
