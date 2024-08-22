@@ -67,9 +67,9 @@ function plugin_emoticons() {
 				emoticons(unescape(\'' . urlencode($emoText) . '\')); return false;
 			}
 		</script>
-		<a href="#!" title="' . htmlentities($emoText) . '" id="' . $elementById . '">';
+		<button type="button" style="font-size: 12px; vertical-align: middle;" title="' . htmlentities($emoText) . '" id="' . $elementById . '">';
 		echo $emoticon;
-		echo '</a>
+		echo '</button>
 		';
 
 	}

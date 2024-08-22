@@ -125,6 +125,7 @@ ul#admin-tabmenu a#admin-tab-current {
 	border-bottom: solid 2px black;
 	padding: 4px;
 	font-size: 0.75em;
+	text-align: left;
 	font-style: italic
 }
 

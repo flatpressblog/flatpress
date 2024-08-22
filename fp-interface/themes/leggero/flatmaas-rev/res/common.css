@@ -279,6 +279,8 @@ input:hover {
 	background-color: #f9f9f9
 }
 
+input[type=radio], input[type=checkbox] { height: 12px }
+
 select { background-color: #EEEEDD }
 
 textarea {
@@ -399,6 +401,9 @@ textarea:hover {
 	background: #fdd
 }
 
+/* Search form */
+#search label { vertical-align: middle }
+
 /* Search-widget */
 div#widget-searchbox ul,
 div#widget-searchbox li {
@@ -419,3 +424,38 @@ form#search ul li:before { content: none }
 
 /* Feed-widget */
 .feed-widget { height: 12px !IMPORTANT; }
+
+/* BBcode toolbar for comments */
+.bb-btn-tlb p { display: table-cell }
+
+.emoticons { margin-top: 0.2em }
+
+.bb-btn-tlb p button,
+.emoticons button {
+	border: none;
+	cursor: pointer;
+	background-color: initial;
+	margin-top: 0.3em;
+	padding: 0;
+	height: 18px;
+	width: 20px
+}
+
+#bb_url img,
+#bb_mail img,
+#bb_h2 img,
+#bb_h3 img,
+#bb_h4 img,
+#bb_ul img,
+#bb_ol img,
+#bb_quote img,
+#bb_code img,
+#bb_html img,
+#bb_b img,
+#bb_i img,
+#bb_u img,
+#bb_del img {
+	margin: 0;
+	vertical-align: middle;
+	padding: 0
+}

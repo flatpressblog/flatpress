@@ -11,21 +11,19 @@
 		{$plang.allow_html}
 	</label></dt>
 	<dd> 
-		<p><input type="checkbox" name="bb-allow-html" id="bb-allow-html" {if $bbchecked[0]}checked="checked"{/if} /> 
+		<p><input type="checkbox" name="bb-allow-html" id="bb-allow-html" {if $bbchecked[0]}checked="checked"{/if}> 
 		{$plang.allow_html_long}</p>
 	</dd>
 
-	{* <!-- BBcode toolbar cannot be deactivated since commit 733a2bb (FP 1.3 Beta1). -->
 	<dt><label for="bb-toolbar">
 		{$plang.toolbar}
 	</label></dt>
 	<dd> 
-		<p><input type="checkbox" name="bb-toolbar" id="bb-toolbar" {if $bbchecked[2]}checked="checked"{/if} />
+		<p><input type="checkbox" name="bb-toolbar" id="bb-toolbar" {if $bbchecked[2]}checked="checked"{/if}>
 		{$plang.toolbar_long}</p>
 	</dd>
-	*}
 </dl>
-		
+
 
 <h2>{$plang.other}</h2>
 
@@ -34,7 +32,7 @@
 		{$plang.comments}
 	</label></dt>
 	<dd> 
-		<p><input type="checkbox" name="bb-comments" id="bb-comments" {if $bbchecked[1]}checked="checked"{/if} />
+		<p><input type="checkbox" name="bb-comments" id="bb-comments" {if $bbchecked[1]}checked="checked"{/if}>
 		{$plang.comments_long} </p>
 	</dd>
 
@@ -50,6 +48,6 @@
 </dl>
 
 <p class="buttonbar">
-	<input type="submit" name="bb-conf" value="{$plang.submit}"/>
+	<input type="submit" name="bb-conf" value="{$plang.submit}">
 </p>
 {/html_form}

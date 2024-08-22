@@ -133,10 +133,10 @@ function theme_wp_head() {
 
 	echo "\n<!-- FP STD HEADER -->\n";
 
-	echo "\n<meta name=\"generator\" content=\"FlatPress " . system_ver() . "\" />\n";
-	echo "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get RSS 2.0 Feed\" href=\"" . theme_feed_link('rss2') . "\" />\n";
+	echo "\n<meta name=\"generator\" content=\"FlatPress " . system_ver() . "\">\n";
+	echo "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get RSS 2.0 Feed\" href=\"" . theme_feed_link('rss2') . "\">\n";
 
-	echo "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Atom 1.0 Feed\" href=\"" . theme_feed_link('atom') . "\" />\n";
+	echo "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Atom 1.0 Feed\" href=\"" . theme_feed_link('atom') . "\">\n";
 
 	echo "<!-- EOF FP STD HEADER -->\n";
 }
@@ -154,12 +154,12 @@ function theme_head_stylesheet() {
 
 	$substyle = '/' . (isset($fp_config ['general'] ['style']) ? $fp_config ['general'] ['style'] . '/' : '');
 
-	echo $substyle . 'res/' . $css . '" type="text/css" rel="stylesheet" />';
+	echo $substyle . 'res/' . $css . '" type="text/css" rel="stylesheet">';
 
 	if (@$theme ['style'] ['style_print']) {
 		echo '<link media="print" href="';
 		echo BLOG_BASEURL . THEMES_DIR . THE_THEME;
-		echo $substyle . 'res/' . $theme ['style'] ['style_print'] . '" type="text/css" rel="stylesheet" />';
+		echo $substyle . 'res/' . $theme ['style'] ['style_print'] . '" type="text/css" rel="stylesheet">';
 	}
 
 	echo "\n<!-- FP STD STYLESHEET -->\n";
@@ -168,7 +168,7 @@ function theme_head_stylesheet() {
 function admin_head_action() {
 	global $theme;
 	if (!$theme ['admin_custom_interface'])
-		echo '<link media="screen" href="' . BLOG_BASEURL . 'admin/res/admin.css" type="text/css" rel="stylesheet" />';
+		echo '<link media="screen" href="' . BLOG_BASEURL . 'admin/res/admin.css" type="text/css" rel="stylesheet">';
 }
 
 add_filter('admin_head', 'admin_head_action');
@@ -250,7 +250,7 @@ function theme_init(&$smarty) { /* &$mode */
 
 	$smarty->assign('pagetitle', apply_filters('wp_title', "", '&laquo;'));
 
-	$$smarty->assign('fp_config', $fp_config);
+	$smarty->assign('fp_config', $fp_config);
 
 	$smarty->registerPlugin('modifier', 'tag', 'theme_apply_filters_wrapper');
 	$smarty->registerPlugin('modifier', 'link', 'theme_apply_filters_link_wrapper');

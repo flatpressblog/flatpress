@@ -53,9 +53,7 @@ if (class_exists('AdminPanelAction')){
 					: 40;
 				plugin_addoption('bbcode', 'escape-html', isset($_POST['bb-allow-html']));
 				plugin_addoption('bbcode', 'comments',    isset($_POST['bb-comments']));
-				// BBcode toolbar cannot be deactivated since commit 733a2bb (FP 1.3 Beta1).
-				// FIXME: #391, If "Allow BBcode in comments" and 'editor' => false, no file or image selection possible in BBcode toolbar.
-				//plugin_addoption('bbcode', 'editor',      isset($_POST['bb-toolbar']));
+				plugin_addoption('bbcode', 'editor',      isset($_POST['bb-toolbar']));
 				plugin_addoption('bbcode', 'url-maxlen',  $maxlen);
 				plugin_saveoptions('bbcode');
 				$this->smarty->assign('success', 1);

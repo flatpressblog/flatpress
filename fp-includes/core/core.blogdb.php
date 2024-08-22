@@ -11,7 +11,7 @@
 	/**
 	 * entry id prefix and identifier
 	 */
-	define('BDB_ENTRY', 'entry');	
+	define('BDB_ENTRY', 'entry');
 	/**
 	 * comment id prefix and identifier
 	 */

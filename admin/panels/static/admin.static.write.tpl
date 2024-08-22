@@ -32,7 +32,7 @@
 			<p>
 				<label for="content">{$panelstrings.content}</label>
 			</p>
-			{if function_exists('plugin_bbcode_init')}
+			{if function_exists('plugin_bbcode_init') && $fp_config.plugins.bbcode.editor == true}
 				{include file="plugin:bbcode/toolbar"}
 			{/if}
 			<!-- BOF Custom toolbar -->{action hook=simple_toolbar_form}<!-- EOF Custom toolbar -->
