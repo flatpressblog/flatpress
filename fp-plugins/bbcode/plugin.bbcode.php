@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BBCode
- * Version: 1.8.2
+ * Version: 1.9.0
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -21,16 +21,12 @@ function plugin_bbcode_startup() {
 	define('BBCODE_ALLOW_HTML', isset($bbconf ['escape-html']) ? $bbconf ['escape-html'] : true);
 	define('BBCODE_ENABLE_COMMENTS', isset($bbconf ['comments']) ? $bbconf ['comments'] : false);
 	define('BBCODE_USE_EDITOR', isset($bbconf ['editor']) ? $bbconf ['editor'] : true);
+	define('BBCODE_MASK_ATTACHS', isset($bbconf ['maskattachs']) ? $bbconf ['maskattachs'] : true);
 	define('BBCODE_URL_MAXLEN', isset($bbconf ['url-maxlen']) ? $bbconf ['url-maxlen'] : 40);
-	if (!file_exists('getfile.php')) {
-		define('BBCODE_USE_WRAPPER', false);
+	if (BBCODE_MASK_ATTACHS) {
+		define('BBCODE_USE_WRAPPER', true);
 	} else {
-		$funcs = explode(',', ini_get('disable_functions'));
-		if (in_array('readfile', $funcs)) {
-			define('BBCODE_USE_WRAPPER', false);
-		} else {
-			define('BBCODE_USE_WRAPPER', true);
-		}
+		define('BBCODE_USE_WRAPPER', false);
 	}
 
 	// filter part
@@ -56,7 +52,7 @@ function plugin_bbcode_startup() {
 	}
 }
 plugin_bbcode_startup();
-// Fraenkiman: RSS-feed returns bbcode if add_action(), see #225
+// FKM: RSS-feed returns bbcode if add_action(), see #225
 //add_action('wp_head', 'plugin_bbcode_startup');
 
 /**
@@ -85,8 +81,13 @@ function bbcode_remap_url(&$d) {
 	if (empty($d)) {
 		return;
 	}
+	// complete the URL if it begins with www. but does not contain a protocol
+	if (strpos($d, 'www.') === 0) {
+		$d = 'https://' . $d;
+	}
 	// NWM: "attachs/" is interpreted as a keyword, and it is translated to the actual path of ATTACHS_DIR
 	// CHANGE! we use the getfile.php script to mask the actual path of the attachs dir!
+	// FKM: We now use a getfile.php script to hide the attachs directory
 	// DMKE: I got an idea about an integer-id based download/media manager... work-in-progress
 	if (strpos($d, ':') === false) {
 		// if is relative url
@@ -102,17 +103,18 @@ function bbcode_remap_url(&$d) {
 			$d = BLOG_BASEURL . substr($d, 1);
 		}
 		if (substr($d, 0, 8) == 'attachs/') {
-			$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) . '&amp;dl=true' : substr_replace($d, ATTACHS_DIR, 0, 8);
+			//$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) . '&amp;dl=true' : substr_replace($d, ATTACHS_DIR, 0, 8);
+			$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . urlencode(basename($d)) . '&amp;dl=true' : substr_replace($d, ATTACHS_DIR, 0, 8);
 			return true;
 		}
+
 		if (substr($d, 0, 7) == 'images/') {
-			$d = substr_replace($d, IMAGES_DIR, 0, 7);
-			$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) : $d;
+			// do not use wrapper for images
+			//$d = substr_replace($d, IMAGES_DIR, 0, 7);
+			//$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) : $d;
+			$d = IMAGES_DIR . urlencode(basename($d));
 		}
 		return true;
-	}
-	if (strpos($d, 'www.') === 0) {
-		$d = 'http://' . $d;
 	}
 	return false;
 }

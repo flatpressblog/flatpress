@@ -19,6 +19,10 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'urlmaxlen' => 'URL max lengte',
 	'urlmaxlen_long_pre' => 'Verkort URL langer dan ',
 	'urlmaxlen_long_post' => ' karakters.',
+
+	'attachsdir' => 'Bestanden downloaden',
+	'attachsdir_long' => 'Uploadmap verbergen (fp-content/attachs/)',
+
 	'submit' => 'Bewaar de configuratie',
 	'msgs' => array(
 		1 => 'BBCode-configuratie succesvol opgeslagen.',
@@ -53,6 +57,18 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Ga naar',
-	'langtag' => 'nl_NL' // language tag for Facebook Video
+
+	// Filewrapper getfille.php
+	'error_403' => 'Fout 403',
+	'not_send' => 'Het gevraagde bestand kan niet worden verzonden.',
+	'error_404' => 'Fout 404',
+	'not_found' => 'Het gevraagde bestand kon niet worden gevonden.',
+	'file' => 'Bestand',
+	'report_error_1' => '',
+	'report_error_2' => 'Meld een fout',
+	'blog_search_1' => '',
+	'blog_search_2' => 'zoek in het blog',
+	'start_page_1' => 'of terug naar de',
+	'start_page_2' => 'startpagina'
 );
 ?>

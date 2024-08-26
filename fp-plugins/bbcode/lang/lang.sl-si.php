@@ -19,6 +19,10 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'urlmaxlen' => 'Največja dolžina URL',
 	'urlmaxlen_long_pre' => 'Skrati URL-je daljše od ',
 	'urlmaxlen_long_post' => ' znakov.',
+
+	'attachsdir' => 'Prenosi datotek',
+	'attachsdir_long' => 'Skrij imenik za nalaganje (fp-content/attachs/)',
+
 	'submit' => 'Shrani konfiguracijo',
 	'msgs' => array(
 		1 => 'BBCode konfiguracija uspešno shranjena.',
@@ -53,6 +57,18 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Pojdi na',
-	'langtag' => 'sl_SI' // Language tag for Facebook Video
+
+	// Filewrapper getfille.php
+	'error_403' => 'Napaka 403',
+	'not_send' => 'Zahtevane datoteke ni mogoče poslati.',
+	'error_404' => 'Napaka 404',
+	'not_found' => 'Zahtevane datoteke ni bilo mogoče najti.',
+	'file' => 'Datoteka',
+	'report_error_1' => '',
+	'report_error_2' => 'Prijavite napako',
+	'blog_search_1' => '',
+	'blog_search_2' => 'iskanje v blogu',
+	'start_page_1' => '',
+	'start_page_2' => 'ali se vrnite na začetno stran'
 );
 ?>
