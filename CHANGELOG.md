@@ -24,9 +24,11 @@
 - FavIcon plugin: Support for iOS Safari, Android Chrome, Windows 10 and Mac OS Safari added ([#416](https://github.com/flatpressblog/flatpress/pull/416), [#28](https://github.com/flatpressblog/flatpress/pull/428))
 - BBcode plugin/ Admin area: The editor toolbar can be deactivated again as in version 1.2.1 when using an alternative editor (e.g. [Wysiwyg editor](https://wiki.flatpress.org/res:plugins:ckeditor)). ([#436](https://github.com/flatpressblog/flatpress/pull/436))
 - BBcode plugin: BBcode toolbar, if BBcode for comments is allowed ([#437](https://github.com/flatpressblog/flatpress/pull/437))
+- BBcode plugin: The fp-content/attachs directory is hidden if the file has been included with the URL tag ([#443](https://github.com/flatpressblog/flatpress/pull/443))
 
 ### Bugfixes
 - BBcode plugin: No file or image selection possible after activating the "Allow BBcode in comments" option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
+- BBcode plugin: BBcode create a valid simple URL ([#442](https://github.com/flatpressblog/flatpress/issues/442))
 
 ## Themes
 - invidual scrollbar for the Leggero v2 style
