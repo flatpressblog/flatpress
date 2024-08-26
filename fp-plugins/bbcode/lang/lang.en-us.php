@@ -13,12 +13,16 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'toolbar' => 'Toolbar',
 	'toolbar_long' => 'Enable the editor toolbar.',
 
-	'other'	=> 'Other options',
+	'other' => 'Other options',
 	'comments' => 'Comments',
 	'comments_long' => 'Allow BBCode in comments',
 	'urlmaxlen' => 'URL max length',
 	'urlmaxlen_long_pre' => 'Shorten URLs longer than ',
 	'urlmaxlen_long_post' => ' characters.',
+
+	'attachsdir' => 'File downloads',
+	'attachsdir_long' => 'Hide upload directory (fp-content/attachs/)',
+
 	'submit' => 'Save configuration',
 	'msgs' => array(
 		1 => 'BBCode configuration successful saved.',
@@ -37,13 +41,13 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Bold',
 		'italictitle' => 'Italic',
 		'headlinetitle' => 'Headline',
-		'underlinetitle' => 'Unterstreichen',
+		'underlinetitle' => 'Underline',
 		'crossouttitle' => 'Crossed out',
 		'unorderedlisttitle' => 'Unsorted list',
 		'orderedlisttitle' => 'Sorted list',
 		'quotetitle' => 'Quote',
 		'codetitle' => 'Code',
-		'htmltitle' => 'Als HTML-Code einfügen',
+		'htmltitle' => 'Insert as HTML code',
 		'help' => 'BBCode Help',
 		'file' => 'File: ',
 		'image' => 'Image: ',
@@ -53,6 +57,18 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Go to',
-	'langtag' => 'en_US' // language tag for Facebook Video
+
+	// Filewrapper getfille.php
+	'error_403' => 'Error 403',
+	'not_send' => 'The requested file cannot be sent.',
+	'error_404' => 'Error 404',
+	'not_found' => 'The requested file could not be found.',
+	'file' => 'File',
+	'report_error_1' => '',
+	'report_error_2' => 'Report error',
+	'blog_search_1' => 'search',
+	'blog_search_2' => 'in the blog',
+	'start_page_1' => 'or back to the',
+	'start_page_2' => 'start page'
 );
 ?>

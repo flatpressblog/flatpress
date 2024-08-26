@@ -13,12 +13,16 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'toolbar' => 'Μπάρα συντομεύσεων',
 	'toolbar_long' => 'Ενεργοποιείται η μπάρα συντομεύσεων κατά την καταχώρηση.',
 
-	'other'	=> 'Άλλες επιλογές',
+	'other' => 'Άλλες επιλογές',
 	'comments' => 'Σχόλια',
 	'comments_long' => 'Επιτρέπεται η χρήση BBCode στα σχόλια',
 	'urlmaxlen' => 'Μέγιστο μήκος συνδέσμων',
 	'urlmaxlen_long_pre' => 'Σμίκρυνση συνδέσμων μεγαλύτερων από ',
 	'urlmaxlen_long_post'=>' χαρακτήρες.',
+
+	'attachsdir' => 'Λήψεις αρχείων',
+	'attachsdir_long' => 'Απόκρυψη καταλόγου μεταφόρτωσης (fp-content/attachs/)',
+
 	'submit' => 'Αποθήκευση ρύθμισης',
 	'msgs' => array(
 		1 => 'Η ρύθμιση του BBCode αποθηκεύτηκε επιτυχώς.',
@@ -53,6 +57,18 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Πηγαίνετε στον',
-	'langtag' => 'el_GR' // language tag for Facebook Video
+
+	// Filewrapper getfille.php
+	'error_403' => 'Σφάλμα 403', // neu
+	'not_send' => 'Το ζητούμενο αρχείο δεν μπορεί να αποσταλεί.', // neu
+	'error_404' => 'Σφάλμα 404', // neu
+	'not_found' => 'Το ζητούμενο αρχείο δεν βρέθηκε.', // neu
+	'file' => 'Αρχείο', // neu
+	'report_error_1' => '', // neu
+	'report_error_2' => 'Αναφορά σφάλματος', // neu
+	'blog_search_1' => '', // neu
+	'blog_search_2' => 'Αναζήτηση στο ιστολόγιο', // neu
+	'start_page_1' => '', // neu
+	'start_page_2' => 'ή πίσω στην αρχική σελίδα' // neu
 );
 ?>

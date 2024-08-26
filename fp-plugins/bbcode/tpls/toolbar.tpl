@@ -31,10 +31,10 @@
 		&nbsp;
 	</p>
 	<p>
-		{$lang.admin.plugin.bbcode.editor.file}{html_options name=attachselect values=$attachs_list output=$attachs_list onchange="insAttach(this.form.attachselect.value)"}
+		{$lang.admin.plugin.bbcode.editor.file}{html_options name=attachselect values=$attachs_list output=$attachs_list id="bb_attach"}
 		&nbsp;
 	</p>
 	<p>
-		{$lang.admin.plugin.bbcode.editor.image}{html_options name=imageselect values=$images_list output=$images_list onchange="insImage(this.form.imageselect.value)"}
+		{$lang.admin.plugin.bbcode.editor.image}{html_options name=imageselect values=$images_list output=$images_list id="bb_image"}
 	</p>
 </fieldset>

@@ -10,7 +10,7 @@ function insertAtCursor(element, start, end) {
 			caretPos.moveEnd("character", -end.length);
 			caretPos.select();
 		}
-		element.focus(caretPos);    
+		element.focus(caretPos);
 	} else if (element.selectionStart || element.selectionStart == '0') {
 		// MOZILLA
 		element.focus();
@@ -146,7 +146,7 @@ if (typeof(Event.observe) == 'function') {
 }
 
 /**
- * Replacement section for href onclick HTML method
+ * Replacement section for onclick/ onchange HTML method
  */
 // url
 if (document.getElementById('bb_url')) {
@@ -408,4 +408,36 @@ function contentFieldReduce() {
 	if (bb) {
 		document.getElementById('content').form.content.rows -= 5;
 	}
+}
+
+// file selection
+if (document.getElementById('bb_attach')) {
+	bb_file_selection();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_file_selection);
+}
+function bb_file_selection() {
+	const bb = document.getElementById('bb_attach');
+	if (bb) {
+		document.getElementById('bb_attach').addEventListener('change', onChange_insAttach, false);
+	}
+}
+function onChange_insAttach() {
+	insAttach(this.form.attachselect.value);
+}
+
+// image selection
+if (document.getElementById('bb_image')) {
+	bb_image_selection();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_image_selection);
+}
+function bb_image_selection() {
+	const bb = document.getElementById('bb_image');
+	if (bb) {
+		document.getElementById('bb_image').addEventListener('change', onChange_insImge, false);
+	}
+}
+function onChange_insImge() {
+	insImage(this.form.imageselect.value);
 }

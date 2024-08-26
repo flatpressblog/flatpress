@@ -13,12 +13,16 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'toolbar' => 'ツールバー',
 	'toolbar_long' => '編集ツールバーを有効にする',
 
-	'other'	=> 'その他のオプション',
+	'other' => 'その他のオプション',
 	'comments' => 'コメント',
 	'comments_long' => 'コメント欄でBBCodeの使用できるようにする',
 	'urlmaxlen' => 'URLの最大文字数',
 	'urlmaxlen_long_pre' => '何文字以上のとき短縮URL表示に変換するか：',
 	'urlmaxlen_long_post' => ' 文字',
+
+	'attachsdir' => 'ファイルのダウンロード',
+	'attachsdir_long' => 'アップロードディレクトリを隠す (fp-content/attachs/)',
+
 	'submit' => '設定の変更を保存する',
 	'msgs' => array(
 		1 => 'BBCodeの設定変更を保存しました。',
@@ -53,6 +57,18 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'へ移動',
-	'langtag' => 'ja_JP' // language tag for Facebook Video
+
+	// Filewrapper getfille.php
+	'error_403' => 'エラー 403',
+	'not_send' => '要求されたファイルは送信できません。',
+	'error_404' => 'エラー 404',
+	'not_found' => '要求されたファイルが見つかりません。',
+	'file' => 'ファイル',
+	'report_error_1' => '',
+	'report_error_2' => 'エラーを報告してください',
+	'blog_search_1' => '',
+	'blog_search_2' => 'ブログ検索',
+	'start_page_1' => '', // neu
+	'start_page_2' => 'またはスタートページに戻る'
 );
 ?>

@@ -13,12 +13,16 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'toolbar' => 'Barra strumenti',
 	'toolbar_long' => 'Abilita la barra strumenti dell\'editor.',
 
-	'other'	=> 'Altre opzioni',
+	'other' => 'Altre opzioni',
 	'comments' => 'Commenti',
 	'comments_long' => 'Consenti di usare BBCode nei commenti',
 	'urlmaxlen' => 'Lunghezza massima degli URL',
 	'urlmaxlen_long_pre' => 'Accorcia gli URL più lunghi di ',
 	'urlmaxlen_long_post'=>' caratteri.',
+
+	'attachsdir' => 'Download di file',
+	'attachsdir_long' => 'Nascondere la directory di upload (fp-content/attachs/)',
+
 	'submit' => 'Salva la configurazione',
 	'msgs' => array(
 		1 => 'La configurazione di BBCode è stata salvata con successo.',
@@ -53,6 +57,18 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Vai a',
-	'langtag' => 'it_IT' // language tag for Facebook Video
+
+	// Filewrapper getfille.php
+	'error_403' => 'Errore 403',
+	'not_send' => 'Il file richiesto non può essere inviato.',
+	'error_404' => 'Errore 404',
+	'not_found' => 'Il file richiesto non è stato trovato.',
+	'file' => 'File',
+	'report_error_1' => '',
+	'report_error_2' => 'Segnala errore',
+	'blog_search_1' => '',
+	'blog_search_2' => 'cerca nel blog',
+	'start_page_1' => 'o torna alla',
+	'start_page_2' => 'pagina iniziale'
 );
 ?>
