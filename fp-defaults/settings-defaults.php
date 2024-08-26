@@ -35,6 +35,7 @@ $fp_config = array(
 			'comments' => true,
 			'editor' => true,
 			'url-maxlen' => 40,
+			'maskattachs' => false,
 		),
 		'commentcenter' => array (
 			'log_all' => false,
