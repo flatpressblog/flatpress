@@ -10,7 +10,6 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'submit' => 'Сохраните robots.txt',
 
 	// SEO Metatags part
-$lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'legend_desc' => 'Описание и ключевые слова',
 	'description' => 'Благодаря этим деталям их легче найти в поисковых системах и разместить в социальных сетях. <a class="hint" href="https://ru.wikipedia.org/wiki/%D0%9C%D0%B5%D1%82%D0%B0%D1%82%D0%B5%D0%B3%D0%B8" title="Метатеги" target="_blank">Метатеги (Википедия)</a>',
 	'input_desc' => 'Добавьте описание:',

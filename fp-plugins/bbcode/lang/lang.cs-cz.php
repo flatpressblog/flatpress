@@ -13,12 +13,16 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'toolbar' => 'Lišta s nástroji',
 	'toolbar_long' => 'Zapnout upravování pomocí lišty nástrojů.',
 
-	'other'	=> 'Ostatní možnosti',
+	'other' => 'Ostatní možnosti',
 	'comments' => 'Komentáře',
 	'comments_long' => 'Povolit BBCode v komentářích',
 	'urlmaxlen' => 'Maximální délka URL',
 	'urlmaxlen_long_pre' => 'Zkrátit URL delší jako ',
 	'urlmaxlen_long_post' =>' znaků.',
+
+	'attachsdir' => 'Soubory ke stažení',
+	'attachsdir_long' => 'Skrýt adresář pro nahrávání (fp-content/attachs/)',
+
 	'submit' => 'Uložit nastavení',
 	'msgs' => array(
 		1 => 'BBCode configuration successful saved.',
@@ -53,6 +57,18 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Přejít na',
-	'langtag' => 'cs_CZ' // language tag for Facebook Video
+
+	// Filewrapper getfille.php
+	'error_403' => 'Chyba 403',
+	'not_send' => 'Požadovaný soubor nelze odeslat.',
+	'error_404' => 'Chyba 404',
+	'not_found' => 'Požadovaný soubor se nepodařilo najít.',
+	'file' => 'Soubor',
+	'report_error_1' => '',
+	'report_error_2' => 'Nahlásit chybu',
+	'blog_search_1' => '',
+	'blog_search_2' => 'Vyhledávání v blogu',
+	'start_page_1' => 'nebo zpět na úvodní',
+	'start_page_2' => 'stránku'
 );
 ?>

@@ -13,12 +13,16 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'toolbar' => 'Værktøjslinje',
 	'toolbar_long' => 'Aktivér Editor-værktøjslinjen.',
 
-	'other'	=> 'Flere muligheder',
+	'other' => 'Flere muligheder',
 	'comments' => 'Kommentarer',
 	'comments_long' => 'Tillad BBCode i kommentarerne',
 	'urlmaxlen' => 'Maksimal længde af URL-visningen',
 	'urlmaxlen_long_pre' => 'Korte URL\'er, der har mere end ',
 	'urlmaxlen_long_post' =>' tegn.',
+
+	'attachsdir' => 'Download af filer',
+	'attachsdir_long' => 'Skjul upload-bibliotek (fp-content/attachs/)',
+
 	'submit' => 'Gem konfiguration',
 	'msgs' => array(
 		1 => 'BBCode-konfiguration gemt med succes.',
@@ -53,6 +57,18 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Gå til',
-	'langtag' => 'da_DK' // language tag for Facebook Video
+
+	// Filewrapper getfille.php
+	'error_403' => 'Fejl 403',
+	'not_send' => 'Den ønskede fil kan ikke sendes.',
+	'error_404' => 'Fejl 404',
+	'not_found' => 'Den ønskede fil kunne ikke findes.',
+	'file' => 'Fil',
+	'report_error_1' => '',
+	'report_error_2' => 'Rapporter fejl',
+	'blog_search_1' => '',
+	'blog_search_2' => 'Søg i bloggen',
+	'start_page_1' => 'eller tilbage til',
+	'start_page_2' => 'startsiden'
 );
 ?>

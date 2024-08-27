@@ -12,12 +12,16 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'toolbar' => 'Панель инструментов',
 	'toolbar_long' => 'Включить панель инструментов редактора.',
 
-	'other'	=> 'Другие опции',
+	'other' => 'Другие опции',
 	'comments' => 'Комментарии',
 	'comments_long' => 'Разрешить BBCode в комментариях',
 	'urlmaxlen' => 'Максимальная длина URL-адреса',
 	'urlmaxlen_long_pre' => 'Сокращение URL-адресов, длина которых превышает ',
 	'urlmaxlen_long_post' => ' символов.',
+
+	'attachsdir' => 'Загрузка файлов',
+	'attachsdir_long' => 'Скрыть директорию загрузки (fp-content/attachs/)',
+
 	'submit' => 'Сохранить конфигурацию',
 	'msgs' => array(
 		1 => 'Конфигурация BBCode успешно сохранена.',
@@ -52,6 +56,18 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Перейти к',
-	'langtag' => 'ru_RU' // language tag for Facebook Video
+
+	// Filewrapper getfille.php
+	'error_403' => 'Ошибка 403', // neu
+	'not_send' => 'Запрошенный файл не может быть отправлен.', // neu
+	'error_404' => 'Ошибка 404', // neu
+	'not_found' => 'Запрашиваемый файл не может быть найден.', // neu
+	'file' => 'Файл', // neu
+	'report_error_1' => '', // neu
+	'report_error_2' => 'Сообщить об ошибке', // neu
+	'blog_search_1' => '', // neu
+	'blog_search_2' => 'выполнить поиск в блоге', // neu
+	'start_page_1' => 'или вернуться на', // neu
+	'start_page_2' => 'стартовую страницу' // neu
 );
 ?>
