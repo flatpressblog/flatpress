@@ -13,7 +13,8 @@ $fp_config = array(
 		'theme' => 'leggero',
 		'style' => 'leggero-v2',
 		'blogid' => 'fpdefid',
-		'charset' => 'utf-8'
+		'charset' => 'utf-8',
+		'noremoteip' => true
 	),
 	'locale' => array(
 		'timeoffset' => '2',
