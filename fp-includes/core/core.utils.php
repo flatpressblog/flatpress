@@ -320,15 +320,16 @@ function utils_validateIPv4($IP) {
 
 function utils_validateIPv6($IP) {
 	// fast exit for localhost
-	if (strlen($IP) < 3)
+	if (strlen($IP) < 3) {
 		return $IP == '::';
+	}
 
 	// Check if part is in IPv4 format
 	if (strpos($IP, '.')) {
 		$lastcolon = strrpos($IP, ':');
-		if (!($lastcolon && validateIPv4(substr($IP, $lastcolon + 1))))
+		if (!($lastcolon && validateIPv4(substr($IP, $lastcolon + 1)))) {
 			return false;
-
+		}
 		// replace IPv4 part with dummy
 		$IP = substr($IP, 0, $lastcolon) . ':0:0';
 	}
@@ -348,6 +349,7 @@ function utils_validateIPv6($IP) {
 
 // get client IP
 function utils_ipget() {
+	global $fp_config;
 	$ip = '';
 
 	if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
@@ -362,6 +364,37 @@ function utils_ipget() {
 		$ip = getenv("HTTP_X_FORWARDED_FOR");
 	} elseif (getenv("REMOTE_ADDR")) {
 		$ip = getenv("REMOTE_ADDR");
+	}
+
+	// Anonymize IPv4 remote address
+	// Replace the last two blocks with 0 (217.83.0.0)
+	if (isset($fp_config ['general'] ['noremoteip']) ? $fp_config ['general'] ['noremoteip'] : true) {
+		if (utils_validateIPv4($ip)) {
+			$_SERVER ["ORIG_REMOTE_IP4ADDR"] = $ip;
+			$octets = explode(".", $ip);
+			if (count($octets) == 4) {
+				$octets[2] = "0";
+				$ip = implode(".", $octets);
+				$octets[3] = "0";
+				$ip = implode(".", $octets);
+				return $ip;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	// Anonymize IPv6 remote address
+	// Use browser language and user agent for IPv6
+	// One advantage of this method is that the result has the same format as an IPv6 and is therefore accepted by all scripts without any problems.
+	if (isset($fp_config ['general'] ['noremoteip']) ? $fp_config ['general'] ['noremoteip'] : true) {
+		if (utils_validateIPv6($ip)) {
+			$_SERVER ["ORIG_REMOTE_IP6ADDR"] = $ip;
+			$ip = implode(':', str_split(md5($_SERVER ['HTTP_ACCEPT_LANGUAGE'] . $_SERVER ['HTTP_USER_AGENT'] . $ip), 4));
+			return $ip;
+		} else {
+			return false;
+		}
 	}
 
 	if (utils_validateIPv4($ip) || utils_validateIPv6($ip)) {
