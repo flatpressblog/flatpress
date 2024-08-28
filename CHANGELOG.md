@@ -3,10 +3,10 @@
 ## General
 - Template engine Smarty updated to version 4.5.2 ([#376](https://github.com/flatpressblog/flatpress/pull/376), [#390](https://github.com/flatpressblog/flatpress/issues/390))
 - The fixed "Stats" panel has been converted into a plugin ([#363](https://github.com/flatpressblog/flatpress/issues/363))
-- FlatPress anonymizes the IPv4 address of the visitor. IPv6 addresses are replaced by a hash. ([#363](https://github.com/flatpressblog/flatpress/issues/363))
+- FlatPress anonymizes the IPv4 address of the visitor. IPv6 addresses are replaced by a hash. ([#105](https://github.com/flatpressblog/flatpress/issues/105))
 
 ## Bugfixes
-- Contact form / comment function: Entering the website is now correct without http(s):// ([#105](https://github.com/flatpressblog/flatpress/issues/105))
+- Contact form / comment function: Entering the website is now correct without http(s):// ([#419](https://github.com/flatpressblog/flatpress/issues/419))
 - Atom feed: Fixes parsing error ([#429](https://github.com/flatpressblog/flatpress/issues/429))
 
 ## Security
