@@ -350,7 +350,7 @@ function utils_validateIPv6($IP) {
 // get client IP
 function utils_ipget() {
 	global $fp_config;
-	$ip = '';
+	$ip = 'fd00:abcd:fb01:7590:dea6:32ff:fe79:a3c8';
 
 	if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
 		$ip = $_SERVER ['HTTP_CLIENT_IP'];
@@ -367,16 +367,26 @@ function utils_ipget() {
 	}
 
 	// Anonymize IPv4 remote address
-	// Replace the last two blocks with 0 (217.83.0.0)
+	// Replace the last two blocks with 0.123 (217.83.0.123)
 	if (isset($fp_config ['general'] ['noremoteip']) ? $fp_config ['general'] ['noremoteip'] : true) {
 		if (utils_validateIPv4($ip)) {
-			$_SERVER ["ORIG_REMOTE_IP4ADDR"] = $ip;
+			$_SERVER ['ORIG_REMOTE_ADDR'] = $ip;
 			$octets = explode(".", $ip);
 			if (count($octets) == 4) {
 				$octets[2] = "0";
 				$ip = implode(".", $octets);
-				$octets[3] = "0";
+				$octets[3] = "123";
 				$ip = implode(".", $octets);
+				// Set anonymized IP as server variable
+				if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
+					$_SERVER ['HTTP_CLIENT_IP'] = $ip;
+				}
+				elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
+					$_SERVER ['HTTP_X_FORWARDED_FOR'] = $ip;
+				}
+				elseif (!empty($_SERVER ['REMOTE_ADDR'])) {
+					$_SERVER ['REMOTE_ADDR'] = $ip;
+				}
 				return $ip;
 			} else {
 				return false;
@@ -389,8 +399,18 @@ function utils_ipget() {
 	// One advantage of this method is that the result has the same format as an IPv6 and is therefore accepted by all scripts without any problems.
 	if (isset($fp_config ['general'] ['noremoteip']) ? $fp_config ['general'] ['noremoteip'] : true) {
 		if (utils_validateIPv6($ip)) {
-			$_SERVER ["ORIG_REMOTE_IP6ADDR"] = $ip;
+			$_SERVER ['ORIG_REMOTE_ADDR'] = $ip;
 			$ip = implode(':', str_split(md5($_SERVER ['HTTP_ACCEPT_LANGUAGE'] . $_SERVER ['HTTP_USER_AGENT'] . $ip), 4));
+			// Set anonymized IP as server variable
+			if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
+				$_SERVER ['HTTP_CLIENT_IP'] = $ip;
+			}
+			elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
+				$_SERVER ['HTTP_X_FORWARDED_FOR'] = $ip;
+			}
+			elseif (!empty($_SERVER ['REMOTE_ADDR'])) {
+				$_SERVER ['REMOTE_ADDR'] = $ip;
+			}
 			return $ip;
 		} else {
 			return false;
