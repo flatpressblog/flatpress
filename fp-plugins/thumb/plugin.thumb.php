@@ -121,8 +121,9 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 
 function plugin_thumb_bbcodehook($actualpath, $props, $newsize) {
 	list ($width, $height) = $newsize;
-	if ($thumb = plugin_thumb_create($actualpath, $props, $width, $height))
+	if ($thumb = plugin_thumb_create($actualpath, $props, $width, $height)) {
 		$thumb = BBCODE_USE_WRAPPER ? ("getfile.php?f=" . basename($actualpath) . '&amp;thumb=true') : $thumb [0];
+	}
 	return $thumb;
 }
 

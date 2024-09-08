@@ -17,12 +17,14 @@ function plugin_aaspam_validate($bool, $arr) {
 
 	// if boolean $bool==false
 	// the test is forced to fail
-	if (!$bool)
+	if (!$bool) {
 		return false;
+	}
 
 	// if user is loggedin we ignore the plugin
-	if (user_loggedin())
+	if (user_loggedin()) {
 		return true;
+	}
 
 	// get the value and reset last saved, so that
 	// an attacker can't use the old one for multiple posting
@@ -128,8 +130,8 @@ function plugin_aaspam_comment_form() {
 	}
 
 	// echoes the question and the form part
-	echo '<p><label class="textlabel" for="aaspam">' . $lang ['plugin'] ['accessibleantispam'] ['prefix'] . ' <strong>' . $question . ' </strong>(*)</label><br>
-		<input type="text" name="aaspam" id="aaspam"></p>';
+	echo '<p><label class="textlabel" for="aaspam">' . $lang ['plugin'] ['accessibleantispam'] ['prefix'] . ' <strong>' . $question . ' </strong>(*)</label><br>' . //
+		'<input type="text" name="aaspam" id="aaspam"></p>';
 }
 
 ?>

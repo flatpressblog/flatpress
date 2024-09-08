@@ -102,30 +102,39 @@ class admin_entry_commedit extends AdminPanelActionValidated {
 
 	function main() {
 		global $lang;
-		if ($this->nosuchcomment) return PANEL_REDIRECT_DEFAULT;
+		if ($this->nosuchcomment) {
+			return PANEL_REDIRECT_DEFAULT;
+		}
 
 		$e = entry_parse($_REQUEST ['entry']);
 		if ($e) {
 			$this->smarty->assign('entrysubject', $e ['subject']);
-		} else return PANEL_REDIRECT_DEFAULT;
+		} else {
+			return PANEL_REDIRECT_DEFAULT;
+		}
 
 		$comment = comment_parse($_REQUEST ['entry'], $_REQUEST ['comment']);
 		if ($comment) {
 			$this->smarty->assign('values', $comment);
 			$this->smarty->append('values', array('ip_address' => $comment ['ip-address']), true);
-		} else return PANEL_REDIRECT_DEFAULT;
+		} else {
+			return PANEL_REDIRECT_DEFAULT;
+		}
 	}
 
 	function onsave($content) {
-		if ($this->nosuchcomment) return PANEL_REDIRECT_DEFAULT;
+		if ($this->nosuchcomment) {
+			return PANEL_REDIRECT_DEFAULT;
+		}
 
 		$comment = comment_parse($_REQUEST ['entry'], $_REQUEST ['comment']);
-		if (isset($comment ['loggedin']))
+		if (isset($comment ['loggedin'])) {
 			$content ['loggedin'] = $comment ['loggedin'];
 			$content ['ip-address'] = $comment ['ip-address'];
 			$content ['date'] = $comment ['date'];
 			$success = comment_save($_REQUEST ['entry'], $content);
 			$this->smarty->assign('success', $success ? 1 : -1);
+		}
 
 		if ($success < 0) {
 			$this->main();

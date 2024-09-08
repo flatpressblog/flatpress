@@ -57,16 +57,18 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 	}
 
 	function deleteFolder($folder, $mmbaseurl) {
-		if (!file_exists($folder))
+		if (!file_exists($folder)) {
 			return false;
+		}
 		$dir = opendir($folder);
 		while (false !== ($file = readdir($dir))) {
 			if (!fs_is_directorycomponent($file)) {
 				if (is_dir($folder . "/" . $file)) {
 					$this->deleteFolder($folder . "/" . $file, $mmbaseurl);
 				} else {
-					if (!unlink($folder . "/" . $file))
+					if (!unlink($folder . "/" . $file)) {
 						return false;
+					}
 				}
 			}
 		}
@@ -132,8 +134,9 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 
 		$weburl = plugin_geturl('mediamanager');
 		$this->conf = plugin_getoptions('mediamanager');
-		if ($this->doItemActions($folder, $mmbaseurl))
+		if ($this->doItemActions($folder, $mmbaseurl)) {
 			return;
+		}
 
 		$files = array();
 		$galleries = array();
@@ -200,20 +203,24 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		$totalfilescount = (string) count($files);
 		# paginator
 		$pages = ceil((count($files) + count($galleries)) / ITEMSPERPAGE);
-		if ($pages == 0)
+		if ($pages == 0) {
 			$pages = 1;
+		}
 		if (isset($_GET ['page'])) {
 			$page = (int) $_GET ['page'];
 		} else {
 			$page = 1;
 		}
-		if ($page < 1)
+		if ($page < 1) {
 			$page = 1;
-		if ($page > $pages)
+		}
+		if ($page > $pages) {
 			$page = $pages;
+		}
 		$pagelist = array();
-		for($k = 1; $k <= $pages; $k++)
+		for($k = 1; $k <= $pages; $k++) {
 			$pagelist [] = $k;
+		}
 		$paginator = array(
 			"total" => $pages,
 			"current" => $page,
@@ -267,8 +274,9 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		}
 
 		list ($action, $arg) = explode("-", $_POST ['action'], 2);
-		if (!isset($_POST ['file']))
+		if (!isset($_POST ['file'])) {
 			return 2;
+		}
 		foreach ($_POST ['file'] as $file => $v) {
 			list ($type, $name) = explode("-", $file, 2);
 			if ($action == 'atg' && $type == 'images') {

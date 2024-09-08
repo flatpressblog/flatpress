@@ -8,8 +8,7 @@
  * Purpose:  print out the comment form
  * -------------------------------------------------------------
  */
-function smarty_function_comment_form($params, &$smarty)
-{
-    return do_action('comment_form');
+function smarty_function_comment_form($params, &$smarty) {
+	return do_action('comment_form');
 }
-?> 
+?>

@@ -134,7 +134,8 @@ class admin_config_default extends AdminPanelActionValidated {
 			'theme' => $fp_config ['general'] ['theme'],
 			'style' => @$fp_config ['general'] ['style'],
 			'blogid' => $fp_config ['general'] ['blogid'],
-			'charset' => 'utf-8'
+			'charset' => 'utf-8',
+			'noremoteip' => isset($_POST ['noremoteip'])
 		);
 
 		$fp_config ['locale'] = array(

@@ -34,11 +34,12 @@
  * @param array formvars form var values
  */
 function smarty_validate_criteria_isDate($value, $empty, &$params, &$formvars) {
-    if(strlen($value) == 0)
-        return $empty;
+	if(strlen($value) == 0) {
+		return $empty;
+	}
 
-    $_ret = strtotime($value);
-    return $_ret != -1 && $_ret !== false;
+	$_ret = strtotime($value);
+	return $_ret != -1 && $_ret !== false;
 }
 
 ?>

@@ -10,8 +10,7 @@
  * See:      #184 and #287 May still be required for the responsiveadmin branch.
  * -------------------------------------------------------------
  */
-function smarty_function_toolbar($params, &$smarty)
-{
-    do_action('editor_toolbar');
+function smarty_function_toolbar($params, &$smarty) {
+	do_action('editor_toolbar');
 }
 ?>

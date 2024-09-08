@@ -11,7 +11,6 @@
 // FIXME: Add a config option in the plugin panel to set this value
 define('ITEMSPERPAGE', 50);
 
-//
 function mediamanager_updateUseCountArr(&$files, $fupd) {
 	$params = array();
 	$params ['start'] = 0;
@@ -22,15 +21,17 @@ function mediamanager_updateUseCountArr(&$files, $fupd) {
 		list ($id, $e) = $q->getEntry();
 		if (isset($e ['content'])) {
 			foreach ($fupd as $id) {
-				if (is_null($files [$id] ['usecount']))
+				if (is_null($files [$id] ['usecount'])) {
 					$files [$id] ['usecount'] = 0;
+				}
 				if ($files [$id] ['type'] == 'gallery') {
 					$searchterm = "[gallery=images/" . $files [$id] ['name'];
 				} else {
 					$searchterm = $files [$id] ['type'] . "/" . $files [$id] ['name'];
 				}
-				if (strpos($e ['content'], $searchterm) !== false)
+				if (strpos($e ['content'], $searchterm) !== false) {
 					$files [$id] ['usecount']++;
+				}
 			}
 		}
 	}
@@ -44,7 +45,6 @@ function mediamanager_updateUseCountArr(&$files, $fupd) {
 }
 
 if (class_exists('AdminPanelAction')) {
-
 	include (plugin_getdir('mediamanager') . '/panels/panel.mediamanager.file.php');
 }
 

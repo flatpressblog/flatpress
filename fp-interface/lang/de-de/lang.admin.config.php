@@ -3,14 +3,14 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'head' => 'Konfiguration',
 	'descr' => 'FlatPress konfigurieren und anpassen.',
 	'submit' => 'Einstellungen übernehmen',
-	
+
 	'sysfset' => 'Allgemeine Einstellungen',
 	'syswarning' => '<big>Warnung!</big> Diese Einstellungen sollten sorgfältig eingegeben werden, sonst könnte FlatPress nicht richtig funktionieren.',
 	'blog_root' => '<strong>Absoluter Pfad zu FlatPress</strong>. Hinweis: ' . //
 		'Normalerweise muss hier nichts geändert werden. FlatPress bietet keine interne Funktion um eventuelle Änderungen von sich aus zu prüfen.',
 	'www' => '<strong>Blog Root</strong>. URL deines Blogs mit Angabe des Verzeichnisses.<br>' . //
 		'Beispiel: http://www.mydomain.com/flatpress/ (abschließender Slash wird benötigt)',
-		
+
 	// ------
 	'gensetts' => 'Grundlegende Einstellungen',
 	'blogtitle' => 'Blog Titel',
@@ -24,6 +24,8 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'notifications' => 'Benachrichtigungen',
 	'mailnotify' => 'Aktiviere E-Mail Benachrichtigung bei neuen Kommentaren',
 	'blogmaxentries' => 'Anzahl der Beiträge pro Seite',
+	'visitor_ip' => 'IP des Besuchers',
+	'use_anonym_ip' => 'FlatPress soll die IP des Besuchers anonymisieren',
 	'langchoice' => 'Sprache',
 
 	'intsetts' => 'Internationale Einstellungen',

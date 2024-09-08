@@ -23,10 +23,20 @@ function plugin_bbcode_startup() {
 	define('BBCODE_USE_EDITOR', isset($bbconf ['editor']) ? $bbconf ['editor'] : true);
 	define('BBCODE_MASK_ATTACHS', isset($bbconf ['maskattachs']) ? $bbconf ['maskattachs'] : true);
 	define('BBCODE_URL_MAXLEN', isset($bbconf ['url-maxlen']) ? $bbconf ['url-maxlen'] : 40);
-	if (BBCODE_MASK_ATTACHS) {
-		define('BBCODE_USE_WRAPPER', true);
-	} else {
+	if (!file_exists('getfile.php')) { // FKM: file not in the repo?
 		define('BBCODE_USE_WRAPPER', false);
+	} else {
+		$funcs = explode(',', ini_get('disable_functions'));
+		if (in_array('readfile', $funcs)) {
+			define('BBCODE_USE_WRAPPER', false);
+		} else {
+			define('BBCODE_USE_WRAPPER', true);
+		}
+	}
+	if (BBCODE_MASK_ATTACHS) {
+		define('BBCODE_USE_FILEWRAPPER', true);
+	} else {
+		define('BBCODE_USE_FILEWRAPPER', false);
 	}
 
 	// filter part
@@ -87,7 +97,7 @@ function bbcode_remap_url(&$d) {
 	}
 	// NWM: "attachs/" is interpreted as a keyword, and it is translated to the actual path of ATTACHS_DIR
 	// CHANGE! we use the getfile.php script to mask the actual path of the attachs dir!
-	// FKM: We now use a getfile.php script to hide the attachs directory
+	// FKM: We now use a get.php script to hide the attachs directory
 	// DMKE: I got an idea about an integer-id based download/media manager... work-in-progress
 	if (strpos($d, ':') === false) {
 		// if is relative url
@@ -103,16 +113,16 @@ function bbcode_remap_url(&$d) {
 			$d = BLOG_BASEURL . substr($d, 1);
 		}
 		if (substr($d, 0, 8) == 'attachs/') {
-			//$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) . '&amp;dl=true' : substr_replace($d, ATTACHS_DIR, 0, 8);
-			$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . urlencode(basename($d)) . '&amp;dl=true' : substr_replace($d, ATTACHS_DIR, 0, 8);
+			$d = BBCODE_USE_FILEWRAPPER ? 'get.php?f=' . urlencode(basename($d)) : substr_replace($d, ATTACHS_DIR, 0, 8);
 			return true;
 		}
-
+		if (substr($d, 0, 8) == 'attachs/') {
+			$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) . '&amp;dl=true' : substr_replace($d, ATTACHS_DIR, 0, 8);
+			return true;
+		}
 		if (substr($d, 0, 7) == 'images/') {
-			// do not use wrapper for images
-			//$d = substr_replace($d, IMAGES_DIR, 0, 7);
-			//$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) : $d;
-			$d = IMAGES_DIR . urlencode(basename($d));
+			$d = substr_replace($d, IMAGES_DIR, 0, 7);
+			$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) : $d;
 		}
 		return true;
 	}
@@ -1026,8 +1036,9 @@ function obfuscateEmailAddress($originalString, $mode) {
 	$encodeMode = $mode;
 
 	for($i = 0; $i < $originalLength; $i++) {
-		if ($mode == 3)
+		if ($mode == 3) {
 			$encodeMode = rand(1, 2);
+		}
 		switch ($encodeMode) {
 			case 1: // Decimal code
 				$nowCodeString = "&#" . ord($originalString [$i]) . ";";

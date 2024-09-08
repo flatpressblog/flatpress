@@ -12,12 +12,14 @@
 // other flags are the same of array_multisort() php function ;)
 function utils_sksort($arr, $key, $flag = SORT_ASC) {
 	if ($arr) {
-		foreach ($arr as $val)
+		foreach ($arr as $val) {
 			$sorter [] = $val [$key];
+		}
 		array_multisort($sorter, $flag, $arr);
 		return $arr;
-	} else
+	} else {
 		return false;
+	}
 }
 
 // function prototype:
@@ -41,8 +43,9 @@ function utils_sksort($arr, $key, $flag = SORT_ASC) {
 if (!function_exists('fnmatch')) {
 
 	function fnmatch($pattern, $string) {
-		if ($pattern == null)
+		if ($pattern == null) {
 			return false;
+		}
 
 		// basically prepare a regular expression
 		$out = null;
@@ -60,11 +63,13 @@ if (!function_exists('fnmatch')) {
 				']',
 				'|'
 			);
-			while (strpos($pattern, '**') !== false)
+			while (strpos($pattern, '**') !== false) {
 				$pattern = str_replace('**', '*', $pattern);
+			}
 
-			foreach ($escape as $probe)
+			foreach ($escape as $probe) {
 				$pattern = str_replace($probe, "\\$probe", $pattern);
+			}
 			$pattern = str_replace('?*', '*', str_replace('*?', '*', str_replace('*', ".*", str_replace('?', '.{1,1}', $pattern))));
 			$out [] = $pattern;
 		}
@@ -73,8 +78,9 @@ if (!function_exists('fnmatch')) {
 		 * if(count($out)==1) return(eregi("^$out[0]$",$string)); else
 		 */
 		foreach ($out as $tester) {
-			if (preg_match("/^$tester$/i", $string))
+			if (preg_match("/^$tester$/i", $string)) {
 				return true;
+			}
 		}
 
 		return false;
@@ -165,8 +171,9 @@ function utils_kexplode($string, $delim = '|', $keyupper = true) {
 function utils_kimplode($arr, $delim = '|') {
 	$string = "";
 	foreach ($arr as $k => $val) {
-		if ($val)
+		if ($val) {
 			$string .= strtoupper($k) . $delim . ($val) . $delim;
+		}
 	}
 	return $string;
 }
@@ -197,8 +204,9 @@ function utils_validateinput($str) {
 	if (preg_match('/[^a-z0-9\-_]/i', $str)) {
 		trigger_error("String \"$str\" is not a valid input", E_USER_ERROR);
 		// return false;
-	} else
+	} else {
 		return true;
+	}
 }
 
 function utils_cut_string($str, $maxc) {
@@ -227,8 +235,9 @@ function utils_status_header($status) {
 // code from php.net ;)
 // defaults to index.php ;)
 function utils_redirect($location = "", $absolute_path = false, $red_type = null) {
-	if (!$absolute_path)
+	if (!$absolute_path) {
 		$location = BLOG_BASEURL . $location;
+	}
 
 	if (function_exists('wp_redirect')) {
 		wp_redirect($location);
@@ -247,8 +256,9 @@ function utils_redirect($location = "", $absolute_path = false, $red_type = null
  */
 function utils_geturlstring() {
 	$str = BLOG_BASEURL . $_SERVER ['PHP_SELF'];
-	if ($_SERVER ['QUERY_STRING'])
+	if ($_SERVER ['QUERY_STRING']) {
 		$str .= '?' . $_SERVER ['QUERY_STRING'];
+	}
 	return $str;
 }
 
@@ -259,8 +269,9 @@ function utils_geturlstring() {
 function utils_array_merge($arr1, $arr2) {
 	$len = count($arr1 [0]);
 
-	foreach ($arr2 as $k => $v)
+	foreach ($arr2 as $k => $v) {
 		$arr2 [$k] = array_pad((array) $v, $len, null);
+	}
 
 	return array_merge($arr1, $arr2);
 }
@@ -279,10 +290,11 @@ function utils_countdashes($string, &$rest) {
 	while ($string [$i] == '-') {
 		$i++;
 	}
-	if ($i)
+	if ($i) {
 		$rest = substr($string, $i);
-	else
+	} else {
 		$rest = $string;
+	}
 
 	return $i;
 }
@@ -320,15 +332,16 @@ function utils_validateIPv4($IP) {
 
 function utils_validateIPv6($IP) {
 	// fast exit for localhost
-	if (strlen($IP) < 3)
+	if (strlen($IP) < 3) {
 		return $IP == '::';
+	}
 
 	// Check if part is in IPv4 format
 	if (strpos($IP, '.')) {
 		$lastcolon = strrpos($IP, ':');
-		if (!($lastcolon && validateIPv4(substr($IP, $lastcolon + 1))))
+		if (!($lastcolon && validateIPv4(substr($IP, $lastcolon + 1)))) {
 			return false;
-
+		}
 		// replace IPv4 part with dummy
 		$IP = substr($IP, 0, $lastcolon) . ':0:0';
 	}
@@ -348,7 +361,8 @@ function utils_validateIPv6($IP) {
 
 // get client IP
 function utils_ipget() {
-	$ip = '';
+	global $fp_config;
+	$ip = 'fd00:abcd:fb01:7590:dea6:32ff:fe79:a3c8';
 
 	if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
 		$ip = $_SERVER ['HTTP_CLIENT_IP'];
@@ -362,6 +376,57 @@ function utils_ipget() {
 		$ip = getenv("HTTP_X_FORWARDED_FOR");
 	} elseif (getenv("REMOTE_ADDR")) {
 		$ip = getenv("REMOTE_ADDR");
+	}
+
+	// Anonymize IPv4 remote address
+	// Replace the last two blocks with 0.123 (217.83.0.123)
+	if (isset($fp_config ['general'] ['noremoteip']) ? $fp_config ['general'] ['noremoteip'] : true) {
+		if (utils_validateIPv4($ip)) {
+			$_SERVER ['ORIG_REMOTE_ADDR'] = $ip;
+			$octets = explode(".", $ip);
+			if (count($octets) == 4) {
+				$octets[2] = "0";
+				$ip = implode(".", $octets);
+				$octets[3] = "123";
+				$ip = implode(".", $octets);
+				// Set anonymized IP as server variable
+				if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
+					$_SERVER ['HTTP_CLIENT_IP'] = $ip;
+				}
+				elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
+					$_SERVER ['HTTP_X_FORWARDED_FOR'] = $ip;
+				}
+				elseif (!empty($_SERVER ['REMOTE_ADDR'])) {
+					$_SERVER ['REMOTE_ADDR'] = $ip;
+				}
+				return $ip;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	// Anonymize IPv6 remote address
+	// Use browser language and user agent for IPv6
+	// One advantage of this method is that the result has the same format as an IPv6 and is therefore accepted by all scripts without any problems.
+	if (isset($fp_config ['general'] ['noremoteip']) ? $fp_config ['general'] ['noremoteip'] : true) {
+		if (utils_validateIPv6($ip)) {
+			$_SERVER ['ORIG_REMOTE_ADDR'] = $ip;
+			$ip = implode(':', str_split(md5($_SERVER ['HTTP_ACCEPT_LANGUAGE'] . $_SERVER ['HTTP_USER_AGENT'] . $ip), 4));
+			// Set anonymized IP as server variable
+			if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
+				$_SERVER ['HTTP_CLIENT_IP'] = $ip;
+			}
+			elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
+				$_SERVER ['HTTP_X_FORWARDED_FOR'] = $ip;
+			}
+			elseif (!empty($_SERVER ['REMOTE_ADDR'])) {
+				$_SERVER ['REMOTE_ADDR'] = $ip;
+			}
+			return $ip;
+		} else {
+			return false;
+		}
 	}
 
 	if (utils_validateIPv4($ip) || utils_validateIPv6($ip)) {
@@ -430,8 +495,9 @@ function utils_checksmarty() {
 }
 
 function fplog($str) {
-	if (!defined('DEBUG_MODE'))
+	if (!defined('DEBUG_MODE')) {
 		echo "\n[DEBUG] $str \n";
+	}
 }
 
 /**

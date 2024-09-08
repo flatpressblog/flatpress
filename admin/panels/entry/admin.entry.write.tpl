@@ -71,7 +71,7 @@
 				<fieldset id="admin-entry-saveopts"><legend>{$panelstrings.saveopts}</legend>
 					<p>
 					{foreach from=$saved_flags item=flag}
-					<label><input name="flags[{$flag}]"{if $categories and (bool)array_intersect(array($flag),$categories)}checked="checked"{/if} type="checkbox">{$lang.entry.flags.long[$flag]} </label><br>
+					<label><input name="flags[{$flag}]" {if $categories and (bool)array_intersect(array($flag),$categories)}checked="checked"{/if} type="checkbox">{$lang.entry.flags.long[$flag]} </label><br>
 					{/foreach}
 					</p>
 				</fieldset>

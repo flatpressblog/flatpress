@@ -184,8 +184,9 @@ class admin_maintain_default extends AdminPanelAction {
 					$this->smarty->force_compile = true;
 					$this->smarty->assign('success', 1);
 
-					if (!file_exists(CACHE_DIR))
+					if (!file_exists(CACHE_DIR)) {
 						fs_mkdir(CACHE_DIR);
+					}
 
 					// rebuilds the list of recent comments if LastComments plugin is active
 					if (function_exists('plugin_lastcomments_cache')) {

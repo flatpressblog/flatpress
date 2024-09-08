@@ -35,8 +35,9 @@ class draft_indexer extends fs_filelister {
 
 function &draft_init() {
 	global $draftdb;
-	if (!isset($draftdb))
+	if (!isset($draftdb)) {
 		$draftdb = new draft_indexer();
+	}
 	return $draftdb;
 }
 
@@ -58,10 +59,11 @@ function draft_parse($id) {
 		$entry = io_load_file($fname);
 
 		$entry = utils_kexplode($entry);
-		if (!isset($entry ['categories']))
+		if (!isset($entry ['categories'])) {
 			$entry ['categories'] = array();
-		else
+		} else {
 			$entry ['categories'] = explode(',', $entry ['categories']);
+		}
 
 		return $entry;
 	}
@@ -92,24 +94,27 @@ function draft_save(&$entry, $id = null, $update_index = false, $update_date = f
 	}
 
 	$new_entry = entry_prepare($entry);
-	if ($new_entry ['categories'])
+	if ($new_entry ['categories']) {
 		$new_entry ['categories'] = implode(',', $entry ['categories']);
-	else
+	} else {
 		unset($new_entry ['categories']);
+	}
 
 	$string = utils_kimplode($new_entry);
 
 	if (!io_write_file($dd . EXT, $string)) {
 		return false;
-	} else
+	} else {
 		return $id;
+	}
 
 	return false;
 }
 
 function draft_dir($id) {
-	if (!preg_match('|^entry[0-9]{6}-[0-9]{6}$|', $id))
+	if (!preg_match('|^entry[0-9]{6}-[0-9]{6}$|', $id)) {
 		return false;
+	}
 	// $date = date_from_id($id);
 	// $f = CONTENT_DIR . "{$date['y']}/{$date['m']}/$id";
 	return DRAFT_DIR . $id;
@@ -118,12 +123,14 @@ function draft_dir($id) {
 
 function draft_exists($id) {
 	$dir = draft_dir($id);
-	if (!$dir)
+	if (!$dir) {
 		return false;
+	}
 
 	$f = $dir . EXT;
-	if (file_exists($f))
+	if (file_exists($f)) {
 		return $f;
+	}
 
 	return false;
 }
@@ -132,8 +139,9 @@ function draft_delete($id) {
 	$dir = draft_dir($id);
 
 	$f = $dir . EXT;
-	if (!file_exists($f))
+	if (!file_exists($f)) {
 		return false;
+	}
 
 	// $draftdb =& draft_init();
 	// $draftdb->delete($id);

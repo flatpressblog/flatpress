@@ -36,32 +36,36 @@
  */
 function smarty_validate_criteria_isFileType($value, $empty, &$params, &$formvars) {
 
-    $_field = $params['field'];
-    $_type = isset($params['field2']) ? $params['field2'] : $params['type'];
-    
-    if(!isset($_FILES[$_field]))
-        // nothing in the form
-        return false;
-    
-    if($_FILES[$_field]['error'] == 4)
-        // no file uploaded
-        return $empty;
+	$_field = $params['field'];
+	$_type = isset($params['field2']) ? $params['field2'] : $params['type'];
 
-    if(!preg_match('!\.(\w+)$!i', $_FILES[$_field]['name'], $_match))
-        // not valid filename
-        return false;
-    
-    $_file_ext = $_match[1];            
-    $_types = preg_split('![\s,]+!', $_type, -1, PREG_SPLIT_NO_EMPTY);
-    foreach($_types as $_key => $_val) {
-        $_types[$_key] = strtolower($_types[$_key]);   
-    }
-        
-    if(!in_array(strtolower($_file_ext),$_types))
-        // not valid file extention
-        return false;
-        
-    return true;
+	if(!isset($_FILES[$_field])) {
+		// nothing in the form
+		return false;
+	}
+
+	if($_FILES[$_field]['error'] == 4) {
+		// no file uploaded
+		return $empty;
+	}
+
+	if(!preg_match('!\.(\w+)$!i', $_FILES[$_field]['name'], $_match)) {
+		// not valid filename
+		return false;
+	}
+
+	$_file_ext = $_match[1];
+	$_types = preg_split('![\s,]+!', $_type, -1, PREG_SPLIT_NO_EMPTY);
+	foreach($_types as $_key => $_val) {
+		$_types[$_key] = strtolower($_types[$_key]);
+	}
+
+	if(!in_array(strtolower($_file_ext),$_types)) {
+		// not valid file extention
+		return false;
+	}
+
+	return true;
 }
 
 ?>

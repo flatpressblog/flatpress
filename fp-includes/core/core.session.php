@@ -1,8 +1,9 @@
 <?php
 
 function sess_setup() {
-	if (SESSION_PATH != '')
+	if (SESSION_PATH != '') {
 		session_save_path(SESSION_PATH);
+	}
 
 	session_name(SESS_COOKIE);
 	setcookie(SESS_COOKIE, '', 0, '', COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
@@ -23,10 +24,11 @@ function sess_remove($key) {
 }
 
 function sess_get($key) {
-	if (isset($_SESSION [$key]))
+	if (isset($_SESSION [$key])) {
 		return $_SESSION [$key];
-	else
+	} else {
 		return false;
+	}
 }
 
 function sess_close() {

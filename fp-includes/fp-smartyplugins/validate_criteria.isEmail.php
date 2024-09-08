@@ -34,11 +34,13 @@
  * @param array formvars form var values
  */
 function smarty_validate_criteria_isEmail($value, $empty, &$params, &$formvars) {
-	if (empty($value))
+	if (empty($value)) {
 		return $empty;
+	}
 
-	if (strlen($value) == 0)
+	if (strlen($value) == 0) {
 		return $empty;
+	}
 
 	// in case value is several addresses separated by newlines
 	$_addresses = preg_split('![\n\r]+!', $value);
@@ -46,8 +48,9 @@ function smarty_validate_criteria_isEmail($value, $empty, &$params, &$formvars) 
 	foreach ($_addresses as $_address) {
 		$_is_valid = !(preg_match('!@.*@|\.\.|\,|\;!', $_address) || !preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,}|[0-9]{1,})(\]?)$!', $_address));
 
-		if (!$_is_valid)
+		if (!$_is_valid) {
 			return false;
+		}
 	}
 	return true;
 }

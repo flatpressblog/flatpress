@@ -24,8 +24,9 @@ class AdminPanel {
 
 	function __construct(&$smarty) {
 		$this->smarty = &$smarty;
-		if (!$this->panelname)
+		if (!$this->panelname) {
 			trigger_error("Variable \$panelname is not defined!", E_USER_ERROR);
+		}
 
 		/* get plugin panels */
 		$plugactions = admin_getpanelactions($this->panelname);
@@ -35,13 +36,15 @@ class AdminPanel {
 
 		/* if # actions > 1 we won't show it in the submenu bar */
 		/* this is just for aesthetics ;) */
-		if ((count($this->actions) > 1) && in_array(true, $this->actions))
+		if ((count($this->actions) > 1) && in_array(true, $this->actions)) {
 			$this->smarty->assign('submenu', $this->actions);
+		}
 	}
 
 	function &get_action(&$action) {
-		if (!$action)
+		if (!$action) {
 			$action = $this->defaultaction;
+		}
 
 		$obj = null;
 
@@ -70,8 +73,9 @@ class AdminPanel {
 
 				$obj = new $class($this->smarty);
 				return $obj;
-			} else
+			} else {
 				trigger_error("No script found for action $action", E_USER_ERROR);
+			}
 		} else {
 			$obj = new $class($this->smarty);
 		}
@@ -99,8 +103,9 @@ class AdminPanelAction {
 		$this->smarty = &$smarty;
 		$the_action_panel = get_class($this);
 		$this->smarty->assign('admin_panel_id', $the_action_panel);
-		if (!$this->langres)
+		if (!$this->langres) {
 			$this->langres = 'admin.' . ADMIN_PANEL;
+		}
 	}
 
 	function exec() {
@@ -181,11 +186,12 @@ class AdminPanelAction {
 		check_admin_referer("admin_{$panel}_{$action}_{$the_cmd}_{$the_val}");
 		$cmd = "do{$the_cmd}";
 
-		if (method_exists($this, $cmd))
+		if (method_exists($this, $cmd)) {
 			return call_user_func(array(
 				&$this,
 				$cmd
 			), $the_val);
+		}
 
 		return 1;
 	}
@@ -255,8 +261,9 @@ class AdminPanelActionValidated extends AdminPanelAction {
 				}
 
 				$errors [$field] = isset($l ['error'] [$field]) ? $l ['error'] [$field] : htmlspecialchars($field);
-				if ($halt)
+				if ($halt) {
 					break;
+				}
 			} else {
 				$content [$field] = $string;
 			}

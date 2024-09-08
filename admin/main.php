@@ -45,8 +45,9 @@ function main() {
 		include ($panelpath);
 		$panelclass = "admin_$panel";
 
-		if (!class_exists($panelclass))
+		if (!class_exists($panelclass)) {
 			trigger_error("No class defined for requested panel", E_USER_ERROR);
+		}
 
 		$fp_admin = new $panelclass($smarty);
 	}
@@ -59,8 +60,9 @@ function main() {
 	}
 
 	$action = isset($_GET ['action']) ? $_GET ['action'] : 'default';
-	if (!$fp_admin)
+	if (!$fp_admin) {
 		return;
+	}
 
 	$fp_admin_action = $fp_admin->get_action($action);
 
@@ -71,8 +73,9 @@ function main() {
 	$smarty->assign('panel_url', $panel_url);
 	$smarty->assign('action_url', $action_url);
 
-	if (!empty($_POST))
+	if (!empty($_POST)) {
 		check_admin_referer("admin_{$panel}_{$action}");
+	}
 
 	$smarty->assign('success', sess_remove("success_{$panel}"));
 	$retval = $fp_admin_action->exec();
@@ -103,10 +106,11 @@ function main() {
 
 // smarty tag
 function admin_filter_action($string, $action) {
-	if (strpos($string, '?') === false)
+	if (strpos($string, '?') === false) {
 		return $string .= "?action={$action}";
-	else
+	} else {
 		return $string .= wp_specialchars("&action={$action}");
+	}
 }
 
 // smarty tag

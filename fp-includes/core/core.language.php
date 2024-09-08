@@ -82,8 +82,9 @@ function lang_getconf($id) {
 	if (file_exists($fpath)) {
 		include ($fpath);
 		return $langconf;
-	} else
+	} else {
 		trigger_error("Error loading config for language \"$file\"", E_USER_WARNING);
+	}
 }
 
 class lang_indexer extends fs_filelister {
@@ -92,8 +93,9 @@ class lang_indexer extends fs_filelister {
 
 	function _checkFile($directory, $file) {
 		if (is_dir("$directory/$file")) {
-			if (!preg_match('![a-z]{2}-[a-z]{2}!', $file))
+			if (!preg_match('![a-z]{2}-[a-z]{2}!', $file)) {
 				return 0;
+			}
 			$this->_list [$file] = lang_getconf($file);
 		}
 

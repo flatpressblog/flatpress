@@ -3,6 +3,7 @@
 ## General
 - Template engine Smarty updated to version 4.5.2 ([#376](https://github.com/flatpressblog/flatpress/pull/376), [#390](https://github.com/flatpressblog/flatpress/issues/390))
 - The fixed "Stats" panel has been converted into a plugin ([#363](https://github.com/flatpressblog/flatpress/issues/363))
+- FlatPress anonymizes the IPv4 address of the visitor. IPv6 addresses are replaced by a hash. ([#105](https://github.com/flatpressblog/flatpress/issues/105))
 
 ## Bugfixes
 - Contact form / comment function: Entering the website is now correct without http(s):// ([#419](https://github.com/flatpressblog/flatpress/issues/419))
@@ -21,7 +22,7 @@
 ### Changes
 - SEO Meta Tag Info plugin: Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
 - SEO Meta Tag Info plugin: If an HTTP root directory is stored in the server configuration file and is not empty, a predefined robots.txt can be created and edited via the SEO panel in the admin area. ([#427](https://github.com/flatpressblog/flatpress/pull/427))
-- FavIcon plugin: Support for iOS Safari, Android Chrome, Windows 10 and Mac OS Safari added ([#416](https://github.com/flatpressblog/flatpress/pull/416), [#28](https://github.com/flatpressblog/flatpress/pull/428))
+- FavIcon plugin: Support for iOS Safari, Android Chrome, Windows 10 and Mac OS Safari added ([#416](https://github.com/flatpressblog/flatpress/pull/416), [#428](https://github.com/flatpressblog/flatpress/pull/428))
 - BBcode plugin/ Admin area: The editor toolbar can be deactivated again as in version 1.2.1 when using an alternative editor (e.g. [Wysiwyg editor](https://wiki.flatpress.org/res:plugins:ckeditor)). ([#436](https://github.com/flatpressblog/flatpress/pull/436))
 - BBcode plugin: BBcode toolbar, if BBcode for comments is allowed ([#437](https://github.com/flatpressblog/flatpress/pull/437))
 - BBcode plugin: The fp-content/attachs directory is hidden if the file has been included with the URL tag ([#443](https://github.com/flatpressblog/flatpress/pull/443))

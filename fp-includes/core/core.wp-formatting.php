@@ -64,14 +64,16 @@ function wptexturize($text) {
 
 			$curl = preg_replace('/(\d+)x(\d+)/', "$1&#215;$2", $curl);
 		} elseif (strstr($curl, '</') || strstr($curl, '/>')) {
-			if ($skip > 0)
+			if ($skip > 0) {
 				$skip--;
+			}
 		} elseif (strstr($curl, '<code') || strstr($curl, '<pre') || strstr($curl, '<kbd') || strstr($curl, '<style') || strstr($curl, '<script')) {
 			// strstr is fast
 			$skip++;
 		} else {
-			if (isset($curl [0]) && $curl [0] == "<" && $skip > 0)
+			if (isset($curl [0]) && $curl [0] == "<" && $skip > 0) {
 				$skip++;
+			}
 		}
 		$curl = preg_replace('/&([^#])(?![a-z12]{1,8};)/', '&#038;$1', $curl);
 		$output .= $curl;
@@ -80,10 +82,11 @@ function wptexturize($text) {
 }
 
 function clean_pre($matches) {
-	if (is_array($matches))
+	if (is_array($matches)) {
 		$text = $matches [1] . $matches [2] . "</pre>";
-	else
+	} else {
 		$text = $matches;
+	}
 
 	/* NWM: a bit hackish? where are the slashes for double quotes added? */
 	$text = str_replace('\"', '"', $text);
@@ -110,8 +113,9 @@ function clean_pre($matches) {
  * @return string Text which has been converted into correct paragraph tags.
  */
 function wpautop($pee, $br = 1) {
-	if (trim($pee) === '')
+	if (trim($pee) === '') {
 		return '';
+	}
 	$pee = $pee . "\n"; // just to make things a little easier, pad the end
 	$pee = preg_replace('|<br />\s*<br />|', "\n\n", $pee);
 	// Space things out a little
@@ -130,8 +134,9 @@ function wpautop($pee, $br = 1) {
 	                                              // make paragraphs, including one at the end
 	$pees = preg_split('/\n\s*\n/', $pee, -1, PREG_SPLIT_NO_EMPTY);
 	$pee = '';
-	foreach ($pees as $tinkle)
+	foreach ($pees as $tinkle) {
 		$pee .= '<p>' . trim($tinkle, "\n") . "</p>\n";
+	}
 	$pee = preg_replace('|<p>\s*</p>|', '', $pee); // under certain strange conditions it could create a P of entirely whitespace
 	$pee = preg_replace('!<p>([^<]+)</(div|address|form)>!', "<p>$1</p></$2>", $pee);
 	$pee = preg_replace('!<p>\s*(</?' . $allblocks . '[^>]*>)\s*</p>!', "$1", $pee); // don't pee all over a tag
@@ -147,8 +152,9 @@ function wpautop($pee, $br = 1) {
 	}
 	$pee = preg_replace('!(</?' . $allblocks . '[^>]*>)\s*<br />!', "$1", $pee);
 	$pee = preg_replace('!<br />(\s*</?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)[^>]*>)!', '$1', $pee);
-	if (strpos($pee, '<pre') !== false)
+	if (strpos($pee, '<pre') !== false) {
 		$pee = preg_replace_callback('!(<pre[^>]*>)(.*?)</pre>!is', 'clean_pre', $pee);
+	}
 	$pee = preg_replace("|\n</p>$|", '</p>', $pee);
 
 	return $pee;
@@ -169,23 +175,30 @@ function _autop_newline_preservation_helper($matches) {
 
 function seems_utf8($Str) { // by bmorel at ssi dot fr
 	for($i = 0; $i < strlen($Str); $i++) {
-		if (ord($Str [$i]) < 0x80)
+		if (ord($Str [$i]) < 0x80) {
 			continue; // 0bbbbbbb
-		elseif ((ord($Str [$i]) & 0xE0) == 0xC0)
+		}
+		elseif ((ord($Str [$i]) & 0xE0) == 0xC0) {
 			$n = 1; // 110bbbbb
-		elseif ((ord($Str [$i]) & 0xF0) == 0xE0)
+		}
+		elseif ((ord($Str [$i]) & 0xF0) == 0xE0) {
 			$n = 2; // 1110bbbb
-		elseif ((ord($Str [$i]) & 0xF8) == 0xF0)
+		}
+		elseif ((ord($Str [$i]) & 0xF8) == 0xF0) {
 			$n = 3; // 11110bbb
-		elseif ((ord($Str [$i]) & 0xFC) == 0xF8)
+		}
+		elseif ((ord($Str [$i]) & 0xFC) == 0xF8) {
 			$n = 4; // 111110bb
-		elseif ((ord($Str [$i]) & 0xFE) == 0xFC)
+		}
+		elseif ((ord($Str [$i]) & 0xFE) == 0xFC) {
 			$n = 5; // 1111110b
-		else
+		} else {
 			return false; // Does not match any model
+		}
 		for($j = 0; $j < $n; $j++) { // n bytes matching 10bbbbbb follow ?
-			if ((++$i == strlen($Str)) || ((ord($Str [$i]) & 0xC0) != 0x80))
+			if ((++$i == strlen($Str)) || ((ord($Str [$i]) & 0xC0) != 0x80)) {
 				return false;
+			}
 		}
 	}
 	return true;
@@ -224,8 +237,9 @@ function utf8_uri_encode($utf8_string) {
 		if ($value < 128) {
 			$unicode .= chr($value);
 		} else {
-			if (count($values) == 0)
+			if (count($values) == 0) {
 				$num_octets = ($value < 224) ? 2 : 3;
+			}
 
 			$values [] = $value;
 
@@ -580,8 +594,9 @@ function funky_javascript_fix($text) {
 	// Fixes for browsers' javascript bugs
 	global $is_macIE, $is_winIE;
 
-	if ($is_winIE || $is_macIE)
+	if ($is_winIE || $is_macIE) {
 		$text = preg_replace("/\%u([0-9A-F]{4,4})/e", "'&#'.base_convert('\\1',16,10).';'", $text);
+	}
 
 	return $text;
 }
@@ -896,27 +911,31 @@ function sanitize_email($email) {
 }
 
 function human_time_diff($from, $to = '') {
-	if (empty($to))
+	if (empty($to)) {
 		$to = time();
+	}
 	$diff = (int) abs($to - $from);
 	if ($diff <= 3600) {
 		$mins = round($diff / 60);
-		if ($mins <= 1)
+		if ($mins <= 1) {
 			$since = __('1 min');
-		else
+		} else {
 			$since = sprintf(__('%s mins'), $mins);
+		}
 	} else if (($diff <= 86400) && ($diff > 3600)) {
 		$hours = round($diff / 3600);
-		if ($hours <= 1)
+		if ($hours <= 1) {
 			$since = __('1 hour');
-		else
+		} else {
 			$since = sprintf(__('%s hours'), $hours);
+		}
 	} elseif ($diff >= 86400) {
 		$days = round($diff / 86400);
-		if ($days <= 1)
+		if ($days <= 1) {
 			$since = __('1 day');
-		else
+		} else {
 			$since = sprintf(__('%s days'), $days);
+		}
 	}
 	return $since;
 }

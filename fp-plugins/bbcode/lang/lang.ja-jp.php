@@ -56,7 +56,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 );
 
 $lang ['plugin'] ['bbcode'] = array (
-	'go_to' => 'へ移動',
+	'go_to' => '移動先: ',
 
 	// Filewrapper getfille.php
 	'error_403' => 'エラー 403',

@@ -23,8 +23,9 @@ define('PRETTYURLS_CATS', CACHE_DIR . '%%prettyurls-cats.tmp');
 // memo
 // register_plugin_setup('plugin_id', 'setup_func');
 function plugin_prettyurls_setup() {
-	if (file_exists(ABS_PATH . '.htaccess'))
+	if (file_exists(ABS_PATH . '.htaccess')) {
 		return 1;
+	}
 
 	if (!is_writable(ABS_PATH)) {
 		return -2;
@@ -50,8 +51,9 @@ class Plugin_PrettyURLs {
 	var $fp_params;
 
 	function categories($force = true) {
-		if ($this->categories)
+		if ($this->categories) {
 			return;
+		}
 
 		if ($force || !file_exists(PRETTYURLS_CATS)) {
 			$d = entry_categories_get('defs');
@@ -75,10 +77,11 @@ class Plugin_PrettyURLs {
 	function permalink($str, $id) {
 		global $fpdb, $post;
 
-		if (isset($post) && PRETTYURLS_TITLES)
+		if (isset($post) && PRETTYURLS_TITLES) {
 			$title = sanitize_title($post ['subject']);
-		else
+		} else {
 			$title = $id;
+		}
 		$date = date_from_id($id);
 		// yeah, hackish, I know...
 
@@ -105,10 +108,11 @@ class Plugin_PrettyURLs {
 
 	function categorylink($str, $catid) {
 		if (PRETTYURLS_TITLES) {
-			if (@$this->categories [$catid])
+			if (@$this->categories [$catid]) {
 				return $this->baseurl . "category/{$this->categories[$catid]}/";
-			else
+			} else {
 				return $str;
+			}
 		} else {
 			return $this->baseurl . "category/{$catid}/";
 		}
@@ -156,17 +160,19 @@ class Plugin_PrettyURLs {
 	}
 
 	function handle_categories($matches) {
-		if (!$this->categories)
+		if (!$this->categories) {
 			return;
+		}
 
 		// $this->categories contains sanitized category names, so we have to sanitize before the search
 		$sanitizedtitle = sanitize_title($matches [1]);
 
 		if (PRETTYURLS_TITLES) {
-			if ($c = array_search($sanitizedtitle, $this->categories))
+			if ($c = array_search($sanitizedtitle, $this->categories)) {
 				$this->fp_params ['cat'] = $c;
-			else
+			} else {
 				return $matches [0];
+			}
 		} else {
 			$this->fp_params ['cat'] = $sanitizedtitle;
 		}
@@ -177,10 +183,12 @@ class Plugin_PrettyURLs {
 	 */
 	function handle_date($matches) {
 		$this->fp_params ['y'] = $matches [1];
-		if (isset($matches [3]))
+		if (isset($matches [3])) {
 			$this->fp_params ['m'] = $matches [3];
-		if (isset($matches [5]))
+		}
+		if (isset($matches [5])) {
 			$this->fp_params ['d'] = $matches [5];
+		}
 
 		$this->date_handled = true;
 	}
@@ -289,14 +297,16 @@ class Plugin_PrettyURLs {
 			// if ($f = io_load_file(PRETTYURLS_CACHE))
 			$this->index = array(); // unserialize($f);
 
-			if (!file_exists(PRETTYURLS_CACHE))
+			if (!file_exists(PRETTYURLS_CACHE)) {
 				$this->cache_create();
+			}
 
 			$this->categories(false);
 		}
 
-		if (!defined('MOD_INDEX'))
+		if (!defined('MOD_INDEX')) {
 			return;
+		}
 
 		// # this is not working if you reach flatpress via symlink
 		// # unless you don't edit manually defaults.php
@@ -309,19 +319,22 @@ class Plugin_PrettyURLs {
 		// }
 
 		// removes querystrings
-		if (false !== $i = strpos($url, '?'))
+		if (false !== $i = strpos($url, '?')) {
 			$url = substr($url, 0, $i);
+		}
 
 		// removes anchors
-		if (false !== $i = strpos($url, '#'))
+		if (false !== $i = strpos($url, '#')) {
 			$url = substr($url, 0, $i);
+		}
 
 		if (strrpos($url, '/') != (strlen($url) - 1)) {
 			$url .= '/';
 		}
 
-		if ($url == '/')
+		if ($url == '/') {
 			return;
+		}
 
 		// date
 		$url = preg_replace_callback('!^/[0-9]{2}(?P<y>[0-9]{2})(/(?P<m>[0-9]{2})(/(?P<d>[0-9]{2}))?)?!', array(
@@ -335,8 +348,9 @@ class Plugin_PrettyURLs {
 				&$this,
 				'handle_static'
 			), $url);
-			if ($this->status == 2)
+			if ($this->status == 2) {
 				return $this->check_url($url);
+			}
 		}
 
 		$url = preg_replace_callback('{category/([^/]+)/}', array(
@@ -348,8 +362,9 @@ class Plugin_PrettyURLs {
 			&$this,
 			'handle_page'
 		), $url);
-		if ($this->status == 2)
+		if ($this->status == 2) {
 			return $this->check_url($url);
+		}
 
 		if ($this->date_handled) {
 			$url = preg_replace_callback('|^/([^/]+)|', array(
@@ -387,10 +402,11 @@ class Plugin_PrettyURLs {
 	function cache_delete_elem($id, $date) {
 
 		// is this a title change?
-		if (false !== ($ids = $this->cache_get($date ['y'], $date ['m'], $date ['d'])))
+		if (false !== ($ids = $this->cache_get($date ['y'], $date ['m'], $date ['d']))) {
 			$hash = array_search($id, $ids);
-		else
+		} else {
 			return;
+		}
 
 		if ($hash) {
 			unset($this->index [$date ['y']] [$date ['m']] [$date ['d']] [$hash]);
@@ -435,16 +451,19 @@ class Plugin_PrettyURLs {
 			$this->index [$y] [$m] = $s ? unserialize($s) : false;
 		}
 
-		if (is_null($d))
+		if (is_null($d)) {
 			return $this->index [$y] [$m];
+		}
 
-		if (is_null($h))
+		if (is_null($h)) {
 			return isset($this->index [$y] [$m] [$d]) ? $this->index [$y] [$m] [$d] : false;
+		}
 
-		if (isset($this->index [$y] [$m] [$d]))
+		if (isset($this->index [$y] [$m] [$d])) {
 			return isset($this->index [$y] [$m] [$d] [$h]);
-		else
+		} else {
 			return false;
+		}
 	}
 
 	function cache_delete($id) {
@@ -456,8 +475,9 @@ class Plugin_PrettyURLs {
 	function cache_save() {
 		if ($this->index) {
 			foreach ($this->index as $year => $months) {
-				foreach ($months as $month => $days)
+				foreach ($months as $month => $days) {
 					io_write_file(PRETTYURLS_CACHE . $year . $month, serialize($days));
+				}
 			}
 		}
 
@@ -473,21 +493,24 @@ class Plugin_PrettyURLs {
 			'get' . $nextprev
 		));
 
-		if (!$id)
+		if (!$id) {
 			return array();
+		}
 
 		if ($q->single) {
 			$date = date_from_id($id);
-			if (PRETTYURLS_TITLES)
+			if (PRETTYURLS_TITLES) {
 				$title = sanitize_title($caption);
-			else
+			} else {
 				$title = $id;
+			}
 			$url = $this->baseurl . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
 
-			if ($v > 0)
+			if ($v > 0) {
 				$caption = $caption . ' &raquo; ';
-			else
+			} else {
 				$caption = ' &laquo; ' . $caption;
+			}
 
 			return array(
 				$caption,
@@ -501,8 +524,9 @@ class Plugin_PrettyURLs {
 
 		$l = $this->baseurl;
 
-		if ((is_numeric($cid = @$this->fp_params ['category'])) || is_numeric($cid = @$this->fp_params ['cat']))
+		if ((is_numeric($cid = @$this->fp_params ['category'])) || is_numeric($cid = @$this->fp_params ['cat'])) {
 			$l = $this->categorylink($l, $cid);
+		}
 
 		if (isset($this->fp_params ['y']) && $this->fp_params ['y']) {
 			$l .= '20' . $this->fp_params ['y'] . '/';
@@ -510,15 +534,17 @@ class Plugin_PrettyURLs {
 			if (isset($this->fp_params ['m']) && $this->fp_params ['m']) {
 				$l .= $this->fp_params ['m'] . '/';
 
-				if (isset($this->fp_params ['d']) && $this->fp_params ['d'])
+				if (isset($this->fp_params ['d']) && $this->fp_params ['d']) {
 					$l .= $this->fp_params ['d'] . '/';
+				}
 			}
 		}
 
 		$page = 1;
 
-		if (isset($this->fp_params ['paged']) && $this->fp_params ['paged'] > 1)
+		if (isset($this->fp_params ['paged']) && $this->fp_params ['paged'] > 1) {
 			$page = $this->fp_params ['paged'];
+		}
 
 		$page += ($v . '');
 
@@ -551,8 +577,8 @@ if (!defined('MOD_ADMIN_PANEL')) {
 			global $plugin_prettyurls;
 			return $plugin_prettyurls->nextprevlink('PrevPage', -1);
 		}
-		
-		endif;
+
+	endif;
 
 }
 
@@ -664,10 +690,11 @@ Options -Indexes
 			if (isset($_POST ['saveopt'])) {
 				$this->_config ['mode'] = (int) $_POST ['mode'];
 				plugin_addoption('prettyurls', 'mode', $this->_config ['mode']);
-				if (plugin_saveoptions())
+				if (plugin_saveoptions()) {
 					$this->smarty->assign('success', 2);
-				else
+				} else {
 					$this->smarty->assign('success', -2);
+				}
 			}
 
 			if (isset($_POST ['htaccess-submit'])) {

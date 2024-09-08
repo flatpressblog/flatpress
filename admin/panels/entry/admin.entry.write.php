@@ -101,10 +101,11 @@ class admin_entry_write extends AdminPanelActionValidated {
 
 			$arr = draft_parse($id);
 
-			if (!$arr)
+			if (!$arr) {
 				$arr = entry_parse($id);
-			else
+			} else {
 				$this->smarty->assign('draft', true);
+			}
 
 			// if entry does not exists
 			if ($arr) {
@@ -117,11 +118,12 @@ class admin_entry_write extends AdminPanelActionValidated {
 			&$this,
 			'makePageTitle'
 		), 10, 2);
-		if ($this->draft)
+		if ($this->draft) {
 			add_filter('admin_body_class', array(
 				&$this,
 				'draft_class'
 			));
+		}
 	}
 
 	function _getposteddata() {
@@ -138,8 +140,9 @@ class admin_entry_write extends AdminPanelActionValidated {
 		$catids = array_merge(array_keys($flags), array_keys($cats));
 
 		$this->draft = isset($flags ['draft']);
-		if ($catids)
+		if ($catids) {
 			$arr ['categories'] = $catids;
+		}
 
 		return $arr;
 	}
@@ -158,8 +161,9 @@ class admin_entry_write extends AdminPanelActionValidated {
 
 		// if ($success) sess_remove('entry');
 
-		if ($do_preview)
+		if ($do_preview) {
 			$this->_makePreview($data);
+		}
 
 		if ($success < 0) {
 			$this->main();
@@ -180,11 +184,12 @@ class admin_entry_write extends AdminPanelActionValidated {
 			&$this,
 			'makePageTitle'
 		), 10, 2);
-		if ($this->draft)
+		if ($this->draft) {
 			add_filter('admin_body_class', array(
 				&$this,
 				'draft_class'
 			));
+		}
 
 		return 0;
 	}
@@ -199,11 +204,12 @@ class admin_entry_write extends AdminPanelActionValidated {
 			&$this,
 			'makePageTitle'
 		), 10, 2);
-		if ($this->draft)
+		if ($this->draft) {
 			add_filter('admin_body_class', array(
 				&$this,
 				'draft_class'
 			));
+		}
 	}
 
 	function onerror() {

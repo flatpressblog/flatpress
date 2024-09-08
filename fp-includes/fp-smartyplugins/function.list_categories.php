@@ -14,8 +14,7 @@
  *        	string before
  *        	-------------------------------------------------------------
  */
-function smarty_function_list_categories($params) // , &$smarty)
-{
+function smarty_function_list_categories($params) { // , &$smarty)
 	$cat_params = array(
 		'ild' => '<li>',
 		'ird' => "</li>\n",
@@ -47,8 +46,9 @@ function smarty_function_list_categories($params) // , &$smarty)
 		global $lang;
 
 		$content = '<a href="' . BLOG_BASEURL . '">' . $lang ['entry'] ['categories'] ['unfiled'] . '</a>';
-		if (isset($lang ['admin'] ['entry'] ['publish'] ['nocategories']))
+		if (isset($lang ['admin'] ['entry'] ['publish'] ['nocategories'])) {
 			$content = $lang ['admin'] ['entry'] ['publish'] ['nocategories'];
+		}
 		return '<ul><li>' . $content . '</li></ul>';
 	}
 
@@ -64,10 +64,11 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 
 	if (empty($lines)) {
 		$l = count($indentstack) - 1;
-		if ($l > 0)
+		if ($l > 0) {
 			$arr = array_fill(0, $l, $ord . $ird);
-		else
+		} else {
 			$arr = array();
+		}
 
 		$result = array_merge($result, $arr);
 		return '';
@@ -113,8 +114,9 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 
 			if ((bool) array_intersect(array(
 				$vid
-			), $cat_entry))
+			), $cat_entry)) {
 				$string .= 'checked="checked" ';
+			}
 
 			$string .= 'type="checkbox" />';
 			$before = $string;
@@ -122,8 +124,9 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 			$string = '<label><input name="' . $catname . 'cats" type="radio" value="' . $vid . '"';
 			if ((bool) array_intersect(array(
 				$vid
-			), $cat_entry))
+			), $cat_entry)) {
 				$string .= 'checked="checked" ';
+			}
 
 			$string .= ' />';
 			$before = $string;

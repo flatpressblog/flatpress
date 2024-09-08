@@ -34,19 +34,20 @@
  * @param array formvars form var values
  */
 function smarty_validate_criteria_isRegExp($value, $empty, &$params, &$formvars) {
-        if(isset($params['field2'])) {
-            $_exp = $params['field2'];
-        } elseif (isset($params['expression'])) {
-            $_exp = $params['expression'];
-        } else {
-            trigger_error("SmartyValidate: [isRegExp] parameter 'expression' is missing.");            
-            return false;
-            
-        }
-        if(strlen($value) == 0)
-            return $empty;
-        
-        return (preg_match($_exp, $value));
+	if(isset($params['field2'])) {
+		$_exp = $params['field2'];
+	} elseif (isset($params['expression'])) {
+		$_exp = $params['expression'];
+	} else {
+		trigger_error("SmartyValidate: [isRegExp] parameter 'expression' is missing.");
+		return false;
+	}
+
+	if(strlen($value) == 0) {
+		return $empty;
+	}
+
+	return (preg_match($_exp, $value));
 }
 
 ?>

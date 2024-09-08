@@ -53,18 +53,21 @@ function getstep(&$id) {
 
 		$setupid = setupid();
 
-		if (!$setupid)
+		if (!$setupid) {
 			die($lang ['err'] ['setuprun1']);
+		}
 
 		if (!file_exists(SETUPTEMP_FILE)) {
-			if (empty($_POST))
+			if (empty($_POST)) {
 				$i = 0;
-			else
+			} else {
 				$i = 1;
+			}
 		} else {
 			$x = explode(',', io_load_file(SETUPTEMP_FILE));
-			if ($x [0] != $setupid)
+			if ($x [0] != $setupid) {
 				die($lang ['err'] ['setuprun2'] . SETUPTEMP_FILE . $lang ['err'] ['setuprun3']);
+			}
 			$i = intval($x [1]);
 		}
 
@@ -113,8 +116,9 @@ function validate() {
 	if (!(preg_match('!@.*@|\.\.|\,|\;!', $email) || preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $email))) {
 		$err [] = $email . $lang ['err'] ['email'];
 	}
-	if (!(preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $www) || preg_match('!^http(s)?://localhost!', $www)))
+	if (!(preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $www) || preg_match('!^http(s)?://localhost!', $www))) {
 		$err [] = $www . $lang ['err'] ['www'];
+	}
 	if ($www && $www [strlen($www) - 1] != '/') {
 		$www .= '/';
 	}

@@ -1,10 +1,10 @@
 <?php
 /*
  * Plugin Name: BBcode
- * Module: getfile.php
- * Function: BBCODE_USE_WRAPPER
+ * Module: get.php
+ * Function: BBCODE_USE_FILEWRAPPER
  * Purpose: Mask the path of the attachs dir
- * Change-Date: 24.08.2024, by Fraenkiman
+ * Change-Date: 24.08.2024, by FKM
  */
 require_once 'defaults.php';
 
@@ -22,7 +22,7 @@ require_once $langFile;
 $lang = $lang ['plugin'] ['bbcode'];
 
 /*
- * Wrapper main part
+ * Getfile main part
  */
 $downloadFile = urldecode($_GET ["f"]);
 
