@@ -20,11 +20,11 @@ class LayoutDefault {
 
 	function LayoutDefault($content = array()) {
 		$this->pagecontent = $content;
-			
-			$this->fpdb =& new FPDB();
+
+		$this->fpdb =& new FPDB();
 		$GLOBALS ['fpdb'] = & $this->fpdb;
-					        
-			$this->fp_widgets =& new widget_indexer();
+
+		$this->fp_widgets =& new widget_indexer();
 		$GLOBALS ['fp_widgets'] = & $this->fp_widgets;
 
 		$this->smarty = & $GLOBALS ['_FP_SMARTY'];
@@ -123,8 +123,9 @@ class Abstract_LayoutDialog extends LayoutDefault {
 		if ($this->pagecontent) {
 			$this->smarty->assign($this->pagecontent);
 			return $content;
-		} else
+		} else {
 			return;
+		}
 	}
 
 	function display() {

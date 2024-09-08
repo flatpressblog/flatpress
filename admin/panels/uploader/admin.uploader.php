@@ -51,11 +51,13 @@ class admin_uploader_default extends AdminPanelAction {
 			die();
 		}
 
-		if (!file_exists(IMAGES_DIR))
+		if (!file_exists(IMAGES_DIR)) {
 			fs_mkdir(IMAGES_DIR);
+		}
 
-		if (!file_exists(ATTACHS_DIR))
+		if (!file_exists(ATTACHS_DIR)) {
 			fs_mkdir(ATTACHS_DIR);
+		}
 		/*
 		 * Blacklist entries from OWASP and
 		 * https://stackoverflow.com/questions/4166762/php-image-upload-security-check-list
@@ -215,11 +217,12 @@ class admin_uploader_default extends AdminPanelAction {
 			 *
 			 * 2019-11-24 - laborix
 			 */
-
-			if (version_compare(PHP_VERSION, '5.3.0') < 0)
+			if (version_compare(PHP_VERSION, '5.3.0') < 0) {
 				return -1;
-			if (!function_exists('finfo_open'))
+			}
+			if (!function_exists('finfo_open')) {
 				return -1;
+			}
 
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$mime = finfo_file($finfo, $tmp_name);
@@ -242,7 +245,7 @@ class admin_uploader_default extends AdminPanelAction {
 			$target = "$dir/$name";
 			@umask(022);
 			$success = move_uploaded_file($tmp_name, $target);
-			@chmod($target, 0766);
+			@chmod($target, FILE_PERMISSIONS);
 
 			$uploaded_files [] = $name;
 

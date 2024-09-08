@@ -62,8 +62,9 @@ class FPDB_QueryParams {
 
 			$this->fullparse = is_string($params ['fullparse']) ? ($params ['fullparse'] != 'false') : $params ['fullparse'];
 
-			if ($this->fullparse)
+			if ($this->fullparse) {
 				$this->comments = true;
+			}
 		}
 
 		if (isset($params ['y'])) {
@@ -206,8 +207,9 @@ class FPDB_Query {
 
 			if ($this->params->exclude) {
 				$o = &$fpdb->get_index($this->params->exclude);
-				if ($o !== false)
+				if ($o !== false) {
 					$this->secondary_idx = &$o;
+				}
 			}
 		}
 
@@ -220,8 +222,9 @@ class FPDB_Query {
 		/*
 		 * this should never happen
 		 */
-		if (!$this->params->id)
+		if (!$this->params->id) {
 			trigger_error("FPDB: no ID found for query {$this->ID}", E_USER_ERROR);
+		}
 
 		$qp = &$this->params;
 
@@ -308,10 +311,11 @@ class FPDB_Query {
 			$qp->count = $index_count;
 		} elseif (($qp->start + $qp->count) > $index_count) {
 
-			if ($index_count >= $qp->start)
+			if ($index_count >= $qp->start) {
 				$qp->count = $index_count - $qp->start;
-			else
+			} else {
 				$index_count = $qp->start = $qp->count = 0;
+			}
 		}
 	}
 
@@ -360,11 +364,13 @@ class FPDB_Query {
 			false
 		);
 
-		if ($this->counter < 0)
+		if ($this->counter < 0) {
 			$this->prepare();
+		}
 
-		if ($this->pointer == $this->params->start + $this->params->count)
+		if ($this->pointer == $this->params->start + $this->params->count) {
 			return $return;
+		}
 
 		if ($qp->id) {
 			$idx = $this->main_idx;
@@ -380,8 +386,9 @@ class FPDB_Query {
 
 				$post = $entry;
 
-				if (!$entry)
+				if (!$entry) {
 					return $return;
+				}
 			} else {
 				$entry = array(
 					'subject' => $v
@@ -411,10 +418,11 @@ class FPDB_Query {
 			$key = $this->walker->current_key();
 			$id = $this->currentid = entry_keytoid($key);
 
-			if ($this->single)
+			if ($this->single) {
 				$this->preventry = array(
 					'subject' => $this->walker->current_value()
 				);
+			}
 
 			$this->walker->next();
 			$this->pointer++;
@@ -439,8 +447,9 @@ class FPDB_Query {
 
 		$prevcurr = $this->currentid;
 		$id = $this->currentid = entry_keytoid($this->walker->current_key());
-		if ($id != $prevcurr)
+		if ($id != $prevcurr) {
 			$this->previd = $prevcurr;
+		}
 
 		if ($qp->fullparse && $this->counter <= 0) {
 
@@ -478,8 +487,9 @@ class FPDB_Query {
 	}
 
 	function &getEntry() {
-		if (!$this->hasMore())
+		if (!$this->hasMore()) {
 			return false;
+		}
 
 		$var = &$this->peekEntry();
 		$this->lastentry = $var;
@@ -499,10 +509,11 @@ class FPDB_Query {
 	}
 
 	function _getOffsetId($offset, $assume_pointer = null) {
-		if (is_int($assume_pointer))
+		if (is_int($assume_pointer)) {
 			$i = $assume_pointer + $offset;
-		else
+		} else {
 			$i = $this->pointer + $offset;
+		}
 		return isset($this->local_list [$i]) ? $this->local_list [$i] : false;
 	}
 
@@ -533,12 +544,12 @@ class FPDB_Query {
 	function getNextPage() {
 		if ($this->single) {
 			$key = $this->nextkey;
-			if (!$key)
+			if (!$key) {
 				return array(
 					null,
 					null
 				);
-			else {
+			} else {
 				$val = $this->main_idx->getitem($key);
 				return array(
 					$val,
@@ -549,23 +560,24 @@ class FPDB_Query {
 
 		if ($this->params->page) {
 			// if ($this->_getOffsetId(0, ($this->params->start + $this->params->count)))
-			if ($this->walker && $this->walker->valid)
+			if ($this->walker && $this->walker->valid) {
 				return array(
 					$GLOBALS ['lang'] ['main'] ['nextpage'],
 					$this->params->page + 1
 				);
+			}
 		}
 	}
 
 	function getPrevPage() {
 		if ($this->single) {
 			$key = $this->prevkey;
-			if (!$key)
+			if (!$key) {
 				return array(
 					null,
 					null
 				);
-			else {
+			} else {
 				$val = $this->main_idx->getitem($key);
 				return array(
 					$val,
@@ -615,8 +627,9 @@ class FPDB_CommentList {
 	}
 
 	function &getComment() {
-		if (!$this->hasMore())
+		if (!$this->hasMore()) {
 			return false;
+		}
 
 		$id = array_shift($this->list);
 
@@ -732,8 +745,9 @@ class FPDB {
 			trigger_error("FPDB: no such query ID ($queryId)", E_USER_WARNING);
 		}
 
-		if (!$q)
+		if (!$q) {
 			return false;
+		}
 
 		// $this->init();
 
@@ -747,8 +761,9 @@ class FPDB {
 	// "get" functions. todo: move out?
 	function &getQuery($queryId = 0) {
 		$o = null;
-		if (isset($this->queries [$queryId]))
+		if (isset($this->queries [$queryId])) {
 			$o = &$this->queries [$queryId];
+		}
 		return $o;
 	}
 
@@ -793,15 +808,17 @@ function smarty_block_entries($params, $content, &$smarty, &$repeat) {
 		// $show = @$fpdb->doquery();
 	} else {
 
-		if (!isset($fpdb->queries [0]->comments) || !$fpdb->queries [0]->comments)
+		if (!isset($fpdb->queries [0]->comments) || !$fpdb->queries [0]->comments) {
 			$fpdb->reset(0);
+		}
 		$show = true;
 	}
 
 	$show = true;
 
-	if ($show)
+	if ($show) {
 		return $content;
+	}
 }
 
 function smarty_block_entry($params, $content, &$smarty, &$repeat) {
@@ -843,8 +860,9 @@ function smarty_block_entry($params, $content, &$smarty, &$repeat) {
 			$entry = theme_entry_filters($entry, $id);
 		}
 
-		foreach ($entry as $k => $v)
+		foreach ($entry as $k => $v) {
 			$smarty->assignByRef($k, $entry [$k]);
+		}
 
 		$smarty->assignByRef('id', $id);
 
@@ -929,8 +947,9 @@ function smarty_function_nextpage($params) {
 	}
 	list ($caption, $link) = $nextPageLink;
 
-	if (!$link)
+	if (!$link) {
 		return;
+	}
 
 	if (isset($params ['admin'])) {
 		$qstr = strstr($link, '?');
@@ -947,8 +966,9 @@ function smarty_function_prevpage($params) {
 	}
 	list ($caption, $link) = $prevPageLink;
 
-	if (!$link)
+	if (!$link) {
 		return;
+	}
 
 	if (isset($params ['admin'])) {
 		$qstr = strstr($link, '?');

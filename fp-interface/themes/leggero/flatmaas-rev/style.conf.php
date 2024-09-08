@@ -11,7 +11,7 @@ Author URI: http://www.flatpress.org/
 	
 	$style['name'] = 'flatmaas-rev';
 	$style['author'] = 'NoWhereMan';
-	$style['www'] = 'http://www.flatpress.org/';
+	$style['www'] = 'https://www.flatpress.org/';
 	
 	$style['version'] = 0.705;
 		

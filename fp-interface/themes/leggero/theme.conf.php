@@ -9,7 +9,7 @@
  */
 $theme ['name'] = 'leggero';
 $theme ['author'] = 'drudo and NoWhereMan';
-$theme ['www'] = 'http://www.flatpress.org/';
+$theme ['www'] = 'https://www.flatpress.org/';
 $theme ['description'] = 'Default FlatPress Theme. Brings a a breathe of fresh mint air.';
 
 $theme ['version'] = 0.705;

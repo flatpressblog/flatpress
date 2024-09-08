@@ -154,8 +154,9 @@ class admin_widgets_default extends AdminPanelAction {
 	);
 
 	function get_widget_lists($wlist, $wpos, &$widget_list, $registered_w, $add_empties) {
-		if (!isset($wlist [$wpos]))
+		if (!isset($wlist [$wpos])) {
 			return;
+		}
 
 		$widget_list [$wpos] = array();
 
@@ -195,8 +196,9 @@ class admin_widgets_default extends AdminPanelAction {
 			}
 		}
 
-		if (!$widget_list [$wpos] && !$add_empties)
+		if (!$widget_list [$wpos] && !$add_empties) {
 			unset($widget_list [$wpos]);
+		}
 	}
 
 	function main() {

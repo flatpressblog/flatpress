@@ -139,10 +139,12 @@ if (!function_exists('get_category_name')) {
 if (!function_exists('pathinfo_filename')) {
 
 	function pathinfo_filename($file) { // file.name.ext, returns file.name
-		if (defined('PATHINFO_FILENAME'))
+		if (defined('PATHINFO_FILENAME')) {
 			return pathinfo($file, PATHINFO_FILENAME);
-		if (strstr($file, '.'))
+		}
+		if (strstr($file, '.')) {
 			return substr($file, 0, strrpos($file, '.'));
+		}
 	}
 }
 
@@ -170,28 +172,35 @@ if (!function_exists('rrmdir')) {
 	function rrmdir($dir) {
 		if (is_dir($dir)) {
 			$files = scandir($dir);
-			foreach ($files as $file)
-				if ($file != "." && $file != "..")
+			foreach ($files as $file) {
+				if ($file != "." && $file != "..") {
 					rrmdir("$dir/$file");
+				}
+			}
 			rmdir($dir);
-		} else if (file_exists($dir))
+		} else if (file_exists($dir)) {
 			unlink($dir);
+		}
 	}
 }
 // copies files and non-empty directories
 if (!function_exists('rcopy')) {
 
 	function rcopy($src, $dst) {
-		if (file_exists($dst))
+		if (file_exists($dst)) {
 			rrmdir($dst);
+		}
 		if (is_dir($src)) {
 			mkdir($dst);
 			$files = scandir($src);
-			foreach ($files as $file)
-				if ($file != "." && $file != "..")
+			foreach ($files as $file) {
+				if ($file != "." && $file != "..") {
 					rcopy("$src/$file", "$dst/$file");
-		} else if (file_exists($src))
+				}
+			}
+		} else if (file_exists($src)) {
 			copy($src, $dst);
+		}
 	}
 }
 
@@ -205,8 +214,9 @@ function is_empty_dir($dir) {
 		}
 		closedir($dh);
 		return true;
-	} else
+	} else {
 		return false; // whatever the reason is : no such dir, not a dir, not readable
+	}
 }
 
 // debug
@@ -218,10 +228,11 @@ if (!function_exists('echoPre')) {
 			$output .= "<pre>";
 			$output .= print_r($value, true);
 			$output .= "</pre><br>";
-			if ($print)
+			if ($print) {
 				echo $output;
-			else
+			} else {
 				return $output;
+			}
 		}
 		return false;
 	}

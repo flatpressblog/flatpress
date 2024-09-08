@@ -42,10 +42,11 @@ function plugin_readmore_main($string) {
 	$q = & $fpdb->getQuery();
 
 	if (($q && !$q->single) && !isset($_GET ['page'])) {
-		if ($q)
+		if ($q) {
 			list ($id) = $q->getLastEntry();
-		else
+		} else {
 			$id = '';
+		}
 
 		if ($MODE == 'auto' || $MODE == 'semiauto') {
 			if (strlen($string) > $CHOP_AT) {

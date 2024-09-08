@@ -7,7 +7,7 @@ class plugin_indexer extends fs_filelister {
 
 	var $_enabledlist = null;
 	var $enabledlist = null;
-	
+
 	var $_directory = PLUGINS_DIR;
 
 	function __construct() {
@@ -32,8 +32,9 @@ class plugin_indexer extends fs_filelister {
 		$lang = & $GLOBALS ['lang'];
 		$errors = array();
 
-		if (!file_exists($this->_enabledlist))
+		if (!file_exists($this->_enabledlist)) {
 			return false;
+		}
 		include ($this->_enabledlist);
 		$var = $this->_varname;
 
@@ -42,8 +43,9 @@ class plugin_indexer extends fs_filelister {
 		foreach ($$var as $plugin) {
 
 			$e = plugin_load($plugin, $checkonly);
-			if ($e)
+			if ($e) {
 				$errors [] = $e;
+			}
 		}
 
 		return $errors;
@@ -94,8 +96,9 @@ function plugin_load($plugin, $checkonly = true, $langload = true) {
 		ob_end_clean();
 	}
 
-	if ($langload)
+	if ($langload) {
 		@lang_load("plugin:{$plugin}");
+	}
 
 	if ($checkonly) {
 		$func = "plugin_{$plugin}_setup";
@@ -127,8 +130,9 @@ function plugin_do($id, $type = null) {
 	$entry = null;
 	if (file_exists($f = PLUGINS_DIR . 'plugin.' . $id . ".php")) {
 		include_once ($f);
-	} else
+	} else {
 		return false;
+	}
 }
 
 function plugin_require($id) {
@@ -158,18 +162,21 @@ function plugin_geturl($id) {
 function plugin_getoptions($plugin, $key = null) {
 	global $fp_config;
 
-	if ($key && isset($fp_config ['plugins'] [$plugin] [$key]))
+	if ($key && isset($fp_config ['plugins'] [$plugin] [$key])) {
 		return $fp_config ['plugins'] [$plugin] [$key];
+	}
 
 	return isset($fp_config ['plugins'] [$plugin]) ? $fp_config ['plugins'] [$plugin] : null;
 }
 
 function plugin_addoption($plugin, $key, $val) {
 	global $fp_config;
-	if (!isset($fp_config ['plugins']))
+	if (!isset($fp_config ['plugins'])) {
 		$fp_config ['plugins'] = array();
-	if (!isset($fp_config ['plugins'] [$plugin]))
+	}
+	if (!isset($fp_config ['plugins'] [$plugin])) {
 		$fp_config ['plugins'] [$plugin] = array();
+	}
 
 	return $fp_config ['plugins'] [$plugin] [$key] = $val;
 }
@@ -179,8 +186,9 @@ function plugin_saveoptions($null = null) {
 }
 
 function smarty_function_plugin_getdir($params, &$smarty) {
-	if (!isset($params ['plugin'])) // todo complete here
+	if (!isset($params ['plugin'])) { // todo complete here
 		$smarty->trigger_error('You must set plugin= parameter to a valid id!');
+	}
 	return plugin_getdir($id);
 }
 
@@ -191,10 +199,11 @@ function plugin_getinfo($plugin) {
 	preg_match("|Description:(.*)|i", $plugin_data, $description);
 	preg_match("|Author:(.*)|i", $plugin_data, $author_name);
 	preg_match("|Author URI:(.*)|i", $plugin_data, $author_uri);
-	if (preg_match("|Version:(.*)|i", $plugin_data, $version))
+	if (preg_match("|Version:(.*)|i", $plugin_data, $version)) {
 		$version = trim($version [1]);
-	else
+	} else {
 		$version = '';
+	}
 
 	$description = wptexturize(trim($description [1]));
 

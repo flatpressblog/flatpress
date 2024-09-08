@@ -24,10 +24,11 @@ class admin_entry_delete extends AdminPanelAction {
 
 		if (isset($_REQUEST ['entry'])) {
 			$id = $_REQUEST ['entry'];
-			if ($a = entry_parse($id))
+			if ($a = entry_parse($id)) {
 				;
-			else
+			} else {
 				$a = draft_parse($id);
+			}
 
 			if ($a) {
 

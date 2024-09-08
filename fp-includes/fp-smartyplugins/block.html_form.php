@@ -28,43 +28,44 @@
  * @param Smarty
  * @return string
  */
- 
- 
-function smarty_block_html_form($params, $content, &$smarty)
-{
- 	
- 	if (!isset($params['name']) && defined('ADMIN_PANEL')) {
- 		$params['name'] = 'admin_' . ADMIN_PANEL . '_' . ADMIN_PANEL_ACTION;
- 		
- 	}
- 	
- 	$str = '<form '; 
- 	if (!isset($params['method']))
- 		$params['method']="post";
- 	/* temporary */
- 	if (!isset($params['action']))
-		$params['action']=BLOG_BASEURL . "admin.php?p=". ADMIN_PANEL.'&amp;action=' .ADMIN_PANEL_ACTION;
-		
-	if (!isset($params['enctype']))
-		$params['enctype']="application/x-www-form-urlencoded"; // multipart/form-data
 
-	
+function smarty_block_html_form($params, $content, &$smarty) {
+
+	if (!isset($params['name']) && defined('ADMIN_PANEL')) {
+		$params['name'] = 'admin_' . ADMIN_PANEL . '_' . ADMIN_PANEL_ACTION;
+
+	}
+
+	$str = '<form '; 
+	if (!isset($params['method'])) {
+		$params['method']="post";
+	}
+	/* temporary */
+	if (!isset($params['action'])) {
+		$params['action']=BLOG_BASEURL . "admin.php?p=". ADMIN_PANEL.'&amp;action=' .ADMIN_PANEL_ACTION;
+	}
+
+	if (!isset($params['enctype'])) {
+		$params['enctype']="application/x-www-form-urlencoded"; // multipart/form-data
+	}
+
+
 	foreach ($params as $key => $val) {
 		$str .= "{$key}=\"" . ($val) . "\" " ;
 	}
-	
+
 	$str .= ">\n";
-	
+
 	ob_start();
 	wp_nonce_field($params['name']);
 	$nonce = ob_get_contents();
 	ob_end_clean();
-	
+
 	return 
-		$str .
-		$nonce . 
-		$content .
-	 	'</form>';
+		$str . //
+		$nonce . //
+		$content . //
+		'</form>';
 
 }
 

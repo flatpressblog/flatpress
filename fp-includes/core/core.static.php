@@ -19,8 +19,9 @@ function static_getlist() {
 }
 
 function static_parse($id) {
-	if (!static_isvalid($id))
+	if (!static_isvalid($id)) {
 		return false;
+	}
 
 	if ($fname = static_exists($id)) {
 		$entry = io_load_file($fname);
@@ -34,8 +35,9 @@ function static_isvalid($id) {
 }
 
 function static_save($entry, $id, $oldid = null) {
-	if (!static_isvalid($id))
+	if (!static_isvalid($id)) {
 		return false;
+	}
 
 	$fname = STATIC_DIR . $id . EXT;
 
@@ -55,20 +57,23 @@ function static_save($entry, $id, $oldid = null) {
 }
 
 function static_exists($id) {
-	if (!static_isvalid($id))
+	if (!static_isvalid($id)) {
 		return false;
+	}
 
 	$fname = STATIC_DIR . $id . EXT;
 
-	if (file_exists($fname))
+	if (file_exists($fname)) {
 		return $fname;
+	}
 
 	return false;
 }
 
 function static_delete($id) {
-	if (!static_isvalid($id))
+	if (!static_isvalid($id)) {
 		return false;
+	}
 
 	return fs_delete(STATIC_DIR . $id . EXT);
 }
@@ -103,8 +108,9 @@ function smarty_block_static($params, $content, &$smarty, &$repeat) {
 
 	if ($arr = $smarty->getTemplateVars('static_page')) {
 		$smarty->assign('id', $smarty->getTemplateVars('static_id'));
-		if (THEME_LEGACY_MODE)
+		if (THEME_LEGACY_MODE) {
 			theme_entry_filters($arr);
+		}
 		$smarty->assign($arr);
 		return $content;
 	}

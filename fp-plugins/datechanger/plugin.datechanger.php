@@ -11,8 +11,9 @@
 if (!(basename($_SERVER ['PHP_SELF']) == 'admin.php' && // must be admin area
 	@$_GET ['p'] == 'entry' && // must be right panel
 	@$_GET ['action'] == 'write' && // must be right action
-	!(@$_POST ['timestamp'] || @$_REQUEST ['entry']))) // must be a new entry
-return;
+	!(@$_POST ['timestamp'] || @$_REQUEST ['entry']))) { // must be a new entry
+	return;
+}
 
 function plugin_datechanger_toolbar() {
 	// $time = time();
@@ -89,22 +90,26 @@ add_filter('simple_datechanger_form', 'plugin_datechanger_toolbar', 0);
 
 
 function plugin_datechanger_check() {
-	if ((isset($_GET ['p']) && $_GET ['p'] != 'entry') || (isset($_GET ['action']) && $_GET ['action'] != 'write'))
+	if ((isset($_GET ['p']) && $_GET ['p'] != 'entry') || (isset($_GET ['action']) && $_GET ['action'] != 'write')) {
 		return;
+	}
 
-	if (empty($_POST))
+	if (empty($_POST)) {
 		return;
+	}
 
-	if (!empty($_POST ['date']))
+	if (!empty($_POST ['date'])) {
 		$date = $_POST ['date'];
-	else
+	} else {
 		return;
+	}
 
 	foreach ($date as $v) {
-		if (!is_numeric($v))
+		if (!is_numeric($v)) {
 			return;
-		else
+		} else {
 			$date [] = intval($v);
+		}
 	}
 
 	list ($hour, $minute, $second, $day, $month, $year) = $date;

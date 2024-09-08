@@ -253,8 +253,9 @@ if (!function_exists('wp_redirect')) :
 
 		$location = apply_filters('wp_redirect', $location, $status);
 
-		if (!$location) // allows the wp_redirect filter to cancel a redirect
+		if (!$location) { // allows the wp_redirect filter to cancel a redirect
 			return false;
+		}
 
 		$location = preg_replace('|[^a-z0-9-~+_.?#=&;,/:%]|i', '', $location);
 		// $location = wp_kses_no_null($location);
@@ -271,8 +272,9 @@ if (!function_exists('wp_redirect')) :
 		if ($is_IIS) {
 			header("Refresh: 0;url=$location");
 		} else {
-			if (php_sapi_name() != 'cgi-fcgi')
+			if (php_sapi_name() != 'cgi-fcgi') {
 				utils_status_header($status); // This causes problems on IIS and some FastCGI setups
+			}
 			header("Location: $location");
 		}
 	}
@@ -281,13 +283,15 @@ endif;
 if (!function_exists('wp_setcookie')) :
 
 	function wp_setcookie($username, $password, $already_md5 = false, $home = '', $siteurl = '') {
-		if (!$already_md5)
+		if (!$already_md5) {
 			$password = md5(md5($password)); // Double hash the password in the cookie.
+		}
 
-		if (empty($home))
+		if (empty($home)) {
 			$cookiepath = COOKIEPATH;
-		else
+		} else {
 			$cookiepath = preg_replace('|https?://[^/]+|i', '', $home . '/');
+		}
 
 		if (empty($siteurl)) {
 			$sitecookiepath = SITECOOKIEPATH;

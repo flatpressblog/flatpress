@@ -592,8 +592,6 @@ a.link-general:hover, .main-cell a:hover {
 /* ===== NOTIFICATIONS ===== */
 .hint { cursor: help }
 
-.draft { background-color: #333 }
-
 /* (already defined in common, here we put just some tuning settings) */
 #admin-content ul.msgs { margin: 0.5em 0 0.5em 0 }
 

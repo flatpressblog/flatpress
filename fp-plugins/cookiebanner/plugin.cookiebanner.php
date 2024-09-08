@@ -34,7 +34,7 @@ function plugin_cookiebanner_footer() {
 		<div id="cookie_banner">
 			<div class="buttonbar">
 				' . $bannertext . '
-				<input type="submit" value="' . $ok . '" class="btn btn-primary btn-sm" id="btn-primary" onclick="cookie_ok()"></input>
+				<input type="submit" value="' . $ok . '" class="btn btn-primary btn-sm" id="btn-primary">
 			</div>
 		</div>
 		<!-- EOF Cookie-Banner HTML -->

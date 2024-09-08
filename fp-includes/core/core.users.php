@@ -26,8 +26,9 @@ function user_list() {
 	$obj = new user_lister();
 	if ($users = $obj->getList()) {
 		return $entry_arr;
-	} else
+	} else {
 		return false;
+	}
 }
 
 function user_pwd($userid, $pwd) {
@@ -87,8 +88,9 @@ function user_logout() {
 function user_loggedin() {
 	global $loggedin, $fp_user;
 
-	if ($loggedin)
+	if ($loggedin) {
 		return $fp_user;
+	}
 
 	if (empty($_COOKIE [USER_COOKIE]) || empty($_COOKIE [PASS_COOKIE])) {
 		$fp_user = null;

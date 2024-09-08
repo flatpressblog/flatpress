@@ -35,7 +35,7 @@
  */
 
 function smarty_validate_transform_stripslashes(&$value, $params, &$formvars) {
-    return stripslashes($value);
+	return stripslashes($value);
 }
 
 ?>

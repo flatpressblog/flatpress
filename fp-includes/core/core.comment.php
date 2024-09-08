@@ -46,8 +46,9 @@ function comment_getlist($id) {
 function comment_parse($entryid, $id) {
 	$f = comment_exists($entryid, $id);
 
-	if (!$f)
+	if (!$f) {
 		return false;
+	}
 
 	$fc = io_load_file($f);
 	$arr = utils_kexplode($fc);
@@ -59,15 +60,18 @@ function comment_parse($entryid, $id) {
 }
 
 function comment_exists($entryid, $id) {
-	if (!preg_match('|^comment[0-9]{6}-[0-9]{6}$|', $id))
+	if (!preg_match('|^comment[0-9]{6}-[0-9]{6}$|', $id)) {
 		return false;
+	}
 	$f = entry_exists($entryid);
-	if (!$f)
+	if (!$f) {
 		return false;
+	}
 
 	$f2 = substr($f, 0, -strlen(EXT)) . '/comments/' . $id . EXT;
-	if (!file_exists($f2))
+	if (!file_exists($f2)) {
 		return false;
+	}
 
 	return $f2;
 }
@@ -106,13 +110,15 @@ function comment_save($id, $comment) {
 
 	$comment_dir = bdb_idtofile($id, BDB_COMMENT);
 
-	if (!isset($comment ['DATE']))
+	if (!isset($comment ['DATE'])) {
 		$comment ['DATE'] = date_time();
+	}
 	$id = bdb_idfromtime(BDB_COMMENT, $comment ['DATE']);
 	$f = $comment_dir . $id . EXT;
 	$str = utils_kimplode($comment);
-	if (io_write_file($f, $str))
+	if (io_write_file($f, $str)) {
 		return $id;
+	}
 
 	return false;
 }

@@ -35,15 +35,16 @@
  * @param array formvars form var values
  */
 function smarty_validate_criteria_isValidPassword($value, $empty, &$params, &$formvars) {
-        if(!isset($params['field2'])) {
-                trigger_error("SmartyValidate: [isValidPassword] parameter 'field2' is missing.");        
-                return false;
-        }
-        if(strlen($value) == 0)
-            return $empty;
-	
+	if(!isset($params['field2'])) {
+		trigger_error("SmartyValidate: [isValidPassword] parameter 'field2' is missing.");
+		return false;
+	}
+	if(strlen($value) == 0) {
+		return $empty;
+	}
+
 	return user_login($formvars[$params['field']], $formvars[$params['field2']]);
-	
+
 }
 
 ?>

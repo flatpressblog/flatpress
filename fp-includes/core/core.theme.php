@@ -26,8 +26,9 @@ function theme_loadsettings() {
 		'admin_custom_interf' => false
 	);
 
-	if (!defined('THE_THEME'))
+	if (!defined('THE_THEME')) {
 		define('THE_THEME', $fp_config ['general'] ['theme']);
+	}
 
 	// backward compatibility:
 	$conf1 = THEMES_DIR . THE_THEME . '/theme_conf.php';
@@ -53,8 +54,9 @@ function theme_loadsettings() {
 
 			if (isset($theme ['default_style'])) {
 
-				if (!isset($fp_config ['general'] ['style']))
+				if (!isset($fp_config ['general'] ['style'])) {
 					$fp_config ['general'] ['style'] = $theme ['default_style'];
+				}
 
 				include (THEMES_DIR . THE_THEME . "/{$fp_config['general']['style']}/style.conf.php");
 
@@ -70,8 +72,9 @@ function theme_loadsettings() {
 		}
 
 		// no widgets registered, load default set
-		if (!get_registered_widgets())
+		if (!get_registered_widgets()) {
 			theme_register_default_widgetsets();
+		}
 	}
 
 	ob_end_clean();
@@ -93,16 +96,18 @@ function theme_getdir($id = THE_THEME) {
 function theme_exists($id) {
 	// quick fix for win
 	$f = THEMES_DIR . ($id);
-	if (file_exists($f))
+	if (file_exists($f)) {
 		return $f . '/';
+	}
 
 	return '';
 }
 
 function theme_style_exists($id, $themeid = THE_THEME) {
 	if ($f = theme_exists($themeid)) {
-		if (file_exists($f))
+		if (file_exists($f)) {
 			return $f . '/';
+		}
 	}
 	return '';
 }
@@ -167,8 +172,9 @@ function theme_head_stylesheet() {
 
 function admin_head_action() {
 	global $theme;
-	if (!$theme ['admin_custom_interface'])
+	if (!$theme ['admin_custom_interface']) {
 		echo '<link media="screen" href="' . BLOG_BASEURL . 'admin/res/admin.css" type="text/css" rel="stylesheet" />';
+	}
 }
 
 add_filter('admin_head', 'admin_head_action');
@@ -178,8 +184,9 @@ add_action('wp_head', 'theme_head_stylesheet');
 
 function get_wp_head() {
 	do_action('wp_head');
-	if (class_exists('AdminPanel'))
+	if (class_exists('AdminPanel')) {
 		do_action('admin_head');
+	}
 }
 
 $smarty->registerPlugin('function', 'header', 'get_wp_head');
@@ -222,8 +229,9 @@ function theme_init(&$smarty) { /* &$mode */
 
 	$flatpress ['loggedin'] = $loggedin;
 
-	if ($loggedin)
+	if ($loggedin) {
 		$flatpress ['user'] = user_get();
+	}
 
 	// useful shorthand for themes
 	// e.g. {$flatpress.themeurl}imgs/myimage.png
@@ -299,8 +307,9 @@ function theme_apply_filters_link_wrapper($var, $hook) {
 }
 
 function theme_smarty_function_action($params, $smarty) {
-	if (isset($params ['hook']))
+	if (isset($params ['hook'])) {
 		do_action($params ['hook']);
+	}
 }
 
 function theme_date_format($string, $format = null, $default_date = '') {
@@ -325,8 +334,9 @@ function theme_date_format($string, $format = null, $default_date = '') {
 function theme_smarty_modifier_date_format_daily($string, $format = null, $default_date = '') {
 	global $THEME_CURRENT_DAY, $lang, $fp_config;
 
-	if (is_null($format))
+	if (is_null($format)) {
 		$format = $fp_config ['locale'] ['dateformat'];
+	}
 
 	$current_day = theme_date_format($string, $format, $default_date);
 

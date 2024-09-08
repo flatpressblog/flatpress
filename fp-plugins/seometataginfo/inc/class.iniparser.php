@@ -61,8 +61,9 @@ class iniParser {
 	 * gibt einen Wert aus einer Sektion zur�ck
 	 */
 	function getValue($section, $key) {
-		if (!isset($this->_iniParsedArray [$section]))
+		if (!isset($this->_iniParsedArray [$section])) {
 			return false;
+		}
 		return $this->_iniParsedArray [$section] [$key];
 	}
 
@@ -70,8 +71,9 @@ class iniParser {
 	 * gibt den Wert einer Sektion oder die ganze Section zur�ck
 	 */
 	function get($section, $key = NULL) {
-		if (is_null($key))
+		if (is_null($key)) {
 			return $this->getSection($section);
+		}
 		return $this->getValue($section, $key);
 	}
 
@@ -79,8 +81,9 @@ class iniParser {
 	 * Seta um valor de acordo com a chave especificada
 	 */
 	function setSection($section, $array) {
-		if (!is_array($array))
+		if (!is_array($array)) {
 			return false;
+		}
 		return $this->_iniParsedArray [$section] = $array;
 	}
 
@@ -88,16 +91,18 @@ class iniParser {
 	 * setzt einen neuen Wert in einer Section
 	 */
 	function setValue($section, $key, $value) {
-		if ($this->_iniParsedArray [$section] [$key] = $value)
+		if ($this->_iniParsedArray [$section] [$key] = $value) {
 			return true;
+		}
 	}
 
 	/**
 	 * setzt einen neuen Wert in einer Section oder eine gesamte, neue Section
 	 */
 	function set($section, $key, $value = NULL) {
-		if (is_array($key) && is_null($value))
+		if (is_array($key) && is_null($value)) {
 			return $this->setSection($section, $key);
+		}
 		return $this->setValue($section, $key, $value);
 	}
 
@@ -105,8 +110,9 @@ class iniParser {
 	 * sichert den gesamten Array in die INI-Datei
 	 */
 	function save($filename = null) {
-		if ($filename == null)
+		if ($filename == null) {
 			$filename = $this->_iniFilename;
+		}
 		if (is_writeable($filename)) {
 			$SFfdescriptor = fopen($filename, "w");
 			foreach ($this->_iniParsedArray as $section => $array) {
