@@ -9,6 +9,5 @@
 		</div>
 
 		<div id="main">
-		
-	
+
 <form class="storycontent" method="post" action="<?php echo BLOG_BASEURL; ?>setup.php">

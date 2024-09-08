@@ -58,8 +58,9 @@ function plugin_lastcomments_widget() {
 	}
 
 	if (!$count) {
-		if ($update)
+		if ($update) {
 			fs_delete(LASTCOMMENTS_CACHE_FILE);
+		}
 		$content .= '<li>' . $lang ['plugin'] ['lastcomments'] ['no_comments'] . '</li>';
 		$subject = $lang ['plugin'] ['lastcomments'] ['no_new_comments'];
 	}

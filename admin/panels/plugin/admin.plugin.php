@@ -78,8 +78,9 @@ class admin_plugin_default extends AdminPanelAction {
 			}
 		}
 
-		if ($success)
+		if ($success) {
 			$this->smarty->assign('success', $success);
+		}
 
 		return PANEL_REDIRECT_CURRENT;
 	}
@@ -106,8 +107,9 @@ class admin_plugin_default extends AdminPanelAction {
 			}
 		}
 
-		if ($success)
+		if ($success) {
 			$this->smarty->assign('success', $success);
+		}
 
 		return PANEL_REDIRECT_CURRENT;
 	}

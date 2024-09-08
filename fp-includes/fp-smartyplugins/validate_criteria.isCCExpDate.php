@@ -34,28 +34,34 @@
  * @param array formvars form var values
  */
 function smarty_validate_criteria_isCCExpDate($value, $empty, &$params, &$formvars) {
-    if(strlen($value) == 0)
-        return $empty;
+	if(strlen($value) == 0) {
+		return $empty;
+	}
 
-    if(!preg_match('!^(\d+)\D+(\d+)$!', $value, $_match))
-        return false;
+	if(!preg_match('!^(\d+)\D+(\d+)$!', $value, $_match)) {
+		return false;
+	}
 
-    $_month = $_match[1];
-    $_year = $_match[2];
-    
-    if(strlen($_year) == 2)
-        $_year = substr(date('Y', time()),0,2) . $_year;
+	$_month = $_match[1];
+	$_year = $_match[2];
 
-    $_month = (int) $_month;
-    $_year = (int) $_year;
-    
-	if($_month < 1 || $_month > 12)
+	if(strlen($_year) == 2) {
+		$_year = substr(date('Y', time()),0,2) . $_year;
+	}
+
+	$_month = (int) $_month;
+	$_year = (int) $_year;
+
+	if($_month < 1 || $_month > 12) {
 		return false;
-	if(date('Y',time()) > $_year)
+	}
+	if(date('Y',time()) > $_year) {
 		return false;
-    
-	if(date('Y',time()) == $_year && date('m', time()) > $_month)
+	}
+
+	if(date('Y',time()) == $_year && date('m', time()) > $_month) {
 		return false;
+	}
 
 	return true;
 

@@ -28,21 +28,20 @@
  * @param Smarty
  * @return string
  */
-function smarty_function_html_submit($params, &$smarty)
-{
- 	// $_SESSION[ADMIN_PANEL][ADMIN_PANEL_ACTION] = 
- 	// (!isset($params['name'])? $params['name'] = 'submit' : $params['name']);
- 	
- 	$params['name'] = (isset($params['name'])? $params['name'] : $params['name'] = 'submit' );
- 	
- 	//admin_addpanelactionevent(ADMIN_PANEL, ADMIN_PANEL_ACTION, $params['name']);
- 	    
-    $str = '<input type="submit" ';
-	
+function smarty_function_html_submit($params, &$smarty) {
+	// $_SESSION[ADMIN_PANEL][ADMIN_PANEL_ACTION] = 
+	// (!isset($params['name'])? $params['name'] = 'submit' : $params['name']);
+
+	$params ['name'] = (isset($params ['name'])? $params ['name'] : $params ['name'] = 'submit' );
+
+	//admin_addpanelactionevent(ADMIN_PANEL, ADMIN_PANEL_ACTION, $params['name']);
+
+	$str = '<input type="submit" ';
+
 	foreach ($params as $key => $val) {
 		$str .= "{$key}=\"" . ($val) . "\" " ;
 	}
-	
+
 	$str .= " />\n";
 	return $str;
 

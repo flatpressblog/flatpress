@@ -89,8 +89,9 @@ if (class_exists('AdminPanelAction')) {
 
 			$i = 0;
 			foreach($toplist as $k => $v) {
-				if ($i >= 10 || $v < 1)
+				if ($i >= 10 || $v < 1) {
 					break;
+				}
 
 				$entries ['topten'] [$k] = array(
 					'subject' => $toplistsubj [$k], 

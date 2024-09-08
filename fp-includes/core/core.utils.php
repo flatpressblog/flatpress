@@ -12,12 +12,14 @@
 // other flags are the same of array_multisort() php function ;)
 function utils_sksort($arr, $key, $flag = SORT_ASC) {
 	if ($arr) {
-		foreach ($arr as $val)
+		foreach ($arr as $val) {
 			$sorter [] = $val [$key];
+		}
 		array_multisort($sorter, $flag, $arr);
 		return $arr;
-	} else
+	} else {
 		return false;
+	}
 }
 
 // function prototype:
@@ -41,8 +43,9 @@ function utils_sksort($arr, $key, $flag = SORT_ASC) {
 if (!function_exists('fnmatch')) {
 
 	function fnmatch($pattern, $string) {
-		if ($pattern == null)
+		if ($pattern == null) {
 			return false;
+		}
 
 		// basically prepare a regular expression
 		$out = null;
@@ -60,11 +63,13 @@ if (!function_exists('fnmatch')) {
 				']',
 				'|'
 			);
-			while (strpos($pattern, '**') !== false)
+			while (strpos($pattern, '**') !== false) {
 				$pattern = str_replace('**', '*', $pattern);
+			}
 
-			foreach ($escape as $probe)
+			foreach ($escape as $probe) {
 				$pattern = str_replace($probe, "\\$probe", $pattern);
+			}
 			$pattern = str_replace('?*', '*', str_replace('*?', '*', str_replace('*', ".*", str_replace('?', '.{1,1}', $pattern))));
 			$out [] = $pattern;
 		}
@@ -73,8 +78,9 @@ if (!function_exists('fnmatch')) {
 		 * if(count($out)==1) return(eregi("^$out[0]$",$string)); else
 		 */
 		foreach ($out as $tester) {
-			if (preg_match("/^$tester$/i", $string))
+			if (preg_match("/^$tester$/i", $string)) {
 				return true;
+			}
 		}
 
 		return false;
@@ -165,8 +171,9 @@ function utils_kexplode($string, $delim = '|', $keyupper = true) {
 function utils_kimplode($arr, $delim = '|') {
 	$string = "";
 	foreach ($arr as $k => $val) {
-		if ($val)
+		if ($val) {
 			$string .= strtoupper($k) . $delim . ($val) . $delim;
+		}
 	}
 	return $string;
 }
@@ -197,8 +204,9 @@ function utils_validateinput($str) {
 	if (preg_match('/[^a-z0-9\-_]/i', $str)) {
 		trigger_error("String \"$str\" is not a valid input", E_USER_ERROR);
 		// return false;
-	} else
+	} else {
 		return true;
+	}
 }
 
 function utils_cut_string($str, $maxc) {
@@ -227,8 +235,9 @@ function utils_status_header($status) {
 // code from php.net ;)
 // defaults to index.php ;)
 function utils_redirect($location = "", $absolute_path = false, $red_type = null) {
-	if (!$absolute_path)
+	if (!$absolute_path) {
 		$location = BLOG_BASEURL . $location;
+	}
 
 	if (function_exists('wp_redirect')) {
 		wp_redirect($location);
@@ -247,8 +256,9 @@ function utils_redirect($location = "", $absolute_path = false, $red_type = null
  */
 function utils_geturlstring() {
 	$str = BLOG_BASEURL . $_SERVER ['PHP_SELF'];
-	if ($_SERVER ['QUERY_STRING'])
+	if ($_SERVER ['QUERY_STRING']) {
 		$str .= '?' . $_SERVER ['QUERY_STRING'];
+	}
 	return $str;
 }
 
@@ -259,8 +269,9 @@ function utils_geturlstring() {
 function utils_array_merge($arr1, $arr2) {
 	$len = count($arr1 [0]);
 
-	foreach ($arr2 as $k => $v)
+	foreach ($arr2 as $k => $v) {
 		$arr2 [$k] = array_pad((array) $v, $len, null);
+	}
 
 	return array_merge($arr1, $arr2);
 }
@@ -279,10 +290,11 @@ function utils_countdashes($string, &$rest) {
 	while ($string [$i] == '-') {
 		$i++;
 	}
-	if ($i)
+	if ($i) {
 		$rest = substr($string, $i);
-	else
+	} else {
 		$rest = $string;
+	}
 
 	return $i;
 }
@@ -483,8 +495,9 @@ function utils_checksmarty() {
 }
 
 function fplog($str) {
-	if (!defined('DEBUG_MODE'))
+	if (!defined('DEBUG_MODE')) {
 		echo "\n[DEBUG] $str \n";
+	}
 }
 
 /**

@@ -14,14 +14,16 @@ class fs_filelister {
 
 	// constructor
 	function __construct($directory = null) {
-		if ($directory)
+		if ($directory) {
 			$this->_directory = $directory;
+		}
 		$this->_listFiles($this->_directory);
 	}
 
 	function _checkFile($directory, $file) {
-		if (!is_dir("$directory/$file"))
+		if (!is_dir("$directory/$file")) {
 			array_push($this->_list, $file);
+		}
 		return 0;
 	}
 
@@ -31,8 +33,9 @@ class fs_filelister {
 	function _listFiles($directory) {
 
 		// Try to open the directory
-		if (!file_exists($directory))
+		if (!file_exists($directory)) {
 			return array();
+		}
 
 		if ($dir = opendir($directory)) {
 			// Add the files
@@ -62,8 +65,9 @@ class fs_filelister {
 			// Finish off the function
 			closedir($dir);
 			return true;
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	function getList() {
@@ -72,8 +76,9 @@ class fs_filelister {
 	}
 
 	function count() {
-		if (!isset($this->count))
+		if (!isset($this->count)) {
 			$this->count = count($this->_list);
+		}
 		return $this->count;
 	}
 
@@ -83,10 +88,11 @@ class fs_pathlister extends fs_filelister {
 
 	function _checkFile($directory, $file) {
 		$f = "$directory/$file";
-		if (!is_dir($f))
+		if (!is_dir($f)) {
 			array_push($this->_list, $f);
-		else
+		} else {
 			return 1;
+		}
 	}
 
 }
@@ -126,8 +132,9 @@ function fs_mkdir($dir, $mode = DIR_PERMISSIONS) {
 		@chmod($dir, $mode);
 		return TRUE;
 	}
-	if (!fs_mkdir(dirname($dir), $mode))
+	if (!fs_mkdir(dirname($dir), $mode)) {
 		return FALSE;
+	}
 	return (@mkdir($dir, $mode) && @chmod($dir, $mode));
 }
 
@@ -187,10 +194,12 @@ class fs_chmodder extends fs_filelister {
 	function _checkFile($directory, $file) {
 		$retval = 0;
 		$path = "$directory/$file";
-		if (is_dir($path))
+		if (is_dir($path)) {
 			$retval = 1;
-		if (!@chmod($path, ($retval ? $this->_chmod_dir : $this->_chmod_file)))
+		}
+		if (!@chmod($path, ($retval ? $this->_chmod_dir : $this->_chmod_file))) {
 			array_push($this->_list, $path);
+		}
 
 		return $retval;
 	}

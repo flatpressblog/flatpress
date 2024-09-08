@@ -1036,8 +1036,9 @@ function obfuscateEmailAddress($originalString, $mode) {
 	$encodeMode = $mode;
 
 	for($i = 0; $i < $originalLength; $i++) {
-		if ($mode == 3)
+		if ($mode == 3) {
 			$encodeMode = rand(1, 2);
+		}
 		switch ($encodeMode) {
 			case 1: // Decimal code
 				$nowCodeString = "&#" . ord($originalString [$i]) . ";";

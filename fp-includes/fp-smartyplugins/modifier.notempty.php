@@ -12,10 +12,10 @@
  * @return string
  */
 
-function smarty_modifier_notempty($string, $default = '')
-{
-    if (isset($string) && $string !== '')
-        return $default;
+function smarty_modifier_notempty($string, $default = '') {
+	if (isset($string) && $string !== '') {
+		return $default;
+	}
 }
 
 ?>

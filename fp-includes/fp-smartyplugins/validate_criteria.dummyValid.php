@@ -34,7 +34,7 @@
  * @param array formvars form var values
  */
 function smarty_validate_criteria_dummyValid($value, $empty, &$params, &$formvars) {
-    return true;
+	return true;
 }
 
 ?>

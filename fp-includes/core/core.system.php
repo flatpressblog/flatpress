@@ -61,10 +61,11 @@ function system_save($file, $array) {
 
 function system_hashsalt_save($force = false) {
 	global $fp_config;
-	if ($force || !file_exists(HASHSALT_FILE))
+	if ($force || !file_exists(HASHSALT_FILE)) {
 		return system_save(HASHSALT_FILE, array(
 			'fp_hashsalt' => $fp_config ['general'] ['blogid'] . ABS_PATH . BLOG_BASEURL . mt_rand()
 		));
+	}
 	return true;
 }
 
@@ -94,8 +95,9 @@ function system_ver_compare($newver, $oldver) {
 
 	// if they equals, but still new version has more digits
 	// then old-version is still outdated
-	if ($cn > $co)
+	if ($cn > $co) {
 		return 1;
+	}
 }
 
 function system_generate_id($string) {
@@ -111,10 +113,11 @@ function system_guessbaseurl() {
 }
 
 function system_getindex() {
-	if (MOD_BLOG != INDEX)
+	if (MOD_BLOG != INDEX) {
 		return MOD_BLOG;
-	else
+	} else {
 		return 'index.php';
+	}
 }
 
 function system_unregister_globals() {
@@ -156,8 +159,9 @@ function system_init_action_params() {
 
 	$fp_params = array();
 
-	if ($x = @$_GET ['x'])
+	if ($x = @$_GET ['x']) {
 		$fp_params = utils_kexplode($x, ':;', false);
+	}
 
 	$fp_params = array_merge($_GET, $fp_params);
 }
@@ -189,6 +193,7 @@ function system_init() {
 	plugin_loadall();
 
 	// init smarty
+	// FlatPress does not use the Smarty cache, only the compiler
 	$smarty->compile_dir = CACHE_DIR;
 	$smarty->cache_dir = SMARTY_DIR . 'cache/';
 	$smarty->caching = 0;
@@ -198,18 +203,20 @@ function system_init() {
 }
 
 function system_seterr($module, $val) {
-	if ($module)
+	if ($module) {
 		$elem = 'success_' . $module;
-	else
+	} else {
 		$elem = 'success';
+	}
 	sess_add($elem, $val);
 }
 
 function system_geterr($module = '') {
-	if ($module)
+	if ($module) {
 		$elem = 'success_' . $module;
-	else
+	} else {
 		$elem = 'success';
+	}
 	return sess_remove($elem);
 }
 

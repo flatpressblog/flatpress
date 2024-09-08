@@ -87,8 +87,9 @@ function date_time($offset = null) {
 function date_from_id($id) {
 	$strdate = substr($id, -13);
 
-	if (!preg_match('/[0-9]{6}-[0-9]{6}/', $strdate))
+	if (!preg_match('/[0-9]{6}-[0-9]{6}/', $strdate)) {
 		return array();
+	}
 
 	$arr ['y'] = substr($strdate, 0, 2);
 	$arr ['m'] = substr($strdate, 2, 2);

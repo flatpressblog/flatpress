@@ -16,8 +16,9 @@ class footnotes_class {
 	var $id = 'noid';
 
 	function __construct($id) {
-		if ($id)
+		if ($id) {
 			$this->id = $id;
+		}
 	}
 
 	function note($n, $s) {
@@ -98,8 +99,9 @@ function plugin_footnotes_filter($text) {
 	), $text);
 
 	// no [footnotes] references at the bottom of the page: stops
-	if (!$footnotes_obj->refs)
+	if (!$footnotes_obj->refs) {
 		return $text;
+	}
 
 	$text = preg_replace_callback('|\[\^([0-9]+)\]|', array(
 		&$footnotes_obj,

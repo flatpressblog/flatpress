@@ -34,19 +34,21 @@
  * @param array formvars form var values
  */
 function smarty_validate_criteria_isCCNum($value, $empty, &$params, &$formvars) {
-    if(strlen($value) == 0)
-        return $empty;
+	if(strlen($value) == 0) {
+		return $empty;
+	}
 
 	// strip everything but digits
 	$value = preg_replace('!\D+!', '', $value);
 
-	if (empty($value))
+	if (empty($value)) {
 		return false;
+	}
 
 	$_c_digits = preg_split('//', $value, -1, PREG_SPLIT_NO_EMPTY);
 
-	$_max_digit   = count($_c_digits)-1;
-	$_even_odd    = $_max_digit % 2;
+	$_max_digit = count($_c_digits)-1;
+	$_even_odd = $_max_digit % 2;
 
 	$_sum = 0;
 	for ($_count=0; $_count <= $_max_digit; $_count++) {
@@ -61,8 +63,9 @@ function smarty_validate_criteria_isCCNum($value, $empty, &$params, &$formvars) 
 		$_sum += $_digit;
 	}
 	$_sum = $_sum % 10;
-	if($_sum)
+	if($_sum) {
 		return false;
+	}
 	return true;
 
 }

@@ -35,29 +35,29 @@
  */
 function smarty_validate_criteria_isRange($value, $empty, &$params, &$formvars) {
 
-        if(isset($params['field2'])) {
-            $_low = $params['field2'];
-        } elseif(isset($params['low'])) {
-            $_low = $params['low'];
-        } else {
-            trigger_error("SmartyValidate: [isRange] parameter 'low' is missing.");            
-            return false;
-        }
+	if(isset($params['field2'])) {
+		$_low = $params['field2'];
+	} elseif(isset($params['low'])) {
+		$_low = $params['low'];
+	} else {
+		trigger_error("SmartyValidate: [isRange] parameter 'low' is missing.");
+		return false;
+	}
 
-        if(isset($params['field3'])) {
-            $_high = $params['field3'];
-        } elseif(isset($params['high'])) {
-            $_high = $params['high'];
-        } else {
-            trigger_error("SmartyValidate: [isRange] parameter 'high' is missing.");            
-            return false;
-        }
-        
-                    
-        if(strlen($value) == 0)
-            return $empty;
-        
-        return ($value >= $_low && $value <= $_high);
+	if(isset($params['field3'])) {
+		$_high = $params['field3'];
+	} elseif(isset($params['high'])) {
+		$_high = $params['high'];
+	} else {
+		trigger_error("SmartyValidate: [isRange] parameter 'high' is missing.");
+		return false;
+	}
+
+	if(strlen($value) == 0) {
+		return $empty;
+	}
+
+	return ($value >= $_low && $value <= $_high);
 }
 
 ?>

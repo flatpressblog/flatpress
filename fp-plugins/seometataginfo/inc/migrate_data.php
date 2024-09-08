@@ -55,8 +55,9 @@ function migrate_old() {
 						if (file_exists($src) && !file_exists($dst)) {
 							echoPre($src . "\n" . $dst);
 							copy($src, $dst);
-							if (file_exists($dst))
+							if (file_exists($dst)) {
 								unlink($src);
+							}
 						}
 					}
 				}
@@ -84,13 +85,15 @@ function migrate_old() {
 				$dst = SEOMETA_STATIC_DIR . $file;
 				if (file_exists($src) && !file_exists($dst)) {
 					$r = copy($src, $dst);
-					if (file_exists($dst))
+					if (file_exists($dst)) {
 						unlink($src);
+					}
 				}
 			}
 		}
-		if (is_empty_dir($cur))
+		if (is_empty_dir($cur)) {
 			rrmdir($cur);
+		}
 	}
 	// categories
 	@io_write_file(SEOMETA_CATEGORY_DIR . 'dummy', '');
@@ -103,13 +106,15 @@ function migrate_old() {
 				$dst = SEOMETA_CATEGORY_DIR . $file;
 				if (file_exists($src) && !file_exists($dst)) {
 					copy($src, $dst);
-					if (file_exists($dst))
+					if (file_exists($dst)) {
 						unlink($src);
+					}
 				}
 			}
 		}
-		if (is_empty_dir($cur))
+		if (is_empty_dir($cur)) {
 			rrmdir($cur);
+		}
 	}
 
 	create_defaults();

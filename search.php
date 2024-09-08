@@ -28,7 +28,7 @@ function search_display() {
 function search_main() {
 	global $lang, $smarty;
 
-	// Initialize modifier functions
+	// register Smarty modifier functions
 	$smarty->registerPlugin('modifier', 'function_exists', 'function_exists');
 	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
 
@@ -112,15 +112,17 @@ function search_do($keywords) {
 			}
 		}
 
-		if ($match)
+		if ($match) {
 			$list [$id] = $e;
+		}
 	}
 
 	$smarty->registerPlugin('block', 'search_result_block', 'smarty_search_results_block');
 	$smarty->registerPlugin('block', 'search_result', 'smarty_search_result');
 
-	if (!$list)
+	if (!$list) {
 		$smarty->assign('noresults', true);
+	}
 
 	$srchresults = $list;
 }

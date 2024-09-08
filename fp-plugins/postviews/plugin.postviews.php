@@ -15,8 +15,9 @@
 
 function plugin_postviews_calc($id, $calc) {
 	$dir = entry_dir($id);
-	if (!$dir)
+	if (!$dir) {
 		return;
+	}
 
 	$f = $dir . '/view_counter' . EXT;
 
@@ -36,13 +37,13 @@ function plugin_postviews_calc($id, $calc) {
 		$v++;
 		io_write_file($f, $v);
 	}
-	
+
 	return $v;
 }
 
 function plugin_postviews_do($smarty, $id) {
 	global $fpdb;
-	
+
 	$q = $fpdb->getQuery();
 	$calc = $q->single;
 

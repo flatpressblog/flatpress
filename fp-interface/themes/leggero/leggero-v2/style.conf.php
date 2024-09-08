@@ -9,7 +9,7 @@
  */
 $style ['name'] = 'leggero-v2';
 $style ['author'] = 'NoWhereMan';
-$style ['www'] = 'http://www.flatpress.org/';
+$style ['www'] = 'https://www.flatpress.org/';
 
 $style ['version'] = 1.0;
 

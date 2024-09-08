@@ -43,14 +43,16 @@ function wp_get_referer() {
 		@$_REQUEST ['_wp_http_referer'],
 		@$_SERVER ['HTTP_REFERER']
 	) as $ref)
-		if (!empty($ref))
+		if (!empty($ref)) {
 			return $ref;
+		}
 	return false;
 }
 
 function wp_get_original_referer() {
-	if (!empty($_REQUEST ['_wp_original_http_referer']))
+	if (!empty($_REQUEST ['_wp_original_http_referer'])) {
 		return $_REQUEST ['_wp_original_http_referer'];
+	}
 	return false;
 }
 
@@ -68,11 +70,13 @@ function add_magic_quotes($array) {
 function wp_remote_fopen($uri) {
 	if (ini_get('allow_url_fopen')) {
 		$fp = fopen($uri, 'r');
-		if (!$fp)
+		if (!$fp) {
 			return false;
+		}
 		$linea = '';
-		while ($remote_read = fread($fp, 4096))
+		while ($remote_read = fread($fp, 4096)) {
 			$linea .= $remote_read;
+		}
 		fclose($fp);
 		return $linea;
 	} else if (function_exists('curl_init')) {
