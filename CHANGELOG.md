@@ -26,6 +26,7 @@
 - BBcode plugin/ Admin area: The editor toolbar can be deactivated again as in version 1.2.1 when using an alternative editor (e.g. [Wysiwyg editor](https://wiki.flatpress.org/res:plugins:ckeditor)). ([#436](https://github.com/flatpressblog/flatpress/pull/436))
 - BBcode plugin: BBcode toolbar, if BBcode for comments is allowed ([#437](https://github.com/flatpressblog/flatpress/pull/437))
 - BBcode plugin: The fp-content/attachs directory is hidden if the file has been included with the URL tag ([#443](https://github.com/flatpressblog/flatpress/pull/443))
+- The Commentcenter plugin has been given a lower priority so that other comment filters (e.g. qspam) can do their work first. ([#449](https://github.com/flatpressblog/flatpress/pull/449))
 
 ### Bugfixes
 - BBcode plugin: File or image selection possible after activating the option “Allow BBcode in comments” option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
