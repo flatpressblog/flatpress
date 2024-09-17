@@ -34,7 +34,7 @@ class plugin_commentcenter {
 		add_filter('comment_validate', array(
 			&$this,
 			'validate'
-		), 5, 2);
+		), 10, 2);
 		$this->pl_dir = FP_CONTENT . 'plugin_commentcenter/';
 		if (!file_exists($this->pl_dir)) {
 			fs_mkdir($this->pl_dir);

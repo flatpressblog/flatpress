@@ -52,7 +52,7 @@ function plugin_qspam_validate($bool, $contents) {
 	}
 	return true;
 }
-add_action('comment_validate', 'plugin_qspam_validate', 5, 2);
+add_filter('comment_validate', 'plugin_qspam_validate', 5, 2);
 
 if (class_exists('AdminPanelAction')) {
 
