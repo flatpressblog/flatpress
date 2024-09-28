@@ -362,7 +362,7 @@ function utils_validateIPv6($IP) {
 // get client IP
 function utils_ipget() {
 	global $fp_config;
-	$ip = 'fd00:abcd:fb01:7590:dea6:32ff:fe79:a3c8';
+	$ip = '';
 
 	if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
 		$ip = $_SERVER ['HTTP_CLIENT_IP'];
