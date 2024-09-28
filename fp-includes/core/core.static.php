@@ -14,12 +14,12 @@ class static_indexer extends fs_filelister {
 
 function static_getlist() {
 	$obj = new static_indexer();
+	$list = $obj->getList();
 
 	// Natural sorting
 	natsort($list);
 	$list = array_values($list);
 
-	$list = $obj->getList();
 	return $list;
 }
 
