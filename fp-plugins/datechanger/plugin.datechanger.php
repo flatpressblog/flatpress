@@ -5,7 +5,7 @@
  * Type: Block
  * Author: FlatPress
  * Description: Allows to change the date and time for <a href="./admin.php?p=entry&action=write" title="Write Entry">new entries</a> via a drop-down menu. Part of the standard distribution. <a href="./fp-plugins/datechanger/doc_datechanger.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author URI: https://www.flatpress.org
  */
 if (!(basename($_SERVER ['PHP_SELF']) == 'admin.php' && // must be admin area
@@ -33,7 +33,7 @@ function plugin_datechanger_toolbar() {
 
 	echo '<div id="admin-date"><fieldset id="plugin_datechanger"><legend>' . $lang ['admin'] ['plugin'] ['datechanger'] ['title'] . '</legend><p>' . $lang ['admin'] ['plugin'] ['datechanger'] ['time'] . ':&nbsp;';
 
-	// set time
+	// select time
 	echo '<label><select name="date[]">';
 	for($i = 0; $i < 24; $i++) {
 		$v = sprintf('%02d', $i);
@@ -58,27 +58,60 @@ function plugin_datechanger_toolbar() {
 
 	echo '</select>&nbsp;&nbsp;&nbsp;</label> ';
 
-	// set date
-	echo '' . $lang ['admin'] ['plugin'] ['datechanger'] ['date'] . ':&nbsp;<select name="date[]">';
-	for($i = 1; $i <= 31; $i++) {
-		$v = sprintf('%02d', $i);
-		echo '<option value="' . $v . '"' . (($v == $D) ? ' selected="selected"' : '') . '>' . $v . '</option>';
-	}
-	echo '</select>&nbsp;';
-
+	// select date (default: DD-MM-YYYY)
 	$mths = $lang ['date'] ['month'];
 
-	echo '<select name="date[]">';
-	for($i = 0; $i < 12; $i++) {
-		$v = sprintf('%02d', $i + 1);
-		echo '<option value="' . $v . '"' . (($v == $M) ? ' selected="selected"' : '') . '>' . $mths [$i] . '</option>';
+	echo '' . $lang ['admin'] ['plugin'] ['datechanger'] ['date'] . ':&nbsp;<select name="date[]">';
+
+	if (is_year_month_day()) {
+		foreach (range(2000, intval($Y) + 10) as $v) {
+			echo '<option value="' . $v . '"' . (($v == $Y) ? ' selected="selected"' : '') . '>' . $v . '</option>';
+		}
+	} else {
+		if (is_month_day_year()) {
+			for($i = 0; $i < 12; $i++) {
+				$v = sprintf('%02d', $i + 1);
+				echo '<option value="' . $v . '"' . (($v == $M) ? ' selected="selected"' : '') . '>' . $mths [$i] . '</option>';
+			}
+		} else { // is_day_month_year
+			for($i = 1; $i <= 31; $i++) {
+				$v = sprintf('%02d', $i);
+				echo '<option value="' . $v . '"' . (($v == $D) ? ' selected="selected"' : '') . '>' . $v . '</option>';
+			}
+		}
 	}
+
 	echo '</select>&nbsp;';
 
 	echo '<select name="date[]">';
-	foreach (range(2000, intval($Y) + 10) as $v) {
-		echo '<option value="' . $v . '"' . (($v == $Y) ? ' selected="selected"' : '') . '>' . $v . '</option>';
+
+	if (is_month_day_year()) {
+		for($i = 1; $i <= 31; $i++) {
+			$v = sprintf('%02d', $i);
+			echo '<option value="' . $v . '"' . (($v == $D) ? ' selected="selected"' : '') . '>' . $v . '</option>';
+		}
+	} else { // is_day_month_year
+		for($i = 0; $i < 12; $i++) {
+			$v = sprintf('%02d', $i + 1);
+			echo '<option value="' . $v . '"' . (($v == $M) ? ' selected="selected"' : '') . '>' . $mths [$i] . '</option>';
+		}
 	}
+
+	echo '</select>&nbsp;';
+
+	echo '<select name="date[]">';
+
+	if (is_year_month_day()) {
+		for($i = 1; $i <= 31; $i++) {
+			$v = sprintf('%02d', $i);
+			echo '<option value="' . $v . '"' . (($v == $D) ? ' selected="selected"' : '') . '>' . $v . '</option>';
+		}
+	} else { // is_day_month_year
+		foreach (range(2000, intval($Y) + 10) as $v) {
+			echo '<option value="' . $v . '"' . (($v == $Y) ? ' selected="selected"' : '') . '>' . $v . '</option>';
+		}
+	}
+
 	echo '</select>';
 
 	echo '</p></fieldset></div><!-- end of #admin-date -->';
@@ -88,6 +121,29 @@ function plugin_datechanger_toolbar() {
 //add_action('editor_toolbar', 'plugin_datechanger_toolbar', 0);
 add_filter('simple_datechanger_form', 'plugin_datechanger_toolbar', 0);
 
+function is_year_month_day() {
+	global $fp_config;
+
+	$language = $fp_config ['locale'] ['lang'];
+
+	if (in_array($language, ['cs-cz', 'ja-jp', 'ru-ru'])) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function is_month_day_year() {
+	global $fp_config;
+
+	$language = $fp_config ['locale'] ['lang'];
+
+	if (in_array($language, ['en-us'])) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 function plugin_datechanger_check() {
 	if ((isset($_GET ['p']) && $_GET ['p'] != 'entry') || (isset($_GET ['action']) && $_GET ['action'] != 'write')) {
