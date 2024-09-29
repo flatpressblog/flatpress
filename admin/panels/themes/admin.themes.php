@@ -19,8 +19,35 @@
 
 	function admin_theme_data($theme_file, $theme_id, $defprev) {
 
+		global $fp_config;
 
-		$theme_data = io_load_file($theme_file);
+		// Optional multi-language support for themes and styles
+		$langId = $fp_config ['locale'] ['lang'];
+
+		$langConfFile = LANG_DIR . $langId . '/lang.conf.php';
+		if (file_exists($langConfFile)) {
+			include_once $langConfFile;
+		}
+
+		$path = $theme_file;
+
+		$lastSlashPos = strrpos($theme_file, '/');
+
+		if ($lastSlashPos !== false) {
+			$thm_langFile = substr_replace($path, '/lang/', $lastSlashPos, 1);
+		}
+
+		$lang_file = str_replace('conf', $langId, $thm_langFile);
+
+		//echo '<pre>' . $lang_file . '</pre>';
+		//echo '<pre>' . $theme_file . '</pre>';
+
+		if (file_exists($lang_file)) {
+			$theme_data = io_load_file($lang_file);
+		} else { // Backward compatibility
+			$theme_data = io_load_file($theme_file);
+		}
+
 		$theme_data = str_replace ('\r', '\n', $theme_data); 
 		preg_match('/(Theme|Style) Name:(.*)/i', $theme_data, $theme_name);
 		preg_match('/(Theme|Style) URI:(.*)/i', $theme_data, $theme_uri);

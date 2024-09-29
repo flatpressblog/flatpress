@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Theme Name: Leggero
  * Theme URI: http://www.flatpress.org/
  * Description: The default FlatPress theme which brings a breath of fresh mint air.<br><br>This theme comes with <a href="admin.php?p=themes&action=style">different styles</a> - try them :)
@@ -8,9 +8,9 @@
  * Author URI: http://www.flatpress.org/
  */
 $theme ['name'] = 'leggero';
-$theme ['author'] = 'drudo and NoWhereMan';
+$theme ['author'] = 'NoWhereMan and Drudo';
 $theme ['www'] = 'https://www.flatpress.org/';
-$theme ['description'] = 'Default FlatPress Theme. Brings a a breathe of fresh mint air.';
+$theme ['description'] = 'Default FlatPress Theme. Brings a breathe of fresh mint air.';
 
 $theme ['version'] = 0.705;
 
@@ -28,5 +28,4 @@ remove_filter('admin_head', 'admin_head_action');
 // register widgetsets
 register_widgetset('right');
 register_widgetset('left');
-
 ?>

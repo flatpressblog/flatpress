@@ -7,14 +7,4 @@
  * Author: NoWhereMan, Drudo, Marc Thibeault and Fraenkiman
  * Author URI: https://www.flatpress.org/
  */
-$style ['name'] = 'leggero-v2';
-$style ['author'] = 'NoWhereMan';
-$style ['www'] = 'https://www.flatpress.org/';
-
-$style ['version'] = 1.0;
-
-$style ['style_def'] = 'style.css';
-$style ['style_admin'] = 'admin.css';
-$style ['style_print'] = 'print.css';
-$style ['style'] = 'default';
 ?>
