@@ -32,6 +32,7 @@
 ### Bugfixes
 - BBcode plugin: File or image selection possible after activating the option “Allow BBcode in comments” option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
 - BBcode plugin: BBcode create a valid simple URL ([#442](https://github.com/flatpressblog/flatpress/issues/442))
+- DateChanger plugin: Correct date format for the languages Czech, English, Japanese and Russian
 
 ## Themes
 - invidual scrollbar for the Leggero v2 style
