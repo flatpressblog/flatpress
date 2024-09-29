@@ -1,6 +1,6 @@
 <?php
 $lang ['plugin'] ['qspam'] = array(
-	'error' => 'Fehler: Dieses Kommentar beinhaltet verbotene Wörter'
+	'error' => 'Fehler: Dieser Kommentar beinhaltet verbotene Wörter'
 );
 
 $lang ['admin'] ['plugin'] ['submenu'] ['qspam'] = 'QuickSpamFilter';

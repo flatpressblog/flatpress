@@ -4,6 +4,7 @@
 - Template engine Smarty updated to version 4.5.2 ([#376](https://github.com/flatpressblog/flatpress/pull/376), [#390](https://github.com/flatpressblog/flatpress/issues/390))
 - The fixed "Stats" panel has been converted into a plugin ([#363](https://github.com/flatpressblog/flatpress/issues/363))
 - FlatPress anonymizes the IPv4 address of the visitor. IPv6 addresses are replaced by a hash. ([#105](https://github.com/flatpressblog/flatpress/issues/105))
+- Login page: Instructs search engines not to index the page ([#450](https://github.com/flatpressblog/flatpress/pull/450))
 
 ## Bugfixes
 - Contact form / comment function: Entering the website is now correct without http(s):// ([#419](https://github.com/flatpressblog/flatpress/issues/419))
@@ -26,16 +27,19 @@
 - BBcode plugin/ Admin area: The editor toolbar can be deactivated again as in version 1.2.1 when using an alternative editor (e.g. [Wysiwyg editor](https://wiki.flatpress.org/res:plugins:ckeditor)). ([#436](https://github.com/flatpressblog/flatpress/pull/436))
 - BBcode plugin: BBcode toolbar, if BBcode for comments is allowed ([#437](https://github.com/flatpressblog/flatpress/pull/437))
 - BBcode plugin: The fp-content/attachs directory is hidden if the file has been included with the URL tag ([#443](https://github.com/flatpressblog/flatpress/pull/443))
+- The Commentcenter plugin has been given a lower priority so that other comment filters (e.g. qspam) can do their work first. ([#449](https://github.com/flatpressblog/flatpress/pull/449))
 
 ### Bugfixes
 - BBcode plugin: File or image selection possible after activating the option “Allow BBcode in comments” option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
 - BBcode plugin: BBcode create a valid simple URL ([#442](https://github.com/flatpressblog/flatpress/issues/442))
+- DateChanger plugin: Correct date format for the languages Czech, English, Japanese and Russian
 
 ## Themes
 - invidual scrollbar for the Leggero v2 style
 
 ## Internationalization
 - Reworked translations: Japanese (Thanks to [NHWS](https://nhws.localinfo.jp/))
+- Month selection localized in the search form ([#158](https://github.com/flatpressblog/flatpress/issues/158))
 
 # 2024-05-04: [FlatPress 1.3.1](https://github.com/flatpressblog/flatpress/releases/tag/1.3.1)
 ## Bugfixes

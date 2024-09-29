@@ -2,40 +2,50 @@
 
 // Example of use
 require_once 'defaults.php';
-require_once (INCLUDES_DIR . 'includes.php');
+require_once INCLUDES_DIR . 'includes.php';
 
 $tpl = 'default.tpl';
 
 function login_validate() {
 	global $smarty, $lang;
 
-	$user = trim(@$_POST ['user']);
-	$pass = trim(@$_POST ['pass']);
+	$user = trim(htmlspecialchars(@$_POST ['user']));
+	$pass = trim(htmlspecialchars(@$_POST ['pass']));
 
 	$error = array();
 	$lerr = &$lang ['login'] ['error'];
 
-	if (!$user) {
+	if (empty($user)) {
 		$error ['user'] = $lerr ['user'];
 	}
 
-	if (!$pass) {
+	if (empty($pass)) {
 		$error ['pass'] = $lerr ['pass'];
 	}
 
-	if (!$error && !user_login($user, $pass)) {
+	if (empty($error) && !user_login($user, $pass)) {
 		$error ['match'] = $lerr ['match'];
 	}
 
-	if ($error) {
+	if (!empty($error)) {
 		$smarty->assign('error', $error);
-		return 0;
+		return false;
+	} else {
+		return true;
 	}
-
-	return 1;
 }
 
-function main() {
+function login_head() {
+	// Don't index any of these forms.
+	echo '
+		<meta name="robots" content="NOINDEX, NOFOLLOW">
+	';
+}
+
+add_action('wp_head', 'login_head');
+
+
+function login_main() {
 	global $lang, $smarty;
 
 	// Initialize modifier functions
@@ -111,9 +121,20 @@ function login_title($title, $sep) {
 
 add_filter('wp_title', 'login_title', 10, 2);
 
-system_init();
-main();
-theme_init($smarty);
-$smarty->display('default.tpl');
+function login_display() {
+	global $smarty;
 
+	login_main();
+
+	theme_init($smarty);
+
+	$smarty->display('default.tpl');
+
+	unset($smarty);
+
+	do_action('shutdown');
+}
+
+system_init();
+login_display();
 ?>
