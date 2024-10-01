@@ -18,7 +18,10 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'action' => 'Δράση',
 	'act_view' => 'Προβολή',
 	'act_del' => 'Διαγραφή',
-	'act_edit' => 'Επεξεργασία'	
+	'act_edit' => 'Επεξεργασία',
+
+	'natural' => 'Φυσική τάξη',
+	'submit' => 'Αναδιάταξη ονομάτων σελίδων'
 );
 
 $lang ['admin'] ['static'] ['list'] ['msgs'] = array(

@@ -24,6 +24,9 @@ $fp_config = array(
 		'charset' => 'utf-8',
 		'lang' => LANG_DEFAULT
 	),
+	'staticlist' => array (
+		'naturalsort' => true,
+	),
 	'plugins' => array(
 		'blockparser' => array(
 			'pages' => array(

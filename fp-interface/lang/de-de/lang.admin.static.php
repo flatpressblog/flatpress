@@ -8,7 +8,7 @@ $lang ['admin'] ['static'] ['submenu'] = array(
 $lang ['admin'] ['static'] ['list'] = array(
 	'head' => 'Statische Seiten verwalten',
 	'descr' => 'Dieses Menü dient zum Bearbeiten von statischen Seiten oder um eine <a href="admin.php?p=static&amp;action=write">neue statische Seite</a> zu erstellen.',
-	
+
 	'sel' => 'Sel', // checkbox
 	'date' => 'Datum',
 	'name' => 'Seitenname',
@@ -18,7 +18,10 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'action' => 'Aktion',
 	'act_view' => 'Anzeigen',
 	'act_del' => 'Löschen',
-	'act_edit' => 'Bearbeiten'
+	'act_edit' => 'Bearbeiten',
+
+	'natural' => 'Natürliche Reihenfolge',
+	'submit' => 'Seinennamen neu sortieren'
 );
 
 $lang ['admin'] ['static'] ['list'] ['msgs'] = array(

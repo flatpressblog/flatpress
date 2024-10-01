@@ -18,7 +18,10 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'action' => 'Akce',
 	'act_view' => 'Ukázat',
 	'act_del' => 'Smazat',
-	'act_edit' => 'Upravit'
+	'act_edit' => 'Upravit',
+
+	'natural' => 'Přirozený řád',
+	'submit' => 'Změna pořadí názvů stránek'
 );
 
 $lang ['admin'] ['static'] ['list'] ['msgs'] = array(

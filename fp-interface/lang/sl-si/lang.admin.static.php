@@ -18,7 +18,10 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'action' => 'Dejanje',
 	'act_view' => 'Pogled',
 	'act_del' => 'Izbriši',
-	'act_edit' => 'Uredi'
+	'act_edit' => 'Uredi',
+
+	'natural' => 'Naravni red',
+	'submit' => 'Spremeni vrstni red imen strani'
 );
 
 $lang ['admin'] ['static'] ['list'] ['msgs'] = array(

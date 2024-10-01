@@ -18,9 +18,12 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'action' => 'Action',
 	'act_view' => 'View',
 	'act_del' => 'Delete',
-	'act_edit' => 'Edit'
+	'act_edit' => 'Edit',
+
+	'natural' => 'Natural arrangement',
+	'submit' => 'Reorder page names'
 );
-	
+
 $lang ['admin'] ['static'] ['list'] ['msgs'] = array(
 	1 => 'Page has been saved successfully',
 	-1 => 'An error occurred while trying to save the page',
