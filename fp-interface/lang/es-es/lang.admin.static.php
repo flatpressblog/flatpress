@@ -18,7 +18,10 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'action' => 'Accion',
 	'act_view' => 'Ver',
 	'act_del' => 'Eliminar',
-	'act_edit' => 'Editar'
+	'act_edit' => 'Editar',
+
+	'natural' => 'Orden natural',
+	'submit' => 'Reordenar nombres de páginas'
 );
 
 $lang ['admin'] ['static'] ['list'] ['msgs'] = array(

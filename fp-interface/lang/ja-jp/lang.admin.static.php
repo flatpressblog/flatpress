@@ -18,7 +18,10 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'action' => '作業を選んでください',
 	'act_view' => '表示',
 	'act_del' => '削除',
-	'act_edit' => '編集'
+	'act_edit' => '編集',
+
+	'natural' => '自然な順序',
+	'submit' => 'ページ名の並び替え'
 );
 
 $lang ['admin'] ['static'] ['list'] ['msgs'] = array(
