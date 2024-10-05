@@ -9,10 +9,7 @@
  * Description: Adds a calendar widget. Part of the standard distribution.
  */
 
-// PHP Calendar (version 2.3), written by Keith Devens
-// http://keithdevens.com/software/php_calendar
-// see example at http://keithdevens.com/weblog
-// License: http://keithdevens.com/software/license
+// Based on PHP calendar (version 2.3), written by Keith Devens
 
 function generate_calendar($year, $month, $days = array(), $day_name_length = 3, $month_href = null, $first_day = 0, $pn = array()) {
 
@@ -83,13 +80,14 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 function plugin_calendar_widget() {
 	global $fp_params;
 
-	// Determine current year and month
+	// Determine the current year and month
 	$y = isset($fp_params ['y']) ? $fp_params ['y'] : date('Y');
 	$m = isset($fp_params ['m']) ? $fp_params ['m'] : date('m');
 
 	global $fpdb;
 
-	// Creating the request for the current month
+	// Collect entries
+	$days = array();
 	$q = new FPDB_Query(array(
 		'fullparse' => true,
 		'y' => $y,
@@ -97,15 +95,13 @@ function plugin_calendar_widget() {
 		'count' => -1
 	), null);
 
-	// Collect entries
-	$days = array();
 	while ($q->hasMore()) {
 		@list($id, $entry) = $q->peekEntry();
 		$date = date_from_id($id);
 		$d = (int) $date ['d'];
 
 		$days [$d] = array(
-			get_day_link($y, $m, str_pad($d, 2, '0', STR_PAD_LEFT)),
+			get_day_link($y, str_pad($m, 2, '0', STR_PAD_LEFT), str_pad($d, 2, '0', STR_PAD_LEFT)),
 			'linked-day'
 		);
 
@@ -113,32 +109,71 @@ function plugin_calendar_widget() {
 		$q->pointer++;
 	}
 
-	// Calculate the links for the previous and next month
-	$prev_month = ($m - 1) < 1 ? 12 : $m - 1;
-	$prev_year = ($prev_month == 12) ? $y - 1 : $y;
+	// Function to search for the previous month with entries
+	function find_prev_month_with_entries($year, $month) {
+		global $fpdb;
 
-	$next_month = ($m + 1) > 12 ? 1 : $m + 1;
-	$next_year = ($next_month == 1) ? $y + 1 : $y;
+		for ($i = 1; $i <= 12; $i++) {
+			$month--;
+			if ($month < 1) {
+				$month = 12;
+				$year--;
+			}
 
-	// Check whether there are entries in the previous month
-	$prev_q = new FPDB_Query(array(
-		'fullparse' => true,
-		'y' => $prev_year,
-		'm' => $prev_month,
-		'count' => 1 // Only one entry required
-	), null);
-	$prev_link = $prev_q->hasMore() ? get_month_link($prev_year, $prev_month) : null;
+			// Request for the month
+			$q = new FPDB_Query(array(
+				'fullparse' => true,
+				'y' => $year,
+				'm' => $month,
+				'count' => 1
+			), null);
 
-	// Check whether entries are available in the next month
-	$next_q = new FPDB_Query(array(
-		'fullparse' => true,
-		'y' => $next_year,
-		'm' => $next_month,
-		'count' => 1 // Only one entry required
-	), null);
-	$next_link = $next_q->hasMore() ? get_month_link($next_year, $next_month) : null;
+			if ($q->hasMore()) {
+				return get_month_link($year, str_pad($month, 2, '0', STR_PAD_LEFT));
+			}
 
-	// load plugin strings
+			// Cancel if the year goes back too far (default: 2006, year of birth of FlatPress)
+			if ($year < 2006) break;
+		}
+
+		return null;
+	}
+
+	// Function to search for the next month with entries
+	function find_next_month_with_entries($year, $month) {
+		global $fpdb;
+
+		for ($i = 1; $i <= 12; $i++) {
+			$month++;
+			if ($month > 12) {
+				$month = 1;
+				$year++;
+			}
+
+			// Request for the month
+			$q = new FPDB_Query(array(
+				'fullparse' => true,
+				'y' => $year,
+				'm' => $month,
+				'count' => 1
+			), null);
+
+			if ($q->hasMore()) {
+				return get_month_link($year, str_pad($month, 2, '0', STR_PAD_LEFT));
+			}
+
+			// Cancel if the year goes too far into the future (default: current year plus 2 years)
+			if ($year > date('Y') + 2) break;
+		}
+
+		return null;
+	}
+
+	// Retrieve links for the previous and next month with entries
+	$prev_link = find_prev_month_with_entries($y, $m);
+	$next_link = find_next_month_with_entries($y, $m);
+
+	// Load plugin strings
 	$lang = lang_load('plugin:calendar');
 
 	// Compile widget content
@@ -150,5 +185,4 @@ function plugin_calendar_widget() {
 }
 
 register_widget('calendar', 'Calendar', 'plugin_calendar_widget');
-
 ?>
