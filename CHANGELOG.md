@@ -34,6 +34,11 @@
 - BBcode plugin: File or image selection possible after activating the option “Allow BBcode in comments” option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
 - BBcode plugin: BBcode create a valid simple URL ([#442](https://github.com/flatpressblog/flatpress/issues/442))
 - DateChanger plugin: Correct date format for the languages Czech, English, Japanese and Russian
+- Calendar plugin: Update to Version 1.2
+  - Two new functions which only output a “Next” or “Previous” link if there is at least one entry in the month. ([#128](https://github.com/flatpressblog/flatpress/issues/128))
+  - The “Next”, “Previous” and “Day” links now always contain a 4-digit year.
+  - The set language is now taken into account when determining the first day of the week. ([#73](https://github.com/flatpressblog/flatpress/issues/73))
+  -  Single-digit months are now always two-digit.
 
 ## Themes
 - invidual scrollbar for the Leggero v2 style
