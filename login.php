@@ -7,11 +7,6 @@ $tpl = 'default.tpl';
 function login_validate() {
 	global $smarty, $lang;
 
-	// Make sure that the session is active
-	if (session_status() !== PHP_SESSION_ACTIVE) {
-		session_start();
-	}
-
 	$user = trim(htmlspecialchars(@$_POST ['user']));
 	$pass = trim(htmlspecialchars(@$_POST ['pass']));
 

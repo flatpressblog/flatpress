@@ -1,4 +1,11 @@
 <?php
+// This function ensures that the session is active before it is used.
+function ensure_session_active() {
+	if (session_status() === PHP_SESSION_NONE) {
+		// Start the session if it is not active
+		sess_setup();
+	}
+}
 
 function sess_setup() {
 	if (SESSION_PATH != '') {
