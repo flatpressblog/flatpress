@@ -181,7 +181,7 @@ function system_init() {
 	$GLOBALS ['fp_config'] = config_load();
 
 	cookie_setup();
-	sess_setup();
+	ensure_session_active();
 	user_loggedin();
 
 	ob_start();

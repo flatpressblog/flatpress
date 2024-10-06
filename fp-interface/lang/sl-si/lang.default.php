@@ -65,7 +65,7 @@ $lang ['staticauthor'] = array(
 $lang ['entryauthor'] = array(
 	// "Objavil(a)" na vnosih
 	'posted_by' => 'Objavil(a)',
-	'ob' => 'ob'
+	'at' => 'ob'
 );
 
 $lang ['entry'] = array();
