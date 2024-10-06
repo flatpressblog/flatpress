@@ -23,23 +23,25 @@
 - GDPR Video embed: Simple two-click solution for GDPR-compliant embedding of YouTube and Vimeo videos. ([#260](https://github.com/flatpressblog/flatpress/issues/260))
 
 ### Changes
-- SEO Meta Tag Info plugin: Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
-- SEO Meta Tag Info plugin: If an HTTP root directory is stored in the server configuration file and is not empty, a predefined robots.txt can be created and edited via the SEO panel in the admin area. ([#427](https://github.com/flatpressblog/flatpress/pull/427))
+- SEO Meta Tag Info plugin: update to version 2.2.4
+  - Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
+  - If an HTTP root directory is stored in the server configuration file and is not empty, a predefined robots.txt can be created and edited via the SEO panel in the admin area. ([#427](https://github.com/flatpressblog/flatpress/pull/427))
 - FavIcon plugin: Support for iOS Safari, Android Chrome, Windows 10 and Mac OS Safari added ([#416](https://github.com/flatpressblog/flatpress/pull/416), [#428](https://github.com/flatpressblog/flatpress/pull/428))
-- BBcode plugin/ Admin area: The editor toolbar can be deactivated again as in version 1.2.1 when using an alternative editor (e.g. [Wysiwyg editor](https://wiki.flatpress.org/res:plugins:ckeditor)). ([#436](https://github.com/flatpressblog/flatpress/pull/436))
-- BBcode plugin: BBcode toolbar, if BBcode for comments is allowed ([#437](https://github.com/flatpressblog/flatpress/pull/437))
-- BBcode plugin: The fp-content/attachs directory is hidden if the file has been included with the URL tag ([#443](https://github.com/flatpressblog/flatpress/pull/443))
+- BBcode plugin: update to version 1.9.0
+  - The editor toolbar can be deactivated again as in version 1.2.1 when using an alternative editor (e.g. [Wysiwyg editor](https://wiki.flatpress.org/res:plugins:ckeditor)). ([#436](https://github.com/flatpressblog/flatpress/pull/436))
+  - BBcode toolbar, if BBcode for comments is allowed ([#437](https://github.com/flatpressblog/flatpress/pull/437))
+  - The fp-content/attachs directory is hidden if the file has been included with the URL tag ([#443](https://github.com/flatpressblog/flatpress/pull/443))
 - The Commentcenter plugin has been given a lower priority so that other comment filters (e.g. qspam) can do their work first. ([#449](https://github.com/flatpressblog/flatpress/pull/449))
 
 ### Bugfixes
 - BBcode plugin: File or image selection possible after activating the option “Allow BBcode in comments” option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
 - BBcode plugin: BBcode create a valid simple URL ([#442](https://github.com/flatpressblog/flatpress/issues/442))
 - DateChanger plugin: Correct date format for the languages Czech, English, Japanese and Russian
-- Calendar plugin: Update to Version 1.2
+- Calendar plugin: Update to Version 1.2.0
   - Two new functions which only output a “Next” or “Previous” link if there is at least one entry in the month. ([#128](https://github.com/flatpressblog/flatpress/issues/128))
   - The “Next”, “Previous” and “Day” links now always contain a 4-digit year.
   - The set language is now taken into account when determining the first day of the week. ([#73](https://github.com/flatpressblog/flatpress/issues/73))
-  -  Single-digit months are now always two-digit.
+  - Single-digit months are now always two-digit.
 
 ## Themes
 - invidual scrollbar for the Leggero v2 style
