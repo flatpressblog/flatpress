@@ -58,13 +58,13 @@ $lang ['search'] ['error'] = array(
 
 $lang ['staticauthor'] = array(
 	// "Objavil(a)" na statičnih straneh
-	'published_by'	=> 'Objavil(a)',
+	'published_by' => 'Objavil(a)',
 	'na' => 'na'
 );
 
 $lang ['entryauthor'] = array(
 	// "Objavil(a)" na vnosih
-	'posted_by'	=> 'Objavil(a)',
+	'posted_by' => 'Objavil(a)',
 	'ob' => 'ob'
 );
 
@@ -115,7 +115,8 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Vnesti morate uporabniško ime.',
 	'pass' => 'Vnesti morate geslo.',
-	'match' => 'Napačno geslo.'
+	'match' => 'Napačno geslo.',
+	'timeout' => 'Pred ponovnim poskusom počakajte 30 sekund.'
 );
 
 $lang ['comments'] = array(
@@ -145,7 +146,7 @@ $lang ['comments'] ['error'] = array(
 
 $lang ['postviews'] = array(
 	// PostView-Plugin
-	'views'	=> 'ogledi',
+	'views' => 'ogledi',
 );
 
 $lang ['date'] ['month'] = array(

@@ -115,13 +115,14 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Devi inserire un nome utente.',
 	'pass' => 'Devi inserire una password.',
-	'match' => 'La password non è corretta.'
-);	
+	'match' => 'La password non è corretta.',
+	'timeout' => 'Attendere 30 secondi prima di riprovare.'
+);
 
 $lang ['comments'] = array(
 	'head' => 'Aggiungi un commento',
 	'descr' => 'Compila il modulo qui sotto per aggiungere i tuoi commenti',
-	'fieldset1'	=> 'Dati utente',
+	'fieldset1' => 'Dati utente',
 	'name' => 'Nome (*)',
 	'email' => 'Email:',
 	'www' => 'Web:',

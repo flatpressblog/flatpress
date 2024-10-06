@@ -1,6 +1,4 @@
 <?php
-
-// Example of use
 require_once 'defaults.php';
 require_once INCLUDES_DIR . 'includes.php';
 
@@ -9,11 +7,24 @@ $tpl = 'default.tpl';
 function login_validate() {
 	global $smarty, $lang;
 
+	// Make sure that the session is active
+	if (session_status() !== PHP_SESSION_ACTIVE) {
+		session_start();
+	}
+
 	$user = trim(htmlspecialchars(@$_POST ['user']));
 	$pass = trim(htmlspecialchars(@$_POST ['pass']));
 
 	$error = array();
 	$lerr = &$lang ['login'] ['error'];
+
+	// Check whether the user has already made a login attempt in the last 30 seconds
+	if (isset($_SESSION ['last_login_attempt']) && (time() - $_SESSION ['last_login_attempt'] < 30)) {
+		$error ['timeout'] = $lerr ['timeout'];
+	} else {
+		// Set the time of the last login attempt
+		$_SESSION ['last_login_attempt'] = time();
+	}
 
 	if (empty($user)) {
 		$error ['user'] = $lerr ['user'];

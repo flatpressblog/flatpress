@@ -27,20 +27,20 @@ $lang ['main'] = array(
 );
 
 $lang ['search'] = array(
-	'head'	=> 'Hledat',
-	'fset1'	=> 'Vložit kritéria hledání',
+	'head' => 'Hledat',
+	'fset1' => 'Vložit kritéria hledání',
 	'keywords' => 'Výraz',
 	'onlytitles' => 'Jen nadpisy',
 	'fulltext' => 'Full-text',
 
-	'fset2'	=> 'Datum',
-	'datedescr'	=> 'Můžete si přiřadit Vaše hledání ke konkrétnímu datu. Můžete zvolit rok, rok a měsíc, nebo přesné datum. ' . // 
+	'fset2' => 'Datum',
+	'datedescr' => 'Můžete si přiřadit Vaše hledání ke konkrétnímu datu. Můžete zvolit rok, rok a měsíc, nebo přesné datum. ' . // 
 		'Nechat prázdné pro hledání v celé databází.',
 
 	'fset3' => 'Hleda v kategoriích',
 	'catdescr' => 'Nechat prázdné pro hledání v celé databází.',
 
-	'fset4'	=> 'Začit hledání',
+	'fset4' => 'Začit hledání',
 	'submit' => 'Hledej',
 
 	'headres' => 'Výsledky hledání',
@@ -115,7 +115,8 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Musíte vložit přihlašovací jméno.',
 	'pass' => 'Musíte vložit heslo.',
-	'match' => 'Nesprávné heslo.'
+	'match' => 'Nesprávné heslo.',
+	'timeout' => 'Před dalším pokusem vyčkejte 30 sekund.'
 );
 
 $lang ['comments'] = array(

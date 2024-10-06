@@ -33,8 +33,8 @@ $lang ['search'] = array(
 	'onlytitles' => 'Solo Títulos',
 	'fulltext' => 'Text Completo',
 
-	'fset2'	=> 'Date',
-	'datedescr'	=> 'Puede vincular su búsqueda a una fecha específica. Puede seleccionar un año, un año y un mes o una fecha completa. ' . //
+	'fset2' => 'Date',
+	'datedescr' => 'Puede vincular su búsqueda a una fecha específica. Puede seleccionar un año, un año y un mes o una fecha completa. ' . //
 		'Déjelo en blanco para buscar en toda la base de datos.',
 
 	'fset3' => 'Buscar en categorías',
@@ -64,14 +64,14 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by'	=> 'Enviado por',
+	'posted_by' => 'Enviado por',
 	'at' => 'a las'
 );
 
 $lang ['entry'] = array();
 $lang ['entry'] ['flags'] = array();
 
-$lang['entry']['flags']['long'] = array(
+$lang ['entry'] ['flags'] ['long'] = array(
 	'draft' => '<strong>Entrada de borrador</strong>: oculto, esperando publicación',
 	//'static' => '<strong>Entrada estática</strong>: normalmente oculto, para llegar a la entrada poner ?page=title-of-the-entry en url (experimental)',
 	'commslock' => '<strong>Comentarios bloqueados</strong>: comentarios no permitidos para esta entrada'
@@ -80,7 +80,7 @@ $lang['entry']['flags']['long'] = array(
 $lang ['entry'] ['flags'] ['short'] = array(
 	'draft' => 'Borrador',
 	//'static' => 'Estático',
-	'commslock'	=> 'Comentarios bloqueados'
+	'commslock' => 'Comentarios bloqueados'
 );
 
 $lang ['entry'] ['categories'] = array(
@@ -115,7 +115,8 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Debes ingresar un nombre de usuario.',
 	'pass' => 'Debes ingresar una contraseña.',
-	'match' => 'Contraseña incorrecta.'
+	'match' => 'Contraseña incorrecta.',
+	'timeout' => 'Espere 30 segundos antes de volver a intentarlo.'
 );
 
 $lang ['comments'] = array(
