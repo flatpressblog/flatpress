@@ -34,8 +34,9 @@
 - The Commentcenter plugin has been given a lower priority so that other comment filters (e.g. qspam) can do their work first. ([#449](https://github.com/flatpressblog/flatpress/pull/449))
 
 ### Bugfixes
-- BBcode plugin: File or image selection possible after activating the option “Allow BBcode in comments” option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
-- BBcode plugin: BBcode create a valid simple URL ([#442](https://github.com/flatpressblog/flatpress/issues/442))
+- BBcode plugin: update to version 1.9.0
+  - File or image selection possible after activating the option “Allow BBcode in comments” option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
+  - BBcode create a valid simple URL ([#442](https://github.com/flatpressblog/flatpress/issues/442))
 - DateChanger plugin: Correct date format for the languages Czech, English, Japanese and Russian
 - Calendar plugin: Update to Version 1.2.0
   - Two new functions which only output a “Next” or “Previous” link if there is at least one entry in the month. ([#128](https://github.com/flatpressblog/flatpress/issues/128))
