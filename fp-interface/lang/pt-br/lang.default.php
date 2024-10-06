@@ -34,7 +34,7 @@ $lang ['search'] = array(
 	'fulltext' => 'Texto completo',
 
 	'fset2' => 'Data',
-	'datedescr'	=> 'Você pode vincular sua pesquisa a uma data específica. Você pode selecionar um ano, um ano e um mês ou uma data completa. ' . //
+	'datedescr' => 'Você pode vincular sua pesquisa a uma data específica. Você pode selecionar um ano, um ano e um mês ou uma data completa. ' . //
 		'Deixe em branco para pesquisar em todo o banco de dados.',
 
 	'fset3' => 'Pesquisar nas categorias.',
@@ -64,7 +64,7 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by'	=> 'Postado por',
+	'posted_by' => 'Postado por',
 	'at' => 'às'
 );
 
@@ -95,7 +95,7 @@ $lang ['404error'] = array(
 // Login
 $lang ['login'] = array(
 	'head' => 'Login',
-	'fieldset1'	=> 'Insira seu nome de usuário e senha.',
+	'fieldset1' => 'Insira seu nome de usuário e senha.',
 	'user' => 'Nome de usuário:',
 	'pass' => 'Senha:',
 	'fieldset2' => 'Efetuar login',
@@ -115,25 +115,26 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Você deve inserir um nome de usuário.',
 	'pass' => 'Você deve inserir uma senha.',
-	'match' => 'Você deve inserir um nome de usuário incorreta.'
+	'match' => 'Você deve inserir um nome de usuário incorreta.',
+	'timeout' => 'Aguarde 30 segundos antes de tentar novamente.'
 );
 
 $lang ['comments'] = array(
 	'head' => 'Adicione comentário',
 	'descr' => 'Preencha o formulário abaixo para adicionar seus próprios comentários.',
-	'fieldset1'	=> 'Dados do usuário',
+	'fieldset1' => 'Dados do usuário',
 	'name' => 'Nome (*)',
 	'email' => 'Email:',
 	'www' => 'Website:',
 	'cookie' => 'Lembre de mim',
-	'fieldset2'	=> 'Adicione seu comentário',
+	'fieldset2' => 'Adicione seu comentário',
 	'comment' => 'Comentário (*):',
-	'fieldset3'	=> 'Envie',
+	'fieldset3' => 'Envie',
 	'submit' => 'Comentar',
 	'reset' => 'Resetar',
 	'success' => 'Seu comentário foi adicionado com sucesso.',
 	'nocomments' => 'Esta entrada ainda não foi comentada.',
-	'commslock'	=> 'Os comentários foram desativados para esta entrada.'
+	'commslock' => 'Os comentários foram desativados para esta entrada.'
 );
 
 $lang ['comments'] ['error'] = array(

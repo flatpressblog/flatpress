@@ -33,8 +33,8 @@ $lang ['search'] = array(
 	'onlytitles' => 'Seulement les titres',
 	'fulltext' => 'Texte en entier',
 
-	'fset2'	=> 'Date',
-	'datedescr'	=> 'Vous pouvez affiner votre recherche &agrave; une date sp&eacute;cifique. Vous pouvez s&eacute;lectionner une ann&eacute;e, une ann&eacute;e et un mois, ou une date compl&egrave;te. ' . //
+	'fset2' => 'Date',
+	'datedescr' => 'Vous pouvez affiner votre recherche &agrave; une date sp&eacute;cifique. Vous pouvez s&eacute;lectionner une ann&eacute;e, une ann&eacute;e et un mois, ou une date compl&egrave;te. ' . //
 		'Laissez vide pour chercher dans l\'ensemble de la base de donn&eacute;es.',
 
 	'fset3' => 'Rechercher dans les cat&eacute;gories',
@@ -64,7 +64,7 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by'	=> 'Posté par',
+	'posted_by' => 'Posté par',
 	'at' => 'à'
 );
 
@@ -115,13 +115,14 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Vous devez entrer un nom d\'utilisateur.',
 	'pass' => 'Vous devez entrer un mot de passe.',
-	'match' => 'Mot de passe incorrect.'
+	'match' => 'Mot de passe incorrect.',
+	'timeout' => 'Veuillez attendre 30 secondes avant de réessayer.'
 );
 
 $lang ['comments'] = array(
 	'head' => 'Ajouter commentaire',
 	'descr' => 'Remplissez le formulaire ci-dessous pour ajouter vos propres commentaires',
-	'fieldset1'	=> 'Donn&eacute;es utilisateur',
+	'fieldset1' => 'Donn&eacute;es utilisateur',
 	'name' => 'Nom (*)',
 	'email' => 'Email:',
 	'www' => 'Web:',

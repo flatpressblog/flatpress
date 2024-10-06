@@ -28,13 +28,13 @@ $lang ['main'] = array(
 
 $lang ['search'] = array(
 	'head' => 'Søgning',
-	'fset1'	=> 'Indsæt søgekriterier',
+	'fset1' => 'Indsæt søgekriterier',
 	'keywords' => 'Søg på ord',
 	'onlytitles' => 'Søg kun i titler',
 	'fulltext' => 'Fuldtekstsøgning',
 
-	'fset2'	=> 'Søg efter dato',
-	'datedescr'	=> 'Du kan søge efter en hvilken som helst dato. Kriterierne kan være: År, år og måned eller som en komplet dato. ' . //
+	'fset2' => 'Søg efter dato',
+	'datedescr' => 'Du kan søge efter en hvilken som helst dato. Kriterierne kan være: År, år og måned eller som en komplet dato. ' . //
 		'Uden information bliver alt gennemsøgt.',
 
 	'fset3' => 'Søg i kategorier',
@@ -64,7 +64,7 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by'	=> 'Indsendt af',
+	'posted_by' => 'Indsendt af',
 	'at' => 'på'
 );
 
@@ -95,10 +95,10 @@ $lang ['404error'] = array(
 // Login
 $lang ['login'] = array(
 	'head' => 'Log ind',
-	'fieldset1'	=> 'Indtast venligst bruger og adgangskode',
+	'fieldset1' => 'Indtast venligst bruger og adgangskode',
 	'user' => 'Bruger:',
 	'pass' => 'Adgangskode:',
-	'fieldset2'	=> 'Log ind',
+	'fieldset2' => 'Log ind',
 	'submit' => 'Log ind',
 	'forgot' => 'Glemt adgangskode'
 );
@@ -115,25 +115,26 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Angiv venligst bruger.',
 	'pass' => 'Indtast venligst adgangskode.',
-	'match' => 'Bruger eller adgangskode er forkert.'
+	'match' => 'Bruger eller adgangskode er forkert.',
+	'timeout' => 'Vent venligst 30 sekunder, før du prøver igen.'
 );
 
 $lang ['comments'] = array(
 	'head' => 'Tilføj kommentar',
 	'descr' => 'Felterne Navn og Kommentar er obligatoriske.',
-	'fieldset1'	=> 'Dine oplysninger',
+	'fieldset1' => 'Dine oplysninger',
 	'name' => 'Navn (nødvendigt)',
 	'email' => 'E-mail-adresse (vil ikke blive offentliggjort):',
 	'www' => 'Hjemmeside (valgfri):',
 	'cookie' => 'Husk datoer til næste gang',
-	'fieldset2'	=> 'Skriv en kommentar',
+	'fieldset2' => 'Skriv en kommentar',
 	'comment' => 'Kommentar:',
-	'fieldset3'	=> 'Send',
+	'fieldset3' => 'Send',
 	'submit' => 'Send',
 	'reset' => 'Nulstil',
 	'success' => 'Din kommentar blev tilføjet med succes',
 	'nocomments' => 'Ingen kommentarer tilgængelige endnu',
-	'commslock'	=> 'Ingen kommentarer er mulige til denne post'
+	'commslock' => 'Ingen kommentarer er mulige til denne post'
 );
 
 $lang ['comments'] ['error'] = array(
@@ -160,7 +161,7 @@ $lang ['date'] ['month'] = array(
 	'September',
 	'Oktober',
 	'November',
-	'December'	
+	'December'
 );
 
 $lang ['date'] ['month_abbr'] = array(

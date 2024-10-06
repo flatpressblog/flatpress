@@ -28,13 +28,13 @@ $lang ['main'] = array(
 
 $lang ['search'] = array(
 	'head' => 'Suchen',
-	'fset1'	=> 'Suchkriterien einfügen',
+	'fset1' => 'Suchkriterien einfügen',
 	'keywords' => 'Suchwörter',
 	'onlytitles' => 'Nur Titel suchen',
 	'fulltext' => 'Volltextsuche',
 
-	'fset2'	=> 'Suche nach Datum',
-	'datedescr'	=> 'Du kannst nach einem beliebigen Datum suchen. Kriterien können sein: Jahr, Jahr und Monat oder als komplettes Datum. ' . //
+	'fset2' => 'Suche nach Datum',
+	'datedescr' => 'Du kannst nach einem beliebigen Datum suchen. Kriterien können sein: Jahr, Jahr und Monat oder als komplettes Datum. ' . //
 		'Ohne Angaben wird alles durchsucht.',
 
 	'fset3' => 'In Kategorien suchen',
@@ -95,10 +95,10 @@ $lang ['404error'] = array(
 // Login
 $lang ['login'] = array(
 	'head' => 'Anmelden',
-	'fieldset1'	=> 'Bitte Benutzer und Passwort eingeben',
+	'fieldset1' => 'Bitte Benutzer und Passwort eingeben',
 	'user' => 'Benutzer:',
 	'pass' => 'Passwort:',
-	'fieldset2'	=> 'Einloggen',
+	'fieldset2' => 'Einloggen',
 	'submit' => 'Anmelden',
 	'forgot' => 'Passwort vergessen'
 );
@@ -115,13 +115,14 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Bitte Benutzer angeben.',
 	'pass' => 'Bitte Passwort eingeben.',
-	'match' => 'Benutzer oder Passwort sind falsch.'
+	'match' => 'Benutzer oder Passwort sind falsch.',
+	'timeout' => 'Bitte warte 30 Sekunden, bevor du es erneut versuchst.'
 );
 
 $lang ['comments'] = array(
 	'head' => 'Kommentar hinzufügen',
 	'descr' => 'Die Felder Name und Kommentar sind Pflichtfelder.',
-	'fieldset1'	=> 'Deine Angaben',
+	'fieldset1' => 'Deine Angaben',
 	'name' => 'Name (notwendig)',
 	'email' => 'E-Mail Adresse (wird nicht veröffentlicht):',
 	'www' => 'Website (optional):',

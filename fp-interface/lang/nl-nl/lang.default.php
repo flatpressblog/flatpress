@@ -64,7 +64,7 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by'	=> 'Geplaatst door',
+	'posted_by' => 'Geplaatst door',
 	'at' => 'om'
 );
 
@@ -115,7 +115,8 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Je moet een gebruikersnaam in voeren.',
 	'pass' => 'Je moet een wachtwoord invoeren.',
-	'match' => 'Wachtwoord is fout.'
+	'match' => 'Wachtwoord is fout.',
+	'timeout' => 'Wacht 30 seconden voordat u het opnieuw probeert.'
 );
 
 $lang ['comments'] = array(

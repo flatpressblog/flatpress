@@ -1,7 +1,7 @@
 <?php
 $lang = array();
 
-$lang['main'] = array(
+$lang ['main'] = array(
 	'nextpage' => '次のページ &raquo;',
 	'prevpage' => '&laquo; 前のページ',
 	'entry' => 'ブログ記事',
@@ -26,25 +26,25 @@ $lang['main'] = array(
 	'atom' => 'Atomフィードを購読する'
 );
 
-$lang['search'] = array(
+$lang ['search'] = array(
 	'head' => '検索',
-	'fset1'	=> '検索キーワードの指定',
+	'fset1' => '検索キーワードの指定',
 	'keywords' => 'キーワード',
 	'onlytitles' => 'タイトルのみを検索',
 	'fulltext' => '全文から検索',
 
-	'fset2'	=> '日付の指定',
-	'datedescr'	=> '日付で絞り込み指定できます。年、年月、年月日を指定できます。 ' . //
+	'fset2' => '日付の指定',
+	'datedescr' => '日付で絞り込み指定できます。年、年月、年月日を指定できます。 ' . //
 		'日付の指定をしない場合は、空欄にしてください。',
 
 	'fset3' => 'カテゴリで検索',
 	'catdescr' => '全カテゴリから検索する場合は、いずれも選ばないでください。',
 
-	'fset4'	=> '検索を開始',
+	'fset4' => '検索を開始',
 	'submit' => '検索する',
 
 	'headres' => '検索結果',
-	'descrres'	=> '<strong>%s</strong> の検索結果:',
+	'descrres' => '<strong>%s</strong> の検索結果:',
 	'descrnores' => '<strong>%s</strong> で検索しましたが、見つかりませんでした。',
 
 	'moreopts' => '追加オプション',
@@ -52,7 +52,7 @@ $lang['search'] = array(
 	'searchag' => '再検索'
 );
 
-$lang['search']['error'] = array(
+$lang ['search'] ['error'] = array(
 
 	'keywords' => '検索キーワードを記入してください'
 );
@@ -65,20 +65,20 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by'	=> '投稿者',
+	'posted_by' => '投稿者',
 	'at' => 'at'
 );
 
-$lang['entry'] = array();
-$lang['entry']['flags'] = array();
+$lang ['entry'] = array();
+$lang ['entry'] ['flags'] = array();
 
-$lang['entry']['flags']['long'] = array(
+$lang ['entry'] ['flags'] ['long'] = array(
 	'draft' => '<strong>下書き記事</strong>: 公開されません',
 	//'static' => '<strong>Static entry</strong>: normally hidden, to reach the entry put ?page=title-of-the-entry in url (experimental)',
 	'commslock' => '<strong>コメント保護</strong>: コメントを記入できません'
 );
 
-$lang['entry']['flags']['short'] = array(
+$lang ['entry'] ['flags'] ['short'] = array(
 	'draft' => '下書き',
 	//'static' => 'Static',
 	'commslock' => 'コメント保護'
@@ -88,23 +88,23 @@ $lang ['entry'] ['categories'] = array(
 	'unfiled' => 'カテゴリが指定されていません'
 );
 
-$lang['404error'] = array(
+$lang ['404error'] = array(
 	'subject' => 'ページが見つかりません',
 	'content' => '<p>要求されたページを見つけることができませんでした。</p>'
 );
 
 // Login
-$lang['login'] = array(
+$lang ['login'] = array(
 	'head' => 'ログイン',
-	'fieldset1'	=> 'ユーザー名とパスワードを入力してください',
+	'fieldset1' => 'ユーザー名とパスワードを入力してください',
 	'user' => 'ユーザー名:',
 	'pass' => 'パスワード:',
-	'fieldset2'	=> 'ログイン実行',
+	'fieldset2' => 'ログイン実行',
 	'submit' => 'ログインする',
 	'forgot' => 'パスワードを忘れた'
 );
 
-$lang['login']['success'] = array(
+$lang ['login'] ['success'] = array(
 	'success' => 'ログインしました。',
 	'logout' => 'ログアウトしました。',
 	'redirect' => '5秒後にリダイレクトされます。',
@@ -113,31 +113,32 @@ $lang['login']['success'] = array(
 	'opt3' => 'ブログ記事を新規作成する'
 );
 
-$lang['login']['error'] = array(
+$lang ['login'] ['error'] = array(
 	'user' => 'ユーザー名を記入してください。',
 	'pass' => 'パスワードを記入してください。',
-	'match' => 'パスワードが正しくありません。'
+	'match' => 'パスワードが正しくありません。',
+	'timeout' => '再試行する前に30秒間お待ちください。'
 );
 
-$lang['comments'] = array(
+$lang ['comments'] = array(
 	'head' => 'コメント記入',
 	'descr' => '次のフォームにコメントを記入してください。',
-	'fieldset1'	=> 'プロフィールのご記入',
+	'fieldset1' => 'プロフィールのご記入',
 	'name' => 'お名前 (*)',
 	'email' => 'メールアドレス:',
 	'www' => 'URL:',
 	'cookie' => 'ブラウザに記憶させる',
-	'fieldset2'	=> 'コメントのご記入',
+	'fieldset2' => 'コメントのご記入',
 	'comment' => 'コメント (*):',
-	'fieldset3'	=> '送信',
+	'fieldset3' => '送信',
 	'submit' => '送信する',
 	'reset' => 'リセット',
 	'success' => 'コメントが投稿されました。',
 	'nocomments' => 'まだコメントがついていません。',
-	'commslock'	=> 'コメントを記入することはできません。'
+	'commslock' => 'コメントを記入することはできません。'
 );
 
-$lang['comments']['error'] = array(
+$lang ['comments'] ['error'] = array(
 	'name' => 'お名前を記入してください。',
 	'email' => 'メールアドレスを正しく記入してください。',
 	'www' => 'URLを正しく入力してください。',
@@ -149,7 +150,7 @@ $lang ['postviews'] = array(
 	'views' => '呼び出す'
 );
 
-$lang['date']['month'] = array(
+$lang ['date'] ['month'] = array(
 	'1月',
 	'2月',
 	'3月',
@@ -164,7 +165,7 @@ $lang['date']['month'] = array(
 	'12月'
 );
 
-$lang['date']['month_abbr'] = array(
+$lang ['date'] ['month_abbr'] = array(
 	'1月',
 	'2月',
 	'3月',
@@ -179,7 +180,7 @@ $lang['date']['month_abbr'] = array(
 	'12月'
 );
 
-$lang['date']['weekday'] = array(
+$lang ['date'] ['weekday'] = array(
 	'日曜日',
 	'月曜日',
 	'火曜日',
@@ -189,7 +190,7 @@ $lang['date']['weekday'] = array(
 	'土曜日'
 );
 
-$lang['date']['weekday_abbr'] = array(
+$lang ['date'] ['weekday_abbr'] = array(
 	'日',
 	'月',
 	'火',

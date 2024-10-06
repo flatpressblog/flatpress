@@ -58,13 +58,13 @@ $lang ['search'] ['error'] = array(
 
 $lang ['staticauthor'] = array(
 	// "Published by" in static pages
-	'published_by'	=> 'Опубликовано пользователем',
+	'published_by' => 'Опубликовано пользователем',
 	'on' => ''
 );
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by'	=> 'Размещено пользователем',
+	'posted_by' => 'Размещено пользователем',
 	'at' => 'в'
 );
 
@@ -115,7 +115,8 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Необходимо ввести имя пользователя.',
 	'pass' => 'Необходимо ввести пароль.',
-	'match' => 'Пароль неверный.'
+	'match' => 'Пароль неверный.',
+	'timeout' => 'Пожалуйста, подождите 30 секунд, прежде чем повторить попытку.'
 );
 
 $lang ['comments'] = array(
@@ -145,7 +146,7 @@ $lang ['comments'] ['error'] = array(
 
 $lang ['postviews'] = array(
 	// PostView-Plugin
-	'views'	=> 'просмотры',
+	'views' => 'просмотры',
 );
 
 $lang ['date'] ['month'] = array(

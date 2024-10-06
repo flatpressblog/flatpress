@@ -64,7 +64,7 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by'	=> 'Posted by',
+	'posted_by' => 'Posted by',
 	'at' => 'at'
 );
 
@@ -115,7 +115,8 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'You must enter a username.',
 	'pass' => 'You must enter a password.',
-	'match' => 'Password incorrect.'
+	'match' => 'Password incorrect.',
+	'timeout' => 'Please wait 30 seconds before trying again.'
 );
 
 $lang ['comments'] = array(
@@ -145,7 +146,7 @@ $lang ['comments'] ['error'] = array(
 
 $lang ['postviews'] = array(
 	// PostView-Plugin
-	'views'	=> 'views',
+	'views' => 'views',
 );
 
 $lang ['date'] ['month'] = array(
