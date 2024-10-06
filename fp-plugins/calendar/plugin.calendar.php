@@ -15,9 +15,18 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 
 	global $fp_config;
 	$characterset = $fp_config ['general'] ['charset'];
+	$lang = $fp_config ['locale'] ['lang'];
 
 	// First day of the month
 	$first_of_month = gmmktime(0, 0, 0, $month, 1, $year);
+
+	// First day of the Week
+	set_locale();
+	if (strpos($lang, 'en-us') !== false || strpos($lang, 'ja-jp') !== false) {
+		$first_day = 0; // Sunday
+	} else {
+		$first_day = 1; // Monday
+	}
 
 	// Generate all the day names according to the current locale
 	$day_names = array();
@@ -58,7 +67,7 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 			$weekday = 0; // Start a new week
 			$calendar .= "</tr>\n<tr>";
 		}
-		if (isset($days [$day]) and is_array($days [$day])) {
+		if (isset($days [$day]) && is_array($days [$day])) {
 			@list($link, $classes, $content) = $days [$day];
 			if (is_null($content)) {
 				$content = $day;
@@ -83,6 +92,11 @@ function plugin_calendar_widget() {
 	// Determine the current year and month
 	$y = isset($fp_params ['y']) ? $fp_params ['y'] : date('Y');
 	$m = isset($fp_params ['m']) ? $fp_params ['m'] : date('m');
+
+	// Shorten $y to two digits if four digits
+	if (strlen($y) === 4) {
+		$y = substr($y, 2);
+	}
 
 	global $fpdb;
 
