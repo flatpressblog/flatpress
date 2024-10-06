@@ -14,14 +14,16 @@
 function generate_calendar($year, $month, $days = array(), $day_name_length = 3, $month_href = null, $first_day = 0, $pn = array()) {
 
 	global $fp_config;
+
+	// Read the language settings and set the locale
 	$characterset = $fp_config ['general'] ['charset'];
 	$lang = $fp_config ['locale'] ['lang'];
+	set_locale();
 
 	// First day of the month
 	$first_of_month = gmmktime(0, 0, 0, $month, 1, $year);
 
 	// First day of the Week
-	set_locale();
 	if (strpos($lang, 'en-us') !== false || strpos($lang, 'ja-jp') !== false) {
 		$first_day = 0; // Sunday
 	} else {
