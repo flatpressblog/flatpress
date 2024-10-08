@@ -7,8 +7,9 @@ $tpl = 'default.tpl';
 function login_validate() {
 	global $smarty, $lang;
 
-	$user = trim(htmlspecialchars(@$_POST ['user']));
-	$pass = trim(htmlspecialchars(@$_POST ['pass']));
+	// Sanitization of the inputs
+	$user = trim(filter_input(INPUT_POST, 'user', FILTER_SANITIZE_STRING));
+	$pass = trim(filter_input(INPUT_POST, 'pass', FILTER_SANITIZE_STRING));
 
 	$error = array();
 	$lerr = &$lang ['login'] ['error'];
@@ -102,7 +103,8 @@ function login_main() {
 		if (login_validate()) {
 			utils_redirect('login.php');
 		} else {
-			$smarty->assign($_POST);
+			// Assign sanitized inputs here
+			$smarty->assign('user', $user);
 			$content = (SHARED_TPLS . 'login.tpl');
 		}
 	}
@@ -122,7 +124,7 @@ function login_redirect($url, $secs = 0) {
 
 function login_title($title, $sep) {
 	global $lang;
-	return $title = "$title $sep {$lang['login']['head']}";
+	return "$title $sep {$lang['login']['head']}";
 }
 
 add_filter('wp_title', 'login_title', 10, 2);
