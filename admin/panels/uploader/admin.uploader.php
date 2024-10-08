@@ -13,17 +13,14 @@
  *        
  */
 class admin_uploader extends AdminPanel {
-
 	var $panelname = 'uploader';
 
 	var $actions = array(
 		'default' => true
 	);
-
 }
 
 class admin_uploader_default extends AdminPanelAction {
-
 	var $events = array(
 		'upload'
 	);
@@ -32,6 +29,25 @@ class admin_uploader_default extends AdminPanelAction {
 		if ($f = sess_remove('admin_uploader_files')) {
 			$this->smarty->assign('uploaded_files', $f);
 		}
+	}
+
+function sanitize_filename($filename) {
+	// Allow letters (incl. specific characters), numbers, hyphens, underscores, dots
+	$allowed_chars = '/[^a-zA-Z0-9._-äöüßČčŠšŽžÁáÉéÍíÓóÚúĚěĽľŇňŘřŤťŮůǍǎĎďŇň]/u';
+	$filename = preg_replace($allowed_chars, '', $filename);
+
+	// Make sure that no subsequent dots or hyphens remain
+	$filename = rtrim($filename, "._-");
+
+	return $filename;
+}
+
+	/**
+	 * This function protects against possible attacks by only using the base name of the file name.
+	 */
+	function prevent_directory_traversal($filename) {
+		// Prevents directory traversal through cleanup
+		return basename($filename);
 	}
 
 	function onupload() {
@@ -47,7 +63,7 @@ class admin_uploader_default extends AdminPanelAction {
 		 * 2019-11-23 - laborix
 		 */
 		if (!user_loggedin()) {
-			utils_redirect("login.php");
+			utils_redirect('login.php');
 			die();
 		}
 
@@ -58,6 +74,7 @@ class admin_uploader_default extends AdminPanelAction {
 		if (!file_exists(ATTACHS_DIR)) {
 			fs_mkdir(ATTACHS_DIR);
 		}
+
 		/*
 		 * Blacklist entries from OWASP and
 		 * https://stackoverflow.com/questions/4166762/php-image-upload-security-check-list
@@ -118,15 +135,13 @@ class admin_uploader_default extends AdminPanelAction {
 		$uploaded_files = array();
 		$this->smarty->assign('uploaded_files', $uploaded_files);
 
-		foreach ($_FILES ["upload"] ["error"] as $key => $error) {
-
-			// Upload went wrong -> jump to the next file
+		foreach ($_FILES ['upload'] ['error'] as $key => $error) {
 			if ($error != UPLOAD_ERR_OK) {
 				continue;
 			}
 
-			$tmp_name = $_FILES ["upload"] ["tmp_name"] [$key];
-			$name = $_FILES ["upload"] ["name"] [$key];
+			$tmp_name = $_FILES ['upload'] ['tmp_name'] [$key];
+			$name = $_FILES ['upload'] ['name'] [$key];
 
 			$dir = ATTACHS_DIR;
 
@@ -137,14 +152,15 @@ class admin_uploader_default extends AdminPanelAction {
 			 * 2019-11-24 - laborix
 			 */
 
+			// Prevents directory traversal
+			$name = $this->prevent_directory_traversal($name);
 			$uploadfilename = strtolower($name);
-
-			$isForbidden = false;
-			$deeptest = array();
-			$extcount = 0;
 			$deeptest = explode('.', $uploadfilename);
 			$extcount = count($deeptest);
 
+			$isForbidden = false;
+
+			// Validation of file extensions
 			if ($extcount == 1) {
 				/*
 				 * none extension like .jpg or something else
@@ -161,13 +177,8 @@ class admin_uploader_default extends AdminPanelAction {
 				 * possible filename = .htaccess
 				 * and so on...
 				 */
-				$check_ext1 = "";
 				$check_ext1 = trim($deeptest [1], "\x00..\x1F");
-				if (in_array($check_ext1, $blacklist_extensions)) {
-					$isForbidden = true;
-				} else {
-					$isForbidden = false;
-				}
+				$isForbidden = in_array($check_ext1, $blacklist_extensions);
 			} elseif ($extcount > 2) {
 				/*
 				 * Chekc only the last two possible extensions
@@ -182,31 +193,19 @@ class admin_uploader_default extends AdminPanelAction {
 				 * possible filename = admin.uploader.php.JPg
 				 * and so on...
 				 */
-				$check_ext1 = "";
-				$check_ext2 = "";
 				$check_ext1 = trim($deeptest [$extcount - 1], "\x00..\x1F");
-				if (in_array($check_ext1, $blacklist_extensions)) {
-					$isForbidden = true;
-				} else {
-					$isForbidden = false;
-				}
-				/* Test only if first extension check are not in the blacklist */
-				if (!$isForbidden) {
-					$check_ext2 = trim($deeptest [$extcount - 2], "\x00..\x1F");
-					if (in_array($check_ext2, $blacklist_extensions)) {
-						$isForbidden = true;
-					} else {
-						$isForbidden = false;
-					}
-				}
+				$check_ext2 = trim($deeptest [$extcount - 2], "\x00..\x1F");
+				$isForbidden = in_array($check_ext1, $blacklist_extensions) || in_array($check_ext2, $blacklist_extensions);
 			}
-			/*
-			 * If one blacklisted extension found then
-			 * return with -1 = An error occurred while trying to upload.
-			 */
+
 			if ($isForbidden) {
 				$this->smarty->assign('success', $success ? 1 : -1);
 				sess_add('admin_uploader_files', $uploaded_files);
+				return -1;
+			}
+
+			// MIME type check
+			if (!function_exists('finfo_open')) {
 				return -1;
 			}
 
@@ -217,18 +216,15 @@ class admin_uploader_default extends AdminPanelAction {
 			 *
 			 * 2019-11-24 - laborix
 			 */
-			if (version_compare(PHP_VERSION, '5.3.0') < 0) {
-				return -1;
-			}
-			if (!function_exists('finfo_open')) {
-				return -1;
-			}
-
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$mime = finfo_file($finfo, $tmp_name);
 			finfo_close($finfo);
 
-			if (($mime == "text/x-php") || ($mime == "text/html")) {
+			/*
+			 * If one blacklisted extension found then
+			 * return with -1 = An error occurred while trying to upload.
+			 */
+			if (in_array($mime, array('text/x-php', 'text/html'))) {
 				$this->smarty->assign('success', $success ? 1 : -1);
 				sess_add('admin_uploader_files', $uploaded_files);
 				return -1;
@@ -240,7 +236,8 @@ class admin_uploader_default extends AdminPanelAction {
 				$dir = IMAGES_DIR;
 			}
 
-			$name = sanitize_title(substr($name, 0, -strlen($ext))) . $ext;
+			// Sanitizing the file name
+			$name = $this->sanitize_filename(substr($name, 0, -strlen($ext))) . $ext;
 
 			$target = "$dir/$name";
 			@umask(022);
@@ -249,7 +246,7 @@ class admin_uploader_default extends AdminPanelAction {
 
 			$uploaded_files [] = $name;
 
-			// one failure will make $success == false :)
+			// One failure will make $success == false :)
 			$success &= $success;
 		}
 
@@ -260,7 +257,5 @@ class admin_uploader_default extends AdminPanelAction {
 
 		return 1;
 	}
-
 }
-
 ?>
