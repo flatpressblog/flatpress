@@ -4,12 +4,16 @@ require_once INCLUDES_DIR . 'includes.php';
 
 $tpl = 'default.tpl';
 
+function sanitize_input($input) {
+	return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+}
+
 function login_validate() {
 	global $smarty, $lang;
 
 	// Sanitization of the inputs
-	$user = trim(filter_input(INPUT_POST, 'user', FILTER_SANITIZE_STRING));
-	$pass = trim(filter_input(INPUT_POST, 'pass', FILTER_SANITIZE_STRING));
+	$user = sanitize_input(filter_input(INPUT_POST, 'user'));
+	$pass = sanitize_input(filter_input(INPUT_POST, 'pass'));
 
 	$error = array();
 	$lerr = &$lang ['login'] ['error'];
@@ -51,7 +55,6 @@ function login_head() {
 
 add_action('wp_head', 'login_head');
 
-
 function login_main() {
 	global $lang, $smarty;
 
@@ -61,7 +64,6 @@ function login_main() {
 	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
 
 	if (user_loggedin()) {
-
 		if (isset($_GET ['do']) && ($_GET ['do'] == 'logout')) {
 			user_logout();
 
@@ -74,7 +76,6 @@ function login_main() {
 
 			$content = (SHARED_TPLS . 'login.tpl');
 		} elseif (user_loggedin()) {
-
 			function myredirect() {
 				// login redirects to Admin Area
 				login_redirect('admin.php');
@@ -84,11 +85,9 @@ function login_main() {
 
 			$content = (SHARED_TPLS . 'login_success.tpl');
 		} else {
-
 			utils_redirect();
 		}
 	} elseif (sess_remove('logout_done')) {
-
 		function myredirect() {
 			// login_redirect('.');
 		}
@@ -104,6 +103,7 @@ function login_main() {
 			utils_redirect('login.php');
 		} else {
 			// Assign sanitized inputs here
+			global $user;
 			$smarty->assign('user', $user);
 			$content = (SHARED_TPLS . 'login.tpl');
 		}
