@@ -31,16 +31,16 @@ class admin_uploader_default extends AdminPanelAction {
 		}
 	}
 
-function sanitize_filename($filename) {
-	// Allow letters (incl. specific characters), numbers, hyphens, underscores, dots
-	$allowed_chars = '/[^a-zA-Z0-9._-äöüßČčŠšŽžÁáÉéÍíÓóÚúĚěĽľŇňŘřŤťŮůǍǎĎďŇň]/u';
-	$filename = preg_replace($allowed_chars, '', $filename);
+	function sanitize_filename($filename) {
+		// Allow letters (incl. specific characters), numbers, hyphens, underscores, dots
+		$allowed_chars = '/[^a-zA-Z0-9._-äöüßČčŠšŽžÁáÉéÍíÓóÚúĚěĽľŇňŘřŤťŮůǍǎĎďŇň]/u';
+		$filename = preg_replace($allowed_chars, '', $filename);
 
-	// Make sure that no subsequent dots or hyphens remain
-	$filename = rtrim($filename, "._-");
+		// Make sure that no subsequent dots or hyphens remain
+		$filename = rtrim($filename, "._-");
 
-	return $filename;
-}
+		return $filename;
+	}
 
 	/**
 	 * This function protects against possible attacks by only using the base name of the file name.
