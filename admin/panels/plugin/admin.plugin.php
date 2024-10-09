@@ -46,7 +46,8 @@ class admin_plugin_default extends AdminPanelAction {
 	var $fp_plugins;
 
 	function setup() {
-		$this->pluginid = isset($_GET ['plugin']) ? $_GET ['plugin'] : null;
+		// Input validation coming from $_POST or $_GET to avoid XSS
+		$this->pluginid = isset($_GET ['plugin']) ? sanitize_text_field($_GET ['plugin']) : null;
 
 		$pi = new plugin_indexer();
 		$plist = $pi->getList();
