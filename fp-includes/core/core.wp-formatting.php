@@ -499,6 +499,40 @@ function sanitize_title($title, $fallback_title = '') {
 	return $title;
 }
 
+/**
+ * Remove potentially dangerous or unwanted characters from user input.
+ */
+// Convert HTML characters to entities
+function sanitize_text_field( $str ) {
+	// Removes HTML tags
+	$str = strip_all_tags( $str );
+	// Normalizes line breaks
+	$str = preg_replace( '/[\r\n]+/', "\n", $str );
+	// Removes spaces at the beginning and end
+	$str = trim( $str );
+
+	// Sanitizing
+	return apply_filters( 'sanitize_text_field', $str );
+}
+
+// Replaces non-breaking spaces
+function strip_all_tags( $string, $remove_empty = false ) {
+	// Removes tags
+	$string = preg_replace( '/<[^>]*>/', '', $string );
+	// Replaces non-breaking spaces
+	$string = str_replace( '&nbsp;', ' ', $string );
+
+	// Optional removal of empty strings
+	if ( $remove_empty ) {
+		$string = trim( $string );
+		if ( '' === $string ) {
+			return '';
+		}
+	}
+
+	return $string;
+}
+
 function sanitize_title_with_dashes($title) {
 	$title = strip_tags($title);
 	// Preserve escaped octets.
