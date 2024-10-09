@@ -20,7 +20,7 @@
 		var $page;
 
 		function setup() {
-			$this->page = @($_REQUEST ['page']);
+			$this->page = isset($_REQUEST ['page']) ? sanitize_text_field($_REQUEST ['page']) : null;
 			$this->smarty->assign('pageid', $this->page);
 		}
 
