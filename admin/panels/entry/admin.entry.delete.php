@@ -10,7 +10,7 @@
  * Input:
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
- *        
+ *
  */
 class admin_entry_delete extends AdminPanelAction {
 
