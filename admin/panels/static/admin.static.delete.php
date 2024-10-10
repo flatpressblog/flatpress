@@ -1,7 +1,7 @@
 <?php
 
 /**
- * edit entry panel
+ * static delete panel
  *
  * Type:     
  * Name:     
