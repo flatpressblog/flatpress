@@ -191,10 +191,15 @@ function is_https() {
 	if (isset($_SERVER ['HTTPS']) && !empty($_SERVER ['HTTPS'])) {
 		return true;
 	}
-	// HTTPS called reverse proxy / load balancer
-	if (!empty($_SERVER ['HTTP_X_FORWARDED_PROTO']) && $_SERVER ['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER ['HTTP_X_FORWARDED_SSL']) && $_SERVER ['HTTP_X_FORWARDED_SSL'] == 'on') {
+	// Check for reverse proxy or load balancer
+	if (!empty($_SERVER ['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER ['HTTP_X_FORWARDED_PROTO']) === 'https') {
+		return true;
+	}
+	// Other headers that could be used with proxies
+	if (!empty($_SERVER ['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER ['HTTP_X_FORWARDED_SSL']) === 'on') {
 		return true;
 	}
 	// none of the above: must be HTTP
 	return false;
 }
+
