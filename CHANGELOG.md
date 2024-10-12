@@ -32,7 +32,8 @@
 - SEO Meta Tag Info plugin: update to version 2.2.4
   - Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
   - If an HTTP root directory is stored in the server configuration file and is not empty, a predefined robots.txt can be created and edited via the SEO panel in the admin area. ([#427](https://github.com/flatpressblog/flatpress/pull/427))
-- FavIcon plugin: Support for iOS Safari, Android Chrome, Windows 10 and Mac OS Safari added ([#416](https://github.com/flatpressblog/flatpress/pull/416), [#428](https://github.com/flatpressblog/flatpress/pull/428))
+- FavIcon plugin: update to  version 1.1.0
+  - Support for iOS Safari, Android Chrome, Windows 10 and Mac OS Safari added ([#416](https://github.com/flatpressblog/flatpress/pull/416), [#428](https://github.com/flatpressblog/flatpress/pull/428))
 - BBcode plugin: update to version 1.9.0
   - The editor toolbar can be deactivated again as in version 1.2.1 when using an alternative editor (e.g. [Wysiwyg editor](https://wiki.flatpress.org/res:plugins:ckeditor)). ([#436](https://github.com/flatpressblog/flatpress/pull/436))
   - BBcode toolbar, if BBcode for comments is allowed ([#437](https://github.com/flatpressblog/flatpress/pull/437))
@@ -45,7 +46,7 @@
   - BBcode create a valid simple URL ([#442](https://github.com/flatpressblog/flatpress/issues/442))
 - DateChanger plugin: Update to version 1.0.6
   - Correct date format in the DateChanger toolbar for the languages Czech, English, Japanese and Russian. Hidden reported by [NHWS](https://nhws.localinfo.jp/). Many thanks for testing to [WineMan from the support forum](https://forum.flatpress.org/viewtopic.php?p=2823#p2829)
-- Calendar plugin: Update to Version 1.2.0
+- Calendar plugin: Update to version 1.2.0
   - Two new functions which only output a “Next” or “Previous” link if there is at least one entry in the month. ([#128](https://github.com/flatpressblog/flatpress/issues/128))
   - The “Next”, “Previous” and “Day” links now always contain a 4-digit year.
   - The set language is now taken into account when determining the first day of the week. ([#73](https://github.com/flatpressblog/flatpress/issues/73))
