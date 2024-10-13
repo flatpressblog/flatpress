@@ -27,7 +27,7 @@
 
 ## Plugins
 ### Additions
-- GDPR Video embed: Simple two-click solution for GDPR-compliant embedding of YouTube and Vimeo videos. ([#260](https://github.com/flatpressblog/flatpress/issues/260))
+- GDPR Video embed: Simple two-click solution for GDPR-compliant embedding of YouTube, Facebook and Vimeo videos. ([#260](https://github.com/flatpressblog/flatpress/issues/260))
 
 ### Changes
 - SEO Meta Tag Info plugin: update to version 2.2.4
