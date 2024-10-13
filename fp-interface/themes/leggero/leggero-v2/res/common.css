@@ -264,8 +264,7 @@ h4 { font-size: 1.2em }
 
 	.bbcode_video.right, .bbcode_video.left { float: unset !IMPORTANT }	
 
-	.responsive_bbcode_video,
-	.responsive_bbcode_fb-video { /* BBcode; normal and center BBcode video if screen < 960px */
+	.responsive_bbcode_video { /* BBcode; normal and center BBcode video if screen < 960px */
 		display: block;
 		text-align: center
 	}
@@ -303,8 +302,7 @@ h4 { font-size: 1.2em }
 
 	#main { width: 605px }
 
-	.responsive_bbcode_video,
-	.responsive_bbcode_fb-video { text-align: unset }
+	.responsive_bbcode_video { text-align: unset }
 
 	.bbcode_video.right { float: right !IMPORTANT; margin: 0.5em 0.5em 1em 1em }
 
@@ -378,8 +376,7 @@ h4 { font-size: 1.2em }
 
 	.img-gallery div.photoswipe figure { margin: 0.5em 0 0 0 !IMPORTANT }
 
-	.responsive_bbcode_video,
-	.responsive_bbcode_fb-video { /* BBcode; responsive */
+	.responsive_bbcode_video { /* BBcode; responsive */
 		position: relative;
 		max-width: 99%;
 		aspect-ratio: 1.777 / 1
@@ -503,8 +500,7 @@ h4#addcomment { clear: both }
 
 	.bbcode_video:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
 
-	.responsive_bbcode_video,
-	.responsive_bbcode_fb-video { margin: 0 auto }
+	.responsive_bbcode_video { margin: 0 auto }
 
 	.navigation { /* next entries & previous entries link */
 		font-size: 90%;
