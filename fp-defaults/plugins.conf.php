@@ -34,7 +34,8 @@ $fp_plugins = array(
 	'support', // Provides the FlatPress admin and the community with all relevant data in case of problems.
 	'gallerycaptions',
 	'photoswipe',
-	'fpprotect' // Hardens your blog with additional features in the HTTP response header.
+	'fpprotect', // Hardens your blog with additional features in the HTTP response header.
 		// Removes the htaccess editor from the PrettyURLs plugin.
+	'gdprvideoembed' // Simple two-click solution for GDPR-compliant embedding of YouTube, Facebook and Vimeo videos.
 );
 ?>
