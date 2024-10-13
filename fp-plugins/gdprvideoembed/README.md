@@ -1,8 +1,8 @@
 # DSGVO Video-Embed
 
-Einfache Zwei-Klick-Lösung zur DSGVO-konformen Einbettung von YouTube- und Vimeo-Videos.
+Einfache Zwei-Klick-Lösung zur DSGVO-konformen Einbettung von YouTube- Facebook und Vimeo- Videos.
 
-Dieses Skript ersetzt alle eingebetteten Videos von YouTube und Vimeo durch den Hinweis, dass es sich um eingebettete Videos handelt, welche beim Abspielen Daten an den Video-Betreiber senden. Es wird ein externer Link zum Video auf der Betreiberseite angezeigt sowie ein Button, mit dem das Video trotzdem eingebettet abgespielt werden kann.  
+Dieses Skript ersetzt alle eingebetteten Videos von YouTube, Facebook und Vimeo durch den Hinweis, dass es sich um eingebettete Videos handelt, welche beim Abspielen Daten an den Video-Betreiber senden. Es wird ein externer Link zum Video auf der Betreiberseite angezeigt sowie ein Button, mit dem das Video trotzdem eingebettet abgespielt werden kann.  
 Normal eingebettete YouTube-Videos werden durch solche mit „erweitertem Datenschutzmodus“ ersetzt.
 
 **Wichtig:**

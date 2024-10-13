@@ -3,7 +3,6 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 
 	// for translated content in script file
 	'head_youtube' => 'Vídeo de YouTube incrustado',
-
 	'hint_youtube' => '<p><b>Nota:</b> Este vídeo incrustado es proporcionado por YouTube, LLC, 901 Cherry Ave, San Bruno, CA 94066, USA.<br>' .//
 		'Durante la reproducción se establece una conexión con los servidores de YouTube. Esto le dice a YouTube qué páginas está visitando. ' . //
 		'Si has iniciado sesión en tu cuenta de YouTube, YouTube puede asignarte personalmente tu comportamiento de navegación. ' . //
@@ -25,6 +24,16 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 		'<p>Para más información sobre la protección de datos en „Vimeo“, consulte la política de privacidad del proveedor en: ' . //
 		'<a href="https://vimeo.com/privacy" title="Ir a https://vimeo.com/privacy" rel="noopener" target="_blank">https://vimeo.com/privacy</a></p>',
 	'link_title_vimeo' => 'Ver el vídeo en Vimeo',
+
+	'head_facebook' => 'Vídeo Facebook incrustado',
+	'hint_facebook' => '<p><b>Nota:</b> Este vídeo incrustado es proporcionado por Facebook, Inc, 1 Hacker Way, Menlo Park, CA 94025, USA.<br>' . //
+		'Cuando se reproduce el vídeo, se establece una conexión con los servidores de Facebook. Esto indica a Facebook qué páginas estás visitando. ' . //
+		'Si has iniciado sesión en tu cuenta de Facebook, Facebook puede asignarte personalmente tu comportamiento de navegación. ' . //
+		'Puedes evitarlo desconectándote previamente de tu cuenta de Facebook.</p>' . //
+		'<p>Si se inicia un vídeo de Facebook, el proveedor utiliza cookies que recopilan información sobre el comportamiento del usuario.</p>' . //
+		'<p>Puede encontrar más información sobre la protección de datos en „Facebook“ en la política de privacidad del proveedor en: ' . //
+		'<a href="https://www.facebook.com/policy.php" title="Ir a https://www.facebook.com/policy.php" rel="noopener" target="_blank">https://www.facebook.com/policy.php</a></p>',
+	'link_title_facebook' => 'Ver el vídeo en Facebook',
 
 	'link' => 'Enlace al vídeo',
 	'button_title' => 'Ver vídeo en esta página',

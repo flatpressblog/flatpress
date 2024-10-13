@@ -397,20 +397,39 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	switch ($type) {
 		// YouTube
 		case 'youtube':
-			$output = '<div class="responsive_bbcode_video"><iframe class="bbcode_video bbcode_video_youtube ' . $floatClass . '" ' . $src . '="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture"></iframe></div>';
+			$output = '
+				<div class="responsive_bbcode_video">' . //
+					'<iframe class="bbcode_video bbcode_video_youtube ' . $floatClass . '" ' . //
+						$src . '="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '"' . //
+						'width="' . $width . '" ' . //
+						'height="' . $height . '" ' . //
+						'allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture">' . //
+					'</iframe>' . //
+				'</div>';
 			break;
 		// Vimeo
 		case 'vimeo':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/', '', $vurl ['path']);
-			$output = '<div class="responsive_bbcode_video"><iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" ' . $src . '="https://player.vimeo.com/video/' . $vid . '?dnt=1?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" allow="autoplay; fullscreen"></iframe></div>';
+			$output = '
+				<div class="responsive_bbcode_video">' . //
+					'<iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" ' . //
+						$src . '="https://player.vimeo.com/video/' . $vid . '?dnt=1?color=' . $vid . '&title=0&byline=0&portrait=0" ' . //
+						'width="' . $width . '" ' . //
+						'height="' . $height . '" ' . //
+						'allow="autoplay; fullscreen">' . //
+					'</iframe>' . //
+				'</div>';
 			break;
 		// Facebook
 		case 'facebook':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/video/', '', $vurl ['path']);
 			$output = '
-				<div class="responsive_bbcode_fb-video">' . //
+				<div class="responsive_bbcode_video">' . //
 					'<iframe class="bbcode_video bbcode_video_facebook ' . $floatClass . '" ' . //
-						'src="https://www.facebook.com/plugins/video.php?height=' . $height . '&href=https://www.facebook.com' . $vid . '&show_text=false&width=' . $width . '&t=0" ' . //
+						$src . '="https://www.facebook.com/plugins/video.php?' . //
+						'height=' . $height . '&' . //
+						'href=https://www.facebook.com' . $vid . '&show_text=false&' . //
+						'width=' . $width . '&t=0" ' . //
 						'width="' . $width . '" ' . //
 						'height="' . $height . '" ' . //
 						'style="border: none; overflow: hidden" ' . //

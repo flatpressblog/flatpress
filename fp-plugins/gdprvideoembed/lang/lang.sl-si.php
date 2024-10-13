@@ -3,7 +3,6 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 
 	// for translated content in script file
 	'head_youtube' => 'Vstavljeni videoposnetek YouTube',
-
 	'hint_youtube' => '<p><b>Note:</b> Ta vdelani videoposnetek zagotavlja YouTube, LLC, 901 Cherry Ave, San Bruno, CA 94066, ZDA.<br>' .//
 		'Med predvajanjem se vzpostavi povezava s strežniki YouTube. Ta sporoča YouTubu, katere strani obiskujete. ' . //
 		'Če ste prijavljeni v svoj račun v YouTubu, lahko YouTube vaše vedenje pri brskanju pripiše vam osebno. ' . //
@@ -25,6 +24,16 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 		'<p>Dodatne informacije o varstvu podatkov pri ponudniku „Vimeo“ so na voljo v njegovem pravilniku o zasebnosti na naslovu: ' . //
 		'<a href="https://vimeo.com/privacy" title="Pojdi na https://vimeo.com/privacy" rel="noopener" target="_blank">https://vimeo.com/privacy</a></p>',
 	'link_title_vimeo' => 'Oglejte si videoposnetek na portalu Vimeo',
+
+	'head_facebook' => 'Vdelani videoposnetek Facebook',
+	'hint_facebook' => '<p><b>Note:</b> Ta vdelani videoposnetek zagotavlja družba Facebook, Inc, 1 Hacker Way, Menlo Park, CA 94025, ZDA.<br>' . //
+		'Ob predvajanju videoposnetka se vzpostavi povezava s Facebookovimi strežniki. S tem Facebook izve, katere strani ste obiskali. ' . //
+		'Če ste prijavljeni v svoj račun na Facebooku, lahko Facebook vaše vedenje pri brskanju po spletu pripiše vam osebno. ' . //
+		'To lahko preprečite tako, da se prej odjavite iz računa Facebook.</p>' . //
+		'<p>Če se zažene videoposnetek na Facebooku, ponudnik uporablja piškotke, ki zbirajo informacije o vedenju uporabnika.</p>' . //
+		'<p>Dodatne informacije o varstvu podatkov v „Facebooku“ najdete v ponudnikovem pravilniku o zasebnosti na naslovu: ' . //
+		'<a href="https://www.facebook.com/policy.php" title="Pojdi na https://www.facebook.com/policy.php" rel="noopener" target="_blank">https://www.facebook.com/policy.php</a></p>',
+	'link_title_facebook' => 'Oglejte si videoposnetek na portalu Facebook',
 
 	'link' => 'Povezava do videoposnetka',
 	'button_title' => 'Oglejte si videoposnetek na tej strani',

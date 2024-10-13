@@ -3,7 +3,6 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 
 	// for translated content in script file
 	'head_youtube' => 'Vložené video YouTube',
-
 	'hint_youtube' => '<p><b>Poznámka:</b> Toto vložené video poskytuje společnost YouTube, LLC, 901 Cherry Ave, San Bruno, CA 94066, USA.<br>' .//
 		'Během přehrávání je navázáno spojení se servery YouTube. Tím se YouTube dozví, které stránky navštěvujete. ' . //
 		'Pokud jste přihlášeni ke svému účtu YouTube, může YouTube přiřadit vaše chování při surfování k vám osobně. ' . //
@@ -25,6 +24,16 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 		'<p>Další informace o ochraně údajů ve službě „Vimeo“ naleznete v zásadách ochrany osobních údajů poskytovatele na adrese.: ' . //
 		'<a href="https://vimeo.com/privacy" title="Přejít na https://vimeo.com/privacy" rel="noopener" target="_blank">https://vimeo.com/privacy</a></p>',
 	'link_title_vimeo' => 'Podívejte se na video na Vimeo',
+
+	'head_facebook' => 'Vložené video Facebook',
+	'hint_facebook' => '<p><b>Poznámka:</b> Toto vložené video poskytuje společnost Facebook, Inc, 1 Hacker Way, Menlo Park, CA 94025, USA.<br>' . //
+		'Při přehrávání videa je navázáno spojení se servery společnosti Facebook. To společnosti Facebook sděluje, které stránky navštěvujete. ' . //
+		'Pokud jste přihlášeni ke svému účtu na Facebooku, může Facebook přiřadit vaše chování při surfování k vám osobně. ' . //
+		'Tomu můžete zabránit tím, že se ze svého účtu na Facebooku předem odhlásíte.</p>' . //
+		'<p>Pokud je spuštěno video na Facebooku, poskytovatel používá soubory cookie, které shromažďují informace o chování uživatele.</p>' . //
+		'<p>Další informace o ochraně údajů na „Facebooku“ najdete v zásadách ochrany osobních údajů poskytovatele na adrese: ' . //
+		'<a href="https://www.facebook.com/policy.php" title="Přejít na https://www.facebook.com/policy.php" rel="noopener" target="_blank">https://www.facebook.com/policy.php</a></p>',
+	'link_title_facebook' => 'Video auf Facebook ansehen',
 
 	'link' => 'Odkaz na video',
 	'button_title' => 'Podívejte se na video na této stránce',

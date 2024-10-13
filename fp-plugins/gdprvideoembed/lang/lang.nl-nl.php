@@ -3,7 +3,6 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 
 	// for translated content in script file
 	'head_youtube' => 'Ingesloten YouTube-video',
-
 	'hint_youtube' => '<p><b>Noot:</b> Deze ingesloten video wordt aangeboden door YouTube, LLC, 901 Cherry Ave, San Bruno, CA 94066, VS.<br>' .//
 		'Tijdens het afspelen wordt er een verbinding gemaakt met de YouTube-servers. Dit vertelt YouTube welke pagina´s je bezoekt. ' . //
 		'Als je bent aangemeld bij je YouTube-account, kan YouTube je surfgedrag aan jou persoonlijk toewijzen. ' . //
@@ -25,6 +24,16 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 		'<p>Meer informatie over gegevensbescherming bij „Vimeo“ is te vinden in het privacybeleid van de provider op: ' . //
 		'<a href="https://vimeo.com/privacy" title="Ga naar https://vimeo.com/privacy" rel="noopener" target="_blank">https://vimeo.com/privacy</a></p>',
 	'link_title_vimeo' => 'Bekijk de video op Vimeo',
+
+	'head_facebook' => 'Ingesloten Facebook-video',
+	'hint_facebook' => '<p><b>Noot:</b> Deze ingesloten video wordt aangeboden door Facebook, Inc, 1 Hacker Way, Menlo Park, CA 94025, Verenigde Staten.<br>' . //
+		'Wanneer de video wordt afgespeeld, wordt er een verbinding gemaakt met de Facebook-servers. Hierdoor weet Facebook welke pagina\'s u bezoekt. ' . //
+		'Als u bent aangemeld bij uw Facebook-account, kan Facebook uw surfgedrag aan u persoonlijk toewijzen. ' . //
+		'Je kunt dit voorkomen door vooraf uit te loggen uit je Facebook-account.</p>' . //
+		'<p>Als een Facebook-video wordt gestart, gebruikt de aanbieder cookies die informatie verzamelen over het gedrag van de gebruiker.</p>' . //
+		'<p>Meer informatie over gegevensbescherming bij „Facebook“ vindt u in het privacybeleid van de aanbieder op: ' . //
+		'<a href="https://www.facebook.com/policy.php" title="Ga naar https://www.facebook.com/policy.php" rel="noopener" target="_blank">https://www.facebook.com/policy.php</a></p>',
+	'link_title_facebook' => 'Bekijk de video op Facebook',
 
 	'link' => 'Link naar de video',
 	'button_title' => 'Bekijk de video op deze pagina',

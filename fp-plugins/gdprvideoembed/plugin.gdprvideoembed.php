@@ -1,10 +1,10 @@
 <?php
 /*
- * Plugin Name: GDPR Video embed 
+ * Plugin Name: GDPR Video embed
  * Plugin URI: https://www.flatpress.org
- * Description: Simple two-click solution for GDPR-compliant embedding of YouTube and Vimeo videos. Part of the standard distribution.
+ * Description: Simple two-click solution for GDPR-compliant embedding of YouTube, Facebook and Vimeo videos. Part of the standard distribution.
  * Author: FlatPress
- * Version: 1.0
+ * Version: 1.1.0
  * Author URI: https://www.flatpress.org
  */
 function plugin_gdprvideoembed_setup() {
@@ -15,7 +15,9 @@ function plugin_gdprvideoembed_head() {
 
 	global $lang;
 	lang_load('plugin:gdprvideoembed');
-	$random_hex = RANDOM_HEX; // Outputs a nonce for inline scripts.
+
+	// Outputs a nonce for inline scripts.
+	$random_hex = RANDOM_HEX;
 	$plugindir = plugin_geturl('gdprvideoembed');
 
 	echo '
@@ -37,6 +39,11 @@ function plugin_gdprvideoembed_head() {
 						'<div>' . $lang ['plugin'] ['gdprvideoembed'] ['hint_vimeo'] . '</div>' . //
 						'<a class="video-link" href="https://vimeo.com/%id%" rel="noopener" target="_blank" ' . //
 							'title="' . $lang ['plugin'] ['gdprvideoembed'] ['link_title_vimeo'] . '">' . $lang ['plugin'] ['gdprvideoembed'] ['link'] . ': https://vimeo.com/%id%</a>' . //
+						'<button title="' . $lang ['plugin'] ['gdprvideoembed'] ['button_title'] . '">' . $lang ['plugin'] ['gdprvideoembed'] ['button'] . '</button>\',
+					facebook: \'<strong>' . $lang ['plugin'] ['gdprvideoembed'] ['head_facebook'] . '</strong>' . //
+						'<div>' . $lang ['plugin'] ['gdprvideoembed'] ['hint_facebook'] . '</div>' . //
+						//'<a class="video-link" href="https://www.facebook.com/%id%" rel="noopener" target="_blank" ' . //
+							//'title="' . $lang ['plugin'] ['gdprvideoembed'] ['link_title_facebook'] . '">' . $lang ['plugin'] ['gdprvideoembed'] ['link'] . ': https://www.facebook.com/%id%</a>' . //
 						'<button title="' . $lang ['plugin'] ['gdprvideoembed'] ['button_title'] . '">' . $lang ['plugin'] ['gdprvideoembed'] ['button'] . '</button>\'
 				};
 				window.video_iframes = [];
@@ -46,8 +53,8 @@ function plugin_gdprvideoembed_head() {
 						video_frame = document.getElementsByTagName(\'iframe\')[0];
 						video_src = video_frame.src || video_frame.dataset.src;
 
-						// Only process video iframes [youtube|vimeo]
-						if (video_src.match(/youtube|vimeo/) == null) {
+						// Only process video iframes [youtube|vimeo|facebook]
+						if (video_src.match(/youtube|vimeo|facebook/) == null) {
 							continue;
 						}
 
@@ -68,8 +75,8 @@ function plugin_gdprvideoembed_head() {
 								}, 1000);
 							}
 						}
-						video_platform = video_src.match(/vimeo/) == null ? \'youtube\' : \'vimeo\';
-						video_id = video_src.match(/(embed|video)\/([^?\s]*)/)[2];
+						video_platform = video_src.match(/(youtube|vimeo|facebook)/)[0];
+						video_id = video_src.match(/(embed|video|videos)\/([^?\s]*)/)[2];
 						responsive_bbcode_video.setAttribute(\'class\', \'video-responsive_bbcode_video\');
 						responsive_bbcode_video.setAttribute(\'data-index\', i);
 						if (video_w && video_h) {
@@ -84,7 +91,6 @@ function plugin_gdprvideoembed_head() {
 								video_iframes[index].src = video_iframes[index].dataset.src;
 								video_iframes[index].removeAttribute(\'data-src\');
 							}
-							// video_iframes[index].src = video_iframes[index].src.replace(/www\.youtube\.com/, \'www.youtube-nocookie.com\');
 							video_frame.parentNode.replaceChild(video_iframes[index], video_frame);
 						}, false);
 					}
