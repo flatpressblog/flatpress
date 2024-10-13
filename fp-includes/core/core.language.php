@@ -119,48 +119,74 @@ function lang_list() {
 function set_locale() {
 	global $fp_config;
 
-	$langId = $fp_config ['locale'] ['lang'];
-
-	$langConfFile = LANG_DIR . $langId . '/lang.conf.php';
-	if (file_exists($langConfFile)) {
-		include_once $langConfFile;
+	// Ensure that the locale configuration exists
+	if (!isset($fp_config ['locale'] ['lang']) || !isset($fp_config ['locale'] ['charset'])) {
+		trigger_error('Locale configuration missing in fp_config.', E_USER_WARNING);
+		return;
 	}
 
-	// As entered in the admin area in the configuration panel -> International settings -> Character set.
+	$langId = $fp_config ['locale'] ['lang'];
 	$charset = $fp_config ['locale'] ['charset'];
 
-	// Read different possible locale names from lang.conf file
+	// Check whether LANG_DIR is defined
+	if (!defined('LANG_DIR')) {
+		trigger_error('LANG_DIR is not defined.', E_USER_WARNING);
+		return;
+	}
+
+	// Creating the path to the language configuration file and securing it
+	$langConfFile = realpath(LANG_DIR . $langId . '/lang.conf.php');
+	if (!$langConfFile || !file_exists($langConfFile)) {
+		trigger_error('Language configuration file not found: ' . $langConfFile, E_USER_WARNING);
+		return;
+	}
+
+	// Integrating the language configuration file and validation
+	$langconf = [];
+	include_once $langConfFile;
+	if (!isset($langconf ['localecountry_a'], $langconf ['localecountry_b'], $langconf ['charsets'], $langconf ['localeshort'])) {
+		trigger_error('Language configuration is incomplete in ' . $langConfFile, E_USER_WARNING);
+		return;
+	}
+
+	// Checking the charset entries
+	$localeCharset_a = $localeCharset_b = $localeCharset_c = $localeCharset_d = '';
+	if (isset($langconf ['charsets'] [0]) && preg_match('/\b' . preg_quote($langconf ['charsets'] [0], '/') . '\b/i', $charset)) {
+		$localeCharset_a = $langconf ['localecharset_a'] ?? ''; // .UTF-8
+		$localeCharset_b = $langconf ['localecharset_b'] ?? ''; // .utf8
+	}
+
+	if (isset($langconf ['charsets'] [1]) && preg_match('/\b' . preg_quote($langconf ['charsets'] [1], '/') . '\b/i', $charset)) {
+		$localeCharset_c = $langconf ['localecharset_c'] ?? ''; // .ISO-8859-15
+		$localeCharset_d = $langconf ['localecharset_d'] ?? ''; // .iso885915
+	}
+
 	$localeCountry_a = $langconf ['localecountry_a']; // de_DE
 	$localeCountry_b = $langconf ['localecountry_b']; // de-DE
-
-	// Entered character set coding available in the lang.conf file?
-	if (preg_match('/\b' . $langconf ['charsets'] [0] . '\b/i', $charset)) {
-		$localeCharset_a = $langconf ['localecharset_a']; // .UTF-8
-		$localeCharset_b = $langconf ['localecharset_b']; // .utf8
-	} else {
-		$localeCharset_a = '';
-		$localeCharset_b = '';
-	}
-
-	if (preg_match('/\b' . $langconf ['charsets'] [1] . '\b/i', $charset)) {
-		$localeCharset_c = $langconf ['localecharset_c']; // .ISO-8859-15
-		$localeCharset_d = $langconf ['localecharset_d']; // .iso885915
-	} else {
-		$localeCharset_c = '';
-		$localeCharset_d = '';
-	}
-
 	$localeShort = $langconf ['localeshort']; // de
 
-	// Check if LC_TIME is set and returns the current locale
-	$currentLocale = @setlocale(LC_TIME, 0);
+	// Check whether LC_TIME is already set
+	$currentLocale = setlocale(LC_TIME, 0);
+	if ($currentLocale === false || !preg_match('/\b' . preg_quote($localeShort, '/') . '\b/i', $currentLocale)) {
+		// If not, then try setting the various possible locale names
+		$currentLocale = setlocale(
+			LC_TIME, //
+			$localeCountry_a . $localeCharset_a, // de_DE.UTF8
+			$localeCountry_a . $localeCharset_b, // de_DE.utf8
+			$localeCountry_a . $localeCharset_c, // de_DE.ISO-8859-15
+			$localeCountry_a . $localeCharset_d, // de_DE.iso885915
+			$localeCountry_a, // de_DE
+			$localeCountry_b, // de-DE
+			$localeShort // de
+		);
 
-	// If LC_TIME is not set or contains something else, but not the correct locale,
-	if ($currentLocale === false || (!preg_match('/\b' . $localeShort . '\b/i', $currentLocale))) {
-		// then try different possible locale names.
-		$currentLocale = @setlocale(LC_TIME, $localeCountry_a . $localeCharset_a, $localeCountry_a . $localeCharset_b, $localeCountry_a . $localeCharset_c, $localeCountry_a . $localeCharset_d, $localeCountry_a, $localeCountry_b, $localeShort);
+		// Debugging message if locale change fails
+		if ($currentLocale === false) {
+			trigger_error('Failed to set locale to: ' . implode(', ', [$localeCountry_a, $localeCountry_b, $localeShort]), E_USER_WARNING);
+		}
 	}
 
-	//echo '<pre>' . strftime_replacement("%B") . '</pre>';
+	// Optional: Debugging output (deactivate in production)
+	// echo '<pre>' . strftime_replacement("%B") . '</pre>';
 }
 ?>
