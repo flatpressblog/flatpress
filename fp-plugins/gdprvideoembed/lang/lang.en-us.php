@@ -3,7 +3,6 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 
 	// for translated content in script file
 	'head_youtube' => 'Embedded YouTube video',
-
 	'hint_youtube' => '<p><b>Note:</b> This embedded video is provided by YouTube, LLC, 901 Cherry Ave, San Bruno, CA 94066, USA.<br>' .//
 		'A connection to the YouTube servers is established during playback. This tells YouTube which pages you are visiting. ' . //
 		'If you are logged into your YouTube account, YouTube can assign your surfing behavior to you personally. ' . //
@@ -25,6 +24,16 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 		'<p>You can find further information on data protection at „Vimeo“ in the provider´s privacy policy at: ' . //
 		'<a href="https://vimeo.com/privacy" title="Go to https://vimeo.com/privacy" rel="noopener" target="_blank">https://vimeo.com/privacy</a></p>',
 	'link_title_vimeo' => 'Watch the video on Vimeo',
+
+	'head_facebook' => 'Embedded Facebook Video',
+	'hint_facebook' => '<p><b>Note:</b> This embedded video is provided by Facebook, Inc, 1 Hacker Way, Menlo Park, CA 94025, USA.<br>' . //
+		'A connection to the Facebook servers is established when the video is played. This tells Facebook which pages you are visiting. ' . //
+		'If you are logged into your Facebook account, Facebook can assign your surfing behavior to you personally. ' . //
+		'You can prevent this by logging out of your Facebook account beforehand.</p>' . //
+		'<p>If a Facebook video is started, the provider uses cookies that collect information about user behavior.</p>' . //
+		'<p>You can find more information on data protection at „Facebook“ in the provider´s privacy policy at: ' . //
+		'<a href="https://www.facebook.com/policy.php" title="Go to https://www.facebook.com/policy.php" rel="noopener" target="_blank">https://www.facebook.com/policy.php</a></p>',
+	'link_title_facebook' => 'Watch the video on Facebook',
 
 	'link' => 'Link to the video',
 	'button_title' => 'Watch video on this page',

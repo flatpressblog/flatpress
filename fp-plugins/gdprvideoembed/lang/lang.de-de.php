@@ -3,7 +3,6 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 
 	// for translated content in script file
 	'head_youtube' => 'Eingebettetes YouTube-Video',
-
 	'hint_youtube' => '<p><b>Hinweis:</b> Dieses eingebettete Video wird von YouTube, LLC, 901 Cherry Ave., San Bruno, CA 94066, USA bereitgestellt.<br>' . //
 		'Beim Abspielen wird eine Verbindung zu den Servern von YouTube hergestellt. Dabei wird YouTube mitgeteilt, welche Seiten du besuchst. ' . //
 		'Wenn du in deinem YouTube-Account eingeloggt bist, kann YouTube dein Surfverhalten dir persönlich zuzuordnen. ' . //
@@ -25,6 +24,16 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 		'<p>Weitere Informationen zum Datenschutz bei „Vimeo“ findest du in der Datenschutzerklärung des Anbieters unter: ' . //
 		'<a href="https://vimeo.com/privacy" title="Gehe zu https://vimeo.com/privacy" rel="noopener" target="_blank">https://vimeo.com/privacy</a></p>',
 	'link_title_vimeo' => 'Video auf Vimeo ansehen',
+
+	'head_facebook' => 'Eingebettetes Facebook-Video',
+	'hint_facebook' => '<p><b>Hinweis:</b> Dieses eingebettete Video wird von Facebook, Inc., 1 Hacker Way, Menlo Park, CA 94025, USA bereitgestellt.<br>' . //
+		'Beim Abspielen wird eine Verbindung zu den Servern von Facebook hergestellt. Dabei wird Facebook mitgeteilt, welche Seiten du besuchst. ' . //
+		'Wenn du in Ihrem Facebook-Account eingeloggt bist, kann Facebook dein Surfverhalten dir persönlich zuzuordnen. ' . //
+		'Dies verhinderst du, indem du dich vorher aus deinem Facebook-Account ausloggst.</p>' . //
+		'<p>Wird ein Facebook-Video gestartet, setzt der Anbieter Cookies ein, die Hinweise über das Nutzerverhalten sammeln.</p>' . //
+		'<p>Weitere Informationen zum Datenschutz bei „Facebook“ findest du in der Datenschutzerklärung des Anbieters unter: ' . //
+		'<a href="https://www.facebook.com/policy.php" title="Gehe zu https://www.facebook.com/policy.php" rel="noopener" target="_blank">https://www.facebook.com/policy.php</a></p>',
+	'link_title_facebook' => 'Video auf Facebook ansehen',
 
 	'link' => 'Link zum Video',
 	'button_title' => 'Video auf dieser Seite ansehen',

@@ -3,7 +3,6 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 
 	// for translated content in script file
 	'head_youtube' => 'Встроенное видео YouTube',
-
 	'hint_youtube' => '<p><b>Примечание:</b> Это встроенное видео предоставлено компанией YouTube, LLC, 901 Cherry Ave, San Bruno, CA 94066, США.<br>' .//
 		'Во время воспроизведения устанавливается соединение с серверами YouTube. Это сообщает YouTube, какие страницы вы посещаете. ' . //
 		'Если вы вошли в свою учетную запись YouTube, YouTube может присвоить ваше поведение при серфинге лично вам. ' . //
@@ -25,6 +24,16 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 		'<p>Дополнительную информацию о защите данных на „Vimeo“ можно найти в политике конфиденциальности провайдера по адресу: ' . //
 		'<a href="https://vimeo.com/privacy" title="Перейти на https://vimeo.com/privacy" rel="noopener" target="_blank">https://vimeo.com/privacy</a></p>',
 	'link_title_vimeo' => 'Смотрите видео на Vimeo',
+
+	'head_facebook' => 'Встроенное видео Facebook',
+	'hint_facebook' => '<p><b>Примечание:</b> Это встроенное видео предоставлено компанией Facebook, Inc, 1 Hacker Way, Menlo Park, CA 94025, USA.<br>' . //
+		'При воспроизведении видео устанавливается соединение с серверами Facebook. Это сообщает Facebook, какие страницы вы посещаете. ' . //
+		'Если вы вошли в свою учетную запись Facebook, Facebook может присвоить ваше поведение на серфинге лично вам. ' . //
+		'Вы можете предотвратить это, предварительно выйдя из своей учетной записи Facebook.</p>' . //
+		'<p>При запуске видео на Facebook провайдер использует файлы cookie, которые собирают информацию о поведении пользователя.</p>' . //
+		'<p>Дополнительную информацию о защите данных в „Facebook“ можно найти в политике конфиденциальности провайдера по адресу: ' . //
+		'<a href="https://www.facebook.com/policy.php" title="Перейти на https://www.facebook.com/policy.php" rel="noopener" target="_blank">https://www.facebook.com/policy.php</a></p>',
+	'link_title_facebook' => 'Смотрите видео на Facebook',
 
 	'link' => 'Ссылка на видео',
 	'button_title' => 'Смотрите видео на этой странице',
