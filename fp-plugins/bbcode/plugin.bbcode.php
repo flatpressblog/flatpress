@@ -427,11 +427,16 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 				<div class="responsive_bbcode_video">' . //
 					'<iframe class="bbcode_video bbcode_video_facebook ' . $floatClass . '" ' . //
 						$src . '="https://www.facebook.com/plugins/video.php?' . //
-						'height=' . $height . '&' . //
-						'href=https://www.facebook.com' . $vid . '&show_text=false&' . //
-						'width=' . $width . '&t=0" ' . //
+						'width=' . $width . //
+						'&height=' . $height . //
+						'&href=https://www.facebook.com' . $vid . //
+						'&show_text=false' . //
+						'&t=0" ' . //
 						'width="' . $width . '" ' . //
 						'height="' . $height . '" ' . //
+						'frameborder="0" ' . //
+						'scrolling="no" ' . //
+						'allowfullscreen="allowfullscreen" ' . //
 						'style="border: none; overflow: hidden" ' . //
 						'allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen">' . //
 					'</iframe>' . //
