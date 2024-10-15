@@ -1,8 +1,13 @@
 <?php
 date_default_timezone_set('UTC');
 
-function date_strformat($format, $timestamp = 0) {
+function date_strformat($format, $timestamp = null) {
 	global $lang;
+
+	// If no timestamp is specified, use the current timestamp
+	if ($timestamp === null || $timestamp === 0) {
+		$timestamp = date_time();
+	}
 
 	// D l day
 
@@ -28,6 +33,7 @@ function date_strformat($format, $timestamp = 0) {
 		$format = str_replace('%B', $lang ['date'] ['month'] [$i], $format);
 	}
 
+	// Windows-specific customizations
 	if (DIRECTORY_SEPARATOR == '\\') {
 		$_win_from = array(
 			'%D',
@@ -144,48 +150,61 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 		throw new \InvalidArgumentException('$timestamp argument is neither a valid UNIX timestamp, a valid date-time string or a DateTime object.');
 	}
 
+	// Locale handling
 	$locale = substr((string) $locale, 0, 5);
 
-	$intl_formats = [
-		'%a' => 'EEE', // An abbreviated textual representation of the day Sun through Sat
-		'%A' => 'EEEE', // A full textual representation of the day Sunday through Saturday
-		'%b' => 'MMM', // Abbreviated month name, based on the locale Jan through Dec
-		'%B' => 'MMMM', // Full month name, based on the locale January through December
-		'%h' => 'MMM' // Abbreviated month name, based on the locale (an alias of %b) Jan through Dec
-	];
+	// IntlDateFormatter caching mechanism
+	static $formatter_cache = []; // Caching array
 
-	$intl_formatter = function (\DateTimeInterface $timestamp, string $format) use ($intl_formats, $locale) {
-		$tz = $timestamp->getTimezone();
-		$date_type = \IntlDateFormatter::FULL;
-		$time_type = \IntlDateFormatter::FULL;
-		$pattern = '';
+	$cache_key = $locale . '_' . $format . '_' . $timestamp->getTimezone()->getName();
+	if (!isset($formatter_cache [$cache_key])) {
+		$intl_formats = [
+			'%a' => 'EEE', // An abbreviated textual representation of the day Sun through Sat
+			'%A' => 'EEEE', // A full textual representation of the day Sunday through Saturday
+			'%b' => 'MMM', // Abbreviated month name, based on the locale Jan through Dec
+			'%B' => 'MMMM', // Full month name, based on the locale January through December
+			'%h' => 'MMM' // Abbreviated month name, based on the locale (an alias of %b) Jan through Dec
+		];
 
-		// %c = Preferred date and time stamp based on locale
-		// Example: Tue Feb 5 00:45:10 2009 for February 5, 2009 at 12:45:10 AM
-		if ($format == '%c') {
-			$date_type = \IntlDateFormatter::LONG;
-			$time_type = \IntlDateFormatter::SHORT;
-		} // %x = Preferred date representation based on locale, without the time
-		  // Example: 02/05/09 for February 5, 2009
-		elseif ($format == '%x') {
-			$date_type = \IntlDateFormatter::SHORT;
-			$time_type = \IntlDateFormatter::NONE;
-		} // Localized time format
-		elseif ($format == '%X') {
-			$date_type = \IntlDateFormatter::NONE;
-			$time_type = \IntlDateFormatter::MEDIUM;
-		} else {
-			$pattern = $intl_formats [$format];
-		}
+		// Formatter function to create IntlDateFormatter
+		$intl_formatter = function (\DateTimeInterface $timestamp, string $format) use ($intl_formats, $locale) {
+			$tz = $timestamp->getTimezone();
+			$date_type = \IntlDateFormatter::FULL;
+			$time_type = \IntlDateFormatter::FULL;
+			$pattern = '';
 
-		return (new \IntlDateFormatter($locale, $date_type, $time_type, $tz, null, $pattern))->format($timestamp);
-	};
+			// %c = Preferred date and time stamp based on locale
+			// // Example: Tue Feb 5 00:45:10 2009 for February 5, 2009 at 12:45:10 AM
+			if ($format == '%c') {
+				$date_type = \IntlDateFormatter::LONG;
+				$time_type = \IntlDateFormatter::SHORT;
+			}
+			// %x = Preferred date representation based on locale, without the time
+			elseif ($format == '%x') {
+				$date_type = \IntlDateFormatter::SHORT;
+				$time_type = \IntlDateFormatter::NONE;
+			}
+			// Localized time format
+			// Example: 02/05/09 for February 5, 2009
+			elseif ($format == '%X') {
+				$date_type = \IntlDateFormatter::NONE;
+				$time_type = \IntlDateFormatter::MEDIUM;
+			} else {
+				$pattern = $intl_formats [$format] ?? $format;
+			}
+
+			// Return cached IntlDateFormatter if exists, else create and cache
+			return (new \IntlDateFormatter($locale, $date_type, $time_type, $tz, null, $pattern))->format($timestamp);
+		};
+
+		$formatter_cache [$cache_key] = $intl_formatter;
+	}
 
 	// Same order as https://www.php.net/manual/en/function.strftime.php
 	$translation_table = [
 		// Day
-		'%a' => $intl_formatter,
-		'%A' => $intl_formatter,
+		'%a' => $formatter_cache [$cache_key],
+		'%A' => $formatter_cache [$cache_key],
 		'%d' => 'd',
 		'%e' => function ($timestamp) {
 			return sprintf('% 2u', $timestamp->format('j'));
@@ -211,9 +230,9 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 		},
 
 		// Month
-		'%b' => $intl_formatter,
-		'%B' => $intl_formatter,
-		'%h' => $intl_formatter,
+		'%b' => $formatter_cache [$cache_key],
+		'%B' => $formatter_cache [$cache_key],
+		'%h' => $formatter_cache [$cache_key],
 		'%m' => 'm',
 
 		// Year
@@ -244,18 +263,18 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 		'%R' => 'H:i', // %H:%M
 		'%S' => 's',
 		'%T' => 'H:i:s', // %H:%M:%S
-		'%X' => $intl_formatter, // Preferred time representation based on locale, without the date
+		'%X' => $formatter_cache [$cache_key], // Preferred time representation based on locale, without the date
 
 		// Timezone
 		'%z' => 'O',
 		'%Z' => 'T',
 
 		// Time and Date Stamps
-		'%c' => $intl_formatter,
+		'%c' => $formatter_cache [$cache_key],
 		'%D' => 'm/d/Y',
 		'%F' => 'Y-m-d',
 		'%s' => 'U',
-		'%x' => $intl_formatter
+		'%x' => $formatter_cache [$cache_key]
 	];
 
 	$out = preg_replace_callback('/(?<!%)(%[a-zA-Z])/', function ($match) use ($translation_table, $timestamp) {
