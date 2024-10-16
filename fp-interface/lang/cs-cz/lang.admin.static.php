@@ -20,7 +20,7 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'act_del' => 'Smazat',
 	'act_edit' => 'Upravit',
 
-	'natural' => 'Přirozený řád',
+	'natural' => 'Seřadit názvy sestupně místo podle data vytvoření.',
 	'submit' => 'Změna pořadí názvů stránek'
 );
 

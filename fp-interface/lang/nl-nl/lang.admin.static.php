@@ -20,7 +20,7 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'act_del' => 'Verwijder',
 	'act_edit' => 'Bewerk',
 
-	'natural' => 'Natuurlijke volgorde',
+	'natural' => 'Sorteer titels in aflopende volgorde in plaats van op aanmaakdatum.',
 	'submit' => 'Paginanamen opnieuw ordenen'
 );
 
