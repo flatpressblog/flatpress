@@ -20,7 +20,7 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'act_del' => '削除',
 	'act_edit' => '編集',
 
-	'natural' => '自然な順序',
+	'natural' => '題名の降順に整列する(チェックを外すと作成日順となります)',
 	'submit' => 'ページ名の並び替え'
 );
 
