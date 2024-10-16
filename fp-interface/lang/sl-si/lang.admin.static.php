@@ -20,7 +20,7 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'act_del' => 'Izbriši',
 	'act_edit' => 'Uredi',
 
-	'natural' => 'Naravni red',
+	'natural' => 'Razvrstite naslove v padajočem vrstnem redu namesto po datumu ustvarjanja.',
 	'submit' => 'Spremeni vrstni red imen strani'
 );
 

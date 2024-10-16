@@ -20,7 +20,7 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'act_del' => 'Elimina',
 	'act_edit' => 'Modifica',
 
-	'natural' => 'Ordine naturale',
+	'natural' => 'Ordina i titoli in ordine decrescente invece che per data di creazione.',
 	'submit' => 'Riordina i nomi delle pagine'
 );
 

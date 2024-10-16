@@ -20,7 +20,7 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'act_del' => 'Effacer',
 	'act_edit' => '&Eacute;diter',
 
-	'natural' => 'Disposition naturelle',
+	'natural' => 'Trier les titres par ordre décroissant plutôt que par date de création.',
 	'submit' => 'Réorganiser les noms de page'
 );
 

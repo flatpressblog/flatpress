@@ -20,7 +20,7 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'act_del' => 'Löschen',
 	'act_edit' => 'Bearbeiten',
 
-	'natural' => 'Natürliche Reihenfolge',
+	'natural' => 'Titel in absteigender Reihenfolge, statt nach Erstellungsdatum sortieren.',
 	'submit' => 'Seinennamen neu sortieren'
 );
 

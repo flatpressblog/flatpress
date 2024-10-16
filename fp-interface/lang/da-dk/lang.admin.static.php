@@ -20,7 +20,7 @@ $lang ['admin'] ['static'] ['list'] = array(
 	'act_del' => 'Slet',
 	'act_edit' => 'Rediger',
 
-	'natural' => 'Naturlig rækkefølge',
+	'natural' => 'Sorter titler i faldende rækkefølge i stedet for efter oprettelsesdato.',
 	'submit' => 'Omorganiser sidenavne'
 );
 
