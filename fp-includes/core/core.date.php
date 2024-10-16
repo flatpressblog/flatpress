@@ -140,7 +140,8 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 		$timestamp = date_create('@' . $timestamp);
 
 		if ($timestamp) {
-			$timestamp->setTimezone(new \DateTimezone(date_default_timezone_get()));
+			$timezone = date_default_timezone_get() ?: 'UTC';
+			$timestamp->setTimezone(new \DateTimezone($timezone));
 		}
 	} elseif (is_string($timestamp)) {
 		$timestamp = date_create($timestamp);
