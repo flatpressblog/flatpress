@@ -1,6 +1,6 @@
 	<div itemscope itemtype="http://schema.org/BlogPosting" id="{$id}" class="entry {$date|date_format:"y-%Y m-%m d-%d"}">
-				{* 	using the following way to print the date, if more 	*} 
-				{*	than one entry have been written the same day,		*} 
+				{* 	using the following way to print the date, if more 	*}
+				{*	than one entry have been written the same day,		*}
 				{*	 the date will be printed only once 				*}
 
 		{$date|date_format_daily:"<h2 class=\"date\">`$fp_config.locale.dateformat`</h2>"}
@@ -24,15 +24,18 @@
 						<span itemprop="articleSection">
 							{if ($categories)} {$lang.plugin.categories.in} {$categories|@filed}{/if}
 						</span>
-					</li> 
+					</li>
 
 					<li class="link-comments">
 					{if isset($views)}
 						<strong>{$views}</strong> {$lang.postviews.views}
 					{/if}
 					{if !(in_array('commslock', $categories) && !$comments)}
-						<a href="{$id|link:comments_link}#comments">{$comments|tag:comments_number} 
-						</a>
+						{if $comments > 0}
+							<a href="{$id|link:comments_link}#comments">{$comments|tag:comments_number}</a>
+						{else}
+							<a href="{$id|link:comments_link}#addcomment">{$comments|tag:comments_number}</a>
+						{/if}
 					{/if}
 					</li>
 
