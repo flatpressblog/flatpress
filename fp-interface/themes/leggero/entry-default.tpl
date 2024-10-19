@@ -1,7 +1,7 @@
 	<div itemscope itemtype="http://schema.org/BlogPosting" id="{$id}" class="entry {$date|date_format:"y-%Y m-%m d-%d"}">
 				{* 	using the following way to print the date, if more 	*}
 				{*	than one entry have been written the same day,		*}
-				{*	 the date will be printed only once 				*}
+				{*	 the date will be printed only once 			*}
 
 		{$date|date_format_daily:"<h2 class=\"date\">`$fp_config.locale.dateformat`</h2>"}
 
@@ -31,11 +31,7 @@
 						<strong>{$views}</strong> {$lang.postviews.views}
 					{/if}
 					{if !(in_array('commslock', $categories) && !$comments)}
-						{if $comments > 0}
-							<a href="{$id|link:comments_link}#comments">{$comments|tag:comments_number}</a>
-						{else}
-							<a href="{$id|link:comments_link}#addcomment">{$comments|tag:comments_number}</a>
-						{/if}
+						<a href="{$id|link:comments_link}{if $comments > 0}#comments{else}#addcomment{/if}">{$comments|tag:comments_number}</a>
 					{/if}
 					</li>
 
