@@ -53,7 +53,8 @@
   - Single-digit months are now always two-digit.
 
 ## Themes
-- invidual scrollbar for the Leggero v2 style
+- Invidual scrollbar for the Leggero v2 style
+- The link "Add comment" now leads to the comment form instead of jumping to top ([#474](https://github.com/flatpressblog/flatpress/issues/474))
 
 ## Internationalization
 - Reworked translations: Japanese (Thanks to [NHWS](https://nhws.localinfo.jp/))
