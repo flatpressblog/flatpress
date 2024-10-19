@@ -17,7 +17,7 @@
 - BBcode, Cookiebanner and Emoticons plugin: removed unsafe href onclick HTML method ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 - BBcode, PhotoSwipe and Emoticons plugin: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 - Admin area:
-  - Allow admin login attempts only every 30 seconds to make brute force attacks more difficult.
+  - Allow admin login attempts only every 30 seconds to make brute force attacks more difficult. ([#87](https://github.com/flatpressblog/flatpress/issues/87))
   - The clear name is no longer transmitted in the fpuser cookie ([#459](https://github.com/flatpressblog/flatpress/pull/459))
  - Upload panel: More resistant to RCE attacks and traversal attacks ([#451](https://github.com/flatpressblog/flatpress/issues/451), [#114](https://github.com/flatpressblog/flatpress/issues/114))
   - Delete entry and delete static page are now more secure against XSS and CSRF attacks ([#220](https://github.com/flatpressblog/flatpress/issues/220))
