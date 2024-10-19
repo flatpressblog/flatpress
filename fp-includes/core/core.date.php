@@ -141,7 +141,14 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 
 		if ($timestamp) {
 			$timezone = date_default_timezone_get() ?: 'UTC';
-			$timestamp->setTimezone(new \DateTimezone($timezone));
+
+			// Check whether the time zone is a valid character string and whether it exists
+			if (is_string($timezone) && in_array($timezone, \DateTimeZone::listIdentifiers())) {
+				$timestamp->setTimezone(new \DateTimeZone($timezone));
+			} else {
+				// Fallback to UTC if the time zone is invalid
+				$timestamp->setTimezone(new \DateTimeZone('UTC'));
+			}
 		}
 	} elseif (is_string($timestamp)) {
 		$timestamp = date_create($timestamp);
@@ -175,7 +182,6 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 			$pattern = '';
 
 			// %c = Preferred date and time stamp based on locale
-			// // Example: Tue Feb 5 00:45:10 2009 for February 5, 2009 at 12:45:10 AM
 			if ($format == '%c') {
 				$date_type = \IntlDateFormatter::LONG;
 				$time_type = \IntlDateFormatter::SHORT;
@@ -185,8 +191,7 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 				$date_type = \IntlDateFormatter::SHORT;
 				$time_type = \IntlDateFormatter::NONE;
 			}
-			// Localized time format
-			// Example: 02/05/09 for February 5, 2009
+			// %X = Preferred time representation based on locale, without the date
 			elseif ($format == '%X') {
 				$date_type = \IntlDateFormatter::NONE;
 				$time_type = \IntlDateFormatter::MEDIUM;
@@ -194,7 +199,7 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 				$pattern = $intl_formats [$format] ?? $format;
 			}
 
-			// Return cached IntlDateFormatter if exists, else create and cache
+			// Return IntlDateFormatter object
 			return (new \IntlDateFormatter($locale, $date_type, $time_type, $tz, null, $pattern))->format($timestamp);
 		};
 
@@ -279,14 +284,17 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 	];
 
 	$out = preg_replace_callback('/(?<!%)(%[a-zA-Z])/', function ($match) use ($translation_table, $timestamp) {
+		// Handle newlines and tabs
 		if ($match [1] == '%n') {
 			return "\n";
 		} elseif ($match [1] == '%t') {
 			return "\t";
 		}
 
+		// Check if the format is known in the translation table
 		if (!isset($translation_table [$match [1]])) {
-			throw new \InvalidArgumentException(sprintf('Format "%s" is unknown in time format', $match [1]));
+			// If unknown, return a safe default, like the literal format string (unprocessed)
+			return $match [0];
 		}
 
 		$replace = $translation_table [$match [1]];
@@ -301,3 +309,4 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 	$out = str_replace('%%', '%', $out);
 	return $out;
 }
+?>
