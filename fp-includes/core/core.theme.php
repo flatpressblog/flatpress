@@ -361,7 +361,7 @@ function theme_smarty_modifier_date_format_daily($string, $format = null, $defau
  */
 function theme_smarty_modifier_date_rfc3339($timestamp = '') {
 	if (!$timestamp) {
-		$timestamp = time();
+		$timestamp = date_time();
 	}
 
 	$date = date('Y-m-d\TH:i:s', $timestamp);
