@@ -337,16 +337,15 @@ h4 { font-size: 1.2em }
 	}
 }
 
-@media (min-width: 1920px) { /* From desktop PC with widescreen display */
+@media (min-width: 1920px) { /* From desktop PC with UltraWide Screen */
 
 	#body-container { max-width: 80% }
 
 	#main { width: 78% }
-
 }
 
 @media (min-width: 2048px) {
-	
+
 	#main { width: 80% }
 }
 
@@ -358,6 +357,11 @@ h4 { font-size: 1.2em }
 @media (min-width: 3200px) {
 
 	#main { width: 87% }
+}
+
+@media (min-width: 3840px) {
+
+	#main { width: 89% }
 }
 
 
