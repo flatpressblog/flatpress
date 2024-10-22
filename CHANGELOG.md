@@ -56,6 +56,7 @@
 ## Themes
 - Invidual scrollbar for the Leggero v2 style
 - The link "Add comment" now leads to the comment form instead of jumping to top ([#474](https://github.com/flatpressblog/flatpress/issues/474))
+- The Leggero v2 style now supports UltraWide monitors ([#476](https://github.com/flatpressblog/flatpress/issues/476))
 
 ## Internationalization
 - Reworked translations: Japanese (Thanks to [NHWS](https://nhws.localinfo.jp/))
