@@ -138,10 +138,10 @@ function theme_wp_head() {
 
 	echo "\n<!-- FP STD HEADER -->\n";
 
-	echo "\n<meta name=\"generator\" content=\"FlatPress " . system_ver() . "\" />\n";
-	echo "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get RSS 2.0 Feed\" href=\"" . theme_feed_link('rss2') . "\" />\n";
+	echo "\n<meta name=\"generator\" content=\"FlatPress " . system_ver() . "\">\n";
+	echo "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get RSS 2.0 Feed\" href=\"" . theme_feed_link('rss2') . "\">\n";
 
-	echo "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Atom 1.0 Feed\" href=\"" . theme_feed_link('atom') . "\" />\n";
+	echo "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Atom 1.0 Feed\" href=\"" . theme_feed_link('atom') . "\">\n";
 
 	echo "<!-- EOF FP STD HEADER -->\n";
 }
@@ -159,12 +159,12 @@ function theme_head_stylesheet() {
 
 	$substyle = '/' . (isset($fp_config ['general'] ['style']) ? $fp_config ['general'] ['style'] . '/' : '');
 
-	echo $substyle . 'res/' . $css . '" type="text/css" rel="stylesheet" />';
+	echo $substyle . 'res/' . $css . '" type="text/css" rel="stylesheet">';
 
 	if (@$theme ['style'] ['style_print']) {
 		echo '<link media="print" href="';
 		echo BLOG_BASEURL . THEMES_DIR . THE_THEME;
-		echo $substyle . 'res/' . $theme ['style'] ['style_print'] . '" type="text/css" rel="stylesheet" />';
+		echo $substyle . 'res/' . $theme ['style'] ['style_print'] . '" type="text/css" rel="stylesheet">';
 	}
 
 	echo "\n<!-- FP STD STYLESHEET -->\n";
@@ -173,7 +173,7 @@ function theme_head_stylesheet() {
 function admin_head_action() {
 	global $theme;
 	if (!$theme ['admin_custom_interface']) {
-		echo '<link media="screen" href="' . BLOG_BASEURL . 'admin/res/admin.css" type="text/css" rel="stylesheet" />';
+		echo '<link media="screen" href="' . BLOG_BASEURL . 'admin/res/admin.css" type="text/css" rel="stylesheet">';
 	}
 }
 
@@ -313,16 +313,21 @@ function theme_smarty_function_action($params, $smarty) {
 }
 
 function theme_date_format($string, $format = null, $default_date = '') {
-	$timestamp = 0;
+	$timestamp = null;
 
 	if ($string) {
-		$timestamp = $string; // smarty_make_timestamp($string);
+		// Conversion to timestamp, if string
+		$timestamp = is_numeric($string) ? $string : strtotime($string); // smarty_make_timestamp($string);
 	} elseif ($default_date != '') {
-		$timestamp = $default_date; // smarty_make_timestamp($default_date);
-	} else {
-		return;
+		$timestamp = is_numeric($default_date) ? $default_date : strtotime($default_date); // smarty_make_timestamp($default_date);
 	}
 
+	// If no valid timestamp is available, the current time is used
+	if ($timestamp === null || $timestamp === false) {
+		$timestamp = date_time();
+	}
+
+	// Use default format if no format is specified
 	if (is_null($format)) {
 		global $fp_config;
 		$format = $fp_config ['locale'] ['timeformat'];
@@ -353,18 +358,23 @@ function theme_smarty_modifier_date_format_daily($string, $format = null, $defau
  * Get date in RFC3339
  * For example used in XML/Atom
  *
- * @param integer $timestamp
+ * @param string|int|null $timestamp The timestamp to be formatted. Defaults to null.
  * @return string date in RFC3339
  * @author Boris Korobkov
  * @see http://tools.ietf.org/html/rfc3339 http://it.php.net/manual/en/function.date.php#75757
  *     
  */
-function theme_smarty_modifier_date_rfc3339($timestamp = '') {
-	if (!$timestamp) {
+function theme_smarty_modifier_date_rfc3339($timestamp = null) {
+	if ($timestamp === null) {
 		$timestamp = date_time();
 	}
 
 	$date = date('Y-m-d\TH:i:s', $timestamp);
+
+	if (!$date) {
+		// Return empty string in case of failure
+		return '';
+	}
 
 	$matches = array();
 	if (preg_match('/^([\-+])(\d{2})(\d{2})$/', date('O', $timestamp), $matches)) {
