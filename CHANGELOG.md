@@ -6,6 +6,7 @@
 - FlatPress anonymizes the IPv4 address of the visitor. IPv6 addresses are replaced by a hash. ([#105](https://github.com/flatpressblog/flatpress/issues/105))
 - Login page: Instructs search engines not to index the page ([#450](https://github.com/flatpressblog/flatpress/pull/450))
 - Admin area: Optional natural sorting for static pages (Hidden improvement suggestion from [NHWS](https://nhws.localinfo.jp/))
+- The determination of the time format has been made more robust
 
 ## Bugfixes
 - Contact form / comment function: Entering the website is now correct without http(s):// ([#419](https://github.com/flatpressblog/flatpress/issues/419))
