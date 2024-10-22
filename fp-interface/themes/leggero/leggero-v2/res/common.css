@@ -337,8 +337,31 @@ h4 { font-size: 1.2em }
 	}
 }
 
+@media (min-width: 1920px) { /* From desktop PC with widescreen display */
 
-/* ===== RESPONSIVE DESIGN ===== */
+	#body-container { max-width: 80% }
+
+	#main { width: 78% }
+
+}
+
+@media (min-width: 2048px) {
+	
+	#main { width: 80% }
+}
+
+@media (min-width: 2400px) {
+
+	#main { width: 83% }
+}
+
+@media (min-width: 3200px) {
+
+	#main { width: 87% }
+}
+
+
+/* ===== RESPONSIVE MOBILE DESIGN ===== */
 @media (max-width: 719px) { /* Smartphone */
 
 	body { margin: 0 0 0 0 }
