@@ -29,6 +29,9 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'msgs' => array(
 		1 => 'Paramètres enregistrés avec succès.',
 		-1 => 'Erreur lors de l\'enregistrement des paramètres.'
-	)
+	),
+
+	// Warning message for unsafe inline scripts
+	'warning_allowUnsafeInline' => 'Avertissement : Politique de sécurité du contenu -> Cette politique contient "unsafe-inline", ce qui est dangereux dans la politique script-src.'
 );
 ?>

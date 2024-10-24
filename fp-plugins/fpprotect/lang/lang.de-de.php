@@ -29,6 +29,9 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'msgs' => array(
 		1 => 'Einstellungen erfolgreich gespeichert.',
 		-1 => 'Fehler beim Speichern der Einstellungen.'
-	)
+	),
+
+	// Warning message for unsafe inline scripts
+	'warning_allowUnsafeInline' => 'Warnung: Content-Security-Policy -> Diese Richtlinie enthält "unsafe-inline", was in der script-src-Richtlinie gefährlich ist.'
 );
 ?>

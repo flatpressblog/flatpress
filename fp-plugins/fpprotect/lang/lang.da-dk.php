@@ -29,6 +29,9 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'msgs' => array(
 		1 => 'Indstillingerne er gemt med succes.',
 		-1 => 'Fejl ved lagring af indstillingerne.'
-	)
+	),
+
+	// Warning message for unsafe inline scripts
+	'warning_allowUnsafeInline' => 'Advarsel: Content-Security-Policy -> Denne politik indeholder "unsafe-inline", som er farlig i script-src-politikken.'
 );
 ?>

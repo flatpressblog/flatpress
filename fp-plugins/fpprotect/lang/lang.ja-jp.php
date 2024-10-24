@@ -29,6 +29,9 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'msgs' => array(
 		1 => '設定は正常に保存されました。',
 		-1 => '設定の保存エラー'
-	)
+	),
+
+	// Warning message for unsafe inline scripts
+	'warning_allowUnsafeInline' => '警告：Content-Security-Policy -> このポリシーには 「unsafe-inline 」が含まれています。'
 );
 ?>

@@ -29,6 +29,9 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'msgs' => array(
 		1 => 'Nastavitve so bile uspešno shranjene.',
 		-1 => 'Napaka pri shranjevanju nastavitev.'
-	)
+	),
+
+	// Warning message for unsafe inline scripts
+	'warning_allowUnsafeInline' => 'Opozorilo: Content-Security-Policy -> Ta politika vsebuje "unsafe-inline", kar je nevarno v politiki script-src.'
 );
 ?>
