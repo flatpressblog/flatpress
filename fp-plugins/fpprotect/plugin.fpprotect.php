@@ -8,27 +8,27 @@
  * Author URI: https://www.flatpress.org
  */
 
+// Get the configuration from the fp_config file
+global $fp_config;
+
+if (isset($fp_config ['plugins'] ['fpprotect'] ['allowUnsafeInline'])) {
+	$allowUnsafeInline = $fp_config ['plugins'] ['fpprotect'] ['allowUnsafeInline'];
+} else {
+	// Default value, if not available
+	$allowUnsafeInline = false;
+}
+
+if (isset($fp_config ['plugins'] ['fpprotect'] ['allowPrettyURLEdit'])) {
+	$allowPrettyURLEdit = $fp_config ['plugins'] ['fpprotect'] ['allowPrettyURLEdit'];
+} else {
+	// Default value, if not available
+	$allowPrettyURLEdit = false;
+}
+
 if (function_exists('is_https')) {
 
 	// $random_hex is only required if unsafe-inline is not set
 	$random_hex = RANDOM_HEX;
-
-	// Get the configuration from the fp_config file
-	global $fp_config;
-
-	if (isset($fp_config ['plugins'] ['fpprotect'] ['allowUnsafeInline'])) {
-		$allowUnsafeInline = $fp_config ['plugins'] ['fpprotect'] ['allowUnsafeInline'];
-	} else {
-		// Default value, if not available
-		$allowUnsafeInline = false;
-	}
-
-	if (isset($fp_config ['plugins'] ['fpprotect'] ['allowPrettyURLEdit'])) {
-		$allowUnsafeInline = $fp_config ['plugins'] ['fpprotect'] ['allowPrettyURLEdit'];
-	} else {
-		// Default value, if not available
-		$allowPrettyURLEdit = false;
-	}
 
 	if (is_https()) {
 		/**
