@@ -9,7 +9,7 @@ $lang ['admin'] ['plugin'] ['prettyurls'] = array(
 	'head' => 'Nastavitve PrettyURLs',
 	'description1' => 'Tu lahko standardne URL-je iz FlatPressa spremenite v čudovite, SEO prijazne URL-je.',
 	'fpprotect_is_on' => 'Vtičnik PrettyURLs zahteva datoteko .htaccess. ' . //
-		'Če želite ustvariti ali spremeniti to datoteko, <a href="admin.php?p=plugin&action=default" title="Pojdite v administracijo vtičnika">deaktivirajte</a> vtičnik FlatPress Protect. ',
+		'Če želite ustvariti ali spremeniti to datoteko, aktivirajte to možnost v vtičniku <a href="admin.php?p=config&action=fpprotect" title="pojdite na FlatPress Protect Plugin">FlatPress Protect</a>. ',
 	'fpprotect_is_off' => 'Vtičnik FlatPress Protect ščiti datoteko .htaccess pred nenamernimi spremembami. ' . //
 		'Vtičnik lahko aktivirate <a href="admin.php?p=plugin&action=default" title="Pojdite v administracijo vtičnika">tukaj</a>!',
 	'nginx' => 'PrettyURLs med NGINX',

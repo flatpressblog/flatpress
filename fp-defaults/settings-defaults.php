@@ -48,6 +48,10 @@ $fp_config = array(
 			'akismet_key' => '',
 			'akismet_url' => '',
 		),
+		'fpprotect' => array (
+			'allowUnsafeInline' => false,
+			'allowPrettyURLEdit' => false,
+		),
 	),
 );
 
