@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: PrettyURLs
- * Version: 3.0
+ * Version: 3.0.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
