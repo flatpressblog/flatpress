@@ -15,15 +15,15 @@
 
 ## Security
 - PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin option must first be activated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
-- BBcode, Cookiebanner and Emoticons plugin: removed unsafe href onclick HTML method ([#422](https://github.com/flatpressblog/flatpress/issues/422))
-- BBcode, PhotoSwipe and Emoticons plugin: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422))
+- BBcode, Cookiebanner and Emoticons plugin: removed unsafe href onclick HTML method ([#422](https://github.com/flatpressblog/flatpress/issues/422), [#477](https://github.com/flatpressblog/flatpress/pull/477))
+- BBcode, PhotoSwipe and Emoticons plugin: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422), [#477](https://github.com/flatpressblog/flatpress/pull/477))
 - Admin area:
   - Allow admin login attempts only every 30 seconds to make brute force attacks more difficult. ([#87](https://github.com/flatpressblog/flatpress/issues/87))
   - The clear name is no longer transmitted in the fpuser cookie ([#459](https://github.com/flatpressblog/flatpress/pull/459))
  - Upload panel: More resistant to RCE attacks and traversal attacks ([#451](https://github.com/flatpressblog/flatpress/issues/451), [#114](https://github.com/flatpressblog/flatpress/issues/114))
   - Delete entry and delete static page are now more secure against XSS and CSRF attacks ([#220](https://github.com/flatpressblog/flatpress/issues/220))
   - Plugin management now more secure against XSS attacks ([#220](https://github.com/flatpressblog/flatpress/issues/220))
-  - Widget management: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422))
+  - Widget management: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422), [#477](https://github.com/flatpressblog/flatpress/pull/477))
 
 ## Plugins
 ### Additions
