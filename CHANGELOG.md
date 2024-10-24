@@ -14,7 +14,7 @@
 - Admin area: Charset dropdown selection instead of an input field ([#340](https://github.com/flatpressblog/flatpress/issues/340))
 
 ## Security
-- PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin must first be deactivated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
+- PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin option must first be activated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
 - BBcode, Cookiebanner and Emoticons plugin: removed unsafe href onclick HTML method ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 - BBcode, PhotoSwipe and Emoticons plugin: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422))
 - Admin area:
@@ -40,6 +40,11 @@
   - BBcode toolbar, if BBcode for comments is allowed ([#437](https://github.com/flatpressblog/flatpress/pull/437))
   - The fp-content/attachs directory is hidden if the file has been included with the URL tag ([#443](https://github.com/flatpressblog/flatpress/pull/443))
 - The Commentcenter plugin has been given a lower priority so that other comment filters (e.g. qspam) can do their work first. ([#449](https://github.com/flatpressblog/flatpress/pull/449))
+- PrettyURLs plugin: update to version 3.0.1
+  - To prevent accidental changes to the .htacces file, the creation or editing of this file must first be activated via the FlatPress Protect plugin ([#477](https://github.com/flatpressblog/flatpress/pull/477))
+- FlatPress Protect plugin: update to version 1.1.0
+  - Insecure inline Java scripts are not executed by the visitor's browser by default. You can allow the execution of insecure Java code if, for example, a plugin contains a Java script that is not equipped with a nonce. ([#477](https://github.com/flatpressblog/flatpress/pull/477))
+  - It is also possible to enable/disable the htaccess edit field to create or edit the file in the PrettyURLs plugin without having to disable the FlatPress Protect plugin. ([#477](https://github.com/flatpressblog/flatpress/pull/477))
 
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
