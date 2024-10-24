@@ -2,7 +2,7 @@
 /*
  * Plugin Name: FlatPress Protect
  * Plugin URI: https://www.flatpress.org/
- * Description: Offers various options for the security of your blog. <a href="./fp-plugins/fpprotect/doc_fpprotect.txt" title="More information" target="_blank">[More information]</a><br>Removes the htaccess editor from the PrettyURLs plugin.
+ * Description: Offers various options for the security of your blog. <a href="./fp-plugins/fpprotect/doc_fpprotect.txt" title="More information" target="_blank">[More information]</a><br>Part of the standard distribution.
  * Author: FlatPress
  * Version: 1.1.0
  * Author URI: https://www.flatpress.org
