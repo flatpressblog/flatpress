@@ -168,7 +168,10 @@ function admin_register_smartyplugins() {
 	global $smarty;
 	$smarty->registerPlugin('modifier', 'action_link', 'admin_filter_action');
 	$smarty->registerPlugin('modifier', 'cmd_link', 'admin_filter_command');
-	$smarty->registerPlugin('modifier', 'fpprotect_harden_prettyurls_plugin', 'fpprotect_harden_prettyurls_plugin');
+	// Plugin functions
+	if (function_exists('fpprotect_harden_prettyurls_plugin')) {
+		$smarty->registerPlugin('modifier', 'fpprotect_harden_prettyurls_plugin', 'fpprotect_harden_prettyurls_plugin');
+	}
 	$functionsToRegister = array(
 		// FlatPress functions
 		'entry_idtotime',
