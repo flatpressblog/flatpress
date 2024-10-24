@@ -82,7 +82,7 @@ if (function_exists('is_https')) {
 function fpprotect_harden_prettyurls_plugin() {
 	// If the checkbox is checked, the htaccess input field and the save button of the PrettyURLs plugin are displayed
 	$config = plugin_getoptions('fpprotect');
-	return isset($config['allowPrettyURLEdit']) ? !(bool)$config['allowPrettyURLEdit'] : true;
+	return isset($config ['allowPrettyURLEdit']) ? !(bool)$config ['allowPrettyURLEdit'] : true;
 }
 
 /**
@@ -110,38 +110,51 @@ if (class_exists('AdminPanelAction')) {
 			$config = $this->load_config();
 
 			// Process the form once it has been submitted
-			if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			if ($_SERVER ['REQUEST_METHOD'] === 'POST') {
 				// Use the onsubmit method to save the configuration
 				$this->onsubmit($_POST);
 			}
 
 			// Transfer the values of the checkboxes to the template
-			$this->smarty->assign('allowUnsafeInline', $config['allowUnsafeInline']);
-			$this->smarty->assign('allowPrettyURLEdit', $config['allowPrettyURLEdit']);
+			$this->smarty->assign('allowUnsafeInline', $config ['allowUnsafeInline']);
+			$this->smarty->assign('allowPrettyURLEdit', $config ['allowPrettyURLEdit']);
 
 			// Render template
 			$this->smarty->assign('admin_resource', 'plugin:fpprotect/admin.plugin.fpprotect');
 		}
 
 		function load_config() {
+			global $lang;
+			$lang = lang_load('plugin:fpprotect');
+
 			// Load the plugin options
 			$config = plugin_getoptions('fpprotect');
 
-			// Return the values of the options, or set default values if they do not exist
+			// Load values of the options or set default values if they do not exist
+			$allowUnsafeInline = isset($config ['allowUnsafeInline']) ? (bool)$config ['allowUnsafeInline'] : false;
+			$allowPrettyURLEdit = isset($config ['allowPrettyURLEdit']) ? (bool)$config ['allowPrettyURLEdit'] : false;
+
+			// If allowUnsafeInline is true, issue a warning
+			if ($allowUnsafeInline) {
+				$errs = $lang ['admin'] ['config'] ['fpprotect'] ['warning_allowUnsafeInline'];
+				$this->smarty->append('warnings', $errs);
+			}
+
+			// Return the configuration as an array
 			return array(
-				'allowUnsafeInline' => isset($config['allowUnsafeInline']) ? (bool)$config['allowUnsafeInline'] : false,
-				'allowPrettyURLEdit' => isset($config['allowPrettyURLEdit']) ? (bool)$config['allowPrettyURLEdit'] : false,
+				'allowUnsafeInline' => $allowUnsafeInline,
+				'allowPrettyURLEdit' => $allowPrettyURLEdit,
 			);
 		}
 
 		function onsubmit($data = null) {
 			// Check whether the checkboxes are set or not
-			$allowUnsafeInline = isset($_POST['allowUnsafeInline']) ? true : false;
-			$allowPrettyURLEdit = isset($_POST['allowPrettyURLEdit']) ? true : false;
+			$allowUnsafeInline = isset($_POST ['allowUnsafeInline']) ? true : false;
+			$allowPrettyURLEdit = isset($_POST ['allowPrettyURLEdit']) ? true : false;
 
 			// Save the new settings in the configuration
 			plugin_addoption('fpprotect', 'allowUnsafeInline', $allowUnsafeInline);
-			plugin_addoption('fpprotect', 'allowPrettyURLEdit', $allowPrettyURLEdit); // Neue Option
+			plugin_addoption('fpprotect', 'allowPrettyURLEdit', $allowPrettyURLEdit);
 
 			plugin_saveoptions('fpprotect');
 

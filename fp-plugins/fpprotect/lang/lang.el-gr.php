@@ -29,6 +29,9 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'msgs' => array(
 		1 => 'Οι ρυθμίσεις αποθηκεύτηκαν με επιτυχία.',
 		-1 => 'Σφάλμα κατά την αποθήκευση των ρυθμίσεων.'
-	)
+	),
+
+	// Warning message for unsafe inline scripts
+	'warning_allowUnsafeInline' => 'Προειδοποίηση: Content-Security-Policy -> Αυτή η πολιτική περιέχει "unsafe-inline", η οποία είναι επικίνδυνη στην πολιτική script-src-policy.'
 );
 ?>
