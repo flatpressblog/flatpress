@@ -3,7 +3,6 @@ FlatPress Protect
 
 Description
 -----------
-Removes the htaccess editor from the PrettyURLs plugin to protect the .htaccess file from unintentional changes.
 Protect your blog with additional fetures in the HTTP response header
 
  * Content Security Policy is an effective measure to protect your site from XSS attacks. By whitelisting sources for approved content, you can prevent the browser from loading malicious content.
@@ -19,5 +18,21 @@ The CSP directives enforce the use of HTTPS.
 Therefore we recommend you to encrypt the HTTP data stream. For this, the web server needs an SSL certificate.
 These are usually chargeable, but since Mozilla launched the "Let's encrypt!" initiative, such certificates are now also available for free, depending on the hosting partner.
 
-Here you can check the security of your Flatpress blog
+Default settings
+----------------
+By default, the editing option of the .htaccess file is hidden in the PrettyURLs plugin to protect this file from unwanted changes.
+With the FlatPress Protect plugin, you can allow access to the .htaccess edit field.
+
+By default, the execution of insecure Java scripts is blocked in your blog visitor's browser.
+If you want to use a plugin with insecure integration, you can activate this option with this plugin.
+
+We recommend using a nonce to securely integrate the Java script in question.
+An example in PHP:
+$random_hex = RANDOM_HEX;
+echo '<script nonce="' . $random_hex . '" src=" ...
+
+An example for the Smarty template:
+<script nonce="{$smarty.const.RANDOM_HEX}" src=" ...
+
+Here you can check the security of your FlatPress blog
 https://securityheaders.com/
