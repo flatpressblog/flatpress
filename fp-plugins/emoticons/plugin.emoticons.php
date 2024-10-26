@@ -101,8 +101,13 @@ function plugin_emoticons_head() {
 			 * Emoticons Plugin
 			 */
 			const buttonData = ' . json_encode($buttonData) . ';
-			document.addEventListener("DOMContentLoaded", function() {
-				registerEmoticonButtons(buttonData);
+			document.addEventListener(\'DOMContentLoaded\', function() {
+				const existingEmoIds = buttonData.map(item => item.id);
+				const allEmoIdsExist = existingEmoIds.every(id => document.getElementById(id) !== null);
+
+				if (allEmoIdsExist) {
+					registerEmoticonButtons(buttonData);
+				}
 			});
 		</script>
 		<!-- EOF Emoticons -->
