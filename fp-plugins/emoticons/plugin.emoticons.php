@@ -1,14 +1,15 @@
 <?php
 /*
  * Plugin Name: Emoticons
- * Version: 1.1.1
+ * Version: 1.1.2
  * Plugin URI: https://flatpress.org
  * Description: Allows use of emoticons. Part of the standard distribution.
  * Author: FlatPress
  * Author URI: https://flatpress.org
  */
-// assigns markdown to HTML Entity
+
 global $plugin_emoticons;
+// Assigns markdown to HTML Entity
 $plugin_emoticons = array(
 	':smile:' => '&#128516;',
 	':smiley:' => '&#128515;',
@@ -34,66 +35,40 @@ $plugin_emoticons = array(
 	':question:' => '&#10067;'
 );
 
-// outputs the editor toolbar
+// Outputs the editor toolbar
 function plugin_emoticons() {
 	global $plugin_emoticons;
-	$random_hex = RANDOM_HEX;
 
 	if (!count($plugin_emoticons)) {
 		return true;
 	}
+
 	echo '
 		<!-- BOF Emoticons -->
 		<div class="emoticons">';
+
+	// Buttons mit gespeicherten IDs ausgeben
 	foreach ($plugin_emoticons as $emoText => $emoticon) {
-
-		$elementById = randomChar(8);
+		$elementById = emoticon_id($emoText);
 		echo '
-		<script nonce="' . $random_hex . '">
-			if (document.getElementById(\'' . $elementById . '\')) { // Button already available?
-				BTN_' . $elementById . '(); // Call the registration function
-			} else { // Register as EventHandler
-				document.addEventListener(\'DOMContentLoaded\', BTN_' . $elementById . ');
-			}
-			// Registration function
-			function BTN_' . $elementById . '() {
-				const em = document.getElementById(\'' . $elementById . '\');
-				if (em) {
-					document.getElementById(\'' . $elementById . '\').addEventListener(\'click\', onClick_' . $elementById . ', false);
-				}
-			}
-			// Replacement for href onclick HTML method
-			function onClick_' . $elementById . '() {
-				emoticons(unescape(\'' . urlencode($emoText) . '\')); return false;
-			}
-		</script>
-		<button type="button" style="font-size: 12px; vertical-align: middle;" title="' . htmlentities($emoText) . '" id="' . $elementById . '">';
+			<button type="button" style="font-size: 12px; vertical-align: middle;" title="' . htmlentities($emoText) . '" id="' . $elementById . '">';
 		echo $emoticon;
-		echo '</button>
-		';
-
+		echo '</button>';
 	}
 	echo '
 		</div>
-		<!-- EOF Emoticons -->
-		';
+		<!-- EOF Emoticons -->';
+
 	return true;
 }
 
-
-// generates a random string for elementById with $length characters
-function randomChar($length = 10) {
-	return substr(str_shuffle(str_repeat(implode('', range('a','z')), $length)), 0, $length);
-}
-
-// replaces the text with an utf-8 emoticon
+// Replaces the text with an utf-8 emoticon
 function plugin_emoticons_filter ($emostring) {
 	global $plugin_emoticons;
 
 	foreach ($plugin_emoticons as $text => $emoticon) {
 		$emostring = str_replace(
 			$text,
-			// Is better for screen readers
 			'<span role="img" aria-label="Emoji ' . htmlentities($text) . '">' . $emoticon . '</span>',
 			$emostring
 		);
@@ -101,15 +76,47 @@ function plugin_emoticons_filter ($emostring) {
 	return $emostring;
 }
 
-// css file
+// Css and js file
 function plugin_emoticons_head() {
+	global $plugin_emoticons;
 	$random_hex = RANDOM_HEX;
 	$pdir = plugin_geturl('emoticons');
+
+	$buttonData = [];
+	foreach ($plugin_emoticons as $emoText => $emoticon) {
+		$elementById = emoticon_id($emoText);
+		$buttonData[] = [
+			'id' => $elementById,
+			'text' => $emoText,
+			'icon' => $emoticon,
+		];
+	}
+
 	echo '
 		<!-- BOF Emoticons -->
 		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/emoticons.css">
-		<script nonce="' . $random_hex . '" src="' . plugin_geturl('emoticons') . 'res/emoticons.js"></script>
-		<!-- EOF Emoticons -->';
+		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/emoticons.js"></script>
+		<script nonce="' . $random_hex . '">
+			/**
+			 * Emoticons Plugin
+			 */
+			const buttonData = ' . json_encode($buttonData) . ';
+			document.addEventListener(\'DOMContentLoaded\', function() {
+				const existingEmoIds = buttonData.map(item => item.id);
+				const allEmoIdsExist = existingEmoIds.every(id => document.getElementById(id) !== null);
+
+				if (allEmoIdsExist) {
+					registerEmoticonButtons(buttonData);
+				}
+			});
+		</script>
+		<!-- EOF Emoticons -->
+	';
+}
+
+// Generates an ID for each emoticon
+function emoticon_id($text) {
+	return rtrim(strtr(base64_encode($text), '+/', '-_'), '=');
 }
 
 // register emoticon head
