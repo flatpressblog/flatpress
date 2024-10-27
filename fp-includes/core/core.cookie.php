@@ -69,8 +69,22 @@ function cookie_clear() {
 
 	if (version_compare(PHP_VERSION, '7.3', '>=')) {
 		// PHP 7.3 and higher: Support for SameSite in setcookie()
-		setcookie(USER_COOKIE, '', $cookie_expiry, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY, ['samesite' => SAMESITE_VALUE]);
-		setcookie(PASS_COOKIE, '', $cookie_expiry, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY, ['samesite' => SAMESITE_VALUE]);
+		setcookie(USER_COOKIE, '', [
+			'expires' => $cookie_expiry,
+			'path' => COOKIEPATH,
+			'domain' => COOKIE_DOMAIN,
+			'secure' => COOKIE_SECURE,
+			'httponly' => COOKIE_HTTPONLY,
+			'samesite' => SAMESITE_VALUE
+		]);
+		setcookie(PASS_COOKIE, '', [
+			'expires' => $cookie_expiry,
+			'path' => COOKIEPATH,
+			'domain' => COOKIE_DOMAIN,
+			'secure' => COOKIE_SECURE,
+			'httponly' => COOKIE_HTTPONLY,
+			'samesite' => SAMESITE_VALUE
+		]);
 	} else {
 		// PHP 7.2 and lower: Without SameSite option
 		setcookie(USER_COOKIE, '', $cookie_expiry, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
@@ -87,9 +101,9 @@ function cookie_clear() {
 			'; Path=' . COOKIEPATH . //
 			'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
 			'; HttpOnly; SameSite=' . SAMESITE_VALUE);
-
 	}
 }
+
 
 /**
  * Session part only
