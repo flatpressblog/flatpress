@@ -38,7 +38,6 @@ require_once INCLUDES_DIR . 'core.fpdb.class.php';
 
 require_once INCLUDES_DIR . 'core.language.php';
 require_once INCLUDES_DIR . 'core.plugins.php';
-require_once INCLUDES_DIR . 'core.session.php';
 require_once INCLUDES_DIR . 'core.cookie.php';
 require_once INCLUDES_DIR . 'core.system.php';
 require_once INCLUDES_DIR . 'core.theme.php';
