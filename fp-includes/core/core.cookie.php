@@ -3,12 +3,12 @@
 function cookie_setup() {
 	global $fp_config;
 
-	// Check whether the connection is secure and define the COOKIE_PREFIX
+	// Check whether the connection is secure and define the cookie prefix
 	if (!defined('COOKIE_PREFIX')) {
 		define('COOKIE_PREFIX', is_https() ? '__secure-' : '');
 	}
 
-	// Sets the value for the SameSite attribute to
+	// Defines the value for the SameSite attribute
 	if (!defined('SAMESITE_VALUE')) {
 		define('SAMESITE_VALUE', 'Lax');
 	}
@@ -44,53 +44,17 @@ function cookie_setup() {
 	if (!defined('COOKIE_HTTPONLY')) {
 		define('COOKIE_HTTPONLY', true);
 	}
-
-	// PHP 7.3 or higher: Set session cookie parameters including SameSite
-	if (version_compare(PHP_VERSION, '7.3', '>=')) {
-		session_set_cookie_params([
-			'lifetime' => 0,
-			'path' => COOKIEPATH,
-			'domain' => COOKIE_DOMAIN,
-			'secure' => COOKIE_SECURE,
-			'httponly' => COOKIE_HTTPONLY,
-			'samesite' => SAMESITE_VALUE
-		]);
-	} else {
-		// PHP 7.2 and lower: SameSite not natively supported
-		session_set_cookie_params(0, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
-
-	}
-
 }
 
 // Function for deleting cookies (FlatPress setup)
 function cookie_clear() {
 	$cookie_expiry = time() - 31536000;
 
-	if (version_compare(PHP_VERSION, '7.3', '>=')) {
-		// PHP 7.3 and higher: Support for SameSite in setcookie()
-		setcookie(USER_COOKIE, '', [
-			'expires' => $cookie_expiry,
-			'path' => COOKIEPATH,
-			'domain' => COOKIE_DOMAIN,
-			'secure' => COOKIE_SECURE,
-			'httponly' => COOKIE_HTTPONLY,
-			'samesite' => SAMESITE_VALUE
-		]);
-		setcookie(PASS_COOKIE, '', [
-			'expires' => $cookie_expiry,
-			'path' => COOKIEPATH,
-			'domain' => COOKIE_DOMAIN,
-			'secure' => COOKIE_SECURE,
-			'httponly' => COOKIE_HTTPONLY,
-			'samesite' => SAMESITE_VALUE
-		]);
-	} else {
-		// PHP 7.2 and lower: Without SameSite option
-		setcookie(USER_COOKIE, '', $cookie_expiry, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
-		setcookie(PASS_COOKIE, '', $cookie_expiry, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+	setcookie(USER_COOKIE, '', get_cookie_options($cookie_expiry));
+	setcookie(PASS_COOKIE, '', get_cookie_options($cookie_expiry));
 
-		// Force SameSite via headers for older PHP versions
+	if (version_compare(PHP_VERSION, '7.3', '<')) {
+		// If PHP 7.2 or lower, force SameSite via headers
 		header('Set-Cookie: ' . USER_COOKIE . //
 			'=; Expires=' . gmdate('D, d-M-Y H:i:s T', $cookie_expiry) . //
 			'; Path=' . COOKIEPATH . //
@@ -104,10 +68,29 @@ function cookie_clear() {
 	}
 }
 
+// Function for creating cookie options based on the PHP version
+function get_cookie_options($expiry_time) {
+	if (version_compare(PHP_VERSION, '7.3', '>=')) {
+		// Options for PHP 7.3 and higher
+		return [
+			'expires' => $expiry_time,
+			'path' => COOKIEPATH,
+			'domain' => COOKIE_DOMAIN,
+			'secure' => COOKIE_SECURE,
+			'httponly' => COOKIE_HTTPONLY,
+			'samesite' => SAMESITE_VALUE
+		];
+	} else {
+		// Options for PHP 7.2 and lower
+		return [$expiry_time, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY];
+	}
+}
 
 /**
- * Session part only
+ * The session area starts here
  */
+
+// Session-Setup
 function sess_setup() {
 
 	ini_set('session.cookie_httponly', 1);
@@ -121,41 +104,45 @@ function sess_setup() {
 		ini_set('session.cookie_secure', 0);
 	}
 
-	if (SESSION_PATH != '') {
-		session_save_path(SESSION_PATH);
-	}
-
 	if (session_status() === PHP_SESSION_NONE) {
+
+		if (SESSION_PATH != '') {
+			session_save_path(SESSION_PATH);
+		}
 
 		session_name(SESS_COOKIE);
 
-		// PHP 7.3 or higher
-		if (version_compare(PHP_VERSION, '7.3', '>=')) {
-			// Configure session cookies with SameSite attribute
-			session_set_cookie_params([
-				'lifetime' => 0,
-				'path' => COOKIEPATH,
-				'domain' => COOKIE_DOMAIN,
-				'secure' => COOKIE_SECURE,
-				'httponly' => COOKIE_HTTPONLY,
-				'samesite' => SAMESITE_VALUE
-			]);
-		} else {
-			// PHP 7.2 and lower
-			session_set_cookie_params(0, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
-		}
+		// Setting up the session cookie parameters
+		set_session_cookie_params();
 
 		// Start of the session
 		session_start();
 
-		// If PHP 7.2 or lower, set SameSite via header
+		// If PHP 7.2 or lower, force SameSite via headers
 		if (version_compare(PHP_VERSION, '7.3', '<')) {
 			header('Set-Cookie: ' . session_name() . '=' . session_id() . //
 				'; Path=' . COOKIEPATH . //
 				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
 				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
-
 		}
+	}
+}
+
+// Function for setting up the session cookie parameters
+function set_session_cookie_params() {
+	if (version_compare(PHP_VERSION, '7.3', '>=')) {
+		// PHP 7.3 and higher
+		session_set_cookie_params([
+			'lifetime' => 0,
+			'path' => COOKIEPATH,
+			'domain' => COOKIE_DOMAIN,
+			'secure' => COOKIE_SECURE,
+			'httponly' => COOKIE_HTTPONLY,
+			'samesite' => SAMESITE_VALUE
+		]);
+	} else {
+		// PHP 7.2 and lower
+		session_set_cookie_params(0, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
 	}
 }
 
@@ -183,14 +170,11 @@ function sess_close() {
 	unset($_SESSION);
 	if (isset($_COOKIE [session_name()])) {
 
-		if (version_compare(PHP_VERSION, '7.3', '>=')) {
-			// PHP 7.3 and higher: set the cookie with SameSite for deletion
-			setcookie(session_name(), '', time() - 42000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY, ['samesite' => SAMESITE_VALUE]);
-		} else {
-			// PHP 7.2 and lower: without SameSite option
-			setcookie(session_name(), '', time() - 42000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+		// Set the cookie for deletion
+		setcookie(session_name(), '', get_cookie_options(time() - 42000));
 
-			// Add SameSite via header to delete the cookie
+		if (version_compare(PHP_VERSION, '7.3', '<')) {
+			// If PHP 7.2 or lower, force SameSite via headers to delete the cookie
 			header('Set-Cookie: ' . session_name() . //
 				'=; Expires=' . gmdate('D, d-M-Y H:i:s T', time() - 42000) . //
 				'; Path=' . COOKIEPATH . //
