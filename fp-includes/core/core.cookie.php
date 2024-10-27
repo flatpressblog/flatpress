@@ -3,13 +3,21 @@
 function cookie_setup() {
 	global $fp_config;
 
+	// Check whether the connection is secure and define the COOKIE_PREFIX
+	if (!defined('COOKIE_PREFIX')) {
+		define('COOKIE_PREFIX', is_https() ? '__secure-' : '');
+	}
 
-	// md5(BLOG_BASEURL);
+	// Sets the value for the SameSite attribute to
+	if (!defined('SAMESITE_VALUE')) {
+		define('SAMESITE_VALUE', 'Lax');
+	}
 
 	if (!defined('COOKIEHASH')) {
 		define('COOKIEHASH', $fp_config ['general'] ['blogid']);
 	}
 
+	// Definition of the different cookies with prefix
 	if (!defined('USER_COOKIE')) {
 		define('USER_COOKIE', COOKIE_PREFIX . 'fpuser_' . COOKIEHASH);
 	}
@@ -20,11 +28,12 @@ function cookie_setup() {
 		define('SESS_COOKIE', COOKIE_PREFIX . 'fpsess_' . COOKIEHASH);
 	}
 
+	// Cookie paths and settings
 	if (!defined('COOKIEPATH')) {
-		define('COOKIEPATH', preg_replace('|https?://[^/]+|i', '', BLOG_BASEURL));
+		define('COOKIEPATH', preg_replace('|https?://[^/]+(/.*?)/?$|i', '$1', BLOG_BASEURL) ?: '/');
 	}
 	if (!defined('SITECOOKIEPATH')) {
-		define('SITECOOKIEPATH', preg_replace('|https?://[^/]+|i', '', BLOG_BASEURL));
+		define('SITECOOKIEPATH', preg_replace('|https?://[^/]+(/.*?)/?$|i', '$1', BLOG_BASEURL) ?: '/');
 	}
 	if (!defined('COOKIE_DOMAIN')) {
 		define('COOKIE_DOMAIN', false);
@@ -35,121 +44,147 @@ function cookie_setup() {
 	if (!defined('COOKIE_HTTPONLY')) {
 		define('COOKIE_HTTPONLY', true);
 	}
+
+	// PHP 7.3 or higher: Set session cookie parameters including SameSite
+	if (version_compare(PHP_VERSION, '7.3', '>=')) {
+		session_set_cookie_params([
+			'lifetime' => 0,
+			'path' => COOKIEPATH,
+			'domain' => COOKIE_DOMAIN,
+			'secure' => COOKIE_SECURE,
+			'httponly' => COOKIE_HTTPONLY,
+			'samesite' => SAMESITE_VALUE
+		]);
+	} else {
+		// PHP 7.2 and lower: SameSite not natively supported
+		session_set_cookie_params(0, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+
+	}
+
 }
 
-// used by FlatPress-Setup
+// Function for deleting cookies (FlatPress setup)
 function cookie_clear() {
-	setcookie(USER_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
-	setcookie(PASS_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+	$cookie_expiry = time() - 31536000;
+
+	if (version_compare(PHP_VERSION, '7.3', '>=')) {
+		// PHP 7.3 and higher: Support for SameSite in setcookie()
+		setcookie(USER_COOKIE, '', $cookie_expiry, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY, ['samesite' => SAMESITE_VALUE]);
+		setcookie(PASS_COOKIE, '', $cookie_expiry, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY, ['samesite' => SAMESITE_VALUE]);
+	} else {
+		// PHP 7.2 and lower: Without SameSite option
+		setcookie(USER_COOKIE, '', $cookie_expiry, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+		setcookie(PASS_COOKIE, '', $cookie_expiry, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+
+		// Force SameSite via headers for older PHP versions
+		header('Set-Cookie: ' . USER_COOKIE . //
+			'=; Expires=' . gmdate('D, d-M-Y H:i:s T', $cookie_expiry) . //
+			'; Path=' . COOKIEPATH . //
+			'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
+			'; HttpOnly; SameSite=' . SAMESITE_VALUE);
+		header('Set-Cookie: ' . PASS_COOKIE . //
+			'=; Expires=' . gmdate('D, d-M-Y H:i:s T', $cookie_expiry) . //
+			'; Path=' . COOKIEPATH . //
+			'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
+			'; HttpOnly; SameSite=' . SAMESITE_VALUE);
+
+	}
 }
 
-
-if (!function_exists('wp_get_cookie_login')) :
-/*
- * 	function wp_get_cookie_login() {
- * 		if (empty($_COOKIE [USER_COOKIE]) || empty($_COOKIE [PASS_COOKIE]))
- * 			return false;
- * 
- * 		return array(
- * 			'login' => $_COOKIE [USER_COOKIE],
- * 			'password' => $_COOKIE [PASS_COOKIE]
- * 		);
- * 	}
+/**
+ * Session part only
  */
-endif;
+function sess_setup() {
 
+	ini_set('session.cookie_httponly', 1);
+	ini_set('session.use_only_cookies', 1);
+	ini_set('session.cookie_samesite', SAMESITE_VALUE);
+	ini_set('session.cookie_path', COOKIEPATH);
 
-/* function cookie_set($username, $password, $already_md5 = false, $home = '', $siteurl = '', $remember = false) {
- * 	if (!$already_md5)
- * 		$password = md5(md5($password)); // Double hash the password in the cookie.
- * 
- * 	if (empty($home))
- * 		$cookiepath = COOKIEPATH;
- * 	else
- * 		$cookiepath = preg_replace('|https?://[^/]+|i', '', $home . '/');
- * 
- * 	if (empty($siteurl)) {
- * 		$sitecookiepath = SITECOOKIEPATH;
- * 		$cookiehash = COOKIEHASH;
- * 	} else {
- * 		$sitecookiepath = preg_replace('|https?://[^/]+|i', '', $siteurl . '/');
- * 		$cookiehash = md5($siteurl);
- * 	}
- * 
- * 	if ($remember)
- * 		$expire = time() + 31536000;
- * 	else
- * 		$expire = 0;
- * 
- * 	setcookie(USER_COOKIE, $username, $expire, $cookiepath, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
- * 	setcookie(PASS_COOKIE, $password, $expire, $cookiepath, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
- * 
- * 	if ($cookiepath != $sitecookiepath) {
- * 		setcookie(USER_COOKIE, $username, $expire, $sitecookiepath, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
- * 		setcookie(PASS_COOKIE, $password, $expire, $sitecookiepath, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
- * 	}
- * }
- */
+	if (is_https()) {
+		ini_set('session.cookie_secure', 1);
+	} else {
+		ini_set('session.cookie_secure', 0);
+	}
 
-if (!function_exists('wp_login')) :
-/* 
- * 	function wp_login($username, $password, $already_md5 = false) {
- * 		global $wpdb, $error;
- * 
- * 		$username = sanitize_user($username);
- * 
- * 		if ('' == $username)
- * 			return false;
- * 
- * 		if ('' == $password) {
- * 			$error = __('<strong>ERROR</strong>: The password field is empty.');
- * 			return false;
- * 		}
- * 
- * 		$login = get_userdatabylogin($username);
- * 		// $login = $wpdb->get_row("SELECT ID, user_login, user_pass FROM $wpdb->users WHERE user_login = '$username'");
- * 
- * 		if (!$login) {
- * 			$error = __('<strong>ERROR</strong>: Invalid username.');
- * 			return false;
- * 		} else {
- * 			// If the password is already_md5, it has been double hashed.
- * 			// Otherwise, it is plain text.
- * 			if (($already_md5 && md5($login->user_pass) == $password) || ($login->user_login == $username && $login->user_pass == md5($password))) {
- * 				return true;
- * 			} else {
- * 				$error = __('<strong>ERROR</strong>: Incorrect password.');
- * 				$pwd = '';
- * 				return false;
- * 			}
- * 		}
- * 	}
- */
-endif;
+	if (SESSION_PATH != '') {
+		session_save_path(SESSION_PATH);
+	}
 
-if (!function_exists('is_user_logged_in')) :
-/* 
- * 	function is_user_logged_in() {
- * 		$user = wp_get_current_user();
- * 
- * 		if ($user->id == 0)
- * 			return false;
- * 
- * 		return true;
- * 	}
- * endif;
- * 
- * if (!function_exists('auth_redirect')) :
- * 
- * 	function auth_redirect() {
- * 		// Checks if a user is logged in, if not redirects them to the login page
- * 		if ((!empty($_COOKIE [USER_COOKIE]) && !wp_login($_COOKIE [USER_COOKIE], $_COOKIE [PASS_COOKIE], true)) || (empty($_COOKIE [USER_COOKIE]))) {
- * 			nocache_headers();
- * 
- * 			wp_redirect(get_option('siteurl') . '/wp-login.php?redirect_to=' . urlencode($_SERVER ['REQUEST_URI']));
- * 			exit();
- * 		}
- * 	}
- */
-endif;
+	if (session_status() === PHP_SESSION_NONE) {
+
+		session_name(SESS_COOKIE);
+
+		// PHP 7.3 or higher
+		if (version_compare(PHP_VERSION, '7.3', '>=')) {
+			// Configure session cookies with SameSite attribute
+			session_set_cookie_params([
+				'lifetime' => 0,
+				'path' => COOKIEPATH,
+				'domain' => COOKIE_DOMAIN,
+				'secure' => COOKIE_SECURE,
+				'httponly' => COOKIE_HTTPONLY,
+				'samesite' => SAMESITE_VALUE
+			]);
+		} else {
+			// PHP 7.2 and lower
+			session_set_cookie_params(0, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+		}
+
+		// Start of the session
+		session_start();
+
+		// If PHP 7.2 or lower, set SameSite via header
+		if (version_compare(PHP_VERSION, '7.3', '<')) {
+			header('Set-Cookie: ' . session_name() . '=' . session_id() . //
+				'; Path=' . COOKIEPATH . //
+				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
+				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
+
+		}
+	}
+}
+
+// Function for adding a value to the session
+function sess_add($key, $val) {
+	$_SESSION [$key] = $val;
+}
+
+// Function for removing a value from the session
+function sess_remove($key) {
+	if (isset($_SESSION [$key])) {
+		$oldval = $_SESSION [$key];
+		unset($_SESSION [$key]);
+		return $oldval;
+	}
+}
+
+// Function for retrieving a value from the session
+function sess_get($key) {
+	return isset($_SESSION [$key]) ? $_SESSION [$key] : false;
+}
+
+// Function for closing the session
+function sess_close() {
+	unset($_SESSION);
+	if (isset($_COOKIE [session_name()])) {
+
+		if (version_compare(PHP_VERSION, '7.3', '>=')) {
+			// PHP 7.3 and higher: set the cookie with SameSite for deletion
+			setcookie(session_name(), '', time() - 42000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY, ['samesite' => SAMESITE_VALUE]);
+		} else {
+			// PHP 7.2 and lower: without SameSite option
+			setcookie(session_name(), '', time() - 42000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+
+			// Add SameSite via header to delete the cookie
+			header('Set-Cookie: ' . session_name() . //
+				'=; Expires=' . gmdate('D, d-M-Y H:i:s T', time() - 42000) . //
+				'; Path=' . COOKIEPATH . //
+				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
+				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
+		}
+
+	}
+	session_destroy();
+}
 ?>
