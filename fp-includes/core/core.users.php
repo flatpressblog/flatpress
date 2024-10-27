@@ -69,48 +69,22 @@ function user_login($userid, $pwd, $params = null) {
 		$expire = time() + 31536000;
 
 		// Cookie options
-		$cookieOptions = [
-			'expires' => $expire,
-			'path' => COOKIEPATH,
-			'domain' => COOKIE_DOMAIN,
-			'secure' => COOKIE_SECURE,
-			'httponly' => COOKIE_HTTPONLY,
-			'samesite' => SAMESITE_VALUE
-		];
+		$cookieOptions = get_cookie_options($expire);
 
-		// Check PHP version
-		if (version_compare(PHP_VERSION, '7.3', '>=')) {
-			// PHP 7.3+ supports SameSite natively
-			setcookie(USER_COOKIE, $hashedUserId, $cookieOptions);
-			setcookie(PASS_COOKIE, $user ['password'], $cookieOptions);
-		} else {
-			// PHP 7.2 and lower - manually set SameSite using header
-			setcookie(USER_COOKIE, $hashedUserId, [
-				'expires' => $expire,
-				'path' => COOKIEPATH,
-				'domain' => COOKIE_DOMAIN,
-				'secure' => COOKIE_SECURE,
-				'httponly' => COOKIE_HTTPONLY
-			]);
-			setcookie(PASS_COOKIE, $user ['password'], [
-				'expires' => $expire,
-				'path' => COOKIEPATH,
-				'domain' => COOKIE_DOMAIN,
-				'secure' => COOKIE_SECURE,
-				'httponly' => COOKIE_HTTPONLY
-			]);
+		// Set cookies for PHP 7.3+ or manually for older versions
+		setcookie(USER_COOKIE, $hashedUserId, $cookieOptions);
+		setcookie(PASS_COOKIE, $user ['password'], $cookieOptions);
 
-			// Add SameSite attribute manually via header
+		// Manually set SameSite for PHP < 7.3
+		if (version_compare(PHP_VERSION, '7.3', '<')) {
 			header('Set-Cookie: ' . USER_COOKIE . '=' . urlencode($hashedUserId) . //
 				'; Expires=' . gmdate('D, d-M-Y H:i:s T', $expire) . //
 				'; Path=' . COOKIEPATH . //
-				'; Domain=' . COOKIE_DOMAIN . //
 				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
 				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
 			header('Set-Cookie: ' . PASS_COOKIE . '=' . urlencode($user ['password']) . //
 				'; Expires=' . gmdate('D, d-M-Y H:i:s T', $expire) . //
 				'; Path=' . COOKIEPATH . //
-				'; Domain=' . COOKIE_DOMAIN . //
 				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
 				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
 		}
@@ -125,48 +99,22 @@ function user_logout() {
 	if (user_loggedin()) {
 
 		// Cookie options for deleting the cookie
-		$cookieOptions = [
-			'expires' => time() - 31536000,
-			'path' => COOKIEPATH,
-			'domain' => COOKIE_DOMAIN,
-			'secure' => COOKIE_SECURE,
-			'httponly' => COOKIE_HTTPONLY,
-			'samesite' => SAMESITE_VALUE
-		];
+		$cookieOptions = get_cookie_options(time() - 31536000);
 
-		// Check PHP version
-		if (version_compare(PHP_VERSION, '7.3', '>=')) {
-			// PHP 7.3+ supports SameSite natively
-			setcookie(USER_COOKIE, '', $cookieOptions);
-			setcookie(PASS_COOKIE, '', $cookieOptions);
-		} else {
-			// PHP 7.2 and lower - manually set SameSite using header
-			setcookie(USER_COOKIE, '', [
-				'expires' => time() - 31536000,
-				'path' => COOKIEPATH,
-				'domain' => COOKIE_DOMAIN,
-				'secure' => COOKIE_SECURE,
-				'httponly' => COOKIE_HTTPONLY
-			]);
-			setcookie(PASS_COOKIE, '', [
-				'expires' => time() - 31536000,
-				'path' => COOKIEPATH,
-				'domain' => COOKIE_DOMAIN,
-				'secure' => COOKIE_SECURE,
-				'httponly' => COOKIE_HTTPONLY
-			]);
+		// Delete cookies for PHP 7.3+ or manually for older versions
+		setcookie(USER_COOKIE, '', $cookieOptions);
+		setcookie(PASS_COOKIE, '', $cookieOptions);
 
-			// Remove cookies manually
+		// Manually remove cookies for PHP < 7.3
+		if (version_compare(PHP_VERSION, '7.3', '<')) {
 			header('Set-Cookie: ' . USER_COOKIE . //
 				'=; Expires=' . gmdate('D, d-M-Y H:i:s T', time() - 31536000) . //
 				'; Path=' . COOKIEPATH . //
-				'; Domain=' . COOKIE_DOMAIN . //
 				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
 				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
 			header('Set-Cookie: ' . PASS_COOKIE . //
 				'=; Expires=' . gmdate('D, d-M-Y H:i:s T', time() - 31536000) . //
 				'; Path=' . COOKIEPATH . //
-				'; Domain=' . COOKIE_DOMAIN . //
 				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
 				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
 		}
@@ -215,13 +163,6 @@ function user_loggedin() {
 	return false;
 }
 
-/**
- * Returns the user information as associative array
- *
- * @param string $userid
- *        	optional: The ID (shortname) of a specific user
- * @return array the user information array
- */
 function user_get($userid = null) {
 	if ($userid == null && ($user = user_loggedin())) {
 		return $user;
