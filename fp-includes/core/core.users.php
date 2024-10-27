@@ -41,7 +41,7 @@ function user_login($userid, $pwd, $params = null) {
 
 	// Get user data
 	$user = user_get($userid);
-	// User not found? get outta hier
+	// User not found? get outta here
 	if (!isset($user) || !isset($user ['password'])) {
 		return $loggedin;
 	}
@@ -68,9 +68,52 @@ function user_login($userid, $pwd, $params = null) {
 		$hashedUserId = hash('sha256', $userid);
 		$expire = time() + 31536000;
 
-		// Save user name as SHA-256 in the cookie
-		setcookie(USER_COOKIE, $hashedUserId, $expire, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
-		setcookie(PASS_COOKIE, $user ['password'], $expire, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+		// Cookie options
+		$cookieOptions = [
+			'expires' => $expire,
+			'path' => COOKIEPATH,
+			'domain' => COOKIE_DOMAIN,
+			'secure' => COOKIE_SECURE,
+			'httponly' => COOKIE_HTTPONLY,
+			'samesite' => SAMESITE_VALUE
+		];
+
+		// Check PHP version
+		if (version_compare(PHP_VERSION, '7.3', '>=')) {
+			// PHP 7.3+ supports SameSite natively
+			setcookie(USER_COOKIE, $hashedUserId, $cookieOptions);
+			setcookie(PASS_COOKIE, $user ['password'], $cookieOptions);
+		} else {
+			// PHP 7.2 and lower - manually set SameSite using header
+			setcookie(USER_COOKIE, $hashedUserId, [
+				'expires' => $expire,
+				'path' => COOKIEPATH,
+				'domain' => COOKIE_DOMAIN,
+				'secure' => COOKIE_SECURE,
+				'httponly' => COOKIE_HTTPONLY
+			]);
+			setcookie(PASS_COOKIE, $user ['password'], [
+				'expires' => $expire,
+				'path' => COOKIEPATH,
+				'domain' => COOKIE_DOMAIN,
+				'secure' => COOKIE_SECURE,
+				'httponly' => COOKIE_HTTPONLY
+			]);
+
+			// Add SameSite attribute manually via header
+			header('Set-Cookie: ' . USER_COOKIE . '=' . urlencode($hashedUserId) . //
+				'; Expires=' . gmdate('D, d-M-Y H:i:s T', $expire) . //
+				'; Path=' . COOKIEPATH . //
+				'; Domain=' . COOKIE_DOMAIN . //
+				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
+				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
+			header('Set-Cookie: ' . PASS_COOKIE . '=' . urlencode($user ['password']) . //
+				'; Expires=' . gmdate('D, d-M-Y H:i:s T', $expire) . //
+				'; Path=' . COOKIEPATH . //
+				'; Domain=' . COOKIE_DOMAIN . //
+				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
+				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
+		}
 	}
 
 	return $loggedin;
@@ -81,8 +124,52 @@ function user_logout() {
 
 	if (user_loggedin()) {
 
-		setcookie(USER_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
-		setcookie(PASS_COOKIE, ' ', time() - 31536000, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+		// Cookie options for deleting the cookie
+		$cookieOptions = [
+			'expires' => time() - 31536000,
+			'path' => COOKIEPATH,
+			'domain' => COOKIE_DOMAIN,
+			'secure' => COOKIE_SECURE,
+			'httponly' => COOKIE_HTTPONLY,
+			'samesite' => SAMESITE_VALUE
+		];
+
+		// Check PHP version
+		if (version_compare(PHP_VERSION, '7.3', '>=')) {
+			// PHP 7.3+ supports SameSite natively
+			setcookie(USER_COOKIE, '', $cookieOptions);
+			setcookie(PASS_COOKIE, '', $cookieOptions);
+		} else {
+			// PHP 7.2 and lower - manually set SameSite using header
+			setcookie(USER_COOKIE, '', [
+				'expires' => time() - 31536000,
+				'path' => COOKIEPATH,
+				'domain' => COOKIE_DOMAIN,
+				'secure' => COOKIE_SECURE,
+				'httponly' => COOKIE_HTTPONLY
+			]);
+			setcookie(PASS_COOKIE, '', [
+				'expires' => time() - 31536000,
+				'path' => COOKIEPATH,
+				'domain' => COOKIE_DOMAIN,
+				'secure' => COOKIE_SECURE,
+				'httponly' => COOKIE_HTTPONLY
+			]);
+
+			// Remove cookies manually
+			header('Set-Cookie: ' . USER_COOKIE . //
+				'=; Expires=' . gmdate('D, d-M-Y H:i:s T', time() - 31536000) . //
+				'; Path=' . COOKIEPATH . //
+				'; Domain=' . COOKIE_DOMAIN . //
+				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
+				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
+			header('Set-Cookie: ' . PASS_COOKIE . //
+				'=; Expires=' . gmdate('D, d-M-Y H:i:s T', time() - 31536000) . //
+				'; Path=' . COOKIEPATH . //
+				'; Domain=' . COOKIE_DOMAIN . //
+				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
+				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
+		}
 	}
 
 	$loggedin = false;
@@ -146,7 +233,7 @@ function user_get($userid = null) {
 	// If PHP file for given user exists
 	if (in_array($userid . '.php', $userfiles)) {
 		// include it
-		include (USERS_DIR . $userid . '.php');
+		include(USERS_DIR . $userid . '.php');
 		return $user;
 	}
 }

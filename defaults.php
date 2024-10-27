@@ -2,7 +2,7 @@
 
 // defaults.php
 
-// this file defines standard positions of some important
+// This file defines standard positions of some important
 // dirs or files.
 
 // For security reasons
@@ -17,34 +17,34 @@
 // legacy mode; needed with some ill-formed spb files
 define('DUMB_MODE_ENABLED', false);
 
-// default file permissions
+// Default file permissions
 // https://binary-butterfly.de/artikel/dateirechte-wie-stelle-ich-das-bei-meinem-hoster-ein/
-// change file to 666 and dir to 777 if your webserver "complains"
+// Change file to 666 and dir to 777 if your webserver "complains"
 // Note: Lowering the directory and file permissions may result in FlatPress or some additional plugins not working correctly.
 define('FILE_PERMISSIONS', 0666);
 define('DIR_PERMISSIONS', 0777);
 
-// first some webserver setup...
+// First some webserver setup...
 
-// here's where your server save session-related stuff.
+// Here's where your server save session-related stuff.
 // If you don't experience any session-related problem, you
 // you can leave it blank and it will default to standard webserver config
 define('SESSION_PATH', '');
-// absolute path to your webserver dir; if you don't experience any problem
+// Absolute path to your webserver dir; if you don't experience any problem
 // you can leave this as it is
 define('ABS_PATH', dirname(__FILE__) . '/');
-// here was blog root in earlier versions. This has been moved to config_load()
+// Here was blog root in earlier versions. This has been moved to config_load()
 
 // Is required so that the file and directory permissions can be set when executing the setup
 define('BASE_DIR', dirname(__FILE__));
 
-// here are default config files
+// Here are default config files
 define('FP_DEFAULTS', 'fp-defaults/');
 
-// all writable directories go here.
+// All writable directories go here.
 define('FP_CONTENT', 'fp-content/'); // must be chmodded to 0777
 
-// blog configurations files
+// Blog configurations files
 define('CONFIG_DIR', FP_CONTENT . 'config/'); // must be chmodded to 0777
 define('CONFIG_FILE', CONFIG_DIR . 'settings.conf.php');
 
@@ -56,8 +56,8 @@ define('HASHSALT_FILE', CONFIG_DIR . 'hashsalt.conf.php');
 define('CONFIG_DEFAULT', FP_DEFAULTS . 'settings-defaults.php');
 define('USERS_DIR', FP_CONTENT . 'users/');
 
-// here we'll store all your entries, comments, static pages and blocks
-// comments are stored automatically in subdirs of the dir CONTENT_DIR
+// Here we'll store all your entries, comments, static pages and blocks
+// Comments are stored automatically in subdirs of the dir CONTENT_DIR
 define('CONTENT_DIR', FP_CONTENT . 'content/');
 // define('BLOCKS_DIR', CONTENT_DIR . 'blocks/');
 
@@ -80,12 +80,12 @@ define('LANG_DIR', FP_INTERFACE . 'lang/');
 // misc forms
 define('SHARED_TPLS', ABS_PATH . FP_INTERFACE . 'sharedtpls/');
 
-// here is where all plugins are saved
+// Here is where all plugins are saved
 define('PLUGINS_DIR', 'fp-plugins/');
 
 define('ADMIN_DIR', 'admin/');
 
-// cache file name and path.
+// Cache file name and path.
 define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0776
 define('CACHE_FILE', '%%cached_list.php');
 
@@ -93,17 +93,16 @@ define('INDEX_DIR', FP_CONTENT . 'index/');
 
 define('LOCKFILE', FP_CONTENT . '%%setup.lock');
 
-// these will be probably moved soon to plugins
-// here is where all the uploaded images will be saved
+// Here is where all the uploaded images will be saved
 define('IMAGES_DIR', FP_CONTENT . 'images/');
-// here is where all the attachments will be saved
+// Here is where all the attachments will be saved
 define('ATTACHS_DIR', FP_CONTENT . 'attachs/');
 
 include (LANG_DIR . 'browserlang.php');
 define('LANG_DEFAULT', $browserLang);
 define('BPT_SORT', SORT_DESC);
 
-// generates for your scripts in plugins and templates
+// Generates for your scripts in plugins and templates
 // a random hexadecimal value for the nonce attribute
 // https://wiki.selfhtml.org/wiki/HTML/Attribute/nonce
 define('RANDOM_HEX', bin2hex(random_bytes(18)));
@@ -126,34 +125,25 @@ set_include_path(ABS_PATH);
 // Adding security and HTTPS support
 //
 
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-
 if (isset($_SERVER ['HTTPS'])) {
 	$_SERVER ['HTTPS'] = htmlspecialchars($_SERVER ['HTTPS'], ENT_QUOTES, "UTF-8");
 }
 
-// supports Apache and IIS
+// Supports Apache and IIS
 $serverport = '';
 if (is_https()) {
 	// HTTPS enabled
 	$serverport = "https://";
-	ini_set('session.cookie_httponly', 1);
-	define('COOKIE_PREFIX', '__secure-');
-	ini_set('session.cookie_secure', 1);
-	ini_set('session.cookie_samesite', 'Lax');
 } else {
 	// HTTP only
 	$serverport = "http://";
-	ini_set('session.cookie_httponly', 0);
-	define('COOKIE_PREFIX', '');
-	ini_set('session.cookie_secure', 0);
 }
 
-// compatibility with ISS
+// Compatibility with ISS
 $_SERVER ["REQUEST_URI"] = htmlspecialchars($_SERVER ["REQUEST_URI"], ENT_QUOTES, "UTF-8");
-if (!isset($_SERVER ['REQUEST_URI']))
+if (!isset($_SERVER ['REQUEST_URI'])) {
 	$_SERVER ['REQUEST_URI'] = $serverport . 'localhost/flatpress/';
+}
 
 // define('BLOG_ROOT', dirname($_SERVER['PHP_SELF']) . '/');
 define('BLOG_ROOT', ('/' == ($v = dirname($_SERVER ['SCRIPT_NAME'])) ? $v : $v . '/'));
@@ -168,7 +158,7 @@ define('BLOG_BASEURL', $serverport . $_SERVER ['HTTP_HOST'] . BLOG_ROOT);
 //
 header('Expires: Sun, 01 Jan 2015 00:00:00 GMT');
 header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Cache-Control: post-check=0, pre-check=0', FALSE);
+header('Cache-Control: post-check=0, pre-check=0', false);
 header('Pragma: no-cache');
 //
 // http://de.wikipedia.org/wiki/Liste_der_HTTP-Headerfelder
@@ -202,4 +192,4 @@ function is_https() {
 	// none of the above: must be HTTP
 	return false;
 }
-
+?>

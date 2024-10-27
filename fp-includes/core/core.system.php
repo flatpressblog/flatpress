@@ -181,7 +181,7 @@ function system_init() {
 	$GLOBALS ['fp_config'] = config_load();
 
 	cookie_setup();
-	ensure_session_active();
+	sess_setup();
 	user_loggedin();
 
 	ob_start();
@@ -197,6 +197,12 @@ function system_init() {
 	$smarty->compile_dir = CACHE_DIR;
 	$smarty->cache_dir = SMARTY_DIR . 'cache/';
 	$smarty->caching = 0;
+
+	// PHP error outputs and Smarty debug console
+	@ini_set('display_errors', 'on'); // on or off
+	@error_reporting(E_ALL); // E_ALL or 0
+	$smarty->debugging = false; // true or false
+	//$smarty->clearCompiledTemplate();
 
 	do_action('init');
 	ob_end_clean();
