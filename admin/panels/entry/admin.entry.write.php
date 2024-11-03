@@ -127,11 +127,15 @@ class admin_entry_write extends AdminPanelActionValidated {
 	}
 
 	function _getposteddata() {
+		global $fp_config;
 		$arr ['version'] = system_ver();
-		$arr ['subject'] = ($_POST ['subject']);
-		$arr ['content'] = ($_POST ['content']);
+		$arr ['subject'] = $_POST ['subject'];
+		$arr ['content'] = $_POST ['content'];
+
+		// Set the author from the configuration, if available; otherwise set the user.
 		$author = user_get();
-		$arr ['author'] = $author ['userid'];
+		$arr ['author'] = !empty($fp_config ['general'] ['author']) ? $fp_config ['general'] ['author'] : $author ['userid'];
+
 		$arr ['date'] = !empty($_POST ['timestamp']) ? $_POST ['timestamp'] : date_time();
 
 		$cats = !empty($_POST ['cats']) ? $_POST ['cats'] : array();
