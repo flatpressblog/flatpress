@@ -147,6 +147,13 @@ if (class_exists('AdminPanelAction')) {
 			);
 		}
 
+		// Assign configuration values to the template
+		function assign_config_to_template() {
+			$config = $this->load_config();
+			$this->smarty->assign('allowUnsafeInline', $config ['allowUnsafeInline']);
+			$this->smarty->assign('allowPrettyURLEdit', $config ['allowPrettyURLEdit']);
+		}
+
 		function onsubmit($data = null) {
 			// Check whether the checkboxes are set or not
 			$allowUnsafeInline = isset($_POST ['allowUnsafeInline']) ? true : false;
@@ -158,9 +165,10 @@ if (class_exists('AdminPanelAction')) {
 
 			plugin_saveoptions('fpprotect');
 
-			// Show success message
+			// Save configuration and update the template
 			global $lang;
 			$this->smarty->assign('success', 1);
+			$this->assign_config_to_template();
 		}
 	}
 
