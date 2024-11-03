@@ -17,7 +17,6 @@ class admin_config_default extends AdminPanelActionValidated {
 			false,
 			'trim'
 		),
-		// ...
 		array(
 			'title',
 			'title',
@@ -44,7 +43,6 @@ class admin_config_default extends AdminPanelActionValidated {
 			false,
 			'trim'
 		),
-
 		array(
 			'timeoffset',
 			'timeoffset',
@@ -77,7 +75,6 @@ class admin_config_default extends AdminPanelActionValidated {
 			false,
 			'trim'
 		),
-
 		array(
 			'lang',
 			'lang',
@@ -96,9 +93,7 @@ class admin_config_default extends AdminPanelActionValidated {
 		)
 	);
 
-	var $events = array(
-		'save'
-	);
+	var $events = array('save');
 
 	function setup() {
 		global $fp_config;
@@ -106,16 +101,14 @@ class admin_config_default extends AdminPanelActionValidated {
 		$this->smarty->assign('themes', theme_list());
 		$this->smarty->assign('lang_list', lang_list());
 
-		// Charset options depending on the selected language
+		// Load charset options based on the selected language
 		$charset_list = $this->getCharsetList($fp_config ['locale'] ['lang']);
 		$this->smarty->assign('charset_list', $charset_list);
 
-		$static_list = array();
-
+		$static_list = [];
 		foreach (static_getlist() as $id) {
 			$static_list [$id] = static_parse($id);
 		}
-
 		$this->smarty->assign('static_list', $static_list);
 	}
 
@@ -124,10 +117,10 @@ class admin_config_default extends AdminPanelActionValidated {
 		$langConfFile = LANG_DIR . $lang . '/lang.conf.php';
 		if (file_exists($langConfFile)) {
 			include $langConfFile;
-			return isset($langconf ['charsets']) ? $langconf ['charsets'] : array();
+			return isset($langconf ['charsets']) ? $langconf ['charsets'] : ['utf-8'];
 		}
 		// Fallback to utf-8 if no charsets are defined
-		return array('utf-8');
+		return ['utf-8'];
 	}
 
 	function onsave() {
@@ -139,13 +132,12 @@ class admin_config_default extends AdminPanelActionValidated {
 		// Check whether the selected charset is valid
 		if (!in_array($_POST ['charset'], $validCharsets)) {
 			// Error case - invalid charset
-			$this->smarty->assign('error', array('charset' => 'Invalid charset selected'));
+			$this->smarty->assign('error', ['charset' => 'Invalid charset selected']);
 			return $this->onerror();
 		}
 
-		// Save configuration
+		// Update and save the configuration
 		$fp_config ['general'] = array(
-			// 'BLOG_ROOT' => $_POST['blog_root'],
 			'www' => $_POST ['www'],
 			'title' => wp_specialchars(stripslashes($_POST ['title'])),
 			'subtitle' => wp_specialchars(stripslashes($_POST ['subtitle'])),
@@ -154,9 +146,7 @@ class admin_config_default extends AdminPanelActionValidated {
 			'email' => wp_specialchars($_POST ['email']),
 			'startpage' => ($_POST ['startpage'] == ':NULL:') ? null : $_POST ['startpage'],
 			'maxentries' => $_POST ['maxentries'],
-			// 'voting' => $_POST['voting'],
 			'notify' => isset($_POST ['notify']),
-			// preserve the following
 			'theme' => $fp_config ['general'] ['theme'],
 			'style' => @$fp_config ['general'] ['style'],
 			'blogid' => $fp_config ['general'] ['blogid'],
@@ -175,9 +165,13 @@ class admin_config_default extends AdminPanelActionValidated {
 
 		$success = config_save() ? 1 : -1;
 
+		// Re-assign values directly to Smarty template to reflect changes
+		// Ensure the latest config is loaded into the template
+		$this->setup();
 		$this->smarty->assign('success', $success);
 
-		return 1;
+		// Call main() to render updated config without reload
+		return $this->main();
 	}
 
 	function onerror() {
@@ -185,12 +179,10 @@ class admin_config_default extends AdminPanelActionValidated {
 		return 0;
 	}
 
+	// if theme was switched, clear tpl cache
 	function cleartplcache() {
-		// if theme was switched, clear tpl cache
 		$tpl = new tpl_deleter();
-
 		$tpl->getList();
 	}
-
 }
 ?>
