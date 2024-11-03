@@ -1,7 +1,7 @@
 <?php
 
 /**
- * edit entry panel
+ * edit static site panel
  *
  * Type:
  * Name:
@@ -98,16 +98,21 @@ class admin_static_write extends AdminPanelActionValidated {
 	}
 
 	function _getposteddata() {
+		global $fp_config;
 		$arr ['version'] = system_ver();
-		$arr ['subject'] = ($_POST ['subject']);
-		$arr ['content'] = ($_POST ['content']);
+		$arr ['subject'] = $_POST ['subject'];
+		$arr ['content'] = $_POST ['content'];
+
+		// Set the author from the configuration, if available; otherwise set the user.
 		$author = user_get();
-		$arr ['author'] = $author ['userid'];
+		$arr ['author'] = !empty($fp_config ['general'] ['author']) ? $fp_config ['general'] ['author'] : $author ['userid'];
+
 		$arr ['date'] = !empty($_POST ['timestamp']) ? $_POST ['timestamp'] : date_time();
 
 		$cats = !empty($_POST ['cats']) ? $_POST ['cats'] : array();
 		$flags = !empty($_POST ['flags']) ? $_POST ['flags'] : array();
 
+		// If required, process the categories and flags here.
 		// $arr['categories'] = array_merge(array_keys($flags), array_keys($cats));
 
 		return $arr;
