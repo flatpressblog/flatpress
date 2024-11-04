@@ -64,6 +64,10 @@
   - The set language is now taken into account when determining the first day of the week. ([#73](https://github.com/flatpressblog/flatpress/issues/73))
   - Single-digit months are now always two-digit.
 
+## Setup
+### Bugfixes
+- The setup now also recognizes the browser language when using Firefox
+
 ## Themes
 - Invidual scrollbar for the Leggero v2 style
 - The Leggero v2 style now supports UltraWide monitors ([#476](https://github.com/flatpressblog/flatpress/issues/476))
