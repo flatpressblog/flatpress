@@ -143,7 +143,12 @@ class admin_uploader_default extends AdminPanelAction {
 			$tmp_name = $_FILES ['upload'] ['tmp_name'] [$key];
 			$name = $_FILES ['upload'] ['name'] [$key];
 
-			$dir = ATTACHS_DIR;
+			// Forbids the upload of hidden files (e.g. .test.png)
+			if (strpos($name, '.') === 0) {
+				$this->smarty->assign('success', -1);
+				sess_add('admin_uploader_files', $uploaded_files);
+				return -1;
+			}
 
 			/*
 			 * second check extension list
@@ -234,9 +239,11 @@ class admin_uploader_default extends AdminPanelAction {
 
 			if (in_array($ext, $imgs)) {
 				$dir = IMAGES_DIR;
+			} else {
+				$dir = ATTACHS_DIR;
 			}
 
-			// Sanitizing the file name
+ 			// Sanitizing the file name
 			$name = $this->sanitize_filename(substr($name, 0, -strlen($ext))) . $ext;
 
 			$target = "$dir/$name";
