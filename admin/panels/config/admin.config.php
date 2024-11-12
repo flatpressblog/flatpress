@@ -7,8 +7,6 @@ class admin_config extends AdminPanel {
 class admin_config_default extends AdminPanelActionValidated {
 
 	var $validators = array(
-		// not needed anymore !
-		// array('blog_root', 'blog_root', 'notEmpty', false, false, 'trim'),
 		array(
 			'www',
 			'www',
@@ -25,8 +23,6 @@ class admin_config_default extends AdminPanelActionValidated {
 			false,
 			'trim'
 		),
-		// array('subtitle', 'subtitle', 'notEmpty', false, false, 'trim'),
-		// array('blogfooter', 'blogfooter', 'notEmpty', false, false, 'trim'),
 		array(
 			'email',
 			'email',
@@ -54,7 +50,7 @@ class admin_config_default extends AdminPanelActionValidated {
 		array(
 			'timeformat',
 			'timeformat',
-			'notEmpty',
+			'isValidDateOrTimeFormat',
 			false,
 			false,
 			'trim'
@@ -62,7 +58,7 @@ class admin_config_default extends AdminPanelActionValidated {
 		array(
 			'dateformat',
 			'dateformat',
-			'notEmpty',
+			'isValidDateOrTimeFormat',
 			false,
 			false,
 			'trim'
@@ -70,7 +66,7 @@ class admin_config_default extends AdminPanelActionValidated {
 		array(
 			'dateformatshort',
 			'dateformatshort',
-			'notEmpty',
+			'isValidDateOrTimeFormat',
 			false,
 			false,
 			'trim'
@@ -112,6 +108,11 @@ class admin_config_default extends AdminPanelActionValidated {
 		$this->smarty->assign('static_list', $static_list);
 	}
 
+	// Function for escaping HTML output
+	private function escapeHTML($value) {
+		return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+	}
+
 	// Function for returning the charset list based on the selected language
 	private function getCharsetList($lang) {
 		$langConfFile = LANG_DIR . $lang . '/lang.conf.php';
@@ -138,14 +139,14 @@ class admin_config_default extends AdminPanelActionValidated {
 
 		// Update and save the configuration
 		$fp_config ['general'] = array(
-			'www' => $_POST ['www'],
-			'title' => wp_specialchars(stripslashes($_POST ['title'])),
-			'subtitle' => wp_specialchars(stripslashes($_POST ['subtitle'])),
-			'footer' => wp_specialchars(stripslashes($_POST ['blogfooter'])),
-			'author' => wp_specialchars($_POST ['author']),
-			'email' => wp_specialchars($_POST ['email']),
-			'startpage' => ($_POST ['startpage'] == ':NULL:') ? null : $_POST ['startpage'],
-			'maxentries' => $_POST ['maxentries'],
+			'www' => $this->escapeHTML($_POST ['www']),
+			'title' => $this->escapeHTML(wp_specialchars(stripslashes($_POST ['title']))),
+			'subtitle' => $this->escapeHTML(wp_specialchars(stripslashes($_POST ['subtitle']))),
+			'footer' => $this->escapeHTML(wp_specialchars(stripslashes($_POST ['blogfooter']))),
+			'author' => $this->escapeHTML(wp_specialchars($_POST ['author'])),
+			'email' => $this->escapeHTML(wp_specialchars($_POST ['email'])),
+			'startpage' => ($_POST ['startpage'] == ':NULL:') ? null : $this->escapeHTML($_POST ['startpage']),
+			'maxentries' => (int)$_POST ['maxentries'],
 			'notify' => isset($_POST ['notify']),
 			'theme' => $fp_config ['general'] ['theme'],
 			'style' => @$fp_config ['general'] ['style'],
@@ -155,10 +156,10 @@ class admin_config_default extends AdminPanelActionValidated {
 		);
 
 		$fp_config ['locale'] = array(
-			'timeoffset' => $_POST ['timeoffset'],
-			'timeformat' => $_POST ['timeformat'],
-			'dateformat' => $_POST ['dateformat'],
-			'dateformatshort' => $_POST ['dateformatshort'],
+			'timeoffset' => (float)$_POST ['timeoffset'],
+			'timeformat' => $this->escapeHTML($_POST ['timeformat']),
+			'dateformat' => $this->escapeHTML($_POST ['dateformat']),
+			'dateformatshort' => $this->escapeHTML($_POST ['dateformatshort']),
 			'charset' => $_POST ['charset'],
 			'lang' => $_POST ['lang']
 		);
@@ -174,15 +175,10 @@ class admin_config_default extends AdminPanelActionValidated {
 		return $this->main();
 	}
 
+	// if theme was switched, clear tpl cache
 	function onerror() {
 		$this->main();
 		return 0;
-	}
-
-	// if theme was switched, clear tpl cache
-	function cleartplcache() {
-		$tpl = new tpl_deleter();
-		$tpl->getList();
 	}
 }
 ?>
