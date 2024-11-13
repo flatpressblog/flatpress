@@ -175,10 +175,15 @@ class admin_config_default extends AdminPanelActionValidated {
 		return $this->main();
 	}
 
-	// if theme was switched, clear tpl cache
 	function onerror() {
 		$this->main();
 		return 0;
+	}
+
+	// if theme was switched, clear tpl cache
+	function cleartplcache() {
+		$tpl = new tpl_deleter();
+		$tpl->getList();
 	}
 }
 ?>
