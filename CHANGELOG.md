@@ -18,7 +18,7 @@
   - Activating or deactivating plugins are immediately reflected in the plugin management panel. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
 
 ## Security
-- The three cookies are now somewhat more secure against CSRF attacks. ([#481](https://github.com/flatpressblog/flatpress/issues/481))
+- The session-cookie are now somewhat more secure against CSRF attacks. ([#481](https://github.com/flatpressblog/flatpress/issues/481))
 - BBcode, Cookiebanner and Emoticons plugin: removed unsafe href onclick HTML method ([#422](https://github.com/flatpressblog/flatpress/issues/422), [#477](https://github.com/flatpressblog/flatpress/pull/477))
 - BBcode, PhotoSwipe and Emoticons plugin: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422), [#477](https://github.com/flatpressblog/flatpress/pull/477))
 - Admin area login:
