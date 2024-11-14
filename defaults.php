@@ -158,8 +158,8 @@ define('BLOG_BASEURL', $serverport . $_SERVER ['HTTP_HOST'] . BLOG_ROOT);
 //
 header('Expires: Sun, 01 Jan 2015 00:00:00 GMT');
 header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Cache-Control: post-check=0, pre-check=0', false);
 header('Pragma: no-cache');
+header('Expires: 0');
 //
 // http://de.wikipedia.org/wiki/Liste_der_HTTP-Headerfelder
 //
