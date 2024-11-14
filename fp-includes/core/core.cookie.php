@@ -83,6 +83,9 @@ function get_cookie_options($expiry = 0, $is_session = false) {
  */
 function sess_setup() {
 	if (session_status() === PHP_SESSION_NONE) {
+		// Activates strict mode for sessions to prevent session fixation
+		ini_set('session.use_strict_mode', 1);
+
 		// Distinguish between cookie options for sessions and normal cookies
 		$session_cookie_options = get_cookie_options(0, true);
 
