@@ -80,21 +80,19 @@ function get_cookie_options($expiry = 0, $is_session = false) {
 
 /**
  * Initializes the session with the correct cookie parameters for authentication.
+ * Also handles session timeout based on inactivity.
  */
 function sess_setup() {
 	if (session_status() === PHP_SESSION_NONE) {
-		// Activates strict mode for sessions to prevent session fixation
+		// Activate strict mode to prevent session fixation attacks
 		ini_set('session.use_strict_mode', 1);
 
-		// Distinguish between cookie options for sessions and normal cookies
 		$session_cookie_options = get_cookie_options(0, true);
 
-		// Different treatment based on the PHP version
+		// Set session cookie parameters based on PHP version
 		if (version_compare(PHP_VERSION, '7.3', '>=')) {
-			// Use `session_set_cookie_params()` with the correct format
 			session_set_cookie_params($session_cookie_options);
 		} else {
-			// For PHP versions < 7.3
 			ini_set('session.cookie_httponly', 1);
 			ini_set('session.cookie_secure', COOKIE_SECURE);
 			ini_set('session.cookie_path', COOKIEPATH);
@@ -111,6 +109,22 @@ function sess_setup() {
 				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
 				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
 		}
+
+		// Set timeout duration in seconds (e.g., 3600 seconds = 60 minutes)
+		$timeout_duration = 3600;
+
+		if (isset($_SESSION ['last_activity'])) {
+			// Check if the session has expired
+			if (time() - $_SESSION ['last_activity'] > $timeout_duration) {
+				// Session has expired, close it
+				sess_close();
+				// Stop further execution
+				return;
+			}
+		}
+
+		// Update last activity timestamp
+		$_SESSION ['last_activity'] = time();
 	}
 }
 
