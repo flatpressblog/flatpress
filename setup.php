@@ -1,7 +1,6 @@
 <?php
 require_once('defaults.php');
 require_once(INCLUDES_DIR . 'includes.php');
-require_once(INCLUDES_DIR . 'core.cookie.php');
 
 define('SETUPTEMP_FILE', FP_CONTENT . 'settingup.lock');
 
