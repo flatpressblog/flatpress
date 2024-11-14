@@ -1,187 +1,152 @@
 <?php
+// core.users.php
+// This file manages the user login and authentication via PHP sessions.
+// Contains functions for user administration, password hashing and session control.
 
+/**
+ * Class for managing the user list.
+ * The class extends `fs_filelister` to load user profiles from the file system.
+ */
 class user_lister extends fs_filelister {
-
 	var $_varname = 'cache';
-
 	var $_cachefile = null;
-
 	var $_directory = USERS_DIR;
 
+	/**
+	 * Constructor of the class.
+	 * Initializes the cache for the user list.
+	 */
 	function bdb_entrylister() {
 		$this->_cachefile = CACHE_DIR . 'userlist.php';
 		parent::__construct();
 	}
 
+	/**
+	 * Checks whether a file is a user profile.
+	 * Used to create a list of user names.
+	 *
+	 * @param string $directory The directory in which to search for files.
+	 * @param string $file The file name.
+	 * @return int Returns 0 if the file is a user profile.
+	 */
 	function _checkFile($directory, $file) {
 		if (fnmatch('*.php', $file)) {
+			// If the file is a PHP file, add it to the list
 			array_push($this->_list, basename($file, EXT));
 			return 0;
 		}
 	}
-
 }
 
+/**
+ * Returns the list of users.
+ *
+ * @return array A list of all users who are registered in the system.
+ */
 function user_list() {
 	$obj = new user_lister();
-	if ($users = $obj->getList()) {
-		return $entry_arr;
-	} else {
-		return false;
-	}
+	// Calls the `getList()` method of the `user_lister` class
+	return $obj->getList();
 }
 
-function user_pwd($userid, $pwd) {
-	return password_hash($userid . $pwd, PASSWORD_DEFAULT);
+/**
+ * Creates a secure password hash.
+ *
+ * @param string $pwd The password to be hashed.
+ * @return string The hashed password string.
+ */
+function user_pwd($pwd) {
+	// Use `password_hash` for secure password storage
+	return password_hash($pwd, PASSWORD_DEFAULT);
 }
 
-function user_login($userid, $pwd, $params = null) {
+/**
+ * Authenticates a user and starts a session.
+ *
+ * @param string $userid The user ID.
+ * @param string $pwd The user's password.
+ * @return bool Returns `true` if the registration is successful, otherwise `false`.
+ */
+function user_login($userid, $pwd) {
 	global $loggedin;
 	$loggedin = false;
 
-	// Get user data
+	// Retrieving user data from the file
 	$user = user_get($userid);
-	// User not found? get outta here
-	if (!isset($user) || !isset($user ['password'])) {
-		return $loggedin;
-	}
-
-	// Check the password
-	if (password_verify($userid . $pwd, $user ['password'])) {
-		$loggedin = true;
-	}
-	// If this didn't work, the passwords may have been created with FlatPress 1.1 or earlier.
-	// So we check the password the old-fashioned way (with wp_hash() which uses md5):
-	elseif (wp_hash($userid . $pwd) == $user ['password']) {
-		$loggedin = true;
-
-		// re-hash password with current algorithm
-		$user ['password'] = $pwd;
-		// save in user file
-		user_add($user);
-		// and update user data from re-read user file
-		$user = user_get($userid);
-	}
-
-	if ($loggedin) {
-		// Generate hash of the user name
-		$hashedUserId = hash('sha256', $userid);
-		$expire = time() + 31536000;
-
-		// Cookie options
-		$cookieOptions = get_cookie_options($expire);
-
-		// Set cookies for PHP 7.3+ or manually for older versions
-		setcookie(USER_COOKIE, $hashedUserId, $cookieOptions);
-		setcookie(PASS_COOKIE, $user ['password'], $cookieOptions);
-
-		// Manually set SameSite for PHP < 7.3
-		if (version_compare(PHP_VERSION, '7.3', '<')) {
-			header('Set-Cookie: ' . USER_COOKIE . '=' . urlencode($hashedUserId) . //
-				'; Expires=' . gmdate('D, d-M-Y H:i:s T', $expire) . //
-				'; Path=' . COOKIEPATH . //
-				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
-				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
-			header('Set-Cookie: ' . PASS_COOKIE . '=' . urlencode($user ['password']) . //
-				'; Expires=' . gmdate('D, d-M-Y H:i:s T', $expire) . //
-				'; Path=' . COOKIEPATH . //
-				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
-				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
-		}
-	}
-
-	return $loggedin;
-}
-
-function user_logout() {
-	global $loggedin;
-
-	if (user_loggedin()) {
-
-		// Cookie options for deleting the cookie
-		$cookieOptions = get_cookie_options(time() - 31536000);
-
-		// Delete cookies for PHP 7.3+ or manually for older versions
-		setcookie(USER_COOKIE, '', $cookieOptions);
-		setcookie(PASS_COOKIE, '', $cookieOptions);
-
-		// Manually remove cookies for PHP < 7.3
-		if (version_compare(PHP_VERSION, '7.3', '<')) {
-			header('Set-Cookie: ' . USER_COOKIE . //
-				'=; Expires=' . gmdate('D, d-M-Y H:i:s T', time() - 31536000) . //
-				'; Path=' . COOKIEPATH . //
-				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
-				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
-			header('Set-Cookie: ' . PASS_COOKIE . //
-				'=; Expires=' . gmdate('D, d-M-Y H:i:s T', time() - 31536000) . //
-				'; Path=' . COOKIEPATH . //
-				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
-				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
-		}
-	}
-
-	$loggedin = false;
-}
-
-function user_loggedin() {
-	global $loggedin, $fp_user;
-
-	if ($loggedin) {
-		return $fp_user;
-	}
-
-	if (empty($_COOKIE [USER_COOKIE]) || empty($_COOKIE [PASS_COOKIE])) {
-		$fp_user = null;
-		return $loggedin = false;
-	}
-
-	// Recalculate hash to find the original user
-	$hashedUserId = $_COOKIE [USER_COOKIE];
-
-	// Search the user data to find the user with the hash
-	$userfiles = array_slice(scandir(USERS_DIR), 2);
-	foreach ($userfiles as $file) {
-		// Removing the .php extension
-		$userid = basename($file, '.php');
-		if (hash('sha256', $userid) === $hashedUserId) {
-			$fp_user = user_get($userid);
-			break;
-		}
-	}
-
-	if (!$fp_user) {
+	if (!$user || !isset($user ['password'])) {
+		// User not found or password missing
 		return false;
 	}
 
-	if ($_COOKIE [PASS_COOKIE] == $fp_user ['password']) {
-		$loggedin = true;
-		return $fp_user;
-	}
-
-	$fp_user = null;
-	$loggedin = false;
+	// Check whether the password entered is correct
+	if (password_verify($pwd, $user ['password'])) {
+		// Initialize the session and save the user data
+		sess_setup();
+		$_SESSION ['loggedin'] = true;
+		$_SESSION ['userid'] = $userid;
+		return true;
+	} 
 	return false;
 }
 
-function user_get($userid = null) {
-	if ($userid == null && ($user = user_loggedin())) {
-		return $user;
-	}
-
-	// We need to include the user file.
-	// At first: Get files in fp_content/users (array_slice removes first elements "." and "..")
-	$userfiles = array_slice(scandir(USERS_DIR), 2);
-	// If PHP file for given user exists
-	if (in_array($userid . '.php', $userfiles)) {
-		// include it
-		include(USERS_DIR . $userid . '.php');
-		return $user;
-	}
+/**
+ * Checks whether a user is logged in.
+ *
+ * @return bool Returns `true` if the user is logged in, otherwise `false`.
+ */
+function user_loggedin() {
+	return isset($_SESSION ['loggedin']) && $_SESSION ['loggedin'] === true;
 }
 
-function user_add($user) {
-	$user ['password'] = user_pwd($user ['userid'], $user ['password']);
+/**
+ * Logs the user out and ends the session.
+ */
+function user_logout() {
+	// Ends the session and deletes the session cookies
+	sess_close();
+}
 
+/**
+ * Retrieves the user data for the given user ID.
+ *
+ * @param string|null $userid The user ID. If `null`, the current session is used.
+ * @return array|null Returns the user data or `null` if the user does not exist.
+ */
+function user_get($userid = null) {
+	// If no user ID is specified, use the ID from the current session
+	if ($userid === null && user_loggedin()) {
+		$userid = $_SESSION ['userid'];
+	}
+
+	if ($userid) {
+		$userfile = USERS_DIR . $userid . '.php';
+
+		// Check whether the user file exists
+		if (file_exists($userfile)) {
+			include($userfile);
+
+			// Check whether the user data has been loaded correctly
+			if (isset($user) && is_array($user)) {
+				return $user;
+			}
+		}
+	}
+	// User not found
+	return null;
+}
+
+/**
+ * Adds a new user or updates an existing user.
+ *
+ * @param array $user An associative array with the user data.
+ * @return bool Returns `true` if the user was successfully saved, otherwise `false`.
+ */
+function user_add($user) {
+	// Check whether the password has already been hashed
+	if (!password_get_info($user ['password']) ['algo']) {
+		$user ['password'] = user_pwd($user ['password']);
+	}
+	// Saves the user data in a PHP file
 	return system_save(USERS_DIR . $user ['userid'] . '.php', compact('user'));
 }
 ?>
