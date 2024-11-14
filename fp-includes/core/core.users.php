@@ -65,7 +65,7 @@ function user_pwd($pwd) {
  *
  * @param string $userid The user ID.
  * @param string $pwd The user's password.
- * @return bool Returns `true` if the registration is successful, otherwise `false`.
+ * @return bool Returns `true` if the login is successful, otherwise `false`.
  */
 function user_login($userid, $pwd) {
 	global $loggedin;
@@ -82,10 +82,15 @@ function user_login($userid, $pwd) {
 	if (password_verify($pwd, $user ['password'])) {
 		// Initialize the session and save the user data
 		sess_setup();
+
+		// Regenerate the session ID to prevent session fixation attacks
+		session_regenerate_id(true);
+
+		// Set session variables
 		$_SESSION ['loggedin'] = true;
 		$_SESSION ['userid'] = $userid;
 		return true;
-	} 
+	}
 	return false;
 }
 
