@@ -32,6 +32,7 @@
   - Plugin management now more secure against XSS attacks ([#220](https://github.com/flatpressblog/flatpress/issues/220))
   - Widget management: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422), [#477](https://github.com/flatpressblog/flatpress/pull/477))
   - XSS vulnerabilities in the configuration menu -> International settings closed. ([#487](https://github.com/flatpressblog/flatpress/pull/487), [#340](https://github.com/flatpressblog/flatpress/issues/340))
+  - Logout after one hour if inactive. ([#488](https://github.com/flatpressblog/flatpress/pull/488))
 
 ## Plugins
 ### Additions
