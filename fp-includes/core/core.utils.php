@@ -299,7 +299,7 @@ function utils_countdashes($string, &$rest) {
 	return $i;
 }
 
-function utils_mail($from = '', $subject, $message, $headers = '') {
+function utils_mail($from = '', $subject = '', $message = '', $headers = '') {
 	global $fp_config;
 	/*
 	 * Fraenkiman: Many e-mail providers only allow e-mail addresses from domains that are known to the mail server via their mail server (SMTP host).
@@ -313,13 +313,13 @@ function utils_mail($from = '', $subject, $message, $headers = '') {
 	}
 	if ($headers == '') {
 		$headers = "MIME-Version: 1.0\r\n" . //
-			"From: " . $from . "\r\n" . //
-			"Content-Type: text/plain; charset=\"" . $fp_config ['general'] ['charset'] . "\"\r\n";
+		"From: " . $from . "\r\n" . //
+		"Content-Type: text/plain; charset=\"" . $fp_config ['general'] ['charset'] . "\"\r\n";
 	}
 	/*
 	 * for non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64
 	 * https://ncona.com/2011/06/using-utf-8-characters-on-an-e-mail-subject/
-	 */	 
+	 */
 	return mail($fp_config ['general'] ['email'], '=?' . $fp_config ['general'] ['charset'] . '?B?' . base64_encode($subject) . '?=', $message, $headers);
 }
 
@@ -385,18 +385,16 @@ function utils_ipget() {
 			$_SERVER ['ORIG_REMOTE_ADDR'] = $ip;
 			$octets = explode(".", $ip);
 			if (count($octets) == 4) {
-				$octets[2] = "0";
+				$octets [2] = "0";
 				$ip = implode(".", $octets);
-				$octets[3] = "123";
+				$octets [3] = "123";
 				$ip = implode(".", $octets);
 				// Set anonymized IP as server variable
 				if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
 					$_SERVER ['HTTP_CLIENT_IP'] = $ip;
-				}
-				elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
+				} elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
 					$_SERVER ['HTTP_X_FORWARDED_FOR'] = $ip;
-				}
-				elseif (!empty($_SERVER ['REMOTE_ADDR'])) {
+				} elseif (!empty($_SERVER ['REMOTE_ADDR'])) {
 					$_SERVER ['REMOTE_ADDR'] = $ip;
 				}
 				return $ip;
@@ -416,11 +414,9 @@ function utils_ipget() {
 			// Set anonymized IP as server variable
 			if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
 				$_SERVER ['HTTP_CLIENT_IP'] = $ip;
-			}
-			elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
+			} elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
 				$_SERVER ['HTTP_X_FORWARDED_FOR'] = $ip;
-			}
-			elseif (!empty($_SERVER ['REMOTE_ADDR'])) {
+			} elseif (!empty($_SERVER ['REMOTE_ADDR'])) {
 				$_SERVER ['REMOTE_ADDR'] = $ip;
 			}
 			return $ip;
