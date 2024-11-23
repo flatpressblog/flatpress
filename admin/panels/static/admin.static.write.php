@@ -8,9 +8,10 @@
  * Date:
  * Purpose:
  * Input:
+ * Change-Date: 23.11.2024, by FKM
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
- *        
+ *
  */
 class admin_static_write extends AdminPanelActionValidated {
 
@@ -66,9 +67,45 @@ class admin_static_write extends AdminPanelActionValidated {
 		$this->smarty->assign('id', $id);
 	}
 
+	function sanitizePageTitle($title) {
+
+		$title = strip_tags($title);
+		$title = htmlspecialchars_decode($title, ENT_QUOTES);
+
+		$dangerous = [
+			'<',
+			'>',
+		];
+
+		$title = str_replace($dangerous, '', $title);
+
+		$title = preg_replace('/\bon\w+\s*=\s*["\'][^"\']*["\']/i', '', $title);
+
+		$allowed = '/[^\p{L}\p{N}\p{P}\p{Zs}\p{M}]/u';
+
+		$title = preg_replace($allowed, '', $title);
+
+		$title = trim($title);
+
+		return $title;
+	}
+
+	function sanitizePageId($id) {
+
+		$id = preg_replace('/\bon\w+\s*=\s*["\'][^"\']*["\']/i', '', $id);
+
+		$allowedPattern = '/[^\p{L}\p{N}_-]/u';
+
+		$id = preg_replace($allowedPattern, '', $id);
+
+		$id = trim($id);
+
+		return $id;
+	}
+
 	function makePageTitle($title, $sep) {
 		global $lang;
-		return "$title $sep {$lang['admin']['static']['write']['head']}";
+		return $title . ' ' . $sep . ' ' . $lang ['admin'] ['static'] ['write'] ['head'];
 	}
 
 	function main() {
@@ -100,10 +137,12 @@ class admin_static_write extends AdminPanelActionValidated {
 	function _getposteddata() {
 		global $fp_config;
 		$arr ['version'] = system_ver();
-		$arr ['subject'] = $_POST ['subject'];
+
+		$arr ['subject'] = $this->sanitizePageTitle($_POST ['subject']);
+		$arr ['id'] = isset($_POST ['id']) ? $this->sanitizePageId($_POST ['id']) : '';
+
 		$arr ['content'] = $_POST ['content'];
 
-		// Set the author from the configuration, if available; otherwise set the user.
 		$author = user_get();
 		$arr ['author'] = !empty($fp_config ['general'] ['author']) ? $fp_config ['general'] ['author'] : $author ['userid'];
 
@@ -143,5 +182,4 @@ class admin_static_write extends AdminPanelActionValidated {
 	}
 
 }
-
 ?>
