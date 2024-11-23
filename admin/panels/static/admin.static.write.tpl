@@ -56,8 +56,8 @@
 			{else}
 				{assign var=class value=""}
 			{/if}
-				<input type="text" name="id" id="id" class="maxsize{$class}"
-					value="{$smarty.request.id|default:$smarty.request.page|default:$static_id|escape:'htmlall':'UTF-8'}"
+				<input type="text" name="id" id="id" class="maxsize{$class}" 
+					value="{$smarty.request.id|default:$smarty.request.page|default:$static_id|escape:'htmlall':'UTF-8'}"></p>
 			</fieldset>
 
 			<div class="buttonbar">
