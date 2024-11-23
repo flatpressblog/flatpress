@@ -95,6 +95,17 @@ function bbcode_remap_url(&$d) {
 	if (strpos($d, 'www.') === 0) {
 		$d = 'https://' . $d;
 	}
+
+	// Include the URL validation
+	require_once (plugin_getdir('bbcode') . '/inc/isValidFileDownloadUrl.php');
+
+	// Validate the URL
+	if (!isValidFileDownloadUrl($d)) {
+		// Handle invalid URLs
+		$d = 'about:blank';
+		return;
+	}
+
 	// NWM: "attachs/" is interpreted as a keyword, and it is translated to the actual path of ATTACHS_DIR
 	// CHANGE! we use the getfile.php script to mask the actual path of the attachs dir!
 	// FKM: We now use a get.php script to hide the attachs directory
@@ -164,7 +175,7 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	// DMKE: uh?
 	$content = $content;
 	$rel = isset($attributes ['rel']) ? ' rel="' . $attributes ['rel'] . '"' : '';
-	$target = isset($attributes['target']) ? ' target="'.$attributes['target'] . '"' : '';
+	$target = isset($attributes ['target']) ? ' target="'.$attributes ['target'] . '"' : '';
 	$extern = !$local ? ' class="externlink" title="' . $lang ['plugin'] ['bbcode'] ['go_to'] . ' ' . $the_url . '"' : '';
 	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target .'>' . $content . '</a>';
 }
@@ -306,7 +317,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	$pop = $popup_start ? '' : ' title="' . $title . '" ';
 
 	// Finally: Put together the whole img tag with all its attributes and return it
-	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '" ' . $pop . $float . $img_width . $img_height . $loading . ' />' . $popup_end;
+	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '" ' . $pop . $float . $img_width . $img_height . $loading . '>' . $popup_end;
 }
 
 /**
@@ -481,7 +492,7 @@ function do_bbcode_code($action, $attributes, $content, $params, $node_object) {
 		return true;
 	}
 	$temp_str = $content;
-	$temp_str = str_replace('<br />', chr(10), $temp_str);
+	$temp_str = str_replace('<br>', chr(10), $temp_str);
 	$temp_str = str_replace(chr(10) . chr(10), chr(10), $temp_str);
 	$temp_str = str_replace(chr(32), '&nbsp;', $temp_str);
 	if (BBCODE_ALLOW_HTML) {
@@ -523,7 +534,7 @@ function do_bbcode_html($action, $attributes, $content, $params, $node_object) {
 		$GLOBALS ['BBCODE_TEMP_HTML'] = array();
 	}
 	$GLOBALS ['BBCODE_TEMP_HTML'] [$count] = $content;
-	$str = "<!-- #HTML_BLOCK_{$count}# -->";
+	$str = '<!-- #HTML_BLOCK_' . $count . '# -->';
 	$count++;
 	return $str;
 }
@@ -1031,7 +1042,7 @@ function plugin_bbcode_undoHtml($text) {
 			// html_entity_decode($content)
 			$content = str_replace('&lt;', '<', $content);
 			$content = str_replace('&gt;', '>', $content);
-			$text = str_replace("<!-- #HTML_BLOCK_{$n}# -->", $content, $text);
+			$text = str_replace('<!-- #HTML_BLOCK_' . $n . '# -->', $content, $text);
 		}
 		$GLOBALS ['BBCODE_TEMP_HTML'] = array();
 	}
@@ -1077,3 +1088,4 @@ function obfuscateEmailAddress($originalString, $mode) {
 	}
 	return $encodedString;
 }
+?>

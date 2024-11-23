@@ -32,11 +32,11 @@ define('DIR_PERMISSIONS', 0777);
 define('SESSION_PATH', '');
 // Absolute path to your webserver dir; if you don't experience any problem
 // you can leave this as it is
-define('ABS_PATH', dirname(__FILE__) . '/');
+define('ABS_PATH', str_replace('\\', '/', dirname(__FILE__)) . '/');
 // Here was blog root in earlier versions. This has been moved to config_load()
 
 // Is required so that the file and directory permissions can be set when executing the setup
-define('BASE_DIR', dirname(__FILE__));
+define('BASE_DIR', str_replace('\\', '/', dirname(__FILE__)));
 
 // Here are default config files
 define('FP_DEFAULTS', 'fp-defaults/');
