@@ -1,65 +1,78 @@
 <?php
-/*
+/**
  * Plugin Name: BBcode
  * Module: get.php
  * Function: BBCODE_USE_FILEWRAPPER
  * Purpose: Mask the path of the attachs dir
- * Change-Date: 24.08.2024, by FKM
+ * Change-Date: 23.11.2024, by FKM
  */
 require_once 'defaults.php';
 
-// load language file
+// Load language file
 require_once CONFIG_DIR . 'settings.conf.php';
 $langId = $fp_config ['locale'] ['lang'];
 $langFile = ABS_PATH . PLUGINS_DIR . 'bbcode/lang/lang.' . $langId . '.php';
 
 if (!file_exists($langFile)) {
 	$langFile = ABS_PATH . PLUGINS_DIR . 'bbcode/lang/lang.en-us.php';
-	$langId =  'en-us';
+	$langId = 'en-us';
 }
 require_once $langFile;
 
 $lang = $lang ['plugin'] ['bbcode'];
 
-/*
- * Getfile main part
+// Load the validation
+require_once ABS_PATH . PLUGINS_DIR . 'bbcode/inc/isValidFileDownloadUrl.php';
+
+// Define allowed directory
+define('ALLOWED_DIR', ABS_PATH . ATTACHS_DIR);
+
+/**
+ * Get main part
  */
-$downloadFile = urldecode($_GET ["f"]);
 
-// make sure the files outside of the download directory are not accessed
-if (startsWith($downloadFile, '..') || startsWith($downloadFile, '/') || substr_count($downloadFile, '..') > 0) {
-	error_403($downloadFile);
+// Decode and sanitize the file parameter
+$downloadFile = urldecode($_GET ['f'] ?? '');
+
+// Validate the file name
+if (empty($downloadFile) || !isValidFileDownloadUrl($downloadFile)) {
+	error_403($langId, $lang, $downloadFile);
 	die;
 }
 
-// files are assumed to be in fp-content/attachs directory
-$download = ABS_PATH . ATTACHS_DIR . $downloadFile;
+// Remove directory traversal attempts and normalize the path
+$sanitizedFile = basename($downloadFile);
+$downloadPath = ALLOWED_DIR . '/' . $sanitizedFile;
 
-if (file_exists($download)) {
-
-	// if the file cannot be read show 403 error
-	if (!is_readable($download)) {
-		error_403($langId, $lang, $downloadFile);
-		die;
-	}
-
-	// set some response headers to indicate that a file is being sent
-	header('Content-type: application/force-download');
-	header('Content-disposition: attachment; filename=' . basename($downloadFile));
-	header('Content-Transfer-Encoding: Binary');
-	header('Content-length: ' . filesize($download));
-
-readfile($download); // send file to browser
-
-} else {
-	error_404($langId, $lang, $downloadFile);
+// Ensure the file exists
+if (!file_exists($downloadPath)) {
+	error_404($langId, $lang, $sanitizedFile);
 	die;
 }
 
-function startsWith($haystack, $needle) {
-	return !strncmp($haystack, $needle, strlen($needle));
+// Normalize and check the path to prevent directory traversal
+$realDownloadPath = realpath($downloadPath);
+$normalizedAllowedDir = str_replace('\\', '/', realpath(ALLOWED_DIR));
+$normalizedDownloadPath = str_replace('\\', '/', $realDownloadPath);
+
+if ($realDownloadPath === false || strpos($normalizedDownloadPath, $normalizedAllowedDir) !== 0) {
+	error_403($langId, $lang, $sanitizedFile);
+	die;
 }
 
+// Ensure the file is readable
+if (!is_readable($realDownloadPath)) {
+	error_403($langId, $lang, $sanitizedFile);
+	die;
+}
+
+// Serve the file with appropriate headers
+header('Content-Type: application/octet-stream');
+header('Content-Disposition: attachment; filename="' . basename($realDownloadPath) . '"');
+header('Content-Length: ' . filesize($realDownloadPath));
+readfile($realDownloadPath);
+
+// Functions for error handling
 function error_403($langId, $lang, $downloadFile) {
 	header('HTTP/1.0 403 Forbidden');
 	header('Content-type: text/html; charset=utf-8');
@@ -69,14 +82,14 @@ function error_403($langId, $lang, $downloadFile) {
 		'<body>' . //
 		'<h1>' . $lang ['error_403'] . '</h1>' . //
 		'<p><strong>' . $lang ['not_send'] . '<br>' . $lang ['file'] . ': ' . //
-		'<span style="color:#FF0000">' . $downloadFile . '</span>' . //
+		'<span style="color:#FF0000">' . htmlspecialchars($downloadFile) . '</span>' . //
 		'</strong></p>' . //
 		'<p><small><span style="color:#9c9c9c">' . $lang ['report_error_1'] . ' <a href="contact.php">' . $lang ['report_error_2'] . '</a>, ' . $lang ['blog_search_1'] . ' <a href="search.php">' . $lang ['blog_search_2'] . '</a> ' . $lang ['start_page_1'] . ' <a href="index.php">' . $lang ['start_page_2'] . '</a> .</span></small></p>' . //
 		'</body>' . //
 		'</html>';
 }
 
-function error_404($langId, $lang, $downloadFile,) {
+function error_404($langId, $lang, $downloadFile) {
 	header('HTTP/1.0 404 Not Found');
 	header('Content-type: text/html; charset=utf-8');
 	echo '<!DOCTYPE HTML>' . //
@@ -85,7 +98,7 @@ function error_404($langId, $lang, $downloadFile,) {
 		'<body>' . //
 		'<h1>' . $lang ['error_404'] . '</h1>' . //
 		'<p><strong>' . $lang ['not_found'] . '<br>' . $lang ['file'] . ': ' . //
-		'<span style="color:#FF0000">' . $downloadFile . '</span>' . //
+		'<span style="color:#FF0000">' . htmlspecialchars($downloadFile) . '</span>' . //
 		'</strong></p>' . //
 		'<p><small><span style="color:#9c9c9c">' . $lang ['report_error_1'] . ' <a href="contact.php">' . $lang ['report_error_2'] . '</a>, ' . $lang ['blog_search_1'] . ' <a href="search.php">' . $lang ['blog_search_2'] . '</a> ' . $lang ['start_page_1'] . ' <a href="index.php">' . $lang ['start_page_2'] . '</a> .</span></small></p>' . //
 		'</body>' . //
