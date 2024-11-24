@@ -25,6 +25,10 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_htaccess_edit' => 'Permet de créer et d\'éditer le fichier .htaccess.',
 	'allowPrettyURLEditDsc' => 'Permet d\'accéder au champ d\'édition .htaccess du plugin PrettyURLs pour créer ou modifier le fichier .htaccess.',
 
+	// Part for metadate in images after upload
+	'allow_image_metadate' => 'Conserver les métadonnées et la qualité d\'origine des images téléchargées.',
+	'allowImageMetadataDsc' => 'Une fois que les images ont été téléchargées avec l\'uploader, les métadonnées sont conservées. Il s\'agit par exemple des informations relatives à l\'appareil photo et des coordonnées géographiques.',
+
 	'submit' => 'Enregistrer les paramètres',
 		'msgs' => array(
 		1 => 'Paramètres enregistrés avec succès.',

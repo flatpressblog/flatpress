@@ -21,6 +21,14 @@
 		<p>{$plang.allowPrettyURLEditDsc}</p>
 	</fieldset>
 
+	<fieldset>
+		<label for="allowImageMetadata">
+			<input type="checkbox" name="allowImageMetadata" id="allowImageMetadata" value="1" {if isset($allowImageMetadata) && $allowImageMetadata == true}checked{/if}>
+			{$plang.allow_image_metadate}
+		</label>
+		<p>{$plang.allowImageMetadataDsc}</p>
+	</fieldset>
+
 	<div class="buttonbar">
 		<input type="submit" value="{$plang.submit}">
 	</div>

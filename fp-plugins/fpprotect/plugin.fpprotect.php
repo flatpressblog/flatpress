@@ -25,6 +25,13 @@ if (isset($fp_config ['plugins'] ['fpprotect'] ['allowPrettyURLEdit'])) {
 	$allowPrettyURLEdit = false;
 }
 
+if (isset($fp_config ['plugins'] ['fpprotect'] ['allowImageMetadata'])) {
+	$allowImageMetadata = $fp_config ['plugins'] ['fpprotect'] ['allowImageMetadata'];
+} else {
+	// Default value, if not available
+	$allowImageMetadata = false;
+}
+
 if (function_exists('is_https')) {
 
 	// $random_hex is only required if unsafe-inline is not set
@@ -118,6 +125,7 @@ if (class_exists('AdminPanelAction')) {
 			// Transfer the values of the checkboxes to the template
 			$this->smarty->assign('allowUnsafeInline', $config ['allowUnsafeInline']);
 			$this->smarty->assign('allowPrettyURLEdit', $config ['allowPrettyURLEdit']);
+			$this->smarty->assign('allowImageMetadata', $config ['allowImageMetadata']);
 
 			// Render template
 			$this->smarty->assign('admin_resource', 'plugin:fpprotect/admin.plugin.fpprotect');
@@ -133,6 +141,7 @@ if (class_exists('AdminPanelAction')) {
 			// Load values of the options or set default values if they do not exist
 			$allowUnsafeInline = isset($config ['allowUnsafeInline']) ? (bool)$config ['allowUnsafeInline'] : false;
 			$allowPrettyURLEdit = isset($config ['allowPrettyURLEdit']) ? (bool)$config ['allowPrettyURLEdit'] : false;
+			$allowImageMetadata = isset($config ['allowImageMetadata']) ? (bool)$config ['allowImageMetadata'] : false;
 
 			// If allowUnsafeInline is true, issue a warning
 			if ($allowUnsafeInline) {
@@ -144,6 +153,7 @@ if (class_exists('AdminPanelAction')) {
 			return array(
 				'allowUnsafeInline' => $allowUnsafeInline,
 				'allowPrettyURLEdit' => $allowPrettyURLEdit,
+				'allowImageMetadata' => $allowImageMetadata,
 			);
 		}
 
@@ -152,16 +162,19 @@ if (class_exists('AdminPanelAction')) {
 			$config = $this->load_config();
 			$this->smarty->assign('allowUnsafeInline', $config ['allowUnsafeInline']);
 			$this->smarty->assign('allowPrettyURLEdit', $config ['allowPrettyURLEdit']);
+			$this->smarty->assign('allowImageMetadata', $config ['allowImageMetadata']);
 		}
 
 		function onsubmit($data = null) {
 			// Check whether the checkboxes are set or not
 			$allowUnsafeInline = isset($_POST ['allowUnsafeInline']) ? true : false;
 			$allowPrettyURLEdit = isset($_POST ['allowPrettyURLEdit']) ? true : false;
+			$allowImageMetadata = isset($_POST ['allowImageMetadata']) ? true : false;
 
 			// Save the new settings in the configuration
 			plugin_addoption('fpprotect', 'allowUnsafeInline', $allowUnsafeInline);
 			plugin_addoption('fpprotect', 'allowPrettyURLEdit', $allowPrettyURLEdit);
+			plugin_addoption('fpprotect', 'allowImageMetadata', $allowImageMetadata);
 
 			plugin_saveoptions('fpprotect');
 

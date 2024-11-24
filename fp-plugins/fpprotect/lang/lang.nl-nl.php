@@ -25,6 +25,10 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_htaccess_edit' => 'Laat het aanmaken en bewerken van het .htaccess bestand toe.',
 	'allowPrettyURLEditDsc' => 'Geeft toegang tot het .htaccess bewerkingsveld van de PrettyURLs plugin om het .htaccess bestand aan te maken of te wijzigen.',
 
+	// Part for metadate in images after upload
+	'allow_image_metadate' => 'Behoud metadata en originele afbeeldingskwaliteit in geüploade afbeeldingen.',
+	'allowImageMetadataDsc' => 'Nadat afbeeldingen zijn geüpload met de uploader, worden de metagegevens bewaard. Dit omvat bijvoorbeeld camera-informatie en geocoördinaten.',
+
 	'submit' => 'Instellingen opslaan',
 		'msgs' => array(
 		1 => 'Instellingen succesvol opgeslagen.',

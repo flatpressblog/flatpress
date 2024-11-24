@@ -25,6 +25,10 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_htaccess_edit' => 'Umožňuje vytvoření a úpravu souboru .htaccess.',
 	'allowPrettyURLEditDsc' => 'Umožňuje přístup k editačnímu poli .htaccess zásuvného modulu PrettyURLs pro vytvoření nebo úpravu souboru .htaccess.',
 
+	// Part for metadate in images after upload
+	'allow_image_metadate' => 'Zachování metadat a původní kvality obrázků v nahraných snímcích.',
+	'allowImageMetadataDsc' => 'Po nahrání obrázků pomocí nástroje pro nahrávání se metadata zachovají. Patří mezi ně například informace o fotoaparátu a zeměpisné souřadnice.',
+
 	'submit' => 'Uložení nastavení',
 		'msgs' => array(
 		1 => 'Nastavení bylo úspěšně uloženo.',
