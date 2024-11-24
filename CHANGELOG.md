@@ -34,6 +34,7 @@
   - XSS vulnerabilities in the configuration menu -> International settings closed. ([#487](https://github.com/flatpressblog/flatpress/pull/487), [#340](https://github.com/flatpressblog/flatpress/issues/340))
   - Logout after one hour if inactive. ([#488](https://github.com/flatpressblog/flatpress/pull/488))
   - XSS vulnerability in the editor for static pages fixed. ([#490](https://github.com/flatpressblog/flatpress/pull/490))
+  - Fixed disclosure of Exif metadata when uploading images. ([#492](https://github.com/flatpressblog/flatpress/pull/492))
 
 ## Plugins
 ### Additions
@@ -55,7 +56,7 @@
 - FlatPress Protect plugin: update to version 1.1.0
   - Insecure inline Java scripts are not executed by the visitor's browser by default. You can allow the execution of insecure Java code if, for example, a plugin contains a Java script that is not equipped with a nonce. ([#477](https://github.com/flatpressblog/flatpress/pull/477))
   - It is also possible to enable/disable the htaccess edit field to create or edit the file in the PrettyURLs plugin without having to disable the FlatPress Protect plugin. ([#477](https://github.com/flatpressblog/flatpress/pull/477))
-
+  - The removal of metadata when uploading images can be deactivated for better image quality. ([#492](https://github.com/flatpressblog/flatpress/pull/492))
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
   - File or image selection possible after activating the option “Allow BBcode in comments” option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
