@@ -68,6 +68,10 @@
   - The set language is now taken into account when determining the first day of the week. ([#73](https://github.com/flatpressblog/flatpress/issues/73))
   - Single-digit months are now always two-digit.
 
+### Security
+- SEO Meta Tag Info plugin:
+  - Removes the vulnerability Cross-Site Scripting (XSS) ([#491](https://github.com/flatpressblog/flatpress/pull/491))
+
 ## Setup
 ### Bugfixes
 - The setup now also recognizes the browser language when using Firefox
