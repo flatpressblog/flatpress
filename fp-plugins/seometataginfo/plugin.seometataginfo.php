@@ -9,18 +9,27 @@
  */
 
 // SEE 'readme.txt' for information
-require ("inc/hw-helpers.php");
-require ("inc/class.iniparser.php");
-require ("inc/migrate_data.php");
+require ('inc/hw-helpers.php');
+require ('inc/class.iniparser.php');
+require ('inc/migrate_data.php');
 
-global $keep_char;
 global $seo_default;
 global $prepend_description;
 global $prepend_keywords;
 
-// IMPORTANT: For non LATIN-1 countries
-// ADD additional characters that you want to allow in your meta tags here
-$keep_char = "€ƒ†‡‰™ŠŒŽ‘’“”•–—˜™š›œžŸ¡¢£¤¥¦ª§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇČĎÈÉÊËĞÌÍÎİÏĲÐŇÑÒÓÔÕÖŘŞŤ×ØÙÚÛŰÜŮÝÞßàáâãäåăæçďčèéêëſğìíîïıĳðňñòóôõöřşțť÷øùúûűüůýþÿ✓✔➤➔→➥▶⇒➨★❤♥✘✖✆✈";
+// Dynamic definition of allowed characters
+$unicode_blocks = [
+	'\p{L}', // Letter
+	'\p{N}', // Number
+	'\p{P}', // Punctuation
+	'\p{Zs}', // Separator, space
+	'\p{M}', // Mark
+];
+
+// Additional permitted characters (e.g. emojis, special characters)
+$extra_chars = '-_,©®✓✔➤➔→➥▶⇒➨★❤♥✘✖✆✈⚠️☎️✉👍😄😃😉😊😁😏😍😎😆😂😐😳😮😵😢😣😟😠🔍☕❗❓';
+
+$allowed_characters_regex = '/[^' . implode('', $unicode_blocks) . preg_quote($extra_chars, '/') . ']/u';
 
 $seo_default = array(
 	'description' => '', // the page description
@@ -131,68 +140,94 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 			}
 
 			$cfg = new iniParser($file_meta);
-			$old_desc = $cfg->get("meta", "description") != false ? wp_specialchars(trim($cfg->get("meta", "description"))) : (!empty($_REQUEST ['pl_description']) ? $_REQUEST ['pl_description'] : '');
-			$old_keywords = $cfg->get("meta", "keywords") != false ? wp_specialchars(trim($cfg->get("meta", "keywords"))) : (!empty($_REQUEST ['pl_keywords']) ? $_REQUEST ['pl_keywords'] : '');
-			$old_noindex = $cfg->get("meta", "noindex") != false ? wp_specialchars(trim($cfg->get("meta", "noindex"))) : (!empty($_REQUEST ['pl_noindex']) ? $_REQUEST ['pl_noindex'] : '0');
-			$old_nofollow = $cfg->get("meta", "nofollow") != false ? wp_specialchars(trim($cfg->get("meta", "nofollow"))) : (!empty($_REQUEST ['pl_nofollow']) ? $_REQUEST ['pl_nofollow'] : '0');
-			$old_noarchive = $cfg->get("meta", "noarchive") != false ? wp_specialchars(trim($cfg->get("meta", "noarchive"))) : (!empty($_REQUEST ['pl_noarchive']) ? $_REQUEST ['pl_noarchive'] : '0');
-			$old_nosnippet = $cfg->get("meta", "nosnippet") != false ? wp_specialchars(trim($cfg->get("meta", "nosnippet"))) : (!empty($_REQUEST ['pl_nosnippet']) ? $_REQUEST ['pl_nosnippet'] : '0');
+			$old_desc = $cfg->get('meta', 'description') != false ? wp_specialchars(trim($cfg->get('meta', 'description'))) : (!empty($_REQUEST ['pl_description']) ? $_REQUEST ['pl_description'] : '');
+			$old_keywords = $cfg->get('meta', 'keywords') != false ? wp_specialchars(trim($cfg->get('meta', 'keywords'))) : (!empty($_REQUEST ['pl_keywords']) ? $_REQUEST ['pl_keywords'] : '');
+			$old_noindex = $cfg->get('meta', 'noindex') != false ? wp_specialchars(trim($cfg->get('meta', 'noindex'))) : (!empty($_REQUEST ['pl_noindex']) ? $_REQUEST ['pl_noindex'] : '0');
+			$old_nofollow = $cfg->get('meta', 'nofollow') != false ? wp_specialchars(trim($cfg->get('meta', 'nofollow'))) : (!empty($_REQUEST ['pl_nofollow']) ? $_REQUEST ['pl_nofollow'] : '0');
+			$old_noarchive = $cfg->get('meta', 'noarchive') != false ? wp_specialchars(trim($cfg->get('meta', 'noarchive'))) : (!empty($_REQUEST ['pl_noarchive']) ? $_REQUEST ['pl_noarchive'] : '0');
+			$old_nosnippet = $cfg->get('meta', 'nosnippet') != false ? wp_specialchars(trim($cfg->get('meta', 'nosnippet'))) : (!empty($_REQUEST ['pl_nosnippet']) ? $_REQUEST ['pl_nosnippet'] : '0');
 
 			$lang = lang_load('plugin:seometataginfo');
 			$string = $lang ['admin'] ['plugin'] ['seometataginfo'];
 
-			echo "\n<fieldset id=\"plugin_seometataginfo\">\n";
-			echo " <legend>{$string['legend_desc']}</legend>\n";
-			echo "  <p>{$string['description']}</p>\n";
-			echo "  <div>\n";
-			echo '    <input id="pl_file_meta" type="hidden" name="pl_file_meta" value="' . $file_meta . '">' . "\n";
-			echo "    <p><label for=\"pl_description\">{$string['input_desc']}</label>\n";
-			echo '       <input placeholder="' . $lang ['admin'] ['plugin'] ['seometataginfo'] ['sample_desc'] . '" class="maxsize" id="pl_description" type="text" name="pl_description" value="' . $old_desc . '"></p>' . "\n";
-			echo "    <p><label for=\"pl_keywords\">{$string['input_keywords']}</label>\n";
-			echo '       <input placeholder="' . $lang ['admin'] ['plugin'] ['seometataginfo'] ['sample_keywords'] . '" class="maxsize" id="pl_keywords" type="text" name="pl_keywords" value="' . $old_keywords . '"></p>' . "\n";
-			echo "    <p><br>\n";
+			echo '<fieldset id="plugin_seometataginfo">';
+			echo '	<legend>' . $string ['legend_desc'] . '</legend>';
+			echo '	<p>' . $string ['description'] . '</p>';
+			echo '	<div>';
+			echo '		<input id="pl_file_meta" type="hidden" name="pl_file_meta" value="' . $file_meta . '">';
+			echo '		<p><label for="pl_description">' . $string ['input_desc'] . '</label>';
+			echo '			<input placeholder="' . $lang ['admin'] ['plugin'] ['seometataginfo'] ['sample_desc'] . '" class="maxsize" id="pl_description" type="text" name="pl_description" value="' . htmlspecialchars($old_desc, ENT_QUOTES, 'UTF-8') . '"></p>';
+			echo '		<p><label for="pl_keywords">' . $string ['input_keywords'] . '</label>';
+			echo '			<input placeholder="' . $lang ['admin'] ['plugin'] ['seometataginfo'] ['sample_keywords'] . '" class="maxsize" id="pl_keywords" type="text" name="pl_keywords" value="' . htmlspecialchars($old_keywords, ENT_QUOTES, 'UTF-8') . '"></p>';
+			echo '		<p>';
 			$checked = ($old_noindex === "1") ? ' checked="yes"' : '';
-			echo "    <label for=\"pl_noindex\">{$string['input_noindex']}</label>\n";
-			echo '       <input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_noindex" type="checkbox"' . $checked . ' name="pl_noindex" value="1"' . '>';
+			echo '		<label for="pl_noindex">' . $string ['input_noindex'] . '</label>';
+			echo '			<input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_noindex" type="checkbox"' . $checked . ' name="pl_noindex" value="1">';
 			$checked = ($old_nofollow === "1") ? ' checked="yes"' : '';
-			echo "    <label for=\"pl_nofollow\">{$string['input_nofollow']}</label>\n";
-			echo '       <input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_nofollow" type="checkbox"' . $checked . ' name="pl_nofollow" value="1"' . '>';
+			echo '		<label for="pl_nofollow">' . $string ['input_nofollow'] . '</label>';
+			echo '			<input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_nofollow" type="checkbox"' . $checked . ' name="pl_nofollow" value="1">';
 			$checked = ($old_noarchive === "1") ? ' checked="yes"' : '';
-			echo "    <label for=\"pl_noarchive\">{$string['input_noarchive']}</label>\n";
-			echo '       <input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_noarchive" type="checkbox"' . $checked . ' name="pl_noarchive" value="1"' . '>';
+			echo '		<label for="pl_noarchive">' . $string ['input_noarchive'] . '</label>';
+			echo '			<input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_noarchive" type="checkbox"' . $checked . ' name="pl_noarchive" value="1">';
 			$checked = ($old_nosnippet === "1") ? ' checked="yes"' : '';
-			echo "    <label for=\"pl_nosnippet\">{$string['input_nosnippet']}</label>\n";
-			echo '       <input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_nosnippet" type="checkbox"' . $checked . ' name="pl_nosnippet" value="1"' . '>';
-			echo '    </p>' . "\n";
-			echo "  </div>\n";
-			echo "</fieldset>\n";
+			echo '		<label for="pl_nosnippet">' . $string ['input_nosnippet'] . '</label>';
+			echo '			<input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_nosnippet" type="checkbox"' . $checked . ' name="pl_nosnippet" value="1">';
+			echo '		</p>';
+			echo '	</div>';
+			echo '</fieldset>';
 
 			return true;
+		}
+
+		function sanitizeSeoField($input) {
+			global $allowed_characters_regex;
+
+			if (!is_string($input)) {
+				return '';
+			}
+
+			$input = strip_tags($input);
+			$input = htmlspecialchars_decode($input, ENT_QUOTES);
+
+			$input = preg_replace('/\bon\w+\s*=\s*["\'][^"\']*["\']/i', '', $input);
+
+			if (!empty($allowed_characters_regex)) {
+				$input = preg_replace($allowed_characters_regex, '', $input);
+			}
+
+			return is_string($input) ? trim($input) : '';
 		}
 
 		function do_save() {
 			if (empty($_POST ['pl_file_meta'])) {
 				return;
 			}
-			global $keep_char;
-			$metatags = "description=" . (isset($_POST ['pl_description']) ? trim($_POST ['pl_description']) : "") . "\n";
-			$metatags .= "keywords=" . (isset($_POST ['pl_keywords']) ? trim($_POST ['pl_keywords']) : "") . "\n";
-			$metatags .= "noindex=" . (isset($_POST ['pl_noindex']) ? trim($_POST ['pl_noindex']) : "0") . "\n";
-			$metatags .= "nofollow=" . (isset($_POST ['pl_nofollow']) ? trim($_POST ['pl_nofollow']) : "0") . "\n";
-			$metatags .= "noarchive=" . (isset($_POST ['pl_noarchive']) ? trim($_POST ['pl_noarchive']) : "0") . "\n";
-			$metatags .= "nosnippet=" . (isset($_POST ['pl_nosnippet']) ? trim($_POST ['pl_nosnippet']) : "0") . "\n";
-			$metatags = preg_replace("/[^0-9a-zA-Z- =,\r\n" . $keep_char . "]/", "", $metatags);
+
+			$sanitize = function($field) {
+				return isset($_POST [$field]) ? $this->sanitizeSeoField($_POST [$field]) : '';
+			};
+
+			$metatags = 'description=' . (isset($_POST ['pl_description']) ? $this->sanitizeSeoField($_POST ['pl_description']) : '') . "\n";
+			$metatags .= 'keywords=' . (isset($_POST ['pl_keywords']) ? $this->sanitizeSeoField($_POST ['pl_keywords']) : '') . "\n";
+			$metatags .= 'noindex=' . (isset($_POST ['pl_noindex']) ? trim($_POST ['pl_noindex']) : '0') . "\n";
+			$metatags .= 'nofollow=' . (isset($_POST ['pl_nofollow']) ? trim($_POST ['pl_nofollow']) : '0') . "\n";
+			$metatags .= 'noarchive=' . (isset($_POST ['pl_noarchive']) ? trim($_POST ['pl_noarchive']) : '0') . "\n";
+			$metatags .= 'nosnippet=' . (isset($_POST ['pl_nosnippet']) ? trim($_POST ['pl_nosnippet']) : '0') . "\n";
+
+			if (!empty($allowed_characters_regex)) {
+				$metatags = preg_replace($allowed_characters_regex, '', $metatags);
+			}
 
 			if (!empty($_POST ['pl_file_meta']) && $_POST ['pl_file_meta'] !== SEOMETA_DEFAULT_DIR . 'metatags.ini') {
-				// existing blog entry or static page (got file name already)
+				// Existing blog entry or static page (got file name already)
 				@io_write_file($_POST ['pl_file_meta'], "[meta]\n" . $metatags);
-			} elseif ($_REQUEST ['p'] === "entry") {
-				// this was a new blog entry
+			} elseif ($_REQUEST ['p'] === 'entry') {
+				// This was a new blog entry
 				$new_id = bdb_idfromtime(BDB_ENTRY, $_POST ['timestamp']);
 				$file_meta = SEOMETA_ENTRY_DIR . $new_id . '_metatags.ini';
 				@io_write_file($file_meta, "[meta]\n" . $metatags);
-			} elseif ($_REQUEST ['p'] === "static") {
-				// this was a new static page
+			} elseif ($_REQUEST ['p'] === 'static') {
+				// This was a new static page
 				$new_id = $_REQUEST ['id'];
 				$file_meta = SEOMETA_STATIC_DIR . $new_id . '_metatags.ini';
 				@io_write_file($file_meta, "[meta]\n" . $metatags);
@@ -287,9 +322,9 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 
 	if (SEOMETA_GEN_TITLE_META) {
 		$metatitle = apply_filters('wp_title', $fp_config ['general'] ['title'], trim($string ['sep']));
-		echo '    <meta name="title" content="' . $metatitle . '">' . "\n";
+		echo '	<meta name="title" content="' . $metatitle . '">' . "\n";
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '    <meta property="og:title" content="' . $metatitle . '">' . "\n";
+			echo '	<meta property="og:title" content="' . $metatitle . '">' . "\n";
 		}
 	}
 
@@ -298,10 +333,10 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		// The size of the image file must not exceed 8 MB.
 		// Meh, the recommended aspect ratio is 1.91:1 otherwise parts will be cut off
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '    <meta property="og:image" content="'. $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png">' . "\n";
-			echo '    <meta property="og:image:url" content="'. $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png">' . "\n";
-			echo '    <meta property="og:image:width" content="800">' . "\n";
-			echo '    <meta property="og:image:height" content="600">' . "\n";
+			echo '	<meta property="og:image" content="'. $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png">' . "\n";
+			echo '	<meta property="og:image:url" content="'. $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png">' . "\n";
+			echo '	<meta property="og:image:width" content="800">' . "\n";
+			echo '	<meta property="og:image:height" content="600">' . "\n";
 		}
 	}
 
@@ -312,39 +347,39 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	$count += ($seo_nosnippet !== '0') ? 1 : 0;
 
 	// make description unique by adding a page# when paging
-	$pagenum = "";
+	$pagenum = '';
 	if (is_paging()) {
-		$pagenum = $string ['sep'] . "(" . $string ['pagenum'] . $fp_params ['paged'] . ")";
+		$pagenum = $string ['sep'] . '(' . $string ['pagenum'] . $fp_params ['paged'] . ')';
 	}
 	// make description unique by adding a comments on comments page
-	$comment = "";
+	$comment = '';
 	if (is_comments()) {
-		$comment = $string ['sep'] . "(" . $string ['comments'] . ")";
+		$comment = $string ['sep'] . '(' . $string ['comments'] . ')';
 	}
 
 	# Now write the tags
-	echo '    <meta name="description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
-	echo '    <meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
+	echo '	<meta name="description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
+	echo '	<meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
 	if (SEOMETA_GEN_OPEN_GRAPH) {
-		echo '    <meta property="og:description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
+		echo '	<meta property="og:description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
 	}
 	if (is_single()) {
-		echo '    <meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
+		echo '	<meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '    <meta property="og:type" content="article">' . "\n";
+			echo '	<meta property="og:type" content="article">' . "\n";
 		}
 	} else {
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '    <meta property="og:type" content="website">' . "\n";
+			echo '	<meta property="og:type" content="website">' . "\n";
 		}
 	}
 	if (SEOMETA_GEN_OPEN_GRAPH) {
-		echo '    <meta property="og:locale" content="' . $lang . '">' . "\n";
-		echo '    <meta property="og:site_name" content="' . $site_title . '">' . "\n";
+		echo '	<meta property="og:locale" content="' . $lang . '">' . "\n";
+		echo '	<meta property="og:site_name" content="' . $site_title . '">' . "\n";
 	}
 
 	if ($count > 0) {
-		echo '    <meta name="robots" content="';
+		echo '	<meta name="robots" content="';
 		$data = ($seo_noindex !== '0') ? 'NOINDEX,' : '';
 		$data .= ($seo_nofollow !== '0' ? 'NOFOLLOW,' : '');
 		$data .= ($seo_noarchive !== '0' ? 'NOARCHIVE,' : '');
@@ -359,12 +394,12 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 			$url = preg_replace('/#comments/', '', $url);
 			$url = preg_replace('/comments\//', '', $url);
 		}
-		echo '    <link rel="canonical" href="' . $url . '">' . "\n";
+		echo '	<link rel="canonical" href="' . $url . '">' . "\n";
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '    <meta property="og:url" content="' . $url . '">' . "\n";
+			echo '	<meta property="og:url" content="' . $url . '">' . "\n";
 		}
 	}
-	echo '    <!-- end of SEO Metatag Info -->' . "\n";
+	echo '	<!-- end of SEO Metatag Info -->' . "\n";
 }
 
 function process_meta($file_meta, $type, $id, $sep) {
@@ -402,12 +437,12 @@ function process_meta($file_meta, $type, $id, $sep) {
 	}
 
 	$cfg = new iniParser($file_meta);
-	$seo_desc = $cfg->get("meta", "description") != false ? wp_specialchars(trim($cfg->get("meta", "description"))) : $seo_default ['description'];
-	$seo_keywords = $cfg->get("meta", "keywords") != false ? wp_specialchars(trim($cfg->get("meta", "keywords"))) : $seo_default ['keywords'];
-	$seo_noindex = $cfg->get("meta", "noindex") != false ? wp_specialchars(trim($cfg->get("meta", "noindex"))) : $seo_default ['noindex'];
-	$seo_nofollow = $cfg->get("meta", "nofollow") != false ? wp_specialchars(trim($cfg->get("meta", "nofollow"))) : $seo_default ['nofollow'];
-	$seo_noarchive = $cfg->get("meta", "noarchive") != false ? wp_specialchars(trim($cfg->get("meta", "noarchive"))) : $seo_default ['noarchive'];
-	$seo_nosnippet = $cfg->get("meta", "nosnippet") != false ? wp_specialchars(trim($cfg->get("meta", "nosnippet"))) : $seo_default ['nosnippet'];
+	$seo_desc = $cfg->get('meta', 'description') != false ? wp_specialchars(trim($cfg->get('meta', 'description'))) : $seo_default ['description'];
+	$seo_keywords = $cfg->get('meta', 'keywords') != false ? wp_specialchars(trim($cfg->get('meta', 'keywords'))) : $seo_default ['keywords'];
+	$seo_noindex = $cfg->get('meta', 'noindex') != false ? wp_specialchars(trim($cfg->get('meta', 'noindex'))) : $seo_default ['noindex'];
+	$seo_nofollow = $cfg->get('meta', 'nofollow') != false ? wp_specialchars(trim($cfg->get('meta', 'nofollow'))) : $seo_default ['nofollow'];
+	$seo_noarchive = $cfg->get('meta', 'noarchive') != false ? wp_specialchars(trim($cfg->get('meta', 'noarchive'))) : $seo_default ['noarchive'];
+	$seo_nosnippet = $cfg->get('meta', 'nosnippet') != false ? wp_specialchars(trim($cfg->get('meta', 'nosnippet'))) : $seo_default ['nosnippet'];
 	output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, $seo_noarchive, $seo_nosnippet);
 }
 
@@ -430,7 +465,7 @@ function process_archive_meta() {
 
 	$file_meta = SEOMETA_ARCHIVE_DIR . 'archive-20' . (!empty($fp_params ['y']) ? $fp_params ['y'] : '') . (!empty($fp_params ['m']) ? '-' . $fp_params ['m'] : '') . (!empty($fp_params ['d']) ? '-' . $fp_params ['d'] : '') . '_metatags.ini';
 	$type = $string ['archive'];
-	$id = "20" . (!empty($fp_params ['y']) ? $fp_params ['y'] : '') . (!empty($fp_params ['m']) ? '/' . $fp_params ['m'] : '') . (!empty($fp_params ['d']) ? '/' . $fp_params ['d'] : '');
+	$id = '20' . (!empty($fp_params ['y']) ? $fp_params ['y'] : '') . (!empty($fp_params ['m']) ? '/' . $fp_params ['m'] : '') . (!empty($fp_params ['d']) ? '/' . $fp_params ['d'] : '');
 	$sep = $string ['sep'];
 	process_meta($file_meta, $type, $id, $sep);
 }
@@ -456,7 +491,7 @@ function process_category_meta() {
  * Checks if the category with the given ID exists
  *
  * @param int $cat_id
- *        	the category ID
+ *			the category ID
  * @return boolean <code>true</code> if the category exists; <code>false</code> otherwise
  */
 function seometa_category_id_exists($cat_id) {
@@ -518,12 +553,12 @@ function plugin_seometataginfo_head($file_meta) {
 		}
 
 		$cfg = new iniParser($file_meta);
-		$seo_desc = $cfg->get("meta", "description") != false ? wp_specialchars(trim($cfg->get("meta", "description"))) : '';
-		$seo_keywords = $cfg->get("meta", "keywords") != false ? wp_specialchars(trim($cfg->get("meta", "keywords"))) : '';
-		$seo_noindex = $cfg->get("meta", "noindex") != false ? wp_specialchars(trim($cfg->get("meta", "noindex"))) : '0';
-		$seo_nofollow = $cfg->get("meta", "nofollow") != false ? wp_specialchars(trim($cfg->get("meta", "nofollow"))) : '0';
-		$seo_noarchive = $cfg->get("meta", "noarchive") != false ? wp_specialchars(trim($cfg->get("meta", "noarchive"))) : '0';
-		$seo_nosnippet = $cfg->get("meta", "nosnippet") != false ? wp_specialchars(trim($cfg->get("meta", "nosnippet"))) : '0';
+		$seo_desc = $cfg->get('meta', 'description') != false ? wp_specialchars(trim($cfg->get('meta', 'description'))) : '';
+		$seo_keywords = $cfg->get('meta', 'keywords') != false ? wp_specialchars(trim($cfg->get('meta', 'keywords'))) : '';
+		$seo_noindex = $cfg->get('meta', 'noindex') != false ? wp_specialchars(trim($cfg->get('meta', 'noindex'))) : '0';
+		$seo_nofollow = $cfg->get('meta', 'nofollow') != false ? wp_specialchars(trim($cfg->get('meta', 'nofollow'))) : '0';
+		$seo_noarchive = $cfg->get('meta', 'noarchive') != false ? wp_specialchars(trim($cfg->get('meta', 'noarchive'))) : '0';
+		$seo_nosnippet = $cfg->get('meta', 'nosnippet') != false ? wp_specialchars(trim($cfg->get('meta', 'nosnippet'))) : '0';
 		output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, $seo_noarchive, $seo_nosnippet);
 	}
 }
@@ -535,7 +570,7 @@ function makePageTitle($title, $sep) {
 	$lang = lang_load('plugin:seometataginfo');
 	$string = $lang ['plugin'] ['seometataginfo'];
 
-	$page_title = "";
+	$page_title = '';
 
 	if (is_contact()) {
 		$page_title = $string ['contact'];
@@ -546,14 +581,14 @@ function makePageTitle($title, $sep) {
 	} elseif (is_blog_page()) {
 		$page_title = $string ['blog_page'];
 	} elseif (is_tag()) {
-		$page_title = $string ['tag'] . $string ['sep'] . $fp_params ["tag"];
+		$page_title = $string ['tag'] . $string ['sep'] . $fp_params ['tag'];
 	} elseif (is_archive()) {
 		if (is_archive_year()) {
-			$page_title = $string ['archive'] . $string ['sep'] . '20' . $fp_params ["y"];
+			$page_title = $string ['archive'] . $string ['sep'] . '20' . $fp_params ['y'];
 		} elseif (is_archive_month()) {
-			$page_title = $string ['archive'] . $string ['sep'] . '20' . $fp_params ["y"] . '/' . $fp_params ["m"];
+			$page_title = $string ['archive'] . $string ['sep'] . '20' . $fp_params ['y'] . '/' . $fp_params ['m'];
 		} elseif (is_archive_day()) {
-			$page_title = $string ['archive'] . $string ['sep'] . '20' . $fp_params ["y"] . '/' . $fp_params ["m"] . '/' . $fp_params ["d"];
+			$page_title = $string ['archive'] . $string ['sep'] . '20' . $fp_params ['y'] . '/' . $fp_params ['m'] . '/' . $fp_params ['d'];
 		}
 	} elseif (is_category()) {
 		$page_title = $string ['category'] . $string ['sep'] . get_category_name($fp_params ['cat']);
@@ -565,7 +600,7 @@ function makePageTitle($title, $sep) {
 		$page_title .= $string ['sep'] . $string ['pagenum'] . $fp_params ['paged'];
 	}
 
-	return "$title" . (!empty($page_title) ? " $sep $page_title" : "");
+	return $title . (!empty($page_title) ? ' ' . $sep . ' ' . $page_title : '');
 }
 
 function plugin_seometataginfo_init() {
