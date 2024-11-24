@@ -51,6 +51,7 @@ $fp_config = array(
 		'fpprotect' => array (
 			'allowUnsafeInline' => false,
 			'allowPrettyURLEdit' => false,
+			'allowImageMetadata' => false,
 		),
 	),
 );
