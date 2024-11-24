@@ -25,6 +25,10 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_htaccess_edit' => 'Omogoča ustvarjanje in urejanje datoteke .htaccess.',
 	'allowPrettyURLEditDsc' => 'Omogoča dostop do polja za urejanje datoteke .htaccess v vtičniku PrettyURLs za ustvarjanje ali spreminjanje datoteke .htaccess.',
 
+	// Part for metadate in images after upload
+	'allow_image_metadate' => 'Ohranite metapodatke in izvirno kakovost slik v naloženih slikah.',
+	'allowImageMetadataDsc' => 'Ko so slike naložene s programom za nalaganje, se metapodatki ohranijo. To vključuje na primer podatke o fotoaparatu in geografske koordinate.',
+
 	'submit' => 'Shranjevanje nastavitev',
 		'msgs' => array(
 		1 => 'Nastavitve so bile uspešno shranjene.',

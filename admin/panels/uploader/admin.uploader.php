@@ -8,9 +8,10 @@
  * Date:
  * Purpose:
  * Input:
+ * Change-Date: 24.11.2024, by FKM
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
- *        
+ *
  */
 class admin_uploader extends AdminPanel {
 	var $panelname = 'uploader';
@@ -32,11 +33,13 @@ class admin_uploader_default extends AdminPanelAction {
 	}
 
 	function sanitize_filename($filename) {
-		// Allow letters (incl. specific characters), numbers, hyphens, underscores, dots
-		$allowed_chars = '/[^a-zA-Z0-9._-äöüßČčŠšŽžÁáÉéÍíÓóÚúĚěĽľŇňŘřŤťŮůǍǎĎďŇň]/u';
+		// Define allowed characters: letters, numbers, hyphens, underscores, dots, and language-specific characters
+		$allowed_chars = '/[^a-zA-Z0-9._\-\p{L}\p{M}]/u';
+
+		// Remove all disallowed characters
 		$filename = preg_replace($allowed_chars, '', $filename);
 
-		// Make sure that no subsequent dots or hyphens remain
+		// Ensure no trailing dots, underscores, or hyphens remain
 		$filename = rtrim($filename, "._-");
 
 		return $filename;
@@ -51,16 +54,22 @@ class admin_uploader_default extends AdminPanelAction {
 	}
 
 	function onupload() {
+		global $fp_config;
+
+		// FPPROTECT: Load configuration
+		$pluginConfig = plugin_getoptions('fpprotect');
+		$allowImageMetadata = isset($pluginConfig ['allowImageMetadata']) ? (bool)$pluginConfig ['allowImageMetadata'] : false;
+
+		$removeMetadata = !$allowImageMetadata;
+
 		$success = false;
 
-		/*
+		/**
 		 * first check if user is logged in
 		 * to prevent remote admin.uploader.php script execution
 		 *
 		 * By testing the admin/main.php made the redirect job
 		 * By direct URL call PHP throw a visible error -> AdminPanel class not found!
-		 *
-		 * 2019-11-23 - laborix
 		 */
 		if (!user_loggedin()) {
 			utils_redirect('login.php');
@@ -75,11 +84,9 @@ class admin_uploader_default extends AdminPanelAction {
 			fs_mkdir(ATTACHS_DIR);
 		}
 
-		/*
+		/**
 		 * Blacklist entries from OWASP and
 		 * https://stackoverflow.com/questions/4166762/php-image-upload-security-check-list
-		 *
-		 * 2019-11-23 - laborix
 		 */
 		$blacklist_extensions = array(
 			'htaccess',
@@ -150,11 +157,9 @@ class admin_uploader_default extends AdminPanelAction {
 				return -1;
 			}
 
-			/*
+			/**
 			 * second check extension list
 			 * https://stackoverflow.com/questions/4166762/php-image-upload-security-check-list
-			 *
-			 * 2019-11-24 - laborix
 			 */
 
 			// Prevents directory traversal
@@ -167,14 +172,14 @@ class admin_uploader_default extends AdminPanelAction {
 
 			// Validation of file extensions
 			if ($extcount == 1) {
-				/*
+				/**
 				 * none extension like .jpg or something else
 				 *
 				 * possible filename = simple-file-without-extension - linux like ok
 				 */
 				$isForbidden = false;
 			} elseif ($extcount == 2) {
-				/*
+				/**
 				 * Only one possible extension
 				 *
 				 * possible filename = 1.jpg
@@ -185,7 +190,7 @@ class admin_uploader_default extends AdminPanelAction {
 				$check_ext1 = trim($deeptest [1], "\x00..\x1F");
 				$isForbidden = in_array($check_ext1, $blacklist_extensions);
 			} elseif ($extcount > 2) {
-				/*
+				/**
 				 * Chekc only the last two possible extensions
 				 *
 				 * Hint: OWASP - Unrestricted File Upload
@@ -214,18 +219,16 @@ class admin_uploader_default extends AdminPanelAction {
 				return -1;
 			}
 
-			/*
+			/**
 			 * third check extension
 			 * if someone upload a .php file as .gif, .jpg or .txt
 			 * if someone upload a .html file as .gif, .jpg or .txt
-			 *
-			 * 2019-11-24 - laborix
 			 */
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$mime = finfo_file($finfo, $tmp_name);
 			finfo_close($finfo);
 
-			/*
+			/**
 			 * If one blacklisted extension found then
 			 * return with -1 = An error occurred while trying to upload.
 			 */
@@ -243,15 +246,22 @@ class admin_uploader_default extends AdminPanelAction {
 				$dir = ATTACHS_DIR;
 			}
 
- 			// Sanitizing the file name
+			// Sanitizing the file name
 			$name = $this->sanitize_filename(substr($name, 0, -strlen($ext))) . $ext;
 
-			$target = "$dir/$name";
+			$target = $dir . '/' . $name;
 			@umask(022);
-			$success = move_uploaded_file($tmp_name, $target);
-			@chmod($target, FILE_PERMISSIONS);
-
-			$uploaded_files [] = $name;
+			if (move_uploaded_file($tmp_name, $target)) {
+				// Remove metadata from images if false or not set in FPPROTECT
+				if ($removeMetadata && in_array($ext, $imgs)) {
+					$this->remove_image_metadata($target, $ext);
+				}
+				@chmod($target, FILE_PERMISSIONS);
+				$uploaded_files [] = $name;
+				$success = true;
+			} else {
+				$success = false;
+			}
 
 			// One failure will make $success == false :)
 			$success &= $success;
@@ -263,6 +273,33 @@ class admin_uploader_default extends AdminPanelAction {
 		}
 
 		return 1;
+	}
+
+	function remove_image_metadata($filepath, $ext) {
+		switch ($ext) {
+			case '.jpg':
+			case '.jpeg':
+				$image = imagecreatefromjpeg($filepath);
+				$saveFunc = 'imagejpeg';
+				break;
+			case '.png':
+				$image = imagecreatefrompng($filepath);
+				$saveFunc = 'imagepng';
+				break;
+			case '.gif':
+				$image = imagecreatefromgif($filepath);
+				$saveFunc = 'imagegif';
+				break;
+			default:
+				return false;
+		}
+
+		if ($image) {
+			$saveFunc($image, $filepath);
+			imagedestroy($image);
+			return true;
+		}
+		return false;
 	}
 }
 ?>
