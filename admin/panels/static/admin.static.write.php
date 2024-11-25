@@ -138,10 +138,11 @@ class admin_static_write extends AdminPanelActionValidated {
 		global $fp_config;
 		$arr ['version'] = system_ver();
 
-		$arr ['subject'] = $this->sanitizePageTitle($_POST ['subject']);
-		$arr ['id'] = isset($_POST ['id']) ? $this->sanitizePageId($_POST ['id']) : '';
+		$arr ['subject'] = isset($_POST ['subject']) ? $this->sanitizePageTitle($_POST ['subject']) : ($this->id ?: 'Untitled Site');
 
-		$arr ['content'] = $_POST ['content'];
+		$arr ['id'] = isset($_POST ['id']) ? $this->sanitizePageId($_POST ['id']) : 'Empty';
+
+		$arr ['content'] = isset($_POST ['content']) ? $_POST ['content'] : 'No Content';
 
 		$author = user_get();
 		$arr ['author'] = !empty($fp_config ['general'] ['author']) ? $fp_config ['general'] ['author'] : $author ['userid'];
