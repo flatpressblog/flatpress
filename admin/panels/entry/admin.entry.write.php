@@ -154,11 +154,9 @@ class admin_entry_write extends AdminPanelActionValidated {
 		global $fp_config;
 		$arr ['version'] = system_ver();
 
-		$subject = isset($_POST ['subject']) ? $_POST ['subject'] : ($this->id ?? '');
-		$arr ['subject'] = $this->sanitizeEntryTitle($_POST ['subject']);
+		$arr ['subject'] = isset($_POST ['subject']) ? $this->sanitizeEntryTitle($_POST ['subject']) : ($this->id ?: 'Untitled Entry');
 
-		$content = isset($_POST ['content']) ? $_POST ['content'] : '';
-		$arr ['content'] = $_POST ['content'];
+		$arr ['content'] = isset($_POST ['content']) ? $_POST ['content'] : 'No Content';
 
 		// Set the author from the configuration, if available; otherwise set the user.
 		$author = user_get();
