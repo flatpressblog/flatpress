@@ -8,7 +8,7 @@
  * Date:
  * Purpose:
  * Input:
- * Change-Date: 23.11.2024, by FKM
+ * Change-Date: 26.11.2024, by FKM
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
  *
@@ -41,7 +41,7 @@ class admin_entry_write extends AdminPanelActionValidated {
 	);
 
 	var $draft = false;
-	
+
 	var $id = null;
 
 	function _makePreview($arr, $id = null) {
@@ -72,25 +72,17 @@ class admin_entry_write extends AdminPanelActionValidated {
 
 	function sanitizeEntryTitle($title) {
 
-		$title = strip_tags($title);
-		$title = htmlspecialchars_decode($title, ENT_QUOTES);
+		$title = htmlspecialchars_decode(strip_all_tags($title), ENT_QUOTES);
 
-		$dangerous = [
-			'<',
-			'>',
-		];
-
-		$title = str_replace($dangerous, '', $title);
-
-		$title = preg_replace('/\bon\w+\s*=\s*["\'][^"\']*["\']/i', '', $title);
+		$title = preg_replace([
+			'/\bon\w+\s*=\s*["\'][^"\']*["\']/i',
+			'/[<>&]/'
+		], '', $title);
 
 		$allowed = '/[^\p{L}\p{N}\p{P}\p{Zs}\p{M}]/u';
-
 		$title = preg_replace($allowed, '', $title);
 
-		$title = trim($title);
-
-		return $title;
+		return trim($title);
 	}
 
 	function makePageTitle($title, $sep) {

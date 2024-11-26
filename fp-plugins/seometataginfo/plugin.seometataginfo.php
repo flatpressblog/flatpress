@@ -160,16 +160,16 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 			echo '		<p><label for="pl_keywords">' . $string ['input_keywords'] . '</label>';
 			echo '			<input placeholder="' . $lang ['admin'] ['plugin'] ['seometataginfo'] ['sample_keywords'] . '" class="maxsize" id="pl_keywords" type="text" name="pl_keywords" value="' . htmlspecialchars($old_keywords, ENT_QUOTES, 'UTF-8') . '"></p>';
 			echo '		<p>';
-			$checked = ($old_noindex === "1") ? ' checked="yes"' : '';
+			$checked = ($old_noindex === '1') ? ' checked="yes"' : '';
 			echo '		<label for="pl_noindex">' . $string ['input_noindex'] . '</label>';
 			echo '			<input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_noindex" type="checkbox"' . $checked . ' name="pl_noindex" value="1">';
-			$checked = ($old_nofollow === "1") ? ' checked="yes"' : '';
+			$checked = ($old_nofollow === '1') ? ' checked="yes"' : '';
 			echo '		<label for="pl_nofollow">' . $string ['input_nofollow'] . '</label>';
 			echo '			<input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_nofollow" type="checkbox"' . $checked . ' name="pl_nofollow" value="1">';
-			$checked = ($old_noarchive === "1") ? ' checked="yes"' : '';
+			$checked = ($old_noarchive === '1') ? ' checked="yes"' : '';
 			echo '		<label for="pl_noarchive">' . $string ['input_noarchive'] . '</label>';
 			echo '			<input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_noarchive" type="checkbox"' . $checked . ' name="pl_noarchive" value="1">';
-			$checked = ($old_nosnippet === "1") ? ' checked="yes"' : '';
+			$checked = ($old_nosnippet === '1') ? ' checked="yes"' : '';
 			echo '		<label for="pl_nosnippet">' . $string ['input_nosnippet'] . '</label>';
 			echo '			<input style="vertical-align: middle; margin: 0px 10px 0px 0px; cursor: pointer;" id="pl_nosnippet" type="checkbox"' . $checked . ' name="pl_nosnippet" value="1">';
 			echo '		</p>';
@@ -186,16 +186,17 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 				return '';
 			}
 
-			$input = strip_tags($input);
-			$input = htmlspecialchars_decode($input, ENT_QUOTES);
-
-			$input = preg_replace('/\bon\w+\s*=\s*["\'][^"\']*["\']/i', '', $input);
+			$input = preg_replace([
+				'/<[^>]*>/',
+				'/&lt;|&gt;/',
+				'/\bon\w+\s*=\s*["\'][^"\']*["\']/i'
+			], '', htmlspecialchars_decode($input, ENT_QUOTES));
 
 			if (!empty($allowed_characters_regex)) {
 				$input = preg_replace($allowed_characters_regex, '', $input);
 			}
 
-			return is_string($input) ? trim($input) : '';
+			return trim($input);
 		}
 
 		function do_save() {
