@@ -11,11 +11,11 @@
 		<dl class="option-list">
 			<dt><label for="title"> {$panelstrings.blogtitle} </label></dt>
 			{if isset($error) && isset($error.title) && !empty($error.title)}
-				{assign var=class value="field-error"}
+				{assign var=class value=" field-error"}
 			{else}
 				{assign var=class value=""}
 			{/if}
-			<dd><input type="text" name="title" id="title" class="textinput {$class}" value="{$flatpress.TITLE|escape:"html"}"></dd>
+			<dd><input type="text" name="title" id="title" class="textinput{$class}" value="{$flatpress.TITLE|escape:"html"}"></dd>
 
 			<dt><label for="subtitle"> {$panelstrings.blogsubtitle} </label></dt>
 			<dd><input type="text" name="subtitle" id="subtitle" class="bigtextinput" value="{$flatpress.subtitle|escape:"html"}"></dd>
@@ -28,19 +28,19 @@
 
 			<dt><label for="www"> {$panelstrings.blogurl} </label></dt>
 			{if isset($error) && isset($error.www) && !empty($error.www)}
-				{assign var=class value="field-error"}
+				{assign var=class value=" field-error"}
 			{else}
 				{assign var=class value=""}
 			{/if}
-			<dd><input type="text" name="www" id="www" class="textinput {$class}" value="{$flatpress.www|escape:"html"}"></dd>
+			<dd><input type="text" name="www" id="www" class="textinput{$class}" value="{$flatpress.www|escape:"html"}"></dd>
 
 			<dt><label for="email"> {$panelstrings.blogemail} </label></dt>
 			{if isset($error) && isset($error.email) && !empty($error.email)}
-				{assign var=class value="field-error"}
+				{assign var=class value=" field-error"}
 			{else}
 				{assign var=class value=""}
 			{/if}
-			<dd><input type="text" name="email" id="email" class="textinput {$class}" value="{$flatpress.email}"></dd>
+			<dd><input type="text" name="email" id="email" class="textinput{$class}" value="{$flatpress.email}"></dd>
 
 			<dt><label> {$panelstrings.notifications} </label></dt>
 			<dd><label for="notify">
@@ -60,7 +60,7 @@
 
 			<dt><label for="maxentries"> {$panelstrings.blogmaxentries} </label></dt>
 			{if isset($error) && isset($error.maxentries) && !empty($error.maxentries)}
-				{assign var=class value="field-error"}
+				{assign var=class value=" field-error"}
 			{else}
 				{assign var=class value=""}
 			{/if}
@@ -86,7 +86,7 @@
 
 			<dt><label for="timeoffset"> {$panelstrings.timeoffset} </label></dt>
 			{if isset($error) && isset($error.timeoffset) && !empty($error.timeoffset)}
-				{assign var=class value="field-error"}
+				{assign var=class value=" field-error"}
 			{else}
 				{assign var=class value=""}
 			{/if}
@@ -95,7 +95,7 @@
 
 			<dt><label for="dateformat"> {$panelstrings.dateformat} </label></dt>
 			{if isset($error) && isset($error.dateformat) && !empty($error.dateformat)}
-				{assign var=class value="field-error"}
+				{assign var=class value=" field-error"}
 			{else}
 				{assign var=class value=""}
 			{/if}
@@ -106,7 +106,7 @@
 
 			<dt><label for="dateformatshort"> {$panelstrings.dateformatshort} </label></dt>
 			{if isset($error) && isset($error.dateformatshort) && !empty($error.dateformatshort)}
-				{assign var=class value="field-error"}
+				{assign var=class value=" field-error"}
 			{else}
 				{assign var=class value=""}
 			{/if}
@@ -117,7 +117,7 @@
 
 			<dt><label for="timeformat"> {$panelstrings.timeformat} </label></dt>
 			{if isset($error) && isset($error.timeformat) && !empty($error.timeformat)}
-				{assign var=class value="field-error"}
+				{assign var=class value=" field-error"}
 			{else}
 				{assign var=class value=""}
 			{/if}
@@ -141,11 +141,6 @@
 			</dd>
 
 			<dt><label for="charset"> {$panelstrings.charset} </label></dt>
-			{if isset($error) && isset($error.charset) && !empty($error.charset)}
-				{assign var=class value="field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
 			<dd>
 				<select name="charset" id="charset" class="textinput">
 					{foreach from=$charset_list item=charset}
