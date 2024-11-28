@@ -11,6 +11,6 @@ function isValidFileDownloadUrl($value) {
 		return false;
 	}
 	// Allow URLs only in specific formats (optional)
-	return preg_match('/^[a-zA-Z0-9\-._~:\/?#\[\]@!$&\'()*+,;=%]+$/', $value) === 1;
+	return preg_match('/^[a-zA-Z0-9\-._~:\/?#\[\]@!$&\'()*+,;=%]+$/u', $value) === 1;
 }
 ?>
