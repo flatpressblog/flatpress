@@ -53,8 +53,8 @@ function comment_main($module) {
 
 function comment_feed() {
 	global $fp_params;
-	echo "\n<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get Comments RSS 2.0 Feed\" href=\"" . theme_comments_feed_link('rss2', $fp_params ['entry']) . "\">";
-	echo "\n<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Comments Atom 1.0 Feed\" href=\"" . theme_comments_feed_link('atom', $fp_params ['entry']) . "\">\n";
+	echo "\n" . '<link rel="alternate" type="application/rss+xml" title="Get Comments RSS 2.0 Feed" href="' . theme_comments_feed_link('rss2', $fp_params ['entry']) . '">';
+	echo "\n" . '<link rel="alternate" type="application/atom+xml" title="Get Comments Atom 1.0 Feed" href="' . theme_comments_feed_link('atom', $fp_params ['entry']) . '">' . "\n";
 }
 add_action('wp_head', 'comment_feed');
 
@@ -63,7 +63,7 @@ function comment_pagetitle($val, $sep) {
 	$q = & $fpdb->getQuery();
 	list ($id, $e) = @$q->peekEntry();
 	if (!empty($e)) {
-		return "{$e['subject']} : {$lang['main']['comments']} {$sep} $val ";
+		return $e ['subject'] . ' : ' . $lang ['main'] ['comments'] . ' ' . $sep . ' ' . $val . ' ';
 	} else {
 		return $val;
 	}
@@ -173,10 +173,19 @@ function commentform() {
 	$comment_formid = 'fp-comments';
 	$smarty->assign('comment_formid', $comment_formid);
 
+	// Define panel strings for success or error message
+	$panelstrings = array(
+		'msgs' => array(
+			1 => $lang ['comments'] ['success'],
+			-1 => $lang ['comments'] ['error'],
+		),
+	);
+	$smarty->assign('panelstrings', $panelstrings);
+
 	if (!empty($_POST)) {
 
 		// new form, we (re)set the session data
-		// utils_nocache_headers();
+		utils_nocache_headers();
 
 		// custom hook here!!
 		if ($arr = comment_validate()) {
@@ -200,10 +209,11 @@ function commentform() {
 
 				global $post;
 
-				$comm_mail = isset($arr ['email']) ? "<{$arr['email']}>" : '';
+				$comm_mail = isset($arr ['email']) ? '<' . $arr ['email'] . '>' : '';
 				$from_mail = $fp_config ['general'] ['email'];
 
-				$post = $e; // plugin such as prettyurls might need this...
+				// plugin such as prettyurls might need this...
+				$post = $e;
 
 				$lang = lang_load('comments');
 
@@ -225,17 +235,30 @@ function commentform() {
 					$fp_config ['general'] ['title']
 				), $lang ['comments'] ['mail']);
 
-				// for non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
-				@utils_mail($from_mail, "{$lang['comments']['newcomment']} {$fp_config['general']['title']}", $mail);
+				// For non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
+				@utils_mail($from_mail, $lang ['comments'] ['newcomment'] . ' ' . $fp_config ['general'] ['title'], $mail);
 			}
 
-			// if comment is valid, this redirect will clean the postdata
-			$location = str_replace('&amp;', '&', get_comments_link($entryid)) . '#' . $id;
+			// Set success message for the current request
+			$smarty->assign('success', 1);
 
+			// Save success status in session for use after redirect
+			system_seterr('comment', 1);
+
+			// If comment is valid, this redirect will clean the postdata
+			$location = str_replace('&amp;', '&', get_comments_link($entryid)) . '#' . $id;
 			utils_redirect($location, true);
 			exit();
 		} else {
+
 			$smarty->assign('values', $_POST);
+		}
+
+	} else {
+		// Check for any previous success or error state
+		$success = system_geterr('comment');
+		if ($success === 1) {
+			$smarty->assign('success', 1);
 		}
 	}
 }
