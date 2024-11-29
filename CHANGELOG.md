@@ -9,7 +9,9 @@
 - The determination of the time format has been made more robust
 
 ## Bugfixes
-- Contact form / comment function: Entering the website is now correct without http(s):// ([#419](https://github.com/flatpressblog/flatpress/issues/419))
+- Contact form / comment function:
+  - Entering the website is now correct without http(s):// ([#419](https://github.com/flatpressblog/flatpress/issues/419))
+  - Positive feedback when the contact form or comment form has been sent correctly. ([#420](https://github.com/flatpressblog/flatpress/issues/420))
 - Atom feed: Fixes parsing error ([#429](https://github.com/flatpressblog/flatpress/issues/429))
 - Admin area:
   - Charset dropdown selection instead of an input field ([#340](https://github.com/flatpressblog/flatpress/issues/340))
