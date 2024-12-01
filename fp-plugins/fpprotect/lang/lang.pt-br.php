@@ -3,7 +3,8 @@ $lang ['admin'] ['config'] ['submenu'] ['fpprotect'] = 'FlatPress Protect';
 
 $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'head' => 'Configurações do FlatPress Protect',
-	'desc1' => 'Aqui você pode alterar as opções relacionadas à segurança do seu blog FlatPress.',
+	'desc1' => 'Aqui você pode alterar as opções relacionadas à segurança do seu blog FlatPress. ' . //
+		'A melhor proteção para seus visitantes e seu blog FlatPress é quando todas as opções estão desativadas.',
 
 	// Part for unsafe inline scripts
 	'allow_unsafe_inline' => 'Permitir scripts Java inseguros (Não recomendado)',
@@ -29,13 +30,19 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_image_metadate' => 'Mantenha os metadados e a qualidade da imagem original nas imagens carregadas.',
 	'allowImageMetadataDsc' => 'Depois que as imagens são carregadas com o carregador, os metadados são mantidos. Isso inclui informações da câmera e coordenadas geográficas, por exemplo.',
 
+	// Part for the visitor-ip in FlatPress
+	'allow_visitor_ip' => 'Permitir que o FlatPress use o endereço IP não anônimo do visitante.',
+	'allowVisitorIpDsc' => 'O FlatPress salvará o endereço IP não anônimo nos comentários, entre outras coisas. ' . //
+		'Se você usar o serviço Akismet Antispam, o Akismet também receberá o endereço IP não anônimo.',
+
 	'submit' => 'Salvar configurações',
 		'msgs' => array(
 		1 => 'Configurações salvas com êxito.',
 		-1 => 'Erro ao salvar as configurações.'
 	),
 
-	// Warning message for unsafe inline scripts
-	'warning_allowUnsafeInline' => 'Aviso: Content-Security-Policy -> Essa política contém "unsafe-inline", que é perigoso na política de script-src.'
+	// Warning message
+	'warning_allowUnsafeInline' => 'Aviso: Content-Security-Policy -> Essa política contém "unsafe-inline", que é perigoso na política de script-src.',
+	'warning_allowVisitorIp' => 'Aviso: Uso de endereços IP de visitantes não anônimos -> Não se esqueça de informar os <a href="static.php?page=privacy-policy" title="edit static page">visitantes do seu blog FlatPress</a> sobre isso!'
 );
 ?>

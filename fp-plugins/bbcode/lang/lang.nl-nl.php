@@ -21,7 +21,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'urlmaxlen_long_post' => ' karakters.',
 
 	'attachsdir' => 'Bestanden downloaden',
-	'attachsdir_long' => 'Uploadmap verbergen (fp-content/attachs/)',
+	'attachsdir_long' => 'Geef de uploaddirectory (fp-content/attachs/) niet weer in de URL.',
 
 	'submit' => 'Bewaar de configuratie',
 	'msgs' => array(
@@ -58,7 +58,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Ga naar',
 
-	// Filewrapper getfille.php
+	// Filewrapper get.php
 	'error_403' => 'Fout 403',
 	'not_send' => 'Het gevraagde bestand kan niet worden verzonden.',
 	'error_404' => 'Fout 404',

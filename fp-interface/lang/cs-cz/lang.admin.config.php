@@ -24,8 +24,6 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'notifications' => 'Oznámení',
 	'mailnotify' => 'Zasílat upozornění o komentářích na email',
 	'blogmaxentries' => 'Počet příspěvků na stránku',
-	'visitor_ip' => 'IP adresa návštěvníka', //
-	'use_anonym_ip' => 'FlatPress by měl anonymizovat IP adresu návštěvníka', //
 	'langchoice' => 'Jazyk',
 
 	'intsetts' => 'Mezinárodní nastavení',

@@ -3,7 +3,8 @@ $lang ['admin'] ['config'] ['submenu'] ['fpprotect'] = 'FlatPress Protect';
 
 $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'head' => 'Настройки FlatPress Protect',
-	'desc1' => 'Здесь вы можете изменить параметры безопасности для вашего блога FlatPress.',
+	'desc1' => 'Здесь вы можете изменить параметры безопасности для вашего блога FlatPress. ' . //
+		'Лучшая защита для ваших посетителей и вашего блога FlatPress - это когда все опции деактивированы.',
 
 	// Part for unsafe inline scripts
 	'allow_unsafe_inline' => 'Разрешить небезопасные Java-скрипты (Не рекомендуется)',
@@ -29,13 +30,19 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_image_metadate' => 'Сохранение метаданных и исходного качества загруженных изображений.',
 	'allowImageMetadataDsc' => 'После загрузки изображений с помощью загрузчика метаданные сохраняются. К ним относятся, например, информация о камере и геокоординаты.',
 
+	// Part for the visitor-ip in FlatPress
+	'allow_visitor_ip' => 'Разрешите FlatPress использовать неанонимизированный IP-адрес посетителя.',
+	'allowVisitorIpDsc' => 'Затем FlatPress будет сохранять неанонимизированный IP-адрес, в частности, в комментариях. ' . //
+		'Если вы используете антиспам-службу Akismet, Akismet также получит неанонимизированный IP-адрес.',
+
 	'submit' => 'Сохранить настройки',
 		'msgs' => array(
 		1 => 'Настройки успешно сохранены.',
 		-1 => 'Ошибка при сохранении настроек.'
 	),
 
-	// Warning message for unsafe inline scripts
-	'warning_allowUnsafeInline' => 'Предупреждение: Content-Security-Policy -> Эта политика содержит "unsafe-inline", что опасно в script-src-policy.'
+	// Warning message
+	'warning_allowUnsafeInline' => 'Предупреждение: Content-Security-Policy -> Эта политика содержит "unsafe-inline", что опасно в script-src-policy.',
+	'warning_allowVisitorIp' => 'Предупреждение: использование неанонимизированных IP-адресов посетителей -> Не забудьте сообщить <a href="static.php?page=privacy-policy" title="edit static page">посетителям вашего FlatPress-блога</a> об этом!'
 );
 ?>

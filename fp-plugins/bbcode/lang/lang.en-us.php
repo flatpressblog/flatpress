@@ -21,7 +21,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'urlmaxlen_long_post' => ' characters.',
 
 	'attachsdir' => 'File downloads',
-	'attachsdir_long' => 'Hide upload directory (fp-content/attachs/)',
+	'attachsdir_long' => 'Do not display the upload directory (fp-content/attachs/) in the URL.',
 
 	'submit' => 'Save configuration',
 	'msgs' => array(
@@ -58,7 +58,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Go to',
 
-	// Filewrapper getfille.php
+	// Filewrapper get.php
 	'error_403' => 'Error 403',
 	'not_send' => 'The requested file cannot be sent.',
 	'error_404' => 'Error 404',

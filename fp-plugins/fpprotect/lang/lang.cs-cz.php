@@ -3,7 +3,8 @@ $lang ['admin'] ['config'] ['submenu'] ['fpprotect'] = 'FlatPress Protect';
 
 $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'head' => 'Nastavení aplikace FlatPress Protect',
-	'desc1' => 'Zde můžete změnit možnosti zabezpečení blogu FlatPress.',
+	'desc1' => 'Zde můžete změnit možnosti zabezpečení blogu FlatPress. ' . //
+		'Nejlepší ochranou pro vaše návštěvníky a váš blog FlatPress je, když jsou všechny možnosti deaktivovány.',
 
 	// Part for unsafe inline scripts
 	'allow_unsafe_inline' => 'Povolit nezabezpečené Java skripty (Nedoporučuje se)',
@@ -29,13 +30,19 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_image_metadate' => 'Zachování metadat a původní kvality obrázků v nahraných snímcích.',
 	'allowImageMetadataDsc' => 'Po nahrání obrázků pomocí nástroje pro nahrávání se metadata zachovají. Patří mezi ně například informace o fotoaparátu a zeměpisné souřadnice.',
 
+	// Part for the visitor-ip in FlatPress
+	'allow_visitor_ip' => 'Povolte FlatPressu používat neanonymizovanou IP adresu návštěvníka.',
+	'allowVisitorIpDsc' => 'FlatPress pak neanonymizovanou IP adresu uloží mimo jiné do komentářů. ' . //
+		'Pokud používáte antispamovou službu Akismet, bude Akismet rovněž přijímat neanonymizovanou IP adresu.',
+
 	'submit' => 'Uložení nastavení',
 		'msgs' => array(
 		1 => 'Nastavení bylo úspěšně uloženo.',
 		-1 => 'Chyba při ukládání nastavení.'
 	),
 
-	// Warning message for unsafe inline scripts
-	'warning_allowUnsafeInline' => 'Varování: Content-Security-Policy -> Tato zásada obsahuje "unsafe-inline", což je v zásadě script-src-policy nebezpečné.'
+	// Warning message
+	'warning_allowUnsafeInline' => 'Varování: Content-Security-Policy -> Tato zásada obsahuje "unsafe-inline", což je v zásadě script-src-policy nebezpečné.',
+	'warning_allowVisitorIp' => 'Varování: Použití neanonymizovaných IP adres návštěvníků -> Nezapomeňte o tom informovat <a href="static.php?page=privacy-policy" title="editovat statickou stránku">návštěvníky vašeho blogu FlatPress</a>!'
 );
 ?>

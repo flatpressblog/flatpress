@@ -21,7 +21,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'urlmaxlen_long_post' =>' tegn.',
 
 	'attachsdir' => 'Download af filer',
-	'attachsdir_long' => 'Skjul upload-bibliotek (fp-content/attachs/)',
+	'attachsdir_long' => 'Vis ikke upload-biblioteket (fp-content/attachs/) i URL\'en.',
 
 	'submit' => 'Gem konfiguration',
 	'msgs' => array(
@@ -58,7 +58,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Gå til',
 
-	// Filewrapper getfille.php
+	// Filewrapper get.php
 	'error_403' => 'Fejl 403',
 	'not_send' => 'Den ønskede fil kan ikke sendes.',
 	'error_404' => 'Fejl 404',

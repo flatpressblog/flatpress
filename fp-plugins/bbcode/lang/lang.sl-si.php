@@ -21,7 +21,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'urlmaxlen_long_post' => ' znakov.',
 
 	'attachsdir' => 'Prenosi datotek',
-	'attachsdir_long' => 'Skrij imenik za nalaganje (fp-content/attachs/)',
+	'attachsdir_long' => 'V naslovu URL ne prikažite imenika za nalaganje (fp-content/attachs/).',
 
 	'submit' => 'Shrani konfiguracijo',
 	'msgs' => array(
@@ -58,7 +58,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Pojdi na',
 
-	// Filewrapper getfille.php
+	// Filewrapper get.php
 	'error_403' => 'Napaka 403',
 	'not_send' => 'Zahtevane datoteke ni mogoče poslati.',
 	'error_404' => 'Napaka 404',
