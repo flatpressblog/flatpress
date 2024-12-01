@@ -13,8 +13,7 @@ $fp_config = array(
 		'theme' => 'leggero',
 		'style' => 'leggero-v2',
 		'blogid' => 'fpdefid',
-		'charset' => 'utf-8',
-		'noremoteip' => true
+		'charset' => 'utf-8'
 	),
 	'locale' => array(
 		'timeoffset' => '2',
@@ -25,7 +24,7 @@ $fp_config = array(
 		'lang' => LANG_DEFAULT
 	),
 	'staticlist' => array (
-		'naturalsort' => true,
+		'naturalsort' => true
 	),
 	'plugins' => array(
 		'blockparser' => array(
@@ -39,19 +38,20 @@ $fp_config = array(
 			'comments' => true,
 			'editor' => true,
 			'url-maxlen' => 40,
-			'maskattachs' => false,
+			'maskattachs' => false
 		),
 		'commentcenter' => array (
 			'log_all' => false,
 			'email_alert' => true,
 			'akismet_check' => false,
 			'akismet_key' => '',
-			'akismet_url' => '',
+			'akismet_url' => ''
 		),
 		'fpprotect' => array (
 			'allowUnsafeInline' => false,
 			'allowPrettyURLEdit' => false,
 			'allowImageMetadata' => false,
+			'allowVisitorIp' => false
 		),
 	),
 );

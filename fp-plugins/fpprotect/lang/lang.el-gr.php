@@ -3,7 +3,8 @@ $lang ['admin'] ['config'] ['submenu'] ['fpprotect'] = 'FlatPress Protect';
 
 $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'head' => 'Ρυθμίσεις FlatPress Protect',
-	'desc1' => 'Εδώ μπορείτε να αλλάξετε τις επιλογές που σχετίζονται με την ασφάλεια για το ιστολόγιό σας FlatPress.',
+	'desc1' => 'Εδώ μπορείτε να αλλάξετε τις επιλογές που σχετίζονται με την ασφάλεια για το ιστολόγιό σας FlatPress. ' . //
+		'Η καλύτερη προστασία για τους επισκέπτες σας και το FlatPress blog σας είναι όταν όλες οι επιλογές είναι απενεργοποιημένες.',
 
 	// Part for unsafe inline scripts
 	'allow_unsafe_inline' => 'Επιτρέψτε τα ανασφαλή Java scripts (Δεν συνιστάται)',
@@ -29,13 +30,19 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_image_metadate' => 'Διατήρηση των μεταδεδομένων και της ποιότητας της αρχικής εικόνας στις εικόνες που μεταφορτώνονται.',
 	'allowImageMetadataDsc' => 'Μετά τη μεταφόρτωση των εικόνων με το πρόγραμμα μεταφόρτωσης, τα μεταδεδομένα διατηρούνται. Αυτά περιλαμβάνουν πληροφορίες για την κάμερα και τις γεωγραφικές συντεταγμένες, για παράδειγμα.',
 
+	// Part for the visitor-ip in FlatPress
+	'allow_visitor_ip' => 'Επιτρέψτε στην FlatPress να χρησιμοποιήσει τη μη ανώνυμη διεύθυνση IP του επισκέπτη.',
+	'allowVisitorIpDsc' => 'Το FlatPress θα αποθηκεύσει στη συνέχεια τη μη ανώνυμη διεύθυνση IP στα σχόλια, μεταξύ άλλων. ' . //
+		'Εάν χρησιμοποιείτε την υπηρεσία Antispam Akismet, το Akismet θα λάβει επίσης τη μη ανωνυμοποιημένη διεύθυνση IP.',
+
 	'submit' => 'Αποθήκευση ρυθμίσεων',
 		'msgs' => array(
 		1 => 'Οι ρυθμίσεις αποθηκεύτηκαν με επιτυχία.',
 		-1 => 'Σφάλμα κατά την αποθήκευση των ρυθμίσεων.'
 	),
 
-	// Warning message for unsafe inline scripts
-	'warning_allowUnsafeInline' => 'Προειδοποίηση: Content-Security-Policy -> Αυτή η πολιτική περιέχει "unsafe-inline", η οποία είναι επικίνδυνη στην πολιτική script-src-policy.'
+	// Warning message
+	'warning_allowUnsafeInline' => 'Προειδοποίηση: Content-Security-Policy -> Αυτή η πολιτική περιέχει "unsafe-inline", η οποία είναι επικίνδυνη στην πολιτική script-src-policy.',
+	'warning_allowVisitorIp' => 'Προειδοποίηση: Χρήση μη ανωνυμοποιημένων διευθύνσεων IP των επισκεπτών -> Μην ξεχάσετε να ενημερώσετε τους <a href="static.php?page=privacy-policy" title="edit static page">επισκέπτες του FlatPress blog σας</a> σχετικά με αυτό!'
 );
 ?>

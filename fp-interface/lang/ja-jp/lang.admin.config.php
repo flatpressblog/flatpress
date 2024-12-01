@@ -24,8 +24,6 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'notifications' => '通知設定',
 	'mailnotify' => 'コメントがつくとメールで通知する。',
 	'blogmaxentries' => 'ブログの1ページに表示する記事数',
-	'visitor_ip' => '訪問者のIP',
-	'use_anonym_ip' => 'FlatPressは訪問者のIPを匿名化すべきである',
 	'langchoice' => '言語の選択',
 
 	'intsetts' => 'ローカルの設定',

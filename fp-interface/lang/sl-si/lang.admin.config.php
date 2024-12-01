@@ -24,8 +24,6 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'notifications' => 'Obvestila',
 	'mailnotify' => 'Omogoči obvestila prek e-pošte za komentarje',
 	'blogmaxentries' => 'Število prispevkov na stran',
-	'visitor_ip' => 'IP obiskovalca',
-	'use_anonym_ip' => 'FlatPress mora anonimizirati IP obiskovalca',
 	'langchoice' => 'Jezik',
 
 	'intsetts' => 'Mednarodne Nastavitve',

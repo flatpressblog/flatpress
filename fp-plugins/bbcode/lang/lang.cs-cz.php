@@ -21,7 +21,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'urlmaxlen_long_post' =>' znaků.',
 
 	'attachsdir' => 'Soubory ke stažení',
-	'attachsdir_long' => 'Skrýt adresář pro nahrávání (fp-content/attachs/)',
+	'attachsdir_long' => 'V adrese URL nezobrazujte adresář pro nahrávání (fp-content/attachs/).',
 
 	'submit' => 'Uložit nastavení',
 	'msgs' => array(
@@ -58,7 +58,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Přejít na',
 
-	// Filewrapper getfille.php
+	// Filewrapper get.php
 	'error_403' => 'Chyba 403',
 	'not_send' => 'Požadovaný soubor nelze odeslat.',
 	'error_404' => 'Chyba 404',

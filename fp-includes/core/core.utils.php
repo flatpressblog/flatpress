@@ -359,11 +359,24 @@ function utils_validateIPv6($IP) {
 	return false;
 }
 
-// get client IP
+/**
+ * Retrieves and optionally anonymizes the client's IP address based on the plugin configuration.
+ * 
+ * - If `allowVisitorIp` is set to true in the configuration, the original IP is returned after validation.
+ * - If `allowVisitorIp` is false or not set, the IP address is anonymized and validated.
+ * - Supports both IPv4 and IPv6 addresses.
+ *
+ * @global array $fp_config Plugin configuration.
+ * @return string The (optionally anonymized) validated IP address, or an empty string if invalid.
+ */
 function utils_ipget() {
 	global $fp_config;
+
+	// Retrieve the configuration value for allowing visitor IPs.
+	$allowVisitorIp = $fp_config ['plugins'] ['fpprotect'] ['allowVisitorIp'] ?? false;
 	$ip = '';
 
+	// Retrieve the client's IP address
 	if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
 		$ip = $_SERVER ['HTTP_CLIENT_IP'];
 	} elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
@@ -378,18 +391,26 @@ function utils_ipget() {
 		$ip = getenv("REMOTE_ADDR");
 	}
 
-	// Anonymize IPv4 remote address
-	// Replace the last two blocks with 0.123 (217.83.0.123)
-	if (isset($fp_config ['general'] ['noremoteip']) ? $fp_config ['general'] ['noremoteip'] : true) {
+	if ($allowVisitorIp) {
+		// If visitor IP is allowed, validate and return the original IP
+		if (utils_validateIPv4($ip) || utils_validateIPv6($ip)) {
+			return $ip;
+		}
+		return '';
+	} else {
+		// If visitor IP is not allowed, anonymize and validate
 		if (utils_validateIPv4($ip)) {
+			// Backup the original IP address.
 			$_SERVER ['ORIG_REMOTE_ADDR'] = $ip;
+
+			// Replace the last two blocks with 0.123 (e.g. 217.83.0.123)
 			$octets = explode(".", $ip);
-			if (count($octets) == 4) {
+			if (count($octets) === 4) {
 				$octets [2] = "0";
-				$ip = implode(".", $octets);
 				$octets [3] = "123";
 				$ip = implode(".", $octets);
-				// Set anonymized IP as server variable
+
+				// Update the server variables with the anonymized IP.
 				if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
 					$_SERVER ['HTTP_CLIENT_IP'] = $ip;
 				} elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
@@ -398,20 +419,18 @@ function utils_ipget() {
 					$_SERVER ['REMOTE_ADDR'] = $ip;
 				}
 				return $ip;
-			} else {
-				return false;
 			}
+			return false;
 		}
-	}
 
-	// Anonymize IPv6 remote address
-	// Use browser language and user agent for IPv6
-	// One advantage of this method is that the result has the same format as an IPv6 and is therefore accepted by all scripts without any problems.
-	if (isset($fp_config ['general'] ['noremoteip']) ? $fp_config ['general'] ['noremoteip'] : true) {
 		if (utils_validateIPv6($ip)) {
+			// Backup the original IP address.
 			$_SERVER ['ORIG_REMOTE_ADDR'] = $ip;
+
+			// Anonymize the IPv6 address using a hash of browser language, user agent, and the original IP.
 			$ip = implode(':', str_split(md5($_SERVER ['HTTP_ACCEPT_LANGUAGE'] . $_SERVER ['HTTP_USER_AGENT'] . $ip), 4));
-			// Set anonymized IP as server variable
+
+			// Update the server variables with the anonymized IP.
 			if (!empty($_SERVER ['HTTP_CLIENT_IP'])) {
 				$_SERVER ['HTTP_CLIENT_IP'] = $ip;
 			} elseif (!empty($_SERVER ['HTTP_X_FORWARDED_FOR'])) {
@@ -420,14 +439,7 @@ function utils_ipget() {
 				$_SERVER ['REMOTE_ADDR'] = $ip;
 			}
 			return $ip;
-		} else {
-			return false;
 		}
-	}
-
-	if (utils_validateIPv4($ip) || utils_validateIPv6($ip)) {
-		return $ip;
-	} else {
 		return '';
 	}
 }

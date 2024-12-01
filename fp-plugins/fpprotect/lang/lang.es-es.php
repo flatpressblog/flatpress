@@ -3,7 +3,8 @@ $lang ['admin'] ['config'] ['submenu'] ['fpprotect'] = 'FlatPress Protect';
 
 $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'head' => 'Configuración de FlatPress Protect',
-	'desc1' => 'Aquí puede cambiar las opciones relacionadas con la seguridad de su blog FlatPress.',
+	'desc1' => 'Aquí puede cambiar las opciones relacionadas con la seguridad de su blog FlatPress. ' . //
+		'La mejor protección para sus visitantes y su blog FlatPress es cuando todas las opciones están desactivadas.',
 
 	// Part for unsafe inline scripts
 	'allow_unsafe_inline' => 'Permitir scripts Java inseguros (No recomendado)',
@@ -29,13 +30,19 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_image_metadate' => 'Conservar los metadatos y la calidad de imagen original en las imágenes cargadas.',
 	'allowImageMetadataDsc' => 'Una vez cargadas las imágenes con el cargador, se conservan los metadatos. Esto incluye la información de la cámara y las coordenadas geográficas, por ejemplo.',
 
+	// Part for the visitor-ip in FlatPress
+	'allow_visitor_ip' => 'Permitir que FlatPress utilice la dirección IP no anonimizada del visitante.',
+	'allowVisitorIpDsc' => 'FlatPress guardará la dirección IP no anonimizada en los comentarios, entre otras cosas. ' . //
+		'Si utiliza el servicio Akismet Antispam, Akismet también recibirá la dirección IP no anonimizada.',
+
 	'submit' => 'Guardar configuración',
 		'msgs' => array(
 		1 => 'Configuración guardada correctamente.',
 		-1 => 'Error al guardar la configuración.'
 	),
 
-	// Warning message for unsafe inline scripts
-	'warning_allowUnsafeInline' => 'Advertencia: Content-Security-Policy -> Esta política contiene "unsafe-inline", que es peligroso en la política script-src.'
+	// Warning message
+	'warning_allowUnsafeInline' => 'Advertencia: Content-Security-Policy -> Esta política contiene "unsafe-inline", que es peligroso en la política script-src.',
+	'warning_allowVisitorIp' => 'Advertencia: Utilización de direcciones IP de visitantes no anonimizadas -> ¡No olvide informar de ello a <a href="static.php?page=privacy-policy" title="edit static page">los visitantes de su blog FlatPress</a>!'
 );
 ?>

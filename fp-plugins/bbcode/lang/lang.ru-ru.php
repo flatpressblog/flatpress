@@ -20,7 +20,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'urlmaxlen_long_post' => ' символов.',
 
 	'attachsdir' => 'Загрузка файлов',
-	'attachsdir_long' => 'Скрыть директорию загрузки (fp-content/attachs/)',
+	'attachsdir_long' => 'Не отображайте каталог загрузки (fp-content/attachs/) в URL.',
 
 	'submit' => 'Сохранить конфигурацию',
 	'msgs' => array(
@@ -57,17 +57,17 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Перейти к',
 
-	// Filewrapper getfille.php
-	'error_403' => 'Ошибка 403', // neu
-	'not_send' => 'Запрошенный файл не может быть отправлен.', // neu
-	'error_404' => 'Ошибка 404', // neu
-	'not_found' => 'Запрашиваемый файл не может быть найден.', // neu
-	'file' => 'Файл', // neu
-	'report_error_1' => '', // neu
-	'report_error_2' => 'Сообщить об ошибке', // neu
-	'blog_search_1' => '', // neu
-	'blog_search_2' => 'выполнить поиск в блоге', // neu
-	'start_page_1' => 'или вернуться на', // neu
-	'start_page_2' => 'стартовую страницу' // neu
+	// Filewrapper get.php
+	'error_403' => 'Ошибка 403',
+	'not_send' => 'Запрошенный файл не может быть отправлен.',
+	'error_404' => 'Ошибка 404',
+	'not_found' => 'Запрашиваемый файл не может быть найден.',
+	'file' => 'Файл',
+	'report_error_1' => '',
+	'report_error_2' => 'Сообщить об ошибке',
+	'blog_search_1' => '',
+	'blog_search_2' => 'выполнить поиск в блоге',
+	'start_page_1' => 'или вернуться на',
+	'start_page_2' => 'стартовую страницу'
 );
 ?>

@@ -24,8 +24,6 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'notifications' => 'Meddelelser',
 	'mailnotify' => 'Aktivér e-mailnotifikation for nye kommentarer',
 	'blogmaxentries' => 'Antal indlæg pr. side',
-	'visitor_ip' => 'Den besøgendes IP',
-	'use_anonym_ip' => 'FlatPress bør anonymisere den besøgendes IP',
 	'langchoice' => 'Sprog',
 
 	'intsetts' => 'Internationale indstillinger',

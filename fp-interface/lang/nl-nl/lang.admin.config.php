@@ -24,8 +24,6 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'notifications' => 'Notificaties',
 	'mailnotify' => 'E-mailmelding inschakelen voor opmerkingen',
 	'blogmaxentries' => 'Aantal berichten per pagina',
-	'visitor_ip' => 'IP van de bezoeker',
-	'use_anonym_ip' => 'FlatPress moet het IP-adres van de bezoeker anonimiseren',
 	'langchoice' => 'Taal',
 
 	'intsetts' => 'Internationale instellingen',

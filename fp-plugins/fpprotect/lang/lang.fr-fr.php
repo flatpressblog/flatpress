@@ -3,7 +3,8 @@ $lang ['admin'] ['config'] ['submenu'] ['fpprotect'] = 'FlatPress Protect';
 
 $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'head' => 'Paramètres de FlatPress Protect',
-	'desc1' => 'Ici, tu peux modifier les options relatives à la sécurité de ton blog FlatPress.',
+	'desc1' => 'Ici, tu peux modifier les options relatives à la sécurité de ton blog FlatPress. ' . //
+		'La meilleure protection pour tes visiteurs et ton blog FlatPress est assurée lorsque toutes les options sont désactivées.',
 
 	// Part for unsafe inline scripts
 	'allow_unsafe_inline' => 'Autoriser les scripts Java non sécurisés (Non recommandé)',
@@ -29,13 +30,19 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_image_metadate' => 'Conserver les métadonnées et la qualité d\'origine des images téléchargées.',
 	'allowImageMetadataDsc' => 'Une fois que les images ont été téléchargées avec l\'uploader, les métadonnées sont conservées. Il s\'agit par exemple des informations relatives à l\'appareil photo et des coordonnées géographiques.',
 
+	// Part for the visitor-ip in FlatPress
+	'allow_visitor_ip' => 'Permet à FlatPress d\'utiliser l\'adresse IP non anonymisée du visiteur.',
+	'allowVisitorIpDsc' => 'FlatPress enregistre alors, entre autres dans les commentaires, l\'adresse IP non anonymisée. ' . //
+		'Si tu utilises le service d\'Akismet Antispam, Akismet reçoit également l\'adresse IP non anonymisée.',
+
 	'submit' => 'Enregistrer les paramètres',
 		'msgs' => array(
 		1 => 'Paramètres enregistrés avec succès.',
 		-1 => 'Erreur lors de l\'enregistrement des paramètres.'
 	),
 
-	// Warning message for unsafe inline scripts
-	'warning_allowUnsafeInline' => 'Avertissement : Politique de sécurité du contenu -> Cette politique contient "unsafe-inline", ce qui est dangereux dans la politique script-src.'
+	// Warning message
+	'warning_allowUnsafeInline' => 'Avertissement: Politique de sécurité du contenu -> Cette politique contient "unsafe-inline", ce qui est dangereux dans la politique script-src.',
+	'warning_allowVisitorIp' => 'Avertissement: utilisation d\'adresses IP non anonymisées du visiteur -> N\'oublie pas d\'en informer les <a href="static.php?page=privacy-policy" title="modifier une page statique">visiteurs de ton blog FlatPress</a>!'
 );
 ?>

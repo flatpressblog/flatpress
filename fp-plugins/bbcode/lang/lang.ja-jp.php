@@ -21,7 +21,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'urlmaxlen_long_post' => ' 文字',
 
 	'attachsdir' => 'ファイルのダウンロード',
-	'attachsdir_long' => 'アップロードディレクトリを隠す (fp-content/attachs/)',
+	'attachsdir_long' => 'URLにアップロードディレクトリ(fp-content/attachs/)を表示しない。',
 
 	'submit' => '設定の変更を保存する',
 	'msgs' => array(
@@ -58,7 +58,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => '移動先: ',
 
-	// Filewrapper getfille.php
+	// Filewrapper get.php
 	'error_403' => 'エラー 403',
 	'not_send' => '要求されたファイルは送信できません。',
 	'error_404' => 'エラー 404',

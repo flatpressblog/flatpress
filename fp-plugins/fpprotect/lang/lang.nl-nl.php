@@ -3,7 +3,8 @@ $lang ['admin'] ['config'] ['submenu'] ['fpprotect'] = 'FlatPress Protect';
 
 $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'head' => 'FlatPress Instellingen Beschermen',
-	'desc1' => 'Hier kun je de beveiligingsopties voor je FlatPress-blog wijzigen.',
+	'desc1' => 'Hier kun je de beveiligingsopties voor je FlatPress-blog wijzigen. ' . //
+		'De beste bescherming voor je bezoekers en je FlatPress blog is wanneer alle opties zijn uitgeschakeld.',
 
 	// Part for unsafe inline scripts
 	'allow_unsafe_inline' => 'Sta onveilige Java-scripts toe (Niet aanbevolen)',
@@ -29,13 +30,19 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_image_metadate' => 'Behoud metadata en originele afbeeldingskwaliteit in geüploade afbeeldingen.',
 	'allowImageMetadataDsc' => 'Nadat afbeeldingen zijn geüpload met de uploader, worden de metagegevens bewaard. Dit omvat bijvoorbeeld camera-informatie en geocoördinaten.',
 
+	// Part for the visitor-ip in FlatPress
+	'allow_visitor_ip' => 'FlatPress toestaan het niet-geanonimiseerde IP-adres van de bezoeker te gebruiken.',
+	'allowVisitorIpDsc' => 'FlatPress slaat het niet-geanonimiseerde IP-adres dan onder andere op in opmerkingen. ' . //
+		'Als u de antispamdienst Akismet gebruikt, zal Akismet ook het niet-geanonimiseerde IP-adres ontvangen.',
+
 	'submit' => 'Instellingen opslaan',
 		'msgs' => array(
 		1 => 'Instellingen succesvol opgeslagen.',
 		-1 => 'Fout bij het opslaan van de instellingen.'
 	),
 
-	// Warning message for unsafe inline scripts
-	'warning_allowUnsafeInline' => 'Waarschuwing: Content-Security-Policy -> Dit beleid bevat "unsafe-inline", wat gevaarlijk is in het script-src-policy.'
+	// Warning message
+	'warning_allowUnsafeInline' => 'Waarschuwing: Content-Security-Policy -> Dit beleid bevat "unsafe-inline", wat gevaarlijk is in het script-src-policy.',
+	'warning_allowVisitorIp' => 'Waarschuwing: Gebruik van niet-geanonimiseerde IP-adressen van de bezoeker -> Vergeet niet de <a href="static.php?page=privacy-policy" title="edit static page">bezoekers van uw FlatPress-blog</a> hierover te informeren!'
 );
 ?>

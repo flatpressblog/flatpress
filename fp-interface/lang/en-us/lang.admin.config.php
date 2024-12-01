@@ -24,8 +24,6 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'notifications' => 'Notifications',
 	'mailnotify' => 'Enable email notification for comments',
 	'blogmaxentries' => 'Number of posts per page',
-	'visitor_ip' => 'IP of the visitor',
-	'use_anonym_ip' => 'FlatPress should anonymize the IP of the visitor',
 	'langchoice' => 'Language',
 
 	'intsetts' => 'International settings',

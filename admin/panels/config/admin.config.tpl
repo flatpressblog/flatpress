@@ -66,11 +66,6 @@
 			{/if}
 			<dd><input type="text" name="maxentries" id="maxentries" class="smalltextinput{$class}" value="{$flatpress.maxentries}"></dd>
 
-			<dt><label>{$panelstrings.visitor_ip}</label></dt>
-			<dd><label for="noremoteip">
-				<input type="checkbox" name="noremoteip" id="noremoteip"{if $flatpress.noremoteip} checked{/if}>
-				{$panelstrings.use_anonym_ip}
-			</label></dd>
 		</dl>
 
 	</div>

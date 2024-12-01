@@ -21,7 +21,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	'urlmaxlen_long_post'=>' χαρακτήρες.',
 
 	'attachsdir' => 'Λήψεις αρχείων',
-	'attachsdir_long' => 'Απόκρυψη καταλόγου μεταφόρτωσης (fp-content/attachs/)',
+	'attachsdir_long' => 'Μην εμφανίζετε τον κατάλογο μεταφόρτωσης (fp-content/attachs/) στη διεύθυνση URL.',
 
 	'submit' => 'Αποθήκευση ρύθμισης',
 	'msgs' => array(
@@ -30,12 +30,12 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	),
 
 	'editor' => array(
-		'formatting' => 'Formatting',
-		'textarea' => 'Textarea: ',
-		'expand' => 'Expand',
-		'expandtitle' => 'Expand Textarea Height',
-		'reduce' => 'Reduce',
-		'reducetitle' => 'Reduce Textarea Height',
+		'formatting' => 'Μορφοποίηση',
+		'textarea' => 'Περιοχή κειμένου: ',
+		'expand' => 'Επεκτείνετε το',
+		'expandtitle' => 'Επέκταση περιοχής κειμένου Ύψος',
+		'reduce' => 'Μειώστε το',
+		'reducetitle' => 'Μείωση ύψους περιοχής κειμένου',
 		'urltitle' => 'URL/ Σύνδεσμος',
 		'mailtitle' => 'Διεύθυνση ηλεκτρονικού ταχυδρομείου',
 		'boldtitle' => 'Έντονα',
@@ -58,17 +58,17 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 $lang ['plugin'] ['bbcode'] = array (
 	'go_to' => 'Πηγαίνετε στον',
 
-	// Filewrapper getfille.php
-	'error_403' => 'Σφάλμα 403', // neu
-	'not_send' => 'Το ζητούμενο αρχείο δεν μπορεί να αποσταλεί.', // neu
-	'error_404' => 'Σφάλμα 404', // neu
-	'not_found' => 'Το ζητούμενο αρχείο δεν βρέθηκε.', // neu
-	'file' => 'Αρχείο', // neu
-	'report_error_1' => '', // neu
-	'report_error_2' => 'Αναφορά σφάλματος', // neu
-	'blog_search_1' => '', // neu
-	'blog_search_2' => 'Αναζήτηση στο ιστολόγιο', // neu
-	'start_page_1' => '', // neu
-	'start_page_2' => 'ή πίσω στην αρχική σελίδα' // neu
+	// Filewrapper get.php
+	'error_403' => 'Σφάλμα 403',
+	'not_send' => 'Το ζητούμενο αρχείο δεν μπορεί να αποσταλεί.',
+	'error_404' => 'Σφάλμα 404',
+	'not_found' => 'Το ζητούμενο αρχείο δεν βρέθηκε.',
+	'file' => 'Αρχείο',
+	'report_error_1' => '',
+	'report_error_2' => 'Αναφορά σφάλματος',
+	'blog_search_1' => '',
+	'blog_search_2' => 'Αναζήτηση στο ιστολόγιο',
+	'start_page_1' => '',
+	'start_page_2' => 'ή πίσω στην αρχική σελίδα'
 );
 ?>

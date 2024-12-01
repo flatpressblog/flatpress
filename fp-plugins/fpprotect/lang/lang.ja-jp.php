@@ -3,7 +3,8 @@ $lang ['admin'] ['config'] ['submenu'] ['fpprotect'] = 'FlatPress Protect';
 
 $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'head' => 'FlatPressプロテクト設定',
-	'desc1' => 'ここでは、FlatPressブログのセキュリティ関連のオプションを変更することができます。',
+	'desc1' => 'ここでは、FlatPressブログのセキュリティ関連のオプションを変更することができます。 ' . //
+		'訪問者とFlatPressブログのための最善の保護は、すべてのオプションを無効にすることです。',
 
 	// Part for unsafe inline scripts
 	'allow_unsafe_inline' => '安全でないJavaスクリプトを許可する（推奨しない）',
@@ -29,13 +30,19 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allow_image_metadate' => 'アップロードされた画像のメタデータと元の画質を保持します。',
 	'allowImageMetadataDsc' => 'アップローダーで画像がアップロードされた後、メタデータは保持されます。これには、カメラ情報や地理座標などが含まれます。',
 
+	// Part for the visitor-ip in FlatPress
+	'allow_visitor_ip' => 'FlatPressが訪問者の匿名化されていないIPアドレスを使用することを許可します。',
+	'allowVisitorIpDsc' => 'FlatPressは、匿名化されていないIPアドレスをコメントなどに保存します。 ' . //
+		'Akismetスパム対策サービスをご利用の場合、Akismetも匿名化されていないIPアドレスを受信します。',
+
 	'submit' => '設定の保存',
 		'msgs' => array(
 		1 => '設定は正常に保存されました。',
 		-1 => '設定の保存エラー'
 	),
 
-	// Warning message for unsafe inline scripts
-	'warning_allowUnsafeInline' => '警告：Content-Security-Policy -> このポリシーには 「unsafe-inline 」が含まれています。'
+	// Warning message
+	'warning_allowUnsafeInline' => '警告： Content-Security-Policy -> このポリシーには 「unsafe-inline 」が含まれています。',
+	'warning_allowVisitorIp' => '警告: 匿名化されていない訪問者のIPアドレスの使用 -> <a href="static.php?page=privacy-policy" title="静的ページの編集">FlatPressブログへの訪問者</a>にこのことを知らせることを忘れないでください！'
 );
 ?>
