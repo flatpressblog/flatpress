@@ -20,6 +20,8 @@ $lang['admin']['main']['default'] = array(
 	'op7' => 'Uploader',
 	'op7d' => 'Caricare e gestire immagini e file',
 	'op8' => 'Temi',
-	'op8d' => 'Passare da un tema all\'altro e da uno stile all\'altro'
+	'op8d' => 'Passare da un tema all\'altro e da uno stile all\'altro',
+	'op9' => 'Centro commenti',
+	'op9d' => 'Gestire i commenti, creare linee guida'
 );
 ?>

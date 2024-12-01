@@ -20,6 +20,8 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op7' => 'Cargador',
 	'op7d' => 'Subir y gestionar imágenes y archivos',
 	'op8' => 'Temas',
-	'op8d' => 'Cambiar entre temas y estilos'
+	'op8d' => 'Cambiar entre temas y estilos',
+	'op9' => 'Centro de comentarios',
+	'op9d' => 'Gestionar comentarios, crear directrices'
 );
 ?>
