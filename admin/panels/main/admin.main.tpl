@@ -15,6 +15,15 @@
 	</dt>
 	<dd class="admin-icon-descr">{$panelstrings.op2d}</dd>
 
+	{if function_exists('plugin_commentcenter_editor')}
+	<dt class="admin-mainmenu-item">
+		<img src="{$smarty.const.ADMIN_DIR}imgs/commentcenter.png" class="alignleft" alt="{$panelstrings.op9}"
+		title="{$panelstrings.op9}">
+		<a href="admin.php?p=entry&action=commentcenter">{$panelstrings.op9}</a>
+	</dt>
+	<dd class="admin-icon-descr">{$panelstrings.op9d}</dd>
+	{/if}
+
 	<dt class="admin-mainmenu-item">
 		<img src="{$smarty.const.ADMIN_DIR}imgs/uploader.png" class="alignleft" alt="{$panelstrings.op7}"
 		title="{$panelstrings.op7}">

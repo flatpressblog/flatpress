@@ -20,6 +20,8 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op7' => 'Uploader',
 	'op7d' => 'Afbeeldingen en bestanden uploaden en beheren',
 	'op8' => 'Thema\'s',
-	'op8d' => 'Schakel tussen thema\'s en stijlen'
+	'op8d' => 'Schakel tussen thema\'s en stijlen',
+	'op9' => 'Commentaarcentrum',
+	'op9d' => 'Beheer commentaar, maak richtlijnen'
 );
 ?>

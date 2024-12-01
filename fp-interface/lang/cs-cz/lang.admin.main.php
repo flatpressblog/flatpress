@@ -20,6 +20,8 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op7' => 'Nahrávač',
 	'op7d' => 'Nahrávání a správa obrázků a souborů',
 	'op8' => 'Motivy',
-	'op8d' => 'Přepínejte mezi motivy a styly'
+	'op8d' => 'Přepínejte mezi motivy a styly',
+	'op9' => 'Centrum komentářů',
+	'op9d' => 'Správa komentářů, vytváření pokynů'
 );
 ?>

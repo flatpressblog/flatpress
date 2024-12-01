@@ -20,6 +20,8 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op7' => 'Naložite',
 	'op7d' => 'Prenašanje in upravljanje slik in datotek',
 	'op8' => 'Motive',
-	'op8d' => 'Preklapljanje med temami in slogi'
+	'op8d' => 'Preklapljanje med temami in slogi',
+	'op9' => 'Središče za pripombe',
+	'op9d' => 'Upravljajte komentarje, ustvarite smernice'
 );
 ?>

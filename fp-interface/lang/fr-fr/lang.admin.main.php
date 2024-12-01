@@ -20,6 +20,8 @@ $lang['admin']['main']['default'] = array(
 	'op7' => 'Téléchargeur',
 	'op7d' => 'Télécharger et gérer des images et des fichiers',
 	'op8' => 'Thèmes',
-	'op8d' => 'Basculer entre les thèmes et les styles'
+	'op8d' => 'Basculer entre les thèmes et les styles',
+	'op9' => 'Centre de commentaires',
+	'op9d' => 'Gérer les commentaires, créer des politiques'
 );
 ?>
