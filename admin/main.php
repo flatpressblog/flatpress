@@ -19,6 +19,9 @@ function wp_nonce_ays() {
  */
 function main() {
 
+	// register all Smarty modifier functions used by the admin templates
+	admin_register_smartyplugins();
+
 	// general setup
 	global $panel, $action, $lang, $smarty, $fp_admin, $fp_admin_action;
 
@@ -99,9 +102,6 @@ function main() {
 		$url = "admin.php?p={$panel}{$to_action}{$with_mod}{$with_arguments}";
 		utils_redirect($url);
 	}
-
-	// register all Smarty modifier functions used by the admin templates
-	admin_register_smartyplugins();
 }
 
 // smarty tag
