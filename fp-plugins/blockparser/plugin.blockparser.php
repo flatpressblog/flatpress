@@ -1,9 +1,8 @@
 <?php
-
 /*
  * Plugin Name: BlockParser
  * Type: Block
- * Version: 1.0
+ * Version: 1.0.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -21,7 +20,7 @@ function plugin_blockparser_parse($blockid) {
 		$contents = utils_kexplode($f_contents);
 		return array_change_key_case($contents, CASE_LOWER);
 	}
-	// else:
+	// Return false if file could not be loaded
 	return false;
 }
 
@@ -30,27 +29,21 @@ function plugin_blockparser_widget($blockid) {
 	if ($contents = plugin_blockparser_parse($blockid)) {
 		$contents ['subject'] = apply_filters('the_title', $contents ['subject']);
 		$contents ['content'] = apply_filters('the_content', $contents ['content']);
-		$contents ['id'] = "widget-bp-$blockid";
+		$contents ['id'] = 'widget-bp-' . $blockid;
 		return $contents;
 	}
 
 	return array(
 		'subject' => 'BlockParser::Error',
-		'content' => "<ul><li>Error parsing block $blockid; file may not exist</li></ul>"
+		'content' => '<ul><li>Error parsing block ' . $blockid . '; file may not exist</li></ul>'
 	);
 }
 
+/**
+ * Initializes the BlockParser plugin.
+ * Registers widgets based on activated pages in the plugin panel.
+ */
 function plugin_blockparser_init() {
-
-	// for instance:
-	// $fp_config['plugins']['blockparser']['pages'] = array('menu');
-	// (these will) be registered from the panel
-
-	// in this case functions are just a convenient way
-	// to create new instances of the plugin_blockparser_widget() function...
-
-	// this would suggest to use an object, though :B
-	// anyway the result is the same...
 	$pgs = plugin_getoptions('blockparser', 'pages');
 	if (is_array($pgs)) {
 		foreach ($pgs as $page) {
@@ -58,7 +51,7 @@ function plugin_blockparser_init() {
 			'BlockParser: ' . $page, // widget name
 			function () use ($page) {
 				return plugin_blockparser_widget($page);
-			} // lambda func
+			} // Widget content as lambda function
 			);
 		}
 	}
@@ -79,14 +72,23 @@ if (class_exists('AdminPanelAction')) {
 
 		var $bp_enabled;
 
-		function doenable($id) {
+		/**
+		 * Activates a page and updates the list.
+		 *
+		 * @param string $id The ID of the page to be activated.
+		 * @return void The updated list is displayed directly.
+		 */
+		 function doenable($id) {
 			$success = -1;
 			$enabled = &$this->bp_enabled;
+
 			if (static_exists($id)) {
 				if (!$enabled) {
 					$enabled = array();
 				}
+
 				if (!in_array($id, $enabled)) {
+					// Activate and save page
 					$enabled [] = $id;
 					sort($enabled);
 					plugin_addoption('blockparser', 'pages', $enabled);
@@ -94,13 +96,28 @@ if (class_exists('AdminPanelAction')) {
 					$success = 1;
 				}
 			}
-			$this->smarty->assign('success', $success);
-			return PANEL_REDIRECT_CURRENT;
+
+			if ($success === 1) {
+				// Update list of activated pages
+				$this->bp_enabled = $enabled;
+				$this->smarty->assign('enabledlist', $this->bp_enabled);
+				$this->smarty->assign('success', $success);
+			}
+
+			// Call main() to show updated list
+			return $this->main();
 		}
 
+		/**
+		 * Deactivates a page and updates the list.
+		 *
+		 * @param string $id The ID of the page to be deactivated.
+		 * @return void The updated list is displayed directly.
+		 */
 		function dodisable($id) {
 			$success = -2;
 			$enabled = &$this->bp_enabled;
+
 			if ($enabled && is_numeric($v = array_search($id, $enabled))) {
 				unset($enabled [$v]);
 				@sort($enabled);
@@ -108,12 +125,20 @@ if (class_exists('AdminPanelAction')) {
 				plugin_saveoptions();
 				$success = 2;
 			}
-			$this->smarty->assign('success', $success);
-			return PANEL_REDIRECT_CURRENT;
+
+			if ($success === 2) {
+				// Update list of activated pages
+				$this->bp_enabled = $enabled;
+				$this->smarty->assign('enabledlist', $this->bp_enabled);
+				$this->smarty->assign('success', $success);
+			}
+
+			// Call main() to show updated list
+			return $this->main();
 		}
 
 		function setup() {
-			$this->smarty->assign('admin_resource', "plugin:blockparser/admin.plugin.blockparser");
+			$this->smarty->assign('admin_resource', 'plugin:blockparser/admin.plugin.blockparser');
 			$this->smarty->assign('enabledlist', $this->bp_enabled = plugin_getoptions('blockparser', 'pages'));
 		}
 
@@ -127,5 +152,4 @@ if (class_exists('AdminPanelAction')) {
 
 	admin_addpanelaction('widgets', 'blockparser', true);
 }
-
 ?>
