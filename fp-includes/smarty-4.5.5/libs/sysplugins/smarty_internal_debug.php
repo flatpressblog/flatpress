@@ -66,13 +66,15 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
      *
      * @param \Smarty_Internal_Template $template cached template
      */
-    public function end_template(Smarty_Internal_Template $template)
-    {
-        $key = $this->get_key($template);
-        $this->template_data[ $this->index ][ $key ][ 'total_time' ] +=
-            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_template_time' ];
-        //$this->template_data[$this->index][$key]['properties'] = $template->properties;
-    }
+     public function end_template(Smarty_Internal_Template $template)
+     {
+         $key = $this->get_key($template);
+         if (isset($this->template_data[ $this->index ][ $key ][ 'start_template_time' ])) {
+             $this->template_data[ $this->index ][ $key ][ 'total_time' ] +=
+                 microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_template_time' ];
+         }
+         // $this->template_data[$this->index][$key]['properties'] = $template->properties;
+     }
 
     /**
      * Start logging of compile time
@@ -139,12 +141,14 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
      *
      * @param \Smarty_Internal_Template $template
      */
-    public function end_render(Smarty_Internal_Template $template)
-    {
-        $key = $this->get_key($template);
-        $this->template_data[ $this->index ][ $key ][ 'render_time' ] +=
-            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_time' ];
-    }
+     public function end_render(Smarty_Internal_Template $template)
+     {
+         $key = $this->get_key($template);
+         if (isset($this->template_data[ $this->index ][ $key ][ 'start_time' ])) {
+             $this->template_data[ $this->index ][ $key ][ 'render_time' ] +=
+                 microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_time' ];
+         }
+     }
 
     /**
      * Start logging of cache time
