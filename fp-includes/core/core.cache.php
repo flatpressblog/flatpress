@@ -19,7 +19,7 @@
 			$varname = $this->_varname;
 
 			if (!file_exists($this->_cachefile.'.dat')) {
-				trigger_error  ("Can't find index '{$this->_cachefile}'", E_USER_ERROR);
+				trigger_error("Can't find index '" . $this->_cachefile . "'", E_USER_ERROR);
 			}
 
 			$this->_tree = new caching_SBPT(
@@ -83,7 +83,7 @@
 		function delete($entryid) {
 			trigger_error('Cannot delete from a cache', E_USER_ERROR) ;
 			$cache =& $this->_list;
-			unset($cache[$entryid]); // if id found, it is deleted
+			unset($cache [$entryid]); // if id found, it is deleted
 
 			return $this->save();
 		}

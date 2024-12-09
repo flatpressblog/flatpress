@@ -17,18 +17,18 @@ function _get_nextprev_link($nextprev) {
 		return null;
 
 	if ($q->single) {
-		$link = "?entry={$id}";
+		$link = "?entry=" . $id;
 	} else {
 		if ($_SERVER ['QUERY_STRING']) {
 
 			if (strpos($_SERVER ['QUERY_STRING'], 'paged') !== false) {
-				$link = '?' . preg_replace('{paged=[0-9]+}', "paged={$id}", $_SERVER ['QUERY_STRING']);
+				$link = '?' . preg_replace('{paged=[0-9]+}', "paged=" . $id, $_SERVER ['QUERY_STRING']);
 			} else {
-				$link = '?' . $_SERVER ['QUERY_STRING'] . "&paged={$id}";
+				$link = '?' . $_SERVER ['QUERY_STRING'] . "&paged=" . $id;
 			}
 			$link = str_replace('&', '&amp;', $link);
 		} else {
-			$link = "?paged={$id}";
+			$link = "?paged=" . $id;
 		}
 	}
 
@@ -270,12 +270,12 @@ if (!function_exists('wp_redirect')) :
 		$location = str_replace($strip, '', $location);
 
 		if ($is_IIS) {
-			header("Refresh: 0;url=$location");
+			header("Refresh: 0;url=" . $location);
 		} else {
 			if (php_sapi_name() != 'cgi-fcgi') {
 				utils_status_header($status); // This causes problems on IIS and some FastCGI setups
 			}
-			header("Location: $location");
+			header("Location: " . $location);
 		}
 	}
 endif;

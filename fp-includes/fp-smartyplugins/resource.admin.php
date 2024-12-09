@@ -28,12 +28,13 @@ class Smarty_Resource_Admin extends Smarty_Resource_Custom {
 		$path = null;
 		$panel = strtok($templateName, '/');
 		if ($action = strtok('/')) {
-			$path = ABS_PATH . ADMIN_DIR . "panels/$panel/admin.$panel.$action.tpl";
+			$path = ABS_PATH . ADMIN_DIR . "panels/" . $panel . "/admin." . $panel . "." . $action . ".tpl";
 		}
 		if (!$action || !file_exists($path)) {
-			$path = ABS_PATH . ADMIN_DIR . "panels/$panel/admin.$panel.tpl";
+			$path = ABS_PATH . ADMIN_DIR . "panels/" . $panel . "/admin." . $panel . ".tpl";
 		}
 		return $path;
 	}
 
 }
+?>

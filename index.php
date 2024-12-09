@@ -14,7 +14,7 @@ function index_permatitle($val, $sep) {
 	$q = &$fpdb->getQuery();
 	list ($id, $e) = @$q->peekEntry();
 	if (!empty($e)) {
-		return "{$e['subject']} {$sep} $val ";
+		return $e['subject'] . " " . $sep . " " . $val . " ";
 	} else {
 		return $val;
 	}
@@ -22,7 +22,7 @@ function index_permatitle($val, $sep) {
 
 function index_gentitle($val, $sep) {
 	global $title;
-	return "$val $sep $title";
+	return $val . " " . $sep . " " . $title;
 }
 
 function index_404error() {

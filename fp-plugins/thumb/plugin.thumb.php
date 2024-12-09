@@ -46,7 +46,7 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	}
 
 	if (!($new_width && $new_height)) {
-		trigger_error("Size can't be 0 but got width=$new_width height=$new_height\n", E_USER_WARNING);
+		trigger_error("Size can't be 0 but got width=" . $new_width . " height=" . $new_height . "\n", E_USER_WARNING);
 		return;
 	}
 
@@ -129,3 +129,4 @@ function plugin_thumb_bbcodehook($actualpath, $props, $newsize) {
 
 add_filter('bbcode_img_scale', 'plugin_thumb_bbcodehook', 0, 3);
 
+?>

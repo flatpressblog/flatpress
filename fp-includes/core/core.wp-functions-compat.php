@@ -42,7 +42,7 @@ function printr($var, $do_not_echo = false) {
 	$code =  htmlentities(ob_get_contents());
 	ob_clean();
 	if (!$do_not_echo) {
-	  echo "<pre>$code</pre>";
+		echo "<pre>" . $code . "</pre>";
 	}
 	return $code;
 }
@@ -81,7 +81,7 @@ if (!function_exists('array_change_key_case')) {
 		$casefunc = ($case == CASE_LOWER) ? 'strtolower' : 'strtoupper';
 
 		foreach ($keys as $key) {
-			$output[$casefunc($key)] = $input[$key];
+			$output [$casefunc($key)] = $input [$key];
 		}
 
 		return $output;

@@ -45,9 +45,9 @@ function plugin_lastentries_widget() {
 		$string .= '<li>';
 		$admin = BLOG_BASEURL . "admin.php?p=entry&amp;entry=";
 		if (user_loggedin()) { // if loggedin prints a "edit" link
-			$string .= "<a href=\"{$admin}{$id}\">[" . $lang ['plugin'] ['lastentries'] ['edit'] . "]</a>";
+			$string .= "<a href=\"" . $admin . $id . "\">[" . $lang ['plugin'] ['lastentries'] ['edit'] . "]</a>";
 		}
-		$string .= "<a href=\"{$link}\">{$entry['subject']}</a></li>\n";
+		$string .= "<a href=\"" . $link . "\">" . $entry ['subject'] . "</a></li>\n";
 
 		$count++;
 	}

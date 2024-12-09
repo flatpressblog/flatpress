@@ -15,7 +15,7 @@ class draft_indexer extends fs_filelister {
 	}
 
 	function _checkFile($directory, $file) {
-		$f = "$directory/$file";
+		$f = $directory . "/" . $file;
 		if (is_dir($f) && ctype_digit($file)) {
 			return 1;
 		}

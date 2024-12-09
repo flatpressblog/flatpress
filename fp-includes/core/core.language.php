@@ -18,15 +18,15 @@ function lang_load($postfix = null) {
 			$pluginpath = substr($postfix, 7);
 		}
 
-		$file = "lang.$postfix.php";
+		$file = "lang." . $postfix . ".php";
 	} else {
 
 		$postfix = 'default';
 		$file = "lang.default.php";
 	}
 
-	$fpath = LANG_DIR . "{$fp_config['locale']['lang']}/$file";
-	$fallback = LANG_DIR . LANG_DEFAULT . "/$file";
+	$fpath = LANG_DIR . $fp_config ['locale'] ['lang'] . "/" . $file;
+	$fallback = LANG_DIR . LANG_DEFAULT . "/" . $file;
 
 	$path = '';
 	$plugin = $pluginpath;
@@ -40,14 +40,14 @@ function lang_load($postfix = null) {
 
 		$dir = plugin_getdir($plugin);
 
-		$fpath = $dir . "lang/lang.{$fp_config['locale']['lang']}{$path}.php";
-		$fallback = $dir . "lang/lang." . LANG_DEFAULT . "{$path}.php";
+		$fpath = $dir . "lang/lang." . $fp_config ['locale'] ['lang'] . $path . ".php";
+		$fallback = $dir . "lang/lang." . LANG_DEFAULT . $path . ".php";
 	}
 
 	if (!file_exists($fpath)) {
 		/* if file does not exist, we fall back on English */
 		if (!file_exists($fallback)) {
-			trigger_error("No suitable language file was found <b>$postfix</b>", E_USER_WARNING);
+			trigger_error("No suitable language file was found <b>" . $postfix . "</b>", E_USER_WARNING);
 			return;
 		}
 
@@ -79,12 +79,12 @@ function lang_load($postfix = null) {
 function lang_getconf($id) {
 	global $lang;
 
-	$fpath = LANG_DIR . "$id/lang.conf.php";
+	$fpath = LANG_DIR . $id . "/lang.conf.php";
 	if (file_exists($fpath)) {
 		include ($fpath);
 		return $langconf;
 	} else {
-		trigger_error("Error loading config for language \"$file\"", E_USER_WARNING);
+		trigger_error("Error loading config for language \"" . $file . "\"", E_USER_WARNING);
 	}
 }
 
@@ -93,7 +93,7 @@ class lang_indexer extends fs_filelister {
 	var $_directory = LANG_DIR;
 
 	function _checkFile($directory, $file) {
-		if (is_dir("$directory/$file")) {
+		if (is_dir($directory . "/" . $file)) {
 			if (!preg_match('![a-z]{2}-[a-z]{2}!', $file)) {
 				return 0;
 			}

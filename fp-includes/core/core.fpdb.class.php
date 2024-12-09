@@ -742,7 +742,7 @@ class FPDB {
 			$q = &$this->queries [$queryId];
 		} else {
 			return false;
-			trigger_error("FPDB: no such query ID ($queryId)", E_USER_WARNING);
+			trigger_error("FPDB: no such query ID (" . $queryId . ")", E_USER_WARNING);
 		}
 
 		if (!$q) {
@@ -956,7 +956,7 @@ function smarty_function_nextpage($params) {
 		$link = BLOG_BASEURL . 'admin.php' . $qstr;
 	}
 
-	return "<div class=\"alignright\"><a href=\"$link\">$caption</a></div>";
+	return "<div class=\"alignright\"><a href=\"" . $link . "\">" . $caption . "</a></div>";
 }
 
 function smarty_function_prevpage($params) {
@@ -975,7 +975,7 @@ function smarty_function_prevpage($params) {
 		$link = BLOG_BASEURL . 'admin.php' . $qstr;
 	}
 
-	return "<div class=\"alignleft\"><a href=\"$link\">$caption</a></div>";
+	return "<div class=\"alignleft\"><a href=\"" . $link . "\">" . $caption . "</a></div>";
 }
 
 $_FP_SMARTY->registerPlugin('block', 'comment', 'smarty_block_comment');

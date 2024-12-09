@@ -10,7 +10,7 @@ class comment_indexer extends fs_filelister {
 	}
 
 	function _checkFile($directory, $file) {
-		$f = "$directory/$file";
+		$f = $directory . "/" . $file;
 		if (fnmatch('comment*' . EXT, $file)) {
 			array_push($this->_list, basename($file, EXT));
 			return 0;

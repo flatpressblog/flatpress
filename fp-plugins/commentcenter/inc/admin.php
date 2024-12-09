@@ -85,7 +85,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 * @return string: The title
 	 */
 	function _title($val, $sep) {
-		return "{$val} {$sep} Comment Center";
+		return $val . " " . $sep . " Comment Center";
 	}
 
 	/**
@@ -137,7 +137,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	function _redirect($cmd, $cmdval = 1, $nosuccess = false) {
 		global $panel;
 		$smarty = &$this->smarty;
-		sess_add("success_{$panel}", $smarty->getTemplateVars('success'));
+		sess_add("success_" . $panel, $smarty->getTemplateVars('success'));
 
 		$action_url = $smarty->getTemplateVars('action_url');
 		$url = admin_filter_command($action_url, $cmd, $cmdval);
@@ -711,7 +711,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 			$smarty->assign('entry_id', $entry);
 			$smarty->assign('fetch', 'list');
 
-			$fpdb->query("id:{$entry},fullparse:true,comments:true");
+			$fpdb->query("id:" . $entry . ",fullparse:true,comments:true");
 			$q = &$fpdb->getQuery();
 			$q->getEntry();
 			$list = array();
@@ -881,3 +881,4 @@ class admin_entry_commentcenter extends AdminPanelAction {
 
 }
 admin_addpanelaction('entry', 'commentcenter', true);
+?>

@@ -114,7 +114,7 @@ function d($s) {
 	$f = @$x [1] ['function'];
 	$l = $x [0] ['line'];
 
-	echo "[{$f}:{$l}]\t", $s, "\n";
+	echo "[" . $f . ":" . $l . "]\t" . $s . "\n";
 	// echo "---[{$x[2]['function']}:{$x[2]['line']}]\n";
 }
 
@@ -699,7 +699,7 @@ class BPlusTree_Node {
 			// is the key there already?
 			if (in_array($key, $keys, true)) {
 				if (array_search($key, $keys, true) < $validkeys) {
-					trigger_error("reinsert of node for existing key ($key)", E_USER_ERROR);
+					trigger_error("reinsert of node for existing key (" . $key . ")", E_USER_ERROR);
 				}
 			}
 
@@ -838,7 +838,7 @@ class BPlusTree_Node {
 		$place = $this->indices [$index];
 		if ($place < 0) {
 			debug_print_backtrace();
-			trigger_error("Invalid position! ($place, $key)", E_USER_ERROR);
+			trigger_error("Invalid position! (" . $place . ", " . $key . ")", E_USER_ERROR);
 		}
 
 		// fifo
@@ -910,11 +910,11 @@ class BPlusTree_Node {
 	 */
 	function putvalue($key, $val) {
 		if (!is_string($key)) {
-			trigger_error("$key must be string", E_USER_ERROR);
+			trigger_error($key . " must be string", E_USER_ERROR);
 		}
 		if (($this->flag & BPT_FLAG_LEAF) != BPT_FLAG_LEAF) {
 			// print_r($this);
-			trigger_error("cannot get next for non-leaf ($key)", E_USER_ERROR);
+			trigger_error("cannot get next for non-leaf (" . $key . ")", E_USER_ERROR);
 		}
 		$validkeys = $this->validkeys;
 		$indices = & $this->indices;
@@ -977,7 +977,7 @@ class BPlusTree_Node {
 		$keys = & $this->keys;
 		$length = $this->validkeys = $keys_indices->count; // count($keys_indices);
 		if ($length > $this->size) {
-			trigger_error("bad length $length", E_USER_ERROR);
+			trigger_error("bad length " . $length, E_USER_ERROR);
 		}
 		for($i = 0; $i < $length; $i++) {
 			// list($keys[$i], $indices[$i]) = $keys_indices[$i];
@@ -1002,7 +1002,7 @@ class BPlusTree_Node {
 		$keys = & $this->keys;
 		$length = $this->validkeys = $keys_positions->count; // count($keys_positions);
 		if ($length > $this->size) {
-			trigger_error("bad length $length", E_USER_ERROR);
+			trigger_error("bad length " . $length, E_USER_ERROR);
 		}
 		$indices [0] = $first_position;
 		for($i = 0; $i < $length; $i++) {
@@ -1035,7 +1035,7 @@ class BPlusTree_Node {
 				$key = $this->keys [$place];
 				return $this->indices [$place];
 			}
-			trigger_error("key '$key' not found", E_USER_WARNING);
+			trigger_error("key '" . $key . "' not found", E_USER_WARNING);
 			return false;
 		}
 	}
@@ -1119,7 +1119,7 @@ class BPlusTree_Node {
 		// print_r($this);
 		$size = $this->size;
 		if ($this->indices [$size] != $next->position) {
-			trigger_error("invalid next pointer " . "{$this->indices[$size]}!={$next->position})", E_USER_ERROR);
+			trigger_error("invalid next pointer " . $this->indices[$size] . "!={$next->position})", E_USER_ERROR);
 		}
 		$this->indices [$size] = $next->indices [$size];
 		return $next->free($free);
@@ -1208,7 +1208,7 @@ class BPlusTree_Node {
 	 *
 	 */
 	function getfreenode($freeposition, $freenode_callback = null) {
-		d("GETTING FREE AT $freeposition");
+		d("GETTING FREE AT " . $freeposition);
 		if ($freeposition == BPT_NULLSEEK) {
 			$file = $this->infile;
 			fseek($file, 0, SEEK_END);
@@ -1336,7 +1336,7 @@ class BPlusTree_Node {
 		for($i = 0; $i < $this->validkeys; $i++) {
 			$k = $this->keys [$i];
 			if (strlen($k) > $this->keylen) {
-				trigger_error("Invalid keylen for '$k'", E_USER_ERROR);
+				trigger_error("Invalid keylen for '" . $k . "'", E_USER_ERROR);
 			}
 			$x .= str_pad($k, $this->keylen, chr(0));
 		}
@@ -1346,7 +1346,7 @@ class BPlusTree_Node {
 		$s .= $x;
 		$l = strlen($s);
 		if (strlen($s) != $this->storage) {
-			trigger_error("bad storage $l != {$this->storage}", E_USER_ERROR);
+			trigger_error("bad storage " . $l . " != " . $this->storage, E_USER_ERROR);
 		}
 
 		return $s;
@@ -1367,7 +1367,7 @@ class BPlusTree_Node {
 		$x = 'Cflag/Cvalidkeys/';
 		$n = $this->size + 1;
 		for($i = 0; $i < $n; $i++) {
-			$x .= "lindices{$i}/";
+			$x .= "lindices" . $i . "/";
 		}
 		$arr = unpack($x, $s);
 
@@ -1375,7 +1375,7 @@ class BPlusTree_Node {
 		$this->validkeys = $arr ['validkeys'];
 
 		for($i = 0; $i < $n; $i++) {
-			$this->indices [$i] = $arr ["indices{$i}"];
+			$this->indices[$i] = $arr["indices" . $i];
 		}
 
 		for($i = 0, $j = ($n * 4 + 2); $i < $this->validkeys; $i++, $j += $this->keylen) {
@@ -1497,7 +1497,7 @@ class BPlusTree_Node {
 	 */
 	function enable_fifo($size = 33) {
 		if ($size < 5 || $size > 1000000) {
-			trigger_error("size not valid $size");
+			trigger_error("size not valid " . $size);
 		}
 		$this->fifo = new BPlusTree_Node_Fifo($size);
 	}
@@ -1588,7 +1588,7 @@ class BPlusTree {
 	 */
 	function __construct($infile, $pos = null, $nodesize = null, $keylen = 10) {
 		if (!is_null($keylen) && $keylen <= 2) {
-			trigger_error("$keylen must be greater than 2", E_USER_ERROR);
+			trigger_error($keylen . " must be greater than 2", E_USER_ERROR);
 		}
 		$this->root_seek = BPT_NULLSEEK;
 		$this->free = BPT_NULLSEEK;
@@ -1751,7 +1751,7 @@ class BPlusTree {
 		$data = fread($file, $this->headersize);
 		$hdr = unpack('a5magic/Llength/Ckeylen/Lnodesize/Lroot_seek/Lfree', $data);
 		if ($hdr ['magic'] != BPT_VERSION_MAGIC) {
-			trigger_error("Version magic mismatch ({$hdr['magic']}!=" . BPT_VERSION_MAGIC . ')', E_USER_WARNING);
+			trigger_error("Version magic mismatch (" . $hdr['magic'] . "!=" . BPT_VERSION_MAGIC . ')', E_USER_WARNING);
 			return false;
 		}
 		$this->length = $hdr ['length'];
@@ -1862,10 +1862,10 @@ class BPlusTree {
 			trigger_error("not open", E_USER_ERROR);
 		}
 		if (!is_string($key)) {
-			trigger_error("$key must be string", E_USER_ERROR);
+			trigger_error($key . " must be string", E_USER_ERROR);
 		}
 		if (strlen($key) > $this->keylen) {
-			trigger_error("$key is too long: MAX is {$this->keylen}", E_USER_ERROR);
+			trigger_error($key . " is too long: MAX is " . $this->keylen, E_USER_ERROR);
 		}
 		d("STARTING FROM ROOT...");
 
@@ -1876,7 +1876,7 @@ class BPlusTree {
 			// getting new rightmost interior node
 			list ($leftmost, $node) = $test1;
 			// print_r($test1);
-			d("LEFTMOST [$leftmost]");
+			d("LEFTMOST [" . $leftmost . "]");
 
 			// getting new non-leaf root
 			list ($newroot, $this->free) = $root->getfreenode($this->free);
@@ -1961,7 +1961,7 @@ class BPlusTree {
 				$TRY = $node->putnode($leftmost, $insertnode);
 				if ($TRY == NOROOMERROR) {
 
-					d("$key::SPLIT!");
+					d($key . "::SPLIT!");
 					// EXCEPT
 
 					$insertindex = $insertnode->position;
@@ -1995,7 +1995,7 @@ class BPlusTree {
 					);
 				} else {
 
-					d("$key::NO SPLIT");
+					d($key . "::NO SPLIT");
 					d($node->keys);
 					$node->store();
 					return null; // no split
@@ -2011,7 +2011,7 @@ class BPlusTree {
 				$newlength = $this->length;
 			}
 
-			d("[LEAF] TRYING TO PUT $key=>$val");
+			d("[LEAF] TRYING TO PUT " . $key . "=>" . $val);
 			if ($node->putvalue($key, $val) == NOROOMERROR) {
 				d("GOT NOROOMERROR");
 
@@ -2036,7 +2036,7 @@ class BPlusTree {
 					&$newnode
 				);
 			} else {
-				d("STORING NODE [{$node->position}]");
+				d("STORING NODE [" . $node->position . "]");
 				d($node->keys);
 
 				$node->store();
@@ -2068,8 +2068,8 @@ class BPlusTree {
 	 */
 	function remove($key, &$node, $NESTING = 0) {
 		$newnodekey = null;
-		d("NESTING LEVEL $NESTING");
-		d("($NESTING) current size = {$this->nodesize}");
+		d("NESTING LEVEL " . $NESTING);
+		d("(" . $NESTING . ") current size = " . $this->nodesize);
 
 		// first of all we check if it is non-leaf
 		if (($node->flag & BPT_FLAG_INTERIOR) == BPT_FLAG_INTERIOR) {
@@ -2113,7 +2113,7 @@ class BPlusTree {
 			// if($size==0) trigger_error("SIZE==0", E_USER_WARNING);
 
 			if ($size < $half) {
-				d("($NESTING) node too small ($size<$nodesize/2), redistribute children");
+				d("(" . $NESTING . ") node too small (" . $size . "<" . $nodesize . "/2), redistribute children");
 
 				// node is too small, need to redistribute
 				// children
@@ -2186,7 +2186,7 @@ class BPlusTree {
 					$leftnode->store();
 					$rightnode->store();
 				} else {
-					d("($NESTING) node too small, need merge left<-right");
+					d("(" . $NESTING . ") node too small, need merge left<-right");
 					// merge into left, free right
 					d($leftnode->keys);
 					d($leftnode->indices);
@@ -2208,7 +2208,7 @@ class BPlusTree {
 						$this->free = $rightnode->free($this->free);
 					}
 					if (!is_null($leftkey) && $newleftkey != $leftkey) {
-						d("$newleftkey!=$leftkey");
+						d($newleftkey . "!=" . $leftkey);
 						$node->delnode($leftkey);
 						$node->putnode($newleftkey, $leftnode);
 					}
@@ -2244,7 +2244,7 @@ class BPlusTree {
 			// leaf, base case: just delete.
 			if ($node->validkeys < 1) {
 				// only for empty root
-				trigger_error("No such key $key", E_USER_ERROR);
+				trigger_error("No such key " . $key, E_USER_ERROR);
 			}
 			$first = $node->keys [0];
 			d($node->keys);
@@ -2257,8 +2257,8 @@ class BPlusTree {
 			$node->store();
 			$this->length--;
 
-			d("NEWNODEKEY: $newnodekey");
-			d("VALIDKEYS: {$node->validkeys}");
+			d("NEWNODEKEY: " . $newnodekey);
+			d("VALIDKEYS: " . $node->validkeys);
 		}
 		d($node->keys);
 		return array(
@@ -2287,7 +2287,7 @@ class BPlusTree {
 		// {{{
 		// $middle = (int)(count($entries)/2);
 		$middle = ceil($entries->count / 2);
-		d("divide entries at $middle");
+		d("divide entries at " . $middle);
 
 		// $left = array_slice($entries, 0, $middle);
 		// $right = array_slice($entries, $middle);
@@ -2510,7 +2510,7 @@ class BPlusWalker {
 		if ($this->valid) {
 			return $this->node->keys [$this->node_index];
 		} else {
-			trigger_error("WALKER: Not a valid index ({$this->node_index})");
+			trigger_error("WALKER: Not a valid index (" . $this->node_index . ")");
 		}
 	}
 
@@ -2518,7 +2518,7 @@ class BPlusWalker {
 		if ($this->valid) {
 			return $this->node->indices [$this->node_index];
 		} else {
-			trigger_error("WALKER: Not a valid index ({$this->node_index})");
+			trigger_error("WALKER: Not a valid index (" . $this->node_index . ")");
 		}
 	}
 
@@ -2529,7 +2529,7 @@ class BPlusWalker {
 				$this->node->indices [$this->node_index]
 			);
 		} else {
-			trigger_error("WALKER: Not a valid index ({$this->node_index})");
+			trigger_error("WALKER: Not a valid index (" . $this->node_index . ")");
 		}
 	}
 
@@ -2727,3 +2727,4 @@ class BPlusUtils {
 	}
 
 }
+?>

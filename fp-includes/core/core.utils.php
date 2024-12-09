@@ -68,7 +68,7 @@ if (!function_exists('fnmatch')) {
 			}
 
 			foreach ($escape as $probe) {
-				$pattern = str_replace($probe, "\\$probe", $pattern);
+				$pattern = str_replace($probe, "\\" . $probe, $pattern);
 			}
 			$pattern = str_replace('?*', '*', str_replace('*?', '*', str_replace('*', ".*", str_replace('?', '.{1,1}', $pattern))));
 			$out [] = $pattern;
@@ -78,7 +78,7 @@ if (!function_exists('fnmatch')) {
 		 * if(count($out)==1) return(eregi("^$out[0]$",$string)); else
 		 */
 		foreach ($out as $tester) {
-			if (preg_match("/^$tester$/i", $string)) {
+			if (preg_match("/^" . $tester . "$/i", $string)) {
 				return true;
 			}
 		}
@@ -202,7 +202,7 @@ function &utils_explode_recursive($array, &$string, $rdelim, $ldelim = '', $oute
 
 function utils_validateinput($str) {
 	if (preg_match('/[^a-z0-9\-_]/i', $str)) {
-		trigger_error("String \"$str\" is not a valid input", E_USER_ERROR);
+		trigger_error("String \"" . $str . "\" is not a valid input", E_USER_ERROR);
 		// return false;
 	} else {
 		return true;
@@ -242,7 +242,7 @@ function utils_redirect($location = "", $absolute_path = false, $red_type = null
 	if (function_exists('wp_redirect')) {
 		wp_redirect($location);
 	} else {
-		header("Location: $location");
+		header("Location: " . $location);
 	}
 
 	exit();
@@ -504,7 +504,7 @@ function utils_checksmarty() {
 
 function fplog($str) {
 	if (!defined('DEBUG_MODE')) {
-		echo "\n[DEBUG] $str \n";
+		echo "\n[DEBUG] " . $str . " \n";
 	}
 }
 

@@ -67,8 +67,11 @@ define('FP_INCLUDES', 'fp-includes/');
 
 // core include scripts
 define('INCLUDES_DIR', FP_INCLUDES . 'core/');
+
 // smarty engine
 define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-4.5.5/libs/');
+define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0777
+define('COMPILE_DIR', FP_CONTENT . 'compile/'); // must be chmodded to 0777
 // FlatPress specific Smarty plugins
 define('FP_SMARTYPLUGINS_DIR', ABS_PATH . FP_INCLUDES . 'fp-smartyplugins/');
 
@@ -86,7 +89,6 @@ define('PLUGINS_DIR', 'fp-plugins/');
 define('ADMIN_DIR', 'admin/');
 
 // Cache file name and path.
-define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0776
 define('CACHE_FILE', '%%cached_list.php');
 
 define('INDEX_DIR', FP_CONTENT . 'index/');
