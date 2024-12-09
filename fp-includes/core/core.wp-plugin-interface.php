@@ -9,19 +9,19 @@
 
 	function merge_filters($tag) {
 		global $wp_filter;
-		if (isset($wp_filter['all'])) {
-			foreach ($wp_filter['all'] as $priority => $functions) {
-				if (isset($wp_filter[$tag][$priority])) {
-					$wp_filter[$tag][$priority] = array_merge($wp_filter['all'][$priority], $wp_filter[$tag][$priority]);
+		if (isset($wp_filter ['all'])) {
+			foreach ($wp_filter ['all'] as $priority => $functions) {
+				if (isset($wp_filter [$tag] [$priority])) {
+					$wp_filter [$tag] [$priority] = array_merge($wp_filter ['all'] [$priority], $wp_filter [$tag] [$priority]);
 				} else {
-					$wp_filter[$tag][$priority] = array_merge($wp_filter['all'][$priority], array());
+					$wp_filter [$tag] [$priority] = array_merge($wp_filter ['all'] [$priority], array());
 				}
-				$wp_filter[$tag][$priority] = array_unique($wp_filter[$tag][$priority]);
+				$wp_filter [$tag] [$priority] = array_unique($wp_filter [$tag] [$priority]);
 			}
 		}
 
-		if (isset($wp_filter[$tag])) {
-			ksort($wp_filter[$tag]);
+		if (isset($wp_filter [$tag])) {
+			ksort($wp_filter [$tag]);
 		}
 	}
 
@@ -32,16 +32,16 @@
 
 		merge_filters($tag);
 
-		if (!isset($wp_filter[$tag])) {
+		if (!isset($wp_filter [$tag])) {
 			return $string;
 		}
-		foreach ($wp_filter[$tag] as $priority => $functions) {
+		foreach ($wp_filter [$tag] as $priority => $functions) {
 			if (!is_null($functions)) {
 				foreach($functions as $function) {
 
 					$all_args = array_merge(array($string), $args);
-					$function_name = $function['function'];
-					$accepted_args = $function['accepted_args'];
+					$function_name = $function ['function'];
+					$accepted_args = $function ['accepted_args'];
 
 					if($accepted_args == 1) {
 						$the_args = array($string);
@@ -64,20 +64,20 @@
 		global $wp_filter;
 
 		// check that we don't already have the same filter at the same priority
-		if (isset($wp_filter[$tag]["$priority"])) {
-			foreach($wp_filter[$tag]["$priority"] as $filter) {
+		if (isset($wp_filter [$tag] [(string)$priority])) {
+			foreach($wp_filter [$tag] [(string)$priority] as $filter) {
 				// uncomment if we want to match function AND accepted_args
 				//if ($filter == array($function, $accepted_args)) {
-				if ($filter['function'] == $function_to_add) {
+				if ($filter ['function'] == $function_to_add) {
 					return true;
 				}
 			}
 		}
 
 		// So the format is wp_filter['tag']['array of priorities']['array of ['array (functions, accepted_args)]']
-		$wp_filter[$tag]["$priority"][] = array('function'=>$function_to_add, 'accepted_args'=>$accepted_args);
+		$wp_filter [$tag] [(string)$priority] [] = array('function' => $function_to_add, 'accepted_args' => $accepted_args);
 		//added by NoWhereMan
-		ksort($wp_filter[$tag]["$priority"]);
+		ksort($wp_filter [$tag] [(string)$priority]);
 		return true;
 	}
 
@@ -87,13 +87,13 @@
 		$new_function_list = array();
 
 		// rebuild the list of filters
-		if (isset($wp_filter[$tag]["$priority"])) {
-			foreach($wp_filter[$tag]["$priority"] as $filter) {
-				if ($filter['function'] != $function_to_remove) {
-					$new_function_list[] = $filter;
+		if (isset($wp_filter [$tag] [(string)$priority])) {
+			foreach($wp_filter [$tag] [(string)$priority] as $filter) {
+				if ($filter ['function'] != $function_to_remove) {
+					$new_function_list [] = $filter;
 				}
 			}
-			$wp_filter[$tag]["$priority"] = $new_function_list;
+			$wp_filter [$tag] [(string)$priority] = $new_function_list;
 		}
 		return true;
 	}
@@ -111,15 +111,15 @@
 
 		merge_filters($tag);
 
-		if (!isset($wp_filter[$tag])) {
+		if (!isset($wp_filter [$tag])) {
 			return;
 		}
-		foreach ($wp_filter[$tag] as $priority => $functions) {
+		foreach ($wp_filter [$tag] as $priority => $functions) {
 			if (!is_null($functions)) {
 				foreach($functions as $function) {
 
-					$function_name = $function['function'];
-					$accepted_args = $function['accepted_args'];
+					$function_name = $function ['function'];
+					$accepted_args = $function ['accepted_args'];
 
 					if($accepted_args == 1) {
 						if (is_array($arg)) {

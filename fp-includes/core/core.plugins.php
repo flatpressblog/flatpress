@@ -16,8 +16,8 @@ class plugin_indexer extends fs_filelister {
 	}
 
 	function _checkFile($directory, $file) {
-		$f = "$directory/$file";
-		if (is_dir($f) && file_exists("$f/plugin.$file.php")) {
+		$f = $directory . "/" . $file;
+		if (is_dir($f) && file_exists($f . "/plugin." . $file . ".php")) {
 			array_push($this->_list, $file);
 		}
 		return 0;
@@ -84,9 +84,9 @@ function plugin_load($plugin, $checkonly = true, $langload = true) {
 	$errno = 0;
 	$errors = false;
 
-	if (file_exists($f = PLUGINS_DIR . "$plugin/plugin.$plugin.php")) {
+	if (file_exists($f = PLUGINS_DIR . $plugin . "/plugin." . $plugin . ".php")) {
 		$errno = 1; // 1 means exists
-	} elseif (file_exists($f = PLUGINS_DIR . "$plugin/$plugin.php")) {
+	} elseif (file_exists($f = PLUGINS_DIR . $plugin . "/" . $plugin . ".php")) {
 		$errno = 2; // 2 means exists but filename is oldstyle
 	}
 
@@ -97,11 +97,11 @@ function plugin_load($plugin, $checkonly = true, $langload = true) {
 	}
 
 	if ($langload) {
-		@lang_load("plugin:{$plugin}");
+		@lang_load("plugin:" . $plugin);
 	}
 
 	if ($checkonly) {
-		$func = "plugin_{$plugin}_setup";
+		$func = "plugin_" . $plugin . "_setup";
 
 		if (is_callable($func)) {
 			$errno = $func();
@@ -110,11 +110,11 @@ function plugin_load($plugin, $checkonly = true, $langload = true) {
 		if ($errno <= 0) {
 
 			if (isset($lang ['plugin'] [$plugin] ['errors'] [$errno])) {
-				$errors = "[<strong>{$plugin}</strong>] {$lang['plugin'][$plugin]['errors'][$errno]}";
+				$errors = "[<strong>" . $plugin . "</strong>] " . $lang ['plugin'] [$plugin] ['errors'] [$errno];
 			} elseif ($errno < 0) {
-				$errors = "[<strong>$plugin</strong>] " . sprintf($lang ['admin'] ['plugin'] ['errors'] ['generic'], $errno);
+				$errors = "[<strong>" . $plugin . "</strong>] " . sprintf($lang ['admin'] ['plugin'] ['errors'] ['generic'], $errno);
 			} else {
-				$errors = "[<strong>$plugin</strong>] " . $lang ['admin'] ['plugin'] ['errors'] ['notfound'];
+				$errors = "[<strong>" . $plugin . "</strong>] " . $lang ['admin'] ['plugin'] ['errors'] ['notfound'];
 			}
 		}
 	}
@@ -193,7 +193,7 @@ function smarty_function_plugin_getdir($params, &$smarty) {
 }
 
 function plugin_getinfo($plugin) {
-	$plugin_data = io_load_file(plugin_getdir($plugin) . "plugin.$plugin.php");
+	$plugin_data = io_load_file(plugin_getdir($plugin) . "plugin." . $plugin . ".php");
 	preg_match("|Plugin Name:(.*)|i", $plugin_data, $plugin_name);
 	preg_match("|Plugin URI:(.*)|i", $plugin_data, $plugin_uri);
 	preg_match("|Description:(.*)|i", $plugin_data, $description);

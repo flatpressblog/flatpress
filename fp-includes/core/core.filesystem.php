@@ -21,7 +21,7 @@ class fs_filelister {
 	}
 
 	function _checkFile($directory, $file) {
-		if (!is_dir("$directory/$file")) {
+		if (!is_dir($directory . "/" . $file)) {
 			array_push($this->_list, $file);
 		}
 		return 0;
@@ -50,7 +50,7 @@ class fs_filelister {
 					switch ($action) {
 						case (1):
 							{
-								$this->_listFiles("$directory/$file");
+								$this->_listFiles($directory . "/" . $file);
 								$this->_exitingDir($directory, $file);
 								break;
 							}
@@ -87,7 +87,7 @@ class fs_filelister {
 class fs_pathlister extends fs_filelister {
 
 	function _checkFile($directory, $file) {
-		$f = "$directory/$file";
+		$f = $directory . "/" . $file;
 		if (!is_dir($f)) {
 			array_push($this->_list, $f);
 		} else {
@@ -193,7 +193,7 @@ class fs_chmodder extends fs_filelister {
 
 	function _checkFile($directory, $file) {
 		$retval = 0;
-		$path = "$directory/$file";
+		$path = $directory . "/" . $file;
 		if (is_dir($path)) {
 			$retval = 1;
 		}
@@ -308,3 +308,4 @@ function fs_is_directorycomponent($filename) {
 function fs_is_hidden_file($filename) {
 	return strlen($filename) > 0 && substr($filename, 0, 1) === '.';
 }
+?>

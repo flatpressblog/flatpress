@@ -44,9 +44,9 @@ class LayoutDefault {
 
 		// init smarty
 
-		$this->smarty->compile_dir = CACHE_DIR;
-		$this->smarty->cache_dir = SMARTY_DIR . 'cache/';
-		$this->smarty->caching = 0;
+		$this->smarty->compile_dir = COMPILE_DIR;
+		$this->smarty->cache_dir = CACHE_DIR;
+		$this->smarty->caching = false;
 
 		do_action('init');
 	}

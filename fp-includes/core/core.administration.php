@@ -2,7 +2,7 @@
 
 	function admin_getpanellink($page, $action, $command='') {
 
-		$link = BLOG_BASEURL . 'admin.php?p=' . $page .	'&action=' .$action;
+		$link = BLOG_BASEURL . 'admin.php?p=' . $page . '&action=' .$action;
 		if ($command) {
 			$link .= '&' . $command;
 		}
@@ -18,7 +18,7 @@
 
 	function admin_addpanel($page) {
 		global $fpadminpanels;
-		$fpadminpanels[] = $page;
+		$fpadminpanels [] = $page;
 	}
 
 	function admin_getpanels() {
@@ -33,7 +33,7 @@
 		global $fpadminpanelactions;
 
 		if (admin_panelexists($panel)) {
-			$fpadminpanelactions[$panel][$action] = $showpanel;
+			$fpadminpanelactions [$panel] [$action] = $showpanel;
 		}
 
 	}
@@ -41,8 +41,8 @@
 	function admin_getpanelactions($panel) {
 
 		global $fpadminpanelactions;
-		if (isset($fpadminpanelactions[$panel])) {
-			return $fpadminpanelactions[$panel];
+		if (isset($fpadminpanelactions [$panel])) {
+			return $fpadminpanelactions [$panel];
 		} else {
 			return array();
 		}

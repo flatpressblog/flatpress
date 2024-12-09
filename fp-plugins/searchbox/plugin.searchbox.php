@@ -19,14 +19,14 @@ function plugin_searchbox_widget() {
 		<input type="hidden" name="stype" value="full">';
 
 	if (SEARCHBOX_BIG) {
-		$content .= "<p><a href=\"{$url}\">{$lang['search']['moreopts']}</a></p>";
+		$content .= "<p><a href=\"" . $url . "\">" . $lang ['search'] ['moreopts'] . "</a></p>";
 	}
 
 	$content .= '<p><input type="text" name="q"></p>';
 
 	if (SEARCHBOX_BIG) {
-		$content .= '<p><label><input type="radio" 
-					name="stype" value="titles" checked="checked">' . $lang ['search'] ['onlytitles'] . '</label><br>' . '<label><input type="radio" name="stype" value="full">' . $lang ['search'] ['fulltext'] . '</label></p>';
+		$content .= '<p><label><input type="radio" ' . //
+					'name="stype" value="titles" checked="checked">' . $lang ['search'] ['onlytitles'] . '</label><br>' . '<label><input type="radio" name="stype" value="full">' . $lang ['search'] ['fulltext'] . '</label></p>';
 	}
 
 	$content .= '<div class="buttonbar"><p><input name="search" type="submit" value="' . $lang ['search'] ['submit'] . '"> </p></div>

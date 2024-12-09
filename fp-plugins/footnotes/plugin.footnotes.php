@@ -28,7 +28,7 @@ class footnotes_class {
 		$id = $this->id;
 		$this->refs = true;
 
-		return '<li>' . trim($s) . " <a id=\"$id-fn-{$n}\" href=\"#$id-rel-{$n}\" " . "title=\"{$back} {$n}\">&#8617;</a>" . '</li>';
+		return '<li>' . trim($s) . " <a id=\"" . $id . "-fn-" . $n . "\" href=\"#" . $id . "-rel-" . $n . "\" " . "title=\"" . $back . " " . $n . "\">&#8617;</a>" . '</li>';
 	}
 
 	function footnotes($matches) {
@@ -60,15 +60,15 @@ class footnotes_class {
 
 		$id = $this->id;
 
-		$href_rel = "{$id}-rel-{$n}";
+		$href_rel = $id . "-rel-" . $n;
 		$href_note = "{$id}-fn-{$n}";
 
-		return "<sup><a id=\"$href_rel\" href=\"#$href_note\" title=\"{$footnote} {$n}\">{$n}</a></sup>";
+		return "<sup><a id=\"" . $href_rel . "\" href=\"#" . $href_note . "\" title=\"" . $footnote . " " . $n . "\">" . $n . "</a></sup>";
 	}
 
 	function headings($matches) {
 		$i = 7 - strlen($matches [1]);
-		return "<h$i>{$matches[2]}</h$i>";
+		return "<h" . $i . ">" . $matches [2] . "</h" . $i . ">";
 	}
 
 }

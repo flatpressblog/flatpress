@@ -48,7 +48,7 @@ function system_save($file, $array) {
 	foreach ($array as $key => $arg) {
 		// $vname = utils_vname ($arg);
 		// var_export($arg);
-		$s = /*"  global {$key};\n*/  "\${$key} = " . var_export($arg, true) . ";\n";
+		$s = "\$" . $key .  " = " . var_export($arg, true) . ";\n";
 		$string .= $s;
 	}
 
@@ -194,9 +194,9 @@ function system_init() {
 
 	// init smarty
 	// FlatPress does not use the Smarty cache, only the compiler
-	$smarty->compile_dir = CACHE_DIR;
-	$smarty->cache_dir = SMARTY_DIR . 'cache/';
-	$smarty->caching = 0;
+	$smarty->compile_dir = COMPILE_DIR;
+	$smarty->cache_dir = CACHE_DIR;
+	$smarty->caching = false;
 
 	// PHP error outputs and Smarty debug console
 	@ini_set('display_errors', 'on'); // on or off
@@ -231,7 +231,7 @@ function system_dpr($action, $content) {
 	$p = print_r($content, 1);
 
 	add_action($action, function () use ($p) {
-		echo "<pre style='position:absolute'>$p</pre>";
+		echo "<pre style='position:absolute'>" . $p . "</pre>";
 	});
 }
 

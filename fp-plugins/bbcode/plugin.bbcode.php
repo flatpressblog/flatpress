@@ -175,7 +175,7 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	// DMKE: uh?
 	$content = $content;
 	$rel = isset($attributes ['rel']) ? ' rel="' . $attributes ['rel'] . '"' : '';
-	$target = isset($attributes ['target']) ? ' target="'.$attributes ['target'] . '"' : '';
+	$target = isset($attributes ['target']) ? ' target="'. $attributes ['target'] . '"' : '';
 	$extern = !$local ? ' class="externlink" title="' . $lang ['plugin'] ['bbcode'] ['go_to'] . ' ' . $the_url . '"' : '';
 	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target .'>' . $content . '</a>';
 }
@@ -614,7 +614,7 @@ function do_bbcode_list($action, $attributes, $content, $params, $node_object) {
 	} else {
 		$list = 'ul';
 	}
-	return "<$list>$content</$list>";
+	return "<" . $list . ">" . $content . "</" . $list . ">";
 }
 
 /**
@@ -663,8 +663,8 @@ function &plugin_bbcode_init() {
 			$htmltag = $bbtag = $val;
 		}
 		$bbcode->addCode($bbtag, 'simple_replace', null, array(
-			'start_tag' => "<$htmltag>",
-			'end_tag' => "</$htmltag>"
+			'start_tag' => "<" . $htmltag . ">",
+			'end_tag' => "</" . $htmltag . ">"
 		), 'inline', array(
 			'listitem',
 			'block',
@@ -1042,7 +1042,7 @@ function plugin_bbcode_undoHtml($text) {
 			// html_entity_decode($content)
 			$content = str_replace('&lt;', '<', $content);
 			$content = str_replace('&gt;', '>', $content);
-			$text = str_replace('<!-- #HTML_BLOCK_' . $n . '# -->', $content, $text);
+			$text = str_replace("<!-- #HTML_BLOCK_" . $n . "# -->", $content, $text);
 		}
 		$GLOBALS ['BBCODE_TEMP_HTML'] = array();
 	}

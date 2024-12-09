@@ -26,7 +26,7 @@ class tpl_deleter extends fs_filelister {
 	function _checkFile($directory, $file) {
 		if ($file != CACHE_FILE) {
 			array_push($this->_list, $file);
-			fs_delete("$directory/$file");
+			fs_delete($directory . "/" . $file);
 		}
 		// trigger_error($file, E_USER_NOTICE);
 		return 0;
@@ -45,7 +45,7 @@ class s_entry_crawler extends fs_filelister {
 	}
 
 	function _checkFile($directory, $file) {
-		$f = "$directory/$file";
+		$f = $directory . "/" . $file;
 		if (is_dir($f) && ctype_digit($file)) {
 			return 1;
 		}
@@ -54,7 +54,7 @@ class s_entry_crawler extends fs_filelister {
 			$id = basename($file, EXT);
 			$arr = entry_parse($id, true);
 
-			echo "[POST] $id => {$arr['subject']}\n";
+			echo "[POST] " . $id . " => " . $arr['subject'] . "\n";
 			$this->index->add($id, $arr);
 
 			return 0;
@@ -143,7 +143,7 @@ class admin_maintain_default extends AdminPanelAction {
 					echo "ENTERING LOWRES MODE\n\n";
 
 					if (file_exists(INDEX_DIR)) {
-						echo "BACKUP INDEX to $movedir\n";
+						echo "BACKUP INDEX to " . $movedir . "\n";
 						$ret = @rename($oldidx, $movedir);
 						if (!$ret) {
 							die("Cannot backup old index. STOP. \nDid you just purge the cache? If so, the index was in use to create a new cache. This is done now, please simply reload the current page.");
@@ -176,8 +176,8 @@ class admin_maintain_default extends AdminPanelAction {
 				{
 					$tpldel = new tpl_deleter();
 					unset($tpldel);
-					$this->smarty->cache_dir = CACHE_DIR . 'cache/';
-					$this->smarty->caching = 0;
+
+					$this->smarty->caching = false;
 					$this->smarty->clearAllCache();
 					$this->smarty->clearCompiledTemplate();
 					$this->smarty->compile_check = true;
@@ -186,6 +186,10 @@ class admin_maintain_default extends AdminPanelAction {
 
 					if (!file_exists(CACHE_DIR)) {
 						fs_mkdir(CACHE_DIR);
+					}
+
+					if (!file_exists(COMPILE_DIR)) {
+						fs_mkdir(COMPILE_DIR);
 					}
 
 					// rebuilds the list of recent comments if LastComments plugin is active

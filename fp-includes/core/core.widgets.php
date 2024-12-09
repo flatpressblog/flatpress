@@ -55,7 +55,7 @@ class widget_indexer extends fs_filelister {
 			if (is_callable($var)) {
 				$content = call_user_func_array($var, $params);
 				if (!isset($content ['id'])) {
-					$content ['id'] = "widget-$newid";
+					$content ['id'] = "widget-" . $newid;
 				}
 			} /*
 			   * else $content = array(

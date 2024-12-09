@@ -29,10 +29,10 @@ class Smarty_Resource_Plugin extends Smarty_Resource_Custom {
 		$path = null;
 
 		$f = explode('/', $templateName);
-		$path = ABS_PATH . PLUGINS_DIR . "{$f[0]}/tpls/{$f[1]}.tpl";
+		$path = ABS_PATH . PLUGINS_DIR . $f [0] . "/tpls/" . $f [1] . ".tpl";
 
 		return $path;
 	}
 
 }
-
+?>

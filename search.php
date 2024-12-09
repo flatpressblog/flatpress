@@ -11,7 +11,7 @@ if (!defined('MOD_INDEX')) {
 
 function search_title($title, $sep) {
 	global $lang;
-	return "$title $sep {$lang['search']['head']}";
+	return $title . " " . $sep . " " . $lang ['search'] ['head'];
 }
 
 function search_display() {

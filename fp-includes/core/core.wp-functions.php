@@ -18,7 +18,7 @@ function wp_nonce_url($actionurl, $action = -1) {
  * @param int $action
  */
 function wp_nonce_field($action = -1) {
-	echo '<input type="hidden" name="_wpnonce" value="' . wp_create_nonce($action) . '" />';
+	echo '<input type="hidden" name="_wpnonce" value="' . wp_create_nonce($action) . '">';
 	wp_referer_field();
 }
 
@@ -27,15 +27,15 @@ function wp_nonce_field($action = -1) {
  */
 function wp_referer_field() {
 	$ref = wp_specialchars($_SERVER ['REQUEST_URI']);
-	echo '<input type="hidden" name="_wp_http_referer" value="' . $ref . '" />';
+	echo '<input type="hidden" name="_wp_http_referer" value="' . $ref . '">';
 	if (wp_get_original_referer()) {
 		$original_ref = wp_specialchars(stripslashes(wp_get_original_referer()));
-		echo '<input type="hidden" name="_wp_original_http_referer" value="' . $original_ref . '" />';
+		echo '<input type="hidden" name="_wp_original_http_referer" value="' . $original_ref . '">';
 	}
 }
 
 function wp_original_referer_field() {
-	echo '<input type="hidden" name="_wp_original_http_referer" value="' . wp_specialchars(stripslashes($_SERVER ['REQUEST_URI'])) . '" />';
+	echo '<input type="hidden" name="_wp_original_http_referer" value="' . wp_specialchars(stripslashes($_SERVER ['REQUEST_URI'])) . '">';
 }
 
 function wp_get_referer() {

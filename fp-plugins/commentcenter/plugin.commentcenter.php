@@ -195,7 +195,7 @@ class plugin_commentcenter {
 		$conf = $this->getConf();
 
 		$oldpost = $post;
-		$o = new FPDB_Query("id:{$entry},fullparse:false", null);
+		$o = new FPDB_Query("id:" . $entry . ",fullparse:false", null);
 		$arr = $o->getEntry();
 		$post = $arr [1];
 		$link = get_permalink($entry);
@@ -393,7 +393,7 @@ class plugin_commentcenter {
 	 * @return boolean: Can it saves the log?
 	 */
 	function logComment($comment, $entry, $why = '') {
-		$f = $this->pl_dir . "e{$entry}_c{$comment['id']}.txt";
+		$f = $this->pl_dir . "e" . $entry . "_c" . $comment ['id'] . ".txt";
 		if (!empty($why)) {
 			$comment ['log_reason'] = $why;
 		}
@@ -418,7 +418,7 @@ class plugin_commentcenter {
 		$subject = $lang ['plugin'] ['commentcenter'] ['mail_subj'];
 		$subject = sprintf($subject, $fp_config ['general'] ['title']);
 
-		$comm_mail = empty($comment ['email']) ? '' : "<{$comment['email']}>";
+		$comm_mail = empty($comment ['email']) ? '' : "<" . $comment ['email'] . ">";
 		$from_mail = $fp_config ['general'] ['email'];
 
 		$text = $lang ['plugin'] ['commentcenter'] ['mail_text'];
@@ -473,7 +473,7 @@ class commentcenter_list extends fs_filelister {
 		$list = array();
 		if (!is_null($entry) && @is_array($this->_list [$entry])) {
 			foreach ($this->_list [$entry] as $commentid) {
-				include $this->_directory . "/e{$entry}_c{$commentid}.txt";
+				include $this->_directory . "/e" . $entry . "_c" . $commentid . ".txt";
 				if (empty($comment ['log_reason'])) {
 					$comment ['log_reason'] = 'nd';
 				}
@@ -495,3 +495,4 @@ if (defined('MOD_ADMIN_PANEL')) {
 	include dirname(__FILE__) . '/inc/jslang.php';
 	include dirname(__FILE__) . '/inc/editor.php';
 }
+?>

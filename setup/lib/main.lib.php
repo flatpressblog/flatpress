@@ -71,7 +71,7 @@ function getstep(&$id) {
 			$i = intval($x [1]);
 		}
 
-		@include ("./setup/lib/{$STEPS[$i]}.lib.php");
+		@include("./setup/lib/" . $STEPS [$i] . ".lib.php");
 		if (!function_exists('check_step')) :
 
 			function check_step() {
@@ -85,7 +85,7 @@ function getstep(&$id) {
 				fs_delete(SETUPTEMP_FILE);
 				io_write_file(LOCKFILE, "locked");
 			} else {
-				if ($i > 0 && !@io_write_file(SETUPTEMP_FILE, "$setupid,$i")) {
+				if ($i > 0 && !@io_write_file(SETUPTEMP_FILE, $setupid . "," . $i)) {
 					$err [] = $lang ['err'] ['writeerror'];
 				}
 			}
@@ -166,7 +166,7 @@ function print_err() {
 	if (isset($err)) {
 		echo $lang ['err'] ['www'];
 		foreach ($err as $val) {
-			echo "<li>$val</li>";
+			echo "<li>" . $val . "</li>";
 		}
 		echo "</ul>";
 	}

@@ -58,7 +58,7 @@ function theme_loadsettings() {
 					$fp_config ['general'] ['style'] = $theme ['default_style'];
 				}
 
-				include (THEMES_DIR . THE_THEME . "/{$fp_config['general']['style']}/style.conf.php");
+				include(THEMES_DIR . THE_THEME . "/" . $fp_config ['general'] ['style'] . "/style.conf.php");
 
 				$theme ['style'] = $style;
 			} else {

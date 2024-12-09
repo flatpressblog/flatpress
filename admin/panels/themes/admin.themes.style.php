@@ -8,7 +8,7 @@
 		}
 
 		function _checkFile($d, $f) {
-			$p = "$d/$f";
+			$p = $d . '/' . $f;
 			if (is_dir($p) && file_exists($p . '/style.conf.php')) {
 				$this->_list[] = $f;
 			}
@@ -39,7 +39,7 @@
 				// continue;
 
 				$style = array();
-				$d = "$based/$sty";
+				$d = $based . '/'. $sty;
 
 				$f = $d . '/style.conf.php';
 
@@ -73,6 +73,8 @@
 				if (theme_style_exists($id)) {
 					$fp_config ['general'] ['style'] = $id;
 
+					$this->cleartplcache();
+
 					$return = config_save() ? 1 : -1;
 				} else {
 					$return = -2;
@@ -84,19 +86,63 @@
 			}
 		}
 
-
 		function onerror() {
 			$this->main();
 			return 0;
 		}
 
 		function cleartplcache() {
-			// if theme was switched, clear tpl cache
+			global $smarty;
 
-			$tpl = new tpl_deleter();
+			try {
+				$tpl = new tpl_deleter();
+				unset($tpl);
 
-			$tpl->getList();
+				$smarty->clearAllCache();
+				$smarty->clearCompiledTemplate();
+				$smarty->compile_check = true;
+				$smarty->force_compile = true;
 
+				if (!file_exists(CACHE_DIR)) {
+					fs_mkdir(CACHE_DIR);
+				}
+
+				if (!file_exists(COMPILE_DIR)) {
+					fs_mkdir(COMPILE_DIR);
+				}
+
+				// Rebuilds the list of recent comments if LastComments plugin is active
+				if (function_exists('plugin_lastcomments_cache')) {
+					$coms = Array();
+
+					$q = new FPDB_Query(array(
+						'fullparse' => false,
+						'start' => 0,
+						'count' => -1
+					), null);
+					while ($q->hasmore()) {
+						list ($id, $e) = $q->getEntry();
+						$obj = new comment_indexer($id);
+						foreach ($obj->getList() as $value) {
+							$coms [$value] = $id;
+						}
+						ksort($coms);
+						$coms = array_slice($coms, -LASTCOMMENTS_MAX);
+					}
+					foreach ($coms as $cid => $eid) {
+						$c = comment_parse($eid, $cid);
+						plugin_lastcomments_cache($eid, array(
+							$cid,
+							$c
+						));
+					}
+				}
+
+				return true;
+			} catch (Exception $e) {
+				trigger_error("Error when clearing the cache: " . $e->getMessage(), E_USER_WARNING);
+				return false;
+			}
 		}
 
 	}

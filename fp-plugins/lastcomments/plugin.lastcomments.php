@@ -49,10 +49,10 @@ function plugin_lastcomments_widget() {
 			}
 
 			$content .= "<li>
-			<blockquote class=\"comment-quote\" cite=\"comments.php?entry={$arr['entry']}#{$arr['id']}\">
-			{$arr['content']}
-			<p><a href=\"" . get_comments_link($arr ['entry']) . "#{$arr['id']}\">{$arr['name']} - {$entry['subject']}</a></p>
-			</blockquote></li>\n";
+				<blockquote class=\"comment-quote\" cite=\"comments.php?entry=" . $arr ['entry'] . "#" . $arr ['id'] . "\">
+				" . $arr ['content'] . "
+				<p><a href=\"" . get_comments_link($arr ['entry']) . "#" . $arr ['id'] . "\">" . $arr ['name'] . " - " . $entry ['subject'] . "</a></p>
+				</blockquote></li>\n";
 		}
 		$subject = $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'];
 	}

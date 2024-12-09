@@ -7,6 +7,8 @@ function check_step() {
 
 		$r = fs_mkdir(CACHE_DIR);
 
+		$r = fs_mkdir(COMPILE_DIR);
+
 		$r &= fs_mkdir(INDEX_DIR);
 
 		$r &= fs_copy(CONFIG_DEFAULT, CONFIG_FILE);

@@ -39,6 +39,6 @@ add_action('wp_footer', 'plugin_lightbox2_footer');
 function plugin_lightbox2_hook($popup, $abspath) {
 	global $lightbox_rel;
 	// the other $popup is just dropped
-	return $lightbox_rel ? "rel=\"lightbox[$lightbox_rel]\"" : ' rel="lightbox"';
+	return $lightbox_rel ? 'rel="lightbox[' . $lightbox_rel . ']"' : ' rel="lightbox"';
 }
 add_action('bbcode_img_popup', 'plugin_lightbox2_hook', 5, 2);

@@ -23,7 +23,7 @@ function plugin_commentcenter_jslang() {
 		$value=str_replace("\r", "\\r", $value);
 		$value=str_replace("\t", "\\t", $value);
 		$value=str_replace('"', '\\"', $value);
-		echo "\t'msg{$key}' : \"{$value}\",\n";
+		echo "\t'msg" . $key . "' : \"" . $value . "\",\n";
 	}
 
 	echo '}';
@@ -31,3 +31,4 @@ function plugin_commentcenter_jslang() {
 	die;
 }
 add_action('init', 'plugin_commentcenter_jslang');
+?>

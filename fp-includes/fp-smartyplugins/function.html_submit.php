@@ -39,10 +39,10 @@ function smarty_function_html_submit($params, &$smarty) {
 	$str = '<input type="submit" ';
 
 	foreach ($params as $key => $val) {
-		$str .= "{$key}=\"" . ($val) . "\" " ;
+		$str .= $key . "=\"" . ($val) . "\" ";
 	}
 
-	$str .= " />\n";
+	$str .= ">\n";
 	return $str;
 
 }

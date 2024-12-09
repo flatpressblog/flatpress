@@ -119,12 +119,12 @@ function login_main() {
 }
 
 function login_redirect($url, $secs = 0) {
-	echo '<meta http-equiv="refresh" content="' . "$secs;url=$url" . '" />';
+	echo '<meta http-equiv="refresh" content="' . $secs . ';url=' . $url . '">';
 }
 
 function login_title($title, $sep) {
 	global $lang;
-	return "$title $sep {$lang['login']['head']}";
+	return $title . " " . $sep . " " . $lang ['login'] ['head'];
 }
 
 add_filter('wp_title', 'login_title', 10, 2);

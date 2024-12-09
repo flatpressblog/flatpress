@@ -17,7 +17,7 @@ class entry_cached_index extends caching_SBPT {
 		$F = INDEX_DIR . 'index-' . $id_cat . '.dat';
 
 		if (!file_exists($F)) {
-			trigger_error("Can't find index '{$F}'", E_USER_ERROR);
+			trigger_error("Can't find index '" . $F . "'", E_USER_ERROR);
 		}
 
 		parent::__construct(fopen($F, 'rb'), fopen(INDEX_DIR . 'index.strings.dat', 'rb'), 256, $this->position, $this->nodesize, $this->keylen);
@@ -102,7 +102,7 @@ class entry_index {
 
 	function &get_index($cat = 0) {
 		if (!is_numeric($cat)) {
-			trigger_error("CAT must be an integer ($cat was given)", E_USER_ERROR);
+			trigger_error("CAT must be an integer (" . $cat . " was given)", E_USER_ERROR);
 		}
 		if (!isset($this->indices [$cat])) {
 			$f = INDEX_DIR . 'index-' . $cat . '.dat';
@@ -239,14 +239,14 @@ class entry_archives extends fs_filelister {
 		$this->_m = $m;
 		$this->_d = $d;
 
-		$this->_directory .= "$y/";
+		$this->_directory .= $y . "/";
 
 		if ($m) {
 
-			$this->_directory .= "$m/";
+			$this->_directory .= $m . "/";
 
 			if ($d) {
-				$this->_filter = "entry$y$m$d*";
+				$this->_filter = "entry" . $y . $m . $d . "*";
 			}
 		}
 
@@ -254,7 +254,7 @@ class entry_archives extends fs_filelister {
 	}
 
 	function _checkFile($directory, $file) {
-		$f = "$directory/$file";
+		$f = $directory . "/" . $file;
 		if (is_dir($f) && ctype_digit($file)) {
 			return 1;
 		}
@@ -367,7 +367,7 @@ function &entry_cached_index($id_cat) {
 function entry_keytoid($key) {
 	$date = substr($key, 0, 6);
 	$time = substr($key, 6);
-	return "entry{$date}-{$time}";
+	return "entry" . $date . "-" . $time;
 }
 
 function entry_idtokey($id) {
@@ -419,9 +419,9 @@ function entry_dir($id, $month_only = false) {
 	}
 	$date = date_from_id($id);
 	if ($month_only) {
-		$f = CONTENT_DIR . "{$date['y']}/{$date['m']}/";
+		$f = CONTENT_DIR . $date ['y'] . "/" . $date ['m'] . "/";
 	} else {
-		$f = CONTENT_DIR . "{$date['y']}/{$date['m']}/$id";
+		$f = CONTENT_DIR . $date ['y'] . "/" . $date ['m'] . "/" . $id;
 	}
 	return $f;
 }

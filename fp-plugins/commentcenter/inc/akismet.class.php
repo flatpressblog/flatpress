@@ -133,7 +133,13 @@ class AkismetHttpClient extends AkismetObject {
 		$this->_connect();
 
 		if ($this->con && !$this->isError(AKISMET_SERVER_NOT_FOUND)) {
-			$request = strToUpper($type) . " /{$this->akismetVersion}/$path HTTP/1.0\r\n" . "Host: " . ((!empty($this->apiKey)) ? $this->apiKey . "." : null) . "{$this->host}\r\n" . "Content-Type: application/x-www-form-urlencoded; charset=utf-8\r\n" . "Content-Length: " . strlen($request) . "\r\n" . "User-Agent: Akismet PHP4 Class\r\n" . "\r\n" . $request;
+			$request = strToUpper($type) . " /" . $this->akismetVersion . "/" . $path . " HTTP/1.0\r\n" . //
+				"Host: " . ((!empty($this->apiKey)) ? $this->apiKey . "." : null) . $this->host . "\r\n" . //
+				"Content-Type: application/x-www-form-urlencoded; charset=utf-8\r\n" . //
+				"Content-Length: " . strlen($request) . "\r\n" . //
+				"User-Agent: Akismet PHP4 Class\r\n" . //
+				"\r\n" . $request;
+
 			$response = "";
 
 			@fwrite($this->con, $request);

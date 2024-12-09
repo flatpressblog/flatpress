@@ -35,9 +35,9 @@ function plugin_commentcenter_editor() {
 
 	echo "<fieldset id=\"commentcenter\">\n";
 	echo "<legend>Comment Center</legend>\n<ul>\n<li>";
-	echo "<a href=\"{$policies}\" title=\"{$plang['simple_edit']}\">";
-	echo "{$plang['simple_pre']}{$plang[$do]}</a></li>\n";
-	echo "<li><a href=\"{$manage}\">{$plang['simple_manage']}</a></li>\n";
+	echo "<a href=\"" . $policies . "\" title=\"" . $plang ['simple_edit'] . "\">";
+	echo $plang ['simple_pre'] . $plang [$do] . "</a></li>\n";
+	echo "<li><a href=\"" . $manage . "\">" . $plang ['simple_manage'] . "</a></li>\n";
 	echo "\n</ul></fieldset>\n";
 }
 add_filter('simple_edit_form', 'plugin_commentcenter_editor');

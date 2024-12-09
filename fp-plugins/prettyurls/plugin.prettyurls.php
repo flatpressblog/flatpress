@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: PrettyURLs
- * Version: 3.0.1
+ * Version: 3.0
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -85,7 +85,7 @@ class Plugin_PrettyURLs {
 		$date = date_from_id($id);
 		// yeah, hackish, I know...
 
-		return $this->baseurl . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
+		return $this->baseurl . "20" . $date ['y'] . "/" . $date ['m'] . "/" . $date ['d'] . "/" . $title . "/";
 	}
 
 	function commentlink($str, $id) {
@@ -94,40 +94,40 @@ class Plugin_PrettyURLs {
 	}
 
 	function feedlink($str, $type) {
-		return $this->baseurl . "feed/{$type}/";
+		return $this->baseurl . "feed/" . $type . "/";
 	}
 
 	function commentsfeedlink($str, $type, $id) {
 		$link = $this->commentlink($str, $id);
-		return $link . "feed/{$type}/";
+		return $link . "feed/" . $type . "/";
 	}
 
 	function staticlink($str, $id) {
-		return $this->baseurl . "$id/";
+		return $this->baseurl . $id . "/";
 	}
 
 	function categorylink($str, $catid) {
 		if (PRETTYURLS_TITLES) {
 			if (@$this->categories [$catid]) {
-				return $this->baseurl . "category/{$this->categories[$catid]}/";
+				return $this->baseurl . "category/" . $this->categories[$catid] . "/";
 			} else {
 				return $str;
 			}
 		} else {
-			return $this->baseurl . "category/{$catid}/";
+			return $this->baseurl . "category/" . $catid . "/";
 		}
 	}
 
 	function yearlink($str, $y) {
-		return $this->baseurl . "20$y/";
+		return $this->baseurl . "20" . $y . "/";
 	}
 
 	function monthlink($str, $y, $m) {
-		return $this->yearlink($str, $y) . "$m/";
+		return $this->yearlink($str, $y) . $m . "/";
 	}
 
 	function daylink($str, $y, $m, $d) {
-		return $this->monthlink($str, $y, $m) . "$d/";
+		return $this->monthlink($str, $y, $m) . $d . "/";
 	}
 
 	function cache_create() {
@@ -145,7 +145,6 @@ class Plugin_PrettyURLs {
 			'fullparse' => false
 		), null);
 
-		// foreach ($entries as $id => $contents) {
 		while ($o->hasMore()) {
 			list ($id, $contents) = $o->getEntry();
 			$date = date_from_id($id);
@@ -153,7 +152,6 @@ class Plugin_PrettyURLs {
 			$md5 = md5(sanitize_title($contents ['subject']));
 			$this->index [$date ['y']] [$date ['m']] [$date ['d']] [$md5] = $id;
 		}
-		// }
 
 		$this->cache_save();
 		io_write_file(PRETTYURLS_CACHE, 'dummy');
@@ -504,7 +502,7 @@ class Plugin_PrettyURLs {
 			} else {
 				$title = $id;
 			}
-			$url = $this->baseurl . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
+			$url = $this->baseurl . "20" . $date ['y'] . "/" . $date ['m'] . "/" . $date ['d'] . "/" . $title . "/";
 
 			if ($v > 0) {
 				$caption = $caption . ' &raquo; ';
@@ -652,7 +650,7 @@ if (class_exists('AdminPanelAction')) {
 		);
 
 		function setup() {
-			$this->smarty->assign('admin_resource', "plugin:prettyurls/admin.plugin.prettyurls");
+			$this->smarty->assign('admin_resource', 'plugin:prettyurls/admin.plugin.prettyurls');
 			$this->_config ['mode'] = plugin_getoptions('prettyurls', 'mode');
 			$this->smarty->assign('pconfig', $this->_config);
 			$blogroot = BLOG_ROOT;

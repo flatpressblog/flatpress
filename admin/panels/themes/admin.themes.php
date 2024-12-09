@@ -17,12 +17,13 @@
 
 	}
 
+
 	function admin_theme_data($theme_file, $theme_id, $defprev) {
 
 		global $fp_config;
 
 		// Optional multi-language support for themes and styles
-		$langId = $fp_config ['locale'] ['lang'];
+		$langId = $fp_config ['locale'] ['lang'] ?? 'en-us';
 
 		$langConfFile = LANG_DIR . $langId . '/lang.conf.php';
 		if (file_exists($langConfFile)) {
@@ -146,7 +147,6 @@
 			$this->smarty->assign('available_themes', $this->theme_list());
 		}
 
-
 		function doselect($id) {
 			global $fp_config;
 			//$id = isset($_GET['select'])? $_GET['select'] : null;
@@ -160,7 +160,10 @@
 					//$t = theme_loadsettings();
 					//$fp_config['general']['style'] = $t['default_style'];
 
+					$this->cleartplcache();
+
 					$return = config_save() ? 1 : -1;
+
 				} else {
 					$return = -2;
 
@@ -180,13 +183,76 @@
 		}
 
 		function cleartplcache() {
-				// if theme was switched, clear tpl cache
+			global $smarty;
 
+			try {
 				$tpl = new tpl_deleter();
+				unset($tpl);
 
-				$tpl->getList();
+				$smarty->clearAllCache();
+				$smarty->clearCompiledTemplate();
+				$smarty->compile_check = true;
+				$smarty->force_compile = true;
+
+				if (!file_exists(CACHE_DIR)) {
+					fs_mkdir(CACHE_DIR);
+				}
+
+				if (!file_exists(COMPILE_DIR)) {
+					fs_mkdir(COMPILE_DIR);
+				}
+
+				// Rebuilds the list of recent comments if LastComments plugin is active
+				if (function_exists('plugin_lastcomments_cache')) {
+					$coms = Array();
+
+					$q = new FPDB_Query(array(
+						'fullparse' => false,
+						'start' => 0,
+						'count' => -1
+					), null);
+					while ($q->hasmore()) {
+						list ($id, $e) = $q->getEntry();
+						$obj = new comment_indexer($id);
+						foreach ($obj->getList() as $value) {
+							$coms [$value] = $id;
+						}
+						ksort($coms);
+						$coms = array_slice($coms, -LASTCOMMENTS_MAX);
+					}
+					foreach ($coms as $cid => $eid) {
+						$c = comment_parse($eid, $cid);
+						plugin_lastcomments_cache($eid, array(
+							$cid,
+							$c
+						));
+					}
+				}
+
+				return true;
+			} catch (Exception $e) {
+				trigger_error("Error when clearing the cache: " . $e->getMessage(), E_USER_WARNING);
+				return false;
+			}
+		}
+
+	}
 
 
+	class tpl_deleter extends fs_filelister {
+
+		function __construct() {
+
+			$this->_directory = CACHE_DIR;
+			parent::__construct();
+		}
+
+		function _checkFile($directory, $file) {
+			if ($file != CACHE_FILE) {
+				array_push($this->_list, $file);
+				fs_delete($directory . "/" . $file);
+			}
+			return 0;
 		}
 
 	}
