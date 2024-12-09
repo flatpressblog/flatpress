@@ -1,12 +1,18 @@
 # Under development: FlatPress 1.4
 
 ## General
-- Template engine Smarty updated to version 4.5.5 with PHP 8.4 support ([#376](https://github.com/flatpressblog/flatpress/pull/376), [#390](https://github.com/flatpressblog/flatpress/issues/390))
 - The fixed "Stats" panel has been converted into a plugin ([#363](https://github.com/flatpressblog/flatpress/issues/363))
 - FlatPress anonymizes the IPv4 address of the visitor. IPv6 addresses are replaced by a hash. ([#105](https://github.com/flatpressblog/flatpress/issues/105))
-- Login page: Instructs search engines not to index the page ([#450](https://github.com/flatpressblog/flatpress/pull/450))
-- Admin area: Optional natural sorting for static pages (Hidden improvement suggestion from [NHWS](https://nhws.localinfo.jp/))
 - The determination of the time format has been made more robust
+
+## Changes
+- Template engine:
+  - Smarty updated to version 4.5.5 with PHP 8.4 support ([#376](https://github.com/flatpressblog/flatpress/pull/376), [#390](https://github.com/flatpressblog/flatpress/issues/390))
+- Login page:
+  - Instructs search engines not to index the page ([#450](https://github.com/flatpressblog/flatpress/pull/450))
+- Admin area:
+  - Optional natural sorting for static pages (Hidden improvement suggestion from [NHWS](https://nhws.localinfo.jp/))
+  - The cache is automatically emptied when the theme or style is changed.
 
 ## Bugfixes
 - Contact form / comment function:
