@@ -17,13 +17,15 @@
 ## Bugfixes
 - Contact form / comment function:
   - Entering the website is now correct without http(s):// ([#419](https://github.com/flatpressblog/flatpress/issues/419))
-  - Positive feedback when the contact form or comment form has been sent correctly. ([#420](https://github.com/flatpressblog/flatpress/issues/420))
+  - Compatibility to PHP with OPcache:
+    - Positive feedback when the contact form or comment form has been sent correctly. ([#420](https://github.com/flatpressblog/flatpress/issues/420))
 - Atom feed: Fixes parsing error ([#429](https://github.com/flatpressblog/flatpress/issues/429))
 - Admin area:
   - Charset dropdown selection instead of an input field ([#340](https://github.com/flatpressblog/flatpress/issues/340))
   - The author entered in the configuration is now the author of the entries and static pages ([#483](https://github.com/flatpressblog/flatpress/issues/483))
-  - Changes in input fields and drop-down menus are immediately reflected in the configuration panel. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
-  - Activating or deactivating plugins are immediately reflected in the plugin management panel. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
+  - Compatibility to PHP with OPcache:
+    - Changes in input fields and drop-down menus are immediately reflected in the configuration panel. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
+    - Activating or deactivating plugins are immediately reflected in the plugin management panel. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
 
 ## Security
 - The session-cookie are now somewhat more secure against CSRF attacks. ([#481](https://github.com/flatpressblog/flatpress/issues/481))
@@ -77,7 +79,8 @@
   - The set language is now taken into account when determining the first day of the week. ([#73](https://github.com/flatpressblog/flatpress/issues/73))
   - Links from single-digit months are now always two-digit.
 - BlockParser plugin: Update to version 1.0.1
-  - The list of activated pages is displayed immediately after activation/deactivation. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
+  - Compatibility to PHP with OPcache:
+    - The list of activated pages is displayed immediately after activation/deactivation. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
 
 ### Security
 - SEO Meta Tag Info plugin:
