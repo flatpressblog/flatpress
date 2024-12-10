@@ -8,6 +8,13 @@ utils_nocache_headers();
 
 define('MOD_ADMIN_PANEL', 1);
 
+// Deactivate OPcache when the theme panel is called up
+if (function_exists('opcache_get_status') && ini_get('opcache.enable')) {
+	if (isset($_GET ['p']) && $_GET ['p'] === 'themes') {
+		ini_set('opcache.enable', 0);
+	}
+}
+
 function wp_nonce_ays() {
 	die('We apologize, an error occurred.');
 }
@@ -38,15 +45,15 @@ function main() {
 		die();
 	}
 
-	$panelprefix = "admin.$panel";
-	$panelpath = ADMIN_DIR . "panels/$panel/$panelprefix.php";
+	$panelprefix = 'admin.' . $panel;
+	$panelpath = ADMIN_DIR . 'panels/' . $panel . '/' . $panelprefix . '.php';
 
 	$fp_admin = null;
 
 	if (file_exists($panelpath)) {
 
 		include ($panelpath);
-		$panelclass = "admin_$panel";
+		$panelclass = 'admin_' . $panel;
 
 		if (!class_exists($panelclass)) {
 			trigger_error("No class defined for requested panel", E_USER_ERROR);
@@ -71,22 +78,22 @@ function main() {
 
 	define('ADMIN_PANEL_ACTION', $action);
 	$smarty->assign('action', $action);
-	$panel_url = BLOG_BASEURL . "admin.php?p={$panel}";
-	$action_url = $panel_url . "&action={$action}";
+	$panel_url = BLOG_BASEURL . 'admin.php?p=' . $panel;
+	$action_url = $panel_url . '&action=' . $action;
 	$smarty->assign('panel_url', $panel_url);
 	$smarty->assign('action_url', $action_url);
 
 	if (!empty($_POST)) {
-		check_admin_referer("admin_{$panel}_{$action}");
+		check_admin_referer('admin_' . $panel . '_' . $action);
 	}
 
-	$smarty->assign('success', sess_remove("success_{$panel}"));
+	$smarty->assign('success', sess_remove('success_' . $panel));
 	$retval = $fp_admin_action->exec();
 
 	if ($retval > 0) { // if has REDIRECT option
 	                   // clear postdata by a redirect
 
-		sess_add("success_{$panel}", $smarty->getTemplateVars('success'));
+		sess_add('success_' . $panel, $smarty->getTemplateVars('success'));
 		$smarty->getTemplateVars('success');
 
 		$to_action = $retval > 1 ? ('&action=' . $action) : '';
@@ -99,7 +106,7 @@ function main() {
 			}
 		}
 
-		$url = "admin.php?p={$panel}{$to_action}{$with_mod}{$with_arguments}";
+		$url = 'admin.php?p=' . $panel . $to_action . $with_mod . $with_arguments;
 		utils_redirect($url);
 	}
 }
@@ -107,9 +114,9 @@ function main() {
 // smarty tag
 function admin_filter_action($string, $action) {
 	if (strpos($string, '?') === false) {
-		return $string .= "?action={$action}";
+		return $string .= '?action=' . $action;
 	} else {
-		return $string .= wp_specialchars("&action={$action}");
+		return $string .= wp_specialchars('&action=' . $action);
 	}
 }
 
@@ -117,9 +124,9 @@ function admin_filter_action($string, $action) {
 function admin_filter_command($string, $cmd, $val) {
 	global $panel, $action;
 
-	$arg = $cmd ? "&{$cmd}" : $cmd;
+	$arg = $cmd ? '&' . $cmd : $cmd;
 
-	return wp_nonce_url("{$string}{$arg}={$val}", "admin_{$panel}_{$action}_{$cmd}_{$val}");
+	return wp_nonce_url($string . $arg . '=' . $val, 'admin_' . $panel . '_' . $action . '_' . $cmd . '_' . $val);
 }
 
 function admin_panelstrings($panelprefix) {
@@ -138,7 +145,7 @@ function admin_panel_title($title, $sep) {
 	global $lang, $panel;
 
 	$t = @$lang ['admin'] ['panels'] [$panel];
-	$title = "$title $sep $t";
+	$title = $title . ' ' . $sep . ' ' . $t;
 	return $title;
 }
 
@@ -149,7 +156,7 @@ function showcontrolpanel($params, $smarty) {
 // html header
 function admin_title($title, $sep) {
 	global $lang;
-	return $title = "$title $sep {$lang['admin']['head']}";
+	return $title = $title . ' ' . $sep . ' ' . $lang ['admin'] ['head'];
 }
 
 add_filter('wp_title', 'admin_title', 10, 2);
@@ -157,7 +164,7 @@ add_filter('wp_title', 'admin_title', 10, 2);
 // setup admin_header
 function admin_header_default_action() {
 	global $panel, $action;
-	do_action("admin_{$panel}_{$action}_head");
+	do_action('admin_' . $panel . '_' . $action . '_head');
 }
 add_filter('admin_head', 'admin_header_default_action');
 

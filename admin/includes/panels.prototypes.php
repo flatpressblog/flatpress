@@ -56,25 +56,25 @@ class AdminPanel {
 
 		$this->smarty->assign('actionname', $action);
 
-		$class = get_class($this) . "_$action";
+		$class = get_class($this) . '_' . $action;
 
 		if (!class_exists($class)) {
 
 			$f = str_replace('_', '.', $class);
 
-			$fname = ADMIN_DIR . "panels/{$this->panelname}/$f.php";
+			$fname = ADMIN_DIR . 'panels/' . $this->panelname . '/' . $f . '.php';
 
 			if (file_exists($fname)) {
 				include ($fname);
 
 				if (!class_exists($class)) {
-					trigger_error("No classes for action $action.", E_USER_ERROR);
+					trigger_error('No classes for action ' . $action . '.', E_USER_ERROR);
 				}
 
 				$obj = new $class($this->smarty);
 				return $obj;
 			} else {
-				trigger_error("No script found for action $action", E_USER_ERROR);
+				trigger_error('No script found for action ' . $action, E_USER_ERROR);
 			}
 		} else {
 			$obj = new $class($this->smarty);
@@ -118,7 +118,7 @@ class AdminPanelAction {
 		}
 
 		$this->setup();
-		do_action("admin_{$panel}_{$action}_setup");
+		do_action('admin_' . $panel . '_' . $action . '_setup');
 
 		$result = 0; // if !=0, defaultaction for this panel is called
 
@@ -127,17 +127,17 @@ class AdminPanelAction {
 				foreach ($this->commands as $cmd) {
 					if (isset($_GET [$cmd])) {
 						$result = $this->docommand($cmd, $_GET [$cmd]);
-						return apply_filters("admin_{$panel}_{$action}_{$cmd}_{$_GET[ $cmd ]}", $result);
+						return apply_filters('admin_' . $panel . '_' . $action . '_' . $cmd . '_' . $_GET [$cmd], $result);
 						// return $result;
 					}
 				}
 			}
 
 			$result = $this->main();
-			do_action("admin_{$panel}_{$action}_main");
+			do_action('admin_' . $panel . '_' . $action . '_main');
 			lang_load($this->langres);
 		} else {
-			$data = apply_filters("admin_{$panel}_{$action}_onsubmit", null);
+			$data = apply_filters('admin_' . $panel . '_' . $action . '_onsubmit', null);
 			$result = $this->onsubmit($data);
 		}
 
@@ -167,9 +167,9 @@ class AdminPanelAction {
 		$valid_evts = array_intersect(array_keys($_POST), $this->events);
 
 		if ($the_event = array_pop($valid_evts)) {
-			$event = "on{$the_event}";
+			$event = 'on' . $the_event;
 			if (method_exists($this, $event)) {
-				$data = apply_filters("admin_{$panel}_{$action}_{$event}", $data);
+				$data = apply_filters('admin_' . $panel . '_' . $action . '_' . $event, $data);
 				$returnvalue = call_user_func(array(
 					&$this,
 					$event
@@ -183,8 +183,8 @@ class AdminPanelAction {
 	function docommand($the_cmd, $the_val) {
 		global $panel, $action;
 
-		check_admin_referer("admin_{$panel}_{$action}_{$the_cmd}_{$the_val}");
-		$cmd = "do{$the_cmd}";
+		check_admin_referer('admin_' . $panel . '_' . $action . '_' . $the_cmd . '_' . $the_val);
+		$cmd = 'do' . $the_cmd;
 
 		if (method_exists($this, $cmd)) {
 			return call_user_func(array(
@@ -274,7 +274,7 @@ class AdminPanelActionValidated extends AdminPanelAction {
 		} else {
 			$this->smarty->assign('error', $errors);
 
-			$result = apply_filters("admin_{$panel}_{$action}_onerror", $this->onerror());
+			$result = apply_filters('admin_' . $panel . '_' . $action . '_onerror', $this->onerror());
 		}
 
 		return $result;
