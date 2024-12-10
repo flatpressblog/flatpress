@@ -390,7 +390,7 @@ function theme_smarty_modifier_date_rfc3339($timestamp = null) {
 add_filter('feed_link', 'theme_def_feed_link', 0, 2);
 
 function theme_def_feed_link($str, $type) {
-	return BLOG_BASEURL . "?x=feed:{$type}";
+	return BLOG_BASEURL . '?x=feed:' . $type;
 }
 
 function theme_feed_link($feed = 'rss2') {
@@ -400,7 +400,7 @@ function theme_feed_link($feed = 'rss2') {
 add_filter('post_comments_feed_link', 'theme_def_feed_comments_link', 0, 3);
 
 function theme_def_feed_comments_link($str, $feed, $id) {
-	return BLOG_BASEURL . "?x=entry:$id;comments:1;feed:{$feed}";
+	return BLOG_BASEURL . '?x=entry:' . $id . ';comments:1;feed:' . $feed;
 }
 
 function theme_comments_feed_link($feed, $id) {
@@ -413,7 +413,7 @@ function theme_comments_feed_link($feed, $id) {
 add_filter('post_link', 'theme_def_permalink', 0, 2);
 
 function theme_def_permalink($str, $id) {
-	return BLOG_BASEURL . "?x=entry:$id";
+	return BLOG_BASEURL . '?x=entry:' . $id;
 }
 
 function get_permalink($id) {
@@ -423,7 +423,7 @@ function get_permalink($id) {
 add_filter('comments_link', 'theme_def_commentlink', 0, 2);
 
 function theme_def_commentlink($str, $id) {
-	return BLOG_BASEURL . "?x=entry:$id;comments:1";
+	return BLOG_BASEURL . '?x=entry:' . $id . ';comments:1';
 }
 
 function get_comments_link($id) {
@@ -433,7 +433,7 @@ function get_comments_link($id) {
 add_filter('page_link', 'theme_def_staticlink', 0, 2);
 
 function theme_def_staticlink($str, $id) {
-	return BLOG_BASEURL . "?page=$id";
+	return BLOG_BASEURL . '?page=' . $id;
 }
 
 function theme_staticlink($id) {
@@ -443,7 +443,7 @@ function theme_staticlink($id) {
 add_filter('category_link', 'theme_def_catlink', 0, 2);
 
 function theme_def_catlink($str, $catid) {
-	return BLOG_BASEURL . "?x=cat:$catid";
+	return BLOG_BASEURL . '?x=cat:' . $catid;
 }
 
 function get_category_link($catid) {
@@ -487,7 +487,7 @@ function theme_entry_categories($cats, $link = true, $separator = ', ') {
 				if (array_intersect(array(
 					$k
 				), $cats)) {
-					$filed [] = $link ? "<a href=\"" . get_category_link($k) . "\">$c</a>" : $c;
+					$filed [] = $link ? '<a href="' . get_category_link($k) . '">' . $c . '</a>' : $c;
 				}
 			}
 		}
