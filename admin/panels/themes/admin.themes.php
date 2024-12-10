@@ -40,68 +40,57 @@
 
 		$lang_file = str_replace('conf', $langId, $thm_langFile);
 
-		//echo '<pre>' . $lang_file . '</pre>';
-		//echo '<pre>' . $theme_file . '</pre>';
-
 		if (file_exists($lang_file)) {
 			$theme_data = io_load_file($lang_file);
 		} else { // Backward compatibility
 			$theme_data = io_load_file($theme_file);
 		}
 
-		$theme_data = str_replace ('\r', '\n', $theme_data); 
+		$theme_data = str_replace('\r', '\n', $theme_data);
 		preg_match('/(Theme|Style) Name:(.*)/i', $theme_data, $theme_name);
 		preg_match('/(Theme|Style) URI:(.*)/i', $theme_data, $theme_uri);
 		preg_match('|Description:(.*)|i', $theme_data, $description);
 		preg_match('|Author:(.*)|i', $theme_data, $author_name);
 		preg_match('|Author URI:(.*)|i', $theme_data, $author_uri);
 		preg_match('|Template:(.*)|i', $theme_data, $template);
-		if (preg_match('|Version:(.*)|i', $theme_data, $version)) {
-			$version = trim($version [1]);
-		} else {
-			$version ='';
+		$version = '';
+		if (preg_match('|Version:(.*)|i', $theme_data, $version_match)) {
+			$version = trim($version_match [1] ?? '');
 		}
-		if (preg_match('|Status:(.*)|i', $theme_data, $status)) {
-			$status = trim($status [1]);
-		} else {
-			$status = 'publish';
+		$status = 'publish';
+		if (preg_match('|Status:(.*)|i', $theme_data, $status_match)) {
+			$status = trim($status_match [1] ?? 'publish');
 		}
 
-		$description = @wptexturize(trim($description [1]));
+		$description = wptexturize(trim($description [1] ?? ''));
 
-		$name = @$theme_name [1] ? $theme_name [2] : $theme_id;
-		$name = trim($name);
+		$name = !empty($theme_name [1]) ? trim($theme_name [2] ?? '') : $theme_id;
 		$theme = $name;
-		$theme_uri = trim(@$theme_uri [2]);
+		$theme_uri = trim($theme_uri [2] ?? '');
 
-		if ('' == @$author_uri [1]) {
-			$author = trim(@$author_name [1]);
+		if (empty($author_uri [1])) {
+			$author = trim($author_name [1] ?? '');
 		} else {
-			$author = '<a href="' . trim($author_uri [1]) . '">' . //
-				trim($author_name [1]) . '</a>';
+			$author = '<a href="' . trim($author_uri [1] ?? '') . '">' . trim($author_name [1] ?? '') . '</a>';
 		}
 
-		if (file_exists($f = dirname($theme_file). '/preview.png')) {
-			$prev = $f;
-		} else {
-			$prev = $defprev;
-		}
+		$prev = file_exists($f = dirname($theme_file) . '/preview.png') ? $f : $defprev;
 
 		//$theme['name'] = isset($theme['name'])? $theme['name'] : ($thm);
 
-		return 
-			array( 	'name' => $name, 
-					'id'   => $theme_id,
-					'title' => $theme, 
-					'www' => $theme_uri, 
-					'description' => $description, 
-					'author' => $author, 
-					'version' => $version, 
-					'template' => $template, 
-					'status' => $status,
-					'preview' => $prev
-			);
-		}
+		return [
+			'name' => $name,
+			'id' => $theme_id,
+			'title' => $theme,
+			'www' => $theme_uri,
+			'description' => $description,
+			'author' => $author,
+			'version' => $version,
+			'template' => $template,
+			'status' => $status,
+			'preview' => $prev,
+		];
+	}
 
 
 	class admin_themes_default extends AdminPanelAction {
