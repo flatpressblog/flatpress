@@ -862,17 +862,25 @@ function plugin_bbcode_init_toolbar() {
 	global $_FP_SMARTY;
 	$lang = lang_load('plugin:bbcode');
 	$selection = $lang ['admin'] ['plugin'] ['bbcode'] ['editor'] ['selection'];
-	// get all available images
+
+	// Get all available images
 	$indexer = new fs_filelister(IMAGES_DIR);
-	$imageslist = $indexer->getList();
-	// sort by name
+	$imageslist = array_filter($indexer->getList(), function($file) {
+		// Exclude hidden files
+		return substr(basename($file), 0, 1) !== '.';
+	});
+	// Sort by name
 	sort($imageslist);
 	array_unshift($imageslist, $selection);
 	$_FP_SMARTY->assign('images_list', $imageslist);
-	// get all available attachements
+
+	// Get all available attachments
 	$indexer = new fs_filelister(ATTACHS_DIR);
-	$attachslist = $indexer->getList();
-	// sort by name
+	$attachslist = array_filter($indexer->getList(), function($file) {
+		// Exclude hidden files
+		return substr(basename($file), 0, 1) !== '.';
+	});
+	// Sort by name
 	sort($attachslist);
 	array_unshift($attachslist, $selection);
 	$_FP_SMARTY->assign('attachs_list', $attachslist);
