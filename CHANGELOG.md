@@ -75,7 +75,7 @@
   - Two new functions which only output a “Next” or “Previous” link if there is at least one entry in the month. ([#128](https://github.com/flatpressblog/flatpress/issues/128))
   - The “Next”, “Previous” and “Day” links now always contain a 4-digit year.
   - The set language is now taken into account when determining the first day of the week. ([#73](https://github.com/flatpressblog/flatpress/issues/73))
-  - Single-digit months are now always two-digit.
+  - Links from single-digit months are now always two-digit.
 - BlockParser plugin: Update to version 1.0.1
   - The list of activated pages is displayed immediately after activation/deactivation. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
 
