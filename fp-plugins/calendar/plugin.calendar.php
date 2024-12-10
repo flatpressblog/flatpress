@@ -76,7 +76,7 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 			}
 			$calendar .= '<td' . ($classes ? ' class="' . htmlspecialchars($classes) . '">' : '>') . ($link ? '<a class="calendar-day" href="' . htmlspecialchars($link) . '">' . $content . '</a>' : $content) . '</td>';
 		} else {
-			$calendar .= "<td>$day</td>";
+			$calendar .= '<td>' . $day . '</td>';
 		}
 	}
 

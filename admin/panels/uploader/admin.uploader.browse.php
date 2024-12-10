@@ -22,22 +22,22 @@
 			$this->urldir = $pd;
 			$this->basepanelurl = //
 				BLOG_BASEURL . //
-					"admin.php?p=uploader&amp;action=browse&amp;dir=";
+					'admin.php?p=uploader&amp;action=browse&amp;dir=';
 			$this->thumburl = //
 				BLOG_BASEURL . //
-					'admin.php?p=uploader&amp;action=thumb&amp;f='; 
+					'admin.php?p=uploader&amp;action=thumb&amp;f=';
 			return parent::__construct($d);
 		}
 
 		function _checkFile($d, $f) {
 
-			$p = "{$d}{$f}";
+			$p = $d . $f;
 
 			if (is_dir($p)) {
-				$this->_dirlist[$f] = "{$this->basepanelurl}$f";
+				$this->_dirlist[$f] = $this->basepanelurl . $f;
 			} else {
 				$lbl = $f;
-				$this->_filelist[$f] = "{$this->thumburl}{$this->urldir}$f";
+				$this->_filelist[$f] = $this->thumburl . $this->urldir . $f;
 			}
 
 			return parent::_checkFile($d, $f);
@@ -106,11 +106,11 @@
 
 			$uploaded_files=array(); 
 
-			foreach ($_FILES ["upload"] ["error"] as $key => $error) {
+			foreach ($_FILES ['upload'] ['error'] as $key => $error) {
 
 				if ($error == UPLOAD_ERR_OK) {
-					$tmp_name = $_FILES ["upload"] ["tmp_name"] [$key];
-					$name = $_FILES ["upload"] ["name"] [$key];
+					$tmp_name = $_FILES ['upload'] ['tmp_name'][$key];
+					$name = $_FILES ['upload'] ['name'][$key];
 
 					$dir = ATTACHS_DIR;
 
@@ -122,7 +122,7 @@
 
 					$name = sanitize_title(substr($name, 0, -strlen($ext))) . $ext;
 
-					$target = "$dir/$name";
+					$target = $dir . '/' . $name;
 					@umask(022);
 					$success = move_uploaded_file($tmp_name, $target);
 					@chmod($target, FILE_PERMISSIONS);
