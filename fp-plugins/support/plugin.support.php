@@ -14,9 +14,12 @@ if (class_exists('AdminPanelAction')) {
 
 	function plugin_support_head() {
 		$plugindir = plugin_geturl('support');
+		$random_hex = RANDOM_HEX;
+
 		echo '
 			<!-- BOF support files -->
 			<link rel="stylesheet" type="text/css" href="' . $plugindir . 'res/support.css">
+			<script nonce="' . $random_hex . '" src="' . $plugindir . 'res/support.js"></script>
 			<!-- EOF support files -->';
 	}
 
@@ -30,31 +33,25 @@ if (class_exists('AdminPanelAction')) {
  			require CONFIG_DIR . 'plugins.conf.php';
 			global $fp_config;
 
-			$BASE_DIR = null;
-			$BASE_DIR = BASE_DIR;
+			$BASE_DIR = defined('BASE_DIR') ? BASE_DIR : null;
 
-			$setupfile = null;
-			$setupfile = BASE_DIR . '/setup.php';
+			$setupfile = $BASE_DIR !== null ? $BASE_DIR . '/setup.php' : null;
 
-			$LANG_DEFAULT = null;
-			$LANG_DEFAULT = LANG_DEFAULT;
+			$LANG_DEFAULT = defined('LANG_DEFAULT') ? LANG_DEFAULT : null;
 
-			$lang = null;
-			$fp_config ['locale'] ['lang'];
+			$langId = $fp_config ['locale'] ['lang'] ?? null;
 
-			$charset = null;
-			$charset = $fp_config ['locale'] ['charset'];
+			$charset = $fp_config ['locale'] ['charset'] ?? null;
 
-			$theme = null;
-			$theme = $fp_config ['general'] ['theme'];
+			$theme = $fp_config ['general'] ['theme'] ?? null;
 
-			$style = null;
-			$style = $fp_config ['general'] ['style'];
+			$style = $fp_config ['general'] ['style'] ?? null;
 
-			$BLOG_BASEURL = null;
-			$BLOG_BASEURL = $fp_config ['general'] ['www'];
+			$BLOG_BASEURL = $fp_config ['general'] ['www'] ?? null;
 
 			$lang = lang_load('plugin:support');
+
+			$support = [];
 
 			/**
 			 * prepare output "Setup"
@@ -67,7 +64,7 @@ if (class_exists('AdminPanelAction')) {
 
 			$support ['output_BASE_DIR'] = BASE_DIR . '</p>';
 
-			$support ['output_www'] = $fp_config ['general'] ['www'] . '</p>';
+			$support ['output_www'] = $BLOG_BASEURL . '</p>';
 
 			if ($theme) {
 				$support ['theme'] = $lang ['admin'] ['maintain'] ['support'] ['pos_theme'];
@@ -102,7 +99,7 @@ if (class_exists('AdminPanelAction')) {
 				$support ['LANG_DEFAULT'] = $lang ['admin'] ['maintain'] ['support'] ['neg_LANG_DEFAULT'];
 			}
 
-			if ($lang) {
+			if ($langId) {
 				$support ['lang'] = $lang ['admin'] ['maintain'] ['support'] ['pos_lang'];
 				$support ['output_lang'] = $fp_config ['locale'] ['lang'] . '</p>';
 			} else {
@@ -117,14 +114,14 @@ if (class_exists('AdminPanelAction')) {
 			}
 
 			$support ['global_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['global_date_time'];
-			if (function_exists("gmdate")) {
+			if (function_exists('gmdate')) {
 				$support ['output_global_date_time'] = gmdate('Y-m-d H:i:s') . '</p>';
 			} else {
 				$support ['output_local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['neg_global_date_time'];
 			}
 
 			$support ['local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['local_date_time'];
-			if (function_exists("date_time") && function_exists("gmdate")) {
+			if (function_exists('date_time') && function_exists('gmdate')) {
 				$timestamp = date_time();
 				$date_time = gmdate('Y-m-d H:i:s', $timestamp);
 				$support ['output_local_date_time'] = $date_time . '</p>';
@@ -150,7 +147,7 @@ if (class_exists('AdminPanelAction')) {
 			}
 
 			$support ['desc_defaultsfile'] = $lang ['admin'] ['maintain'] ['support'] ['desc_defaultsfile'];
-			$test_file = @fopen("{$BASE_DIR}/defaults.php", "a+");
+			$test_file = @fopen($BASE_DIR . '/defaults.php', 'a+');
 			if ($test_file) {
 				$support ['defaultsfile'] = $lang ['admin'] ['maintain'] ['support'] ['attention_defaultsfile'];
 			} else {
@@ -159,24 +156,24 @@ if (class_exists('AdminPanelAction')) {
 			@fclose($test_file);
 
 			$support ['desc_admindir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_admindir'];
-			$test_file = @fopen("{$BASE_DIR}/admin/chmod-test-file", "a+");
+			$test_file = @fopen($BASE_DIR . '/admin/chmod-test-file', 'a+');
 			if ($test_file) {
 				$support ['admindir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_admindir'];
 			} else {
 				$support ['admindir'] = $lang ['admin'] ['maintain'] ['support'] ['success_admindir'];
 			}
 			@fclose($test_file);
-			@unlink("{$BASE_DIR}/admin/chmod-test-file");
+			@unlink($BASE_DIR . '/admin/chmod-test-file');
 
 			$support ['desc_includesdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_includesdir'];
-			$test_file = @fopen("{$BASE_DIR}/fp-includes/chmod-test-file", "a+");
+			$test_file = @fopen($BASE_DIR . '/fp-includes/chmod-test-file', 'a+');
 			if ($test_file) {
 				$support ['includesdir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_includesdir'];
 			} else {
 				$support ['includesdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_includesdir'];
 			}
 			@fclose($test_file);
-			@unlink("{$BASE_DIR}/fp-includes/chmod-test-file");
+			@unlink($BASE_DIR . '/fp-includes/chmod-test-file');
 
 			/**
 			 * prepare output "Configuration file for the webserver"
@@ -185,24 +182,24 @@ if (class_exists('AdminPanelAction')) {
 			$support ['note_configwebserver'] = $lang ['admin'] ['maintain'] ['support'] ['note_configwebserver'];
 			$support ['serversoftware'] = $lang ['admin'] ['maintain'] ['support'] ['serversoftware'];
 
-			$test_file = @fopen("{$BASE_DIR}/chmod-test-file", "a+");
+			$test_file = @fopen($BASE_DIR . '/chmod-test-file', 'a+');
 			if ($test_file) {
 				$support ['maindir'] = $lang ['admin'] ['maintain'] ['support'] ['success_maindir'];
 			} else {
 				$support ['maindir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_maindir'];
 			}
 			@fclose($test_file);
-			@unlink("{$BASE_DIR}/chmod-test-file");
+			@unlink($BASE_DIR . '/chmod-test-file');
 
 			// Do not create a .hthaccess file, otherwise the PrettyURLs plugin cannot create its own file. Better is .htaccess.txt
-			$test_file = @fopen("{$BASE_DIR}/.htaccess.txt", "a+");
+			$test_file = @fopen($BASE_DIR . '/.htaccess.txt', 'a+');
 			if ($test_file) {
 				$support ['htaccessw'] = $lang ['admin'] ['maintain'] ['support'] ['success_htaccessw'];
 			} else {
 				$support ['htaccessw'] = $lang ['admin'] ['maintain'] ['support'] ['attention_htaccessw'];
 			}
 			@fclose($test_file);
-			@unlink("{$BASE_DIR}/.htaccess.txt");
+			@unlink($BASE_DIR . '/.htaccess.txt');
 
 			$htaccess = BASE_DIR . '/.htaccess';
 			if (file_exists($htaccess)) {
@@ -217,99 +214,99 @@ if (class_exists('AdminPanelAction')) {
 			$support ['h3_themesplugins'] = $lang ['admin'] ['maintain'] ['support'] ['h3_themesplugins'];
 
 			$support ['desc_interfacedir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_interfacedir'];
-			$test_file = @fopen("{$BASE_DIR}/fp-interface/chmod-test-file", "a+");
+			$test_file = @fopen($BASE_DIR . '/fp-interface/chmod-test-file', 'a+');
 			if ($test_file) {
 				$support ['interfacedir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_interfacedir'];
 			} else {
 				$support ['interfacedir'] = $lang ['admin'] ['maintain'] ['support'] ['success_interfacedir'];
 			}
 			@fclose($test_file);
-			@unlink("{$BASE_DIR}/fp-interface/chmod-test-file");
+			@unlink($BASE_DIR . '/fp-interface/chmod-test-file');
 
 			$support ['desc_themesdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_themesdir'];
-			$test_file = @fopen("{$BASE_DIR}/fp-interface/themes/chmod-test-file", "a+");
+			$test_file = @fopen($BASE_DIR . '/fp-interface/themes/chmod-test-file', 'a+');
 			if ($test_file) {
 				$support ['themesdir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_themesdir'];
 			} else {
 				$support ['themesdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_themesdir'];
 			}
 			@fclose($test_file);
-			@unlink("{$BASE_DIR}/fp-interface/themes/chmod-test-file");
+			@unlink($BASE_DIR . '/fp-interface/themes/chmod-test-file');
 
 			$support ['desc_plugindir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_plugindir'];
-			$test_file = @fopen("{$BASE_DIR}/fp-plugins/chmod-test-file", "a+");
+			$test_file = @fopen($BASE_DIR . '/fp-plugins/chmod-test-file', 'a+');
 			if ($test_file) {
 				$support ['plugindir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_plugindir'];
 			} else {
 				$support ['plugindir'] = $lang ['admin'] ['maintain'] ['support'] ['success_plugindir'];
 			}
 			@fclose($test_file);
-			@unlink("{$BASE_DIR}/fp-plugins/chmod-test-file");
+			@unlink($BASE_DIR . '/fp-plugins/chmod-test-file');
 
 			$support ['h3_contentdir'] = $lang ['admin'] ['maintain'] ['support'] ['h3_contentdir'];
 
 			$support ['desc_contentdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_contentdir'];
-			$test_file = @fopen("{$BASE_DIR}/fp-content/chmod-test-file", "a+");
+			$test_file = @fopen($BASE_DIR . '/fp-content/chmod-test-file', 'a+');
 			if ($test_file) {
 				$support ['contentdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_contentdir'];
 			} else {
 				$support ['contentdir'] = $lang ['admin'] ['maintain'] ['support'] ['error_contentdir'];
 			}
 			@fclose($test_file);
-			@unlink("{$BASE_DIR}/fp-content/chmod-test-file");
+			@unlink($BASE_DIR . '/fp-content/chmod-test-file');
 
 			$support ['desc_imagesdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_imagesdir'];
-			if (file_exists("{$BASE_DIR}/fp-content/images/")) {
-				$test_file = @fopen("{$BASE_DIR}/fp-content/images/chmod-test-file", "a+");
+			if (file_exists($BASE_DIR . '/fp-content/images/')) {
+				$test_file = @fopen($BASE_DIR . '/fp-content/images/chmod-test-file', 'a+');
 				if ($test_file) {
 					$support ['imagesdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_imagesdir'];
 				} else {
 					$support ['imagesdir'] = $lang ['admin'] ['maintain'] ['support'] ['error_imagesdir'];
 				}
 				@fclose($test_file);
-				@unlink("{$BASE_DIR}/fp-content/images/chmod-test-file");
+				@unlink($BASE_DIR . '/fp-content/images/chmod-test-file');
 			} else {
 				$support ['imagesdir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_imagesdir'];
 			}
 
 			$support ['desc_thumbsdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_thumbsdir'];
-			if (file_exists("{$BASE_DIR}/fp-content/images/.thumbs")) {
-				$test_file = @fopen("{$BASE_DIR}/fp-content/images/.thumbs/chmod-test-file", "a+");
+			if (file_exists($BASE_DIR . '/fp-content/images/.thumbs')) {
+				$test_file = @fopen($BASE_DIR . '/fp-content/images/.thumbs/chmod-test-file', 'a+');
 				if ($test_file) {
 					$support ['thumbsdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_thumbsdir'];
 				} else {
 					$support ['thumbsdir'] = $lang ['admin'] ['maintain'] ['support'] ['error_thumbsdir'];
 				}
 				@fclose($test_file);
-				@unlink("{$BASE_DIR}/fp-content/images/chmod-test-file");
+				@unlink($BASE_DIR . '/fp-content/images/chmod-test-file');
 			} else {
 				$support ['thumbsdir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_thumbsdir'];
 			}
 
 			$support ['desc_attachsdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_attachsdir'];
-			if (file_exists("{$BASE_DIR}/fp-content/attachs/")) {
-				$test_file = @fopen("{$BASE_DIR}/fp-content/attachs/chmod-test-file", "a+");
+			if (file_exists($BASE_DIR . '/fp-content/attachs/')) {
+				$test_file = @fopen($BASE_DIR . '/fp-content/attachs/chmod-test-file', 'a+');
 				if ($test_file) {
 					$support ['attachsdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_attachsdir'];
 				} else {
 					$support ['attachsdir'] = $lang ['admin'] ['maintain'] ['support'] ['error_attachsdir'];
 				}
 				@fclose($test_file);
-				@unlink("{$BASE_DIR}/fp-content/attachs/chmod-test-file");
+				@unlink($BASE_DIR . '/fp-content/attachs/chmod-test-file');
 			} else {
 				$support ['attachsdir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_attachsdir'];
 			}
 
 			$support ['desc_cachedir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_cachedir'];
-			if (file_exists("{$BASE_DIR}/fp-content/cache/")) {
-				$test_file = @fopen("{$BASE_DIR}/fp-content/cache/chmod-test-file", "a+");
+			if (file_exists($BASE_DIR . '/fp-content/cache/')) {
+				$test_file = @fopen($BASE_DIR . '/fp-content/cache/chmod-test-file', 'a+');
 				if ($test_file) {
 					$support ['cachedir'] = $lang ['admin'] ['maintain'] ['support'] ['success_cachedir'];
 				} else {
 					$support ['cachedir'] = $lang ['admin'] ['maintain'] ['support'] ['error1_cachedir'];
 				}
 				@fclose($test_file);
-				@unlink("{$BASE_DIR}/fp-content/cache/chmod-test-file");
+				@unlink($BASE_DIR . '/fp-content/cache/chmod-test-file');
 			} else {
 				$support ['cachedir'] = $lang ['admin'] ['maintain'] ['support'] ['error2_cachedir'];
 			}
@@ -332,14 +329,14 @@ if (class_exists('AdminPanelAction')) {
 			$support ['h3_extensions'] = $lang ['admin'] ['maintain'] ['support'] ['h3_extensions'];
 
 			$support ['desc_php_intl'] = $lang ['admin'] ['maintain'] ['support'] ['desc_php_intl'];
-			if (function_exists("intl_error_name")) {
+			if (function_exists('intl_error_name')) {
 				$support ['php_intl'] = $lang ['admin'] ['maintain'] ['support'] ['success_php_intl'];
 			} else {
 				$support ['php_intl'] = $lang ['admin'] ['maintain'] ['support'] ['error_php_intl'];
 			}
 
 			$support ['desc_php_gdlib'] = $lang ['admin'] ['maintain'] ['support'] ['desc_php_gdlib'];
-			if (function_exists("gd_info")) {
+			if (function_exists('gd_info')) {
 				$support ['php_gdlib'] = $lang ['admin'] ['maintain'] ['support'] ['success_php_gdlib'];
 			} else {
 				$support ['php_gdlib'] = $lang ['admin'] ['maintain'] ['support'] ['error_php_gdlib'];
@@ -384,7 +381,7 @@ if (class_exists('AdminPanelAction')) {
 
 			$support ['desc_cookie'] = $lang ['admin'] ['maintain'] ['support'] ['desc_cookie'];
 			$support ['session_cookie'] = $lang ['admin'] ['maintain'] ['support'] ['session_cookie'];
-			if (function_exists("cookie_setup")) {
+			if (function_exists('cookie_setup')) {
 				@cookie_setup();
 				$support ['output_sess_cookie'] = SESS_COOKIE;
 			} else {
@@ -405,9 +402,10 @@ if (class_exists('AdminPanelAction')) {
 
 	}
 
-	// register stylesheet
+	// Register stylesheet
 	add_action('wp_head', 'plugin_support_head');
 
-	// register to 'maintain' menu
+	// Register to 'maintain' menu
 	admin_addpanelaction('maintain', 'support', true);
 }
+?>
