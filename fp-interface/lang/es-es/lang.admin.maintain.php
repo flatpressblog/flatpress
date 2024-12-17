@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Mostrar información sobre PHP',
 	'opt5' => 'Buscar actualizaciones',
 
-	'chmod_info' => 'Si los permisos del archivo <strong>no se pudieron</strong> restablecer a ' . decoct(FILE_PERMISSIONS) . ', es probable que el propietario del archivo no sea el mismo que el del servidor web.<br>' . //
-		'Por lo general, puede ignorar este aviso.'
+	'chmod_info' => 'Si los permisos <strong>no se pueden restablecer</strong>, es probable que el propietario del archivo/ directorio no sea el mismo que el propietario del servidor web.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Autorizaciones</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>Núcleo</th>
+					<th>Todos los demás</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Archivos</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Directorios</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Todas las autorizaciones se han actualizado correctamente.',
+	'opt3_error' => 'Error al establecer las autorizaciones:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

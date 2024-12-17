@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Εμφάνιση πληροφοριών σχετικά με την PHP',
 	'opt5' => 'Έλεγχος για αναβαθμίσεις',
 
-	'chmod_info' => 'Αν τα δικαιώματα του αρχείου <strong>δεν μπόρεσαν</strong> να επανέλθουν σε ' . decoct(FILE_PERMISSIONS) . ', ο ιδιοκτήτης του αρχείου δεν είναι πιθανότατα ο ίδιος με τον ιδιοκτήτη του διακομιστή ιστού.<br>' . //
-		'Συνήθως αυτή η ειδοποίηση μπορεί να αγνοηθεί.'
+	'chmod_info' => 'Αν τα δικαιώματα <strong>δεν μπόρεσαν</strong> να επαναρυθμιστούν, ο ιδιοκτήτης του αρχείου/καταλόγου πιθανόν να μην είναι ο ίδιος με τον ιδιοκτήτη του διακομιστή ιστού.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Εξουσιοδοτήσεις</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>πυρήνας</th>
+					<th>Όλα τα άλλα</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>αρχεία</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Κατάλογοι</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Όλες οι άδειες ενημερώθηκαν επιτυχώς.',
+	'opt3_error' => 'Σφάλμα κατά τη ρύθμιση των εξουσιοδοτήσεων:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

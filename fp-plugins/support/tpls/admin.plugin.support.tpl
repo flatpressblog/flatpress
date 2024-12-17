@@ -278,5 +278,5 @@
 </fieldset>
 
 <div class="buttonbar">
-	<input type="submit" value="{$support.close_btn}" onclick="window.location.href='admin.php?p=maintain';">
+	<input type="submit" id="s_close_btn" value="{$support.close_btn}">
 </div>

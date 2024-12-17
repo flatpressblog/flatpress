@@ -168,47 +168,159 @@ function fs_delete($path) {
 }
 
 /**
- * function fs_recursive_chmod
+ * Class fs_chmodder
+ * 
+ * An extension of fs_filelister for managing and applying file and directory permissions recursively. 
+ * It ensures specific permissions are set for different file types and directories, with special handling for core 
+ * and restricted locations. Symlink attacks are prevented by checking and skipping symbolic links.
  *
- * Perform a recursive reset of file permission in the given $path
- * and its subdirectories to 0777
+ * Attributes:
+ * - public $_chmod_dir: Default permissions for directories.
+ * - public $_chmod_file: Default permissions for files.
+ * - public $_core_file: Permissions for critical (core) files.
+ * - public $_core_dir: Permissions for critical (core) directories.
+ * - public $_restricted_file: Permissions for restricted files.
+ * - public $_restricted_dir: Permissions for restricted directories.
  *
- * @param $fpath dir
- *        	path
- * @return bool
+ * Methods:
+ * - __construct(): Initializes permissions and calls the parent class constructor.
+ * - _checkFile(): Verifies and sets appropriate permissions for files and directories, avoiding symlink attacks.
  *
+ * Function fs_chmod_recursive:
+ * Recursively applies permissions to a specified directory and its contents.
+ * 
+ * Function restore_chmods:
+ * Restores permissions for critical system directories and files.
+ * Processes specific paths like FP_CONTENT, BASE_DIR, ADMIN_DIR, FP_INCLUDES, FP_INTERFACE, and PLUGINS_DIR.
+ * Combines results to return a list of problematic files or directories that failed to update.
+ *
+ * Note:
+ * This implementation avoids symbolic link processing and ensures consistent permission settings based on the
+ * specified classification of files and directories.
  */
+
+// Class fs_chmodder: Extension of fs_filelister for managing file and directory permissions
 class fs_chmodder extends fs_filelister {
 
-	var $_chmod_dir;
+	// Attributes for permission values
+	public $_chmod_dir;
+	public $_chmod_file;
+	public $_core_file;
+	public $_core_dir;
+	public $_restricted_file;
+	public $_restricted_dir;
 
-	var $_chmod_file;
-
-	function __construct($directory, $ch_file = FILE_PERMISSIONS, $ch_dir = DIR_PERMISSIONS) {
+	// Initializes attributes and calls the parent constructor
+	function __construct(
+		$directory,
+		$ch_file = FILE_PERMISSIONS,
+		$ch_dir = DIR_PERMISSIONS,
+		$core_file = CORE_FILE_PERMISSIONS,
+		$core_dir = CORE_DIR_PERMISSIONS,
+		$restricted_file = RESTRICTED_FILE_PERMISSIONS,
+		$restricted_dir = RESTRICTED_DIR_PERMISSIONS
+	) {
 		$this->_directory = $directory;
 		$this->_chmod_file = $ch_file;
 		$this->_chmod_dir = $ch_dir;
+		$this->_core_file = $core_file;
+		$this->_core_dir = $core_dir;
+		$this->_restricted_file = $restricted_file;
+		$this->_restricted_dir = $restricted_dir;
 		parent::__construct();
 	}
 
+	// Verifies and sets permissions for a file or directory, avoiding symlink attacks
 	function _checkFile($directory, $file) {
 		$retval = 0;
 		$path = $directory . "/" . $file;
+
+		// Prevent symlink attacks by verifying the path
+		if (is_link($path)) {
+			array_push($this->_list, $path);
+			return $retval;
+		}
+
+		// Path classification
+		$is_fp_content = strpos(realpath($path), realpath(FP_CONTENT)) === 0;
+		$is_admin_dir = strpos(realpath($path), realpath(ADMIN_DIR)) === 0;
+		$is_includes_dir = strpos(realpath($path), realpath(FP_INCLUDES)) === 0;
+		$is_interface_dir = strpos(realpath($path), realpath(FP_INTERFACE)) === 0;
+		$is_plugin_dir = strpos(realpath($path), realpath(PLUGINS_DIR)) === 0;
+		$is_defaults_file = realpath($path) === realpath(BASE_DIR . '/defaults.php');
+
 		if (is_dir($path)) {
 			$retval = 1;
+			if ($is_admin_dir || $is_includes_dir || $is_interface_dir || $is_plugin_dir) {
+				// Core permissions for system-critical directories
+				$chmod_value = CORE_DIR_PERMISSIONS;
+			} else {
+				// Default or restricted permissions
+				$chmod_value = $is_fp_content ? $this->_chmod_dir : $this->_restricted_dir;
+			}
+		} else {
+			// Otherwise, it is a file
+			if ($is_defaults_file) {
+				// Specific permissions for defaults.php
+				$chmod_value = CORE_FILE_PERMISSIONS;
+			} elseif ($is_admin_dir || $is_includes_dir || $is_interface_dir || $is_plugin_dir) {
+				// Core permissions for system-critical files
+				$chmod_value = CORE_FILE_PERMISSIONS;
+			} else {
+				// Default or restricted permissions
+				$chmod_value = $is_fp_content ? $this->_chmod_file : $this->_restricted_file;
+			}
 		}
-		if (!@chmod($path, ($retval ? $this->_chmod_dir : $this->_chmod_file))) {
+
+		// Attempt to apply permissions and log errors
+		if (!@chmod($path, $chmod_value)) {
+			// If chmod fails, add the path to the list of failed items
+			//error_log("Failed to chmod $path to " . decoct($chmod_value));
 			array_push($this->_list, $path);
 		}
 
+		// Return value (0 for file, 1 for directory)
 		return $retval;
 	}
-
 }
 
-function fs_chmod_recursive($fpath = FP_CONTENT) {
-	$obj = new fs_chmodder($fpath);
+// Recursively applies permissions to a directory
+function fs_chmod_recursive($fpath = BASE_DIR) {
+	$obj = new fs_chmodder(
+		$fpath,
+		FILE_PERMISSIONS,
+		DIR_PERMISSIONS,
+		CORE_FILE_PERMISSIONS,
+		CORE_DIR_PERMISSIONS,
+		RESTRICTED_FILE_PERMISSIONS,
+		RESTRICTED_DIR_PERMISSIONS
+	);
+	// Return list of files/directories with permission issues
 	return $obj->getList();
+}
+
+// Restores permissions for critical directories and files
+function restore_chmods() {
+	$files_content = fs_chmod_recursive(FP_CONTENT);
+	$files_base = fs_chmod_recursive(BASE_DIR);
+	$files_admin = fs_chmod_recursive(ADMIN_DIR);
+	$files_includes = fs_chmod_recursive(FP_INCLUDES);
+	$files_interface = fs_chmod_recursive(FP_INTERFACE);
+	$files_plugins = fs_chmod_recursive(PLUGINS_DIR);
+
+	// Combine results from all directories
+	$files = array_merge(
+		$files_content,
+		$files_base,
+		$files_admin,
+		$files_includes,
+		$files_interface,
+		$files_plugins
+	);
+	//error_log("DEBUG: Files updated: " . print_r($files, true));
+
+	// Return list of problematic files/directories for feedback
+	return $files;
 }
 
 /**

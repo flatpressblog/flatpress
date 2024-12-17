@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Показать информацию о PHP',
 	'opt5' => 'Проверить наличие обновлений',
 
-	'chmod_info' => 'Если права доступа к файлу не удалось сбросить на ' . decoct(FILE_PERMISSIONS) . ', владелец файла, вероятно, не совпадает с владельцем веб-сервера.<br>' . //
-		'Обычно это уведомление можно проигнорировать.'
+	'chmod_info' => 'Если разрешения <strong>не удалось</strong> сбросить, владелец файла/ директории, вероятно, не тот же, что и владелец веб-сервера.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Полномочия</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>ядро</th>
+					<th>Все остальные</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>файлы</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>каталоги</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Все разрешения были успешно обновлены.',
+	'opt3_error' => 'Ошибка при установке полномочий:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
