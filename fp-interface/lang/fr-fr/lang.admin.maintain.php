@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Afficher info.php',
 	'opt5' => 'V&eacute;rifier les mises &agrave; jour',
 
-	'chmod_info' => 'Si les permissions du fichier <strong>n\'ont pas pu être remises à ' . decoct(FILE_PERMISSIONS) . '</strong>, il est probable que le propriétaire du fichier ne soit pas le même que celui du serveur web.<br>' . //
-		'tre diff&eacute;rent du serveur web.'
+	'chmod_info' => 'Si les autorisations <strong>n\'ont pas pu être réinitialisées</strong>, le propriétaire du fichier/répertoire n\'est probablement pas le même que celui du serveur web.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Autorisations</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>Noyau</th>
+					<th>Tous les autres</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Fichiers</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Répertoires</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Toutes les autorisations ont été mises à jour avec succès.',
+	'opt3_error' => 'Erreur lors de la définition des autorisations:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

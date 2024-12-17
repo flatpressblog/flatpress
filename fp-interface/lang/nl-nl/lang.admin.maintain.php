@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Toon info over PHP',
 	'opt5' => 'Controleren op updates',
 
-	'chmod_info' => 'Als de bestandsrechten niet konden worden teruggezet naar ' . decoct(FILE_PERMISSIONS) . ', is de eigenaar van het bestand waarschijnlijk niet dezelfde als de eigenaar van de webserver.<br>' . //
-		'Meestal kunt u deze kennisgeving negeren.'
+	'chmod_info' => 'Als de machtigingen <strong>niet</strong> konden worden gereset, is de eigenaar van het bestand/de map waarschijnlijk niet dezelfde als de eigenaar van de webserver.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Machtigingen</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>Kern</th>
+					<th>Alle andere</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Bestanden</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Mappen</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Alle machtigingen zijn succesvol bijgewerkt.',
+	'opt3_error' => 'Fout bij het instellen van de machtigingen:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

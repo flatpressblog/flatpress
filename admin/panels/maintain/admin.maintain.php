@@ -10,7 +10,7 @@
  * Input:
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
- *        
+ *
  */
 
 /* utility class */
@@ -158,17 +158,12 @@ class admin_maintain_default extends AdminPanelAction {
 				}
 			case 'restorechmods':
 				{
-					$this->smarty->assign('files', fs_chmod_recursive());
+					$files = restore_chmods();
 
-					// Test whether writing is possible in the fp-content directory
-					$test_file = @fopen(CONTENT_DIR . 'chmod-test-file', "a+");
-					if ($test_file) {
-						$this->smarty->assign('success', 1);
-					} else {
-						$this->smarty->assign('success', -1);
-					}
-					@fclose($test_file);
-					@unlink(CONTENT_DIR . 'chmod-test-file');
+					$this->smarty->assign('files', $files);
+
+					$overall_success = count($files) === 0 ? 1 : -1;
+					$this->smarty->assign('success', $overall_success);
 
 					return PANEL_NOREDIRECT;
 				}

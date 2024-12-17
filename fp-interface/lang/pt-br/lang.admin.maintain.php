@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Mostre as informações sobre o PHP',
 	'opt5' => 'Procure atualizações',
 
-	'chmod_info' => 'Se não for possível redefinir as permissões do arquivo para ' . decoct(FILE_PERMISSIONS) . ', o proprietário do arquivo provavelmente não é o mesmo que o proprietário do servidor Web.<br>' . //
-		'Geralmente você pode ignorar este aviso.'
+	'chmod_info' => 'Se as permissões <strong>não puderem</strong> ser redefinidas, o proprietário do arquivo/ diretório provavelmente não é o mesmo que o proprietário do servidor Web.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Autorizações</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>Núcleo</th>
+					<th>Todos os outros</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Arquivos</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Diretórios</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Todas as autorizações foram atualizadas com sucesso.',
+	'opt3_error' => 'Erro ao definir as autorizações:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Vis PHP-information om webserveren',
 	'opt5' => 'Tjek for nye versioner',
 
-	'chmod_info' => 'Hvis filrettighederne <strong>ikke</strong> kunne nulstilles til ' . decoct(FILE_PERMISSIONS) . ', er ejeren af filen sandsynligvis ikke den samme som ejeren af webserveren.<br>' . //
-		'Normalt kan du ignorere dette tip.'
+	'chmod_info' => 'Hvis tilladelserne <strong>ikke</strong> kunne nulstilles, er ejeren af filen/ mappen sandsynligvis ikke den samme som ejeren af webserveren.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Autorisationer</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>Kerne</th>
+					<th>Alle andre</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Filer</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Mapper</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Alle autorisationer er blevet opdateret.',
+	'opt3_error' => 'Fejl ved indstilling af autorisationer:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

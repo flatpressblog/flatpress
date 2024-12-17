@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'PHP情報を表示します',
 	'opt5' => 'アップデートをチェックします',
 
-	'chmod_info' => 'ファイルのパーミッションを' . decoct(FILE_PERMISSIONS) . 'にリセットできません; おそらく、ファイルの所有者とウェブサーバの実行者が異なるのでしょう。<br>' . //
-		'でも通常、この通知を無視することができます。'
+	'chmod_info' => 'パーミッションが<strong>リセットできなかった場合、ファイル/ ディレクトリのオーナーはおそらくウェブサーバーのオーナーと同じではありません。<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>権限</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>コア</th>
+					<th>他のすべての</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>ファイル</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>ディレクトリ</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'すべてのオーソライゼーションが正常に更新されました。',
+	'opt3_error' => '権限設定時のエラー：'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

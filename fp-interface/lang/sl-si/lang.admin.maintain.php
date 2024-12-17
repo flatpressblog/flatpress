@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Prikaži informacije o PHP',
 	'opt5' => 'Preveri posodobitve',
 
-	'chmod_info' => 'Če pravic datoteke ni bilo mogoče ponastaviti na ' . decoct(FILE_PERMISSIONS) . ', lastnik datoteke verjetno ni isti kot lastnik spletnega strežnika.<br>' . //
-		'Običajno lahko to obvestilo prezrete.'
+	'chmod_info' => 'Če dovoljenj <strong>ne morete ponastaviti</strong>, lastnik datoteke/imenikov verjetno ni enak lastniku spletnega strežnika.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Pooblastila</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>Jedro</th>
+					<th>Vsi drugi</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Datoteke</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Imeniki</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Vsa dovoljenja so bila uspešno posodobljena.',
+	'opt3_error' => 'Napaka pri nastavljanju pooblastil:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

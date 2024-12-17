@@ -17,15 +17,26 @@
 // legacy mode; needed with some ill-formed spb files
 define('DUMB_MODE_ENABLED', false);
 
-// Default file permissions
-// https://binary-butterfly.de/artikel/dateirechte-wie-stelle-ich-das-bei-meinem-hoster-ein/
-// Change file to 666 and dir to 777 if your webserver "complains"
-// Note: Lowering the directory and file permissions may result in FlatPress or some additional plugins not working correctly.
-define('FILE_PERMISSIONS', 0666);
-define('DIR_PERMISSIONS', 0777);
+/**
+ * Default file permissions
+ * https://binary-butterfly.de/artikel/dateirechte-wie-stelle-ich-das-bei-meinem-hoster-ein/
+ * Note: Lowering the directory and file permissions may result in FlatPress or some additional plugins not working correctly.
+ */
+// For the directory fp-content and its subdirectories including the files
+define('FILE_PERMISSIONS', 0666); // 0666 is recommended
+define('DIR_PERMISSIONS', 0777); // 0777 is recommended
 
-// First some webserver setup...
+// FlatPress core: This includes this file, the directory admin, fp-incudes, fp-interface and fp-plugins
+define('CORE_FILE_PERMISSIONS', 0600); // 0600 for productive operation
+define('CORE_DIR_PERMISSIONS', 0700); // 0700 for productive operation
 
+// For all other files and directories 
+define('RESTRICTED_FILE_PERMISSIONS', 0644); // 0644 is recommended
+define('RESTRICTED_DIR_PERMISSIONS', 0755); // 0755 is recommended
+
+/**
+ * First some webserver setup...
+ */
 // Here's where your server save session-related stuff.
 // If you don't experience any session-related problem, you
 // you can leave it blank and it will default to standard webserver config

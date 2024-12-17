@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Ukázat informace o PHP',
 	'opt5' => 'Zjistit aktualizace',
 
-	'chmod_info' => 'Pokud se oprávnění souboru <strong>nepodařilo</strong> obnovit na ' . decoct(FILE_PERMISSIONS) . ', vlastník souboru pravděpodobně není stejný jako vlastník webového serveru.<br>' . //
-		'Případně můžete ignorovat toto oznámení.'
+	'chmod_info' => 'Pokud se oprávnění <strong>nepodařilo</strong> obnovit, vlastník souboru/adresáře pravděpodobně není stejný jako vlastník webového serveru.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Oprávnění</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>Jádro</th>
+					<th>Všechny ostatní</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Soubory</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Adresáře</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Všechna povolení byla úspěšně aktualizována.',
+	'opt3_error' => 'Chyba při nastavování oprávnění:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

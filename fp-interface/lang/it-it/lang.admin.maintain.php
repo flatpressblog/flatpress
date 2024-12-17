@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Visualizza informazioni su PHP',
 	'opt5' => 'Controllo aggiornamenti',
 
-	'chmod_info' => 'Se non è stato possibile reimpostare i permessi del file a ' . decoct(FILE_PERMISSIONS) . ', probabilmente il proprietario del file non è lo stesso del server web.<br>' . //
-		'Di solito puoi ignorare questo avviso.'
+	'chmod_info' => 'Se non è stato possibile ripristinare i permessi, probabilmente il proprietario del file/della directory non è lo stesso del server web.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Autorizzazioni</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>Nucleo</th>
+					<th>Tutti gli altri</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>File</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Directory</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Tutte le autorizzazioni sono state aggiornate con successo.',
+	'opt3_error' => 'Errore nell\'impostazione delle autorizzazioni:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

@@ -11,8 +11,36 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Zeige PHP-Informationen des Webservers',
 	'opt5' => 'Prüfe auf neue Versionen',
 
-	'chmod_info' => 'Wenn die Dateiberechtigungen <strong>nicht</strong> auf ' . decoct(FILE_PERMISSIONS) . ' zurückgesetzt werden konnten, ist wahrscheinlich der Eigentümer der Datei nicht derselbe wie der des Webservers.<br>' . //
-		'Normalerweise kann man diesen Hinweis ignorieren.'
+	'chmod_info' => 'Wenn die Berechtigungen <strong>nicht</strong> zurückgesetzt werden konnten, ist wahrscheinlich der Eigentümer der Datei/ des Verzeichnisses nicht derselbe wie der des Webservers.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Berechtigungen</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>Kern</th>
+					<th>alle anderen</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Dateien</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Verzeichnisse</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'Alle Berechtigungen wurden erfolgreich aktualisiert.',
+	'opt3_error' => 'Fehler beim Setzen der Berechtigungen:'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

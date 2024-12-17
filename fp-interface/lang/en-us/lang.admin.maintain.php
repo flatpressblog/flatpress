@@ -11,10 +11,38 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt4' => 'Show info about PHP',
 	'opt5' => 'Check for updates',
 
-	'chmod_info' => 'If the file permissions <strong>could not</strong> be reset to ' . decoct(FILE_PERMISSIONS) . ', the owner of the file is probably not the same as the owner of the web server.<br>' . //
-		'Usually you can ignore this notice.'
+	'chmod_info' => 'If the permissions <strong>could not</strong> be reset, the owner of the file/directory is probably not the same as the owner of the web server.<br>' . //
+		'
+		<table>
+			<thead>
+				<tr>
+					<th>Permissions</th>
+					<th>' . FP_CONTENT . '</th>
+					<th>Core</th>
+					<th>All other</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Files</td>
+					<td>' . decoct(FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_FILE_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_FILE_PERMISSIONS) . '</td>
+				</tr>
+				<tr>
+					<td>Directories</td>
+					<td>' . decoct(DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(CORE_DIR_PERMISSIONS) . '</td>
+					<td>' . decoct(RESTRICTED_DIR_PERMISSIONS) . '</td>
+				</tr>
+			</tbody>
+		</table>
+		',
+
+	'opt3_success' => 'All authorizations have been successfully updated.',
+	'opt3_error' => 'Error when setting the authorizations:'
 );
-	
+
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
 	1 => 'Operation completed',
 	-1 => 'Operation failed'
