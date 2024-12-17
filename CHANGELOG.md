@@ -13,6 +13,7 @@
 - Admin area:
   - Optional natural sorting for static pages (Hidden improvement suggestion from [NHWS](https://nhws.localinfo.jp/))
   - The cache is automatically emptied when the theme or style is changed.
+  - Setting permissions via the maintenance panel now takes all FlatPress files and directories into account. A distinction is made between content, core and other. ([#502](https://github.com/flatpressblog/flatpress/pull/502))
 
 ## Bugfixes
 - Contact form / comment function:
@@ -46,6 +47,7 @@
   - Logout after one hour if inactive. ([#488](https://github.com/flatpressblog/flatpress/pull/488))
   - XSS vulnerability in the editor for static pages fixed. ([#490](https://github.com/flatpressblog/flatpress/pull/490))
   - Fixed disclosure of Exif metadata when uploading images. ([#492](https://github.com/flatpressblog/flatpress/pull/492))
+  - Prevention of symlink attacks by checking the path when setting file and directory permissions ([#502](https://github.com/flatpressblog/flatpress/pull/502))
 
 ## Plugins
 ### Additions
@@ -68,6 +70,9 @@
   - Insecure inline Java scripts are not executed by the visitor's browser by default. You can allow the execution of insecure Java code if, for example, a plugin contains a Java script that is not equipped with a nonce. ([#477](https://github.com/flatpressblog/flatpress/pull/477))
   - It is also possible to enable/disable the htaccess edit field to create or edit the file in the PrettyURLs plugin without having to disable the FlatPress Protect plugin. ([#477](https://github.com/flatpressblog/flatpress/pull/477))
   - The removal of metadata when uploading images can be deactivated for better image quality. ([#492](https://github.com/flatpressblog/flatpress/pull/492))
+- Support plugin: update to version 1.1.0
+  - The file and directory permissions are read for some outputs (the last two numbers of the octal value) before a write test is performed. This leads to a more reliable indication of whether writeable or not. ([#502](https://github.com/flatpressblog/flatpress/pull/502))
+
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
   - File or image selection possible after activating the option “Allow BBcode in comments” option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
