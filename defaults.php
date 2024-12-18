@@ -23,14 +23,14 @@ define('DUMB_MODE_ENABLED', false);
  * Note: Lowering the directory and file permissions may result in FlatPress or some additional plugins not working correctly.
  */
 // For the directory fp-content and its subdirectories including the files
-define('FILE_PERMISSIONS', 0666); // 0666 is recommended
-define('DIR_PERMISSIONS', 0777); // 0777 is recommended
+define('FILE_PERMISSIONS', 0644); // 0644 is recommended
+define('DIR_PERMISSIONS', 0755); // 0755 is recommended
 
-// FlatPress core: This includes this file, the directory admin, fp-incudes, fp-interface and fp-plugins
-define('CORE_FILE_PERMISSIONS', 0600); // 0600 for productive operation
-define('CORE_DIR_PERMISSIONS', 0700); // 0700 for productive operation
+// FlatPress core: This includes this file, the directory admin, fp-incudes, fp-interface, fp-plugins and config
+define('CORE_FILE_PERMISSIONS', 0640); // 0640 for productive operation
+define('CORE_DIR_PERMISSIONS', 0750); // 0750 for productive operation
 
-// For all other files and directories 
+// For all other files and directories
 define('RESTRICTED_FILE_PERMISSIONS', 0644); // 0644 is recommended
 define('RESTRICTED_DIR_PERMISSIONS', 0755); // 0755 is recommended
 

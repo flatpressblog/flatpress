@@ -53,15 +53,15 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	'error_setupfile' => '<p class="error"><strong>&#33;</strong> The setup file is located in the main directory!</p>',
 	'success_setupfile' => '<p class="success"><strong>&#10003;</strong> The setup file was not found in the main directory.</p>',
 
-	'desc_defaultsfile' => '<p>The defaults.php file should only be read-only for productive operation.</p>',
+	'desc_defaultsfile' => '<p>The defaults.php file should be write-protected for others in productive operation.</p>',
 	'attention_defaultsfile' => '<p class="attention"><strong>&#8505;</strong> The defaults.php file can be changed!</p>',
 	'success_defaultsfile' => '<p class="success"><strong>&#10003;</strong> The defaults.php file cannot be changed.</p>',
 
-	'desc_admindir' => '<p>The admin directory should be read-only for productive operation.</p>',
+	'desc_admindir' => '<p>The admin directory should be write-protected for others in productive operation.</p>',
 	'attention_admindir' => '<p class="attention"><strong>&#8505;</strong> The core files in the admin directory are writable!</p>',
 	'success_admindir' => '<p class="success"><strong>&#10003;</strong> The core files in the admin directory are not writable.</p>',
 
-	'desc_includesdir' => '<p>The fp-includes directory should be read-only for productive operation.</p>',
+	'desc_includesdir' => '<p>The fp-includes directory should be write-protected for others in productive operation.</p>',
 	'attention_includesdir' => '<p class="attention"><strong>&#8505;</strong> The core files in the fp-includes directory are writable!</p>',
 	'success_includesdir' => '<p class="success"><strong>&#10003;</strong> The core files in the fp-includes directory are not writable.</p>',
 
@@ -84,15 +84,15 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	// output "Themes and plugins"
 	'h3_themesplugins' => 'Themes and plugins',
 
-	'desc_interfacedir' => 'The fp-interface directory should be read-only for productive operation.',
+	'desc_interfacedir' => 'The fp-interface directory should be write-protected for others in productive operation.',
 	'attention_interfacedir' => '<p class="attention"><strong>&#8505;</strong> The directory fp-interface writable!</p>',
 	'success_interfacedir' => '<p class="success"><strong>&#10003;</strong> The directory fp-interface is not writable.</p>',
 
-	'desc_themesdir' => 'The themes directory should be read-only for productive operation.',
+	'desc_themesdir' => 'The themes directory should be write-protected for others in productive operation.',
 	'attention_themesdir' => '<p class="attention"><strong>&#8505;</strong> The theme directory is writable!</p>',
 	'success_themesdir' => '<p class="success"><strong>&#10003;</strong> The theme directory is not writable.</p>',
 
-	'desc_plugindir' => 'The fp-plugin directory should be read-only for productive operation.',
+	'desc_plugindir' => 'The fp-plugins directory should be write-protected for others in productive operation.',
 	'attention_plugindir' => '<p class="attention"><strong>&#8505;</strong> The plugin directory fp-plugins writable!</p>',
 	'success_plugindir' => '<p class="success"><strong>&#10003;</strong> The plugin directory fp-plugins is not writable.</p>',
 

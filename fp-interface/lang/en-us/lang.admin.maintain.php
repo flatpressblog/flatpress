@@ -7,7 +7,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt0' => '&laquo; Back to main menu',
 	'opt1' => 'Rebuild index',
 	'opt2' => 'Purge theme and templates cache',
-	'opt3' => 'Restore file permissions',
+	'opt3' => 'Restore authorizations for productive operation',
 	'opt4' => 'Show info about PHP',
 	'opt5' => 'Check for updates',
 

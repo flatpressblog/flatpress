@@ -10,7 +10,7 @@
 require_once ABS_PATH . 'defaults.php';
 require_once INCLUDES_DIR . 'includes.php';
 
-function has_write_permission($path) {
+function owner_has_write_permission($path) {
 	if (!file_exists($path)) {
 		return false;
 	}
@@ -19,8 +19,31 @@ function has_write_permission($path) {
 	if ($perms === false) {
 		return false;
 	}
-	$octal_perms = substr(sprintf('%o', $perms), -2);
+	// -3, 1 owner, -1 others, -2 group/ others
+	$octal_perms = substr(sprintf('%o', $perms), -3, 1);
 	return $is_writable && (
+		// 2: Write permission for the group/others.
+		// 6: Read and write permission for the group/ others.
+		// 7: Full access (read, write, execute) for the group/others.
+		strpos($octal_perms, '2') !== false || strpos($octal_perms, '6') !== false || strpos($octal_perms, '7') !== false
+	);
+}
+
+function other_has_write_permission($path) {
+	if (!file_exists($path)) {
+		return false;
+	}
+	$is_writable = is_writable($path);
+	$perms = fileperms($path);
+	if ($perms === false) {
+		return false;
+	}
+	// -3, 1 owner, -1 others, -2 group/ others
+	$octal_perms = substr(sprintf('%o', $perms), -1);
+	return $is_writable && (
+		// 2: Write permission for the group/others.
+		// 6: Read and write permission for the group/ others.
+		// 7: Full access (read, write, execute) for the group/others.
 		strpos($octal_perms, '2') !== false || strpos($octal_perms, '6') !== false || strpos($octal_perms, '7') !== false
 	);
 }
@@ -163,7 +186,7 @@ if (class_exists('AdminPanelAction')) {
 
 			$support ['desc_defaultsfile'] = $lang ['admin'] ['maintain'] ['support'] ['desc_defaultsfile'];
 			if (file_exists($BASE_DIR . '/defaults.php')) {
-				if (is_readable($BASE_DIR . '/defaults.php') && has_write_permission($BASE_DIR . '/defaults.php')) {
+				if (is_readable($BASE_DIR . '/defaults.php') && other_has_write_permission($BASE_DIR . '/defaults.php')) {
 					$support ['defaultsfile'] = $lang ['admin'] ['maintain'] ['support'] ['attention_defaultsfile'];
 				} else {
 					$support ['defaultsfile'] = $lang ['admin'] ['maintain'] ['support'] ['success_defaultsfile'];
@@ -175,7 +198,7 @@ if (class_exists('AdminPanelAction')) {
 			$support ['desc_admindir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_admindir'];
 			$admin_dir = $BASE_DIR . '/admin';
 			if (file_exists($admin_dir) && is_readable($admin_dir)) {
-				if (has_write_permission($admin_dir)) {
+				if (other_has_write_permission($admin_dir)) {
 					$test_file = @fopen($admin_dir . '/chmod-test-file', 'a+');
 					if ($test_file) {
 						$support ['admindir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_admindir'];
@@ -194,7 +217,7 @@ if (class_exists('AdminPanelAction')) {
 			$support ['desc_includesdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_includesdir'];
 			$includes_dir = $BASE_DIR . '/fp-includes';
 			if (file_exists($includes_dir) && is_readable($includes_dir)) {
-				if (has_write_permission($includes_dir)) {
+				if (other_has_write_permission($includes_dir)) {
 					$test_file = @fopen($includes_dir . '/chmod-test-file', 'a+');
 					if ($test_file) {
 						$support ['includesdir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_includesdir'];
@@ -251,7 +274,7 @@ if (class_exists('AdminPanelAction')) {
 			$support ['desc_interfacedir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_interfacedir'];
 			$interface_dir = $BASE_DIR . '/fp-interface';
 			if (file_exists($interface_dir) && is_readable($interface_dir)) {
-				if (has_write_permission($interface_dir)) {
+				if (other_has_write_permission($interface_dir)) {
 					$test_file = @fopen($interface_dir . '/chmod-test-file', 'a+');
 					if ($test_file) {
 						$support ['interfacedir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_interfacedir'];
@@ -270,7 +293,7 @@ if (class_exists('AdminPanelAction')) {
 			$support ['desc_themesdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_themesdir'];
 			$themes_dir = $BASE_DIR . '/fp-interface/themes';
 			if (file_exists($themes_dir) && is_readable($themes_dir)) {
-				if (has_write_permission($themes_dir)) {
+				if (other_has_write_permission($themes_dir)) {
 					$test_file = @fopen($themes_dir . '/chmod-test-file', 'a+');
 					if ($test_file) {
 						$support ['themesdir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_themesdir'];
@@ -289,7 +312,7 @@ if (class_exists('AdminPanelAction')) {
 			$support ['desc_plugindir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_plugindir'];
 			$plugin_dir = $BASE_DIR . '/fp-plugins';
 			if (file_exists($plugin_dir) && is_readable($plugin_dir)) {
-				if (has_write_permission($plugin_dir)) {
+				if (other_has_write_permission($plugin_dir)) {
 					$test_file = @fopen($plugin_dir . '/chmod-test-file', 'a+');
 					if ($test_file) {
 						$support ['plugindir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_plugindir'];
@@ -310,7 +333,7 @@ if (class_exists('AdminPanelAction')) {
 			$support ['desc_contentdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_contentdir'];
 			$content_dir = $BASE_DIR . '/fp-content';
 			if (file_exists($content_dir) && is_readable($content_dir)) {
-				if (has_write_permission($content_dir)) {
+				if (owner_has_write_permission($content_dir)) {
 					$test_file = @fopen($content_dir . '/chmod-test-file', 'a+');
 					if ($test_file) {
 						$support ['contentdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_contentdir'];
@@ -329,7 +352,7 @@ if (class_exists('AdminPanelAction')) {
 			$support ['desc_imagesdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_imagesdir'];
 			$images_dir = $BASE_DIR . '/fp-content/images';
 			if (file_exists($images_dir) && is_readable($images_dir)) {
-				if (has_write_permission($images_dir)) {
+				if (owner_has_write_permission($images_dir)) {
 					$test_file = @fopen($images_dir . '/chmod-test-file', 'a+');
 					if ($test_file) {
 						$support ['imagesdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_imagesdir'];
@@ -348,7 +371,7 @@ if (class_exists('AdminPanelAction')) {
 			$support ['desc_thumbsdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_thumbsdir'];
 			$thumbs_dir = $BASE_DIR . '/fp-content/images/.thumbs';
 			if (file_exists($thumbs_dir) && is_readable($thumbs_dir)) {
-				if (has_write_permission($thumbs_dir)) {
+				if (owner_has_write_permission($thumbs_dir)) {
 					$test_file = @fopen($thumbs_dir . '/chmod-test-file', 'a+');
 					if ($test_file) {
 						$support ['thumbsdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_thumbsdir'];
@@ -367,7 +390,7 @@ if (class_exists('AdminPanelAction')) {
 			$support ['desc_attachsdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_attachsdir'];
 			$attachs_dir = $BASE_DIR . '/fp-content/attachs';
 			if (file_exists($attachs_dir) && is_readable($attachs_dir)) {
-				if (has_write_permission($attachs_dir)) {
+				if (owner_has_write_permission($attachs_dir)) {
 					$test_file = @fopen($attachs_dir . '/chmod-test-file', 'a+');
 					if ($test_file) {
 						$support ['attachsdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_attachsdir'];
@@ -386,7 +409,7 @@ if (class_exists('AdminPanelAction')) {
 			$support ['desc_cachedir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_cachedir'];
 			$cache_dir = $BASE_DIR . '/fp-content/cache';
 			if (file_exists($cache_dir) && is_readable($cache_dir)) {
-				if (has_write_permission($cache_dir)) {
+				if (owner_has_write_permission($cache_dir)) {
 					$test_file = @fopen($cache_dir . '/chmod-test-file', 'a+');
 					if ($test_file) {
 						$support ['cachedir'] = $lang ['admin'] ['maintain'] ['support'] ['success_cachedir'];

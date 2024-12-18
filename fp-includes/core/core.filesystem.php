@@ -247,11 +247,12 @@ class fs_chmodder extends fs_filelister {
 		$is_includes_dir = strpos(realpath($path), realpath(FP_INCLUDES)) === 0;
 		$is_interface_dir = strpos(realpath($path), realpath(FP_INTERFACE)) === 0;
 		$is_plugin_dir = strpos(realpath($path), realpath(PLUGINS_DIR)) === 0;
+		$is_config_dir = strpos(realpath($path), realpath(CONFIG_DIR)) === 0;
 		$is_defaults_file = realpath($path) === realpath(BASE_DIR . '/defaults.php');
 
 		if (is_dir($path)) {
 			$retval = 1;
-			if ($is_admin_dir || $is_includes_dir || $is_interface_dir || $is_plugin_dir) {
+			if ($is_admin_dir || $is_includes_dir || $is_interface_dir || $is_plugin_dir || $is_config_dir) {
 				// Core permissions for system-critical directories
 				$chmod_value = CORE_DIR_PERMISSIONS;
 			} else {
@@ -263,7 +264,7 @@ class fs_chmodder extends fs_filelister {
 			if ($is_defaults_file) {
 				// Specific permissions for defaults.php
 				$chmod_value = CORE_FILE_PERMISSIONS;
-			} elseif ($is_admin_dir || $is_includes_dir || $is_interface_dir || $is_plugin_dir) {
+			} elseif ($is_admin_dir || $is_includes_dir || $is_interface_dir || $is_plugin_dir || $is_config_dir) {
 				// Core permissions for system-critical files
 				$chmod_value = CORE_FILE_PERMISSIONS;
 			} else {
@@ -307,6 +308,7 @@ function restore_chmods() {
 	$files_includes = fs_chmod_recursive(FP_INCLUDES);
 	$files_interface = fs_chmod_recursive(FP_INTERFACE);
 	$files_plugins = fs_chmod_recursive(PLUGINS_DIR);
+	$files_config = fs_chmod_recursive(CONFIG_DIR);
 
 	// Combine results from all directories
 	$files = array_merge(
@@ -315,7 +317,8 @@ function restore_chmods() {
 		$files_admin,
 		$files_includes,
 		$files_interface,
-		$files_plugins
+		$files_plugins,
+		$files_config
 	);
 	//error_log("DEBUG: Files updated: " . print_r($files, true));
 

@@ -7,7 +7,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt0' => '&laquo; Terug naar hoofdmenu',
 	'opt1' => 'Herbouw index',
 	'opt2' => 'Thema- en sjablonencache opschonen',
-	'opt3' => 'Bestandsmachtigingen herstellen',
+	'opt3' => 'Machtigingen voor productieve werking herstellen',
 	'opt4' => 'Toon info over PHP',
 	'opt5' => 'Controleren op updates',
 
