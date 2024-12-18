@@ -7,7 +7,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt0' => '&laquo; Nazaj na glavni meni',
 	'opt1' => 'Ponovno zgradi indeks',
 	'opt2' => 'Počisti predpomnilnik teme in predlog',
-	'opt3' => 'Obnovi dovoljenja datotek',
+	'opt3' => 'Obnovitev dovoljenj za produktivno delovanje',
 	'opt4' => 'Prikaži informacije o PHP',
 	'opt5' => 'Preveri posodobitve',
 

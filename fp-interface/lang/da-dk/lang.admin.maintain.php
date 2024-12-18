@@ -7,7 +7,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt0' => '&laquo; Tilbage til vedligeholdelse',
 	'opt1' => 'Genskab FlatPress-indekset',
 	'opt2' => 'Tøm tema- og skabeloncachen',
-	'opt3' => 'Gendan rettigheder til filadgang',
+	'opt3' => 'Genopret tilladelser til produktiv drift',
 	'opt4' => 'Vis PHP-information om webserveren',
 	'opt5' => 'Tjek for nye versioner',
 

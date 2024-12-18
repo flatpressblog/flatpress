@@ -7,7 +7,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt0' => '&laquo; Zurück zur Wartung',
 	'opt1' => 'Den FlatPress-Index neu erstellen',
 	'opt2' => 'Den Theme- und Template-Cache leeren',
-	'opt3' => 'Wiederherstellen der Dateizugriffsrechte',
+	'opt3' => 'Berechtigungen für den produktiven Betrieb wiederherstellen',
 	'opt4' => 'Zeige PHP-Informationen des Webservers',
 	'opt5' => 'Prüfe auf neue Versionen',
 

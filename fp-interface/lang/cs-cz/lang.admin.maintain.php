@@ -7,7 +7,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt0' => '&laquo; Návrat do hlavního menu',
 	'opt1' => 'Opravit index',
 	'opt2' => 'Vyčistit cache motivů a šablon',
-	'opt3' => 'Obnovit oprávnění souborů',
+	'opt3' => 'Obnovení oprávnění k produktivnímu provozu',
 	'opt4' => 'Ukázat informace o PHP',
 	'opt5' => 'Zjistit aktualizace',
 

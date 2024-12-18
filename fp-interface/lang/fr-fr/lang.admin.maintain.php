@@ -7,7 +7,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt0' => '&laquo; Retour au menu principal',
 	'opt1' => 'Reconstruire les index',
 	'opt2' => 'Purger le cache des th&egrave;mes et des templates',
-	'opt3' => 'Restaurer les permissions de fichiers',
+	'opt3' => 'Rétablir les autorisations pour l\'exploitation productive',
 	'opt4' => 'Afficher info.php',
 	'opt5' => 'V&eacute;rifier les mises &agrave; jour',
 
