@@ -195,6 +195,25 @@ if (class_exists('AdminPanelAction')) {
 				$support ['defaultsfile'] = $lang ['admin'] ['maintain'] ['support'] ['neg_local_date_time'];
 			}
 
+			$support ['desc_configdir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_configdir'];
+			$config_dir = $BASE_DIR . '/fp-content/config';
+			if (file_exists($config_dir) && is_readable($config_dir)) {
+				if (other_has_write_permission($config_dir)) {
+					$test_file = @fopen($config_dir . '/chmod-test-file', 'a+');
+					if ($test_file) {
+						$support ['configdir'] = $lang ['admin'] ['maintain'] ['support'] ['error_configdir'];
+						@fclose($test_file);
+						@unlink($config_dir . '/chmod-test-file');
+					} else {
+						$support ['configdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_configdir'];
+					}
+				} else {
+					$support ['configdir'] = $lang ['admin'] ['maintain'] ['support'] ['success_configdir'];
+				}
+			} else {
+				$support ['configdir'] = $lang ['admin'] ['maintain'] ['support'] ['neg_local_date_time'];
+			}
+
 			$support ['desc_admindir'] = $lang ['admin'] ['maintain'] ['support'] ['desc_admindir'];
 			$admin_dir = $BASE_DIR . '/admin';
 			if (file_exists($admin_dir) && is_readable($admin_dir)) {

@@ -83,6 +83,15 @@
 	</ul>
 
 	<p>
+		{$support.desc_configdir}
+	</p>
+	<ul>
+		<li>
+			{$support.configdir}
+		</li>
+	</ul>
+
+	<p>
 		{$support.desc_admindir}
 	</p>
 	<ul>
