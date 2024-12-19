@@ -71,7 +71,7 @@
   - It is also possible to enable/disable the htaccess edit field to create or edit the file in the PrettyURLs plugin without having to disable the FlatPress Protect plugin. ([#477](https://github.com/flatpressblog/flatpress/pull/477))
   - The removal of metadata when uploading images can be deactivated for better image quality. ([#492](https://github.com/flatpressblog/flatpress/pull/492))
 - Support plugin: update to version 1.1.0
-  - The file and directory permissions are read for some outputs (the last two numbers of the octal value) before a write test is performed. This leads to a more reliable indication of whether writeable or not. ([#502](https://github.com/flatpressblog/flatpress/pull/502))
+  - The file and directory permissions are read for some outputs before a write test is performed. This leads to a more reliable indication of whether a file is writable or not. ([#502](https://github.com/flatpressblog/flatpress/pull/502))
 
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
