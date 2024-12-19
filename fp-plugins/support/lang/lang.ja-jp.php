@@ -57,13 +57,17 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	'attention_defaultsfile' => '<p class="attention"><strong>&#8505;</strong> The defaults.php file can be changed!</p>',
 	'success_defaultsfile' => '<p class="success"><strong>&#10003;</strong> The defaults.php file cannot be changed.</p>',
 
+	'desc_configdir' => '<p>The config directory should be write-protected for others in productive operation.</p>',
+	'error_configdir' => '<p class="error"><strong>&#33;</strong> The configuration directory can be written to by others!</p>',
+	'success_configdir' => '<p class="success"><strong>&#10003;</strong> The configuration directory cannot be written to by others.</p>',
+
 	'desc_admindir' => '<p>The admin directory should be write-protected for others in productive operation.</p>',
-	'attention_admindir' => '<p class="attention"><strong>&#8505;</strong> The core files in the admin directory are writable!</p>',
-	'success_admindir' => '<p class="success"><strong>&#10003;</strong> The core files in the admin directory are not writable.</p>',
+	'attention_admindir' => '<p class="attention"><strong>&#8505;</strong> The admin directory can be written to by others!</p>',
+	'success_admindir' => '<p class="success"><strong>&#10003;</strong> The admin directory cannot be written to by others.</p>',
 
 	'desc_includesdir' => '<p>The fp-includes directory should be write-protected for others in productive operation.</p>',
-	'attention_includesdir' => '<p class="attention"><strong>&#8505;</strong> The core files in the fp-includes directory are writable!</p>',
-	'success_includesdir' => '<p class="success"><strong>&#10003;</strong> The core files in the fp-includes directory are not writable.</p>',
+	'attention_includesdir' => '<p class="attention"><strong>&#8505;</strong> The fp-includes directory can be written to by others!</p>',
+	'success_includesdir' => '<p class="success"><strong>&#10003;</strong> The fp-includes directory cannot be written to by others.</p>',
 
 	// output "Configuration file for the webserver"
 	'h3_configwebserver' => 'Configuration file for the webserver',
@@ -75,8 +79,8 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	'success_maindir' => '<p class="success"><strong>&#10003;</strong> The FlatPress main directory is writable.</p>',
 	'attention_maindir' => '<p class="attention"><strong>&#8505;</strong> The FlatPress main directory is not writable!</p>',
 
-	'success_htaccessw' => '<p class="success"><strong>&#10003;</strong> The .htaccess file is writable.</p>',
-	'attention_htaccessw' => '<p class="attention"><strong>&#8505;</strong> The .htaccess file is not writable!</p>',
+	'success_htaccessw' => '<p class="success"><strong>&#10003;</strong> The .htaccess file can be written.</p>',
+	'attention_htaccessw' => '<p class="attention"><strong>&#8505;</strong> The .htaccess file cannot be written!</p>',
 
 	'attention_htaccessn' => '<p class="attention"><strong>&#8505;</strong> A .htaccess file already exists in the main directory!</p>',
 	'success_htaccessn' => '<p class="success"><strong>&#10003;</strong> No .htaccess file was found in the main directory.</p>',
@@ -85,16 +89,16 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	'h3_themesplugins' => 'Themes and plugins',
 
 	'desc_interfacedir' => 'The fp-interface directory should be write-protected for others in productive operation.',
-	'attention_interfacedir' => '<p class="attention"><strong>&#8505;</strong> The directory fp-interface writable!</p>',
-	'success_interfacedir' => '<p class="success"><strong>&#10003;</strong> The directory fp-interface is not writable.</p>',
+	'attention_interfacedir' => '<p class="attention"><strong>&#8505;</strong> The fp-interface directory can be written to by others!</p>',
+	'success_interfacedir' => '<p class="success"><strong>&#10003;</strong> The fp-interface directory cannot be written to by others.</p>',
 
 	'desc_themesdir' => 'The themes directory should be write-protected for others in productive operation.',
-	'attention_themesdir' => '<p class="attention"><strong>&#8505;</strong> The theme directory is writable!</p>',
-	'success_themesdir' => '<p class="success"><strong>&#10003;</strong> The theme directory is not writable.</p>',
+	'attention_themesdir' => '<p class="attention"><strong>&#8505;</strong> The themes directory can be written to by others!</p>',
+	'success_themesdir' => '<p class="success"><strong>&#10003;</strong> The fp-interface directory cannot be written to by others.</p>',
 
 	'desc_plugindir' => 'The fp-plugins directory should be write-protected for others in productive operation.',
-	'attention_plugindir' => '<p class="attention"><strong>&#8505;</strong> The plugin directory fp-plugins writable!</p>',
-	'success_plugindir' => '<p class="success"><strong>&#10003;</strong> The plugin directory fp-plugins is not writable.</p>',
+	'attention_plugindir' => '<p class="attention"><strong>&#8505;</strong> The fp-plugins directory can be written to by others!</p>',
+	'success_plugindir' => '<p class="success"><strong>&#10003;</strong> The fp-plugins directory cannot be written to by others.</p>',
 
 	// output "Content directory"
 	'h3_contentdir' => 'Content',
