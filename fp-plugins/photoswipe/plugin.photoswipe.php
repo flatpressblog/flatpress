@@ -56,12 +56,38 @@
  * gallery directory. You may edit them with the Gallery captions plugin.
  */
 
-// include the plugin's PHP files
-include_once dirname(__FILE__) . '/photoswipefunctions.class.php';
+// Only execute if no RSS feed is active
+if (!is_rss_feed()) {
+	// Include the plugin's PHP files
+	include_once dirname(__FILE__) . '/photoswipefunctions.class.php';
 
-// intialize the BBCode tags of the plugin
-add_filter('init', 'PhotoSwipeFunctions::initializePluginTags');
+	// Intialize the BBCode tags of the plugin
+	add_filter('init', 'PhotoSwipeFunctions::initializePluginTags');
 
-// inject neccessary JS in the <head> section
-add_action('wp_head', 'PhotoSwipeFunctions::echoScriptTags', 0);
+	// Inject necessary JS in the <head> section
+	add_action('wp_head', 'PhotoSwipeFunctions::echoScriptTags', 0);
+} else {
+	// Log entry for debugging
+	//error_log('PhotoSwipe plugin has been deactivated for the RSS feed.');
+}
 
+// Function for recognizing the RSS feed
+function is_rss_feed() {
+	// Checking the GET parameter 'feed'
+	if (isset($_GET ['feed']) && in_array($_GET ['feed'], ['rss2', 'atom'])) {
+		return true;
+	}
+
+	// Checking the GET parameter 'x'
+	if (isset($_GET ['x']) && strpos($_GET ['x'], 'feed:') === 0) {
+		return true;
+	}
+
+	// Check the URL for 'feed/rss2' or 'feed/atom'
+	if (strpos($_SERVER ['REQUEST_URI'], 'feed/rss2') !== false || strpos($_SERVER ['REQUEST_URI'], 'feed/atom') !== false) {
+		return true;
+	}
+
+	return false;
+}
+?>
