@@ -38,7 +38,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 			{foreach from=$lastcomments_list item=comment}
 			<item>
 			{assign var=comm_link value=$comment.entry|cmnt:comments_link}
-			<title>{$comment.name}</title>
+			<title>{$comment.name|escape:"html"} - {$comment.subject|escape:"html"}</title>
 			<link>{$comm_link}#{$comment.id}</link>
 			<description>
 				<![CDATA[
