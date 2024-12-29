@@ -20,6 +20,7 @@ function comment_main($module) {
 
 	// register Smarty modifier function
 	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
+	$smarty->registerPlugin('modifier', 'theme_comments_feed_link', 'theme_comments_feed_link');
 
 	// hackish solution to get title before fullparse starts dunno, I don't like it
 
@@ -96,13 +97,13 @@ function comment_validate() {
 	if (user_loggedin()) {
 		$user = user_get();
 		$loggedin = $arr ['loggedin'] = true;
-		$email = $user ['email'];
-		$url = $user ['www'];
-		$name = $user ['userid'];
+		$email = $user ['email'] ?? '';
+		$url = $user ['www'] ?? '';
+		$name = $user ['userid'] ?? '';
 	} else {
-		$name = trim(htmlspecialchars(@$_POST ['name']));
-		$email = isset($_POST ['email']) ? trim(htmlspecialchars($_POST ['email'])) : null;
-		$url = isset($_POST ['url']) ? trim(stripslashes(htmlspecialchars($_POST ['url']))) : null;
+		$name = trim(htmlspecialchars(@$_POST ['name'] ?? ''));
+		$email = isset($_POST ['email']) ? trim(htmlspecialchars($_POST ['email'])) : '';
+		$url = isset($_POST ['url']) ? trim(stripslashes(htmlspecialchars($_POST ['url']))) : '';
 
 		/*
 		 * check name
