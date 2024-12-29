@@ -203,7 +203,7 @@ function plugin_lastcomments_rsshead() {
 		echo '
 			<link rel="alternate" type="application/rss+xml" title="Get last Comments RSS 2.0 Feed" href="' . plugin_lastcomments_rss_link() . '">' . //
 			'
-			<link rel="alternate" type="application/rss+xml" title="Get last Comments Atom Feed" href="' . plugin_lastcomments_atom_link() . '">
+			<link rel="alternate" type="application/rss+xml" title="Get last Comments Atom 1.0 Feed" href="' . plugin_lastcomments_atom_link() . '">
 		';
 	}
 }
