@@ -41,7 +41,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 	{foreach from=$lastcomments_list item=comment}
 	<entry>
-		<title>{$comment.name|escape:"html"}</title>
+		<title>{$comment.name|escape:"html"} - {$comment.subject|escape:"html"}</title>
 		<link href="{$comment.entry|cmnt:comments_link}#{$comment.id}" />
 		<id>{$comment.entry|cmnt:comments_link}#{$comment.id}</id>
 		<published>{$comment.date|date_format:"%Y-%m-%dT%H:%M:%SZ"}</published>

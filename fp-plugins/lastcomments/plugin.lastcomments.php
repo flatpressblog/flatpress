@@ -93,7 +93,7 @@ function plugin_lastcomments_widget() {
 function plugin_lastcomments_cache($entryid, $comment) {
 
 	// Max num of chars per comment
-	$CHOP_AT = 32;
+	$CHOP_AT = 48;
 
 	list ($id, $content) = $comment;
 
@@ -167,6 +167,12 @@ function plugin_lastcomments_rss() {
 		}
 
 		if ($c) {
+			$q = new FPDB_Query(array(
+				'id' => $c ['entry']
+			), null);
+			@list (, $entry) = $q->getEntry();
+			$c ['subject'] = $entry ['subject'] ?? 'Untitled Post';
+
 			$c ['link'] = get_comments_link($c ['entry']);
 			$c ['date'] = date('r', $c ['date']);
 
