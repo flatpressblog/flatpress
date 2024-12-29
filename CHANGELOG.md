@@ -73,6 +73,8 @@
   - The removal of metadata when uploading images can be deactivated for better image quality. ([#492](https://github.com/flatpressblog/flatpress/pull/492))
 - Support plugin: update to version 1.1.0
   - The file and directory permissions are read for some outputs before a write test is performed. This leads to a more reliable indication of whether a file is writable or not. ([#502](https://github.com/flatpressblog/flatpress/pull/502))
+- LastComments plugin: update to version 1.1.0
+  - Generates an RSS and Atom feed that displays the latest comments. ([#509](https://github.com/flatpressblog/flatpress/pull/509))
 
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
