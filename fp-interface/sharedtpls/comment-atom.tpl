@@ -24,7 +24,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 	<title>{$flatpress.title|tag:wp_title:':'}</title>
 
-	{if $flatpress.subtitle!=""}
+	{if $flatpress.subtitle != ""}
 	<subtitle>{$flatpress.subtitle}</subtitle>
 	{/if}
 
@@ -48,7 +48,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 				<title>{$name}</title>
 				<author>
 					<name>{$name}</name>
-					{if $www}
+					{if isset($www) && $www != ""}
 					<uri>{$www}</uri>
 					{/if}
 				</author>
@@ -60,7 +60,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 				<content type="xhtml">
 					<div xmlns="http://www.w3.org/1999/xhtml">
 						<![CDATA[
-						{$content|tag:the_content|strip_tags|strip|truncate:180:"...":true|escape}
+						{$content|tag:the_content|strip_tags|strip|truncate:180:" [...]":true|escape}
 						]]>
 					</div>
 				</content>
