@@ -21,6 +21,7 @@
   - Compatibility to PHP with OPcache:
     - Positive feedback when the contact form or comment form has been sent correctly. ([#420](https://github.com/flatpressblog/flatpress/issues/420))
 - Atom feed: Fixes parsing error ([#429](https://github.com/flatpressblog/flatpress/issues/429))
+- Comment Atom feed: Fixed pharsing error if the commenter had not specified a website. ([#508](https://github.com/flatpressblog/flatpress/pull/508))
 - Admin area:
   - Charset dropdown selection instead of an input field ([#340](https://github.com/flatpressblog/flatpress/issues/340))
   - The author entered in the configuration is now the author of the entries and static pages ([#483](https://github.com/flatpressblog/flatpress/issues/483))
