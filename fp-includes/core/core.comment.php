@@ -15,6 +15,7 @@ class comment_indexer extends fs_filelister {
 			array_push($this->_list, basename($file, EXT));
 			return 0;
 		}
+		return;
 	}
 
 	// overrides parent method to return sorted results
