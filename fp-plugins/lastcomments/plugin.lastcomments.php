@@ -50,7 +50,7 @@ function plugin_lastcomments_widget() {
 
 			$content .= "<li>
 				<blockquote class=\"comment-quote\" cite=\"comments.php?entry=" . $arr ['entry'] . "#" . $arr ['id'] . "\">
-				" . $arr ['content'] . "
+				" . $arr ['content'] = clean_cmnt($arr ['content']) . "
 				<p><a href=\"" . get_comments_link($arr ['entry']) . "#" . $arr ['id'] . "\">" . $arr ['name'] . " - " . $entry ['subject'] . "</a></p>
 				</blockquote></li>\n";
 		}
@@ -71,6 +71,18 @@ function plugin_lastcomments_widget() {
 	$entry ['content'] = $content;
 
 	return $entry;
+}
+
+// Removing BBCode and HTML tags
+function clean_cmnt($text) {
+	$text = remove_bb_code($text);
+	return strip_tags($text);
+}
+
+function remove_bb_code($text) {
+	// Remove all BBCode tags, except [...]
+	$pattern = '/\[(?!\.\.\.)([^\]]+)\]/';
+	return preg_replace($pattern, '', $text);
 }
 
 /**
