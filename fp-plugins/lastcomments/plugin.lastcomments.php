@@ -253,8 +253,20 @@ function plugin_lastcomments_rssinit() {
 			exit();
 		}
 
-		$smarty->assign('fp_config', $fp_config);
+		// Register all Smarty modifier functions used by the feed-templates
+		if (!isset($smarty->registered_plugins['modifier']['date'])) {
+			$smarty->registerPlugin('modifier', 'date', 'date');
+		}
+		if (!isset($smarty->registered_plugins['modifier']['date_rfc3339'])) {
+			$smarty->registerPlugin('modifier', 'date_rfc3339', 'theme_smarty_modifier_date_rfc3339');
+		}
+		if (function_exists('BBCode')) {
+			register_modifier_bbcode();
+		}
+		$smarty->registerPlugin('modifier', 'cmnt', 'smarty_modifier_cmnt');
+		$smarty->registerPlugin('modifier', 'remove_bb_code', 'remove_bb_code');
 
+		$smarty->assign('fp_config', $fp_config);
 		$smarty->assign('flatpress', array(
 			'lang' => $fp_config ['locale'] ['lang'] ?? '',
 			'title' => $fp_config ['general'] ['title'] ?? '',
@@ -263,17 +275,12 @@ function plugin_lastcomments_rssinit() {
 			'author' => $fp_config ['general'] ['author'] ?? '',
 			'email' => $fp_config ['general'] ['email'] ?? '',
 		));
-
 		$smarty->assign('rss_link', plugin_lastcomments_rss_link());
 		$smarty->assign('atom_link', plugin_lastcomments_atom_link());
 
-		$smarty->registerPlugin('modifier', 'date', 'date');
-		$smarty->registerPlugin('modifier', 'date_rfc3339', 'theme_smarty_modifier_date_rfc3339');
-		$smarty->registerPlugin('modifier', 'cmnt', 'smarty_modifier_cmnt');
-
-		if ($_GET['feed'] == 'lastcomments-rss2') {
+		if ($_GET ['feed'] == 'lastcomments-rss2') {
 			$smarty->display('plugin:lastcomments/plugin.lastcomments-feed');
-		} elseif ($_GET['feed'] == 'lastcomments-atom') {
+		} elseif ($_GET ['feed'] == 'lastcomments-atom') {
 			$smarty->display('plugin:lastcomments/plugin.lastcomments-atom');
 		}
 
@@ -302,5 +309,55 @@ function smarty_modifier_cmnt($string, $modifier_name) {
 		return get_comments_link($string);
 	}
 	return $string;
+}
+
+/**
+ * Registers the BBCode modifier in Smarty.
+ *
+ * This function checks whether the `bbcode` modifier is already registered in the
+ * global `$smarty` instance. If it is not registered, it ensures that the BBCode
+ * parser is properly initialized and then registers the `BBCode` function as a 
+ * Smarty modifier under the name `bbcode`.
+ *
+ * Usage:
+ * - Call this function during plugin initialization or before rendering templates
+ *   that require BBCode-to-HTML transformation.
+ *
+ * Important:
+ * - The `ensure_bbcode_init()` function is called internally to ensure that the BBCode
+ *   parser is initialized before registration.
+ * - This function prevents duplicate registrations by checking the `registered_plugins`
+ *   array in the global `$smarty` instance.
+ */
+function register_modifier_bbcode() {
+	global $smarty;
+
+	if (isset($smarty->registered_plugins['modifier']['bbcode'])) {
+		return;
+	}
+
+	ensure_bbcode_init();
+	$smarty->registerPlugin('modifier', 'bbcode', 'BBCode');
+}
+
+/**
+ * Ensures the BBCode parser is properly initialized.
+ *
+ * This function checks whether the BBCode parser has already been initialized
+ * by verifying the `BBCODE_INIT_DONE` constant. If not, it calls `plugin_bbcode_init()`
+ * to initialize the parser.
+ *
+ * Usage:
+ * - Call this function before attempting to use the BBCode parser or registering
+ *   the BBCode modifier in Smarty.
+ *
+ * Important:
+ * - This function does not return the BBCode parser instance. If you need the
+ *   parser instance, you should directly call `plugin_bbcode_init()`.
+ */
+function ensure_bbcode_init() {
+	if (!defined('BBCODE_INIT_DONE') || !BBCODE_INIT_DONE) {
+		plugin_bbcode_init();
+	}
 }
 ?>

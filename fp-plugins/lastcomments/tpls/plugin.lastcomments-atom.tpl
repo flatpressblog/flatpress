@@ -18,9 +18,9 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 	<title>{$flatpress.title}</title>
-	<link href="{$flatpress.www}" rel="alternate" />
+	<link href="{$smarty.const.BLOG_BASEURL}" rel="alternate" />
 	<link href="{$atom_link}" rel="self" type="application/atom+xml" />
-	<generator uri="https://www.flatpress.org/" version="{$smarty.const.SYSTEM_VER}">
+	<generator uri="https://www.flatpress.org" version="{$smarty.const.SYSTEM_VER}">
 		FlatPress
 	</generator>
 	<rights> {$flatpress.author} {'Y'|date} </rights>
@@ -29,7 +29,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 		<name>{$flatpress.author}</name>
 		<email>{$flatpress.email}</email>
 	</author>
-	<id>{$flatpress.www}</id>
+	<id>{$smarty.const.BLOG_BASEURL}</id>
 
 	{if $flatpress.subtitle != ""}
 	<subtitle>
@@ -42,13 +42,13 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 	{foreach from=$lastcomments_list item=comment}
 	<entry>
 		<title>{$comment.name|escape:"html"} - {$comment.subject|escape:"html"}</title>
-		<link href="{$comment.entry|cmnt:comments_link}#{$comment.id}" />
-		<id>{$comment.entry|cmnt:comments_link}#{$comment.id}</id>
+		<link href="{$smarty.const.BLOG_BASEURL}{$comment.entry|cmnt:comments_link}#{$comment.id}" />
+		<id>{$smarty.const.BLOG_BASEURL}{$comment.entry|cmnt:comments_link}#{$comment.id}</id>
 		<published>{$comment.date|date_format:"%Y-%m-%dT%H:%M:%SZ"}</published>
 		<updated>{$comment.date|date_format:"%Y-%m-%dT%H:%M:%SZ"}</updated>
 		<summary type="html">
 			<![CDATA[
-			{$comment.content|escape:"html"}
+			{$comment.content|remove_bb_code|strip_tags|strip|escape:"html"}
 			]]>
 		</summary>
 		<author>

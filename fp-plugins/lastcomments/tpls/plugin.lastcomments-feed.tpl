@@ -19,7 +19,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
 	<channel>
 		<title>{$flatpress.title}</title>
-		<link>{$flatpress.www}</link>
+		<link>{$smarty.const.BLOG_BASEURL}</link>
 
 		{if $flatpress.subtitle != ""}
 		<description>
@@ -39,14 +39,14 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 			<item>
 			{assign var=comm_link value=$comment.entry|cmnt:comments_link}
 			<title>{$comment.name|escape:"html"} - {$comment.subject|escape:"html"}</title>
-			<link>{$comm_link}#{$comment.id}</link>
+			<link>{$smarty.const.BLOG_BASEURL}{$comm_link}#{$comment.id}</link>
 			<description>
 				<![CDATA[
-				{$comment.content}
+				{$comment.content|bbcode}
 				]]>
 			</description>
 
-			<guid isPermaLink="true">{$comm_link}#{$comment.id}</guid>
+			<guid isPermaLink="true">{$smarty.const.BLOG_BASEURL}{$comm_link}#{$comment.id}</guid>
 
 			{if $comment.email != ""}
 				<author>{$comment.email} ({$comment.name})</author>
