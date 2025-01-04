@@ -18,7 +18,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 -->
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
 	<channel>
-		<title>{$flatpress.title}</title>
+		<title>{$flatpress.title} » {$dynamic_title}</title>
 		<link>{$smarty.const.BLOG_BASEURL}</link>
 
 		{if $flatpress.subtitle != ""}
@@ -38,23 +38,19 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 			{foreach from=$lastcomments_list item=comment}
 			<item>
 			{assign var=comm_link value=$comment.entry|cmnt:comments_link}
-			<title>{$comment.name|escape:"html"} - {$comment.subject|escape:"html"}</title>
-			<link>{$smarty.const.BLOG_BASEURL}{$comm_link}#{$comment.id}</link>
-			<description>
-				<![CDATA[
-				{$comment.content|bbcode}
-				]]>
-			</description>
+				<title>{$comment.subject|escape:"html"}</title>
+				<link>{$smarty.const.BLOG_BASEURL}{$comm_link}#{$comment.id}</link>
+				<description>
+					<![CDATA[
+					{$comment.name|escape:"html"}: {$comment.content|bbcode}
+					]]>
+				</description>
 
-			<guid isPermaLink="true">{$smarty.const.BLOG_BASEURL}{$comm_link}#{$comment.id}</guid>
+				<guid isPermaLink="true">{$smarty.const.BLOG_BASEURL}{$comm_link}#{$comment.id}</guid>
 
-			{if $comment.email != ""}
-				<author>{$comment.email} ({$comment.name})</author>
-			{else}
-				<author>{$comment.name}</author>
-			{/if}
+				<dc:creator>{$comment.name|escape:"html"}</dc:creator>
 
-			<pubDate>{$comment.date}</pubDate>
+				<pubDate>{$comment.date}</pubDate>
 			</item>
 			{/foreach}
 	</channel>
