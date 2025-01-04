@@ -2,7 +2,7 @@
 /*
  * Plugin Name: LastComments
  * Type: Block
- * Version: 1.1.0
+ * Version: 1.1.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -11,9 +11,40 @@
 define('LASTCOMMENTS_CACHE_FILE', CACHE_DIR . 'lastcomments.tmp');
 define('LASTCOMMENTS_MAX', 8);
 
-add_action('comment_post', 'plugin_lastcomments_cache', 0, 2);
-
+/**
+ * Function: plugin_lastcomments_widget
+ *
+ * Purpose:
+ * This function generates the "Last Comments" widget for the FlatPress plugin.
+ * It retrieves a list of recent comments from a cache file and builds an HTML list for display.
+ * The function also handles updates to the cache file that tracks the count of comments, minimizing
+ * unnecessary writes by only updating when the count changes.
+ *
+ * Workflow:
+ * 1. Loads the cached comment count from `lastcomments_count.tmp`.
+ * 2. Reads and unserializes the list of cached comments from `LASTCOMMENTS_CACHE_FILE`.
+ * 3. Initializes the HTML content for the "Last Comments" widget.
+ * 4. Iterates through the list of comments:
+ *    - Queries the database for the corresponding entry.
+ *    - Adds valid comments to the widget's HTML content.
+ *    - Decrements the count for invalid or missing entries.
+ * 5. If no comments are available, displays a "No Comments" message.
+ * 6. Updates the `lastcomments_count.tmp` cache file only if the comment count has changed.
+ *
+ * Parameters:
+ * None.
+ *
+ * Returns:
+ * An array containing:
+ * - `subject`: The widget's title.
+ * - `content`: The HTML list of recent comments or a message indicating no comments.
+ */
 function plugin_lastcomments_widget() {
+
+	$cache_file = CACHE_DIR . 'lastcomments_count.tmp';
+	// Load the saved value of the comments from the cache file
+	$cached_count = (int) io_load_file($cache_file);
+
 	if (false === ($f = io_load_file(LASTCOMMENTS_CACHE_FILE)) || empty(unserialize($f))) {
 		// No comments in cache
 		$list = array();
@@ -31,9 +62,13 @@ function plugin_lastcomments_widget() {
 	// They're located under plugin.PLUGINNAME/lang/LANGID/
 	$lang = lang_load('plugin:lastcomments');
 
+	// Initialize number of last comments
+	$count = count($list);
+
 	$update = false;
 
 	if ($count = count($list)) {
+
 		while ($arr = array_pop($list)) {
 			$q = new FPDB_Query(array(
 				'id' => $arr ['entry']
@@ -48,11 +83,11 @@ function plugin_lastcomments_widget() {
 				continue;
 			}
 
-			$content .= "<li>
-				<blockquote class=\"comment-quote\" cite=\"comments.php?entry=" . $arr ['entry'] . "#" . $arr ['id'] . "\">
-				" . $arr ['content'] = clean_cmnt($arr ['content']) . "
-				<p><a href=\"" . get_comments_link($arr ['entry']) . "#" . $arr ['id'] . "\">" . $arr ['name'] . " - " . $entry ['subject'] . "</a></p>
-				</blockquote></li>\n";
+			$content .= '<li>
+				<blockquote class="comment-quote" cite="comments.php?entry=' . $arr ['entry'] . '#' . $arr ['id'] . '">' . //
+				'<p><a href="' . get_comments_link($arr ['entry']) . '#' . $arr ['id'] . '">' . $entry ['subject'] . '</a></p>' . //
+				'<strong>' . $arr ['name'] . ':</strong> ' . $arr ['content'] = clean_cmnt($arr ['content']) . //
+				'</blockquote></li>' . "\n";
 		}
 		$subject = $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'];
 	}
@@ -69,6 +104,11 @@ function plugin_lastcomments_widget() {
 
 	$entry ['subject'] = $subject;
 	$entry ['content'] = $content;
+
+	// Write number of comments only if the value has changed
+	if ($count !== $cached_count) {
+		io_write_file($cache_file, $count);
+	}
 
 	return $entry;
 }
@@ -105,7 +145,7 @@ function remove_bb_code($text) {
 function plugin_lastcomments_cache($entryid, $comment) {
 
 	// Max num of chars per comment
-	$CHOP_AT = 48;
+	$CHOP_AT = 64;
 
 	list ($id, $content) = $comment;
 
@@ -127,14 +167,16 @@ function plugin_lastcomments_cache($entryid, $comment) {
 	}
 
 	if (strlen($content ['content']) > $CHOP_AT) {
-		$string = substr($content ['content'], 0, $CHOP_AT) . ' [...]';
+		// Short visible text with BBCode
+		$string = truncate_visible_text_with_bbcode($content ['content'], $CHOP_AT);
 	} else {
 		$string = $content ['content'];
 	}
 
 	array_push($list, array(
 		'name' => $content ['name'],
-		'email' => $content ['email'] ?? 'john@doe.org',
+		'email' => $content ['email'] ?? '',
+		'url' => $content ['url'] ?? '',
 		'content' => $string,
 		'id' => $id,
 		'entry' => $entryid,
@@ -143,8 +185,6 @@ function plugin_lastcomments_cache($entryid, $comment) {
 
 	return io_write_file(LASTCOMMENTS_CACHE_FILE, serialize($list));
 }
-
-register_widget('lastcomments', 'LastComments', 'plugin_lastcomments_widget');
 
 /**
  * Function: plugin_lastcomments_rss
@@ -188,6 +228,9 @@ function plugin_lastcomments_rss() {
 			$c ['link'] = get_comments_link($c ['entry']);
 			$c ['date'] = date('r', $c ['date']);
 
+			$c ['formatted_date'] = strftime_replacement($fp_config ['locale'] ['dateformat'], $c ['date']);
+			$c ['formatted_time'] = strftime_replacement($fp_config ['locale'] ['timeformat'], $c ['date']);
+
 			$newlist [] = $c;
 		}
 	}
@@ -216,17 +259,54 @@ function plugin_lastcomments_def_atom_link() {
 
 add_action('wp_head', 'plugin_lastcomments_rsshead');
 
+/**
+ * Function: plugin_lastcomments_rsshead
+ *
+ * Purpose:
+ * This function generates the `<link>` tags for the RSS 2.0 and Atom 1.0 feeds
+ * of the "Last Comments" plugin. These tags are added to the `<head>` section
+ * of the HTML output to provide links to the feeds for news aggregators or feed readers.
+ * The function also dynamically includes the total number of recent comments in the feed title,
+ * based on a cached count stored in `lastcomments_count.tmp`.
+ *
+ * Workflow:
+ * 1. Loads the cached number of recent comments from the temporary file `lastcomments_count.tmp`.
+ * 2. Retrieves the translated strings for the "Last Comments" plugin using `lang_load`.
+ * 3. Calls `plugin_lastcomments_rss()` to ensure the RSS/Atom feed data is available.
+ *    - If the feed data is not available, no `<link>` tags are output.
+ * 4. Outputs `<link>` tags for both RSS 2.0 and Atom 1.0 feeds, dynamically including:
+ *    - The number of recent comments (`$lastcomments_count`).
+ *    - Translated feed titles.
+ *    - Feed URLs.
+ *
+ * Parameters:
+ * None.
+ *
+ * Notes:
+ * - Relies on the existence of `lastcomments_count.tmp` for the cached comment count.
+ * - The function uses `plugin_lastcomments_rss()` to check if feed data is available
+ *   before adding the `<link>` tags.
+ * - Requires translation strings for RSS and Atom feed titles to be defined
+ *   under the "plugin:lastcomments" namespace.
+ *
+ */
 function plugin_lastcomments_rsshead() {
+
+	// Temporary file for the number of recent comments
+	$cache_file = CACHE_DIR . 'lastcomments_count.tmp';
+	// Read the number from the cache
+	$lastcomments_count = (int) io_load_file($cache_file);
+
+	$lang = lang_load('plugin:lastcomments');
+
 	if (plugin_lastcomments_rss()) {
 		echo '
-			<link rel="alternate" type="application/rss+xml" title="Get last Comments RSS 2.0 Feed" href="' . plugin_lastcomments_rss_link() . '">' . //
+			<link rel="alternate" type="application/rss+xml" title="' . $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $lastcomments_count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'] . ' | RSS 2.0 Feed" href="' . plugin_lastcomments_rss_link() . '">' . //
 			'
-			<link rel="alternate" type="application/rss+xml" title="Get last Comments Atom 1.0 Feed" href="' . plugin_lastcomments_atom_link() . '">
+			<link rel="alternate" type="application/rss+xml" title="' . $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $lastcomments_count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'] . ' | Atom 1.0 Feed" href="' . plugin_lastcomments_atom_link() . '">
 		';
 	}
 }
-
-add_action('init', 'plugin_lastcomments_rssinit');
 
 /**
  * Function: plugin_lastcomments_rssinit
@@ -253,6 +333,12 @@ function plugin_lastcomments_rssinit() {
 			exit();
 		}
 
+		$lang = lang_load('plugin:lastcomments');
+
+		$cache_file = CACHE_DIR . 'lastcomments_count.tmp';
+		$lastcomments_count = (int) io_load_file($cache_file);
+		$dynamic_title = $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $lastcomments_count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'];
+
 		// Register all Smarty modifier functions used by the feed-templates
 		if (!isset($smarty->registered_plugins['modifier']['date'])) {
 			$smarty->registerPlugin('modifier', 'date', 'date');
@@ -277,6 +363,8 @@ function plugin_lastcomments_rssinit() {
 		));
 		$smarty->assign('rss_link', plugin_lastcomments_rss_link());
 		$smarty->assign('atom_link', plugin_lastcomments_atom_link());
+		$smarty->assign('dynamic_title', $dynamic_title);
+
 
 		if ($_GET ['feed'] == 'lastcomments-rss2') {
 			$smarty->display('plugin:lastcomments/plugin.lastcomments-feed');
@@ -360,4 +448,122 @@ function ensure_bbcode_init() {
 		plugin_bbcode_init();
 	}
 }
+
+/**
+ * Removes incomplete BBCode tags from the truncated text.
+ *
+ * @param string $truncated The shortened text.
+ * @return string The cleaned text without incomplete BBCode tags.
+ */
+function remove_incomplete_bbcode($truncated) {
+	// Match all BBCode tags in the text
+	preg_match_all('/\[(\/?[a-z]+)(?:=[^\]]+)?\]/i', $truncated, $matches);
+	$openTags = [];
+	$fullTagPositions = []; // Track positions of tags for clean removal
+
+	foreach ($matches [1] as $index => $tag) {
+		if ($tag [0] !== '/') {
+			// Opening tag: store it and its position
+			$openTags [] = [
+				'tag' => $tag,
+				'position' => $matches [0] [$index],
+			];
+		} else {
+			// Closing tag: check if there's a matching opening tag
+			$closingTag = substr($tag, 1);
+			$key = array_search($closingTag, array_column($openTags, 'tag'));
+			if ($key !== false) {
+				// Remove matched opening tag
+				unset($openTags [$key]);
+			}
+		}
+	}
+
+	// Remove any unmatched opening tags
+	foreach (array_reverse($openTags) as $openTag) {
+		$truncated = preg_replace('/' . preg_quote($openTag ['position'], '/') . '[^\]]*/', '', $truncated);
+	}
+
+	return $truncated;
+}
+
+/**
+ * Shortens the visible text with BBCode and removes incomplete BBCode tags.
+ *
+ * @param string $content The complete text with BBCode and HTML.
+ * @param int $maxLength Maximum visible length of the text.
+ * @return string The shortened text with complete BBCode and HTML.
+ */
+function truncate_visible_text_with_bbcode($content, $maxLength) {
+	// Extract visible text without BBCode and HTML
+	$plainText = strip_tags(remove_bb_code($content));
+
+	// If visible text is longer than permitted, shorten it
+	if (strlen($plainText) > $maxLength) {
+		$visibleText = substr($plainText, 0, $maxLength);
+		$htmlSafeContent = '';
+		$visibleCharCount = 0;
+		$insideTag = false;
+		$insideBBCode = false;
+		$bbcodeStack = [];
+
+		// Run through the original text and build the shortened HTML/BBCode text
+		for ($i = 0; $i < strlen($content); $i++) {
+			$char = $content [$i];
+
+			if ($char === '<') {
+				// Start of an HTML tag
+				$insideTag = true;
+			} elseif ($char === '>') {
+				// End of an HTML tag
+				$insideTag = false;
+			} elseif ($char === '[') {
+				// Start of a BBCode tag
+				$insideBBCode = true;
+			} elseif ($char === ']') {
+				// End of a BBCode tag
+				$insideBBCode = false;
+
+				// Process BBCode tag
+				$bbcodeTag = substr($content, strrpos($htmlSafeContent, '['));
+				if (strpos($bbcodeTag, '/') === 1) {
+					// Closing tag, remove from stack
+					$tag = trim($bbcodeTag, '[]/');
+					if (($key = array_search($tag, $bbcodeStack)) !== false) {
+						unset($bbcodeStack [$key]);
+					}
+				} else {
+					// Opening tag, add to stack
+					$tag = trim($bbcodeTag, '[]');
+					$bbcodeStack [] = $tag;
+				}
+			}
+
+			if (!$insideTag && !$insideBBCode && $char !== '<' && $char !== '>') {
+				$visibleCharCount++;
+			}
+
+			$htmlSafeContent .= $char;
+
+			// End the setup when visible characters reach the limit
+			if ($visibleCharCount >= $maxLength) {
+				break;
+			}
+		}
+
+		// Remove incomplete BBCode tags
+		foreach (array_reverse($bbcodeStack) as $unmatchedTag) {
+			$htmlSafeContent = preg_replace('/\[' . preg_quote($unmatchedTag, '/') . '[^\]]*\]/', '', $htmlSafeContent);
+		}
+
+		return $htmlSafeContent . ' [...]';
+	}
+
+	// No shortening required
+	return $content;
+}
+
+add_action('comment_post', 'plugin_lastcomments_cache', 0, 2);
+add_action('init', 'plugin_lastcomments_rssinit');
+register_widget('lastcomments', 'LastComments', 'plugin_lastcomments_widget');
 ?>
