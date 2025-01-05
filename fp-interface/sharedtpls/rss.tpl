@@ -44,7 +44,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 				<link>{$id|link:post_link}</link>
 				<description>
 					<![CDATA[
-					{$content|tag:the_content}
+					{$content|tag:the_content|fix_encoding_issues}
 					]]>
 				</description>
 				{if ($categories)}
