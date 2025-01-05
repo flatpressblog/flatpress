@@ -19,7 +19,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 
-		<title>{$flatpress.title}</title>
+		<title>{$flatpress.title} » {$lang.main.entries}</title>
 		<link>{$flatpress.www}</link>
 
 		{if $flatpress.subtitle!=""}
@@ -44,14 +44,15 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 				<link>{$id|link:post_link}</link>
 				<description>
 					<![CDATA[
-					{$content|tag:the_content}
+					{$content|tag:the_content|fix_encoding_issues}
 					]]>
 				</description>
 				{if ($categories)}
 				<category>
 					<![CDATA[
 					{$categories|@filed:false}
-					]]></category>
+					]]>
+				</category>
 				{/if}
 				<guid isPermaLink="true">{$id|link:post_link}</guid>
 

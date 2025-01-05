@@ -22,7 +22,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-	<title>{$flatpress.title|tag:wp_title:':'}</title>
+	<title>{$flatpress.title|tag:wp_title:':'} » {$subject} » {$lang.main.comments}</title>
 
 	{if $flatpress.subtitle != ""}
 	<subtitle>{$flatpress.subtitle}</subtitle>

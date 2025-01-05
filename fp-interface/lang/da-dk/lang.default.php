@@ -5,6 +5,7 @@ $lang ['main'] = array(
 	'nextpage' => 'Næste side &raquo;',
 	'prevpage' => '&laquo; Forrige side',
 	'entry' => 'Bidrag',
+	'entries' => 'Bidrag',
 	'static' => 'Statisk side',
 	'comment' => 'Kommentar',
 	'preview' => 'Rediger/gennemse',
