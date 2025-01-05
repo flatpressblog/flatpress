@@ -5,6 +5,7 @@ $lang ['main'] = array(
 	'nextpage' => '次のページ &raquo;',
 	'prevpage' => '&laquo; 前のページ',
 	'entry' => 'ブログ記事',
+	'entries' => 'ブログエントリー',
 	'static' => '固定ページ',
 	'comment' => 'コメント',
 	'preview' => '編集/プレビュー',

@@ -5,6 +5,7 @@ $lang ['main'] = array(
 	'nextpage' => 'Próxima página &raquo;',
 	'prevpage' => '&laquo; Página anterior',
 	'entry' => 'Post',
+	'entries' => 'Entradas',
 	'static' => 'Página estática',
 	'comment' => 'Comentário',
 	'preview' => 'edite/visualize',

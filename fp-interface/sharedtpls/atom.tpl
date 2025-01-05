@@ -18,7 +18,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-	<title>{$flatpress.title}</title>
+	<title>{$flatpress.title} » {$lang.main.entries}</title>
 
 	{if $flatpress.subtitle!=""}
 	<subtitle>{$flatpress.subtitle}</subtitle>
@@ -29,7 +29,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 	<generator uri="https://www.flatpress.org/" version="{$smarty.const.SYSTEM_VER}">
 		FlatPress
 	</generator>
-	<rights> {$flatpress.author} {'Y'|date} </rights>
+	<rights>{$flatpress.author} {'Y'|date}</rights>
 	<updated>{$smarty.now|date_rfc3339}</updated>
 	<author>
 		<name>{$flatpress.author}</name>
@@ -50,7 +50,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 		<content type="xhtml">
 			<div xmlns="http://www.w3.org/1999/xhtml">
 				<![CDATA[
-				{$content|tag:the_content|strip_tags|strip|truncate:180:"...":true|escape}
+				{$content|tag:the_content|strip_tags|strip|truncate:180:" [...]":true|escape}
 				]]>
 			</div>
 		</content>

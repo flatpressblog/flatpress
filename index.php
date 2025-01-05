@@ -163,12 +163,14 @@ function index_main() {
 
 			switch ($fp_params ['feed']) {
 				case 'atom':
-					header('Content-type: application/atom+xml');
+					$charset = strtoupper($fp_config ['locale'] ['charset']);
+					header('Content-Type: application/rss+xml; charset=' . $charset); 
 					$module = SHARED_TPLS . 'atom.tpl';
 					break;
 				case 'rss2':
 				default:
-					header('Content-type: application/rss+xml');
+					$charset = strtoupper($fp_config ['locale'] ['charset']);
+					header('Content-Type: application/rss+xml; charset=' . $charset);
 					$module = SHARED_TPLS . 'rss.tpl';
 			}
 		}
@@ -204,6 +206,10 @@ function register_smartyplugins() {
 	);
 	foreach ($functionsToRegister as $functionToRegister) {
 		$smarty->registerPlugin('modifier', $functionToRegister, $functionToRegister);
+	}
+	if (!isset($smarty->registered_plugins['modifier']['fix_encoding_issues'])) {
+		// This modifier converts characters such as Ã¤ to ä or &#8220; to “. See core.language.php
+		$smarty->registerPlugin('modifier', 'fix_encoding_issues', 'fix_encoding_issues');
 	}
 }
 

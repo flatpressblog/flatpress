@@ -25,7 +25,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 		<title>
 			<![CDATA[
-			{$flatpress.title} » {$subject}
+			{$flatpress.title} » {$subject} » {$lang.main.comments}
 			]]>
 		</title>
 		<link>{$the_comment_link}</link>

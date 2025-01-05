@@ -10,6 +10,7 @@
  */
 define('LASTCOMMENTS_CACHE_FILE', CACHE_DIR . 'lastcomments.tmp');
 define('LASTCOMMENTS_MAX', 8);
+define('LASTCOMMENTS_TRUNCATE_LENGTH', 64);
 
 /**
  * Function: plugin_lastcomments_widget
@@ -83,10 +84,13 @@ function plugin_lastcomments_widget() {
 				continue;
 			}
 
+			// Truncate comment for widget display
+			$truncatedContent = comment_for_widget($arr ['content'], LASTCOMMENTS_TRUNCATE_LENGTH);
+
 			$content .= '<li>
 				<blockquote class="comment-quote" cite="comments.php?entry=' . $arr ['entry'] . '#' . $arr ['id'] . '">' . //
 				'<p><a href="' . get_comments_link($arr ['entry']) . '#' . $arr ['id'] . '">' . $entry ['subject'] . '</a></p>' . //
-				'<strong>' . $arr ['name'] . ':</strong> ' . $arr ['content'] = clean_cmnt($arr ['content']) . //
+				'<strong>' . $arr ['name'] . ':</strong> ' . $truncatedContent . //
 				'</blockquote></li>' . "\n";
 		}
 		$subject = $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'];
@@ -113,7 +117,24 @@ function plugin_lastcomments_widget() {
 	return $entry;
 }
 
-// Removing BBCode and HTML tags
+/**
+ * Processes a comment for widget display, including truncation and BBCode conversion.
+ *
+ * @param string $content The raw comment content.
+ * @param int $maxLength The maximum length for the visible text.
+ * @return string The processed and truncated comment content.
+ */
+function comment_for_widget($content, $maxLength) {
+	$cleanedText = clean_cmnt($content);
+	return truncate_with_bbcode($cleanedText, $maxLength);
+}
+
+/**
+ * Removes BBCode from text while preserving visible text and basic formatting.
+ *
+ * @param string $text The text containing BBCode.
+ * @return string The cleaned text without BBCode and HTML tags.
+ */
 function clean_cmnt($text) {
 	$text = remove_bb_code($text);
 	return strip_tags($text);
@@ -166,18 +187,11 @@ function plugin_lastcomments_cache($entryid, $comment) {
 		}
 	}
 
-	if (strlen($content ['content']) > $CHOP_AT) {
-		// Short visible text with BBCode
-		$string = truncate_visible_text_with_bbcode($content ['content'], $CHOP_AT);
-	} else {
-		$string = $content ['content'];
-	}
-
 	array_push($list, array(
 		'name' => $content ['name'],
 		'email' => $content ['email'] ?? '',
 		'url' => $content ['url'] ?? '',
-		'content' => $string,
+		'content' => $content ['content'] ?? '',
 		'id' => $id,
 		'entry' => $entryid,
 		'date' => $content ['date'] ?? time()
@@ -301,9 +315,9 @@ function plugin_lastcomments_rsshead() {
 
 	if (plugin_lastcomments_rss()) {
 		echo '
-			<link rel="alternate" type="application/rss+xml" title="' . $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $lastcomments_count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'] . ' | RSS 2.0 Feed" href="' . plugin_lastcomments_rss_link() . '">' . //
+			<link rel="alternate" type="application/rss+xml" title="' . $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $lastcomments_count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'] . ' | RSS 2.0" href="' . plugin_lastcomments_rss_link() . '">' . //
 			'
-			<link rel="alternate" type="application/rss+xml" title="' . $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $lastcomments_count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'] . ' | Atom 1.0 Feed" href="' . plugin_lastcomments_atom_link() . '">
+			<link rel="alternate" type="application/rss+xml" title="' . $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $lastcomments_count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'] . ' | Atom 1.0" href="' . plugin_lastcomments_atom_link() . '">
 		';
 	}
 }
@@ -346,6 +360,10 @@ function plugin_lastcomments_rssinit() {
 		if (!isset($smarty->registered_plugins['modifier']['date_rfc3339'])) {
 			$smarty->registerPlugin('modifier', 'date_rfc3339', 'theme_smarty_modifier_date_rfc3339');
 		}
+		if (!isset($smarty->registered_plugins['modifier']['fix_encoding_issues'])) {
+			// This modifier converts characters such as Ã¤ to ä or &#8220; to “. See core.language.php
+			$smarty->registerPlugin('modifier', 'fix_encoding_issues', 'fix_encoding_issues');
+		}
 		if (function_exists('BBCode')) {
 			register_modifier_bbcode();
 		}
@@ -365,10 +383,11 @@ function plugin_lastcomments_rssinit() {
 		$smarty->assign('atom_link', plugin_lastcomments_atom_link());
 		$smarty->assign('dynamic_title', $dynamic_title);
 
-
 		if ($_GET ['feed'] == 'lastcomments-rss2') {
+			header('Content-Type: application/rss+xml; charset=' . $fp_config ['locale'] ['charset']);
 			$smarty->display('plugin:lastcomments/plugin.lastcomments-feed');
 		} elseif ($_GET ['feed'] == 'lastcomments-atom') {
+			header('Content-Type: application/atom+xml; charset=' . $fp_config ['locale'] ['charset']);
 			$smarty->display('plugin:lastcomments/plugin.lastcomments-atom');
 		}
 
@@ -450,51 +469,13 @@ function ensure_bbcode_init() {
 }
 
 /**
- * Removes incomplete BBCode tags from the truncated text.
- *
- * @param string $truncated The shortened text.
- * @return string The cleaned text without incomplete BBCode tags.
- */
-function remove_incomplete_bbcode($truncated) {
-	// Match all BBCode tags in the text
-	preg_match_all('/\[(\/?[a-z]+)(?:=[^\]]+)?\]/i', $truncated, $matches);
-	$openTags = [];
-	$fullTagPositions = []; // Track positions of tags for clean removal
-
-	foreach ($matches [1] as $index => $tag) {
-		if ($tag [0] !== '/') {
-			// Opening tag: store it and its position
-			$openTags [] = [
-				'tag' => $tag,
-				'position' => $matches [0] [$index],
-			];
-		} else {
-			// Closing tag: check if there's a matching opening tag
-			$closingTag = substr($tag, 1);
-			$key = array_search($closingTag, array_column($openTags, 'tag'));
-			if ($key !== false) {
-				// Remove matched opening tag
-				unset($openTags [$key]);
-			}
-		}
-	}
-
-	// Remove any unmatched opening tags
-	foreach (array_reverse($openTags) as $openTag) {
-		$truncated = preg_replace('/' . preg_quote($openTag ['position'], '/') . '[^\]]*/', '', $truncated);
-	}
-
-	return $truncated;
-}
-
-/**
  * Shortens the visible text with BBCode and removes incomplete BBCode tags.
  *
  * @param string $content The complete text with BBCode and HTML.
  * @param int $maxLength Maximum visible length of the text.
  * @return string The shortened text with complete BBCode and HTML.
  */
-function truncate_visible_text_with_bbcode($content, $maxLength) {
+function truncate_with_bbcode($content, $maxLength) {
 	// Extract visible text without BBCode and HTML
 	$plainText = strip_tags(remove_bb_code($content));
 
