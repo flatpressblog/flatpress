@@ -2,7 +2,7 @@
 
 /*
  * Plugin Name: RSS and Atom Feed
- * Version: 1.0.0
+ * Version: 1.0.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -15,7 +15,7 @@ function plugin_feed_head() { // stytesheet-file
 
 	echo '
 	<!-- BOF Feed-Button Stylesheet -->
-	<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/feed.css">
+	<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/feed.css.php">
 	<!-- EOF Feed Stylesheet  -->
 	';
 }
@@ -24,7 +24,6 @@ function plugin_feed_widget() {
 
 	$lang = lang_load('plugin:feed');
 	$baseurl = BLOG_BASEURL;
-	$imgdir = plugin_geturl('feed');
 
 	$widget ['subject'] = $lang ['plugin'] ['feed'] ['subject'];
 
@@ -35,8 +34,8 @@ function plugin_feed_widget() {
 		<!-- BOF Feed-Buttons -->
 		<ul>
 			<li>
-				<a href="' . $baseurl . '?x=feed:rss2" title="' . $rss . '" target="_blank"><img class="feed-widget" src="' . $imgdir . 'img/rss.png" alt="RSS"></a>
-				<a href="' . $baseurl . '?x=feed:atom" title="' . $atom . '" target="_blank"><img class="feed-widget" src="' . $imgdir . 'img/atom.png" alt="Atom"></a>
+				<a href="' . $baseurl . '?x=feed:rss2" title="' . $rss . '" target="_blank"><span class="icon-rss"></span>RSS</a> | ' . //
+				'<a href="' . $baseurl . '?x=feed:atom" title="' . $atom . '" target="_blank"><span class="icon-rss"></span>ATOM</a>
 			</li>
 		</ul>
 		<!-- EOF Feed-Buttons -->
