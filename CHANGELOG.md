@@ -76,6 +76,8 @@
 - LastComments plugin: update to version 1.1.1
   - Generates an RSS and Atom feed that displays the latest comments. ([#509](https://github.com/flatpressblog/flatpress/pull/509))
   - Output of comments in the widget without BBcode tags
+- Feed plugin: update to version 1.0.1
+  - RSS image replaced with RSS icon (woff2) ([#515](https://github.com/flatpressblog/flatpress/pull/515))
 
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
