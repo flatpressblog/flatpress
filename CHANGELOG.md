@@ -105,6 +105,7 @@
 - The setup now also recognizes the browser language when using Firefox
 
 ## Themes
+- The Leggero theme now also indicates that comment feeds can be subscribed to ([#515](https://github.com/flatpressblog/flatpress/pull/515))
 - Invidual scrollbar for the Leggero v2 style
 - The Leggero v2 style now supports UltraWide monitors ([#476](https://github.com/flatpressblog/flatpress/issues/476))
   
