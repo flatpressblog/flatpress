@@ -86,6 +86,14 @@ class admin_config_default extends AdminPanelActionValidated {
 			false,
 			false,
 			'trim'
+		),
+		array(
+			'admin',
+			'admin',
+			'isValidAdminName',
+			false,
+			false,
+			'trim'
 		)
 	);
 
@@ -106,6 +114,37 @@ class admin_config_default extends AdminPanelActionValidated {
 			$static_list [$id] = static_parse($id);
 		}
 		$this->smarty->assign('static_list', $static_list);
+
+		// Determining the logged-in user
+		$user = isset($_SESSION ['userid']) ? $_SESSION ['userid'] : null;
+
+		// Set default value for $flatpress.admin
+		if (empty($fp_config ['general'] ['admin']) && $user) {
+			$fp_config ['general'] ['admin'] = $user;
+		}
+
+		// Transfer logged-in user to the template
+		$this->smarty->assign('user', $user);
+
+		// Dynamically add password validators only if necessary
+		if (!empty($_POST ['password']) || !empty($_POST ['confirm_password'])) {
+			$this->validators[] = array(
+				'password',
+				'password',
+				'isValidAdminPassword',
+				false,
+				false,
+				'trim'
+			);
+			$this->validators[] = array(
+				'confirm_password',
+				'confirm_password',
+				'isValidAdminPassword',
+				false,
+				false,
+				'trim'
+			);
+		}
 	}
 
 	// Function for escaping HTML output
@@ -125,7 +164,7 @@ class admin_config_default extends AdminPanelActionValidated {
 	}
 
 	function onsave() {
-		global $fp_config;
+		global $fp_config, $lang;
 
 		// Load list of valid charsets for the current language
 		$validCharsets = $this->getCharsetList($_POST ['lang']);
@@ -162,6 +201,26 @@ class admin_config_default extends AdminPanelActionValidated {
 			'charset' => $_POST ['charset'],
 			'lang' => $_POST ['lang']
 		);
+
+		// Password and admin name logic
+		if (!empty($_POST ['password']) || !empty($_POST ['confirm_password'])) {
+			// Check password fields if one of the fields is filled
+			if ($_POST ['password'] !== $_POST ['confirm_password']) {
+				$error_message = isset($lang ['admin'] ['config'] ['default'] ['error'] ['confirm_password'])
+					? $lang ['admin'] ['config'] ['default'] ['error'] ['confirm_password']
+					: 'Passwords do not match.';
+				$this->smarty->assign('error', ['password' => $error_message]);
+				return $this->onerror();
+			}
+
+			// Update admin data
+			$admin = user_get('admin') ?? [];
+			$admin ['userid'] = !empty($_POST ['admin']) ? $_POST ['admin'] : $admin ['userid'];
+			$admin ['password'] = user_pwd($_POST ['password']);
+			$admin ['www'] = $_POST ['www'];
+			$admin ['email'] = $_POST ['email'];
+			user_add($admin);
+		}
 
 		$success = config_save() ? 1 : -1;
 

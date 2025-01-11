@@ -13,6 +13,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	// ------
 	'gensetts' => 'Hlavní nastavení',
+	'adminname' => 'Jméno správce',
+	'adminpassword' => 'Nové heslo',
+	'adminpasswordconfirm' => 'Opakované heslo',
 	'blogtitle' => 'Nadpis blogu',
 	'blogsubtitle' => 'Podnadpis blogu',
 	'blogfooter' => 'Patička blogu',
@@ -55,6 +58,9 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => 'Musíš zadat řetězec s formátem datumu',
 	'dateformatshort' => 'Musíš zadat řetězec s formátem datumu (krátká verze)',
 	'charset' => 'Musíš zadat ID znakové sady',
-	'lang' => 'Vybraný jazyk není dostupný'
+	'lang' => 'Vybraný jazyk není dostupný',
+	'admin' => 'Jméno správce může obsahovat pouze písmena, číslice a 1 podtržítko.',
+	'password' => 'Heslo musí obsahovat alespoň 6 znaků a nesmí obsahovat žádné mezery.',
+	'confirm_password' => 'Hesla se neshodují.'
 );
 ?>
