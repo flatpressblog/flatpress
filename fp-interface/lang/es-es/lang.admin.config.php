@@ -13,6 +13,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	// ------
 	'gensetts' => 'Configuración general',
+	'adminname' => 'Nombre del administrador',
+	'adminpassword' => 'Nueva contraseña',
+	'adminpasswordconfirm' => 'Repetir contraseña',
 	'blogtitle' => 'Título del Blog',
 	'blogsubtitle' => 'Subtítulo del Blog',
 	'blogfooter' => 'Pie de página del Blog',
@@ -54,6 +57,9 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => 'Debe insertar el formato para la fecha',
 	'dateformatshort' => 'Debe insertar el formato para la fecha (corto)',
 	'charset' => 'Debe insertar un ID de set de caracteres',
-	'lang' => 'El idioma que eligió no está disponible'
+	'lang' => 'El idioma que eligió no está disponible',
+	'admin' => 'El nombre del administrador sólo puede contener letras, números y 1 guión bajo.',
+	'password' => 'La contraseña debe contener al menos 6 caracteres y no debe contener espacios.',
+	'confirm_password' => 'Las contraseñas no coinciden.'
 );
 ?>

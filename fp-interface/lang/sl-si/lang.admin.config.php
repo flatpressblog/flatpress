@@ -13,6 +13,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	// ------
 	'gensetts' => 'Splošne Nastavitve',
+	'adminname' => 'Ime upravitelja',
+	'adminpassword' => 'Novo geslo',
+	'adminpasswordconfirm' => 'Ponovitev gesla',
 	'blogtitle' => 'Naslov Bloga',
 	'blogsubtitle' => 'Podnaslov Bloga',
 	'blogfooter' => 'Noga Bloga',
@@ -54,6 +57,9 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => 'Morate vstaviti niz formata za datum',
 	'dateformatshort' => 'Morate vstaviti niz formata za datum (kratko)',
 	'charset' => 'Morate vstaviti identifikator nabora znakov',
-	'lang' => 'Izbrani jezik ni na voljo'
+	'lang' => 'Izbrani jezik ni na voljo',
+	'admin' => 'Ime skrbnika lahko vsebuje samo črke, številke in 1 podčrtaj.',
+	'password' => 'Geslo mora vsebovati vsaj 6 znakov in ne sme vsebovati presledkov.',
+	'confirm_password' => 'Gesla se ne ujemajo.'
 );
 ?>

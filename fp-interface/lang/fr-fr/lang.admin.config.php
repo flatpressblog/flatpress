@@ -13,6 +13,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	// ------
 	'gensetts' => 'Configuration g&eacute;n&eacute;rale',
+	'adminname' => 'Nom de l\'administrateur',
+	'adminpassword' => 'Nouveau mot de passe',
+	'adminpasswordconfirm' => 'Répéter le mot de passe',
 	'blogtitle' => 'Titre du Blog',
 	'blogsubtitle' => 'Description du blog',
 	'blogfooter' => 'Texte en bas de page du blog',
@@ -54,6 +57,9 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => 'Vous devez ins&eacute;rer la date au format correct',
 	'dateformatshort' => 'Vous devez ins&eacute;rer la date au format correct (court)',
 	'charset' => 'Vous devez choisir le format d\'encodage de votre blog',
-	'lang' => 'La langue choisie n\'est pas disponible'
+	'lang' => 'La langue choisie n\'est pas disponible',
+	'admin' => 'Le nom de l\'administrateur ne peut contenir que des lettres, des chiffres et 1 trait de soulignement.',
+	'password' => 'Le mot de passe doit contenir au moins 6 caractères et aucun espace.',
+	'confirm_password' => 'Les mots de passe ne correspondent pas.'
 );
 ?>
