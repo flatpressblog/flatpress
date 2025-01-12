@@ -271,8 +271,6 @@ function plugin_lastcomments_def_atom_link() {
 	return BLOG_BASEURL . '?feed=lastcomments-atom';
 }
 
-add_action('wp_head', 'plugin_lastcomments_rsshead');
-
 /**
  * Function: plugin_lastcomments_rsshead
  *
@@ -313,11 +311,23 @@ function plugin_lastcomments_rsshead() {
 
 	$lang = lang_load('plugin:lastcomments');
 
+	// Ugly solution for #517: Type checking and validation for language strings
+	$last_key = $lang ['plugin'] ['lastcomments'] ['last'] ?? '';
+	$comments_key = $lang ['plugin'] ['lastcomments'] ['comments'] ?? '';
+
+	if (is_array($last_key)) {
+		$last_key = implode(', ', $last_key);
+	}
+
+	if (is_array($comments_key)) {
+		$comments_key = implode(', ', $comments_key);
+	}
+
 	if (plugin_lastcomments_rss()) {
 		echo '
-			<link rel="alternate" type="application/rss+xml" title="' . $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $lastcomments_count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'] . ' | RSS 2.0" href="' . plugin_lastcomments_rss_link() . '">' . //
+			<link rel="alternate" type="application/rss+xml" title="' . htmlspecialchars($last_key) . ' ' . $lastcomments_count . ' ' . htmlspecialchars($comments_key) . ' | RSS 2.0" href="' . plugin_lastcomments_rss_link() . '">' . //
 			'
-			<link rel="alternate" type="application/rss+xml" title="' . $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $lastcomments_count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'] . ' | Atom 1.0" href="' . plugin_lastcomments_atom_link() . '">
+			<link rel="alternate" type="application/rss+xml" title="' . htmlspecialchars($last_key) . ' ' . $lastcomments_count . ' ' . htmlspecialchars($comments_key) . ' | Atom 1.0" href="' . plugin_lastcomments_atom_link() . '">
 		';
 	}
 }
@@ -546,5 +556,6 @@ function truncate_with_bbcode($content, $maxLength) {
 
 add_action('comment_post', 'plugin_lastcomments_cache', 0, 2);
 add_action('init', 'plugin_lastcomments_rssinit');
+add_action('wp_head', 'plugin_lastcomments_rsshead');
 register_widget('lastcomments', 'LastComments', 'plugin_lastcomments_widget');
 ?>
