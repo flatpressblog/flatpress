@@ -14,6 +14,7 @@
   - Optional natural sorting for static pages (Hidden improvement suggestion from [NHWS](https://nhws.localinfo.jp/))
   - The cache is automatically emptied when the theme or style is changed.
   - Setting permissions via the maintenance panel now takes all FlatPress files and directories into account. A distinction is made between content, core and other. ([#502](https://github.com/flatpressblog/flatpress/pull/502))
+  - You can now change the admin password in the configuration menu or create another administrator ([#516](https://github.com/flatpressblog/flatpress/issues/516))
 
 ## Bugfixes
 - Contact form / comment function:
