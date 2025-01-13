@@ -16,7 +16,7 @@
 			{else}
 				{assign var=class value=""}
 			{/if}
-			<dd><input type="text" name="admin" id="admin" class="textinput{$class}" value="{$user|escape:'html'}" /></dd>
+			<dd><input type="text" name="admin" id="admin" class="textinput{$class}" value="{$user|escape:'html'}"></dd>
 
 			<dt><label for="password">{$panelstrings.adminpassword}</label></dt>
 			{if isset($error) && isset($error.password) && !empty($error.password)}
@@ -24,7 +24,7 @@
 			{else}
 				{assign var=class value=""}
 			{/if}
-			<dd><input type="apassword" name="password" id="password" class="textinput{$class}"></dd>
+			<dd><input type="password" name="password" id="password" autocomplete="new-password" aria-hidden="true" class="textinput{$class}"></dd>
 
 			<dt><label for="confirm_password">{$panelstrings.adminpasswordconfirm}</label></dt>
 			{if isset($error) && isset($error.confirm_password) && !empty($error.confirm_password)}
@@ -32,7 +32,7 @@
 			{else}
 				{assign var=class value=""}
 			{/if}
-			<dd><input type="cpassword" name="confirm_password" id="confirm_password" class="textinput{$class}"></dd>
+			<dd><input type="password" name="confirm_password" id="confirm_password" autocomplete="new-password" aria-hidden="true" class="textinput{$class}"></dd>
 
 			<dt><label for="title">{$panelstrings.blogtitle}</label></dt>
 			{if isset($error) && isset($error.title) && !empty($error.title)}
