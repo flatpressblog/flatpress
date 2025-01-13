@@ -339,17 +339,22 @@ if (!function_exists('wp_verify_nonce')) :
 	/**
 	 * Verifies the given nonce for the given action string.
 	 *
-	 * @param string $nonce
-	 *        	the nonce to verify
-	 * @param string $action
-	 *        	the action
+	 * @param string $nonce the nonce to verify
+	 * @param string $action the action
 	 * @return boolean <code>true</code> if the nonce is valid; <code>false</code> otherwise
 	 */
 	function wp_verify_nonce($nonce, $action = -1) {
 		$user = user_get();
+
+		// Check if user exists and has a valid user ID
+		if (!$user || !isset($user ['userid'])) {
+			error_log('wp_verify_nonce: No user is logged in or user data is missing.');
+			return false;
+		}
+
 		$uid = $user ['userid'];
 
-		// new nonce each 12 hours
+		// New nonce each 12 hours
 		$i = ceil(time() / (60 * 60 * 12));
 
 		// The nonce we expect for the given action at the current time
@@ -357,8 +362,8 @@ if (!function_exists('wp_verify_nonce')) :
 		// The nonce we expect for the given action in the previous time period
 		$expectedPreviousNonce = substr(wp_hash(($i - 1) . $action . $uid), -12, 10);
 
-		// given nonce must match the current or the previous nonce
-		return $nonce == $expectedNonce || $nonce == $expectedPreviousNonce;
+		// Given nonce must match the current or the previous nonce
+		return $nonce === $expectedNonce || $nonce === $expectedPreviousNonce;
 	}
 endif;
 
@@ -367,16 +372,22 @@ if (!function_exists('wp_create_nonce')) :
 	/**
 	 * Creates and returns the valid nonce.
 	 *
-	 * @param int $action
-	 *        	optional: the action
-	 * @return string the nonce
+	 * @param int $action optional: the action
+	 * @return string|null The nonce or null if no user is logged in.
 	 */
 	function wp_create_nonce($action = -1) {
-		// get the info array of the user currenty logged in
+		// Get the info array of the user currently logged in
 		$user = user_get();
+
+		// Check if the user data is available
+		if (!$user || !isset($user ['userid'])) {
+			error_log('wp_create_nonce: No user is logged in or user data is missing.');
+			return null; // Return null if no user is logged in
+		}
+
 		$uid = $user ['userid'];
 
-		// new nonce each 12 hours
+		// New nonce each 12 hours
 		$i = ceil(time() / (60 * 60 * 12));
 
 		return substr(wp_hash($i . $action . $uid), -12, 10);
