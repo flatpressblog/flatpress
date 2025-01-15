@@ -44,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'Nastavitve so bile uspešno shranjene.',
+	2 => 'Upravitelj je bil spremenjen. Zdaj boste odjavljeni.',
 	-1 => 'Prišlo je do napake med shranjevanjem nastavitev.'
 );
 

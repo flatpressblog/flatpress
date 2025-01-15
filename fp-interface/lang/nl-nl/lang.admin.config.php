@@ -44,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'Configuratie opgeslagen',
+	2 => 'De beheerder is gewijzigd. Je wordt nu uitgelogd.',
 	-1 => 'Er is een fout opgetreden tijdens het opslaan van de configuratie'
 );
 

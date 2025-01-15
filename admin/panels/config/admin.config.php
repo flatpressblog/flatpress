@@ -166,6 +166,8 @@ class admin_config_default extends AdminPanelActionValidated {
 	function onsave() {
 		global $fp_config, $lang;
 
+		$success = null;
+
 		// Sanitize all input data
 		$postData = array_map(function ($value) {
 			return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
@@ -229,19 +231,29 @@ class admin_config_default extends AdminPanelActionValidated {
 
 			// Check if the new admin name is different from the current logged-in user
 			if ($current_user && $current_user !== $postData ['admin']) {
+
 				// Delete the current user's file
 				if (user_del($current_user)) {
-					// Trigger logout
-					$this->delay_logout(3);
+					// Send logout info
+					$success = 2;
 				}
 			}
 		}
 
-		$success = config_save() ? 1 : -1;
+		if ($success === null) {
+			$success = config_save() ? 1 : -1;
+		} else {
+			config_save();
+		}
 
 		// Re-assign values directly to Smarty template to reflect changes
 		$this->setup();
 		$this->smarty->assign('success', $success);
+
+		// If set the new Admin and delete the current Admin, delay the logout
+		if ($success === 2) {
+			$this->delay_logout(5);
+		}
 
 		// Call main() to render updated config without reload
 		return $this->main();
@@ -252,8 +264,7 @@ class admin_config_default extends AdminPanelActionValidated {
 		return 0;
 	}
 
-	function delay_logout($delay_seconds = 3) {
-		global $fp_config;
+	function delay_logout($delay_seconds = 5) {
 		user_logout();
 		cookie_clear();
 		header('Refresh: ' . $delay_seconds . '; URL=' . BLOG_BASEURL . 'login.php?do=logout');

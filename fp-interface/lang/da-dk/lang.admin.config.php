@@ -44,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'Konfigurationen er blevet gemt med succes.',
+	2 => 'Administratoren er blevet ændret. Du vil nu blive logget ud.',
 	-1 => 'Der opstod en fejl, da konfigurationen blev gemt.'
 );
 

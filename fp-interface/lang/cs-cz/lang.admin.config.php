@@ -44,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'Konfigurace úspěšně uložena..',
+	2 => 'Správce byl změněn. Nyní budete odhlášeni.',
 	-1 => 'Při ukládání sa vyskytla chyba..',
 );
 
