@@ -44,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => '変更された設定を保存しました。',
+	2 => '管理者が変更されました。ログアウトされます。',
 	-1 => '設定を保存できませんでした。'
 );
 

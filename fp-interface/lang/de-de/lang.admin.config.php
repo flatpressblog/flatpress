@@ -44,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'Die Konfiguration wurde erfolgreich gespeichert.',
+	2 => 'Der Administrator wurde geändert. Du wirst jetzt abgemeldet.',
 	-1 => 'Es ist ein Fehler beim Speichern der Konfiguration aufgetreten.'
 );
 

@@ -44,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'Configuration has been saved successfully.',
+	2 => 'The administrator has been changed. You will now be logged out.',
 	-1 => 'An error occurred while trying to save the configuration.'
 );
 

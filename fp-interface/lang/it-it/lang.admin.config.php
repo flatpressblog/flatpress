@@ -44,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'La configurazione è stata salvata con successo.',
+	2 => 'L\'amministratore è stato cambiato. Ora sarete disconnessi.',
 	-1 => 'Si è verificato un errore durante il salvataggio della configurazione.'
 );
 

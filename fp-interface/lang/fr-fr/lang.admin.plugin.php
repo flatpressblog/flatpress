@@ -20,6 +20,7 @@ $lang ['admin'] ['plugin'] ['default'] = array(
 
 $lang ['admin'] ['plugin'] ['default'] ['msgs'] = array(
 	1 => 'Configuration enregistr&eacute;e',
+	2 => 'L\'administrateur a été changé. Tu vas maintenant être déconnecté.',
 	-1 => 'Une erreur est survenue pendant l\'enregistrement. Il peut y avoir plusieurs raisons: erreurs de synthaxes.'
 );
 

@@ -44,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'La configuración se ha guardado correctamente.',
+	2 => 'El administrador ha sido cambiado. Ahora se le cerrará la sesión.',
 	-1 => 'Se produjo un error al intentar guardar la configuración.'
 );
 
