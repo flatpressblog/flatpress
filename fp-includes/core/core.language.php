@@ -291,7 +291,7 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8') {
 		// Fallback if no encoding fits
 		if (!mb_check_encoding($text, 'UTF-8')) {
 			// Force UTF-8 using mb_convert_encoding (replaces utf8_encode)
-			$text = mb_convert_encoding($text, 'UTF-8', 'ISO-8859-1');
+			$text = mb_convert_encoding($text, 'UTF-8', 'auto');
 		}
 	}
 
