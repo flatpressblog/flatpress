@@ -9,7 +9,7 @@
 	</fieldset>
 	
 	<fieldset><legend>{$lang.search.fset2}</legend>
-	<p>{html_select_date reverse_years="true" start_year=2000 end_year=$smarty.now|date_format:"%Y" field_separator=" - " field_order="DMY" time="0000-00-00" all_empty="--"}</p>
+	<p>{html_select_date|fix_encoding_issues reverse_years="true" start_year=2000 end_year=$smarty.now|date_format:"%Y" field_separator=" - " field_order="DMY" time="0000-00-00" all_empty="--"}</p>
 	<p>{$lang.search.datedescr}</p>
 	</fieldset>
 	

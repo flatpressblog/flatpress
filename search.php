@@ -34,6 +34,10 @@ function search_main() {
 	// register Smarty modifier functions
 	$smarty->registerPlugin('modifier', 'function_exists', 'function_exists');
 	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
+	if (!isset($smarty->registered_plugins['modifier']['fix_encoding_issues'])) {
+		// This modifier converts characters such as Ã¤ to ä or &#8220; to “. See core.language.php
+		$smarty->registerPlugin('modifier', 'fix_encoding_issues', 'fix_encoding_issues');
+	}
 
 	add_action('wp_title', 'search_title', 0, 2);
 
