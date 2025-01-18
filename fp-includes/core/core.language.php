@@ -159,32 +159,28 @@ function set_locale() {
 	];
 
 	foreach (['localecountry_a', 'localecountry_b', 'charsets', 'localeshort'] as $key) {
-		if (!isset($langconf [$key])) {
-			trigger_error('Missing key in language configuration: ' . $key . '. Using fallback value.', E_USER_WARNING);
-			$langconf [$key] = $fallbackLangconf [$key];
+		if (!isset($langconf [$key]) || !is_array($langconf [$key]) && $key === 'charsets') {
+			trigger_error('Missing or invalid key in language configuration: ' . $key . '. Using fallback value.', E_USER_WARNING);
+			$langconf [$key] = $fallbackLangconf[$key];
 		}
 	}
 
-	// Integrating the language configuration file and validation
-	if (!isset($langconf ['localecountry_a'], $langconf ['localecountry_b'], $langconf ['charsets'], $langconf ['localeshort'])) {
-		trigger_error('Language configuration is incomplete in ' . $langConfFile, E_USER_WARNING);
-		return;
-	}
-
 	// Checking the charset entries
-	if (isset($langconf ['charsets'] [0]) && preg_match('/\b' . preg_quote($langconf ['charsets'] [0], '/') . '\b/i', $charset)) {
-		$localeCharset_a = $langconf ['localecharset_a'] ?? $fallbackLangconf ['localecharset_a']; // .UTF-8
-		$localeCharset_b = $langconf ['localecharset_b'] ?? $fallbackLangconf ['localecharset_b']; // .utf8
+	if (!empty($langconf ['charsets']) && is_array($langconf ['charsets'])) {
+		if (isset($langconf ['charsets'] [0]) && preg_match('/\b' . preg_quote($langconf ['charsets'][0], '/') . '\b/i', $charset)) {
+			$localeCharset_a = $langconf ['localecharset_a'] ?? $fallbackLangconf ['localecharset_a']; // .UTF-8
+			$localeCharset_b = $langconf ['localecharset_b'] ?? $fallbackLangconf ['localecharset_b']; // .utf8
+		}
+
+		if (isset($langconf['charsets'] [1]) && preg_match('/\b' . preg_quote($langconf['charsets'] [1], '/') . '\b/i', $charset)) {
+			$localeCharset_c = $langconf ['localecharset_c'] ?? $fallbackLangconf ['localecharset_c']; // .ISO-8859-15
+			$localeCharset_d = $langconf ['localecharset_d'] ?? $fallbackLangconf['localecharset_d']; // .iso885915
+		}
 	}
 
-	if (isset($langconf ['charsets'] [1]) && preg_match('/\b' . preg_quote($langconf ['charsets'] [1], '/') . '\b/i', $charset)) {
-		$localeCharset_c = $langconf ['localecharset_c'] ?? $fallbackLangconf ['localecharset_c']; // .ISO-8859-15
-		$localeCharset_d = $langconf ['localecharset_d'] ?? $fallbackLangconf ['localecharset_a']; // .iso885915
-	}
-
-	$localeCountry_a = $langconf ['localecountry_a']; // de_DE
-	$localeCountry_b = $langconf ['localecountry_b']; // de-DE
-	$localeShort = $langconf ['localeshort']; // de
+	$localeCountry_a = $langconf ['localecountry_a'] ?? $fallbackLangconf ['localecountry_a']; // de_DE
+	$localeCountry_b = $langconf ['localecountry_b'] ?? $fallbackLangconf ['localecountry_b']; // de-DE
+	$localeShort = $langconf ['localeshort'] ?? $fallbackLangconf ['localeshort']; // de
 
 	// Check whether LC_TIME is already set
 	$currentLocale = setlocale(LC_TIME, 0);
