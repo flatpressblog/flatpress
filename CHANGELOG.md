@@ -55,6 +55,9 @@
 ### Additions
 - GDPR Video embed: Simple two-click solution for GDPR-compliant embedding of YouTube, Facebook and Vimeo videos. ([#260](https://github.com/flatpressblog/flatpress/issues/260))
 
+### Reductions
+- LightBox2 plugin (can still be obtained from the [flatpress-extras repo](https://github.com/flatpressblog/flatpress-extras)) ([#359](https://github.com/flatpressblog/flatpress/issues/359))
+
 ### Changes
 - SEO Meta Tag Info plugin: update to version 2.2.4
   - Integration of Open Graph tags ([#366](https://github.com/flatpressblog/flatpress/issues/366))
