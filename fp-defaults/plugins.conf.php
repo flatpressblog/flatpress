@@ -5,7 +5,6 @@ $fp_plugins = array(
 	// remove it to enable :)
 
 	'jquery', // needed by ligthbox2 (quite heavy in size)
-	'lightbox2', // fancy usable img overlay effect, needs jquery
 	'thumb', // creates thumbnails adding scale=NN% to [img] tags :)
 	'bbcode', // bbcode-style formatting; if you disable this
 		// you'll loose some features, but you will be able to use html
