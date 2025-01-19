@@ -13,6 +13,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	// ------
 	'gensetts' => 'Grundlæggende indstillinger',
+	'adminname' => 'Navn på administrator',
+	'adminpassword' => 'Ny adgangskode',
+	'adminpasswordconfirm' => 'Gentag adgangskode',
 	'blogtitle' => 'Blog Titel',
 	'blogsubtitle' => 'Bloggens undertitel',
 	'blogfooter' => 'Bloggens fodområde',
@@ -41,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'Konfigurationen er blevet gemt med succes.',
+	2 => 'Administratoren er blevet ændret. Du vil nu blive logget ud.',
 	-1 => 'Der opstod en fejl, da konfigurationen blev gemt.'
 );
 
@@ -54,6 +58,9 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => 'Formatet for datoen er ugyldigt',
 	'dateformatshort' => 'Indtast venligst en gyldig kort dato',
 	'charset' => 'Det angivne tegnsæt er ugyldigt',
-	'lang' => 'Det valgte sprog er ikke tilgængeligt'
+	'lang' => 'Det valgte sprog er ikke tilgængeligt',
+	'admin' => 'Administratorens navn må kun indeholde bogstaver, tal og 1 understregning.',
+	'password' => 'Adgangskoden skal indeholde mindst 6 tegn og må ikke indeholde mellemrum.',
+	'confirm_password' => 'Adgangskoderne stemmer ikke overens.'
 );
 ?>

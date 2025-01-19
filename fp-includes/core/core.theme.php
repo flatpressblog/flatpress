@@ -134,14 +134,14 @@ function theme_list() {
 }
 
 function theme_wp_head() {
-	global $fp_config;
+	global $fp_config, $lang;
 
 	echo "\n<!-- FP STD HEADER -->\n";
 
-	echo "\n<meta name=\"generator\" content=\"FlatPress " . system_ver() . "\">\n";
-	echo "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get RSS 2.0 Feed\" href=\"" . theme_feed_link('rss2') . "\">\n";
+	echo '<meta name="generator" content="FlatPress "' . system_ver() . '">' . "\n";
+	echo '<link rel="alternate" type="application/rss+xml" title="' . $lang ['main'] ['entries'] . ' | RSS 2.0" href="' . theme_feed_link('rss2') . '">' . "\n";
 
-	echo "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Atom 1.0 Feed\" href=\"" . theme_feed_link('atom') . "\">\n";
+	echo '<link rel="alternate" type="application/atom+xml" title="' . $lang ['main'] ['entries'] . ' | Atom 1.0" href="' . theme_feed_link('atom') . '">' . "\n";
 
 	echo "<!-- EOF FP STD HEADER -->\n";
 }
@@ -206,7 +206,8 @@ $smarty->registerPlugin('function', 'footer', 'get_wp_footer');
 
 function theme_charset() {
 	global $fp_config;
-	header('Content-Type: text/html; charset=' . $fp_config ['general'] ['charset']);
+	$charset = strtoupper($fp_config ['locale'] ['charset']);
+	header('Content-Type: text/html; charset=' . $charset);
 }
 
 add_action('init', 'theme_charset');
@@ -272,6 +273,11 @@ function theme_init(&$smarty) { /* &$mode */
 	$smarty->registerPlugin('modifier', 'date_rfc3339', 'theme_smarty_modifier_date_rfc3339');
 
 	$smarty->registerPlugin('function', 'action', 'theme_smarty_function_action');
+
+	if (!isset($smarty->registered_plugins['modifier']['fix_encoding_issues'])) {
+		// This modifier converts characters such as Ã¤ to ä or &#8220; to “. See core.language.php
+		$smarty->registerPlugin('modifier', 'fix_encoding_issues', 'fix_encoding_issues');
+	}
 
 	do_action('theme_init');
 }

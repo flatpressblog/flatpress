@@ -13,6 +13,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	// ------
 	'gensetts' => 'Grundlegende Einstellungen',
+	'adminname' => 'Administrator Name',
+	'adminpassword' => 'Neues Passwort',
+	'adminpasswordconfirm' => 'Passwort wiederholen',
 	'blogtitle' => 'Blog Titel',
 	'blogsubtitle' => 'Blog Untertitel',
 	'blogfooter' => 'Blog Fussbereich',
@@ -41,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'Die Konfiguration wurde erfolgreich gespeichert.',
+	2 => 'Der Administrator wurde geändert. Du wirst jetzt abgemeldet.',
 	-1 => 'Es ist ein Fehler beim Speichern der Konfiguration aufgetreten.'
 );
 
@@ -55,6 +59,9 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => 'Das Format für das Datum ist ungültig',
 	'dateformatshort' => 'Bitte ein gültiges kurzes Datum eingeben',
 	'charset' => 'Der angegebene Zeichensatz ist ungültig',
-	'lang' => 'Die ausgewählte Sprache ist nicht verfügbar'
+	'lang' => 'Die ausgewählte Sprache ist nicht verfügbar',
+	'admin' => 'Der Name des Administrators darf nur Buchstaben, Zahlen und 1 Unterstrich enthalten.',
+	'password' => 'Das Passwort muss mindestens 6 Zeichen und darf keine Leerzeichen enthalten.',
+	'confirm_password' => 'Die Passwörter stimmen nicht überein.'
 );
 ?>

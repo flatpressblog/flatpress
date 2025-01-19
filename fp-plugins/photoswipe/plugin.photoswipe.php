@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: PhotoSwipe
- * Version: 2.0.1
+ * Version: 2.0.2
  * Plugin URI: https://www.flatpress.org
  * Description: Displays images and galleries with <a href="http://photoswipe.com">PhotoSwipe</a>.<br>Part of the standard distribution.&nbsp;Needs the BBCode plugin to be activated.
  * Author: FlatPress
@@ -56,38 +56,52 @@
  * gallery directory. You may edit them with the Gallery captions plugin.
  */
 
-// Only execute if no RSS feed is active
+// Check if the current request is not an RSS feed
 if (!is_rss_feed()) {
 	// Include the plugin's PHP files
 	include_once dirname(__FILE__) . '/photoswipefunctions.class.php';
 
-	// Intialize the BBCode tags of the plugin
+	// Initialize the BBCode tags of the plugin
 	add_filter('init', 'PhotoSwipeFunctions::initializePluginTags');
 
-	// Inject necessary JS in the <head> section
-	add_action('wp_head', 'PhotoSwipeFunctions::echoScriptTags', 0);
+	// Inject necessary JavaScript into the <head> section
+	add_action('wp_head', 'PhotoSwipeFunctions::echoScriptTags', 2);
 } else {
-	// Log entry for debugging
-	//error_log('PhotoSwipe plugin has been deactivated for the RSS feed.');
+	// Optional debugging log entry
+	// error_log('PhotoSwipe plugin has been deactivated for the RSS feed.');
 }
 
-// Function for recognizing the RSS feed
+// Function to detect if the current request is for an RSS or Atom feed
 function is_rss_feed() {
-	// Checking the GET parameter 'feed'
-	if (isset($_GET ['feed']) && in_array($_GET ['feed'], ['rss2', 'atom'])) {
+	// Check if 'feed' parameter is set and matches valid feed types
+	if (isset($_GET ['feed']) && in_array(strtolower($_GET ['feed']), ['rss2', 'atom'])) {
 		return true;
 	}
 
-	// Checking the GET parameter 'x'
-	if (isset($_GET ['x']) && strpos($_GET ['x'], 'feed:') === 0) {
+	// Check if 'x' parameter starts with 'feed:'
+	if (isset($_GET ['x']) && strpos(strtolower($_GET ['x']), 'feed:') === 0) {
 		return true;
 	}
 
-	// Check the URL for 'feed/rss2' or 'feed/atom'
-	if (strpos($_SERVER ['REQUEST_URI'], 'feed/rss2') !== false || strpos($_SERVER ['REQUEST_URI'], 'feed/atom') !== false) {
+	// Fallback for REQUEST_URI if it's not available
+	$request_uri = strtolower($_SERVER ['REQUEST_URI'] ?? ($_SERVER ['SCRIPT_NAME'] . ($_SERVER ['QUERY_STRING'] ?? '')));
+
+	// Check if the request URI explicitly matches a feed endpoint
+	if (preg_match('#/(feed/rss2|feed/atom)(/|$)#', $request_uri)) {
 		return true;
 	}
 
+	// Optional: Check if the content type matches RSS/Atom types
+	if (!empty($_SERVER ['HTTP_ACCEPT'])) {
+		if (strpos($_SERVER ['HTTP_ACCEPT'], 'application/rss+xml') !== false) {
+			return true;
+		}
+		if (strpos($_SERVER ['HTTP_ACCEPT'], 'application/atom+xml') !== false) {
+			return true;
+		}
+	}
+
+	// If none of the conditions match, it's not a feed request
 	return false;
 }
 ?>

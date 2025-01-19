@@ -5,11 +5,12 @@ $lang ['main'] = array(
 	'nextpage' => 'Página Siguiente &raquo;',
 	'prevpage' => '&laquo; Página anterior',
 	'entry' => 'Entrada',
+	'entries' => 'Entradas',
 	'static' => 'Pagina Estatica',
 	'comment' => 'Comentario',
 	'preview' => 'Editar/Vista previa',
 
-	'filed_under' => 'Archivado bajo ',	
+	'filed_under' => 'Archivado bajo ',
 
 	'add_entry' => 'Agregar Entrada',
 	'add_comment' => 'Agregar Comentario',

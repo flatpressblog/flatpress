@@ -4,7 +4,7 @@
  *
  * Type:
  * Name:
- * Date: 21.02.2024
+ * Date: 30.12.2024
  * Purpose: Provides the option to edit comments
  * Input:
  *
@@ -123,12 +123,16 @@ class admin_entry_commedit extends AdminPanelActionValidated {
 	}
 
 	function onsave($content) {
+
+		$success = false;
+
 		if ($this->nosuchcomment) {
 			return PANEL_REDIRECT_DEFAULT;
 		}
 
 		$comment = comment_parse($_REQUEST ['entry'], $_REQUEST ['comment']);
-		if (isset($comment ['loggedin'])) {
+
+		if (isset($comment ['loggedin']) || user_loggedin()) {
 			$content ['loggedin'] = $comment ['loggedin'];
 			$content ['ip-address'] = $comment ['ip-address'];
 			$content ['date'] = $comment ['date'];
@@ -136,7 +140,7 @@ class admin_entry_commedit extends AdminPanelActionValidated {
 			$this->smarty->assign('success', $success ? 1 : -1);
 		}
 
-		if ($success < 0) {
+		if ($success === false || $success < 0) {
 			$this->main();
 			return PANEL_NOREDIRECT;
 		}

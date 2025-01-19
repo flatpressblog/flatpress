@@ -16,11 +16,15 @@ if (!defined('MOD_INDEX')) {
 $module = comment_main($module);
 
 function comment_main($module) {
-	global $fpdb, $fp_params, $smarty;
+	global $fpdb, $fp_params, $smarty, $fp_config, $current_entry;
 
 	// register Smarty modifier function
 	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
 	$smarty->registerPlugin('modifier', 'theme_comments_feed_link', 'theme_comments_feed_link');
+	if (!isset($smarty->registered_plugins['modifier']['fix_encoding_issues'])) {
+		// This modifier converts characters such as Ã¤ to ä or &#8220; to “. See core.language.php
+		$smarty->registerPlugin('modifier', 'fix_encoding_issues', 'fix_encoding_issues');
+	}
 
 	// hackish solution to get title before fullparse starts dunno, I don't like it
 
@@ -31,17 +35,21 @@ function comment_main($module) {
 		return $module;
 	}
 
+	$current_entry = $entry;
+
 	if (!empty($fp_params ['feed'])) {
 
 		switch ($fp_params ['feed']) {
 
 			case 'atom':
-				header('Content-type: application/atom+xml');
+				$charset = strtoupper($fp_config ['locale'] ['charset']);
+				header('Content-Type: application/atom+xml; charset=' . $charset);
 				$module = SHARED_TPLS . 'comment-atom.tpl';
 				break;
 			case 'rss2':
 			default:
-				header('Content-type: application/rss+xml');
+				$charset = strtoupper($fp_config ['locale'] ['charset']);
+				header('Content-Type: application/rss+xml; charset=' . $charset);
 				$module = SHARED_TPLS . 'comment-rss.tpl';
 		}
 	} elseif (!in_array('commslock', $entry ['categories'])) {
@@ -53,9 +61,12 @@ function comment_main($module) {
 }
 
 function comment_feed() {
-	global $fp_params;
-	echo "\n" . '<link rel="alternate" type="application/rss+xml" title="Get Comments RSS 2.0 Feed" href="' . theme_comments_feed_link('rss2', $fp_params ['entry']) . '">';
-	echo "\n" . '<link rel="alternate" type="application/atom+xml" title="Get Comments Atom 1.0 Feed" href="' . theme_comments_feed_link('atom', $fp_params ['entry']) . '">' . "\n";
+	global $fp_params, $fp_config, $lang, $current_entry;
+
+	$entry_title = $current_entry ['subject'] ?? $fp_config ['404error'] ['subject'];
+
+	echo "\n" . '<link rel="alternate" type="application/rss+xml" title="' . $entry_title . ' » ' . $lang ['main'] ['comments'] . ' | RSS 2.0" href="' . theme_comments_feed_link('rss2', $fp_params ['entry']) . '">';
+	echo "\n" . '<link rel="alternate" type="application/atom+xml" title="' . $entry_title . ' » ' . $lang ['main'] ['comments'] . ' | Atom 1.0" href="' . theme_comments_feed_link('atom', $fp_params ['entry']) . '">' . "\n";
 }
 add_action('wp_head', 'comment_feed');
 

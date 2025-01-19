@@ -13,6 +13,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	// ------
 	'gensetts' => 'Algemene instellingen',
+	'adminname' => 'Naam beheerder',
+	'adminpassword' => 'Nieuw wachtwoord',
+	'adminpasswordconfirm' => 'Herhaal wachtwoord',
 	'blogtitle' => 'Blog titel',
 	'blogsubtitle' => 'Blog subtitel',
 	'blogfooter' => 'Blog voettekst',
@@ -41,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'Configuratie opgeslagen',
+	2 => 'De beheerder is gewijzigd. Je wordt nu uitgelogd.',
 	-1 => 'Er is een fout opgetreden tijdens het opslaan van de configuratie'
 );
 
@@ -54,6 +58,9 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => 'U moet een opmaaktekenreeks voor datum invoegen',
 	'dateformatshort' => 'U moet een opmaaktekenreeks voor korte datum invoegen',
 	'charset' => 'U moet een tekenset-id invoegen',
-	'lang' => 'De taal die u hebt gekozen, is niet beschikbaar'
+	'lang' => 'De taal die u hebt gekozen, is niet beschikbaar',
+	'admin' => 'De naam van de beheerder mag alleen letters, cijfers en 1 underscore bevatten.',
+	'password' => 'Het wachtwoord moet minstens 6 tekens bevatten en mag geen spaties bevatten.',
+	'confirm_password' => 'De wachtwoorden komen niet overeen.'
 );
 ?>

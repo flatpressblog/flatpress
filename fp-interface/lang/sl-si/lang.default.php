@@ -5,6 +5,7 @@ $lang ['main'] = array(
 	'nextpage' => 'Naslednja stran &raquo;',
 	'prevpage' => '&laquo; Prejšnja stran',
 	'entry' => 'Vnos',
+	'entries' => 'Vnosi',
 	'static' => 'Statična stran',
 	'comment' => 'Komentar',
 	'preview' => 'Uredi/Ogled',

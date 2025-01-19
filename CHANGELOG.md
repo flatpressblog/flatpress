@@ -14,6 +14,7 @@
   - Optional natural sorting for static pages (Hidden improvement suggestion from [NHWS](https://nhws.localinfo.jp/))
   - The cache is automatically emptied when the theme or style is changed.
   - Setting permissions via the maintenance panel now takes all FlatPress files and directories into account. A distinction is made between content, core and other. ([#502](https://github.com/flatpressblog/flatpress/pull/502))
+  - You can now change the admin password in the configuration menu or create another administrator ([#516](https://github.com/flatpressblog/flatpress/issues/516))
 
 ## Bugfixes
 - Contact form / comment function:
@@ -21,6 +22,7 @@
   - Compatibility to PHP with OPcache:
     - Positive feedback when the contact form or comment form has been sent correctly. ([#420](https://github.com/flatpressblog/flatpress/issues/420))
 - Atom feed: Fixes parsing error ([#429](https://github.com/flatpressblog/flatpress/issues/429))
+- Comment Atom feed: Fixed pharsing error if the commenter had not specified a website. ([#508](https://github.com/flatpressblog/flatpress/pull/508))
 - Admin area:
   - Charset dropdown selection instead of an input field ([#340](https://github.com/flatpressblog/flatpress/issues/340))
   - The author entered in the configuration is now the author of the entries and static pages ([#483](https://github.com/flatpressblog/flatpress/issues/483))
@@ -35,8 +37,8 @@
 - BBcode, PhotoSwipe and Emoticons plugin: Scripts equipped with a nonce to enable stricter [CSP](https://en.wikipedia.org/wiki/Content_Security_Policy) ([#422](https://github.com/flatpressblog/flatpress/issues/422), [#477](https://github.com/flatpressblog/flatpress/pull/477))
 - Admin area login:
   - Allow admin login attempts only every 30 seconds to make brute force attacks more difficult. ([#87](https://github.com/flatpressblog/flatpress/issues/87))
-  - The fp-user or fp-pass cookie is no longer set when logging in. Admin login and authentication via PHP sessions. ([#488](https://github.com/flatpressblog/flatpress/pull/488))<br><sub><i>When installing a release update package, previously saved login information becomes invalid due to the change from cookie authentication to session authentication! The user must be recreated by executing the setup.</i></sub>
-- Admin area generel:
+  - The fp-user or fp-pass cookie is no longer set when logging in. Admin login and authentication via PHP sessions. ([#488](https://github.com/flatpressblog/flatpress/pull/488))<br><sub><i>When installing a release update package, previously saved login information becomes invalid due to the change from cookie authentication to session authentication! The user must be recreated by executing the setup - see [FAQ](https://wiki.flatpress.org/doc:techfaq#i_ve_lost_my_password).</i></sub>
+- Admin area:
   - PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin option must first be activated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
   - Upload panel: More resistant to RCE attacks and traversal attacks ([#451](https://github.com/flatpressblog/flatpress/issues/451), [#114](https://github.com/flatpressblog/flatpress/issues/114))
     - Upload of hidden files is no longer possible. ([#486](https://github.com/flatpressblog/flatpress/pull/486))
@@ -72,6 +74,11 @@
   - The removal of metadata when uploading images can be deactivated for better image quality. ([#492](https://github.com/flatpressblog/flatpress/pull/492))
 - Support plugin: update to version 1.1.0
   - The file and directory permissions are read for some outputs before a write test is performed. This leads to a more reliable indication of whether a file is writable or not. ([#502](https://github.com/flatpressblog/flatpress/pull/502))
+- LastComments plugin: update to version 1.1.1
+  - Generates an RSS and Atom feed that displays the latest comments. ([#509](https://github.com/flatpressblog/flatpress/pull/509))
+  - Output of comments in the widget without BBcode tags
+- Feed plugin: update to version 1.0.1
+  - RSS image replaced with RSS icon (woff2) ([#515](https://github.com/flatpressblog/flatpress/pull/515))
 
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
@@ -87,8 +94,9 @@
 - BlockParser plugin: Update to version 1.0.1
   - Compatibility to PHP with OPcache:
     - The list of activated pages is displayed immediately after activation/deactivation. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
-- PhotoSwipe plugin: update to version 2.0.1
+- PhotoSwipe plugin: update to version 2.0.2
   - The overlay buttons are no longer displayed in the RSS and Atom feed. ([#506](https://github.com/flatpressblog/flatpress/pull/506))
+  - External images are displayed correctly. ([#520](https://github.com/flatpressblog/flatpress/pull/520))
 
 ### Security
 - SEO Meta Tag Info plugin:
@@ -99,6 +107,7 @@
 - The setup now also recognizes the browser language when using Firefox
 
 ## Themes
+- The Leggero theme now also indicates that comment feeds can be subscribed to ([#515](https://github.com/flatpressblog/flatpress/pull/515))
 - Invidual scrollbar for the Leggero v2 style
 - The Leggero v2 style now supports UltraWide monitors ([#476](https://github.com/flatpressblog/flatpress/issues/476))
   

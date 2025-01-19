@@ -13,6 +13,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	// ------
 	'gensetts' => 'General settings',
+	'adminname' => 'Administrator Name',
+	'adminpassword' => 'New password',
+	'adminpasswordconfirm' => 'Repeat password',
 	'blogtitle' => 'Blog title',
 	'blogsubtitle' => 'Blog subtitle',
 	'blogfooter' => 'Blog footer',
@@ -41,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'Configuration has been saved successfully.',
+	2 => 'The administrator has been changed. You will now be logged out.',
 	-1 => 'An error occurred while trying to save the configuration.'
 );
 
@@ -54,6 +58,9 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => 'You must insert a format string for date',
 	'dateformatshort' => 'You must insert a format string for date (short)',
 	'charset' => 'You must insert a charset id',
-	'lang' => 'The language you chose is not available'
+	'lang' => 'The language you chose is not available',
+	'admin' => 'The name of the administrator may only contain letters, numbers and 1 underscore.',
+	'password' => 'The password must contain at least 6 characters and must not contain any spaces.',
+	'confirm_password' => 'The passwords do not match.'
 );
 ?>

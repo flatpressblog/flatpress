@@ -13,6 +13,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	// ------
 	'gensetts' => 'Configurações em geral',
+	'adminname' => 'Nome do administrador',
+	'adminpassword' => 'Nova senha',
+	'adminpasswordconfirm' => 'Repetir senha',
 	'blogtitle' => 'Título do blog',
 	'blogsubtitle' => 'Subtítulo do blog',
 	'blogfooter' => 'Rodapé do blog',
@@ -41,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => 'A configuração foi salva com sucesso.',
+	2 => 'O administrador foi alterado. Agora você será desconectado.',
 	-1 => 'Ocorreu um erro ao tentar salvar a configuração.'
 );
 
@@ -54,6 +58,9 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => 'Você deve inserir uma string de formato para a data.',
 	'dateformatshort' => 'Você deve inserir uma string de formato para a data (curta).',
 	'charset' => 'Você deve inserir um conjunto de caracteres.',
-	'lang' => 'O idioma que você escolheu não está disponível.'
+	'lang' => 'O idioma que você escolheu não está disponível.',
+	'admin' => 'O nome do administrador só pode conter letras, números e um sublinhado.',
+	'password' => 'A senha deve conter pelo menos 6 caracteres e não deve conter espaços.',
+	'confirm_password' => 'As senhas não são iguais.'
 );
 ?>

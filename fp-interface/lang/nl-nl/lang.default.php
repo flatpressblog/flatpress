@@ -5,6 +5,7 @@ $lang ['main'] = array(
 	'nextpage' => 'Volgende pagina &raquo;',
 	'prevpage' => '&laquo; Vorige pagina',
 	'entry' => 'Data invoer',
+	'entries' => 'Vermeldingen',
 	'static' => 'Statische pagina',
 	'comment' => 'Commentaar',
 	'preview' => 'Wijzig/Voorbeeld',

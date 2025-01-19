@@ -45,15 +45,18 @@ class PhotoSwipeFunctions {
 		if (strpos($img, '..') !== false) {
 			return $lang ['plugin'] ['photoswipe'] ['label_imagedoesntexist'];
 		}
-		$imgPathRel = 'fp-content/' . $img;
-		$imgUrl = BLOG_BASEURL . 'fp-content/' . $img;
 
-		// check if dir exists
-		if (!file_exists($imgPathRel)) {
+		$imgPathRel = 'fp-content/' . $img;
+		// check if given image path is a local path
+		$imageIsLocal = bbcode_remap_url($imgPathRel);
+		$imgUrl = $imageIsLocal ? BLOG_BASEURL . 'fp-content/' . $img : $img;
+
+		// error message if local image file does not exist
+		if ($imageIsLocal && !file_exists($imgPathRel)) {
 			return $lang ['plugin'] ['photoswipe'] ['label_imagedoesntexist'] . ' ' . $img;
 		}
 
-		// image title will be its file name - or the title from the tag attributes, if given
+		// image title will be empty - or the title from the tag attributes, if given
 		$title = isset($attr ['title']) ? $attr ['title'] : '';
 		// for usage in HTML attributes, we need to remove quotes and HTML tags from the title
 		$titleForAttributes = isset($attr ['title']) ? htmlentities(strip_tags($attr ['title'])) : '';
@@ -78,7 +81,14 @@ class PhotoSwipeFunctions {
 		$previewHtml .= ' itemprop="thumbnail" title="' . $titleForAttributes . '">';
 
 		// PhotoSwipe needs to know the dimensions of the image - so we read them
-		$imgsize = @getimagesize($imgPathRel);
+		$imgsize = $imageIsLocal ? @getimagesize($imgPathRel) : @getimagesize($imgUrl);
+		// use default dimensions as fallback
+		if ($imgsize === false) {
+			$imgsize = array(
+				100,
+				100
+			);
+		}
 		$datasizeAttr = ($imgsize === false) ? '' : 'data-size="' . $imgsize [0] . 'x' . $imgsize [1] . '" ';
 
 		// set max width of the figure according to the width attribute

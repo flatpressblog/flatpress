@@ -5,6 +5,7 @@ $lang ['main'] = array(
 	'nextpage' => 'Další strana &raquo;',
 	'prevpage' => '&laquo; Předcházející',
 	'entry' => 'Příspěvek',
+	'entries' => 'Příspěvky',
 	'static' => 'Statická stránka',
 	'comment' => 'Komentář',
 	'preview' => 'Upravit/Náhled',

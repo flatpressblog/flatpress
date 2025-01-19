@@ -71,26 +71,44 @@ function user_login($userid, $pwd) {
 	global $loggedin;
 	$loggedin = false;
 
-	// Retrieving user data from the file
-	$user = user_get($userid);
-	if (!$user || !isset($user ['password'])) {
-		// User not found or password missing
+	// Validate user ID
+	if (!is_valid_userid($userid)) {
 		return false;
 	}
 
-	// Check whether the password entered is correct
-	if (password_verify($pwd, $user ['password'])) {
-		// Initialize the session and save the user data
-		sess_setup();
+	// Rate limiting using a temporary storage like $_SESSION
+	if (!isset($_SESSION ['login_attempts'])) {
+		$_SESSION ['login_attempts'] = [];
+	}
 
-		// Regenerate the session ID to prevent session fixation attacks
+	$now = time();
+	$_SESSION ['login_attempts'] = array_filter($_SESSION ['login_attempts'], function($timestamp) use ($now) {
+		// Keep attempts from the last 5 minutes
+		return ($now - $timestamp) < 300;
+	});
+
+	if (count($_SESSION ['login_attempts']) >= 5) {
+		// Too many attempts, deny login
+		return false;
+	}
+
+	$user = user_get($userid);
+	if (!$user || !isset($user ['password'])) {
+		$_SESSION ['login_attempts'] [] = $now;
+		return false;
+	}
+
+	if (password_verify($pwd, $user ['password'])) {
+		sess_setup();
 		session_regenerate_id(true);
 
-		// Set session variables
 		$_SESSION ['loggedin'] = true;
 		$_SESSION ['userid'] = $userid;
 		return true;
 	}
+
+	// Log failed attempt
+	$_SESSION ['login_attempts'] [] = $now;
 	return false;
 }
 
@@ -123,12 +141,13 @@ function user_get($userid = null) {
 		$userid = $_SESSION ['userid'];
 	}
 
-	if ($userid) {
+	// Validate user ID
+	if ($userid && is_valid_userid($userid)) {
 		$userfile = USERS_DIR . $userid . '.php';
 
 		// Check whether the user file exists
 		if (file_exists($userfile)) {
-			include($userfile);
+			@include($userfile);
 
 			// Check whether the user data has been loaded correctly
 			if (isset($user) && is_array($user)) {
@@ -136,8 +155,19 @@ function user_get($userid = null) {
 			}
 		}
 	}
-	// User not found
+	// User not found or invalid ID
 	return null;
+}
+
+
+/**
+ * Validates a user ID to ensure it contains only valid characters.
+ *
+ * @param string $userid The user ID to validate.
+ * @return bool True if valid, otherwise false.
+ */
+function is_valid_userid($userid) {
+	return preg_match('/^[a-zA-Z0-9_]+$/', $userid) === 1;
 }
 
 /**
@@ -153,5 +183,28 @@ function user_add($user) {
 	}
 	// Saves the user data in a PHP file
 	return system_save(USERS_DIR . $user ['userid'] . '.php', compact('user'));
+}
+
+/**
+ * Deletes the user file for the given user ID.
+ *
+ * @param string $userid The user ID whose file should be deleted.
+ * @return bool Returns true if the file was successfully deleted, false otherwise.
+ */
+function user_del($userid) {
+	// Validate user ID
+	if (!is_valid_userid($userid)) {
+		return false;
+	}
+
+	// Construct the file path
+	$userfile = USERS_DIR . $userid . '.php';
+
+	// Check if the file exists and delete it
+	if (file_exists($userfile)) {
+		return unlink($userfile);
+	}
+
+	return false;
 }
 ?>

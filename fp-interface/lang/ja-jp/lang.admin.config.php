@@ -13,6 +13,9 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 	// ------
 	'gensetts' => '全般の設定',
+	'adminname' => '管理者名',
+	'adminpassword' => '新しいパスワード',
+	'adminpasswordconfirm' => '繰り返しパスワード',
 	'blogtitle' => 'サイトのタイトル',
 	'blogsubtitle' => 'サイトのサブタイトル',
 	'blogfooter' => 'フッター欄',
@@ -41,6 +44,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
 	1 => '変更された設定を保存しました。',
+	2 => '管理者が変更されました。ログアウトされます。',
 	-1 => '設定を保存できませんでした。'
 );
 
@@ -54,6 +58,9 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'dateformat' => '日付表示用の形式で指定してください。',
 	'dateformatshort' => '日付短縮表示用の形式を使用してください。',
 	'charset' => 'You must insert a charset id.(文字コード名を正確に記入してください)',
-	'lang' => 'The language you chose is not available.(選択言語は使用不可)'
-);		
+	'lang' => 'The language you chose is not available.(選択言語は使用不可)',
+	'admin' => '管理者名には、アルファベット、数字、アンダースコア1文字のみを使用できます。',
+	'password' => 'パスワードは 6 文字以上で、スペースを含んではならない。',
+	'confirm_password' => 'パスワードが一致しない。'
+);
 ?>

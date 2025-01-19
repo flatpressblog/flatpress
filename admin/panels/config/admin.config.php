@@ -86,6 +86,14 @@ class admin_config_default extends AdminPanelActionValidated {
 			false,
 			false,
 			'trim'
+		),
+		array(
+			'admin',
+			'admin',
+			'isValidAdminName',
+			false,
+			false,
+			'trim'
 		)
 	);
 
@@ -106,6 +114,37 @@ class admin_config_default extends AdminPanelActionValidated {
 			$static_list [$id] = static_parse($id);
 		}
 		$this->smarty->assign('static_list', $static_list);
+
+		// Determining the logged-in user
+		$user = isset($_SESSION ['userid']) ? $_SESSION ['userid'] : null;
+
+		// Set default value for $flatpress.admin
+		if (empty($fp_config ['general'] ['admin']) && $user) {
+			$fp_config ['general'] ['admin'] = $user;
+		}
+
+		// Transfer logged-in user to the template
+		$this->smarty->assign('user', $user);
+
+		// Dynamically add password validators only if necessary
+		if (!empty($_POST ['password']) || !empty($_POST ['confirm_password'])) {
+			$this->validators[] = array(
+				'password',
+				'password',
+				'isValidAdminPassword',
+				false,
+				false,
+				'trim'
+			);
+			$this->validators[] = array(
+				'confirm_password',
+				'confirm_password',
+				'isValidAdminPassword',
+				false,
+				false,
+				'trim'
+			);
+		}
 	}
 
 	// Function for escaping HTML output
@@ -117,7 +156,7 @@ class admin_config_default extends AdminPanelActionValidated {
 	private function getCharsetList($lang) {
 		$langConfFile = LANG_DIR . $lang . '/lang.conf.php';
 		if (file_exists($langConfFile)) {
-			include $langConfFile;
+			@include $langConfFile;
 			return isset($langconf ['charsets']) ? $langconf ['charsets'] : ['utf-8'];
 		}
 		// Fallback to utf-8 if no charsets are defined
@@ -125,50 +164,96 @@ class admin_config_default extends AdminPanelActionValidated {
 	}
 
 	function onsave() {
-		global $fp_config;
+		global $fp_config, $lang;
+
+		$success = null;
+
+		// Sanitize all input data
+		$postData = array_map(function ($value) {
+			return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+		}, $_POST);
 
 		// Load list of valid charsets for the current language
-		$validCharsets = $this->getCharsetList($_POST ['lang']);
+		$validCharsets = $this->getCharsetList($postData ['lang']);
 
 		// Check whether the selected charset is valid
-		if (!in_array($_POST ['charset'], $validCharsets)) {
-			// Error case - invalid charset
+		if (!in_array($postData ['charset'], $validCharsets)) {
 			$this->smarty->assign('error', ['charset' => 'Invalid charset selected']);
 			return $this->onerror();
 		}
 
 		// Update and save the configuration
 		$fp_config ['general'] = array(
-			'www' => $this->escapeHTML($_POST ['www']),
-			'title' => $this->escapeHTML(wp_specialchars(stripslashes($_POST ['title']))),
-			'subtitle' => $this->escapeHTML(wp_specialchars(stripslashes($_POST ['subtitle']))),
-			'footer' => $this->escapeHTML(wp_specialchars(stripslashes($_POST ['blogfooter']))),
-			'author' => $this->escapeHTML(wp_specialchars($_POST ['author'])),
-			'email' => $this->escapeHTML(wp_specialchars($_POST ['email'])),
-			'startpage' => ($_POST ['startpage'] == ':NULL:') ? null : $this->escapeHTML($_POST ['startpage']),
-			'maxentries' => (int)$_POST ['maxentries'],
-			'notify' => isset($_POST ['notify']),
+			'www' => $postData ['www'],
+			'title' => wp_specialchars(stripslashes($postData ['title'])),
+			'subtitle' => wp_specialchars(stripslashes($postData ['subtitle'])),
+			'footer' => wp_specialchars(stripslashes($postData ['blogfooter'])),
+			'author' => wp_specialchars($postData ['author']),
+			'email' => wp_specialchars($postData ['email']),
+			'startpage' => ($postData ['startpage'] == ':NULL:') ? null : $postData ['startpage'],
+			'maxentries' => (int)$postData ['maxentries'],
+			'notify' => isset($postData ['notify']),
 			'theme' => $fp_config ['general'] ['theme'],
 			'style' => @$fp_config ['general'] ['style'],
 			'blogid' => $fp_config ['general'] ['blogid'],
-			'charset' => $_POST ['charset']
+			'charset' => $postData ['charset']
 		);
 
 		$fp_config ['locale'] = array(
-			'timeoffset' => (float)$_POST ['timeoffset'],
-			'timeformat' => $this->escapeHTML($_POST ['timeformat']),
-			'dateformat' => $this->escapeHTML($_POST ['dateformat']),
-			'dateformatshort' => $this->escapeHTML($_POST ['dateformatshort']),
-			'charset' => $_POST ['charset'],
-			'lang' => $_POST ['lang']
+			'timeoffset' => (float)$postData ['timeoffset'],
+			'timeformat' => $postData ['timeformat'],
+			'dateformat' => $postData ['dateformat'],
+			'dateformatshort' => $postData ['dateformatshort'],
+			'charset' => $postData ['charset'],
+			'lang' => $postData ['lang']
 		);
 
-		$success = config_save() ? 1 : -1;
+		// Password and admin name logic
+		if (!empty($postData ['password']) || !empty($postData ['confirm_password'])) {
+			// Check password fields if one of the fields is filled
+			if ($postData ['password'] !== $postData ['confirm_password']) {
+				$error_message = isset($lang ['admin'] ['config'] ['default'] ['error'] ['confirm_password'])
+					? $lang ['admin'] ['config'] ['default'] ['error'] ['confirm_password']
+					: 'Passwords do not match.';
+				$this->smarty->assign('error', ['password' => $error_message]);
+				return $this->onerror();
+			}
+
+			$admin = user_get('admin') ?? [];
+			$current_user = isset($_SESSION ['userid']) ? $_SESSION ['userid'] : null;
+
+			// Update admin data
+			$admin ['userid'] = !empty($postData ['admin']) ? $postData ['admin'] : $admin ['userid'];
+			$admin ['password'] = user_pwd($postData ['password']);
+			$admin ['www'] = $postData ['www'];
+			$admin ['email'] = $postData ['email'];
+			user_add($admin);
+
+			// Check if the new admin name is different from the current logged-in user
+			if ($current_user && $current_user !== $postData ['admin']) {
+
+				// Delete the current user's file
+				if (user_del($current_user)) {
+					// Send logout info
+					$success = 2;
+				}
+			}
+		}
+
+		if ($success === null) {
+			$success = config_save() ? 1 : -1;
+		} else {
+			config_save();
+		}
 
 		// Re-assign values directly to Smarty template to reflect changes
-		// Ensure the latest config is loaded into the template
 		$this->setup();
 		$this->smarty->assign('success', $success);
+
+		// If set the new Admin and delete the current Admin, delay the logout
+		if ($success === 2) {
+			$this->delay_logout(5);
+		}
 
 		// Call main() to render updated config without reload
 		return $this->main();
@@ -177,6 +262,13 @@ class admin_config_default extends AdminPanelActionValidated {
 	function onerror() {
 		$this->main();
 		return 0;
+	}
+
+	function delay_logout($delay_seconds = 5) {
+		user_logout();
+		cookie_clear();
+		header('Refresh: ' . $delay_seconds . '; URL=' . BLOG_BASEURL . 'login.php?do=logout');
+		//exit;
 	}
 
 	// if theme was switched, clear tpl cache
