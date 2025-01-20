@@ -1,7 +1,7 @@
 <?php
 
 /**
- * add entry panel
+ * add maintain panel
  *
  * Type:
  * Name:
@@ -169,6 +169,11 @@ class admin_maintain_default extends AdminPanelAction {
 				}
 			case 'purgetplcache':
 				{
+					if (function_exists('opcache_reset') && ini_get('opcache.enable') && ini_get('opcache.enable_cli')) {
+						// Called to ensure that all cached PHP scripts are up-to-date.
+						opcache_reset();
+					}
+
 					$tpldel = new tpl_deleter();
 					unset($tpldel);
 
@@ -185,6 +190,11 @@ class admin_maintain_default extends AdminPanelAction {
 
 					if (!file_exists(COMPILE_DIR)) {
 						fs_mkdir(COMPILE_DIR);
+					}
+
+					if (function_exists('opcache_reset') && ini_get('opcache.enable') && ini_get('opcache.enable_cli')) {
+						// Ensures that all changes to the Smarty cache are also reflected in the OPcache.
+						opcache_reset();
 					}
 
 					// rebuilds the list of recent comments if LastComments plugin is active
