@@ -28,9 +28,6 @@ function search_display() {
 function search_main() {
 	global $lang, $smarty;
 
-	// Localize Smarty function {html_select_date}
-	set_locale();
-
 	// register Smarty modifier functions
 	$smarty->registerPlugin('modifier', 'function_exists', 'function_exists');
 	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');

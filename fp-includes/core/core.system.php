@@ -190,6 +190,8 @@ function system_init() {
 
 	$GLOBALS ['lang'] = lang_load();
 
+	set_locale();
+
 	plugin_loadall();
 
 	// init smarty
@@ -198,9 +200,7 @@ function system_init() {
 	$smarty->cache_dir = CACHE_DIR;
 	$smarty->caching = false;
 
-	// PHP error outputs and Smarty debug console
-	@ini_set('display_errors', 'on'); // on or off
-	@error_reporting(E_ALL); // E_ALL or 0
+	// Smarty debug console
 	$smarty->debugging = false; // true or false
 	//$smarty->clearCompiledTemplate();
 
