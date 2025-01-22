@@ -190,6 +190,8 @@ function system_init() {
 
 	$GLOBALS ['lang'] = lang_load();
 
+	set_locale();
+
 	plugin_loadall();
 
 	// init smarty
