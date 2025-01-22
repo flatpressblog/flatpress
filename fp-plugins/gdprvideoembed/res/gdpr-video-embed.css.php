@@ -1,9 +1,8 @@
-<?php header('Content-Type: text/css; charset=utf-8'); ?>
-@charset "UTF-8";
-
 <?php
 // Turn off all error reporting
 error_reporting(0);
+
+header('Content-Type: text/css; charset=utf-8');
 
 // PHP4.1.0 or later supported
 if (phpversion() >= "4.1.0") {
