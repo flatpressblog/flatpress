@@ -108,6 +108,9 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 		 * This function adds the Description field to editor
 		 */
 		function simple() {
+			global $fp_config;
+			$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+
 			if (!file_exists(SEOMETA_DEFAULT_DIR . 'metatags.ini')) {
 				$metatags = "[meta]\n";
 				$metatags .= "description=\n";
@@ -156,9 +159,9 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 			echo '	<div>';
 			echo '		<input id="pl_file_meta" type="hidden" name="pl_file_meta" value="' . $file_meta . '">';
 			echo '		<p><label for="pl_description">' . $string ['input_desc'] . '</label>';
-			echo '			<input placeholder="' . $lang ['admin'] ['plugin'] ['seometataginfo'] ['sample_desc'] . '" class="maxsize" id="pl_description" type="text" name="pl_description" value="' . htmlspecialchars($old_desc, ENT_QUOTES, 'UTF-8') . '"></p>';
+			echo '			<input placeholder="' . $lang ['admin'] ['plugin'] ['seometataginfo'] ['sample_desc'] . '" class="maxsize" id="pl_description" type="text" name="pl_description" value="' . htmlspecialchars($old_desc, ENT_QUOTES, $charset) . '"></p>';
 			echo '		<p><label for="pl_keywords">' . $string ['input_keywords'] . '</label>';
-			echo '			<input placeholder="' . $lang ['admin'] ['plugin'] ['seometataginfo'] ['sample_keywords'] . '" class="maxsize" id="pl_keywords" type="text" name="pl_keywords" value="' . htmlspecialchars($old_keywords, ENT_QUOTES, 'UTF-8') . '"></p>';
+			echo '			<input placeholder="' . $lang ['admin'] ['plugin'] ['seometataginfo'] ['sample_keywords'] . '" class="maxsize" id="pl_keywords" type="text" name="pl_keywords" value="' . htmlspecialchars($old_keywords, ENT_QUOTES, $charset) . '"></p>';
 			echo '		<p>';
 			$checked = ($old_noindex === '1') ? ' checked="yes"' : '';
 			echo '		<label for="pl_noindex">' . $string ['input_noindex'] . '</label>';

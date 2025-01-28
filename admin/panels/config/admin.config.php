@@ -149,7 +149,9 @@ class admin_config_default extends AdminPanelActionValidated {
 
 	// Function for escaping HTML output
 	private function escapeHTML($value) {
-		return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+		global $fp_config;
+		$localeCharset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+		return htmlspecialchars($value, ENT_QUOTES, $localeCharset);
 	}
 
 	// Function for returning the charset list based on the selected language
@@ -169,8 +171,9 @@ class admin_config_default extends AdminPanelActionValidated {
 		$success = null;
 
 		// Sanitize all input data
-		$postData = array_map(function ($value) {
-			return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+		$localeCharset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+		$postData = array_map(function ($value) use ($localeCharset) {
+			return htmlspecialchars($value, ENT_QUOTES, $localeCharset);
 		}, $_POST);
 
 		// Load list of valid charsets for the current language

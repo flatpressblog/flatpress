@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: PrettyURLs
- * Version: 3.0
+ * Version: 3.0.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -71,7 +71,9 @@ class Plugin_PrettyURLs {
 
 	function md5($id, $title) {
 		$date = date_from_id($id);
-		return md5($date ['y'] . $date ['m'] . $date ['d'] . $title);
+		if (isset($date ['y'], $date ['m'], $date ['d'])) {
+			return md5($date ['y'] . $date ['m'] . $date ['d'] . $title);
+		}
 	}
 
 	function permalink($str, $id) {
@@ -85,8 +87,10 @@ class Plugin_PrettyURLs {
 		$date = date_from_id($id);
 		// yeah, hackish, I know...
 
-		return $this->baseurl . "20" . $date ['y'] . "/" . $date ['m'] . "/" . $date ['d'] . "/" . $title . "/";
-	}
+		return isset($date ['y'], $date ['m'], $date ['d'])
+			? $this->baseurl . "20" . $date ['y'] . "/" . $date ['m'] . "/" . $date ['d'] . "/" . $title . "/"
+			: $this->baseurl . $title . "/";
+		}
 
 	function commentlink($str, $id) {
 		$link = $this->permalink($str, $id);
@@ -205,18 +209,29 @@ class Plugin_PrettyURLs {
 			return;
 		}
 
-		// data is not as expected
-		if (!array_key_exists('y', $this->fp_params) || !array_key_exists('m', $this->fp_params) || !array_key_exists('d', $this->fp_params)) {
-			// a bit hackish: we make up a fake url when there is no match,
-			// so that at the higher level the system will 404...
+		// Ensure 'y', 'm', and 'd' keys exist in $this->fp_params before accessing them
+		if (!isset($this->fp_params ['y'], $this->fp_params ['m'], $this->fp_params ['d'])) {
+			// If any of the keys are missing, create a fake entry and stop further processing
 			$this->fp_params ['entry'] = 'a';
+			return;
 		}
 
+		// Retrieve the cache if all keys exist and check for the entry
 		if ($this->cache_get($this->fp_params ['y'], $this->fp_params ['m'], $this->fp_params ['d'], md5($sanitizedtitle))) {
-			$this->fp_params ['entry'] = $this->index [$this->fp_params ['y']] [$this->fp_params ['m']] [$this->fp_params ['d']] [md5($sanitizedtitle)];
+			// Check if the required keys exist in the cache index
+			$y = $this->fp_params ['y'];
+			$m = $this->fp_params ['m'];
+			$d = $this->fp_params ['d'];
+			$hash = md5($sanitizedtitle);
+
+			if (isset($this->index [$y] [$m] [$d] [$hash])) {
+				$this->fp_params ['entry'] = $this->index [$y] [$m] [$d] [$hash];
+			} else {
+				// If the hash key does not exist, set a fake entry
+				$this->fp_params ['entry'] = 'a';
+			}
 		} else {
-			// a bit hackish: we make up a fake url when there is no match,
-			// so that at the higher level the system will 404...
+			// If the cache_get returns false, set a fake entry
 			$this->fp_params ['entry'] = 'a';
 		}
 	}
@@ -431,9 +446,13 @@ class Plugin_PrettyURLs {
 
 		$this->cache_delete_elem($id, $date);
 
-		// Add year and month keys to index, if not present already
-		if (!array_key_exists($date ['y'], $this->index) || !array_key_exists($date ['m'], $this->index [$date ['y']]) || $this->index [$date ['y']] [$date ['m']] === false) {
-			$this->index [$date ['y']] [$date ['m']] = array();
+		if (!isset($date ['y'], $date ['m'], $date ['d'])) {
+			return false;
+		}
+
+		if (!isset($this->index [$date ['y']] [$date ['m']]) || $this->index [$date ['y']] [$date ['m']] === false) {
+			// Add year and month keys to index, if not present already
+			$this->index [$date ['y']] [$date ['m']] = [];
 		}
 
 		$this->index [$date ['y']] [$date ['m']] [$date ['d']] [md5($title)] = $id;

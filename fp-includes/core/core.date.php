@@ -85,12 +85,18 @@ function date_time($offset = null) {
  * }
  */
 
-// I really DON'T LIKE THIS, looks like an hack, yech...
-// Takes filename and extension as a parameter, strips
-// alphabetic chars (ascii) from filename and "parses" the date;
-// In fact it's just a substr, counting on the fact filename should be
-// "prefix%y%m%d-%H%M%S.ext"
+/**
+ * Takes filename and extension as a parameter, strips
+ * alphabetic chars (ascii) from filename and "parses" the date;
+ * In fact it's just a substr, counting on the fact filename should be
+ * "prefix%y%m%d-%H%M%S.ext"
+ */
 function date_from_id($id) {
+
+	if (!is_string($id) || strlen($id) < 13) {
+		return array();
+	}
+
 	$strdate = substr($id, -13);
 
 	if (!preg_match('/[0-9]{6}-[0-9]{6}/', $strdate)) {
@@ -108,7 +114,19 @@ function date_from_id($id) {
 	$arr ['ymd'] = $arr ['y'] . $arr ['m'] . $arr ['d'];
 	$arr ['HMS'] = $arr ['H'] . $arr ['M'] . $arr ['S'];
 
-	$arr ['time'] = mktime($arr ['H'], $arr ['M'], $arr ['S'], $arr ['m'], $arr ['d'], $arr ['y']);
+	if (
+		checkdate((int)$arr ['m'], (int)$arr ['d'], (int)$arr ['y']) &&
+		(int)$arr ['H'] >= 0 && (int)$arr ['H'] <= 23 &&
+		(int)$arr ['M'] >= 0 && (int)$arr ['M'] <= 59 &&
+		(int)$arr ['S'] >= 0 && (int)$arr ['S'] <= 59
+	) {
+		$arr ['time'] = mktime(
+			(int)$arr ['H'], (int)$arr ['M'], (int)$arr ['S'],
+			(int)$arr ['m'], (int)$arr ['d'], (int)$arr ['y']
+		);
+	} else {
+		$arr ['time'] = false;
+	}
 
 	return $arr;
 }
