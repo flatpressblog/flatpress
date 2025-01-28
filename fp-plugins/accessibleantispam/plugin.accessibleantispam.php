@@ -35,6 +35,15 @@ function plugin_aaspam_validate($bool, $arr) {
 	if (!$v) {
 		return false;
 	}
+
+	if (!isset($_POST ['aaspam'])) {
+		global $smarty;
+		$lang = lang_load('plugin:accessibleantispam');
+
+		$smarty->append('error', $lang ['plugin'] ['accessibleantispam'] ['error']);
+		return false;
+	}
+
 	// we test the result wether match user input
 	if (!($ret = $_POST ['aaspam'] == $v)) {
 		global $smarty;

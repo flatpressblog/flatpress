@@ -16,16 +16,18 @@ $contactform_inputs = array(
  * @return boolean|array
  */
 function contact_validate() {
-	global $smarty, $contactform_inputs, $lang;
+	global $smarty, $contactform_inputs, $fp_config, $lang;
 
 	$lerr = &$lang ['contact'] ['error'];
 
 	$r = true;
 
-	$name = trim(htmlspecialchars(@$_POST ['name']));
-	$email = isset($_POST ['email']) ? trim(htmlspecialchars($_POST ['email'])) : null;
-	$url = isset($_POST ['url']) ? trim(stripslashes(htmlspecialchars($_POST ['url']))) : null;
-	$content = isset($_POST ['content']) ? trim(addslashes($_POST ['content'])) : null;
+	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+
+	$name = htmlspecialchars(trim($_POST ['name'] ?? ''), ENT_QUOTES, $charset);
+	$email = isset($_POST ['email']) ? htmlspecialchars(trim($_POST ['email']), ENT_QUOTES, $charset) : '';
+	$url = isset($_POST ['url']) ? htmlspecialchars(trim($_POST ['url']), ENT_QUOTES, $charset) : '';
+	$content = isset($_POST ['content']) ? htmlspecialchars(trim($_POST ['content']), ENT_QUOTES, $charset) : '';
 
 	$errors = array();
 
@@ -65,22 +67,14 @@ function contact_validate() {
 		return false;
 	}
 
-	$arr ['version'] = system_ver();
-	$arr ['name'] = $name;
-
-	if (!empty($email)) {
-		($arr ['email'] = $email);
-	}
-
-	if (!empty($url)) {
-		($arr ['url'] = ($url));
-	}
-
-	$arr ['content'] = $content;
-
-	if ($v = utils_ipget()) {
-		$arr ['ip-address'] = $v;
-	}
+	$arr = [
+		'version' => system_ver(),
+		'name' => $name,
+		'email' => $email ? : null,
+		'url' => $url ? : null,
+		'content' => $content,
+		'ip-address' => utils_ipget() ? : null,
+	];
 
 	// check aaspam if active
 	if (apply_filters('comment_validate', true, $arr)) {

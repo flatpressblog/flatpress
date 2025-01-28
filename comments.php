@@ -63,7 +63,13 @@ function comment_main($module) {
 function comment_feed() {
 	global $fp_params, $fp_config, $lang, $current_entry;
 
-	$entry_title = $current_entry ['subject'] ?? $fp_config ['404error'] ['subject'];
+	if (isset($current_entry ['subject']) && !empty($current_entry ['subject'])) {
+		$entry_title = $current_entry ['subject'];
+	} elseif (isset($fp_config ['404error'] ['subject']) && !empty($fp_config ['404error'] ['subject'])) {
+		$entry_title = $fp_config ['404error'] ['subject'];
+	} else {
+		$entry_title = 'Undefined Title';
+	}
 
 	echo "\n" . '<link rel="alternate" type="application/rss+xml" title="' . $entry_title . ' » ' . $lang ['main'] ['comments'] . ' | RSS 2.0" href="' . theme_comments_feed_link('rss2', $fp_params ['entry']) . '">';
 	echo "\n" . '<link rel="alternate" type="application/atom+xml" title="' . $entry_title . ' » ' . $lang ['main'] ['comments'] . ' | Atom 1.0" href="' . theme_comments_feed_link('atom', $fp_params ['entry']) . '">' . "\n";

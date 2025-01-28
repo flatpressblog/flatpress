@@ -5,15 +5,17 @@ require_once INCLUDES_DIR . 'includes.php';
 $tpl = 'default.tpl';
 
 function sanitize_input($input) {
-	return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+	global $fp_config;
+	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+	return htmlspecialchars(trim($input ?? ''), ENT_QUOTES, $charset);
 }
 
 function login_validate() {
 	global $smarty, $lang;
 
 	// Sanitization of the inputs
-	$user = sanitize_input(filter_input(INPUT_POST, 'user'));
-	$pass = sanitize_input(filter_input(INPUT_POST, 'pass'));
+	$user = sanitize_input(filter_input(INPUT_POST, 'user', FILTER_DEFAULT) ?? '');
+	$pass = sanitize_input(filter_input(INPUT_POST, 'pass', FILTER_DEFAULT) ?? '');
 
 	$error = array();
 	$lerr = &$lang ['login'] ['error'];
