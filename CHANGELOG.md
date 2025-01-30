@@ -30,6 +30,7 @@
     - Changes in input fields and drop-down menus are immediately reflected in the configuration panel. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
     - Activating or deactivating plugins are immediately reflected in the plugin management panel. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
   - OPcache is deactivated when the theme panel is called up so that newly activated themes or styles are displayed immediately. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
+  - The validation of the standard format for date and time has been extended to include some Japanese characters ([#531](https://github.com/flatpressblog/flatpress/pull/531))
 
 ## Security
 - The session-cookie are now somewhat more secure against CSRF attacks. ([#481](https://github.com/flatpressblog/flatpress/issues/481))
