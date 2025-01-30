@@ -26,11 +26,11 @@ define('DUMB_MODE_ENABLED', false);
 define('FILE_PERMISSIONS', 0644); // 0644 is recommended
 define('DIR_PERMISSIONS', 0755); // 0755 is recommended
 
-// FlatPress core: This includes this file, the directory admin, fp-incudes, fp-interface, fp-plugins and config
+// FlatPress core: This includes this file, recursively the directories ADMIN_DIR, FP_INCLUDES, CONFIG_DIR, USERS_DIR, LANG_DIR, SHARED_TPLS and PLUGINS_DIR
 define('CORE_FILE_PERMISSIONS', 0640); // 0640 for productive operation
 define('CORE_DIR_PERMISSIONS', 0750); // 0750 for productive operation
 
-// For all other files and directories
+// For all other files and directories, e.g. FP_INTERFACE, THEMES_DIR
 define('RESTRICTED_FILE_PERMISSIONS', 0644); // 0644 is recommended
 define('RESTRICTED_DIR_PERMISSIONS', 0755); // 0755 is recommended
 
@@ -53,10 +53,10 @@ define('BASE_DIR', str_replace('\\', '/', dirname(__FILE__)));
 define('FP_DEFAULTS', 'fp-defaults/');
 
 // All writable directories go here.
-define('FP_CONTENT', 'fp-content/'); // must be chmodded to 0777
+define('FP_CONTENT', 'fp-content/');
 
 // Blog configurations files
-define('CONFIG_DIR', FP_CONTENT . 'config/'); // must be chmodded to 0777
+define('CONFIG_DIR', FP_CONTENT . 'config/');
 define('CONFIG_FILE', CONFIG_DIR . 'settings.conf.php');
 
 /**
@@ -81,8 +81,8 @@ define('INCLUDES_DIR', FP_INCLUDES . 'core/');
 
 // smarty engine
 define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-4.5.5/libs/');
-define('CACHE_DIR', FP_CONTENT . 'cache/'); // must be chmodded to 0777
-define('COMPILE_DIR', FP_CONTENT . 'compile/'); // must be chmodded to 0777
+define('CACHE_DIR', FP_CONTENT . 'cache/');
+define('COMPILE_DIR', FP_CONTENT . 'compile/');
 // FlatPress specific Smarty plugins
 define('FP_SMARTYPLUGINS_DIR', ABS_PATH . FP_INCLUDES . 'fp-smartyplugins/');
 
