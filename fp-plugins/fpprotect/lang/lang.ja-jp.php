@@ -7,7 +7,7 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'訪問者とFlatPressブログのための最善の保護は、すべてのオプションを無効にすることです。',
 
 	// Part for unsafe inline scripts
-	'allow_unsafe_inline' => '安全でないJavaスクリプトを許可する（推奨しない）',
+	'allow_unsafe_inline' => '安全でないJavaスクリプトを許可する(推奨しません)',
 
 	'allowUnsafeInlineDsc' => '<p>安全でないインラインJavaScriptコードの読み込みを許可します。</p>' . //
 		'<p><br>プラグイン開発者への注意：Javaスクリプトにnonceを追加してください。</p>' . //
@@ -28,7 +28,7 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Part for metadate in images after upload
 	'allow_image_metadate' => 'アップロードされた画像のメタデータと元の画質を保持します。',
-	'allowImageMetadataDsc' => 'アップローダーで画像がアップロードされた後、メタデータは保持されます。これには、カメラ情報や地理座標などが含まれます。',
+	'allowImageMetadataDsc' => 'アップローダーで画像がアップロードされた後、メタデータは保持されます。これにはカメラ情報や地理座標などが含まれたままです。',
 
 	// Part for the visitor-ip in FlatPress
 	'allow_visitor_ip' => 'FlatPressが訪問者の匿名化されていないIPアドレスを使用することを許可します。',
@@ -38,7 +38,7 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'submit' => '設定の保存',
 		'msgs' => array(
 		1 => '設定は正常に保存されました。',
-		-1 => '設定の保存エラー'
+		-1 => '設定保存時にエラーがありました。'
 	),
 
 	// Warning message

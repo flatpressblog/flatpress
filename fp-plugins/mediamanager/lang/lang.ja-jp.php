@@ -1,10 +1,10 @@
 <?php
-$lang ['admin'] ['uploader'] ['submenu'] ['default'] = 'アップローダー';
+$lang ['admin'] ['uploader'] ['submenu'] ['default'] = 'アップローダ';
 
-$lang ['admin'] ['uploader'] ['submenu'] ['mediamanager'] = 'メディアマネージャー';
+$lang ['admin'] ['uploader'] ['submenu'] ['mediamanager'] = 'メディアマネージャ';
 
 $lang ['admin'] ['uploader'] ['mediamanager'] = array(
-	'head' => 'メディアマネージャー',
+	'head' => 'メディアマネージャ',
 	'description' => 'メディアファイルを管理します',
 
 	'delete' => '削除',

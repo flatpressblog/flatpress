@@ -9,11 +9,11 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'descr' => '<a class="hint" ' . //
 		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="What is a Widget?">' . //
 		'ウィジェット</a>は、情報の表示や閲覧者とのやり取りをダイナミックにできる部品です。 ' . //
-		'<strong>テーマ</strong>はサイトの見かけを変えますが、ウィジェットは 見かけと機能を<strong>拡張</strong>します。</p>' . //
+		'<strong>テーマ</strong>はサイトの見かけを変えますが、ウィジェットは見かけと機能を<strong>拡張</strong>します。</p>' . //
 
-		'<p>ウィジェットは、<strong>ウィジェットセット</strong>という、テーマの特別な領域にドラッグできます。 使えるウィジェットセットの数や拡張機能は、選んだテーマに依存します。</p>' . //
+		'<p>ウィジェットは、<strong>ウィジェットセット</strong>というテーマ内の特別な領域(サイドバー等)にドラッグできます。 使えるウィジェットセットの数や拡張機能は、選んだテーマに依存します。</p>' . //
 
-		'<p>FlatPressには、あらかじめいくつかのウィジェットがついています: ログインのためのウィジェット、検索窓のウィジェットなどです。</p>' . //
+		'<p>FlatPressには、あらかじめいくつかのウィジェットがついています: ログインのための"AdminArea"ウィジェット、検索窓の"SearchBox"ウィジェットなどです。</p>' . //
 
 		'<p>各々のウィジェットは、<a class="hint" ' . //
 		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="What is a plugin?">プラグイン</a>で定義されます。',

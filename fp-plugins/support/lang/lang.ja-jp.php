@@ -3,10 +3,10 @@ $lang ['admin'] ['maintain'] ['submenu'] ['support'] = 'サポートデータの
 
 $lang ['admin'] ['maintain'] ['support'] = array(
 	'title' => 'サポートデータ',
-	'intro' => 'バグレポートやヘルプについては、<a href="https://forum.flatpress.org" target="_blank">FlatPress forum</a>をご覧いただくか、' . //
+	'intro' => 'バグ報告やヘルプについては、<a href="https://forum.flatpress.org" target="_blank">FlatPress forum</a>をご覧いただくか、' . //
 		'<a href="https://github.com/flatpressblog/flatpress/issues" target="_blank">GitHub</a>でバグを報告するか、' . //
 		'<a href="mailto:hello@flatpress.org">メールを送信</a>してください。<br>' . //
-		'これらの問題（コピー&38;ペースト）は、以下の情報を英語で貼り付けてください： バグの説明、再現手順',
+		'バグの説明、再現手順 : これらの話題の際は、以下の情報を(英文のままで)コピー&amp;ペーストしてください',
 
 	// output "Setup"
 	'h2_general' => 'General',

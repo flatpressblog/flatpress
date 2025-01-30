@@ -5,7 +5,7 @@ $lang ['main'] = array(
 	'nextpage' => '次のページ &raquo;',
 	'prevpage' => '&laquo; 前のページ',
 	'entry' => 'ブログ記事',
-	'entries' => 'ブログエントリー',
+	'entries' => 'ブログ記事',
 	'static' => '固定ページ',
 	'comment' => 'コメント',
 	'preview' => '編集/プレビュー',
@@ -19,9 +19,9 @@ $lang ['main'] = array(
 	'btn_edit' => '編集',
 	'btn_delete' => '削除',
 
-	'nocomments' => 'コメントを追加する',
-	'comment' => '1コメントあります',
-	'comments' => 'コメントあります',
+	'nocomments' => 'コメントの記入',
+	'comment' => '1コメントあり',
+	'comments' => 'コメントあり',
 
 	'rss' => 'RSSフィードを購読する',
 	'atom' => 'Atomフィードを購読する'
@@ -97,8 +97,8 @@ $lang ['404error'] = array(
 // Login
 $lang ['login'] = array(
 	'head' => 'ログイン',
-	'fieldset1' => 'ユーザー名とパスワードを入力してください',
-	'user' => 'ユーザー名:',
+	'fieldset1' => 'ユーザ名とパスワードを入力してください',
+	'user' => 'ユーザ名:',
 	'pass' => 'パスワード:',
 	'fieldset2' => 'ログイン実行',
 	'submit' => 'ログインする',
@@ -115,7 +115,7 @@ $lang ['login'] ['success'] = array(
 );
 
 $lang ['login'] ['error'] = array(
-	'user' => 'ユーザー名を記入してください。',
+	'user' => 'ユーザ名を記入してください。',
 	'pass' => 'パスワードを記入してください。',
 	'match' => 'パスワードが正しくありません。',
 	'timeout' => '再試行する前に30秒間お待ちください。'
@@ -141,14 +141,14 @@ $lang ['comments'] = array(
 
 $lang ['comments'] ['error'] = array(
 	'name' => 'お名前を記入してください。',
-	'email' => 'メールアドレスを正しく記入してください。',
-	'www' => 'URLを正しく入力してください。',
+	'email' => 'メールアドレスが正しいか確認してください。',
+	'www' => 'URLが正しいか確認してください。',
 	'comment' => 'コメントを記入してください。'
 );
 
 $lang ['postviews'] = array(
 	// PostView-Plugin
-	'views' => '呼び出す'
+	'views' => 'コール'
 );
 
 $lang ['date'] ['month'] = array(
@@ -167,18 +167,18 @@ $lang ['date'] ['month'] = array(
 );
 
 $lang ['date'] ['month_abbr'] = array(
-	'1月',
-	'2月',
-	'3月',
-	'4月',
-	'5月',
-	'6月',
-	'7月',
-	'8月',
-	'9月',
-	'10月',
-	'11月',
-	'12月'
+	'1',
+	'2',
+	'3',
+	'4',
+	'5',
+	'6',
+	'7',
+	'8',
+	'9',
+	'10',
+	'11',
+	'12'
 );
 
 $lang ['date'] ['weekday'] = array(
