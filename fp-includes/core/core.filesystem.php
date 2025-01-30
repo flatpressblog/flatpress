@@ -191,7 +191,7 @@ function fs_delete($path) {
  * 
  * Function restore_chmods:
  * Restores permissions for critical system directories and files.
- * Processes specific paths like FP_CONTENT, BASE_DIR, ADMIN_DIR, FP_INCLUDES, FP_INTERFACE, and PLUGINS_DIR.
+ * Processes specific paths like BASE_DIR, ADMIN_DIR, FP_CONTENT, CONFIG_DIR, USERS_DIR, FP_INCLUDES, LANG_DIR, SHARED_TPLS and PLUGINS_DIR.
  * Combines results to return a list of problematic files or directories that failed to update.
  *
  * Note:
@@ -242,18 +242,19 @@ class fs_chmodder extends fs_filelister {
 		}
 
 		// Path classification
-		$is_fp_content = strpos(realpath($path), realpath(FP_CONTENT)) === 0;
 		$is_admin_dir = strpos(realpath($path), realpath(ADMIN_DIR)) === 0;
-		$is_includes_dir = strpos(realpath($path), realpath(FP_INCLUDES)) === 0;
-		$is_interface_dir = strpos(realpath($path), realpath(FP_INTERFACE)) === 0;
-		$is_plugin_dir = strpos(realpath($path), realpath(PLUGINS_DIR)) === 0;
+		$is_fp_content = strpos(realpath($path), realpath(FP_CONTENT)) === 0;
 		$is_config_dir = strpos(realpath($path), realpath(CONFIG_DIR)) === 0;
 		$is_users_dir = strpos(realpath($path), realpath(USERS_DIR)) === 0;
+		$is_includes_dir = strpos(realpath($path), realpath(FP_INCLUDES)) === 0;
+		$is_lang_dir = strpos(realpath($path), realpath(LANG_DIR)) === 0;
+		$is_sharedtpls_dir = strpos(realpath($path), realpath(SHARED_TPLS)) === 0;
+		$is_plugin_dir = strpos(realpath($path), realpath(PLUGINS_DIR)) === 0;
 		$is_defaults_file = realpath($path) === realpath(BASE_DIR . '/defaults.php');
 
 		if (is_dir($path)) {
 			$retval = 1;
-			if ($is_admin_dir || $is_includes_dir || $is_interface_dir || $is_plugin_dir || $is_config_dir || $is_users_dir) {
+			if ($is_admin_dir || $is_config_dir || $is_users_dir || $is_includes_dir || $is_lang_dir || $is_sharedtpls_dir || $is_plugin_dir) {
 				// Core permissions for system-critical directories
 				$chmod_value = CORE_DIR_PERMISSIONS;
 			} else {
@@ -265,7 +266,7 @@ class fs_chmodder extends fs_filelister {
 			if ($is_defaults_file) {
 				// Specific permissions for defaults.php
 				$chmod_value = CORE_FILE_PERMISSIONS;
-			} elseif ($is_admin_dir || $is_includes_dir || $is_interface_dir || $is_plugin_dir || $is_config_dir || $is_users_dir) {
+			} elseif ($is_admin_dir || $is_config_dir || $is_users_dir || $is_includes_dir || $is_lang_dir || $is_sharedtpls_dir || $is_plugin_dir) {
 				// Core permissions for system-critical files
 				$chmod_value = CORE_FILE_PERMISSIONS;
 			} else {
@@ -303,25 +304,27 @@ function fs_chmod_recursive($fpath = BASE_DIR) {
 
 // Restores permissions for critical directories and files
 function restore_chmods() {
-	$files_content = fs_chmod_recursive(FP_CONTENT);
 	$files_base = fs_chmod_recursive(BASE_DIR);
 	$files_admin = fs_chmod_recursive(ADMIN_DIR);
-	$files_includes = fs_chmod_recursive(FP_INCLUDES);
-	$files_interface = fs_chmod_recursive(FP_INTERFACE);
-	$files_plugins = fs_chmod_recursive(PLUGINS_DIR);
+	$files_content = fs_chmod_recursive(FP_CONTENT);
 	$files_config = fs_chmod_recursive(CONFIG_DIR);
 	$files_users = fs_chmod_recursive(USERS_DIR);
+	$files_includes = fs_chmod_recursive(FP_INCLUDES);
+	$files_lang = fs_chmod_recursive(LANG_DIR);
+	$files_sharedtpls = fs_chmod_recursive(SHARED_TPLS);
+	$files_plugins = fs_chmod_recursive(PLUGINS_DIR);
 
 	// Combine results from all directories
 	$files = array_merge(
-		$files_content,
 		$files_base,
 		$files_admin,
-		$files_includes,
-		$files_interface,
-		$files_plugins,
+		$files_content,
 		$files_config,
-		$files_users
+		$files_users,
+		$files_includes,
+		$files_lang,
+		$files_sharedtpls,
+		$files_plugins
 	);
 	//error_log("DEBUG: Files updated: " . print_r($files, true));
 
