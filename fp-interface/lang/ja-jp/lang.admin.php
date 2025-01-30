@@ -27,7 +27,7 @@ $lang ['admin'] ['general'] = array(
 	'actedit' => '編集',
 	'actenable' => '有効',
 	'actdisable' => '無効',
-	'startpage' => 'スタートページ',
+	'startpage' => 'トップページ',
 	'logout' => 'ログアウト'
 );
 ?>

@@ -7,19 +7,19 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt0' => '&laquo; メインメニューに戻ります',
 	'opt1' => 'インデックスを再構成します',
 	'opt2' => 'テーマとテンプレートのキャッシュをクリアします',
-	'opt3' => '生産活動のための認可を回復する',
+	'opt3' => 'パーミッションの回復',
 	'opt4' => 'PHP情報を表示します',
 	'opt5' => 'アップデートをチェックします',
 
-	'chmod_info' => 'パーミッションが<strong>リセットできなかった場合、ファイル/ ディレクトリのオーナーはおそらくウェブサーバーのオーナーと同じではありません。<br>' . //
+	'chmod_info' => 'パーミッションを<strong>回復(リセット)できなかった</strong>場合、おそらく、ファイル/ディレクトリの所有者とウェブサーバの実行者が異なるのでしょう。<br>' . //
 		'
 		<table>
 			<thead>
 				<tr>
-					<th>権限</th>
+					<th>パーミッション</th>
 					<th>' . FP_CONTENT . '</th>
-					<th>コア</th>
-					<th>他のすべての</th>
+					<th>Core(コア部分)</th>
+					<th>その他</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -39,8 +39,8 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 		</table>
 		',
 
-	'opt3_success' => 'すべてのオーソライゼーションが正常に更新されました。',
-	'opt3_error' => '権限設定時のエラー：'
+	'opt3_success' => 'すべてのパーミッションが正常に更新されました。',
+	'opt3_error' => 'パーミッション更新エラー：'
 );
 
 $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(

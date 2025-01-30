@@ -68,7 +68,7 @@ $lang ['plugin'] ['bbcode'] = array (
 	'report_error_2' => 'エラーを報告してください',
 	'blog_search_1' => '',
 	'blog_search_2' => 'ブログ検索',
-	'start_page_1' => '', // neu
-	'start_page_2' => 'またはスタートページに戻る'
+	'start_page_1' => '',
+	'start_page_2' => 'トップページに戻る'
 );
 ?>
