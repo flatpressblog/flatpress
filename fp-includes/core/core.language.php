@@ -257,7 +257,7 @@ function set_locale() {
 	$supportedLocales = [];
 	if (function_exists('shell_exec') && is_callable('shell_exec')) {
 		// Checks the supported locales with locale -a and only uses valid combinations
-		$output = shell_exec('locale -a');
+		$output = shell_exec('timeout 5s locale -a');
 		if ($output !== null) {
 			$supportedLocales = explode("\n", trim($output));
 		}

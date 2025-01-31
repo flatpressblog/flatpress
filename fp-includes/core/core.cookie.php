@@ -87,6 +87,14 @@ function sess_setup() {
 		// Activate strict mode to prevent session fixation attacks
 		ini_set('session.use_strict_mode', 1);
 
+		// Set session timeout duration (e.g., 3600 seconds = 60 minutes)
+		$timeout_duration = 3600;
+		ini_set('session.gc_maxlifetime', $timeout_duration);
+
+		// Optimize Garbage Collection (adjust to session load)
+		ini_set('session.gc_probability', 1);
+		ini_set('session.gc_divisor', 50);
+
 		$session_cookie_options = get_cookie_options(0, true);
 
 		// Set session cookie parameters based on PHP version
@@ -109,9 +117,6 @@ function sess_setup() {
 				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
 				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
 		}
-
-		// Set timeout duration in seconds (e.g., 3600 seconds = 60 minutes)
-		$timeout_duration = 3600;
 
 		if (isset($_SESSION ['last_activity'])) {
 			// Check if the session has expired
