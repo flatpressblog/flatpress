@@ -348,7 +348,7 @@ if (!function_exists('wp_verify_nonce')) :
 
 		// Check if user exists and has a valid user ID
 		if (!$user || !isset($user ['userid'])) {
-			error_log('wp_verify_nonce: No user is logged in or user data is missing.');
+			//error_log('wp_verify_nonce: No user is logged in or user data is missing.');
 			return false;
 		}
 
@@ -381,7 +381,7 @@ if (!function_exists('wp_create_nonce')) :
 
 		// Check if the user data is available
 		if (!$user || !isset($user ['userid'])) {
-			error_log('wp_create_nonce: No user is logged in or user data is missing.');
+			//error_log('wp_create_nonce: No user is logged in or user data is missing.');
 			return null; // Return null if no user is logged in
 		}
 
