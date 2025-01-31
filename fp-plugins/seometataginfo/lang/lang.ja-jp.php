@@ -5,7 +5,7 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	// SEO robots.txt part 1
 	'head' => 'SEO robots.txt',
 	'description1' => '<code>robots.txt</code>ファイルは、検索エンジンのクローラーと、あなたのFlatPressブログ上でのクローラーの動作を制御します。 ' . //
-		'ここでは、検索エンジン最適化のための<code>rotots.txt</code>ファイルを作成・編集することができます。',
+		'ここでは、検索エンジン最適化のための<code>robots.txt</code>ファイルを作成・編集することができます。',
 	'location' => '<strong>保管場所:</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
 	'submit' => 'robots.txtを保存する',
 
