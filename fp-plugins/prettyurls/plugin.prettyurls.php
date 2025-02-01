@@ -681,6 +681,10 @@ if (class_exists('AdminPanelAction')) {
 AddType application/x-httpd-php .php .htm .html
 Options -Indexes
 
+<IfModule mod_headers.c>
+	Header unset X-Powered-By
+</IfModule>
+
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 	RewriteBase ' . $blogroot . '
