@@ -71,6 +71,9 @@ if (function_exists('is_https') && is_https()) {
 	header('Cross-Origin-Resource-Policy: same-site');
 	header('X-Permitted-Cross-Domain-Policies: none');
 	header('X-Download-Options: noopen');
+
+	// Emergency solution for Shared hosting environments; should already be done in the php.ini file or server configuration
+	header_remove('X-Powered-By'); // Hide server information
 }
 
 /**
