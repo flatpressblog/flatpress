@@ -87,19 +87,39 @@ function contact_validate() {
 function contactform() {
 	global $smarty, $lang, $fp_config, $contactform_inputs;
 
-	// initial call of the contact form
+	// Ensure session is started
+	if (session_status() === PHP_SESSION_NONE) {
+		session_start();
+	}
+	if (empty($_SESSION ['csrf_token'])) {
+		// Generate CSRF token
+		$_SESSION ['csrf_token'] = RANDOM_HEX;
+	}
+
+	// Transfer token to Smarty
+	$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
+
+	// Initial call of the contact form
 	if (empty($_POST)) {
 		$smarty->assign('success', system_geterr('contact'));
 		$smarty->assignByRef('panelstrings', $lang ['contact']);
 		return;
 	}
 
-	// new form, we (re)set the session data
+	// New form, we (re)set the session data
 	utils_nocache_headers();
+
+	// CSRF token verification
+	if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== $_SESSION ['csrf_token']) {
+		return;
+	}
+
+	// Reset CSRF token after validation
+	unset($_SESSION ['csrf_token']);
 
 	$validationResult = contact_validate();
 
-	// if validation failed
+	// If validation failed
 	if ($validationResult === false) {
 		// assign given input values to the template, so they're prefilled again
 		$smarty->assign('values', $_POST);
@@ -118,8 +138,8 @@ function contactform() {
 	}
 	$msg .= $lang ['contact'] ['notification'] ['content'] . " \n" . $validationResult ['content'] . "\n";
 
-	// send notification mail to site admin
-	// for non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
+	// Send notification mail to site admin
+	// For non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
 	$success = @utils_mail((isset($validationResult ['email']) ? $validationResult ['email'] : $fp_config ['general'] ['email']), $lang ['contact'] ['notification'] ['subject'] . ' ' . $fp_config ['general'] ['title'], $msg);
 
 	// Assign success or error message directly

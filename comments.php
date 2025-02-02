@@ -194,7 +194,7 @@ function commentform() {
 	}
 	if (empty($_SESSION ['csrf_token'])) {
 		// Generate CSRF token
-		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
+		$_SESSION ['csrf_token'] = RANDOM_HEX;
 	}
 
 	$comment_formid = 'fp-comments';
@@ -221,6 +221,9 @@ function commentform() {
 		if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== $_SESSION ['csrf_token']) {
 			return;
 		}
+
+		// Reset CSRF token after validation
+		unset($_SESSION ['csrf_token']);
 
 		// Custom hook here!!
 		if ($arr = comment_validate()) {
