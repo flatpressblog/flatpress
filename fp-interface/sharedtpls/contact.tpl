@@ -1,11 +1,11 @@
 {if not $flatpress.loggedin}
 <p>{$lang.contact.descr}</p>
 
-<form id="contactform" method="post"
-	action="{$smarty.const.BLOG_BASEURL}contact.php"
-	enctype="multipart/form-data">
-	
-	{include file='shared:errorlist.tpl'}
+<form id="contactform" method="post" action="{$smarty.const.BLOG_BASEURL}contact.php" enctype="multipart/form-data">
+
+	<input type="hidden" name="csrf_token" value="{$csrf_token}">
+
+	{include file="shared:errorlist.tpl"}
 
 	<fieldset><legend>{$lang.contact.fieldset1}</legend>
 		<p><label class="textlabel" for="name">{$lang.contact.name}</label><br>
@@ -21,7 +21,7 @@
 		{/if}
 		<input type="text" name="name" id="name" class="{$class}" 
 		value="{$namevalue|stripslashes|wp_specialchars:true}"></p>
-		
+
 		<p><label class="textlabel" for="email">{$lang.contact.email}</label><br>
 		{if isset($error) && isset($error.email) && !empty($error.email)}
 			{assign var=class value="field-error"}
@@ -35,7 +35,7 @@
 		{/if}
 		<input type="text" name="email" id="email" class="{$class}" 
 		value="{$emailvalue|stripslashes|wp_specialchars:true}"></p>
-		
+
 		<p><label class="textlabel" for="url">{$lang.contact.www}</label><br>
 		{if isset($error) && isset($error.url) && !empty($error.url)}
 			{assign var=class value="field-error"}
@@ -70,7 +70,7 @@
 		rows="10" cols="74">{$contentvalue|stripslashes|wp_specialchars:true}</textarea></p>
 
 	</fieldset>
-	
+
 	<div class="buttonbar">
 	<input type="submit" name="submit" id="submit" value="{$lang.contact.submit}">
 	<input type="reset" name="reset" id="reset" value="{$lang.contact.reset}">
