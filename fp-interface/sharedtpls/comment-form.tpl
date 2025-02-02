@@ -13,10 +13,8 @@
 	<p>{$lang.comments.descr}</p>
 	{/if}
 
-	<form id="commentform" method="post"
-		action="{$flatpress.params.entry|link:comments_link}#commentform"
-		enctype="multipart/form-data">
-
+	<form id="commentform" method="post" action="{$flatpress.params.entry|link:comments_link}#commentform" enctype="multipart/form-data">
+	<input type="hidden" name="csrf_token" value="{$csrf_token}">
 
 		{include file="shared:errorlist.tpl"}
 
