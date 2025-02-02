@@ -40,9 +40,9 @@
 -  E-mail function with header injection protection and rate limiting ([#539](https://github.com/flatpressblog/flatpress/issues/539))
 -  CSRF protection added for the comment function ([#534](https://github.com/flatpressblog/flatpress/issues/534))
 -  CSRF protection added for the contact form ([#541](https://github.com/flatpressblog/flatpress/issues/541))
--  CSRF protection added for the login page ([#542](https://github.com/flatpressblog/flatpress/pull/542))
 - Admin area login:
   - Allow admin login attempts only every 30 seconds to make brute force attacks more difficult. ([#87](https://github.com/flatpressblog/flatpress/issues/87))
+  - CSRF protection added for the login page ([#542](https://github.com/flatpressblog/flatpress/pull/542))
   - The fp-user or fp-pass cookie is no longer set when logging in. Admin login and authentication via PHP sessions. ([#488](https://github.com/flatpressblog/flatpress/pull/488))<br><sub><i>When installing a release update package, previously saved login information becomes invalid due to the change from cookie authentication to session authentication! The user must be recreated by executing the setup - see [FAQ](https://wiki.flatpress.org/doc:techfaq#i_ve_lost_my_password).</i></sub>
 - Admin area:
   - PrettyURLs plugin: To edit the .htacces file directly, the FlatPress Protect plugin option must first be activated. ([#379](https://github.com/flatpressblog/flatpress/issues/379))
