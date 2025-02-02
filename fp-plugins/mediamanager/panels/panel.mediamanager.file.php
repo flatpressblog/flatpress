@@ -14,8 +14,8 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		$typeA = isset($a ['type']) ? $a ['type'] : 'images';
 		$typeB = isset($b ['type']) ? $b ['type'] : 'images';
 
-		$orderA = $typeOrder[$typeA] ?? 3;
-		$orderB = $typeOrder[$typeB] ?? 3;
+		$orderA = $typeOrder [$typeA] ?? 3;
+		$orderB = $typeOrder [$typeB] ?? 3;
 
 		if ($orderA !== $orderB) {
 			return $orderA - $orderB;
@@ -80,11 +80,13 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 						$this->deleteFolder($folder . "/" . $file, $mmbaseurl);
 					} else {
 						if (!unlink($folder . "/" . $file)) {
+							closedir($dir);
 							return false;
 						}
 					}
 				}
 			}
+			closedir($dir);
 		}
 		return rmdir($folder);
 	}
