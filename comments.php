@@ -188,8 +188,20 @@ function comment_validate() {
 function commentform() {
 	global $smarty, $lang, $fpdb, $fp_params;
 
+	// Ensure session is started
+	if (session_status() === PHP_SESSION_NONE) {
+		session_start();
+	}
+	if (empty($_SESSION ['csrf_token'])) {
+		// Generate CSRF token
+		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
+	}
+
 	$comment_formid = 'fp-comments';
 	$smarty->assign('comment_formid', $comment_formid);
+
+	// Transfer token to Smarty
+	$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
 
 	// Define panel strings for success or error message
 	$panelstrings = array(
@@ -202,16 +214,19 @@ function commentform() {
 
 	if (!empty($_POST)) {
 
-		// new form, we (re)set the session data
+		// New form, we (re)set the session data
 		utils_nocache_headers();
 
-		// custom hook here!!
-		if ($arr = comment_validate()) {
+		// CSRF token verification
+		if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== $_SESSION ['csrf_token']) {
+			return;
+		}
 
+		// Custom hook here!!
+		if ($arr = comment_validate()) {
 			global $fp_config;
 
 			$id = comment_save($fp_params ['entry'], $arr);
-
 			do_action('comment_post', $fp_params ['entry'], array(
 				$id,
 				$arr
@@ -223,14 +238,15 @@ function commentform() {
 			), null);
 			list ($entryid, $e) = $q->getEntry();
 
+			$q = new FPDB_Query(['id' => $fp_params ['entry'], 'fullparse' => false], null);
+			list($entryid, $e) = $q->getEntry();
+
 			if ($fp_config ['general'] ['notify'] && !user_loggedin()) {
-
 				global $post;
-
 				$comm_mail = isset($arr ['email']) ? '<' . $arr ['email'] . '>' : '';
 				$from_mail = $fp_config ['general'] ['email'];
 
-				// plugin such as prettyurls might need this...
+				// Plugin such as prettyurls might need this...
 				$post = $e;
 
 				$lang = lang_load('comments');
@@ -267,8 +283,8 @@ function commentform() {
 			$location = str_replace('&amp;', '&', get_comments_link($entryid)) . '#' . $id;
 			utils_redirect($location, true);
 			exit();
-		} else {
 
+		} else {
 			$smarty->assign('values', $_POST);
 		}
 

@@ -87,22 +87,41 @@ if (!function_exists('fnmatch')) {
 	}
 }
 
-// function prototype:
-// array utils_kexplode(string $string, string $delim='|')
-
-// explodes a string into an array by the given delimiter;
-// delimiter defaults to pipe ('|').
-// the string must be formatted as in:
-// key1|value1|key2|value2 , etc.
-// the array will look like
-// $arr['key1'] = 'value1'; $arr['key2'] = 'value2'; etc.
+/**
+ * function prototype:
+ * array utils_kexplode(string $string, string $delim='|')
+ *
+ * explodes a string into an array by the given delimiter;
+ * delimiter defaults to pipe ('|').
+ * the string must be formatted as in:
+ * key1|value1|key2|value2 , etc.
+ * the array will look like
+ *  $arr['key1'] = 'value1'; $arr['key2'] = 'value2'; etc.
+ */
 function utils_kexplode($string, $delim = '|', $keyupper = true) {
 	$arr = array();
 	$string = trim($string);
 
+	if ($string === '') {
+		return $arr;
+	}
+
 	$k = strtolower(strtok($string, $delim));
-	$arr [$k] = strtok($delim);
+	$v = strtok($delim);
+
+	if ($k === false || $v === false) {
+		return $arr;
+	}
+
+	$arr [$k] = $v;
+
 	while (($k = strtok($delim)) !== false) {
+		$v = strtok($delim);
+
+		if ($v === false) {
+			break;
+		}
+
 		if ($keyupper && !preg_match('/[A-Z-_]/', $k)) {
 			/*
 			 * trigger_error("Failed parsing <pre>$string</pre>
@@ -115,7 +134,7 @@ function utils_kexplode($string, $delim = '|', $keyupper = true) {
 			continue;
 		}
 
-		$arr [strtolower($k)] = strtok($delim);
+		$arr [strtolower($k)] = $v;
 	}
 
 	return $arr;
@@ -301,29 +320,73 @@ function utils_countdashes($string, &$rest) {
 
 function utils_mail($from = '', $subject = '', $message = '', $headers = '') {
 	global $fp_config;
-	/*
-	 * Fraenkiman: Many e-mail providers only allow e-mail addresses from domains that are known to the mail server via their mail server (SMTP host).
+	/**
+	 * Many e-mail providers only allow e-mail addresses from domains that are known to the mail server via their mail server (SMTP host).
 	 * As a rule, these are all e-mail addresses for domains that are registered with the provider.
 	 * In some cases, however, there may be further restrictions, which you should ask your mail provider about.
 	 * When using the PHP mail() function, clarify directly with your provider what restrictions and regulations there are for sending e-mails.
 	 * For this reason, you should have set a sender e-mail address that is permitted for sending by the mail system used (e.g. SMTP).
 	 */
-	if ($from == '') {
+
+	// Use default sender from configuration
+	if (empty($from)) {
 		$from = $fp_config ['general'] ['email'];
 	}
-	if ($headers == '') {
-		$headers = "MIME-Version: 1.0\r\n" . //
-		"From: " . $from . "\r\n" . //
-		"Content-Type: text/plain; charset=\"" . $fp_config ['general'] ['charset'] . "\"\r\n";
+
+	// Security filter: Prevent header injection
+	$from = filter_var($from, FILTER_VALIDATE_EMAIL) ? $from : $fp_config ['general'] ['email'];
+	$subject = preg_replace('/[\r\n]/', '', $subject);
+	$headers = preg_replace('/[\r\n]/', '', $headers);
+
+	// Define allowed character sets
+	$allowed_charsets = ['UTF-8', 'ISO-8859-1','ISO-8859-5', 'ISO-8859-15', 'Windows-1252', 'Shift_JIS', 'EUC-JP', 'GB2312'];
+
+	// Validate and set charset
+	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+	if (!in_array($charset, $allowed_charsets)) {
+		// Fallback to UTF-8
+		$charset = 'UTF-8';
 	}
-	/*
-	 * for non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64
-	 * https://ncona.com/2011/06/using-utf-8-characters-on-an-e-mail-subject/
-	 */
-	return mail($fp_config ['general'] ['email'], '=?' . $fp_config ['general'] ['charset'] . '?B?' . base64_encode($subject) . '?=', $message, $headers);
+
+	// Convert subject to the correct charset
+	if ($charset !== 'UTF-8') {
+		$subject = mb_convert_encoding($subject, $charset, 'UTF-8');
+	}
+
+	// Set default header if not specified
+	if (empty($headers)) {
+		$headers = "MIME-Version: 1.0\r\n" .
+			"From: " . $from . "\r\n" .
+			"Content-Type: text/plain; charset=\"" . $charset . "\"\r\n";
+	}
+
+	// Encode subject with Base64 for UTF-8
+	$encoded_subject = '=?' . $charset . '?B?' . base64_encode($subject) . '?=';
+
+	// Ensure session is started
+	if (session_status() === PHP_SESSION_NONE) {
+		session_start();
+	}
+
+	// Rate limiting: Maximum 30 emails per hour
+	if (!isset($_SESSION ['email_sent'])) {
+		$_SESSION ['email_sent'] = [];
+	}
+
+	$_SESSION ['email_sent'] = array_filter($_SESSION ['email_sent'], fn($t) => $t > time() - 3600);
+
+	if (count($_SESSION ['email_sent']) >= 30) {
+		// Limit reached
+		return false;
+	}
+
+	$_SESSION ['email_sent'] [] = time();
+
+	// Send email
+	return mail($fp_config ['general'] ['email'], $encoded_subject, $message, $headers);
 }
 
-/*
+/**
  * props: http://crisp.tweakblogs.net/blog/2031
  */
 function utils_validateIPv4($IP) {

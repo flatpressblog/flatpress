@@ -105,8 +105,7 @@ function login_main() {
 			utils_redirect('login.php');
 		} else {
 			// Assign sanitized inputs here
-			global $user;
-			$smarty->assign('user', $user);
+			$smarty->assign('user', $_POST ['user'] ?? '');
 			$content = (SHARED_TPLS . 'login.tpl');
 		}
 	}
