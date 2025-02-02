@@ -74,6 +74,8 @@ if (function_exists('is_https') && is_https()) {
 
 	// Emergency solution for Shared hosting environments; should already be done in the php.ini file or server configuration
 	header_remove('X-Powered-By'); // Hide server information
+	header_remove('Server');
+	header('Server: FlatPress');
 }
 
 /**
