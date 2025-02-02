@@ -60,6 +60,21 @@ add_action('wp_head', 'login_head');
 function login_main() {
 	global $lang, $smarty;
 
+	// Ensure session is started
+	if (session_status() === PHP_SESSION_NONE) {
+		session_start();
+	}
+	if (empty($_SESSION ['csrf_token'])) {
+		// Generate CSRF token
+		$_SESSION ['csrf_token'] = RANDOM_HEX;
+	}
+
+	// New login, we (re)set the session data
+	utils_nocache_headers();
+
+	// Transfer token to Smarty
+	$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
+
 	// Initialize modifier functions
 	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
 	$smarty->registerPlugin('modifier', 'function_exists', 'function_exists');
@@ -70,7 +85,7 @@ function login_main() {
 			user_logout();
 
 			function myredirect() {
-				// logout redirects to home page
+				// Logout redirects to home page
 				login_redirect('.');
 			}
 
@@ -79,7 +94,7 @@ function login_main() {
 			$content = (SHARED_TPLS . 'login.tpl');
 		} elseif (user_loggedin()) {
 			function myredirect() {
-				// login redirects to Admin Area
+				// Login redirects to Admin Area
 				login_redirect('admin.php');
 			}
 
@@ -100,13 +115,20 @@ function login_main() {
 	} elseif (empty($_POST)) {
 		$content = (SHARED_TPLS . 'login.tpl');
 	} else {
-		// validate after a POST
-		if (login_validate()) {
-			utils_redirect('login.php');
-		} else {
-			// Assign sanitized inputs here
-			$smarty->assign('user', $_POST ['user'] ?? '');
+		// CSRF token verification
+		if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== $_SESSION ['csrf_token']) {
 			$content = (SHARED_TPLS . 'login.tpl');
+		} else {
+			// Reset CSRF token after successful verification
+			unset($_SESSION ['csrf_token']);
+			// Validate after a POST
+			if (login_validate()) {
+				utils_redirect('login.php');
+			} else {
+				// Assign sanitized inputs here
+				$smarty->assign('user', $_POST ['user'] ?? '');
+				$content = (SHARED_TPLS . 'login.tpl');
+			}
 		}
 	}
 
