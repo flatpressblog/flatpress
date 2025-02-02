@@ -106,6 +106,8 @@
 - PhotoSwipe plugin: update to version 2.0.2
   - The overlay buttons are no longer displayed in the RSS and Atom feed. ([#506](https://github.com/flatpressblog/flatpress/pull/506))
   - External images are displayed correctly. ([#520](https://github.com/flatpressblog/flatpress/pull/520))
+- Media Manager plugin: update to version 1.0.1
+  - Files and directories are sorted numerically, alphabetically. ([#537](https://github.com/flatpressblog/flatpress/issues/537))
 
 ### Security
 - SEO Meta Tag Info plugin:
