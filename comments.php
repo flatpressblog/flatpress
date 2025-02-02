@@ -222,8 +222,10 @@ function commentform() {
 			return;
 		}
 
-		// Reset CSRF token after validation
+		// Reset CSRF token after validation and generate a new one
 		unset($_SESSION ['csrf_token']);
+		$_SESSION ['csrf_token'] = RANDOM_HEX;
+		$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
 
 		// Custom hook here!!
 		if ($arr = comment_validate()) {
@@ -240,9 +242,6 @@ function commentform() {
 				'fullparse' => false
 			), null);
 			list ($entryid, $e) = $q->getEntry();
-
-			$q = new FPDB_Query(['id' => $fp_params ['entry'], 'fullparse' => false], null);
-			list($entryid, $e) = $q->getEntry();
 
 			if ($fp_config ['general'] ['notify'] && !user_loggedin()) {
 				global $post;
