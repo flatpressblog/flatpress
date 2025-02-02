@@ -9,11 +9,19 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 	var $langres = 'plugin:mediamanager';
 
 	function cmpfiles($a, $b) {
-		$c = strcmp($a ['type'], $b ['type']);
-		if ($c == 0) {
-			return strcmp($a ['name'], $b ['name']);
+		$typeOrder = ['gallery' => 0, 'attachs' => 1, 'images' => 2];
+
+		$typeA = isset($a ['type']) ? $a ['type'] : 'images';
+		$typeB = isset($b ['type']) ? $b ['type'] : 'images';
+
+		$orderA = $typeOrder[$typeA] ?? 3;
+		$orderB = $typeOrder[$typeB] ?? 3;
+
+		if ($orderA !== $orderB) {
+			return $orderA - $orderB;
 		}
-		return $c;
+
+		return strnatcmp($a ['name'], $b ['name']);
 	}
 
 	function formatBytes($bytes, $precision = 2) {
@@ -36,6 +44,11 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 
 	function getFileInfo($filepath) {
 		global $fp_config;
+
+		// Prevents the capture of .dlctr (Igor Kromins DownloadCounter) files
+			if (pathinfo($filepath, PATHINFO_EXTENSION) === 'dlctr') {
+				return null;
+		}
 
 		$info = array(
 			"name" => basename($filepath),
@@ -60,14 +73,15 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		if (!file_exists($folder)) {
 			return false;
 		}
-		$dir = opendir($folder);
-		while (false !== ($file = readdir($dir))) {
-			if (!fs_is_directorycomponent($file)) {
-				if (is_dir($folder . "/" . $file)) {
-					$this->deleteFolder($folder . "/" . $file, $mmbaseurl);
-				} else {
-					if (!unlink($folder . "/" . $file)) {
-						return false;
+		if ($dir = opendir($folder)) {
+			while (false !== ($file = readdir($dir))) {
+				if (!fs_is_directorycomponent($file)) {
+					if (is_dir($folder . "/" . $file)) {
+						$this->deleteFolder($folder . "/" . $file, $mmbaseurl);
+					} else {
+						if (!unlink($folder . "/" . $file)) {
+							return false;
+						}
 					}
 				}
 			}
@@ -94,8 +108,9 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 					$type = ABS_PATH . IMAGES_DIR . $folder;
 					break;
 				case 'gallery':
-					if (!$this->deleteFolder(ABS_PATH . IMAGES_DIR . $name, $mmbaseurl))
+					if (!$this->deleteFolder(ABS_PATH . IMAGES_DIR . $name, $mmbaseurl)) {
 						@utils_redirect($mmbaseurl . '&status=-1');
+					}
 					@utils_redirect($mmbaseurl . '&status=1');
 					return true;
 					break;
@@ -144,64 +159,77 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		$files_needupdate = array();
 		$galleries_needupdate = array();
 
-		# galleries (alwais from IMAGES_DIR)
+		// galleries (always from IMAGES_DIR)
 		if (file_exists(ABS_PATH . IMAGES_DIR)) {
-			$dir = opendir(ABS_PATH . IMAGES_DIR);
-			while (false !== ($file = readdir($dir))) {
-				$fullpath = ABS_PATH . IMAGES_DIR . $file;
-				if (!fs_is_directorycomponent($file) && !fs_is_hidden_file($file) && is_dir($fullpath)) {
-					$info = $this->getFileInfo($fullpath);
-					$info ['type'] = "gallery";
-					$galleries [$fullpath] = $info;
-					if (is_null($info ['usecount'])) {
-						$galleries_needupdate [] = $fullpath;
+			if ($dir = opendir(ABS_PATH . IMAGES_DIR)) {
+				while (false !== ($file = readdir($dir))) {
+					$fullpath = ABS_PATH . IMAGES_DIR . $file;
+					if (!fs_is_directorycomponent($file) && !fs_is_hidden_file($file) && is_dir($fullpath)) {
+						$info = $this->getFileInfo($fullpath);
+						if ($info) {
+							$info ['type'] = "gallery";
+							$galleries [$fullpath] = $info;
+							if (is_null($info ['usecount'])) {
+								$galleries_needupdate [] = $fullpath;
+							}
+						}
 					}
 				}
+				closedir($dir);
 			}
 		}
 
-		# attachs (NO attachs in galleries)
+		// attachs (NO attachs in galleries)
 		if ($folder == "" && file_exists(ABS_PATH . ATTACHS_DIR)) {
-			$dir = opendir(ABS_PATH . ATTACHS_DIR);
-			while (false !== ($file = readdir($dir))) {
-				if (!fs_is_directorycomponent($file) && !fs_is_hidden_file($file)) {
-					$fullpath = ABS_PATH . ATTACHS_DIR . $file;
-					$info = $this->getFileInfo($fullpath);
-					$info ['type'] = "attachs";
-					$info ['url'] = BLOG_ROOT . ATTACHS_DIR . $file;
-					$files [$fullpath] = $info;
-					if (is_null($info ['usecount'])) {
-						$files_needupdate [] = $fullpath;
+			if ($dir = opendir(ABS_PATH . ATTACHS_DIR)) {
+				while (false !== ($file = readdir($dir))) {
+					if (!fs_is_directorycomponent($file) && !fs_is_hidden_file($file)) {
+						$fullpath = ABS_PATH . ATTACHS_DIR . $file;
+						$info = $this->getFileInfo($fullpath);
+						if ($info) {
+							$info ['type'] = "attachs";
+							$info ['url'] = BLOG_ROOT . ATTACHS_DIR . $file;
+							$files [$fullpath] = $info;
+							if (is_null($info ['usecount'])) {
+								$files_needupdate [] = $fullpath;
+							}
+						}
 					}
 				}
+				closedir($dir);
 			}
 		}
-		# images
+
+		// images
 		if (file_exists(ABS_PATH . IMAGES_DIR . $folder)) {
-			$dir = opendir(ABS_PATH . IMAGES_DIR . $folder);
-			while (false !== ($file = readdir($dir))) {
-				$fullpath = ABS_PATH . IMAGES_DIR . $folder . $file;
-				if (!fs_is_directorycomponent($file) && !fs_is_hidden_file($file) && !is_dir($fullpath)) {
-					$info = $this->getFileInfo($fullpath);
-					$info ['type'] = "images";
-					$info ['url'] = BLOG_ROOT . IMAGES_DIR . $folder . $file;
-					$files [$fullpath] = $info;
-					# NO count for images in galleries
-					if ($folder == "" && is_null($info ['usecount'])) {
-						$files_needupdate [] = $fullpath;
+			if ($dir = opendir(ABS_PATH . IMAGES_DIR . $folder)) {
+				while (false !== ($file = readdir($dir))) {
+					$fullpath = ABS_PATH . IMAGES_DIR . $folder . $file;
+					if (!fs_is_directorycomponent($file) && !fs_is_hidden_file($file) && !is_dir($fullpath)) {
+						$info = $this->getFileInfo($fullpath);
+						if ($info) {
+							$info ['type'] = "images";
+							$info ['url'] = BLOG_ROOT . IMAGES_DIR . $folder . $file;
+							$files [$fullpath] = $info;
+							if ($folder == "" && is_null($info ['usecount'])) {
+								$files_needupdate [] = $fullpath;
+							}
+						}
 					}
 				}
+				closedir($dir);
 			}
 		}
+
 		mediamanager_updateUseCountArr($files, $files_needupdate);
 		mediamanager_updateUseCountArr($galleries, $galleries_needupdate);
 
-		usort($files, Array(
-			"admin_uploader_mediamanager",
-			"cmpfiles"
-		));
+		usort($files, [$this, "cmpfiles"]);
+		usort($galleries, [$this, "cmpfiles"]);
+
 		$totalfilescount = (string) count($files);
-		# paginator
+
+		// paginator
 		$pages = ceil((count($files) + count($galleries)) / ITEMSPERPAGE);
 		if ($pages == 0) {
 			$pages = 1;
@@ -290,3 +318,4 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 }
 
 admin_addpanelaction('uploader', 'mediamanager', true);
+?>
