@@ -116,6 +116,8 @@ function contactform() {
 
 	// Reset CSRF token after validation
 	unset($_SESSION ['csrf_token']);
+	$_SESSION ['csrf_token'] = RANDOM_HEX;
+	$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
 
 	$validationResult = contact_validate();
 

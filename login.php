@@ -121,9 +121,12 @@ function login_main() {
 		} else {
 			// Reset CSRF token after successful verification
 			unset($_SESSION ['csrf_token']);
+			$_SESSION ['csrf_token'] = RANDOM_HEX;
+			$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
 			// Validate after a POST
 			if (login_validate()) {
 				utils_redirect('login.php');
+				exit();
 			} else {
 				// Assign sanitized inputs here
 				$smarty->assign('user', $_POST ['user'] ?? '');
