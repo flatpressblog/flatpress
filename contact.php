@@ -22,46 +22,41 @@ function contact_validate() {
 
 	$r = true;
 
-	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
-
-	$name = htmlspecialchars(trim($_POST ['name'] ?? ''), ENT_QUOTES, $charset);
-	$email = isset($_POST ['email']) ? htmlspecialchars(trim($_POST ['email']), ENT_QUOTES, $charset) : '';
-	$url = isset($_POST ['url']) ? htmlspecialchars(trim($_POST ['url']), ENT_QUOTES, $charset) : '';
-	$content = isset($_POST ['content']) ? htmlspecialchars(trim($_POST ['content']), ENT_QUOTES, $charset) : '';
+	$name = strip_tags(sanitize_contact($_POST ['name'] ?? ''));
+	$email = strip_tags(sanitize_contact($_POST ['email'] ?? '', FILTER_VALIDATE_EMAIL));
+	$url = strip_tags(sanitize_contact(ensure_https_url($_POST ['url'] ?? ''), FILTER_SANITIZE_URL));
+	$content = isset($_POST ['content']) ? sanitize_contact($_POST ['content']) : '';
 
 	$errors = array();
 
-	// if the request does not contain all input fields, it might be forged
+	// If the request does not contain all input fields, it might be forged
 	foreach ($contactform_inputs as $input) {
 		if (!array_key_exists($input, $_POST)) {
 			return false;
 		}
 	}
 
-	// check name
+	// Check name
 	if (empty($name)) {
 		$errors ['name'] = $lerr ['name'];
 	}
 
-	// check email
-	if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+	// Check email
+	if (!empty($_POST ['email']) && !$email) {
 		$errors ['email'] = $lerr ['email'];
 	}
 
-	// add https to url if not given and check url
-	if (!empty($url) && strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
-		$url = 'https://' . $url;
-		if (!filter_var($url, FILTER_VALIDATE_URL)) {
-			$errors ['url'] = $lerr ['www'];
-		}
+	// Check url
+	if (!empty($_POST ['url']) && !$url) {
+		$errors ['url'] = $lerr ['www'];
 	}
 
-	// check content
+	// Check content
 	if (empty($content)) {
 		$errors ['content'] = $lerr ['content'];
 	}
 
-	// assign error messages to template
+	// Assign error messages to template
 	if (!empty($errors)) {
 		$smarty->assign('error', $errors);
 		return false;
@@ -76,12 +71,52 @@ function contact_validate() {
 		'ip-address' => utils_ipget() ? : null,
 	];
 
-	// check aaspam if active
+	// Check aaspam if active
 	if (apply_filters('comment_validate', true, $arr)) {
 		return $arr;
 	} else {
 		return false;
 	}
+}
+
+function sanitize_contact($data, $filter = FILTER_UNSAFE_RAW) {
+	global $fp_config;
+	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+
+	$data = trim($data);
+	$data = filter_var($data, $filter) ? : '';
+
+	// Removes dangerous characters for flat file manipulation and potential code injections
+	$unsafe_patterns = [
+		"<?", "?>", ";", "eval", "base64_decode", "base64_encode",
+		"system", "exec", "shell_exec", "system", "exec", "shell_exec", "proc_open", "passthru", "popen"
+	];
+	$data = str_replace($unsafe_patterns, "", $data);
+
+	// Block potential SQL injection patterns
+	$sql_patterns = [
+		'/\bSELECT\b/i', '/\bINSERT\b/i', '/\bUPDATE\b/i', '/\bDELETE\b/i', '/\bDROP\b/i',
+		'/\bUNION\b/i', '/\bALTER\b/i', '/\bEXEC\b/i', '/\bOR\b\s*\d+=\d+/i', '/\bAND\b\s*\d+=\d+/i',
+		'/--/', '/;/', '/\bNULL\b/i', '/\bTRUE\b/i', '/\bFALSE\b/i', '/\bINFORMATION_SCHEMA\b/i',
+		'/\bTABLE_SCHEMA\b/i', '/\bCONCAT\b/i', '/\bSLEEP\b/i', '/\bBENCHMARK\b/i'
+	];
+	$data = preg_replace($sql_patterns, '', $data) ? : '';
+
+	// Check for potentially dangerous flat file characters
+	if (preg_match('/\|{2,}|::{2,}|;;/', $data)) {
+		return '';
+	}
+
+	return htmlspecialchars($data, ENT_NOQUOTES, $charset);
+}
+
+// Add https to url if not given
+function ensure_https_url($url) {
+	$url = trim(stripslashes($url));
+	if (!empty($url) && !preg_match('/^https?:\/\//i', $url)) {
+		$url = 'https://' . $url;
+	}
+	return (filter_var($url, FILTER_VALIDATE_URL) && !preg_match('/^(file|php|data|ftp):/i', $url)) ? $url : '';
 }
 
 function contactform() {
@@ -93,7 +128,7 @@ function contactform() {
 	}
 	if (empty($_SESSION ['csrf_token'])) {
 		// Generate CSRF token
-		$_SESSION ['csrf_token'] = RANDOM_HEX;
+		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
 	}
 
 	// Transfer token to Smarty
@@ -116,7 +151,7 @@ function contactform() {
 
 	// Reset CSRF token after validation
 	unset($_SESSION ['csrf_token']);
-	$_SESSION ['csrf_token'] = RANDOM_HEX;
+	$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
 	$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
 
 	$validationResult = contact_validate();
