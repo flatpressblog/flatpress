@@ -66,7 +66,7 @@ function login_main() {
 	}
 	if (empty($_SESSION ['csrf_token'])) {
 		// Generate CSRF token
-		$_SESSION ['csrf_token'] = RANDOM_HEX;
+		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
 	}
 
 	// New login, we (re)set the session data
@@ -121,7 +121,7 @@ function login_main() {
 		} else {
 			// Reset CSRF token after successful verification
 			unset($_SESSION ['csrf_token']);
-			$_SESSION ['csrf_token'] = RANDOM_HEX;
+			$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
 			$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
 			// Validate after a POST
 			if (login_validate()) {

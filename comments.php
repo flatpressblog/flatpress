@@ -96,7 +96,7 @@ function comment_validate() {
 
 	$r = true;
 
-	/*
+	/**
 	 * $lang['comments']['error'] = array(
 	 * 'name' => 'You must enter a name',
 	 * 'email' => 'You must enter a valid email',
@@ -105,7 +105,7 @@ function comment_validate() {
 	 * );
 	 */
 
-	$content = isset($_POST ['content']) ? trim(addslashes($_POST ['content'])) : null;
+	$content = isset($_POST ['content']) ? trim(sanitize_comment($_POST ['content'], FILTER_UNSAFE_RAW)) : '';
 
 	$errors = array();
 
@@ -118,44 +118,32 @@ function comment_validate() {
 		$url = $user ['www'] ?? '';
 		$name = $user ['userid'] ?? '';
 	} else {
-		$name = trim(htmlspecialchars(@$_POST ['name'] ?? ''));
-		$email = isset($_POST ['email']) ? trim(htmlspecialchars($_POST ['email'])) : '';
-		$url = isset($_POST ['url']) ? trim(stripslashes(htmlspecialchars($_POST ['url']))) : '';
+		$name = strip_tags(sanitize_comment($_POST ['name'] ?? ''));
+		$email = strip_tags(sanitize_comment($_POST ['email'] ?? '', FILTER_VALIDATE_EMAIL));
+		$url = strip_tags(sanitize_comment(ensure_https_url($_POST ['url'] ?? ''), FILTER_SANITIZE_URL));
 
-		/*
-		 * check name
-		 *
-		 */
+		// Check name
 		if (empty($name)) {
 			$errors ['name'] = $lerr ['name'];
 		}
 
-		/*
-		 * check email
-		 *
-		 */
-		if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		// Check email
+		if (!empty($_POST ['email']) && !$email) {
 			$errors ['email'] = $lerr ['email'];
 		}
 
-		/*
-		 * add https to url if not given and check url
-		 *
-		 */
-		if (!empty($url) && strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
-			$url = 'https://' . $url;
-			if (!filter_var($url, FILTER_VALIDATE_URL)) {
+		// Check url
+		if (!empty($_POST ['url']) && !$url) {
 				$errors ['url'] = $lerr ['www'];
-			}
 		}
 	}
 
-	// check content
+	// Check content
 	if (empty($content)) {
 		$errors ['content'] = $lerr ['comment'];
 	}
 
-	// assign error messages to template
+	// Assign error messages to template
 	if (!empty($errors)) {
 		$smarty->assign('error', $errors);
 		return false;
@@ -185,6 +173,46 @@ function comment_validate() {
 	}
 }
 
+function sanitize_comment($data, $filter = FILTER_UNSAFE_RAW) {
+	global $fp_config;
+	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+
+	$data = trim($data);
+	$data = filter_var($data, $filter) ? : '';
+
+	// Removes dangerous characters for flat file manipulation and potential code injections
+	$unsafe_patterns = [
+		"<?", "?>", ";", "eval", "base64_decode", "base64_encode",
+		"system", "exec", "shell_exec", "system", "exec", "shell_exec", "proc_open", "passthru", "popen"
+	];
+	$data = str_replace($unsafe_patterns, "", $data);
+
+	// Block potential SQL injection patterns
+	$sql_patterns = [
+		'/\bSELECT\b/i', '/\bINSERT\b/i', '/\bUPDATE\b/i', '/\bDELETE\b/i', '/\bDROP\b/i',
+		'/\bUNION\b/i', '/\bALTER\b/i', '/\bEXEC\b/i', '/\bOR\b\s*\d+=\d+/i', '/\bAND\b\s*\d+=\d+/i',
+		'/--/', '/;/', '/\bNULL\b/i', '/\bTRUE\b/i', '/\bFALSE\b/i', '/\bINFORMATION_SCHEMA\b/i',
+		'/\bTABLE_SCHEMA\b/i', '/\bCONCAT\b/i', '/\bSLEEP\b/i', '/\bBENCHMARK\b/i'
+	];
+	$data = preg_replace($sql_patterns, '', $data) ? : '';
+
+	// Check for potentially dangerous flat file characters
+	if (preg_match('/\|{2,}|::{2,}|;;/', $data)) {
+		return '';
+	}
+
+	return htmlspecialchars($data, ENT_NOQUOTES, $charset);
+}
+
+// Add https to url if not given
+function ensure_https_url($url) {
+	$url = trim(stripslashes($url));
+	if (!empty($url) && !preg_match('/^https?:\/\//i', $url)) {
+		$url = 'https://' . $url;
+	}
+	return (filter_var($url, FILTER_VALIDATE_URL) && !preg_match('/^(file|php|data|ftp):/i', $url)) ? $url : '';
+}
+
 function commentform() {
 	global $smarty, $lang, $fpdb, $fp_params;
 
@@ -194,7 +222,7 @@ function commentform() {
 	}
 	if (empty($_SESSION ['csrf_token'])) {
 		// Generate CSRF token
-		$_SESSION ['csrf_token'] = RANDOM_HEX;
+		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
 	}
 
 	$comment_formid = 'fp-comments';
@@ -224,7 +252,7 @@ function commentform() {
 
 		// Reset CSRF token after validation and generate a new one
 		unset($_SESSION ['csrf_token']);
-		$_SESSION ['csrf_token'] = RANDOM_HEX;
+		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
 		$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
 
 		// Custom hook here!!
