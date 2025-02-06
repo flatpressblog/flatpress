@@ -40,6 +40,7 @@
 -  E-mail function with header injection protection and rate limiting ([#539](https://github.com/flatpressblog/flatpress/issues/539))
 -  CSRF protection added for the comment function ([#534](https://github.com/flatpressblog/flatpress/issues/534))
 -  CSRF protection added for the contact form ([#541](https://github.com/flatpressblog/flatpress/issues/541))
+-  Blocking of SQL injection patterns in the comment function and in the contact form ([#534](https://github.com/flatpressblog/flatpress/issues/534))
 - Admin area login:
   - Allow admin login attempts only every 30 seconds to make brute force attacks more difficult. ([#87](https://github.com/flatpressblog/flatpress/issues/87))
   - CSRF protection added for the login page ([#542](https://github.com/flatpressblog/flatpress/pull/542))
