@@ -89,7 +89,8 @@ function sanitize_contact($data, $filter = FILTER_UNSAFE_RAW) {
 	// Removes dangerous characters for flat file manipulation and potential code injections
 	$unsafe_patterns = [
 		"<?", "?>", ";", "eval", "base64_decode", "base64_encode",
-		"system", "exec", "shell_exec", "system", "exec", "shell_exec", "proc_open", "passthru", "popen"
+		"system", "exec", "shell_exec", "proc_open", "passthru", "popen",
+		"curl_exec", "curl_multi_exec", "fopen", "fwrite", "file_put_contents"
 	];
 	$data = str_replace($unsafe_patterns, "", $data);
 
@@ -131,6 +132,30 @@ function contactform() {
 		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
 	}
 
+	// Check CSRF protection
+	$request_method = $_SERVER ['REQUEST_METHOD'] ?? '';
+	$is_post_request = ($request_method === 'POST');
+
+	if (!$is_post_request && isset($_SERVER ['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
+		$override_method = strtoupper(trim($_SERVER ['HTTP_X_HTTP_METHOD_OVERRIDE']));
+		if ($override_method === 'POST') {
+			$is_post_request = true;
+		}
+	}
+
+	if ($is_post_request) {
+		if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== ($_SESSION ['csrf_token'] ?? '')) {
+			// Renew CSRF token to prevent replay attacks
+			unset($_SESSION ['csrf_token']);
+			$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
+			utils_redirect('contact.php');
+			exit();
+		}
+
+		unset($_SESSION ['csrf_token']);
+		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
+	}
+
 	// Transfer token to Smarty
 	$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
 
@@ -144,16 +169,6 @@ function contactform() {
 	// New form, we (re)set the session data
 	utils_nocache_headers();
 
-	// CSRF token verification
-	if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== $_SESSION ['csrf_token']) {
-		return;
-	}
-
-	// Reset CSRF token after validation
-	unset($_SESSION ['csrf_token']);
-	$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
-	$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
-
 	$validationResult = contact_validate();
 
 	// If validation failed
@@ -163,7 +178,7 @@ function contactform() {
 		return;
 	}
 
-	// okay, validation returned validated values
+	// Okay, validation returned validated values
 	// now build the mail content
 	$msg = $lang ['contact'] ['notification'] ['name'] . " \n" . $validationResult ['name'] . "\n\n";
 

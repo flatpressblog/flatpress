@@ -118,20 +118,17 @@ function login_main() {
 		// CSRF token verification
 		if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== $_SESSION ['csrf_token']) {
 			$content = (SHARED_TPLS . 'login.tpl');
-		} else {
-			// Reset CSRF token after successful verification
+		} elseif (login_validate()) {
+			// Validate after a POST and reset CSRF token after successful verification
 			unset($_SESSION ['csrf_token']);
 			$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
 			$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
-			// Validate after a POST
-			if (login_validate()) {
-				utils_redirect('login.php');
-				exit();
-			} else {
-				// Assign sanitized inputs here
-				$smarty->assign('user', $_POST ['user'] ?? '');
-				$content = (SHARED_TPLS . 'login.tpl');
-			}
+			utils_redirect('login.php');
+			exit();
+		} else {
+			// Assign sanitized inputs here
+			$smarty->assign('user', $_POST ['user'] ?? '');
+			$content = (SHARED_TPLS . 'login.tpl');
 		}
 	}
 
