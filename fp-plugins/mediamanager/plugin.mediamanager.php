@@ -17,20 +17,21 @@ function mediamanager_updateUseCountArr(&$files, $fupd) {
 	$params ['count'] = -1;
 	$params ['fullparse'] = true;
 	$q = new FPDB_Query($params, null);
+
 	while ($q->hasMore()) {
-		list ($id, $e) = $q->getEntry();
-		if (isset($e ['content'])) {
-			foreach ($fupd as $id) {
-				if (is_null($files [$id] ['usecount'])) {
-					$files [$id] ['usecount'] = 0;
+		list($entryId, $e) = $q->getEntry();
+		if (!empty($e ['content'])) {
+			foreach ($fupd as $fileId) {
+				if (!isset($files [$fileId] ['usecount'])) {
+					$files [$fileId] ['usecount'] = 0;
 				}
-				if ($files [$id] ['type'] == 'gallery') {
-					$searchterm = "[gallery=images/" . $files [$id] ['name'];
-				} else {
-					$searchterm = $files [$id] ['type'] . "/" . $files [$id] ['name'];
-				}
+
+				$searchterm = ($files [$fileId] ['type'] == 'gallery')
+					? "[gallery=images/" . $files [$fileId] ['name']
+					: $files [$fileId] ['type'] . "/" . $files [$fileId] ['name'];
+
 				if (strpos($e ['content'], $searchterm) !== false) {
-					$files [$id] ['usecount']++;
+					$files [$fileId] ['usecount']++;
 				}
 			}
 		}
@@ -38,10 +39,15 @@ function mediamanager_updateUseCountArr(&$files, $fupd) {
 
 	$usecount = array();
 	foreach ($files as $info) {
-		$usecount [$info ['name']] = $info ['usecount'];
+		if (isset($info ['name'], $info ['usecount'])) {
+			$usecount [$info ['name']] = $info ['usecount'];
+		}
 	}
-	plugin_addoption('mediamanager', 'usecount', $usecount);
-	plugin_saveoptions('mediamanager');
+
+	if (!empty($usecount)) {
+		plugin_addoption('mediamanager', 'usecount', $usecount);
+		plugin_saveoptions('mediamanager');
+	}
 }
 
 if (class_exists('AdminPanelAction')) {

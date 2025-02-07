@@ -865,23 +865,25 @@ function plugin_bbcode_init_toolbar() {
 
 	// Get all available images
 	$indexer = new fs_filelister(IMAGES_DIR);
-	$imageslist = array_filter($indexer->getList(), function($file) {
+	$imageslist = array_filter($indexer->getList(), function ($file) {
 		// Exclude hidden files
 		return substr(basename($file), 0, 1) !== '.';
 	});
+
 	// Sort by name
-	sort($imageslist);
+	usort($imageslist, 'strnatcasecmp');
 	array_unshift($imageslist, $selection);
 	$_FP_SMARTY->assign('images_list', $imageslist);
 
 	// Get all available attachments
 	$indexer = new fs_filelister(ATTACHS_DIR);
-	$attachslist = array_filter($indexer->getList(), function($file) {
+	$attachslist = array_filter($indexer->getList(), function ($file) {
 		// Exclude hidden files
 		return substr(basename($file), 0, 1) !== '.';
 	});
+
 	// Sort by name
-	sort($attachslist);
+	usort($attachslist, 'strnatcasecmp');
 	array_unshift($attachslist, $selection);
 	$_FP_SMARTY->assign('attachs_list', $attachslist);
 }
