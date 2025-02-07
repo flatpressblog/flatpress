@@ -40,7 +40,7 @@
 -  E-mail function with header injection protection and rate limiting ([#539](https://github.com/flatpressblog/flatpress/issues/539))
 -  CSRF protection added for the comment function ([#534](https://github.com/flatpressblog/flatpress/issues/534))
 -  CSRF protection added for the contact form ([#541](https://github.com/flatpressblog/flatpress/issues/541))
--  Blocking of SQL injection patterns in the comment function and in the contact form ([#534](https://github.com/flatpressblog/flatpress/issues/534))
+-  Blocking of SQL injection patterns in the comment function and in the contact form ([#534](https://github.com/flatpressblog/flatpress/issues/534)) [Many thanks to Laborix for testing](https://forum.flatpress.org/viewtopic.php?t=828)
 - Admin area login:
   - Allow admin login attempts only every 30 seconds to make brute force attacks more difficult. ([#87](https://github.com/flatpressblog/flatpress/issues/87))
   - CSRF protection added for the login page ([#542](https://github.com/flatpressblog/flatpress/pull/542))
@@ -94,6 +94,7 @@
 - BBcode plugin: update to version 1.9.0
   - File or image selection possible after activating the option “Allow BBcode in comments” option ([#391](https://github.com/flatpressblog/flatpress/issues/391))
   - BBcode create a valid simple URL ([#442](https://github.com/flatpressblog/flatpress/issues/442))
+  - Files and images are now sorted correctly alphabetically in the toolbar ([#537](https://github.com/flatpressblog/flatpress/issues/537))
 - DateChanger plugin: Update to version 1.0.6
   - Correct date format in the DateChanger toolbar for the languages Czech, English, Japanese and Russian. Hidden reported by [NHWS](https://nhws.localinfo.jp/). Many thanks for testing to [WineMan from the support forum](https://forum.flatpress.org/viewtopic.php?p=2823#p2829)
 - Calendar plugin: Update to version 1.2.0
