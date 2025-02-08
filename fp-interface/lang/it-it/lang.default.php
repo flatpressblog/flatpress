@@ -65,7 +65,7 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by' => 'Pubblicato da',
+	'posted_by' => 'Inserito da',
 	'at' => 'a'
 );
 

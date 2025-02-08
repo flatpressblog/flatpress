@@ -3,7 +3,7 @@ $lang ['admin'] ['entry'] ['submenu'] ['stats'] = 'Statistiche';
 
 $lang ['admin'] ['entry'] ['stats'] = array(
 	'head' => 'Statistiche',
-	'entries' => 'Entrate',
+	'entries' => 'Articoli',
 	'you_have' => 'Hai',
 	'entries_using' => 'voci con',
 	'characters_in' => 'caratteri in',
@@ -11,7 +11,7 @@ $lang ['admin'] ['entry'] ['stats'] = array(
 	'total_disk_space_is' => 'Lo spazio di archiviazione totale è di',
 	'comments' => 'Commenti',
 	'comments_using' => 'commenti con',
-	'the' => 'Le',
+	'the' => 'Gli',
 	'most_commented_entries' => 'articoli più commentati'
 );
 ?>
