@@ -102,26 +102,19 @@ function utils_kexplode($string, $delim = '|', $keyupper = true) {
 	$arr = array();
 	$string = trim($string);
 
-	if ($string === '') {
+	$k = strtolower(strtok($string, $delim));
+	if (empty($k)) {
 		return $arr;
 	}
 
-	$tokens = explode($delim, $string);
-
-	if (count($tokens) < 2) {
+	$arr [$k] = strtok($delim);
+	if (empty($arr [$k])) {
 		return $arr;
 	}
 
-	while (!empty($tokens)) {
-		$k = array_shift($tokens);
-		$v = array_shift($tokens) ?? null;
-
-		if ($v === null) {
-			break;
-		}
-
+	while (($k = strtok($delim)) !== false) {
 		if ($keyupper && !preg_match('/[A-Z-_]/', $k)) {
-			/**
+			/*
 			 * trigger_error("Failed parsing <pre>$string</pre>
 			 * keys were supposed to be UPPERCASE but <strong>\"$k\"</strong> was found; file may be corrupted
 			 * or in an expected format. <br />
@@ -132,7 +125,7 @@ function utils_kexplode($string, $delim = '|', $keyupper = true) {
 			continue;
 		}
 
-		$arr [strtolower($k)] = $v;
+		$arr [strtolower($k)] = strtok($delim);
 	}
 
 	return $arr;
