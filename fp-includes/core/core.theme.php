@@ -138,7 +138,7 @@ function theme_wp_head() {
 
 	echo "\n<!-- FP STD HEADER -->\n";
 
-	echo '<meta name="generator" content="FlatPress "' . system_ver() . '">' . "\n";
+	echo '<meta name="generator" content="FlatPress ' . system_ver() . '">' . "\n";
 	echo '<link rel="alternate" type="application/rss+xml" title="' . $lang ['main'] ['entries'] . ' | RSS 2.0" href="' . theme_feed_link('rss2') . '">' . "\n";
 
 	echo '<link rel="alternate" type="application/atom+xml" title="' . $lang ['main'] ['entries'] . ' | Atom 1.0" href="' . theme_feed_link('atom') . '">' . "\n";
