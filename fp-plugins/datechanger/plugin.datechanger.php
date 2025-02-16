@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Plugin Name: DateChanger
  * Plugin URI: https://www.flatpress.org
  * Type: Block
@@ -8,43 +8,38 @@
  * Version: 1.0.6
  * Author URI: https://www.flatpress.org
  */
-function is_valid_admin_area() {
+function is_valid_admin_request(): bool {
+	if (!isset($_SERVER ['SCRIPT_NAME'], $_GET ['p'], $_GET ['action'])) {
+		return false;
+	}
+
 	// Check whether we are in the admin area
-	if (basename($_SERVER ['PHP_SELF']) !== 'admin.php') {
+	if (basename($_SERVER ['SCRIPT_NAME']) !== 'admin.php') {
 		return false;
 	}
 
-	// Check whether the required GET parameters are set and have the correct values
-	if (!isset($_GET ['p']) || $_GET ['p'] !== 'entry') {
+	$p = strtolower($_GET ['p'] ?? '');
+	$action = strtolower($_GET ['action'] ?? '');
+
+	// Check whether this is the correct section
+	if ($p !== 'entry' || $action !== 'write') {
 		return false;
 	}
 
-	// Check whether the correct 'write' action is executed
-	if (!isset($_GET ['action']) || $_GET ['action'] !== 'write') {
-		return false;
-	}
+	$timestamp = $_POST ['timestamp'] ?? null;
+	$entry = $_REQUEST ['entry'] ?? null;
 
-	// Check whether it is a new entry (no timestamp and no existing 'entry')
-	if (isset($_POST ['timestamp']) || isset($_REQUEST ['entry'])) {
-		return false;
-	}
-
-	// All conditions fulfilled
-	return true;
+	return empty($timestamp) && empty($entry);
 }
 
-if (!is_valid_admin_area()) {
+if (!is_valid_admin_request()) {
 	return;
 }
-
 
 function plugin_datechanger_toolbar() {
 	global $fp_config, $lang;
 
-	// Retrieve language from the configuration
-	$language = $fp_config ['locale'] ['lang'];
-
-	// Current time (UTC + time offset)
+	// Use UTC + timeoffset
 	$time = date_time();
 
 	$h = date('H', $time);
@@ -55,92 +50,123 @@ function plugin_datechanger_toolbar() {
 	$M = date('m', $time);
 	$D = date('d', $time);
 
-	// Load language files
+	// Multilingual support of the plugin
 	$lang = lang_load('plugin:datechanger');
 
-	// Show time selection
-	echo '<div id="admin-date"><fieldset id="plugin_datechanger"><legend>' . $lang ['admin'] ['plugin'] ['datechanger'] ['title'] . '</legend><p>' . $lang ['admin'] ['plugin'] ['datechanger'] ['time'] . ':&nbsp;';
+	// Load month names
+	$mths = $lang ['date'] ['month'];
 
-	// Time selection fields (hours, minutes, seconds)
-	echo '<label><select name="date[]">';
+	// Get the language setting of FlatPress
+	$language = $fp_config ['locale'] ['lang'];
+
+	// Date format by language
+	$DD_MM_YYYY = ['de-de', 'fr-fr', 'es-es', 'da-dk', 'el-gr', 'it-it', 'nl-nl', 'pt-br', 'sl-si'];
+	$MM_DD_YYYY = ['en-us'];
+	$YYYY_MM_DD = ['cs-cz', 'ja-jp', 'ru-ru'];
+
+	echo '<div id="admin-date"><fieldset id="plugin_datechanger">
+		<legend>' . $lang ['admin'] ['plugin'] ['datechanger'] ['title'] . '</legend>' . //
+		$lang ['admin'] ['plugin'] ['datechanger'] ['time'] . ':&nbsp;';
+
+	// Hours selection
+	echo '<label><select name="date_hour">';
 	for ($i = 0; $i < 24; $i++) {
 		$v = sprintf('%02d', $i);
-		echo '<option value="' . $v . '"' . (($v == $h) ? ' selected="selected"' : '') . '>' . $v . '</option>';
+		echo '<option value="' . $v . '"' . (($v == $h) ? ' selected' : '') . '>' . $v . '</option>';
 	}
 	echo '</select></label>:';
 
-	echo '<label><select name="date[]">';
+	// Minute selection
+	echo '<label><select name="date_minute">';
 	for ($i = 0; $i < 60; $i++) {
 		$v = sprintf('%02d', $i);
-		echo '<option value="' . $v . '"' . (($v == $m) ? ' selected="selected"' : '') . '>' . $v . '</option>';
+		echo '<option value="' . $v . '"' . (($v == $m) ? ' selected' : '') . '>' . $v . '</option>';
 	}
 	echo '</select></label>:';
 
-	echo '<label><select name="date[]">';
+	// Seconds Selection
+	echo '<label><select name="date_second">';
 	for ($i = 0; $i < 60; $i++) {
 		$v = sprintf('%02d', $i);
-		echo '<option value="' . $v . '"' . (($v == $s) ? ' selected="selected"' : '') . '>' . $v . '</option>';
+		echo '<option value="' . $v . '"' . (($v == $s) ? ' selected' : '') . '>' . $v . '</option>';
 	}
-	echo '</select>&nbsp;&nbsp;&nbsp;</label>';
+	echo '</select></label>';
 
-	// Date selection (different depending on language)
-	$daySelect = '<select name="date[]">';
-	for ($i = 1; $i <= 31; $i++) {
-		$v = sprintf('%02d', $i);
-		$daySelect .= '<option value="' . $v . '"' . (($v == $D) ? ' selected="selected"' : '') . '>' . $v . '</option>';
+	echo '&nbsp;&nbsp;&nbsp;' . $lang ['admin'] ['plugin'] ['datechanger'] ['date'] . ':&nbsp;';
+	// Set the order of the date selection fields depending on the language
+	if (in_array($language, $DD_MM_YYYY, true)) {
+		// DD-MM-YYYY (e.g. German, French, Spanish)
+		echo '<label><select name="date_day">';
+		for ($i = 1; $i <= 31; $i++) {
+			$v = sprintf('%02d', $i);
+			echo '<option value="' . $v . '"' . (($v == date('d', $time)) ? ' selected' : '') . '>' . $v . '</option>';
+		}
+		echo '</select></label>&nbsp;';
+
+		echo '<label><select name="date_month">';
+		for ($i = 0; $i < 12; $i++) {
+			$v = sprintf('%02d', $i + 1);
+			echo '<option value="' . $v . '"' . (($v == date('m', $time)) ? ' selected' : '') . '>' . $mths [$i] . '</option>';
+		}
+		echo '</select></label>&nbsp;';
+
+		echo '<label><select name="date_year">';
+		foreach (range(2006, intval(date('Y', $time)) + 10) as $v) {
+			echo '<option value="' . $v . '"' . (($v == date('Y', $time)) ? ' selected' : '') . '>' . $v . '</option>';
+		}
+		echo '</select></label>';
+	} elseif (in_array($language, $MM_DD_YYYY, true)) {
+		// MM-DD-YYYY (e.g English)
+		echo '<label><select name="date_month">';
+		for ($i = 0; $i < 12; $i++) {
+			$v = sprintf('%02d', $i + 1);
+			echo '<option value="' . $v . '"' . (($v == date('m', $time)) ? ' selected' : '') . '>' . $mths [$i] . '</option>';
+		}
+		echo '</select></label>&nbsp;';
+
+		echo '<label><select name="date_day">';
+		for ($i = 1; $i <= 31; $i++) {
+			$v = sprintf('%02d', $i);
+			echo '<option value="' . $v . '"' . (($v == date('d', $time)) ? ' selected' : '') . '>' . $v . '</option>';
+		}
+		echo '</select></label>&nbsp;';
+
+		echo '<label><select name="date_year">';
+		foreach (range(2006, intval(date('Y', $time)) + 10) as $v) {
+			echo '<option value="' . $v . '"' . (($v == date('Y', $time)) ? ' selected' : '') . '>' . $v . '</option>';
+		}
+		echo '</select></label>';
+	} else {
+		// YYYY-MM-DD (e.g. Czech, Japanese, Russian)
+		echo '<label><select name="date_year">';
+		foreach (range(2006, intval(date('Y', $time)) + 10) as $v) {
+			echo '<option value="' . $v . '"' . (($v == date('Y', $time)) ? ' selected' : '') . '>' . $v . '</option>';
+		}
+		echo '</select></label>&nbsp;';
+
+		echo '<label><select name="date_month">';
+		for ($i = 0; $i < 12; $i++) {
+			$v = sprintf('%02d', $i + 1);
+			echo '<option value="' . $v . '"' . (($v == date('m', $time)) ? ' selected' : '') . '>' . $mths [$i] . '</option>';
+		}
+		echo '</select></label>&nbsp;';
+
+		echo '<label><select name="date_day">';
+		for ($i = 1; $i <= 31; $i++) {
+			$v = sprintf('%02d', $i);
+			echo '<option value="' . $v . '"' . (($v == date('d', $time)) ? ' selected' : '') . '>' . $v . '</option>';
+		}
+		echo '</select></label>';
 	}
-	$daySelect .= '</select>&nbsp;';
-
-	$monthSelect = '<select name="date[]">';
-	// Load month names from the language file
-	$mths = $lang ['date'] ['month'];
-	for ($i = 0; $i < 12; $i++) {
-		$v = sprintf('%02d', $i + 1);
-		$monthSelect .= '<option value="' . $v . '"' . (($v == $M) ? ' selected="selected"' : '') . '>' . $mths [$i] . '</option>';
-	}
-	$monthSelect .= '</select>&nbsp;';
-
-	$yearSelect = '<select name="date[]">';
-	foreach (range(2006, intval($Y) + 10) as $v) {
-		$yearSelect .= '<option value="' . $v . '"' . (($v == $Y) ? ' selected="selected"' : '') . '>' . $v . '</option>';
-	}
-	$yearSelect .= '</select>';
-
-	// Adjust the order of the fields depending on the language
-	$formattedDateSelect = '';
-	switch ($language) {
-		case 'en-us':
-			// MM/DD/YYYY
-			$formattedDateSelect = $monthSelect . $daySelect . $yearSelect;
-			break;
-		case 'cs-cz':
-		case 'ru-ru':
-		case 'ja-jp':
-			// YYYY/MM/DD
-			$formattedDateSelect = $yearSelect . $monthSelect . $daySelect;
-			break;
-		default:
-			// Default: DD/MM/YYYY (e.g. for de-de)
-			$formattedDateSelect = $daySelect . $monthSelect . $yearSelect;
-			break;
-	}
-
-	// Output of the date
-	echo $lang ['admin'] ['plugin'] ['datechanger'] ['date'] . ':&nbsp;' . $formattedDateSelect;
 
 	echo '</p></fieldset></div><!-- end of #admin-date -->';
 }
 
 add_filter('simple_datechanger_form', 'plugin_datechanger_toolbar', 0);
 
-
 function plugin_datechanger_check() {
-	global $fp_config;
 
-	// Retrieve language from the configuration
-	$language = $fp_config ['locale'] ['lang'];
-
-	if (!is_valid_admin_area()) {
+	if (!is_valid_admin_request()) {
 		return;
 	}
 
@@ -148,48 +174,20 @@ function plugin_datechanger_check() {
 		return;
 	}
 
-	if (!empty($_POST ['date'])) {
-		$date = $_POST ['date'];
-	} else {
-		return;
-	}
+	$year = isset($_POST ['date_year']) ? intval($_POST ['date_year']) : date('Y');
+	$month = isset($_POST ['date_month']) ? intval($_POST ['date_month']) : date('m');
+	$day = isset($_POST ['date_day']) ? intval($_POST ['date_day']) : date('d');
+	$hour = isset($_POST ['date_hour']) ? intval($_POST ['date_hour']) : date('H');
+	$minute = isset($_POST ['date_minute']) ? intval($_POST ['date_minute']) : date('i');
+	$second = isset($_POST ['date_second']) ? intval($_POST ['date_second']) : date('s');
 
-	// Extract date and time values
-	foreach ($date as $v) {
-		if (!is_numeric($v)) {
-			return;
-		}
-	}
-
-	// Set the order of the variables depending on the language
-	switch ($language) {
-		case 'en-us':
-			// MM/DD/YYYY
-			list($month, $day, $year, $hour, $minute, $second) = array_slice($date, 0, 6);
-			break;
-		case 'cs-cz':
-		case 'ru-ru':
-		case 'ja-jp':
-			// YYYY/MM/DD
-			list($year, $month, $day, $hour, $minute, $second) = array_slice($date, 0, 6);
-			break;
-		default:
-			// Default: DD/MM/YYYY (e.g. for de-de)
-			list($day, $month, $year, $hour, $minute, $second) = array_slice($date, 0, 6);
-			break;
-	}
-
-	// Validation of the date
 	if (!checkdate($month, $day, $year)) {
-		// Invalid date, return without change
 		return;
 	}
 
-	// Create timestamp
+	// Generate and save timestamp
 	$time = mktime($hour, $minute, $second, $month, $day, $year);
-
-	// Insert timestamp in the POST array
-	$_POST ['timestamp'] = $time;
+	$_POST ['timestamp'] = (int) $time;
 }
 
 add_action('init', 'plugin_datechanger_check');
