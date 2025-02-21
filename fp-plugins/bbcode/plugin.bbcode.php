@@ -227,16 +227,13 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		$img_size = @getimagesize($actualpath, $img_info);
 		$absolutepath = BLOG_BASEURL . $actualpath;
 
-		if ($useimageinfo && function_exists('iptcparse')) {
-			if ($img_size ['mime'] == 'image/jpeg') {
-				// tiffs won't be supported
-
-				if (is_array($img_info)) {
-					if (isset($img_info ["APP13"])) {
-						$iptc = iptcparse($img_info ["APP13"]);
-						$title = @$iptc ["2#005"] [0] ? wp_specialchars($iptc ["2#005"] [0]) : $title;
-						$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
-					}
+		if ($useimageinfo && function_exists('iptcparse') && is_array($img_size) && isset($img_size ['mime']) && $img_size ['mime'] == 'image/jpeg') {
+			// tiffs won't be supported
+			if (is_array($img_info)) {
+				if (isset($img_info ["APP13"])) {
+					$iptc = iptcparse($img_info ["APP13"]);
+					$title = !empty($iptc ["2#005"] [0]) ? wp_specialchars($iptc ["2#005"][0]) : $title;
+					$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
 				}
 			}
 		}
