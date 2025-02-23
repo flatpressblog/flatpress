@@ -202,7 +202,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	$absolutepath = $actualpath = $attributes ['default'];
 	// NWM: "images/" is interpreted as a keyword, and it is translated to the actual path of IMAGES_DIR
 	$image_is_local = bbcode_remap_url($actualpath);
-	$float = ' class="center" ';
+	$float = ' class="center"';
 	$popup_start = '';
 	$popup_end = '';
 
@@ -314,7 +314,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	$pop = $popup_start ? '' : ' title="' . $title . '" ';
 
 	// Finally: Put together the whole img tag with all its attributes and return it
-	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '" ' . $pop . $float . $img_width . $img_height . $loading . '>' . $popup_end;
+	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '"' . $pop . $float . $img_width . $img_height . $loading . '>' . $popup_end;
 }
 
 /**
