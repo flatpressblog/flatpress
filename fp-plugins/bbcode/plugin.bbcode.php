@@ -202,7 +202,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	$absolutepath = $actualpath = $attributes ['default'];
 	// NWM: "images/" is interpreted as a keyword, and it is translated to the actual path of IMAGES_DIR
 	$image_is_local = bbcode_remap_url($actualpath);
-	$float = ' class="center" ';
+	$float = ' class="center"';
 	$popup_start = '';
 	$popup_end = '';
 
@@ -227,16 +227,13 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		$img_size = @getimagesize($actualpath, $img_info);
 		$absolutepath = BLOG_BASEURL . $actualpath;
 
-		if ($useimageinfo && function_exists('iptcparse')) {
-			if ($img_size ['mime'] == 'image/jpeg') {
-				// tiffs won't be supported
-
-				if (is_array($img_info)) {
-					if (isset($img_info ["APP13"])) {
-						$iptc = iptcparse($img_info ["APP13"]);
-						$title = @$iptc ["2#005"] [0] ? wp_specialchars($iptc ["2#005"] [0]) : $title;
-						$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
-					}
+		if ($useimageinfo && function_exists('iptcparse') && is_array($img_size) && isset($img_size ['mime']) && $img_size ['mime'] == 'image/jpeg') {
+			// tiffs won't be supported
+			if (is_array($img_info)) {
+				if (isset($img_info ["APP13"])) {
+					$iptc = iptcparse($img_info ["APP13"]);
+					$title = !empty($iptc ["2#005"] [0]) ? wp_specialchars($iptc ["2#005"][0]) : $title;
+					$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
 				}
 			}
 		}
@@ -317,7 +314,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	$pop = $popup_start ? '' : ' title="' . $title . '" ';
 
 	// Finally: Put together the whole img tag with all its attributes and return it
-	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '" ' . $pop . $float . $img_width . $img_height . $loading . '>' . $popup_end;
+	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '"' . $pop . $float . $img_width . $img_height . $loading . '>' . $popup_end;
 }
 
 /**
@@ -408,10 +405,9 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	switch ($type) {
 		// YouTube
 		case 'youtube':
-			$output = '
-				<div class="responsive_bbcode_video">' . //
+			$output = '<div class="responsive_bbcode_video">' . //
 					'<iframe class="bbcode_video bbcode_video_youtube ' . $floatClass . '" ' . //
-						$src . '="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '"' . //
+						$src . '="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" ' . //
 						'width="' . $width . '" ' . //
 						'height="' . $height . '" ' . //
 						'allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture">' . //
@@ -421,8 +417,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 		// Vimeo
 		case 'vimeo':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/', '', $vurl ['path']);
-			$output = '
-				<div class="responsive_bbcode_video">' . //
+			$output = '<div class="responsive_bbcode_video">' . //
 					'<iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" ' . //
 						$src . '="https://player.vimeo.com/video/' . $vid . '?dnt=1?color=' . $vid . '&title=0&byline=0&portrait=0" ' . //
 						'width="' . $width . '" ' . //
@@ -434,8 +429,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 		// Facebook
 		case 'facebook':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/video/', '', $vurl ['path']);
-			$output = '
-				<div class="responsive_bbcode_video">' . //
+			$output = '<div class="responsive_bbcode_video">' . //
 					'<iframe class="bbcode_video bbcode_video_facebook ' . $floatClass . '" ' . //
 						$src . '="https://www.facebook.com/plugins/video.php?' . //
 						'width=' . $width . //
