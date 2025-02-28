@@ -39,10 +39,13 @@ class PhotoSwipeFunctions {
 		}
 
 		// the name of the image - and its relative path
-		$img = $attr ['default'];
+		$img = isset($attr ['default']) ? $attr ['default'] : '';
+		if (empty($img)) {
+			return $lang ['plugin'] ['photoswipe'] ['label_imagedoesntexist'];
+		}
 
 		// sanitize first
-		if (strpos($img, '..') !== false) {
+		if (!empty($img) && strpos($img, '..') !== false) {
 			return $lang ['plugin'] ['photoswipe'] ['label_imagedoesntexist'];
 		}
 
@@ -96,6 +99,7 @@ class PhotoSwipeFunctions {
 
 		// now lets assemble the whole HTML code - including the overlay HTML, if not inserted into the DOM before
 		$imgHtml = self::getPhotoSwipeOverlay() . //
+		"\n\n" . //
 		'<div ' . //
 		'class="photoswipe ' . $floatClasses . '"' . $styleAttr . //
 		'itemscope itemtype="http://schema.org/ImageGallery"' . //
@@ -118,7 +122,8 @@ class PhotoSwipeFunctions {
 		'</a>' . //
 		'<figcaption' . $styleAttr . '>' . $title . '</figcaption>' . //
 		'</figure>' . //
-		'</div>';
+		'</div>' . //
+		"\n\n";
 
 		self::$lastusedDataIndex++;
 		return $imgHtml;
@@ -143,10 +148,13 @@ class PhotoSwipeFunctions {
 		}
 
 		// gallery dir is set as tag attribute
-		$dir = $attr ['default'];
+		$dir = isset($attr ['default']) ? $attr ['default'] : '';
+		if (empty($dir)) {
+			return $lang ['plugin'] ['photoswipe'] ['label_gallerydoesntexist'];
+		}
 
 		// sanitize first
-		if (strpos($dir, '..') !== false) {
+		if (!empty($dir) && strpos($dir, '..') !== false) {
 			return $lang ['plugin'] ['photoswipe'] ['label_gallerydoesntexist'];
 		}
 		// check if dir exists
@@ -317,4 +325,5 @@ class PhotoSwipeFunctions {
 		}
 	}
 
-} 
+}
+?>
