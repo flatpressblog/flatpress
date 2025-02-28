@@ -177,7 +177,7 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	$rel = isset($attributes ['rel']) ? ' rel="' . $attributes ['rel'] . '"' : '';
 	$target = isset($attributes ['target']) ? ' target="'. $attributes ['target'] . '"' : '';
 	$extern = !$local ? ' class="externlink" title="' . $lang ['plugin'] ['bbcode'] ['go_to'] . ' ' . $the_url . '"' : '';
-	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target .'>' . $content . '</a>';
+	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target . '>' . $content . '</a>';
 }
 
 /**
@@ -228,11 +228,11 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		$absolutepath = BLOG_BASEURL . $actualpath;
 
 		if ($useimageinfo && function_exists('iptcparse') && is_array($img_size) && isset($img_size ['mime']) && $img_size ['mime'] == 'image/jpeg') {
-			// tiffs won't be supported
 			if (is_array($img_info)) {
+				// tiffs won't be supported
 				if (isset($img_info ["APP13"])) {
 					$iptc = iptcparse($img_info ["APP13"]);
-					$title = !empty($iptc ["2#005"] [0]) ? wp_specialchars($iptc ["2#005"][0]) : $title;
+					$title = !empty($iptc ["2#005"] [0]) ? wp_specialchars($iptc ["2#005"] [0]) : $title;
 					$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
 				}
 			}
