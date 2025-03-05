@@ -57,6 +57,7 @@
   - XSS vulnerability in the editor for static pages fixed. ([#490](https://github.com/flatpressblog/flatpress/pull/490))
   - Fixed disclosure of Exif metadata when uploading images. ([#492](https://github.com/flatpressblog/flatpress/pull/492))
   - Prevention of symlink attacks by checking the path when setting file and directory permissions ([#502](https://github.com/flatpressblog/flatpress/pull/502))
+  - When deactivating the last widget under PHP 8.4, the penultimate widget is only displayed once (RC1) ([#555](https://github.com/flatpressblog/flatpress/issues/555))
 
 ## Plugins
 ### Additions
