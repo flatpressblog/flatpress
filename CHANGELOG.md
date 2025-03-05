@@ -32,6 +32,7 @@
   - OPcache is deactivated when the theme panel is called up so that newly activated themes or styles are displayed immediately. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
   - The validation of the standard format for date and time has been extended to include some Japanese characters. (hidden hint from [NHWS](https://nhws.localinfo.jp/)) (RC1) ([#531](https://github.com/flatpressblog/flatpress/pull/531))
   - Theme or style thumbnails are displayed after permissions are restored (hidden hint from [NHWS](https://nhws.localinfo.jp/)) (RC1) ([#532](https://github.com/flatpressblog/flatpress/pull/532))
+  - When deactivating the last widget under PHP 8.4, the penultimate widget is only displayed once (RC1) ([#555](https://github.com/flatpressblog/flatpress/issues/555))
 
 ## Security
 - The session-cookie are now somewhat more secure against CSRF attacks. ([#481](https://github.com/flatpressblog/flatpress/issues/481))
@@ -57,7 +58,6 @@
   - XSS vulnerability in the editor for static pages fixed. ([#490](https://github.com/flatpressblog/flatpress/pull/490))
   - Fixed disclosure of Exif metadata when uploading images. ([#492](https://github.com/flatpressblog/flatpress/pull/492))
   - Prevention of symlink attacks by checking the path when setting file and directory permissions ([#502](https://github.com/flatpressblog/flatpress/pull/502))
-  - When deactivating the last widget under PHP 8.4, the penultimate widget is only displayed once (RC1) ([#555](https://github.com/flatpressblog/flatpress/issues/555))
 
 ## Plugins
 ### Additions
