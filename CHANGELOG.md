@@ -111,6 +111,8 @@
   - External images are displayed correctly. ([#520](https://github.com/flatpressblog/flatpress/pull/520))
 - Media Manager plugin: update to version 1.0.1
   - Files and directories are sorted numerically, alphabetically. ([#537](https://github.com/flatpressblog/flatpress/issues/537))
+- SEO Meta Tag Info plugin: update to version 2.2.4
+  - The determination of the page URL now also works if FlatPress is operated behind a load balancer or reverse proxy.
 
 ### Security
 - SEO Meta Tag Info plugin:
