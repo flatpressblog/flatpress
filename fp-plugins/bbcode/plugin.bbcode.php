@@ -294,15 +294,12 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	}
 	$loading = ' loading="' . $loadingValue . '"';
 
-	// JS for popup
+	// For popup
 	if (isset($attributes ['popup']) && ($attributes ['popup'])) {
 		$pop_width = $orig_w ? $orig_w : 800;
 		$pop_height = $orig_h ? $orig_h : 600;
-		$popup = ' onclick="Popup=window.open("' . $absolutepath . '","Popup","toolbar=no,location=no,status=no,"' . '"menubar=no,scrollbars=yes,resizable=yes,width=' . $pop_width . ',height=' . $pop_height . '"); return false;"';
 
-		// Plugin hook, here lightbox attachs
-		$popup = apply_filters('bbcode_img_popup', $popup, $absolutepath);
-		$popup_start = $attributes ['popup'] == 'true' ? '<a title="' . $title . '" href="' . $absolutepath . '"' . $popup . '>' : '';
+		$popup_start = $attributes ['popup'] == 'true' ? '<a title="' . $title . '" href="' . $absolutepath . '" class="bbcode-popup" data-width="' . $pop_width . '" data-height="' . $pop_height . '">' : '';
 		$popup_end = $attributes ['popup'] == 'true' ? '</a>' : '';
 	}
 	$img_width = $width ? ' width="' . $width . '"' : '';
@@ -311,7 +308,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		$float = ($attributes ['float'] == 'left' || $attributes ['float'] == 'right') ? ' class="float' . $attributes ['float'] . '"' : ' class="center"';
 	}
 	$src = $thumbpath ? (BLOG_BASEURL . $thumbpath) : $absolutepath;
-	$pop = $popup_start ? '' : ' title="' . $title . '" ';
+	$pop = $popup_start ? '' : ' title="' . $title . '"';
 
 	// Finally: Put together the whole img tag with all its attributes and return it
 	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '"' . $pop . $float . $img_width . $img_height . $loading . '>' . $popup_end;
