@@ -7,15 +7,19 @@ on:
     branches: [ "master" ]
   schedule:
     - cron: '0 4 * * 0' # Weekly scan (Sunday 04:00 UTC)
-  workflow_dispatch: # Manual triggering via button
+  workflow_dispatch:
 
 jobs:
   phpstan:
-    name: Run PHPStan without Composer
+    name: Run PHPStan using config ${{ matrix.config }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        phpstan-version: [70200, 80300] # Check PHP 7.2 and 8.3
+        include:
+          - php: '8.3'
+            config: .github/phpstan/phpstan-7.2.neon.dist
+          - php: '8.3'
+            config: .github/phpstan/phpstan-8.3.neon.dist
 
     steps:
     - name: Checkout FlatPress
@@ -24,11 +28,11 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.3' # PHPStan needs modern PHP
+        php-version: ${{ matrix.php }}
         extensions: mbstring, intl, dom, json, xml, ctype, fileinfo, iconv, curl
 
     - name: Download PHPStan (phar)
       run: curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
 
     - name: Run PHPStan (phar)
-      run: php phpstan.phar analyse --configuration=.github/phpstan/phpstan.neon.dist --parameter=phpVersion=${{ matrix.php-version }}
+      run: php phpstan.phar analyse --configuration=${{ matrix.config }}
