@@ -65,6 +65,7 @@
 
 ### Reductions
 - LightBox2 plugin (can still be obtained from the [flatpress-extras repo](https://github.com/flatpressblog/flatpress-extras)) ([#359](https://github.com/flatpressblog/flatpress/issues/359))
+- LastComments Admin plugin (can still be obtained from the [flatpress-extras repo](https://github.com/flatpressblog/flatpress-extras)) ([#559](https://github.com/flatpressblog/flatpress/issues/559))
 
 ### Changes
 - SEO Meta Tag Info plugin: update to version 2.2.4
