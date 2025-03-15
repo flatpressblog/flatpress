@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: Gallery captions
- * Version: 1.0
+ * Version: 1.0.1
  * Plugin URI: https://www.flatpress.org
  * Description: Manages image captions for gallery images; part of the standard distribution.
  * Author: FlatPress
