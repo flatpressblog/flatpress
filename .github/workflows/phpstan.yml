@@ -17,9 +17,9 @@ jobs:
       matrix:
         include:
           - php: '8.3'
-            config: .github/phpstan/phpstan-7.2.neon.dist
+            config: .github/workflows/phpstan/phpstan-7.2.neon.dist
           - php: '8.3'
-            config: .github/phpstan/phpstan-8.3.neon.dist
+            config: .github/workflows/phpstan/phpstan-8.3.neon.dist
 
     steps:
     - name: Checkout FlatPress
