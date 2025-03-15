@@ -90,6 +90,8 @@
   - Output of comments in the widget without BBcode tags
 - Feed plugin: update to version 1.0.1
   - RSS image replaced with RSS icon (woff2) ([#515](https://github.com/flatpressblog/flatpress/pull/515))
+- Media Manager plugin and Gallery captions: update to version 1.0.1
+  - Show image in a popup instead of in the same tab
 
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
