@@ -7,6 +7,7 @@ on:
     branches: [ "master" ]
   schedule:
     - cron: '0 4 * * 0' # Wöchentlicher Scan (Sonntag 04:00 Uhr UTC)
+  workflow_dispatch: # Manuelles Auslösen per Button
 
 jobs:
   phpstan:
