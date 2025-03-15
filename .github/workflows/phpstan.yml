@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [ '7.2', '8.3' ] # Check PHP 7.2 and 8.3
+        phpstan-version: [70200, 80300] # Check PHP 7.2 and 8.3
 
     steps:
     - name: Checkout FlatPress
@@ -24,7 +24,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php-version }}
+        php-version: '8.3' # PHPStan needs modern PHP
         extensions: mbstring, intl, dom, json, xml, ctype, fileinfo, iconv, curl
 
     - name: Download PHPStan (phar)
