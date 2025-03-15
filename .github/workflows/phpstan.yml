@@ -1,0 +1,31 @@
+name: "PHPStan Static Analysis for FlatPress (without Composer)"
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  schedule:
+    - cron: '0 4 * * 0' # Weekly scan (Sunday 04:00 UTC)
+  workflow_dispatch: # Manual triggering via button
+
+jobs:
+  phpstan:
+    name: Run PHPStan without Composer
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout FlatPress
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4' # Or compatible PHP version
+        extensions: mbstring, intl, dom, json, xml, ctype, fileinfo, iconv, curl
+
+    - name: Download PHPStan (phar)
+      run: curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
+
+    - name: Run PHPStan (phar)
+      run: php phpstan.phar analyse --configuration=phpstan.neon.dist
