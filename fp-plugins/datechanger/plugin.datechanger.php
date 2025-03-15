@@ -65,7 +65,7 @@ function plugin_datechanger_toolbar() {
 	$YYYY_MM_DD = ['cs-cz', 'ja-jp', 'ru-ru'];
 
 	echo '<div id="admin-date"><fieldset id="plugin_datechanger">
-		<legend>' . $lang ['admin'] ['plugin'] ['datechanger'] ['title'] . '</legend><p>' . //
+		<legend>' . $lang ['admin'] ['plugin'] ['datechanger'] ['title'] . '</legend>' . //
 		$lang ['admin'] ['plugin'] ['datechanger'] ['time'] . ':&nbsp;';
 
 	// Hours selection

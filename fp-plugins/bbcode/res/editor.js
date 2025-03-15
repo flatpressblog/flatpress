@@ -441,3 +441,21 @@ function bb_image_selection() {
 function onChange_insImge() {
 	insImage(this.form.imageselect.value);
 }
+
+// BBcode image popup
+document.addEventListener('DOMContentLoaded', function() {
+	const popupLinks = document.querySelectorAll('a.bbcode-popup');
+	popupLinks.forEach(function(link) {
+		link.addEventListener('click', function(event) {
+			event.preventDefault();
+			const url = link.getAttribute('href');
+			const width = link.dataset.width || 800;
+			const height = link.dataset.height || 600;
+			window.open(
+				url,
+				'Popup',
+				`toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${width},height=${height}`
+			);
+		});
+	});
+});

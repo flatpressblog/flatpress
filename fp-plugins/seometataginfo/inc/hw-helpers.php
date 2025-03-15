@@ -151,17 +151,19 @@ if (!function_exists('pathinfo_filename')) {
 if (!function_exists('currentPageURL')) {
 
 	function currentPageURL() {
-		$curpageURL = 'http';
-		if (array_key_exists("HTTPS", $_SERVER) && $_SERVER ["HTTPS"] == "on") {
-			$curpageURL .= "s";
+
+		$protocol = is_https() ? "https" : "http";
+
+		$port = $_SERVER ['SERVER_PORT'];
+
+		if (!empty($_SERVER ['HTTP_X_FORWARDED_PORT'])) {
+			$port = $_SERVER ['HTTP_X_FORWARDED_PORT'];
 		}
-		$curpageURL .= "://";
-		if ($_SERVER ["SERVER_PORT"] != "80") {
-			// $curpageURL.= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-			$curpageURL .= $_SERVER ["SERVER_NAME"] . $_SERVER ["REQUEST_URI"];
-		} else {
-			$curpageURL .= $_SERVER ["SERVER_NAME"] . $_SERVER ["REQUEST_URI"];
-		}
+
+		$portString = (!in_array($port, ["80", "443"])) ? ":" . $port : "";
+
+		$curpageURL = $protocol . "://" . $_SERVER ["SERVER_NAME"] . $portString . $_SERVER ["REQUEST_URI"];
+
 		return $curpageURL;
 	}
 }
@@ -174,7 +176,7 @@ if (!function_exists('rrmdir')) {
 			$files = scandir($dir);
 			foreach ($files as $file) {
 				if ($file != "." && $file != "..") {
-					rrmdir("$dir/$file");
+					rrmdir($dir . "/" . $file);
 				}
 			}
 			rmdir($dir);
@@ -195,7 +197,7 @@ if (!function_exists('rcopy')) {
 			$files = scandir($src);
 			foreach ($files as $file) {
 				if ($file != "." && $file != "..") {
-					rcopy("$src/$file", "$dst/$file");
+					rcopy($src . "/" . $file, $dst . "/" . $file);
 				}
 			}
 		} else if (file_exists($src)) {
@@ -239,4 +241,3 @@ if (!function_exists('echoPre')) {
 }
 
 ?>
-

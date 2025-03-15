@@ -164,7 +164,9 @@ class admin_widgets_default extends AdminPanelAction {
 
 			$widget_list [$wpos] [$idx] = array();
 
-			$newid = $wdg; // @list($newid, $params) = explode(":", $wdg);
+			$newid = $wdg;
+
+			$params = '';
 
 			$widget_list [$wpos] [$idx] ['id'] = $newid;
 
@@ -177,7 +179,7 @@ class admin_widgets_default extends AdminPanelAction {
 					$widget_list [$wpos] [$idx] ['params'] = $params;
 				}
 
-				/*
+				/**
 				 * here should go the check for
 				 * limited parameters: parameters limited to a
 				 * particular set would mean using a <select> control

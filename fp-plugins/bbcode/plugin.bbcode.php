@@ -177,7 +177,7 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	$rel = isset($attributes ['rel']) ? ' rel="' . $attributes ['rel'] . '"' : '';
 	$target = isset($attributes ['target']) ? ' target="'. $attributes ['target'] . '"' : '';
 	$extern = !$local ? ' class="externlink" title="' . $lang ['plugin'] ['bbcode'] ['go_to'] . ' ' . $the_url . '"' : '';
-	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target .'>' . $content . '</a>';
+	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target . '>' . $content . '</a>';
 }
 
 /**
@@ -228,11 +228,11 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		$absolutepath = BLOG_BASEURL . $actualpath;
 
 		if ($useimageinfo && function_exists('iptcparse') && is_array($img_size) && isset($img_size ['mime']) && $img_size ['mime'] == 'image/jpeg') {
-			// tiffs won't be supported
 			if (is_array($img_info)) {
+				// tiffs won't be supported
 				if (isset($img_info ["APP13"])) {
 					$iptc = iptcparse($img_info ["APP13"]);
-					$title = !empty($iptc ["2#005"] [0]) ? wp_specialchars($iptc ["2#005"][0]) : $title;
+					$title = !empty($iptc ["2#005"] [0]) ? wp_specialchars($iptc ["2#005"] [0]) : $title;
 					$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
 				}
 			}
@@ -294,15 +294,12 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	}
 	$loading = ' loading="' . $loadingValue . '"';
 
-	// JS for popup
+	// For popup
 	if (isset($attributes ['popup']) && ($attributes ['popup'])) {
 		$pop_width = $orig_w ? $orig_w : 800;
 		$pop_height = $orig_h ? $orig_h : 600;
-		$popup = ' onclick="Popup=window.open("' . $absolutepath . '","Popup","toolbar=no,location=no,status=no,"' . '"menubar=no,scrollbars=yes,resizable=yes,width=' . $pop_width . ',height=' . $pop_height . '"); return false;"';
 
-		// Plugin hook, here lightbox attachs
-		$popup = apply_filters('bbcode_img_popup', $popup, $absolutepath);
-		$popup_start = $attributes ['popup'] == 'true' ? '<a title="' . $title . '" href="' . $absolutepath . '"' . $popup . '>' : '';
+		$popup_start = $attributes ['popup'] == 'true' ? '<a title="' . $title . '" href="' . $absolutepath . '" class="bbcode-popup" data-width="' . $pop_width . '" data-height="' . $pop_height . '">' : '';
 		$popup_end = $attributes ['popup'] == 'true' ? '</a>' : '';
 	}
 	$img_width = $width ? ' width="' . $width . '"' : '';
@@ -311,7 +308,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		$float = ($attributes ['float'] == 'left' || $attributes ['float'] == 'right') ? ' class="float' . $attributes ['float'] . '"' : ' class="center"';
 	}
 	$src = $thumbpath ? (BLOG_BASEURL . $thumbpath) : $absolutepath;
-	$pop = $popup_start ? '' : ' title="' . $title . '" ';
+	$pop = $popup_start ? '' : ' title="' . $title . '"';
 
 	// Finally: Put together the whole img tag with all its attributes and return it
 	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '"' . $pop . $float . $img_width . $img_height . $loading . '>' . $popup_end;
