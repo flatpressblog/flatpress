@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [70200, 80400] # Check PHP 7.2 and 8.4
+        php-version: [70200, 80300] # Check PHP 7.2 and 8.3
 
     steps:
     - name: Checkout FlatPress
