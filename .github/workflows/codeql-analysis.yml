@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'php', 'javascript' ] # Currently officially supported by CodeQL
+        language: [ 'javascript' ] # Currently officially supported by CodeQL
 
     steps:
     - name: Checkout repository
