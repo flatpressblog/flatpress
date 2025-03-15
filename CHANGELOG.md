@@ -32,6 +32,7 @@
   - OPcache is deactivated when the theme panel is called up so that newly activated themes or styles are displayed immediately. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
   - The validation of the standard format for date and time has been extended to include some Japanese characters. (hidden hint from [NHWS](https://nhws.localinfo.jp/)) (RC1) ([#531](https://github.com/flatpressblog/flatpress/pull/531))
   - Theme or style thumbnails are displayed after permissions are restored (hidden hint from [NHWS](https://nhws.localinfo.jp/)) (RC1) ([#532](https://github.com/flatpressblog/flatpress/pull/532))
+  - When deactivating the last widget under PHP 8.4, the penultimate widget is only displayed once (RC1) ([#555](https://github.com/flatpressblog/flatpress/issues/555))
 
 ## Security
 - The session-cookie are now somewhat more secure against CSRF attacks. ([#481](https://github.com/flatpressblog/flatpress/issues/481))
@@ -64,6 +65,7 @@
 
 ### Reductions
 - LightBox2 plugin (can still be obtained from the [flatpress-extras repo](https://github.com/flatpressblog/flatpress-extras)) ([#359](https://github.com/flatpressblog/flatpress/issues/359))
+- LastComments Admin plugin (can still be obtained from the [flatpress-extras repo](https://github.com/flatpressblog/flatpress-extras)) ([#559](https://github.com/flatpressblog/flatpress/issues/559))
 
 ### Changes
 - SEO Meta Tag Info plugin: update to version 2.2.4
@@ -89,6 +91,8 @@
   - Output of comments in the widget without BBcode tags
 - Feed plugin: update to version 1.0.1
   - RSS image replaced with RSS icon (woff2) ([#515](https://github.com/flatpressblog/flatpress/pull/515))
+- Media Manager plugin and Gallery captions: update to version 1.0.1
+  - Show image in a popup instead of in the same tab
 
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
@@ -110,6 +114,8 @@
   - External images are displayed correctly. ([#520](https://github.com/flatpressblog/flatpress/pull/520))
 - Media Manager plugin: update to version 1.0.1
   - Files and directories are sorted numerically, alphabetically. ([#537](https://github.com/flatpressblog/flatpress/issues/537))
+- SEO Meta Tag Info plugin: update to version 2.2.4
+  - The determination of the page URL now also works if FlatPress is operated behind a load balancer or reverse proxy.
 
 ### Security
 - SEO Meta Tag Info plugin:

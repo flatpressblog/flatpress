@@ -59,7 +59,7 @@
 					&nbsp;
 				{/if}
 			</td>
-			<td class="main-cell type-{$v.type}"><a class="link-general" {if $v.type=='images'}rel="lightbox[mm]"{/if} href="{$v.url}">{$v.name}</a></td>
+			<td class="main-cell type-{$v.type}"><a class="link-general{if $v.type=='images'} bbcode-popup{/if}" {if $v.type=='images'}rel="lightbox[mm]"{/if} href="{$v.url}">{$v.name}</a></td>
 			<td>{if $v.usecount>0}
 				<a class="link-general" href="search.php?q={$v.type}%2F{$v.name}&stype=full&Date_Day=&Date_Month=&Date_Year=&submit=Search">{$v.usecount}</a>
 				{else}

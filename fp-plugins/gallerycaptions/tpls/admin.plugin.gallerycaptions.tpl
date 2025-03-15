@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="{$pluginurl}res/adminstyle.css" />
+<link rel="stylesheet" type="text/css" href="{$pluginurl}res/adminstyle.css">
 <h2>{$plang.head}</h2>
 
 {include file="shared:errorlist.tpl"}
@@ -11,7 +11,7 @@
             <option value="{$galleryname}" {if $galleryname == $currentgallery} selected="selected"{/if}>{$galleryname}</option>
         {/foreach}
     </select>
-	<input type="submit" name="gallerycaptions-selectgallery" value="{$plang.button_selectgallery}"/>
+	<input type="submit" name="gallerycaptions-selectgallery" value="{$plang.button_selectgallery}">
 </p>
 {/html_form}
 
@@ -27,12 +27,8 @@
 		{foreach from=$currentgalleryimages item=currentfilename}
 			<tr>
 				<td>
-					<a href="{$smarty.const.BLOG_BASEURL}{$smarty.const.IMAGES_DIR}{$currentgallery}/{$currentfilename}">
-					<img 
-						src="{$smarty.const.BLOG_BASEURL}{$smarty.const.IMAGES_DIR}{$currentgallery}/{if defined("THUMB_DIR")}{$smarty.const.THUMB_DIR}/{/if}{$currentfilename}" 
-						alt="{$currentfilename}" 
-						title="{$currentfilename}" 
-						/>
+					<a class"bbcode-popup" href="{$smarty.const.BLOG_BASEURL}{$smarty.const.IMAGES_DIR}{$currentgallery}/{$currentfilename}">
+						<img src="{$smarty.const.BLOG_BASEURL}{$smarty.const.IMAGES_DIR}{$currentgallery}/{if defined("THUMB_DIR")}{$smarty.const.THUMB_DIR}/{/if}{$currentfilename}" alt="{$currentfilename}" title="{$currentfilename}">
 					</a>
 					<br>
 					{$currentfilename}
@@ -44,7 +40,7 @@
 		{/foreach}
 		</table>
 		<div class="buttonbar">
-			<input type="submit" name="gallerycaptions-savecaptions" value="{$plang.button_savecaptions}"/>
+			<input type="submit" name="gallerycaptions-savecaptions" value="{$plang.button_savecaptions}">
 		</div>
 	{/if}
 	</p>

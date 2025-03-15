@@ -15,7 +15,6 @@ $fp_plugins = array(
 	'archives',
 	// 'calendar', //time consuming, not really recommended :p
 	'lastcomments', // cache-based last-comments block
-	// 'lastcommentsadmin',
 	'lastentries',
 	'prettyurls', // PrettyURLs with NGINX? see https://wiki.flatpress.org/res:plugins:prettyurls#nginx
 	'categories',
