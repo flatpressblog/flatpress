@@ -7,6 +7,7 @@ on:
     branches: [ "master" ] # Scannt PRs
   schedule:
     - cron: '0 0 * * 0' # Wöchentlicher Scan (Sonntag Mitternacht)
+  workflow_dispatch: # Manuelles Auslösen per Button
 
 jobs:
   analyze:
@@ -31,11 +32,10 @@ jobs:
       uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
-        # Optional: eigene Datenbank zur Analyse, falls notwendig
 
     - name: Autobuild (optional)
       uses: github/codeql-action/autobuild@v2
-      # Hinweis: Für viele PHP-Projekte ist kein expliziter Build notwendig
+
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
