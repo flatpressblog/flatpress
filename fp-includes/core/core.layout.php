@@ -21,22 +21,22 @@ class LayoutDefault {
 	function LayoutDefault($content = array()) {
 		$this->pagecontent = $content;
 
-		$this->fpdb =& new FPDB();
-		$GLOBALS ['fpdb'] = & $this->fpdb;
+		$this->fpdb = new FPDB();
+		$GLOBALS ['fpdb'] = $this->fpdb;
 
-		$this->fp_widgets =& new widget_indexer();
-		$GLOBALS ['fp_widgets'] = & $this->fp_widgets;
+		$this->fp_widgets = new widget_indexer();
+		$GLOBALS ['fp_widgets'] = $this->fp_widgets;
 
-		$this->smarty = & $GLOBALS ['_FP_SMARTY'];
+		$this->smarty = $GLOBALS ['_FP_SMARTY'];
 
-		$GLOBALS ['fp_config'] = & $this->config;
+		$GLOBALS ['fp_config'] = $this->config;
 		$this->config = $GLOBALS ['fp_config'] ['general'];
 
 		$this->theme = theme_loadsettings();
-		$GLOBALS ['theme'] = & $this->theme;
+		$GLOBALS ['theme'] = $this->theme;
 
 		$this->lang = lang_load();
-		$GLOBALS ['lang'] = & $this->lang;
+		$GLOBALS ['lang'] = $this->lang;
 
 		// user_loggedin() or sess_setup();
 
@@ -130,7 +130,7 @@ class Abstract_LayoutDialog extends LayoutDefault {
 
 	function display() {
 		$this->smarty->registerPlugin('block', 'pagecontent', array(
-			&$this,
+			$this,
 			'pagecontent'
 		));
 		parent::display();
