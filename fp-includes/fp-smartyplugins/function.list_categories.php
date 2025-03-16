@@ -8,11 +8,9 @@
  * Name: list_categories
  * Purpose: print out the comment form
  *
- * @param
- *        	string after
- * @param
- *        	string before
- *        	-------------------------------------------------------------
+ * @param string after
+ * @param string before
+ * -------------------------------------------------------------
  */
 function smarty_function_list_categories($params) { // , &$smarty)
 	$cat_params = array(
@@ -159,3 +157,4 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 
 	return implode($result);
 }
+?>
