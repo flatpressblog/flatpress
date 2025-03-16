@@ -629,7 +629,14 @@ function funky_javascript_fix($text) {
 	global $is_macIE, $is_winIE;
 
 	if ($is_winIE || $is_macIE) {
-		$text = preg_replace("/\%u([0-9A-F]{4,4})/e", "'&#'.base_convert('\\1',16,10).';'", $text);
+		$text = preg_replace_callback(
+				"/\%u([0-9A-F]{4,4})/",
+				function ($matches) {
+					return '&#' . base_convert($matches [1], 16, 10) . ';';
+				},
+				$text
+		);
+
 	}
 
 	return $text;
