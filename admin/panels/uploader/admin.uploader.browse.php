@@ -18,7 +18,7 @@
 		var $_dirlist = array();
 		var $_filelist = array();
 
-		function uploader_lister($d, $pd) {
+		function __construct($d, $pd) {
 			$this->urldir = $pd;
 			$this->basepanelurl = //
 				BLOG_BASEURL . //
@@ -26,7 +26,7 @@
 			$this->thumburl = //
 				BLOG_BASEURL . //
 					'admin.php?p=uploader&amp;action=thumb&amp;f=';
-			return parent::__construct($d);
+			parent::__construct($d);
 		}
 
 		function _checkFile($d, $f) {

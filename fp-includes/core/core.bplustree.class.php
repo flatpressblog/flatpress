@@ -269,19 +269,16 @@ class pairs {
 	 * (assumes there aren't duplicates)
 	 * uses {@link BPT_keycmp} for comparing
 	 *
-	 * @param mixed $a
-	 *        	first element of the pair
-	 * @param mixed $b
-	 *        	second element of the pair
-	 * @param int $lo
-	 *        	starting offset of the sub-array
-	 * @param int|nul $hi
-	 *        	ending offset of the sub-array
+	 * @param mixed $a first element of the pair
+	 * @param mixed $b second element of the pair
+	 * @param int $lo starting offset of the sub-array
+	 * @param int|null $hi ending offset of the sub-array
 	 */
 	function insort($a, $b, $lo = 0, $hi = null) {
 		if (is_null($hi)) {
 			$hi = $this->count;
 		}
+		assert(is_int($hi));
 		$A = $this->a;
 		$X = $a;
 		while ($lo < $hi) {
@@ -551,31 +548,32 @@ class BPlusTree_Node {
 
 	/**
 	 * constructor
-	 *
-	 * @param int $flag
-	 *        	flag of current node
-	 * @param int $size
-	 *        	size of node
-	 * @param int $keylen
-	 *        	max key length
-	 * @param long $position
-	 *        	seek position in file
-	 * @param
-	 *        	resource resource stream (opened file)
-	 * @param
-	 *        	BPlusTree_Node object from which cloning properties
-	 */
+	*
+	* @param int $flag Flag of current node
+	* @param int $size Size of node
+	* @param int $keylen Max key length
+	* @param int|string $position Seek position in file
+	* @param resource $infile Opened file stream (resource)
+	* @param BPlusTree_Node|null $cloner BPlusTree_Node object from which to clone properties
+	*
+	* @throws InvalidArgumentException
+	*/
 	function __construct($flag, $size, $keylen, $position, $infile, $cloner = null) {
 		$this->flag = $flag;
 
-		if ($size < 0) {
+		if (!is_int($size) || $size < 0) {
 			trigger_error('size must be positive', E_USER_ERROR);
 		}
 
 		$this->size = $size;
 
 		$this->keylen = $keylen;
-		$this->position = $position;
+
+		if (!is_numeric($position) || $position < 0) {
+			throw new InvalidArgumentException('Position must be a positive number (int|string).');
+		}
+		$this->position = is_int($position) ? $position : (string)$position;
+
 		$this->infile = $infile;
 		// last (+1) is successor seek TODO move to its own!
 		$this->indices = array_fill(0, $size + 1, BPT_NULL);
