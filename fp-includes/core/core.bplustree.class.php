@@ -2029,6 +2029,7 @@ class BPlusTree {
 				return null;
 			}
 		}
+		return null;
 	}
 
 	// }}}
