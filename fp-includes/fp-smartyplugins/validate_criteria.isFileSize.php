@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Project:     SmartyValidate: Form Validator for the Smarty Template Engine
  * File:        validate_criteria.isFileSize.php
@@ -26,35 +25,41 @@
  */
 
 /**
- * test if a value is a valid file size.
+ * Test if a file's size does not exceed the maximum allowed.
  *
- * @param string $value the value being tested
- * @param boolean $empty if field can be empty
- * @param array params validate parameter values
- * @param array formvars form var values
+ * @param string $value The value being tested (not used here).
+ * @param bool $empty Whether the field can be empty.
+ * @param array $params Validation parameters (expects 'max' like "2M" or 'field2').
+ * @param array $formvars Form variables.
+ * @return bool True if file size is within limit, false otherwise.
  */
 function smarty_validate_criteria_isFileSize($value, $empty, &$params, &$formvars) {
 
 	$_field = $params['field'];
-	$_max = isset($params['field2']) ? $params['field2'] : trim($params['max']);
 
-
-	if(!isset($_FILES[$_field])) {
-		// nothing in the form
-		return false;
-	}
-
-	if($_FILES[$_field]['error'] == 4) {
-		// no file uploaded
-		return $empty;
-	}
-
-	if(!isset($_max)) {
+	// Check max value from 'field2' or 'max'
+	if (isset($params ['field2'])) {
+		$_max = trim($params ['field2']);
+	} elseif (isset($params ['max'])) {
+		$_max = trim($params ['max']);
+	} else {
 		trigger_error("SmartyValidate: [isFileSize] 'max' attribute is missing.");
 		return false;
 	}
 
-	if(!preg_match('!^(\d+)([bkmg](b)?)?$!i', $_max, $_match)) {
+	// Check if file field is set
+	if (!isset($_FILES [$_field])) {
+		// nothing in the form
+		return false;
+	}
+
+	if ($_FILES [$_field] ['error'] == 4) {
+		// no file uploaded
+		return $empty;
+	}
+
+	// Parse the max size value
+	if (!preg_match('!^(\d+)([bkmg](b)?)?$!i', $_max, $_match)) {
 		trigger_error("SmartyValidate: [isFileSize] 'max' attribute is invalid.");
 		return false;
 	}
@@ -62,7 +67,8 @@ function smarty_validate_criteria_isFileSize($value, $empty, &$params, &$formvar
 	$_size = $_match[1];
 	$_type = strtolower($_match[2]);
 
-	switch($_type) {
+	// Calculate max size in bytes
+	switch ($_type) {
 		case 'k':
 			$_maxsize = $_size * 1024;
 			break;
@@ -78,7 +84,7 @@ function smarty_validate_criteria_isFileSize($value, $empty, &$params, &$formvar
 			break;
 	}
 
-	return $_FILES[$_field]['size'] <= $_maxsize;
+	// Compare file size with max allowed
+	return $_FILES [$_field] ['size'] <= $_maxsize;
 }
-
 ?>
