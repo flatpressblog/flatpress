@@ -10,10 +10,10 @@
  */
 function smarty_validate_criteria_isValidDateOrTimeFormat($value) {
 	// Check that the value is not empty
-	if (!isset($value) || trim($value) === '') {
+	if (trim($value) === '') {
 		return false;
 	}
 	// Check whether the value only contains permitted characters
-	return preg_match('/^[a-zA-Z0-9:%.,\\- 年日月()令和平成昭和大正一二三四五六七八九十]+$/u', $value);
+	return preg_match('/^[a-zA-Z0-9:%.,\\- 年日月()令和平成昭和大正一二三四五六七八九十]+$/u', $value) === 1;
 }
 ?>
