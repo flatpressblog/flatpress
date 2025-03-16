@@ -2,7 +2,7 @@ parameters:
   phpVersion: 70200
   level: 3 # Intermediate level for PHP 7.2
   paths:
-    - . # Everything, including root and folder
+    %currentWorkingDirectory% # Everything, including root and folder
 
   ignoreErrors:
     # Maximum consideration for old code.
