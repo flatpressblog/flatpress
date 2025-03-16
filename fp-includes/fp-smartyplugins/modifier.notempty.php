@@ -4,7 +4,7 @@
  *
  * Type: modifier
  * Name: notempty
- * Purpose:  print a message if the input variable is not empty or null
+ * Purpose: Return default value if input string is not empty, otherwise empty string.
  * @author Edoardo Vacchi (NoWhereMan)
  * @param string $string The input string to check
  * @param string $default The default string to return if not empty
@@ -12,7 +12,7 @@
  *
  */
 function smarty_modifier_notempty($string, $default = '') {
-	if (isset($string) && $string !== '') {
+	if ($string !== '') {
 		return $default;
 	}
 	return '';
