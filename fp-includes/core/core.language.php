@@ -172,6 +172,23 @@ function set_locale() {
 	$langconf = [];
 
 	if ($langConfFile && file_exists($langConfFile)) {
+		/** 
+		 * @var array{
+		 *     id: string,
+		 *     locale: string,
+		 *     charsets: array{
+		 *         0: string,
+		 *         1: string
+		 *     },
+		 *     localecountry_a: string,
+		 *     localecountry_b: string,
+		 *     localeshort: string,
+		 *     localecharset_a: string,
+		 *     localecharset_b: string,
+		 *     localecharset_c: string,
+		 *     localecharset_d: string
+		 * } $langconf 
+		 */
 		include_once $langConfFile;
 		if ($debug) {
 			error_log('set_locale -> Langconf loaded: ' . print_r($langconf, true));
