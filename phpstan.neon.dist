@@ -11,7 +11,7 @@ parameters:
     - '#Undefined variable: \$.*#'
     - '#Trying to access property .* on non-object#'
 
-    # Plugins, dynamic methods
+    # Plugins, dynamic methods and properties
     - '#Call to an undefined method.*#'
     - '#Access to an undefined property.*#'
     - '#Function .* not found.*#'
@@ -22,15 +22,16 @@ parameters:
     # Typical parameter problems (dynamic calls)
     - '#Parameter .* expects.*, .* given#'
 
-    # Old PHPDoc tags
+    # Old PHPDoc tags and formatting issues
     - '#PHPDoc tag @param has invalid value \(.*\)#'
     - '#PHPDoc tag @param references unknown parameter.*#'
     - '#PHPDoc tag @param has invalid value \(string\): Unexpected token.*#'
-    - '#PHPDoc tag @param has invalid value \(.*\)#'
-    - '#PHPDoc tag @param references unknown parameter.*#'
     - '#PHPDoc tag @var has invalid value \(.*\)#'
     - '#PHPDoc tag @var has invalid value \(.*root node.*\)#'
     - '#PHPDoc tag @var has invalid value \(.*\): Unexpected token.*#'
+
+    # Properties that would require null|Type (legacy code)
+    - '#Property .* does not accept null#'
 
     # Comparison of incorrect types
     - '#Comparison operation .* is always (true|false)#'
