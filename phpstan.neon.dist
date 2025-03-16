@@ -1,0 +1,33 @@
+parameters:
+  phpVersion: 80300  # PHP 8.3
+  level: 3  # Medium level
+
+  paths:
+    - .  # Check all
+
+  ignoreErrors:
+    # Dynamic and global variables
+    - '#Variable \$.* might not be defined#'
+    - '#Undefined variable: \$.*#'
+    - '#Trying to access property .* on non-object#'
+
+    # Plugins, dynamic methods
+    - '#Call to an undefined method.*#'
+    - '#Access to an undefined property.*#'
+    - '#Function .* not found.*#'
+
+    # Constants (dynamic, possibly loaded from config)
+    - '#Constant .* not found.*#'
+
+    # Typical parameter problems (dynamic calls)
+    - '#Parameter .* expects.*, .* given#'
+
+    # Old PHPDoc tags
+    - '#PHPDoc tag @param has invalid value \(.*\)#'
+    - '#PHPDoc tag @param references unknown parameter.*#'
+
+    # Comparison of incorrect types
+    - '#Comparison operation .* is always (true|false)#'
+
+  checkMissingVarTagTypehint: false
+  reportUnmatchedIgnoredErrors: false
