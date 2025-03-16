@@ -1,6 +1,6 @@
 parameters:
   phpVersion: 80300
-  level: 3 Intermediate level for PHP 8.3
+  level: 3 # Intermediate level for PHP 8.3
 
   paths:
     - %currentWorkingDirectory% # Everything, including root and folder
