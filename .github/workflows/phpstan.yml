@@ -36,3 +36,4 @@ jobs:
 
     - name: Run PHPStan (phar)
       run: php phpstan.phar analyse --configuration=${{ matrix.config }}
+      working-directory: .
