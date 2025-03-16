@@ -169,16 +169,16 @@ function set_locale() {
 
 	// Creating the path to the language configuration file and securing it
 	$langConfFile = realpath(LANG_DIR . $langId . '/lang.conf.php');
+	$langconf = [];
+
 	if ($langConfFile && file_exists($langConfFile)) {
 		include_once $langConfFile;
-		if (isset($langconf)) {
-			if ($debug) {
-				error_log('set_locale -> Langconf loaded: ' . print_r($langconf, true));
-			}
+		if ($debug) {
+			error_log('set_locale -> Langconf loaded: ' . print_r($langconf, true));
 		}
 	} else {
 		if ($debug) {
-			trigger_error('set_locale -> Language configuration file not found: ' . ($langConfFile ?: 'undefined'), E_USER_WARNING);
+			trigger_error('set_locale -> Language configuration file not found: ' . ($langConfFile ? : 'undefined'), E_USER_WARNING);
 		}
 		return;
 	}
@@ -438,10 +438,10 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8') {
 		'Ã¤' => 'ä', 'Ã¶' => 'ö', 'Ã¼' => 'ü', 'ÃŸ' => 'ß',
 		'Ã„' => 'Ä', 'Ã–' => 'Ö', 'Ãœ' => 'Ü',
 		// Spanish
-		'Ã¡' => 'á', 'Ã©' => 'é', 'Ã­' => 'í', 'Ã³' => 'ó', 'Ãº' => 'ú', 'Ã±' => 'ñ',
-		'Ã�' => 'Á', 'Ã‰' => 'É', 'Ã�' => 'Í', 'Ã“' => 'Ó', 'Ãš' => 'Ú', 'Ã‘' => 'Ñ',
+		'Ã¡' => 'á', 'Ã­' => 'í', 'Ã³' => 'ó', 'Ãº' => 'ú', 'Ã±' => 'ñ',
+		'Ã�' => 'Á', 'Ã‰' => 'É', 'Ã“' => 'Ó', 'Ãš' => 'Ú', 'Ã‘' => 'Ñ',
 		// French
-		'Ã ' => 'à', 'Ã¨' => 'è', 'Ã©' => 'é', 'Ãª' => 'ê', 'Ã«' => 'ë', 'Ã§' => 'ç',
+		'Ã ' => 'à', 'Ã¨' => 'è', 'Ã©' => 'é', 'Ãª' => 'ê', 'Ã«' => 'ë',
 		// Italian
 		'Ã¬' => 'ì', 'Ã²' => 'ò', 'Ã¹' => 'ù',
 		// Czech
@@ -455,7 +455,7 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8') {
 		// Portuguese
 		'Ã£' => 'ã', 'Ãµ' => 'õ', 'Ãª' => 'ê', 'Ã§' => 'ç',
 		// Dutch
-		'Ã¨' => 'è', 'Ã´' => 'ô',
+		'Ã´' => 'ô',
 		// English (typical quotation marks and dashes)
 		'â€œ' => '“', 'â€' => '”', 'â€˜' => '‘', 'â€™' => '’', 'â€”' => '—'
 	];
