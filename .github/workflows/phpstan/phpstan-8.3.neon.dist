@@ -1,6 +1,7 @@
 parameters:
   phpVersion: 80300
-  level: 3 # Intermediate level for PHP 8.3
+  level: 4 # Slightly higher for more modern PHP
+
   paths:
     - .
     - fp-admin
@@ -9,14 +10,9 @@ parameters:
     - fp-plugins
 
   ignoreErrors:
-    # Typical problems with old code that can be ignored for the time being
-    - '#Call to an undefined method.*#'
-    - '#Access to an undefined property.*#'
-    - '#Parameter .* expects.*, .* given#'
-    - '#Variable .* might not be defined#'
-    - '#Function .* not found.*#'
-    - '#Constant .* not found.*#'
-    - '#Trying to access property .* on non-object#'
+    # Only really unavoidable, dynamic patterns (if necessary)
+    - '#Call to an undefined method.*#' # Optional: Falls Plugins dynamisch sind
+    # Do NOT ignore all other errors so that real problems are noticed
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
