@@ -183,14 +183,14 @@ function set_locale() {
 		return;
 	}
 
-	if (!empty($langconf ['charsets']) && is_array($langconf ['charsets'])) {
+	if (isset($langconf ['charsets']) && is_array($langconf ['charsets'])) {
 		if ($debug) {
 			error_log('set_locale -> Charset comparison. Defined: ' . print_r($langconf ['charsets'], true) . '. Current: ' . $charset);
 		}
-		if (isset($langconf ['charsets'] [0]) && strtolower($charset) === $langconf ['charsets'] [0]) {
+		if (isset($langconf ['charsets'] [0]) && strtolower($charset) === strtolower($langconf ['charsets'] [0])) {
 			$localeCharset_a = isset($langconf ['localecharset_a']) ? $langconf ['localecharset_a'] : '';
 			$localeCharset_b = isset($langconf ['localecharset_b']) ? $langconf ['localecharset_b'] : '';
-		} elseif (isset($langconf ['charsets'] [1]) && strtolower($charset) === $langconf ['charsets'] [1]) {
+		} elseif (isset($langconf ['charsets'] [1]) && strtolower($charset) === strtolower($langconf ['charsets'] [1])) {
 			$localeCharset_c = isset($langconf ['localecharset_c']) ? $langconf ['localecharset_c'] : '';
 			$localeCharset_d = isset($langconf ['localecharset_d']) ? $langconf ['localecharset_d'] : '';
 		}
@@ -441,7 +441,7 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8') {
 		'Ã¡' => 'á', 'Ã­' => 'í', 'Ã³' => 'ó', 'Ãº' => 'ú', 'Ã±' => 'ñ',
 		'Ã�' => 'Á', 'Ã‰' => 'É', 'Ã“' => 'Ó', 'Ãš' => 'Ú', 'Ã‘' => 'Ñ',
 		// French
-		'Ã ' => 'à', 'Ã¨' => 'è', 'Ã©' => 'é', 'Ãª' => 'ê', 'Ã«' => 'ë',
+		'Ã ' => 'à', 'Ã¨' => 'è', 'Ã©' => 'é', 'Ã«' => 'ë',
 		// Italian
 		'Ã¬' => 'ì', 'Ã²' => 'ò', 'Ã¹' => 'ù',
 		// Czech
