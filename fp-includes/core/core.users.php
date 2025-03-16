@@ -33,8 +33,8 @@ class user_lister extends fs_filelister {
 		if (fnmatch('*.php', $file)) {
 			// If the file is a PHP file, add it to the list
 			array_push($this->_list, basename($file, EXT));
-			return 0;
 		}
+		return 0;
 	}
 }
 
