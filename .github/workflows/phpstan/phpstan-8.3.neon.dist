@@ -3,7 +3,7 @@ parameters:
   level: 4 # Slightly higher for more modern PHP
 
   paths:
-    - . # Everything, including root and folder
+    %currentWorkingDirectory% # Everything, including root and folder
 
   ignoreErrors:
     # Only really unavoidable, dynamic patterns (if necessary)
