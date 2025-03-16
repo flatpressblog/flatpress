@@ -534,7 +534,7 @@ class BPlusTree_Node {
 
 	/**
 	 *
-	 * @var BPlusTree_Node_Fifo object of type {@link BPlusTree_Node_Fifo}
+	 * @var BPlusTree_Node_Fifo|null
 	 */
 	var $fifo = null;
 
@@ -620,8 +620,8 @@ class BPlusTree_Node {
 	/**
 	 * returns clone of the obect at position $position
 	 *
-	 * @param long $position
-	 *        	seek position
+	 * @param int $position seek position
+	 * @return BPlusTree_Node
 	 */
 	function &getclone($position) {
 		if ($this->fifo) {
@@ -1105,11 +1105,9 @@ class BPlusTree_Node {
 	 * if leaf, deletes neighbor on the right, and re-link
 	 * with the following
 	 *
-	 * @param object $next
-	 *        	target for deletion
-	 * @param free $free
-	 *        	seek position of last free node in free list
-	 *        	
+	 * @param object $next target for deletion
+	 * @param int $free Seek position of last free node in free list.
+	 *
 	 * @returns int new free position
 	 */
 	function delnext(&$next, $free) {
@@ -1126,8 +1124,7 @@ class BPlusTree_Node {
 	/**
 	 * if leaf, deletes corresponding value
 	 *
-	 * @param string $key
-	 *        	target key
+	 * @param string $key target key
 	 */
 	function delvalue($key) {
 		$keys = & $this->keys;
@@ -1193,12 +1190,11 @@ class BPlusTree_Node {
 	 * make one if none exist;
 	 * assume $freeposition is seek position of next free node
 	 *
-	 * @param int $freeposition
-	 *        	seek position of next freenode
-	 * @param callback $freenode_callback
+	 * @param int $freeposition seek position of next freenode
+	 * @param callable|null $freenode_callback
 	 *        	is specified it is a func to call
 	 *        	with a new free list head, if needed
-	 *        	
+	 *
 	 * @returns array(&$node, $newfreeposition)
 	 *
 	 *
@@ -1550,7 +1546,7 @@ class BPlusTree {
 
 	/**
 	 *
-	 * @var object BPlusTree_Node root node
+	 * @var BPlusTree_Node|null
 	 */
 	var $root = null;
 
@@ -1671,7 +1667,7 @@ class BPlusTree {
 		$this->reset_header();
 		$file = $this->file;
 		fseek($file, 0, SEEK_END);
-		$this->root = new BplusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
+		$this->root = new BPlusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
 		$this->root->store();
 	}
 
@@ -1683,7 +1679,7 @@ class BPlusTree {
 		if ($this->get_parameters() === false) {
 			return false;
 		}
-		$this->root = new BplusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
+		$this->root = new BPlusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
 		$this->root = & $this->root->materialize();
 		return true;
 	}
@@ -1775,11 +1771,9 @@ class BPlusTree {
 
 	/**
 	 *
-	 * @param
-	 *        	string &$key key to find.
-	 * @param bool $loose
-	 *        	if true searches the tree for the "nearest" key to $key;
-	 *        	
+	 * @param string &$key key to find.
+	 * @param bool $loose if true searches the tree for the "nearest" key to $key;
+	 *
 	 * @returns int associated value
 	 *
 	 */
