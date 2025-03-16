@@ -3,11 +3,7 @@ parameters:
   level: 4 # Slightly higher for more modern PHP
 
   paths:
-    - .
-    - fp-admin
-    - fp-content
-    - fp-includes
-    - fp-plugins
+    - . # Everything, including root and folder
 
   ignoreErrors:
     # Only really unavoidable, dynamic patterns (if necessary)
