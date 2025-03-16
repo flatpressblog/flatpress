@@ -250,7 +250,7 @@ class entry_archives extends fs_filelister {
 			}
 		}
 
-		return parent::__construct();
+		parent::__construct();
 	}
 
 	function _checkFile($directory, $file) {
@@ -467,13 +467,11 @@ function entry_parse($id, $raw = false) {
 /**
  * function entry_get_comments
  *
- * @param
- *        	string id entry id
- * @param
- *        	array entry entry content array by ref; 'commentcount' field is added to the array
- *        	
- * @return object comment_indexer as reference
- *        
+ * @param string $id Entry ID
+ * @param array $entry Entry content array by ref; 'commentcount' field is added to the array
+ *
+ * @return comment_indexer Comment indexer as reference
+ *
  */
 function &entry_get_comments($id, &$count) {
 	$obj = new comment_indexer($id);
@@ -706,26 +704,13 @@ function entry_prepare(&$entry) { // prepare for serialization
 }
 
 /**
- *
- * @param
- *        	array entry contents
- * @param
- *        	string|null entry id, null if can be deducted from the date field of $entry;
- *        	defaults to null
- *        	
- * @param
- *        	bool updates entry index; defaults to true
- *        	
- *        	
- * @return integer -1 failure while storing preliminar draft, abort. Index not touched.
- *         -2 index updated succesfully, but draft doesn't exist anymore
- *         (should never happen!) OR
- *         failure while trying to move draft to entry path, draft does not exist anymore
- *         index not touched
- *         -3 error while moving draft still exists, index written succesfully but rolled back
- *         -4 failure while saving to index, aborted (draft still exists)
- *        
- *        
+ * @param array $entry Entry contents
+ * @param string|null $id Entry ID, null if can be deducted from the date field of $entry; defaults to null
+ * @param bool $update_index Updates entry index; defaults to true
+ * @return int -1 failure while storing preliminary draft, abort. Index not touched.
+ *              -2 index updated successfully, but draft doesn't exist anymore
+ *              -3 error while moving draft still exists, index written successfully but rolled back
+ *              -4 failure while saving to index, aborted (draft still exists)
  */
 function entry_save($entry, $id = null, $update_index = true) {
 
