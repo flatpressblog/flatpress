@@ -1787,13 +1787,11 @@ class BPlusTree {
 	/**
 	 * traverses tree starting from $node, searching for $key
 	 *
-	 * @param string $key
-	 *        	target key
-	 * @param
-	 *        	object BPlusTree_Node starting node
-	 *        	
-	 * @returns int|bool value at the leaf node containing key or false if key is missing
+	 * @param string $key Target key
+	 * @param BPlusTree_Node $node Starting node
+	 * @param bool $loose If true, searches for "nearest" key to $key
 	 *
+	 * @return int|false Value at the leaf node containing key or false if missing
 	 */
 	function find(&$key, &$node, $loose = false) {
 		while (($node->flag & BPT_FLAG_INTERIOR) == BPT_FLAG_INTERIOR) {
@@ -1911,14 +1909,9 @@ class BPlusTree {
 	 * support method for {@link BPlusTree::setitem}
 	 *
 	 * @param string $key
-	 * @param int $val
-	 *        	value associated to $key
-	 * @param
-	 *        	object BPlusTree_Node starting node
-	 *        	
-	 * @returns array|null a pair (leftmost, newnode) where "leftmost" is
-	 * 			the leftmost key in newnode, and newnode is the split node;
-	 *			returns null if no split took place
+	 * @param int $val Value associated to $key
+	 * @param BPlusTree_Node $node Starting node
+	 * @return array|null Pair (leftmost, newnode) or null if no split took place
 	 */
 	function set($key, $val, &$node) {
 		// {{{
