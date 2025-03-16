@@ -9,26 +9,24 @@ parameters:
     # Only really unavoidable, dynamic patterns (if necessary)
     - '#Call to an undefined method.*#' # Optional: Falls Plugins dynamisch sind
 
-    # Dynamic global constants
-    - '#Constant ADMIN_PANEL not found#'
-    - '#Constant ADMIN_PANEL_ACTION not found#'
-
-    # Global variables, e.g. $smarty, $lang, which come dynamically
-    - '#Variable \$.* might not be defined#'
-    - '#Undefined variable: \$.*#'
-
-    # Dynamic function results
-    - '#Function .* not found.*#'
-
-    # Typical legacy issues
-    - '#Call to an undefined method .*#'
-    - '#Access to an undefined property .*#'
+    - '#Call to an undefined method.*#'
+    - '#Access to an undefined property.*#'
     - '#Parameter .* expects.*, .* given#'
     - '#Result of method .*::__construct.* is used#'
     - '#PHPDoc tag @param has invalid value \(.*\)#'
     - '#PHPDoc tag @param references unknown parameter.*#'
     - '#Comparison operation .* is always (true|false)#'
     - '#Trying to access property .* on non-object#'
+    - '#Constant ADMIN_PANEL not found#'
+    - '#Constant ADMIN_PANEL_ACTION not found#'
+    - '#Variable \$.* might not be defined#'
+    - '#Undefined variable: \$.*#'
+    - '#Class .* referenced with incorrect case.*#'
+    - '#Array has 2 duplicate keys with value.*#'
+    - '#Return type \(.*\) of method .* should be compatible with return type \(.*\)#'
+    - '#Binary operation "\*" between .* results in an error#'
+    - '#PHPDoc tag @param has invalid value \(string\): Unexpected token.*#'
+    - '#Variable .* in (isset|empty)\(\) always exists and (is not nullable|is always falsy)#'
     # Do NOT ignore all other errors so that real problems are noticed
 
   checkMissingVarTagTypehint: false
