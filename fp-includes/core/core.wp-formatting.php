@@ -885,7 +885,13 @@ function wp_iso_descrambler($string) {
 		return $string;
 	} else {
 		$subject = str_replace('_', ' ', $matches [2]);
-		$subject = preg_replace('#\=([0-9a-f]{2})#ei', "chr(hexdec(strtolower('$1')))", $subject);
+		$subject = preg_replace_callback(
+			'#=([0-9a-f]{2})#i',
+			function ($matches) {
+				return chr(hexdec(strtolower($matches [1])));
+			},
+			$subject
+		);
 		return $subject;
 	}
 }
@@ -1191,7 +1197,7 @@ function ent2ncr($text) {
 		'&lsaquo;' => '&#8249;',
 		'&rsaquo;' => '&#8250;',
 		'&oline;' => '&#8254;',
-		'&frasl;' => '&#8260;',
+		// '&frasl;' => '&#8260;', // e.g. "½", "⅔"
 		'&euro;' => '&#8364;',
 		'&image;' => '&#8465;',
 		'&weierp;' => '&#8472;',
