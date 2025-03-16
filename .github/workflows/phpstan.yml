@@ -35,5 +35,5 @@ jobs:
       run: curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
 
     - name: Run PHPStan (phar)
-      run: php phpstan.phar analyse --configuration=${{ matrix.config }}
+      run: php phpstan.phar analyse --configuration=${{ matrix.config }} --error-format=github
       working-directory: .
