@@ -707,10 +707,10 @@ function entry_prepare(&$entry) { // prepare for serialization
  * @param array $entry Entry contents
  * @param string|null $id Entry ID, null if can be deducted from the date field of $entry; defaults to null
  * @param bool $update_index Updates entry index; defaults to true
- * @return int -1 failure while storing preliminary draft, abort. Index not touched.
- *              -2 index updated successfully, but draft doesn't exist anymore
- *              -3 error while moving draft still exists, index written successfully but rolled back
- *              -4 failure while saving to index, aborted (draft still exists)
+ * @return int|string -1 failure while storing preliminary draft, abort. Index not touched.
+ *                    -2 index updated successfully, but draft doesn't exist anymore
+ *                    -3 error while moving draft still exists, index written successfully but rolled back
+ *                    -4 failure while saving to index, aborted (draft still exists)
  */
 function entry_save($entry, $id = null, $update_index = true) {
 
