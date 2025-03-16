@@ -9,7 +9,7 @@ parameters:
     - fp-plugins
 
   ignoreErrors:
-    # Typical problems with old code that can be ignored for the time being
+    # Maximum consideration for old code.
     - '#Call to an undefined method.*#'
     - '#Access to an undefined property.*#'
     - '#Parameter .* expects.*, .* given#'
