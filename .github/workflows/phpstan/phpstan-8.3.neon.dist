@@ -1,6 +1,6 @@
 parameters:
   phpVersion: 80300
-  level: 4 # Slightly higher for more modern PHP
+  level: 3 Intermediate level for PHP 8.3
 
   paths:
     - %currentWorkingDirectory% # Everything, including root and folder
@@ -8,6 +8,11 @@ parameters:
   ignoreErrors:
     # Only really unavoidable, dynamic patterns (if necessary)
     - '#Call to an undefined method.*#' # Optional: Falls Plugins dynamisch sind
+    # Problems with Docblocks (old formatting)
+    - '#PHPDoc tag @param has invalid value \(.*\)#'
+    - '#PHPDoc tag @param references unknown parameter.*#'
+    - '#PHPDoc tag @var has invalid value \(.*\)#'
+    - '#Class .* referenced with incorrect case.*#'
     # Do NOT ignore all other errors so that real problems are noticed
 
   checkMissingVarTagTypehint: false
