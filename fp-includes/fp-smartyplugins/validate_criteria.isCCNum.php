@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Project:     SmartyValidate: Form Validator for the Smarty Template Engine
  * File:        validate_criteria.isCCNum.php
@@ -24,14 +23,15 @@
  * @author Monte Ohrt <monte at newdigitalgroup dot com>
  * @package SmartyValidate
  */
- 
- /**
- * test if a value is a valid credit card checksum
+
+/**
+ * Test if a value is a valid credit card checksum using the Luhn algorithm.
  *
- * @param string $value the value being tested
- * @param boolean $empty if field can be empty
- * @param array params validate parameter values
- * @param array formvars form var values
+ * @param string $value The value being tested.
+ * @param bool $empty Whether the field can be empty and still pass validation.
+ * @param array $params Validation parameter values (passed by reference).
+ * @param array $formvars Form variable values (passed by reference).
+ * @return bool True if valid, false otherwise.
  */
 function smarty_validate_criteria_isCCNum($value, $empty, &$params, &$formvars) {
 	if(strlen($value) == 0) {
@@ -52,11 +52,11 @@ function smarty_validate_criteria_isCCNum($value, $empty, &$params, &$formvars) 
 
 	$_sum = 0;
 	for ($_count=0; $_count <= $_max_digit; $_count++) {
-		$_digit = $_c_digits[$_count];
+		$_digit = (int) $_c_digits [$_count];
 		if ($_even_odd) {
 			$_digit = $_digit * 2;
 			if ($_digit > 9) {
-				$_digit = substr($_digit, 1, 1) + 1;
+				$_digit = (int) substr($_digit, 1, 1) + 1;
 			}
 		}
 		$_even_odd = 1 - $_even_odd;
