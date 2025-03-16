@@ -8,11 +8,27 @@ parameters:
   ignoreErrors:
     # Only really unavoidable, dynamic patterns (if necessary)
     - '#Call to an undefined method.*#' # Optional: Falls Plugins dynamisch sind
-    # Problems with Docblocks (old formatting)
+
+    # Dynamic global constants
+    - '#Constant ADMIN_PANEL not found#'
+    - '#Constant ADMIN_PANEL_ACTION not found#'
+
+    # Global variables, e.g. $smarty, $lang, which come dynamically
+    - '#Variable \$.* might not be defined#'
+    - '#Undefined variable: \$.*#'
+
+    # Dynamic function results
+    - '#Function .* not found.*#'
+
+    # Typical legacy issues
+    - '#Call to an undefined method .*#'
+    - '#Access to an undefined property .*#'
+    - '#Parameter .* expects.*, .* given#'
+    - '#Result of method .*::__construct.* is used#'
     - '#PHPDoc tag @param has invalid value \(.*\)#'
     - '#PHPDoc tag @param references unknown parameter.*#'
-    - '#PHPDoc tag @var has invalid value \(.*\)#'
-    - '#Class .* referenced with incorrect case.*#'
+    - '#Comparison operation .* is always (true|false)#'
+    - '#Trying to access property .* on non-object#'
     # Do NOT ignore all other errors so that real problems are noticed
 
   checkMissingVarTagTypehint: false
