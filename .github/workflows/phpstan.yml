@@ -1,0 +1,30 @@
+name: "PHPStan Static Analysis for FlatPress"
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  phpstan:
+    name: Run PHPStan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout FlatPress
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, intl, dom, json, xml, ctype, fileinfo, iconv, curl
+
+    - name: Download PHPStan (phar)
+      run: curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
+
+    - name: Run PHPStan (phar)
+      run: php phpstan.phar analyse --configuration=phpstan.neon.dist --error-format=github
+      working-directory: .
