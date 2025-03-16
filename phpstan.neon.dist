@@ -25,6 +25,12 @@ parameters:
     # Old PHPDoc tags
     - '#PHPDoc tag @param has invalid value \(.*\)#'
     - '#PHPDoc tag @param references unknown parameter.*#'
+    - '#PHPDoc tag @param has invalid value \(string\): Unexpected token.*#'
+    - '#PHPDoc tag @param has invalid value \(.*\)#'
+    - '#PHPDoc tag @param references unknown parameter.*#'
+    - '#PHPDoc tag @var has invalid value \(.*\)#'
+    - '#PHPDoc tag @var has invalid value \(.*root node.*\)#'
+    - '#PHPDoc tag @var has invalid value \(.*\): Unexpected token.*#'
 
     # Comparison of incorrect types
     - '#Comparison operation .* is always (true|false)#'
