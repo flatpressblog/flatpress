@@ -31,4 +31,3 @@ jobs:
     - name: Run PHPStan (phar)
       run: php phpstan.phar analyse --configuration=phpstan.neon.dist --error-format=github
       working-directory: .
-
