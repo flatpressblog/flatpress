@@ -700,9 +700,9 @@ class FPDB {
 	 *                      - d (string): Day (two digits), requires 'y' and 'm'
 	 *                      - exclude (int): Exclude category ID (experimental)
 	 *                      - fullparse (bool): Whether to fully parse entries (default false)
-	 * @return array The result of the query.
+	 * @return int Query ID result of the query.
 	 */
-	function query($params = array()) {
+	 function query($params = array()) {
 		static $queryId = -1;
 		$queryId++;
 
