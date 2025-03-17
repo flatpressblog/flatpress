@@ -32,5 +32,3 @@ jobs:
       run: php phpstan.phar analyse --configuration=phpstan.neon.dist --error-format=github
       working-directory: .
 
-    - name: Exclude Smarty from Analysis
-      run: echo "excludes_analyse:\n  - fp-includes/smarty-4.5.5/demo/*" >> phpstan.neon.dist
