@@ -3,7 +3,7 @@ parameters:
   level: 3  # Medium level
 
   excludePaths:
-    - fp-includes/smarty-4.5.5/demo/*
+    - fp-includes/smarty-4.5.5/*
 
   paths:
     - .  # Check all
@@ -41,21 +41,6 @@ parameters:
 
     # IGNORE ALL ERRORS IN SMARTY
     - { message: '#.*#', path: 'fp-includes/smarty-4.5.5/.*\.php' }
-
-        - pattern: '#Function smarty_function_fetch\(\) should return string\|null but empty return statement found.#'
-          path: fp-includes/smarty-4.5.5/libs/plugins/function.fetch.php
-
-        - pattern: '#Function smarty_function_cycle\(\) should return string\|null but empty return statement found.#'
-          path: fp-includes/smarty-4.5.5/libs/plugins/function.cycle.php
-
-        - pattern: '#Function smarty_block_textformat\(\) should return string but empty return statement found.#'
-          path: fp-includes/smarty-4.5.5/libs/plugins/block.textformat.php
-
-        - pattern: '#Variable \$dir on left side of \?\? always exists and is not nullable.#'
-          path: fp-includes/smarty-4.5.5/libs/Smarty.class.php
-
-        - pattern: '#Property Smarty::\$start_time \(int\) does not accept float.#'
-          path: fp-includes/smarty-4.5.5/libs/Smarty.class.php
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
