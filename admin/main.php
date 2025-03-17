@@ -31,7 +31,7 @@ function wp_nonce_ays($action = '') {
  */
 function main() {
 
-	// general setup
+	// General setup
 	global $panel, $action, $lang, $smarty, $fp_admin, $fp_admin_action;
 
 	// register all Smarty modifier functions used by the admin templates
