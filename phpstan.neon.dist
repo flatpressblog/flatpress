@@ -36,5 +36,9 @@ parameters:
     # Comparison of incorrect types
     - '#Comparison operation .* is always (true|false)#'
 
+    # IGNORE ALL ERRORS IN SMARTY
+    - message: '#.*#'
+      path: 'fp-includes/smarty-4.5.5/.*'
+
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
