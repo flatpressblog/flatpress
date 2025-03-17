@@ -41,4 +41,3 @@ parameters:
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
-
