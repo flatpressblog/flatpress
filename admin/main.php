@@ -1,6 +1,6 @@
 <?php
 
-// aggiungere nuovo protocollo per template
+// Add new protocol for template
 include (ADMIN_DIR . 'panels/admin.defaultpanels.php');
 include (ADMIN_DIR . 'includes/panels.prototypes.php');
 
