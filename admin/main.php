@@ -34,7 +34,7 @@ function main() {
 	// General setup
 	global $panel, $action, $lang, $smarty, $fp_admin, $fp_admin_action;
 
-	// register all Smarty modifier functions used by the admin templates
+	// Register all Smarty modifier functions used by the admin templates
 	admin_register_smartyplugins();
 
 	$panels = admin_getpanels();
