@@ -41,3 +41,6 @@ parameters:
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
+
+excludes_analyse:
+  - fp-includes/smarty-4.5.5/demo/*
