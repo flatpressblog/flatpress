@@ -38,7 +38,7 @@ parameters:
 
     # IGNORE ALL ERRORS IN SMARTY
     - message: '#.*#'
-      path: fp-includes/smarty-4.5.5/.*\.php
+      path: '.*fp-includes/smarty-4.5.5/.*\.php'
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
