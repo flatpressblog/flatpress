@@ -408,6 +408,7 @@ if (!function_exists('wp_salt')) :
 		if (!$salt) {
 			// get the salt from the hashsalt file
 			if (file_exists(HASHSALT_FILE)) {
+				/** @phpstan-ignore-next-line */
 				@include (HASHSALT_FILE);
 			} else {
 				trigger_error('Cannot load hash salt: reinstall FlatPress', E_USER_ERROR);
