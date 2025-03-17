@@ -94,13 +94,11 @@ function comment_clean(&$arr) {
  *
  * <p>Saves the content of the $comment array, associating it to the entry-ID $id.</p>
  * <p>$comment must be formatted as the one returned by {@link bdb_parse_entry()}.</p>
- * <p>Returns true on success, or false on failure</p>
+ * <p>Returns the comment ID on success, or false on failure.</p>
  *
- * @param string $id
- *        	string formatted like "prefixYYMMDD-HHMMSS"
- * @param array $comment
- *        	array formatted as the one returned by {@link bdb_parse_entry()}
- * @return bool
+ * @param string $id string formatted like "prefixYYMMDD-HHMMSS"
+ * @param array $comment array formatted as the one returned by {@link bdb_parse_entry()}
+ * @return string|false
  *
  * @see bdb_parse_entry()
  */
