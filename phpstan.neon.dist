@@ -2,6 +2,9 @@ parameters:
   phpVersion: 80300  # PHP 8.3
   level: 3  # Medium level
 
+  excludePaths:
+    - fp-includes/smarty-4.5.5/demo/*
+
   paths:
     - .  # Check all
 
