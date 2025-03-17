@@ -15,8 +15,13 @@ if (function_exists('opcache_get_status') && ini_get('opcache.enable')) {
 	}
 }
 
-function wp_nonce_ays() {
-	die('We apologize, an error occurred.');
+/**
+ * Handle failed nonce verification.
+ *
+ * @param string $action The action that was attempted (optional).
+ */
+function wp_nonce_ays($action = '') {
+	die('We apologize, an error occurred.' . ($action ? ' Action: ' . htmlspecialchars($action) : ''));
 }
 
 /*
