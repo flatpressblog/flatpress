@@ -37,8 +37,7 @@ parameters:
     - '#Comparison operation .* is always (true|false)#'
 
     # IGNORE ALL ERRORS IN SMARTY
-    - { message: '#.*#', path: '(.*[\\/])?fp-includes[\\/]smarty-4\.5\.5[\\/].*\.php' }
-    - { message: '#.*#', path: 'fp-includes/smarty-4\.5\.5/.*\.php' }
+    - { message: '#.*#', path: 'fp-includes/smarty-4.5.5/.*\.php' }
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
