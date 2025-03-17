@@ -474,7 +474,7 @@ function utils_ipget() {
 				}
 				return $ip;
 			}
-			return false;
+			return '';
 		}
 
 		if (utils_validateIPv6($ip)) {
@@ -566,9 +566,8 @@ function fplog($str) {
  * Shift an element with its key off the beginning of array.
  * Just like array_shift(), but for an associative array.
  *
- * @param array $arr
- *        	The input array
- * @return unknown the shifted value, or NULL if array is empty or is not an array
+ * @param array $arr The input array
+ * @return array|null The shifted key-value pair as array, or null if array is empty or not an array
  */
 function utils_array_kshift(&$arr) {
 	if (!is_array($arr) || count($arr) === 0) {

@@ -212,12 +212,18 @@ function theme_charset() {
 
 add_action('init', 'theme_charset');
 
-function theme_init(&$smarty) { /* &$mode */
+/**
+ * Initializes the theme.
+ *
+ * @param Smarty $smarty Smarty template engine instance
+ * @param object|null $layout The layout instance (optional)
+ */
+function theme_init(&$smarty, $layout = null) { /* &$mode */
 	global $fp_config, $lang, $theme, $fp_params;
 
 	// avoid compiled tpl collision (i.e. change theme without this and cry)
 	$smarty->compile_id = md5($fp_config ['general'] ['theme']);
-	$smarty->template_dir = ABS_PATH . THEMES_DIR . $fp_config ['general'] ['theme'] . '/';
+	$smarty->setTemplateDir([ABS_PATH . THEMES_DIR . $fp_config ['general'] ['theme'] . '/']);
 
 	$loggedin = user_loggedin();
 

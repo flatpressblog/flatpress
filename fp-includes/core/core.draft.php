@@ -11,7 +11,7 @@ class draft_indexer extends fs_filelister {
 
 	function __construct() {
 		$this->_cachefile = CACHE_DIR . 'draft_index.php';
-		return parent::__construct();
+		parent::__construct();
 	}
 
 	function _checkFile($directory, $file) {

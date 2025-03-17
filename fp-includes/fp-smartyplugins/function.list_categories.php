@@ -8,11 +8,9 @@
  * Name: list_categories
  * Purpose: print out the comment form
  *
- * @param
- *        	string after
- * @param
- *        	string before
- *        	-------------------------------------------------------------
+ * @param $string after
+ * @param $string before
+ * -------------------------------------------------------------
  */
 function smarty_function_list_categories($params) { // , &$smarty)
 	$cat_params = array(
@@ -118,7 +116,7 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 				$string .= 'checked="checked" ';
 			}
 
-			$string .= 'type="checkbox" />';
+			$string .= 'type="checkbox">';
 			$before = $string;
 		} elseif (isset($params ['type']) && $params ['type'] == 'radio') {
 			$string = '<label><input name="' . $catname . 'cats" type="radio" value="' . $vid . '"';
@@ -128,7 +126,7 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 				$string .= 'checked="checked" ';
 			}
 
-			$string .= ' />';
+			$string .= '>';
 			$before = $string;
 		} elseif (isset($params ['type']) && $params ['type'] == 'linked') {
 			$before = '<a href="' . get_category_link($vid) . '">';
@@ -159,3 +157,4 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 
 	return implode($result);
 }
+?>

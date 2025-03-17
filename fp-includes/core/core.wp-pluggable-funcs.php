@@ -343,7 +343,7 @@ if (!function_exists('wp_verify_nonce')) :
 	 * @param string $action the action
 	 * @return boolean <code>true</code> if the nonce is valid; <code>false</code> otherwise
 	 */
-	function wp_verify_nonce($nonce, $action = -1) {
+	function wp_verify_nonce($nonce, $action = '') {
 		$user = user_get();
 
 		// Check if user exists and has a valid user ID
@@ -407,8 +407,10 @@ if (!function_exists('wp_salt')) :
 		static $salt = null;
 		if (!$salt) {
 			// get the salt from the hashsalt file
-			@include (HASHSALT_FILE);
-			if (!$fp_hashsalt) {
+			if (file_exists(HASHSALT_FILE)) {
+				/** @phpstan-ignore-next-line */
+				@include (HASHSALT_FILE);
+			} else {
 				trigger_error('Cannot load hash salt: reinstall FlatPress', E_USER_ERROR);
 			}
 			$salt = $fp_hashsalt;

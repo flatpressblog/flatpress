@@ -269,19 +269,16 @@ class pairs {
 	 * (assumes there aren't duplicates)
 	 * uses {@link BPT_keycmp} for comparing
 	 *
-	 * @param mixed $a
-	 *        	first element of the pair
-	 * @param mixed $b
-	 *        	second element of the pair
-	 * @param int $lo
-	 *        	starting offset of the sub-array
-	 * @param int|nul $hi
-	 *        	ending offset of the sub-array
+	 * @param mixed $a first element of the pair
+	 * @param mixed $b second element of the pair
+	 * @param int $lo starting offset of the sub-array
+	 * @param int|null $hi ending offset of the sub-array
 	 */
 	function insort($a, $b, $lo = 0, $hi = null) {
 		if (is_null($hi)) {
 			$hi = $this->count;
 		}
+		assert(is_int($hi));
 		$A = $this->a;
 		$X = $a;
 		while ($lo < $hi) {
@@ -537,7 +534,7 @@ class BPlusTree_Node {
 
 	/**
 	 *
-	 * @var BPlusTree_Node_Fifo object of type {@link BPlusTree_Node_Fifo}
+	 * @var BPlusTree_Node_Fifo|null
 	 */
 	var $fifo = null;
 
@@ -551,31 +548,32 @@ class BPlusTree_Node {
 
 	/**
 	 * constructor
-	 *
-	 * @param int $flag
-	 *        	flag of current node
-	 * @param int $size
-	 *        	size of node
-	 * @param int $keylen
-	 *        	max key length
-	 * @param long $position
-	 *        	seek position in file
-	 * @param
-	 *        	resource resource stream (opened file)
-	 * @param
-	 *        	BPlusTree_Node object from which cloning properties
-	 */
+	*
+	* @param int $flag Flag of current node
+	* @param int $size Size of node
+	* @param int $keylen Max key length
+	* @param int|string $position Seek position in file
+	* @param resource $infile Opened file stream (resource)
+	* @param BPlusTree_Node|null $cloner BPlusTree_Node object from which to clone properties
+	*
+	* @throws InvalidArgumentException
+	*/
 	function __construct($flag, $size, $keylen, $position, $infile, $cloner = null) {
 		$this->flag = $flag;
 
-		if ($size < 0) {
+		if (!is_int($size) || $size < 0) {
 			trigger_error('size must be positive', E_USER_ERROR);
 		}
 
 		$this->size = $size;
 
 		$this->keylen = $keylen;
-		$this->position = $position;
+
+		if (!is_numeric($position) || $position < 0) {
+			throw new InvalidArgumentException('Position must be a positive number (int|string).');
+		}
+		$this->position = is_int($position) ? $position : (string)$position;
+
 		$this->infile = $infile;
 		// last (+1) is successor seek TODO move to its own!
 		$this->indices = array_fill(0, $size + 1, BPT_NULL);
@@ -622,8 +620,8 @@ class BPlusTree_Node {
 	/**
 	 * returns clone of the obect at position $position
 	 *
-	 * @param long $position
-	 *        	seek position
+	 * @param int $position seek position
+	 * @return BPlusTree_Node
 	 */
 	function &getclone($position) {
 		if ($this->fifo) {
@@ -1107,11 +1105,9 @@ class BPlusTree_Node {
 	 * if leaf, deletes neighbor on the right, and re-link
 	 * with the following
 	 *
-	 * @param object $next
-	 *        	target for deletion
-	 * @param free $free
-	 *        	seek position of last free node in free list
-	 *        	
+	 * @param object $next target for deletion
+	 * @param int $free Seek position of last free node in free list.
+	 *
 	 * @returns int new free position
 	 */
 	function delnext(&$next, $free) {
@@ -1128,8 +1124,7 @@ class BPlusTree_Node {
 	/**
 	 * if leaf, deletes corresponding value
 	 *
-	 * @param string $key
-	 *        	target key
+	 * @param string $key target key
 	 */
 	function delvalue($key) {
 		$keys = & $this->keys;
@@ -1195,12 +1190,11 @@ class BPlusTree_Node {
 	 * make one if none exist;
 	 * assume $freeposition is seek position of next free node
 	 *
-	 * @param int $freeposition
-	 *        	seek position of next freenode
-	 * @param callback $freenode_callback
+	 * @param int $freeposition seek position of next freenode
+	 * @param callable|null $freenode_callback
 	 *        	is specified it is a func to call
 	 *        	with a new free list head, if needed
-	 *        	
+	 *
 	 * @returns array(&$node, $newfreeposition)
 	 *
 	 *
@@ -1552,7 +1546,7 @@ class BPlusTree {
 
 	/**
 	 *
-	 * @var object BPlusTree_Node root node
+	 * @var BPlusTree_Node|null
 	 */
 	var $root = null;
 
@@ -1673,7 +1667,7 @@ class BPlusTree {
 		$this->reset_header();
 		$file = $this->file;
 		fseek($file, 0, SEEK_END);
-		$this->root = new BplusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
+		$this->root = new BPlusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
 		$this->root->store();
 	}
 
@@ -1685,7 +1679,7 @@ class BPlusTree {
 		if ($this->get_parameters() === false) {
 			return false;
 		}
-		$this->root = new BplusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
+		$this->root = new BPlusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
 		$this->root = & $this->root->materialize();
 		return true;
 	}
@@ -1777,11 +1771,9 @@ class BPlusTree {
 
 	/**
 	 *
-	 * @param
-	 *        	string &$key key to find.
-	 * @param bool $loose
-	 *        	if true searches the tree for the "nearest" key to $key;
-	 *        	
+	 * @param string &$key key to find.
+	 * @param bool $loose if true searches the tree for the "nearest" key to $key;
+	 *
 	 * @returns int associated value
 	 *
 	 */
@@ -1795,13 +1787,11 @@ class BPlusTree {
 	/**
 	 * traverses tree starting from $node, searching for $key
 	 *
-	 * @param string $key
-	 *        	target key
-	 * @param
-	 *        	object BPlusTree_Node starting node
-	 *        	
-	 * @returns int|bool value at the leaf node containing key or false if key is missing
+	 * @param string $key Target key
+	 * @param BPlusTree_Node $node Starting node
+	 * @param bool $loose If true, searches for "nearest" key to $key
 	 *
+	 * @return int|false Value at the leaf node containing key or false if missing
 	 */
 	function find(&$key, &$node, $loose = false) {
 		while (($node->flag & BPT_FLAG_INTERIOR) == BPT_FLAG_INTERIOR) {
@@ -1919,14 +1909,9 @@ class BPlusTree {
 	 * support method for {@link BPlusTree::setitem}
 	 *
 	 * @param string $key
-	 * @param int $val
-	 *        	value associated to $key
-	 * @param
-	 *        	object BPlusTree_Node starting node
-	 *        	
-	 * @returns array|null a pair (leftmost, newnode) where "leftmost" is
-	 * 			the leftmost key in newnode, and newnode is the split node;
-	 *			returns null if no split took place
+	 * @param int $val Value associated to $key
+	 * @param BPlusTree_Node $node Starting node
+	 * @return array|null Pair (leftmost, newnode) or null if no split took place
 	 */
 	function set($key, $val, &$node) {
 		// {{{
@@ -2044,6 +2029,7 @@ class BPlusTree {
 				return null;
 			}
 		}
+		return null;
 	}
 
 	// }}}

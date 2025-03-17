@@ -629,7 +629,14 @@ function funky_javascript_fix($text) {
 	global $is_macIE, $is_winIE;
 
 	if ($is_winIE || $is_macIE) {
-		$text = preg_replace("/\%u([0-9A-F]{4,4})/e", "'&#'.base_convert('\\1',16,10).';'", $text);
+		$text = preg_replace_callback(
+				"/\%u([0-9A-F]{4,4})/",
+				function ($matches) {
+					return '&#' . base_convert($matches [1], 16, 10) . ';';
+				},
+				$text
+		);
+
 	}
 
 	return $text;
@@ -878,7 +885,13 @@ function wp_iso_descrambler($string) {
 		return $string;
 	} else {
 		$subject = str_replace('_', ' ', $matches [2]);
-		$subject = preg_replace('#\=([0-9a-f]{2})#ei', "chr(hexdec(strtolower('$1')))", $subject);
+		$subject = preg_replace_callback(
+			'#=([0-9a-f]{2})#i',
+			function ($matches) {
+				return chr(hexdec(strtolower($matches [1])));
+			},
+			$subject
+		);
 		return $subject;
 	}
 }
@@ -1184,7 +1197,7 @@ function ent2ncr($text) {
 		'&lsaquo;' => '&#8249;',
 		'&rsaquo;' => '&#8250;',
 		'&oline;' => '&#8254;',
-		'&frasl;' => '&#8260;',
+		// '&frasl;' => '&#8260;', // e.g. "½", "⅔"
 		'&euro;' => '&#8364;',
 		'&image;' => '&#8465;',
 		'&weierp;' => '&#8472;',

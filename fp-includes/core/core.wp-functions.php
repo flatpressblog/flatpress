@@ -3,10 +3,9 @@
 /**
  * Returns the given action URL with the current nonce.
  *
- * @param string $actionurl
- *        	the URL
- * @param unknown $action
- * @return string the URL with the nonce
+ * @param string $actionurl The URL
+ * @param int|string $action Action name or ID for nonce creation
+ * @return string The URL with the nonce
  */
 function wp_nonce_url($actionurl, $action = -1) {
 	return wp_specialchars($actionurl . '&_wpnonce=' . wp_create_nonce($action));

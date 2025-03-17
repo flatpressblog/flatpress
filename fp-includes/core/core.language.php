@@ -169,28 +169,45 @@ function set_locale() {
 
 	// Creating the path to the language configuration file and securing it
 	$langConfFile = realpath(LANG_DIR . $langId . '/lang.conf.php');
+	$langconf = [];
+
 	if ($langConfFile && file_exists($langConfFile)) {
+		/** 
+		 * @var array{
+		 *     id: string,
+		 *     locale: string,
+		 *     charsets: array{
+		 *         0: string,
+		 *         1: string
+		 *     },
+		 *     localecountry_a: string,
+		 *     localecountry_b: string,
+		 *     localeshort: string,
+		 *     localecharset_a: string,
+		 *     localecharset_b: string,
+		 *     localecharset_c: string,
+		 *     localecharset_d: string
+		 * } $langconf 
+		 */
 		include_once $langConfFile;
-		if (isset($langconf)) {
-			if ($debug) {
-				error_log('set_locale -> Langconf loaded: ' . print_r($langconf, true));
-			}
+		if ($debug) {
+			error_log('set_locale -> Langconf loaded: ' . print_r($langconf, true));
 		}
 	} else {
 		if ($debug) {
-			trigger_error('set_locale -> Language configuration file not found: ' . ($langConfFile ?: 'undefined'), E_USER_WARNING);
+			trigger_error('set_locale -> Language configuration file not found: ' . ($langConfFile ? : 'undefined'), E_USER_WARNING);
 		}
 		return;
 	}
 
-	if (!empty($langconf ['charsets']) && is_array($langconf ['charsets'])) {
+	if (isset($langconf ['charsets']) && is_array($langconf ['charsets'])) {
 		if ($debug) {
 			error_log('set_locale -> Charset comparison. Defined: ' . print_r($langconf ['charsets'], true) . '. Current: ' . $charset);
 		}
-		if (isset($langconf ['charsets'] [0]) && strtolower($charset) === $langconf ['charsets'] [0]) {
+		if (isset($langconf ['charsets'] [0]) && strtolower($charset) === strtolower($langconf ['charsets'] [0])) {
 			$localeCharset_a = isset($langconf ['localecharset_a']) ? $langconf ['localecharset_a'] : '';
 			$localeCharset_b = isset($langconf ['localecharset_b']) ? $langconf ['localecharset_b'] : '';
-		} elseif (isset($langconf ['charsets'] [1]) && strtolower($charset) === $langconf ['charsets'] [1]) {
+		} elseif (isset($langconf ['charsets'] [1]) && strtolower($charset) === strtolower($langconf ['charsets'] [1])) {
 			$localeCharset_c = isset($langconf ['localecharset_c']) ? $langconf ['localecharset_c'] : '';
 			$localeCharset_d = isset($langconf ['localecharset_d']) ? $langconf ['localecharset_d'] : '';
 		}
@@ -438,10 +455,10 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8') {
 		'Ã¤' => 'ä', 'Ã¶' => 'ö', 'Ã¼' => 'ü', 'ÃŸ' => 'ß',
 		'Ã„' => 'Ä', 'Ã–' => 'Ö', 'Ãœ' => 'Ü',
 		// Spanish
-		'Ã¡' => 'á', 'Ã©' => 'é', 'Ã­' => 'í', 'Ã³' => 'ó', 'Ãº' => 'ú', 'Ã±' => 'ñ',
-		'Ã�' => 'Á', 'Ã‰' => 'É', 'Ã�' => 'Í', 'Ã“' => 'Ó', 'Ãš' => 'Ú', 'Ã‘' => 'Ñ',
+		'Ã¡' => 'á', 'Ã­' => 'í', 'Ã³' => 'ó', 'Ãº' => 'ú', 'Ã±' => 'ñ',
+		'Ã�' => 'Á', 'Ã‰' => 'É', 'Ã“' => 'Ó', 'Ãš' => 'Ú', 'Ã‘' => 'Ñ',
 		// French
-		'Ã ' => 'à', 'Ã¨' => 'è', 'Ã©' => 'é', 'Ãª' => 'ê', 'Ã«' => 'ë', 'Ã§' => 'ç',
+		'Ã ' => 'à', 'Ã¨' => 'è', 'Ã©' => 'é', 'Ã«' => 'ë',
 		// Italian
 		'Ã¬' => 'ì', 'Ã²' => 'ò', 'Ã¹' => 'ù',
 		// Czech
@@ -455,7 +472,7 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8') {
 		// Portuguese
 		'Ã£' => 'ã', 'Ãµ' => 'õ', 'Ãª' => 'ê', 'Ã§' => 'ç',
 		// Dutch
-		'Ã¨' => 'è', 'Ã´' => 'ô',
+		'Ã´' => 'ô',
 		// English (typical quotation marks and dashes)
 		'â€œ' => '“', 'â€' => '”', 'â€˜' => '‘', 'â€™' => '’', 'â€”' => '—'
 	];

@@ -25,8 +25,9 @@
 	 *
 	 * <p>Takes the id $id and returns a filepath</p>
 	 *
-	 * @param string $id string formatted like "prefixYYMMDD-HHMMSS.EXT"
-	 * @return string
+	 * @param string $id ID formatted like "prefixYYMMDD-HHMMSS.EXT"
+	 * @param string|null $type Optional type (BDB_ENTRY, BDB_COMMENT)
+	 * @return string|false Path to the file, or false if ID is invalid
 	 */
 	function bdb_idtofile($id, $type = null) {
 
@@ -113,8 +114,9 @@
 	 * ?>
 	 * </code>
 	 *
-	 * @param string $file filepath of the blogdb entry
-	 * @return string
+	 * @param string $id ID or file path to parse
+	 * @param string|null $type Optional type (e.g., BDB_ENTRY, BDB_COMMENT)
+	 * @return array|false Parsed key-value pairs, or false if file not found
 	 *
 	 * @todo validate returned id
 	 */

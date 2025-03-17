@@ -1,6 +1,6 @@
 <?php
 
-// aggiungere nuovo protocollo per template
+// Add new protocol for template
 include (ADMIN_DIR . 'panels/admin.defaultpanels.php');
 include (ADMIN_DIR . 'includes/panels.prototypes.php');
 
@@ -15,8 +15,13 @@ if (function_exists('opcache_get_status') && ini_get('opcache.enable')) {
 	}
 }
 
-function wp_nonce_ays() {
-	die('We apologize, an error occurred.');
+/**
+ * Handle failed nonce verification.
+ *
+ * @param string $action The action that was attempted (optional).
+ */
+function wp_nonce_ays($action = '') {
+	die('We apologize, an error occurred.' . ($action ? ' Action: ' . htmlspecialchars($action) : ''));
 }
 
 /*
@@ -26,10 +31,10 @@ function wp_nonce_ays() {
  */
 function main() {
 
-	// general setup
+	// General setup
 	global $panel, $action, $lang, $smarty, $fp_admin, $fp_admin_action;
 
-	// register all Smarty modifier functions used by the admin templates
+	// Register all Smarty modifier functions used by the admin templates
 	admin_register_smartyplugins();
 
 	$panels = admin_getpanels();
