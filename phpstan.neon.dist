@@ -5,8 +5,8 @@ parameters:
   paths:
     - .  # Check all
 
-  excludePaths:
-    - fp-includes/smarty-4.5.5/*
+  # excludePaths:
+    # - fp-includes/smarty-4.5.5/*
 
   ignoreErrors:
     # Dynamic and global variables
