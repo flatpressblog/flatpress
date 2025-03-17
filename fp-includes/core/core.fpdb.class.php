@@ -683,48 +683,24 @@ class FPDB {
 	}
 
 	/**
-	 * function query
+	 * Runs a query on the database.
 	 *
-	 * @param
-	 *        	mixed params
-	 *        	$params may be an associative array or a query string with the following syntax:
-	 *        	'key:val,key:val,key:val';
-	 *        	example: <code>$params = 'start:0,count:5';<br />
-	 *        	is a convenient way to express
-	 *        	$params = array('start'=>0,'count'=>5);</code>
-	 *        	
-	 *        	Valid parameters:
-	 *        	
-	 *        	start (int) first entry to show (counting from 0
-	 *        	to the total number of entries).
-	 *        	Defaults to 0.
-	 *        	
-	 *        	count (int) offset from start (e.g. for the first 5 entries,
-	 *        	you'll have start=0 and count=5).
-	 *        	Defaults to $blog_config['MAXENTRIES']
-	 *        	
-	 *        	page (int) page number (counting from 1 to
-	 *        	n=ceil(num_entries/maxentries_setting))
-	 *        	This is a shortcut for setting both start and count
-	 *        	and overrides them, if they're set too
-	 *        	
-	 *        	id (string) entry or static page id
-	 *        	
-	 *        	get (string) 'entry' or 'static' defaults to 'entry'. <-- not anymore
-	 *        	
-	 *        	y (string) two digit year (06 means 2006)
-	 *        	m (string) two digit month (06 means June); 'y' must be set
-	 *        	d (string) two digit for day; 'y' and 'm' must be set
-	 *        	
-	 *        	exclude (int) experimental: excludes category ID given as argument from listing
-	 *        	
-	 *        	
-	 *        	fullparse (bool) non-full-parsed entries get their values
-	 *        	right from the indexed list (or <em>cache</em>).
-	 *        	These values are 'subject', 'content' and 'categories'.
-	 *        	If you need any of the other values, you'll need to
-	 *        	set fullparse=true; defaults to false.
-	 *        	
+	 * @param mixed $params The parameters of the query. May be an associative array or a query string:
+	 *                      'key:val,key:val,key:val'
+	 *                      Example: $params = 'start:0,count:5';
+	 *                      Equivalent to: array('start' => 0, 'count' => 5)
+	 *                      Valid parameters:
+	 *                      - start (int): First entry to show (from 0)
+	 *                      - count (int): Number of entries to fetch
+	 *                      - page (int): Page number (overrides start and count)
+	 *                      - id (string): Entry or static page ID
+	 *                      - get (string): 'entry' or 'static' (default 'entry')
+	 *                      - y (string): Year (two digits)
+	 *                      - m (string): Month (two digits), requires 'y'
+	 *                      - d (string): Day (two digits), requires 'y' and 'm'
+	 *                      - exclude (int): Exclude category ID (experimental)
+	 *                      - fullparse (bool): Whether to fully parse entries (default false)
+	 * @return array The result of the query.
 	 */
 	function query($params = array()) {
 		static $queryId = -1;
