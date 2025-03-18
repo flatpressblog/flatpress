@@ -22,19 +22,12 @@ jobs:
         php-version: '8.3'
         extensions: mbstring, intl, dom, json, xml, ctype, fileinfo, iconv, curl
 
-    - name: Delete PHPStan Cache
-      run: rm -rf /tmp/phpstan || true
-        uses: actions/cache@v3
-        with:
-          path: /tmp/phpstan
-          key: phpstan-cache-${{ github.run_id }}
-
-    - name: Show Analyzed Paths
-      run: php phpstan.phar analyse --debug
+    - name: Clear PHPStan Cache
+      run: rm -rf /tmp/phpstan
 
     - name: Download PHPStan (phar)
       run: curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
 
     - name: Run PHPStan (phar)
-      run: php phpstan.phar analyse --debug --configuration=phpstan.neon.dist --error-format=github
+      run: php phpstan.phar analyse --configuration=phpstan.neon.dist --error-format=github
       working-directory: .
