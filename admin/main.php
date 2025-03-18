@@ -43,7 +43,7 @@ function main() {
 	define('ADMIN_PANEL', $panel);
 	$smarty->assign('panel', $panel);
 
-	// redirect to admin main page if requested panel does not exist
+	// Redirect to admin main page if requested panel does not exist
 	if (!admin_panelexists($panel)) {
 		// will lead to login if not logged in already
 		utils_redirect("admin.php");
