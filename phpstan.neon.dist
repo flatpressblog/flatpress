@@ -39,11 +39,5 @@ parameters:
     # Comparison of incorrect types
     - '#Comparison operation .* is always (true|false)#'
 
-    # IGNORE ALL ERRORS IN SMARTY
-    - { message: '#.*#', path: 'fp-includes/smarty-4.5.5/.*\.php' }
-    - { message: '#Call to method .* on an unknown class Smarty#', path: '.*' }
-    - { message: '#Access to property .* on an unknown class Smarty#', path: '.*' }
-    - { message: '#Parameter .* has invalid type Smarty#', path: '.*' }
-
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
