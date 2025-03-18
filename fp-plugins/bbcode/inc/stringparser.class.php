@@ -874,7 +874,7 @@ define('STRINGPARSER_NODE_TEXT', 2);
  * Compare it to a
  * sequence in databases.
  *
- * @var int
+ * @var int $__STRINGPARSER_NODE_ID
  */
 $GLOBALS ['__STRINGPARSER_NODE_ID'] = 0;
 
