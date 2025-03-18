@@ -7,7 +7,6 @@ $lang ['main'] = array(
 	'entry' => 'Data invoer',
 	'entries' => 'Vermeldingen',
 	'static' => 'Statische pagina',
-	'comment' => 'Commentaar',
 	'preview' => 'Wijzig/Voorbeeld',
 
 	'filed_under' => 'Geachiveerd onder ',
