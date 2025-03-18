@@ -41,9 +41,9 @@ parameters:
 
     # IGNORE ALL ERRORS IN SMARTY
     - { message: '#.*#', path: 'fp-includes/smarty-4.5.5/.*\.php' }
-    - { message: '#Call to method .* on an unknown class Smarty#' }
-    - { message: '#Access to property .* on an unknown class Smarty#' }
-    - { message: '#Parameter .* has invalid type Smarty#' }
+    - { message: '#Call to method .* on an unknown class Smarty#', path: '.*' }
+    - { message: '#Access to property .* on an unknown class Smarty#', path: '.*' }
+    - { message: '#Parameter .* has invalid type Smarty#', path: '.*' }
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
