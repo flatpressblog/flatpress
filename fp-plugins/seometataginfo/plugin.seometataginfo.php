@@ -138,7 +138,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 				$file_meta = SEOMETA_DEFAULT_DIR . 'metatags.ini';
 			}
 
-			if (!empty($file_meta) && !file_exists($file_meta)) {
+			if (isset($file_meta) && $file_meta !== '' && !file_exists($file_meta)) {
 				@io_write_file($file_meta, '');
 			}
 
@@ -218,7 +218,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 			$metatags .= 'noarchive=' . (isset($_POST ['pl_noarchive']) ? trim($_POST ['pl_noarchive']) : '0') . "\n";
 			$metatags .= 'nosnippet=' . (isset($_POST ['pl_nosnippet']) ? trim($_POST ['pl_nosnippet']) : '0') . "\n";
 
-			if (!empty($allowed_characters_regex)) {
+			if (isset($allowed_characters_regex) && !empty($allowed_characters_regex)) {
 				$metatags = preg_replace($allowed_characters_regex, '', $metatags);
 			}
 
