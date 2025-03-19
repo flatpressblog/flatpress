@@ -68,7 +68,10 @@ if (class_exists('AdminPanelAction')) {
 		}
 
 		function main() {
-			require CONFIG_DIR . 'plugins.conf.php';
+			$pluginConfigPath = CONFIG_DIR . 'plugins.conf.php';
+			if (file_exists($pluginConfigPath)) {
+				require $pluginConfigPath;
+			}
 			global $fp_config;
 
 			$BASE_DIR = defined('BASE_DIR') ? BASE_DIR : null;
