@@ -11,7 +11,7 @@ if (phpversion() >= "4.1.0") {
 
 // load language file
 require_once '../../../defaults.php';
-if (file_exists('fp-content/config/settings.conf.php')) {
+if (file_exists(CONFIG_DIR . 'settings.conf.php')) {
 	require_once CONFIG_DIR . 'settings.conf.php';
 }
 $langId = $fp_config ['locale'] ['lang'];
