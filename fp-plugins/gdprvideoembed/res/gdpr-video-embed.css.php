@@ -11,19 +11,26 @@ if (phpversion() >= "4.1.0") {
 
 // load language file
 require_once '../../../defaults.php';
+
 if (file_exists(CONFIG_DIR . 'settings.conf.php')) {
 	require_once CONFIG_DIR . 'settings.conf.php';
+} else {
+	$fp_config = [];
 }
-$langId = $fp_config ['locale'] ['lang'];
+
+$langId = isset($fp_config ['locale'] ['lang']) ? $fp_config ['locale'] ['lang'] : 'en-us';
+
 $langFile = ABS_PATH . PLUGINS_DIR . 'gdprvideoembed/lang/lang.' . $langId . '.php';
 
 if (!file_exists($langFile)) {
 	$langFile = ABS_PATH . PLUGINS_DIR . 'gdprvideoembed/lang/lang.en-us.php';
 }
 
-require_once $langFile;
+if (file_exists($langFile)) {
+	require_once $langFile;
+}
 ?>
-/*
+/**
  * Name: GDPR video embed
  * Module: ggdpr-video-embed.css
  * Plugin URI: https://www.flatpress.org
