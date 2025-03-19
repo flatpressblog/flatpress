@@ -76,7 +76,7 @@ class plugin_commentcenter {
 	 *        	The current status of the comment validation
 	 * @param array $comment:
 	 *        	The comment data
-	 * @return boolean: Is the comment valid?
+	 * @return bool Returns true if the comment is valid, false otherwise.
 	 */
 	function validate($status, $comment) {
 		global $smarty, $fp_params, $lang;
@@ -224,7 +224,7 @@ class plugin_commentcenter {
 	 *        	The comment data
 	 * @param string $entry:
 	 *        	The entry id
-	 * @return boolean: Is the comment allowed?
+	 * @return bool Is the comment allowed?
 	 */
 	function akismetCheck($comment, $entry) {
 		$akismet = &$this->akismetLoad();
@@ -390,7 +390,7 @@ class plugin_commentcenter {
 	 *        	The entry id
 	 * @param string $why:
 	 *        	The reason of the log
-	 * @return boolean: Can it saves the log?
+	 * @return bool Can it saves the log?
 	 */
 	function logComment($comment, $entry, $why = '') {
 		$f = $this->pl_dir . "e" . $entry . "_c" . $comment ['id'] . ".txt";
