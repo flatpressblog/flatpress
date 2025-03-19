@@ -11,7 +11,9 @@ if (phpversion() >= "4.1.0") {
 
 // load language file
 require_once '../../../defaults.php';
-require_once CONFIG_DIR . 'settings.conf.php';
+if (file_exists('fp-content/config/settings.conf.php')) {
+	require_once CONFIG_DIR . 'settings.conf.php';
+}
 $langId = $fp_config ['locale'] ['lang'];
 $langFile = ABS_PATH . PLUGINS_DIR . 'gdprvideoembed/lang/lang.' . $langId . '.php';
 
