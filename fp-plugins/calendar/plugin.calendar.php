@@ -38,7 +38,7 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 
 	// Information about the month
 	@list($month, $year, $month_name, $weekday) = explode(',', date_strformat('%m,%Y,%B,%w', $first_of_month));
-	$weekday = ($weekday + 7 - $first_day) % 7;
+	$weekday = ((int) $weekday + 7 - $first_day) % 7;
 	$title = htmlentities(ucfirst($month_name)) . '&nbsp;' . $year;
 
 	// Previous and next links, if applicable
@@ -125,66 +125,6 @@ function plugin_calendar_widget() {
 		$q->pointer++;
 	}
 
-	// Function to search for the previous month with entries
-	function find_prev_month_with_entries($year, $month) {
-		global $fpdb;
-
-		for ($i = 1; $i <= 12; $i++) {
-			$month--;
-			if ($month < 1) {
-				$month = 12;
-				$year--;
-			}
-
-			// Request for the month
-			$q = new FPDB_Query(array(
-				'fullparse' => true,
-				'y' => $year,
-				'm' => $month,
-				'count' => 1
-			), null);
-
-			if ($q->hasMore()) {
-				return get_month_link($year, str_pad($month, 2, '0', STR_PAD_LEFT));
-			}
-
-			// Cancel if the year goes back too far (default: 2006, year of birth of FlatPress)
-			if ($year < 2006) break;
-		}
-
-		return null;
-	}
-
-	// Function to search for the next month with entries
-	function find_next_month_with_entries($year, $month) {
-		global $fpdb;
-
-		for ($i = 1; $i <= 12; $i++) {
-			$month++;
-			if ($month > 12) {
-				$month = 1;
-				$year++;
-			}
-
-			// Request for the month
-			$q = new FPDB_Query(array(
-				'fullparse' => true,
-				'y' => $year,
-				'm' => $month,
-				'count' => 1
-			), null);
-
-			if ($q->hasMore()) {
-				return get_month_link($year, str_pad($month, 2, '0', STR_PAD_LEFT));
-			}
-
-			// Cancel if the year goes too far into the future (default: current year plus 2 years)
-			if ($year > date('Y') + 2) break;
-		}
-
-		return null;
-	}
-
 	// Retrieve links for the previous and next month with entries
 	$prev_link = find_prev_month_with_entries($y, $m);
 	$next_link = find_next_month_with_entries($y, $m);
@@ -201,4 +141,64 @@ function plugin_calendar_widget() {
 }
 
 register_widget('calendar', 'Calendar', 'plugin_calendar_widget');
+
+// Function to search for the previous month with entries
+function find_prev_month_with_entries($year, $month) {
+	global $fpdb;
+
+	for ($i = 1; $i <= 12; $i++) {
+		$month--;
+		if ($month < 1) {
+			$month = 12;
+			$year--;
+		}
+
+		// Request for the month
+		$q = new FPDB_Query(array(
+			'fullparse' => true,
+			'y' => $year,
+			'm' => $month,
+			'count' => 1
+		), null);
+
+		if ($q->hasMore()) {
+			return get_month_link($year, str_pad($month, 2, '0', STR_PAD_LEFT));
+		}
+
+		// Cancel if the year goes back too far (default: 2006, year of birth of FlatPress)
+		if ($year < 2006) break;
+	}
+
+	return null;
+}
+
+// Function to search for the next month with entries
+function find_next_month_with_entries($year, $month) {
+	global $fpdb;
+
+	for ($i = 1; $i <= 12; $i++) {
+		$month++;
+		if ($month > 12) {
+			$month = 1;
+			$year++;
+		}
+
+		// Request for the month
+		$q = new FPDB_Query(array(
+			'fullparse' => true,
+			'y' => $year,
+			'm' => $month,
+			'count' => 1
+		), null);
+
+		if ($q->hasMore()) {
+			return get_month_link($year, str_pad($month, 2, '0', STR_PAD_LEFT));
+		}
+
+		// Cancel if the year goes too far into the future (default: current year plus 2 years)
+		if ($year > date('Y') + 2) break;
+	}
+
+	return null;
+}
 ?>
