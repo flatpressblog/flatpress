@@ -45,7 +45,7 @@ class PhotoSwipeFunctions {
 		}
 
 		// sanitize first
-		if (!empty($img) && strpos($img, '..') !== false) {
+		if ($img !== '' && strpos($img, '..') !== false) {
 			return $lang ['plugin'] ['photoswipe'] ['label_imagedoesntexist'];
 		}
 
@@ -154,7 +154,7 @@ class PhotoSwipeFunctions {
 		}
 
 		// sanitize first
-		if (!empty($dir) && strpos($dir, '..') !== false) {
+		if ($dir !== '' && strpos($dir, '..') !== false) {
 			return $lang ['plugin'] ['photoswipe'] ['label_gallerydoesntexist'];
 		}
 		// check if dir exists

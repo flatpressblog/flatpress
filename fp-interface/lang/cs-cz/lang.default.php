@@ -7,7 +7,6 @@ $lang ['main'] = array(
 	'entry' => 'Příspěvek',
 	'entries' => 'Příspěvky',
 	'static' => 'Statická stránka',
-	'comment' => 'Komentář',
 	'preview' => 'Upravit/Náhled',
 
 	'filed_under' => 'Pole pod ',

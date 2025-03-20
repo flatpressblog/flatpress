@@ -150,7 +150,7 @@ function bbcode_remap_url(&$d) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return string
+ * @return bool|string
  */
 function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	global $lang;
@@ -190,7 +190,7 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return string
+ * @return bool|string
  */
 function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -324,7 +324,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return string
+ * @return bool|string
  */
 function do_bbcode_mail($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -354,7 +354,7 @@ function do_bbcode_mail($action, $attributes, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return string
+ * @return bool|string
  */
 function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 
@@ -476,7 +476,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return string
+ * @return bool|string
  */
 function do_bbcode_code($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -513,7 +513,7 @@ function do_bbcode_code($action, $attributes, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return string
+ * @return bool|string
  */
 function do_bbcode_html($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -540,7 +540,7 @@ function do_bbcode_html($action, $attributes, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return string
+ * @return bool|string
  */
 function do_bbcode_color($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -559,7 +559,7 @@ function do_bbcode_color($action, $attributes, $content, $params, $node_object) 
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return string
+ * @return bool|string
  */
 function do_bbcode_size($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -594,7 +594,7 @@ function do_bbcode_align($action, $attr, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return string
+ * @return bool|string
  */
 function do_bbcode_list($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {

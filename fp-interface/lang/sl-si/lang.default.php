@@ -7,7 +7,6 @@ $lang ['main'] = array(
 	'entry' => 'Vnos',
 	'entries' => 'Vnosi',
 	'static' => 'Statična stran',
-	'comment' => 'Komentar',
 	'preview' => 'Uredi/Ogled',
 
 	'filed_under' => 'Kategorija ',

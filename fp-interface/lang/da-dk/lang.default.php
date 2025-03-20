@@ -7,7 +7,6 @@ $lang ['main'] = array(
 	'entry' => 'Bidrag',
 	'entries' => 'Bidrag',
 	'static' => 'Statisk side',
-	'comment' => 'Kommentar',
 	'preview' => 'Rediger/gennemse',
 
 	'filed_under' => 'Arkiveret under ',

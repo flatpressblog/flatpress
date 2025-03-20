@@ -1125,7 +1125,7 @@ class StringParser_BBCode extends StringParser {
 	 * Output a node
 	 *
 	 * @access protected
-	 * @return bool
+	 * @return bool|string
 	 */
 	function _outputNode(&$node) {
 		$output = '';
@@ -1268,6 +1268,7 @@ class StringParser_BBCode extends StringParser {
 		unset($nodes);
 		$nodes = $this->_root->getNodesByCriterium('empty', true);
 		$nodes_count = count($nodes);
+		$parent = null;
 		if (isset($parent)) {
 			unset($parent);
 			$parent = null;
@@ -1479,7 +1480,7 @@ class StringParser_BBCode extends StringParser {
 	 *
 	 * @access protected
 	 * @param string $name
-	 * @return string
+	 * @return string|false
 	 */
 	function _getCanonicalName($name) {
 		if (isset($this->_codes [$name])) {
@@ -1573,8 +1574,8 @@ class StringParser_BBCode_Node_Paragraph extends StringParser_Node {
 			if (!strlen($content)) {
 				return true;
 			}
-			return false;
 		}
+		return false;
 	}
 
 }
@@ -2078,7 +2079,7 @@ class StringParser_BBCode_Node_Element extends StringParser_Node {
 		if ($this->_codeInfo ['callback_type'] == 'simple_replace' || $this->_codeInfo ['callback_type'] == 'simple_replace_single') {
 			if ($this->_codeInfo ['callback_type'] == 'simple_replace_single') {
 				if (strlen($subcontent)) { // can't be!
-					return false;
+					return strlen($subcontent) ? $this->_codeInfo ['callback_params'] ['start_tag'] : '';
 				}
 				return $this->_codeInfo ['callback_params'] ['start_tag'];
 			}

@@ -212,7 +212,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param integer $id:
 	 *        	The policy id. -1 means a new one
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function dopoledit($id) {
 		global $lang;
@@ -239,7 +239,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * The edit policy/new policy save callback.
 	 *
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function onedit_policy() {
 		$plugin = &$this->plugin;
@@ -390,7 +390,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This is the delete ok command.
 	 *
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function ondelok() {
 		if (empty($_POST ['del_policy'])) {
@@ -413,7 +413,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 * This is the cancel callback.
 	 * It just makes the redirect.
 	 *
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function oncancel() {
 		return 2;
@@ -465,7 +465,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This function is the callback for the approve_list command
 	 *
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function doapprove_list() {
 		$plugin = &$this->plugin;
@@ -491,7 +491,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *        	If true, don't redirect
 	 * @param boolean $noham:
 	 *        	If it was blocked from Akismet, don't submit as ham
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function dopublishcomm($id, $noredirect = false, $noham = false) {
 		$plugin = &$this->plugin;
@@ -551,7 +551,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param string $id:
 	 *        	The comment id
-	 * @return integer: The redirect option.
+	 * @return int The redirect option..
 	 */
 	function dopubnoham($id) {
 		return $this->dopublishcomm($id, false, true);
@@ -560,7 +560,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This is the callback to publish multiple comments.
 	 *
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function onmpubcomm() {
 		if (!isset($_POST ['select'])) {
@@ -658,7 +658,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This is the delete ok command.
 	 *
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function oncommdelok() {
 		if (empty($_POST ['select'])) {
@@ -679,7 +679,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 * This is the cancel callback.
 	 * It just makes the redirect.
 	 *
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function onccancel() {
 		$this->_redirect('approve_list');
@@ -691,7 +691,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param string $entry:
 	 *        	The entry id
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function domanage($entry) {
 		global $lang, $fpdb;
@@ -728,7 +728,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 * Since it's impossible to use a GET form in Flatpress, to search entries
 	 * we have to use a POST form, and here's its callback.
 	 *
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function onentry_search() {
 		if (!isset($_POST ['entry'])) {
@@ -816,7 +816,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This is the delete ok command.
 	 *
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function oncommdelok_2() {
 		if (empty($_POST ['select'])) {
@@ -839,7 +839,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 * This is the cancel callback.
 	 * It just makes the redirect.
 	 *
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function onccancel_2() {
 		$this->_redirect('manage', @$_POST ['entry']);
@@ -851,7 +851,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param string $id:
 	 *        	The comment id
-	 * @return integer: The redirect option
+	 * @return int The redirect option.
 	 */
 	function docommspam($id) {
 		$smarty = &$this->smarty;

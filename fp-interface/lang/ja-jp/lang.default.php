@@ -7,7 +7,6 @@ $lang ['main'] = array(
 	'entry' => 'ブログ記事',
 	'entries' => 'ブログ記事',
 	'static' => '固定ページ',
-	'comment' => 'コメント',
 	'preview' => '編集/プレビュー',
 
 	'filed_under' => 'Filed under ',

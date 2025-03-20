@@ -105,7 +105,7 @@ if (class_exists('AdminPanelAction')) {
 			}
 
 			// Call main() to show updated list
-			return $this->main();
+			$this->main();
 		}
 
 		/**
@@ -134,7 +134,7 @@ if (class_exists('AdminPanelAction')) {
 			}
 
 			// Call main() to show updated list
-			return $this->main();
+			$this->main();
 		}
 
 		function setup() {

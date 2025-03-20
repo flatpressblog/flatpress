@@ -26,28 +26,26 @@ function plugin_thumb_setup() {
  *
  * creates a thumbnail and caches the thumbnail in IMAGES_DIR/.thumb
  *
- * @param string $fpath
- *        	string with filepath
- * @param array $infos
- *        	infos from getimagesize($fpath) function
- * @param int $new_width
- * @param int $new_height
+ * @param string $fpath string with filepath
+ * @param array $infos infos from getimagesize($fpath)
+ * @param int $new_width Width of the thumbnail
+ * @param int $new_height Height of the thumbnail
  *
- * @return array array(string $thumbpath, int $thumbwidth, int $thumbheight)
+ * @return array [string $thumbpath, int $thumbwidth, int $thumbheight]
  *        
  */
 function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	if (!defined('PLUGIN_THUMB_ENABLED')) {
-		return array();
+		return [];
 	}
 
 	if (!file_exists($fpath)) {
-		return array();
+		return [];
 	}
 
 	if (!($new_width && $new_height)) {
 		trigger_error("Size can't be 0 but got width=" . $new_width . " height=" . $new_height . "\n", E_USER_WARNING);
-		return;
+		return [];
 	}
 
 	$thumbname = basename($fpath);
@@ -57,12 +55,7 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	if (file_exists($thumbpath)) {
 		$oldthumbinfo = getimagesize($thumbpath);
 		if ($new_width == $oldthumbinfo [0]) {
-			// already scaled
-			return array(
-				$thumbpath,
-				$new_width,
-				$new_height
-			);
+			return [$thumbpath, $new_width, $new_height];
 		}
 	}
 
@@ -79,6 +72,9 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 			break;
 		case 3:
 			$image = imagecreatefrompng($fpath);
+			break;
+		default:
+			return [];
 	}
 
 	// $image = imagecreatefromgd2 ($fpath);
@@ -86,7 +82,7 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	// create empty scaled and copy(resized) the picture
 
 	$scaled = imagecreatetruecolor($new_width, $new_height);
-	/*
+	/**
 	 * If gif or png preserve the alpha channel
 	 *
 	 * Added by Piero VDFN

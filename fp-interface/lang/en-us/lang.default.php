@@ -7,7 +7,6 @@ $lang ['main'] = array(
 	'entry' => 'Entry',
 	'entries' => 'Entries',
 	'static' => 'Static page',
-	'comment' => 'Comment',
 	'preview' => 'Edit/Preview',
 
 	'filed_under' => 'Filed under ',

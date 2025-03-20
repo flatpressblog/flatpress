@@ -10,46 +10,43 @@
  */
 
 /**
- * This plugin denies comments when they're containing "bad words",
- * e.g.
- * "href" (which indexes links)., etc.
+ * This plugin denies comments containing "bad words" (e.g., "href" or "[url").
  *
- * @global $smarty
- * @param boolean $bool
- * @param string $contents
- *        	The comment
- * @return unknown
+ * @global object $smarty Smarty template engine instance.
+ * @param bool $bool Whether the comment validation should proceed.
+ * @param array|string $contents The comment being checked (should be an array).
+ * @return bool Returns false if the comment contains spam words, true otherwise.
  */
 function plugin_qspam_validate($bool, $contents) {
 	if (!$bool) {
 		return false;
 	}
+
 	$qscfg = plugin_getoptions('qspam');
-	// We're looking for these words:
-	$BAN_WORDS = '';
-	if (isset($qscfg ['wordlist'])) {
-		$BAN_WORDS = $qscfg ['wordlist'];
-	} else {
-		// rudimentary ban of links
-		$BAN_WORDS = array(
-			'href',
-			'[url'
-		);
+
+	// Rudimentary ban of links
+	$BAN_WORDS = isset($qscfg ['wordlist']) ? (array) $qscfg ['wordlist'] : ['href', '[url'];
+
+	$qscfg ['number'] = isset($qscfg ['number']) ? (int) $qscfg ['number'] : 1;
+
+	if (!is_array($contents) || !isset($contents ['content'])) {
+		return false;
 	}
-	$qscfg ['number'] = isset($qscfg ['number']) ? $qscfg ['number'] : 1;
+
 	$txt = strtolower(trim($contents ['content']));
 	$count = 0;
-	while ($w = array_pop($BAN_WORDS)) {
-		$count += substr_count($txt, strtolower($w));
+
+	foreach ($BAN_WORDS as $word) {
+		$count += substr_count($txt, strtolower($word));
 	}
+
 	if ($count >= $qscfg ['number']) {
 		global $smarty;
 		$lang = lang_load('plugin:qspam');
-		$smarty->assign('error', array(
-			$lang ['plugin'] ['qspam'] ['error']
-		));
+		$smarty->assign('error', [$lang ['plugin'] ['qspam'] ['error']]);
 		return false;
 	}
+
 	return true;
 }
 add_filter('comment_validate', 'plugin_qspam_validate', 5, 2);

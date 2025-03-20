@@ -68,7 +68,10 @@ if (class_exists('AdminPanelAction')) {
 		}
 
 		function main() {
-			require CONFIG_DIR . 'plugins.conf.php';
+			$pluginConfigPath = CONFIG_DIR . 'plugins.conf.php';
+			if (file_exists($pluginConfigPath)) {
+				require $pluginConfigPath;
+			}
 			global $fp_config;
 
 			$BASE_DIR = defined('BASE_DIR') ? BASE_DIR : null;
@@ -159,10 +162,9 @@ if (class_exists('AdminPanelAction')) {
 			}
 
 			$support ['local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['local_date_time'];
-			if (function_exists('date_time') && function_exists('gmdate')) {
-				$timestamp = date_time();
-				$date_time = gmdate('Y-m-d H:i:s', $timestamp);
-				$support ['output_local_date_time'] = $date_time . '</p>';
+			$dateTime = getLocalDateTime();
+			if ($dateTime !== false) {
+				$support ['output_local_date_time'] = $dateTime . '</p>';
 			} else {
 				$support ['output_local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['neg_local_date_time'];
 			}
@@ -540,5 +542,13 @@ if (class_exists('AdminPanelAction')) {
 
 	// Register to 'maintain' menu
 	admin_addpanelaction('maintain', 'support', true);
+}
+
+function getLocalDateTime() {
+	if (function_exists('date_time') && function_exists('gmdate')) {
+		$timestamp = date_time();
+		return gmdate('Y-m-d H:i:s', $timestamp);
+	}
+	return false;
 }
 ?>
