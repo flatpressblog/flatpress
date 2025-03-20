@@ -84,32 +84,26 @@ function login_main() {
 		if (isset($_GET ['do']) && ($_GET ['do'] == 'logout')) {
 			user_logout();
 
-			function myredirect() {
+			add_filter('wp_head', function () {
 				// Logout redirects to home page
-				login_redirect('.');
-			}
-
-			add_filter('wp_head', 'myredirect');
+				myredirect('.');
+			});
 
 			$content = (SHARED_TPLS . 'login.tpl');
 		} elseif (user_loggedin()) {
-			function myredirect() {
+			add_filter('wp_head', function () {
 				// Login redirects to Admin Area
-				login_redirect('admin.php');
-			}
-
-			add_filter('wp_head', 'myredirect');
+				myredirect('admin.php');
+			});
 
 			$content = (SHARED_TPLS . 'login_success.tpl');
 		} else {
 			utils_redirect();
 		}
 	} elseif (sess_remove('logout_done')) {
-		function myredirect() {
-			// login_redirect('.');
-		}
-
-		add_filter('wp_head', 'myredirect');
+			//add_filter('wp_head', function () {
+				//myredirect('.');
+			//});
 
 		$content = (SHARED_TPLS . 'login_success.tpl');
 	} elseif (empty($_POST)) {
@@ -139,6 +133,10 @@ function login_main() {
 
 	$smarty->assign('subject', $lang ['login'] ['head']);
 	$smarty->assign('content', $content);
+}
+
+function myredirect($target) {
+	login_redirect($target);
 }
 
 function login_redirect($url, $secs = 0) {
