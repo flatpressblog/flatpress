@@ -151,7 +151,7 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
                 break;
         }
     }
-    if (!isset($options) && !isset($values)) {
+    if (empty($options)) {
         return '';
     } /* raise error here? */
     $_html_result = array();
@@ -189,6 +189,7 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
     }
     if (!empty($params[ 'assign' ])) {
         $template->assign($params[ 'assign' ], $_html_result);
+        return '';
     } else {
         return implode("\n", $_html_result);
     }
