@@ -7,31 +7,27 @@
  */
 /**
  * Smarty {html_options} function plugin
+ *
  * Type:     function
  * Name:     html_options
- * Purpose:  Prints the list of <option> tags generated from
- *           the passed parameters
- * Params:
+ * Purpose:  Prints the list of <option> tags generated from the passed parameters.
  *
- * - name       (optional) - string default "select"
- * - values     (required) - if no options supplied) - array
- * - options    (required) - if no values supplied) - associative array
- * - selected   (optional) - string default not set
- * - output     (required) - if not options supplied) - array
- * - id         (optional) - string default not set
- * - class      (optional) - string default not set
+ * Parameters:
+ * - name       (optional)  - name of the select element (default: "select")
+ * - values     (required if "options" not set) - array of values
+ * - options    (required if "values" not set) - associative array of options
+ * - selected   (optional)  - value or array of selected option(s)
+ * - output     (required if "options" not set) - array of displayed text values
+ * - id         (optional)  - HTML ID attribute for <select>
+ * - class      (optional)  - HTML class attribute for <select>
  *
- * @link   https://www.smarty.net/manual/en/language.function.html.options.php {html_image}
- *           (Smarty online manual)
+ * @link   https://www.smarty.net/manual/en/language.function.html.options.php {html_options}
  * @author Monte Ohrt <monte at ohrt dot com>
  * @author Ralf Strehle (minor optimization) <ralf dot strehle at yahoo dot de>
- *
- * @param array                     $params parameters
- *
- * @param \Smarty_Internal_Template $template
- *
- * @return string
- * @uses   smarty_function_escape_special_chars()
+ * @param array $params Parameters passed to the function
+ * @param \Smarty_Internal_Template $template Smarty template object
+ * @return string Rendered HTML <select> element
+ * @uses smarty_function_escape_special_chars()
  * @throws \SmartyException
  */
 function smarty_function_html_options($params, Smarty_Internal_Template $template)
@@ -52,6 +48,7 @@ function smarty_function_html_options($params, Smarty_Internal_Template $templat
     $id = null;
     $class = null;
     $extra = '';
+
     foreach ($params as $_key => $_val) {
         switch ($_key) {
             case 'name':
@@ -127,13 +124,15 @@ function smarty_function_html_options($params, Smarty_Internal_Template $templat
                 break;
         }
     }
-    if (!isset($options) && !isset($values)) {
+
+    if (empty($options) && $values === null) {
         /* raise error here? */
         return '';
     }
+
     $_html_result = '';
     $_idx = 0;
-    if (isset($options)) {
+    if ($options !== null) {
         foreach ($options as $_key => $_val) {
             $_html_result .= smarty_function_html_options_optoutput($_key, $_val, $selected, $id, $class, $_idx);
         }
@@ -143,13 +142,15 @@ function smarty_function_html_options($params, Smarty_Internal_Template $templat
             $_html_result .= smarty_function_html_options_optoutput($_key, $_val, $selected, $id, $class, $_idx);
         }
     }
-    if (!empty($name)) {
-        $_html_class = !empty($class) ? ' class="' . $class . '"' : '';
-        $_html_id = !empty($id) ? ' id="' . $id . '"' : '';
+
+    if ($name !== null && $name !== '') {
+        $_html_class = ($class !== null && $class !== '') ? ' class="' . $class . '"' : '';
+        $_html_id = ($id !== null && $id !== '') ? ' id="' . $id . '"' : '';
         $_html_result =
             '<select name="' . $name . '"' . $_html_class . $_html_id . $extra . '>' . "\n" . $_html_result .
             '</select>' . "\n";
     }
+
     return $_html_result;
 }
 
