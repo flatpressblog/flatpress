@@ -25,7 +25,7 @@ function smarty_function_fetch($params, $template)
 {
     if (empty($params[ 'file' ])) {
         trigger_error('[plugin] fetch parameter \'file\' cannot be empty', E_USER_NOTICE);
-        return;
+        return null;
     }
     // strip file protocol
     if (stripos($params[ 'file' ], 'file://') === 0) {
@@ -39,12 +39,12 @@ function smarty_function_fetch($params, $template)
         if ($protocol) {
             // remote resource (or php stream, …)
             if (!$template->smarty->security_policy->isTrustedUri($params[ 'file' ])) {
-                return;
+                return null;
             }
         } else {
             // local file
             if (!$template->smarty->security_policy->isTrustedResourceDir($params[ 'file' ])) {
-                return;
+                return null;
             }
         }
     }
@@ -98,7 +98,7 @@ function smarty_function_fetch($params, $template)
                         if (!empty($param_value)) {
                             if (!preg_match('![\w\d-]+: .+!', $param_value)) {
                                 trigger_error("[plugin] invalid header format '{$param_value}'", E_USER_NOTICE);
-                                return;
+                                return null;
                             } else {
                                 $extra_headers[] = $param_value;
                             }
@@ -114,7 +114,7 @@ function smarty_function_fetch($params, $template)
                             $proxy_port = (int)$param_value;
                         } else {
                             trigger_error("[plugin] invalid value for attribute '{$param_key }'", E_USER_NOTICE);
-                            return;
+                            return null;
                         }
                         break;
                     case 'agent':
@@ -132,12 +132,12 @@ function smarty_function_fetch($params, $template)
                             $timeout = (int)$param_value;
                         } else {
                             trigger_error("[plugin] invalid value for attribute '{$param_key}'", E_USER_NOTICE);
-                            return;
+                            return null;
                         }
                         break;
                     default:
                         trigger_error("[plugin] unrecognized attribute '{$param_key}'", E_USER_NOTICE);
-                        return;
+                        return null;
                 }
             }
             if (!empty($proxy_host) && !empty($proxy_port)) {
@@ -148,7 +148,7 @@ function smarty_function_fetch($params, $template)
             }
             if (!$fp) {
                 trigger_error("[plugin] unable to fetch: $errstr ($errno)", E_USER_NOTICE);
-                return;
+                return null;
             } else {
                 if ($_is_proxy) {
                     fputs($fp, 'GET ' . $params[ 'file' ] . " HTTP/1.0\r\n");
@@ -188,7 +188,7 @@ function smarty_function_fetch($params, $template)
             }
         } else {
             trigger_error("[plugin fetch] unable to parse URL, check syntax", E_USER_NOTICE);
-            return;
+            return null;
         }
     } else {
         $content = @file_get_contents($params[ 'file' ]);
