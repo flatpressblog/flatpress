@@ -361,10 +361,10 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
     // order the fields for output
     $_html = '';
     for ($i = 0; $i <= 2; $i++) {
-        switch ($field_order[ $i ]) {
+        switch ($field_order[$i]) {
             case 'Y':
             case 'y':
-                if (isset($_html_years)) {
+                if (!empty($_html_years)) {
                     if ($_html) {
                         $_html .= $field_separator;
                     }
@@ -373,7 +373,7 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
                 break;
             case 'm':
             case 'M':
-                if (isset($_html_months)) {
+                if (!empty($_html_months)) {
                     if ($_html) {
                         $_html .= $field_separator;
                     }
@@ -382,7 +382,7 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
                 break;
             case 'd':
             case 'D':
-                if (isset($_html_days)) {
+                if (!empty($_html_days)) {
                     if ($_html) {
                         $_html .= $field_separator;
                     }
