@@ -151,7 +151,7 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
                 break;
         }
     }
-    if (empty($options)) {
+    if (!is_array($options) || $options === []) {
         return '';
     } /* raise error here? */
     $_html_result = array();
