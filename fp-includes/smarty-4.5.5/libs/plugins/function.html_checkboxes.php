@@ -157,7 +157,7 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
     } /* raise error here? */
     $_html_result = array();
     if (!empty($options)) {
-        foreach ($options as $_key => $_val) {
+        foreach ((array) $values as $_i => $_key) {
             $_html_result[] =
                 smarty_function_html_checkboxes_output(
                     $name,
