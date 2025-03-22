@@ -88,33 +88,44 @@ if (!function_exists('fnmatch')) {
 }
 
 /**
- * function prototype:
- * array utils_kexplode(string $string, string $delim='|')
+ * Parses a delimited string into an associative array.
  *
- * explodes a string into an array by the given delimiter;
- * delimiter defaults to pipe ('|').
- * the string must be formatted as in:
- * key1|value1|key2|value2 , etc.
- * the array will look like
- *  $arr['key1'] = 'value1'; $arr['key2'] = 'value2'; etc.
+ * The input string must follow the format: "key1|value1|key2|value2|...".
+ * The function splits the string using the given delimiter (default: '|') and
+ * returns an associative array like ['key1' => 'value1', 'key2' => 'value2', ...].
+ *
+ * If $keyupper is true, only keys containing uppercase letters, hyphens, or underscores
+ * are accepted. Invalid keys are skipped.
+ *
+ * @param string $string   The input string to parse.
+ * @param string $delim    The delimiter used to separate keys and values. Default is '|'.
+ * @param bool $keyupper   If true, only accept keys with uppercase letters, hyphens, or underscores.
+ *
+ * @return array<string, string>  Associative array of parsed key-value pairs.
  */
 function utils_kexplode($string, $delim = '|', $keyupper = true) {
 	$arr = array();
 	$string = trim($string);
 
-	$k = strtolower(strtok($string, $delim));
-	if (empty($k)) {
+	if (empty($string) || strpos($string, $delim) === false) {
 		return $arr;
 	}
 
-	$arr [$k] = strtok($delim);
-	if (empty($arr [$k])) {
+	$token = strtok($string, $delim);
+	if ($token === false) {
 		return $arr;
 	}
+	$k = strtolower($token);
+
+	$token = strtok($delim);
+	if ($token === false) {
+		return $arr;
+	}
+	$arr[$k] = $token;
 
 	while (($k = strtok($delim)) !== false) {
 		if ($keyupper && !preg_match('/[A-Z-_]/', $k)) {
-			/*
+			/**
 			 * trigger_error("Failed parsing <pre>$string</pre>
 			 * keys were supposed to be UPPERCASE but <strong>\"$k\"</strong> was found; file may be corrupted
 			 * or in an expected format. <br />
@@ -124,8 +135,11 @@ function utils_kexplode($string, $delim = '|', $keyupper = true) {
 			 */
 			continue;
 		}
-
-		$arr [strtolower($k)] = strtok($delim);
+		$v = strtok($delim);
+		if ($v === false) {
+			break;
+		}
+		$arr[strtolower($k)] = $v;
 	}
 
 	return $arr;
