@@ -129,7 +129,7 @@ function smarty_function_html_options($params, Smarty_Internal_Template $templat
         }
     }
 
-    if ((empty($options) && !is_array($values)) || (empty($options) && empty($values))) {
+    if ((empty($options) && (!is_array($values) || empty($values)))) {
         /* raise error here? */
         return '';
     }
@@ -148,9 +148,9 @@ function smarty_function_html_options($params, Smarty_Internal_Template $templat
         }
     }
 
-    if (!empty($name)) {
-        $_html_class = !empty($class) ? ' class="' . $class . '"' : '';
-        $_html_id = !empty($id) ? ' id="' . $id . '"' : '';
+    if ($name !== null && $name !== '') {
+        $_html_class = ($class !== null && $class !== '') ? ' class="' . $class . '"' : '';
+        $_html_id = ($id !== null && $id !== '') ? ' id="' . $id . '"' : '';
         $_html_result = '<select name="' . $name . '"' . $_html_class . $_html_id . $extra . ">\n" .
             $_html_result . '</select>' . "\n";
     }
