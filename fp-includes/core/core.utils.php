@@ -88,43 +88,41 @@ if (!function_exists('fnmatch')) {
 }
 
 /**
- * Parses a delimited string into an associative array.
+ * Parses a delimited string into an associative array of key-value pairs.
  *
- * The input string must follow the format: "key1|value1|key2|value2|...".
- * The function splits the string using the given delimiter (default: '|') and
- * returns an associative array like ['key1' => 'value1', 'key2' => 'value2', ...].
+ * The input string must be formatted as:
+ *     "key1|value1|key2|value2" (or using other delimiters)
+ * 
+ * It will be converted into:
+ *     ['key1' => 'value1', 'key2' => 'value2']
  *
- * If $keyupper is true, only keys containing uppercase letters, hyphens, or underscores
- * are accepted. Invalid keys are skipped.
+ * Multiple delimiters can be used (e.g. ',:'), and empty tokens are ignored.
  *
- * @param string $string   The input string to parse.
- * @param string $delim    The delimiter used to separate keys and values. Default is '|'.
- * @param bool $keyupper   If true, only accept keys with uppercase letters, hyphens, or underscores.
+ * If $keyupper is true, only keys that contain at least one uppercase letter,
+ * hyphen, or underscore are accepted. Invalid keys will be skipped.
  *
- * @return array<string, string>  Associative array of parsed key-value pairs.
+ * @param string $string     The delimited input string to parse.
+ * @param string $delims     A string of one or more delimiters (default: '|').
+ * @param bool   $keyupper   If true, filters keys using uppercase, '-' or '_' (default: true).
+ *
+ * @return array<string, string> Associative array of parsed key-value pairs.
  */
-function utils_kexplode($string, $delim = '|', $keyupper = true) {
-	$arr = array();
+function utils_kexplode($string, $delims = '|', $keyupper = true) {
+	$arr = [];
 	$string = trim($string);
 
-	if (empty($string) || strpos($string, $delim) === false) {
+	if ($string === '') {
 		return $arr;
 	}
 
-	$token = strtok($string, $delim);
-	if ($token === false) {
-		return $arr;
-	}
-	$k = strtolower($token);
+	$tokens = preg_split('/[' . preg_quote($delims, '/') . ']/', $string, -1, PREG_SPLIT_NO_EMPTY);
+	$count = count($tokens);
 
-	$token = strtok($delim);
-	if ($token === false) {
-		return $arr;
-	}
-	$arr[$k] = $token;
+	for ($i = 0; $i + 1 < $count; $i += 2) {
+		$key = trim($tokens [$i]);
+		$val = trim($tokens [$i + 1]);
 
-	while (($k = strtok($delim)) !== false) {
-		if ($keyupper && !preg_match('/[A-Z-_]/', $k)) {
+		if ($keyupper && !preg_match('/[A-Z-_]/', $key)) {
 			/**
 			 * trigger_error("Failed parsing <pre>$string</pre>
 			 * keys were supposed to be UPPERCASE but <strong>\"$k\"</strong> was found; file may be corrupted
@@ -135,11 +133,8 @@ function utils_kexplode($string, $delim = '|', $keyupper = true) {
 			 */
 			continue;
 		}
-		$v = strtok($delim);
-		if ($v === false) {
-			break;
-		}
-		$arr[strtolower($k)] = $v;
+
+		$arr [strtolower($key)] = $val;
 	}
 
 	return $arr;
