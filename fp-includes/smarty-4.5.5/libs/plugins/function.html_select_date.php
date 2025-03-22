@@ -102,11 +102,6 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
     $option_separator = "\n";
     $time = null;
 
-    global $fp_config;
-    $raw_locale = $fp_config['locale']['lang'] ?? 'en-us';
-    $parts = explode('-', strtolower($raw_locale));
-    $locale = isset($parts[1]) ? $parts[0] . '_' . strtoupper($parts[1]) : $raw_locale;
-
     // $day_empty = null;
     // $all_empty = null;
     // $month_empty = null;
