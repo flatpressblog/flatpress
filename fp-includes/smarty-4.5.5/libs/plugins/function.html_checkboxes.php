@@ -7,40 +7,41 @@
  */
 /**
  * Smarty {html_checkboxes} function plugin
- * File:       function.html_checkboxes.php
- * Type:       function
- * Name:       html_checkboxes
- * Date:       24.Feb.2003
- * Purpose:    Prints out a list of checkbox input types
- * Examples:
  *
- * {html_checkboxes values=$ids output=$names}
- * {html_checkboxes values=$ids name='box' separator='<br>' output=$names}
- * {html_checkboxes values=$ids checked=$checked separator='<br>' output=$names}
+ * Generates a list of HTML checkbox inputs, optionally wrapped in <label> tags.
  *
- * Params:
+ * Example usage:
+ *  {html_checkboxes values=$ids output=$names}
+ *  {html_checkboxes values=$ids name='box' separator='<br>' output=$names}
+ *  {html_checkboxes values=$ids checked=$checked separator='<br>' output=$names}
  *
- * - name       (optional) - string default "checkbox"
- * - values     (required) - array
- * - options    (optional) - associative array
- * - checked    (optional) - array default not set
- * - separator  (optional) - ie <br> or &nbsp;
- * - output     (optional) - the output next to each checkbox
- * - assign     (optional) - assign the output as an array to this variable
- * - escape     (optional) - escape the content (not value), defaults to true
+ * Accepted parameters:
+ * - name        (string)   Name attribute of each checkbox (default: "checkbox")
+ * - values      (array)    Indexed array of checkbox values (alternative to "options")
+ * - output      (array)    Indexed array of labels for each value (used with "values")
+ * - options     (array)    Associative array of value => label (alternative to "values"/"output")
+ * - checked     (mixed)    Pre-selected value(s) (alias: "selected")
+ * - separator   (string)   String to separate each checkbox (e.g., '<br>' or '&nbsp;')
+ * - assign      (string)   Template variable to assign the result to instead of outputting it
+ * - escape      (bool)     Whether to escape labels and values (default: true)
+ * - labels      (bool)     Whether to wrap each input in a <label> (default: true)
+ * - label_ids   (bool)     Whether to assign unique IDs to inputs and labels (default: false)
+ * - disabled    (bool)     Whether to add a "disabled" attribute to each input
+ * - readonly    (bool)     Whether to add a "readonly" attribute to each input
+ * - strict      (bool)     Enforce strict validation on certain attributes (optional)
+ * - ...         (mixed)    Any other attributes will be added to the input elements
  *
- * @link    https://www.smarty.net/manual/en/language.function.html.checkboxes.php {html_checkboxes}
- *             (Smarty online manual)
- * @author  Christopher Kvarme <christopher.kvarme@flashjab.com>
- * @author  credits to Monte Ohrt <monte at ohrt dot com>
- * @version 1.0
+ * @link     https://www.smarty.net/manual/en/language.function.html.checkboxes.php
+ * @author   Christopher Kvarme <christopher.kvarme@flashjab.com>
+ * @author   Monte Ohrt <monte at ohrt dot com>
+ * @version  1.1
  *
- * @param array                    $params   parameters
- * @param Smarty_Internal_Template $template template object
+ * @param array<string, mixed>        $params   Parameters passed from the template
+ * @param Smarty_Internal_Template    $template The Smarty template object
  *
- * @return string
- * @uses    smarty_function_escape_special_chars()
+ * @return string                     Rendered HTML output or an empty string if options/values are missing
  * @throws \SmartyException
+ * @uses smarty_function_escape_special_chars()
  */
 function smarty_function_html_checkboxes($params, Smarty_Internal_Template $template)
 {
@@ -151,11 +152,11 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
                 break;
         }
     }
-    if (!isset($options) && !isset($values)) {
+    if ((!isset($params['options']) || empty($params['options'])) && (!isset($params['values']) || empty($params['values']))) {
         return '';
     } /* raise error here? */
     $_html_result = array();
-    if (isset($options)) {
+    if (!empty($options)) {
         foreach ($options as $_key => $_val) {
             $_html_result[] =
                 smarty_function_html_checkboxes_output(
@@ -171,6 +172,7 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
                 );
         }
     } else {
+        $values = (array) $values;
         foreach ($values as $_i => $_key) {
             $_val = isset($output[ $_i ]) ? $output[ $_i ] : '';
             $_html_result[] =
@@ -189,23 +191,29 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
     }
     if (!empty($params[ 'assign' ])) {
         $template->assign($params[ 'assign' ], $_html_result);
+        return '';
     } else {
         return implode("\n", $_html_result);
     }
 }
 
 /**
- * @param      $name
- * @param      $value
- * @param      $output
- * @param      $selected
- * @param      $extra
- * @param      $separator
- * @param      $labels
- * @param      $label_ids
- * @param bool $escape
+ * Generates the HTML markup for a single checkbox input.
  *
- * @return string
+ * This helper is used internally by {@see smarty_function_html_checkboxes()}.
+ * It supports optional wrapping labels, automatic ID generation, and value escaping.
+ *
+ * @param string       $name        Name attribute for the checkbox input
+ * @param string|int   $value       Value attribute for the checkbox input
+ * @param string|int   $output      Label to be shown next to the checkbox
+ * @param array|string $selected    Selected values (array for multiple selections or string for single)
+ * @param string       $extra       Extra HTML attributes (e.g. disabled, class, style)
+ * @param string       $separator   HTML used to separate checkboxes (e.g. '<br>')
+ * @param bool         $labels      Whether to wrap the input in a <label> element
+ * @param bool         $label_ids   Whether to generate unique ID attributes and link <label for="">
+ * @param bool         $escape      Whether to escape label/output and value content
+ *
+ * @return string Rendered HTML string for a single checkbox with label and optional attributes
  */
 function smarty_function_html_checkboxes_output(
     $name,
@@ -277,7 +285,7 @@ function smarty_function_html_checkboxes_output(
     } elseif ($value === $selected) {
         $_output .= ' checked="checked"';
     }
-    $_output .= $extra . ' />' . $output;
+    $_output .= $extra . '>' . $output;
     if ($labels) {
         $_output .= '</label>';
     }

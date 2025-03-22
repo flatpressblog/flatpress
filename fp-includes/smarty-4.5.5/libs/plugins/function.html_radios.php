@@ -7,40 +7,41 @@
  */
 /**
  * Smarty {html_radios} function plugin
- * File:       function.html_radios.php
- * Type:       function
- * Name:       html_radios
- * Date:       24.Feb.2003
- * Purpose:    Prints out a list of radio input types
- * Params:
  *
- * - name       (optional) - string default "radio"
- * - values     (required) - array
- * - options    (required) - associative array
- * - checked    (optional) - array default not set
- * - separator  (optional) - ie <br> or &nbsp;
- * - output     (optional) - the output next to each radio button
- * - assign     (optional) - assign the output as an array to this variable
- * - escape     (optional) - escape the content (not value), defaults to true
+ * Renders a list of HTML radio input elements based on the given parameters.
+ * Supports both `values`/`output` arrays and associative `options` arrays.
  *
- * Examples:
+ * Example usage in templates:
+ *   {html_radios values=$ids output=$names}
+ *   {html_radios values=$ids name='group' separator='<br>' output=$names}
+ *   {html_radios values=$ids checked=$selected separator='<br>' output=$names}
  *
- * {html_radios values=$ids output=$names}
- * {html_radios values=$ids name='box' separator='<br>' output=$names}
- * {html_radios values=$ids checked=$checked separator='<br>' output=$names}
+ * Supported parameters:
+ * - name       (string)  – Name attribute of the radio input group (default: "radio")
+ * - values     (array)   – List of values for the radio buttons (used with "output")
+ * - output     (array)   – Corresponding labels for the "values"
+ * - options    (array)   – Associative array of value => label (alternative to values/output)
+ * - checked    (mixed)   – Pre-selected value (alias: "selected")
+ * - separator  (string)  – String to separate each radio input (e.g. '<br>', '&nbsp;')
+ * - assign     (string)  – Assign the rendered output to a template variable
+ * - escape     (bool)    – Whether to escape the label content (default: true)
+ * - labels     (bool)    – Whether to wrap radio inputs in <label> tags (default: true)
+ * - label_ids  (bool)    – Whether to add `id` attributes to inputs and link them with labels
+ * - strict     (bool)    – Enables stricter attribute validation for 'disabled' or 'readonly'
+ * - disabled   (bool|string) – Adds disabled attribute when strict mode is on
+ * - readonly   (bool|string) – Adds readonly attribute when strict mode is on
+ * - ...        (mixed)   – Any additional key-value pairs are added as HTML attributes
  *
- * @link    https://www.smarty.net/manual/en/language.function.html.radios.php {html_radios}
- *          (Smarty online manual)
+ * @link    https://www.smarty.net/manual/en/language.function.html.radios.php
  * @author  Christopher Kvarme <christopher.kvarme@flashjab.com>
- * @author  credits to Monte Ohrt <monte at ohrt dot com>
- * @version 1.0
+ * @author  Monte Ohrt <monte at ohrt dot com>
+ * @version 1.1
  *
- * @param array                    $params   parameters
- * @param Smarty_Internal_Template $template template object
- *
- * @return string
- * @uses    smarty_function_escape_special_chars()
+ * @param array<string, mixed>         $params   Parameters passed from the template
+ * @param Smarty_Internal_Template     $template The Smarty template object
+ * @return string                      Rendered HTML or empty string if 'assign' is used
  * @throws \SmartyException
+ * @uses smarty_function_escape_special_chars()
  */
 function smarty_function_html_radios($params, Smarty_Internal_Template $template)
 {
@@ -134,7 +135,8 @@ function smarty_function_html_radios($params, Smarty_Internal_Template $template
                 break;
         }
     }
-    if (!isset($options) && !isset($values)) {
+    $values = isset($params['values']) ? (array)$params['values'] : [];
+    if ((empty($options) || !is_array($options)) && (!isset($params['values']) || empty($params['values']) || !is_array($params['values']))) {
         /* raise error here? */
         return '';
     }
@@ -173,23 +175,29 @@ function smarty_function_html_radios($params, Smarty_Internal_Template $template
     }
     if (!empty($params[ 'assign' ])) {
         $template->assign($params[ 'assign' ], $_html_result);
+        return '';
     } else {
         return implode("\n", $_html_result);
     }
 }
 
 /**
- * @param $name
- * @param $value
- * @param $output
- * @param $selected
- * @param $extra
- * @param $separator
- * @param $labels
- * @param $label_ids
- * @param $escape
+ * Helper function to render a single HTML radio input element (optionally wrapped in a <label> tag).
  *
- * @return string
+ * This function is called internally by {@see smarty_function_html_radios()} for each radio item.
+ * It handles value escaping, label wrapping, and optional ID generation for better accessibility.
+ *
+ * @param string $name       The name attribute for the radio input
+ * @param mixed  $value      The value attribute for the radio input
+ * @param mixed  $output     The visible label/text next to the radio input
+ * @param mixed  $selected   The selected value (to determine "checked" state)
+ * @param string $extra      Additional attributes as a string (e.g. 'disabled="disabled"')
+ * @param string $separator  HTML or plain-text separator after the radio input
+ * @param bool   $labels     Whether to wrap the radio input in a <label> tag
+ * @param bool   $label_ids  Whether to generate a unique ID and associate it with the label
+ * @param bool   $escape     Whether to HTML-escape the visible label text
+ *
+ * @return string            The rendered HTML string for the radio input (and optional label)
  */
 function smarty_function_html_radios_output(
     $name,
@@ -257,7 +265,7 @@ function smarty_function_html_radios_output(
     if ($value === $selected) {
         $_output .= ' checked="checked"';
     }
-    $_output .= $extra . ' />' . $output;
+    $_output .= $extra . '>' . $output;
     if ($labels) {
         $_output .= '</label>';
     }

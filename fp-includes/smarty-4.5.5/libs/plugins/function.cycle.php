@@ -51,7 +51,7 @@ function smarty_function_cycle($params, $template)
     if (!isset($params[ 'values' ])) {
         if (!isset($cycle_vars[ $name ][ 'values' ])) {
             trigger_error('cycle: missing \'values\' parameter');
-            return;
+            return null;
         }
     } else {
         if (isset($cycle_vars[ $name ][ 'values' ]) && $cycle_vars[ $name ][ 'values' ] !== $params[ 'values' ]) {
