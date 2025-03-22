@@ -876,7 +876,7 @@ class Smarty extends Smarty_Internal_TemplateBase
                 $this->plugins_dir = (array)$this->plugins_dir;
             }
             foreach ($this->plugins_dir as $k => $v) {
-                $this->plugins_dir[ $k ] = $this->_realpath(rtrim($v ?? '', '/\\') . DIRECTORY_SEPARATOR, true);
+                $this->plugins_dir[ $k ] = $this->_realpath(rtrim($v, '/\\') . DIRECTORY_SEPARATOR, true);
             }
             $this->_cache[ 'plugin_files' ] = array();
             $this->_pluginsDirNormalized = true;
@@ -1052,17 +1052,15 @@ class Smarty extends Smarty_Internal_TemplateBase
         $caching = null,
         ?Smarty_Internal_Template $template = null
     ) {
-        $template_name = (strpos($template_name, ':') === false) ? "{$this->default_resource_type}:{$template_name}" :
-            $template_name;
+        $template_name = (strpos($template_name, ':') === false) ? $this->default_resource_type . ':' . $template_name : $template_name;
         $cache_id = $cache_id === null ? $this->cache_id : $cache_id;
         $compile_id = $compile_id === null ? $this->compile_id : $compile_id;
         $caching = (int)($caching === null ? $this->caching : $caching);
         if ((isset($template) && strpos($template_name, ':.') !== false) || $this->allow_ambiguous_resources) {
             $_templateId =
-                Smarty_Resource::getUniqueTemplateName((isset($template) ? $template : $this), $template_name) .
-                "#{$cache_id}#{$compile_id}#{$caching}";
+                Smarty_Resource::getUniqueTemplateName((isset($template) ? $template : $this), $template_name) . '#' . $cache_id . '#' . $compile_id . '#' . $caching;
         } else {
-            $_templateId = $this->_joined_template_dir . "#{$template_name}#{$cache_id}#{$compile_id}#{$caching}";
+            $_templateId = $this->_joined_template_dir . '#' . $template_name . '#' . $cache_id . '#' . $compile_id . '#' . $caching;
         }
         if (isset($_templateId[ 150 ])) {
             $_templateId = sha1($_templateId);
@@ -1404,3 +1402,4 @@ class Smarty extends Smarty_Internal_TemplateBase
     }
 
 }
+?>
