@@ -134,7 +134,8 @@ function smarty_function_html_radios($params, Smarty_Internal_Template $template
                 break;
         }
     }
-    if (empty($options) && empty($values)) {
+    $values = isset($params['values']) ? (array)$params['values'] : [];
+    if ((empty($options) || !is_array($options)) && (!isset($params['values']) || empty($params['values']) || !is_array($params['values']))) {
         /* raise error here? */
         return '';
     }
