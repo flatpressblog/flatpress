@@ -16,46 +16,45 @@
  * @author Roberto Berto <roberto@berto.net>
  * @author Monte Ohrt <monte AT ohrt DOT com>
  *
- * @param array{
- *     time?: string|int|array,
- *     prefix?: string,
- *     field_array?: string,
- *     field_separator?: string,
- *     option_separator?: string,
- *     all_extra?: string,
- *     hour_extra?: string,
- *     minute_extra?: string,
- *     second_extra?: string,
- *     meridian_extra?: string,
- *     all_empty?: string|null,
- *     hour_empty?: string|null,
- *     minute_empty?: string|null,
- *     second_empty?: string|null,
- *     meridian_empty?: string|null,
- *     all_id?: string,
- *     hour_id?: string,
- *     minute_id?: string,
- *     second_id?: string,
- *     meridian_id?: string,
- *     hour_format?: string,
- *     hour_value_format?: string,
- *     minute_format?: string,
- *     minute_value_format?: string,
- *     second_format?: string,
- *     second_value_format?: string,
- *     display_hours?: bool,
- *     display_minutes?: bool,
- *     display_seconds?: bool,
- *     display_meridian?: bool,
- *     use_24_hours?: bool,
- *     hour_size?: int,
- *     minute_size?: int,
- *     second_size?: int,
- *     meridian_size?: int,
- *     minute_interval?: int,
- *     second_interval?: int,
- *     [string]: mixed
- * } $params Parameters passed to the function
+ * @param array $params {
+ *     @type string|int|array|null $time              Timestamp or array of time values
+ *     @type string|null           $prefix            Prefix for form field names
+ *     @type string|null           $field_array       Name of array to assign fields to
+ *     @type string|null           $field_separator   HTML between fields
+ *     @type string|null           $option_separator  HTML between options
+ *     @type string|null           $all_extra         Extra attributes for all selects
+ *     @type string|null           $hour_extra        Extra attributes for hour select
+ *     @type string|null           $minute_extra      Extra attributes for minute select
+ *     @type string|null           $second_extra      Extra attributes for second select
+ *     @type string|null           $meridian_extra    Extra attributes for meridian select
+ *     @type string|null           $all_empty         Placeholder for all selects
+ *     @type string|null           $hour_empty        Placeholder for hour
+ *     @type string|null           $minute_empty      Placeholder for minute
+ *     @type string|null           $second_empty      Placeholder for second
+ *     @type string|null           $meridian_empty    Placeholder for meridian
+ *     @type string|null           $all_id            ID for all selects
+ *     @type string|null           $hour_id           ID for hour select
+ *     @type string|null           $minute_id         ID for minute select
+ *     @type string|null           $second_id         ID for second select
+ *     @type string|null           $meridian_id       ID for meridian select
+ *     @type string               $hour_format        Format for hour display
+ *     @type string               $minute_format      Format for minute display
+ *     @type string               $second_format      Format for second display
+ *     @type string               $hour_value_format  Format for hour value
+ *     @type string               $minute_value_format Format for minute value
+ *     @type string               $second_value_format Format for second value
+ *     @type bool                 $display_hours      Show hours
+ *     @type bool                 $display_minutes    Show minutes
+ *     @type bool                 $display_seconds    Show seconds
+ *     @type bool                 $display_meridian   Show meridian (AM/PM)
+ *     @type bool                 $use_24_hours       Use 24-hour time format
+ *     @type int                  $hour_size          Size of hour select
+ *     @type int                  $minute_size        Size of minute select
+ *     @type int                  $second_size        Size of second select
+ *     @type int                  $meridian_size      Size of meridian select
+ *     @type int                  $minute_interval    Step interval for minutes
+ *     @type int                  $second_interval    Step interval for seconds
+ * }
  * @param Smarty_Internal_Template $template Smarty template object
  *
  * @return string Generated HTML for the time selection
