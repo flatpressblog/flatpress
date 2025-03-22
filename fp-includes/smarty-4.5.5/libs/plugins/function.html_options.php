@@ -129,6 +129,7 @@ function smarty_function_html_options($params, Smarty_Internal_Template $templat
         }
     }
 
+    $values = isset($params['values']) ? (array)$params['values'] : [];
     if ((empty($options) || !is_array($options)) && (!isset($params['values']) || empty($params['values']) || !is_array($params['values']))) {
         /* raise error here? */
         return '';
