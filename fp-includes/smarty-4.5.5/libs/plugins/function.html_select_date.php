@@ -364,30 +364,24 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
         switch ($field_order[$i]) {
             case 'Y':
             case 'y':
-                if (!empty($_html_years)) {
-                    if ($_html) {
-                        $_html .= $field_separator;
-                    }
-                    $_html .= $_html_years;
+                if ($_html) {
+                    $_html .= $field_separator;
                 }
+                $_html .= $_html_years;
                 break;
             case 'm':
             case 'M':
-                if (!empty($_html_months)) {
-                    if ($_html) {
-                        $_html .= $field_separator;
-                    }
-                    $_html .= $_html_months;
+                if ($_html) {
+                    $_html .= $field_separator;
                 }
+                $_html .= $_html_months;
                 break;
             case 'd':
             case 'D':
-                if (!empty($_html_days)) {
-                    if ($_html) {
-                        $_html .= $field_separator;
-                    }
-                    $_html .= $_html_days;
+                if ($_html) {
+                    $_html .= $field_separator;
                 }
+                $_html .= $_html_days;
                 break;
         }
     }
