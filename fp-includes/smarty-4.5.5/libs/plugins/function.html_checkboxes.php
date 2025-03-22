@@ -172,6 +172,7 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
                 );
         }
     } else {
+        $values = (array) $values;
         foreach ($values as $_i => $_key) {
             $_val = isset($output[ $_i ]) ? $output[ $_i ] : '';
             $_html_result[] =
