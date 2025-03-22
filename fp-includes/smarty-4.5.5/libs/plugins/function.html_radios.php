@@ -134,7 +134,7 @@ function smarty_function_html_radios($params, Smarty_Internal_Template $template
                 break;
         }
     }
-    if (!isset($options) && !isset($values)) {
+    if (empty($options) && empty($values)) {
         /* raise error here? */
         return '';
     }
@@ -173,6 +173,7 @@ function smarty_function_html_radios($params, Smarty_Internal_Template $template
     }
     if (!empty($params[ 'assign' ])) {
         $template->assign($params[ 'assign' ], $_html_result);
+        return '';
     } else {
         return implode("\n", $_html_result);
     }
@@ -257,7 +258,7 @@ function smarty_function_html_radios_output(
     if ($value === $selected) {
         $_output .= ' checked="checked"';
     }
-    $_output .= $extra . ' />' . $output;
+    $_output .= $extra . '>' . $output;
     if ($labels) {
         $_output .= '</label>';
     }
