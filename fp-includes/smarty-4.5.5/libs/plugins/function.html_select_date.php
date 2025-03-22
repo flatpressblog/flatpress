@@ -100,7 +100,9 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
     /* String printed between the different fields. */
     $field_separator = "\n";
     $option_separator = "\n";
+
     $time = null;
+    $month_names = null;
 
     // $day_empty = null;
     // $all_empty = null;
