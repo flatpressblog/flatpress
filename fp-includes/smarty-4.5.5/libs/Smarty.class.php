@@ -1354,7 +1354,7 @@ class Smarty extends Smarty_Internal_TemplateBase
      */
     private function _normalizeDir($dirName, $dir)
     {
-        $dir = $dir ?? '';
+        $dir = (string) $dir;
         $this->{$dirName} = $this->_realpath(rtrim($dir, "/\\") . DIRECTORY_SEPARATOR, true);
     }
 
