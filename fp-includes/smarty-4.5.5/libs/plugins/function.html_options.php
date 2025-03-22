@@ -129,7 +129,7 @@ function smarty_function_html_options($params, Smarty_Internal_Template $templat
         }
     }
 
-    if ((empty($options) && (!isset($values) || !is_array($values) || empty($values)))) {
+    if (empty($options) && (empty($values) || !is_array($values))) {
         /* raise error here? */
         return '';
     }
