@@ -80,24 +80,24 @@ function smarty_function_fetch($params, $template)
                     case 'assign_headers':
                         break;
                     case 'user':
-                        if (!empty($param_value)) {
+                        if ($param_value !== '') {
                             $user = $param_value;
                         }
                         break;
                     case 'pass':
-                        if (!empty($param_value)) {
+                        if ($param_value !== '') {
                             $pass = $param_value;
                         }
                         break;
                     case 'accept':
-                        if (!empty($param_value)) {
+                        if ($param_value !== '') {
                             $accept = $param_value;
                         }
                         break;
                     case 'header':
-                        if (!empty($param_value)) {
+                        if ($param_value !== '') {
                             if (!preg_match('![\w\d-]+: .+!', $param_value)) {
-                                trigger_error("[plugin] invalid header format '{$param_value}'", E_USER_NOTICE);
+                                trigger_error('[plugin] invalid header format "' . $param_value . '"', E_USER_NOTICE);
                                 return null;
                             } else {
                                 $extra_headers[] = $param_value;
@@ -105,7 +105,7 @@ function smarty_function_fetch($params, $template)
                         }
                         break;
                     case 'proxy_host':
-                        if (!empty($param_value)) {
+                        if ($param_value !== '') {
                             $proxy_host = $param_value;
                         }
                         break;
@@ -113,17 +113,17 @@ function smarty_function_fetch($params, $template)
                         if (!preg_match('!\D!', $param_value)) {
                             $proxy_port = (int)$param_value;
                         } else {
-                            trigger_error("[plugin] invalid value for attribute '{$param_key }'", E_USER_NOTICE);
+                            trigger_error('[plugin] invalid value for attribute "' . $param_key . '"', E_USER_NOTICE);
                             return null;
                         }
                         break;
                     case 'agent':
-                        if (!empty($param_value)) {
+                        if ($param_value !== '') {
                             $agent = $param_value;
                         }
                         break;
                     case 'referer':
-                        if (!empty($param_value)) {
+                        if ($param_value !== '') {
                             $referer = $param_value;
                         }
                         break;
@@ -131,12 +131,12 @@ function smarty_function_fetch($params, $template)
                         if (!preg_match('!\D!', $param_value)) {
                             $timeout = (int)$param_value;
                         } else {
-                            trigger_error("[plugin] invalid value for attribute '{$param_key}'", E_USER_NOTICE);
+                            trigger_error('[plugin] invalid value for attribute "' . $param_key . '"', E_USER_NOTICE);
                             return null;
                         }
                         break;
                     default:
-                        trigger_error("[plugin] unrecognized attribute '{$param_key}'", E_USER_NOTICE);
+                        trigger_error('[plugin] unrecognized attribute "' . $param_key . '"', E_USER_NOTICE);
                         return null;
                 }
             }
@@ -147,25 +147,25 @@ function smarty_function_fetch($params, $template)
                 $fp = fsockopen($server_name, $port, $errno, $errstr, $timeout);
             }
             if (!$fp) {
-                trigger_error("[plugin] unable to fetch: $errstr ($errno)", E_USER_NOTICE);
+                trigger_error('[plugin] unable to fetch: ' . $errstr . ' (' . $errno . ')', E_USER_NOTICE);
                 return null;
             } else {
                 if ($_is_proxy) {
                     fputs($fp, 'GET ' . $params[ 'file' ] . " HTTP/1.0\r\n");
                 } else {
-                    fputs($fp, "GET $uri HTTP/1.0\r\n");
+                    fputs($fp, 'GET ' . $uri . " HTTP/1.0\r\n");
                 }
                 if (!empty($host)) {
-                    fputs($fp, "Host: $host\r\n");
+                    fputs($fp, 'Host: ' . $host . "\r\n");
                 }
                 if (!empty($accept)) {
-                    fputs($fp, "Accept: $accept\r\n");
+                    fputs($fp, 'Accept: ' . $accept . "\r\n");
                 }
                 if (!empty($agent)) {
-                    fputs($fp, "User-Agent: $agent\r\n");
+                    fputs($fp, 'User-Agent: ' . $agent . "\r\n");
                 }
                 if (!empty($referer)) {
-                    fputs($fp, "Referer: $referer\r\n");
+                    fputs($fp, 'Referer: ' . $referer . "\r\n");
                 }
                 if (isset($extra_headers) && is_array($extra_headers)) {
                     foreach ($extra_headers as $curr_header) {
@@ -173,7 +173,7 @@ function smarty_function_fetch($params, $template)
                     }
                 }
                 if (!empty($user) && !empty($pass)) {
-                    fputs($fp, 'Authorization: BASIC ' . base64_encode("$user:$pass") . "\r\n");
+                    fputs($fp, 'Authorization: BASIC ' . base64_encode($user . ':' . $pass) . "\r\n");
                 }
                 fputs($fp, "\r\n");
                 while (!feof($fp)) {
@@ -198,6 +198,7 @@ function smarty_function_fetch($params, $template)
     }
     if (!empty($params[ 'assign' ])) {
         $template->assign($params[ 'assign' ], $content);
+        return null;
     } else {
         return $content;
     }
