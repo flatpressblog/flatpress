@@ -152,7 +152,7 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
                 break;
         }
     }
-    if (empty($options) && empty($values)) {
+    if ((empty($options) || !is_array($options)) && (empty($values) || !is_array($values))) {
         return '';
     } /* raise error here? */
     $_html_result = array();
