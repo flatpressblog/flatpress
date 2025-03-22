@@ -665,7 +665,7 @@ class Smarty extends Smarty_Internal_TemplateBase
         if (is_callable('mb_internal_encoding')) {
             mb_internal_encoding(Smarty::$_CHARSET);
         }
-        $this->start_time = microtime(true);
+        $this->start_time = (int) microtime(true);
         if (isset($_SERVER[ 'SCRIPT_NAME' ])) {
             Smarty::$global_tpl_vars[ 'SCRIPT_NAME' ] = new Smarty_Variable($_SERVER[ 'SCRIPT_NAME' ]);
         }
@@ -1354,7 +1354,8 @@ class Smarty extends Smarty_Internal_TemplateBase
      */
     private function _normalizeDir($dirName, $dir)
     {
-        $this->{$dirName} = $this->_realpath(rtrim($dir ?? '', "/\\") . DIRECTORY_SEPARATOR, true);
+        $dir = (string) $dir;
+        $this->{$dirName} = $this->_realpath(rtrim($dir, "/\\") . DIRECTORY_SEPARATOR, true);
     }
 
     /**
