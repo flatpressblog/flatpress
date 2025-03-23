@@ -12,17 +12,53 @@
  * Purpose:  Prints the dropdowns for time selection
  *
  * @link   https://www.smarty.net/manual/en/language.function.html.select.time.php {html_select_time}
- *           (Smarty online manual)
+ *         (Smarty online manual)
  * @author Roberto Berto <roberto@berto.net>
  * @author Monte Ohrt <monte AT ohrt DOT com>
  *
- * @param array                     $params parameters
+ * @param array $params {
+ *     @type string|int|array|null $time              Timestamp or array of time values
+ *     @type string|null           $prefix            Prefix for form field names
+ *     @type string|null           $field_array       Name of array to assign fields to
+ *     @type string|null           $field_separator   HTML between fields
+ *     @type string|null           $option_separator  HTML between options
+ *     @type string|null           $all_extra         Extra attributes for all selects
+ *     @type string|null           $hour_extra        Extra attributes for hour select
+ *     @type string|null           $minute_extra      Extra attributes for minute select
+ *     @type string|null           $second_extra      Extra attributes for second select
+ *     @type string|null           $meridian_extra    Extra attributes for meridian select
+ *     @type string|null           $all_empty         Placeholder for all selects
+ *     @type string|null           $hour_empty        Placeholder for hour
+ *     @type string|null           $minute_empty      Placeholder for minute
+ *     @type string|null           $second_empty      Placeholder for second
+ *     @type string|null           $meridian_empty    Placeholder for meridian
+ *     @type string|null           $all_id            ID for all selects
+ *     @type string|null           $hour_id           ID for hour select
+ *     @type string|null           $minute_id         ID for minute select
+ *     @type string|null           $second_id         ID for second select
+ *     @type string|null           $meridian_id       ID for meridian select
+ *     @type string               $hour_format        Format for hour display
+ *     @type string               $minute_format      Format for minute display
+ *     @type string               $second_format      Format for second display
+ *     @type string               $hour_value_format  Format for hour value
+ *     @type string               $minute_value_format Format for minute value
+ *     @type string               $second_value_format Format for second value
+ *     @type bool                 $display_hours      Show hours
+ *     @type bool                 $display_minutes    Show minutes
+ *     @type bool                 $display_seconds    Show seconds
+ *     @type bool                 $display_meridian   Show meridian (AM/PM)
+ *     @type bool                 $use_24_hours       Use 24-hour time format
+ *     @type int                  $hour_size          Size of hour select
+ *     @type int                  $minute_size        Size of minute select
+ *     @type int                  $second_size        Size of second select
+ *     @type int                  $meridian_size      Size of meridian select
+ *     @type int                  $minute_interval    Step interval for minutes
+ *     @type int                  $second_interval    Step interval for seconds
+ * }
+ * @param Smarty_Internal_Template $template Smarty template object
  *
- * @param \Smarty_Internal_Template $template
- *
- * @return string
- * @uses   smarty_make_timestamp()
- * @throws \SmartyException
+ * @return string Generated HTML for the time selection
+ * @throws SmartyException
  */
 function smarty_function_html_select_time($params, Smarty_Internal_Template $template)
 {
@@ -207,19 +243,24 @@ function smarty_function_html_select_time($params, Smarty_Internal_Template $tem
             $_html_hours .= ' size="' . $hour_size . '"';
         }
         $_html_hours .= $_extra . $extra_attrs . '>' . $option_separator;
-        if (isset($hour_empty) || isset($all_empty)) {
-            $_html_hours .= '<option value="">' . (isset($hour_empty) ? $hour_empty : $all_empty) . '</option>' .
+
+        if ($hour_empty !== null || $all_empty !== null) {
+            $_html_hours .= '<option value="">' . ($hour_empty !== null ? $hour_empty : $all_empty) . '</option>' .
                             $option_separator;
         }
+
         $start = $use_24_hours ? 0 : 1;
         $end = $use_24_hours ? 23 : 12;
         for ($i = $start; $i <= $end; $i++) {
             $_val = sprintf('%02d', $i);
             $_text = $hour_format === '%02d' ? $_val : sprintf($hour_format, $i);
             $_value = $hour_value_format === '%02d' ? $_val : sprintf($hour_value_format, $i);
+
             if (!$use_24_hours) {
-                $_hour12 = $_hour == 0 ? 12 : ($_hour <= 12 ? $_hour : $_hour - 12);
+                $_hour_int = (int)$_hour;
+                $_hour12 = $_hour_int == 0 ? 12 : ($_hour_int <= 12 ? $_hour_int : $_hour_int - 12);
             }
+
             $selected = $_hour !== null ? ($use_24_hours ? $_hour == $_val : $_hour12 == $_val) : null;
             $_html_hours .= '<option value="' . $_value . '"' . ($selected ? ' selected="selected"' : '') . '>' .
                             $_text . '</option>' . $option_separator;
@@ -242,19 +283,21 @@ function smarty_function_html_select_time($params, Smarty_Internal_Template $tem
             $_html_minutes .= ' id="' . smarty_function_escape_special_chars(
                     $minute_id !== null ?
                         ($minute_id ? $minute_id : $_name) :
-                        ($all_id ? ($all_id . $_name) :
-                            $_name)
+                        ($all_id ? ($all_id . $_name) : $_name)
                 ) . '"';
         }
         if ($minute_size) {
             $_html_minutes .= ' size="' . $minute_size . '"';
         }
         $_html_minutes .= $_extra . $extra_attrs . '>' . $option_separator;
-        if (isset($minute_empty) || isset($all_empty)) {
-            $_html_minutes .= '<option value="">' . (isset($minute_empty) ? $minute_empty : $all_empty) . '</option>' .
+
+        if ($minute_empty !== null || $all_empty !== null) {
+            $_html_minutes .= '<option value="">' . ($minute_empty !== null ? $minute_empty : $all_empty) . '</option>' .
                               $option_separator;
         }
-        $selected = $_minute !== null ? ($_minute - $_minute % $minute_interval) : null;
+
+        $selected = $_minute !== null ? ((int)$_minute - (int)$_minute % $minute_interval) : null;
+
         for ($i = 0; $i <= 59; $i += $minute_interval) {
             $_val = sprintf('%02d', $i);
             $_text = $minute_format === '%02d' ? $_val : sprintf($minute_format, $i);
@@ -280,19 +323,21 @@ function smarty_function_html_select_time($params, Smarty_Internal_Template $tem
             $_html_seconds .= ' id="' . smarty_function_escape_special_chars(
                     $second_id !== null ?
                         ($second_id ? $second_id : $_name) :
-                        ($all_id ? ($all_id . $_name) :
-                            $_name)
+                        ($all_id ? ($all_id . $_name) : $_name)
                 ) . '"';
         }
         if ($second_size) {
             $_html_seconds .= ' size="' . $second_size . '"';
         }
         $_html_seconds .= $_extra . $extra_attrs . '>' . $option_separator;
-        if (isset($second_empty) || isset($all_empty)) {
-            $_html_seconds .= '<option value="">' . (isset($second_empty) ? $second_empty : $all_empty) . '</option>' .
+
+        if ($second_empty !== null || $all_empty !== null) {
+            $_html_seconds .= '<option value="">' . ($second_empty !== null ? $second_empty : $all_empty) . '</option>' .
                               $option_separator;
         }
-        $selected = $_second !== null ? ($_second - $_second % $second_interval) : null;
+
+        $selected = $_second !== null ? ((int)$_second - (int)$_second % $second_interval) : null;
+
         for ($i = 0; $i <= 59; $i += $second_interval) {
             $_val = sprintf('%02d', $i);
             $_text = $second_format === '%02d' ? $_val : sprintf($second_format, $i);
@@ -317,23 +362,24 @@ function smarty_function_html_select_time($params, Smarty_Internal_Template $tem
         if ($meridian_id !== null || $all_id !== null) {
             $_html_meridian .= ' id="' . smarty_function_escape_special_chars(
                     $meridian_id !== null ?
-                        ($meridian_id ? $meridian_id :
-                            $_name) :
-                        ($all_id ? ($all_id . $_name) :
-                            $_name)
+                        ($meridian_id ? $meridian_id : $_name) :
+                        ($all_id ? ($all_id . $_name) : $_name)
                 ) . '"';
         }
         if ($meridian_size) {
             $_html_meridian .= ' size="' . $meridian_size . '"';
         }
         $_html_meridian .= $_extra . $extra_attrs . '>' . $option_separator;
-        if (isset($meridian_empty) || isset($all_empty)) {
-            $_html_meridian .= '<option value="">' . (isset($meridian_empty) ? $meridian_empty : $all_empty) .
+
+        if ($meridian_empty !== null || $all_empty !== null) {
+            $_html_meridian .= '<option value="">' . ($meridian_empty !== null ? $meridian_empty : $all_empty) .
                                '</option>' . $option_separator;
         }
+
         $_html_meridian .= '<option value="am"' . ($_hour > 0 && $_hour < 12 ? ' selected="selected"' : '') .
-                           '>AM</option>' . $option_separator . '<option value="pm"' .
-                           ($_hour < 12 ? '' : ' selected="selected"') . '>PM</option>' . $option_separator .
+                           '>AM</option>' . $option_separator .
+                           '<option value="pm"' . ($_hour < 12 ? '' : ' selected="selected"') .
+                           '>PM</option>' . $option_separator .
                            '</select>';
     }
     $_html = '';

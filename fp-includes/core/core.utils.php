@@ -88,44 +88,122 @@ if (!function_exists('fnmatch')) {
 }
 
 /**
- * function prototype:
- * array utils_kexplode(string $string, string $delim='|')
+ * Tokenizer is a lightweight string tokenizer that splits a string
+ * into substrings based on a set of delimiter characters.
  *
- * explodes a string into an array by the given delimiter;
- * delimiter defaults to pipe ('|').
- * the string must be formatted as in:
- * key1|value1|key2|value2 , etc.
- * the array will look like
- *  $arr['key1'] = 'value1'; $arr['key2'] = 'value2'; etc.
+ * This class allows independent tokenization processes without using
+ * the global state like the native strtok() function does.
+ *
+ * @package Utils
+ */
+class Tokenizer {
+	/**
+	 * The input string to tokenize.
+	 *
+	 * @var string
+	 */
+	private $str;
+
+	/**
+	 * The list of delimiter characters.
+	 *
+	 * @var string
+	 */
+	private $delims;
+
+	 /**
+	 * The current position within the string.
+	 *
+	 * @var int
+	 */
+	 private $position;
+
+	/**
+	 * Create a new Tokenizer instance.
+	 *
+	 * @param string $string  The input string to tokenize.
+	 * @param string $delims  A string containing delimiter characters.
+	 */
+	public function __construct(string $string, string $delims) {
+		$this->str = $string;
+		$this->delims = $delims;
+		$this->position = 0;
+	}
+
+	/**
+	 * Get the next token from the string.
+	 *
+	 * @return string|false Returns the next token as a string, or false if no more tokens are found.
+	 */
+	public function nextToken() {
+		if ($this->position >= strlen($this->str)) {
+			return false;
+		}
+
+		// Skip leading delimiters
+		while ($this->position < strlen($this->str) && strpos($this->delims, $this->str[$this->position]) !== false) {
+			$this->position++;
+		}
+
+		if ($this->position >= strlen($this->str)) {
+			return false;
+		}
+
+		$start = $this->position;
+
+		// Find next delimiter
+		while ($this->position < strlen($this->str) && strpos($this->delims, $this->str[$this->position]) === false) {
+			$this->position++;
+		}
+
+		return substr($this->str, $start, $this->position - $start);
+	}
+}
+
+/**
+ * Parses a delimited string into an associative array of key-value pairs.
+ *
+ * The input string must be formatted as:
+ *     "KEY1|value1|KEY2|value2" (or using other delimiters)
+ *
+ * It will be converted into:
+ *     ['key1' => 'value1', 'key2' => 'value2']
+ *
+ * Multiple delimiters can be used (e.g. ",:|"). Keys are lowercased in the result.
+ * Empty tokens are ignored. If an odd number of tokens is found, the last key
+ * without a value will be ignored.
+ *
+ * If $keyupper is true, only keys that contain at least one uppercase letter (A–Z),
+ * a hyphen (-), or an underscore (_) are accepted. Other keys will be skipped.
+ *
+ * @param string $string    The delimited input string to parse.
+ * @param string $delims    One or more delimiter characters (default: "|").
+ * @param bool   $keyupper  Whether to only accept keys with [A-Z\-_] (default: true).
+ *
+ * @return array<string, string> Associative array of parsed and filtered key-value pairs.
  */
 function utils_kexplode($string, $delim = '|', $keyupper = true) {
 	$arr = array();
 	$string = trim($string);
 
-	$k = strtolower(strtok($string, $delim));
+	$tokenizer = new Tokenizer($string, $delim);
+
+	$k = strtolower($tokenizer->nextToken());
 	if (empty($k)) {
 		return $arr;
 	}
 
-	$arr [$k] = strtok($delim);
-	if (empty($arr [$k])) {
+	$arr[$k] = $tokenizer->nextToken();
+	if (empty($arr[$k])) {
 		return $arr;
 	}
 
-	while (($k = strtok($delim)) !== false) {
+	while (($k = $tokenizer->nextToken()) !== false) {
 		if ($keyupper && !preg_match('/[A-Z-_]/', $k)) {
-			/*
-			 * trigger_error("Failed parsing <pre>$string</pre>
-			 * keys were supposed to be UPPERCASE but <strong>\"$k\"</strong> was found; file may be corrupted
-			 * or in an expected format. <br />
-			 * Some SimplePHPBlog files may raise this error: set DUMB_MODE_ENABLED
-			 * to true in your defaults.php to force parsing of the offending keys.",
-			 * E_USER_WARNING);
-			 */
 			continue;
 		}
 
-		$arr [strtolower($k)] = strtok($delim);
+		$arr [strtolower($k)] = $tokenizer->nextToken();
 	}
 
 	return $arr;
