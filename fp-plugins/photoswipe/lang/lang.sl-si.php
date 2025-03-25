@@ -6,6 +6,7 @@ $lang ['plugin'] ['photoswipe'] = array(
 	'tooltip_fullscreenbutton' => 'Celozaslonski način',
 	'tooltip_zoombutton' => 'Povečaj',
 	'tooltip_autoplaybutton' => 'Začni predvajanje diaprojekcije',
+	'tooltip_autoplaybutton_stop' => 'Ustavitev diaprojekcije',
 	'tooltip_prevbutton' => 'Prejšnja slika (leva tipka)',
 	'tooltip_nextbutton' => 'Naslednja slika (desna tipka)',
 	'label_gallerydoesntexist' => 'Galerija ne obstaja:',

@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: PhotoSwipe
- * Version: 2.0.2
+ * Version: 2.0.3
  * Plugin URI: https://www.flatpress.org
  * Description: Displays images and galleries with <a href="http://photoswipe.com">PhotoSwipe</a>.<br>Part of the standard distribution.&nbsp;Needs the BBCode plugin to be activated.
  * Author: FlatPress

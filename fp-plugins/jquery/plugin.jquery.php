@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: jQuery
- * Version: 2.2
+ * Version: 2.2.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -15,8 +15,8 @@ function plugin_jquery_head() {
 	$pdir = plugin_geturl('jquery');
 	echo '
 		<!-- start of jsUtils -->
-		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/jquery/3.6.1/jquery-3.6.1.min.js"></script>
-		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/jqueryui/1.13.2/jquery-ui.min.js"></script>
+		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/jquery/3.7.1/jquery-3.7.1.js"></script>
+		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/jqueryui/1.14.1/jquery-ui.js"></script>
 		<!-- end of jsUtils -->';
 }
 

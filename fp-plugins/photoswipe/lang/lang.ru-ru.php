@@ -6,6 +6,7 @@ $lang ['plugin'] ['photoswipe'] = array(
 	'tooltip_fullscreenbutton' => 'Во весь экран',
 	'tooltip_zoombutton' => 'Приблизить',
 	'tooltip_autoplaybutton' => 'Запустить слайд-шоу',
+	'tooltip_autoplaybutton_stop' => 'Остановка слайд-шоу',
 	'tooltip_prevbutton' => 'Предыдущее изображение (стрелка влево)',
 	'tooltip_nextbutton' => 'Следующее изображение (стрелка вправо)',
 	'label_gallerydoesntexist' => 'Галерея не существует:',
