@@ -6,6 +6,7 @@ $lang ['plugin'] ['photoswipe'] = array(
 	'tooltip_fullscreenbutton' => 'Na celou obrazovku',
 	'tooltip_zoombutton' => 'Zoom',
 	'tooltip_autoplaybutton' => 'Spustit prezentaci',
+	'tooltip_autoplaybutton_stop' => 'Zastavení prezentace',
 	'tooltip_prevbutton' => 'Předchozí obrázek (levý klíč)',
 	'tooltip_nextbutton' => 'Další obrázek (pravý klíč)',
 	'label_gallerydoesntexist' => 'Galerie neexistuje:',

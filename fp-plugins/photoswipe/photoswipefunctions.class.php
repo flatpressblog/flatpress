@@ -109,14 +109,14 @@ class PhotoSwipeFunctions {
 		'itemscope ' . //
 		'itemtype="http://schema.org/ImageObject" ' . //
 		'data-index="' . self::$lastusedDataIndex . '" ' . //
-		'class="' . $floatClasses . '" ' . //
+		'class="' . $floatClasses . '"' . //
 		'>' . //
 		'<a ' . //
 		'href="' . $imgUrl . '" ' . //
 		'itemprop="contentUrl" ' . //
 		$datasizeAttr . //
 		'data-index="' . self::$lastusedDataIndex . '" ' . //
-		'title="' . htmlentities($title) . '" ' . //
+		'title="' . htmlentities($title) . '"' . //
 		'>' . //
 		$previewHtml . //
 		'</a>' . //
