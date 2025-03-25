@@ -93,6 +93,8 @@
   - RSS image replaced with RSS icon (woff2) ([#515](https://github.com/flatpressblog/flatpress/pull/515))
 - Media Manager plugin and Gallery captions: update to version 1.0.1
   - Show image in a popup instead of in the same tab
+- jQuery plugin: update to Version 2.2.1
+  - Updated jQuery and jQuery UI to their current versions
 
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
