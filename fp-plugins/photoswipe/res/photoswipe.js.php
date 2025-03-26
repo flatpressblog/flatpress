@@ -2,6 +2,9 @@
 global $lang;
 ?>
 
+		/**
+		 * Initializes the PhotoSwipe plugin.
+		 */
 		function initPhotoSwipePlugin() {
 			// Only add PhotoSwipe overlay if it does not yet exist for [more] tag
 			if ($('.pswp').length === 0) {
