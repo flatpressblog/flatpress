@@ -58,6 +58,7 @@
   - XSS vulnerability in the editor for static pages fixed. ([#490](https://github.com/flatpressblog/flatpress/pull/490))
   - Fixed disclosure of Exif metadata when uploading images. ([#492](https://github.com/flatpressblog/flatpress/pull/492))
   - Prevention of symlink attacks by checking the path when setting file and directory permissions ([#502](https://github.com/flatpressblog/flatpress/pull/502))
+  - Removed an XSS vulnerability in the category management panel. ([#574](https://github.com/flatpressblog/flatpress/pull/574))
 
 ## Plugins
 ### Additions
@@ -123,7 +124,9 @@
 
 ### Security
 - SEO Meta Tag Info plugin:
-  - Removes the vulnerability Cross-Site Scripting (XSS) ([#491](https://github.com/flatpressblog/flatpress/pull/491))
+  - Removed a cross-site scripting (XSS) vulnerability. ([#491](https://github.com/flatpressblog/flatpress/pull/491))
+- Gallery captions plugin:
+  - Removed a cross-site scripting (XSS) vulnerability. ([#574](https://github.com/flatpressblog/flatpress/pull/574))
 
 ## Setup
 ### Bugfixes
