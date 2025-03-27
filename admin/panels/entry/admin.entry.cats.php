@@ -1,7 +1,7 @@
 <?php
 
 /**
- * plugin control panel
+ * category management panel
  *
  * Type:     
  * Name:     
@@ -21,7 +21,7 @@
 
 		function main() {
 
-			if (isset($_GET['do']) && $_GET['do'] == 'clear') {
+			if (isset($_GET ['do']) && $_GET ['do'] == 'clear') {
 				$ret1 = fs_delete(CONTENT_DIR . 'categories_encoded.dat') &&
 				$ret2 = fs_delete(CONTENT_DIR . 'categories.txt');
 
@@ -45,7 +45,10 @@
 
 		function onsave() {
 
-			$str = stripslashes( trim( @$_POST['content'] ) ) ;
+			$str = stripslashes(trim( @$_POST ['content']));
+			$str = strip_tags($str);
+			$str = preg_replace('/on\w+="[^"]*"/i', '', $str);
+			$str = preg_replace('/javascript:/i', '', $str);
 
 			if ($str) {
 				//$success = io_write_file(CONTENT_DIR . 'categories.txt', $str);
