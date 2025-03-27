@@ -40,6 +40,18 @@ class admin_uploader_gallerycaptions extends AdminPanelAction {
 	}
 
 	/**
+	 * Sanitizes a single caption to prevent XSS
+	 *
+	 * @param string $caption
+	 * @return string
+	 */
+	private function sanitize_caption(string $caption): string {
+		global $fp_config;
+		$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+		return htmlspecialchars($caption, ENT_QUOTES | ENT_HTML5, $charset);
+	}
+
+	/**
 	 *
 	 * {@inheritdoc}
 	 * @see AdminPanelAction::onsubmit()
@@ -52,7 +64,16 @@ class admin_uploader_gallerycaptions extends AdminPanelAction {
 			$_SESSION ['gallerycaptions-selectedgallery'] = $_REQUEST ['gallerycaptions-gallery'];
 		} // Save captions button was pressed
 		elseif (isset($_POST ['gallerycaptions-savecaptions'])) {
-			gallery_write_captions($_REQUEST ['galleryname'], $_REQUEST ['captions']);
+			$rawCaptions = $_REQUEST ['captions'];
+			$sanitizedCaptions = [];
+
+			// Sanitize all captions
+			foreach ($rawCaptions as $filename => $caption) {
+				$sanitizedCaptions [$filename] = $this->sanitize_caption($caption);
+			}
+
+			// Save sanitized captions
+			gallery_write_captions($_REQUEST ['galleryname'], $sanitizedCaptions);
 		}
 
 		return 2;
