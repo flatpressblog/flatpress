@@ -145,6 +145,7 @@
 - Month selection localized in the search form ([#158](https://github.com/flatpressblog/flatpress/issues/158))
 - Administration area: Optional localization for the description of themes and styles ([#453](https://github.com/flatpressblog/flatpress/pull/453))
 - Minor corrections to the Italian language pack. Grazie mille eagleman
+- Turkish language package by [oldmouseclick](https://github.com/oldmouseclick)
 
 # 2024-05-04: [FlatPress 1.3.1](https://github.com/flatpressblog/flatpress/releases/tag/1.3.1)
 ## Bugfixes
