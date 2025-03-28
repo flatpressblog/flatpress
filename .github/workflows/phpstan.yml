@@ -29,5 +29,5 @@ jobs:
       run: curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
 
     - name: Run PHPStan (phar)
-      run: php phpstan.phar analyse --configuration=phpstan.neon.dist --error-format=table
+      run: php phpstan.phar analyse --configuration=.dist/phpstan.neon.dist --error-format=table
       working-directory: .
