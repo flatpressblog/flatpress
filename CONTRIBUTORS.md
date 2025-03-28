@@ -31,6 +31,7 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/
 - 🇷🇺 Russian: [Mark](https://github.com/cosmopolityan)
 - 🇪🇸 Spanish: karelv
 - 🇸🇮 Slovenian: [Sergio](https://github.com/developersorli)
+- 🇹🇷 Turkish: [@oldmouseclick](https://github.com/oldmouseclick)
 
 ## Libraries
 FlatPress utilizes the following free frameworks and libraries. Thanks to their authors!
