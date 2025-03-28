@@ -1,6 +1,6 @@
 <?php
 $lang ['plugin'] ['archives'] = array(
-	'subject' => 'Archives',
-	'no_posts' => 'No posts'
+	'subject' => 'Arşivler',
+	'no_posts' => 'Gönderi bulunamadı.'
 );
 ?>
