@@ -79,7 +79,7 @@ function smarty_outputfilter_trimwhitespace($source)
     if (preg_match_all('#@!@SMARTY:([0-9]+):SMARTY@!@#is', $source, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER)) {
         foreach ($matches as $match) {
             $_length = strlen($match[ 0 ][ 0 ]);
-            $replace = $store[ $match[ 1 ][ 0 ] ];
+            $replace = $store[ (int) $match[ 1 ][ 0 ] ];
             $source = substr_replace($source, $replace, $match[ 0 ][ 1 ] + $_offset, $_length);
             $_offset += strlen($replace) - $_length;
             $_store++;

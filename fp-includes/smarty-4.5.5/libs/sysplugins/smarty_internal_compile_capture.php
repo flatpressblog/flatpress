@@ -46,8 +46,7 @@ class Smarty_Internal_Compile_Capture extends Smarty_Internal_CompileBase
         Smarty_Internal_TemplateCompilerBase $compiler,
         $parameter = null
     ) {
-        return '$_smarty_tpl->smarty->ext->_capture->getBuffer($_smarty_tpl' .
-               (isset($parameter[ 1 ]) ? ", {$parameter[ 1 ]})" : ')');
+        return '$_smarty_tpl->smarty->ext->_capture->getBuffer($_smarty_tpl' . (isset($parameter[1]) ? ', ' . $parameter[1] . ')' : ')');
     }
 
     /**
@@ -55,21 +54,27 @@ class Smarty_Internal_Compile_Capture extends Smarty_Internal_CompileBase
      *
      * @param array                                 $args     array with attributes from parser
      * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object
-     * @param null                                  $parameter
+     * @param mixed|null                            $parameter
+     * @param string|null                           $tag
      *
      * @return string compiled code
      */
-    public function compile($args, Smarty_Internal_TemplateCompilerBase $compiler, $parameter = null)
+    public function compile($args, Smarty_Internal_TemplateCompilerBase $compiler, $parameter = null, $tag = null)
     {
-        // check and get attributes
         $_attr = $this->getAttributes($compiler, $args, $parameter, 'capture');
-        $buffer = isset($_attr[ 'name' ]) ? $_attr[ 'name' ] : "'default'";
-        $assign = isset($_attr[ 'assign' ]) ? $_attr[ 'assign' ] : 'null';
-        $append = isset($_attr[ 'append' ]) ? $_attr[ 'append' ] : 'null';
-        $compiler->_cache[ 'capture_stack' ][] = array($compiler->nocache);
-        // maybe nocache because of nocache variables
-        $compiler->nocache = $compiler->nocache | $compiler->tag_nocache;
-        $_output = "<?php \$_smarty_tpl->smarty->ext->_capture->open(\$_smarty_tpl, $buffer, $assign, $append);?>";
+
+        $quote = function ($val) {
+            return (preg_match('/^["\'].*["\']$/', $val) ? $val : "'" . str_replace("'", "\\'", $val) . "'");
+        };
+
+        $buffer = isset($_attr['name']) ? $quote($_attr['name']) : "'default'";
+        $assign = isset($_attr['assign']) ? $quote($_attr['assign']) : 'null';
+        $append = isset($_attr['append']) ? $quote($_attr['append']) : 'null';
+
+        $compiler->_cache['capture_stack'][] = array($compiler->nocache);
+        $compiler->nocache = (bool) ($compiler->nocache | $compiler->tag_nocache);
+        $_output = '<?php $_smarty_tpl->smarty->ext->_capture->open($_smarty_tpl, ' . $buffer . ', ' . $assign . ', ' . $append . ');?>';
+
         return $_output;
     }
 }

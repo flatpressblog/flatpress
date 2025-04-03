@@ -21,5 +21,5 @@
 function smarty_modifier_explode($separator, $string, ?int $limit = null)
 {
     // provide $string default to prevent deprecation errors in PHP >=8.1
-    return explode($separator, $string ?? '', $limit ?? PHP_INT_MAX);
+    return explode($separator, (string) $string, $limit ?? PHP_INT_MAX);
 }

@@ -82,7 +82,6 @@ class Smarty_Internal_Config_File_Compiler
      */
     public function __construct($lexer_class, $parser_class, Smarty $smarty)
     {
-        $this->smarty = $smarty;
         // get required plugins
         $this->lexer_class = $lexer_class;
         $this->parser_class = $parser_class;
@@ -96,7 +95,7 @@ class Smarty_Internal_Config_File_Compiler
      *
      * @param Smarty_Internal_Template $template
      *
-     * @return bool true if compiling succeeded, false if it failed
+     * @return string compiled PHP code as string
      * @throws \SmartyException
      */
     public function compileTemplate(Smarty_Internal_Template $template)
@@ -115,7 +114,7 @@ class Smarty_Internal_Config_File_Compiler
             $this->smarty->_debug->start_compile($this->template);
         }
         // init the lexer/parser to compile the config file
-        /* @var Smarty_Internal_ConfigFileLexer $this->lex */
+        /** @var Smarty_Internal_ConfigFileLexer $this->lex */
         $this->lex = new $this->lexer_class(
             str_replace(
                 array(
@@ -127,7 +126,7 @@ class Smarty_Internal_Config_File_Compiler
             ) . "\n",
             $this
         );
-        /* @var Smarty_Internal_ConfigFileParser $this->parser */
+        /** @var Smarty_Internal_ConfigFileParser $this->parser */
         $this->parser = new $this->parser_class($this->lex, $this);
         if (function_exists('mb_internal_encoding')
             && function_exists('ini_get')
@@ -144,7 +143,7 @@ class Smarty_Internal_Config_File_Compiler
         // get tokens from lexer and parse them
         while ($this->lex->yylex()) {
             if ($this->smarty->_parserdebug) {
-                echo "<br>Parsing  {$this->parser->yyTokenName[$this->lex->token]} Token {$this->lex->value} Line {$this->lex->line} \n";
+                echo "<br>Parsing " . $this->parser->yyTokenName[$this->lex->token] . " Token " . $this->lex->value . " Line " . $this->lex->line . " \n";
             }
             $this->parser->doParse($this->lex->token, $this->lex->value);
         }
@@ -186,8 +185,7 @@ class Smarty_Internal_Config_File_Compiler
             // $line--;
         }
         $match = preg_split("/\n/", $this->lex->data);
-        $error_text =
-            "Syntax error in config file '{$this->template->source->filepath}' on line {$line} '{$match[$line - 1]}' ";
+        $error_text = $error_text = "Syntax error in config file '" . $this->template->source->filepath . "' on line " . $line . " '" . $match[$line - 1] . "' ";
         if (isset($args)) {
             // individual error message
             $error_text .= $args;

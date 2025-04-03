@@ -89,10 +89,10 @@ abstract class Smarty_Internal_Data
      *
      * @param array|string $tpl_var the template variable name(s)
      * @param mixed        $value   the value to assign
-     * @param boolean      $nocache if true any output of this variable will be not cached
+     * @param bool         $nocache if true any output of this variable will be not cached
      *
-     * @return Smarty_Internal_Data current Smarty_Internal_Data (or Smarty or Smarty_Internal_Template) instance for
-     *                              chaining
+     * @return static      Smarty_Internal_Data current Smarty_Internal_Data (or Smarty or Smarty_Internal_Template) instance for
+     *                     chaining
      */
     public function assign($tpl_var, $value = null, $nocache = false)
     {
@@ -102,12 +102,7 @@ abstract class Smarty_Internal_Data
             }
         } else {
             if ($tpl_var !== '') {
-                if ($this->_objType === 2) {
-                    /**
-                     *
-                     *
-                     * @var Smarty_Internal_Template $this
-                     */
+                if ($this->_objType === 2 && $this instanceof Smarty_Internal_Template) {
                     $this->_assignInScope($tpl_var, $value, $nocache);
                 } else {
                     $this->tpl_vars[ $tpl_var ] = new Smarty_Variable($value, $nocache);
