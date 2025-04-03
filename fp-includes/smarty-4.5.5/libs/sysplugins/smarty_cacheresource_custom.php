@@ -18,12 +18,12 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
     /**
      * fetch cached content and its modification time from data source
      *
-     * @param string  $id         unique cache content identifier
-     * @param string  $name       template name
-     * @param string  $cache_id   cache id
-     * @param string  $compile_id compile id
-     * @param string  $content    cached content
-     * @param integer $mtime      cache modification timestamp (epoch)
+     * @param string      $id         unique cache content identifier
+     * @param string      $name       template name
+     * @param string      $cache_id   cache id
+     * @param string      $compile_id compile id
+     * @param string|null &$content cached content (output)
+     * @param int|null    &$mtime   cache modification timestamp (output)
      *
      * @return void
      */
@@ -128,7 +128,7 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
      * @param Smarty_Template_Cached|null $cached      cached object
      * @param boolean                     $update      flag if called because cache update
      *
-     * @return boolean                 true or false if the cached content does not exist
+     * @return bool                       true if cache was processed or false if the cached content does not exist
      */
     public function process(
         Smarty_Internal_Template $_smarty_tpl,
@@ -150,7 +150,7 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
                 $timestamp
             );
         }
-        if (isset($content)) {
+        if ($content !== null && $content !== '') {
             eval('?>' . $content);
             $cached->content = null;
             return true;
@@ -183,7 +183,7 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
      *
      * @param Smarty_Internal_Template $_template template object
      *
-     * @return string|boolean  content
+     * @return string|false  content or false if not found
      */
     public function readCachedContent(Smarty_Internal_Template $_template)
     {
@@ -200,7 +200,7 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
                 $timestamp
             );
         }
-        if (isset($content)) {
+        if ($content !== null && $content !== '') {
             return $content;
         }
         return false;
@@ -234,7 +234,7 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
     public function clear(Smarty $smarty, $resource_name, $cache_id, $compile_id, $exp_time)
     {
         $cache_name = null;
-        if (isset($resource_name)) {
+        if (!empty($resource_name)) {
             $source = Smarty_Template_Source::load(null, $smarty, $resource_name);
             if ($source->exists) {
                 $cache_name = $source->name;

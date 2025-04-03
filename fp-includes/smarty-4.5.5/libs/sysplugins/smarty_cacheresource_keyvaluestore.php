@@ -218,15 +218,15 @@ abstract class Smarty_CacheResource_KeyValueStore extends Smarty_CacheResource
     /**
      * Get template's unique ID
      *
-     * @param Smarty $smarty        Smarty object
-     * @param string $resource_name template name
+     * @param Smarty      $smarty        Smarty object
+     * @param string|null $resource_name template name (nullable)
      *
      * @return string filepath of cache file
      * @throws \SmartyException
      */
     protected function getTemplateUid(Smarty $smarty, $resource_name)
     {
-        if (isset($resource_name)) {
+        if ($resource_name !== null) {
             $source = Smarty_Template_Source::load(null, $smarty, $resource_name);
             if ($source->exists) {
                 return $source->uid;
@@ -291,12 +291,12 @@ abstract class Smarty_CacheResource_KeyValueStore extends Smarty_CacheResource
      * Add current microtime to the beginning of $cache_content
      * {@internal the header uses 8 Bytes, the first 4 Bytes are the seconds, the second 4 Bytes are the microseconds}}
      *
-     * @param string &$content the content to be cached
+     * @param string &$content the content to be cached (prefixed with binary timestamp header)
      */
     protected function addMetaTimestamp(&$content)
     {
         $mt = explode(' ', microtime());
-        $ts = pack('NN', $mt[ 1 ], (int)($mt[ 0 ] * 100000000));
+        $ts = pack('NN', (int)$mt[1], (int)((float)$mt[0] * 100000000));
         $content = $ts . $content;
     }
 

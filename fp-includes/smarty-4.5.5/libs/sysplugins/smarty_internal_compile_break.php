@@ -56,11 +56,14 @@ class Smarty_Internal_Compile_Break extends Smarty_Internal_CompileBase
             $foreachLevels--;
         }
         if ($foreachLevels > 0) {
-            /* @var Smarty_Internal_Compile_Foreach $foreachCompiler */
+            /** @var false|Smarty_Internal_Compile_Foreach $foreachCompiler */
             $foreachCompiler = $compiler->getTagCompiler('foreach');
+            if (!$foreachCompiler instanceof Smarty_Internal_CompileBase) {
+                $compiler->trigger_template_error("Missing 'foreach' tag compiler.", null, true);
+            }
             $output .= $foreachCompiler->compileRestore($foreachLevels);
         }
-        $output .= "{$this->tag} {$levels};?>";
+        $output .= $this->tag . ' ' . $levels . ";?>";
         return $output;
     }
 
@@ -107,7 +110,7 @@ class Smarty_Internal_Compile_Break extends Smarty_Internal_CompileBase
             $stack_count--;
         }
         if ($level_count !== 0) {
-            $compiler->trigger_template_error("cannot {$this->tag} {$levels} level(s)", null, true);
+            $compiler->trigger_template_error('cannot ' . $this->tag . ' ' . $levels . ' level(s)', null, true);
         }
         if ($lastTag === 'foreach' && $this->tag === 'break' && $foreachLevels > 0) {
             $foreachLevels--;
