@@ -32,12 +32,12 @@ class Smarty_Internal_Config_File_Compiler
     public $parser_class;
 
     /**
-     * @var \Smarty_Internal_ConfigFileLexer
+     * @var \Smarty_Internal_Configfilelexer
      */
     public $lex;
 
     /**
-     * @var \Smarty_Internal_ConfigFileParser
+     * @var \Smarty_Internal_Configfileparser
      */
     public $parser;
 
@@ -109,7 +109,6 @@ class Smarty_Internal_Config_File_Compiler
             }
             $this->smarty->_debug->start_compile($this->template);
         }
-        /** @var \Smarty_Internal_ConfigFileLexer $this->lex */
         $this->lex = new $this->lexer_class(
             str_replace(
                 array(
@@ -121,7 +120,6 @@ class Smarty_Internal_Config_File_Compiler
             ) . "\n",
             $this
         );
-        /** @var \Smarty_Internal_ConfigFileParser $this->parser */
         $this->parser = new $this->parser_class($this->lex, $this);
         if (function_exists('mb_internal_encoding')
             && function_exists('ini_get')
