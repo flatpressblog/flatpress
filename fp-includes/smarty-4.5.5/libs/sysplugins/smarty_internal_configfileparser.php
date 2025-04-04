@@ -288,7 +288,7 @@ class Smarty_Internal_Configfileparser
     /**
      * lexer object
      *
-     * @var \Smarty_Internal_ConfigFileLexer
+     * @var \Smarty_Internal_Configfilelexer
      */
     public $lex;
 
