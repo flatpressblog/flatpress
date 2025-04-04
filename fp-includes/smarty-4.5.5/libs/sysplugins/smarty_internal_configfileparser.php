@@ -288,9 +288,9 @@ class Smarty_Internal_Configfileparser
     /**
      * lexer object
      *
-     * @var Smarty_Internal_Configfilelexer
+     * @var \Smarty_Internal_ConfigFileLexer
      */
-    private $lex;
+    public $lex;
 
     /**
      * internal error flag
