@@ -293,8 +293,10 @@ class Smarty_Internal_Compile_Foreachelse extends Smarty_Internal_CompileBase
     {
         // check and get attributes
         $_attr = $this->getAttributes($compiler, $args);
-        /** @var array{string, bool, string, string, int} */
-        list($openTag, $nocache, $local, $itemVar, $restore) = $this->closeTag($compiler, array('foreach'));
+        /** @var array{string, bool, string, string, int} $tagData */
+        $tagData = $this->closeTag($compiler, array('foreach'));
+        list($openTag, $nocacheFlag, $local, $itemVar, $restore) = $tagData;
+        $nocache = (bool) $nocacheFlag;
         $this->openTag($compiler, 'foreachelse', array('foreachelse', $nocache, $local, $itemVar, 0));
         $output = "<?php\n";
         if ($restore === 2) {
@@ -331,7 +333,9 @@ class Smarty_Internal_Compile_Foreachclose extends Smarty_Internal_CompileBase
         }
 
         /** @var array{string, bool, string, string, int} */
-        list($openTag, $compiler->nocache, $local, $itemVar, $restore) = $this->closeTag($compiler, array('foreach', 'foreachelse'));
+        $tagData = $this->closeTag($compiler, array('foreach', 'foreachelse'));
+        list($openTag, $nocacheFlag, $local, $itemVar, $restore) = $tagData;
+        $compiler->nocache = (bool) $nocacheFlag;
         $output = "<?php\n";
         if ($restore === 2) {
             $output .= $itemVar . ' = ' . $local . 'saved;' . "\n";

@@ -211,12 +211,12 @@ class Smarty_Internal_CacheResource_File extends Smarty_CacheResource
      * @param Smarty                 $smarty Smarty object
      * @param Smarty_Template_Cached $cached cached object
      *
-     * @return void
+     * @return bool
      */
-    public function acquireLock(Smarty $smarty, Smarty_Template_Cached $cached)
+    public function acquireLock(Smarty $smarty, Smarty_Template_Cached $cached): bool
     {
         $cached->is_locked = true;
-        touch($cached->lock_id);
+        return touch($cached->lock_id);
     }
 
     /**
@@ -225,11 +225,11 @@ class Smarty_Internal_CacheResource_File extends Smarty_CacheResource
      * @param Smarty                 $smarty Smarty object
      * @param Smarty_Template_Cached $cached cached object
      *
-     * @return void
+     * @return bool
      */
-    public function releaseLock(Smarty $smarty, Smarty_Template_Cached $cached)
+    public function releaseLock(Smarty $smarty, Smarty_Template_Cached $cached): bool
     {
         $cached->is_locked = false;
-        @unlink($cached->lock_id);
+        return @unlink($cached->lock_id);
     }
 }
