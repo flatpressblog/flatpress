@@ -70,7 +70,7 @@ abstract class Smarty_Internal_CompileBase
      *
      * @return array  of mapped attributes for further processing
      */
-    public function getAttributes($compiler, $attributes)
+    public function getAttributes($compiler, $attributes, $required = array(), $optional = array())
     {
         $_indexed_attr = array();
         if (!isset($this->mapCache[ 'option' ])) {
