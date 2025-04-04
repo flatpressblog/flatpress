@@ -21,7 +21,7 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
      *
      * @param array                                 $args     array with attributes from parser
      * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object
-     * @param                                       $parameter
+     * @param string                                $parameter Parameter string representing the special variable
      *
      * @return string compiled code
      * @throws \SmartyCompilerException
@@ -57,14 +57,6 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
                 case 'now':
                     return 'time()';
                 case 'cookies':
-                    if (isset($compiler->smarty->security_policy)
-                        && !$compiler->smarty->security_policy->allow_super_globals
-                    ) {
-                        $compiler->trigger_template_error("(secure mode) super globals not permitted");
-                        return '';
-                    }
-                    $compiled_ref = '$_COOKIE';
-                    break;
                 case 'get':
                 case 'post':
                 case 'env':
@@ -77,8 +69,16 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
                         $compiler->trigger_template_error("(secure mode) super globals not permitted");
                         return '';
                     }
-                    $compiled_ref = '$_' . smarty_strtoupper_ascii($variable);
-                    break;
+                    $compiled_ref = $variable === 'cookies'
+                        ? '$_COOKIE'
+                        : '$_' . smarty_strtoupper_ascii($variable);
+                    if (isset($_index[1])) {
+                        array_shift($_index);
+                        foreach ($_index as $_ind) {
+                            $compiled_ref .= '[' . $_ind . ']';
+                        }
+                    }
+                    return $compiled_ref;
                 case 'template':
                     return 'basename($_smarty_tpl->source->filepath)';
                 case 'template_object':
