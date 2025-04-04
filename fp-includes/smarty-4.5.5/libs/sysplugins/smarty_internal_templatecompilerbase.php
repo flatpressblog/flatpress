@@ -227,7 +227,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
     /**
      * Flag true when compiling nocache section
      *
-     * @var bool
+     * @var bool|int
      */
     public $nocache = false;
 

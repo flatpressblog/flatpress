@@ -197,7 +197,7 @@ class Smarty_Internal_Compile_Foreach extends Smarty_Internal_Compile_Private_Fo
             array('foreach', (bool) $compiler->nocache, $local, $itemVar, empty($itemAttr) ? 1 : 2)
         );
         // maybe nocache because of nocache variables
-        $compiler->nocache = $compiler->nocache | $compiler->tag_nocache;
+        $compiler->nocache = (int) $compiler->nocache | (int) $compiler->tag_nocache;
         // generate output code
         $output = "<?php\n";
         $output .= '$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, ' . $from . ', ' . var_export($item, true);
