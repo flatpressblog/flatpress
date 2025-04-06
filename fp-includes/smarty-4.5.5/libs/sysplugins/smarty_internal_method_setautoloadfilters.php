@@ -30,7 +30,7 @@ class Smarty_Internal_Method_SetAutoloadFilters
      *
      * @api Smarty::setAutoloadFilters()
      *
-     * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
+     * @param \Smarty_Internal_TemplateBase                                   $obj
      * @param array                                                           $filters filters to load automatically
      * @param string                                                          $type    "pre", "output", … specify
      *                                                                                 the filter type to set.
@@ -38,7 +38,7 @@ class Smarty_Internal_Method_SetAutoloadFilters
      *                                                                                 $filters' keys as the
      *                                                                                 appropriate types
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      * @throws \SmartyException
      */
     public function setAutoloadFilters(Smarty_Internal_TemplateBase $obj, $filters, $type = null)
