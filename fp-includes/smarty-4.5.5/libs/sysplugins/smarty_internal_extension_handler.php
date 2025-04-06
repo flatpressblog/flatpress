@@ -34,9 +34,9 @@
  * @property   Smarty_Internal_Method_RegisterFilter     $registerFilter
  * @property   Smarty_Internal_Method_RegisterObject     $registerObject
  * @property   Smarty_Internal_Method_RegisterPlugin     $registerPlugin
- * @property   mixed|\Smarty_Template_Cached             configLoad
+ * @property   mixed|\Smarty_Template_Cached             $configLoad
  */
-#[\AllowDynamicProperties]
+# [\AllowDynamicProperties]
 class Smarty_Internal_Extension_Handler
 {
     public $objType = null;
@@ -129,7 +129,7 @@ class Smarty_Internal_Extension_Handler
         }
         $callback = array($smarty->ext->$name, $name);
         array_unshift($args, $data);
-        if (isset($callback) && $callback[ 0 ]->objMap | $data->_objType) {
+        if (is_object($callback[0]) && ((bool) ($callback[0]->objMap | $data->_objType))) {
             return call_user_func_array($callback, $args);
         }
         return call_user_func_array(array(new Smarty_Internal_Undefined(), $name), $args);
