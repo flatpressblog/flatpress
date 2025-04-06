@@ -39,7 +39,8 @@ class Smarty_Internal_Resource_File extends Smarty_Resource
             );
             $source->timestamp = filemtime($source->filepath);
         } else {
-            $source->timestamp = $source->exists = false;
+            $source->exists = false;
+            $source->timestamp = 0;
         }
     }
 
@@ -51,11 +52,9 @@ class Smarty_Internal_Resource_File extends Smarty_Resource
     public function populateTimestamp(Smarty_Template_Source $source)
     {
         if (!$source->exists) {
-            $source->timestamp = $source->exists = is_file($source->filepath);
+            $source->exists = is_file($source->filepath);
         }
-        if ($source->exists) {
-            $source->timestamp = filemtime($source->filepath);
-        }
+        $source->timestamp = $source->exists ? filemtime($source->filepath) : 0;
     }
 
     /**
