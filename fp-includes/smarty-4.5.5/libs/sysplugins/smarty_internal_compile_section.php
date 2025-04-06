@@ -343,7 +343,7 @@ class Smarty_Internal_Compile_Section extends Smarty_Internal_Compile_Private_Fo
                     $total_code[ 1 ] = $total_code[ 17 ] = '';
                 }
                 if ($propType[ 'loop' ] + $propType[ 'start' ] === 0) {
-                    $total_code[ 5 ] = $propValue[ 'loop' ] - $propValue[ 'start' ];
+                    $total_code[ 5 ] = '(int)(' . $propValue['loop'] . ') - (int)(' . $propValue['start'] . ')';
                     $total_code[ 6 ] = $total_code[ 7 ] = '';
                 }
                 if ($propType[ 'start' ] === 0) {
