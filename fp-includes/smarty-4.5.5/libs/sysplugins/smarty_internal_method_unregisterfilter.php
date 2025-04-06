@@ -20,9 +20,9 @@ class Smarty_Internal_Method_UnregisterFilter extends Smarty_Internal_Method_Reg
      *
      * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
      * @param string                                                          $type filter type
-     * @param callback|string                                                 $callback
+     * @param callable|string                                                 $callback
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      * @throws \SmartyException
      */
     public function unregisterFilter(Smarty_Internal_TemplateBase $obj, $type, $callback)

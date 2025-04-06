@@ -29,7 +29,8 @@ class Smarty_Internal_Resource_Eval extends Smarty_Resource_Recompiled
     public function populate(Smarty_Template_Source $source, ?Smarty_Internal_Template $_template = null)
     {
         $source->uid = $source->filepath = sha1($source->name);
-        $source->timestamp = $source->exists = true;
+        $source->exists = true;
+        $source->timestamp = time();
     }
 
     /**
