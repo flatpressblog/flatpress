@@ -28,7 +28,7 @@ class Smarty_Internal_Method_UnregisterPlugin
      * @param string                                                          $type plugin type
      * @param string                                                          $name name of template tag
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty|\Smarty_Internal_Template|\Smarty_Internal_TemplateBase
      */
     public function unregisterPlugin(Smarty_Internal_TemplateBase $obj, $type, $name)
     {
