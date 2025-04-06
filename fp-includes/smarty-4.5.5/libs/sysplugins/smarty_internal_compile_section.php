@@ -195,7 +195,7 @@ class Smarty_Internal_Compile_Section extends Smarty_Internal_Compile_Private_Fo
             } elseif ($propValue[ 'step' ] > 1) {
                 $incFor['index'] = $sectionVar . "->value['index'] += " . $propValue['step'];
             } else {
-                $incFor['index'] = $sectionVar . "->value['index'] -= " . -$propValue['step'];
+                $incFor['index'] = $sectionVar . "->value['index'] -= -((int)(" . $propValue['step'] . "))";
             }
         } else {
             $incFor['index'] = $sectionVar . "->value['index'] += " . $propValue['step'];
