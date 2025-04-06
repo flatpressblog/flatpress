@@ -37,7 +37,7 @@ class Smarty_Internal_Method_RegisterFilter
      * @param callable                                                        $callback
      * @param string|null                                                     $name optional filter name
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      * @throws \SmartyException
      */
     public function registerFilter(Smarty_Internal_TemplateBase $obj, $type, $callback, $name = null)
