@@ -26,9 +26,9 @@ class Smarty_Internal_Method_RegisterResource
      *
      * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
      * @param string                                                          $name             name of resource type
-     * @param Smarty_Resource                                           $resource_handler instance of Smarty_Resource
+     * @param Smarty_Resource                                                 $resource_handler instance of Smarty_Resource
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty
      */
     public function registerResource(Smarty_Internal_TemplateBase $obj, $name, Smarty_Resource $resource_handler)
     {
