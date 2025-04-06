@@ -27,7 +27,7 @@ class Smarty_Internal_Method_UnregisterObject
      * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
      * @param string                                                          $object_name name of object
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      */
     public function unregisterObject(Smarty_Internal_TemplateBase $obj, $object_name)
     {
