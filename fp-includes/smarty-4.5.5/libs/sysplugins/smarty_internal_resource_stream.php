@@ -34,7 +34,7 @@ class Smarty_Internal_Resource_Stream extends Smarty_Resource_Recompiled
         } else {
             $source->filepath = str_replace(':', '://', $source->resource);
         }
-        $source->uid = false;
+        $source->uid = '';
         $source->content = $this->getContent($source);
         $source->timestamp = $source->exists = !!$source->content;
     }
