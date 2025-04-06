@@ -36,7 +36,8 @@ class Smarty_Internal_Resource_Stream extends Smarty_Resource_Recompiled
         }
         $source->uid = '';
         $source->content = $this->getContent($source);
-        $source->timestamp = $source->exists = !!$source->content;
+        $source->exists = !!$source->content;
+        $source->timestamp = $source->exists ? time() : 0;
     }
 
     /**
