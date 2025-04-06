@@ -32,7 +32,7 @@ class Smarty_Internal_Method_RegisterPlugin
      *                                                                                    function is cache able
      * @param mixed                                                           $cache_attr caching attributes if any
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty|\Smarty_Internal_Template|\Smarty_Internal_TemplateBase
      * @throws SmartyException              when the plugin tag is invalid
      */
     public function registerPlugin(
