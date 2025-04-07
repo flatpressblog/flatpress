@@ -46,18 +46,16 @@ class Smarty_Internal_Runtime_CacheResourceFile
                 }
             }
         }
-        if (isset($resource_name)) {
-            $_save_stat = $smarty->caching;
-            $smarty->caching = Smarty::CACHING_LIFETIME_CURRENT;
-            $tpl = new $smarty->template_class($resource_name, $smarty);
-            $smarty->caching = $_save_stat;
-            // remove from template cache
-            $tpl->source; // have the template registered before unset()
-            if ($tpl->source->exists) {
-                $_resourcename_parts = basename(str_replace('^', '/', $tpl->cached->filepath));
-            } else {
-                return 0;
-            }
+        $_save_stat = $smarty->caching;
+        $smarty->caching = Smarty::CACHING_LIFETIME_CURRENT;
+        $tpl = new $smarty->template_class($resource_name, $smarty);
+        $smarty->caching = $_save_stat;
+        // remove from template cache
+        $tpl->source;
+        if ($tpl->source->exists) {
+            $_resourcename_parts = basename(str_replace('^', '/', $tpl->cached->filepath));
+        } else {
+            return 0;
         }
         $_count = 0;
         $_time = time();
@@ -83,15 +81,11 @@ class Smarty_Internal_Runtime_CacheResourceFile
                     $_parts = explode($_dir_sep, str_replace('\\', '/', substr($_filepath, $_dir_length)));
                     $_parts_count = count($_parts);
                     // check name
-                    if (isset($resource_name)) {
-                        if ($_parts[ $_parts_count - 1 ] !== $_resourcename_parts) {
-                            continue;
-                        }
+                    if ($_parts[$_parts_count - 1] !== $_resourcename_parts) {
+                        continue;
                     }
                     // check compile id
-                    if (isset($_compile_id) && (!isset($_parts[ $_parts_count - 2 - $_compile_id_offset ])
-                                                || $_parts[ $_parts_count - 2 - $_compile_id_offset ] !== $_compile_id)
-                    ) {
+                    if (isset($_compile_id) && (!isset($_parts[ $_parts_count - 2 - $_compile_id_offset ]) || $_parts[ $_parts_count - 2 - $_compile_id_offset ] !== $_compile_id)) {
                         continue;
                     }
                     // check cache id
