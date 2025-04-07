@@ -69,7 +69,7 @@ class Smarty_Internal_Runtime_UpdateScope
                 $_stack[] = $tpl->smarty;
             }
         } elseif ($mergedScope & Smarty::SCOPE_ROOT) {
-            while (isset($ptr)) {
+            while ($ptr !== null) {
                 if (!$ptr->_isTplObj()) {
                     $_stack[] = $ptr;
                     break;
