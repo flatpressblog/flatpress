@@ -231,8 +231,9 @@ class Smarty_Internal_Runtime_Inheritance
     {
         if (isset($block->parent)) {
             $this->callBlock($block->parent, $tpl);
+            return null;
         } else {
-            throw new SmartyException("inheritance: illegal '{$tag}' used in child template '{$tpl->inheritance->sources[$block->tplIndex]->filepath}' block '{$block->name}'");
+            throw new SmartyException('inheritance: illegal \'' . $tag . '\' used in child template \'' . $tpl->inheritance->sources[$block->tplIndex]->filepath . '\' block \'' . $block->name . '\'');
         }
     }
 
