@@ -24,7 +24,7 @@ class Smarty_Internal_Method_AddAutoloadFilters extends Smarty_Internal_Method_S
      *                                                                                 $filters' keys as the
      *                                                                                 appropriate types
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      * @throws \SmartyException
      */
     public function addAutoloadFilters(Smarty_Internal_TemplateBase $obj, $filters, $type = null)
