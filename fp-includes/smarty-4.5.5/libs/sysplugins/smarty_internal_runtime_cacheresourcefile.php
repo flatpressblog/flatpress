@@ -28,8 +28,8 @@ class Smarty_Internal_Runtime_CacheResourceFile
      */
     public function clear(Smarty $smarty, $resource_name, $cache_id, $compile_id, $exp_time)
     {
-        $_cache_id = isset($cache_id) ? preg_replace('![^\w\|]+!', '_', $cache_id) : null;
-        $_compile_id = isset($compile_id) ? preg_replace('![^\w]+!', '_', $compile_id) : null;
+        $_cache_id = $cache_id !== '' && $cache_id !== null ? preg_replace('![^\w\|]+!', '_', $cache_id) : null;
+        $_compile_id = $compile_id !== '' && $compile_id !== null ? preg_replace('![^\w]+!', '_', $compile_id) : null;
         $_dir_sep = $smarty->use_sub_dirs ? '/' : '^';
         $_compile_id_offset = $smarty->use_sub_dirs ? 3 : 0;
         $_dir = $smarty->getCacheDir();
