@@ -46,6 +46,9 @@ class Smarty_Internal_Runtime_CacheResourceFile
                 }
             }
         }
+        if ($resource_name === '' || $resource_name === null) {
+            return 0;
+        }
         $_save_stat = $smarty->caching;
         $smarty->caching = Smarty::CACHING_LIFETIME_CURRENT;
         $tpl = new $smarty->template_class($resource_name, $smarty);
