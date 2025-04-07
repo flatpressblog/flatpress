@@ -107,16 +107,14 @@ class Smarty_Internal_Runtime_CacheResourceFile
                     }
                     if (is_file($_filepath)) {
                         // expired ?
-                        if (isset($exp_time)) {
-                            if ($exp_time < 0) {
-                                preg_match('#\'cache_lifetime\' =>\s*(\d*)#', file_get_contents($_filepath), $match);
-                                if ($_time < (filemtime($_filepath) + $match[ 1 ])) {
-                                    continue;
-                                }
-                            } else {
-                                if ($_time - filemtime($_filepath) < $exp_time) {
-                                    continue;
-                                }
+                        if ($exp_time < 0) {
+                            preg_match('#\'cache_lifetime\' =>\s*(\d*)#', file_get_contents($_filepath), $match);
+                            if (isset($match[1]) && $_time < (filemtime($_filepath) + (int)$match[1])) {
+                                continue;
+                            }
+                        } else {
+                            if ($_time - filemtime($_filepath) < $exp_time) {
+                                continue;
                             }
                         }
                         $_count += @unlink($_filepath) ? 1 : 0;
