@@ -214,6 +214,7 @@ class Smarty_Internal_Runtime_Inheritance
         if (isset($block->child)) {
             $this->process($tpl, $block->child, $block);
         }
+        return null;
     }
 
     /**
