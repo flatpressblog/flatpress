@@ -380,7 +380,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
      * @param bool                                      $nocache  true is shall be compiled in nocache mode
      * @param null|Smarty_Internal_TemplateCompilerBase $parent_compiler
      *
-     * @return bool true if compiling succeeded, false if it failed
+     * @return string Compiled template code
      * @throws \Exception
      */
     public function compileTemplate(
@@ -508,17 +508,19 @@ abstract class Smarty_Internal_TemplateCompilerBase
      * Optionally process compiled code by post filter
      *
      * @param string $code compiled code
+     * @param Smarty_Internal_Template|null $template optional template context
      *
      * @return string
      * @throws \SmartyException
      */
-    public function postFilter($code)
+    public function postFilter($code, Smarty_Internal_Template $template = null)
     {
+        $template = $template ?? $this->template;
         // run post filter if on code
         if (!empty($code)
             && (isset($this->smarty->autoload_filters[ 'post' ]) || isset($this->smarty->registered_filters[ 'post' ]))
         ) {
-            return $this->smarty->ext->_filterHandler->runFilter('post', $code, $this->template);
+            return $this->smarty->ext->_filterHandler->runFilter('post', $code, $template);
         } else {
             return $code;
         }
@@ -650,7 +652,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
                 )
                 ) {
                     if (count($parameter) !== 1) {
-                        $this->trigger_template_error("Illegal number of parameter in '{$func_name()}'");
+                        $this->trigger_template_error('Illegal number of parameter in \'' . $func_name() . '\'');
                     }
                     if ($func_name === 'empty') {
                         return $func_name . '(' .
@@ -689,7 +691,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
             );
         }
 
-        $this->trigger_template_error("unknown function '{$name}'");
+        $this->trigger_template_error('unknown function \'' . $name . '\'');
     }
 
     /**
@@ -930,7 +932,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
                     }
                     include_once $script;
                 } else {
-                    $this->trigger_template_error("Default plugin handler: Returned script file '{$script}' for '{$tag}' not found");
+                    $this->trigger_template_error('Default plugin handler: Returned script file \'' . $script . '\' for \'' . $tag . '\' not found');
                 }
             }
             if (is_callable($callback)) {
@@ -941,7 +943,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
                 );
                 return true;
             } else {
-                $this->trigger_template_error("Default plugin handler: Returned callback for '{$tag}' not callable");
+                $this->trigger_template_error('Default plugin handler: Returned callback for \'' . $tag . '\' not callable');
             }
         }
         return false;
@@ -990,8 +992,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
                 $this->template->compiled->has_nocache_code = true;
                 $_output = addcslashes($content, '\'\\');
                 $_output = str_replace('^#^', '\'', $_output);
-                $_output =
-                    "<?php echo '/*%%SmartyNocache:{$this->nocache_hash}%%*/{$_output}/*/%%SmartyNocache:{$this->nocache_hash}%%*/';?>\n";
+                $_output = "<?php echo '/*%%SmartyNocache:" . $this->nocache_hash . "%%*/" . $_output . "/*/%%SmartyNocache:" . $this->nocache_hash . "%%*/';?>\n";
                 // make sure we include modifier plugins for nocache code
                 foreach ($this->modifier_plugins as $plugin_name => $dummy) {
                     if (isset($this->required_plugins[ 'compiled' ][ $plugin_name ][ 'modifier' ])) {
@@ -1081,7 +1082,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
             }
             if ($_scope === false) {
                 $err = var_export($_scopeName, true);
-                $this->trigger_template_error("illegal value '{$err}' for \"scope\" attribute", null, true);
+                $this->trigger_template_error('illegal value \'' . $err . '\' for "scope" attribute', null, true);
             }
         }
         return $_scope;
@@ -1096,9 +1097,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
      */
     public function makeNocacheCode($code)
     {
-        return "echo '/*%%SmartyNocache:{$this->nocache_hash}%%*/<?php " .
-               str_replace('^#^', '\'', addcslashes($code, '\'\\')) .
-               "?>/*/%%SmartyNocache:{$this->nocache_hash}%%*/';\n";
+        return 'echo \'/*%%SmartyNocache:' . $this->nocache_hash . '%%*/<?php ' . str_replace('^#^', '\'', addcslashes($code, '\'\\')) . '?>/*/%%SmartyNocache:' . $this->nocache_hash . '%%*/\';' . "\n";
     }
 
     /**
@@ -1651,7 +1650,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
                                 return $plugin_object->compile($args, $this);
                             }
                         }
-                        throw new SmartyException("Plugin '{$tag}' not callable");
+                        throw new SmartyException('Plugin "' . $tag . '" not callable');
                     } else {
                         if ($function = $this->getPlugin($tag, $plugin_type)) {
                             if (!isset($this->smarty->security_policy)
@@ -1786,10 +1785,10 @@ abstract class Smarty_Internal_TemplateCompilerBase
                             return $plugin_object->compile($args, $this);
                         }
                     }
-                    throw new SmartyException("Plugin '{$tag}' not callable");
+                    throw new SmartyException('Plugin \'' . $tag . '\' not callable');
                 }
             }
-            $this->trigger_template_error("unknown tag '{$tag}'", null, true);
+            $this->trigger_template_error('unknown tag \'' . $tag . '\'', null, true);
         }
     }
 }
