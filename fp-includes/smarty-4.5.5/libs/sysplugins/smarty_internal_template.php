@@ -128,13 +128,6 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
     public $endRenderCallbacks = array();
 
     /**
-     * Parent data container (optional, e.g. Smarty, Template or Data)
-     *
-     * @var Smarty|Smarty_Data|Smarty_Internal_Template|null
-     */
-    public $parent = null;
-
-    /**
      * Create template data object
      * Some of the global Smarty settings copied to template scope
      * It load the required template resources and caching plugins
