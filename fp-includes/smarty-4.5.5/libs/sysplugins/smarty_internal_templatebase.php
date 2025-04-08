@@ -253,7 +253,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
                 $errorHandler->deactivate();
             }
 
-            if (isset($_smarty_old_error_level)) {
+            if ($_smarty_old_error_level !== null) {
                 error_reporting($_smarty_old_error_level);
             }
             return $result;
@@ -284,7 +284,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
      * @param bool     $cacheable  if true (default) this function is cache able
      * @param mixed    $cache_attr caching attributes if any
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      * @throws \SmartyException
      */
     public function registerPlugin($type, $name, $callback, $cacheable = true, $cache_attr = null)
