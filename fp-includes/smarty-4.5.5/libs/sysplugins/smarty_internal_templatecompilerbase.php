@@ -476,7 +476,11 @@ abstract class Smarty_Internal_TemplateCompilerBase
             } else {
                 // get template source
                 $_content = $this->template->source->getContent();
-                $_compiled_code = $this->postFilter($this->doCompile($this->preFilter($_content), true));
+                $this->doCompile($this->preFilter($_content), true);
+                if (empty($this->compiledCode)) {
+                    throw new \SmartyCompilerException('Compiled code is empty after doCompile()');
+                }
+                $_compiled_code = $this->postFilter($this->compiledCode);
             }
             if (!empty($this->required_plugins[ 'compiled' ]) || !empty($this->required_plugins[ 'nocache' ])) {
                 $_compiled_code = '<?php ' . $this->compileRequiredPlugins() . "?>\n" . $_compiled_code;

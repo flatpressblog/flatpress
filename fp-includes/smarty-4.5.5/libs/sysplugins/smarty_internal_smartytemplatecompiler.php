@@ -59,6 +59,13 @@ class Smarty_Internal_SmartyTemplateCompiler extends Smarty_Internal_TemplateCom
     public $postfixCompiledCode = '';
 
     /**
+     * Holds compiled output after doCompile()
+     *
+     * @var string|null
+     */
+    public $compiledCode = null;
+
+    /**
      * Initialize compiler
      *
      * @param string $lexer_class  class name
@@ -79,7 +86,7 @@ class Smarty_Internal_SmartyTemplateCompiler extends Smarty_Internal_TemplateCom
      * @param mixed $_content template source
      * @param bool  $isTemplateSource
      *
-     * @return string compiled template code
+     * @return bool True on success
      * @throws \SmartyCompilerException
      */
     protected function doCompile($_content, $isTemplateSource = false)
@@ -143,8 +150,9 @@ class Smarty_Internal_SmartyTemplateCompiler extends Smarty_Internal_TemplateCom
             $parameter[ 0 ] = $this;
             call_user_func_array($cb[ 0 ], $parameter);
         }
-        // return compiled code
-        return $this->prefixCompiledCode . $this->parser->retvalue . $this->postfixCompiledCode;
+        // store compiled code for later use
+        $this->compiledCode = $this->prefixCompiledCode . $this->parser->retvalue . $this->postfixCompiledCode;
+        return true;
     }
 
     /**
