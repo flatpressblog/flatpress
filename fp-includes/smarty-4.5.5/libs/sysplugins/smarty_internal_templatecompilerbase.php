@@ -513,7 +513,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
      * @return string
      * @throws \SmartyException
      */
-    public function postFilter($code, Smarty_Internal_Template $template = null)
+    public function postFilter(string $code, ?Smarty_Internal_Template $template = null)
     {
         $template = $template ?? $this->template;
         // run post filter if on code
@@ -584,14 +584,14 @@ abstract class Smarty_Internal_TemplateCompilerBase
         if (!strpos($variable, '(')) {
             // not a variable variable
             $var = trim($variable, '\'');
-            $this->tag_nocache = $this->tag_nocache |
+            $this->tag_nocache = (bool) ($this->tag_nocache |
                                  $this->template->ext->getTemplateVars->_getVariable(
                                      $this->template,
                                      $var,
                                      null,
                                      true,
                                      false
-                                 )->nocache;
+                                 )->nocache);
         }
         return '$_smarty_tpl->tpl_vars[' . $variable . ']->value';
     }
