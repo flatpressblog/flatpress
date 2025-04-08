@@ -55,7 +55,7 @@ abstract class Smarty_Internal_Data
     /**
      * parent template (if any)
      *
-     * @var Smarty|Smarty_Internal_Template|Smarty_Data|null
+     * @var Smarty|Smarty_Data|Smarty_Internal_Template|Smarty_Internal_Data|null
      */
     public $parent = null;
 
