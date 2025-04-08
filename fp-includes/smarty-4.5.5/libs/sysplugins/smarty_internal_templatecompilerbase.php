@@ -1280,11 +1280,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
     {
         if (array_pop($this->_tag_stack_count) !== $this->getTagStackCount()) {
             $tag = $this->getOpenBlockTag();
-            $this->trigger_template_error(
-                "unclosed '{{$tag}}' in doubled quoted string",
-                null,
-                true
-            );
+            $this->trigger_template_error('unclosed \'{{' . $tag . '}}\' in doubled quoted string', null, true);
         }
     }
 
