@@ -319,7 +319,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
      * @param callable    $callback
      * @param string|null $name optional filter name
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      * @throws \SmartyException
      */
     public function registerFilter($type, $callback, $name = null)
@@ -339,7 +339,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
      * @param bool   $format                     smarty argument format, else traditional
      * @param array  $block_methods              list of block-methods
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      * @throws \SmartyException
      */
     public function registerObject(
