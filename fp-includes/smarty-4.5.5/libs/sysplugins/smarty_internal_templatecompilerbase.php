@@ -693,6 +693,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
         }
 
         $this->trigger_template_error('unknown function \'' . $name . '\'');
+        return '';
     }
 
     /**
@@ -764,7 +765,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
         ) {
             foreach ($matches as $match) {
                 $_length = strlen($match[ 0 ][ 0 ]);
-                $replace = $store[ $match[ 1 ][ 0 ] ];
+                $replace = $store[ (int) $match[1][0] ];
                 $text = substr_replace($text, $replace, $match[ 0 ][ 1 ] + $_offset, $_length);
                 $_offset += strlen($replace) - $_length;
                 $_store++;
