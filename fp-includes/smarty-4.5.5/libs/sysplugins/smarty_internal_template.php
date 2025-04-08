@@ -130,7 +130,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
     /**
      * Parent data container (optional, e.g. Smarty, Template or Data)
      *
-     * @var Smarty_Internal_Data|null
+     * @var Smarty|Smarty_Data|Smarty_Internal_Template|null
      */
     public $parent = null;
 
