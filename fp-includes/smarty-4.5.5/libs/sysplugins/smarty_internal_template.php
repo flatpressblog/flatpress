@@ -230,7 +230,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
                 $this->smarty->ext->_cacheModify->cacheModifiedCheck(
                     $this->cached,
                     $this,
-                    isset($content) ? $content : ob_get_clean()
+                    $content ?? ob_get_clean()
                 );
             } else {
                 if ((!$this->caching || $this->cached->has_nocache_code || $this->source->handler->recompiled)
