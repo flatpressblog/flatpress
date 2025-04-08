@@ -226,6 +226,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
         // display or fetch
         if ($display) {
             if ($this->caching && $this->smarty->cache_modified_check) {
+                $content = null;
                 $this->smarty->ext->_cacheModify->cacheModifiedCheck(
                     $this->cached,
                     $this,
@@ -262,7 +263,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
                 return $this->smarty->ext->_filterHandler->runFilter('output', ob_get_clean(), $this);
             }
             // return cache content
-            return null;
+            return '';
         }
     }
 
