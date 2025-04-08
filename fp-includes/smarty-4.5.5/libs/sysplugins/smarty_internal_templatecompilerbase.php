@@ -651,13 +651,15 @@ abstract class Smarty_Internal_TemplateCompilerBase
                 )
                 ) {
                     if (count($parameter) !== 1) {
-                        $this->trigger_template_error('Illegal number of parameter in \'' . $func_name() . '\'');
+                        $this->trigger_template_error('Illegal number of parameter in \'' . $func_name . '()\'');
                     }
                     if ($func_name === 'empty') {
                         return $func_name . '(' .
                             str_replace("')->value", "',null,true,false)->value", $parameter[0]) . ')';
                     } else {
-                        return $func_name . '(' . $parameter[0] . ')';
+                        if (isset($parameter[0])) {
+                            return $func_name . '(' . $parameter[0] . ')';
+                        }
                     }
                 } else {
 
