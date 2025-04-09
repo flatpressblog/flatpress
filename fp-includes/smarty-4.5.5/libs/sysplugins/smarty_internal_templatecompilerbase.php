@@ -1790,6 +1790,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
                 }
             }
             $this->trigger_template_error('unknown tag \'' . $tag . '\'', null, true);
+            return null;
         }
     }
 }
