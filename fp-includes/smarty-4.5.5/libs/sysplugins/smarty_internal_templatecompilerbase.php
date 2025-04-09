@@ -1499,7 +1499,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
      *
      * @throws SmartyCompilerException
      * @throws SmartyException
-     * @return string compiled code
+     * @return string|null compiled code or null if nothing was generated
      */
     private function compileTag2($tag, $args, $parameter)
     {
