@@ -205,7 +205,7 @@ class Smarty_Internal_Templatelexer
     /**
      * preg token pattern for state DOUBLEQUOTEDSTRING
      *
-     * @var null
+     * @var string|null
      */
     private $yy_global_pattern5 = null;
 
