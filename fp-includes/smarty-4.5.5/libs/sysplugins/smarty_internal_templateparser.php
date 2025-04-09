@@ -1604,7 +1604,7 @@ public static $yy_action = array(
             return self::YY_NO_ACTION;
         }
         $i += $iLookAhead;
-        if ($i < 0 || $i >= self::YY_SZ_ACTTAB ||
+        if (!is_int($i) || $i < 0 || $i >= self::YY_SZ_ACTTAB ||
               self::$yy_lookahead[$i] != $iLookAhead) {
             return self::$yy_default[$stateno];
         } else {
