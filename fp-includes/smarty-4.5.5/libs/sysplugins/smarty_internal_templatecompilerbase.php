@@ -794,7 +794,10 @@ abstract class Smarty_Internal_TemplateCompilerBase
         /* @var Smarty_Internal_CompileBase $tagCompiler */
         $tagCompiler = $this->getTagCompiler($tag);
         // compile this tag
-        return $tagCompiler === false ? false : $tagCompiler->compile($args, $this, $param1, $param2, $param3);
+        if ($tagCompiler instanceof Smarty_Internal_CompileBase) {
+            return $tagCompiler === false ? false : $tagCompiler->compile($args, $this, $param1, $param2, $param3);
+        }
+        return false;
     }
 
     /**
@@ -832,7 +835,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
      * @param        $plugin_name
      * @param string $plugin_type type of plugin
      *
-     * @return string call name of function
+     * @return string|false call name of function or false if not found
      * @throws \SmartyException
      */
     public function getPlugin($plugin_name, $plugin_type)
