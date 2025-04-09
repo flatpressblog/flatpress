@@ -55,9 +55,7 @@ abstract class Smarty_Resource_Custom extends Smarty_Resource
         } else {
             $this->fetch($source->name, $content, $timestamp);
             $source->timestamp = $timestamp !== null ? $timestamp : false;
-            if (isset($content)) {
-                $source->content = $content;
-            }
+            $source->content = $content;
         }
         $source->exists = (bool) $source->timestamp;
     }
@@ -73,10 +71,10 @@ abstract class Smarty_Resource_Custom extends Smarty_Resource
     public function getContent(Smarty_Template_Source $source)
     {
         $this->fetch($source->name, $content, $timestamp);
-        if (isset($content)) {
-            return $content;
+        if ($content === null || $content === false) {
+            throw new SmartyException('Unable to read template ' . $source->type . ' \'' . $source->name . '\'');
         }
-        throw new SmartyException('Unable to read template ' . $source->type . ' \'' . $source->name . '\'');
+        return $content;
     }
 
     /**
