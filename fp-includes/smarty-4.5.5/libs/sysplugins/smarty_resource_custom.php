@@ -36,7 +36,7 @@ abstract class Smarty_Resource_Custom extends Smarty_Resource
      */
     protected function fetchTimestamp($name)
     {
-        return null;
+        return false;
     }
 
     /**
@@ -50,16 +50,16 @@ abstract class Smarty_Resource_Custom extends Smarty_Resource
         $source->filepath = $source->type . ':' . $this->generateSafeName($source->name);
         $source->uid = sha1($source->type . ':' . $source->name);
         $mtime = $this->fetchTimestamp($source->name);
-        if ($mtime !== null) {
+        if ($mtime !== false) {
             $source->timestamp = $mtime;
         } else {
             $this->fetch($source->name, $content, $timestamp);
-            $source->timestamp = isset($timestamp) ? $timestamp : false;
+            $source->timestamp = $timestamp !== null ? $timestamp : false;
             if (isset($content)) {
                 $source->content = $content;
             }
         }
-        $source->exists = !!$source->timestamp;
+        $source->exists = (bool) $source->timestamp;
     }
 
     /**
@@ -76,7 +76,7 @@ abstract class Smarty_Resource_Custom extends Smarty_Resource
         if (isset($content)) {
             return $content;
         }
-        throw new SmartyException("Unable to read template {$source->type} '{$source->name}'");
+        throw new SmartyException('Unable to read template ' . $source->type . ' \'' . $source->name . '\'');
     }
 
     /**
