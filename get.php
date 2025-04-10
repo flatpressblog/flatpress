@@ -9,9 +9,11 @@
 require_once 'defaults.php';
 
 // Load language file
-$settings_file = defined('CONFIG_DIR') ? CONFIG_DIR . 'settings.conf.php' : null;
-if ($settings_file !== null && file_exists($settings_file)) {
-	require_once($settings_file);
+if (defined('CONFIG_DIR')) {
+	$settings_file = CONFIG_DIR . 'settings.conf.php';
+	if (file_exists($settings_file)) {
+		require_once $settings_file;
+	}
 }
 $langId = $fp_config ['locale'] ['lang'];
 $langFile = ABS_PATH . PLUGINS_DIR . 'bbcode/lang/lang.' . $langId . '.php';
