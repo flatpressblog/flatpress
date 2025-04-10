@@ -70,6 +70,7 @@ if (class_exists('AdminPanelAction')) {
 		function main() {
 			$pluginConfigPath = CONFIG_DIR . 'plugins.conf.php';
 			if (file_exists($pluginConfigPath)) {
+				/** @phpstan-ignore-next-line */
 				require $pluginConfigPath;
 			}
 			global $fp_config;
