@@ -1270,10 +1270,6 @@ class StringParser_BBCode extends StringParser {
 		$nodes = $this->_root->getNodesByCriterium('empty', true);
 		$nodes_count = count($nodes);
 		$parent = null;
-		if (isset($parent)) {
-			unset($parent);
-			$parent = null;
-		}
 		for($i = 0; $i < $nodes_count; $i++) {
 			if ($nodes [$i]->_type != STRINGPARSER_BBCODE_NODE_PARAGRAPH) {
 				continue;
