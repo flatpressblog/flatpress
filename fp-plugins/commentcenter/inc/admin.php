@@ -118,7 +118,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 			'id' => $id
 		), null);
 		if (!$o->hasMore()) {
-			return false;
+			return '';
 		}
 		$arr = $o->getEntry();
 		return wp_specialchars($arr [1] ['subject']);
@@ -539,7 +539,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 		}
 
 		if ($noredirect) {
-			return $succ == 5;
+			return $succ;
 		}
 
 		$this->_redirect('approve_list');
