@@ -84,12 +84,12 @@ add_action('wp_head', 'plugin_bbcode_head');
  * Remaps the URL so that there's no hint to your attachs/ directory.
  *
  * @param string $d
- * @return boolean
+ * @return bool
  */
 function bbcode_remap_url(&$d) {
 	// nothing to remap if given string is empty
 	if (empty($d)) {
-		return;
+		return false;
 	}
 	// complete the URL if it begins with www. but does not contain a protocol
 	if (strpos($d, 'www.') === 0) {
@@ -103,7 +103,7 @@ function bbcode_remap_url(&$d) {
 	if (!isValidFileDownloadUrl($d)) {
 		// Handle invalid URLs
 		$d = 'about:blank';
-		return;
+		return false;
 	}
 
 	// NWM: "attachs/" is interpreted as a keyword, and it is translated to the actual path of ATTACHS_DIR
