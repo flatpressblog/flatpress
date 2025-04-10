@@ -1022,7 +1022,7 @@ function bbcode2html($html) {
 /**
  * This is for [html] tag postprocess
  *
- * @param unknown_type $match
+ * @param array $match Regex match array
  * @return string Cleaned HTML string
  */
 function plugin_bbcode_undoHtmlCallback($match) {
