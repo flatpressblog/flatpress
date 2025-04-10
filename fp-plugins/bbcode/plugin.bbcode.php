@@ -460,7 +460,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 			$output = null;
 	}
 
-	if (isset($output)) {
+	if ($output !== null) {
 		return $output;
 	}
 	return '[unsupported video]';
