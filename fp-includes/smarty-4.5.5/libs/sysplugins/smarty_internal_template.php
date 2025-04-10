@@ -17,7 +17,7 @@
  * @property Smarty_Template_Compiled             $compiled
  * @property Smarty_Template_Cached               $cached
  * @property Smarty_Internal_TemplateCompilerBase $compiler
- * @property mixed|\Smarty_Template_Cached        registered_plugins
+ * @property array<string, callable[]>            $registered_filters
  *
  * The following methods will be dynamically loaded by the extension handler when they are called.
  * They are located in a corresponding Smarty_Internal_Method_xxxx class
@@ -116,16 +116,23 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
     /**
      * Callbacks called before rendering template
      *
-     * @var callback[]
+     * @var callable[]
      */
     public $startRenderCallbacks = array();
 
     /**
      * Callbacks called after rendering template
      *
-     * @var callback[]
+     * @var callable[]
      */
     public $endRenderCallbacks = array();
+
+    /**
+     * Parent data container (optional, e.g. Smarty, Template or Data)
+     *
+     * @var Smarty|Smarty_Data|Smarty_Internal_Template|Smarty_Internal_Data|null
+     */
+    public $parent = null;
 
     /**
      * Create template data object
@@ -222,7 +229,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
                 $this->smarty->ext->_cacheModify->cacheModifiedCheck(
                     $this->cached,
                     $this,
-                    isset($content) ? $content : ob_get_clean()
+                    ob_get_clean()
                 );
             } else {
                 if ((!$this->caching || $this->cached->has_nocache_code || $this->source->handler->recompiled)
@@ -255,7 +262,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
                 return $this->smarty->ext->_filterHandler->runFilter('output', ob_get_clean(), $this);
             }
             // return cache content
-            return null;
+            return '';
         }
     }
 

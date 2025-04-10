@@ -52,16 +52,15 @@ class Smarty_Internal_Runtime_UpdateScope
     {
         $_stack = array();
         $ptr = $tpl->parent;
-        if ($mergedScope && isset($ptr) && $ptr->_isTplObj()) {
+        if ($mergedScope && $ptr !== null && $ptr->_isTplObj()) {
             $_stack[] = $ptr;
             $mergedScope = $mergedScope & ~Smarty::SCOPE_PARENT;
             if (!$mergedScope) {
-                // only parent was set, we are done
                 return $_stack;
             }
             $ptr = $ptr->parent;
         }
-        while (isset($ptr) && $ptr->_isTplObj()) {
+        while ($ptr !== null && $ptr->_isTplObj()) {
             $_stack[] = $ptr;
             $ptr = $ptr->parent;
         }
@@ -70,7 +69,7 @@ class Smarty_Internal_Runtime_UpdateScope
                 $_stack[] = $tpl->smarty;
             }
         } elseif ($mergedScope & Smarty::SCOPE_ROOT) {
-            while (isset($ptr)) {
+            while ($ptr !== null) {
                 if (!$ptr->_isTplObj()) {
                     $_stack[] = $ptr;
                     break;

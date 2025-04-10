@@ -138,7 +138,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 				$file_meta = SEOMETA_DEFAULT_DIR . 'metatags.ini';
 			}
 
-			if (isset($file_meta) && $file_meta !== '' && !file_exists($file_meta)) {
+			if ($file_meta !== '' && !file_exists($file_meta)) {
 				@io_write_file($file_meta, '');
 			}
 
@@ -203,6 +203,8 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 		}
 
 		function do_save() {
+			global $allowed_characters_regex;
+
 			if (empty($_POST ['pl_file_meta'])) {
 				return;
 			}

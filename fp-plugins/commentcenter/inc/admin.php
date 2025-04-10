@@ -82,7 +82,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *        	The current title
 	 * @param string $sep:
 	 *        	The separator
-	 * @return string: The title
+	 * @return string The title
 	 */
 	function _title($val, $sep) {
 		return $val . " " . $sep . " Comment Center";
@@ -108,7 +108,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param string $id:
 	 *        	The entry id
-	 * @return string: The output
+	 * @return string The output
 	 */
 	function _idToTitle($id) {
 		$o = new FPDB_Query(array(
@@ -118,7 +118,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 			'id' => $id
 		), null);
 		if (!$o->hasMore()) {
-			return false;
+			return '';
 		}
 		$arr = $o->getEntry();
 		return wp_specialchars($arr [1] ['subject']);
@@ -331,7 +331,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param integer $id:
 	 *        	The id of policy you wish to delete
-	 * @return integer: Redirect option
+	 * @return int Redirect option
 	 */
 	function dopoldelete($id) {
 		$plugin = &$this->plugin;
@@ -352,7 +352,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This function is like dopoldelete but it's for multiple policies.
 	 *
-	 * @return integer: Redirect option
+	 * @return int Redirect option
 	 */
 	function onmultidel() {
 		$plugin = &$this->plugin;
@@ -424,7 +424,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param integer $id:
 	 *        	The id of policy you wish to delete
-	 * @return integer: Redirect option
+	 * @return int Redirect option
 	 */
 	function dopolup($id) {
 		$s = -3;
@@ -445,7 +445,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param integer $id:
 	 *        	The id of policy you wish to delete
-	 * @return integer: Redirect option
+	 * @return int Redirect option
 	 */
 	function dopoldown($id) {
 		$s = -3;
@@ -539,7 +539,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 		}
 
 		if ($noredirect) {
-			return $succ == 5;
+			return $succ;
 		}
 
 		$this->_redirect('approve_list');
@@ -587,7 +587,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param integer $id:
 	 *        	The id of the comment you wish to delete
-	 * @return integer: Redirect option
+	 * @return int Redirect option
 	 */
 	function dodeletecomm($id) {
 		$plugin = &$this->plugin;
@@ -615,7 +615,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This function is like dopoldelete but it's for multiple policies.
 	 *
-	 * @return integer: Redirect option
+	 * @return int Redirect option
 	 */
 	function onmdelcomm() {
 		$plugin = &$this->plugin;
@@ -746,7 +746,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param integer $id:
 	 *        	The id of the comment you wish to delete
-	 * @return integer: Redirect option
+	 * @return int Redirect option
 	 */
 	function dodeletecomm2($id) {
 		$smarty = &$this->smarty;
@@ -773,7 +773,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This function is like dopoldelete but it's for multiple policies.
 	 *
-	 * @return integer: Redirect option
+	 * @return int Redirect option
 	 */
 	function onmdelcomm_2() {
 		$smarty = &$this->smarty;

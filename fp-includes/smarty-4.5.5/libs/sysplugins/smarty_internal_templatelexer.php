@@ -205,21 +205,21 @@ class Smarty_Internal_Templatelexer
     /**
      * preg token pattern for state DOUBLEQUOTEDSTRING
      *
-     * @var null
+     * @var string|null
      */
     private $yy_global_pattern5 = null;
 
     /**
      * preg token pattern for text
      *
-     * @var null
+     * @var string|null
      */
     private $yy_global_text = null;
 
     /**
      * preg token pattern for literal
      *
-     * @var null
+     * @var string|null
      */
     private $yy_global_literal = null;
 
@@ -1091,5 +1091,3 @@ class Smarty_Internal_Templatelexer
          }
 
   }
-
-     
