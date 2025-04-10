@@ -12,6 +12,7 @@ require_once 'defaults.php';
 if (defined('CONFIG_DIR')) {
 	$settings_file = CONFIG_DIR . 'settings.conf.php';
 	if (file_exists($settings_file)) {
+		/** @phpstan-ignore-next-line */
 		require_once $settings_file;
 	}
 }
