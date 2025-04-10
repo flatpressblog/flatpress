@@ -263,7 +263,7 @@ class Smarty_Security
         ) {
             return true;
         }
-        $compiler->trigger_template_error("PHP function '{$function_name}' not allowed by security setting");
+        $compiler->trigger_template_error('PHP function \'' . $function_name . '\' not allowed by security setting');
         return false; // should not, but who knows what happens to the compiler in the future?
     }
 
@@ -282,7 +282,7 @@ class Smarty_Security
         ) {
             return true;
         }
-        $compiler->trigger_template_error("access to static class '{$class_name}' not allowed by security setting");
+        $compiler->trigger_template_error('access to static class \'' . $class_name . '\' not allowed by security setting');
         return false; // should not, but who knows what happens to the compiler in the future?
     }
 
@@ -309,18 +309,17 @@ class Smarty_Security
             // strip '$'
             $name = substr($params[ 0 ], 1);
         }
-        if (isset($allowed)) {
-            if (empty($allowed)) {
-                // fall back
-                return $this->isTrustedStaticClass($class_name, $compiler);
-            }
-            if (isset($allowed[ $class_name ])
-                && (empty($allowed[ $class_name ]) || in_array($name, $allowed[ $class_name ]))
-            ) {
-                return true;
-            }
+        if (empty($allowed)) {
+            // fall back
+            return $this->isTrustedStaticClass($class_name, $compiler);
         }
-        $compiler->trigger_template_error("access to static class '{$class_name}' {$params[2]} '{$name}' not allowed by security setting");
+
+        if (isset($allowed[ $class_name ])
+            && (empty($allowed[ $class_name ]) || in_array($name, $allowed[ $class_name ]))
+        ) {
+            return true;
+        }
+        $compiler->trigger_template_error('access to static class \'' . $class_name . '\' ' . $params[2] . ' \'' . $name . '\' not allowed by security setting');
         return false; // should not, but who knows what happens to the compiler in the future?
     }
 
@@ -339,7 +338,7 @@ class Smarty_Security
         ) {
             return true;
         }
-        $compiler->trigger_template_error("modifier '{$modifier_name}' not allowed by security setting");
+        $compiler->trigger_template_error('modifier \'' . $modifier_name . '\' not allowed by security setting');
         return false; // should not, but who knows what happens to the compiler in the future?
     }
 
@@ -371,12 +370,12 @@ class Smarty_Security
             if (empty($this->disabled_tags) || !in_array($tag_name, $this->disabled_tags)) {
                 return true;
             } else {
-                $compiler->trigger_template_error("tag '{$tag_name}' disabled by security setting", null, true);
+                $compiler->trigger_template_error('tag \'' . $tag_name . '\' disabled by security setting', null, true);
             }
         } elseif (in_array($tag_name, $this->allowed_tags) && !in_array($tag_name, $this->disabled_tags)) {
             return true;
         } else {
-            $compiler->trigger_template_error("tag '{$tag_name}' not allowed by security setting", null, true);
+            $compiler->trigger_template_error('tag "' . $tag_name . '" not allowed by security setting', null, true);
         }
         return false; // should not, but who knows what happens to the compiler in the future?
     }
@@ -394,11 +393,7 @@ class Smarty_Security
         if (!in_array($var_name, $this->disabled_special_smarty_vars)) {
             return true;
         } else {
-            $compiler->trigger_template_error(
-                "special variable '\$smarty.{$var_name}' not allowed by security setting",
-                null,
-                true
-            );
+            $compiler->trigger_template_error('special variable \'$smarty.' . $var_name . '\' not allowed by security setting', null, true);
         }
         return false; // should not, but who knows what happens to the compiler in the future?
     }
@@ -422,22 +417,14 @@ class Smarty_Security
             if (empty($this->disabled_modifiers) || !in_array($modifier_name, $this->disabled_modifiers)) {
                 return true;
             } else {
-                $compiler->trigger_template_error(
-                    "modifier '{$modifier_name}' disabled by security setting",
-                    null,
-                    true
-                );
+                $compiler->trigger_template_error('modifier \'' . $modifier_name . '\' disabled by security setting', null, true);
             }
         } elseif (in_array($modifier_name, $this->allowed_modifiers)
                   && !in_array($modifier_name, $this->disabled_modifiers)
         ) {
             return true;
         } else {
-            $compiler->trigger_template_error(
-                "modifier '{$modifier_name}' not allowed by security setting",
-                null,
-                true
-            );
+            $compiler->trigger_template_error('modifier \'' . $modifier_name . '\' not allowed by security setting', null, true);
         }
         return false; // should not, but who knows what happens to the compiler in the future?
     }
@@ -457,7 +444,7 @@ class Smarty_Security
         }
         if (!empty($this->trusted_constants)) {
             if (!in_array(strtolower($const), $this->trusted_constants)) {
-                $compiler->trigger_template_error("Security: access to constant '{$const}' not permitted");
+                $compiler->trigger_template_error('Security: access to constant \'' . $const . '\' not permitted');
                 return false;
             }
             return true;
@@ -482,7 +469,7 @@ class Smarty_Security
         if (isset($this->streams) && (empty($this->streams) || in_array($stream_name, $this->streams))) {
             return true;
         }
-        throw new SmartyException("stream '{$stream_name}' not allowed by security setting");
+        throw new SmartyException('stream \'' . $stream_name . '\' not allowed by security setting');
     }
 
     /**
@@ -553,7 +540,7 @@ class Smarty_Security
                 }
             }
         }
-        throw new SmartyException("URI '{$uri}' not allowed by security setting");
+        throw new SmartyException('URI \'' . $uri . '\' not allowed by security setting');
     }
 
     /**
@@ -634,9 +621,9 @@ class Smarty_Security
             $security_class = $smarty->security_class;
         }
         if (!class_exists($security_class)) {
-            throw new SmartyException("Security class '$security_class' is not defined");
+            throw new SmartyException('Security class \'' . $security_class . '\' is not defined');
         } elseif ($security_class !== 'Smarty_Security' && !is_subclass_of($security_class, 'Smarty_Security')) {
-            throw new SmartyException("Class '$security_class' must extend Smarty_Security.");
+            throw new SmartyException('Class \'' . $security_class . '\' must extend Smarty_Security.');
         } else {
             $smarty->security_policy = new $security_class($smarty);
         }
@@ -653,7 +640,7 @@ class Smarty_Security
     public function startTemplate($template)
     {
         if ($this->max_template_nesting > 0 && $this->_current_template_nesting++ >= $this->max_template_nesting) {
-            throw new SmartyException("maximum template nesting level of '{$this->max_template_nesting}' exceeded when calling '{$template->template_resource}'");
+            throw new SmartyException('Maximum template nesting level of \'' . $this->max_template_nesting . '\' exceeded when calling \'' . $template->template_resource . '\'');
         }
     }
 
