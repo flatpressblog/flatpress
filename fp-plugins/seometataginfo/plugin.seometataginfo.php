@@ -203,6 +203,8 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 		}
 
 		function do_save() {
+			global $allowed_characters_regex;
+
 			if (empty($_POST ['pl_file_meta'])) {
 				return;
 			}
