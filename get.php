@@ -9,7 +9,7 @@
 require_once 'defaults.php';
 
 // Load language file
-$settings_file = CONFIG_DIR . 'settings.conf.php';
+$settings_file = defined('CONFIG_DIR') ? CONFIG_DIR . 'settings.conf.php' : null;
 if (file_exists($settings_file)) {
 	require_once($settings_file);
 }
