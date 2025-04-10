@@ -145,7 +145,7 @@ class plugin_commentcenter {
 	 *
 	 * @param string $key:
 	 *        	A key for the service
-	 * @return object The akismet object
+	 * @return object|int The akismet object or a negative integer on error
 	 */
 	function &akismetLoad($key = '') {
 		$conf = $this->getConf();
