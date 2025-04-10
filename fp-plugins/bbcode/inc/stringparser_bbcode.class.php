@@ -1198,6 +1198,7 @@ class StringParser_BBCode extends StringParser {
 			}
 			return $before . $output . $after;
 		}
+		return false;
 	}
 
 	/**
