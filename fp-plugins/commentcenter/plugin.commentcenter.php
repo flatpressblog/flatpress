@@ -44,9 +44,9 @@ class plugin_commentcenter {
 	/**
 	 * This function loads the configuration of the plugin.
 	 *
-	 * @param boolean $foce:
+	 * @param bool $foce:
 	 *        	Force to load it?
-	 * @return array: The configuration
+	 * @return array The configuration
 	 */
 	function getConf($force = false) {
 		if (!empty($this->conf) && $force) {
@@ -72,7 +72,7 @@ class plugin_commentcenter {
 	/**
 	 * This function validates a comment.
 	 *
-	 * @param boolean $status:
+	 * @param bool $status:
 	 *        	The current status of the comment validation
 	 * @param array $comment:
 	 *        	The comment data
@@ -145,7 +145,7 @@ class plugin_commentcenter {
 	 *
 	 * @param string $key:
 	 *        	A key for the service
-	 * @return object: The akismet object
+	 * @return object The akismet object
 	 */
 	function &akismetLoad($key = '') {
 		$conf = $this->getConf();
@@ -188,7 +188,7 @@ class plugin_commentcenter {
 	 *        	The comment data
 	 * @param string $entry:
 	 *        	The entry id
-	 * @return array: $comment cleaned
+	 * @return array $comment cleaned
 	 */
 	function akismetClean($comment, $entry) {
 		global $post;
@@ -247,9 +247,9 @@ class plugin_commentcenter {
 	/**
 	 * This function loads the comment policies.
 	 *
-	 * @param boolean $force:
+	 * @param bool $force:
 	 *        	Force to load them?
-	 * @return array: The policies
+	 * @return array The policies
 	 */
 	function &loadPolicies($force = false) {
 		if (!$force && !empty($this->policies)) {
@@ -269,7 +269,7 @@ class plugin_commentcenter {
 	/**
 	 * This function saves the policies.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	function savePolicies() {
 		$this->policies = array_values($this->policies);
@@ -283,7 +283,7 @@ class plugin_commentcenter {
 	 *
 	 * @param mixed $policy:
 	 *        	The policy
-	 * @param integer $position:
+	 * @param int $position:
 	 *        	The position
 	 */
 	function addPolicyAt($policy, $position) {
@@ -329,7 +329,7 @@ class plugin_commentcenter {
 	 *        	The entry id
 	 * @param array $cats:
 	 *        	The categories
-	 * @return integer: The behavoir
+	 * @return int The behavoir
 	 */
 	function behavoirFromPolicies($entry, $cats = array()) {
 		if (!is_array($cats)) {
@@ -410,7 +410,7 @@ class plugin_commentcenter {
 	 *        	The comment data
 	 * @param string $entry_title:
 	 *        	The title of the entry
-	 * @return boolean
+	 * @return bool
 	 */
 	function commentMail($comment, $entry_title) {
 		global $lang, $fp_config;
