@@ -10,45 +10,74 @@
 require_once ABS_PATH . 'defaults.php';
 require_once INCLUDES_DIR . 'includes.php';
 
-function owner_has_write_permission($path) {
-	if (!file_exists($path)) {
-		return false;
-	}
-	$is_writable = is_writable($path);
-	$perms = fileperms($path);
-	if ($perms === false) {
-		return false;
-	}
-	// -3, 1 owner, -1 others, -2 group/ others
-	$octal_perms = substr(sprintf('%o', $perms), -3, 1);
-	return $is_writable && (
-		// 2: Write permission for the group/others.
-		// 6: Read and write permission for the group/ others.
-		// 7: Full access (read, write, execute) for the group/others.
-		strpos($octal_perms, '2') !== false || strpos($octal_perms, '6') !== false || strpos($octal_perms, '7') !== false
-	);
-}
-
-function other_has_write_permission($path) {
-	if (!file_exists($path)) {
-		return false;
-	}
-	$is_writable = is_writable($path);
-	$perms = fileperms($path);
-	if ($perms === false) {
-		return false;
-	}
-	// -3, 1 owner, -1 others, -2 group/ others
-	$octal_perms = substr(sprintf('%o', $perms), -1);
-	return $is_writable && (
-		// 2: Write permission for the group/others.
-		// 6: Read and write permission for the group/ others.
-		// 7: Full access (read, write, execute) for the group/others.
-		strpos($octal_perms, '2') !== false || strpos($octal_perms, '6') !== false || strpos($octal_perms, '7') !== false
-	);
-}
-
 if (class_exists('AdminPanelAction')) {
+
+	function owner_has_write_permission($path) {
+		if (!file_exists($path)) {
+			return false;
+		}
+		$is_writable = is_writable($path);
+		$perms = fileperms($path);
+		if ($perms === false) {
+			return false;
+		}
+		// -3, 1 owner, -1 others, -2 group/ others
+		$octal_perms = substr(sprintf('%o', $perms), -3, 1);
+		return $is_writable && (
+			// 2: Write permission for the group/others.
+			// 6: Read and write permission for the group/ others.
+			// 7: Full access (read, write, execute) for the group/others.
+			strpos($octal_perms, '2') !== false || strpos($octal_perms, '6') !== false || strpos($octal_perms, '7') !== false
+		);
+	}
+
+	function other_has_write_permission($path) {
+		if (!file_exists($path)) {
+			return false;
+		}
+		$is_writable = is_writable($path);
+		$perms = fileperms($path);
+		if ($perms === false) {
+			return false;
+		}
+		// -3, 1 owner, -1 others, -2 group/ others
+		$octal_perms = substr(sprintf('%o', $perms), -1);
+		return $is_writable && (
+			// 2: Write permission for the group/others.
+			// 6: Read and write permission for the group/ others.
+			// 7: Full access (read, write, execute) for the group/others.
+			strpos($octal_perms, '2') !== false || strpos($octal_perms, '6') !== false || strpos($octal_perms, '7') !== false
+		);
+	}
+
+	// Browser recognition does not always work correctly.
+	// This also depends on whether a current browscap has been set in php.ini or not.
+	function browser_rec() {
+		$lang = lang_load('plugin:support');
+
+		$user_agent = $_SERVER ['HTTP_USER_AGENT'];
+		$browser = $lang ['admin'] ['maintain'] ['support'] ['no_browser'];
+
+		$browsers = [
+			'/msie/i' => 'Internet explorer',
+			'/trident/i' => 'Internet explorer',
+			'/edge/i' => 'Edge',
+			'/firefox/i' => 'Firefox',
+			'/safari/i' => 'Safari',
+			'/chrome/i' => 'Chrome',
+			'/opera/i' => 'Opera',
+			'/opr/i' => 'Opera',
+			'/mobile/i' => 'Mobile browser',
+			'/konqueror/i' => 'Konqueror'
+		];
+
+		foreach ($browsers as $regex => $value) {
+			if (preg_match($regex, $user_agent)) {
+				$browser = $value;
+			}
+		}
+		return $browser;
+	}
 
 	function plugin_support_head() {
 		$plugindir = plugin_geturl('support');
@@ -484,36 +513,8 @@ if (class_exists('AdminPanelAction')) {
 			$support ['h2_other'] = $lang ['admin'] ['maintain'] ['support'] ['h2_other'];
 			$support ['desc_browser'] = $lang ['admin'] ['maintain'] ['support'] ['desc_browser'];
 
-			// Browser recognition does not always work correctly.
-			// This also depends on whether a current browscap has been set in php.ini or not.
-			function browser() {
-				$lang = lang_load('plugin:support');
-
-				$user_agent = $_SERVER ['HTTP_USER_AGENT'];
-				$browser = $lang ['admin'] ['maintain'] ['support'] ['no_browser'];
-
-				$browsers = [
-					'/msie/i' => 'Internet explorer',
-					'/trident/i' => 'Internet explorer',
-					'/edge/i' => 'Edge',
-					'/firefox/i' => 'Firefox',
-					'/safari/i' => 'Safari',
-					'/chrome/i' => 'Chrome',
-					'/opera/i' => 'Opera',
-					'/opr/i' => 'Opera',
-					'/mobile/i' => 'Mobile browser',
-					'/konqueror/i' => 'Konqueror'
-				];
-
-				foreach ($browsers as $regex => $value) {
-					if (preg_match($regex, $user_agent)) {
-						$browser = $value;
-					}
-				}
-				return $browser;
-			}
 			$support ['detect_browser'] = $lang ['admin'] ['maintain'] ['support'] ['detect_browser'];
-			$support ['function_browser'] = browser();
+			$support ['function_browser'] = browser_rec();
 
 			$support ['desc_cookie'] = $lang ['admin'] ['maintain'] ['support'] ['desc_cookie'];
 			$support ['session_cookie'] = $lang ['admin'] ['maintain'] ['support'] ['session_cookie'];
