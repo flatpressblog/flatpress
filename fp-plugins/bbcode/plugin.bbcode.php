@@ -1023,7 +1023,7 @@ function bbcode2html($html) {
  * This is for [html] tag postprocess
  *
  * @param unknown_type $match
- * @return unknown
+ * @return string Cleaned HTML string
  */
 function plugin_bbcode_undoHtmlCallback($match) {
 	// builtin function (see core.wp-formatting)
