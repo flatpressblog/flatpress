@@ -34,12 +34,6 @@ function setupid() {
 	return $setupid;
 }
 
-if (!function_exists('check_step_placeholder')) {
-	function check_step_placeholder() {
-		return true;
-	}
-}
-
 function getstep(&$id) {
 	global $err, $lang;
 
@@ -82,11 +76,12 @@ function getstep(&$id) {
 			include $libfile;
 		}
 
-		if (!function_exists('check_step')) {
+		/** @phpstan-ignore-next-line */
+		if (!function_exists('check_step')) :
 			function check_step() {
-				return check_step_placeholder();
+				return true;
 			}
-		}
+		endif;
 
 		if (check_step()) {
 			++$i;
