@@ -76,12 +76,11 @@ function getstep(&$id) {
 			include $libfile;
 		}
 
-		if (!function_exists('check_step')) :
-
+		if (!function_exists('check_step')) {
 			function check_step() {
 				return true;
 			}
-		endif;
+		}
 
 		if (check_step()) {
 			++$i;
