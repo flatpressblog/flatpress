@@ -76,8 +76,8 @@ function getstep(&$id) {
 			include $libfile;
 		}
 
-		/** @phpstan-ignore-next-line */
 		if (!function_exists('check_step')) :
+			/** @phpstan-ignore-next-line */
 			function check_step() {
 				return true;
 			}
