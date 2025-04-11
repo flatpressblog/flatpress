@@ -13,8 +13,8 @@ function cache_exist() {
 	return file_exists(CACHE_FILE);
 }
 
-function check_write($num = 2) {
-	$ok = @io_write_file(SETUPTEMP_FILE, $num);
+function check_write($file = SETUPTEMP_FILE, $data = 2) {
+	$ok = @io_write_file($file, $data);
 	return $ok;
 }
 
