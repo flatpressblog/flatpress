@@ -71,7 +71,11 @@ function getstep(&$id) {
 			$i = intval($x [1]);
 		}
 
-		@include("./setup/lib/" . $STEPS [$i] . ".lib.php");
+		$libfile = __DIR__ . '/' . $STEPS [$i] . '.lib.php';
+		if (is_file($libfile)) {
+			include $libfile;
+		}
+
 		if (!function_exists('check_step')) :
 
 			function check_step() {
