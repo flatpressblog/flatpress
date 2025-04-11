@@ -76,12 +76,6 @@ function getstep(&$id) {
 			include $libfile;
 		}
 
-		if (!function_exists('check_step')) {
-			function check_step() {
-				return true;
-			}
-		}
-
 		if (check_step()) {
 			++$i;
 			if ($i >= $MAXST) {
@@ -99,6 +93,12 @@ function getstep(&$id) {
 
 	return $i;
 }
+
+if (!function_exists('check_step')) :
+	function check_step() {
+		return true;
+	}
+endif;
 
 function validate() {
 	global $lang;
