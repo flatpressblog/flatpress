@@ -10,6 +10,7 @@
 [![License](https://img.shields.io/github/license/flatpressblog/flatpress.svg?style=plastic)](./LICENSE.md "License")
 [![Open issues](https://img.shields.io/github/issues-raw/flatpressblog/flatpress?style=plastic)](https://github.com/flatpressblog/flatpress/issues "See open issues")
 [![Last commit](https://img.shields.io/github/last-commit/flatpressblog/flatpress?style=plastic)](https://github.com/flatpressblog/flatpress/commits/ "Last commit")
+[![PHPStan](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml)
 <a href="https://fosstodon.org/@flatpress" title="Follow on Mastodon"><img src="https://img.shields.io/mastodon/follow/326815?domain=https%3A%2F%2Ffosstodon.org&style=social" alt="Follow on Mastodon"></a>
 
 # Welcome to FlatPress!
