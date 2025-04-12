@@ -33,7 +33,7 @@ parameters:
     - '#Property .* does not accept null#'
 
     # Comparison of incorrect types
-    - '#Comparison operation .* is always (true|false)#'
+    #- '#Comparison operation .* is always (true|false)#'
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
