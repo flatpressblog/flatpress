@@ -13,8 +13,8 @@ function cache_exist() {
 	return file_exists(CACHE_FILE);
 }
 
-function check_write($num = 2) {
-	$ok = @io_write_file(SETUPTEMP_FILE, $num);
+function check_write($file = SETUPTEMP_FILE, $data = 2) {
+	$ok = @io_write_file($file, $data);
 	return $ok;
 }
 
@@ -71,9 +71,13 @@ function getstep(&$id) {
 			$i = intval($x [1]);
 		}
 
-		@include("./setup/lib/" . $STEPS [$i] . ".lib.php");
-		if (!function_exists('check_step')) :
+		$libfile = __DIR__ . '/' . $STEPS [$i] . '.lib.php';
+		if (is_file($libfile)) {
+			include $libfile;
+		}
 
+		if (!function_exists('check_step')) :
+			/** @phpstan-ignore-next-line */
 			function check_step() {
 				return true;
 			}

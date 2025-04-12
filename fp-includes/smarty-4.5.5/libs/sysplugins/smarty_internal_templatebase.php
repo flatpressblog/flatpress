@@ -31,9 +31,9 @@
  * @method object getRegisteredObject(string $object_name)
  * @method Smarty_Internal_TemplateBase registerCacheResource(string $name, Smarty_CacheResource $resource_handler)
  * @method Smarty_Internal_TemplateBase registerClass(string $class_name, string $class_impl)
- * @method Smarty_Internal_TemplateBase registerDefaultConfigHandler(callback $callback)
- * @method Smarty_Internal_TemplateBase registerDefaultPluginHandler(callback $callback)
- * @method Smarty_Internal_TemplateBase registerDefaultTemplateHandler(callback $callback)
+ * @method Smarty_Internal_TemplateBase registerDefaultConfigHandler(callable $callback)
+ * @method Smarty_Internal_TemplateBase registerDefaultPluginHandler(callable $callback)
+ * @method Smarty_Internal_TemplateBase registerDefaultTemplateHandler(callable $callback)
  * @method Smarty_Internal_TemplateBase registerResource(string $name, mixed $resource_handler)
  * @method Smarty_Internal_TemplateBase setAutoloadFilters(mixed $filters, string $type = null)
  * @method Smarty_Internal_TemplateBase setDebugTemplate(string $tpl_name)
@@ -253,7 +253,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
                 $errorHandler->deactivate();
             }
 
-            if (isset($_smarty_old_error_level)) {
+            if ($_smarty_old_error_level !== null) {
                 error_reporting($_smarty_old_error_level);
             }
             return $result;
@@ -284,7 +284,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
      * @param bool     $cacheable  if true (default) this function is cache able
      * @param mixed    $cache_attr caching attributes if any
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      * @throws \SmartyException
      */
     public function registerPlugin($type, $name, $callback, $cacheable = true, $cache_attr = null)
@@ -319,7 +319,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
      * @param callable    $callback
      * @param string|null $name optional filter name
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      * @throws \SmartyException
      */
     public function registerFilter($type, $callback, $name = null)
@@ -339,7 +339,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
      * @param bool   $format                     smarty argument format, else traditional
      * @param array  $block_methods              list of block-methods
      *
-     * @return \Smarty|\Smarty_Internal_Template
+     * @return \Smarty_Internal_TemplateBase
      * @throws \SmartyException
      */
     public function registerObject(

@@ -6,14 +6,25 @@ header('Content-Type: text/css; charset=utf-8');
 
 // PHP4.1.0 or later supported
 if (phpversion() >= "4.1.0") {
-	extract($_GET);
+	extract($_GET, EXTR_SKIP);
 }
 
 // load language file
 require_once '../../../defaults.php';
 
-if (file_exists(CONFIG_DIR . 'settings.conf.php')) {
-	require_once CONFIG_DIR . 'settings.conf.php';
+if (!defined('ABS_PATH')) {
+	define('ABS_PATH', realpath(__DIR__ . '/../../../') . '/');
+}
+if (!defined('CONFIG_DIR')) {
+	define('CONFIG_DIR', 'fp-content/config/');
+}
+if (!defined('PLUGINS_DIR')) {
+	define('PLUGINS_DIR', 'fp-plugins/');
+}
+
+$configFile = ABS_PATH . CONFIG_DIR . 'settings.conf.php';
+if (is_readable($configFile)) {
+	require_once $configFile;
 } else {
 	$fp_config = [];
 }
@@ -21,12 +32,10 @@ if (file_exists(CONFIG_DIR . 'settings.conf.php')) {
 $langId = isset($fp_config ['locale'] ['lang']) ? $fp_config ['locale'] ['lang'] : 'en-us';
 
 $langFile = ABS_PATH . PLUGINS_DIR . 'gdprvideoembed/lang/lang.' . $langId . '.php';
-
 if (!file_exists($langFile)) {
 	$langFile = ABS_PATH . PLUGINS_DIR . 'gdprvideoembed/lang/lang.en-us.php';
 }
-
-if (file_exists($langFile)) {
+if (is_readable($langFile)) {
 	require_once $langFile;
 }
 ?>

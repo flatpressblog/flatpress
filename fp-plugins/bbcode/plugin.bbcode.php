@@ -84,12 +84,12 @@ add_action('wp_head', 'plugin_bbcode_head');
  * Remaps the URL so that there's no hint to your attachs/ directory.
  *
  * @param string $d
- * @return boolean
+ * @return bool
  */
 function bbcode_remap_url(&$d) {
 	// nothing to remap if given string is empty
 	if (empty($d)) {
-		return;
+		return false;
 	}
 	// complete the URL if it begins with www. but does not contain a protocol
 	if (strpos($d, 'www.') === 0) {
@@ -103,7 +103,7 @@ function bbcode_remap_url(&$d) {
 	if (!isValidFileDownloadUrl($d)) {
 		// Handle invalid URLs
 		$d = 'about:blank';
-		return;
+		return false;
 	}
 
 	// NWM: "attachs/" is interpreted as a keyword, and it is translated to the actual path of ATTACHS_DIR
@@ -460,7 +460,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 			$output = null;
 	}
 
-	if (isset($output)) {
+	if ($output !== null) {
 		return $output;
 	}
 	return '[unsupported video]';
@@ -1022,8 +1022,8 @@ function bbcode2html($html) {
 /**
  * This is for [html] tag postprocess
  *
- * @param unknown_type $match
- * @return unknown
+ * @param array $match Regex match array
+ * @return string Cleaned HTML string
  */
 function plugin_bbcode_undoHtmlCallback($match) {
 	// builtin function (see core.wp-formatting)
