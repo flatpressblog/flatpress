@@ -12,7 +12,7 @@ parameters:
     # Dynamic and global variables
     - '#Variable \$.* might not be defined#'
     - '#Undefined variable: \$.*#'
-    - '#Trying to access property .* on non-object#'
+    #- '#Trying to access property .* on non-object#'
 
     # Plugins, dynamic methods and properties
     - '#Call to an undefined method.*#'
