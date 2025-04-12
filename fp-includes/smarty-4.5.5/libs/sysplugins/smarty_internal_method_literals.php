@@ -50,6 +50,10 @@ class Smarty_Internal_Method_Literals
         if (isset($literals)) {
             $this->set($obj->_getSmartyObj(), (array)$literals);
         }
+        $realObj = $obj instanceof Smarty_Internal_TemplateBase ? $obj->_getSmartyObj() : $obj;
+        if ($realObj instanceof Smarty || $realObj instanceof Smarty_Internal_Template) {
+            return $realObj;
+        }
         return $obj;
     }
 
@@ -71,6 +75,10 @@ class Smarty_Internal_Method_Literals
         $smarty->literals = array();
         if (!empty($literals)) {
             $this->set($smarty, (array)$literals);
+        }
+        $realObj = $obj instanceof Smarty_Internal_TemplateBase ? $obj->_getSmartyObj() : $obj;
+        if ($realObj instanceof Smarty || $realObj instanceof Smarty_Internal_Template) {
+            return $realObj;
         }
         return $obj;
     }
