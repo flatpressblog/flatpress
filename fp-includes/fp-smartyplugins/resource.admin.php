@@ -9,6 +9,14 @@
 class Smarty_Resource_Admin extends Smarty_Resource_Custom {
 
 	/**
+	 * Fetches the template source and modification time.
+	 *
+	 * @param string $name Template name (e.g., "settings/main")
+	 * @param string|null &$source Output: template source or null on failure
+	 * @param int|null &$mtime Output: modification time as Unix timestamp or null on failure
+	 *
+	 * @phpstan-param-out string|null $source
+	 * @phpstan-param-out int|null $mtime
 	 *
 	 * {@inheritdoc}
 	 * @see Smarty_Resource_Custom::fetch()
@@ -24,6 +32,12 @@ class Smarty_Resource_Admin extends Smarty_Resource_Custom {
 		}
 	}
 
+	/**
+	 * Resolves the file path of an admin template.
+	 *
+	 * @param string $templateName
+	 * @return string|null
+	 */
 	private function getFilePath($templateName) {
 		$path = null;
 		$panel = strtok($templateName, '/');
