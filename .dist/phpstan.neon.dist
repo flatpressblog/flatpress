@@ -23,7 +23,7 @@ parameters:
     - '#Constant .* not found.*#'
 
     # Typical parameter problems (dynamic calls)
-    - '#Parameter .* expects.*, .* given#'
+    #- '#Parameter .* expects.*, .* given#'
 
     # Old PHPDoc tags and formatting issues
     - '#PHPDoc tag @param has invalid value \(.*\)#'
