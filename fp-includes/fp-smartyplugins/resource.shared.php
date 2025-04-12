@@ -23,7 +23,8 @@ class Smarty_Resource_Shared extends Smarty_Resource_Custom {
 	 */
 	protected function fetch($name, &$source, &$mtime) {
 		if ($source = io_load_file(SHARED_TPLS . $name)) {
-			$mtime = filemtime(SHARED_TPLS . $name);
+			$filemtime = filemtime(SHARED_TPLS . $name);
+			$mtime = $filemtime !== false ? $filemtime : null;
 		} else {
 			$source = null;
 			$mtime = null;
