@@ -25,7 +25,8 @@ class Smarty_Resource_Admin extends Smarty_Resource_Custom {
 		$filePath = $this->getFilePath($name);
 
 		if ($source = io_load_file($filePath)) {
-			$mtime = filemtime($filePath);
+			$mtimeRaw = filemtime($filePath);
+			$mtime = ($mtimeRaw !== false) ? $mtimeRaw : null;
 		} else {
 			$source = null;
 			$mtime = null;
