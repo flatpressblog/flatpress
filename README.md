@@ -5,13 +5,15 @@
 [![Security policy](https://img.shields.io/badge/Security%20policy-⚡-555?style=plastic)](./SECURITY.md "Security policy")
 [![Contributors](https://img.shields.io/badge/Contributors-😎-555?style=plastic)](./CONTRIBUTORS.md "Contributors")
 [![Wiki](https://img.shields.io/badge/Donate-💛-555?style=plastic&logo=paypal)](https://www.flatpress.org/donate "Send us a little Thank You")
+<a href="https://fosstodon.org/@flatpress" title="Follow on Mastodon"><img src="https://img.shields.io/mastodon/follow/326815?domain=https%3A%2F%2Ffosstodon.org&style=social" alt="Follow on Mastodon"></a>
 
 [![Releases](https://img.shields.io/github/release/flatpressblog/flatpress.svg?label=Latest%20release&style=plastic)](https://github.com/flatpressblog/flatpress/releases "See all releases")
 [![License](https://img.shields.io/github/license/flatpressblog/flatpress.svg?style=plastic)](./LICENSE.md "License")
 [![Open issues](https://img.shields.io/github/issues-raw/flatpressblog/flatpress?style=plastic)](https://github.com/flatpressblog/flatpress/issues "See open issues")
 [![Last commit](https://img.shields.io/github/last-commit/flatpressblog/flatpress?style=plastic)](https://github.com/flatpressblog/flatpress/commits/ "Last commit")
+
 [![PHPStan](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml)
-<a href="https://fosstodon.org/@flatpress" title="Follow on Mastodon"><img src="https://img.shields.io/mastodon/follow/326815?domain=https%3A%2F%2Ffosstodon.org&style=social" alt="Follow on Mastodon"></a>
+[![CodeQL](https://github.com/flatpressblog/flatpress/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/codeql-analysis.yml)
 
 # Welcome to FlatPress!
 FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, just PHP. No database needed!
