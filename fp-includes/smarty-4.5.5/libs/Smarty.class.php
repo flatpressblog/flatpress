@@ -1280,7 +1280,10 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * Test install
      *
-     * @param null $errors
+     * @param array|null &$errors Will be filled with error messages if install fails
+     * @return void
+     *
+     * @phpstan-param-out array|null $errors
      */
     public function testInstall(&$errors = null)
     {
