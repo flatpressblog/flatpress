@@ -27,7 +27,8 @@ class Smarty_Resource_Plugin extends Smarty_Resource_Custom {
 		$filePath = $this->getFilePath($name);
 
 		if ($source = io_load_file($filePath)) {
-			$mtime = filemtime($filePath);
+			$fTime = filemtime($filePath);
+			$mtime = is_int($fTime) ? $fTime : null;
 		} else {
 			$source = null;
 			$mtime = null;
