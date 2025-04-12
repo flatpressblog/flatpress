@@ -10,6 +10,15 @@
 class Smarty_Resource_Plugin extends Smarty_Resource_Custom {
 
 	/**
+	 * Fetches the template source and its modification time.
+	 *
+	 * @param string $name Template name
+	 * @param string|null &$source [output] Template source code, or null if not found
+	 * @param int|null &$mtime [output] Last modification timestamp, or null if not found
+	 * @return void
+	 *
+	 * @phpstan-param-out string|null $source
+	 * @phpstan-param-out int|null $mtime
 	 *
 	 * {@inheritdoc}
 	 * @see Smarty_Resource_Custom::fetch()
