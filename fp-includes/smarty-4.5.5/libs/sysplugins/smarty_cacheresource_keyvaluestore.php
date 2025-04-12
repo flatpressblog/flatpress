@@ -259,7 +259,7 @@ abstract class Smarty_CacheResource_KeyValueStore extends Smarty_CacheResource
      * @param string  $cache_id      cache id
      * @param string  $compile_id    compile id
      * @param string  $content       cached content
-     * @param integer &$timestamp    cached timestamp (epoch)
+     * @param float|int|null &$timestamp cached timestamp (epoch)
      * @param string  $resource_uid  resource's uid
      *
      * @return boolean success
@@ -276,12 +276,14 @@ abstract class Smarty_CacheResource_KeyValueStore extends Smarty_CacheResource
         $t = $this->read(array($cid));
         $content = !empty($t[ $cid ]) ? $t[ $cid ] : null;
         $timestamp = null;
-        if ($content && ($timestamp = $this->getMetaTimestamp($content))) {
-            $invalidated =
-                $this->getLatestInvalidationTimestamp($cid, $resource_name, $cache_id, $compile_id, $resource_uid);
-            if ($invalidated > $timestamp) {
-                $timestamp = null;
-                $content = null;
+        if ($content) {
+            $timestamp = $this->getMetaTimestamp($content);
+            if ($timestamp) {
+                $invalidated = $this->getLatestInvalidationTimestamp($cid, $resource_name, $cache_id, $compile_id, $resource_uid);
+                if ($invalidated > $timestamp) {
+                    $timestamp = null;
+                    $content = null;
+                }
             }
         }
         return !!$content;
