@@ -35,8 +35,10 @@ parameters:
     - '#PHPDoc tag @var has invalid value \(.*root node.*\)#'
     - '#PHPDoc tag @var has invalid value \(.*\): Unexpected token.*#'
 
-    # Properties that would require null|Type (legacy code)
-    #- '#Property .* does not accept null#'
+    # Ignore error “does not accept null” only in Smarty core
+    - message: '#Property .* does not accept null#'
+      paths:
+        - ../fp-includes/smarty-4.5.5/libs/sysplugins/*.php
 
     # Comparison of incorrect types
     #- '#Comparison operation .* is always (true|false)#'
