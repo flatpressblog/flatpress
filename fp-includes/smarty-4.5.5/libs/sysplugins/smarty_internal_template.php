@@ -74,7 +74,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
     /**
      * Inheritance runtime extension
      *
-     * @var Smarty_Internal_Runtime_Inheritance
+     * @var null|Smarty_Internal_Runtime_Inheritance
      */
     public $inheritance = null;
 
@@ -201,8 +201,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
         // checks if template exists
         if (!$this->source->exists) {
             throw new SmartyException(
-                "Unable to load template '{$this->source->type}:{$this->source->name}'" .
-                ($this->_isSubTpl() ? " in '{$this->parent->template_resource}'" : '')
+                'Unable to load template \'' . $this->source->type . ':' . $this->source->name . '\'' . ($this->_isSubTpl() ? ' in \'' . $this->parent->template_resource . '\'' : '')
             );
         }
         // disable caching for evaluated code
@@ -473,7 +472,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
                 if (false !== $this->smarty->loadPlugin($name)) {
                     $checked[ $name ] = true;
                 } else {
-                    throw new SmartyException("Plugin '{$name}' not callable");
+                    throw new SmartyException('Plugin \'' . $name . '\' not callable');
                 }
             }
         }
@@ -598,7 +597,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
      */
     public function capture_error()
     {
-        throw new SmartyException("Not matching {capture} open/close in '{$this->template_resource}'");
+        throw new SmartyException('Not matching {capture} open/close in \'' . $this->template_resource . '\'');
     }
 
     /**
@@ -707,7 +706,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
                     return $this->smarty->$property_name;
                 }
         }
-        throw new SmartyException("template property '$property_name' does not exist.");
+        throw new SmartyException('template property \'' . $property_name . '\' does not exist.');
     }
 
     /**
@@ -733,7 +732,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
                     return;
                 }
         }
-        throw new SmartyException("invalid template property '$property_name'.");
+        throw new SmartyException('invalid template property \'' . $property_name . '\'.');
     }
 
     /**

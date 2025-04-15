@@ -171,7 +171,7 @@ class Smarty_Template_Compiled extends Smarty_Template_Resource_Base
         $this->file_dependency = array();
         $this->includes = array();
         $this->nocache_hash = null;
-        $this->unifunc = null;
+        $this->unifunc = '';
         // compile locking
         if ($saved_timestamp = (!$_template->source->handler->recompiled && is_file($this->filepath))) {
             $saved_timestamp = $this->getTimeStamp();

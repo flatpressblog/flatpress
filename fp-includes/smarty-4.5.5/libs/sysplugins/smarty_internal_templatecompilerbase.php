@@ -45,7 +45,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
     /**
      * Parser object
      *
-     * @var Smarty_Internal_Templateparser
+     * @var Smarty_Internal_Templateparser|null
      */
     public $parser = null;
 
@@ -101,7 +101,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
     /**
      * current template
      *
-     * @var Smarty_Internal_Template
+     * @var Smarty_Internal_Template|null
      */
     public $template = null;
 
@@ -220,7 +220,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
     /**
      * parent compiler object for merged subtemplates and template functions
      *
-     * @var Smarty_Internal_TemplateCompilerBase
+     * @var Smarty_Internal_TemplateCompilerBase|null
      */
     public $parent_compiler = null;
 

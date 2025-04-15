@@ -97,7 +97,7 @@ class Smarty_Template_Source
     /**
      * Template source content eventually set by default handler
      *
-     * @var string
+     * @var string|null
      */
     public $content = null;
 

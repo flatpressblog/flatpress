@@ -109,6 +109,7 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
             return;
         }
         $timestamp = null;
+        $content = '';
         $this->fetch(
             $cached->filepath,
             $cached->source->name,
@@ -138,9 +139,9 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
         if (!$cached) {
             $cached = $_smarty_tpl->cached;
         }
-        $content = $cached->content ? $cached->content : null;
-        $timestamp = $cached->timestamp ? $cached->timestamp : null;
-        if ($content === null || !$timestamp) {
+        $content = $cached->content !== '' ? $cached->content : '';
+        $timestamp = $cached->timestamp ?: null;
+        if ($content === '' || !$timestamp) {
             $this->fetch(
                 $_smarty_tpl->cached->filepath,
                 $_smarty_tpl->source->name,
@@ -150,9 +151,9 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
                 $timestamp
             );
         }
-        if ($content !== null && $content !== '') {
+        if ($content !== '') {
             eval('?>' . $content);
-            $cached->content = null;
+            $cached->content = '';
             return true;
         }
         return false;
@@ -187,10 +188,9 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
      */
     public function readCachedContent(Smarty_Internal_Template $_template)
     {
-        $content = $_template->cached->content ? $_template->cached->content : null;
+        $content = $_template->cached->content !== '' ? $_template->cached->content : '';
         $timestamp = null;
-        if ($content === null) {
-            $timestamp = null;
+        if ($content === '') {
             $this->fetch(
                 $_template->cached->filepath,
                 $_template->source->name,
@@ -200,7 +200,7 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
                 $timestamp
             );
         }
-        if ($content !== null && $content !== '') {
+        if ($content !== '') {
             return $content;
         }
         return false;
@@ -259,6 +259,7 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
         $name = $cached->source->name . '.lock';
         $mtime = $this->fetchTimestamp($id, $name, $cached->cache_id, $cached->compile_id);
         if ($mtime === null) {
+            $content = '';
             $this->fetch($id, $name, $cached->cache_id, $cached->compile_id, $content, $mtime);
         }
         return $mtime && ($t = time()) - $mtime < $smarty->locking_timeout;

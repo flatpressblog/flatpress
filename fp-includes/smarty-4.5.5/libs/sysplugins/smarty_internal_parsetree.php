@@ -26,7 +26,7 @@ abstract class Smarty_Internal_ParseTree
     /**
      * Subtree array
      *
-     * @var array
+     * @var array|null
      */
     public $subtrees = array();
 

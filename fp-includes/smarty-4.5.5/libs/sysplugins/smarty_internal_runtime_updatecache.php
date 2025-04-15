@@ -79,12 +79,12 @@ class Smarty_Internal_Runtime_UpdateCache
         // get text between non-cached items
         $cache_split =
             preg_split(
-                "!/\*%%SmartyNocache:{$nocache_hash}%%\*\/(.+?)/\*/%%SmartyNocache:{$nocache_hash}%%\*/!s",
+                '!/\*%%SmartyNocache:' . $nocache_hash . '%%\*/(.+?)/\*/%%SmartyNocache:' . $nocache_hash . '%%\*/!s',
                 $content
             );
         // get non-cached items
         preg_match_all(
-            "!/\*%%SmartyNocache:{$nocache_hash}%%\*\/(.+?)/\*/%%SmartyNocache:{$nocache_hash}%%\*/!s",
+            '!/\*%%SmartyNocache:' . $nocache_hash . '%%\*/(.+?)/\*/%%SmartyNocache:' . $nocache_hash . '%%\*/!s',
             $content,
             $cache_parts
         );
@@ -105,7 +105,7 @@ class Smarty_Internal_Runtime_UpdateCache
                 foreach ($php_split as $idx_php => $curr_php) {
                     $content .= $curr_php;
                     if (isset($php_parts[ 0 ][ $idx_php ])) {
-                        $content .= "<?php echo '{$php_parts[ 1 ][ $idx_php ]}'; ?>\n";
+                        $content .= '<?php echo \'' . $php_parts[1][$idx_php] . '\'; ?>' . "\n";
                     }
                 }
             } else {
@@ -161,7 +161,7 @@ class Smarty_Internal_Runtime_UpdateCache
         if (!$_template->source->handler->recompiled) {
             $cached = $_template->cached;
             if ($cached->handler->writeCachedContent($_template, $content)) {
-                $cached->content = null;
+                $cached->content = '';
                 $cached->timestamp = time();
                 $cached->exists = true;
                 $cached->valid = true;
@@ -172,7 +172,7 @@ class Smarty_Internal_Runtime_UpdateCache
                 }
                 return true;
             }
-            $cached->content = null;
+            $cached->content = '';
             $cached->timestamp = false;
             $cached->exists = false;
             $cached->valid = false;
