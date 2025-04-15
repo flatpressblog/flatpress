@@ -36,7 +36,7 @@ parameters:
     - '#PHPDoc tag @var has invalid value \(.*\): Unexpected token.*#'
 
     # Properties that would require null|Type (legacy code)
-    - '#Property .* does not accept null#'
+    #- '#Property .* does not accept null#'
 
     # Comparison of incorrect types
     #- '#Comparison operation .* is always (true|false)#'
