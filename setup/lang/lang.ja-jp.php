@@ -170,7 +170,7 @@ FlatPress-Leggeroテーマでは、クラシックからモダンまで3つの�
 [*][url=https://wiki.flatpress.org/res:themes target=_blank rel=external]他のユーザから投稿[/url]された[b]素晴らしいテーマ[/b]を入手しましょう!
 [*][url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]プラグイン[/url]をチェックしてください。
 [*]あなたの言語の[url=https://wiki.flatpress.org/res:language target=_blank rel=external]翻訳パック[/url]を入手しましょう。
-[*][url=https://twitter.com/FlatPress target=_blank rel=external]X(Twitter)[/url]と[url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url]でもFlatPressをフォローできます。
+[*][url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url]でもFlatPressをフォローできます。
 [/list]
 
 

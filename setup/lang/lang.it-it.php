@@ -165,7 +165,7 @@ Vuoi saperne di più?
 [*]Scarica [b]magnifici temi[/b] dagli [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]invii di altri utenti[/url]!
 [*]Dai un\'occhiata ai [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugin[/url].
 [*]Scarica [url=https://wiki.flatpress.org/res:language target=_blank rel=external]il pacchetto di traduzione[/url] per la tua lingua.
-[*]Potete seguire FlatPress anche su [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] e [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Potete seguire FlatPress anche su [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 

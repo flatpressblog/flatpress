@@ -168,7 +168,7 @@ Tu souhaites en savoir plus sur FlatPress?
 [*]Télécharge de superbes [b]thèmes[/b] créés par la communauté à partir du [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]Wiki[/url].
 [*]On y trouve également de superbes [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url].
 [*]Obtenez [url=https://wiki.flatpress.org/res:language target=_blank rel=external]translation pack[/url] pour votre langue.
-[*]Tu peux aussi suivre FlatPress sur [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] et [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Tu peux aussi suivre FlatPress sur [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 

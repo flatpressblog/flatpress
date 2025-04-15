@@ -165,7 +165,7 @@ FlatPress очень хорошо настраивается и поддержи
 [*]Используйте [b]отличные темы[/b], [url=https://wiki.flatpress.org/res:themes target=_blank rel=external] созданные другими пользователями[/url]!
 [*]Посмотрите [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]плагины[/url].
 [*]Используйте [url=https://wiki.flatpress.org/res:language target=_blank rel=external]языковой пакет[/url] для Вашего языка.
-[*]Вы также можете следить за FlatPress на [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] и [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Вы также можете следить за FlatPress на [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 

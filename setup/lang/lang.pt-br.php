@@ -162,7 +162,7 @@ Want to see more?
 [*]Obtenha [b]ótimos temas[/b] em [url=https://wiki.flatpress.org/res:themes target=_blank rel=external] enviadas de outros usuários[/url]!
 [*]Confira [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]os plugins não oficiais.[/url]!
 [*]Obtenha [url=https://wiki.flatpress.org/res:language target=_blank rel=external]o pacote de tradução[/url] para o seu idioma.
-[*]Você também pode seguir o FlatPress em [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] e [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Você também pode seguir o FlatPress em [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 

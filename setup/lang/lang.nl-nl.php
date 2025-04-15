@@ -164,7 +164,7 @@ Wil je meer zien?
 [*]Krijg [b]mooie themas[/b] van [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]other users\' submissions[/url]!
 [*]Bekijk de [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url].
 [*]Krijg [url=https://wiki.flatpress.org/res:language target=_blank rel=external]translation pack[/url] voor jouw taal.
-[*]Je kunt FlatPress ook volgen op [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] en [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Je kunt FlatPress ook volgen op [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 
