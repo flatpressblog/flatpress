@@ -219,7 +219,10 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
         $debObj->compile_check = Smarty::COMPILECHECK_ON;
         $debObj->left_delimiter = '{';
         $debObj->right_delimiter = '}';
-        $debObj->security_policy = null;
+        if ($debObj->security_policy === '') {
+            // Workaround: first valid type (string), then set null again for Smarty debug console
+            $debObj->security_policy = null;
+        }
         $debObj->debugging = false;
         $debObj->debugging_ctrl = 'NONE';
         $debObj->error_reporting = E_ALL & ~E_NOTICE;
@@ -232,8 +235,8 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
         $debObj->default_modifiers = array();
         $debObj->escape_html = true;
         $debObj->caching = Smarty::CACHING_OFF;
-        $debObj->compile_id = null;
-        $debObj->cache_id = null;
+        $debObj->compile_id = '';
+        $debObj->cache_id = '';
         // prepare information of assigned variables
         $ptr = $this->get_debug_vars($obj);
         $_assigned_vars = $ptr->tpl_vars;
