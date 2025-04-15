@@ -12,9 +12,6 @@
 [![Open issues](https://img.shields.io/github/issues-raw/flatpressblog/flatpress?style=plastic)](https://github.com/flatpressblog/flatpress/issues "See open issues")
 [![Last commit](https://img.shields.io/github/last-commit/flatpressblog/flatpress?style=plastic)](https://github.com/flatpressblog/flatpress/commits/ "Last commit")
 
-[![PHPStan](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml)
-[![CodeQL](https://github.com/flatpressblog/flatpress/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/codeql-analysis.yml)
-
 # Welcome to FlatPress!
 FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, just PHP. No database needed!
 
@@ -27,6 +24,17 @@ FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, ju
 - __Comments__ function with spam protection
 - __Free software__ under [GNU GPLv2](LICENSE.md)
 - Supported languages: [🇨🇿](## "Čeština") [🇩🇰](## "Dansk") [🇩🇪](## "Deutsch") [🇺🇸](## "English") [🇪🇸](## "Español") [🇫🇷](## "Français") [🇬🇷](## "Ελληνικά") [🇮🇹](## "Italiano") [🇯🇵](## "日本語") [🇳🇱](## "Nederlands") [🇧🇷](## "Português Brasileiro") [🇷🇺](## "Русский") [🇸🇮](## "Slovenski") [🇹🇷](## "Türkçe") (easy [to add](https://wiki.flatpress.org/doc:lang:packs:guidelines) yours!)
+
+## Code quality and security
+[![PHPStan](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml)
+[![CodeQL](https://github.com/flatpressblog/flatpress/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/codeql-analysis.yml)
+
+FlatPress uses automated checks to improve code quality and security:
+
+- **[PHPStan](https://phpstan.org/)** is executed with every change to detect potential errors, unclean code and violations of best practices at an early stage.
+- **[CodeQL](https://github.com/github/codeql)** analyzes the source code for known security risks and vulnerabilities through semantic code analysis.
+
+These tools run automatically via **GitHub Actions**, both for pull requests and regularly in the background.
 
 ## Getting started
 Installing and running FlatPress is really easy:
