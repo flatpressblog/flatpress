@@ -24,8 +24,10 @@ class Smarty_Internal_Compile_Shared_Inheritance extends Smarty_Internal_Compile
      */
     public static function postCompile(Smarty_Internal_TemplateCompilerBase $compiler, $initChildSequence = false)
     {
-        $compiler->prefixCompiledCode .= "<?php \$_smarty_tpl->_loadInheritance();\n\$_smarty_tpl->inheritance->init(\$_smarty_tpl, " .
-                                         var_export($initChildSequence, true) . ");\n?>\n";
+        if (!is_string($compiler->prefixCompiledCode ?? null)) {
+            $compiler->prefixCompiledCode = '';
+        }
+        $compiler->prefixCompiledCode .= "<?php \$_smarty_tpl->_loadInheritance();\n" . "\$_smarty_tpl->inheritance->init(\$_smarty_tpl, " . var_export($initChildSequence, true) . ");\n?>\n";
     }
 
     /**
