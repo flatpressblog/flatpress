@@ -5,7 +5,7 @@ parameters:
   level: 3  # Medium level
 
   bootstrapFiles:
-    - .dist/phpstan-bootstrap.php
+    - phpstan-bootstrap.php
 
   excludePaths:
     - ../fp-includes/smarty-4.5.5/demo/*
