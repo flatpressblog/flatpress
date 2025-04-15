@@ -168,7 +168,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 [*]Κατεβάστε σπουδαία θέματα [b]δημιουργημένα από την κοινότητα[/b] από το [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]Wiki[/url].
 [*]Υπάρχουν επίσης σπουδαία [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url] εκεί.
 [*]Αποκτήστε [url=https://wiki.flatpress.org/res:language target=_blank rel=external]πακέτο μεταφράσεων[/url] για τη γλώσσα σας.
-[*]Μπορείτε επίσης να ακολουθήσετε την FlatPress στα [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] και [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Μπορείτε επίσης να ακολουθήσετε την FlatPress στα [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 

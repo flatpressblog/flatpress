@@ -166,7 +166,7 @@ Daha fazlasını öğrenmek ister misiniz?
 [*][b]Harika temalar[/b] edinmek için [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]diğer kullanıcıların gönderilerini[/url] keşfedin!
 [*][url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]Eklentiler[/url]i keşfedin.
 [*][url=https://wiki.flatpress.org/res:language target=_blank rel=external]Dil paketi[/url] edinin.
-[*]FlatPress\'i [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] ve [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url] üzerinden takip edebilirsiniz.
+[*]FlatPress\'i [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url] üzerinden takip edebilirsiniz.
 [/list]
 
 

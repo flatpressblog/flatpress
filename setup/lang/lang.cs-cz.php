@@ -164,7 +164,7 @@ Chcete se o FlatPressu dozvědět více?
 [*]Stáhněte si [b]šablony vzhledu[/b] od [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]našich uživatelů[/url]!
 [*]Podívejte se na [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]neoficiální pluginy[/url]
 [*]Stáhněte si [url=https://wiki.flatpress.org/res:language target=_blank rel=external]překlady[/url] do dalších jazyků
-[*]FlatPress můžete sledovat také na [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] a [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]FlatPress můžete sledovat také na [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 

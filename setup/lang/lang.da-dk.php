@@ -168,7 +168,7 @@ Vil du gerne vide mere om FlatPress?
 [*]Download fantastiske [b]temaer[/b] skabt af fællesskabet fra [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]Wiki[/url].
 [*]Der er også gode [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url] der.
 [*]Få [url=https://wiki.flatpress.org/res:language]oversættelsespakken[/url] til dit sprog.
-[*]Du kan også følge FlatPress på [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] og [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Du kan også følge FlatPress på [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 

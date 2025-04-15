@@ -165,7 +165,7 @@ Want to see more?
 [*]Get [b]great themes[/b] from [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]other users\' submissions[/url]!
 [*]Check out the [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url].
 [*]Get [url=https://wiki.flatpress.org/res:language target=_blank rel=external]translation pack[/url] for your language.
-[*]You can also follow FlatPress on [url=https://twitter.com/FlatPress target=_blank rel=external]X (Twitter)[/url] and [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]You can also follow FlatPress on [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 
