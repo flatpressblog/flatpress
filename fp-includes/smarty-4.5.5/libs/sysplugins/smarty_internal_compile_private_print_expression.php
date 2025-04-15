@@ -152,7 +152,7 @@ class Smarty_Internal_Compile_Private_Print_Expression extends Smarty_Internal_C
      * @return string|false
      * @throws \SmartyException
      */
-    private function compile_variable_filter(Smarty_Internal_TemplateCompilerBase $compiler, string $name, string $output, bool $throwOnMissing = false) : string|false
+    private function compile_variable_filter(Smarty_Internal_TemplateCompilerBase $compiler, string $name, string $output, bool $throwOnMissing = false)
     {
         $function = $compiler->getPlugin($name, 'variablefilter');
 
