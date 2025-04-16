@@ -25,7 +25,7 @@ parameters:
     - '#Function .* not found.*#'
 
     # Constants (dynamic, possibly loaded from config)
-    - '#Constant .* not found.*#'
+    # - '#Constant .* not found.*#'
 
     # Old PHPDoc tags and formatting issues
     - '#PHPDoc tag @param has invalid value \(.*\)#'
@@ -41,7 +41,7 @@ parameters:
         - ../fp-includes/smarty-4.5.5/libs/sysplugins/*.php
 
     # Comparison of incorrect types
-    #- '#Comparison operation .* is always (true|false)#'
+    # - '#Comparison operation .* is always (true|false)#'
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
