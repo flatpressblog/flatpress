@@ -2,7 +2,7 @@
 
 /*
  * Plugin Name: Comment Center
- * Version: 1.1.2
+ * Version: 1.1.3
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org

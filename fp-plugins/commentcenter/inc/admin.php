@@ -358,7 +358,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 		$plugin = &$this->plugin;
 		$smarty = &$this->smarty;
 
-		if (@!count($_POST ['select'])) {
+		if (empty($_POST ['select']) || !is_array($_POST ['select'])) {
 			$smarty->assign('success', -4);
 			return 2;
 		}
@@ -621,7 +621,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 		$plugin = &$this->plugin;
 		$smarty = &$this->smarty;
 
-		if (@!count($_POST ['select'])) {
+		if (empty($_POST ['select']) || !is_array($_POST ['select'])) {
 			$smarty->assign('success', -6);
 			$this->_redirect('approve_list');
 			return 0;
@@ -778,7 +778,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	function onmdelcomm_2() {
 		$smarty = &$this->smarty;
 
-		if (@!count($_POST ['select'])) {
+		if (empty($_POST ['select']) || !is_array($_POST ['select'])) {
 			$smarty->assign('success', -6);
 			$this->_redirect('manage', @$_POST ['entry_hid']);
 			return 0;
