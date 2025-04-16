@@ -21,11 +21,11 @@ parameters:
 
     # Plugins, dynamic methods and properties
     - '#Call to an undefined method.*#'
-    - '#Access to an undefined property.*#'
+    # - '#Access to an undefined property.*#'
     - '#Function .* not found.*#'
 
     # Constants (dynamic, possibly loaded from config)
-    # - '#Constant .* not found.*#'
+    - '#Constant .* not found.*#'
 
     # Old PHPDoc tags and formatting issues
     - '#PHPDoc tag @param has invalid value \(.*\)#'
