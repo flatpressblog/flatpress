@@ -66,12 +66,14 @@
 
 		$name = !empty($theme_name [1]) ? trim($theme_name [2] ?? '') : $theme_id;
 		$theme = $name;
-		$theme_uri = trim($theme_uri [2] ?? '');
+		$theme_uri = isset($theme_uri [2]) ? trim($theme_uri [2]) : '';
 
 		if (empty($author_uri [1])) {
 			$author = trim($author_name [1] ?? '');
 		} else {
-			$author = '<a href="' . trim($author_uri [1] ?? '') . '">' . trim($author_name [1] ?? '') . '</a>';
+			$author_uri_val = isset($author_uri [1]) ? trim($author_uri [1]) : '';
+			$author_name_val = isset($author_name [1]) ? trim($author_name[1]) : '';
+			$author = '<a href="' . $author_uri_val . '">' . $author_name_val . '</a>';
 		}
 
 		$prev = file_exists($f = dirname($theme_file) . '/preview.png') ? $f : $defprev;
