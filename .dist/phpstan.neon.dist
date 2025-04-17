@@ -20,7 +20,6 @@ parameters:
     - '#Undefined variable: \$.*#'
 
     # Plugins, dynamic methods and properties
-    # - '#Call to an undefined method.*#'
     - '#Function .* not found.*#'
 
     # Constants (dynamic, possibly loaded from config)
@@ -38,6 +37,11 @@ parameters:
     - message: '#Property .* does not accept null#'
       paths:
         - ../fp-includes/smarty-4.5.5/libs/sysplugins/*.php
+
+    # Ignore error “Call to undefined method” only in Smarty core
+    - message: '#Call to an undefined method Smarty_Internal_.*::.*#'
+      paths:
+        - ../fp-includes/smarty-4.5.5/libs/sysplugins/.*\.php
 
     # Comparison of incorrect types
     # - '#Comparison operation .* is always (true|false)#'
