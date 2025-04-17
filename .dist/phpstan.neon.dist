@@ -20,7 +20,7 @@ parameters:
     - '#Undefined variable: \$.*#'
 
     # Plugins, dynamic methods and properties
-    - '#Call to an undefined method.*#'
+    # - '#Call to an undefined method.*#'
     - '#Function .* not found.*#'
 
     # Constants (dynamic, possibly loaded from config)
