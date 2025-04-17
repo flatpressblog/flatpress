@@ -250,6 +250,7 @@ class AdminPanelActionValidated extends AdminPanelAction {
 				if (!$lang_loaded) {
 					$lang = lang_load('admin.' . ADMIN_PANEL);
 					$l = $lang ['admin'] [ADMIN_PANEL] [ADMIN_PANEL_ACTION];
+					$lang_loaded = true;
 				}
 
 				$errors [$field] = isset($l ['error'] [$field]) ? $l ['error'] [$field] : htmlspecialchars($field);
