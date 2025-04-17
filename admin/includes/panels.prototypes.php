@@ -69,14 +69,16 @@ class AdminPanel {
 
 				if (!class_exists($class)) {
 					trigger_error('No classes for action ' . $action . '.', E_USER_ERROR);
-					return null;
+					$return = null;
+					return $return;
 				}
 
 				$obj = new $class($this->smarty);
 				return $obj;
 			} else {
 				trigger_error('No script found for action ' . $action, E_USER_ERROR);
-				return null;
+				$return = null;
+				return $return;
 			}
 		} else {
 			$obj = new $class($this->smarty);
