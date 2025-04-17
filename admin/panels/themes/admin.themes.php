@@ -55,11 +55,11 @@
 		preg_match('|Template:(.*)|i', $theme_data, $template);
 		$version = '';
 		if (preg_match('|Version:(.*)|i', $theme_data, $version_match)) {
-			$version = trim($version_match [1] ?? '');
+			$version = trim($version_match [1]);
 		}
 		$status = 'publish';
 		if (preg_match('|Status:(.*)|i', $theme_data, $status_match)) {
-			$status = trim($status_match [1] ?? 'publish');
+			$status = trim($status_match [1]);
 		}
 
 		$description = wptexturize(trim($description [1] ?? ''));

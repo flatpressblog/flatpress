@@ -46,7 +46,7 @@ class AdminPanel {
 			$action = $this->defaultaction;
 		}
 
-		if (!isset($this->actions[$action])) {
+		if (!isset($this->actions [$action])) {
 			// trigger_error("$action:
 			// No such an action was defined", E_USER_ERROR);
 			$action = $this->defaultaction;
