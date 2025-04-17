@@ -46,9 +46,7 @@ class AdminPanel {
 			$action = $this->defaultaction;
 		}
 
-		$obj = null;
-
-		if (!isset($this->actions [$action])) {
+		if (!isset($this->actions[$action])) {
 			// trigger_error("$action:
 			// No such an action was defined", E_USER_ERROR);
 			$action = $this->defaultaction;
@@ -59,27 +57,21 @@ class AdminPanel {
 		$class = get_class($this) . '_' . $action;
 
 		if (!class_exists($class)) {
-
 			$f = str_replace('_', '.', $class);
-
 			$fname = ADMIN_DIR . 'panels/' . $this->panelname . '/' . $f . '.php';
 
-			if (file_exists($fname)) {
-				include ($fname);
-
-				if (!class_exists($class)) {
-					throw new \RuntimeException ('No classes for action ' . $action . '.');
-				}
-
-				$obj = new $class($this->smarty);
-				return $obj;
-			} else {
-				throw new \RuntimeException ('No script found for action ' . $action);
+			if (!file_exists($fname)) {
+				throw new \RuntimeException('No script found for action ' . $action);
 			}
-		} else {
-			$obj = new $class($this->smarty);
+
+			include($fname);
 		}
 
+		if (!class_exists($class)) {
+			throw new \RuntimeException('No classes for action ' . $action . '.');
+		}
+
+		$obj = new $class($this->smarty);
 		return $obj;
 	}
 
