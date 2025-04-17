@@ -21,7 +21,6 @@ parameters:
 
     # Plugins, dynamic methods and properties
     - '#Call to an undefined method.*#'
-    # - '#Access to an undefined property.*#'
     - '#Function .* not found.*#'
 
     # Constants (dynamic, possibly loaded from config)
@@ -45,3 +44,6 @@ parameters:
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
+
+  # Deactivates warnings via dynamic properties (e.g. Smarty::__get)
+  # checkDynamicProperties: false
