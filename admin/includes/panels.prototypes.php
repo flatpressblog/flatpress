@@ -69,12 +69,14 @@ class AdminPanel {
 
 				if (!class_exists($class)) {
 					trigger_error('No classes for action ' . $action . '.', E_USER_ERROR);
+					return null;
 				}
 
 				$obj = new $class($this->smarty);
 				return $obj;
 			} else {
 				trigger_error('No script found for action ' . $action, E_USER_ERROR);
+				return null;
 			}
 		} else {
 			$obj = new $class($this->smarty);
@@ -253,7 +255,7 @@ class AdminPanelActionValidated extends AdminPanelAction {
 
 			$valid_f = 'smarty_validate_criteria_' . $validatorname;
 
-			if (!$valid_f($string, $empty, $dummyarr, $dummyarr)) {
+			if (is_callable($valid_f) && !$valid_f($string, $empty, $dummyarr, $dummyarr)) {
 
 				if (!$lang_loaded) {
 					$lang = lang_load('admin.' . ADMIN_PANEL);
