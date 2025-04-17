@@ -68,17 +68,13 @@ class AdminPanel {
 				include ($fname);
 
 				if (!class_exists($class)) {
-					trigger_error('No classes for action ' . $action . '.', E_USER_ERROR);
-					$return = null;
-					return $return;
+					throw new \RuntimeException ('No classes for action ' . $action . '.');
 				}
 
 				$obj = new $class($this->smarty);
 				return $obj;
 			} else {
-				trigger_error('No script found for action ' . $action, E_USER_ERROR);
-				$return = null;
-				return $return;
+				throw new \RuntimeException ('No script found for action ' . $action);
 			}
 		} else {
 			$obj = new $class($this->smarty);
