@@ -38,8 +38,11 @@ class Smarty_Internal_ParseTree_Template extends Smarty_Internal_ParseTree
      * @param \Smarty_Internal_Templateparser $parser
      * @param Smarty_Internal_ParseTree       $subtree
      */
-    public function append_subtree(Smarty_Internal_Templateparser $parser, Smarty_Internal_ParseTree $subtree)
+    public function append_subtree(Smarty_Internal_Templateparser $parser, ?Smarty_Internal_ParseTree $subtree = null)
     {
+        if ($subtree === null) {
+            return $this;
+        }
         if (!empty($subtree->subtrees)) {
             $this->subtrees = array_merge($this->subtrees, $subtree->subtrees);
         } else {
