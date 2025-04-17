@@ -57,6 +57,13 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
     public $cache_id = null;
 
     /**
+     * Inheritance handler instance
+     *
+     * @var Smarty_Internal_Runtime_Inheritance|null
+     */
+    public $inheritance = null;
+
+    /**
      * Set this if you want different sets of compiled files for the same
      * templates.
      *

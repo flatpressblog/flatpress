@@ -33,19 +33,21 @@ class Smarty_Internal_Nocache_Insert
         if ($_script !== 'null') {
             // script which must be included
             // code for script file loading
-            $_output .= "require_once '{$_script}';";
+            $_output .= 'require_once \'' . $_script . '\';';
         }
         // call insert
         if (isset($_assign)) {
-            $_output .= "\$_smarty_tpl->assign('{$_assign}' , {$_function} (" . var_export($_attr, true) .
-                        ',\$_smarty_tpl), true);?>';
+            $_output .= '$_smarty_tpl->assign(\'' . $_assign . '\' , ' . $_function . '(' . var_export($_attr, true) . ', $_smarty_tpl), true);?>';
         } else {
-            $_output .= "echo {$_function}(" . var_export($_attr, true) . ',$_smarty_tpl);?>';
+            $_output .= 'echo ' . $_function . '(' . var_export($_attr, true) . ', $_smarty_tpl);?>';
         }
         $_tpl = $_template;
         while ($_tpl->_isSubTpl()) {
             $_tpl = $_tpl->parent;
         }
-        return "/*%%SmartyNocache:{$_tpl->compiled->nocache_hash}%%*/{$_output}/*/%%SmartyNocache:{$_tpl->compiled->nocache_hash}%%*/";
+        /** @var Smarty_Internal_Template $_tpl */
+        assert($_tpl instanceof Smarty_Internal_Template);
+        $nocacheHash = $_tpl->compiled->nocache_hash;
+        return '/*%%SmartyNocache:' . $nocacheHash . '%%*/' . $_output . '/*/%%SmartyNocache:' . $nocacheHash . '%%*/';
     }
 }

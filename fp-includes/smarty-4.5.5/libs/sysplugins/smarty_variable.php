@@ -18,9 +18,16 @@ class Smarty_Variable
     public $value = null;
 
     /**
+     * Total count of items in foreach, if used
+     *
+     * @var int|null
+     */
+    public $total;
+
+    /**
      * if true any output of this variable will be not cached
      *
-     * @var boolean
+     * @var bool
      */
     public $nocache = false;
 
@@ -28,7 +35,7 @@ class Smarty_Variable
      * create Smarty variable object
      *
      * @param mixed   $value   the value to assign
-     * @param boolean $nocache if true any output of this variable will be not cached
+     * @param bool $nocache if true any output of this variable will be not cached
      */
     public function __construct($value = null, $nocache = false)
     {

@@ -4,10 +4,14 @@
 
 	class cache_filelister extends fs_filelister {
 
-		var $_cachefile = null;
-		var $_offset = 0;
-		var $_nodesize = 30;
-		var $_keysize = 12;
+		protected $_cachefile = null;
+		protected $_offset = 0;
+		protected $_nodesize = 30;
+		protected $_keysize = 12;
+
+		protected $_varname;
+		protected $_tree;
+		protected $_chunksize;
 
 		// sub-classes will fill the above variables on constructing
 		function __construct() {

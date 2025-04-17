@@ -88,8 +88,10 @@ abstract class Smarty_Resource
                 $smarty->registerResource(
                     $type,
                     array(
-                        "smarty_resource_{$type}_source", "smarty_resource_{$type}_timestamp",
-                        "smarty_resource_{$type}_secure", "smarty_resource_{$type}_trusted"
+                        'smarty_resource_' . $type . '_source',
+                        'smarty_resource_' . $type . '_timestamp',
+                        'smarty_resource_' . $type . '_secure',
+                        'smarty_resource_' . $type . '_trusted'
                     )
                 );
                 // give it another try, now that the resource is registered properly
@@ -107,7 +109,7 @@ abstract class Smarty_Resource
         }
         // TODO: try default_(template|config)_handler
         // give up
-        throw new SmartyException("Unknown resource type '{$type}'");
+        throw new SmartyException('Unknown resource type \'' . $type . '\'');
     }
 
     /**
@@ -148,12 +150,16 @@ abstract class Smarty_Resource
     {
         $smarty = $obj->_getSmartyObj();
         list($name, $type) = self::parseResourceName($template_resource, $smarty->default_resource_type);
-        // TODO: optimize for Smarty's internal resource types
         $resource = Smarty_Resource::load($smarty, $type);
-        // go relative to a given template?
-        $_file_is_dotted = $name[ 0 ] === '.' && ($name[ 1 ] === '.' || $name[ 1 ] === '/');
-        if ($obj->_isTplObj() && $_file_is_dotted
-            && ($obj->source->type === 'file' || $obj->parent->source->type === 'extends')
+        $_file_is_dotted = isset($name[1]) && $name[0] === '.' && ($name[1] === '.' || $name[1] === '/');
+        if (
+            $obj instanceof Smarty_Internal_Template &&
+            $_file_is_dotted &&
+            isset($obj->source) &&
+            (
+                $obj->source->type === 'file' ||
+                (isset($obj->parent) && $obj->parent instanceof Smarty_Internal_Template && isset($obj->parent->source) && $obj->parent->source->type === 'extends')
+            )
         ) {
             $name = $smarty->_realpath(dirname($obj->parent->source->filepath) . DIRECTORY_SEPARATOR . $name);
         }

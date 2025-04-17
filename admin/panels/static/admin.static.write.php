@@ -15,6 +15,8 @@
  */
 class admin_static_write extends AdminPanelActionValidated {
 
+	protected $id;
+
 	var $validators = array(
 		array(
 			'subject',
@@ -109,6 +111,7 @@ class admin_static_write extends AdminPanelActionValidated {
 			// if entry does not exists,
 			// we print the list
 			if ($arr) {
+				$this->id = $id;
 				$this->_makePreview($arr, $id);
 			} else {
 				$id = '';

@@ -24,6 +24,13 @@ class Smarty_Security
 {
 
     /**
+     * Reference to the Smarty instance
+     *
+     * @var \Smarty
+     */
+    public $smarty;
+
+    /**
      * This is the list of template directories that are considered secure.
      * $template_dir is in this list implicitly.
      *

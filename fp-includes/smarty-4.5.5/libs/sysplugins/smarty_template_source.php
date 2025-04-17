@@ -102,6 +102,20 @@ class Smarty_Template_Source
     public $content = null;
 
     /**
+     * Sections to be loaded from config file
+     *
+     * @var array|string|null
+     */
+    public $config_sections = null;
+
+    /**
+     * Scope into which config vars shall be loaded
+     *
+     * @var int
+     */
+    public $scope = 0;
+
+    /**
      * Name of the Class to compile this resource's contents with
      *
      * @var string

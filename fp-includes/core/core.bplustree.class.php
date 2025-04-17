@@ -428,6 +428,11 @@ class BPlusTree_Node_Fifo {
 	var $size;
 
 	/**
+	 * @var int configured fifo size (as set in constructor)
+	 */
+	var $fifosize;
+
+	/**
 	 * constructor
 	 *
 	 * @param int $size
