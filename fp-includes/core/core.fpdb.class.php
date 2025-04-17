@@ -167,6 +167,8 @@ class FPDB_Query {
 
 	var $comments = null;
 
+	var $preventry = array();
+
 	function __construct($params, $ID) {
 		global $current_query;
 
@@ -651,6 +653,10 @@ class FPDB {
 
 	var $queries = array();
 
+	var $_query = null;
+
+	var $entry_index = array();
+
 	function __construct() {
 		// constructor
 	}
@@ -754,6 +760,12 @@ class FPDB_transaction {
 	var $_nodesize = 30;
 
 	var $_keysize = 12;
+
+	var $_cachefile = '';
+
+	var $_chunksize = 0;
+
+	var $_tree = array();
 
 	function __construct($id_cat = 0) {
 		$this->_index = INDEX_DIR . 'index-' . $id_cat;

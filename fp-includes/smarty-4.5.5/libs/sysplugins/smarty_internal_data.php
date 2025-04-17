@@ -16,6 +16,7 @@
  *
  * @property int    $scope
  * @property Smarty $smarty
+ * @property string $template_resource
  * The following methods will be dynamically loaded by the extension handler when they are called.
  * They are located in a corresponding Smarty_Internal_Method_xxxx class
  *
@@ -31,6 +32,13 @@
  */
 abstract class Smarty_Internal_Data
 {
+    /**
+     * Template source object (populated by resource handlers)
+     *
+     * @var Smarty_Template_Source|null
+     */
+    public $source;
+
     /**
      * This object type (Smarty = 1, template = 2, data = 4)
      *
@@ -65,6 +73,13 @@ abstract class Smarty_Internal_Data
      * @var string[]
      */
     public $config_vars = array();
+
+    /**
+     * Compiled template object
+     *
+     * @var Smarty_Template_Compiled|null
+     */
+    public $compiled = null;
 
     /**
      * extension handler

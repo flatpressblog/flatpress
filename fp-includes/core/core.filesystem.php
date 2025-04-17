@@ -12,6 +12,9 @@ class fs_filelister {
 
 	var $_directory = null;
 
+	/** @var int|null */
+	public $count = null;
+
 	// constructor
 	function __construct($directory = null) {
 		if ($directory) {

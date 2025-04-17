@@ -4,19 +4,30 @@ class LayoutDefault {
 
 	var $content;
 
+	/** @var FPDB */
 	var $fpdb;
 
+	/** @var widget_indexer */
 	var $fp_widgets;
 
+	/** @var Smarty */
 	var $smarty;
 
+	/** @var array */
 	var $config;
 
+	/** @var array */
 	var $lang;
 
 	var $tpl = 'index.tpl';
 
 	var $message_queue = array();
+
+	/** @var array */
+	var $pagecontent = array();
+
+	/** @var array */
+	var $theme = array();
 
 	function LayoutDefault($content = array()) {
 		$this->pagecontent = $content;
@@ -29,7 +40,6 @@ class LayoutDefault {
 
 		$this->smarty = $GLOBALS ['_FP_SMARTY'];
 
-		$GLOBALS ['fp_config'] = $this->config;
 		$this->config = $GLOBALS ['fp_config'] ['general'];
 
 		$this->theme = theme_loadsettings();
@@ -105,6 +115,8 @@ class Abstract_LayoutComment extends LayoutDefault {
 class Abstract_LayoutDialog extends LayoutDefault {
 
 	var $tpl = 'default.tpl';
+
+	var $pagecontent = array();
 
 	function page($subject, $content, $rawcontent = false) {
 		$this->pagecontent = array(

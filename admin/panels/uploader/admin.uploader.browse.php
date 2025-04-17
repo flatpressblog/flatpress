@@ -15,8 +15,20 @@
 
 	class uploader_lister extends fs_filelister {
 
+		/** @var array */
 		var $_dirlist = array();
+
+		/** @var array */
 		var $_filelist = array();
+
+		/** @var string */
+		var $urldir;
+
+		/** @var string */
+		var $basepanelurl;
+
+		/** @var string */
+		var $thumburl;
 
 		function __construct($d, $pd) {
 			$this->urldir = $pd;
