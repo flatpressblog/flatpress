@@ -47,4 +47,22 @@ abstract class Smarty_Internal_ParseTree
         $this->data = null;
         $this->subtrees = null;
     }
+
+    /**
+     * Append a subtree to this parse tree node.
+     *
+     * @param \Smarty_Internal_Templateparser $parser
+     * @param \Smarty_Internal_ParseTree|null $subtree
+     *
+     * @return static
+     */
+    public function append_subtree(Smarty_Internal_Templateparser $parser, ?Smarty_Internal_ParseTree $subtree = null)
+    {
+        if ($subtree === null) {
+            return $this;
+        }
+
+        // Default behavior: return self or merge logic here
+        return $this;
+    }
 }

@@ -39,4 +39,17 @@ class Smarty_Internal_ParseTree_Code extends Smarty_Internal_ParseTree
     {
         return sprintf('(%s)', $this->data);
     }
+
+    /**
+     * Append a subtree to this parse tree node.
+     *
+     * @param \Smarty_Internal_Templateparser $parser
+     * @param \Smarty_Internal_ParseTree|null $subtree
+     *
+     * @return static
+     */
+    public function append_subtree(Smarty_Internal_Templateparser $parser, ?Smarty_Internal_ParseTree $subtree = null)
+    {
+        return $this;
+    }
 }

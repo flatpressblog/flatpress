@@ -458,7 +458,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
                 $_compiled_code = '<?php $_smarty_tpl->_loadInheritance(); $_smarty_tpl->inheritance->init($_smarty_tpl, true); ?>';
 
                 $i = 0;
-                $reversed_components = array_reverse($this->template->getSource()->components);
+                $reversed_components = array_reverse($this->template->source->components);
                 foreach ($reversed_components as $source) {
                     $i++;
                     if ($i === count($reversed_components)) {

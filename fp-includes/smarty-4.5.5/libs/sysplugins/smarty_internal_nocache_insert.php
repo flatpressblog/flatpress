@@ -42,7 +42,7 @@ class Smarty_Internal_Nocache_Insert
             $_output .= 'echo ' . $_function . '(' . var_export($_attr, true) . ', $_smarty_tpl);?>';
         }
         $_tpl = $_template;
-        while ($_tpl->_isSubTpl()) {
+        while ($_tpl->parent !== null) {
             $_tpl = $_tpl->parent;
         }
         /** @var Smarty_Internal_Template $_tpl */

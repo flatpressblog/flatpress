@@ -34,10 +34,14 @@ class Smarty_Internal_ParseTree_Dq extends Smarty_Internal_ParseTree
      * Append buffer to subtree
      *
      * @param \Smarty_Internal_Templateparser $parser
-     * @param Smarty_Internal_ParseTree       $subtree parse tree buffer
+     * @param Smarty_Internal_ParseTree|null  $subtree parse tree buffer
+     * @return static
      */
-    public function append_subtree(Smarty_Internal_Templateparser $parser, Smarty_Internal_ParseTree $subtree)
+    public function append_subtree(Smarty_Internal_Templateparser $parser, ?Smarty_Internal_ParseTree $subtree = null)
     {
+        if ($subtree === null) {
+            return $this;
+        }
         $last_subtree = count($this->subtrees) - 1;
         if ($last_subtree >= 0 && $this->subtrees[ $last_subtree ] instanceof Smarty_Internal_ParseTree_Tag
             && $this->subtrees[ $last_subtree ]->saved_block_nesting < $parser->block_nesting_level
@@ -64,6 +68,7 @@ class Smarty_Internal_ParseTree_Dq extends Smarty_Internal_ParseTree
         if ($subtree instanceof Smarty_Internal_ParseTree_Tag) {
             $parser->block_nesting_level = count($parser->compiler->_tag_stack);
         }
+        return $this;
     }
 
     /**

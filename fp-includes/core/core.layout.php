@@ -61,6 +61,13 @@ class LayoutDefault {
 		do_action('init');
 	}
 
+	/**
+	 * Placeholder method. Override in subclasses for custom layout rendering logic.
+	 */
+	function main() {
+		// Default implementation does nothing.
+	}
+
 	function display() {
 		$this->main();
 		theme_init($this->smarty, $this);

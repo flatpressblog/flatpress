@@ -12,6 +12,8 @@
  *
  * @package    Smarty
  * @subpackage Compiler
+ *
+ * @method mixed compile(mixed $args, Smarty_Internal_TemplateCompilerBase $compiler, mixed $param1 = null, mixed $param2 = null, mixed $param3 = null)
  */
 abstract class Smarty_Internal_CompileBase
 {
