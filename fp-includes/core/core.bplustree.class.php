@@ -1530,7 +1530,8 @@ class BPlusTree {
 
 	/**
 	 *
-	 * @var int number of values
+	 * @var int|null number of values
+	 *
 	 */
 	var $length = null;
 
@@ -1773,11 +1774,12 @@ class BPlusTree {
 	}
 
 	/**
+	 * Returns the length of the tree (number of values).
 	 *
-	 * @returns length of the tree (number of values)
+	 * @return int|false Number of values, or false on failure
 	 */
 	function length() {
-		if (is_null($this->length)) {
+		if ($this->length === null) {
 			if (false === $this->get_parameters()) {
 				return false;
 			}
