@@ -125,16 +125,17 @@ function d($s) {
 
 error_reporting(E_ALL);
 
-/** @phpstan-ignore-start */
+/** @phpstan-ignore-next-line */
 if (!defined('BPT_SORT')) {
 	/**
 	 *
 	 * @const int type of sorting, defaults to SORT_ASC (ascending);
 	 * SORT_DESC (descending) is also possibile
 	 */
+
+	/** @phpstan-ignore-next-line */
 	define('BPT_SORT', SORT_ASC);
 }
-/** @phpstan-ignore-end */
 
 /**
  *
