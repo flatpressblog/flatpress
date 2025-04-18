@@ -1258,9 +1258,6 @@ class BPlusTree_Node {
 	function store($force = false) {
 		// {{{
 		$position = $this->position;
-		if (!is_int($position)) {
-			trigger_error("position cannot be null", E_USER_ERROR);
-		}
 		$fifo = & $this->fifo;
 		if (!$force && $fifo) {
 			$fd = & $fifo->fifo_dict;
