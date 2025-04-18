@@ -333,7 +333,8 @@ class pairs {
 
 }
 
-if (BPT_SORT == SORT_ASC) {
+/** @phpstan-ignore-next-line */
+if (defined('BPT_SORT') && constant('BPT_SORT') === SORT_ASC) {
 
 	/**
 	 * compares key $a and $b using a less-than or greather-than relation
@@ -572,7 +573,7 @@ class BPlusTree_Node {
 	function __construct($flag, $size, $keylen, $position, $infile, $cloner = null) {
 		$this->flag = $flag;
 
-		if (!is_int($size) || $size < 0) {
+		if ($size < 0) {
 			trigger_error('size must be positive', E_USER_ERROR);
 		}
 
@@ -734,7 +735,7 @@ class BPlusTree_Node {
 	/**
 	 * deletes from interior nodes
 	 *
-	 * @param string $key
+	 * @param string|null $key
 	 *        	target key
 	 */
 	function delnode($key) {
@@ -830,7 +831,7 @@ class BPlusTree_Node {
 	/**
 	 * returns child, searching for $key in an interior node
 	 *
-	 * @param string $key
+	 * @param string|null $key
 	 *        	target $key
 	 * @returns object BPlusTree_Node
 	 *
@@ -912,7 +913,7 @@ class BPlusTree_Node {
 	/**
 	 * put ($key, $val) in a leaf
 	 *
-	 * @param string $key
+	 * @param string|null $key
 	 *        	target string
 	 * @param int $val
 	 *        	value for $key
@@ -1257,9 +1258,6 @@ class BPlusTree_Node {
 	function store($force = false) {
 		// {{{
 		$position = $this->position;
-		if (is_null($position)) {
-			trigger_error("position cannot be null", E_USER_ERROR);
-		}
 		$fifo = & $this->fifo;
 		if (!$force && $fifo) {
 			$fd = & $fifo->fifo_dict;
@@ -1485,13 +1483,14 @@ class BPlusTree_Node {
 				$last->store(true);
 			}
 		}
-		$is_o = true;
 		// Arvid: The loop doesn't do anything - but contains a deprecated each(). Commented out.
 		// while ((list (, $v) = each($ff)) && $is_o = is_object($v))
 		// ;
-		if (!$is_o) {
-			trigger_error('ERR', E_USER_ERROR);
-		}
+		// The following code was an outdated check for object types and is redundant.
+		// $is_o = true;
+		// if (!$allObjects) {
+		//	trigger_error('ERR', E_USER_ERROR);
+		//}
 	}
 
 	/**
@@ -1531,7 +1530,8 @@ class BPlusTree {
 
 	/**
 	 *
-	 * @var int number of values
+	 * @var int|null number of values
+	 *
 	 */
 	var $length = null;
 
@@ -1588,11 +1588,11 @@ class BPlusTree {
 	 *        	offset from the beginning of the file (usually 0)
 	 * @param int $nodesize
 	 *        	size of the node
-	 * @param int $keylen
+	 * @param int|null $keylen
 	 *        	maximum lenght of a key in bytes (unicode extended chars evaluate to two chars)
 	 */
 	function __construct($infile, $pos = null, $nodesize = null, $keylen = 10) {
-		if (!is_null($keylen) && $keylen <= 2) {
+		if ($keylen !== null && $keylen <= 2) {
 			trigger_error($keylen . " must be greater than 2", E_USER_ERROR);
 		}
 		$this->root_seek = BPT_NULLSEEK;
@@ -1670,14 +1670,20 @@ class BPlusTree {
 	 * and a new root node is created
 	 */
 	function startup() {
-		if (is_null($this->nodesize) || is_null($this->keylen)) {
-			trigger_error("cannot initialize without nodesize, keylen specified\n");
+		if (!is_int($this->nodesize) || $this->nodesize <= 0) {
+			trigger_error("nodesize must be a positive integer", E_USER_ERROR);
 		}
+		if (!is_int($this->keylen) || $this->keylen <= 2) {
+			trigger_error("keylen must be an integer greater than 2", E_USER_ERROR);
+		}
+
 		$this->length = 0;
 		$this->root_seek = 22; // pack('a5LCL3',...)
 		$this->reset_header();
+
 		$file = $this->file;
 		fseek($file, 0, SEEK_END);
+
 		$this->root = new BPlusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
 		$this->root->store();
 	}
@@ -1768,11 +1774,12 @@ class BPlusTree {
 	}
 
 	/**
+	 * Returns the length of the tree (number of values).
 	 *
-	 * @returns length of the tree (number of values)
+	 * @return int|false Number of values, or false on failure
 	 */
 	function length() {
-		if (is_null($this->length)) {
+		if ($this->length === null) {
 			if (false === $this->get_parameters()) {
 				return false;
 			}
@@ -1848,22 +1855,14 @@ class BPlusTree {
 	 * sets an item in the tree with key $key and value $val
 	 *
 	 * @param string $key
-	 * @param integer $val
+	 * @param int $val
 	 *        	(internally stored as a 4byte long: keep it in mind!)
-	 *        	
-	 *        	
 	 */
-	function setitem($key, $val) {
-		if (!is_numeric($val)) {
-			trigger_error("Second parameter must be numeric", E_USER_ERROR);
-		}
+	function setitem(string $key, int $val) {
 		$curr_length = $this->length;
 		$root = & $this->root;
-		if (is_null($root)) {
+		if ($root === null) {
 			trigger_error("not open", E_USER_ERROR);
-		}
-		if (!is_string($key)) {
-			trigger_error($key . " must be string", E_USER_ERROR);
 		}
 		if (strlen($key) > $this->keylen) {
 			trigger_error($key . " is too long: MAX is " . $this->keylen, E_USER_ERROR);
@@ -1871,7 +1870,7 @@ class BPlusTree {
 		d("STARTING FROM ROOT...");
 
 		$test1 = $this->set($key, $val, $this->root);
-		if (!is_null($test1)) {
+		if ($test1 !== null) {
 			d("SPLITTING ROOT");
 
 			// getting new rightmost interior node
@@ -2582,7 +2581,7 @@ class caching_BPT extends BPlusTree {
 		trigger_error("operation not permitted in caching_BPT", E_USER_WARNING);
 	}
 
-	function setitem($key, $val) {
+	public function setitem(string $key, int $val) {
 		$this->nope();
 	}
 
@@ -2649,7 +2648,7 @@ class SBPlusTree extends BPlusTree {
 		return @parent::getitem($key, $loose);
 	}
 
-	function setitem($key, $val) {
+	public function setitem(string $key, int $val) {
 		$seek = $this->setstring($val, $key);
 		parent::setitem($key, $seek);
 		return $seek;
@@ -2697,7 +2696,7 @@ class caching_SBPT extends SBPlusTree {
 		trigger_error("operation not permitted in caching_BPT", E_USER_WARNING);
 	}
 
-	function setitem($key, $val) {
+	public function setitem(string $key, int $val) {
 		$this->nope();
 	}
 
@@ -2711,7 +2710,7 @@ class BPlusUtils {
 
 	function recopy_bplus($fromfile, $tofile, $class = 'BPlusTree') {
 		$fromtree = new $class($fromfile);
-		$fromtree->open;
+		$fromtree->open();
 		list ($f, $p, $n, $k) = $fromtree->init_params();
 		$totree = new $class($tofile, $p, $n, $k);
 		$totree->startup();

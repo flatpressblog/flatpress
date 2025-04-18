@@ -104,11 +104,9 @@ function draft_save(&$entry, $id = null, $update_index = false, $update_date = f
 
 	if (!io_write_file($dd . EXT, $string)) {
 		return false;
-	} else {
-		return $id;
 	}
 
-	return false;
+	return $id;
 }
 
 function draft_dir($id) {

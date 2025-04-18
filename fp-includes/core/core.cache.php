@@ -79,22 +79,26 @@
 
 		function add($id, $val) {
 			trigger_error('Cannot add to a cache', E_USER_ERROR) ;
-			$this->_list[$id]=$val;
-
-			return $this->save();
+			/**
+			 * $this->_list[$id]=$val;
+			 * return $this->save();
+			 */
 		}
 
 		function delete($entryid) {
 			trigger_error('Cannot delete from a cache', E_USER_ERROR) ;
-			$cache =& $this->_list;
-			unset($cache [$entryid]); // if id found, it is deleted
-
-			return $this->save();
+			/**
+			 * $cache =& $this->_list;
+			 * unset($cache [$entryid]); // if id found, it is deleted
+			 * return $this->save();
+			 */
 		}
 
 		function purge() {
 			trigger_error('cannot purge', E_USER_ERROR);
-			return fs_delete($this->_cachefile);
+			/**
+			 * return fs_delete($this->_cachefile);
+			 */
 		}
 
 	}
