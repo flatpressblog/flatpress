@@ -20,6 +20,8 @@
 	 */
 	define('EXT', '.txt');
 
+	define('DUMB_MODE_ENABLED_KEY', 'DUMB_MODE_ENABLED');
+
 	/**
 	 * function bdb_idtofile
 	 *
@@ -137,7 +139,7 @@
 			// to ignore array key case (defaults to true i.e. check them to be uppercase or failing otherwise
 
 			/** @var bool $ignoreCase */
-			$ignoreCase = !(defined('DUMB_MODE_ENABLED') && constant('DUMB_MODE_ENABLED'));
+			$ignoreCase = !(defined(DUMB_MODE_ENABLED_KEY) && (bool)constant(DUMB_MODE_ENABLED_KEY));
 
 			$entry = utils_kexplode($contents, '|', $ignoreCase);
 
