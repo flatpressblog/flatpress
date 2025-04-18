@@ -1670,14 +1670,20 @@ class BPlusTree {
 	 * and a new root node is created
 	 */
 	function startup() {
-		if (is_null($this->nodesize) || is_null($this->keylen)) {
-			trigger_error("cannot initialize without nodesize, keylen specified\n");
+		if (!is_int($this->nodesize) || $this->nodesize <= 0) {
+			trigger_error("nodesize must be a positive integer", E_USER_ERROR);
 		}
+		if (!is_int($this->keylen) || $this->keylen <= 2) {
+			trigger_error("keylen must be an integer greater than 2", E_USER_ERROR);
+		}
+
 		$this->length = 0;
 		$this->root_seek = 22; // pack('a5LCL3',...)
 		$this->reset_header();
+
 		$file = $this->file;
 		fseek($file, 0, SEEK_END);
+
 		$this->root = new BPlusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
 		$this->root->store();
 	}
