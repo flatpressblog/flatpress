@@ -569,7 +569,7 @@ class BPlusTree_Node {
 	*
 	* @throws InvalidArgumentException
 	*/
-	function __construct(int $flag, int $size, int $keylen, int|string $position, $infile, BPlusTree_Node $cloner = null) {
+	function __construct($flag, $size, $keylen, $position, $infile, $cloner = null) {
 		$this->flag = $flag;
 
 		if ($size < 0) {
