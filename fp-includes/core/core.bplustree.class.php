@@ -1860,7 +1860,7 @@ class BPlusTree {
 	 * @return void
 	 *        	
 	 */
-	function setitem(string $key, int $val): void {
+	function setitem(string $key, int $val) {
 		$curr_length = $this->length;
 		$root = & $this->root;
 		if ($root === null) {
@@ -2583,7 +2583,7 @@ class caching_BPT extends BPlusTree {
 		trigger_error("operation not permitted in caching_BPT", E_USER_WARNING);
 	}
 
-	public function setitem(string $key, int $val): void {
+	public function setitem(string $key, int $val) {
 		$this->nope();
 	}
 
@@ -2650,7 +2650,7 @@ class SBPlusTree extends BPlusTree {
 		return @parent::getitem($key, $loose);
 	}
 
-	public function setitem(string $key, int $val): int {
+	public function setitem(string $key, int $val) {
 		$seek = $this->setstring($val, $key);
 		parent::setitem($key, $seek);
 		return $seek;
@@ -2698,7 +2698,7 @@ class caching_SBPT extends SBPlusTree {
 		trigger_error("operation not permitted in caching_BPT", E_USER_WARNING);
 	}
 
-	public function setitem(string $key, int $val): void {
+	public function setitem(string $key, int $val) {
 		$this->nope();
 	}
 
