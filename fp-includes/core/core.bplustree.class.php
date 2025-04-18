@@ -1587,7 +1587,7 @@ class BPlusTree {
 	 *        	offset from the beginning of the file (usually 0)
 	 * @param int $nodesize
 	 *        	size of the node
-	 * @param int $keylen
+	 * @param int|null $keylen
 	 *        	maximum lenght of a key in bytes (unicode extended chars evaluate to two chars)
 	 */
 	function __construct($infile, $pos = null, $nodesize = null, $keylen = 10) {
