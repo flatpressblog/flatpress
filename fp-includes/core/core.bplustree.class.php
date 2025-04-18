@@ -280,10 +280,9 @@ class pairs {
 	 * @param int|null $hi ending offset of the sub-array
 	 */
 	function insort($a, $b, $lo = 0, $hi = null) {
-		if (is_null($hi)) {
+		if ($hi === null) {
 			$hi = $this->count;
 		}
-		assert(is_int($hi));
 		$A = $this->a;
 		$X = $a;
 		while ($lo < $hi) {
