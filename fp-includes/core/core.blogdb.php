@@ -137,7 +137,7 @@
 			// to ignore array key case (defaults to true i.e. check them to be uppercase or failing otherwise
 
 			/** @var bool $ignoreCase */
-			$ignoreCase = !DUMB_MODE_ENABLED;
+			$ignoreCase = !(defined('DUMB_MODE_ENABLED') && DUMB_MODE_ENABLED);
 
 			$entry = utils_kexplode($contents, '|', $ignoreCase);
 
