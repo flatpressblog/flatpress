@@ -105,8 +105,7 @@
  *
  */
 
-// Set to true to activate debugging
-define('BPLUSTREE_DEBUG', false);
+// define('BPLUSTREE_DEBUG', true);
 
 function d($s) {
 
