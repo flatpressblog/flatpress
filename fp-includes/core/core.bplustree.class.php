@@ -104,9 +104,13 @@
  * routine would have to check the setting each time it's called.
  *
  */
+
+// Set to true to activate debugging
+define('BPLUSTREE_DEBUG', false);
+
 function d($s) {
 
-	if (false) { // Set to true to activate debugging
+	if (BPLUSTREE_DEBUG) {
 		if (is_array($s)) {
 			$s = '{ ' . implode(", ", $s) . ' }';
 		}
