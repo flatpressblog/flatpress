@@ -153,8 +153,8 @@ if (is_https()) {
 }
 
 // Compatibility with ISS
-$_SERVER ["REQUEST_URI"] = htmlspecialchars($_SERVER ["REQUEST_URI"], ENT_QUOTES, "UTF-8");
-if (!isset($_SERVER ['REQUEST_URI'])) {
+$_SERVER ["REQUEST_URI"] = htmlspecialchars($_SERVER ["REQUEST_URI"] ?? '', ENT_QUOTES, "UTF-8");
+if ($_SERVER ["REQUEST_URI"] === '') {
 	$_SERVER ['REQUEST_URI'] = $serverport . 'localhost/flatpress/';
 }
 
