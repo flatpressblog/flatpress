@@ -1857,8 +1857,6 @@ class BPlusTree {
 	 * @param string $key
 	 * @param int $val
 	 *        	(internally stored as a 4byte long: keep it in mind!)
-	 * @return void
-	 *        	
 	 */
 	function setitem(string $key, int $val) {
 		$curr_length = $this->length;
