@@ -2583,7 +2583,7 @@ class caching_BPT extends BPlusTree {
 		trigger_error("operation not permitted in caching_BPT", E_USER_WARNING);
 	}
 
-	function setitem($key, $val) {
+	public function setitem(string $key, int $val): void {
 		$this->nope();
 	}
 
