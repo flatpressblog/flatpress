@@ -110,7 +110,7 @@ define('BPLUSTREE_DEBUG', false);
 
 function d($s) {
 
-	if (BPLUSTREE_DEBUG) {
+	if (defined('BPLUSTREE_DEBUG') && BPLUSTREE_DEBUG) {
 		if (is_array($s)) {
 			$s = '{ ' . implode(", ", $s) . ' }';
 		}
