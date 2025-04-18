@@ -131,6 +131,8 @@ if (!defined('BPT_SORT')) {
 	 * @const int type of sorting, defaults to SORT_ASC (ascending);
 	 * SORT_DESC (descending) is also possibile
 	 */
+
+	/** @phpstan-ignore-next-line */
 	define('BPT_SORT', SORT_ASC);
 }
 
@@ -331,7 +333,7 @@ class pairs {
 
 }
 
-if (!function_exists('BPT_keycmp')) {
+if (BPT_SORT == SORT_ASC) {
 
 	/**
 	 * compares key $a and $b using a less-than or greather-than relation
@@ -343,11 +345,12 @@ if (!function_exists('BPT_keycmp')) {
 	 * on the value of the BPT_SORT constant
 	 */
 	function BPT_keycmp($a, $b) {
-		if (BPT_SORT === SORT_ASC) {
-			return strcmp($a, $b);
-		} else {
-			return -strcmp($a, $b);
-		}
+		return strcmp($a, $b);
+	}
+} else {
+
+	function BPT_keycmp($a, $b) {
+		return -strcmp($a, $b);
 	}
 }
 
