@@ -333,7 +333,7 @@ class pairs {
 
 }
 
-if (BPT_SORT == SORT_ASC) {
+if (BPT_SORT === SORT_ASC) {
 
 	/**
 	 * compares key $a and $b using a less-than or greather-than relation
@@ -569,10 +569,10 @@ class BPlusTree_Node {
 	*
 	* @throws InvalidArgumentException
 	*/
-	function __construct($flag, $size, $keylen, $position, $infile, $cloner = null) {
+	function __construct(int $flag, int $size, int $keylen, int|string $position, $infile, BPlusTree_Node $cloner = null) {
 		$this->flag = $flag;
 
-		if (!is_int($size) || $size < 0) {
+		if ($size < 0) {
 			trigger_error('size must be positive', E_USER_ERROR);
 		}
 
