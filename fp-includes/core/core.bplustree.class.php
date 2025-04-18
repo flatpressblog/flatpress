@@ -1483,13 +1483,14 @@ class BPlusTree_Node {
 				$last->store(true);
 			}
 		}
-		$is_o = true;
 		// Arvid: The loop doesn't do anything - but contains a deprecated each(). Commented out.
 		// while ((list (, $v) = each($ff)) && $is_o = is_object($v))
 		// ;
-		if (!$is_o) {
-			trigger_error('ERR', E_USER_ERROR);
-		}
+		// The following code was an outdated check for object types and is redundant.
+		// $is_o = true;
+		// if (!$allObjects) {
+		//	trigger_error('ERR', E_USER_ERROR);
+		//}
 	}
 
 	/**
