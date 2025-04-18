@@ -2650,7 +2650,7 @@ class SBPlusTree extends BPlusTree {
 		return @parent::getitem($key, $loose);
 	}
 
-	public function setitem(string $key, int $val): void {
+	public function setitem(string $key, int $val): int {
 		$seek = $this->setstring($val, $key);
 		parent::setitem($key, $seek);
 		return $seek;
@@ -2698,7 +2698,7 @@ class caching_SBPT extends SBPlusTree {
 		trigger_error("operation not permitted in caching_BPT", E_USER_WARNING);
 	}
 
-	function setitem($key, $val) {
+	public function setitem(string $key, int $val): void {
 		$this->nope();
 	}
 
