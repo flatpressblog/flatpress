@@ -1855,22 +1855,16 @@ class BPlusTree {
 	 * sets an item in the tree with key $key and value $val
 	 *
 	 * @param string $key
-	 * @param integer $val
+	 * @param int $val
 	 *        	(internally stored as a 4byte long: keep it in mind!)
-	 *        	
+	 * @return void
 	 *        	
 	 */
-	function setitem($key, $val) {
-		if (!is_numeric($val)) {
-			trigger_error("Second parameter must be numeric", E_USER_ERROR);
-		}
+	function setitem(string $key, int $val): void {
 		$curr_length = $this->length;
 		$root = & $this->root;
-		if (is_null($root)) {
+		if ($root === null) {
 			trigger_error("not open", E_USER_ERROR);
-		}
-		if (!is_string($key)) {
-			trigger_error($key . " must be string", E_USER_ERROR);
 		}
 		if (strlen($key) > $this->keylen) {
 			trigger_error($key . " is too long: MAX is " . $this->keylen, E_USER_ERROR);
@@ -1878,7 +1872,7 @@ class BPlusTree {
 		d("STARTING FROM ROOT...");
 
 		$test1 = $this->set($key, $val, $this->root);
-		if (!is_null($test1)) {
+		if ($test1 !== null) {
 			d("SPLITTING ROOT");
 
 			// getting new rightmost interior node
