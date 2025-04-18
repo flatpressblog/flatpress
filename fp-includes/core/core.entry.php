@@ -397,15 +397,16 @@ function entry_idtotime($id) {
 
 function entry_list() {
 	trigger_error('function deprecated', E_USER_ERROR);
-
-	$obj = & entry_init();
-
-	$entry_arr = $obj->getList();
-
-	if ($entry_arr) {
-		krsort($entry_arr);
-		return $entry_arr;
-	}
+	/**
+	 * $obj = & entry_init();
+	 *
+	 * $entry_arr = $obj->getList();
+	 *
+	 * if ($entry_arr) {
+	 *    krsort($entry_arr);
+	 *    return $entry_arr;
+	 * }
+	 */
 }
 
 function entry_exists($id) {
