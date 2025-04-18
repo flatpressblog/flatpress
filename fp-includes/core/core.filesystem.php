@@ -396,7 +396,6 @@ function fs_delete_recursive($path) {
 
 		$elem = null;
 		while ($elem = array_pop($list)) {
-			$elem;
 			fs_delete($elem);
 		}
 	}
