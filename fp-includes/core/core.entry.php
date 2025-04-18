@@ -545,11 +545,8 @@ function entry_categories_encode($cat_file) {
 
 	// print_r($result);
 
+	// Writes the result to the file, returns true/false
 	return io_write_file(CONTENT_DIR . 'categories_encoded.dat', serialize($result));
-
-	// }
-
-	return false;
 }
 
 /*
