@@ -121,14 +121,7 @@ function system_getindex() {
 }
 
 function system_unregister_globals() {
-	$v = @ini_get('register_globals');
-
-	// on error we unregister anyway
-	if ($v || is_null($v)) {
-		foreach ($_REQUEST as $var => $val) {
-			unset($GLOBALS [$var]);
-		}
-	}
+	// No longer needed since PHP 5.4
 }
 
 function system_sanitizequery() {
@@ -168,7 +161,6 @@ function system_init_action_params() {
 
 function system_init() {
 	system_sanitizequery();
-	system_unregister_globals();
 	system_prepare_iis();
 
 	$GLOBALS ['fpdb'] = new FPDB();
