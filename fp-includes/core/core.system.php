@@ -235,4 +235,23 @@ function system_dpr($action, $content) {
 	});
 }
 
+/**
+ * @const int BPT_SORT
+ *
+ * Global constant defining the sort order for B+Tree operations.
+ *
+ * Defaults to `SORT_ASC` (ascending), but can be overridden before
+ * loading the B+Tree library by defining it manually.
+ *
+ * This setting affects key comparisons in BPlusTree and is evaluated
+ * only once at load time for performance reasons.
+ *
+ * @example define('BPT_SORT', SORT_DESC); // Use descending order for keys
+ *
+ * @see https://www.php.net/manual/en/array.constants.php
+ */
+if (!defined('BPT_SORT')) {
+    /** @phpstan-ignore-next-line */
+    define('BPT_SORT', SORT_ASC);
+}
 ?>
