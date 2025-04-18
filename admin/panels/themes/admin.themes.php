@@ -55,23 +55,23 @@
 		preg_match('|Template:(.*)|i', $theme_data, $template);
 		$version = '';
 		if (preg_match('|Version:(.*)|i', $theme_data, $version_match)) {
-			$version = trim($version_match [1] ?? '');
+			$version = trim($version_match [1]);
 		}
 		$status = 'publish';
 		if (preg_match('|Status:(.*)|i', $theme_data, $status_match)) {
-			$status = trim($status_match [1] ?? 'publish');
+			$status = trim($status_match [1]);
 		}
 
 		$description = wptexturize(trim($description [1] ?? ''));
 
 		$name = !empty($theme_name [1]) ? trim($theme_name [2] ?? '') : $theme_id;
 		$theme = $name;
-		$theme_uri = trim($theme_uri [2] ?? '');
+		$theme_uri = isset($theme_uri [2]) ? trim($theme_uri [2]) : '';
 
 		if (empty($author_uri [1])) {
 			$author = trim($author_name [1] ?? '');
 		} else {
-			$author = '<a href="' . trim($author_uri [1] ?? '') . '">' . trim($author_name [1] ?? '') . '</a>';
+			$author = '<a href="' . trim($author_uri [1]) . '">' . trim($author_name [1]) . '</a>';
 		}
 
 		$prev = file_exists($f = dirname($theme_file) . '/preview.png') ? $f : $defprev;

@@ -130,10 +130,16 @@
 
 		if (file_exists($file)) {
 			$contents = io_load_file($file);
+
 			// TODO: here we must add compatibility to encoding conversion!
+			// Legacy mode: ignore array key case when DUMB_MODE_ENABLED is false (default)
 			// if "dumb" (legacy :D) mode is enabled (set to true in default.php, then we set parsing
 			// to ignore array key case (defaults to true i.e. check them to be uppercase or failing otherwise
-			$entry = utils_kexplode($contents, '|', !DUMB_MODE_ENABLED);
+
+			/** @var bool $ignoreCase */
+			$ignoreCase = !(defined('DUMB_MODE_ENABLED') && call_user_func('constant', 'DUMB_MODE_ENABLED'));
+
+			$entry = utils_kexplode($contents, '|', $ignoreCase);
 
 			return $entry;
 		} else {

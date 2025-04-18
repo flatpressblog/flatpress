@@ -22,8 +22,12 @@
 		function main() {
 
 			if (isset($_GET ['do']) && $_GET ['do'] == 'clear') {
-				$ret1 = fs_delete(CONTENT_DIR . 'categories_encoded.dat') &&
-				$ret2 = fs_delete(CONTENT_DIR . 'categories.txt');
+				$ret1 = fs_delete(CONTENT_DIR . 'categories_encoded.dat');
+				$ret2 = false;
+
+				if ($ret1) {
+					$ret2 = fs_delete(CONTENT_DIR . 'categories.txt');
+				}
 
 				$ret  = ($ret1 && $ret2) ? 2 : -2;
 
@@ -38,7 +42,6 @@
 			do_action('update_categories', true);
 
 			return 0;
-
 
 		}
 

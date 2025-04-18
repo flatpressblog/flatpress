@@ -147,13 +147,6 @@ class admin_config_default extends AdminPanelActionValidated {
 		}
 	}
 
-	// Function for escaping HTML output
-	private function escapeHTML($value) {
-		global $fp_config;
-		$localeCharset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
-		return htmlspecialchars($value, ENT_QUOTES, $localeCharset);
-	}
-
 	// Function for returning the charset list based on the selected language
 	private function getCharsetList($lang) {
 		$langConfFile = LANG_DIR . $lang . '/lang.conf.php';
@@ -277,7 +270,7 @@ class admin_config_default extends AdminPanelActionValidated {
 	// if theme was switched, clear tpl cache
 	function cleartplcache() {
 		$tpl = new tpl_deleter();
-		$tpl->getList();
+		$_ = $tpl->getList();
 	}
 }
 ?>

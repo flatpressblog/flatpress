@@ -104,18 +104,23 @@
  * routine would have to check the setting each time it's called.
  *
  */
+
+// define('BPLUSTREE_DEBUG', true);
+
 function d($s) {
-	return; // disable debug output
-	if (is_array($s)) {
-		$s = '{ ' . implode(", ", $s) . ' }';
+
+	if (defined('BPLUSTREE_DEBUG') && BPLUSTREE_DEBUG) {
+		if (is_array($s)) {
+			$s = '{ ' . implode(", ", $s) . ' }';
+		}
+
+		$x = debug_backtrace();
+		$f = @$x [1] ['function'];
+		$l = $x [0] ['line'];
+
+		echo "[" . $f . ":" . $l . "]\t" . $s . "\n";
+		// echo "---[{$x[2]['function']}:{$x[2]['line']}]\n";
 	}
-
-	$x = debug_backtrace();
-	$f = @$x [1] ['function'];
-	$l = $x [0] ['line'];
-
-	echo "[" . $f . ":" . $l . "]\t" . $s . "\n";
-	// echo "---[{$x[2]['function']}:{$x[2]['line']}]\n";
 }
 
 error_reporting(E_ALL);
@@ -126,6 +131,8 @@ if (!defined('BPT_SORT')) {
 	 * @const int type of sorting, defaults to SORT_ASC (ascending);
 	 * SORT_DESC (descending) is also possibile
 	 */
+
+	/** @phpstan-ignore-next-line */
 	define('BPT_SORT', SORT_ASC);
 }
 
@@ -275,10 +282,9 @@ class pairs {
 	 * @param int|null $hi ending offset of the sub-array
 	 */
 	function insort($a, $b, $lo = 0, $hi = null) {
-		if (is_null($hi)) {
+		if ($hi === null) {
 			$hi = $this->count;
 		}
-		assert(is_int($hi));
 		$A = $this->a;
 		$X = $a;
 		while ($lo < $hi) {

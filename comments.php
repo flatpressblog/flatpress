@@ -5,11 +5,11 @@ if (!defined('MOD_INDEX')) {
 
 	/* backward compatibility */
 
-	if (!@$_GET ['entry']) {
+	if (empty($_GET ['entry'])) {
 		@utils_redirect();
 	} else {
 		@utils_status_header(301);
-		@utils_redirect(str_replace('&amp;', '&', get_comments_link($_GET ['entry'] ?? '')), true);
+		@utils_redirect(str_replace('&amp;', '&', get_comments_link($_GET ['entry'])), true);
 	}
 }
 
