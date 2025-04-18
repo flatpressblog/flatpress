@@ -2650,7 +2650,7 @@ class SBPlusTree extends BPlusTree {
 		return @parent::getitem($key, $loose);
 	}
 
-	function setitem($key, $val) {
+	public function setitem(string $key, int $val): void {
 		$seek = $this->setstring($val, $key);
 		parent::setitem($key, $seek);
 		return $seek;
