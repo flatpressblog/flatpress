@@ -331,7 +331,7 @@ class pairs {
 
 }
 
-if (BPT_SORT == SORT_ASC) {
+if (!defined('BPT_SORT') || constant('BPT_SORT') === SORT_ASC) {
 
 	/**
 	 * compares key $a and $b using a less-than or greather-than relation
