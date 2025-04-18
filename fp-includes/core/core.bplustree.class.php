@@ -105,17 +105,19 @@
  *
  */
 function d($s) {
-	return; // disable debug output
-	if (is_array($s)) {
-		$s = '{ ' . implode(", ", $s) . ' }';
+
+	if (false) { // Set to true to activate debugging
+		if (is_array($s)) {
+			$s = '{ ' . implode(", ", $s) . ' }';
+		}
+
+		$x = debug_backtrace();
+		$f = @$x [1] ['function'];
+		$l = $x [0] ['line'];
+
+		echo "[" . $f . ":" . $l . "]\t" . $s . "\n";
+		// echo "---[{$x[2]['function']}:{$x[2]['line']}]\n";
 	}
-
-	$x = debug_backtrace();
-	$f = @$x [1] ['function'];
-	$l = $x [0] ['line'];
-
-	echo "[" . $f . ":" . $l . "]\t" . $s . "\n";
-	// echo "---[{$x[2]['function']}:{$x[2]['line']}]\n";
 }
 
 error_reporting(E_ALL);
