@@ -831,7 +831,7 @@ class BPlusTree_Node {
 	/**
 	 * returns child, searching for $key in an interior node
 	 *
-	 * @param string $key
+	 * @param string|null $key
 	 *        	target $key
 	 * @returns object BPlusTree_Node
 	 *
@@ -913,7 +913,7 @@ class BPlusTree_Node {
 	/**
 	 * put ($key, $val) in a leaf
 	 *
-	 * @param string $key
+	 * @param string|null $key
 	 *        	target string
 	 * @param int $val
 	 *        	value for $key
