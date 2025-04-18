@@ -331,7 +331,7 @@ class pairs {
 
 }
 
-if (!defined('BPT_SORT') || constant('BPT_SORT') === SORT_ASC) {
+if (!function_exists('BPT_keycmp')) {
 
 	/**
 	 * compares key $a and $b using a less-than or greather-than relation
@@ -343,12 +343,11 @@ if (!defined('BPT_SORT') || constant('BPT_SORT') === SORT_ASC) {
 	 * on the value of the BPT_SORT constant
 	 */
 	function BPT_keycmp($a, $b) {
-		return strcmp($a, $b);
-	}
-} else {
-
-	function BPT_keycmp($a, $b) {
-		return -strcmp($a, $b);
+		if (BPT_SORT === SORT_ASC) {
+			return strcmp($a, $b);
+		} else {
+			return -strcmp($a, $b);
+		}
 	}
 }
 
