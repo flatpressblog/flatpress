@@ -233,6 +233,7 @@ function set_locale() {
 	];
 
 	foreach (['localecountry_a', 'localecountry_b', 'charsets', 'localeshort'] as $key) {
+		/** @phpstan-ignore-next-line */
 		if (!isset($langconf [$key]) || empty($langconf [$key]) || ($key === 'charsets' && !is_array($langconf [$key]))) {
 			if ($debug) {
 				trigger_error('set_locale -> Missing or invalid key in language configuration: ' . $key . '. Value: ' . var_export($langconf [$key], true), E_USER_WARNING);
