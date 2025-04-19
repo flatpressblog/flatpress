@@ -200,13 +200,16 @@ function set_locale() {
 		return;
 	}
 
+	/** @phpstan-ignore-next-line */
 	if (isset($langconf ['charsets']) && is_array($langconf ['charsets'])) {
 		if ($debug) {
 			error_log('set_locale -> Charset comparison. Defined: ' . print_r($langconf ['charsets'], true) . '. Current: ' . $charset);
 		}
+		/** @phpstan-ignore-next-line */
 		if (isset($langconf ['charsets'] [0]) && strtolower($charset) === strtolower($langconf ['charsets'] [0])) {
 			$localeCharset_a = isset($langconf ['localecharset_a']) ? $langconf ['localecharset_a'] : '';
 			$localeCharset_b = isset($langconf ['localecharset_b']) ? $langconf ['localecharset_b'] : '';
+		/** @phpstan-ignore-next-line */
 		} elseif (isset($langconf ['charsets'] [1]) && strtolower($charset) === strtolower($langconf ['charsets'] [1])) {
 			$localeCharset_c = isset($langconf ['localecharset_c']) ? $langconf ['localecharset_c'] : '';
 			$localeCharset_d = isset($langconf ['localecharset_d']) ? $langconf ['localecharset_d'] : '';
@@ -272,7 +275,8 @@ function set_locale() {
 	}
 
 	$supportedLocales = [];
-	if (function_exists('shell_exec') && is_callable('shell_exec')) {
+	/** @phpstan-ignore-next-line */
+	if (function_exists('shell_exec') && is_callable('shell_exec') && stripos(ini_get('disable_functions'), 'shell_exec') === false) {
 		// Checks the supported locales with locale -a and only uses valid combinations
 		$output = shell_exec('timeout 5s locale -a');
 		if ($output !== null) {
@@ -473,6 +477,9 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8') {
 		'Ã£' => 'ã', 'Ãµ' => 'õ', 'Ãª' => 'ê', 'Ã§' => 'ç',
 		// Dutch
 		'Ã´' => 'ô',
+		// Turkish
+		'Ã‡' => 'Ç', 'ÄŸ' => 'ğ', 'Äž' => 'Ğ', 'Ä±' => 'ı',
+		'IÌ‡' => 'İ', 'ÅŸ' => 'ş', 'Åž' => 'Ş',
 		// English (typical quotation marks and dashes)
 		'â€œ' => '“', 'â€' => '”', 'â€˜' => '‘', 'â€™' => '’', 'â€”' => '—'
 	];
