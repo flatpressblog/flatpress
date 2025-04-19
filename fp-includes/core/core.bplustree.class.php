@@ -2691,7 +2691,7 @@ class BPlusUtils {
 
 	function recopy_bplus($fromfile, $tofile, $class = 'BPlusTree') {
 		$fromtree = new $class($fromfile);
-		$fromtree->open;
+		$fromtree->open();
 		list ($f, $p, $n, $k) = $fromtree->init_params();
 		$totree = new $class($tofile, $p, $n, $k);
 		$totree->startup();
