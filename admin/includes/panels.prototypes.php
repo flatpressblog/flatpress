@@ -24,8 +24,8 @@ class AdminPanel {
 
 	function __construct(&$smarty) {
 		$this->smarty = &$smarty;
-		if ($this->panelname === null || $this->panelname === '') {
-			trigger_error("Variable \$panelname is not defined!", E_USER_WARNING);
+		if (!$this->panelname) {
+			trigger_error("Variable \$panelname is not defined!", E_USER_ERROR);
 		}
 
 		/* get plugin panels */
@@ -67,14 +67,14 @@ class AdminPanel {
 			if (file_exists($fname)) {
 				include ($fname);
 
-				if (!class_exists($class)) {
-					trigger_error('No classes for action ' . $action . '.', E_USER_WARNING);
+				if (!class_exists($class, false)) {
+					throw new \LogicException('No classes for action ' . $action . '.');
 				}
 
 				$obj = new $class($this->smarty);
 				return $obj;
 			} else {
-				trigger_error('No script found for action ' . $action, E_USER_WARNING);
+				throw new \LogicException('No script found for action ' . $action . '.');
 			}
 		} else {
 			$obj = new $class($this->smarty);
@@ -255,9 +255,10 @@ class AdminPanelActionValidated extends AdminPanelAction {
 
 			if (!$valid_f($string, $empty, $dummyarr, $dummyarr)) {
 
-				if ($lang_loaded === false) {
+				if (!$lang_loaded) {
 					$lang = lang_load('admin.' . ADMIN_PANEL);
 					$l = $lang ['admin'] [ADMIN_PANEL] [ADMIN_PANEL_ACTION];
+					$lang_loaded = true;
 				}
 
 				$errors [$field] = isset($l ['error'] [$field]) ? $l ['error'] [$field] : htmlspecialchars($field);
@@ -269,7 +270,7 @@ class AdminPanelActionValidated extends AdminPanelAction {
 			}
 		}
 
-		if (count($errors) === 0) {
+		if (!$errors) {
 			$result = parent::onsubmit($content);
 		} else {
 			$this->smarty->assign('error', $errors);
