@@ -253,7 +253,9 @@ function set_locale() {
 	$localeVariantsWithCharsets = [];
 	if (strtolower($charset) === $langconf ['charsets'] [0]) {
 		foreach ($localeVariants as $variant) {
+			/** @phpstan-ignore-next-line */
 			$localeCharset_a = isset($langconf ['localecharset_a']) ? $langconf ['localecharset_a'] : '';
+			/** @phpstan-ignore-next-line */
 			$localeCharset_b = isset($langconf ['localecharset_b']) ? $langconf ['localecharset_b'] : '';
 
 			$localeVariantsWithCharsets [] = $variant . $localeCharset_a; // .UTF-8
@@ -266,7 +268,9 @@ function set_locale() {
 		}
 	} elseif (strtolower($charset) === $langconf ['charsets'] [1]) {
 		foreach ($localeVariants as $variant) {
+			/** @phpstan-ignore-next-line */
 			$localeCharset_c = isset($langconf ['localecharset_c']) ? $langconf ['localecharset_c'] : '';
+			/** @phpstan-ignore-next-line */
 			$localeCharset_d = isset($langconf ['localecharset_d']) ? $langconf ['localecharset_d'] : '';
 
 			$localeVariantsWithCharsets [] = $variant . $localeCharset_c; // .ISO-8859-15
