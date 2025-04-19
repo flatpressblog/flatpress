@@ -445,10 +445,11 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8') {
 	// Check whether the text is in UTF-8
 	if (!mb_check_encoding($text, 'UTF-8')) {
 		// List of source encodings that can be decoded
-		$possible_encodings = ['ISO-8859-1', 'ISO-8859-15', 'ISO-8859-7', 'ISO-8859-5'];
+		$possible_encodings = ['ISO-8859-1', 'ISO-8859-15', 'ISO-8859-7', 'ISO-8859-5', 'ISO-8859-9'];
 
 		foreach ($possible_encodings as $encoding) {
 			$converted = @mb_convert_encoding($text, 'UTF-8', $encoding);
+			/** @phpstan-ignore-next-line */
 			if ($converted !== false && mb_check_encoding($converted, 'UTF-8')) {
 				$text = $converted;
 				break;
