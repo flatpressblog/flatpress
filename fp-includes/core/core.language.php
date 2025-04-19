@@ -207,11 +207,15 @@ function set_locale() {
 		}
 		/** @phpstan-ignore-next-line */
 		if (isset($langconf ['charsets'] [0]) && strtolower($charset) === strtolower($langconf ['charsets'] [0])) {
+			/** @phpstan-ignore-next-line */
 			$localeCharset_a = isset($langconf ['localecharset_a']) ? $langconf ['localecharset_a'] : '';
+			/** @phpstan-ignore-next-line */
 			$localeCharset_b = isset($langconf ['localecharset_b']) ? $langconf ['localecharset_b'] : '';
 		/** @phpstan-ignore-next-line */
 		} elseif (isset($langconf ['charsets'] [1]) && strtolower($charset) === strtolower($langconf ['charsets'] [1])) {
+			/** @phpstan-ignore-next-line */
 			$localeCharset_c = isset($langconf ['localecharset_c']) ? $langconf ['localecharset_c'] : '';
+			/** @phpstan-ignore-next-line */
 			$localeCharset_d = isset($langconf ['localecharset_d']) ? $langconf ['localecharset_d'] : '';
 		}
 	}
