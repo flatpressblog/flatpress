@@ -1578,6 +1578,7 @@ class BPlusTree {
 	 *        	maximum lenght of a key in bytes (unicode extended chars evaluate to two chars)
 	 */
 	function __construct($infile, $pos = null, $nodesize = null, $keylen = 10) {
+		/** @phpstan-ignore-next-line */
 		if (!is_null($keylen) && $keylen <= 2) {
 			trigger_error($keylen . " must be greater than 2", E_USER_ERROR);
 		}
@@ -1758,6 +1759,7 @@ class BPlusTree {
 	 * @returns length of the tree (number of values)
 	 */
 	function length() {
+		/** @phpstan-ignore-next-line */
 		if (is_null($this->length)) {
 			if (false === $this->get_parameters()) {
 				return false;
@@ -1840,6 +1842,7 @@ class BPlusTree {
 	 *        	
 	 */
 	function setitem($key, $val) {
+		/** @phpstan-ignore-next-line */
 		if (!is_numeric($val)) {
 			trigger_error("Second parameter must be numeric", E_USER_ERROR);
 		}
@@ -1848,6 +1851,7 @@ class BPlusTree {
 		if (is_null($root)) {
 			trigger_error("not open", E_USER_ERROR);
 		}
+		/** @phpstan-ignore-next-line */
 		if (!is_string($key)) {
 			trigger_error($key . " must be string", E_USER_ERROR);
 		}
