@@ -46,6 +46,8 @@ class AdminPanel {
 			$action = $this->defaultaction;
 		}
 
+		$obj = null;
+
 		if (!isset($this->actions [$action])) {
 			// trigger_error("$action:
 			// No such an action was defined", E_USER_ERROR);
@@ -57,21 +59,27 @@ class AdminPanel {
 		$class = get_class($this) . '_' . $action;
 
 		if (!class_exists($class)) {
+
 			$f = str_replace('_', '.', $class);
+
 			$fname = ADMIN_DIR . 'panels/' . $this->panelname . '/' . $f . '.php';
 
-			if (!file_exists($fname)) {
-				throw new \RuntimeException('No script found for action ' . $action);
+			if (file_exists($fname)) {
+				include ($fname);
+
+				if (!class_exists($class)) {
+					trigger_error('No classes for action ' . $action . '.', E_USER_ERROR);
+				}
+
+				$obj = new $class($this->smarty);
+				return $obj;
+			} else {
+				trigger_error('No script found for action ' . $action, E_USER_ERROR);
 			}
-
-			include($fname);
+		} else {
+			$obj = new $class($this->smarty);
 		}
 
-		if (!class_exists($class)) {
-			throw new \RuntimeException('No classes for action ' . $action . '.');
-		}
-
-		$obj = new $class($this->smarty);
 		return $obj;
 	}
 
@@ -245,12 +253,11 @@ class AdminPanelActionValidated extends AdminPanelAction {
 
 			$valid_f = 'smarty_validate_criteria_' . $validatorname;
 
-			if (is_callable($valid_f) && !$valid_f($string, $empty, $dummyarr, $dummyarr)) {
+			if (!$valid_f($string, $empty, $dummyarr, $dummyarr)) {
 
 				if (!$lang_loaded) {
 					$lang = lang_load('admin.' . ADMIN_PANEL);
 					$l = $lang ['admin'] [ADMIN_PANEL] [ADMIN_PANEL_ACTION];
-					$lang_loaded = true;
 				}
 
 				$errors [$field] = isset($l ['error'] [$field]) ? $l ['error'] [$field] : htmlspecialchars($field);
