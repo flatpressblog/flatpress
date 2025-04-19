@@ -726,7 +726,7 @@ class BPlusTree_Node {
 	/**
 	 * deletes from interior nodes
 	 *
-	 * @param string $key
+	 * @param string|null $key
 	 *        	target key
 	 */
 	function delnode($key) {
@@ -820,7 +820,7 @@ class BPlusTree_Node {
 	/**
 	 * returns child, searching for $key in an interior node
 	 *
-	 * @param string $key
+	 * @param string|null $key
 	 *        	target $key
 	 * @returns object BPlusTree_Node
 	 *
