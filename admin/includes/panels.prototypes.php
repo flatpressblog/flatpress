@@ -255,7 +255,7 @@ class AdminPanelActionValidated extends AdminPanelAction {
 
 			if (!$valid_f($string, $empty, $dummyarr, $dummyarr)) {
 
-				if (!$lang_loaded) {
+				if ($lang_loaded === false) {
 					$lang = lang_load('admin.' . ADMIN_PANEL);
 					$l = $lang ['admin'] [ADMIN_PANEL] [ADMIN_PANEL_ACTION];
 				}
