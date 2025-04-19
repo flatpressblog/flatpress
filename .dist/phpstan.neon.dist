@@ -49,5 +49,8 @@ parameters:
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
 
+  # Constants are configurable if false
+  treatConstantAsCertain: false
+
   # Deactivates warnings via dynamic properties (e.g. Smarty::__get)
   # checkDynamicProperties: false
