@@ -24,8 +24,8 @@ class AdminPanel {
 
 	function __construct(&$smarty) {
 		$this->smarty = &$smarty;
-		if (!$this->panelname) {
-			trigger_error("Variable \$panelname is not defined!", E_USER_ERROR);
+		if ($this->panelname === null || $this->panelname === '') {
+			trigger_error("Variable \$panelname is not defined!", E_USER_WARNING);
 		}
 
 		/* get plugin panels */
@@ -269,7 +269,7 @@ class AdminPanelActionValidated extends AdminPanelAction {
 			}
 		}
 
-		if (!$errors) {
+		if (count($errors) === 0) {
 			$result = parent::onsubmit($content);
 		} else {
 			$this->smarty->assign('error', $errors);
