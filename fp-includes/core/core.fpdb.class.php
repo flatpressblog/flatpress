@@ -263,6 +263,7 @@ class FPDB_Query {
 
 		if ($prevkey == $key) {
 			$this->prevkey = null;
+			/** @phpstan-ignore-next-line */
 			if ($this->walker->valid) {
 				$this->walker->next();
 				// After walker->next() valid could be false, so check again
