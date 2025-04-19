@@ -14,12 +14,6 @@ parameters:
   paths:
     - ..
 
-  phpDoc:
-    # Constants are configurable if false
-    treatConstantAsCertain: false
-
-    # treatPhpDocTypesAsCertain: false
-
   ignoreErrors:
     # Dynamic and global variables
     - '#Variable \$.* might not be defined#'
