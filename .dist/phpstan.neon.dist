@@ -14,6 +14,12 @@ parameters:
   paths:
     - ..
 
+  phpDoc:
+    # Constants are configurable if false
+    treatConstantAsCertain: false
+
+    # treatPhpDocTypesAsCertain: false
+
   ignoreErrors:
     # Dynamic and global variables
     - '#Variable \$.* might not be defined#'
@@ -48,9 +54,6 @@ parameters:
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
-
-  # Constants are configurable if false
-  treatConstantAsCertain: false
 
   # Deactivates warnings via dynamic properties (e.g. Smarty::__get)
   # checkDynamicProperties: false
