@@ -908,6 +908,7 @@ class BPlusTree_Node {
 	 *        	value for $key
 	 */
 	function putvalue($key, $val) {
+		/** @phpstan-ignore-next-line */
 		if (!is_string($key)) {
 			trigger_error($key . " must be string", E_USER_ERROR);
 		}
@@ -1245,8 +1246,9 @@ class BPlusTree_Node {
 	 *        	
 	 */
 	function store($force = false) {
-		// {{{
+
 		$position = $this->position;
+		/** @phpstan-ignore-next-line */
 		if (is_null($position)) {
 			trigger_error("position cannot be null", E_USER_ERROR);
 		}
@@ -1272,8 +1274,6 @@ class BPlusTree_Node {
 
 		return $last;
 	}
-
-	// }}}
 
 	/**
 	 * load node from file
