@@ -549,20 +549,20 @@ class BPlusTree_Node {
 
 	/**
 	 * constructor
-	*
-	* @param int $flag Flag of current node
-	* @param int $size Size of node
-	* @param int $keylen Max key length
-	* @param int|string $position Seek position in file
-	* @param resource $infile Opened file stream (resource)
-	* @param BPlusTree_Node|null $cloner BPlusTree_Node object from which to clone properties
-	*
-	* @throws InvalidArgumentException
-	*/
+	 *
+	 * @param int $flag Flag of current node
+	 * @param int $size Size of node
+	 * @param int $keylen Max key length
+	 * @param int|string $position Seek position in file
+	 * @param resource $infile Opened file stream (resource)
+	 * @param BPlusTree_Node|null $cloner BPlusTree_Node object from which to clone properties
+	 *
+	 * @throws InvalidArgumentException
+	 */
 	function __construct($flag, $size, $keylen, $position, $infile, $cloner = null) {
 		$this->flag = $flag;
 
-		if (!is_int($size) || $size < 0) {
+		if ($size < 0 || gettype($size) !== 'integer') {
 			trigger_error('size must be positive', E_USER_ERROR);
 		}
 
@@ -573,7 +573,7 @@ class BPlusTree_Node {
 		if (!is_numeric($position) || $position < 0) {
 			throw new InvalidArgumentException('Position must be a positive number (int|string).');
 		}
-		$this->position = is_int($position) ? $position : (string)$position;
+		$this->position = $position;
 
 		$this->infile = $infile;
 		// last (+1) is successor seek TODO move to its own!
