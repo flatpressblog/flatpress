@@ -340,6 +340,7 @@ class pairs {
 	 * on the value of the BPT_SORT constant
 	 */
 	function BPT_keycmp($a, $b) {
+		/** @phpstan-ignore-next-line */
 		return (BPT_SORT === SORT_ASC) ? strcmp($a, $b) : -strcmp($a, $b);
 	}
 
@@ -562,8 +563,9 @@ class BPlusTree_Node {
 	function __construct($flag, $size, $keylen, $position, $infile, $cloner = null) {
 		$this->flag = $flag;
 
-		if ($size < 0 || gettype($size) !== 'integer') {
-			trigger_error('size must be positive', E_USER_ERROR);
+		/** @phpstan-ignore-next-line */
+		if (!is_int($size) || $size < 0) {
+			trigger_error('size must be positive integer', E_USER_ERROR);
 		}
 
 		$this->size = $size;
