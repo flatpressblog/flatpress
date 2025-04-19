@@ -68,13 +68,13 @@ class AdminPanel {
 				include ($fname);
 
 				if (!class_exists($class)) {
-					trigger_error('No classes for action ' . $action . '.', E_USER_ERROR);
+					trigger_error('No classes for action ' . $action . '.', E_USER_WARNING);
 				}
 
 				$obj = new $class($this->smarty);
 				return $obj;
 			} else {
-				trigger_error('No script found for action ' . $action, E_USER_ERROR);
+				trigger_error('No script found for action ' . $action, E_USER_WARNING);
 			}
 		} else {
 			$obj = new $class($this->smarty);
