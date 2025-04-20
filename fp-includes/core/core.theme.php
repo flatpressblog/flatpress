@@ -11,7 +11,7 @@ function theme_loadsettings() {
 		// theme website
 		'www' => 'https://www.flatpress.org',
 		// fp version
-		'version' => 0.0,
+		'version' => -1,
 		// default style (must be in res/ dir
 		'default_style' => null,
 		'style' => array(
@@ -46,13 +46,13 @@ function theme_loadsettings() {
 	}
 
 	if (!defined('THEME_LEGACY_MODE')) {
-		if ($theme['version'] < 0.702) {
+		if ($theme ['version'] >= 0 && $theme ['version'] < 0.702) {
 			define('THEME_LEGACY_MODE', true);
 			theme_register_default_widgetsets();
 		} else {
 			define('THEME_LEGACY_MODE', false);
 
-			if (isset($theme ['default_style'])) {
+			if (!empty($theme ['default_style'])) {
 
 				if (!isset($fp_config ['general'] ['style'])) {
 					$fp_config ['general'] ['style'] = $theme ['default_style'];
