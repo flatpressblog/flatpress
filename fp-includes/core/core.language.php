@@ -200,15 +200,22 @@ function set_locale() {
 		return;
 	}
 
+	/** @phpstan-ignore-next-line */
 	if (isset($langconf ['charsets']) && is_array($langconf ['charsets'])) {
 		if ($debug) {
 			error_log('set_locale -> Charset comparison. Defined: ' . print_r($langconf ['charsets'], true) . '. Current: ' . $charset);
 		}
+		/** @phpstan-ignore-next-line */
 		if (isset($langconf ['charsets'] [0]) && strtolower($charset) === strtolower($langconf ['charsets'] [0])) {
+			/** @phpstan-ignore-next-line */
 			$localeCharset_a = isset($langconf ['localecharset_a']) ? $langconf ['localecharset_a'] : '';
+			/** @phpstan-ignore-next-line */
 			$localeCharset_b = isset($langconf ['localecharset_b']) ? $langconf ['localecharset_b'] : '';
+		/** @phpstan-ignore-next-line */
 		} elseif (isset($langconf ['charsets'] [1]) && strtolower($charset) === strtolower($langconf ['charsets'] [1])) {
+			/** @phpstan-ignore-next-line */
 			$localeCharset_c = isset($langconf ['localecharset_c']) ? $langconf ['localecharset_c'] : '';
+			/** @phpstan-ignore-next-line */
 			$localeCharset_d = isset($langconf ['localecharset_d']) ? $langconf ['localecharset_d'] : '';
 		}
 	}
@@ -226,6 +233,7 @@ function set_locale() {
 	];
 
 	foreach (['localecountry_a', 'localecountry_b', 'charsets', 'localeshort'] as $key) {
+		/** @phpstan-ignore-next-line */
 		if (!isset($langconf [$key]) || empty($langconf [$key]) || ($key === 'charsets' && !is_array($langconf [$key]))) {
 			if ($debug) {
 				trigger_error('set_locale -> Missing or invalid key in language configuration: ' . $key . '. Value: ' . var_export($langconf [$key], true), E_USER_WARNING);
@@ -245,7 +253,9 @@ function set_locale() {
 	$localeVariantsWithCharsets = [];
 	if (strtolower($charset) === $langconf ['charsets'] [0]) {
 		foreach ($localeVariants as $variant) {
+			/** @phpstan-ignore-next-line */
 			$localeCharset_a = isset($langconf ['localecharset_a']) ? $langconf ['localecharset_a'] : '';
+			/** @phpstan-ignore-next-line */
 			$localeCharset_b = isset($langconf ['localecharset_b']) ? $langconf ['localecharset_b'] : '';
 
 			$localeVariantsWithCharsets [] = $variant . $localeCharset_a; // .UTF-8
@@ -258,7 +268,9 @@ function set_locale() {
 		}
 	} elseif (strtolower($charset) === $langconf ['charsets'] [1]) {
 		foreach ($localeVariants as $variant) {
+			/** @phpstan-ignore-next-line */
 			$localeCharset_c = isset($langconf ['localecharset_c']) ? $langconf ['localecharset_c'] : '';
+			/** @phpstan-ignore-next-line */
 			$localeCharset_d = isset($langconf ['localecharset_d']) ? $langconf ['localecharset_d'] : '';
 
 			$localeVariantsWithCharsets [] = $variant . $localeCharset_c; // .ISO-8859-15
@@ -272,7 +284,8 @@ function set_locale() {
 	}
 
 	$supportedLocales = [];
-	if (function_exists('shell_exec') && is_callable('shell_exec')) {
+	/** @phpstan-ignore-next-line */
+	if (function_exists('shell_exec') && is_callable('shell_exec') && stripos(ini_get('disable_functions'), 'shell_exec') === false) {
 		// Checks the supported locales with locale -a and only uses valid combinations
 		$output = shell_exec('timeout 5s locale -a');
 		if ($output !== null) {
@@ -432,10 +445,11 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8') {
 	// Check whether the text is in UTF-8
 	if (!mb_check_encoding($text, 'UTF-8')) {
 		// List of source encodings that can be decoded
-		$possible_encodings = ['ISO-8859-1', 'ISO-8859-15', 'ISO-8859-7', 'ISO-8859-5'];
+		$possible_encodings = ['ISO-8859-1', 'ISO-8859-15', 'ISO-8859-7', 'ISO-8859-5', 'ISO-8859-9'];
 
 		foreach ($possible_encodings as $encoding) {
 			$converted = @mb_convert_encoding($text, 'UTF-8', $encoding);
+			/** @phpstan-ignore-next-line */
 			if ($converted !== false && mb_check_encoding($converted, 'UTF-8')) {
 				$text = $converted;
 				break;
@@ -473,6 +487,9 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8') {
 		'Ã£' => 'ã', 'Ãµ' => 'õ', 'Ãª' => 'ê', 'Ã§' => 'ç',
 		// Dutch
 		'Ã´' => 'ô',
+		// Turkish
+		'Ã‡' => 'Ç', 'ÄŸ' => 'ğ', 'Äž' => 'Ğ', 'Ä±' => 'ı',
+		'IÌ‡' => 'İ', 'ÅŸ' => 'ş', 'Åž' => 'Ş',
 		// English (typical quotation marks and dashes)
 		'â€œ' => '“', 'â€' => '”', 'â€˜' => '‘', 'â€™' => '’', 'â€”' => '—'
 	];

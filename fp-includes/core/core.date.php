@@ -67,13 +67,28 @@ function date_strformat($format, $timestamp = null) {
 	return strftime_replacement($format, $timestamp);
 }
 
+/**
+ * Returns the current UNIX timestamp adjusted by a time offset in hours.
+ *
+ * If no offset is provided, the function attempts to retrieve it from
+ * $fp_config['locale']['timeoffset']. If the offset is invalid or not set,
+ * it defaults to 0 (no offset).
+ *
+ * @param int|float|string|null $offset Time offset in hours. Can be null to use the default from configuration.
+ * @return int UNIX timestamp with the offset applied (in seconds).
+ */
 function date_time($offset = null) {
 	global $fp_config;
-	if (is_null($offset)) {
-		$offset = $fp_config ['locale'] ['timeoffset'];
+
+	if (!is_numeric($offset)) {
+		if (isset($fp_config ['locale'] ['timeoffset']) && is_numeric($fp_config ['locale'] ['timeoffset'])) {
+			$offset = $fp_config ['locale'] ['timeoffset'];
+		} else {
+			$offset = 0;
+		}
 	}
-	$timestamp = time();
-	return $timestamp + $offset * 3600;
+
+	return time() + (int)$offset * 3600;
 }
 
 /*
@@ -144,10 +159,9 @@ function date_from_id($id) {
  * \setlocale('fr_FR.UTF-8', LC_TIME);
  * echo \strftime('%A %e %B %Y %X', strtotime('2021-09-28 00:00:00'));
  *
- * @param string $format
- *        	Date format
- * @param integer|string|DateTime $timestamp
- *        	Timestamp
+ * @param string $format Date format
+ * @param int|string|\DateTimeInterface|null $timestamp Timestamp
+ * @param string|null $locale
  * @return string
  * @author BohwaZ <https://bohwaz.net/>
  */
@@ -157,11 +171,11 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 	} elseif (is_numeric($timestamp)) {
 		$timestamp = date_create('@' . $timestamp);
 
-		if ($timestamp) {
-			$timezone = date_default_timezone_get() ?: 'UTC';
+		if ($timestamp instanceof \DateTimeInterface) {
+			$timezone = date_default_timezone_get();
 
 			// Check whether the time zone is a valid character string and whether it exists
-			if (is_string($timezone) && in_array($timezone, \DateTimeZone::listIdentifiers())) {
+			if (in_array($timezone, \DateTimeZone::listIdentifiers())) {
 				$timestamp->setTimezone(new \DateTimeZone($timezone));
 			} else {
 				// Fallback to UTC if the time zone is invalid
@@ -179,10 +193,14 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 	// Locale handling
 	$locale = substr((string) $locale, 0, 5);
 
+	if (!$locale || !class_exists('ResourceBundle') || !in_array($locale, \ResourceBundle::getLocales(''))) {
+		$locale = 'en_US';
+	}
+
 	// IntlDateFormatter caching mechanism
 	static $formatter_cache = []; // Caching array
 
-	$cache_key = $locale . '_' . $format . '_' . $timestamp->getTimezone()->getName();
+	$cache_key = md5($locale . '|' . $format . '|' . $timestamp->getTimezone()->getName());
 	if (!isset($formatter_cache [$cache_key])) {
 		$intl_formats = [
 			'%a' => 'EEE', // An abbreviated textual representation of the day Sun through Sat

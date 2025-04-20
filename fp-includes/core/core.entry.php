@@ -45,6 +45,10 @@ class entry_index {
 		$this->_lock_file = CACHE_DIR . 'bpt.lock';
 
 		$this->catlist = entry_categories_list();
+		if (!is_array($this->catlist)) {
+			trigger_error("core.entry: The file categories.txt could not be loaded. Create at least one category in the category management.", E_USER_WARNING);
+			$this->catlist = [];
+		}
 
 		// only main index s a SBPlus (string BPlus):
 		// the other (other categories) are managed

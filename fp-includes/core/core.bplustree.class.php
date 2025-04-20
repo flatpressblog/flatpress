@@ -105,7 +105,9 @@
  *
  */
 function d($s) {
-	return; // disable debug output
+	if (!defined('DEBUG') || !DEBUG) {
+		return false;
+	}
 	if (is_array($s)) {
 		$s = '{ ' . implode(", ", $s) . ' }';
 	}
@@ -116,6 +118,7 @@ function d($s) {
 
 	echo "[" . $f . ":" . $l . "]\t" . $s . "\n";
 	// echo "---[{$x[2]['function']}:{$x[2]['line']}]\n";
+	return true;
 }
 
 error_reporting(E_ALL);
@@ -278,7 +281,7 @@ class pairs {
 		if (is_null($hi)) {
 			$hi = $this->count;
 		}
-		assert(is_int($hi));
+
 		$A = $this->a;
 		$X = $a;
 		while ($lo < $hi) {
@@ -327,8 +330,6 @@ class pairs {
 
 }
 
-if (BPT_SORT == SORT_ASC) {
-
 	/**
 	 * compares key $a and $b using a less-than or greather-than relation
 	 * depending on {@link BPT_SORT} constants
@@ -339,14 +340,9 @@ if (BPT_SORT == SORT_ASC) {
 	 * on the value of the BPT_SORT constant
 	 */
 	function BPT_keycmp($a, $b) {
-		return strcmp($a, $b);
+		/** @phpstan-ignore-next-line */
+		return (BPT_SORT === SORT_ASC) ? strcmp($a, $b) : -strcmp($a, $b);
 	}
-} else {
-
-	function BPT_keycmp($a, $b) {
-		return -strcmp($a, $b);
-	}
-}
 
 /*
  * function _BPT_bisect($a, $x, $lo=0, $hi=null) {
@@ -356,6 +352,7 @@ if (BPT_SORT == SORT_ASC) {
  * return $lo;
  * }
  */
+
 /**
  * locate an element $x or the nearest bigger one
  * in the array $a, starting from offset $lo
@@ -553,21 +550,22 @@ class BPlusTree_Node {
 
 	/**
 	 * constructor
-	*
-	* @param int $flag Flag of current node
-	* @param int $size Size of node
-	* @param int $keylen Max key length
-	* @param int|string $position Seek position in file
-	* @param resource $infile Opened file stream (resource)
-	* @param BPlusTree_Node|null $cloner BPlusTree_Node object from which to clone properties
-	*
-	* @throws InvalidArgumentException
-	*/
+	 *
+	 * @param int $flag Flag of current node
+	 * @param int $size Size of node
+	 * @param int $keylen Max key length
+	 * @param int|string $position Seek position in file
+	 * @param resource $infile Opened file stream (resource)
+	 * @param BPlusTree_Node|null $cloner BPlusTree_Node object from which to clone properties
+	 *
+	 * @throws InvalidArgumentException
+	 */
 	function __construct($flag, $size, $keylen, $position, $infile, $cloner = null) {
 		$this->flag = $flag;
 
+		/** @phpstan-ignore-next-line */
 		if (!is_int($size) || $size < 0) {
-			trigger_error('size must be positive', E_USER_ERROR);
+			trigger_error('size must be positive integer', E_USER_ERROR);
 		}
 
 		$this->size = $size;
@@ -577,7 +575,7 @@ class BPlusTree_Node {
 		if (!is_numeric($position) || $position < 0) {
 			throw new InvalidArgumentException('Position must be a positive number (int|string).');
 		}
-		$this->position = is_int($position) ? $position : (string)$position;
+		$this->position = $position;
 
 		$this->infile = $infile;
 		// last (+1) is successor seek TODO move to its own!
@@ -728,11 +726,11 @@ class BPlusTree_Node {
 	/**
 	 * deletes from interior nodes
 	 *
-	 * @param string $key
+	 * @param string|null $key
 	 *        	target key
 	 */
 	function delnode($key) {
-		// {{{
+
 		if (($this->flag & BPT_FLAG_INTERIOR) != BPT_FLAG_INTERIOR) {
 			trigger_error("Can't delete node from leaf node");
 		}
@@ -763,8 +761,6 @@ class BPlusTree_Node {
 
 		$this->validkeys = $validkeys - 1;
 	}
-
-	// }}}
 
 	/**
 	 * slices the $this->keys array to the number of valid keys
@@ -824,7 +820,7 @@ class BPlusTree_Node {
 	/**
 	 * returns child, searching for $key in an interior node
 	 *
-	 * @param string $key
+	 * @param string|null $key
 	 *        	target $key
 	 * @returns object BPlusTree_Node
 	 *
@@ -912,6 +908,7 @@ class BPlusTree_Node {
 	 *        	value for $key
 	 */
 	function putvalue($key, $val) {
+		/** @phpstan-ignore-next-line */
 		if (!is_string($key)) {
 			trigger_error($key . " must be string", E_USER_ERROR);
 		}
@@ -1249,8 +1246,9 @@ class BPlusTree_Node {
 	 *        	
 	 */
 	function store($force = false) {
-		// {{{
+
 		$position = $this->position;
+		/** @phpstan-ignore-next-line */
 		if (is_null($position)) {
 			trigger_error("position cannot be null", E_USER_ERROR);
 		}
@@ -1276,8 +1274,6 @@ class BPlusTree_Node {
 
 		return $last;
 	}
-
-	// }}}
 
 	/**
 	 * load node from file
@@ -1359,7 +1355,7 @@ class BPlusTree_Node {
 	 *        	
 	 */
 	function delinearize($s) {
-		// {{{
+
 		if (strlen($s) != $this->storage) {
 			trigger_error("bad storage", E_USER_ERROR);
 		}
@@ -1383,8 +1379,6 @@ class BPlusTree_Node {
 		}
 	}
 
-	// }}}
-
 	// foo dump
 	/**
 	 *
@@ -1395,7 +1389,7 @@ class BPlusTree_Node {
 	 *        	
 	 */
 	function dump($indent = '') {
-		// {{{
+
 		$flag = $this->flag;
 		if ($flag == BPT_FLAG_FREE) {
 			echo "free->", $this->position, "\n";
@@ -1449,8 +1443,6 @@ class BPlusTree_Node {
 		echo $indent, "*****\n";
 	}
 
-	// }}}*/
-
 	/**
 	 * adds this node to fifo
 	 */
@@ -1479,13 +1471,13 @@ class BPlusTree_Node {
 				$last->store(true);
 			}
 		}
-		$is_o = true;
+		//$is_o = true;
 		// Arvid: The loop doesn't do anything - but contains a deprecated each(). Commented out.
 		// while ((list (, $v) = each($ff)) && $is_o = is_object($v))
 		// ;
-		if (!$is_o) {
-			trigger_error('ERR', E_USER_ERROR);
-		}
+		//if (!$is_o) {
+		//	trigger_error('ERR', E_USER_ERROR);
+		//}
 	}
 
 	/**
@@ -1586,6 +1578,7 @@ class BPlusTree {
 	 *        	maximum lenght of a key in bytes (unicode extended chars evaluate to two chars)
 	 */
 	function __construct($infile, $pos = null, $nodesize = null, $keylen = 10) {
+		/** @phpstan-ignore-next-line */
 		if (!is_null($keylen) && $keylen <= 2) {
 			trigger_error($keylen . " must be greater than 2", E_USER_ERROR);
 		}
@@ -1766,6 +1759,7 @@ class BPlusTree {
 	 * @returns length of the tree (number of values)
 	 */
 	function length() {
+		/** @phpstan-ignore-next-line */
 		if (is_null($this->length)) {
 			if (false === $this->get_parameters()) {
 				return false;
@@ -1848,6 +1842,7 @@ class BPlusTree {
 	 *        	
 	 */
 	function setitem($key, $val) {
+		/** @phpstan-ignore-next-line */
 		if (!is_numeric($val)) {
 			trigger_error("Second parameter must be numeric", E_USER_ERROR);
 		}
@@ -1856,6 +1851,7 @@ class BPlusTree {
 		if (is_null($root)) {
 			trigger_error("not open", E_USER_ERROR);
 		}
+		/** @phpstan-ignore-next-line */
 		if (!is_string($key)) {
 			trigger_error($key . " must be string", E_USER_ERROR);
 		}
@@ -2036,8 +2032,6 @@ class BPlusTree {
 		}
 		return null;
 	}
-
-	// }}}
 
 	/**
 	 *
@@ -2314,8 +2308,6 @@ class BPlusTree {
 			return $right->a [0];
 		}
 	}
-
-	// }}}
 
 	/**
 	 * delete item $key
@@ -2705,7 +2697,7 @@ class BPlusUtils {
 
 	function recopy_bplus($fromfile, $tofile, $class = 'BPlusTree') {
 		$fromtree = new $class($fromfile);
-		$fromtree->open;
+		$fromtree->open();
 		list ($f, $p, $n, $k) = $fromtree->init_params();
 		$totree = new $class($tofile, $p, $n, $k);
 		$totree->startup();

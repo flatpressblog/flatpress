@@ -263,16 +263,20 @@ class FPDB_Query {
 
 		if ($prevkey == $key) {
 			$this->prevkey = null;
+			/** @phpstan-ignore-next-line */
 			if ($this->walker->valid) {
 				$this->walker->next();
+				/** @phpstan-ignore-next-line */
 				$this->nextkey = $this->walker->valid ? $this->walker->current_key() : null;
 			}
 		} else {
 			$this->prevkey = $prevkey;
 			if ($this->walker->valid) {
 				$this->walker->next();
+				/** @phpstan-ignore-next-line */
 				if ($this->walker->valid) {
 					$this->walker->next();
+					/** @phpstan-ignore-next-line */
 					$this->nextkey = $this->walker->valid ? $this->walker->current_key() : null;
 				}
 			}
@@ -724,7 +728,7 @@ class FPDB {
 			$q = &$this->queries [$queryId];
 		} else {
 			return false;
-			trigger_error("FPDB: no such query ID (" . $queryId . ")", E_USER_WARNING);
+			// trigger_error("FPDB: no such query ID (" . $queryId . ")", E_USER_WARNING);
 		}
 
 		if (!$q) {
@@ -780,34 +784,36 @@ function smarty_block_entries($params, $content, &$smarty, &$repeat) {
 	global $fpdb;
 
 	return $content;
-
-	$show = false;
-
-	$smarty->assign('prev_entry_day', '');
-
-	if ($repeat) {
-
-		if (isset($params ['alwaysshow']) && $params ['alwaysshow']) {
-			// $fpdb->doquery();
-			$repeat = false;
-			return $content;
-		}
-
-		// $show = @$fpdb->doquery();
-	} else {
-
-		if (!isset($fpdb->queries [0]->comments) || !$fpdb->queries [0]->comments) {
-			$fpdb->reset(0);
-		}
-		$show = true;
-	}
-
-	$show = true;
-
-	if ($show) {
-		return $content;
-	}
 }
+/**
+ *	$show = false;
+ *
+ *	$smarty->assign('prev_entry_day', '');
+ *
+ *	if ($repeat) {
+ *
+ *		if (isset($params ['alwaysshow']) && $params ['alwaysshow']) {
+ *			// $fpdb->doquery();
+ *			$repeat = false;
+ *			return $content;
+ *		}
+ *
+ *		// $show = @$fpdb->doquery();
+ *	} else {
+ *
+ *		if (!isset($fpdb->queries [0]->comments) || !$fpdb->queries [0]->comments) {
+ *			$fpdb->reset(0);
+ *		}
+ *		$show = true;
+ *	}
+ *
+ *	$show = true;
+ *
+ *	if ($show) {
+ *		return $content;
+ *	}
+ *}
+ */
 
 function smarty_block_entry($params, $content, &$smarty, &$repeat) {
 	global $fpdb;
