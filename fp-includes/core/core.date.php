@@ -67,13 +67,28 @@ function date_strformat($format, $timestamp = null) {
 	return strftime_replacement($format, $timestamp);
 }
 
+/**
+ * Returns the current UNIX timestamp adjusted by a time offset in hours.
+ *
+ * If no offset is provided, the function attempts to retrieve it from
+ * $fp_config['locale']['timeoffset']. If the offset is invalid or not set,
+ * it defaults to 0 (no offset).
+ *
+ * @param int|float|string|null $offset Time offset in hours. Can be null to use the default from configuration.
+ * @return int UNIX timestamp with the offset applied (in seconds).
+ */
 function date_time($offset = null) {
 	global $fp_config;
-	if (is_null($offset)) {
-		$offset = $fp_config ['locale'] ['timeoffset'];
+
+	if (!is_numeric($offset)) {
+		if (isset($fp_config ['locale'] ['timeoffset']) && is_numeric($fp_config ['locale'] ['timeoffset'])) {
+			$offset = $fp_config ['locale'] ['timeoffset'];
+		} else {
+			$offset = 0;
+		}
 	}
-	$timestamp = time();
-	return $timestamp + $offset * 3600;
+
+	return time() + (int)$offset * 3600;
 }
 
 /*

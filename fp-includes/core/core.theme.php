@@ -11,9 +11,9 @@ function theme_loadsettings() {
 		// theme website
 		'www' => 'https://www.flatpress.org',
 		// fp version
-		'version' => -1,
+		'version' => null,
 		// default style (must be in res/ dir
-
+		'default_style' => null,
 		'style' => array(
 
 			'style_def' => 'style.css',
@@ -46,7 +46,7 @@ function theme_loadsettings() {
 	}
 
 	if (!defined('THEME_LEGACY_MODE')) {
-		if ($theme ['version'] < 0.702) {
+		if (is_numeric($theme ['version']) && $theme ['version'] < 0.702) {
 			define('THEME_LEGACY_MODE', true);
 			theme_register_default_widgetsets();
 		} else {
@@ -382,11 +382,6 @@ function theme_smarty_modifier_date_rfc3339($timestamp = null) {
 	}
 
 	$date = date('Y-m-d\TH:i:s', $timestamp);
-
-	if (!$date) {
-		// Return empty string in case of failure
-		return '';
-	}
 
 	$matches = array();
 	if (preg_match('/^([\-+])(\d{2})(\d{2})$/', date('O', $timestamp), $matches)) {
