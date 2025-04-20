@@ -46,7 +46,7 @@ function theme_loadsettings() {
 	}
 
 	if (!defined('THEME_LEGACY_MODE')) {
-		if (is_numeric($theme ['version']) && $theme ['version'] < 0.702) {
+		if ($theme ['version'] !== null && is_numeric($theme ['version']) && $theme ['version'] < 0.702) {
 			define('THEME_LEGACY_MODE', true);
 			theme_register_default_widgetsets();
 		} else {
