@@ -7,8 +7,11 @@
  * Description: Antispam asking to answer a simple math question. Part of the standard distribution.
  * Version: 3.0
  */
-define('AASPAM_DEBUG', false);
-define('AASPAM_LOG', CACHE_DIR . 'aaspamlog.txt');
+
+/**
+ * define('AASPAM_DEBUG', false);
+ * define('AASPAM_LOG', CACHE_DIR . 'aaspamlog.txt');
+ */
 
 add_action('comment_validate', 'plugin_aaspam_validate', 5, 2);
 add_action('comment_form', 'plugin_aaspam_comment_form');
