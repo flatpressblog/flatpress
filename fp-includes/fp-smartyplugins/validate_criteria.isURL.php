@@ -30,16 +30,13 @@
  * test if a value is a valid URL
  *
  * @param string $value the value being tested
- * @param boolean $empty if field can be empty
- * @param array params validate parameter values
- * @param array formvars form var values
+ * @param bool $empty if field can be empty
+ * @param array $params validate parameter values
+ * @param array $formvars form var values
+ * @return bool
  */
 function smarty_validate_criteria_isURL($value, $empty, &$params, &$formvars) {
 	if (empty($value)) {
-		return $empty;
-	}
-
-	if (strlen($value) == 0) {
 		return $empty;
 	}
 
