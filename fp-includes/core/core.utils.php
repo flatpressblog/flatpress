@@ -373,9 +373,9 @@ function utils_microtime() {
 }
 
 function utils_countdashes($string, &$rest) {
-	trim($string);
+	$string = trim($string);
 	$i = 0;
-	while ($string [$i] == '-') {
+	while (isset($string [$i]) && $string [$i] === '-') {
 		$i++;
 	}
 	if ($i) {
@@ -408,7 +408,7 @@ function utils_mail($from = '', $subject = '', $message = '', $headers = '') {
 	$headers = preg_replace('/[\r\n]/', '', $headers);
 
 	// Define allowed character sets
-	$allowed_charsets = ['UTF-8', 'ISO-8859-1','ISO-8859-5', 'ISO-8859-15', 'Windows-1252', 'Shift_JIS', 'EUC-JP', 'GB2312'];
+	$allowed_charsets = ['UTF-8', 'ISO-8859-1','ISO-8859-5', 'ISO-8859-9', 'ISO-8859-15', 'Windows-1252', 'Shift_JIS', 'EUC-JP', 'GB2312'];
 
 	// Validate and set charset
 	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
@@ -644,7 +644,7 @@ function fplog($str) {
  * Shift an element with its key off the beginning of array.
  * Just like array_shift(), but for an associative array.
  *
- * @param array $arr The input array
+ * @param mixed $arr Input, which can be an array.
  * @return array|null The shifted key-value pair as array, or null if array is empty or not an array
  */
 function utils_array_kshift(&$arr) {
