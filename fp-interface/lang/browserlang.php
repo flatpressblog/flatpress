@@ -2,7 +2,7 @@
 /**
  * Determines the language of the browser based on a list of accepted languages
  *
- * @param array $arrAllowedLanguages List of accepted languages (e.g. 'de-de', 'en-us', da-dk)
+ * @param array|string $arrAllowedLanguages List of accepted languages (e.g. 'de-de', 'en-us', da-dk)
  * @param string $strDefaultLanguage Default language if no match is found
  * @param string|null $strLangVariable Optional language from the HTTP header (by default $_SERVER['HTTP_ACCEPT_LANGUAGE'])
  * @param bool $boolStrictMode If true, only exact match is accepted

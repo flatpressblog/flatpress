@@ -793,10 +793,9 @@ function trailingslashit($string) {
 	return $string;
 }
 
+// This function is currently not used by FlatPress
 function addslashes_gpc($gpc) {
-	if (!get_magic_quotes_gpc()) {
-		$gpc = addslashes($gpc);
-	}
+	$gpc = addslashes($gpc);
 	return $gpc;
 }
 
@@ -957,11 +956,14 @@ function sanitize_email($email) {
 	return preg_replace('/[^a-z0-9+_.@-]/i', '', $email);
 }
 
+// This function is currently not used by FlatPress
+// Returns a character string, such as: “5 mins”, “2 hours”, “1 day”
 function human_time_diff($from, $to = '') {
 	if (empty($to)) {
 		$to = time();
 	}
 	$diff = (int) abs($to - $from);
+
 	if ($diff <= 3600) {
 		$mins = round($diff / 60);
 		if ($mins <= 1) {
@@ -969,14 +971,14 @@ function human_time_diff($from, $to = '') {
 		} else {
 			$since = sprintf(__('%s mins'), $mins);
 		}
-	} else if (($diff <= 86400) && ($diff > 3600)) {
+	} elseif ($diff <= 86400) {
 		$hours = round($diff / 3600);
 		if ($hours <= 1) {
 			$since = __('1 hour');
 		} else {
 			$since = sprintf(__('%s hours'), $hours);
 		}
-	} elseif ($diff >= 86400) {
+	} else {
 		$days = round($diff / 86400);
 		if ($days <= 1) {
 			$since = __('1 day');
@@ -984,6 +986,7 @@ function human_time_diff($from, $to = '') {
 			$since = sprintf(__('%s days'), $days);
 		}
 	}
+
 	return $since;
 }
 

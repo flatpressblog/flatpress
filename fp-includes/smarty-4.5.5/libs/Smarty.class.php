@@ -267,7 +267,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * flag if plugins_dir is normalized
      *
-     * @var bool
+     * @var bool|null
      */
     public $_pluginsDirNormalized = false;
 
@@ -581,7 +581,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * template directory
      *
-     * @var array
+     * @var array|string|null
      */
     protected $template_dir = array('./templates/');
 
@@ -595,7 +595,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * config directory
      *
-     * @var array
+     * @var array|string|null
      */
     protected $config_dir = array('./configs/');
 
@@ -616,7 +616,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * plugins directory
      *
-     * @var array
+     * @var array|string|null
      */
     protected $plugins_dir = array();
 
@@ -662,7 +662,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     {
         $this->_clearTemplateCache();
         parent::__construct();
-        if (is_callable('mb_internal_encoding')) {
+        if (function_exists('mb_internal_encoding')) {
             mb_internal_encoding(Smarty::$_CHARSET);
         }
         $this->start_time = (int) microtime(true);
@@ -871,7 +871,7 @@ class Smarty extends Smarty_Internal_TemplateBase
             $this->plugins_dir[] = SMARTY_PLUGINS_DIR;
             $this->_pluginsDirNormalized = false;
         }
-        if (!$this->_pluginsDirNormalized) {
+        if ($this->_pluginsDirNormalized === false) {
             if (!is_array($this->plugins_dir)) {
                 $this->plugins_dir = (array)$this->plugins_dir;
             }
@@ -1001,7 +1001,7 @@ class Smarty extends Smarty_Internal_TemplateBase
         }
         $tpl->parent = $parent ? $parent : $this;
         // fill data if present
-        if (!empty($data) && is_array($data)) {
+        if (!empty($data)) {
             // set up variable values
             foreach ($data as $_key => $_val) {
                 $tpl->tpl_vars[ $_key ] = new Smarty_Variable($_val);
@@ -1039,7 +1039,7 @@ class Smarty extends Smarty_Internal_TemplateBase
      * @param string                         $template_name
      * @param null|mixed                     $cache_id
      * @param null|mixed                     $compile_id
-     * @param null                           $caching
+     * @param int|null                       $caching
      * @param \Smarty_Internal_Template|null $template
      *
      * @return string
@@ -1367,24 +1367,31 @@ class Smarty extends Smarty_Internal_TemplateBase
     private function _normalizeTemplateConfig($isConfig)
     {
         if ($isConfig) {
-            $processed = &$this->_processedConfigDir;
-            $dir = &$this->config_dir;
+            $processed = $this->_processedConfigDir;
+            $dirRef = &$this->config_dir;
         } else {
-            $processed = &$this->_processedTemplateDir;
-            $dir = &$this->template_dir;
+            $processed = $this->_processedTemplateDir;
+            $dirRef = &$this->template_dir;
         }
-        if (!is_array($dir)) {
-            $dir = (array)$dir;
+        if (!is_array($dirRef)) {
+            $dirRef = (array) $dirRef;
         }
-        foreach ($dir as $k => $v) {
-            if (!isset($processed[ $k ])) {
-                $dir[ $k ] = $v = $this->_realpath(rtrim($v ?? '', "/\\") . DIRECTORY_SEPARATOR, true);
-                $processed[ $k ] = true;
+        foreach ($dirRef as $k => $v) {
+            if (!isset($processed[$k])) {
+                $v = rtrim($v ?? '', "/\\") . DIRECTORY_SEPARATOR;
+                $dirRef[$k] = $this->_realpath($v, true);
+                $processed[$k] = true;
             }
         }
-        $isConfig ? $this->_configDirNormalized = true : $this->_templateDirNormalized = true;
-        $isConfig ? $this->_joined_config_dir = join('#', $this->config_dir) :
-            $this->_joined_template_dir = join('#', $this->template_dir);
+        if ($isConfig) {
+            $this->_processedConfigDir = $processed;
+            $this->_configDirNormalized = true;
+            $this->_joined_config_dir = implode('#', $this->config_dir);
+        } else {
+            $this->_processedTemplateDir = $processed;
+            $this->_templateDirNormalized = true;
+            $this->_joined_template_dir = implode('#', $this->template_dir);
+        }
     }
 
     /**
