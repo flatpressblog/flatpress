@@ -581,7 +581,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * template directory
      *
-     * @var array
+     * @var array|string|null
      */
     protected $template_dir = array('./templates/');
 
@@ -595,7 +595,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * config directory
      *
-     * @var array
+     * @var array|string|null
      */
     protected $config_dir = array('./configs/');
 
