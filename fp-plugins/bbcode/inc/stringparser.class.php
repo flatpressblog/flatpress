@@ -208,7 +208,10 @@ class StringParser {
 	 * @var bool
 	 */
 	var $_recentlyReparsed = false;
-	
+
+	/**
+	 * @var string|null
+	 */
 	var $_output;
 
 	/**
@@ -286,7 +289,8 @@ class StringParser {
 	 * @access public
 	 * @param string $text
 	 *        	The text to parse
-	 * @return mixed Either the root object of the tree if no output method
+	 * @return StringParser_Node_Root|string|false
+	 *         Either the root object of the tree if no output method
 	 *         is defined, the tree reoutput to e.g. a string or false
 	 *         if an internal error occured, such as a parse error if
 	 *         in strict mode or the object is already parsing a text.
@@ -298,7 +302,6 @@ class StringParser {
 		$this->_parsing = true;
 		$this->_text = $this->_applyPrefilters($text);
 		$this->_output = null;
-		$this->_text = $this->_text ?? '';
 		$this->_length = strlen($this->_text);
 		$this->_cpos = 0;
 		unset($this->_stack);
@@ -987,15 +990,11 @@ class StringParser_Node {
 	 * Prepend a node
 	 *
 	 * @access public
-	 * @param object $node
+	 * @param StringParser_Node $node
 	 *        	The node to be prepended.
 	 * @return bool On success, the function returns true, else false.
 	 */
 	function prependChild(&$node) {
-		if (!is_object($node)) {
-			return false;
-		}
-
 		// root nodes may not be children of other nodes!
 		if ($node->_type == STRINGPARSER_NODE_ROOT) {
 			return false;
@@ -1054,15 +1053,11 @@ class StringParser_Node {
 	 * property of the node that is to be appended.
 	 *
 	 * @access public
-	 * @param object $node
+	 * @param StringParser_Node $node
 	 *        	The node that is to be appended.
 	 * @return bool On success, the function returns true, else false.
 	 */
 	function appendChild(&$node) {
-		if (!is_object($node)) {
-			return false;
-		}
-
 		// root nodes may not be children of other nodes!
 		if ($node->_type == STRINGPARSER_NODE_ROOT) {
 			return false;
@@ -1089,18 +1084,14 @@ class StringParser_Node {
 	 * Insert a node before another node
 	 *
 	 * @access public
-	 * @param object $node
+	 * @param StringParser_Node $node
 	 *        	The node to be inserted.
-	 * @param object $reference
+	 * @param StringParser_Node $reference
 	 *        	The reference node where the new node is
 	 *        	to be inserted before.
 	 * @return bool On success, the function returns true, else false.
 	 */
 	function insertChildBefore(&$node, &$reference) {
-		if (!is_object($node)) {
-			return false;
-		}
-
 		// root nodes may not be children of other nodes!
 		if ($node->_type == STRINGPARSER_NODE_ROOT) {
 			return false;
@@ -1143,18 +1134,14 @@ class StringParser_Node {
 	 * Insert a node after another node
 	 *
 	 * @access public
-	 * @param object $node
+	 * @param StringParser_Node $node
 	 *        	The node to be inserted.
-	 * @param object $reference
+	 * @param StringParser_Node $reference
 	 *        	The reference node where the new node is
 	 *        	to be inserted after.
 	 * @return bool On success, the function returns true, else false.
 	 */
 	function insertChildAfter(&$node, &$reference) {
-		if (!is_object($node)) {
-			return false;
-		}
-
 		// root nodes may not be children of other nodes!
 		if ($node->_type == STRINGPARSER_NODE_ROOT) {
 			return false;
@@ -1272,7 +1259,6 @@ class StringParser_Node {
 
 		if ($destroy) {
 			return StringParser_Node::destroyNode($object);
-			unset($object);
 		}
 		return true;
 	}
@@ -1316,9 +1302,6 @@ class StringParser_Node {
 	 * @return bool True on success, else false.
 	 */
 	static function destroyNode(&$node) {
-		if ($node === null) {
-			return false;
-		}
 		// if parent exists: remove node from tree!
 		if ($node->_parent !== null) {
 			$parent = $node->_parent;
