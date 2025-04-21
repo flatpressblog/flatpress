@@ -616,7 +616,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * plugins directory
      *
-     * @var array
+     * @var array|string|null
      */
     protected $plugins_dir = array();
 
