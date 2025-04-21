@@ -117,6 +117,7 @@
   - External images are displayed correctly. ([#520](https://github.com/flatpressblog/flatpress/pull/520))
   - Correct grouping: Only images from the same gallery are taken into account.
   - Fallback for missing overlay through BBcode [more]-tag. ([#572](https://github.com/flatpressblog/flatpress/issues/572))
+  - An image with an external link can be created if the “Popup” parameter contains false. ([#548](https://github.com/flatpressblog/flatpress/issues/548))
 - Media Manager plugin: update to version 1.0.1
   - Files and directories are sorted numerically, alphabetically. ([#537](https://github.com/flatpressblog/flatpress/issues/537))
 - SEO Meta Tag Info plugin: update to version 2.2.4
