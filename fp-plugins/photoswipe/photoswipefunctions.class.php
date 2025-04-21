@@ -142,13 +142,11 @@ class PhotoSwipeFunctions {
 				$imgTag = '<a href="' . htmlspecialchars($attr ['link']) . '">' . $imgTag . '</a>';
 			}
 
+			// Standard behavior with BBCode
 			return $imgTag;
 		}
 
-		// Default behavior: With PhotoSwipe
-		if (isset($attr ['link'])) {
-			$imgHtml = '<a href="' . htmlspecialchars($attr ['link']) . '">' . $imgHtml . '</a>';
-		}
+		// Standard behavior with PhotoSwipe
 		return $imgHtml;
 	}
 
