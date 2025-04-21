@@ -52,15 +52,17 @@ function plugin_aaspam_validate($bool, $arr) {
 		$smarty->append('error', $lang ['plugin'] ['accessibleantispam'] ['error']);
 	}
 
-	if (AASPAM_DEBUG && $f = @fopen(AASPAM_LOG, 'a')) {
-		$arr ['aaspam-q'] = $_POST ['aaspam'];
-		$arr ['aaspam-a'] = $v;
-		$arr ['SUCCESS'] = $ret;
-
-		$s = date('r') . "|" . session_id() . '|' . utils_kimplode($arr) . "\r\n";
-		@fwrite($f, $s);
-		@fclose($f);
-	}
+	/**
+	 * if (AASPAM_DEBUG && $f = @fopen(AASPAM_LOG, 'a')) {
+	 * 	$arr ['aaspam-q'] = $_POST ['aaspam'];
+	 * 	$arr ['aaspam-a'] = $v;
+	 * 	$arr ['SUCCESS'] = $ret;
+	 *
+	 * 	$s = date('r') . "|" . session_id() . '|' . utils_kimplode($arr) . "\r\n";
+	 * 	@fwrite($f, $s);
+	 * 	@fclose($f);
+	 * }
+	 */
 
 	return $ret;
 }
@@ -132,11 +134,13 @@ function plugin_aaspam_comment_form() {
 	// format the question with numbers at the proper positions
 	$question = sprintf($question, $v1, $v2);
 
-	if (AASPAM_DEBUG && $f = @fopen(AASPAM_LOG, 'a')) {
-		$arr ['aaspam-q'] = $v;
-		@fwrite($f, date('r') . '|' . session_id() . '|' . utils_kimplode($arr) . "\r\n");
-		@fclose($f);
-	}
+	/**
+	 * if (AASPAM_DEBUG && $f = @fopen(AASPAM_LOG, 'a')) {
+	 *	$arr ['aaspam-q'] = $v;
+	 *	@fwrite($f, date('r') . '|' . session_id() . '|' . utils_kimplode($arr) . "\r\n");
+	 *	@fclose($f);
+	 *}
+	 */
 
 	// echoes the question and the form part
 	echo '<p><label class="textlabel" for="aaspam">' . $lang ['plugin'] ['accessibleantispam'] ['prefix'] . ' <strong>' . $question . ' </strong>(*)</label><br>' . //
