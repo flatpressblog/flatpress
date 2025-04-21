@@ -139,7 +139,7 @@ class PhotoSwipeFunctions {
 
 			// Link around it, if available
 			if (!empty($attr ['link'])) {
-				$imgTag = '<a href="' . htmlspecialchars($attr ['link']) . '" target="_blank" rel="noopener noreferrer">' . $imgTag . '</a>';
+				$imgTag = '<a href="' . htmlspecialchars($attr ['link']) . '">' . $imgTag . '</a>';
 			}
 
 			return $imgTag;
@@ -147,7 +147,7 @@ class PhotoSwipeFunctions {
 
 		// Default behavior: With PhotoSwipe
 		if (isset($attr ['link'])) {
-			$imgHtml = '<a href="' . htmlspecialchars($attr ['link']) . '>' . $imgHtml . '</a>';
+			$imgHtml = '<a href="' . htmlspecialchars($attr ['link']) . '">' . $imgHtml . '</a>';
 		}
 		return $imgHtml;
 	}
