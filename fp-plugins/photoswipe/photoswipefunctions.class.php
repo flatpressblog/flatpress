@@ -126,6 +126,29 @@ class PhotoSwipeFunctions {
 		"\n\n";
 
 		self::$lastusedDataIndex++;
+
+		// If popup=“false”, do NOT use the PhotoSwipe wrapper
+		if (isset($attr ['popup']) && strtolower($attr ['popup']) === 'false') {
+			// Popup explicitly deactivated
+			$attr ['popup'] = false;
+			$previewHtml = do_bbcode_img(null, $attr, null, null, null);
+
+			// Extract <img ...> only
+			preg_match('/<img[^>]*>/u', $previewHtml, $matches);
+			$imgTag = $matches[0] ?? '';
+
+			// Link around it, if available
+			if (!empty($attr ['link'])) {
+				$imgTag = '<a href="' . htmlspecialchars($attr ['link']) . '" target="_blank" rel="noopener noreferrer">' . $imgTag . '</a>';
+			}
+
+			return $imgTag;
+		}
+
+		// Default behavior: With PhotoSwipe
+		if (isset($attr ['link'])) {
+			$imgHtml = '<a href="' . htmlspecialchars($attr ['link']) . '>' . $imgHtml . '</a>';
+		}
 		return $imgHtml;
 	}
 
