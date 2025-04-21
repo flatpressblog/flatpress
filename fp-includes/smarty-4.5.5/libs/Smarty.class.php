@@ -267,7 +267,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * flag if plugins_dir is normalized
      *
-     * @var bool
+     * @@var bool|null
      */
     public $_pluginsDirNormalized = false;
 
