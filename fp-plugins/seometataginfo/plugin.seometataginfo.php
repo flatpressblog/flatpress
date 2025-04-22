@@ -51,31 +51,45 @@ $prepend_keywords = $fp_config ['general'] ['title'] . ', ';
 // the published entry version will be kept.
 // set 'SEOMETA_MIGRATE_DATA' to 'true' then
 // create a new entry to force data migration.
-define('SEOMETA_MIGRATE_DATA', false);
+if (!defined('SEOMETA_MIGRATE_DATA')) {
+	define('SEOMETA_MIGRATE_DATA', false);
+}
 
 // generate Open Graph <meta property="og:".. true/false
-define('SEOMETA_GEN_OPEN_GRAPH', true);
+if (!defined('SEOMETA_GEN_OPEN_GRAPH')) {
+	define('SEOMETA_GEN_OPEN_GRAPH', true);
+}
 
 // generate pretty titles e.g.
 // 'Blog Title - Archive - 2011/06' or
 // 'Blog Title - Category - Something Cool'
-define('SEOMETA_GEN_TITLE', true);
+if (!defined('SEOMETA_GEN_TITLE')) {
+	define('SEOMETA_GEN_TITLE', true);
+}
 
 // generate <meta name='title'.. true/false
-define('SEOMETA_GEN_TITLE_META', true);
+if (!defined('SEOMETA_GEN_TITLE_META')) {
+	define('SEOMETA_GEN_TITLE_META', true);
+}
 
 // Before the crawler selects any image, we give it the style/ theme preview
 // generate <meta property="og:image".. true/false
-define('SEOMETA_GEN_IMAGE_META', true);
+if (!defined('SEOMETA_GEN_IMAGE_META')) {
+	define('SEOMETA_GEN_IMAGE_META', true);
+}
 
 // generate <link rel="canonical".. true/false
-define('SEOMETA_GEN_CANONICAL', true);
+if (!defined('SEOMETA_GEN_CANONICAL')) {
+	define('SEOMETA_GEN_CANONICAL', true);
+}
 
 // force comments to point at page (canonical)
 // e.g.
 // /yy/mm/dd/mypage/comments/ => /yy/mm/dd/mypage/
 // /yy/mm/dd/mypage/comments/#comments => /yy/mm/dd/mypage/
-define('SEOMETA_HIDECOMMENTS', true);
+if (!defined('SEOMETA_HIDECOMMENTS')) {
+	define('SEOMETA_HIDECOMMENTS', true);
+}
 
 // define storage
 define('SEOMETA_DIR', CONTENT_DIR . 'seometa/');
@@ -92,7 +106,8 @@ define('SEOMETA_ARCHIVE_DIR', SEOMETA_DIR . 'archives/');
  *
  * It saves the meta data of entries/pages.
  */
-if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL')) {
+//if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL')) {
+if (version_compare(SYSTEM_VER, '0.1010', '>=') && defined('MOD_ADMIN_PANEL')) {
 
 	/**
 	 * plugin_description_entry class
@@ -138,7 +153,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 				$file_meta = SEOMETA_DEFAULT_DIR . 'metatags.ini';
 			}
 
-			if ($file_meta !== '' && !file_exists($file_meta)) {
+			if (!file_exists($file_meta)) {
 				@io_write_file($file_meta, '');
 			}
 
@@ -224,7 +239,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 				$metatags = preg_replace($allowed_characters_regex, '', $metatags);
 			}
 
-			if (!empty($_POST ['pl_file_meta']) && $_POST ['pl_file_meta'] !== SEOMETA_DEFAULT_DIR . 'metatags.ini') {
+			if ($_POST['pl_file_meta'] !== SEOMETA_DEFAULT_DIR . 'metatags.ini') {
 				// Existing blog entry or static page (got file name already)
 				@io_write_file($_POST ['pl_file_meta'], "[meta]\n" . $metatags);
 			} elseif ($_REQUEST ['p'] === 'entry') {
