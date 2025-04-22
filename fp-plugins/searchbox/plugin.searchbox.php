@@ -7,8 +7,22 @@
  * Author URI: https://www.flatpress.org
  * Description: Adds a search box widget. Part of the standard distribution.
  */
-define('SEARCHBOX_BIG', false);
 
+/**
+ * If not defined, default to false.
+ */
+if (!defined('SEARCHBOX_BIG')) {
+	define('SEARCHBOX_BIG', false);
+}
+
+/**
+ * Generate the search box widget HTML
+ *
+ * @return array{
+ *     subject: string,
+ *     content: string
+ * }
+ */
 function plugin_searchbox_widget() {
 	global $lang;
 
