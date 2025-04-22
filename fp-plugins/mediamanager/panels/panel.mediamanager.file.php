@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Admin panel action for managing media files and galleries.
+ *
+ * @package FlatPress
+ */
 class admin_uploader_mediamanager extends AdminPanelAction {
 
 	var $finfo;
@@ -8,6 +12,13 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 
 	var $langres = 'plugin:mediamanager';
 
+	 /**
+	 * Comparison function to sort files by type and name.
+	 *
+	 * @param array $a
+	 * @param array $b
+	 * @return int
+	 */
 	function cmpfiles($a, $b) {
 		$typeOrder = ['gallery' => 0, 'attachs' => 1, 'images' => 2];
 
@@ -24,6 +35,13 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		return strnatcmp($a ['name'], $b ['name']);
 	}
 
+	/**
+	 * Format a byte value into a human-readable string.
+	 *
+	 * @param int $bytes
+	 * @param int $precision
+	 * @return string
+	 */
 	function formatBytes($bytes, $precision = 2) {
 		$units = array(
 			'B',
@@ -42,6 +60,12 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		return round($bytes, $precision) . ' ' . $units [$pow];
 	}
 
+	 /**
+	 * Get formatted file information including size and modified time.
+	 *
+	 * @param string $filepath
+	 * @return array|null
+	 */
 	function getFileInfo($filepath) {
 		global $fp_config;
 
@@ -65,10 +89,22 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		return $info;
 	}
 
+	/**
+	 * Assigns template resource for the admin panel.
+	 *
+	 * @return void
+	 */
 	function setup() {
 		$this->smarty->assign('admin_resource', "plugin:mediamanager/admin.plugin.mediamanager.files");
 	}
 
+	/**
+	 * Recursively delete a folder and its contents.
+	 *
+	 * @param string $folder
+	 * @param string $mmbaseurl
+	 * @return bool
+	 */
 	function deleteFolder($folder, $mmbaseurl) {
 		if (!file_exists($folder)) {
 			return false;
@@ -91,6 +127,13 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		return rmdir($folder);
 	}
 
+	/**
+	 * Handles item-specific actions like file deletion.
+	 *
+	 * @param string $folder
+	 * @param string $mmbaseurl
+	 * @return bool
+	 */
 	function doItemActions($folder, $mmbaseurl) {
 
 		/* delete file */
@@ -115,7 +158,7 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 					}
 					@utils_redirect($mmbaseurl . '&status=1');
 					return true;
-					break;
+					// break;
 				default:
 					{
 						@utils_redirect($mmbaseurl . '&status=-1');
@@ -139,6 +182,11 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		return false;
 	}
 
+	/**
+	 * Main method to display media manager data.
+	 *
+	 * @return void
+	 */
 	function main() {
 		$mmbaseurl = "admin.php?p=uploader&action=mediamanager";
 		$folder = "";
@@ -275,6 +323,12 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		$this->smarty->assign('totalfilescount', $totalfilescount);
 	}
 
+	/**
+	 * Handles form submissions for media manager actions (e.g. create gallery).
+	 *
+	 * @param array|null $data
+	 * @return int
+	 */
 	function onsubmit($data = NULL) {
 		if (isset($_POST ['mm-newgallery'])) {
 			$newgallery = strip_tags($_POST ['mm-newgallery-name']);
