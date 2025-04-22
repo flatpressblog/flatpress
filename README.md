@@ -11,6 +11,8 @@
 [![License](https://img.shields.io/github/license/flatpressblog/flatpress.svg?style=plastic)](./LICENSE.md "License")
 [![Open issues](https://img.shields.io/github/issues-raw/flatpressblog/flatpress?style=plastic)](https://github.com/flatpressblog/flatpress/issues "See open issues")
 [![Last commit](https://img.shields.io/github/last-commit/flatpressblog/flatpress?style=plastic)](https://github.com/flatpressblog/flatpress/commits/ "Last commit")
+[![PHPStan](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml)
+[![CodeQL](https://github.com/flatpressblog/flatpress/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/codeql-analysis.yml)
 
 # Welcome to FlatPress!
 FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, just PHP. No database needed!
@@ -23,18 +25,7 @@ FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, ju
 - Easy to customize with __themes__, powered by [Smarty](http://www.smarty.net/)
 - __Comments__ function with spam protection
 - __Free software__ under [GNU GPLv2](LICENSE.md)
-- Supported languages: [🇨🇿](## "Čeština") [🇩🇰](## "Dansk") [🇩🇪](## "Deutsch") [🇺🇸](## "English") [🇪🇸](## "Español") [🇫🇷](## "Français") [🇬🇷](## "Ελληνικά") [🇮🇹](## "Italiano") [🇯🇵](## "日本語") [🇳🇱](## "Nederlands") [🇧🇷](## "Português Brasileiro") [🇷🇺](## "Русский") [🇸🇮](## "Slovenski") [🇹🇷](## "Türkçe") (easy [to add](https://wiki.flatpress.org/doc:lang:packs:guidelines) yours!)
-
-## Code quality and security
-[![PHPStan](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/phpstan.yml)
-[![CodeQL](https://github.com/flatpressblog/flatpress/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/flatpressblog/flatpress/actions/workflows/codeql-analysis.yml)
-
-FlatPress uses automated checks to improve code quality and security:
-
-- **[PHPStan](https://phpstan.org/)** is executed with every change to detect potential errors, unclean code and violations of best practices at an early stage.
-- **[CodeQL](https://github.com/github/codeql)** analyzes the source code for known security risks and vulnerabilities through semantic code analysis.
-
-These tools run automatically via **GitHub Actions**, both for pull requests and regularly in the background.
+- Supported languages: [🇨🇿](## "Čeština") [🇩🇰](## "Dansk") [🇩🇪](## "Deutsch") [🇬🇧](## "English") [🇪🇸](## "Español") [🇫🇷](## "Français") [🇬🇷](## "Ελληνικά") [🇮🇹](## "Italiano") [🇯🇵](## "日本語") [🇳🇱](## "Nederlands") [🇧🇷](## "Português Brasileiro") [🇷🇺](## "Русский") [🇸🇮](## "Slovenski") [🇹🇷](## "Türkçe") (easy [to add](https://wiki.flatpress.org/doc:lang:packs:guidelines) yours!)
 
 ## Getting started
 Installing and running FlatPress is really easy:
@@ -54,6 +45,14 @@ Ask your questions, show off your FlatPress blog and meet fellow FlatPressers at
 
 ## Requirements
 FlatPress runs on any web server (e.g. Apache, NGINX or IIS) with PHP 7.1 to PHP 8.3 (more details [on the wiki](https://wiki.flatpress.org/doc:techfaq#what_is_required_to_run_flatpress)). Since all data is stored in files, no database is needed.
+
+## Code quality and security
+FlatPress uses automated checks to improve code quality and security:
+
+- [PHPStan](https://phpstan.org/) is executed with every change to detect potential errors, unclean code and violations of best practices at an early stage.
+- [CodeQL](https://github.com/github/codeql) analyzes the source code for known security risks and vulnerabilities through semantic code analysis.
+
+These tools run automatically via **GitHub Actions**, both for pull requests and regularly in the background.
 
 ## Credits
 There are many people who contributed to FlatPress over the years. [See them here.](./CONTRIBUTORS.md)
