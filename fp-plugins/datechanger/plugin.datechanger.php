@@ -33,7 +33,6 @@ function is_valid_admin_request(): bool {
 		return false;
 	}
 
-	// Inhalt prüfen – Anfrage darf keine Daten enthalten
 	$timestamp = $_POST ['timestamp'] ?? null;
 	$entry = $_REQUEST ['entry'] ?? null;
 
