@@ -284,10 +284,8 @@ class StringParser_BBCode extends StringParser {
 	 * Add a parser
 	 *
 	 * @access public
-	 * @param string $type
-	 *        	The content type for which the parser is to add
-	 * @param mixed $parser
-	 *        	The function to call
+	 * @param string|array<string> $type The content type for which the parser is to add
+	 * @param callable $parser The function to call
 	 * @return bool
 	 */
 	function addParser($type, $parser) {
@@ -430,7 +428,7 @@ class StringParser_BBCode extends StringParser {
 	 *        	The type of the return value
 	 * @param mixed $default
 	 *        	The default return value
-	 * @return bool
+	 * @return mixed
 	 */
 	function getCodeFlag($name, $flag, $type = 'mixed', $default = null) {
 		if (!isset($this->_codes [$name])) {
@@ -660,7 +658,7 @@ class StringParser_BBCode extends StringParser {
 						return false;
 					}
 					$this->_setStatus(1);
-				} else if ($needle == '[/') {
+				} else {
 					if (count($this->_stack) <= 1) {
 						$this->_appendText($needle);
 						return true;
@@ -2075,10 +2073,7 @@ class StringParser_BBCode_Node_Element extends StringParser_Node {
 	function getReplacement($subcontent) {
 		if ($this->_codeInfo ['callback_type'] == 'simple_replace' || $this->_codeInfo ['callback_type'] == 'simple_replace_single') {
 			if ($this->_codeInfo ['callback_type'] == 'simple_replace_single') {
-				if (strlen($subcontent)) { // can't be!
-					return strlen($subcontent) ? $this->_codeInfo ['callback_params'] ['start_tag'] : '';
-				}
-				return $this->_codeInfo ['callback_params'] ['start_tag'];
+				return strlen($subcontent) ? $this->_codeInfo['callback_params']['start_tag'] : '';
 			}
 			return $this->_codeInfo ['callback_params'] ['start_tag'] . $subcontent . $this->_codeInfo ['callback_params'] ['end_tag'];
 		}
