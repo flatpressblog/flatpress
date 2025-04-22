@@ -224,6 +224,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	// slow remote servers may otherwise lockup the system
 	if ($image_is_local) {
 		$img_info = array();
+		/** @var array{0: int, 1: int, 2: int, 3: string, mime: string, channels?: int, bits?: int}|false $img_size */
 		$img_size = @getimagesize($actualpath, $img_info);
 		$absolutepath = BLOG_BASEURL . $actualpath;
 
@@ -457,13 +458,10 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 			}
 			$output = '<div class="responsive_bbcode_video"><video class="bbcode_video bbcode_video_html5 ' . $floatClass . '" width="' . $width . '" height="' . $height . '" controls><source src="' . $videoPath . '">Your browser does not support the video tag</video></div>';
 			break;
-			$output = null;
+			// $output = null;
 	}
 
-	if ($output !== null) {
-		return $output;
-	}
-	return '[unsupported video]';
+	return $output ?? '[unsupported video]';
 }
 
 /**

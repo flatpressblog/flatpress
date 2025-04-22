@@ -45,7 +45,7 @@ class PhotoSwipeFunctions {
 		}
 
 		// sanitize first
-		if ($img !== '' && strpos($img, '..') !== false) {
+		if (strpos($img, '..') !== false) {
 			return $lang ['plugin'] ['photoswipe'] ['label_imagedoesntexist'];
 		}
 
@@ -92,7 +92,7 @@ class PhotoSwipeFunctions {
 				100
 			);
 		}
-		$datasizeAttr = ($imgsize === false) ? '' : 'data-size="' . $imgsize [0] . 'x' . $imgsize [1] . '" ';
+		$datasizeAttr = 'data-size="' . $imgsize [0] . 'x' . $imgsize [1] . '" ';
 
 		// set max width of the figure according to the width attribute
 		$styleAttr = isset($attr ['width']) ? ' style="width:' . $attr ['width'] . 'px" ' : '';
@@ -174,7 +174,7 @@ class PhotoSwipeFunctions {
 		}
 
 		// sanitize first
-		if ($dir !== '' && strpos($dir, '..') !== false) {
+		if (strpos($dir, '..') !== false) {
 			return $lang ['plugin'] ['photoswipe'] ['label_gallerydoesntexist'];
 		}
 		// check if dir exists
