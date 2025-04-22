@@ -20,15 +20,15 @@ class PhotoSwipeFunctions {
 	private static $lastusedDataIndex = 0;
 
 	/**
-	 * Callback function called for [img] tags which returns the HTML code for a single PhotoSwipe image.
+	 * Callback function for [img] BBCode tag. Returns the HTML for a PhotoSwipe image,
+	 * or a standard <img> element if popup="false" is set.
 	 *
-	 * @param string $action
-	 * @param array $attr
-	 *        	the attributes given in the tag
-	 * @param string $content
-	 * @param array $params
-	 * @param string $node_object
-	 * @return boolean|string the HTML code for a single PhotoSwipe image
+	 * @param string $action Action context, e.g. "validate" or "replace".
+	 * @param array $attr the attributes given in the tag
+	 * @param string|null $content Tag content (not used for [img], may be null).
+	 * @param array|null $params Internal use (optional, usually null).
+	 * @param mixed $node_object $node_object Internal use (optional, may be null or an object).
+	 * @return string|bool HTML string or true if $action == "validate".
 	 */
 	static function getImageHtml($action, $attr, $content, $params, $node_object) {
 		global $lang;
@@ -139,29 +139,26 @@ class PhotoSwipeFunctions {
 
 			// Link around it, if available
 			if (!empty($attr ['link'])) {
-				$imgTag = '<a href="' . htmlspecialchars($attr ['link']) . '" target="_blank" rel="noopener noreferrer">' . $imgTag . '</a>';
+				$imgTag = '<a href="' . htmlspecialchars($attr ['link']) . '">' . $imgTag . '</a>';
 			}
 
+			// Standard behavior with BBCode
 			return $imgTag;
 		}
 
-		// Default behavior: With PhotoSwipe
-		if (isset($attr ['link'])) {
-			$imgHtml = '<a href="' . htmlspecialchars($attr ['link']) . '>' . $imgHtml . '</a>';
-		}
+		// Standard behavior with PhotoSwipe
 		return $imgHtml;
 	}
 
 	/**
 	 * Callback function called for [gallery] tags which returns the HTML code for a PhotoSwipe gallery.
 	 *
-	 * @param string $action
-	 * @param array $attr
-	 *        	the attributes given in the tag
-	 * @param string $content
-	 * @param array $params
-	 * @param string $node_object
-	 * @return boolean|string the HTML code for a PhotoSwipe gallery
+	 * @param string $action Action context, e.g. "validate" or "replace".
+	 * @param array $attr Parsed tag attributes (e.g. 'default' for the gallery folder).
+	 * @param string|null $content Tag content (not used for [gallery], may be null).
+	 * @param array|null $params Internal use (usually null).
+	 * @param mixed $node_object Internal use (optional, may be null or an object).
+	 * @return string|bool HTML string with gallery markup, or true if $action == "validate".
 	 */
 	static function getGalleryHtml($action, $attr, $content, $params, $node_object) {
 		global $lang;
@@ -208,10 +205,11 @@ class PhotoSwipeFunctions {
 	}
 
 	/**
-	 * Returns the overlay HTML.
-	 * This needs to be inserted into the DOM only once, so a second call will return an empty string.
+	 * Returns the HTML for the PhotoSwipe overlay container.
+	 * This overlay must only be present once per page. On the first call,
+	 * it returns the complete HTML markup; subsequent calls return an empty string.
 	 *
-	 * @return string the PhotoSwipe overlay HTML
+	 * @return string HTML markup for the PhotoSwipe overlay (or empty string if already initialized)
 	 */
 	static function getPhotoSwipeOverlay() {
 		global $lang;
@@ -256,8 +254,15 @@ class PhotoSwipeFunctions {
 	}
 
 	/**
-	 * Header hook for loading the PhotoSwipe scripts.
-	 * Echoes the <script> tags.
+	 * Outputs the required <script> and <link> tags for PhotoSwipe.
+	 *
+	 * This method should be called in the HTML <head> section to load
+	 * PhotoSwipe JavaScript and CSS resources. It also includes jQuery
+	 * if not already present.
+	 *
+	 * Uses a nonce for CSP compatibility.
+	 *
+	 * @return void
 	 */
 	static function echoScriptTags() {
 		$random_hex = RANDOM_HEX;
@@ -281,7 +286,15 @@ class PhotoSwipeFunctions {
 	}
 
 	/**
-	 * Initializes the BBCode tags of the plugin.
+	 * Registers the PhotoSwipe-specific BBCode tags ([img], [gallery], etc.).
+	 *
+	 * This method hooks into the FlatPress BBCode system to override or add
+	 * custom BBCode tags used by the PhotoSwipe plugin:
+	 *
+	 * - [img] or [photoswipeimage]: single image with optional zoom overlay
+	 * - [gallery] or [photoswipegallery]: auto-generated gallery from a folder
+	 *
+	 * @return void
 	 */
 	public static function initializePluginTags() {
 		// At first: check if BBCode plugin is active
