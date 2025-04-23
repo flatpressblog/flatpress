@@ -106,7 +106,6 @@ define('SEOMETA_ARCHIVE_DIR', SEOMETA_DIR . 'archives/');
  *
  * It saves the meta data of entries/pages.
  */
-//if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL')) {
 if (version_compare(SYSTEM_VER, '0.1010', '>=') && defined('MOD_ADMIN_PANEL')) {
 
 	/**
