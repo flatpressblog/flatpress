@@ -380,12 +380,13 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	}
 
 	$final_description = trim($seo_desc) === '' ? $fp_config ['general'] ['title'] : $fp_config ['general'] ['title'] . ' - ' . $seo_desc . $comment . $pagenum;
+	$encoded_description = htmlspecialchars($final_description, ENT_QUOTES, $charset);
 
 	# Now write the tags
-	echo '	<meta name="description" content="' . htmlspecialchars($final_description, ENT_QUOTES, $charset) . '">' . "\n";
+	echo '	<meta name="description" content="' . $encoded_description . '">' . "\n";
 	echo '	<meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
 	if (SEOMETA_GEN_OPEN_GRAPH) {
-		echo '	<meta property="og:description" content="' . $final_description . '">' . "\n";
+		echo '	<meta property="og:description" content="' . $encoded_description . '">' . "\n";
 	}
 	if (is_single()) {
 		echo '	<meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
