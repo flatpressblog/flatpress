@@ -12,28 +12,8 @@
  */
 if (!class_exists('Smarty_Internal_TemplateCompilerBase')) {
 	class Smarty_Internal_TemplateCompilerBase {
-		/**
-		 * Simulates retrieving a plugin from the Smarty compiler system.
-		 *
-		 * @param string $name Name of the plugin.
-		 * @param string $type Type of the plugin (e.g., 'function', 'modifier').
-		 * @return string Dummy return value representing a plugin function.
-		 */
-		public function getPlugin(string $name, string $type) {
-			return 'dummy_plugin_function';
-		}
-
-		/**
-		 * Simulates compiling a Smarty tag.
-		 *
-		 * @param string $tag The name of the Smarty tag.
-		 * @param array $args Arguments passed to the tag.
-		 * @param array $params Additional parameters for compilation.
-		 * @return string Dummy output representing compiled tag code.
-		 */
-		public function compileTag(string $tag, array $args = [], array $params = []) {
-			return 'compiled_tag_output';
-		}
+		public function getPlugin(string $name, string $type) { return 'dummy_plugin_function'; }
+		public function compileTag(string $tag, array $args = [], array $params = []) { return 'compiled_tag_output'; }
 	}
 }
 
@@ -45,24 +25,38 @@ if (!class_exists('Smarty_Internal_TemplateCompilerBase')) {
  */
 if (!class_exists('Smarty')) {
 	class Smarty {
-		/**
-		 * Constant defining a variable filter type.
-		 */
 		const FILTER_VARIABLE = 'variable';
-
-		/** @var array Default modifiers applied to variables. */
 		public $default_modifiers = [];
-
-		/** @var array Manually registered filter functions. */
 		public $registered_filters = [];
-
-		/** @var array Autoloaded filters, grouped by type. */
 		public $autoload_filters = [];
-
-		/** @var bool Whether HTML output should be automatically escaped. */
 		public $escape_html = false;
-
-		/** @var string Charset used for template output. */
 		public static $_CHARSET = 'UTF-8';
+
+		// Supplemented for FlatPress & plugins
+		public function assign($tpl_var, $value = null, $nocache = false) {}
+		public function assignByRef($tpl_var, &$value) {}
+		public function display($template = null, $cache_id = null, $compile_id = null, $parent = null) {}
+		public function registerPlugin($type, $name, $callback, $cacheable = true, $cache_attr = null) {}
+		public function getTemplateVars($name = null, $search_parents = true) {}
+		public function setTemplateDir($template_dir) {}
+		public function addPluginsDir($plugins_dir) {}
+		public function fetch($template = null, $cache_id = null, $compile_id = null, $parent = null, $display = false, $merge_tpl_vars = true, $no_output_filter = false) { return ''; }
+
+		// Typical properties
+		public $compile_id;
+		public $cache_id;
 	}
+}
+
+if (!class_exists('Smarty_Resource_Custom')) {
+	class Smarty_Resource_Custom {}
+}
+if (!class_exists('Smarty_Resource_Admin')) {
+	class Smarty_Resource_Admin extends Smarty_Resource_Custom {}
+}
+if (!class_exists('Smarty_Resource_Plugin')) {
+	class Smarty_Resource_Plugin extends Smarty_Resource_Custom {}
+}
+if (!class_exists('Smarty_Resource_Shared')) {
+	class Smarty_Resource_Shared extends Smarty_Resource_Custom {}
 }
