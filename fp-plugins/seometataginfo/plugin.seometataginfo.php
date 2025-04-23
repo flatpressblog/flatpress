@@ -239,7 +239,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') && defined('MOD_ADMIN_PANEL')) {
 				$metatags = preg_replace($allowed_characters_regex, '', $metatags);
 			}
 
-			if ($_POST['pl_file_meta'] !== SEOMETA_DEFAULT_DIR . 'metatags.ini') {
+			if ($_POST ['pl_file_meta'] !== SEOMETA_DEFAULT_DIR . 'metatags.ini') {
 				// Existing blog entry or static page (got file name already)
 				@io_write_file($_POST ['pl_file_meta'], "[meta]\n" . $metatags);
 			} elseif ($_REQUEST ['p'] === 'entry') {
@@ -330,6 +330,7 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	global $fp_params, $fp_config;
 	$lang = lang_load('plugin:seometataginfo');
 	$string = $lang ['plugin'] ['seometataginfo'];
+	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
 
 	$site_title = $fp_config ['general'] ['title'];
 	$BLOG_BASEURL = $fp_config ['general'] ['www'];
@@ -343,9 +344,9 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 
 	if (SEOMETA_GEN_TITLE_META) {
 		$metatitle = apply_filters('wp_title', $fp_config ['general'] ['title'], trim($string ['sep']));
-		echo '	<meta name="title" content="' . $metatitle . '">' . "\n";
+		echo '	<meta name="title" content="' . htmlspecialchars($metatitle, ENT_QUOTES, $charset) . '">' . "\n";
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '	<meta property="og:title" content="' . $metatitle . '">' . "\n";
+			echo '	<meta property="og:title" content="' . htmlspecialchars($metatitle, ENT_QUOTES, $charset) . '">' . "\n";
 		}
 	}
 
@@ -378,11 +379,13 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		$comment = $string ['sep'] . '(' . $string ['comments'] . ')';
 	}
 
+	$final_description = trim($seo_desc) === '' ? $fp_config ['general'] ['title'] : $fp_config ['general'] ['title'] . $prepend_description . $seo_desc . $comment . $pagenum;
+
 	# Now write the tags
-	echo '	<meta name="description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
+	echo '	<meta name="description" content="' . $final_description . '">' . "\n";
 	echo '	<meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
 	if (SEOMETA_GEN_OPEN_GRAPH) {
-		echo '	<meta property="og:description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
+		echo '	<meta property="og:description" content="' . $final_description . '">' . "\n";
 	}
 	if (is_single()) {
 		echo '	<meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
