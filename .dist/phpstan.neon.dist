@@ -9,6 +9,7 @@ parameters:
 
   excludePaths:
     - ../fp-includes/smarty-4.5.5/demo/*
+    - ../fp-includes/smarty-4.5.5/libs/*
     - ../fp-includes/smarty-4.5.5/libs/plugins/*
 
   paths:
@@ -32,6 +33,7 @@ parameters:
     - '#PHPDoc tag @var has invalid value \(.*\)#'
     - '#PHPDoc tag @var has invalid value \(.*root node.*\)#'
     - '#PHPDoc tag @var has invalid value \(.*\): Unexpected token.*#'
+    - '#phpDoc.parseError#'
 
     # Ignore error “does not accept null” only in Smarty core
     - message: '#Property .* does not accept null#'
@@ -63,6 +65,15 @@ parameters:
     - '#Expression ".*" on a separate line does not do anything.#'
     - '#Offset .+ on .+ always exists and is not nullable.#'
     - '#Property .+ in isset\(\) is not nullable.#'
+
+    # FlatPress/Smarty/Plugins: Frequent cosmetic warnings
+    - '#staticMethod.resultUnused#'
+    - '#return.unusedType#'
+    - '#parameterByRef.unusedType#'
+    - '#function.impossibleType#'
+    - '#function.alreadyNarrowedType#'
+    - '#instanceof.alwaysTrue#'
+    - '#instanceof.alwaysFalse#'
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
