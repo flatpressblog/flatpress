@@ -8,21 +8,28 @@
  * Version: 1.0.6
  * Author URI: https://www.flatpress.org
  */
+
+/**
+ * Checks if the current request is a valid admin entry write action.
+ *
+ * @return bool True if in admin.php and action is 'write' for 'entry', without timestamp or entry set.
+ */
 function is_valid_admin_request(): bool {
 	if (!isset($_SERVER ['SCRIPT_NAME'], $_GET ['p'], $_GET ['action'])) {
 		return false;
 	}
 
 	// Check whether we are in the admin area
-	if (basename($_SERVER ['SCRIPT_NAME']) !== 'admin.php') {
+	$script = basename($_SERVER ['SCRIPT_NAME']);
+	if ($script !== 'admin.php') {
 		return false;
 	}
 
-	$p = strtolower($_GET ['p'] ?? '');
-	$action = strtolower($_GET ['action'] ?? '');
+	$page = strtolower((string) ($_GET ['p'] ?? ''));
+	$action = strtolower((string) ($_GET ['action'] ?? ''));
 
 	// Check whether this is the correct section
-	if ($p !== 'entry' || $action !== 'write') {
+	if ($page !== 'entry' || $action !== 'write') {
 		return false;
 	}
 
@@ -60,7 +67,7 @@ function plugin_datechanger_toolbar() {
 	$language = $fp_config ['locale'] ['lang'];
 
 	// Date format by language
-	$DD_MM_YYYY = ['de-de', 'fr-fr', 'es-es', 'da-dk', 'el-gr', 'it-it', 'nl-nl', 'pt-br', 'sl-si'];
+	$DD_MM_YYYY = ['de-de', 'fr-fr', 'es-es', 'da-dk', 'el-gr', 'it-it', 'nl-nl', 'pt-br', 'sl-si', 'tr-tr'];
 	$MM_DD_YYYY = ['en-us'];
 	$YYYY_MM_DD = ['cs-cz', 'ja-jp', 'ru-ru'];
 

@@ -84,7 +84,6 @@ class StringParser {
 	 * The subclass that does the string parsing itself will define which
 	 * mode it will implement.
 	 *
-	 * @access protected
 	 * @var int
 	 * @see STRINGPARSER_MODE_SEARCH, STRINGPARSER_MODE_LOOP
 	 */
@@ -93,7 +92,6 @@ class StringParser {
 	/**
 	 * Raw text
 	 *
-	 * @access protected
 	 * @var string
 	 */
 	var $_text = '';
@@ -101,7 +99,6 @@ class StringParser {
 	/**
 	 * Parse stack
 	 *
-	 * @access protected
 	 * @var array
 	 */
 	var $_stack = array();
@@ -109,7 +106,6 @@ class StringParser {
 	/**
 	 * Current position in raw text
 	 *
-	 * @access protected
 	 * @var integer
 	 */
 	var $_cpos = -1;
@@ -117,7 +113,6 @@ class StringParser {
 	/**
 	 * Root node
 	 *
-	 * @access protected
 	 * @var mixed
 	 */
 	var $_root = null;
@@ -125,7 +120,6 @@ class StringParser {
 	/**
 	 * Length of the text
 	 *
-	 * @access protected
 	 * @var integer
 	 */
 	var $_length = -1;
@@ -136,7 +130,6 @@ class StringParser {
 	 * This flag is to prevent recursive calls to the parse() function that
 	 * would cause very nasty things.
 	 *
-	 * @access protected
 	 * @var boolean
 	 */
 	var $_parsing = false;
@@ -146,7 +139,6 @@ class StringParser {
 	 *
 	 * Whether to stop parsing if a parse error occurs.
 	 *
-	 * @access public
 	 * @var boolean
 	 */
 	var $strict = false;
@@ -154,7 +146,6 @@ class StringParser {
 	/**
 	 * Characters or strings to look for
 	 *
-	 * @access protected
 	 * @var array
 	 */
 	var $_charactersSearch = array();
@@ -180,7 +171,6 @@ class StringParser {
 	/**
 	 * Current parser status
 	 *
-	 * @access protected
 	 * @var int
 	 */
 	var $_status = 0;
@@ -188,7 +178,6 @@ class StringParser {
 	/**
 	 * Prefilters
 	 *
-	 * @access protected
 	 * @var array
 	 */
 	var $_prefilters = array();
@@ -196,7 +185,6 @@ class StringParser {
 	/**
 	 * Postfilters
 	 *
-	 * @access protected
 	 * @var array
 	 */
 	var $_postfilters = array();
@@ -204,7 +192,6 @@ class StringParser {
 	/**
 	 * Recently reparsed?
 	 *
-	 * @access protected
 	 * @var bool
 	 */
 	var $_recentlyReparsed = false;

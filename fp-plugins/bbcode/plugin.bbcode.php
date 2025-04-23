@@ -183,14 +183,12 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 /**
  * Function to include images.
  *
- * @param string $action
- * @param array $attributes
- * @param string $content
- * @param mixed $params
- *        	Not used
- * @param mixed $node_object
- *        	Not used
- * @return bool|string
+ * @param string $action 'validate' or 'render'
+ * @param array $attributes Array of tag attributes like 'alt', 'width', 'popup', etc.
+ * @param string $content Content between tags (usually empty)
+ * @param mixed $params Not used
+ * @param mixed $node_object Not used
+ * @return string|true Returns rendered HTML or true if validating
  */
 function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -224,11 +222,15 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	// slow remote servers may otherwise lockup the system
 	if ($image_is_local) {
 		$img_info = array();
-		/** @var array{0: int, 1: int, 2: int, 3: string, mime: string, channels?: int, bits?: int}|false $img_size */
+
+		/** @var array{0?: int, 1?: int, 2?: int, 3?: string, mime?: string, channels?: int, bits?: int}|false $img_size */
 		$img_size = @getimagesize($actualpath, $img_info);
+		if (!is_array($img_size)) {
+			$img_size = [];
+		}
 		$absolutepath = BLOG_BASEURL . $actualpath;
 
-		if ($useimageinfo && function_exists('iptcparse') && is_array($img_size) && isset($img_size ['mime']) && $img_size ['mime'] == 'image/jpeg') {
+		if ($useimageinfo && function_exists('iptcparse') && is_array($img_size) && isset($img_size ['mime']) && $img_size ['mime'] === 'image/jpeg') {
 			if (is_array($img_info)) {
 				// tiffs won't be supported
 				if (isset($img_info ["APP13"])) {
@@ -461,7 +463,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 			// $output = null;
 	}
 
-	return $output ?? '[unsupported video]';
+	return $output;
 }
 
 /**

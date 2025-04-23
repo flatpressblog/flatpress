@@ -131,7 +131,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *        	The command
 	 * @param mixed $cmdval:
 	 *        	The value for the command
-	 * @param boolean $nosuccess:
+	 * @param bool $nosuccess:
 	 *        	Don't save the success?
 	 */
 	function _redirect($cmd, $cmdval = 1, $nosuccess = false) {
@@ -210,7 +210,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * The edit policy/new policy action callback.
 	 *
-	 * @param integer $id:
+	 * @param int $id:
 	 *        	The policy id. -1 means a new one
 	 * @return int The redirect option.
 	 */
@@ -252,7 +252,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 			$success = -2;
 		}
 
-		while (true && $success == 2) {
+		while ($success == 2) {
 			if (empty($_POST ['apply_to'])) {
 				$success = -2;
 				break;
@@ -297,12 +297,12 @@ class admin_entry_commentcenter extends AdminPanelAction {
 						$policy ['categories'] = array_keys($_POST ['cats']);
 						$policy ['is_all'] = false;
 					}
-					if (is_numeric($_POST ['older'])) {
+					if (isset($_POST ['older']) && is_numeric($_POST['older'])) {
 						// Save in seconds
 						$policy ['older'] = $_POST ['older'] * 86400;
 						$policy ['is_all'] = false;
 					}
-					if (isset($policy ['is_all']) && @!$policy ['is_all']) {
+					if (!$policy ['is_all']) {
 						unset($policy ['is_all']);
 					}
 					break 2;
@@ -310,7 +310,6 @@ class admin_entry_commentcenter extends AdminPanelAction {
 					$success = -2;
 					break 2;
 			}
-			break;
 		}
 
 		if ($success == 2) {
@@ -329,7 +328,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This function is the callback for the poldelete action.
 	 *
-	 * @param integer $id:
+	 * @param int $id:
 	 *        	The id of policy you wish to delete
 	 * @return int Redirect option
 	 */
@@ -443,7 +442,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This function is the callback for the poldown action.
 	 *
-	 * @param integer $id:
+	 * @param int $id:
 	 *        	The id of policy you wish to delete
 	 * @return int Redirect option
 	 */
@@ -487,9 +486,9 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	 *
 	 * @param string $id:
 	 *        	The comment id
-	 * @param boolean $noredirect:
+	 * @param bool $noredirect:
 	 *        	If true, don't redirect
-	 * @param boolean $noham:
+	 * @param bool $noham:
 	 *        	If it was blocked from Akismet, don't submit as ham
 	 * @return int The redirect option.
 	 */
@@ -585,7 +584,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This function is the callback for the deletecomm action.
 	 *
-	 * @param integer $id:
+	 * @param int $id:
 	 *        	The id of the comment you wish to delete
 	 * @return int Redirect option
 	 */
@@ -744,7 +743,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This function is the callback for the deletecomm2 action.
 	 *
-	 * @param integer $id:
+	 * @param int $id:
 	 *        	The id of the comment you wish to delete
 	 * @return int Redirect option
 	 */

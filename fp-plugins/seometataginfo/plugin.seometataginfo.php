@@ -51,31 +51,45 @@ $prepend_keywords = $fp_config ['general'] ['title'] . ', ';
 // the published entry version will be kept.
 // set 'SEOMETA_MIGRATE_DATA' to 'true' then
 // create a new entry to force data migration.
-define('SEOMETA_MIGRATE_DATA', false);
+if (!defined('SEOMETA_MIGRATE_DATA')) {
+	define('SEOMETA_MIGRATE_DATA', false);
+}
 
 // generate Open Graph <meta property="og:".. true/false
-define('SEOMETA_GEN_OPEN_GRAPH', true);
+if (!defined('SEOMETA_GEN_OPEN_GRAPH')) {
+	define('SEOMETA_GEN_OPEN_GRAPH', true);
+}
 
 // generate pretty titles e.g.
 // 'Blog Title - Archive - 2011/06' or
 // 'Blog Title - Category - Something Cool'
-define('SEOMETA_GEN_TITLE', true);
+if (!defined('SEOMETA_GEN_TITLE')) {
+	define('SEOMETA_GEN_TITLE', true);
+}
 
 // generate <meta name='title'.. true/false
-define('SEOMETA_GEN_TITLE_META', true);
+if (!defined('SEOMETA_GEN_TITLE_META')) {
+	define('SEOMETA_GEN_TITLE_META', true);
+}
 
 // Before the crawler selects any image, we give it the style/ theme preview
 // generate <meta property="og:image".. true/false
-define('SEOMETA_GEN_IMAGE_META', true);
+if (!defined('SEOMETA_GEN_IMAGE_META')) {
+	define('SEOMETA_GEN_IMAGE_META', true);
+}
 
 // generate <link rel="canonical".. true/false
-define('SEOMETA_GEN_CANONICAL', true);
+if (!defined('SEOMETA_GEN_CANONICAL')) {
+	define('SEOMETA_GEN_CANONICAL', true);
+}
 
 // force comments to point at page (canonical)
 // e.g.
 // /yy/mm/dd/mypage/comments/ => /yy/mm/dd/mypage/
 // /yy/mm/dd/mypage/comments/#comments => /yy/mm/dd/mypage/
-define('SEOMETA_HIDECOMMENTS', true);
+if (!defined('SEOMETA_HIDECOMMENTS')) {
+	define('SEOMETA_HIDECOMMENTS', true);
+}
 
 // define storage
 define('SEOMETA_DIR', CONTENT_DIR . 'seometa/');
@@ -92,7 +106,7 @@ define('SEOMETA_ARCHIVE_DIR', SEOMETA_DIR . 'archives/');
  *
  * It saves the meta data of entries/pages.
  */
-if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL')) {
+if (version_compare(SYSTEM_VER, '0.1010', '>=') && defined('MOD_ADMIN_PANEL')) {
 
 	/**
 	 * plugin_description_entry class
@@ -138,7 +152,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 				$file_meta = SEOMETA_DEFAULT_DIR . 'metatags.ini';
 			}
 
-			if ($file_meta !== '' && !file_exists($file_meta)) {
+			if (!file_exists($file_meta)) {
 				@io_write_file($file_meta, '');
 			}
 
@@ -224,7 +238,7 @@ if (version_compare(SYSTEM_VER, '0.1010', '>=') == 1 && defined('MOD_ADMIN_PANEL
 				$metatags = preg_replace($allowed_characters_regex, '', $metatags);
 			}
 
-			if (!empty($_POST ['pl_file_meta']) && $_POST ['pl_file_meta'] !== SEOMETA_DEFAULT_DIR . 'metatags.ini') {
+			if ($_POST ['pl_file_meta'] !== SEOMETA_DEFAULT_DIR . 'metatags.ini') {
 				// Existing blog entry or static page (got file name already)
 				@io_write_file($_POST ['pl_file_meta'], "[meta]\n" . $metatags);
 			} elseif ($_REQUEST ['p'] === 'entry') {
@@ -315,6 +329,7 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	global $fp_params, $fp_config;
 	$lang = lang_load('plugin:seometataginfo');
 	$string = $lang ['plugin'] ['seometataginfo'];
+	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
 
 	$site_title = $fp_config ['general'] ['title'];
 	$BLOG_BASEURL = $fp_config ['general'] ['www'];
@@ -328,9 +343,9 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 
 	if (SEOMETA_GEN_TITLE_META) {
 		$metatitle = apply_filters('wp_title', $fp_config ['general'] ['title'], trim($string ['sep']));
-		echo '	<meta name="title" content="' . $metatitle . '">' . "\n";
+		echo '	<meta name="title" content="' . htmlspecialchars($metatitle, ENT_QUOTES, $charset) . '">' . "\n";
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '	<meta property="og:title" content="' . $metatitle . '">' . "\n";
+			echo '	<meta property="og:title" content="' . htmlspecialchars($metatitle, ENT_QUOTES, $charset) . '">' . "\n";
 		}
 	}
 
@@ -363,11 +378,14 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		$comment = $string ['sep'] . '(' . $string ['comments'] . ')';
 	}
 
+	$final_description = trim($seo_desc) === '' ? $fp_config ['general'] ['title'] : $fp_config ['general'] ['title'] . ' - ' . $seo_desc . $comment . $pagenum;
+	$encoded_description = htmlspecialchars($final_description, ENT_QUOTES, $charset);
+
 	# Now write the tags
-	echo '	<meta name="description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
+	echo '	<meta name="description" content="' . $encoded_description . '">' . "\n";
 	echo '	<meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
 	if (SEOMETA_GEN_OPEN_GRAPH) {
-		echo '	<meta property="og:description" content="' . $prepend_description . $seo_desc . $comment . $pagenum . '">' . "\n";
+		echo '	<meta property="og:description" content="' . $encoded_description . '">' . "\n";
 	}
 	if (is_single()) {
 		echo '	<meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
