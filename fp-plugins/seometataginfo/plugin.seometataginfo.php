@@ -379,10 +379,10 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		$comment = $string ['sep'] . '(' . $string ['comments'] . ')';
 	}
 
-	$final_description = trim($seo_desc) === '' ? $fp_config ['general'] ['title'] : $fp_config ['general'] ['title'] . $prepend_description . $seo_desc . $comment . $pagenum;
+	$final_description = trim($seo_desc) === '' ? $fp_config ['general'] ['title'] : $fp_config ['general'] ['title'] . ' - ' . $seo_desc . $comment . $pagenum;
 
 	# Now write the tags
-	echo '	<meta name="description" content="' . $final_description . '">' . "\n";
+	echo '	<meta name="description" content="' . htmlspecialchars($final_description, ENT_QUOTES, $charset) . '">' . "\n";
 	echo '	<meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
 	if (SEOMETA_GEN_OPEN_GRAPH) {
 		echo '	<meta property="og:description" content="' . $final_description . '">' . "\n";
