@@ -46,8 +46,27 @@ parameters:
     # Comparison of incorrect types
     # - '#Comparison operation .* is always (true|false)#'
 
+    # FlatPress/Smarty: dynamic conditions (noise filter)
+    - '#If condition is always (true|false)#'
+    - '#Elseif condition is always true#'
+    - '#Right side of && is always true#'
+    - '#Left side of && is always true#'
+    - '#Left side of && is always false#'
+    - '#Result of && is always false#'
+    - '#Result of \|\| is always (true|false)#'
+    - '#Negated boolean expression is always (false|true)#'
+    - '#Strict comparison using (===|!==) between [^ ]+ and [^ ]+ will always evaluate to (true|false)#'
+    - '#Loose comparison using (==|!=) between [^ ]+ and [^ ]+ will always evaluate to (true|false)#'
+    - '#Unreachable statement - code above always terminates.#'
+    - '#Ternary operator condition is always (true|false)#'
+    - '#Dead code - code above always terminates.#'
+    - '#Expression ".*" on a separate line does not do anything.#'
+    - '#Offset .+ on .+ always exists and is not nullable.#'
+    - '#Property .+ in isset\(\) is not nullable.#'
+
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
+  treatPhpDocTypesAsCertain: false
 
   # Deactivates warnings via dynamic properties (e.g. Smarty::__get)
   # checkDynamicProperties: false
