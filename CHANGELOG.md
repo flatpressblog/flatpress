@@ -123,6 +123,7 @@
   - Files and directories are sorted numerically, alphabetically. ([#537](https://github.com/flatpressblog/flatpress/issues/537))
 - SEO Meta Tag Info plugin: update to version 2.2.4
   - The determination of the page URL now also works if FlatPress is operated behind a load balancer or reverse proxy.
+  - No hyphen after the blog title if there is no description for the entry 
 - Commentcenter plugin: update to version 1.1.3
   - Deleting non-existent comments no longer leads to a fatal error ([#593](https://github.com/flatpressblog/flatpress/issues/593))
 
