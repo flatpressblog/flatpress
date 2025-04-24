@@ -68,7 +68,7 @@ function theme_loadsettings() {
 		} else {
 			define('THEME_LEGACY_MODE', false);
 
-			if (!empty($theme ['default_style'])) {
+			if ($theme ['default_style']) {
 
 				if (!isset($fp_config ['general'] ['style'])) {
 					$fp_config ['general'] ['style'] = $theme ['default_style'];
