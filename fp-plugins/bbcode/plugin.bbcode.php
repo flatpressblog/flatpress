@@ -230,7 +230,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		}
 		$absolutepath = BLOG_BASEURL . $actualpath;
 
-		if ($useimageinfo && function_exists('iptcparse') && is_array($img_size) && isset($img_size ['mime']) && $img_size ['mime'] === 'image/jpeg') {
+		if ($useimageinfo && function_exists('iptcparse') && isset($img_size['mime']) && $img_size['mime'] === 'image/jpeg') {
 			if (is_array($img_info)) {
 				// tiffs won't be supported
 				if (isset($img_info ["APP13"])) {
