@@ -1,5 +1,20 @@
 <?php
-
+/**
+ * Loads and initializes theme settings.
+ *
+ * @global array $fp_config
+ * @global array $theme
+ * @global string $FLATPRESS
+ * @return array{
+ *   name: string,
+ *   author: string,
+ *   www: string,
+ *   version: float|int,
+ *   default_style: null|string,
+ *   style: array{style_def: string, style_admin: string},
+ *   admin_custom_interf: bool
+ * }
+ */
 function theme_loadsettings() {
 	global $fp_config, $theme, $FLATPRESS;
 
@@ -53,7 +68,7 @@ function theme_loadsettings() {
 		} else {
 			define('THEME_LEGACY_MODE', false);
 
-			if (!empty($theme ['default_style'])) {
+			if ($theme ['default_style']) {
 
 				if (!isset($fp_config ['general'] ['style'])) {
 					$fp_config ['general'] ['style'] = $theme ['default_style'];
