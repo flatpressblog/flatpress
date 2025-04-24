@@ -33,7 +33,9 @@ class admin_entry_list extends AdminPanelActionValidated {
 	}
 
 	function main() {
-		parent::main();
+		// Returns an int value of 0... What for?
+		// parent::main();
+
 		// $smarty = $this->smarty;
 
 		// parameters for the list
