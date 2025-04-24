@@ -1,16 +1,11 @@
 <?php
 
 /**
- * static list panel
- *
- * Type:     
- * Name:     
- * Date:     
- * Purpose:  
- * Input:
+ * Static list panel for FlatPress admin
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
  *
+ * @property \Smarty $smarty
  */
 
 	class admin_static_list extends AdminPanelActionValidated {
@@ -23,7 +18,8 @@
 		);
 
 		function main() {
-			parent::main();
+			// Returns an int value of 0... What for?
+			// parent::main(); 
 			$this->smarty->assign('statics', $assign = static_getlist());
 			return 0;
 		}

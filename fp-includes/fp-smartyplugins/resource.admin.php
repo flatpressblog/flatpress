@@ -37,7 +37,7 @@ class Smarty_Resource_Admin extends Smarty_Resource_Custom {
 	 * Resolves the file path of an admin template.
 	 *
 	 * @param string $templateName
-	 * @return string|null
+	 * @return string
 	 */
 	private function getFilePath($templateName) {
 		$path = null;

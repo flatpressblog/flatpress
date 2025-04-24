@@ -1,5 +1,20 @@
 <?php
-
+/**
+ * Loads and initializes theme settings.
+ *
+ * @global array $fp_config
+ * @global array $theme
+ * @global string $FLATPRESS
+ * @return array{
+ *   name: string,
+ *   author: string,
+ *   www: string,
+ *   version: float|int,
+ *   default_style: null|string,
+ *   style: array{style_def: string, style_admin: string},
+ *   admin_custom_interf: bool
+ * }
+ */
 function theme_loadsettings() {
 	global $fp_config, $theme, $FLATPRESS;
 
