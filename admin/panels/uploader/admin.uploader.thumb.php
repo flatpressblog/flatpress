@@ -47,7 +47,7 @@ function thumb_send($fpath) {
 	switch($infos [2]) {
 		case 1 : $image = imagecreatefromgif($fpath); break;
 		case 2 : $image = imagecreatefromjpeg ($fpath); break;
-		case 3 : $image = imagecreatefrompng($fpath);
+		case 3 : $image = imagecreatefrompng($fpath); break;
 		case 18:
 			if (function_exists('imagecreatefromwebp')) {
 				$image = imagecreatefromwebp($fpath);
