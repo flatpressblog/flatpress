@@ -17,6 +17,7 @@
  *
  */
 
+// we support jpeg, png, gif, and webp
 function thumb_send($fpath) {
 
 	$MAX = 100;
@@ -24,27 +25,41 @@ function thumb_send($fpath) {
 	// we support only jpeg's, png's and gif's
 
 	$infos = getimagesize($fpath);
-
+	if (!$infos) return;
 
 	list($w, $h) = $infos;
 
+	$isWebP = (isset($infos [2]) && $infos [2] === 18);
+
 	if ($w <= $MAX && $h <= $MAX) {
-		switch ($infos[2]) {
+		switch ($infos [2]) {
 			case 1 : header('Content-Type: image/gif'); break;
 			case 2 : header('Content-Type: image/jpeg'); break;
 			case 3 : header('Content-Type: image/png'); break;
+			case 18: header('Content-Type: image/webp'); break;
+			default: return;
 		}
 
 		readfile($fpath);
 		return;
 	}
 
-	switch($infos[2]) {
+	switch($infos [2]) {
 		case 1 : $image = imagecreatefromgif($fpath); break;
 		case 2 : $image = imagecreatefromjpeg ($fpath); break;
 		case 3 : $image = imagecreatefrompng($fpath);
+		case 18:
+			if (function_exists('imagecreatefromwebp')) {
+				$image = imagecreatefromwebp($fpath);
+			} else {
+				return;
+			}
+			break;
+		default:
+			return;
 	}
 
+	if (!$image) return;
 
 	if ($w > $h) {
 
@@ -59,12 +74,26 @@ function thumb_send($fpath) {
 	}
 
 	$scaled = imagecreatetruecolor($new_width, $new_height);
+
+	if (in_array($infos [2], [3, 18])) {
+		imagealphablending($scaled, false);
+		imagesavealpha($scaled, true);
+		$transparent = imagecolorallocatealpha($scaled, 0, 0, 0, 127);
+		imagefilledrectangle($scaled, 0, 0, $new_width, $new_height, $transparent);
+	}
+
 	imagecopyresampled($scaled, $image, 0, 0, 0, 0, $new_width, $new_height, $infos[0], $infos[1]);
 
+	if ($infos [2] === 18 && function_exists('imagewebp')) {
+		header('Content-Type: image/webp');
+		imagewebp($scaled);
+	} else {
+		header('Content-Type: image/jpeg');
+		imagejpeg($scaled, null, 90);
+	}
 
-	header('Content-Type: image/jpeg');
-	imagejpeg($scaled);
-
+	imagedestroy($scaled);
+	imagedestroy($image);
 }
 
 	if (isset($_GET ['f'])) {
