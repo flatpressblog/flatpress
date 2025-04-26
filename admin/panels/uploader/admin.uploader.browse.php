@@ -111,7 +111,7 @@
 				fs_mkdir(ATTACHS_DIR);
 			}
 
-			$imgs = array('.jpg', '.gif', '.png', '.jpeg', .'webp'); 
+			$imgs = array('.jpg', '.gif', '.png', '.jpeg', '.webp'); 
 
 								//intentionally 
 								//I've not put BMPs
