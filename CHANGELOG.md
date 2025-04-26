@@ -15,7 +15,7 @@
   - The cache is automatically emptied when the theme or style is changed.
   - Setting permissions via the maintenance panel now takes all FlatPress files and directories into account. A distinction is made between content, core and other. ([#502](https://github.com/flatpressblog/flatpress/pull/502))
   - You can now change the admin password in the configuration menu or create another administrator ([#516](https://github.com/flatpressblog/flatpress/issues/516))
-  - Added support for the webp image format.
+  - Added support for the webp image format. ([#611](https://github.com/flatpressblog/flatpress/issues/611))
 
 ## Bugfixes
 - Contact form / comment function:
@@ -97,8 +97,8 @@
   - Show image in a popup instead of in the same tab
 - jQuery plugin: update to Version 2.2.1
   - Updated jQuery and jQuery UI to their current versions
-Thumbnails plugin: update to version 1.1.0
-  - Added support for the webp image format.
+- Thumbnails plugin: update to version 1.1.0
+  - Added support for the webp image format. ([#611](https://github.com/flatpressblog/flatpress/issues/611))
 
 ### Bugfixes
 - BBcode plugin: update to version 1.9.0
