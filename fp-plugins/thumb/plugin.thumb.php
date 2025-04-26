@@ -2,7 +2,7 @@
 
 /*
  * Plugin Name: Thumbnails
- * Version: 1.0
+ * Version: 1.1.0
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
