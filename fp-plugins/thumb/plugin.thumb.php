@@ -73,6 +73,13 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 		case 3:
 			$image = imagecreatefrompng($fpath);
 			break;
+		case 18:
+			if (function_exists('imagecreatefromwebp')) {
+				$image = imagecreatefromwebp($fpath);
+			} else {
+				return [];
+			}
+			break;
 		default:
 			return [];
 	}
@@ -88,11 +95,18 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	 * Added by Piero VDFN
 	 * Kudos to http://www.php.net/manual/en/function.imagecopyresampled.php#104028
 	 */
-	if ($infos [2] == 1 || $infos [2] == 3) {
+	if ($infos[2] == 1 || $infos[2] == 3 || $infos[2] == 18) {
 		imagecolortransparent($scaled, imagecolorallocatealpha($scaled, 0, 0, 0, 127));
 		imagealphablending($scaled, false);
 		imagesavealpha($scaled, true);
-		$output = $infos [2] == 3 ? 'png' : 'gif';
+
+		if ($infos [2] == 3) {
+			$output = 'png';
+		} elseif ($infos [2] == 18) {
+			$output = 'webp';
+		} else {
+			$output = 'gif';
+		}
 	} else {
 		$output = 'jpg';
 	}
@@ -103,8 +117,10 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 		imagepng($scaled, $thumbpath);
 	} elseif ($output == 'gif') {
 		imagegif($scaled, $thumbpath);
+	} elseif ($output == 'webp' && function_exists('imagewebp')) {
+		imagewebp($scaled, $thumbpath, 80);
 	} else {
-		imagejpeg($scaled, $thumbpath);
+		imagejpeg($scaled, $thumbpath, 90);
 	}
 
 	@chmod($thumbpath, FILE_PERMISSIONS);

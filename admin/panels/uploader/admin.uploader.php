@@ -133,7 +133,8 @@ class admin_uploader_default extends AdminPanelAction {
 			'.jpg',
 			'.gif',
 			'.png',
-			'.jpeg'
+			'.jpeg',
+			'.webp'
 		);
 
 		// intentionally
@@ -290,7 +291,15 @@ class admin_uploader_default extends AdminPanelAction {
 				$image = imagecreatefromgif($filepath);
 				$saveFunc = 'imagegif';
 				break;
-			default:
+			case '.webp':
+				if (function_exists('imagecreatefromwebp')) {
+					$image = imagecreatefromwebp($filepath);
+					$saveFunc = 'imagewebp';
+				} else {
+					return false;
+				}
+				break;
+ 			default:
 				return false;
 		}
 
