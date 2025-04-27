@@ -34,6 +34,7 @@
   - The validation of the standard format for date and time has been extended to include some Japanese characters. (hidden hint from [NHWS](https://nhws.localinfo.jp/)) (RC1) ([#531](https://github.com/flatpressblog/flatpress/pull/531))
   - Theme or style thumbnails are displayed after permissions are restored (hidden hint from [NHWS](https://nhws.localinfo.jp/)) (RC1) ([#532](https://github.com/flatpressblog/flatpress/pull/532))
   - When deactivating the last widget under PHP 8.4, the penultimate widget is only displayed once (RC1) ([#555](https://github.com/flatpressblog/flatpress/issues/555))
+  - A defined HTML form and the id admin-{$panel}-{$subtab} is not output twice. ([#613](https://github.com/flatpressblog/flatpress/issues/613))
 
 ## Security
 - The session-cookie are now somewhat more secure against CSRF attacks. ([#481](https://github.com/flatpressblog/flatpress/issues/481))
