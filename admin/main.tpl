@@ -3,13 +3,13 @@
 		{foreach from=$menubar item=tab}
 		{if $tab eq $panel}
 
-		<li id="admin-{$tab}">
+		<li id="admin-{$tab}-parentmenu">
 			<a class="admin-tab-current" href="{$smarty.const.BLOG_BASEURL}admin.php?p={$tab}">
 				{$lang.admin.panels[$tab]|default:$tab}
 			</a>
 		</li>
 		{else}
-		<li id="admin-{$tab}">
+		<li id="admin-{$tab}-parentmenu">
 			<a href="{$smarty.const.BLOG_BASEURL}admin.php?p={$tab}">
 				{$lang.admin.panels[$tab]|default:$tab}
 			</a>
