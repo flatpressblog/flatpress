@@ -6,7 +6,7 @@
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  * Description: Adds an Archive widget element. Part of the standard distribution.
- * Version: 1.0
+ * Version: 1.1.0
  */
 class plugin_archives_monthlist extends fs_filelister {
 
@@ -74,17 +74,52 @@ class plugin_archives_monthlist extends fs_filelister {
 }
 
 function plugin_archives_head() {
+	$random_hex = RANDOM_HEX;
+	$pdir = plugin_geturl('archives');
 	global $PLUGIN_ARCHIVES_MONTHLIST;
 	$PLUGIN_ARCHIVES_MONTHLIST = new plugin_archives_monthlist();
 
-	echo "\n<!-- archives -->\n";
+	echo '
+		<!-- archives -->';
+	echo '
+		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/togglearchive.js" defer></script>';
+	echo '
+		<script nonce="' . $random_hex . '">
+			/**
+			 * Making the archive widget interactive
+			 */
+			var pluginArchive = \'\';
+			function toggleArchive(pdir) {
+				pluginArchive = pdir;
+				$(document).ready(function () {
+					$(\'#widget-archives ul > li.archive-year\').each(function (index) {
+						const uniqueId = \'archive-\' + index;
+						$(this).prepend(
+							\'<span class="togglelink toggleplus" aria-expanded="false" aria-controls="\' + uniqueId + \'" title="Expand">\' + \'▸ </span>\'
+						);
+						$(this).children(\'ul\').attr(\'id\', uniqueId);
+						const toggleEl = $(this).children(\'.togglelink\')[0];
+						toggle(toggleEl);
+						$(toggleEl).click(function () {
+							toggle(this);
+							return false;
+						});
+					});
+				});
+			}
+		</script>';
+	echo '
+		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/togglearchive.css">';
+
 	foreach ($PLUGIN_ARCHIVES_MONTHLIST->getList() as $y => $months) {
 		foreach ($months as $ttl => $link) {
-			echo "<link rel=\"archives\" title=\"" . $ttl . "\" href=\"" . $link . "\">\n";
+			echo "
+			<link rel=\"archives\" title=\"" . $ttl . "\" href=\"" . $link . "\">";
 		}
 	}
 
-	echo "\n<!-- end of archives -->\n";
+	echo '
+		<!-- end of archives -->' . "\n";
 }
 add_filter('wp_head', 'plugin_archives_head');
 
