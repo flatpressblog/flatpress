@@ -54,7 +54,7 @@ global $lang;
 			const $pswp = $('.pswp')[0];
 
 			if (!$pswp) {
-				console.warn('PhotoSwipe (.pswp) not found in DOM.');
+				// console.warn('PhotoSwipe (.pswp) not found in DOM. Possibly .readmore is missing or the plugin was initialized too early.');
 				return;
 			}
 
