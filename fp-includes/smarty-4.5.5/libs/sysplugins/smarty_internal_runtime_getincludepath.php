@@ -153,7 +153,7 @@ class Smarty_Internal_Runtime_GetIncludePath
                 $this->_user_dirs[ $dir_n ] = $dir;
             }
             if ($this->_has_stream_include) {
-                $path = stream_resolve_include_path($dir . ($file !== '' ? $file : ''));
+                $path = stream_resolve_include_path($dir . (isset($file) ? $file : ''));
                 if ($path) {
                     return $this->isFile[ $dir_n ][ $file ] = $path;
                 }
@@ -164,7 +164,7 @@ class Smarty_Internal_Runtime_GetIncludePath
                     if ($path === false) {
                         continue;
                     }
-                    if ($file !== '') {
+                    if (isset($file)) {
                         $_file = $this->isFile[ $dir_n ][ $file ] = (is_file($path . $file)) ? $path . $file : false;
                         if ($_file) {
                             return $_file;

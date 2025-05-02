@@ -57,21 +57,17 @@ class Smarty_Internal_Compile_Private_Block_Plugin extends Smarty_Internal_Compi
             // compile code
             $output = "<?php ";
             if (is_array($callback)) {
-                $output .= '$_block_plugin' . $this->nesting . ' = isset(' . $callback[0] . ') ? ' . $callback[0] . " : null;\n";
-                $callback = '$_block_plugin' . $this->nesting . $callback[1];
+                $output .= "\$_block_plugin{$this->nesting} = isset({$callback[0]}) ? {$callback[0]} : null;\n";
+                $callback = "\$_block_plugin{$this->nesting}{$callback[1]}";
             }
             if (isset($callable)) {
-                $output .= 'if (!is_callable(' . $callable . ")) {\n";
-                $output .= 'throw new SmartyException(\'block tag \\\'' . $tag . '\\\' not callable or registered\');' . "\n";
-                $output .= "}\n";
+                $output .= "if (!is_callable({$callable})) {\nthrow new SmartyException('block tag \'{$tag}\' not callable or registered');\n}\n";
             }
-            $output .= '$_smarty_tpl->smarty->_cache[\'_tag_stack\'][] = array(\'' . $tag . '\', ' . $_params . ");\n";
-            $output .= '$_block_repeat=true;' . "\n";
-            $output .= 'echo ' . $callback . '(' . $_params . ', null, $_smarty_tpl, $_block_repeat);' . "\n";
-            $output .= "while (\$_block_repeat) {\nob_start();?>";
+            $output .= "\$_smarty_tpl->smarty->_cache['_tag_stack'][] = array('{$tag}', {$_params});\n";
+            $output .= "\$_block_repeat=true;\necho {$callback}({$_params}, null, \$_smarty_tpl, \$_block_repeat);\nwhile (\$_block_repeat) {\nob_start();?>";
             $this->openTag($compiler, $tag, array($_params, $compiler->nocache, $callback));
             // maybe nocache because of nocache variables or nocache plugin
-            $compiler->nocache = (bool) ($compiler->nocache | $compiler->tag_nocache);
+            $compiler->nocache = $compiler->nocache | $compiler->tag_nocache;
         } else {
             // must endblock be nocache?
             if ($compiler->nocache) {
@@ -84,8 +80,8 @@ class Smarty_Internal_Compile_Private_Block_Plugin extends Smarty_Internal_Compi
                 $mod_pre = $mod_post = $mod_content = '';
                 $mod_content2 = 'ob_get_clean()';
             } else {
-                $mod_content2 = '$_block_content' . $this->nesting;
-                $mod_content = '$_block_content' . $this->nesting . ' = ob_get_clean();' . "\n";
+                $mod_content2 = "\$_block_content{$this->nesting}";
+                $mod_content = "\$_block_content{$this->nesting} = ob_get_clean();\n";
                 $mod_pre = "ob_start();\n";
                 $mod_post = 'echo ' . $compiler->compileTag(
                         'private_modifier',
@@ -96,11 +92,8 @@ class Smarty_Internal_Compile_Private_Block_Plugin extends Smarty_Internal_Compi
                         )
                     ) . ";\n";
             }
-            $output  = '<?php ' . $mod_content;
-            $output .= '$_block_repeat = false;' . "\n";
-            $output .= $mod_pre;
-            $output .= 'echo ' . $callback . '(' . $_params . ', ' . $mod_content2 . ', $_smarty_tpl, $_block_repeat);' . "\n";
-            $output .= $mod_post . "}\n";
+            $output =
+                "<?php {$mod_content}\$_block_repeat=false;\n{$mod_pre}echo {$callback}({$_params}, {$mod_content2}, \$_smarty_tpl, \$_block_repeat);\n{$mod_post}}\n";
             $output .= 'array_pop($_smarty_tpl->smarty->_cache[\'_tag_stack\']);?>';
         }
         return $output;
@@ -121,9 +114,9 @@ class Smarty_Internal_Compile_Private_Block_Plugin extends Smarty_Internal_Compi
         $_paramsArray = array();
         foreach ($_attr as $_key => $_value) {
             if (is_int($_key)) {
-                $_paramsArray[] = $_key . '=>' . $_value;
+                $_paramsArray[] = "$_key=>$_value";
             } else {
-                $_paramsArray[] = "'" . str_replace("'", "\\'", $_key) . "'=>" . $_value;
+                $_paramsArray[] = "'$_key'=>$_value";
             }
         }
         return array($function, $_paramsArray, null);

@@ -52,7 +52,7 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
      */
     public function start_template(Smarty_Internal_Template $template, $mode = null)
     {
-        if ($mode !== null && !$template->_isSubTpl()) {
+        if (isset($mode) && !$template->_isSubTpl()) {
             $this->index++;
             $this->offset++;
             $this->template_data[ $this->index ] = null;
@@ -66,15 +66,13 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
      *
      * @param \Smarty_Internal_Template $template cached template
      */
-     public function end_template(Smarty_Internal_Template $template)
-     {
-         $key = $this->get_key($template);
-         if (isset($this->template_data[ $this->index ][ $key ][ 'start_template_time' ])) {
-             $this->template_data[ $this->index ][ $key ][ 'total_time' ] +=
-                 microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_template_time' ];
-         }
-         // $this->template_data[$this->index][$key]['properties'] = $template->properties;
-     }
+    public function end_template(Smarty_Internal_Template $template)
+    {
+        $key = $this->get_key($template);
+        $this->template_data[ $this->index ][ $key ][ 'total_time' ] +=
+            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_template_time' ];
+        //$this->template_data[$this->index][$key]['properties'] = $template->properties;
+    }
 
     /**
      * Start logging of compile time
@@ -141,14 +139,12 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
      *
      * @param \Smarty_Internal_Template $template
      */
-     public function end_render(Smarty_Internal_Template $template)
-     {
-         $key = $this->get_key($template);
-         if (isset($this->template_data[ $this->index ][ $key ][ 'start_time' ])) {
-             $this->template_data[ $this->index ][ $key ][ 'render_time' ] +=
-                 microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_time' ];
-         }
-     }
+    public function end_render(Smarty_Internal_Template $template)
+    {
+        $key = $this->get_key($template);
+        $this->template_data[ $this->index ][ $key ][ 'render_time' ] +=
+            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_time' ];
+    }
 
     /**
      * Start logging of cache time
@@ -214,15 +210,13 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
         // copy the working dirs from application
         $debObj->setCompileDir($smarty->getCompileDir());
         // init properties by hand as user may have edited the original Smarty class
-        $debObj->setPluginsDir(is_dir(__DIR__ . '/../plugins') ? __DIR__ . '/../plugins' : $smarty->getPluginsDir());
+        $debObj->setPluginsDir(is_dir(__DIR__ . '/../plugins') ? __DIR__ .
+                                                                           '/../plugins' : $smarty->getPluginsDir());
         $debObj->force_compile = false;
         $debObj->compile_check = Smarty::COMPILECHECK_ON;
         $debObj->left_delimiter = '{';
         $debObj->right_delimiter = '}';
-        if ($debObj->security_policy === '') {
-            // Workaround: first valid type (string), then set null again for Smarty debug console
-            $debObj->security_policy = null;
-        }
+        $debObj->security_policy = null;
         $debObj->debugging = false;
         $debObj->debugging_ctrl = 'NONE';
         $debObj->error_reporting = E_ALL & ~E_NOTICE;
@@ -235,8 +229,8 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
         $debObj->default_modifiers = array();
         $debObj->escape_html = true;
         $debObj->caching = Smarty::CACHING_OFF;
-        $debObj->compile_id = '';
-        $debObj->cache_id = '';
+        $debObj->compile_id = null;
+        $debObj->cache_id = null;
         // prepare information of assigned variables
         $ptr = $this->get_debug_vars($obj);
         $_assigned_vars = $ptr->tpl_vars;
@@ -259,10 +253,10 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
         $_template->assign('assigned_vars', $_assigned_vars);
         $_template->assign('config_vars', $_config_vars);
         $_template->assign('execution_time', microtime(true) - $smarty->start_time);
-        $_template->assign('targetWindow', $displayMode ? md5($offset . $templateName) : '__Smarty__');
+        $_template->assign('targetWindow', $displayMode ? md5("$offset$templateName") : '__Smarty__');
         $_template->assign('offset', $offset);
         echo $_template->fetch();
-        if ($full) {
+        if (isset($full)) {
             $this->index--;
         }
         if (!$full) {
@@ -274,103 +268,84 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
      * Recursively gets variables from all template/data scopes
      *
      * @param Smarty_Internal_Template|Smarty_Data $obj object to debug
+     *
      * @return StdClass
      */
     public function get_debug_vars($obj)
     {
         $config_vars = array();
-
         foreach ($obj->config_vars as $key => $var) {
-            $config_vars[$key]['value'] = $var;
+            $config_vars[ $key ][ 'value' ] = $var;
             if ($obj->_isTplObj()) {
-                $config_vars[$key]['scope'] = $obj->source->type . ':' . $obj->source->name;
+                $config_vars[ $key ][ 'scope' ] = $obj->source->type . ':' . $obj->source->name;
             } elseif ($obj->_isDataObj()) {
-                $config_vars[$key]['scope'] = $obj->dataObjectName;
+                $tpl_vars[ $key ][ 'scope' ] = $obj->dataObjectName;
             } else {
-                $config_vars[$key]['scope'] = 'Smarty object';
+                $config_vars[ $key ][ 'scope' ] = 'Smarty object';
             }
         }
-
         $tpl_vars = array();
-
         foreach ($obj->tpl_vars as $key => $var) {
-            if ($var instanceof Smarty_Variable) {
-                $tpl_vars[$key]['value'] = $var->value ?? null;
-
-                if ($var->nocache === true) {
-                    $tpl_vars[$key]['nocache'] = true;
-                }
-
-                $reflected = new \ReflectionObject($var);
-                foreach ($reflected->getProperties() as $property) {
-                    $property->setAccessible(true);
-                    $name = $property->getName();
-
-                    if (!in_array($name, ['value', 'nocache'])) {
-                        $val = $property->getValue($var);
-                        if ($name !== 'scope' || $val !== 0) {
-                            $tpl_vars[$key]['attributes'][$name] = $val;
+            foreach ($var as $varkey => $varvalue) {
+                if ($varkey === 'value') {
+                    $tpl_vars[ $key ][ $varkey ] = $varvalue;
+                } else {
+                    if ($varkey === 'nocache') {
+                        if ($varvalue === true) {
+                            $tpl_vars[ $key ][ $varkey ] = $varvalue;
+                        }
+                    } else {
+                        if ($varkey !== 'scope' || $varvalue !== 0) {
+                            $tpl_vars[ $key ][ 'attributes' ][ $varkey ] = $varvalue;
                         }
                     }
                 }
             }
-
             if ($obj->_isTplObj()) {
-                $tpl_vars[$key]['scope'] = $obj->source->type . ':' . $obj->source->name;
+                $tpl_vars[ $key ][ 'scope' ] = $obj->source->type . ':' . $obj->source->name;
             } elseif ($obj->_isDataObj()) {
-                $tpl_vars[$key]['scope'] = $obj->dataObjectName;
+                $tpl_vars[ $key ][ 'scope' ] = $obj->dataObjectName;
             } else {
-                $tpl_vars[$key]['scope'] = 'Smarty object';
+                $tpl_vars[ $key ][ 'scope' ] = 'Smarty object';
             }
         }
-
         if (isset($obj->parent)) {
             $parent = $this->get_debug_vars($obj->parent);
-
             foreach ($parent->tpl_vars as $name => $pvar) {
-                if (isset($tpl_vars[$name]) && $tpl_vars[$name]['value'] === $pvar['value']) {
-                    $tpl_vars[$name]['scope'] = $pvar['scope'];
+                if (isset($tpl_vars[ $name ]) && $tpl_vars[ $name ][ 'value' ] === $pvar[ 'value' ]) {
+                    $tpl_vars[ $name ][ 'scope' ] = $pvar[ 'scope' ];
                 }
             }
             $tpl_vars = array_merge($parent->tpl_vars, $tpl_vars);
-
             foreach ($parent->config_vars as $name => $pvar) {
-                if (isset($config_vars[$name]) && $config_vars[$name]['value'] === $pvar['value']) {
-                    $config_vars[$name]['scope'] = $pvar['scope'];
+                if (isset($config_vars[ $name ]) && $config_vars[ $name ][ 'value' ] === $pvar[ 'value' ]) {
+                    $config_vars[ $name ][ 'scope' ] = $pvar[ 'scope' ];
                 }
             }
             $config_vars = array_merge($parent->config_vars, $config_vars);
         } else {
             foreach (Smarty::$global_tpl_vars as $key => $var) {
-                if (!array_key_exists($key, $tpl_vars) && $var instanceof Smarty_Variable) {
-                    $tpl_vars[$key]['value'] = $var->value ?? null;
-
-                    if ($var->nocache === true) {
-                        $tpl_vars[$key]['nocache'] = true;
-                    }
-
-                    $reflected = new \ReflectionObject($var);
-                    foreach ($reflected->getProperties() as $property) {
-                        $property->setAccessible(true);
-                        $name = $property->getName();
-
-                        if (!in_array($name, ['value', 'nocache'])) {
-                            $val = $property->getValue($var);
-                            if ($name !== 'scope' || $val !== 0) {
-                                $tpl_vars[$key]['attributes'][$name] = $val;
+                if (!array_key_exists($key, $tpl_vars)) {
+                    foreach ($var as $varkey => $varvalue) {
+                        if ($varkey === 'value') {
+                            $tpl_vars[ $key ][ $varkey ] = $varvalue;
+                        } else {
+                            if ($varkey === 'nocache') {
+                                if ($varvalue === true) {
+                                    $tpl_vars[ $key ][ $varkey ] = $varvalue;
+                                }
+                            } else {
+                                if ($varkey !== 'scope' || $varvalue !== 0) {
+                                    $tpl_vars[ $key ][ 'attributes' ][ $varkey ] = $varvalue;
+                                }
                             }
                         }
                     }
-
-                    $tpl_vars[$key]['scope'] = 'Global';
+                    $tpl_vars[ $key ][ 'scope' ] = 'Global';
                 }
             }
         }
-
-        return (object)[
-            'tpl_vars' => $tpl_vars,
-            'config_vars' => $config_vars
-        ];
+        return (object)array('tpl_vars' => $tpl_vars, 'config_vars' => $config_vars);
     }
 
     /**

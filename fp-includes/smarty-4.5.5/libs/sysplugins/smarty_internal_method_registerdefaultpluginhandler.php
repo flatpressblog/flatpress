@@ -36,9 +36,8 @@ class Smarty_Internal_Method_RegisterDefaultPluginHandler
         if (is_callable($callback)) {
             $smarty->default_plugin_handler_func = $callback;
         } else {
-            throw new SmartyException('Default plugin handler \'' . $callback . '\' not callable');
+            throw new SmartyException("Default plugin handler '$callback' not callable");
         }
-        /** @var \Smarty|\Smarty_Internal_Template $obj */
         return $obj;
     }
 }

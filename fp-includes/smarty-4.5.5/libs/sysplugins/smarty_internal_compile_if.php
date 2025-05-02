@@ -20,7 +20,7 @@ class Smarty_Internal_Compile_If extends Smarty_Internal_CompileBase
      * Compiles code for the {if} tag
      *
      * @param array                                 $args      array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object (expects $nocache as bool)
+     * @param \Smarty_Internal_TemplateCompilerBase $compiler  compiler object
      * @param array                                 $parameter array with compilation parameter
      *
      * @return string compiled code
@@ -32,7 +32,7 @@ class Smarty_Internal_Compile_If extends Smarty_Internal_CompileBase
         $_attr = $this->getAttributes($compiler, $args);
         $this->openTag($compiler, 'if', array(1, $compiler->nocache));
         // must whole block be nocache ?
-        $compiler->nocache = (bool) ($compiler->nocache | $compiler->tag_nocache);
+        $compiler->nocache = $compiler->nocache | $compiler->tag_nocache;
         if (!isset($parameter[ 'if condition' ])) {
             $compiler->trigger_template_error('missing if condition', null, true);
         }
@@ -47,7 +47,7 @@ class Smarty_Internal_Compile_If extends Smarty_Internal_CompileBase
                 $compiler->setNocacheInVariable($var);
             }
             $prefixVar = $compiler->getNewPrefixVariable();
-            $_output = '<?php ' . $prefixVar . ' = ' . $parameter['if condition']['value'] . ';?>' . "\n";
+            $_output = "<?php {$prefixVar} = {$parameter[ 'if condition' ][ 'value' ]};?>\n";
             $assignAttr = array();
             $assignAttr[][ 'value' ] = $prefixVar;
             $assignCompiler = new Smarty_Internal_Compile_Assign();
@@ -62,10 +62,10 @@ class Smarty_Internal_Compile_If extends Smarty_Internal_CompileBase
                 $assignAttr[][ 'var' ] = $parameter[ 'if condition' ][ 'var' ];
                 $_output .= $assignCompiler->compile($assignAttr, $compiler, array());
             }
-            $_output .= '<?php if (' . $prefixVar . ') {?>';
+            $_output .= "<?php if ({$prefixVar}) {?>";
             return $_output;
         } else {
-            return '<?php if (' . $parameter['if condition'] . ') {?>';
+            return "<?php if ({$parameter['if condition']}) {?>";
         }
     }
 }
@@ -134,7 +134,7 @@ class Smarty_Internal_Compile_Elseif extends Smarty_Internal_CompileBase
                 $compiler->setNocacheInVariable($var);
             }
             $prefixVar = $compiler->getNewPrefixVariable();
-            $assignCode = '<?php ' . $prefixVar . ' = ' . $parameter['if condition']['value'] . ';?>' . "\n";
+            $assignCode = "<?php {$prefixVar} = {$parameter[ 'if condition' ][ 'value' ]};?>\n";
             $assignCompiler = new Smarty_Internal_Compile_Assign();
             $assignAttr = array();
             $assignAttr[][ 'value' ] = $prefixVar;
@@ -157,19 +157,19 @@ class Smarty_Internal_Compile_Elseif extends Smarty_Internal_CompileBase
             if ($condition_by_assign) {
                 $this->openTag($compiler, 'elseif', array($nesting + 1, $compiler->tag_nocache));
                 $_output = $compiler->appendCode("<?php } else {\n?>", $assignCode);
-                return $compiler->appendCode($_output, '<?php if (' . $prefixVar . ') {?>');
+                return $compiler->appendCode($_output, "<?php if ({$prefixVar}) {?>");
             } else {
                 $this->openTag($compiler, 'elseif', array($nesting, $compiler->tag_nocache));
-                return '<?php } elseif (' . $parameter['if condition'] . ') {?>';
+                return "<?php } elseif ({$parameter['if condition']}) {?>";
             }
         } else {
             $_output = $compiler->appendCode("<?php } else {\n?>", $prefixCode);
             $this->openTag($compiler, 'elseif', array($nesting + 1, $compiler->tag_nocache));
             if ($condition_by_assign) {
                 $_output = $compiler->appendCode($_output, $assignCode);
-                return $compiler->appendCode($_output, '<?php if (' . $prefixVar . ') {?>');
+                return $compiler->appendCode($_output, "<?php if ({$prefixVar}) {?>");
             } else {
-                return $compiler->appendCode($_output, '<?php if (' . $parameter['if condition'] . ') {?>');
+                return $compiler->appendCode($_output, "<?php if ({$parameter['if condition']}) {?>");
             }
         }
     }
@@ -202,6 +202,6 @@ class Smarty_Internal_Compile_Ifclose extends Smarty_Internal_CompileBase
         for ($i = 0; $i < $nesting; $i++) {
             $tmp .= '}';
         }
-        return '<?php ' . $tmp . '?>';
+        return "<?php {$tmp}?>";
     }
 }

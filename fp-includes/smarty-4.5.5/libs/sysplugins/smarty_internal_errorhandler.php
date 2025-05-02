@@ -74,7 +74,7 @@ class Smarty_Internal_ErrorHandler
      * @param         $errline
      * @param         $errcontext
      *
-     * @return bool  True if the error was handled internally, false otherwise
+     * @return bool
      */
     public function handleError($errno, $errstr, $errfile, $errline, $errcontext = [])
     {
@@ -83,31 +83,32 @@ class Smarty_Internal_ErrorHandler
                 '/^(Attempt to read property "value" on null|Trying to get property (\'value\' )?of non-object)/',
                 $errstr
             )) {
-            return true; // suppresses this error
+            return; // suppresses this error
         }
 
         if ($this->allowUndefinedProperties && preg_match(
                 '/^(Undefined property)/',
                 $errstr
             )) {
-            return true; // suppresses this error
+            return; // suppresses this error
         }
 
         if ($this->allowUndefinedArrayKeys && preg_match(
             '/^(Undefined index|Undefined array key|Trying to access array offset on)/',
             $errstr
         )) {
-            return true; // suppresses this error
+            return; // suppresses this error
         }
 
         if ($this->allowDereferencingNonObjects && preg_match(
                 '/^Attempt to read property ".+?" on/',
                 $errstr
             )) {
-            return true; // suppresses this error
+            return; // suppresses this error
         }
 
         // pass all other errors through to the previous error handler or to the default PHP error handler
-        return $this->previousErrorHandler ? call_user_func($this->previousErrorHandler, $errno, $errstr, $errfile, $errline, $errcontext) : false;
+        return $this->previousErrorHandler ?
+            call_user_func($this->previousErrorHandler, $errno, $errstr, $errfile, $errline, $errcontext) : false;
     }
 }

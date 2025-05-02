@@ -59,13 +59,6 @@ class Smarty_Internal_SmartyTemplateCompiler extends Smarty_Internal_TemplateCom
     public $postfixCompiledCode = '';
 
     /**
-     * Holds compiled output after doCompile()
-     *
-     * @var string|null
-     */
-    public $compiledCode = null;
-
-    /**
      * Initialize compiler
      *
      * @param string $lexer_class  class name
@@ -86,7 +79,7 @@ class Smarty_Internal_SmartyTemplateCompiler extends Smarty_Internal_TemplateCom
      * @param mixed $_content template source
      * @param bool  $isTemplateSource
      *
-     * @return bool True on success
+     * @return bool true if compiling succeeded, false if it failed
      * @throws \SmartyCompilerException
      */
     protected function doCompile($_content, $isTemplateSource = false)
@@ -111,7 +104,7 @@ class Smarty_Internal_SmartyTemplateCompiler extends Smarty_Internal_TemplateCom
                 $this
             );
         if ($isTemplateSource && $this->template->caching) {
-            $this->parser->insertPhpCode("<?php\n\$_smarty_tpl->compiled->nocache_hash = '" . $this->nocache_hash . "';\n?>\n");
+            $this->parser->insertPhpCode("<?php\n\$_smarty_tpl->compiled->nocache_hash = '{$this->nocache_hash}';\n?>\n");
         }
         if (function_exists('mb_internal_encoding')
             && function_exists('ini_get')
@@ -129,7 +122,8 @@ class Smarty_Internal_SmartyTemplateCompiler extends Smarty_Internal_TemplateCom
         // get tokens from lexer and parse them
         while ($this->parser->lex->yylex()) {
             if ($this->smarty->_parserdebug) {
-                echo '<pre>Line ' . $this->parser->lex->line . ' Parsing  ' . $this->parser->yyTokenName[$this->parser->lex->token] . ' Token ' . htmlentities($this->parser->lex->value) . '</pre>';
+                echo "<pre>Line {$this->parser->lex->line} Parsing  {$this->parser->yyTokenName[$this->parser->lex->token]} Token " .
+                     htmlentities($this->parser->lex->value) . "</pre>";
             }
             $this->parser->doParse($this->parser->lex->token, $this->parser->lex->value);
         }
@@ -142,7 +136,10 @@ class Smarty_Internal_SmartyTemplateCompiler extends Smarty_Internal_TemplateCom
         if (count($this->_tag_stack) > 0) {
             // get stacked info
             list($openTag, $_data) = array_pop($this->_tag_stack);
-            $this->trigger_template_error('unclosed ' . $this->smarty->left_delimiter . $openTag . $this->smarty->right_delimiter . ' tag');
+            $this->trigger_template_error(
+                "unclosed {$this->smarty->left_delimiter}" . $openTag .
+                "{$this->smarty->right_delimiter} tag"
+            );
         }
         // call post compile callbacks
         foreach ($this->postCompileCallbacks as $cb) {
@@ -150,21 +147,20 @@ class Smarty_Internal_SmartyTemplateCompiler extends Smarty_Internal_TemplateCom
             $parameter[ 0 ] = $this;
             call_user_func_array($cb[ 0 ], $parameter);
         }
-        // store compiled code for later use
-        $this->compiledCode = $this->prefixCompiledCode . $this->parser->retvalue . $this->postfixCompiledCode;
-        return true;
+        // return compiled code
+        return $this->prefixCompiledCode . $this->parser->retvalue . $this->postfixCompiledCode;
     }
 
     /**
      * Register a post compile callback
      * - when the callback is called after template compiling the compiler object will be inserted as first parameter
      *
-     * @param callable $callback
+     * @param callback $callback
      * @param array    $parameter optional parameter array
      * @param string   $key       optional key for callback
      * @param bool     $replace   if true replace existing keyed callback
      */
-    public function registerPostCompileCallback(callable $callback, array $parameter = array(), $key = null, $replace = false)
+    public function registerPostCompileCallback($callback, $parameter = array(), $key = null, $replace = false)
     {
         array_unshift($parameter, $callback);
         if (isset($key)) {

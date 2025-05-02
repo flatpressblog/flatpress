@@ -46,7 +46,7 @@ class entry_index {
 
 		$this->catlist = entry_categories_list();
 		if (!is_array($this->catlist)) {
-			trigger_error("core.entry: The file categories.txt could not be loaded. Create at least one category in the category management.", E_USER_WARNING);
+			// trigger_error("core.entry: The file categories.txt could not be loaded. Create at least one category in the category management.", E_USER_WARNING);
 			$this->catlist = [];
 		}
 

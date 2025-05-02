@@ -112,7 +112,7 @@ class Smarty_Internal_Compile_Foreach extends Smarty_Internal_Compile_Private_Fo
         }
         foreach ($attributes as $a => $v) {
             if ($v === false) {
-                $compiler->trigger_template_error("'" . $a . "' attribute/variable has illegal value", null, true);
+                $compiler->trigger_template_error("'{$a}' attribute/variable has illegal value", null, true);
             }
         }
         $fromName = $compiler->getVariableName($_attr[ 'from' ]);
@@ -120,15 +120,14 @@ class Smarty_Internal_Compile_Foreach extends Smarty_Internal_Compile_Private_Fo
             foreach (array('item', 'key') as $a) {
                 if (isset($attributes[ $a ]) && $attributes[ $a ] === $fromName) {
                     $compiler->trigger_template_error(
-                        "'" . $a . "' and 'from' may not have same variable name '" . $fromName . "'",
+                        "'{$a}' and 'from' may not have same variable name '{$fromName}'",
                         null,
                         true
                     );
                 }
             }
         }
-        $escape = str_replace("'", "\\'", $item);
-        $itemVar = '$_smarty_tpl->tpl_vars[\'' . $escape . '\']';
+        $itemVar = "\$_smarty_tpl->tpl_vars['{$item}']";
         $local = '$__foreach_' . $attributes[ 'item' ] . '_' . $this->counter++ . '_';
         // search for used tag attributes
         $itemAttr = array();
@@ -145,7 +144,7 @@ class Smarty_Internal_Compile_Foreach extends Smarty_Internal_Compile_Private_Fo
                 if (in_array($prop, $this->itemProperties)) {
                     $itemAttr[ $prop ] = true;
                 } else {
-                    $compiler->trigger_template_error('Invalid property \'' . $prop . '\'', null, true);
+                    $compiler->trigger_template_error("Invalid property '{$prop}'", null, true);
                 }
             }
             if ($this->isNamed) {
@@ -153,7 +152,7 @@ class Smarty_Internal_Compile_Foreach extends Smarty_Internal_Compile_Private_Fo
                     if (in_array($prop, $this->nameProperties)) {
                         $nameAttr[ $prop ] = true;
                     } else {
-                        $compiler->trigger_template_error('Invalid property \'' . $prop . '\'', null, true);
+                        $compiler->trigger_template_error("Invalid property '{$prop}'", null, true);
                     }
                 }
             }
@@ -180,27 +179,27 @@ class Smarty_Internal_Compile_Foreach extends Smarty_Internal_Compile_Private_Fo
         }
         $keyTerm = '';
         if (isset($attributes[ 'key' ])) {
-            $escapedKey = str_replace("'", "\\'", $key);
-            $keyTerm = '$_smarty_tpl->tpl_vars[\'' . $escapedKey . '\']->value => ';
+            $keyTerm = "\$_smarty_tpl->tpl_vars['{$key}']->value => ";
         }
         if (isset($itemAttr[ 'key' ])) {
-            $keyTerm = $itemVar . '->key => ';
+            $keyTerm = "{$itemVar}->key => ";
         }
         if ($this->isNamed) {
-            $foreachVar = '$_smarty_tpl->tpl_vars[\'__smarty_foreach_' . str_replace("'", "\\'", $attributes['name']) . '\']';
+            $foreachVar = "\$_smarty_tpl->tpl_vars['__smarty_foreach_{$attributes['name']}']";
         }
         $needTotal = isset($itemAttr[ 'total' ]);
         // Register tag
         $this->openTag(
             $compiler,
             'foreach',
-            array('foreach', (bool) $compiler->nocache, $local, $itemVar, empty($itemAttr) ? 1 : 2)
+            array('foreach', $compiler->nocache, $local, $itemVar, empty($itemAttr) ? 1 : 2)
         );
         // maybe nocache because of nocache variables
-        $compiler->nocache = (int) $compiler->nocache | (int) $compiler->tag_nocache;
+        $compiler->nocache = $compiler->nocache | $compiler->tag_nocache;
         // generate output code
         $output = "<?php\n";
-        $output .= '$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, ' . $from . ', ' . var_export($item, true);
+        $output .= "\$_from = \$_smarty_tpl->smarty->ext->_foreach->init(\$_smarty_tpl, $from, " .
+                   var_export($item, true);
         if ($name || $needTotal || $key) {
             $output .= ', ' . var_export($needTotal, true);
         }
@@ -212,49 +211,48 @@ class Smarty_Internal_Compile_Foreach extends Smarty_Internal_Compile_Private_Fo
         }
         $output .= ");\n";
         if (isset($itemAttr[ 'show' ])) {
-            $output .= $itemVar . '->show = (' . $itemVar . '->total > 0);' . "\n";
+            $output .= "{$itemVar}->show = ({$itemVar}->total > 0);\n";
         }
         if (isset($itemAttr[ 'iteration' ])) {
-            $output .= $itemVar . '->iteration = 0;' . "\n";
+            $output .= "{$itemVar}->iteration = 0;\n";
         }
         if (isset($itemAttr[ 'index' ])) {
-            $output .= $itemVar . '->index = -1;' . "\n";
+            $output .= "{$itemVar}->index = -1;\n";
         }
-        $output .= $itemVar . '->do_else = true;' . "\n";
-        $output .= 'if ($_from !== null) foreach ($_from as ' . $keyTerm . $itemVar . '->value) {' . "\n";
-        $output .= $itemVar . '->do_else = false;' . "\n";
+        $output .= "{$itemVar}->do_else = true;\n";
+        $output .= "if (\$_from !== null) foreach (\$_from as {$keyTerm}{$itemVar}->value) {\n";
+        $output .= "{$itemVar}->do_else = false;\n";
         if (isset($attributes[ 'key' ]) && isset($itemAttr[ 'key' ])) {
-            $escapedKey = str_replace("'", "\\'", $key);
-            $output .= '$_smarty_tpl->tpl_vars[\'' . $escapedKey . '\']->value = ' . $itemVar . '->key;' . "\n";
+            $output .= "\$_smarty_tpl->tpl_vars['{$key}']->value = {$itemVar}->key;\n";
         }
         if (isset($itemAttr[ 'iteration' ])) {
-            $output .= $itemVar . '->iteration++;' . "\n";
+            $output .= "{$itemVar}->iteration++;\n";
         }
         if (isset($itemAttr[ 'index' ])) {
-            $output .= $itemVar . '->index++;' . "\n";
+            $output .= "{$itemVar}->index++;\n";
         }
         if (isset($itemAttr[ 'first' ])) {
-            $output .= $itemVar . '->first = !' . $itemVar . '->index;' . "\n";
+            $output .= "{$itemVar}->first = !{$itemVar}->index;\n";
         }
         if (isset($itemAttr[ 'last' ])) {
-            $output .= $itemVar . '->last = ' . $itemVar . '->iteration === ' . $itemVar . '->total;' . "\n";
+            $output .= "{$itemVar}->last = {$itemVar}->iteration === {$itemVar}->total;\n";
         }
         if (isset($foreachVar)) {
             if (isset($namedAttr[ 'iteration' ])) {
-                $output .= $foreachVar . '->value[\'iteration\']++;' . "\n";
+                $output .= "{$foreachVar}->value['iteration']++;\n";
             }
             if (isset($namedAttr[ 'index' ])) {
-                $output .= $foreachVar . '->value[\'index\']++;' . "\n";
+                $output .= "{$foreachVar}->value['index']++;\n";
             }
             if (isset($namedAttr[ 'first' ])) {
-                $output .= $foreachVar . '->value[\'first\'] = !' . $foreachVar . '->value[\'index\'];' . "\n";
+                $output .= "{$foreachVar}->value['first'] = !{$foreachVar}->value['index'];\n";
             }
             if (isset($namedAttr[ 'last' ])) {
-                $output .= $foreachVar . '->value[\'last\'] = ' . $foreachVar . '->value[\'iteration\'] === ' . $foreachVar . '->value[\'total\'];' . "\n";
+                $output .= "{$foreachVar}->value['last'] = {$foreachVar}->value['iteration'] === {$foreachVar}->value['total'];\n";
             }
         }
         if (!empty($itemAttr)) {
-            $output .= $local . 'saved = ' . $itemVar . ';' . "\n";
+            $output .= "{$local}saved = {$itemVar};\n";
         }
         $output .= '?>';
         return $output;
@@ -269,7 +267,7 @@ class Smarty_Internal_Compile_Foreach extends Smarty_Internal_Compile_Private_Fo
      */
     public function compileRestore($levels)
     {
-        return '$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, ' . $levels . ');';
+        return "\$_smarty_tpl->smarty->ext->_foreach->restore(\$_smarty_tpl, {$levels});";
     }
 }
 
@@ -293,16 +291,13 @@ class Smarty_Internal_Compile_Foreachelse extends Smarty_Internal_CompileBase
     {
         // check and get attributes
         $_attr = $this->getAttributes($compiler, $args);
-        /** @var array{string, bool, string, string, int} $tagData */
-        $tagData = $this->closeTag($compiler, array('foreach'));
-        list($openTag, $nocacheFlag, $local, $itemVar, $restore) = $tagData;
-        $nocache = (bool) $nocacheFlag;
+        list($openTag, $nocache, $local, $itemVar, $restore) = $this->closeTag($compiler, array('foreach'));
         $this->openTag($compiler, 'foreachelse', array('foreachelse', $nocache, $local, $itemVar, 0));
         $output = "<?php\n";
         if ($restore === 2) {
-            $output .= $itemVar . ' = ' . $local . 'saved;' . "\n";
+            $output .= "{$itemVar} = {$local}saved;\n";
         }
-        $output .= "}\nif (" . $itemVar . '->do_else) {' . "\n?>";
+        $output .= "}\nif ({$itemVar}->do_else) {\n?>";
         return $output;
     }
 }
@@ -331,23 +326,17 @@ class Smarty_Internal_Compile_Foreachclose extends Smarty_Internal_CompileBase
         if ($compiler->nocache) {
             $compiler->tag_nocache = true;
         }
-
-        /** @var array{string, bool, string, string, int} */
-        $tagData = $this->closeTag($compiler, array('foreach', 'foreachelse'));
-        list($openTag, $nocacheFlag, $local, $itemVar, $restore) = $tagData;
-        $compiler->nocache = (bool) $nocacheFlag;
+        list(
+            $openTag, $compiler->nocache, $local, $itemVar, $restore
+            ) = $this->closeTag($compiler, array('foreach', 'foreachelse'));
         $output = "<?php\n";
         if ($restore === 2) {
-            $output .= $itemVar . ' = ' . $local . 'saved;' . "\n";
+            $output .= "{$itemVar} = {$local}saved;\n";
         }
         $output .= "}\n";
-
-        /** @var Smarty_Internal_Compile_Foreach $foreachCompiler */
+        /* @var Smarty_Internal_Compile_Foreach $foreachCompiler */
         $foreachCompiler = $compiler->getTagCompiler('foreach');
-        if ($foreachCompiler instanceof Smarty_Internal_Compile_Foreach) {
-            $output .= $foreachCompiler->compileRestore(1);
-        }
-
+        $output .= $foreachCompiler->compileRestore(1);
         $output .= "?>";
         return $output;
     }

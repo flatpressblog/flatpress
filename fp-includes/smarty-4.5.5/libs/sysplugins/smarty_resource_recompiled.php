@@ -43,7 +43,7 @@ abstract class Smarty_Resource_Recompiled extends Smarty_Resource
         $compiled->file_dependency = array();
         $compiled->includes = array();
         $compiled->nocache_hash = null;
-        $compiled->unifunc = '';
+        $compiled->unifunc = null;
         $level = ob_get_level();
         ob_start();
         $_smarty_tpl->loadCompiler();
@@ -74,8 +74,8 @@ abstract class Smarty_Resource_Recompiled extends Smarty_Resource
      */
     public function populateCompiledFilepath(Smarty_Template_Compiled $compiled, Smarty_Internal_Template $_template)
     {
-        $compiled->filepath = '';
-        $compiled->timestamp = 0;
+        $compiled->filepath = false;
+        $compiled->timestamp = false;
         $compiled->exists = false;
     }
 

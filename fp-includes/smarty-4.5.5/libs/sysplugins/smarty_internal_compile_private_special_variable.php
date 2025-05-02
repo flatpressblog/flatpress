@@ -21,7 +21,7 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
      *
      * @param array                                 $args     array with attributes from parser
      * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object
-     * @param string                                $parameter Parameter string representing the special variable
+     * @param                                       $parameter
      *
      * @return string compiled code
      * @throws \SmartyCompilerException
@@ -29,10 +29,9 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
     public function compile($args, Smarty_Internal_TemplateCompilerBase $compiler, $parameter)
     {
         $_index = preg_split("/\]\[/", substr($parameter, 1, strlen($parameter) - 2));
-        $variable = smarty_strtolower_ascii($compiler->getId($_index[0]));
+        $variable = smarty_strtolower_ascii($compiler->getId($_index[ 0 ]));
         if ($variable === false) {
             $compiler->trigger_template_error("special \$Smarty variable name index can not be variable", null, true);
-            return '';
         }
         if (!isset($compiler->smarty->security_policy)
             || $compiler->smarty->security_policy->isTrustedSpecialSmartyVar($variable, $compiler)
@@ -40,11 +39,11 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
             switch ($variable) {
                 case 'foreach':
                 case 'section':
-                    if (!isset(Smarty_Internal_TemplateCompilerBase::$_tag_objects[$variable])) {
+                    if (!isset(Smarty_Internal_TemplateCompilerBase::$_tag_objects[ $variable ])) {
                         $class = 'Smarty_Internal_Compile_' . smarty_ucfirst_ascii($variable);
-                        Smarty_Internal_TemplateCompilerBase::$_tag_objects[$variable] = new $class;
+                        Smarty_Internal_TemplateCompilerBase::$_tag_objects[ $variable ] = new $class;
                     }
-                    return Smarty_Internal_TemplateCompilerBase::$_tag_objects[$variable]->compileSpecialVariable(
+                    return Smarty_Internal_TemplateCompilerBase::$_tag_objects[ $variable ]->compileSpecialVariable(
                         array(),
                         $compiler,
                         $_index
@@ -57,6 +56,14 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
                 case 'now':
                     return 'time()';
                 case 'cookies':
+                    if (isset($compiler->smarty->security_policy)
+                        && !$compiler->smarty->security_policy->allow_super_globals
+                    ) {
+                        $compiler->trigger_template_error("(secure mode) super globals not permitted");
+                        break;
+                    }
+                    $compiled_ref = '$_COOKIE';
+                    break;
                 case 'get':
                 case 'post':
                 case 'env':
@@ -67,71 +74,57 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
                         && !$compiler->smarty->security_policy->allow_super_globals
                     ) {
                         $compiler->trigger_template_error("(secure mode) super globals not permitted");
-                        return '';
+                        break;
                     }
-                    $compiled_ref = $variable === 'cookies'
-                        ? '$_COOKIE'
-                        : '$_' . smarty_strtoupper_ascii($variable);
-                    if (isset($_index[1])) {
-                        array_shift($_index);
-                        foreach ($_index as $_ind) {
-                            $compiled_ref .= '[' . $_ind . ']';
-                        }
-                    }
-                    return $compiled_ref;
+                    $compiled_ref = '$_' . smarty_strtoupper_ascii($variable);
+                    break;
                 case 'template':
                     return 'basename($_smarty_tpl->source->filepath)';
                 case 'template_object':
                     if (isset($compiler->smarty->security_policy)) {
                         $compiler->trigger_template_error("(secure mode) template_object not permitted");
-                        return '';
+                        break;
                     }
                     return '$_smarty_tpl';
                 case 'current_dir':
                     return 'dirname($_smarty_tpl->source->filepath)';
                 case 'version':
-                    return 'Smarty::SMARTY_VERSION';
+                    return "Smarty::SMARTY_VERSION";
                 case 'const':
                     if (isset($compiler->smarty->security_policy)
                         && !$compiler->smarty->security_policy->allow_constants
                     ) {
                         $compiler->trigger_template_error("(secure mode) constants not permitted");
-                        return '';
+                        break;
                     }
-                    if (strpos($_index[1], '$') === false && strpos($_index[1], '\'') === false) {
-                        return '(defined(\'' . $_index[1] . '\') ? constant(\'' . $_index[1] . '\') : null)';
+                    if (strpos($_index[ 1 ], '$') === false && strpos($_index[ 1 ], '\'') === false) {
+                        return "(defined('{$_index[1]}') ? constant('{$_index[1]}') : null)";
                     } else {
-                        return '(defined(' . $_index[1] . ') ? constant(' . $_index[1] . ') : null)';
+                        return "(defined({$_index[1]}) ? constant({$_index[1]}) : null)";
                     }
+                // no break
                 case 'config':
-                    if (isset($_index[2])) {
-                        return '(is_array($tmp = $_smarty_tpl->smarty->ext->configload->_getConfigVariable($_smarty_tpl, ' . $_index[1] . ')) ? $tmp[' . $_index[2] . '] : null)';
+                    if (isset($_index[ 2 ])) {
+                        return "(is_array(\$tmp = \$_smarty_tpl->smarty->ext->configload->_getConfigVariable(\$_smarty_tpl, $_index[1])) ? \$tmp[$_index[2]] : null)";
                     } else {
-                        return '$_smarty_tpl->smarty->ext->configload->_getConfigVariable($_smarty_tpl, ' . $_index[1] . ')';
+                        return "\$_smarty_tpl->smarty->ext->configload->_getConfigVariable(\$_smarty_tpl, $_index[1])";
                     }
+                // no break
                 case 'ldelim':
-                    return '$_smarty_tpl->smarty->left_delimiter';
+                    return "\$_smarty_tpl->smarty->left_delimiter";
                 case 'rdelim':
-                    return '$_smarty_tpl->smarty->right_delimiter';
+                    return "\$_smarty_tpl->smarty->right_delimiter";
                 default:
-                    $compiler->trigger_template_error('$smarty.' . trim($_index[0], "'") . ' is not defined');
-                    return '';
+                    $compiler->trigger_template_error('$smarty.' . trim($_index[ 0 ], "'") . ' is not defined');
+                    break;
             }
-            if (isset($compiled_ref)) {
-                if (isset($_index[1])) {
-                    array_shift($_index);
-                    foreach ($_index as $_ind) {
-                        $compiled_ref = $compiled_ref . '[' . $_ind . ']';
-                    }
+            if (isset($_index[ 1 ])) {
+                array_shift($_index);
+                foreach ($_index as $_ind) {
+                    $compiled_ref = $compiled_ref . "[$_ind]";
                 }
-                return $compiled_ref;
             }
+            return $compiled_ref;
         }
-        $compiler->trigger_template_error(
-            'Unknown or unsupported special variable: $smarty.' . trim($_index[0], "'"),
-            null,
-            true
-        );
-        return '';
     }
 }

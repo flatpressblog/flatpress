@@ -92,7 +92,7 @@ class Smarty_Internal_CacheResource_File extends Smarty_CacheResource
      * @param Smarty_Template_Cached|null $cached      cached object
      * @param bool                        $update      flag if called because cache update
      *
-     * @return bool|mixed  true or the result of included file (can be anything)
+     * @return boolean true or false if the cached content does not exist
      */
     public function process(
         Smarty_Internal_Template $_smarty_tpl,
@@ -147,7 +147,7 @@ class Smarty_Internal_CacheResource_File extends Smarty_CacheResource
      *
      * @param Smarty_Internal_Template $_template template object
      *
-     * @return string|false  content or false if file does not exist
+     * @return string  content
      */
     public function readCachedContent(Smarty_Internal_Template $_template)
     {
@@ -211,12 +211,12 @@ class Smarty_Internal_CacheResource_File extends Smarty_CacheResource
      * @param Smarty                 $smarty Smarty object
      * @param Smarty_Template_Cached $cached cached object
      *
-     * @return bool
+     * @return bool|void
      */
-    public function acquireLock(Smarty $smarty, Smarty_Template_Cached $cached): bool
+    public function acquireLock(Smarty $smarty, Smarty_Template_Cached $cached)
     {
         $cached->is_locked = true;
-        return touch($cached->lock_id);
+        touch($cached->lock_id);
     }
 
     /**
@@ -225,11 +225,11 @@ class Smarty_Internal_CacheResource_File extends Smarty_CacheResource
      * @param Smarty                 $smarty Smarty object
      * @param Smarty_Template_Cached $cached cached object
      *
-     * @return bool
+     * @return bool|void
      */
-    public function releaseLock(Smarty $smarty, Smarty_Template_Cached $cached): bool
+    public function releaseLock(Smarty $smarty, Smarty_Template_Cached $cached)
     {
         $cached->is_locked = false;
-        return @unlink($cached->lock_id);
+        @unlink($cached->lock_id);
     }
 }

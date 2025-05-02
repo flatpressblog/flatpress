@@ -34,10 +34,9 @@ class Smarty_Internal_Resource_Stream extends Smarty_Resource_Recompiled
         } else {
             $source->filepath = str_replace(':', '://', $source->resource);
         }
-        $source->uid = '';
+        $source->uid = false;
         $source->content = $this->getContent($source);
-        $source->exists = !!$source->content;
-        $source->timestamp = $source->exists ? time() : 0;
+        $source->timestamp = $source->exists = !!$source->content;
     }
 
     /**
@@ -59,7 +58,7 @@ class Smarty_Internal_Resource_Stream extends Smarty_Resource_Recompiled
             fclose($fp);
             return $t;
         } else {
-            return '';
+            return false;
         }
     }
 

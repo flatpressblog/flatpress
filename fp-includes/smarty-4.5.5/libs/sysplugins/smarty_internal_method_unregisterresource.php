@@ -24,12 +24,12 @@ class Smarty_Internal_Method_UnregisterResource
      * @api  Smarty::unregisterResource()
      * @link https://www.smarty.net/docs/en/api.unregister.resource.tpl
      *
-     * @param \Smarty|\Smarty_Internal_Template          $obj
-     * @param string                                     $type name of resource type
+     * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
+     * @param string                                                          $type name of resource type
      *
      * @return \Smarty|\Smarty_Internal_Template
      */
-    public function unregisterResource($obj, $type)
+    public function unregisterResource(Smarty_Internal_TemplateBase $obj, $type)
     {
         $smarty = $obj->_getSmartyObj();
         if (isset($smarty->registered_resources[ $type ])) {

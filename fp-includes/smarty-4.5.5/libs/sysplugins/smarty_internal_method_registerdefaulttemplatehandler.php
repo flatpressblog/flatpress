@@ -37,7 +37,6 @@ class Smarty_Internal_Method_RegisterDefaultTemplateHandler
         } else {
             throw new SmartyException('Default template handler not callable');
         }
-        /** @var \Smarty|\Smarty_Internal_Template $obj */
         return $obj;
     }
 
@@ -65,7 +64,11 @@ class Smarty_Internal_Method_RegisterDefaultTemplateHandler
             if ($source->exists) {
                 $source->timestamp = filemtime($_return);
             } else {
-                throw new SmartyException('Default handler: Unable to load ' . ($source->isConfig ? 'config' : 'template') . ' default file "' . $_return . '" for "' . $source->type . ':' . $source->name . '"');
+                throw new SmartyException(
+                    'Default handler: Unable to load ' .
+                    ($source->isConfig ? 'config' : 'template') .
+                    " default file '{$_return}' for '{$source->type}:{$source->name}'"
+                );
             }
             $source->name = $source->filepath = $_return;
             $source->uid = sha1($source->filepath);
@@ -76,7 +79,10 @@ class Smarty_Internal_Method_RegisterDefaultTemplateHandler
             $source->handler = Smarty_Resource::load($source->smarty, 'eval');
         } else {
             $source->exists = false;
-            throw new SmartyException('Default handler: No ' . ($source->isConfig ? 'config' : 'template') . ' default content for "' . $source->type . ':' . $source->name . '"');
+            throw new SmartyException(
+                'Default handler: No ' . ($source->isConfig ? 'config' : 'template') .
+                " default content for '{$source->type}:{$source->name}'"
+            );
         }
     }
 }
