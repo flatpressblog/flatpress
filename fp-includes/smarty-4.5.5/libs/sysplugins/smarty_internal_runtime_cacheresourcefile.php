@@ -28,8 +28,8 @@ class Smarty_Internal_Runtime_CacheResourceFile
      */
     public function clear(Smarty $smarty, $resource_name, $cache_id, $compile_id, $exp_time)
     {
-        $_cache_id = $cache_id !== '' && $cache_id !== null ? preg_replace('![^\w\|]+!', '_', $cache_id) : null;
-        $_compile_id = $compile_id !== '' && $compile_id !== null ? preg_replace('![^\w]+!', '_', $compile_id) : null;
+        $_cache_id = isset($cache_id) ? preg_replace('![^\w\|]+!', '_', $cache_id) : null;
+        $_compile_id = isset($compile_id) ? preg_replace('![^\w]+!', '_', $compile_id) : null;
         $_dir_sep = $smarty->use_sub_dirs ? '/' : '^';
         $_compile_id_offset = $smarty->use_sub_dirs ? 3 : 0;
         $_dir = $smarty->getCacheDir();
@@ -46,19 +46,18 @@ class Smarty_Internal_Runtime_CacheResourceFile
                 }
             }
         }
-        if ($resource_name === '' || $resource_name === null) {
-            return 0;
-        }
-        $_save_stat = $smarty->caching;
-        $smarty->caching = Smarty::CACHING_LIFETIME_CURRENT;
-        $tpl = new $smarty->template_class($resource_name, $smarty);
-        $smarty->caching = $_save_stat;
-        // remove from template cache
-        $tpl->source;
-        if ($tpl->source->exists) {
-            $_resourcename_parts = basename(str_replace('^', '/', $tpl->cached->filepath));
-        } else {
-            return 0;
+        if (isset($resource_name)) {
+            $_save_stat = $smarty->caching;
+            $smarty->caching = Smarty::CACHING_LIFETIME_CURRENT;
+            $tpl = new $smarty->template_class($resource_name, $smarty);
+            $smarty->caching = $_save_stat;
+            // remove from template cache
+            $tpl->source; // have the template registered before unset()
+            if ($tpl->source->exists) {
+                $_resourcename_parts = basename(str_replace('^', '/', $tpl->cached->filepath));
+            } else {
+                return 0;
+            }
         }
         $_count = 0;
         $_time = time();
@@ -84,11 +83,15 @@ class Smarty_Internal_Runtime_CacheResourceFile
                     $_parts = explode($_dir_sep, str_replace('\\', '/', substr($_filepath, $_dir_length)));
                     $_parts_count = count($_parts);
                     // check name
-                    if ($_parts[$_parts_count - 1] !== $_resourcename_parts) {
-                        continue;
+                    if (isset($resource_name)) {
+                        if ($_parts[ $_parts_count - 1 ] !== $_resourcename_parts) {
+                            continue;
+                        }
                     }
                     // check compile id
-                    if (isset($_compile_id) && (!isset($_parts[ $_parts_count - 2 - $_compile_id_offset ]) || $_parts[ $_parts_count - 2 - $_compile_id_offset ] !== $_compile_id)) {
+                    if (isset($_compile_id) && (!isset($_parts[ $_parts_count - 2 - $_compile_id_offset ])
+                                                || $_parts[ $_parts_count - 2 - $_compile_id_offset ] !== $_compile_id)
+                    ) {
                         continue;
                     }
                     // check cache id
@@ -107,14 +110,16 @@ class Smarty_Internal_Runtime_CacheResourceFile
                     }
                     if (is_file($_filepath)) {
                         // expired ?
-                        if ($exp_time < 0) {
-                            preg_match('#\'cache_lifetime\' =>\s*(\d*)#', file_get_contents($_filepath), $match);
-                            if (isset($match[1]) && $_time < (filemtime($_filepath) + (int)$match[1])) {
-                                continue;
-                            }
-                        } else {
-                            if ($_time - filemtime($_filepath) < $exp_time) {
-                                continue;
+                        if (isset($exp_time)) {
+                            if ($exp_time < 0) {
+                                preg_match('#\'cache_lifetime\' =>\s*(\d*)#', file_get_contents($_filepath), $match);
+                                if ($_time < (filemtime($_filepath) + $match[ 1 ])) {
+                                    continue;
+                                }
+                            } else {
+                                if ($_time - filemtime($_filepath) < $exp_time) {
+                                    continue;
+                                }
                             }
                         }
                         $_count += @unlink($_filepath) ? 1 : 0;

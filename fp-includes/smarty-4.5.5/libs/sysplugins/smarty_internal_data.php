@@ -16,7 +16,6 @@
  *
  * @property int    $scope
  * @property Smarty $smarty
- * @property string $template_resource
  * The following methods will be dynamically loaded by the extension handler when they are called.
  * They are located in a corresponding Smarty_Internal_Method_xxxx class
  *
@@ -32,13 +31,6 @@
  */
 abstract class Smarty_Internal_Data
 {
-    /**
-     * Template source object (populated by resource handlers)
-     *
-     * @var Smarty_Template_Source|null
-     */
-    public $source;
-
     /**
      * This object type (Smarty = 1, template = 2, data = 4)
      *
@@ -63,7 +55,7 @@ abstract class Smarty_Internal_Data
     /**
      * parent template (if any)
      *
-     * @var Smarty|Smarty_Internal_Template|Smarty_Data|Smarty_Internal_Data|null
+     * @var Smarty|Smarty_Internal_Template|Smarty_Data
      */
     public $parent = null;
 
@@ -73,13 +65,6 @@ abstract class Smarty_Internal_Data
      * @var string[]
      */
     public $config_vars = array();
-
-    /**
-     * Compiled template object
-     *
-     * @var Smarty_Template_Compiled|null
-     */
-    public $compiled = null;
 
     /**
      * extension handler
@@ -104,10 +89,10 @@ abstract class Smarty_Internal_Data
      *
      * @param array|string $tpl_var the template variable name(s)
      * @param mixed        $value   the value to assign
-     * @param bool         $nocache if true any output of this variable will be not cached
+     * @param boolean      $nocache if true any output of this variable will be not cached
      *
-     * @return static      Smarty_Internal_Data current Smarty_Internal_Data (or Smarty or Smarty_Internal_Template) instance for
-     *                     chaining
+     * @return Smarty_Internal_Data current Smarty_Internal_Data (or Smarty or Smarty_Internal_Template) instance for
+     *                              chaining
      */
     public function assign($tpl_var, $value = null, $nocache = false)
     {
@@ -117,7 +102,12 @@ abstract class Smarty_Internal_Data
             }
         } else {
             if ($tpl_var !== '') {
-                if ($this->_objType === 2 && $this instanceof Smarty_Internal_Template) {
+                if ($this->_objType === 2) {
+                    /**
+                     *
+                     *
+                     * @var Smarty_Internal_Template $this
+                     */
                     $this->_assignInScope($tpl_var, $value, $nocache);
                 } else {
                     $this->tpl_vars[ $tpl_var ] = new Smarty_Variable($value, $nocache);

@@ -2,28 +2,11 @@
 
 class TPC_yyStackEntry
 {
-    /**
-     * The parser state number.
-     *
-     * @var int
-     */
-    public $stateno;
-
-    /**
-     * The major token value.
-     * This is the code number for the token at this stack level.
-     *
-     * @var int
-     */
-    public $major;
-
-    /**
-     * The user-supplied minor token value.
-     * This is the actual value of the token (e.g., a string, number, etc.).
-     *
-     * @var mixed
-     */
-    public $minor;
+    public $stateno;       /* The state-number */
+    public $major;         /* The major token value.  This is the code
+                     ** number for the token at this stack level */
+    public $minor; /* The user-supplied minor token value.  This
+                     ** is the value of the token  */
 }
 
 // line 12 "../smarty/lexer/smarty_internal_configfileparser.y"
@@ -288,9 +271,9 @@ class Smarty_Internal_Configfileparser
     /**
      * lexer object
      *
-     * @var \Smarty_Internal_Configfilelexer
+     * @var Smarty_Internal_Configfilelexer
      */
-    public $lex;
+    private $lex;
 
     /**
      * internal error flag
@@ -374,7 +357,6 @@ class Smarty_Internal_Configfileparser
         $inner_str = substr($qstr, 1, strlen($qstr) - 2);
         return stripcslashes($inner_str);
     }                 /* Shifts left before out of the error */
-
     /**
      * parse triple quoted string
      *
@@ -385,8 +367,7 @@ class Smarty_Internal_Configfileparser
     private static function parse_tripple_double_quoted_string($qstr)
     {
         return stripcslashes($qstr);
-    }
-
+    }  /* The parser's stack */
     public function Trace($TraceFILE, $zTracePrompt)
     {
         if (!$TraceFILE) {
@@ -535,8 +516,7 @@ class Smarty_Internal_Configfileparser
         static $res = array();
         static $res2 = array();
         if ($token === 0) {
-            // 0 is not part of this
-            return true;
+            return true; // 0 is not part of this
         }
         $state = $this->yystack[ $this->yyidx ]->stateno;
         if (isset($res[ $state ][ $token ])) {
@@ -620,16 +600,10 @@ class Smarty_Internal_Configfileparser
         return true;
     }
 
-    /**
-     * Determines the next shift action based on the current parser state and lookahead token.
-     *
-     * @param int $iLookAhead The token code of the lookahead input.
-     * @return int The action code (shift, reduce, error, or default).
-     */
     public function yy_find_shift_action($iLookAhead)
     {
         $stateno = $this->yystack[ $this->yyidx ]->stateno;
-        /** if ($this->yyidx < 0) return self::YY_NO_ACTION;  */
+        /* if ($this->yyidx < 0) return self::YY_NO_ACTION;  */
         if (!isset(self::$yy_shift_ofst[ $stateno ])) {
             // no shift actions
             return self::$yy_default[ $stateno ];
@@ -642,11 +616,14 @@ class Smarty_Internal_Configfileparser
             return self::YY_NO_ACTION;
         }
         $i += $iLookAhead;
-        if (!is_int($i) || $i < 0 || $i >= self::YY_SZ_ACTTAB || self::$yy_lookahead[ $i ] != $iLookAhead) {
+        if ($i < 0 || $i >= self::YY_SZ_ACTTAB ||
+            self::$yy_lookahead[ $i ] != $iLookAhead) {
             if (count(self::$yyFallback) && $iLookAhead < count(self::$yyFallback)
                 && ($iFallback = self::$yyFallback[ $iLookAhead ]) != 0) {
                 if ($this->yyTraceFILE) {
-                    fwrite($this->yyTraceFILE, $this->yyTracePrompt . 'FALLBACK ' . $this->yyTokenName[ $iLookAhead ] . ' => ' . $this->yyTokenName[ $iFallback ] . "\n");
+                    fwrite($this->yyTraceFILE, $this->yyTracePrompt . 'FALLBACK ' .
+                                               $this->yyTokenName[ $iLookAhead ] . ' => ' .
+                                               $this->yyTokenName[ $iFallback ] . "\n");
                 }
                 return $this->yy_find_shift_action($iFallback);
             }
@@ -656,16 +633,9 @@ class Smarty_Internal_Configfileparser
         }
     }
 
-    /**
-     * Determines the reduce action to take for a given state and lookahead token.
-     *
-     * @param int $stateno Current state number.
-     * @param int $iLookAhead The token code of the lookahead input.
-     * @return int The action code (reduce or default).
-     */
     public function yy_find_reduce_action($stateno, $iLookAhead)
     {
-        /** $stateno = $this->yystack[$this->yyidx]->stateno; */
+        /* $stateno = $this->yystack[$this->yyidx]->stateno; */
         if (!isset(self::$yy_reduce_ofst[ $stateno ])) {
             return self::$yy_default[ $stateno ];
         }
@@ -677,7 +647,8 @@ class Smarty_Internal_Configfileparser
             return self::YY_NO_ACTION;
         }
         $i += $iLookAhead;
-        if (!is_int($i) || $i < 0 || $i >= self::YY_SZ_ACTTAB || self::$yy_lookahead[ $i ] != $iLookAhead) {
+        if ($i < 0 || $i >= self::YY_SZ_ACTTAB ||
+            self::$yy_lookahead[ $i ] != $iLookAhead) {
             return self::$yy_default[ $stateno ];
         } else {
             return self::$yy_action[ $i ];

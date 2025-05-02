@@ -34,7 +34,7 @@ class Smarty_Internal_Compile_Private_Modifier extends Smarty_Internal_CompileBa
         $output = $parameter[ 'value' ];
         // loop over list of modifiers
         foreach ($parameter[ 'modifierlist' ] as $single_modifier) {
-            /** @var string|array{0:object|string,1:string}|callable $modifier */
+            /* @var string $modifier */
             $modifier = $single_modifier[ 0 ];
             $single_modifier[ 0 ] = $output;
             $params = implode(',', $single_modifier);
@@ -96,7 +96,7 @@ class Smarty_Internal_Compile_Private_Modifier extends Smarty_Internal_CompileBa
                             if (!is_object($compiler->smarty->security_policy)
                                 || $compiler->smarty->security_policy->isTrustedModifier($modifier, $compiler)
                             ) {
-                                $output = $function . '(' . $params . ')';
+                                $output = "{$function}({$params})";
                             }
                             $compiler->known_modifier_type[ $modifier ] = $type;
                             break 2;
@@ -110,11 +110,11 @@ class Smarty_Internal_Compile_Private_Modifier extends Smarty_Internal_CompileBa
                                 || $compiler->smarty->security_policy->isTrustedPhpModifier($modifier, $compiler)
                             ) {
                                 if (!in_array($modifier, ['time', 'join', 'is_array', 'in_array'])) {
-                                    $modifier_name = $this->stringifyCallable($modifier);
-                                    trigger_error('Using unregistered function "' . $modifier_name . '" in a template is deprecated and will be removed in a future release. Use Smarty::registerPlugin to explicitly register a custom modifier.', E_USER_DEPRECATED);
+                                    trigger_error('Using unregistered function "' . $modifier . '" in a template is deprecated and will be ' .
+                                        'removed in a future release. Use Smarty::registerPlugin to explicitly register ' .
+                                        'a custom modifier.', E_USER_DEPRECATED);
                                 }
-                                $modifier_name = $this->stringifyCallable($modifier);
-                                $output = $modifier_name . '(' . $params . ')';
+                                $output = "{$modifier}({$params})";
                             }
                             $compiler->known_modifier_type[ $modifier ] = $type;
                             break 2;
@@ -132,7 +132,7 @@ class Smarty_Internal_Compile_Private_Modifier extends Smarty_Internal_CompileBa
                                 || $compiler->smarty->security_policy->isTrustedModifier($modifier, $compiler)
                             ) {
                                 if (!is_array($function)) {
-                                    $output = $function . '(' . $params . ')';
+                                    $output = "{$function}({$params})";
                                 } else {
                                     if (is_object($function[ 0 ])) {
                                         $output = $function[ 0 ] . '->' . $function[ 1 ] . '(' . $params . ')';
@@ -155,28 +155,9 @@ class Smarty_Internal_Compile_Private_Modifier extends Smarty_Internal_CompileBa
                 }
             }
             if (!isset($compiler->known_modifier_type[ $modifier ])) {
-                $compiler->trigger_template_error('unknown modifier \'' . $modifier . '\'', null, true);
+                $compiler->trigger_template_error("unknown modifier '{$modifier}'", null, true);
             }
         }
         return $output;
-    }
-    /**
-     * Converts a callable to a human-readable string representation.
-     *
-     * @param callable|string|array{0:object|string,1:string} $callable
-     * @return string
-     */
-    private function stringifyCallable($callable): string {
-        if (is_string($callable)) {
-            return $callable;
-        }
-        if (is_array($callable)) {
-            $class = is_object($callable[0]) ? get_class($callable[0]) : $callable[0];
-            return $class . '::' . $callable[1];
-        }
-        if (is_object($callable)) {
-            return get_class($callable);
-        }
-        return 'unknown';
     }
 }

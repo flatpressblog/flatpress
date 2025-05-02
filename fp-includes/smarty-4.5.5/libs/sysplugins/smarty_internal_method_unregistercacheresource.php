@@ -27,7 +27,7 @@ class Smarty_Internal_Method_UnregisterCacheResource
      * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
      * @param                                                                 $name
      *
-     * @return \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty
+     * @return \Smarty|\Smarty_Internal_Template
      */
     public function unregisterCacheResource(Smarty_Internal_TemplateBase $obj, $name)
     {

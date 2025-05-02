@@ -11,23 +11,16 @@ if (!function_exists('smarty_mb_str_replace')) {
      *
      * @param string|string[] $search  the string to be searched
      * @param string|string[] $replace the replacement string
-     * @param string|string[] $subject the source string
+     * @param string          $subject the source string
      * @param int             &$count  number of matches found
      *
-     * @return string|false Replaced string or false in backward compatibility mode
-     * @throws SmartyException If parameters are invalid (unless SMARTY_MB_STR_REPLACE_BC is true)
+     * @return string replaced string
      * @author Rodney Rehm
      */
-    // define('SMARTY_MB_STR_REPLACE_BC', true);
-
     function smarty_mb_str_replace($search, $replace, $subject, &$count = 0)
     {
         if (!is_array($search) && is_array($replace)) {
-            if (defined('SMARTY_MB_STR_REPLACE_BC') && SMARTY_MB_STR_REPLACE_BC) {
-                trigger_error('smarty_mb_str_replace(): $replace is an array but $search is a string — returned false for BC compatibility', E_USER_WARNING);
-                return false;
-            }
-            throw new SmartyException('Invalid argument: $replace cannot be an array if $search is not an array.');
+            return false;
         }
         if (is_array($subject)) {
             // call mb_replace for each single string in $subject
@@ -69,7 +62,7 @@ if (!function_exists('smarty_mb_str_replace')) {
                 $replace = mb_convert_encoding($replace, $current_charset, Smarty::$_CHARSET);
             }
 
-            $parts = mb_split(preg_quote($search), $subject) ?: array();
+            $parts = mb_split(preg_quote($search), $subject ?? "") ?: array();
             // If original regex encoding was not unicode...
             if(!$reg_is_unicode) {
                 // ...restore original regex encoding to avoid breaking the system.

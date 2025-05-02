@@ -1570,7 +1570,7 @@ public static $yy_action = array(
             return self::YY_NO_ACTION;
         }
         $i += $iLookAhead;
-        if (!is_int($i) || $i < 0 || $i >= self::YY_SZ_ACTTAB ||
+        if ($i < 0 || $i >= self::YY_SZ_ACTTAB ||
               self::$yy_lookahead[$i] != $iLookAhead) {
             if (count(self::$yyFallback) && $iLookAhead < count(self::$yyFallback)
                    && ($iFallback = self::$yyFallback[$iLookAhead]) != 0) {
@@ -1604,7 +1604,7 @@ public static $yy_action = array(
             return self::YY_NO_ACTION;
         }
         $i += $iLookAhead;
-        if (!is_int($i) || $i < 0 || $i >= self::YY_SZ_ACTTAB ||
+        if ($i < 0 || $i >= self::YY_SZ_ACTTAB ||
               self::$yy_lookahead[$i] != $iLookAhead) {
             return self::$yy_default[$stateno];
         } else {
@@ -2402,9 +2402,9 @@ public static $yy_action = array(
 	    }
     $prefixVar = $this->compiler->getNewPrefixVariable();
     if ($this->yystack[$this->yyidx + -2]->minor['var'] === '\'smarty\'') {
-        $this->compiler->appendPrefixCode('<?php ' . $prefixVar . ' = ' . $this->compiler->compileTag('private_special_variable', array(), $this->yystack[$this->yyidx + -2]->minor['smarty_internal_index']) . ';?>');
+        $this->compiler->appendPrefixCode("<?php {$prefixVar} = ". $this->compiler->compileTag('private_special_variable',array(),$this->yystack[$this->yyidx + -2]->minor['smarty_internal_index']).';?>');
      } else {
-        $this->compiler->appendPrefixCode('<?php ' . $prefixVar . ' = ' . $this->compiler->compileVariable($this->yystack[$this->yyidx - 2]->minor['var']) . $this->yystack[$this->yyidx - 2]->minor['smarty_internal_index'] . ';?>');
+        $this->compiler->appendPrefixCode("<?php  {$prefixVar} = ". $this->compiler->compileVariable($this->yystack[$this->yyidx + -2]->minor['var']).$this->yystack[$this->yyidx + -2]->minor['smarty_internal_index'].';?>');
     }
     $this->_retvalue = $prefixVar .'::'.$this->yystack[$this->yyidx + 0]->minor[0].$this->yystack[$this->yyidx + 0]->minor[1];
     }
@@ -2412,7 +2412,7 @@ public static $yy_action = array(
     public function yy_r95(){
     $prefixVar = $this->compiler->getNewPrefixVariable();
     $tmp = $this->compiler->appendCode('<?php ob_start();?>', $this->yystack[$this->yyidx + 0]->minor);
-    $this->compiler->appendPrefixCode($this->compiler->appendCode($tmp, '<?php ' . $prefixVar . ' = ob_get_clean();?>'));
+    $this->compiler->appendPrefixCode($this->compiler->appendCode($tmp, "<?php {$prefixVar} = ob_get_clean();?>"));
     $this->_retvalue = $prefixVar;
     }
 // line 767 "../smarty/lexer/smarty_internal_templateparser.y"
@@ -2616,7 +2616,7 @@ public static $yy_action = array(
         $this->compiler->trigger_template_error (self::ERR2);
     }
     $prefixVar = $this->compiler->getNewPrefixVariable();
-    $this->compiler->appendPrefixCode('<?php ' . $prefixVar . ' = ' . $this->compiler->compileVariable('\'' . substr($this->yystack[$this->yyidx - 3]->minor, 1) . '\'') . ';?>');
+    $this->compiler->appendPrefixCode("<?php {$prefixVar} = ".$this->compiler->compileVariable('\''.substr($this->yystack[$this->yyidx + -3]->minor,1).'\'').';?>');
     $this->_retvalue = $prefixVar .'('. implode(',',$this->yystack[$this->yyidx + -1]->minor) .')';
     }
 // line 1050 "../smarty/lexer/smarty_internal_templateparser.y"
@@ -2926,3 +2926,4 @@ public static $yy_action = array(
         } while ($yymajor !== self::YYNOCODE && $this->yyidx >= 0);
     }
 }
+

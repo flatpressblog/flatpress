@@ -90,9 +90,9 @@ function smarty_function_html_image($params, Smarty_Internal_Template $template)
                 break;
         }
     }
-    if ($file === '') {
+    if (empty($file)) {
         trigger_error('html_image: missing \'file\' parameter', E_USER_NOTICE);
-        return '';
+        return;
     }
     if ($file[ 0 ] === '/') {
         $_image_path = $basedir . $file;

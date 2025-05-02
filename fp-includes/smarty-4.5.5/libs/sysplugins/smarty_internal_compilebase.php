@@ -12,8 +12,6 @@
  *
  * @package    Smarty
  * @subpackage Compiler
- *
- * @method mixed compile(mixed $args, Smarty_Internal_TemplateCompilerBase $compiler, mixed $param1 = null, mixed $param2 = null, mixed $param3 = null)
  */
 abstract class Smarty_Internal_CompileBase
 {
@@ -72,7 +70,7 @@ abstract class Smarty_Internal_CompileBase
      *
      * @return array  of mapped attributes for further processing
      */
-    public function getAttributes($compiler, $attributes, $required = array(), $optional = array())
+    public function getAttributes($compiler, $attributes)
     {
         $_indexed_attr = array();
         if (!isset($this->mapCache[ 'option' ])) {

@@ -6,8 +6,6 @@
  * @subpackage PluginsFunction
  */
 /**
- * Generates a mailto link with optional encoding and parameters.
- *
  * Smarty {mailto} function plugin
  * Type:     function
  * Name:     mailto
@@ -48,7 +46,7 @@
  *
  * @return string
  */
-function smarty_function_mailto($params) : string
+function smarty_function_mailto($params)
 {
     static $_allowed_encoding = [
         'javascript' => true,
@@ -58,9 +56,9 @@ function smarty_function_mailto($params) : string
     ];
 
     $extra = '';
-    if (empty($params['address'])) {
+    if (empty($params[ 'address' ])) {
         trigger_error("mailto: missing 'address' parameter", E_USER_WARNING);
-        return '';
+        return;
     } else {
         $address = $params[ 'address' ];
     }
@@ -95,12 +93,12 @@ function smarty_function_mailto($params) : string
         $address .= '?' . join('&', $mail_parms);
     }
     $encode = (empty($params[ 'encode' ])) ? 'none' : $params[ 'encode' ];
-    if (!isset($_allowed_encoding[$encode])) {
+    if (!isset($_allowed_encoding[ $encode ])) {
         trigger_error(
             "mailto: 'encode' parameter must be none, javascript, javascript_charcode or hex",
             E_USER_WARNING
         );
-        return '';
+        return;
     }
 
     $string = '<a href="mailto:' . htmlspecialchars($address, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, Smarty::$_CHARSET) .
@@ -121,7 +119,7 @@ function smarty_function_mailto($params) : string
         preg_match('!^(.*)(\?.*)$!', $address, $match);
         if (!empty($match[ 2 ])) {
             trigger_error("mailto: hex encoding does not work with extra attributes. Try javascript.", E_USER_WARNING);
-            return '';
+            return;
         }
         $address_encode = '';
         for ($x = 0, $_length = strlen($address); $x < $_length; $x++) {

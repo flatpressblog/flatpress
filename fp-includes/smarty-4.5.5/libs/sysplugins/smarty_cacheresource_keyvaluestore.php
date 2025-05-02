@@ -218,15 +218,15 @@ abstract class Smarty_CacheResource_KeyValueStore extends Smarty_CacheResource
     /**
      * Get template's unique ID
      *
-     * @param Smarty      $smarty        Smarty object
-     * @param string|null $resource_name template name (nullable)
+     * @param Smarty $smarty        Smarty object
+     * @param string $resource_name template name
      *
      * @return string filepath of cache file
      * @throws \SmartyException
      */
     protected function getTemplateUid(Smarty $smarty, $resource_name)
     {
-        if ($resource_name !== null) {
+        if (isset($resource_name)) {
             $source = Smarty_Template_Source::load(null, $smarty, $resource_name);
             if ($source->exists) {
                 return $source->uid;
@@ -259,7 +259,7 @@ abstract class Smarty_CacheResource_KeyValueStore extends Smarty_CacheResource
      * @param string  $cache_id      cache id
      * @param string  $compile_id    compile id
      * @param string  $content       cached content
-     * @param float|int|null &$timestamp cached timestamp (epoch)
+     * @param integer &$timestamp    cached timestamp (epoch)
      * @param string  $resource_uid  resource's uid
      *
      * @return boolean success
@@ -276,14 +276,12 @@ abstract class Smarty_CacheResource_KeyValueStore extends Smarty_CacheResource
         $t = $this->read(array($cid));
         $content = !empty($t[ $cid ]) ? $t[ $cid ] : null;
         $timestamp = null;
-        if ($content) {
-            $timestamp = $this->getMetaTimestamp($content);
-            if ($timestamp) {
-                $invalidated = $this->getLatestInvalidationTimestamp($cid, $resource_name, $cache_id, $compile_id, $resource_uid);
-                if ($invalidated > $timestamp) {
-                    $timestamp = null;
-                    $content = null;
-                }
+        if ($content && ($timestamp = $this->getMetaTimestamp($content))) {
+            $invalidated =
+                $this->getLatestInvalidationTimestamp($cid, $resource_name, $cache_id, $compile_id, $resource_uid);
+            if ($invalidated > $timestamp) {
+                $timestamp = null;
+                $content = null;
             }
         }
         return !!$content;
@@ -293,12 +291,12 @@ abstract class Smarty_CacheResource_KeyValueStore extends Smarty_CacheResource
      * Add current microtime to the beginning of $cache_content
      * {@internal the header uses 8 Bytes, the first 4 Bytes are the seconds, the second 4 Bytes are the microseconds}}
      *
-     * @param string &$content the content to be cached (prefixed with binary timestamp header)
+     * @param string &$content the content to be cached
      */
     protected function addMetaTimestamp(&$content)
     {
         $mt = explode(' ', microtime());
-        $ts = pack('NN', (int)$mt[1], (int)((float)$mt[0] * 100000000));
+        $ts = pack('NN', $mt[ 1 ], (int)($mt[ 0 ] * 100000000));
         $content = $ts . $content;
     }
 
