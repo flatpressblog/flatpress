@@ -1,6 +1,12 @@
 /**
  * GDPR-Video-Embed | non-dynamic part
  */
+function escapeHTML(str) {
+	var div = document.createElement('div');
+	div.appendChild(document.createTextNode(str));
+	return div.innerHTML;
+}
+
 (function () {
 	// Function for extracting the Facebook video URL from the IFrame
 	function getFacebookVideoUrl(url) {
@@ -56,11 +62,13 @@
 			}
 
 			// Replace the placeholders with the extracted video ID or URL
+			var tpl = window.gdprConfig.text[video_platform];
 			if (video_platform === 'facebook') {
-				responsive_bbcode_video.innerHTML = window.gdprConfig.text[video_platform].replace(/\%video_url\%/g, video_url);
+				tpl = tpl.replace(/\%video_url\%/g, escapeHTML(video_url));
 			} else {
-				responsive_bbcode_video.innerHTML = window.gdprConfig.text[video_platform].replace(/\%id\%/g, video_id);
+				tpl = tpl.replace(/\%id\%/g, escapeHTML(video_id));
 			}
+			responsive_bbcode_video.innerHTML = tpl;
 
 			video_frame.parentNode.replaceChild(responsive_bbcode_video, video_frame);
 			document.querySelectorAll('.video-responsive_bbcode_video button')[i].addEventListener('click', function () {
