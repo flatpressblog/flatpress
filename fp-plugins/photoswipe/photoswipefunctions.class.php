@@ -8,7 +8,7 @@ class PhotoSwipeFunctions {
 	/**
 	 * Class-wide flag that the PhotoSwipe overlay UI has already been initialized
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private static $photoswipeUiIsInitialized = false;
 
@@ -98,8 +98,7 @@ class PhotoSwipeFunctions {
 		$styleAttr = isset($attr ['width']) ? ' style="width:' . $attr ['width'] . 'px" ' : '';
 
 		// now lets assemble the whole HTML code - including the overlay HTML, if not inserted into the DOM before
-		$imgHtml = self::getPhotoSwipeOverlay() . //
-		"\n\n" . //
+		$imgHtml = "\n\n" . //
 		'<div ' . //
 		'class="photoswipe ' . $floatClasses . '"' . $styleAttr . //
 		'itemscope itemtype="http://schema.org/ImageGallery"' . //
@@ -214,7 +213,7 @@ class PhotoSwipeFunctions {
 	static function getPhotoSwipeOverlay() {
 		global $lang;
 
-		$photoswipeoverlay = self::$photoswipeUiIsInitialized ? '' : '<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">' . //
+		$photoswipeoverlay = self::$photoswipeUiIsInitialized ? '' : '<div class="pswp" tabindex="-1" role="dialog" aria-modal="true">' . //
 		'<div class="pswp__bg"></div>' . //
 		'<div class="pswp__scroll-wrap">' . //
 		'<div class="pswp__container">' . //
@@ -257,32 +256,56 @@ class PhotoSwipeFunctions {
 	 * Outputs the required <script> and <link> tags for PhotoSwipe.
 	 *
 	 * This method should be called in the HTML <head> section to load
-	 * PhotoSwipe JavaScript and CSS resources. It also includes jQuery
+	 * PhotoSwipe CSS resources. It also includes jQuery
 	 * if not already present.
 	 *
 	 * Uses a nonce for CSP compatibility.
 	 *
 	 * @return void
 	 */
-	static function echoScriptTags() {
+	static function pswpHead() {
 		$random_hex = RANDOM_HEX;
 		$pdir = plugin_geturl('photoswipe');
-		echo '<!-- PhotoSwipe -->
+		echo '<!-- BOF PhotoSwipe head -->
 ';
 		if (!function_exists('plugin_jquery_head')) {
 			echo '<script nonce="' . $random_hex . '" src="' . $pdir . 'res/jquery-2.2.2/jquery-2.2.2.min.js"></script>
 ';
 		}
 		echo '
-	<script nonce="' . $random_hex . '" src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe-ui-default.min.js"></script>
-	<script nonce="' . $random_hex . '" src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe.min.js"></script>
-	<script nonce="' . $random_hex . '">';
-		include_once (dirname(__FILE__) . '/res/photoswipe.js.php');
-		echo '
-	</script>
+	<script nonce="' . $random_hex . '" src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe-ui-default.js" defer></script>
+	<script nonce="' . $random_hex . '" src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe.js" defer></script>
 	<link rel="stylesheet" property="stylesheet" href="' . $pdir . 'res/photoswipe-4.1.3/default-skin/default-skin.css">
 	<link media="screen" href="' . $pdir . 'res/photoswipe-4.1.3/photoswipe.css" type="text/css" rel="stylesheet">
-	<!-- /PhotoSwipe -->';
+	<!-- EOF PhotoSwipe head -->';
+	}
+
+	/**
+	 * Outputs the required <script> for PhotoSwipe.
+	 *
+	 * This method should be called in the HTML Footer section to load
+	 * PhotoSwipe JavaScript resources.
+	 *
+	 * Uses a nonce for CSP compatibility.
+	 *
+	 * @return void
+	 */
+	static function pswpFooter() {
+		echo '
+		<!-- BOF PhotoSwipe footer -->
+		';
+
+		// Outputs the Overlay-Container
+		echo self::getPhotoSwipeOverlay();
+
+		$random_hex = RANDOM_HEX;
+		$pdir = plugin_geturl('photoswipe');
+		echo '
+		<script nonce="' . $random_hex . '">';
+		include_once (dirname(__FILE__) . '/res/photoswipe.js.php');
+		echo '
+		</script>
+		<!-- EOF PhotoSwipe footer -->';
 	}
 
 	/**

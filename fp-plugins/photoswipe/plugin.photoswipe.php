@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: PhotoSwipe
- * Version: 2.0.3
+ * Version: 2.0.4
  * Plugin URI: https://www.flatpress.org
  * Description: Displays images and galleries with <a href="http://photoswipe.com">PhotoSwipe</a>.<br>Part of the standard distribution.&nbsp;Needs the BBCode plugin to be activated.
  * Author: FlatPress
@@ -64,8 +64,11 @@ if (!is_rss_feed()) {
 	// Initialize the BBCode tags of the plugin
 	add_filter('init', 'PhotoSwipeFunctions::initializePluginTags');
 
-	// Inject necessary JavaScript into the <head> section
-	add_action('wp_head', 'PhotoSwipeFunctions::echoScriptTags', 2);
+	// Inject necessary files into the <head> section
+	add_action('wp_head', 'PhotoSwipeFunctions::pswpHead', 2);
+
+	// Inject necessary JavaScript and Overlay-Container into the footer section
+	add_action('wp_footer', 'PhotoSwipeFunctions::pswpFooter', 10);
 } else {
 	// Optional debugging log entry
 	// error_log('PhotoSwipe plugin has been deactivated for the RSS feed.');
