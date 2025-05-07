@@ -116,7 +116,7 @@
 - BlockParser plugin: Update to version 1.0.1
   - Compatibility to PHP with OPcache:
     - The list of activated pages is displayed immediately after activation/deactivation. ([#213](https://github.com/flatpressblog/flatpress/issues/213), [#244](https://github.com/flatpressblog/flatpress/issues/244))
-- PhotoSwipe plugin: update to version 2.0.3
+- PhotoSwipe plugin: update to version 2.0.4
   - The overlay buttons are no longer displayed in the RSS and Atom feed. ([#506](https://github.com/flatpressblog/flatpress/pull/506))
   - External images are displayed correctly. ([#520](https://github.com/flatpressblog/flatpress/pull/520))
   - Correct grouping: Only images from the same gallery are taken into account.
