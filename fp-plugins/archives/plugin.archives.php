@@ -29,7 +29,7 @@ class plugin_archives_monthlist extends fs_filelister {
 				// we may have nested elements)
 				$this->_year = $file;
 				$lnk = get_year_link($file);
-				$this->_htmllist[$this->_year] = "<li class=\"archive-year archive-y20" . $file . "\"> <span class=\"togglelink toggleplus\" aria-expanded=\"false\" title=\"Expand\">▸ </span> <a href=\"" . $lnk . "\">20" . $file . "</a>";
+				$this->_htmllist[$this->_year] = "<li class=\"archive-year archive-y20" . $file . "\"> <span role=\"button\" class=\"togglelink toggleplus\" aria-expanded=\"false\" title=\"Expand\">▸ </span> <a href=\"" . $lnk . "\">20" . $file . "</a>";
 				return 1;
 			} elseif (is_dir($f)) {
 				$this->_months [] = $file;
