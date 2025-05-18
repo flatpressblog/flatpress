@@ -10,7 +10,7 @@ function cookie_setup() {
 
 	// Set the cookie prefix depending on whether HTTPS is used
 	if (!defined('COOKIE_PREFIX')) {
-		define('COOKIE_PREFIX', is_https() ? '__secure-' : '');
+		define('COOKIE_PREFIX', is_https() ? '__Secure-' : '');
 	}
 
 	// Set the SameSite attribute to Lax if not defined
