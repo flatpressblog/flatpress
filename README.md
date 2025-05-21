@@ -2,7 +2,6 @@
 [![Support forum](https://img.shields.io/badge/Support%20forum-💬-555?style=plastic)](https://forum.flatpress.org "Support forum")
 [![Wiki](https://img.shields.io/badge/Wiki-📖-555?style=plastic)](https://wiki.flatpress.org "Wiki")
 [![Mastodon](https://img.shields.io/badge/Mastodon-🐘-555?style=plastic)](https://fosstodon.org/@flatpress "FlatPress@Mastodon")
-[![Twitter](https://img.shields.io/badge/Twitter-🐦-555?style=plastic)](https://twitter.com/FlatPress "FlatPress@Twitter")
 [![Change log](https://img.shields.io/badge/Change%20log-📜-555?style=plastic)](./CHANGELOG.md "Change log")
 [![Security policy](https://img.shields.io/badge/Security%20policy-⚡-555?style=plastic)](./SECURITY.md "Security policy")
 [![Contributors](https://img.shields.io/badge/Contributors-😎-555?style=plastic)](./CONTRIBUTORS.md "Contributors")
