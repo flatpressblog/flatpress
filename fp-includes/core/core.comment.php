@@ -10,12 +10,11 @@ class comment_indexer extends fs_filelister {
 	}
 
 	function _checkFile($directory, $file) {
-		$f = $directory . "/" . $file;
+		$f = "$directory/$file";
 		if (fnmatch('comment*' . EXT, $file)) {
 			array_push($this->_list, basename($file, EXT));
 			return 0;
 		}
-		return;
 	}
 
 	// overrides parent method to return sorted results
@@ -47,9 +46,8 @@ function comment_getlist($id) {
 function comment_parse($entryid, $id) {
 	$f = comment_exists($entryid, $id);
 
-	if (!$f) {
+	if (!$f)
 		return false;
-	}
 
 	$fc = io_load_file($f);
 	$arr = utils_kexplode($fc);
@@ -61,31 +59,26 @@ function comment_parse($entryid, $id) {
 }
 
 function comment_exists($entryid, $id) {
-	if (!preg_match('|^comment[0-9]{6}-[0-9]{6}$|', $id)) {
+	if (!preg_match('|^comment[0-9]{6}-[0-9]{6}$|', $id))
 		return false;
-	}
 	$f = entry_exists($entryid);
-	if (!$f) {
+	if (!$f)
 		return false;
-	}
 
 	$f2 = substr($f, 0, -strlen(EXT)) . '/comments/' . $id . EXT;
-	if (!file_exists($f2)) {
+	if (!file_exists($f2))
 		return false;
-	}
 
 	return $f2;
 }
 
 function comment_clean(&$arr) {
-	$arr ['name'] = strip_tags(apply_filters('pre_comment_author_name', stripslashes($arr ['name'])));
-	if (isset($arr ['email'])) {
-		$arr ['email'] = strip_tags(apply_filters('pre_comment_author_email', $arr ['email']));
-	}
-	if (isset($arr ['url'])) {
-		$arr ['url'] = strip_tags(apply_filters('pre_comment_author_url', $arr ['url']));
-	}
-	$arr ['content'] = strip_tags(apply_filters('pre_comment_content', $arr ['content']));
+	$arr ['name'] = apply_filters('pre_comment_author_name', stripslashes($arr ['name']));
+	if (isset($arr ['email']))
+		$arr ['email'] = apply_filters('pre_comment_author_email', $arr ['email']);
+	if (isset($arr ['url']))
+		$arr ['url'] = apply_filters('pre_comment_author_url', $arr ['url']);
+	$arr ['content'] = apply_filters('pre_comment_content', $arr ['content']);
 	return $arr;
 }
 
@@ -94,11 +87,13 @@ function comment_clean(&$arr) {
  *
  * <p>Saves the content of the $comment array, associating it to the entry-ID $id.</p>
  * <p>$comment must be formatted as the one returned by {@link bdb_parse_entry()}.</p>
- * <p>Returns the comment ID on success, or false on failure.</p>
+ * <p>Returns true on success, or false on failure</p>
  *
- * @param string $id string formatted like "prefixYYMMDD-HHMMSS"
- * @param array $comment array formatted as the one returned by {@link bdb_parse_entry()}
- * @return string|false
+ * @param string $id
+ *        	string formatted like "prefixYYMMDD-HHMMSS"
+ * @param array $comment
+ *        	array formatted as the one returned by {@link bdb_parse_entry()}
+ * @return bool
  *
  * @see bdb_parse_entry()
  */
@@ -109,15 +104,13 @@ function comment_save($id, $comment) {
 
 	$comment_dir = bdb_idtofile($id, BDB_COMMENT);
 
-	if (!isset($comment ['DATE'])) {
+	if (!isset($comment ['DATE']))
 		$comment ['DATE'] = date_time();
-	}
 	$id = bdb_idfromtime(BDB_COMMENT, $comment ['DATE']);
 	$f = $comment_dir . $id . EXT;
 	$str = utils_kimplode($comment);
-	if (io_write_file($f, $str)) {
+	if (io_write_file($f, $str))
 		return $id;
-	}
 
 	return false;
 }

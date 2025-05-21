@@ -9,9 +9,8 @@ function io_write_file($filename, $data) {
 		$f = fopen($filename, "w");
 		if ($f) {
 
-			if (!flock($f, LOCK_EX)) {
+			if (!flock($f, LOCK_EX))
 				return -1;
-			}
 
 			$length = strlen($data);
 			$done = fwrite($f, $data);
@@ -33,15 +32,13 @@ function io_write_file($filename, $data) {
 
 function io_load_file($filename) {
 	if (file_exists($filename)) {
-		if (function_exists('file_get_contents')) {
+		if (function_exists('file_get_contents'))
 			return file_get_contents($filename);
-		}
 
 		$f = fopen($filename, "r");
 		if ($f) {
-			if (!flock($f, LOCK_SH)) {
+			if (!flock($f, LOCK_SH))
 				return -1;
-			}
 			$contents = fread($f, filesize($filename));
 			flock($f, LOCK_UN);
 			fclose($f);

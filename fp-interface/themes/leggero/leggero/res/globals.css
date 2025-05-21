@@ -11,6 +11,8 @@ Version: 0.1
 Module: globals.css
 */
 
+
+
 .alignleft { float: left }
 
 .alignright { float: right }
@@ -18,8 +20,7 @@ Module: globals.css
 /* ===== NOTIFICATION ===== */
 #main ul.msgs, ul.msgs {
 	margin: 0;
-	padding: 1em 2em;
-	list-style-type: none
+	padding: 1em 2em
 }
 
 .errors {
@@ -48,7 +49,7 @@ Module: globals.css
 	border-top: 1px solid;
     border-bottom: 1px solid;
 	border-color: #f8e674;
-	background: #fffdd5
+	background: #fffdd5;
 
 }
 

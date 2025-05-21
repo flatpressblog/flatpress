@@ -1,11 +1,11 @@
 <?php
 /*
  * Plugin Name: BBCode
- * Version: 1.9.0
+ * Version: 1.6
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
- * Description: Allows using <a href="http://www.phpbb.com/phpBB/faq.php?mode=bbcode">BBCode</a> markup. Part of the standard distribution.
+ * Description: Allows using <a href="http://www.phpbb.com/phpBB/faq.php?mode=bbcode">BBCode</a> markup; provides automatic integration with lightbox. Part of the standard distribution.
  */
 require (plugin_getdir('bbcode') . '/inc/stringparser_bbcode.class.php');
 require (plugin_getdir('bbcode') . '/panels/admin.plugin.panel.bbcode.php');
@@ -21,9 +21,8 @@ function plugin_bbcode_startup() {
 	define('BBCODE_ALLOW_HTML', isset($bbconf ['escape-html']) ? $bbconf ['escape-html'] : true);
 	define('BBCODE_ENABLE_COMMENTS', isset($bbconf ['comments']) ? $bbconf ['comments'] : false);
 	define('BBCODE_USE_EDITOR', isset($bbconf ['editor']) ? $bbconf ['editor'] : true);
-	define('BBCODE_MASK_ATTACHS', isset($bbconf ['maskattachs']) ? $bbconf ['maskattachs'] : true);
 	define('BBCODE_URL_MAXLEN', isset($bbconf ['url-maxlen']) ? $bbconf ['url-maxlen'] : 40);
-	if (!file_exists('getfile.php')) { // FKM: file not in the repo?
+	if (!file_exists('getfile.php')) {
 		define('BBCODE_USE_WRAPPER', false);
 	} else {
 		$funcs = explode(',', ini_get('disable_functions'));
@@ -32,11 +31,6 @@ function plugin_bbcode_startup() {
 		} else {
 			define('BBCODE_USE_WRAPPER', true);
 		}
-	}
-	if (BBCODE_MASK_ATTACHS) {
-		define('BBCODE_USE_FILEWRAPPER', true);
-	} else {
-		define('BBCODE_USE_FILEWRAPPER', false);
 	}
 
 	// filter part
@@ -51,64 +45,33 @@ function plugin_bbcode_startup() {
 	add_filter('the_excerpt', 'BBCode', 1);
 	add_filter('the_content', 'plugin_bbcode_undoHtml', 30);
 	if (BBCODE_USE_EDITOR) {
-		// initialize the toolbar
 		add_filter('editor_toolbar', 'plugin_bbcode_toolbar');
-		plugin_bbcode_init_toolbar();
 	}
 	if (BBCODE_ENABLE_COMMENTS) {
 		add_filter('comment_text', 'plugin_bbcode_comment', 1);
-		// converts BBCode [url] and [list] tags to HTML
-		add_filter('comment_text', 'bbcode2html', 10);
 	}
 }
 plugin_bbcode_startup();
-// FKM: RSS-feed returns bbcode if add_action(), see #225
-//add_action('wp_head', 'plugin_bbcode_startup');
 
 /**
- * Adds the plugin's CSS and JS to the HTML head.
+ * Adds special stlye definitions into the HTML head.
  */
-function plugin_bbcode_head() {
-	$plugindir = plugin_geturl('bbcode');
-	$random_hex = RANDOM_HEX;
-
-	echo '
-		<!-- bbcode plugin -->
-		<link rel="stylesheet" type="text/css" href="' . $plugindir . 'res/bbcode.css">
-		<script nonce="' . $random_hex . '" src="' . $plugindir . 'res/editor.js"></script>
-		<!-- end of bbcode plugin -->';
+function plugin_bbcode_style() {
+	echo "	<!-- bbcode plugin -->\n";
+	echo '	<link rel="stylesheet" type="text/css" href="' . plugin_geturl('bbcode') . "res/bbcode.css\" />\n";
+	echo "	<!-- end of bbcode plugin -->\n";
 }
-add_action('wp_head', 'plugin_bbcode_head');
+add_action('wp_head', 'plugin_bbcode_style');
 
 /**
  * Remaps the URL so that there's no hint to your attachs/ directory.
  *
  * @param string $d
- * @return bool
+ * @return boolean
  */
 function bbcode_remap_url(&$d) {
-	// nothing to remap if given string is empty
-	if (empty($d)) {
-		return false;
-	}
-	// complete the URL if it begins with www. but does not contain a protocol
-	if (strpos($d, 'www.') === 0) {
-		$d = 'https://' . $d;
-	}
-
-	// Include the URL validation
-	require_once (plugin_getdir('bbcode') . '/inc/isValidFileDownloadUrl.php');
-
-	// Validate the URL
-	if (!isValidFileDownloadUrl($d)) {
-		// Handle invalid URLs
-		$d = 'about:blank';
-		return false;
-	}
-
 	// NWM: "attachs/" is interpreted as a keyword, and it is translated to the actual path of ATTACHS_DIR
 	// CHANGE! we use the getfile.php script to mask the actual path of the attachs dir!
-	// FKM: We now use a get.php script to hide the attachs directory
 	// DMKE: I got an idea about an integer-id based download/media manager... work-in-progress
 	if (strpos($d, ':') === false) {
 		// if is relative url
@@ -124,10 +87,6 @@ function bbcode_remap_url(&$d) {
 			$d = BLOG_BASEURL . substr($d, 1);
 		}
 		if (substr($d, 0, 8) == 'attachs/') {
-			$d = BBCODE_USE_FILEWRAPPER ? 'get.php?f=' . urlencode(basename($d)) : substr_replace($d, ATTACHS_DIR, 0, 8);
-			return true;
-		}
-		if (substr($d, 0, 8) == 'attachs/') {
 			$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) . '&amp;dl=true' : substr_replace($d, ATTACHS_DIR, 0, 8);
 			return true;
 		}
@@ -136,6 +95,9 @@ function bbcode_remap_url(&$d) {
 			$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) : $d;
 		}
 		return true;
+	}
+	if (strpos($d, 'www.') === 0) {
+		$d = 'http://' . $d;
 	}
 	return false;
 }
@@ -150,11 +112,9 @@ function bbcode_remap_url(&$d) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return bool|string
+ * @return string
  */
 function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
-	global $lang;
-	lang_load('plugin:bbcode');
 	if ($action == 'validate') {
 		return true;
 	}
@@ -175,20 +135,21 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	// DMKE: uh?
 	$content = $content;
 	$rel = isset($attributes ['rel']) ? ' rel="' . $attributes ['rel'] . '"' : '';
-	$target = isset($attributes ['target']) ? ' target="'. $attributes ['target'] . '"' : '';
-	$extern = !$local ? ' class="externlink" title="' . $lang ['plugin'] ['bbcode'] ['go_to'] . ' ' . $the_url . '"' : '';
-	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target . '>' . $content . '</a>';
+	$extern = !$local ? ' class="externlink" title="Go to ' . $the_url . '"' : '';
+	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . '>' . $content . '</a>';
 }
 
 /**
  * Function to include images.
  *
- * @param string $action 'validate' or 'render'
- * @param array $attributes Array of tag attributes like 'alt', 'width', 'popup', etc.
- * @param string $content Content between tags (usually empty)
- * @param mixed $params Not used
- * @param mixed $node_object Not used
- * @return string|true Returns rendered HTML or true if validating
+ * @param string $action
+ * @param array $attributes
+ * @param string $content
+ * @param mixed $params
+ *        	Not used
+ * @param mixed $node_object
+ *        	Not used
+ * @return string
  */
 function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -200,7 +161,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	$absolutepath = $actualpath = $attributes ['default'];
 	// NWM: "images/" is interpreted as a keyword, and it is translated to the actual path of IMAGES_DIR
 	$image_is_local = bbcode_remap_url($actualpath);
-	$float = ' class="center"';
+	$float = ' class="center" ';
 	$popup_start = '';
 	$popup_end = '';
 
@@ -222,21 +183,19 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	// slow remote servers may otherwise lockup the system
 	if ($image_is_local) {
 		$img_info = array();
-
-		/** @var array{0?: int, 1?: int, 2?: int, 3?: string, mime?: string, channels?: int, bits?: int}|false $img_size */
 		$img_size = @getimagesize($actualpath, $img_info);
-		if (!is_array($img_size)) {
-			$img_size = [];
-		}
 		$absolutepath = BLOG_BASEURL . $actualpath;
 
-		if ($useimageinfo && function_exists('iptcparse') && isset($img_size ['mime']) && $img_size ['mime'] === 'image/jpeg') {
-			if (is_array($img_info)) {
+		if ($useimageinfo && function_exists('iptcparse')) {
+			if ($img_size ['mime'] == 'image/jpeg') {
 				// tiffs won't be supported
-				if (isset($img_info ["APP13"])) {
-					$iptc = iptcparse($img_info ["APP13"]);
-					$title = !empty($iptc ["2#005"] [0]) ? wp_specialchars($iptc ["2#005"] [0]) : $title;
-					$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
+
+				if (is_array($img_info)) {
+					if (isset($img_info ["APP13"])) {
+						$iptc = iptcparse($img_info ["APP13"]);
+						$title = @$iptc ["2#005"] [0] ? wp_specialchars($iptc ["2#005"] [0]) : $title;
+						$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
+					}
 				}
 			}
 		}
@@ -297,12 +256,15 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	}
 	$loading = ' loading="' . $loadingValue . '"';
 
-	// For popup
+	// JS for popup
 	if (isset($attributes ['popup']) && ($attributes ['popup'])) {
 		$pop_width = $orig_w ? $orig_w : 800;
 		$pop_height = $orig_h ? $orig_h : 600;
+		$popup = ' onclick="Popup=window.open("' . $absolutepath . '","Popup","toolbar=no,location=no,status=no,"' . '"menubar=no,scrollbars=yes,resizable=yes,width=' . $pop_width . ',height=' . $pop_height . '"); return false;"';
 
-		$popup_start = $attributes ['popup'] == 'true' ? '<a title="' . $title . '" href="' . $absolutepath . '" class="bbcode-popup" data-width="' . $pop_width . '" data-height="' . $pop_height . '">' : '';
+		// Plugin hook, here lightbox attachs
+		$popup = apply_filters('bbcode_img_popup', $popup, $absolutepath);
+		$popup_start = $attributes ['popup'] == 'true' ? '<a title="' . $title . '" href="' . $absolutepath . '"' . $popup . '>' : '';
 		$popup_end = $attributes ['popup'] == 'true' ? '</a>' : '';
 	}
 	$img_width = $width ? ' width="' . $width . '"' : '';
@@ -311,10 +273,10 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		$float = ($attributes ['float'] == 'left' || $attributes ['float'] == 'right') ? ' class="float' . $attributes ['float'] . '"' : ' class="center"';
 	}
 	$src = $thumbpath ? (BLOG_BASEURL . $thumbpath) : $absolutepath;
-	$pop = $popup_start ? '' : ' title="' . $title . '"';
+	$pop = $popup_start ? '' : ' title="' . $title . '" ';
 
 	// Finally: Put together the whole img tag with all its attributes and return it
-	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '"' . $pop . $float . $img_width . $img_height . $loading . '>' . $popup_end;
+	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '" ' . $pop . $float . $img_width . $img_height . $loading . ' />' . $popup_end;
 }
 
 /**
@@ -327,7 +289,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return bool|string
+ * @return string
  */
 function do_bbcode_mail($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -357,13 +319,9 @@ function do_bbcode_mail($action, $attributes, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return bool|string
+ * @return string
  */
 function do_bbcode_video($action, $attr, $content, $params, $node_object) {
-
-	global $lang;
-	lang_load('plugin:bbcode');
-
 	if ($action == 'validate') {
 		return true;
 	}
@@ -372,98 +330,51 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	if (isset($attr ['type'])) {
 		$type = $attr ['type'];
 	} else {
-		// no host: must be local file
-		if (!array_key_exists('host', $vurl)) {
-			$type = 'html5';
-		} else {
-			// is it http://www.MYSITE.com or http://MYSITE.com ?
-			$web = explode('.', $vurl ['host']);
-			array_pop($web);
-			$type = isset($web [1]) ? $web [1] : $web [0];
-		}
+		// is it http://www.MYSITE.com or http://MYSITE.com ?
+		$web = explode('.', $vurl ['host']);
+		array_pop($web);
+		$type = isset($web [1]) ? $web [1] : $web [0];
 	}
 
 	// Check the [video] element's attributes width, height and float
 	$width = isset($attr ['width']) ? $attr ['width'] : '560';
 	$height = isset($attr ['height']) ? $attr ['height'] : '315';
-	$floatClass = isset($attr ['float']) ? $attr ['float'] : 'nofloat';
+	$float = isset($attr ['float']) ? 'align="' . $attr ['float'] . '" ' : 'style="margin: 0 auto; display:block;" ';
 
-	$query = array();
-	if (array_key_exists('query', $vurl)) {
-		$query = utils_kexplode($vurl ['query'], '=&');
-	}
+	$query = utils_kexplode($vurl ['query'], '=&');
 	$output = null;
-
-	// Set the video source from YouTube and Vimeo to data-scr if the GDPR-video-embed plugin is active
-	if (function_exists('plugin_gdprvideoembed_head')) {
-		$src = 'data-src';
-	} else {
-		$src = 'src';
-	}
 
 	// We recognize different video providers by the given video URL.
 	switch ($type) {
 		// YouTube
 		case 'youtube':
-			$output = '<div class="responsive_bbcode_video">' . //
-					'<iframe class="bbcode_video bbcode_video_youtube ' . $floatClass . '" ' . //
-						$src . '="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" ' . //
-						'width="' . $width . '" ' . //
-						'height="' . $height . '" ' . //
-						'allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture">' . //
-					'</iframe>' . //
-				'</div>';
+			$output = '<iframe class="bbcode_video bbcode_video_youtube" src="https://www.youtube.com/embed/' . $query ['v'] . '" width="' . $width . '" height="' . $height . '" frameborder="0" allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" ' . $float . '></iframe>';
 			break;
 		// Vimeo
 		case 'vimeo':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/', '', $vurl ['path']);
-			$output = '<div class="responsive_bbcode_video">' . //
-					'<iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" ' . //
-						$src . '="https://player.vimeo.com/video/' . $vid . '?dnt=1?color=' . $vid . '&title=0&byline=0&portrait=0" ' . //
-						'width="' . $width . '" ' . //
-						'height="' . $height . '" ' . //
-						'allow="autoplay; fullscreen">' . //
-					'</iframe>' . //
-				'</div>';
+			$output = '<iframe class="bbcode_video bbcode_video_vimeo" src="https://player.vimeo.com/video/' . $vid . '?color=' . $vid . '&title=0&byline=0&portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" allow="autoplay; fullscreen;" allowfullscreen ' . $float . '></iframe>';
 			break;
 		// Facebook
 		case 'facebook':
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/video/', '', $vurl ['path']);
-			$output = '<div class="responsive_bbcode_video">' . //
-					'<iframe class="bbcode_video bbcode_video_facebook ' . $floatClass . '" ' . //
-						$src . '="https://www.facebook.com/plugins/video.php?' . //
-						'width=' . $width . //
-						'&height=' . $height . //
-						'&href=https://www.facebook.com' . $vid . //
-						'&show_text=false' . //
-						'&t=0" ' . //
-						'width="' . $width . '" ' . //
-						'height="' . $height . '" ' . //
-						'frameborder="0" ' . //
-						'scrolling="no" ' . //
-						'allowfullscreen="allowfullscreen" ' . //
-						'style="border: none; overflow: hidden" ' . //
-						'allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen">' . //
-					'</iframe>' . //
-				'</div>';
+			$output = '<div id="fb-root" ' . $float . '></div>
+			<script async defer src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2"></script>
+			<div class="fb-video bbcode_video bbcode_video_facebook" " data-href="' . $vid . '" data-allowfullscreen="true" data-width="' . $width . '" ' . $float . '></div>';
 			break;
 		// Any video file that can be played with HTML5 <video> element
+		// FIXME: support of uploaded video files ($attr ['default'] is like "attachs/video.mp4") still to be implemented!
 		case 'html5':
 		default:
-			// get the video path from the default attribute
-			$videoPath = $attr ['default'];
-			// if it's local ("attachs/video.mp4") ...
-			$video_is_local = bbcode_remap_url($videoPath);
-			if ($video_is_local) {
-				// ... we need to prepend it with the blog base URL
-				$videoPath = BLOG_BASEURL . $videoPath;
-			}
-			$output = '<div class="responsive_bbcode_video"><video class="bbcode_video bbcode_video_html5 ' . $floatClass . '" width="' . $width . '" height="' . $height . '" controls><source src="' . $videoPath . '">Your browser does not support the video tag</video></div>';
+			$output = '<video class="bbcode_video bbcode_video_html5" width="' . $width . '" height="' . $height . '" controls ' . $float . '><source src="' . $attr ['default'] . '">Your browser does not support the video tag</video>';
 			break;
-			// $output = null;
+			$output = null;
 	}
 
-	return $output;
+	if (isset($output)) {
+		return $output;
+	}
+	return '[unsupported video]';
 }
 
 /**
@@ -476,14 +387,14 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return bool|string
+ * @return string
  */
 function do_bbcode_code($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
 		return true;
 	}
 	$temp_str = $content;
-	$temp_str = str_replace('<br>', chr(10), $temp_str);
+	$temp_str = str_replace('<br />', chr(10), $temp_str);
 	$temp_str = str_replace(chr(10) . chr(10), chr(10), $temp_str);
 	$temp_str = str_replace(chr(32), '&nbsp;', $temp_str);
 	if (BBCODE_ALLOW_HTML) {
@@ -513,7 +424,7 @@ function do_bbcode_code($action, $attributes, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return bool|string
+ * @return string
  */
 function do_bbcode_html($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -525,7 +436,7 @@ function do_bbcode_html($action, $attributes, $content, $params, $node_object) {
 		$GLOBALS ['BBCODE_TEMP_HTML'] = array();
 	}
 	$GLOBALS ['BBCODE_TEMP_HTML'] [$count] = $content;
-	$str = '<!-- #HTML_BLOCK_' . $count . '# -->';
+	$str = "<!-- #HTML_BLOCK_{$count}# -->";
 	$count++;
 	return $str;
 }
@@ -540,7 +451,7 @@ function do_bbcode_html($action, $attributes, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return bool|string
+ * @return string
  */
 function do_bbcode_color($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -559,7 +470,7 @@ function do_bbcode_color($action, $attributes, $content, $params, $node_object) 
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return bool|string
+ * @return string
  */
 function do_bbcode_size($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -594,7 +505,7 @@ function do_bbcode_align($action, $attr, $content, $params, $node_object) {
  *        	Not used
  * @param mixed $node_object
  *        	Not used
- * @return bool|string
+ * @return string
  */
 function do_bbcode_list($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
@@ -605,7 +516,7 @@ function do_bbcode_list($action, $attributes, $content, $params, $node_object) {
 	} else {
 		$list = 'ul';
 	}
-	return "<" . $list . ">" . $content . "</" . $list . ">";
+	return "<$list>$content</$list>";
 }
 
 /**
@@ -654,8 +565,8 @@ function &plugin_bbcode_init() {
 			$htmltag = $bbtag = $val;
 		}
 		$bbcode->addCode($bbtag, 'simple_replace', null, array(
-			'start_tag' => "<" . $htmltag . ">",
-			'end_tag' => "</" . $htmltag . ">"
+			'start_tag' => "<$htmltag>",
+			'end_tag' => "</$htmltag>"
 		), 'inline', array(
 			'listitem',
 			'block',
@@ -840,7 +751,7 @@ function &plugin_bbcode_init() {
  * @return string
  */
 function BBCode($text) {
-	$bbcode = &plugin_bbcode_init();
+	$bbcode = & plugin_bbcode_init();
 	return $bbcode->parse($text);
 }
 
@@ -849,34 +760,29 @@ function BBCode($text) {
  *
  * @global $_FP_SMARTY
  */
-function plugin_bbcode_init_toolbar() {
+function plugin_bbcode_toolbar() {
 	global $_FP_SMARTY;
-	$lang = lang_load('plugin:bbcode');
-	$selection = $lang ['admin'] ['plugin'] ['bbcode'] ['editor'] ['selection'];
-
-	// Get all available images
+	// get all available images
 	$indexer = new fs_filelister(IMAGES_DIR);
-	$imageslist = array_filter($indexer->getList(), function ($file) {
-		// Exclude hidden files
-		return substr(basename($file), 0, 1) !== '.';
-	});
-
-	// Sort by name
-	usort($imageslist, 'strnatcasecmp');
-	array_unshift($imageslist, $selection);
+	$imageslist = $indexer->getList();
+	// sort by name
+	sort($imageslist);
+	array_unshift($imageslist, '--');
 	$_FP_SMARTY->assign('images_list', $imageslist);
-
-	// Get all available attachments
+	// get all available attachements
 	$indexer = new fs_filelister(ATTACHS_DIR);
-	$attachslist = array_filter($indexer->getList(), function ($file) {
-		// Exclude hidden files
-		return substr(basename($file), 0, 1) !== '.';
-	});
-
-	// Sort by name
-	usort($attachslist, 'strnatcasecmp');
-	array_unshift($attachslist, $selection);
+	$attachslist = $indexer->getList();
+	// sort by name
+	sort($attachslist);
+	array_unshift($attachslist, '--');
 	$_FP_SMARTY->assign('attachs_list', $attachslist);
+	// DMKE: does not work
+	// $bblang = lang_load('plugin:bbcode');
+	// $_FP_SMARTY->assign('bblang', $bblang);
+	echo "<!-- bbcode plugin -->\n";
+	echo '<script type="text/javascript" src="' . plugin_geturl('bbcode') . 'res/editor.js"></script>' . "\n";
+	echo $_FP_SMARTY->fetch('plugin:bbcode/toolbar');
+	echo "<!-- end of bbcode plugin -->\n";
 }
 
 /**
@@ -999,31 +905,10 @@ function plugin_bbcode_comment($text) {
 }
 
 /**
- * Modifier BBcode to HTML for comments
- */
-function bbcode2html($html) {
-	$preg = array(
-		// [url]
-		'/(?<!\\\\)\[url(?::\w+)?\]www\.(.*?)\[\/url(?::\w+)?\]/si' => '<a href="https://www.\\1" target="_blank" class="externlink" rel="external">\\1</a>',
-		'/(?<!\\\\)\[url(?::\w+)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\1</a>',
-		'/(?<!\\\\)\[url(?::\w+)?=(.*?)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\2</a>',
-
-		// [list]
-		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\*(?::\w+)?\](.*?)(?=(?:\s*<br\s*\/?>\s*)?\[\*|(?:\s*<br\s*\/?>\s*)?\[\/?list)/si' => '<li>\\1</li>',
-		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\/list(:(?!u|o)\w+)?\](?:<br\s*\/?>)?/si' => '</ul>',
-		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\/list:o(:\w+)?\](?:<br\s*\/?>)?/si' => '</ol>',
-		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[list(:(?!u|o)\w+)?\]\s*(?:<br\s*\/?>)?/si' => '<ul class="list-unordered">',
-		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[list(?::o)?(:\w+)?=#\]\s*(?:<br\s*\/?>)?/si' => '<ol class="list-ordered">',
-	);
-	$html = preg_replace(array_keys($preg), array_values($preg), $html);
-	return $html;
-}
-
-/**
  * This is for [html] tag postprocess
  *
- * @param array $match Regex match array
- * @return string Cleaned HTML string
+ * @param unknown_type $match
+ * @return unknown
  */
 function plugin_bbcode_undoHtmlCallback($match) {
 	// builtin function (see core.wp-formatting)
@@ -1043,7 +928,7 @@ function plugin_bbcode_undoHtml($text) {
 			// html_entity_decode($content)
 			$content = str_replace('&lt;', '<', $content);
 			$content = str_replace('&gt;', '>', $content);
-			$text = str_replace("<!-- #HTML_BLOCK_" . $n . "# -->", $content, $text);
+			$text = str_replace("<!-- #HTML_BLOCK_{$n}# -->", $content, $text);
 		}
 		$GLOBALS ['BBCODE_TEMP_HTML'] = array();
 	}
@@ -1072,9 +957,8 @@ function obfuscateEmailAddress($originalString, $mode) {
 	$encodeMode = $mode;
 
 	for($i = 0; $i < $originalLength; $i++) {
-		if ($mode == 3) {
+		if ($mode == 3)
 			$encodeMode = rand(1, 2);
-		}
 		switch ($encodeMode) {
 			case 1: // Decimal code
 				$nowCodeString = "&#" . ord($originalString [$i]) . ";";
@@ -1089,4 +973,3 @@ function obfuscateEmailAddress($originalString, $mode) {
 	}
 	return $encodedString;
 }
-?>

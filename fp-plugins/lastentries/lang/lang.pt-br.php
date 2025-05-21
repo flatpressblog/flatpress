@@ -1,9 +1,14 @@
 <?php
-$lang ['plugin'] ['lastentries'] = array(
-	'subject_before_count' => 'Últimos ',
-	'subject_after_count' => ' posts',
-	'edit' => 'Editar',
-	'add_entry' => 'Adicionar um post',
-	'no_entries' => 'Não há posts'
-);
+
+	$lang['plugin']['lastentries'] = array(
+		
+		'subject_before_count'	=> 'Úlitimo ',
+		'subject_after_count'	=> ' posts',
+		'edit'			=> 'Edite',
+		'add_entry'		=> 'Adicione post',
+		'no_entries'	=> 'Sem Posts'
+	
+	
+	);
+
 ?>

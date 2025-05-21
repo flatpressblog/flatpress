@@ -1,27 +1,16 @@
 <?php
 
-// Add new protocol for template
+// aggiungere nuovo protocollo per template
 include (ADMIN_DIR . 'panels/admin.defaultpanels.php');
 include (ADMIN_DIR . 'includes/panels.prototypes.php');
+require (SMARTY_DIR . 'SmartyValidate.class.php');
 
 utils_nocache_headers();
 
 define('MOD_ADMIN_PANEL', 1);
 
-// Deactivate OPcache when the theme panel is called up
-if (function_exists('opcache_get_status') && ini_get('opcache.enable')) {
-	if (isset($_GET ['p']) && $_GET ['p'] === 'themes') {
-		ini_set('opcache.enable', 0);
-	}
-}
-
-/**
- * Handle failed nonce verification.
- *
- * @param string $action The action that was attempted (optional).
- */
-function wp_nonce_ays($action = '') {
-	die('We apologize, an error occurred.' . ($action ? ' Action: ' . htmlspecialchars($action) : ''));
+function wp_nonce_ays() {
+	die('We apologize, an error occurred.');
 }
 
 /*
@@ -31,11 +20,8 @@ function wp_nonce_ays($action = '') {
  */
 function main() {
 
-	// General setup
+	// general setup
 	global $panel, $action, $lang, $smarty, $fp_admin, $fp_admin_action;
-
-	// Register all Smarty modifier functions used by the admin templates
-	admin_register_smartyplugins();
 
 	$panels = admin_getpanels();
 
@@ -50,19 +36,18 @@ function main() {
 		die();
 	}
 
-	$panelprefix = 'admin.' . $panel;
-	$panelpath = ADMIN_DIR . 'panels/' . $panel . '/' . $panelprefix . '.php';
+	$panelprefix = "admin.$panel";
+	$panelpath = ADMIN_DIR . "panels/$panel/$panelprefix.php";
 
 	$fp_admin = null;
 
 	if (file_exists($panelpath)) {
 
 		include ($panelpath);
-		$panelclass = 'admin_' . $panel;
+		$panelclass = "admin_$panel";
 
-		if (!class_exists($panelclass)) {
+		if (!class_exists($panelclass))
 			trigger_error("No class defined for requested panel", E_USER_ERROR);
-		}
 
 		$fp_admin = new $panelclass($smarty);
 	}
@@ -75,31 +60,29 @@ function main() {
 	}
 
 	$action = isset($_GET ['action']) ? $_GET ['action'] : 'default';
-	if (!$fp_admin) {
+	if (!$fp_admin)
 		return;
-	}
 
 	$fp_admin_action = $fp_admin->get_action($action);
 
 	define('ADMIN_PANEL_ACTION', $action);
 	$smarty->assign('action', $action);
-	$panel_url = BLOG_BASEURL . 'admin.php?p=' . $panel;
-	$action_url = $panel_url . '&action=' . $action;
+	$panel_url = BLOG_BASEURL . "admin.php?p={$panel}";
+	$action_url = $panel_url . "&action={$action}";
 	$smarty->assign('panel_url', $panel_url);
 	$smarty->assign('action_url', $action_url);
 
-	if (!empty($_POST)) {
-		check_admin_referer('admin_' . $panel . '_' . $action);
-	}
+	if (!empty($_POST))
+		check_admin_referer("admin_{$panel}_{$action}");
 
-	$smarty->assign('success', sess_remove('success_' . $panel));
+	$smarty->assign('success', sess_remove("success_{$panel}"));
 	$retval = $fp_admin_action->exec();
 
 	if ($retval > 0) { // if has REDIRECT option
 	                   // clear postdata by a redirect
 
-		sess_add('success_' . $panel, $smarty->getTemplateVars('success'));
-		$smarty->getTemplateVars('success');
+		sess_add("success_{$panel}", $smarty->get_template_vars('success'));
+		$smarty->get_template_vars('success');
 
 		$to_action = $retval > 1 ? ('&action=' . $action) : '';
 		$with_mod = isset($_GET ['mod']) ? ('&mod=' . $_GET ['mod']) : '';
@@ -111,27 +94,29 @@ function main() {
 			}
 		}
 
-		$url = 'admin.php?p=' . $panel . $to_action . $with_mod . $with_arguments;
+		$url = "admin.php?p={$panel}{$to_action}{$with_mod}{$with_arguments}";
 		utils_redirect($url);
 	}
+
+	$smarty->register_modifier('action_link', 'admin_filter_action');
+	$smarty->register_modifier('cmd_link', 'admin_filter_command');
 }
 
 // smarty tag
 function admin_filter_action($string, $action) {
-	if (strpos($string, '?') === false) {
-		return $string .= '?action=' . $action;
-	} else {
-		return $string .= wp_specialchars('&action=' . $action);
-	}
+	if (strpos($string, '?') === false)
+		return $string .= "?action={$action}";
+	else
+		return $string .= wp_specialchars("&action={$action}");
 }
 
 // smarty tag
 function admin_filter_command($string, $cmd, $val) {
 	global $panel, $action;
 
-	$arg = $cmd ? '&' . $cmd : $cmd;
+	$arg = $cmd ? "&{$cmd}" : $cmd;
 
-	return wp_nonce_url($string . $arg . '=' . $val, 'admin_' . $panel . '_' . $action . '_' . $cmd . '_' . $val);
+	return wp_nonce_url("{$string}{$arg}={$val}", "admin_{$panel}_{$action}_{$cmd}_{$val}");
 }
 
 function admin_panelstrings($panelprefix) {
@@ -150,18 +135,18 @@ function admin_panel_title($title, $sep) {
 	global $lang, $panel;
 
 	$t = @$lang ['admin'] ['panels'] [$panel];
-	$title = $title . ' ' . $sep . ' ' . $t;
+	$title = "$title $sep $t";
 	return $title;
 }
 
-function showcontrolpanel($params, $smarty) {
+function showcontrolpanel($params, &$smarty) {
 	$smarty->display(ABS_PATH . ADMIN_DIR . 'main.tpl');
 }
 
 // html header
 function admin_title($title, $sep) {
 	global $lang;
-	return $title = $title . ' ' . $sep . ' ' . $lang ['admin'] ['head'];
+	return $title = "$title $sep {$lang['admin']['head']}";
 }
 
 add_filter('wp_title', 'admin_title', 10, 2);
@@ -169,58 +154,37 @@ add_filter('wp_title', 'admin_title', 10, 2);
 // setup admin_header
 function admin_header_default_action() {
 	global $panel, $action;
-	do_action('admin_' . $panel . '_' . $action . '_head');
+	do_action("admin_{$panel}_{$action}_head");
 }
 add_filter('admin_head', 'admin_header_default_action');
-
-/**
- * Registers all Smarty modifier functions used by the admin templates
- */
-function admin_register_smartyplugins() {
-	global $smarty;
-	$smarty->registerPlugin('modifier', 'action_link', 'admin_filter_action');
-	$smarty->registerPlugin('modifier', 'cmd_link', 'admin_filter_command');
-	// Plugin functions
-	if (function_exists('fpprotect_harden_prettyurls_plugin')) {
-		$smarty->registerPlugin('modifier', 'fpprotect_harden_prettyurls_plugin', 'fpprotect_harden_prettyurls_plugin');
-	}
-	$functionsToRegister = array(
-		// FlatPress functions
-		'entry_idtotime',
-		'plugin_getinfo',
-		'plugin_geturl',
-		'wp_specialchars',
-		'wp_nonce_url',
-		'wptexturize',
-		// PHP functions
-		'addslashes',
-		'array_intersect',
-		'array_key_exists',
-		'count',
-		'date',
-		'defined',
-		'function_exists',
-		'htmlspecialchars',
-		'in_array',
-		'is_numeric',
-		'sprintf'
-	);
-	foreach ($functionsToRegister as $functionToRegister) {
-		$smarty->registerPlugin('modifier', $functionToRegister, $functionToRegister);
-	}
-}
 
 $fp_config = config_load();
 system_init();
 main();
 admin_panelstrings('admin.' . ADMIN_PANEL);
 theme_init($smarty);
-$smarty->registerPlugin('function', 'controlpanel', 'showcontrolpanel');
+$smarty->register_function('controlpanel', 'showcontrolpanel');
 
 $v = $lang ['admin'] [$panel] [$action];
 
-$smarty->assignByRef('panelstrings', $v);
-$smarty->assignByRef('plang', $v);
+$smarty->assign_by_ref('panelstrings', $v);
+$smarty->assign_by_ref('plang', $v);
+
+// We create a varible to write user name in tpls
+if($user = user_loggedin()) {
+	$smarty->assign("username", $user['userid']);
+} else {
+	$smarty->assign("username", "#NAME#");
+}
+
+// Custom lang message for admin panel
+$smarty->assign("help_top", $lang['admin']['general']['help_top']);
+$smarty->assign("logout", $lang['admin']['general']['logout_top']);
+$smarty->assign("close", $lang['admin']['general']['close']);
+$smarty->assign("blog", $lang['admin']['general']['blog']);
+$smarty->assign("footer", $lang['admin']['general']['footer']);
+
+$smarty->assign("sceditor_display", "bbcode");
 
 if (isset($_GET ['mod'])) {
 
@@ -229,10 +193,11 @@ if (isset($_GET ['mod'])) {
 			$smarty->display(ABS_PATH . ADMIN_DIR . 'admin-inline.tpl');
 			break;
 		case 'ajax':
-			echo $smarty->getTemplateVars('success');
+			echo $smarty->get_template_vars('success');
 	}
 } else {
-	$smarty->display('admin.tpl');
+	#$smarty->display('admin.tpl');
+	$smarty->display(ABS_PATH . ADMIN_DIR . 'admin.tpl');
 }
 
 ?>

@@ -16,6 +16,4 @@ $lang ['comments'] ['mail'] = 'Αγαπητέ/η %toname%,
 
 ';
 
-$lang ['comments'] ['newcomment'] = 'νέο σχόλιο στο ';
-
 ?>

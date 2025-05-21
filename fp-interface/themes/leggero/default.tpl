@@ -1,10 +1,10 @@
-{include file="header.tpl"}
+{include file=header.tpl}
 	
 			<div id="main">
 				
 
 			<div class="entry">
-				<h2 class="title">{$subject}</h2>
+				<h3 class="title">{$subject}</h3>
 				<div class="body">
 				
 				{if isset($rawcontent) and $rawcontent} {$content}
@@ -15,9 +15,9 @@
 			
 			</div>
 			
-			{include file="widgets.tpl"}
+			{include file=widgets.tpl}
 			
-{include file="footer.tpl"}
+{include file=footer.tpl}
 
 
 

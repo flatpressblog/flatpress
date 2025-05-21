@@ -4,44 +4,24 @@ Leggero CSS Styles
 ===================
 
 Name: Leggero v2
-Author: NoWhereMan, Drudo, Marc Thibeault and Fraenkiman
-Version: 1.0
+Author: NoWhereMan, drudo & Marc Thibeault
+Version: 0.1
 Module: style.css
 */
 
 /* imports common style ruleset */
-@import url('common.css');
-@import url('globals.css');
+@import url(common.css);
+@import url(globals.css);
 
 /* imports column (where widgets usually go) rules */
-@import url('column.css');
+@import url(column.css);
 
 #comments li.comment-admin {
-	padding: 1em
+	padding:1em
 }
+
+#comments li.comment-admin strong.comment-name { font-size:140% }
 
 #widget-searchbox form {
-	text-align: center
-}
-
-/* Last Comments-Widget */
-.comment-quote {
-	margin-left: auto;
-	margin-right: auto;
-	border-radius: 3px
-}
-
-@media (min-width: 720px) {
-	.comment-quote { width: auto }
-}
-
-/* Calendar-Widget */
-.calendar {
-	margin-left: auto;
-	margin-right: auto;
-	text-align: center
-}
-
-@media (min-width: 720px) {
-	.calendar { font-size: small !IMPORTANT }
+	text-align: center;
 }

@@ -44,10 +44,9 @@ function plugin_lastentries_widget() {
 
 		$string .= '<li>';
 		$admin = BLOG_BASEURL . "admin.php?p=entry&amp;entry=";
-		if (user_loggedin()) { // if loggedin prints a "edit" link
-			$string .= "<a href=\"" . $admin . $id . "\">[" . $lang ['plugin'] ['lastentries'] ['edit'] . "]</a>";
-		}
-		$string .= "<a href=\"" . $link . "\">" . $entry ['subject'] . "</a></li>\n";
+		if (user_loggedin()) // if loggedin prints a "edit" link
+			$string .= "<a href=\"{$admin}{$id}\">[" . $lang ['plugin'] ['lastentries'] ['edit'] . "]</a>";
+		$string .= "<a href=\"{$link}\">{$entry['subject']}</a></li>\n";
 
 		$count++;
 	}
@@ -55,9 +54,8 @@ function plugin_lastentries_widget() {
 	if ($string == '<ul>') {
 		$string .= '<li><a href="admin.php?p=entry&amp;action=write">' . $lang ['plugin'] ['lastentries'] ['add_entry'] . '</a></li>';
 		$subject = $lang ['plugin'] ['lastentries'] ['no_entries'];
-	} else {
+	} else
 		$subject = $lang ['plugin'] ['lastentries'] ['subject_before_count'] . $count . $lang ['plugin'] ['lastentries'] ['subject_after_count'];
-	}
 
 	$string .= '</ul>';
 

@@ -6,7 +6,7 @@
  */
 function _get_nextprev_link($nextprev) {
 	global $fpdb;
-	$q = &$fpdb->getQuery();
+	$q = & $fpdb->getQuery();
 
 	list ($caption, $id) = call_user_func(array(
 		&$q,
@@ -17,18 +17,18 @@ function _get_nextprev_link($nextprev) {
 		return null;
 
 	if ($q->single) {
-		$link = "?entry=" . $id;
+		$link = "?entry={$id}";
 	} else {
 		if ($_SERVER ['QUERY_STRING']) {
 
 			if (strpos($_SERVER ['QUERY_STRING'], 'paged') !== false) {
-				$link = '?' . preg_replace('{paged=[0-9]+}', "paged=" . $id, $_SERVER ['QUERY_STRING']);
+				$link = '?' . preg_replace('{paged=[0-9]+}', "paged={$id}", $_SERVER ['QUERY_STRING']);
 			} else {
-				$link = '?' . $_SERVER ['QUERY_STRING'] . "&paged=" . $id;
+				$link = '?' . $_SERVER ['QUERY_STRING'] . "&paged={$id}";
 			}
 			$link = str_replace('&', '&amp;', $link);
 		} else {
-			$link = "?paged=" . $id;
+			$link = "?paged={$id}";
 		}
 	}
 
@@ -42,12 +42,11 @@ if (!function_exists('get_nextpage_link')) :
 
 	function get_nextpage_link() {
 		global $fpdb;
-		$q = &$fpdb->getQuery();
+		$q = & $fpdb->getQuery();
 
 		$a = _get_nextprev_link('NextPage');
 
-		// show next entry link only if there actually is a next entry - and only if one single entry is displayed
-		if (isset($a) && $q->single) {
+		if ($q->single) {
 			$a [0] .= ' &raquo; ';
 		}
 
@@ -59,12 +58,11 @@ if (!function_exists('get_prevpage_link')) :
 
 	function get_prevpage_link() {
 		global $fpdb;
-		$q = &$fpdb->getQuery();
+		$q = & $fpdb->getQuery();
 
 		$a = _get_nextprev_link('PrevPage');
 
-		// show previous entry link only if there actually is a previous entry - and only if one single entry is displayed
-		if (isset($a) && $q->single) {
+		if ($q->single) {
 			$a [0] = ' &laquo; ' . $a [0];
 		}
 
@@ -178,15 +176,10 @@ if (!function_exists('wp_mail')) :
 
 	function wp_mail($to, $subject, $message, $headers = '') {
 		if ($headers == '') {
-			$headers = "MIME-Version: 1.0\r\n" . //
-				"From: " . get_settings('admin_email') . "\r\n" . //
-				"Content-Type: text/plain; charset=\"" . get_settings('blog_charset') . "\"\r\n";
+			$headers = "MIME-Version: 1.0\n" . "From: " . get_settings('admin_email') . "\n" . "Content-Type: text/plain; charset=\"" . get_settings('blog_charset') . "\"\n";
 		}
-		/*
-		* for non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64
-		* https://ncona.com/2011/06/using-utf-8-characters-on-an-e-mail-subject/
-		*/
-		return @mail($to, '=?' . get_settings('blog_charset') . '?B?' . base64_encode($subject) . '?=', $message, $headers);
+
+		return @mail($to, $subject, $message, $headers);
 	}
 endif;
 
@@ -253,9 +246,8 @@ if (!function_exists('wp_redirect')) :
 
 		$location = apply_filters('wp_redirect', $location, $status);
 
-		if (!$location) { // allows the wp_redirect filter to cancel a redirect
+		if (!$location) // allows the wp_redirect filter to cancel a redirect
 			return false;
-		}
 
 		$location = preg_replace('|[^a-z0-9-~+_.?#=&;,/:%]|i', '', $location);
 		// $location = wp_kses_no_null($location);
@@ -270,12 +262,11 @@ if (!function_exists('wp_redirect')) :
 		$location = str_replace($strip, '', $location);
 
 		if ($is_IIS) {
-			header("Refresh: 0;url=" . $location);
+			header("Refresh: 0;url=$location");
 		} else {
-			if (php_sapi_name() != 'cgi-fcgi') {
+			if (php_sapi_name() != 'cgi-fcgi')
 				utils_status_header($status); // This causes problems on IIS and some FastCGI setups
-			}
-			header("Location: " . $location);
+			header("Location: $location");
 		}
 	}
 endif;
@@ -283,15 +274,13 @@ endif;
 if (!function_exists('wp_setcookie')) :
 
 	function wp_setcookie($username, $password, $already_md5 = false, $home = '', $siteurl = '') {
-		if (!$already_md5) {
+		if (!$already_md5)
 			$password = md5(md5($password)); // Double hash the password in the cookie.
-		}
 
-		if (empty($home)) {
+		if (empty($home))
 			$cookiepath = COOKIEPATH;
-		} else {
+		else
 			$cookiepath = preg_replace('|https?://[^/]+|i', '', $home . '/');
-		}
 
 		if (empty($siteurl)) {
 			$sitecookiepath = SITECOOKIEPATH;
@@ -301,12 +290,12 @@ if (!function_exists('wp_setcookie')) :
 			$cookiehash = md5($siteurl);
 		}
 
-		setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $cookiepath, COOKIE_SECURE, COOKIE_HTTPONLY);
-		setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $cookiepath, COOKIE_SECURE, COOKIE_HTTPONLY);
+		setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $cookiepath, COOKIE_SECURE);
+		setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $cookiepath, COOKIE_SECURE);
 
 		if ($cookiepath != $sitecookiepath) {
-			setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $sitecookiepath, COOKIE_SECURE, COOKIE_HTTPONLY);
-			setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $sitecookiepath, COOKIE_SECURE, COOKIE_HTTPONLY);
+			setcookie('wordpressuser_' . $cookiehash, $username, time() + 31536000, $sitecookiepath, COOKIE_SECURE);
+			setcookie('wordpresspass_' . $cookiehash, $password, time() + 31536000, $sitecookiepath, COOKIE_SECURE);
 		}
 	}
 endif;
@@ -314,10 +303,10 @@ endif;
 if (!function_exists('wp_clearcookie')) :
 
 	function wp_clearcookie() {
-		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH, COOKIE_SECURE, COOKIE_HTTPONLY);
-		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH, COOKIE_SECURE, COOKIE_HTTPONLY);
-		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_SECURE, COOKIE_HTTPONLY);
-		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_SECURE, COOKIE_HTTPONLY);
+		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH, COOKIE_SECURE);
+		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH, COOKIE_SECURE);
+		setcookie('wordpressuser_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_SECURE);
+		setcookie('wordpresspass_' . COOKIEHASH, ' ', time() - 31536000, SITECOOKIEPATH, COOKIE_SECURE);
 	}
 endif;
 
@@ -336,59 +325,26 @@ endif;
 
 if (!function_exists('wp_verify_nonce')) :
 
-	/**
-	 * Verifies the given nonce for the given action string.
-	 *
-	 * @param string $nonce the nonce to verify
-	 * @param string $action the action
-	 * @return boolean <code>true</code> if the nonce is valid; <code>false</code> otherwise
-	 */
-	function wp_verify_nonce($nonce, $action = '') {
+	function wp_verify_nonce($nonce, $action = -1) {
 		$user = user_get();
-
-		// Check if user exists and has a valid user ID
-		if (!$user || !isset($user ['userid'])) {
-			//error_log('wp_verify_nonce: No user is logged in or user data is missing.');
-			return false;
-		}
-
 		$uid = $user ['userid'];
 
-		// New nonce each 12 hours
-		$i = ceil(time() / (60 * 60 * 12));
+		$i = ceil(time() / 43200);
 
-		// The nonce we expect for the given action at the current time
-		$expectedNonce = substr(wp_hash($i . $action . $uid), -12, 10);
-		// The nonce we expect for the given action in the previous time period
-		$expectedPreviousNonce = substr(wp_hash(($i - 1) . $action . $uid), -12, 10);
-
-		// Given nonce must match the current or the previous nonce
-		return $nonce === $expectedNonce || $nonce === $expectedPreviousNonce;
+		// Allow for expanding range, but only do one check if we can
+		if (substr(wp_hash($i . $action . $uid), -12, 10) == $nonce || substr(wp_hash(($i - 1) . $action . $uid), -12, 10) == $nonce)
+			return true;
+		return false;
 	}
 endif;
 
 if (!function_exists('wp_create_nonce')) :
 
-	/**
-	 * Creates and returns the valid nonce.
-	 *
-	 * @param int $action optional: the action
-	 * @return string|null The nonce or null if no user is logged in.
-	 */
 	function wp_create_nonce($action = -1) {
-		// Get the info array of the user currently logged in
 		$user = user_get();
-
-		// Check if the user data is available
-		if (!$user || !isset($user ['userid'])) {
-			//error_log('wp_create_nonce: No user is logged in or user data is missing.');
-			return null; // Return null if no user is logged in
-		}
-
 		$uid = $user ['userid'];
 
-		// New nonce each 12 hours
-		$i = ceil(time() / (60 * 60 * 12));
+		$i = ceil(time() / 43200);
 
 		return substr(wp_hash($i . $action . $uid), -12, 10);
 	}
@@ -397,22 +353,18 @@ endif;
 if (!function_exists('wp_salt')) :
 
 	/**
-	 * Returns a salt for hashing.<br>
-	 * The salt is unique for each FlatPress installation; see <code>fp-content/config/hashsalt.conf.php</code>
 	 *
-	 * @return string the salt
+	 * @return NULL|unknown
+	 * @deprecated as of FlatPress 1.2 - still here only to be able to update pre-1.2 credentials
 	 */
 	function wp_salt() {
 		global $fp_config;
 		static $salt = null;
 		if (!$salt) {
-			// get the salt from the hashsalt file
-			if (file_exists(HASHSALT_FILE)) {
-				/** @phpstan-ignore-next-line */
-				@include (HASHSALT_FILE);
-			} else {
+			@include (HASHSALT_FILE);
+			if (!$fp_hashsalt)
 				trigger_error('Cannot load hash salt: reinstall FlatPress', E_USER_ERROR);
-			}
+
 			$salt = $fp_hashsalt;
 		}
 		return $salt;
@@ -422,11 +374,10 @@ endif;
 if (!function_exists('wp_hash')) :
 
 	/**
-	 * Creates a salted MD5 hash of the given string.
 	 *
-	 * @param string $data
-	 *        	the string to hash
-	 * @return string the hash
+	 * @param unknown $data
+	 * @return string
+	 * @deprecated as of FlatPress 1.2 - still here only to be able to update pre-1.2 credentials
 	 */
 	function wp_hash($data) {
 		$salt = wp_salt();

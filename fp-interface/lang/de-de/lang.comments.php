@@ -16,6 +16,4 @@ Automatisch generiert von,
 
 ';
 
-$lang ['comments'] ['newcomment'] = 'Neuer Kommentar auf ';
-
 ?>

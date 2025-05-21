@@ -1,20 +1,5 @@
 <?php
-/**
- * Loads and initializes theme settings.
- *
- * @global array $fp_config
- * @global array $theme
- * @global string $FLATPRESS
- * @return array{
- *   name: string,
- *   author: string,
- *   www: string,
- *   version: float|int,
- *   default_style: null|string,
- *   style: array{style_def: string, style_admin: string},
- *   admin_custom_interf: bool
- * }
- */
+
 function theme_loadsettings() {
 	global $fp_config, $theme, $FLATPRESS;
 
@@ -28,7 +13,7 @@ function theme_loadsettings() {
 		// fp version
 		'version' => -1,
 		// default style (must be in res/ dir
-		'default_style' => null,
+
 		'style' => array(
 
 			'style_def' => 'style.css',
@@ -41,9 +26,8 @@ function theme_loadsettings() {
 		'admin_custom_interf' => false
 	);
 
-	if (!defined('THE_THEME')) {
+	if (!defined('THE_THEME'))
 		define('THE_THEME', $fp_config ['general'] ['theme']);
-	}
 
 	// backward compatibility:
 	$conf1 = THEMES_DIR . THE_THEME . '/theme_conf.php';
@@ -61,20 +45,18 @@ function theme_loadsettings() {
 	}
 
 	if (!defined('THEME_LEGACY_MODE')) {
-		/** @phpstan-ignore-next-line */
 		if ($theme ['version'] < 0.702) {
 			define('THEME_LEGACY_MODE', true);
 			theme_register_default_widgetsets();
 		} else {
 			define('THEME_LEGACY_MODE', false);
 
-			if ($theme ['default_style']) {
+			if (isset($theme ['default_style'])) {
 
-				if (!isset($fp_config ['general'] ['style'])) {
+				if (!isset($fp_config ['general'] ['style']))
 					$fp_config ['general'] ['style'] = $theme ['default_style'];
-				}
 
-				include(THEMES_DIR . THE_THEME . "/" . $fp_config ['general'] ['style'] . "/style.conf.php");
+				include (THEMES_DIR . THE_THEME . "/{$fp_config['general']['style']}/style.conf.php");
 
 				$theme ['style'] = $style;
 			} else {
@@ -88,9 +70,8 @@ function theme_loadsettings() {
 		}
 
 		// no widgets registered, load default set
-		if (!get_registered_widgets()) {
+		if (!get_registered_widgets())
 			theme_register_default_widgetsets();
-		}
 	}
 
 	ob_end_clean();
@@ -112,18 +93,16 @@ function theme_getdir($id = THE_THEME) {
 function theme_exists($id) {
 	// quick fix for win
 	$f = THEMES_DIR . ($id);
-	if (file_exists($f)) {
+	if (file_exists($f))
 		return $f . '/';
-	}
 
 	return '';
 }
 
 function theme_style_exists($id, $themeid = THE_THEME) {
 	if ($f = theme_exists($themeid)) {
-		if (file_exists($f)) {
+		if (file_exists($f))
 			return $f . '/';
-		}
 	}
 	return '';
 }
@@ -141,7 +120,7 @@ function theme_list() {
 	$dh = opendir($dir);
 	$i = 0;
 	while (false !== ($filename = readdir($dh))) {
-		if (!fs_is_directorycomponent($filename)) {
+		if (($filename != '.') && ($filename != '..')) {
 			$files [$i++] = $filename;
 		}
 	}
@@ -150,14 +129,14 @@ function theme_list() {
 }
 
 function theme_wp_head() {
-	global $fp_config, $lang;
+	global $fp_config;
 
 	echo "\n<!-- FP STD HEADER -->\n";
 
-	echo '<meta name="generator" content="FlatPress ' . system_ver() . '">' . "\n";
-	echo '<link rel="alternate" type="application/rss+xml" title="' . $lang ['main'] ['entries'] . ' | RSS 2.0" href="' . theme_feed_link('rss2') . '">' . "\n";
+	echo "\n<meta name=\"generator\" content=\"FlatPress " . system_ver() . "\" />\n";
+	echo "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Get RSS 2.0 Feed\" href=\"" . theme_feed_link('rss2') . "\" />\n";
 
-	echo '<link rel="alternate" type="application/atom+xml" title="' . $lang ['main'] ['entries'] . ' | Atom 1.0" href="' . theme_feed_link('atom') . '">' . "\n";
+	echo "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Get Atom 1.0 Feed\" href=\"" . theme_feed_link('atom') . "\" />\n";
 
 	echo "<!-- EOF FP STD HEADER -->\n";
 }
@@ -175,12 +154,12 @@ function theme_head_stylesheet() {
 
 	$substyle = '/' . (isset($fp_config ['general'] ['style']) ? $fp_config ['general'] ['style'] . '/' : '');
 
-	echo $substyle . 'res/' . $css . '" type="text/css" rel="stylesheet">';
+	echo $substyle . 'res/' . $css . '" type="text/css" rel="stylesheet" />';
 
 	if (@$theme ['style'] ['style_print']) {
 		echo '<link media="print" href="';
 		echo BLOG_BASEURL . THEMES_DIR . THE_THEME;
-		echo $substyle . 'res/' . $theme ['style'] ['style_print'] . '" type="text/css" rel="stylesheet">';
+		echo $substyle . 'res/' . $theme ['style'] ['style_print'] . '" type="text/css" rel="stylesheet" />';
 	}
 
 	echo "\n<!-- FP STD STYLESHEET -->\n";
@@ -188,9 +167,8 @@ function theme_head_stylesheet() {
 
 function admin_head_action() {
 	global $theme;
-	if (!$theme ['admin_custom_interface']) {
-		echo '<link media="screen" href="' . BLOG_BASEURL . 'admin/res/admin.css" type="text/css" rel="stylesheet">';
-	}
+	if (!$theme ['admin_custom_interface'])
+		echo '<link media="screen" href="' . BLOG_BASEURL . 'admin/res/admin.css" type="text/css" rel="stylesheet" />';
 }
 
 add_filter('admin_head', 'admin_head_action');
@@ -200,12 +178,11 @@ add_action('wp_head', 'theme_head_stylesheet');
 
 function get_wp_head() {
 	do_action('wp_head');
-	if (class_exists('AdminPanel')) {
+	if (class_exists('AdminPanel'))
 		do_action('admin_head');
-	}
 }
 
-$smarty->registerPlugin('function', 'header', 'get_wp_head');
+$smarty->register_function('header', 'get_wp_head');
 
 function theme_wp_footer() {
 	global $fp_config;
@@ -218,28 +195,21 @@ function get_wp_footer() {
 	do_action('wp_footer');
 }
 
-$smarty->registerPlugin('function', 'footer', 'get_wp_footer');
+$smarty->register_function('footer', 'get_wp_footer');
 
 function theme_charset() {
 	global $fp_config;
-	$charset = strtoupper($fp_config ['locale'] ['charset']);
-	header('Content-Type: text/html; charset=' . $charset);
+	header('Content-Type: text/html; charset=' . $fp_config ['general'] ['charset']);
 }
 
 add_action('init', 'theme_charset');
 
-/**
- * Initializes the theme.
- *
- * @param Smarty $smarty Smarty template engine instance
- * @param object|null $layout The layout instance (optional)
- */
-function theme_init(&$smarty, $layout = null) { /* &$mode */
+function theme_init(&$smarty) { /* &$mode */
 	global $fp_config, $lang, $theme, $fp_params;
 
 	// avoid compiled tpl collision (i.e. change theme without this and cry)
 	$smarty->compile_id = md5($fp_config ['general'] ['theme']);
-	$smarty->setTemplateDir([ABS_PATH . THEMES_DIR . $fp_config ['general'] ['theme'] . '/']);
+	$smarty->template_dir = ABS_PATH . THEMES_DIR . $fp_config ['general'] ['theme'] . '/';
 
 	$loggedin = user_loggedin();
 
@@ -252,9 +222,8 @@ function theme_init(&$smarty, $layout = null) { /* &$mode */
 
 	$flatpress ['loggedin'] = $loggedin;
 
-	if ($loggedin) {
+	if ($loggedin)
 		$flatpress ['user'] = user_get();
-	}
 
 	// useful shorthand for themes
 	// e.g. {$flatpress.themeurl}imgs/myimage.png
@@ -281,25 +250,20 @@ function theme_init(&$smarty, $layout = null) { /* &$mode */
 
 	$smarty->assign('pagetitle', apply_filters('wp_title', "", '&laquo;'));
 
-	$smarty->assignByRef('fp_config', $fp_config);
+	$smarty->assign_by_ref('fp_config', $fp_config);
 
-	$smarty->registerPlugin('modifier', 'tag', 'theme_apply_filters_wrapper');
-	$smarty->registerPlugin('modifier', 'link', 'theme_apply_filters_link_wrapper');
-	$smarty->registerPlugin('modifier', 'filed', 'theme_entry_categories');
+	$smarty->register_modifier('tag', 'theme_apply_filters_wrapper');
+	$smarty->register_modifier('link', 'theme_apply_filters_link_wrapper');
+	$smarty->register_modifier('filed', 'theme_entry_categories');
 
 	if (!isset($fp_params ['feed']) || empty($fp_params ['feed'])) {
-		$smarty->registerPlugin('modifier', 'date_format_daily', 'theme_smarty_modifier_date_format_daily');
-		$smarty->registerPlugin('modifier', 'date_format', 'theme_date_format');
+		$smarty->register_modifier('date_format_daily', 'theme_smarty_modifier_date_format_daily');
+		$smarty->register_modifier('date_format', 'theme_date_format');
 	}
 
-	$smarty->registerPlugin('modifier', 'date_rfc3339', 'theme_smarty_modifier_date_rfc3339');
+	$smarty->register_modifier('date_rfc3339', 'theme_smarty_modifier_date_rfc3339');
 
-	$smarty->registerPlugin('function', 'action', 'theme_smarty_function_action');
-
-	if (!isset($smarty->registered_plugins['modifier']['fix_encoding_issues'])) {
-		// This modifier converts characters such as Ã¤ to ä or &#8220; to “. See core.language.php
-		$smarty->registerPlugin('modifier', 'fix_encoding_issues', 'fix_encoding_issues');
-	}
+	$smarty->register_function('action', 'theme_smarty_function_action');
 
 	do_action('theme_init');
 }
@@ -308,7 +272,7 @@ function smarty_block_page($params, $content) {
 	return $content;
 }
 
-$smarty->registerPlugin('block', 'page', 'smarty_block_page');
+$smarty->register_block('page', 'smarty_block_page');
 
 function theme_apply_filters_wrapper($var, $hook) {
 	$args = func_get_args();
@@ -334,28 +298,22 @@ function theme_apply_filters_link_wrapper($var, $hook) {
 	return call_user_func_array('apply_filters', $args);
 }
 
-function theme_smarty_function_action($params, $smarty) {
-	if (isset($params ['hook'])) {
+function theme_smarty_function_action($params, &$smarty) {
+	if (isset($params ['hook']))
 		do_action($params ['hook']);
-	}
 }
 
 function theme_date_format($string, $format = null, $default_date = '') {
-	$timestamp = null;
+	$timestamp = 0;
 
 	if ($string) {
-		// Conversion to timestamp, if string
-		$timestamp = is_numeric($string) ? $string : strtotime($string); // smarty_make_timestamp($string);
+		$timestamp = $string; // smarty_make_timestamp($string);
 	} elseif ($default_date != '') {
-		$timestamp = is_numeric($default_date) ? $default_date : strtotime($default_date); // smarty_make_timestamp($default_date);
+		$timestamp = $default_date; // smarty_make_timestamp($default_date);
+	} else {
+		return;
 	}
 
-	// If no valid timestamp is available, the current time is used
-	if ($timestamp === null || $timestamp === false) {
-		$timestamp = date_time();
-	}
-
-	// Use default format if no format is specified
 	if (is_null($format)) {
 		global $fp_config;
 		$format = $fp_config ['locale'] ['timeformat'];
@@ -367,9 +325,8 @@ function theme_date_format($string, $format = null, $default_date = '') {
 function theme_smarty_modifier_date_format_daily($string, $format = null, $default_date = '') {
 	global $THEME_CURRENT_DAY, $lang, $fp_config;
 
-	if (is_null($format)) {
+	if (is_null($format))
 		$format = $fp_config ['locale'] ['dateformat'];
-	}
 
 	$current_day = theme_date_format($string, $format, $default_date);
 
@@ -386,15 +343,15 @@ function theme_smarty_modifier_date_format_daily($string, $format = null, $defau
  * Get date in RFC3339
  * For example used in XML/Atom
  *
- * @param string|int|null $timestamp The timestamp to be formatted. Defaults to null.
+ * @param integer $timestamp
  * @return string date in RFC3339
  * @author Boris Korobkov
  * @see http://tools.ietf.org/html/rfc3339 http://it.php.net/manual/en/function.date.php#75757
  *     
  */
-function theme_smarty_modifier_date_rfc3339($timestamp = null) {
-	if ($timestamp === null) {
-		$timestamp = date_time();
+function theme_smarty_modifier_date_rfc3339($timestamp = '') {
+	if (!$timestamp) {
+		$timestamp = time();
 	}
 
 	$date = date('Y-m-d\TH:i:s', $timestamp);
@@ -413,7 +370,7 @@ function theme_smarty_modifier_date_rfc3339($timestamp = null) {
 add_filter('feed_link', 'theme_def_feed_link', 0, 2);
 
 function theme_def_feed_link($str, $type) {
-	return BLOG_BASEURL . '?x=feed:' . $type;
+	return BLOG_BASEURL . "?x=feed:{$type}";
 }
 
 function theme_feed_link($feed = 'rss2') {
@@ -423,7 +380,7 @@ function theme_feed_link($feed = 'rss2') {
 add_filter('post_comments_feed_link', 'theme_def_feed_comments_link', 0, 3);
 
 function theme_def_feed_comments_link($str, $feed, $id) {
-	return BLOG_BASEURL . '?x=entry:' . $id . ';comments:1;feed:' . $feed;
+	return BLOG_BASEURL . "?x=entry:$id;comments:1;feed:{$feed}";
 }
 
 function theme_comments_feed_link($feed, $id) {
@@ -436,7 +393,7 @@ function theme_comments_feed_link($feed, $id) {
 add_filter('post_link', 'theme_def_permalink', 0, 2);
 
 function theme_def_permalink($str, $id) {
-	return BLOG_BASEURL . '?x=entry:' . $id;
+	return BLOG_BASEURL . "?x=entry:$id";
 }
 
 function get_permalink($id) {
@@ -446,7 +403,7 @@ function get_permalink($id) {
 add_filter('comments_link', 'theme_def_commentlink', 0, 2);
 
 function theme_def_commentlink($str, $id) {
-	return BLOG_BASEURL . '?x=entry:' . $id . ';comments:1';
+	return BLOG_BASEURL . "?x=entry:$id;comments:1";
 }
 
 function get_comments_link($id) {
@@ -456,7 +413,7 @@ function get_comments_link($id) {
 add_filter('page_link', 'theme_def_staticlink', 0, 2);
 
 function theme_def_staticlink($str, $id) {
-	return BLOG_BASEURL . '?page=' . $id;
+	return BLOG_BASEURL . "?page=$id";
 }
 
 function theme_staticlink($id) {
@@ -466,7 +423,7 @@ function theme_staticlink($id) {
 add_filter('category_link', 'theme_def_catlink', 0, 2);
 
 function theme_def_catlink($str, $catid) {
-	return BLOG_BASEURL . '?x=cat:' . $catid;
+	return BLOG_BASEURL . "?x=cat:$catid";
 }
 
 function get_category_link($catid) {
@@ -510,7 +467,7 @@ function theme_entry_categories($cats, $link = true, $separator = ', ') {
 				if (array_intersect(array(
 					$k
 				), $cats)) {
-					$filed [] = $link ? '<a href="' . get_category_link($k) . '">' . $c . '</a>' : $c;
+					$filed [] = $link ? "<a href=\"" . get_category_link($k) . "\">$c</a>" : $c;
 				}
 			}
 		}

@@ -18,16 +18,15 @@ $lang ['admin'] ['panels'] = array(
 );
 
 $lang ['admin'] ['general'] = array(
-	'id' => 'Id', // for entry ids
-	'name' => 'Naam', // for file names
-	'title' => 'Titel', // for entry/posts/static titles
-	'comments' => '#Comms',
+	'id' 		=> 'Id', // for entry ids
+	'name' 		=> 'Naam', // for file names
+	'title' 	=> 'Titel', // for entry/posts/static titles
+	'comments' 	=> '#Comms',
 	'author' => 'Auteur',
 	'actdel' => 'Verwijder',
 	'actedit' => 'Bewerk',
 	'actenable' => 'Inschakelen',
-	'actdisable' => 'Uitschakelen',
-	'startpage' => 'Startpagina',
-	'logout' => 'Afmelden'
+	'actdisable' => 'Uitschakelen'
 );
+
 ?>

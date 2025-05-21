@@ -3,7 +3,7 @@ $lang ['admin'] ['head'] = 'Administration area';
 
 $lang ['admin'] ['panels'] = array(
 	'main' => 'Main',
-	'config' => 'Configuration',
+	'config' => 'Options',
 	// 'users' => 'Users',
 	'entry' => 'Entries',
 	'static' => 'Statics',
@@ -27,7 +27,12 @@ $lang ['admin'] ['general'] = array(
 	'actedit' => 'Edit',
 	'actenable' => 'Enable',
 	'actdisable' => 'Disable',
-	'startpage' => 'Startpage',
-	'logout' => 'Logout'
+	// New admin panel
+	'help_top'  => 'Help',
+	'logout_top'    => 'Logout',
+	'close'		=> 'Close',
+	'blog'		=> 'Blog',
+	'footer'	=> 'This blog is proudly powered by'
 );
+
 ?>

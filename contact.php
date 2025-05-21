@@ -1,236 +1,80 @@
 <?php
 require_once 'defaults.php';
-require_once INCLUDES_DIR . 'includes.php';
+require_once (INCLUDES_DIR . 'includes.php');
+require SMARTY_DIR . 'SmartyValidate.class.php';
 
-// contact form fields
-$contactform_inputs = array(
-	'name',
-	'email',
-	'url',
-	'content'
-);
+function contact_form_validate() {
+	$arr ['version'] = system_ver();
+	$arr ['name'] = $_POST ['name'];
 
-/**
- * Validates the POST data and returns a validated array (key=>value) - or <code>false</code> if validation failed
- *
- * @return boolean|array
- */
-function contact_validate() {
-	global $smarty, $contactform_inputs, $fp_config, $lang;
+	if (!empty($_POST ['email']))
+		($arr ['email'] = $_POST ['email']);
+	if (!empty($_POST ['url']))
+		($arr ['url'] = $_POST ['url']);
+	$arr ['content'] = $_POST ['content'];
 
-	$lerr = &$lang ['contact'] ['error'];
+	$arr ['ip-address'] = utils_ipget();
 
-	$r = true;
-
-	$name = strip_tags(sanitize_contact($_POST ['name'] ?? ''));
-	$email = strip_tags(sanitize_contact($_POST ['email'] ?? '', FILTER_VALIDATE_EMAIL));
-	$url = strip_tags(sanitize_contact(ensure_https_url($_POST ['url'] ?? ''), FILTER_SANITIZE_URL));
-	$content = isset($_POST ['content']) ? sanitize_contact($_POST ['content']) : '';
-
-	$errors = array();
-
-	// If the request does not contain all input fields, it might be forged
-	foreach ($contactform_inputs as $input) {
-		if (!array_key_exists($input, $_POST)) {
-			return false;
-		}
-	}
-
-	// Check name
-	if (empty($name)) {
-		$errors ['name'] = $lerr ['name'];
-	}
-
-	// Check email
-	if (!empty($_POST ['email']) && !$email) {
-		$errors ['email'] = $lerr ['email'];
-	}
-
-	// Check url
-	if (!empty($_POST ['url']) && !$url) {
-		$errors ['url'] = $lerr ['www'];
-	}
-
-	// Check content
-	if (empty($content)) {
-		$errors ['content'] = $lerr ['content'];
-	}
-
-	// Assign error messages to template
-	if (!empty($errors)) {
-		$smarty->assign('error', $errors);
-		return false;
-	}
-
-	$arr = [
-		'version' => system_ver(),
-		'name' => $name,
-		'email' => $email ? : null,
-		'url' => $url ? : null,
-		'content' => $content,
-		'ip-address' => utils_ipget() ? : null,
-	];
-
-	// Check aaspam if active
-	if (apply_filters('comment_validate', true, $arr)) {
+	if (apply_filters('comment_validate', true, $arr))
 		return $arr;
-	} else {
+	else
 		return false;
-	}
 }
 
-function sanitize_contact($data, $filter = FILTER_UNSAFE_RAW) {
-	global $fp_config;
-	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+function contact_form() {
+	global $smarty, $lang, $fp_config;
 
-	$data = trim($data);
-	$data = filter_var($data, $filter) ? : '';
-
-	// Removes dangerous characters for flat file manipulation and potential code injections
-	$unsafe_patterns = [
-		"<?", "?>", ";", "eval", "base64_decode", "base64_encode",
-		"system", "exec", "shell_exec", "proc_open", "passthru", "popen",
-		"curl_exec", "curl_multi_exec", "fopen", "fwrite", "file_put_contents"
-	];
-	$data = str_replace($unsafe_patterns, "", $data);
-
-	// Block potential SQL injection patterns
-	$sql_patterns = [
-		'/\bSELECT\b/i', '/\bINSERT\b/i', '/\bUPDATE\b/i', '/\bDELETE\b/i', '/\bDROP\b/i',
-		'/\bUNION\b/i', '/\bALTER\b/i', '/\bEXEC\b/i', '/\bOR\b\s*\d+=\d+/i', '/\bAND\b\s*\d+=\d+/i',
-		'/--/', '/;/', '/\bNULL\b/i', '/\bTRUE\b/i', '/\bFALSE\b/i', '/\bINFORMATION_SCHEMA\b/i',
-		'/\bTABLE_SCHEMA\b/i', '/\bCONCAT\b/i', '/\bSLEEP\b/i', '/\bBENCHMARK\b/i'
-	];
-	$data = preg_replace($sql_patterns, '', $data) ? : '';
-
-	// Check for potentially dangerous flat file characters
-	if (preg_match('/\|{2,}|::{2,}|;;/', $data)) {
-		return '';
-	}
-
-	return htmlspecialchars($data, ENT_NOQUOTES, $charset);
-}
-
-// Add https to url if not given
-function ensure_https_url($url) {
-	$url = trim(stripslashes($url));
-	if (!empty($url) && !preg_match('/^https?:\/\//i', $url)) {
-		$url = 'https://' . $url;
-	}
-	return (filter_var($url, FILTER_VALIDATE_URL) && !preg_match('/^(file|php|data|ftp):/i', $url)) ? $url : '';
-}
-
-function contactform() {
-	global $smarty, $lang, $fp_config, $contactform_inputs;
-
-	// Ensure session is started
-	if (session_status() === PHP_SESSION_NONE) {
-		session_start();
-	}
-	if (empty($_SESSION ['csrf_token'])) {
-		// Generate CSRF token
-		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
-	}
-
-	// Check CSRF protection
-	$request_method = $_SERVER ['REQUEST_METHOD'] ?? '';
-	$is_post_request = ($request_method === 'POST');
-
-	if (!$is_post_request && isset($_SERVER ['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
-		$override_method = strtoupper(trim($_SERVER ['HTTP_X_HTTP_METHOD_OVERRIDE']));
-		if ($override_method === 'POST') {
-			$is_post_request = true;
-		}
-	}
-
-	if ($is_post_request) {
-		if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== ($_SESSION ['csrf_token'] ?? '')) {
-			// Renew CSRF token to prevent replay attacks
-			unset($_SESSION ['csrf_token']);
-			$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
-			utils_redirect('contact.php');
-			exit();
-		}
-
-		unset($_SESSION ['csrf_token']);
-		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
-	}
-
-	// Transfer token to Smarty
-	$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
-
-	// Initial call of the contact form
 	if (empty($_POST)) {
+
 		$smarty->assign('success', system_geterr('contact'));
-		$smarty->assignByRef('panelstrings', $lang ['contact']);
-		return;
+		$smarty->assign_by_ref('panelstrings', $lang ['contact']);
+
+		// new form, we (re)set the session data
+		SmartyValidate::connect($smarty, true);
+		// register our validators
+		SmartyValidate::register_validator('name', 'name', 'notEmpty', false, false, 'trim');
+		SmartyValidate::register_validator('email', 'email', 'isEmail', true, false, 'trim');
+		SmartyValidate::register_validator('www', 'url', 'isURL', true, false, 'trim');
+		SmartyValidate::register_validator('content', 'content', 'notEmpty', false, false);
+	} else {
+		utils_nocache_headers();
+		// validate after a POST
+		SmartyValidate::connect($smarty);
+
+		// add http to url if not given
+		if (!empty($_POST ['url']) && strpos($_POST ['url'], 'http://') === false && strpos($_POST ['url'], 'https://') === false)
+			$_POST ['url'] = 'http://' . $_POST ['url'];
+
+		// custom hook here!!
+		// we'll use comment actions, anyway
+		if (SmartyValidate::is_valid($_POST) && $arr = contact_form_validate()) {
+
+			$msg = "Name: \n{$arr['name']} \n\n";
+
+			if (isset($arr ['email']))
+				$msg .= "Email: {$arr['email']}\n\n";
+			if (isset($arr ['url']))
+				$msg .= "WWW: {$arr['url']}\n\n";
+			$msg .= "Content:\n{$arr['content']}\n";
+
+			$success = @utils_mail((isset($arr ['email']) ? $arr ['email'] : $fp_config ['general'] ['email']), "Contact sent through {$fp_config['general']['title']} ", $msg);
+
+			system_seterr('contact', $success ? 1 : -1);
+			utils_redirect(basename(__FILE__));
+		} else {
+			$smarty->assign('values', $_POST);
+		}
 	}
-
-	// New form, we (re)set the session data
-	utils_nocache_headers();
-
-	$validationResult = contact_validate();
-
-	// If validation failed
-	if ($validationResult === false) {
-		// assign given input values to the template, so they're prefilled again
-		$smarty->assign('values', $_POST);
-		return;
-	}
-
-	// Okay, validation returned validated values
-	// now build the mail content
-	$msg = $lang ['contact'] ['notification'] ['name'] . " \n" . $validationResult ['name'] . "\n\n";
-
-	if (isset($validationResult ['email'])) {
-		$msg .= $lang ['contact'] ['notification'] ['email'] . " \n" . $validationResult ['email'] . "\n\n";
-	}
-	if (isset($validationResult ['url'])) {
-		$msg .= $lang ['contact'] ['notification'] ['www'] . " \n" . $validationResult ['url'] . "\n\n";
-	}
-	$msg .= $lang ['contact'] ['notification'] ['content'] . " \n" . $validationResult ['content'] . "\n";
-
-	// Send notification mail to site admin
-	// For non-ASCII characters in the e-mail header use RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
-	$success = @utils_mail((isset($validationResult ['email']) ? $validationResult ['email'] : $fp_config ['general'] ['email']), $lang ['contact'] ['notification'] ['subject'] . ' ' . $fp_config ['general'] ['title'], $msg);
-
-	// Assign success or error message directly
-	$smarty->assign('success', $success ? 1 : -1);
-
-	// Store the result in the session for further use after the redirect
-	system_seterr('contact', $success ? 1 : -1);
-
-	// Redirect to the same page to prevent double submission
-	utils_redirect(basename(__FILE__), true);
-	exit();
 }
 
 function contact_main() {
 	global $smarty;
 
-	// register all Smarty modifier functions used by the templates
-	register_smartyplugins();
-
 	$lang = lang_load('contact');
 
 	$smarty->assign('subject', $lang ['contact'] ['head']);
 	$smarty->assign('content', 'shared:contact.tpl');
-	contactform();
-}
-
-function register_smartyplugins() {
-	global $smarty;
-	$functionsToRegister = array(
-		// FlatPress functions
-		'stripslashes',
-		'wp_specialchars',
-		// PHP functions
-		'function_exists',
-		'is_numeric'
-	);
-	foreach ($functionsToRegister as $functionToRegister) {
-		$smarty->registerPlugin('modifier', $functionToRegister, $functionToRegister);
-	}
+	contact_form();
 }
 
 function contact_display() {
@@ -249,4 +93,5 @@ function contact_display() {
 
 system_init();
 contact_display();
+
 ?>

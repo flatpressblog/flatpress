@@ -63,17 +63,15 @@ function wptexturize($text) {
 			$curl = str_replace("''", '&#8221;', $curl);
 
 			$curl = preg_replace('/(\d+)x(\d+)/', "$1&#215;$2", $curl);
-		} elseif (strstr($curl, '</') || strstr($curl, '>')) {
-			if ($skip > 0) {
+		} elseif (strstr($curl, '</') || strstr($curl, '/>')) {
+			if ($skip > 0)
 				$skip--;
-			}
 		} elseif (strstr($curl, '<code') || strstr($curl, '<pre') || strstr($curl, '<kbd') || strstr($curl, '<style') || strstr($curl, '<script')) {
 			// strstr is fast
 			$skip++;
 		} else {
-			if (isset($curl [0]) && $curl [0] == "<" && $skip > 0) {
+			if (isset($curl [0]) && $curl [0] == "<" && $skip > 0)
 				$skip++;
-			}
 		}
 		$curl = preg_replace('/&([^#])(?![a-z12]{1,8};)/', '&#038;$1', $curl);
 		$output .= $curl;
@@ -82,15 +80,14 @@ function wptexturize($text) {
 }
 
 function clean_pre($matches) {
-	if (is_array($matches)) {
+	if (is_array($matches))
 		$text = $matches [1] . $matches [2] . "</pre>";
-	} else {
+	else
 		$text = $matches;
-	}
 
 	/* NWM: a bit hackish? where are the slashes for double quotes added? */
 	$text = str_replace('\"', '"', $text);
-	$text = str_replace('<br>', '', $text);
+	$text = str_replace('<br />', '', $text);
 	$text = str_replace('<p>', "\n", $text);
 	$text = str_replace('</p>', '', $text);
 	return $text;
@@ -113,11 +110,10 @@ function clean_pre($matches) {
  * @return string Text which has been converted into correct paragraph tags.
  */
 function wpautop($pee, $br = 1) {
-	if (trim($pee) === '') {
+	if (trim($pee) === '')
 		return '';
-	}
 	$pee = $pee . "\n"; // just to make things a little easier, pad the end
-	$pee = preg_replace('|<br>\s*<br>|', "\n\n", $pee);
+	$pee = preg_replace('|<br />\s*<br />|', "\n\n", $pee);
 	// Space things out a little
 	$allblocks = '(?:table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|select|option|form|map|area|blockquote|address|math|style|input|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)';
 	$pee = preg_replace('!(<' . $allblocks . '[^>]*>)!', "\n$1", $pee);
@@ -134,9 +130,8 @@ function wpautop($pee, $br = 1) {
 	                                              // make paragraphs, including one at the end
 	$pees = preg_split('/\n\s*\n/', $pee, -1, PREG_SPLIT_NO_EMPTY);
 	$pee = '';
-	foreach ($pees as $tinkle) {
+	foreach ($pees as $tinkle)
 		$pee .= '<p>' . trim($tinkle, "\n") . "</p>\n";
-	}
 	$pee = preg_replace('|<p>\s*</p>|', '', $pee); // under certain strange conditions it could create a P of entirely whitespace
 	$pee = preg_replace('!<p>([^<]+)</(div|address|form)>!', "<p>$1</p></$2>", $pee);
 	$pee = preg_replace('!<p>\s*(</?' . $allblocks . '[^>]*>)\s*</p>!', "$1", $pee); // don't pee all over a tag
@@ -147,14 +142,13 @@ function wpautop($pee, $br = 1) {
 	$pee = preg_replace('!(</?' . $allblocks . '[^>]*>)\s*</p>!', "$1", $pee);
 	if ($br) {
 		$pee = preg_replace_callback('/<(script|style).*?<\/\\1>/s', '_autop_newline_preservation_helper', $pee);
-		$pee = preg_replace('|(?<!<br>)\s*\n|', "<br>\n", $pee); // optionally make line breaks
+		$pee = preg_replace('|(?<!<br />)\s*\n|', "<br />\n", $pee); // optionally make line breaks
 		$pee = str_replace('<WPPreserveNewline />', "\n", $pee);
 	}
-	$pee = preg_replace('!(</?' . $allblocks . '[^>]*>)\s*<br>!', "$1", $pee);
-	$pee = preg_replace('!<br>(\s*</?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)[^>]*>)!', '$1', $pee);
-	if (strpos($pee, '<pre') !== false) {
+	$pee = preg_replace('!(</?' . $allblocks . '[^>]*>)\s*<br />!', "$1", $pee);
+	$pee = preg_replace('!<br />(\s*</?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)[^>]*>)!', '$1', $pee);
+	if (strpos($pee, '<pre') !== false)
 		$pee = preg_replace_callback('!(<pre[^>]*>)(.*?)</pre>!is', 'clean_pre', $pee);
-	}
 	$pee = preg_replace("|\n</p>$|", '</p>', $pee);
 
 	return $pee;
@@ -175,30 +169,23 @@ function _autop_newline_preservation_helper($matches) {
 
 function seems_utf8($Str) { // by bmorel at ssi dot fr
 	for($i = 0; $i < strlen($Str); $i++) {
-		if (ord($Str [$i]) < 0x80) {
+		if (ord($Str [$i]) < 0x80)
 			continue; // 0bbbbbbb
-		}
-		elseif ((ord($Str [$i]) & 0xE0) == 0xC0) {
+		elseif ((ord($Str [$i]) & 0xE0) == 0xC0)
 			$n = 1; // 110bbbbb
-		}
-		elseif ((ord($Str [$i]) & 0xF0) == 0xE0) {
+		elseif ((ord($Str [$i]) & 0xF0) == 0xE0)
 			$n = 2; // 1110bbbb
-		}
-		elseif ((ord($Str [$i]) & 0xF8) == 0xF0) {
+		elseif ((ord($Str [$i]) & 0xF8) == 0xF0)
 			$n = 3; // 11110bbb
-		}
-		elseif ((ord($Str [$i]) & 0xFC) == 0xF8) {
+		elseif ((ord($Str [$i]) & 0xFC) == 0xF8)
 			$n = 4; // 111110bb
-		}
-		elseif ((ord($Str [$i]) & 0xFE) == 0xFC) {
+		elseif ((ord($Str [$i]) & 0xFE) == 0xFC)
 			$n = 5; // 1111110b
-		} else {
+		else
 			return false; // Does not match any model
-		}
 		for($j = 0; $j < $n; $j++) { // n bytes matching 10bbbbbb follow ?
-			if ((++$i == strlen($Str)) || ((ord($Str [$i]) & 0xC0) != 0x80)) {
+			if ((++$i == strlen($Str)) || ((ord($Str [$i]) & 0xC0) != 0x80))
 				return false;
-			}
 		}
 	}
 	return true;
@@ -237,9 +224,8 @@ function utf8_uri_encode($utf8_string) {
 		if ($value < 128) {
 			$unicode .= chr($value);
 		} else {
-			if (count($values) == 0) {
+			if (count($values) == 0)
 				$num_octets = ($value < 224) ? 2 : 3;
-			}
 
 			$values [] = $value;
 
@@ -499,57 +485,27 @@ function sanitize_title($title, $fallback_title = '') {
 	return $title;
 }
 
-/**
- * Remove potentially dangerous or unwanted characters from user input.
- */
-// Convert HTML characters to entities
-function sanitize_text_field( $str ) {
-	// Removes HTML tags
-	$str = strip_all_tags( $str );
-	// Normalizes line breaks
-	$str = preg_replace( '/[\r\n]+/', "\n", $str );
-	// Removes spaces at the beginning and end
-	$str = trim( $str );
-
-	// Sanitizing
-	return apply_filters( 'sanitize_text_field', $str );
-}
-
-// Replaces non-breaking spaces
-function strip_all_tags( $string, $remove_empty = false ) {
-	// Removes tags
-	$string = preg_replace( '/<[^>]*>/', '', $string );
-	// Replaces non-breaking spaces
-	$string = str_replace( '&nbsp;', ' ', $string );
-
-	// Optional removal of empty strings
-	if ( $remove_empty ) {
-		$string = trim( $string );
-		if ( '' === $string ) {
-			return '';
-		}
-	}
-
-	return $string;
-}
-
 function sanitize_title_with_dashes($title) {
 	$title = strip_tags($title);
-	// Preserve escaped octets.
-	$title = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '---$1---', $title);
-	// Remove percent signs that are not part of an octet.
-	$title = str_replace('%', '', $title);
-	// Restore octets.
-	$title = preg_replace('|---([a-fA-F0-9][a-fA-F0-9])---|', '%$1', $title);
 
-	// remove accents
-	$title = remove_accents($title);
 	if (seems_utf8($title)) {
 		if (function_exists('mb_strtolower')) {
 			$title = mb_strtolower($title, 'UTF-8');
 		}
 		$title = utf8_uri_encode($title);
 	}
+
+	// Preserve escaped octets.
+	$title = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '---$1---', $title);
+	// Remove percent signs that are not part of an octet.
+	$title = str_replace('%', '', $title);
+	// Restore octets.
+	$title = preg_replace('|---([a-fA-F0-9][a-fA-F0-9])---|', '%$1', $title);
+	// and finally: Kill octets
+	$title = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $title);
+
+	// remove accents
+	$title = remove_accents($title);
 
 	// title is in lower case always
 	$title = strtolower($title);
@@ -617,9 +573,9 @@ function convert_chars($content, $flag = 'obsolete') {
 	// Fix Word pasting
 	$content = strtr($content, $wp_htmltranswinuni);
 
-	// Just a little XHTML to HTML5 help
-	$content = str_replace('<br />', '<br>', $content);
-	$content = str_replace('<hr />', '<hr>', $content);
+	// Just a little XHTML help
+	$content = str_replace('<br>', '<br />', $content);
+	$content = str_replace('<hr>', '<hr />', $content);
 
 	return $content;
 }
@@ -628,16 +584,8 @@ function funky_javascript_fix($text) {
 	// Fixes for browsers' javascript bugs
 	global $is_macIE, $is_winIE;
 
-	if ($is_winIE || $is_macIE) {
-		$text = preg_replace_callback(
-				"/\%u([0-9A-F]{4,4})/",
-				function ($matches) {
-					return '&#' . base_convert($matches [1], 16, 10) . ';';
-				},
-				$text
-		);
-
-	}
+	if ($is_winIE || $is_macIE)
+		$text = preg_replace("/\%u([0-9A-F]{4,4})/e", "'&#'.base_convert('\\1',16,10).';'", $text);
 
 	return $text;
 }
@@ -793,9 +741,10 @@ function trailingslashit($string) {
 	return $string;
 }
 
-// This function is currently not used by FlatPress
 function addslashes_gpc($gpc) {
-	$gpc = addslashes($gpc);
+	if (!get_magic_quotes_gpc()) {
+		$gpc = addslashes($gpc);
+	}
 	return $gpc;
 }
 
@@ -884,13 +833,7 @@ function wp_iso_descrambler($string) {
 		return $string;
 	} else {
 		$subject = str_replace('_', ' ', $matches [2]);
-		$subject = preg_replace_callback(
-			'#=([0-9a-f]{2})#i',
-			function ($matches) {
-				return chr(hexdec(strtolower($matches [1])));
-			},
-			$subject
-		);
+		$subject = preg_replace('#\=([0-9a-f]{2})#ei', "chr(hexdec(strtolower('$1')))", $subject);
 		return $subject;
 	}
 }
@@ -956,37 +899,29 @@ function sanitize_email($email) {
 	return preg_replace('/[^a-z0-9+_.@-]/i', '', $email);
 }
 
-// This function is currently not used by FlatPress
-// Returns a character string, such as: “5 mins”, “2 hours”, “1 day”
 function human_time_diff($from, $to = '') {
-	if (empty($to)) {
+	if (empty($to))
 		$to = time();
-	}
 	$diff = (int) abs($to - $from);
-
 	if ($diff <= 3600) {
 		$mins = round($diff / 60);
-		if ($mins <= 1) {
+		if ($mins <= 1)
 			$since = __('1 min');
-		} else {
+		else
 			$since = sprintf(__('%s mins'), $mins);
-		}
-	} elseif ($diff <= 86400) {
+	} else if (($diff <= 86400) && ($diff > 3600)) {
 		$hours = round($diff / 3600);
-		if ($hours <= 1) {
+		if ($hours <= 1)
 			$since = __('1 hour');
-		} else {
+		else
 			$since = sprintf(__('%s hours'), $hours);
-		}
-	} else {
+	} elseif ($diff >= 86400) {
 		$days = round($diff / 86400);
-		if ($days <= 1) {
+		if ($days <= 1)
 			$since = __('1 day');
-		} else {
+		else
 			$since = sprintf(__('%s days'), $days);
-		}
 	}
-
 	return $since;
 }
 
@@ -1200,7 +1135,7 @@ function ent2ncr($text) {
 		'&lsaquo;' => '&#8249;',
 		'&rsaquo;' => '&#8250;',
 		'&oline;' => '&#8254;',
-		// '&frasl;' => '&#8260;', // e.g. "½", "⅔"
+		'&frasl;' => '&#8260;',
 		'&euro;' => '&#8364;',
 		'&image;' => '&#8465;',
 		'&weierp;' => '&#8472;',

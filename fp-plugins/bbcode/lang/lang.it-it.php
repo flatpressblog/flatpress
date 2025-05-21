@@ -1,28 +1,26 @@
 <?php
-$lang ['admin'] ['plugin'] ['submenu'] ['bbcode'] = 'BBCode';
-$lang ['admin'] ['plugin'] ['bbcode'] = array(
-	'head' => 'Configurazione BBCode',
-	'desc1' => 'Questo plugin ti consente di usare <a href="https://wiki.flatpress.org/' . //
-		'doc:techfaq#bbcode" class="hint" target="_blank">BBCode</a> come markup.',
 
+$lang['admin']['plugin']['submenu']['bbcode'] = 'BBCode';
+$lang['admin']['plugin']['bbcode'] = array(
+	'head' => 'Configurazione BBCode',
+	'desc1' => 'Questo plugin ti consente di usare <a href="http://www.phpbb.com/'.
+		'phpBB/faq.php?mode=bbcode">BBCode</a> come markup e fornisce '.
+		'un\'integrazione automatica con lightbox (quando è abilitato).',
+	
 	'options' => 'Opzioni',
 
-	'editing' => 'Modifica',
-	'allow_html' => 'Inline HTML',
+	'editing'	=> 'Modifica',
+	'allow_html'=> 'Inline HTML',
 	'allow_html_long' => 'Consente di usare l\'HTML insieme a BBCode',
 	'toolbar' => 'Barra strumenti',
 	'toolbar_long' => 'Abilita la barra strumenti dell\'editor.',
 
-	'other' => 'Altre opzioni',
+	'other'	=>	'Altre opzioni',
 	'comments' => 'Commenti',
 	'comments_long' => 'Consenti di usare BBCode nei commenti',
-	'urlmaxlen' => 'Lunghezza massima degli URL',
+	'urlmaxlen' => 'Lungehzza massima degli URL',
 	'urlmaxlen_long_pre' => 'Accorcia gli URL più lunghi di ',
 	'urlmaxlen_long_post'=>' caratteri.',
-
-	'attachsdir' => 'Download di file',
-	'attachsdir_long' => 'Non visualizzare la directory di caricamento (fp-content/attachs/) nell\'URL.',
-
 	'submit' => 'Salva la configurazione',
 	'msgs' => array(
 		1 => 'La configurazione di BBCode è stata salvata con successo.',
@@ -30,45 +28,29 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 	),
 
 	'editor' => array(
-		'formatting' => 'Formattazione',
-		'textarea' => 'Casella di testo: ',
-		'expand' => 'Espandi',
-		'expandtitle' => 'Espandi l\'altezza della casella di testo',
-		'reduce' => 'Riduci',
-		'reducetitle' => 'Riduci l\'altezza della casella di testo',
-		'urltitle' => 'URL/ Link',
-		'mailtitle' => 'Indirizzo e-mail',
-		'boldtitle' => 'Grassetto',
-		'italictitle' => 'Corsivo',
-		'headlinetitle' => 'Intestazione',
+		'formatting'     => 'Formattazione',
+		'textarea'       => 'Casella di testo: ',
+		'expand'         => 'Espandi',
+		'expandtitle'    => 'Espandi l\'altezza della casella di testo',
+		'reduce'         => 'Riduci',
+		'reducetitle'    => 'Riduci l\'altezza della casella di testo',
+		// note: accesskeys are not internationalized...
+		// btw. why not :-D
+		'bold'           => 'G',
+		'boldtitle'      => 'Grassetto',
+		'italic'         => 'C',
+		'italictitle'    => 'Corsivo',
+		'underline'      => 'S',
 		'underlinetitle' => 'Sottolineato',
-		'crossouttitle' => 'Cancellato',
-		'unorderedlisttitle' => 'Elenco non ordinato',
-		'orderedlisttitle' => 'Elenco ordinato',
-		'quotetitle' => 'Citazione',
-		'codetitle' => 'Codice',
-		'htmltitle' => 'Inserire come codice HTML',
-		'help' => 'Guida  di BBCode',
-		'file' => 'File: ',
-		'image' => 'Immagine: ',
-		'selection' => '-- Selezione --'
+		'quote'          => 'Cita',
+		'quotetitle'     => 'Citazione',
+		'code'           => 'Codice',
+		'codetitle'      => 'Codice',
+		'help'           => 'Guida  di BBCode',
+		// currently not used
+		'status'         => 'Barra di stato',
+		'statusbar'      => 'Modalità normale. Premi &lt;Esc&gt; per passare da una modalità all\'altra.'
 	)
 );
 
-$lang ['plugin'] ['bbcode'] = array (
-	'go_to' => 'Vai a',
-
-	// Filewrapper get.php
-	'error_403' => 'Errore 403',
-	'not_send' => 'Il file richiesto non può essere inviato.',
-	'error_404' => 'Errore 404',
-	'not_found' => 'Il file richiesto non è stato trovato.',
-	'file' => 'File',
-	'report_error_1' => '',
-	'report_error_2' => 'Segnala errore',
-	'blog_search_1' => '',
-	'blog_search_2' => 'cerca nel blog',
-	'start_page_1' => 'o torna alla',
-	'start_page_2' => 'pagina iniziale'
-);
 ?>

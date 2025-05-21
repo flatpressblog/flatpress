@@ -3,7 +3,9 @@ if (!defined('MOD_INDEX')) {
 	// Example of use
 	require_once 'defaults.php';
 	require_once (INCLUDES_DIR . 'includes.php');
-
+	
+	require (SMARTY_DIR . 'SmartyValidate.class.php');
+	
 	system_init();
 	search_main();
 	search_display();
@@ -11,33 +13,25 @@ if (!defined('MOD_INDEX')) {
 
 function search_title($title, $sep) {
 	global $lang;
-	return $title . " " . $sep . " " . $lang ['search'] ['head'];
+	return "$title $sep {$lang['search']['head']}";
 }
 
 function search_display() {
 	global $smarty;
 	theme_init($smarty);
-
+	
 	$smarty->display('default.tpl');
-
+	
 	unset($smarty);
-
+	
 	do_action('shutdown');
 }
 
 function search_main() {
 	global $lang, $smarty;
-
-	// register Smarty modifier functions
-	$smarty->registerPlugin('modifier', 'function_exists', 'function_exists');
-	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
-	if (!isset($smarty->registered_plugins['modifier']['fix_encoding_issues'])) {
-		// This modifier converts characters such as Ã¤ to ä or &#8220; to “. See core.language.php
-		$smarty->registerPlugin('modifier', 'fix_encoding_issues', 'fix_encoding_issues');
-	}
-
+	
 	add_action('wp_title', 'search_title', 0, 2);
-
+	
 	if (empty($_GET)) {
 		// display form
 		$title = $lang ['search'] ['head'];
@@ -47,7 +41,7 @@ function search_main() {
 		if (isset($_GET ['q']) && $kw = trim($_GET ['q'])) {
 			$title = $lang ['search'] ['head'];
 			$content = "shared:search_results.tpl";
-
+			
 			$kw = strtolower($kw);
 			search_do($kw);
 		} else {
@@ -56,7 +50,7 @@ function search_main() {
 			$content = "shared:search.tpl";
 		}
 	}
-
+	
 	$smarty->assign(array(
 		'subject' => $title,
 		'content' => $content
@@ -66,24 +60,24 @@ function search_main() {
 
 function search_do($keywords) {
 	global $smarty, $srchresults;
-
+	
 	// get parameters
-
+	
 	$srchkeywords = $keywords;
-
+	
 	$params = array();
 	$params ['start'] = 0;
 	$params ['count'] = -1;
-
+	
 	(!empty($_GET ['Date_Day'])) && ($_GET ['Date_Day'] != '--') ? $params ['d'] = $_GET ['Date_Day'] : null;
 	isset($_GET ['Date_Month']) && ($_GET ['Date_Month'] != '--') ? $params ['m'] = $_GET ['Date_Month'] : null;
 	!empty($_GET ['Date_Year']) && ($_GET ['Date_Year'] != '--') ? $params ['y'] = substr($_GET ['Date_Year'], 2) : null;
-
+	
 	// isset($_GET['cats'])? $params = $_GET['cats']: null;
 	isset($_GET ['cats']) ? $params ['cats'] = $_GET ['cats'] : null;
-
+	
 	$params ['fullparse'] = false;
-
+	
 	if (!empty($_GET ['stype']) && $_GET ['stype'] == 'full') {
 		$params ['fullparse'] = true;
 		$fts = "yes";
@@ -91,49 +85,47 @@ function search_do($keywords) {
 		$params ['fullparse'] = false;
 		$fts = "no";
 	}
-
+	
 	$srchparams = $params;
-
+	
 	$list = array();
-
+	
 	$q = new FPDB_Query($params, null);
-
+	
 	while ($q->hasMore()) {
-
+		
 		list ($id, $e) = $q->getEntry();
-
+		
 		$match = false;
-
+		
 		if ($keywords == '*') {
 			$match = true;
 		} else {
 			$match = strpos(strtolower($e ['subject']), $keywords) !== false;
-
+			
 			// if (!$match && $params['fullparse']) {
 			if (!$match && ($fts === "yes")) {
-
+				
 				$match = strpos(strtolower($e ['content']), $keywords) !== false;
 			}
 		}
-
-		if ($match) {
+		
+		if ($match)
 			$list [$id] = $e;
-		}
 	}
-
-	$smarty->registerPlugin('block', 'search_result_block', 'smarty_search_results_block');
-	$smarty->registerPlugin('block', 'search_result', 'smarty_search_result');
-
-	if (!$list) {
+	
+	$smarty->register_block('search_result_block', 'smarty_search_results_block');
+	$smarty->register_block('search_result', 'smarty_search_result');
+	
+	if (!$list)
 		$smarty->assign('noresults', true);
-	}
-
+	
 	$srchresults = $list;
 }
 
 function smarty_search_results_block($params, $content, &$smarty, &$repeat) {
 	global $srchresults;
-
+	
 	if ($srchresults) {
 		return $content;
 	}
@@ -142,7 +134,7 @@ function smarty_search_results_block($params, $content, &$smarty, &$repeat) {
 function smarty_search_result($params, $content, &$smarty, &$repeat) {
 	global $srchresults, $post;
 	$repeat = false;
-
+	
 	// check if we have at least one more search result
 	// (current pointer position must not be after the last element)
 	if (current($srchresults)) {
@@ -152,7 +144,7 @@ function smarty_search_result($params, $content, &$smarty, &$repeat) {
 		// assign values to template
 		$smarty->assign('id', $id);
 		$post = $e;
-		$smarty->assign($e);
+		+$smarty->assign($e);
 		$repeat = true;
 		// advance pointer to next search result element
 		next($srchresults);

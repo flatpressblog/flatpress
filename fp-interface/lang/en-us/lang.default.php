@@ -2,11 +2,12 @@
 $lang = array();
 
 $lang ['main'] = array(
+
 	'nextpage' => 'Next Page &raquo;',
 	'prevpage' => '&laquo; Previous Page',
 	'entry' => 'Entry',
-	'entries' => 'Entries',
 	'static' => 'Static page',
+	'comment' => 'Comment',
 	'preview' => 'Edit/Preview',
 
 	'filed_under' => 'Filed under ',
@@ -20,13 +21,11 @@ $lang ['main'] = array(
 
 	'nocomments' => 'Add a comment',
 	'comment' => '1 comment',
-	'comments' => 'comments',
-
-	'rss' => 'Subscribe RSS feed',
-	'atom' => 'Subscribe Atom feed'
+	'comments' => 'comments'
 );
 
 $lang ['search'] = array(
+
 	'head' => 'Search',
 	'fset1' => 'Insert search criteria',
 	'keywords' => 'Phrase',
@@ -34,8 +33,7 @@ $lang ['search'] = array(
 	'fulltext' => 'Full-text',
 
 	'fset2' => 'Date',
-	'datedescr' => 'You can bind your search to a specific date. You may select an year, an year and a month, or a full date. ' . //
-		'Leave blank to search the entire database.',
+	'datedescr' => 'You can bind your search to a specific date. You may select an year, an year and a month, or a full date. ' . 'Leave blank to search the entire database.',
 
 	'fset3' => 'Search in categories',
 	'catdescr' => 'Don\'t select any to search all',
@@ -53,19 +51,8 @@ $lang ['search'] = array(
 );
 
 $lang ['search'] ['error'] = array(
+
 	'keywords' => 'You must specify at least one keyword'
-);
-
-$lang ['staticauthor'] = array(
-	// "Published by" in static pages
-	'published_by' => 'Published by',
-	'on' => 'on'
-);
-
-$lang ['entryauthor'] = array(
-	// "Posted by" in entry pages
-	'posted_by' => 'Posted by',
-	'at' => 'at'
 );
 
 $lang ['entry'] = array();
@@ -83,10 +70,6 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Comments locked'
 );
 
-$lang ['entry'] ['categories'] = array(
-	'unfiled' => 'Unfiled'
-);
-
 $lang ['404error'] = array(
 	'subject' => 'Not Found',
 	'content' => '<p>Sorry, we could not find the page you requested</p>'
@@ -94,6 +77,7 @@ $lang ['404error'] = array(
 
 // Login
 $lang ['login'] = array(
+
 	'head' => 'Login',
 	'fieldset1' => 'Insert your user name and password',
 	'user' => 'Username:',
@@ -115,8 +99,7 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'You must enter a username.',
 	'pass' => 'You must enter a password.',
-	'match' => 'Password incorrect.',
-	'timeout' => 'Please wait 30 seconds before trying again.'
+	'match' => 'Password incorrect.'
 );
 
 $lang ['comments'] = array(
@@ -144,12 +127,8 @@ $lang ['comments'] ['error'] = array(
 	'comment' => 'You must enter a comment'
 );
 
-$lang ['postviews'] = array(
-	// PostView-Plugin
-	'views' => 'views',
-);
-
 $lang ['date'] ['month'] = array(
+
 	'January',
 	'February',
 	'March',
@@ -165,6 +144,7 @@ $lang ['date'] ['month'] = array(
 );
 
 $lang ['date'] ['month_abbr'] = array(
+
 	'Jan',
 	'Feb',
 	'Mar',
@@ -180,6 +160,7 @@ $lang ['date'] ['month_abbr'] = array(
 );
 
 $lang ['date'] ['weekday'] = array(
+
 	'Sunday',
 	'Monday',
 	'Tuesday',
@@ -190,6 +171,7 @@ $lang ['date'] ['weekday'] = array(
 );
 
 $lang ['date'] ['weekday_abbr'] = array(
+
 	'Sun',
 	'Mon',
 	'Tue',
@@ -198,4 +180,5 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Fri',
 	'Sat'
 );
+
 ?>

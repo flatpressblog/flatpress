@@ -1,0 +1,9 @@
+The footnote plugin creates links between numbers in the content and the corresponding footnote below the text. It's quite straightforward - to try, just create a sample entry with the following content:
+
+
+
+Here is some text[1] with a note. The text goes on and has another reference[2] to a footnote.
+
+[footnotes]
+[1] here is the note
+[2] and the second one :)

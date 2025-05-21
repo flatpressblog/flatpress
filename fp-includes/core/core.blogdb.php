@@ -1,56 +1,59 @@
 <?php
+
+	
 	/**
 	 * Blogdb lib
 	 * provides access to the blog. 
 	 *
 	 * @author NoWhereMan <nowhereman@phreaker.net>
 	 */
-
+	
 	/**
 	 * entry id prefix and identifier
 	 */
-	define('BDB_ENTRY', 'entry');
+	define('BDB_ENTRY', 'entry');	
 	/**
 	 * comment id prefix and identifier
 	 */
 	define('BDB_COMMENT', 'comment');
-
+	
 	/**
 	 * default file extension
 	 */
 	define('EXT', '.txt');
+
+	
+	
 
 	/**
 	 * function bdb_idtofile
 	 *
 	 * <p>Takes the id $id and returns a filepath</p>
 	 *
-	 * @param string $id ID formatted like "prefixYYMMDD-HHMMSS.EXT"
-	 * @param string|null $type Optional type (BDB_ENTRY, BDB_COMMENT)
-	 * @return string|false Path to the file, or false if ID is invalid
+	 * @param string $id string formatted like "prefixYYMMDD-HHMMSS.EXT"
+	 * @return string
 	 */
-	function bdb_idtofile($id, $type = null) {
-
-		$fname = $id . EXT;
-
+	function bdb_idtofile($id,$type=null) {
+	
+		$fname = $id.EXT;
+		
 		$date = date_from_id($id);
-
-		if (!$date) {
+		
+		if (!$date)
 			return false;
-		}
-
-		$path = CONTENT_DIR . $date ['y'] . '/' . $date ['m'] . '/';
+		
+		$path = CONTENT_DIR . $date['y'] . '/' . $date['m'] . '/';
 		if ($type == null || $type == BDB_ENTRY) {
 			$path .= $fname;
 		} elseif ($type == BDB_COMMENT) {
 			$path .= $id . '/comments/';
 		}
-
+		
 		return $path;
-
+		
 	}
-
-
+	
+	
 	/**
 	 * function bdb_idfromtime
 	 *
@@ -61,19 +64,18 @@
 	 * @param int $timestamp UNIX timestamp
 	 * @return string
 	 */
-	function bdb_idfromtime($type, $timestamp = null) {
-		if (!$timestamp) {
-			$timestamp = time();
-		}
-
+	function bdb_idfromtime($type, $timestamp=null) {
+		if (!$timestamp)
+			$timestamp=time();
+			
 		/*if (!ctype_digit($timestamp)) {
 			trigger_error("bdb_idfromtime():
 			$timestamp Not a valid timestamp", E_USER_WARNING);
 		}*/
 		return $type . date('ymd-His', $timestamp);
 	}
-
-
+	
+	
 	/**
 	 * function bdb_filetoid
 	 *
@@ -85,12 +87,12 @@
 	 * @todo validate returned id
 	 */
 	function bdb_filetoid($file) {
-
+		
 		return basename($file, EXT);
-
+		
 	}
-
-
+	
+	
 	/**
 	 * function bdb_parse_entry
 	 *
@@ -114,38 +116,29 @@
 	 * ?>
 	 * </code>
 	 *
-	 * @param string $id ID or file path to parse
-	 * @param string|null $type Optional type (e.g., BDB_ENTRY, BDB_COMMENT)
-	 * @return array|false Parsed key-value pairs, or false if file not found
+	 * @param string $file filepath of the blogdb entry
+	 * @return string
 	 *
 	 * @todo validate returned id
 	 */
-	function bdb_parse_entry($id, $type = null) {
-
-		if (file_exists($id)) {
+	function bdb_parse_entry($id, $type=null) {
+	
+		if (file_exists($id))
 			$file = $id;
-		} else {
+		else
 			$file = bdb_idtofile($id, $type);
-		}
-
+			
+		
 		if (file_exists($file)) {
 			$contents = io_load_file($file);
-
 			// TODO: here we must add compatibility to encoding conversion!
-			// Legacy mode: ignore array key case when DUMB_MODE_ENABLED is false (default)
 			// if "dumb" (legacy :D) mode is enabled (set to true in default.php, then we set parsing
 			// to ignore array key case (defaults to true i.e. check them to be uppercase or failing otherwise
-
-			/** @var bool $ignoreCase */
-			$ignoreCase = !(defined('DUMB_MODE_ENABLED') && call_user_func('constant', 'DUMB_MODE_ENABLED'));
-
-			$entry = utils_kexplode($contents, '|', $ignoreCase);
-
+			$entry = utils_kexplode($contents, '|', !DUMB_MODE_ENABLED);
+		
 			return $entry;
-		} else {
-			return false;
-		}
-
+		} else return false; 
+		
 	}
 
 ?>

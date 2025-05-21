@@ -10,19 +10,17 @@ class widget_indexer extends fs_filelister {
 	var $_enabledlist = null;
 
 	function __construct() {
-		if (!file_exists(CONFIG_DIR . 'widgets.conf.php')) {
+		if (!file_exists(CONFIG_DIR . 'widgets.conf.php'))
 			trigger_error('widgets.conf.php not found. Blog may not work as expected, create a widgetlist.conf.php 
 					or reinstall completely FlatPress. If you have just installed FlatPress, the package you
 					downloaded may be corrupted.', E_USER_WARNING);
-		}
 		$this->_enabledlist = CONFIG_DIR . 'widgets.conf.php';
 		$this->getEnableds();
 	}
 
 	function getEnableds() {
-		if (!file_exists($this->_enabledlist)) {
+		if (!file_exists($this->_enabledlist))
 			return;
-		}
 
 		include ($this->_enabledlist);
 
@@ -42,20 +40,16 @@ class widget_indexer extends fs_filelister {
 			$id = array_shift($this->_list [$hor]);
 
 			$newid = $id; // @list($newid, $params) = explode(":", $id);
-			if (@$params) {
+			if (@$params)
 				$params = explode(',', $params);
-			} else {
+			else
 				$params = array();
-			}
 			// $var = 'plugin_' . $newid . '_widget';
-			if (!array_key_exists($newid, $fp_registered_widgets)) {
-				continue;
-			}
 			$var = $fp_registered_widgets [$newid] ['func'];
 			if (is_callable($var)) {
 				$content = call_user_func_array($var, $params);
 				if (!isset($content ['id'])) {
-					$content ['id'] = "widget-" . $newid;
+					$content ['id'] = "widget-$newid";
 				}
 			} /*
 			   * else $content = array(
@@ -78,9 +72,8 @@ function register_widgetset($widgetset) {
 		$fp_registered_widgetsets = array();
 	}
 
-	if (!in_array($widgetset, $fp_registered_widgetsets)) {
+	if (!in_array($widgetset, $fp_registered_widgetsets))
 		$fp_registered_widgetsets [] = $widgetset;
-	}
 }
 
 function get_registered_widgetsets($widgetset) {
@@ -104,9 +97,8 @@ $num_params = 0, // number of eventually needed parameters
 		                             // allowed parameters (not impl.)
 {
 	global $fp_registered_widgets;
-	if (!$fp_registered_widgets) {
+	if (!$fp_registered_widgets)
 		$fp_registered_widgets = array();
-	}
 
 	/* we won't mind about collisions, for now */
 
@@ -122,15 +114,13 @@ $num_params = 0, // number of eventually needed parameters
 function get_registered_widgets($widget = null) {
 	global $fp_registered_widgets;
 
-	if (!$fp_registered_widgets) {
+	if (!$fp_registered_widgets)
 		$fp_registered_widgets = array();
-	}
 
 	ksort($fp_registered_widgets);
 
-	if ($widget) {
+	if ($widget)
 		return isset($fp_registered_widgets [$widget]) ? $fp_registered_widgets [$widget] : false;
-	}
 
 	return $fp_registered_widgets;
 }
@@ -147,6 +137,6 @@ function smarty_block_widgets($params, $content, &$smarty, &$repeat) {
 	return $content;
 }
 
-$smarty->registerPlugin('block', 'widgets', 'smarty_block_widgets');
+$smarty->register_block('widgets', 'smarty_block_widgets');
 
 ?>

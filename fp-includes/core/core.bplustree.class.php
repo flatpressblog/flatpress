@@ -105,20 +105,17 @@
  *
  */
 function d($s) {
-	if (!defined('DEBUG') || !DEBUG) {
-		return false;
-	}
+	return; // disable debug output
 	if (is_array($s)) {
 		$s = '{ ' . implode(", ", $s) . ' }';
 	}
-
+	
 	$x = debug_backtrace();
 	$f = @$x [1] ['function'];
 	$l = $x [0] ['line'];
-
-	echo "[" . $f . ":" . $l . "]\t" . $s . "\n";
+	
+	echo "[{$f}:{$l}]\t", $s, "\n";
 	// echo "---[{$x[2]['function']}:{$x[2]['line']}]\n";
-	return true;
 }
 
 error_reporting(E_ALL);
@@ -222,9 +219,8 @@ class pairs {
 	 *
 	 */
 	function __construct($a, $b) {
-		if (($v = count($a)) != count($b)) {
+		if (($v = count($a)) != count($b))
 			trigger_error("Size of params must match", E_USER_ERROR);
-		}
 		$this->a = $a;
 		$this->b = $b;
 		$this->count = $v;
@@ -240,11 +236,11 @@ class pairs {
 	 *
 	 */
 	function &slice($offset, $count = null) {
-		if (is_null($count)) {
+		if (is_null($count))
 			$count = $this->count;
-		}
+		
 		$a = new pairs(array_slice($this->a, $offset, $count), array_slice($this->b, $offset, $count));
-
+		
 		return $a;
 	}
 
@@ -272,25 +268,26 @@ class pairs {
 	 * (assumes there aren't duplicates)
 	 * uses {@link BPT_keycmp} for comparing
 	 *
-	 * @param mixed $a first element of the pair
-	 * @param mixed $b second element of the pair
-	 * @param int $lo starting offset of the sub-array
-	 * @param int|null $hi ending offset of the sub-array
+	 * @param mixed $a
+	 *        	first element of the pair
+	 * @param mixed $b
+	 *        	second element of the pair
+	 * @param int $lo
+	 *        	starting offset of the sub-array
+	 * @param int|nul $hi
+	 *        	ending offset of the sub-array
 	 */
 	function insort($a, $b, $lo = 0, $hi = null) {
-		if (is_null($hi)) {
+		if (is_null($hi))
 			$hi = $this->count;
-		}
-
 		$A = $this->a;
 		$X = $a;
 		while ($lo < $hi) {
 			$mid = (int) (($lo + $hi) / 2);
-			if (BPT_keycmp($X, $A [$mid]) < 0) {
+			if (BPT_keycmp($X, $A [$mid]) < 0)
 				$hi = $mid;
-			} else {
+			else
 				$lo = $mid + 1;
-			}
 		}
 		$this->insert($lo, $a, $b);
 	}
@@ -327,8 +324,10 @@ class pairs {
 	function __set($x, $y) {
 		trigger_error("Can't edit pairs directly'", E_USER_ERROR);
 	}
-
+	
 }
+
+if (BPT_SORT == SORT_ASC) {
 
 	/**
 	 * compares key $a and $b using a less-than or greather-than relation
@@ -340,9 +339,14 @@ class pairs {
 	 * on the value of the BPT_SORT constant
 	 */
 	function BPT_keycmp($a, $b) {
-		/** @phpstan-ignore-next-line */
-		return (BPT_SORT === SORT_ASC) ? strcmp($a, $b) : -strcmp($a, $b);
+		return strcmp($a, $b);
 	}
+} else {
+
+	function BPT_keycmp($a, $b) {
+		return -strcmp($a, $b);
+	}
+}
 
 /*
  * function _BPT_bisect($a, $x, $lo=0, $hi=null) {
@@ -352,7 +356,6 @@ class pairs {
  * return $lo;
  * }
  */
-
 /**
  * locate an element $x or the nearest bigger one
  * in the array $a, starting from offset $lo
@@ -378,11 +381,10 @@ function BPT_bisect($a, $x, $lo = 0, $hi = null) {
 	while ($lo < $hi) {
 		$mid = (int) (($lo + $hi) / 2);
 		// if ($x < $a[$mid])
-		if (BPT_keycmp($x, $a [$mid]) < 0) {
+		if (BPT_keycmp($x, $a [$mid]) < 0)
 			$hi = $mid;
-		} else {
+		else
 			$lo = $mid + 1;
-		}
 	}
 	return $lo;
 }
@@ -425,11 +427,6 @@ class BPlusTree_Node_Fifo {
 	var $size;
 
 	/**
-	 * @var int configured fifo size (as set in constructor)
-	 */
-	var $fifosize;
-
-	/**
 	 * constructor
 	 *
 	 * @param int $size
@@ -453,7 +450,7 @@ class BPlusTree_Node_Fifo {
 		$this->fifo = array();
 		$this->fifo_dict = array();
 	}
-
+	
 }
 
 /**
@@ -536,7 +533,7 @@ class BPlusTree_Node {
 
 	/**
 	 *
-	 * @var BPlusTree_Node_Fifo|null
+	 * @var BPlusTree_Node_Fifo object of type {@link BPlusTree_Node_Fifo}
 	 */
 	var $fifo = null;
 
@@ -546,42 +543,38 @@ class BPlusTree_Node {
 	 */
 	var $validkeys;
 
-	var $storage;
-
 	/**
 	 * constructor
 	 *
-	 * @param int $flag Flag of current node
-	 * @param int $size Size of node
-	 * @param int $keylen Max key length
-	 * @param int|string $position Seek position in file
-	 * @param resource $infile Opened file stream (resource)
-	 * @param BPlusTree_Node|null $cloner BPlusTree_Node object from which to clone properties
-	 *
-	 * @throws InvalidArgumentException
+	 * @param int $flag
+	 *        	flag of current node
+	 * @param int $size
+	 *        	size of node
+	 * @param int $keylen
+	 *        	max key length
+	 * @param long $position
+	 *        	seek position in file
+	 * @param
+	 *        	resource resource stream (opened file)
+	 * @param
+	 *        	BPlusTree_Node object from which cloning properties
 	 */
 	function __construct($flag, $size, $keylen, $position, $infile, $cloner = null) {
 		$this->flag = $flag;
-
-		/** @phpstan-ignore-next-line */
-		if (!is_int($size) || $size < 0) {
-			trigger_error('size must be positive integer', E_USER_ERROR);
+		
+		if ($size < 0) {
+			trigger_error('size must be positive', E_USER_ERROR);
 		}
-
+		
 		$this->size = $size;
-
+		
 		$this->keylen = $keylen;
-
-		if (!is_numeric($position) || $position < 0) {
-			throw new InvalidArgumentException('Position must be a positive number (int|string).');
-		}
 		$this->position = $position;
-
 		$this->infile = $infile;
 		// last (+1) is successor seek TODO move to its own!
 		$this->indices = array_fill(0, $size + 1, BPT_NULL);
 		$this->keys = array_fill(0, $size, '');
-
+		
 		if (is_null($cloner)) {
 			$this->storage = 2 +
 			/* 2 chars for flag, validkeys */
@@ -591,7 +584,7 @@ class BPlusTree_Node {
 			$this->storage = $cloner->storage;
 			$this->fifo = $cloner->fifo;
 		}
-
+		
 		if ($flag == BPT_FLAG_INTERIOR || $flag == BPT_FLAG_ROOT) {
 			$this->validkeys = -1;
 		} else {
@@ -605,7 +598,7 @@ class BPlusTree_Node {
 	function clear() {
 		$size = $this->size;
 		// re-init keys
-
+		
 		$this->keys = array_fill(0, $size, '');
 		$this->validkeys = 0;
 		if (($this->flag & BPT_FLAG_INTERIOR) == BPT_FLAG_INTERIOR) {
@@ -623,8 +616,8 @@ class BPlusTree_Node {
 	/**
 	 * returns clone of the obect at position $position
 	 *
-	 * @param int $position seek position
-	 * @return BPlusTree_Node
+	 * @param long $position
+	 *        	seek position
 	 */
 	function &getclone($position) {
 		if ($this->fifo) {
@@ -633,7 +626,7 @@ class BPlusTree_Node {
 				return $dict [$position];
 			}
 		}
-
+		
 		$o = new BPlusTree_Node($this->flag, $this->size, $this->keylen, $position, $this->infile, $this);
 		return $o;
 	}
@@ -645,9 +638,8 @@ class BPlusTree_Node {
 	 *        	seek position
 	 */
 	function putfirstindex($index) {
-		if ($this->validkeys >= 0) {
+		if ($this->validkeys >= 0)
 			trigger_error("Can't putfirstindex on full node", E_USER_ERROR);
-		}
 		$this->indices [0] = $index;
 		$this->validkeys = 0;
 	}
@@ -680,15 +672,15 @@ class BPlusTree_Node {
 		if (($this->flag & BPT_FLAG_INTERIOR) != BPT_FLAG_INTERIOR) {
 			trigger_error("Can't insert into leaf node", E_USER_ERROR);
 		}
-
+		
 		$validkeys = $this->validkeys;
 		$last = $this->validkeys + 1;
-
+		
 		if ($this->validkeys >= $this->size) {
 			// trigger_error('No room error', E_USER_WARNING);
 			return NOROOMERROR;
 		}
-
+		
 		// store the key
 		if ($validkeys < 0) { // no nodes currently
 			d("no keys");
@@ -699,11 +691,10 @@ class BPlusTree_Node {
 			$keys = & $this->keys;
 			// is the key there already?
 			if (in_array($key, $keys, true)) {
-				if (array_search($key, $keys, true) < $validkeys) {
-					trigger_error("reinsert of node for existing key (" . $key . ")", E_USER_ERROR);
-				}
+				if (array_search($key, $keys, true) < $validkeys)
+					trigger_error("reinsert of node for existing key ($key)", E_USER_ERROR);
 			}
-
+			
 			$place = BPT_bisect($keys, $key, 0, $validkeys);
 			// insert at position $place
 			array_splice($keys, $place, 0, $key);
@@ -726,18 +717,18 @@ class BPlusTree_Node {
 	/**
 	 * deletes from interior nodes
 	 *
-	 * @param string|null $key
+	 * @param string $key
 	 *        	target key
 	 */
 	function delnode($key) {
-
+		// {{{
 		if (($this->flag & BPT_FLAG_INTERIOR) != BPT_FLAG_INTERIOR) {
 			trigger_error("Can't delete node from leaf node");
 		}
 		if ($this->validkeys < 0) {
 			trigger_error("No such key (empty)");
 		}
-
+		
 		$validkeys = $this->validkeys;
 		$indices = & $this->indices;
 		$keys = & $this->keys;
@@ -748,20 +739,22 @@ class BPlusTree_Node {
 			$place = array_search($key, $keys, true);
 			$indexplace = $place + 1;
 		}
-
+		
 		// unset($indices[$indexplace]);
 		array_splice($indices, $indexplace, 1);
 		$indices [] = BPT_NULLSEEK;
 		// $indices = array_values($indices);
-
+		
 		// unset($keys[$place]);
 		array_splice($keys, $place, 1);
 		$keys [] = '';
 		// $keys = array_values($keys);
-
+		
 		$this->validkeys = $validkeys - 1;
 	}
 
+	// }}}
+	
 	/**
 	 * slices the $this->keys array to the number of valid keys
 	 * in $this->validkeys
@@ -773,7 +766,7 @@ class BPlusTree_Node {
 		if ($validkeys <= 0) {
 			return array();
 		}
-
+		
 		return array_slice($this->keys, 0, $validkeys);
 	}
 
@@ -820,7 +813,7 @@ class BPlusTree_Node {
 	/**
 	 * returns child, searching for $key in an interior node
 	 *
-	 * @param string|null $key
+	 * @param string $key
 	 *        	target $key
 	 * @returns object BPlusTree_Node
 	 *
@@ -829,19 +822,19 @@ class BPlusTree_Node {
 		if (($this->flag & BPT_FLAG_INTERIOR) != BPT_FLAG_INTERIOR) {
 			trigger_error("cannot getnode from leaf node", E_USER_ERROR);
 		}
-		if (is_null($key)) {
+		if (is_null($key))
 			$index = 0;
-		} else {
+		else
 			$index = array_search($key, $this->keys, true) + 1;
-		}
+		
 		$place = $this->indices [$index];
 		if ($place < 0) {
 			debug_print_backtrace();
-			trigger_error("Invalid position! (" . $place . ", " . $key . ")", E_USER_ERROR);
+			trigger_error("Invalid position! ($place, $key)", E_USER_ERROR);
 		}
-
+		
 		// fifo
-
+		
 		$fifo = & $this->fifo;
 		if ($fifo) {
 			$ff = & $fifo->fifo;
@@ -855,7 +848,7 @@ class BPlusTree_Node {
 				return $node;
 			}
 		}
-
+		
 		$node = & $this->getclone($place);
 		$node = & $node->materialize();
 		return $node;
@@ -864,7 +857,7 @@ class BPlusTree_Node {
 	/**
 	 * *** leaf mode operations ****
 	 */
-
+	
 	/**
 	 * if leaf returns the next leaf on the right
 	 */
@@ -873,9 +866,9 @@ class BPlusTree_Node {
 			trigger_error("cannot get next for non-leaf", E_USER_ERROR);
 		}
 		$place = $this->indices [$this->size];
-		if ($place == BPT_NULLSEEK) {
+		if ($place == BPT_NULLSEEK)
 			return null;
-		} else {
+		else {
 			$node = & $this->getclone($place);
 			$node = & $node->materialize();
 			return $node;
@@ -898,7 +891,7 @@ class BPlusTree_Node {
 	 *
 	 * }
 	 */
-
+	
 	/**
 	 * put ($key, $val) in a leaf
 	 *
@@ -908,18 +901,17 @@ class BPlusTree_Node {
 	 *        	value for $key
 	 */
 	function putvalue($key, $val) {
-		/** @phpstan-ignore-next-line */
-		if (!is_string($key)) {
-			trigger_error($key . " must be string", E_USER_ERROR);
-		}
+		if (!is_string($key))
+			trigger_error("$key must be string", E_USER_ERROR);
+		
 		if (($this->flag & BPT_FLAG_LEAF) != BPT_FLAG_LEAF) {
 			// print_r($this);
-			trigger_error("cannot get next for non-leaf (" . $key . ")", E_USER_ERROR);
+			trigger_error("cannot get next for non-leaf ($key)", E_USER_ERROR);
 		}
 		$validkeys = $this->validkeys;
 		$indices = & $this->indices;
 		$keys = & $this->keys;
-
+		
 		if ($validkeys <= 0) { // empty
 		                       // first entry
 			$indices [0] = $val;
@@ -937,15 +929,15 @@ class BPlusTree_Node {
 				$keys [$place] = $key;
 				$indices [$place] = $val;
 			} else {
-
+				
 				if ($validkeys >= $this->size) {
 					// trigger_error("no room", E_USER_WARNING);
 					return NOROOMERROR;
 				}
-
+				
 				$place = BPT_bisect($keys, $key, 0, $validkeys);
 				$last = $validkeys + 1;
-
+				
 				// del keys[validkeys]
 				// del indices[validkeys]
 				// array_splice($keys, $validkeys, 1);
@@ -954,10 +946,10 @@ class BPlusTree_Node {
 				// array_splice($indices, $validkeys, 1);
 				unset($indices [$validkeys]);
 				$indices = array_values($indices);
-
+				
 				array_splice($keys, $place, 0, $key);
 				array_splice($indices, $place, 0, $val);
-
+				
 				// echo implode(', ', $keys), " ::: $place \n";
 				$this->validkeys = $last;
 			}
@@ -976,9 +968,9 @@ class BPlusTree_Node {
 		$indices = & $this->indices;
 		$keys = & $this->keys;
 		$length = $this->validkeys = $keys_indices->count; // count($keys_indices);
-		if ($length > $this->size) {
-			trigger_error("bad length " . $length, E_USER_ERROR);
-		}
+		if ($length > $this->size)
+			trigger_error("bad length $length", E_USER_ERROR);
+		
 		for($i = 0; $i < $length; $i++) {
 			// list($keys[$i], $indices[$i]) = $keys_indices[$i];
 			$keys [$i] = $keys_indices->a [$i];
@@ -1002,7 +994,7 @@ class BPlusTree_Node {
 		$keys = & $this->keys;
 		$length = $this->validkeys = $keys_positions->count; // count($keys_positions);
 		if ($length > $this->size) {
-			trigger_error("bad length " . $length, E_USER_ERROR);
+			trigger_error("bad length $length", E_USER_ERROR);
 		}
 		$indices [0] = $first_position;
 		for($i = 0; $i < $length; $i++) {
@@ -1021,7 +1013,7 @@ class BPlusTree_Node {
 	 *
 	 */
 	function getvalue(&$key, $loose = false) {
-
+		
 		// d(implode(",",$this->keys));
 		// $place = array_search($key, $this->keys);
 		$place = BPT_bisect($this->keys, $key, 0, $this->validkeys);
@@ -1029,13 +1021,12 @@ class BPlusTree_Node {
 			return $this->indices [$place - 1];
 		} else {
 			if ($loose) {
-				if ($place > 1) {
+				if ($place > 1)
 					$place--;
-				}
 				$key = $this->keys [$place];
 				return $this->indices [$place];
 			}
-			trigger_error("key '" . $key . "' not found", E_USER_WARNING);
+			trigger_error("key '$key' not found", E_USER_WARNING);
 			return false;
 		}
 	}
@@ -1050,14 +1041,14 @@ class BPlusTree_Node {
 	 *
 	 */
 	function &newneighbour($position) {
-		if (($this->flag & BPT_FLAG_LEAF) != BPT_FLAG_LEAF) {
+		if (($this->flag & BPT_FLAG_LEAF) != BPT_FLAG_LEAF)
 			trigger_error('cannot make leaf neighbour for non-leaf');
-		}
+		
 		// create clone
 		$neighbour = & $this->getclone($position);
 		$size = $this->size;
 		$indices = & $this->indices;
-
+		
 		// linking siblings
 		$neighbour->indices [$size] = $indices [$size];
 		$indices [$size] = $position;
@@ -1070,9 +1061,9 @@ class BPlusTree_Node {
 	 * @return object BPlusTree_Node
 	 */
 	function &nextneighbour() {
-		if (($this->flag & BPT_FLAG_LEAF) != BPT_FLAG_LEAF) {
+		if (($this->flag & BPT_FLAG_LEAF) != BPT_FLAG_LEAF)
 			trigger_error('cannot get leaf neighbour for non-leaf');
-		}
+		
 		$size = $this->size;
 		$position = $this->indices [$size];
 		if ($position == BPT_NULLSEEK) {
@@ -1081,7 +1072,7 @@ class BPlusTree_Node {
 			$neighbour = $this->getclone($position);
 			$neighbour = $neighbour->materialize();
 		}
-
+		
 		return $neighbour;
 	}
 
@@ -1102,14 +1093,16 @@ class BPlusTree_Node {
 	 *
 	 * }
 	 */
-
+	
 	/**
 	 * if leaf, deletes neighbor on the right, and re-link
 	 * with the following
 	 *
-	 * @param object $next target for deletion
-	 * @param int $free Seek position of last free node in free list.
-	 *
+	 * @param object $next
+	 *        	target for deletion
+	 * @param free $free
+	 *        	seek position of last free node in free list
+	 *        	
 	 * @returns int new free position
 	 */
 	function delnext(&$next, $free) {
@@ -1117,7 +1110,7 @@ class BPlusTree_Node {
 		// print_r($this);
 		$size = $this->size;
 		if ($this->indices [$size] != $next->position) {
-			trigger_error("invalid next pointer " . $this->indices[$size] . "!={$next->position})", E_USER_ERROR);
+			trigger_error("invalid next pointer " . "{$this->indices[$size]}!={$next->position})", E_USER_ERROR);
 		}
 		$this->indices [$size] = $next->indices [$size];
 		return $next->free($free);
@@ -1126,7 +1119,8 @@ class BPlusTree_Node {
 	/**
 	 * if leaf, deletes corresponding value
 	 *
-	 * @param string $key target key
+	 * @param string $key
+	 *        	target key
 	 */
 	function delvalue($key) {
 		$keys = & $this->keys;
@@ -1138,7 +1132,7 @@ class BPlusTree_Node {
 		$place = array_search($key, $keys, true);
 		$validkeys = $this->validkeys;
 		$prev = $validkeys - 1;
-
+		
 		// delete
 		array_splice($keys, $place, 1);
 		array_splice($indices, $place, 1);
@@ -1148,11 +1142,11 @@ class BPlusTree_Node {
 		// unset($indices[$place]);
 		// $indices[] = BPT_NULL;
 		// $indices = array_values($indices);
-
+		
 		// insert NULLs/empties
 		array_splice($keys, $prev, 0, '');
 		array_splice($indices, $prev, 0, BPT_NULL);
-
+		
 		$this->validkeys = $prev; // validkeys-1
 	}
 
@@ -1186,17 +1180,18 @@ class BPlusTree_Node {
 	 * return $next;
 	 * }
 	 */
-
+	
 	/**
 	 * get free node of same shape as self from $this->file;
 	 * make one if none exist;
 	 * assume $freeposition is seek position of next free node
 	 *
-	 * @param int $freeposition seek position of next freenode
-	 * @param callable|null $freenode_callback
+	 * @param int $freeposition
+	 *        	seek position of next freenode
+	 * @param callback $freenode_callback
 	 *        	is specified it is a func to call
 	 *        	with a new free list head, if needed
-	 *
+	 *        	
 	 * @returns array(&$node, $newfreeposition)
 	 *
 	 *
@@ -1204,7 +1199,7 @@ class BPlusTree_Node {
 	 *
 	 */
 	function getfreenode($freeposition, $freenode_callback = null) {
-		d("GETTING FREE AT " . $freeposition);
+		d("GETTING FREE AT $freeposition");
 		if ($freeposition == BPT_NULLSEEK) {
 			$file = $this->infile;
 			fseek($file, 0, SEEK_END);
@@ -1226,9 +1221,9 @@ class BPlusTree_Node {
 			if (!is_null($freenode_callback)) {
 				call_user_func($freenode_callback, $next);
 			}
-
+			
 			$thenode->BplusTree_Node($this->flag, $this->size, $this->keylen, $position, $this->infile);
-
+			
 			$thenode->store(); // save reinit'ed node
 			return array(
 				&$thenode,
@@ -1246,12 +1241,11 @@ class BPlusTree_Node {
 	 *        	
 	 */
 	function store($force = false) {
-
+		// {{{
 		$position = $this->position;
-		/** @phpstan-ignore-next-line */
-		if (is_null($position)) {
+		if (is_null($position))
 			trigger_error("position cannot be null", E_USER_ERROR);
-		}
+		
 		$fifo = & $this->fifo;
 		if (!$force && $fifo) {
 			$fd = & $fifo->fifo_dict;
@@ -1260,21 +1254,23 @@ class BPlusTree_Node {
 				return; // defer processing
 			}
 		}
-
+		
 		$f = $this->infile;
 		fseek($f, $position);
 		$data = $this->linearize();
 		fwrite($f, $data);
 		$last = ftell($f);
 		$this->dirty = false;
-
+		
 		if (!$force && $this->fifo) {
 			$this->add_to_fifo();
 		}
-
+		
 		return $last;
 	}
 
+	// }}}
+	
 	/**
 	 * load node from file
 	 *
@@ -1283,7 +1279,7 @@ class BPlusTree_Node {
 	 */
 	function &materialize() {
 		$position = $this->position;
-
+		
 		if ($this->fifo) {
 			$fifo = & $this->fifo;
 			$dict = & $fifo->fifo_dict;
@@ -1298,16 +1294,16 @@ class BPlusTree_Node {
 				return $node;
 			}
 		}
-
+		
 		$f = $this->infile;
 		fseek($f, $position);
 		$data = fread($f, $this->storage);
 		$this->delinearize($data);
-
+		
 		if ($this->fifo) {
 			$this->add_to_fifo();
 		}
-
+		
 		return $this;
 	}
 
@@ -1321,29 +1317,28 @@ class BPlusTree_Node {
 			$this->flag,
 			$this->validkeys
 		);
-
-		foreach ($this->indices as $i) {
+		
+		foreach ($this->indices as $i)
 			$params [] = $i;
-		}
+		
 		$s = call_user_func_array('pack', $params);
-
+		
 		$x = '';
 		for($i = 0; $i < $this->validkeys; $i++) {
 			$k = $this->keys [$i];
-			if (strlen($k) > $this->keylen) {
-				trigger_error("Invalid keylen for '" . $k . "'", E_USER_ERROR);
-			}
+			if (strlen($k) > $this->keylen)
+				trigger_error("Invalid keylen for '$k'", E_USER_ERROR);
 			$x .= str_pad($k, $this->keylen, chr(0));
 		}
-
+		
 		$x = str_pad($x, $this->size * $this->keylen, chr(0));
-
+		
 		$s .= $x;
 		$l = strlen($s);
 		if (strlen($s) != $this->storage) {
-			trigger_error("bad storage " . $l . " != " . $this->storage, E_USER_ERROR);
+			trigger_error("bad storage $l != {$this->storage}", E_USER_ERROR);
 		}
-
+		
 		return $s;
 	}
 
@@ -1355,30 +1350,32 @@ class BPlusTree_Node {
 	 *        	
 	 */
 	function delinearize($s) {
-
-		if (strlen($s) != $this->storage) {
+		// {{{
+		if (strlen($s) != $this->storage)
 			trigger_error("bad storage", E_USER_ERROR);
-		}
+		
 		$x = 'Cflag/Cvalidkeys/';
 		$n = $this->size + 1;
 		for($i = 0; $i < $n; $i++) {
-			$x .= "lindices" . $i . "/";
+			$x .= "lindices{$i}/";
 		}
 		$arr = unpack($x, $s);
-
+		
 		$this->flag = $arr ['flag'];
 		$this->validkeys = $arr ['validkeys'];
-
+		
 		for($i = 0; $i < $n; $i++) {
-			$this->indices[$i] = $arr["indices" . $i];
+			$this->indices [$i] = $arr ["indices{$i}"];
 		}
-
+		
 		for($i = 0, $j = ($n * 4 + 2); $i < $this->validkeys; $i++, $j += $this->keylen) {
-
+			
 			$this->keys [$i] = rtrim(substr($s, $j, $this->keylen));
 		}
 	}
 
+	// }}}
+	
 	// foo dump
 	/**
 	 *
@@ -1389,7 +1386,7 @@ class BPlusTree_Node {
 	 *        	
 	 */
 	function dump($indent = '') {
-
+		// {{{
 		$flag = $this->flag;
 		if ($flag == BPT_FLAG_FREE) {
 			echo "free->", $this->position, "\n";
@@ -1421,7 +1418,7 @@ class BPlusTree_Node {
 			default:
 				echo "invalid flag??? ", $flag;
 		}
-
+		
 		echo "($flag) ";
 		echo " ", $this->position, " valid=", $this->validkeys, "\n";
 		echo $indent, "keys {", implode(', ', $this->keys), "}\n";
@@ -1443,6 +1440,8 @@ class BPlusTree_Node {
 		echo $indent, "*****\n";
 	}
 
+	// }}}*/
+	
 	/**
 	 * adds this node to fifo
 	 */
@@ -1450,7 +1449,7 @@ class BPlusTree_Node {
 		$fifo = & $this->fifo;
 		$ff = & $fifo->fifo;
 		$dict = & $fifo->fifo_dict;
-
+		
 		$position = $this->position;
 		if (isset($dict [$position])) {
 			$old = & $dict [$position];
@@ -1471,13 +1470,13 @@ class BPlusTree_Node {
 				$last->store(true);
 			}
 		}
-		//$is_o = true;
+		$is_o = true;
 		// Arvid: The loop doesn't do anything - but contains a deprecated each(). Commented out.
 		// while ((list (, $v) = each($ff)) && $is_o = is_object($v))
 		// ;
-		//if (!$is_o) {
-		//	trigger_error('ERR', E_USER_ERROR);
-		//}
+		if (!$is_o) {
+			trigger_error('ERR', E_USER_ERROR);
+		}
 	}
 
 	/**
@@ -1488,7 +1487,7 @@ class BPlusTree_Node {
 	 */
 	function enable_fifo($size = 33) {
 		if ($size < 5 || $size > 1000000) {
-			trigger_error("size not valid " . $size);
+			trigger_error("size not valid $size");
 		}
 		$this->fifo = new BPlusTree_Node_Fifo($size);
 	}
@@ -1502,7 +1501,7 @@ class BPlusTree_Node {
 			$this->fifo = null;
 		}
 	}
-
+	
 }
 
 /**
@@ -1543,7 +1542,7 @@ class BPlusTree {
 
 	/**
 	 *
-	 * @var BPlusTree_Node|null
+	 * @var object BPlusTree_Node root node
 	 */
 	var $root = null;
 
@@ -1560,11 +1559,6 @@ class BPlusTree {
 	 */
 	var $fifo_enabled = false;
 
-	var $file = null;
-	var $nodesize = null;
-	var $keylen = null;
-	var $position = null;
-
 	/**
 	 * constructor
 	 *
@@ -1578,9 +1572,8 @@ class BPlusTree {
 	 *        	maximum lenght of a key in bytes (unicode extended chars evaluate to two chars)
 	 */
 	function __construct($infile, $pos = null, $nodesize = null, $keylen = 10) {
-		/** @phpstan-ignore-next-line */
 		if (!is_null($keylen) && $keylen <= 2) {
-			trigger_error($keylen . " must be greater than 2", E_USER_ERROR);
+			trigger_error("$keylen must be greater than 2", E_USER_ERROR);
 		}
 		$this->root_seek = BPT_NULLSEEK;
 		$this->free = BPT_NULLSEEK;
@@ -1665,7 +1658,7 @@ class BPlusTree {
 		$this->reset_header();
 		$file = $this->file;
 		fseek($file, 0, SEEK_END);
-		$this->root = new BPlusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
+		$this->root = new BplusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
 		$this->root->store();
 	}
 
@@ -1674,10 +1667,9 @@ class BPlusTree {
 	 */
 	function open() {
 		$file = $this->file;
-		if ($this->get_parameters() === false) {
+		if ($this->get_parameters() === false)
 			return false;
-		}
-		$this->root = new BPlusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
+		$this->root = new BplusTree_Node(BPT_FLAG_LEAFANDROOT, $this->nodesize, $this->keylen, $this->root_seek, $file);
 		$this->root = & $this->root->materialize();
 		return true;
 	}
@@ -1743,7 +1735,7 @@ class BPlusTree {
 		$data = fread($file, $this->headersize);
 		$hdr = unpack('a5magic/Llength/Ckeylen/Lnodesize/Lroot_seek/Lfree', $data);
 		if ($hdr ['magic'] != BPT_VERSION_MAGIC) {
-			trigger_error("Version magic mismatch (" . $hdr['magic'] . "!=" . BPT_VERSION_MAGIC . ')', E_USER_WARNING);
+			trigger_error("Version magic mismatch ({$hdr['magic']}!=" . BPT_VERSION_MAGIC . ')', E_USER_WARNING);
 			return false;
 		}
 		$this->length = $hdr ['length'];
@@ -1759,62 +1751,62 @@ class BPlusTree {
 	 * @returns length of the tree (number of values)
 	 */
 	function length() {
-		/** @phpstan-ignore-next-line */
 		if (is_null($this->length)) {
-			if (false === $this->get_parameters()) {
+			if (false === $this->get_parameters())
 				return false;
-			}
 		}
 		return $this->length;
 	}
 
 	/**
 	 *
-	 * @param string &$key key to find.
-	 * @param bool $loose if true searches the tree for the "nearest" key to $key;
-	 *
+	 * @param
+	 *        	string &$key key to find.
+	 * @param bool $loose
+	 *        	if true searches the tree for the "nearest" key to $key;
+	 *        	
 	 * @returns int associated value
 	 *
 	 */
 	function getitem(&$key, $loose = false) {
-		if (is_null($this->root)) {
+		if (is_null($this->root))
 			trigger_error("not open!", E_USER_ERROR);
-		}
 		return $this->find($key, $this->root, $loose);
 	}
 
 	/**
 	 * traverses tree starting from $node, searching for $key
 	 *
-	 * @param string $key Target key
-	 * @param BPlusTree_Node $node Starting node
-	 * @param bool $loose If true, searches for "nearest" key to $key
+	 * @param string $key
+	 *        	target key
+	 * @param
+	 *        	object BPlusTree_Node starting node
+	 *        	
+	 * @returns int|bool value at the leaf node containing key or false if key is missing
 	 *
-	 * @return int|false Value at the leaf node containing key or false if missing
 	 */
 	function find(&$key, &$node, $loose = false) {
 		while (($node->flag & BPT_FLAG_INTERIOR) == BPT_FLAG_INTERIOR) {
-
+			
 			$thesekeys = $node->keys;
 			$validkeys = $node->validkeys;
-
+			
 			// d(array_slice($thesekeys, 0, $validkeys));
-
+			
 			$place = BPT_bisect($thesekeys, $key, 0, $validkeys);
 			if ($place >= $validkeys || BPT_keycmp($thesekeys [$place], $key) > 0) {
 				// $thesekeys[$place]>$key) {
-				if ($place == 0) {
+				if ($place == 0)
 					$nodekey = null;
-				} else {
+				else
 					$nodekey = $thesekeys [$place - 1];
-				}
 			} else {
 				$nodekey = $key;
 			}
-
+			
 			$node = & $node->getnode($nodekey);
 		}
-
+		
 		return $node->getvalue($key, $loose);
 	}
 
@@ -1842,37 +1834,32 @@ class BPlusTree {
 	 *        	
 	 */
 	function setitem($key, $val) {
-		/** @phpstan-ignore-next-line */
-		if (!is_numeric($val)) {
+		if (!is_numeric($val))
 			trigger_error("Second parameter must be numeric", E_USER_ERROR);
-		}
 		$curr_length = $this->length;
 		$root = & $this->root;
-		if (is_null($root)) {
+		if (is_null($root))
 			trigger_error("not open", E_USER_ERROR);
-		}
-		/** @phpstan-ignore-next-line */
-		if (!is_string($key)) {
-			trigger_error($key . " must be string", E_USER_ERROR);
-		}
-		if (strlen($key) > $this->keylen) {
-			trigger_error($key . " is too long: MAX is " . $this->keylen, E_USER_ERROR);
-		}
+		if (!is_string($key))
+			trigger_error("$key must be string", E_USER_ERROR);
+		if (strlen($key) > $this->keylen)
+			trigger_error("$key is too long: MAX is {$this->keylen}", E_USER_ERROR);
+		
 		d("STARTING FROM ROOT...");
-
+		
 		$test1 = $this->set($key, $val, $this->root);
 		if (!is_null($test1)) {
 			d("SPLITTING ROOT");
-
+			
 			// getting new rightmost interior node
 			list ($leftmost, $node) = $test1;
 			// print_r($test1);
-			d("LEFTMOST [" . $leftmost . "]");
-
+			d("LEFTMOST [$leftmost]");
+			
 			// getting new non-leaf root
 			list ($newroot, $this->free) = $root->getfreenode($this->free);
 			$newroot->flag = BPT_FLAG_ROOT;
-
+			
 			/*
 			 * if ($root->flag == BPT_FLAG_LEAFANDROOT) {
 			 * $root->flag = BPT_FLAG_LEAF;
@@ -1880,11 +1867,11 @@ class BPlusTree {
 			 * $root->flag = BPT_FLAG_INTERIOR;
 			 * }
 			 */
-
+			
 			// zero-ing root flag (makes an interior or leaf node
 			// respectively from a normal root or a leaf-root)
 			$root->flag &= ~BPT_FLAG_ROOT_BIT;
-
+			
 			$newroot->clear();
 			$newroot->putfirstindex($root->position);
 			$newroot->putnode($leftmost, $node);
@@ -1910,9 +1897,14 @@ class BPlusTree {
 	 * support method for {@link BPlusTree::setitem}
 	 *
 	 * @param string $key
-	 * @param int $val Value associated to $key
-	 * @param BPlusTree_Node $node Starting node
-	 * @return array|null Pair (leftmost, newnode) or null if no split took place
+	 * @param int $val
+	 *        	value associated to $key
+	 * @param
+	 *        	object BPlusTree_Node starting node
+	 *        	
+	 * @returns array|null a pair (leftmost, newnode) where "leftmost" is
+	 * 			the leftmost key in newnode, and newnode is the split node;
+	 *			returns null if no split took place
 	 */
 	function set($key, $val, &$node) {
 		// {{{
@@ -1923,7 +1915,7 @@ class BPlusTree {
 			// non-leaf: find descendant to insert
 			d($keys);
 			$place = BPT_bisect($keys, $key, 0, $validkeys);
-
+			
 			if ($place >= $validkeys || BPT_keycmp($keys [$place], $key) >= 0) {
 				// $keys[$place]>=$key) {
 				// insert at previous node
@@ -1931,48 +1923,48 @@ class BPlusTree {
 			} else {
 				$index = $place + 1;
 			}
-
-			if ($index == 0) {
+			
+			if ($index == 0)
 				$nodekey = null;
-			} else {
+			else
 				$nodekey = $keys [$place - 1];
-			}
+			
 			$nextnode = $node->getnode($nodekey);
 			$test = $this->set($key, $val, $nextnode);
 			// split ?
 			if (!is_null($test)) {
 				list ($leftmost, $insertnode) = $test;
-
+				
 				// TRY
 				$TRY = $node->putnode($leftmost, $insertnode);
 				if ($TRY == NOROOMERROR) {
-
-					d($key . "::SPLIT!");
+					
+					d("$key::SPLIT!");
 					// EXCEPT
-
+					
 					$insertindex = $insertnode->position;
-
+					
 					list ($newnode, $this->free) = $node->getfreenode($this->free, array(
 						&$this,
 						'update_freelist'
 					));
-
+					
 					$newnode->flag = BPT_FLAG_INTERIOR;
-
+					
 					$ki = $node->keys_indices("dummy");
-
+					
 					// list($dummy, $firstindex) = $ki[0]; #each($ki);
 					$firstindex = $ki->b [0];
-
+					
 					// $ki = array_slice($ki, 1);
 					$ki->remove(0);
 					// print_r($ki);
 					// insert new pair
 					// BPT_insort($ki, array($leftmost, $insertindex));
 					$ki->insort($leftmost, $insertindex);
-
+					
 					$newleftmost = $this->divide_entries($firstindex, $node, $newnode, $ki);
-
+					
 					$node->store();
 					$newnode->store();
 					return array(
@@ -1980,8 +1972,8 @@ class BPlusTree {
 						&$newnode
 					);
 				} else {
-
-					d($key . "::NO SPLIT");
+					
+					d("$key::NO SPLIT");
 					d($node->keys);
 					$node->store();
 					return null; // no split
@@ -1996,11 +1988,11 @@ class BPlusTree {
 			} else {
 				$newlength = $this->length;
 			}
-
-			d("[LEAF] TRYING TO PUT " . $key . "=>" . $val);
+			
+			d("[LEAF] TRYING TO PUT $key=>$val");
 			if ($node->putvalue($key, $val) == NOROOMERROR) {
 				d("GOT NOROOMERROR");
-
+				
 				$ki = $node->keys_indices("dummy");
 				// BPT_insort($ki, array($key, $val));
 				$ki->insort($key, $val);
@@ -2022,17 +2014,18 @@ class BPlusTree {
 					&$newnode
 				);
 			} else {
-				d("STORING NODE [" . $node->position . "]");
+				d("STORING NODE [{$node->position}]");
 				d($node->keys);
-
+				
 				$node->store();
 				$this->length = $newlength;
 				return null;
 			}
 		}
-		return null;
 	}
 
+	// }}}
+	
 	/**
 	 *
 	 * removes key from tree at node $node;
@@ -2053,17 +2046,17 @@ class BPlusTree {
 	 */
 	function remove($key, &$node, $NESTING = 0) {
 		$newnodekey = null;
-		d("NESTING LEVEL " . $NESTING);
-		d("(" . $NESTING . ") current size = " . $this->nodesize);
-
+		d("NESTING LEVEL $NESTING");
+		d("($NESTING) current size = {$this->nodesize}");
+		
 		// first of all we check if it is non-leaf
 		if (($node->flag & BPT_FLAG_INTERIOR) == BPT_FLAG_INTERIOR) {
 			// non-leaf
-
+			
 			$keys = & $node->keys;
 			$validkeys = $node->validkeys;
 			$place = BPT_bisect($keys, $key, 0, $validkeys);
-
+			
 			if ($place >= $validkeys || BPT_keycmp($keys [$place], $key) >= 0) {
 				// $keys[$place]>=$key) {
 				// delete occurs before $place
@@ -2075,39 +2068,39 @@ class BPlusTree {
 				// delete occurs in $place (k_i <= K_search < k_(i+1) )
 				$index = $place + 1;
 			}
-
+			
 			if ($index == 0) {
 				$nodekey = null;
 			} else {
 				$nodekey = $keys [$place - 1];
 			}
-
+			
 			// get child node
 			$nextnode = & $node->getnode($nodekey);
-
+			
 			// RECURSION! remove from nextnode;
 			// returns new leftmost if changed, otherwise null,
 			// and new size of the child node
 			list ($lm, $size) = $this->remove($key, $nextnode, $NESTING + 1);
-
+			
 			// check now for size of nodesize: is it too small?
 			// (less than half)
 			$nodesize = $this->nodesize;
 			$half = (int) ($nodesize / 2);
-
+			
 			// if($size==0) trigger_error("SIZE==0", E_USER_WARNING);
-
+			
 			if ($size < $half) {
-				d("(" . $NESTING . ") node too small (" . $size . "<" . $nodesize . "/2), redistribute children");
-
+				d("($NESTING) node too small ($size<$nodesize/2), redistribute children");
+				
 				// node is too small, need to redistribute
 				// children
-
+				
 				if (is_null($nodekey) && $validkeys == 0) {
 					// print_r($node);
 					trigger_error("invalid node, only one child", E_USER_ERROR);
 				}
-
+				
 				if ($place >= $validkeys) {
 					// final node in row, get previous
 					$rightnode = & $nextnode;
@@ -2122,7 +2115,7 @@ class BPlusTree {
 					// non-final, get next
 					$leftnode = & $nextnode;
 					$leftkey = $nodekey;
-
+					
 					if ($index == 0) {
 						$rightkey = $keys [0];
 					} else {
@@ -2133,15 +2126,15 @@ class BPlusTree {
 				// get all keys and indices
 				$rightki = $rightnode->keys_indices($rightkey);
 				$leftki = $leftnode->keys_indices($leftkey);
-
+				
 				// $ki = array_merge($leftki, $rightki);
 				$leftki->append($rightki);
 				$ki = & $leftki;
-
+				
 				// array_splice ($leftki, count($leftki), 0, $rightki);
-
+				
 				$lki = $ki->count; // count($ki);
-
+				                   
 				// merging?
 				if (($lki > $nodesize) || (($leftnode->flag & BPT_FLAG_LEAF) != BPT_FLAG_LEAF && ($lki >= $nodesize))) {
 					// redistribute
@@ -2157,11 +2150,11 @@ class BPlusTree {
 						$ki->remove(0);
 					}
 					$newrightkey = $this->divide_entries($firstindex, $leftnode, $rightnode, $ki);
-
+					
 					// delete, reinsert right
 					$node->delnode($rightkey);
 					$node->putnode($newrightkey, $rightnode);
-
+					
 					// same for left if first changed
 					if (!is_null($leftkey) && $leftkey != $newleftkey) {
 						$node->delnode($leftkey);
@@ -2171,7 +2164,7 @@ class BPlusTree {
 					$leftnode->store();
 					$rightnode->store();
 				} else {
-					d("(" . $NESTING . ") node too small, need merge left<-right");
+					d("($NESTING) node too small, need merge left<-right");
 					// merge into left, free right
 					d($leftnode->keys);
 					d($leftnode->indices);
@@ -2179,21 +2172,21 @@ class BPlusTree {
 					// list($newleftkey, $firstindex) = $ki[0];
 					$newleftkey = $ki->a [0];
 					$firstindex = $ki->b [0];
-
+					
 					if (($leftnode->flag & BPT_FLAG_LEAF) != BPT_FLAG_LEAF) {
 						$leftnode->put_all_positions($firstindex, $ki->slice(1));
 						// array_slice($ki, 1)
 					} else {
 						$leftnode->put_all_values($ki);
 					}
-
+					
 					if ($rightnode->flag == BPT_FLAG_LEAF) {
 						$this->free = $leftnode->delnext($rightnode, $this->free);
 					} else {
 						$this->free = $rightnode->free($this->free);
 					}
 					if (!is_null($leftkey) && $newleftkey != $leftkey) {
-						d($newleftkey . "!=" . $leftkey);
+						d("$newleftkey!=$leftkey");
 						$node->delnode($leftkey);
 						$node->putnode($newleftkey, $leftnode);
 					}
@@ -2203,12 +2196,11 @@ class BPlusTree {
 					d('redist:');
 					d($node->keys);
 					d($leftnode->keys);
-
+					
 					$this->reset_header();
 				}
-				if (is_null($leftkey)) {
+				if (is_null($leftkey))
 					$newnodekey = $lm;
-				}
 			} else {
 				// no restructuring,
 				// update leftmost if needed
@@ -2229,7 +2221,7 @@ class BPlusTree {
 			// leaf, base case: just delete.
 			if ($node->validkeys < 1) {
 				// only for empty root
-				trigger_error("No such key " . $key, E_USER_ERROR);
+				trigger_error("No such key $key", E_USER_ERROR);
 			}
 			$first = $node->keys [0];
 			d($node->keys);
@@ -2241,9 +2233,9 @@ class BPlusTree {
 			}
 			$node->store();
 			$this->length--;
-
-			d("NEWNODEKEY: " . $newnodekey);
-			d("VALIDKEYS: " . $node->validkeys);
+			
+			d("NEWNODEKEY: $newnodekey");
+			d("VALIDKEYS: {$node->validkeys}");
 		}
 		d($node->keys);
 		return array(
@@ -2272,19 +2264,19 @@ class BPlusTree {
 		// {{{
 		// $middle = (int)(count($entries)/2);
 		$middle = ceil($entries->count / 2);
-		d("divide entries at " . $middle);
-
+		d("divide entries at $middle");
+		
 		// $left = array_slice($entries, 0, $middle);
 		// $right = array_slice($entries, $middle);
 		$left = $entries->slice(0, $middle);
 		$right = $entries->slice($middle);
-
+		
 		if (($node1->flag & BPT_FLAG_INTERIOR) == BPT_FLAG_INTERIOR) {
 			d("DIVIDING INTERIOR\n");
 			// list($leftmost, $midindex) = $right[0];
 			$leftmost = $right->a [0];
 			$midindex = $right->b [0];
-
+			
 			$node1->put_all_positions($firstindex, $left);
 			// $node2->put_all_positions($midindex, array_slice($right, 1));
 			$node2->put_all_positions($midindex, $right->slice(1));
@@ -2309,6 +2301,8 @@ class BPlusTree {
 		}
 	}
 
+	// }}}
+	
 	/**
 	 * delete item $key
 	 *
@@ -2319,19 +2313,19 @@ class BPlusTree {
 	function delitem($key) {
 		$root = $this->root;
 		$currentlength = $this->length;
-
+		
 		$this->remove($key, $root, $NESTING = 0);
-
+		
 		if ($root->flag == BPT_FLAG_ROOT) {
-
+			
 			$validkeys = $root->validkeys;
-
+			
 			if ($validkeys < 1) {
-
+				
 				if ($validkeys < 0) {
 					trigger_error("invalid empty non-leaf root", E_USER_ERROR);
 				}
-
+				
 				$this->root = & $root->getnode(null);
 				$newroot = & $this->root;
 				$this->root_seek = $newroot->position;
@@ -2376,20 +2370,20 @@ class BPlusTree {
 			$free->dump();
 		}
 	}
-
+	
 }
 
 class BPlusWalker {
 
 	var $tree;
+
 	var $keylower;
+
 	var $includelower;
+
 	var $keyupper;
+
 	var $includeupper;
-	var $startnode;
-	var $node;
-	var $node_index;
-	var $valid;
 
 	function __construct(&$tree, &$keylower, $includelower = null, $keyupper = null, $includeupper = null) {
 		$this->tree = & $tree;
@@ -2402,7 +2396,7 @@ class BPlusWalker {
 		}
 		$node = $this->tree->get_root();
 		while (BPT_FLAG_INTERIOR == ($node->flag & BPT_FLAG_INTERIOR)) {
-
+			
 			if (is_null($keylower)) {
 				$nkey = null;
 			} else {
@@ -2417,13 +2411,13 @@ class BPlusWalker {
 					$nkey = $keys [$place - 1];
 				}
 			}
-
+			
 			$node = & $node->getnode($nkey);
 		}
-
+		
 		$this->startnode = & $node;
 		$this->node = & $node;
-
+		
 		$this->node_index = null;
 		$this->valid = 0;
 		$this->first();
@@ -2452,11 +2446,11 @@ class BPlusWalker {
 		if (!$this->valid) {
 			$place = BPT_bisect($keys, $keylower, 0, $validkeys);
 			if ($place < $validkeys || ($place == $validkeys && $this->includelower > 1)) {
-				if ($place > 0) {
+				if ($place > 0)
 					$index = $place - 1;
-				} else {
+				else
 					$index = $place;
-				}
+				
 				$this->node_index = $index;
 				$testk = $keys [$index];
 				/*
@@ -2469,7 +2463,7 @@ class BPlusWalker {
 				 */
 				$this->valid = BPT_keycmp($testk, $keylower) < 0 || // $testk>$keylower ||
 				($this->includelower && ($this->includelower > 1 || $testk == $keylower));
-
+				
 				$this->keylower = $testk;
 			} else {
 				$next = & $node->nextneighbour();
@@ -2490,19 +2484,17 @@ class BPlusWalker {
 	}
 
 	function current_key() {
-		if ($this->valid) {
+		if ($this->valid)
 			return $this->node->keys [$this->node_index];
-		} else {
-			trigger_error("WALKER: Not a valid index (" . $this->node_index . ")");
-		}
+		else
+			trigger_error("WALKER: Not a valid index ({$this->node_index})");
 	}
 
 	function current_value() {
-		if ($this->valid) {
+		if ($this->valid)
 			return $this->node->indices [$this->node_index];
-		} else {
-			trigger_error("WALKER: Not a valid index (" . $this->node_index . ")");
-		}
+		else
+			trigger_error("WALKER: Not a valid index ({$this->node_index})");
 	}
 
 	function current() {
@@ -2512,7 +2504,7 @@ class BPlusWalker {
 				$this->node->indices [$this->node_index]
 			);
 		} else {
-			trigger_error("WALKER: Not a valid index (" . $this->node_index . ")");
+			trigger_error("WALKER: Not a valid index ({$this->node_index})");
 		}
 	}
 
@@ -2537,11 +2529,10 @@ class BPlusWalker {
 			$this->valid = (is_null($keyupper) || BPT_keycmp($testkey, $keyupper) < 0 || 
 			// $testkey < $keyupper ||
 			($this->includeupper && $testkey == $keyupper));
-			if ($this->valid) {
+			if ($this->valid)
 				$this->node_index = $nextp;
-			}
 		}
-
+		
 		return $this->valid;
 	}
 	
@@ -2552,9 +2543,9 @@ class caching_BPT extends BPlusTree {
 	var $cache = array();
 
 	function getitem(&$key, $loose = false) {
-		if (isset($this->cache [$key])) {
+		if (isset($this->cache [$key]))
 			return $this->cache [$key];
-		} else {
+		else {
 			$this->cache [$key] = parent::getitem($key, $loose);
 			return $this->cache [$key];
 		}
@@ -2575,16 +2566,14 @@ class caching_BPT extends BPlusTree {
 	function delitem($key) {
 		$this->nope();
 	}
-
+	
 }
 
 class SBPlusTree extends BPlusTree {
 
 	var $maxstring;
+
 	var $stringfile;
-	var $nodesize;
-	var $keylen;
-	var $position;
 
 	function __construct($infile, $stringfile, $maxstring = 256, $pos = null, $nodesize = null, $keylen = null) {
 		parent::__construct($infile, $pos, $nodesize, $keylen);
@@ -2612,9 +2601,8 @@ class SBPlusTree extends BPlusTree {
 			fseek($this->stringfile, $seek);
 		}
 		// nul-pad string
-		if (strlen($s > $this->maxstring)) {
+		if (strlen($s > $this->maxstring))
 			$x = substr($s, 0, $this->maxstring);
-		}
 		$x = str_pad($s, $this->maxstring, chr(0));
 		fwrite($this->stringfile, $x);
 		return $seek;
@@ -2654,7 +2642,7 @@ class SBPlusWalker extends BPlusWalker {
 		$id = parent::current_value();
 		return $this->tree->getstring($id);
 	}
-
+	
 }
 
 class caching_SBPT extends SBPlusTree {
@@ -2666,9 +2654,9 @@ class caching_SBPT extends SBPlusTree {
 	}
 
 	function getitem(&$key, $loose = false) {
-		if (isset($this->cache [$key])) {
+		if (isset($this->cache [$key]))
 			return $this->cache [$key];
-		} else {
+		else {
 			$item = parent::getitem($key, $loose);
 			$this->cache [$key] = $item;
 			return $item;
@@ -2690,14 +2678,14 @@ class caching_SBPT extends SBPlusTree {
 	function delitem($key) {
 		$this->nope();
 	}
-
+	
 }
 
 class BPlusUtils {
 
 	function recopy_bplus($fromfile, $tofile, $class = 'BPlusTree') {
 		$fromtree = new $class($fromfile);
-		$fromtree->open();
+		$fromtree->open;
 		list ($f, $p, $n, $k) = $fromtree->init_params();
 		$totree = new $class($tofile, $p, $n, $k);
 		$totree->startup();
@@ -2708,6 +2696,7 @@ class BPlusUtils {
 		list ($f, $p, $n, $k) = $totree->init_params();
 		// ....
 	}
-
+	
 }
-?>
+
+

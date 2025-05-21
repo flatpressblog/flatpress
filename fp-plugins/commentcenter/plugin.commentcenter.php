@@ -2,11 +2,11 @@
 
 /*
  * Plugin Name: Comment Center
- * Version: 1.1.3
+ * Version: 1.1.2
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
- * Description: Manage your blog's comments: <a href="./admin.php?p=entry&action=commentcenter" title="Manage the policies" >Set policies</a>, publish or reject comments. Part of the standard distribution.
+ * Description: Manage your blog's comments: Set policies, publish or reject comments. Part of the standard distribution.
  */
 
 /**
@@ -34,7 +34,7 @@ class plugin_commentcenter {
 		add_filter('comment_validate', array(
 			&$this,
 			'validate'
-		), 10, 2);
+		), 5, 2);
 		$this->pl_dir = FP_CONTENT . 'plugin_commentcenter/';
 		if (!file_exists($this->pl_dir)) {
 			fs_mkdir($this->pl_dir);
@@ -44,9 +44,9 @@ class plugin_commentcenter {
 	/**
 	 * This function loads the configuration of the plugin.
 	 *
-	 * @param bool $foce:
+	 * @param boolean $foce:
 	 *        	Force to load it?
-	 * @return array The configuration
+	 * @return array: The configuration
 	 */
 	function getConf($force = false) {
 		if (!empty($this->conf) && $force) {
@@ -72,11 +72,11 @@ class plugin_commentcenter {
 	/**
 	 * This function validates a comment.
 	 *
-	 * @param bool $status:
+	 * @param boolean $status:
 	 *        	The current status of the comment validation
 	 * @param array $comment:
 	 *        	The comment data
-	 * @return bool Returns true if the comment is valid, false otherwise.
+	 * @return boolean: Is the comment valid?
 	 */
 	function validate($status, $comment) {
 		global $smarty, $fp_params, $lang;
@@ -145,7 +145,7 @@ class plugin_commentcenter {
 	 *
 	 * @param string $key:
 	 *        	A key for the service
-	 * @return object|int The akismet object or a negative integer on error
+	 * @return object: The akismet object
 	 */
 	function &akismetLoad($key = '') {
 		$conf = $this->getConf();
@@ -188,14 +188,14 @@ class plugin_commentcenter {
 	 *        	The comment data
 	 * @param string $entry:
 	 *        	The entry id
-	 * @return array $comment cleaned
+	 * @return array: $comment cleaned
 	 */
 	function akismetClean($comment, $entry) {
 		global $post;
 		$conf = $this->getConf();
 
 		$oldpost = $post;
-		$o = new FPDB_Query("id:" . $entry . ",fullparse:false", null);
+		$o = new FPDB_Query("id:{$entry},fullparse:false", null);
 		$arr = $o->getEntry();
 		$post = $arr [1];
 		$link = get_permalink($entry);
@@ -224,7 +224,7 @@ class plugin_commentcenter {
 	 *        	The comment data
 	 * @param string $entry:
 	 *        	The entry id
-	 * @return bool Is the comment allowed?
+	 * @return boolean: Is the comment allowed?
 	 */
 	function akismetCheck($comment, $entry) {
 		$akismet = &$this->akismetLoad();
@@ -247,9 +247,9 @@ class plugin_commentcenter {
 	/**
 	 * This function loads the comment policies.
 	 *
-	 * @param bool $force:
+	 * @param boolean $force:
 	 *        	Force to load them?
-	 * @return array The policies
+	 * @return array: The policies
 	 */
 	function &loadPolicies($force = false) {
 		if (!$force && !empty($this->policies)) {
@@ -269,7 +269,7 @@ class plugin_commentcenter {
 	/**
 	 * This function saves the policies.
 	 *
-	 * @return bool
+	 * @return boolean
 	 */
 	function savePolicies() {
 		$this->policies = array_values($this->policies);
@@ -283,7 +283,7 @@ class plugin_commentcenter {
 	 *
 	 * @param mixed $policy:
 	 *        	The policy
-	 * @param int $position:
+	 * @param integer $position:
 	 *        	The position
 	 */
 	function addPolicyAt($policy, $position) {
@@ -329,12 +329,9 @@ class plugin_commentcenter {
 	 *        	The entry id
 	 * @param array $cats:
 	 *        	The categories
-	 * @return int The behavoir
+	 * @return integer: The behavoir
 	 */
 	function behavoirFromPolicies($entry, $cats = array()) {
-		if (!is_array($cats)) {
-			$cats = array();
-		}
 		$date = date_from_id($entry);
 		// check if $date is in expected format
 		if (!array_key_exists('time', $date)) {
@@ -390,10 +387,10 @@ class plugin_commentcenter {
 	 *        	The entry id
 	 * @param string $why:
 	 *        	The reason of the log
-	 * @return bool Can it saves the log?
+	 * @return boolean: Can it saves the log?
 	 */
 	function logComment($comment, $entry, $why = '') {
-		$f = $this->pl_dir . "e" . $entry . "_c" . $comment ['id'] . ".txt";
+		$f = $this->pl_dir . "e{$entry}_c{$comment['id']}.txt";
 		if (!empty($why)) {
 			$comment ['log_reason'] = $why;
 		}
@@ -410,7 +407,7 @@ class plugin_commentcenter {
 	 *        	The comment data
 	 * @param string $entry_title:
 	 *        	The title of the entry
-	 * @return bool
+	 * @return boolean
 	 */
 	function commentMail($comment, $entry_title) {
 		global $lang, $fp_config;
@@ -418,7 +415,7 @@ class plugin_commentcenter {
 		$subject = $lang ['plugin'] ['commentcenter'] ['mail_subj'];
 		$subject = sprintf($subject, $fp_config ['general'] ['title']);
 
-		$comm_mail = empty($comment ['email']) ? '' : "<" . $comment ['email'] . ">";
+		$comm_mail = empty($comment ['email']) ? '' : "<{$comment['email']}>";
 		$from_mail = $fp_config ['general'] ['email'];
 
 		$text = $lang ['plugin'] ['commentcenter'] ['mail_text'];
@@ -438,7 +435,6 @@ class plugin_commentcenter {
 			$fp_config ['general'] ['title']
 		), $text);
 
-		// for non-ASCII characters in the e-mail header use RFC RFC 1342 — Encodes $subject with MIME base64 via core.utils.php
 		return @utils_mail($from_mail, $subject, $text);
 	}
 
@@ -473,7 +469,7 @@ class commentcenter_list extends fs_filelister {
 		$list = array();
 		if (!is_null($entry) && @is_array($this->_list [$entry])) {
 			foreach ($this->_list [$entry] as $commentid) {
-				include $this->_directory . "/e" . $entry . "_c" . $commentid . ".txt";
+				include $this->_directory . "/e{$entry}_c{$commentid}.txt";
 				if (empty($comment ['log_reason'])) {
 					$comment ['log_reason'] = 'nd';
 				}
@@ -495,4 +491,3 @@ if (defined('MOD_ADMIN_PANEL')) {
 	include dirname(__FILE__) . '/inc/jslang.php';
 	include dirname(__FILE__) . '/inc/editor.php';
 }
-?>
