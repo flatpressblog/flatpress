@@ -42,35 +42,34 @@ function plugin_readmore_main($string) {
 	$q = & $fpdb->getQuery();
 
 	if (($q && !$q->single) && !isset($_GET ['page'])) {
-		if ($q) {
+		if ($q)
 			list ($id) = $q->getLastEntry();
-		} else {
+		else
 			$id = '';
-		}
 
 		if ($MODE == 'auto' || $MODE == 'semiauto') {
 			if (strlen($string) > $CHOP_AT) {
 
-				return substr($string, 0, $CHOP_AT) . "&hellip; <span class=\"readmore\"><a href=\"" . get_permalink($id) . "#readmore-" . $id . "\">" . $readmoreString . "</a></span>";
+				return substr($string, 0, $CHOP_AT) . "&hellip; <span class=\"readmore\"><a href=\"" . get_permalink($id) . "#readmore-{$id}\">" . $readmoreString . "</a></span>";
 			}
 		}
 
 		if ($MODE == 'manual' || $MODE == 'semiauto') {
 			if (($p = strpos($string, '[more]')) !== false) {
-				return substr($string, 0, $p) . "<span class=\"readmore\"><a href=\"" . get_permalink($id) . "#readmore-" . $id . "\">" . $readmoreString . "</a></span>";
+				return substr($string, 0, $p) . "<span class=\"readmore\"><a href=\"" . get_permalink($id) . "#readmore-{$id}\">" . $readmoreString . "</a></span>";
 			}
 		} elseif ($MODE == 'sentence') {
 			$matches = array();
 			if ($v = preg_match_all('|[.!?]\s|', $string, $matches, PREG_OFFSET_CAPTURE)) {
 				if (count($matches [0]) > $CHOP_AT) {
-					$string = substr($string, 0, $matches [0] [$CHOP_AT - 1] [1]) . ". <span class=\"readmore\"><a href=\"" . get_permalink($id) . "#readmore-" . $id . "\">" . $readmoreString . "</a></span>";
+					$string = substr($string, 0, $matches [0] [$CHOP_AT - 1] [1]) . ". <span class=\"readmore\"><a href=\"" . get_permalink($id) . "#readmore-{$id}\">" . $readmoreString . "</a></span>";
 				}
 			}
 		}
 	}
 
 	if (($q && $q->single) || isset($fp_params ['entry'])) {
-		$string = str_replace('[more]', "<a id=\"readmore-" . $fp_params ['entry'] . "\"></a>", $string);
+		$string = str_replace('[more]', "<a id=\"readmore-{$fp_params['entry']}\"></a>", $string);
 	}
 
 	return $string;

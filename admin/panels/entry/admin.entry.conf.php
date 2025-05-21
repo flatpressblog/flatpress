@@ -14,13 +14,13 @@
  */
  
  
-$admin_entry_sections = array(
-	'list',
+ $admin_entry_sections = array(
+ 	'list',
 	'new',
 	'edit',
 	'delete',
 	'comms',
 	'commsdel'
-);
+ );
 
 ?>

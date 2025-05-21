@@ -62,9 +62,8 @@ class FPDB_QueryParams {
 
 			$this->fullparse = is_string($params ['fullparse']) ? ($params ['fullparse'] != 'false') : $params ['fullparse'];
 
-			if ($this->fullparse) {
+			if ($this->fullparse)
 				$this->comments = true;
-			}
 		}
 
 		if (isset($params ['y'])) {
@@ -161,14 +160,6 @@ class FPDB_Query {
 
 	var $walker = null;
 
-	var $prevkey = null;
-
-	var $nextkey = null;
-
-	var $comments = null;
-
-	var $preventry = array();
-
 	function __construct($params, $ID) {
 		global $current_query;
 
@@ -179,7 +170,7 @@ class FPDB_Query {
 			$this->single = true;
 		}
 
-		$GLOBALS ['current_query'] = &$this;
+		$GLOBALS ['current_query'] = & $this;
 	}
 
 	function prepare() {
@@ -187,8 +178,8 @@ class FPDB_Query {
 
 		$fpdb->init();
 
-		$this->main_idx = &$fpdb->get_index($this->params->category);
-		$entry_index = &$this->main_idx;
+		$this->main_idx = & $fpdb->get_index($this->params->category);
+		$entry_index = & $this->main_idx;
 
 		$this->counter++;
 
@@ -208,10 +199,9 @@ class FPDB_Query {
 			$this->_prepare_list($entry_index);
 
 			if ($this->params->exclude) {
-				$o = &$fpdb->get_index($this->params->exclude);
-				if ($o !== false) {
-					$this->secondary_idx = &$o;
-				}
+				$o = & $fpdb->get_index($this->params->exclude);
+				if ($o !== false)
+					$this->secondary_idx = & $o;
 			}
 		}
 
@@ -224,11 +214,10 @@ class FPDB_Query {
 		/*
 		 * this should never happen
 		 */
-		if (!$this->params->id) {
+		if (!$this->params->id)
 			trigger_error("FPDB: no ID found for query {$this->ID}", E_USER_ERROR);
-		}
 
-		$qp = &$this->params;
+		$qp = & $this->params;
 
 		$time = entry_idtotime($qp->id);
 
@@ -251,7 +240,7 @@ class FPDB_Query {
 		// i.e. includes the first key $newkey such as $newkey <= $prevkey
 		// also, if $prevkey != $newkey then $prevkey := $newkey
 
-		$this->walker = &$entry_index->walker($prevkey, 2, null, null);
+		$this->walker = & $entry_index->walker($prevkey, 2, null, null);
 
 		// since we're searching for $prevkey, i.e. a key preceding the target $id
 		// in the sequence, if $prevkey becomes equal to $key then it means
@@ -263,20 +252,16 @@ class FPDB_Query {
 
 		if ($prevkey == $key) {
 			$this->prevkey = null;
-			/** @phpstan-ignore-next-line */
 			if ($this->walker->valid) {
 				$this->walker->next();
-				/** @phpstan-ignore-next-line */
 				$this->nextkey = $this->walker->valid ? $this->walker->current_key() : null;
 			}
 		} else {
 			$this->prevkey = $prevkey;
 			if ($this->walker->valid) {
 				$this->walker->next();
-				/** @phpstan-ignore-next-line */
 				if ($this->walker->valid) {
 					$this->walker->next();
-					/** @phpstan-ignore-next-line */
 					$this->nextkey = $this->walker->valid ? $this->walker->current_key() : null;
 				}
 			}
@@ -284,7 +269,7 @@ class FPDB_Query {
 	}
 
 	function _prepare_list(&$entry_index) {
-		$qp = &$this->params;
+		$qp = & $this->params;
 
 		$entry_num = 0;
 
@@ -295,7 +280,7 @@ class FPDB_Query {
 			$firstid = null;
 
 			$index_count = $entry_index->length();
-			$this->walker = &$entry_index->walker($firstid);
+			$this->walker = & $entry_index->walker($firstid);
 		} else {
 			// notice this won't work with cats (for now)
 
@@ -317,17 +302,16 @@ class FPDB_Query {
 			$qp->count = $index_count;
 		} elseif (($qp->start + $qp->count) > $index_count) {
 
-			if ($index_count >= $qp->start) {
+			if ($index_count >= $qp->start)
 				$qp->count = $index_count - $qp->start;
-			} else {
+			else
 				$index_count = $qp->start = $qp->count = 0;
-			}
 		}
 	}
 
 	// not so great implementation... doesn't work well
 	function _get_random_id(&$entry_index) {
-		$qp = &$this->params;
+		$qp = & $this->params;
 		$now = time();
 
 		$first = '999999999999';
@@ -348,7 +332,7 @@ class FPDB_Query {
 
 	/* reading functions */
 	function hasMore() {
-		$GLOBALS ['current_query'] = &$this;
+		$GLOBALS ['current_query'] = & $this;
 
 		// if system init has not been done (filling pointer variable etc.)
 		// call prepare()
@@ -364,19 +348,17 @@ class FPDB_Query {
 	function &peekEntry() {
 		global $post;
 
-		$qp = &$this->params;
+		$qp = & $this->params;
 		$return = array(
 			false,
 			false
 		);
 
-		if ($this->counter < 0) {
+		if ($this->counter < 0)
 			$this->prepare();
-		}
 
-		if ($this->pointer == $this->params->start + $this->params->count) {
+		if ($this->pointer == $this->params->start + $this->params->count)
 			return $return;
-		}
 
 		if ($qp->id) {
 			$idx = $this->main_idx;
@@ -392,9 +374,8 @@ class FPDB_Query {
 
 				$post = $entry;
 
-				if (!$entry) {
+				if (!$entry)
 					return $return;
-				}
 			} else {
 				$entry = array(
 					'subject' => $v
@@ -424,11 +405,10 @@ class FPDB_Query {
 			$key = $this->walker->current_key();
 			$id = $this->currentid = entry_keytoid($key);
 
-			if ($this->single) {
+			if ($this->single)
 				$this->preventry = array(
 					'subject' => $this->walker->current_value()
 				);
-			}
 
 			$this->walker->next();
 			$this->pointer++;
@@ -453,9 +433,8 @@ class FPDB_Query {
 
 		$prevcurr = $this->currentid;
 		$id = $this->currentid = entry_keytoid($this->walker->current_key());
-		if ($id != $prevcurr) {
+		if ($id != $prevcurr)
 			$this->previd = $prevcurr;
-		}
 
 		if ($qp->fullparse && $this->counter <= 0) {
 
@@ -493,11 +472,10 @@ class FPDB_Query {
 	}
 
 	function &getEntry() {
-		if (!$this->hasMore()) {
+		if (!$this->hasMore())
 			return false;
-		}
 
-		$var = &$this->peekEntry();
+		$var = & $this->peekEntry();
 		$this->lastentry = $var;
 
 		$this->walker->next();
@@ -515,11 +493,10 @@ class FPDB_Query {
 	}
 
 	function _getOffsetId($offset, $assume_pointer = null) {
-		if (is_int($assume_pointer)) {
+		if (is_int($assume_pointer))
 			$i = $assume_pointer + $offset;
-		} else {
+		else
 			$i = $this->pointer + $offset;
-		}
 		return isset($this->local_list [$i]) ? $this->local_list [$i] : false;
 	}
 
@@ -550,12 +527,12 @@ class FPDB_Query {
 	function getNextPage() {
 		if ($this->single) {
 			$key = $this->nextkey;
-			if (!$key) {
+			if (!$key)
 				return array(
 					null,
 					null
 				);
-			} else {
+			else {
 				$val = $this->main_idx->getitem($key);
 				return array(
 					$val,
@@ -566,24 +543,23 @@ class FPDB_Query {
 
 		if ($this->params->page) {
 			// if ($this->_getOffsetId(0, ($this->params->start + $this->params->count)))
-			if ($this->walker && $this->walker->valid) {
+			if ($this->walker->valid)
 				return array(
 					$GLOBALS ['lang'] ['main'] ['nextpage'],
 					$this->params->page + 1
 				);
-			}
 		}
 	}
 
 	function getPrevPage() {
 		if ($this->single) {
 			$key = $this->prevkey;
-			if (!$key) {
+			if (!$key)
 				return array(
 					null,
 					null
 				);
-			} else {
+			else {
 				$val = $this->main_idx->getitem($key);
 				return array(
 					$val,
@@ -633,9 +609,8 @@ class FPDB_CommentList {
 	}
 
 	function &getComment() {
-		if (!$this->hasMore()) {
+		if (!$this->hasMore())
 			return false;
-		}
 
 		$id = array_shift($this->list);
 
@@ -657,10 +632,6 @@ class FPDB {
 
 	var $queries = array();
 
-	var $_query = null;
-
-	var $entry_index = array();
-
 	function __construct() {
 		// constructor
 	}
@@ -677,7 +648,7 @@ class FPDB {
 
 	function &get_index($cat_id = 0) {
 		if (!isset($this->_indexer [$cat_id])) {
-			$this->_indexer [$cat_id] = &entry_cached_index($cat_id);
+			$this->_indexer [$cat_id] = & entry_cached_index($cat_id);
 		}
 		return $this->_indexer [$cat_id];
 	}
@@ -693,26 +664,50 @@ class FPDB {
 	}
 
 	/**
-	 * Runs a query on the database.
+	 * function query
 	 *
-	 * @param mixed $params The parameters of the query. May be an associative array or a query string:
-	 *                      'key:val,key:val,key:val'
-	 *                      Example: $params = 'start:0,count:5';
-	 *                      Equivalent to: array('start' => 0, 'count' => 5)
-	 *                      Valid parameters:
-	 *                      - start (int): First entry to show (from 0)
-	 *                      - count (int): Number of entries to fetch
-	 *                      - page (int): Page number (overrides start and count)
-	 *                      - id (string): Entry or static page ID
-	 *                      - get (string): 'entry' or 'static' (default 'entry')
-	 *                      - y (string): Year (two digits)
-	 *                      - m (string): Month (two digits), requires 'y'
-	 *                      - d (string): Day (two digits), requires 'y' and 'm'
-	 *                      - exclude (int): Exclude category ID (experimental)
-	 *                      - fullparse (bool): Whether to fully parse entries (default false)
-	 * @return int Query ID result of the query.
+	 * @param
+	 *        	mixed params
+	 *        	$params may be an associative array or a query string with the following syntax:
+	 *        	'key:val,key:val,key:val';
+	 *        	example: <code>$params = 'start:0,count:5';<br />
+	 *        	is a convenient way to express
+	 *        	$params = array('start'=>0,'count'=>5);</code>
+	 *        	
+	 *        	Valid parameters:
+	 *        	
+	 *        	start (int) first entry to show (counting from 0
+	 *        	to the total number of entries).
+	 *        	Defaults to 0.
+	 *        	
+	 *        	count (int) offset from start (e.g. for the first 5 entries,
+	 *        	you'll have start=0 and count=5).
+	 *        	Defaults to $blog_config['MAXENTRIES']
+	 *        	
+	 *        	page (int) page number (counting from 1 to
+	 *        	n=ceil(num_entries/maxentries_setting))
+	 *        	This is a shortcut for setting both start and count
+	 *        	and overrides them, if they're set too
+	 *        	
+	 *        	id (string) entry or static page id
+	 *        	
+	 *        	get (string) 'entry' or 'static' defaults to 'entry'. <-- not anymore
+	 *        	
+	 *        	y (string) two digit year (06 means 2006)
+	 *        	m (string) two digit month (06 means June); 'y' must be set
+	 *        	d (string) two digit for day; 'y' and 'm' must be set
+	 *        	
+	 *        	exclude (int) experimental: excludes category ID given as argument from listing
+	 *        	
+	 *        	
+	 *        	fullparse (bool) non-full-parsed entries get their values
+	 *        	right from the indexed list (or <em>cache</em>).
+	 *        	These values are 'subject', 'content' and 'categories'.
+	 *        	If you need any of the other values, you'll need to
+	 *        	set fullparse=true; defaults to false.
+	 *        	
 	 */
-	 function query($params = array()) {
+	function query($params = array()) {
 		static $queryId = -1;
 		$queryId++;
 
@@ -725,15 +720,14 @@ class FPDB {
 
 	function doquery($queryId = 0) {
 		if (isset($this->queries [$queryId])) {
-			$q = &$this->queries [$queryId];
+			$q = & $this->queries [$queryId];
 		} else {
 			return false;
-			// trigger_error("FPDB: no such query ID (" . $queryId . ")", E_USER_WARNING);
+			trigger_error("FPDB: no such query ID ($queryId)", E_USER_WARNING);
 		}
 
-		if (!$q) {
+		if (!$q)
 			return false;
-		}
 
 		// $this->init();
 
@@ -747,9 +741,8 @@ class FPDB {
 	// "get" functions. todo: move out?
 	function &getQuery($queryId = 0) {
 		$o = null;
-		if (isset($this->queries [$queryId])) {
-			$o = &$this->queries [$queryId];
-		}
+		if (isset($this->queries [$queryId]))
+			$o = & $this->queries [$queryId];
 		return $o;
 	}
 
@@ -765,12 +758,6 @@ class FPDB_transaction {
 
 	var $_keysize = 12;
 
-	var $_cachefile = '';
-
-	var $_chunksize = 0;
-
-	var $_tree = array();
-
 	function __construct($id_cat = 0) {
 		$this->_index = INDEX_DIR . 'index-' . $id_cat;
 
@@ -784,36 +771,32 @@ function smarty_block_entries($params, $content, &$smarty, &$repeat) {
 	global $fpdb;
 
 	return $content;
+
+	$show = false;
+
+	$smarty->assign('prev_entry_day', '');
+
+	if ($repeat) {
+
+		if (isset($params ['alwaysshow']) && $params ['alwaysshow']) {
+			// $fpdb->doquery();
+			$repeat = false;
+			return $content;
+		}
+
+		// $show = @$fpdb->doquery();
+	} else {
+
+		if (!isset($fpdb->queries [0]->comments) || !$fpdb->queries [0]->comments)
+			$fpdb->reset(0);
+		$show = true;
+	}
+
+	$show = true;
+
+	if ($show)
+		return $content;
 }
-/**
- *	$show = false;
- *
- *	$smarty->assign('prev_entry_day', '');
- *
- *	if ($repeat) {
- *
- *		if (isset($params ['alwaysshow']) && $params ['alwaysshow']) {
- *			// $fpdb->doquery();
- *			$repeat = false;
- *			return $content;
- *		}
- *
- *		// $show = @$fpdb->doquery();
- *	} else {
- *
- *		if (!isset($fpdb->queries [0]->comments) || !$fpdb->queries [0]->comments) {
- *			$fpdb->reset(0);
- *		}
- *		$show = true;
- *	}
- *
- *	$show = true;
- *
- *	if ($show) {
- *		return $content;
- *	}
- *}
- */
 
 function smarty_block_entry($params, $content, &$smarty, &$repeat) {
 	global $fpdb;
@@ -841,31 +824,23 @@ function smarty_block_entry($params, $content, &$smarty, &$repeat) {
 		return $content;
 	}
 
-	$q = &$fpdb->getQuery();
+	$q = & $fpdb->getQuery();
 
 	if ($repeat = $q->hasMore()) {
 
-		$couplet = &$q->getEntry();
+		$couplet = & $q->getEntry();
 
-		$id = &$couplet [0];
-		$entry = &$couplet [1];
+		$id = & $couplet [0];
+		$entry = & $couplet [1];
 
 		if (THEME_LEGACY_MODE) {
 			$entry = theme_entry_filters($entry, $id);
 		}
 
-		foreach ($entry as $k => $v) {
-			$smarty->assignByRef($k, $entry [$k]);
-		}
+		foreach ($entry as $k => $v)
+			$smarty->assign_by_ref($k, $entry [$k]);
 
-		$smarty->assignByRef('id', $id);
-
-		// If PostViews plugin is active: Trigger view counter!
-		// This seems a bit hackish; please fix if possible.
-		// See also commented line "// add_action('entry_block', 'plugin_postviews_do');" in plugin.postviews.php
-		if (function_exists('plugin_postviews_do')) {
-			plugin_postviews_do($smarty, $id);
-		}
+		$smarty->assign_by_ref('id', $id);
 
 		if (array_key_exists('categories', $entry)) {
 			$smarty->assign('entry_commslock', in_array('commslock', $entry ['categories']));
@@ -894,18 +869,18 @@ function smarty_block_comment($params, $content, &$smarty, &$repeat) {
 		'loggedin' => ''
 	));
 
-	$q = &$fpdb->getQuery();
+	$q = & $fpdb->getQuery();
 
 	if ($repeat = $q->comments->hasMore()) {
 
-		$couplet = &$q->comments->getComment();
+		$couplet = & $q->comments->getComment();
 
-		$id = &$couplet [0];
-		$comment = &$couplet [1];
+		$id = & $couplet [0];
+		$comment = & $couplet [1];
 
 		foreach ($comment as $k => $v) {
 			$kk = str_replace('-', '_', $k);
-			$smarty->assignByRef($kk, $comment [$k]);
+			$smarty->assign_by_ref($kk, $comment [$k]);
 		}
 
 		if (THEME_LEGACY_MODE) {
@@ -921,7 +896,7 @@ function smarty_block_comment($params, $content, &$smarty, &$repeat) {
 function smarty_block_comments($params, $content, &$smarty, &$repeat) {
 	global $fpdb;
 
-	$q = &$fpdb->getQuery();
+	$q = & $fpdb->getQuery();
 	$show = $q->comments->getCount();
 	$smarty->assign('entryid', $q->comments->entryid);
 
@@ -941,16 +916,15 @@ function smarty_function_nextpage($params) {
 	}
 	list ($caption, $link) = $nextPageLink;
 
-	if (!$link) {
+	if (!$link)
 		return;
-	}
 
 	if (isset($params ['admin'])) {
 		$qstr = strstr($link, '?');
 		$link = BLOG_BASEURL . 'admin.php' . $qstr;
 	}
 
-	return "<div class=\"alignright\"><a href=\"" . $link . "\">" . $caption . "</a></div>";
+	return "<div class=\"alignright\"><a href=\"$link\">$caption</a></div>";
 }
 
 function smarty_function_prevpage($params) {
@@ -960,28 +934,27 @@ function smarty_function_prevpage($params) {
 	}
 	list ($caption, $link) = $prevPageLink;
 
-	if (!$link) {
+	if (!$link)
 		return;
-	}
 
 	if (isset($params ['admin'])) {
 		$qstr = strstr($link, '?');
 		$link = BLOG_BASEURL . 'admin.php' . $qstr;
 	}
 
-	return "<div class=\"alignleft\"><a href=\"" . $link . "\">" . $caption . "</a></div>";
+	return "<div class=\"alignleft\"><a href=\"$link\">$caption</a></div>";
 }
 
-$_FP_SMARTY->registerPlugin('block', 'comment', 'smarty_block_comment');
-$_FP_SMARTY->registerPlugin('block', 'comments', 'smarty_block_comments');
-$_FP_SMARTY->registerPlugin('block', 'comment_block', 'smarty_block_comments');
+$_FP_SMARTY->register_block('comment', 'smarty_block_comment');
+$_FP_SMARTY->register_block('comments', 'smarty_block_comments');
+$_FP_SMARTY->register_block('comment_block', 'smarty_block_comments');
 
-$_FP_SMARTY->registerPlugin('block', 'entries', 'smarty_block_entries');
-$_FP_SMARTY->registerPlugin('block', 'entry_block', 'smarty_block_entries');
+$_FP_SMARTY->register_block('entries', 'smarty_block_entries');
+$_FP_SMARTY->register_block('entry_block', 'smarty_block_entries');
 
-$_FP_SMARTY->registerPlugin('block', 'entry', 'smarty_block_entry');
+$_FP_SMARTY->register_block('entry', 'smarty_block_entry');
 
-$_FP_SMARTY->registerPlugin('function', 'nextpage', 'smarty_function_nextpage');
-$_FP_SMARTY->registerPlugin('function', 'prevpage', 'smarty_function_prevpage');
+$_FP_SMARTY->register_function('nextpage', 'smarty_function_nextpage');
+$_FP_SMARTY->register_function('prevpage', 'smarty_function_prevpage');
 
 ?>

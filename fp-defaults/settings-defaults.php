@@ -21,39 +21,14 @@ $fp_config = array(
 		'dateformat' => '%A, %B %e, %Y',
 		'dateformatshort' => '%Y-%m-%d',
 		'charset' => 'utf-8',
-		'lang' => LANG_DEFAULT
-	),
-	'staticlist' => array (
-		'naturalsort' => true
+		'lang' => 'en-us'
 	),
 	'plugins' => array(
 		'blockparser' => array(
 			'pages' => array(
 				'menu',
 				'about'
-			),
-		),
-		'bbcode' => array (
-			'escape-html' => true,
-			'comments' => true,
-			'editor' => true,
-			'url-maxlen' => 40,
-			'maskattachs' => false
-		),
-		'commentcenter' => array (
-			'log_all' => false,
-			'email_alert' => true,
-			'akismet_check' => false,
-			'akismet_key' => '',
-			'akismet_url' => ''
-		),
-		'fpprotect' => array (
-			'allowUnsafeInline' => false,
-			'allowPrettyURLEdit' => false,
-			'allowImageMetadata' => false,
-			'allowVisitorIp' => false
-		),
-	),
+			)
+		)
+	)
 );
-
-?>

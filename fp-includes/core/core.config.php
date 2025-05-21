@@ -1,9 +1,8 @@
 <?php
 
 function config_read($fullpath) {
-	if ($fullpath [0] != '/') {
+	if ($fullpath [0] != '/')
 		trigger_error('config_read: syntax error. Path must begin with a /');
-	}
 	$last_slash = strrpos($fullpath, '/');
 	$option = substr($fullpath, $last_slash + 1);
 	$path = substr($fullpath, 1, $last_slash);
@@ -21,9 +20,8 @@ function config_read($fullpath) {
 // a cosmetic wrapper around an include :D
 // plus, loads the defaults if CONFIG_FILE is not found
 function config_load($conffile = CONFIG_FILE) {
-	if (!file_exists($conffile) && ($conffile == CONFIG_FILE)) {
+	if (!file_exists($conffile) && ($conffile == CONFIG_FILE))
 		$conffile = CONFIG_DEFAULT;
-	}
 
 	include $conffile;
 

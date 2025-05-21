@@ -13,26 +13,27 @@
  *
  */
 
-	class admin_entry_commentlist extends AdminPanelAction {
-
+ 
+ 	class admin_entry_commentlist extends AdminPanelAction {
+ 		
 		var $commands = array('delete');
 		var $args = array('entry');
-
-		function dodelete($commentid) {
+ 		
+ 		function dodelete($commentid) {
 			$this->smarty->assign('success',
-				comment_delete($_GET ['entry'], $commentid)? 1 : -1
+				comment_delete($_GET['entry'], $commentid)? 1 : -1
 			);
 			return PANEL_REDIRECT_CURRENT;
-		}
-
+ 		}
+		
 		function main() {
 			global $fpdb;
-
-			$fpdb->query('id:' . $_GET ['entry'] . ',fullparse:true');
-
+				
+			$fpdb->query("id:{$_GET['entry']},fullparse:true");
+				
 			return 0;
-
+				
 		}
-	}
+	}			
 
 ?>

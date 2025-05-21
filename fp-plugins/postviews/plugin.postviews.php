@@ -7,17 +7,12 @@
  * Author URI: https://www.flatpress.org
  * Description: Counts and displays entry views. Part of the standard distribution.
  */
-
-// This seems a bit hackish; please fix if possible.
-// The action hook seems to come "to late", the 'views' variable assignment in plugin_postviews_do() does not have effect on the (already parsed?) template.
-// For now, smarty_block_entry() in core.fpdb.class.php takes care of calling plugin_postviews_do() early enough.
-// add_action('entry_block', 'plugin_postviews_do');
+add_action('entry_block', 'plugin_postviews_do');
 
 function plugin_postviews_calc($id, $calc) {
 	$dir = entry_dir($id);
-	if (!$dir) {
+	if (!$dir)
 		return;
-	}
 
 	$f = $dir . '/view_counter' . EXT;
 
@@ -41,13 +36,14 @@ function plugin_postviews_calc($id, $calc) {
 	return $v;
 }
 
-function plugin_postviews_do($smarty, $id) {
-	global $fpdb;
+function plugin_postviews_do($id) {
+	global $fpdb, $smarty;
 
 	$q = $fpdb->getQuery();
 	$calc = $q->single;
 
 	$v = plugin_postviews_calc($id, $calc);
+
 	$smarty->assign('views', $v);
 }
 

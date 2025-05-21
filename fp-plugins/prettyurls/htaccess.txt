@@ -1,16 +1,19 @@
 AddType application/x-httpd-php .php .htm .html
-Options -Indexes
 
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteBase /your_subdirectory/
+RewriteEngine On
+RewriteBase /~nowhereman/flatpress/
 
-	RewriteRule ^\.htaccess$ - [F]
+#RewriteCond %{REQUEST_FILENAME} -f
+#RewriteCond %{REQUEST_FILENAME} -d 
 
-	RewriteRule ^sitemap\.xml$ /your_subdirectory/sitemap.php [L]
-	RewriteRule ^sitemap$ /your_subdirectory/sitemap.php [L]
+RewriteRule ^entry([0-9]{6})-([0-9]{6})\.html$ ./index.php?entry=entry$1-$2
+RewriteRule ^comments([0-9]{6})-([0-9]{6})\.html$ ./comments.php?entry=entry$1-$2
+#RewriteRule ^page-([-_0-9a-zA-Z]+)\.html$ static.php?page=$1
 
-	RewriteCond %{REQUEST_FILENAME} !-f
-	RewriteCond %{REQUEST_FILENAME} !-d
-	RewriteRule . /your_subdirectory/index.php [L]
-</IfModule>
+
+RewriteRule ^index\.html$ index.php 
+
+
+#RewriteRule ^images/(.*) fp-content/images/$1
+#RewriteRule ^attachs/(.*) fp-content/attachs/$1 
+

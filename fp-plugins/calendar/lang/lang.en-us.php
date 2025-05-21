@@ -1,5 +1,9 @@
 <?php
-$lang ['plugin'] ['calendar'] = array(
-	'subject' => 'Calendar'
-);
+
+	$lang['plugin']['calendar'] = array(
+		
+		'subject'	=> 'Calendar'
+	
+	);
+
 ?>

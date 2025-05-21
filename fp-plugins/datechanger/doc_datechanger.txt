@@ -1,9 +1,0 @@
-Description
------------
-Lets you change the publish date for (new) entries. Therefore, it adds the edit interface with a date drop down menu.
-
-This plugin only works for NEW entries. Once published, the date cannot be changed again!
-
-About
------
-The DateChanger plugin was originally built by Edoardo Vacchi (NoWhereMan).

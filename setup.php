@@ -1,17 +1,18 @@
 <?php
-require_once('defaults.php');
-require_once(INCLUDES_DIR . 'includes.php');
 
-define('SETUPTEMP_FILE', FP_CONTENT . 'settingup.lock');
+	require_once('defaults.php');
+	require_once(INCLUDES_DIR.'includes.php');
+	
+	define('SETUPTEMP_FILE', FP_CONTENT . 'settingup.lock');
 
-@system_init();
-
-if (empty($_POST)) {
-	if (session_status() === PHP_SESSION_ACTIVE) {
+	 @system_init();
+	
+	if (empty($_POST)) {
 		session_destroy();
+		cookie_clear();
 	}
-	cookie_clear();
-}
 
-require('./setup/main.php');
+	
+	require('./setup/main.php');	
+	
 ?>

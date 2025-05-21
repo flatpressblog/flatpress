@@ -1,7 +1,7 @@
 <?php
 
 /**
- * add maintain panel
+ * add entry panel
  *
  * Type:
  * Name:
@@ -10,7 +10,7 @@
  * Input:
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
- *
+ *        
  */
 
 /* utility class */
@@ -26,7 +26,7 @@ class tpl_deleter extends fs_filelister {
 	function _checkFile($directory, $file) {
 		if ($file != CACHE_FILE) {
 			array_push($this->_list, $file);
-			fs_delete($directory . "/" . $file);
+			fs_delete("$directory/$file");
 		}
 		// trigger_error($file, E_USER_NOTICE);
 		return 0;
@@ -37,7 +37,6 @@ class tpl_deleter extends fs_filelister {
 class s_entry_crawler extends fs_filelister {
 
 	var $_directory = CONTENT_DIR;
-	var $index;
 
 	function __construct() {
 		$this->index = entry_init();
@@ -45,7 +44,7 @@ class s_entry_crawler extends fs_filelister {
 	}
 
 	function _checkFile($directory, $file) {
-		$f = $directory . "/" . $file;
+		$f = "$directory/$file";
 		if (is_dir($f) && ctype_digit($file)) {
 			return 1;
 		}
@@ -54,7 +53,7 @@ class s_entry_crawler extends fs_filelister {
 			$id = basename($file, EXT);
 			$arr = entry_parse($id, true);
 
-			echo "[POST] " . $id . " => " . $arr['subject'] . "\n";
+			echo "[POST] $id => {$arr['subject']}\n";
 			$this->index->add($id, $arr);
 
 			return 0;
@@ -133,9 +132,8 @@ class admin_maintain_default extends AdminPanelAction {
 			case 'rebuild':
 				{
 
-					if (substr(INDEX_DIR, -1) == '/') {
+					if (substr(INDEX_DIR, -1) == '/')
 						$oldidx = substr(INDEX_DIR, 0, -1);
-					}
 
 					$movedir = $oldidx . time();
 
@@ -143,11 +141,11 @@ class admin_maintain_default extends AdminPanelAction {
 					echo "ENTERING LOWRES MODE\n\n";
 
 					if (file_exists(INDEX_DIR)) {
-						echo "BACKUP INDEX to " . $movedir . "\n";
+
+						echo "BACKUP INDEX to $movedir\n";
 						$ret = @rename($oldidx, $movedir);
-						if (!$ret) {
-							die("Cannot backup old index. STOP. \nDid you just purge the cache? If so, the index was in use to create a new cache. This is done now, please simply reload the current page.");
-						}
+						if (!$ret)
+							trigger_error('Cannot backup old index. STOP.', E_USER_ERROR);
 					}
 					fs_mkdir(INDEX_DIR);
 
@@ -158,71 +156,24 @@ class admin_maintain_default extends AdminPanelAction {
 				}
 			case 'restorechmods':
 				{
-					$files = restore_chmods();
-
-					$this->smarty->assign('files', $files);
-
-					$overall_success = count($files) === 0 ? 1 : -1;
-					$this->smarty->assign('success', $overall_success);
-
+					$this->smarty->assign('files', fs_chmod_recursive());
+					$this->smarty->assign('success', 1);
 					return PANEL_NOREDIRECT;
 				}
 			case 'purgetplcache':
 				{
-					if (function_exists('opcache_reset') && ini_get('opcache.enable') && ini_get('opcache.enable_cli')) {
-						// Called to ensure that all cached PHP scripts are up-to-date.
-						opcache_reset();
-					}
-
 					$tpldel = new tpl_deleter();
 					unset($tpldel);
-
-					$this->smarty->caching = false;
-					$this->smarty->clearAllCache();
-					$this->smarty->clearCompiledTemplate();
+					$this->smarty->cache_dir = CACHE_DIR . 'cache/';
+					$this->smarty->caching = 0;
+					$this->smarty->clear_all_cache();
+					$this->smarty->clear_compiled_tpl();
 					$this->smarty->compile_check = true;
 					$this->smarty->force_compile = true;
 					$this->smarty->assign('success', 1);
 
-					if (!file_exists(CACHE_DIR)) {
+					if (!file_exists(CACHE_DIR))
 						fs_mkdir(CACHE_DIR);
-					}
-
-					if (!file_exists(COMPILE_DIR)) {
-						fs_mkdir(COMPILE_DIR);
-					}
-
-					if (function_exists('opcache_reset') && ini_get('opcache.enable') && ini_get('opcache.enable_cli')) {
-						// Ensures that all changes to the Smarty cache are also reflected in the OPcache.
-						opcache_reset();
-					}
-
-					// rebuilds the list of recent comments if LastComments plugin is active
-					if (function_exists('plugin_lastcomments_cache')) {
-						$coms = Array();
-
-						$q = new FPDB_Query(array(
-							'fullparse' => false,
-							'start' => 0,
-							'count' => -1
-						), null);
-						while ($q->hasmore()) {
-							list ($id, $e) = $q->getEntry();
-							$obj = new comment_indexer($id);
-							foreach ($obj->getList() as $value) {
-								$coms [$value] = $id;
-							}
-							ksort($coms);
-							$coms = array_slice($coms, -LASTCOMMENTS_MAX);
-						}
-						foreach ($coms as $cid => $eid) {
-							$c = comment_parse($eid, $cid);
-							plugin_lastcomments_cache($eid, array(
-								$cid,
-								$c
-							));
-						}
-					}
 
 					return PANEL_NOREDIRECT;
 				}
@@ -233,7 +184,7 @@ class admin_maintain_default extends AdminPanelAction {
 					$info = ob_get_contents();
 					ob_end_clean();
 
-					$this->smarty->assign('phpinfo', preg_replace('%^.*<body>(.*)</body>.*$%ms', '<div id="phpinfo">$1<div>', $info));
+					$this->smarty->assign('phpinfo', preg_replace('%^.*<body>(.*)</body>.*$%ms', '$1', $info));
 				}
 
 				return PANEL_NOREDIRECT;

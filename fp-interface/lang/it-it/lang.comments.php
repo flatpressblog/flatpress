@@ -16,6 +16,4 @@ Saluti,
 
 ';
 
-$lang ['comments'] ['newcomment'] = 'Nuovo commento su ';
-
 ?>

@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: PrettyURLs
- * Version: 3.0.1
+ * Version: 3.0
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -11,9 +11,7 @@
 /**
  * Place where the index is stored
  */
-if (!defined('PRETTYURLS_TITLES')) {
-	define('PRETTYURLS_TITLES', true);
-}
+define('PRETTYURLS_TITLES', true);
 define('PRETTYURLS_PATHINFO', !file_exists(ABS_PATH . '.htaccess'));
 define('PRETTYURLS_CACHE', CACHE_DIR . '%%prettyurls-index.tmp');
 define('PRETTYURLS_CATS', CACHE_DIR . '%%prettyurls-cats.tmp');
@@ -25,9 +23,8 @@ define('PRETTYURLS_CATS', CACHE_DIR . '%%prettyurls-cats.tmp');
 // memo
 // register_plugin_setup('plugin_id', 'setup_func');
 function plugin_prettyurls_setup() {
-	if (file_exists(ABS_PATH . '.htaccess')) {
+	if (file_exists(ABS_PATH . '.htaccess'))
 		return 1;
-	}
 
 	if (!is_writable(ABS_PATH)) {
 		return -2;
@@ -46,16 +43,11 @@ class Plugin_PrettyURLs {
 
 	var $categories = null;
 
-	var $baseurl = null;
-
-	var $mode = null;
-
 	var $fp_params;
 
 	function categories($force = true) {
-		if ($this->categories) {
+		if ($this->categories)
 			return;
-		}
 
 		if ($force || !file_exists(PRETTYURLS_CATS)) {
 			$d = entry_categories_get('defs');
@@ -73,26 +65,21 @@ class Plugin_PrettyURLs {
 
 	function md5($id, $title) {
 		$date = date_from_id($id);
-		if (isset($date ['y'], $date ['m'], $date ['d'])) {
-			return md5($date ['y'] . $date ['m'] . $date ['d'] . $title);
-		}
+		return md5($date ['y'] . $date ['m'] . $date ['d'] . $title);
 	}
 
 	function permalink($str, $id) {
 		global $fpdb, $post;
 
-		if (isset($post) && PRETTYURLS_TITLES) {
+		if (isset($post) && PRETTYURLS_TITLES)
 			$title = sanitize_title($post ['subject']);
-		} else {
+		else
 			$title = $id;
-		}
 		$date = date_from_id($id);
 		// yeah, hackish, I know...
 
-		return isset($date ['y'], $date ['m'], $date ['d'])
-			? $this->baseurl . "20" . $date ['y'] . "/" . $date ['m'] . "/" . $date ['d'] . "/" . $title . "/"
-			: $this->baseurl . $title . "/";
-		}
+		return $this->baseurl . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
+	}
 
 	function commentlink($str, $id) {
 		$link = $this->permalink($str, $id);
@@ -100,40 +87,39 @@ class Plugin_PrettyURLs {
 	}
 
 	function feedlink($str, $type) {
-		return $this->baseurl . "feed/" . $type . "/";
+		return $this->baseurl . "feed/{$type}/";
 	}
 
 	function commentsfeedlink($str, $type, $id) {
 		$link = $this->commentlink($str, $id);
-		return $link . "feed/" . $type . "/";
+		return $link . "feed/{$type}/";
 	}
 
 	function staticlink($str, $id) {
-		return $this->baseurl . $id . "/";
+		return $this->baseurl . "$id/";
 	}
 
 	function categorylink($str, $catid) {
 		if (PRETTYURLS_TITLES) {
-			if (@$this->categories [$catid]) {
-				return $this->baseurl . "category/" . $this->categories[$catid] . "/";
-			} else {
+			if (@$this->categories [$catid])
+				return $this->baseurl . "category/{$this->categories[$catid]}/";
+			else
 				return $str;
-			}
 		} else {
-			return $this->baseurl . "category/" . $catid . "/";
+			return $this->baseurl . "category/{$catid}/";
 		}
 	}
 
 	function yearlink($str, $y) {
-		return $this->baseurl . "20" . $y . "/";
+		return $this->baseurl . "20$y/";
 	}
 
 	function monthlink($str, $y, $m) {
-		return $this->yearlink($str, $y) . $m . "/";
+		return $this->yearlink($str, $y) . "$m/";
 	}
 
 	function daylink($str, $y, $m, $d) {
-		return $this->monthlink($str, $y, $m) . $d . "/";
+		return $this->monthlink($str, $y, $m) . "$d/";
 	}
 
 	function cache_create() {
@@ -151,6 +137,7 @@ class Plugin_PrettyURLs {
 			'fullparse' => false
 		), null);
 
+		// foreach ($entries as $id => $contents) {
 		while ($o->hasMore()) {
 			list ($id, $contents) = $o->getEntry();
 			$date = date_from_id($id);
@@ -158,27 +145,23 @@ class Plugin_PrettyURLs {
 			$md5 = md5(sanitize_title($contents ['subject']));
 			$this->index [$date ['y']] [$date ['m']] [$date ['d']] [$md5] = $id;
 		}
+		// }
 
 		$this->cache_save();
 		io_write_file(PRETTYURLS_CACHE, 'dummy');
 	}
 
 	function handle_categories($matches) {
-		if (!$this->categories) {
+		if (!$this->categories)
 			return;
-		}
-
-		// $this->categories contains sanitized category names, so we have to sanitize before the search
-		$sanitizedtitle = sanitize_title($matches [1]);
 
 		if (PRETTYURLS_TITLES) {
-			if ($c = array_search($sanitizedtitle, $this->categories)) {
+			if ($c = array_search($matches [1], $this->categories))
 				$this->fp_params ['cat'] = $c;
-			} else {
+			else
 				return $matches [0];
-			}
 		} else {
-			$this->fp_params ['cat'] = $sanitizedtitle;
+			$this->fp_params ['cat'] = $matches [1];
 		}
 	}
 
@@ -187,12 +170,10 @@ class Plugin_PrettyURLs {
 	 */
 	function handle_date($matches) {
 		$this->fp_params ['y'] = $matches [1];
-		if (isset($matches [3])) {
+		if (isset($matches [3]))
 			$this->fp_params ['m'] = $matches [3];
-		}
-		if (isset($matches [5])) {
+		if (isset($matches [5]))
 			$this->fp_params ['d'] = $matches [5];
-		}
 
 		$this->date_handled = true;
 	}
@@ -203,37 +184,23 @@ class Plugin_PrettyURLs {
 	}
 
 	function handle_entry($matches) {
-		// the cache contains (md5'ed) sanitized entry names, so we have to sanitize before handling it
-		$sanitizedtitle = sanitize_title($matches [1]);
-
 		if (!PRETTYURLS_TITLES) {
-			$this->fp_params ['entry'] = $sanitizedtitle;
+			$this->fp_params ['entry'] = $matches [1];
 			return;
 		}
 
-		// Ensure 'y', 'm', and 'd' keys exist in $this->fp_params before accessing them
-		if (!isset($this->fp_params ['y'], $this->fp_params ['m'], $this->fp_params ['d'])) {
-			// If any of the keys are missing, create a fake entry and stop further processing
+		// data is not as expected
+		if (!array_key_exists('y', $this->fp_params) || !array_key_exists('m', $this->fp_params) || !array_key_exists('d', $this->fp_params)) {
+			// a bit hackish: we make up a fake url when there is no match,
+			// so that at the higher level the system will 404...
 			$this->fp_params ['entry'] = 'a';
-			return;
 		}
 
-		// Retrieve the cache if all keys exist and check for the entry
-		if ($this->cache_get($this->fp_params ['y'], $this->fp_params ['m'], $this->fp_params ['d'], md5($sanitizedtitle))) {
-			// Check if the required keys exist in the cache index
-			$y = $this->fp_params ['y'];
-			$m = $this->fp_params ['m'];
-			$d = $this->fp_params ['d'];
-			$hash = md5($sanitizedtitle);
-
-			if (isset($this->index [$y] [$m] [$d] [$hash])) {
-				$this->fp_params ['entry'] = $this->index [$y] [$m] [$d] [$hash];
-			} else {
-				// If the hash key does not exist, set a fake entry
-				$this->fp_params ['entry'] = 'a';
-			}
+		if ($this->cache_get($this->fp_params ['y'], $this->fp_params ['m'], $this->fp_params ['d'], md5($matches [1]))) {
+			$this->fp_params ['entry'] = $this->index [$this->fp_params ['y']] [$this->fp_params ['m']] [$this->fp_params ['d']] [md5($matches [1])];
 		} else {
-			// If the cache_get returns false, set a fake entry
+			// a bit hackish: we make up a fake url when there is no match,
+			// so that at the higher level the system will 404...
 			$this->fp_params ['entry'] = 'a';
 		}
 	}
@@ -305,23 +272,21 @@ class Plugin_PrettyURLs {
 	function cache_init() {
 		global $fp_params;
 
-		$this->fp_params = &$fp_params;
+		$this->fp_params = & $fp_params;
 		$url = $this->get_url();
 
 		if (PRETTYURLS_TITLES) {
 			// if ($f = io_load_file(PRETTYURLS_CACHE))
 			$this->index = array(); // unserialize($f);
 
-			if (!file_exists(PRETTYURLS_CACHE)) {
+			if (!file_exists(PRETTYURLS_CACHE))
 				$this->cache_create();
-			}
 
 			$this->categories(false);
 		}
 
-		if (!defined('MOD_INDEX')) {
+		if (!defined('MOD_INDEX'))
 			return;
-		}
 
 		// # this is not working if you reach flatpress via symlink
 		// # unless you don't edit manually defaults.php
@@ -334,22 +299,19 @@ class Plugin_PrettyURLs {
 		// }
 
 		// removes querystrings
-		if (false !== $i = strpos($url, '?')) {
+		if (false !== $i = strpos($url, '?'))
 			$url = substr($url, 0, $i);
-		}
 
 		// removes anchors
-		if (false !== $i = strpos($url, '#')) {
+		if (false !== $i = strpos($url, '#'))
 			$url = substr($url, 0, $i);
-		}
 
 		if (strrpos($url, '/') != (strlen($url) - 1)) {
 			$url .= '/';
 		}
 
-		if ($url == '/') {
+		if ($url == '/')
 			return;
-		}
 
 		// date
 		$url = preg_replace_callback('!^/[0-9]{2}(?P<y>[0-9]{2})(/(?P<m>[0-9]{2})(/(?P<d>[0-9]{2}))?)?!', array(
@@ -363,9 +325,8 @@ class Plugin_PrettyURLs {
 				&$this,
 				'handle_static'
 			), $url);
-			if ($this->status == 2) {
+			if ($this->status == 2)
 				return $this->check_url($url);
-			}
 		}
 
 		$url = preg_replace_callback('{category/([^/]+)/}', array(
@@ -377,9 +338,8 @@ class Plugin_PrettyURLs {
 			&$this,
 			'handle_page'
 		), $url);
-		if ($this->status == 2) {
+		if ($this->status == 2)
 			return $this->check_url($url);
-		}
 
 		if ($this->date_handled) {
 			$url = preg_replace_callback('|^/([^/]+)|', array(
@@ -417,11 +377,10 @@ class Plugin_PrettyURLs {
 	function cache_delete_elem($id, $date) {
 
 		// is this a title change?
-		if (false !== ($ids = $this->cache_get($date ['y'], $date ['m'], $date ['d']))) {
+		if (false !== ($ids = $this->cache_get($date ['y'], $date ['m'], $date ['d'])))
 			$hash = array_search($id, $ids);
-		} else {
+		else
 			return;
-		}
 
 		if ($hash) {
 			unset($this->index [$date ['y']] [$date ['m']] [$date ['d']] [$hash]);
@@ -448,15 +407,6 @@ class Plugin_PrettyURLs {
 
 		$this->cache_delete_elem($id, $date);
 
-		if (!isset($date ['y'], $date ['m'], $date ['d'])) {
-			return false;
-		}
-
-		if (!isset($this->index [$date ['y']] [$date ['m']]) || $this->index [$date ['y']] [$date ['m']] === false) {
-			// Add year and month keys to index, if not present already
-			$this->index [$date ['y']] [$date ['m']] = [];
-		}
-
 		$this->index [$date ['y']] [$date ['m']] [$date ['d']] [md5($title)] = $id;
 
 		$this->cache_save();
@@ -470,19 +420,16 @@ class Plugin_PrettyURLs {
 			$this->index [$y] [$m] = $s ? unserialize($s) : false;
 		}
 
-		if (is_null($d)) {
+		if (is_null($d))
 			return $this->index [$y] [$m];
-		}
 
-		if (is_null($h)) {
+		if (is_null($h))
 			return isset($this->index [$y] [$m] [$d]) ? $this->index [$y] [$m] [$d] : false;
-		}
 
-		if (isset($this->index [$y] [$m] [$d])) {
+		if (isset($this->index [$y] [$m] [$d]))
 			return isset($this->index [$y] [$m] [$d] [$h]);
-		} else {
+		else
 			return false;
-		}
 	}
 
 	function cache_delete($id) {
@@ -494,9 +441,8 @@ class Plugin_PrettyURLs {
 	function cache_save() {
 		if ($this->index) {
 			foreach ($this->index as $year => $months) {
-				foreach ($months as $month => $days) {
+				foreach ($months as $month => $days)
 					io_write_file(PRETTYURLS_CACHE . $year . $month, serialize($days));
-				}
 			}
 		}
 
@@ -505,31 +451,28 @@ class Plugin_PrettyURLs {
 
 	function nextprevlink($nextprev, $v) {
 		global $fpdb;
-		$q = &$fpdb->getQuery();
+		$q = & $fpdb->getQuery();
 
 		list ($caption, $id) = call_user_func(array(
 			&$q,
 			'get' . $nextprev
 		));
 
-		if (!$id) {
+		if (!$id)
 			return array();
-		}
 
 		if ($q->single) {
 			$date = date_from_id($id);
-			if (PRETTYURLS_TITLES) {
+			if (PRETTYURLS_TITLES)
 				$title = sanitize_title($caption);
-			} else {
+			else
 				$title = $id;
-			}
-			$url = $this->baseurl . "20" . $date ['y'] . "/" . $date ['m'] . "/" . $date ['d'] . "/" . $title . "/";
+			$url = $this->baseurl . "20{$date['y']}/{$date['m']}/{$date['d']}/$title/";
 
-			if ($v > 0) {
+			if ($v > 0)
 				$caption = $caption . ' &raquo; ';
-			} else {
+			else
 				$caption = ' &laquo; ' . $caption;
-			}
 
 			return array(
 				$caption,
@@ -543,9 +486,8 @@ class Plugin_PrettyURLs {
 
 		$l = $this->baseurl;
 
-		if ((is_numeric($cid = @$this->fp_params ['category'])) || is_numeric($cid = @$this->fp_params ['cat'])) {
+		if ((is_numeric($cid = @$this->fp_params ['category'])) || is_numeric($cid = @$this->fp_params ['cat']))
 			$l = $this->categorylink($l, $cid);
-		}
 
 		if (isset($this->fp_params ['y']) && $this->fp_params ['y']) {
 			$l .= '20' . $this->fp_params ['y'] . '/';
@@ -553,17 +495,15 @@ class Plugin_PrettyURLs {
 			if (isset($this->fp_params ['m']) && $this->fp_params ['m']) {
 				$l .= $this->fp_params ['m'] . '/';
 
-				if (isset($this->fp_params ['d']) && $this->fp_params ['d']) {
+				if (isset($this->fp_params ['d']) && $this->fp_params ['d'])
 					$l .= $this->fp_params ['d'] . '/';
-				}
 			}
 		}
 
 		$page = 1;
 
-		if (isset($this->fp_params ['paged']) && $this->fp_params ['paged'] > 1) {
+		if (isset($this->fp_params ['paged']) && $this->fp_params ['paged'] > 1)
 			$page = $this->fp_params ['paged'];
-		}
 
 		$page += ($v . '');
 
@@ -596,8 +536,8 @@ if (!defined('MOD_ADMIN_PANEL')) {
 			global $plugin_prettyurls;
 			return $plugin_prettyurls->nextprevlink('PrevPage', -1);
 		}
-
-	endif;
+		
+		endif;
 
 }
 
@@ -671,7 +611,7 @@ if (class_exists('AdminPanelAction')) {
 		);
 
 		function setup() {
-			$this->smarty->assign('admin_resource', 'plugin:prettyurls/admin.plugin.prettyurls');
+			$this->smarty->assign('admin_resource', "plugin:prettyurls/admin.plugin.prettyurls");
 			$this->_config ['mode'] = plugin_getoptions('prettyurls', 'mode');
 			$this->smarty->assign('pconfig', $this->_config);
 			$blogroot = BLOG_ROOT;
@@ -680,27 +620,17 @@ if (class_exists('AdminPanelAction')) {
 			if (!$txt) {
 
 				$txt = '
-AddType application/x-httpd-php .php .htm .html
-Options -Indexes
-
-<IfModule mod_headers.c>
-	Header unset X-Powered-By
-</IfModule>
-
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteBase ' . $blogroot . '
-
-	RewriteRule ^\.htaccess$ - [F]
-
-	RewriteRule ^sitemap\.xml$ ' . $blogroot . 'sitemap.php [L]
-	RewriteRule ^sitemap$ ' . $blogroot . 'sitemap.php [L]
-
-	RewriteCond %{REQUEST_FILENAME} !-f
-	RewriteCond %{REQUEST_FILENAME} !-d
-
-	RewriteRule . ' . $blogroot . 'index.php [L]
-</IfModule>';
+				
+				# Thanks again WP :)
+				
+				<IfModule mod_rewrite.c>
+				RewriteEngine On
+				RewriteBase ' . $blogroot . '
+				RewriteCond %{REQUEST_FILENAME} !-f
+				RewriteCond %{REQUEST_FILENAME} !-d
+				RewriteRule . ' . $blogroot . 'index.php [L]
+				</IfModule>
+				';
 			}
 
 			$this->smarty->assign('cantsave', (!is_writable(ABS_PATH) || (file_exists($f) && !is_writable($f))));
@@ -713,11 +643,10 @@ Options -Indexes
 			if (isset($_POST ['saveopt'])) {
 				$this->_config ['mode'] = (int) $_POST ['mode'];
 				plugin_addoption('prettyurls', 'mode', $this->_config ['mode']);
-				if (plugin_saveoptions()) {
+				if (plugin_saveoptions())
 					$this->smarty->assign('success', 2);
-				} else {
+				else
 					$this->smarty->assign('success', -2);
-				}
 			}
 
 			if (isset($_POST ['htaccess-submit'])) {

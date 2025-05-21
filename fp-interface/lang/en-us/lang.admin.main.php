@@ -14,14 +14,24 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op4' => 'Plugins',
 	'op4d' => 'Install, enable, disable plugins',
 	'op5' => 'Configuration',
-	'op5d' => 'Customize your FlatPress',
+	'op5d' => 'Customize your flatpress',
 	'op6' => 'Maintenance',
-	'op6d' => 'Clean and restore FlatPress',
-	'op7' => 'Uploader',
-	'op7d' => 'Upload and manage images and files',
-	'op8' => 'Themes',
-	'op8d' => 'Switch between themes and styles',
-	'op9' => 'Comment Center',
-	'op9d' => 'Manage comments, create guidelines'
+	'op6d' => 'Clean and restore flatpress',
+	// New admin theme
+	'quick_menu' => 'Quick Menu',
+	'welcome_back' => 'Welcome back',
+	'can_do' => 'here you can do:',
+	'last_comments' => 'Last comments',
+	'add_new_entry' => 'Add new entry',
+	'entry_name' => 'Entry Name',
+	'entry_content' => 'Entry Content',
+	'publish' => 'Publish',
+	'saveandcontinue' => 'Save & Continue',
+	'preview' => 'Preview',
+	'help' => 'Help',
+	'useful_links' => 'Here are some useful links:',
+	'fp_home' => 'FlatPress Home',
+	'fp_blog' => 'FlatPress Blog',
+	'fp_forums' => 'FlatPress Forums',
+	'fp_wiki' => 'FlatPress Wiki'
 );
-?>

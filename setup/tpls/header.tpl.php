@@ -1,13 +1,14 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="<?php echo LANG_DEFAULT; ?>">
-<head><title>FlatPress <?php echo $lang ['setup'] ['setup']; ?></title>
-		<link href="setup/res/setup.css" type="text/css" rel="stylesheet"></head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>Flatpress installer</title>
+		<link href="setup/res/setup.css" type="text/css" rel="stylesheet" /></head>
 <body>
 	<div id="rap">
-		<h1 id="header"><img src="<?php echo BLOG_BASEURL; ?>setup/imgs/logo-small.gif" alt="logo-small.gif" title="Logo"><span> Flat</span><span>Press</span> <?php echo $lang ['setup'] ['setup']; ?></h1>
-
+		<h1 id="header">FlatPress Installer</h1>
 		</div>
 
 		<div id="main">
-
-<form class="storycontent" method="post" action="<?php echo BLOG_BASEURL; ?>setup.php">
+		
+	
+<form class="storycontent" method="post" action="<?php echo BLOG_BASEURL ?>setup.php"> 

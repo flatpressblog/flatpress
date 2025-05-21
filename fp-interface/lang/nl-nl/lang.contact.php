@@ -1,41 +1,31 @@
 <?php
-$baseurl = BLOG_BASEURL;
 
-$lang ['contact'] = array(
-	'head' => 'Neem contact op',
-	'descr' => 'Vul het formulier hieronder in. 
-	Om een antwoord te krijgen is een e-mail adres nodig.
-	(*) verplicht in te vullen velden',
-	'fieldset1' => 'Gegevens gebruiker',
-	'name' => 'Naam (*)',
-	'email' => 'Email:',
-	'www' => 'Web:',
-	'cookie' => 'Stuur herinnering',
-	'fieldset2' => 'Bericht',
-	'comment' => 'Bericht (*):',
-	'fieldset3' => 'Stuur',
-	'submit' => 'Stuur',
-	'reset' => 'Reset',
-	'loggedin' => 'U bent ingelogd 😉. <a href="' . $baseurl . 'login.php?do=logout">Uitloggen</a> of naar het <a href="' . $baseurl . 'admin.php">administratiegedeelte</a>.'
-);
-
-$lang ['contact'] ['notification'] = array(
-	'name' => 'Naam:',
-	'email' => 'Email:',
-	'www' => 'Web:',
-	'content' => 'Boodschap:',
-	'subject' => 'Contact verzonden via '
-);
-
-$lang ['contact'] ['error'] = array(
-	'name' => 'Er dient een naam ingevuld te worden',
-	'email' => 'Geen geldig e-mail adres',
-	'www' => 'Geen geldige URL ',
-	'content' => 'Het bericht mag niet blanko zijn'
-);
-
-$lang ['contact'] ['msgs'] = array(
-	1 => 'Bericht is succesvol verstuurd',
-	-1 => 'Bericht kon niet verstuurd worden'
-);
+	$lang['contact'] = array(
+		'head'		=> 'Contact mij',
+		'descr'		=> 'Vuk het formulier hieronder in om een feedback te sturen. Vul je email als je een antwoord wilt.',
+		'fieldset1'	=> 'Gebruiker gegevens',
+		'name'		=> 'Naam (*)',
+		'email'		=> 'Email:',
+		'www'		=> 'Web:',
+		'cookie'	=> 'Herinner mij',
+		'fieldset2'	=> 'Jouw bericht',
+		'comment'	=> 'Bericht (*):',
+		'fieldset3'	=> 'Stuur',
+		'submit'	=> 'Stuur',
+		'reset'		=> 'Reset',
+		
+	);
+	
+	$lang['contact']['error'] = array(
+		'name'		=> 'Je moet een naam invullen',
+		'email'		=> 'Je moet een geldig email invullen',
+		'www'		=> 'Je moet een geldig URL invullen',
+		'content'	=> 'Je moet een bericht invullen',
+	);
+	
+	$lang['contact']['msgs'] = array(
+		1	=> 'Bericht is succesvol verstuurd',
+		-1	=> 'Bericht kon niet verstuurd worden',
+	);
+	
 ?>

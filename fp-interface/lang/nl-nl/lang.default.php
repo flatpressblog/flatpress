@@ -2,11 +2,12 @@
 $lang = array();
 
 $lang ['main'] = array(
+
 	'nextpage' => 'Volgende pagina &raquo;',
 	'prevpage' => '&laquo; Vorige pagina',
 	'entry' => 'Data invoer',
-	'entries' => 'Vermeldingen',
 	'static' => 'Statische pagina',
+	'comment' => 'Commentaar',
 	'preview' => 'Wijzig/Voorbeeld',
 
 	'filed_under' => 'Geachiveerd onder ',
@@ -20,13 +21,11 @@ $lang ['main'] = array(
 
 	'nocomments' => 'Voeg een commentaar toe',
 	'comment' => '1 commentaar',
-	'comments' => 'commentaren',
-
-	'rss' => 'Abonneren op RSS-feed',
-	'atom' => 'Abonneren op Atom-feed'
+	'comments' => 'commentaren'
 );
 
 $lang ['search'] = array(
+
 	'head' => 'Zoek',
 	'fset1' => 'Vul zoek criteria in',
 	'keywords' => 'Zin',
@@ -34,8 +33,7 @@ $lang ['search'] = array(
 	'fulltext' => 'Volledige tekst',
 
 	'fset2' => 'Datum',
-	'datedescr' => 'Je kan zoeken op een specifieke datum. Je kan een jaar, een jaar en maand, of een volledige datum invoeren. ' . //
-		'Laat het leeg om alle data invoer uit de database te tonen.',
+	'datedescr' => 'Je kan zoeken op een specifieke datum. Je kan een jaar, een jaar en maand, of een volledige datum invoeren. ' . 'Laat het leeg om alle data invoer uit de database te tonen.',
 
 	'fset3' => 'Zoek op categorie',
 	'catdescr' => 'Selecteer niets om alles te zoeken',
@@ -53,19 +51,8 @@ $lang ['search'] = array(
 );
 
 $lang ['search'] ['error'] = array(
+
 	'keywords' => 'Je moet tenminste 1 zoekwoord invullen'
-);
-
-$lang ['staticauthor'] = array(
-	// "Published by" in static pages
-	'published_by' => 'Gepubliceerd door',
-	'on' => 'op'
-);
-
-$lang ['entryauthor'] = array(
-	// "Posted by" in entry pages
-	'posted_by' => 'Geplaatst door',
-	'at' => 'om'
 );
 
 $lang ['entry'] = array();
@@ -83,10 +70,6 @@ $lang ['entry'] ['flags'] ['short'] = array(
 	'commslock' => 'Commentaar geblokt'
 );
 
-$lang ['entry'] ['categories'] = array(
-	'unfiled' => 'Niet gestort'
-);
-
 $lang ['404error'] = array(
 	'subject' => 'Niet gevonden',
 	'content' => '<p>Sorry, we konden de door u gevraagde pagina niet vinden</p>'
@@ -94,6 +77,7 @@ $lang ['404error'] = array(
 
 // Login
 $lang ['login'] = array(
+
 	'head' => 'Login',
 	'fieldset1' => 'Voeg uw gebruikersnaam en wachtwoord in',
 	'user' => 'Gebruikersnaam:',
@@ -115,8 +99,7 @@ $lang ['login'] ['success'] = array(
 $lang ['login'] ['error'] = array(
 	'user' => 'Je moet een gebruikersnaam in voeren.',
 	'pass' => 'Je moet een wachtwoord invoeren.',
-	'match' => 'Wachtwoord is fout.',
-	'timeout' => 'Wacht 30 seconden voordat u het opnieuw probeert.'
+	'match' => 'Wachtwoord is fout.'
 );
 
 $lang ['comments'] = array(
@@ -144,58 +127,58 @@ $lang ['comments'] ['error'] = array(
 	'comment' => 'U moet een commentaar invoeren'
 );
 
-$lang ['postviews'] = array(
-	// PostView-Plugin
-	'views' => 'maal gezien'
-);
-
 $lang ['date'] ['month'] = array(
-	'januari',
-	'februari',
-	'maart',
-	'april',
-	'mei',
-	'juni',
-	'juli',
-	'augustus',
-	'september',
-	'oktober',
-	'november',
-	'december'
+
+	'Januari',
+	'Februari',
+	'Maart',
+	'April',
+	'Mei',
+	'Juni',
+	'July',
+	'Augustus',
+	'September',
+	'October',
+	'November',
+	'December'
 );
 
 $lang ['date'] ['month_abbr'] = array(
-	'jan',
-	'feb',
-	'mrt',
-	'apr',
-	'mei',
-	'jun',
-	'jul',
-	'aug',
-	'sep',
-	'okt',
-	'nov',
-	'dec'
+
+	'Jan',
+	'Feb',
+	'Mrt',
+	'Apr',
+	'Mei',
+	'Jun',
+	'Jul',
+	'Aug',
+	'Sep',
+	'Oct',
+	'Nov',
+	'Dec'
 );
 
 $lang ['date'] ['weekday'] = array(
-	'zondag',
-	'maandag',
-	'dinsdag',
-	'woensdag',
-	'donderdag',
-	'vrijdag',
-	'zaterdag'
+
+	'Zondag',
+	'Maandag',
+	'Dinsdag',
+	'Woensdag',
+	'Donderdag',
+	'Vrijdag',
+	'Zaterdag'
 );
 
 $lang ['date'] ['weekday_abbr'] = array(
-	'zo',
-	'ma',
-	'di',
-	'wo',
-	'do',
-	'vr',
-	'za'
+
+	'Zo',
+	'Ma',
+	'Di',
+	'Wo',
+	'Do',
+	'Vr',
+	'Za'
 );
+
 ?>

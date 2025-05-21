@@ -13,7 +13,7 @@
 		</ul>
 		{/if}
 		
-		{if isset($warnings) && !empty($warnings)}
+		{if isset($warnings)}
 		<ul class="msgs warnings">
 			{foreach from=$warnings key=field item=msg}
 			<li>

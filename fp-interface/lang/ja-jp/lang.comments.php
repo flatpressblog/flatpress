@@ -19,6 +19,4 @@ $lang ['comments'] ['mail'] = '%toname% さま,
 
 ';
 
-$lang ['comments'] ['newcomment'] = 'の新しいコメント ';
-
 ?>

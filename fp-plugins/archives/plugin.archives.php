@@ -21,7 +21,7 @@ class plugin_archives_monthlist extends fs_filelister {
 	var $_year = '';
 
 	function _checkFile($directory, $file) {
-		$f = $directory . "/" . $file;
+		$f = "$directory/$file";
 
 		if (ctype_digit($file)) {
 			if ($this->_directory === $directory) {
@@ -29,7 +29,7 @@ class plugin_archives_monthlist extends fs_filelister {
 				// we may have nested elements)
 				$this->_year = $file;
 				$lnk = get_year_link($file);
-				$this->_htmllist[$this->_year] = "<li class=\"archive-year archive-y20" . $file . "\"> <a href=\"" . $lnk . "\">20" . $file . "</a>";
+				$this->_htmllist [$this->_year] = "<li class=\"archive-year archive-y20$file\"> <a href=\"$lnk\">20$file</a>";
 				return 1;
 			} elseif (is_dir($f)) {
 				$this->_months [] = $file;
@@ -48,8 +48,8 @@ class plugin_archives_monthlist extends fs_filelister {
 			foreach ($mos as $mth) {
 				$lnk = get_month_link($y, $mth);
 				$the_month = theme_date_format(mktime(0, 0, 0, $mth, 1, 0), '%B');
-				$list = "<li class=\"archive-month archive-m" . $mth . "\"><a href=\"" . $lnk . "\">" . $the_month . ' </a></li>' . $list;
-				$linearlist[$the_month . " 20" . $this->_year] = $lnk;
+				$list = "<li class=\"archive-month archive-m$mth\"><a href=\"$lnk\">" . $the_month . ' </a></li>' . $list;
+				$linearlist ["$the_month 20{$this->_year}"] = $lnk;
 			}
 			$list = '<ul>' . $list . '</ul>';
 		}
@@ -79,9 +79,8 @@ function plugin_archives_head() {
 
 	echo "\n<!-- archives -->\n";
 	foreach ($PLUGIN_ARCHIVES_MONTHLIST->getList() as $y => $months) {
-		foreach ($months as $ttl => $link) {
-			echo "<link rel=\"archives\" title=\"" . $ttl . "\" href=\"" . $link . "\">\n";
-		}
+		foreach ($months as $ttl => $link)
+			echo "<link rel=\"archives\" title=\"{$ttl}\" href=\"{$link}\" />\n";
 	}
 
 	echo "\n<!-- end of archives -->\n";
@@ -95,7 +94,7 @@ function plugin_archives_widget() {
 	return array(
 		'subject' => $lang ['plugin'] ['archives'] ['subject'],
 
-		'content' => ($list = $PLUGIN_ARCHIVES_MONTHLIST->getHtmlList()) ? '<ul>' . $list . '</ul>' : "<p>" . $lang ['plugin'] ['archives'] ['no_posts'] . "</p>"
+		'content' => ($list = $PLUGIN_ARCHIVES_MONTHLIST->getHtmlList()) ? '<ul>' . $list . '</ul>' : "<p>{$lang['plugin']['archives']['no_posts']}</p>"
 	);
 }
 

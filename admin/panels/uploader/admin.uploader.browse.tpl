@@ -1,7 +1,7 @@
 <h2>{$panelstrings.head}</h2>
 <p>{$panelstrings.descr}</p>
 
-{include file='shared:errorlist.tpl'}
+{include file='shared:admin_errorlist.tpl'}
 
 
 

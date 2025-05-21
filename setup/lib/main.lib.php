@@ -2,7 +2,7 @@
 $err = array();
 
 function print_done_fail($label, $bool) {
-	echo "<li>", $label . ' <strong style="color: ' . (($bool) ? 'green;">DONE' : 'red;">FAILED') . '</strong><br>', "</li>\n";
+	echo "<li>", $label . ' <strong style="color :' . (($bool) ? 'green;">DONE' : 'red;">FAILED') . '</strong><br />', "</li>\n";
 }
 
 function config_exist() {
@@ -13,8 +13,8 @@ function cache_exist() {
 	return file_exists(CACHE_FILE);
 }
 
-function check_write($file = SETUPTEMP_FILE, $data = 2) {
-	$ok = @io_write_file($file, $data);
+function check_write($num = 2) {
+	$ok = @io_write_file(SETUPTEMP_FILE, $num);
 	return $ok;
 }
 
@@ -35,7 +35,7 @@ function setupid() {
 }
 
 function getstep(&$id) {
-	global $err, $lang;
+	global $err;
 
 	$STEPS = array(
 		'locked',
@@ -53,31 +53,24 @@ function getstep(&$id) {
 
 		$setupid = setupid();
 
-		if (!$setupid) {
-			die($lang ['err'] ['setuprun1']);
-		}
+		if (!$setupid)
+			die('Setup is running');
 
 		if (!file_exists(SETUPTEMP_FILE)) {
-			if (empty($_POST)) {
+			if (empty($_POST))
 				$i = 0;
-			} else {
+			else
 				$i = 1;
-			}
 		} else {
 			$x = explode(',', io_load_file(SETUPTEMP_FILE));
-			if ($x [0] != $setupid) {
-				die($lang ['err'] ['setuprun2'] . SETUPTEMP_FILE . $lang ['err'] ['setuprun3']);
-			}
+			if ($x [0] != $setupid)
+				die('Setup is running: if you are the owner, you can delete ' . SETUPTEMP_FILE . ' to restart');
 			$i = intval($x [1]);
 		}
 
-		$libfile = __DIR__ . '/' . $STEPS [$i] . '.lib.php';
-		if (is_file($libfile)) {
-			include $libfile;
-		}
-
+		@include ("./setup/lib/{$STEPS[$i]}.lib.php");
 		if (!function_exists('check_step')) :
-			/** @phpstan-ignore-next-line */
+
 			function check_step() {
 				return true;
 			}
@@ -89,8 +82,8 @@ function getstep(&$id) {
 				fs_delete(SETUPTEMP_FILE);
 				io_write_file(LOCKFILE, "locked");
 			} else {
-				if ($i > 0 && !@io_write_file(SETUPTEMP_FILE, $setupid . "," . $i)) {
-					$err [] = $lang ['err'] ['writeerror'];
+				if ($i > 0 && !@io_write_file(SETUPTEMP_FILE, "$setupid,$i")) {
+					$err [] = 'Write error';
 				}
 			}
 		}
@@ -102,51 +95,32 @@ function getstep(&$id) {
 }
 
 function validate() {
-	global $lang;
-	$fpuser = strip_tags($_POST ['fpuser']);
-	$fppwd = $_POST ['fppwd'];
-	$fppwd2 = $_POST ['fppwd2'];
-	$email = strip_tags($_POST ['email']);
-	$www = strip_tags($_POST ['www']);
-	if (!(preg_match('/^[\w]+$/u', $fpuser))) {
-		$err [] = $fpuser . $lang ['err'] ['fpuser2'];
-	}
-	if (strlen(trim(($fppwd))) < 6) {
-		$err [] = $lang ['err'] ['fppwd'];
-	}
-	if (($fppwd) != ($fppwd2)) {
-		$err [] = $lang ['err'] ['fppwd2'];
-	}
-	if (!(preg_match('!@.*@|\.\.|\,|\;!', $email) || preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $email))) {
-		$err [] = $email . $lang ['err'] ['email'];
-	}
-	if (!(preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $www) || preg_match('!^http(s)?://localhost!', $www))) {
-		$err [] = $www . $lang ['err'] ['www'];
-	}
-	if ($www && $www [strlen($www) - 1] != '/') {
+	if (!ctype_alnum($_POST ['fpuser']))
+		$err [] = "{$_POST['fpuser']} is not a valid username. 
+		Username must be alphanumeric and should not contain spaces.";
+
+	if (strlen(trim(($_POST ['fppwd']))) < 6)
+		$err [] = "Password must contain at least 6 non-space characters";
+
+	if (($_POST ['fppwd']) != ($_POST ['fppwd2']))
+		$err [] = "Passwords did not match";
+
+	if (!(preg_match('!@.*@|\.\.|\,|\;!', $_POST ['email']) || preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $_POST ['email'])))
+		$err [] = "{$_POST['email']} is not a valid email address";
+
+	$www = $_POST ['www'];
+	if (!(preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $www) || preg_match('!^http(s)?://localhost!', $www)))
+		$err [] = "$www is not a valid URL";
+	if ($www && $www [strlen($www) - 1] != '/')
 		$www .= '/';
-	}
 
 	global $fp_config;
 
-	$fp_config ['general'] ['author'] = $user ['userid'] = $fpuser;
-	$user ['password'] = $fppwd;
+	$fp_config ['general'] ['author'] = $user ['userid'] = $_POST ['fpuser'];
+	$user ['password'] = $_POST ['fppwd'];
 
 	$fp_config ['general'] ['www'] = $user ['www'] = $www;
-	$fp_config ['general'] ['email'] = $user ['email'] = $email;
-
-	// Set UTC offset according to time zone set in php.ini
-	$timezoneFromIni = new DateTimeZone('UTC'); // UTC as fallback value
-	try {
-		$timezoneFromIni = new DateTimeZone(ini_get('date.timezone'));
-	} catch (Exception $e) {
-		// ignore "Unknown or bad timezone" exceptions - just move on with UTC
-	}
-	// calculate the offset from local time zon to UTC...
-	$now = new DateTime('now', $timezoneFromIni);
-	$timeOffset = $timezoneFromIni->getOffset($now) / 3600;
-	// ... and set it to the FlatPress config
-	$fp_config ['locale'] ['timeoffset'] = $timeOffset;
+	$fp_config ['general'] ['email'] = $user ['email'] = $_POST ['email'];
 
 	if (isset($err)) {
 		$GLOBALS ['err'] = $err;
@@ -166,11 +140,11 @@ function validate() {
 
 function print_err() {
 	global $err;
-	global $lang;
 	if (isset($err)) {
-		echo $lang ['err'] ['www'];
+		echo "<p><big>Error!</big> 
+		The following errors have been encountered processing the form:</p><ul>";
 		foreach ($err as $val) {
-			echo "<li>" . $val . "</li>";
+			echo "<li>$val</li>";
 		}
 		echo "</ul>";
 	}

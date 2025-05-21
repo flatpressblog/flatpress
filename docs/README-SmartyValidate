@@ -1,0 +1,1089 @@
+NAME:
+
+    SmartyValidate: a class/plugin for validating form variables
+    within the Smarty template environment.
+
+AUTHOR:
+    Monte Ohrt (monte [AT] ohrt [DOT] com)
+
+VERSION:
+    2.6
+    
+DATE:
+    February 7th, 2005
+
+WEBSITE:
+    http://www.phpinsider.com/php/code/SmartyValidate/
+    
+DOWNLOAD:
+    http://www.phpinsider.com/php/code/SmartyValidate/SmartyValidate-current.tar.gz   
+    
+ANONYMOUS CVS: (leave password empty)
+    cvs -d :pserver:anonymous@cvs.phpinsider.com:/export/CVS login
+    cvs -d :pserver:anonymous@cvs.phpinsider.com:/export/CVS checkout SmartyValidate
+
+SYNOPSIS:
+
+    index.php
+    ---------
+
+    session_start();
+    require('Smarty.class.php');
+    require('SmartyValidate.class.php');
+    
+    $smarty =& new Smarty;
+    
+    
+    if(empty($_POST)) {
+        SmartyValidate::connect($smarty, true);
+        SmartyValidate::register_validator('fname','FullName','notEmpty');
+        SmartyValidate::register_validator('fdate','Date','isDate');
+      $smarty->display('form.tpl');
+    } else {    
+        SmartyValidate::connect($smarty);
+       // validate after a POST
+       if(SmartyValidate::is_valid($_POST)) {
+           // no errors, done with SmartyValidate
+           SmartyValidate::disconnect();
+           $smarty->display('success.tpl');
+       } else {
+           // error, redraw the form
+           $smarty->assign($_POST);
+           $smarty->display('form.tpl');
+       }
+    }
+    
+    form.tpl
+    --------
+    
+    <form method="POST" action="index.php">
+    
+    {validate id="fname" message="Full Name cannot be empty"}
+    Full Name: <input type="text" name="FullName">
+    
+    {validate id="fdate" message="Date is not valid"}
+    Date: <input type="text" name="Date">
+    
+    <input type="submit">
+    </form>
+
+DESCRIPTION:
+
+    What is SmartyValidate?
+
+    SmartyValidate is a form validation class. Its design goals are to
+    leverage the Smarty templating environment and make form validation
+    as easy and flexible as possible.
+
+BACKGROUND:
+
+    Form validation is one of the most frequently performed tasks when
+    it comes to web application programming. Developing form validation
+    can be a tedious and time consuming task. SmartyValidate simplifies
+    this effort by abstracting the validation process. You basically
+    provide the validation criteria and error messages, SmartyValidate
+    does the rest!
+        
+    On the application side, you call SmartyValidate::connect($smarty) first,
+    passing your smarty object as the parameter. Then you register your
+    validators with the SmartyValidate::register_validator() function, once for
+    each validation criteria on the form. Once the form is posted, you call
+    SmartyValidate::is_valid($_POST) and depending on the outcome, you either
+    continue with a valid form or begin a form redraw cycle until all the
+    validation criteria is met. This keeps the form validation process to a bare
+    minimum on the application side.
+    
+    In the form template, you put {validate ...} tags which handle error
+    messages that get displayed upon a validation error.
+    
+
+FEATURES:
+
+    Supplied validation criteria includes empty, integer, float, price,
+    email syntax, credit card checksums, credit card exp dates, valid
+    date syntax, equality between fields, ranges, lengths, regular expression
+    matching and custom function calls. Create your own through Smarty plugins,
+    PHP functions or class methods.
+    
+    Transform functions can be applied to form values prior to validation,
+    such as trimming, upper-casing, etc. Create your own through Smarty Plugins,
+    PHP functions or class methods.
+
+    {validate ...} tags can be located anywhere in your template, regardless of
+    where the corresponding fields are located.
+    
+    Multiple validators may be used for one field. Once one validator fails,
+    the remaining validators for that field are ignored. A "halt" parameter can
+    also stop validation on remaining fields.
+
+
+CAVEATS:
+
+    Smarty supports validation on single-level array values such as foo[] and
+    foo[bar], but does not (currently) support nested array validation such as
+    foo[bar][blah]. So you can do this:
+    
+    {validate field="foo[bar]" criteria="notEmpty" ...}
+    <input type="text" name="foo[bar]">
+    
+    But not this:
+
+    {validate field="foo[bar][blah]" criteria="notEmpty" ...}
+    <input type="text" name="foo[bar][blah]">
+
+
+REQUIREMENTS:
+
+    You must enable session management prior to using SmartyValidate. Do this
+    by calling session_start() at the top of your PHP application.
+    SmartyValidate also requires the Smarty template environment.
+
+INSTALLATION:
+
+    It is assumed that you are familiar with the Smarty templating
+    installation and setup, so I will not explain Smarty template
+    directories and such. Please refer to the Smarty documentation for
+    that information.
+    
+    To install SmartyValidate:
+
+    * Copy the 'SmartyValidate.class.php' file to a place within your
+      php_include path (or use absolute pathnames when including.)
+    * Copy all of the plugins to your Smarty plugin directory. (located
+      in the plugins/ directory of the distribution.)
+
+EXAMPLE:
+
+    Here is a full working example of how to use SmartyValidate. Put the
+    form.tpl and success.tpl files in your Smarty template directory.
+
+    
+    index.php
+    ---------
+
+    <?php
+    session_start();
+
+    // you will need to setup Smarty if
+    // the defaults are not correct.
+
+    require('Smarty.class.php');
+    require('SmartyValidate.class.php');
+    
+    $smarty =& new Smarty;
+    
+    if(empty($_POST)) {
+        // new form, we (re)set the session data
+        SmartyValidate::connect($smarty, true);
+        // register our validators
+        SmartyValidate::register_validator('fullname', 'FullName', 'notEmpty',
+            false, false, 'trim');
+        SmartyValidate::register_validator('phone', 'Phone', 'isNumber', true,
+            false, 'trim');
+        SmartyValidate::register_validator('expdate', 'CCExpDate', 'notEmpty',
+            false, false, 'trim');
+        SmartyValidate::register_validator('email', 'Email', 'isEmail', false,
+            false, 'trim');
+        SmartyValidate::register_validator('date', 'Date', 'isDate', true,
+            false, 'trim');
+        SmartyValidate::register_validator('password', 'password:password2', 'isEqual');
+        // display form
+        $smarty->display('form.tpl');
+    } else {    
+       // validate after a POST
+       SmartyValidate::connect($smarty);
+       if(SmartyValidate::is_valid($_POST)) {
+           // no errors, done with SmartyValidate
+           SmartyValidate::disconnect();
+           $smarty->display('success.tpl');
+       } else {
+           // error, redraw the form
+           $smarty->assign($_POST);
+           $smarty->display('form.tpl');
+       }
+    }
+
+    ?>
+    
+    form.tpl
+    --------
+    
+    <form method="post" action="index.php">
+    {validate id="fullname" message="Full Name Cannot Be Empty"}
+    Full Name: <input type="text" name="FullName" value="{$FullName|escape}"><br />
+    {validate id="phone" message="Phone Number Must be a Number"}
+    Phone :<input type="text" name="Phone" value="{$Phone|escape}" empty="yes"><br />
+    {validate id="expdate" message="Exp Date not valid"}
+    Exp Date: <input type="text" name="CCExpDate" size="8" value="{$CCExpDate|escape}"><br />
+    {validate id="email" message="Email not valid"}
+    Email: <input type="text" name="Email" size="30" value="{$Email|escape}"><br />
+    {validate id="date" message="Date not valid"}
+    Date: <input type="text" name="Date" size="10" value="{$Date|escape}"><br />
+    {validate id="password" message="passwords do not match"}
+    password: <input type="password" name="password" size="10" value="{$password|escape}"><br />
+    password2: <input type="password" name="password2" size="10" value="{$password2|escape}"><br />
+
+    <input type="submit">
+    </form>   
+    
+    success.tpl
+    -----------
+    
+    Your form submission succeeded.
+
+
+PUBLIC METHODS:    
+
+    function connect(&$smarty, $reset = false)
+    ------------------------------------------
+    
+    examples:
+    SmartyValidate::connect($smarty);
+    SmartyValidate::connect($smarty, true);
+
+    connect() is required on every invocation of SmartyValidate. Pass your
+    $smarty object as the parameter. This sets up SmartyValidate with $smarty
+    and auto-registers the default form. Passing the optional second param as
+    true, the default form registration will get reset.
+
+    function disconnect()
+    ---------------------
+    
+    examples:
+    SmartyValidate::disconnect();
+    
+    This clears the SmartyValidate session data. Call this after you are
+    completely finished with SmartyValidate (eg. do NOT call between form
+    submissions.)
+
+
+    function register_object($obj_name,&$object)
+    --------------------------------------------
+    
+    examples:
+    SmartyValidate::register_object('myobj',$myobj);
+    
+    Register an object with SmartyValidate for use with transform and criteria
+    functions. Typically do this right after issuing connect(). See the
+    register_criteria() method for more details.
+
+
+    function is_registered_object($obj_name)
+    ----------------------------------------
+    
+    examples:
+    if(!SmartyValidate::is_registered_object('myobj')) { ... do something ... }
+    
+    Test if an object has been registered.
+
+
+    function register_form($form, $reset = false)
+    ---------------------------------------------
+
+    examples:
+    SmartyValidate::register_form('myform');
+    SmartyValidate::register_form('myform', true);
+    
+    Register a form to be validated. Each form must be registered before it can
+    be validated. You do not have to register the 'default' form, that is done
+    automatically by SmartyValidate. If you register a form that is already
+    registered, nothing will happen (returns false). If you have the optional
+    reset parameter set to true, the form will get reset (essentially
+    unregistering and reregistering the form.)
+
+
+    function is_registered_form($form)
+    ----------------------------------
+    
+    examples:
+    if(!SmartyValidate::is_registered_form('myform')) { ... do something ... }
+    
+    Test if a form has been registered for validation.
+
+
+    function is_valid(&$formvars, $form = 'default')
+    ------------------------------------------------
+
+    examples:
+    SmartyValidate::is_valid($_POST);
+    SmartyValidate::is_valid($_POST, 'myform');
+    
+    Tests if the current form is valid. You MUST supply the form variable array
+    to this function, typically $_POST. You can optionally pass a form name as
+    the second parameter, otherwise the 'default' form is used. Call this after
+    the form is submitted.
+
+    
+    function register_criteria($name, $func_name, $form = 'default')
+    ----------------------------------------------------------------
+    
+    examples:
+    SmartyValidate::register_criteria('isPass', 'test_password');
+    SmartyValidate::register_criteria('isPass', 'test_password','myform');
+    SmartyValidate::register_criteria('isPass', 'myobj::test_password');
+    SmartyValidate::register_criteria('isPass', 'myobj->test_password');
+    
+    Registers a new criteria function. All functions must be registered before
+    they can be used (or exist as a plugin.) You can optionally pass a form
+    name in the case you are not using the 'default' form. Static method calls
+    are also supported such as foo::bar. You can also register a method of an
+    object instance such as foo->bar, but you must first register the object
+    with SmartyValidate. See the register_object() method. Then use your new
+    criteria within the template:
+    
+    {validate field="Password" criteria="isPass" ... }
+
+    Note: the "isCustom" criteria type is no longer supported (or necessary.)
+    See the "BUILDING YOUR OWN" section.
+
+    function is_registered_criteria($func_name, $form = 'default')
+    --------------------------------------------------------------
+    
+    examples:
+    if(SmartyValidate::is_registered_criteria('isPass')) { ... }
+
+    Tests to see if a criteria function has been registered.
+
+
+    function register_transform($name, $func_name, $form = 'default')
+    -----------------------------------------------------------------
+    
+    examples:
+    SmartyValidate::register_transform('upper','strtoupper');
+    SmartyValidate::register_transform('upper','strtoupper','myform');
+    
+    Registers a function to use with "transform" parameter. All functions must
+    be registered before they can be used (or exist as a plugin.) You can
+    optinally pass a form name in the case you are not using the 'default'
+    form. 'trim' is already registered by default.
+
+
+    function is_registered_transform($func_name, $form = 'default')
+    ---------------------------------------------------------------
+    
+    examples:
+    if(SmartyValidate::is_registered_transform('upper')) { ... }
+
+    Tests to see if a transform function has been registered.
+    
+    
+    function register_validator($id, $field, $criteria, $empty = false, $halt =
+    false, $transform = null, $form = 'default')
+    ---------------------------------------------------------------------------
+    
+    examples:
+    
+    SmartyValidate::register_validator('fullname', 'FullName', 'notEmpty');
+    SmartyValidate::register_validator('fullname', 'FullName', 'notEmpty', true);
+    SmartyValidate::register_validator('fullname', 'FullName', 'notEmpty', true,
+    false, 'trim', 'myform');
+    
+    Register a validator with the form. You must register at least one
+    validator. If you specify multiple fields, separate them with a colon and
+    they will be passed into the validator as params field2, field3, etc.
+    
+    Example:
+
+    SmartyValidate::register_validator('passcheck', 'pass1:pass2', 'isEqual');
+
+    {validator id="passcheck" message="your passwords must match"}
+
+
+    function set_page($page, $form = 'default')
+    ---------------------------------------------------------------
+    
+    examples:
+    SmartyValidate::set_page('1'));
+
+    When doing multi-page forms, this value must be set proir to drawing each
+    page. Each validator must have a page="1" attribute for the given page.
+
+    
+SMARTYVALIDATE TEMPLATE VARS:
+
+    For each form, the variable {$validate.formname.is_error} is a boolean set
+    to true or false indicating whether the form had any failed validators from
+    the last is_valid() call. is_error is initialized to "false". The default
+    form is denoted as {$validate.default.is_error}.
+
+
+SMARTYVALIDATE FUNCTION SYNTAX:    
+    
+    The basic syntax of the {validate ...} function is as follows:
+    
+    {validate field="foo" criteria="isNumber" message="foo must be a number"}
+    
+    Those are the three required attributes to a {validate ...}
+    function call. "field" is the form field the validation will
+    validate, "criteria" is the validation criteria, and "message" is
+    the message that will be displayed when an error occurs.
+
+    
+OPTIONAL FUNCTION ATTRIBUTES:
+
+    FORM
+    ----
+
+    {validate form="foo" ...}
+
+    If you are using a registered form other than the "default" form,
+    you must supply the form name with each corresponding validate tag.
+
+
+    TRANSFORM
+    ---------
+
+    Note: This attribute has been deprecated, please set your transform functions with
+    the register_validator() function.
+
+    {validate field="foo" ... transform="trim"}
+    {validate field="foo" ... transform="trim,upper"}
+    
+    "transform" is used to apply a transformation to a form value prior to
+    validation. For instance, you may want to trim off extra whitespace from
+    the form value before validating.
+    
+    You can apply multiple transform functions to a single form value by
+    separating them with commas. You must register all transformation functions
+    with the register_transform() method. By default, 'trim' is registered.
+    
+    Transformations will apply to every value of an array. If you want the
+    transformation applied to the array itself, you must specify with an "@"
+    symbol in front of each transform function:
+    
+    {validate field="foo" ... transform="@notEmpty"}
+    
+    If you want only a particular array element transformed, you must specify:
+
+    {validate field="foo[4]" ... transform="notEmpty"}
+    {validate field="foo[bar]" ... transform="notEmpty"}
+
+    
+    TRIM
+    ----
+
+    Note: the "trim" attribute has been deprecated, set your "trim" behavior
+    with a transform parameter of 'trim' in the register_validator() function.
+    Trim will trim whitespace from the form value before being validated, and
+    before the "empty" or "default" parameters are tested.
+
+        
+    EMPTY
+    -----
+    
+    Note: This attribute has been deprecated, please set your "empty" behavior with
+    the register_validator() function.
+    
+    {validate id="foo" ... empty="yes"}
+    
+    "empty" determines if the field is allowed to be empty or not. If
+    allowed, the validation will be skipped when the field is empty.
+    Note this is ignored with the "notEmpty" criteria.
+
+    
+    HALT
+    ----
+ 
+    Note: This attribute has been deprecated, please set your "halt" behavior with
+    the register_validator() function. 
+    
+    {validate id="foo" ... halt="yes"}
+    If the validator fails, "halt" determines if any remaining validators for
+    this form will be processed. If "halt" is yes, validation will stop at this
+    point.
+
+
+    ASSIGN
+    ------
+    
+    {validate id="foo" ... assign="error"}
+    
+    "assign" is used to assign the error message to a template variable
+    instead of displaying the value. Use this when you don't want the
+    error message displayed right where the {validate ...} function is
+    called.
+
+
+    APPEND
+    ------
+    
+    {validate id="foo" ... append="error"}
+    
+    "append" is used to append the error message to a template variable as an
+    array. This is an alternate to "assign". Use this when you want to loop over
+    multiple validation error messages and display them in one place. Example:
+    
+    {foreach from=$error key="key" item="val"}
+       field: {$key} error: {$val}
+    {/foreach}
+
+
+    PAGE
+    ----
+    
+    {validate id="foo" page="1" ... message="fooError"}
+
+    When doing multi-page forms, each validator must have a page attribute to
+    identify the page that it belongs to. The SmartyValidator::set_page('1')
+    function must be called prior to displaying the given page.
+
+
+
+TRANSFORM FUNCTIONS BUNDLED WITH SMARTYVALIDATE:
+
+
+    trim
+    ----
+    
+    example:
+   
+    SmartyValidate::register_validator('fullname','FullName','notEmpty',false,false,'trim');
+    
+    "trim": this trims whitespace from the beginning and end of the field. This
+    is useful to avoid confusing errors just because extra space was typed into
+    a field.
+
+    default
+    -------
+    
+    example:
+   
+   
+    SmartyValidate::register_validator('value','Value','isInt',false,false,'default:0');
+
+    {validate id="value" message="..."}
+    
+    "default": This sets the form value to the given default value in the case
+    it is empty. You can pass the default value as a parameter in the
+    register_validator() function (see above), or in the template as default="0".
+
+    
+    makeDate
+    --------
+    
+    example:
+   
+    SmartyValidate::register_validator('start','StartDate','isDate',false,false,'makeDate');
+    SmartyValidate::register_validator('start','StartDate:year:month:day','isDate',false,false,'makeDate');
+
+    {validate id="start" message="..."}
+       
+    "makeDate": this creates a date from three other form fields constructed by
+    using the "field" parameter as the prefix, such as StartDateYear,
+    StartDateMonth, StartDateDay in the first example. This is the common format
+    used with date fields generated by {html_select_date}. You can supply three
+    specific form fields separated by colons as in the second example above.
+    
+    Here is a full example of how you might use "makeDate" transform function
+    and "isDateOnOrAfter" criteria  function to compare two dates:    
+
+    // in PHP script, setup validators
+    SmartyValidate::register_validator('setdate', 'EndDate', 'dummyValid', false, false, 'makeDate');
+    SmartyValidate::register_validator('compdate', 'StartDate:EndDate', 'isDateOnOrBefore');
+
+
+    // template
+    {* generate the EndDate value from EndDateYear, EndDateMonth, EndDateDay *}
+    {validate id="setdate"}
+    {* generate StartDate, then compare to EndDate *}
+    {validate is="compdate" message="start date must be on or after end date"}
+    {html_select_date prefix="StartDate"}
+    {html_select_date prefix="EndDate"}
+    {* we need these two hidden form fields to hold the values generated by makeDate *}
+    <input type="hidden" name="StartDate">
+    <input type="hidden" name="EndDate">
+    
+
+CRITERIA BUNDLED WITH SMARTYVALIDATE:
+
+    This is a list of the possible criteria you can use with
+    SmartyValidate. Some of them require their own special attributes.
+    
+    Note: setting criteria in the template is deprecated, use the
+    register_validator() function instead.
+    
+    notEmpty
+    --------
+    
+    Tests if a field is empty (zero length). NOTE: using the "empty" flag with
+    this validator has no effect, it is ignored.
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_fullname','FullName','notEmpty');
+    
+    TEMPLATE:
+    {validate id="v_fullname" message="..."}
+    <input type="text" name="FullName">
+
+    
+    isInt
+    -----
+
+    Tests if a field is an integer value.
+
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_age','age','isInt');
+    
+    TEMPLATE:
+    {validate id="v_age" message="..."}
+    <input type="text" name="age">
+    
+    
+    isFloat
+    -------
+
+    Tests if a field is a float value.
+
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_fraction','fraction','isFloat');
+    
+    TEMPLATE:
+    {validate id="v_fraction" message="..."}
+    <input type="text" name="fraction">
+    
+    
+    isNumber
+    --------
+
+    Tests if a field is either an int or float value.    
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_total','total','isNumber');    
+    
+    TEMPLATE:
+    {validate id="v_total" message="..."}
+    <input type="text" name="total">
+    
+    
+    isPrice
+    -------
+
+    Tests if a field has number with two decimal places.
+
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_price','price','isPrice');    
+    
+    TEMPLATE:
+    {validate id="v_price" message="..."}
+    <input type="text" name="price">
+    
+ 
+    
+    isEmail
+    -------
+
+    Tests if field is valid Email address syntax.
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_email','email','isEmail');    
+    
+    TEMPLATE:
+    {validate id="v_email" message="..."}
+    <input type="text" name="email">
+    
+    
+    
+    isCCNum
+    -------
+
+    Tests if field is a checksummed credit card number.
+
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_ccnum','ccnum','isCCNum');    
+    
+    TEMPLATE:
+    {validate id="v_ccnum" message="..."}
+    <input type="text" name="ccnum">
+    
+ 
+    isCCExpDate
+    -----------
+
+    Tests if field is valid credit card expiration date.
+
+    example:
+
+    PHP:
+    SmartyValidate::register_validator('v_ccexp','ccexp','isCCExpDate');    
+    
+    TEMPLATE:
+
+    {validate id="v_ccexp" message="..."}
+    <input type="text" name="ccexp">
+    
+    isDate
+    ------
+
+    Tests if field is valid Date (parsible by strtotime()).
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_startDate','startDate','isDate');    
+    
+    TEMPLATE:
+    {validate id="v_startDate" message="..."}
+    <input type="text" name="startDate">
+    
+
+
+    isURL
+    ------
+
+    Tests if field is valid URL (http://www.foo.com/)
+
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_URL','URL','isURL');    
+    
+    TEMPLATE:
+    {validate id="v_URL" message="..."}
+    <input type="text" name="URL">
+    
+    
+    
+    isEqual
+    -------
+
+    Tests if two fields are equal in value.
+
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_pass','pass:pass2','isEqual');    
+    
+    TEMPLATE:
+    {validate id="v_pass" message="..."}
+    <input type="password" name="pass">
+    <input type="password" name="pass2">
+    
+    
+    
+    isRange
+    -------
+ 
+    Tests if field is within a given range. Must give low and high params.
+ 
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_mynum','num:1:5','isRange');    
+
+    TEMPLATE:    
+    {validate id="v_mynum" message="..."}
+    <input type="text" name="mynum">
+
+
+    isLength
+    --------
+
+    Tests if field is a given length. parameters 1 and 2 are min and max. use
+    -1 for no min or no max.
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_username','username:3:10','isLength');    
+    
+    TEMPLATE:
+    {validate id="isLength" message="..."}
+    <input type="text" name="username">
+
+    
+    isRegExp
+    --------
+
+    Tests a field against a regular expression. Expression must be fully
+    qualified preg_* expression. Note: it is recommended to use a custom plugin
+    instead of this validator, otherwise syntax limits may be a problem.
+
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_username','username:!^\w+$!','isLength');    
+    
+    TEMPLATE:
+    {validate id="v_username" message="..."}
+    <input type="text" name="username">
+    
+    
+
+    isFileType
+    ----------
+
+    Tests if an uploaded file is a given type (just checks the extention
+    name.) Note: This function is not backward compatible prior to version 2.4.
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_myfile','myfile:jpg,gif,png','isFileType');    
+
+    TEMPLATE:    
+    {validate id="v_myfile" message="..."}
+    <input type="file" name="myfile">
+
+
+    isFileSize
+    ----------
+
+    Tests if an uploaded file is under a given size. Size param can be suffixed
+    with "b" for bytes (default), "k" for kilobytes, "m" for megabytes and "g"
+    for gigabytes (kb, mb, and gb also work.) Note: This function is not
+    backward compatible prior to version 2.4.
+    
+    example:
+    
+    PHP:
+    SmartyValidate::register_validator('v_myimage','myimage:50k','isFileSize');    
+    
+    {validate id="v_myimage" message="..."}
+    <input type="file" name="myimage">
+
+
+    dummyValid
+    ----------
+
+    This is a dummy criteria that always validates to true. This is useful to
+    apply a transformation to a field without actually applying a validation.
+    NOTE: Using the "empty" flag with this validator is ignored, dummyValid
+    always validates true anyways.
+
+    
+    example:
+    
+    PHP:
+   
+    SmartyValidate::register_validator('v_initdate','StartDate','dummyValid',false,false,'makeDate');    
+    
+    TEMPLATE:
+    {validate id="v_initdate"}
+    <input type="text name="StartDate">
+
+
+    isDateEqual
+    -----------
+
+    Tests if a date is equal to another. The dates must be parsible by strtotime().
+
+    
+    example:
+
+    PHP:
+    SmartyValidate::register_validator('date_equal', 'StartDate:EndDate', 'isDateEqual');
+    
+    TEMPLATE:
+    {validate id="date_equal" message="..."}
+    <input type="text" name="StartDate">
+    <input type="text" name="EndDate">
+
+    
+    isDateBefore
+    ------------
+    isDateAfter
+    -----------
+    isDateOnOrBefore
+    ----------------
+    isDateOnOrAfter
+    ---------------
+    
+    These all work similar to "isDateEqual" example above, but testing the dates
+    according to their respective function.    
+
+    
+    isCustom
+    --------
+
+    "isCustom" HAS BEEN REMOVED. Please see BUILDING YOUR OWN directly below.
+
+VALIDATE INIT
+-------------
+
+    Note: validate_init is deprecated now that we have register_validator(),
+    it shouldn't be necessary any more with no criteria in the templates.
+
+    example:
+    {validate_init form="foobar" halt="yes" assign="error_msg"}
+    {validate field="name" criteria="notEmpty" message="name cannot be empty"}
+    {validate field="pass" criteria="notEmpty" message="pass cannot be empty"}
+
+    {validate_init ... } sets parameter values that are implicitly passed to
+    each {validate ... } tag thereafter. This keeps the repeated verbosity of
+    {validate ... } tags to a minimum. Any initialized parameter can be
+    overridden in each {validate ... } tag. You can re-initialize the
+    parameters by calling {validate_init ... } again.
+
+
+BUILDING YOUR OWN CRITERIA/TRANSFORM FUNCTIONS:
+
+    Building your own custom functions has never been easier. First, we'll make
+    up a couple of new functions in the template. We'll make one criteria
+    function and one transform function.
+    
+    "isValidPassword" and "upper" are names we are using in the validator
+    registration reference your new custom functions. These are not necessarily
+    real PHP function names, it just the names used by the validator.
+    
+    You can do one of two things: make Smarty plugins so the new functions are
+    automatically found and used, or write PHP functions and register them
+    directly.
+    
+    SMARTY_PLUGIN METHOD:
+    
+    In your Smarty plugin directory, create a new file named
+    validate_TYPE.NAME.php where TYPE is either 'criteria' or 'transform', and
+    NAME is the name of the new function. The corresponding function names in
+    the plugin files must follow the convention smarty_validate_TYPE_NAME()
+    where TYPE and NAME are the same TYPE and NAME from the filename. The NAME
+    is the criteria/transform name that will be used in the template. In our
+    example, the filenames will be validate_criteria.isValidPassword.php, and
+    validate_transform.upper.php. (The template will be calling
+    criteria="isValidPassword" and transform="upper")
+    
+    
+    validate_criteria_isValidPassword.php
+    -------------------------------------
+
+    <?php
+    
+    function smarty_validate_criteria_isValidPassword($value, $empty, &$params, &$formvars) {
+        if(strlen($value) == 0)
+            return $empty;
+         // we might have a function we call to test the password
+         // against a database   
+         return is_valid_password($formvars['username'], $value);
+    }
+
+    ?>
+    
+    validate_transform_upper.php
+    ----------------------------
+    
+    <?php
+    
+    function smarty_validate_transform_upper($value, &$params, &$formvars) {
+        return strtoupper($value);
+    }
+    
+    ?>
+
+    Your criteria functions must contain the four parameters given in the
+    example above. The first parameter is the form field value being validated.
+    The second is the boolean "empty" value given as a parameter to the
+    validator (or false if none was given). $params contains all the parameters
+    passed to the validator, and $formavars contains all the form information.
+    The last two are passed by reference so you can edit the original values if
+    need be.
+    
+    All custom criteria should return a boolean "true" or "false" value to
+    indicate to SmartyValidate that the validation passed or failed. You do NOT
+    print error messages inside the function, except for errors dealing with a
+    misconfiguration of the validator such as a missing parameter. If the
+    validator fails, the error message for the person filling out the form
+    should already be set in the template {validator ... message="error!"}
+
+    Transform functions have three parameters, the first being the field value
+    being transformed, and the second is all the parameters passed to the
+    validator, and the third is the form variables.  The last two are passed by
+    reference so you can edit the original values if need be. The transform
+    function should return the transformed value of $value.
+
+    If the file names and function names follow the above convention, no
+    registration of the functions are necessary, SmartyValidate will locate and
+    use the plugins. All of the functions that ship with SmartyValidate are plugins.
+    
+
+MANUAL REGISTER METHOD:
+    
+    You can manually register your functions instead of using plugins. This is
+    useful if you have a function specific to one application and a Smarty
+    plugin may not be the most practical place for it. You can also register
+    class methods this way.
+    
+    First example will be a straight forward PHP function:
+    
+    function check_pass($value, $empty, &$params, &$formvars) {
+        // do your logic here, check password, return true or false
+    }
+    
+    After your function exists, you can register it with SmartyValidate:
+    
+    SmartyValidate::register_criteria('isValidPassword','check_pass');
+    
+    Transformation functions are done the same way:
+
+    SmartyValidate::register_transform('upper','my_upper_func');
+    
+    You can also register class methods. First, you must register the object
+    with SmartyValidate, then register the method(s):
+    
+    SmartyValidate::register_object('my_obj', $my_obj);
+    SmartyValidate::register_criteria('isValidPassword','myobj->check_pass');
+    SmartyValidate::register_transform('upper','myobj->my_upper_method');
+    
+    Calling PHP functions or class methods look exactly the same, you just use
+    the registered name(s) like so:
+    
+    SmartyValidate::register_validator('v_foo','foo','isValidPassword',false,false,'upper');    
+    
+    Just like functions that come with SmartyValidator, all functions are
+    applied to every element of an array coming from the form. If you want your
+    function to act on the array itself, you must specify that in the
+    registration:
+       
+    SmartyValidate::register_validator('v_foo','foo','@isValidPassword',false,false,'@upper');    
+    
+    If you want a specific array element validated, you must specify:
+    
+    SmartyValidate::register_validator('v_foo','foo[4]','isValidPassword',false,false,'upper');    
+    SmartyValidate::register_validator('v_foo','foo[bar]','isValidPassword',false,false,'upper');    
+    
+    
+
+CREDITS:
+
+    Thanks to the many people who have submitted bug reports, suggestions, etc.
+    
+    Edwin Protomo
+    John Blyberg
+    Alexey Kuimov
+    boots (from forums)
+    xces (from forums)
+    electr0n (from forums)
+    Justin (from forums)
+    hristov (form forums)
+    
+    Anyone I missed, let me know!
+
+
+COPYRIGHT:
+    Copyright(c) 2004-2005 New Digital Group, Inc. All rights reserved.
+
+    This library is free software; you can redistribute it and/or modify it
+    under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or (at
+    your option) any later version.
+
+    This library is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+    License for more details.

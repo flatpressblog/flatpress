@@ -1,185 +1,142 @@
-{include file="shared:errorlist.tpl"}
+
+{include file='shared:admin_errorlist.tpl'}
 
 {html_form}
 
-<div id="admin-config" class="option-set">
+<div class="row">
+		<div class="col-xl-12 col-lg-12">
+			<div class="card shadow mb-4">
+				<div class="card-header">
+					<h6 class="m-0 font-weight-bold text-primary">{$panelstrings.head}</h6>
+				</div>
+				<div class="card-body options_page">
+					<div class="row">
+						<div class="col-lg-6 mb-4">
+							<div id="admin-config-general">
+								<h2>{$panelstrings.gensetts}</h2>
+								<dl class="option-list">
+								<dt><label for="title"> {$panelstrings.blogtitle} </label></dt>
+								<dd><input type="text" name="title" id="title" class="textinput{if isset($error)}{$error.title|notempty:' field-error'}{/if} form-control input_gray" 
+								value="{$flatpress.TITLE|escape:"html"}" />
+								</dd>
 
-	<div id="admin-config-general">
 
-		<h2>{$panelstrings.gensetts}</h2>
+								<dt><label for="subtitle"> {$panelstrings.blogsubtitle} </label></dt>
+								<dd><input type="text" name="subtitle" id="subtitle" class="bigtextinput form-control input_gray"  value="{$flatpress.subtitle|escape:"html"}" /></dd>
 
-		<dl class="option-list">
+								<dt><label for="blogfooter"> {$panelstrings.blogfooter} </label></dt>
+								<dd><input type="text" name="blogfooter" id="blogfooter" class="textinput form-control input_gray" value="{$flatpress.footer|escape:"html"}" /></dd>
 
-			<dt><label for="admin">{$panelstrings.adminname}</label></dt>
-			{if isset($error) && isset($error.admin) && !empty($error.admin)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd><input type="text" name="admin" id="admin" class="textinput{$class}" value="{$user|escape:'html'}"></dd>
+								<dt><label for="author"> {$panelstrings.blogauthor} </label></dt>
+								<dd><input type="text" name="author" id="author" class="textinput form-control input_gray" value="{$flatpress.author}" /></dd>
 
-			<dt><label for="password">{$panelstrings.adminpassword}</label></dt>
-			{if isset($error) && isset($error.password) && !empty($error.password)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd><input type="password" name="password" id="password" autocomplete="new-password" aria-hidden="true" class="textinput{$class}"></dd>
 
-			<dt><label for="confirm_password">{$panelstrings.adminpasswordconfirm}</label></dt>
-			{if isset($error) && isset($error.confirm_password) && !empty($error.confirm_password)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd><input type="password" name="confirm_password" id="confirm_password" autocomplete="new-password" aria-hidden="true" class="textinput{$class}"></dd>
+								<dt><label for="www"> {$panelstrings.blogurl} </label></dt>
+								<dd><input type="text" name="www" id="www" class="form-control input_gray textinput{if isset($error)}{$error.www|notempty:" field-error"}{/if}"
+										value="{$flatpress.www|escape:"html"}" /></dd>
 
-			<dt><label for="title">{$panelstrings.blogtitle}</label></dt>
-			{if isset($error) && isset($error.title) && !empty($error.title)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd><input type="text" name="title" id="title" class="textinput{$class}" value="{$flatpress.TITLE|escape:"html"}"></dd>
 
-			<dt><label for="subtitle">{$panelstrings.blogsubtitle}</label></dt>
-			<dd><input type="text" name="subtitle" id="subtitle" class="bigtextinput" value="{$flatpress.subtitle|escape:"html"}"></dd>
+								<dt><label for="email"> {$panelstrings.blogemail} </label></dt>
+								<dd><input type="text" name="email" id="email" class="form-control input_gray textinput{if isset($error)}{$error.email|notempty:" field-error"}{/if}" 
+								value="{$flatpress.email}" /></dd>
 
-			<dt><label for="blogfooter">{$panelstrings.blogfooter}</label></dt>
-			<dd><input type="text" name="blogfooter" id="blogfooter" class="textinput" value="{$flatpress.footer|escape:"html"}"></dd>
+								<dt> {$panelstrings.notifications} </dt>
+								<dd> 
+								<label for="notify"> 
+								<input type="checkbox" name="notify" id="notify"{if isset($flatpress.NOTIFY) && $flatpress.NOTIFY}checked="checked"{/if} /> 
+								{$panelstrings.mailnotify} 
+								</label> 
+								</dd>
 
-			<dt><label for="author">{$panelstrings.blogauthor}</label></dt>
-			<dd><input type="text" name="author" id="author" class="textinput" value="{$flatpress.author}"></dd>
+								<dt><label for="startpage"> {$panelstrings.startpage} </label></dt>
+								<dd><select name="startpage" id="startpage" class="textinput form-select form-control input_gray">
+									<option value=":NULL:">
+										{$panelstrings.stdstartpage}
+									</option>
+								{foreach from=$static_list key=staticid item=staticpage}
+									<option value="{$staticid}"{if $staticid == $fp_config.general.startpage} selected="selected"{/if}>
+										{$staticpage.subject}
+									</option>
+								{/foreach}
+								</select>
+								</dd>
 
-			<dt><label for="www">{$panelstrings.blogurl}</label></dt>
-			{if isset($error) && isset($error.www) && !empty($error.www)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd><input type="text" name="www" id="www" class="textinput{$class}" value="{$flatpress.www|escape:"html"}"></dd>
+								<dt><label for="maxentries"> {$panelstrings.blogmaxentries} </label></dt>
+								<dd><input type="text" name="maxentries" id="maxentries" 
+								class="form-control input_gray smalltextinput{if isset($error)}{$error.maxentries|notempty:" field-error"}{/if}" value="{$flatpress.maxentries}" /></dd>
+								</dl>
 
-			<dt><label for="email">{$panelstrings.blogemail}</label></dt>
-			{if isset($error) && isset($error.email) && !empty($error.email)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd><input type="text" name="email" id="email" class="textinput{$class}" value="{$flatpress.email}"></dd>
+							</div>
+						</div>
+						<div class="col-lg-6 mb-4">
+						<div id="admin-config-intsetts">
+						<h2> {$panelstrings.intsetts}  </h2>
+							<dl class="option-list">
+								<dt> {$panelstrings.utctime} </dt>
+								{assign var=temp_time value="%b %d %Y %H:%M:%S"}
+								<dd> <code> {"r"|date:$smarty.now} </code> </dd>
 
-			<dt><label>{$panelstrings.notifications}</label></dt>
-			<dd><label for="notify">
-				<input type="checkbox" name="notify" id="notify"{if $flatpress.NOTIFY} checked{/if}>
-				{$panelstrings.mailnotify}
-			</label></dd>
+								<dt><label for="timeoffset"> {$panelstrings.timeoffset} </label></dt>
+								<dd><input type="text" name="timeoffset" id="timeoffset" 
+									class="form-control input_gray smalltextinput{if isset($error)}{$error.timeoffset|notempty:" field-error"}{/if}" 
+									value="{$fp_config.locale.timeoffset}" /> {$panelstrings.hours} 
+								</dd>
 
-			<dt><label for="startpage">{$panelstrings.startpage}</label></dt>
-			<dd><select name="startpage" id="startpage" class="textinput">
-				<option value=":NULL:">{$panelstrings.stdstartpage}</option>
-				{foreach from=$static_list key=staticid item=staticpage}
-					<option value="{$staticid}"{if $staticid == $fp_config.general.startpage} selected="selected"{/if}>
-						{$staticpage.subject}
-					</option>
-				{/foreach}
-			</select></dd>
 
-			<dt><label for="maxentries">{$panelstrings.blogmaxentries}</label></dt>
-			{if isset($error) && isset($error.maxentries) && !empty($error.maxentries)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd><input type="text" name="maxentries" id="maxentries" class="smalltextinput{$class}" value="{$flatpress.maxentries}"></dd>
+								<dt><label for="dateformat"> {$panelstrings.dateformat} </label></dt>
+								<dd>	<p> <input type="text" name="dateformat" id="dateformat" 
+									class="form-control input_gray textinput{if isset($error)}{$error.dateformat|notempty:" field-error"}{/if}" 
+									value="{$fp_config.locale.dateformat}" /> </p>
+									<p> {$panelstrings.output}:   {$smarty.now|date_format:$fp_config.locale.dateformat}  </p>
+								</dd>
 
-		</dl>
+								<dt><label for="dateformatshort"> {$panelstrings.dateformatshort} </label></dt>
+								<dd>	<p> <input type="text" name="dateformatshort" id="dateformatshort" 
+									class="form-control input_gray textinput{if isset($error)}{$error.dateformatshort|notempty:" field-error"}{/if}" 
+									value="{$fp_config.locale.dateformatshort}" /> </p>
+									<p> {$panelstrings.output}:   {$smarty.now|date_format:$fp_config.locale.dateformatshort}  </p>
+								</dd>
 
-	</div>
+								<dt><label for="timeformat"> {$panelstrings.timeformat} </label></dt>
+								<dd>	<p> <input type="text" name="timeformat" id="timeformat" 
+									class="form-control input_gray textinput{if isset($error)}{$error.timeformat|notempty:" field-error"}{/if}" 
+									value="{$fp_config.locale.timeformat}" /> </p>
+									<p> {$panelstrings.output}:  {$smarty.now|date_format:$fp_config.locale.timeformat}  </p>
+								</dd>
 
-	<div id="admin-config-intsetts">
 
-		<h2>{$panelstrings.intsetts}</h2>
+								<dt><label for="lang"> {$panelstrings.langchoice} </label></dt>
+								<dd>	
+								<select name="lang" id="lang" class="form-control form-select input_gray textinput">
+								{foreach from=$lang_list item=langsetts}
+									<option value="{$langsetts.locale}" 
+										{if $langsetts.locale == $fp_config.locale.lang}selected="selected"{/if}>
+										{$langsetts.id}
+									</option>
+								{/foreach}
+								</select>
+								</dd>
 
-		<dl class="option-list">
-			<dt><label>{$panelstrings.utctime}</label></dt>
-			{assign var=temp_time value="%b %d %Y %H:%M:%S"}
-			<dd><code>{"r"|date:$smarty.now}</code></dd>
-
-			<dt><label for="timeoffset">{$panelstrings.timeoffset}</label></dt>
-			{if isset($error) && isset($error.timeoffset) && !empty($error.timeoffset)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd><input type="text" name="timeoffset" id="timeoffset" class="smalltextinput{$class}" value="{$fp_config.locale.timeoffset}">
-				<p class="text">{$panelstrings.hours}</p></dd>
-
-			<dt><label for="dateformat">{$panelstrings.dateformat}</label></dt>
-			{if isset($error) && isset($error.dateformat) && !empty($error.dateformat)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd>
-				<p><input type="text" name="dateformat" id="dateformat" class="textinput{$class}" value="{$fp_config.locale.dateformat}"></p>
-				<p class="output">{$panelstrings.output}: {$smarty.now|date_format:$fp_config.locale.dateformat}</p>
-			</dd>
-
-			<dt><label for="dateformatshort">{$panelstrings.dateformatshort}</label></dt>
-			{if isset($error) && isset($error.dateformatshort) && !empty($error.dateformatshort)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd>
-				<p><input type="text" name="dateformatshort" id="dateformatshort" class="textinput{$class}" value="{$fp_config.locale.dateformatshort}"></p>
-				<p class="output">{$panelstrings.output}: {$smarty.now|date_format:$fp_config.locale.dateformatshort}</p>
-			</dd>
-
-			<dt><label for="timeformat">{$panelstrings.timeformat}</label></dt>
-			{if isset($error) && isset($error.timeformat) && !empty($error.timeformat)}
-				{assign var=class value=" field-error"}
-			{else}
-				{assign var=class value=""}
-			{/if}
-			<dd>
-				<p><input type="text" name="timeformat" id="timeformat" class="textinput{$class}" value="{$fp_config.locale.timeformat}"></p>
-				{assign var=currentTime value=$smarty.now}
-				{assign var=timeDiff value=$fp_config.locale.timeoffset}
-				{assign var=TimeDiffUTC value=$currentTime+$timeDiff*3600}
-				<p class="output">{$panelstrings.output}: {$TimeDiffUTC|date_format:$fp_config.locale.timeformat}</p>
-			</dd>
-
-			<dt><label for="lang">{$panelstrings.langchoice}</label></dt>
-			<dd>
-				<select name="lang" id="lang" class="textinput">
-					{foreach from=$lang_list item=langsetts}
-						<option value="{$langsetts.locale}" {if $langsetts.locale == $fp_config.locale.lang} selected="selected"{/if}>
-							{$langsetts.id}
-						</option>
-					{/foreach}
-				</select>
-			</dd>
-
-			<dt><label for="charset">{$panelstrings.charset}</label></dt>
-			<dd>
-				<select name="charset" id="charset" class="textinput">
-					{foreach from=$charset_list item=charset}
-						<option value="{$charset}" {if $charset == $fp_config.locale.charset} selected="selected"{/if}>
-							{$charset}
-						</option>
-					{/foreach}
-				</select>
-				<p class="output">{$panelstrings.charsettip}</p>
-			</dd>
-
-		</dl>
-
-	</div>
-
+								<dt> <label for="charset"> {$panelstrings.charset} </label></dt>
+								<dd> <p><input type="text" name="charset" id="charset" 
+									class="form-control input_gray smalltextinput{if isset($error)}{$error.charset|notempty:" field-error"}{/if}" 
+									value="{$fp_config.locale.charset}" /></p>
+									<p>{$panelstrings.charsettip}</p>
+								</dd>
+							</dl>
+							</div>
+						</div>
+					</div>
+					<div class="buttonbar">
+						{html_submit name="save" id="save" class="btn btn-primary" value=$panelstrings.submit}
+					</div>
+				</div>
+			</div>
+		 </div>
 </div>
 
-<div class="buttonbar">
-	{html_submit name="save" id="save" value=$panelstrings.submit}
-</div>
+
 
 {/html_form}
+
+

@@ -6,7 +6,5 @@ $lang ['plugin'] ['adminarea'] = array(
 	'admin_panel' => 'Admin area',
 	'add_entry' => 'Add entry',
 	'add_static' => 'Add static',
-	'login' => 'Log in',
-	'logout' => 'Log out'
+	'logout' => 'Logout'
 );
-?>

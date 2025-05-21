@@ -1,26 +1,225 @@
-/*
-===================
-FlatPress Setup CSS
-===================
-
-Name: Leggero v2
-Author: NoWhereMan, Dave Shea, Matthew Mullenweg and Fraenkiman
-Version: 1.0.1
-Module: setup.css
+/* Default WordPress by Dave Shea || http://mezzoblue.com
+	Modifications by Matthew Mullenweg || http://photomatt.net
+	This is just a basic layout, with only the bare minimum defined.
+	Please tweak this and make it your own. :)
 */
 
-@viewport { width: device-width }
+/*base blue: #263962*/
+
+
+a {
+	color: #3b68bf;
+	text-decoration: none;
+}
+
+a img {
+	border: none;
+}
+
+a:visited {
+	color: #3b68bf;
+}
+
+a:hover {
+	color: #3b5d9f;
+	border-bottom: 1px solid #333;
+}
+
+acronym, abbr {
+	border-bottom: 1px dashed #333;
+}
+
+acronym, abbr, span.caps {
+	cursor: help;
+	font-size: 90%;
+	letter-spacing: .07em;
+}
+
+blockquote {
+	border-left: 5px solid #ccc;
+	margin-left: 1.5em;
+	padding-left: 5px;
+}
 
 body {
-	background: #fff;
+	background: #fff ; /* url('../imgs/tile.png') repeat-x; */
 	color: #535c6f;
 	font-family: 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif;
 	font-size: 70%;
 	text-align: center;
-	-webkit-text-size-adjust: none;
-	-moz-text-size-adjust: none;
-	text-size-adjust: none
 }
+
+#main {
+	margin: auto;
+	width: 500px;
+	text-align: left;
+}
+
+cite {
+	font-size: 90%;
+	font-style: normal;
+}
+
+h2 {
+	font: 160%, bold, Georgia, Times, 'Times New Roman', serif;
+	margin-top: 1em;
+}
+
+h3 {
+	border-bottom: dotted 1px #eee;
+	font: 200%, bold, Georgia, Times, 'Times New Roman', serif;
+	margin-top: 0;
+}
+
+big {
+	color:red;
+	font-weight: bold;
+}
+
+ol#comments li p {
+	font-size: 100%;
+	
+
+}
+
+ol#commentlist li {
+	padding-left: 8px;
+	padding-right: 8px;
+	margin: 4px;
+	border: thin dotted #e0e5ef;
+	background-color:#eff4ff;
+	
+}
+
+#pagesubtitle {
+	color: #ddd;
+	font-style: italic;
+	font-family: Georgia, Times, 'Times New Roman', serif;
+	text-align:center;
+}
+
+/* classes used by the_meta() */
+ul.post-meta {
+	list-style: none;
+}
+
+ul.post-meta span.post-meta-key {
+	font-weight: bold;
+}
+
+.credit {
+	/*background: #263962;
+	color: #fff;*/
+	font-size: 11px;
+	text-align: center;
+	clear:both;
+	
+	padding-top:20px;
+	
+	width: 85%	
+	
+}
+
+
+.feedback {
+	color: #ccc;
+	text-align: right;
+	margin-top: 2em;
+	font-size: .75em;
+}
+
+.meta {
+	font-size: .75em;
+}
+
+.meta li, ul.post-meta li {
+	display: inline;
+}
+
+.meta ul {
+	display: inline;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.meta, .meta a {
+	color: #808080;
+	font-weight: normal;
+	letter-spacing: 0;
+}
+
+.storytitle {
+	margin: 0;
+}
+
+.storytitle a {
+	text-decoration: none;
+}
+
+
+.storycontent {
+	
+	/* clear floats */
+	
+	overflow: hidden;
+	_height:1%; /*ie hack*/
+}
+
+.post {
+	padding: 0.2em 1em;
+	background: #fff;
+	border: solid thin #ddd;
+}
+
+#navigation {
+	margin-left: 6.2%;
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+
+
+.alignleft {
+		float:left;
+}
+
+ .alignright, #buttonbar {
+		float:right;
+}
+
+#buttonbar {
+	padding: 0;
+	margin-top: 1em;
+}
+
+#commentform #name, #commentform #email, #commentform #url, #commentform textarea {
+	background: #fff;
+	border: 1px solid #333;
+	padding: .2em;
+}
+
+
+fieldset {
+	padding: 0.4em;
+}
+
+ textarea {
+	width: 99%;
+	font: normal 1em 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif;
+	background: #fff;
+	border: 1px solid #333;
+	padding: .2em;
+
+
+}
+
+#commentlist li ul {
+	border-left: 1px solid #ddd;
+	font-size: 110%;
+	list-style-type: none;
+}
+
+
 
 #header {
 	font-family: Georgia, Times, 'Times New Roman', serif;
@@ -28,91 +227,47 @@ body {
 	font-style: italic;
 	font-size: 300%;
 	text-align: center;
-	border-bottom: 1px solid #bbb
+	border-bottom: 1px solid #bbb;
 }
 
-#main {
-	margin: auto;
-	width: 500px;
-	text-align: left
+#header a {
+	color: #fff;
+	text-decoration: none;
 }
 
-a { color: #aa4142; text-decoration: none }
-
-a img { border: none }
-
-a:hover { color: #aa4142; border-bottom: 1px solid #333 }
-
-a:visited { color: #aa5152 }
-
-h1 :nth-child(1) { /* logo-small.gif */
-	vertical-align: bottom;
-    width: 28px;
-    margin: 5px 0
+#header a:hover {
+	text-decoration: underline;
 }
 
-h1 :nth-child(2) { color: #535c6f }
-
-h1 :nth-child(3) { color: #aa4142 }
-
-pre, code {
-    font-family: "Lucida Console", Monaco, monospace;
-    font-size: 100%;
-    color: #3b68bf
-}
-
-.storycontent { overflow: hidden }
-
-.post {
-	padding: 0.2em 1em;
-	background: #eee;
-	border: solid thin #ddd;
-	font-size: 120%;
-	border-radius: 5px
-}
-
-dt {
-	width: 40%; 
-	margin-top: 1.8em; 
-	text-align: right; 
-	line-height: 1.5em
-}
-
-dd {
-    margin-top: -1.5em;
-    margin-right: 10%;
-    float: right;
-    line-height: 1.5em
-}
-
-dl { margin: 1.8em 0 }
-
-.alignleft { float: left }
-
-.alignright, #buttonbar { float: right }
 
 input, select {
 	font-size: 130%;
-	font-family: sans-serif;
+	font-family: Georgia, Garamond, 'Times New Roman', Times, serif;
+	border: 1px solid #bbb;
+	background-color: #eee;
+}
+
+.maxsize {
+	width: 99%;
+}
+
+
+dt {
+	width: 30%; 
+	margin-top: 1.8em; 
+	text-align: right; 
+	line-height: 1.5em;
+}
+
+dd {
+	margin-top: -1.5em; 
+	margin-right: 10%; 
+	line-height: 2em;
+	float: right;
+}
+
+.info-notice {
+	padding: 1em;
 	border: 1px solid #ddd;
-	border-radius: 3px;
+	background: #eee;
 }
-
-input[type=text],
-input[type=password] {
-	width: 16em;
-	font-size: 100%;
-	background-color: #fff;
-	vertical-align: middle
-}
-
-input:hover,
-input:focus,
-textarea:hover, 
-textarea:focus { border: 1px solid #aa4142 }
-
-#buttonbar { padding: 0; margin-top: 1.6em }
-
-input[type=submit] { cursor: pointer; font-size: 100% }
-
-#footer { padding-top: 20px }

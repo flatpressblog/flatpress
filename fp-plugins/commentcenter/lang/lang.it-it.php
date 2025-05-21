@@ -11,7 +11,6 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'lapprove' => 'Elencare i commenti bloccati',
 	'lmanage' => 'Gestire i commenti',
 	'lconfig' => 'Configurare il plugin',
-	'faq_spamcomments' => 'Ottenere assistenza su come gestire i commenti di spam',
 
 	// Policies
 	'policies' => 'Regole',
@@ -24,10 +23,10 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'entries' => 'Articoli',
 	'categories' => 'Categorie',
 	'nopolicies' => 'Non c\'è nessuna regola.',
-	'all_entries' => 'Tutti gli articoli',
-	'fol_entries' => 'La regola è applicata ai seguenti articoli:',
-	'fol_cats' => 'La regola è applicata agli articoli nelle seguenti categorie:',
-	'older' => 'La regola è applicata agli articoli più vecchi di %d giorno/i.',
+	'all_entries' => 'Tutti i post',
+	'fol_entries' => 'La regola è applicata ai seguenti post:',
+	'fol_cats' => 'La regola è applicata ai post nelle seguenti categorie:',
+	'older' => 'La regola è applicata ai post più vecchi di %d giorno/i.',
 	'allow' => 'Permetti di commentare',
 	'block' => 'Blocca i commenti',
 	'approvation' => 'I commenti devono essere approvati',
@@ -46,14 +45,13 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'log_all' => 'Registra i commenti bloccati',
 	'log_all_long' => 'Selezionala se vuoi registrare anche i commenti che sono bloccati.',
 	'email_alert' => 'Notifica commenti via email',
-	'email_alert_long' => 'Selezionala se vuoi essere informato via email quando c\'è un nuovo commento da approvare.',
+	'email_alert_long' => 'Selezionala se vuoi essere informato via email quando c\'è un nuovo commento ' . 'da approvare.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Abilita il controllo di Akismet',
-	'akismet_use_long' => 'Con <a href="https://akismet.com/" target="_blank">Akismet</a> è possibile ridurre lo spam nei commenti.',
 	'akismet_key' => 'Chiave di Akismet',
-	'akismet_key_long' => 'Il servizio <a href="https://akismet.com/signup/" target="_blank">Akismet</a> fornisce una <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">chiave</a>. Inseritela qui.',
+	'akismet_key_long' => 'Per usare Akismet ti viene fornita una chiave. Inseriscila qui.',
 	'akismet_url' => 'Indirizzo di base per Akismet',
-	'akismet_url_long' => 'Penso che per il servizio gratuito di Akismet si possa usare un solo indirizzo. Puoi anche lasciare vuoto questo campo, al suo posto si utilizzerà <code>%s</code>.',
+	'akismet_url_long' => 'Penso che per il servizio gratuito di Akismet si possa usare un solo indirizzo. ' . 'Puoi anche lasciare vuoto questo campo, al suo posto si utilizzerà <code>%s</code>.',
 	'save_conf' => 'Salva configurazione',
 
 	// Edit policy page
@@ -62,11 +60,11 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'createpol' => 'Crea una regola',
 	'some_entries' => 'Alcuni articoli',
 	'properties' => 'Articoli con precise caratteristiche',
-	'se_desc' => 'Se hai selezionato l\'opzione %s, inserisci gli articoli ai quali la vuoi applicare.',
-	'se_fill' => 'Riempi i campi con gli <a href="admin.php?p=entry">ID</a> degli articoli (<code>entryYYMMDD-HHMMSS</code>).',
+	'se_desc' => 'Se hai selezionato l\'opzione %s, per favore inserisci gli articoli ai quali la vuoi applicare.',
+	'se_fill' => 'Per favore riempi i campi con gli id degli articoli (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'Caratteristiche',
-	'po_desc' => 'Se hai selezionato l\'opzione %s, seleziona le caratteristiche.',
-	'po_comp' => 'I campi non sono obbligatori ma ne devi selezionare almeno uno, altrimenti la regola sarà applicata a tutti gli articoli.',
+	'po_desc' => 'Se hai selezionato l\'opzione %s, per seleziona le caratteristiche.',
+	'po_comp' => 'I campi non sono obbligatori ma ne devi selezionare almeno uno, altrimenti la regola ' . 'sarà applicata a tutti gli articoli.',
 	'po_time' => 'Opzioni sulle date',
 	'po_older' => 'Applica agli articoli più vecchi di ',
 	'days' => 'giorni.',
@@ -95,7 +93,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'app_nocomms' => 'Non c\'è nessun commento.',
 	'app_pselected' => 'Pubblica i commenti selezionati',
 	'app_dselected' => 'Elimina i commenti selezionati',
-	'app_other' => 'Altri Commenti',
+	'app_other' => 'Alti Commenti',
 	'app_akismet' => 'Segnalati come spam',
 	'app_spamdesc' => 'Questi commenti sono stati bloccati da Akismet.',
 	'app_hamsubmit' => 'Inviali ad Akismet come ham quando li pubblichi.',
@@ -107,8 +105,8 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'delc_descm' => 'Stai per eliminare questi commenti: ',
 
 	// Manage comments page
-	'man_searcht' => 'Cerca un articolo',
-	'man_searchd' => 'Inserisci l\'<a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>) dell\'articolo di cui vuoi gestire i commenti.',
+	'man_searcht' => 'Cerca un post',
+	'man_searchd' => 'Inserisci l\'id dell\'articolo di cui vuoi gestire i commenti.',
 	'man_search' => 'Cerca',
 	'man_commfor' => 'Commenti di %s',
 	'man_spam' => 'Segnala come spam ad Akismet',
@@ -123,7 +121,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Akismet warnings
 	'akismet_errors' => array(
-		-1 => 'La chiave di Akismet è vuota. Inseriscila adesso.',
+		-1 => 'La chiave di Akismet è vuota. Per favore inseriscila.',
 		-2 => 'Non abbiamo potuto chiamare i server di Akismet.',
 		-3 => 'La risposta di Akismet è fallita.',
 		-4 => 'La chiave di Akismet non è valida.'
@@ -135,10 +133,10 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		-1 => 'Si è verificato un errore durante il salvataggio della configurazione.',
 
 		2 => 'Regola salvata.',
-		-2 => 'Si è verificato un errore durante il salvataggio della regola (forse le tue opzioni non sono corrette).',
+		-2 => 'Si è verificato un errore durante il salvataggio della regola (forse le tue opzioni sono scorrette).',
 
 		3 => 'Regola spostata.',
-		-3 => 'Si è verificato un errore nello spostamento della regola (o non la si può spostare).',
+		-3 => 'Si è verificato un errore nello spostamento della regola (o non la si può muovere).',
 
 		4 => 'Regole rimosse.',
 		-4 => 'Si è verificato un errore durante la rimozione delle regole (o non hai selezionato nessuna regola).',
@@ -159,7 +157,6 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'L\'articolo da te selezionato non esiste.'
 	)
 );
-
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Akismet ha rilevato il tuo commento come SPAM.',
 	'lock' => 'Siamo spiacenti ma i commenti per questo articolo sono chiusi.',
@@ -175,14 +172,11 @@ $lang ['plugin'] ['commentcenter'] ['mail_text'] = 'Caro %toname%,
 ma tu devi approvarlo.
 
 Questo è il suo contenuto:
-__________________________________________
+***************
 %content%
-__________________________________________
-
-Accedere all\'area amministrativa del blog FlatPress e controllare i commenti bloccati nel centro commenti.
+***************
 
 Cordiali saluti,
 %blogtitle%
 
 ';
-?>

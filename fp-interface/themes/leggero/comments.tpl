@@ -1,9 +1,9 @@
-{include file="header.tpl"}
+{include file=header.tpl}
 
 		<div id="main">
 		{entry_block}
 		{entry}
-			{include file="entry-default.tpl"}
+			{include file=entry-default.tpl}
 		{comment_block}
 		<ol id="comments">
 		{comment}
@@ -22,10 +22,10 @@
 				{$url|notempty:"<a href=\"$url\" rel=\"nofollow\" title=\"Visit $url\">$name</a>"|default:$name}
 				</strong>
 				
-				{include file="shared:commentadminctrls.tpl"} {* this shows edit/delete links*}
+				{include file=shared:commentadminctrls.tpl} {* this shows edit/delete links*}
 				
 				<p class="date">
-				<a href="{$entryid|link:comments_link}#{$id}" title="Permalink to {$name}'s comment">{$date|date_format_daily} {$lang.entryauthor.at} {$date|date_format}</a>
+				<a href="{$entryid|link:comments_link}#{$id}" title="Permalink to {$name}'s comment">{$date|date_format:"%A, %B %e, %Y - %H:%M:%S"}</a>
 				</p>
 				
 				{$content|tag:comment_text}
@@ -51,10 +51,10 @@
 	
 		</div>
 		
-		{include file="widgets.tpl"}
+		{include file=widgets.tpl}
 	
 		
 
 	<hr />
 	
-{include file="footer.tpl"}
+{include file=footer.tpl}

@@ -7,7 +7,8 @@
 /.buildpath
 /.project
 /.settings
+/.vscode
 /fp-content/attachs
+/fp-content/images
 /fp-content_
 /fp-content__
-/phpstan.phar

@@ -1,4 +1,4 @@
-{include file="shared:errorlist.tpl"}
+{include file=shared:errorlist.tpl}
 <form id="search" method="get" action="{$smarty.const.BLOG_BASEURL}search.php" enctype="multipart/form-data">
 		
 	<fieldset><legend>{$lang.search.fset1}</legend>
@@ -9,7 +9,7 @@
 	</fieldset>
 	
 	<fieldset><legend>{$lang.search.fset2}</legend>
-	<p>{html_select_date|fix_encoding_issues reverse_years="true" start_year=2000 end_year=$smarty.now|date_format:"%Y" field_separator=" - " field_order="DMY" time="0000-00-00" all_empty="--"}</p>
+	<p>{html_select_date start_year=2000 end_year=$smarty.now|date_format:"%Y" field_separator=" - " field_order="DMY" time="0000-00-00" all_empty="--"}</p>
 	<p>{$lang.search.datedescr}</p>
 	</fieldset>
 	

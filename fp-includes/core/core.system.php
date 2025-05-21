@@ -48,7 +48,7 @@ function system_save($file, $array) {
 	foreach ($array as $key => $arg) {
 		// $vname = utils_vname ($arg);
 		// var_export($arg);
-		$s = "\$" . $key .  " = " . var_export($arg, true) . ";\n";
+		$s = /*"  global {$key};\n*/  "\${$key} = " . var_export($arg, true) . ";\n";
 		$string .= $s;
 	}
 
@@ -61,15 +61,14 @@ function system_save($file, $array) {
 
 function system_hashsalt_save($force = false) {
 	global $fp_config;
-	if ($force || !file_exists(HASHSALT_FILE)) {
+	if ($force || !file_exists(HASHSALT_FILE))
 		return system_save(HASHSALT_FILE, array(
 			'fp_hashsalt' => $fp_config ['general'] ['blogid'] . ABS_PATH . BLOG_BASEURL . mt_rand()
 		));
-	}
 	return true;
 }
 
-define('SYSTEM_VER', '1.4.dev');
+define('SYSTEM_VER', '1.3.dev');
 
 function system_ver() {
 	return 'fp-' . SYSTEM_VER;
@@ -95,9 +94,8 @@ function system_ver_compare($newver, $oldver) {
 
 	// if they equals, but still new version has more digits
 	// then old-version is still outdated
-	if ($cn > $co) {
+	if ($cn > $co)
 		return 1;
-	}
 }
 
 function system_generate_id($string) {
@@ -113,15 +111,21 @@ function system_guessbaseurl() {
 }
 
 function system_getindex() {
-	if (MOD_BLOG != INDEX) {
+	if (MOD_BLOG != INDEX)
 		return MOD_BLOG;
-	} else {
+	else
 		return 'index.php';
-	}
 }
 
 function system_unregister_globals() {
-	// No longer needed since PHP 5.4
+	$v = @ini_get('register_globals');
+
+	// on error we unregister anyway
+	if ($v || is_null($v)) {
+		foreach ($_REQUEST as $var => $val) {
+			unset($GLOBALS [$var]);
+		}
+	}
 }
 
 function system_sanitizequery() {
@@ -152,23 +156,23 @@ function system_init_action_params() {
 
 	$fp_params = array();
 
-	if ($x = @$_GET ['x']) {
+	if ($x = @$_GET ['x'])
 		$fp_params = utils_kexplode($x, ':;', false);
-	}
 
 	$fp_params = array_merge($_GET, $fp_params);
 }
 
 function system_init() {
 	system_sanitizequery();
+	system_unregister_globals();
 	system_prepare_iis();
 
 	$GLOBALS ['fpdb'] = new FPDB();
 
 	$GLOBALS ['fp_widgets'] = new widget_indexer();
 
-	$GLOBALS ['smarty'] = &$GLOBALS ['_FP_SMARTY'];
-	$smarty = &$GLOBALS ['smarty'];
+	$GLOBALS ['smarty'] = & $GLOBALS ['_FP_SMARTY'];
+	$smarty = & $GLOBALS ['smarty'];
 
 	$GLOBALS ['fp_config'] = config_load();
 
@@ -182,39 +186,30 @@ function system_init() {
 
 	$GLOBALS ['lang'] = lang_load();
 
-	set_locale();
-
 	plugin_loadall();
 
 	// init smarty
-	// FlatPress does not use the Smarty cache, only the compiler
-	$smarty->compile_dir = COMPILE_DIR;
-	$smarty->cache_dir = CACHE_DIR;
-	$smarty->caching = false;
-
-	// Smarty debug console
-	$smarty->debugging = false; // true or false
-	//$smarty->clearCompiledTemplate();
+	$smarty->compile_dir = CACHE_DIR;
+	$smarty->cache_dir = SMARTY_DIR . 'cache/';
+	$smarty->caching = 0;
 
 	do_action('init');
 	ob_end_clean();
 }
 
 function system_seterr($module, $val) {
-	if ($module) {
+	if ($module)
 		$elem = 'success_' . $module;
-	} else {
+	else
 		$elem = 'success';
-	}
 	sess_add($elem, $val);
 }
 
 function system_geterr($module = '') {
-	if ($module) {
+	if ($module)
 		$elem = 'success_' . $module;
-	} else {
+	else
 		$elem = 'success';
-	}
 	return sess_remove($elem);
 }
 
@@ -223,7 +218,7 @@ function system_dpr($action, $content) {
 	$p = print_r($content, 1);
 
 	add_action($action, function () use ($p) {
-		echo "<pre style='position:absolute'>" . $p . "</pre>";
+		echo "<pre style='position:absolute'>$p</pre>";
 	});
 }
 

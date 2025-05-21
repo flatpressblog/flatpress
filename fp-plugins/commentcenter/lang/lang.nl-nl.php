@@ -11,7 +11,6 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'lapprove'  => 'Geblokkeerde opmerkingen weergeven',
 	'lmanage'   => 'Opmerkingen beheren',
 	'lconfig'   => 'De plug-in configureren',
-	'faq_spamcomments' => 'Krijg hulp bij het omgaan met spamcommentaren',
 
 	// Beleid
 	'policies' => 'Beleid',
@@ -46,14 +45,13 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'log_all' => 'Geblokkeerde opmerkingen registreren',
 	'log_all_long' => 'Controleer het als u ook opmerkingen wilt registreren die zijn geblokkeerd.',
 	'email_alert' => 'Opmerkingen melden via e-mail',
-	'email_alert_long' => 'Controleer het als u wilt dat wanneer er een opmerking is om goed te keuren, je geïnformeerd wordt via e-mail.',
+	'email_alert_long' => 'Controleer het als u wilt dat wanneer er een opmerking is om goed te keuren, je ' . 'geïnformeerd wordt via e-mail.',
 	'akismet' => 'Akismet',
 	'akismet_use' => 'Akismet-controle inschakelen',
-	'akismet_use_long' => 'Met <a href="https://akismet.com/" target="_blank">Akismet</a> kun je spam in reacties verminderen.',
 	'akismet_key' => 'Akismet Key',
-	'akismet_key_long' => 'De <a href="https://akismet.com/signup/" target="_blank">Akismet-service</a> geeft je een <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">sleutel</a>. Voeg deze hier in.',
+	'akismet_key_long' => 'De Akismet-service biedt u een sleutel om deze te gebruiken. Voeg hier in.',
 	'akismet_url' => 'Url van blogbasis voor Akismet',
-	'akismet_url_long' => 'Ik denk dat je voor Akismet gratis service gewoon een domein moet gebruiken. U kunt dit veld leeg laten, <code>%s</code> wordt gebruikt.',
+	'akismet_url_long' => 'Ik denk dat je voor Akismet gratis service gewoon een domein moet gebruiken. ' . 'U kunt dit veld leeg laten, <code>%s</code> wordt gebruikt.',
 	'save_conf' => 'Bewaar Configuratie',
 
 	// Beleidspagina bewerken
@@ -63,10 +61,10 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'some_entries' => 'Sommige vermeldingen',
 	'properties' => 'Binnenkomen met bepaalde eigenschappen',
 	'se_desc' => 'Als u de %s optie heeft geselecteerd, voeg dan vermeldingen in die u op dit beleid wilt toepassen.',
-	'se_fill' => 'Vul de velden in met het <a href="admin.php?p=entry">ID</a> van de vermeldingen (<code>entryYYMMDD-HHMMSS</code>).',
+	'se_fill' => 'Vul de velden in met het ID van de vermeldingen (<code>entryYYMMDD-HHMMSS</code>).',
 	'po_title' => 'eigenschappen',
 	'po_desc' => 'Als u de optie %s heeft geselecteerd, vul dan de eigenschappen in.',
-	'po_comp' => 'De velden zijn niet verplicht, maar u moet minstens één van de beleidsregels invullen is van toepassing op alle vermeldingen.',
+	'po_comp' => 'De velden zijn niet verplicht, maar u moet minstens één van de beleidsregels invullen ' . 'is van toepassing op alle vermeldingen.',
 	'po_time' => 'Tijd opties',
 	'po_older' => 'Toepassen op vermeldingen ouder dan ',
 	'days' => 'dagen.',
@@ -108,7 +106,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Beheer commentaar pagina
 	'man_searcht' => 'Zoek een vermelding',
-	'man_searchd' => 'Voer de <a href="admin.php?p=entry">ID</a> (<code>entryYYMMDD-HHMMSS</code>) in van het item waarvan je commentaren wilt beheren.',
+	'man_searchd' => 'Voer de id in van het item waarvan je commentaren wilt beheren.',
 	'man_search' => 'Zoek',
 	'man_commfor' => 'Commentaar voor %s',
 	'man_spam' => 'Dien als spam in bij Akismet',
@@ -159,7 +157,6 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 		'entry_nf' => 'De vermelding dat je heeft geselecteerd, bestaat niet.'
 	)
 );
-
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Sorry, we ondervinden technische problemen.',
 	'lock' => 'Opmerkingen voor dit item zijn geblokkeerd, sorry.',
@@ -175,14 +172,11 @@ $lang ['plugin'] ['commentcenter'] ['mail_text'] = 'Beste %toname%,
 maar het heeft uw goedkeuring nodig voordat het wordt getoond.
 
 Hier is de opmerking die zojuist is geplaatst:
-__________________________________________
+***************
 %content%
-__________________________________________
+***************
 
-Log in bij het beheer van je FlatPress-blog en controleer de geblokkeerde opmerking in het opmerkingencentrum.
-
-Automatisch gegenereerd door
+Het beste,
 %blogtitle%
 
 ';
-?>
