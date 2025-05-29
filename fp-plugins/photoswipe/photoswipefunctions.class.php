@@ -130,6 +130,8 @@ class PhotoSwipeFunctions {
 		if (isset($attr ['popup']) && strtolower($attr ['popup']) === 'false') {
 			// Popup explicitly deactivated
 			$attr ['popup'] = false;
+
+			// image HTML generated without PhotoSwipe functions by the default BBCode plugin
 			$previewHtml = do_bbcode_img(null, $attr, null, null, null);
 
 			// Extract <img ...> only
