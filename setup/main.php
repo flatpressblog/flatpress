@@ -48,8 +48,8 @@ function chmod_r($path, $filemode, $dirmode) {
 
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $fileinfo) {
-			if ($fileinfo->isDot()) {
-				// Skip '.' and '..'
+			if ($fileinfo->isDot() || $fileinfo->getFilename() === '.git') {
+				// Skip '.', '..', and '.git'
 				continue;
 			}
 			chmod_r($fileinfo->getPathname(), $filemode, $dirmode);
