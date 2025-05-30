@@ -1,4 +1,4 @@
-# Under development: FlatPress 1.4 "Notturno"
+# 2025-05-30: [FlatPress 1.4 "Notturno"](https://github.com/flatpressblog/flatpress/releases/tag/1.4)
 
 ## General
 - The fixed "Stats" panel has been converted into a plugin ([#363](https://github.com/flatpressblog/flatpress/issues/363))
