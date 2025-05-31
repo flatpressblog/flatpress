@@ -4,18 +4,22 @@ require_once INCLUDES_DIR . 'includes.php';
 
 $tpl = 'default.tpl';
 
-function sanitize_input($input) {
+function sanitize_user($input) {
 	global $fp_config;
 	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
 	return htmlspecialchars(trim($input ?? ''), ENT_QUOTES, $charset);
+}
+
+function sanitize_pass($input) {
+	return trim($input ?? '');
 }
 
 function login_validate() {
 	global $smarty, $lang;
 
 	// Sanitization of the inputs
-	$user = sanitize_input(filter_input(INPUT_POST, 'user', FILTER_DEFAULT) ?? '');
-	$pass = sanitize_input(filter_input(INPUT_POST, 'pass', FILTER_DEFAULT) ?? '');
+	$user = sanitize_user(filter_input(INPUT_POST, 'user', FILTER_DEFAULT) ?? '');
+	$pass = sanitize_pass(filter_input(INPUT_POST, 'pass', FILTER_DEFAULT) ?? '');
 
 	$error = array();
 	$lerr = &$lang ['login'] ['error'];
