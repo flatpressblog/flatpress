@@ -429,6 +429,9 @@ function utils_mail($from = '', $subject = '', $message = '', $headers = '') {
 			"Content-Type: text/plain; charset=\"" . $charset . "\"\r\n";
 	}
 
+	// Add Date header for RFC 5322 compliance
+	$headers = "Date: " . date('r') . "\r\n" . $headers;
+
 	// Encode subject with Base64 for UTF-8
 	$encoded_subject = '=?' . $charset . '?B?' . base64_encode($subject) . '?=';
 
