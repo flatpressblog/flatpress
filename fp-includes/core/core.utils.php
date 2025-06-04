@@ -445,7 +445,12 @@ function utils_mail($from = '', $subject = '', $message = '', $headers = '') {
 		$_SESSION ['email_sent'] = [];
 	}
 
-	$_SESSION ['email_sent'] = array_filter($_SESSION ['email_sent'], fn($t) => $t > time() - 3600);
+	$_SESSION ['email_sent'] = array_filter(
+		$_SESSION ['email_sent'],
+		function($t) {
+			return $t > time() - 3600;
+		}
+	);
 
 	if (count($_SESSION ['email_sent']) >= 30) {
 		// Limit reached
