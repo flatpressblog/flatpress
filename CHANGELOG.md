@@ -3,6 +3,7 @@
 ## Bugfixes
  - Removed cleanup of special characters in the password for admin login ([#627](https://github.com/flatpressblog/flatpress/issues/627))
  - Sending e-mails now also works if the recipient requests the RFC 5322 header. ([#631](https://github.com/flatpressblog/flatpress/issues/631))
+ - Sending an e-mail is again possible under PHP7.1 to PHP7.3. ([#630](https://github.com/flatpressblog/flatpress/issues/630))
 
 # 2025-05-30: [FlatPress 1.4 "Notturno"](https://github.com/flatpressblog/flatpress/releases/tag/1.4)
 
