@@ -83,8 +83,8 @@ if (!preg_match('|^lang\.[a-z]{2}-[a-z]{2}\.php$|', $lf)) {
 	die ('Error with lang file');
 }
 
-include __DIR__ . '/../setup/lang/' . $lf;
-include __DIR__ . '/../setup/lib/main.lib.php';
+include __DIR__ . '/lang/' . $lf;
+include __DIR__ . '/lib/main.lib.php';
 
 $step = null;
 
@@ -92,8 +92,8 @@ $id = getstep($step);
 
 $l = &$lang [$step];
 
-include __DIR__ . '/../setup/tpls/header.tpl.php';
-include __DIR__ . '/../setup/tpls/' . $step . '.tpl.php';
-include __DIR__ . '/../setup/tpls/footer.tpl.php';
+include __DIR__ . '/tpls/header.tpl.php';
+include __DIR__ . '/tpls/' . $step . '.tpl.php';
+include __DIR__ . '/tpls/footer.tpl.php';
 
 ?>
