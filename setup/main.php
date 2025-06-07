@@ -78,22 +78,22 @@ chmod_r(BASE_DIR, FILE_PERMISSIONS, DIR_PERMISSIONS);
 // Sets the local language based on the browser
 $language = @$_POST ['language'] ? $_POST ['language'] : $browserLang;
 
-$lf = "lang." . $language . ".php";
+$lf = 'lang.' . $language . '.php';
 if (!preg_match('|^lang\.[a-z]{2}-[a-z]{2}\.php$|', $lf)) {
 	die ('Error with lang file');
 }
 
-include('./setup/lang/' . $lf);
-include('./setup/lib/main.lib.php');
+include __DIR__ . '/../setup/lang/' . $lf;
+include __DIR__ . '/../setup/lib/main.lib.php';
 
 $step = null;
 
 $id = getstep($step);
 
-$l =& $lang [$step];
+$l = &$lang [$step];
 
-include ("./setup/tpls/header.tpl.php");
-include ("./setup/tpls/" . $step . ".tpl.php");
-include ("./setup/tpls/footer.tpl.php");
+include __DIR__ . '/../setup/tpls/header.tpl.php';
+include __DIR__ . '/../setup/tpls/' . $step . '.tpl.php';
+include __DIR__ . '/../setup/tpls/footer.tpl.php';
 
 ?>
