@@ -10,7 +10,7 @@
 ## Plugins
 ### Bugfixes
 - BBcode plugin: update to version 1.9.1
-  - The font-tag works as documented in the [wiki](https://wiki.flatpress.org/doc:plugins:bbcode#text_formatting)
+  - The font-tag works as documented in the [wiki](https://wiki.flatpress.org/doc:plugins:bbcode#text_formatting) ([#635](https://github.com/flatpressblog/flatpress/issues/635))
 
 # 2025-05-30: [FlatPress 1.4 "Notturno"](https://github.com/flatpressblog/flatpress/releases/tag/1.4)
 
