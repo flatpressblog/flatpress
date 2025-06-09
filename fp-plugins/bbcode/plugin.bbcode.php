@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BBCode
- * Version: 1.9.0
+ * Version: 1.9.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -546,7 +546,24 @@ function do_bbcode_color($action, $attributes, $content, $params, $node_object) 
 	if ($action == 'validate') {
 		return true;
 	}
-	return '<span style="color:' . $attributes ['default'] . '">' . $content . '</span>';
+	return '<span style="color:' . $attributes ['default'] . ';">' . $content . '</span>';
+}
+
+/**
+ * Function to set font.
+ *
+ * @param string $action
+ * @param array  $attributes
+ * @param string $content
+ * @param array  $params
+ * @param object $node_object
+ * @return bool|string
+ */
+function do_bbcode_font($action, $attributes, $content, $params, $node_object) {
+	if ($action === 'validate') {
+	return true;
+	}
+	return '<span style="font-family:' . $attributes ['default'] . ';">' . $content . '</span>';
 }
 
 /**
@@ -565,7 +582,7 @@ function do_bbcode_size($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
 		return true;
 	}
-	return '<span style="font-size:' . $attributes ['default'] . '">' . $content . '</span>';
+	return '<span style="font-size:' . $attributes ['default'] . ';">' . $content . '</span>';
 }
 
 /**
@@ -704,6 +721,18 @@ function &plugin_bbcode_init() {
 		'link'
 	), array());
 	$bbcode->setCodeFlag('size', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
+
+	// Font-Face Tag
+	$bbcode->addCode(
+		'font',
+		'callback_replace',
+		'do_bbcode_font',
+		array('usecontent_param' => array('default')),
+		'inline',
+		array('listitem', 'block', 'inline', 'link'),
+		array()
+	);
+	$bbcode->setCodeFlag('font', 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
 
 	// code
 	$bbcode->addCode('code', 'usecontent', 'do_bbcode_code', array(), 'inline', array(
