@@ -163,6 +163,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Beklager, vi oplever tekniske problemer.',
+	'akismet_spam'  => 'Din kommentar er blevet genkendt som spam.',
 	'lock' => 'Beklager, dette indlæg kan ikke kommenteres.',
 	'approvation' => 'Kommentaren er blevet gemt, men administratoren skal låse den op, før den kan vises.',
 

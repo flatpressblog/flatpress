@@ -162,6 +162,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'ごめんなさい,技術的な問題が発生してます.',
+	'akismet_spam'  => 'あなたのコメントはスパムとして認識されました。',
 	'lock' => 'この記事へのコメントはブロックされてます,ごめんなさい.',
 	'approvation' => 'コメントは保存されました, 管理者が承認すると表示されます.',
 

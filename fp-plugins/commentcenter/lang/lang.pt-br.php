@@ -162,6 +162,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Desculpe, estamos encontrando dificuldades técnicas.',
+	'akismet_spam'  => 'Seu comentário foi reconhecido como spam.',
 	'lock' => 'Desculpe, comentários para esta entrada estão bloqueados.',
 	'approvation' => 'Os comentários foram salvos, mas o Administrador deve aprová-los antes de exibi-los.',
 

@@ -153,6 +153,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 $lang['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Opravičujemo se, prihaja do tehničnih težav.',
+	'akismet_spam'  => 'Vaš komentar je bil prepoznan kot neželena pošta.',
 	'lock' => 'Komentarji za ta vnos so blokirani, žal.',
 	'approvation' => 'Komentar je bil shranjen, vendar ga mora administrator odobriti, preden se prikaže.',
 

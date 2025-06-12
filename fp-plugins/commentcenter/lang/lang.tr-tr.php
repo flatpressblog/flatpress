@@ -162,6 +162,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Üzgünüz, teknik zorluklarla karşılaşıyoruz.',
+	'akismet_spam'  => 'Yorumunuz spam olarak algılandı.',
 	'lock' => 'Bu gönderi için yorumlar engellenmiş, üzgünüz.',
 	'approvation' => 'Yorum kaydedildi ancak gösterilmeden önce Yönetici onaylamalıdır.',
 	
