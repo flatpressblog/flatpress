@@ -12,6 +12,9 @@
 ### Bugfixes
 - BBcode plugin: update to version 1.9.1
   - The font-tag works as documented in the [wiki](https://wiki.flatpress.org/doc:plugins:bbcode#text_formatting) ([#635](https://github.com/flatpressblog/flatpress/issues/635))
+- Comment Center plugin: update to version 1.1.4
+  - Akismet client now uses SSL/HTTPS, as fallback HTTP ([#638](https://github.com/flatpressblog/flatpress/issues/638))
+  - A comment recognized as spam is not a technical problem ([#639](https://github.com/flatpressblog/flatpress/issues/639))
 
 # 2025-05-30: [FlatPress 1.4 "Notturno"](https://github.com/flatpressblog/flatpress/releases/tag/1.4)
 
