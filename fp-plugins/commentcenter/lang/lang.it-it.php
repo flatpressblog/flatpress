@@ -162,6 +162,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Akismet ha rilevato il tuo commento come SPAM.',
+	'akismet_spam'  => 'Il tuo commento è stato riconosciuto come spam.',
 	'lock' => 'Siamo spiacenti ma i commenti per questo articolo sono chiusi.',
 	'approvation' => 'Il commento è stato salvato ma l\'Amministratore lo deve approvare prima di farlo vedere.',
 

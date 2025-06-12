@@ -1,8 +1,8 @@
 <?php
 
-/*
+/**
  * Plugin Name: Comment Center
- * Version: 1.1.3
+ * Version: 1.1.4
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -45,7 +45,7 @@ class plugin_commentcenter {
 	 * This function loads the configuration of the plugin.
 	 *
 	 * @param bool $foce:
-	 *        	Force to load it?
+	 *			Force to load it?
 	 * @return array The configuration
 	 */
 	function getConf($force = false) {
@@ -73,9 +73,9 @@ class plugin_commentcenter {
 	 * This function validates a comment.
 	 *
 	 * @param bool $status:
-	 *        	The current status of the comment validation
+	 *			The current status of the comment validation
 	 * @param array $comment:
-	 *        	The comment data
+	 *			The comment data
 	 * @return bool Returns true if the comment is valid, false otherwise.
 	 */
 	function validate($status, $comment) {
@@ -104,11 +104,22 @@ class plugin_commentcenter {
 		global $post;
 		$behavoir = $this->behavoirFromPolicies($entry, $post ['categories']);
 
-		// If comments are locked we don't send to Akismet
+		// Akismet check: Differentiate between connection/key vs. spam detection
 		if (@$conf ['akismet_check'] && $behavoir != -1) {
-			$akismet = $this->akismetCheck($comment, $entry);
-			if (!$akismet) {
+			// Load Akismet instance and check for technical errors
+			$akismetObj = $this->akismetLoad();
+			if (!is_object($akismetObj)) {
+				// Technical problem (e.g. empty/invalid key or server error)
 				$smarty->append('error', $lang ['plugin'] ['commentcenter'] ['akismet_error']);
+				return false;
+			}
+
+			// Spam check: Prepare and check comments
+			$clean = $this->akismetClean($comment, $entry);
+			$akismetObj->setComment($clean);
+			if ($akismetObj->isSpam()) {
+				// Comment was recognized as spam
+				$smarty->append('error', $lang ['plugin'] ['commentcenter'] ['akismet_spam']);
 				$this->logComment($comment, $entry, 'akismet');
 				return false;
 			}
@@ -144,7 +155,7 @@ class plugin_commentcenter {
 	 * -4 if the key isn't valid
 	 *
 	 * @param string $key:
-	 *        	A key for the service
+	 *			A key for the service
 	 * @return object|int The akismet object or a negative integer on error
 	 */
 	function &akismetLoad($key = '') {
@@ -185,9 +196,9 @@ class plugin_commentcenter {
 	 * This function clean a comment to send it to Akismet.
 	 *
 	 * @param array $comment:
-	 *        	The comment data
+	 *			The comment data
 	 * @param string $entry:
-	 *        	The entry id
+	 *			The entry id
 	 * @return array $comment cleaned
 	 */
 	function akismetClean($comment, $entry) {
@@ -221,9 +232,9 @@ class plugin_commentcenter {
 	 * This function manages the Akismet Check
 	 *
 	 * @param array $comment:
-	 *        	The comment data
+	 *			The comment data
 	 * @param string $entry:
-	 *        	The entry id
+	 *			The entry id
 	 * @return bool Is the comment allowed?
 	 */
 	function akismetCheck($comment, $entry) {
@@ -248,7 +259,7 @@ class plugin_commentcenter {
 	 * This function loads the comment policies.
 	 *
 	 * @param bool $force:
-	 *        	Force to load them?
+	 *			Force to load them?
 	 * @return array The policies
 	 */
 	function &loadPolicies($force = false) {
@@ -282,9 +293,9 @@ class plugin_commentcenter {
 	 * This function adds a policy in a certain position.
 	 *
 	 * @param mixed $policy:
-	 *        	The policy
+	 *			The policy
 	 * @param int $position:
-	 *        	The position
+	 *			The position
 	 */
 	function addPolicyAt($policy, $position) {
 		if ($position < 0) {
@@ -301,9 +312,9 @@ class plugin_commentcenter {
 	 * This function moves a policy from a postition to another one.
 	 *
 	 * @param integer $old:
-	 *        	The old position
+	 *			The old position
 	 * @param integer $new:
-	 *        	The new position
+	 *			The new position
 	 */
 	function policyMove($old, $new) {
 		if (!isset($this->policies [$old])) {
@@ -326,9 +337,9 @@ class plugin_commentcenter {
 	 * -1: The user can't comment
 	 *
 	 * @param string $entry:
-	 *        	The entry id
+	 *			The entry id
 	 * @param array $cats:
-	 *        	The categories
+	 *			The categories
 	 * @return int The behavoir
 	 */
 	function behavoirFromPolicies($entry, $cats = array()) {
@@ -385,11 +396,11 @@ class plugin_commentcenter {
 	 * the Administrator's approvation.
 	 *
 	 * @param array $comment:
-	 *        	The comment data
+	 *			The comment data
 	 * @param string $entry:
-	 *        	The entry id
+	 *			The entry id
 	 * @param string $why:
-	 *        	The reason of the log
+	 *			The reason of the log
 	 * @return bool Can it saves the log?
 	 */
 	function logComment($comment, $entry, $why = '') {
@@ -407,9 +418,9 @@ class plugin_commentcenter {
 	 * It's based on the code of comment.php
 	 *
 	 * @param array $comment:
-	 *        	The comment data
+	 *			The comment data
 	 * @param string $entry_title:
-	 *        	The title of the entry
+	 *			The title of the entry
 	 * @return bool
 	 */
 	function commentMail($comment, $entry_title) {

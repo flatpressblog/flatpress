@@ -162,6 +162,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Sorry, we ondervinden technische problemen.',
+	'akismet_spam'  => 'Uw opmerking is herkend als spam.',
 	'lock' => 'Opmerkingen voor dit item zijn geblokkeerd, sorry.',
 	'approvation' => 'De commentaren zijn opgeslagen, maar de beheerder moet deze goedkeuren voordat deze wordt weergegeven.',
 

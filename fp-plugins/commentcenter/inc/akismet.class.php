@@ -1,8 +1,8 @@
 <?php
 /**
- * 08.11.2010 22:25:17est
+ * 13.06.2025
  *
- * Akismet PHP4 class
+ * Akismet class
  *
  * <b>Usage</b>
  * <code>
@@ -14,7 +14,7 @@
  * 'permalink' => 'http://yourdomain.com/yourblogpost.url',
  * );
  *
- * $akismet = new Akismet('http://www.yourdomain.com/', 'YOUR_WORDPRESS_API_KEY', $comment);
+ * $akismet = new Akismet('http://www.yourdomain.com/', 'YOUR_API_KEY', $comment);
  *
  * if($akismet->errorsExist()) {
  * echo"Couldn't connected to Akismet server!";
@@ -27,9 +27,9 @@
  * }
  * </code>
  *
- * @author Bret Kuhns {@link www.bretkuhns.com}
- * @link http://code.google.com/p/akismet-php4
- * @version 0.3.5
+ * @author FlatPress, based on Akismet PHP4 class, written by Bret Kuhns {@link www.bretkuhns.com}
+ * @link https://flatpress.org
+ * @version 0.3.6
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -47,9 +47,9 @@ class AkismetObject {
 	 * Add a new error to the errors array in the object
 	 *
 	 * @param String $name
-	 *        	A name (array key) for the error
+	 *			A name (array key) for the error
 	 * @param String $string
-	 *        	The error message
+	 *			The error message
 	 * @return void
 	 */
 	// Set an error in the object
@@ -61,7 +61,7 @@ class AkismetObject {
 	 * Return a specific error message from the errors array
 	 *
 	 * @param String $name
-	 *        	The name of the error you want
+	 *			The name of the error you want
 	 * @return mixed Returns a String if the error exists, a false boolean if it does not exist
 	 */
 	function getError($name) {
@@ -85,7 +85,7 @@ class AkismetObject {
 	 * Check if a certain error exists
 	 *
 	 * @param String $name
-	 *        	The name of the error you want
+	 *			The name of the error you want
 	 * @return boolean
 	 */
 	function isError($name) {
@@ -121,7 +121,7 @@ class AkismetHttpClient extends AkismetObject {
 	var $errors = array();
 
 	// Constructor
-	function __construct($host, $blogUrl, $apiKey, $port = 80) {
+	function __construct($host, $blogUrl, $apiKey, $port = 443) {
 		$this->host = $host;
 		$this->port = $port;
 		$this->blogUrl = $blogUrl;
@@ -133,11 +133,12 @@ class AkismetHttpClient extends AkismetObject {
 		$this->_connect();
 
 		if ($this->con && !$this->isError(AKISMET_SERVER_NOT_FOUND)) {
-			$request = strToUpper($type) . " /" . $this->akismetVersion . "/" . $path . " HTTP/1.0\r\n" . //
+			$request = strToUpper($type) . " /" . $this->akismetVersion . "/" . $path . " HTTP/1.1\r\n" . //
 				"Host: " . ((!empty($this->apiKey)) ? $this->apiKey . "." : null) . $this->host . "\r\n" . //
 				"Content-Type: application/x-www-form-urlencoded; charset=utf-8\r\n" . //
 				"Content-Length: " . strlen($request) . "\r\n" . //
-				"User-Agent: Akismet PHP4 Class\r\n" . //
+				"User-Agent: FlatPress/" . SYSTEM_VER . " | Akismet/0.3.6\r\n" . //
+				"Connection: close\r\n" . //
 				"\r\n" . $request;
 
 			$response = "";
@@ -159,8 +160,20 @@ class AkismetHttpClient extends AkismetObject {
 
 	// Connect to the Akismet server and store that connection in the instance variable $con
 	function _connect() {
-		if (!($this->con = @fsockopen($this->host, $this->port))) {
-			$this->setError(AKISMET_SERVER_NOT_FOUND, "Could not connect to akismet server.");
+		// First connect via SSL/HTTPS
+		$errno  = 0;
+		$errstr = '';
+		$this->con = @fsockopen('ssl://' . $this->host, $this->port, $errno, $errstr, 5);
+		if (! $this->con) {
+			// SSL connection failed - fallback to HTTP/port 80
+			$this->con = @fsockopen($this->host, 80, $errno, $errstr, 5);
+			if (! $this->con) {
+				// Both connections failed
+				$this->setError(AKISMET_SERVER_NOT_FOUND, "Could not connect to akismet server via SSL or HTTP.");
+			} else {
+				// Successful HTTP fallback - Adjust port
+				$this->port = 80;
+			}
 		}
 	}
 
@@ -211,11 +224,11 @@ class Akismet extends AkismetObject {
 	 * Set instance variables, connect to Akismet, and check API key
 	 *
 	 * @param String $blogUrl
-	 *        	The URL to your own blog
+	 *			The URL to your own blog
 	 * @param String $apiKey
-	 *        	Your wordpress API key
+	 *			Your API key
 	 * @param String[] $comment
-	 *        	A formatted comment array to be examined by the Akismet service
+	 *			A formatted comment array to be examined by the Akismet service
 	 * @return Akismet
 	 */
 	function __construct($blogUrl, $apiKey, $comment = array()) {
@@ -292,7 +305,7 @@ class Akismet extends AkismetObject {
 	 *
 	 * @access Protected
 	 * @param String $key
-	 *        	The Wordpress API key passed from the constructor argument
+	 *			The API key passed from the constructor argument
 	 * @return boolean
 	 */
 	function _isValidApiKey($key) {

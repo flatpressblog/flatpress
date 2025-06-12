@@ -164,6 +164,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 $lang ['plugin'] ['commentcenter'] = array(
 	'akismet_error' => 'Je nám líto, ale máme technické potíže.',
+	'akismet_spam'  => 'Váš komentář byl rozpoznán jako spam.',
 	'lock' => 'Komentáře k tomuto zýznamu jsou blokovány.',
 	'approvation' => 'Komentář byl uložen, ale správce jej musí před zobrazením schválit.',
 
