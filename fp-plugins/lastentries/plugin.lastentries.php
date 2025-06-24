@@ -44,7 +44,7 @@ function plugin_lastentries_widget() {
 
 		$string .= '<li>';
 		$admin = BLOG_BASEURL . "admin.php?p=entry&amp;entry=";
-		if (user_loggedin() && !class_exists('AdminPanelAction')
+		if (user_loggedin() && !class_exists('AdminPanelAction')) {
 			// if loggedin prints a "edit" link
 			$string .= "<a href=\"" . $admin . $id . "\">[" . $lang ['plugin'] ['lastentries'] ['edit'] . "]</a>";
 		}
