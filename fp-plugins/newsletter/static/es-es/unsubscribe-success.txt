@@ -1,0 +1,3 @@
+SUBJECT|¡Ha cancelado el boletín de noticias!|CONTENT|
+Si aún así desea mantenerse al día, puede suscribirse a mi feed Atom o RSS.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletín|

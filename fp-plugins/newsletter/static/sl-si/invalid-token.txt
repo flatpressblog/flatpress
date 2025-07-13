@@ -1,0 +1,6 @@
+SUBJECT|Neveljavna ali pretečena povezava!|CONTENT|
+Potrditvena povezava, na katero ste kliknili, žal ni več veljavna ali pa je bila že uporabljena.
+
+Prosimo, da ponovno začnete z registracijo prek obrazca za prejemanje novic.
+Če ste že prejeli elektronsko sporočilo, v 24 urah preverite, ali ste povezavo odprli.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|E-novice|

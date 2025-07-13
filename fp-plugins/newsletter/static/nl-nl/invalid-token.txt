@@ -1,0 +1,6 @@
+SUBJECT|Ongeldige of verlopen link!|CONTENT|
+Helaas, de bevestigingslink waarop je hebt geklikt is niet langer geldig of is al gebruikt.
+
+Begin de registratie opnieuw via het nieuwsbriefformulier.
+Als je al een e-mail hebt ontvangen, controleer dan of je de link binnen 24 uur hebt geopend.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nieuwsbrief|

@@ -1,0 +1,6 @@
+SUBJECT|Neplatný nebo neplatný odkaz!|CONTENT|
+Potvrzovací odkaz, na který jste klikli, již bohužel není platný nebo byl již použit.
+
+Spusťte prosím registraci znovu prostřednictvím formuláře pro zasílání novinek.
+Pokud jste již e-mail obdrželi, zkontrolujte, zda jste odkaz otevřeli do 24 hodin.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

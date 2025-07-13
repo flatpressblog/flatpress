@@ -1,0 +1,3 @@
+SUBJECT|Dirección de correo electrónico no válida|CONTENT|
+La dirección de correo electrónico no es válida. Inténtelo de nuevo.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletín|

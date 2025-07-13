@@ -1,0 +1,7 @@
+SUBJECT|Almost done!|CONTENT|
+Thank you for subscribing to the newsletter.
+I have just sent you an e-mail to your e-mail address.
+Please click on the confirmation link in this email to complete your registration.
+
+If the email is not in your inbox, please also check your spam folder.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

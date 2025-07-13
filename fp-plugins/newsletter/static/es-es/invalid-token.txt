@@ -1,0 +1,6 @@
+SUBJECT|Enlace no válido o caducado|CONTENT|
+Lamentablemente, el enlace de confirmación en el que ha hecho clic ya no es válido o ya se ha utilizado.
+
+Por favor, inicie de nuevo el registro a través del formulario del boletín de noticias.
+Si ya ha recibido un correo electrónico, compruebe que ha abierto el enlace en un plazo de 24 horas.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletín|

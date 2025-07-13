@@ -1,0 +1,6 @@
+SUBJECT|Deine Anmeldung für den Newsletter wurde bestätigt!|CONTENT|
+Vielen Dank, deine Anmeldung zum Newsletter ist nun abgeschlossen!
+
+Du erhältst ab sofort 1-mal im Monat Informationen zu neuen Beiträgen und Kommentare.
+Falls du dich später abmelden möchten, findest du am Ende jeder E-Mail einen Abmeldelink.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

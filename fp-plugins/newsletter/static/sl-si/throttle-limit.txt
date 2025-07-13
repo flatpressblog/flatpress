@@ -1,0 +1,3 @@
+SUBJECT|Preveč zahtevkov!|CONTENT|
+Podali ste že več zahtev. Poskusite znova pozneje.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|E-novice|

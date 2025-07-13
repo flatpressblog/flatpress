@@ -1,0 +1,3 @@
+SUBJECT|Aviso legal|CONTENT|
+([url=admin.php?p=static&action=write&page=legal-notice]Edite-me![/url])
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|FlatPress|

@@ -1,0 +1,3 @@
+SUBJECT|Ungültige E-Mail-Adresse!|CONTENT|
+Die E-Mail-Adresse ist ungültig. Bitte versuche es erneut.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

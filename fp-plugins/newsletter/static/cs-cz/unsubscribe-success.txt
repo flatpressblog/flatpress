@@ -1,0 +1,3 @@
+SUBJECT|Odhlášení od odběru newsletteru jste zrušili!|CONTENT|
+Pokud chcete být i nadále informováni o novinkách, můžete se přihlásit k odběru mého kanálu Atom nebo RSS.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

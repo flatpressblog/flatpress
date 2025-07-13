@@ -1,0 +1,6 @@
+SUBJECT|Link inválido ou expirado!|CONTENT|
+Infelizmente, o link de confirmação no qual você clicou não é mais válido ou já foi usado.
+
+Inicie o registro novamente por meio do formulário de boletim informativo.
+Se você já tiver recebido um e-mail, verifique se abriu o link dentro de 24 horas.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletim_informativo|

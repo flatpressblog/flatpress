@@ -1,0 +1,6 @@
+SUBJECT|Link non valido o scaduto!|CONTENT|
+Purtroppo il link di conferma su cui avete fatto clic non è più valido o è già stato utilizzato.
+
+Si prega di avviare nuovamente la registrazione tramite il modulo della newsletter.
+Se avete già ricevuto un'e-mail, verificate di aver aperto il link entro 24 ore.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

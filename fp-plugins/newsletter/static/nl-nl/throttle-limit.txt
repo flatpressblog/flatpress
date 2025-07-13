@@ -1,0 +1,3 @@
+SUBJECT|Te veel verzoeken!|CONTENT|
+Je hebt al meerdere aanvragen gedaan. Probeer het later nog eens.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nieuwsbrief|

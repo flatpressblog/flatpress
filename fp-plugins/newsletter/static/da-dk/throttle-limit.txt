@@ -1,0 +1,3 @@
+SUBJECT|For mange anmodninger!|CONTENT|
+Du har allerede lavet flere anmodninger. Prøv venligst igen senere.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nyhedsbrev|

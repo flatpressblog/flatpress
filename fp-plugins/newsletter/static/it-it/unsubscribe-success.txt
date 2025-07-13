@@ -1,0 +1,3 @@
+SUBJECT|Avete cancellato la newsletter!|CONTENT|
+Se volete rimanere aggiornati, potete iscrivervi al mio feed Atom o RSS.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

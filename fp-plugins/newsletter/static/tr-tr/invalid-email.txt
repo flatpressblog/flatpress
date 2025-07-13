@@ -1,0 +1,3 @@
+SUBJECT|Geçersiz e-posta adresi!|CONTENT|
+E-posta adresi geçersiz. Lütfen tekrar deneyin.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Haber_Bülteni|

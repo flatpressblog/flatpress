@@ -1,0 +1,3 @@
+SUBJECT|Neplatná e-mailová adresa!|CONTENT|
+Zadaná e-mailová adresa je neplatná. Zkuste to prosím znovu.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

@@ -1,0 +1,3 @@
+SUBJECT|Gizlilik Politikası|CONTENT|
+([url=admin.php?p=static&action=write&page=privacy-policy]Düzenle beni![/url])
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|FlatPress|

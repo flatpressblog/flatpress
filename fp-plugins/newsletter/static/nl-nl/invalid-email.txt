@@ -1,0 +1,3 @@
+SUBJECT|Ongeldig e-mailadres!|CONTENT|
+Het e-mailadres is ongeldig. Probeer het opnieuw.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nieuwsbrief|

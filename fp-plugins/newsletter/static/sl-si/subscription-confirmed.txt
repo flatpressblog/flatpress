@@ -1,0 +1,6 @@
+SUBJECT|Vaša prijava na novice je bila potrjena!|CONTENT|
+Zahvaljujemo se vam, vaša prijava za prejemanje novic je zdaj zaključena!
+
+Zdaj boste enkrat mesečno prejemali informacije o novih objavah in komentarjih.
+Če se želite pozneje odjaviti, boste na koncu vsakega e-poštnega sporočila našli povezavo za odjavo.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|E-novice|

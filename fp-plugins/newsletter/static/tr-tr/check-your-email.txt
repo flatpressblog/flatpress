@@ -1,0 +1,7 @@
+SUBJECT|Neredeyse geldik!|CONTENT|
+Haber bültenine abone olduğunuz için teşekkür ederiz.
+Az önce e-posta adresinize bir e-posta gönderdim.
+Lütfen aboneliğinizi tamamlamak için bu e-postadaki onay bağlantısına tıklayın.
+
+E-posta gelen kutunuzda değilse, lütfen spam klasörünüzü de kontrol edin.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Haber_Bülteni|
