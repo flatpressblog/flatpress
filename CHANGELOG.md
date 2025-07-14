@@ -1,4 +1,4 @@
-# Under development: FlatPress 1.4.1 "Notturno"
+# Under development: FlatPress 1.4.1
 
 ## General
 ### Bugfixes
