@@ -1,0 +1,89 @@
+Newsletter Plugin
+=================
+ Version:  1.6.2
+ Plugin URI:  https://flatpress.org
+ Author:  FlatPress
+
+Overview
+--------
+This FlatPress plugin offers a GDPR-compliant newsletter subscription widget, encrypted subscriber storage, double opt-in confirmation, and flexible dispatch scheduling (monthly or staggered batches).
+
+Requirements
+------------
+-  LastEntries  plugin (required). The setup routine returns an error code if LastEntries is inactive.
+-  LastComments  plugin (optional for including recent comments in newsletters).
+
+Static Pages
+------------
+Customize the following static pages:
+-  check-your-email:  Prompt to check inbox/spam for confirmation link.
+-  invalid-email:  Message when entered email is invalid.
+-  invalid-token:  Shown when confirmation link is expired or reused.
+-  throttle-limit:  Message after 3 attempts per day to register an e-mail
+-  subscription-confirmed:  Thank-you message after successful opt-in.
+-  unsubscribe-success:  Confirmation after unsubscribing.
+-  privacy-policy:  Privacy policy
+-  legal-notice:  Legal notice
+
+Sample texts are provided in the plugin’s `static/en-us/` or `static/de-de/` directories.
+
+Configuration
+-------------
+-  Batch Size:  Controls how many emails are sent per day. Default is 30, defined by `FP_NEWSLETTER_DEFAULT_OPTIONS` and loaded via `plugin_newsletter_get_options()`.
+-  PLUGIN_NEWSLETTER_KEY:  Uses your blog ID by default for encryption.
+
+Storage & Encryption
+--------------------
+-  Directory:  `FP_CONTENT/plugin_newsletter/`
+-  Subscriber List (`subscribers.txt`):  Each line stores `base64(iv|ciphertext)|UnixTimestamp`.
+-  Pending List (`pending.txt`):  For double opt‑in; lines are `base64(iv|ciphertext)|token|UnixTimestamp`.
+-  Encryption:  AES-256-CBC via OpenSSL or libsodium secretbox. Keys are derived from `PLUGIN_NEWSLETTER_KEY` (blog ID), salted/hashed for sodium.
+
+Subscription Workflow
+---------------------
+1.  Widget  (`plugin_newsletter_widget()`): Displays an email input, privacy checkbox (linking to your privacy policy), and CSRF protection token.
+2.  Handle Subscribe: `plugin_newsletter_handle_subscribe()` validates CSRF, email format, and consent; writes a pending entry; sends a confirmation email with a unique token link (`?newsletter_action=confirm&email=…&token=…`).
+3.  Confirm: `plugin_newsletter_handle_confirm()` checks token expiry (24h), moves confirmed entries to `subscribers.txt`, purges expired pending entries, and redirects to the appropriate static page.
+
+Unsubscribe
+-----------
+-  Each newsletter includes an unsubscribe link (`?newsletter_action=unsubscribe&email=…`).
+-  `plugin_newsletter_handle_unsubscribe()` decrypts the email, removes the subscriber, and redirects to `unsubscribe-success`.
+
+Dispatch Scheduling
+-------------------
+All dispatch logic is handled by `plugin_newsletter_check_and_send($dateFile, $subFile)`:
+-  Initialization:  Creates `pending.txt`, `subscribers.txt`, `batch-offset.txt`, and `next-send-date.txt` if missing.
+-  Monthly Purge:  On the 1st of each month, clears `pending.txt` and resets `batch-offset.txt`.
+-  Next Send Date:  Sets initial send for the 1st of next month at 03:00 if no date is saved; thereafter reads and compares against current time.
+-  Batch Dispatch:  Sends up to `PLUGIN_NEWSLETTER_BATCH_SIZE` subscribers per invocation at 03:00 daily, updates offset, and schedules the next run (next day or next month).
+-  Full Send:  `plugin_newsletter_send_all($subFile)` builds email content with last entries and comments widget outputs, then sends HTML emails with proper headers.
+
+Admin Panel Integration
+-----------------------
+Template:  `admin.plugin.newsletter.tpl`
+Smarty Variables:
+- `subscribers`:  Array of `{email, email_encoded, date (Y-m-d), time (H:i:s)}` decrypted from `subscribers.txt`.
+- `batch_size`:  Current batch size option.
+- `batch_pending` & `subscribers_remaining`:  Indicates in-progress staggered dispatch and shows remaining count.
+- `newsletter_csrf_token`:  Token for secure POST actions.
+
+Actions:
+-  Delete Subscriber:  POST `newsletter_delete` with CSRF token invokes `plugin_newsletter_handle_admin_delete()`.
+-  Send Now:  POST `newsletter_send_all` with CSRF token triggers an immediate full send and redirects with success flag.
+-  Settings:  POST `newsletter_save_settings` to update `batch_size`, uses `plugin_addoption()` and `plugin_saveoptions()`, then displays success message.
+
+Localization
+------------
+Text strings are defined in `lang/<locale>/lang.<locale>.php`; the German example is `lang/de-de.php` for translations of widget labels, messages, and admin UI.
+
+FAQ
+---
+ Q:  Max emails per month?
+ A:  `PLUGIN_NEWSLETTER_BATCH_SIZE` × days in month (default 30 × 30 = 900)
+
+ Q:  Freemail limits reached?
+ A:  Adjust `batch_size` in admin to comply.
+
+ Q:  When is the next batch sent?
+ A:  On first visitor hit after 03:00, runs once daily.

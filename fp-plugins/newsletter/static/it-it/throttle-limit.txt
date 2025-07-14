@@ -1,0 +1,3 @@
+SUBJECT|Troppe richieste!|CONTENT|
+Sono già state effettuate diverse richieste. Riprovare più tardi.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

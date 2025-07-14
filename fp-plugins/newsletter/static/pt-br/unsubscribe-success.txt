@@ -1,0 +1,3 @@
+SUBJECT|Você cancelou o boletim informativo!|CONTENT|
+Se ainda quiser se manter atualizado, você pode assinar meu feed Atom ou RSS.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletim_informativo|

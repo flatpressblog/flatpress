@@ -1,0 +1,6 @@
+SUBJECT|Uw inschrijving voor de nieuwsbrief is bevestigd!|CONTENT|
+Bedankt, je inschrijving voor de nieuwsbrief is nu voltooid!
+
+Je ontvangt nu één keer per maand informatie over nieuwe berichten en reacties.
+Als je je later wilt afmelden, vind je aan het einde van elke e-mail een afmeldlink.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nieuwsbrief|

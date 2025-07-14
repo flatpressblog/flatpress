@@ -1,0 +1,7 @@
+SUBJECT|Quase lá!|CONTENT|
+Obrigado por assinar o boletim informativo.
+Acabei de enviar um e-mail para seu endereço de e-mail.
+Clique no link de confirmação contido nesse e-mail para finalizar sua assinatura.
+
+Se o e-mail não estiver em sua caixa de entrada, verifique também sua pasta de spam.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletim_informativo|

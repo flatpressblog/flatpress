@@ -1,0 +1,6 @@
+SUBJECT|Haber bülteni için kaydınız onaylandı!|CONTENT|
+Teşekkürler, haber bülteni için kaydınız artık tamamlandı!
+
+Artık ayda bir kez yeni yazılar ve yorumlar hakkında bilgi alacaksınız.
+Daha sonra abonelikten çıkmak isterseniz, her e-postanın sonunda bir abonelikten çıkma bağlantısı bulacaksınız.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Haber_Bülteni|

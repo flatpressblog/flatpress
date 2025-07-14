@@ -1,0 +1,6 @@
+SUBJECT|Lien non valide ou expiré !|CONTENT|
+Le lien de confirmation sur lequel tu as cliqué n'est malheureusement plus valable ou a déjà été utilisé.
+
+Veuillez recommencer l'inscription via le formulaire de la newsletter.
+Si tu as déjà reçu un e-mail, vérifie que tu as bien ouvert le lien dans les 24 heures.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

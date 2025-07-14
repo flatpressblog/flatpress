@@ -1,0 +1,7 @@
+SUBJECT|Tu y es presque !|CONTENT|
+Merci beaucoup pour ton inscription à la newsletter.
+Je viens de t'envoyer un e-mail à ton adresse e-mail.
+Veuillez cliquer sur le lien de confirmation dans cet e-mail pour finaliser votre inscription.
+
+Si l'e-mail ne se trouve pas dans ta boîte de réception, vérifie également dans ton dossier spam.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

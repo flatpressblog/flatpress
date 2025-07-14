@@ -1,0 +1,7 @@
+SUBJECT|Fast geschafft!|CONTENT|
+Vielen Dank für deine Anmeldung zum Newsletter.
+Ich habe dir soeben eine E-Mail an deine E-Mail-Adresse gesendet.
+Bitte klicke auf den Bestätigungslink in dieser E-Mail, um deine Anmeldung abzuschließen.
+
+Sollte die E-Mail nicht in deinem Posteingang sein, schaue bitte auch in deinem Spam-Ordner nach.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

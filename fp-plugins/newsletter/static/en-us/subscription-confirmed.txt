@@ -1,0 +1,6 @@
+SUBJECT|Deine Anmeldung für den Newsletter wurde bestätigt!|CONTENT|
+Thank you, your registration for the newsletter is now complete!
+
+You will now receive information about new posts and comments once a month.
+If you would like to unsubscribe later, you will find an unsubscribe link at the end of each e-mail.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

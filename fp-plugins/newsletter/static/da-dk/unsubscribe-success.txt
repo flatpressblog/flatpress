@@ -1,0 +1,3 @@
+SUBJECT|Du har afmeldt nyhedsbrevet!|CONTENT|
+Hvis du stadig vil holde dig opdateret, kan du abonnere på mit Atom- eller RSS-feed.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nyhedsbrev|

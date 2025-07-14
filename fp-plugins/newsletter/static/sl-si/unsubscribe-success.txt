@@ -1,0 +1,3 @@
+SUBJECT|Odjavili ste se od prejemanja novic!|CONTENT|
+Če še vedno želite biti na tekočem, se lahko naročite na moj vir Atom ali RSS.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|E-novice|

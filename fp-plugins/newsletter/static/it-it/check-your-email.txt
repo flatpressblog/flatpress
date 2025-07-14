@@ -1,0 +1,7 @@
+SUBJECT|Ci siamo quasi!|CONTENT|
+Grazie per esserti iscritto alla newsletter.
+Ti ho appena inviato un'e-mail al tuo indirizzo di posta elettronica.
+Per favore, clicca sul link di conferma in questa e-mail per finalizzare la tua iscrizione.
+
+Se l'e-mail non è presente nella tua casella di posta, controlla anche la cartella spam.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

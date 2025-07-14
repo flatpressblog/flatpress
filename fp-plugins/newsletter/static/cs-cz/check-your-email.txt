@@ -1,0 +1,7 @@
+SUBJECT|Už to skoro je!|CONTENT|
+Děkujeme vám za přihlášení k odběru newsletteru.
+Právě jsem vám poslal e-mail na vaši e-mailovou adresu.
+Klikněte prosím na potvrzovací odkaz v tomto e-mailu, abyste dokončili svůj odběr.
+
+Pokud se e-mail nenachází ve vaší schránce, zkontrolujte prosím také složku se spamem.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

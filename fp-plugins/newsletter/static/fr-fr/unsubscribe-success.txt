@@ -1,0 +1,3 @@
+SUBJECT|Tu t'es désabonné de la newsletter !|CONTENT|
+Si tu souhaites tout de même rester au courant, tu peux t'abonner à mon Atom ou au flux RSS.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

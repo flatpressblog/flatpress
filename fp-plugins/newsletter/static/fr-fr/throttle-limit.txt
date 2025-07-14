@@ -1,0 +1,3 @@
+SUBJECT|Trop de demandes !|CONTENT|
+Tu as déjà fait plusieurs demandes. Merci de réessayer plus tard.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

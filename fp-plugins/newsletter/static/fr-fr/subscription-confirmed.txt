@@ -1,0 +1,6 @@
+SUBJECT|Ton inscription à la newsletter a été confirmée !|CONTENT|
+Merci beaucoup, ton inscription à la newsletter est maintenant terminée !
+
+Tu recevras désormais 1 fois par mois des informations sur les nouveaux articles et commentaires.
+Si tu souhaites te désinscrire ultérieurement, tu trouveras un lien de désinscription à la fin de chaque e-mail.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

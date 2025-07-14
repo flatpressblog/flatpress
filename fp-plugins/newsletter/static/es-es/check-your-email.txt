@@ -1,0 +1,7 @@
+SUBJECT|Ya casi está.|CONTENT|
+Gracias por suscribirte al boletín.
+Acabo de enviarle un mensaje a su dirección de correo electrónico.
+Por favor, haga clic en el enlace de confirmación de este correo electrónico para finalizar su suscripción.
+
+Si el mensaje no aparece en su bandeja de entrada, compruebe también su carpeta de correo no deseado.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletín|

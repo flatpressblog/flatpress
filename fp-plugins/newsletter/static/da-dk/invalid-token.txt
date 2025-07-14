@@ -1,0 +1,6 @@
+SUBJECT|Ugyldigt eller udløbet link!|CONTENT|
+Desværre er det bekræftelseslink, du klikkede på, ikke længere gyldigt eller er allerede blevet brugt.
+
+Start venligst registreringen igen via nyhedsbrevsformularen.
+Hvis du allerede har modtaget en e-mail, skal du kontrollere, at du har åbnet linket inden for 24 timer.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nyhedsbrev|

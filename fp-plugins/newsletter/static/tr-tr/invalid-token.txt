@@ -1,0 +1,6 @@
+SUBJECT|Geçersiz veya süresi dolmuş bağlantı!|CONTENT|
+Maalesef, tıkladığınız onay bağlantısı artık geçerli değil veya zaten kullanılmış.
+
+Lütfen bülten formu aracılığıyla kaydı yeniden başlatın.
+Zaten bir e-posta aldıysanız, bağlantıyı 24 saat içinde açıp açmadığınızı kontrol edin.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Haber_Bülteni|

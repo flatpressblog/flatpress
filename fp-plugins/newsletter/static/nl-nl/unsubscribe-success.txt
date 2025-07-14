@@ -1,0 +1,3 @@
+SUBJECT|Je hebt de nieuwsbrief opgezegd!|CONTENT|
+Als je toch op de hoogte wilt blijven, kun je je abonneren op mijn Atom of RSS feed.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nieuwsbrief|

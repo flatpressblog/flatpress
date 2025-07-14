@@ -1,0 +1,7 @@
+SUBJECT|Skoraj tam!|CONTENT|
+Hvala, ker ste se naročili na novice.
+Pravkar sem vam poslal e-poštno sporočilo na vaš e-poštni naslov.
+Prosimo, da kliknete potrditveno povezavo v tem e-poštnem sporočilu, da dokončate svojo naročnino.
+
+Če e-poštnega sporočila ni v vašem poštnem predalu, preverite tudi mapo za neželeno pošto.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|E-novice|
