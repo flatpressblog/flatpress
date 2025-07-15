@@ -69,7 +69,7 @@ function system_hashsalt_save($force = false) {
 	return true;
 }
 
-define('SYSTEM_VER', '1.4.1.dev');
+define('SYSTEM_VER', '1.4.1');
 
 function system_ver() {
 	return 'fp-' . SYSTEM_VER;
