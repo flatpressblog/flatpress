@@ -9,6 +9,9 @@
   - Removed cleanup of special characters in the password for admin login ([#627](https://github.com/flatpressblog/flatpress/issues/627))
 
 ## Plugins
+### Additions
+- Newsletter: Provides a complete, privacy-conscious newsletter solution for FlatPress, without a database and with minimal configuration effort. 
+
 ### Bugfixes
 - BBcode plugin: update to version 1.9.1
   - The font-tag works as documented in the [wiki](https://wiki.flatpress.org/doc:plugins:bbcode#text_formatting) ([#635](https://github.com/flatpressblog/flatpress/issues/635))
