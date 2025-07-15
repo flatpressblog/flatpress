@@ -1,4 +1,4 @@
-# Under development: FlatPress 1.4.1
+# 2025-07-15: [FlatPress 1.4.1](https://github.com/flatpressblog/flatpress/releases/tag/1.4.1)
 
 ## General
 ### Bugfixes
