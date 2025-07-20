@@ -14,18 +14,18 @@
  * Name:       html_submit<br>
  * Date:       25.Jul.2006<br>
  * Purpose:    Create a simple submit button but also saves its id/name into the $_SESSION
- * 		(used by flatpress) <br>
+ *             (used by flatpress) <br>
  * Input:<br>
  *           - name       (optional) - string default "submit"
- *	     - id	  (optional) - string default blank
+ *           - id         (optional) - string default blank
  *           - value      (optional) - string (default "Submit")
- *	     - extra	  (optional) - string (default blank): allows to add extra 
- *					parameters as in "class=\"myclass\" onclick=\"dosomething()\""
- *           
- * @author     NoWhereMan <real_nowhereman at users dot sf dot net>
- * @version    1.0
- * @param array
- * @param Smarty
+ *           - extra      (optional) - string (default blank): allows to add extra 
+ *           parameters as in "class=\"myclass\" onclick=\"dosomething()\""
+ *
+ * @author NoWhereMan <real_nowhereman at users dot sf dot net>
+ * @version 1.0
+ * @param array<string,string> $params Parameter für das Template
+ * @param \Smarty $smarty Smarty-Objekt
  * @return string
  */
 function smarty_function_html_submit($params, &$smarty) {
