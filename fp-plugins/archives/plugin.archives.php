@@ -6,7 +6,7 @@
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  * Description: Adds an Archive widget element. Part of the standard distribution.
- * Version: 1.0
+ * Version: 1.1.0
  */
 class plugin_archives_monthlist extends fs_filelister {
 
@@ -29,7 +29,7 @@ class plugin_archives_monthlist extends fs_filelister {
 				// we may have nested elements)
 				$this->_year = $file;
 				$lnk = get_year_link($file);
-				$this->_htmllist[$this->_year] = "<li class=\"archive-year archive-y20" . $file . "\"> <a href=\"" . $lnk . "\">20" . $file . "</a>";
+				$this->_htmllist[$this->_year] = "<li class=\"archive-year archive-y20" . $file . "\"> <span role=\"button\" class=\"togglelink toggleplus\" aria-expanded=\"false\" title=\"Expand\">▸ </span> <a href=\"" . $lnk . "\">20" . $file . "</a>";
 				return 1;
 			} elseif (is_dir($f)) {
 				$this->_months [] = $file;
@@ -74,19 +74,60 @@ class plugin_archives_monthlist extends fs_filelister {
 }
 
 function plugin_archives_head() {
+	$random_hex = RANDOM_HEX;
+	$pdir = plugin_geturl('archives');
 	global $PLUGIN_ARCHIVES_MONTHLIST;
 	$PLUGIN_ARCHIVES_MONTHLIST = new plugin_archives_monthlist();
 
-	echo "\n<!-- archives -->\n";
+	echo '
+		<!-- archives -->
+		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/togglearchive.js" defer></script>
+		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/togglearchive.css">
+	';
+
 	foreach ($PLUGIN_ARCHIVES_MONTHLIST->getList() as $y => $months) {
 		foreach ($months as $ttl => $link) {
-			echo "<link rel=\"archives\" title=\"" . $ttl . "\" href=\"" . $link . "\">\n";
+			echo "
+			<link rel=\"archives\" title=\"" . $ttl . "\" href=\"" . $link . "\">";
 		}
 	}
 
-	echo "\n<!-- end of archives -->\n";
+	echo '
+		<!-- end of archives -->' . "\n";
 }
 add_filter('wp_head', 'plugin_archives_head');
+
+function plugin_archives_footer() {
+	$random_hex = RANDOM_HEX;
+
+	echo '
+		<!-- archives -->
+		<script nonce="' . $random_hex . '">
+			/**
+			 * Making the archive widget interactive
+			 */
+			var pluginArchive = \'\';
+			function toggleArchive(pdir) {
+				pluginArchive = pdir;
+				$(document).ready(function () {
+					$(\'#widget-archives ul > li.archive-year\').each(function (index) {
+						const uniqueId = \'archive-\' + index;
+							$(this).find(\'.togglelink\').attr(\'aria-controls\', uniqueId);
+						$(this).children(\'ul\').attr(\'id\', uniqueId);
+						const toggleEl = $(this).children(\'.togglelink\')[0];
+						toggle(toggleEl);
+						$(toggleEl).click(function () {
+							toggle(this);
+							return false;
+						});
+					});
+				});
+			}
+		</script>
+		<!-- end of archives -->
+	';
+}
+add_filter('end_footer', 'plugin_archives_footer');
 
 function plugin_archives_widget() {
 	lang_load('plugin:archives');

@@ -1,0 +1,6 @@
+SUBJECT|La registrazione alla newsletter è stata confermata!|CONTENT|
+Grazie, la registrazione alla newsletter è stata completata!
+
+Ora riceverete informazioni sui nuovi post e sui commenti una volta al mese.
+Se desiderate cancellarvi in seguito, troverete un link di cancellazione alla fine di ogni e-mail.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

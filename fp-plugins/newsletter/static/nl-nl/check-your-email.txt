@@ -1,0 +1,7 @@
+SUBJECT|We zijn er bijna!|CONTENT|
+Bedankt voor je inschrijving op de nieuwsbrief.
+Ik heb je zojuist een e-mail gestuurd naar je e-mailadres.
+Klik op de bevestigingslink in deze e-mail om je inschrijving te voltooien.
+
+Als de e-mail niet in je inbox staat, controleer dan ook je spamfolder.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nieuwsbrief|

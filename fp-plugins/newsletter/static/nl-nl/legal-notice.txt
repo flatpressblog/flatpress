@@ -1,0 +1,3 @@
+SUBJECT|Wettelijke kennisgeving|CONTENT|
+([url=admin.php?p=static&action=write&page=legal-notice]Bewerk mij![/url])
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|FlatPress|

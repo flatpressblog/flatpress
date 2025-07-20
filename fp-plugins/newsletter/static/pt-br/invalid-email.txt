@@ -1,0 +1,3 @@
+SUBJECT|Endereço de e-mail inválido!|CONTENT|
+O endereço de e-mail é inválido. Tente novamente.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletim_informativo|

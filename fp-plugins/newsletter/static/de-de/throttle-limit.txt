@@ -1,0 +1,3 @@
+SUBJECT|Zu viele Anfragen!|CONTENT|
+Du hast bereits mehrere Anfragen gestellt. Bitte versuche es später erneut.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

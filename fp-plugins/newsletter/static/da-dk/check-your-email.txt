@@ -1,0 +1,7 @@
+SUBJECT|Vi er der næsten!|CONTENT|
+Tak, fordi du har tilmeldt dig nyhedsbrevet.
+Jeg har netop sendt dig en e-mail til din e-mailadresse.
+Klik venligst på bekræftelseslinket i denne e-mail for at afslutte dit abonnement.
+
+Hvis e-mailen ikke er i din indbakke, bedes du også tjekke din spam-mappe.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nyhedsbrev|

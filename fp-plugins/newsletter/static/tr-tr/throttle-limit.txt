@@ -1,0 +1,3 @@
+SUBJECT|Çok fazla istek var!|CONTENT|
+Zaten birkaç talepte bulundunuz. Lütfen daha sonra tekrar deneyin.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Haber_Bülteni|

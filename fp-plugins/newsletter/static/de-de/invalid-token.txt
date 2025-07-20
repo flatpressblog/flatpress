@@ -1,0 +1,6 @@
+SUBJECT|Ungültiger oder abgelaufener Link!|CONTENT|
+Der von dir angeklickte Bestätigungslink ist leider nicht mehr gültig oder wurde bereits verwendet.
+
+Bitte starte die Anmeldung noch einmal über das Newsletter-Formular.
+Wenn du bereits eine E-Mail erhalten hast, prüfe, ob du den Link innerhalb von 24 Stunden geöffnet hast.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

@@ -1,0 +1,6 @@
+SUBJECT|Din tilmelding til nyhedsbrevet er bekræftet!|CONTENT|
+Tak, din tilmelding til nyhedsbrevet er nu gennemført!
+
+Du vil nu modtage information om nye indlæg og kommentarer en gang om måneden.
+Hvis du vil afmelde dig senere, finder du et afmeldingslink i slutningen af hver e-mail.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Nyhedsbrev|

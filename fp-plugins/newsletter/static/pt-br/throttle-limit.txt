@@ -1,0 +1,3 @@
+SUBJECT|Muitas solicitações!|CONTENT|
+Você já fez várias solicitações. Tente novamente mais tarde.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletim_informativo|

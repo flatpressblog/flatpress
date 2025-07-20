@@ -1,0 +1,3 @@
+SUBJECT|法的通知|CONTENT|
+([url=admin.php?p=static&action=write&page=legal-notice]編集する[/url])
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|FlatPress|

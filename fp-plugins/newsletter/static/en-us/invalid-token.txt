@@ -1,0 +1,6 @@
+SUBJECT|Invalid or expired link!|CONTENT|
+Unfortunately, the confirmation link you clicked on is no longer valid or has already been used.
+
+Please start the registration again via the newsletter form.
+If you have already received an e-mail, check whether you have opened the link within 24 hours.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

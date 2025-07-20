@@ -1,0 +1,6 @@
+SUBJECT|Vaše registrace k odběru newsletteru byla potvrzena!|CONTENT|
+Děkujeme, vaše registrace k odběru newsletteru je nyní dokončena!
+
+Nyní budete jednou měsíčně dostávat informace o nových příspěvcích a komentářích.
+Pokud se chcete z odběru newsletteru později odhlásit, najdete na konci každého e-mailu odkaz pro odhlášení.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

@@ -1,0 +1,6 @@
+SUBJECT|Seu registro para o boletim informativo foi confirmado!|CONTENT|
+Obrigado, seu registro para o boletim informativo foi concluído!
+
+Agora você receberá informações sobre novas postagens e comentários uma vez por mês.
+Se quiser cancelar a assinatura posteriormente, você encontrará um link de cancelamento de assinatura no final de cada e-mail.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletim_informativo|

@@ -1,0 +1,3 @@
+SUBJECT|Demasiadas peticiones!|CONTENT|
+Ya ha realizado varias solicitudes. Vuelva a intentarlo más tarde.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletín|

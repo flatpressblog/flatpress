@@ -1,0 +1,6 @@
+SUBJECT|Su inscripción al boletín de noticias ha sido confirmada.|CONTENT|
+Gracias, su inscripción al boletín de noticias ha finalizado.
+
+A partir de ahora recibirá información sobre nuevas entradas y comentarios una vez al mes.
+Si desea darse de baja más tarde, encontrará un enlace para darse de baja al final de cada correo electrónico.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Boletín|
