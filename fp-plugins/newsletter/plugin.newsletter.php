@@ -536,9 +536,6 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 		}
 
 		// Update DNS cache entry
-		if (!isset($cache)) {
-			$cache = [];
-		}
 		if (!empty($mailHosts)) {
 			// Positive result: cache up to 84 days
 			$ttlMax = 84 * 86400;
