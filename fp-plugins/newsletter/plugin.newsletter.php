@@ -82,6 +82,42 @@ if ($staticLang) {
 	}
 }
 
+/**
+ * Performs an atomic read/write operation.
+ * Locks the file exclusively, reads all lines, passes them to
+ * $callback, and writes the result back.
+ *
+ * @param string $file Path to the file
+ * @param callable $callback Function(array $lines): array $newLines
+ * @return bool true on success, false on failure
+ */
+function plugin_newsletter_rmw_file(string $file, callable $callback): bool {
+	if (!file_exists($file)) touch($file);
+	$fp = fopen($file, 'c+');
+	if (!$fp || !flock($fp, LOCK_EX)) {
+		if ($fp) fclose($fp);
+		return false;
+	}
+
+	// Determine file size
+	$stat = fstat($fp);
+	$size = $stat['size'] ?? 0;
+	// Read full content
+	rewind($fp);
+	$content = $size > 0 ? fread($fp, $size) : '';
+	// Split into lines and remove empty ones
+	$lines = $content === '' ? [] : array_filter(explode("\n", str_replace(["\r\n","\r"], "\n", rtrim($content, "\r\n"))), 'strlen');
+
+	$newLines = $callback($lines);
+	rewind($fp);
+	ftruncate($fp, 0);
+	fwrite($fp, implode(PHP_EOL, $newLines) . (count($newLines) ? PHP_EOL : ''));
+	fflush($fp);
+	flock($fp, LOCK_UN);
+	fclose($fp);
+	return true;
+}
+
 // Initialization on every page request
 plugin_newsletter_init();
 
@@ -101,45 +137,37 @@ function plugin_newsletter_init() {
 	$blocked_file = PLUGIN_NEWSLETTER_DIR . 'blocked-ips.txt';
 	$last_clean_file = PLUGIN_NEWSLETTER_DIR . 'blocked-ips-last-clean.txt';
 
-	// Only clean if never cleaned before or last clean was over 24 h ago
+	// Only retains IPs < 24 hours
 	if (!file_exists($last_clean_file) || filemtime($last_clean_file) < time() - 24 * 3600) {
-		if (file_exists($blocked_file) && is_readable($blocked_file)) {
-			$lines = file($blocked_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-			$new_lines = [];
+		plugin_newsletter_rmw_file($blocked_file, function(array $lines): array {
+			$filtered = [];
 			foreach ($lines as $line) {
-				list($blocked_ip, $ts) = explode('|', $line);
+				// Extract timestamp only
+				list(, $ts) = explode('|', $line, 2);
 				if (time() - (int)$ts < 24 * 3600) {
-					$new_lines [] = $line;
+					$filtered [] = $line;
 				}
 			}
-			// Rewrite only if something expired
-			if (count($new_lines) < count($lines)) {
-				file_put_contents($blocked_file, implode(PHP_EOL, $new_lines) . (count($new_lines) ? PHP_EOL : ''), LOCK_EX);
-			}
-		}
+			return $filtered;
+		});
 		touch($last_clean_file);
 	}
 
-	// Create file for pending (unconfirmed) subscriptions, if not available
-	if (!file_exists($pending_file)) {
-		touch($pending_file);
-	}
-
 	// Daily cleanup for pending
-	$expiry = 24 * 3600;  // 24 hours
+	$expiry = 24 * 3600; // 24 hours
 	$lines = file($pending_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	$now = time();
-	$cleaned  = [];
-	foreach ($lines as $line) {
-		list($enc_email, $token, $ts) = explode('|', $line);
-		if ($now - (int)$ts < $expiry) {
-			$cleaned [] = $line;
+	// Only keeps entries < $expiry
+	plugin_newsletter_rmw_file($pending_file, function(array $lines) use ($expiry, $now): array {
+		$filtered = [];
+		foreach ($lines as $line) {
+			[,, $ts] = explode('|', $line, 3);
+			if ($now - (int)$ts < $expiry) {
+				$filtered [] = $line;
+			}
 		}
-	}
-	// Only overwrite if something has changed
-	if (count($cleaned) !== count($lines)) {
-		file_put_contents($pending_file, implode(PHP_EOL, $cleaned) . (count($cleaned) ? PHP_EOL : ''), LOCK_EX);
-	}
+		return $filtered;
+	});
 
 	// Admin: Delete a subscriber via POST, CSRF-protected
 	if ($_SERVER ['REQUEST_METHOD'] === 'POST' && isset($_POST ['newsletter_delete'])) {
@@ -228,10 +256,11 @@ function plugin_newsletter_handle_confirm() {
 		if (!$confirmed && $dec_email === $email && hash_equals($token_line, $token)) {
 			// Transfer to final list
 			$sub_file = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
-			if (!file_exists($sub_file)) {
-				touch($sub_file);
-			}
-			file_put_contents($sub_file, $enc_email . '|' . $timestamp . PHP_EOL, FILE_APPEND | LOCK_EX);
+			// Add confirmed subscriber
+			plugin_newsletter_rmw_file($sub_file, function(array $lines) use ($enc_email, $timestamp): array {
+				$lines [] = $enc_email . '|' . $timestamp;
+				return $lines;
+			});
 			$confirmed = true;
 		} else {
 			// Still outstanding
@@ -239,11 +268,10 @@ function plugin_newsletter_handle_confirm() {
 		}
 	}
 
-	// Update pending list
-	if (!file_exists($pending_file)) {
-		touch($pending_file);
-	}
-	file_put_contents($pending_file, implode(PHP_EOL, $remaining) . (count($remaining) ? PHP_EOL : ''), LOCK_EX);
+	// Update pending list - overwrite pending list with remaining entries
+	plugin_newsletter_rmw_file($pending_file, function(array $lines) use ($remaining): array {
+		return $remaining;
+	});
 
 	// Forwarding depending on the result
 	if ($confirmed) {
@@ -607,31 +635,25 @@ function plugin_newsletter_handle_subscribe() {
 		$blocked_file = PLUGIN_NEWSLETTER_DIR . 'blocked-ips.txt';
 		$ip = plugin_newsletter_get_client_ip();
 
-		if (!file_exists($blocked_file)) {
-			touch($blocked_file);
-		}
-
-		// Cleanup expired entries before adding new block
-		$lines = file($blocked_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		$new_lines = [];
-		$has_expired_entries = false;
-		foreach ($lines as $line) {
-			list($line_ip, $line_ts) = explode('|', $line);
-			if (time() - (int)$line_ts < 24 * 3600) {
-				$new_lines [] = $line;
-			} else {
-				$has_expired_entries = true;
+		// Write blocking entry
+		plugin_newsletter_rmw_file($blocked_file, function(array $lines) use ($ip): array {
+			$new = [];
+			// Keep what is less than 24 hours old
+			foreach ($lines as $l) {
+				list($line_ip, $ts) = explode('|', $l);
+				if (time() - (int)$ts < 24 * 3600) {
+					$new [] = $l;
+				}
 			}
-		}
-		if ($has_expired_entries) {
-			file_put_contents($blocked_file, implode(PHP_EOL, $new_lines) . (count($new_lines) ? PHP_EOL : ''), LOCK_EX);
-		}
+			// Append new block entry
+			$new [] = $ip . '|' . time();
+			return $new;
+		});
+
 		// Update last-clean marker
 		$last_clean_file = PLUGIN_NEWSLETTER_DIR . 'blocked-ips-last-clean.txt';
 		touch($last_clean_file);
 
-		// Write blocking entry
-		file_put_contents($blocked_file, $ip . '|' . time() . PHP_EOL, FILE_APPEND | LOCK_EX);
 		// Remove honeypot session so that the bot does not use the field repeatedly
 		unset($_SESSION ['newsletter_hp_field']);
 		header('Location: ' . BLOG_BASEURL . '?page=throttle-limit');
@@ -751,17 +773,19 @@ function plugin_newsletter_handle_unsubscribe($encodedEmail) {
 		header('Location: ' . BLOG_BASEURL);
 		exit;
 	}
-	$lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	$keep = [];
-	$email = urldecode($encodedEmail);
-	foreach ($lines as $line) {
-		list($data) = explode('|', $line);
-		$dec = plugin_newsletter_decrypt($data);
-		if ($dec !== $email) {
-			$keep [] = $line;
+
+	plugin_newsletter_rmw_file($file, function(array $lines) use ($encodedEmail): array {
+		$email = urldecode($encodedEmail);
+		$keep = [];
+		foreach ($lines as $line) {
+			list($data) = explode('|', $line, 2);
+			if (plugin_newsletter_decrypt($data) !== $email) {
+				$keep [] = $line;
+			}
 		}
-	}
-	file_put_contents($file, implode(PHP_EOL, $keep) . PHP_EOL, LOCK_EX);
+		return $keep;
+	});
+
 	header('Location: ' . BLOG_BASEURL . '?page=unsubscribe-success');
 	exit;
 }
@@ -777,17 +801,19 @@ function plugin_newsletter_handle_admin_delete($encodedEmail) {
 		header('Location: ' . $redirect);
 		exit;
 	}
-	$lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	$keep = array();
-	$email = urldecode($encodedEmail);
-	foreach ($lines as $line) {
-		list($data, $time) = explode('|', $line, 2);
-		$dec = plugin_newsletter_decrypt($data);
-		if ($dec !== $email) {
-			$keep [] = $line;
+
+	plugin_newsletter_rmw_file($file, function(array $lines) use ($encodedEmail): array {
+		$email = urldecode($encodedEmail);
+		$keep = [];
+		foreach ($lines as $line) {
+			list($data, $time) = explode('|', $line, 2);
+			if (plugin_newsletter_decrypt($data) !== $email) {
+				$keep [] = $line;
+			}
 		}
-	}
-	file_put_contents($file, implode(PHP_EOL, $keep) . PHP_EOL, LOCK_EX);
+		return $keep;
+	});
+
 	$redirect = isset($_SERVER ['HTTP_REFERER']) ? $_SERVER ['HTTP_REFERER'] : $_SERVER ['REQUEST_URI'];
 	header('Location: ' . $redirect);
 	exit;
@@ -908,11 +934,13 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 
 			// Monthly validation of subscriber e-mail addresses (syntax, and DNS fallback)
 			if (!plugin_newsletter_is_valid_email($email)) {
-				// Remove invalid address from the subscriber list
-				$filtered = array_filter($subscribers, function($l) use ($line) {
-					return $l !== $line;
+				// Removing invalid subscribers from the subscriber list
+				plugin_newsletter_rmw_file($subFile, function(array $lines) use ($line): array {
+					return array_filter($lines, function($l) use ($line) {
+						return $l !== $line;
+					});
 				});
-				file_put_contents($subFile, implode(PHP_EOL, $filtered) . PHP_EOL, LOCK_EX);
+
 				// Log removal
 				$bounced_log = PLUGIN_NEWSLETTER_DIR . 'bounced-log.txt';
 				if (!file_exists($bounced_log)) {
