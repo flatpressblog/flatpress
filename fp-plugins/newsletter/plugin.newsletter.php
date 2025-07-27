@@ -1196,6 +1196,7 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 
 	// Blocklist file does not yet exist? - Obtain immediately from Remote
 	if (!file_exists($local)) {
+		$data = @file_get_contents($remote_disposable_email_blocklist);
 		if ($data !== false) {
 			file_put_contents($local, $data, LOCK_EX);
 			@chmod($local, FILE_PERMISSIONS);
@@ -1215,6 +1216,7 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 	}
 
 	// We will update the block list after the 25th
+	$data = @file_get_contents($remote_disposable_email_blocklist);
 	if ($data !== false) {
 		file_put_contents($local, $data, LOCK_EX);
 		@chmod($local, FILE_PERMISSIONS);
