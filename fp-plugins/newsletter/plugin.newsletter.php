@@ -13,23 +13,25 @@ defined('FP_CONTENT') or exit;
 
 global $fp_config;
 
-/**
- * Remote source of the blocklist
- * Contains a list of disposable and temporary email address domains to register dummy users or to prevent spam/abuse.
- * https://github.com/disposable-email-domains/disposable-email-domains/blob/main/LICENSE.txt
- *
- * CC0 1.0 Universal (CC0 1.0)
- * Public Domain Dedication
- * No Copyright
- */
-$remote_disposable_email_blocklist = 'https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/refs/heads/main/disposable_email_blocklist.conf';
-
 // Constants
 if (!defined('PLUGIN_NEWSLETTER_DIR')) {
 	define('PLUGIN_NEWSLETTER_DIR', FP_CONTENT . 'plugin_newsletter/');
 }
 if (!defined('PLUGIN_NEWSLETTER_KEY')) {
 	define('PLUGIN_NEWSLETTER_KEY', $fp_config ['general'] ['blogid']);
+}
+
+if (!defined('NEWSLETTER_BLOCKLIST_URL')) {
+	/**
+	 * Remote source of the blocklist
+	 * Contains a list of disposable and temporary email address domains to register dummy users or to prevent spam/abuse.
+	 * https://github.com/disposable-email-domains/disposable-email-domains/blob/main/LICENSE.txt
+	 *
+	 * CC0 1.0 Universal (CC0 1.0)
+	 * Public Domain Dedication
+	 * No Copyright
+	 */
+	define('NEWSLETTER_BLOCKLIST_URL', 'https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/refs/heads/main/disposable_email_blocklist.conf');
 }
 
 if (!defined('FP_NEWSLETTER_DEFAULT_OPTIONS')) {
@@ -51,7 +53,9 @@ if (!defined('FP_NEWSLETTER_DEFAULT_OPTIONS')) {
 
 // Stack size from configuration or default
 $newsletter_opts = plugin_newsletter_get_options();
-define('PLUGIN_NEWSLETTER_BATCH_SIZE', (int)$newsletter_opts ['batch_size']);
+if (!defined('PLUGIN_NEWSLETTER_BATCH_SIZE')) {
+	define('PLUGIN_NEWSLETTER_BATCH_SIZE', (int)$newsletter_opts ['batch_size']);
+}
 
 function plugin_newsletter_setup() {
 	return function_exists('plugin_lastentries_widget') ? 1 : -2;
@@ -1176,14 +1180,27 @@ if (class_exists('AdminPanelAction')) {
  */
 function plugin_newsletter_maybe_update_blocklist(): void {
 
-	global $remote_disposable_email_blocklist;
+	$remote_disposable_email_blocklist = NEWSLETTER_BLOCKLIST_URL;
+	if (function_exists('get_headers')) {
+		$headers = @get_headers($remote_disposable_email_blocklist);
+		$status = is_array($headers) ? $headers[0] : '';
+		if ($headers === false || strpos($status, '200') === false) {
+			trigger_error(sprintf('[Newsletter plugin] The blocklist URL "%s" is currently unavailable or returns an HTTP status other than 200.', $remote_disposable_email_blocklist), E_USER_WARNING);
+		}
+	} else {
+		trigger_error('[Newsletter plugin] The get_headers() function is not available; blocklist URL could not be verified.', E_USER_WARNING);
+	}
 
 	// Local path to the blocklist
 	$local = PLUGIN_NEWSLETTER_DIR . 'disposable-email-blocklist.txt';
 
 	// Blocklist file does not yet exist? - Obtain immediately from Remote
 	if (!file_exists($local)) {
-		$data = @file_get_contents($remote);
+		if (!empty($remote_disposable_email_blocklist)) {
+			$data = @file_get_contents($remote_disposable_email_blocklist);
+		} else {
+			$data = false;
+		}
 		if ($data !== false) {
 			file_put_contents($local, $data, LOCK_EX);
 			@chmod($local, FILE_PERMISSIONS);
@@ -1203,7 +1220,11 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 	}
 
 	// We will update the block list after the 25th
-	$data = @file_get_contents($remote);
+	if (!empty($remote_disposable_email_blocklist)) {
+		$data = @file_get_contents($remote_disposable_email_blocklist);
+	} else {
+		$data = false;
+	}
 	if ($data !== false) {
 		file_put_contents($local, $data, LOCK_EX);
 		@chmod($local, FILE_PERMISSIONS);
