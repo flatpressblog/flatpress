@@ -1183,7 +1183,7 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 	$remote_disposable_email_blocklist = NEWSLETTER_BLOCKLIST_URL;
 	if (function_exists('get_headers')) {
 		$headers = @get_headers($remote_disposable_email_blocklist);
-		$status = is_array($headers) ? $headers[0] : '';
+		$status = is_array($headers) ? $headers [0] : '';
 		if ($headers === false || strpos($status, '200') === false) {
 			trigger_error(sprintf('[Newsletter plugin] The blocklist URL "%s" is currently unavailable or returns an HTTP status other than 200.', $remote_disposable_email_blocklist), E_USER_WARNING);
 		}
