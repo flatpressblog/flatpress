@@ -127,7 +127,7 @@ function plugin_archives_footer() {
 		<!-- end of archives -->
 	';
 }
-add_filter('end_footer', 'plugin_archives_footer');
+add_filter('wp_footer', 'plugin_archives_footer');
 
 function plugin_archives_widget() {
 	lang_load('plugin:archives');
