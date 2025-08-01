@@ -1,12 +1,13 @@
 Newsletter Plugin
 =================
- Version:  1.6.2
+ Version:  1.7.0
  Plugin URI:  https://flatpress.org
  Author:  FlatPress
 
 Overview
 --------
-This FlatPress plugin offers a GDPR-compliant newsletter subscription widget, encrypted subscriber storage, double opt-in confirmation, and flexible dispatch scheduling (monthly or staggered batches).
+This FlatPress plugin provides a GDPR-compliant newsletter subscription widget with encrypted subscriber storage, double opt-in confirmation,
+advanced email validation (including IDN/Punycode support), DNS caching, and blocklist filtering, all integrated with flexible dispatch scheduling (monthly or staggered batches).
 
 Requirements
 ------------
@@ -36,8 +37,10 @@ Storage & Encryption
 --------------------
 -  Directory:  `FP_CONTENT/plugin_newsletter/`
 -  Subscriber List (`subscribers.txt`):  Each line stores `base64(iv|ciphertext)|UnixTimestamp`.
--  Pending List (`pending.txt`):  For double opt‑in; lines are `base64(iv|ciphertext)|token|UnixTimestamp`.
+-  Pending List (`pending.txt`):  For double opt-in; lines are `base64(iv|ciphertext)|token|UnixTimestamp`.
 -  Encryption:  AES-256-CBC via OpenSSL or libsodium secretbox. Keys are derived from `PLUGIN_NEWSLETTER_KEY` (blog ID), salted/hashed for sodium.
+-  DNS Cache (`newsletter-dns-cache.txt`) & Cleanup Marker (dns-cleanup-marker.txt):  Caches MX lookup results with monthly pruning for performance.
+-  Blocklist (`disposable-email-blocklist.txt`):  Stores blacklisted domains and is updated monthly from a remote source to prevent sending to unwanted addresses.
 
 Subscription Workflow
 ---------------------
@@ -58,6 +61,7 @@ All dispatch logic is handled by `plugin_newsletter_check_and_send($dateFile, $s
 -  Next Send Date:  Sets initial send for the 1st of next month at 03:00 if no date is saved; thereafter reads and compares against current time.
 -  Batch Dispatch:  Sends up to `PLUGIN_NEWSLETTER_BATCH_SIZE` subscribers per invocation at 03:00 daily, updates offset, and schedules the next run (next day or next month).
 -  Full Send:  `plugin_newsletter_send_all($subFile)` builds email content with last entries and comments widget outputs, then sends HTML emails with proper headers.
+   It now skips subscribers whose domains appear in the blocklist.
 
 Admin Panel Integration
 -----------------------
