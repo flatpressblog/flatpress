@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Newsletter
- * Version: 1.7.0
+ * Version: 1.7.1
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
  * Author URI: https://flatpress.org
@@ -155,7 +155,11 @@ function plugin_newsletter_init() {
 
 	// Daily cleanup for pending
 	$expiry = 24 * 3600; // 24 hours
-	$lines = file($pending_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	if (file_exists($pending_file)) {
+		$lines = file($pending_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	} else {
+		$lines = [];
+	}
 	$now = time();
 	// Only keeps entries < $expiry
 	plugin_newsletter_rmw_file($pending_file, function(array $lines) use ($expiry, $now): array {
@@ -836,27 +840,30 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 	}
 	$offset = (int) trim(@file_get_contents($offsetFile) ?: '0');
 
-	// Reset offset at the beginning of each month for auto dispatch
+	// Start of month: handle manual vs. auto dispatch
 	// (but if a manual send is in progress, defer auto by one month)
 	if ($now->format('j') === '1' && file_exists($offsetFile)) {
-		// Inspect current offset vs total subscribers
-		$manOffset = (int) trim(@file_get_contents($offsetFile) ?: '0');
-		if (file_exists($subFile) && is_readable($subFile)) {
-			$manSubs = file($subFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		} else {
-			$manSubs = [];
-		}
-		$manTotal = count($manSubs);
-		if ($manOffset === 0 || $manOffset >= $manTotal) {
-			// No batches pending - clear for new auto run
-			@unlink($offsetFile);
-		} else {
-			// Manual send still in progress - push next auto to next month
+		$offset = (int) trim(@file_get_contents($offsetFile) ?: '0');
+		$subs = file_exists($subFile) && is_readable($subFile) ? file($subFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
+		$total = count($subs);
+		$isManual = is_file(PLUGIN_NEWSLETTER_DIR . 'manual-flag.txt');
+
+		// Manual dispatch still in progress - auto-dispatch postponed by one month
+		if ($isManual && $offset > 0 && $offset < $total) {
 			$next = (clone $now)->modify('first day of next month')->setTime(3, 0, 0);
 			file_put_contents($dateFile, $next->format('Y-m-d H:i:s'), LOCK_EX);
-			// Skip any auto dispatch today
 			return;
 		}
+
+		// No batch running (new or complete) - Delete offset
+		if ($offset === 0 || $offset >= $total) {
+			@unlink($offsetFile);
+			// Remove flag after completing manual dispatch
+			if ($isManual) {
+				@unlink(PLUGIN_NEWSLETTER_DIR . 'manual-flag.txt');
+			}
+		}
+		// Ongoing partial batches (offset >0 <total) retain their next-day deadline.
 	}
 
 	// First entry: next dispatch on the 1st of the next month at 03:00
