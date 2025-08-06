@@ -75,8 +75,10 @@ if ($staticLang) {
 			$src = $srcDir . $file;
 			$dest = $destDir . $file;
 			if (file_exists($src) && !file_exists($dest)) {
-				@copy($src, $dest);
-				@chmod($dest, FILE_PERMISSIONS);
+				$tmp = $dest . '.tmp';
+				@copy($src, $tmp);
+				@chmod($tmp, FILE_PERMISSIONS);
+				@rename($tmp, $dest);
 			}
 		}
 	}
@@ -93,7 +95,7 @@ if ($staticLang) {
  */
 function plugin_newsletter_rmw_file(string $file, callable $callback): bool {
 	if (!file_exists($file)) touch($file);
-	$fp = fopen($file, 'c+');
+	$fp = @fopen($file, 'c+');
 	if (!$fp || !flock($fp, LOCK_EX)) {
 		if ($fp) fclose($fp);
 		return false;
@@ -101,7 +103,7 @@ function plugin_newsletter_rmw_file(string $file, callable $callback): bool {
 
 	// Determine file size
 	$stat = fstat($fp);
-	$size = $stat['size'] ?? 0;
+	$size = $stat ['size'] ?? 0;
 	// Read full content
 	rewind($fp);
 	$content = $size > 0 ? fread($fp, $size) : '';
@@ -118,6 +120,34 @@ function plugin_newsletter_rmw_file(string $file, callable $callback): bool {
 	return true;
 }
 
+/**
+ * Read atomically: Shared lock, then return rows.
+ *
+ * @param string $file
+ * @return string[] Array of lines or [] in case of error/not available
+ */
+function plugin_newsletter_read_lines(string $file): array {
+	if (!file_exists($file)) {
+		return [];
+	}
+	$fp = @fopen($file, 'r');
+	if (!$fp || !flock($fp, LOCK_SH)) {
+		if ($fp) fclose($fp);
+		return [];
+	}
+	$stat = fstat($fp);
+	$size = $stat ['size'] ?? 0;
+	$content = $size > 0 ? fread($fp, $size) : '';
+	flock($fp, LOCK_UN);
+	fclose($fp);
+	if ($content === '') {
+		return [];
+	}
+	// Normiere auf "\n" und splitte
+	$normalized = str_replace(["\r\n", "\r"], "\n", rtrim($content, "\r\n"));
+	return array_filter(explode("\n", $normalized), 'strlen');
+}
+
 // Initialization on every page request
 plugin_newsletter_init();
 
@@ -126,12 +156,14 @@ plugin_newsletter_init();
  */
 function plugin_newsletter_init() {
 	if (!is_dir(PLUGIN_NEWSLETTER_DIR)) {
-		mkdir(PLUGIN_NEWSLETTER_DIR, DIR_PERMISSIONS, true);
+		@mkdir(PLUGIN_NEWSLETTER_DIR, DIR_PERMISSIONS, true);
 	}
 
 	$sub_file = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
 	$date_file = PLUGIN_NEWSLETTER_DIR . 'next-send-date.txt';
 	$pending_file = PLUGIN_NEWSLETTER_DIR . 'pending.txt';
+	$offset_file = PLUGIN_NEWSLETTER_DIR . 'batch-offset.txt';
+	$manual_flag_file = PLUGIN_NEWSLETTER_DIR . 'manual-flag.txt';
 
 	// Honeypot throttle: cleanup expired blocks at most once per 24 h
 	$blocked_file = PLUGIN_NEWSLETTER_DIR . 'blocked-ips.txt';
@@ -155,11 +187,7 @@ function plugin_newsletter_init() {
 
 	// Daily cleanup for pending
 	$expiry = 24 * 3600; // 24 hours
-	if (file_exists($pending_file)) {
-		$lines = file($pending_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	} else {
-		$lines = [];
-	}
+	$lines = plugin_newsletter_read_lines($pending_file);
 	$now = time();
 	// Only keeps entries < $expiry
 	plugin_newsletter_rmw_file($pending_file, function(array $lines) use ($expiry, $now): array {
@@ -187,10 +215,24 @@ function plugin_newsletter_init() {
 	// Admin: Sends the newsletter immediately to all subscribers
 	if ($_SERVER ['REQUEST_METHOD'] === 'POST' && isset($_POST ['newsletter_send_all'])) {
 
+		// No manual dispensing during a running batch
+		$offsetLines = plugin_newsletter_read_lines($offset_file);
+		$offset = (int) trim($offsetLines [0] ?? '0');
+
+		// Determine total number of subscribers
+		$subs = plugin_newsletter_read_lines($sub_file);
+		$total = count($subs);
+
+		// If offset >0 and <total, another batch is still running.
+		if ($offset > 0 && $offset < $total) {
+			// Cancel
+			header('Location: ' . $_SERVER ['REQUEST_URI']);
+			exit;
+		}
+
 		// Create a flag indicating manual batch dispatch is in progress
-		$manualFlagFile = PLUGIN_NEWSLETTER_DIR . 'manual-flag.txt';
-		if (!file_exists($manualFlagFile)) {
-			file_put_contents($manualFlagFile, 'manual', LOCK_EX);
+		if (!file_exists($manual_flag_file)) {
+			file_put_contents($manual_flag_file, 'manual', LOCK_EX);
 		}
 
 		// Check CSRF token
@@ -241,7 +283,7 @@ function plugin_newsletter_handle_confirm() {
 		exit;
 	}
 
-	$lines = file($pending_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	$lines = plugin_newsletter_read_lines($pending_file);
 	$remaining = [];
 	$confirmed = false;
 	$now = time();
@@ -296,16 +338,11 @@ function plugin_newsletter_widget(){
 
 	// Honeypot: Hiding the widget for blocked IPs
 	$blocked_file = PLUGIN_NEWSLETTER_DIR . 'blocked-ips.txt';
-	if (!file_exists($blocked_file)) {
-		touch($blocked_file);
-	}
 	$ip = plugin_newsletter_get_client_ip();
-	if (file_exists($blocked_file) && is_readable($blocked_file)) {
-		foreach (file($blocked_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-			list($blocked_ip, $ts) = explode('|', $line);
-			if ($blocked_ip === $ip && time() - (int)$ts < 24 * 3600) {
-				return ['subject' => '', 'content' => ''];
-			}
+	foreach (plugin_newsletter_read_lines($blocked_file) as $line) {
+		list($blocked_ip, $ts) = explode('|', $line);
+		if ($blocked_ip === $ip && time() - (int)$ts < 24 * 3600) {
+			return ['subject' => '', 'content' => ''];
 		}
 	}
 
@@ -439,44 +476,44 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 	$cacheFile = CACHE_DIR . 'newsletter-dns-cache.txt';
 	$markerFile = PLUGIN_NEWSLETTER_DIR . 'dns-cleanup-marker.txt';
 	$now = time();
+
 	// Last cleanup timestamp (0 if never)
-	$lastRun = file_exists($markerFile) ? (int) @file_get_contents($markerFile) : 0;
+	$markerLines = plugin_newsletter_read_lines($markerFile);
+	$lastRun = (int) ($markerLines [0] ?? '0');
 
 	// Monthly cleaning of the DNS-cache: once after the 28th, not more than once a month
 	if (date('j') >= 28 && date('Ym', $lastRun) !== date('Ym')) {
-		$linesCache = file($cacheFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$linesCache = plugin_newsletter_read_lines($cacheFile);
 		$cacheTmp = [];
 		foreach ($linesCache as $lineCache) {
 			list($d, $st, $exp) = explode('|', $lineCache, 3) + [null, null, null];
 			$cacheTmp [$d] = ['status' => $st, 'expires' => (int)$exp];
 		}
 		$subFile = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
-		if (file_exists($subFile)) {
-			$subsLines = file($subFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-			$subDomains = [];
-			foreach ($subsLines as $encEmail) {
-				$emailDec = plugin_newsletter_decrypt(trim($encEmail));
-				if (strpos($emailDec, '@') !== false) {
-					list(, $dSub) = explode('@', $emailDec, 2);
-					$subDomains [$dSub] = true;
-				}
+		$subsLines = plugin_newsletter_read_lines($subFile);
+		$subDomains = [];
+		foreach ($subsLines as $encEmail) {
+			$emailDec = plugin_newsletter_decrypt(trim($encEmail));
+			if (strpos($emailDec, '@') !== false) {
+				list(, $dSub) = explode('@', $emailDec, 2);
+				$subDomains [$dSub] = true;
 			}
-			// Remove cache entries for domains no longer in subscribers
-			foreach ($cacheTmp as $dTmp => $infoTmp) {
-				if (!isset($subDomains [$dTmp])) {
-					unset($cacheTmp [$dTmp]);
-				}
-			}
-			if ($fpCh = fopen($cacheFile, 'w')) {
-				flock($fpCh, LOCK_EX);
-				foreach ($cacheTmp as $dCh => $infoCh) {
-					fwrite($fpCh, $dCh . '|' . $infoCh ['status'] . '|' . $infoCh ['expires'] . PHP_EOL);
-				}
-				flock($fpCh, LOCK_UN);
-				fclose($fpCh);
-			}
-			unset($subsLines, $subDomains, $emailDec, $dSub);
 		}
+		// Remove cache entries for domains no longer in subscribers
+		foreach ($cacheTmp as $dTmp => $infoTmp) {
+			if (!isset($subDomains [$dTmp])) {
+				unset($cacheTmp [$dTmp]);
+			}
+		}
+		if ($fpCh = @fopen($cacheFile, 'w')) {
+			flock($fpCh, LOCK_EX);
+			foreach ($cacheTmp as $dCh => $infoCh) {
+				fwrite($fpCh, $dCh . '|' . $infoCh ['status'] . '|' . $infoCh ['expires'] . PHP_EOL);
+			}
+			flock($fpCh, LOCK_UN);
+			fclose($fpCh);
+		}
+		unset($subsLines, $subDomains, $emailDec, $dSub);
 		unset($linesCache, $cacheTmp);
 
 		// Update cleanup marker to prevent rerun this month
@@ -485,11 +522,9 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 
 	// Load existing cache
 	$cache = [];
-	if (file_exists($cacheFile)) {
-		foreach (file($cacheFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $lineCache) {
-			list($d, $st, $exp) = explode('|', $lineCache, 3) + [null, null, null];
-			$cache [$d] = ['status' => $st, 'expires' => (int)$exp];
-		}
+	foreach (plugin_newsletter_read_lines($cacheFile) as $lineCache) {
+		list($d, $st, $exp) = explode('|', $lineCache, 3) + [null, null, null];
+		$cache [$d] = ['status' => $st, 'expires' => (int)$exp];
 	}
 
 	// Check cached entry
@@ -536,12 +571,10 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 
 				// Collect old log entries in the 96-day window
 				$recent = [];
-				if (file_exists($logFile)) {
-					foreach (file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-						list($enc, $ts) = explode('|', $line, 2) + [1 => 0];
-						if ($now - (int)$ts < $windowSeconds) {
-							$recent [] = ['enc' => $enc, 'ts' => (int)$ts];
-						}
+				foreach (plugin_newsletter_read_lines($logFile) as $line) {
+					list($enc, $ts) = explode('|', $line, 2) + [1 => 0];
+					if ($now - (int)$ts < $windowSeconds) {
+						$recent [] = ['enc' => $enc, 'ts' => (int)$ts];
 					}
 				}
 
@@ -559,10 +592,9 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 					$lines = array_map(function($e) {
 						return $e ['enc'] . '|' . $e ['ts'];
 					}, $recent);
-					if (!file_exists($logFile)) {
-						touch($logFile);
-					}
-					file_put_contents($logFile, implode(PHP_EOL, $lines).PHP_EOL, LOCK_EX);
+					plugin_newsletter_rmw_file($logFile, function(array $_) use ($lines): array {
+						return $lines;
+					});
 					return true;
 				}
 
@@ -583,7 +615,7 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 			$cache [$domain] = ['status' => 'invalid', 'expires' => $expiresDomain];
 		}
 		// Write back cache file
-		if ($fpWs = fopen($cacheFile, 'w')) {
+		if ($fpWs = @fopen($cacheFile, 'w')) {
 			flock($fpWs, LOCK_EX);
 			foreach ($cache as $dWs => $infoWs) {
 				fwrite($fpWs, $dWs . '|' . $infoWs ['status'] . '|' . $infoWs ['expires'] . PHP_EOL);
@@ -593,12 +625,13 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 		}
 
 		// If successful, clean up any previously logged entries for this address
-		if (!empty($mailHosts) && file_exists($logFile)) {
-			$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-			$filtered = array_filter($lines, function($enc) use ($email) {
-				return plugin_newsletter_decrypt(trim($enc)) !== $email;
+		if (!empty($mailHosts)) {
+			$lines = plugin_newsletter_read_lines($logFile);
+			plugin_newsletter_rmw_file($logFile, function(array $lines) use ($email): array {
+				return array_filter($lines, function(string $enc) use ($email): bool {
+					return plugin_newsletter_decrypt(trim($enc)) !== $email;
+				});
 			});
-			file_put_contents($logFile, implode(PHP_EOL, $filtered) . PHP_EOL, LOCK_EX);
 		}
 
 	}
@@ -620,15 +653,14 @@ function plugin_newsletter_handle_subscribe() {
 
 	// IP throttling: check immediately whether this IP is already blocked
 	$blocked_file = PLUGIN_NEWSLETTER_DIR . 'blocked-ips.txt';
+	$blocked = plugin_newsletter_read_lines($blocked_file);
 	$ip = plugin_newsletter_get_client_ip();
-	if (file_exists($blocked_file) && is_readable($blocked_file)) {
-		foreach (file($blocked_file, FILE_IGNORE_NEW_LINES) as $line) {
-			list($blocked_ip, $ts) = explode('|', $line);
-			// 24 hour lock
-			if ($blocked_ip === $ip && time() - (int)$ts < 24 * 3600) {
-				header('Location: '.BLOG_BASEURL.'?page=throttle-limit');
-				exit;
-			}
+	foreach (plugin_newsletter_read_lines($blocked_file) as $line) {
+		list($blocked_ip, $ts) = explode('|', $line);
+		// 24 hour lock
+		if ($blocked_ip === $ip && time() - (int)$ts < 24 * 3600) {
+			header('Location: '.BLOG_BASEURL.'?page=throttle-limit');
+			exit;
 		}
 	}
 
@@ -683,13 +715,10 @@ function plugin_newsletter_handle_subscribe() {
 	// Block disposable and temporary email domains
 	$domain = substr(strrchr($email, '@'), 1);
 	$blockfile = PLUGIN_NEWSLETTER_DIR . 'disposable-email-blocklist.txt';
-	if (file_exists($blockfile) && is_readable($blockfile)) {
-		$blocked = file($blockfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		$blocked = array_map('strtolower', $blocked);
-		if (in_array(strtolower($domain), $blocked, true)) {
-			header('Location: ' . BLOG_BASEURL . '?page=invalid-email');
-			exit;
-		}
+	$blocked = array_map('strtolower', plugin_newsletter_read_lines($blockfile));
+	if (in_array(strtolower($domain), $blocked, true)) {
+		header('Location: ' . BLOG_BASEURL . '?page=invalid-email');
+		exit;
 	}
 
 	if (!user_loggedin()) {
@@ -716,15 +745,13 @@ function plugin_newsletter_handle_subscribe() {
 
 	// Check if the user is already subscribed
 	$sub_file = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
-	if (file_exists($sub_file) && is_readable($sub_file)) {
-		$sub_lines = file($sub_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		foreach ($sub_lines as $sub_line) {
-			list($sub_data) = explode('|', $sub_line, 2);
-			if (plugin_newsletter_decrypt($sub_data) === $email) {
-				// Already confirmed – redirect to confirmation page
-				header('Location: ' . BLOG_BASEURL . '?page=subscription-confirmed');
-				exit;
-			}
+	$sub_lines = plugin_newsletter_read_lines($sub_file);
+	foreach ($sub_lines as $sub_line) {
+		list($sub_data) = explode('|', $sub_line, 2);
+		if (plugin_newsletter_decrypt($sub_data) === $email) {
+			// Already confirmed – redirect to confirmation page
+			header('Location: ' . BLOG_BASEURL . '?page=subscription-confirmed');
+			exit;
 		}
 	}
 
@@ -745,7 +772,10 @@ function plugin_newsletter_handle_subscribe() {
 	if (!file_exists($pending_file)) {
 		touch($pending_file);
 	}
-	file_put_contents($pending_file, $encrypted . '|' . $token . '|' . $time . PHP_EOL, FILE_APPEND | LOCK_EX);
+	plugin_newsletter_rmw_file($pending_file, function(array $lines) use ($encrypted, $token, $time): array {
+		$lines [] = $encrypted . '|'. $token .'|'. $time;
+		return $lines;
+	});
 
 	// Send confirmation e-mail
 	$from = $fp_config ['general'] ['email'];
@@ -836,22 +866,30 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 
 	// Create offset file if not available
 	if (!file_exists($offsetFile)) {
-		file_put_contents($offsetFile, '0', LOCK_EX);
+		// Initialize with 0
+		plugin_newsletter_rmw_file($offsetFile, function(array $lines): array {
+			return ['0'];
+		});
 	}
-	$offset = (int) trim(@file_get_contents($offsetFile) ?: '0');
+
+	$offLines = plugin_newsletter_read_lines($offsetFile);
+	$offset = (int) ($offLines [0] ?? '0');
 
 	// Start of month: handle manual vs. auto dispatch
 	// (but if a manual send is in progress, defer auto by one month)
-	if ($now->format('j') === '1' && file_exists($offsetFile)) {
-		$offset = (int) trim(@file_get_contents($offsetFile) ?: '0');
-		$subs = file_exists($subFile) && is_readable($subFile) ? file($subFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
+	if ($now->format('j') === '1') {
+		$offset = (int) (plugin_newsletter_read_lines($offsetFile)[0] ?? '0');
+		$subs = plugin_newsletter_read_lines($subFile);
 		$total = count($subs);
 		$isManual = is_file(PLUGIN_NEWSLETTER_DIR . 'manual-flag.txt');
 
 		// Manual dispatch still in progress - auto-dispatch postponed by one month
 		if ($isManual && $offset > 0 && $offset < $total) {
 			$next = (clone $now)->modify('first day of next month')->setTime(3, 0, 0);
-			file_put_contents($dateFile, $next->format('Y-m-d H:i:s'), LOCK_EX);
+			// Save next dispatch
+			plugin_newsletter_rmw_file($dateFile, function(array $_) use ($next): array {
+				return [$next->format('Y-m-d H:i:s')];
+			});
 			return;
 		}
 
@@ -868,20 +906,20 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 
 	// First entry: next dispatch on the 1st of the next month at 03:00
 	if (!file_exists($dateFile)) {
+		touch($dateFile);
 		$time = (clone $now)->setTime(3, 0, 0);
 		if ($now < $time) {
 			$next = $time;
 		} else {
 			$next = (clone $now)->modify('first day of next month')->setTime(3, 0, 0);
 		}
-		if (!file_exists($dateFile)) {
-			touch($dateFile);
-		}
-		file_put_contents($dateFile, $next->format('Y-m-d H:i:s'), LOCK_EX);
+		plugin_newsletter_rmw_file($dateFile, function(array $_) use ($next): array {
+			return [$next->format('Y-m-d H:i:s')];
+		});
 	}
 
 	// Check and send
-	$stored = trim(@file_get_contents($dateFile));
+	$stored = trim((plugin_newsletter_read_lines($dateFile)[0] ?? ''));
 	$sendTime = DateTime::createFromFormat('Y-m-d H:i:s', $stored, new DateTimeZone($tz));
 	if ($now >= $sendTime) {
 		// Prepare newsletter content
@@ -927,11 +965,7 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 		$headers .= 'From: ' . $from . "\r\n";
 
 		// Perform batch dispatch
-		if (file_exists($subFile) && is_readable($subFile)) {
-			$subscribers = file($subFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		} else {
-			$subscribers = [];
-		}
+		$subscribers = plugin_newsletter_read_lines($subFile);
 		$total = count($subscribers);
 		// Only get the next batch
 		$batch = array_slice($subscribers, $offset, $batchSize);
@@ -980,7 +1014,10 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 			@unlink($offsetFile);
 			$next = (clone $now)->modify('first day of next month')->setTime(3, 0, 0);
 		}
-		file_put_contents($dateFile, $next->format('Y-m-d H:i:s'), LOCK_EX);
+		// Set date
+		plugin_newsletter_rmw_file($dateFile, function(array $_) use ($next): array {
+			return [$next->format('Y-m-d H:i:s')];
+		});
 	}
 }
 
@@ -1040,14 +1077,11 @@ function plugin_newsletter_send_all($subFile) {
 	if (!file_exists($offsetFile)) {
 		file_put_contents($offsetFile, '0', LOCK_EX);
 	}
-	$offset = (int) trim(@file_get_contents($offsetFile) ?: '0');
+	$offsetLines = plugin_newsletter_read_lines($offsetFile);
+	$offset = (int) trim($offsetLines [0] ?? '0');
 
 	// Load all subscribers, then slice out next batch
-	if (file_exists($subFile) && is_readable($subFile)) {
-		$allSubs = file($subFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	} else {
-		$allSubs = [];
-	}
+	$allSubs = plugin_newsletter_read_lines($subFile);
 	$total = count($allSubs);
 	$batch = array_slice($allSubs, $offset, $batchSize);
 
@@ -1059,7 +1093,7 @@ function plugin_newsletter_send_all($subFile) {
 		// Validation of subscriber e-mail addresses (syntax and DNS fallback)
 		if (!plugin_newsletter_is_valid_email($email)) {
 			// Remove from subscriber list
-			$allSubs = file($subFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			$allSubs = plugin_newsletter_read_lines($subFile);
 			$filtered = array_filter($allSubs, function($l) use ($line) {
 				return $l !== $line;
 			});
@@ -1100,10 +1134,14 @@ function plugin_newsletter_send_all($subFile) {
 		@unlink(PLUGIN_NEWSLETTER_DIR . 'manual-flag.txt');
 		$next = (new DateTime())->modify('first day of next month')->setTime(3, 0, 0);
 	}
+
 	if (!file_exists($dateFile)) {
 		touch($dateFile);
 	}
-	file_put_contents($dateFile, $next->format('Y-m-d H:i:s'), LOCK_EX);
+	// Set date
+	plugin_newsletter_rmw_file($dateFile, function(array $_) use ($next): array {
+		return [$next->format('Y-m-d H:i:s')];
+	});
 }
 
 if (class_exists('AdminPanelAction')) {
@@ -1128,16 +1166,15 @@ if (class_exists('AdminPanelAction')) {
 			// Read subscribers
 			$file = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
 			$subscribers = array();
-			if (file_exists($file) && is_readable($file)) {
-				$lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-				foreach ($lines as $line) {
-					list($data, $time) = explode('|', $line, 2);
-					$email = plugin_newsletter_decrypt($data);
-					$dt = new DateTime();
-					$dt->setTimestamp((int)$time);
-					$subscribers [] = array('email' => $email, 'email_encoded' => urlencode($email), 'date' => $dt->format('Y-m-d'), 'time' => $dt->format('H:i:s'));
-				}
+			$lines = plugin_newsletter_read_lines($file);
+			foreach ($lines as $line) {
+				list($data, $time) = explode('|', $line, 2);
+				$email = plugin_newsletter_decrypt($data);
+				$dt = new DateTime();
+				$dt->setTimestamp((int)$time);
+				$subscribers [] = array('email' => $email, 'email_encoded' => urlencode($email), 'date' => $dt->format('Y-m-d'), 'time' => $dt->format('H:i:s'));
 			}
+
 			$this->smarty->assign('subscribers', $subscribers);
 
 			// Generate CSRF token for deletion forms and transfer to template
@@ -1158,19 +1195,18 @@ if (class_exists('AdminPanelAction')) {
 			// Check whether a staggered dispatch is currently running and determine remaining subscribers
 			$subFile = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
 			$offsetFile = PLUGIN_NEWSLETTER_DIR . 'batch-offset.txt';
-			if (file_exists($offsetFile) && file_exists($subFile)) {
-				$offset = (int) trim(@file_get_contents($offsetFile));
-				$subs = file($subFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-				$total  = count($subs);
-				// If partial shipments have already been made and not all have been sent yet
-				if ($offset > 0 && $offset < $total) {
-					$this->smarty->assign('batch_pending', true);
-					$this->smarty->assign('subscribers_remaining', $total - $offset);
-					// Assign batch type for template: manual if flag exists, else monthly
-					$manualFlag = is_file(PLUGIN_NEWSLETTER_DIR . 'manual-flag.txt');
-					$batchTypeKey = $manualFlag ? 'send_type_manual' : 'send_type_monthly';
-					$this->smarty->assign('batch_type', $lang ['admin'] ['plugin'] ['newsletter'] [$batchTypeKey]);
-				}
+			$offsetLines = plugin_newsletter_read_lines($offsetFile);
+			$offset = (int) trim($offsetLines [0] ?? '0');
+			$subs = plugin_newsletter_read_lines($subFile);
+			$total = count($subs);
+			// If partial shipments have already been made and not all have been sent yet
+			if ($offset > 0 && $offset < $total) {
+				$this->smarty->assign('batch_pending', true);
+				$this->smarty->assign('subscribers_remaining', $total - $offset);
+				// Assign batch type for template: manual if flag exists, else monthly
+				$manualFlag = is_file(PLUGIN_NEWSLETTER_DIR . 'manual-flag.txt');
+				$batchTypeKey = $manualFlag ? 'send_type_manual' : 'send_type_monthly';
+				$this->smarty->assign('batch_type', $lang ['admin'] ['plugin'] ['newsletter'] [$batchTypeKey]);
 			}
 
 			// Template for the admin panel
@@ -1233,7 +1269,10 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 	if (!file_exists($local)) {
 		$data = @file_get_contents($remote_disposable_email_blocklist);
 		if ($data !== false) {
-			file_put_contents($local, $data, LOCK_EX);
+			$lines = explode("\n", rtrim($data, "\n"));
+			plugin_newsletter_rmw_file($local, function(array $_) use ($lines): array {
+				return $lines;
+			});
 			@chmod($local, FILE_PERMISSIONS);
 		}
 		return;
@@ -1253,24 +1292,24 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 	// We will update the block list after the 25th
 	$data = @file_get_contents($remote_disposable_email_blocklist);
 	if ($data !== false) {
-		file_put_contents($local, $data, LOCK_EX);
+		$lines = explode("\n", rtrim($data, "\n"));
+		plugin_newsletter_rmw_file($local, function(array $_) use ($lines): array {
+			return $lines;
+		});
 		@chmod($local, FILE_PERMISSIONS);
+
 		// Remove subscribers with blocklist domains
 		$subsFile = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
-		if (file_exists($subsFile) && is_readable($subsFile)) {
-			$blocklist = array_map('strtolower', file($local, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
-			$subs = file($subsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-			$filtered = [];
-			foreach ($subs as $line) {
-				list($encEmail) = explode('|', $line, 2);
-				$email = plugin_newsletter_decrypt($encEmail);
+		$blocklist = array_map('strtolower', plugin_newsletter_read_lines($local));
+		plugin_newsletter_rmw_file($subsFile, function(array $lines) use ($blocklist): array {
+			// Only keep subscriptions whose domain is not on the block list
+			return array_filter($lines, function(string $line) use ($blocklist): bool {
+				list($enc) = explode('|', $line, 2);
+				$email = plugin_newsletter_decrypt($enc);
 				$domain = strtolower(substr(strrchr($email, '@'), 1));
-				if (!in_array($domain, $blocklist, true)) {
-					$filtered [] = $line;
-				}
-			}
-			file_put_contents($subsFile, implode(PHP_EOL, $filtered) . (count($filtered) ? PHP_EOL : ''), LOCK_EX);
-		}
+				return !in_array($domain, $blocklist, true);
+			});
+		});
 	}
 }
 
