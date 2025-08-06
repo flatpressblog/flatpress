@@ -6,7 +6,7 @@
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  * Description: Adds an Archive widget element. Part of the standard distribution.
- * Version: 1.1.0
+ * Version: 1.1.1
  */
 class plugin_archives_monthlist extends fs_filelister {
 
@@ -110,7 +110,7 @@ function plugin_archives_footer() {
 			function toggleArchive(pdir) {
 				pluginArchive = pdir;
 				$(document).ready(function () {
-					$(\'#widget-archives ul > li.archive-year\').each(function (index) {
+					$(\'#widget-archives ul > li.archive-year, #footernav ul > li.archive-year\') .each(function (index) {
 						const uniqueId = \'archive-\' + index;
 							$(this).find(\'.togglelink\').attr(\'aria-controls\', uniqueId);
 						$(this).children(\'ul\').attr(\'id\', uniqueId);

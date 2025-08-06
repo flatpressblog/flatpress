@@ -3,6 +3,7 @@
 	line-height: 1.35em
 }
 
-#widget-archives ul ul {
+#widget-archives ul ul,
+#footernav ul ul {
 	display: none
 }

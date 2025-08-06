@@ -62,7 +62,7 @@ function removeOpenYear(year) {
  * Initialize toggle buttons for the Archive widget
  */
 document.addEventListener('DOMContentLoaded', function () {
-	const archiveYears = document.querySelectorAll('#widget-archives ul > li.archive-year');
+	const archiveYears = document.querySelectorAll('#widget-archives ul > li.archive-year, ' + '#footernav ul > li.archive-year');
 	if (!archiveYears.length) return;
 
 	let openYears = JSON.parse(localStorage.getItem('fp_open_years') || '[]');
