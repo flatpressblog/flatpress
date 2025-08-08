@@ -162,7 +162,7 @@ function contactform() {
 	// Initial call of the contact form
 	if (empty($_POST)) {
 		$smarty->assign('success', system_geterr('contact'));
-		$smarty->assignByRef('panelstrings', $lang ['contact']);
+		$smarty->assign('panelstrings', $lang ['contact']);
 		return;
 	}
 

@@ -281,7 +281,7 @@ function theme_init(&$smarty, $layout = null) { /* &$mode */
 
 	$smarty->assign('pagetitle', apply_filters('wp_title', "", '&laquo;'));
 
-	$smarty->assignByRef('fp_config', $fp_config);
+	$smarty->assign('fp_config', $fp_config);
 
 	$smarty->registerPlugin('modifier', 'tag', 'theme_apply_filters_wrapper');
 	$smarty->registerPlugin('modifier', 'link', 'theme_apply_filters_link_wrapper');
