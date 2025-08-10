@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'Glasilo se samodejno pošlje vsem naročnikom na začetku meseca. ' . //
 		'Če trenutno ne poteka samodejno pošiljanje, lahko pošiljanje glasila sprožite tudi takoj. ' . //
 		'Če takojšnje pošiljanje ni zaključeno do 28. dne v mesecu, bodo vsi naročniki samodejno prejeli redne novice šele v naslednjem mesecu.',
+	'icon_sent_title' => 'Že dostavljeno v tej pošiljki',
+	'icon_sent_alt' => 'Dostavljeno',
+	'icon_queued_title' => 'Načrtovano za naslednjo pošiljko',
+	'icon_queued_alt' => 'Načrtovano',
 	'send_all_button' => 'Zdaj pošljite novice vsem naročnikom',
 	'send_all_confirm' => 'Ali želite zdaj poslati novice vsem naročnikom?',
 	'send_type_monthly' => 'Mesečno pošiljanje.',

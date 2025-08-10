@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Newsletter
- * Version: 1.7.1
+ * Version: 1.7.2
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
  * Author URI: https://flatpress.org
@@ -1166,13 +1166,25 @@ if (class_exists('AdminPanelAction')) {
 			// Read subscribers
 			$file = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
 			$subscribers = array();
+
 			$lines = plugin_newsletter_read_lines($file);
-			foreach ($lines as $line) {
+
+			// Current shipping status: We only display icons when a run is active (offset > 0).
+			$offsetLines = plugin_newsletter_read_lines(PLUGIN_NEWSLETTER_DIR . 'batch-offset.txt');
+			$offset = (int) trim($offsetLines [0] ?? '0');
+			$total = count($lines);
+
+			foreach ($lines as $idx => $line) {
 				list($data, $time) = explode('|', $line, 2);
 				$email = plugin_newsletter_decrypt($data);
 				$dt = new DateTime();
 				$dt->setTimestamp((int)$time);
-				$subscribers [] = array('email' => $email, 'email_encoded' => urlencode($email), 'date' => $dt->format('Y-m-d'), 'time' => $dt->format('H:i:s'));
+				$row = array('email' => $email, 'email_encoded' => urlencode($email), 'date' => $dt->format('Y-m-d'), 'time' => $dt->format('H:i:s'));
+				// Only set status when running (offset > 0); NO icon when offset == 0.
+				if ($offset > 0) {
+					$row ['status'] = ($offset >= $total || $idx < $offset) ? 'sent' : 'queued';
+				}
+				$subscribers [] = $row;
 			}
 
 			$this->smarty->assign('subscribers', $subscribers);

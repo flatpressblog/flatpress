@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'O boletim informativo é enviado automaticamente a todos os assinantes no início do mês. ' . //
 		'Se nenhum envio automático estiver em execução no momento, você também poderá iniciar o envio do boletim informativo imediatamente. ' . //
 		'Se o envio imediato não tiver sido concluído até o dia 28 do mês, todos os assinantes não receberão automaticamente o boletim informativo regular até o mês seguinte.',
+	'icon_sent_title' => 'Já entregue nesta expedição',
+	'icon_sent_alt' => 'Entregue',
+	'icon_queued_title' => 'Programado para o próximo lote',
+	'icon_queued_alt' => 'Programado',
 	'send_all_button' => 'Enviar newsletter para todos os assinantes agora',
 	'send_all_confirm' => 'Deseja enviar o boletim informativo a todos os assinantes agora?',
 	'send_type_monthly' => 'Envio mensal.',

@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'Bülten, ayın başında tüm abonelere otomatik olarak gönderilir. ' . //
 		'Otomatik gönderim o anda çalışmıyorsa, bülten gönderimini hemen de başlatabilirsiniz. ' . //
 		'Anında gönderim ayın 28\'ine kadar tamamlanmamışsa, tüm aboneler bir sonraki aya kadar düzenli bülteni otomatik olarak almayacaktır.',
+	'icon_sent_title' => 'Bu sevkiyatta zaten teslim edildi',
+	'icon_sent_alt' => 'Teslim edildi',
+	'icon_queued_title' => 'Bir sonraki parti için planlandı',
+	'icon_queued_alt' => 'Planlanmış',
 	'send_all_button' => 'Bülteni şimdi tüm abonelere gönder',
 	'send_all_confirm' => 'Bülteni şimdi tüm abonelere göndermek istiyor musunuz?',
 	'send_type_monthly' => 'Aylık gönderim.',

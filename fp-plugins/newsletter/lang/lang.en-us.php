@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'The newsletter is automatically sent to all subscribers at the beginning of the month. ' . //
 		'If no automatic dispatch is currently running, you can also trigger the newsletter dispatch immediately. ' . //
 		'If immediate dispatch has not been completed by the 28th of the month, all subscribers will not automatically receive the regular newsletter until the month after next.',
+	'icon_sent_title' => 'Already delivered in this shipment',
+	'icon_sent_alt' => 'Delivered',
+	'icon_queued_title' => 'Scheduled for next batch',
+	'icon_queued_alt' => 'Scheduled',
 	'send_all_button' => 'Send newsletter to all subscribers now',
 	'send_all_confirm' => 'Would you like to send the newsletter to all subscribers now?',
 	'send_type_monthly' => 'Monthly dispatch.',

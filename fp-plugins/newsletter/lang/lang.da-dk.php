@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'Nyhedsbrevet sendes automatisk til alle abonnenter i begyndelsen af måneden. ' . //
 		'Hvis der ikke kører en automatisk udsendelse i øjeblikket, kan du også starte udsendelsen af nyhedsbrevet med det samme. ' . //
 		'Hvis den øjeblikkelige udsendelse ikke er gennemført inden den 28. i måneden, vil alle abonnenter først automatisk modtage det almindelige nyhedsbrev i den efterfølgende måned.',
+	'icon_sent_title' => 'Allerede leveret i denne forsendelse',
+	'icon_sent_alt' => 'Leveret',
+	'icon_queued_title' => 'Planlagt til næste batch',
+	'icon_queued_alt' => 'Planlagt',
 	'send_all_button' => 'Send nyhedsbrev til alle abonnenter nu',
 	'send_all_confirm' => 'Vil du sende nyhedsbrevet til alle abonnenter nu?',
 	'send_type_monthly' => 'Månedlig udsendelse.',
