@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'El boletín se envía automáticamente a todos los suscriptores a principios de mes. ' . //
 		'Si actualmente no se está realizando ningún envío automático, también puede iniciar el envío inmediato del boletín. ' . //
 		'Si el envío inmediato no se ha completado antes del día 28 del mes, todos los suscriptores no recibirán automáticamente el boletín periódico hasta el mes siguiente.',
+	'icon_sent_title' => 'Ya entregado en este envío',
+	'icon_sent_alt' => 'Entregado',
+	'icon_queued_title' => 'Programado para el próximo lote',
+	'icon_queued_alt' => 'Programado',
 	'send_all_button' => 'Enviar el boletín a todos los suscriptores ahora',
 	'send_all_confirm' => '¿Desea enviar el boletín a todos los suscriptores ahora?',
 	'send_type_monthly' => 'Envío mensual.',

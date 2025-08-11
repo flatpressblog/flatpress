@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'Der Newsletter wird zu Beginn des Monats automatisch an alle Abonnenten versendet. ' . //
 		'Wenn gerade kein automatischer Versand läuft, kannst du auch sofort den Newsletterversand anstoßen. ' . //
 		'Wenn bis zum 28 des Monats der sofortige Versand noch nicht abgeschlossen ist, erhalten alle Abonnenten erst im übernächsten Monat automatisch den regulären Newsletter.',
+	'icon_sent_title' => 'In diesem Versand bereits zugestellt',
+	'icon_sent_alt' => 'Zugestellt',
+	'icon_queued_title' => 'Für nächste Charge eingeplant',
+	'icon_queued_alt' => 'Eingeplant',
 	'send_all_button' => 'Newsletter jetzt an alle Abonnenten versenden',
 	'send_all_confirm' => 'Möchtest du den Newsletter jetzt an alle Abonnenten versenden?',
 	'send_type_monthly' => 'Monatlicher Versand.',

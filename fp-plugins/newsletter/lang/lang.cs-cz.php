@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'Newsletter je automaticky odeslán všem odběratelům na začátku měsíce. ' . //
 		'Pokud v současné době není spuštěno žádné automatické rozesílání, můžete rozesílání newsletteru iniciovat také okamžitě. ' . //
 		'Pokud nebude okamžité rozesílání ukončeno do 28. dne v měsíci, budou všichni odběratelé dostávat pravidelný newsletter automaticky až v následujícím měsíci.',
+	'icon_sent_title' => 'Již doručeno v této zásilce',
+	'icon_sent_alt' => 'Dodáno',
+	'icon_queued_title' => 'Naplánováno pro další dávku',
+	'icon_queued_alt' => 'Naplánováno',
 	'send_all_button' => 'Odeslat newsletter všem odběratelům nyní',
 	'send_all_confirm' => 'Chcete zaslat newsletter všem odběratelům nyní?',
 	'send_type_monthly' => 'Měsíční rozesílání.',

@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'La newsletter est envoyée automatiquement à tous les abonnés au début du mois. ' . //
 		'Wenn gerade kein automatischer Versand läuft, kannst du auch sofort den Newsletterversand anstoßen. ' . //
 		'Si aucun envoi automatique n\'est en cours, tu peux aussi déclencher l\'envoi de la newsletter immédiatement.',
+	'icon_sent_title' => 'Déjà distribué dans cet envoi',
+	'icon_sent_alt' => 'Livré',
+	'icon_queued_title' => 'Planifié pour le lot suivant',
+	'icon_queued_alt' => 'Planifié',
 	'send_all_button' => 'Envoyer maintenant la newsletter à tous les abonnés',
 	'send_all_confirm' => 'Souhaites-tu envoyer la newsletter maintenant à tous les abonnés ?',
 	'send_type_monthly' => 'Envoi mensuel.',

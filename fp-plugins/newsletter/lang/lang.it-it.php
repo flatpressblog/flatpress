@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'La newsletter viene inviata automaticamente a tutti gli abbonati all\'inizio del mese. ' . //
 		'Se non è in corso un invio automatico, è possibile avviare l\'invio immediato della newsletter. ' . //
 		'Se l\'invio immediato non è stato completato entro il 28 del mese, tutti gli abbonati riceveranno automaticamente la newsletter regolare solo il mese successivo.',
+	'icon_sent_title' => 'Già consegnato in questo invio',
+	'icon_sent_alt' => 'Consegnato',
+	'icon_queued_title' => 'Programmato per il prossimo lotto',
+	'icon_queued_alt' => 'Programmato',
 	'send_all_button' => 'Invia ora la newsletter a tutti gli iscritti',
 	'send_all_confirm' => 'Si desidera inviare subito la newsletter a tutti gli iscritti?',
 	'send_type_monthly' => 'Invio mensile.',

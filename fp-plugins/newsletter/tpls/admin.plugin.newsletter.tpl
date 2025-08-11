@@ -21,6 +21,13 @@
 									<input type="hidden" name="newsletter_delete" value="{$sub.email_encoded|escape}">
 									<input type="hidden" name="csrf_token" value="{$newsletter_csrf_token|escape}">
 									<input type="submit" title="{$lang.admin.plugin.newsletter.delete_subscriber}" style="cursor: pointer;" class="link-button" value="{$sub.email|escape}">
+									{if isset($sub.status)}
+										{if $sub.status == 'sent'}
+											<img src="{$smarty.const.BLOG_BASEURL}fp-plugins/newsletter/res/check-green.svg" alt="{$lang.admin.plugin.newsletter.icon_sent_alt|escape}" title="{$lang.admin.plugin.newsletter.icon_sent_title|escape}" style="width: 14px; height: 14px; vertical-align: middle; margin-left: .4em">
+										{elseif $sub.status == 'queued'}
+											<img src="{$smarty.const.BLOG_BASEURL}fp-plugins/newsletter/res/dot-yellow.svg" alt="{$lang.admin.plugin.newsletter.icon_queued_alt|escape}" title="{$lang.admin.plugin.newsletter.icon_queued_title|escape}" style="width: 14px; height: 14px; vertical-align: middle; margin-left: .4em">
+										{/if}
+									{/if}
 								</form>
 							</td>
 							<td>{$sub.date|escape}</td>

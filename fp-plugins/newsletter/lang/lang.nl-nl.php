@@ -42,6 +42,10 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 		'De nieuwsbrief wordt automatisch verzonden naar alle abonnees aan het begin van de maand. ' . //
 		'Als er momenteel geen automatische verzending loopt, kun je de verzending van de nieuwsbrief ook onmiddellijk starten. ' . //
 		'Als onmiddellijke verzending niet is voltooid op de 28e van de maand, zullen alle abonnees de reguliere nieuwsbrief pas automatisch ontvangen in de daaropvolgende maand.',
+	'icon_sent_title' => 'Reeds geleverd in deze zending',
+	'icon_sent_alt' => 'Geleverd',
+	'icon_queued_title' => 'Gepland voor volgende batch',
+	'icon_queued_alt' => 'Gepland',
 	'send_all_button' => 'Stuur de nieuwsbrief nu naar alle abonnees',
 	'send_all_confirm' => 'Wil je de nieuwsbrief nu naar alle abonnees sturen?',
 	'send_type_monthly' => 'Maandelijkse verzending.',
