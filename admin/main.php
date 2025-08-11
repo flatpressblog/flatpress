@@ -219,8 +219,8 @@ $smarty->registerPlugin('function', 'controlpanel', 'showcontrolpanel');
 
 $v = $lang ['admin'] [$panel] [$action];
 
-$smarty->assignByRef('panelstrings', $v);
-$smarty->assignByRef('plang', $v);
+$smarty->assign('panelstrings', $v);
+$smarty->assign('plang', $v);
 
 if (isset($_GET ['mod'])) {
 
