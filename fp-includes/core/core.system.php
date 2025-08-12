@@ -187,9 +187,9 @@ function system_init() {
 	plugin_loadall();
 
 	// init smarty
+	$smarty->setCompileDir(COMPILE_DIR);
 	// FlatPress does not use the Smarty cache, only the compiler
-	$smarty->compile_dir = COMPILE_DIR;
-	$smarty->cache_dir = CACHE_DIR;
+	$smarty->setCacheDir(CACHE_DIR);
 	$smarty->caching = false;
 
 	// Smarty debug console
