@@ -54,8 +54,9 @@ class LayoutDefault {
 
 		// init smarty
 
-		$this->smarty->compile_dir = COMPILE_DIR;
-		$this->smarty->cache_dir = CACHE_DIR;
+		$this->smarty->setCompileDir(COMPILE_DIR);
+		// FlatPress does not use the Smarty cache, only the compiler.
+		$this->smarty->setCacheDir(CACHE_DIR);
 		$this->smarty->caching = false;
 
 		do_action('init');
