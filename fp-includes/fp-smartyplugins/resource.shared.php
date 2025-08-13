@@ -6,7 +6,7 @@
  * @author FlatPress
  * @see https://www.smarty.net/docs/en/plugins.resources.tpl
  */
-class Smarty_Resource_Shared extends Smarty_Resource_Custom {
+class Smarty_Resource_Shared extends \Smarty\Resource\CustomPlugin {
 
 	/**
 	 * Fetch template source and modification time.

@@ -3,14 +3,26 @@
 // This is just a list of all the standard includes
 require_once INCLUDES_DIR . 'core.utils.php';
 
-// Smarty initialisieren
-utils_checksmarty();
-require_once SMARTY_DIR . 'Smarty.class.php';
-$smarty = new Smarty();
+// Smarty 5 without Composer: Load PSR-4 stub – automatically finds/pulls the stub
+utils_checksmarty('5.5.1');
+
+// Namespace class in v5
+$smarty = new \Smarty\Smarty();
+
 $_FP_SMARTY = &$smarty;
 
-// Add plugin dir for FlatPress-specific Smarty plugins
-$smarty->addPluginsDir(FP_SMARTYPLUGINS_DIR);
+// FlatPress custom resources: Classes are NOT located in the Smarty namespace -> load explicitly
+require_once FP_SMARTYPLUGINS_DIR . 'resource.admin.php';
+require_once FP_SMARTYPLUGINS_DIR . 'resource.plugin.php';
+require_once FP_SMARTYPLUGINS_DIR . 'resource.shared.php';
+
+// In Smarty 5, registration is done exclusively via objects.
+$smarty->registerResource('admin',  new \Smarty_Resource_Admin());
+$smarty->registerResource('plugin', new \Smarty_Resource_Plugin());
+$smarty->registerResource('shared', new \Smarty_Resource_Shared());
+
+// Register FlatPress-specific Smarty plugins explicitly (Smarty 5; no addPluginsDir)
+fp_register_fp_plugins($smarty, FP_SMARTYPLUGINS_DIR);
 
 $includes = [
 	// WordPress plugin system

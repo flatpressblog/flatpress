@@ -238,7 +238,7 @@ function theme_init(&$smarty, $layout = null) { /* &$mode */
 	global $fp_config, $lang, $theme, $fp_params;
 
 	// avoid compiled tpl collision (i.e. change theme without this and cry)
-	$smarty->compile_id = md5($fp_config ['general'] ['theme']);
+	$smarty->setCompileId(md5($fp_config ['general'] ['theme']));
 	$smarty->setTemplateDir([ABS_PATH . THEMES_DIR . $fp_config ['general'] ['theme'] . '/']);
 
 	$loggedin = user_loggedin();
