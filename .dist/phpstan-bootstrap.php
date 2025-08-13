@@ -1,48 +1,61 @@
-
 <?php
+declare(strict_types=1);
+
 /**
- * PHPStan Bootstrap for FlatPress without Composer + Smarty 5.5.1
- * No runtime side effects: no sessions, no system_init(), no plugin load.
+ * PHPStan stubs for Smarty 5 – no runtime effect!
+ * Covers both worlds:
+ *  - \Smarty\Smarty (new, namespaced class)
+ *  - Smarty (old, global short form in docblocks)
+ * Plus a minimal template API.
  */
+namespace Smarty {
+	class Smarty {
+		public const COMPILECHECK_OFF = 0;
+		public const COMPILECHECK_ON  = 1;
+		public const COMPILECHECK_CACHEMISS = 2;
 
-// Select analysis context
-defined('PHPSTAN') || define('PHPSTAN', true);
+		public const PLUGIN_FUNCTION = 'function';
+		public const PLUGIN_BLOCK = 'block';
+		public const PLUGIN_MODIFIER = 'modifier';
+		public const PLUGIN_MODIFIERCOMPILER = 'modifiercompiler';
+		public const PLUGIN_COMPILER = 'compiler';
 
-// repo root
-$root = realpath(__DIR__ . '/..') ?: dirname(__DIR__);
+		public function setCompileDir($dir): void {}
+		public function setCacheDir($dir): void {}
+		public function setCaching($flag): void {}
+		public function setDebugging($flag): void {}
 
-// Minimum required constants
-defined('ABS_PATH') || define('ABS_PATH', $root . DIRECTORY_SEPARATOR);
-defined('FP_INCLUDES') || define('FP_INCLUDES', 'fp-includes' . DIRECTORY_SEPARATOR);
-defined('FP_SMARTYPLUGINS_DIR') || define('FP_SMARTYPLUGINS_DIR', ABS_PATH . FP_INCLUDES . 'fp-smartyplugins' . DIRECTORY_SEPARATOR);
+		public function setCompileCheck(int $mode): void {}
+		public function setForceCompile(bool $flag): void {}
 
-defined('COMPILE_DIR') || define('COMPILE_DIR', ABS_PATH . 'fp-content' . DIRECTORY_SEPARATOR . 'compile' . DIRECTORY_SEPARATOR);
-defined('CACHE_DIR') || define('CACHE_DIR',   ABS_PATH . 'fp-content' . DIRECTORY_SEPARATOR . 'cache'   . DIRECTORY_SEPARATOR);
+		/** @param object $resource */
+		public function registerResource(string $name, $resource): void {}
+		/** @param callable $callback */
+		public function registerPlugin(string $type, string $name, $callback): void {}
+		/** @param callable $callback */
+		public function registerFilter(string $type, $callback): void {}
 
-// Legacy compatibility: some old code may still reference SMARTY_DIR
-defined('SMARTY_DIR') || define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-5.5.1' . DIRECTORY_SEPARATOR . 'libs' . DIRECTORY_SEPARATOR);
+		public function assign($var, $value = null): void {}
+		public function display($tpl): void {}
+		public function fetch($tpl): string { return ''; }
+		public function clearAllCache(): void {}
+		public function clearCompiledTemplate(): void {}
+	}
 
-// Load Smarty 5 without Composer so that \Smarty\* types can be resolved
-$smartyBootstrap = SMARTY_DIR . 'Smarty.class.php';
-if (is_file($smartyBootstrap)) {
-	/** @noinspection PhpIncludeInspection */
-	require_once $smartyBootstrap; // Internally loads Smarty 5 src/* (without Composer) :contentReference[oaicite:2]{index=2}
-}
-
-// --- PHPStan type aliases for legacy names used in FlatPress docblocks/code ---
-// Map old global 'Smarty' name to namespaced '\Smarty\Smarty'
-if (!class_exists('Smarty', false) && class_exists(\Smarty\Smarty::class, false)) {
-	class_alias(\Smarty\Smarty::class, 'Smarty');
-}
-// Map old internal template class name used in some annotations
-if (!class_exists('Smarty_Internal_Template', false) && class_exists(\Smarty\Template::class, false)) {
-	class_alias(\Smarty\Template::class, 'Smarty_Internal_Template');
-}
-
-// FlatPress-specific Smarty resources (class declarations only, no registration)
-foreach (['resource.admin.php', 'resource.plugin.php', 'resource.shared.php'] as $res) {
-	$file = FP_SMARTYPLUGINS_DIR . $res;
-	if (is_file($file)) {
-		require_once $file;
+	class Template {
+		public function getSmarty(): Smarty { return new Smarty(); }
+		/** @return mixed */
+		public function getTemplateVars(?string $name = null) { return null; }
+		public function renderSubTemplate($tpl, ...$args): string { return ''; }
 	}
 }
+
+namespace {
+	/**
+	 * Old short forms that can be found in Docblocks/Properties.
+	 * (Global classes, separate from \Smarty\Smarty.)
+	 */
+	class Smarty extends \Smarty\Smarty {}
+	class Smarty_Internal_Template extends \Smarty\Template {}
+}
+
