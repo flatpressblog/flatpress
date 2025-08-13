@@ -1,62 +1,38 @@
 <?php
 /**
- * Simulates the Smarty 4.5.5 template engine for PHPStan, e.g. for dynamic methods/filters
- * This is necessary if you do not want to change the Smarty code
- * and do not want to get errors with dynamic behavior such as plugin lookups.
- *
- * Dummy class acting as a fallback for Smarty_Internal_TemplateCompilerBase.
- *
- * This class is used when the actual Smarty compiler class is not available.
- * It's primarily useful for unit tests, mocking, or ensuring compatibility
- * in environments where Smarty is not installed.
+ * PHPStan Bootstrap for FlatPress without Composer + Smarty 5.5.1
+ * No runtime side effects: no sessions, no system_init(), no plugin load.
  */
-if (!class_exists('Smarty_Internal_TemplateCompilerBase')) {
-	class Smarty_Internal_TemplateCompilerBase {
-		public function getPlugin(string $name, string $type) { return 'dummy_plugin_function'; }
-		public function compileTag(string $tag, array $args = [], array $params = []) { return 'compiled_tag_output'; }
+declare(strict_types=1);
+
+// Select analysis context
+defined('PHPSTAN') || define('PHPSTAN', true);
+
+// repo root
+$root = dirname(__DIR__);
+
+// Minimum required constants
+defined('ABS_PATH') || define('ABS_PATH', $root . DIRECTORY_SEPARATOR);
+defined('FP_INCLUDES') || define('FP_INCLUDES', 'fp-includes' . DIRECTORY_SEPARATOR);
+defined('FP_SMARTYPLUGINS_DIR') || define('FP_SMARTYPLUGINS_DIR', ABS_PATH . FP_INCLUDES . 'fp-smartyplugins' . DIRECTORY_SEPARATOR);
+
+defined('COMPILE_DIR') || define('COMPILE_DIR', ABS_PATH . 'fp-content' . DIRECTORY_SEPARATOR . 'compile' . DIRECTORY_SEPARATOR);
+defined('CACHE_DIR') || define('CACHE_DIR',   ABS_PATH . 'fp-content' . DIRECTORY_SEPARATOR . 'cache'   . DIRECTORY_SEPARATOR);
+
+// Legacy compatibility: some old code may still reference SMARTY_DIR
+defined('SMARTY_DIR') || define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-5.5.1' . DIRECTORY_SEPARATOR . 'libs' . DIRECTORY_SEPARATOR);
+
+// Load Smarty 5 without Composer so that \Smarty\* types can be resolved
+$smartyBootstrap = SMARTY_DIR . 'Smarty.class.php';
+if (is_file($smartyBootstrap)) {
+	/** @noinspection PhpIncludeInspection */
+	require_once $smartyBootstrap; // Internally loads Smarty 5 src/* (without Composer) :contentReference[oaicite:2]{index=2}
+}
+
+// FlatPress-specific Smarty resources (class declarations only, no registration)
+foreach (['resource.admin.php', 'resource.plugin.php', 'resource.shared.php'] as $res) {
+	$file = FP_SMARTYPLUGINS_DIR . $res;
+	if (is_file($file)) {
+		require_once $file;
 	}
-}
-
-/**
- * Dummy replacement for the core Smarty class.
- *
- * Provides basic structure and properties found in the real Smarty class
- * to allow testing or fallback behavior in environments where Smarty is missing.
- */
-if (!class_exists('Smarty')) {
-	class Smarty {
-		const FILTER_VARIABLE = 'variable';
-		public $default_modifiers = [];
-		public $registered_filters = [];
-		public $autoload_filters = [];
-		public $escape_html = false;
-		public static $_CHARSET = 'UTF-8';
-
-		// Supplemented for FlatPress & plugins
-		public function assign($tpl_var, $value = null, $nocache = false) {}
-		public function assignByRef($tpl_var, &$value) {}
-		public function display($template = null, $cache_id = null, $compile_id = null, $parent = null) {}
-		public function registerPlugin($type, $name, $callback, $cacheable = true, $cache_attr = null) {}
-		public function getTemplateVars($name = null, $search_parents = true) {}
-		public function setTemplateDir($template_dir) {}
-		public function addPluginsDir($plugins_dir) {}
-		public function fetch($template = null, $cache_id = null, $compile_id = null, $parent = null, $display = false, $merge_tpl_vars = true, $no_output_filter = false) { return ''; }
-
-		// Typical properties
-		public $compile_id;
-		public $cache_id;
-	}
-}
-
-if (!class_exists('Smarty_Resource_Custom')) {
-	class Smarty_Resource_Custom {}
-}
-if (!class_exists('Smarty_Resource_Admin')) {
-	class Smarty_Resource_Admin extends Smarty_Resource_Custom {}
-}
-if (!class_exists('Smarty_Resource_Plugin')) {
-	class Smarty_Resource_Plugin extends Smarty_Resource_Custom {}
-}
-if (!class_exists('Smarty_Resource_Shared')) {
-	class Smarty_Resource_Shared extends Smarty_Resource_Custom {}
 }
