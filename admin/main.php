@@ -154,8 +154,11 @@ function admin_panel_title($title, $sep) {
 	return $title;
 }
 
-function showcontrolpanel($params, $smarty) {
-	$smarty->display(ABS_PATH . ADMIN_DIR . 'main.tpl');
+// Called by {controlpanel} in admin.tpl (Smarty 5: BCPluginWrapper)
+function showcontrolpanel(array $params, \Smarty\Template $template): string {
+	$smarty = $template->getSmarty();
+	// Only render the admin body, not admin.tpl (would recursively execute {controlpanel} again)
+	return $smarty->fetch('file:' . ABS_PATH . ADMIN_DIR . 'main.tpl');
 }
 
 // html header

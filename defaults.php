@@ -80,9 +80,8 @@ define('FP_INCLUDES', 'fp-includes/');
 define('INCLUDES_DIR', FP_INCLUDES . 'core/');
 
 // smarty engine
-define('SMARTY_DIR', ABS_PATH . FP_INCLUDES . 'smarty-4.5.5/libs/');
-define('CACHE_DIR', FP_CONTENT . 'cache/');
 define('COMPILE_DIR', FP_CONTENT . 'compile/');
+define('CACHE_DIR', FP_CONTENT . 'cache/');
 // FlatPress specific Smarty plugins
 define('FP_SMARTYPLUGINS_DIR', ABS_PATH . FP_INCLUDES . 'fp-smartyplugins/');
 

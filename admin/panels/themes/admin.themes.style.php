@@ -100,8 +100,8 @@
 
 				$smarty->clearAllCache();
 				$smarty->clearCompiledTemplate();
-				$smarty->compile_check = true;
-				$smarty->force_compile = true;
+				$smarty->setCompileCheck(\Smarty\Smarty::COMPILECHECK_ON);
+				$smarty->setForceCompile(true);
 
 				if (!file_exists(CACHE_DIR)) {
 					fs_mkdir(CACHE_DIR);
