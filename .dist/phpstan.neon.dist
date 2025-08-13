@@ -1,16 +1,24 @@
+
 parameters:
   phpVersion:
-    min: 70100 # PHP 7.1
+    min: 70100 # PHP 7.2
     max: 80400 # PHP 8.4
   level: 4  # Medium level
 
+  # Minimal Bootstrap (without Composer)
   bootstrapFiles:
     - phpstan-bootstrap.php
 
+  # Scan for type resolution, but do not analyze
+  scanDirectories:
+    - ../fp-includes/smarty-5.5.1/src
+    - ../fp-includes/fp-smartyplugins
+
   excludePaths:
-    - ../fp-includes/smarty-4.5.5/demo/*
-    - ../fp-includes/smarty-4.5.5/libs/*
-    - ../fp-includes/smarty-4.5.5/libs/plugins/*
+    analyse:
+      - ../fp-includes/smarty-5.5.1/**
+      - ../fp-content/compile/**
+      - ../fp-content/cache/**
 
   paths:
     - ..
@@ -38,12 +46,12 @@ parameters:
     # Ignore error “does not accept null” only in Smarty core
     - message: '#Property .* does not accept null#'
       paths:
-        - ../fp-includes/smarty-4.5.5/libs/sysplugins/*.php
+        - ../fp-includes/smarty-5.5.1/src/*.php
 
     # Ignore error “Call to undefined method” only in Smarty core
     - message: '#Call to an undefined method Smarty_Internal_.*::.*#'
       paths:
-        - ../fp-includes/smarty-4.5.5/libs/sysplugins/.*\.php
+        - ../fp-includes/smarty-5.5.1/src/.*\.php
 
     # Comparison of incorrect types
     # - '#Comparison operation .* is always (true|false)#'
