@@ -9,7 +9,7 @@
 defined('PHPSTAN') || define('PHPSTAN', true);
 
 // repo root
-$root = dirname(__DIR__);
+$root = realpath(__DIR__ . '/..') ?: dirname(__DIR__);
 
 // Minimum required constants
 defined('ABS_PATH') || define('ABS_PATH', $root . DIRECTORY_SEPARATOR);
