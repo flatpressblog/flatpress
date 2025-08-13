@@ -1,5 +1,12 @@
 # Under development: FlatPress 1.5
 
+## Changed requirements
+- FlatPress 1.5 runs under PHP up to **8.4**; minimum required PHP version increases to **7.2**.
+
+## Changes
+- Template engine:
+  - Smarty updated to version 5.5.1 with PHP 8.4 support ([#651](https://github.com/flatpressblog/flatpress/pull/651))
+
 ## Plugins
 ### Changes
 - Archives plugin: update to version 1.1.1
