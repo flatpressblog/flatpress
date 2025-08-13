@@ -1,10 +1,10 @@
 
 <?php
+declare(strict_types=1);
 /**
  * PHPStan Bootstrap for FlatPress without Composer + Smarty 5.5.1
  * No runtime side effects: no sessions, no system_init(), no plugin load.
  */
-declare(strict_types=1);
 
 // Select analysis context
 defined('PHPSTAN') || define('PHPSTAN', true);
