@@ -1,3 +1,4 @@
+
 <?php
 /**
  * PHPStan Bootstrap for FlatPress without Composer + Smarty 5.5.1
@@ -27,6 +28,16 @@ $smartyBootstrap = SMARTY_DIR . 'Smarty.class.php';
 if (is_file($smartyBootstrap)) {
 	/** @noinspection PhpIncludeInspection */
 	require_once $smartyBootstrap; // Internally loads Smarty 5 src/* (without Composer) :contentReference[oaicite:2]{index=2}
+}
+
+// --- PHPStan type aliases for legacy names used in FlatPress docblocks/code ---
+// Map old global 'Smarty' name to namespaced '\Smarty\Smarty'
+if (!class_exists('Smarty', false) && class_exists(\Smarty\Smarty::class, false)) {
+	class_alias(\Smarty\Smarty::class, 'Smarty');
+}
+// Map old internal template class name used in some annotations
+if (!class_exists('Smarty_Internal_Template', false) && class_exists(\Smarty\Template::class, false)) {
+	class_alias(\Smarty\Template::class, 'Smarty_Internal_Template');
 }
 
 // FlatPress-specific Smarty resources (class declarations only, no registration)
