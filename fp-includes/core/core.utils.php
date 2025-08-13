@@ -781,7 +781,7 @@ function fp_register_fp_plugins(\Smarty\Smarty $smarty, string $dir): void {
 		}
 
 		// Validation helpers (no direct registration, just make functions/classes available)
-		if (preg_match('/^validate_[A-Za-z0-9_]+\.php$/', $file)) {
+		if (preg_match('/^validate_[A-Za-z0-9_.]+\.(php)$/', $file)) {
 			require_once $path;
 			continue;
 		}
