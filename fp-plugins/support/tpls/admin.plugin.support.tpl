@@ -11,24 +11,24 @@
 	</h3>
 	<ul>
 		<li>
-			{$plang.version}{$support.output_SYSTEM_VER}
+			{$plang.version}{$support.output_SYSTEM_VER|default:''}
 		</li>
 		{*
 		<li>
-			{$plang.basedir}{$support.output_BASE_DIR}
+			{$plang.basedir}{$support.output_BASE_DIR|default:''}
 		</li>
 		*}
 		<li>
-			{$plang.blogbaseurl}{$support.output_www}
+			{$plang.blogbaseurl}{$support.output_www|default:''}
 		</li>
 		<li>
-			{$support.theme}{$support.output_theme}
+			{$support.theme}{$support.output_theme|default:''}
 		</li>
 		<li>
-			{$support.style}{$support.output_style}
+			{$support.style}{$support.output_style|default:''}
 		</li>
 		<li>
-			{$support.plugins}{$support.output_plugins}
+			{$support.plugins}{$support.output_plugins|default:''}
 		</li>
 	</ul>
 	<h3>
@@ -36,22 +36,22 @@
 	</h3>
 	<ul>
 		<li>
-			{$support.LANG_DEFAULT}{$support.output_LANG_DEFAULT}
+			{$support.LANG_DEFAULT}{$support.output_LANG_DEFAULT|default:''}
 		</li>
 		<li>
-			{$support.lang}{$support.output_lang}
+			{$support.lang}{$support.output_lang|default:''}
 		</li>
 		<li>
-			{$support.charset}{$support.output_charset}
+			{$support.charset}{$support.output_charset|default:''}
 		</li>
 		<li>
-			{$support.global_date_time}{$support.output_global_date_time}
+			{$support.global_date_time}{$support.output_global_date_time|default:''}
 		</li>
 		<li>
-			{$support.local_date_time}{$support.output_local_date_time}
+			{$support.local_date_time}{$support.output_local_date_time|default:''}
 		</li>
 		<li>
-			{$support.time_offset}{$support.timeoffset}
+			{$support.time_offset}{$support.timeoffset|default:''}
 		</li>
 	</ul>
 	<p class="codeblock">[/code]</p>
@@ -214,11 +214,11 @@
 	</h2>
 	<p class="codeblock">[code]</p>
 	<p>
-		{$support.php_ver}{$support.output_php_ver}
+		{$support.php_ver}{$support.output_php_ver|default:''}
 	</p>
 
 	<p>
-		{$support.php_timezone}{$support.output_timezone}
+		{$support.php_timezone}{$support.output_timezone|default:''}
 	</p>
 
 	<h3>
@@ -242,6 +242,15 @@
 			{$support.php_gdlib}
 		</li>
 	</ul>
+
+	<p>
+		{$support.desc_php_mbstring}
+	</p>
+	<ul>
+		<li>
+			{$support.php_mbstring}
+		</li>
+	</ul>
 	<p class="codeblock">[/code]</p>
 
 	<h2>
@@ -262,7 +271,7 @@
 	</p>
 	<ul>
 		<li>
-			{$support.session_cookie}{$support.output_sess_cookie}</p>
+			{$support.session_cookie}{$support.output_sess_cookie|default:''}</p>
 		</li>
 	</ul>
 	<p class="codeblock">[/code]</p>

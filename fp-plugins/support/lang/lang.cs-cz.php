@@ -140,12 +140,16 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 	'h3_extensions' => 'Extensions',
 
 	'desc_php_intl' => 'The PHP-Intl extension must be activated.',
-	'error_php_intl' => '<p class="error"><strong>&#33;</strong> The intl Extension is not activated!</p>',
-	'success_php_intl' => '<p class="success"><strong>&#10003;</strong> The intl Extension is activated.</p>',
+	'error_php_intl' => '<p class="error"><strong>&#33;</strong> The intl extension is not activated!</p>',
+	'success_php_intl' => '<p class="success"><strong>&#10003;</strong> The intl extension is activated.</p>',
 
 	'desc_php_gdlib' => 'The GDlib extension must be activated to create image thumbnails.',
-	'error_php_gdlib' => '<p class="error"><strong>&#33;</strong> The GD Extension is not activated!</p>',
-	'success_php_gdlib' => '<p class="success"><strong>&#10003;</strong> The GD Extension is activated.</p>',
+	'error_php_gdlib' => '<p class="error"><strong>&#33;</strong> The GD extension is not activated!</p>',
+	'success_php_gdlib' => '<p class="success"><strong>&#10003;</strong> The GD extension is activated.</p>',
+
+	'desc_php_mbstring' => 'For optimal performance in productive operation, the PHP multibyte extension must be enabled for Smarty.',
+	'attention_php_mbstring' => '<p class="attention"><strong>&#8505;</strong> The Multibyte extension is not activated!</p>',
+	'success_php_mbstring' => '<p class="success"><strong>&#10003;</strong> The Multibyte extension is activated.</p>',
 
 	// output "Other"
 	'h2_other' => 'Other',
