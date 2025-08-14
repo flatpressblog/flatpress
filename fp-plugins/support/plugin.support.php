@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Support
  * Description: Shows support data in the Maintain menu. Part of the standard distribution.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
  * Author URI: https://flatpress.org
@@ -105,24 +105,22 @@ if (class_exists('AdminPanelAction')) {
 			global $fp_config;
 
 			$BASE_DIR = defined('BASE_DIR') ? BASE_DIR : null;
-
 			$setupfile = $BASE_DIR !== null ? $BASE_DIR . '/setup.php' : null;
-
 			$LANG_DEFAULT = defined('LANG_DEFAULT') ? LANG_DEFAULT : null;
-
 			$langId = $fp_config ['locale'] ['lang'] ?? null;
-
 			$charset = $fp_config ['locale'] ['charset'] ?? null;
-
 			$theme = $fp_config ['general'] ['theme'] ?? null;
-
 			$style = $fp_config ['general'] ['style'] ?? null;
-
 			$BLOG_BASEURL = $fp_config ['general'] ['www'] ?? null;
-
 			$lang = lang_load('plugin:support');
 
 			$support = [];
+			$support ['output_LANG_DEFAULT'] = '';
+			$support ['output_lang'] = '';
+			$support ['output_charset'] = '';
+			$support ['output_theme'] = '';
+			$support ['output_style'] = '';
+			$support ['output_plugins'] = '';
 
 			/**
 			 * prepare output "Setup"
@@ -188,7 +186,7 @@ if (class_exists('AdminPanelAction')) {
 			if (function_exists('gmdate')) {
 				$support ['output_global_date_time'] = gmdate('Y-m-d H:i:s') . '</p>';
 			} else {
-				$support ['output_local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['neg_global_date_time'];
+				$support ['output_global_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['neg_global_date_time'];
 			}
 
 			$support ['local_date_time'] = $lang ['admin'] ['maintain'] ['support'] ['local_date_time'];
@@ -505,6 +503,13 @@ if (class_exists('AdminPanelAction')) {
 				$support ['php_gdlib'] = $lang ['admin'] ['maintain'] ['support'] ['success_php_gdlib'];
 			} else {
 				$support ['php_gdlib'] = $lang ['admin'] ['maintain'] ['support'] ['error_php_gdlib'];
+			}
+
+			$support ['desc_php_mbstring'] = $lang ['admin'] ['maintain'] ['support'] ['desc_php_mbstring'];
+			if (function_exists('mb_get_info')) {
+				$support ['php_mbstring'] = $lang ['admin'] ['maintain'] ['support'] ['success_php_mbstring'];
+			} else {
+				$support ['php_mbstring'] = $lang ['admin'] ['maintain'] ['support'] ['attention_php_mbstring'];
 			}
 
 			/**

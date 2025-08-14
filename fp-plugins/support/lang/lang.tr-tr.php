@@ -138,12 +138,16 @@ $lang['admin']['maintain']['support'] = array(
 	'h3_extensions' => 'Eklentiler',
 
 	'desc_php_intl' => 'PHP-Intl eklentisi etkinleştirilmelidir.',
-	'error_php_intl' => '<p class="error"><strong>&#33;</strong> intl eklentisi etkinleştirilmemiş!</p>',
-	'success_php_intl' => '<p class="success"><strong>&#10003;</strong> intl eklentisi etkinleştirildi.</p>',
+	'error_php_intl' => '<p class="error"><strong>&#33;</strong> Intl eklentisi etkinleştirilmemiştir!</p>',
+	'success_php_intl' => '<p class="success"><strong>&#10003;</strong> Intl uzantısı etkinleştirilmiştir.</p>',
 
-	'desc_php_gdlib' => 'GDlib eklentisi, resim küçük resimleri oluşturmak için etkinleştirilmelidir.',
-	'error_php_gdlib' => '<p class="error"><strong>&#33;</strong> GD eklentisi etkinleştirilmemiş!</p>',
-	'success_php_gdlib' => '<p class="success"><strong>&#10003;</strong> GD eklentisi etkinleştirildi.</p>',
+	'desc_php_gdlib' => 'Görüntü küçük resimleri oluşturmak için GDlib uzantısı etkinleştirilmelidir.',
+	'error_php_gdlib' => '<p class="error"><strong>&#33;</strong> GD uzantısı etkinleştirilmemiştir!</p>',
+	'success_php_gdlib' => '<p class="success"><strong>&#10003;</strong> GD uzantısı etkinleştirilmiştir.</p>',
+
+	'desc_php_mbstring' => 'Üretken çalışmada optimum performans için, Smarty için PHP multibyte uzantısı etkinleştirilmelidir.',
+	'attention_php_mbstring' => '<p class="attention"><strong>&#8505;</strong> Multibyte uzantısı etkinleştirilmemiştir!</p>',
+	'success_php_mbstring' => '<p class="success"><strong>&#10003;</strong> Multibyte uzantısı etkinleştirilmiştir.</p>',
 
 	// "Diğer" çıktısı
 	'h2_other' => 'Diğer',
