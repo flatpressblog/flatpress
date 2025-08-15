@@ -96,10 +96,25 @@ class admin_entry_commentcenter extends AdminPanelAction {
 		if (!function_exists('plugin_jquery_head')) {
 			return;
 		}
-		$src1 = plugin_geturl('commentcenter') . 'res/ajax.js';
-		$src2 = BLOG_BASEURL . 'admin.php?jslang=commentcenter';
-		echo '<script type="text/javascript" src="' . $src1 . "\"></script>\n";
-		echo '<script type="text/javascript" src="' . $src2 . "\"></script>\n";
+		global $fp_config;
+		$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+
+		$raw1 = plugin_geturl('commentcenter') . 'res/ajax.js';
+		$raw2 = BLOG_BASEURL . 'admin.php?jslang=commentcenter';
+
+		$ver1 = function_exists('utils_asset_ver') ? utils_asset_ver($raw1) : $raw1;
+		$ver2 = function_exists('utils_asset_ver') ? utils_asset_ver($raw2, defined('SYSTEM_VER') ? SYSTEM_VER : null) : $raw2 . (strpos($raw2, '?') === false ? '?' : '&') . 'v=' . (defined('SYSTEM_VER') ? rawurlencode(SYSTEM_VER) : time());
+
+		$nonce = defined('RANDOM_HEX') ? RANDOM_HEX : '';
+		$nonceAttr = $nonce !== '' ? ' nonce="' . htmlspecialchars($nonce, ENT_QUOTES, $charset) . '"' : '';
+
+		$s1 = htmlspecialchars($ver1, ENT_QUOTES, $charset);
+		$s2 = htmlspecialchars($ver2, ENT_QUOTES, $charset);
+
+		echo '
+			<script' . $nonceAttr . ' src="' . $s1 . '"></script>
+			<script' . $nonceAttr . ' src="' . $s2 . '"></script>
+		';
 	}
 
 	/**

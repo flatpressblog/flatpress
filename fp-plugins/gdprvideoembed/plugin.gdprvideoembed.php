@@ -17,9 +17,7 @@ function plugin_gdprvideoembed_head() {
 	lang_load('plugin:gdprvideoembed');
 
 	// Ensure that the language variables are correctly available as arrays
-	$lang_plugin = isset($lang ['plugin'] ['gdprvideoembed']) && is_array($lang ['plugin'] ['gdprvideoembed'])
-		? $lang ['plugin'] ['gdprvideoembed']
-		: [];
+	$lang_plugin = isset($lang ['plugin'] ['gdprvideoembed']) && is_array($lang ['plugin'] ['gdprvideoembed']) ? $lang ['plugin'] ['gdprvideoembed'] : [];
 
 	// Language variables with fallback values and type checking
 	$link = isset($lang_plugin ['link']) && is_string($lang_plugin ['link']) ? $lang_plugin ['link'] : 'Link';
@@ -42,10 +40,13 @@ function plugin_gdprvideoembed_head() {
 	$random_hex = RANDOM_HEX;
 	$plugindir = plugin_geturl('gdprvideoembed');
 
+	$css = utils_asset_ver($plugindir . 'res/gdpr-video-embed.css.php', SYSTEM_VER);
+	$js = utils_asset_ver($plugindir . 'res/gdpr-video-embed.js', SYSTEM_VER);
+
 	echo '
 		<!-- BOF GDPR Video embed -->
-		<link rel="stylesheet" type="text/css" href="' . $plugindir . 'res/gdpr-video-embed.css.php">
-		<script nonce="' . $random_hex . '" src="' . $plugindir . 'res/gdpr-video-embed.js"></script>
+		<link rel="stylesheet" type="text/css" href="' . $css . '">
+		<script nonce="' . $random_hex . '" src="' . $js . '"></script>
 		<script nonce="' . $random_hex . '">
 			/**
 			 * GDPR-Video-Embed | dynamic part
@@ -57,13 +58,11 @@ function plugin_gdprvideoembed_head() {
 						'<a class="video-link" href="https://youtu.be/%id%" rel="noopener" target="_blank" ' . //
 						'title="' . $link_title_youtube . '">' . $link . ': https://youtu.be/%id%</a>' . //
 						'<button title="' . $button_title . '">' . $button . '</button>\',
-
 					vimeo: \'<strong>' . $head_vimeo . '</strong>' . //
 						'<div>' . $hint_vimeo . '</div>' . //
 						'<a class="video-link" href="https://vimeo.com/%id%" rel="noopener" target="_blank" ' . //
 						'title="' . $link_title_vimeo . '">' . $link . ': https://vimeo.com/%id%</a>' . //
 						'<button title="' . $button_title . '">' . $button . '</button>\',
-
 					facebook: \'<strong>' . $head_facebook . '</strong>' . //
 						'<div>' . $hint_facebook . '</div>' . //
 						'<a class="video-link" href="%video_url%" rel="noopener" target="_blank" ' . //

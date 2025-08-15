@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Plugin Name: CookieBanner
  * Plugin URI: https://flatpress.org
  * Description: Displays a discreet banner that informs the visitor about the use of cookies and provides a link to the <a href="./admin.php?p=static&action=write&page=privacy-policy" title="Edit me!" >privacy policy</a>. Part of the standard distribution. <a href="#" id="DeleteCookie" title="Reset CookieBanner">[Reset]</a>
@@ -10,11 +10,13 @@
 function plugin_cookiebanner_head() {
 	$pdir = plugin_geturl('cookiebanner');
 	$random_hex = RANDOM_HEX;
+	$css = utils_asset_ver($pdir . 'res/cookiebanner.css', SYSTEM_VER);
+	$js = utils_asset_ver($pdir . 'res/cookiebanner.js', SYSTEM_VER);
 	echo '
-		<!-- BOF CookieBanner CSS -->
-		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/cookiebanner.css">
-		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/cookiebanner.js"></script>
-		<!-- EOF Cookiebanner CSS -->
+		<!-- BOF CookieBanner -->
+		<link rel="stylesheet" type="text/css" href="' . $css . '">
+		<script nonce="' . $random_hex . '" src="' . $js . '" defer></script>
+		<!-- EOF Cookiebanner -->
 ';
 }
 

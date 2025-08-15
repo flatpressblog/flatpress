@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Plugin Name: RSS and Atom Feed
  * Version: 1.0.1
  * Plugin URI: https://www.flatpress.org
@@ -9,14 +8,20 @@
  * Description: Activates feed buttons in the <a href="./admin.php?p=widgets" title="Widget menu">widget menu</a>. Part of the standard distribution.
  */
 
-
-function plugin_feed_head() { // stytesheet-file
+function plugin_feed_head() { // stylesheet-file
 	$pdir = plugin_geturl('feed');
+	$raw  = $pdir . 'res/feed.css.php';
+
+	if (function_exists('utils_asset_ver')) {
+		$href = utils_asset_ver($raw, defined('SYSTEM_VER') ? SYSTEM_VER : null);
+	} else {
+		$href = $raw . ((strpos($raw, '?') === false) ? '?' : '&') . 'v=' . (defined('SYSTEM_VER') ? rawurlencode(SYSTEM_VER) : time());
+	}
 
 	echo '
-	<!-- BOF Feed-Button Stylesheet -->
-	<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/feed.css.php">
-	<!-- EOF Feed Stylesheet  -->
+		<!-- BOF Feed-Button Stylesheet -->
+		<link rel="stylesheet" type="text/css" href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '">
+		<!-- EOF Feed Stylesheet -->
 	';
 }
 

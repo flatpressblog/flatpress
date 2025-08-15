@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="{$mmurl}res/style.css" />
+<link rel="stylesheet" type="text/css" href="{($mmurl|cat:'res/style.css')|ver:$smarty.const.SYSTEM_VER}">
 <h2>{$plang.head}</h2>
 <p>{$plang.description}</p>
 {include file="shared:errorlist.tpl"}
@@ -19,7 +19,7 @@
 	</thead>
 	<tbody>
 {if $currentgallery!=""}
-    <tr><td>&nbsp;</td>
+	<tr><td>&nbsp;</td>
 		<td class="main-cell type-gallery" colspan="5">
 			<a class="link-general" href="admin.php?p=uploader&action=mediamanager">{$plang.up}</a>
 		</td>
@@ -91,20 +91,20 @@
 	
 
 <p>
-    {$plang.selected}:
-    <select name='action'>
-        <option value='-'>{$plang.selectaction}</option>
-        {foreach from=$dwgalleries item=v}
-            <option value='atg-{$v.name}'>{$plang.addtogallery} '{$v.name}'</option>
-        {/foreach}
-    </select>
-	<input type="submit" name="mm-addto" value="{$plang.go}"/>
+	{$plang.selected}:
+	<select name='action'>
+		<option value='-'>{$plang.selectaction}</option>
+		{foreach from=$dwgalleries item=v}
+			<option value='atg-{$v.name}'>{$plang.addtogallery} '{$v.name}'</option>
+		{/foreach}
+	</select>
+	<input type="submit" name="mm-addto" value="{$plang.go}">
 </p>
 <p>
 	<label>{$plang.newgallery}:
-	<input type="text" name="mm-newgallery-name" />
+	<input type="text" name="mm-newgallery-name">
 	</label>
-	<input type="submit" name="mm-newgallery" value="{$plang.add}"/>
+	<input type="submit" name="mm-newgallery" value="{$plang.add}">
 </p>
 
 {/html_form}

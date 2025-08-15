@@ -268,18 +268,24 @@ class PhotoSwipeFunctions {
 	static function pswpHead() {
 		$random_hex = RANDOM_HEX;
 		$pdir = plugin_geturl('photoswipe');
-		echo '<!-- BOF PhotoSwipe head -->
-';
+		$jQueryOldJs = utils_asset_ver($pdir . 'res/jquery-2.2.2/jquery-2.2.2.min.js', SYSTEM_VER);
+		$pswpUiJs = utils_asset_ver($pdir . 'res/photoswipe-4.1.3/photoswipe-ui-default.js', SYSTEM_VER);
+		$pswpJs = utils_asset_ver($pdir . 'res/photoswipe-4.1.3/photoswipe.js', SYSTEM_VER);
+		$pswpSkinCss = utils_asset_ver($pdir . 'res/photoswipe-4.1.3/default-skin/default-skin.css', SYSTEM_VER);
+		$pswpCss = utils_asset_ver($pdir . 'res/photoswipe-4.1.3/photoswipe.css', SYSTEM_VER);
+		echo '
+		<!-- BOF PhotoSwipe head -->';
 		if (!function_exists('plugin_jquery_head')) {
-			echo '<script nonce="' . $random_hex . '" src="' . $pdir . 'res/jquery-2.2.2/jquery-2.2.2.min.js"></script>
-';
+			echo '<script nonce="' . $random_hex . '" src="' . $jQueryOldJs . '"></script>
+		';
 		}
 		echo '
-	<script nonce="' . $random_hex . '" src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe-ui-default.js" defer></script>
-	<script nonce="' . $random_hex . '" src="' . $pdir . 'res/photoswipe-4.1.3/photoswipe.js" defer></script>
-	<link rel="stylesheet" property="stylesheet" href="' . $pdir . 'res/photoswipe-4.1.3/default-skin/default-skin.css">
-	<link media="screen" href="' . $pdir . 'res/photoswipe-4.1.3/photoswipe.css" type="text/css" rel="stylesheet">
-	<!-- EOF PhotoSwipe head -->';
+		<script nonce="' . $random_hex . '" src="' . $pswpUiJs . '" defer></script>
+		<script nonce="' . $random_hex . '" src="' . $pswpJs . '" defer></script>
+		<link rel="stylesheet" property="stylesheet" href="' . $pswpSkinCss . '">
+		<link media="screen" href="' . $pswpCss . '" type="text/css" rel="stylesheet">
+		<!-- EOF PhotoSwipe head -->
+		';
 	}
 
 	/**

@@ -76,13 +76,15 @@ class plugin_archives_monthlist extends fs_filelister {
 function plugin_archives_head() {
 	$random_hex = RANDOM_HEX;
 	$pdir = plugin_geturl('archives');
+	$css = utils_asset_ver($pdir . 'res/togglearchive.css', SYSTEM_VER);
+	$js = utils_asset_ver($pdir . 'res/togglearchive.js', SYSTEM_VER);
 	global $PLUGIN_ARCHIVES_MONTHLIST;
 	$PLUGIN_ARCHIVES_MONTHLIST = new plugin_archives_monthlist();
 
 	echo '
 		<!-- archives -->
-		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/togglearchive.js" defer></script>
-		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/togglearchive.css">
+		<script nonce="' . $random_hex . '" src="' . $js . '" defer></script>
+		<link rel="stylesheet" type="text/css" href="' . $css . '">
 	';
 
 	foreach ($PLUGIN_ARCHIVES_MONTHLIST->getList() as $y => $months) {

@@ -1,6 +1,7 @@
 <?php
 // includes.php
 // This is just a list of all the standard includes
+require_once INCLUDES_DIR . 'core.smarty.php';
 require_once INCLUDES_DIR . 'core.utils.php';
 
 // Smarty 5 without Composer: Load PSR-4 stub – automatically finds/pulls the stub
