@@ -71,12 +71,14 @@ plugin_bbcode_startup();
 function plugin_bbcode_head() {
 	$plugindir = plugin_geturl('bbcode');
 	$random_hex = RANDOM_HEX;
+	$css = utils_asset_ver($plugindir . 'res/bbcode.css', SYSTEM_VER);
+	$js = utils_asset_ver($plugindir . 'res/editor.js', SYSTEM_VER);
 
 	echo '
-		<!-- bbcode plugin -->
-		<link rel="stylesheet" type="text/css" href="' . $plugindir . 'res/bbcode.css">
-		<script nonce="' . $random_hex . '" src="' . $plugindir . 'res/editor.js"></script>
-		<!-- end of bbcode plugin -->';
+		<!-- BOF bbcode plugin -->
+		<link rel="stylesheet" type="text/css" href="' . $css . '">
+		<script nonce="' . $random_hex . '" src="' . $js . '" defer></script>
+		<!-- EOF bbcode plugin -->';
 }
 add_action('wp_head', 'plugin_bbcode_head');
 

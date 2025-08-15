@@ -635,166 +635,6 @@ function utils_geturl($url) {
 	return $header;
 }
 
-/**
- * Internal Bootstrap error output, usable before core.system.php is loaded.
- * Uses system_failure() if available, otherwise plain text 500.
- */
-function utils_boot_failure($msg) {
-	if (function_exists('system_failure')) {
-		system_failure($msg);
-	}
-	if (!headers_sent()) {
-		header('HTTP/1.1 500 Internal Server Error');
-		header('Content-Type: text/plain; charset=utf-8');
-	}
-	echo "FlatPress bootstrap error: " . (string)$msg;
-	exit(1);
-}
-
-/**
- * Finds the non-Composer stub of Smarty 5 under fp-includes/smarty-X.X.X/libs/Smarty.class.php
- * and returns [path, version string] or [null, null].
- */
-function utils_smarty_find_stub() {
-	$base = rtrim(ABS_PATH . FP_INCLUDES, '/\\');
-	$dirs = @glob($base . '/smarty-*', GLOB_ONLYDIR | GLOB_NOSORT);
-	$bestStub = null;
-	$bestVer  = null;
-	if (is_array($dirs)) {
-		foreach ($dirs as $dir) {
-			$name = basename($dir); // e.g. smarty-5.5.1
-			if (preg_match('/^smarty-(\d+\.\d+\.\d+)/', $name, $m)) {
-				$ver  = $m [1];
-				$stub = rtrim($dir, '/\\') . '/libs/Smarty.class.php';
-				if (is_file($stub) && is_readable($stub)) {
-					if ($bestVer === null || version_compare($ver, $bestVer, '>')) {
-						$bestVer  = $ver;
-						$bestStub = $stub;
-					}
-				}
-			}
-		}
-	}
-	return array($bestStub, $bestVer);
-}
-
-/**
- * Checks and loads Smarty 5 (without Composer). Ensures that at least $minVersion is available.
- * Uses the PSR-4 stub from fp-includes/smarty-X.X.X/libs/Smarty.class.php.
- */
-function utils_checksmarty($minVersion = '5.5.1') {
-	// Class already there? (e.g., because it was manually integrated beforehand)
-	if (!class_exists('\\Smarty\\Smarty', false)) {
-		list($stub, $verFromDir) = utils_smarty_find_stub();
-		if (!$stub) {
-			utils_boot_failure('Smarty 5 stub not found. Expected under ' . ABS_PATH . FP_INCLUDES . 'smarty-*/libs/Smarty.class.php'
-			);
-		}
-		require_once $stub;
-	}
-
-	// After the require, the class must exist.
-	if (!class_exists('\\Smarty\\Smarty')) {
-		utils_boot_failure('Smarty 5 could not be loaded (\\Smarty\\Smarty is missing).');
-	}
-
-	// Determine version: prefers class constant, otherwise fallback from directory name
-	$detected = null;
-	if (defined('Smarty\\Smarty::SMARTY_VERSION')) { // PHP 7.2+: class constant check
-		$detected = \Smarty\Smarty::SMARTY_VERSION;
-	} else {
-		// If utils_smarty_find_stub() ran before, we use its version.
-		if (!isset($verFromDir)) {
-			list(, $verFromDir) = utils_smarty_find_stub();
-		}
-		if ($verFromDir) {
-			$detected = $verFromDir;
-		}
-	}
-
-	// Check minimum version (only if determinable)
-	if ($detected !== null && version_compare($detected, $minVersion, '<')) {
-		utils_boot_failure(sprintf('Smarty too old: %s found, >= %s required', $detected, $minVersion));
-	}
-}
-
-/**
- * Register FlatPress Smarty plugins without using addPluginsDir() (deprecated in Smarty 5).
- * Scans $dir for classic plugin filenames and registers them via registerPlugin()/registerFilter().
- * Compatible with PHP 7.2–8.4.
- */
-function fp_register_fp_plugins(\Smarty\Smarty $smarty, string $dir): void {
-	if (!is_dir($dir)) {
-		return;
-	}
-	$dh = @opendir($dir);
-	if (!$dh) {
-		return;
-	}
-	while (($file = readdir($dh)) !== false) {
-		if ($file === '.' || $file === '..' || $file [0] === '.') {
-			continue;
-		}
-		$path = $dir . DIRECTORY_SEPARATOR . $file;
-		if (!is_file($path) || pathinfo($path, PATHINFO_EXTENSION) !== 'php') {
-			continue;
-		}
-
-		// Classic plugin files: function.|modifier.|block.|compiler.|modifiercompiler.
-		if (preg_match('/^(function|modifier|block|compiler|modifiercompiler)\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
-			require_once $path;
-			$type = $m [1];
-			$name = $m [2];
-			switch ($type) {
-				case 'function':
-					$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_FUNCTION, $name, 'smarty_function_' . $name);
-					break;
-				case 'block':
-					$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_BLOCK, $name, 'smarty_block_' . $name);
-					break;
-				case 'modifier':
-					$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_MODIFIER, $name, 'smarty_modifier_' . $name);
-					break;
-				case 'modifiercompiler':
-					$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_MODIFIERCOMPILER, $name, 'smarty_modifiercompiler_' . $name);
-					break;
-				case 'compiler':
-					$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_COMPILER, $name, 'smarty_compiler_' . $name);
-					break;
-			}
-			continue;
-		}
-
-		// Filters: prefilter.|postfilter.|outputfilter.|variablefilter.
-		if (preg_match('/^(pre|post|output|variable)filter\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
-			require_once $path;
-			$kind = $m [1]; // pre|post|output|variable
-			$name = $m [2];
-			$smarty->registerFilter($kind, 'smarty_' . $kind . 'filter_' . $name);
-			continue;
-		}
-
-		// Shared helpers used by other plugins (no registration, just load)
-		if (preg_match('/^shared\.([A-Za-z0-9_]+)\.php$/', $file)) {
-			require_once $path;
-			continue;
-		}
-
-		// Validation helpers (no direct registration, just make functions/classes available)
-		if (preg_match('/^validate_[A-Za-z0-9_.]+\.(php)$/', $file)) {
-			require_once $path;
-			continue;
-		}
-
-		// Inserts are removed in Smarty 5 – soft warning for plugin authors.
-		if (preg_match('/^insert\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
-			@trigger_error('Smarty insert plugin "' . $m [1] . '" is not supported in Smarty 5; convert to a function plugin.', E_USER_DEPRECATED);
-			continue;
-		}
-	}
-	closedir($dh);
-}
-
 function fplog($str) {
 	if (!defined('DEBUG_MODE')) {
 		echo "\n[DEBUG] " . $str . " \n";
@@ -820,4 +660,76 @@ function utils_array_kshift(&$arr) {
 	return $r;
 }
 
+/**
+ * Versioned asset URLs (JS/CSS/images) via query parameter v=…
+ * Priority: $version (explicit) > filemtime (local file) > SYSTEM_VER (fallback).
+ *
+ * @param string      $path     URL or path (relative or absolute, with/without schema)
+ * @param string|null $version  Force specific version (e.g., build/release number)
+ * @return string     Versioned URL
+ */
+function utils_asset_ver(string $path, $version = null): string {
+	if ($path === '') {
+		return '';
+	}
+
+	// Explicit version takes precedence
+	$ver = (is_string($version) && $version !== '') ? (string)$version : null;
+
+	// If no version is specified: try mtime of local file
+	if ($ver === null) {
+		$u = @parse_url($path);
+		$p = $u ['path'] ?? $path;
+		if (defined('ABS_PATH')) {
+			$file = rtrim(ABS_PATH, "/\\") . '/' . ltrim($p, "/\\");
+			if (is_file($file)) {
+				$m = @filemtime($file);
+				if ($m) {
+					$ver = (string)$m;
+				}
+			}
+		}
+	}
+
+	// Fallback: FlatPress system version
+	if ($ver === null && defined('SYSTEM_VER')) {
+		$ver = (string)SYSTEM_VER;
+	}
+
+	// If still nothing: return original path
+	if ($ver === null || $ver === '') {
+		return $path;
+	}
+
+	return utils_url_set_query_param($path, 'v', $ver);
+}
+
+/**
+ * Sets/replaces a query parameter in a URL (RFC-3986).
+ */
+function utils_url_set_query_param(string $url, string $key, string $value): string {
+	$u = @parse_url($url);
+	if ($u === false) {
+		// Fallback: simply append
+		return $url . (strpos($url, '?') === false ? '?' : '&') . rawurlencode($key) . '=' . rawurlencode($value);
+	}
+	$scheme = isset($u ['scheme']) ? $u ['scheme'] . '://' : '';
+	$auth = '';
+	if (isset($u ['user'])) {
+		$auth = $u ['user'];
+		if (isset($u ['pass'])) $auth .= ':' . $u ['pass'];
+		$auth .= '@';
+	}
+	$host = $u ['host'] ?? '';
+	$port = isset($u ['port']) ? ':' . $u ['port'] : '';
+	$path = $u ['path'] ?? '';
+	$qArr = [];
+	if (!empty($u ['query'])) {
+		parse_str($u ['query'], $qArr);
+	}
+	$qArr [$key] = $value;
+	$query = http_build_query($qArr, '', '&', PHP_QUERY_RFC3986);
+	$frag = isset($u ['fragment']) ? '#' . $u ['fragment'] : '';
+	return $scheme . $auth . $host . $port . $path . ($query !== '' ? '?' . $query : '') . $frag;
+}
 ?>

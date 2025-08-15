@@ -165,32 +165,51 @@ function theme_wp_head() {
 function theme_head_stylesheet() {
 	global $fp_config, $theme;
 
-	echo "\n<!-- FP STD STYLESHEET -->\n";
+	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
 
-	// echo '<link media="screen,projection,handheld" href="';
-	echo '<link media="screen" href="';
-	echo BLOG_BASEURL . THEMES_DIR . THE_THEME;
+	echo '
+		<!-- FP STD STYLESHEET -->';
 
 	$css = defined('MOD_ADMIN_PANEL') ? $theme ['style'] ['style_admin'] : $theme ['style'] ['style_def'];
-
 	$substyle = '/' . (isset($fp_config ['general'] ['style']) ? $fp_config ['general'] ['style'] . '/' : '');
+	$base = BLOG_BASEURL . THEMES_DIR . THE_THEME . $substyle . 'res/';
 
-	echo $substyle . 'res/' . $css . '" type="text/css" rel="stylesheet">';
+	$raw_screen = $base . $css;
+	if (function_exists('utils_asset_ver')) {
+		$explicit = isset($theme ['version']) ? (string)$theme ['version'] : null;
+		$href_screen = utils_asset_ver($raw_screen, $explicit);
+	} else {
+		$href_screen = $raw_screen . ((strpos($raw_screen, '?') === false) ? '?' : '&') . 'v=' . (defined('SYSTEM_VER') ? rawurlencode(SYSTEM_VER) : time());
+	}
+	echo '
+		<link media="screen" href="' . htmlspecialchars($href_screen, ENT_QUOTES, $charset) . '" type="text/css" rel="stylesheet">';
 
-	if (@$theme ['style'] ['style_print']) {
-		echo '<link media="print" href="';
-		echo BLOG_BASEURL . THEMES_DIR . THE_THEME;
-		echo $substyle . 'res/' . $theme ['style'] ['style_print'] . '" type="text/css" rel="stylesheet">';
+	if (!empty(@$theme ['style'] ['style_print'])) {
+		$raw_print = $base . @$theme ['style'] ['style_print'];
+		if (function_exists('utils_asset_ver')) {
+			$href_print = utils_asset_ver($raw_print);
+		} else {
+			$href_print = $raw_print . ((strpos($raw_print, '?') === false) ? '?' : '&') . 'v=' . (defined('SYSTEM_VER') ? rawurlencode(SYSTEM_VER) : time());
+		}
+		echo '<link media="print" href="' . htmlspecialchars($href_print, ENT_QUOTES, $charset) . '" type="text/css" rel="stylesheet">';
 	}
 
-	echo "\n<!-- FP STD STYLESHEET -->\n";
+	echo '
+		<!-- FP STD STYLESHEET -->
+	';
 }
 
 function admin_head_action() {
-	global $theme;
-	if (!$theme ['admin_custom_interface']) {
-		echo '<link media="screen" href="' . BLOG_BASEURL . 'admin/res/admin.css" type="text/css" rel="stylesheet">';
+	global $fp_config, $theme;
+
+	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
+	$raw = BLOG_BASEURL . 'admin/res/admin.css';
+	if (function_exists('utils_asset_ver')) {
+		$href = utils_asset_ver($raw);
+	} else {
+		$href = $raw . ((strpos($raw, '?') === false) ? '?' : '&') . 'v=' . (defined('SYSTEM_VER') ? rawurlencode(SYSTEM_VER) : time());
 	}
+	echo '<link media="screen" href="' . htmlspecialchars($href, ENT_QUOTES, $charset) . '" type="text/css" rel="stylesheet">';
 }
 
 add_filter('admin_head', 'admin_head_action');

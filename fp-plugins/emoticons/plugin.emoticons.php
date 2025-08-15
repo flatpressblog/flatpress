@@ -78,14 +78,16 @@ function plugin_emoticons_filter ($emostring) {
 
 // Css and js file
 function plugin_emoticons_head() {
-	global $plugin_emoticons;
+	global $plugin_emoticons, $buttonData;
 	$random_hex = RANDOM_HEX;
 	$pdir = plugin_geturl('emoticons');
+	$css = utils_asset_ver($pdir . 'res/emoticons.css', SYSTEM_VER);
+	$js = utils_asset_ver($pdir . 'res/emoticons.js', SYSTEM_VER);
 
 	$buttonData = [];
 	foreach ($plugin_emoticons as $emoText => $emoticon) {
 		$elementById = emoticon_id($emoText);
-		$buttonData[] = [
+		$buttonData [] = [
 			'id' => $elementById,
 			'text' => $emoText,
 			'icon' => $emoticon,
@@ -94,8 +96,18 @@ function plugin_emoticons_head() {
 
 	echo '
 		<!-- BOF Emoticons -->
-		<link rel="stylesheet" type="text/css" href="' . $pdir . 'res/emoticons.css">
-		<script nonce="' . $random_hex . '" src="' . $pdir . 'res/emoticons.js"></script>
+		<link rel="stylesheet" type="text/css" href="' . $css . '">
+		<script nonce="' . $random_hex . '" src="' . $js . '" defer></script>
+		<!-- EOF Emoticons -->
+	';
+}
+
+function plugin_emoticons_footer() {
+	global $buttonData;
+	$random_hex = RANDOM_HEX;
+
+	echo '
+		<!-- BOF Emoticons -->
 		<script nonce="' . $random_hex . '">
 			/**
 			 * Emoticons Plugin
@@ -104,7 +116,6 @@ function plugin_emoticons_head() {
 			document.addEventListener(\'DOMContentLoaded\', function() {
 				const existingEmoIds = buttonData.map(item => item.id);
 				const allEmoIdsExist = existingEmoIds.every(id => document.getElementById(id) !== null);
-
 				if (allEmoIdsExist) {
 					registerEmoticonButtons(buttonData);
 				}
@@ -121,6 +132,8 @@ function emoticon_id($text) {
 
 // register emoticon head
 add_action('wp_head', 'plugin_emoticons_head', 10);
+// register emoticon footer
+add_action('wp_footer', 'plugin_emoticons_footer', 10);
 // register editor toolbar
 add_filter('simple_toolbar_form', 'plugin_emoticons');
 // register to the hook

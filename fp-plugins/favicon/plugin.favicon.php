@@ -9,46 +9,76 @@
  */
 
 function plugin_favicon_head() {
+	global $fp_config;
+	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
 
 	// Google Search, for example, only supports one favicon per website, whereby a website is defined by the host name.
 	// If an icon is in the main directory, do not load it, but redirect it temporarily!!!
 	redir_favicon();
 
-	// Indicates the version of the symbol. Increase it by one when you change the image ($v = '?v=3', $v = '?v=4', etc.).
+	// Indicates the version of the symbol.
 	// The browser will then immediately display the latest version.
-	$v = '?v=2';
+	$p = plugin_geturl('favicon') . 'imgs/';
+	$ver = function (string $url, $force = null): string {
+		if (function_exists('utils_asset_ver')) {
+			return utils_asset_ver($url, $force);
+		}
+		$sep = (strpos($url, '?') === false) ? '?' : '&';
+		$v = ($force !== null) ? (string)$force : (defined('SYSTEM_VER') ? (string)SYSTEM_VER : (string)time());
+		return $url . $sep . 'v=' . rawurlencode($v);
+	};
+	$e = function (string $s) use ($charset): string {
+		return htmlspecialchars($s, ENT_QUOTES, $charset);
+	};
+
+	$apple180 = $ver($p . 'apple-touch-icon.png');
+	$apple152 = $ver($p . 'apple-touch-icon-152x152.png');
+	$apple120 = $ver($p . 'apple-touch-icon-120x120.png');
+	$apple76 = $ver($p . 'apple-touch-icon-76x76.png');
+	$apple60 = $ver($p . 'apple-touch-icon-60x60.png');
+	$applePre = $ver($p . 'apple-touch-icon-precomposed.png');
+	$and256 = $ver($p . 'android-chrome-256x256.png');// For Android home screen
+	$and192 = $ver($p . 'android-chrome-192x192.png');
+	$png32 = $ver($p . 'favicon-32x32.png');
+	$png16 = $ver($p . 'favicon-16x16.png');
+	$icoMulti = $ver($p . 'favicon.ico'); // FlatPress multilayer icon
+	$safari = $ver($p . 'safari-pinned-tab.svg'); // Mask icon for Safari pinned tabs
+	$manifest = $ver($p . 'site.webmanifest.json.php', defined('SYSTEM_VER') ? SYSTEM_VER : null); // This file must be located in the imgs directory!
+	$msconfig = $ver($p . 'browserconfig.xml.php', defined('SYSTEM_VER') ? SYSTEM_VER : null);
+	$mstile = $ver($p . 'mstile-144x144.png');
 
 	echo '
 		<!-- BOF FavIcon -->
 		' . //
 
 		// Smartphone iOS Safari
-		'<link rel="apple-touch-icon" sizes="180x180" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon.png' . $v . '">' . //
-		'<link rel="apple-touch-icon" sizes="152x152" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-152x152.png' . $v . '">' . //
-		'<link rel="apple-touch-icon" sizes="120x120" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-120x120.png' . $v . '">' . //
-		'<link rel="apple-touch-icon" sizes="76x76" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-76x76.png' . $v . '">' . //
-		'<link rel="apple-touch-icon" sizes="60x60" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-60x60.png' . $v . '">' . //
-		'<link rel="apple-touch-icon-precomposed" sizes="180x180" href="' . plugin_geturl('favicon') . 'imgs/apple-touch-icon-precomposed.png' . $v . '">' . //
+		'<link rel="apple-touch-icon" sizes="180x180" href="' . $e($apple180) . '">' . //
+		'<link rel="apple-touch-icon" sizes="152x152" href="' . $e($apple152) . '">' . //
+		'<link rel="apple-touch-icon" sizes="120x120" href="' . $e($apple120) . '">' . //
+		'<link rel="apple-touch-icon" sizes="76x76" href="' . $e($apple76)  . '">' . //
+		'<link rel="apple-touch-icon" sizes="60x60" href="' . $e($apple60)  . '">' . //
+		'<link rel="apple-touch-icon-precomposed" sizes="180x180" href="' . $e($applePre) . '">' . //
 
 		// Smartphone Android Chrome
-		'<link rel="icon" type="image/png" sizes="256x256" href="' . plugin_geturl('favicon') . 'imgs/android-chrome-256x256.png' . $v . '">' . // For Android home screen
-		'<link rel="icon" type="image/png" sizes="192x192" href="' . plugin_geturl('favicon') . 'imgs/android-chrome-192x192.png' . $v . '">' . //
-		'<link rel="icon" type="image/png" sizes="32x32" href="' . plugin_geturl('favicon') . 'imgs/favicon-32x32.png' . $v . '">' . //
-		'<link rel="icon" type="image/png" sizes="16x16" href="' . plugin_geturl('favicon') . 'imgs/favicon-16x16.png' . $v . '">' . //
-		'<link rel="manifest" href="' . plugin_geturl('favicon') . 'imgs/site.webmanifest.json.php' . $v . '">' . // This file must be located in the imgs directory!
+		'<link rel="icon" type="image/png" sizes="256x256" href="' . $e($and256) . '">' . //
+		'<link rel="icon" type="image/png" sizes="192x192" href="' . $e($and192) . '">' . //
+		'<link rel="icon" type="image/png" sizes="32x32" href="' . $e($png32) . '">' . //
+		'<link rel="icon" type="image/png" sizes="16x16" href="' . $e($png16) . '">' . //
+		'<link rel="manifest" href="' . $e($manifest) . '">' . //
 
 		// Mac OS Safari
-		'<link rel="mask-icon" href="' . plugin_geturl('favicon') . 'imgs/safari-pinned-tab.svg' . $v . '" color="#aa4142">' . // Mask icon for Safari pinned tabs
+		'<link rel="mask-icon" href="' . $e($safari) . '" color="#aa4142">' . //
 
-		// Classic/, desktop browsers
-		'<link rel="icon" sizes="16x16 32x32 48x48" href="' . plugin_geturl('favicon') . 'imgs/favicon.ico' . $v . '">' . // FlatPress multilayer icon
+		// Classic/desktop browsers
+		'<link rel="icon" sizes="16x16 32x32 48x48" href="' . $e($icoMulti) . '">' . //
 
 		// Windows 10 or higher
 		'<meta name="msapplication-TileColor" content="#b77b7b">' . //
-		'<meta name="msapplication-config" content="' . plugin_geturl('favicon') . 'imgs/browserconfig.xml.php' . $v . '">' . // This file must be located in the imgs directory!
-		'<meta name="msapplication-TileImage" content="' . plugin_geturl('favicon') . 'imgs/mstile-144x144.png' . $v . '">' . //
+		'<meta name="msapplication-config" content="' . $e($msconfig) . '">' . //
+		'<meta name="msapplication-TileImage" content="' . $e($mstile) . '">' . //
 
 		'<meta name="theme-color" content="#b77b7b">' . // Specify a color for the browser toolbar and the status bar on mobile devices
+
 		'
 		<!-- EOF FavIcon -->
 		';

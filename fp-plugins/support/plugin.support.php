@@ -82,12 +82,15 @@ if (class_exists('AdminPanelAction')) {
 	function plugin_support_head() {
 		$plugindir = plugin_geturl('support');
 		$random_hex = RANDOM_HEX;
+		$css = utils_asset_ver($plugindir . 'res/support.css', SYSTEM_VER);
+		$js = utils_asset_ver($plugindir . 'res/support.js', SYSTEM_VER);
 
 		echo '
-			<!-- BOF support files -->
-			<link rel="stylesheet" type="text/css" href="' . $plugindir . 'res/support.css">
-			<script nonce="' . $random_hex . '" src="' . $plugindir . 'res/support.js"></script>
-			<!-- EOF support files -->';
+		<!-- BOF support files -->
+		<link rel="stylesheet" type="text/css" href="' . $css . '">
+		<script nonce="' . $random_hex . '" src="' . $js . '" defer></script>
+		<!-- EOF support files -->
+		';
 	}
 
 	class admin_maintain_support extends AdminPanelAction {
