@@ -7,6 +7,7 @@
 - Template engine:
   - Smarty updated to version 5.5.1 with PHP 8.4 support ([#651](https://github.com/flatpressblog/flatpress/pull/651))<br><sub><i>
 Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte extension](https://www.php.net/manual/en/book.mbstring.php) in production for optimal performance.</i></sub>
+- The new Smarty Modifier ``|ver``  uses a new core function, utils_asset_ver(), to assign the FlatPress version to Java scripts and stylesheets. This ensures that the visitor's browser only uses the updated files. ([#629](https://github.com/flatpressblog/flatpress/issues/629))
 
 ## Plugins
 ### Changes
