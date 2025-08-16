@@ -4,12 +4,13 @@
 require_once INCLUDES_DIR . 'core.smarty.php';
 require_once INCLUDES_DIR . 'core.utils.php';
 
-// Smarty 5 without Composer: Load PSR-4 stub – automatically finds/pulls the stub
-utils_checksmarty('5.5.1');
+// Smarty without Composer: Load PSR-4 stub – automatically finds/fetches the latest stub
+utils_checksmarty();
 
-// Namespace class in v5
+// Namespace class
 $smarty = new \Smarty\Smarty();
 
+// Legacy alias for historical plugins/core code.
 $_FP_SMARTY = &$smarty;
 
 // FlatPress custom resources: Classes are NOT located in the Smarty namespace -> load explicitly
@@ -17,7 +18,7 @@ require_once FP_SMARTYPLUGINS_DIR . 'resource.admin.php';
 require_once FP_SMARTYPLUGINS_DIR . 'resource.plugin.php';
 require_once FP_SMARTYPLUGINS_DIR . 'resource.shared.php';
 
-// In Smarty 5, registration is done exclusively via objects.
+// Since Smarty 5, registration is done exclusively via objects.
 $smarty->registerResource('admin',  new \Smarty_Resource_Admin());
 $smarty->registerResource('plugin', new \Smarty_Resource_Plugin());
 $smarty->registerResource('shared', new \Smarty_Resource_Shared());

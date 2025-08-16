@@ -38,7 +38,11 @@ class LayoutDefault {
 		$this->fp_widgets = new widget_indexer();
 		$GLOBALS ['fp_widgets'] = $this->fp_widgets;
 
-		$this->smarty = $GLOBALS ['_FP_SMARTY'];
+		// Prefer modern global $smarty; fallback to legacy alias for BC.
+		$this->smarty = isset($GLOBALS ['smarty']) ? $GLOBALS ['smarty'] : (isset($GLOBALS ['_FP_SMARTY']) ? $GLOBALS ['_FP_SMARTY'] : null);
+		if ($this->smarty === null) {
+			utils_boot_failure('Smarty instance not initialized');
+		}
 
 		$this->config = $GLOBALS ['fp_config'] ['general'];
 

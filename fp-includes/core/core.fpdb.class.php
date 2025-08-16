@@ -972,16 +972,16 @@ function smarty_function_prevpage($params) {
 	return "<div class=\"alignleft\"><a href=\"" . $link . "\">" . $caption . "</a></div>";
 }
 
-$_FP_SMARTY->registerPlugin('block', 'comment', 'smarty_block_comment');
-$_FP_SMARTY->registerPlugin('block', 'comments', 'smarty_block_comments');
-$_FP_SMARTY->registerPlugin('block', 'comment_block', 'smarty_block_comments');
+$smarty->registerPlugin('block', 'comment', 'smarty_block_comment');
+$smarty->registerPlugin('block', 'comments', 'smarty_block_comments');
+$smarty->registerPlugin('block', 'comment_block', 'smarty_block_comments');
 
-$_FP_SMARTY->registerPlugin('block', 'entries', 'smarty_block_entries');
-$_FP_SMARTY->registerPlugin('block', 'entry_block', 'smarty_block_entries');
+$smarty->registerPlugin('block', 'entries', 'smarty_block_entries');
+$smarty->registerPlugin('block', 'entry_block', 'smarty_block_entries');
 
-$_FP_SMARTY->registerPlugin('block', 'entry', 'smarty_block_entry');
+$smarty->registerPlugin('block', 'entry', 'smarty_block_entry');
 
-$_FP_SMARTY->registerPlugin('function', 'nextpage', 'smarty_function_nextpage');
-$_FP_SMARTY->registerPlugin('function', 'prevpage', 'smarty_function_prevpage');
+$smarty->registerPlugin('function', 'nextpage', 'smarty_function_nextpage');
+$smarty->registerPlugin('function', 'prevpage', 'smarty_function_prevpage');
 
 ?>

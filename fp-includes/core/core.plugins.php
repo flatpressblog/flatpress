@@ -138,8 +138,8 @@ function plugin_do($id, $type = null) {
 function plugin_require($id) {
 	return !plugin_loaded($id);
 	/*
-	 * global $_FP_SMARTY;
-	 * $_FP_SMARTY->trigger_error("A plugin required <strong>$id</strong> to be loaded to work properly, but $id ".
+	 * global $smarty;
+	 * $smarty->trigger_error("A plugin required <strong>$id</strong> to be loaded to work properly, but $id ".
 	 * "does not appear to be loaded. Maybe the plugins have been loaded in the wrong sequence. ".
 	 * "Check your <a href=\"admin.php?p=plugins\">plugin config</a> in the control panel");
 	 */
@@ -232,6 +232,6 @@ function plugin_getinfo($plugin) {
 	);
 }
 
-$_FP_SMARTY->registerPlugin('function', 'plugin_getdir', 'smarty_function_plugin_getdir');
+$smarty->registerPlugin('function', 'plugin_getdir', 'smarty_function_plugin_getdir');
 
 ?>

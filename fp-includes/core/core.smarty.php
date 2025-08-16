@@ -1,12 +1,13 @@
 <?php
+// Minimum required Smarty version for FlatPress core.
+if (!defined('FP_SMARTY_MIN_VERSION')) {
+	define('FP_SMARTY_MIN_VERSION', '5.5.1');
+}
+
 /**
  * Internal Bootstrap error output, usable before core.system.php is loaded.
- * Uses system_failure() if available, otherwise plain text 500.
  */
 function utils_boot_failure($msg) {
-	if (function_exists('system_failure')) {
-		system_failure($msg);
-	}
 	if (!headers_sent()) {
 		header('HTTP/1.1 500 Internal Server Error');
 		header('Content-Type: text/plain; charset=utf-8');
@@ -16,23 +17,23 @@ function utils_boot_failure($msg) {
 }
 
 /**
- * Finds the non-Composer stub of Smarty 5 under fp-includes/smarty-X.X.X/libs/Smarty.class.php
+ * Finds the non-Composer stub of Smarty under fp-includes/smarty-X.X.X/libs/Smarty.class.php
  * and returns [path, version string] or [null, null].
  */
 function utils_smarty_find_stub() {
 	$base = rtrim(ABS_PATH . FP_INCLUDES, '/\\');
 	$dirs = @glob($base . '/smarty-*', GLOB_ONLYDIR | GLOB_NOSORT);
 	$bestStub = null;
-	$bestVer  = null;
+	$bestVer = null;
 	if (is_array($dirs)) {
 		foreach ($dirs as $dir) {
-			$name = basename($dir); // e.g. smarty-5.5.1
-			if (preg_match('/^smarty-(\d+\.\d+\.\d+)/', $name, $m)) {
-				$ver  = $m [1];
+			$name = basename($dir); // e.g. smarty-5.5.1, smarty-6.0.0-rc1
+			if (preg_match('/^smarty-(\d+\.\d+\.\d+)(?:[._-].*)?$/i', $name, $m)) {
+				$ver = $m [1];
 				$stub = rtrim($dir, '/\\') . '/libs/Smarty.class.php';
 				if (is_file($stub) && is_readable($stub)) {
 					if ($bestVer === null || version_compare($ver, $bestVer, '>')) {
-						$bestVer  = $ver;
+						$bestVer = $ver;
 						$bestStub = $stub;
 					}
 				}
@@ -43,27 +44,27 @@ function utils_smarty_find_stub() {
 }
 
 /**
- * Checks and loads Smarty 5 (without Composer). Ensures that at least $minVersion is available.
+ * Checks and loads Smarty 5 or higher (without Composer). Ensures that at least $minVersion is available.
  * Uses the PSR-4 stub from fp-includes/smarty-X.X.X/libs/Smarty.class.php.
  */
-function utils_checksmarty($minVersion = '5.5.1') {
+function utils_checksmarty($minVersion = FP_SMARTY_MIN_VERSION) {
 	// Class already there? (e.g., because it was manually integrated beforehand)
-	if (!class_exists('\\Smarty\\Smarty', false)) {
+	if (!class_exists(\Smarty\Smarty::class, false)) {
 		list($stub, $verFromDir) = utils_smarty_find_stub();
 		if (!$stub) {
-			utils_boot_failure('Smarty 5 stub not found. Expected under ' . ABS_PATH . FP_INCLUDES . 'smarty-*/libs/Smarty.class.php');
+			utils_boot_failure('Smarty stub not found. Expected under ' . ABS_PATH . FP_INCLUDES . 'smarty-*/libs/Smarty.class.php');
 		}
 		require_once $stub;
 	}
 
 	// After the require, the class must exist.
-	if (!class_exists('\\Smarty\\Smarty')) {
-		utils_boot_failure('Smarty 5 could not be loaded (\\Smarty\\Smarty is missing).');
+	if (!class_exists(\Smarty\Smarty::class)) {
+		utils_boot_failure('Smarty could not be loaded ((\Smarty\Smarty::class) is missing).');
 	}
 
 	// Determine version: prefers class constant, otherwise fallback from directory name
 	$detected = null;
-	if (defined('Smarty\\Smarty::SMARTY_VERSION')) { // PHP 7.2+: class constant check
+	if (defined(\Smarty\Smarty::class . '::SMARTY_VERSION')) { // PHP 7.2+: class constant check
 		$detected = \Smarty\Smarty::SMARTY_VERSION;
 	} else {
 		// If utils_smarty_find_stub() ran before, we use its version.
@@ -82,11 +83,22 @@ function utils_checksmarty($minVersion = '5.5.1') {
 }
 
 /**
- * Register FlatPress Smarty plugins without using addPluginsDir() (deprecated in Smarty 5).
+ * Register FlatPress Smarty plugins without using addPluginsDir() (deprecated since Smarty 5).
  * Scans $dir for classic plugin filenames and registers them via registerPlugin()/registerFilter().
- * Compatible with PHP 7.2–8.4.
  */
 function fp_register_fp_plugins(\Smarty\Smarty $smarty, string $dir): void {
+	// Prevent multiple calls - Terminate immediately when called again
+	static $done = false;
+	if ($done) {
+		return;
+	}
+	$done = true;
+
+	if (!defined('FP_SMARTY_FP_PLUGINS_DONE')) {
+		// Set to true only at the end
+		define('FP_SMARTY_FP_PLUGINS_DONE', false);
+	}
+
 	if (!is_dir($dir)) {
 		return;
 	}
@@ -151,10 +163,15 @@ function fp_register_fp_plugins(\Smarty\Smarty $smarty, string $dir): void {
 
 		// Inserts are removed in Smarty 5 – soft warning for plugin authors.
 		if (preg_match('/^insert\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
-			@trigger_error('Smarty insert plugin "' . $m [1] . '" is not supported in Smarty 5; convert to a function plugin.', E_USER_DEPRECATED);
+			@trigger_error('Smarty insert plugin "' . $m [1] . '" not supported in Smarty 5 or later; convert to a function plugin.', E_USER_DEPRECATED);
 			continue;
 		}
 	}
 	closedir($dh);
+
+	// End – Registration successfully completed
+	if (!defined('FP_SMARTY_FP_PLUGINS_DONE')) {
+		define('FP_SMARTY_FP_PLUGINS_DONE', true);
+	}
 }
 ?>
