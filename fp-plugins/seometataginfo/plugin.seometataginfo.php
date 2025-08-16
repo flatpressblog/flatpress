@@ -331,12 +331,13 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	$string = $lang ['plugin'] ['seometataginfo'];
 	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
 
-	$site_title = $fp_config ['general'] ['title'];
-	$BLOG_BASEURL = $fp_config ['general'] ['www'];
-	$theme = $fp_config ['general'] ['theme'];
-	$style = ''; // if no style can be read out
-	$style = $fp_config ['general'] ['style'];
-	$lang = $fp_config ['locale'] ['lang'];
+	$lang = $fp_config ['locale'] ['lang'] ?? '';
+	$site_title = $fp_config ['general'] ['title'] ?? '';
+	$BLOG_BASEURL = $fp_config ['general'] ['www'] ?? '';
+	$theme = $fp_config ['general'] ['theme'] ?? '';
+	$style = isset($fp_config ['general'] ['style']) && is_string($fp_config ['general'] ['style']) ? trim($fp_config ['general'] ['style']) : '';
+	$styleSegment = ($style !== '') ? ($style . '/') : '';
+	$previewImage = $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $styleSegment . 'preview.png';
 
 	echo '
 	<!-- beginning of SEO Metatag Info -->' . "\n";
@@ -354,8 +355,8 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		// The size of the image file must not exceed 8 MB.
 		// Meh, the recommended aspect ratio is 1.91:1 otherwise parts will be cut off
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '	<meta property="og:image" content="'. $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png">' . "\n";
-			echo '	<meta property="og:image:url" content="'. $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png">' . "\n";
+			echo '	<meta property="og:image" content="'. $previewImage . '">' . "\n";
+			echo '	<meta property="og:image:url" content="'. $previewImage . '">' . "\n";
 			echo '	<meta property="og:image:width" content="800">' . "\n";
 			echo '	<meta property="og:image:height" content="600">' . "\n";
 		}
