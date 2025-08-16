@@ -878,10 +878,10 @@ function BBCode($text) {
 /**
  * Adds a Toolbar to admin panels write entry.
  *
- * @global $_FP_SMARTY
+ * @global $smarty
  */
 function plugin_bbcode_init_toolbar() {
-	global $_FP_SMARTY;
+	global $smarty;
 	$lang = lang_load('plugin:bbcode');
 	$selection = $lang ['admin'] ['plugin'] ['bbcode'] ['editor'] ['selection'];
 
@@ -895,7 +895,7 @@ function plugin_bbcode_init_toolbar() {
 	// Sort by name
 	usort($imageslist, 'strnatcasecmp');
 	array_unshift($imageslist, $selection);
-	$_FP_SMARTY->assign('images_list', $imageslist);
+	$smarty->assign('images_list', $imageslist);
 
 	// Get all available attachments
 	$indexer = new fs_filelister(ATTACHS_DIR);
@@ -907,7 +907,7 @@ function plugin_bbcode_init_toolbar() {
 	// Sort by name
 	usort($attachslist, 'strnatcasecmp');
 	array_unshift($attachslist, $selection);
-	$_FP_SMARTY->assign('attachs_list', $attachslist);
+	$smarty->assign('attachs_list', $attachslist);
 }
 
 /**
