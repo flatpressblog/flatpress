@@ -167,7 +167,10 @@ function system_init() {
 
 	$GLOBALS ['fp_widgets'] = new widget_indexer();
 
-	$GLOBALS ['smarty'] = &$GLOBALS ['_FP_SMARTY'];
+	// Prefer modern global $smarty; keep legacy alias as fallback for BC.
+	if (!isset($GLOBALS ['smarty']) && isset($GLOBALS ['_FP_SMARTY'])) {
+		$GLOBALS ['smarty'] = &$GLOBALS ['_FP_SMARTY'];
+	}
 	$smarty = &$GLOBALS ['smarty'];
 
 	$GLOBALS ['fp_config'] = config_load();
