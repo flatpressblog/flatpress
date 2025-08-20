@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Newsletter
- * Version: 1.7.2
+ * Version: 1.7.3
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
  * Author URI: https://flatpress.org
@@ -204,7 +204,7 @@ function plugin_newsletter_init() {
 	// Admin: Delete a subscriber via POST, CSRF-protected
 	if ($_SERVER ['REQUEST_METHOD'] === 'POST' && isset($_POST ['newsletter_delete'])) {
 		// Check CSRF token
-		if (!hash_equals($_SESSION ['newsletter_csrf_token'] ?? '', $_POST ['csrf_token'] ?? '')) {
+		if (!hash_equals($_SESSION ['newsletter_admin_csrf_token'] ?? '', $_POST ['csrf_token'] ?? '')) {
 			header('HTTP/1.1 400 Bad Request');
 			exit('Invalid CSRF token');
 		}
@@ -235,8 +235,8 @@ function plugin_newsletter_init() {
 			file_put_contents($manual_flag_file, 'manual', LOCK_EX);
 		}
 
-		// Check CSRF token
-		if (!hash_equals($_SESSION ['newsletter_csrf_token'] ?? '', $_POST ['csrf_token'] ?? '')) {
+		// Check CSRF token (Admin "Send all")
+		if (!hash_equals($_SESSION ['newsletter_admin_csrf_token'] ?? '', $_POST ['csrf_token'] ?? '')) {
 			header('HTTP/1.1 400 Bad Request');
 			exit('Invalid CSRF token');
 		}
@@ -332,9 +332,9 @@ function plugin_newsletter_handle_confirm() {
  * Newsletter-Widget
  */
 function plugin_newsletter_widget(){
-	// Generate CSRF token and save in session
+	// Generate CSRF token and save in session (frontend scope)
 	$token = bin2hex(random_bytes(32));
-	$_SESSION ['newsletter_csrf_token'] = $token;
+	$_SESSION ['newsletter_widget_csrf_token'] = $token;
 
 	// Honeypot: Hiding the widget for blocked IPs
 	$blocked_file = PLUGIN_NEWSLETTER_DIR . 'blocked-ips.txt';
@@ -352,7 +352,7 @@ function plugin_newsletter_widget(){
 
 	$lang = lang_load('plugin:newsletter');
 	$html = '<form method="post" action="' . htmlspecialchars(BLOG_BASEURL, ENT_QUOTES) . '">' . //
-		'<input type="hidden" name="newsletter_csrf_token" value="' . $token . '"><ul>' . //
+		'<input type="hidden" name="newsletter_widget_csrf_token" value="' . $token . '"><ul>' . //
 		// Honeypot field, hidden from real users
 		'<li style="display: none; visibility: hidden; height:0; overflow: hidden;"><input type="text" name="' . $hp_field . '" value="" autocomplete="off" tabindex="-1"></li>' . //
 		'<li><input type="email" name="newsletter_email" placeholder="' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['input_email_placeholder'], ENT_QUOTES).'" required></li>' . //
@@ -646,8 +646,8 @@ function plugin_newsletter_handle_subscribe() {
 	global $fp_config;
 	$lang = lang_load('plugin:newsletter');
 
-	// Validate CSRF token
-	if (!isset($_POST ['newsletter_csrf_token']) || !isset($_SESSION ['newsletter_csrf_token']) || $_POST ['newsletter_csrf_token'] !== $_SESSION ['newsletter_csrf_token']) {
+	// Validate CSRF token (frontend scope)
+	if (!isset($_POST ['newsletter_widget_csrf_token']) || !isset($_SESSION ['newsletter_widget_csrf_token']) || $_POST ['newsletter_widget_csrf_token'] !== $_SESSION ['newsletter_widget_csrf_token']) {
 		die(htmlspecialchars($lang ['plugin'] ['newsletter'] ['csrf_error'], ENT_QUOTES));
 	}
 
@@ -696,8 +696,8 @@ function plugin_newsletter_handle_subscribe() {
 		exit;
 	}
 
-	// Use token only once
-	unset($_SESSION ['newsletter_csrf_token']);
+	// Use token only once (frontend)
+	unset($_SESSION ['newsletter_widget_csrf_token']);
 
 	// Validate e-mail and consent
 	$email = trim($_POST ['newsletter_email'] ?? '');
@@ -1189,15 +1189,15 @@ if (class_exists('AdminPanelAction')) {
 
 			$this->smarty->assign('subscribers', $subscribers);
 
-			// Generate CSRF token for deletion forms and transfer to template
-			if (empty($_SESSION ['newsletter_csrf_token'])) {
-				$_SESSION ['newsletter_csrf_token'] = bin2hex(random_bytes(32));
+			// Generate CSRF token for deletion/send-all forms (admin scope) and transfer to template
+			if (empty($_SESSION ['newsletter_admin_csrf_token'])) {
+				$_SESSION ['newsletter_admin_csrf_token'] = bin2hex(random_bytes(32));
 			}
 			$this->smarty->assign('batch_pending', false);
 			$this->smarty->assign('subscribers_remaining', 0);
 			// Default batch type (not displayed when no pending)
 			$this->smarty->assign('batch_type', $lang ['admin'] ['plugin'] ['newsletter'] ['send_type_monthly']);
-			$this->smarty->assign('newsletter_csrf_token', $_SESSION ['newsletter_csrf_token']);
+			$this->smarty->assign('newsletter_csrf_token', $_SESSION ['newsletter_admin_csrf_token']);
 
 			// If we're coming back after sending, display success message
 			if (isset($_GET ['success'])) {
