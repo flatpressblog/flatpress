@@ -680,7 +680,7 @@ if (class_exists('AdminPanelAction')) {
 			if (!$txt) {
 
 				$txt = '
-AddType application/x-httpd-php .php .htm .html
+AddType application/x-httpd-php .php
 Options -Indexes
 
 <IfModule mod_headers.c>

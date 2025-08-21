@@ -4,7 +4,14 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'descr' => 'Выберите один или несколько файлов для загрузки.',
 	'fset1' => 'Выбор файлов',
 	'fset2' => 'Загрузить',
-	'submit' => 'Загрузить'
+	'submit' => 'Загрузить',
+	'uploader_some_failed' => 'Этот файл не был загружен по соображениям безопасности или из-за системных ограничений:',
+	'uploader_drop' => 'Перетащите файлы сюда',
+	'uploader_browse_hint' => '…или нажмите, чтобы выбрать файлы',
+	'uploader_drop_active' => 'Отпустите, чтобы добавить',
+	'uploader_selected_count' => 'Выбрано %d файлов',
+	'uploader_clear' => 'Очистить выбор',
+	'uploader_remove' => 'Удалить'
 );
 
 $lang ['admin'] ['uploader'] ['default'] ['msgs'] = array(

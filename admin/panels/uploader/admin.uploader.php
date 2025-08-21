@@ -89,8 +89,23 @@ class admin_uploader_default extends AdminPanelAction {
 		 * https://stackoverflow.com/questions/4166762/php-image-upload-security-check-list
 		 */
 		$blacklist_extensions = array(
+			'asp',
+			'aspx',
+			'bash',
+			'bat',
+			'cgi',
+			'cmd',
+			'com',
+			'fcgi',
+			'fpl',
 			'htaccess',
+			'htm',
+			'html',
+			'jsp',
+			'md',
+			'pages',
 			'pht',
+			'phar',
 			'phtm',
 			'phtml',
 			'ph2',
@@ -100,6 +115,7 @@ class admin_uploader_default extends AdminPanelAction {
 			'ph6',
 			'ph7',
 			'ph8',
+			'ph9',
 			'php',
 			'php2',
 			'php3',
@@ -108,24 +124,17 @@ class admin_uploader_default extends AdminPanelAction {
 			'php6',
 			'php7',
 			'php8',
+			'php9',
 			'phps',
-			'cgi',
-			'exe',
 			'pl',
-			'asp',
-			'aspx',
-			'shtml',
+			'py',
 			'shtm',
-			'fcgi',
-			'fpl',
-			'jsp',
-			'htm',
-			'html',
-			'wml',
+			'shtml',
+			'sh',
+			'so',
 			'svg',
+			'wml',
 			'xml',
-			'md',
-			'pages',
 			'xsig'
 		);
 
@@ -141,6 +150,7 @@ class admin_uploader_default extends AdminPanelAction {
 		// I've not put BMPs
 
 		$uploaded_files = array();
+		$upload_errors  = array();
 		$this->smarty->assign('uploaded_files', $uploaded_files);
 
 		foreach ($_FILES ['upload'] ['error'] as $key => $error) {
@@ -153,9 +163,8 @@ class admin_uploader_default extends AdminPanelAction {
 
 			// Forbids the upload of hidden files (e.g. .test.png)
 			if (strpos($name, '.') === 0) {
-				$this->smarty->assign('success', -1);
-				sess_add('admin_uploader_files', $uploaded_files);
-				return -1;
+				$upload_errors [] = (string)$name . ' (hidden file)';
+			continue;
 			}
 
 			/**
@@ -210,14 +219,13 @@ class admin_uploader_default extends AdminPanelAction {
 			}
 
 			if ($isForbidden) {
-				$this->smarty->assign('success', $success ? 1 : -1);
-				sess_add('admin_uploader_files', $uploaded_files);
-				return -1;
+				$upload_errors [] = (string)$name . ' (forbidden extension)';
+				continue;
 			}
 
-			// MIME type check
-			if (!function_exists('finfo_open')) {
-				return -1;
+			if (!function_exists('finfo_open') && !function_exists('mime_content_type')) {
+				$upload_errors [] = (string)$name . ' (cannot detect MIME type)';
+				continue;
 			}
 
 			/**
@@ -225,18 +233,24 @@ class admin_uploader_default extends AdminPanelAction {
 			 * if someone upload a .php file as .gif, .jpg or .txt
 			 * if someone upload a .html file as .gif, .jpg or .txt
 			 */
-			$finfo = finfo_open(FILEINFO_MIME_TYPE);
-			$mime = finfo_file($finfo, $tmp_name);
-			finfo_close($finfo);
+			if (function_exists('finfo_open')) {
+				$finfo = finfo_open(FILEINFO_MIME_TYPE);
+				$mime = $finfo ? @finfo_file($finfo, $tmp_name) : false;
+				if ($finfo) { @finfo_close($finfo); }
+			} else {
+				$mime = @mime_content_type($tmp_name);
+			}
+			if ($mime === false || $mime === null) {
+				$upload_errors[] = (string)$name . ' (MIME detection failed)';
+				continue;
+			}
 
 			/**
-			 * If one blacklisted extension found then
-			 * return with -1 = An error occurred while trying to upload.
+			 * Prohibited MIME types
 			 */
-			if (in_array($mime, array('text/x-php', 'text/html'))) {
-				$this->smarty->assign('success', $success ? 1 : -1);
-				sess_add('admin_uploader_files', $uploaded_files);
-				return -1;
+			if (in_array($mime, array('text/x-php', 'text/html'), true)) {
+				$upload_errors [] = (string)$name . ' (' . $mime . ')';
+				continue;
 			}
 
 			$ext = strtolower(strrchr($name, '.'));
@@ -262,15 +276,25 @@ class admin_uploader_default extends AdminPanelAction {
 				$success = true;
 			} else {
 				$success = false;
+				$upload_errors [] = (string)$name . ' (move failed)';
 			}
-
-			// One failure will make $success == false :)
-			$success &= $success;
 		}
 
-		if ($uploaded_files) {
-			$this->smarty->assign('success', $success ? 1 : -1);
-			sess_add('admin_uploader_files', $uploaded_files);
+		// Finalize: report successes and per-file errors
+		$anySuccess = !empty($uploaded_files);
+		$hasErrors = !empty($upload_errors);
+
+		// Transfer to template
+		$this->smarty->assign('uploaded_files', $uploaded_files);
+		if ($hasErrors) {
+			$this->smarty->assign('upload_errors', $upload_errors);
+		}
+		$this->smarty->assign('success', $anySuccess ? 1 : -1);
+
+		// Persistence via redirect/reload
+		sess_add('admin_uploader_files', $uploaded_files);
+		if ($hasErrors) {
+			sess_add('admin_uploader_errors', $upload_errors);
 		}
 
 		return 1;
@@ -299,7 +323,7 @@ class admin_uploader_default extends AdminPanelAction {
 					return false;
 				}
 				break;
- 			default:
+			default:
 				return false;
 		}
 

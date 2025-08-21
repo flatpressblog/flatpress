@@ -4,7 +4,14 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'descr' => 'Elija uno o más archivos para subir.',
 	'fset1' => 'Selector de archivos',
 	'fset2' => 'Subir',
-	'submit' => 'Subir'
+	'submit' => 'Subir',
+	'uploader_some_failed' => 'Este archivo no se ha cargado por motivos de seguridad o del sistema:',
+	'uploader_drop' => 'Arrastra los archivos aquí',
+	'uploader_browse_hint' => '…o haz clic para seleccionar los archivos',
+	'uploader_drop_active' => 'Suelta para añadir',
+	'uploader_selected_count' => '%d archivo(s) seleccionado(s)',
+	'uploader_clear' => 'Vaciar selección',
+	'uploader_remove' => 'Eliminar'
 );
 
 $lang ['admin'] ['uploader'] ['default'] ['msgs'] = array(
