@@ -145,29 +145,50 @@ function fs_mkdir($dir, $mode = DIR_PERMISSIONS) {
  * function fs_delete
  *
  * Deletes a file and recursively deletes dirs, if they're empty
+ *
+ * @param  string     $path  Path to file or symlink.
+ * @return bool|int   true on success, false on error, 2 if path does not exist (and is not a symlink).
  */
 function fs_delete($path) {
-	if (file_exists($path)) {
+	// Normalize path (trailing slashes can confuse dirname() on some setups)
+	$path = rtrim($path, "/\\");
 
-		$fsuccess = unlink($path);
-		$dsuccess = true;
+	// Not available and no (broken) symlink -> old Sentinel
+	if (!file_exists($path) && !is_link($path)) {
 
-		while ($dsuccess) {
+		/**
+		 * In our particular implementation
+		 * you can always delete a non existent file;
+		 * anyway, we'll return a value != false
+		 * so that we can anyway track it back
+		 */
 
-			$path = dirname($path);
-			$dsuccess = @rmdir($path);
-		}
-
-		// unlink can return both 0 and false -__-'
-		return ($fsuccess);
+		return 2;
 	}
 
-	// in our particular implementation
-	// you can always delete a non existent file;
-	// anyway, we'll return a value != false
-	// so that we can anyway track it back
+	// Delete only files or symlinks (no directory contents!)
+	$fsuccess = false;
+	if (is_link($path) || is_file($path)) {
+		$fsuccess = @unlink($path);
+	} else {
+		// Is a real directory: NO recursive deletion here!
+		// Behave as before: do not touch
+		$fsuccess = false;
+	}
 
-	return 2;
+	// Clear away parents while they are empty
+	$dsuccess = true;
+	$prune = dirname($path);
+	while ($dsuccess) {
+		$dsuccess = @rmdir($prune);
+		$parent = dirname($prune);
+		if ($parent === $prune) {
+			break;
+		}
+		$prune = $parent;
+	}
+
+	return (bool)$fsuccess;
 }
 
 /**
@@ -334,50 +355,6 @@ function restore_chmods() {
 	// Return list of problematic files/directories for feedback
 	return $files;
 }
-
-/**
- * recursive deletion
- * deletes all files and directories recursively in the given $path
- *
- * @param $fpath dir
- *        	path
- * @return bool
- */
-
-/*
- * class fs_deleter extends fs_filelister {
- *
- * function fs_deleter($directory) {
- * $this->_directory = $directory;
- * parent::__construct();
- * }
- *
- * function _checkFile($directory, $file) {
- *
- * $path = "$directory/$file";
- *
- * /*
- * open dir handle prevents directory deletion of php5 (and probably win)
- * thanks to cimangi <cimangi (at) yahoo (dot) it> for noticing and
- * giving a possible solution:
- *
- * filenames are cached and then deleted
- * //
- *
- * if ( is_dir($path) ) {
- * return 1;
- * } elseif ( file_exists($path) ) {
- * array_push($this->_list, $path);
- * return 0;
- * } else {
- * return 2;
- * }
- *
- * }
- *
- * }
- *
- */
 
 /*
  * open dir handle prevents directory deletion of php5 (and probably win)
