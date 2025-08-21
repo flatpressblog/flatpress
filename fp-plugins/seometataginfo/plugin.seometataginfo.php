@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: SEO Meta Tag Info
- * Version: 2.2.4
+ * Version: 2.2.5
  * Plugin URI: https://www.flatpress.org
  * Description: This plugin allows editing of SEO meta tags description, keywords and robots for Entries, Statics and Categories. Part of the standard distribution. <a href="./fp-plugins/seometataginfo/doc_seometataginfo.txt" title="Anleitung" target="_blank">[Instructions]</a>
  * Author: FlatPress
