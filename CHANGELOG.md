@@ -10,6 +10,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - No code changes required with new, stable Smarty version.
   - FlatPress automatically loads the latest PSR-4 stub.
 - The new Smarty Modifier ``|ver``  uses a new core function, utils_asset_ver(), to assign the FlatPress version to Java scripts and stylesheets. This ensures that the visitor's browser only uses the updated files. ([#629](https://github.com/flatpressblog/flatpress/issues/629))
+- Admin area:
+    - Uploader revised to multi-file uploader ([#656](https://github.com/flatpressblog/flatpress/pull/656))
 
 ## Plugins
 ### Changes
@@ -21,6 +23,16 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - An up-to-date list of disposable email domains is automatically downloaded from [GitHub](https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/refs/heads/main/disposable_email_blocklist.conf) once a month and integrated, so that disposable addresses are rejected immediately and removed from the subscriber list.
   - In addition, the plugin limits the number of login attempts per IP and sorts out incorrect addresses before they are sent, ensuring that the newsletter is reliably delivered only to valid recipients.
   - Even more against race conditions
+
+## Plugins
+### Bugfixes
+- Newsletter plugin: update to version 1.7.1
+    - Fixes "Invalid CSRF token" when the widget is visible in the admin area footer.
+- Seo Metatag Info plugin: update to version 2.2.5
+    - Fixed: Theme without style causes PHP warning
+- Support plugin: update to version 1.1.1
+    - Fixed: Theme without style causes PHP warning
+    - mbstring query for Smarty 5 added
 
 # 2025-07-15: [FlatPress 1.4.1](https://github.com/flatpressblog/flatpress/releases/tag/1.4.1)
 
