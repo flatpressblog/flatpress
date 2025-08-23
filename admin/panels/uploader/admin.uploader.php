@@ -8,11 +8,26 @@
  * Date:
  * Purpose:
  * Input:
- * Change-Date: 24.11.2024, by FKM
+ * Change-Date: 23.08.2025, by FKM
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
  *
  */
+function admin_uploader_head() {
+	global $fp_config;
+	$blogbase = BLOG_BASEURL;
+	$random_hex = RANDOM_HEX;
+	$css = utils_asset_ver($blogbase . 'admin/panels/uploader/uploader.css', SYSTEM_VER);
+	$js = utils_asset_ver($blogbase . 'admin/panels/uploader/uploader.js', SYSTEM_VER);
+
+	echo '
+		<!-- BOF Admin Multi file uploader CSS -->
+		<link rel="stylesheet" type="text/css" href="' . $css . '">
+		<script nonce="' . $random_hex . '" src="' . $js . '" defer></script>
+		<!-- BOF Admin Multi file uploader CSS -->
+	';
+}
+
 class admin_uploader extends AdminPanel {
 	var $panelname = 'uploader';
 
@@ -27,8 +42,13 @@ class admin_uploader_default extends AdminPanelAction {
 	);
 
 	function main() {
+		add_action('admin_head', 'admin_uploader_head');
+
 		if ($f = sess_remove('admin_uploader_files')) {
 			$this->smarty->assign('uploaded_files', $f);
+		}
+		if ($e = sess_remove('admin_uploader_errors')) {
+			$this->smarty->assign('upload_errors', $e);
 		}
 	}
 
