@@ -311,24 +311,7 @@ input.maxsize, select.maxsize { width: 99% }
 
 
 /* ===== UPLOAD PANEL ===== */
-.fp-dropzone {
-	border: 2px dashed #bbb;
-	border-radius: 10px;
-	padding: 1rem;
-	margin: 0.5rem 0 1rem 0;
-	transition: background 0.15s ease, border-color 0.15s ease
-}
-
-.fp-dropzone.is-dragover { background: #f6faff; border-color: #66aaff }
-
-.fp-dropzone__label { margin: 0; font-weight: 600 }
-.fp-dropzone__hint { margin: 0.25rem 0 0; font-size: 0.9em; color: #555 }
-.fp-upload-list { list-style: none; padding-left: 0; margin: 0.75rem 0 0 }
-.fp-upload-list__item { display: flex; align-items: center; justify-content: space-between; padding: 0.25rem 0; border-top: 1px solid #eee }
-.fp-upload-list__item:first-child { border-top: 0 }
-.fp-upload-list__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75% }
-.fp-upload-list__remove { margin-left: 0.5rem }
-.button.button-small { font-size: 0.85em; padding: 0.2rem 0.5rem }
+/* Global for all themes in admin/uploader/uploader.css */
 
 
 /* ===== GALLERY CAPTIONS ===== */
