@@ -548,7 +548,7 @@ if (class_exists('AdminPanelAction')) {
 	}
 
 	// Register stylesheet
-	add_action('wp_head', 'plugin_support_head');
+	add_action('admin_head', 'plugin_support_head');
 
 	// Register to 'maintain' menu
 	admin_addpanelaction('maintain', 'support', true);
@@ -562,3 +562,4 @@ function getLocalDateTime() {
 	return false;
 }
 ?>
+
