@@ -562,4 +562,3 @@ function getLocalDateTime() {
 	return false;
 }
 ?>
-
