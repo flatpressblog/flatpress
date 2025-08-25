@@ -1,0 +1,169 @@
+#admin-widgets-default ul li::before {
+	content: none
+}
+
+#manage-widgets {
+	display: inline-block;
+	width: 100%
+}
+
+#admin-widgetset-list {
+	float: right;
+	width: 50em;
+	max-width: 45%
+}
+
+#admin-widgetset-list ul {
+	list-style-type: none;
+	margin: 0;
+	margin-bottom: 0;
+	text-align: left
+}
+
+li.admin-widgetset {
+	padding: 0.5em;
+	margin-bottom: 1em;
+	border: 1px solid #ddd;
+	border-radius: 3px
+}
+
+#available-widgets {
+	float: left;
+	border: 1px solid #ddd;
+	background: #eee;
+	padding: 0.5em;
+	width: 50em;
+	max-width: 45%;
+	z-index: 1000;
+	position: relative;
+	text-align: left;
+	border-radius: 3px
+}
+
+.widgetset-name { border-radius: 2px }
+
+#widget-trashcan { /* colors for trashcan/uninstall widgets while dragging */
+	background-color: rgba(170, 34, 34, 0.7);
+	color: #ddd;
+	font-weight: bold;
+	padding: 2em;
+	text-align: center;
+	border: 2px solid #f00;
+	margin: 1em;
+	border-radius: 2px
+}
+
+.widget-available { /* colors for available widgets while dragging */
+	cursor: move;
+	color: #fff;
+	background-color: rgba(34, 102, 0, 0.7);
+	border: 2px solid #2f0;
+	z-index: 2000
+}
+
+.widget-installed { /* colors for installed widgets while dragging */
+	cursor: move;
+	color: #fff;
+	background-color: rgba(0, 34, 102, 0.7);
+	border: 2px solid #00f;
+	z-index: 2000
+}
+
+#available-widgets ul,
+.admin-widgetset ul {
+	padding-left: 0;
+	margin-left: 0
+}
+
+li.widget-instance,
+li.widget-class {
+	cursor: move;
+	border: 1px solid #bbb;
+	margin: 2px;
+	padding: 0 8px;
+	display: flex;
+	align-items: center;
+	min-height: 36px;
+	background-color: white;
+	list-style-type: none;
+	border-radius: 2px
+}
+
+.admin-widgetset h3 {
+	margin: 0;
+	margin-bottom: 0.5em;
+	padding: 0.3em;
+	background: #eee;
+	border: 1px solid #ddd
+}
+
+#available-widgets h2 {
+	cursor: move;
+	color: white;
+	margin: 0;
+	margin-bottom: 0.5em;
+	border: 1px solid #eee;
+	background: #999;
+	border-radius: 2px
+}
+
+.widget-instance .textinput {
+	padding: .4em;
+	background: transparent;
+	font-weight: bold;
+	font-style: oblique;
+	color: blue;
+	border: #fff 2px solid;
+	text-align: right
+}
+
+.widget-instance .textinput:hover {
+	border: #d00 2px solid;
+	background-color: white
+}
+
+.widget-instance .textinput:focus {
+	font-style: normal;
+	border: #f00 2px solid;
+	background-color:white;
+	text-align: left
+}
+
+.widgetname a,
+.widgetname a:link,
+.widgetname a:visited { color: #ddd }
+
+.widget-placeholder {
+	padding: 0;
+	font-style: oblique;
+	text-align: center;
+	border: 1px dashed #ddd;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 36px
+}
+
+/* Very old fallback without Flexbox */
+@supports not (align-items: center) {
+	li.widget-instance,
+	li.widget-class,
+	.widget-dragger { line-height: 36px }
+}
+
+.widget-dragger {
+	text-align: left;
+	z-index: 1000;
+	padding: 0.5em;
+	display: flex;
+	align-items: center;
+	min-height: 30px !important
+}
+
+li.widget-instance .widgetname,
+li.widget-class .widgetname {
+	flex: 1 1 auto;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis
+}

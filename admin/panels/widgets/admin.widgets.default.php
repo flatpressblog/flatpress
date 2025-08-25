@@ -1,6 +1,18 @@
 <?php
-
 function admin_widgets_head() {
+	global $fp_config;
+	$blogbase = BLOG_BASEURL;
+	$random_hex = RANDOM_HEX;
+	$css = utils_asset_ver($blogbase . 'admin/panels/widgets/admin.widgets.css', SYSTEM_VER);
+
+	echo '
+		<!-- BOF Admin Widgets CSS -->
+		<link rel="stylesheet" type="text/css" href="' . $css . '">
+		<!-- EOF Admin Widgets CSS -->
+	';
+}
+
+function admin_widgets_footer() {
 	global $lang;
 	$random_hex = RANDOM_HEX;
 	echo '
@@ -9,44 +21,44 @@ function admin_widgets_head() {
 			 * FlatPress widget js admin
 			 */
 			var FlatPress = {
-				winstancedrag : function() {
+				winstancedrag: function() {
 					$(\'.widget-class\').draggable({
-						\'scroll\' : true,
-						\'helper\' : function(event) {
+						\'scroll\': true,
+						\'helper\': function(event) {
 							return $(this).clone().appendTo(\'body\').removeClass(\'widget-class\').css({
 								\'position\': \'fixed\',
-								\'cursor\' : \'move\',
-								\'list-style-type\' : \'none\',
-								\'margin\' : \'0\',
-								\'padding\' : \'0\',
-								\'width\' : $(this).width(),
-								\'height\' : $(this).height()
+								\'cursor\': \'move\',
+								\'list-style-type\': \'none\',
+								\'margin\': \'0\',
+								\'padding\': \'0\',
+								\'width\': $(this).width(),
+								\'height\': $(this).height()
 								})
 							.addClass(\'widget-available\');
 						}
 					});
 					$(\'.widget-instance\').draggable({
-						\'scroll\' : true,
-						\'helper\' : function(event) {
+						\'scroll\': true,
+						\'helper\': function(event) {
 							return $(this).clone().appendTo(\'body\').removeClass(\'widget-instance\').css({
 								\'position\': \'fixed\',
-								\'cursor\' : \'move\',
-								\'list-style-type\' : \'none\',
-								\'width\' : $(this).width(),
-								\'height\' : $(this).height()
+								\'cursor\': \'move\',
+								\'list-style-type\': \'none\',
+								\'width\': $(this).width(),
+								\'height\': $(this).height()
 								})
 							.addClass(\'widget-installed\');
 						}
 					});
 				},
-				wplaceholder : function() {
+				wplaceholder: function() {
 					$(\'.widget-placeholder\').droppable({
-						\'accept\' : \'.widget-class, .widget-instance\',
-						\'activeClass\' : \'ui-state-highlight\',
-						\'over\' : function(event, ui) {
+						\'accept\': \'.widget-class, .widget-instance\',
+						\'activeClass\': \'ui-state-highlight\',
+						\'over\': function(event, ui) {
 							$(this).effect("highlight", { \'color\' : $(\'.widget-installed, .widget-available\').css(\'background-color\') }, 1000);
 						},
-						\'drop\' : function(event, ui) {
+						\'drop\': function(event, ui) {
 							var parent = ui.draggable.parent();
 							var where = $(this).parent().attr(\'id\').split(\'-\')[1];
 							var replace = null;
@@ -67,21 +79,20 @@ function admin_widgets_head() {
 						}
 					});
 				},
-				winstancedrop : function() {
+				winstancedrop: function() {
 					$(\'.widget-instance\').droppable({
-						\'accept\' : \'.widget-class, .widget-instance\',
-						\'activeClass\' : \'ui-state-highlight\',
-						\'over\' : function(event, ui) {
-							$(this).effect("highlight", { \'color\' : $(\'.widget-available, .widget-installed\').css(\'background-color\') }, 1000);
+						\'accept\': \'.widget-class, .widget-instance\',
+						\'activeClass\': \'ui-state-highlight\',
+						\'over\': function(event, ui) {
+							$(this).effect("highlight", { \'color\': $(\'.widget-available, .widget-installed\').css(\'background-color\') }, 1000);
 						},
-						\'drop\' : function(event, ui) {
+						\'drop\': function(event, ui) {
 							var parent = ui.draggable.parent();
 							var where = $(this).parent().attr(\'id\').split(\'-\')[1];
 							var replace = null;
 							if (ui.draggable.hasClass(\'widget-instance\')) {
 								replace = ui.draggable;
-							}
-							else {
+							} else {
 								replace = $(\'<li class="\' + ui.draggable.attr(\'class\') + \'"></li>\').append(ui.draggable.children().clone());
 								replace.removeClass(\'widget-class\').addClass(\'widget-instance\');
 							}
@@ -94,14 +105,14 @@ function admin_widgets_head() {
 						}
 					});
 				},
-				wtrash : function() {
+				wtrash: function() {
 					$(\'#widget-trashcan\').droppable({
-						\'accept\' : \'.widget-instance\',
-						\'activeClass\' : \'ui-state-highlight\',
-						\'over\' : function(event, ui) {
+						\'accept\': \'.widget-instance\',
+						\'activeClass\': \'ui-state-highlight\',
+						\'over\': function(event, ui) {
 							$(this).fadeTo(\'slow\', 0.2).fadeTo(\'slow\', 1.0);
 						},
-						\'drop\' : function(event, ui) {
+						\'drop\': function(event, ui) {
 							var parent = ui.draggable.parent();
 							var draggable = $(ui.draggable);
 							$(\'.widget-installed\').remove();
@@ -115,12 +126,12 @@ function admin_widgets_head() {
 						}
 					});
 					$(\'.widget-class\').droppable({
-						\'accept\' : \'.widget-instance\',
-						\'activeClass\' : \'ui-state-highlight\',
-						\'over\' : function(event, ui) {
-							$(this).effect("highlight", { \'color\' : $(\'#widget-trashcan\').css(\'background-color\') }, 1000);
+						\'accept\': \'.widget-instance\',
+						\'activeClass\': \'ui-state-highlight\',
+						\'over\': function(event, ui) {
+							$(this).effect("highlight", { \'color\': $(\'#widget-trashcan\').css(\'background-color\') }, 1000);
 						},
-						\'drop\' : function(event, ui) {
+						\'drop\': function(event, ui) {
 							var parent = ui.draggable.parent();
 							var draggable = $(ui.draggable);
 							$(\'.widget-installed\').remove();
@@ -133,18 +144,17 @@ function admin_widgets_head() {
 							FlatPress.wreload();
 						}
 					});
-
 				},
-				wreload : function(){
+				wreload: function(){
 					this.winstancedrag();
 					this.winstancedrop();
 					this.wplaceholder();
 				}
 			}
-			FlatPress.wreload();FlatPress.wtrash();
+			FlatPress.wreload();
+			FlatPress.wtrash();
 		</script>';
 }
-add_action('wp_footer', 'admin_widgets_head');
 
 class admin_widgets_default extends AdminPanelAction {
 
@@ -204,7 +214,12 @@ class admin_widgets_default extends AdminPanelAction {
 	}
 
 	function main() {
+
 		lang_load('admin.widgets');
+
+		add_action('admin_head', 'admin_widgets_head');
+		add_action('wp_footer', 'admin_widgets_footer');
+
 		// $this->smarty->assign('warnings', admin_widgets_checkall());
 		global $fp_widgets;
 
