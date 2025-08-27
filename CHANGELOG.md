@@ -11,7 +11,12 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - FlatPress automatically loads the latest PSR-4 stub.
 - The new Smarty Modifier ``|ver``  uses a new core function, utils_asset_ver(), to assign the FlatPress version to Java scripts and stylesheets. This ensures that the visitor's browser only uses the updated files. ([#629](https://github.com/flatpressblog/flatpress/issues/629))
 - Admin area:
-    - Uploader revised to multi-file uploader ([#656](https://github.com/flatpressblog/flatpress/pull/656))
+    - Uploader revised to multi-file uploader  ([#656](https://github.com/flatpressblog/flatpress/pull/656))
+    - Widget-panel revisited  ([#659](https://github.com/flatpressblog/flatpress/pull/659))
+        - Stylesheet is now also loaded by themes that do not have a design for the widget panel.
+        - From left to right/ Available widgets to widget bar
+        - Flex version with wrapper and responsive
+        - Drag & drop now also available for mobile devices 
 
 ## Plugins
 ### Changes
