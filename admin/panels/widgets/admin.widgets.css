@@ -7,6 +7,21 @@
 	width: 100%
 }
 
+.widgets-center {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 45px;
+	flex-wrap: wrap
+}
+
+.widgets-center #available-widgets,
+.widgets-center #admin-widgetset-list {
+	float: none;
+	flex: 0 1 330px;
+	max-width: 100%
+}
+
 #admin-widgetset-list {
 	float: right;
 	width: 50em;
@@ -86,7 +101,9 @@ li.widget-class {
 	min-height: 36px;
 	background-color: white;
 	list-style-type: none;
-	border-radius: 2px
+	border-radius: 2px;
+	touch-action: none;
+	-ms-touch-action: none;
 }
 
 .admin-widgetset h3 {
@@ -107,14 +124,17 @@ li.widget-class {
 	border-radius: 2px
 }
 
-.widget-instance .textinput {
+.widget-instance .textinput,
+.widget-class .textinput {
 	padding: .4em;
 	background: transparent;
 	font-weight: bold;
 	font-style: oblique;
 	color: blue;
 	border: #fff 2px solid;
-	text-align: right
+	text-align: right;
+	margin-left: auto;
+	float: none
 }
 
 .widget-instance .textinput:hover {
@@ -157,7 +177,22 @@ li.widget-class {
 	padding: 0.5em;
 	display: flex;
 	align-items: center;
+	justify-content: center;
+	line-height: 1;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: none;
+	-ms-touch-action: none;
+	cursor: grab;
 	min-height: 30px !important
+}
+
+.widget-dragger:active{ cursor: grabbing }
+
+html.dragging-widgets,
+body.dragging-widgets {
+	overscroll-behavior: contain;
+	overscroll-behavior-y: contain
 }
 
 li.widget-instance .widgetname,
