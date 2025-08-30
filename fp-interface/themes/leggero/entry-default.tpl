@@ -28,7 +28,9 @@
 
 					<li class="link-comments">
 
-						<strong>{$views}</strong> {$lang.postviews.views}
+					{if function_exists('plugin_postviews_calc')}
+						<strong>{views}</strong> {$lang.postviews.views}
+					{/if}
 
 					{if !(in_array('commslock', $categories) && !$comments)}
 						<a href="{$id|link:comments_link}{if $comments > 0}#comments{else}#addcomment{/if}">{$comments|tag:comments_number}</a>
