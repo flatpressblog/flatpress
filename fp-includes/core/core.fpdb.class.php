@@ -860,13 +860,6 @@ function smarty_block_entry($params, $content, &$smarty, &$repeat) {
 
 		$smarty->assign('id', $id);
 
-		// If PostViews plugin is active: Trigger view counter!
-		// This seems a bit hackish; please fix if possible.
-		// See also commented line "// add_action('entry_block', 'plugin_postviews_do');" in plugin.postviews.php
-		if (function_exists('plugin_postviews_do')) {
-			plugin_postviews_do($smarty, $id);
-		}
-
 		if (array_key_exists('categories', $entry)) {
 			$smarty->assign('entry_commslock', in_array('commslock', $entry ['categories']));
 		}
