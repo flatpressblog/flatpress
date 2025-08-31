@@ -40,6 +40,12 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - Fixed: Theme without style causes PHP warning
     - mbstring query for Smarty 5 added
 
+## Themes
+  
+### Bugfixes
+- Leggero theme:
+  - After a fresh installation, the correct time format is now displayed instead of the default format  ``%b %e, %Y``. ([#662](https://github.com/flatpressblog/flatpress/pull/662))
+
 # 2025-07-15: [FlatPress 1.4.1](https://github.com/flatpressblog/flatpress/releases/tag/1.4.1)
 
 ## General
