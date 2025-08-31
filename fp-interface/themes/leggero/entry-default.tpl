@@ -19,10 +19,11 @@
 				<ul class="entry-footer">
 
 					<li class="entry-info">{$lang.entryauthor.posted_by} <span itemprop="author">{$author}</span> {$lang.entryauthor.at}
-					{$date|date_format}
+					{$date|date_format:"`$fp_config.locale.timeformat`"}
 
 						<span itemprop="articleSection">
-							{if ($categories)} {$lang.plugin.categories.in} {$categories|@filed}{/if}
+							{assign var="__filed_cats" value=$categories|@filed}
+							{if $__filed_cats} {$lang.plugin.categories.in} {$__filed_cats}{/if}
 						</span>
 					</li>
 
