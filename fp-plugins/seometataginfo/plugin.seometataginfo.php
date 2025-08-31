@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Plugin Name: SEO Meta Tag Info
  * Version: 2.2.5
  * Plugin URI: https://www.flatpress.org
@@ -540,6 +540,26 @@ function seometa_category_id_exists($cat_id) {
 	return false;
 }
 
+/**
+ * Per-request cache for entry meta to avoid duplicate INI reading.
+ */
+function seometataginfo_cache_set($id, $desc, $keys) {
+	if (!is_string($id) || $id === '') {
+		return;
+	}
+	if (!isset($GLOBALS ['seometataginfo_entry_cache']) || !is_array($GLOBALS ['seometataginfo_entry_cache'])) {
+		$GLOBALS ['seometataginfo_entry_cache'] = array();
+	}
+	$GLOBALS ['seometataginfo_entry_cache'] [$id] = array((string)$desc, (string)$keys);
+}
+
+function seometataginfo_cache_get($id) {
+	if (!isset($GLOBALS ['seometataginfo_entry_cache']) || !is_array($GLOBALS ['seometataginfo_entry_cache'])) {
+		return null;
+	}
+	return isset($GLOBALS ['seometataginfo_entry_cache'] [$id]) ? $GLOBALS ['seometataginfo_entry_cache'] [$id] : null;
+}
+
 function plugin_seometataginfo_head($file_meta) {
 	global $fpdb, $fp_params, $fp_config, $smarty;
 
@@ -584,6 +604,9 @@ function plugin_seometataginfo_head($file_meta) {
 		$seo_nofollow = $cfg->get('meta', 'nofollow') != false ? wp_specialchars(trim($cfg->get('meta', 'nofollow'))) : '0';
 		$seo_noarchive = $cfg->get('meta', 'noarchive') != false ? wp_specialchars(trim($cfg->get('meta', 'noarchive'))) : '0';
 		$seo_nosnippet = $cfg->get('meta', 'nosnippet') != false ? wp_specialchars(trim($cfg->get('meta', 'nosnippet'))) : '0';
+		if (is_single() && isset($id)) {
+			seometataginfo_cache_set($id, $seo_desc, $seo_keywords);
+		}
 		output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, $seo_noarchive, $seo_nosnippet);
 	}
 }
@@ -742,21 +765,28 @@ function seometataginfo_assign_entry_vars($id) {
 	if (!is_string($id) || $id === '') {
 		return;
 	}
+
 	// Pro-request memoization: id => [desc, keys]
 	static $memo = array();
-	if (isset($memo [$id])) {
+	$data = isset($memo [$id]) ? $memo [$id] : null;
+	if ($data === null) {
+		$data = seometataginfo_cache_get($id);
+	}
+	if ($data !== null) {
+		$memo [$id] = $data;
 		if (isset($GLOBALS ['smarty']) && is_object($GLOBALS ['smarty']) && method_exists($GLOBALS ['smarty'], 'assign')) {
-			$GLOBALS ['smarty']->assign('seo_desc', $memo [$id] [0]);
-			$GLOBALS ['smarty']->assign('seo_keywords', $memo [$id] [1]);
+			$GLOBALS ['smarty']->assign('seo_desc', $data [0]);
+			$GLOBALS ['smarty']->assign('seo_keywords', $data [1]);
 		}
 		return;
 	}
 	$file_meta = SEOMETA_ENTRY_DIR . $id . '_metatags.ini';
-	
+
 	// Ensure $smarty is usable
 	if (!isset($GLOBALS ['smarty']) || !is_object($GLOBALS ['smarty']) || !method_exists($GLOBALS ['smarty'], 'assign')) {
 		return;
 	}
+
 	$smarty = $GLOBALS ['smarty'];
 	if (!is_readable($file_meta)) {
 		// Provide empty default so templates can fallback cleanly
@@ -770,6 +800,7 @@ function seometataginfo_assign_entry_vars($id) {
 	$keysRaw = $cfg->get('meta', 'keywords');
 	$seo_desc = $descRaw !== false ? wp_specialchars(trim((string)$descRaw)) : '';
 	$seo_keywords = $keysRaw !== false ? wp_specialchars(trim((string)$keysRaw)) : '';
+	seometataginfo_cache_set($id, $seo_desc, $seo_keywords);
 	$memo [$id] = array($seo_desc, $seo_keywords);
 	$smarty->assign('seo_desc', $seo_desc);
 	$smarty->assign('seo_keywords', $seo_keywords);
