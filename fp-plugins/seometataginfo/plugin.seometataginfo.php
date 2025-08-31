@@ -730,4 +730,51 @@ Disallow: ' . $blogroot . 'fp-content/attachs/
 	admin_addpanelaction('plugin', 'seometataginfo', true);
 }
 
+/**
+ * Make per-entry SEO meta available to Smarty templates.
+ * Memorization reduces double reads within a request.
+ * Exposes: $seo_desc, $seo_keywords for the current {entry}-block.
+ * For output in the template, e.g. in entry-default.tpl:
+ *   {if $seo_desc}<i>{$seo_desc|escape}</i>{/if}
+ *   {if $seo_keywords}<i>{$seo_keywords|escape}</i>{/if}
+ */
+function seometataginfo_assign_entry_vars($id) {
+	if (!is_string($id) || $id === '') {
+		return;
+	}
+	// Pro-request memoization: id => [desc, keys]
+	static $memo = array();
+	if (isset($memo [$id])) {
+		if (isset($GLOBALS ['smarty']) && is_object($GLOBALS ['smarty']) && method_exists($GLOBALS ['smarty'], 'assign')) {
+			$GLOBALS ['smarty']->assign('seo_desc', $memo [$id] [0]);
+			$GLOBALS ['smarty']->assign('seo_keywords', $memo [$id] [1]);
+		}
+		return;
+	}
+	$file_meta = SEOMETA_ENTRY_DIR . $id . '_metatags.ini';
+	
+	// Ensure $smarty is usable
+	if (!isset($GLOBALS ['smarty']) || !is_object($GLOBALS ['smarty']) || !method_exists($GLOBALS ['smarty'], 'assign')) {
+		return;
+	}
+	$smarty = $GLOBALS ['smarty'];
+	if (!is_readable($file_meta)) {
+		// Provide empty default so templates can fallback cleanly
+		$memo [$id] = array('', '');
+		$smarty->assign('seo_desc', '');
+		$smarty->assign('seo_keywords', '');
+		return;
+	}
+	$cfg = new iniParser($file_meta);
+	$descRaw = $cfg->get('meta', 'description');
+	$keysRaw = $cfg->get('meta', 'keywords');
+	$seo_desc = $descRaw !== false ? wp_specialchars(trim((string)$descRaw)) : '';
+	$seo_keywords = $keysRaw !== false ? wp_specialchars(trim((string)$keysRaw)) : '';
+	$memo [$id] = array($seo_desc, $seo_keywords);
+	$smarty->assign('seo_desc', $seo_desc);
+	$smarty->assign('seo_keywords', $seo_keywords);
+}
+
+// Bind during entry rendering so {$seo_desc} and {$seo_keywords} is available inside {entry} blocks
+add_action('entry_block', 'seometataginfo_assign_entry_vars', 0);
 ?>
