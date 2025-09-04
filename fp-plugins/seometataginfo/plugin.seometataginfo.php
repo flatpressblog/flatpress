@@ -753,6 +753,15 @@ Disallow: ' . $blogroot . 'fp-content/attachs/
 	admin_addpanelaction('plugin', 'seometataginfo', true);
 }
 
+// Establish compatibility with older Smarty 4.
+function seometataginfo_assign_defaults() {
+	if (isset($GLOBALS ['smarty']) && is_object($GLOBALS ['smarty']) && method_exists($GLOBALS ['smarty'], 'assign')) {
+		$GLOBALS ['smarty']->assign('seo_desc', '');
+		$GLOBALS ['smarty']->assign('seo_keywords', '');
+	}
+}
+add_action('init', 'seometataginfo_assign_defaults', 0);
+
 /**
  * Make per-entry SEO meta available to Smarty templates.
  * Memorization reduces double reads within a request.

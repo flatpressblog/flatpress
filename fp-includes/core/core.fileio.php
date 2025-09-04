@@ -60,13 +60,46 @@ function io_load_file_uncached($filename) {
 }
 
 /**
- * Cached file read for current request. Falls back to io_load_file_uncached.
+ * Cached file read for current request. Optional APCu hotcache.
+ * Always falls back cleanly to io_load_file_uncached().
  */
 function io_load_file($filename) {
 	static $cache = array();
 	if (isset($cache [$filename])) {
 		return $cache [$filename];
 	}
+
+	// Check APCu securely and host-agnostically
+	$apcu_on = function_exists('apcu_enabled') ? apcu_enabled() : (function_exists('apcu_fetch') && (bool) ini_get('apcu.enabled') || (bool) ini_get('apc.enabled'));
+
+	// CLI usually off; only allow if explicitly enabled
+	if ($apcu_on && PHP_SAPI === 'cli' && !((bool) ini_get('apc.enable_cli'))) {
+		$apcu_on = false;
+	}
+
+	if ($apcu_on) {
+		$mt = @filemtime($filename);
+		if ($mt !== false) {
+			// Stabilizes collisions <1s
+			$sz  = (int) @filesize($filename);
+			$key = 'fp:io:' . $filename . ':' . $mt . ':' . $sz;
+
+			$hit = false;
+			$val = apcu_fetch($key, $hit);
+			if ($hit) {
+				return $cache [$filename] = $val;
+			}
+
+			$val = io_load_file_uncached($filename);
+			if ($val !== false && $val !== null) {
+				// TTL unnecessary, key changes with mtime/size
+				apcu_store($key, $val);
+				$cache [$filename] = $val;
+			}
+			return $val;
+		}
+	}
+
 	$contents = io_load_file_uncached($filename);
 	if ($contents !== false && $contents !== null) {
 		$cache [$filename] = $contents;
