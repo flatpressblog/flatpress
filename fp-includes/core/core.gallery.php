@@ -117,15 +117,13 @@ function gallery_write_captions($galleryName, $captions) {
 		return false;
 	}
 	$captionfilePath = IMAGES_DIR . $galleryName . DIRECTORY_SEPARATOR . GALLERY_CAPTIONS_FILENAME;
-	$captionfileHandle = fopen($captionfilePath, 'w');
 
 	$filecontent = '';
 	foreach ($captions as $filename => $caption) {
 		$filecontent .= $filename . ' = ' . $caption . PHP_EOL;
 	}
 
-	fwrite($captionfileHandle, $filecontent);
-	fclose($captionfileHandle);
+	io_write_file($captionfilePath, $filecontent);
 
 	// Updating from legacy versions: If legacy captions fill still exists, delete if
 	$legacyCaptionfilePath = IMAGES_DIR . $galleryName . DIRECTORY_SEPARATOR . GALLERY_CAPTIONS_LEGACYFILENAME;

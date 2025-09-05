@@ -346,7 +346,19 @@ class FPDB_Query {
 		$qp->id = entry_keytoid($random_key);
 	}
 
-	/* reading functions */
+	/**
+	 * Checks whether further entries in the current window are readable
+	 * without moving the pointer or parsing.
+	 *
+	 * Logic:
+	 * - If pointer >= start+count ⇒ false.
+	 * - If $this->params->id is set, only the window is checked;
+	 *   existence/parsing is handled by peekEntry().
+	 * - Otherwise: a walker must exist and be valid.
+	 *
+	 * Runtime: O(1).
+	 * @return bool
+	 */
 	function hasMore() {
 		$GLOBALS ['current_query'] = &$this;
 
@@ -356,26 +368,36 @@ class FPDB_Query {
 			$this->prepare();
 		}
 
-		// hasMore() returns false either if pointer exceeded the count
-		// or peekEntry returns false
-		return ((bool) $this->peekEntry() && $this->pointer < $this->params->start + $this->params->count);
+		// true if still within range and source has data
+		if ($this->pointer >= $this->params->start + $this->params->count) {
+			return false;
+		}
+		// id-queries don't rely on walker validity
+		if ($this->params->id) {
+			return true;
+		}
+		return ($this->walker && $this->walker->valid);
 	}
 
+	/**
+	 * @return array{0:string|false,1:array|false} Reference.
+	 */
 	function &peekEntry() {
 		global $post;
 
 		$qp = &$this->params;
-		$return = array(
+		static $RET_EMPTY = array(
 			false,
 			false
 		);
+		$return = $RET_EMPTY;
 
 		if ($this->counter < 0) {
 			$this->prepare();
 		}
 
 		if ($this->pointer == $this->params->start + $this->params->count) {
-			return $return;
+			return $RET_EMPTY;
 		}
 
 		if ($qp->id) {
@@ -384,7 +406,17 @@ class FPDB_Query {
 
 			$v = $idx->getitem($key);
 			if ($qp->fullparse) {
-				$entry = isset($this->localcache [$qp->id]) ? $this->localcache [$qp->id] : entry_parse($qp->id);
+
+				$entry = null;
+				if (isset($this->localcache [$qp->id])) {
+					$entry = $this->localcache [$qp->id];
+				} else {
+					$entry = entry_parse($qp->id);
+					if ($entry) {
+						$this->localcache [$qp->id] = $entry;
+					}
+				}
+
 				if ($entry && $qp->comments) {
 					$this->comments = new FPDB_CommentList($qp->id, comment_getlist($qp->id));
 					$entry ['comments'] = $this->comments->getCount();
@@ -392,8 +424,8 @@ class FPDB_Query {
 
 				$post = $entry;
 
-				if (!$entry) {
-					return $return;
+				if (!is_array($entry)) {
+					return $RET_EMPTY;
 				}
 			} else {
 				$entry = array(
@@ -403,7 +435,7 @@ class FPDB_Query {
 			}
 
 			$return = array(
-				$this->params->id,
+				$qp->id,
 				$entry
 			);
 			return $return;
@@ -445,8 +477,7 @@ class FPDB_Query {
 		}
 
 		if (!$this->walker->valid) {
-			$cont = false;
-			return $cont;
+			return $RET_EMPTY;
 		}
 
 		// pointer == start
@@ -460,9 +491,15 @@ class FPDB_Query {
 		if ($qp->fullparse && $this->counter <= 0) {
 
 			// full parse: reads the whole array from file
-			$cont = array();
-
-			$cont = isset($this->localcache [$id]) ? $this->localcache [$id] : entry_parse($id);
+			$cont = null;
+			if (isset($this->localcache [$id])) {
+				$cont = $this->localcache [$id];
+			} else {
+				$cont = entry_parse($id);
+				if (is_array($cont)) {
+					$this->localcache [$id] = $cont;
+				}
+			}
 		} else {
 
 			// only title
@@ -472,9 +509,8 @@ class FPDB_Query {
 			);
 		}
 
-		if (!$cont) {
-			$cont = false;
-			return $cont;
+		if (!is_array($cont)) {
+			return $RET_EMPTY;
 		}
 
 		if ($qp->comments) {

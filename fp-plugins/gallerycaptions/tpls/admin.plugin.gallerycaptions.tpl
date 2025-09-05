@@ -28,7 +28,7 @@
 			<tr>
 				<td>
 					<a class="bbcode-popup" href="{$smarty.const.BLOG_BASEURL}{$smarty.const.IMAGES_DIR}{$currentgallery}/{$currentfilename}">
-						<img src="{$smarty.const.BLOG_BASEURL}{$smarty.const.IMAGES_DIR}{$currentgallery}/{if defined("THUMB_DIR")}{$smarty.const.THUMB_DIR}/{/if}{$currentfilename}" alt="{$currentfilename}" title="{$currentfilename}">
+						<img src="{$smarty.const.BLOG_BASEURL}{$smarty.const.IMAGES_DIR}{$currentgallery}/{$currentfilename}" alt="{$currentfilename}" title="{$currentfilename}" style="width: 320px" loading="lazy">
 					</a>
 					<br>
 					{$currentfilename}

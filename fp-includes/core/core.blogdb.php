@@ -122,10 +122,16 @@
 	 */
 	function bdb_parse_entry($id, $type = null) {
 
+		static $__bdb_entry_cache = array();
+
 		if (file_exists($id)) {
 			$file = $id;
 		} else {
 			$file = bdb_idtofile($id, $type);
+		}
+
+		if (isset($__bdb_entry_cache [$file])) {
+			return $__bdb_entry_cache [$file];
 		}
 
 		if (file_exists($file)) {
@@ -140,6 +146,8 @@
 			$ignoreCase = !(defined('DUMB_MODE_ENABLED') && call_user_func('constant', 'DUMB_MODE_ENABLED'));
 
 			$entry = utils_kexplode($contents, '|', $ignoreCase);
+
+			$__bdb_entry_cache [$file] = $entry;
 
 			return $entry;
 		} else {
