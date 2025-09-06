@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Author: Enrico Reinsdorf (enrico@re-design.de)
  * Author URI: www.re-design.de
@@ -21,7 +20,9 @@ class iniParser {
 		static $cache = array();
 
 		$rp = @realpath($this->_iniFilename);
-		if ($rp === false) { $rp = $this->_iniFilename; }
+		if ($rp === false) {
+			$rp = $this->_iniFilename;
+		}
 		$exists = @file_exists($rp);
 		$mt = $exists ? @filemtime($rp) : 0;
 		$sz = $exists ? @filesize($rp) : 0;
@@ -57,10 +58,16 @@ class iniParser {
 		}
 
 		// Fallback: parse file now
-		$file_content = $exists ? @file($rp) : array();
+		$file_content = $exists ? (@file($rp) ?: array()) : array();
 
 		$this->_iniParsedArray = array();
 		$cur_sec = false;
+
+		// Tolerate BOM on first line
+		if (isset($file_content [0])) {
+			$file_content [0] = ltrim($file_content [0], "\xEF\xBB\xBF");
+		}
+
 		foreach ($file_content as $line) {
 			$line = trim($line);
 			if ($line !== '' && $line [0] === '[' && substr($line, -1) === ']') {
@@ -81,8 +88,10 @@ class iniParser {
 				}
 			}
 		}
+		// Fill caches
 		$cache [$local_key] = $this->_iniParsedArray;
 		if ($apcu_on) {
+			// TTL short; mtime/size in key
 			@apcu_store($apcu_key, $this->_iniParsedArray, 60);
 		}
 	}
