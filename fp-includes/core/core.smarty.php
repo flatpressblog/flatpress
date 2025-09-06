@@ -102,10 +102,18 @@ function fp_register_fp_plugins(\Smarty\Smarty $smarty, string $dir): void {
 	if (!is_dir($dir)) {
 		return;
 	}
+
 	$dh = @opendir($dir);
 	if (!$dh) {
 		return;
 	}
+
+	// Lazy loading for classic plugins (function|modifier|block|compiler|modifiercompiler)
+	$lazy = method_exists($smarty, 'addPluginsDir');
+	if ($lazy) {
+		$smarty->addPluginsDir($dir);
+	}
+
 	while (($file = readdir($dh)) !== false) {
 		if ($file === '.' || $file === '..' || $file [0] === '.') {
 			continue;
@@ -117,6 +125,9 @@ function fp_register_fp_plugins(\Smarty\Smarty $smarty, string $dir): void {
 
 		// Classic plugin files: function.|modifier.|block.|compiler.|modifiercompiler.
 		if (preg_match('/^(function|modifier|block|compiler|modifiercompiler)\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
+			if ($lazy) {
+				continue;
+			}
 			require_once $path;
 			$type = $m [1];
 			$name = $m [2];
@@ -151,13 +162,17 @@ function fp_register_fp_plugins(\Smarty\Smarty $smarty, string $dir): void {
 
 		// Shared helpers used by other plugins (no registration, just load)
 		if (preg_match('/^shared\.([A-Za-z0-9_]+)\.php$/', $file)) {
-			require_once $path;
+			if (!$lazy) {
+				require_once $path;
+			}
 			continue;
 		}
 
 		// Validation helpers (no direct registration, just make functions/classes available)
 		if (preg_match('/^validate_[A-Za-z0-9_.]+\.(php)$/', $file)) {
-			require_once $path;
+			if (!$lazy) {
+				require_once $path;
+			}
 			continue;
 		}
 
