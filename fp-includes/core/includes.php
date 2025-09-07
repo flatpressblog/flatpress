@@ -1,8 +1,9 @@
 <?php
 // includes.php
 // This is just a list of all the standard includes
+require_once INCLUDES_DIR . 'core.filesystem.php';
+require_once INCLUDES_DIR . 'core.fileio.php';
 require_once INCLUDES_DIR . 'core.smarty.php';
-require_once INCLUDES_DIR . 'core.utils.php';
 
 // Smarty without Composer: Load PSR-4 stub – automatically finds/fetches the latest stub
 utils_checksmarty();
@@ -12,16 +13,6 @@ $smarty = new \Smarty\Smarty();
 
 // Legacy alias for historical plugins/core code.
 $_FP_SMARTY = &$smarty;
-
-// FlatPress custom resources: Classes are NOT located in the Smarty namespace -> load explicitly
-require_once FP_SMARTYPLUGINS_DIR . 'resource.admin.php';
-require_once FP_SMARTYPLUGINS_DIR . 'resource.plugin.php';
-require_once FP_SMARTYPLUGINS_DIR . 'resource.shared.php';
-
-// Since Smarty 5, registration is done exclusively via objects.
-$smarty->registerResource('admin',  new \Smarty_Resource_Admin());
-$smarty->registerResource('plugin', new \Smarty_Resource_Plugin());
-$smarty->registerResource('shared', new \Smarty_Resource_Shared());
 
 // Register FlatPress-specific Smarty plugins explicitly (Smarty 5; no addPluginsDir)
 fp_register_fp_plugins($smarty, FP_SMARTYPLUGINS_DIR);
@@ -34,8 +25,7 @@ $includes = [
 	'core.wp-formatting.php',
 	'core.wp-default-filters.php',
 
-	'core.filesystem.php',
-	'core.fileio.php',
+	'core.utils.php',
 	'core.cache.php',
 	'core.blogdb.php',
 	'core.bplustree.class.php',
