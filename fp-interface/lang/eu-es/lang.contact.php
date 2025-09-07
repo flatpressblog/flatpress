@@ -2,38 +2,38 @@
 $baseurl = BLOG_BASEURL;
 
 $lang ['contact'] = array(
-	'head' => 'Contact Us',
-	'descr' => 'Fill out the form below to send us feedback. Please add your email if you wish to be answered.',
-	'fieldset1' => 'User data',
-	'name' => 'Name (*)',
-	'email' => 'Email:',
-	'www' => 'Web:',
-	'cookie' => 'Remember me',
-	'fieldset2' => 'Your message',
-	'comment' => 'Message (*):',
-	'fieldset3' => 'Send',
-	'submit' => 'Send',
-	'reset' => 'Reset',
-	'loggedin' => 'You are logged in 😉. <a href="' . $baseurl . 'login.php?do=logout">Log out</a> or to the <a href="' . $baseurl . 'admin.php">Administration area</a>.'
+	'head' => 'Jarri gurekin harremanetan',
+	'descr' => 'Bete beheko formularioa iritzia bidaltzeko. Mesedez, gehitu zure helbide elektronikoa erantzun bat jaso nahi baduzu.',
+	'fieldset1' => 'Erabiltzailearen datuak',
+	'name' => 'Izena (*)',
+	'email' => 'E-maila:',
+	'www' => 'Web orria:',
+	'cookie' => 'Gogoratu nazazu',
+	'fieldset2' => 'Zure mezua',
+	'comment' => 'Mezua (*):',
+	'fieldset3' => 'Bidali',
+	'submit' => 'Bidali',
+	'reset' => 'Berrezarri',
+	'loggedin' => 'Saioa hasita duzu 😉. <a href="' . $baseurl . 'login.php?do=logout">Itxi saioa</a> edo joan <a href="' . $baseurl . 'admin.php">kontrol-panelera</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(
-	'name' => 'Name:',
-	'email' => 'Email:',
-	'www' => 'Web:',
-	'content' => 'Message:',
-	'subject' => 'Contact sent through '
+	'name' => 'Izena:',
+	'email' => 'E-maila:',
+	'www' => 'Web orria:',
+	'content' => 'Mezua:',
+	'subject' => 'Mezua honen bidez bidali da: '
 );
 
 $lang ['contact'] ['error'] = array(
-	'name' => 'You must enter a name',
-	'email' => 'You must enter a valid email',
-	'www' => 'You must enter a valid URL',
-	'content' => 'You must enter a message'
+	'name' => 'Izena sartu behar duzu.',
+	'email' => 'Baliozko helbide elektronikoa sartu behar duzu.',
+	'www' => 'Baliozko URLa sartu behar duzu.',
+	'content' => 'Mezua sartu behar duzu.'
 );
 
 $lang ['contact'] ['msgs'] = array(
-	1 => 'Message was sent successfully',
-	-1 => 'Message could not be sent'
+	1 => 'Mezua ondo bidali da.',
+	-1 => 'Errore bat gertatu da mezua bidaltzen saiatzean.'
 );
 ?>
