@@ -4,6 +4,6 @@ $lang ['plugin'] ['lastentries'] = array(
 	'subject_after_count' => ' sarrerak',
 	'edit' => 'Editatu',
 	'add_entry' => 'Idatzi sarrera',
-	'no_entries' => 'Ez dago sarrerarik.'
+	'no_entries' => 'Ez dago sarrerarik'
 );
 ?>

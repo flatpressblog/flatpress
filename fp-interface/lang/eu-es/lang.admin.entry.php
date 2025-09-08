@@ -36,11 +36,11 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'fieldset2' => 'Gorde',
 	'submit' => 'Argitaratu',
 	'preview' => 'Aurrebista',
-	'savecontinue' => 'Gorde eta editatzen jarraitu',
+	'savecontinue' => 'Gorde eta jarraitu editatzen',
 	'categories' => 'Kategoriak',
 	'nocategories' => 'Ez da kategoriarik ezarri. <a href="admin.php?p=entry&amp;action=cats">Sortu zure kategoriak</a> kontrol-panel nagusian. ' . //
 		'<a href="#save">Gorde</a> zure sarrera lehenik.',
-	'saveopts' => 'Gordetzeko aukerak',
+	'saveopts' => 'Gordetze aukerak',
 	'success' => 'Zure sarrera ondo argitaratu da.',
 	'otheropts' => 'Beste aukera batzuk',
 	'commmsg' => 'Kudeatu sarrera honen iruzkinak',
@@ -133,7 +133,7 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Kudeatu kategoriak',
 	'descr' => '<p>Erabili beheko formularioa kategoriak gehitzeko eta editatzeko. ' . //
-		'Kategoria-elementu bakoitza formatu honetan egon behar da "kategoria-izena: <em>id_zenbakia</em>". Elementuak marratxoekin koskatu hierarkiak sortzeko.</p>
+		'Kategoria-elementu bakoitza formatu honetan egon behar da: "kategoria-izena: <em>id_zenbakia</em>". Elementuak marratxoekin koskatu ditzakezu hierarkiak sortzeko.</p>
 	<p>Adibidea:</p>
 	<pre>
 Orokorra :1

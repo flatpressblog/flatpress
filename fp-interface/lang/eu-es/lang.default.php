@@ -88,7 +88,7 @@ $lang ['entry'] ['categories'] = array(
 );
 
 $lang ['404error'] = array(
-	'subject' => 'Ez da aurkitu',
+	'subject' => 'Oh! Ez dugu ezer erakusteko',
 	'content' => '<p>Barkatu, ezin izan dugu eskatutako orrialdea aurkitu.</p>'
 );
 
