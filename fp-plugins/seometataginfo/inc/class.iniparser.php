@@ -24,12 +24,8 @@ class iniParser {
 			$rp = $this->_iniFilename;
 		}
 		$exists = @file_exists($rp);
-		$mt = $exists ? @filemtime($rp) : 0;
-		$sz = $exists ? @filesize($rp) : 0;
-		$token = $mt . ':' . $sz;
-		$local_key = $rp . '|' . $token;
-		$apcu_key = 'fp:ini:' . sha1($local_key);
 
+		// Check APCu
 		$apcu_on = false;
 		if (function_exists('apcu_fetch')) {
 			if (function_exists('apcu_enabled')) {
@@ -40,6 +36,18 @@ class iniParser {
 			if ($apcu_on && PHP_SAPI === 'cli' && !((bool) @ini_get('apc.enable_cli'))) {
 				$apcu_on = false;
 			}
+		}
+
+		// Key generation: Only with stat() tokens when APCu is active
+		if ($apcu_on) {
+			$mt = $exists ? @filemtime($rp) : 0;
+			$sz = $exists ? @filesize($rp) : 0;
+			$token = $mt . ':' . $sz;
+			$local_key = $rp . '|' . $token;
+			$apcu_key = 'fp:ini:' . sha1($local_key);
+		} else {
+			$local_key = $rp;
+			$apcu_key = null;
 		}
 
 		// per-Request-Cache
@@ -58,7 +66,24 @@ class iniParser {
 		}
 
 		// Fallback: parse file now
-		$file_content = $exists ? (@file($rp) ?: array()) : array();
+		$file_content = array();
+		if ($exists) {
+			$fh = @fopen($rp, "rb");
+			if ($fh) {
+				if (@flock($fh, LOCK_SH)) {
+					while (($line = fgets($fh)) !== false) {
+						$file_content [] = rtrim($line, "\r\n");
+					}
+					@flock($fh, LOCK_UN);
+				} else {
+					$file_content = @file($rp) ?: array();
+				}
+				@flock($fh, LOCK_UN);
+				fclose($fh);
+			} else {
+				$file_content = @file($rp) ?: array();
+			}
+		}
 
 		$this->_iniParsedArray = array();
 		$cur_sec = false;
@@ -107,7 +132,7 @@ class iniParser {
 	 * Returns a value from a section
 	 */
 	function getValue($section, $key) {
-		if (!isset($this->_iniParsedArray [$section])) {
+		if (!isset($this->_iniParsedArray [$section]) || !array_key_exists($key, $this->_iniParsedArray [$section])) {
 			return false;
 		}
 		return $this->_iniParsedArray [$section] [$key];
@@ -159,8 +184,30 @@ class iniParser {
 		if ($filename == null) {
 			$filename = $this->_iniFilename;
 		}
-		if (is_writeable($filename)) {
-			$SFfdescriptor = fopen($filename, "w");
+		if (true) {
+			$tmpFile = $filename . '.tmp.' . getmypid() . '.' . uniqid('', true);
+			$dir = dirname($filename);
+			if (!@is_dir($dir) || !@is_writable($dir)) {
+				return false;
+			}
+			$lock = @fopen($filename . '.lock', 'c');
+			if ($lock) {
+				@flock($lock, LOCK_EX);
+			}
+			$SFfdescriptor = @fopen($tmpFile, "wb");
+			if (!$SFfdescriptor) {
+				if ($lock) {
+					@flock($lock, LOCK_UN);
+					fclose($lock);
+				}
+				return false;
+			}
+			// blocking exclusive lock
+			if (!@flock($SFfdescriptor, LOCK_EX)) {
+				fclose($SFfdescriptor);
+				@unlink($tmpFile);
+				return false;
+			}
 			foreach ($this->_iniParsedArray as $section => $array) {
 				fwrite($SFfdescriptor, "[" . $section . "]\n");
 				foreach ($array as $key => $value) {
@@ -168,7 +215,25 @@ class iniParser {
 				}
 				fwrite($SFfdescriptor, "\n");
 			}
+			fflush($SFfdescriptor);
+			@flock($SFfdescriptor, LOCK_UN);
 			fclose($SFfdescriptor);
+
+			$ok = @rename($tmpFile, $filename);
+			if (!$ok) {
+				@unlink($filename);
+				$ok = @rename($tmpFile, $filename);
+			}
+			if (!$ok) {
+				@unlink($tmpFile);
+				return false;
+			}
+			@chmod($filename, FILE_PERMISSIONS);
+			if ($lock) {
+				@flock($lock, LOCK_UN);
+				fclose($lock);
+			}
+			clearstatcache(true, $filename);
 			return true;
 		} else {
 			return false;

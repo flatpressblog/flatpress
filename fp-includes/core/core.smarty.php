@@ -83,6 +83,102 @@ function utils_checksmarty($minVersion = FP_SMARTY_MIN_VERSION) {
 }
 
 /**
+ * Build/load persistent index for fp-smartyplugins.
+ * Cached under CACHE_DIR, invalidated via mtime($dir).
+ */
+function fp_smarty_get_plugin_index(string $dir): array {
+	$empty = [
+		// Classic plugin files
+		'function' => [],
+		'block' => [],
+		'modifier' => [],
+		'compiler' => [],
+		'modifiercompiler' => [],
+		// Filters
+		'filters' => ['pre' => [],
+		'post' => [],
+		'output' => [],
+		'variable' => []],
+		// Custom resources
+		'resources' => [],
+		// Shared helpers
+		'helpers' => []
+	];
+
+	if (!is_dir($dir)) {
+		return $empty;
+	}
+
+	$cacheDir = defined('CACHE_DIR') ? CACHE_DIR : (defined('FP_CONTENT') ? FP_CONTENT . 'cache/' : sys_get_temp_dir() . '/');
+	$token = @filemtime($dir) ?: 0;
+	$indexFile = rtrim($cacheDir, '/\\') . '/smarty_plugins.index.php';
+	$apcuOn = function_exists('apcu_fetch') && ((bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled') || (PHP_SAPI==='cli' && (bool) @ini_get('apc.enable_cli')));
+	if ($apcuOn) {
+		$val = apcu_fetch('fp:spi:' . sha1($dir . '|' . $token), $hit);
+		if ($hit && is_array($val)) {
+			return $val;
+		}
+	}
+	$map = null;
+	if (is_file($indexFile)) {
+		$payload = @include $indexFile;
+		if (is_array($payload) && ($payload ['_token'] ?? null) === $token && is_array($payload ['map'] ?? null)) {
+			$map = $payload ['map'];
+		}
+	}
+	if ($map === null) {
+		$map = $empty;
+		if ($dh = @opendir($dir)) {
+			while (($file = readdir($dh)) !== false) {
+				if ($file === '.' || $file === '..' || $file [0]==='.') {
+					continue;
+				}
+				$path = $dir.DIRECTORY_SEPARATOR.$file;
+				if (!is_file($path) || pathinfo($path, PATHINFO_EXTENSION) !== 'php') {
+					continue;
+				}
+				// Classic plugin files: function.|modifier.|block.|compiler.|modifiercompiler.
+				if (preg_match('/^(function|modifier|block|compiler|modifiercompiler)\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
+					$map [$m [1]] [$m [2]] = $path;
+					continue;
+				}
+				// Filters: prefilter.|postfilter.|outputfilter.|variablefilter.
+				if (preg_match('/^(pre|post|output|variable)filter\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
+					$map ['filters'] [$m [1]] [$m [2]] = $path;
+					continue;
+				}
+				// Custom resources: Classes outside the Smarty namespace (admin, plugin, shared).
+				if (preg_match('/^resource\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
+					$map ['resources'] [$m [1]] = $path;
+					continue;
+				}
+				// Shared helpers (no direct registration; can be preloaded once)
+				if (preg_match('/^shared\.([A-Za-z0-9_]+)\.php$/', $file)) {
+					$map ['helpers'] [] = $path;
+					continue;
+				}
+				// Validation helpers (no direct registration, just make functions/classes available)
+				if (preg_match('/^validate_[A-Za-z0-9_.]+\.php$/', $file)) {
+					$map ['helpers'] [] = $path;
+					continue;
+				}
+			}
+			closedir($dh);
+		}
+		$php = "<?php\nreturn " . var_export(['_token' => $token, 'map' => $map], true) . ";\n";
+		if (function_exists('io_write_file')) {
+			@io_write_file($indexFile, $php);
+		} else {
+			@file_put_contents($indexFile, $php, LOCK_EX);
+		}
+	}
+	if ($apcuOn) {
+		@apcu_store('fp:spi:' . sha1($dir . '|' . $token), $map, 60);
+	}
+	return $map;
+}
+
+/**
  * Register FlatPress Smarty plugins without using addPluginsDir() (deprecated since Smarty 5).
  * Scans $dir for classic plugin filenames and registers them via registerPlugin()/registerFilter().
  */
@@ -102,72 +198,147 @@ function fp_register_fp_plugins(\Smarty\Smarty $smarty, string $dir): void {
 	if (!is_dir($dir)) {
 		return;
 	}
-	$dh = @opendir($dir);
-	if (!$dh) {
-		return;
-	}
-	while (($file = readdir($dh)) !== false) {
-		if ($file === '.' || $file === '..' || $file [0] === '.') {
-			continue;
-		}
-		$path = $dir . DIRECTORY_SEPARATOR . $file;
-		if (!is_file($path) || pathinfo($path, PATHINFO_EXTENSION) !== 'php') {
-			continue;
-		}
 
-		// Classic plugin files: function.|modifier.|block.|compiler.|modifiercompiler.
-		if (preg_match('/^(function|modifier|block|compiler|modifiercompiler)\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
-			require_once $path;
-			$type = $m [1];
-			$name = $m [2];
-			switch ($type) {
-				case 'function':
-					$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_FUNCTION, $name, 'smarty_function_' . $name);
+	$index = fp_smarty_get_plugin_index($dir);
+
+	foreach ($index ['function'] as $name => $path) {
+		$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_FUNCTION, $name,
+			static function(array $params, $template) use ($name, $path) {
+				static $fn = [];
+				if (!isset($fn [$name])) {
+					@require_once $path;
+					$fn [$name] = 'smarty_function_' . $name;
+				}
+				return $fn [$name]($params, $template);
+			}
+		);
+	}
+	foreach ($index ['block'] as $name => $path) {
+		$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_BLOCK, $name,
+			static function(array $params, $content, $template, &$repeat) use ($name, $path) {
+				static $fn = [];
+				if (!isset($fn [$name])) {
+					@require_once $path;
+					$fn [$name] = 'smarty_block_' . $name;
+				}
+				return $fn [$name]($params, $content, $template, $repeat);
+			}
+		);
+	}
+	foreach ($index ['modifier'] as $name => $path) {
+		$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_MODIFIER, $name,
+			static function($value, ...$args) use ($name, $path) {
+				static $fn = [];
+				if (!isset($fn [$name])) {
+					@require_once $path;
+					$fn [$name] = 'smarty_modifier_' . $name;
+				}
+				return $fn [$name]($value, ...$args);
+			}
+		);
+	}
+	foreach ($index ['compiler'] as $name => $path) {
+		$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_COMPILER, $name,
+			static function($params, $compiler) use ($name, $path) {
+				static $fn = [];
+				if (!isset($fn [$name])) {
+					@require_once $path;
+					$fn [$name] = 'smarty_compiler_' . $name;
+				}
+				return $fn [$name]($params, $compiler);
+			}
+		);
+	}
+	foreach ($index ['modifiercompiler'] as $name => $path) {
+		$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_MODIFIERCOMPILER, $name,
+			static function($params, $compiler) use ($name, $path) {
+				static $fn = [];
+				if (!isset($fn [$name])) {
+					@require_once $path;
+					$fn [$name] = 'smarty_modifiercompiler_' . $name;
+				}
+				return $fn [$name]($params, $compiler);
+			}
+		);
+	}
+
+	foreach (['pre', 'post', 'output', 'variable'] as $kind) {
+		foreach ($index ['filters'] [$kind] as $name => $path) {
+			switch ($kind) {
+				case 'pre':
+					$smarty->registerFilter('pre',
+						static function($tpl_source, $template) use ($name, $path) {
+							static $fn = [];
+							if (!isset($fn [$name])) {
+								@require_once $path;
+								$fn [$name] = 'smarty_prefilter_' . $name;
+							}
+							return $fn [$name]($tpl_source, $template);
+						}
+					);
 					break;
-				case 'block':
-					$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_BLOCK, $name, 'smarty_block_' . $name);
+				case 'post':
+					$smarty->registerFilter('post',
+						static function($tpl_source, $template) use ($name, $path) {
+							static $fn = [];
+							if (!isset($fn [$name])) {
+								@require_once $path;
+								$fn [$name] = 'smarty_postfilter_' . $name;
+							}
+							return $fn [$name]($tpl_source, $template);
+						}
+					);
 					break;
-				case 'modifier':
-					$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_MODIFIER, $name, 'smarty_modifier_' . $name);
+				case 'output':
+					$smarty->registerFilter('output',
+						static function($output, $template) use ($name, $path) {
+							static $fn = [];
+							if (!isset($fn [$name])) {
+								@require_once $path;
+								$fn [$name] = 'smarty_outputfilter_' . $name;
+							}
+							return $fn [$name]($output, $template);
+						}
+					);
 					break;
-				case 'modifiercompiler':
-					$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_MODIFIERCOMPILER, $name, 'smarty_modifiercompiler_' . $name);
-					break;
-				case 'compiler':
-					$smarty->registerPlugin(\Smarty\Smarty::PLUGIN_COMPILER, $name, 'smarty_compiler_' . $name);
+				case 'variable':
+					$smarty->registerFilter('variable',
+						static function($variable, $template) use ($name, $path) {
+							static $fn = [];
+							if (!isset($fn [$name])) {
+								@require_once $path;
+								$fn [$name] = 'smarty_variablefilter_' . $name;
+							}
+							return $fn [$name]($variable, $template);
+						}
+					);
 					break;
 			}
-			continue;
-		}
-
-		// Filters: prefilter.|postfilter.|outputfilter.|variablefilter.
-		if (preg_match('/^(pre|post|output|variable)filter\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
-			require_once $path;
-			$kind = $m [1]; // pre|post|output|variable
-			$name = $m [2];
-			$smarty->registerFilter($kind, 'smarty_' . $kind . 'filter_' . $name);
-			continue;
-		}
-
-		// Shared helpers used by other plugins (no registration, just load)
-		if (preg_match('/^shared\.([A-Za-z0-9_]+)\.php$/', $file)) {
-			require_once $path;
-			continue;
-		}
-
-		// Validation helpers (no direct registration, just make functions/classes available)
-		if (preg_match('/^validate_[A-Za-z0-9_.]+\.(php)$/', $file)) {
-			require_once $path;
-			continue;
-		}
-
-		// Inserts are removed in Smarty 5 – soft warning for plugin authors.
-		if (preg_match('/^insert\.([A-Za-z0-9_]+)\.php$/', $file, $m)) {
-			@trigger_error('Smarty insert plugin "' . $m [1] . '" not supported in Smarty 5 or later; convert to a function plugin.', E_USER_DEPRECATED);
-			continue;
 		}
 	}
-	closedir($dh);
+
+	/**
+	 * Register FlatPress custom Smarty resources (admin, plugin, shared).
+	 * Note: Resources are classes outside the Smarty namespace
+	 * and must be registered as objects (Smarty 5).
+	 */
+	if (!empty($index ['resources']) && is_array($index ['resources'])) {
+		foreach ($index ['resources'] as $name => $path) {
+			$n = (string)$name;
+			if ($n === '' || !is_string($path)) {
+				continue;
+			}
+			@require_once $path;
+			$cls = 'Smarty_Resource_' . ucfirst($n);
+			if (class_exists($cls, false)) {
+				$smarty->registerResource($n, new $cls());
+			}
+		}
+	}
+
+	foreach ($index ['helpers'] as $path) {
+		require_once $path;
+	}
 
 	// End – Registration successfully completed
 	if (!defined('FP_SMARTY_FP_PLUGINS_DONE')) {
