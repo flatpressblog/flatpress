@@ -12,7 +12,7 @@
  * @param $string before
  * -------------------------------------------------------------
  */
-function smarty_function_list_categories($params) { // , &$smarty)
+function smarty_function_list_categories($params, $template) {
 	$cat_params = array(
 		'ild' => '<li>',
 		'ird' => "</li>\n",

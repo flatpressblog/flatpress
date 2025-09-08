@@ -4,6 +4,8 @@
 - FlatPress 1.5 runs under PHP up to **8.4**; minimum required PHP version increases to **7.2**.
 
 ## Changes
+- General
+  - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667))
 - Template engine:
   - Smarty updated to version 5.5.1 with PHP 8.4 support ([#651](https://github.com/flatpressblog/flatpress/pull/651))<br><sub><i>
 Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte extension](https://www.php.net/manual/en/book.mbstring.php) in production for optimal performance.</i></sub>
