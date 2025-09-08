@@ -1,6 +1,6 @@
 <?php
 /*
- * LangId: Basque
+ * LangId: Euskara (ES)
  */
 $lang ['setup'] = array(
 	'setup' => 'Instalazioa'
