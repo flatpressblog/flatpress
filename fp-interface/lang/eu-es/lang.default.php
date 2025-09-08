@@ -64,8 +64,8 @@ $lang ['staticauthor'] = array(
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by' => 'Honek bidalia',
-	'at' => 'ordu honetan'
+	'posted_by' => '(e)k idatzia',
+	'at' => '(r)etan'
 );
 
 $lang ['entry'] = array();
@@ -74,13 +74,13 @@ $lang ['entry'] ['flags'] = array();
 $lang ['entry'] ['flags'] ['long'] = array(
 	'draft' => '<strong>Zirriborroa</strong>: ezkutatuta, argitaratzeko zain.',
 	// 'static' => '<strong>Orri estatikoa</strong>: normalean ezkutatuta, sarrerara iristeko jarri ?page=sarreraren-izenburua URLan (esperimentala)',
-	'commslock' => '<strong>Iruzkinak blokeatuta</strong>: sarrera honetarako iruzkinak debekatuta daude.'
+	'commslock' => '<strong>Blokeatu iruzkinak</strong>: sarrera honetarako iruzkinak debekatuta daude.'
 );
 
 $lang ['entry'] ['flags'] ['short'] = array(
 	'draft' => 'Zirriborroa',
-	// 'static' => 'Estatikoa',
-	'commslock' => 'Iruzkinak blokeatuta'
+	// 'static' => 'Orri estatikoa',
+	'commslock' => 'Blokeatu iruzkinak'
 );
 
 $lang ['entry'] ['categories'] = array(

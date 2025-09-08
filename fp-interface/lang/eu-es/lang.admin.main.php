@@ -21,7 +21,7 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op7d' => 'Igo eta kudeatu irudiak eta fitxategiak.',
 	'op8' => 'Gaiak',
 	'op8d' => 'Aldatu zure blogaren itxura (gaiak eta estiloak).',
-	'op9' => 'Iruzkin-gunea',
+	'op9' => 'Iruzkin-zentroa',
 	'op9d' => 'Iruzkinak kudeatu, jarraibideak sortu.'
 );
 ?>
