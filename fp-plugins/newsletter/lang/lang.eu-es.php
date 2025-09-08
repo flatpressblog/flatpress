@@ -3,8 +3,8 @@ $lang ['plugin'] ['newsletter'] = array(
 	// Widget
 	'subject' => 'Buletina',
 	'input_email_placeholder' => 'Zure helbide elektronikoa',
-	'accept_privacy_policy' => 'Pribatutasun politika onartzen dut',
-	'privacy_link_text' => 'joan pribatutasun politikara',
+	'accept_privacy_policy' => 'Pribatutasun-politika onartzen dut',
+	'privacy_link_text' => 'joan pribatutasun-politikara',
 	'button' => 'Harpidetu',
 	'csrf_error' => 'CSRF token baliogabea.',
 
@@ -20,7 +20,7 @@ $lang ['plugin'] ['newsletter'] = array(
 	'last_comments' => 'Azken iruzkinak',
 	'no_comments' => 'Ez dago iruzkinik',
 	'unsubscribe' => 'Buletinan baja eman',
-	'privacy_policy' => 'Pribatutasun politika',
+	'privacy_policy' => 'Pribatutasun-politika',
 	'legal_notice' => 'Lege oharra'
 );
 
@@ -28,7 +28,7 @@ $lang ['plugin'] ['newsletter'] = array(
 $lang ['admin'] ['plugin'] ['submenu'] ['newsletter'] = 'Buletina';
 $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'head' => 'Buletinaren kudeaketa',
-	'desc_subscribers' => 'Hemen ikus ditzakezu buletinaren harpidedunen helbide elektroniko guztiak eta harpidedunek pribatutasun politika onartu baldin badute. ' . //
+	'desc_subscribers' => 'Hemen ikus ditzakezu buletinaren harpidedunen helbide elektroniko guztiak eta harpidedunek pribatutasun-politika onartu baldin badute. ' . //
 		'Harpidedunak ere ezaba ditzakezu.',
 	'admin_subscribers_list' => 'Harpidedunen zerrenda',
 	'email_address' => 'Helbide elektronikoa',
