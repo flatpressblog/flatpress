@@ -1,0 +1,6 @@
+SUBJECT|Esteka baliogabea edo iraungita!|CONTENT|
+Zoritxarrez, klik egin duzun baieztapen-esteka ez da baliozkoa edo dagoeneko erabili da.
+
+Mesedez, hasi berriro izen-ematea buletinaren formularioaren bidez.
+Mezu elektroniko bat jaso baduzu, egiaztatu esteka 24 orduko epean ireki duzun ala ez.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|
