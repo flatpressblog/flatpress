@@ -1,0 +1,3 @@
+SUBJECT|Lege oharra|CONTENT|
+([url=admin.php?p=static&action=write&page=legal-notice]Editatu nazazu![/url])
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|FlatPress|

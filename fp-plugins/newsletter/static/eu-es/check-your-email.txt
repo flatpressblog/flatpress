@@ -1,0 +1,7 @@
+SUBJECT|Ia eginda!|CONTENT|
+Eskerrik asko buletinera harpidetzeagatik.
+Mezu elektroniko bat bidali dizut zure helbide elektronikora.
+Mesedez, egin klik mezu elektroniko honetako baieztapen-estekan erregistroa osatzeko.
+
+Mezu elektronikoa ez badago zure sarrera-ontzian, egiaztatu zure spam karpeta ere.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

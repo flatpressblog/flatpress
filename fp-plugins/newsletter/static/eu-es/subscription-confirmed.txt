@@ -1,0 +1,6 @@
+SUBJECT|Buletinerako harpidetza baieztatu dugu!|CONTENT|
+Eskerrik asko, buletinerako izen-ematea osatu da!
+
+Hemendik aurrera hilean behin jasoko duzu argitalpen eta iruzkin berriei buruzko informazioa.
+Aurrerago harpidetzan baja eman nahi baduzu, harpidetza kentzeko esteka bat aurkituko duzu mezu elektroniko bakoitzaren amaieran.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|

@@ -1,0 +1,3 @@
+SUBJECT|Buletinaren harpidetzan baja eman duzu!|CONTENT|
+Eguneraketak jaso nahi badituzu, nire Atom edo RSS jariora harpidetu zaitezke.
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|Newsletter|
