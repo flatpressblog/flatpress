@@ -587,7 +587,7 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, 
 				$langconf = [];
 				/** @var array{charsets?: array<int,string>} $langconf */
 				@include_once $langfile;
-				if (isset($langconf ['charsets']) && is_array($langconf ['charsets']) && isset($langconf ['charsets'][1]) && is_string($langconf ['charsets'][1])) {
+				if (array_key_exists('charsets', $langconf) && is_array($langconf ['charsets']) && array_key_exists(1, $langconf ['charsets']) && is_string($langconf ['charsets'] [1])) {
 					$pref [$locale_lc] = [strtoupper($langconf ['charsets'] [1])];
 				}
 			}
