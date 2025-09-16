@@ -583,14 +583,15 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, 
 		if ($locale_lc !== '') {
 			$langId = $fp_config ['locale'] ['lang'];
 			$langfile = realpath(LANG_DIR . $langId . '/lang.conf.php');
-			if ($langfile && file_exists($langfile) && is_readable($langfile)) {
-				$langconf = [];
-				/** @var array{charsets?: array<int,string>} $langconf */
+				/** @var mixed $langconf */
+				$langconf = null;
 				@include_once $langfile;
-				if (array_key_exists('charsets', $langconf) && is_array($langconf ['charsets']) && array_key_exists(1, $langconf ['charsets']) && is_string($langconf ['charsets'] [1])) {
-					$pref [$locale_lc] = [strtoupper($langconf ['charsets'] [1])];
+				/** @var array{charsets?: array<int,string>} $langconf */
+				$langconf = is_array($langconf) ? $langconf : [];
+				$csList = $langconf ['charsets'] ?? null;
+				if (is_array($csList) && isset($csList [1]) && is_string($csList [1])) {
+					$pref [$locale_lc] = [strtoupper($csList [1])];
 				}
-			}
 		}
 		$candidates = [$enc];
 		if (isset($pref [$locale_lc])) {
