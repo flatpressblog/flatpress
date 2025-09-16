@@ -537,7 +537,7 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, 
 		'Ð­' => 'Э', 'Ð®' => 'Ю', 'Ð¯' => 'Я', 'Ñ\x80' => 'р', 'Ñ\x81' => 'с', 'Ñ\x82' => 'т', 'Ñ\x83' => 'у', 'Ñ\x84' => 'ф', 'Ñ\x85' => 'х',
 		'Ñ\x86' => 'ц', 'Ñ\x87' => 'ч', 'Ñ\x88' => 'ш', 'Ñ\x89' => 'щ', 'Ñ\x8a' => 'ъ', 'Ñ\x8b' => 'ы', 'Ñ\x8c' => 'ь', 'Ñ\x8d' => 'э',
 		'Ñ\x8e' => 'ю', 'Ñ\x8f' => 'я', 'Ð�' => 'А', 'Ð‘' => 'Б', 'Ð’' => 'В', 'Ð“' => 'Г', 'Ð”' => 'Д', 'Ð•' => 'Е', 'Ð\x81' => 'Ё',
-		'Ð–' => 'Ж', 'Ð—' => 'З', 'Ð˜' => 'И', 'Ð™' => 'Й', 'Ðš' => 'К', 'Ð›' => 'Л', 'Ðœ' => 'М', 'Ð�' => 'Н', 'Ðž' => 'О', 'ÐŸ' => 'П',
+		'Ð–' => 'Ж', 'Ð—' => 'З', 'Ð˜' => 'И', 'Ð™' => 'Й', 'Ðš' => 'К', 'Ð›' => 'Л', 'Ðœ' => 'М', 'Ðž' => 'О', 'ÐŸ' => 'П',
 		'ÑŒ' => 'ь', 'ÑŠ' => 'ъ', 'ÑŽ' => 'ю', 'Ñƒ' => 'у', 'Ñˆ' => 'ш', 'Ñ‘' => 'ё', 'Ñ‚' => 'т', 'Ñ„' => 'ф', 'Ñ†' => 'ц', 'Ñ‡' => 'ч',
 		'Ñ…' => 'х', 'Ñ‰' => 'щ', 'Ñ‹' => 'ы', 'Ñ€' => 'р'
 	];
@@ -578,14 +578,16 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, 
 	$enc = strtolower($target_encoding);
 	if ($enc !== 'utf-8') {
 		// Preferred legacy encoding
+		/** @var array<string, array<int,string>> $pref */
 		$pref = [];
 		if ($locale_lc !== '') {
 			$langId = $fp_config ['locale'] ['lang'];
 			$langfile = realpath(LANG_DIR . $langId . '/lang.conf.php');
 			if ($langfile && file_exists($langfile) && is_readable($langfile)) {
 				$langconf = [];
+				/** @var array{charsets?: array<int,string>} $langconf */
 				@include_once $langfile;
-				if (!empty($langconf ['charsets'] [1]) && is_string($langconf ['charsets'] [1])) {
+				if (isset($langconf ['charsets']) && is_array($langconf ['charsets']) && isset($langconf ['charsets'][1]) && is_string($langconf ['charsets'][1])) {
 					$pref [$locale_lc] = [strtoupper($langconf ['charsets'] [1])];
 				}
 			}
@@ -850,5 +852,18 @@ function normalize_to_utf8() {
 	if (function_exists('ini_set')) {
 		@ini_set('default_charset', 'UTF-8');
 	}
+}
+
+function set_default_html_ct() {
+	if (PHP_SAPI === 'cli' || headers_sent()) {
+		return;
+	}
+	foreach (headers_list() as $h) {
+		if (stripos($h, 'Content-Type:') === 0) {
+			return;
+		}
+	}
+	$cs = strtoupper($GLOBALS ['fp_config'] ['locale'] ['charset'] ?? 'UTF-8');
+	header('Content-Type: text/html; charset=' . $cs);
 }
 ?>
