@@ -581,17 +581,12 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, 
 		/** @var array<string, array<int,string>> $pref */
 		$pref = [];
 		if ($locale_lc !== '') {
-			$langId = $fp_config ['locale'] ['lang'];
-			$langfile = realpath(LANG_DIR . $langId . '/lang.conf.php');
-				/** @var mixed $langconf */
-				$langconf = null;
-				@include_once $langfile;
-				/** @var array{charsets?: array<int,string>} $langconf */
-				$langconf = is_array($langconf) ? $langconf : [];
-				$csList = $langconf ['charsets'] ?? null;
-				if (is_array($csList) && isset($csList [1]) && is_string($csList [1])) {
-					$pref [$locale_lc] = [strtoupper($csList [1])];
-				}
+			/** @var array{charsets?: array<int,string>} $conf */
+			$conf = (array) lang_getconf($fp_config ['locale'] ['lang']);
+			$cs = $conf ['charsets'] [1] ?? null;
+			if (is_string($cs)) {
+				$pref [$locale_lc] = [strtoupper($cs)];
+			}
 		}
 		$candidates = [$enc];
 		if (isset($pref [$locale_lc])) {
