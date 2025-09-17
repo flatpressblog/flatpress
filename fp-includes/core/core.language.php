@@ -99,13 +99,14 @@ function lang_getconf($langId) {
 	if (file_exists($file) && is_readable($file)) {
 		/** @var mixed $langconf */
 		$langconf = null; // Is set in the file
-		include $file; // Expected $langconf
+		@include_once $file; // Expected $langconf
 		if (is_array($langconf)) {
 			$conf = $langconf;
 		}
 	} else {
 		trigger_error("Error loading config for language \"" . $file . "\"", E_USER_WARNING);
 	}
+
 	return $cache [$id] = $conf;
 }
 
@@ -463,7 +464,7 @@ function fp_decode_named_entities_only($text) {
 function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, $decode_all_entities = false, $respect_target = false) {
 	global $fp_config;
 
-	// Ziel-Charset nur aus Config übernehmen, wenn nicht ausdrücklich vorgegeben
+	// Only apply target character set from config if not explicitly specified
 	if (!$respect_target && isset($fp_config ['general'] ['charset']) && is_string($fp_config ['general'] ['charset'])) {
 		$target_encoding = strtolower($fp_config ['general'] ['charset']);
 	}
