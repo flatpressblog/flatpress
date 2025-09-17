@@ -99,7 +99,7 @@ function lang_getconf($langId) {
 	if (file_exists($file) && is_readable($file)) {
 		/** @var mixed $langconf */
 		$langconf = null; // Is set in the file
-		@include_once $file; // Expected $langconf
+		include $file; // Expected $langconf
 		if (is_array($langconf)) {
 			$conf = $langconf;
 		}
@@ -161,147 +161,94 @@ function lang_list() {
  * - Ensure the required locales are installed on the server (e.g., `locale-gen` on Linux).
  * - Unsupported or invalid combinations will be logged but do not terminate execution.
  */
+//define('DEBUG', true);
 function set_locale() {
 	global $fp_config;
 
-	//define('DEBUG', true);
 	$debug = defined('DEBUG') && DEBUG;
 
-	$langconf = [];
-	$localeCharset_a = $localeCharset_b = $localeCharset_c = $localeCharset_d = '';
-
-	// Ensure that the locale configuration exists
-	if (!isset($fp_config ['locale'] ['lang']) || !isset($fp_config ['locale'] ['charset'])) {
+	// Preconditions
+	$langId  = (string)($fp_config ['locale'] ['lang'] ?? '');
+	$charset = (string)($fp_config ['locale'] ['charset'] ?? '');
+	if ($langId === '' || $charset === '') {
 		if ($debug) {
 			trigger_error('set_locale -> Locale configuration missing in fp_config.', E_USER_WARNING);
 		}
 		return;
 	}
 
-	$langId = $fp_config ['locale'] ['lang'];
-	$charset = $fp_config ['locale'] ['charset'];
-
-	// Check whether LANG_DIR is defined
-	if (!defined('LANG_DIR')) {
-		if ($debug) {
-			trigger_error('set_locale -> LANG_DIR is not defined.', E_USER_WARNING);
-		}
-		return;
+	/** @var array{
+	 *   id?: string,
+	 *   locale?: string|array<mixed,mixed>,
+	 *   locales?: array<mixed,mixed>,
+	 *   charsets?: array<int,string>,
+	 *   localecountry_a?: string,
+	 *   localecountry_b?: string,
+	 *   localeshort?: string,
+	 *   localecharset_a?: string,
+	 *   localecharset_b?: string,
+	 *   localecharset_c?: string,
+	 *   localecharset_d?: string
+	 * } $langConf */
+	$langConf = (array)(lang_getconf($langId) ?? []);
+	if ($debug) {
+		error_log('set_locale -> Langconf loaded: ' . print_r($langConf, true));
 	}
 
-	// Creating the path to the language configuration file and securing it
-	$langConfFile = realpath(LANG_DIR . $langId . '/lang.conf.php');
-
-	if ($langConfFile && file_exists($langConfFile)) {
-		/** 
-		 * @var array{
-		 *     id: string,
-		 *     locale: string,
-		 *     charsets: array{
-		 *         0: string,
-		 *         1: string
-		 *     },
-		 *     localecountry_a: string,
-		 *     localecountry_b: string,
-		 *     localeshort: string,
-		 *     localecharset_a: string,
-		 *     localecharset_b: string,
-		 *     localecharset_c: string,
-		 *     localecharset_d: string
-		 * } $langconf 
-		 */
-		@include_once $langConfFile;
-		if ($debug) {
-			error_log('set_locale -> Langconf loaded: ' . print_r($langconf, true));
-		}
-	} else {
-		if ($debug) {
-			trigger_error('set_locale -> Language configuration file not found: ' . ($langConfFile ? : 'undefined'), E_USER_WARNING);
-		}
-		return;
-	}
-
-	/** @phpstan-ignore-next-line */
-	if (isset($langconf ['charsets']) && is_array($langconf ['charsets'])) {
-		if ($debug) {
-			error_log('set_locale -> Charset comparison. Defined: ' . print_r($langconf ['charsets'], true) . '. Current: ' . $charset);
-		}
-		/** @phpstan-ignore-next-line */
-		if (isset($langconf ['charsets'] [0]) && strtolower($charset) === strtolower($langconf ['charsets'] [0])) {
-			/** @phpstan-ignore-next-line */
-			$localeCharset_a = isset($langconf ['localecharset_a']) ? $langconf ['localecharset_a'] : '';
-			/** @phpstan-ignore-next-line */
-			$localeCharset_b = isset($langconf ['localecharset_b']) ? $langconf ['localecharset_b'] : '';
-			/** @phpstan-ignore-next-line */
-		} elseif (isset($langconf ['charsets'] [1]) && strtolower($charset) === strtolower($langconf ['charsets'] [1])) {
-			/** @phpstan-ignore-next-line */
-			$localeCharset_c = isset($langconf ['localecharset_c']) ? $langconf ['localecharset_c'] : '';
-			/** @phpstan-ignore-next-line */
-			$localeCharset_d = isset($langconf ['localecharset_d']) ? $langconf ['localecharset_d'] : '';
-		}
-	}
-
-	// Validate the configuration and apply fallback if necessary
-	$fallbackLangconf = [
+	// Fallbacks for missing keys
+	$langConf += [
 		'localecountry_a' => 'en_US',
 		'localecountry_b' => 'en-US',
 		'localeshort' => 'en',
-		'charsets' => ['utf-8'],
+		'charsets' => ['UTF-8'],
 		'localecharset_a' => '.UTF-8',
 		'localecharset_b' => '.utf8',
 		'localecharset_c' => '.ISO-8859-1',
 		'localecharset_d' => '.iso88591',
 	];
 
-	foreach (['localecountry_a', 'localecountry_b', 'charsets', 'localeshort'] as $key) {
-		/** @phpstan-ignore-next-line */
-		if (!isset($langconf [$key]) || empty($langconf [$key]) || ($key === 'charsets' && !is_array($langconf [$key]))) {
-			if ($debug) {
-				trigger_error('set_locale -> Missing or invalid key in language configuration: ' . $key . '. Value: ' . var_export($langconf [$key], true), E_USER_WARNING);
-			}
-			$langconf [$key] = $fallbackLangconf [$key];
-		}
+	// Candidates
+	$a = is_string($langConf ['localecountry_a']) ? $langConf ['localecountry_a'] : ''; // de_DE
+	$b = is_string($langConf ['localecountry_b']) ? $langConf ['localecountry_b'] : ''; // de-DE
+	$short = is_string($langConf ['localeshort']) ? $langConf ['localeshort'] : ''; // de
+
+	if ($a === '' && $b !== '') {
+		$a = str_replace('-', '_', $b);
+	}
+	if ($b === '' && $a !== '') {
+		$b = str_replace('_', '-', $a);
 	}
 
-	// Variants to check
-	$localeVariants = [
-		$langconf ['localecountry_a'], // de_DE
-		$langconf ['localecountry_b'], // de-DE
-		$langconf ['localeshort'], // de
-	];
+	$localeVariants = [];
+	if ($a !== '') {
+		$localeVariants [] = $a; // .UTF-8
+	}
+	if ($b !== '') {
+		$localeVariants [] = $b; // .utf8
+	}
+	if ($short !== '') {
+		$localeVariants [] = $short; // de_DE
+	}
 
 	// Add charset variations based on the current charset
 	$localeVariantsWithCharsets = [];
-	if (isset($langconf ['charsets'] [0]) && strtolower($charset) === strtolower($langconf ['charsets'] [0])) {
-		foreach ($localeVariants as $variant) {
-			/** @phpstan-ignore-next-line */
-			$localeCharset_a = isset($langconf ['localecharset_a']) ? $langconf ['localecharset_a'] : '';
-			/** @phpstan-ignore-next-line */
-			$localeCharset_b = isset($langconf ['localecharset_b']) ? $langconf ['localecharset_b'] : '';
+	$charsets = $langConf ['charsets'] ?? [];
+	$second = (is_array($charsets) && isset($charsets [1]) && is_string($charsets [1])) ? $charsets [1] : null;
+	$useLegacy = ($second !== null && strcasecmp($charset, $second) === 0);
 
-			$localeVariantsWithCharsets [] = $variant . $localeCharset_a; // .UTF-8
-			$localeVariantsWithCharsets [] = $variant . $localeCharset_b; // .utf8
-			$localeVariantsWithCharsets [] = $variant; // de_DE
-		}
-		if ($debug) {
-			error_log('set_locale -> Adding charset variations. Current charset: ' . $charset);
-			error_log('set_locale -> localeCharset_a: ' . $localeCharset_a . ', localeCharset_b: ' . $localeCharset_b);
-		}
-	} elseif (isset($langconf ['charsets'] [1]) && strtolower($charset) === strtolower($langconf ['charsets'] [1])) {
-		foreach ($localeVariants as $variant) {
-			/** @phpstan-ignore-next-line */
-			$localeCharset_c = isset($langconf ['localecharset_c']) ? $langconf ['localecharset_c'] : '';
-			/** @phpstan-ignore-next-line */
-			$localeCharset_d = isset($langconf ['localecharset_d']) ? $langconf ['localecharset_d'] : '';
+	$suffixes = $useLegacy ? [(string)($langConf ['localecharset_c'] ?? ''), (string)($langConf ['localecharset_d'] ?? '')] : [(string)($langConf ['localecharset_a'] ?? ''), (string)($langConf ['localecharset_b'] ?? '')];
 
-			$localeVariantsWithCharsets [] = $variant . $localeCharset_c; // .ISO-8859-15
-			$localeVariantsWithCharsets [] = $variant . $localeCharset_d; // .iso885915
-			$localeVariantsWithCharsets [] = $variant; // de_DE
+	foreach ($localeVariants as $variant) {
+		foreach ($suffixes as $suf) {
+			if (is_string($suf) && $suf !== '') {
+				$localeVariantsWithCharsets [] = $variant . $suf;
+			}
 		}
-		if ($debug) {
-			error_log('set_locale -> Adding charset variations. Current charset: ' . $charset);
-			error_log('set_locale -> localeCharset_c: ' . $localeCharset_c . ', localeCharset_d: ' . $localeCharset_d);
-		}
+		$localeVariantsWithCharsets [] = $variant;
+	}
+
+	if ($debug) {
+		error_log('set_locale -> Adding charset variations. Current charset: ' . $charset);
 	}
 
 	$supportedLocales = [];
@@ -341,9 +288,9 @@ function set_locale() {
 					}
 				} else {
 					if ($debug) {
-						error_log('set_locale -> Locale set for category ' . $category . ': ' . $variant);
+						error_log('set_locale -> Locale set for category ' . $category . ': ' . $currentLocale);
 					}
-					$selectedLocale = $variant;
+					$selectedLocale = $currentLocale;
 				}
 			}
 			if ($selectedLocale) {
@@ -603,9 +550,9 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, 
 		/** @var array<string, array<int,string>> $pref */
 		$pref = [];
 		if ($locale_lc !== '') {
-			/** @var array{charsets?: array<int,string>} $conf */
-			$conf = (array) lang_getconf($fp_config ['locale'] ['lang']);
-			$cs = $conf ['charsets'] [1] ?? null;
+			/** @var array{charsets?: array<int,string>} $langconf */
+			$langconf = (array) lang_getconf($fp_config ['locale'] ['lang']);
+			$cs = $langconf ['charsets'] [1] ?? null;
 			if (is_string($cs)) {
 				$pref [$locale_lc] = [strtoupper($cs)];
 			}
