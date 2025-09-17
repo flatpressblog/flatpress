@@ -236,11 +236,12 @@ function set_locale() {
 	$second = (is_array($charsets) && isset($charsets [1]) && is_string($charsets [1])) ? $charsets [1] : null;
 	$useLegacy = ($second !== null && strcasecmp($charset, $second) === 0);
 
+	/** @var array<int,string> $suffixes */
 	$suffixes = $useLegacy ? [(string)($langConf ['localecharset_c'] ?? ''), (string)($langConf ['localecharset_d'] ?? '')] : [(string)($langConf ['localecharset_a'] ?? ''), (string)($langConf ['localecharset_b'] ?? '')];
 
 	foreach ($localeVariants as $variant) {
 		foreach ($suffixes as $suf) {
-			if (is_string($suf) && $suf !== '') {
+			if ($suf !== '') {
 				$localeVariantsWithCharsets [] = $variant . $suf;
 			}
 		}
