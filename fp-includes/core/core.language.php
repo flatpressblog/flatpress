@@ -76,16 +76,37 @@ function lang_load($postfix = null) {
 	return $GLOBALS ['lang'];
 }
 
-function lang_getconf($id) {
-	global $lang;
+/**
+ * Loads lang.conf.php with per-request cache.
+ * @param string $langId e.g. en-US
+ * @return array{charsets?: array<int,string>}
+ */
+function lang_getconf($langId) {
+	static $cache = [];
 
-	$fpath = LANG_DIR . $id . "/lang.conf.php";
-	if (file_exists($fpath)) {
-		include ($fpath);
-		return $langconf;
+	$id = is_string($langId) ? strtolower(trim($langId)) : '';
+	if ($id === '') {
+		return [];
+	}
+	if (array_key_exists($id, $cache)) {
+		return $cache [$id];
+	}
+
+	$file = LANG_DIR . $id . '/lang.conf.php';
+
+	/** @var array{charsets?: array<int,string>} $conf */
+	$conf = [];
+	if (file_exists($file) && is_readable($file)) {
+		/** @var mixed $langconf */
+		$langconf = null; // Is set in the file
+		include $file; // Expected $langconf
+		if (is_array($langconf)) {
+			$conf = $langconf;
+		}
 	} else {
 		trigger_error("Error loading config for language \"" . $file . "\"", E_USER_WARNING);
 	}
+	return $cache [$id] = $conf;
 }
 
 class lang_indexer extends fs_filelister {
