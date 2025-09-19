@@ -65,7 +65,16 @@ function io_load_file_uncached($filename) {
  */
 function io_load_file($filename) {
 	static $cache = array();
-	if (isset($cache [$filename])) {
+	static $meta = array();
+
+	clearstatcache(true, $filename);
+
+	$exists = @file_exists($filename);
+	$mt = $exists ? @filemtime($filename) : false;
+	$sz = $exists ? (int) @filesize($filename) : 0;
+	$sig = ($mt !== false ? $mt : 'na') . ':' . $sz;
+
+	if (isset($cache [$filename]) && isset($meta [$filename]) && $meta [$filename] === $sig) {
 		return $cache [$filename];
 	}
 
@@ -87,7 +96,9 @@ function io_load_file($filename) {
 			$hit = false;
 			$val = apcu_fetch($key, $hit);
 			if ($hit) {
-				return $cache [$filename] = $val;
+				$cache [$filename] = $val;
+				$meta [$filename] = $sig;
+				return $val;
 			}
 
 			$val = io_load_file_uncached($filename);
@@ -95,6 +106,7 @@ function io_load_file($filename) {
 				// TTL unnecessary, key changes with mtime/size
 				apcu_store($key, $val);
 				$cache [$filename] = $val;
+				$meta [$filename] = $sig;
 			}
 			return $val;
 		}
@@ -103,6 +115,7 @@ function io_load_file($filename) {
 	$contents = io_load_file_uncached($filename);
 	if ($contents !== false && $contents !== null) {
 		$cache [$filename] = $contents;
+		$meta [$filename] = $sig;
 	}
 	return $contents;
 }

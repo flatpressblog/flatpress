@@ -264,54 +264,35 @@ function fp_register_fp_plugins(\Smarty\Smarty $smarty, string $dir): void {
 
 	foreach (['pre', 'post', 'output', 'variable'] as $kind) {
 		foreach ($index ['filters'] [$kind] as $name => $path) {
+			$n = (string)$name;
+			if ($n === '' || !is_string($path)) {
+				continue;
+			}
+			@require_once $path;
 			switch ($kind) {
 				case 'pre':
-					$smarty->registerFilter('pre',
-						static function($tpl_source, $template) use ($name, $path) {
-							static $fn = [];
-							if (!isset($fn [$name])) {
-								@require_once $path;
-								$fn [$name] = 'smarty_prefilter_' . $name;
-							}
-							return $fn [$name]($tpl_source, $template);
-						}
-					);
+					$fn = 'smarty_prefilter_' . $n;
+					if (function_exists($fn)) {
+						$smarty->registerFilter('pre', $fn);
+					}
 					break;
 				case 'post':
-					$smarty->registerFilter('post',
-						static function($tpl_source, $template) use ($name, $path) {
-							static $fn = [];
-							if (!isset($fn [$name])) {
-								@require_once $path;
-								$fn [$name] = 'smarty_postfilter_' . $name;
-							}
-							return $fn [$name]($tpl_source, $template);
-						}
-					);
+					$fn = 'smarty_postfilter_' . $n;
+					if (function_exists($fn)) {
+						$smarty->registerFilter('post', $fn);
+					}
 					break;
 				case 'output':
-					$smarty->registerFilter('output',
-						static function($output, $template) use ($name, $path) {
-							static $fn = [];
-							if (!isset($fn [$name])) {
-								@require_once $path;
-								$fn [$name] = 'smarty_outputfilter_' . $name;
-							}
-							return $fn [$name]($output, $template);
-						}
-					);
+					$fn = 'smarty_outputfilter_' . $n;
+					if (function_exists($fn)) {
+						$smarty->registerFilter('output', $fn);
+					}
 					break;
 				case 'variable':
-					$smarty->registerFilter('variable',
-						static function($variable, $template) use ($name, $path) {
-							static $fn = [];
-							if (!isset($fn [$name])) {
-								@require_once $path;
-								$fn [$name] = 'smarty_variablefilter_' . $name;
-							}
-							return $fn [$name]($variable, $template);
-						}
-					);
+					$fn = 'smarty_variablefilter_' . $n;
+					if (function_exists($fn)) {
+						$smarty->registerFilter('variable', $fn);
+					}
 					break;
 			}
 		}

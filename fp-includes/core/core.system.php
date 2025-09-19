@@ -175,6 +175,12 @@ function system_init() {
 
 	$GLOBALS ['fp_config'] = config_load();
 
+	normalize_to_utf8();
+	set_default_html_ct();
+	if (PHP_SAPI !== 'cli') {
+		ob_start('fp_output_encoding_handler');
+	}
+
 	cookie_setup();
 	sess_setup();
 	user_loggedin();

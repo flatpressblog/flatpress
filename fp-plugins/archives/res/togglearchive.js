@@ -1,3 +1,6 @@
+const ARROW_OPEN = '\u25BE ';
+const ARROW_CLOSED = '\u25B8 ';
+
 function toggle(obj) {
 	let parentElement = obj.parentNode;
 	for (let i = 0; i < parentElement.childNodes.length; i++) {
@@ -9,7 +12,7 @@ function toggle(obj) {
 			if (ul.style.display === "none" || ul.style.display === "") {
 				showMth(parentElement);
 				obj.className = 'togglelink toggleminus';
-				obj.textContent = '▾ ';
+				obj.textContent = ARROW_OPEN;
 				obj.title = 'Reduce';
 				obj.setAttribute('aria-expanded', 'true');
 				parentElement.classList.add('open');
@@ -17,7 +20,7 @@ function toggle(obj) {
 			} else {
 				hideMth(parentElement);
 				obj.className = 'togglelink toggleplus';
-				obj.textContent = '▸ ';
+				obj.textContent = ARROW_CLOSED;
 				obj.title = 'Expand';
 				obj.setAttribute('aria-expanded', 'false');
 				parentElement.classList.remove('open');
@@ -80,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			hideMth(li);
 			toggleEl.className = 'togglelink toggleplus';
-			toggleEl.textContent = '▸ ';
+			toggleEl.textContent = ARROW_CLOSED;
 			toggleEl.setAttribute('aria-expanded', 'false');
 			li.classList.remove('open');
 
