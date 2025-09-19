@@ -251,8 +251,8 @@ class admin_config_default extends AdminPanelActionValidated {
 			$this->delay_logout(5);
 		}
 
-		// Call main() to render updated config without reload
-		return $this->main();
+		// Call setup() to render updated config without reload
+		return $this->setup();
 	}
 
 	function onerror() {
