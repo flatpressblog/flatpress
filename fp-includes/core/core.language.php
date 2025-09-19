@@ -595,6 +595,14 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, 
  * @return string Converted buffer ready to send to the client
  */
 function fp_output_encoding_handler($buffer) {
+	$cfg = isset($GLOBALS ['fp_config']) ? $GLOBALS ['fp_config'] : [];
+
+	// Only normalize if site charset is not UTF-8
+	$siteCharset = strtolower((string)($cfg ['locale'] ['charset'] ?? 'utf-8'));
+	if ($siteCharset === 'utf-8') {
+		return $buffer;
+	}
+
 	// Enable only for text/XML responses
 	$ctype = null;
 	foreach (@headers_list() as $h) {
@@ -693,6 +701,7 @@ function fp_output_encoding_handler($buffer) {
 
 /**
  * Converts $_GET/$_POST/$_COOKIE from the user's charset (locale) to UTF-8.
+ * Leaves binary paths untouched.
  * This ensures that templates and PHP APIs never see non-UTF-8 bytes.
  * Required by system_init()
  */
@@ -700,6 +709,11 @@ function normalize_to_utf8() {
 	$cfg = isset($GLOBALS ['fp_config']) ? $GLOBALS ['fp_config'] : [];
 	$langId = strtolower((string)($cfg ['locale'] ['lang'] ?? 'en-us'));
 	$siteCharset = strtolower((string)($cfg ['locale'] ['charset'] ?? 'utf-8'));
+
+	// Only normalize if site charset is not UTF-8
+	if ($siteCharset === 'utf-8') {
+		return;
+	}
 
 	// Load Langconf - historical character set [1]
 	$langconf = [];
@@ -746,7 +760,7 @@ function normalize_to_utf8() {
 			}
 			break;
 		case 'ja':
-			foreach (['SJIS-win','Shift_JIS'] as $sj) {
+			foreach (['Shift_JIS'] as $sj) {
 				if (!in_array($sj, $detect, true)) {
 					// ja-JP
 					$detect [] = $sj;
