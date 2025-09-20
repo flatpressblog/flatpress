@@ -26,7 +26,7 @@
 							{* class is for javascript: this input will be converted into a type="text" :) *}
 							<input class="textinput" type="hidden">
 							{/if}
-							<p>☰ {$widget.name}</p>
+							<p>&#9776; {$widget.name}</p>
 						</li>
 					{/foreach}
 					</ul>
@@ -67,7 +67,7 @@
 								{* this will be hooked from javascript *}
 								<input class="textinput" type="text" value="{$widgetparams}">
 								{/if}
-								<p>☰ {$widget.name}</p>
+								<p>&#9776; {$widget.name}</p>
 							</li>
 							{foreachelse}
 							<li class="widget-placeholder">{$panelstrings.drop_here}</li>
@@ -97,7 +97,7 @@
 									{* this will be hooked from javascript *}
 									<input class="textinput" type="text" value="{$widget.params}">
 									{/if}
-									<p>☰ {$widget.name}</p>
+									<p>&#9776; {$widget.name}</p>
 								</li>
 							{foreachelse}
 								<li class="widget-placeholder">{$panelstrings.drop_here}</li>

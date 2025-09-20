@@ -164,7 +164,7 @@ function index_main() {
 			switch ($fp_params ['feed']) {
 				case 'atom':
 					$charset = strtoupper($fp_config ['locale'] ['charset']);
-					header('Content-Type: application/rss+xml; charset=' . $charset); 
+					header('Content-Type: application/atom+xml; charset=' . $charset);
 					$module = SHARED_TPLS . 'atom.tpl';
 					break;
 				case 'rss2':

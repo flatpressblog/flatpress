@@ -18,7 +18,6 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 	// Read the language settings and set the locale
 	$characterset = $fp_config ['general'] ['charset'];
 	$lang = $fp_config ['locale'] ['lang'];
-	set_locale();
 
 	// First day of the month
 	$first_of_month = gmmktime(0, 0, 0, $month, 1, $year);
