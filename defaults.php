@@ -37,6 +37,7 @@ define('RESTRICTED_DIR_PERMISSIONS', 0755); // 0755 is recommended
 /**
  * First some webserver setup...
  */
+
 // Here's where your server save session-related stuff.
 // If you don't experience any session-related problem, you
 // you can leave it blank and it will default to standard webserver config
@@ -110,6 +111,8 @@ define('IMAGES_DIR', FP_CONTENT . 'images/');
 // Here is where all the attachments will be saved
 define('ATTACHS_DIR', FP_CONTENT . 'attachs/');
 
+set_include_path(ABS_PATH);
+
 include (LANG_DIR . 'browserlang.php');
 define('LANG_DEFAULT', $browserLang);
 define('BPT_SORT', SORT_DESC);
@@ -119,89 +122,11 @@ define('BPT_SORT', SORT_DESC);
 // https://wiki.selfhtml.org/wiki/HTML/Attribute/nonce
 define('RANDOM_HEX', bin2hex(random_bytes(18)));
 
-set_include_path(ABS_PATH);
-
-//
-// original Flatpress 1.0.3 coding disabled
-//
-// compatibility with ISS
-// if (!isset($_SERVER['REQUEST_URI']))
-// $_SERVER['REQUEST_URI'] = 'http://localhost/flatpress/';
-
-// #define('BLOG_ROOT', dirname($_SERVER['PHP_SELF']) . '/');
-// define('BLOG_ROOT', ('/'==($v=dirname($_SERVER['SCRIPT_NAME']))? $v : $v.'/') );
-
-// define('BLOG_BASEURL', 'http://'.$_SERVER['HTTP_HOST']. BLOG_ROOT);
-
-//
 // Adding security and HTTPS support
-//
-
-if (isset($_SERVER ['HTTPS'])) {
-	$_SERVER ['HTTPS'] = htmlspecialchars($_SERVER ['HTTPS'], ENT_QUOTES, "UTF-8");
-}
-
-// Supports Apache and IIS
-$serverport = '';
-if (is_https()) {
-	// HTTPS enabled
-	$serverport = "https://";
-} else {
-	// HTTP only
-	$serverport = "http://";
-}
-
-// Compatibility with ISS
-$_SERVER ["REQUEST_URI"] = htmlspecialchars($_SERVER ["REQUEST_URI"] ?? '', ENT_QUOTES, "UTF-8");
-if ($_SERVER ["REQUEST_URI"] === '') {
-	$_SERVER ['REQUEST_URI'] = $serverport . 'localhost/flatpress/';
-}
+include (INCLUDES_DIR . 'core.connection.php');
 
 // define('BLOG_ROOT', dirname($_SERVER['PHP_SELF']) . '/');
 define('BLOG_ROOT', ('/' == ($v = dirname($_SERVER ['SCRIPT_NAME'])) ? $v : $v . '/'));
 
 define('BLOG_BASEURL', $serverport . $_SERVER ['HTTP_HOST'] . BLOG_ROOT);
-
-//
-// OWASP - Browser Cache - How can the browser cache be used in attacks?
-// https://www.owasp.org/index.php/OWASP_Application_Security_FAQ#How_can_the_browser_cache_be_used_in_attacks.3F
-//
-// http://stackoverflow.com/questions/13640109/how-to-prevent-browser-cache-for-php-site
-//
-header('Expires: Sun, 01 Jan 2015 00:00:00 GMT');
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
-//
-// http://de.wikipedia.org/wiki/Liste_der_HTTP-Headerfelder
-//
-header('X-Frame-Options: SAMEORIGIN');
-header('X-XSS-Protection: 1; mode=block');
-header('X-Content-Type-Options: nosniff');
-
-//
-// End of send header
-//
-
-/**
- * Checks if FlatPress is called via HTTPS.
- *
- * @return boolean <code>true</code> when FlatPress is called via HTTPS; <code>false</code> otherwise.
- */
-function is_https() {
-	// HTTPS called web server
-	if (isset($_SERVER ['HTTPS']) && !empty($_SERVER ['HTTPS'])) {
-		return true;
-	}
-	// Check for reverse proxy or load balancer
-	if (!empty($_SERVER ['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER ['HTTP_X_FORWARDED_PROTO']) === 'https') {
-		return true;
-	}
-	// Other headers that could be used with proxies
-	if (!empty($_SERVER ['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER ['HTTP_X_FORWARDED_SSL']) === 'on') {
-		return true;
-	}
-	// none of the above: must be HTTP
-	return false;
-}
 ?>
