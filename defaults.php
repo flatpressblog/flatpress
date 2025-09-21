@@ -128,5 +128,5 @@ include (INCLUDES_DIR . 'core.connection.php');
 // define('BLOG_ROOT', dirname($_SERVER['PHP_SELF']) . '/');
 define('BLOG_ROOT', ('/' == ($v = dirname($_SERVER ['SCRIPT_NAME'])) ? $v : $v . '/'));
 
-define('BLOG_BASEURL', $serverport . $_SERVER ['HTTP_HOST'] . BLOG_ROOT);
+define('BLOG_BASEURL', $scheme . $_SERVER ['HTTP_HOST'] . BLOG_ROOT);
 ?>
