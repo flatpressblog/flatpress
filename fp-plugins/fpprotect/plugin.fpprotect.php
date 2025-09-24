@@ -52,7 +52,6 @@ if (function_exists('is_https') && is_https()) {
 		$scriptSrc . // Use the dynamic script-src directive based on the configuration
 		'style-src \'self\' \'unsafe-inline\' https:; ' . // Defines permitted sources for stylesheets e.g Youtube - only via https
 		'img-src \'self\' https: data:; ' . // Defines permitted sources for images - only via https (e.g. base64-encoded images)
-		'frame-ancestors \'self\' https:; ' . // Defines permitted sources that may have embedded content, such as <frame>, <iframe>, <object>, <embed> and <applet>.
 		'manifest-src \'self\'; ' . // Specifies the URLs from which video, audio and text track resources can be loaded from
 		'worker-src \'self\' blob:; ' . //
 		'connect-src \'self\' https:; ' . // Applies to XMLHttpRequests (AJAX), WebSockets or EventSource - only via https. Otherwise emulate 400 HTTP status code
@@ -77,6 +76,8 @@ if (function_exists('is_https') && is_https()) {
 	header_remove('Server');
 	header('Server: FlatPress');
 }
+
+header('Content-Security-Policy: frame-ancestors \'self\'', false); // Defines permitted sources that may have embedded content, such as <frame>, <iframe>, <object>, <embed> and <applet>.
 
 /**
  * Check if PrettyURLs plugin should allow editing htaccess.
