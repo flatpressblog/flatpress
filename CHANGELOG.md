@@ -6,6 +6,8 @@
 ## Changes
 - General
   - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667))
+  - A web server that returns HTTPS=off is now correctly recognized as an HTTP server. ([#671](https://github.com/flatpressblog/flatpress/issues/671))
+  - Correct output when a historical character set encoding is set. ([#670](https://github.com/flatpressblog/flatpress/pull/670))
 - Template engine:
   - Smarty updated to version 5.5.1 with PHP 8.4 support ([#651](https://github.com/flatpressblog/flatpress/pull/651))<br><sub><i>
 Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte extension](https://www.php.net/manual/en/book.mbstring.php) in production for optimal performance.</i></sub>
@@ -47,6 +49,9 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 ### Bugfixes
 - Leggero theme:
   - After a fresh installation, the correct time format is now displayed instead of the default format  ``%b %e, %Y``. ([#662](https://github.com/flatpressblog/flatpress/pull/662))
+
+## Internationalization
+- Basque translations by [@xbhrnnd](https://github.com/xbhrnnd)
 
 # 2025-07-15: [FlatPress 1.4.1](https://github.com/flatpressblog/flatpress/releases/tag/1.4.1)
 
