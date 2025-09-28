@@ -1,10 +1,10 @@
 <?php
-/*
+/**
  * Plugin Name: FlatPress Protect
  * Plugin URI: https://www.flatpress.org/
  * Description: Offers various options for the security of your blog. <a href="./fp-plugins/fpprotect/doc_fpprotect.txt" title="More information" target="_blank">[More information]</a><br>Part of the standard distribution.
  * Author: FlatPress
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author URI: https://www.flatpress.org
  */
 
@@ -70,14 +70,14 @@ if (function_exists('is_https') && is_https()) {
 	header('Cross-Origin-Resource-Policy: same-site');
 	header('X-Permitted-Cross-Domain-Policies: none');
 	header('X-Download-Options: noopen');
-
-	// Emergency solution for Shared hosting environments; should already be done in the php.ini file or server configuration
-	header_remove('X-Powered-By'); // Hide server information
-	header_remove('Server');
-	header('Server: FlatPress');
 }
 
 header('Content-Security-Policy: frame-ancestors \'self\'', false); // Defines permitted sources that may have embedded content, such as <frame>, <iframe>, <object>, <embed> and <applet>.
+
+// Emergency solution for Shared hosting environments; should already be done in the php.ini file or server configuration
+header_remove('X-Powered-By'); // Hide server information
+header_remove('Server');
+header('Server: FlatPress');
 
 /**
  * Check if PrettyURLs plugin should allow editing htaccess.
