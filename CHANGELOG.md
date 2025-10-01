@@ -5,7 +5,7 @@
 
 ## Changes
 - General
-  - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667))
+  - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667), [#673](https://github.com/flatpressblog/flatpress/pull/673))
   - A web server that returns HTTPS=off is now correctly recognized as an HTTP server. ([#671](https://github.com/flatpressblog/flatpress/issues/671))
   - Correct output when a historical character set encoding is set. ([#670](https://github.com/flatpressblog/flatpress/pull/670))
 - Template engine:
