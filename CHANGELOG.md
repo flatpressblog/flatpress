@@ -22,6 +22,9 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
         - Flex version with wrapper and responsive
         - Drag & drop now also available for mobile devices 
 
+## Security
+- Detection of an HTTP/HTTPS connection ``is_https()`` is significantly more reliable and less susceptible to spoofing. Improved detection for public proxies/CDNs, including Azure and Cloudflare. ([#671](https://github.com/flatpressblog/flatpress/issues/671))
+
 ## Plugins
 ### Changes
 - Archives plugin: update to version 1.1.1
@@ -47,7 +50,6 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - mbstring query for Smarty 5 added
 
 ## Themes
-  
 ### Bugfixes
 - Leggero theme:
   - After a fresh installation, the correct time format is now displayed instead of the default format  ``%b %e, %Y``. ([#662](https://github.com/flatpressblog/flatpress/pull/662))
