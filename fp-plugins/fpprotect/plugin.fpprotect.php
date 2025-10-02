@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FlatPress Protect
  * Plugin URI: https://www.flatpress.org/
- * Description: Offers various options for the security of your blog. <a href="./fp-plugins/fpprotect/doc_fpprotect.txt" title="More information" target="_blank">[More information]</a><br>Part of the standard distribution.
+ * Description: Offers various options for the security of your blog.<br><a href="./fp-plugins/fpprotect/doc_fpprotect.txt" title="More information" target="_blank">[More information]</a><br>Part of the standard distribution.
  * Author: FlatPress
  * Version: 1.1.1
  * Author URI: https://www.flatpress.org
@@ -47,6 +47,7 @@ if (function_exists('is_https') && is_https()) {
 	header('Content-Security-Policy: upgrade-insecure-requests; ' . // Is migrating from HTTP to HTTPS, will ensure that all requests will be sent over HTTPS with no fallback to HTTP
 		'default-src \'none\'; ' . // The default-src directive is the default setting for all directives that load additional content such as JavaScript, images, CSS, fonts, AJAX requests, frames and HTML5 media.
 		'frame-src \'self\' https: data:; ' . // Allows iframes from other sources - only via https
+		'frame-ancestors \'self\'; ' . // Defines permitted sources that may have embedded content, such as <frame>, <iframe>, <object>, <embed> and <applet>.
 		'base-uri \'self\'; ' . //
 		'font-src \'self\' https: data:; ' . // Allows fonts from other sources (e.g. font awesome) - only via https
 		$scriptSrc . // Use the dynamic script-src directive based on the configuration
@@ -58,7 +59,7 @@ if (function_exists('is_https') && is_https()) {
 		'media-src \'self\' https:; ' . // Defines permitted sources for audio and video, e.g. HTML5 <audio>, <video> elements.
 		'child-src \'self\'; ' . // Defines permitted sources for web workers and nested browsing contexts for elements such as <frame> and <iframe> - only via https
 		'form-action \'self\'; ' . // Defines permitted targets for HTML forms
-		'object-src \'self\' https:' // Defines permitted sources for plugins, e.g. <object>, <embed> or <applet> - only via https
+		'object-src \'self\' https:;' // Defines permitted sources for plugins, e.g. <object>, <embed> or <applet> - only via https
 	);
 	// End of Content Security Policy rules
 
@@ -70,9 +71,11 @@ if (function_exists('is_https') && is_https()) {
 	header('Cross-Origin-Resource-Policy: same-site');
 	header('X-Permitted-Cross-Domain-Policies: none');
 	header('X-Download-Options: noopen');
+} else {
+	header('Content-Security-Policy: default-src \'none\'; ' . //
+		'frame-ancestors \'self\';'
+	);
 }
-
-header('Content-Security-Policy: frame-ancestors \'self\'', false); // Defines permitted sources that may have embedded content, such as <frame>, <iframe>, <object>, <embed> and <applet>.
 
 // Emergency solution for Shared hosting environments; should already be done in the php.ini file or server configuration
 header_remove('X-Powered-By'); // Hide server information
@@ -145,7 +148,6 @@ if (class_exists('AdminPanelAction')) {
 		 * Handle form submission and save configuration.
 		 *
 		 * @param array|null $data The submitted data (if any).
-		 * @return int Always returns 0
 		 */
 		function onsubmit($data = null) {
 
@@ -159,8 +161,6 @@ if (class_exists('AdminPanelAction')) {
 			// Update the template
 			$this->smarty->assign('success', 1);
 			$this->assign_config_to_template();
-
-			return 0;
 		}
 	}
 
