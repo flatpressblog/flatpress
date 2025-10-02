@@ -148,6 +148,7 @@ if (class_exists('AdminPanelAction')) {
 		 * Handle form submission and save configuration.
 		 *
 		 * @param array|null $data The submitted data (if any).
+		 * @return int Always returns 0
 		 */
 		function onsubmit($data = null) {
 
@@ -161,6 +162,8 @@ if (class_exists('AdminPanelAction')) {
 			// Update the template
 			$this->smarty->assign('success', 1);
 			$this->assign_config_to_template();
+
+			return 0;
 		}
 	}
 
