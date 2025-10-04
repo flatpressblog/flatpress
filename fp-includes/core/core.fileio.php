@@ -89,7 +89,7 @@ function io_load_file($filename) {
 	if ($apcu_on) {
 		$mt = @filemtime($filename);
 		if ($mt !== false) {
-			// Stabilizes collisions <1s
+			// Stabilizes collisions < 1s
 			$sz  = (int) @filesize($filename);
 			$key = 'fp:io:' . $filename . ':' . $mt . ':' . $sz;
 
@@ -103,8 +103,24 @@ function io_load_file($filename) {
 
 			$val = io_load_file_uncached($filename);
 			if ($val !== false && $val !== null) {
+				/**
+				 * Load scenario: 3,000 posts × 5 comments (see FlatPress Bulk Content Generator).
+				 * Search (search.php) touches most entries and dominates memory.
+				 * Peak calculation:
+				 *   fp:io:*
+				 *      3,000 × ~1.93 KiB + 15,000 × ~0.52 KiB ≈ 13.3 MiB
+				 *   fp:entry:parsed:* (TTL 600 s, e.g. after search)
+				 *      3,000 × ~1.98 KiB ≈ 6.0 MiB
+				 *   Plugins/Smarty/other: ~2–3 MiB
+				 * Worst-case simultaneously ≈ 21–23 MiB < 32 MiB; headroom ≈ 9–11 MiB covers fragmentation.
+				 * Note: APCu is a shared pool per FPM pool (apc.shm_size), not per child process.
+				 */
+				$ttl = max(0, (int) ($_ENV ['FP_APCU_IO_TTL'] ?? 21600)); // Removed from cache after 6 hours
+				$max = max(0, (int) ($_ENV ['FP_APCU_IO_MAX_BYTES'] ?? 65536)); // 64 KiB - prevents fat items
 				// TTL unnecessary, key changes with mtime/size
-				apcu_store($key, $val);
+				if (strlen($val) <= $max) {
+					apcu_store($key, $val, $ttl);
+				}
 				$cache [$filename] = $val;
 				$meta [$filename] = $sig;
 			}
