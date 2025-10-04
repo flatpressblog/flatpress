@@ -440,7 +440,7 @@ function entry_parse($id, $raw = false) {
 
 	if (!isset($arr ['AUTHOR'])) {
 		global $fp_config;
-		$arr ['AUTHOR'] = $fp_config ['general'] ['author'];
+		$arr ['AUTHOR'] = (string) (($fp_config ['general'] ?? []) ['author'] ?? '');
 	}
 
 	$local_cache [$id] = $arr;
