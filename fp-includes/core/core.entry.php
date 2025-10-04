@@ -50,18 +50,20 @@ class entry_index {
 			$this->catlist = [];
 		}
 
-		// only main index s a SBPlus (string BPlus):
-		// the other (other categories) are managed
-		// as if they were simple BPlus trees, so
-		// values in key,value pairs won't
-		// be strings but integers
-		//
-		// the integer will be the seek position
-		// in the SBPlus' string file
-		//
-		// they'll be loaded back with the string file
-		// as SBPlus trees: the string-key, string-value pair
-		// will be returned
+		/**
+		 * only main index s a SBPlus (string BPlus):
+		 * the other (other categories) are managed
+		 * as if they were simple BPlus trees, so
+		 * values in key,value pairs won't
+		 * be strings but integers
+		 *
+		 * the integer will be the seek position
+		 * in the SBPlus' string file
+		 *
+		 * they'll be loaded back with the string file
+		 * as SBPlus trees: the string-key, string-value pair
+		 * will be returned
+		 */
 
 		if ($oldfile = file_exists($f = INDEX_DIR . 'index-0.dat')) {
 			$mode = 'r+b';
@@ -282,43 +284,6 @@ class entry_archives extends fs_filelister {
 
 }
 
-// //work in progress
-// class entry {
-
-// var $_indexer;
-// var $id;
-
-// function entry($id, $content) {
-// //$this->_indexer =& $indexer;
-// }
-
-// function get($field) {
-// $field = strtolower($field);
-// if (!isset($this->$field)) {
-// // if it is not set
-// // tries to fetch from the database
-// $arr = entry_parse($id);
-// while(list($field, $val) = each($arr))
-// $this->$field = $val;
-
-// // if still is not set raises an error
-// if (!isset($this->$field))
-// trigger_error("$field is not set", E_USER_NOTICE);
-// return;
-
-// }
-
-// return $this->$field;
-
-// }
-
-// function set($field, $val) {
-// $field = strtolower($field);
-// $this->$field = $val;
-// }
-
-// }
-
 /**
  * function entry_init
  * fills the global array containing the entry object
@@ -348,26 +313,6 @@ function &entry_cached_index($id_cat) {
 	return $o;
 }
 
-/*
- * function entry_query($params=array()){
- *
- * global $fpdb;
- * $queryid = $fpdb->query($params);
- * $fpdb->doquery($queryid);
- *
- *
- * }
- *
- * function entry_hasmore() {
- * global $fpdb;
- * return $fpdb->hasmore();
- *
- * }
- *
- * function entry_get() {
- * $fpdb->get();
- * }
- */
 function entry_keytoid($key) {
 	$date = substr($key, 0, 6);
 	$time = substr($key, 6);
@@ -437,8 +382,45 @@ function entry_parse($id, $raw = false) {
 		return array();
 	}
 
-	$fc = io_load_file($f);
+	// Local static cache keyed by entry id with file signature
+	static $local_cache = array();
+	static $local_meta = array();
 
+	clearstatcache(true, $f);
+	$mt = @filemtime($f);
+	$sz = ($mt !== false) ? (int) @filesize($f) : 0;
+	$sig = (($mt !== false) ? $mt : 'na') . ':' . $sz;
+
+	if (isset($local_cache [$id]) && isset($local_meta [$id]) && $local_meta [$id] === $sig) {
+		return $local_cache [$id];
+	}
+
+	// APCu cross-request cache
+	$apcu_on = false;
+	if (function_exists('apcu_enabled')) {
+		$apcu_on = @apcu_enabled();
+	} elseif (function_exists('apcu_fetch') && ((bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled'))) {
+		$apcu_on = true;
+	}
+
+	// CLI: deaktiviert außer apc.enable_cli=1
+	if ($apcu_on && PHP_SAPI === 'cli' && !((bool) @ini_get('apc.enable_cli'))) {
+		$apcu_on = false;
+	}
+
+	$key = null;
+	if ($apcu_on && $mt !== false) {
+		$key = 'fp:entry:parsed:' . $id . ':' . $mt . ':' . $sz;
+		$hit = false;
+		$val = apcu_fetch($key, $hit);
+		if ($hit && is_array($val)) {
+			$local_cache [$id] = $val;
+			$local_meta [$id] = $sig;
+			return $val;
+		}
+	}
+
+	$fc = io_load_file($f);
 	if (!$fc) {
 		return array();
 	}
@@ -447,9 +429,7 @@ function entry_parse($id, $raw = false) {
 
 	// propagates the error if entry does not exist
 
-	if (isset($arr ['categories']) && // fix to bad old behaviour:
-	(trim($arr ['categories']) != '')) {
-
+	if (isset($arr ['categories']) && (trim($arr ['categories']) != '')) {
 		$cats = (array) explode(',', $arr ['categories']);
 		$arr ['categories'] = (array) $cats;
 	} else {
@@ -463,8 +443,10 @@ function entry_parse($id, $raw = false) {
 		$arr ['AUTHOR'] = $fp_config ['general'] ['author'];
 	}
 
-	if ($raw) {
-		return $arr;
+	$local_cache [$id] = $arr;
+	$local_meta [$id] = $sig;
+	if ($apcu_on && $key) {
+		@apcu_store($key, $arr, 600);
 	}
 	return $arr;
 }
@@ -553,23 +535,50 @@ function entry_categories_encode($cat_file) {
 	return io_write_file(CONTENT_DIR . 'categories_encoded.dat', serialize($result));
 }
 
-/*
- *
- * function entry_categories_print(&$lines, &$indentstack, &$result, $params) {
- *
- *
- * }
- *
- */
 function entry_categories_list() {
-	if (!$string = io_load_file(CONTENT_DIR . 'categories.txt')) {
+	$catfile = CONTENT_DIR . 'categories.txt';
+	// Static-Cache pro Request + APCu über mtime/size
+	static $local_cache = null, $local_sig = null;
+	if (!@file_exists($catfile)) {
+		return false;
+	}
+	clearstatcache(true, $catfile);
+	$mt = @filemtime($catfile);
+	$sz = ($mt !== false) ? (int) @filesize($catfile) : 0;
+	$sig = (($mt !== false) ? $mt : 'na') . ':' . $sz;
+	if ($local_cache !== null && $local_sig === $sig) {
+		return $local_cache;
+	}
+
+	$apcu_on = false;
+	if (function_exists('apcu_enabled')) {
+		$apcu_on = @apcu_enabled();
+	} elseif (function_exists('apcu_fetch') && ((bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled'))) {
+		$apcu_on = true;
+	}
+
+	// CLI nur wenn apc.enable_cli=1
+	if ($apcu_on && PHP_SAPI === 'cli' && !((bool) @ini_get('apc.enable_cli'))) {
+		$apcu_on = false;
+	}
+
+	$key = null;
+	if ($apcu_on && $mt !== false) {
+		$key = 'fp:cats:list:' . $mt . ':' . $sz;
+		$hit = false; $val = apcu_fetch($key, $hit);
+		if ($hit && is_array($val)) {
+			$local_cache = $val;
+			$local_sig = $sig;
+			return $val;
+		}
+	}
+
+	if (!$string = io_load_file($catfile)) {
 		return false;
 	}
 
 	$lines = explode("\n", trim($string));
-	$idstack = array(
-		0
-	);
+	$idstack = array(0);
 	$indentstack = array();
 
 	// $categories = array(0=>null);
@@ -578,7 +587,6 @@ function entry_categories_list() {
 	$parent = 0;
 
 	$NEST = 0;
-
 	foreach ($lines as $v) {
 
 		$vt = trim($v);
@@ -589,7 +597,6 @@ function entry_categories_list() {
 
 		$text = '';
 		$indent = utils_countdashes($vt, $text);
-
 		$val = explode(':', $text);
 
 		$id = trim($val [1]);
@@ -609,10 +616,13 @@ function entry_categories_list() {
 				$dedent = array_pop($indentstack);
 				array_pop($idstack);
 				$NEST--;
-			} while ($dedent > $indent);
-			if ($dedent < $indent) {
-				return false; // trigger_error("failed parsing ($dedent<$indent)", E_USER_ERROR);
 			}
+			while ($dedent > $indent);
+
+			if ($dedent < $indent) {
+				return false;
+			}
+
 			$parent = end($idstack);
 			$lastindent = $indent;
 			$lastid = $id;
@@ -622,6 +632,13 @@ function entry_categories_list() {
 		// echo "NEST: $NEST\n";
 
 		$categories [$id] = $parent;
+	}
+
+	$local_cache = $categories;
+	$local_sig = $sig;
+
+	if ($apcu_on && $key) {
+		@apcu_store($key, $categories, 600);
 	}
 
 	return $categories;
@@ -635,23 +652,62 @@ function entry_categories_get($what = null) {
 	if (!empty($fpdb->_categories)) {
 		$categories = $fpdb->_categories;
 	} else {
-
 		$f = CONTENT_DIR . 'categories_encoded.dat';
-		if (file_exists($f)) {
-			if ($c = io_load_file($f)) {
-				$categories = unserialize($c);
+		if (@file_exists($f)) {
+			clearstatcache(true, $f);
+			$mt = @filemtime($f);
+			$sz = ($mt !== false) ? (int) @filesize($f) : 0;
+			$apcu_on = false;
+
+			if (function_exists('apcu_enabled')) {
+				$apcu_on = @apcu_enabled();
+			} elseif (function_exists('apcu_fetch') && ((bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled'))) {
+				$apcu_on = true;
 			}
+
+			if ($apcu_on && PHP_SAPI === 'cli' && !((bool) @ini_get('apc.enable_cli'))) {
+				$apcu_on = false;
+			}
+
+			$key = null;
+			if ($apcu_on && $mt !== false) {
+				$key = 'fp:cats:encoded:' . $mt . ':' . $sz;
+				$hit = false;
+				$val = apcu_fetch($key, $hit);
+				if ($hit && is_array($val)) {
+					$categories = $val;
+				}
+			}
+
+			if (!$categories) {
+				if ($c = io_load_file($f)) {
+					$categories = @unserialize($c);
+
+					if (!is_array($categories)) {
+						$categories = array();
+					}
+					if ($apcu_on && $key) {
+						@apcu_store($key, $categories, 600);
+					}
+
+				}
+			}
+
+		}
+
+		if ($categories) {
+			$fpdb->_categories = $categories;
 		}
 	}
 
 	if ($categories) {
-
 		if ($what == 'defs' || $what == 'rels') {
 			return $categories [$what];
 		} else {
 			return $categories;
 		}
 	}
+
 	return array();
 }
 
@@ -747,7 +803,7 @@ function entry_save($entry, $id = null, $update_index = true) {
 		$update_title = $entry ['subject'] != $old_entry ['subject'];
 	}
 
-	/*
+	/**
 	 * echo 'old';
 	 * print_r($old_entry['categories']);
 	 * echo 'new';
@@ -803,7 +859,7 @@ function entry_delete($id) {
 		return;
 	}
 
-	/*
+	/**
 	 * $d = bdb_idtofile($id,BDB_COMMENT);
 	 * fs_delete_recursive("$d");
 	 *
