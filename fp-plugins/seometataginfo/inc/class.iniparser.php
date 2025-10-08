@@ -3,7 +3,7 @@
  * Author: Enrico Reinsdorf (enrico@re-design.de)
  * Author URI: www.re-design.de
  * Changelog: RAM hits instead of I/O
- * Change-Date: 06.09.2025
+ * Change-Date: 08.10.2025
  */
 class iniParser {
 
@@ -25,18 +25,8 @@ class iniParser {
 		}
 		$exists = @file_exists($rp);
 
-		// Check APCu
-		$apcu_on = false;
-		if (function_exists('apcu_fetch')) {
-			if (function_exists('apcu_enabled')) {
-				$apcu_on = @apcu_enabled();
-			} else {
-				$apcu_on = (bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled');
-			}
-			if ($apcu_on && PHP_SAPI === 'cli' && !((bool) @ini_get('apc.enable_cli'))) {
-				$apcu_on = false;
-			}
-		}
+		// Check APCu securely and host-agnostically
+		$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 
 		// Key generation: Only with stat() tokens when APCu is active
 		if ($apcu_on) {

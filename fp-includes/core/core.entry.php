@@ -395,18 +395,8 @@ function entry_parse($id, $raw = false) {
 		return $local_cache [$id];
 	}
 
-	// APCu cross-request cache
-	$apcu_on = false;
-	if (function_exists('apcu_enabled')) {
-		$apcu_on = @apcu_enabled();
-	} elseif (function_exists('apcu_fetch') && ((bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled'))) {
-		$apcu_on = true;
-	}
-
-	// CLI: deaktiviert außer apc.enable_cli=1
-	if ($apcu_on && PHP_SAPI === 'cli' && !((bool) @ini_get('apc.enable_cli'))) {
-		$apcu_on = false;
-	}
+	// Check APCu securely and host-agnostically
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 
 	$key = null;
 	if ($apcu_on && $mt !== false) {
@@ -550,17 +540,8 @@ function entry_categories_list() {
 		return $local_cache;
 	}
 
-	$apcu_on = false;
-	if (function_exists('apcu_enabled')) {
-		$apcu_on = @apcu_enabled();
-	} elseif (function_exists('apcu_fetch') && ((bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled'))) {
-		$apcu_on = true;
-	}
-
-	// CLI nur wenn apc.enable_cli=1
-	if ($apcu_on && PHP_SAPI === 'cli' && !((bool) @ini_get('apc.enable_cli'))) {
-		$apcu_on = false;
-	}
+	// Check APCu securely and host-agnostically
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 
 	$key = null;
 	if ($apcu_on && $mt !== false) {
@@ -657,17 +638,9 @@ function entry_categories_get($what = null) {
 			clearstatcache(true, $f);
 			$mt = @filemtime($f);
 			$sz = ($mt !== false) ? (int) @filesize($f) : 0;
-			$apcu_on = false;
 
-			if (function_exists('apcu_enabled')) {
-				$apcu_on = @apcu_enabled();
-			} elseif (function_exists('apcu_fetch') && ((bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled'))) {
-				$apcu_on = true;
-			}
-
-			if ($apcu_on && PHP_SAPI === 'cli' && !((bool) @ini_get('apc.enable_cli'))) {
-				$apcu_on = false;
-			}
+			// Check APCu securely and host-agnostically
+			$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 
 			$key = null;
 			if ($apcu_on && $mt !== false) {

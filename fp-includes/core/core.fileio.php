@@ -36,6 +36,59 @@ function io_write_file($filename, $data) {
 	return true;
 }
 
+/**
+ * APCu availability for this request. CLI/phpdbg -> false, except apc.enable_cli=1.
+ */
+function is_apcu_on(): bool {
+	static $on = null;
+	if ($on !== null) {
+		return $on;
+	}
+	if (!function_exists('apcu_fetch')) {
+		return $on = false;
+	}
+	if (function_exists('apcu_enabled')) {
+		$on = @apcu_enabled();
+	} else {
+		$on = (bool) @ini_get('apc.enabled');
+	}
+	if ($on && in_array(PHP_SAPI, ['cli', 'phpdbg'], true) && !((bool) @ini_get('apc.enable_cli'))) {
+		$on = false;
+	}
+	return $on;
+}
+
+/**
+ * Fetch a value from APCu. Sets $ok=true on hit; returns null if APCu is off.
+ * @param string $key
+ * @param bool $ok
+ * @return mixed|null
+ */
+function apcu_get($key, &$ok) {
+	$ok = false;
+	if (!is_apcu_on()) {
+		return null;
+	}
+	return apcu_fetch((string) $key, $ok);
+}
+
+/**
+ * Store a value in APCu. TTL=0 means no expiry; no-op if APCu is off.
+ * @param string $key
+ * @param mixed $val
+ * @param int $ttl
+ */
+function apcu_set($key, $val, $ttl = 120) {
+	if (!is_apcu_on()) {
+		return false;
+	}
+	$ttl = (int) $ttl;
+	if ($ttl < 0) {
+		$ttl = 0;
+	}
+	return apcu_store((string) $key, $val, $ttl);
+}
+
 function io_load_file_uncached($filename) {
 	if (file_exists($filename)) {
 		if (function_exists('file_get_contents')) {
@@ -79,18 +132,13 @@ function io_load_file($filename) {
 	}
 
 	// Check APCu securely and host-agnostically
-	$apcu_on = function_exists('apcu_enabled') ? apcu_enabled() : (function_exists('apcu_fetch') && (bool) ini_get('apcu.enabled') || (bool) ini_get('apc.enabled'));
-
-	// CLI usually off; only allow if explicitly enabled
-	if ($apcu_on && PHP_SAPI === 'cli' && !((bool) ini_get('apc.enable_cli'))) {
-		$apcu_on = false;
-	}
+	$apcu_on = is_apcu_on();
 
 	if ($apcu_on) {
 		$mt = @filemtime($filename);
 		if ($mt !== false) {
 			// Stabilizes collisions < 1s
-			$sz  = (int) @filesize($filename);
+			$sz = (int) @filesize($filename);
 			$key = 'fp:io:' . $filename . ':' . $mt . ':' . $sz;
 
 			$hit = false;

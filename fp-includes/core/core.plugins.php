@@ -1,41 +1,4 @@
 <?php
-// APCu helpers
-if (!function_exists('fp_plugins_apcu_on')) {
-	/**
-	 * APCu availability for this request. Returns false for CLI unless apc.enable_cli=1.
-	 */
-	function fp_plugins_apcu_on() {
-		if (!function_exists('apcu_fetch')) {
-			return false;
-		}
-		$ena = function_exists('apcu_enabled') ? apcu_enabled() : ((bool) ini_get('apcu.enabled') || (bool) ini_get('apc.enabled'));
-		if (PHP_SAPI === 'cli' && !((bool) ini_get('apc.enable_cli'))) {
-			return false;
-		}
-		return $ena;
-	}
-	/**
-	 * Fetch a value from APCu. Sets $ok=true on hit; returns null if APCu is off.
-	 */
-	function fp_plugins_apcu_get($key, &$ok) {
-		$ok = false;
-		if (!fp_plugins_apcu_on()) {
-			return null;
-		}
-		$val = apcu_fetch($key, $ok);
-		return $val;
-	}
-	/**
-	 * Store a value in APCu. TTL=0 means no expiry; no-op if APCu is off.
-	 */
-	function fp_plugins_apcu_set($key, $val, $ttl = 120) {
-		if (!fp_plugins_apcu_on()) {
-			return false;
-		}
-		return apcu_store($key, $val, max(0, (int) $ttl));
-	}
-}
-
 // define('PLUG_BLOCK', 'block');
 class plugin_indexer extends fs_filelister {
 
@@ -68,13 +31,13 @@ class plugin_indexer extends fs_filelister {
 			$plugFile = $plugDir . '/plugin.' . $file . '.php';
 			$plugFileM = @file_exists($plugFile) ? @filemtime($plugFile) : 0;
 			$key = 'fp:plugins:checkfile:v2:' . md5($directory . '|' . (string)$dirM . '|' . $file . '|' . (string)$plugM . '|' . (string)$plugFileM);
-			$val = fp_plugins_apcu_get($key, $hit);
+			$val = apcu_get($key, $hit);
 			if ($hit) {
 				$local [$k] = (bool) $val;
 			} else {
 				$f = $directory . '/' . $file;
 				$local [$k] = (is_dir($f) && @file_exists($f . '/plugin.' . $file . '.php'));
-				fp_plugins_apcu_set($key, $local [$k], 0);
+				apcu_set($key, $local [$k], 0);
 			}
 		}
 		if ($local [$k]) {
@@ -96,7 +59,7 @@ class plugin_indexer extends fs_filelister {
 		$confMtime = @file_exists($conf) ? @filemtime($conf) : 0;
 		$hit = false;
 		$key = 'fp:plugins:enableds:list:v1:' . (string) $confMtime;
-		$list = fp_plugins_apcu_get($key, $hit);
+		$list = apcu_get($key, $hit);
 		if ($hit && is_array($list)) {
 			$this->enabledlist = $list;
 			$$var = $list;
@@ -106,7 +69,7 @@ class plugin_indexer extends fs_filelister {
 			}
 			include ($conf);
 			$this->enabledlist = $$var;
-			fp_plugins_apcu_set($key, $$var, 0);
+			apcu_set($key, $$var, 0);
 		}
 
 		foreach ($$var as $plugin) {
@@ -156,14 +119,14 @@ function plugin_get($id = null) {
 	// versioned by PLUGINS_DIR mtime
 	$dirM = @file_exists(PLUGINS_DIR) ? @filemtime(PLUGINS_DIR) : 0;
 	$key = 'fp:plugins:list:v1:' . (string) $dirM;
-	$list = fp_plugins_apcu_get($key, $hit);
+	$list = apcu_get($key, $hit);
 	if ($hit && is_array($list)) {
 		$local = $list;
 		return $local;
 	}
 	$pluginlister = new plugin_indexer();
 	$local = $pluginlister->getList();
-	fp_plugins_apcu_set($key, $local, 0);
+	apcu_set($key, $local, 0);
 	return $local;
 }
 
@@ -240,13 +203,13 @@ function plugin_exists($id) {
 	$plugDirM = @file_exists($plugDir) ? @filemtime($plugDir) : 0;
 	$plugFileM = @file_exists($plugFile) ? @filemtime($plugFile) : 0;
 	$key = 'fp:plugin:exists:v2:' . md5((string)$dirM . '|' . (string)$plugDirM . '|' . (string)$plugFileM . '|' . $id);
-	$val = fp_plugins_apcu_get($key, $hit);
+	$val = apcu_get($key, $hit);
 	if ($hit) {
 		return $local [$id] = (bool) $val;
 	}
 	$res = file_exists($plugFile);
 	$local [$id] = $res;
-	fp_plugins_apcu_set($key, $res, 0);
+	apcu_set($key, $res, 0);
 	return $res;
 }
 
@@ -283,13 +246,13 @@ function plugin_getdir($id) {
 	if (isset($local[$id])) { return $local[$id]; }
 	$hit = false;
 	$key = 'fp:plugin:dir:v2:' . md5(PLUGINS_DIR) . ':' . $id;
-	$val = fp_plugins_apcu_get($key, $hit);
+	$val = apcu_get($key, $hit);
 	if ($hit && is_string($val)) {
 		return $local [$id] = $val;
 	}
 	$dir = PLUGINS_DIR . $id . '/';
 	$local [$id] = $dir;
-	fp_plugins_apcu_set($key, $dir, 0);
+	apcu_set($key, $dir, 0);
 	return $dir;
 }
 
@@ -303,13 +266,13 @@ function plugin_geturl($id) {
 	}
 	$hit = false;
 	$key = 'fp:plugin:url:v2:' . md5(BLOG_BASEURL) . ':' . md5(PLUGINS_DIR) . ':' . $id;
-	$val = fp_plugins_apcu_get($key, $hit);
+	$val = apcu_get($key, $hit);
 	if ($hit && is_string($val)) {
 		return $local [$id] = $val;
 	}
 	$url = BLOG_BASEURL . PLUGINS_DIR . $id . '/';
 	$local [$id] = $url;
-	fp_plugins_apcu_set($key, $url, 0);
+	apcu_set($key, $url, 0);
 	return $url;
 }
 

@@ -112,13 +112,17 @@ function fp_smarty_get_plugin_index(string $dir): array {
 	$cacheDir = defined('CACHE_DIR') ? CACHE_DIR : (defined('FP_CONTENT') ? FP_CONTENT . 'cache/' : sys_get_temp_dir() . '/');
 	$token = @filemtime($dir) ?: 0;
 	$indexFile = rtrim($cacheDir, '/\\') . '/smarty_plugins.index.php';
-	$apcuOn = function_exists('apcu_fetch') && ((bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled') || (PHP_SAPI==='cli' && (bool) @ini_get('apc.enable_cli')));
+
+	// Check APCu securely and host-agnostically
+	$apcuOn = function_exists('is_apcu_on') ? is_apcu_on() : false;
+
 	if ($apcuOn) {
 		$val = apcu_fetch('fp:spi:' . sha1($dir . '|' . $token), $hit);
 		if ($hit && is_array($val)) {
 			return $val;
 		}
 	}
+
 	$map = null;
 	if (is_file($indexFile)) {
 		$payload = @include $indexFile;
