@@ -46,18 +46,8 @@ function ip_in_cidrs(string $ip, array $cidrs): bool {
 		return $local [$key];
 	}
 	// APCu hot-cache across requests
-	$apcu_on = false;
-	if (function_exists('apcu_fetch')) {
-		if (function_exists('apcu_enabled')) {
-			$apcu_on = @apcu_enabled();
-		} else {
-			$apcu_on = (bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled');
-		}
-		// CLI usually off unless explicitly enabled
-		if ($apcu_on && PHP_SAPI === 'cli' && !((bool) @ini_get('apc.enable_cli'))) {
-			$apcu_on = false;
-		}
-	}
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+
 	$apcu_key = $apcu_on ? ('fp:net:in_cidrs:' . $key) : null;
 	if ($apcu_on) {
 		$hit = false;
@@ -171,18 +161,9 @@ function is_https(array $trustedProxies = []) {
 		return $local [$key];
 	}
 
-	// APCu hot-cache across requests
-	$apcu_on = false;
-	if (function_exists('apcu_fetch')) {
-		if (function_exists('apcu_enabled')) {
-			$apcu_on = @apcu_enabled();
-		} else {
-			$apcu_on = (bool) @ini_get('apcu.enabled') || (bool) @ini_get('apc.enabled');
-		}
-		if ($apcu_on && PHP_SAPI === 'cli' && !((bool) @ini_get('apc.enable_cli'))) {
-			$apcu_on = false;
-		}
-	}
+	// Check APCu securely and host-agnostically
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+
 	$apcu_key = $apcu_on ? ('fp:https:v2:' . $key) : null;
 	if ($apcu_on) {
 		$hit = false;
@@ -229,7 +210,7 @@ function is_https(array $trustedProxies = []) {
 	$xssl = strtolower((string)($_SERVER ['HTTP_X_FORWARDED_SSL'] ?? '')); // Other headers that could be used with proxies
 	$xs = strtolower((string)($_SERVER ['HTTP_X_FORWARDED_SCHEME'] ?? ''));
 	$feh = strtolower((string)($_SERVER ['HTTP_FRONT_END_HTTPS'] ?? '')); // IIS
-	$arr = !empty($_SERVER ['HTTP_X_ARR_SSL']);// Azure
+	$arr = !empty($_SERVER ['HTTP_X_ARR_SSL']); // Azure
 	$cfv = (strpos((string)($_SERVER ['HTTP_CF_VISITOR'] ?? ''), '"scheme":"https"') !== false); // Cloudflare
 
 	// RFC 7239 proto=https OR XFP contains https
