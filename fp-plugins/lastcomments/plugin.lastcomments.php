@@ -327,7 +327,7 @@ function plugin_lastcomments_rsshead() {
 		echo '
 			<link rel="alternate" type="application/rss+xml" title="' . htmlspecialchars($last_key) . ' ' . $lastcomments_count . ' ' . htmlspecialchars($comments_key) . ' | RSS 2.0" href="' . plugin_lastcomments_rss_link() . '">' . //
 			'
-			<link rel="alternate" type="application/rss+xml" title="' . htmlspecialchars($last_key) . ' ' . $lastcomments_count . ' ' . htmlspecialchars($comments_key) . ' | Atom 1.0" href="' . plugin_lastcomments_atom_link() . '">
+			<link rel="alternate" type="application/atom+xml" title="' . htmlspecialchars($last_key) . ' ' . $lastcomments_count . ' ' . htmlspecialchars($comments_key) . ' | Atom 1.0" href="' . plugin_lastcomments_atom_link() . '">
 		';
 	}
 }
