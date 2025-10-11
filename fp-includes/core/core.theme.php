@@ -754,30 +754,38 @@ function theme_entry_categories($cats, $link = true, $separator = ', '): ?string
 	if (!is_array($cats) || !$cats) {
 		return null;
 	}
-	$defs = entry_categories_get('defs');
-	if (!is_array($defs) || !$defs) {
+	static $defsCache = null;
+	static $urlCache = array();
+
+	if ($defsCache === null) {
+		$defs = entry_categories_get('defs');
+		$defsCache = is_array($defs) ? $defs : array();
+	}
+	if (!$defsCache) {
+	 return null;
+	}
+
+	$keys = array_fill_keys(array_map('strval', $cats), true);
+	$selected = array_intersect_key($defsCache, $keys);
+	if (!$selected) {
 		return null;
 	}
-	$want = array();
-	foreach ($cats as $cid) {
-		$want [(string)$cid] = true;
-	}
+
 	$filed = array();
-	foreach ($defs as $k => $c) {
-		if (isset($want [(string)$k])) {
-			$name = (string)$c;
-			if ($link) {
-				$url = get_category_link($k);
-				$filed [] = '<a href="' . $url . '">' . $name . '</a>';
-			} else {
-				$filed [] = $name;
+	if ($link) {
+		foreach ($selected as $id => $name) {
+			$sid = (string)$id;
+			if (!isset($urlCache[$sid])) {
+				$urlCache [$sid] = (string) get_category_link($id);
 			}
+			$filed [] = '<a href="' . $urlCache [$sid] . '">' . (string)$name . '</a>';
+		}
+	} else {
+		foreach ($selected as $name) {
+			$filed [] = (string)$name;
 		}
 	}
-	if (!$filed) {
-		return null;
-	}
-	return implode((string)$separator, $filed);
+	return $filed ? implode((string)$separator, $filed) : null;
 }
 
 /**
