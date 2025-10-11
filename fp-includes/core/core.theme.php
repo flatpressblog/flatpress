@@ -259,8 +259,8 @@ function theme_head_stylesheet() {
 	echo '
 		<link media="screen" href="' . htmlspecialchars($href_screen, ENT_QUOTES, $charset) . '" type="text/css" rel="stylesheet">';
 
-	if (!empty($theme ['style'] ['style_print'])) {
-		$raw_print = $base . $theme ['style'] ['style_print'];
+	if (!empty(@$theme ['style'] ['style_print'])) {
+		$raw_print = $base . @$theme ['style'] ['style_print'];
 		if (function_exists('utils_asset_ver')) {
 			$href_print = utils_asset_ver($raw_print);
 		} else {
