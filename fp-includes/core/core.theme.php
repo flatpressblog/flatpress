@@ -98,6 +98,10 @@ function theme_loadsettings() {
 	return $theme;
 }
 
+/**
+ * Register the default widgetset slots used by themes.
+ * @return void
+ */
 function theme_register_default_widgetsets() {
 	register_widgetset('left');
 	register_widgetset('right');
@@ -105,63 +109,134 @@ function theme_register_default_widgetsets() {
 	register_widgetset('bottom');
 }
 
+/**
+ * Return the theme directory path with trailing slash or '' if not found.
+ * @param string $id Theme identifier.
+ * @return string Filesystem path (base-relative) or empty string.
+ */
 function theme_getdir($id = THE_THEME) {
 	return theme_exists($id);
 }
 
+/**
+ * Check if a theme exists and return its directory with trailing slash.
+ * @param string $id Theme identifier.
+ * @return string Path when found, '' otherwise.
+ */
 function theme_exists($id) {
 	// quick fix for win
+	static $cache = array();
+	if (isset($cache [$id])) {
+		return $cache [$id];
+	}
 	$f = THEMES_DIR . ($id);
 	if (file_exists($f)) {
-		return $f . '/';
+		return $cache [$id] = $f . '/';
 	}
-
-	return '';
+	return $cache [$id] = '';
 }
 
+/**
+ * Returns the absolute theme style directory with trailing slash if it exists, otherwise ''.
+ * @param string $id Style identifier (subdirectory name).
+ * @param string $themeid Theme identifier (default THE_THEME).
+ * @return string Absolute style path or empty string when not found.
+ */
 function theme_style_exists($id, $themeid = THE_THEME) {
-	if ($f = theme_exists($themeid)) {
-		if (file_exists($f)) {
-			return $f . '/';
-		}
+	static $cache = array();
+	$key = (string)$themeid . '|' . (string)$id;
+	if (isset($cache [$key])) {
+		return $cache [$key];
 	}
-	return '';
-}
-
-function theme_geturl($id = THE_THEME) {
-	return BLOG_BASEURL . THEMES_DIR . $id . '/';
-}
-
-function theme_style_geturl($style, $id = THE_THEME) {
-	return theme_geturl($id) . $style . '/';
-}
-
-function theme_list() {
-	$dir = THEMES_DIR;
-	$dh = opendir($dir);
-	$i = 0;
-	while (false !== ($filename = readdir($dh))) {
-		if (!fs_is_directorycomponent($filename)) {
-			$files [$i++] = $filename;
+	$base = theme_exists($themeid);
+	if (!$base) {
+		return $cache [$key] = '';
+	}
+	// Normalize and build style directory path
+	$dir = rtrim($base, "/\\") . '/' . ltrim((string)$id, "/\\");
+	if (is_dir($dir)) {
+		// Prefer directories that actually contain style markers
+		if (file_exists($dir . '/style.conf.php') || file_exists($dir . '/res/style.css') || file_exists($dir . '/style.css')) {
+			return $cache [$key] = $dir . '/';
 		}
+		// Still accept the directory if markers are missing
+		return $cache [$key] = $dir . '/';
+	}
+	return $cache [$key] = '';
+}
+
+/**
+ * Build the public URL to the theme root with trailing slash.
+ * @param string $id Theme identifier.
+ * @return string Absolute URL.
+ */
+function theme_geturl($id = THE_THEME) {
+	static $cache = array();
+	if (isset($cache [$id])) {
+		return $cache [$id];
+	}
+	return $cache [$id] = BLOG_BASEURL . THEMES_DIR . $id . '/';
+}
+
+/**
+ * Build the public URL to a style subdirectory within a theme.
+ * @param string $style Style identifier (subdirectory).
+ * @param string $id Theme identifier.
+ * @return string Absolute URL ending with '/'.
+ */
+function theme_style_geturl($style, $id = THE_THEME) {
+	static $cache = array();
+	$key = $id . '|' . $style;
+	if (isset($cache [$key])) {
+		return $cache [$key];
+	}
+	return $cache [$key] = theme_geturl($id) . $style . '/';
+}
+
+/**
+ * List available themes by scanning the themes directory.
+ * @return array<int,string> Sorted list of theme IDs.
+ */
+function theme_list() {
+	static $cache = null;
+	if (is_array($cache)) {
+		return $cache;
+	}
+	$dir = THEMES_DIR;
+	$dh = @opendir($dir);
+	$files = array();
+	if ($dh) {
+		while (false !== ($filename = readdir($dh))) {
+			if (!fs_is_directorycomponent($filename)) {
+				$files [] = $filename;
+			}
+		}
+		closedir($dh);
 	}
 	sort($files);
-	return $files;
+	return $cache = $files;
 }
 
+/**
+ * Output standard <head> meta and feed links for the front end.
+ * @return void
+ */
 function theme_wp_head() {
 	global $fp_config, $lang;
 
-	echo "\n<!-- FP STD HEADER -->\n";
-
-	echo '<meta name="generator" content="FlatPress ' . system_ver() . '">' . "\n";
-	echo '<link rel="alternate" type="application/rss+xml" title="' . $lang ['main'] ['entries'] . ' | RSS 2.0" href="' . theme_feed_link('rss2') . '">' . "\n";
-
-	echo '<link rel="alternate" type="application/atom+xml" title="' . $lang ['main'] ['entries'] . ' | Atom 1.0" href="' . theme_feed_link('atom') . '">' . "\n";
-
-	echo "<!-- EOF FP STD HEADER -->\n";
+	echo '
+		<!-- FP STD HEADER -->
+		<meta name="generator" content="FlatPress ' . system_ver() . '">
+		<link rel="alternate" type="application/rss+xml" title="' . $lang ['main'] ['entries'] . ' | RSS 2.0" href="' . theme_feed_link('rss2') . '">
+		<link rel="alternate" type="application/atom+xml" title="' . $lang ['main'] ['entries'] . ' | Atom 1.0" href="' . theme_feed_link('atom') . '">
+		<!-- EOF FP STD HEADER -->
+	';
 }
 
+/**
+ * Output the theme stylesheet <link> tag(s) for the active theme.
+ * @return void
+ */
 function theme_head_stylesheet() {
 	global $fp_config, $theme;
 
@@ -199,6 +274,10 @@ function theme_head_stylesheet() {
 	';
 }
 
+/**
+ * Output admin panel CSS <link> tag into the head section.
+ * @return void
+ */
 function admin_head_action() {
 	global $fp_config, $theme;
 
@@ -217,6 +296,10 @@ add_filter('admin_head', 'admin_head_action');
 add_action('wp_head', 'theme_wp_head');
 add_action('wp_head', 'theme_head_stylesheet');
 
+/**
+ * Fire WordPress-compatible 'wp_head' and, when in admin, 'admin_head' hooks.
+ * @return void
+ */
 function get_wp_head() {
 	do_action('wp_head');
 	if (class_exists('AdminPanel')) {
@@ -226,6 +309,10 @@ function get_wp_head() {
 
 $smarty->registerPlugin('function', 'header', 'get_wp_head');
 
+/**
+ * Output the configured footer HTML.
+ * @return void
+ */
 function theme_wp_footer() {
 	global $fp_config;
 	echo $fp_config ['general'] ['footer'];
@@ -233,12 +320,20 @@ function theme_wp_footer() {
 
 add_action('wp_footer', 'theme_wp_footer');
 
+/**
+ * Fire WordPress-compatible 'wp_footer' hook.
+ * @return void
+ */
 function get_wp_footer() {
 	do_action('wp_footer');
 }
 
 $smarty->registerPlugin('function', 'footer', 'get_wp_footer');
 
+/**
+ * Send the Content-Type header with the configured charset.
+ * @return void
+ */
 function theme_charset() {
 	global $fp_config;
 	$charset = strtoupper($fp_config ['locale'] ['charset']);
@@ -252,6 +347,7 @@ add_action('init', 'theme_charset');
  *
  * @param Smarty $smarty Smarty template engine instance
  * @param object|null $layout The layout instance (optional)
+ * @return void
  */
 function theme_init(&$smarty, $layout = null) { /* &$mode */
 	global $fp_config, $lang, $theme, $fp_params;
@@ -323,12 +419,24 @@ function theme_init(&$smarty, $layout = null) { /* &$mode */
 	do_action('theme_init');
 }
 
+/**
+ * Smarty block plugin: passthrough for the page container.
+ * @param array<string,mixed> $params Block parameters.
+ * @param string|null $content Captured block content or null on open.
+ * @return string|null Content to output or null on open.
+ */
 function smarty_block_page($params, $content) {
 	return $content;
 }
 
 $smarty->registerPlugin('block', 'page', 'smarty_block_page');
 
+/**
+ * Apply a filter swapping ($hook, $var, ...rest) for Smarty modifier usage.
+ * @param mixed $var Value to filter.
+ * @param string $hook Filter hook name.
+ * @return mixed Filtered value.
+ */
 function theme_apply_filters_wrapper($var, $hook) {
 	$args = func_get_args();
 	$tmp = $args [0];
@@ -337,6 +445,13 @@ function theme_apply_filters_wrapper($var, $hook) {
 	return call_user_func_array('apply_filters', $args);
 }
 
+/**
+ * Apply a link filter with reordered arguments for template use.
+ * Moves the id to the end and injects an empty string for compatibility.
+ * @param mixed $var First argument (usually the id).
+ * @param string $hook Filter hook name.
+ * @return mixed Filter result.
+ */
 function theme_apply_filters_link_wrapper($var, $hook) {
 	// MODIFIER: id, type, feed
 	// FILTER: type, oldlink, feed, id
@@ -353,12 +468,26 @@ function theme_apply_filters_link_wrapper($var, $hook) {
 	return call_user_func_array('apply_filters', $args);
 }
 
+/**
+ * Smarty function: trigger a FlatPress-style action by name.
+ * @param array<string,mixed> $params Must contain 'hook'.
+ * @param \Smarty_Internal_Template $smarty Template instance.
+ * @return void
+ */
 function theme_smarty_function_action($params, $smarty) {
 	if (isset($params ['hook'])) {
 		do_action($params ['hook']);
 	}
 }
 
+/**
+ * Format a date/time using the configured locale defaults.
+ * Accepts timestamp or parseable string; falls back to now.
+ * @param string|int|null $string Timestamp or strtotime()-parseable string.
+ * @param string|null $format Optional date format string.
+ * @param string|int $default_date Fallback when $string is empty.
+ * @return string Formatted date/time.
+ */
 function theme_date_format($string, $format = null, $default_date = '') {
 	$timestamp = null;
 
@@ -383,6 +512,13 @@ function theme_date_format($string, $format = null, $default_date = '') {
 	return date_strformat($format, $timestamp);
 }
 
+/**
+ * Format a date once per day; returns '' for repeated same-day calls.
+ * @param string|int|null $string Timestamp or parseable string.
+ * @param string|null $format Optional format; defaults to locale date.
+ * @param string|int $default_date Fallback when $string is empty.
+ * @return string Empty string or formatted date when day changes.
+ */
 function theme_smarty_modifier_date_format_daily($string, $format = null, $default_date = '') {
 	global $THEME_CURRENT_DAY, $lang, $fp_config;
 
@@ -409,7 +545,6 @@ function theme_smarty_modifier_date_format_daily($string, $format = null, $defau
  * @return string date in RFC3339
  * @author Boris Korobkov
  * @see http://tools.ietf.org/html/rfc3339 http://it.php.net/manual/en/function.date.php#75757
- *     
  */
 function theme_smarty_modifier_date_rfc3339($timestamp = null) {
 	if ($timestamp === null) {
@@ -431,20 +566,44 @@ function theme_smarty_modifier_date_rfc3339($timestamp = null) {
 
 add_filter('feed_link', 'theme_def_feed_link', 0, 2);
 
+/**
+ * Default feed link builder used by the 'feed_link' filter.
+ * @param string $str Ignored input string.
+ * @param string $type Feed type, e.g., 'rss2' or 'atom'.
+ * @return string Absolute feed URL.
+ */
 function theme_def_feed_link($str, $type) {
 	return BLOG_BASEURL . '?x=feed:' . $type;
 }
 
+/**
+ * Return the feed link after applying the 'feed_link' filter.
+ * @param string $feed Feed type, e.g., 'rss2' or 'atom'.
+ * @return string Absolute feed URL.
+ */
 function theme_feed_link($feed = 'rss2') {
 	return apply_filters('feed_link', '', $feed);
 }
 
 add_filter('post_comments_feed_link', 'theme_def_feed_comments_link', 0, 3);
 
+/**
+ * Default comments feed link builder used by 'post_comments_feed_link'.
+ * @param string $str Ignored input string.
+ * @param string $feed Feed type.
+ * @param string|int $id Entry identifier.
+ * @return string Absolute comments feed URL.
+ */
 function theme_def_feed_comments_link($str, $feed, $id) {
 	return BLOG_BASEURL . '?x=entry:' . $id . ';comments:1;feed:' . $feed;
 }
 
+/**
+ * Return the comments feed link after applying the filter.
+ * @param string $feed Feed type.
+ * @param string|int $id Entry identifier.
+ * @return string Absolute comments feed URL.
+ */
 function theme_comments_feed_link($feed, $id) {
 	if (empty($feed)) {
 		$feed = 'rss2';
@@ -454,57 +613,123 @@ function theme_comments_feed_link($feed, $id) {
 
 add_filter('post_link', 'theme_def_permalink', 0, 2);
 
+/**
+ * Default permalink builder used by the 'post_link' filter.
+ * @param string $str Ignored input string.
+ * @param string|int $id Entry identifier.
+ * @return string Absolute permalink URL.
+ */
 function theme_def_permalink($str, $id) {
 	return BLOG_BASEURL . '?x=entry:' . $id;
 }
 
+/**
+ * Return the permalink after applying the 'post_link' filter.
+ * @param string|int $id Entry identifier.
+ * @return string Absolute permalink URL.
+ */
 function get_permalink($id) {
 	return apply_filters('post_link', '', $id);
 }
 
 add_filter('comments_link', 'theme_def_commentlink', 0, 2);
 
+/**
+ * Default comments link builder used by the 'comments_link' filter.
+ * @param string $str Ignored input string.
+ * @param string|int $id Entry identifier.
+ * @return string Absolute comments page URL.
+ */
 function theme_def_commentlink($str, $id) {
 	return BLOG_BASEURL . '?x=entry:' . $id . ';comments:1';
 }
 
+/**
+ * Return the comments link after applying the 'comments_link' filter.
+ * @param string|int $id Entry identifier.
+ * @return string Absolute comments page URL.
+ */
 function get_comments_link($id) {
 	return apply_filters('comments_link', '', $id);
 }
 
 add_filter('page_link', 'theme_def_staticlink', 0, 2);
 
+/**
+ * Default static page link builder used by the 'page_link' filter.
+ * @param string $str Ignored input string.
+ * @param string|int $id Static page identifier.
+ * @return string Absolute static page URL.
+ */
 function theme_def_staticlink($str, $id) {
 	return BLOG_BASEURL . '?page=' . $id;
 }
 
+/**
+ * Return the static page link after applying the 'page_link' filter.
+ * @param string|int $id Static page identifier.
+ * @return string Absolute static page URL.
+ */
 function theme_staticlink($id) {
 	return apply_filters('page_link', '', $id);
 }
 
 add_filter('category_link', 'theme_def_catlink', 0, 2);
 
+/**
+ * Default category link builder used by the 'category_link' filter.
+ * @param string $str Ignored input string.
+ * @param string|int $catid Category identifier.
+ * @return string Absolute category URL.
+ */
 function theme_def_catlink($str, $catid) {
 	return BLOG_BASEURL . '?x=cat:' . $catid;
 }
 
+/**
+ * Return the category link after applying the 'category_link' filter.
+ * @param string|int $catid Category identifier.
+ * @return string Absolute category URL.
+ */
 function get_category_link($catid) {
 	return apply_filters('category_link', '', $catid);
 }
 
+/**
+ * Build a link to the yearly archive.
+ * @param int|string $year Four-digit year.
+ * @return string Absolute archive URL.
+ */
 function get_year_link($year) {
 	return wp_specialchars(apply_filters('year_link', BLOG_BASEURL . '?x=y:' . str_pad($year, 2, '0', STR_PAD_LEFT), $year));
 }
 
+/**
+ * Build a link to the monthly archive.
+ * @param int|string $year Four-digit year.
+ * @param int|string $month One- or two-digit month.
+ * @return string Absolute archive URL.
+ */
 function get_month_link($year, $month) {
 	return wp_specialchars(apply_filters('month_link', BLOG_BASEURL . '?x=y:' . str_pad($year, 2, '0', STR_PAD_LEFT) . ';m:' . str_pad($month, 2, '0', STR_PAD_LEFT), $year, $month));
 }
 
+/**
+ * Build a link to the daily archive.
+ * @param int|string $year Four-digit year.
+ * @param int|string $month One- or two-digit month.
+ * @param int|string $day One- or two-digit day.
+ * @return string Absolute archive URL.
+ */
 function get_day_link($year, $month, $day) {
 	return wp_specialchars(apply_filters('day_link', BLOG_BASEURL . '?x=y:' . str_pad($year, 2, '0', STR_PAD_LEFT) . ';m:' . str_pad($month, 2, '0', STR_PAD_LEFT) . ';d:' . str_pad($day, 2, '0', STR_PAD_LEFT), $year, $month, $day));
 }
 
-// }}}
+/**
+ * Return a localized comments label for a given count.
+ * @param int $count Number of comments.
+ * @return string Human-readable label.
+ */
 function theme_entry_commentcount($count) {
 	global $lang;
 	switch ($count) {
@@ -518,33 +743,61 @@ function theme_entry_commentcount($count) {
 }
 add_filter('comments_number', 'theme_entry_commentcount');
 
-function theme_entry_categories($cats, $link = true, $separator = ', ') {
-	if (!$cats) {
-		return;
-	} else {
-		$filed = array();
-		if ($tmp1 = entry_categories_get('defs')) {
+/**
+ * Render entry categories as text or linked list.
+ * @param array<int,string> $cats Category IDs assigned to the entry.
+ * @param bool $link Whether to link category names.
+ * @param string $separator Separator string between items.
+ * @return string|null Rendered list or null when none.
+ */
+function theme_entry_categories($cats, $link = true, $separator = ', '): ?string {
+	if (!is_array($cats) || !$cats) {
+		return null;
+	}
+	static $defsCache = null;
+	static $urlCache = array();
 
-			foreach ($tmp1 as $k => $c) {
-				if (array_intersect(array(
-					$k
-				), $cats)) {
-					$filed [] = $link ? '<a href="' . get_category_link($k) . '">' . $c . '</a>' : $c;
-				}
+	if ($defsCache === null) {
+		$defs = entry_categories_get('defs');
+		$defsCache = is_array($defs) ? $defs : array();
+	}
+	if (!$defsCache) {
+	 return null;
+	}
+
+	$keys = array_fill_keys(array_map('strval', $cats), true);
+	$selected = array_intersect_key($defsCache, $keys);
+	if (!$selected) {
+		return null;
+	}
+
+	$filed = array();
+	if ($link) {
+		foreach ($selected as $id => $name) {
+			$sid = (string)$id;
+			if (!isset($urlCache[$sid])) {
+				$urlCache [$sid] = (string) get_category_link($id);
 			}
+			$filed [] = '<a href="' . $urlCache [$sid] . '">' . (string)$name . '</a>';
 		}
-		if ($filed) {
-			return implode($separator, $filed);
+	} else {
+		foreach ($selected as $name) {
+			$filed [] = (string)$name;
 		}
 	}
+	return $filed ? implode((string)$separator, $filed) : null;
 }
 
-/*
- * this is called only in legacy mode
- *
+/**
+ * This is called only in legacy mode
  */
 
-// {{{ ENTRY
+/**
+ * Returns theme-specific filters for rendering entries.
+ * Keys are hook names (e.g., 'post_link', 'post_date'); values are callables.
+ * The map is consumed by the filter registrar during theme init.
+ * @return array<string, callable> Hook→callback map for entry output.
+ */
 function &theme_entry_filters(&$contentarr, $id = null) {
 	$contentarr ['subject'] = apply_filters('the_title', $contentarr ['subject']);
 
@@ -561,7 +814,12 @@ function &theme_entry_filters(&$contentarr, $id = null) {
 	return $contentarr;
 }
 
-// {{{ COMMENTS
+/**
+ * Returns theme-specific filters for rendering comments.
+ * Keys are hook names (e.g., 'comments_link', 'comment_date'); values are callables.
+ * The map is consumed by the filter registrar during theme init.
+ * @return array<string, callable> Hook→callback map for comment output.
+ */
 function &theme_comments_filters(&$contentarr, $key) {
 	$contentarr ['name'] = apply_filters('comment_author_name', $contentarr ['name']);
 	if (isset($contentarr ['email'])) {
