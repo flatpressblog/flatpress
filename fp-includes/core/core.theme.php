@@ -750,25 +750,29 @@ add_filter('comments_number', 'theme_entry_commentcount');
  * @param string $separator Separator string between items.
  * @return string|null Rendered list or null when none.
  */
-function theme_entry_categories($cats, $link = true, $separator = ', ') {
-	if (!$cats) {
-		return;
-	} else {
-		$filed = array();
-		if ($tmp1 = entry_categories_get('defs')) {
-
-			foreach ($tmp1 as $k => $c) {
-				if (array_intersect(array(
-					$k
-				), $cats)) {
-					$filed [] = $link ? '<a href="' . get_category_link($k) . '">' . $c . '</a>' : $c;
-				}
+function theme_entry_categories($cats, $link = true, $separator = ', '): ?string {
+	if (!is_array($cats) || !$cats) {
+		return null;
+	}
+	$tmp1 = entry_categories_get('defs');
+	if (!is_array($tmp1) || !$defs) {
+		return null;
+	}
+	$filed = array();
+	foreach ($tmp1 as $k => $c) {
+		if (in_array($k, $cats, true)) {
+			if ($link) {
+				$url = get_category_link($k);
+				$filed [] = '<a href="' . $url . '">' . $c . '</a>';
+			} else {
+				$filed [] = $c;
 			}
 		}
-		if ($filed) {
-			return implode($separator, $filed);
-		}
 	}
+	if (!$filed) {
+		return null;
+	}
+	return implode((string)$separator, $filed);
 }
 
 /**
