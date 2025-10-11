@@ -754,18 +754,23 @@ function theme_entry_categories($cats, $link = true, $separator = ', '): ?string
 	if (!is_array($cats) || !$cats) {
 		return null;
 	}
-	$tmp1 = entry_categories_get('defs');
-	if (!is_array($tmp1) || !$defs) {
+	$defs = entry_categories_get('defs');
+	if (!is_array($defs) || !$defs) {
 		return null;
 	}
+	$want = array();
+	foreach ($cats as $cid) {
+		$want [(string)$cid] = true;
+	}
 	$filed = array();
-	foreach ($tmp1 as $k => $c) {
-		if (in_array($k, $cats, true)) {
+	foreach ($defs as $k => $c) {
+		if (isset($want [(string)$k])) {
+			$name = (string)$c;
 			if ($link) {
 				$url = get_category_link($k);
-				$filed [] = '<a href="' . $url . '">' . $c . '</a>';
+				$filed [] = '<a href="' . $url . '">' . $name . '</a>';
 			} else {
-				$filed [] = $c;
+				$filed [] = $name;
 			}
 		}
 	}
