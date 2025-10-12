@@ -699,6 +699,7 @@ function &plugin_bbcode_init() {
 	// APCu cross-request reuse of parser
 	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 	$apc_hit = false;
+	$sig = null;
 	if ($apcu_on) {
 		$dir = plugin_getdir('bbcode');
 		$sig = 'fp:bbcode:parser:v1:' . md5(implode('|', array(
