@@ -40,8 +40,44 @@ class comment_indexer extends fs_filelister {
  * @see bdb_idtofile()
  */
 function comment_getlist($id) {
-	$obj = new comment_indexer($id); // todo change syntax
-	return $obj->getList();
+	$dir = bdb_idtofile($id, BDB_COMMENT);
+	if (!@is_dir($dir)) {
+		return array();
+	}
+
+	static $local = array(), $meta = array();
+	clearstatcache(true, $dir);
+	$mt = @filemtime($dir);
+	$sz = ($mt !== false) ? (int) @filesize($dir) : 0;
+	$sig = (($mt !== false) ? $mt : 'na') . ':' . $sz;
+
+	if (isset($local [$id]) && (($meta [$id] ?? null) === $sig)) {
+		return $local [$id];
+	}
+
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	$key = null;
+	if ($apcu_on && $mt !== false) {
+		$key = 'fp:comments:list:' . $id . ':' . $mt . ':' . $sz;
+		$hit = false;
+		$val = apcu_fetch($key, $hit);
+		if ($hit && is_array($val)) {
+			$local [$id] = $val;
+			$meta [$id] = $sig;
+			return $val;
+		}
+	}
+
+	$obj = new comment_indexer($id);
+	$list = $obj->getList();
+	$local [$id] = $list;
+	$meta [$id] = $sig;
+
+	if ($key) {
+		@apcu_store($key, $list, 300);
+	}
+
+	return $list;
 }
 
 function comment_parse($entryid, $id) {
@@ -108,15 +144,17 @@ function comment_save($id, $comment) {
 	$comment = array_change_key_case($comment, CASE_UPPER);
 
 	$comment_dir = bdb_idtofile($id, BDB_COMMENT);
+	$entryid = $id;
 
 	if (!isset($comment ['DATE'])) {
 		$comment ['DATE'] = date_time();
 	}
-	$id = bdb_idfromtime(BDB_COMMENT, $comment ['DATE']);
-	$f = $comment_dir . $id . EXT;
+	$comment_id = bdb_idfromtime(BDB_COMMENT, $comment ['DATE']);
+	$f = $comment_dir . $comment_id . EXT;
 	$str = utils_kimplode($comment);
 	if (io_write_file($f, $str)) {
-		return $id;
+		do_action('comment_save', $entryid, $comment_id);
+		return $comment_id;
 	}
 
 	return false;
@@ -137,10 +175,16 @@ function comment_save($id, $comment) {
  * @see entry_delete()
  */
 function comment_delete($id, $comment_id) {
+	// Pre-delete event
 	do_action('comment_delete', $id, $comment_id);
 	$comment_dir = bdb_idtofile($id, BDB_COMMENT);
 	$f = $comment_dir . $comment_id . EXT;
-	return fs_delete($f);
+	$ok = fs_delete($f);
+	if ($ok) {
+		// Post-delete event for cache invalidation
+		do_action('comment_deleted', $id, $comment_id);
+	}
+	return $ok;
 }
 
 function dummy_comment($val) {

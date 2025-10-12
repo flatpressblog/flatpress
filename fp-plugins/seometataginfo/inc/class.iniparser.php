@@ -107,7 +107,7 @@ class iniParser {
 		$cache [$local_key] = $this->_iniParsedArray;
 		if ($apcu_on) {
 			// TTL short; mtime/size in key
-			@apcu_store($apcu_key, $this->_iniParsedArray, 60);
+			@apcu_store($apcu_key, $this->_iniParsedArray, 600);
 		}
 	}
 

@@ -15,14 +15,51 @@ class static_indexer extends fs_filelister {
 function static_getlist() {
 	global $fp_config;
 
+	$dir = STATIC_DIR;
+	if (!@is_dir($dir)) {
+		return array();
+	}
+
+	// Naturalsort flag from configuration (default: true)
+	$nat = isset($fp_config ['staticlist'] ['naturalsort']) ? $fp_config ['staticlist'] ['naturalsort'] : true;
+	$natFlag = $nat ? 'true' : 'false';
+
+	// Request local memoization by directory signature + sort mode
+	static $local = array();
+	clearstatcache(true, $dir);
+	$mt = @filemtime($dir);
+	$sz = ($mt !== false) ? (int) @filesize($dir) : 0;
+	$sig = (($mt !== false) ? $mt : 'na') . ':' . $sz . ':' . $natFlag;
+	if (isset($local [$sig])) {
+		return $local [$sig];
+	}
+
+	// Optional: APCu cache, key contains directory signature and sort mode
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	$key = ($apcu_on && $mt !== false) ? ('fp:statics:list:' . $mt . ':' . $sz . ':' . $natFlag) : null;
+	if ($key) {
+		$hit = false;
+		$val = apcu_fetch($key, $hit);
+		if ($hit && is_array($val)) {
+			$local [$sig] = $val;
+			return $val;
+		}
+	}
+
 	$obj = new static_indexer();
 	$list = $obj->getList();
 
-	if (isset($fp_config ['staticlist'] ['naturalsort']) ? $fp_config ['staticlist'] ['naturalsort'] : true) {
+	if ($nat) {
 		// Natural sorting
 		natsort($list);
 		$list = array_values($list);
 	}
+
+	$local [$sig] = $list;
+	if ($key) {
+		@apcu_store($key, $list, 600);
+	}
+
 	return $list;
 }
 

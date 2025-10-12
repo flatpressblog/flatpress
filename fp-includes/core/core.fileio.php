@@ -163,8 +163,8 @@ function io_load_file($filename) {
 				 * Worst-case simultaneously ≈ 21–23 MiB < 32 MiB; headroom ≈ 9–11 MiB covers fragmentation.
 				 * Note: APCu is a shared pool per FPM pool (apc.shm_size), not per child process.
 				 */
-				$ttl = max(0, (int) ($_ENV ['FP_APCU_IO_TTL'] ?? 21600)); // Removed from cache after 6 hours
-				$max = max(0, (int) ($_ENV ['FP_APCU_IO_MAX_BYTES'] ?? 65536)); // 64 KiB - prevents fat items
+				$ttl = max(0, (int) ($_ENV ['FP_APCU_IO_TTL'] ?? 7200)); // Removed from cache after 2 hours
+				$max = max(0, (int) ($_ENV ['FP_APCU_IO_MAX_BYTES'] ?? 32768)); // 32 KiB - prevents fat items
 				// TTL unnecessary, key changes with mtime/size
 				if (strlen($val) <= $max) {
 					apcu_store($key, $val, $ttl);
