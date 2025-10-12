@@ -3,9 +3,10 @@
 ## Changed requirements
 - FlatPress 1.5 runs under PHP up to **8.4**; minimum required PHP version increases to **7.2**.
 
-## Changes
+## General
+### Changes
 - General
-  - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667), [#673](https://github.com/flatpressblog/flatpress/pull/673))
+  - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667), [#673](https://github.com/flatpressblog/flatpress/pull/673), [#675](https://github.com/flatpressblog/flatpress/pull/675), [#679](https://github.com/flatpressblog/flatpress/pull/679))
   - A web server that returns HTTPS=off is now correctly recognized as an HTTP server. ([#671](https://github.com/flatpressblog/flatpress/issues/671))
   - Correct output when a historical character set encoding is set. ([#670](https://github.com/flatpressblog/flatpress/pull/670))
 - Template engine:
@@ -22,13 +23,18 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
         - Flex version with wrapper and responsive
         - Drag & drop now also available for mobile devices 
 
-## Security
+### Security
 - Detection of an HTTP/HTTPS connection ``is_https()`` is significantly more reliable and less susceptible to spoofing. Improved detection for public proxies/CDNs, including Azure and Cloudflare. ([#672](https://github.com/flatpressblog/flatpress/pull/672))
+
+### Bugfixes
+- If ``$_SERVER [‘HTTPS’] = off`` is set in the web server, an HTTP connection is now correctly recognized. ([#671](https://github.com/flatpressblog/flatpress/issues/671))
+- ``theme_style_exists()`` now returns ``''`` if the style directory is missing. Previously, the theme root was returned incorrectly. ([#678](https://github.com/flatpressblog/flatpress/pull/678))
 
 ## Plugins
 ### Changes
 - Archives plugin: update to version 1.1.1
   - Toggles in Themes, based on FlatMaas 2 by Drudo
+  - Added request-local and APCu caching. ([#679](https://github.com/flatpressblog/flatpress/pull/679))
 - Newsletter plugin: update to version 1.7.3
   - Unwanted requests and bots are now intercepted more effectively: Suspicious IP addresses are automatically added to a block list, which is cleaned daily.
   - Email addresses are now checked much more thoroughly—including domain and server checks—to detect typos, invalid, or undeliverable addresses.
@@ -38,8 +44,9 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - Batch shipping shows shipping status ([#649](https://github.com/flatpressblog/flatpress/pull/649))
 - FlatPress Protect plugin: update to version 1.1.1
   - iFrames can only be embedded from the same domain.
+- BBCode plugin: update to version 2.0.0
+  - Memoization and optional APCu caches added ([#680](https://github.com/flatpressblog/flatpress/pull/680))
 
-## Plugins
 ### Bugfixes
 - Newsletter plugin: update to version 1.7.3
     - Fixes "Invalid CSRF token" when the widget is visible in the admin area footer.
