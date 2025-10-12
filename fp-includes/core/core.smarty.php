@@ -177,7 +177,7 @@ function fp_smarty_get_plugin_index(string $dir): array {
 		}
 	}
 	if ($apcuOn) {
-		@apcu_store('fp:spi:' . sha1($dir . '|' . $token), $map, 60);
+		@apcu_store('fp:spi:' . sha1($dir . '|' . $token), $map, 300);
 	}
 	return $map;
 }
