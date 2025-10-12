@@ -54,7 +54,7 @@ class Smarty extends \Smarty\TemplateBase {
 	/**
 	 * smarty version
 	 */
-	const SMARTY_VERSION = '5.5.1';
+	const SMARTY_VERSION = '5.6.0';
 
 	/**
 	 * define caching modes
@@ -805,9 +805,9 @@ class Smarty extends \Smarty\TemplateBase {
 	 * @deprecated since 5.0
 	 */
 	public function addPluginsDir($plugins_dir) {
-		//trigger_error('Using Smarty::addPluginsDir() to load plugins is deprecated and will be ' .
-			//'removed in a future release. Use Smarty::addExtension() to add an extension or Smarty::registerPlugin to ' .
-			//'quickly register a plugin using a callback function.', E_USER_DEPRECATED);
+		trigger_error('Using Smarty::addPluginsDir() to load plugins is deprecated and will be ' .
+			'removed in a future release. Use Smarty::addExtension() to add an extension or Smarty::registerPlugin to ' .
+			'quickly register a plugin using a callback function.', E_USER_DEPRECATED);
 
 		foreach ((array)$plugins_dir as $v) {
 			$path = $this->_realpath(rtrim($v ?? '', '/\\') . DIRECTORY_SEPARATOR, true);
