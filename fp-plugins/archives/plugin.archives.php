@@ -72,13 +72,148 @@ class plugin_archives_monthlist extends fs_filelister {
 
 }
 
+// BOF Caching helpers
+function plugin_archives_cache_ns() {
+	static $ns = null;
+	if ($ns !== null) {
+		return $ns;
+	}
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	if (!$apcu_on) {
+		return $ns = '';
+	}
+	$v = apcu_fetch('fp:archives:v');
+	if (!$v) {
+		$v = 1;
+		@apcu_store('fp:archives:v', $v);
+	}
+	return $ns = ':v' . (int)$v;
+}
+
+// Call this from entry/comment save/delete to invalidate caches.
+function plugin_archives_cache_bump() {
+	if (!(function_exists('is_apcu_on') && is_apcu_on())) {
+		return;
+	}
+	$ok = false;
+	apcu_inc('fp:archives:v', 1, $ok);
+	if (!$ok) {
+		@apcu_store('fp:archives:v', 1);
+	}
+}
+add_filter('comment_save', 'plugin_archives_cache_bump');
+add_filter('comment_deleted', 'plugin_archives_cache_bump');
+
+function plugin_archives_mtime_sig() {
+	$root = rtrim(CONTENT_DIR, '/');
+	$rt = (int) @filemtime($root);
+	$maxY = 0; $maxM = 0;
+	if (@is_dir($root) && ($h = @opendir($root))) {
+		while (false !== ($y = readdir($h))) {
+			if ($y === '.' || $y === '..') {
+				continue;
+			}
+			if (!(ctype_digit($y) && strlen($y) === 4)) {
+				continue;
+			}
+			$ydir = $root . '/' . $y;
+			if (!@is_dir($ydir)) {
+				continue;
+			}
+			$ty = @filemtime($ydir);
+			if ($ty && $ty > $maxY) {
+				$maxY = $ty;
+			}
+			if (($hh = @opendir($ydir))) {
+				while (false !== ($m = readdir($hh))) {
+					if ($m === '.' || $m === '..') {
+						continue;
+					}
+					if (!(ctype_digit($m) && strlen($m) === 2 && $m >= '01' && $m <= '12')) {
+						continue;
+					}
+					$mdir = $ydir . '/' . $m;
+					if (!@is_dir($mdir)) {
+						continue;
+					}
+					$tm = @filemtime($mdir);
+					if ($tm && $tm > $maxM) {
+						$maxM = $tm;
+					}
+				}
+				@closedir($hh);
+			}
+		}
+		@closedir($h);
+	}
+	return $rt . ':' . $maxY . ':' . $maxM;
+}
+
+function plugin_archives_mtime_sig_cached() {
+	static $sig = null;
+	if ($sig !== null) {
+		return $sig;
+	}
+	return $sig = plugin_archives_mtime_sig();
+}
+
+function plugin_archives_cached_list() {
+	static $local = null;
+	if ($local !== null) {
+		return $local;
+	}
+	global $fp_config;
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	$ns = plugin_archives_cache_ns();
+	$sig = plugin_archives_mtime_sig_cached();
+	$key = 'fp:archives:list' . $ns . ':' . $sig;
+	if ($apcu_on) {
+		$hit = false;
+		$val = apcu_fetch($key, $hit);
+		if ($hit && is_array($val)) {
+			return $local = $val;
+		}
+	}
+	$obj = new plugin_archives_monthlist();
+	$list = $obj->getList();
+	$local = $list;
+	if ($apcu_on) {
+		@apcu_store($key, $list, 900);
+	}
+	return $list;
+}
+
+function plugin_archives_cached_html() {
+	static $local = null;
+	if ($local !== null) {
+		return $local;
+	}
+	global $fp_config;
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	$ns = plugin_archives_cache_ns();
+	$sig = plugin_archives_mtime_sig_cached();
+	$key = 'fp:archives:html' . $ns . ':' . $sig;
+	if ($apcu_on) {
+		$hit = false; $val = apcu_fetch($key, $hit);
+		if ($hit && is_string($val)) {
+			return $local = $val;
+		}
+	}
+	$obj = new plugin_archives_monthlist();
+	$html = $obj->getHtmlList();
+	$local = $html;
+	if ($apcu_on) {
+		@apcu_store($key, $html, 900);
+	}
+	return $html;
+}
+// EOF Caching helpers
+
 function plugin_archives_head() {
 	$random_hex = RANDOM_HEX;
 	$pdir = plugin_geturl('archives');
 	$css = utils_asset_ver($pdir . 'res/togglearchive.css', SYSTEM_VER);
 	$js = utils_asset_ver($pdir . 'res/togglearchive.js', SYSTEM_VER);
-	global $PLUGIN_ARCHIVES_MONTHLIST;
-	$PLUGIN_ARCHIVES_MONTHLIST = new plugin_archives_monthlist();
 
 	echo '
 		<!-- archives -->
@@ -86,7 +221,7 @@ function plugin_archives_head() {
 		<link rel="stylesheet" type="text/css" href="' . $css . '">
 	';
 
-	foreach ($PLUGIN_ARCHIVES_MONTHLIST->getList() as $y => $months) {
+	foreach (plugin_archives_cached_list() as $y => $months) {
 		foreach ($months as $ttl => $link) {
 			echo "
 			<link rel=\"archives\" title=\"" . $ttl . "\" href=\"" . $link . "\">";
@@ -132,15 +267,13 @@ add_filter('wp_footer', 'plugin_archives_footer');
 
 function plugin_archives_widget() {
 	lang_load('plugin:archives');
-	global $lang, $PLUGIN_ARCHIVES_MONTHLIST;
+	global $lang;
 
 	return array(
 		'subject' => $lang ['plugin'] ['archives'] ['subject'],
 
-		'content' => ($list = $PLUGIN_ARCHIVES_MONTHLIST->getHtmlList()) ? '<ul>' . $list . '</ul>' : "<p>" . $lang ['plugin'] ['archives'] ['no_posts'] . "</p>"
+		'content' => (($list = plugin_archives_cached_html())) ? '<ul>' . $list . '</ul>' : "<p>" . $lang ['plugin'] ['archives'] ['no_posts'] . "</p>"
 	);
 }
-
 register_widget('archives', 'Archives', 'plugin_archives_widget');
-
 ?>
