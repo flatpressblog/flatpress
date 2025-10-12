@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * Plugin Name: BBCode
- * Version: 1.9.1
+ * Version: 2.0.0
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -9,6 +9,9 @@
  */
 require (plugin_getdir('bbcode') . '/inc/stringparser_bbcode.class.php');
 require (plugin_getdir('bbcode') . '/panels/admin.plugin.panel.bbcode.php');
+
+// Include the URL validation
+require_once (plugin_getdir('bbcode') . '/inc/isValidFileDownloadUrl.php');
 
 /**
  * Setups the plugin.
@@ -98,9 +101,6 @@ function bbcode_remap_url(&$d) {
 		$d = 'https://' . $d;
 	}
 
-	// Include the URL validation
-	require_once (plugin_getdir('bbcode') . '/inc/isValidFileDownloadUrl.php');
-
 	// Validate the URL
 	if (!isValidFileDownloadUrl($d)) {
 		// Handle invalid URLs
@@ -116,7 +116,7 @@ function bbcode_remap_url(&$d) {
 		// if is relative url
 		// absolute path, relative to this server
 		if ($d [0] == '/') {
-			/*
+			/**
 			 * BLOG_BASEURL contains a trailing slash in the end. If
 			 * $d begins with a slash, we first strip it otherwise
 			 * the string would look like
@@ -156,7 +156,11 @@ function bbcode_remap_url(&$d) {
  */
 function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	global $lang;
-	lang_load('plugin:bbcode');
+	static $lang_loaded = false;
+	if (!$lang_loaded) {
+		lang_load('plugin:bbcode');
+		$lang_loaded = true;
+	}
 	if ($action == 'validate') {
 		return true;
 	}
@@ -196,6 +200,13 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
 		return true;
 	}
+
+	// Lokale Caches und APCu-Check
+	static $gi_local = array(); // getimagesize
+	static $iptc_local = array(); // IPTC - Metadata
+	static $scale_local = array(); // Result of bbcode_img_scale
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+
 	if (!isset($attributes ['default'])) {
 		return '[No valid img specified]';
 	}
@@ -224,22 +235,59 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	// slow remote servers may otherwise lockup the system
 	if ($image_is_local) {
 		$img_info = array();
-
-		/** @var array{0?: int, 1?: int, 2?: int, 3?: string, mime?: string, channels?: int, bits?: int}|false $img_size */
-		$img_size = @getimagesize($actualpath, $img_info);
-		if (!is_array($img_size)) {
-			$img_size = [];
+		$mt = @filemtime($actualpath);
+		$sz = @filesize($actualpath);
+		$k = $actualpath . '|' . (string)$mt . '|' . (string)$sz;
+		$ak_gi = 'fp:bbcode:imginfo:v1:' . md5($k);
+		// getimagesize: lokal -> APCu -> origin
+		if (isset($gi_local [$k])) {
+			list($img_size, $img_info) = $gi_local [$k];
+		} elseif ($apcu_on && ($tmp = @apcu_fetch($ak_gi))) {
+			list($img_size, $img_info) = $tmp;
+		} else {
+			/** @var array{0?:int,1?:int,2?:int,3?:string,mime?:string,channels?:int,bits?:int}|false $img_size */
+			$img_size = @getimagesize($actualpath, $img_info);
+			if (!is_array($img_size)) {
+				$img_size = array();
+			}
+			$gi_local [$k] = array($img_size, $img_info);
+			if ($apcu_on) {
+				@apcu_store($ak_gi, array($img_size, $img_info), 600);
+			}
 		}
 		$absolutepath = BLOG_BASEURL . $actualpath;
 
+		// IPTC: lokal -> APCu -> origin
 		if ($useimageinfo && function_exists('iptcparse') && isset($img_size ['mime']) && $img_size ['mime'] === 'image/jpeg') {
-			if (is_array($img_info)) {
+			$ak_ip = 'fp:bbcode:iptc:v1:' . md5($k);
+			$meta = null;
+			if (isset($iptc_local [$k])) {
+				$meta = $iptc_local [$k];
+			} elseif ($apcu_on && ($tmp = @apcu_fetch($ak_ip))) {
+				$meta = $tmp;
+			} else {
 				// tiffs won't be supported
-				if (isset($img_info ["APP13"])) {
-					$iptc = iptcparse($img_info ["APP13"]);
-					$title = !empty($iptc ["2#005"] [0]) ? wp_specialchars($iptc ["2#005"] [0]) : $title;
-					$alt = isset($iptc ["2#120"] [0]) ? wp_specialchars($iptc ["2#120"] [0], 1) : $title;
+				if (is_array($img_info) && isset($img_info ['APP13'])) {
+					$iptc = @iptcparse($img_info['APP13']);
+					$meta = array(
+						'title' => !empty($iptc ['2#005'] [0]) ? wp_specialchars($iptc ['2#005'] [0]) : null,
+						'alt' => isset($iptc ['2#120'] [0]) ? wp_specialchars($iptc ['2#120'] [0], 1) : null,
+					);
+				} else {
+					$meta = array('title' => null, 'alt' => null);
 				}
+				$iptc_local [$k] = $meta;
+				if ($apcu_on) {
+					@apcu_store($ak_ip, $meta, 600);
+				}
+			}
+			if (!empty($meta ['title'])) {
+				$title = $meta ['title'];
+			}
+			if (array_key_exists('alt', $meta) && $meta ['alt'] !== null) {
+				$alt = $meta ['alt'];
+			} else {
+				$alt = $title;
 			}
 		}
 	}
@@ -248,7 +296,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	$thumbpath = null;
 	// default: resize to 0, which means leaving it as it is, as width and hight will be ignored ;)
 	$scalefact = 0;
-	/*
+	/**
 	 * scale attribute has priority over width and height if scale is
 	 * set popup is set to true automatically, unless it is explicitly
 	 * set to false
@@ -283,10 +331,13 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	}
 	if ($height != $orig_h) {
 		// bbcode_img_scale_filter($actualpath, $img_props, $newsize)
-		$thumbpath = apply_filters('bbcode_img_scale', $actualpath, $img_size, array(
-			$width,
-			$height
-		));
+		$sk = $actualpath . '|' . (string)$width . 'x' . (string)$height . '|' . (string)$orig_w . 'x' . (string)$orig_h . '|' . (isset($mt) ? (string)$mt : '') . '|' . (isset($sz) ? (string)$sz : '');
+		if (isset($scale_local [$sk])) {
+			$thumbpath = $scale_local [$sk];
+		} else {
+			$thumbpath = apply_filters('bbcode_img_scale', $actualpath, $img_size, array($width, $height));
+			$scale_local [$sk] = $thumbpath;
+		}
 	}
 
 	// Calculating the "loading" attribute of the image.
@@ -364,7 +415,12 @@ function do_bbcode_mail($action, $attributes, $content, $params, $node_object) {
 function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 
 	global $lang;
-	lang_load('plugin:bbcode');
+
+	static $lang_loaded = false;
+	if (!$lang_loaded) {
+		lang_load('plugin:bbcode');
+		$lang_loaded = true;
+	}
 
 	if ($action == 'validate') {
 		return true;
@@ -640,8 +696,34 @@ function &plugin_bbcode_init() {
 		return $bbcode;
 	}
 
+	// APCu cross-request reuse of parser
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	$apc_hit = false;
+	$sig = null;
+	if ($apcu_on) {
+		$dir = plugin_getdir('bbcode');
+		$sig = 'fp:bbcode:parser:v1:' . md5(implode('|', array(
+			(int) (defined('BBCODE_ALLOW_HTML') ? BBCODE_ALLOW_HTML : 1),
+			(int) (defined('BBCODE_MASK_ATTACHS') ? BBCODE_MASK_ATTACHS : 1),
+			(int) (defined('BBCODE_URL_MAXLEN') ? BBCODE_URL_MAXLEN : 40),
+			(string) @filemtime(__FILE__),
+			(string) @filemtime($dir . '/inc/stringparser_bbcode.class.php'),
+			(string) @filemtime($dir . '/inc/stringparser.class.php'),
+			(string) PHP_VERSION_ID
+		)));
+		$hit = false;
+		$val = @apcu_fetch($sig, $hit);
+		if ($hit && $val instanceof StringParser_BBCode) {
+			// Get base parser from cache, but do not mutate
+			$bbcode = clone $val;
+			$apc_hit = true;
+		}
+	}
+
 	// get the BBCode parser
-	$bbcode = new StringParser_BBCode();
+	if (!isset($bbcode)) {
+		$bbcode = new StringParser_BBCode();
+	}
 	$bbcode->setGlobalCaseSensitive(false); // don't care about case sensitivity: img == IMG == Img
 	$bbcode->setMixedAttributeTypes(true);
 
@@ -857,8 +939,15 @@ function &plugin_bbcode_init() {
 		'link'
 	), array());
 
+	if ($apcu_on && isset($sig) && ($bbcode instanceof StringParser_BBCode) && !$apc_hit) {
+		// Only persist unfiltered base
+		@apcu_store($sig, $bbcode, 300);
+	}
+
 	// aaaand we're done!
 	define('BBCODE_INIT_DONE', true);
+
+	// Always apply extensions from other plugins
 	$bbcode = apply_filters('bbcode_init', $bbcode);
 
 	return $bbcode;
@@ -871,8 +960,16 @@ function &plugin_bbcode_init() {
  * @return string
  */
 function BBCode($text) {
+	// Request-local memoization for identical texts in the same request
+	static $local = array();
+	$h = md5((string)$text);
+	if (isset($local [$h])) {
+		return $local [$h];
+	}
 	$bbcode = &plugin_bbcode_init();
-	return $bbcode->parse($text);
+	$res = $bbcode->parse($text);
+	$local [$h] = $res;
+	return $res;
 }
 
 /**
@@ -885,27 +982,53 @@ function plugin_bbcode_init_toolbar() {
 	$lang = lang_load('plugin:bbcode');
 	$selection = $lang ['admin'] ['plugin'] ['bbcode'] ['editor'] ['selection'];
 
-	// Get all available images
-	$indexer = new fs_filelister(IMAGES_DIR);
-	$imageslist = array_filter($indexer->getList(), function ($file) {
-		// Exclude hidden files
-		return substr(basename($file), 0, 1) !== '.';
-	});
+	// Caching
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	static $img_local = null, $att_local = null;
 
-	// Sort by name
-	usort($imageslist, 'strnatcasecmp');
+	// Get all available images (cached)
+	if ($img_local === null) {
+		$mtI = @filemtime(IMAGES_DIR);
+		$ckI = 'fp:bbcode:toolbar:images:v1:' . md5(IMAGES_DIR . '|' . (string)$mtI);
+		$list = $apcu_on ? @apcu_fetch($ckI) : null;
+		if (!is_array($list)) {
+			$indexerI = new fs_filelister(IMAGES_DIR);
+			$list = array_filter($indexerI->getList(), function ($file) {
+				// Exclude hidden files
+				return substr(basename($file), 0, 1) !== '.';
+			});
+			// Sort by name
+			usort($list, 'strnatcasecmp');
+			if ($apcu_on) {
+				@apcu_store($ckI, $list, 300);
+			}
+		}
+		$img_local = $list;
+	}
+	$imageslist = $img_local;
 	array_unshift($imageslist, $selection);
 	$smarty->assign('images_list', $imageslist);
 
-	// Get all available attachments
-	$indexer = new fs_filelister(ATTACHS_DIR);
-	$attachslist = array_filter($indexer->getList(), function ($file) {
-		// Exclude hidden files
-		return substr(basename($file), 0, 1) !== '.';
-	});
-
-	// Sort by name
-	usort($attachslist, 'strnatcasecmp');
+	// Get all available attachments (cached)
+	if ($att_local === null) {
+		$mtA = @filemtime(ATTACHS_DIR);
+		$ckA = 'fp:bbcode:toolbar:attachs:v1:' . md5(ATTACHS_DIR . '|' . (string)$mtA);
+		$list = $apcu_on ? @apcu_fetch($ckA) : null;
+		if (!is_array($list)) {
+			$indexerA = new fs_filelister(ATTACHS_DIR);
+			$list = array_filter($indexerA->getList(), function ($file) {
+				// Exclude hidden files
+				return substr(basename($file), 0, 1) !== '.';
+			});
+			// Sort by name
+			usort($list, 'strnatcasecmp');
+			if ($apcu_on) {
+				@apcu_store($ckA, $list, 300);
+			}
+		}
+		$att_local = $list;
+	}
+	$attachslist = $att_local;
 	array_unshift($attachslist, $selection);
 	$smarty->assign('attachs_list', $attachslist);
 }
@@ -917,6 +1040,34 @@ function plugin_bbcode_init_toolbar() {
  * @return string
  */
 function plugin_bbcode_comment($text) {
+
+	// Request-local and APCu caching of the comment parser
+	static $bb = null;
+	static $local = array();
+	$h = md5((string)$text);
+	if (isset($local [$h])) {
+		return $local [$h];
+	}
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	$key = null;
+	if ($bb === null && $apcu_on) {
+		$dir = plugin_getdir('bbcode');
+		$key = 'fp:bbcode:commentparser:v1:' . md5(implode('|', array(
+			(string) @filemtime(__FILE__),
+			(string) @filemtime($dir . '/inc/stringparser_bbcode.class.php'),
+			(string) @filemtime($dir . '/inc/stringparser.class.php'),
+			(string) PHP_VERSION_ID
+		)));
+		$hit = false;
+		$val = @apcu_fetch($key, $hit);
+		if ($hit && $val instanceof StringParser_BBCode) {
+			$bb = $val;
+			$res = $bb->parse($text);
+			$local [$h] = $res;
+			return $res;
+		}
+	}
+
 	$bbcode = new StringParser_BBCode();
 	// If you set it to false the case-sensitive will be ignored for all codes
 	$bbcode->setGlobalCaseSensitive(false);
@@ -1026,26 +1177,34 @@ function plugin_bbcode_comment($text) {
 		'inline',
 		'link'
 	), array());
-	return $bbcode->parse($text);
+	$res = $bbcode->parse($text);
+	$bb = $bbcode;
+	if ($apcu_on && $key) {
+		@apcu_store($key, $bb, 300);
+	}
+	$local [$h] = $res;
+	return $res;
 }
 
 /**
  * Modifier BBcode to HTML for comments
  */
 function bbcode2html($html) {
-	$preg = array(
-		// [url]
-		'/(?<!\\\\)\[url(?::\w+)?\]www\.(.*?)\[\/url(?::\w+)?\]/si' => '<a href="https://www.\\1" target="_blank" class="externlink" rel="external">\\1</a>',
-		'/(?<!\\\\)\[url(?::\w+)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\1</a>',
-		'/(?<!\\\\)\[url(?::\w+)?=(.*?)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\2</a>',
-
-		// [list]
-		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\*(?::\w+)?\](.*?)(?=(?:\s*<br\s*\/?>\s*)?\[\*|(?:\s*<br\s*\/?>\s*)?\[\/?list)/si' => '<li>\\1</li>',
-		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\/list(:(?!u|o)\w+)?\](?:<br\s*\/?>)?/si' => '</ul>',
-		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\/list:o(:\w+)?\](?:<br\s*\/?>)?/si' => '</ol>',
-		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[list(:(?!u|o)\w+)?\]\s*(?:<br\s*\/?>)?/si' => '<ul class="list-unordered">',
-		'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[list(?::o)?(:\w+)?=#\]\s*(?:<br\s*\/?>)?/si' => '<ol class="list-ordered">',
-	);
+	static $preg = null;
+	if ($preg === null) {
+		$preg = array(
+			// [url]
+			'/(?<!\\\\)\[url(?::\w+)?\]www\.(.*?)\[\/url(?::\w+)?\]/si' => '<a href="https://www.\\1" target="_blank" class="externlink" rel="external">\\1</a>',
+			'/(?<!\\\\)\[url(?::\w+)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\1</a>',
+			'/(?<!\\\\)\[url(?::\w+)?=(.*?)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\2</a>',
+			// [list]
+			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\*(?::\w+)?\](.*?)(?=(?:\s*<br\s*\/?>\s*)?\[\*|(?:\s*<br\s*\/?>\s*)?\[\/?list)/si' => '<li>\\1</li>',
+			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\/list(:(?!u|o)\w+)?\](?:<br\s*\/?>)?/si' => '</ul>',
+			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\/list:o(:\w+)?\](?:<br\s*\/?>)?/si' => '</ol>',
+			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[list(:(?!u|o)\w+)?\]\s*(?:<br\s*\/?>)?/si' => '<ul class="list-unordered">',
+			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[list(?::o)?(:\w+)?=#\]\s*(?:<br\s*\/?>)?/si' => '<ol class="list-ordered">',
+		);
+	}
 	$html = preg_replace(array_keys($preg), array_values($preg), $html);
 	return $html;
 }
@@ -1069,15 +1228,17 @@ function plugin_bbcode_undoHtmlCallback($match) {
  */
 function plugin_bbcode_undoHtml($text) {
 	// return preg_replace_callback('|<!-- BEGOFHTML -->(.*)<!-- EOFHTML -->|sU', 'plugin_bbcode_undoHtmlCallback', $text);
-	if (isset($GLOBALS ['BBCODE_TEMP_HTML'])) {
-		foreach ($GLOBALS ['BBCODE_TEMP_HTML'] as $n => $content) {
-			// html_entity_decode($content)
-			$content = str_replace('&lt;', '<', $content);
-			$content = str_replace('&gt;', '>', $content);
-			$text = str_replace("<!-- #HTML_BLOCK_" . $n . "# -->", $content, $text);
-		}
-		$GLOBALS ['BBCODE_TEMP_HTML'] = array();
+	if (!isset($GLOBALS ['BBCODE_TEMP_HTML']) || !is_array($GLOBALS ['BBCODE_TEMP_HTML']) || !$GLOBALS ['BBCODE_TEMP_HTML']) {
+		return $text;
 	}
+	$search = array();
+	$replace = array();
+	foreach ($GLOBALS ['BBCODE_TEMP_HTML'] as $n => $content) {
+		$search [] = "<!-- #HTML_BLOCK_" . $n . "# -->";
+		$replace [] = strtr((string)$content, array('&lt;' => '<', '&gt;' => '>'));
+	}
+	$text = str_replace($search, $replace, $text);
+	$GLOBALS ['BBCODE_TEMP_HTML'] = array();
 	return $text;
 }
 
@@ -1096,6 +1257,22 @@ function plugin_bbcode_undoHtml($text) {
  * @return string
  */
 function obfuscateEmailAddress($originalString, $mode) {
+	static $memo = array();
+	$key = $mode . '|' . (string)$originalString;
+	if (isset($memo [$key])) {
+		return $memo [$key];
+	}
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	$ak = 'fp:bbcode:obf:v1:' . md5($key);
+	if ($apcu_on && ($mode === 1 || $mode === 2)) {
+		$hit = false;
+		$val = @apcu_fetch($ak, $hit);
+		if ($hit) {
+			$memo [$key] = $val;
+			return $val;
+		}
+	}
+
 	$encodedString = "";
 	$nowCodeString = "";
 
@@ -1118,6 +1295,13 @@ function obfuscateEmailAddress($originalString, $mode) {
 		}
 		$encodedString .= $nowCodeString;
 	}
+
+	$memo [$key] = $encodedString;
+
+	if ($apcu_on && ($mode === 1 || $mode === 2) && strlen((string)$originalString) <= 256) {
+		@apcu_store($ak, $encodedString, 7200); // 2h
+	}
+
 	return $encodedString;
 }
 ?>
