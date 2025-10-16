@@ -327,43 +327,65 @@ function smarty_function_plugin_getdir($params, &$smarty) {
  * Read plugin metadata (name, description, author, version) from its info source.
  */
 function plugin_getinfo($plugin) {
-	$plugin_data = io_load_file(plugin_getdir($plugin) . "plugin." . $plugin . ".php");
-	preg_match("|Plugin Name:(.*)|i", $plugin_data, $plugin_name);
-	preg_match("|Plugin URI:(.*)|i", $plugin_data, $plugin_uri);
-	preg_match("|Description:(.*)|i", $plugin_data, $description);
-	preg_match("|Author:(.*)|i", $plugin_data, $author_name);
-	preg_match("|Author URI:(.*)|i", $plugin_data, $author_uri);
-	if (preg_match("|Version:(.*)|i", $plugin_data, $version)) {
-		$version = trim($version [1]);
-	} else {
-		$version = '';
+	static $local = array();
+	$plugfile = plugin_getdir($plugin) . 'plugin.' . $plugin . '.php';
+	$mt = @file_exists($plugfile) ? (int) @filemtime($plugfile) : 0;
+	$sig = $plugin . ':' . $mt;
+	if (isset($local [$sig])) {
+		return $local [$sig];
+	}
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	$key = $apcu_on ? ('fp:plugin:info:v2:' . $sig) : null;
+	if ($key) {
+		$hit = false;
+		$val = apcu_fetch($key, $hit);
+		if ($hit && is_array($val)) {
+			return $local [$sig] = $val;
+		}
 	}
 
-	$description = wptexturize(trim($description [1]));
+	$plugin_data = (string) io_load_file($plugfile);
+	preg_match('|Plugin Name:(.*)|i', $plugin_data, $m_name);
+	preg_match('|Plugin URI:(.*)|i', $plugin_data, $m_puri);
+	preg_match('|Description:(.*)|i', $plugin_data, $m_desc);
+	preg_match('|Author:(.*)|i', $plugin_data, $m_author);
+	preg_match('|Author URI:(.*)|i', $plugin_data, $m_auri);
 
-	$name = $plugin_name [1];
-	$name = trim($name);
-	$plugin = $name;
+	$version = '';
+	if (preg_match('|Version:(.*)|i', $plugin_data, $m_ver)) {
+		$version = trim($m_ver [1]);
+	}
 
-	if ('' != $plugin_uri [1] && '' != $name) {
+	$name = isset($m_name [1]) ? trim($m_name [1]) : $plugin;
+	$description = isset($m_desc [1]) ? wptexturize(trim($m_desc [1])) : '';
+	$author_text = isset($m_author [1]) ? trim($m_author [1]) : '';
+	$author_uri = isset($m_auri [1]) ? trim($m_auri [1]) : '';
+	$plugin_uri = isset($m_puri [1]) ? trim($m_puri [1]) : '';
+
+	$title = $name;
+	if ($plugin_uri !== '' && $name !== '') {
 		// '" title="'.__('Visit plugin homepage').'">'.
-		$plugin = '<a href="' . trim($plugin_uri [1]) . $plugin . '</a>';
+		$title = '<a href="' . $plugin_uri . '">' . $name . '</a>';
 	}
 
-	if ('' == $author_uri [1]) {
-		$author = trim($author_name [1]);
-	} else {
+	$author = $author_text;
+	if ($author_uri !== '' && $author_text !== '') {
 		// . '" title="'.__('Visit author homepage').
-		$author = '<a href="' . trim($author_uri [1]) . '">' . trim($author_name [1]) . '</a>';
+		$author = '<a href="' . $author_uri . '">' . $author_text . '</a>';
 	}
 
-	return array(
+	$out = array(
 		'name' => $name,
-		'title' => $plugin,
+		'title' => $title,
 		'description' => $description,
 		'author' => $author,
-		'version' => $version
+		'version' => $version,
 	);
+	if ($key) {
+		@apcu_store($key, $out, 0);
+	}
+	$local [$sig] = $out;
+	return $out;
 }
 
 $smarty->registerPlugin('function', 'plugin_getdir', 'smarty_function_plugin_getdir');

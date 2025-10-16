@@ -53,11 +53,15 @@ class admin_plugin_default extends AdminPanelAction {
 
 		if (plugin_exists($id)) {
 			$success = 1;
-			if (($key = array_search($id, $fp_plugins)) !== false) {
+			if (($key = array_search($id, $fp_plugins, true)) !== false) {
 				unset($fp_plugins [$key]);
+				$fp_plugins = array_values($fp_plugins);
 				sort($fp_plugins);
 				do_action('deactivate_' . $id);
 				$success = system_save(CONFIG_DIR . 'plugins.conf.php', compact('fp_plugins'));
+				if ($success && function_exists('opcache_invalidate')) {
+					@opcache_invalidate(CONFIG_DIR . 'plugins.conf.php', true);
+				}
 			}
 		}
 
@@ -83,12 +87,16 @@ class admin_plugin_default extends AdminPanelAction {
 
 		if (plugin_exists($id)) {
 			$success = 1;
-			if (!in_array($id, $fp_plugins)) {
+			if (!in_array($id, $fp_plugins, true)) {
 				$fp_plugins [] = $id;
+				$fp_plugins = array_values(array_unique($fp_plugins));
 				sort($fp_plugins);
 				plugin_load($id, false, false);
 				do_action('activate_' . $id);
 				$success = system_save(CONFIG_DIR . 'plugins.conf.php', compact('fp_plugins'));
+				if ($success && function_exists('opcache_invalidate')) {
+					@opcache_invalidate(CONFIG_DIR . 'plugins.conf.php', true);
+				}
 			}
 		}
 
@@ -114,19 +122,6 @@ class admin_plugin_default extends AdminPanelAction {
 
 		lang_load('admin.plugin');
 		return 0;
-	}
-
-	function onsave() {
-		$fp_plugins = array_keys($_POST ['plugin_enabled']);
-		$success = system_save(CONFIG_DIR . 'plugins.conf.php', compact('fp_plugins'));
-
-		$retval = ($success) ? 1 : -1;
-		$this->smarty->assign('success', $retval);
-
-		// Assign updated enabledlist after save
-		$this->smarty->assign('enabledlist', $fp_plugins);
-
-		return $retval;
 	}
 }
 ?>

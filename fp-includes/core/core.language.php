@@ -45,7 +45,7 @@ function lang_load($postfix = null) {
 	}
 
 	if (!file_exists($fpath)) {
-		/* if file does not exist, we fall back on English */
+		// if file does not exist, we fall back on English
 		if (!file_exists($fallback)) {
 			trigger_error("No suitable language file was found <b>" . $postfix . "</b>", E_USER_WARNING);
 			return;
@@ -54,25 +54,52 @@ function lang_load($postfix = null) {
 		$fpath = $fallback;
 	}
 
-	/* load $lang from file */
+	// per-request and optional APCu caching
+	static $fp_lang_loaded = []; // realpath => true (already merged this file in this request)
+	static $fp_lang_req = []; // cacheKey => array ($lang from file) for this request
 
-	/*
-	 * utf encoded files may output whitespaces known as BOM, we must
-	 * capture this chars
-	 */
-
-	ob_start();
-
-	include_once ($fpath);
-
-	if (!isset($lang)) {
+	$real = realpath($fpath) ?: $fpath;
+	if (isset($fp_lang_loaded [$real])) {
 		return $GLOBALS ['lang'];
 	}
 
-	ob_end_clean();
+	$mtime = @filemtime($fpath) ?: 0;
+	$locale = isset($fp_config ['locale'] ['lang']) ? (string)$fp_config ['locale'] ['lang'] : '';
+	$ckey = 'fp:lang:' . md5($real . '|' . $mtime . '|' . $locale);
+
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+
+	$lang_loaded = false;
+	if (isset($fp_lang_req [$ckey]) && is_array($fp_lang_req [$ckey])) {
+		$lang = $fp_lang_req [$ckey];
+		$lang_loaded = true;
+	} elseif ($apcu_on) {
+		$ok = false;
+		$cached = apcu_fetch($ckey, $ok);
+		if ($ok && is_array($cached)) {
+			$lang = $cached;
+			$fp_lang_req [$ckey] = $lang;
+			$lang_loaded = true;
+		}
+	}
+
+	if (!$lang_loaded) {
+		// load $lang from file; capture BOM/whitespace
+		ob_start();
+		include_once ($fpath);
+		if (!isset($lang)) {
+			ob_end_clean();
+			return $GLOBALS ['lang'];
+		}
+		ob_end_clean();
+		$fp_lang_req [$ckey] = $lang;
+		if ($apcu_on) {
+			@apcu_store($ckey, $lang, 0);
+		}
+	}
 
 	$GLOBALS ['lang'] = array_merge_recursive($lang, $old_lang);
-
+	$fp_lang_loaded [$real] = true;
 	return $GLOBALS ['lang'];
 }
 

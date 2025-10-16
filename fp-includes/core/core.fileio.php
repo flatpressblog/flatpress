@@ -9,30 +9,53 @@
  * @return bool
  */
 function io_write_file($filename, $data) {
-	@umask(0);
+	$oldUmask = @umask(0);
 	$dir = dirname($filename);
 	if (!fs_mkdir($dir)) {
+		@umask($oldUmask);
 		return false;
 	}
+
 	$tmp = $dir . '/.' . basename($filename) . '.' . bin2hex(random_bytes(6)) . '.tmp';
 	$f = @fopen($tmp, 'wb');
 	if (!$f) {
+		@umask($oldUmask);
 		return false;
 	}
 	stream_set_write_buffer($f, 0);
-	$len = strlen($data);
-	$w = fwrite($f, $data);
-	$ok = ($w === $len) && fflush($f);
+
+	$len = strlen($data); $pos = 0;
+	while ($pos < $len) {
+		$n = fwrite($f, substr($data, $pos));
+		if ($n === false) {
+			fclose($f); 
+			@unlink($tmp);
+			@umask($oldUmask);
+			return false;
+		}
+		$pos += $n;
+	}
+	$ok = fflush($f);
 	fclose($f);
 	if (!$ok) {
 		@unlink($tmp);
+		@umask($oldUmask);
 		return false;
 	}
-	if (!@rename($tmp, $filename)) {
+
+	$mv = @rename($tmp, $filename);
+	if (!$mv && is_file($tmp)) {
+		@unlink($filename);
+		$mv = @rename($tmp, $filename) ?: (@copy($tmp, $filename) && @unlink($tmp));
+	}
+	if (!$mv) {
 		@unlink($tmp);
+		@umask($oldUmask);
 		return false;
 	}
+
 	@chmod($filename, FILE_PERMISSIONS);
+	@umask($oldUmask);
 	return true;
 }
 
