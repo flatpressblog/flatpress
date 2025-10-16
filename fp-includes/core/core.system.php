@@ -41,13 +41,9 @@
  */
 function system_save($file, $array) {
 
-	// if ( ( $numargs = func_num_args() ) > 1) {
 	$string = "<?php\n\n";
 
-	// $arg_list = func_get_args();
 	foreach ($array as $key => $arg) {
-		// $vname = utils_vname ($arg);
-		// var_export($arg);
 		$s = "\$" . $key .  " = " . var_export($arg, true) . ";\n";
 		$string .= $s;
 	}
@@ -55,8 +51,6 @@ function system_save($file, $array) {
 	$string .= "\n?>";
 
 	return io_write_file($file, $string);
-
-	// } else die('Wrong number of parameters!');
 }
 
 function system_hashsalt_save($force = false) {
