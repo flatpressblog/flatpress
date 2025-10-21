@@ -490,7 +490,7 @@ if (class_exists('AdminPanelAction')) {
 						$entryFileCount++;
 						$id = basename($path, EXT);
 						$sz = @filesize($path);
-						if (is_int($sz) || is_float($sz)) {
+						if ($sz !== false) {
 							$entries ['size'] += (float)$sz;
 						}
 						$e = @bdb_parse_entry($id);
