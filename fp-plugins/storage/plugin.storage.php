@@ -185,7 +185,7 @@ if (class_exists('AdminPanelAction')) {
 					}
 					if ($fi->isFile()) {
 						$fs = @$fi->getSize();
-						if (is_int($fs) || is_float($fs)) {
+						if ($fs !== false) {
 							$total += (float)$fs;
 							$count++;
 						}
@@ -382,10 +382,10 @@ if (class_exists('AdminPanelAction')) {
 		// Last resort: filesystem capacity
 		if ($total <= 0 && is_string($root) && $root !== '') {
 			$tot = @disk_total_space($root);
-			if (is_int($tot) || is_float($tot)) {
+			if ($tot !== false) {
 				$total = (float)$tot;
 				$fre = @disk_free_space($root);
-				if (is_int($fre) || is_float($fre)) {
+				if ($fre !== false) {
 					$free = (float)$fre;
 					$used = $total - $free;
 				}
@@ -412,7 +412,7 @@ if (class_exists('AdminPanelAction')) {
 		/**
 		 * Scales a number by successive powers of $base and returns the compact value with its unit exponent.
 		 * @param float|int $number Input value; @param int $base Typically 1000 or 1024.
-		 * @return array{0:float,1:int} [scaledValue, exponentIndex]
+		 * @return array{0:string,1:int} [formattedValue, exponentIndex]
 		 */
 		function format_number($num, $sep) {
 
@@ -503,7 +503,7 @@ if (class_exists('AdminPanelAction')) {
 						$eid = basename($d2);
 						$comments ['count']++;
 						$sz = @filesize($path);
-						if (is_int($sz) || is_float($sz)) {
+						if ($sz !== false) {
 							$comments ['size'] += (float)$sz;
 						}
 						if ($doTopTen) {
@@ -520,7 +520,7 @@ if (class_exists('AdminPanelAction')) {
 					arsort($perEntry);
 					$i = 0;
 					foreach ($perEntry as $k => $v) {
-						if ($i >= 10 || $v < 1) {
+						if ($i >= 10) {
 							break;
 						}
 					$subject = '';
@@ -571,7 +571,7 @@ if (class_exists('AdminPanelAction')) {
 					$path = static_exists($sid);
 					if ($path && is_file($path)) {
 						$sz = @filesize($path);
-						if (is_int($sz) || is_float($sz)) {
+						if ($sz !== false) {
 							$tot += (float)$sz;
 						}
 					}
@@ -673,12 +673,12 @@ if (class_exists('AdminPanelAction')) {
 
 			$tot = @disk_total_space($root);
 			$fre = @disk_free_space($root);
-			if (is_int($tot) || is_float($tot)) {
+			if ($tot !== false) {
 				$storage ['total_bytes'] = (float)$tot;
 				list($c2, $a2) = $this->format_number((float)$tot, 1024);
 				$storage ['total'] = $c2 . ' ' . $binunit[$a2];
 			}
-			if (is_int($fre) || is_float($fre)) {
+			if ($fre !== false) {
 				$storage ['free_bytes'] = (float)$fre;
 				list($c3, $a3) = $this->format_number((float)$fre, 1024);
 				$storage ['free'] = $c3 . ' ' . $binunit[$a3];
