@@ -45,6 +45,13 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - iFrames can only be embedded from the same domain.
 - BBCode plugin: update to version 2.0.0
   - Memoization and optional APCu caches added ([#680](https://github.com/flatpressblog/flatpress/pull/680))
+- Stats plugin to Storage plugin:
+  - The stats plugin has been renamed as part of the modernization and can be found in the uploader submenu ([#363](https://github.com/flatpressblog/flatpress/issues/363))
+    - Free/used web space is displayed.
+    - The storage space used by images and files is displayed.
+    - APCu support has been added for optimal performance
+    - The 10 most commented posts are only displayed if the Postviews plugin is active
+    - A slightly more modern, responsive design
 
 ### Bugfixes
 - Newsletter plugin: update to version 1.7.3
