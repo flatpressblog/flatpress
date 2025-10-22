@@ -70,7 +70,7 @@ if (class_exists('AdminPanelAction')) {
 		$cf = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/storage.aggregate.json';
 		if (@file_exists($cf)) {
 			$mt = @filemtime($cf);
-			$ttl = 600;
+			$ttl = 120;
 			if ($mt !== false && (time() - (int)$mt) < $ttl) {
 				$raw = @io_load_file($cf);
 				if (is_string($raw)) {
@@ -108,10 +108,10 @@ if (class_exists('AdminPanelAction')) {
 
 	/**
 	 * Recursively sums file sizes and counts under $abs_root, with APCu+JSON caching; can skip ".thumbs" dirs and ".captions.conf" files.
-	 * @param string $abs_root, string $channel, int $ttl=600, bool $excludeThumbDirs=false, bool $excludeCaptionsConf=false
+	 * @param string $abs_root, string $channel, int $ttl=120, bool $excludeThumbDirs=false, bool $excludeCaptionsConf=false
 	 * @return array{size:float,count:int,ts:int}
 	 */
-	function plugin_storage_dirsize_get($abs_root, $channel, $ttl = 600, $excludeThumbDirs = false, $excludeCaptionsConf = false) {
+	function plugin_storage_dirsize_get($abs_root, $channel, $ttl = 120, $excludeThumbDirs = false, $excludeCaptionsConf = false) {
 		$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 		$ns = plugin_storage_cache_ns();
 		$suffix = ($excludeThumbDirs ? ':nth' : '') . ($excludeCaptionsConf ? ':ncc' : '');
@@ -590,8 +590,8 @@ if (class_exists('AdminPanelAction')) {
 			$imgRoot = (defined('ABS_PATH') ? ABS_PATH : '') . IMAGES_DIR;
 			$attRoot = (defined('ABS_PATH') ? ABS_PATH : '') . ATTACHS_DIR;
 			// Exclude ".captions.conf" and preview thumbnails in ".thumbs" folders
-			$img = plugin_storage_dirsize_get($imgRoot, 'images', 600, true, true);
-			$att = plugin_storage_dirsize_get($attRoot, 'attachs', 600);
+			$img = plugin_storage_dirsize_get($imgRoot, 'images', 120, true, true);
+			$att = plugin_storage_dirsize_get($attRoot, 'attachs', 120);
 			if (is_array($img)) {
 				$images ['size_bytes'] = (float)$img ['size'];
 				$images ['count'] = (int)$img ['count'];
@@ -610,7 +610,7 @@ if (class_exists('AdminPanelAction')) {
 			// FlatPress folder total and disk usage
 			$storage = array('fp_size' => '0 Bytes', 'fp_size_bytes' => 0.0, 'total' => 'n/a', 'total_bytes' => 0.0, 'free' => 'n/a', 'free_bytes' => 0.0, 'pct' => 'n/a');
 			$root = defined('BASE_DIR') ? BASE_DIR : dirname(__FILE__, 3);
-			$ttl = 600;
+			$ttl = 120;
 			$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 			$ck = 'fp:storage:dirsize:v1:' . sha1($root);
 			$sz = false;
