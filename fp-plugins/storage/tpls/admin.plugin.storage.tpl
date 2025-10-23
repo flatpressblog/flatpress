@@ -2,6 +2,8 @@
 
 {include file="shared:errorlist.tpl"}
 
+<br>
+
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px,1fr)); gap: 1rem;">
 
 	<div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem;">
@@ -40,16 +42,17 @@
 		<p>{$panelstrings.total_disk_space_is} <strong>{"%s"|sprintf:$comments.size}</strong>.</p>
 	</div>
 
-	{if $show_topten && $entries.topten}
-	<div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem;">
-		<h3>{$panelstrings.the} {$entries.topten|@count} {$panelstrings.most_commented_entries}</h3>
-
-		<ol>
-		{foreach from=$entries.topten key=id item=this_entry}
-			<li><a href="{$smarty.const.BLOG_BASEURL}admin.php?p=entry&amp;entry={$id}">{$this_entry.subject}</a> ({$this_entry.comments})</li>
-		{/foreach}
-		</ol>
-	</div>
-	{/if}
-
 </div>
+
+{if $show_topten && $entries.topten}
+<br>
+<div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem;">
+	<h3>{$panelstrings.the} {$entries.topten|@count} {$panelstrings.most_commented_entries}</h3>
+
+	<ol>
+	{foreach from=$entries.topten key=id item=this_entry}
+		<li><a href="{$smarty.const.BLOG_BASEURL}admin.php?p=entry&amp;entry={$id}">{$this_entry.subject}</a> ({$this_entry.comments})</li>
+	{/foreach}
+	</ol>
+</div>
+{/if}
