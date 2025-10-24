@@ -63,8 +63,16 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 	 /**
 	 * Get formatted file information including size and modified time.
 	 *
-	 * @param string $filepath
-	 * @return array|null
+	 * @param string $filepath Absolute filesystem path.
+	 * @return array{
+	 *   name:string,
+	 *   relpath:string,
+	 *   size:string,
+	 *   mtime:string,
+	 *   usecount:int|null,
+	 *   gallery:string|null,
+	 *   use_via_gallery:bool
+	 * }|null
 	 */
 	function getFileInfo($filepath) {
 		global $fp_config;
@@ -74,16 +82,54 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 				return null;
 		}
 
+		$filepath_stat = @stat($filepath);
+		$file_size = 0;
+		$file_mtime = 0;
+		if (is_array($filepath_stat)) {
+			if (isset($filepath_stat['size'])) {
+				$file_size = (int)$filepath_stat ['size'];
+			}
+			if (isset($filepath_stat ['mtime'])) {
+				$file_mtime = (int)$filepath_stat ['mtime'];
+			}
+		}
+		if ($file_size === 0 && is_file($filepath)) {
+			$fs = @filesize($filepath);
+			if ($fs !== false) {
+				$file_size = (int)$fs;
+			}
+		}
+		if ($file_mtime === 0 && is_file($filepath)) {
+			$fm = @filemtime($filepath);
+			if ($fm !== false) {
+				$file_mtime = (int)$fm;
+			}
+		}
+
+		$rel = (strpos($filepath, ABS_PATH . IMAGES_DIR) === 0) ? str_replace("\\", "/", ltrim(substr($filepath, strlen(ABS_PATH . IMAGES_DIR)), "/")) : basename($filepath);
 		$info = array(
 			"name" => basename($filepath),
-			"size" => $this->formatBytes(filesize($filepath)),
-			"mtime" => date_strformat($fp_config ['locale'] ['dateformatshort'], filemtime($filepath))
+			"relpath" => $rel,
+			"size" => $this->formatBytes($file_size),
+			"mtime" => date_strformat($fp_config ['locale'] ['dateformatshort'], $file_mtime)
 		);
 
-		if (isset($this->conf ['usecount'] [basename($filepath)])) {
+		// Read via relative path, fallback to old key (base name) for backward compatibility
+		if (isset($this->conf ['usecount'] [$info ['relpath']])) {
+			$info ['usecount'] = $this->conf ['usecount'] [$info ['relpath']];
+		} elseif (isset($this->conf ['usecount'] [basename($filepath)])) {
 			$info ['usecount'] = $this->conf ['usecount'] [basename($filepath)];
 		} else {
 			$info ['usecount'] = null;
+		}
+
+		// Gallery name and usage flag
+		$info ['gallery'] = (strpos($rel, '/')!== false) ? substr($rel, 0 ,strpos($rel, '/')) : null;
+		if (isset($this->conf ['useflags'] [$info ['relpath']])) {
+			$flags = $this->conf ['useflags'] [$info ['relpath']];
+			$info ['use_via_gallery'] = is_array($flags) && !empty($flags ['gallery']);
+		} else {
+			$info ['use_via_gallery'] = false;
 		}
 
 		return $info;
@@ -259,9 +305,10 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 						$info = $this->getFileInfo($fullpath);
 						if ($info) {
 							$info ['type'] = "images";
-							$info ['url'] = BLOG_ROOT . IMAGES_DIR . $folder . $file;
+							$info ['url']  = BLOG_ROOT . IMAGES_DIR . $folder . $file;
 							$files [$fullpath] = $info;
-							if ($folder == "" && is_null($info ['usecount'])) {
+							// Always maintain, not just in the root folder
+							if (is_null($info ['usecount'])) {
 								$files_needupdate [] = $fullpath;
 							}
 						}
