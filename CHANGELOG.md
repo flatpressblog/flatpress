@@ -61,6 +61,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - Support plugin: update to version 1.1.1
     - Fixed: Theme without style causes PHP warning
     - mbstring query for Smarty 5 added
+- Media Manager plugin: update to version 1.0.2
+    - Fix Media Manager usage detection for images in subfolders and galleries. ([#547](https://github.com/flatpressblog/flatpress/issues/547))
 
 ## Themes
 ### Bugfixes
