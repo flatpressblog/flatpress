@@ -34,7 +34,7 @@
 				<a class="link-general" href="admin.php?p=uploader&action=mediamanager&gallery={$v.name}">{$v.name}</a>
 			</td>
 			<td>{if $v.usecount>0}
-				<a class="link-general" href="search.php?q=images%2F{$v.name}&stype=full&Date_Day=&Date_Month=&Date_Year=&submit=Search">{$v.usecount}</a>
+				<a class="link-general" href="search.php?q=images%2F{$v.name|escape:'url'}&stype=full&author=&cat=-1&phrasetype=all&Date_Day=&Date_Month=&Date_Year=&submit=Search">{$v.usecount}</a>
 				{else}
 				0
 				{/if}
@@ -47,7 +47,7 @@
 		</tr>
 	{/foreach}
 {/if}
-{if $totalfilescount=="0" }
+{if $totalfilescount=="0"}
 	<tr><td colspan="6"><br>{$plang.nofiles} <a class="link-general" href="admin.php?p=uploader&action=default">{$plang.loadfile}</a><br><br></td></tr>
 {else}
 	{foreach from=$files item=v}
@@ -60,11 +60,19 @@
 				{/if}
 			</td>
 			<td class="main-cell type-{$v.type}"><a class="link-general{if $v.type=='images'} bbcode-popup{/if}" {if $v.type=='images'}rel="lightbox[mm]"{/if} href="{$v.url}">{$v.name}</a></td>
-			<td>{if $v.usecount>0}
-				<a class="link-general" href="search.php?q={$v.type}%2F{$v.name}&stype=full&Date_Day=&Date_Month=&Date_Year=&submit=Search">{$v.usecount}</a>
+			<td>
+			{if $v.usecount>0}
+				{assign var="vrel" value=$v.relpath|default:$v.name}
+				{assign var="vfolder" value=$v.relpath|default:''|regex_replace:"/\\/.+$/":""}
+				{if $v.type == 'images' && $v.relpath ne '' && $v.relpath ne $vfolder}
+					{assign var="vq" value="images/`$vfolder`"}
+				{else}
+					{assign var="vq" value="`$v.type`/`$vrel`"}
+				{/if}
+				<a class="link-general" href="search.php?q={$vq|escape:'url'}&stype=full&author=&cat=-1&phrasetype=all&Date_Day=&Date_Month=&Date_Year=&submit=Search">{$v.usecount}</a>
 				{else}
 				0
-				{/if}
+			{/if}
 			</td>
 			<td>{$v.size}</td>
 			<td>{$v.mtime}</td>
@@ -88,7 +96,6 @@
 		{if $smarty.foreach.pagelist.last==false} - {/if}
 	{/foreach}
 </p>
-	
 
 <p>
 	{$plang.selected}:
@@ -100,6 +107,7 @@
 	</select>
 	<input type="submit" name="mm-addto" value="{$plang.go}">
 </p>
+
 <p>
 	<label>{$plang.newgallery}:
 	<input type="text" name="mm-newgallery-name">
@@ -108,4 +116,3 @@
 </p>
 
 {/html_form}
-
