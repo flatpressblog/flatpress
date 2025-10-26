@@ -52,6 +52,11 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - APCu support has been added for optimal performance
     - The 10 most commented posts are only displayed if the Postviews plugin is active
     - A slightly more modern, responsive design
+- Media Manager plugin: update to version 2.0.0 ([#685](https://github.com/flatpressblog/flatpress/pull/685))
+    - The folder icon now indicates whether the gallery or a single image in the directory is used in entries or not
+    - Performance:
+        - (initial call, root view): Entry scan reduced from 2× to 1×
+        - No entry reads for subsequent calls.
 
 ### Bugfixes
 - Newsletter plugin: update to version 1.7.3
@@ -61,7 +66,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - Support plugin: update to version 1.1.1
     - Fixed: Theme without style causes PHP warning
     - mbstring query for Smarty 5 added
-- Media Manager plugin: update to version 1.0.2
+- Media Manager plugin: update to version 2.0.0
     - Fix Media Manager usage detection for images in subfolders and galleries. ([#547](https://github.com/flatpressblog/flatpress/issues/547))
 
 ## Themes
