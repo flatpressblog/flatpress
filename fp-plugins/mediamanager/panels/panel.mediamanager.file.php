@@ -12,6 +12,8 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 
 	var $langres = 'plugin:mediamanager';
 
+	var $used_galleries = array();
+
 	 /**
 	 * Comparison function to sort files by type and name.
 	 *
@@ -45,10 +47,11 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 	function formatBytes($bytes, $precision = 2) {
 		$units = array(
 			'B',
-			'KB',
-			'MB',
-			'GB',
-			'TB'
+			'KiB',
+			'MiB',
+			'GiB',
+			'TiB',
+			'PiB'
 		);
 
 		$bytes = max($bytes, 0);
@@ -58,6 +61,96 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		$bytes /= pow(1024, $pow);
 
 		return round($bytes, $precision) . ' ' . $units [$pow];
+	}
+
+	/**
+	 * Calculate total size of a directory (recursive), skipping hidden and .dlctr files.
+	 *
+	 * @param string $dir
+	 * @return int
+	 */
+	function getDirBytes($dir) {
+		$sum = 0;
+		$stack = array($dir);
+		while (!empty($stack)) {
+			$d = array_pop($stack);
+			if (!is_dir($d)) {
+				continue;
+			}
+			$dh = @opendir($d);
+			if ($dh === false) {
+				continue;
+			}
+			while (false !== ($f = readdir($dh))) {
+				if (fs_is_directorycomponent($f) || fs_is_hidden_file($f)) {
+					continue;
+				}
+				$p = $d . DIRECTORY_SEPARATOR . $f;
+				if (is_dir($p)) {
+					$stack [] = $p;
+				} else {
+					if (pathinfo($p, PATHINFO_EXTENSION) === 'dlctr') {
+						continue;
+					}
+					$st = @stat($p);
+					if (is_array($st) && isset($st ['size'])) {
+						$sum += (int)$st ['size'];
+					} else {
+						$sz = @filesize($p);
+						if ($sz !== false) {
+							$sum += (int)$sz;
+						}
+					}
+				}
+			}
+			closedir($dh);
+		}
+		return $sum;
+	}
+
+	/**
+	 * Detect used gallery folders by scanning entries once.
+	 * Returns an array of lowercase gallery names.
+	 * Used only when no usecount data is available yet.
+	 */
+	function detect_used_galleries() {
+		$found = array();
+		$q = new FPDB_Query(array('start' => 0, 'count' => -1, 'fullparse' => false), null);
+
+		// IMG: [img="images/<relpath>" ...] or [img=images/<relpath> ...]
+		// - optional " or ' after '='
+		// - Path ends before space, ], " or '
+		// - additional attributes allowed
+		$reImg = "/\\[\\s*img\\b[^\\]]*?=\\s*[\"']?images\\/([^\\s\\]\"']+)/iu";
+
+		// GALLERY: [gallery=\"images/<folder>/\" ...] or without Quotes/Slash
+		// - optional " or ' after '='
+		// - optional trailing slash
+		// - additional attributes allowed
+		$reGal = "/\\[\\s*gallery\\b[^\\]]*?=\\s*[\"']?images\\/([^\\s\\]\\/\"']+)/iu";
+
+		while ($q->hasMore()) {
+			list($entryId, $e) = $q->getEntry();
+			if (empty($e ['content'])) {
+				continue;
+			}
+			$c = $e ['content'];
+			if (preg_match_all($reImg, $c, $m)) {
+				foreach ($m [1] as $rel) {
+					$p = strpos($rel, '/');
+					if ($p !== false) {
+						$g = strtolower(substr($rel, 0, $p));
+						$found [$g] = true;
+					}
+				}
+			}
+			if (preg_match_all($reGal, $c, $mg)) {
+				foreach ($mg [1] as $g) {
+					$found [strtolower($g)] = true;
+				}
+			}
+		}
+		return array_keys($found);
 	}
 
 	 /**
@@ -107,6 +200,12 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		}
 
 		$rel = (strpos($filepath, ABS_PATH . IMAGES_DIR) === 0) ? str_replace("\\", "/", ltrim(substr($filepath, strlen(ABS_PATH . IMAGES_DIR)), "/")) : basename($filepath);
+
+		// For directories, show the sum of contained files rather than the inode size
+		if (is_dir($filepath)) {
+			$file_size = $this->getDirBytes($filepath);
+		}
+
 		$info = array(
 			"name" => basename($filepath),
 			"relpath" => $rel,
@@ -245,6 +344,29 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 
 		$weburl = plugin_geturl('mediamanager');
 		$this->conf = plugin_getoptions('mediamanager');
+
+		// Build usage map from usecount if available
+		$this->used_galleries = array();
+		if (isset($this->conf ['usecount']) && is_array($this->conf ['usecount'])) {
+			foreach ($this->conf['usecount'] as $k => $v) {
+				if ((int)$v > 0) {
+					// images/<gallery>/<file> -> gallery
+					// <gallery> (gallery item) -> gallery
+					$g = strtolower((strpos($k, '/') !== false) ? substr($k, 0, strpos($k, '/')) : $k);
+					if ($g !== '') {
+						$this->used_galleries [$g] = true;
+					}
+				}
+			}
+		}
+		// First-load fallback: if empty, detect directly from entries (one pass)
+		if (empty($this->used_galleries) && method_exists($this, 'detect_used_galleries')) {
+			$det = $this->detect_used_galleries();
+			foreach ($det as $g) {
+				$this->used_galleries [strtolower($g)] = true;
+			}
+		}
+
 		if ($this->doItemActions($folder, $mmbaseurl)) {
 			return;
 		}
@@ -255,7 +377,7 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		$files_needupdate = array();
 		$galleries_needupdate = array();
 
-		// galleries (always from IMAGES_DIR)
+		// Galleries (always from IMAGES_DIR)
 		if (file_exists(ABS_PATH . IMAGES_DIR)) {
 			if ($dir = opendir(ABS_PATH . IMAGES_DIR)) {
 				while (false !== ($file = readdir($dir))) {
@@ -264,6 +386,8 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 						$info = $this->getFileInfo($fullpath);
 						if ($info) {
 							$info ['type'] = "gallery";
+							// Mark folder usage for template icon
+							$info ['used_in_posts'] = !empty($this->used_galleries [strtolower($info ['name'])]);
 							$galleries [$fullpath] = $info;
 							if (is_null($info ['usecount'])) {
 								$galleries_needupdate [] = $fullpath;
@@ -275,7 +399,7 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 			}
 		}
 
-		// attachs (NO attachs in galleries)
+		// Attachs (NO attachs in galleries)
 		if ($folder == "" && file_exists(ABS_PATH . ATTACHS_DIR)) {
 			if ($dir = opendir(ABS_PATH . ATTACHS_DIR)) {
 				while (false !== ($file = readdir($dir))) {
@@ -296,7 +420,7 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 			}
 		}
 
-		// images
+		// Images
 		if (file_exists(ABS_PATH . IMAGES_DIR . $folder)) {
 			if ($dir = opendir(ABS_PATH . IMAGES_DIR . $folder)) {
 				while (false !== ($file = readdir($dir))) {
@@ -305,7 +429,7 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 						$info = $this->getFileInfo($fullpath);
 						if ($info) {
 							$info ['type'] = "images";
-							$info ['url']  = BLOG_ROOT . IMAGES_DIR . $folder . $file;
+							$info ['url'] = BLOG_ROOT . IMAGES_DIR . $folder . $file;
 							$files [$fullpath] = $info;
 							// Always maintain, not just in the root folder
 							if (is_null($info ['usecount'])) {
@@ -321,12 +445,27 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		mediamanager_updateUseCountArr($files, $files_needupdate);
 		mediamanager_updateUseCountArr($galleries, $galleries_needupdate);
 
+		// Derive used_in_posts after counts/flags were updated
+		if (!empty($galleries)) {
+			foreach ($galleries as &$inUse) {
+				if (!is_array($inUse)) {
+					continue;
+				}
+				$nameLower = isset($inUse ['name']) ? strtolower($inUse ['name']) : null;
+				$viaMap = $nameLower ? !empty($this->used_galleries [$nameLower]) : false;
+				$viaCnt = isset($inUse ['usecount']) && (int)$inUse ['usecount'] > 0;
+				$viaFlag = !empty($inUse['use_via_gallery']);
+				$inUse ['used_in_posts'] = ($viaMap || $viaCnt || $viaFlag);
+			}
+			unset($inUse);
+		}
+
 		usort($files, [$this, "cmpfiles"]);
 		usort($galleries, [$this, "cmpfiles"]);
 
 		$totalfilescount = (string) count($files);
 
-		// paginator
+		// Paginator
 		$pages = ceil((count($files) + count($galleries)) / ITEMSPERPAGE);
 		if ($pages == 0) {
 			$pages = 1;

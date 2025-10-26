@@ -10,6 +10,12 @@
 	background-repeat: no-repeat;
 	background-position: left center;
 }
+.type-not-use a {
+	padding-left: 25px;
+	background-image: url('not-use-folder.gif');
+	background-repeat: no-repeat;
+	background-position: left center;
+}
 .type-gallery a {
 	padding-left: 25px;
 	background-image: url('folder.gif');
