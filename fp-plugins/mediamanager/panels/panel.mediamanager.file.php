@@ -360,7 +360,7 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 			}
 		}
 		// First-load fallback: if empty, detect directly from entries (one pass)
-		if (empty($this->used_galleries) && method_exists($this, 'detect_used_galleries')) {
+		if (empty($this->used_galleries)) {
 			$det = $this->detect_used_galleries();
 			foreach ($det as $g) {
 				$this->used_galleries [strtolower($g)] = true;
