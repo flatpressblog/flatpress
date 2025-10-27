@@ -1,8 +1,7 @@
 <?php
-
-/*
+/**
  * Plugin Name: ReadMore
- * Version: 1.0
+ * Version: 1.0.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -69,8 +68,10 @@ function plugin_readmore_main($string) {
 		}
 	}
 
-	if (($q && $q->single) || isset($fp_params ['entry'])) {
-		$string = str_replace('[more]', "<a id=\"readmore-" . $fp_params ['entry'] . "\"></a>", $string);
+	$entryId = isset($fp_params ['entry']) ? (string) $fp_params ['entry'] : '';
+	if (($q && $q->single) || $entryId !== '') {
+		$anchor = $entryId !== '' ? '<a id="readmore-' . $entryId . '"></a>' : '<a id="readmore"></a>';
+		$string = str_replace('[more]', $anchor, $string);
 	}
 
 	return $string;
