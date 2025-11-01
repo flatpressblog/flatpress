@@ -72,9 +72,7 @@ if (function_exists('is_https') && is_https()) {
 	header('X-Permitted-Cross-Domain-Policies: none');
 	header('X-Download-Options: noopen');
 } else {
-	header('Content-Security-Policy: default-src \'none\'; ' . //
-		'frame-ancestors \'self\';'
-	);
+	header('Content-Security-Policy: frame-ancestors \'self\';');
 }
 
 // Emergency solution for Shared hosting environments; should already be done in the php.ini file or server configuration
