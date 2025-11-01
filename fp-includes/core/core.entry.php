@@ -402,7 +402,7 @@ function entry_parse($id, $raw = false) {
 	if ($apcu_on && $mt !== false) {
 		$key = 'fp:entry:parsed:' . $id . ':' . $mt . ':' . $sz;
 		$hit = false;
-		$val = apcu_fetch($key, $hit);
+		$val = apcu_get($key, $hit);
 		if ($hit && is_array($val)) {
 			$local_cache [$id] = $val;
 			$local_meta [$id] = $sig;
@@ -436,7 +436,7 @@ function entry_parse($id, $raw = false) {
 	$local_cache [$id] = $arr;
 	$local_meta [$id] = $sig;
 	if ($apcu_on && $key) {
-		@apcu_store($key, $arr, 600);
+		@apcu_set($key, $arr, 600);
 	}
 	return $arr;
 }
@@ -546,7 +546,8 @@ function entry_categories_list() {
 	$key = null;
 	if ($apcu_on && $mt !== false) {
 		$key = 'fp:cats:list:' . $mt . ':' . $sz;
-		$hit = false; $val = apcu_fetch($key, $hit);
+		$hit = false;
+		$val = apcu_get($key, $hit);
 		if ($hit && is_array($val)) {
 			$local_cache = $val;
 			$local_sig = $sig;
@@ -619,7 +620,7 @@ function entry_categories_list() {
 	$local_sig = $sig;
 
 	if ($apcu_on && $key) {
-		@apcu_store($key, $categories, 600);
+		@apcu_set($key, $categories, 600);
 	}
 
 	return $categories;
@@ -646,7 +647,7 @@ function entry_categories_get($what = null) {
 			if ($apcu_on && $mt !== false) {
 				$key = 'fp:cats:encoded:' . $mt . ':' . $sz;
 				$hit = false;
-				$val = apcu_fetch($key, $hit);
+				$val = apcu_get($key, $hit);
 				if ($hit && is_array($val)) {
 					$categories = $val;
 				}
@@ -660,7 +661,7 @@ function entry_categories_get($what = null) {
 						$categories = array();
 					}
 					if ($apcu_on && $key) {
-						@apcu_store($key, $categories, 600);
+						@apcu_set($key, $categories, 600);
 					}
 
 				}

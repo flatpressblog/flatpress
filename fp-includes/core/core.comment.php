@@ -60,7 +60,7 @@ function comment_getlist($id) {
 	if ($apcu_on && $mt !== false) {
 		$key = 'fp:comments:list:' . $id . ':' . $mt . ':' . $sz;
 		$hit = false;
-		$val = apcu_fetch($key, $hit);
+		$val = apcu_get($key, $hit);
 		if ($hit && is_array($val)) {
 			$local [$id] = $val;
 			$meta [$id] = $sig;
@@ -74,7 +74,7 @@ function comment_getlist($id) {
 	$meta [$id] = $sig;
 
 	if ($key) {
-		@apcu_store($key, $list, 300);
+		@apcu_set($key, $list, 300);
 	}
 
 	return $list;

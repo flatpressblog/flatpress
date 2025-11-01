@@ -3,7 +3,7 @@
  * Author: Enrico Reinsdorf (enrico@re-design.de)
  * Author URI: www.re-design.de
  * Changelog: RAM hits instead of I/O
- * Change-Date: 08.10.2025
+ * Change-Date: 01.11.2025
  */
 class iniParser {
 
@@ -48,7 +48,7 @@ class iniParser {
 
 		// Optional APCu hot cache
 		if ($apcu_on) {
-			$v = apcu_fetch($apcu_key, $hit);
+			$v = apcu_get($apcu_key, $hit);
 			if ($hit && is_array($v)) {
 				$this->_iniParsedArray = $cache [$local_key] = $v;
 				return;
@@ -107,7 +107,7 @@ class iniParser {
 		$cache [$local_key] = $this->_iniParsedArray;
 		if ($apcu_on) {
 			// TTL short; mtime/size in key
-			@apcu_store($apcu_key, $this->_iniParsedArray, 600);
+			@apcu_set($apcu_key, $this->_iniParsedArray, 600);
 		}
 	}
 

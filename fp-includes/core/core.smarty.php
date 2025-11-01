@@ -117,7 +117,7 @@ function fp_smarty_get_plugin_index(string $dir): array {
 	$apcuOn = function_exists('is_apcu_on') ? is_apcu_on() : false;
 
 	if ($apcuOn) {
-		$val = apcu_fetch('fp:spi:' . sha1($dir . '|' . $token), $hit);
+		$val = apcu_get('fp:spi:' . sha1($dir . '|' . $token), $hit);
 		if ($hit && is_array($val)) {
 			return $val;
 		}
@@ -177,7 +177,7 @@ function fp_smarty_get_plugin_index(string $dir): array {
 		}
 	}
 	if ($apcuOn) {
-		@apcu_store('fp:spi:' . sha1($dir . '|' . $token), $map, 300);
+		@apcu_set('fp:spi:' . sha1($dir . '|' . $token), $map, 300);
 	}
 	return $map;
 }

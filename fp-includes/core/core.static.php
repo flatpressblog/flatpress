@@ -39,7 +39,7 @@ function static_getlist() {
 	$key = ($apcu_on && $mt !== false) ? ('fp:statics:list:' . $mt . ':' . $sz . ':' . $natFlag) : null;
 	if ($key) {
 		$hit = false;
-		$val = apcu_fetch($key, $hit);
+		$val = apcu_get($key, $hit);
 		if ($hit && is_array($val)) {
 			$local [$sig] = $val;
 			return $val;
@@ -57,7 +57,7 @@ function static_getlist() {
 
 	$local [$sig] = $list;
 	if ($key) {
-		@apcu_store($key, $list, 600);
+		@apcu_set($key, $list, 600);
 	}
 
 	return $list;

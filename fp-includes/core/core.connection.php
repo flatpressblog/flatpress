@@ -51,7 +51,7 @@ function ip_in_cidrs(string $ip, array $cidrs): bool {
 	$apcu_key = $apcu_on ? ('fp:net:in_cidrs:' . $key) : null;
 	if ($apcu_on) {
 		$hit = false;
-		$val = apcu_fetch($apcu_key, $hit);
+		$val = apcu_get($apcu_key, $hit);
 		if ($hit) {
 			$local [$key] = (bool)$val;
 			return $local [$key];
@@ -61,7 +61,7 @@ function ip_in_cidrs(string $ip, array $cidrs): bool {
 	if ($binIp === false) {
 		$local [$key] = false;
 		if ($apcu_on) {
-			@apcu_store($apcu_key, false, 3600);
+			@apcu_set($apcu_key, false, 3600);
 		}
 		return false;
 	}
@@ -70,7 +70,7 @@ function ip_in_cidrs(string $ip, array $cidrs): bool {
 			if ($ip === $cidr) {
 				$local [$key] = true;
 				if ($apcu_on) {
-					@apcu_store($apcu_key, true, 3600);
+					@apcu_set($apcu_key, true, 3600);
 				}
 				return true;
 			}
@@ -102,13 +102,13 @@ function ip_in_cidrs(string $ip, array $cidrs): bool {
 		}
 		$local [$key] = true;
 		if ($apcu_on) {
-			@apcu_store($apcu_key, true, 3600);
+			@apcu_set($apcu_key, true, 3600);
 		}
 		return true;
 	}
 	$local [$key] = false;
 	if ($apcu_on) {
-		@apcu_store($apcu_key, false, 3600);
+		@apcu_set($apcu_key, false, 3600);
 	}
 	return false;
 }
@@ -167,7 +167,7 @@ function is_https(array $trustedProxies = []) {
 	$apcu_key = $apcu_on ? ('fp:https:v2:' . $key) : null;
 	if ($apcu_on) {
 		$hit = false;
-		$val = apcu_fetch($apcu_key, $hit);
+		$val = apcu_get($apcu_key, $hit);
 		if ($hit) {
 			$local [$key] = (bool)$val;
 			return $local [$key];
@@ -179,13 +179,13 @@ function is_https(array $trustedProxies = []) {
 	if ($https !== '' && strcasecmp($https, 'off') !== 0) {
 		$local [$key] = true; // 'on', '1', etc.
 		if ($apcu_on) {
-			@apcu_store($apcu_key, true, $ttl);
+			@apcu_set($apcu_key, true, $ttl);
 		} return true;
 	}
 	if (!empty($_SERVER ['REQUEST_SCHEME']) && strcasecmp($_SERVER ['REQUEST_SCHEME'], 'https') === 0) {
 		$local [$key] = true;
 		if ($apcu_on) {
-			@apcu_store($apcu_key, true, $ttl);
+			@apcu_set($apcu_key, true, $ttl);
 		}
 		return true;
 	}
@@ -222,7 +222,7 @@ function is_https(array $trustedProxies = []) {
 	if ($trusted && ($proto_https || $strong_hint)) {
 		$local [$key] = true;
 		if ($apcu_on) {
-			@apcu_store($apcu_key, true, $ttl);
+			@apcu_set($apcu_key, true, $ttl);
 		}
 		return true;
 	}
@@ -255,7 +255,7 @@ function is_https(array $trustedProxies = []) {
 		if ($https_hints >= 2 || ($https_hints >= 1 && $proxy_identity >= 1)) {
 			$local [$key] = true;
 			if ($apcu_on) {
-				@apcu_store($apcu_key, true, $ttl);
+				@apcu_set($apcu_key, true, $ttl);
 			}
 			return true;
 		}
@@ -265,14 +265,14 @@ function is_https(array $trustedProxies = []) {
 	if ((int)($_SERVER ['SERVER_PORT'] ?? 0) === 443) {
 		$local [$key] = true;
 		if ($apcu_on) {
-			@apcu_store($apcu_key, true, $ttl);
+			@apcu_set($apcu_key, true, $ttl);
 		}
 		return true;
 	}
 
 	$local [$key] = false;
 	if ($apcu_on) {
-		@apcu_store($apcu_key, false, $ttl);
+		@apcu_set($apcu_key, false, $ttl);
 	}
 	return false;
 }
