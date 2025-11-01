@@ -94,10 +94,17 @@ if ($staticLang) {
  * @return bool true on success, false on failure
  */
 function plugin_newsletter_rmw_file(string $file, callable $callback): bool {
-	if (!file_exists($file)) touch($file);
+	$dir = dirname($file);
+	if ($dir && !is_dir($dir)) {
+		$mode = DIR_PERMISSIONS;
+		@mkdir($dir, $mode, true);
+	}
+
 	$fp = @fopen($file, 'c+');
 	if (!$fp || !flock($fp, LOCK_EX)) {
-		if ($fp) fclose($fp);
+		if ($fp) {
+			fclose($fp);
+		}
 		return false;
 	}
 
@@ -132,7 +139,9 @@ function plugin_newsletter_read_lines(string $file): array {
 	}
 	$fp = @fopen($file, 'r');
 	if (!$fp || !flock($fp, LOCK_SH)) {
-		if ($fp) fclose($fp);
+		if ($fp) {
+			fclose($fp);
+		}
 		return [];
 	}
 	$stat = fstat($fp);

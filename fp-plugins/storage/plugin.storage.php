@@ -24,9 +24,9 @@ if (class_exists('AdminPanelAction')) {
 		if (!$apcu_on) {
 			return $ns = '';
 		}
-		$v = apcu_fetch('fp:storage:v');
+		$v = apcu_get('fp:storage:v');
 		if (!$v) {
-			@apcu_store('fp:storage:v', 1);
+			@apcu_set('fp:storage:v', 1);
 			$v = 1;
 		}
 		return $ns = ':v' . (int)$v;
@@ -42,9 +42,9 @@ if (class_exists('AdminPanelAction')) {
 			return;
 		}
 		$ok = false;
-		apcu_inc('fp:storage:v', 1, $ok);
+		apcu_incr('fp:storage:v', 1, $ok);
 		if (!$ok) {
-			@apcu_store('fp:storage:v', 1);
+			@apcu_set('fp:storage:v', 1);
 		}
 		// File fallback best-effort purge
 		$cf = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/storage.aggregate.json';
@@ -61,7 +61,7 @@ if (class_exists('AdminPanelAction')) {
 		$key = $apcu_on ? ('fp:storage:aggregate' . plugin_storage_cache_ns()) : null;
 		if ($apcu_on) {
 			$hit = false;
-			$val = apcu_fetch($key, $hit);
+			$val = apcu_get($key, $hit);
 			if ($hit && is_array($val)) {
 				return $val;
 			}
@@ -92,7 +92,7 @@ if (class_exists('AdminPanelAction')) {
 	function plugin_storage_cache_set(array $payload) {
 		$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 		if ($apcu_on) {
-			@apcu_store('fp:storage:aggregate' . plugin_storage_cache_ns(), $payload, 900);
+			@apcu_set('fp:storage:aggregate' . plugin_storage_cache_ns(), $payload, 300);
 		}
 		// Also write JSON fallback
 		$cf = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/storage.aggregate.json';
@@ -118,7 +118,7 @@ if (class_exists('AdminPanelAction')) {
 		$key = $apcu_on ? ('fp:storage:dirsize:' . $channel . $suffix . $ns) : null;
 		if ($apcu_on) {
 			$ok = false;
-			$val = apcu_fetch($key, $ok);
+			$val = apcu_get($key, $ok);
 			if ($ok && is_array($val) && isset($val ['size']) && isset($val ['count']) && isset($val ['ts'])) {
 				if ((time() - (int)$val ['ts']) < $ttl) {
 					return $val;
@@ -145,7 +145,7 @@ if (class_exists('AdminPanelAction')) {
 					$jd = @json_decode($raw, true);
 					if (is_array($jd) && isset($jd ['size']) && isset($jd ['count'])) {
 						if ($apcu_on) {
-							@apcu_store($key, array('size' => (float)$jd ['size'], 'count' => (int)$jd ['count'], 'ts' => (int)$mt), $ttl);
+							@apcu_set($key, array('size' => (float)$jd ['size'], 'count' => (int)$jd ['count'], 'ts' => (int)$mt), $ttl);
 						}
 						return array('size' => (float)$jd ['size'], 'count' => (int)$jd ['count'], 'ts' => (int)$mt);
 					}
@@ -197,7 +197,7 @@ if (class_exists('AdminPanelAction')) {
 		}
 		$payload = array('size' => (float)$total, 'count' => (int)$count, 'ts' => time());
 		if ($apcu_on) {
-			@apcu_store($key, $payload, $ttl);
+			@apcu_set($key, $payload, $ttl);
 		}
 		@io_write_file($cf, json_encode($payload));
 		return $payload;
@@ -249,7 +249,7 @@ if (class_exists('AdminPanelAction')) {
 		$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 		if ($apcu_on) {
 			$ok = false;
-			$val = apcu_fetch(plugin_storage_quota_cache_key(), $ok);
+			$val = apcu_get(plugin_storage_quota_cache_key(), $ok);
 			if ($ok && is_array($val) && isset($val ['ts']) && (time() - (int)$val ['ts']) < $ttl) {
 				return $val;
 			}
@@ -280,7 +280,7 @@ if (class_exists('AdminPanelAction')) {
 		$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 		$payload ['ts'] = time();
 		if ($apcu_on) {
-			@apcu_store(plugin_storage_quota_cache_key(), $payload, $ttl);
+			@apcu_set(plugin_storage_quota_cache_key(), $payload, $ttl);
 		}
 		$cfdir = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/';
 		if (!@is_dir($cfdir)) {

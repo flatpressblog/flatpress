@@ -75,7 +75,7 @@ function lang_load($postfix = null) {
 		$lang_loaded = true;
 	} elseif ($apcu_on) {
 		$ok = false;
-		$cached = apcu_fetch($ckey, $ok);
+		$cached = apcu_get($ckey, $ok);
 		if ($ok && is_array($cached)) {
 			$lang = $cached;
 			$fp_lang_req [$ckey] = $lang;
@@ -94,7 +94,7 @@ function lang_load($postfix = null) {
 		ob_end_clean();
 		$fp_lang_req [$ckey] = $lang;
 		if ($apcu_on) {
-			@apcu_store($ckey, $lang, 0);
+			@apcu_set($ckey, $lang, 0);
 		}
 	}
 

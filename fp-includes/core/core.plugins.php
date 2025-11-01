@@ -338,7 +338,7 @@ function plugin_getinfo($plugin) {
 	$key = $apcu_on ? ('fp:plugin:info:v2:' . $sig) : null;
 	if ($key) {
 		$hit = false;
-		$val = apcu_fetch($key, $hit);
+		$val = apcu_get($key, $hit);
 		if ($hit && is_array($val)) {
 			return $local [$sig] = $val;
 		}
@@ -382,7 +382,7 @@ function plugin_getinfo($plugin) {
 		'version' => $version,
 	);
 	if ($key) {
-		@apcu_store($key, $out, 0);
+		@apcu_set($key, $out, 0);
 	}
 	$local [$sig] = $out;
 	return $out;

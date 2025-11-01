@@ -242,7 +242,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		// getimagesize: lokal -> APCu -> origin
 		if (isset($gi_local [$k])) {
 			list($img_size, $img_info) = $gi_local [$k];
-		} elseif ($apcu_on && ($tmp = @apcu_fetch($ak_gi))) {
+		} elseif ($apcu_on && ($tmp = @apcu_get($ak_gi))) {
 			list($img_size, $img_info) = $tmp;
 		} else {
 			/** @var array{0?:int,1?:int,2?:int,3?:string,mime?:string,channels?:int,bits?:int}|false $img_size */
@@ -252,7 +252,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 			}
 			$gi_local [$k] = array($img_size, $img_info);
 			if ($apcu_on) {
-				@apcu_store($ak_gi, array($img_size, $img_info), 600);
+				@apcu_set($ak_gi, array($img_size, $img_info), 600);
 			}
 		}
 		$absolutepath = BLOG_BASEURL . $actualpath;
@@ -263,7 +263,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 			$meta = null;
 			if (isset($iptc_local [$k])) {
 				$meta = $iptc_local [$k];
-			} elseif ($apcu_on && ($tmp = @apcu_fetch($ak_ip))) {
+			} elseif ($apcu_on && ($tmp = @apcu_get($ak_ip))) {
 				$meta = $tmp;
 			} else {
 				// tiffs won't be supported
@@ -278,7 +278,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 				}
 				$iptc_local [$k] = $meta;
 				if ($apcu_on) {
-					@apcu_store($ak_ip, $meta, 600);
+					@apcu_set($ak_ip, $meta, 600);
 				}
 			}
 			if (!empty($meta ['title'])) {
@@ -712,7 +712,7 @@ function &plugin_bbcode_init() {
 			(string) PHP_VERSION_ID
 		)));
 		$hit = false;
-		$val = @apcu_fetch($sig, $hit);
+		$val = @apcu_get($sig, $hit);
 		if ($hit && $val instanceof StringParser_BBCode) {
 			// Get base parser from cache, but do not mutate
 			$bbcode = clone $val;
@@ -941,7 +941,7 @@ function &plugin_bbcode_init() {
 
 	if ($apcu_on && isset($sig) && ($bbcode instanceof StringParser_BBCode) && !$apc_hit) {
 		// Only persist unfiltered base
-		@apcu_store($sig, $bbcode, 300);
+		@apcu_set($sig, $bbcode, 300);
 	}
 
 	// aaaand we're done!
@@ -990,7 +990,7 @@ function plugin_bbcode_init_toolbar() {
 	if ($img_local === null) {
 		$mtI = @filemtime(IMAGES_DIR);
 		$ckI = 'fp:bbcode:toolbar:images:v1:' . md5(IMAGES_DIR . '|' . (string)$mtI);
-		$list = $apcu_on ? @apcu_fetch($ckI) : null;
+		$list = $apcu_on ? @apcu_get($ckI) : null;
 		if (!is_array($list)) {
 			$indexerI = new fs_filelister(IMAGES_DIR);
 			$list = array_filter($indexerI->getList(), function ($file) {
@@ -1000,7 +1000,7 @@ function plugin_bbcode_init_toolbar() {
 			// Sort by name
 			usort($list, 'strnatcasecmp');
 			if ($apcu_on) {
-				@apcu_store($ckI, $list, 300);
+				@apcu_set($ckI, $list, 300);
 			}
 		}
 		$img_local = $list;
@@ -1013,7 +1013,7 @@ function plugin_bbcode_init_toolbar() {
 	if ($att_local === null) {
 		$mtA = @filemtime(ATTACHS_DIR);
 		$ckA = 'fp:bbcode:toolbar:attachs:v1:' . md5(ATTACHS_DIR . '|' . (string)$mtA);
-		$list = $apcu_on ? @apcu_fetch($ckA) : null;
+		$list = $apcu_on ? @apcu_get($ckA) : null;
 		if (!is_array($list)) {
 			$indexerA = new fs_filelister(ATTACHS_DIR);
 			$list = array_filter($indexerA->getList(), function ($file) {
@@ -1023,7 +1023,7 @@ function plugin_bbcode_init_toolbar() {
 			// Sort by name
 			usort($list, 'strnatcasecmp');
 			if ($apcu_on) {
-				@apcu_store($ckA, $list, 300);
+				@apcu_set($ckA, $list, 300);
 			}
 		}
 		$att_local = $list;
@@ -1059,7 +1059,7 @@ function plugin_bbcode_comment($text) {
 			(string) PHP_VERSION_ID
 		)));
 		$hit = false;
-		$val = @apcu_fetch($key, $hit);
+		$val = @apcu_get($key, $hit);
 		if ($hit && $val instanceof StringParser_BBCode) {
 			$bb = $val;
 			$res = $bb->parse($text);
@@ -1180,7 +1180,7 @@ function plugin_bbcode_comment($text) {
 	$res = $bbcode->parse($text);
 	$bb = $bbcode;
 	if ($apcu_on && $key) {
-		@apcu_store($key, $bb, 300);
+		@apcu_set($key, $bb, 300);
 	}
 	$local [$h] = $res;
 	return $res;
@@ -1266,7 +1266,7 @@ function obfuscateEmailAddress($originalString, $mode) {
 	$ak = 'fp:bbcode:obf:v1:' . md5($key);
 	if ($apcu_on && ($mode === 1 || $mode === 2)) {
 		$hit = false;
-		$val = @apcu_fetch($ak, $hit);
+		$val = @apcu_get($ak, $hit);
 		if ($hit) {
 			$memo [$key] = $val;
 			return $val;
@@ -1299,7 +1299,7 @@ function obfuscateEmailAddress($originalString, $mode) {
 	$memo [$key] = $encodedString;
 
 	if ($apcu_on && ($mode === 1 || $mode === 2) && strlen((string)$originalString) <= 256) {
-		@apcu_store($ak, $encodedString, 7200); // 2h
+		@apcu_set($ak, $encodedString, 7200); // 2h
 	}
 
 	return $encodedString;

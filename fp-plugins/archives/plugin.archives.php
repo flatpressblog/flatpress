@@ -82,10 +82,10 @@ function plugin_archives_cache_ns() {
 	if (!$apcu_on) {
 		return $ns = '';
 	}
-	$v = apcu_fetch('fp:archives:v');
+	$v = apcu_get('fp:archives:v');
 	if (!$v) {
 		$v = 1;
-		@apcu_store('fp:archives:v', $v);
+		@apcu_set('fp:archives:v', $v);
 	}
 	return $ns = ':v' . (int)$v;
 }
@@ -96,9 +96,9 @@ function plugin_archives_cache_bump() {
 		return;
 	}
 	$ok = false;
-	apcu_inc('fp:archives:v', 1, $ok);
+	apcu_incr('fp:archives:v', 1, $ok);
 	if (!$ok) {
-		@apcu_store('fp:archives:v', 1);
+		@apcu_set('fp:archives:v', 1);
 	}
 }
 add_filter('comment_save', 'plugin_archives_cache_bump');
@@ -169,7 +169,7 @@ function plugin_archives_cached_list() {
 	$key = 'fp:archives:list' . $ns . ':' . $sig;
 	if ($apcu_on) {
 		$hit = false;
-		$val = apcu_fetch($key, $hit);
+		$val = apcu_get($key, $hit);
 		if ($hit && is_array($val)) {
 			return $local = $val;
 		}
@@ -178,7 +178,7 @@ function plugin_archives_cached_list() {
 	$list = $obj->getList();
 	$local = $list;
 	if ($apcu_on) {
-		@apcu_store($key, $list, 900);
+		@apcu_set($key, $list, 900);
 	}
 	return $list;
 }
@@ -194,7 +194,8 @@ function plugin_archives_cached_html() {
 	$sig = plugin_archives_mtime_sig_cached();
 	$key = 'fp:archives:html' . $ns . ':' . $sig;
 	if ($apcu_on) {
-		$hit = false; $val = apcu_fetch($key, $hit);
+		$hit = false;
+		$val = apcu_get($key, $hit);
 		if ($hit && is_string($val)) {
 			return $local = $val;
 		}
@@ -203,7 +204,7 @@ function plugin_archives_cached_html() {
 	$html = $obj->getHtmlList();
 	$local = $html;
 	if ($apcu_on) {
-		@apcu_store($key, $html, 900);
+		@apcu_set($key, $html, 900);
 	}
 	return $html;
 }
