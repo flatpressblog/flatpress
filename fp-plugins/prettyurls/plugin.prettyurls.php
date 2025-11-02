@@ -1,11 +1,11 @@
 <?php
-/*
+/**
  * Plugin Name: PrettyURLs
- * Version: 3.0.1
+ * Version: 3.0.2
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
- * Description: Enables SEO friendly, pretty URLs (via htaccess). Part of the standard distribution.
+ * Description: Enables SEO friendly, pretty URLs (<a href="./fp-plugins/prettyurls/doc_prettyurls.txt" title="More information" target="_blank">via htaccess or nginx-config</a>). Part of the standard distribution.
  */
 
 /**
@@ -251,10 +251,43 @@ class Plugin_PrettyURLs {
 		$this->fp_params ['feed'] = isset($matches [2]) ? $matches [2] : 'rss2';
 	}
 
+	private function server_rewrite_active() {
+		$req = isset($_SERVER ['REQUEST_URI']) ? (string)$_SERVER ['REQUEST_URI'] : '';
+		$sn  = isset($_SERVER ['SCRIPT_NAME']) ? (string)$_SERVER ['SCRIPT_NAME'] : '';
+		if ($req !== '' && $sn !== '' && strpos($req, 'index.php') === false && substr($sn, -9) === 'index.php') {
+			return true; // vHost-/Server-Rewrite (without .htaccess)
+		}
+		if (function_exists('apache_get_modules')) {
+			$mods = @apache_get_modules();
+			if (in_array('mod_rewrite', (array) $mods, true)) {
+				return true;
+			}
+		}
+		if (!empty($_SERVER ['IIS_WasUrlRewritten']) && $_SERVER ['IIS_WasUrlRewritten'] == '1') {
+			return true;
+		}
+		if (!empty($_SERVER ['REDIRECT_URL'])) {
+			return true;
+		}
+		return false;
+	}
+
+	private function server_can_pathinfo() {
+		$req = isset($_SERVER ['REQUEST_URI']) ? (string)$_SERVER ['REQUEST_URI'] : '';
+		if (!empty($_SERVER ['PATH_INFO'])) {
+			return true;
+		}
+		if ($req !== '' && strpos($req, 'index.php/') !== false) {
+			return true;
+		}
+		return false;
+	}
+
 	function get_url() {
 		$baseurl = BLOG_BASEURL;
 		$opt = plugin_getoptions('prettyurls', 'mode');
-		$url = substr($_SERVER ['REQUEST_URI'], strlen(BLOG_ROOT) - 1);
+		$reqUri = isset($_SERVER ['REQUEST_URI']) ? (string)$_SERVER ['REQUEST_URI'] : '';
+		$url = substr($reqUri, strlen(BLOG_ROOT) - 1);
 
 		$urllenght = strlen($url);
 
@@ -267,7 +300,12 @@ class Plugin_PrettyURLs {
 		switch ($opt) {
 			case null:
 			case 0:
-				$opt = file_exists(ABS_PATH . '.htaccess') ? 3 : 1;
+				$hasHt = file_exists(ABS_PATH . '.htaccess');
+				if ($hasHt || $this->server_rewrite_active()) {
+					$opt = 3; // Pretty
+				} else {
+					$opt = $this->server_can_pathinfo() ? 1 : 2; // Path Info or HTTP Get
+				}
 			case 1:
 				$baseurl .= 'index.php/';
 				if ($urllenght < 2) {
@@ -279,7 +317,7 @@ class Plugin_PrettyURLs {
 				break;
 			case 2:
 				$baseurl .= '?u=/';
-				$url = @$_GET ['u'];
+				$url = isset($_GET ['u']) ? (string)$_GET ['u'] : '';
 			/* case 3: do nothing, it's BLOG_BASEURL */
 		}
 
@@ -307,6 +345,10 @@ class Plugin_PrettyURLs {
 
 		$this->fp_params = &$fp_params;
 		$url = $this->get_url();
+
+		if (!is_string($url)) {
+			$url = '';
+		}
 
 		if (PRETTYURLS_TITLES) {
 			// if ($f = io_load_file(PRETTYURLS_CACHE))
@@ -577,6 +619,83 @@ class Plugin_PrettyURLs {
 		);
 	}
 
+	/**
+	 * Unified 301 canonical redirect for plain ?entry=<id> and plain ?x=entry:<id>.
+	 * - Redirects only when the respective param is the ONLY query parameter.
+	 * - For ?x=entry:<id> also requires no ';' flags in the value.
+	 * - Builds the canonical permalink based on PrettyURLs baseurl for all four modes.
+	 * - Leaves legacy functional URLs with extra flags intact (no redirect).
+	 */
+	function prettyurls_redirect_canonical() {
+		if (!defined('MOD_INDEX')) {
+			return;
+		}
+		if (defined('PRETTYURLS_CANONICAL_REDIRECT_RAN')) {
+			return;
+		}
+		$has_x = isset($_GET ['x']) && is_string($_GET ['x']);
+		$has_entry = isset($_GET ['entry']) && is_string($_GET ['entry']);
+		// Require exactly one of them
+		if ($has_x === $has_entry) {
+			return;
+		}
+		// Ensure it is the only query parameter
+		foreach (array_keys($_GET) as $k) {
+			if (($has_x && $k !== 'x') || ($has_entry && $k !== 'entry')) {
+				return;
+			}
+		}
+		if ($has_x) {
+			$x = $_GET ['x'];
+			if (strpos($x, ';') !== false) {
+				return;
+			} // Flags present (comments, feed, …)
+			if (!preg_match('/^entry:(entry[0-9]{6}-[0-9]{6})$/', $x, $m)) {
+				return;
+			}
+			$id = $m [1];
+		} else { // ?entry=
+			$id = (string) $_GET ['entry'];
+			if (!preg_match('/^entry[0-9]{6}-[0-9]{6}$/', $id)) {
+				return;
+			}
+		}
+		// Resolve baseurl for current mode (Auto/Pretty/Path Info/HTTP Get)
+		global $plugin_prettyurls;
+		$base = '/';
+		if (isset($plugin_prettyurls) && is_object($plugin_pretty = $plugin_prettyurls)) {
+			if (method_exists($plugin_pretty, 'get_url')) {
+				$plugin_pretty->get_url();
+			}
+			if (isset($plugin_pretty->baseurl) && is_string($plugin_pretty->baseurl)) {
+				$base = $plugin_pretty->baseurl;
+			}
+		}
+		// Build canonical permalink
+		if (!function_exists('entry_parse') || !function_exists('date_from_id') || !function_exists('sanitize_title') || !function_exists('utils_geturlstring')) {
+			return;
+		}
+		$entry = entry_parse($id);
+		if (!is_array($entry) || empty($entry ['subject'])) {
+			return;
+		}
+		$date = date_from_id($id);
+		if (!isset($date ['y'], $date ['m'], $date ['d'])) {
+			return;
+		}
+		$slug = sanitize_title($entry ['subject']);
+		$target = $base . '20' . $date ['y'] . '/' . $date ['m'] . '/' . $date ['d'] . '/' . $slug . '/';
+		$current = utils_geturlstring();
+		if ($current === $target) {
+			return;
+		}
+		if (!headers_sent()) {
+			define('PRETTYURLS_CANONICAL_REDIRECT_RAN', true);
+			header('Location: ' . $target, true, 301);
+			exit();
+		}
+	}
+
 }
 
 global $plugin_prettyurls;
@@ -659,6 +778,11 @@ add_filter('init', array(
 	&$plugin_prettyurls,
 	'cache_init'
 ));
+
+add_filter('init', array(
+	&$plugin_prettyurls,
+	'prettyurls_redirect_canonical'
+), 11);
 
 if (class_exists('AdminPanelAction')) {
 

@@ -1,0 +1,59 @@
+nginx configuration
+===================
+
+# Pretty (recommended)
+location /<FlatPress instance>/ {
+	root /var/www;
+	try_files $uri $uri/ /<FlatPress instance>/index.php?$query_string;
+}
+location ~ ^/<FlatPress instance>/.*\.php$ {
+	root /var/www;
+	include fastcgi_params;
+	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	fastcgi_param QUERY_STRING $query_string;
+	fastcgi_pass unix:/run/php/php8.4-fpm.sock; # adjust
+}
+location = /<FlatPress instance>/sitemap {
+	rewrite ^ /<FlatPress instance>/sitemap.php last;
+}
+location = /<FlatPress instance>/sitemap.xml {
+	rewrite ^ /<FlatPress instance>/sitemap.php last;
+}
+location ~ ^/<FlatPress instance>/\.ht {
+	deny all;
+}
+
+# Path-Info (only if "Path Info" mode is used)
+location = /index.php {
+	fastcgi_split_path_info ^(.+\.php)(/.*)$;
+	include fastcgi_params;
+	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	fastcgi_param PATH_INFO $fastcgi_path_info;
+	fastcgi_param QUERY_STRING $query_string;
+	fastcgi_pass unix:/run/php/php8.4-fpm.sock; # adjust
+}
+
+Apache configuration (.htaccess in FlatPress root directory)
+============================================================
+
+AddType application/x-httpd-php .php
+Options -Indexes
+
+<IfModule mod_headers.c>
+	Header unset X-Powered-By
+</IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /<FlatPress instance>/
+
+	RewriteRule ^\.htaccess$ - [F]
+
+	RewriteRule ^sitemap\.xml$ /<FlatPress instance>/sitemap.php [L]
+	RewriteRule ^sitemap$ /<FlatPress instance>/sitemap.php [L]
+
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+
+	RewriteRule . /<FlatPress instance>/index.php [L]
+</IfModule>
