@@ -259,7 +259,7 @@ class Plugin_PrettyURLs {
 		}
 		if (function_exists('apache_get_modules')) {
 			$mods = @apache_get_modules();
-			if (is_array($mods) && in_array('mod_rewrite', $mods, true)) {
+			if (in_array('mod_rewrite', (array) $mods, true)) {
 				return true;
 			}
 		}
