@@ -679,17 +679,19 @@ class Plugin_PrettyURLs {
 			return;
 		}
 
-		// Canonicalize bare index.php to mode-specific base (Pretty:/  PathInfo:/index.php/  GET:?u=/)
+		// Resolve baseurl for current mode (Auto/Pretty/Path Info/HTTP Get)
 		global $plugin_prettyurls;
 		if (isset($plugin_prettyurls) && method_exists($plugin_prettyurls, 'get_url')) {
 			$plugin_prettyurls->get_url(); // sets $plugin_prettyurls->baseurl and ->mode
 		}
 		$base = isset($plugin_prettyurls->baseurl) ? $plugin_prettyurls->baseurl : BLOG_BASEURL;
-		$req  = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+
+		// Canonicalize bare index.php to mode-specific base (Pretty:/  PathInfo:/index.php/  GET:?u=/)
+		$req = isset($_SERVER ['REQUEST_URI']) ? (string) $_SERVER ['REQUEST_URI'] : '';
 		$path = $req !== '' ? (string) parse_url($req, PHP_URL_PATH) : '';
 		$qry = $req !== '' ? (string) parse_url($req, PHP_URL_QUERY) : '';
 		$idx = rtrim(BLOG_ROOT, '/').'/index.php';
-		$method = isset($_SERVER['REQUEST_METHOD']) ? (string) $_SERVER['REQUEST_METHOD'] : 'GET';
+		$method = isset($_SERVER ['REQUEST_METHOD']) ? (string) $_SERVER ['REQUEST_METHOD'] : 'GET';
 		// Only if no further parameters follow index.php
 		if ($method === 'GET' && $path === $idx && ($qry === '' || $qry === null)) {
 			if (!headers_sent()) {
@@ -715,23 +717,14 @@ class Plugin_PrettyURLs {
 			}
 		}
 
-		// Resolve baseurl for current mode (Auto/Pretty/Path Info/HTTP Get)
-		global $plugin_prettyurls;
-		if (!isset($plugin_prettyurls)) {
-			return;
-		}
-		if (method_exists($plugin_prettyurls, 'get_url')) {
-			$plugin_prettyurls->get_url();
-		}
-		$base = isset($plugin_prettyurls->baseurl) ? $plugin_prettyurls->baseurl : BLOG_BASEURL;
 		$target = null;
 
 		// Canonicalize legacy feed queries (?x=feed:{rss2|atom}) to mode-specific URL
-		if ($has_x && isset($_GET['x']) && is_string($_GET['x'])) {
+		if ($has_x && isset($_GET ['x']) && is_string($_GET ['x'])) {
 			$x = $_GET['x'];
 			if ($x === 'feed:rss2' || $x === 'feed:atom') {
 				// Uniform construction: $base is already mode-specific
-				$type   = ($x === 'feed:rss2') ? 'rss2' : 'atom';
+				$type = ($x === 'feed:rss2') ? 'rss2' : 'atom';
 				$target = $base . 'feed/' . $type . '/';
 				$current = utils_geturlstring();
 				if ($current !== $target && !headers_sent()) {
