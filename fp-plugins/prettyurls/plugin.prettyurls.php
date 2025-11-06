@@ -299,7 +299,7 @@ class Plugin_PrettyURLs {
 	 * Auto mode detection with request cache and optional APCu.
 	 * Returns: 3=Pretty, 1=PATH_INFO, 2=GET
 	 */
-	private function auto_mode_detect() {
+	function auto_mode_detect() {
 		$htPath = rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess';
 		$hasHt = is_file($htPath);
 		$sn = isset($_SERVER ['SCRIPT_NAME']) ? (string) $_SERVER ['SCRIPT_NAME'] : '';
@@ -339,6 +339,43 @@ class Plugin_PrettyURLs {
 		}
 		return (int) $mode;
 	}
+
+		/**
+		 * Preview: automatic mode specifically for calling index.php without any additional parameters.
+		 * Uses a minimally manipulated SERVER environment and then restores it.
+		 * Returns: 3=Pretty, 1=PATH_INFO, 2=GET
+		 */
+		function auto_mode_detect_preview() {
+			$htPath = rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess';
+			$hasHt = is_file($htPath);
+			// Save original
+			$bak = array(
+				'REQUEST_URI' => isset($_SERVER ['REQUEST_URI']) ? $_SERVER ['REQUEST_URI'] : null,
+				'SCRIPT_NAME' => isset($_SERVER ['SCRIPT_NAME']) ? $_SERVER ['SCRIPT_NAME'] : null,
+				'PATH_INFO' => isset($_SERVER ['PATH_INFO']) ? $_SERVER ['PATH_INFO'] : null,
+				'ORIG_PATH_INFO' => isset($_SERVER ['ORIG_PATH_INFO'])? $_SERVER ['ORIG_PATH_INFO']: null,
+				'PHP_SELF' => isset($_SERVER ['PHP_SELF']) ? $_SERVER ['PHP_SELF'] : null,
+				'QUERY_STRING' => isset($_SERVER ['QUERY_STRING'])  ? $_SERVER ['QUERY_STRING']  : null,
+			);
+			$root = rtrim(BLOG_ROOT, '/');
+			// Simulate index call without additional parameters
+			$_SERVER ['REQUEST_URI'] = $root . '/';
+			$_SERVER ['SCRIPT_NAME'] = $root . '/index.php';
+			unset($_SERVER ['PATH_INFO'], $_SERVER ['ORIG_PATH_INFO']);
+			$_SERVER ['PHP_SELF'] = $_SERVER ['SCRIPT_NAME'];
+			$_SERVER ['QUERY_STRING'] = '';
+			// Determine mode
+			$mode = ($hasHt && $this->server_rewrite_active()) ? 3 : ($this->server_can_pathinfo() ? 1 : 2);
+			// Reset environment
+			foreach ($bak as $k => $v) {
+				if ($v === null) {
+					unset($_SERVER [$k]);
+				} else {
+					$_SERVER [$k] = $v;
+				}
+			}
+			return (int) $mode;
+		}
 
 	function get_url() {
 		$baseurl = BLOG_BASEURL;
@@ -888,9 +925,25 @@ if (class_exists('AdminPanelAction')) {
 		);
 
 		function setup() {
+			global $plugin_prettyurls;
 			$this->smarty->assign('admin_resource', 'plugin:prettyurls/admin.plugin.prettyurls');
 			$this->_config ['mode'] = plugin_getoptions('prettyurls', 'mode');
 			$this->smarty->assign('pconfig', $this->_config);
+
+			// Provide auto mode for index.php (preview) and icon URL to the template
+			$auto_mode_index = 0;
+			if (isset($plugin_prettyurls) && is_object($plugin_prettyurls)) {
+				if (method_exists($plugin_prettyurls, 'auto_mode_detect_preview')) {
+					// Preview: Automatic mode specifically for calling index.php outside the admin area
+					$auto_mode_index = (int) $plugin_prettyurls->auto_mode_detect_preview();
+				} elseif (method_exists($plugin_prettyurls, 'auto_mode_detect')) {
+					// Auto mode detection
+					$auto_mode_index = (int) $plugin_prettyurls->auto_mode_detect();
+				}
+			}
+			$this->smarty->assign('auto_mode_index', (int) $auto_mode_index);
+
+			$this->smarty->assign('check_icon_url', BLOG_BASEURL . 'fp-plugins/prettyurls/res/check-green.svg');
 			$blogroot = BLOG_ROOT;
 			$f = ABS_PATH . '.htaccess';
 			$txt = io_load_file($f);
@@ -952,3 +1005,4 @@ Options -Indexes
 
 	admin_addpanelaction('plugin', 'prettyurls', true);
 }
+?>
