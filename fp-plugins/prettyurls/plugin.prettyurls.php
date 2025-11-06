@@ -952,5 +952,4 @@ Options -Indexes
 
 	admin_addpanelaction('plugin', 'prettyurls', true);
 }
-
 ?>
