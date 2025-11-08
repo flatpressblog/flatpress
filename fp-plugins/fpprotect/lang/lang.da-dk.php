@@ -35,6 +35,10 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allowVisitorIpDsc' => 'FlatPress vil derefter gemme den ikke-anonymiserede IP-adresse i blandt andet kommentarer. ' . //
 		'Hvis du bruger Akismet Antispam-tjenesten, vil Akismet også modtage den ikke-anonymiserede IP-adresse.',
 
+	// Part for Idle timeout for admin session
+	'session_timeout_label' => 'Idle-timeout for admin-session (minutter)',
+	'session_timeout_desc' => 'Minutter med inaktivitet, indtil admin-sessionen udløber. Tomt eller 0 betyder standard 60 minutter.',
+
 	'submit' => 'Gem indstillinger',
 		'msgs' => array(
 		1 => 'Indstillingerne er gemt med succes.',

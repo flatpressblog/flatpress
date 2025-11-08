@@ -4,7 +4,7 @@
  * Plugin URI: https://www.flatpress.org/
  * Description: Offers various options for the security of your blog.<br><a href="./fp-plugins/fpprotect/doc_fpprotect.txt" title="More information" target="_blank">[More information]</a><br>Part of the standard distribution.
  * Author: FlatPress
- * Version: 1.1.1
+ * Version: 1.2.1
  * Author URI: https://www.flatpress.org
  */
 
@@ -122,10 +122,16 @@ if (class_exists('AdminPanelAction')) {
 		 * Assign plugin configuration to the template.
 		 */
 		function assign_config_to_template() {
+			global $fp_config;
 			$options = fpprotect_get_options();
 			foreach ($options as $key => $value) {
 				$this->smarty->assign($key, $value);
 			}
+
+			// Expose admin-session timeout to template (minutes)
+			$admin_timeout = isset($fp_config ['auth'] ['session_timeout']) ? (int)$fp_config ['auth'] ['session_timeout'] : 3600;
+			if ($admin_timeout <= 0) { $admin_timeout = 3600; }
+			$this->smarty->assign('session_timeout_minutes', (int) ceil($admin_timeout / 60));
 
 			// Define warnings for specific options
 			$warnings = [
@@ -156,6 +162,20 @@ if (class_exists('AdminPanelAction')) {
 				plugin_addoption('fpprotect', $key, $value);
 			}
 			plugin_saveoptions('fpprotect');
+
+			// Save admin-session timeout to global config
+			$minutes = isset($_POST ['session_timeout_minutes']) ? (int) $_POST ['session_timeout_minutes'] : 0;
+			global $fp_config;
+			if (!isset($fp_config ['auth']) || !is_array($fp_config ['auth'])) {
+				$fp_config['auth'] = array();
+			}
+			if ($minutes > 0) {
+				$fp_config ['auth'] ['session_timeout'] = $minutes * 60;
+			} else {
+				// Remove to fall back to default 3600
+				unset($fp_config ['auth'] ['session_timeout']);
+			}
+			config_save();
 
 			// Update the template
 			$this->smarty->assign('success', 1);

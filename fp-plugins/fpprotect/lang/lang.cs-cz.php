@@ -35,6 +35,10 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allowVisitorIpDsc' => 'FlatPress pak neanonymizovanou IP adresu uloží mimo jiné do komentářů. ' . //
 		'Pokud používáte antispamovou službu Akismet, bude Akismet rovněž přijímat neanonymizovanou IP adresu.',
 
+	// Part for Idle timeout for admin session
+	'session_timeout_label' => 'Časový limit nečinnosti pro relaci správce (minuty)',
+	'session_timeout_desc' => 'Minuty nečinnosti do vypršení relace správce. Prázdný nebo 0 znamená ve výchozím nastavení 60 minut.',
+
 	'submit' => 'Uložení nastavení',
 		'msgs' => array(
 		1 => 'Nastavení bylo úspěšně uloženo.',
