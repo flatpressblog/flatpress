@@ -38,6 +38,14 @@
 		<p>{$plang.allowVisitorIpDsc}</p>
 	</fieldset>
 
+	<fieldset>
+		<label for="session_timeout_minutes">
+			{$plang.session_timeout_label}
+			<input type="number" name="session_timeout_minutes" id="session_timeout_minutes" min="0" step="1" value="{$session_timeout_minutes|escape}">
+		</label>
+		<p>{$plang.session_timeout_desc}</p>
+	</fieldset>
+
 	<div class="buttonbar">
 		<input type="submit" value="{$plang.submit}">
 	</div>

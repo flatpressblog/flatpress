@@ -35,6 +35,10 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allowVisitorIpDsc' => 'FlatPress bo neanonimizirani naslov IP med drugim shranil v komentarjih. ' . //
 		'Če uporabljate storitev Akismet Antispam, bo Akismet prav tako prejel neanonimiziran naslov IP.',
 
+	// Part for Idle timeout for admin session
+	'session_timeout_label' => 'Časovna omejitev nedejavnosti za sejo upravitelja (v minutah)',
+	'session_timeout_desc' => 'Minute nedejavnosti do izteka seje administratorja. Prazno ali 0 pomeni privzeto 60 minut.',
+
 	'submit' => 'Shranjevanje nastavitev',
 		'msgs' => array(
 		1 => 'Nastavitve so bile uspešno shranjene.',

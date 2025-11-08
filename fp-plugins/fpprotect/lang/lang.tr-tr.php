@@ -35,6 +35,10 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allowVisitorIpDsc' => 'FlatPress, anonimleştirilmemiş IP adresini, yorumlar gibi yerlerde kaydedecektir. ' . //
 		'Akismet Antispam servisini kullanıyorsanız, Akismet de anonimleştirilmemiş IP adresini alacaktır.',
 
+	// Part for Idle timeout for admin session
+	'session_timeout_label' => 'Yönetici oturumu için boşta kalma zaman aşımı (dakika)',
+	'session_timeout_desc' => 'Yönetici oturumu sona erene kadar hareketsiz kalınacak dakika. Boş veya 0 varsayılan olarak 60 dakika anlamına gelir.',
+
 	'submit' => 'Ayarları kaydet',
 		'msgs' => array(
 		1 => 'Ayarlar başarıyla kaydedildi.',

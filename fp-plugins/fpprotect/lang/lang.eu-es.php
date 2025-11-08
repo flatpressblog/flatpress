@@ -35,6 +35,10 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allowVisitorIpDsc' => 'FlatPressek IP helbide ez-anonimizatua gordeko du iruzkinetan, besteak beste. ' . //
 		'Akismet Antispam zerbitzua erabiltzen baduzu, Akismetek IP helbide ez-anonimizatua ere jasoko du.',
 
+	// Part for Idle timeout for admin session
+	'session_timeout_label' => 'Administrazio Saioaren Inaktibotasun Denbora-muga (Minutuak)',
+	'session_timeout_desc' => 'Administrazio saioa amaitu arteko inaktibitate minutuak. Hutsik edo 0 bada, lehenetsitako denbora 60 minutu dela esan nahi du.',
+
 	'submit' => 'Gorde ezarpenak',
 		'msgs' => array(
 		1 => 'Ezarpenak ondo gorde dira.',

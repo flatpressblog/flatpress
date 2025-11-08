@@ -35,6 +35,10 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	'allowVisitorIpDsc' => 'FlatPressは、匿名化されていないIPアドレスをコメントなどに保存します。 ' . //
 		'Akismetスパム対策サービスをご利用の場合、Akismetも匿名化されていないIPアドレスを受信します。',
 
+	// Part for Idle timeout for admin session
+	'session_timeout_label' => '管理者セッションのアイドルタイムアウト（分）',
+	'session_timeout_desc' => '管理者セッションがタイムアウトするまでの非アクティブ時間（分）。空欄または 0 の場合は、デフォルトの 60 分となります。',
+
 	'submit' => '設定の保存',
 		'msgs' => array(
 		1 => '設定は正常に保存されました。',

@@ -89,6 +89,13 @@ function sess_setup() {
 
 		// Set session timeout duration (e.g., 3600 seconds = 60 minutes)
 		$timeout_duration = 3600;
+		// Override from config if set
+		if (isset($GLOBALS ['fp_config'] ['auth'] ['session_timeout'])) {
+			$cfg = (int)$GLOBALS ['fp_config'] ['auth'] ['session_timeout'];
+			if ($cfg > 0) {
+				$timeout_duration = $cfg;
+			}
+		}
 		ini_set('session.gc_maxlifetime', $timeout_duration);
 
 		// Optimize Garbage Collection (adjust to session load)
