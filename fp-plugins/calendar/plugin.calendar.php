@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Calendar
- * Version: 1.2
+ * Version: 1.2.1
  * Type: Block
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
@@ -87,8 +87,114 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 	return $calendar . "</tr>\n</table>\n";
 }
 
+// Calendar APCu/File Cache Helpers
+
+/**
+ * Versioned namespace suffix for calendar cache (":vN") or "".
+ * Uses APCu key "fp:calendar:v". Bumped by hooks on content changes.
+ */
+function plugin_calendar_cache_ns() {
+	static $ns = null;
+	if ($ns !== null) {
+		return $ns;
+	}
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	if (!$apcu_on) {
+		return $ns = '';
+	}
+	$v = apcu_get('fp:calendar:v');
+	if (!$v) {
+		@apcu_set('fp:calendar:v', 1); $v = 1;
+	}
+	return $ns = ':v' . (int)$v;
+}
+
+/**
+ * Bumps calendar cache version and purges file fallback.
+ */
+function plugin_calendar_cache_bump() {
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	if ($apcu_on) {
+		$ok = false;
+		apcu_incr('fp:calendar:v', 1, $ok);
+		if (!$ok) {
+			@apcu_set('fp:calendar:v', 1);
+		}
+	}
+	$dir = defined('CACHE_DIR') ? CACHE_DIR : ((defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/');
+	if (!is_dir($dir)) {
+		return;
+	}
+	foreach (glob($dir . 'calendar-*.html') as $f) {
+		@unlink($f);
+	}
+}
+
+// Hook-based invalidation
+if (function_exists('add_action')) {
+	// Core hooks
+	add_action('publish_post', 'plugin_calendar_cache_bump', 10, 1);
+	add_action('delete_post', 'plugin_calendar_cache_bump', 10, 1);
+	// Edit hooks used by plugins or core
+	add_action('edit_post', 'plugin_calendar_cache_bump', 10, 1);
+	add_action('update_post', 'plugin_calendar_cache_bump', 10, 1);
+	add_action('save_post', 'plugin_calendar_cache_bump', 10, 1);
+}
+
+function plugin_calendar_cache_key($y4, $m2, $lang, $first_day) {
+	$norm = array(
+		'y' => (int)$y4,
+		'm' => (int)$m2,
+		'lang' => (string)$lang,
+		'fd' => (int)$first_day
+	);
+	$rev = plugin_calendar_cache_ns();
+	return 'calendar:' . sha1(json_encode($norm, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)) . $rev;
+}
+
+function plugin_calendar_cache_get($key, $ttl = 3600) {
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	if ($apcu_on) {
+		$hit = false;
+		$val = apcu_get($key, $hit);
+		if ($hit && is_string($val)) {
+			return $val;
+		}
+	}
+	// File fallback
+	$dir = defined('CACHE_DIR') ? CACHE_DIR : ((defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/');
+	$file = $dir . 'calendar-' . sha1($key) . '.html';
+	if (@file_exists($file)) {
+		$mt = @filemtime($file);
+		if ($mt && (time() - $mt) <= (int)$ttl) {
+			$val = @file_get_contents($file);
+			if (is_string($val)) {
+				return $val;
+			}
+		}
+	}
+	return null;
+}
+
+function plugin_calendar_cache_set($key, $html, $ttl = 3600) {
+	if (!is_string($html) || $html === '') {
+		return;
+	}
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	if ($apcu_on) {
+		@apcu_set($key, $html, max(60, (int)$ttl));
+	}
+	$dir = defined('CACHE_DIR') ? CACHE_DIR : ((defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/');
+	if (!@is_dir($dir)) {
+		@mkdir($dir, defined('DIR_PERMISSIONS') ? DIR_PERMISSIONS : 0777, true);
+	}
+	$file = $dir . 'calendar-' . sha1($key) . '.html';
+	@file_put_contents($file, $html);
+}
+// End Helpers
+
 function plugin_calendar_widget() {
-	global $fp_params;
+	global $fpdb, $fp_config, $fp_params;
 
 	// Determine the current year and month
 	$y = isset($fp_params ['y']) ? $fp_params ['y'] : date('Y');
@@ -99,7 +205,19 @@ function plugin_calendar_widget() {
 		$y = substr($y, 2);
 	}
 
-	global $fpdb;
+	// Cache: build key and try APCu/file cache
+	$first_day = 0;
+	$lang_code = isset($fp_config ['general'] ['language']) ? $fp_config ['general'] ['language'] : 'en-US';
+	$y4 = calendar_normalize_year($y);
+	$cache_key = plugin_calendar_cache_key($y4, (int)$m, $lang_code, $first_day);
+	$cached = plugin_calendar_cache_get($cache_key, 86400);
+	if (is_string($cached)) {
+		$lang = lang_load('plugin:calendar');
+		$widget = array();
+		$widget ['subject'] = $lang ['plugin'] ['calendar'] ['subject'];
+		$widget ['content'] = $cached;
+		return $widget;
+	}
 
 	// Collect entries
 	$days = array();
@@ -134,12 +252,29 @@ function plugin_calendar_widget() {
 	// Compile widget content
 	$widget = array();
 	$widget ['subject'] = $lang ['plugin'] ['calendar'] ['subject'];
-	$widget ['content'] = '<ul id="widget_calendar"><li>' . generate_calendar($y, $m, $days, 3, null, 0, array($prev_link, $next_link)) . '</li></ul>';
+	$html = '<ul id="widget_calendar"><li>' . generate_calendar($y, $m, $days, 3, null, 0, array($prev_link, $next_link)) . '</li></ul>';
+	plugin_calendar_cache_set($cache_key, $html, 86400);
+	$widget ['content'] = $html;
 
 	return $widget;
 }
 
 register_widget('calendar', 'Calendar', 'plugin_calendar_widget');
+
+/**
+ * Normalize a possibly two-digit year to four digits.
+ * FlatPress stores years as two digits (00–99 = 2000–2099) in queries and URLs.
+ * This keeps queries and links unchanged while allowing safe boundary checks.
+ * @param int|string $y
+ * @return int
+ */
+function calendar_normalize_year($y) {
+	$y = intval($y);
+	if ($y < 100) {
+		return 2000 + $y;
+	}
+	return $y;
+}
 
 // Function to search for the previous month with entries
 function find_prev_month_with_entries($year, $month) {
@@ -165,7 +300,9 @@ function find_prev_month_with_entries($year, $month) {
 		}
 
 		// Cancel if the year goes back too far (default: 2006, year of birth of FlatPress)
-		if ($year < 2006) break;
+		if (calendar_normalize_year($year) < 2006) {
+			break;
+		}
 	}
 
 	return null;
@@ -195,7 +332,9 @@ function find_next_month_with_entries($year, $month) {
 		}
 
 		// Cancel if the year goes too far into the future (default: current year plus 2 years)
-		if ($year > date('Y') + 2) break;
+		if (calendar_normalize_year($year) > date('Y') + 2) {
+			break;
+		}
 	}
 
 	return null;
