@@ -71,7 +71,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - Added request-local and APCu caching. ([#690](https://github.com/flatpressblog/flatpress/pull/690))
     - A green hook indicates the best automatically determined mode.
 - Calendar plugin: update to version 1.2.1
-    - Optional APCu support with file fallback added
+    - Optional APCu support with file fallback added ([#694](https://github.com/flatpressblog/flatpress/pull/694))
 
 ### Bugfixes
 - Newsletter plugin: update to version 1.7.3
