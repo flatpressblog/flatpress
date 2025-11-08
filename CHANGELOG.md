@@ -7,7 +7,7 @@ On a Paspberry Pi 4b 4GB with APCu support, the content capacity can now be up t
 
 Additional frontend payloads per page view, such as HTML, CSS, jQuery, and other JS, were not evaluated. Variation arises from theme, plugins, image content, and server I/O characteristics.
 
-For optimal performance, an initial APCu size of 32 MB is recommended (``apc.shm_size=32M``). Minimum requirement ~1–2 MB. From 9000 entries plus 10 comments per entry, 64M is recommended.
+For optimal performance, an initial APCu size of 32 MB is recommended (``apc.shm_size=32M``). Minimum requirement ~1–2 MB. From 9000 entries plus 10 comments per entry, 64MB is recommended.
 
 ## Changed requirements
 - FlatPress 1.5 runs under PHP up to **8.4**; minimum required PHP version increases to **7.2**.
@@ -50,8 +50,9 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - In addition, the plugin limits the number of login attempts per IP and sorts out incorrect addresses before they are sent, ensuring that the newsletter is reliably delivered only to valid recipients.
   - Even more against race conditions
   - Batch shipping shows shipping status ([#649](https://github.com/flatpressblog/flatpress/pull/649))
-- FlatPress Protect plugin: update to version 1.1.1
+- FlatPress Protect plugin: update to version 1.2.1
   - iFrames can only be embedded from the same domain.
+  - It is now possible to change the idle timeout for admin sessions. ([#693](https://github.com/flatpressblog/flatpress/issues/693))
 - BBCode plugin: update to version 2.0.0
   - Memoization and optional APCu caches added ([#680](https://github.com/flatpressblog/flatpress/pull/680))
 - Stats plugin to Storage plugin:
@@ -69,6 +70,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - PrettyURLs plugin: update to version 3.0.2
     - Added request-local and APCu caching. ([#690](https://github.com/flatpressblog/flatpress/pull/690))
     - A green hook indicates the best automatically determined mode.
+- Calendar plugin: update to version 1.2.1
+    - Optional APCu support with file fallback added
 
 ### Bugfixes
 - Newsletter plugin: update to version 1.7.3
