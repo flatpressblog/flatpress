@@ -70,6 +70,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - PrettyURLs plugin: update to version 3.0.2
     - Added request-local and APCu caching. ([#690](https://github.com/flatpressblog/flatpress/pull/690))
     - A green hook indicates the best automatically determined mode.
+    - Modes that are not supported by the web server are grayed out.
+    - If Pretty is saved in the configuration but is not supported, downgrade to one of the remaining modes.
 - Calendar plugin: update to version 1.2.1
     - Optional APCu support with file fallback added
 
