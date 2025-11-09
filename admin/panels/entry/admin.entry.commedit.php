@@ -116,7 +116,8 @@ class admin_entry_commedit extends AdminPanelActionValidated {
 		$comment = comment_parse($_REQUEST ['entry'], $_REQUEST ['comment']);
 		if ($comment) {
 			$this->smarty->assign('values', $comment);
-			$this->smarty->append('values', array('ip_address' => $comment ['ip-address']), true);
+			$ip = isset($comment ['ip-address']) ? $comment ['ip-address'] : '';
+			$this->smarty->append('values', array('ip_address' => $ip), true);
 		} else {
 			return PANEL_REDIRECT_DEFAULT;
 		}
