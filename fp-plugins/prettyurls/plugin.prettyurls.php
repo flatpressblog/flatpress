@@ -888,7 +888,11 @@ class Plugin_PrettyURLs {
 		// === Cross-mode canonicalization for common routes ===
 		// Routes: page/N, paged/N, category/NAME, tag/NAME, archive[s]/YYYY(/MM)?, static/SLUG, entry/SLUG
 		// Redirect only if there are no extra query params (besides 'u' in GET style).
-		$opt = isset($plugin_prettyurls->mode) ? (int)$plugin_prettyurls->mode : (int)plugin_getoptions('prettyurls', 'mode');
+		$opt = (int)plugin_getoptions('prettyurls','mode');
+		if (isset($plugin_prettyurls) && isset($plugin_prettyurls->mode)) {
+			$opt = (int)$plugin_prettyurls->mode;
+		}
+
 		$req = isset($_SERVER ['REQUEST_URI']) ? (string)$_SERVER ['REQUEST_URI'] : '';
 		$path = $req !== '' ? (string)parse_url($req, PHP_URL_PATH) : '';
 		$qry = $req !== '' ? (string)parse_url($req, PHP_URL_QUERY) : '';
