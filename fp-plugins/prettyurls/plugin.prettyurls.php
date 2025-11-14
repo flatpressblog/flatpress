@@ -275,29 +275,75 @@ class Plugin_PrettyURLs {
 	}
 
 	private function server_can_pathinfo() {
-		$req = isset($_SERVER ['REQUEST_URI']) ? (string) $_SERVER ['REQUEST_URI'] : '';
-		// PATH_INFO natively available
-		if (!empty($_SERVER ['PATH_INFO'])) {
+		// Real server signals (also via ProxyFCGISetEnvIf/SetEnv)
+		if (!empty($_SERVER ['PATH_INFO']) || !empty($_SERVER ['ORIG_PATH_INFO'])) {
 			return true;
 		}
-		// Alternative variables of some SAPIs
-		if (!empty($_SERVER ['ORIG_PATH_INFO'])) {
-			return true;
+
+		// Heuristics about the requested URL
+		$uri = null;
+		if (!empty($_SERVER ['REQUEST_URI'])) {
+			$uri = (string)$_SERVER ['REQUEST_URI'];
+		} elseif (!empty($_SERVER ['HTTP_X_REWRITE_URL'])) {
+			$uri = (string)$_SERVER ['HTTP_X_REWRITE_URL'];
+		} elseif (!empty($_SERVER ['REDIRECT_URL'])) {
+			$uri = (string)$_SERVER ['REDIRECT_URL'];
 		}
-		// Self-recognition via PHP_SELF
-		if (!empty($_SERVER ['PHP_SELF']) && strpos((string) $_SERVER ['PHP_SELF'], 'index.php/') !== false) {
-			return true;
+
+		if ($uri === null) {
+			return false;
 		}
-		// Request URI explicitly contains index.php/
-		if ($req !== '' && strpos($req, 'index.php/') !== false) {
-			return true;
+
+		// Remove query string
+		$qpos = strpos($uri, '?');
+		if ($qpos !== false) {
+			$uri = substr($uri, 0, $qpos);
+		}
+		$uriNorm = rtrim($uri, '/');
+
+		// Determine base (BLOG_ROOT without /index.php)
+		$base = defined('BLOG_ROOT') ? (string)BLOG_ROOT : '';
+		if (substr($base, -10) === '/index.php') {
+			$base = substr($base, 0, -10); // sicheres Entfernen von '/index.php'
+		}
+		$baseNorm = rtrim($base, '/');
+
+		// If BLOG_ROOT is not set, fall back to SCRIPT_NAME directory
+		if ($baseNorm === '' && !empty($_SERVER ['SCRIPT_NAME'])) {
+			$sn = (string)$_SERVER ['SCRIPT_NAME'];
+			// Remove ‘/index.php’ if present, otherwise directory
+			if (substr($sn, -10) === '/index.php') {
+				$baseNorm = rtrim(substr($sn, 0, -10), '/');
+			} else {
+				$baseNorm = rtrim((string)dirname($sn), '/\\');
+				// Avoid backslashes in URLs
+				$baseNorm = str_replace('\\', '/', $baseNorm);
+				if ($baseNorm === '.') {
+					$baseNorm = '';
+				}
+			}
+		}
+
+		// Check whether real segments follow after the base (e.g., ‘/page/1’).
+		if ($baseNorm === '' || strpos($uriNorm, $baseNorm) === 0) {
+			$suffix = substr($uriNorm, strlen($baseNorm));
+			// Suffix begins with ‘/’ and contains more than just the slash
+			if ($suffix !== '' && $suffix [0] === '/' && strlen($suffix) > 1) {
+				return true;
+			}
+		}
+
+		// Without explicit PATH_INFO and with cgi.fix_pathinfo=0: not available
+		$fix = @ini_get('cgi.fix_pathinfo');
+		if ($fix !== false && (string) $fix === '0') {
+			return false;
 		}
 		return false;
 	}
 
 	/**
-	 * Preview der Server-Fähigkeiten außerhalb des Adminbereichs.
-	 * Liefert: can_pretty (Rewrite), can_pathinfo, can_get.
+	 * Preview of server capabilities outside the admin area.
+	 * Delivers: can_pretty (Rewrite), can_pathinfo, can_get.
 	 */
 	public function modes_capabilities_preview() {
 		$htPath = rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess';
@@ -317,31 +363,50 @@ class Plugin_PrettyURLs {
 
 		$root = rtrim(BLOG_ROOT, '/');
 
-		// Rewrite-Fähigkeit testen (Request ohne index.php)
+		// Test rewrite capability (request without index.php)
 		$_SERVER ['REQUEST_URI'] = $root . '/';
 		$_SERVER ['SCRIPT_NAME'] = $root . '/index.php';
 		unset($_SERVER ['PATH_INFO'], $_SERVER ['ORIG_PATH_INFO']);
 		$_SERVER ['PHP_SELF'] = $_SERVER ['SCRIPT_NAME'];
 		$_SERVER ['QUERY_STRING'] = '';
 		unset($_SERVER ['IIS_WasUrlRewritten'], $_SERVER ['HTTP_X_REWRITE_URL'], $_SERVER ['REDIRECT_URL']);
-		$can_pretty = $hasHt && $this->server_rewrite_active();
+		//$can_pretty = $hasHt && $this->server_rewrite_active();
+		$can_pretty = $this->server_rewrite_active();
 
-		// Path-Info Variante A: echtes PATH_INFO
-		$_SERVER ['REQUEST_URI'] = $root . '/index.php/preview-check';
-		$_SERVER ['SCRIPT_NAME'] = $root . '/index.php';
-		$_SERVER ['PATH_INFO'] = '/preview-check';
-		$_SERVER ['PHP_SELF'] = $_SERVER ['SCRIPT_NAME'];
-		$_SERVER ['QUERY_STRING'] = '';
-		$can_pathinfo = $this->server_can_pathinfo();
+		// Path info:
+		$fix = @ini_get('cgi.fix_pathinfo');
+		$can_pathinfo = false;
+		if (!($fix !== false && (string)$fix === '0')) {
+			// Evaluate live environment
+			if (!empty($bak['PATH_INFO']) || !empty($bak ['ORIG_PATH_INFO'])) {
+				$can_pathinfo = true;
+			} else {
+				// Fallback: REQUEST_URI begins with base and has additional segments
+				$base = defined('BLOG_ROOT') ? BLOG_ROOT : '';
+				if (substr($base, -10) === '/index.php') {
+					// Safely remove '/index.php'
+					$base = substr($base, 0, -10);
+				}
+				$baseNorm = rtrim((string)$base, '/');
 
-		// Path-Info Variante B: ohne PATH_INFO, aber mit index.php/ in REQUEST_URI bzw. PHP_SELF
-		if (!$can_pathinfo) {
-			unset($_SERVER ['PATH_INFO'], $_SERVER ['ORIG_PATH_INFO']);
-			$_SERVER ['REQUEST_URI'] = $root . '/index.php/preview-check';
-			$_SERVER ['SCRIPT_NAME'] = $root . '/index.php';
-			$_SERVER ['PHP_SELF'] = $root . '/index.php/preview-check';
-			$_SERVER ['QUERY_STRING'] = '';
-			$can_pathinfo = $this->server_can_pathinfo();
+				if (!empty($bak ['REQUEST_URI'])) {
+					$req = (string)$bak ['REQUEST_URI'];
+					// Remove query string
+					$qpos = strpos($req, '?');
+					if ($qpos !== false) {
+						$req = substr($req, 0, $qpos);
+					}
+					$reqNorm = rtrim($req, '/');
+
+					if ($baseNorm === '' || strpos($reqNorm, $baseNorm) === 0) {
+						$suffix = substr($reqNorm, strlen($baseNorm));
+						// Additional segments present? (e.g., ‘/page’ or ‘/page/1’)
+						if ($suffix !== '' && $suffix [0] === '/' && strlen($suffix) > 1) {
+							$can_pathinfo = true;
+						}
+					}
+				}
+			}
 		}
 
 		// Restore
@@ -382,7 +447,11 @@ class Plugin_PrettyURLs {
 			$sw
 		));
 		// Version/namespace prefix for separating different implementations
-		$key = 'prettyurls:auto:v2:' . md5($flags);
+		$gen = (int) plugin_getoptions('prettyurls', 'apcu_gen');
+		if ($gen < 1) {
+			$gen = 1;
+		}
+		$key = 'prettyurls:auto:v3:g' . $gen . ':' . md5($flags);
 		static $reqCache = array();
 		if (isset($reqCache [$key])) {
 			return (int) $reqCache [$key];
@@ -396,7 +465,7 @@ class Plugin_PrettyURLs {
 				return (int) $val;
 			}
 		}
-		$mode = ($hasHt && $this->server_rewrite_active()) ? 3 : ($this->server_can_pathinfo() ? 1 : 2);
+		$mode = ($this->server_rewrite_active() ? 3 : ($this->server_can_pathinfo() ? 1 : 2));
 		$reqCache [$key] = (int) $mode;
 		if (function_exists('is_apcu_on') && is_apcu_on() && function_exists('apcu_set')) {
 			// Keep TTL small; namespacing is done in core.fileio.php via apcu_key()
@@ -461,6 +530,15 @@ class Plugin_PrettyURLs {
 			$pathinfo = '';
 		}
 
+		$htPath = rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess';
+		$hasHt = is_file($htPath);
+
+		// If not configured or automatic, check htaccess
+		if ($opt === null || $opt === 0) {
+			// If htaccess exists, then Pretty (3), otherwise Path info (1)
+			$opt = $hasHt ? 3 : 1;
+		}
+
 		// Resolve effective mode once, then apply mapping
 		if ($opt === null || $opt === 0 || $opt === 3) {
 			$opt = (int) $this->auto_mode_detect();
@@ -468,11 +546,11 @@ class Plugin_PrettyURLs {
 
 		switch ($opt) {
 			case 1:
-				// Path Info
 				$baseurl .= 'index.php/';
 				if ($urllenght < 2) {
 					$url = "/";
 				} else {
+					// Path Info
 					$url = $pathinfo;
 				}
 				break;
@@ -773,17 +851,169 @@ class Plugin_PrettyURLs {
 	}
 
 	/**
-	 * Unified 301 canonical redirect for
-	 * plain ?entry=<id>, plain ?x=entry:<id>, plain ?page=<id>, ?page<n>, x=feed:<rss2|atom> and index.php only.
-	 * - Redirects only when the respective param is the ONLY query parameter.
-	 * - For ?x=entry:<id> also requires no ';' flags in the value.
-	 * - Builds the canonical permalink based on PrettyURLs baseurl for all four modes.
-	 * - Leaves legacy functional URLs with extra flags intact (no redirect).
+	 * Unified 301 canonical redirect function
+	 *
+	 * Canonicalizes frontend requests across PrettyURLs modes and redirects to one canonical style per mode.
+	 *
+	 * Behavior
+	 * --------
+	 * - Runs in frontend only (returns early when MOD_INDEX is not defined).
+	 * - Detects the incoming URL "style" and its route suffix:
+	 *     GET style:              ?u=/...
+	 *     Path-Info style:        /index.php/..., or PATH_INFO
+	 *     Pretty style:           /...
+	 * - Redirects with HTTP 301 if the detected style does not match the selected mode:
+	 *     Mode 1 (Path-Info)      BLOG_BASEURL/index.php{suffix}
+	 *     Mode 2 (HTTP-Get)       BLOG_BASEURL/?u={suffix}
+	 *     Mode 3 (Pretty)         BLOG_BASEURL/{suffix}
+	 * - Redirects only when there are no extra query parameters (except key 'u' in GET style).
+	 * - Normalizes {suffix} to a single leading and trailing slash and collapses duplicate slashes.
+	 * - Guarded to avoid loops; redirects only when target style differs from the current style.
+	 *
+	 * Supported routes (suffix patterns)
+	 * ----------------------------------
+	 * - Pagination:               /page/{n}/, /paged/{n}/
+	 * - Category & Tag:           /category/{name}/, /tag/{name}/
+	 * - Archives:                 /archives/{YYYY}/, /archives/{YYYY}/{MM}/, /archive/{YYYY}/, /archive/{YYYY}/{MM}/
+	 * - Bare date archives:       /{YYYY}/, /{YYYY}/{MM}/, optional /{YYYY}/{MM}/{DD}/
+	 * - Dated permalinks:         /{YYYY}/{MM}/{DD}/{slug}/
+	 * - Global feeds:             /feed/(rss2|atom)/
+	 * - Entry comments feeds:     /{YYYY}/{MM}/{DD}/{slug}/comments/feed/(rss2|atom)/
+	 * - Static pages and entries: /static/{slug}/, /entry/{slug}/
 	 */
 	function prettyurls_redirect_canonical() {
 		if (!defined('MOD_INDEX')) {
 			return;
 		}
+		// === Cross-mode canonicalization for common routes ===
+		// Routes: page/N, paged/N, category/NAME, tag/NAME, archive[s]/YYYY(/MM)?, static/SLUG, entry/SLUG
+		// Redirect only if there are no extra query params (besides 'u' in GET style).
+		$opt = isset($plugin_prettyurls->mode) ? (int)$plugin_prettyurls->mode : (int)plugin_getoptions('prettyurls', 'mode');
+		$req = isset($_SERVER ['REQUEST_URI']) ? (string)$_SERVER ['REQUEST_URI'] : '';
+		$path = $req !== '' ? (string)parse_url($req, PHP_URL_PATH) : '';
+		$qry = $req !== '' ? (string)parse_url($req, PHP_URL_QUERY) : '';
+		$style = '';
+		$suffix = '';
+
+		// BOF Helper: extract route suffix from a given path (BLOG_ROOT aware)
+		$extract_suffix = function($pth) {
+			$root = rtrim(BLOG_ROOT, '/');
+			$pp = $pth;
+			if ($root !== '' && strpos($pp, $root) === 0) {
+				$pp = substr($pp, strlen($root));
+				if ($pp === false) {
+					$pp = '';
+				}
+			}
+			if ($pp === '') {
+				$pp = $pth;
+			}
+			$pp = preg_replace('!/{2,}!', '/', $pp);
+			$rx = array(
+				// Pagination
+				'!^/(?:page|paged)/([0-9]+)/?$!i',
+				// Post-specific comment feeds
+				'!^/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/comments/feed/(?:rss2|atom)/?$!i',
+				// Global feeds
+				'!^/feed/(?:rss2|atom)/?$!i',
+				// Date-based entry permalinks
+				'!^/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/?$!i',
+				// Bare date archives: /YYYY/ und /YYYY/MM/ and optional /YYYY/MM/DD/
+				'!^/[0-9]{4}(?:/[0-9]{1,2}(?:/[0-9]{1,2})?)?/?$!i',
+				// "archives"-Routes
+				'!^/(?:archive|archives)/([0-9]{4})(?:/([0-9]{1,2}))?/?$!i',
+				// Taxonomies
+				'!^/category/([^/]+)/?$!i',
+				'!^/tag/([^/]+)/?$!i',
+				// Static pages and entries
+				'!^/static/([^/]+)/?$!i',
+				'!^/entry/([^/]+)/?$!i',
+			);
+			foreach ($rx as $r) {
+				if (preg_match($r, $pp)) {
+					return rtrim($pp, '/') . '/';
+				}
+			}
+			return '';
+		};
+
+		// Detect incoming style and suffix
+		if (isset($_GET['u']) && is_string($_GET['u'])) {
+			$u = (string)$_GET ['u'];
+			$cand = $extract_suffix($u);
+			if ($cand !== '') {
+				$style = 'get';
+				$suffix = $cand;
+			}
+		}
+		if ($style === '' && !empty($_SERVER ['PATH_INFO'])) {
+			$pi = (string)$_SERVER ['PATH_INFO'];
+			$cand = $extract_suffix($pi);
+			if ($cand !== '') {
+				$style = 'pathinfo';
+				$suffix = $cand;
+			}
+		}
+		if ($style === '' && is_string($path) && strpos($path, '/index.php/') !== false) {
+			$after = substr($path, strpos($path, '/index.php/') + 10);
+			if ($after !== '' && $after [0] !== '/') {
+				$after = '/' . $after;
+			}
+			$cand = $extract_suffix($after);
+			if ($cand !== '') {
+				$style = 'pathinfo';
+				$suffix = $cand;
+			}
+		}
+		if ($style === '' && is_string($path)) {
+			$cand = $extract_suffix($path);
+			if ($cand !== '') {
+				$style = 'pretty';
+				$suffix = $cand;
+			}
+		}
+
+		if ($style !== '') {
+			// Normalize suffix to single leading/trailing slash
+			if ($suffix !== '') {
+				$suffix = '/' . trim($suffix, '/');
+				$suffix = preg_replace('!/{2,}!', '/', $suffix) . '/';
+				$suffix = preg_replace('!/+$!', '/', $suffix);
+			}
+			// No redirect if there are extra params (besides 'u' in GET style)
+			$extra = false;
+			if ($style === 'get') {
+				foreach (array_keys($_GET) as $k) {
+					if ($k !== 'u') {
+						$extra = true;
+						break;
+					}
+				}
+			} else {
+				if (is_string($qry) && $qry !== '' && $qry !== null) {
+					$extra = true;
+				}
+			}
+			if (!$extra) {
+				$target = '';
+				if ($opt === 1 && $style !== 'pathinfo') {
+					$target = BLOG_BASEURL . 'index.php' . $suffix;
+				} elseif ($opt === 2 && $style !== 'get') {
+					$target = BLOG_BASEURL . '?u=' . $suffix;
+				} elseif ($opt === 3 && $style !== 'pretty') {
+					$target = BLOG_BASEURL . ltrim($suffix, '/');
+				}
+				if ($target !== '' && !headers_sent()) {
+					if (!defined('PRETTYURLS_CANONICAL_REDIRECT_RAN')) {
+						define('PRETTYURLS_CANONICAL_REDIRECT_RAN', true);
+					}
+					header('Location: ' . $target, true, 301);
+					exit();
+				}
+			}
+		}
+		// EOF Helper
+
 		if (defined('PRETTYURLS_CANONICAL_REDIRECT_RAN')) {
 			return;
 		}
@@ -1011,6 +1241,7 @@ if (class_exists('AdminPanelAction')) {
 
 		function assign_config_to_template() {
 			global $plugin_prettyurls;
+
 			$this->_config ['mode'] = plugin_getoptions('prettyurls', 'mode');
 			$this->smarty->assign('pconfig', $this->_config);
 
@@ -1028,7 +1259,9 @@ if (class_exists('AdminPanelAction')) {
 			$this->smarty->assign('auto_mode_index', (int) $auto_mode_index);
 
 			// Assign capabilities outside the admin area to the template
-			$can_pretty = false; $can_pathinfo = false; $can_get = true;
+			$can_pretty = false;
+			$can_pathinfo = false;
+			$can_get = true;
 			if (isset($plugin_prettyurls) && is_object($plugin_prettyurls) && method_exists($plugin_prettyurls, 'modes_capabilities_preview')) {
 				$caps = (array) $plugin_prettyurls->modes_capabilities_preview();
 				$can_pretty = !empty($caps ['can_pretty']);
@@ -1094,22 +1327,48 @@ Options -Indexes
 		}
 
 		function onsubmit($data = null) {
+			$bumpGen = false;
+
+			// Settings: selected mode
 			if (isset($_POST ['saveopt'])) {
-				$mode = (int) $_POST['mode'];
-				if (!in_array($mode, array(0,1,2,3), true)) {
+				$mode = isset($_POST ['mode']) ? (int) $_POST ['mode'] : 0;
+				if (!in_array($mode, array(0, 1, 2, 3), true)) {
 					$mode = 0;
+				} else {
+					// Prevent explicit PATH_INFO mode on environments that clearly do not support it reliably
+					if ($mode === 1) {
+						$fix = @ini_get('cgi.fix_pathinfo');
+						$noPathInfo = empty($_SERVER ['PATH_INFO']) && empty($_SERVER ['ORIG_PATH_INFO']);
+						$sapi = PHP_SAPI;
+						$isFastCgi = (strpos($sapi, 'cgi') !== false) || (strpos($sapi, 'fpm') !== false);
+						if ($fix !== false && (string) $fix === '0' && $noPathInfo && !$isFastCgi) {
+							$mode = 0;
+							$this->smarty->assign('prettyurls_mode_forced_auto', true);
+						}
+					}
 				}
+
 				plugin_addoption('prettyurls', 'mode', $mode);
-				plugin_saveoptions('prettyurls');
 				$this->smarty->assign('success', 2);
+				$bumpGen = true;
 			}
 
+			// .htaccess editor
 			if (isset($_POST ['htaccess-submit'])) {
 				if (!empty($_POST ['htaccess']) && io_write_file(ABS_PATH . '.htaccess', $_POST ['htaccess'])) {
 					$this->smarty->assign('success', 1);
+					// Only bump when write succeeded, because rewrite behavior may have changed
+					$bumpGen = true;
 				} else {
 					$this->smarty->assign('success', -1);
 				}
+			}
+
+			// Apply APCu generation bump once per request if something relevant changed
+			if ($bumpGen) {
+				$gen = (int) plugin_getoptions('prettyurls', 'apcu_gen');
+				plugin_addoption('prettyurls', 'apcu_gen', ($gen < 1) ? 1 : ($gen + 1));
+				plugin_saveoptions('prettyurls');
 			}
 
 			// Refill template after changes
