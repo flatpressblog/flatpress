@@ -72,6 +72,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - A green hook indicates the best automatically determined mode.
     - Modes that are not supported by the web server are grayed out.
     - If Pretty is saved in the configuration but is not supported, downgrade to one of the remaining modes.
+    - Pretty URLs for static pages and feed URLs.
+    - Mixed-mode URLs are redirected to the correct URL to improve search engine rankings.
 - Calendar plugin: update to version 1.2.1
     - Optional APCu support with file fallback added
 
