@@ -374,36 +374,33 @@ class Plugin_PrettyURLs {
 		$can_pretty = $this->server_rewrite_active();
 
 		// Path info:
-		$fix = @ini_get('cgi.fix_pathinfo');
 		$can_pathinfo = false;
-		if (!($fix !== false && (string)$fix === '0')) {
-			// Evaluate live environment
-			if (!empty($bak['PATH_INFO']) || !empty($bak ['ORIG_PATH_INFO'])) {
-				$can_pathinfo = true;
-			} else {
-				// Fallback: REQUEST_URI begins with base and has additional segments
-				$base = defined('BLOG_ROOT') ? BLOG_ROOT : '';
-				if (substr($base, -10) === '/index.php') {
-					// Safely remove '/index.php'
-					$base = substr($base, 0, -10);
+		// Evaluate live environment
+		if (!empty($bak ['PATH_INFO']) || !empty($bak ['ORIG_PATH_INFO'])) {
+			$can_pathinfo = true;
+		} else {
+			// Fallback: REQUEST_URI begins with base and has additional segments
+			$base = defined('BLOG_ROOT') ? BLOG_ROOT : '';
+			if (substr($base, -10) === '/index.php') {
+				// Safely remove '/index.php'
+				$base = substr($base, 0, -10);
+			}
+			$baseNorm = rtrim((string)$base, '/');
+
+			if (!empty($bak ['REQUEST_URI'])) {
+				$req = (string)$bak ['REQUEST_URI'];
+				// Remove query string
+				$qpos = strpos($req, '?');
+				if ($qpos !== false) {
+					$req = substr($req, 0, $qpos);
 				}
-				$baseNorm = rtrim((string)$base, '/');
+				$reqNorm = rtrim($req, '/');
 
-				if (!empty($bak ['REQUEST_URI'])) {
-					$req = (string)$bak ['REQUEST_URI'];
-					// Remove query string
-					$qpos = strpos($req, '?');
-					if ($qpos !== false) {
-						$req = substr($req, 0, $qpos);
-					}
-					$reqNorm = rtrim($req, '/');
-
-					if ($baseNorm === '' || strpos($reqNorm, $baseNorm) === 0) {
-						$suffix = substr($reqNorm, strlen($baseNorm));
-						// Additional segments present? (e.g., ‘/page’ or ‘/page/1’)
-						if ($suffix !== '' && $suffix [0] === '/' && strlen($suffix) > 1) {
-							$can_pathinfo = true;
-						}
+				if ($baseNorm === '' || strpos($reqNorm, $baseNorm) === 0) {
+					$suffix = substr($reqNorm, strlen($baseNorm));
+					// Additional segments present? (e.g., '/page' or '/page/1')
+					if ($suffix !== '' && $suffix[0] === '/' && strlen($suffix) > 1) {
+						$can_pathinfo = true;
 					}
 				}
 			}
@@ -418,7 +415,7 @@ class Plugin_PrettyURLs {
 			}
 		}
 
-		 return array(
+		return array(
 			'can_pretty' => (bool) $can_pretty,
 			'can_pathinfo' => (bool) $can_pathinfo,
 			'can_get' => true,
