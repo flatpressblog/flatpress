@@ -29,7 +29,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
         - Stylesheet is now also loaded by themes that do not have a design for the widget panel.
         - From left to right/ Available widgets to widget bar
         - Flex version with wrapper and responsive
-        - Drag & drop now also available for mobile devices 
+        - Drag & drop now also available for mobile devices
+    -  New APCu Control Panel with cache clearing function ([#701](https://github.com/flatpressblog/flatpress/pull/701))
 
 ### Security
 - Detection of an HTTP/HTTPS connection ``is_https()`` is significantly more reliable and less susceptible to spoofing. Improved detection for public proxies/CDNs, including Azure and Cloudflare. ([#672](https://github.com/flatpressblog/flatpress/pull/672))
