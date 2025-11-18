@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Restaurar as autorizações para operação produtiva',
 	'opt4' => 'Mostre as informações sobre o PHP',
 	'opt5' => 'Procure atualizações',
+	'opt6' => 'Status do cache APCu',
 
 	'chmod_info' => 'Se as permissões <strong>não puderem</strong> ser redefinidas, o proprietário do arquivo/ diretório provavelmente não é o mesmo que o proprietário do servidor Web.<br>' . //
 		'
@@ -62,5 +63,37 @@ $lang ['admin'] ['maintain'] ['updates'] ['msgs'] = array(
 	1 => 'Existem atualizações disponíveis!',
 	2 => 'O FlatPress já está atualizado.',
 	-1 => 'Não foi possível recuperar as atualizações.'
+);
+
+$lang ['admin'] ['maintain'] ['apcu'] = array(
+	'head' => 'Cache APCu',
+	'descr' => 'Visão geral do uso da memória compartilhada APCu e da eficiência do cache.',
+	'status_heading' => 'Status heurístico',
+	'status_good' => 'O cache parece ter o tamanho adequado para a carga de trabalho atual.',
+	'status_bad' => 'Alta taxa de erros ou memória livre muito baixa: o cache APCu pode estar muito pequeno ou muito fragmentado.',
+	'hit_rate' => 'Taxa de acertos',
+	'free_mem' => 'Memória livre',
+	'total_mem' => 'Memória compartilhada total',
+	'used_mem' => 'Memória usada',
+	'avail_mem' => 'Memória disponível',
+	'memory_type' => 'Tipo de memória',
+	'memory_type_unknown' => 'n/a',
+	'num_slots' => 'Número de slots',
+	'num_hits' => 'Número de acertos',
+	'num_misses' => 'Número de erros',
+	'cache_type' => 'Tipo de cache',
+	'cache_user_only' => 'Cache de dados do usuário',
+	'legend_good' => 'Verde: a configuração parece saudável (alta taxa de acertos, memória livre razoável).',
+	'legend_bad' => 'Vermelho: cache sob pressão (muitas falhas ou quase nenhuma memória livre).',
+	'no_apcu' => 'O APCu não parece estar habilitado neste servidor.',
+	'back' => '&laquo; Voltar à manutenção',
+	'clear_fp_button'=> 'Limpar entradas APCu do FlatPress',
+	'clear_fp_confirm' => 'Deseja mesmo excluir todas as entradas APCu? Isso limpará os caches APCu do FlatPress.',
+	'clear_fp_result'=> 'Excluídas %d entradas APCu.',
+	'msgs' => array(
+		1  => 'As entradas APCu do FlatPress foram limpas.',
+		2  => 'Nenhuma entrada APCu foi encontrada.',
+		-1 => 'O APCu não está disponível ou não pôde ser acessado; nada foi excluído.'
+	)
 );
 ?>

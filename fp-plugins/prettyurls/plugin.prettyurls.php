@@ -53,7 +53,9 @@ class Plugin_PrettyURLs {
 	var $fp_params;
 
 	function categories($force = true) {
-		if ($this->categories) {
+		// $force === true: rebuild from master data and update cache file
+		// $force === false: load from cache file if available
+		if ($this->categories && !$force) {
 			return;
 		}
 
@@ -66,7 +68,10 @@ class Plugin_PrettyURLs {
 			io_write_file(PRETTYURLS_CATS, serialize($list));
 		} else {
 			$f = io_load_file(PRETTYURLS_CATS);
-			$list = unserialize($f);
+			$list = $f !== false ? @unserialize($f) : array();
+			if (!is_array($list)) {
+				$list = array();
+			}
 		}
 		$this->categories = $list;
 	}
@@ -90,7 +95,7 @@ class Plugin_PrettyURLs {
 		// yeah, hackish, I know...
 
 		return isset($date ['y'], $date ['m'], $date ['d']) ? $this->baseurl . "20" . $date ['y'] . "/" . $date ['m'] . "/" . $date ['d'] . "/" . $title . "/" : $this->baseurl . $title . "/";
-		}
+	}
 
 	function commentlink($str, $id) {
 		$link = $this->permalink($str, $id);
@@ -405,7 +410,7 @@ class Plugin_PrettyURLs {
 		// Only use APCu via Core wrapper with FP namespace
 		if (function_exists('is_apcu_on') && is_apcu_on() && function_exists('apcu_get')) {
 			$ok = false;
-			$val = apcu_get($key, $ok);
+			$val = apcu_get('prettyurls:' . $key, $ok);
 			if ($ok) {
 				$reqCache [$key] = (int) $val;
 				return (int) $val;
@@ -415,7 +420,7 @@ class Plugin_PrettyURLs {
 		$reqCache [$key] = (int) $mode;
 		if (function_exists('is_apcu_on') && is_apcu_on() && function_exists('apcu_set')) {
 			// Keep TTL small; namespacing is done in core.fileio.php via apcu_key()
-			apcu_set($key, (int) $mode, 120);
+			apcu_set('prettyurls:' . $key, (int) $mode, 120);
 		}
 		return (int) $mode;
 	}
@@ -461,9 +466,21 @@ class Plugin_PrettyURLs {
 		return (int) $mode;
 	}
 
+	/**
+	 * Request-local memo for PrettyURLs mode
+	 */
+	private function get_mode() {
+		if ($this->mode !== null) {
+			return (int) $this->mode;
+		}
+		$opt = plugin_getoptions('prettyurls', 'mode');
+		$this->mode = (int) $opt;
+		return $this->mode;
+	}
+
 	function get_url() {
 		$baseurl = BLOG_BASEURL;
-		$opt = plugin_getoptions('prettyurls', 'mode');
+		$opt = $this->get_mode();
 		$reqUri = isset($_SERVER ['REQUEST_URI']) ? (string)$_SERVER ['REQUEST_URI'] : '';
 		$rootLen = strlen(BLOG_ROOT);
 		$url = ($rootLen > 0) ? substr($reqUri, $rootLen - 1) : $reqUri;
@@ -841,7 +858,7 @@ class Plugin_PrettyURLs {
 		// === Cross-mode canonicalization for common routes ===
 		// Routes: page/N, paged/N, category/NAME, tag/NAME, archive[s]/YYYY(/MM)?, static/SLUG, entry/SLUG
 		// Redirect only if there are no extra query params (besides 'u' in GET style).
-		$plugin_prettyurls = isset($GLOBALS['plugin_prettyurls']) ? $GLOBALS['plugin_prettyurls'] : null;
+		$plugin_prettyurls = isset($GLOBALS ['plugin_prettyurls']) ? $GLOBALS ['plugin_prettyurls'] : null;
 		if ($plugin_prettyurls && isset($plugin_prettyurls->mode)) {
 			$opt = (int)$plugin_prettyurls->mode;
 		}
@@ -866,28 +883,33 @@ class Plugin_PrettyURLs {
 				$pp = $pth;
 			}
 			$pp = preg_replace('!/{2,}!', '/', $pp);
-			$rx = array(
-				// Pagination
-				'!^/(?:page|paged)/([0-9]+)/?$!i',
-				// Post-specific comment feeds
-				'!^/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/comments/feed/(?:rss2|atom)/?$!i',
-				// Global feeds
-				'!^/feed/(?:rss2|atom)/?$!i',
-				// Date-based entry permalinks
-				'!^/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/?$!i',
-				// Bare date archives: /YYYY/ und /YYYY/MM/ and optional /YYYY/MM/DD/
-				'!^/[0-9]{4}(?:/[0-9]{1,2}(?:/[0-9]{1,2})?)?/?$!i',
-				// "archives"-Routes
-				'!^/(?:archive|archives)/([0-9]{4})(?:/([0-9]{1,2}))?/?$!i',
-				// Taxonomies
-				'!^/category/([^/]+)/?$!i',
-				'!^/tag/([^/]+)/?$!i',
-				// Static pages and entries
-				'!^/static/([^/]+)/?$!i',
-				'!^/entry/([^/]+)/?$!i',
-				// Single-segment static page slugs
-				'!^/([A-Za-z0-9_-]+)/?$!i',
-			);
+
+			static $rx = null;
+			if ($rx === null) {
+				$rx = array(
+					// Pagination
+					'!^/(?:page|paged)/([0-9]+)/?$!i',
+					// Post-specific comment feeds
+					'!^/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/comments/feed/(?:rss2|atom)/?$!i',
+					// Global feeds
+					'!^/feed/(?:rss2|atom)/?$!i',
+					// Date-based entry permalinks
+					'!^/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/?$!i',
+					// Bare date archives: /YYYY/ und /YYYY/MM/ and optional /YYYY/MM/DD/
+					'!^/[0-9]{4}(?:/[0-9]{1,2}(?:/[0-9]{1,2})?)?/?$!i',
+					// "archives"-Routes
+					'!^/(?:archive|archives)/([0-9]{4})(?:/([0-9]{1,2}))?/?$!i',
+					// Taxonomies
+					'!^/category/([^/]+)/?$!i',
+					'!^/tag/([^/]+)/?$!i',
+					// Static pages and entries
+					'!^/static/([^/]+)/?$!i',
+					'!^/entry/([^/]+)/?$!i',
+					// Single-segment static page slugs
+					'!^/([A-Za-z0-9_-]+)/?$!i',
+				);
+			}
+
 			foreach ($rx as $r) {
 				if (preg_match($r, $pp)) {
 					return rtrim($pp, '/') . '/';
@@ -897,7 +919,7 @@ class Plugin_PrettyURLs {
 		};
 
 		// Detect incoming style and suffix
-		if (isset($_GET['u']) && is_string($_GET['u'])) {
+		if (isset($_GET ['u']) && is_string($_GET ['u'])) {
 			$u = (string)$_GET ['u'];
 			$cand = $extract_suffix($u);
 			if ($cand !== '') {
@@ -980,12 +1002,14 @@ class Plugin_PrettyURLs {
 		// Resolve baseurl for current mode (Auto/Pretty/Path Info/HTTP Get)
 		global $plugin_prettyurls;
 		if (isset($plugin_prettyurls) && method_exists($plugin_prettyurls, 'get_url')) {
-			$plugin_prettyurls->get_url(); // sets $plugin_prettyurls->baseurl and ->mode
+			if (!isset($plugin_prettyurls->baseurl) || !isset($plugin_prettyurls->mode)) {
+				$plugin_prettyurls->get_url(); // sets $plugin_prettyurls->baseurl and ->mode
+			}
 		}
 		$base = isset($plugin_prettyurls->baseurl) ? $plugin_prettyurls->baseurl : BLOG_BASEURL;
 
 		// Never assume Pretty base when unresolved
-		if ((!isset($plugin_prettyurls->baseurl) || $plugin_prettyurls->baseurl === null) && plugin_getoptions('prettyurls', 'mode') == 0) {
+		if ((!isset($plugin_prettyurls->baseurl) || $plugin_prettyurls->baseurl === null) && $this->get_mode() == 0) {
 			$auto = method_exists($plugin_prettyurls,'auto_mode_detect_preview') ? (int)$plugin_prettyurls->auto_mode_detect_preview() : (int)$plugin_prettyurls->auto_mode_detect();
 			if ($auto === 1) {
 				$base = BLOG_BASEURL . 'index.php/'; // Path Info
@@ -1104,7 +1128,7 @@ class Plugin_PrettyURLs {
 
 global $plugin_prettyurls;
 $plugin_prettyurls = new Plugin_PrettyURLs();
-$plugin_prettyurls->categories();
+$plugin_prettyurls->categories(false);
 
 if (!defined('MOD_ADMIN_PANEL')) {
 

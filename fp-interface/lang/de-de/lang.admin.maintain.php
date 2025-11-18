@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Berechtigungen für den produktiven Betrieb wiederherstellen',
 	'opt4' => 'Zeige PHP-Informationen des Webservers',
 	'opt5' => 'Prüfe auf neue Versionen',
+	'opt6' => 'APCu-Cache-Status',
 
 	'chmod_info' => 'Wenn die Berechtigungen <strong>nicht</strong> zurückgesetzt werden konnten, ist wahrscheinlich der Eigentümer der Datei/ des Verzeichnisses nicht derselbe wie der des Webservers.<br>' . //
 		'
@@ -64,4 +65,35 @@ $lang ['admin'] ['maintain'] ['updates'] ['msgs'] = array(
 	-1 => 'Fehler: Es konnten keine Update-Informationen abgerufen werden'
 );
 
+$lang ['admin'] ['maintain'] ['apcu'] = array(
+	'head' => 'APCu-Cache',
+	'descr' => 'Übersicht über die Nutzung des APCu-Speichers und die Cache-Effizienz.',
+	'status_heading' => 'Heuristische Bewertung',
+	'status_good' => 'Der Cache scheint für die aktuelle Auslastung gut dimensioniert zu sein.',
+	'status_bad' => 'Hohe Miss-Rate oder sehr wenig freier Speicher: Der APCu-Cache ist möglicherweise zu klein oder stark fragmentiert.',
+	'hit_rate' => 'Trefferquote',
+	'free_mem' => 'Freier Speicher',
+	'total_mem' => 'Gesamter Shared-Memory',
+	'used_mem' => 'Belegter Speicher',
+	'avail_mem' => 'Verfügbarer Speicher',
+	'memory_type' => 'Speichertyp',
+	'memory_type_unknown' => 'k. A.',
+	'num_slots' => 'Anzahl Slots',
+	'num_hits' => 'Anzahl Treffer',
+	'num_misses' => 'Anzahl Fehlzugriffe',
+	'cache_type' => 'Cache-Typ',
+	'cache_user_only' => 'User-Cache.',
+	'legend_good' => 'Grün: Konfiguration wirkt gesund (hohe Trefferquote, ausreichend freier Speicher).',
+	'legend_bad' => 'Rot: Cache steht unter Druck (viele Fehlzugriffe oder kaum freier Speicher).',
+	'no_apcu' => 'APCu scheint auf diesem Server nicht aktiviert zu sein.',
+	'back' => '&laquo; Zurück zur Wartung',
+	'clear_fp_button'=> 'FlatPress-APCu-Einträge löschen',
+	'clear_fp_confirm' => 'Möchtest du wirklich alle APCu-Einträge löschen? Dadurch werden die APCu-Caches von FlatPress geleert.',
+	'clear_fp_result'=> '%d APCu-Einträge wurden gelöscht.',
+	'msgs' => array(
+		1  => 'Die APCu-Einträge von FlatPress wurden gelöscht.',
+		2  => 'Es wurden keine APCu-Einträge gefunden.',
+		-1 => 'APCu ist nicht verfügbar oder konnte nicht angesprochen werden; es wurde nichts gelöscht.'
+	)
+);
 ?>

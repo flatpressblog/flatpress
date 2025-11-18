@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Genopret tilladelser til produktiv drift',
 	'opt4' => 'Vis PHP-information om webserveren',
 	'opt5' => 'Tjek for nye versioner',
+	'opt6' => 'APCu-cache-status',
 
 	'chmod_info' => 'Hvis tilladelserne <strong>ikke</strong> kunne nulstilles, er ejeren af filen/ mappen sandsynligvis ikke den samme som ejeren af webserveren.<br>' . //
 		'
@@ -62,5 +63,37 @@ $lang ['admin'] ['maintain'] ['updates'] ['msgs'] = array(
 	1 => 'Opdateringer er tilgængelige!',
 	2 => 'Du bruger allerede den aktuelle version',
 	-1 => 'Fejl: Der kunne ikke hentes opdateringsoplysninger'
+);
+
+$lang ['admin'] ['maintain'] ['apcu'] = array(
+	'head' => 'APCu cache',
+	'descr' => 'Oversigt over APCu-delt hukommelsesforbrug og cache-effektivitet.',
+	'status_heading' => 'Heuristisk status',
+	'status_good' => 'Cachen synes at have en passende størrelse til den aktuelle arbejdsbyrde.',
+	'status_bad' => 'Høj fejlrate eller meget lav ledig hukommelse: APCu-cachen er muligvis for lille eller meget fragmenteret.',
+	'hit_rate' => 'Hitrate',
+	'free_mem' => 'Ledig hukommelse',
+	'total_mem' => 'Samlet delt hukommelse',
+	'used_mem' => 'Brugt hukommelse',
+	'avail_mem' => 'Tilgængelig hukommelse',
+	'memory_type' => 'Hukommelsestype',
+	'memory_type_unknown' => 'n/a',
+	'num_slots' => 'Antal slots',
+	'num_hits' => 'Antal hits',
+	'num_misses' => 'Antal fejl',
+	'cache_type' => 'Cache-type',
+	'cache_user_only' => 'Brugerdatacache',
+	'legend_good' => 'Grøn: konfigurationen ser sund ud (høj hitrate, rimelig ledig hukommelse).',
+	'legend_bad' => 'Rød: cache under pres (mange fejl eller næsten ingen ledig hukommelse).',
+	'no_apcu' => 'APCu ser ikke ud til at være aktiveret på denne server.',
+	'back' => '&laquo; Tilbage til vedligeholdelse',
+	'clear_fp_button'=> 'Ryd FlatPress APCu-poster',
+	'clear_fp_confirm' => 'Vil du virkelig slette alle APCu-poster? Dette vil rydde FlatPress\' APCu-cacher.',
+	'clear_fp_result'=> 'Slet %d APCu-poster.',
+	'msgs' => array(
+		1  => 'FlatPress APCu-poster er blevet ryddet.',
+		2  => 'Der blev ikke fundet nogen APCu-poster.',
+		-1 => 'APCu er ikke tilgængelig eller kunne ikke tilgås; intet blev slettet.'
+	)
 );
 ?>
