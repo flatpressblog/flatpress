@@ -279,60 +279,6 @@ class Plugin_PrettyURLs {
 		if (!empty($_SERVER ['PATH_INFO']) || !empty($_SERVER ['ORIG_PATH_INFO'])) {
 			return true;
 		}
-
-		// Heuristics about the requested URL
-		$uri = null;
-		if (!empty($_SERVER ['REQUEST_URI'])) {
-			$uri = (string)$_SERVER ['REQUEST_URI'];
-		} elseif (!empty($_SERVER ['HTTP_X_REWRITE_URL'])) {
-			$uri = (string)$_SERVER ['HTTP_X_REWRITE_URL'];
-		} elseif (!empty($_SERVER ['REDIRECT_URL'])) {
-			$uri = (string)$_SERVER ['REDIRECT_URL'];
-		}
-
-		if ($uri === null) {
-			return false;
-		}
-
-		// Remove query string
-		$qpos = strpos($uri, '?');
-		if ($qpos !== false) {
-			$uri = substr($uri, 0, $qpos);
-		}
-		$uriNorm = rtrim($uri, '/');
-
-		// Determine base (BLOG_ROOT without /index.php)
-		$base = defined('BLOG_ROOT') ? (string)BLOG_ROOT : '';
-		if (substr($base, -10) === '/index.php') {
-			$base = substr($base, 0, -10); // sicheres Entfernen von '/index.php'
-		}
-		$baseNorm = rtrim($base, '/');
-
-		// If BLOG_ROOT is not set, fall back to SCRIPT_NAME directory
-		if ($baseNorm === '' && !empty($_SERVER ['SCRIPT_NAME'])) {
-			$sn = (string)$_SERVER ['SCRIPT_NAME'];
-			// Remove ‘/index.php’ if present, otherwise directory
-			if (substr($sn, -10) === '/index.php') {
-				$baseNorm = rtrim(substr($sn, 0, -10), '/');
-			} else {
-				$baseNorm = rtrim((string)dirname($sn), '/\\');
-				// Avoid backslashes in URLs
-				$baseNorm = str_replace('\\', '/', $baseNorm);
-				if ($baseNorm === '.') {
-					$baseNorm = '';
-				}
-			}
-		}
-
-		// Check whether real segments follow after the base (e.g., ‘/page/1’).
-		if ($baseNorm === '' || strpos($uriNorm, $baseNorm) === 0) {
-			$suffix = substr($uriNorm, strlen($baseNorm));
-			// Suffix begins with ‘/’ and contains more than just the slash
-			if ($suffix !== '' && $suffix [0] === '/' && strlen($suffix) > 1) {
-				return true;
-			}
-		}
-
 		// Without explicit PATH_INFO and with cgi.fix_pathinfo=0: not available
 		$fix = @ini_get('cgi.fix_pathinfo');
 		if ($fix !== false && (string) $fix === '0') {
@@ -342,6 +288,7 @@ class Plugin_PrettyURLs {
 	}
 
 	/**
+	 * Locks or unlocks the radios
 	 * Preview of server capabilities outside the admin area.
 	 * Delivers: can_pretty (Rewrite), can_pathinfo, can_get.
 	 */
@@ -370,37 +317,39 @@ class Plugin_PrettyURLs {
 		$_SERVER ['PHP_SELF'] = $_SERVER ['SCRIPT_NAME'];
 		$_SERVER ['QUERY_STRING'] = '';
 		unset($_SERVER ['IIS_WasUrlRewritten'], $_SERVER ['HTTP_X_REWRITE_URL'], $_SERVER ['REDIRECT_URL']);
-		//$can_pretty = $hasHt && $this->server_rewrite_active();
 		$can_pretty = $this->server_rewrite_active();
 
 		// Path info:
+		$fix = @ini_get('cgi.fix_pathinfo');
 		$can_pathinfo = false;
-		// Evaluate live environment
-		if (!empty($bak ['PATH_INFO']) || !empty($bak ['ORIG_PATH_INFO'])) {
-			$can_pathinfo = true;
-		} else {
-			// Fallback: REQUEST_URI begins with base and has additional segments
-			$base = defined('BLOG_ROOT') ? BLOG_ROOT : '';
-			if (substr($base, -10) === '/index.php') {
-				// Safely remove '/index.php'
-				$base = substr($base, 0, -10);
-			}
-			$baseNorm = rtrim((string)$base, '/');
-
-			if (!empty($bak ['REQUEST_URI'])) {
-				$req = (string)$bak ['REQUEST_URI'];
-				// Remove query string
-				$qpos = strpos($req, '?');
-				if ($qpos !== false) {
-					$req = substr($req, 0, $qpos);
+		if (!($fix !== false && (string)$fix === '0')) {
+			// Evaluate live environment
+			if (!empty($bak ['PATH_INFO']) || !empty($bak ['ORIG_PATH_INFO'])) {
+				$can_pathinfo = true;
+			} else {
+				// Fallback: REQUEST_URI begins with base and has additional segments
+				$base = defined('BLOG_ROOT') ? BLOG_ROOT : '';
+				if (substr($base, -10) === '/index.php') {
+					// Safely remove '/index.php'
+					$base = substr($base, 0, -10);
 				}
-				$reqNorm = rtrim($req, '/');
+				$baseNorm = rtrim((string)$base, '/');
 
-				if ($baseNorm === '' || strpos($reqNorm, $baseNorm) === 0) {
-					$suffix = substr($reqNorm, strlen($baseNorm));
-					// Additional segments present? (e.g., '/page' or '/page/1')
-					if ($suffix !== '' && $suffix[0] === '/' && strlen($suffix) > 1) {
-						$can_pathinfo = true;
+				if (!empty($bak ['REQUEST_URI'])) {
+					$req = (string)$bak ['REQUEST_URI'];
+					// Remove query string
+					$qpos = strpos($req, '?');
+					if ($qpos !== false) {
+						$req = substr($req, 0, $qpos);
+					}
+					$reqNorm = rtrim($req, '/');
+
+					if ($baseNorm === '' || strpos($reqNorm, $baseNorm) === 0) {
+						$suffix = substr($reqNorm, strlen($baseNorm));
+						// Additional segments present? (e.g., ‘/page’ or ‘/page/1’)
+						if ($suffix !== '' && $suffix [0] === '/' && strlen($suffix) > 1) {
+							$can_pathinfo = true;
+						}
 					}
 				}
 			}
@@ -466,7 +415,7 @@ class Plugin_PrettyURLs {
 		$reqCache [$key] = (int) $mode;
 		if (function_exists('is_apcu_on') && is_apcu_on() && function_exists('apcu_set')) {
 			// Keep TTL small; namespacing is done in core.fileio.php via apcu_key()
-			apcu_set($key, (int) $mode, 300);
+			apcu_set($key, (int) $mode, 120);
 		}
 		return (int) $mode;
 	}
@@ -530,10 +479,16 @@ class Plugin_PrettyURLs {
 		$htPath = rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess';
 		$hasHt = is_file($htPath);
 
+		/**
+		 * Initially, neither PATH_INFO nor Pretty is set in Automatic mode,
+		 * because although we check whether the web server is capable,
+		 * we cannot reliably check whether all conditions are actually met.
+		 */
+
 		// If not configured or automatic, check htaccess
 		if ($opt === null || $opt === 0) {
-			// If htaccess exists, then Pretty (3), otherwise Path info (1)
-			$opt = $hasHt ? 3 : 1;
+			// If htaccess exists, then Pretty (3), otherwise HTTP Get (2)
+			$opt = $hasHt ? 3 : 2;
 		}
 
 		// Resolve effective mode once, then apply mapping
@@ -548,7 +503,7 @@ class Plugin_PrettyURLs {
 					$url = "/";
 				} else {
 					// Path Info
-					$url = $pathinfo;
+					$url = $pathinfo !== '' ? $pathinfo : '/';
 				}
 				break;
 			case 2:
@@ -869,14 +824,15 @@ class Plugin_PrettyURLs {
 	 *
 	 * Supported routes (suffix patterns)
 	 * ----------------------------------
-	 * - Pagination:               /page/{n}/, /paged/{n}/
-	 * - Category & Tag:           /category/{name}/, /tag/{name}/
-	 * - Archives:                 /archives/{YYYY}/, /archives/{YYYY}/{MM}/, /archive/{YYYY}/, /archive/{YYYY}/{MM}/
-	 * - Bare date archives:       /{YYYY}/, /{YYYY}/{MM}/, optional /{YYYY}/{MM}/{DD}/
-	 * - Dated permalinks:         /{YYYY}/{MM}/{DD}/{slug}/
-	 * - Global feeds:             /feed/(rss2|atom)/
-	 * - Entry comments feeds:     /{YYYY}/{MM}/{DD}/{slug}/comments/feed/(rss2|atom)/
-	 * - Static pages and entries: /static/{slug}/, /entry/{slug}/
+	 * - Pagination:                /page/{n}/, /paged/{n}/
+	 * - Category & Tag:            /category/{name}/, /tag/{name}/
+	 * - Archives:                  /archives/{YYYY}/, /archives/{YYYY}/{MM}/, /archive/{YYYY}/, /archive/{YYYY}/{MM}/
+	 * - Bare date archives:        /{YYYY}/, /{YYYY}/{MM}/, optional /{YYYY}/{MM}/{DD}/
+	 * - Dated permalinks:          /{YYYY}/{MM}/{DD}/{slug}/
+	 * - Global feeds:              /feed/(rss2|atom)/
+	 * - Entry comments feeds:      /{YYYY}/{MM}/{DD}/{slug}/comments/feed/(rss2|atom)/
+	 * - Static pages and entries:  /static/{slug}/, /entry/{slug}/
+	 * - Single-segment static page /{slug}/
 	 */
 	function prettyurls_redirect_canonical() {
 		if (!defined('MOD_INDEX')) {
@@ -929,6 +885,8 @@ class Plugin_PrettyURLs {
 				// Static pages and entries
 				'!^/static/([^/]+)/?$!i',
 				'!^/entry/([^/]+)/?$!i',
+				// Single-segment static page slugs
+				'!^/([A-Za-z0-9_-]+)/?$!i',
 			);
 			foreach ($rx as $r) {
 				if (preg_match($r, $pp)) {
