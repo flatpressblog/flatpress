@@ -410,7 +410,7 @@ class Plugin_PrettyURLs {
 		// Only use APCu via Core wrapper with FP namespace
 		if (function_exists('is_apcu_on') && is_apcu_on() && function_exists('apcu_get')) {
 			$ok = false;
-			$val = apcu_get(apcu_key('prettyurls', $key), $ok);
+			$val = apcu_get('prettyurls:' . $key, $ok);
 			if ($ok) {
 				$reqCache [$key] = (int) $val;
 				return (int) $val;
@@ -420,7 +420,7 @@ class Plugin_PrettyURLs {
 		$reqCache [$key] = (int) $mode;
 		if (function_exists('is_apcu_on') && is_apcu_on() && function_exists('apcu_set')) {
 			// Keep TTL small; namespacing is done in core.fileio.php via apcu_key()
-			apcu_set(apcu_key('prettyurls', $key), (int) $mode, 120);
+			apcu_set('prettyurls:' . $key, (int) $mode, 120);
 		}
 		return (int) $mode;
 	}
