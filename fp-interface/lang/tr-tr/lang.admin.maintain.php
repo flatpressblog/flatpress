@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Verimli çalışma için yetkilendirmeleri geri yükle',
 	'opt4' => 'PHP hakkında bilgi göster',
 	'opt5' => 'Güncellemeleri kontrol et',
+	'opt6' => 'APCu önbellek durumu',
 
 	'chmod_info' => 'Eğer izinler <strong>geri yüklenemediyse</strong>, dosya/dizin sahipliği büyük ihtimalle web sunucusunun sahipliği ile farklıdır.<br>' . //
 		'
@@ -62,5 +63,37 @@ $lang ['admin'] ['maintain'] ['updates'] ['msgs'] = array(
 	1 => 'Güncellemeler mevcut!',
 	2 => 'Zaten en son sürüme sahipsiniz',
 	-1 => 'Güncellemeleri alırken hata oluştu'
+);
+
+$lang ['admin'] ['maintain'] ['apcu'] = array(
+	'head' => 'APCu önbellek',
+	'descr' => 'APCu paylaşılan bellek kullanımı ve önbellek verimliliğine genel bakış.',
+	'status_heading' => 'Sezgisel durum',
+	'status_good' => 'Önbellek, mevcut iş yükü için uygun boyutta görünüyor.',
+	'status_bad' => 'Yüksek kaçırma oranı veya çok düşük boş bellek: APCu önbelleği çok küçük veya aşırı parçalanmış olabilir.',
+	'hit_rate' => 'Isabet oranı',
+	'free_mem' => 'Boş bellek',
+	'total_mem' => 'Toplam paylaşılan bellek',
+	'used_mem' => 'Kullanılan bellek',
+	'avail_mem' => 'Kullanılabilir bellek',
+	'memory_type' => 'Bellek türü',
+	'memory_type_unknown' => 'n/a',
+	'num_slots' => 'Yuva sayısı',
+	'num_hits' => 'Isabet sayısı',
+	'num_misses' => 'Kaçırma sayısı',
+	'cache_type' => 'Önbellek türü',
+	'cache_user_only' => 'Kullanıcı veri önbelleği',
+	'legend_good' => 'Yeşil: yapılandırma sağlıklı görünüyor (yüksek isabet oranı, makul boş bellek).',
+	'legend_bad' => 'Kırmızı: önbellek baskı altında (çok sayıda ıskalama veya neredeyse hiç boş bellek yok).',
+	'no_apcu' => 'APCu bu sunucuda etkinleştirilmiş görünmüyor.',
+	'back' => '&laquo; Bakım sayfasına geri dön',
+	'clear_fp_button'=> 'FlatPress APCu girişlerini temizle',
+	'clear_fp_confirm' => 'Tüm APCu girişlerini gerçekten silmek istiyor musunuz? Bu, FlatPress\'in APCu önbelleklerini temizleyecektir.',
+	'clear_fp_result'=> '%d APCu girişi silindi.',
+	'msgs' => array(
+		1  => 'FlatPress APCu girişleri silindi.',
+		2  => 'APCu girişi bulunamadı.',
+		-1 => 'APCu kullanılamıyor veya erişilemiyor; hiçbir şey silinmedi.'
+	)
 );
 ?>

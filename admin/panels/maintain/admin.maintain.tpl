@@ -25,6 +25,9 @@
 	<li><a href="{$action_url|cmd_link:do:purgetplcache}">{$panelstrings.opt2}</a></li>
 	<li><a href="{$action_url|cmd_link:do:restorechmods}">{$panelstrings.opt3}</a></li>
 	<li><a href="{$action_url|cmd_link:do:phpinfo}">{$panelstrings.opt4}</a></li>
+	{if $apcu_available}
+		<li><a href="{$panel_url|action_link:apcu}">{$panelstrings.opt6}</a></li>
+	{/if}
 	<li><a href="{$panel_url|action_link:updates}">{$panelstrings.opt5}</a></li>
 	</ul>
 {/if}

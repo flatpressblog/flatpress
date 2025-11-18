@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Ripristino delle autorizzazioni per il funzionamento produttivo',
 	'opt4' => 'Visualizza informazioni su PHP',
 	'opt5' => 'Controllo aggiornamenti',
+	'opt6' => 'Stato della cache APCu',
 
 	'chmod_info' => 'Se non è stato possibile ripristinare i permessi, probabilmente il proprietario del file/della directory non è lo stesso del server web.<br>' . //
 		'
@@ -62,5 +63,37 @@ $lang ['admin'] ['maintain'] ['updates'] ['msgs'] = array(
 	1 => 'Sono disponibili degli aggionamenti!',
 	2 => 'È tutto aggiornato all\'ultima versione',
 	-1 => 'Impossibile controllare gli aggiornamenti'
+);
+
+$lang ['admin'] ['maintain'] ['apcu'] = array(
+	'head' => 'Cache APCu',
+	'descr' => 'Panoramica sull\'utilizzo della memoria condivisa APCu e sull\'efficienza della cache.',
+	'status_heading' => 'Stato euristico',
+	'status_good' => 'La cache sembra avere dimensioni adeguate al carico di lavoro attuale.',
+	'status_bad' => 'Alto tasso di errori o memoria libera molto bassa: la cache APCu potrebbe essere troppo piccola o fortemente frammentata.',
+	'hit_rate' => 'Tasso di successo',
+	'free_mem' => 'Memoria libera',
+	'total_mem' => 'Memoria condivisa totale',
+	'used_mem' => 'Memoria utilizzata',
+	'avail_mem' => 'Memoria disponibile',
+	'memory_type' => 'Tipo di memoria',
+	'memory_type_unknown' => 'n/a',
+	'num_slots' => 'Numero di slot',
+	'num_hits' => 'Numero di successi',
+	'num_misses' => 'Numero di errori',
+	'cache_type' => 'Tipo di cache',
+	'cache_user_only' => 'Cache dei dati utente',
+	'legend_good' => 'Verde: la configurazione sembra corretta (alto tasso di successo, memoria libera ragionevole).',
+	'legend_bad' => 'Rosso: cache sotto pressione (molti errori o memoria libera quasi esaurita).',
+	'no_apcu' => 'APCu non sembra essere abilitato su questo server.',
+	'back' => '&laquo; Torna alla manutenzione',
+	'clear_fp_button'=> 'Cancella voci APCu FlatPress',
+	'clear_fp_confirm' => 'Vuoi davvero eliminare tutte le voci APCu? Questa operazione cancellerà le cache APCu di FlatPress.',
+	'clear_fp_result'=> 'Eliminate %d voci APCu.',
+	'msgs' => array(
+		1  => 'Le voci APCu di FlatPress sono state cancellate.',
+		2  => 'Non sono state trovate voci APCu.',
+		-1 => 'APCu non è disponibile o non è stato possibile accedervi; non è stato eliminato nulla.'
+	)
 );
 ?>
