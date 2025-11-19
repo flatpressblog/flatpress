@@ -72,9 +72,223 @@ class admin_maintain extends AdminPanel {
 
 	var $actions = array(
 		'default' => false,
-		'updates' => false
+		'updates' => false,
+		'apcu' => false
 	);
 
+	function __construct(&$smarty) {
+		parent::__construct($smarty);
+
+		// Expose APCu availability flag to templates of this panel
+		if (function_exists('is_apcu_on') && is_apcu_on()) {
+			$this->smarty->assign('apcu_available', true);
+		} else {
+			$this->smarty->assign('apcu_available', false);
+		}
+	}
+
+}
+
+class admin_maintain_apcu extends AdminPanelAction {
+
+	// POST event triggered by the button
+	var $events = array(
+		'apcu_clear_fp'
+	);
+
+	function onapcu_clear_fp($data = null) {
+		$cleared = 0;
+		$available = function_exists('is_apcu_on') && is_apcu_on();
+		$canManage = $available && function_exists('apcu_cache_info') && function_exists('apcu_delete');
+
+		if ($canManage) {
+			// Preferred: Use APCUIterator if available
+			if (class_exists('APCUIterator')) {
+				$it = @new APCUIterator('/^fp:/', APC_ITER_KEY);
+				if ($it !== false) {
+					foreach ($it as $entry) {
+						if (!is_array($entry)) {
+							continue;
+						}
+						// APCUIterator returns the name of the entry, usually in ‘key’.
+						$key = '';
+						if (isset($entry ['key'])) {
+							$key = (string) $entry ['key'];
+						} elseif (isset($entry ['info'])) {
+							$key = (string) $entry ['info'];
+						}
+
+						if ($key === '' || strpos($key, 'fp:') !== 0) {
+							continue;
+						}
+
+						if (@apcu_delete($key)) {
+							$cleared++;
+						}
+					}
+				}
+			} else {
+				// Fallback: go through cache_list
+				$cache = @apcu_cache_info(false); // user cache only
+				if (!empty($cache ['cache_list']) && is_array($cache ['cache_list'])) {
+					foreach ($cache ['cache_list'] as $entry) {
+						if (!is_array($entry)) {
+							continue;
+						}
+
+						// Usual structure: 'info' contains the variable name,
+						// Some builds use 'key' – we take both into account.
+						$key = '';
+						if (isset($entry ['info'])) {
+							$key = (string) $entry ['info'];
+						} elseif (isset($entry ['key'])) {
+							$key = (string) $entry ['key'];
+						}
+
+						if ($key === '' || strpos($key, 'fp:') !== 0) {
+							continue;
+						}
+
+						if (@apcu_delete($key)) {
+							$cleared++;
+						}
+					}
+				}
+			}
+		}
+
+		// Store the result in the session so that it can be displayed after the redirect.
+		sess_add('apcu_clear_result', array('done' => true, 'cleared' => $cleared));
+
+		// Status code for shared:errorlist.tpl:
+		//  1  = successfully deleted (at least one entry)
+		//  2  = no entry found with "fp:"
+		// -1 = APCu not available / error
+		if (!$canManage) {
+			$status = -1;
+		} elseif ($cleared > 0) {
+			$status = 1;
+		} else {
+			$status = 2;
+		}
+
+		$this->smarty->assign('success', $status);
+
+		// Redirect to the current action (apcu) so that POST is gone
+		return PANEL_REDIRECT_CURRENT;
+	}
+
+	function main() {
+		$available = function_exists('is_apcu_on') && is_apcu_on();
+
+		// Flag for the template
+		$this->smarty->assign('apcu_available', $available);
+
+		// Read out the result of any previous deletion process
+		$clear_result = sess_remove('apcu_clear_result');
+		if (is_array($clear_result)) {
+			$this->smarty->assign('apcu_clear_result', $clear_result);
+		}
+
+		if (!$available || !function_exists('apcu_cache_info') || !function_exists('apcu_sma_info')) {
+			$this->smarty->assign('apcu_status', -1);
+			$this->smarty->assign('apcu', array());
+			return;
+		}
+
+		$sma = @apcu_sma_info();
+		$cache = @apcu_cache_info(false); // User-Cache
+
+		$shm_size_ini = @ini_get('apc.shm_size');
+
+		$num_seg = isset($sma ['num_seg']) ? (int) $sma ['num_seg'] : 0;
+		$seg_size = isset($sma ['seg_size']) ? (int) $sma ['seg_size'] : 0;
+		$avail_mem = isset($sma ['avail_mem']) ? (float) $sma ['avail_mem'] : 0.0;
+		$memory_type = isset($sma ['memory_type']) ? trim((string) $sma ['memory_type']) : '';
+
+		$total_mem = ($num_seg > 0 && $seg_size > 0) ? (float) $num_seg * $seg_size : 0.0;
+		$used_mem = ($total_mem > 0) ? max(0.0, $total_mem - $avail_mem) : 0.0;
+
+		$num_slots = isset($cache ['num_slots']) ? (int) $cache ['num_slots'] : 0;
+		$num_hits = isset($cache ['num_hits']) ? (int) $cache ['num_hits'] : 0;
+		$num_misses = isset($cache ['num_misses']) ? (int) $cache ['num_misses'] : 0;
+
+		$hit_rate = 0.0;
+		$hit_rate_valid = false;
+		if (($num_hits + $num_misses) > 0) {
+			$hit_rate = $num_hits / ($num_hits + $num_misses);
+			$hit_rate_valid = true;
+		}
+
+		$free_pct = null;
+		$used_pct = null;
+		if ($total_mem > 0) {
+			$free_pct = ($avail_mem / $total_mem) * 100.0;
+			$used_pct = ($used_mem / $total_mem) * 100.0;
+		}
+
+		// Human-readable sizes
+		$fmtBytes = function ($bytes) {
+			$bytes = (float) $bytes;
+			if ($bytes <= 0) {
+				return '0 B';
+			}
+			$units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
+			$i = 0;
+			while ($bytes >= 1024 && $i < count($units) - 1) {
+				$bytes /= 1024;
+				$i++;
+			}
+			return sprintf('%.1f %s', $bytes, $units [$i]);
+		};
+
+		// Heuristics: good if hit rate >= 85% and some free memory available
+		$status = 'good';
+		$status_code = 1;
+		if (!$hit_rate_valid || $hit_rate < 0.85 || ($free_pct !== null && $free_pct < 5.0)) {
+			$status = 'bad';
+			$status_code = -1;
+		}
+
+		$hit_rate_percent = $hit_rate_valid ? $hit_rate * 100.0 : null;
+
+		$apcu = array(
+			'shm_size_ini' => (string) $shm_size_ini,
+			'memory_type' => $memory_type,
+			'num_seg' => $num_seg,
+			'seg_size' => $seg_size,
+			'total_mem' => $total_mem,
+			'avail_mem' => $avail_mem,
+			'used_mem' => $used_mem,
+			'num_slots' => $num_slots,
+			'num_hits' => $num_hits,
+			'num_misses' => $num_misses,
+			'hit_rate' => $hit_rate_percent,
+			'free_pct' => $free_pct,
+			'used_pct' => $used_pct,
+			'status' => $status,
+			'total_mem_str' => $total_mem > 0 ? $fmtBytes($total_mem) : '',
+			'used_mem_str' => $used_mem > 0 ? $fmtBytes($used_mem) : '',
+			'avail_mem_str' => $avail_mem > 0 ? $fmtBytes($avail_mem) : '',
+		);
+
+		if ($apcu ['hit_rate'] !== null) {
+			$apcu ['hit_rate_str'] = sprintf('%.1f', $apcu ['hit_rate']);
+		} else {
+			$apcu ['hit_rate_str'] = '';
+		}
+
+		if ($free_pct !== null) {
+			$apcu ['free_pct_str'] = sprintf('%.1f', $free_pct);
+			$apcu ['used_pct_str'] = sprintf('%.1f', $used_pct);
+		} else {
+			$apcu ['free_pct_str'] = '';
+			$apcu ['used_pct_str'] = '';
+		}
+
+		$this->smarty->assign('apcu_status', $status_code);
+		$this->smarty->assign('apcu', $apcu);
+	}
 }
 
 class admin_maintain_updates extends AdminPanelAction {

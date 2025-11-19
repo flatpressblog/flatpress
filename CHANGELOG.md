@@ -7,7 +7,7 @@ On a Paspberry Pi 4b 4GB with APCu support, the content capacity can now be up t
 
 Additional frontend payloads per page view, such as HTML, CSS, jQuery, and other JS, were not evaluated. Variation arises from theme, plugins, image content, and server I/O characteristics.
 
-For optimal performance, an initial APCu size of 32 MB is recommended (``apc.shm_size=32M``). Minimum requirement ~1–2 MB. From 9000 entries plus 10 comments per entry, 64MB is recommended.
+For optimal performance, an initial APCu size of 32 MB is recommended (``apc.shm_size=32M``). Minimum requirement ~1–2 MB. From 9000 entries plus 10 comments per entry, 64MB is recommended. The APCu cache usage can be viewed in the admin area -> Maintenance -> submenu "APCu cache status" and cleared if necessary.
 
 ## Changed requirements
 - FlatPress 1.5 runs under PHP up to **8.4**; minimum required PHP version increases to **7.2**.
@@ -15,26 +15,29 @@ For optimal performance, an initial APCu size of 32 MB is recommended (``apc.shm
 ## General
 ### Changes
 - General
-  - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667), [#673](https://github.com/flatpressblog/flatpress/pull/673), [#675](https://github.com/flatpressblog/flatpress/pull/675), [#679](https://github.com/flatpressblog/flatpress/pull/679), [#687](https://github.com/flatpressblog/flatpress/pull/687), [#690](https://github.com/flatpressblog/flatpress/pull/690))
-  - Correct output when a historical character set encoding is set. ([#670](https://github.com/flatpressblog/flatpress/pull/670))
+  - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667), [#673](https://github.com/flatpressblog/flatpress/pull/673), [#675](https://github.com/flatpressblog/flatpress/pull/675), [#679](https://github.com/flatpressblog/flatpress/pull/679), [#687](https://github.com/flatpressblog/flatpress/pull/687), [#690](https://github.com/flatpressblog/flatpress/pull/690), [#701](https://github.com/flatpressblog/flatpress/pull/701))
+
 - Template engine:
   - Smarty updated to version 5.6.0 with PHP 8.4 support ([#651](https://github.com/flatpressblog/flatpress/pull/651))<br><sub><i>
 Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte extension](https://www.php.net/manual/en/book.mbstring.php) in production for optimal performance.</i></sub>
   - No code changes required with new, stable Smarty version.
   - FlatPress automatically loads the latest PSR-4 stub.
-- The new Smarty Modifier ``|ver``  uses a new core function, utils_asset_ver(), to assign the FlatPress version to Java scripts and stylesheets. This ensures that the visitor's browser only uses the updated files. ([#629](https://github.com/flatpressblog/flatpress/issues/629))
+- The new Smarty Modifier ``|ver``  uses a new core function, ``utils_asset_ver()``, to assign the FlatPress version to Java scripts and stylesheets. This ensures that the visitor's browser only uses the updated files. ([#629](https://github.com/flatpressblog/flatpress/issues/629))
 - Admin area:
+    - The inactivity timeout can be changed using the Flatpress protect plugin. Default = 1 hour ([#693](https://github.com/flatpressblog/flatpress/issues/693))
     - Uploader revised to multi-file uploader  ([#656](https://github.com/flatpressblog/flatpress/pull/656), [#46](https://github.com/flatpressblog/flatpress/issues/46))
     - Widget-panel revisited  ([#659](https://github.com/flatpressblog/flatpress/pull/659))
         - Stylesheet is now also loaded by themes that do not have a design for the widget panel.
         - From left to right/ Available widgets to widget bar
         - Flex version with wrapper and responsive
-        - Drag & drop now also available for mobile devices 
+        - Drag & drop now also available for mobile devices
+    -  New APCu Control Panel with cache clearing function ([#701](https://github.com/flatpressblog/flatpress/pull/701))
 
 ### Security
 - Detection of an HTTP/HTTPS connection ``is_https()`` is significantly more reliable and less susceptible to spoofing. Improved detection for public proxies/CDNs, including Azure and Cloudflare. ([#672](https://github.com/flatpressblog/flatpress/pull/672))
 
 ### Bugfixes
+- Correct output when a historical character set encoding is set. ([#670](https://github.com/flatpressblog/flatpress/pull/670))
 - If ``$_SERVER [‘HTTPS’] = off`` is set in the web server, an HTTP connection is now correctly recognized. ([#671](https://github.com/flatpressblog/flatpress/issues/671))
 - ``theme_style_exists()`` now returns ``''`` if the style directory is missing. Previously, the theme root was returned incorrectly. ([#678](https://github.com/flatpressblog/flatpress/pull/678))
 
@@ -91,6 +94,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - Unified 301 canonical redirect for plain ``?entry=<id>`` and plain ``?x=entry:<id>``. ([#104](https://github.com/flatpressblog/flatpress/issues/104))
     - Unified 301 canonical redirect for plain ``?page=<id>``, ``?page<n>``and ``x=feed:<rss2|atom>``. ([#93](https://github.com/flatpressblog/flatpress/issues/93))
     - Fixes Deprecated: ``strpos(): Passing null to parameter #1 ($haystack) of type string``.
+- Calendar plugin: update to version 1.2.1
+    - The link "Previous month with entries" now also works if there are no entries in the previous month.
 
 ## Themes
 ### Bugfixes

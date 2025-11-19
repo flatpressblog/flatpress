@@ -10,6 +10,7 @@ $lang ['admin'] ['maintain'] ['default'] = array(
 	'opt3' => 'Restore authorizations for productive operation',
 	'opt4' => 'Show info about PHP',
 	'opt5' => 'Check for updates',
+	'opt6' => 'APCu cache status',
 
 	'chmod_info' => 'If the permissions <strong>could not</strong> be reset, the owner of the file/directory is probably not the same as the owner of the web server.<br>' . //
 		'
@@ -62,5 +63,37 @@ $lang ['admin'] ['maintain'] ['updates'] ['msgs'] = array(
 	1 => 'There are updates available!',
 	2 => 'You are already up-to-date',
 	-1 => 'Unable to retrieve updates'
+);
+
+$lang ['admin'] ['maintain'] ['apcu'] = array(
+	'head' => 'APCu cache',
+	'descr' => 'Overview of APCu shared memory usage and cache efficiency.',
+	'status_heading' => 'Heuristic status',
+	'status_good' => 'Cache seems well sized for the current workload.',
+	'status_bad' => 'High miss rate or very low free memory: APCu cache might be too small or heavily fragmented.',
+	'hit_rate' => 'Hit rate',
+	'free_mem' => 'Free memory',
+	'total_mem' => 'Total shared memory',
+	'used_mem' => 'Used memory',
+	'avail_mem' => 'Available memory',
+	'memory_type' => 'Memory type',
+	'memory_type_unknown' => 'n/a',
+	'num_slots' => 'Number of slots',
+	'num_hits' => 'Number of hits',
+	'num_misses' => 'Number of misses',
+	'cache_type' => 'Cache type',
+	'cache_user_only' => 'User data cache.',
+	'legend_good' => 'Green: configuration looks healthy (high hit rate, reasonable free memory).',
+	'legend_bad' => 'Red: cache under pressure (many misses or almost no free memory).',
+	'no_apcu' => 'APCu does not appear to be enabled on this server.',
+	'back' => '&laquo; Back to maintenance',
+	'clear_fp_button'=> 'Clear FlatPress APCu entries',
+	'clear_fp_confirm' => 'Do you really want to delete all APCu entries? This will clear FlatPress\' APCu caches.',
+	'clear_fp_result'=> 'Deleted %d APCu entries.',
+	'msgs' => array(
+		1  => 'FlatPress APCu entries have been cleared.',
+		2  => 'No APCu entries were found.',
+		-1 => 'APCu is not available or could not be accessed; nothing was deleted.'
+	)
 );
 ?>
