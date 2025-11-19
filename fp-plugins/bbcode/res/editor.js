@@ -308,6 +308,22 @@ function onClick_bb_html() {
 	insBBCode('html');
 }
 
+// font
+if (document.getElementById('bb_font')) {
+	bb_font();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_font);
+}
+function bb_font() {
+	const bb = document.getElementById('bb_font');
+	if (bb) {
+		document.getElementById('bb_font').addEventListener('click', onClick_bb_font, false);
+	}
+}
+function onClick_bb_font() {
+	insBBCode('font');
+}
+
 // b
 if (document.getElementById('bb_b')) {
 	bb_b();

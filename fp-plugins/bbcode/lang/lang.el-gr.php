@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Έντονα',
 		'italictitle' => 'Πλάγια',
 		'headlinetitle' => 'Επικεφαλής',
+		'fonttitle' => 'Γραμματοσειρά',
 		'underlinetitle' => 'Υπογραμμισμένα',
 		'crossouttitle' => 'Διαγραμμένο',
 		'unorderedlisttitle' => 'Μη ταξινομημένος κατάλογος',

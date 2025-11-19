@@ -24,6 +24,7 @@
 		&nbsp;
 	</p>
 	<p>
+		<button class="bb-button" type="button" id="bb_font" accesskey="" title="{$lang.admin.plugin.bbcode.editor.fonttitle}"><img src="{$smarty.const.BLOG_BASEURL}fp-plugins/bbcode/res/toolbaricons/font.svg" alt="font"></button>
 		<button class="bb-button" type="button" id="bb_b" accesskey="" title="{$lang.admin.plugin.bbcode.editor.boldtitle}"><img src="{$smarty.const.BLOG_BASEURL}fp-plugins/bbcode/res/toolbaricons/bold.svg" alt="b"></button>
 		<button class="bb-button" type="button" id="bb_i" accesskey="" title="{$lang.admin.plugin.bbcode.editor.italictitle}"><img src="{$smarty.const.BLOG_BASEURL}fp-plugins/bbcode/res/toolbaricons/italic.svg" alt="i"></button>
 		<button class="bb-button" type="button" id="bb_u" accesskey="" title="{$lang.admin.plugin.bbcode.editor.underlinetitle}"><img src="{$smarty.const.BLOG_BASEURL}fp-plugins/bbcode/res/toolbaricons/underlined.svg" alt="u"></button>

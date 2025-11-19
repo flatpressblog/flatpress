@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Fett',
 		'italictitle' => 'Kursiv',
 		'headlinetitle' => 'Überschrift',
+		'fonttitle' => 'Schriftart',
 		'underlinetitle' => 'Unterstreichen',
 		'crossouttitle' => 'Durchgestrichen',
 		'unorderedlisttitle' => 'Unsortierte Liste',

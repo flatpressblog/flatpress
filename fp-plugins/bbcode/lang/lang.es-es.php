@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Negrita',
 		'italictitle' => 'Itálica',
 		'headlinetitle' => 'Rúbrica',
+		'fonttitle' => 'Tipo de letra',
 		'underlinetitle' => 'Subrayada',
 		'crossouttitle' => 'Tachado',
 		'unorderedlisttitle' => 'Lista sin clasificar',

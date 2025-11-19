@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Grassetto',
 		'italictitle' => 'Corsivo',
 		'headlinetitle' => 'Intestazione',
+		'fonttitle' => 'Carattere tipografico',
 		'underlinetitle' => 'Sottolineato',
 		'crossouttitle' => 'Cancellato',
 		'unorderedlisttitle' => 'Elenco non ordinato',

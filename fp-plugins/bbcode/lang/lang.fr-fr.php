@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Gras',
 		'italictitle' => 'Italique',
 		'headlinetitle' => 'Titre',
+		'fonttitle' => 'Police de caractères',
 		'underlinetitle' => 'Soulign&eacute;',
 		'crossouttitle' => 'Barré',
 		'unorderedlisttitle' => 'Liste non triée',
