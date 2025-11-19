@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Tučné',
 		'italictitle' => 'Kurzíva',
 		'headlinetitle' => 'Hlavička',
+		'fonttitle' => 'Písmo',
 		'underlinetitle' => 'Podtržené',
 		'crossouttitle' => 'Přeškrtnuto',
 		'unorderedlisttitle' => 'Netříděný seznam',

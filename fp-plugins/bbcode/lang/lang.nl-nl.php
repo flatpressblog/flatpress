@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Bold',
 		'italictitle' => 'Italic',
 		'headlinetitle' => 'Rubriek',
+		'fonttitle' => 'Lettertype',
 		'underlinetitle' => 'Underlined',
 		'crossouttitle' => 'Doorgestreept',
 		'unorderedlisttitle' => 'Ongesorteerde lijst',

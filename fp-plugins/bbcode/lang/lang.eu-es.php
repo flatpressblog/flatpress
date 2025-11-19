@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Lodia',
 		'italictitle' => 'Etzana',
 		'headlinetitle' => 'Izenburua',
+		'fonttitle' => 'Letra-tipoa',
 		'underlinetitle' => 'Azpimarratua',
 		'crossouttitle' => 'Marratua',
 		'unorderedlisttitle' => 'Ordenatu gabeko zerrenda',

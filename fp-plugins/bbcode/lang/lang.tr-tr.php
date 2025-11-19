@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Kalın',
 		'italictitle' => 'İtalik',
 		'headlinetitle' => 'Başlık',
+		'fonttitle' => 'Yazı Tipi',
 		'underlinetitle' => 'Altı Çizili',
 		'crossouttitle' => 'Üstü Çizili',
 		'unorderedlisttitle' => 'Sırasız liste',

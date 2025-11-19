@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Krepko',
 		'italictitle' => 'Ležeče',
 		'headlinetitle' => 'Naslov',
+		'fonttitle' => 'Pisava',
 		'underlinetitle' => 'Podčrtano',
 		'crossouttitle' => 'Prečrtano',
 		'unorderedlisttitle' => 'Nesortiran seznam',

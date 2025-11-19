@@ -40,6 +40,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Жирный',
 		'italictitle' => 'Курсив',
 		'headlinetitle' => 'Направление',
+		'fonttitle' => 'шрифт',
 		'underlinetitle' => 'Подчеркнутый',
 		'crossouttitle' => 'Зачеркнуто',
 		'unorderedlisttitle' => 'Неотсортированный список',

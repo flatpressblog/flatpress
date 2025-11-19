@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'Fedt',
 		'italictitle' => 'Kursiv',
 		'headlinetitle' => 'Overskrift',
+		'fonttitle' => 'Skrifttype',
 		'underlinetitle' => 'Understregning',
 		'crossouttitle' => 'Streget ud',
 		'unorderedlisttitle' => 'Usorteret liste',

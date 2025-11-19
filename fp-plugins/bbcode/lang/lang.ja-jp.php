@@ -41,6 +41,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'boldtitle' => 'ボールド体',
 		'italictitle' => 'イタリック体',
 		'headlinetitle' => '見出し',
+		'fonttitle' => 'フォント',
 		'underlinetitle' => '下線',
 		'crossouttitle' => '取り消し線',
 		'unorderedlisttitle' => '順序なしリスト',
