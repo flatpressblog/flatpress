@@ -256,7 +256,13 @@ class admin_uploader_default extends AdminPanelAction {
 			if (function_exists('finfo_open')) {
 				$finfo = finfo_open(FILEINFO_MIME_TYPE);
 				$mime = $finfo ? @finfo_file($finfo, $tmp_name) : false;
-				if ($finfo) { @finfo_close($finfo); }
+				if ($finfo) {
+					if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+						if (isset($finfo) && is_resource($finfo)) {
+							@finfo_close($finfo);
+						}
+					}
+				}
 			} else {
 				$mime = @mime_content_type($tmp_name);
 			}
@@ -349,10 +355,13 @@ class admin_uploader_default extends AdminPanelAction {
 
 		if ($image) {
 			$saveFunc($image, $filepath);
-			imagedestroy($image);
+			if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+				if (isset($image) && is_resource($image)) {
+					@imagedestroy($image);
+				}
+			}
 			return true;
 		}
-		return false;
 	}
 }
 ?>

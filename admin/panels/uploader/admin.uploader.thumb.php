@@ -92,22 +92,29 @@ function thumb_send($fpath) {
 		imagejpeg($scaled, null, 90);
 	}
 
-	imagedestroy($scaled);
-	imagedestroy($image);
-}
-
-	if (isset($_GET ['f'])) {
-
-		$f = ABS_PATH . IMAGES_DIR . $_GET ['f'];
-		if (strpos ($f, '..') !== false) {
-			return;
-		}
-
-		if (file_exists($f)) {
-			thumb_send($f);
+	if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+		if (isset($scaled) && is_resource($scaled)) {
+			imagedestroy($scaled);
 		}
 	}
+	if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+		if (isset($image) && is_resource($image)) {
+			imagedestroy($image);
+		}
+	}
+}
 
-	exit();
+if (isset($_GET ['f'])) {
 
+	$f = ABS_PATH . IMAGES_DIR . $_GET ['f'];
+	if (strpos ($f, '..') !== false) {
+		return;
+	}
+
+	if (file_exists($f)) {
+		thumb_send($f);
+	}
+}
+
+exit();
 ?>
