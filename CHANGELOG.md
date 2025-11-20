@@ -18,7 +18,7 @@ For optimal performance, an initial APCu size of 32 MB is recommended (``apc.shm
   - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667), [#673](https://github.com/flatpressblog/flatpress/pull/673), [#675](https://github.com/flatpressblog/flatpress/pull/675), [#679](https://github.com/flatpressblog/flatpress/pull/679), [#687](https://github.com/flatpressblog/flatpress/pull/687), [#690](https://github.com/flatpressblog/flatpress/pull/690), [#701](https://github.com/flatpressblog/flatpress/pull/701))
 
 - Template engine:
-  - Smarty updated to version 5.6.0 with PHP 8.4 support ([#651](https://github.com/flatpressblog/flatpress/pull/651))<br><sub><i>
+  - Smarty updated to version 5.7.0 with PHP 8.5 support ([#651](https://github.com/flatpressblog/flatpress/pull/651))<br><sub><i>
 Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte extension](https://www.php.net/manual/en/book.mbstring.php) in production for optimal performance.</i></sub>
   - No code changes required with new, stable Smarty version.
   - FlatPress automatically loads the latest PSR-4 stub.
