@@ -258,7 +258,7 @@ class admin_uploader_default extends AdminPanelAction {
 				$mime = $finfo ? @finfo_file($finfo, $tmp_name) : false;
 				if ($finfo) {
 					if (version_compare(PHP_VERSION, '8.0.0', '<')) {
-						if (isset($finfo) && is_resource($finfo)) {
+						if (is_resource($finfo)) {
 							@finfo_close($finfo);
 						}
 					}
