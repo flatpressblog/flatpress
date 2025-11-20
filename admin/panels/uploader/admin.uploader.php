@@ -356,7 +356,7 @@ class admin_uploader_default extends AdminPanelAction {
 		if ($image) {
 			$saveFunc($image, $filepath);
 			if (version_compare(PHP_VERSION, '8.0.0', '<')) {
-				if (isset($image) && is_resource($image)) {
+				if (is_resource($image)) {
 					@imagedestroy($image);
 				}
 			}

@@ -93,12 +93,12 @@ function thumb_send($fpath) {
 	}
 
 	if (version_compare(PHP_VERSION, '8.0.0', '<')) {
-		if (isset($scaled) && is_resource($scaled)) {
+		if (is_resource($scaled)) {
 			imagedestroy($scaled);
 		}
 	}
 	if (version_compare(PHP_VERSION, '8.0.0', '<')) {
-		if (isset($image) && is_resource($image)) {
+		if (is_resource($image)) {
 			imagedestroy($image);
 		}
 	}

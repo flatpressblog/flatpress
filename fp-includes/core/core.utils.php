@@ -628,7 +628,7 @@ function utils_geturl($url) {
 	$errmsg = curl_error($ch);
 	$header = curl_getinfo($ch);
 	if (version_compare(PHP_VERSION, '8.0.0', '<')) {
-		if (isset($ch) && is_resource($ch)) {
+		if (is_resource($ch)) {
 			curl_close($ch);
 		}
 	}
