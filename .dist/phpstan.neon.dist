@@ -2,7 +2,7 @@
 parameters:
   phpVersion:
     min: 70100 # PHP 7.2
-    max: 80400 # PHP 8.4
+    max: 80400 # PHP 8.5
   level: 4  # Medium level
 
   # Minimal Bootstrap (without Composer)
