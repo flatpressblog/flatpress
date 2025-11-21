@@ -10,7 +10,7 @@ Additional frontend payloads per page view, such as HTML, CSS, jQuery, and other
 For optimal performance, an initial APCu size of 32 MB is recommended (``apc.shm_size=32M``). Minimum requirement ~1–2 MB. From 9000 entries plus 10 comments per entry, 64MB is recommended. The APCu cache usage can be viewed in the admin area -> Maintenance -> submenu "APCu cache status" and cleared if necessary.
 
 ## Changed requirements
-- FlatPress 1.5 runs under PHP up to **8.4**; minimum required PHP version increases to **7.2**.
+- FlatPress 1.5 runs under PHP up to **8.5**; minimum required PHP version increases to **7.2**.
 
 ## General
 ### Changes
