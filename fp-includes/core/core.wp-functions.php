@@ -67,6 +67,7 @@ function add_magic_quotes($array) {
 }
 
 function is_php85_plus(): bool {
+	// @phpstan-ignore-next-line
 	return PHP_VERSION_ID >= 80500;
 }
 
