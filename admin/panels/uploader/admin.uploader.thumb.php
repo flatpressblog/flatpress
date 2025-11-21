@@ -82,7 +82,7 @@ function thumb_send($fpath) {
 		imagefilledrectangle($scaled, 0, 0, $new_width, $new_height, $transparent);
 	}
 
-	imagecopyresampled($scaled, $image, 0, 0, 0, 0, $new_width, $new_height, $infos[0], $infos[1]);
+	imagecopyresampled($scaled, $image, 0, 0, 0, 0, $new_width, $new_height, $infos [0], $infos [1]);
 
 	if ($infos [2] === 18 && function_exists('imagewebp')) {
 		header('Content-Type: image/webp');
@@ -92,15 +92,11 @@ function thumb_send($fpath) {
 		imagejpeg($scaled, null, 90);
 	}
 
-	if (version_compare(PHP_VERSION, '8.0.0', '<')) {
-		if (is_resource($scaled)) {
-			imagedestroy($scaled);
-		}
+	if (PHP_VERSION_ID < 80500) {
+		imagedestroy($scaled);
 	}
-	if (version_compare(PHP_VERSION, '8.0.0', '<')) {
-		if (is_resource($image)) {
-			imagedestroy($image);
-		}
+	if (PHP_VERSION_ID < 80500) {
+		imagedestroy($image);
 	}
 }
 

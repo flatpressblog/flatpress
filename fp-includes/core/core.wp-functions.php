@@ -84,10 +84,8 @@ function wp_remote_fopen($uri) {
 		curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 1);
 		curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
 		$buffer = curl_exec($handle);
-		if (version_compare(PHP_VERSION, '8.0.0', '<')) {
-			if (is_resource($handle)) {
-				curl_close($handle);
-			}
+		if (PHP_VERSION_ID < 80500) {
+			curl_close($handle);
 		}
 		return $buffer;
 	} else {

@@ -272,7 +272,7 @@ class StringParser_BBCode extends StringParser {
 	 * @return bool
 	 */
 	function setMaxOccurrences($type, $count) {
-		settype($count, 'integer');
+		settype($count, 'int');
 		if ($count < 0) { // sorry, does not make any sense
 			return false;
 		}
@@ -439,7 +439,19 @@ class StringParser_BBCode extends StringParser {
 		}
 		$return = $this->_codes [$name] ['flags'] [$flag];
 		if ($type != 'mixed') {
-			settype($return, $type);
+			// Normalize type names for settype() to canonical forms for PHP 8.5+.
+			$settype = $type;
+			if (is_string($settype)) {
+				$legacy = strtolower($settype);
+				if ($legacy === 'integer') {
+					$settype = 'int';
+				} elseif ($legacy === 'boolean') {
+					$settype = 'bool';
+				} elseif ($legacy === 'double') {
+					$settype = 'float';
+				}
+			}
+			settype($return, $settype);
 		}
 		return $return;
 	}
@@ -1985,7 +1997,19 @@ class StringParser_BBCode_Node_Element extends StringParser_Node {
 		}
 		$return = $this->_flags [$flag];
 		if ($type != 'mixed') {
-			settype($return, $type);
+			// Normalize type names for settype() to canonical forms for PHP 8.5+.
+			$settype = $type;
+			if (is_string($settype)) {
+				$legacy = strtolower($settype);
+				if ($legacy === 'integer') {
+					$settype = 'int';
+				} elseif ($legacy === 'boolean') {
+					$settype = 'bool';
+				} elseif ($legacy === 'double') {
+					$settype = 'float';
+				}
+			}
+			settype($return, $settype);
 		}
 		return $return;
 	}
