@@ -627,7 +627,11 @@ function utils_geturl($url) {
 	$err = curl_errno($ch);
 	$errmsg = curl_error($ch);
 	$header = curl_getinfo($ch);
-	curl_close($ch);
+	if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+		if (is_resource($ch)) {
+			curl_close($ch);
+		}
+	}
 
 	$header ['errno'] = $err;
 	$header ['errmsg'] = $errmsg;
