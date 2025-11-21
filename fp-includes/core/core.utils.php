@@ -627,7 +627,7 @@ function utils_geturl($url) {
 	$err = curl_errno($ch);
 	$errmsg = curl_error($ch);
 	$header = curl_getinfo($ch);
-	if (PHP_VERSION_ID < 80500) {
+	if (!is_php85_plus()) {
 		curl_close($ch);
 	}
 

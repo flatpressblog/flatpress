@@ -92,10 +92,8 @@ function thumb_send($fpath) {
 		imagejpeg($scaled, null, 90);
 	}
 
-	if (PHP_VERSION_ID < 80500) {
+	if (!is_php85_plus()) {
 		imagedestroy($scaled);
-	}
-	if (PHP_VERSION_ID < 80500) {
 		imagedestroy($image);
 	}
 }

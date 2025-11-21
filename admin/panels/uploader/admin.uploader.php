@@ -257,7 +257,7 @@ class admin_uploader_default extends AdminPanelAction {
 				$finfo = finfo_open(FILEINFO_MIME_TYPE);
 				$mime = $finfo ? @finfo_file($finfo, $tmp_name) : false;
 				if ($finfo) {
-					if (PHP_VERSION_ID < 80500) {
+					if (!is_php85_plus()) {
 						@finfo_close($finfo);
 					}
 				}
@@ -353,7 +353,7 @@ class admin_uploader_default extends AdminPanelAction {
 
 		if ($image) {
 			$saveFunc($image, $filepath);
-			if (PHP_VERSION_ID < 80500) {
+			if (!is_php85_plus()) {
 				@imagedestroy($image);
 			}
 			return true;

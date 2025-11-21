@@ -66,6 +66,10 @@ function add_magic_quotes($array) {
 	return $array;
 }
 
+function is_php85_plus(): bool {
+	return PHP_VERSION_ID >= 80500;
+}
+
 function wp_remote_fopen($uri) {
 	if (ini_get('allow_url_fopen')) {
 		$fp = fopen($uri, 'r');
@@ -84,7 +88,7 @@ function wp_remote_fopen($uri) {
 		curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 1);
 		curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
 		$buffer = curl_exec($handle);
-		if (PHP_VERSION_ID < 80500) {
+		if (!is_php85_plus()) {
 			curl_close($handle);
 		}
 		return $buffer;
