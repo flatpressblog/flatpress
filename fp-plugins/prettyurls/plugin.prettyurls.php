@@ -1052,10 +1052,11 @@ class Plugin_PrettyURLs {
 		}
 
 		$target = null;
+		$x = null;
 
 		// Canonicalize legacy feed queries (?x=feed:{rss2|atom}) to mode-specific URL
 		if ($has_x && isset($_GET ['x']) && is_string($_GET ['x'])) {
-			$x = $_GET['x'];
+			$x = (string) $_GET ['x'];
 			if ($x === 'feed:rss2' || $x === 'feed:atom') {
 				// Uniform construction: $base is already mode-specific
 				$type = ($x === 'feed:rss2') ? 'rss2' : 'atom';
@@ -1065,6 +1066,16 @@ class Plugin_PrettyURLs {
 					define('PRETTYURLS_CANONICAL_REDIRECT_RAN', true);
 					header('Location: ' . $target, true, 301);
 					exit();
+				}
+			} elseif (strpos($x, 'cat:') === 0 && isset($plugin_prettyurls) && method_exists($plugin_prettyurls, 'categorylink')) {
+				// Legacy category queries (?x=cat:{id}) to mode-specific category URL
+				$cid_raw = substr($x, 4);
+				if ($cid_raw !== '' && ctype_digit($cid_raw)) {
+					$cid = (int) $cid_raw;
+					if ($cid > 0) {
+						// Uses categorylink() to correctly handle Pretty/PathInfo/HTTP-GET
+						$target = $plugin_prettyurls->categorylink('', $cid);
+					}
 				}
 			}
 		}
@@ -1084,37 +1095,38 @@ class Plugin_PrettyURLs {
 			$target = $plugin_prettyurls->staticlink('', $id);
 		} else {
 			// Entry cases (?entry= or ?x=entry:)
-			if ($has_x) {
-				$x = $_GET ['x'];
-				if (strpos($x, ';') !== false) {
+			if ($has_entry || ($has_x && is_string($x) && strpos($x, 'entry:') === 0)) {
+				if ($has_x && is_string($x) && strpos($x, 'entry:') === 0) {
+					if (strpos($x, ';') !== false) {
+						return;
+					}
+					// Flags present (comments, feed, …)
+					if (!preg_match('/^entry:(entry[0-9]{6}-[0-9]{6})$/', $x, $m)) {
+						return;
+					}
+					$id = $m [1];
+				} else {
+					// ?entry=
+					$id = (string) $_GET ['entry'];
+					if (!preg_match('/^entry[0-9]{6}-[0-9]{6}$/', $id)) {
+						return;
+					}
+				}
+				// Build canonical permalink
+				if (!function_exists('entry_parse') || !function_exists('date_from_id') || !function_exists('sanitize_title') || !function_exists('utils_geturlstring')) {
 					return;
 				}
-				// Flags present (comments, feed, …)
-				if (!preg_match('/^entry:(entry[0-9]{6}-[0-9]{6})$/', $x, $m)) {
+				$entry = entry_parse($id);
+				if (!is_array($entry) || empty($entry ['subject'])) {
 					return;
 				}
-				$id = $m [1];
-			} else {
-				// ?entry=
-				$id = (string) $_GET ['entry'];
-				if (!preg_match('/^entry[0-9]{6}-[0-9]{6}$/', $id)) {
+				$date = date_from_id($id);
+				if (!isset($date ['y'], $date ['m'], $date ['d'])) {
 					return;
 				}
+				$slug = sanitize_title($entry ['subject']);
+				$target = $base . '20' . $date ['y'] . '/' . $date ['m'] . '/' . $date ['d'] . '/' . $slug . '/';
 			}
-			// Build canonical permalink
-			if (!function_exists('entry_parse') || !function_exists('date_from_id') || !function_exists('sanitize_title') || !function_exists('utils_geturlstring')) {
-				return;
-			}
-			$entry = entry_parse($id);
-			if (!is_array($entry) || empty($entry ['subject'])) {
-				return;
-			}
-			$date = date_from_id($id);
-			if (!isset($date ['y'], $date ['m'], $date ['d'])) {
-				return;
-			}
-			$slug = sanitize_title($entry ['subject']);
-			$target = $base . '20' . $date ['y'] . '/' . $date ['m'] . '/' . $date ['d'] . '/' . $slug . '/';
 		}
 		$current = utils_geturlstring();
 		if ($target && $current !== $target && !headers_sent()) {
