@@ -94,6 +94,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - PrettyURLs plugin: update to version 3.0.2
     - Unified 301 canonical redirect for plain ``?entry=<id>`` and plain ``?x=entry:<id>``. ([#104](https://github.com/flatpressblog/flatpress/issues/104))
     - Unified 301 canonical redirect for plain ``?page=<id>``, ``?page<n>``and ``x=feed:<rss2|atom>``. ([#93](https://github.com/flatpressblog/flatpress/issues/93))
+    - Unified 301 canonical redirect for plain ``?x=cat:<n>``. ([#709](https://github.com/flatpressblog/flatpress/pull/709))
     - Fixes Deprecated: ``strpos(): Passing null to parameter #1 ($haystack) of type string``.
 - Calendar plugin: update to version 1.2.1
     - The link "Previous month with entries" now also works if there are no entries in the previous month.
