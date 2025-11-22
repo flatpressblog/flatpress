@@ -2228,14 +2228,19 @@ class BPlusTree {
 		} else {
 			// leaf, base case: just delete.
 			if ($node->validkeys < 1) {
-				// only for empty root
-				trigger_error("No such key " . $key, E_USER_ERROR);
+				// nothing to delete (empty leaf)
+				return array(null, $this->nodesize);
 			}
-			$first = $node->keys [0];
-			d($node->keys);
+			$keys = &$node->keys;
+			if (!in_array($key, $keys, true)) {
+				// key not found in this leaf, nothing to delete
+				return array(null, $this->nodesize);
+			}
+			$first = $keys [0];
+			d($keys);
 			$node->delvalue($key);
-			d($node->keys);
-			$rest = $node->keys [0];
+			d($keys);
+			$rest = $keys [0];
 			if ($first != $rest) {
 				$newnodekey = $rest;
 			}
