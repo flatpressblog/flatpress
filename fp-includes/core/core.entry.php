@@ -82,8 +82,23 @@ class entry_index {
 
 	function _lock_acquire($exclusive = true, $cat = 0) {
 		if (file_exists($this->_lock_file)) {
-			trigger_error("Could not acquire write lock on INDEX. " . "Didn't I told you FlatPress is not designed for concurrency, already? ;) " . "Don't worry: your entry has been saved as draft!", E_USER_WARNING);
-			return false;
+			$isStale = false;
+			$mtime = @filemtime($this->_lock_file);
+			if (is_int($mtime)) {
+				// Consider lock file orphaned after 2 minutes
+				$isStale = (time() - $mtime) > 120;
+			}
+			if ($isStale) {
+				@unlink($this->_lock_file);
+			} else {
+				trigger_error(
+					"Could not acquire write lock on INDEX. " . //
+					"Didn't I told you FlatPress is not designed for concurrency, already? ;) " . //
+					"Don't worry: your entry has been saved as draft!",
+					E_USER_WARNING
+				);
+				return false;
+			}
 		}
 
 		// simulates atomic write by writing to a file, then moving in place
