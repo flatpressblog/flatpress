@@ -32,7 +32,8 @@ $lang ['plugin'] ['seometataginfo'] = array(
 	'tag' => 'Oznaka',
 	'contact' => 'Kontaktirajte nas',
 	'comments' => 'Komentarji',
-	'pagenum' => 'Stran #'
+	'pagenum' => 'Stran #',
+	'introduction' => 'Uvod'
 );
 
 // SEO robots.txt part 2

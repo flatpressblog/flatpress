@@ -31,7 +31,8 @@ $lang ['plugin'] ['seometataginfo'] = array(
 	'tag' => 'Etiket',
 	'contact' => 'İletişim',
 	'comments' => 'Yorumlar',
-	'pagenum' => 'Sayfa #'
+	'pagenum' => 'Sayfa #',
+	'introduction' => 'Giriş'
 );
 
 // SEO robots.txt kısmı 2

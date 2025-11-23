@@ -32,7 +32,8 @@ $lang ['plugin'] ['seometataginfo'] = array(
 	'tag' => 'Tag',
 	'contact' => 'Contacteer ons',
 	'comments' => 'Commentaar',
-	'pagenum' => 'Pagina #'
+	'pagenum' => 'Pagina #',
+	'introduction' => 'Inleiding'
 );
 
 // SEO robots.txt part 2

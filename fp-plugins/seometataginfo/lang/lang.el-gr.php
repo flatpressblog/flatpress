@@ -32,7 +32,8 @@ $lang ['plugin'] ['seometataginfo'] = array(
 	'tag' => 'Tag',
 	'contact' => 'Επικοινωνήστε μαζί μας',
 	'comments' => 'Σχόλια',
-	'pagenum' => 'Σελίδα #'
+	'pagenum' => 'Σελίδα #',
+	'introduction' => 'Εισαγωγή'
 );
 
 // SEO robots.txt part 2

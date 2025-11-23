@@ -32,7 +32,8 @@ $lang ['plugin'] ['seometataginfo'] = array(
 	'tag' => 'Etiketa',
 	'contact' => 'Jarri gurekin harremanetan',
 	'comments' => 'Iruzkinak',
-	'pagenum' => 'Orri #'
+	'pagenum' => 'Orri #',
+	'introduction' => 'Sarrera'
 );
 
 // SEO robots.txt part 2
