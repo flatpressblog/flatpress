@@ -54,6 +54,7 @@
 - [ ] Media Manager 2.0: Folder icons, usage detection (gallery vs. single image).
 - [ ] Archives: Open and close, link check.
 - [ ] Calendar: Link check; previous vs. next month and daily links.
+- [ ] SEO Metatag info: Enter a description for a newly created post; check in the frontend whether an introduction is displayed.
 
 5) **Internationalization**
 - [ ] Switch language between German/English/Basque; check frontend/backend for missing/incorrect translations.
