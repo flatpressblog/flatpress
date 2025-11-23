@@ -44,8 +44,8 @@ function generate_calendar($year, $month, $days = array(), $day_name_length = 3,
 	$prev_link = isset($pn [0]) ? $pn [0] : '';
 	$next_link = isset($pn [1]) ? $pn [1] : '';
 
-	$p = $prev_link ? '<span class="calendar-prev"><a href="' . htmlspecialchars($prev_link) . '">&laquo;</a>&nbsp;</span>' : '&laquo;&nbsp;';
-	$n = $next_link ? '<span class="calendar-next">&nbsp;<a href="' . htmlspecialchars($next_link) . '">&raquo;</a></span>' : '&nbsp;&raquo;';
+	$p = $prev_link ? '<span class="calendar-prev"><a href="' . htmlspecialchars($prev_link) . '#widget_calendar">&laquo;</a>&nbsp;</span>' : '&laquo;&nbsp;';
+	$n = $next_link ? '<span class="calendar-next">&nbsp;<a href="' . htmlspecialchars($next_link) . '#widget_calendar">&raquo;</a></span>' : '&nbsp;&raquo;';
 
 	$calendar = '<table class="calendar">' . "\n" . '<caption class="calendar-month">' . $p . ($month_href ? '<a href="' . htmlspecialchars($month_href) . '">' . $title . '</a>' : $title) . $n . "</caption>\n<tr>";
 
@@ -219,27 +219,30 @@ function plugin_calendar_widget() {
 		return $widget;
 	}
 
-	// Collect entries
+	// Collect entries using the index for the current month.
 	$days = array();
-	$q = new FPDB_Query(array(
-		'fullparse' => true,
-		'y' => $y,
-		'm' => $m,
-		'count' => -1
-	), null);
+
+	$m2 = str_pad((string)$m, 2, '0', STR_PAD_LEFT);
+
+	$q = new FPDB_Query(array('fullparse' => false, 'y' => $y, 'm' => $m, 'count' => -1), null);
 
 	while ($q->hasMore()) {
-		@list($id, $entry) = $q->peekEntry();
+		@list($id, $entry) = $q->getEntry();
+		if (empty($id)) {
+			continue;
+		}
+
 		$date = date_from_id($id);
-		$d = (int) $date ['d'];
+		if (empty($date) || empty($date ['d'])) {
+			continue;
+		}
 
-		$days [$d] = array(
-			get_day_link($y, str_pad($m, 2, '0', STR_PAD_LEFT), str_pad($d, 2, '0', STR_PAD_LEFT)),
-			'linked-day'
-		);
+		$d = (int)$date ['d'];
+		if ($d < 1 || $d > 31) {
+			continue;
+		}
 
-		// Increase pointer
-		$q->pointer++;
+		$days [$d] = array(get_day_link($y, $m2, str_pad((string)$d, 2, '0', STR_PAD_LEFT)), 'linked-day', null);
 	}
 
 	// Retrieve links for the previous and next month with entries
@@ -289,7 +292,7 @@ function find_prev_month_with_entries($year, $month) {
 
 		// Request for the month
 		$q = new FPDB_Query(array(
-			'fullparse' => true,
+			'fullparse' => false,
 			'y' => $year,
 			'm' => $month,
 			'count' => 1
@@ -321,7 +324,7 @@ function find_next_month_with_entries($year, $month) {
 
 		// Request for the month
 		$q = new FPDB_Query(array(
-			'fullparse' => true,
+			'fullparse' => false,
 			'y' => $year,
 			'm' => $month,
 			'count' => 1
