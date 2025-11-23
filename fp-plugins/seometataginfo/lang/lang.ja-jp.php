@@ -32,7 +32,8 @@ $lang ['plugin'] ['seometataginfo'] = array(
 	'tag' => 'タグ',
 	'contact' => 'お問い合わせ',
 	'comments' => 'コメント',
-	'pagenum' => 'ページ #'
+	'pagenum' => 'ページ #',
+	'introduction' => 'はじめに'
 );
 
 // SEO robots.txt part 2

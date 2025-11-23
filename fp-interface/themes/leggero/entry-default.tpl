@@ -1,7 +1,7 @@
 	<div itemscope itemtype="http://schema.org/BlogPosting" id="{$id}" class="entry {$date|date_format:"y-%Y m-%m d-%d"}">
-				{* 	using the following way to print the date, if more 	*}
-				{*	than one entry have been written the same day,		*}
-				{*	 the date will be printed only once 			*}
+				{*    using the following way to print the date, if more     *}
+				{*    than one entry have been written the same day,         *}
+				{*    the date will be printed only once                     *}
 
 		{$date|date_format_daily:"<h2 class=\"date\">`$fp_config.locale.dateformat`</h2>"}
 
@@ -13,6 +13,15 @@
 				{include file="shared:entryadminctrls.tpl"}
 
 				<div itemprop="articleBody">
+					{if $seo_desc}
+
+					<br>
+					<!-- BOF SEO Metagtag info description -->
+					<fieldset><legend>{$lang.plugin.seometataginfo.introduction}</legend><b>&rArr;</b> {$seo_desc|escape}</fieldset>
+					<!-- EOF SEO Metagtag info description -->
+
+					{/if}
+
 				{$content|tag:the_content}
 				</div>
 
