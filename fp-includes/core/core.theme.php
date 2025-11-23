@@ -701,6 +701,7 @@ function get_category_link($catid) {
  * @return string Absolute archive URL.
  */
 function get_year_link($year) {
+	$year = (string)$year;
 	return wp_specialchars(apply_filters('year_link', BLOG_BASEURL . '?x=y:' . str_pad($year, 2, '0', STR_PAD_LEFT), $year));
 }
 
@@ -711,6 +712,8 @@ function get_year_link($year) {
  * @return string Absolute archive URL.
  */
 function get_month_link($year, $month) {
+	$year = (string)$year;
+	$month = (string)$month;
 	return wp_specialchars(apply_filters('month_link', BLOG_BASEURL . '?x=y:' . str_pad($year, 2, '0', STR_PAD_LEFT) . ';m:' . str_pad($month, 2, '0', STR_PAD_LEFT), $year, $month));
 }
 
@@ -722,6 +725,9 @@ function get_month_link($year, $month) {
  * @return string Absolute archive URL.
  */
 function get_day_link($year, $month, $day) {
+	$year = (string)$year;
+	$month = (string)$month;
+	$day = (string)$day;
 	return wp_specialchars(apply_filters('day_link', BLOG_BASEURL . '?x=y:' . str_pad($year, 2, '0', STR_PAD_LEFT) . ';m:' . str_pad($month, 2, '0', STR_PAD_LEFT) . ';d:' . str_pad($day, 2, '0', STR_PAD_LEFT), $year, $month, $day));
 }
 
