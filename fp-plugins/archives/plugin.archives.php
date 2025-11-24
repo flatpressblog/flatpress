@@ -157,6 +157,78 @@ function plugin_archives_mtime_sig_cached() {
 	return $sig = plugin_archives_mtime_sig();
 }
 
+/**
+ * Recursively replace BLOG_BASEURL placeholder or value inside cached archives structures.
+ *
+ * @param mixed  $value
+ * @param string $search
+ * @param string $replace
+ * @return mixed
+ */
+function plugin_archives_cache_replace_baseurl_recursive($value, $search, $replace) {
+	if (is_array($value)) {
+		foreach ($value as $k => $v) {
+			$value [$k] = plugin_archives_cache_replace_baseurl_recursive($v, $search, $replace);
+		}
+		return $value;
+	}
+	if (is_string($value)) {
+		return str_replace($search, $replace, $value);
+	}
+	return $value;
+}
+
+/**
+ * Expand the %BLOG_BASEURL% placeholder in cached archives lists.
+ *
+ * @param mixed $list
+ * @return mixed
+ */
+function plugin_archives_cache_expand_baseurl_list($list) {
+	if (!is_array($list)) {
+		return $list;
+	}
+	if (!defined('BLOG_BASEURL') || BLOG_BASEURL === '') {
+		return $list;
+	}
+	return plugin_archives_cache_replace_baseurl_recursive($list, '%BLOG_BASEURL%', BLOG_BASEURL);
+}
+
+/**
+ * Expand the %BLOG_BASEURL% placeholder in cached archives HTML.
+ *
+ * @param string $html
+ * @return string
+ */
+function plugin_archives_cache_expand_baseurl_html($html) {
+	if (!is_string($html) || $html === '') {
+		return $html;
+	}
+	if (!defined('BLOG_BASEURL') || BLOG_BASEURL === '') {
+		return $html;
+	}
+	return str_replace('%BLOG_BASEURL%', BLOG_BASEURL, $html);
+}
+
+/**
+ * Prepare archives data for storing in cache: replace BLOG_BASEURL by a placeholder.
+ *
+ * @param mixed $value
+ * @return mixed
+ */
+function plugin_archives_cache_prepare_for_store($value) {
+	if (!defined('BLOG_BASEURL') || BLOG_BASEURL === '') {
+		return $value;
+	}
+	if (is_array($value)) {
+		return plugin_archives_cache_replace_baseurl_recursive($value, BLOG_BASEURL, '%BLOG_BASEURL%');
+	}
+	if (is_string($value)) {
+		return str_replace(BLOG_BASEURL, '%BLOG_BASEURL%', $value);
+	}
+	return $value;
+}
+
 function plugin_archives_cached_list() {
 	static $local = null;
 	if ($local !== null) {
@@ -171,6 +243,7 @@ function plugin_archives_cached_list() {
 		$hit = false;
 		$val = apcu_get($key, $hit);
 		if ($hit && is_array($val)) {
+			$val = plugin_archives_cache_expand_baseurl_list($val);
 			return $local = $val;
 		}
 	}
@@ -178,7 +251,7 @@ function plugin_archives_cached_list() {
 	$list = $obj->getList();
 	$local = $list;
 	if ($apcu_on) {
-		@apcu_set($key, $list, 900);
+		@apcu_set($key, plugin_archives_cache_prepare_for_store($list), 900);
 	}
 	return $list;
 }
@@ -197,6 +270,7 @@ function plugin_archives_cached_html() {
 		$hit = false;
 		$val = apcu_get($key, $hit);
 		if ($hit && is_string($val)) {
+			$val = plugin_archives_cache_expand_baseurl_html($val);
 			return $local = $val;
 		}
 	}
@@ -204,7 +278,7 @@ function plugin_archives_cached_html() {
 	$html = $obj->getHtmlList();
 	$local = $html;
 	if ($apcu_on) {
-		@apcu_set($key, $html, 900);
+		@apcu_set($key, plugin_archives_cache_prepare_for_store($html), 900);
 	}
 	return $html;
 }
