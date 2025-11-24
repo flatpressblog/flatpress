@@ -152,13 +152,29 @@ function plugin_calendar_cache_key($y4, $m2, $lang, $first_day) {
 	return 'calendar:' . sha1(json_encode($norm, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)) . $rev;
 }
 
+/**
+ * Replace the BLOG_BASEURL placeholder in cached HTML with the current BLOG_BASEURL.
+ *
+ * @param string $html
+ * @return string
+ */
+function plugin_calendar_cache_expand_baseurl($html) {
+	if (!is_string($html) || $html === '') {
+		return $html;
+	}
+	if (defined('BLOG_BASEURL')) {
+		return str_replace('%BLOG_BASEURL%', BLOG_BASEURL, $html);
+	}
+	return $html;
+}
+
 function plugin_calendar_cache_get($key, $ttl = 3600) {
 	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 	if ($apcu_on) {
 		$hit = false;
 		$val = apcu_get($key, $hit);
 		if ($hit && is_string($val)) {
-			return $val;
+			return plugin_calendar_cache_expand_baseurl($val);
 		}
 	}
 	// File fallback
@@ -169,7 +185,7 @@ function plugin_calendar_cache_get($key, $ttl = 3600) {
 		if ($mt && (time() - $mt) <= (int)$ttl) {
 			$val = @file_get_contents($file);
 			if (is_string($val)) {
-				return $val;
+				return plugin_calendar_cache_expand_baseurl($val);
 			}
 		}
 	}
