@@ -59,6 +59,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - BBCode plugin: update to version 2.0.0
   - Memoization and optional APCu caches added ([#680](https://github.com/flatpressblog/flatpress/pull/680))
   - Font button added ([#689](https://github.com/flatpressblog/flatpress/issues/689))
+  - BBcode toolbar gallery selection added ([#714](https://github.com/flatpressblog/flatpress/pull/714))
 - Stats plugin to Storage plugin:
   - The stats plugin has been renamed as part of the modernization and can be found in the uploader submenu ([#363](https://github.com/flatpressblog/flatpress/issues/363))
     - Free/used web space is displayed.
