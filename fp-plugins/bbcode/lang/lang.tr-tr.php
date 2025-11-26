@@ -52,6 +52,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'help' => 'BBCode Yardımı',
 		'file' => 'Dosya: ',
 		'image' => 'Resim: ',
+		'gallery' => 'Galeri: ',
 		'selection' => '-- Seçim --'
 	)
 );

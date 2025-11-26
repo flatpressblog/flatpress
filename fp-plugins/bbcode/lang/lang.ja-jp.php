@@ -52,6 +52,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'help' => 'BBCode ヘルプ',
 		'file' => 'ファイル: ',
 		'image' => '画像: ',
+		'gallery' => 'ギャラリー: ',
 		'selection' => '-- 選択して挿入 --'
 	)
 );

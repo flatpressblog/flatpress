@@ -52,6 +52,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'help' => 'Ayuda de BBCode',
 		'file' => 'Fichero: ',
 		'image' => 'Imagen: ',
+		'gallery' => 'Galería: ',
 		'selection' => '-- Selección --'
 	)
 );

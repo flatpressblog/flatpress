@@ -52,6 +52,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'help' => 'BBCode laguntza',
 		'file' => 'Fitxategia: ',
 		'image' => 'Irudia: ',
+		'gallery' => 'Galeria: ',
 		'selection' => '-- Hautatu --'
 	)
 );
