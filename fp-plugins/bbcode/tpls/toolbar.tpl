@@ -39,3 +39,20 @@
 		{$lang.admin.plugin.bbcode.editor.image}{html_options name=imageselect values=$images_list output=$images_list id="bb_image"}
 	</p>
 </fieldset>
+
+<fieldset id="admin-bbcode-selectbar" style="clear:both">
+	<p>
+		{$lang.admin.plugin.bbcode.editor.file}{html_options name=attachselect values=$attachs_list output=$attachs_list id="bb_attach" style="width: 10em;"}
+		&nbsp;
+	</p>
+	<p>
+		{$lang.admin.plugin.bbcode.editor.image}{html_options name=imageselect values=$images_list output=$images_list id="bb_image" style="width: 10em;"}
+		&nbsp;
+	</p>
+	{if function_exists('is_rss_feed')}
+	<p>
+		{$lang.admin.plugin.bbcode.editor.gallery|default:"Gallery: "}{html_options name=galleryselect values=$galleries_list output=$galleries_list id="bb_gallery" style="width: 10em;"}
+		&nbsp;
+	</p>
+	{/if}
+</fieldset>

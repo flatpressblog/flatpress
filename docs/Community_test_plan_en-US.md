@@ -49,6 +49,7 @@
 4) **Plugins (random samples)**
 - [ ] Newsletter: Registration (valid/invalid/disposable emails), double opt-in, bulk mailing with status display.
 - [ ] BBCode Editor: Test new buttons (font); preview and save.
+- [ ] BBCode Editor: Upload images, create a gallery, and place the new gallery in an entry.
 - [ ] PrettyURLs: Activate, check links in the frontend.
 - [ ] Storage (formerly Stats): Check capacity displays and "Top Comments" only with the Postviews plugin enabled.
 - [ ] Media Manager 2.0: Folder icons, usage detection (gallery vs. single image).

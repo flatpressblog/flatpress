@@ -458,6 +458,27 @@ function onChange_insImge() {
 	insImage(this.form.imageselect.value);
 }
 
+// gallery selection
+if (document.getElementById('bb_gallery')) {
+	bb_gallery_selection();
+} else {
+	document.addEventListener('DOMContentLoaded', bb_gallery_selection);
+}
+function insGallery(val) {
+	if (val != '--') {
+		insertAtCursor('content', '[gallery=images/' + val + ' width=180]','');
+	}
+}
+function bb_gallery_selection() {
+	const bb = document.getElementById('bb_gallery');
+	if (bb) {
+		document.getElementById('bb_gallery').addEventListener('change', onChange_insGallery, false);
+	}
+}
+function onChange_insGallery() {
+	insGallery(this.form.galleryselect.value);
+}
+
 // BBcode image popup
 document.addEventListener('DOMContentLoaded', function() {
 	const popupLinks = document.querySelectorAll('a.bbcode-popup');

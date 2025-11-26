@@ -1,24 +1,37 @@
 img.floatleft {
-	float:left;
+	float: left;
 }
 
 img.floatright {
-	float:right;
+	float: right;
 }
 
 .bbcode_video.right {
-	float:right;
-	border:0px;
+	float: right;
+	border: 0px;
 }
 
 .bbcode_video.left {
-	float:left;
-	border:0px;
+	float: left;
+	border: 0px;
 }
 
 .bbcode_video.nofloat {
-	display:block;
-	border:none;
+	display: block;
+	border: none;
 	/* disable next line if you do NOT want videos to be displayed centered */
 	margin: 0 auto;
+}
+
+#admin-bbcode-selectbar {
+	margin-top: 0.5em;
+	border: none;
+	display: table;
+	padding: 0;
+}
+
+#admin-bbcode-selectbar p {
+	display: table-cell;
+	vertical-align: middle;
+	line-height: 1em;
 }

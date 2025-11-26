@@ -51,6 +51,7 @@ $lang ['admin'] ['plugin'] ['bbcode'] = array(
 		'help' => 'Подсказки BBCode',
 		'file' => 'Файл: ',
 		'image' => 'Изображение: ',
+		'gallery' => 'Галерея: ',
 		'selection' => '-- Выбрать --'
 	)
 );

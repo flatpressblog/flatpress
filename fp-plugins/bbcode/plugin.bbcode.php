@@ -984,7 +984,7 @@ function plugin_bbcode_init_toolbar() {
 
 	// Caching
 	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
-	static $img_local = null, $att_local = null;
+	static $img_local = null, $att_local = null, $gal_local = null;
 
 	// Get all available images (cached)
 	if ($img_local === null) {
@@ -1008,6 +1008,37 @@ function plugin_bbcode_init_toolbar() {
 	$imageslist = $img_local;
 	array_unshift($imageslist, $selection);
 	$smarty->assign('images_list', $imageslist);
+
+	// Get available galleries (cached) – only if PhotoSwipe's is_rss_feed() exists
+	if ($gal_local === null) {
+		$mtG = @filemtime(IMAGES_DIR);
+		$ckG = 'fp:bbcode:toolbar:galleries:v1:' . md5(IMAGES_DIR . '|' . (string)$mtG);
+		$list = $apcu_on ? @apcu_get($ckG) : null;
+		if (!is_array($list)) {
+			$list = array();
+			if (@is_dir(IMAGES_DIR) && ($dh = @opendir(IMAGES_DIR))) {
+				while (false !== ($filename = readdir($dh))) {
+					if ($filename [0] === '.') {
+						continue;
+					}
+					$path = IMAGES_DIR . $filename;
+					if (@is_dir($path)) {
+						$list [] = $filename;
+					}
+				}
+				closedir($dh);
+			}
+			// Sort by name
+			usort($list, 'strnatcasecmp');
+			if ($apcu_on) {
+				@apcu_set($ckG, $list, 300);
+			}
+		}
+		$gal_local = $list;
+	}
+	$gallerieslist = $gal_local;
+	array_unshift($gallerieslist, $selection);
+	$smarty->assign('galleries_list', $gallerieslist);
 
 	// Get all available attachments (cached)
 	if ($att_local === null) {
