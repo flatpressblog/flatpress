@@ -111,6 +111,18 @@ class Plugin_PrettyURLs {
 		return $link . "feed/" . $type . "/";
 	}
 
+	function lastcomments_feed_link($str, $type) {
+		return $this->baseurl . "lastcomments/feed/" . $type . "/";
+	}
+
+	function lastcomments_feed_link_rss($str) {
+		return $this->lastcomments_feed_link($str, 'rss2');
+	}
+
+	function lastcomments_feed_link_atom($str) {
+		return $this->lastcomments_feed_link($str, 'atom');
+	}
+
 	function staticlink($str, $id) {
 		return $this->baseurl . $id . "/";
 	}
@@ -252,6 +264,16 @@ class Plugin_PrettyURLs {
 
 	function handle_feed($matches) {
 		$this->fp_params ['feed'] = isset($matches [2]) ? $matches [2] : 'rss2';
+	}
+
+	function handle_feed_lastcomments($matches) {
+		$type = isset($matches [2]) ? $matches [2] : 'rss2';
+		if ($type !== 'rss2' && $type !== 'atom') {
+			$type = 'rss2';
+		}
+		// Map to lastcomments feed names expected by plugin_lastcomments
+		$this->fp_params ['feed'] = 'lastcomments-' . $type;
+		$_GET ['feed'] = 'lastcomments-' . $type;
 	}
 
 	private function server_rewrite_active() {
@@ -641,6 +663,11 @@ class Plugin_PrettyURLs {
 			), $url);
 		}
 
+		$url = preg_replace_callback('|^/lastcomments/feed(/([^/]*))?|', array(
+			&$this,
+			'handle_feed_lastcomments'
+		), $url);
+
 		$url = preg_replace_callback('|^/feed(/([^/]*))?|', array(
 			&$this,
 			'handle_feed'
@@ -889,6 +916,8 @@ class Plugin_PrettyURLs {
 				$rx = array(
 					// Pagination
 					'!^/(?:page|paged)/([0-9]+)/?$!i',
+					// LastComments feeds
+					'!^/lastcomments/feed/(?:rss2|atom)/?$!i',
 					// Post-specific comment feeds
 					'!^/[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}/[^/]+/comments/feed/(?:rss2|atom)/?$!i',
 					// Global feeds
@@ -1168,6 +1197,14 @@ add_filter('comments_link', array(
 	&$plugin_prettyurls,
 	'commentlink'
 ), 0, 2);
+add_filter('plugin_lastcomments_rss_link', array(
+	&$plugin_prettyurls,
+	'lastcomments_feed_link_rss'
+), 0, 1);
+add_filter('plugin_lastcomments_atom_link', array(
+	&$plugin_prettyurls,
+	'lastcomments_feed_link_atom'
+), 0, 1);
 add_filter('feed_link', array(
 	&$plugin_prettyurls,
 	'feedlink'
