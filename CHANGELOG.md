@@ -78,6 +78,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - Modes that are not supported by the web server are grayed out.
     - If Pretty is saved in the configuration but is not supported, downgrade to one of the remaining modes.
     - Pretty URLs for static pages and feed URLs.
+    - Pretty URLs for the RSS and Atom feeds of the LastComment plugin.
     - Mixed-mode URLs are redirected to the correct URL to improve search engine rankings.
 - Calendar plugin: update to version 1.2.1
     - Optional APCu support with file fallback added ([#694](https://github.com/flatpressblog/flatpress/pull/694))
