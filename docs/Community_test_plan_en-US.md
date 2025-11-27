@@ -51,6 +51,7 @@
 - [ ] BBCode Editor: Test new buttons (font); preview and save.
 - [ ] BBCode Editor: Upload images, create a gallery, and place the new gallery in an entry.
 - [ ] PrettyURLs: Activate, check links in the frontend.
+- [ ] PrettyURLs: Open a feed reader or feed browser add-on and check whether all feeds are accessible and readable. Repeat the test with all PrettyURLs modes.
 - [ ] Storage (formerly Stats): Check capacity displays and "Top Comments" only with the Postviews plugin enabled.
 - [ ] Media Manager 2.0: Folder icons, usage detection (gallery vs. single image).
 - [ ] Archives: Open and close, link check.
