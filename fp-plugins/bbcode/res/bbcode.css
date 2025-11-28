@@ -23,15 +23,38 @@ img.floatright {
 	margin: 0 auto;
 }
 
+/* For themes/styles that do not have this section defined */
 #admin-bbcode-selectbar {
 	margin-top: 0.5em;
 	border: none;
 	display: table;
-	padding: 0;
+	padding: 0
 }
 
 #admin-bbcode-selectbar p {
 	display: table-cell;
 	vertical-align: middle;
-	line-height: 1em;
+	line-height: 1em
+}
+
+select {
+	cursor: pointer
+}
+
+#bb_url img,
+#bb_mail img,
+#bb_h2 img,
+#bb_h3 img,
+#bb_h4 img,
+#bb_ul img,
+#bb_ol img,
+#bb_quote img,
+#bb_code img,
+#bb_html img,
+#bb_font img,
+#bb_b img,
+#bb_i img,
+#bb_u img,
+#bb_del img {
+	vertical-align: middle
 }
