@@ -42,15 +42,15 @@ function insBBCode(code) {
 }
 
 function insBBCodeWithParams(code, params) {
-	insertAtCursor('content', '[' + code + '='+params+']','[/' + code + ']');
+	insertAtCursor('content', '[' + code + '=' + params + ']','[/' + code + ']');
 }
 
 function insBBCodeWithParamsAndContent(code, params, content) {
-	insertAtCursor('content', '[' + code + '='+params+']'+content,'[/' + code + ']');
+	insertAtCursor('content', '[' + code + '=' + params + ']' + content,'[/' + code + ']');
 }
 
 function insBBCodeWithContent(code, content) {
-	insertAtCursor('content', '[' + code +']'+content,'[/' + code + ']');
+	insertAtCursor('content', '[' + code +']' + content,'[/' + code + ']');
 }
 
 function insBBCodeWithoutClosingTag(code) {
@@ -58,19 +58,28 @@ function insBBCodeWithoutClosingTag(code) {
 }
 
 function insBBCodeWithParamsWithoutClosingTag(code, params) {
-	insertAtCursor('content', '[' + code + '='+params+']','');
+	insertAtCursor('content', '[' + code + '=' + params + ']','');
 }
 
 function insImage(val) {
-	if (val != '--') {
-		insertAtCursor('content', '[img=images/'+val+']',' ');
+	if (!val) {
+		return;
 	}
+	insertAtCursor('content', '[img=images/' + val + ']',' ');
 }
 
 function insAttach(val) {
-	if (val !='--') {
-		insertAtCursor('content', '[url=attachs/'+val+']','[/url]');
+	if (!val) {
+		return;
 	}
+	insertAtCursor('content', '[url=attachs/' + val + ']','[/url]');
+}
+
+function insGallery(val) {
+	if (!val) {
+		return;
+	}
+	insertAtCursor('content', '[gallery=images/' + val + ' width=180]','');
 }
 
 // if false, tab move to next element
@@ -463,11 +472,6 @@ if (document.getElementById('bb_gallery')) {
 	bb_gallery_selection();
 } else {
 	document.addEventListener('DOMContentLoaded', bb_gallery_selection);
-}
-function insGallery(val) {
-	if (val != '--') {
-		insertAtCursor('content', '[gallery=images/' + val + ' width=180]','');
-	}
 }
 function bb_gallery_selection() {
 	const bb = document.getElementById('bb_gallery');
