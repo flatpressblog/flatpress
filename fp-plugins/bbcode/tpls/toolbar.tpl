@@ -31,13 +31,6 @@
 		<button class="bb-button" type="button" id="bb_del" accesskey="" title="{$lang.admin.plugin.bbcode.editor.crossouttitle}"><img src="{$smarty.const.BLOG_BASEURL}fp-plugins/bbcode/res/toolbaricons/del.svg" alt="del"></button>
 		&nbsp;
 	</p>
-	<p>
-		{$lang.admin.plugin.bbcode.editor.file}{html_options name=attachselect values=$attachs_list output=$attachs_list id="bb_attach"}
-		&nbsp;
-	</p>
-	<p>
-		{$lang.admin.plugin.bbcode.editor.image}{html_options name=imageselect values=$images_list output=$images_list id="bb_image"}
-	</p>
 </fieldset>
 
 <fieldset id="admin-bbcode-selectbar" style="clear:both">
