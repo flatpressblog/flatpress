@@ -25,6 +25,7 @@ img.floatright {
 
 /* For themes/styles that do not have this section defined */
 #admin-bbcode-selectbar {
+	margin: 0;
 	margin-top: 0.5em;
 	border: none;
 	display: table;
