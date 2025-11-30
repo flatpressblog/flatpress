@@ -25,7 +25,7 @@ FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, ju
 - Easy to customize with __themes__, powered by [Smarty](http://www.smarty.net/)
 - __Comments__ function with spam protection
 - __Free software__ under [GNU GPLv2](LICENSE.md)
-- Supported languages: [🇨🇿](## "Čeština") [🇩🇰](## "Dansk") [🇩🇪](## "Deutsch") [🇬🇧](## "English") [🇪🇸](## "Español") [<img width="16" height="16" alt="grafik" src="https://github.com/user-attachments/assets/1ad2223a-7e3b-490e-ab8f-dfe1ee4b6acc" />](## "Euskal") [🇫🇷](## "Français") [🇬🇷](## "Ελληνικά") [🇮🇹](## "Italiano") [🇯🇵](## "日本語") [🇳🇱](## "Nederlands") [🇧🇷](## "Português Brasileiro") [🇷🇺](## "Русский") [🇸🇮](## "Slovenski") [🇹🇷](## "Türkçe") - (easy [to add](https://wiki.flatpress.org/doc:lang:packs:guidelines) yours!)
+- Supported languages: [🇨🇿](## "Čeština") [🇩🇰](## "Dansk") [🇩🇪](## "Deutsch") [🇬🇧](## "English") [🇪🇸](## "Español") [<img width="20" height="20" alt="grafik" src="https://github.com/user-attachments/assets/1ad2223a-7e3b-490e-ab8f-dfe1ee4b6acc" />](## "Euskal") [🇫🇷](## "Français") [🇬🇷](## "Ελληνικά") [🇮🇹](## "Italiano") [🇯🇵](## "日本語") [🇳🇱](## "Nederlands") [🇧🇷](## "Português Brasileiro") [🇷🇺](## "Русский") [🇸🇮](## "Slovenski") [🇹🇷](## "Türkçe") - (easy [to add](https://wiki.flatpress.org/doc:lang:packs:guidelines) yours!)
 
 ## Getting started
 Installing and running FlatPress is really easy:
