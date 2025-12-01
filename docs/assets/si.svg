@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16">
+	<!-- Streifen wie RU -->
+	<rect width="24" height="16" fill="#d52b1e"/>
+	<rect y="0" width="24" height="10.6667" fill="#0039a6"/>
+	<rect y="0" width="24" height="5.3333" fill="#ffffff"/>
+	<!-- vereinfachtes Wappen -->
+	<rect x="2" y="3" width="4" height="6" rx="1" fill="#005da4"/>
+	<polygon points="4,4 3.3,5.5 4.7,5.5" fill="#ffffff"/>
+</svg>

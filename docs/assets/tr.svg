@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16">
+	<rect width="24" height="16" fill="#e30a17"/>
+	<!-- Halbmond -->
+	<circle cx="9" cy="8" r="4" fill="#ffffff"/>
+	<circle cx="10" cy="8" r="3" fill="#e30a17"/>
+	<!-- Stern -->
+	<polygon points="
+		14.5,6.0
+		14.97,7.35
+		16.4,7.38
+		15.26,8.25
+		15.68,9.62
+		14.5,8.8
+		13.32,9.62
+		13.74,8.25
+		12.6,7.38
+		14.03,7.35
+	" fill="#ffffff"/>
+</svg>
