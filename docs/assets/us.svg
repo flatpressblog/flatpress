@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16">
+	<!-- roter Grund (13 Streifen, rot oben/unten) -->
+	<rect width="24" height="16" fill="#b22234"/>
+
+	<!-- weiße Streifen (6 Stück) -->
+	<rect y="1.231" width="24" height="1.231" fill="#ffffff"/>
+	<rect y="3.692" width="24" height="1.231" fill="#ffffff"/>
+	<rect y="6.154" width="24" height="1.231" fill="#ffffff"/>
+	<rect y="8.615" width="24" height="1.231" fill="#ffffff"/>
+	<rect y="11.077" width="24" height="1.231" fill="#ffffff"/>
+	<rect y="13.538" width="24" height="1.231" fill="#ffffff"/>
+
+	<!-- blaues Sternenfeld (Union) -->
+	<rect width="12.16" height="8.615" fill="#3c3b6e"/>
+
+	<!-- Sterne als kleine Kreise: 9 Reihen, abwechselnd 6 und 5 Sterne = 50 -->
+	<!-- Grid innerhalb des Unionsfeldes -->
+	<circle cx="1.013" cy="0.862" r="0.2" fill="#ffffff"/>
+	<circle cx="3.04"	cy="0.862" r="0.2" fill="#ffffff"/>
+	<circle cx="5.067" cy="0.862" r="0.2" fill="#ffffff"/>
+	<circle cx="7.093" cy="0.862" r="0.2" fill="#ffffff"/>
+	<circle cx="9.12"	cy="0.862" r="0.2" fill="#ffffff"/>
+	<circle cx="11.147" cy="0.862" r="0.2" fill="#ffffff"/>
+
+	<circle cx="2.027" cy="1.723" r="0.2" fill="#ffffff"/>
+	<circle cx="4.053" cy="1.723" r="0.2" fill="#ffffff"/>
+	<circle cx="6.08"	cy="1.723" r="0.2" fill="#ffffff"/>
+	<circle cx="8.107" cy="1.723" r="0.2" fill="#ffffff"/>
+	<circle cx="10.133" cy="1.723" r="0.2" fill="#ffffff"/>
+
+	<circle cx="1.013" cy="2.585" r="0.2" fill="#ffffff"/>
+	<circle cx="3.04"	cy="2.585" r="0.2" fill="#ffffff"/>
+	<circle cx="5.067" cy="2.585" r="0.2" fill="#ffffff"/>
+	<circle cx="7.093" cy="2.585" r="0.2" fill="#ffffff"/>
+	<circle cx="9.12"	cy="2.585" r="0.2" fill="#ffffff"/>
+	<circle cx="11.147" cy="2.585" r="0.2" fill="#ffffff"/>
+
+	<circle cx="2.027" cy="3.446" r="0.2" fill="#ffffff"/>
+	<circle cx="4.053" cy="3.446" r="0.2" fill="#ffffff"/>
+	<circle cx="6.08"	cy="3.446" r="0.2" fill="#ffffff"/>
+	<circle cx="8.107" cy="3.446" r="0.2" fill="#ffffff"/>
+	<circle cx="10.133" cy="3.446" r="0.2" fill="#ffffff"/>
+
+	<circle cx="1.013" cy="4.308" r="0.2" fill="#ffffff"/>
+	<circle cx="3.04"	cy="4.308" r="0.2" fill="#ffffff"/>
+	<circle cx="5.067" cy="4.308" r="0.2" fill="#ffffff"/>
+	<circle cx="7.093" cy="4.308" r="0.2" fill="#ffffff"/>
+	<circle cx="9.12"	cy="4.308" r="0.2" fill="#ffffff"/>
+	<circle cx="11.147" cy="4.308" r="0.2" fill="#ffffff"/>
+
+	<circle cx="2.027" cy="5.169" r="0.2" fill="#ffffff"/>
+	<circle cx="4.053" cy="5.169" r="0.2" fill="#ffffff"/>
+	<circle cx="6.08"	cy="5.169" r="0.2" fill="#ffffff"/>
+	<circle cx="8.107" cy="5.169" r="0.2" fill="#ffffff"/>
+	<circle cx="10.133" cy="5.169" r="0.2" fill="#ffffff"/>
+
+	<circle cx="1.013" cy="6.031" r="0.2" fill="#ffffff"/>
+	<circle cx="3.04"	cy="6.031" r="0.2" fill="#ffffff"/>
+	<circle cx="5.067" cy="6.031" r="0.2" fill="#ffffff"/>
+	<circle cx="7.093" cy="6.031" r="0.2" fill="#ffffff"/>
+	<circle cx="9.12"	cy="6.031" r="0.2" fill="#ffffff"/>
+	<circle cx="11.147" cy="6.031" r="0.2" fill="#ffffff"/>
+
+	<circle cx="2.027" cy="6.892" r="0.2" fill="#ffffff"/>
+	<circle cx="4.053" cy="6.892" r="0.2" fill="#ffffff"/>
+	<circle cx="6.08"	cy="6.892" r="0.2" fill="#ffffff"/>
+	<circle cx="8.107" cy="6.892" r="0.2" fill="#ffffff"/>
+	<circle cx="10.133" cy="6.892" r="0.2" fill="#ffffff"/>
+
+	<circle cx="1.013" cy="7.754" r="0.2" fill="#ffffff"/>
+	<circle cx="3.04"	cy="7.754" r="0.2" fill="#ffffff"/>
+	<circle cx="5.067" cy="7.754" r="0.2" fill="#ffffff"/>
+	<circle cx="7.093" cy="7.754" r="0.2" fill="#ffffff"/>
+	<circle cx="9.12"	cy="7.754" r="0.2" fill="#ffffff"/>
+	<circle cx="11.147" cy="7.754" r="0.2" fill="#ffffff"/>
+</svg>

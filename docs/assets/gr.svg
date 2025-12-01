@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16">
+	<rect width="24" height="16" fill="#0d5eaf"/>
+	<!-- weiße Streifen -->
+	<rect y="1.78" width="24" height="1.78" fill="#ffffff"/>
+	<rect y="5.34" width="24" height="1.78" fill="#ffffff"/>
+	<rect y="8.9" width="24" height="1.78" fill="#ffffff"/>
+	<rect y="12.46" width="24" height="1.78" fill="#ffffff"/>
+	<!-- blaues Feld mit weißem Kreuz -->
+	<rect width="10" height="10" fill="#0d5eaf"/>
+	<rect x="4" width="2" height="10" fill="#ffffff"/>
+	<rect y="4" width="10" height="2" fill="#ffffff"/>
+</svg>
