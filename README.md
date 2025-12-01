@@ -25,7 +25,23 @@ FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, ju
 - Easy to customize with __themes__, powered by [Smarty](http://www.smarty.net/)
 - __Comments__ function with spam protection
 - __Free software__ under [GNU GPLv2](LICENSE.md)
-- Supported languages: [🇨🇿](## "Čeština") [🇩🇰](## "Dansk") [🇩🇪](## "Deutsch") [🇬🇧](## "English") [🇪🇸](## "Español") [<img width="20" height="20" alt="grafik" src="https://github.com/user-attachments/assets/1ad2223a-7e3b-490e-ab8f-dfe1ee4b6acc" />](## "Euskal") [🇫🇷](## "Français") [🇬🇷](## "Ελληνικά") [🇮🇹](## "Italiano") [🇯🇵](## "日本語") [🇳🇱](## "Nederlands") [🇧🇷](## "Português Brasileiro") [🇷🇺](## "Русский") [🇸🇮](## "Slovenski") [🇹🇷](## "Türkçe") - (easy [to add](https://wiki.flatpress.org/doc:lang:packs:guidelines) yours!)
+- Supported languages:
+[<img src="docs/assets/🇨🇿.svg" alt="CZ" height="12" />](## "Čeština")
+[<img src="docs/assets/dk.svg" alt="DK" height="12" />](## "Dansk")
+[<img src="docs/assets/de.svg" alt="DE" height="12" />](## "Deutsch")
+[<img src="docs/assets/us.svg" alt="EN" height="12" />](## "English US")
+[<img src="docs/assets/es.svg" alt="ES" height="12" />](## "Español")
+[<img src="docs/assets/eu.svg" alt="EU" height="12" />](## "Euskal")
+[<img src="docs/assets/fr.svg" alt="FR" height="12" />](## "Français")
+[<img src="docs/assets/gr.svg" alt="GR" height="12" />](## "Ελληνικά")
+[<img src="docs/assets/it.svg" alt="IT" height="12" />](## "Italiano")
+[<img src="docs/assets/jp.svg" alt="JP" height="12" />](## "日本語")
+[<img src="docs/assets/nl.svg" alt="NL" height="12" />](## "Nederlands")
+[<img src="docs/assets/br.svg" alt="BR" height="12" />](## "Português Brasileiro")
+[<img src="docs/assets/ru.svg" alt="RU" height="12" />](## "Русский")
+[<img src="docs/assets/si.svg" alt="SI" height="12" />](## "Slovenski")
+[<img src="docs/assets/tr.svg" alt="TR" height="12" />](## "Türkçe") - (easy [to add](https://wiki.flatpress.org/doc:lang:packs:guidelines) yours!)
+
 
 ## Getting started
 Installing and running FlatPress is really easy:
