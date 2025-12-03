@@ -346,7 +346,6 @@ class admin_maintain_default extends AdminPanelAction {
 		switch ($do) {
 			case 'rebuild':
 				{
-
 					if (substr(INDEX_DIR, -1) == '/') {
 						$oldidx = substr(INDEX_DIR, 0, -1);
 					}
@@ -359,6 +358,14 @@ class admin_maintain_default extends AdminPanelAction {
 					if (file_exists(INDEX_DIR)) {
 						echo "BACKUP INDEX to " . $movedir . "\n";
 						$ret = @rename($oldidx, $movedir);
+
+						if (!$ret && is_file($oldidx)) {
+							@unlink($movedir);
+							clearstatcache(true, $movedir);
+							usleep(20000);
+							$mv = @rename($oldidx, $movedir) ?: (@copy($oldidx, $movedir) && @unlink($oldidx));
+						}
+
 						if (!$ret) {
 							die("Cannot backup old index. STOP. \nDid you just purge the cache? If so, the index was in use to create a new cache. This is done now, please simply reload the current page.");
 						}
@@ -383,6 +390,7 @@ class admin_maintain_default extends AdminPanelAction {
 				}
 			case 'purgetplcache':
 				{
+					clearstatcache();
 					if (function_exists('opcache_reset') && ini_get('opcache.enable') && ini_get('opcache.enable_cli')) {
 						// Called to ensure that all cached PHP scripts are up-to-date.
 						opcache_reset();
