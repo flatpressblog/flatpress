@@ -1699,7 +1699,28 @@ class Smarty extends \Smarty\TemplateBase {
 					error_reporting($_error_reporting);
 					throw new Exception("unable to create directory {$_dirpath}");
 				}
-				sleep(1);
+				usleep(500000);
+			}
+		}
+		// Prefer FlatPress atomic writer if available
+		if (\function_exists('io_write_file')) {
+			try {
+				// Tune options by OS: on Windows be stricter (fsync), on Unix prioritize speed.
+				if (\Smarty\Smarty::$_IS_WINDOWS) {
+					$opts = ['fsync' => true, 'invalidate_opcache' => true];
+				} else {
+					$opts = ['fsync' => false, 'invalidate_opcache' => true];
+				}
+				if (\io_write_file($_filepath, $_contents, $opts)) {
+					@chmod($_filepath, 0666 & ~umask());
+					if (function_exists('opcache_invalidate')) {
+						@opcache_invalidate($_filepath, true);
+					}
+					error_reporting($_error_reporting);
+					return true;
+				}
+			} catch (\Throwable $e) {
+				// fall through to default writer
 			}
 		}
 		// write to tmp file, then move to overt file lock race condition
@@ -1716,22 +1737,57 @@ class Smarty extends \Smarty\TemplateBase {
 		 * seems to be smart enough to handle that for us.
 		 */
 		if (\Smarty\Smarty::$_IS_WINDOWS) {
-			// remove original file
+			// --- Windows: stricter path against locks / NTFS peculiarities ---
 			if (is_file($_filepath)) {
 				@unlink($_filepath);
+				clearstatcache(true, $_filepath);
+				usleep(50000); // 50ms backoff due to AV/backup locks
 			}
-			// rename tmp file
-			$success = @rename($_tmp_file, $_filepath);
-		} else {
-			// rename tmp file
+			// 1) primary attempt: rename()
 			$success = @rename($_tmp_file, $_filepath);
 			if (!$success) {
-				// remove original file
+				clearstatcache(true, $_filepath);
+				usleep(50000);
+				// 2) Fallback: copy() + unlink(tmp) (proven on Windows with locks)
+				$success = @copy($_tmp_file, $_filepath);
+				if ($success) {
+					@unlink($_tmp_file);
+				} else {
+					// 3) Last fallback: FlatPress Writer (temp file + atomic swap)
+					if (\function_exists('io_write_file')) {
+						try {
+							$success = \io_write_file($_filepath, $_contents, ['fsync' => true, 'invalidate_opcache' => true]);
+						} catch (\Throwable $e) {
+							$success = false;
+						}
+					}
+					// Clean up tmp file best effort
+					@unlink($_tmp_file);
+				}
+			}
+		} else {
+			// --- Unix: rename is usually atomic and robust ---
+			// 1) primary attempt: rename()
+			$success = @rename($_tmp_file, $_filepath);
+			if (!$success) {
+				clearstatcache(true, $_filepath);
+				// 2) Second attempt after removing the target file
 				if (is_file($_filepath)) {
 					@unlink($_filepath);
+					clearstatcache(true, $_filepath);
 				}
-				// rename tmp file
+				usleep(20000); // 20ms backoff for NFS/metadata latency
 				$success = @rename($_tmp_file, $_filepath);
+				// 3) Last fallback: FlatPress Writer
+				if (!$success && \function_exists('io_write_file')) {
+					try {
+						$success = \io_write_file($_filepath, $_contents, ['fsync' => false, 'invalidate_opcache' => true]);
+					} catch (\Throwable $e) {
+						$success = false;
+					}
+					// Clean up tmp file best effort
+					@unlink($_tmp_file);
+				}
 			}
 		}
 		if (!$success) {

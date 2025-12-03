@@ -127,18 +127,49 @@ function fs_list_dirs($dir) {
  *        	octal mode value; same as UNIX chmod; defaults to 0777 (rwrwrw);
  * @return bool
  *
- * @todo cleanup & check bool return value
- *      
  */
 function fs_mkdir($dir, $mode = DIR_PERMISSIONS) {
-	if (is_dir($dir) || (@mkdir($dir, $mode))) {
+	// Normalize path
+	$dir = rtrim($dir, "/\\");
+	if ($dir === '' || $dir === '.' ) {
+		return true;
+	}
+	// Fast path: already exists
+	if (is_dir($dir)) {
 		@chmod($dir, $mode);
-		return TRUE;
+		return true;
 	}
-	if (!fs_mkdir(dirname($dir), $mode)) {
-		return FALSE;
+	$parent = dirname($dir);
+	if ($parent === $dir) {
+		// Reached filesystem root without success
+		return false;
 	}
-	return (@mkdir($dir, $mode) && @chmod($dir, $mode));
+	// Ensure parent exists (recursive)
+	if (!is_dir($parent) && !fs_mkdir($parent, $mode)) {
+		return false;
+	}
+	// Concurrency-safe mkdir with retries, see https://bugs.php.net/bug.php?id=35326
+	$attempts = 10;
+	while ($attempts-- > 0) {
+		if (@mkdir($dir, $mode)) {
+			@chmod($dir, $mode);
+			return true;
+		}
+		// If another process created it in the meantime, accept it
+		if (is_dir($dir)) {
+			@chmod($dir, $mode);
+			return true;
+		}
+		clearstatcache(true, $dir);
+		// Small backoff (20ms) to mitigate races on NFS/slow FS
+		usleep(20000);
+	}
+	// Final check
+	if (is_dir($dir)) {
+		@chmod($dir, $mode);
+		return true;
+	}
+	return false;
 }
 
 /**

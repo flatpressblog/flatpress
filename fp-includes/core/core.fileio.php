@@ -8,9 +8,14 @@
  * Readers see old or new version, never partial.
  * @return bool
  */
-function io_write_file($filename, $data) {
+function io_write_file($filename, $data, $options = []) {
 	$oldUmask = @umask(0);
 	$dir = dirname($filename);
+
+	$options = is_array($options) ? $options : [];
+	$doFsync = !empty($options ['fsync']);
+	$invalidateOpcache = !empty($options ['invalidate_opcache']);
+
 	if (!fs_mkdir($dir)) {
 		@umask($oldUmask);
 		return false;
@@ -36,6 +41,9 @@ function io_write_file($filename, $data) {
 		$pos += $n;
 	}
 	$ok = fflush($f);
+	if ($ok && $doFsync && function_exists('fsync')) {
+		@fsync($f);
+	}
 	fclose($f);
 	if (!$ok) {
 		@unlink($tmp);
@@ -55,6 +63,9 @@ function io_write_file($filename, $data) {
 	}
 
 	@chmod($filename, FILE_PERMISSIONS);
+	if ($invalidateOpcache && function_exists('opcache_invalidate')) {
+		@opcache_invalidate($filename, true);
+	}
 	@umask($oldUmask);
 	return true;
 }
