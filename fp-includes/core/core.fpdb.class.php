@@ -325,7 +325,6 @@ class FPDB_Query {
 		}
 	}
 
-	// not so great implementation... doesn't work well
 	function _get_random_id(&$entry_index) {
 		$qp = &$this->params;
 		$now = time();
@@ -338,7 +337,15 @@ class FPDB_Query {
 		$t1 = entry_keytotime($first);
 		$t2 = entry_keytotime($last);
 
-		$t = mt_rand($t2, $t1);
+		// mktime() with 2-digit years, so ensure min<=max
+		$min = min($t1, $t2);
+		$max = max($t1, $t2);
+
+		// If index is empty or bounds are equal, bail out safely
+		if ($min === false || $max === false) {
+			return false;
+		}
+		$t = ($min === $max) ? $min : mt_rand($min, $max);
 
 		$random_key = entry_timetokey($t);
 		$entry_index->getitem($random_key, true);
@@ -821,35 +828,6 @@ function smarty_block_entries($params, $content, &$smarty, &$repeat) {
 
 	return $content;
 }
-/**
- *	$show = false;
- *
- *	$smarty->assign('prev_entry_day', '');
- *
- *	if ($repeat) {
- *
- *		if (isset($params ['alwaysshow']) && $params ['alwaysshow']) {
- *			// $fpdb->doquery();
- *			$repeat = false;
- *			return $content;
- *		}
- *
- *		// $show = @$fpdb->doquery();
- *	} else {
- *
- *		if (!isset($fpdb->queries [0]->comments) || !$fpdb->queries [0]->comments) {
- *			$fpdb->reset(0);
- *		}
- *		$show = true;
- *	}
- *
- *	$show = true;
- *
- *	if ($show) {
- *		return $content;
- *	}
- *}
- */
 
 function smarty_block_entry($params, $content, &$smarty, &$repeat) {
 	global $fpdb;
