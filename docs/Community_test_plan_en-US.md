@@ -42,7 +42,7 @@
 - [ ] Open image lists/galleries and check whether media lists respond quickly.
 
 3) **Admin area**
-- [ ] Adjust the inactivity timeout under "Configuration → FlatPress Protect → Idle timeout for admin session"; check automatic logout after timeout.
+- [ ] Adjust the inactivity timeout under "Configuration → FlatPress Protect → Idle timeout for admin session"; check automatic logout after timeout. Automatic logout should occur after a timeout during an action.
 - [ ] Uploader/media management: Upload files/images, check thumbnails, insert into post.
 - [ ] Themes/Widgets: Change style, change widget order, control in frontend.
 - [ ] Check the hit rate in the admin area -> Maintenance -> APCu status. After extensive testing, this should not be below 85%.
