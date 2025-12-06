@@ -50,6 +50,83 @@ class admin_uploader_default extends AdminPanelAction {
 		if ($e = sess_remove('admin_uploader_errors')) {
 			$this->smarty->assign('upload_errors', $e);
 		}
+
+		// Determine PHP upload limits for client-side hints
+		$upload_limits = array();
+
+		$max_files = (int) @ini_get('max_file_uploads');
+		if ($max_files > 0) {
+			$upload_limits ['max_files'] = $max_files;
+		}
+
+		$post_max = $this->parse_ini_bytes(@ini_get('post_max_size'));
+		$upload_max = $this->parse_ini_bytes(@ini_get('upload_max_filesize'));
+
+		if ($post_max > 0 || $upload_max > 0) {
+			$max_bytes = 0;
+
+			if ($post_max > 0 && $upload_max > 0) {
+				$max_bytes = (int) min($post_max, $upload_max * ($max_files > 0 ? $max_files : 1));
+			} elseif ($post_max > 0) {
+				$max_bytes = (int) $post_max;
+			} else {
+				$max_bytes = (int) $upload_max;
+			}
+
+			// Keep a small safety margin to avoid hitting the hard limit exactly
+			if ($max_bytes > 0) {
+				$upload_limits ['max_bytes'] = (int) floor($max_bytes * 0.9);
+				$upload_limits ['max_bytes_readable'] = $this->format_bytes($upload_limits ['max_bytes']);
+			}
+		}
+
+		if (!empty($upload_limits)) {
+			$this->smarty->assign('upload_limits', $upload_limits);
+		}
+
+	}
+
+	function parse_ini_bytes($val) {
+		if (!is_string($val) || $val === '') {
+			return 0;
+		}
+		$val = trim($val);
+		$last = strtolower(substr($val, -1));
+		$num = (float) $val;
+
+		switch ($last) {
+			case 'g':
+				$num *= 1024;
+				// no break
+			case 'm':
+				$num *= 1024;
+				// no break
+			case 'k':
+				$num *= 1024;
+		}
+
+		return (int) $num;
+	}
+
+	function format_bytes($bytes) {
+		$bytes = (int) $bytes;
+		if ($bytes <= 0) {
+			return '0 B';
+		}
+
+		$units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
+		$idx = 0;
+
+		while ($bytes >= 1024 && $idx < count($units) - 1) {
+			$bytes /= 1024;
+			$idx++;
+		}
+
+		if ($idx === 0) {
+			return sprintf('%d %s', $bytes, $units [$idx]);
+		}
+
+		return sprintf('%.1f %s', $bytes, $units [$idx]);
 	}
 
 	function sanitize_filename($filename) {
@@ -74,7 +151,7 @@ class admin_uploader_default extends AdminPanelAction {
 	}
 
 	function onupload() {
-		global $fp_config;
+		global $fp_config, $lang;
 
 		// FPPROTECT: Load configuration
 		$pluginConfig = plugin_getoptions('fpprotect');
@@ -170,8 +247,84 @@ class admin_uploader_default extends AdminPanelAction {
 		// I've not put BMPs
 
 		$uploaded_files = array();
-		$upload_errors  = array();
+		$upload_errors = array();
 		$this->smarty->assign('uploaded_files', $uploaded_files);
+
+		// Server-side detection when PHP has rejected the upload.
+		$filesFieldPresent = (isset($_FILES ['upload']) && is_array($_FILES ['upload']) && isset($_FILES ['upload'] ['error']) && is_array($_FILES ['upload'] ['error']));
+
+		$hasAnyFile = false;
+		if ($filesFieldPresent) {
+			foreach ($_FILES ['upload'] ['error'] as $err) {
+				if ($err !== UPLOAD_ERR_NO_FILE) {
+					$hasAnyFile = true;
+					break;
+				}
+			}
+		}
+
+		if (!$filesFieldPresent || !$hasAnyFile) {
+			$contentLength = isset($_SERVER ['CONTENT_LENGTH']) ? (int) $_SERVER ['CONTENT_LENGTH'] : 0;
+			$postMaxBytes = 0;
+			$postMax = @ini_get('post_max_size');
+
+			if (is_string($postMax) && $postMax !== '') {
+				$val = trim($postMax);
+				$last = strtolower(substr($val, -1));
+				$num = (float) $val;
+
+				switch ($last) {
+					case 'g':
+						$num *= 1024;
+						// no break
+					case 'm':
+						$num *= 1024;
+						// no break
+					case 'k':
+						$num *= 1024;
+				}
+
+				$postMaxBytes = (int) $num;
+			}
+
+			// Get panel messages (msgs) for status codes
+			$panelMsgs = array();
+			if (isset($lang ['admin'] ['uploader'] ['default'] ['msgs']) && is_array($lang ['admin'] ['uploader'] ['default'] ['msgs'])) {
+				$panelMsgs = $lang ['admin'] ['uploader'] ['default'] ['msgs'];
+			}
+
+			$successCode = -1;
+			$msg = null;
+
+			if ($contentLength > 0 && $postMaxBytes > 0 && $contentLength > $postMaxBytes) {
+				// Upload was rejected by PHP due to post_max_size
+				$successCode = -2;
+				if (isset($panelMsgs [$successCode])) {
+					$msg = sprintf($panelMsgs [$successCode], $postMax);
+				}
+			} elseif ($contentLength > 0 && !$filesFieldPresent) {
+				// Upload data is present, but $_FILES[‘upload’] is missing completely
+				$successCode = -3;
+				if (isset($panelMsgs [$successCode])) {
+					$msg = $panelMsgs [$successCode];
+				}
+			} else {
+				// No files selected/received
+				$successCode = -4;
+				if (isset($panelMsgs [$successCode])) {
+					$msg = $panelMsgs [$successCode];
+				}
+			}
+
+			if ($msg !== null) {
+				$upload_errors [] = $msg;
+			}
+
+			$this->smarty->assign('upload_errors', $upload_errors);
+			$this->smarty->assign('success', $successCode);
+			sess_add('admin_uploader_errors', $upload_errors);
+			return 1;
+		}
 
 		foreach ($_FILES ['upload'] ['error'] as $key => $error) {
 			if ($error != UPLOAD_ERR_OK) {

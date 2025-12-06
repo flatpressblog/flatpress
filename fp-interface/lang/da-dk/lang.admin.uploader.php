@@ -11,12 +11,17 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'uploader_drop_active' => 'Slip for at tilføje',
 	'uploader_selected_count' => '%d fil(er) valgt',
 	'uploader_clear' => 'Ryd valg',
-	'uploader_remove' => 'Fjern'
+	'uploader_remove' => 'Fjern',
+	'uploader_limit_files' => 'Maksimalt %d filer pr. upload.',
+	'uploader_limit_size' => 'Maksimal samlet uploadstørrelse: %s.'
 );
 
 $lang ['admin'] ['uploader'] ['default'] ['msgs'] = array(
 	1 => 'Fil(er) uploadet',
-	-1 => 'Der opstod en fejl under upload.'
+	-1 => 'Der opstod en fejl under upload.',
+	-2 => 'Upload afvist af serveren: den samlede uploadstørrelse overskrider post_max_size (%s).',
+	-3 => 'Upload afvist af serveren, sandsynligvis på grund af begrænsninger i uploadstørrelse eller filantal. Der blev ikke modtaget nogen filer.',
+	-4 => 'Der blev ikke modtaget nogen filer. Vælg en eller flere filer, før du uploader.'
 );
 
 $lang ['admin'] ['uploader'] ['browse'] = array(

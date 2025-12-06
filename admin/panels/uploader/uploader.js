@@ -30,6 +30,18 @@
 	}
 	var seen = Object.create(null);
 
+	var maxFiles = parseInt(zone.getAttribute('data-max-files') || '', 10);
+	if (!isFinite(maxFiles) || maxFiles <= 0) {
+		maxFiles = null;
+	}
+
+	var maxBytes = parseInt(zone.getAttribute('data-max-bytes') || '', 10);
+	if (!isFinite(maxBytes) || maxBytes <= 0) {
+		maxBytes = null;
+	}
+
+	var maxHuman = zone.getAttribute('data-max-human') || '';
+
 	function render() {
 		list.innerHTML = '';
 		var files = dt ? dt.files : input.files;
@@ -71,16 +83,60 @@
 	}
 
 	function addFiles(fl){
-		if(!fl) return;
+		if(!fl) {
+			return;
+		}
+
+		var existing = dt ? dt.files : input.files;
+		var count = existing ? existing.length : 0;
+		var bytes = 0;
+
+		if (existing) {
+			for (var j = 0; j < existing.length; j++) {
+				bytes += existing[j].size || 0;
+			}
+		}
+
+		var added = 0;
+		var addedBytes = 0;
+
 		for (var i = 0; i < fl.length; i++){
 			var f = fl[i];
 			var k = fileKey(f);
-			if(seen[k]) continue;
+
+			if (seen[k]) {
+				continue;
+			}
+
+			if (maxFiles && (count + added) >= maxFiles) {
+				var msgFiles = t('max-files') || 'Maximum %d files per upload.';
+				msgFiles = msgFiles.replace('%d', maxFiles);
+				window.alert(msgFiles);
+				break;
+			}
+
+			var fSize = f.size || 0;
+			if (maxBytes && (bytes + addedBytes + fSize) > maxBytes) {
+				var msgSize = t('max-size') || 'Maximum total upload size: %s.';
+				var human = maxHuman || (Math.round(maxBytes / (1024 * 1024)) + ' MB');
+				msgSize = msgSize.replace('%s', human);
+				window.alert(msgSize);
+				continue;
+			}
+
 			seen[k] = true;
-			if(dt) dt.items.add(f);
-		} if(!dt) {
+			if (dt) {
+				dt.items.add(f);
+			}
+
+			added++;
+			addedBytes += fSize;
+		}
+
+		if(!dt) {
 			/* Fallback: last selection wins */
-		} syncInput();
+		}
+		syncInput();
 	}
 
 	function removeAt(idx) {
