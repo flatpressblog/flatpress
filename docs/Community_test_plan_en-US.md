@@ -1,6 +1,6 @@
 ## Summary
 
-- FlatPress 1.5 – Community Test Plan v1.0
+- FlatPress 1.5 – Community Test Plan v1.1
 
 ## Preparation
 1) **Preparation**
@@ -56,7 +56,7 @@
 - [ ] Storage (formerly Stats): Check capacity displays and "Top Comments" only with the Postviews plugin enabled.
 - [ ] Media Manager 2.0: Folder icons, usage detection (gallery vs. single image).
 - [ ] Archives: Open and close, link check.
-- [ ] Calendar: Link check; previous vs. next month and daily links.
+- [ ] Calendar: Link check; previous vs. next month and daily links. Deactivate the plugin without removing the widget; check the frontend to see if there are any side effects.
 - [ ] SEO Metatag info: Enter a description for a newly created post; check in the frontend whether an introduction is displayed.
 
 5) **Internationalization**
