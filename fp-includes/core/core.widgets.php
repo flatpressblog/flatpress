@@ -11,9 +11,9 @@ class widget_indexer extends fs_filelister {
 
 	function __construct() {
 		if (!file_exists(CONFIG_DIR . 'widgets.conf.php')) {
-			trigger_error('widgets.conf.php not found. Blog may not work as expected, create a widgetlist.conf.php 
-					or reinstall completely FlatPress. If you have just installed FlatPress, the package you
-					downloaded may be corrupted.', E_USER_WARNING);
+			trigger_error('widgets.conf.php not found. Blog may not work as expected, create a widgetlist.conf.php ' . //
+					'or reinstall completely FlatPress. If you have just installed FlatPress, the package you ' . //
+					'downloaded may be corrupted.', E_USER_WARNING);
 		}
 		$this->_enabledlist = CONFIG_DIR . 'widgets.conf.php';
 		$this->getEnableds();
@@ -30,7 +30,14 @@ class widget_indexer extends fs_filelister {
 	}
 
 	function hasMore($hor) {
-		return array_key_exists($hor, $this->_list) && is_array($this->_list [$hor]) && (current($this->_list [$hor]) !== false);
+		if ($hor === null || !is_array($this->_list)) {
+			return false;
+		}
+		$key = is_int($hor) ? $hor : (string)$hor;
+		if ($key === '') {
+			return false;
+		}
+		return isset($this->_list [$key]) && is_array($this->_list [$key]) && (current($this->_list [$key]) !== false);
 	}
 
 	function get($hor) {
@@ -40,15 +47,18 @@ class widget_indexer extends fs_filelister {
 			$content = array();
 
 			$id = array_shift($this->_list [$hor]);
+			if ($id === null || $id === '') {
+				continue;
+			}
 
-			$newid = $id; // @list($newid, $params) = explode(":", $id);
+			$newid = $id;
 			if (@$params) {
 				$params = explode(',', $params);
 			} else {
 				$params = array();
 			}
-			// $var = 'plugin_' . $newid . '_widget';
-			if (!array_key_exists($newid, $fp_registered_widgets)) {
+			$key = is_int($newid) ? $newid : (string)$newid;
+			if ($key === '' || !isset($fp_registered_widgets [$key])) {
 				continue;
 			}
 			$var = $fp_registered_widgets [$newid] ['func'];
@@ -57,14 +67,7 @@ class widget_indexer extends fs_filelister {
 				if (!isset($content ['id'])) {
 					$content ['id'] = "widget-" . $newid;
 				}
-			} /*
-			   * else $content = array(
-			   * 'subject' => "Sidebar::Error",
-			   * 'content' => "<ul class=\"widget-error\"><li>No $var function found for plugin $newid.
-			   * Plugin may not have been loaded.
-			   * Verify whether it is enabled.</li></ul>",
-			   * );
-			   */
+			}
 		} while (!$content && $id);
 
 		return array_change_key_case($content, CASE_LOWER);
@@ -92,17 +95,18 @@ function get_registered_widgetsets($widgetset) {
 	return $fp_registered_widgetsets;
 }
 
-function register_widget($widgetid, // widget id
-$widgetname, // name to show
-$widget_func, // function/method to call
-$num_params = 0, // number of eventually needed parameters
-                  // -1 means optional,
-                  // 0 means no parameters
-                  // each N>0 means *at least* N parameters
-
-		$limit_params_to = array()) // indexed array of arrays, containing
-		                             // allowed parameters (not impl.)
-{
+/**
+ * $widgetname,                name to show
+ * $widget_func,               function/method to call
+ * $num_params = 0,            number of eventually needed parameters
+ *                             -1 means optional,
+ *                             0 means no parameters
+ *                             each N>0 means *at least* N parameters
+ *
+ * $limit_params_to = array()) indexed array of arrays, containing
+ * allowed parameters (not impl.)
+ */
+function register_widget($widgetid, $widgetname, $widget_func, $num_params = 0, $limit_params_to = array()) {
 	global $fp_registered_widgets;
 	if (!$fp_registered_widgets) {
 		$fp_registered_widgets = array();
@@ -138,10 +142,38 @@ function get_registered_widgets($widget = null) {
 function smarty_block_widgets($params, $content, &$smarty, &$repeat) {
 	global $fp_widgets;
 
-	if ($repeat = $fp_widgets->hasMore(($params ['pos']))) {
+	$pos = isset($params ['pos']) ? $params ['pos'] : null;
 
-		$entry = $fp_widgets->get(($params ['pos']));
-		$smarty->assign($entry);
+	// Opening call: preparing the first valid iteration
+	if ($content === null) {
+		while (true) {
+			if (!($repeat = $fp_widgets->hasMore(($pos)))) {
+				// No longer available
+				return;
+			}
+			$entry = $fp_widgets->get(($pos));
+			if (!empty($entry)) {
+				$repeat = true;
+				$smarty->assign($entry);
+				return;
+			}
+			// Empty/abandoned -> try next
+		}
+	} else {
+		// Closing call: prepare the next valid iteration (if available)
+		while (true) {
+			if (!($repeat = $fp_widgets->hasMore(($pos)))) {
+				$repeat = false;
+				return $content;
+			}
+			$entry = $fp_widgets->get(($pos));
+			if (!empty($entry)) {
+				$repeat = true;
+				$smarty->assign($entry);
+				return $content;
+			}
+			// Empty/abandoned -> try next
+		}
 	}
 
 	return $content;
