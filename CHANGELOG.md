@@ -40,6 +40,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - Correct output when a historical character set encoding is set. ([#670](https://github.com/flatpressblog/flatpress/pull/670))
 - If ``$_SERVER [‘HTTPS’] = off`` is set in the web server, an HTTP connection is now correctly recognized. ([#671](https://github.com/flatpressblog/flatpress/issues/671))
 - ``theme_style_exists()`` now returns ``''`` if the style directory is missing. Previously, the theme root was returned incorrectly. ([#678](https://github.com/flatpressblog/flatpress/pull/678))
+- Fixes the display of orphaned widgets when a plugin has been deactivated and prevents duplicate or missing widget outputs, so that only widgets from active plugins are output. ([#726](https://github.com/flatpressblog/flatpress/pull/726))
 
 ## Plugins
 ### Changes
