@@ -16,7 +16,7 @@
 - [ ] Place missing widgets in the right widget bar.
 
 2) **Checking the preparation**
-- [ ] Log in to the admin area, open the "Uploader" menu -> "Storage" submenu.
+- [ ] Log in to the admin area, open the "Uploader" menu -> "Storage".
 - [ ] Check in the storage menu whether there are 3000 entries with 10 comments each.
 - [ ] Check in the Storage menu whether 10 static pages are available.
 - [ ] Check the PHP log file to see if any errors or warnings occurred during preparation.
