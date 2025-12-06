@@ -45,6 +45,7 @@
 - [ ] Adjust the inactivity timeout under "Configuration → FlatPress Protect → Idle timeout for admin session"; check automatic logout after timeout.
 - [ ] Uploader/media management: Upload files/images, check thumbnails, insert into post.
 - [ ] Themes/Widgets: Change style, change widget order, control in frontend.
+- [ ] Check the hit rate in the admin area -> "APCu status". After extensive testing, this should not be below 85%.
 
 4) **Plugins (random samples)**
 - [ ] Newsletter: Registration (valid/invalid/disposable emails), double opt-in, bulk mailing with status display.
