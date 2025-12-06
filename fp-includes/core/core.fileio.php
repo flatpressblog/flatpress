@@ -191,6 +191,12 @@ function apcu_set($key, $val, $ttl = 120) {
 
 function io_load_file_uncached($filename) {
 	if (file_exists($filename)) {
+
+		if (function_exists('set_time_limit')) {
+			@set_time_limit(0);
+		}
+		@ini_set('max_execution_time', '0');
+
 		if (function_exists('file_get_contents')) {
 			return file_get_contents($filename);
 		}

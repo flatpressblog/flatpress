@@ -11,12 +11,17 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'uploader_drop_active' => 'Loslaten om toe te voegen',
 	'uploader_selected_count' => '%d bestand(en) geselecteerd',
 	'uploader_clear' => 'Selectie leegmaken',
-	'uploader_remove' => 'Verwijderen'
+	'uploader_remove' => 'Verwijderen',
+	'uploader_limit_files' => 'Maximaal %d bestanden per upload.',
+	'uploader_limit_size' => 'Maximale totale uploadgrootte: %s.'
 );
 
 $lang ['admin'] ['uploader'] ['default'] ['msgs'] = array(
 	1 => 'File(s) opgeladen',
-	-1 => 'Er is een fout opgetreden tijdens het uploaden.'
+	-1 => 'Er is een fout opgetreden tijdens het uploaden.',
+	-2 => 'Upload geweigerd door de server: de totale uploadgrootte overschrijdt post_max_size (%s).',
+	-3 => 'Upload geweigerd door de server, waarschijnlijk vanwege beperkingen in uploadgrootte of aantal bestanden. Er zijn geen bestanden ontvangen.',
+	-4 => 'Er zijn geen bestanden ontvangen. Selecteer een of meer bestanden voordat u begint met uploaden.'
 );
 
 $lang ['admin'] ['uploader'] ['browse'] = array(
