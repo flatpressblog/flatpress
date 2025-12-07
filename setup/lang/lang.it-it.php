@@ -23,7 +23,7 @@ $lang ['locked'] = array(
 $lang ['err'] = array(
 	'setuprun1' => 'L\'installazione è in corso.',
 
-	'setuprun2' => 'L\'installazione è già in corso: se siete l\'amministratore, potete cancellare ',
+	'setuprun2' => 'L\'installazione è già in corso: se sei l\'amministratore, puoi cancellare ',
 	'setuprun3' => ' per riavviare.',
 	'writeerror' => 'Errore di scrittura',
 
@@ -113,7 +113,7 @@ Il modo predefinito dell\'aspetto e del contenuto dell\'articolo è [url=https:/
 
 [quote]Ci sono anche i blocchi [b]citazione[/b] per mostrare le tue citazioni preferite.[/quote]
 
-[code]E il tag \'code\' mmostra dei pezzetti di codice in uno stile monospaziale.
+[code]E il tag \'code\' mostra dei pezzetti di codice in uno stile monospaziale.
 Inoltre supporta
    il contenuto indentato.[/code]
 
