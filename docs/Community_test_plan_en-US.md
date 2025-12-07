@@ -9,7 +9,7 @@
 - [ ] Download the latest developer version or the latest release candidate of [FlatPress](https://github.com/flatpressblog/flatpress).
 - [ ] Download the latest version of the [Bulk Content Generator](https://github.com/flatpressblog/flatpress-extras/tree/master/fp-tools/gen-bulk).
 - [ ] If possible and available, install the [APCu cache extension](https://github.com/flatpressblog/flatpress/blob/master/docs/APCu_Installation_and_Activation.md) on your web server.
-- [ ] Install FlatPress on your web server. If you already have a FlatPress instance, install the latest version as a separate instance (e.g., `/fp15-dev`).
+- [ ] [Install FlatPress](https://wiki.flatpress.org/en:doc:basic:installation) on your web server. If you already have a FlatPress instance, install the latest version as a separate instance (e.g., `/fp15-dev`).
 - [ ] Copy the Bulk Content Generator to the blog root directory to generate test data.
 - [ ] If necessary, recursively adjust the ownership rights and file and directory permissions.
 - [ ] Open the browser of your choice and then run the setup (``setup.php``).
