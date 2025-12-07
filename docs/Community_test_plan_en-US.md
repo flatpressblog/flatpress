@@ -2,6 +2,8 @@
 
 - FlatPress 1.5 – Community Test Plan v1.1
 
+<sub><i>I recommend working through the test plan step by step from top to bottom. Otherwise, some test steps may not be performed or may distort the overall result.</i></sub>
+
 ## Preparation
 1) **Preparation**
 - [ ] Download the latest developer version or the latest release candidate of [FlatPress](https://github.com/flatpressblog/flatpress).
