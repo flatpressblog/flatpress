@@ -398,7 +398,7 @@ Both store BLOG_BASEURL as a placeholder `%BLOG_BASEURL%` and expand it on read.
 - Namespaced by `fp:archives:v` (integer version in APCu).
 - `plugin_archives_cache_bump()`:
   - `apcu_incr('fp:archives:v', 1, …)`; falls back to `@apcu_set('fp:archives:v', 1);`.
-  - Bound to comment/save hooks and (since 2803-09) also invoked from PrettyURLs when the URL mode changes.
+  - Bound to comment/save hooks and (since 2833) also invoked from PrettyURLs when the URL mode changes.
 
 **PrettyURLs dependency:**
 
@@ -428,7 +428,7 @@ Medium. Reduces repeated archive computation and template rendering.
 - `plugin_calendar_cache_ns()` uses `fp:calendar:v` to generate a `:vN` suffix.
 - `plugin_calendar_cache_bump()`:
   - `apcu_incr('fp:calendar:v', …)` + fallback and file cache cleanup.
-  - Bound to entry publish/edit/delete hooks and (since 2803-09) invoked from PrettyURLs when the URL mode changes.
+  - Bound to entry publish/edit/delete hooks and (since 2833) invoked from PrettyURLs when the URL mode changes.
 
 **PrettyURLs dependency:**
 
@@ -571,7 +571,7 @@ The following table summarizes each logical cache group:
 
 ## 7. Reference: All APCu Key Prefixes
 
-For completeness, the following logical prefixes are used by FlatPress `flatpress-master-2803-09`:
+For completeness, the following logical prefixes are used by FlatPress `flatpress-master-2833`:
 
 - `fp:archives:html`
 - `fp:archives:list`
