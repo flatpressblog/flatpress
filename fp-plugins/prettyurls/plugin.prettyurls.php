@@ -1401,6 +1401,14 @@ Options -Indexes
 				$gen = (int) plugin_getoptions('prettyurls', 'apcu_gen');
 				plugin_addoption('prettyurls', 'apcu_gen', ($gen < 1) ? 1 : ($gen + 1));
 				plugin_saveoptions('prettyurls');
+
+				// Invalidate APCu-backed caches that embed absolute URLs
+				if (function_exists('plugin_archives_cache_bump')) {
+					plugin_archives_cache_bump();
+				}
+				if (function_exists('plugin_calendar_cache_bump')) {
+					plugin_calendar_cache_bump();
+				}
 			}
 
 			// Refill template after changes
