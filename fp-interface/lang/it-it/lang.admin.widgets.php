@@ -9,11 +9,11 @@ $lang ['admin'] ['widgets'] ['default'] = array(
 	'descr' => 'Un <a class="hint" ' . //
 		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="What is a Widget?">' . //
 		'Widget</a> è un componente dinamico che può visualizzare dati e interagire con l\'utente. ' . //
-		'Mentre i <strong>Temi</strong> sono fatti per cambiare l\'aspetto del blog, i Widgets ' . //
+		'Mentre i <strong>Temi</strong> sono fatti per cambiare l\'aspetto del blog, i Widget ' . //
 		'ne <strong>estendono</strong> le funzionalità e ne cambiano l\'aspetto.</p>' . //
 
 		'<p>I Widget possono essere trascinati in aree specifiche del tuo tema chiamate ' . //
-		'<strong>WidgetSets</strong>. Il numero e il nome dei WidgetSets possono variare a seconda del tema che hai scelto.</p>' . //
+		'<strong>WidgetSet</strong>. Il numero e il nome dei WidgetSet possono variare a seconda del tema che hai scelto.</p>' . //
 
 		'<p>FlatPress viene fornito con parecchi widget: ci sono widget che aiutano con la connessione, per visualizzare una casella di ricerca, ecc.</p>' . //
 

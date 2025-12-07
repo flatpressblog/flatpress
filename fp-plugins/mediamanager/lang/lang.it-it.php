@@ -5,7 +5,7 @@ $lang ['admin'] ['uploader'] ['submenu'] ['mediamanager'] = 'Media manager';
 
 $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Media manager',
-	'description' => 'Gestisci i file mulltimediali',
+	'description' => 'Gestisci i file multimediali',
 
 	'delete' => 'Elimina',
 	'up' => 'Indietro',
