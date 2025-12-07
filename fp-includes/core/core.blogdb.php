@@ -97,15 +97,15 @@
 	 * <p>Parses the entry file passed as parameter; returns an associative array
 	 * of the file content</p>
 	 * Tipically, entry arrays are usually made of these keys
-	 * - VERSION	:	SimplePHPBlog or compatible blogs' version identifier string
-	 * - SUBJECT 	:	Subject of the entry
-	 * - CONTENT	:	Content of the entry
-	 * - DATE		:	UNIX filestamp to format by {@link date_format()}.
+	 * - VERSION:       SimplePHPBlog or compatible blogs' version identifier string
+	 * - SUBJECT:       Subject of the entry
+	 * - CONTENT:       Content of the entry
+	 * - DATE:          UNIX filestamp to format by {@link date_format()}.
 	 * 
-	 * comments usually provide also 
-	 * - NAME 	:	author name
-	 * - EMAIL	:	author email (if any)
-	 * - URL	:	author website url (if any)
+	 * comments usually provide also
+	 * - NAME:          author name
+	 * - EMAIL:         author email (if any)
+	 * - URL:           author website url (if any)
 	 *
 	 * A common usage of the function could be
 	 * <code>
@@ -117,8 +117,6 @@
 	 * @param string $id ID or file path to parse
 	 * @param string|null $type Optional type (e.g., BDB_ENTRY, BDB_COMMENT)
 	 * @return array|false Parsed key-value pairs, or false if file not found
-	 *
-	 * @todo validate returned id
 	 */
 	function bdb_parse_entry($id, $type = null) {
 
@@ -134,6 +132,23 @@
 			return $__bdb_entry_cache [$file];
 		}
 
+		// Optional APCu cache of parsed entry (shared hot cache across requests)
+		$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+		if ($apcu_on) {
+			clearstatcache(true, $file);
+			$mt = @filemtime($file);
+			if ($mt !== false) {
+				$sz = (int) @filesize($file);
+				$akey = 'fp:entry:parsed:' . basename($file) . ':' . $mt . ':' . $sz;
+				$ahit = false;
+				$aval = apcu_get($akey, $ahit);
+				if ($ahit && is_array($aval)) {
+					$__bdb_entry_cache [$file] = $aval;
+					return $aval;
+				}
+			}
+		}
+
 		if (file_exists($file)) {
 			$contents = io_load_file($file);
 
@@ -147,7 +162,45 @@
 
 			$entry = utils_kexplode($contents, '|', $ignoreCase);
 
+			// Existing ID or file name (without extension)
+			$rawId = isset($entry ['id']) && $entry ['id'] !== '' ? (string)$entry ['id'] : (string)pathinfo($file, PATHINFO_FILENAME);
+			$normId = preg_replace('/[^A-Za-z0-9_-]/', '-', $rawId);
+			$normId = trim($normId, '-_');
+			if ($normId === '' || $normId === null) {
+				// Exactly matching FlatPress entry name?
+				$base = (string)pathinfo($file, PATHINFO_FILENAME);
+				if (preg_match('/^entry(\d{6}-\d{6})$/i', $base, $m)) {
+					$normId = 'entry' . strtolower($m [1]);
+				} else {
+					// Timestamp fragment somewhere in the name?
+					if (preg_match('/(\d{6})[-_](\d{6})/', $base, $t)) {
+						$normId = 'entry' . strtolower($t [1] . '-' . $t [2]);
+					} else {
+						// Generate from file time (FlatPress convention)
+						clearstatcache(true, $file);
+						$mt = @filemtime($file);
+						if ($mt !== false) {
+							$normId = 'entry' . gmdate('ymd-His', $mt);
+						} else {
+							// Last resort: stable hash (extreme special cases)
+							$normId = 'entry-' . substr(sha1($file), 0, 12);
+						}
+					}
+				}
+			}
+
+			// Lowercase letters (IDs lowercase in themes/URLs)
+			$entry ['id'] = strtolower($normId);
+
 			$__bdb_entry_cache [$file] = $entry;
+
+			// Fill APCu parsed-entry cache (bounded TTL)
+			if ($apcu_on && isset($mt) && $mt !== false) {
+				$sz = isset($sz) ? $sz : (int) @filesize($file);
+				$akey = 'fp:entry:parsed:' . basename($file) . ':' . $mt . ':' . $sz;
+				$ttl = max(0, (int) ($_ENV ['FP_APCU_ENTRY_TTL'] ?? 600));
+				apcu_set($akey, $entry, $ttl);
+			}
 
 			return $entry;
 		} else {
