@@ -372,7 +372,7 @@ Medium. Helps under repeated, identical search requests.
   - Obfuscation: up to 7200 seconds (2 hours).
 
 **Impact:**  
-Medium–High. Particularly useful when many users edit content or when image metadata is queried frequently.
+Medium. Particularly useful when image metadata is frequently queried.
 
 ---
 
@@ -403,7 +403,7 @@ Both store BLOG_BASEURL as a placeholder `%BLOG_BASEURL%` and expand it on read.
 **PrettyURLs dependency:**
 
 - Yes. The cached HTML and URL paths depend on the current PrettyURLs mode.
-- As of `flatpress-master-2803-09`, PrettyURLs’ settings save (`onsubmit()`) calls `plugin_archives_cache_bump()` to keep this cache consistent with URL mode changes.
+- As of `flatpress-master`, PrettyURLs’ settings save (`onsubmit()`) calls `plugin_archives_cache_bump()` to keep this cache consistent with URL mode changes.
 
 **Impact:**  
 Medium. Reduces repeated archive computation and template rendering.
