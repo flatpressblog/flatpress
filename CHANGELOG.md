@@ -71,6 +71,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - The 10 most commented posts are only displayed if the Postviews plugin is active
     - A slightly more modern, responsive design
 - Media Manager plugin: update to version 2.0.0 ([#685](https://github.com/flatpressblog/flatpress/pull/685))
+    - Preview images on mouseover ([#732](https://github.com/flatpressblog/flatpress/pull/732))
     - The folder icon now indicates whether the gallery or a single image in the directory is used in entries or not
     - Performance:
         - (initial call, root view): Entry scan reduced from 2× to 1×
