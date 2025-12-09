@@ -1,4 +1,6 @@
 <link rel="stylesheet" type="text/css" href="{($mmurl|cat:'res/style.css')|ver:$smarty.const.SYSTEM_VER}">
+<script nonce="{$smarty.const.RANDOM_HEX}" src="{($mmurl|cat:'res/mediamanager.js')|ver:$smarty.const.SYSTEM_VER}" defer></script>
+
 <h2>{$plang.head}</h2>
 <p>{$plang.description}</p>
 {include file="shared:errorlist.tpl"}
@@ -60,7 +62,7 @@
 						&nbsp;
 					{/if}
 				</td>
-				<td class="main-cell type-{$v.type}"><a class="link-general{if $v.type=='images'} bbcode-popup{/if}" {if $v.type=='images'}rel="lightbox[mm]"{/if} href="{$v.url}">{$v.name}</a></td>
+				<td class="main-cell type-{$v.type}"><a class="link-general{if $v.type=='images'} bbcode-popup{/if}" {if $v.type=='images'}rel="lightbox[mm]"{/if} data-mm-preview="{$v.url}" href="{$v.url}">{$v.name}</a></td>
 				<td>
 				{if $v.usecount>0}
 					{assign var="vrel" value=$v.relpath|default:$v.name}
