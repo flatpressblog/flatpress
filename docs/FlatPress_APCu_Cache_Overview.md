@@ -83,7 +83,7 @@ High. Most APCu usage flows through these helpers.
   - Automatic when the file changes (mtime/size).
   - No global version bump needed.
 - TTL:
-  - Controlled via env `FP_APCU_IO_TTL` (seconds). Default 7200s (2h).
+  - Controlled via env `FP_APCU_IO_TTL` (seconds). Default 3600s (1h).
   - For constrained APCu pools (< 32 MiB), consider `FP_APCU_IO_TTL=600–1800`.
 
 **Impact:**  
@@ -550,7 +550,7 @@ The following table summarizes each logical cache group:
 | Area                         | Key prefixes (logical)                                                               | Depends on PrettyURLs?   | Invalidation driver                                  | Approx. impact      |
 |------------------------------|--------------------------------------------------------------------------------------|--------------------------|------------------------------------------------------|---------------------|
 | APCu core helpers            | `fp:ns:*`, `apcu_ns()`, `apcu_key()`                                                 | No                       | N/A (meta only)                                      | High (foundational) |
-| File I/O                     | `fp:io:*`                                                                            | No                       | File mtime/size, TTL (default 2h)                    | High                |
+| File I/O                     | `fp:io:*`                                                                            | No                       | File mtime/size, TTL (default 1h)                    | High                |
 | Entries                      | `fp:entry:parsed:*`                                                                  | No                       | Entry file mtime/size                                | High                |
 | Comments                     | `fp:comments:list:*`                                                                 | No                       | Comment index mtime/size, TTL 300s                   | Medium–High         |
 | Static pages                 | `fp:statics:list:*`                                                                  | No                       | Static dir mtime/size, TTL 600s                      | Medium              |
