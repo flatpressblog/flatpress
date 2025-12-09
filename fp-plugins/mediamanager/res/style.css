@@ -4,24 +4,62 @@
 	background-repeat: no-repeat;
 	background-position: left center;
 }
+
 .type-images a {
 	padding-left: 25px;
 	background-image: url('image2.gif');
 	background-repeat: no-repeat;
 	background-position: left center;
 }
+
 .type-not-use a {
 	padding-left: 25px;
 	background-image: url('not-use-folder.gif');
 	background-repeat: no-repeat;
 	background-position: left center;
 }
+
 .type-gallery a {
 	padding-left: 25px;
 	background-image: url('folder.gif');
 	background-repeat: no-repeat;
 	background-position: left center;
 }
+
 .colname {
 	width: 50%;
+}
+
+/**
+ * Hover image preview for Media Manager 2.X.X
+ */
+.mm-hover-preview {
+	position: fixed;
+	pointer-events: none;
+	z-index: 9999;
+	display: none;
+	background: #fff;
+	border: 1px solid rgba(0,0,0,.15);
+	box-shadow: 0 4px 18px rgba(0,0,0,.2);
+	padding: 4px;
+	border-radius: 8px;
+	max-width: 320px;
+	max-height: 320px;
+	overflow: hidden;
+}
+
+.mm-hover-preview img {
+	display: block;
+	max-width: 300px;
+	max-height: 300px;
+	height: auto;
+	width: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+	.mm-hover-preview {
+		background: #1f2937;
+		border-color: rgba(255,255,255,.15);
+		box-shadow: 0 10px 24px rgba(0,0,0,.5);
+	}
 }
