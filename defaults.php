@@ -35,7 +35,7 @@ define('RESTRICTED_FILE_PERMISSIONS', 0644); // 0644 is recommended
 define('RESTRICTED_DIR_PERMISSIONS', 0755); // 0755 is recommended
 
 // For small APCu pools (< 32 MiB), set to 600–1800 s; for standard pools, set it to 1800–3600 s; for large pools, set it to 3600–7200 s.
-define('FP_APCU_IO_TTL', 3600)
+define('FP_APCU_IO_TTL', 3600);
 
 /**
  * First some webserver setup...
