@@ -3,7 +3,7 @@
  * Author: Enrico Reinsdorf (enrico@re-design.de)
  * Author URI: www.re-design.de
  * Changelog: RAM hits instead of I/O
- * Change-Date: 01.11.2025
+ * Change-Date: 11.12.2025
  */
 class iniParser {
 
@@ -66,12 +66,14 @@ class iniParser {
 					}
 					@flock($fh, LOCK_UN);
 				} else {
-					$file_content = @file($rp) ?: array();
+					$raw = io_load_file($rp);
+					$file_content = is_string($raw) ? explode("\n", str_replace(array("\r\n", "\r"), "\n", $raw)) : array();
 				}
 				@flock($fh, LOCK_UN);
 				fclose($fh);
 			} else {
-				$file_content = @file($rp) ?: array();
+				$raw = io_load_file($rp);
+				$file_content = is_string($raw) ? explode("\n", str_replace(array("\r\n", "\r"), "\n", $raw)) : array();
 			}
 		}
 
