@@ -627,7 +627,7 @@ if (class_exists('AdminPanelAction')) {
 				if (@file_exists($cf)) {
 					$mt = @filemtime($cf);
 					if ($mt !== false && (time() - (int)$mt) < $ttl) {
-						$raw = @file_get_contents($cf);
+						$raw = io_load_file($cf);
 						if ($raw !== false) {
 							$jd = @json_decode($raw, true);
 							if (is_array($jd) && isset($jd ['size'])) {

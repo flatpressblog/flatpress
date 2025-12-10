@@ -23,14 +23,10 @@ function search_cache_index_load() {
 	if (!is_readable($idxFile)) {
 		return array('entries' => array());
 	}
-	$fp = @fopen($idxFile, 'rb');
-	if (!$fp) {
+	$raw = io_load_file($idxFile);
+	if ($raw === false || $raw === null) {
 		return array('entries' => array());
 	}
-	@flock($fp, LOCK_SH);
-	$raw = @stream_get_contents($fp);
-	@flock($fp, LOCK_UN);
-	@fclose($fp);
 	$data = @json_decode($raw, true);
 	if (!is_array($data) || !isset($data ['entries']) || !is_array($data ['entries'])) {
 		return array('entries' => array());
@@ -190,7 +186,7 @@ function search_cache_get($key) {
 	if (!is_apcu_on()) {
 		$file = CACHE_DIR . 'search-' . sha1($key) . '.json';
 		if (is_readable($file)) {
-			$j = @file_get_contents($file);
+			$j = io_load_file($file);
 			if ($j !== false) {
 				$val = json_decode($j, true);
 				if (is_array($val)) {
