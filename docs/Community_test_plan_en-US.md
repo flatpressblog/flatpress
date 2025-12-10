@@ -57,7 +57,8 @@
 - [ ] PrettyURLs: Activate, check links in the frontend.
 - [ ] PrettyURLs: Open a feed reader or feed browser add-on and check whether all feeds are accessible and readable. Repeat the test with all PrettyURLs modes.
 - [ ] Storage (formerly Stats): Check capacity displays and "Top Comments" only with the Postviews plugin enabled.
-- [ ] Media Manager 2.0: Folder icons, usage detection (gallery vs. single image).
+- [ ] Media Manager: Folder icons, usage detection (gallery vs. single image).
+- [ ] Media Manager: Preview images on mouseover.
 - [ ] Archives: Open and close, link check.
 - [ ] Calendar: Link check; previous vs. next month and daily links. Deactivate the plugin without removing the widget; check the frontend to see if there are any side effects.
 - [ ] SEO Metatag info: Enter a description for a newly created post; check in the frontend whether an introduction is displayed.
