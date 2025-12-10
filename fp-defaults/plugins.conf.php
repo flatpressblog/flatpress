@@ -34,6 +34,7 @@ $fp_plugins = array(
 	'photoswipe',
 	'fpprotect', // Hardens your blog with additional features in the HTTP response header.
 		// Removes the htaccess editor from the PrettyURLs plugin.
-	'gdprvideoembed' // Simple two-click solution for GDPR-compliant embedding of YouTube, Facebook and Vimeo videos.
+	'gdprvideoembed', // Simple two-click solution for GDPR-compliant embedding of YouTube, Facebook and Vimeo videos.
+	'storage'
 );
 ?>
