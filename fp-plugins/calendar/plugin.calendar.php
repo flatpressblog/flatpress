@@ -183,7 +183,7 @@ function plugin_calendar_cache_get($key, $ttl = 3600) {
 	if (@file_exists($file)) {
 		$mt = @filemtime($file);
 		if ($mt && (time() - $mt) <= (int)$ttl) {
-			$val = @file_get_contents($file);
+			$val = io_load_file($file);
 			if (is_string($val)) {
 				return plugin_calendar_cache_expand_baseurl($val);
 			}

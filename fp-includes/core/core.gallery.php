@@ -79,15 +79,22 @@ function gallery_read_captions($galleryDir) {
 	$galleryDirPathAbs = ABS_PATH . FP_CONTENT . $galleryDir . '/';
 	// read captions.conf from gallery dir
 	if (file_exists($galleryDirPathAbs . GALLERY_CAPTIONS_FILENAME)) {
-		$captionsFileContent = file($galleryDirPathAbs . GALLERY_CAPTIONS_FILENAME);
+		$raw = io_load_file($galleryDirPathAbs . GALLERY_CAPTIONS_FILENAME);
+		$captionsFileContent = is_string($raw) ? explode("\n", str_replace(array("\r\n","\r"), "\n", rtrim($raw, "\r\n"))) : array();
 	} //
 	  // legacy mode: if captions.conf is not available, check for texte.conf
 	elseif (file_exists($galleryDirPathAbs . GALLERY_CAPTIONS_LEGACYFILENAME)) {
-		$captionsFileContent = file($galleryDirPathAbs . GALLERY_CAPTIONS_LEGACYFILENAME);
+		$raw = io_load_file($galleryDirPathAbs . GALLERY_CAPTIONS_LEGACYFILENAME);
+		$captionsFileContent = is_string($raw) ? explode("\n", str_replace(array("\r\n","\r"), "\n", rtrim($raw, "\r\n"))) : array();
 	} //
 	  // no caption file available
 	else {
 		return array();
+	}
+
+	// Tolerate BOM on first line
+	if (isset($captionsFileContent[0])) {
+		$captionsFileContent[0] = ltrim($captionsFileContent[0], "\xEF\xBB\xBF");
 	}
 
 	// read captions file line by line
@@ -132,3 +139,4 @@ function gallery_write_captions($galleryName, $captions) {
 	}
 	return true;
 }
+?>
