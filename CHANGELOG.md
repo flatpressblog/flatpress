@@ -1,34 +1,21 @@
-# Under development: FlatPress 1.5
-## Introduction
-In this version, read and write processes have been optimized in the core and in some standard plugins.
-On a Raspberry Pi 3b+ 2GB without APCu support, the content capacity can now be up to ~2500 entries plus 10 comments per post.
-
-On a Paspberry Pi 4b 4GB with APCu support, the content capacity can now be up to ~9000 entries plus 10 comments per post.
-
-Additional frontend payloads per page view, such as HTML, CSS, jQuery, and other JS, were not evaluated. Variation arises from theme, plugins, image content, and server I/O characteristics.
-
-For optimal performance, an initial APCu size of 32 MB is recommended (``apc.shm_size=32M``). Minimum requirement ~1–2 MB. From 9000 entries plus 10 comments per entry, 64MB is recommended. The APCu cache usage can be viewed in the admin area -> Maintenance -> submenu "APCu cache status" and cleared if necessary.
-
-[Here is a detailed overview](https://github.com/flatpressblog/flatpress/blob/master/docs/FlatPress_APCu_Cache_Overview.md) of where FlatPess uses the APCu cache.
-
+# Currently testing: FlatPress 1.5
 ## Changed requirements
 - FlatPress 1.5 runs under PHP up to **8.5**; minimum required PHP version increases to **7.2**.
 
 ## General
-### Changes
-- General
-  - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667), [#673](https://github.com/flatpressblog/flatpress/pull/673), [#675](https://github.com/flatpressblog/flatpress/pull/675), [#679](https://github.com/flatpressblog/flatpress/pull/679), [#687](https://github.com/flatpressblog/flatpress/pull/687), [#690](https://github.com/flatpressblog/flatpress/pull/690), [#701](https://github.com/flatpressblog/flatpress/pull/701), [#729](https://github.com/flatpressblog/flatpress/pull/729), [#730](https://github.com/flatpressblog/flatpress/pull/730))
-
-- Template engine:
-  - Smarty updated to version 5.7.0 with PHP 8.5 support ([#651](https://github.com/flatpressblog/flatpress/pull/651))<br><sub><i>
+- Template engine Smarty:
+  - Updated to version 5.7.0 with PHP 8.5 support ([#651](https://github.com/flatpressblog/flatpress/pull/651))<br><sub><i>
 Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte extension](https://www.php.net/manual/en/book.mbstring.php) in production for optimal performance.</i></sub>
   - No code changes required with new, stable Smarty version.
   - FlatPress automatically loads the latest PSR-4 stub.
-- The new Smarty Modifier ``|ver``  uses a new core function, ``utils_asset_ver()``, to assign the FlatPress version to Java scripts and stylesheets. This ensures that the visitor's browser only uses the updated files. ([#629](https://github.com/flatpressblog/flatpress/issues/629))
+  - The new Smarty Modifier ``|ver``  uses a new core function, ``utils_asset_ver()``, to assign the FlatPress version to Java scripts and stylesheets. This ensures that the visitor's browser only uses the updated files. ([#629](https://github.com/flatpressblog/flatpress/issues/629))
+- Caching:
+  - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667), [#673](https://github.com/flatpressblog/flatpress/pull/673), [#675](https://github.com/flatpressblog/flatpress/pull/675), [#679](https://github.com/flatpressblog/flatpress/pull/679), [#687](https://github.com/flatpressblog/flatpress/pull/687), [#690](https://github.com/flatpressblog/flatpress/pull/690), [#701](https://github.com/flatpressblog/flatpress/pull/701), [#729](https://github.com/flatpressblog/flatpress/pull/729), [#730](https://github.com/flatpressblog/flatpress/pull/730))
+
 - Admin area:
     - The inactivity timeout can be changed using the Flatpress protect plugin. Default = 1 hour ([#693](https://github.com/flatpressblog/flatpress/issues/693))
     - Uploader revised to multi-file uploader  ([#656](https://github.com/flatpressblog/flatpress/pull/656), [#46](https://github.com/flatpressblog/flatpress/issues/46))
-    - Widget-panel revisited  ([#659](https://github.com/flatpressblog/flatpress/pull/659))
+    - Widget panel revisited  ([#659](https://github.com/flatpressblog/flatpress/pull/659))
         - Stylesheet is now also loaded by themes that do not have a design for the widget panel.
         - From left to right/ Available widgets to widget bar
         - Flex version with wrapper and responsive
@@ -40,7 +27,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 
 ### Bugfixes
 - Correct output when a historical character set encoding is set. ([#670](https://github.com/flatpressblog/flatpress/pull/670))
-- If ``$_SERVER [‘HTTPS’] = off`` is set in the web server, an HTTP connection is now correctly recognized. ([#671](https://github.com/flatpressblog/flatpress/issues/671))
+- If ``$_SERVER ['HTTPS'] = off`` is set in the web server, an HTTP connection is now correctly recognized. ([#671](https://github.com/flatpressblog/flatpress/issues/671))
 - ``theme_style_exists()`` now returns ``''`` if the style directory is missing. Previously, the theme root was returned incorrectly. ([#678](https://github.com/flatpressblog/flatpress/pull/678))
 - Fixes the display of orphaned widgets when a plugin has been deactivated and prevents duplicate or missing widget outputs, so that only widgets from active plugins are output. ([#726](https://github.com/flatpressblog/flatpress/pull/726))
 
@@ -51,7 +38,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - Added request-local and APCu caching. ([#679](https://github.com/flatpressblog/flatpress/pull/679))
 - Newsletter plugin: update to version 1.7.3
   - Unwanted requests and bots are now intercepted more effectively: Suspicious IP addresses are automatically added to a block list, which is cleaned daily.
-  - Email addresses are now checked much more thoroughly—including domain and server checks—to detect typos, invalid, or undeliverable addresses.
+  - Email addresses are now checked much more thoroughly – including domain and server checks – to detect typos, invalid, or undeliverable addresses.
   - An up-to-date list of disposable email domains is automatically downloaded from [GitHub](https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/refs/heads/main/disposable_email_blocklist.conf) once a month and integrated, so that disposable addresses are rejected immediately and removed from the subscriber list.
   - In addition, the plugin limits the number of login attempts per IP and sorts out incorrect addresses before they are sent, ensuring that the newsletter is reliably delivered only to valid recipients.
   - Even more against race conditions
@@ -114,7 +101,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - After a fresh installation, the correct time format is now displayed instead of the default format  ``%b %e, %Y``. ([#662](https://github.com/flatpressblog/flatpress/pull/662))
 
 ## Internationalization
-- Basque translations by [@xbhrnnd](https://github.com/xbhrnnd)
+- Added Basque translation by [@xbhrnnd](https://github.com/xbhrnnd)
 
 # 2025-07-15: [FlatPress 1.4.1](https://github.com/flatpressblog/flatpress/releases/tag/1.4.1)
 
