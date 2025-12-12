@@ -71,4 +71,6 @@
 - [ ] Check the browser console and PHP log for warnings/errors during all actions.
 
 ### Reporting
-Please report bugs with clear step-by-step descriptions, expected vs. actual behavior, screenshots, and PHP log extracts in the [GitHub issue tracker](https://github.com/flatpressblog/flatpress/issues).
+Please report bugs with clear step-by-step descriptions, expected vs. actual behavior, screenshots, and PHP log extracts in the [GitHub issue tracker](https://github.com/flatpressblog/flatpress/issues). If you're not familiar with GitHub, feel free to use the [FlatPress support forum](https://forum.flatpress.org/) instead.
+
+**Thanks a lot!**
