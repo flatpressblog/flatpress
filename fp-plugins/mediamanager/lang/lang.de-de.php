@@ -7,6 +7,10 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Media Manager',
 	'description' => 'Der Media Manager schafft einen Überblick der in FlatPress hochgeladenen Dateien und Bilder.',
 
+	'view' => 'Ansicht',
+	'view_detail' => 'Detail-Ansicht',
+	'view_thumb' => 'Miniatur-Ansicht',
+
 	'delete' => 'Löschen',
 	'up' => 'Zurück',
 	'page' => 'Seite',

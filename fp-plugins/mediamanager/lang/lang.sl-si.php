@@ -7,6 +7,10 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Upravitelj medijskih vsebin',
 	'description' => 'Upravljajte svoje medijske vsebine',
 
+	'view' => 'Pogled',
+	'view_detail' => 'Podrobni pogled',
+	'view_thumb' => 'Pogled sličic',
+
 	'delete' => 'izbriši',
 	'up' => 'Nazaj',
 	'page' => 'Stran',

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Media Manager
- * Version: 2.0.0
+ * Version: 2.0.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -82,7 +82,7 @@ function mediamanager_updateUseCountArr(&$files, $fupd) {
 	// Short-circuit galleries pass using per-entry counts from first pass
 	if (!empty($galItems) && !empty($GLOBALS ['mm_gal_entry_count'])) {
 		foreach ($GLOBALS ['mm_gal_entry_count'] as $g => $n) {
-			if (isset($galItems[$g])) {
+			if (isset($galItems [$g])) {
 				$files [$galItems [$g]] ['usecount'] += (int)$n;
 			}
 		}

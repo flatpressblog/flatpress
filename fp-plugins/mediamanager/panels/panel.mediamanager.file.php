@@ -171,8 +171,8 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		global $fp_config;
 
 		// Prevents the capture of .dlctr (Igor Kromins DownloadCounter) files
-			if (pathinfo($filepath, PATHINFO_EXTENSION) === 'dlctr') {
-				return null;
+		if (pathinfo($filepath, PATHINFO_EXTENSION) === 'dlctr') {
+			return null;
 		}
 
 		$filepath_stat = @stat($filepath);
@@ -507,6 +507,9 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		$this->smarty->assign('mmbaseurl', $mmbaseurl);
 		$this->smarty->assign('currentgallery', $gallery);
 		$this->smarty->assign('totalfilescount', $totalfilescount);
+		$view = isset($this->conf ['viewmode']) ? $this->conf ['viewmode'] : 'detail';
+		$this->smarty->assign('viewmode', ($view === 'thumb') ? 'thumb' : 'detail');
+
 	}
 
 	/**
@@ -516,6 +519,14 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 	 * @return int
 	 */
 	function onsubmit($data = NULL) {
+		// Handle view mode change (detail / thumb)
+		if (isset($_POST['mm-viewmode'])) {
+			$mode = ($_POST['mm-viewmode'] === 'thumb') ? 'thumb' : 'detail';
+			plugin_addoption('mediamanager', 'viewmode', $mode);
+			plugin_saveoptions('mediamanager');
+			// Continue with normal processing / rendering
+		}
+
 		if (isset($_POST ['mm-newgallery'])) {
 			$newgallery = strip_tags($_POST ['mm-newgallery-name']);
 			if ($newgallery == "") {

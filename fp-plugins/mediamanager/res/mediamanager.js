@@ -18,6 +18,14 @@
 	var LONG_PRESS_DELAY = 300; // ms
 	var MAX_W = 300, MAX_H = 300;
 
+	function cancelShow(){
+		clearTimeout(showTimer);
+		showTimer = null;
+		clearTimeout(longPressTimer);
+		longPressTimer = null;
+		longPressFired = false;
+	}
+
 	function isImageLink(a) {
 		if (!a || !a.href) {
 			return false;
@@ -132,6 +140,7 @@
 			return;
 		}
 		clearTimeout(hideTimer);
+		cancelShow();
 		hideTimer = setTimeout(function(){
 			preview.style.display = 'none';
 		}, typeof delay === 'number' ? delay : hideDelay);
@@ -141,6 +150,7 @@
 		if (currentAnchor === a) {
 			return;
 		}
+		cancelShow();
 		currentAnchor = a;
 		if (!a) {
 			return;
@@ -214,6 +224,7 @@
 
 	function onKeyDown(e) {
 		if (e.key === 'Escape') {
+			cancelShow();
 			hidePreviewSoon(0);
 		}
 	}
@@ -252,6 +263,10 @@
 		}, { passive: true });
 	}
 
-	window.addEventListener('scroll', onScroll, { passive: true });
+	window.addEventListener('scroll', function(){
+		cancelShow();
+		onScroll();
+	}, { passive: true });
+
 	window.addEventListener('keydown', onKeyDown);
 })();

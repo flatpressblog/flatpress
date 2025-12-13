@@ -7,6 +7,10 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Media Manager',
 	'description' => 'Media Manager skaber et overblik over de filer og billeder, der er uploadet til FlatPress.',
 
+	'view' => 'Vis',
+	'view_detail' => 'Detaljevisning',
+	'view_thumb' => 'Miniaturevisning',
+
 	'delete' => 'Slet',
 	'up' => 'Tilbage',
 	'page' => 'Side',

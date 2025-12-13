@@ -7,6 +7,10 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Media manager',
 	'description' => 'Beheer jouw media',
 
+	'view' => 'Bekijken',
+	'view_detail' => 'Detailweergave',
+	'view_thumb' => 'Miniatuurweergave',
+
 	'delete' => 'Verwijder',
 	'up' => 'Terug',
 	'page' => 'Pagina',

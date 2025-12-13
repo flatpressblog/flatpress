@@ -7,6 +7,10 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Správce souborů',
 	'description' => 'Spravovat soubory',
 
+	'view' => 'Zobrazit',
+	'view_detail' => 'Detailní zobrazení',
+	'view_thumb' => 'Zobrazení miniatur',
+
 	'delete' => 'Smazat',
 	'up' => 'Zpět',
 	'page' => 'Strana',

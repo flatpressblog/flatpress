@@ -7,6 +7,10 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Medya Yöneticisi',
 	'description' => 'Medyanızı yönetin',
 
+	'view' => 'Görünüm',
+	'view_detail' => 'Ayrıntılı görünüm',
+	'view_thumb' => 'Küçük resim görünümü',
+
 	'delete' => 'Sil',
 	'up' => 'Geri',
 	'page' => 'Sayfa',

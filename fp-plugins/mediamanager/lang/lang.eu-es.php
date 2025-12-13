@@ -7,6 +7,10 @@ $lang ['admin'] ['uploader'] ['mediamanager'] = array(
 	'head' => 'Multimedia-kudeatzailea',
 	'description' => 'Kudeatu zure multimedia fitxategiak.',
 
+	'view' => 'Ikusi',
+	'view_detail' => 'Xehetasunen ikuspegia',
+	'view_thumb' => 'Miniatura ikuspegia',
+
 	'delete' => 'Ezabatu',
 	'up' => 'Atzera',
 	'page' => 'Orria',
