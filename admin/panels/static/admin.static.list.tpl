@@ -52,7 +52,7 @@
 
 <div class="buttonbar">
 	<p>
-		<input type="checkbox" name="naturalsort" id="naturalsort"{if $fp_config.staticlist.naturalsort} checked{/if}> {$panelstrings.natural}
+		<input type="checkbox" name="naturalsort" id="naturalsort"{if $fp_config.staticlist.naturalsort|default:''} checked{/if}> {$panelstrings.natural}
 	</p>
 	{html_submit name="save" id="save" value=$panelstrings.submit}
 </div>
