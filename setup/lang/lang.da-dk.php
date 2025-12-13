@@ -142,7 +142,7 @@ To statiske sider er allerede forberedt til dig:
 [/list]
 
 Med [b]PhotoSwipe-pluginet[/b] kan du nu placere dine billeder endnu nemmere, enten som et float="left"- eller float="right"-justeret enkeltbillede, omgivet af teksten.
-Du kan endda præsentere hele gallerier for dine besøgende med elementet \'gallery\'. Du kan finde ud af, hvor nemt det er [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]her.[/url].
+Du kan endda præsentere hele gallerier for dine besøgende med elementet \'gallery\'. Du kan finde ud af, hvor nemt det er [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]her.[/url].
 
 
 [h4]Widgets[/h4]

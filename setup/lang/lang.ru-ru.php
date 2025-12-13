@@ -139,7 +139,7 @@ FlatPress очень хорошо настраивается и поддержи
 [/list]
 
 С помощью плагина [b]PhotoSwipe[/b] вы можете размещать свои изображения еще проще, либо как float="left", либо как float="right", выровненные по одному изображению, заключенному в текст.
-Вы даже можете использовать элемент \'gallery\', чтобы представить посетителям целые галереи. Как это работает, [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]вы можете узнать здесь[/url].
+Вы даже можете использовать элемент \'gallery\', чтобы представить посетителям целые галереи. Как это работает, [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]вы можете узнать здесь[/url].
 
 
 [h4]Виджеты[/h4]

@@ -139,7 +139,7 @@ You can find two [b]static pages[/b] ready to accept your contents:
 [/list]
 
 With the [b]PhotoSwipe plugin[/b] you can now place your images even easier, either as float="left"- or float="right" aligned single image, enclosed by the text.
-You can even use the \'gallery\' element to present entire galleries to your visitors. How easy it works, [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]you can learn here[/url].
+You can even use the \'gallery\' element to present entire galleries to your visitors. How easy it works, [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]you can learn here[/url].
 
 
 [h4]Widgets[/h4]

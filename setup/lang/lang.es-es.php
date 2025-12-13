@@ -142,7 +142,7 @@ Dos páginas estáticas ya están preparadas para usted:
 [/list]
 
 Con el plugin [b]PhotoSwipe[/b] ahora puedes colocar tus imágenes aún más fácilmente, ya sea como una sola imagen alineada  float="left"-  o  float="right" rodeada por el texto.
-Incluso puede presentar galerías enteras a sus visitantes con el elemento \'gallery\'. Puede comprobar lo fácil que es [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]aquí[/url].
+Incluso puede presentar galerías enteras a sus visitantes con el elemento \'gallery\'. Puede comprobar lo fácil que es [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]aquí[/url].
 
 
 [h4]Widgets[/h4]
