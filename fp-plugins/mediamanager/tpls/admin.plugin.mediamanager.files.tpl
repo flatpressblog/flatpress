@@ -54,7 +54,7 @@
 							<div class="mm-caption">{$v.name|truncate:24:"…":true}</div>
 						</a>
 						<div class="mm-actions">
-							<a class="link-delete" href="{wp_nonce_url("{$mmbaseurl}&delete={$v.type}-{$v.name}", 'mediamanager_deletefile')}">{$plang.delete}</a>
+							<a class="link-delete" href="{wp_nonce_url("{$mmbaseurl}&deletefile={$v.type}-{$v.name}", 'mediamanager_deletefile')}">{$plang.delete}</a>
 						</div>
 					</div>
 				{/foreach}
