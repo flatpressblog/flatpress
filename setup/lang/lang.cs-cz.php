@@ -139,7 +139,7 @@ Můžete zde najít dvě statické stránky připravené pro váš obsah:
 [/list]
 
 Pomocí pluginu [b]PhotoSwipe[/b] můžete nyní své obrázky umístit ještě snadněji, a to buď jako float="left"- nebo float="right" zarovnané jednotlivé obrázky obklopené textem.
-Pomocí prvku \'gallery\' můžete dokonce návštěvníkům prezentovat celé galerie. Jak je to snadné, se můžete přesvědčit [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]zde[/url].
+Pomocí prvku \'gallery\' můžete dokonce návštěvníkům prezentovat celé galerie. Jak je to snadné, se můžete přesvědčit [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]zde[/url].
 
 
 [h4]Widgety[/h4]

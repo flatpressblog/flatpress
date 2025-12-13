@@ -141,7 +141,7 @@ Size FP\'nin iyi gizlenmiş özellikleri ve püf noktalarını göstermek için 
 [/list]
 
 [b]PhotoSwipe eklentisi[/b] ile artık resimlerinizi çok daha kolay bir şekilde yerleştirebilirsiniz. Resimler, metinle çevrelenmiş şekilde, ya da float="left" (sola hizalı) ya da float="right" (sağa hizalı) olarak tek bir resim olarak yerleştirilebilir.
-Ayrıca, ziyaretçilerinize tüm galerileri sunmak için "galeri" öğesini de kullanabilirsiniz. Ne kadar kolay çalıştığını [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]buradan öğrenebilirsiniz[/url].
+Ayrıca, ziyaretçilerinize tüm galerileri sunmak için "galeri" öğesini de kullanabilirsiniz. Ne kadar kolay çalıştığını [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]buradan öğrenebilirsiniz[/url].
 
 [h4]Widget\'lar[/h4]
 

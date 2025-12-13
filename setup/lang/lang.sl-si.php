@@ -142,7 +142,7 @@ Za vas sta že pripravljeni dve statični strani:
 [/list]
 
 Z vtičnikom [b]PhotoSwipe-Plugin[/b] lahko zdaj še lažje postavite svoje slike, bodisi kot float="left"-  ali  float="right" poravnano posamezno sliko, obdano z besedilom.
-Element \'gallery\' lahko uporabite tudi za predstavitev celotnih galerij obiskovalcem. Kako enostavno je to [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]tukaj[/url].
+Element \'gallery\' lahko uporabite tudi za predstavitev celotnih galerij obiskovalcem. Kako enostavno je to [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]tukaj[/url].
 
 
 [h4]Gradniki[/h4]

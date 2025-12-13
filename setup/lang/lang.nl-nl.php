@@ -138,7 +138,7 @@ Je kunt twee [b]statische paginas[/b] vinden die klaar zijn om in je inhoud te a
 [/list]
 
 Met de [b]PhotoSwipe plugin[/b] kunt u nu nog gemakkelijker uw afbeeldingen plaatsen, hetzij als float="left"- of float="right" uitgelijnde enkele afbeelding, omgeven door de tekst.
-Je kunt zelfs het element "galerij" gebruiken om hele galerijen aan je bezoekers te presenteren. U kunt hier [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]zien hoe eenvoudig het is[/url].
+Je kunt zelfs het element "galerij" gebruiken om hele galerijen aan je bezoekers te presenteren. U kunt hier [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]zien hoe eenvoudig het is[/url].
 
 
 [h4]Widgets[/h4]

@@ -142,7 +142,7 @@ Zwei statische Seiten sind für dich schon vorbereitet:
 [/list]
 
 Mit dem [b]PhotoSwipe-Plugin[/b] platzierst du jetzt noch einfacher deine Bilder, wahlweise als float="left" oder float="right" ausgerichtetes Einzelbild, vom Text umschlossen.
-Du kannst sogar mit dem Element \'gallery\' deinen Besuchern ganze Galerien präsentieren. Wie einfach es funktioniert, [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]erfährst du hier[/url].
+Du kannst sogar mit dem Element \'gallery\' deinen Besuchern ganze Galerien präsentieren. Wie einfach es funktioniert, [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]erfährst du hier[/url].
 
 
 [h4]Widgets[/h4]

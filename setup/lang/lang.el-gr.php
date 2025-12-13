@@ -142,7 +142,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 [/list]
 
 Με το πρόσθετο [b]PhotoSwipe-Plugin[/b] μπορείτε τώρα να τοποθετήσετε τις εικόνες σας ακόμα πιο εύκολα, είτε ως float="left"- είτε ως float="right" ευθυγραμμισμένη μεμονωμένη εικόνα, που περιβάλλεται από το κείμενο.
-Μπορείτε ακόμη και να παρουσιάσετε ολόκληρες γκαλερί στους επισκέπτες σας με το στοιχείο \'gallery\'. Μπορείτε να μάθετε πόσο εύκολο είναι [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]εδώ[/url].
+Μπορείτε ακόμη και να παρουσιάσετε ολόκληρες γκαλερί στους επισκέπτες σας με το στοιχείο \'gallery\'. Μπορείτε να μάθετε πόσο εύκολο είναι [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]εδώ[/url].
 
 
 [h4]Widgets[/h4]

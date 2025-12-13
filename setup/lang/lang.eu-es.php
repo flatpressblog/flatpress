@@ -139,7 +139,7 @@ Bi [b]orrialde estatiko[/b] aurki ditzakezu zure edukia onartzeko prest:
 [/list]
 
 [b]PhotoSwipe plugin[/b]arekin irudiak are errazago jar ditzakezu orain, float="left" edo float="right" lerrokatutako irudi bakar gisa, testuz inguratuta.
-\'gallery\' elementua ere erabil dezakezu argazki galeria osoak bisitariei aurkezteko. [url=https://wiki.flatpress.org/res:plugins:photoswipe target=_blank rel=external]Hemen ikas dezakezu[/url]  zein erraza den.
+\'gallery\' elementua ere erabil dezakezu argazki galeria osoak bisitariei aurkezteko. [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]Hemen ikas dezakezu[/url]  zein erraza den.
 
 
 [h4]Trepetak (widgetak)[/h4]
