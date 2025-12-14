@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'Hochladen',
 	'submit' => 'Hochladen',
 	'uploader_some_failed' => 'Diese Datei wurde aus Sicherheits- oder Systemgründen nicht hochgeladen:',
+	'uploader_metadata_failed' => 'Datei wurde hochgeladen, aber die Metadaten konnten nicht entfernt werden:',
 	'uploader_drop' => 'Dateien hierher ziehen',
 	'uploader_browse_hint' => '…oder klicken, um Dateien zu wählen',
 	'uploader_drop_active' => 'Loslassen zum Hinzufügen',

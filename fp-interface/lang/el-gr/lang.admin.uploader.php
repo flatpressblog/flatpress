@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'Ανέβασμα',
 	'submit' => 'Ανέβασμα',
 	'uploader_some_failed' => 'Αυτό το αρχείο δεν μεταφορτώθηκε για λόγους ασφαλείας ή συστήματος:',
+	'uploader_metadata_failed' => 'Το αρχείο μεταφορτώθηκε, αλλά τα μεταδεδομένα δεν μπόρεσαν να αφαιρεθούν:',
 	'uploader_drop' => 'Σύρετε τα αρχεία εδώ',
 	'uploader_browse_hint' => '…ή κάντε κλικ για να επιλέξετε αρχεία',
 	'uploader_drop_active' => 'Αφήστε για προσθήκη',

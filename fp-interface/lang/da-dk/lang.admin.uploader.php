@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'Upload',
 	'submit' => 'Upload',
 	'uploader_some_failed' => 'Denne fil blev ikke uploadet af sikkerheds- eller systemmæssige årsager:',
+	'uploader_metadata_failed' => 'Filen blev uploadet, men metadata kunne ikke fjernes:',
 	'uploader_drop' => 'Træk filer hertil',
 	'uploader_browse_hint' => '...eller klik for at vælge filer',
 	'uploader_drop_active' => 'Slip for at tilføje',

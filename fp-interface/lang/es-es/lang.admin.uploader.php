@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'Subir',
 	'submit' => 'Subir',
 	'uploader_some_failed' => 'Este archivo no se ha cargado por motivos de seguridad o del sistema:',
+	'uploader_metadata_failed' => 'El archivo se ha subido, pero no se han podido eliminar los metadatos:',
 	'uploader_drop' => 'Arrastra los archivos aquí',
 	'uploader_browse_hint' => '…o haz clic para seleccionar los archivos',
 	'uploader_drop_active' => 'Suelta para añadir',

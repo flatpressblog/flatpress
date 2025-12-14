@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'Carica',
 	'submit' => 'Carica',
 	'uploader_some_failed' => 'Questo file non è stato caricato per motivi di sicurezza o di sistema:',
+	'uploader_metadata_failed' => 'Il file è stato caricato, ma non è stato possibile rimuovere i metadati:',
 	'uploader_drop' => 'Trascina i file qui',
 	'uploader_browse_hint' => '…oppure clicca per selezionare i file',
 	'uploader_drop_active' => 'Rilascia per aggiungere',
