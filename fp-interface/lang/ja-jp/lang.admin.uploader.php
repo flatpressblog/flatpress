@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'アップロード',
 	'submit' => 'アップロードを開始する',
 	'uploader_some_failed' => 'このファイルはセキュリティまたはシステム上の理由によりアップロードされませんでした：',
+	'uploader_metadata_failed' => 'ファイルはアップロードされましたが、メタデータは削除できませんでした：',
 	'uploader_drop' => 'ファイルをここにドラッグ',
 	'uploader_browse_hint' => '…またはクリックしてファイルを選択',
 	'uploader_drop_active' => 'ドラッグを解除して追加',

@@ -52,7 +52,7 @@
 				li.className = 'fp-upload-list__item';
 				var name = document.createElement('span');
 				name.className = 'fp-upload-list__name';
-				name.textContent = f.name + ' (' + Math.round(f.size/1024) + ' KB) ';
+				name.textContent = f.name + ' (' + Math.round(f.size / 1024) + ' KiB) ';
 				li.appendChild(name);
 				var btn = document.createElement('button');
 				btn.type = 'button';
@@ -66,7 +66,7 @@
 				list.appendChild(li);
 			})(i, files[i]);
 		}
-		if (n>0){
+		if (n > 0){
 			clearBtn.style.display = '';
 			zone.setAttribute('data-has-files', '1');
 			zone.setAttribute('aria-label', (t('selected-count') || '%d file(s) selected').replace('%d', n));
@@ -118,7 +118,7 @@
 			var fSize = f.size || 0;
 			if (maxBytes && (bytes + addedBytes + fSize) > maxBytes) {
 				var msgSize = t('max-size') || 'Maximum total upload size: %s.';
-				var human = maxHuman || (Math.round(maxBytes / (1024 * 1024)) + ' MB');
+				var human = maxHuman || (Math.round(maxBytes / (1024 * 1024)) + ' MiB');
 				msgSize = msgSize.replace('%s', human);
 				window.alert(msgSize);
 				continue;
@@ -178,7 +178,9 @@
 	zone.addEventListener('dragleave', onDragLeave);
 	zone.addEventListener('drop', onDrop);
 	zone.addEventListener('click', function(e) {
-		if(e.target && e.target.closest('.fp-upload-list__remove')) return;
+		if(e.target && e.target.closest('.fp-upload-list__remove')) {
+			return;
+		}
 		input.click();
 	});
 	if (browse) {

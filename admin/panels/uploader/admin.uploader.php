@@ -8,7 +8,7 @@
  * Date:
  * Purpose:
  * Input:
- * Change-Date: 23.08.2025, by FKM
+ * Change-Date: 14.12.2025, by FKM
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
  *
@@ -49,6 +49,10 @@ class admin_uploader_default extends AdminPanelAction {
 		}
 		if ($e = sess_remove('admin_uploader_errors')) {
 			$this->smarty->assign('upload_errors', $e);
+		}
+
+		if ($w = sess_remove('admin_uploader_warnings')) {
+			$this->smarty->assign('upload_warnings', $w);
 		}
 
 		// Determine PHP upload limits for client-side hints
@@ -248,6 +252,7 @@ class admin_uploader_default extends AdminPanelAction {
 
 		$uploaded_files = array();
 		$upload_errors = array();
+		$upload_warnings = array();
 		$this->smarty->assign('uploaded_files', $uploaded_files);
 
 		// Server-side detection when PHP has rejected the upload.
@@ -418,7 +423,7 @@ class admin_uploader_default extends AdminPanelAction {
 				$mime = @mime_content_type($tmp_name);
 			}
 			if ($mime === false || $mime === null) {
-				$upload_errors[] = (string)$name . ' (MIME detection failed)';
+				$upload_errors [] = (string)$name . ' (MIME detection failed)';
 				continue;
 			}
 
@@ -446,7 +451,10 @@ class admin_uploader_default extends AdminPanelAction {
 			if (move_uploaded_file($tmp_name, $target)) {
 				// Remove metadata from images if false or not set in FPPROTECT
 				if ($removeMetadata && in_array($ext, $imgs)) {
-					$this->remove_image_metadata($target, $ext);
+					$metaRemoved = $this->remove_image_metadata($target, $ext);
+					if (!$metaRemoved) {
+						$upload_warnings[] = (string)$name;
+					}
 				}
 				@chmod($target, FILE_PERMISSIONS);
 				$uploaded_files [] = $name;
@@ -460,11 +468,15 @@ class admin_uploader_default extends AdminPanelAction {
 		// Finalize: report successes and per-file errors
 		$anySuccess = !empty($uploaded_files);
 		$hasErrors = !empty($upload_errors);
+		$hasWarnings = !empty($upload_warnings);
 
 		// Transfer to template
 		$this->smarty->assign('uploaded_files', $uploaded_files);
 		if ($hasErrors) {
 			$this->smarty->assign('upload_errors', $upload_errors);
+		}
+		if ($hasWarnings) {
+			$this->smarty->assign('upload_warnings', $upload_warnings);
 		}
 		$this->smarty->assign('success', $anySuccess ? 1 : -1);
 
@@ -473,28 +485,106 @@ class admin_uploader_default extends AdminPanelAction {
 		if ($hasErrors) {
 			sess_add('admin_uploader_errors', $upload_errors);
 		}
+		if ($hasWarnings) {
+			sess_add('admin_uploader_warnings', $upload_warnings);
+		}
 
 		return 1;
 	}
 
+	function get_memory_limit_bytes() {
+		$limit = @ini_get('memory_limit');
+		if (!is_string($limit) || $limit === '' || $limit === '-1') {
+			// Unlimited or unknown
+			return 0;
+		}
+		return (int) $this->parse_ini_bytes($limit);
+	}
+
+	/**
+	 * Try to predict whether loading+re-encoding an image via GD will fit into memory.
+	 * This prevents fatal "Allowed memory size exhausted" errors when stripping metadata.
+	 */
+	function can_process_image_in_memory($filepath) {
+		$limitBytes = $this->get_memory_limit_bytes();
+		if ($limitBytes === null) {
+			// unlimited or cannot determine
+			return true;
+		}
+
+		$usage = function_exists('memory_get_usage') ? (int) @memory_get_usage(true) : 0;
+
+		// Safety margin: leave some headroom for PHP, Smarty, and temporary buffers
+		$available = (float) ($limitBytes - $usage - (8 * 1024 * 1024));
+		if ($available <= 0) {
+			return false;
+		}
+
+		$info = @getimagesize($filepath);
+		if ($info === false || !isset($info [0], $info [1])) {
+			return false;
+		}
+
+		$w = (int) $info [0];
+		$h = (int) $info [1];
+
+		// GD typically expands to 4 bytes per pixel (truecolor) plus overhead/copies.
+		$pixels = (float) $w * (float) $h;
+		$bytesPerPixel = 4.0;
+
+		// Factor 2.5 = original + working copy + overhead, plus extra buffer.
+		$needed = ($pixels * $bytesPerPixel * 2.5) + (5 * 1024 * 1024);
+
+		return ($needed > 0 && $needed < $available);
+	}
+
 	function remove_image_metadata($filepath, $ext) {
+		// Prefer Imagick if available (often more reliable for metadata stripping).
+		if (class_exists('Imagick')) {
+			try {
+				$img = new Imagick();
+				$img->readImage($filepath);
+				$img->stripImage();
+				$img->writeImage($filepath);
+				$img->clear();
+				$img->destroy();
+				return true;
+			} catch (Throwable $e) {
+				// Fallback to GD below
+			}
+		}
+
+		// Guard against fatal OOM errors in GD.
+		if (!$this->can_process_image_in_memory($filepath)) {
+			return false;
+		}
+
 		switch ($ext) {
 			case '.jpg':
 			case '.jpeg':
-				$image = imagecreatefromjpeg($filepath);
+				if (!function_exists('imagecreatefromjpeg')) {
+					return false;
+				}
+				$image = @imagecreatefromjpeg($filepath);
 				$saveFunc = 'imagejpeg';
 				break;
 			case '.png':
-				$image = imagecreatefrompng($filepath);
+				if (!function_exists('imagecreatefrompng')) {
+					return false;
+				}
+				$image = @imagecreatefrompng($filepath);
 				$saveFunc = 'imagepng';
 				break;
 			case '.gif':
-				$image = imagecreatefromgif($filepath);
+				if (!function_exists('imagecreatefromgif')) {
+					return false;
+				}
+				$image = @imagecreatefromgif($filepath);
 				$saveFunc = 'imagegif';
 				break;
 			case '.webp':
 				if (function_exists('imagecreatefromwebp')) {
-					$image = imagecreatefromwebp($filepath);
+					$image = @imagecreatefromwebp($filepath);
 					$saveFunc = 'imagewebp';
 				} else {
 					return false;
@@ -505,12 +595,24 @@ class admin_uploader_default extends AdminPanelAction {
 		}
 
 		if ($image) {
-			$saveFunc($image, $filepath);
+			// Preserve transparency for formats that support it.
+			if ($ext === '.png' && function_exists('imagesavealpha')) {
+				@imagesavealpha($image, true);
+			}
+			if ($ext === '.webp' && function_exists('imagesavealpha')) {
+				@imagesavealpha($image, true);
+			}
+
+			$ok = @$saveFunc($image, $filepath);
+
 			if (!is_php85_plus()) {
 				@imagedestroy($image);
 			}
-			return true;
+
+			return (bool) $ok;
 		}
+
+		return false;
 	}
 }
 ?>

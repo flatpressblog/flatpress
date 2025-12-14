@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'Yükle',
 	'submit' => 'Yükle',
 	'uploader_some_failed' => 'Bu dosya güvenlik veya sistem nedenleriyle yüklenmedi:',
+	'uploader_metadata_failed' => 'Dosya yüklendi, ancak meta veriler kaldırılamadı:',
 	'uploader_drop' => 'Dosyaları buraya sürükleyin',
 	'uploader_browse_hint' => '…veya dosyaları seçmek için tıklayın',
 	'uploader_drop_active' => 'Eklemek için bırakın',

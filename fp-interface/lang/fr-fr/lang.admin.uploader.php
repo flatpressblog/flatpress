@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'Transf&eacute;rer',
 	'submit' => 'Transf&eacute;rer',
 	'uploader_some_failed' => 'Ce fichier n\'a pas été téléchargé pour des raisons de sécurité ou liées au système :',
+	'uploader_metadata_failed' => 'Le fichier a été téléchargé, mais les métadonnées n\'ont pas pu être supprimées :',
 	'uploader_drop' => 'Faites glisser les fichiers ici',
 	'uploader_browse_hint' => '…ou cliquez pour sélectionner les fichiers',
 	'uploader_drop_active' => 'Relâchez pour ajouter',

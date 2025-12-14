@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'Nahrát',
 	'submit' => 'Nahrát',
 	'uploader_some_failed' => 'Tento soubor nebyl z bezpečnostních nebo systémových důvodů nahrán:',
+	'uploader_metadata_failed' => 'Soubor byl nahrán, ale metadata nemohla být odstraněna:',
 	'uploader_drop' => 'Přetáhněte soubory sem',
 	'uploader_browse_hint' => '...nebo kliknutím vyberte soubory',
 	'uploader_drop_active' => 'Uvolněte pro přidání',

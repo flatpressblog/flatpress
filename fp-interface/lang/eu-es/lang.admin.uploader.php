@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'Kargatu',
 	'submit' => 'Kargatu',
 	'uploader_some_failed' => 'Fitxategi hau ez da igo segurtasun edo sistema arrazoiengatik:',
+	'uploader_metadata_failed' => 'Fitxategia igo da, baina ezin izan dira metadatuak kendu:',
 	'uploader_drop' => 'Arrastatu fitxategiak hona ',
 	'uploader_browse_hint' => 'edo egin klik fitxategiak hautatzeko.',
 	'uploader_drop_active' => 'Arrastatu gehitzeko',

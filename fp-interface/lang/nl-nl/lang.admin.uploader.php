@@ -6,6 +6,7 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset2' => 'Oploaden',
 	'submit' => 'Oploaden',
 	'uploader_some_failed' => 'Dit bestand is om veiligheids- of systeemredenen niet geüpload:',
+	'uploader_metadata_failed' => 'Het bestand is geüpload, maar de metagegevens konden niet worden verwijderd:',
 	'uploader_drop' => 'Bestanden hierheen slepen',
 	'uploader_browse_hint' => '…of klik om bestanden te selecteren',
 	'uploader_drop_active' => 'Loslaten om toe te voegen',

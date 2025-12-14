@@ -24,6 +24,17 @@
 			</ul>
 			<br>
 		{/if}
+		{if isset($upload_warnings) && $upload_warnings|count}
+			<ul class="msgs warnings">
+				{$panelstrings.uploader_metadata_failed|default:'The file was uploaded, but metadata could not be removed:'|escape}
+			</ul>
+			<ul>
+				{foreach from=$upload_warnings item=wf}
+					<li>{$wf|escape}</li>
+				{/foreach}
+			</ul>
+			<br>
+		{/if}
 
 		{html_form enctype='multipart/form-data'}
 
