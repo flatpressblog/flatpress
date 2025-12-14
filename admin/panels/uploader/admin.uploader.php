@@ -521,15 +521,12 @@ class admin_uploader_default extends AdminPanelAction {
 		}
 
 		$info = @getimagesize($filepath);
-		if (!is_array($info) || empty($info[0]) || empty($info[1])) {
+		if ($info === false || !isset($info [0], $info [1])) {
 			return false;
 		}
 
 		$w = (int) $info [0];
 		$h = (int) $info [1];
-		if ($w <= 0 || $h <= 0) {
-			return false;
-		}
 
 		// GD typically expands to 4 bytes per pixel (truecolor) plus overhead/copies.
 		$pixels = (float) $w * (float) $h;
