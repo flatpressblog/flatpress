@@ -508,7 +508,8 @@ class admin_uploader_default extends AdminPanelAction {
 	function can_process_image_in_memory($filepath) {
 		$limitBytes = $this->get_memory_limit_bytes();
 		if ($limitBytes <= 0) {
-			return true; // unlimited or cannot determine
+			// unlimited or cannot determine
+			return true;
 		}
 
 		$usage = function_exists('memory_get_usage') ? (int) @memory_get_usage(true) : 0;
