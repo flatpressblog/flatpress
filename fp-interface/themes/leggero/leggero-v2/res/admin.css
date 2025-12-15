@@ -309,6 +309,17 @@ input.maxsize, select.maxsize { width: 99% }
 
 .entry-footer { margin: 2em 0 0.5em 0; text-align: right }
 
+#post-preview .entry img { /* Responsive images */
+	max-width: 99%;
+	height: auto
+}
+
+#post-preview .entry figure,
+#post-preview .entry .photoswipe {
+	max-width: 99%;
+	overflow: hidden
+}
+
 
 /* ===== UPLOAD PANEL ===== */
 /* Global for all themes in admin/uploader/uploader.css */

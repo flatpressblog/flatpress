@@ -39,9 +39,15 @@ p { margin: .5em 0 }
 img { border: none }
 
 /* Responsive Design img */
-img {
+#main .entry img {
 	max-width: 100%;
 	height: auto
+}
+
+#main .entry figure,
+#main .entry .photoswipe {
+	max-width: 100%;
+	overflow: hidden
 }
 
 /*

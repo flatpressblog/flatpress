@@ -438,103 +438,114 @@ h4 { font-size: 1.2em }
 
 h4#addcomment { clear: both }
 
-	#commentform fieldset p { margin: 0 0 .5em 0 }
+#commentform fieldset p { margin: 0 0 .5em 0 }
 
-	#comments li {
-		margin: 0 0 1.5em 0;
-		padding: 5px;
-		border-top: 1px solid #ddd;
-		border-bottom: 1px solid #ddd;
-		background: #efefef
-	}
+#comments li {
+	margin: 0 0 1.5em 0;
+	padding: 5px;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	background: #efefef
+}
 
-	/* === Class of main block === */
-	h6.date { font-size: 0.8em; color: #444 }
+/* === Class of main block === */
+h6.date { font-size: 0.8em; color: #444 }
 
-	.date { /* date under titles of the entry */
-		font-size: 80%;
-		font-style: oblique;
-		color: black;
-		margin: .2em 0 .8em 0
-	}
+.date { /* date under titles of the entry */
+	font-size: 80%;
+	font-style: oblique;
+	color: black;
+	margin: .2em 0 .8em 0
+}
 
-	/* .entry class */
-	.entry {
-		margin: 0 0 1.5em 0;
-		padding: 0 0 1.5em 0;
-		overflow: auto;
-		border-bottom: solid 1px #999
-	}
+/* .entry class */
+.entry {
+	margin: 0 0 1.5em 0;
+	padding: 0 0 1.5em 0;
+	overflow: auto;
+	border-bottom: solid 1px #999
+}
 
-	#main>.entry {
-		overflow: hidden /* rest of the world :) */
-	}
-	/* end of .entry */
+#main>.entry {
+	overflow: hidden /* rest of the world :) */
+}
+/* end of .entry */
 
-	#main ul.entry-footer { /* entry footer */
-		clear: both;
-		font-size: 80%;
-		color: black;
-		margin: 2em 0 .5em 0;
-		text-align: right
-	}
+#main ul.entry-footer { /* entry footer */
+	clear: both;
+	font-size: 80%;
+	color: black;
+	margin: 2em 0 .5em 0;
+	text-align: right
+}
 
-	.entry-footer li { display: block }
+.entry-footer li { display: block }
 
-	.admincontrols { /* [edit] and [delete] */
-		font-size: 80%;
-		text-align: right
-	}
+.admincontrols { /* [edit] and [delete] */
+	font-size: 80%;
+	text-align: right
+}
 
-	.buttonbar { text-align: center }
+.buttonbar { text-align: center }
 
-	.buttonbar input[type=submit], /* Send-Message-Button */
-	.buttonbar input[type=reset], /* Reset-Message-Button */
-	.buttonbar input[type=button] {
-		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
-		margin: 0.1em 0.5em;
-		padding: 0.2em 1em
-	}
+.buttonbar input[type=submit], /* Send-Message-Button */
+.buttonbar input[type=reset], /* Reset-Message-Button */
+.buttonbar input[type=button] {
+	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+	margin: 0.1em 0.5em;
+	padding: 0.2em 1em
+}
 
-	.buttonbar input[type=submit]:hover,
-	.buttonbar input[type=reset]:hover,
-	.buttonbar input[type=button]:hover {
-		box-shadow: none
-	}
+.buttonbar input[type=submit]:hover,
+.buttonbar input[type=reset]:hover,
+.buttonbar input[type=button]:hover {
+	box-shadow: none
+}
 
-	input[type=radio],
-	input[type=checkbox] {
-		vertical-align: middle;
-		margin-bottom: 7px;
-		height: 16px
-	}
+input[type=radio],
+input[type=checkbox] {
+	vertical-align: middle;
+	margin-bottom: 7px;
+	height: 16px
+}
 
-	.photoswipe figure img { /* PhotoSwipe */
-		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
-		border-radius: 3px
-	}
+#main .entry img { /* Responsive images */
+	max-width: 99%;
+	height: auto;
+}
 
-	.photoswipe figure img:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
+#main .entry figure,
+#main .entry .photoswipe {
+	max-width: 99%;
+	overflow: hidden
+}
 
-	.photoswipe figure figcaption { font-size: 12px !IMPORTANT }
+.photoswipe figure img { /* PhotoSwipe */
+	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+	border-radius: 3px
+}
 
-	.bbcode_video { /* BBCode [video] */
-		background-color: rgba(0,0,0,0.3);
-		box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
-		border-radius: 3px;
-		margin: 0px 3px 0px 0px
-	}
+.photoswipe figure img:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
 
-	.bbcode_video:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
+.photoswipe figure figcaption { font-size: 12px !IMPORTANT }
 
-	.responsive_bbcode_video { margin: 0 auto }
+.bbcode_video { /* BBCode [video] */
+	background-color: rgba(0,0,0,0.3);
+	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+	border-radius: 3px;
+	margin: 0px 3px 0px 0px
+}
 
-	.navigation { /* next entries & previous entries link */
-		font-size: 90%;
-		display: flow-root
-	}
+.bbcode_video:hover { box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3) }
 
-	form#search ul { list-style-type: none }
+.responsive_bbcode_video { margin: 0 auto }
+
+.navigation { /* next entries & previous entries link */
+	font-size: 90%;
+	display: flow-root
+}
+
+form#search ul { list-style-type: none }
 
 /* BBcode toolbar for comments */
 .bb-btn-tlb p { display: table-cell }
