@@ -351,6 +351,16 @@ input.maxsize, select.maxsize { width: 99% }
 
 #post-preview  ol { list-style-position: inside; Padding: 0 1.6em 0 1.6em }
 
+#post-preview .entry img {
+	max-width: 100%;
+	height: auto
+}
+
+#post-preview .entry figure,
+#post-preview .entry .photoswipe {
+	max-width: 100%;
+	overflow: hidden
+}
 
 /* ===== UPLOAD PANEL ===== */
 /* Global for all themes in admin/uploader/uploader.css */

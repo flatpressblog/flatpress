@@ -156,22 +156,33 @@ h3 { margin: 0;
 
 h4 { font-size: 1.2em }
 
-	/* in the specific ID */
-	#column h4 {
-		/* Titles of the sections in #column */
-		color: white;
-		font-family: "Gill Sans", "Trebuchet MS", Helvetica, sans-serif;
-		margin: 0 5px 5px 5px;
-		padding: .2em .5em;
-		background: #BBBB99 url('../imgs/sf_h4.png') bottom left repeat-x
-	}
-	
-	#main h4 { margin: 1.5em 0 1em 0 }
+/* in the specific ID */
+#column h4 {
+	/* Titles of the sections in #column */
+	color: white;
+	font-family: "Gill Sans", "Trebuchet MS", Helvetica, sans-serif;
+	margin: 0 5px 5px 5px;
+	padding: .2em .5em;
+	background: #BBBB99 url('../imgs/sf_h4.png') bottom left repeat-x
+}
+
+#main h4 { margin: 1.5em 0 1em 0 }
 
 img { border: none }
 
-	/* in the specific ID */
-	#main img { margin: .5em }
+/* in the specific ID */
+#main img { margin: .5em }
+
+#main .entry img {
+	max-width: 100%;
+	height: auto
+}
+
+#main .entry figure,
+#main .entry .photoswipe {
+	max-width: 100%;
+	overflow: hidden
+}
 
 blockquote {
 	color: #666666;
