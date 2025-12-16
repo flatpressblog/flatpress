@@ -91,7 +91,7 @@ class admin_plugin_default extends AdminPanelAction {
 				$fp_plugins [] = $id;
 				$fp_plugins = array_values(array_unique($fp_plugins));
 				sort($fp_plugins);
-				plugin_load($id, false, false);
+				plugin_load($id, false, true);
 				do_action('activate_' . $id);
 				$success = system_save(CONFIG_DIR . 'plugins.conf.php', compact('fp_plugins'));
 				if ($success && function_exists('opcache_invalidate')) {
