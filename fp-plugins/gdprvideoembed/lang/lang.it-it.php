@@ -28,10 +28,10 @@ $lang ['plugin'] ['gdprvideoembed'] = array(
 	'head_facebook' => 'Video Facebook incorporato',
 	'hint_facebook' => '<p><b>Nota:</b> Questo video incorporato è fornito da Facebook, Inc, 1 Hacker Way, Menlo Park, CA 94025, USA.<br>' . //
 		'Quando il video viene riprodotto, viene stabilita una connessione ai server di Facebook. Ciò indica a Facebook quali pagine si stanno visitando. ' . //
-		'Se l\'utente ha effettuato l\'accesso al proprio account Facebook, quest\'ultimo può attribuirgli personalmente il comportamento di navigazione. ' . //
+		'Se l´utente ha effettuato l´accesso al proprio account Facebook, quest´ultimo può attribuirgli personalmente il comportamento di navigazione. ' . //
 		'È possibile evitare che ciò accada disconnettendosi preventivamente dal proprio account Facebook.</p>' . //
-		'<p>Se viene avviato un video di Facebook, il provider utilizza dei cookie che raccolgono informazioni sul comportamento dell\'utente.</p>' . //
-		'<p>Ulteriori informazioni sulla protezione dei dati di „Facebook“ sono disponibili nell\'informativa sulla privacy del provider all\'indirizzo: ' . //
+		'<p>Se viene avviato un video di Facebook, il provider utilizza dei cookie che raccolgono informazioni sul comportamento dell´utente.</p>' . //
+		'<p>Ulteriori informazioni sulla protezione dei dati di „Facebook“ sono disponibili nell´informativa sulla privacy del provider all´indirizzo: ' . //
 		'<a href="https://www.facebook.com/policy.php" title="Vai a https://www.facebook.com/policy.php" rel="noopener" target="_blank">https://www.facebook.com/policy.php</a></p>',
 	'link_title_facebook' => 'Guarda il video su Facebook',
 
