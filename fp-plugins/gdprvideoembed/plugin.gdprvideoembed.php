@@ -4,7 +4,7 @@
  * Plugin URI: https://www.flatpress.org
  * Description: Simple two-click solution for GDPR-compliant embedding of YouTube, Facebook and Vimeo videos. Part of the standard distribution.
  * Author: FlatPress
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author URI: https://www.flatpress.org
  */
 function plugin_gdprvideoembed_setup() {
