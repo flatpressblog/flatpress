@@ -1,65 +1,65 @@
 <?php
 $lang ['admin'] ['config'] ['default'] = array(
 	'head' => 'Options',
-	'descr' => 'Personnaliser et configurer FlatPress installation.',
-	'submit' => 'Enregistrer',
+	'descr' => 'Personnalisez et configurez l’installation de FlatPress.',
+	'submit' => 'Sauvegarder',
 
-	'sysfset' => 'Informations g&eacute;n&eacute;rales du syst&egrave;me',
-	'syswarning' => '<big>Attention!</big> Ces informations sont indispensables et doivent &ecirc;tre correctes ou FlatPress ne pourra pas fonctionner correctement.',
-	'blog_root' => '<strong>Chemin absolu de FlatPress</strong>. Note: ' . //
-		'vous ne devez g&eacute;n&eacute;ralement pas modifier ceci, n&eacute;anmoins il est recommand&eacute; de v&eacute;rifier si le chemin est correct.',
-	'www' => '<strong>Adresse du blog (root)</strong>. Adresse de votre blog, en incluant les sous-r&eacute;pertoires.<br>' . //
-		'e.g.: http://www.mondomaine.be/flatpress/ (le slash de fin est requis)',
+	'sysfset' => 'Informations générales du système',
+	'syswarning' => 'Attention ! Ces informations sont critiques et doivent être exactes, sinon FlatPress pourrait ne pas fonctionner correctement.',
+	'blog_root' => '<strong>Chemin absolu vers FlatPress</strong>. Remarque : ' . //
+		'vous ne devez généralement pas modifier ceci, mais il est recommandé de vérifier si ce chemin est correct.',
+	'www' => '<strong>Adresse du blog (racine)</strong>. Spécifiez l’adresse complète de votre blog, y compris tous les sous-répertoires.<br>' . //
+		'par exemple : http://www.monblog.fr/flatpress/ (le slash à la fin est requis)',
 
 	// ------
-	'gensetts' => 'Configuration g&eacute;n&eacute;rale',
-	'adminname' => 'Nom de l\'administrateur',
+	'gensetts' => 'Paramètres globaux',
+	'adminname' => 'Nom de l’administrateur',
 	'adminpassword' => 'Nouveau mot de passe',
-	'adminpasswordconfirm' => 'Répéter le mot de passe',
-	'blogtitle' => 'Titre du Blog',
-	'blogsubtitle' => 'Description du blog',
-	'blogfooter' => 'Texte en bas de page du blog',
-	'blogauthor' => 'Auteur du Blog',
-	'startpage' => 'La page d\'accueil de ce site web est',
-	'stdstartpage' => 'mon blog (d&eacute;faut)',
-	'blogurl' => 'Url du blog',
-	'blogemail' => 'Adresse email (notifications)',
-	'notifications' => 'Notifications',
-	'mailnotify' => 'Activer les notifications par email pour les commentaires',
-	'blogmaxentries' => 'Nombre de sujets par page',
-	'langchoice' => 'Langage',
+	'adminpasswordconfirm' => 'Confirmez le mot de passe',
+	'blogtitle' => 'Titre du blog',
+	'blogsubtitle' => 'Sous-titre du blog',
+	'blogfooter' => 'Pied de page du blog',
+	'blogauthor' => 'Auteur du blog',
+	'startpage' => 'La page d’accueil par défaut de ce site web est',
+	'stdstartpage' => 'Mon blog (par défaut)',
+	'blogurl' => 'URL du blog',
+	'blogemail' => 'Adresse courriel (notifications)',
+	'notifications' => 'Options de notification',
+	'mailnotify' => 'Activer les notifications par courriel pour les commentaires',
+	'blogmaxentries' => 'Nombre d’articles affichés par page',
+	'langchoice' => 'Langue utilisée',
 
-	'intsetts' => 'R&eacute;glages Internationaux',
-	'utctime' => '<abbr title="Universal Coordinated Time">L\'heure (UTC) </abbr>actuelle est',
-	'timeoffset' => 'Fuseau horaire (GMT+)',
+	'intsetts' => 'Internationalisation',
+	'utctime' => 'L’heure (UTC) actuelle est',
+	'timeoffset' => 'Fuseau horaire (exemple : GMT+)',
 	'hours' => 'heures',
-	'timeformat' => 'Format par d&eacute;faut pour l\'heure',
-	'dateformat' => 'Format par d&eacute;faut pour la date',
-	'dateformatshort' => 'Format par d&eacute;faut pour la date (court)',
-	'output' => 'Pr&eacute;visualisation',
+	'timeformat' => 'Format par défaut pour l’heure',
+	'dateformat' => 'Format par défaut pour la date',
+	'dateformatshort' => 'Format abrégé pour la date',
+	'output' => 'Aperçu',
 	'charset' => 'Encodage',
-	'charsettip' => 'L\'encodage de votre blog est en UTF-8 ' . //
-		'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="Quelles sont les normes d\'encodage de caractères prises en charge par FlatPress ?">(recommand&eacute;)</a>.'
+	'charsettip' => 'L’encodage de votre blog est en UTF-8 ' . //
+		'<a href="https://wiki.flatpress.org/doc:techfaq#character_encoding" title="Quelles sont les normes d’encodage de caractères prises en charge par FlatPress ?">(recommandé)</a>.'
 );
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
-	1 => 'La configuration a &eacute;t&eacute; enregistr&eacute;e avec succ&egrave;s.',
-	-1 => 'Une erreur est apparue au moment de l\'enregistrement de la configuration!'
+	1 => 'La configuration a été enregistrée avec succès.',
+	-1 => 'Une erreur est survenue lors de l’enregistrement de la configuration.'
 );
 
 $lang ['admin'] ['config'] ['default'] ['error'] = array(
-	'www' => 'Adresse du Blog (root) doit avoir une URL valide',
-	'title' => 'Vous devez ins&eacute;rer un titre',
-	'email' => 'l\'adresse email n\'est pas au format correct',
-	'maxentries' => 'Vous n\'avez pas entr&eacute; un nombre correct d\'entr&eacute;es',
-	'timeoffset' => 'Vous n\'avez pas entr&eacute; un format d\'heure correct! Vous pouvez utiliser des points flottants (ex: 2h30" => 2.5)',
-	'timeformat' => 'Vous devez ins&eacute;rer l\'heure au format correct',
-	'dateformat' => 'Vous devez ins&eacute;rer la date au format correct',
-	'dateformatshort' => 'Vous devez ins&eacute;rer la date au format correct (court)',
-	'charset' => 'Vous devez choisir le format d\'encodage de votre blog',
-	'lang' => 'La langue choisie n\'est pas disponible',
-	'admin' => 'Le nom de l\'administrateur ne peut contenir que des lettres, des chiffres et 1 trait de soulignement.',
-	'password' => 'Le mot de passe doit contenir au moins 6 caractères et aucun espace.',
+	'www' => 'L’adresse racine du blog doit être une URL valide.',
+	'title' => 'Vous devez saisir un titre.',
+	'email' => 'L’adresse courriel n’est pas valide.',
+	'maxentries' => 'Vous n’avez pas renseigné un nombre d’articles valide.',
+	'timeoffset' => 'Vous n’avez pas spécifié un fuseau horaire correct ! Vous pouvez utiliser des nombres décimaux (exemple : 2h30 = 2.5).',
+	'timeformat' => 'Vous devez indiquer un format horaire valide.',
+	'dateformat' => 'Vous devez indiquer un format de date valide.',
+	'dateformatshort' => 'Vous devez indiquer un format abrégé de date valide.',
+	'charset' => 'Vous devez sélectionner un encodage pour votre blog.',
+	'lang' => 'La langue choisie n’est pas disponible.',
+	'admin' => 'Le nom de l’administrateur ne peut contenir que des lettres, des chiffres et un underscore.',
+	'password' => 'Le mot de passe doit contenir au moins 6 caractères et ne pas inclure d’espaces.',
 	'confirm_password' => 'Les mots de passe ne correspondent pas.'
 );
 ?>
