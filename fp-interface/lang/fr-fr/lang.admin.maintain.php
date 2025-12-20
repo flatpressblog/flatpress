@@ -1,5 +1,7 @@
 <?php
-$lang ['admin'] ['maintain'] = array(
+$lang ['admin'] ['panel'] ['maintain'] = 'Maintenance';
+
+$lang ['admin'] ['maintain'] ['default'] = array(
 	'head' => 'Maintenance',
 	'descr' => 'Venez ici lorsque vous pensez que quelque chose ne fonctionne pas correctement. Peut-être trouverez-vous une solution !',
 
