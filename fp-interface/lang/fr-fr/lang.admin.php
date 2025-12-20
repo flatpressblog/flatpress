@@ -7,7 +7,7 @@ $lang ['admin'] ['panels'] = array(
 	// 'users' => 'Utilisateurs',
 	'entry' => 'Billets',
 	'static' => 'Pages statiques',
-	'uploader' => 'Téléverseur',
+	'uploader' => 'Téléverser',
 	'widgets' => 'Widgets',
 	// 'add' => 'Ajouter',
 	// 'edit' => 'Éditer/Effacer',
@@ -27,7 +27,7 @@ $lang ['admin'] ['general'] = array(
 	'actedit' => 'Éditer',
 	'actenable' => 'Activer',
 	'actdisable' => 'Désactiver',
-	'startpage' => 'Page d\'accueil',
+	'startpage' => 'Page d’accueil',
 	'logout' => 'Déconnexion'
 );
 ?>
