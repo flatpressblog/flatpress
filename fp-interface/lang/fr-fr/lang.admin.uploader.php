@@ -1,14 +1,14 @@
 <?php
 $lang ['admin'] ['uploader'] ['default'] = array(
-	'head' => 'Transf&eacute;rer',
-	'descr' => 'Choisissez un ou plusieurs fichiers &agrave; transf&eacute;rer.',
+	'head' => 'Transférer',
+	'descr' => 'Choisissez un ou plusieurs fichiers à transférer.',
 	'fset1' => 'Explorateur de fichiers',
-	'fset2' => 'Transf&eacute;rer',
-	'submit' => 'Transf&eacute;rer',
+	'fset2' => 'Transférer',
+	'submit' => 'Transférer',
 	'uploader_some_failed' => 'Ce fichier n\'a pas été téléchargé pour des raisons de sécurité ou liées au système :',
 	'uploader_metadata_failed' => 'Le fichier a été téléchargé, mais les métadonnées n\'ont pas pu être supprimées :',
 	'uploader_drop' => 'Faites glisser les fichiers ici',
-	'uploader_browse_hint' => '…ou cliquez pour sélectionner les fichiers',
+	'uploader_browse_hint' => '… ou cliquez pour sélectionner les fichiers',
 	'uploader_drop_active' => 'Relâchez pour ajouter',
 	'uploader_selected_count' => '%d fichier(s) sélectionné(s)',
 	'uploader_clear' => 'Vider la sélection',
@@ -18,17 +18,17 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 );
 
 $lang ['admin'] ['uploader'] ['default'] ['msgs'] = array(
-	1 => 'Fichier(s) transf&eacute;r&eacute;(s)',
-	-1 => 'Echec du transfert.',
-	-2 => 'Téléchargement refusé par le serveur: la taille totale du téléchargement dépasse post_max_size (%s).',
+	1 => 'Fichier(s) transféré(s)',
+	-1 => 'Échec du transfert.',
+	-2 => 'Téléchargement refusé par le serveur : la taille totale du téléchargement dépasse post_max_size (%s).',
 	-3 => 'Téléchargement refusé par le serveur, probablement en raison de la taille du téléchargement ou des limites du nombre de fichiers. Aucun fichier n\'a été reçu.',
 	-4 => 'Aucun fichier n\'a été reçu. Veuillez sélectionner un ou plusieurs fichiers avant de procéder au téléchargement.'
 );
 
 $lang ['admin'] ['uploader'] ['browse'] = array(
 	'head' => 'Voir',
-	'descr' => 'Choisissez un ou plusieurs fichiers &agrave; transf&eacute;rer.',
+	'descr' => 'Choisissez un ou plusieurs fichiers à transférer.',
 	'fset1' => 'Explorateur de fichiers',
-	'submit' => 'Transf&eacute;rer'
+	'submit' => 'Transférer'
 );
 ?>

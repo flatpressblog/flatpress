@@ -1,35 +1,35 @@
 <?php
-$lang ['admin'] ['widgets'] ['submenu'] ['default'] = 'G&eacute;rer les Widgets';
-$lang ['admin'] ['widgets'] ['submenu'] ['raw'] = 'G&eacute;rer les Widgets (raw)';
+$lang ['admin'] ['widgets'] ['submenu'] ['default'] = 'Gérer les widgets';
+$lang ['admin'] ['widgets'] ['submenu'] ['raw'] = 'Gérer les widgets (raw)';
 
 /* default action */
 $lang ['admin'] ['widgets'] ['default'] = array(
-	'head' => 'G&eacute;rer les Widgets',
+	'head' => 'Gérer les widgets',
 
 	'descr' => 'Un <a class="hint" ' . //
-		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="C\'est quoi un Widget?">' . //
-		'Widget</a> est un composant dynamique qui peut afficher des donn&eacute;es et interagir avec l\'utilisateur. ' . //
-		'Bien que les<strong> Th&egrave;mes</strong> ont pour but de modifier l\'apparence de votre blog, les widgets ' . //
-		'<strong>&eacute;tendent</strong> les possibilit&eacute;s et les fonctions.</p>' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="C\'est quoi un widget ?">' . //
+		'Widget</a> est un composant dynamique qui peut afficher des données et interagir avec l\'utilisateur. ' . //
+		'Bien que les <strong>thèmes</strong> aient pour but de modifier l\'apparence de votre blog, les widgets ' . //
+		'<strong>étendent</strong> les possibilités et les fonctions.</p>' . //
 
-		'<p>Les Widgets peuvent &ecirc;tre d&eacute;plac&eacute;s vers des zones sp&eacute;ciales de votre th&egrave;me appel&eacute;es ' . //
-		'<strong>WidgetSets</strong>. Le nombre et le nom des WidgetSets peuvent varier avec le th&egrave;me que vous choisissez.</p>' . //
+		'<p>Les widgets peuvent être déplacés vers des zones spéciales de votre thème appelées ' . //
+		'<strong>widgetsets</strong>. Le nombre et le nom des widgetsets peuvent varier avec le thème que vous choisissez.</p>' . //
 
-		'<p>FlatPress est fourni avec plusieurs widgets: il y a des widgets pour aider &agrave; la connexion, pour afficher une bo&icirc;te de recherche, etc.</p>' . //
+		'<p>FlatPress est fourni avec plusieurs widgets : il y a des widgets pour aider à la connexion, pour afficher une boîte de recherche, etc.</p>' . //
 
-		'<p>Chaque widget est d&eacute;fini par un <a class="hint" ' . //
-		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Aide Widget?">plugin</a>.',
+		'<p>Chaque widget est défini par un <a class="hint" ' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Aide widget ?">plugin</a>.',
 
 	'availwdgs' => 'Widgets disponibles',
-	'trashcan' => 'D&eacute;placer ici pour supprimer',
+	'trashcan' => 'Déplacer ici pour supprimer',
 
-	'themewdgs' => 'Widgetsets pour ce th&egrave;me',
-	'themewdgsdescr' => 'Le th&egrave;me que vous avez s&eacute;lectionn&eacute; dispose des widgetsets suivants',
+	'themewdgs' => 'Widgetsets pour ce thème',
+	'themewdgsdescr' => 'Le thème que vous avez sélectionné dispose des widgetsets suivants',
 	'oldwdgs' => 'Autres widgetsets',
-	'oldwdgsdescr' => 'Les widgetsets suivantes semblent ne pas appartenir &agrave; l\'un des ' . //
-		'widgetsets list&eacute;s ici. Ceux-ci proviennent peut-&ecirc;tre d\'un autre th&egrave;me.',
+	'oldwdgsdescr' => 'Les widgetsets suivants semblent ne pas appartenir à l\'un des ' . //
+		'widgetsets listés ici. Ceux-ci proviennent peut-être d\'un autre thème.',
 
-	'submit' => 'Enregistrer modifications',
+	'submit' => 'Enregistrer les modifications',
 	'drop_here' => 'Placer ici'
 );
 
@@ -41,34 +41,34 @@ $lang ['admin'] ['widgets'] ['default'] ['stdsets'] = array(
 );
 
 $lang ['admin'] ['widgets'] ['default'] ['msgs'] = array(
-	1 => 'Modifications enregistr&eacute;es',
-	-1 => 'Echec de la sauvegarde, veuillez essayer &agrave; nouveau'
+	1 => 'Modifications enregistrées',
+	-1 => 'Échec de la sauvegarde, veuillez essayer à nouveau'
 );
 
 /* "raw" panel */
 $lang ['admin'] ['widgets'] ['raw'] = array(
-	'head' => 'G&eacute;rer Widgets (<em>&eacute;diteur RAW</em>)',
+	'head' => 'Gérer les widgets (<em>éditeur RAW</em>)',
 	'descr' => 'Un <a class="hint" ' . //
-		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="C\'est quoi un Widget?">' . //
-		'Widget</a> est un &eacute;l&eacute;ment visuel de <a class="hint" ' . //
-		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="C\'est quoi un plugin?">' . //
-		'Plugin</a> que vous pouvez mettre dans certaines zones particuli&egrave;res (le <em>widgetsets</em>) des pages de votre blog. </p>' . //
-		'<p>Voici l\'<strong>&eacute;diteur</strong> avanc&eacute; r&eacute;serv&eacute; aux personnes experiment&eacute;es ' . //
-		'qui pref&egrave;rent ne pas utiliser Javascript.',
+		'href="https://wiki.flatpress.org/doc:techfaq#widgets" target="_blank" title="C\'est quoi un widget ?">' . //
+		'Widget</a> est un élément visuel de <a class="hint" ' . //
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="C\'est quoi un plugin ?">' . //
+		'Plugin</a> que vous pouvez mettre dans certaines zones particulières (les <em>widgetsets</em>) des pages de votre blog.</p>' . //
+		'<p>Voici l\'<strong>éditeur</strong> avancé réservé aux personnes expérimentées ' . //
+		'qui préfèrent ne pas utiliser JavaScript.',
 
-	'fset1' => 'Editeur',
-	'fset2' => 'Appliquer modifications',
+	'fset1' => 'Éditeur',
+	'fset2' => 'Appliquer les modifications',
 	'submit' => 'Appliquer'
 );
 
 $lang ['admin'] ['widgets'] ['raw'] ['msgs'] = array(
-	1 => 'Modifications enregistr&eacute;es',
-	-1 => 'Une erreur est survenue pendant l\'enregistrement. V&eacute;rifiez les param&egrave;tres.'
+	1 => 'Modifications enregistrées',
+	-1 => 'Une erreur est survenue pendant l\'enregistrement. Vérifiez les paramètres.'
 );
 
 /* system errors */
 $lang ['admin'] ['widgets'] ['errors'] = array(
-	'generic' => 'Le widget appel&eacute; <strong>%s</strong> n\'est pas enregistr&eacute;, et sera ignor&eacute;. ' . //
-		'est le plugin activ&eacute; dans le <a href="admin.php?p=plugin">panneau des plugins</a>?'
+	'generic' => 'Le widget appelé <strong>%s</strong> n\'est pas enregistré, et sera ignoré. ' . //
+		'Le plugin est-il activé dans le <a href="admin.php?p=plugin">panneau des plugins</a> ?'
 );
 ?>

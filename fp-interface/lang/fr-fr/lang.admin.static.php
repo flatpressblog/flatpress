@@ -1,15 +1,15 @@
 <?php
 $lang ['admin'] ['static'] ['submenu'] = array(
-	'list' => 'G&eacute;rer pages statiques',
-	'write' => '&Eacute;crire'
+	'list' => 'Gérer pages statiques',
+	'write' => 'Écrire'
 );
 
 /* main panel */
 $lang ['admin'] ['static'] ['list'] = array(
-	'head' => 'Pages Statiques',
-	'descr' => 'S&eacute;lectionnez une page &agrave; &eacute;diter ou <a href="admin.php?p=static&amp;action=write">ajoutez-en une nouvelle</a>.',
+	'head' => 'Pages statiques',
+	'descr' => 'Sélectionnez une page à éditer ou <a href="admin.php?p=static&amp;action=write">ajoutez-en une nouvelle</a>.',
 
-	'sel' => 'Sel', // checkbox
+	'sel' => 'Sél', // checkbox
 	'date' => 'Date',
 	'name' => 'Page',
 	'title' => 'Titre',
@@ -17,54 +17,54 @@ $lang ['admin'] ['static'] ['list'] = array(
 
 	'action' => 'Action',
 	'act_view' => 'Voir',
-	'act_del' => 'Effacer',
-	'act_edit' => '&Eacute;diter',
+	'act_del' => 'Supprimer',
+	'act_edit' => 'Éditer',
 
 	'natural' => 'Trier les titres par ordre décroissant plutôt que par date de création.',
 	'submit' => 'Réorganiser les noms de page'
 );
 
 $lang ['admin'] ['static'] ['list'] ['msgs'] = array(
-	1 => 'Page enregistr&eacute;e avec succ&egrave;s',
-	-1 => 'Echec de la sauvegarde de la page',
-	2 => 'La page a &eacute;t&eacute; effac&eacute;e',
-	-2 => 'Echec de la suppression de la page'
+	1 => 'Page enregistrée avec succès',
+	-1 => 'Échec de la sauvegarde de la page',
+	2 => 'La page a été supprimée',
+	-2 => 'Échec de la suppression de la page'
 );
 
 /* write panel */
 $lang ['admin'] ['static'] ['write'] = array(
 	'head' => 'Publier une page statique',
-	'descr' => 'Editez le formulaire pour publier la page',
-	'fieldset1' => '&Eacute;diter',
-	'subject' => 'Sujet (*):',
-	'content' => 'Contenu (*):',
+	'descr' => 'Éditez le formulaire pour publier la page',
+	'fieldset1' => 'Éditer',
+	'subject' => 'Sujet (*) :',
+	'content' => 'Contenu (*) :',
 	'fieldset2' => 'Soumettre',
-	'pagename' => 'Nom de la page (*):',
+	'pagename' => 'Nom de la page (*) :',
 	'submit' => 'Publier',
-	'preview' => 'Aper&ccedil;u',
+	'preview' => 'Aperçu',
 
-	'delfset' => 'Effacer',
-	'deletemsg' => 'Effacer cette page',
-	'del' => 'Effacer',
-	'success' => 'Votre page a &eacute;t&eacute; publi&eacute;e',
+	'delfset' => 'Supprimer',
+	'deletemsg' => 'Supprimer cette page',
+	'del' => 'Supprimer',
+	'success' => 'Votre page a été publiée',
 	'otheropts' => 'Autres options',
 );
 
 $lang ['admin'] ['static'] ['write'] ['error'] = array(
-	'subject' => 'Compl&eacute;tez le sujet',
-	'content' => 'Compl&eacute;tez les champs requis',
-	'id' => 'Vous devez entrer un id valide'
+	'subject' => 'Complétez le sujet',
+	'content' => 'Complétez les champs requis',
+	'id' => 'Vous devez entrer un identifiant valide'
 );
 
 /* delete action */	
 $lang ['admin'] ['static'] ['delete'] = array(
-	'head' => 'Supprimer Page', 
-	'descr' => 'Vous allez effacer la page suivante:',
-	'preview' => 'Aper&ccedil;u',
-	'confirm' => 'Confirmer la suppression?',
-	'fset' => 'Effacer',
-	'ok' => 'Oui, effacer cette page',
-	'cancel' => 'Non, retour au panel',
-	'err' => 'La page sp&eacute;cifi&eacute;e n\'existe pas'
+	'head' => 'Supprimer la page', 
+	'descr' => 'Vous allez supprimer la page suivante :',
+	'preview' => 'Aperçu',
+	'confirm' => 'Confirmer la suppression ?',
+	'fset' => 'Supprimer',
+	'ok' => 'Oui, supprimer cette page',
+	'cancel' => 'Non, retour au panneau',
+	'err' => 'La page spécifiée n\'existe pas'
 );
 ?>
