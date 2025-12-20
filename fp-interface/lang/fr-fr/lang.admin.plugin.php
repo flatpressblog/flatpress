@@ -10,7 +10,7 @@ $lang ['admin'] ['plugin'] ['default'] = array(
 	'disable' => 'Désactiver',
 	'descr' => 'Un <a class="hint" ' . //
 		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Qu\'est-ce qu\'un plugin ?">Plugin</a> est un composant qui étend les fonctionnalités de FlatPress.</p>' . //
-		'<p>Vous pouvez installer des plugins en les téléchargeant dans le répertoire <code>fp-plugins/</code>.</p><p>Ce panneau vous permet d\'activer et de désactiver les plugins.',
+		'<p>Vous pouvez installer des plugins en les transférant dans le répertoire <code>fp-plugins/</code>.</p><p>Ce panneau vous permet d\'activer et de désactiver les plugins.',
 	'name' => 'Nom',
 	'description' => 'Description',
 	'author' => 'Auteur',
@@ -20,7 +20,7 @@ $lang ['admin'] ['plugin'] ['default'] = array(
 
 $lang ['admin'] ['plugin'] ['default'] ['msgs'] = array(
 	1 => 'Configuration enregistrée',
-	-1 => 'Une erreur s\'est produite lors de l\'enregistrement. Cela peut être dû à plusieurs raisons : votre fichier contient peut-être des erreurs de syntaxe.'
+	-1 => 'Une erreur s\'est produite lors de l\'enregistrement. Cela peut arriver pour plusieurs raisons : le fichier peut contenir des erreurs de syntaxe.'
 );
 
 /* system errors */
