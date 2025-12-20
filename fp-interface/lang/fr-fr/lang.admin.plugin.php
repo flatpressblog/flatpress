@@ -1,16 +1,16 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] = array (
-	'default' => 'G&eacute;rer Plugins'
+	'default' => 'Gérer les Plugins'
 );
 
 /* main plugin panel */
 $lang ['admin'] ['plugin'] ['default'] = array(
-	'head' => 'G&eacute;rer les Plugins',
+	'head' => 'Gérer les Plugins',
 	'enable' => 'Activer',
-	'disable' => 'D&eacute;sactiver',
+	'disable' => 'Désactiver',
 	'descr' => 'Un <a class="hint" ' . //
-		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="C\'est quoi un plugin?">Plugin</a> est un composant qui &eacute;tend les possibilit&eacute;s de FlatPress.</p>' . //
-		'<p>Vous pouvez installer les plugins en les transf&eacute;rant dans le dossier <code>fp-plugins/</code> de votre ftp.</p><p>Ce menu vous permet d\'activer ou de d&eacute;sactiver les plugins.',
+		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Qu\'est-ce qu\'un plugin ?">Plugin</a> est un composant qui étend les fonctionnalités de FlatPress.</p>' . //
+		'<p>Vous pouvez installer des plugins en les transférant dans le répertoire <code>fp-plugins/</code>.</p><p>Ce panneau vous permet d\'activer et de désactiver les plugins.',
 	'name' => 'Nom',
 	'description' => 'Description',
 	'author' => 'Auteur',
@@ -19,15 +19,14 @@ $lang ['admin'] ['plugin'] ['default'] = array(
 );
 
 $lang ['admin'] ['plugin'] ['default'] ['msgs'] = array(
-	1 => 'Configuration enregistr&eacute;e',
-	2 => 'L\'administrateur a été changé. Tu vas maintenant être déconnecté.',
-	-1 => 'Une erreur est survenue pendant l\'enregistrement. Il peut y avoir plusieurs raisons: erreurs de synthaxes.'
+	1 => 'Configuration enregistrée',
+	-1 => 'Une erreur s\'est produite lors de l\'enregistrement. Cela peut arriver pour plusieurs raisons : le fichier peut contenir des erreurs de syntaxe.'
 );
 
 /* system errors */
 $lang ['admin'] ['plugin'] ['errors'] = array(
-	'head' => 'Des erreurs sont survenues pendant le chargement des plugins:',
-	'notfound' => 'Plugin non trouv&eacute;.',
-	'generic' => 'Erreur num&eacute;ro %d'
+	'head' => 'Les erreurs suivantes se sont produites lors du chargement des plugins :',
+	'notfound' => 'Plugin introuvable. Ignoré.',
+	'generic' => 'Erreur numéro %d'
 );
 ?>
