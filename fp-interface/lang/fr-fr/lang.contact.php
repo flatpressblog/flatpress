@@ -3,7 +3,7 @@ $baseurl = BLOG_BASEURL;
 
 $lang ['contact'] = array(
 	'head' => 'Nous contacter',
-	'descr' => 'Remplissez le formulaire ci-dessous pour nous envoyer vos commentaires. Merci d\'ajouter votre courriel si vous souhaitez une réponse.',
+	'descr' => 'Remplissez le formulaire ci-dessous pour nous envoyer vos commentaires. Merci d’ajouter votre courriel si vous souhaitez une réponse.',
 	'fieldset1' => 'Données utilisateur',
 	'name' => 'Nom (*)',
 	'email' => 'Courriel :',
@@ -14,7 +14,7 @@ $lang ['contact'] = array(
 	'fieldset3' => 'Envoyer',
 	'submit' => 'Envoyer',
 	'reset' => 'Réinitialiser',
-	'loggedin' => 'Vous êtes connecté 😉. <a href="' . $baseurl . 'login.php?do=logout">Se déconnecter</a> ou accéder à l\'<a href="' . $baseurl . 'admin.php">espace d\'administration</a>.'
+	'loggedin' => 'Vous êtes connecté 😉. <a href="' . $baseurl . 'login.php?do=logout">Se déconnecter</a> ou accéder à l’<a href="' . $baseurl . 'admin.php">espace d’administration</a>.'
 );
 
 $lang ['contact'] ['notification'] = array(
@@ -34,6 +34,6 @@ $lang ['contact'] ['error'] = array(
 
 $lang ['contact'] ['msgs'] = array(
 	1 => 'Message envoyé avec succès',
-	-1 => 'Échec d\'envoi du message'
+	-1 => 'Échec d’envoi du message'
 );
 ?>

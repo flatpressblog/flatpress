@@ -65,6 +65,6 @@ $lang ['admin'] ['static'] ['delete'] = array(
 	'fset' => 'Supprimer',
 	'ok' => 'Oui, supprimer cette page',
 	'cancel' => 'Non, retour au panneau',
-	'err' => 'La page spécifiée n\'existe pas'
+	'err' => 'La page spécifiée n’existe pas'
 );
 ?>

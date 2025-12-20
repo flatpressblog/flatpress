@@ -18,7 +18,7 @@ $lang ['admin'] ['themes'] ['default'] = array(
 $lang ['admin'] ['themes'] ['default'] ['msgs'] = array(
 	1 => 'Le thème a été modifié.',
 	-1 => 'Une erreur est survenue lors de la modification du thème.',
-	-2 => 'Le thème sélectionné n\'existe pas.'
+	-2 => 'Le thème sélectionné n’existe pas.'
 );
 
 /* select style */
@@ -35,6 +35,6 @@ $lang ['admin'] ['themes'] ['style'] = array(
 $lang ['admin'] ['themes'] ['style'] ['msgs'] = array(
 	1 => 'Le style a été modifié.',
 	-1 => 'Une erreur est survenue lors de la modification du style.',
-	-2 => 'Le style sélectionné n\'existe pas.'
+	-2 => 'Le style sélectionné n’existe pas.'
 );
 ?>

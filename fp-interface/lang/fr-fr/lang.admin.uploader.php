@@ -5,8 +5,8 @@ $lang ['admin'] ['uploader'] ['default'] = array(
 	'fset1' => 'Explorateur de fichiers',
 	'fset2' => 'Transférer',
 	'submit' => 'Transférer',
-	'uploader_some_failed' => 'Ce fichier n\'a pas été téléchargé pour des raisons de sécurité ou liées au système :',
-	'uploader_metadata_failed' => 'Le fichier a été téléchargé, mais les métadonnées n\'ont pas pu être supprimées :',
+	'uploader_some_failed' => 'Ce fichier n’a pas été téléchargé pour des raisons de sécurité ou liées au système :',
+	'uploader_metadata_failed' => 'Le fichier a été téléchargé, mais les métadonnées n’ont pas pu être supprimées :',
 	'uploader_drop' => 'Faites glisser les fichiers ici',
 	'uploader_browse_hint' => '… ou cliquez pour sélectionner les fichiers',
 	'uploader_drop_active' => 'Relâchez pour ajouter',
@@ -21,8 +21,8 @@ $lang ['admin'] ['uploader'] ['default'] ['msgs'] = array(
 	1 => 'Fichier(s) transféré(s)',
 	-1 => 'Échec du transfert.',
 	-2 => 'Téléchargement refusé par le serveur : la taille totale du téléchargement dépasse post_max_size (%s).',
-	-3 => 'Téléchargement refusé par le serveur, probablement en raison de la taille du téléchargement ou des limites du nombre de fichiers. Aucun fichier n\'a été reçu.',
-	-4 => 'Aucun fichier n\'a été reçu. Veuillez sélectionner un ou plusieurs fichiers avant de procéder au téléchargement.'
+	-3 => 'Téléchargement refusé par le serveur, probablement en raison de la taille du téléchargement ou des limites du nombre de fichiers. Aucun fichier n’a été reçu.',
+	-4 => 'Aucun fichier n’a été reçu. Veuillez sélectionner un ou plusieurs fichiers avant de procéder au téléchargement.'
 );
 
 $lang ['admin'] ['uploader'] ['browse'] = array(
