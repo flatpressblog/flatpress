@@ -22,8 +22,8 @@ $lang ['main'] = array(
 	'comment' => '1 commentaire',
 	'comments' => 'commentaires',
 
-	'rss' => 'S\'abonner au flux RSS',
-	'atom' => 'S\'abonner au flux Atom'
+	'rss' => 'S’abonner au flux RSS',
+	'atom' => 'S’abonner au flux Atom'
 );
 
 $lang ['search'] = array(
@@ -35,7 +35,7 @@ $lang ['search'] = array(
 
 	'fset2' => 'Date',
 	'datedescr' => 'Vous pouvez affiner votre recherche à une date spécifique. Vous pouvez sélectionner une année, une année et un mois, ou une date complète. ' . //
-		'Laissez vide pour chercher dans l\'ensemble de la base de données.',
+		'Laissez vide pour chercher dans l’ensemble de la base de données.',
 
 	'fset3' => 'Rechercher dans les catégories',
 	'catdescr' => 'Laissez vide pour rechercher dans la totalité',
@@ -47,7 +47,7 @@ $lang ['search'] = array(
 	'descrres' => 'La recherche de <strong>%s</strong> a donné les résultats suivants :',
 	'descrnores' => 'La recherche de <strong>%s</strong> a donné les résultats suivants :',
 
-	'moreopts' => 'Plus d\'options',
+	'moreopts' => 'Plus d’options',
 
 	'searchag' => 'Nouvelle recherche'
 );
@@ -89,14 +89,14 @@ $lang ['entry'] ['categories'] = array(
 
 $lang ['404error'] = array(
 	'subject' => 'Page non trouvée',
-	'content' => '<p>Désolé, la page demandée n\'a pas été trouvée !</p>'
+	'content' => '<p>Désolé, la page demandée n’a pas été trouvée !</p>'
 );
 
 // Login
 $lang ['login'] = array(
 	'head' => 'Identifiant',
 	'fieldset1' => 'Insérez vos identifiants',
-	'user' => 'Nom d\'utilisateur :',
+	'user' => 'Nom d’utilisateur :',
 	'pass' => 'Mot de passe :',
 	'fieldset2' => 'Se connecter',
 	'submit' => 'Connexion',
@@ -107,13 +107,13 @@ $lang ['login'] ['success'] = array(
 	'success' => 'Vous êtes connecté.',
 	'logout' => 'Vous êtes déconnecté.',
 	'redirect' => 'Vous serez redirigé dans 5 secondes.',
-	'opt1' => 'Retour à l\'index',
+	'opt1' => 'Retour à l’index',
 	'opt2' => 'Aller au panneau de contrôle',
 	'opt3' => 'Ajouter un nouveau billet'
 );
 
 $lang ['login'] ['error'] = array(
-	'user' => 'Vous devez entrer un nom d\'utilisateur.',
+	'user' => 'Vous devez entrer un nom d’utilisateur.',
 	'pass' => 'Vous devez entrer un mot de passe.',
 	'match' => 'Mot de passe incorrect.',
 	'timeout' => 'Veuillez attendre 30 secondes avant de réessayer.'
