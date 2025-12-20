@@ -30,7 +30,7 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'langchoice' => 'Langue utilisée',
 
 	'intsetts' => 'Internationalisation',
-	'utctime' => 'L’heure (UTC) actuelle est',
+	'utctime' => '<abbr title="Universal Coordinated Time">L’heure (UTC) </abbr>actuelle est',
 	'timeoffset' => 'Fuseau horaire (exemple : GMT+)',
 	'hours' => 'heures',
 	'timeformat' => 'Format par défaut pour l’heure',
