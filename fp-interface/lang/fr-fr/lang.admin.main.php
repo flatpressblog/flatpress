@@ -1,5 +1,7 @@
 <?php
-$lang ['admin'] ['main'] = array(
+$lang['admin']['panel']['main'] = 'Main';
+
+$lang['admin']['main']['default'] = array(
 	'head' => 'Bienvenue sur le panneau de contrôle !',
 	'descr' => 'Choisissez une action',
 
