@@ -93,6 +93,9 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - The link "Previous month with entries" now also works if there are no entries in the previous month.
 - GDPR Video embed: update to version 1.1.1
     - An issue in the French and Italian language files that prevented the JS from loading has been fixed. Thank you for reporting the issue to [macadoum from the support forum](https://forum.flatpress.org/viewtopic.php?t=938&start=20#p3334).
+- QuickSpamFilter plugin update to version 3.5.2
+    - Set default bad words are now visible to the admin
+    - In addition to ``[url`` and ``href``, generic URLs are now also blocked by default. Thank you for reporting the issue to [macadoum from the support forum](https://forum.flatpress.org/viewtopic.php?t=938&start=20#p3334).
 
 ## Themes
 ### Changes
