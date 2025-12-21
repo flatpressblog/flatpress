@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: PrettyURLs
- * Version: 3.0.2
+ * Version: 3.0.3
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -795,6 +795,10 @@ class Plugin_PrettyURLs {
 				$title = $id;
 			}
 			$url = $this->baseurl . "20" . $date ['y'] . "/" . $date ['m'] . "/" . $date ['d'] . "/" . $title . "/";
+
+			if (!empty($this->fp_params ['comments'])) {
+				$url .= "comments/";
+			}
 
 			if ($v > 0) {
 				$caption = $caption . ' &raquo; ';

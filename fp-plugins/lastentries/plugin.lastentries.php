@@ -2,7 +2,7 @@
 
 /*
  * Plugin Name: LastEntries
- * Version: 1.0
+ * Version: 1.0.1
  * Type: Block
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
@@ -40,7 +40,7 @@ function plugin_lastentries_widget() {
 
 		list ($id, $entry) = $q->getEntry();
 
-		$link = get_permalink($id);
+		$link = function_exists('get_comments_link') ? get_comments_link($id) : get_permalink($id);
 
 		$string .= '<li>';
 		$admin = BLOG_BASEURL . "admin.php?p=entry&amp;entry=";

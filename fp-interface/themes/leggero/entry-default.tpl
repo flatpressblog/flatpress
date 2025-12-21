@@ -6,7 +6,7 @@
 		{$date|date_format_daily:"<h2 class=\"date\">`$fp_config.locale.dateformat`</h2>"}
 
 				<h2 itemprop="name" class="entry-title">
-					<a href="{$id|link:post_link}">
+					<a href="{if !(in_array('commslock', $categories) && !$comments)}{$id|link:comments_link}{else}{$id|link:post_link}{/if}">
 					{$subject|tag:the_title}
 					</a>
 				</h2>

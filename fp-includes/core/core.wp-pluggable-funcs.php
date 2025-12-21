@@ -17,7 +17,23 @@ function _get_nextprev_link($nextprev) {
 		return null;
 
 	if ($q->single) {
-		$link = "?entry=" . $id;
+		$in_comments = (isset($GLOBALS ['fp_params']) && is_array($GLOBALS ['fp_params']) && isset($GLOBALS ['fp_params']['comments']));
+
+		if ($in_comments) {
+			if (function_exists('get_comments_link')) {
+				$link = get_comments_link($id);
+			} else {
+				$link = BLOG_BASEURL . '?entry=' . $id . '&amp;comments=1';
+			}
+		} else {
+			if (function_exists('get_permalink')) {
+				$link = get_permalink($id);
+			} else {
+				$link = BLOG_BASEURL . '?entry=' . $id;
+			}
+		}
+
+		return array($caption, $link);
 	} else {
 		if ($_SERVER ['QUERY_STRING']) {
 
@@ -32,10 +48,7 @@ function _get_nextprev_link($nextprev) {
 		}
 	}
 
-	return array(
-		$caption,
-		BLOG_BASEURL . $link
-	);
+	return array($caption, BLOG_BASEURL . $link);
 }
 
 if (!function_exists('get_nextpage_link')) :
