@@ -3,8 +3,8 @@ $lang ['plugin'] ['qspam'] = array(
 	'error' => 'ERROREA: iruzkinak debekatuta dauden hitzak ditu.'
 );
 
-$lang ['admin'] ['plugin'] ['submenu'] ['qspam'] = 'QuickSpam iragazkia';
-$lang ['admin'] ['plugin'] ['qspam'] = array(
+$lang ['admin'] ['entry'] ['submenu'] ['qspam'] = 'QuickSpam iragazkia';
+$lang ['admin'] ['entry'] ['qspam'] = array(
 	'head' => 'QuickSpam konfigurazioa',
 	'desc1' => 'Ez onartu hitz hauek dituzten iruzkinak (idatzi lerro bakoitzeko bat):',
 	'desc2' => '<strong>Abisua:</strong> iruzkin bat ez da onartuko blokeatutako hitz bat beste baten barne idazten denean. Adib. "ero" hitza blokeatu nahi bada, "goiz<em>ero</em>" hitza ere blokeatuko da.',

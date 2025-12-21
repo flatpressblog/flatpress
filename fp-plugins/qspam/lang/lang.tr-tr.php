@@ -3,8 +3,8 @@ $lang ['plugin'] ['qspam'] = array(
 	'error' => 'HATA: Yorumda yasaklı kelimeler bulundu'
 );
 
-$lang ['admin'] ['plugin'] ['submenu'] ['qspam'] = 'QuickSpamFilter';
-$lang ['admin'] ['plugin'] ['qspam'] = array(
+$lang ['admin'] ['entry'] ['submenu'] ['qspam'] = 'QuickSpamFilter';
+$lang ['admin'] ['entry'] ['qspam'] = array(
 	'head' => 'QuickSpam Yapılandırması',
 	'desc1' => 'Bu kelimeleri içeren yorumlara izin verme (her birini bir satıra yazın):',
 	'desc2' => '<strong>Uyarı:</strong> Bir kelime başka bir kelimenin içinde olsa bile yorum engellenecektir. (Örneğin, "old" kelimesi "<em>old</em>" içinde de eşleşir)',
