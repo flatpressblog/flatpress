@@ -3,8 +3,8 @@ $lang ['plugin'] ['qspam'] = array(
 	'error' => 'FEJL: Denne kommentar indeholder forbudte ord'
 );
 
-$lang ['admin'] ['plugin'] ['submenu'] ['qspam'] = 'QuickSpamFilter';
-$lang ['admin'] ['plugin'] ['qspam'] = array(
+$lang ['admin'] ['entry'] ['submenu'] ['qspam'] = 'QuickSpamFilter';
+$lang ['admin'] ['entry'] ['qspam'] = array(
 	'head' => 'QuickSpam Konfiguration',
 	'desc1' => 'Bloker kommentarer, der indeholder følgende forbudte ord. For hvert nyt ord skal du starte en ny linje:',
 	'desc2' => '<strong>Advarsel:</strong> En kommentar vil også blive blokeret, hvis et andet ord indeholder denne streng! (e.g. "old" matches "b<em>old</em>" too)',

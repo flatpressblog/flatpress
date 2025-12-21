@@ -3,8 +3,8 @@ $lang ['plugin'] ['qspam'] = array(
 	'error' => 'ΣΦΑΛΜΑ: Το σχόλιο αυτό περιέχει απαγορευμένες λέξεις'
 );
 
-$lang ['admin'] ['plugin'] ['submenu'] ['qspam'] = 'Φίλτρο QuickSpam';
-$lang ['admin'] ['plugin'] ['qspam'] = array(
+$lang ['admin'] ['entry'] ['submenu'] ['qspam'] = 'Φίλτρο QuickSpam';
+$lang ['admin'] ['entry'] ['qspam'] = array(
 	'head' => 'Ρύθμιση του QuickSpam',
 	'desc1' => 'Αποτροπή σχολίων που περιέχουν τις παρακάτω λέξεις (γράψτε μία ανά σειρά):',
 	'desc2' => '<strong>Προσοχή:</strong> Το σχόλιο θα αποτραπεί ακόμη κι αν η απαγορευμένη λέξη είναι μέρος κάποιας άλλης. (π.χ. Το "παλιά" ταιριάζει με το "b<em>παλιάλογο</em>" επίσης)',

@@ -3,8 +3,8 @@ $lang ['plugin'] ['qspam'] = array(
 	'error' => 'ERRORE: Il commento contiene parole vietate'
 );
 
-$lang ['admin'] ['plugin'] ['submenu'] ['qspam'] = 'QuickSpamFilter';
-$lang ['admin'] ['plugin'] ['qspam'] = array(
+$lang ['admin'] ['entry'] ['submenu'] ['qspam'] = 'QuickSpamFilter';
+$lang ['admin'] ['entry'] ['qspam'] = array(
 	'head' => 'Configurazione di QuickSpam',
 	'desc1' => 'Non consentire commenti che contengono queste parole (scrivine una per riga):',
 	'desc2' => '<strong>Attenzione:</strong> Un commento verrà vietato anche quando una parola fa parte di un\'altra parola. (ad esempio. "gomma" corrisponde anche a "s<em>gomma</em>ta" )',
