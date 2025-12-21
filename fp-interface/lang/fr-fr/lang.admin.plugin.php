@@ -1,33 +1,35 @@
 <?php
-$lang ['admin'] ['plugin'] ['submenu'] = array (
-	'default' => 'G&eacute;rer Plugins'
-);
+$lang ['admin'] ['plugin'] = array(
+	'submenu' => array(
+		'default' => 'Gérer Plugins'
+	),
 
-/* main plugin panel */
-$lang ['admin'] ['plugin'] ['default'] = array(
-	'head' => 'G&eacute;rer les Plugins',
-	'enable' => 'Activer',
-	'disable' => 'D&eacute;sactiver',
-	'descr' => 'Un <a class="hint" ' . //
-		'href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="C\'est quoi un plugin?">Plugin</a> est un composant qui &eacute;tend les possibilit&eacute;s de FlatPress.</p>' . //
-		'<p>Vous pouvez installer les plugins en les transf&eacute;rant dans le dossier <code>fp-plugins/</code> de votre ftp.</p><p>Ce menu vous permet d\'activer ou de d&eacute;sactiver les plugins.',
-	'name' => 'Nom',
-	'description' => 'Description',
-	'author' => 'Auteur',
-	'version' => 'Version',
-	'action' => 'Action'
-);
+	/* panneau principal des plugins */
+	'default' => array(
+		'head' => 'Gérer les Plugins',
+		'enable' => 'Activer',
+		'disable' => 'Désactiver',
+		'descr' => 'Un <a class="hint" href="https://wiki.flatpress.org/doc:techfaq#plugins" title="Qu’est-ce qu’un plugin?">plugin</a> est un composant qui étend les fonctionnalités de FlatPress.</p>' . //
+			'<p>Vous pouvez installer des plugins en les transférant dans le dossier <code>fp-plugins/</code> de votre serveur FTP.</p><p>Ce menu vous permet d’activer ou de désactiver les plugins.',
+		'name' => 'Nom',
+		'description' => 'Description',
+		'author' => 'Auteur',
+		'version' => 'Version',
+		'action' => 'Action'
+	),
 
-$lang ['admin'] ['plugin'] ['default'] ['msgs'] = array(
-	1 => 'Configuration enregistr&eacute;e',
-	2 => 'L\'administrateur a été changé. Tu vas maintenant être déconnecté.',
-	-1 => 'Une erreur est survenue pendant l\'enregistrement. Il peut y avoir plusieurs raisons: erreurs de synthaxes.'
-);
+	/* messages */
+	'default_msgs' => array(
+		1 => 'Configuration enregistrée avec succès.',
+		2 => 'L’administrateur a été modifié. Vous allez maintenant être déconnecté.',
+		-1 => 'Une erreur est survenue lors de l’enregistrement. Cela peut être dû à des erreurs de syntaxe.'
+	),
 
-/* system errors */
-$lang ['admin'] ['plugin'] ['errors'] = array(
-	'head' => 'Des erreurs sont survenues pendant le chargement des plugins:',
-	'notfound' => 'Plugin non trouv&eacute;.',
-	'generic' => 'Erreur num&eacute;ro %d'
+	/* erreurs du système */
+	'errors' => array(
+		'head' => 'Des erreurs sont survenues lors du chargement des plugins :',
+		'notfound' => 'Plugin introuvable.',
+		'generic' => 'Erreur numéro %d'
+	)
 );
 ?>
