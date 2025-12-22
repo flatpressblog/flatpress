@@ -7,6 +7,6 @@ $lang ['plugin'] ['accessibleantispam'] = array(
 	'sub' => '%2$s moins %1$s ?',
 	'prod' => '%s fois %s ?',
 
-	'error' => 'Oups&nbsp;! Votre réponse est incorrecte. Veuillez réessayer.'
+	'error' => 'Oups! Votre réponse est incorrecte. Veuillez réessayer.'
 );
 ?>
