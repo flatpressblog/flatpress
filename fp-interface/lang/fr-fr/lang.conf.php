@@ -1,16 +1,18 @@
 <?php
-$lang['conf'] = array(
-	'head' => 'Configuration du système',
+$langconf = array();
+$langconf ['id'] = 'Français (FR)';
+$langconf ['locale'] = 'fr-fr';
+$langconf ['charsets'] [0] = 'utf-8';
+$langconf ['charsets'] [1] = 'iso-8859-15';
 
-	'cookie' => '<strong>Durée de vie des cookies</strong> (secondes). Utilisé pour les fichiers .log.',
-	'cookie_descr' => '0 pour autoriser les cookies uniquement pendant la session (recommandé).',
+// Different possible locale names
+$langconf ['localecountry_a'] = 'fr_FR';
+$langconf ['localecountry_b'] = 'fr-FR';
+$langconf ['localeshort'] = 'fr';
 
-	'session' => '<strong>Durée de vie des sessions</strong> (secondes). (*).',
-
-	'email' => '<strong>Email de communication</strong>. Utilisé pour envoyer les notifications.',
-	'title_options' => 'Veuillez compléter ces champs :',
-
-	'descr_save' => 'Configuration mise à jour avec succès.',
-	'err_save' => 'Erreur lors de l’enregistrement des paramètres. Vérifiez les champs pour des valeurs incorrectes.'
-);
+// Different possible coding names
+$langconf ['localecharset_a'] = '.UTF-8';
+$langconf ['localecharset_b'] = '.utf8';
+$langconf ['localecharset_c'] = '.ISO-8859-15';
+$langconf ['localecharset_d'] = '.iso885915';
 ?>
