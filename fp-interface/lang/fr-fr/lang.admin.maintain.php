@@ -53,9 +53,9 @@ $lang ['admin'] ['maintain'] ['default'] ['msgs'] = array(
 $lang ['admin'] ['maintain'] ['updates'] = array(
 	'head' => 'Mises à jour',
 	'list' => '<ul>
-		<li>Votre version de FlatPress : %s</li>
-		<li>La dernière version stable de FlatPress est <a href="%s">%s</a></li>
-		<li>La dernière version dev (beta, rc) de FlatPress est <a href="%s">%s</a></li>
+		<li>Votre version de FlatPress : <big>%s</big></li>
+		<li>La dernière version stable de FlatPress est <big><a href="%s">%s</a></big></li>
+		<li>La dernière version dev (beta, rc) de FlatPress est <big><a href="%s">%s</a></big></li>
 	</ul>',
 	'notice' => 'Remarque :',
 );
