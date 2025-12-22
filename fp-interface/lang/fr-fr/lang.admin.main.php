@@ -1,5 +1,7 @@
 <?php
-$lang ['admin'] ['main'] = array(
+$lang['admin']['panel']['main'] = 'Main';
+
+$lang['admin']['main']['default'] = array(
 	'head' => 'Bienvenue sur le panneau de contrôle !',
 	'descr' => 'Choisissez une action',
 
@@ -15,7 +17,7 @@ $lang ['admin'] ['main'] = array(
 	'op5d' => 'Personnaliser FlatPress',
 	'op6' => 'Maintenance',
 	'op6d' => 'Nettoyer et restaurer FlatPress',
-	'op7' => 'Téléchargeur',
+	'op7' => 'Téléverser',
 	'op7d' => 'Télécharger et gérer des images et des fichiers',
 	'op8' => 'Thèmes',
 	'op8d' => 'Changer entre les thèmes et les styles',
