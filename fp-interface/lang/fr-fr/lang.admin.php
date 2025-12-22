@@ -12,7 +12,7 @@ $lang ['admin'] ['panels'] = array(
 	// 'add' => 'Ajouter',
 	// 'edit' => 'Éditer/Effacer',
 	'maintain' => 'Maintenance',
-	'plugin' => 'Extensions',
+	'plugin' => 'Pluginss',
 	'themes' => 'Thèmes'
 	// 'updates' => 'Mises à jour',
 );
