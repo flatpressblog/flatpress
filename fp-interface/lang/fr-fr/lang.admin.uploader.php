@@ -29,7 +29,6 @@ $lang ['admin'] ['uploader'] ['browse'] = array(
 	'head' => 'Parcourir',
 	'descr' => 'Utilisez cet explorateur pour parcourir et gérer vos fichiers.',
 	'fset1' => 'Fichiers disponibles',
-	'fset2' => 'Aperçu',
 	'submit' => 'Afficher le fichier'
 );
 ?>
