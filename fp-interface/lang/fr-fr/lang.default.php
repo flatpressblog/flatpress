@@ -2,68 +2,66 @@
 $lang = array();
 
 $lang ['main'] = array(
-	'nextpage' => 'Page suivante;',
-	'prevpage' => 'Page pr&eacute;c&eacute;dente',
+	'nextpage' => 'Page suivante',
+	'prevpage' => 'Page précédente',
 	'entry' => 'Billet',
 	'entries' => 'Billets',
 	'static' => 'Page statique',
-	'preview' => '&Eacute;diter/aper&ccedil;u',
+	'preview' => 'Éditer/Aperçu',
 
-	'filed_under' => 'Class&eacute; sous ',	
+	'filed_under' => 'Classé sous',
 
-	'add_entry' => 'Ajouter billet',
-	'add_comment' => 'Ajouter commentaire',
-	'add_static' => 'Ajouter page statique',
+	'add_entry' => 'Ajouter un billet',
+	'add_comment' => 'Ajouter un commentaire',
+	'add_static' => 'Ajouter une page statique',
 
-	'btn_edit' => '&Eacute;diter',
+	'btn_edit' => 'Éditer',
 	'btn_delete' => 'Supprimer',
 
-	'nocomments' => 'Ajouter un commentaire',
+	'nocomments' => 'Pas de commentaire',
 	'comment' => '1 commentaire',
 	'comments' => 'commentaires',
 
-	'rss' => 'S\'abonner au flux RSS',
-	'atom' => 'S\'abonner au flux Atom'
+	'rss' => 'S’abonner au flux RSS',
+	'atom' => 'S’abonner au flux Atom'
 );
 
 $lang ['search'] = array(
 	'head' => 'Rechercher',
-	'fset1' => 'Ins&eacute;rer un crit&egrave;re de recherche',
-	'keywords' => 'Phrase',
+	'fset1' => 'Entrer un critère de recherche',
+	'keywords' => 'Mots-clés',
 	'onlytitles' => 'Seulement les titres',
-	'fulltext' => 'Texte en entier',
+	'fulltext' => 'Texte complet',
 
 	'fset2' => 'Date',
-	'datedescr' => 'Vous pouvez affiner votre recherche &agrave; une date sp&eacute;cifique. Vous pouvez s&eacute;lectionner une ann&eacute;e, une ann&eacute;e et un mois, ou une date compl&egrave;te. ' . //
-		'Laissez vide pour chercher dans l\'ensemble de la base de donn&eacute;es.',
+	'datedescr' => 'Vous pouvez restreindre votre recherche à une date spécifique. Vous pouvez sélectionner une année, une année et un mois, ou une date complète.' . //
+		'Laissez vide pour rechercher dans toutes les données.',
 
-	'fset3' => 'Rechercher dans les cat&eacute;gories',
-	'catdescr' => 'Laissez vide pour rechercher dans la totalit&eacute;',
+	'fset3' => 'Rechercher dans les catégories',
+	'catdescr' => 'Laissez vide pour rechercher dans toutes les catégories',
 
-	'fset4' => 'Commencer la recherche',
+	'fset4' => 'Démarrer la recherche',
 	'submit' => 'Chercher',
 
-	'headres' => 'R&eacute;sultats de la recherche',
-	'descrres' => 'La recherche de <strong>%s</strong> a donn&eacute; les r&eacute;sultats suivants:',
-	'descrnores' => 'La recherche de <strong>%s</strong> a donn&eacute; les r&eacute;sultats suivants:',
+	'headres' => 'Résultats de la recherche',
+	'descrres' => 'La recherche pour <strong>%s</strong> a donné les résultats suivants :',
+	'descrnores' => 'La recherche pour <strong>%s</strong> n’a donné aucun résultat.',
 
-	'moreopts' => 'Plus d\'options',
+	'moreopts' => 'Options supplémentaires',
 
 	'searchag' => 'Nouvelle recherche'
 );
 
 $lang ['search'] ['error'] = array(
-	'keywords' => 'Vous devez sp&eacute;cifier au moins un mot-cl&eacute;'
+	'keywords' => 'Vous devez entrer au moins un mot-clé.'
 );
 
 $lang ['staticauthor'] = array(
-	// "Published by" in static pages
 	'published_by' => 'Publié par',
 	'on' => 'le'
 );
 
 $lang ['entryauthor'] = array(
-	// "Posted by" in entry pages
 	'posted_by' => 'Posté par',
 	'at' => 'à'
 );
@@ -72,111 +70,108 @@ $lang ['entry'] = array();
 $lang ['entry'] ['flags'] = array();
 
 $lang ['entry'] ['flags'] ['long'] = array(
-	'draft' => '<strong>Billet brouillon</strong>: cach&eacute;, en attente de publication',
-	//'static' => '<strong>Static entry</strong>: normally hidden, to reach the entry put ?page=title-of-the-entry in url (experimental)',
-	'commslock' => '<strong>Commentaires d&eacute;sactiv&eacute;s</strong>: commentaires d&eacute;sactiv&eacute;s pour ce billet'
+	'draft' => '<strong>Brouillon</strong> : non publié pour l’instant',
+	'commslock' => '<strong>Commentaires désactivés</strong> : les commentaires sont fermés pour ce billet'
 );
 
 $lang ['entry'] ['flags'] ['short'] = array(
 	'draft' => 'Brouillon',
-	//'static' => 'Static',
-	'commslock' => 'Commentaires d&eacute;sactiv&eacute;s'
+	'commslock' => 'Commentaires désactivés'
 );
 
 $lang ['entry'] ['categories'] = array(
-	'unfiled' => 'Non déposé'
+	'unfiled' => 'Non classé'
 );
 
 $lang ['404error'] = array(
-	'subject' => 'Pas trouv&eacute;',
-	'content' => '<p>D&eacute;sol&eacute;, la page demand&eacute;e n\'a pas &eacute;t&eacute; trouv&eacute;e!</p>'
+	'subject' => 'Page non trouvée',
+	'content' => '<p>Désolé, la page demandée est introuvable !</p>'
 );
 
-// Login
+// Connexion
 $lang ['login'] = array(
-	'head' => 'Identifiant',
-	'fieldset1' => 'Ins&eacute;rez vos identifiants',
-	'user' => 'Nom d\'utilisateur:',
-	'pass' => 'Mot de passe:',
+	'head' => 'Connexion',
+	'fieldset1' => 'Entrez vos identifiants',
+	'user' => 'Nom d’utilisateur :',
+	'pass' => 'Mot de passe :',
 	'fieldset2' => 'Se connecter',
 	'submit' => 'Connexion',
-	'forgot' => 'Mot de passe oubli&eacute; ?'
+	'forgot' => 'Mot de passe oublié ?'
 );
 
 $lang ['login'] ['success'] = array(
-	'success' => 'Vous &ecirc;tes connect&eacute;.',
-	'logout' => 'Vous &ecirc;tes d&eacute;connect&eacute;.',
-	'redirect' => 'Vous serez redirig&eacute; dans 5 secondes.',
-	'opt1' => 'Retour &agrave; l\'index',
-	'opt2' => 'Aller au panneau de contr&ocirc;le',
-	'opt3' => 'Ajouter un nouveau billet'
+	'success' => 'Vous êtes maintenant connecté.',
+	'logout' => 'Vous êtes maintenant déconnecté.',
+	'redirect' => 'Vous allez être redirigé dans 5 secondes.',
+	'opt1' => 'Retour à l’accueil',
+	'opt2' => 'Aller au panneau de contrôle',
+	'opt3' => 'Créer un nouveau billet'
 );
 
 $lang ['login'] ['error'] = array(
-	'user' => 'Vous devez entrer un nom d\'utilisateur.',
+	'user' => 'Vous devez entrer un nom d’utilisateur.',
 	'pass' => 'Vous devez entrer un mot de passe.',
-	'match' => 'Mot de passe incorrect.',
+	'match' => 'Nom d’utilisateur ou mot de passe incorrect.',
 	'timeout' => 'Veuillez attendre 30 secondes avant de réessayer.'
 );
 
 $lang ['comments'] = array(
-	'head' => 'Ajouter commentaire',
-	'descr' => 'Remplissez le formulaire ci-dessous pour ajouter vos propres commentaires',
-	'fieldset1' => 'Donn&eacute;es utilisateur',
+	'head' => 'Ajouter un commentaire',
+	'descr' => 'Remplissez le formulaire ci-dessous pour ajouter un commentaire.',
+	'fieldset1' => 'Informations utilisateur',
 	'name' => 'Nom (*)',
-	'email' => 'Email:',
-	'www' => 'Web:',
+	'email' => 'Email :',
+	'www' => 'Site web :',
 	'cookie' => 'Se souvenir de moi',
-	'fieldset2' => 'Ajouter votre commentaire',
-	'comment' => 'Commentaire (*):',
+	'fieldset2' => 'Votre commentaire',
+	'comment' => 'Commentaire (*) :',
 	'fieldset3' => 'Envoyer',
-	'submit' => 'Ajouter',
-	'reset' => 'R&eacute;initialiser',
-	'success' => 'Votre commentaire a &eacute;t&eacute; ajout&eacute; avec succ&egrave;s',
-	'nocomments' => 'Pas de commentaires pour ce billet',
-	'commslock' => 'Les commentaires ont &eacute;t&eacute; d&eacute;sactiv&eacute;s pour ce billet'
+	'submit' => 'Envoyer',
+	'reset' => 'Réinitialiser',
+	'success' => 'Votre commentaire a été ajouté avec succès.',
+	'nocomments' => 'Pas de commentaire sur ce billet.',
+	'commslock' => 'Les commentaires sont fermés pour ce billet.'
 );
 
 $lang ['comments'] ['error'] = array(
-	'name' => 'Vous devez entrer un nom',
-	'email' => 'Vous devez entrer une adresse email valide',
-	'www' => 'Vous devez entrer une URL valide',
-	'comment' => 'Vous devez &eacute;crire un commentaire'
+	'name' => 'Vous devez entrer un nom.',
+	'email' => 'Vous devez entrer une adresse électronique valide.',
+	'www' => 'Vous devez entrer une URL valide.',
+	'comment' => 'Vous devez entrer un commentaire.'
 );
 
 $lang ['postviews'] = array(
-	// PostView-Plugin
 	'views' => 'Vues'
 );
 
 $lang ['date'] ['month'] = array(
 	'Janvier',
-	'F&eacute;vrier',
+	'Février',
 	'Mars',
 	'Avril',
 	'Mai',
 	'Juin',
 	'Juillet',
-	'Ao&ucirc;t',
+	'Août',
 	'Septembre',
 	'Octobre',
 	'Novembre',
-	'D&eacute;cembre'
+	'Décembre'
 );
 
 $lang ['date'] ['month_abbr'] = array(
 	'Jan',
-	'Fev',
+	'Fév',
 	'Mar',
 	'Avr',
 	'Mai',
-	'Jun',
-	'Jul',
-	'Aou',
+	'Juin',
+	'Juil',
+	'Aoû',
 	'Sep',
 	'Oct',
 	'Nov',
-	'Dec'
+	'Déc'
 );
 
 $lang ['date'] ['weekday'] = array(

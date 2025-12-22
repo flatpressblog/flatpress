@@ -1,34 +1,34 @@
 <?php
 $lang ['admin'] ['uploader'] ['default'] = array(
-	'head' => 'Transf&eacute;rer',
-	'descr' => 'Choisissez un ou plusieurs fichiers &agrave; transf&eacute;rer.',
+	'head' => 'Transférer',
+	'descr' => 'Choisissez un ou plusieurs fichiers à transférer.',
 	'fset1' => 'Explorateur de fichiers',
-	'fset2' => 'Transf&eacute;rer',
-	'submit' => 'Transf&eacute;rer',
-	'uploader_some_failed' => 'Ce fichier n\'a pas été téléchargé pour des raisons de sécurité ou liées au système :',
-	'uploader_metadata_failed' => 'Le fichier a été téléchargé, mais les métadonnées n\'ont pas pu être supprimées :',
-	'uploader_drop' => 'Faites glisser les fichiers ici',
-	'uploader_browse_hint' => '…ou cliquez pour sélectionner les fichiers',
+	'fset2' => 'Transférer',
+	'submit' => 'Transférer',
+	'uploader_some_failed' => 'Certains fichiers n’ont pas pu être transférés en raison de problèmes de sécurité ou du système :',
+	'uploader_metadata_failed' => 'Le fichier a été transféré, mais les métadonnées n’ont pas été supprimées :',
+	'uploader_drop' => 'Déposez vos fichiers ici',
+	'uploader_browse_hint' => '...ou cliquez pour choisir vos fichiers',
 	'uploader_drop_active' => 'Relâchez pour ajouter',
 	'uploader_selected_count' => '%d fichier(s) sélectionné(s)',
-	'uploader_clear' => 'Vider la sélection',
-	'uploader_remove' => 'Supprimer',
-	'uploader_limit_files' => 'Nombre maximal de fichiers par téléchargement : %d.',
-	'uploader_limit_size' => 'Taille totale maximale du téléchargement : %s.'
+	'uploader_clear' => 'Effacer la sélection',
+	'uploader_remove' => 'Retirer',
+	'uploader_limit_files' => 'Nombre maximum de fichiers par transfert : %d.',
+	'uploader_limit_size' => 'Taille totale maximum du transfert : %s.'
 );
 
 $lang ['admin'] ['uploader'] ['default'] ['msgs'] = array(
-	1 => 'Fichier(s) transf&eacute;r&eacute;(s)',
-	-1 => 'Echec du transfert.',
-	-2 => 'Téléchargement refusé par le serveur: la taille totale du téléchargement dépasse post_max_size (%s).',
-	-3 => 'Téléchargement refusé par le serveur, probablement en raison de la taille du téléchargement ou des limites du nombre de fichiers. Aucun fichier n\'a été reçu.',
-	-4 => 'Aucun fichier n\'a été reçu. Veuillez sélectionner un ou plusieurs fichiers avant de procéder au téléchargement.'
+	1 => 'Fichier(s) transféré(s)',
+	-1 => 'Échec du transfert.',
+	-2 => 'Le serveur a refusé le téléchargement : la taille totale dépasse la limite "post_max_size" (%s).',
+	-3 => 'Le serveur a rejeté le transfert. Aucune donnée n’a été reçue, probablement en raison de la taille des fichiers ou des restrictions serveur.',
+	-4 => 'Aucun fichier n’a été reçu. Veuillez sélectionner au moins un fichier.'
 );
 
 $lang ['admin'] ['uploader'] ['browse'] = array(
-	'head' => 'Voir',
-	'descr' => 'Choisissez un ou plusieurs fichiers &agrave; transf&eacute;rer.',
-	'fset1' => 'Explorateur de fichiers',
-	'submit' => 'Transf&eacute;rer'
+	'head' => 'Parcourir',
+	'descr' => 'Utilisez cet explorateur pour parcourir et gérer vos fichiers.',
+	'fset1' => 'Fichiers disponibles',
+	'submit' => 'Afficher le fichier'
 );
 ?>

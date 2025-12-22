@@ -1,99 +1,98 @@
 <?php
 $lang ['admin'] ['entry'] ['submenu'] = array(
-	'list' => 'G&eacute;rer les billets',
-	'write' => '&Eacute;crire un billet',
-	'cats' => 'G&eacute;rer les cat&eacute;gories'
+	'list' => 'Gérer les billets',
+	'write' => 'Écrire un billet',
+	'cats' => 'Gérer les catégories'
 );
 
 /* action par défaut */
 $lang ['admin'] ['entry'] ['list'] = array(
-	'head' => 'G&eacute;rer les billets',
-	'descr' => 'S&eacute;lectionner un billet &agrave; &eacute;diter ou<a href="admin.php?p=entry&amp;action=write"> ajouter un nouveau billet</a><br>' . //
-		'<a href="admin.php?p=entry&amp;action=cats">&Eacute;diter les cat&eacute;gories</a>',
-	'drafts' => 'Brouillons: ',
-	'filter' => 'Filtrer: ',
-	'nofilter' => 'Tout Afficher',
-	'filterbtn' => 'Appliquer filtre',
-	'sel' => 'Sel', // checkbox
+	'head' => 'Gérer les billets',
+	'descr' => 'Sélectionnez un billet à éditer ou <a href="admin.php?p=entry&amp;action=write">ajouter un nouveau billet</a><br>' . //
+		'<a href="admin.php?p=entry&amp;action=cats">Éditer les catégories</a>',
+	'drafts' => 'Brouillons : ',
+	'filter' => 'Filtrer : ',
+	'nofilter' => 'Tout afficher',
+	'filterbtn' => 'Appliquer le filtre',
+	'sel' => 'Sélection', // checkbox
 	'date' => 'Date',
 	'title' => 'Titre',
 	'author' => 'Auteur',
-	'comms' => '#Comms', // commentaires
+	'comms' => '#Commentaires',
 	'action' => 'Action',
 	'act_del' => 'Effacer',
 	'act_view' => 'Voir',
-	'act_edit' => '&Eacute;diter'
+	'act_edit' => 'Éditer'
 );
 
 /* écrire action */
 $lang ['admin'] ['entry'] ['write'] = array(
-	'head' => '&Eacute;crire un billet',
-	'descr' => '&Eacute;diter les formulaire d\'&eacute;criture du billet',
+	'head' => 'Écrire un billet',
+	'descr' => 'Remplir le formulaire pour écrire un billet',
 	'uploader' => 'Uploader',
-	'fieldset1' => '&Eacute;diter',
+	'fieldset1' => 'Rédaction',
 	'subject' => 'Sujet (*):',
 	'content' => 'Contenu (*):',
-	'fieldset2' => 'Soumettre',
+	'fieldset2' => 'Soumission',
 	'submit' => 'Publier',
-	'preview' => 'Aper&ccedil;u',
-	'savecontinue' => 'enregistrer et continuer',
-	'categories' => 'Cat&eacute;gories',
-	'nocategories' => 'Pas de cat&eacute;gories d&eacute;finies. <a href="admin.php?p=entry&amp;action=cats"> Cr&eacute;er cat&eacute;gories</a> &agrave; partir de du menu des cat&eacute;gories. ' . //
-		'<a href="#save">Enregistrer</a> votre premi&egrave;re entr&eacute;e.',
-	'saveopts' => 'Enregistrer options',
-	'success' => 'Votre billet a &eacute;t&eacute; publi&eacute;',
+	'preview' => 'Aperçu',
+	'savecontinue' => 'Enregistrer et continuer',
+	'categories' => 'Catégories',
+	'nocategories' => 'Pas de catégories définies. <a href="admin.php?p=entry&amp;action=cats">Créer des catégories</a> dans le menu des catégories. ' . //
+		'<a href="#save">Enregistrer</a> votre première entrée.',
+	'saveopts' => 'Enregistrer les options',
+	'success' => 'Votre billet a été publié',
 	'otheropts' => 'Autres options',
-	'commmsg' => 'G&eacute;rer les commentaires de ce billet',
+	'commmsg' => 'Gérer les commentaires de ce billet',
 	'delmsg' => 'Effacer ce billet'
-	// 'back' => 'Back discarding changes',
 );
 
 $lang ['admin'] ['entry'] ['list'] ['msgs'] = array(
-	1 => 'Le billet a &eacute;t&eacute; enregistr&eacute; avec succ&egrave;s',
-	-1 => 'Une erreur est survenue pendant l\'enregistrement du billet',
-	2 => 'Billet effac&eacute;',
+	1 => 'Le billet a été enregistré avec succès',
+	-1 => 'Une erreur est survenue pendant l’enregistrement du billet',
+	2 => 'Billet effacé',
 	-2 => 'Une erreur est survenue pendant la suppression du billet'
 );
 
 $lang ['admin'] ['entry'] ['write'] ['error'] = array(
-	'subject' => 'Compl&eacute;tez le sujet',
-	'content' => 'Compl&eacute;tez correctement le formulaire'
+	'subject' => 'Veuillez compléter le champ du sujet',
+	'content' => 'Veuillez remplir correctement le formulaire'
 );
 
 $lang ['admin'] ['entry'] ['write'] ['msgs'] = array(
-	1 => 'Le billet a &eacute;t&eacute; enregistr&eacute; avec succ&egrave;s',
-	-1 => 'Une erreur est survenue: votre billet n\'a pas &eacute;t&eacute; enregistr&eacute;',
-	-2 => 'Une erreur est survenue: votre billet n\'a pas &eacute;t&eacute; enregistr&eacute;; index peut &ecirc;tre endommag&eacute;',
-	-3 => 'Une erreur est survenue: votre billet n\'a pas &eacute;t&eacute; enregistr&eacute;',
-	-4 => 'Une erreur est survenue: votre billet n\'a pas &eacute;t&eacute; enregistr&eacute;; index peut &ecirc;tre endommag&eacute;',
-	'draft' => 'Vous &eacute;ditez actuellement un <strong>brouillon</strong>'
+	1 => 'Le billet a été enregistré avec succès',
+	-1 => 'Une erreur est survenue : votre billet n’a pas pu être enregistré',
+	-2 => 'Une erreur est survenue : votre billet n’a pas été enregistré ; l’index semble corrompu',
+	-3 => 'Une erreur est survenue : votre billet n’a pas été enregistré',
+	-4 => 'Une erreur est survenue : votre billet n’a pas été enregistré ; l’index semble corrompu',
+	'draft' => 'Vous éditez actuellement un <strong>brouillon</strong>'
 );
 
-/* comments */
+/* commentaires */
 $lang ['admin'] ['entry'] ['commentlist'] = array(
-	'head' => 'Commentaires du billet: ',
-	'descr' => 'S&eacute;lectionner un commentaire &agrave; effacer',
-	'sel' => 'Sel',
+	'head' => 'Commentaires du billet : ',
+	'descr' => 'Sélectionnez un commentaire à effacer',
+	'sel' => 'Sélection',
 	'content' => 'Contenu',
 	'date' => 'Date',
 	'author' => 'Auteur',
 	'email' => 'Email',
 	'ip' => 'IP',
 	'actions' => 'Actions',
-	'act_edit' => '&Eacute;diter',
+	'act_edit' => 'Éditer',
 	'act_del' => 'Effacer',
-	'act_del_confirm' => 'Confirmez-vous la suppression du commentaire?',
-	'nocomments' => 'pas de commentaires pour ce billet.'
+	'act_del_confirm' => 'Confirmez-vous la suppression du commentaire ?',
+	'nocomments' => 'Pas de commentaires pour ce billet.'
 );
 
 $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
-	1 => 'Commentaire effac&eacute; avec succ&egrave;s',
+	1 => 'Commentaire effacé avec succès',
 	-1 => 'Une erreur est survenue pendant la suppression du commentaire'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
-	'head' => '&Eacute;diter commentaire du billet: ',
-	'descr' => 'Ici, tu peux modifier à ta guise le commentaire, le nom, l\'adresse e-mail et le site web d\'un auteur.<br><br>',
+	'head' => 'Éditer un commentaire du billet : ',
+	'descr' => 'Vous pouvez modifier ici le commentaire, le nom, l’adresse email et le site web de l’auteur.',
 	'content' => 'Contenu',
 	'date' => 'Date',
 	'author' => 'Auteur',
@@ -102,61 +101,60 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 	'ip' => 'IP',
 	'loggedin' => 'Administrateur connecté',
 	'submit' => 'Enregistrer',
-	'commentlist' => 'retour à l\'aperçu des commentaires'
+	'commentlist' => 'Retour à la liste des commentaires'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
-	'name' => 'Le nom ne doit pas manquer.',
-	'email' => 'L\'adresse e-mail est erronée.',
-	'url' => 'L\'indication du site web est erronée et doit commencer par <strong>http://</strong> ou <strong>https://</strong>.',
-	'content' => 'Le commentaire ne doit pas manquer.'
+	'name' => 'Le nom est requis.',
+	'email' => 'L’adresse email est incorrecte.',
+	'url' => 'L’URL est incorrecte et doit commencer par <strong>http://</strong> ou <strong>https://</strong>.',
+	'content' => 'Un commentaire est requis.'
 );
 
 $lang ['admin'] ['entry'] ['commedit'] ['msgs'] = array(
-	1 => 'Commentaire a &eacute;t&eacute; modifi&eacute;',
-	-1 => 'Une erreur est survenue pendant l\'&eacute;dition du commentaire'
+	1 => 'Le commentaire a été modifié',
+	-1 => 'Une erreur est survenue pendant la modification du commentaire'
 );
 
-/* delete action */
+/* suppression */
 $lang ['admin'] ['entry'] ['delete'] = array(
-	'head' => 'Supprimer ce billet',
-	'descr' => 'Vous allez supprimer le billet suivant: ',
-	'preview' => 'Aper&ccedil;u',
-	'confirm' => 'Confirmez-vous l\'action?',
-	'fset' => 'Effacer',
-	'ok' => 'Oui, effacer ce billet',
-	'cancel' => 'Non, retour au panel',
-	'err' => 'Le billet sp&eacute;cifi&eacute;e n\'existe pas'
+	'head' => 'Effacer ce billet',
+	'descr' => 'Vous allez supprimer le billet suivant : ',
+	'preview' => 'Aperçu',
+	'confirm' => 'Confirmer la suppression ?',
+	'fset' => 'Supprimer',
+	'ok' => 'Oui, supprimer ce billet',
+	'cancel' => 'Non, retour au panneau',
+	'err' => 'Le billet spécifié est introuvable'
 );
 
-/* cat�gories gestionnaire */
-
+/* gestion des catégories */
 $lang ['admin'] ['entry'] ['cats'] = array(
-	'head' => '&Eacute;diter cat&eacute;gories',
-	'descr' => '<p>Utilisez le formulaire pour ajouter et &eacute;diter vos cat&eacute;gories.</p>' . //
-		'<p>Chaque item doit &ecirc;tre au format "nom cat&eacute;gorie: <em>num&eacute;ro de cat&eacute;gorie</em>". Placez des tirets devant les articles pour cr&eacute;er des hi&eacute;rarchies.</p>
+	'head' => 'Éditer les catégories',
+	'descr' => '<p>Utilisez le formulaire pour ajouter et modifier des catégories.</p>' . //
+		'<p>Chaque élément doit être au format "nom de la catégorie : <em>numéro de la catégorie</em>". Placez des tirets devant les éléments pour créer des hiérarchies.</p>
 		
 	<p>Exemple:</p>
 	<pre>
 Accueil :1
 Infos :2
 --Annonces :3
---Ev&egrave;nements :4
+--Evènements :4
 ----Misc :5
 Technologie :6
 	</pre>',
-	'clear' => 'Effacer toutes les donn&eacute;es des cat&eacute;gories',
+	'clear' => 'Effacer toutes les catégories',
 
-	'fset1' => '&Eacute;diteur',
-	'fset2' => 'Appliquer modifications',
-	'submit' => 'Enregistrer'
+	'fset1' => 'Éditeur',
+	'fset2' => 'Appliquer les modifications',
+	'submit' => 'Enregistrer les catégories'
 );
 
 $lang ['admin'] ['entry'] ['cats'] ['msgs'] = array(
-	1 => 'Cat&eacute;gories enregistr&eacute;es',
-	-1 => 'Une erreur est survenue pendant l\'enregistrement des cat&eacute;gories',
-	2 => 'Cat&eacute;gories effac&eacute;es',
-	-2 => 'Une erreur est survenue pendant la suppression des cat&eacute;gories',
-	-3 => 'Le num&eacute;ro de cat&eacute;gorie doit &ecirc;tre positif (0 pas permis)'
+	1 => 'Les catégories ont été enregistrées.',
+	-1 => 'Une erreur est survenue pendant l’enregistrement des catégories.',
+	2 => 'Les catégories ont été effacées.',
+	-2 => 'Une erreur est survenue pendant l’effacement des catégories.',
+	-3 => 'Le numéro de catégorie doit être supérieur à zéro.'
 );
 ?>

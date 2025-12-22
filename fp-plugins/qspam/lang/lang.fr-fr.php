@@ -1,21 +1,21 @@
 <?php
 $lang ['plugin'] ['qspam'] = array(
-	'error' => 'ERREUR: le commentaire contient des mots bannis'
+	'error' => 'ERREUR : le commentaire contient des mots interdits'
 );
 
 $lang ['admin'] ['entry'] ['submenu'] ['qspam'] = 'QuickSpamFilter';
 $lang ['admin'] ['entry'] ['qspam'] = array(
 	'head' => 'Configuration de QuickSpam',
-	'desc1' => 'Ne pas autoriser les commentaires qui contiennent les mots suivants (un par ligne):',
-	'desc2' => '<strong>Attention:</strong> Un commentaire sera d&eacute;sactiv&eacute; s\'il contient un ou des mots bannis. (Exemple: "old" est pr&eacute;sent dans le mot "b<em>old</em>" &eacute;galement)',
+	'desc1' => 'Refuser les commentaires contenant les mots suivants (un par ligne) :',
+	'desc2' => '<strong>Attention :</strong> un commentaire sera refusé s’il contient un mot interdit. (Exemple : « old » est aussi présent dans « b<em>old</em> »)',
 	'options' => 'Autres options',
 	'desc3' => 'Compteur de mots bannis',
 	'desc3pre' => 'Commentaires contenant plus de ',
-	'desc3post' => ' mot(s) banni(s).',
+	'desc3post' => ' mot(s) interdit(s).',
 	'submit' => 'Enregistrer la configuration',
 	'msgs' => array(
-		1 => 'Mots bannis enregistr&eacute;s.',
-		-1 => 'Echec de l\'enregistrement des mots bannis.'
+		1 => 'Mots interdits enregistrés.',
+		-1 => 'Échec de l’enregistrement des mots interdits.'
 	)
 );
 ?>

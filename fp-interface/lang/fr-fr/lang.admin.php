@@ -7,26 +7,26 @@ $lang ['admin'] ['panels'] = array(
 	// 'users' => 'Utilisateurs',
 	'entry' => 'Billets',
 	'static' => 'Pages statiques',
-	'uploader' => 'Uploader',
+	'uploader' => 'Téléverseur',
 	'widgets' => 'Widgets',
 	// 'add' => 'Ajouter',
-	// 'edit' => '&Eacute;diter/Effacer',
+	// 'edit' => 'Éditer/Effacer',
 	'maintain' => 'Maintenance',
 	'plugin' => 'Plugins',
-	'themes' => 'Th&egrave;mes'
-	// 'updates' => 'Mises � jour',
+	'themes' => 'Thèmes'
+	// 'updates' => 'Mises à jour',
 );
 
 $lang ['admin'] ['general'] = array(
-	'id' => 'Id', // for entry ids
-	'name' => 'Nom', // for file names
-	'title' => 'Titr', // for entry/posts/static titles
-	'comments' => '#Comms',
+	'id' => 'Identifiant', // pour les identifiants des billets
+	'name' => 'Nom', // pour les noms de fichiers
+	'title' => 'Titre', // pour les titres des billets, des pages statiques
+	'comments' => '#Commentaires',
 	'author' => 'Auteur',
 	'actdel' => 'Effacer',
-	'actedit' => '&Eacute;diter',
+	'actedit' => 'Éditer',
 	'actenable' => 'Activer',
-	'actdisable' => 'D&eacute;sactiver',
+	'actdisable' => 'Désactiver',
 	'startpage' => 'Page d\'accueil',
 	'logout' => 'Déconnexion'
 );
