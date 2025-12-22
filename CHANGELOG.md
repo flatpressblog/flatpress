@@ -99,6 +99,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 
 ## Themes
 ### Changes
+- Added edit button comment admin controls
 - Leggero theme:
     - If a SEO metatag description of the post is available, it will be displayed as an introduction to the post. [@wjar forum entry](https://forum.flatpress.org/viewtopic.php?t=424&start=10#p3208)
 ### Bugfixes
