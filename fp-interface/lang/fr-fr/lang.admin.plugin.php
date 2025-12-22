@@ -5,7 +5,7 @@ $lang ['admin'] ['plugin'] = array(
 	),
 
 	/* panneau principal des plugins */
-	'default' => array(
+	$lang ['admin'] ['plugin'] ['default'] = array(
 		'head' => 'Gérer les Plugins',
 		'enable' => 'Activer',
 		'disable' => 'Désactiver',
@@ -18,15 +18,14 @@ $lang ['admin'] ['plugin'] = array(
 		'action' => 'Action'
 	),
 
-	/* messages */
-	'default_msgs' => array(
+	$lang ['admin'] ['plugin'] ['default'] ['msgs'] = array(
 		1 => 'Configuration enregistrée avec succès.',
 		2 => 'L’administrateur a été modifié. Vous allez maintenant être déconnecté.',
 		-1 => 'Une erreur est survenue lors de l’enregistrement. Cela peut être dû à des erreurs de syntaxe.'
 	),
 
 	/* erreurs du système */
-	'errors' => array(
+	$lang ['admin'] ['plugin'] ['errors'] = array(
 		'head' => 'Des erreurs sont survenues lors du chargement des plugins :',
 		'notfound' => 'Plugin introuvable.',
 		'generic' => 'Erreur numéro %d'
