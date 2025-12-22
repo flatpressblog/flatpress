@@ -1,5 +1,5 @@
 <?php
 $lang ['plugin'] ['readmore'] = array(
-	'readmore' => '[Lire la suite...]'
+	'readmore' => '[Lire la suite…]'
 );
 ?>
