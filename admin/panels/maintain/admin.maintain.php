@@ -99,74 +99,243 @@ class admin_maintain_apcu extends AdminPanelAction {
 	function onapcu_clear_fp($data = null) {
 		$cleared = 0;
 		$available = function_exists('is_apcu_on') && is_apcu_on();
-		$canManage = $available && function_exists('apcu_cache_info') && function_exists('apcu_delete');
 
-		if ($canManage) {
-			// Preferred: Use APCUIterator if available
+		$method = 'none';
+
+		$canDelete = $available && function_exists('apcu_delete');
+		$pattern = '/^fp:/';
+
+		if ($canDelete) {
+
+			// Preferred: APCUIterator if available (efficient for large caches)
 			if (class_exists('APCUIterator')) {
-				$it = @new APCUIterator('/^fp:/', APC_ITER_KEY);
-				if ($it !== false) {
+
+				$format = 0;
+				if (defined('APC_ITER_KEY')) {
+					$format = APC_ITER_KEY;
+				} elseif (defined('APC_ITER_ALL')) {
+					$format = APC_ITER_ALL;
+				}
+
+				$it = null;
+				try {
+					$it = new APCUIterator($pattern, $format, 200);
+				} catch (\Throwable $e) {
+					$it = null;
+				}
+
+				if ($it instanceof APCUIterator) {
+
+					$method = 'iterator';
+					$batch = array();
+
 					foreach ($it as $entry) {
+
 						if (!is_array($entry)) {
 							continue;
 						}
-						// APCUIterator returns the name of the entry, usually in ‘key’.
+
 						$key = '';
 						if (isset($entry ['key'])) {
 							$key = (string) $entry ['key'];
 						} elseif (isset($entry ['info'])) {
 							$key = (string) $entry ['info'];
+						} elseif (isset($entry ['name'])) {
+							$key = (string) $entry ['name'];
 						}
 
 						if ($key === '' || strpos($key, 'fp:') !== 0) {
 							continue;
 						}
 
-						if (@apcu_delete($key)) {
-							$cleared++;
+						$batch [] = $key;
+
+						if (count($batch) >= 200) {
+
+							$failed = @apcu_delete($batch);
+
+							if (is_array($failed)) {
+								$cleared += max(0, count($batch) - count($failed));
+							} elseif ($failed) {
+								$cleared += count($batch);
+							}
+
+							$batch = array();
 						}
+
 					}
+
+					// Flush the remainder
+					if (!empty($batch)) {
+
+						$failed = @apcu_delete($batch);
+
+						if (is_array($failed)) {
+							$cleared += max(0, count($batch) - count($failed));
+						} elseif ($failed) {
+							$cleared += count($batch);
+						}
+
+					}
+
 				}
-			} else {
-				// Fallback: go through cache_list
+
+			}
+
+			// Fallback: go through cache_list (slower, but works without APCUIterator)
+			if ($method === 'none' && function_exists('apcu_cache_info')) {
+
 				$cache = @apcu_cache_info(false); // user cache only
-				if (!empty($cache ['cache_list']) && is_array($cache ['cache_list'])) {
+
+				if (is_array($cache) && !empty($cache ['cache_list']) && is_array($cache ['cache_list'])) {
+
+					$method = 'cache_info';
+					$batch = array();
+
 					foreach ($cache ['cache_list'] as $entry) {
+
 						if (!is_array($entry)) {
 							continue;
 						}
 
 						// Usual structure: 'info' contains the variable name,
-						// Some builds use 'key' – we take both into account.
+						// Some builds use 'key' or 'name' – we take all into account.
 						$key = '';
 						if (isset($entry ['info'])) {
 							$key = (string) $entry ['info'];
 						} elseif (isset($entry ['key'])) {
 							$key = (string) $entry ['key'];
+						} elseif (isset($entry ['name'])) {
+							$key = (string) $entry ['name'];
 						}
 
 						if ($key === '' || strpos($key, 'fp:') !== 0) {
 							continue;
 						}
 
-						if (@apcu_delete($key)) {
-							$cleared++;
+						$batch [] = $key;
+
+						if (count($batch) >= 200) {
+
+							$failed = @apcu_delete($batch);
+
+							if (is_array($failed)) {
+								$cleared += max(0, count($batch) - count($failed));
+							} elseif ($failed) {
+								$cleared += count($batch);
+							}
+
+							$batch = array();
+						}
+
+					}
+
+					// Flush the remainder
+					if (!empty($batch)) {
+
+						$failed = @apcu_delete($batch);
+
+						if (is_array($failed)) {
+							$cleared += max(0, count($batch) - count($failed));
+						} elseif ($failed) {
+							$cleared += count($batch);
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+		// Last resort: clear the whole APCu user cache to guarantee fp:* is removed.
+		// This is useful on hosters that disable cache iteration/introspection functions.
+		if ($method === 'none' && $available && function_exists('apcu_clear_cache')) {
+
+			// Try to estimate how many FlatPress entries exist, if possible.
+			// (If the hoster disabled introspection APIs, this will stay 0.)
+			if ($cleared === 0) {
+
+				if (class_exists('APCUIterator')) {
+
+					$format = 0;
+					if (defined('APC_ITER_KEY')) {
+						$format = APC_ITER_KEY;
+					} elseif (defined('APC_ITER_ALL')) {
+						$format = APC_ITER_ALL;
+					}
+
+					$it = null;
+					try {
+						$it = new APCUIterator($pattern, $format, 200);
+					} catch (\Throwable $e) {
+						$it = null;
+					}
+
+					if ($it instanceof APCUIterator) {
+						foreach ($it as $entry) {
+							if (!is_array($entry)) {
+								continue;
+							}
+
+							$key = '';
+							if (isset($entry ['key'])) {
+								$key = (string) $entry ['key'];
+							} elseif (isset($entry ['info'])) {
+								$key = (string) $entry ['info'];
+							} elseif (isset($entry ['name'])) {
+								$key = (string) $entry ['name'];
+							}
+
+							if ($key !== '' && strpos($key, 'fp:') === 0) {
+								$cleared++;
+							}
 						}
 					}
+
+				} elseif (function_exists('apcu_cache_info')) {
+
+					$cache = @apcu_cache_info(false);
+					if (is_array($cache) && !empty($cache ['cache_list']) && is_array($cache ['cache_list'])) {
+						foreach ($cache ['cache_list'] as $entry) {
+							if (!is_array($entry)) {
+								continue;
+							}
+
+							$key = '';
+							if (isset($entry ['info'])) {
+								$key = (string) $entry ['info'];
+							} elseif (isset($entry ['key'])) {
+								$key = (string) $entry ['key'];
+							} elseif (isset($entry ['name'])) {
+								$key = (string) $entry ['name'];
+							}
+
+							if ($key !== '' && strpos($key, 'fp:') === 0) {
+								$cleared++;
+							}
+						}
+					}
+
 				}
+
 			}
+
+			$method = 'clear_cache';
+			@apcu_clear_cache();
 		}
 
 		// Store the result in the session so that it can be displayed after the redirect.
-		sess_add('apcu_clear_result', array('done' => true, 'cleared' => $cleared));
+		sess_add('apcu_clear_result', array('done' => true, 'cleared' => $cleared, 'method' => $method));
 
 		// Status code for shared:errorlist.tpl:
-		//  1  = successfully deleted (at least one entry)
+		//  1  = successfully deleted (at least one entry) or full cache cleared
 		//  2  = no entry found with "fp:"
 		// -1 = APCu not available / error
-		if (!$canManage) {
+		if (!$available || $method === 'none') {
 			$status = -1;
-		} elseif ($cleared > 0) {
+		} elseif ($cleared > 0 || $method === 'clear_cache') {
 			$status = 1;
 		} else {
 			$status = 2;
