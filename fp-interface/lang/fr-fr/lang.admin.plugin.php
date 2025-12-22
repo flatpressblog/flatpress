@@ -8,7 +8,7 @@ $lang ['admin'] ['plugin'] ['default'] = array(
 	'head' => 'Gérer les Plugins',
 	'enable' => 'Activer',
 	'disable' => 'Désactiver',
-	'descr' => 'Un <a class="hint" href="https://wiki.flatpress.org/doc:techfaq#plugins" title="Qu’est-ce qu’un plugin?">plugin</a> est un composant qui étend les fonctionnalités de FlatPress.</p>' . //
+	'descr' => 'Un <a class="hint" href="https://wiki.flatpress.org/doc:techfaq#plugins" target="_blank" title="Qu’est-ce qu’un plugin?">plugin</a> est un composant qui étend les fonctionnalités de FlatPress.</p>' . //
 			'<p>Vous pouvez installer des plugins en les transférant dans le dossier <code>fp-plugins/</code> de votre serveur FTP.</p><p>Ce menu vous permet d’activer ou de désactiver les plugins.',
 	'name' => 'Nom',
 	'description' => 'Description',
