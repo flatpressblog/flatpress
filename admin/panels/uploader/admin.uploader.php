@@ -8,7 +8,7 @@
  * Date:
  * Purpose:
  * Input:
- * Change-Date: 14.12.2025, by FKM
+ * Change-Date: 22.12.2025, by FKM
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
  *
@@ -134,14 +134,36 @@ class admin_uploader_default extends AdminPanelAction {
 	}
 
 	function sanitize_filename($filename) {
-		// Define allowed characters: letters, numbers, hyphens, underscores, dots, and language-specific characters
-		$allowed_chars = '/[^a-zA-Z0-9._\-\p{L}\p{M}]/u';
-
-		// Remove all disallowed characters
-		$filename = preg_replace($allowed_chars, '', $filename);
-
-		// Ensure no trailing dots, underscores, or hyphens remain
-		$filename = rtrim($filename, "._-");
+		// Keep names portable across filesystems/hosts: remove accents and strip unsafe characters.
+		$filename = (string)$filename;
+		$filename = trim($filename);
+		// Remove any path components (some browsers send "C:\\fakepath\\...")
+		$filename = basename(str_replace('\\', '/', $filename));
+		// Decode entities (e.g. &auml;)
+		$filename = html_entity_decode($filename, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		// Normalize whitespace to underscore
+		$filename = preg_replace('/\s+/u', '_', $filename);
+		// Remove accents if possible
+		if (function_exists('remove_accents')) {
+			// fp-includes/core/core.wp-formatting.php
+			$filename = remove_accents($filename);
+		} else {
+			$filename = strtr($filename, array(
+				'ä' => 'a', 'Ä' => 'A',
+				'ö' => 'o', 'Ö' => 'O',
+				'ü' => 'u', 'Ü' => 'U',
+				'ß' => 'ss'
+			));
+		}
+		// Keep only ASCII safe characters
+		$filename = preg_replace('/[^A-Za-z0-9._-]/', '', $filename);
+		// Collapse duplicate underscores
+		$filename = preg_replace('/_{2,}/', '_', $filename);
+		// Avoid leading/trailing separators and dots
+		$filename = trim($filename, " ._-");
+		if ($filename === '') {
+			$filename = 'file';
+		}
 
 		return $filename;
 	}
