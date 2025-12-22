@@ -1,7 +1,7 @@
 <?php
-$lang['admin']['widgets']['submenu']['blockparser'] = 'BlockParser Widgets';
+$lang ['admin'] ['widgets'] ['submenu'] ['blockparser'] = 'BlockParser Widgets';
 
-$lang['admin']['widgets']['blockparser'] = array(
+$lang ['admin'] ['widgets'] ['blockparser'] = array(
 	'head' => 'BlockParser Widgets',
 	'description' => 'Le plugin BlockParser permet de cr&eacute;er un widget &agrave; partir d’une page statique.</p>' . //
 		'<p>S&eacute;lectionnez une ou plusieurs pages statiques dans la liste pour associer un widget.</p>' . //
@@ -15,10 +15,10 @@ $lang['admin']['widgets']['blockparser'] = array(
 	'edit' => 'Modifier'
 );
 
-$lang['admin']['widgets']['blockparser']['msgs'] = array(
-	1 => 'Votre nouveau widget est disponible. Ajoutez-le à votre blog depuis le <a href="?p=widgets">panneau principal</a>&nbsp;!',
+$lang ['admin'] ['widgets'] ['blockparser'] ['msgs'] = array(
+	1 => 'Votre nouveau widget est disponible. Ajoutez-le à votre blog depuis le <a href="?p=widgets">panneau principal</a> !',
 	-1 => 'Impossible de cr&eacute;er le widget demand&eacute;',
-	2 => 'Vous avez d&eacute;sactiv&eacute; un widget&nbsp;: pensez à supprimer les r&eacute;f&eacute;rences dans le <a href="?p=widgets">panneau principal</a>&nbsp;!',
+	2 => 'Vous avez d&eacute;sactiv&eacute; un widget : pensez à supprimer les r&eacute;f&eacute;rences dans le <a href="?p=widgets">panneau principal</a> !',
 	-2 => 'Impossible de d&eacute;sactiver le widget'
 );
 ?>
