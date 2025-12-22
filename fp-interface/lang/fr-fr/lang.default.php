@@ -1,5 +1,7 @@
 <?php
-$lang['default'] = array(
+$lang = array();
+
+$lang ['main'] = array(
 	'nextpage' => 'Page suivante',
 	'prevpage' => 'Page précédente',
 	'entry' => 'Billet',
