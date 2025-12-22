@@ -131,7 +131,18 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 /* gestion des catégories */
 $lang ['admin'] ['entry'] ['cats'] = array(
 	'head' => 'Éditer les catégories',
-	'descr' => 'Utilisez le formulaire pour ajouter et modifier des catégories.',
+	'descr' => '<p>Utilisez le formulaire pour ajouter et modifier des catégories.</p>' . //
+		'<p>Chaque élément doit être au format "nom de la catégorie : <em>numéro de la catégorie</em>". Placez des tirets devant les éléments pour créer des hiérarchies.</p>
+		
+	<p>Exemple:</p>
+	<pre>
+Accueil :1
+Infos :2
+--Annonces :3
+--Evènements :4
+----Misc :5
+Technologie :6
+	</pre>',
 	'clear' => 'Effacer toutes les catégories',
 
 	'fset1' => 'Éditeur',
