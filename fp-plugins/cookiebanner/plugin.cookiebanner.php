@@ -4,9 +4,48 @@
  * Plugin URI: https://flatpress.org
  * Description: Displays a discreet banner that informs the visitor about the use of cookies and provides a link to the <a href="./admin.php?p=static&action=write&page=privacy-policy" title="Edit me!" >privacy policy</a>. Part of the standard distribution. <a href="#" id="DeleteCookie" title="Reset CookieBanner">[Reset]</a>
  * Author: FlatPress
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author URI: http://flatpress.org
- */ 
+ */
+
+/**
+ * Returns the CookieBanner language array, cached per request.
+ * Uses lang_load() but avoids repeated merges that can turn strings into arrays
+ * when array_merge_recursive() meets already-loaded translations.
+ *
+ * @return array
+ */
+function plugin_cookiebanner_getlang() {
+	static $cache = null;
+	if (is_array($cache)) {
+		return $cache;
+	}
+	$cache = lang_load('plugin:cookiebanner');
+	return is_array($cache) ? $cache : array();
+}
+
+/**
+ * Normalize a language value to a scalar string (guards against recursive merges
+ * that may turn strings into arrays).
+ *
+ * @param mixed  $value
+ * @param string $default
+ * @return string
+ */
+function plugin_cookiebanner_langval($value, $default = '') {
+	// array_merge_recursive can turn scalar values into arrays; pick the first scalar value
+	while (is_array($value)) {
+		if (!$value) {
+			return (string)$default;
+		}
+		$value = reset($value);
+	}
+	if (is_object($value) && method_exists($value, '__toString')) {
+		return (string)$value;
+	}
+	return is_scalar($value) ? (string)$value : (string)$default;
+}
+
 function plugin_cookiebanner_head() {
 	$pdir = plugin_geturl('cookiebanner');
 	$random_hex = RANDOM_HEX;
@@ -24,19 +63,20 @@ add_action('wp_head', 'plugin_cookiebanner_head', 0);
 
 function plugin_cookiebanner_footer() {
 
-	global $lang;
 	$random_hex = RANDOM_HEX;
-	lang_load('plugin:cookiebanner');
 
-	$bannertext = $lang ['plugin'] ['cookiebanner'] ['bannertext'];
-	$ok = $lang ['plugin'] ['cookiebanner'] ['ok'];
+	$lang = plugin_cookiebanner_getlang();
+
+	$bannertext = plugin_cookiebanner_langval($lang ['plugin'] ['cookiebanner'] ['bannertext'] ?? '');
+	$ok = plugin_cookiebanner_langval($lang ['plugin'] ['cookiebanner'] ['ok'] ?? 'OK', 'OK');
+	$ok_attr = htmlspecialchars($ok, ENT_QUOTES, 'UTF-8');
 
 	echo '
 		<!-- BOF Cookie-Banner HTML -->
 		<div id="cookie_banner">
 			<div class="buttonbar">
 				' . $bannertext . '
-				<input type="submit" value="' . $ok . '" class="btn btn-primary btn-sm" id="btn-primary">
+				<input type="submit" value="' . $ok_attr . '" class="btn btn-primary btn-sm" id="btn-primary">
 			</div>
 		</div>
 		<!-- EOF Cookie-Banner HTML -->
@@ -77,10 +117,10 @@ add_action('wp_footer', 'plugin_cookiebanner_footer', 0);
 
 
 function plugin_cookiebanner_privacypolicy() {
-	global $lang;
-	$lang = lang_load('plugin:cookiebanner');
 
-	$notice_text = $lang ['plugin'] ['cookiebanner'] ['notice_text'];
+	$lang = plugin_cookiebanner_getlang();
+
+	$notice_text = plugin_cookiebanner_langval($lang ['plugin'] ['cookiebanner'] ['notice_text'] ?? '');
 
 	echo '<p><em>' . $notice_text . '</em></p>';
 }
