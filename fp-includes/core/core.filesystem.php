@@ -309,7 +309,7 @@ class fs_chmodder extends fs_filelister {
 
 		if (is_dir($path)) {
 			$retval = 1;
-			if ($is_admin_dir || $is_config_dir || $is_users_dir || $is_includes_dir || $is_lang_dir || $is_sharedtpls_dir || $is_plugin_dir) {
+			if ($is_admin_dir || $is_config_dir || $is_users_dir || $is_includes_dir || $is_lang_dir || $is_sharedtpls_dir) {
 				// Core permissions for system-critical directories
 				$chmod_value = CORE_DIR_PERMISSIONS;
 			} else {
@@ -321,7 +321,7 @@ class fs_chmodder extends fs_filelister {
 			if ($is_defaults_file) {
 				// Specific permissions for defaults.php
 				$chmod_value = CORE_FILE_PERMISSIONS;
-			} elseif ($is_admin_dir || $is_config_dir || $is_users_dir || $is_includes_dir || $is_lang_dir || $is_sharedtpls_dir || $is_plugin_dir) {
+			} elseif ($is_admin_dir || $is_config_dir || $is_users_dir || $is_includes_dir || $is_lang_dir || $is_sharedtpls_dir) {
 				// Core permissions for system-critical files
 				$chmod_value = CORE_FILE_PERMISSIONS;
 			} else {
@@ -367,7 +367,6 @@ function restore_chmods() {
 	$files_includes = fs_chmod_recursive(FP_INCLUDES);
 	$files_lang = fs_chmod_recursive(LANG_DIR);
 	$files_sharedtpls = fs_chmod_recursive(SHARED_TPLS);
-	$files_plugins = fs_chmod_recursive(PLUGINS_DIR);
 
 	// Combine results from all directories
 	$files = array_merge(
@@ -378,8 +377,7 @@ function restore_chmods() {
 		$files_users,
 		$files_includes,
 		$files_lang,
-		$files_sharedtpls,
-		$files_plugins
+		$files_sharedtpls
 	);
 	//error_log("DEBUG: Files updated: " . print_r($files, true));
 
