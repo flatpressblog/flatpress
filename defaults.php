@@ -26,11 +26,11 @@ define('DUMB_MODE_ENABLED', false);
 define('FILE_PERMISSIONS', 0644); // 0644 is recommended
 define('DIR_PERMISSIONS', 0755); // 0755 is recommended
 
-// FlatPress core: This includes this file, recursively the directories ADMIN_DIR, FP_INCLUDES, CONFIG_DIR, USERS_DIR, LANG_DIR, SHARED_TPLS and PLUGINS_DIR
+// FlatPress core: This includes this file, recursively the directories ADMIN_DIR, FP_INCLUDES, CONFIG_DIR, USERS_DIR, LANG_DIR and SHARED_TPLS
 define('CORE_FILE_PERMISSIONS', 0640); // 0640 for productive operation
 define('CORE_DIR_PERMISSIONS', 0750); // 0750 for productive operation
 
-// For all other files and directories, e.g. FP_INTERFACE, THEMES_DIR
+// For all other files and directories, e.g. FP_INTERFACE, THEMES_DIR and PLUGINS_DIR
 define('RESTRICTED_FILE_PERMISSIONS', 0644); // 0644 is recommended
 define('RESTRICTED_DIR_PERMISSIONS', 0755); // 0755 is recommended
 
