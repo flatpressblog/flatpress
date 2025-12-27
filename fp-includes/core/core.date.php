@@ -197,8 +197,9 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 		$locale = 'en_US';
 	}
 
-	// IntlDateFormatter caching mechanism
+	// IntlDateFormatter caching mechanism (with fallback for hosts without ext-intl)
 	static $formatter_cache = []; // Caching array
+	$intl_available = class_exists('IntlDateFormatter');
 
 	$cache_key = md5($locale . '|' . $format . '|' . $timestamp->getTimezone()->getName());
 	if (!isset($formatter_cache [$cache_key])) {
@@ -210,36 +211,59 @@ function strftime_replacement(string $format, $timestamp = null, ?string $locale
 			'%h' => 'MMM' // Abbreviated month name, based on the locale (an alias of %b) Jan through Dec
 		];
 
-		// Formatter function to create IntlDateFormatter
-		$intl_formatter = function (\DateTimeInterface $timestamp, string $format) use ($intl_formats, $locale) {
-			$tz = $timestamp->getTimezone();
-			$date_type = \IntlDateFormatter::FULL;
-			$time_type = \IntlDateFormatter::FULL;
-			$pattern = '';
+		if ($intl_available) {
+			// Formatter function to create IntlDateFormatter
+			$intl_formatter = function (\DateTimeInterface $timestamp, string $format) use ($intl_formats, $locale) {
+				$tz = $timestamp->getTimezone();
+				$date_type = \IntlDateFormatter::FULL;
+				$time_type = \IntlDateFormatter::FULL;
+				$pattern = '';
 
-			// %c = Preferred date and time stamp based on locale
-			if ($format == '%c') {
-				$date_type = \IntlDateFormatter::LONG;
-				$time_type = \IntlDateFormatter::SHORT;
-			}
-			// %x = Preferred date representation based on locale, without the time
-			elseif ($format == '%x') {
-				$date_type = \IntlDateFormatter::SHORT;
-				$time_type = \IntlDateFormatter::NONE;
-			}
-			// %X = Preferred time representation based on locale, without the date
-			elseif ($format == '%X') {
-				$date_type = \IntlDateFormatter::NONE;
-				$time_type = \IntlDateFormatter::MEDIUM;
-			} else {
-				$pattern = $intl_formats [$format] ?? $format;
-			}
+				// %c = Preferred date and time stamp based on locale
+				if ($format == '%c') {
+					$date_type = \IntlDateFormatter::LONG;
+					$time_type = \IntlDateFormatter::SHORT;
+				}
+				// %x = Preferred date representation based on locale, without the time
+				elseif ($format == '%x') {
+					$date_type = \IntlDateFormatter::SHORT;
+					$time_type = \IntlDateFormatter::NONE;
+				}
+				// %X = Preferred time representation based on locale, without the date
+				elseif ($format == '%X') {
+					$date_type = \IntlDateFormatter::NONE;
+					$time_type = \IntlDateFormatter::MEDIUM;
+				} else {
+					$pattern = $intl_formats [$format] ?? $format;
+				}
 
-			// Return IntlDateFormatter object
-			return (new \IntlDateFormatter($locale, $date_type, $time_type, $tz, null, $pattern))->format($timestamp);
-		};
-
-		$formatter_cache [$cache_key] = $intl_formatter;
+				// Return formatted date/time
+				return (new \IntlDateFormatter($locale, $date_type, $time_type, $tz, null, $pattern))->format($timestamp);
+			};
+			$formatter_cache [$cache_key] = $intl_formatter;
+		} else {
+			// Fallback for hosts without ext-intl: non-localized but functional.
+			$formatter_cache [$cache_key] = function (\DateTimeInterface $timestamp, string $format) {
+				switch ($format) {
+					case '%a':
+						return $timestamp->format('D');
+					case '%A':
+						return $timestamp->format('l');
+					case '%b':
+					case '%h':
+						return $timestamp->format('M');
+					case '%B':
+						return $timestamp->format('F');
+					case '%X':
+						return $timestamp->format('H:i:s');
+					case '%x':
+						return $timestamp->format('Y-m-d');
+					case '%c':
+					default:
+						return $timestamp->format('Y-m-d H:i:s');
+				}
+			};
+		}
 	}
 
 	// Same order as https://www.php.net/manual/en/function.strftime.php

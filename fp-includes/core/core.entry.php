@@ -425,7 +425,7 @@ function entry_parse($id, $raw = false) {
 		}
 	}
 
-	$fc = io_load_file($f);
+	$fc = io_load_file($f, array('exists' => true, 'mt' => $mt, 'sz' => $sz));
 	if (!$fc) {
 		return array();
 	}

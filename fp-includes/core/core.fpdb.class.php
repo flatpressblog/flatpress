@@ -26,6 +26,12 @@ class FPDB_QueryParams {
 
 	var $comments = false;
 
+	/**
+	 * If true, only compute and expose comment count (no comment list parsing/iteration).
+	 * Intended for entry streams where templates typically need only the count.
+	 */
+	var $commentcount = false;
+
 	function __construct($params) {
 		if (is_string($params)) {
 			$this->parse_string($params);
@@ -59,12 +65,7 @@ class FPDB_QueryParams {
 		}
 
 		if (isset($params ['fullparse'])) {
-
 			$this->fullparse = is_string($params ['fullparse']) ? ($params ['fullparse'] != 'false') : $params ['fullparse'];
-
-			if ($this->fullparse) {
-				$this->comments = true;
-			}
 		}
 
 		if (isset($params ['y'])) {
@@ -111,6 +112,20 @@ class FPDB_QueryParams {
 		}
 
 		if (isset($params ['comments'])) {
+			$this->comments = true;
+		}
+
+		if (isset($params ['commentcount'])) {
+			$this->commentcount = true;
+		}
+
+		/**
+		 * Legacy default:
+		 * Historically, fullparse implied that comments were loaded.
+		 * Keep that behavior unless an explicit lightweight comment count
+		 * was requested.
+		 */
+		if ($this->fullparse && !$this->comments && !$this->commentcount) {
 			$this->comments = true;
 		}
 
@@ -369,8 +384,7 @@ class FPDB_Query {
 	function hasMore() {
 		$GLOBALS ['current_query'] = &$this;
 
-		// if system init has not been done (filling pointer variable etc.)
-		// call prepare()
+		// If system init has not been done (filling pointer variable etc.)
 		if ($this->counter < 0) {
 			$this->prepare();
 		}
@@ -427,6 +441,8 @@ class FPDB_Query {
 				if ($entry && $qp->comments) {
 					$this->comments = new FPDB_CommentList($qp->id, comment_getlist($qp->id));
 					$entry ['comments'] = $this->comments->getCount();
+				} elseif ($entry && $qp->commentcount) {
+					$entry ['comments'] = comment_getcount($qp->id);
 				}
 
 				$post = $entry;
@@ -523,6 +539,8 @@ class FPDB_Query {
 		if ($qp->comments) {
 			$this->comments = new FPDB_CommentList($id, comment_getlist($id));
 			$cont ['comments'] = $this->comments->getCount();
+		} elseif ($qp->commentcount) {
+			$cont ['comments'] = comment_getcount($id);
 		}
 
 		$post = $cont;
@@ -902,6 +920,10 @@ function smarty_block_comment($params, $content, &$smarty, &$repeat) {
 	));
 
 	$q = &$fpdb->getQuery();
+	if (!isset($q->comments) || !is_object($q->comments)) {
+		$repeat = false;
+		return $content;
+	}
 
 	if ($repeat = $q->comments->hasMore()) {
 
@@ -929,6 +951,11 @@ function smarty_block_comments($params, $content, &$smarty, &$repeat) {
 	global $fpdb;
 
 	$q = &$fpdb->getQuery();
+
+	if (!isset($q->comments) || !is_object($q->comments)) {
+		$repeat = false;
+		return $content;
+	}
 	$show = $q->comments->getCount();
 	$smarty->assign('entryid', $q->comments->entryid);
 

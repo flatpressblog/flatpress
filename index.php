@@ -41,9 +41,18 @@ function index_404error() {
 function index_singlepost(&$params, &$module) {
 	global $fpdb, $theme, $fp_params;
 
-$entry = array();
+	$entry = array();
 	$params ['id'] = $fp_params ['entry'];
 	$params ['fullparse'] = true;
+
+	// Comments list is only needed on the dedicated comments view.
+	// For the single entry view we keep a cheap comment count to avoid directory scans.
+	if (isset($fp_params ['comments'])) {
+		$params ['comments'] = true;
+	} else {
+		$params ['commentcount'] = true;
+	}
+
 	$fpdb->query($params);
 
 	if (@$theme ['hassingle']) {
@@ -55,7 +64,6 @@ $entry = array();
 	if (isset($fp_params ['comments'])) {
 
 		$module = 'comments.tpl';
-		$params ['comments'] = true;
 
 		include ('comments.php');
 	}
@@ -179,6 +187,11 @@ function index_main() {
 	}
 
 	$params ['fullparse'] = true;
+
+	// Default front-end listing: keep comment count available without loading full comment lists.
+	if (!isset($params ['comments']) && !isset($params ['commentcount'])) {
+		$params ['commentcount'] = true;
+	}
 
 	$fpdb->query($params);
 
