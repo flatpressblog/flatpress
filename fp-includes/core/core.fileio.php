@@ -189,31 +189,33 @@ function apcu_set($key, $val, $ttl = 120) {
 	return apcu_store(apcu_key((string) $key), $val, $ttl);
 }
 
-function io_load_file_uncached($filename) {
-	if (file_exists($filename)) {
-
-		if (function_exists('set_time_limit')) {
-			@set_time_limit(0);
-		}
-		@ini_set('max_execution_time', '0');
-
-		if (function_exists('file_get_contents')) {
-			return file_get_contents($filename);
-		}
-
-		$f = fopen($filename, "r");
-		if ($f) {
-			if (!flock($f, LOCK_SH)) {
-				return -1;
-			}
-			$contents = fread($f, filesize($filename));
-			flock($f, LOCK_UN);
-			fclose($f);
-
-			// returns contents as string on success
-			return ($contents);
-		}
+function io_load_file_uncached($filename, $assume_exists = false) {
+	if (!$assume_exists && !file_exists($filename)) {
+		return false;
 	}
+
+	if (function_exists('set_time_limit')) {
+		@set_time_limit(0);
+	}
+	@ini_set('max_execution_time', '0');
+
+	if (function_exists('file_get_contents')) {
+		// Suppress warnings to keep callers warning-free (consistent with prior file_exists guard).
+		return @file_get_contents($filename);
+	}
+
+	$f = fopen($filename, "r");
+	if ($f) {
+		if (!flock($f, LOCK_SH)) {
+			return -1;
+		}
+		$contents = fread($f, filesize($filename));
+		flock($f, LOCK_UN);
+		fclose($f);
+		// Returns contents as string on success
+		return ($contents);
+	}
+
 	// trigger_error("io_load_file: $filename does not exists", E_USER_ERROR);
 	return false;
 }
@@ -222,15 +224,35 @@ function io_load_file_uncached($filename) {
  * Cached file read for current request. Optional APCu hotcache.
  * Always falls back cleanly to io_load_file_uncached().
  */
-function io_load_file($filename) {
+function io_load_file($filename, $prestat = null) {
 	static $cache = array();
 	static $meta = array();
 
-	clearstatcache(true, $filename);
+	$exists = null;
+	$mt = null;
+	$sz = null;
 
-	$exists = @file_exists($filename);
-	$mt = $exists ? @filemtime($filename) : false;
-	$sz = $exists ? (int) @filesize($filename) : 0;
+	if (is_array($prestat)) {
+		$exists = (bool) ($prestat ['exists'] ?? true);
+		$mt = $prestat ['mt'] ?? null;
+		$sz = $prestat ['sz'] ?? null;
+	} else {
+		clearstatcache(true, $filename);
+		$exists = @file_exists($filename);
+	}
+
+	if (!$exists) {
+		return false;
+	}
+
+	// Stat only if needed. Many hot paths (entry_parse) already have a signature.
+	if ($mt === null) {
+		$mt = @filemtime($filename);
+	}
+	if ($sz === null) {
+		$sz = ($mt !== false) ? (int) @filesize($filename) : 0;
+	}
+
 	$sig = ($mt !== false ? $mt : 'na') . ':' . $sz;
 
 	if (isset($cache [$filename]) && isset($meta [$filename]) && $meta [$filename] === $sig) {
@@ -240,49 +262,45 @@ function io_load_file($filename) {
 	// Check APCu securely and host-agnostically
 	$apcu_on = is_apcu_on();
 
-	if ($apcu_on) {
-		$mt = @filemtime($filename);
-		if ($mt !== false) {
-			// Stabilizes collisions < 1s
-			$sz = (int) @filesize($filename);
-			$key = 'fp:io:' . $filename . ':' . $mt . ':' . $sz;
+	if ($apcu_on && $mt !== false) {
+		// Stabilizes collisions < 1s
+		$key = 'fp:io:' . $filename . ':' . $mt . ':' . $sz;
 
-			$hit = false;
-			$val = apcu_get($key, $hit);
-			if ($hit) {
-				$cache [$filename] = $val;
-				$meta [$filename] = $sig;
-				return $val;
-			}
-
-			$val = io_load_file_uncached($filename);
-			if ($val !== false && $val !== null) {
-				/**
-				 * Load scenario: 3,000 posts × 5 comments (see FlatPress Bulk Content Generator).
-				 * Search (search.php) touches most entries and dominates memory.
-				 * Peak calculation:
-				 *   fp:io:*
-				 *      3,000 × ~1.93 KiB + 15,000 × ~0.52 KiB ≈ 13.3 MiB
-				 *   fp:entry:parsed:* (TTL 600 s, e.g. after search)
-				 *      3,000 × ~1.98 KiB ≈ 6.0 MiB
-				 *   Plugins/Smarty/other: ~2–3 MiB
-				 * Worst-case simultaneously ≈ 21–23 MiB < 32 MiB; headroom ≈ 9–11 MiB covers fragmentation.
-				 * Note: APCu is a shared pool per FPM pool (apc.shm_size), not per child process.
-				 */
-				$ttl = max(0, (int) ($_ENV ['FP_APCU_IO_TTL'] ?? 7200)); // Removed from cache after 2 hours
-				$max = max(0, (int) ($_ENV ['FP_APCU_IO_MAX_BYTES'] ?? 32768)); // 32 KiB - prevents fat items
-				// TTL unnecessary, key changes with mtime/size
-				if (strlen($val) <= $max) {
-					apcu_set($key, $val, $ttl);
-				}
-				$cache [$filename] = $val;
-				$meta [$filename] = $sig;
-			}
+		$hit = false;
+		$val = apcu_get($key, $hit);
+		if ($hit) {
+			$cache [$filename] = $val;
+			$meta [$filename] = $sig;
 			return $val;
 		}
+
+		$val = io_load_file_uncached($filename);
+		if ($val !== false && $val !== null) {
+			/**
+			 * Load scenario: 3,000 posts × 5 comments (see FlatPress Bulk Content Generator).
+			 * Search (search.php) touches most entries and dominates memory.
+			 * Peak calculation:
+			 *   fp:io:*
+			 *      3,000 × ~1.93 KiB + 15,000 × ~0.52 KiB ≈ 13.3 MiB
+			 *   fp:entry:parsed:* (TTL 600 s, e.g. after search)
+			 *      3,000 × ~1.98 KiB ≈ 6.0 MiB
+			 *   Plugins/Smarty/other: ~2–3 MiB
+			 * Worst-case simultaneously ≈ 21–23 MiB < 32 MiB; headroom ≈ 9–11 MiB covers fragmentation.
+			 * Note: APCu is a shared pool per FPM pool (apc.shm_size), not per child process.
+			 */
+			$ttl = max(0, (int) ($_ENV ['FP_APCU_IO_TTL'] ?? 7200)); // Removed from cache after 2 hours
+			$max = max(0, (int) ($_ENV ['FP_APCU_IO_MAX_BYTES'] ?? 32768)); // 32 KiB - prevents fat items
+			// TTL unnecessary, key changes with mtime/size
+			if (strlen($val) <= $max) {
+				apcu_set($key, $val, $ttl);
+			}
+			$cache [$filename] = $val;
+			$meta [$filename] = $sig;
+		}
+		return $val;
 	}
 
-	$contents = io_load_file_uncached($filename);
+	$contents = io_load_file_uncached($filename, true);
 	if ($contents !== false && $contents !== null) {
 		$cache [$filename] = $contents;
 		$meta [$filename] = $sig;

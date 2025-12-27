@@ -27,6 +27,105 @@ class comment_indexer extends fs_filelister {
 }
 
 /**
+ * Small on-disk cache for comment counts to avoid directory scans on hosts without APCu.
+ * Stored outside the comments directory to not affect directory mtime.
+ */
+function comment_count_cachefile($id) {
+	// CACHE_DIR is defined in defaults.php; keep path stable across platforms.
+	$dir = (defined('CACHE_DIR') ? CACHE_DIR : '');
+	if ($dir && function_exists('fs_mkdir')) {
+		@fs_mkdir($dir);
+	} elseif ($dir) {
+		@mkdir($dir, DIR_PERMISSIONS, true);
+	}
+	// Entry IDs are safe filename components (entryYYMMDD-HHMMSS).
+	return $dir . $id . '.txt';
+}
+
+function comment_count_scan_dir($dir) {
+	$count = 0;
+	$dh = @opendir($dir);
+	if (!$dh) {
+		return 0;
+	}
+	while (($file = readdir($dh)) !== false) {
+		// Fast path: only comment*.EXT files.
+		if ($file [0] === '.') {
+			continue;
+		}
+		if (fnmatch('comment*' . EXT, $file)) {
+			$count++;
+		}
+	}
+	closedir($dh);
+	return $count;
+}
+
+/**
+ * Returns comment count for entry $id without building/sorting the full list.
+ */
+function comment_getcount($id) {
+	$dir = bdb_idtofile($id, BDB_COMMENT);
+	if (!@is_dir($dir)) {
+		return 0;
+	}
+
+	static $local = array(), $meta = array();
+	clearstatcache(true, $dir);
+	$mt = @filemtime($dir);
+	if ($mt === false) {
+		return 0;
+	}
+	$sig = (string) $mt;
+
+	if (isset($local [$id]) && (($meta [$id] ?? null) === $sig)) {
+		return (int) $local [$id];
+	}
+
+	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+	if ($apcu_on) {
+		$key = 'fp:comments:count:' . $id . ':' . $mt;
+		$hit = false;
+		$val = apcu_get($key, $hit);
+		if ($hit && is_int($val)) {
+			$local [$id] = $val;
+			$meta [$id] = $sig;
+			return $val;
+		}
+	}
+
+	$cachefile = comment_count_cachefile($id);
+	if ($cachefile && is_string($cachefile) && @is_file($cachefile)) {
+		$raw = @file_get_contents($cachefile);
+		if (is_string($raw) && $raw !== '') {
+			$raw = trim($raw);
+			$parts = explode(':', $raw, 2);
+			if (count($parts) === 2 && $parts [0] === (string) $mt) {
+				$cnt = (int) $parts [1];
+				$local [$id] = $cnt;
+				$meta [$id] = $sig;
+				if ($apcu_on) {
+					@apcu_set('fp:comments:count:' . $id . ':' . $mt, $cnt, 300);
+				}
+				return $cnt;
+			}
+		}
+	}
+
+	$cnt = comment_count_scan_dir($dir);
+	$local [$id] = $cnt;
+	$meta [$id] = $sig;
+
+	if ($cachefile) {
+		@io_write_file($cachefile, $mt . ':' . $cnt);
+	}
+	if ($apcu_on) {
+		@apcu_set('fp:comments:count:' . $id . ':' . $mt, $cnt, 300);
+	}
+	return $cnt;
+}
+
+/**
  * function bdb_get_comments
  *
  * <p>On success returns an array containing the comment <b>IDs</b>, associated to
@@ -48,8 +147,7 @@ function comment_getlist($id) {
 	static $local = array(), $meta = array();
 	clearstatcache(true, $dir);
 	$mt = @filemtime($dir);
-	$sz = ($mt !== false) ? (int) @filesize($dir) : 0;
-	$sig = (($mt !== false) ? $mt : 'na') . ':' . $sz;
+	$sig = (($mt !== false) ? (string) $mt : 'na');
 
 	if (isset($local [$id]) && (($meta [$id] ?? null) === $sig)) {
 		return $local [$id];
@@ -58,7 +156,7 @@ function comment_getlist($id) {
 	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 	$key = null;
 	if ($apcu_on && $mt !== false) {
-		$key = 'fp:comments:list:' . $id . ':' . $mt . ':' . $sz;
+		$key = 'fp:comments:list:' . $id . ':' . $mt;
 		$hit = false;
 		$val = apcu_get($key, $hit);
 		if ($hit && is_array($val)) {
@@ -153,6 +251,8 @@ function comment_save($id, $comment) {
 	$f = $comment_dir . $comment_id . EXT;
 	$str = utils_kimplode($comment);
 	if (io_write_file($f, $str)) {
+		// Invalidate cached comment count for this entry (file cache + APCu).
+		@unlink(comment_count_cachefile($entryid));
 		do_action('comment_save', $entryid, $comment_id);
 		return $comment_id;
 	}
@@ -183,6 +283,7 @@ function comment_delete($id, $comment_id) {
 	if ($ok) {
 		// Post-delete event for cache invalidation
 		do_action('comment_deleted', $id, $comment_id);
+		@unlink(comment_count_cachefile($id));
 	}
 	return $ok;
 }

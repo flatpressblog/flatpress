@@ -118,23 +118,54 @@ High. This is the primary hot cache for the entry stream and single entry view.
 
 ### 2.3 Comment Index Cache – `fp:comments:list:…`
 
-**Prefix:** `fp:comments:list:<entryId>:<mtime>:<size>`  
+**Prefix:** `fp:comments:list:<entryId>:<dirMtime>`  
 **File:** `fp-includes/core/core.comment.php`  
 
 **What is cached:**
 
-- Comment ID list for a given entry.
+- The **comment ID list** for a given entry (used for full comment listing).
 
 **Invalidation:**
 
-- Based on mtime/size of the comment index file.
+- Based on the **comment directory mtime** (`filemtime($comment_dir)`).
+- Any change that touches the comment directory (add/delete comment file) updates the mtime and therefore rotates the key.
 
 **TTL:**
 
 - `@apcu_set($key, $list, 300);` (5 minutes).
 
 **Impact:**  
-Medium–High. Speeds up comment listing for popular entries.
+Medium–High. Speeds up full comment listing on popular entries.
+
+---
+
+### 2.3a Comment Count Cache – `fp:comments:count:…` (new)
+
+**Prefix:** `fp:comments:count:<entryId>:<dirMtime>`  
+**File:** `fp-includes/core/core.comment.php`  
+
+**What is cached:**
+
+- The **comment count only** (no list building), intended for entry streams where templates typically only need `{comments}` as a number.
+
+**Invalidation:**
+
+- Same as the list cache: **comment directory mtime** (`filemtime($comment_dir)`).
+
+**TTL:**
+
+- `@apcu_set(..., 300);` (5 minutes).
+
+**File fallback (APCu off / small hosts):**
+
+- Cache file: `fp-content/cache/<entryId>.txt`
+- Format: `<dirMtime>:<count>`
+- Invalidation:
+  - Automatically cold when `dirMtime` changes.
+  - Additionally deleted on comment save/delete hooks (`unlink()`).
+
+**Impact:**  
+High on stream pages with many entries. Avoids directory scans and avoids building/sorting full comment lists when only the count is required.
 
 ---
 
@@ -552,7 +583,7 @@ The following table summarizes each logical cache group:
 | APCu core helpers            | `fp:ns:*`, `apcu_ns()`, `apcu_key()`                                                 | No                       | N/A (meta only)                                      | High (foundational) |
 | File I/O                     | `fp:io:*`                                                                            | No                       | File mtime/size, TTL (default 1h)                    | High                |
 | Entries                      | `fp:entry:parsed:*`                                                                  | No                       | Entry file mtime/size                                | High                |
-| Comments                     | `fp:comments:list:*`                                                                 | No                       | Comment index mtime/size, TTL 300s                   | Medium–High         |
+| Comments                     | `fp:comments:list:*`, `fp:comments:count:*`                                          | No                       | Comment dir mtime, TTL 300s (APCu) + file fallback   | Medium–High         |
 | Static pages                 | `fp:statics:list:*`                                                                  | No                       | Static dir mtime/size, TTL 600s                      | Medium              |
 | Categories                   | `fp:cats:list:*`, `fp:cats:encoded:*`                                                | No                       | Categories file mtime/size, TTL 600s                 | Medium              |
 | Language                     | `fp:lang:*`                                                                          | No                       | Language file mtime/size, locale                     | Medium–High         |
@@ -589,6 +620,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.5 „S
 - `fp:cats:encoded:`
 - `fp:cats:list:`
 - `fp:comments:list:`
+- `fp:comments:count:`
 - `fp:entry:parsed:`
 - `fp:https:v2:`
 - `fp:ini:`
