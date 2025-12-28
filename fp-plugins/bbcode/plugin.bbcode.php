@@ -26,7 +26,7 @@ function plugin_bbcode_startup() {
 	define('BBCODE_USE_EDITOR', isset($bbconf ['editor']) ? $bbconf ['editor'] : true);
 	define('BBCODE_MASK_ATTACHS', isset($bbconf ['maskattachs']) ? $bbconf ['maskattachs'] : true);
 	define('BBCODE_URL_MAXLEN', isset($bbconf ['url-maxlen']) ? $bbconf ['url-maxlen'] : 40);
-	if (!file_exists('getfile.php')) { // FKM: file not in the repo?
+	if (!file_exists('getfile.php')) {
 		define('BBCODE_USE_WRAPPER', false);
 	} else {
 		$funcs = explode(',', ini_get('disable_functions'));
@@ -43,7 +43,6 @@ function plugin_bbcode_startup() {
 	}
 
 	// filter part
-	// add_filter('comment_text', 'plugin_bbcode_comment');
 	add_filter('title_save_pre', 'wp_specialchars', 1);
 	if (!BBCODE_ALLOW_HTML) {
 		add_filter('content_save_pre', 'wp_specialchars', 1);
@@ -65,8 +64,6 @@ function plugin_bbcode_startup() {
 	}
 }
 plugin_bbcode_startup();
-// FKM: RSS-feed returns bbcode if add_action(), see #225
-//add_action('wp_head', 'plugin_bbcode_startup');
 
 /**
  * Adds the plugin's CSS and JS to the HTML head.
@@ -1241,13 +1238,66 @@ function bbcode2html($html) {
 			'/(?<!\\\\)\[url(?::\w+)?=(.*?)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\2</a>',
 			// [list]
 			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\*(?::\w+)?\](.*?)(?=(?:\s*<br\s*\/?>\s*)?\[\*|(?:\s*<br\s*\/?>\s*)?\[\/?list)/si' => '<li>\\1</li>',
-			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\/list(:(?!u|o)\w+)?\](?:<br\s*\/?>)?/si' => '</ul>',
-			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\/list:o(:\w+)?\](?:<br\s*\/?>)?/si' => '</ol>',
-			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[list(:(?!u|o)\w+)?\]\s*(?:<br\s*\/?>)?/si' => '<ul class="list-unordered">',
-			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[list(?::o)?(:\w+)?=#\]\s*(?:<br\s*\/?>)?/si' => '<ol class="list-ordered">',
 		);
 	}
+
+	/**
+	 * Convert list items first, then handle list wrappers with a stack so that
+	 * ordered lists like [list=#]...[/list] close with </ol> (and not </ul>).
+	 */
 	$html = preg_replace(array_keys($preg), array_values($preg), $html);
+
+	$stack = array();
+	$pattern = '/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[(\/)?list(?::(\w+))?(?:=([^\]]+))?\](?:\s*<br\s*\/?>\s*)?/i';
+
+	$html = preg_replace_callback($pattern, function ($m) use (&$stack) {
+		$isClose = !empty($m [1]);
+		$type = isset($m [2]) ? strtolower((string) $m [2]) : '';
+		$param = isset($m [3]) ? (string) $m [3] : null;
+
+		if (!$isClose) {
+			$isOrdered = false;
+
+			// [list=#] / [list=1] / [list=a] (or any [list=...]) -> ordered
+			if ($type === 'o') {
+				$isOrdered = true;
+			} elseif ($param !== null && $param !== '') {
+				$isOrdered = true;
+			}
+
+			if ($isOrdered) {
+				$stack[] = 'ol';
+				return '<ol class="list-ordered">';
+			}
+
+			$stack[] = 'ul';
+			return '<ul class="list-unordered">';
+		}
+
+		// Closing tag
+		$desired = null;
+		if ($type === 'o') {
+			$desired = 'ol';
+		} elseif ($type === 'u') {
+			$desired = 'ul';
+		}
+
+		if (!empty($stack)) {
+			$top = array_pop($stack);
+			$close = $desired ? $desired : $top;
+		} else {
+			$close = $desired ? $desired : 'ul';
+		}
+
+		return ($close === 'ol') ? '</ol>' : '</ul>';
+	}, $html);
+
+	// If a user forgot to close a list, don't let it bleed into the next comment.
+	while (!empty($stack)) {
+		$close = array_pop($stack);
+		$html .= ($close === 'ol') ? '</ol>' : '</ul>';
+	}
+
 	return $html;
 }
 
