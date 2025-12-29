@@ -66,19 +66,22 @@ if (function_exists('is_https') && is_https()) {
 	header('Permissions-Policy: interest-cohort=(), autoplay=(self), camera=(self), fullscreen=*, geolocation=(self), microphone=(self), payment=()');
 	header('Referrer-Policy: strict-origin-when-cross-origin');
 	header('Strict-Transport-Security: max-age=15552000; includeSubDomains');
-	header('Cross-Origin-Embedder-Policy: same-origin');
+	header('Cross-Origin-Embedder-Policy: unsafe-none');
 	header('Cross-Origin-Opener-Policy: same-origin-allow-popups');
 	header('Cross-Origin-Resource-Policy: same-site');
 	header('X-Permitted-Cross-Domain-Policies: none');
 	header('X-Download-Options: noopen');
 } else {
-	header('Content-Security-Policy: frame-ancestors \'self\';');
+	header('Content-Security-Policy: frame-ancestors \'self\'; ' . //
+		'child-src \'self\';');
 }
 
 // Emergency solution for Shared hosting environments; should already be done in the php.ini file or server configuration
-header_remove('X-Powered-By'); // Hide server information
-header_remove('Server');
-header('Server: FlatPress');
+if (PHP_SAPI !== 'cli' && !headers_sent()) {
+	header_remove('X-Powered-By'); // Hide server information
+	header_remove('Server');
+	header('Server: FlatPress');
+}
 
 /**
  * Check if PrettyURLs plugin should allow editing htaccess.
