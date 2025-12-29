@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Storage
  * Description: Displays storage information from FlatPress. Part of the standard distribution.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
  * Author URI: https://flatpress.org
@@ -224,9 +224,24 @@ if (class_exists('AdminPanelAction')) {
 	 * @return bool True if disabled, false otherwise.
 	 */
 	function plugin_storage_is_disabled($fn) {
+		if (!function_exists('ini_get')) {
+			return false;
+		}
 		$df = (string) @ini_get('disable_functions');
+		if ($df === '') {
+			return false;
+		}
 		$bl = array_map('trim', explode(',', $df));
 		return in_array($fn, $bl, true);
+	}
+
+	/**
+	 * Convenience helper: checks if a function can be called (exists and not disabled via php.ini).
+	 * @param string $fn Function name.
+	 * @return bool
+	 */
+	function plugin_storage_can_use($fn) {
+		return function_exists($fn) && !plugin_storage_is_disabled($fn);
 	}
 
 	// ---- BOF: Webspace/Quota detection with cache ----
@@ -381,10 +396,10 @@ if (class_exists('AdminPanelAction')) {
 
 		// Last resort: filesystem capacity
 		if ($total <= 0 && is_string($root) && $root !== '') {
-			$tot = @disk_total_space($root);
+			$tot = plugin_storage_can_use('disk_total_space') ? @disk_total_space($root) : false;
 			if ($tot !== false) {
 				$total = (float)$tot;
-				$fre = @disk_free_space($root);
+				$fre = plugin_storage_can_use('disk_free_space') ? @disk_free_space($root) : false;
 				if ($fre !== false) {
 					$free = (float)$fre;
 					$used = $total - $free;
@@ -664,15 +679,17 @@ if (class_exists('AdminPanelAction')) {
 				if (function_exists('io_write_file')) {
 					@io_write_file($cf, $payload);
 				} else {
-					@file_put_contents($cf, $payload);
+					if (plugin_storage_can_use('file_put_contents')) {
+						@file_put_contents($cf, $payload);
+					}
 				}
 			}
 			$storage ['fp_size_bytes'] = (float)$sz;
 			list($cnt, $approx) = $this->format_number((float)$sz, 1024);
 			$storage ['fp_size'] = $cnt . ' ' . $binunit [$approx];
 
-			$tot = @disk_total_space($root);
-			$fre = @disk_free_space($root);
+			$tot = plugin_storage_can_use('disk_total_space') ? @disk_total_space($root) : false;
+			$fre = plugin_storage_can_use('disk_free_space') ? @disk_free_space($root) : false;
 			if ($tot !== false) {
 				$storage ['total_bytes'] = (float)$tot;
 				list($c2, $a2) = $this->format_number((float)$tot, 1024);
