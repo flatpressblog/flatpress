@@ -112,6 +112,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - Added Basque translation by [@xbhrnnd](https://github.com/xbhrnnd)
 - Reworked French translation by [@finkiki](https://github.com/finkiki) ([#754](https://github.com/flatpressblog/flatpress/pull/754), [#759](https://github.com/flatpressblog/flatpress/pull/759))
 - Reworked German translation by [@RainerBielefeld](https://github.com/RainerBielefeld) ([#747](https://github.com/flatpressblog/flatpress/pull/747))
+- Minor corrections to the Italian translation by [@eagleman](https://github.com/eagleman)
 
 # 2025-07-15: [FlatPress 1.4.1](https://github.com/flatpressblog/flatpress/releases/tag/1.4.1)
 
