@@ -33,7 +33,7 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 	// Part for the visitor-ip in FlatPress
 	'allow_visitor_ip' => 'Consentire a FlatPress di utilizzare l\'indirizzo IP non anonimo del visitatore.',
 	'allowVisitorIpDsc' => 'FlatPress salverà quindi l\'indirizzo IP non anonimo nei commenti, tra le altre cose. ' . //
-		'Se utilizzate il servizio Akismet antispam , anche Akismet riceverà l\'indirizzo IP non anonimo.',
+		'Se utilizzate il servizio antispam Akismet, anche Akismet riceverà l\'indirizzo IP non anonimo.',
 
 	// Part for Idle timeout for admin session
 	'session_timeout_label' => 'Timeout di inattività per sessione amministratore (minuti)',
