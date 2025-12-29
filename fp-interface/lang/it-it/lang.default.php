@@ -139,7 +139,7 @@ $lang ['comments'] = array(
 
 $lang ['comments'] ['error'] = array(
 	'name' => 'Devi inserire un nome',
-	'email' => 'Devi inserire un indirizzo email valido',
+	'email' => 'Devi inserire un indirizzo e-mail valido',
 	'www' => 'Devi inserire un URL valido',
 	'comment' => 'Devi inserire un commento'
 );

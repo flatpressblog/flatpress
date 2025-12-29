@@ -127,15 +127,15 @@ Queto è un articolo, mentre [url=static.php?page=about]Informazioni su[/url] è
 Le pagine statiche sono utili per creare pagine di informazioni generali. Puoi anche rendere una di queste pagine la [b]pagina di apertura[/b] per i tuoi visitatori. Questo vuol dire che con FlatPress puoi anche costruire un sito completo che non sia un blog. L\'opzione per rendere una pagina statica la pagina iniziale del tuo sito si trova nel [b]pannello delle opzioni[/b] del [url=admin.php]pannello di controllo[/url].
 
 
-[h4]Plugins[/h4]
+[h4]Plugin[/h4]
 
-FlatPress è molto personalizzabile e supporta dei [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]plugins[/url] per estenderne le funzioni. BBCode stesso è un plugin.
+FlatPress è molto personalizzabile e supporta dei [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]plugin[/url] per estenderne le funzioni. BBCode stesso è un plugin.
 
-Abbiamo creato altri contenuti di esempio per mostrarvi alcune delle funzioni ben nascoste di FP e chicche :)
+Abbiamo creato altri contenuti di esempio per mostrarvi alcune delle funzioni ben nascoste di FP e alcune chicche :)
 Puoi trovare due [b]pagine statiche[/b] pronte per accettare i tuoi contenuti:
 [list]
 [*][url=static.php?page=about]Chi sono[/url]
-[*][url=static.php?page=menu]Menu[/url] (nota che i collegamenti in questa pagine appariranno anche sulla barra laterale - questa è una magia del [b]widget blockparser[/b]. Consulta le [url=https://wiki.flatpress.org/doc:faq target=_blank rel=external]FAQ[/url] per questo e altro!)
+[*][url=static.php?page=menu]Menu[/url] (tieni conto che i collegamenti in questa pagine appariranno anche sulla barra laterale - questa è una magia del [b]widget blockparser[/b]. Consulta le [url=https://wiki.flatpress.org/doc:faq target=_blank rel=external]FAQ[/url] per questo e altro!)
 [/list]
 
 Con il plugin [b]PhotoSwipe[/b] è ora possibile posizionare le immagini in modo ancora più semplice, sia come float="left"- che come float="right" allineate a una singola immagine, circondata dal testo.
@@ -144,7 +144,7 @@ Con il plugin [b]PhotoSwipe[/b] è ora possibile posizionare le immagini in modo
 
 [h4]Widget[/h4]
 
-Non c\'è un singolo elemento fisso nelle barre laterali. Tutti gli elementi che si trovano nelle barre circondando questo testo sono completamente riposizionabili, e molti di loro sono personalizzabili. Alcun temi forniscono anche uno specifico pannello nel pannello di controllo.
+Non c\'è un singolo elemento fisso nelle barre laterali. Tutti gli elementi che si trovano nelle barre che circondano questo testo sono completamente riposizionabili, e molti di loro sono personalizzabili. Alcun temi forniscono anche uno specifico pannello nel pannello di controllo.
 
 Questi elementi si chiamano [b]widget[/b]. Per saperne di più sui widget e [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]alcuni consigli[/url] per ottenere dei bellissimi effetti, dai un\'occhiata sul [url=https://wiki.flatpress.org/ target=_blank rel=external]wiki[/url].
 
@@ -152,7 +152,7 @@ Questi elementi si chiamano [b]widget[/b]. Per saperne di più sui widget e [url
 [h4]Temi[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-Con il tema FlatPress-Leggero avete a disposizione 3 modelli di stile, dal classico al moderno. Questi modelli sono un ottimo inizio per creare qualcosa di proprio.
+Con il tema FlatPress-Leggero si hanno a disposizione 3 modelli di stile, dal classico al moderno. Questi modelli sono un ottimo inizio per creare qualcosa di proprio.
 
 
 [h4]Saperne di più[/h4]
@@ -165,14 +165,14 @@ Vuoi saperne di più?
 [*]Scarica [b]magnifici temi[/b] dagli [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]invii di altri utenti[/url]!
 [*]Dai un\'occhiata ai [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugin[/url].
 [*]Scarica [url=https://wiki.flatpress.org/res:language target=_blank rel=external]il pacchetto di traduzione[/url] per la tua lingua.
-[*]Potete seguire FlatPress anche su [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Puoi seguire FlatPress anche su [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
 [/list]
 
 
-[h4]Come posso aiutare?[/h4]
+[h4]Come posso essere utile?[/h4]
 
 [list]
-[*]Sostenete il progetto con una [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]piccola donazione.
+[*]Sostenendo il progetto con una [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]piccola donazione.
 [*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Contattaci[/url] per segnalare dei bug o suggerirci dei miglioramenti.
 [*]Contribuisci allo sviluppo di Flatpress su [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
 [*]Traduci FlatPress o la documentazione nella [url=https://wiki.flatpress.org/res:language target=_blank rel=external]tua lingua[/url].
@@ -199,8 +199,8 @@ $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'In alcuni Paesi, se si
 
 [b]Suggerimento:[/b] su Internet si trovano molti modelli e generatori.
 
-Potete inserirli qui. ([url=admin.php?p=static&action=write&page=privacy-policy]Modificatemi![/url])
+Possono essere inseriti qui. ([url=admin.php?p=static&action=write&page=privacy-policy]Modificami![/url])
 
-Se attivate il plugin CookieBanner, i vostri visitatori potranno accedere direttamente a questa pagina nel modulo di contatto e nella funzione dei commenti.
+Se viene attivato il plugin CookieBanner, i visitatori del sito potranno accedere direttamente a questa pagina nel modulo di contatto e nella funzione dei commenti.
 ';
 ?>
