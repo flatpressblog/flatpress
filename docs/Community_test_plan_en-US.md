@@ -1,6 +1,6 @@
 ## Summary
 
-- FlatPress 1.5 – Community Test Plan v1.1
+- FlatPress 1.5 RC2 – Community Test Plan v1.0
 
 <sub><i>I recommend working through the test plan step by step from top to bottom. Otherwise, some test steps may not be performed or may distort the overall result.</i></sub>
 
@@ -15,6 +15,7 @@
 - [ ] Open the browser of your choice and then run the setup (``setup.php``).
 - [ ] Then run the Bulk Content Generator (``gen-bulk.php?n=3000&k=10&seed=1234&spread=1080``) in your browser and wait until the summary is displayed.
 - [ ] Log in to the admin area, click on "Rebuild the FlatPress index" in the Maintenance menu, and wait until the summary is displayed.
+- [ ] "Purge theme and templates cache" in the Maintenance menu.
 - [ ] Activate all plugins that are part of the distribution.
 - [ ] Place missing widgets in the right widget bar.
 
@@ -54,6 +55,8 @@
 - [ ] Newsletter: Registration (valid/invalid/disposable emails), double opt-in, bulk mailing with status display.
 - [ ] BBCode Editor: Test new buttons (font); preview and save.
 - [ ] BBCode Editor: Upload images, create a gallery, and place the new gallery in an entry.
+- [ ] BBCode Editor: Sorted/unsorted lists in comments; comment on an entry with a list.
+- [ ] GDPR Video embed: Insert a YouTube video, e.g. ``https://www.youtube.com/watch?v=o6rBK0BqL2w`` into a new post; check thr frontend.
 - [ ] PrettyURLs: Activate, check links in the frontend. Repeat the test with all PrettyURLs modes.
 - [ ] PrettyURLs: Open a feed reader or feed browser add-on and check whether all feeds are accessible and readable. Repeat the test with all PrettyURLs modes.
 - [ ] Storage (formerly Stats): Check capacity displays and "Top Comments" only with the Postviews plugin enabled.
@@ -64,7 +67,7 @@
 - [ ] SEO Metatag info: Enter a description for a newly created post; check in the frontend whether an introduction is displayed.
 
 5) **Internationalization**
-- [ ] Switch language between German/English/Basque; check frontend/backend for missing/incorrect translations.
+- [ ] Switch language between German/English/Basque/French; check frontend/backend for missing/incorrect translations.
 
 6) **Safety & Robustness**
 - [ ] Incorrect form entries (contact/comment/newsletter) with special characters/emojis; expected validation.
