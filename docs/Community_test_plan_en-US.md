@@ -56,7 +56,7 @@
 - [ ] BBCode Editor: Test new buttons (font); preview and save.
 - [ ] BBCode Editor: Upload images, create a gallery, and place the new gallery in an entry.
 - [ ] BBCode Editor: Sorted/unsorted lists in comments; comment on an entry with a list.
-- [ ] GDPR Video embed: Insert a YouTube video, e.g. ``https://www.youtube.com/watch?v=o6rBK0BqL2w`` into a new post; check thr frontend.
+- [ ] GDPR Video embed: Insert a YouTube video, e.g. ``https://www.youtube.com/watch?v=o6rBK0BqL2w`` into a new post; check the frontend.
 - [ ] PrettyURLs: Activate, check links in the frontend. Repeat the test with all PrettyURLs modes.
 - [ ] PrettyURLs: Open a feed reader or feed browser add-on and check whether all feeds are accessible and readable. Repeat the test with all PrettyURLs modes.
 - [ ] Storage (formerly Stats): Check capacity displays and "Top Comments" only with the Postviews plugin enabled.
