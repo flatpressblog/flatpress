@@ -1,5 +1,7 @@
 <?php
-
+/*
+ * LangId: Français
+ */
 $lang ['setup'] = array(
 	'setup' => 'Installation'
 );
