@@ -41,6 +41,19 @@
 
 {entry_block}
 
+<div style="margin: 10px 0; font-size: 0.9em;">
+	Show 
+	{foreach from=$perpage_options item=opt name=perpage_loop}
+		{if $opt == $perpage_current}
+			<strong>{$opt}</strong>
+		{else}
+			<a href="admin.php?{$perpage_base_query}&amp;count={$opt}&amp;paged=1">{$opt}</a>
+		{/if}
+		{if !$smarty.foreach.perpage_loop.last} {/if}
+	{/foreach}
+	entries per page
+</div>
+
 <table class="entrylist">
 <thead><tr>{*<th>{$panelstrings.sel}</th>*}
 <th>{$panelstrings.date}</th>
