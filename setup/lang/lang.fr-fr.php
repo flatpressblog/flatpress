@@ -77,7 +77,7 @@ $lang ['step3'] = array(
 		<ul>
 		<li>Vers la <a href="%s">page principale de votre blog</a></li>
 		<li>Bon blog ! <a href="%s">Connectez-vous maintenant</a></li>
-		<li>Vous souhaitez faire part de vos compliments ou de vos critiques ? Rendez-nous visite sur <a href="https://www.flatpress.org/">FlatPress.org</a> !</li>
+		<li>Vous souhaitez faire part de vos compliments ou de vos critiques ? Rendez-nous visite sur <a href="https://www.flatpress.org/" target="_blank" rel="external">FlatPress.org</a> !</li>
 		</ul>
 
 		Merci d’avoir choisi FlatPress !'
