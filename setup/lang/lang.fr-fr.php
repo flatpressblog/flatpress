@@ -43,8 +43,8 @@ $lang ['step1'] = array(
 
 		Mais ne vous inquiétez pas, cela ne durera pas longtemps !',
 	'descrl1' => 'Choisissez votre langue.',
-	'descrl2' => 'Pas dans la liste ?',
-	'descrlang' => 'Si vous ne trouvez pas votre langue dans la liste, vérifiez s’il existe <a href="https://wiki.flatpress.org/res:language">un pack de langue correspondant</a> :
+	'descrl2' => '<a class="hint" onclick="toggleinfo();">Pas dans la liste ?</a>',
+	'descrlang' => 'Si vous ne trouvez pas votre langue dans la liste, vérifiez s’il existe <a href="https://wiki.flatpress.org/res:language" target="_blank" rel="external">un pack de langue correspondant</a> :
 
 		<pre>%s</pre>
 
