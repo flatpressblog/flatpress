@@ -139,7 +139,7 @@ Medium–High. Speeds up full comment listing on popular entries.
 
 ---
 
-### 2.3a Comment Count Cache – `fp:comments:count:…` (new)
+### 2.3a Comment Count Cache – `fp:comments:count:…`
 
 **Prefix:** `fp:comments:count:<entryId>:<dirMtime>`  
 **File:** `fp-includes/core/core.comment.php`  
@@ -435,7 +435,7 @@ Both store BLOG_BASEURL as a placeholder `%BLOG_BASEURL%` and expand it on read.
 **PrettyURLs dependency:**
 
 - Yes. The cached HTML and URL paths depend on the current PrettyURLs mode.
-- As of `flatpress-master`, PrettyURLs’ settings save (`onsubmit()`) calls `plugin_archives_cache_bump()` to keep this cache consistent with URL mode changes.
+- As of FlatPress `1.5 „Stringendo“`, PrettyURLs’ settings save (`onsubmit()`) calls `plugin_archives_cache_bump()` to keep this cache consistent with URL mode changes.
 
 **Impact:**  
 Medium. Reduces repeated archive computation and template rendering.
