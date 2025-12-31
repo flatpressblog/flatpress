@@ -59,6 +59,7 @@ class admin_entry_list extends AdminPanelActionValidated {
 		$perpage_count = $defcount;
 		if (isset($_REQUEST['count']) && in_array((int)$_REQUEST['count'], $allowed_counts, true)) {
 			$perpage_count = (int)$_REQUEST['count'];
+			// Cookie expires in 1 year (31536000 seconds)
 			setcookie($cookie_name, $perpage_count, time() + 31536000, '/');
 		} elseif (isset($_COOKIE[$cookie_name]) && in_array((int)$_COOKIE[$cookie_name], $allowed_counts, true)) {
 			$perpage_count = (int)$_COOKIE[$cookie_name];

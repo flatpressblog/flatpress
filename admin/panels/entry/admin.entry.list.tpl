@@ -48,8 +48,7 @@
 			<strong>{$opt}</strong>
 		{else}
 			<a href="admin.php?{$perpage_base_query}&amp;count={$opt}&amp;paged=1">{$opt}</a>
-		{/if}
-		{if !$smarty.foreach.perpage_loop.last} {/if}
+		{/if}{if !$smarty.foreach.perpage_loop.last} {/if}
 	{/foreach}
 	entries per page
 </div>
