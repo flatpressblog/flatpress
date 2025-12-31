@@ -173,11 +173,11 @@ Vuoi saperne di più?
 
 [list]
 [*]Sostenendo il progetto con una [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]piccola donazione.
-[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Contattaci[/url] per segnalare dei bug o suggerirci dei miglioramenti.
-[*]Contribuisci allo sviluppo di Flatpress su [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
-[*]Traduci FlatPress o la documentazione nella [url=https://wiki.flatpress.org/res:language target=_blank rel=external]tua lingua[/url].
-[*]Condividi la tua conoscenza e rimani in contatto con altri utenti di FlatPress sul [url=https://forum.flatpress.org/ target=_blank rel=external]forum[/url].
-[*]Parlane con chi vuoi! :)
+[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Contattandoci[/url] per segnalare dei bug o suggerirci dei miglioramenti.
+[*]Contribuendo allo sviluppo di Flatpress su [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
+[*]Traducendo FlatPress o la documentazione nella [url=https://wiki.flatpress.org/res:language target=_blank rel=external]tua lingua[/url].
+[*]Condividendo la tua conoscenza e rimanendo in contatto con altri utenti di FlatPress sul [url=https://forum.flatpress.org/ target=_blank rel=external]forum[/url].
+[*]Parlandone con chi vuoi! :)
 [/list]
 
 
