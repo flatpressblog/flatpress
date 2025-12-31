@@ -22,7 +22,9 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'action' => '作業を選んでください',
 	'act_del' => '削除',
 	'act_view' => '表示',
-	'act_edit' => '編集'
+	'act_edit' => '編集',
+	'perpage_show' => '表示',
+	'perpage_entries' => '記事数/ページ'
 );
 
 /* write action */

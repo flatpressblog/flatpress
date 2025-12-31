@@ -22,7 +22,9 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'action' => 'Ação',
 	'act_del' => 'Excluir',
 	'act_view' => 'Visualizar',
-	'act_edit' => 'Editar'
+	'act_edit' => 'Editar',
+	'perpage_show' => 'Mostrar',
+	'perpage_entries' => 'entradas por página'
 );
 
 /* write action */

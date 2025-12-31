@@ -22,7 +22,9 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'action' => 'Δράση',
 	'act_del' => 'Διαγραφή',
 	'act_view' => 'Προβολή',
-	'act_edit' => 'Επεξεργασία'
+	'act_edit' => 'Επεξεργασία',
+	'perpage_show' => 'Εμφάνιση',
+	'perpage_entries' => 'καταχωρήσεις ανά σελίδα'
 );
 
 /* write action */

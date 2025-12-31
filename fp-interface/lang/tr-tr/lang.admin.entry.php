@@ -22,7 +22,9 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'action' => 'İşlem',
 	'act_del' => 'Sil',
 	'act_view' => 'Görüntüle',
-	'act_edit' => 'Düzenle'
+	'act_edit' => 'Düzenle',
+	'perpage_show' => 'Göster',
+	'perpage_entries' => 'sayfa başına yazı'
 );
 
 /* yazma işlemi */
