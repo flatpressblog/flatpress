@@ -22,7 +22,9 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'action' => 'Akce',
 	'act_del' => 'Smazat',
 	'act_view' => 'Zobrazit',
-	'act_edit' => 'Upravit'
+	'act_edit' => 'Upravit',
+	'perpage_show' => 'Zobrazit',
+	'perpage_entries' => 'příspěvků na stránku'
 );
 
 /* write action */

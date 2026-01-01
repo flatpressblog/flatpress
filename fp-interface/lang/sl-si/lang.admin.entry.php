@@ -22,7 +22,9 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'action' => 'Dejanje',
 	'act_del' => 'Izbriši',
 	'act_view' => 'Poglej',
-	'act_edit' => 'Uredi'
+	'act_edit' => 'Uredi',
+	'perpage_show' => 'Prikaži',
+	'perpage_entries' => 'vnosov na stran'
 );
 
 /* dejanje pisanja */

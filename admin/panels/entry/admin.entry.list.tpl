@@ -1,9 +1,6 @@
 
 <h2>{$panelstrings.head}</h2>
 
-
-
-
 {draft_block}
 {if isset($draft_list)}
 	<div id="admin-drafts">
@@ -19,14 +16,12 @@
 {/if}
 {/draft_block}
 
-
-
 {include file="shared:errorlist.tpl"}
 
 <p>{$panelstrings.descr}</p>
 
 <form method="get" action="{$formtarget}?p=entry">
-<p> <input type="hidden" name="p" value="entry" /> </p>
+<p><input type="hidden" name="p" value="entry"></p>
 <fieldset><legend>{$panelstrings.filter}</legend>
 	<select name="category" class="alignleft">
 	<option label="{$lang.admin.entry.list.nofilter}" value="all">{$panelstrings.nofilter}</option>
@@ -41,59 +36,59 @@
 
 {entry_block}
 
+<div>
+	{$panelstrings.perpage_show}
+	{foreach from=$perpage_options item=opt name=perpage_loop}
+	{if $opt == $perpage_current}
+	<strong>{$opt}</strong>
+	{else}
+	<a href="admin.php?{$perpage_base_query}&amp;count={$opt}&amp;paged=1">{$opt}</a>
+	{/if}{if !$smarty.foreach.perpage_loop.last}{/if}
+	{/foreach}
+	{$panelstrings.perpage_entries}
+</div><br>
+
 <table class="entrylist">
-<thead><tr>{*<th>{$panelstrings.sel}</th>*}
-<th>{$panelstrings.date}</th>
-<th class="main-cell">{$panelstrings.title}</th>
-<th>ID</th>
-<!-- <th>{$panelstrings.author}</th> -->
-<th>{$panelstrings.comms}</th>
-<th>{$panelstrings.action}</th></tr></thead>
-<tbody>
-{entry}
-<tr>
-<td>{$id|entry_idtotime|date_format:"`$fp_config.locale.dateformatshort`, `$fp_config.locale.timeformat`"}</td>
-<td class="main-cell">
-{if in_array('draft',$categories)}
-(<em class="entry-flag">{$lang.entry.flags.short.draft}</em>)
-{/if}
-<a class="link-general" 
-href="{$panel_url|action_link:write}&amp;entry={$id}">
-{$subject|truncate:70} 
-</a>
-</td>
-<td>{$id}</td>
-<!-- <td>{$author}</td> -->
-<td><a class="link-general" 
-href="{$panel_url|action_link:commentlist}&amp;entry={$id}">
-{* Compatibility with pre-0.702 *}
-{$commentcount|default:$comments}</a></td>
-<td>
-<a class="link-general" 
-href="{$id|link:post_link}">
-{$panelstrings.act_view}
-</a>
-<a class="link-general" 
-href="{$panel_url|action_link:write}&amp;entry={$id}">
-{$panelstrings.act_edit}
-</a>
-<a class="link-delete" 
-href="{$panel_url|action_link:delete}&amp;entry={$id}">
-{$panelstrings.act_del}
-</a>
+	<thead>
+		<tr>{*<th>{$panelstrings.sel}</th>*}
+		<th>{$panelstrings.date}</th>
+		<th class="main-cell">{$panelstrings.title}</th>
+		<th>ID</th>
+		<!-- <th>{$panelstrings.author}</th> -->
+		<th>{$panelstrings.comms}</th>
+		<th>{$panelstrings.action}</th></tr>
+	</thead>
+	<tbody>
 
-</td>
+	{entry}
 
-</tr>
+		<tr>
+			<td>{$id|entry_idtotime|date_format:"`$fp_config.locale.dateformatshort`, `$fp_config.locale.timeformat`"}</td>
+			<td class="main-cell">
+				{if in_array('draft',$categories)}(<em class="entry-flag">{$lang.entry.flags.short.draft}</em>){/if}
+				<a class="link-general" href="{$panel_url|action_link:write}&amp;entry={$id}">{$subject|truncate:70}</a>
+			</td>
+			<td>
+				{$id}
+			</td>
+			<!-- <td>{$author}</td> -->
+			<td>
+				<a class="link-general" href="{$panel_url|action_link:commentlist}&amp;entry={$id}">{$commentcount|default:$comments}</a>
+			</td>
+			<td>
+				<a class="link-general" href="{$id|link:post_link}">{$panelstrings.act_view}</a>
+				<a class="link-general" href="{$panel_url|action_link:write}&amp;entry={$id}">{$panelstrings.act_edit}</a>
+				<a class="link-delete" href="{$panel_url|action_link:delete}&amp;entry={$id}">{$panelstrings.act_del}</a>
+			</td>
+		</tr>
 
-{/entry}
+	{/entry}
 
-</tbody></table>
+	</tbody>
+</table>
 
 <div class="navigation">
 	{prevpage admin=yes}
 	{nextpage admin=yes}
 </div>
 {/entry_block}
-
-

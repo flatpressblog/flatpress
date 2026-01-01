@@ -22,7 +22,9 @@ $lang ['admin'] ['entry'] ['list'] = array(
 	'action' => 'Ekintza',
 	'act_del' => 'Ezabatu',
 	'act_view' => 'Ikusi',
-	'act_edit' => 'Editatu'
+	'act_edit' => 'Editatu',
+	'perpage_show' => 'Erakutsi',
+	'perpage_entries' => 'sarrera orriko'
 );
 
 /* write action */
