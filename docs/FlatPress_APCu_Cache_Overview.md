@@ -4,6 +4,8 @@ This document summarizes all APCu-backed caches used in FlatPress `1.5 „String
 
 It is intended for maintainers, plugin authors, and performance testing.
 
+To view and manage user cache entries, [Joe Watkins'](https://github.com/krakjoe) [APCu Control Panel library](https://github.com/krakjoe/apcu) ([PHP License](https://github.com/krakjoe/apcu/blob/master/LICENSE)) can be used during the development phase.
+
 ---
 
 ## 1. Core APCu Helpers and Namespacing
