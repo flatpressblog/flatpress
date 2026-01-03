@@ -46,8 +46,9 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - Even more against race conditions
   - Batch shipping shows shipping status ([#649](https://github.com/flatpressblog/flatpress/pull/649))
 - FlatPress Protect plugin: update to version 1.2.1
-  - iFrames can only be embedded from the same domain.
+  - iFrames can only be embedded from the same domain, unless explicitly enabled.
   - It is now possible to change the idle timeout for admin sessions. ([#693](https://github.com/flatpressblog/flatpress/issues/693))
+  - The upload of SVG files can be allowed. ([#771](https://github.com/flatpressblog/flatpress/issues/771))
 - BBCode plugin: update to version 2.0.0
   - Memoization and optional APCu caches added ([#680](https://github.com/flatpressblog/flatpress/pull/680))
   - Font button added ([#689](https://github.com/flatpressblog/flatpress/issues/689))
