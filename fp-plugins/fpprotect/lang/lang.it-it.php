@@ -22,6 +22,15 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'</pre>' . //
 		'<p>Questo assicura che il browser del visitatore esegua solo gli script Java provenienti dal vostro blog FlatPress.</p>',
 
+	// Part for external iFrame embedding
+	'allow_external_iframe' => 'Consenti l\'incorporamento di contenuti esterni tramite iFrame (sconsigliato).',
+	'allowExternalIframeDsc' => 'Consente l\'incorporamento di contenuti esterni tramite il tag <code>&lt;iframe&gt;</code> (ad esempio, video, mappe, widget). ' . //
+		'I contenuti di terze parti incorporati possono tracciare i visitatori e potrebbero non essere sicuri. Abilita questa opzione solo se ne hai realmente bisogno.',
+
+	// Part for SVG uploads via admin uploader
+	'allow_svg_upload' => 'Consenti il ​​caricamento di file SVG tramite l\'uploader (solo utenti attendibili).',
+	'allowSvgUploadDsc' => 'Consente il caricamento di file SVG tramite l\'uploader amministratore. Gli SVG possono contenere contenuti attivi (ad esempio, script); abilita questa opzione solo se consideri attendibili gli uploader e non incorpori SVG non attendibili.',
+
 	// Part for the PrettyURLs .htaccess edit-field
 	'allow_htaccess_edit' => 'Consente la creazione e la modifica del file .htaccess.',
 	'allowPrettyURLEditDsc' => 'Consente l\'accesso al campo di modifica .htaccess del plugin PrettyURLs per creare o modificare il file .htaccess.',
@@ -47,6 +56,8 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Warning message
 	'warning_allowUnsafeInline' => 'Attenzione: Content-Security-Policy -> Questa policy contiene "unsafe-inline", che è pericoloso nella script-src-policy.',
+	'warning_allowExternalIframe' => 'Attenzione: Content-Security-Policy -> Incorporamento di iFrame esterno è abilitato. I contenuti di terze parti incorporati possono tracciare i visitatori e potrebbero non essere sicuri.',
+	'warning_allowSvgUpload' => 'Attenzione: i file SVG possono contenere contenuti attivi. Carica solo SVG attendibili e non incorporarli senza verifica!',
 	'warning_allowVisitorIp' => 'Attenzione: Utilizzo di indirizzi IP dei visitatori non anonimizzati -> Non dimenticate di informare <a href="static.php?page=privacy-policy" title="modifica pagina statica">i visitatori del vostro blog FlatPress</a>!'
 );
 ?>

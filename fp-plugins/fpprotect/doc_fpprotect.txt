@@ -23,6 +23,10 @@ Default settings
 By default, the editing option of the .htaccess file is hidden in the PrettyURLs plugin to protect this file from unwanted changes.
 With the FlatPress Protect plugin, you can allow access to the .htaccess edit field.
 
+By default, embedding external content via <iframe> is restricted on HTTP installs.
+If you need to embed external content (e.g. videos, maps, widgets), you can enable the corresponding option.
+Important: embedded third-party content can track visitors and may be unsafe.
+
 By default, the execution of insecure Java scripts is blocked in your blog visitor's browser.
 If you want to use a plugin with insecure integration, you can activate this option with this plugin.
 

@@ -22,6 +22,15 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'</pre>' . //
 		'<p>Honek bermatuko du bisitariaren nabigatzaileak zure FlatPress blogetik datozen JavaScript script-ak bakarrik exekutatuko dituela.</p>',
 
+	// Part for external iFrame embedding
+	'allow_external_iframe' => 'Kanpoko edukia iFrame bidez txertatzea baimendu (Ez da gomendagarria).',
+	'allowExternalIframeDsc' => 'Kanpoko edukia <code>&lt;iframe&gt;</code> etiketaren bidez txertatzea baimendu (adibidez, bideoak, mapak, widgetak). ' . //
+		'Txertatutako hirugarrenen edukiak bisitariak jarrai ditzake eta ez da segurua izan daiteke. Gaitu hau benetan behar baduzu bakarrik.',
+
+	// Part for SVG uploads via admin uploader
+	'allow_svg_upload' => 'Baimendu SVG fitxategiak igotzea kargatzailearen bidez (erabiltzaile fidagarrientzat bakarrik).',
+	'allowSvgUploadDsc' => 'Baimendu SVG fitxategiak administratzailearen kargatzailearen bidez igotzea. SVG-k eduki aktiboa izan dezake (adibidez, script-ak); gaitu hau kargatzaileengan konfiantza baduzu eta SVG fidagarriak ez txertatzen badituzu bakarrik.',
+
 	// Part for the PrettyURLs .htaccess edit-field
 	'allow_htaccess_edit' => 'Baimendu .htaccess fitxategia sortzea eta editatzea.',
 	'allowPrettyURLEditDsc' => 'PrettyURLs pluginaren .htaccess edizio eremurako sarbidea baimentzen du .htaccess fitxategia sortu edo aldatzeko.',
@@ -47,6 +56,8 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Warning message
 	'warning_allowUnsafeInline' => 'Abisua! Content-Security-Policy -> Politika honek "unsafe-inline" gako-hitza du, <code>script-src-policy</code> direktiba arriskuan jartzen duena.',
+	'warning_allowExternalIframe' => 'Abisua: Edukiaren Segurtasun Politika -> Kanpoko iFrame txertatzea gaituta dago. Txertatutako hirugarrenen edukiak bisitariak jarrai ditzake eta ez da segurua izan daiteke.',
+	'warning_allowSvgUpload' => 'Abisua: SVG fitxategiek eduki aktiboa izan dezakete. Kargatu SVG fidagarriak bakarrik eta ez txertatu berrikusi gabe!',
 	'warning_allowVisitorIp' => 'Abisua! Bisitariaren IP helbide ez-anonimizatuen erabilera -> Ez ahaztu zure FlatPress blogaren <a href="static.php?page=privacy-policy" title="edit static page">bisitariei</a> honen berri ematea!'
 );
 ?>

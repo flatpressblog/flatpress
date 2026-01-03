@@ -22,6 +22,15 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'</pre>' . //
 		'<p>This ensures that the visitor\'s browser only executes Java scripts that originate from your FlatPress blog.</p>',
 
+	// Part for external iFrame embedding
+	'allow_external_iframe' => 'Allow embedding external content via iFrame (Not recommended)',
+	'allowExternalIframeDsc' => 'Allows embedding external content via the <code>&lt;iframe&gt;</code> tag (e.g. videos, maps, widgets). ' . //
+		'Embedded third-party content can track visitors and may be unsafe. Enable this only if you really need it.',
+
+	// Part for SVG uploads via admin uploader
+	'allow_svg_upload' => 'Allow uploading SVG files via the uploader (trusted users only)',
+	'allowSvgUploadDsc' => 'Allows uploading SVG files via the admin uploader. SVG may contain active content (e.g. scripts); enable this only if you trust uploaders and do not embed untrusted SVGs.',
+
 	// Part for the PrettyURLs .htaccess edit-field
 	'allow_htaccess_edit' => 'Allow the creation and editing of the .htaccess file.',
 	'allowPrettyURLEditDsc' => 'Allows access to the .htaccess edit field of the PrettyURLs plugin to create or modify the .htaccess file.',
@@ -47,6 +56,8 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Warning message
 	'warning_allowUnsafeInline' => 'Warning: Content-Security-Policy -> This policy contains "unsafe-inline", which is dangerous in the script-src-policy.',
+	'warning_allowExternalIframe' => 'Warning: Content-Security-Policy -> External iFrame embedding is enabled. Embedded third-party content can track visitors and may be unsafe.',
+	'warning_allowSvgUpload' => 'Warning: SVG files can contain active content. Upload only trusted SVGs and do not embed them without review!',
 	'warning_allowVisitorIp' => 'Warning: Use of non-anonymized IP addresses of the visitor -> Don\'t forget to inform the <a href="static.php?page=privacy-policy" title="edit static page">visitors of your FlatPress blog</a> about this!'
 );
 ?>

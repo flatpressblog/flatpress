@@ -22,6 +22,15 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'</pre>' . //
 		'<p>これにより、訪問者のブラウザはFlatPressブログから発信されたJavaスクリプトのみを実行するようになります。</p>',
 
+	// Part for external iFrame embedding
+	'allow_external_iframe' => 'iFrame 経由での外部コンテンツの埋め込みを許可します（非推奨）。',
+	'allowExternalIframeDsc' => '<code>&lt;iframe&gt;</code> タグ経由での外部コンテンツの埋め込みを許可します（例：動画、マップ、ウィジェット）。 ' . //
+		'埋め込まれたサードパーティコンテンツは訪問者を追跡する可能性があり、安全ではない可能性があります。本当に必要な場合のみ有効にしてください。',
+
+	// Part for SVG uploads via admin uploader
+	'allow_svg_upload' => 'アップローダー経由での SVG ファイルのアップロードを許可します（信頼できるユーザーのみ）。',
+	'allowSvgUploadDsc' => '管理者アップローダー経由での SVG ファイルのアップロードを許可します。SVG にはアクティブコンテンツ（例：スクリプト）が含まれている場合があります。アップローダーを信頼し、信頼できない SVG を埋め込まない場合にのみ有効にしてください。',
+
 	// Part for the PrettyURLs .htaccess edit-field
 	'allow_htaccess_edit' => '.htaccess ファイルの作成と編集を許可します。',
 	'allowPrettyURLEditDsc' => 'PrettyURLsプラグインの.htaccess編集フィールドにアクセスし、.htaccessファイルの作成・修正を許可します。',
@@ -47,6 +56,8 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Warning message
 	'warning_allowUnsafeInline' => '警告： Content-Security-Policy -> このポリシーには 「unsafe-inline 」が含まれています。',
+	'warning_allowExternalIframe' => '警告： Content-Security-Policy -> 外部 iFrame 埋め込みが有効になっています。埋め込まれたサードパーティコンテンツは訪問者を追跡する可能性があり、安全ではない可能性があります。',
+	'warning_allowSvgUpload' => '警告： SVG ファイルにアクティブコンテンツが含まれている可能性があります。信頼できる SVG のみをアップロードし、確認なしで埋め込まないでください。',
 	'warning_allowVisitorIp' => '警告: 匿名化されていない訪問者のIPアドレスの使用 -> <a href="static.php?page=privacy-policy" title="静的ページの編集">FlatPressブログへの訪問者</a>にこのことを知らせることを忘れないでください！'
 );
 ?>

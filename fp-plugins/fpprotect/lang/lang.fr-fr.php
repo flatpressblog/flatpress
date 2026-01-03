@@ -22,6 +22,15 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'</pre>' . //
 		'<p>Cela permet de garantir que le navigateur du visiteur n’exécute que des scripts Java provenant de votre blog FlatPress.</p>',
 
+	// Part for external iFrame embedding
+	'allow_external_iframe' => 'Autoriser l’intégration de contenu externe via iFrame (non recommandé).',
+	'allowExternalIframeDsc' => 'Autoriser l’intégration de contenu externe via la balise <code>&lt;iframe&gt;</code> (par exemple, vidéos, cartes, widgets). ' . //
+		'Le contenu tiers intégré peut suivre les visiteurs et présenter des risques. N’activez cette option qu’en cas de nécessité absolue.',
+
+	// Part for SVG uploads via admin uploader
+	'allow_svg_upload' => 'Autoriser le chargement de fichiers SVG via l’outil de chargement (utilisateurs de confiance uniquement).',
+	'allowSvgUploadDsc' => 'Autoriser le chargement de fichiers SVG via l’outil de chargement d’administration. Les fichiers SVG peuvent contenir du contenu actif (par exemple, des scripts) ; n’activez cette option que si vous faites confiance aux utilisateurs qui chargent les fichiers et n’intégrez pas de fichiers SVG non fiables.',
+
 	// Part for the PrettyURLs .htaccess edit-field
 	'allow_htaccess_edit' => 'Permet de créer et d’éditer le fichier .htaccess.',
 	'allowPrettyURLEditDsc' => 'Permet d’accéder au champ d’édition .htaccess du plugin PrettyURLs pour créer ou modifier le fichier .htaccess.',
@@ -47,6 +56,8 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Warning message
 	'warning_allowUnsafeInline' => 'Avertissement : Politique de sécurité du contenu -> Cette politique contient « unsafe-inline », ce qui est risqué dans la directive script-src.',
+	'warning_allowExternalIframe' => 'Avertissement : La politique de sécurité du contenu (CSP) autorise l’intégration d’iFrames externes. Le contenu tiers intégré peut suivre les visiteurs et présenter des risques.',
+	'warning_allowSvgUpload' => 'Avertissement : Les fichiers SVG peuvent contenir du contenu actif. Chargez uniquement des fichiers SVG de confiance et ne les intégrez pas sans les avoir vérifiés au préalable !',
 	'warning_allowVisitorIp' => 'Avertissement : utilisation d’adresses IP non anonymisées du visiteur -> n’oubliez pas d’en informer les <a href="static.php?page=privacy-policy" title="modifier une page statique">visiteurs de votre blog FlatPress</a> !'
 );
 ?>
