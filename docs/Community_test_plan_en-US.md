@@ -66,6 +66,7 @@
 - [ ] Archives: Open and close, link check.
 - [ ] Calendar: Link check; previous vs. next month and daily links. Deactivate the plugin without removing the widget; check the frontend to see if there are any side effects.
 - [ ] SEO Metatag info: Enter a description for a newly created post; check in the frontend whether an introduction is displayed.
+- [ ] FlatPress Protect: Upload SVG file (must fail), activate corresponding option in the configuration menu -> FlatPress Protect, upload SVG file again.
 
 5) **Internationalization**
 - [ ] Switch language between German/English/Basque/French; check frontend/backend for missing/incorrect translations.
