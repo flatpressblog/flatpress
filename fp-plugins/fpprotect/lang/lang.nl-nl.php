@@ -22,6 +22,15 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'</pre>' . //
 		'<p>Dit zorgt ervoor dat de browser van de bezoeker alleen Java scripts uitvoert die afkomstig zijn van je FlatPress blog.</p>',
 
+	// Part for external iFrame embedding
+	'allow_external_iframe' => 'Het insluiten van externe content via iFrame toestaan ​​(niet aanbevolen).',
+	'allowExternalIframeDsc' => 'Hiermee kunt u externe content insluiten via de <code>&lt;iframe&gt;</code>-tag (bijv. video\'s, kaarten, widgets). ' . //
+		'Ingesloten content van derden kan bezoekers volgen en kan onveilig zijn. Schakel dit alleen in als u het echt nodig hebt.',
+
+	// Part for SVG uploads via admin uploader
+	'allow_svg_upload' => 'Het uploaden van SVG-bestanden via de uploader toestaan ​​(alleen voor vertrouwde gebruikers).',
+	'allowSvgUploadDsc' => 'Hiermee kunt u SVG-bestanden uploaden via de beheerdersuploader. SVG-bestanden kunnen actieve content bevatten (bijv. scripts); schakel dit alleen in als u uploaders vertrouwt en sluit geen onbetrouwbare SVG-bestanden in.',
+
 	// Part for the PrettyURLs .htaccess edit-field
 	'allow_htaccess_edit' => 'Laat het aanmaken en bewerken van het .htaccess bestand toe.',
 	'allowPrettyURLEditDsc' => 'Geeft toegang tot het .htaccess bewerkingsveld van de PrettyURLs plugin om het .htaccess bestand aan te maken of te wijzigen.',
@@ -47,6 +56,8 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Warning message
 	'warning_allowUnsafeInline' => 'Waarschuwing: Content-Security-Policy -> Dit beleid bevat "unsafe-inline", wat gevaarlijk is in het script-src-policy.',
+	'warning_allowExternalIframe' => 'Waarschuwing: Content-Security-Policy -> Het insluiten van externe iFrames is ingeschakeld. Ingesloten content van derden kan bezoekers volgen en kan onveilig zijn.',
+	'warning_allowSvgUpload' => 'Waarschuwing: SVG-bestanden kunnen actieve content bevatten. Upload alleen vertrouwde SVG-bestanden en sluit ze niet in zonder ze eerst te controleren!',
 	'warning_allowVisitorIp' => 'Waarschuwing: Gebruik van niet-geanonimiseerde IP-adressen van de bezoeker -> Vergeet niet de <a href="static.php?page=privacy-policy" title="edit static page">bezoekers van uw FlatPress-blog</a> hierover te informeren!'
 );
 ?>

@@ -22,6 +22,15 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'</pre>' . //
 		'<p>Tím zajistíte, že prohlížeč návštěvníka spustí pouze skripty Java, které pocházejí z vašeho blogu FlatPress.</p>',
 
+	// Part for external iFrame embedding
+	'allow_external_iframe' => 'Povolit vkládání externího obsahu přes iFrame (nedoporučeno).',
+	'allowExternalIframeDsc' => 'Umožňuje vkládání externího obsahu přes tag <code>&lt;iframe&gt;</code> (např. videa, mapy, widgety). ' . //
+		'Vložený obsah třetích stran může sledovat návštěvníky a může být nebezpečný. Tuto funkci povolte pouze v případě, že ji skutečně potřebujete.',
+
+	// Part for SVG uploads via admin uploader
+	'allow_svg_upload' => 'Povolit nahrávání souborů SVG prostřednictvím nástroje pro nahrávání (pouze důvěryhodní uživatelé).',
+	'allowSvgUploadDsc' => 'Povoluje nahrávání souborů SVG prostřednictvím nástroje pro nahrávání správce. Soubory SVG mohou obsahovat aktivní obsah (např. skripty); tuto funkci povolte pouze v případě, že důvěřujete uživatelům nahrávajícím soubory a nevkládáte nedůvěryhodné soubory SVG.',
+
 	// Part for the PrettyURLs .htaccess edit-field
 	'allow_htaccess_edit' => 'Umožňuje vytvoření a úpravu souboru .htaccess.',
 	'allowPrettyURLEditDsc' => 'Umožňuje přístup k editačnímu poli .htaccess zásuvného modulu PrettyURLs pro vytvoření nebo úpravu souboru .htaccess.',
@@ -47,6 +56,8 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Warning message
 	'warning_allowUnsafeInline' => 'Varování: Content-Security-Policy -> Tato zásada obsahuje "unsafe-inline", což je v zásadě script-src-policy nebezpečné.',
+	'warning_allowExternalIframe' => 'Varování: Content-Security-Policy -> Vkládání externích iFrame je povoleno. Vložený obsah třetích stran může sledovat návštěvníky a může být nebezpečný.',
+	'warning_allowSvgUpload' => 'Varování: Soubory SVG mohou obsahovat aktivní obsah. Nahrajte pouze důvěryhodné soubory SVG a nevkládejte je bez kontroly!',
 	'warning_allowVisitorIp' => 'Varování: Použití neanonymizovaných IP adres návštěvníků -> Nezapomeňte o tom informovat <a href="static.php?page=privacy-policy" title="editovat statickou stránku">návštěvníky vašeho blogu FlatPress</a>!'
 );
 ?>

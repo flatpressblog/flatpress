@@ -22,6 +22,15 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'</pre>' . //
 		'<p>So wird sichergestellt, dass der Browser des Besuchers nur Java-Skripte ausführt, welche von deinem FlatPress-Blog stammen.</p>',
 
+	// Part for external iFrame embedding
+	'allow_external_iframe' => 'Externe Inhalte per iFrame einbetten erlauben (Nicht empfohlen)',
+	'allowExternalIframeDsc' => 'Erlaubt das Einbetten externer Inhalte über das <code>&lt;iframe&gt;</code>-Tag (z.B. Videos, Karten, Widgets). ' . //
+		'Eingebettete Drittinhalte können Besucher verfolgen und können unsicher sein. Aktiviere das nur, wenn du es wirklich brauchst.',
+
+	// Part for SVG uploads via admin uploader
+	'allow_svg_upload' => 'SVG-Dateien über den Uploader hochladen erlauben (Nur für vertrauenswürdige Benutzer)',
+	'allowSvgUploadDsc' => 'Erlaubt das Hochladen von SVG-Dateien über den Admin-Uploader. SVG kann aktiven Inhalt (z.B. Skripte) enthalten; aktiviere dies nur, wenn du den Uploads vertraust und SVG-Dateien nicht ungeprüft einbindest.',
+
 	// Part for the PrettyURLs .htaccess edit-field
 	'allow_htaccess_edit' => 'Erlaube das Erstellen und Editieren der .htaccess Datei.',
 	'allowPrettyURLEditDsc' => 'Erlaubt den Zugriff auf das .htaccess Bearbeitungsfeld des PrettyURLs-Plugins, um die .htaccess-Datei zu erstellen oder zu ändern.',
@@ -47,6 +56,8 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Warning message
 	'warning_allowUnsafeInline' => 'Warnung: Content-Security-Policy -> Diese Richtlinie enthält "unsafe-inline", was in der script-src-Richtlinie gefährlich ist.',
+	'warning_allowExternalIframe' => 'Warnung: Content-Security-Policy -> Externe iFrame-Einbettung ist aktiviert. Eingebettete Drittinhalte können Besucher verfolgen und können unsicher sein.',
+	'warning_allowSvgUpload' => 'Warnung: SVG-Dateien können aktiven Inhalt enthalten. Lade nur vertrauenswürdige SVGs hoch und binde sie nicht ungeprüft ein!',
 	'warning_allowVisitorIp' => 'Warnung: Verwendung nicht anonymisierter IP-Adressen des Besuchers -> Vergesse nicht, die <a href="static.php?page=privacy-policy" title="statische Seite bearbeiten">Besucher deines FlatPress-Blogs</a> darauf hinzuweisen!'
 );
 ?>

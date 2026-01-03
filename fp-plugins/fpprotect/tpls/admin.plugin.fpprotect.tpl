@@ -15,6 +15,22 @@
 	</fieldset>
 
 	<fieldset>
+		<label for="allowExternalIframe">
+			<input type="checkbox" name="allowExternalIframe" id="allowExternalIframe" value="1" {if isset($allowExternalIframe) && $allowExternalIframe == true}checked{/if}>
+			{$plang.allow_external_iframe}
+		</label>
+		<p>{$plang.allowExternalIframeDsc}</p>
+	</fieldset>
+
+	<fieldset>
+		<label for="allowSvgUpload">
+			<input type="checkbox" name="allowSvgUpload" id="allowSvgUpload" value="1" {if isset($allowSvgUpload) && $allowSvgUpload == true}checked{/if}>
+			{$plang.allow_svg_upload}
+		</label>
+		<p>{$plang.allowSvgUploadDsc}</p>
+	</fieldset>
+
+	<fieldset>
 		<label for="allowPrettyURLEdit">
 			<input type="checkbox" name="allowPrettyURLEdit" id="allowPrettyURLEdit" value="1" {if isset($allowPrettyURLEdit) && $allowPrettyURLEdit == true}checked{/if}>
 			{$plang.allow_htaccess_edit}

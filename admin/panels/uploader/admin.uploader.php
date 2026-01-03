@@ -8,7 +8,7 @@
  * Date:
  * Purpose:
  * Input:
- * Change-Date: 22.12.2025, by FKM
+ * Change-Date: 03.01.2026, by FKM
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
  *
@@ -181,9 +181,16 @@ class admin_uploader_default extends AdminPanelAction {
 
 		// FPPROTECT: Load configuration
 		$pluginConfig = plugin_getoptions('fpprotect');
-		$allowImageMetadata = isset($pluginConfig ['allowImageMetadata']) ? (bool)$pluginConfig ['allowImageMetadata'] : false;
+		if (!is_array($pluginConfig)) {
+			$pluginConfig = array();
+		}
+		// FPPROTECT: Allow the original metadata in the images
+		$allowImageMetadata = !empty($pluginConfig ['allowImageMetadata']);
 
 		$removeMetadata = !$allowImageMetadata;
+
+		// FPPROTECT: Allow uploading SVG files
+		$allowSvgUpload = !empty($pluginConfig ['allowSvgUpload']);
 
 		$success = false;
 
@@ -256,17 +263,25 @@ class admin_uploader_default extends AdminPanelAction {
 			'sh',
 			'so',
 			'svg',
+			'svgz',
 			'wml',
 			'xml',
 			'xsig'
 		);
+
+		if ($allowSvgUpload) {
+			// Allow explicit SVG uploads when enabled in FlatPress Protect
+			$blacklist_extensions = array_values(array_diff($blacklist_extensions, array('svg', 'svgz')));
+		}
 
 		$imgs = array(
 			'.jpg',
 			'.gif',
 			'.png',
 			'.jpeg',
-			'.webp'
+			'.webp',
+			'.svg',
+			'.svgz'
 		);
 
 		// intentionally

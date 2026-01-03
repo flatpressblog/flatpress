@@ -11,8 +11,10 @@
 // Define default options for the plugin
 define('FP_PROTECT_DEFAULT_OPTIONS', [
 	'allowUnsafeInline' => false,
+	'allowExternalIframe' => false,
 	'allowPrettyURLEdit' => false,
 	'allowImageMetadata' => false,
+	'allowSvgUpload' => false,
 	'allowVisitorIp' => false,
 ]);
 
@@ -32,6 +34,8 @@ function fpprotect_get_options() {
 // Get options once for this scope
 $options = fpprotect_get_options();
 
+$allow_external_iframe = !empty($options ['allowExternalIframe']);
+
 if (function_exists('is_https') && is_https()) {
 
 	$random_hex = RANDOM_HEX;
@@ -41,12 +45,20 @@ if (function_exists('is_https') && is_https()) {
 	$scriptSrc .= $options ['allowUnsafeInline'] ? '\'unsafe-inline\' https:;' : '\'nonce-' . $random_hex . '\' https:;';
 
 	/**
+	 * iFrame embedding policy
+	 * - frame-src controls which origins this site may embed via <iframe>
+	 * - child-src is used by some browsers as a fallback for frame-src
+	 */
+	$frameSrc = $allow_external_iframe ? 'frame-src \'self\' https: data:; ' : 'frame-src \'self\'; ';
+	$childSrc = $allow_external_iframe ? 'child-src \'self\' https: data:; ' : 'child-src \'self\'; ';
+
+	/**
 	 * Content Security Policy rules for Youtube, Facebook and Vimeo embedded video / BBCode [video], embedded OSM '
 	 * https://scotthelme.co.uk/content-security-policy-an-introduction/
 	 */
 	header('Content-Security-Policy: upgrade-insecure-requests; ' . // Is migrating from HTTP to HTTPS, will ensure that all requests will be sent over HTTPS with no fallback to HTTP
 		'default-src \'none\'; ' . // The default-src directive is the default setting for all directives that load additional content such as JavaScript, images, CSS, fonts, AJAX requests, frames and HTML5 media.
-		'frame-src \'self\' https: data:; ' . // Allows iframes from other sources - only via https
+		$frameSrc . // Allows iframes from other sources
 		'frame-ancestors \'self\'; ' . // Defines permitted sources that may have embedded content, such as <frame>, <iframe>, <object>, <embed> and <applet>.
 		'base-uri \'self\'; ' . //
 		'font-src \'self\' https: data:; ' . // Allows fonts from other sources (e.g. font awesome) - only via https
@@ -57,7 +69,7 @@ if (function_exists('is_https') && is_https()) {
 		'worker-src \'self\' blob:; ' . //
 		'connect-src \'self\' https:; ' . // Applies to XMLHttpRequests (AJAX), WebSockets or EventSource - only via https. Otherwise emulate 400 HTTP status code
 		'media-src \'self\' https:; ' . // Defines permitted sources for audio and video, e.g. HTML5 <audio>, <video> elements.
-		'child-src \'self\'; ' . // Defines permitted sources for web workers and nested browsing contexts for elements such as <frame> and <iframe> - only via https
+		$childSrc . // Defines permitted sources for web workers and nested browsing contexts for elements such as <frame> and <iframe>
 		'form-action \'self\'; ' . // Defines permitted targets for HTML forms
 		'object-src \'self\' https:;' // Defines permitted sources for plugins, e.g. <object>, <embed> or <applet> - only via https
 	);
@@ -72,8 +84,16 @@ if (function_exists('is_https') && is_https()) {
 	header('X-Permitted-Cross-Domain-Policies: none');
 	header('X-Download-Options: noopen');
 } else {
-	header('Content-Security-Policy: frame-ancestors \'self\'; ' . //
-		'child-src \'self\';');
+	if ($allow_external_iframe) {
+		// Allow embedding external content via <iframe> on HTTP installs as well
+		header('Content-Security-Policy: frame-ancestors \'self\'; ' . //
+			'frame-src \'self\' http: https: data:; ' . //
+			'child-src \'self\' http: https: data:;');
+	} else {
+		header('Content-Security-Policy: frame-ancestors \'self\'; ' . //
+			'frame-src \'self\'; ' . //
+			'child-src \'self\';');
+	}
 }
 
 // Emergency solution for Shared hosting environments; should already be done in the php.ini file or server configuration
@@ -133,12 +153,16 @@ if (class_exists('AdminPanelAction')) {
 
 			// Expose admin-session timeout to template (minutes)
 			$admin_timeout = isset($fp_config ['auth'] ['session_timeout']) ? (int)$fp_config ['auth'] ['session_timeout'] : 3600;
-			if ($admin_timeout <= 0) { $admin_timeout = 3600; }
+			if ($admin_timeout <= 0) {
+				$admin_timeout = 3600;
+			}
 			$this->smarty->assign('session_timeout_minutes', (int) ceil($admin_timeout / 60));
 
 			// Define warnings for specific options
 			$warnings = [
 				'allowUnsafeInline' => 'warning_allowUnsafeInline',
+				'allowExternalIframe' => 'warning_allowExternalIframe',
+				'allowSvgUpload' => 'warning_allowSvgUpload',
 				'allowVisitorIp' => 'warning_allowVisitorIp',
 			];
 
@@ -170,7 +194,7 @@ if (class_exists('AdminPanelAction')) {
 			$minutes = isset($_POST ['session_timeout_minutes']) ? (int) $_POST ['session_timeout_minutes'] : 0;
 			global $fp_config;
 			if (!isset($fp_config ['auth']) || !is_array($fp_config ['auth'])) {
-				$fp_config['auth'] = array();
+				$fp_config ['auth'] = array();
 			}
 			if ($minutes > 0) {
 				$fp_config ['auth'] ['session_timeout'] = $minutes * 60;

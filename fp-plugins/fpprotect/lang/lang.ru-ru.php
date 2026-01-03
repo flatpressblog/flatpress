@@ -22,6 +22,15 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'</pre>' . //
 		'<p>Это гарантирует, что браузер посетителя будет выполнять только те Java-скрипты, которые исходят от вашего блога FlatPress.</p>',
 
+	// Part for external iFrame embedding
+	'allow_external_iframe' => 'Разрешить встраивание внешнего контента через iFrame (не рекомендуется).',
+	'allowExternalIframeDsc' => 'Разрешает встраивание внешнего контента через тег <code><iframe></code> (например, видео, карты, виджеты). ' . //
+		'Встроенный сторонний контент может отслеживать посетителей и может быть небезопасным. Включайте эту опцию только в случае крайней необходимости.',
+
+	// Part for SVG uploads via admin uploader
+	'allow_svg_upload' => 'Разрешить загрузку SVG-файлов через загрузчик (только для доверенных пользователей).',
+	'allowSvgUploadDsc' => 'Разрешает загрузку SVG-файлов через административный загрузчик. SVG может содержать активный контент (например, скрипты); включайте эту опцию только в том случае, если вы доверяете загрузчикам и не встраиваете ненадежные SVG-файлы.',
+
 	// Part for the PrettyURLs .htaccess edit-field
 	'allow_htaccess_edit' => 'Разрешить создание и редактирование файла .htaccess.',
 	'allowPrettyURLEditDsc' => 'Позволяет получить доступ к полю редактирования .htaccess плагина PrettyURLs для создания или изменения файла .htaccess.',
@@ -47,6 +56,8 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Warning message
 	'warning_allowUnsafeInline' => 'Предупреждение: Content-Security-Policy -> Эта политика содержит "unsafe-inline", что опасно в script-src-policy.',
+	'warning_allowExternalIframe' => 'Предупреждение: Content-Security-Policy -> Встраивание внешнего контента через iFrame включено. Встроенный сторонний контент может отслеживать посетителей и может быть небезопасным.',
+	'warning_allowSvgUpload' => 'Предупреждение: SVG-файлы могут содержать активный контент. Загружайте только доверенные SVG-файлы и не встраивайте их без проверки!',
 	'warning_allowVisitorIp' => 'Предупреждение: использование неанонимизированных IP-адресов посетителей -> Не забудьте сообщить <a href="static.php?page=privacy-policy" title="edit static page">посетителям вашего FlatPress-блога</a> об этом!'
 );
 ?>

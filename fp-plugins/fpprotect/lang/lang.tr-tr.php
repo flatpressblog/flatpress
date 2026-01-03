@@ -22,6 +22,15 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 		'</pre>' . //
 		'<p>Bu, ziyaretçinin tarayıcısının yalnızca FlatPress blogunuzdan gelen JavaScript\'leri çalıştırmasını sağlar.</p>',
 
+	// Part for external iFrame embedding
+	'allow_external_iframe' => 'iFrame aracılığıyla harici içerik yerleştirmeye izin verin (Önerilmez).',
+	'allowExternalIframeDsc' => '<code>&lt;iframe&gt;</code> etiketi aracılığıyla harici içerik yerleştirmeye izin verir (örneğin videolar, haritalar, widget\'lar). ' . //
+		'Yerleştirilen üçüncü taraf içerik ziyaretçileri izleyebilir ve güvenli olmayabilir. Bunu yalnızca gerçekten ihtiyacınız varsa etkinleştirin.',
+
+	// Part for SVG uploads via admin uploader
+	'allow_svg_upload' => 'Yükleyici aracılığıyla SVG dosyaları yüklemeye izin verin (yalnızca güvenilir kullanıcılar).',
+	'allowSvgUploadDsc' => 'Yönetici yükleyicisi aracılığıyla SVG dosyaları yüklemeye izin verir. SVG aktif içerik (örneğin komut dosyaları) içerebilir; bunu yalnızca yükleyicilere güveniyorsanız ve güvenilmeyen SVG\'leri yerleştirmiyorsanız etkinleştirin.',
+
 	// PrettyURLs .htaccess düzenleme alanı için bölüm
 	'allow_htaccess_edit' => '.htaccess dosyasının oluşturulmasına ve düzenlenmesine izin ver.',
 	'allowPrettyURLEditDsc' => '.htaccess dosyasını oluşturmak veya düzenlemek için PrettyURLs eklentisinin düzenleme alanına erişime izin verir.',
@@ -47,6 +56,8 @@ $lang ['admin'] ['config'] ['fpprotect'] = array(
 
 	// Uyarı mesajı
 	'warning_allowUnsafeInline' => 'Uyarı: Content-Security-Policy -> Bu politika "unsafe-inline" içeriyor, bu script-src politikasında tehlikelidir.',
+	'warning_allowExternalIframe' => 'Uyarı: İçerik Güvenlik Politikası -> Harici iFrame yerleştirme etkinleştirildi. Yerleştirilen üçüncü taraf içerik ziyaretçileri izleyebilir ve güvenli olmayabilir.',
+	'warning_allowSvgUpload' => 'Uyarı: SVG dosyaları aktif içerik içerebilir. Yalnızca güvenilir SVG\'leri yükleyin ve incelemeden yerleştirmeyin!',
 	'warning_allowVisitorIp' => 'Uyarı: Ziyaretçinin anonimleştirilmemiş IP adresi kullanımı -> Lütfen FlatPress blogunuzun <a href="static.php?page=privacy-policy" title="statik sayfa düzenle">ziyaretçilerini</a> bu konuda bilgilendirdiğinizden emin olun!'
 );
 ?>
