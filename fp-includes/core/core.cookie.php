@@ -31,7 +31,7 @@ function cookie_setup() {
 		define('COOKIEPATH', preg_replace('|https?://[^/]+(/.*?)/?$|i', '$1', BLOG_BASEURL) ?: '/');
 	}
 	if (!defined('COOKIE_DOMAIN')) {
-		define('COOKIE_DOMAIN', false);
+		define('COOKIE_DOMAIN', '');
 	}
 	if (!defined('COOKIE_SECURE')) {
 		define('COOKIE_SECURE', is_https());
@@ -52,30 +52,63 @@ function cookie_setup() {
 function get_cookie_options($expiry = 0, $is_session = false) {
 	// For `session_set_cookie_params` `lifetime` is used instead of `expires`
 	if ($is_session) {
-		return [
+		$opts = [
 			'lifetime' => $expiry,
 			'path' => COOKIEPATH,
-			'domain' => COOKIE_DOMAIN,
 			'secure' => COOKIE_SECURE,
 			'httponly' => COOKIE_HTTPONLY,
 			'samesite' => version_compare(PHP_VERSION, '7.3', '>=') ? SAMESITE_VALUE : null,
 		];
+		if (is_string(COOKIE_DOMAIN) && COOKIE_DOMAIN !== '') {
+			$opts ['domain'] = COOKIE_DOMAIN;
+		}
+		return $opts;
 	}
 
 	// For `setcookie()`
 	$options = [
 		'expires' => $expiry,
 		'path' => COOKIEPATH,
-		'domain' => COOKIE_DOMAIN,
 		'secure' => COOKIE_SECURE,
 		'httponly' => COOKIE_HTTPONLY,
 	];
+
+	if (is_string(COOKIE_DOMAIN) && COOKIE_DOMAIN !== '') {
+		$options ['domain'] = COOKIE_DOMAIN;
+	}
 
 	if (version_compare(PHP_VERSION, '7.3', '>=')) {
 		$options ['samesite'] = SAMESITE_VALUE;
 	}
 
 	return $options;
+}
+
+/**
+ * Compatibility wrapper for setting cookies with modern options on PHP >= 7.3
+ * and a safe SameSite workaround on PHP < 7.3.
+ *
+ * @param string $name
+ * @param string $value
+ * @param int $expires Unix timestamp (0 for session cookie).
+ * @return bool
+ */
+function fp_setcookie($name, $value = '', $expires = 0) {
+	// PHP >= 7.3 supports the options array (including SameSite)
+	if (version_compare(PHP_VERSION, '7.3', '>=')) {
+		$cookie_options = get_cookie_options($expires);
+		return setcookie($name, $value, $cookie_options);
+	}
+
+	// PHP < 7.3: use the classic signature and inject SameSite into the path.
+	$path = COOKIEPATH;
+	if (defined('SAMESITE_VALUE') && SAMESITE_VALUE !== '') {
+		$path .= '; SameSite=' . SAMESITE_VALUE;
+	}
+
+	$domain = (is_string(COOKIE_DOMAIN) && COOKIE_DOMAIN !== '') ? COOKIE_DOMAIN : '';
+
+	return setcookie($name, $value, (int)$expires, $path, $domain, COOKIE_SECURE, COOKIE_HTTPONLY);
 }
 
 /**
@@ -108,22 +141,19 @@ function sess_setup() {
 		if (version_compare(PHP_VERSION, '7.3', '>=')) {
 			session_set_cookie_params($session_cookie_options);
 		} else {
+			$path = COOKIEPATH;
+			if (defined('SAMESITE_VALUE') && SAMESITE_VALUE !== '') {
+				$path .= '; SameSite=' . SAMESITE_VALUE;
+			}
 			ini_set('session.cookie_httponly', 1);
 			ini_set('session.cookie_secure', COOKIE_SECURE);
-			ini_set('session.cookie_path', COOKIEPATH);
-			session_set_cookie_params(0, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
+			ini_set('session.cookie_path', $path);
+			$domain = (is_string(COOKIE_DOMAIN) && COOKIE_DOMAIN !== '') ? COOKIE_DOMAIN : '';
+			session_set_cookie_params(0, $path, $domain, COOKIE_SECURE, COOKIE_HTTPONLY);
 		}
 
 		session_name(SESS_COOKIE);
 		session_start();
-
-		// Set the SameSite attribute manually for PHP < 7.3
-		if (version_compare(PHP_VERSION, '7.3', '<')) {
-			header('Set-Cookie: ' . session_name() . '=' . session_id() . //
-				'; Path=' . COOKIEPATH . //
-				'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
-				'; HttpOnly; SameSite=' . SAMESITE_VALUE);
-		}
 
 		if (isset($_SESSION ['last_activity'])) {
 			// Check if the session has expired
@@ -184,8 +214,7 @@ function sess_close() {
 		session_destroy();
 
 		// Delete the session cookie
-		$cookie_options = get_cookie_options(time() - 3600);
-		setcookie(session_name(), '', $cookie_options);
+		fp_setcookie(session_name(), '', time() - 3600);
 	}
 }
 
@@ -194,17 +223,6 @@ function sess_close() {
  */
 function cookie_clear() {
 	$cookie_expiry = time() - 31536000;
-	$cookie_options = get_cookie_options($cookie_expiry);
-
-	if (version_compare(PHP_VERSION, '7.3', '>=')) {
-		setcookie(SESS_COOKIE, '', $cookie_options);
-	} else {
-		// Manual setting of the cookie for PHP < 7.3
-		setcookie(SESS_COOKIE, '', $cookie_expiry, COOKIEPATH, COOKIE_DOMAIN, COOKIE_SECURE, COOKIE_HTTPONLY);
-		header('Set-Cookie: ' . SESS_COOKIE . '=; Expires=' . gmdate('D, d-M-Y H:i:s T', $cookie_expiry) . //
-			'; Path=' . COOKIEPATH . //
-			'; Secure=' . (COOKIE_SECURE ? 'true' : 'false') . //
-			'; HttpOnly; SameSite=' . SAMESITE_VALUE);
-	}
+	fp_setcookie(SESS_COOKIE, '', $cookie_expiry);
 }
 ?>
