@@ -9,6 +9,7 @@
 - [ ] Download [the latest developer version](https://github.com/flatpressblog/flatpress/archive/refs/heads/master.zip) or [the latest release candidate](https://github.com/flatpressblog/flatpress/releases) of [FlatPress](https://github.com/flatpressblog/flatpress).
 - [ ] Download the latest version of the [Bulk Content Generator](https://github.com/flatpressblog/flatpress-extras/tree/master/fp-tools/gen-bulk).
 - [ ] If possible and available, install the [APCu cache extension](https://github.com/flatpressblog/flatpress/blob/master/docs/APCu_Installation_and_Activation.md) on your web server.
+- [ ] Clear the browser cache of the browsers you want to use for testing and disable all third-party browser add-ons.
 - [ ] [Install FlatPress](https://wiki.flatpress.org/en:doc:basic:installation) on your web server. If you already have a FlatPress instance, install the latest version as a separate instance (e.g., `/fp15-dev`).
 - [ ] Copy the Bulk Content Generator to the blog root directory to generate test data.
 - [ ] If necessary, recursively adjust the ownership rights and file and directory permissions.
