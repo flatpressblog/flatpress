@@ -309,7 +309,7 @@ class fs_chmodder extends fs_filelister {
 
 		if (is_dir($path)) {
 			$retval = 1;
-			if ($is_admin_dir || $is_config_dir || $is_users_dir || $is_includes_dir || $is_lang_dir || $is_sharedtpls_dir) {
+			if ($is_config_dir || $is_users_dir || $is_includes_dir || $is_lang_dir || $is_sharedtpls_dir) {
 				// Core permissions for system-critical directories
 				$chmod_value = CORE_DIR_PERMISSIONS;
 			} else {
@@ -321,7 +321,7 @@ class fs_chmodder extends fs_filelister {
 			if ($is_defaults_file) {
 				// Specific permissions for defaults.php
 				$chmod_value = CORE_FILE_PERMISSIONS;
-			} elseif ($is_admin_dir || $is_config_dir || $is_users_dir || $is_includes_dir || $is_lang_dir || $is_sharedtpls_dir) {
+			} elseif ($is_config_dir || $is_users_dir || $is_includes_dir || $is_lang_dir || $is_sharedtpls_dir) {
 				// Core permissions for system-critical files
 				$chmod_value = CORE_FILE_PERMISSIONS;
 			} else {
@@ -360,7 +360,6 @@ function fs_chmod_recursive($fpath = BASE_DIR) {
 // Restores permissions for critical directories and files
 function restore_chmods() {
 	$files_base = fs_chmod_recursive(BASE_DIR);
-	$files_admin = fs_chmod_recursive(ADMIN_DIR);
 	$files_content = fs_chmod_recursive(FP_CONTENT);
 	$files_config = fs_chmod_recursive(CONFIG_DIR);
 	$files_users = fs_chmod_recursive(USERS_DIR);
@@ -371,7 +370,6 @@ function restore_chmods() {
 	// Combine results from all directories
 	$files = array_merge(
 		$files_base,
-		$files_admin,
 		$files_content,
 		$files_config,
 		$files_users,
