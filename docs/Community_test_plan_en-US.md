@@ -10,11 +10,11 @@
 - [ ] Download the latest version of the [Bulk Content Generator](https://github.com/flatpressblog/flatpress-extras/tree/master/fp-tools/gen-bulk).
 - [ ] If possible and available, install the [APCu cache extension](https://github.com/flatpressblog/flatpress/blob/master/docs/APCu_Installation_and_Activation.md) on your web server.
 - [ ] Clear the browser cache of the browsers you want to use for testing and disable all third-party browser add-ons.
-- [ ] [Install FlatPress](https://wiki.flatpress.org/en:doc:basic:installation) on your web server. If you already have a FlatPress instance, install the latest version as a separate instance (e.g., `/fp15-dev`).
+- [ ] [Install FlatPress](https://wiki.flatpress.org/en:doc:basic:installation) on your web server. If you already have a FlatPress instance, install the latest version as a separate instance (e.g., `/fp15-RC2`).
 - [ ] Copy the Bulk Content Generator to the blog root directory to generate test data.
 - [ ] If necessary, recursively adjust the ownership rights and file and directory permissions.
 - [ ] Open the browser of your choice and then run the setup (``setup.php``).
-- [ ] Then run the Bulk Content Generator (``gen-bulk.php?n=3000&k=10&seed=1234&spread=1080``) in your browser and wait until the summary is displayed.
+- [ ] Then run the Bulk Content Generator (``https://<your-flatpress>/gen-bulk.php?n=3000&k=10&seed=1234&spread=1080``) in your browser and wait until the summary is displayed.
 - [ ] Log in to the admin area, click on "Rebuild the FlatPress index" in the Maintenance menu, and wait until the summary is displayed.
 - [ ] "Purge theme and templates cache" in the Maintenance menu.
 - [ ] Activate all plugins that are part of the distribution.
