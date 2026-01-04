@@ -41,18 +41,22 @@
 - [ ] Log in to the admin area and click on all menus and submenus as completely as possible, checking accessibility and looking for warnings or errors in the console.
 - [ ] Check the PHP log file to see if any errors or warnings occurred during the interactions.
 
-2) **Performance & Caching**
+2) **Setting file and directory permissions**
+- [ ] Log in to the admin area, and trigger Maintenance -> "Restore authorizations for productive operation".
+- [ ] Then check whether the admin area and the front end are still working as expected.
+
+3) **Performance & Caching**
 - [ ] Access blog posts: Home page, entries, comments, category, search – loading should be consistently fast, no 500 errors/timeouts.
 - [ ] Activate APCu (if available) and test again; note any differences.
 - [ ] Open image lists/galleries and check whether media lists respond quickly.
 
-3) **Admin area**
+4) **Admin area**
 - [ ] Adjust the inactivity timeout under "Configuration → FlatPress Protect → Idle timeout for admin session"; check automatic logout after timeout. Automatic logout should occur after a timeout during an action.
 - [ ] Uploader/media management: Upload files/images, check thumbnails, insert into post.
 - [ ] Themes/Widgets: Change style, change widget order, control in frontend.
 - [ ] Check the hit rate in the admin area -> Maintenance -> APCu status. After extensive testing, this should not be below 85%.
 
-4) **Plugins (random samples)**
+5) **Plugins (random samples)**
 - [ ] Newsletter: Registration (valid/invalid/disposable emails), double opt-in, bulk mailing with status display.
 - [ ] BBCode Editor: Test new buttons (font); preview and save.
 - [ ] BBCode Editor: Upload images, create a gallery, and place the new gallery in an entry.
@@ -68,10 +72,10 @@
 - [ ] SEO Metatag info: Enter a description for a newly created post; check in the frontend whether an introduction is displayed.
 - [ ] FlatPress Protect: Upload SVG file (must fail), activate corresponding option in the configuration menu -> FlatPress Protect, upload SVG file again.
 
-5) **Internationalization**
+6) **Internationalization**
 - [ ] Switch language between German/English/Basque/French; check frontend/backend for missing/incorrect translations.
 
-6) **Safety & Robustness**
+7) **Safety & Robustness**
 - [ ] Incorrect form entries (contact/comment/newsletter) with special characters/emojis; expected validation.
 - [ ] Check the browser console and PHP log for warnings/errors during all actions.
 
