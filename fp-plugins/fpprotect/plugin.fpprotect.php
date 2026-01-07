@@ -55,7 +55,9 @@ function fpprotect_is_plugin_enabled($id) {
 			$fp_plugins = array();
 			/** @phpstan-ignore-next-line */
 			include_once ($conf);
+			/** @phpstan-ignore-next-line */
 			if (isset($fp_plugins) && is_array($fp_plugins)) {
+				/** @phpstan-ignore-next-line */
 				return in_array($id, $fp_plugins, true);
 			}
 		}
