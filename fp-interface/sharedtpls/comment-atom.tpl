@@ -60,7 +60,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 				<content type="xhtml">
 					<div xmlns="http://www.w3.org/1999/xhtml">
 						<![CDATA[
-						{$content|tag:the_content|strip_tags|strip|truncate:180:" [...]":true|escape}
+						{$content|tag:the_content|strip_tags|strip|escape|fix_encoding_issues}
 						]]>
 					</div>
 				</content>
