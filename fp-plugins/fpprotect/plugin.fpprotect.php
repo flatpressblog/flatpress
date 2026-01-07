@@ -32,10 +32,7 @@ function fpprotect_get_options() {
 }
 
 /**
- * Check whether a plugin is enabled (listed in fp-content/config/plugins.conf.php).
- *
- * We cannot reliably use function_exists() here because FlatPress loads plugin files
- * in the order of fp_plugins, and fpprotect may be included before gdprvideoembed.
+ * Check whether a plugin is enabled
  *
  * @param string $id Plugin ID.
  * @return bool
@@ -44,23 +41,6 @@ function fpprotect_is_plugin_enabled($id) {
 	// Preferred: the enabled plugin list already loaded for this request
 	if (isset($GLOBALS ['fp_plugins']) && is_array($GLOBALS ['fp_plugins'])) {
 		return in_array($id, $GLOBALS ['fp_plugins'], true);
-	}
-
-	// Fallback: load enabled plugin list from configuration
-	if (defined('CONFIG_DIR')) {
-		/** @phpstan-ignore-next-line */
-		$conf = CONFIG_DIR . 'plugins.conf.php';
-		/** @phpstan-ignore-next-line */
-		if (file_exists($conf)) {
-			$fp_plugins = array();
-			/** @phpstan-ignore-next-line */
-			include_once ($conf);
-			/** @phpstan-ignore-next-line */
-			if (isset($fp_plugins) && is_array($fp_plugins)) {
-				/** @phpstan-ignore-next-line */
-				return in_array($id, $fp_plugins, true);
-			}
-		}
 	}
 
 	return false;
