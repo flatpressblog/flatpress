@@ -295,21 +295,21 @@ if (class_exists('AdminPanelAction')) {
 			$test_file = @fopen($BASE_DIR . '/chmod-test-file', 'a+');
 			if ($test_file) {
 				$support ['maindir'] = $lang ['admin'] ['maintain'] ['support'] ['success_maindir'];
+				@fclose($test_file);
+				@unlink($BASE_DIR . '/chmod-test-file');
 			} else {
 				$support ['maindir'] = $lang ['admin'] ['maintain'] ['support'] ['attention_maindir'];
 			}
-			@fclose($test_file);
-			@unlink($BASE_DIR . '/chmod-test-file');
 
 			// Do not create a .hthaccess file, otherwise the PrettyURLs plugin cannot create its own file. Better is .htaccess.txt
 			$test_file = @fopen($BASE_DIR . '/.htaccess.txt', 'a+');
 			if ($test_file) {
 				$support ['htaccessw'] = $lang ['admin'] ['maintain'] ['support'] ['success_htaccessw'];
+				@fclose($test_file);
+				@unlink($BASE_DIR . '/.htaccess.txt');
 			} else {
 				$support ['htaccessw'] = $lang ['admin'] ['maintain'] ['support'] ['attention_htaccessw'];
 			}
-			@fclose($test_file);
-			@unlink($BASE_DIR . '/.htaccess.txt');
 
 			$htaccess = BASE_DIR . '/.htaccess';
 			if (file_exists($htaccess)) {
