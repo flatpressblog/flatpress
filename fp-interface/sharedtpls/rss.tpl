@@ -10,7 +10,7 @@
                                                                           
 
 The specified file is not intended for direct display in the browser, but solely for the configuration of your newsreader.
-To receive my RSS2-feed, enter the address {'rss2'|theme_feed_link} in your newsreader.
+To receive my RSS2-feed, enter the address {'rss2'|theme_feed_link|escape:'html'} in your newsreader.
 
 Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It's free.
 
@@ -19,29 +19,29 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 
-		<title>{$flatpress.title} » {$lang.main.entries}</title>
-		<link>{$flatpress.www}</link>
+		<title>{$flatpress.title|escape:'html'} » {$lang.main.entries|escape:'html'}</title>
+		<link>{$flatpress.www|escape:'html'}</link>
 
 		{if $flatpress.subtitle!=""}
 		<description>
 			<![CDATA[
-			{$flatpress.subtitle}
+			{$flatpress.subtitle|escape:'html'}
 			]]>
 		</description>
 		{/if}
 
-		<copyright>Copyright {'Y'|date}, {$flatpress.author}</copyright>
+		<copyright>Copyright {'Y'|date}, {$flatpress.author|escape:'html'}</copyright>
 		{*<managingEditor>{$flatpress.email} ({$flatpress.author})</managingEditor>*}
 		<language>{$fp_config.locale.lang}</language>
-		<atom:link rel="self" href="{'rss2'|theme_feed_link}" type="application/rss+xml" />
+		<atom:link rel="self" href="{'rss2'|theme_feed_link|escape:'html'}" type="application/rss+xml" />
 		<generator>FlatPress</generator>
 
 		{entry_block}
 			{entry}
 			<item>
 
-				<title>{$subject}</title>
-				<link>{$id|link:post_link}</link>
+				<title>{$subject|tag:the_title|wp_specialchars}</title>
+				<link>{$id|link:post_link|wp_specialchars}</link>
 				<description>
 					<![CDATA[
 					{$content|tag:the_content|fix_encoding_issues}
@@ -54,15 +54,15 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 					]]>
 				</category>
 				{/if}
-				<guid isPermaLink="true">{$id|link:post_link}</guid>
+				<guid isPermaLink="true">{$id|link:post_link|escape:'html'}</guid>
 
 				{*<author>{$flatpress.email} ({$flatpress.author})</author>*}
 				<pubDate>{'r'|date:$date}</pubDate>
-				<comments>{$id|link:comments_link}</comments>
+				<comments>{$id|link:comments_link|escape:'html'}</comments>
 
 				{if isset($enclosure)}
 					{foreach from=$enclosure item=encl} 
-					<enclosure url="{$encl.url}" length="{$encl.length}" type="{$encl.type}" />
+					<enclosure url="{$encl.url|escape:'html'}" length="{$encl.length|escape:'html'}" type="{$encl.type|escape:'html'}" />
 					{/foreach}
 				{/if}
 

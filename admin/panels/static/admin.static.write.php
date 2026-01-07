@@ -1,5 +1,4 @@
 <?php
-
 /**
  * edit static site panel
  *
@@ -8,7 +7,7 @@
  * Date:
  * Purpose:
  * Input:
- * Change-Date: 26.11.2024, by FKM
+ * Change-Date: 07.01.2026, by FKM
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
  *
@@ -70,16 +69,38 @@ class admin_static_write extends AdminPanelActionValidated {
 	}
 
 	function sanitizePageTitle($title) {
+		global $fp_config;
 
-		$title = htmlspecialchars_decode(strip_all_tags($title), ENT_QUOTES);
+		// Decode named + numeric entities early so entity-encoded "<" / ">" cannot slip through as markup later.
+		$charset = !empty($fp_config ['locale'] ['charset']) ? $fp_config ['locale'] ['charset'] : 'UTF-8';
+		$title = html_entity_decode((string) $title, ENT_QUOTES | ENT_HTML5, $charset);
 
-		$title = preg_replace([
-			'/\bon\w+\s*=\s*["\'][^"\']*["\']/i',
-			'/[<>&]/'
-		], '', $title);
+		// Remove any HTML tags and normalize spaces.
+		$title = strip_all_tags($title);
+		// NBSP → space (UTF-8)
+		$title = str_replace("\xC2\xA0", ' ', $title);
 
-		$allowed = '/[^\p{L}\p{N}\p{P}\p{Zs}\p{M}]/u';
-		$title = preg_replace($allowed, '', $title);
+		// Never allow real tag delimiters in titles.
+		$title = str_replace(['<', '>'], '', $title);
+
+		// Drop control/format characters (incl. newlines, zero-width, etc.).
+		$tmp = preg_replace('/\p{C}+/u', '', $title);
+		if ($tmp !== null) {
+			$title = $tmp;
+		} else {
+			// Fallback for invalid UTF-8 sequences (should be rare).
+			$title = preg_replace('/[\x00-\x1F\x7F]+/', '', $title);
+		}
+
+		// Allow letters, numbers, punctuation, symbols (e.g. =, ~, £, $, €), spaces and combining marks.
+		$allowed = '/[^\p{L}\p{N}\p{P}\p{S}\p{Zs}\p{M}]/u';
+		$tmp = preg_replace($allowed, '', $title);
+		if ($tmp !== null) {
+			$title = $tmp;
+		}
+
+		// Collapse whitespace.
+		$title = preg_replace('/\s+/u', ' ', $title);
 
 		return trim($title);
 	}

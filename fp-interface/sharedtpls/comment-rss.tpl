@@ -14,7 +14,7 @@
                                                                           
 
 The specified file is not intended for direct display in the browser, but solely for the configuration of your newsreader.
-To receive my RSS2-feed, enter the address {'rss2'|theme_comments_feed_link:$id} in your newsreader.
+To receive my RSS2-feed, enter the address {'rss2'|theme_comments_feed_link:$id|wp_specialchars:1} in your newsreader.
 
 Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It's free.
 
@@ -25,23 +25,23 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 		<title>
 			<![CDATA[
-			{$flatpress.title} » {$subject} » {$lang.main.comments}
+			{$flatpress.title|escape:'html'} » {$subject|tag:the_title|escape:'html'} » {$lang.main.comments|escape:'html'}
 			]]>
 		</title>
-		<link>{$the_comment_link}</link>
+		<link>{$the_comment_link|escape:'html'}</link>
 
 		{if $flatpress.subtitle!=""}
 		<description>
 			<![CDATA[
-			{$flatpress.subtitle}
+			{$flatpress.subtitle|escape:'html'}
 			]]>
 		</description>
 		{/if}
 
-		<copyright>Copyright {'Y'|date}, {$flatpress.author}</copyright>
+		<copyright>Copyright {'Y'|date}, {$flatpress.author|escape:'html'}</copyright>
 		{*<managingEditor>{$flatpress.email} ({$flatpress.author})</managingEditor>*}
 		<language>{$fp_config.locale.lang}</language>
-		<atom:link rel="self" href="{'rss2'|theme_comments_feed_link:$id}" type="application/rss+xml" />
+		<atom:link rel="self" href="{'rss2'|theme_comments_feed_link:$id|escape:'html'}" type="application/rss+xml" />
 
 		<generator>FlatPress</generator>
 
@@ -49,17 +49,17 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 			{comment}
 			<item>
 
-				<title>{$name}</title>
-				<link>{$the_comment_link}#{$id}</link>
+				<title>{$name|escape:'html'}</title>
+				<link>{$the_comment_link|escape:'html'}#{$id}</link>
 				<description>
 					<![CDATA[
 					{$content|tag:the_content}
 					]]>
 				</description>
 
-				<guid isPermaLink="true">{$the_comment_link}#{$id}</guid>
+				<guid isPermaLink="true">{$the_comment_link|escape:'html'}#{$id}</guid>
 
-				<dc:creator>{$name}</dc:creator>
+				<dc:creator>{$name|escape:'html'}</dc:creator>
 				<pubDate>{'r'|date:$date}</pubDate>
 
 			</item>
