@@ -11,6 +11,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - The new Smarty Modifier ``|ver``  uses a new core function, ``utils_asset_ver()``, to assign the FlatPress version to Java scripts and stylesheets. This ensures that the visitor's browser only uses the updated files. ([#629](https://github.com/flatpressblog/flatpress/issues/629))
 - Caching:
   - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667), [#673](https://github.com/flatpressblog/flatpress/pull/673), [#675](https://github.com/flatpressblog/flatpress/pull/675), [#679](https://github.com/flatpressblog/flatpress/pull/679), [#687](https://github.com/flatpressblog/flatpress/pull/687), [#690](https://github.com/flatpressblog/flatpress/pull/690), [#701](https://github.com/flatpressblog/flatpress/pull/701), [#729](https://github.com/flatpressblog/flatpress/pull/729), [#730](https://github.com/flatpressblog/flatpress/pull/730))
+- Allow special characters and emoticons in the titles of posts and static pages. ([#777](https://github.com/flatpressblog/flatpress/pull/777))
 
 - Admin area:
     - The inactivity timeout can be changed using the Flatpress protect plugin. Default = 1 hour ([#693](https://github.com/flatpressblog/flatpress/issues/693))
@@ -48,6 +49,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - Batch shipping shows shipping status ([#649](https://github.com/flatpressblog/flatpress/pull/649))
 - FlatPress Protect plugin: update to version 1.2.1
   - iFrames can only be embedded from the same domain, unless explicitly enabled.
+    - If the GDPR Video embed plugin is active, YouTube, Vimeo, and Facebook videos can still be embedded. ([#778](https://github.com/flatpressblog/flatpress/pull/778))
   - It is now possible to change the idle timeout for admin sessions. ([#693](https://github.com/flatpressblog/flatpress/issues/693))
   - The upload of SVG files can be allowed. ([#771](https://github.com/flatpressblog/flatpress/issues/771))
 - BBCode plugin: update to version 2.0.0
