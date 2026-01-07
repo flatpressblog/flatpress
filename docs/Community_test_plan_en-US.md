@@ -78,7 +78,7 @@
 7) **Safety & Robustness**
 - [ ] Incorrect form entries (contact/comment/newsletter) with special characters/emojis; expected validation.
 - [ ] Post titles with special characters (``= & ~ £ $ € "``)/emojis; expenses expected.
-- [ ] iFrames in posts; Expected: external content is blocked, but not videos from YouTube, Vimeo, and Facebook.
+- [ ] iFrames in posts; Expected: external content is blocked, but not [videos from YouTube, Vimeo, and Facebook](https://wiki.flatpress.org/doc:plugins:bbcode#videos).
 - [ ] Check the browser console and PHP log for warnings/errors during all actions.
 
 ### Reporting
