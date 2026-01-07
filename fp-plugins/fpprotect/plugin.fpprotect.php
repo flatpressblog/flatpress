@@ -41,24 +41,58 @@ function fpprotect_get_options() {
  * @return bool
  */
 function fpprotect_is_plugin_enabled($id) {
-	// Preferred: the enabled plugin list already loaded for this request
-	if (isset($GLOBALS ['fp_plugins']) && is_array($GLOBALS ['fp_plugins'])) {
-		return in_array($id, $GLOBALS ['fp_plugins'], true);
+	/** @var array<string,bool> $memo */
+	static $memo = array();
+
+	if (isset($memo [$id])) {
+		return $memo [$id];
 	}
 
-	// Fallback: load enabled plugin list from configuration
-	if (defined('CONFIG_DIR')) {
-		$conf = CONFIG_DIR . 'plugins.conf.php';
-		if (file_exists($conf)) {
-			$fp_plugins = array();
-			include ($conf);
-			if (isset($fp_plugins) && is_array($fp_plugins)) {
-				return in_array($id, $fp_plugins, true);
+	if ($id === 'gdprvideoembed' && function_exists('plugin_gdprvideoembed_head')) {
+		return $memo [$id] = true;
+	}
+
+	$paths = array();
+
+	if (defined('ABS_PATH') && defined('CONFIG_DIR')) {
+		$paths [] = ABS_PATH . CONFIG_DIR . 'plugins.conf.php';
+	} elseif (defined('CONFIG_DIR')) {
+		$paths [] = CONFIG_DIR . 'plugins.conf.php';
+	}
+
+	if (defined('ABS_PATH') && defined('FP_DEFAULTS')) {
+		$paths [] = ABS_PATH . FP_DEFAULTS . 'plugins.conf.php';
+	} elseif (defined('FP_DEFAULTS')) {
+		$paths [] = FP_DEFAULTS . 'plugins.conf.php';
+	}
+
+	foreach ($paths as $conf) {
+		if ($conf === '' || !is_readable($conf)) {
+			continue;
+		}
+
+		$contents = file_get_contents($conf);
+		if ($contents === false || $contents === '') {
+			continue;
+		}
+
+		$lines = preg_split("/\r\n|\r|\n/", $contents);
+		if ($lines === false) {
+			continue;
+		}
+
+		foreach ($lines as $line) {
+			$t = ltrim($line);
+			if ($t === '' || strpos($t, '//') === 0 || strpos($t, '#') === 0) {
+				continue;
+			}
+			if (preg_match('/^([\'"])' . preg_quote((string) $id, '/') . '\\1\s*(?:,|$)/', $t)) {
+				return $memo [$id] = true;
 			}
 		}
 	}
 
-	return false;
+	return $memo [$id] = false;
 }
 
 // Get options once for this scope
