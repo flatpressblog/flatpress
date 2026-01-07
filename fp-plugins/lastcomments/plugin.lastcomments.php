@@ -1,8 +1,8 @@
 <?php
-/*
+/**
  * Plugin Name: LastComments
  * Type: Block
- * Version: 1.1.1
+ * Version: 1.1.2
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -89,8 +89,8 @@ function plugin_lastcomments_widget() {
 
 			$content .= '<li>
 				<blockquote class="comment-quote" cite="comments.php?entry=' . $arr ['entry'] . '#' . $arr ['id'] . '">' . //
-				'<p><a href="' . get_comments_link($arr ['entry']) . '#' . $arr ['id'] . '">' . $entry ['subject'] . '</a></p>' . //
-				'<strong>' . $arr ['name'] . ':</strong> ' . $truncatedContent . //
+				'<p><a href="' . get_comments_link($arr ['entry']) . '#' . $arr ['id'] . '">' . wp_specialchars($entry ['subject']) . '</a></p>' . //
+				'<strong>' . wp_specialchars($arr ['name']) . ':</strong> ' . wp_specialchars($truncatedContent) . //
 				'</blockquote></li>' . "\n";
 		}
 		$subject = $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'];

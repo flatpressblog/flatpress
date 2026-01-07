@@ -1,8 +1,7 @@
 <?php
-
-/*
+/**
  * Plugin Name: LastEntries
- * Version: 1.0.1
+ * Version: 1.0.2
  * Type: Block
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
@@ -48,7 +47,7 @@ function plugin_lastentries_widget() {
 			// if loggedin prints a "edit" link
 			$string .= "<a href=\"" . $admin . $id . "\">[" . $lang ['plugin'] ['lastentries'] ['edit'] . "]</a>";
 		}
-		$string .= "<a href=\"" . $link . "\">" . $entry ['subject'] . "</a></li>\n";
+		$string .= "<a href=\"" . $link . "\">" . wp_specialchars($entry ['subject']) . "</a></li>\n";
 
 		$count++;
 	}

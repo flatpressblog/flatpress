@@ -10,31 +10,31 @@
 
 
 The specified file is not intended for direct display in the browser, but solely for the configuration of your newsreader.
-To receive my Atom-feed, enter the address {$atom_link} in your newsreader.
+To receive my Atom-feed, enter the address {$atom_link|escape:'html'} in your newsreader.
 
 Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It's free.
 
 
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
-	<title>{$flatpress.title} » {$dynamic_title}</title>
-	<link href="{$smarty.const.BLOG_BASEURL}" rel="alternate" />
-	<link href="{$atom_link}" rel="self" type="application/atom+xml" />
+	<title>{$flatpress.title|escape:'html'} » {$dynamic_title|escape:'html'}</title>
+	<link href="{$smarty.const.BLOG_BASEURL|escape:'html'}" rel="alternate" />
+	<link href="{$atom_link|escape:'html'}" rel="self" type="application/atom+xml" />
 	<generator uri="https://www.flatpress.org" version="{$smarty.const.SYSTEM_VER}">
 		FlatPress
 	</generator>
-	<rights>{$flatpress.author} {'Y'|date}</rights>
+	<rights>{$flatpress.author|escape:'html'} {'Y'|date}</rights>
 	<updated>{$smarty.now|date_rfc3339}</updated>
 	<author>
-		<name>{$flatpress.author}</name>
-		<email>{$flatpress.email}</email>
+		<name>{$flatpress.author|escape:'html'}</name>
+		<email>{$flatpress.email|escape:'html'}</email>
 	</author>
-	<id>{$smarty.const.BLOG_BASEURL}</id>
+	<id>{$smarty.const.BLOG_BASEURL|escape:'html'}</id>
 
 	{if $flatpress.subtitle != ""}
 	<subtitle>
 		<![CDATA[
-		{$flatpress.subtitle}
+		{$flatpress.subtitle|wp_specialchars}
 		]]>
 	</subtitle>
 	{/if}
@@ -54,14 +54,14 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 			</div>
 		</summary>
 		<author>
-			<name>{$comment.name|escape:"html"}</name>
+			<name>{$comment.name|escape:'html'}</name>
 
 			{if $comment.email != ""}
-			<email>{$comment.email}</email>
+			<email>{$comment.email|escape:'html'}</email>
 			{/if}
 
 			{if $comment.url != ""}
-			<uri>{$comment.url}</uri>
+			<uri>{$comment.url|escape:'html'}</uri>
 			{/if}
 
 		</author>

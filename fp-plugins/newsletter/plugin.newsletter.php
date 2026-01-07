@@ -649,6 +649,69 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 }
 
 /**
+ * Sanitizes and validates the sender e-mail used for the newsletter.
+ * - Removes control characters and CRLF to prevent header/parameter injection.
+ * - Extracts a plain address from "Name <email>" formats.
+ * - Provides a safe fallback if the configured address is invalid.
+ */
+function plugin_newsletter_sanitize_from_email($from) {
+	$from = (string) $from;
+
+	// Remove CRLF and other control chars (defense-in-depth)
+	$from = preg_replace('/[\x00-\x1F\x7F]+/', '', $from);
+	$from = trim($from);
+
+	// Extract address from "Name <email@domain>" if present
+	if (preg_match('/<([^>]+)>/', $from, $m)) {
+		$from = trim($m [1]);
+	}
+
+	if ($from !== '' && filter_var($from, FILTER_VALIDATE_EMAIL)) {
+		return $from;
+	}
+
+	// Fallback: derive a domain from blog URL / host
+	$host = '';
+	if (defined('BLOG_BASEURL')) {
+		$host = parse_url(BLOG_BASEURL, PHP_URL_HOST);
+	}
+	if (!$host) {
+		$host = $_SERVER ['HTTP_HOST'] ?? $_SERVER ['SERVER_NAME'] ?? '';
+	}
+	$host = preg_replace('/:\d+$/', '', (string) $host);
+	$host = strtolower((string) $host);
+	$host = preg_replace('/[^a-z0-9.\-]/', '', $host);
+
+	// Only use a real-looking host; otherwise pick a reserved invalid TLD.
+	if ($host === '' || strpos($host, '.') === false) {
+		$host = 'example.invalid';
+	}
+
+	return 'noreply@' . $host;
+}
+
+/**
+ * Best-effort mail wrapper for maximum compatibility across hosters.
+ * - On Windows: ignore additional parameters (no sendmail flags).
+ * - On Unix: try setting envelope sender via "-f", fallback without params if blocked.
+ */
+function plugin_newsletter_mail(string $to, string $subject, string $message, string $headers, string $fromEmail): bool {
+	$fromEmail = plugin_newsletter_sanitize_from_email($fromEmail);
+
+	// Windows uses SMTP; sendmail flags are not applicable.
+	if (stripos(PHP_OS, 'WIN') === 0) {
+		return (bool) @mail($to, $subject, $message, $headers);
+	}
+
+	// Try with envelope sender; some hosters block 5th param -> fallback.
+	$ok = @mail($to, $subject, $message, $headers, '-f' . $fromEmail);
+	if (!$ok) {
+		$ok = @mail($to, $subject, $message, $headers);
+	}
+	return (bool) $ok;
+}
+
+/**
  * Handles new subscriber sign-ups: encrypts and stores their data.
  */
 function plugin_newsletter_handle_subscribe() {
@@ -787,7 +850,7 @@ function plugin_newsletter_handle_subscribe() {
 	});
 
 	// Send confirmation e-mail
-	$from = $fp_config ['general'] ['email'];
+	$from = plugin_newsletter_sanitize_from_email($fp_config ['general'] ['email'] ?? '');
 	$confirm_link = BLOG_BASEURL . '?newsletter_action=confirm&email=' . urlencode($email) . '&token=' . $token;
 	$subject_text = $lang ['plugin'] ['newsletter'] ['confirm_subject'] . ' - ' . $fp_config ['general'] ['title'];
 	$subject = '=?' . $charset . '?B?' . base64_encode($subject_text). '?=';
@@ -800,7 +863,7 @@ function plugin_newsletter_handle_subscribe() {
 		'MIME-Version: 1.0' . "\r\n" . //
 		'Content-Type: text/html; charset="' . $charset . '"' . "\r\n" . //
 		'From: ' . $from . "\r\n";
-	@mail($email, $subject, $body, $headers, '-f ' . $from);
+	plugin_newsletter_mail($email, $subject, $body, $headers, $from);
 
 	// Forwarding to information page
 	header('Location: ' . BLOG_BASEURL . '?page=check-your-email');
@@ -967,7 +1030,7 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 
 		$subject_text = $title . ' - ' . $lang ['plugin'] ['newsletter'] ['subject'];
 		$encoded_subject = '=?' . $charset . '?B?' . base64_encode($subject_text) . '?=';
-		$from = $fp_config ['general'] ['email'];
+		$from = plugin_newsletter_sanitize_from_email($fp_config ['general'] ['email'] ?? '');
 		$headers = 'Date: ' . date('r') . "\r\n";
 		$headers .= 'MIME-Version: 1.0' . "\r\n";
 		$headers .= 'Content-Type: text/html; charset=' . $charset . "\r\n";
@@ -1007,7 +1070,7 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 			$body .= '<h2>' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['last_comments']) . '</h2>' . $comments_content;
 			$body .= '<p><a href="' . htmlspecialchars($unsubscribe) . '">' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['unsubscribe']) . '</a></p>';
 			$body .= '<p><a href="' . BLOG_BASEURL . '?page=legal-notice">' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['legal_notice'], ENT_QUOTES) . '</a> | <a href="' . BLOG_BASEURL . '?page=privacy-policy">' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['privacy_policy'], ENT_QUOTES) . '</a></p>';
-			@mail($email, $encoded_subject, $body, $headers, '-f ' . $from);
+			plugin_newsletter_mail($email, $encoded_subject, $body, $headers, $from);
 		}
 
 		// Update offset
@@ -1069,7 +1132,7 @@ function plugin_newsletter_send_all($subFile) {
 
 	$subject_text = $title . ' - ' . $lang ['plugin'] ['newsletter'] ['subject'];
 	$encoded_subject = '=?' . $charset . '?B?' . base64_encode($subject_text) . '?=';
-	$from = $fp_config ['general'] ['email'];
+	$from = plugin_newsletter_sanitize_from_email($fp_config ['general'] ['email'] ?? '');
 
 	$headers = '';
 	$headers .= 'Date: ' . date('r') . "\r\n";
@@ -1125,7 +1188,7 @@ function plugin_newsletter_send_all($subFile) {
 		$body .= '<h2>' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['last_comments']) . '</h2>' . $comments_content;
 		$body .= '<p><a href="' . htmlspecialchars($unsubscribe) . '">' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['unsubscribe']) . '</a></p>';
 		$body .= '<p><a href="' . BLOG_BASEURL . '?page=legal-notice">' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['legal_notice'], ENT_QUOTES) . '</a> | <a href="' . BLOG_BASEURL . '?page=privacy-policy">' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['privacy_policy'], ENT_QUOTES) . '</a></p>';
-		@mail($email, $encoded_subject, $body, $headers, '-f ' . $from);
+		plugin_newsletter_mail($email, $encoded_subject, $body, $headers, $from);
 	}
 
 	// Persist new offset

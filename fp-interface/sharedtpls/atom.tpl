@@ -10,7 +10,7 @@
 
 
 The specified file is not intended for direct display in the browser, but solely for the configuration of your newsreader.
-To receive my Atom-feed, enter the address {'atom'|theme_feed_link} in your newsreader.
+To receive my Atom-feed, enter the address {'atom'|theme_feed_link|escape:'html'} in your newsreader.
 
 Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It's free.
 
@@ -18,32 +18,32 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-	<title>{$flatpress.title} » {$lang.main.entries}</title>
+	<title>{$flatpress.title|escape:'html'} » {$lang.main.entries|escape:'html'}</title>
 
 	{if $flatpress.subtitle!=""}
-	<subtitle>{$flatpress.subtitle}</subtitle>
+	<subtitle>{$flatpress.subtitle|escape:'html'}</subtitle>
 	{/if}
 
-	<link href="{$smarty.const.BLOG_BASEURL}" />
-	<link rel="self" href="{'atom'|theme_feed_link}" />
+	<link href="{$smarty.const.BLOG_BASEURL|escape:'html'}" />
+	<link rel="self" href="{'atom'|theme_feed_link|escape:'html'}" />
 	<generator uri="https://www.flatpress.org/" version="{$smarty.const.SYSTEM_VER}">
 		FlatPress
 	</generator>
-	<rights>{$flatpress.author} {'Y'|date}</rights>
+	<rights>{$flatpress.author|escape:'html'} {'Y'|date}</rights>
 	<updated>{$smarty.now|date_rfc3339}</updated>
 	<author>
-		<name>{$flatpress.author}</name>
+		<name>{$flatpress.author|escape:'html'}</name>
 	</author>
-	<id>{$smarty.const.BLOG_BASEURL}</id>
+	<id>{$smarty.const.BLOG_BASEURL|escape:'html'}</id>
 
 	{entry_block}
 	{entry}
 	<entry>
 
-		<title>{$subject}</title>
-		<link href="{$id|link:post_link}" />
+		<title>{$subject|tag:the_title|escape:'html'}</title>
+		<link href="{$id|link:post_link|escape:'html'}" />
 
-		<id>{$id|link:post_link}</id>
+		<id>{$id|link:post_link|escape:'html'}</id>
 		{assign var=the_date value=$date|date_rfc3339}
 		<published>{$the_date}</published>
 		<updated>{$the_date}</updated>
@@ -57,7 +57,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 		{if isset($enclosure)}
 			{foreach from=$enclosure item=encl}
-			<link rel="enclosure" href="{$encl.url}" title="{$encl.title}" length="{$encl.length}" type="{$encl.type}" />
+			<link rel="enclosure" href="{$encl.url|escape:'html'}" title="{$encl.title|escape:'html'}" length="{$encl.length|escape:'html'}" type="{$encl.type|escape:'html'}" />
 			{/foreach}
 		{/if}
 

@@ -14,7 +14,7 @@
 
 
 The specified file is not intended for direct display in the browser, but solely for the configuration of your newsreader.
-To receive my Atom-feed, enter the address {'atom'|theme_comments_feed_link:$id} in your newsreader.
+To receive my Atom-feed, enter the address {'atom'|theme_comments_feed_link:$id|escape:'html'} in your newsreader.
 
 Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It's free.
 
@@ -22,38 +22,38 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-	<title>{$flatpress.title|tag:wp_title:':'} » {$subject} » {$lang.main.comments}</title>
+	<title>{$flatpress.title|tag:wp_title:':'|escape:'html'} » {$subject|tag:the_title|escape:'html'} » {$lang.main.comments|escape:'html'}</title>
 
 	{if $flatpress.subtitle != ""}
-	<subtitle>{$flatpress.subtitle}</subtitle>
+	<subtitle>{$flatpress.subtitle|escape:'html'}</subtitle>
 	{/if}
 
-	<link href="{$smarty.const.BLOG_BASEURL}" />
-	<link rel="self" href="{'atom'|theme_comments_feed_link:$id}" type="application/atom+xml" />
+	<link href="{$smarty.const.BLOG_BASEURL|escape:'html'}" />
+	<link rel="self" href="{'atom'|theme_comments_feed_link:$id|escape:'html'}" type="application/atom+xml" />
 	<generator uri="https://www.flatpress.org/" version="{$smarty.const.SYSTEM_VER}">
 		FlatPress
 	</generator>
-	<rights> {$flatpress.author} {$smarty.now|date_format:'%Y'} </rights>
+	<rights>{$flatpress.author|escape:'html'} {$smarty.now|date_format:'%Y'}</rights>
 
 	<updated>{$date|date_rfc3339}</updated>
 	<author>
-		<name>{$author}</name>
+		<name>{$author|escape:'html'}</name>
 	</author>
-	<id>{$id|link:post_link}</id>
+	<id>{$id|link:post_link|escape:'html'}</id>
 
 		{comment_block}
 			{comment}
 			<entry>
 
-				<title>{$name}</title>
+				<title>{$name|escape:'html'}</title>
 				<author>
-					<name>{$name}</name>
+					<name>{$name|escape:'html'}</name>
 					{if isset($www) && $www != ""}
-					<uri>{$www}</uri>
+					<uri>{$www|escape:'html'}</uri>
 					{/if}
 				</author>
-				<link href="{$the_comment_link}#{$id}" />
-				<id>{$the_comment_link}#{$id}</id>
+				<link href="{$the_comment_link|escape:'html'}#{$id}" />
+				<id>{$the_comment_link|escape:'html'}#{$id}</id>
 				{assign var=the_date value=$date|date_rfc3339}
 				<published>{$the_date}</published>
 				<updated>{$the_date}</updated>
