@@ -38,6 +38,7 @@
 - [ ] Check the developer tools console to see if any warnings or errors are displayed.
 - [ ] Open a static page in the frontend (e.g., ``static.php?page=about``) and check the console to see if any warnings or errors are displayed.
 - [ ] In the frontend, click on all links, if possible without leaving any gaps, and check the accessibility as well as for warnings or errors in the console.
+- [ ] Blog, entry, and comment RSS/ATOM feeds; check readability.
 - [ ] Log in to the admin area and click on all menus and submenus as completely as possible, checking accessibility and looking for warnings or errors in the console.
 - [ ] Check the PHP log file to see if any errors or warnings occurred during the interactions.
 
