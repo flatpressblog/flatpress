@@ -31,10 +31,34 @@ function fpprotect_get_options() {
 	return array_merge(FP_PROTECT_DEFAULT_OPTIONS, array_map('boolval', $config));
 }
 
+/**
+ * Check whether a plugin is enabled
+ *
+ * @param string $id Plugin ID.
+ * @return bool
+ */
+function fpprotect_is_plugin_enabled($id) {
+	// Preferred: the enabled plugin list already loaded for this request
+	if (isset($GLOBALS ['fp_plugins']) && is_array($GLOBALS ['fp_plugins'])) {
+		return in_array($id, $GLOBALS ['fp_plugins'], true);
+	}
+
+	return false;
+}
+
 // Get options once for this scope
 $options = fpprotect_get_options();
 
 $allow_external_iframe = !empty($options ['allowExternalIframe']);
+
+// Allow GDPR Video embed placeholders (BBCode [video]) to be activated without opening all external iframes
+$gdprvideoembed_enabled = fpprotect_is_plugin_enabled('gdprvideoembed');
+$gdpr_video_frames = array(
+	'https://www.youtube.com',
+	'https://www.youtube-nocookie.com',
+	'https://player.vimeo.com',
+	'https://www.facebook.com',
+);
 
 if (function_exists('is_https') && is_https()) {
 
@@ -49,8 +73,19 @@ if (function_exists('is_https') && is_https()) {
 	 * - frame-src controls which origins this site may embed via <iframe>
 	 * - child-src is used by some browsers as a fallback for frame-src
 	 */
-	$frameSrc = $allow_external_iframe ? 'frame-src \'self\' https: data:; ' : 'frame-src \'self\'; ';
-	$childSrc = $allow_external_iframe ? 'child-src \'self\' https: data:; ' : 'child-src \'self\'; ';
+	$frameSrc = 'frame-src \'self\'';
+	$childSrc = 'child-src \'self\'';
+
+	if ($allow_external_iframe) {
+		$frameSrc .= ' https: data:';
+		$childSrc .= ' https: data:';
+	} elseif ($gdprvideoembed_enabled) {
+		$frameSrc .= ' ' . implode(' ', $gdpr_video_frames);
+		$childSrc .= ' ' . implode(' ', $gdpr_video_frames);
+	}
+
+	$frameSrc .= '; ';
+	$childSrc .= '; ';
 
 	/**
 	 * Content Security Policy rules for Youtube, Facebook and Vimeo embedded video / BBCode [video], embedded OSM '
@@ -90,9 +125,16 @@ if (function_exists('is_https') && is_https()) {
 			'frame-src \'self\' http: https: data:; ' . //
 			'child-src \'self\' http: https: data:;');
 	} else {
-		header('Content-Security-Policy: frame-ancestors \'self\'; ' . //
-			'frame-src \'self\'; ' . //
-			'child-src \'self\';');
+		// Keep external iframes blocked, but allow known video providers when GDPR Video embed is enabled
+		$frameSrc = 'frame-src \'self\'';
+		$childSrc = 'child-src \'self\'';
+		if ($gdprvideoembed_enabled) {
+			$frameSrc .= ' ' . implode(' ', $gdpr_video_frames);
+			$childSrc .= ' ' . implode(' ', $gdpr_video_frames);
+		}
+		$frameSrc .= '; ';
+		$childSrc .= '; ';
+		header('Content-Security-Policy: frame-ancestors \'self\'; ' . $frameSrc . $childSrc);
 	}
 }
 

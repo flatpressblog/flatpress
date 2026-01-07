@@ -72,6 +72,9 @@ class plugin_indexer extends fs_filelister {
 			apcu_set($key, $$var, 0);
 		}
 
+		// Expose enabled plugin IDs globally for plugins that need to check activation state
+		$GLOBALS [$var] = $$var;
+
 		foreach ($$var as $plugin) {
 			$e = plugin_load($plugin, $checkonly);
 			if ($e) {
