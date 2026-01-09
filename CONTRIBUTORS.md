@@ -49,3 +49,4 @@ FlatPress utilizes the following free frameworks and libraries. Thanks to their 
 - And last but not least: A big shout out to all the security researchers voluntarily reporting possible vulnerabilities in the FlatPress code on platforms like https://huntr.dev, or by opening [issues](https://github.com/flatpressblog/flatpress/issues). You make FlatPress a lot more secure for everyone!
 - Many thanks to Laborix, who used a penetration suite to check FlatPress for possible security vulnerabilities.
 - [harish0x](https://github.com/harish0x) reported XSS vulnerabilities we fixed with FlatPress 1.4.
+- Many thanks to all testers and to Lubomír Ludvík, who let me use his two domains to test FlatPress 1.5 RC1. This allowed me to fix a few minor bugs under real-world conditions.
