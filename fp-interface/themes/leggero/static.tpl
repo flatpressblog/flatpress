@@ -6,7 +6,7 @@
 		{static_block}
 		{static}
 			<div id="{$id}" class="entry page-{$id}">
-				<h2 class="entry-title">{$subject}</h2>
+				<h2 class="entry-title">{$subject|tag:the_title}</h2>
 				<p class="date">{$lang.staticauthor.published_by} {$author} {$lang.staticauthor.on} {$date|date_format_daily}</p>
 				
 				{$content|tag:the_content}
