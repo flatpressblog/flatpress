@@ -11,7 +11,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - The new Smarty Modifier ``|ver``  uses a new core function, ``utils_asset_ver()``, to assign the FlatPress version to Java scripts and stylesheets. This ensures that the visitor's browser only uses the updated files. ([#629](https://github.com/flatpressblog/flatpress/issues/629))
 - Caching:
   - Fewer race conditions thanks to local cache, optionally supported by APCu. ([#667](https://github.com/flatpressblog/flatpress/issues/667), [#673](https://github.com/flatpressblog/flatpress/pull/673), [#675](https://github.com/flatpressblog/flatpress/pull/675), [#679](https://github.com/flatpressblog/flatpress/pull/679), [#687](https://github.com/flatpressblog/flatpress/pull/687), [#690](https://github.com/flatpressblog/flatpress/pull/690), [#701](https://github.com/flatpressblog/flatpress/pull/701), [#729](https://github.com/flatpressblog/flatpress/pull/729), [#730](https://github.com/flatpressblog/flatpress/pull/730))
-- Allow special characters and emoticons in the titles of posts and static pages. ([#777](https://github.com/flatpressblog/flatpress/pull/777))
+- Allow special characters and emoticons in the titles of posts and static pages. ([#777](https://github.com/flatpressblog/flatpress/pull/777), [#781](https://github.com/flatpressblog/flatpress/pull/781))
 
 - Admin area:
     - The inactivity timeout can be changed using the Flatpress protect plugin. Default = 1 hour ([#693](https://github.com/flatpressblog/flatpress/issues/693))
