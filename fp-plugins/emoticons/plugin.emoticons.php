@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * Plugin Name: Emoticons
- * Version: 1.1.2
+ * Version: 1.1.3
  * Plugin URI: https://flatpress.org
  * Description: Allows use of emoticons. Part of the standard distribution.
  * Author: FlatPress
@@ -76,6 +76,24 @@ function plugin_emoticons_filter ($emostring) {
 	return $emostring;
 }
 
+/**
+ * Replaces the text with an utf-8 emoticon (title-safe; no HTML markup)
+ * Used for entry titles, static page titles and feeds.
+ */
+function plugin_emoticons_filter_title($titlestring, $sep = null) {
+	global $plugin_emoticons;
+
+	if (!is_string($titlestring) || $titlestring === '') {
+		return $titlestring;
+	}
+
+	foreach ($plugin_emoticons as $text => $emoticon) {
+		$titlestring = str_replace($text, $emoticon, $titlestring);
+	}
+
+	return $titlestring;
+}
+
 // Css and js file
 function plugin_emoticons_head() {
 	global $plugin_emoticons, $buttonData;
@@ -142,4 +160,8 @@ add_filter('the_content','plugin_emoticons_filter');
 add_filter('comment_text','plugin_emoticons_filter');
 // register for the excerpt of a post
 add_filter('the_excerpt', 'plugin_emoticons_filter');
+// register for emoticon in entry/static titles (HTML body + feeds)
+add_filter('the_title', 'plugin_emoticons_filter_title', 20, 1);
+// register for emoticon in HTML <title> tag (runs after SEO plugins that build the title)
+add_filter('wp_title', 'plugin_emoticons_filter_title', 20, 2);
 ?>
