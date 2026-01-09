@@ -656,7 +656,7 @@ function utils_geturl($url) {
 			fclose($fp);
 
 			$ret ['content'] = is_string($content) ? $content : '';
-			if (is_array($meta) && isset($meta ['wrapper_data'])) {
+			if (isset($meta ['wrapper_data'])) {
 				$headers = $meta ['wrapper_data'];
 			}
 		}
