@@ -79,6 +79,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - Mixed-mode URLs are redirected to the correct URL to improve search engine rankings.
 - Calendar plugin: update to version 1.2.1
     - Optional APCu support with file fallback added ([#694](https://github.com/flatpressblog/flatpress/pull/694))
+- Emoticons plugin: update to version 1.1.3
+    - New filter that converts Markdown emoticons in entry titles and static page titles to utf-8 emoticons. ([#781](https://github.com/flatpressblog/flatpress/pull/781))
 
 ### Bugfixes
 - Newsletter plugin: update to version 1.7.3
