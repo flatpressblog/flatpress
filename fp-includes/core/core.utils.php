@@ -22,24 +22,25 @@ function utils_sksort($arr, $key, $flag = SORT_ASC) {
 	}
 }
 
-// function prototype:
-// bool utils_pattern_match(string $string, string $pattern)
-
-// returns true if $pattern matches $string, else returns false (what else?)
-// $pattern is a string containing standard shell-style jokers: * and ?
-// regex are powerful but somtimes, too complicated :)
-// usage: * matches a variable number of chars
-// e.g. : doc*.txt matches document.txt, docs.txt, dock.txt, etc.
-// and also doc.txt (note: I didn't want it to do that, but I didn't change it)
-// ? matches one char, whichever is
-// e.g. : document?.txt matches document1.txt, document2.txt, document3.txt, etc.
-// likewise "*", it should match document.txt, too (but I hadn't tried it :) )
-
-// code from http://www.php.net/function.glob.php.htm#54519
-// by x_terminat_or_3 at yahoo dot country:fr
-// thank you, man ;)
-// as usual, slightly modified to fit my tastes :)
-
+/**
+ * function prototype:
+ *  bool utils_pattern_match(string $string, string $pattern)
+ *
+ * returns true if $pattern matches $string, else returns false (what else?)
+ * $pattern is a string containing standard shell-style jokers: * and ?
+ * regex are powerful but somtimes, too complicated :)
+ * usage: * matches a variable number of chars
+ * e.g. : doc*.txt matches document.txt, docs.txt, dock.txt, etc.
+ * and also doc.txt (note: I didn't want it to do that, but I didn't change it)
+ * ? matches one char, whichever is
+ * e.g. : document?.txt matches document1.txt, document2.txt, document3.txt, etc.
+ * likewise "*", it should match document.txt, too (but I hadn't tried it :) )
+ *
+ * code from http://www.php.net/function.glob.php.htm#54519
+ * by x_terminat_or_3 at yahoo dot country:fr
+ * thank you, man ;)
+ * as usual, slightly modified to fit my tastes :)
+ */
 if (!function_exists('fnmatch')) {
 
 	function fnmatch($pattern, $string) {
@@ -184,6 +185,13 @@ class Tokenizer {
  */
 function utils_kexplode($string, $delim = '|', $keyupper = true) {
 	$arr = array();
+
+	// PHP 8.1+ deprecates trim(null). Also avoid "Array to string conversion".
+	if ($string === null) {
+		$string = '';
+	} elseif (!is_string($string)) {
+		$string = is_scalar($string) ? (string) $string : '';
+	}
 	$string = trim($string);
 
 	$tokenizer = new Tokenizer($string, $delim);
@@ -193,8 +201,8 @@ function utils_kexplode($string, $delim = '|', $keyupper = true) {
 		return $arr;
 	}
 
-	$arr[$k] = $tokenizer->nextToken();
-	if (empty($arr[$k])) {
+	$arr [$k] = $tokenizer->nextToken();
+	if (empty($arr [$k])) {
 		return $arr;
 	}
 
@@ -210,52 +218,16 @@ function utils_kexplode($string, $delim = '|', $keyupper = true) {
 }
 
 /**
- * function utils_newkexplode($string, $delim='|') {
+ * function prototype:
+ * array utils_kimplode(string $string, string $delim='|')
  *
- * $arr = array();
- *
- * $lastoffset = $offset = 0;
- * $len = strlen($string);
- *
- * while ($lastoffset<$len) {
- * $offset = strpos($string, $delim, $lastoffset);
- * $key = substr($string, $lastoffset, $offset-$lastoffset);
- * //echo 'parsing key: ', $key, $offset, chr(10);
- *
- * $lastoffset = $offset + 1;
- *
- * if (!ctype_upper($key))
- * trigger_error("Failed parsing \"$string\"
- * keys were supposed to be UPPERCASE", E_USER_ERROR);
- *
- * $offset = strpos($string, $delim, $lastoffset);
- *
- * if ($offset===false)
- * $offset = $len;
- *
- * $val = substr($string, $lastoffset, $offset-$lastoffset);
- *
- * //echo 'parsing value ', $val, $offset, chr(10);
- *
- * $lastoffset = $offset + 1;
- *
- * $arr[$key] = $val;
- *
- * }
- * return $arr;
- *
- * }
+ * explodes a string into an array by the given delimiter;
+ * delimiter defaults to pipe ('|').
+ * the string must be formatted as in:
+ * key1|value1|key2|value2 , etc.
+ * the array will look like
+ * $arr['key1'] = 'value1'; $arr['key2'] = 'value2'; etc.
  */
-
-// function prototype:
-// array utils_kimplode(string $string, string $delim='|')
-
-// explodes a string into an array by the given delimiter;
-// delimiter defaults to pipe ('|').
-// the string must be formatted as in:
-// key1|value1|key2|value2 , etc.
-// the array will look like
-// $arr['key1'] = 'value1'; $arr['key2'] = 'value2'; etc.
 function utils_kimplode($arr, $delim = '|') {
 	$string = "";
 	foreach ($arr as $k => $val) {
@@ -350,10 +322,12 @@ function utils_geturlstring() {
 	return $str;
 }
 
-// custom array_merge:
-// pads the second array to match the length of the first
-// this can be improved, anyway for now I'd just
-// do a quick & dirty solution :)
+/**
+ * custom array_merge:
+ * pads the second array to match the length of the first
+ * this can be improved, anyway for now I'd just
+ * do a quick & dirty solution :)
+ */
 function utils_array_merge($arr1, $arr2) {
 	$len = count($arr1 [0]);
 
@@ -373,7 +347,15 @@ function utils_microtime() {
 }
 
 function utils_countdashes($string, &$rest) {
+
+	// PHP 8.1+ deprecates trim(null). Also avoid "Array to string conversion".
+	if ($string === null) {
+		$string = '';
+	} elseif (!is_string($string)) {
+		$string = is_scalar($string) ? (string) $string : '';
+	}
 	$string = trim($string);
+
 	$i = 0;
 	while (isset($string [$i]) && $string [$i] === '-') {
 		$i++;
@@ -591,50 +573,117 @@ function utils_nocache_headers() {
 	@ header('Pragma: no-cache');
 }
 
-// from http://nadeausoftware.com/articles/2007/06/php_tip_how_get_web_page_using_curl
-// code under OSI BSD
 /**
  * Get a web file (HTML, XHTML, XML, image, etc.) from a URL.
+ * From http://nadeausoftware.com/articles/2007/06/php_tip_how_get_web_page_using_curl. Code under OSI BSD
  * Return an
  * array containing the HTTP server response header fields and content.
  */
 function utils_geturl($url) {
-	/*
-	 * if (ini_get('allow_url_fopen')) {
-	 * return array('content' => io_load_file($url));
-	 * }
-	 */
-	if (!function_exists('curl_init')) {
-		trigger_error('curl extension is not installed');
-		return array();
-	}
-
-	$options = array(
-		CURLOPT_RETURNTRANSFER => true, // return web page
-		CURLOPT_HEADER => false, // don't return headers
-		CURLOPT_ENCODING => "", // handle all encodings
-		CURLOPT_USERAGENT => "spider", // who am i
-		CURLOPT_AUTOREFERER => true, // set referer on redirect
-		CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
-		CURLOPT_TIMEOUT => 120, // timeout on response
-		CURLOPT_FOLLOWLOCATION => true, // follow redirects
-		CURLOPT_MAXREDIRS => 10 // stop after 10 redirects
+	// Always return a predictable structure (avoids "Undefined array key" warnings).
+	$default = array(
+		'errno' => 1,
+		'errmsg' => '',
+		'http_code' => 0,
+		'content' => ''
 	);
 
-	$ch = curl_init($url);
-	curl_setopt_array($ch, $options);
-	$content = curl_exec($ch);
-	$err = curl_errno($ch);
-	$errmsg = curl_error($ch);
-	$header = curl_getinfo($ch);
-	if (!is_php85_plus()) {
-		curl_close($ch);
+	// Preferred transport: cURL
+	if (function_exists('curl_init')) {
+		$options = array(
+			CURLOPT_RETURNTRANSFER => true, // return web page
+			CURLOPT_HEADER => false, // don't return headers
+			CURLOPT_ENCODING => "", // handle all encodings
+			CURLOPT_USERAGENT => "spider", // who am i
+			CURLOPT_AUTOREFERER => true, // set referer on redirect
+			CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
+			CURLOPT_TIMEOUT => 120, // timeout on response
+			CURLOPT_FOLLOWLOCATION => true, // follow redirects
+			CURLOPT_MAXREDIRS => 10 // stop after 10 redirects
+		);
+
+		$ch = curl_init($url);
+		curl_setopt_array($ch, $options);
+		$content = curl_exec($ch);
+		$err = curl_errno($ch);
+		$errmsg = curl_error($ch);
+		$header = curl_getinfo($ch);
+		if (!is_php85_plus()) {
+			curl_close($ch);
+		}
+
+		if (!is_array($header)) {
+			$header = array();
+		}
+		// Ensure required keys exist for callers.
+		$header += $default;
+		$header ['errno'] = $err;
+		$header ['errmsg'] = $errmsg;
+		$header ['content'] = $content;
+
+		return $header;
 	}
 
-	$header ['errno'] = $err;
-	$header ['errmsg'] = $errmsg;
-	$header ['content'] = $content;
-	return $header;
+	// Fallback transport: allow_url_fopen (common on shared hosting without cURL)
+	if (ini_get('allow_url_fopen')) {
+		$context = stream_context_create(array(
+			'http' => array(
+				'method' => 'GET',
+				'timeout' => 120,
+				'header' => "User-Agent: spider\r\n",
+				'follow_location' => true,
+				'max_redirects' => 10,
+				'ignore_errors' => true
+			)
+		));
+
+		$ret = $default;
+		$ret ['errno'] = 0;
+		$ret ['url'] = $url;
+
+		// Use fopen() + stream_get_meta_data() to get headers without relying on $http_response_header
+		$fp = @fopen($url, 'rb', false, $context);
+		$headers = null;
+
+		if ($fp === false) {
+			$ret ['errno'] = 1;
+			$last = error_get_last();
+			$ret ['errmsg'] = (is_array($last) && isset($last ['message'])) ? $last ['message'] : 'Unable to fetch URL';
+			$ret ['content'] = '';
+		} else {
+			$content = stream_get_contents($fp);
+			$meta = stream_get_meta_data($fp);
+			fclose($fp);
+
+			$ret ['content'] = is_string($content) ? $content : '';
+			if (isset($meta ['wrapper_data'])) {
+				$headers = $meta ['wrapper_data'];
+			}
+		}
+
+		// Determine HTTP status code from response headers (supports redirects).
+		$http_code = 0;
+		if (is_string($headers)) {
+			$headers = preg_split('/\r\n|\n|\r/', trim($headers));
+		}
+		if (is_array($headers)) {
+			foreach ($headers as $hline) {
+				if (preg_match('#^HTTP/\S+\s+(\d{3})\b#', $hline, $m)) {
+					$http_code = (int) $m[1];
+				}
+			}
+		}
+		$ret ['http_code'] = $http_code;
+
+		return $ret;
+	}
+
+	// No transport available
+	$ret = $default;
+	$ret ['errno'] = 1;
+	$ret ['errmsg'] = 'curl extension is not installed and allow_url_fopen is disabled';
+	$ret ['content'] = '';
+	return $ret;
 }
 
 function fplog($str) {
