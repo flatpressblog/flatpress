@@ -463,7 +463,7 @@ class admin_maintain_apcu extends AdminPanelAction {
 class admin_maintain_updates extends AdminPanelAction {
 
 	// URL to fetch the latest version infos
-	var $web = 'http://flatpress.org/fp/VERSION';
+	var $web = 'https://flatpress.org/fp/VERSION';
 
 	// URL to the latest final release
 	var $fpweb = 'https://github.com/flatpressblog/flatpress';
@@ -482,9 +482,29 @@ class admin_maintain_updates extends AdminPanelAction {
 		// retrieve content of update file
 		$file = utils_geturl($this->web);
 
-		if (!$file ['errno'] && $file ['http_code'] < 400) {
-			$ver = utils_kexplode($file ['content']);
-			if (!isset($ver ['stable'])) {
+		// Be defensive: utils_geturl() may return an empty array (e.g. when no transport is available).
+		if (!is_array($file)) {
+			$file = array();
+		}
+		$file += array(
+			'errno' => 1,
+			'errmsg' => '',
+			'http_code' => 0,
+			'content' => ''
+		);
+
+		$errno = (int) $file ['errno'];
+		$http_code = (int) $file ['http_code'];
+		$content = $file ['content'];
+
+		if ($errno === 0 && ($http_code === 0 || $http_code < 400) && $content !== null && $content !== false && $content !== '') {
+			$parsed = utils_kexplode($content);
+			// Keep default keys (stable/unstable/notice) to avoid undefined index warnings.
+			if (is_array($parsed) && !empty($parsed)) {
+				$ver = array_merge($ver, $parsed);
+			}
+
+			if (empty($ver ['stable']) || $ver ['stable'] === 'unknown') {
 				$success = -1;
 			} elseif (system_ver_compare($ver ['stable'], SYSTEM_VER)) {
 				$success = 1;
