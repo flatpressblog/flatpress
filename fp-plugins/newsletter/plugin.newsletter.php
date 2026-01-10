@@ -226,11 +226,14 @@ function plugin_newsletter_http_get(string $url, ?int &$httpCode = null, ?string
 			],
 		]);
 
+		/** @var array<int, string> $http_response_header */
+		$http_response_header = [];
+
 		$data = @file_get_contents($url, false, $context);
 
 		// Determine final HTTP code (after redirects, if any)
 		/** @var array<int, string> $headers */
-		$headers = $http_response_header ?? [];
+		$headers = $http_response_header;
 		foreach ($headers as $h) {
 			if (preg_match('#^HTTP/[\d.]+\s+(\d{3})#', $h, $m)) {
 				$httpCode = (int) $m[1];
