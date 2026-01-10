@@ -157,6 +157,118 @@ function plugin_newsletter_read_lines(string $file): array {
 	return array_filter(explode("\n", $normalized), 'strlen');
 }
 
+
+/**
+ * Fetch a remote URL and return its body.
+ *
+ * Uses cURL when available (works even if allow_url_fopen is disabled), otherwise falls back to file_get_contents().
+ * Follows redirects and exposes the final HTTP response code (if available).
+ *
+ * @param string      $url
+ * @param int|null    $httpCode Final HTTP status code (if available)
+ * @param string|null $error    Error message (if available)
+ * @return string|false Response body on success, false on failure or non-2xx status
+ */
+function plugin_newsletter_http_get(string $url, ?int &$httpCode = null, ?string &$error = null) {
+	$httpCode = null;
+	$error = null;
+
+	$userAgent = 'FlatPress-Newsletter/1.7 (+https://flatpress.org)';
+
+	// Prefer cURL when available (more reliable across hosts)
+	if (function_exists('curl_init')) {
+		$ch = curl_init($url);
+		if ($ch !== false) {
+			$opts = [
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_CONNECTTIMEOUT => 10,
+				CURLOPT_TIMEOUT => 20,
+				CURLOPT_USERAGENT => $userAgent,
+				CURLOPT_HTTPHEADER => ['Accept: text/plain, */*;q=0.8'],
+				CURLOPT_SSL_VERIFYPEER => true,
+				CURLOPT_SSL_VERIFYHOST => 2,
+				CURLOPT_ENCODING => '',
+			];
+
+			// Follow redirects when possible (may be restricted by open_basedir)
+			if (!ini_get('open_basedir') && defined('CURLOPT_FOLLOWLOCATION')) {
+				$opts [CURLOPT_FOLLOWLOCATION] = true;
+				if (defined('CURLOPT_MAXREDIRS')) {
+					$opts [CURLOPT_MAXREDIRS] = 5;
+				}
+			}
+
+			curl_setopt_array($ch, $opts);
+			$data = curl_exec($ch);
+			if ($data === false) {
+				$error = curl_error($ch) ?: 'cURL error';
+			}
+			$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			if ($code) {
+				$httpCode = (int)$code;
+			}
+			curl_close($ch);
+
+			if ($data !== false && $httpCode !== null && $httpCode >= 200 && $httpCode < 300) {
+				return $data;
+			}
+
+			// If cURL responded with a non-2xx code, treat as failure (but keep $httpCode/$error)
+			if ($data !== false && $httpCode !== null && ($httpCode < 200 || $httpCode >= 300) && !$error) {
+				$error = 'HTTP status ' . $httpCode;
+			}
+		}
+	}
+
+	// Fallback to streams (requires allow_url_fopen)
+	$allowUrlFopen = ini_get('allow_url_fopen');
+	if (!$allowUrlFopen) {
+		if (!$error) {
+			$error = 'allow_url_fopen is disabled and cURL is unavailable';
+		}
+		return false;
+	}
+
+	$context = stream_context_create([
+		'http' => [
+			'method' => 'GET',
+			'header' => "User-Agent: " . $userAgent . "\r\nAccept: text/plain, */*;q=0.8\r\n",
+			'timeout' => 20,
+			'follow_location' => 1,
+			'max_redirects' => 5,
+			'ignore_errors' => true,
+		],
+		'ssl' => [
+			'verify_peer' => true,
+			'verify_peer_name' => true,
+		],
+	]);
+
+	$data = @file_get_contents($url, false, $context);
+
+	// Parse final HTTP response code from $http_response_header (may contain multiple status lines due to redirects)
+	if (isset($http_response_header) && is_array($http_response_header)) {
+		foreach ($http_response_header as $h) {
+			if (is_string($h) && strpos($h, 'HTTP/') === 0) {
+				if (preg_match('/\s(\d{3})\b/', $h, $m)) {
+					$httpCode = (int)$m[1];
+				}
+			}
+		}
+	}
+
+	if ($data !== false && ($httpCode === null || ($httpCode >= 200 && $httpCode < 300))) {
+		return $data;
+	}
+
+	if (!$error) {
+		$last = error_get_last();
+		$error = isset($last ['message']) ? $last ['message'] : 'Unable to fetch remote URL';
+	}
+
+	return false;
+}
+
 // Initialization on every page request
 plugin_newsletter_init();
 
@@ -1335,67 +1447,109 @@ if (class_exists('AdminPanelAction')) {
  */
 function plugin_newsletter_maybe_update_blocklist(): void {
 
-	$remote_disposable_email_blocklist = NEWSLETTER_BLOCKLIST_URL;
-	if (function_exists('get_headers')) {
-		$headers = @get_headers($remote_disposable_email_blocklist);
-		$status = is_array($headers) ? $headers [0] : '';
-		if ($headers === false || strpos($status, '200') === false) {
-			trigger_error(sprintf('[Newsletter plugin] The blocklist URL "%s" is currently unavailable or returns an HTTP status other than 200.', $remote_disposable_email_blocklist), E_USER_WARNING);
-		}
-	} else {
-		trigger_error('[Newsletter plugin] The get_headers() function is not available; blocklist URL could not be verified.', E_USER_WARNING);
-	}
+	$remote = NEWSLETTER_BLOCKLIST_URL;
 
 	// Local path to the blocklist
 	$local = PLUGIN_NEWSLETTER_DIR . 'disposable-email-blocklist.txt';
 
-	// Blocklist file does not yet exist? - Obtain immediately from Remote
-	if (!file_exists($local)) {
-		$data = @file_get_contents($remote_disposable_email_blocklist);
-		if ($data !== false) {
-			$lines = explode("\n", rtrim($data, "\n"));
-			plugin_newsletter_rmw_file($local, function(array $_) use ($lines): array {
-				return $lines;
-			});
-			@chmod($local, FILE_PERMISSIONS);
+	// Decide whether we actually need to fetch anything (avoid remote calls on every request)
+	$need_initial_fetch = !file_exists($local);
+
+	if (!$need_initial_fetch) {
+		// Only continue after the 25th day of the month
+		if ((int) date('j') < 25) {
+			return;
 		}
+
+		// Already updated this month?
+		$mtime = @filemtime($local);
+		if ($mtime !== false && date('Y-m', $mtime) === date('Y-m')) {
+			return;
+		}
+	}
+
+	// Throttle remote attempts to avoid log spam on busy sites
+	// - initial fetch: retry at most once per hour
+	// - monthly updates: retry at most once per day
+	$attemptFile = PLUGIN_NEWSLETTER_DIR . 'disposable-email-blocklist.lastattempt';
+	$throttleSeconds = $need_initial_fetch ? 3600 : 86400;
+	if (file_exists($attemptFile)) {
+		$lastAttempt = @filemtime($attemptFile);
+		if ($lastAttempt !== false && (time() - $lastAttempt) < $throttleSeconds) {
+			return;
+		}
+	}
+
+	@touch($attemptFile);
+
+	// Some hosts may not like the /refs/heads/ form; try a direct branch URL as fallback
+	$urls = [$remote];
+	if (strpos($remote, '/refs/heads/') !== false) {
+		$alt = str_replace('/refs/heads/', '/', $remote);
+		if ($alt !== $remote) {
+			$urls[] = $alt;
+		}
+	}
+
+	$data = false;
+	$httpCode = null;
+	$error = null;
+
+	foreach ($urls as $u) {
+		$tmpCode = null;
+		$tmpErr  = null;
+		$tmpData = plugin_newsletter_http_get($u, $tmpCode, $tmpErr);
+
+		if ($tmpData !== false) {
+			$data = $tmpData;
+			$httpCode = $tmpCode;
+			$error = null;
+			break;
+		}
+
+		// Keep last seen details
+		$httpCode = $tmpCode;
+		$error = $tmpErr;
+	}
+
+	if ($data === false) {
+		$msg = sprintf('[Newsletter plugin] The blocklist URL "%s" could not be downloaded', $remote);
+		if ($httpCode !== null) {
+			$msg .= sprintf(' (HTTP %d)', $httpCode);
+		}
+		if ($error) {
+			$msg .= ': ' . $error;
+		}
+		trigger_error($msg . '.', E_USER_WARNING);
 		return;
 	}
 
-	// Only continue after the 25th day of the month
-	if ((int) date('j') < 25) {
+	$lines = explode("\n", rtrim($data, "\n"));
+
+	plugin_newsletter_rmw_file($local, function(array $_) use ($lines): array {
+		return $lines;
+	});
+	@chmod($local, FILE_PERMISSIONS);
+
+	// Initial fetch ends here (no subscriber cleanup to keep behaviour identical)
+	if ($need_initial_fetch) {
 		return;
 	}
 
-	// Already updated this month?
-	$mtime = filemtime($local);
-	if (date('Y-m', $mtime) === date('Y-m')) {
-		return;
-	}
-
-	// We will update the block list after the 25th
-	$data = @file_get_contents($remote_disposable_email_blocklist);
-	if ($data !== false) {
-		$lines = explode("\n", rtrim($data, "\n"));
-		plugin_newsletter_rmw_file($local, function(array $_) use ($lines): array {
-			return $lines;
+	// Remove subscribers with blocklist domains (monthly update)
+	$subsFile = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
+	$blocklist = array_map('strtolower', plugin_newsletter_read_lines($local));
+	plugin_newsletter_rmw_file($subsFile, function(array $lines) use ($blocklist): array {
+		// Only keep subscriptions whose domain is not on the block list
+		return array_filter($lines, function(string $line) use ($blocklist): bool {
+			list($enc) = explode('|', $line, 2);
+			$email = plugin_newsletter_decrypt($enc);
+			$domain = strtolower(substr(strrchr($email, '@'), 1));
+			return !in_array($domain, $blocklist, true);
 		});
-		@chmod($local, FILE_PERMISSIONS);
-
-		// Remove subscribers with blocklist domains
-		$subsFile = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
-		$blocklist = array_map('strtolower', plugin_newsletter_read_lines($local));
-		plugin_newsletter_rmw_file($subsFile, function(array $lines) use ($blocklist): array {
-			// Only keep subscriptions whose domain is not on the block list
-			return array_filter($lines, function(string $line) use ($blocklist): bool {
-				list($enc) = explode('|', $line, 2);
-				$email = plugin_newsletter_decrypt($enc);
-				$domain = strtolower(substr(strrchr($email, '@'), 1));
-				return !in_array($domain, $blocklist, true);
-			});
-		});
-	}
+	});
 }
+
 
 // Plugin file is loaded with every request - Trigger update check
 plugin_newsletter_maybe_update_blocklist();
