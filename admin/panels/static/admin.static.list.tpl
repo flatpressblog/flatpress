@@ -28,7 +28,7 @@
 			<td>{$id}</td>
 			<td class="main-cell">
 				<a class="link-general" href="{$panel_url|action_link:write}&amp;page={$id}">
-					{$subject|truncate:70}
+					{$subject|truncate:70|tag:the_title}
 				</a>
 			</td>
 
