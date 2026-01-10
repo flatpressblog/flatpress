@@ -33,7 +33,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - ``theme_style_exists()`` now returns ``''`` if the style directory is missing. Previously, the theme root was returned incorrectly. ([#678](https://github.com/flatpressblog/flatpress/pull/678))
 - Fixes the display of orphaned widgets when a plugin has been deactivated and prevents duplicate or missing widget outputs, so that only widgets from active plugins are output. ([#726](https://github.com/flatpressblog/flatpress/pull/726))
 - Fixes a PHP warning ``expects parameter 3 to be integer, array given`` under PHP 7.2 when the admin logs out. ([#774](https://github.com/flatpressblog/flatpress/pull/774))
-- A problem with setting file and directory permissions that occurred with shared web hosts has been fixed.
+- A problem with setting file and directory permissions that occurred with shared web hosts has been fixed. Many thanks to @RainerBielefeld and Lubomír Ludvík.
 
 ## Plugins
 ### Changes
