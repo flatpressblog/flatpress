@@ -94,7 +94,7 @@ $lang ['admin'] ['maintain'] ['support'] = array(
 
 	'desc_themesdir' => 'The themes directory should be write-protected for others in productive operation.',
 	'attention_themesdir' => '<p class="attention"><strong>&#8505;</strong> The themes directory can be written to by others!</p>',
-	'success_themesdir' => '<p class="success"><strong>&#10003;</strong> The fp-interface directory cannot be written to by others.</p>',
+	'success_themesdir' => '<p class="success"><strong>&#10003;</strong> The themes directory cannot be written to by others.</p>',
 
 	'desc_plugindir' => 'The fp-plugins directory should be write-protected for others in productive operation.',
 	'attention_plugindir' => '<p class="attention"><strong>&#8505;</strong> The fp-plugins directory can be written to by others!</p>',
