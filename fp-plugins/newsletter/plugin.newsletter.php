@@ -193,7 +193,9 @@ function plugin_newsletter_http_get(string $url, ?int &$httpCode = null, ?string
 			$errno = curl_errno($ch);
 			$errstr = curl_error($ch);
 			$code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close($ch);
+			if (!is_php85_plus()) {
+				curl_close($ch);
+			}
 
 			if ($errno === 0 && is_string($data) && $data !== '') {
 				$httpCode = $code;
