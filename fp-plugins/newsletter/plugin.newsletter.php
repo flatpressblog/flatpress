@@ -157,7 +157,6 @@ function plugin_newsletter_read_lines(string $file): array {
 	return array_filter(explode("\n", $normalized), 'strlen');
 }
 
-
 /**
  * Fetch a URL with broad hosting compatibility.
  * Prefers cURL (works even if allow_url_fopen is off), then falls back to streams.
@@ -257,7 +256,6 @@ function plugin_newsletter_http_get(string $url, ?int &$httpCode = null, ?string
 	$error = 'allow_url_fopen disabled and cURL not available';
 	return null;
 }
-
 
 // Initialization on every page request
 plugin_newsletter_init();
@@ -793,24 +791,89 @@ function plugin_newsletter_sanitize_from_email($from) {
 }
 
 /**
+ * Returns the configured FlatPress character set (validated against a safe allow-list).
+ *
+ * @return string
+ */
+function plugin_newsletter_get_charset(): string {
+	global $fp_config;
+
+	$charset = strtoupper((string) ($fp_config ['locale'] ['charset'] ?? 'UTF-8'));
+
+	// Keep this allow-list in sync with core.utils.php (utils_mail()).
+	$allowed_charsets = [
+		'UTF-8',
+		'ISO-8859-1',
+		'ISO-8859-5',
+		'ISO-8859-9',
+		'ISO-8859-15',
+		'WINDOWS-1252',
+		'SHIFT_JIS',
+		'EUC-JP',
+		'GB2312'
+	];
+
+	if (!in_array($charset, $allowed_charsets, true)) {
+		$charset = 'UTF-8';
+	}
+
+	return $charset;
+}
+
+/**
+ * Encodes a subject line per RFC 2047, converting from UTF-8 to the requested charset if needed.
+ *
+ * @param string $subject_text Human-readable subject (expected UTF-8)
+ * @param string $charset Target charset (validated)
+ * @return string Encoded header value
+ */
+function plugin_newsletter_encode_subject(string $subject_text, string $charset): string {
+	$subject_text = (string) preg_replace('/[\r\n]/', '', $subject_text);
+	$charset = strtoupper($charset);
+
+	if ($charset !== 'UTF-8') {
+		if (function_exists('mb_convert_encoding')) {
+			$converted = @mb_convert_encoding($subject_text, $charset, 'UTF-8');
+			if (is_string($converted) && $converted !== '') {
+				$subject_text = $converted;
+			}
+		} elseif (function_exists('iconv')) {
+			$converted = @iconv('UTF-8', $charset . '//TRANSLIT', $subject_text);
+			if (!is_string($converted) || $converted === '') {
+				$converted = @iconv('UTF-8', $charset . '//IGNORE', $subject_text);
+			}
+			if (is_string($converted) && $converted !== '') {
+				$subject_text = $converted;
+			}
+		}
+	}
+
+	return '=?' . $charset . '?B?' . base64_encode($subject_text) . '?=';
+}
+
+/**
  * Best-effort mail wrapper for maximum compatibility across hosters.
- * - On Windows: ignore additional parameters (no sendmail flags).
- * - On Unix: try setting envelope sender via "-f", fallback without params if blocked.
+ * Note: Avoid the 5th parameter of mail() (additional_params, e.g. "-f").
+ * On shared hosting it is often blocked, ignored, or forcibly overridden via
+ * php.ini (mail.force_extra_parameters). It can also break delivery when users
+ * configure external sender addresses (Gmail/GMX, etc.).
+ *
+ * FlatPress core (utils_mail()) therefore avoids passing additional parameters.
+ * Here we only ensure a sane "From:" header is present and call mail().
  */
 function plugin_newsletter_mail(string $to, string $subject, string $message, string $headers, string $fromEmail): bool {
 	$fromEmail = plugin_newsletter_sanitize_from_email($fromEmail);
 
-	// Windows uses SMTP; sendmail flags are not applicable.
-	if (stripos(PHP_OS, 'WIN') === 0) {
-		return (bool) @mail($to, $subject, $message, $headers);
+	// Ensure required From header exists (mail() requires it; on Windows it can also affect Return-Path)
+	if ($fromEmail !== '' && !preg_match('/^From:/mi', $headers)) {
+		// Ensure headers end with CRLF before appending
+		if ($headers !== '' && substr($headers, -2) !== "\r\n") {
+			$headers .= "\r\n";
+		}
+		$headers .= 'From: ' . $fromEmail . "\r\n";
 	}
 
-	// Try with envelope sender; some hosters block 5th param -> fallback.
-	$ok = @mail($to, $subject, $message, $headers, '-f' . $fromEmail);
-	if (!$ok) {
-		$ok = @mail($to, $subject, $message, $headers);
-	}
-	return (bool) $ok;
+	return (bool) @mail($to, $subject, $message, $headers);
 }
 
 /**
@@ -833,7 +896,7 @@ function plugin_newsletter_handle_subscribe() {
 		list($blocked_ip, $ts) = explode('|', $line);
 		// 24 hour lock
 		if ($blocked_ip === $ip && time() - (int)$ts < 24 * 3600) {
-			header('Location: '.BLOG_BASEURL.'?page=throttle-limit');
+			header('Location: ' . BLOG_BASEURL . '?page=throttle-limit');
 			exit;
 		}
 	}
@@ -930,11 +993,7 @@ function plugin_newsletter_handle_subscribe() {
 	}
 
 	// Determine FlatPress character set
-	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
-	$allowed_charsets = ['UTF-8', 'ISO-8859-1', 'ISO-8859-5', 'ISO-8859-9', 'ISO-8859-15', 'Windows-1252', 'Shift_JIS', 'EUC-JP','GB2312'];
-	if (!in_array($charset, $allowed_charsets)) {
-		$charset = 'UTF-8';
-	}
+	$charset = plugin_newsletter_get_charset();
 
 	// Generate token for the confirmation e-mail
 	$token = bin2hex(random_bytes(16));
@@ -955,7 +1014,7 @@ function plugin_newsletter_handle_subscribe() {
 	$from = plugin_newsletter_sanitize_from_email($fp_config ['general'] ['email'] ?? '');
 	$confirm_link = BLOG_BASEURL . '?newsletter_action=confirm&email=' . urlencode($email) . '&token=' . $token;
 	$subject_text = $lang ['plugin'] ['newsletter'] ['confirm_subject'] . ' - ' . $fp_config ['general'] ['title'];
-	$subject = '=?' . $charset . '?B?' . base64_encode($subject_text). '?=';
+	$subject = plugin_newsletter_encode_subject($subject_text, $charset);
 	$body = '<p>' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['confirm_greeting'], ENT_QUOTES) . '</p>' . //
 		'<p><a href="' . htmlspecialchars($confirm_link, ENT_QUOTES) . '">' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['confirm_link_text'], ENT_QUOTES) . '</a></p>' . //
 		'<p>' . htmlspecialchars($lang ['plugin'] ['newsletter'] ['confirm_ignore'], ENT_QUOTES) . '</p>' . //
@@ -1124,14 +1183,10 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 		}
 
 		// Determine FlatPress character set
-		$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
-		$allowed_charsets = ['UTF-8', 'ISO-8859-1', 'ISO-8859-5', 'ISO-8859-9', 'ISO-8859-15', 'Windows-1252', 'Shift_JIS', 'EUC-JP','GB2312'];
-		if (!in_array($charset, $allowed_charsets)) {
-			$charset = 'UTF-8';
-		}
+		$charset = plugin_newsletter_get_charset();
 
 		$subject_text = $title . ' - ' . $lang ['plugin'] ['newsletter'] ['subject'];
-		$encoded_subject = '=?' . $charset . '?B?' . base64_encode($subject_text) . '?=';
+		$encoded_subject = plugin_newsletter_encode_subject($subject_text, $charset);
 		$from = plugin_newsletter_sanitize_from_email($fp_config ['general'] ['email'] ?? '');
 		$headers = 'Date: ' . date('r') . "\r\n";
 		$headers .= 'MIME-Version: 1.0' . "\r\n";
@@ -1226,14 +1281,10 @@ function plugin_newsletter_send_all($subFile) {
 	}
 
 	// Determine FlatPress character set
-	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
-	$allowed_charsets = ['UTF-8', 'ISO-8859-1', 'ISO-8859-5', 'ISO-8859-9', 'ISO-8859-15', 'Windows-1252', 'Shift_JIS', 'EUC-JP','GB2312'];
-	if (!in_array($charset, $allowed_charsets)) {
-		$charset = 'UTF-8';
-	}
+	$charset = plugin_newsletter_get_charset();
 
 	$subject_text = $title . ' - ' . $lang ['plugin'] ['newsletter'] ['subject'];
-	$encoded_subject = '=?' . $charset . '?B?' . base64_encode($subject_text) . '?=';
+	$encoded_subject = plugin_newsletter_encode_subject($subject_text, $charset);
 	$from = plugin_newsletter_sanitize_from_email($fp_config ['general'] ['email'] ?? '');
 
 	$headers = '';
@@ -1243,7 +1294,7 @@ function plugin_newsletter_send_all($subFile) {
 	$headers .= 'From: ' . $from . "\r\n";
 
 	// MANUAL BATCHED DISPATCH START
-	$batchSize  = PLUGIN_NEWSLETTER_BATCH_SIZE;
+	$batchSize = PLUGIN_NEWSLETTER_BATCH_SIZE;
 	$offsetFile = PLUGIN_NEWSLETTER_DIR . 'batch-offset.txt';
 	$dateFile = PLUGIN_NEWSLETTER_DIR . 'next-send-date.txt';
 
