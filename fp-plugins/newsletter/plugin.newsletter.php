@@ -159,115 +159,100 @@ function plugin_newsletter_read_lines(string $file): array {
 
 
 /**
- * Fetch a remote URL and return its body.
- *
- * Uses cURL when available (works even if allow_url_fopen is disabled), otherwise falls back to file_get_contents().
- * Follows redirects and exposes the final HTTP response code (if available).
+ * Fetch a URL with broad hosting compatibility.
+ * Prefers cURL (works even if allow_url_fopen is off), then falls back to streams.
  *
  * @param string      $url
- * @param int|null    $httpCode Final HTTP status code (if available)
- * @param string|null $error    Error message (if available)
- * @return string|false Response body on success, false on failure or non-2xx status
+ * @param int|null    $httpCode Filled with the HTTP status code when available
+ * @param string|null $error    Filled with a short error description when available
+ * @return string|null Response body on success, null on failure
  */
-function plugin_newsletter_http_get(string $url, ?int &$httpCode = null, ?string &$error = null) {
+function plugin_newsletter_http_get(string $url, ?int &$httpCode = null, ?string &$error = null): ?string {
 	$httpCode = null;
 	$error = null;
 
-	$userAgent = 'FlatPress-Newsletter/1.7 (+https://flatpress.org)';
-
-	// Prefer cURL when available (more reliable across hosts)
+	// Prefer cURL if available
 	if (function_exists('curl_init')) {
 		$ch = curl_init($url);
 		if ($ch !== false) {
-			$opts = [
+			curl_setopt_array($ch, [
 				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_CONNECTTIMEOUT => 10,
-				CURLOPT_TIMEOUT => 20,
-				CURLOPT_USERAGENT => $userAgent,
-				CURLOPT_HTTPHEADER => ['Accept: text/plain, */*;q=0.8'],
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_MAXREDIRS => 5,
+				CURLOPT_CONNECTTIMEOUT => 5,
+				CURLOPT_TIMEOUT => 10,
+				CURLOPT_USERAGENT => 'FlatPress Newsletter Plugin',
+				CURLOPT_HTTPHEADER => [
+					'Accept: text/plain, */*;q=0.8'
+				],
 				CURLOPT_SSL_VERIFYPEER => true,
 				CURLOPT_SSL_VERIFYHOST => 2,
-				CURLOPT_ENCODING => '',
-			];
+			]);
 
-			// Follow redirects when possible (may be restricted by open_basedir)
-			if (!ini_get('open_basedir') && defined('CURLOPT_FOLLOWLOCATION')) {
-				$opts [CURLOPT_FOLLOWLOCATION] = true;
-				if (defined('CURLOPT_MAXREDIRS')) {
-					$opts [CURLOPT_MAXREDIRS] = 5;
-				}
-			}
-
-			curl_setopt_array($ch, $opts);
 			$data = curl_exec($ch);
-			if ($data === false) {
-				$error = curl_error($ch) ?: 'cURL error';
-			}
-			$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			if ($code) {
-				$httpCode = (int)$code;
-			}
+			$errno = curl_errno($ch);
+			$errstr = curl_error($ch);
+			$code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			curl_close($ch);
 
-			if ($data !== false && $httpCode !== null && $httpCode >= 200 && $httpCode < 300) {
+			if ($errno === 0 && is_string($data) && $data !== '') {
+				$httpCode = $code;
+				if ($code >= 200 && $code < 300) {
+					return $data;
+				}
+				$error = 'HTTP ' . $code;
+				return null;
+			}
+
+			$httpCode = $code ?: null;
+			$error = $errno ? ('cURL error ' . $errno . ': ' . $errstr) : ('HTTP ' . $code);
+			// continue to stream fallback
+		}
+	}
+
+	// Fallback: streams (requires allow_url_fopen)
+	if (ini_get('allow_url_fopen')) {
+		$context = stream_context_create([
+			'http' => [
+				'method' => 'GET',
+				'timeout' => 10,
+				'follow_location' => 1,
+				'max_redirects' => 5,
+				'header' => "User-Agent: FlatPress Newsletter Plugin\r\nAccept: text/plain, */*;q=0.8\r\n",
+			],
+			'ssl' => [
+				'verify_peer' => true,
+				'verify_peer_name' => true,
+			],
+		]);
+
+		$data = @file_get_contents($url, false, $context);
+
+		// Determine final HTTP code (after redirects, if any)
+		/** @var array<int, string> $headers */
+		$headers = $http_response_header ?? [];
+		foreach ($headers as $h) {
+			if (preg_match('#^HTTP/[\d.]+\s+(\d{3})#', $h, $m)) {
+				$httpCode = (int) $m[1];
+			}
+		}
+
+		if ($data !== false && $data !== '') {
+			if ($httpCode === null || ($httpCode >= 200 && $httpCode < 300)) {
 				return $data;
 			}
-
-			// If cURL responded with a non-2xx code, treat as failure (but keep $httpCode/$error)
-			if ($data !== false && $httpCode !== null && ($httpCode < 200 || $httpCode >= 300) && !$error) {
-				$error = 'HTTP status ' . $httpCode;
-			}
+			$error = 'HTTP ' . $httpCode;
+			return null;
 		}
+
+		$error = $httpCode !== null ? ('HTTP ' . $httpCode) : 'stream error';
+		return null;
 	}
 
-	// Fallback to streams (requires allow_url_fopen)
-	$allowUrlFopen = ini_get('allow_url_fopen');
-	if (!$allowUrlFopen) {
-		if (!$error) {
-			$error = 'allow_url_fopen is disabled and cURL is unavailable';
-		}
-		return false;
-	}
-
-	$context = stream_context_create([
-		'http' => [
-			'method' => 'GET',
-			'header' => "User-Agent: " . $userAgent . "\r\nAccept: text/plain, */*;q=0.8\r\n",
-			'timeout' => 20,
-			'follow_location' => 1,
-			'max_redirects' => 5,
-			'ignore_errors' => true,
-		],
-		'ssl' => [
-			'verify_peer' => true,
-			'verify_peer_name' => true,
-		],
-	]);
-
-	$data = @file_get_contents($url, false, $context);
-
-	// Parse final HTTP response code from $http_response_header (may contain multiple status lines due to redirects)
-	if (isset($http_response_header) && is_array($http_response_header)) {
-		foreach ($http_response_header as $h) {
-			if (is_string($h) && strpos($h, 'HTTP/') === 0) {
-				if (preg_match('/\s(\d{3})\b/', $h, $m)) {
-					$httpCode = (int)$m[1];
-				}
-			}
-		}
-	}
-
-	if ($data !== false && ($httpCode === null || ($httpCode >= 200 && $httpCode < 300))) {
-		return $data;
-	}
-
-	if (!$error) {
-		$last = error_get_last();
-		$error = isset($last ['message']) ? $last ['message'] : 'Unable to fetch remote URL';
-	}
-
-	return false;
+	$error = 'allow_url_fopen disabled and cURL not available';
+	return null;
 }
+
 
 // Initialization on every page request
 plugin_newsletter_init();
@@ -1452,10 +1437,22 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 	// Local path to the blocklist
 	$local = PLUGIN_NEWSLETTER_DIR . 'disposable-email-blocklist.txt';
 
-	// Decide whether we actually need to fetch anything (avoid remote calls on every request)
-	$need_initial_fetch = !file_exists($local);
+	// Used to throttle failed attempts (prevents log spam on strict hosts)
+	$attemptFile = PLUGIN_NEWSLETTER_DIR . 'disposable-email-blocklist.last_attempt.txt';
+	$now = time();
 
-	if (!$need_initial_fetch) {
+	$mode = '';
+
+	// Decide whether we should download now (avoid network calls on every request)
+	// Blocklist file does not yet exist? - Obtain immediately from Remote
+	if (!file_exists($local)) {
+		$mode = 'initial';
+		// Retry at most once per hour if it fails
+		if (file_exists($attemptFile) && ($now - (int) @filemtime($attemptFile) < 3600)) {
+			return;
+		}
+	} else {
+
 		// Only continue after the 25th day of the month
 		if ((int) date('j') < 25) {
 			return;
@@ -1463,80 +1460,53 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 
 		// Already updated this month?
 		$mtime = @filemtime($local);
-		if ($mtime !== false && date('Y-m', $mtime) === date('Y-m')) {
+		if ($mtime && date('Y-m', $mtime) === date('Y-m')) {
+			return;
+		}
+
+		$mode = 'monthly';
+		// Retry at most once per day if it fails
+		if (file_exists($attemptFile) && ($now - (int) @filemtime($attemptFile) < 86400)) {
 			return;
 		}
 	}
 
-	// Throttle remote attempts to avoid log spam on busy sites
-	// - initial fetch: retry at most once per hour
-	// - monthly updates: retry at most once per day
-	$attemptFile = PLUGIN_NEWSLETTER_DIR . 'disposable-email-blocklist.lastattempt';
-	$throttleSeconds = $need_initial_fetch ? 3600 : 86400;
-	if (file_exists($attemptFile)) {
-		$lastAttempt = @filemtime($attemptFile);
-		if ($lastAttempt !== false && (time() - $lastAttempt) < $throttleSeconds) {
-			return;
-		}
-	}
-
+	// Mark attempt
 	@touch($attemptFile);
 
-	// Some hosts may not like the /refs/heads/ form; try a direct branch URL as fallback
-	$urls = [$remote];
-	if (strpos($remote, '/refs/heads/') !== false) {
-		$alt = str_replace('/refs/heads/', '/', $remote);
-		if ($alt !== $remote) {
-			$urls[] = $alt;
-		}
-	}
-
-	$data = false;
 	$httpCode = null;
-	$error = null;
+	$err = null;
+	$remoteUsed = $remote;
 
-	foreach ($urls as $u) {
-		$tmpCode = null;
-		$tmpErr  = null;
-		$tmpData = plugin_newsletter_http_get($u, $tmpCode, $tmpErr);
+	$data = plugin_newsletter_http_get($remote, $httpCode, $err);
 
-		if ($tmpData !== false) {
-			$data = $tmpData;
-			$httpCode = $tmpCode;
-			$error = null;
-			break;
+	// Fallback for some hosts: try the canonical raw URL without /refs/heads/
+	if ($data === null && strpos($remote, '/refs/heads/') !== false) {
+		$alt = preg_replace('#/refs/heads/([^/]+)/#', '/$1/', $remote, 1);
+		if (is_string($alt) && $alt !== '' && $alt !== $remote) {
+			$remoteUsed = $alt;
+			$data = plugin_newsletter_http_get($alt, $httpCode, $err);
 		}
-
-		// Keep last seen details
-		$httpCode = $tmpCode;
-		$error = $tmpErr;
 	}
 
-	if ($data === false) {
-		$msg = sprintf('[Newsletter plugin] The blocklist URL "%s" could not be downloaded', $remote);
-		if ($httpCode !== null) {
-			$msg .= sprintf(' (HTTP %d)', $httpCode);
-		}
-		if ($error) {
-			$msg .= ': ' . $error;
-		}
-		trigger_error($msg . '.', E_USER_WARNING);
+	if (!is_string($data) || $data === '') {
+		$detail = $err ?: 'unknown error';
+		trigger_error(sprintf('[Newsletter plugin] The blocklist URL "%s" could not be fetched (%s).', $remoteUsed, $detail), E_USER_WARNING);
 		return;
 	}
 
 	$lines = explode("\n", rtrim($data, "\n"));
-
 	plugin_newsletter_rmw_file($local, function(array $_) use ($lines): array {
 		return $lines;
 	});
 	@chmod($local, FILE_PERMISSIONS);
 
-	// Initial fetch ends here (no subscriber cleanup to keep behaviour identical)
-	if ($need_initial_fetch) {
+	// Keep previous behaviour: do not clean subscribers on first download
+	if ($mode === 'initial') {
 		return;
 	}
 
-	// Remove subscribers with blocklist domains (monthly update)
+	// Remove subscribers with blocklist domains
 	$subsFile = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
 	$blocklist = array_map('strtolower', plugin_newsletter_read_lines($local));
 	plugin_newsletter_rmw_file($subsFile, function(array $lines) use ($blocklist): array {
