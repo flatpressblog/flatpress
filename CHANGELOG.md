@@ -47,6 +47,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
   - In addition, the plugin limits the number of login attempts per IP and sorts out incorrect addresses before they are sent, ensuring that the newsletter is reliably delivered only to valid recipients.
   - Even more against race conditions
   - Batch shipping shows shipping status ([#649](https://github.com/flatpressblog/flatpress/pull/649))
+  - The mail function covers most shared hosting restrictions, e.g. at [milesweb.com](https://www.milesweb.com) ([#784](https://github.com/flatpressblog/flatpress/pull/784))
 - FlatPress Protect plugin: update to version 1.2.1
   - iFrames can only be embedded from the same domain, unless explicitly enabled.
     - If the GDPR Video embed plugin is active, YouTube, Vimeo, and Facebook videos can still be embedded. ([#778](https://github.com/flatpressblog/flatpress/pull/778))
