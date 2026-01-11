@@ -1,0 +1,44 @@
+# No directory listing
+Options -Indexes
+
+<IfModule mod_mime.c>
+	# Correct MIME types (some hosts mis-detect .ico/.svg/.webmanifest)
+	AddType image/x-icon .ico
+	AddType image/svg+xml .svg .svgz
+	AddEncoding gzip .svgz
+	AddType application/manifest+json .webmanifest
+</IfModule>
+
+<IfModule mod_headers.c>
+	# Basic hardening for served assets
+	<FilesMatch "\.(ico|png|svg|svgz|webmanifest)$">
+		Header set X-Content-Type-Options "nosniff"
+	</FilesMatch>
+
+	# Caching:
+	# Keep favicon.ico shorter because browsers may fetch it without ?v=
+	<FilesMatch "\.ico$">
+		Header set Cache-Control "public, max-age=86400"
+	</FilesMatch>
+
+	# Other icons/manifests can be cached longer; the plugin already adds ?v=mtime in <head>
+	<FilesMatch "\.(png|svg|svgz|webmanifest)$">
+		Header set Cache-Control "public, max-age=604800"
+	</FilesMatch>
+
+	# PHP-generated files (if accessed directly): moderate caching
+	<Files "site.webmanifest.json.php">
+		Header set Cache-Control "public, max-age=3600"
+	</Files>
+	<Files "browserconfig.xml.php">
+		Header set Cache-Control "public, max-age=3600"
+	</Files>
+</IfModule>
+
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresByType image/x-icon "access plus 1 day"
+	ExpiresByType image/png "access plus 7 days"
+	ExpiresByType image/svg+xml "access plus 7 days"
+	ExpiresByType application/manifest+json "access plus 7 days"
+</IfModule>
