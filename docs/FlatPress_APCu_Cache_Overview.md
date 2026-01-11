@@ -76,7 +76,8 @@ High. Most APCu usage flows through these helpers.
 **Prefix:** `fp:io:<filename>:<mtime>:<size>`  
 **File:** `fp-includes/core/core.fileio.php`  
 
-- Caches results of `io_load_file()` on top-level core files.
+- Caches results of `io_load_file()` for any file loaded through this helper  
+  (most notably frequently accessed core, config, and content files).
 - Key includes:
   - Absolute filename.
   - File mtime.
@@ -84,8 +85,15 @@ High. Most APCu usage flows through these helpers.
 - Invalidation:
   - Automatic when the file changes (mtime/size).
   - No global version bump needed.
+- APCu entry size guard:
+  - Controlled via env `FP_APCU_IO_MAX_BYTES` (bytes). Default 32768 (32 KiB).
+  - Values larger than this are **not** stored in APCu  
+    (but are still returned and kept in the per-request local cache).
 - TTL:
-  - Controlled via env `FP_APCU_IO_TTL` (seconds). Default 3600s (1h).
+  - Controlled via env `FP_APCU_IO_TTL` (seconds). Default 3600s (1h), set in `defaults.php`  
+    (fallback in `core.fileio.php` is 7200s).
+  - Note: the key already changes with `mtime/size`, so TTL mainly limits  
+    how long older versions can remain in APCu until eviction.
   - For constrained APCu pools (< 32 MiB), consider `FP_APCU_IO_TTL=600–1800`.
 
 **Impact:**  
@@ -112,6 +120,13 @@ High. Reduces filesystem I/O for frequently accessed content and config files.
 
 - mtime + size of the entry file.
 - Any update to the entry file automatically switches the key.
+
+**TTL / retention:**
+
+- BlogDB-level cache: controlled via env `FP_APCU_ENTRY_TTL` (seconds), default 600.
+- Entry-level cache: stored with a fixed 600s TTL.
+- As with other signature-based caches, the key changes with `mtime/size`; TTL mainly limits  
+  how long older versions remain in APCu.
 
 **Impact:**  
 High. This is the primary hot cache for the entry stream and single entry view.
@@ -148,7 +163,8 @@ Medium–High. Speeds up full comment listing on popular entries.
 
 **What is cached:**
 
-- The **comment count only** (no list building), intended for entry streams where templates typically only need `{comments}` as a number.
+- The **comment count only** (no list building), intended for entry streams where templates  
+  typically only need `{comments}` as a number.
 
 **Invalidation:**
 
@@ -158,13 +174,16 @@ Medium–High. Speeds up full comment listing on popular entries.
 
 - `@apcu_set(..., 300);` (5 minutes).
 
-**File fallback (APCu off / small hosts):**
+**On-disk cache (second-level cache / APCu-off fallback):**
 
-- Cache file: `fp-content/cache/<entryId>.txt`
+- Cache file (via `comment_count_cachefile()` and `CACHE_DIR`): `fp-content/cache/<entryId>.txt`
 - Format: `<dirMtime>:<count>`
+- Behavior:
+  - If the disk cache hits and APCu is enabled, the value is written back into APCu (seeding).
+  - If APCu is disabled, the disk cache is the primary mechanism to avoid repeated directory scans.
 - Invalidation:
   - Automatically cold when `dirMtime` changes.
-  - Additionally deleted on comment save/delete hooks (`unlink()`).
+  - Additionally deleted on comment save/delete hooks (`unlink()`), forcing a rescan.
 
 **Impact:**  
 High on stream pages with many entries. Avoids directory scans and avoids building/sorting full comment lists when only the count is required.
@@ -255,7 +274,11 @@ High on multi-language setups; otherwise medium.
 
 **Invalidation:**
 
-- mtime + size of the INI file.
+- mtime + size of the INI file (tokens are only included in the key when APCu is active).
+
+**TTL:**
+
+- `@apcu_set(..., 600);` (10 minutes).
 
 **Impact:**  
 Low–Medium. Useful for avoiding repeated disk + parsing cost on high-traffic sites using this plugin.
@@ -267,7 +290,7 @@ Low–Medium. Useful for avoiding repeated disk + parsing cost on high-traffic s
 **Prefixes:**
 
 - `fp:https:v2:<sha1(env_state)>`
-- `fp:net:in_cidrs:<sha1(input)>`
+- `fp:net:in_cidrs:<ip>|<sha1(sorted_unique_cidrs)>`
 
 **File:** `fp-includes/core/core.connection.php`  
 
@@ -278,8 +301,12 @@ Low–Medium. Useful for avoiding repeated disk + parsing cost on high-traffic s
 
 **Invalidation:**
 
-- TTL-based (typically 3600 seconds for HTTPS detection; shared `ttl` for CIDR checks).
-- No PrettyURLs dependency.
+- HTTPS detection:
+  - TTL is controlled via env `FP_HTTPS_CACHE_TTL` (seconds), default 120.
+  - Key is a SHA1 over a JSON-encoded “env state” including relevant `$_SERVER` values and the normalized trusted proxy list.
+- CIDR membership checks:
+  - TTL is fixed at 3600 seconds.
+  - Key includes the IP plus a SHA1 over the normalized CIDR list.
 
 **Impact:**  
 Low–Medium. Reduces repeated environment probing, especially under reverse proxies.
@@ -329,12 +356,17 @@ Medium. Reduces disk access when admin UI or core repeatedly scan plugin structu
 
 **What is cached:**
 
-- “Smarty Plugin Index” mapping of templates to directories/plugins.
+- “Smarty Plugin Index” mapping of plugin types to plugin files (function/modifier/block/etc.) for a given plugin directory.
 
-**Invalidation:**
+**How it works (APCu + disk layer):**
 
-- Key incorporates directory and a token including relevant mtimes.
-- TTL: `@apcu_set(..., 300);` (5 minutes).
+- Token: `filemtime($dir)` (directory mtime).
+- APCu (hot cache):
+  - `@apcu_set('fp:spi:' . sha1($dir . '|' . $token), $map, 300);`
+- Disk index (fallback / warm-start):
+  - File: `CACHE_DIR/smarty_plugins.index.php` (typically `fp-content/cache/smarty_plugins.index.php`)
+  - Stores `['_token' => <token>, 'map' => <map>]` as a PHP return payload.
+  - Used on APCu misses and when APCu is off; regenerated when token mismatches.
 
 **Impact:**  
 Medium. Helps keep Smarty’s plugin lookup fast under load.
@@ -383,7 +415,7 @@ Medium. Helps under repeated, identical search requests.
 - `fp:bbcode:commentparser:v1:<...>`
 - `fp:bbcode:imginfo:v1:<md5(path|mtime|size)>`
 - `fp:bbcode:iptc:v1:<md5(path|mtime|size)>`
-- `fp:bbcode:obf:v1:<md5(string)>`
+- `fp:bbcode:obf:v1:<md5(mode|string)>`
 - `fp:bbcode:toolbar:images:v1:<md5(IMAGES_DIR|mtime)>`
 - `fp:bbcode:toolbar:galleries:v1:<md5(IMAGES_DIR|mtime)>`
 - `fp:bbcode:toolbar:attachs:v1:<md5(UPLOADS_DIR|mtime)>`
@@ -392,7 +424,8 @@ Medium. Helps under repeated, identical search requests.
 
 **What is cached:**
 
-- Parser instances for entries and comments.
+- Parser instances for entries and comments.  
+  (Base objects are stored in APCu and **cloned** on retrieval to avoid shared-state mutation.)
 - Image metadata (`getimagesize()`, IPTC, etc.).
 - Obfuscated email strings.
 - Toolbar dropdown lists (images, galleries, attachments) for the editor.
@@ -403,7 +436,8 @@ Medium. Helps under repeated, identical search requests.
 - TTLs:
   - Parsers and toolbars: typically 300 seconds.
   - Image info: 600 seconds.
-  - Obfuscation: up to 7200 seconds (2 hours).
+  - Obfuscation: 7200 seconds (2 hours), but only cached for modes 1/2 and short inputs (≤ 256 chars).  
+    Mode 3 (random) is intentionally not cached.
 
 **Impact:**  
 Medium. Particularly useful when image metadata is frequently queried.
@@ -455,19 +489,31 @@ Medium. Reduces repeated archive computation and template rendering.
 
 **What is cached:**
 
-- Full HTML calendar widget for a given (year, month, language, first_day), containing links constructed via `get_day_link()` and `get_month_link()`.
+- Full HTML calendar widget for a given (year, month, language, first-day-of-week).
+- Day/month links constructed via `get_day_link()` and `get_month_link()`.
+
+**Cache layers:**
+
+- APCu (optional hot cache):
+  - Stored with `@apcu_set($key, $html, max(60, $ttl));`
+- File fallback (always written, used when APCu is off or misses):
+  - File: `CACHE_DIR/calendar-<sha1(key)>.html` (typically `fp-content/cache/calendar-*.html`)
+  - Freshness check uses the file mtime: valid if `(time() - filemtime) <= $ttl`.
+- On cache hits (APCu or file), the HTML is passed through `plugin_calendar_cache_expand_baseurl()`,  
+  which replaces `%BLOG_BASEURL%` placeholders with the current `BLOG_BASEURL` (safe no-op if absent).
 
 **Invalidation:**
 
 - `plugin_calendar_cache_ns()` uses `fp:calendar:v` to generate a `:vN` suffix.
 - `plugin_calendar_cache_bump()`:
-  - `apcu_incr('fp:calendar:v', …)` + fallback and file cache cleanup.
-  - Bound to entry publish/edit/delete hooks and (since FlatPress 1.5 „Stringendo“) invoked from PrettyURLs when the URL mode changes.
+  - If APCu is on: `apcu_incr('fp:calendar:v', …)` + fallback initialization.
+  - Always purges the file fallback: deletes `calendar-*.html` in `CACHE_DIR`.
+  - Bound to entry publish/edit/delete hooks and invoked from PrettyURLs when the URL mode changes.
 
 **PrettyURLs dependency:**
 
 - Yes. Calendar cell links and navigation (prev/next month) depend on the PrettyURLs mode.
-- PrettyURLs now explicitly bumps this cache when its mode changes.
+- PrettyURLs bumps this cache when its mode changes.
 
 **Impact:**  
 Medium–High in widgets-heavy setups. Calendar widgets are often present on every page.
@@ -480,23 +526,44 @@ Medium–High in widgets-heavy setups. Calendar widgets are often present on eve
 
 - `fp:storage:v`
 - `fp:storage:aggregate:vN`
-- `fp:storage:dirsize:<path|meta>`
-- `fp:storage:dirsize:v1:<signature>`
-- `fp:storage:quota`
-- (Commented in code: `fp:storage:quota:vN` as conceptual name.)
+- `fp:storage:dirsize:<channel>[:nth][:ncc]:vN`
+- `fp:storage:quota:vN`
+- `fp:storage:dirsize:v1:<sha1(root)>` (FlatPress folder total size)
 
 **File:** `fp-plugins/storage/plugin.storage.php`  
 
 **What is cached:**
 
-- Storage aggregates (entries count, comments count, top lists).
-- Directory size computations.
-- Quota information (if configured).
+- Storage aggregates (entries/comments counters, top lists, etc.).
+- Directory size computations:
+  - Per storage channel (e.g. `images`, `attachs`), optionally excluding `.thumbs` (`:nth`)  
+    and/or `.captions.conf` (`:ncc`).
+  - Total FlatPress folder size (recursive sum of `BASE_DIR`).
+- Quota information (if configured / detectable).
+
+**Cache layers and TTLs:**
+
+- Aggregate:
+  - APCu: `fp:storage:aggregate:vN` with TTL 300s.
+  - File fallback: `fp-content/cache/storage.aggregate.json` with TTL 120s (based on file mtime).
+- Dir size per channel:
+  - APCu: `fp:storage:dirsize:<channel>[:nth][:ncc]:vN` with default TTL 120s (values include `ts`).
+  - File fallback: `fp-content/cache/storage.dirsize.<channel>[.nth][.ncc].json` with TTL = `$ttl`.
+- Quota:
+  - APCu: `fp:storage:quota:vN` with default TTL 3600s (payload includes `ts`).
+  - File fallback: `fp-content/cache/storage.quota.json` with TTL = `$ttl` (based on file mtime).
+- FlatPress folder total size:
+  - APCu: `fp:storage:dirsize:v1:<sha1(root)>` with TTL 120s.
+  - File fallback: `fp-content/cache/storage.dirsize.json` with TTL 120s.
 
 **Invalidation:**
 
 - Namespaced via `plugin_storage_cache_ns()` reading `fp:storage:v`.
-- Version bump via `apcu_incr('fp:storage:v', …)` when storage data is recomputed (plugin-internal).
+- Version bump via `plugin_storage_cache_bump()` (`apcu_incr('fp:storage:v', …)`) is triggered by:
+  - `publish_post`, `delete_post`, `comment_save`, `comment_delete`
+- File invalidation:
+  - `plugin_storage_cache_bump()` deletes **only** `storage.aggregate.json` (best effort).  
+    Other file fallbacks rely on their TTL and are refreshed on demand.
 
 **Impact:**  
 Low–Medium. Mostly relevant for admin and diagnostics; not on every frontend request.
@@ -559,20 +626,36 @@ Already covered in section 2.8, but worth summarizing:
 
 - Uses APCu for:
   - Checking availability (`is_apcu_on()`).
-  - Reading APCu statistics via `apcu_cache_info()` and `apcu_sma_info()`.
-  - Clearing FlatPress-related keys (usually all keys starting with `fp:` and `prettyurls:`) via the `apcu_clear_fp` action.
+  - Reading APCu statistics via `apcu_cache_info(false)` (user cache) and `apcu_sma_info()`.
+  - Clearing FlatPress-related keys via the `apcu_clear_fp` action.
+
+**Clear behavior (`apcu_clear_fp`):**
+
+- Targets keys matching `^fp:` (pattern `/^fp:/`).
+- Best-effort strategies (depending on host capabilities):
+  - `APCUIterator` + batched `apcu_delete()` (preferred).
+  - `apcu_cache_info(false)` enumeration + batched `apcu_delete()`.
+  - Last resort: `apcu_clear_cache()` to clear the entire APCu **user cache** when iteration/introspection APIs are unavailable.
+- Note: This action does **not** explicitly delete non-`fp:` caches like `prettyurls:*`.
 
 **Impact:**  
 Admin-only, but critical for debugging and manual cache reset.
 
 ---
 
-### 5.4 Calendar and Archives File Fallback
+### 5.4 File Fallback Layers (Calendar, Storage)
 
-Both Calendar and Archives plugins also maintain a file-based cache (e.g. `calendar-*.html`, `storage.aggregate.json`) used when APCu is off.
+Some features use a **dual-layer cache** (APCu + file fallback) to stay fast even when APCu is unavailable.
 
-- The APCu and file caches share the same invalidation strategy (version bumps + mtimes).
-- On APCu-enabled hosts, the file fallback is rarely hit.
+- **Calendar** (`fp-plugins/calendar/plugin.calendar.php`)
+  - File cache: `CACHE_DIR/calendar-<sha1(key)>.html`
+  - Invalidation: version bump (`fp:calendar:v`) plus file purge (`calendar-*.html`) on `plugin_calendar_cache_bump()`.
+
+- **Storage** (`fp-plugins/storage/plugin.storage.php`)
+  - Aggregate JSON: `fp-content/cache/storage.aggregate.json` (purged on `plugin_storage_cache_bump()` when APCu is on).
+  - Additional JSON fallbacks:
+    - `storage.dirsize.*.json`, `storage.quota.json`, `storage.dirsize.json`  
+      (TTL-based; refreshed on demand; not globally purged on version bumps).
 
 ---
 
