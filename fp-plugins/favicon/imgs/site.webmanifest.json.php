@@ -7,36 +7,44 @@ header('X-Content-Type-Options: nosniff');
 require_once dirname(__FILE__, 4) . '/defaults.php';
 require_once dirname(__FILE__, 4) . '/fp-includes/core/core.system.php';
 
+/** @var array<string, mixed> $fp_config */
 $fp_config = array();
-$settingsFile = rtrim(ABS_PATH, "/\\") . '/' . FP_CONTENT . 'config/settings.conf.php';
+$settingsFile = rtrim (ABS_PATH, "/\\") . '/' . FP_CONTENT . 'config/settings.conf.php';
 if (is_file($settingsFile)) {
 	include $settingsFile;
 }
 
-$title = $fp_config ['general'] ['title'] ?? '';
-$subtitle = $fp_config ['general'] ['subtitle'] ?? '';
+$general = array();
+$generalRaw = $fp_config ['general'] ?? null;
+if (is_array($generalRaw)) {
+	/** @var array<string, mixed> $general */
+	$general = $generalRaw;
+}
+
+$title = '';
+if (isset($general ['title']) && is_string($general ['title'])) {
+	$title = $general['title'];
+}
+
+$subtitle = '';
+if (isset($general ['subtitle']) && is_string($general ['subtitle'])) {
+	$subtitle = $general['subtitle'];
+}
 
 $host = parse_url(BLOG_BASEURL, PHP_URL_HOST);
 if (!is_string($host) || $host === '') {
 	$host = 'FlatPress';
 }
 
-if (!is_string($title) || $title === '') {
+if ($title === '') {
 	$title = $host;
 }
 
 $shortName = $title;
-if (!is_string($subtitle)) {
-	$subtitle = '';
-}
 
 $description = ($subtitle !== '') ? $subtitle : $title;
 
-$baseUrl = BLOG_BASEURL;
-if (!is_string($baseUrl) || $baseUrl === '') {
-	$baseUrl = '';
-}
-$baseUrl = rtrim($baseUrl, "/") . "/";
+$baseUrl = rtrim((string)BLOG_BASEURL, "/") . "/";
 
 $pluginsDir = defined('PLUGINS_DIR') ? (string)PLUGINS_DIR : 'fp-plugins/';
 $pluginsDir = trim($pluginsDir, "/\\") . '/';
@@ -52,7 +60,7 @@ $startUrl = $siteBase;
 $scope = $siteBase;
 
 $imgUrlBase = $siteBase . $pluginRel;
-$imgFsBase = rtrim (ABS_PATH, "/\\") . '/' . PLUGINS_DIR . 'favicon/imgs/';
+$imgFsBase = rtrim (ABS_PATH, "/\\") . '/' . $pluginsDir . 'favicon/imgs/';
 
 $assetVer = function (string $filename) use ($imgFsBase): string {
 	$file = $imgFsBase . $filename;

@@ -8,11 +8,7 @@ header('X-Content-Type-Options: nosniff');
 require_once dirname(__FILE__, 4) . '/defaults.php';
 require_once dirname(__FILE__, 4) . '/fp-includes/core/core.system.php';
 
-$baseUrl = BLOG_BASEURL;
-if (!is_string($baseUrl) || $baseUrl === '') {
-	$baseUrl = '';
-}
-$baseUrl = rtrim($baseUrl, "/") . "/";
+$baseUrl = rtrim ((string)BLOG_BASEURL, "/") . "/";
 
 $pluginsDir = defined('PLUGINS_DIR') ? (string)PLUGINS_DIR : 'fp-plugins/';
 $pluginsDir = trim($pluginsDir, "/\\") . '/';
@@ -20,12 +16,12 @@ $pluginRel = $pluginsDir . 'favicon/imgs/';
 
 $siteBase = $baseUrl;
 if (substr($baseUrl, -strlen($pluginRel)) === $pluginRel) {
-	$siteBase = substr($baseUrl, 0, -strlen($pluginRel));
+    $siteBase = substr($baseUrl, 0, -strlen($pluginRel));
 }
-$siteBase = rtrim($siteBase, "/") . "/";
+$siteBase = rtrim ($siteBase, "/") . "/";
 
 $imgUrlBase = $siteBase . $pluginRel;
-$imgFsBase = rtrim(ABS_PATH, "/\\") . '/' . PLUGINS_DIR . 'favicon/imgs/';
+$imgFsBase = rtrim (ABS_PATH, "/\\") . '/' . $pluginsDir . 'favicon/imgs/';
 
 $assetVer = function (string $filename) use ($imgFsBase): string {
 	$file = $imgFsBase . $filename;
