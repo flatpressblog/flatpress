@@ -655,3 +655,13 @@ All of these are either:
 - Wrapped through `apcu_key()` and thus effectively live under `fp:<NS>:`; or
 - Intentionally global/“self-namespaced” (e.g. `calendar:`, `prettyurls:`) with their own versioning and hashing schemes.
 
+---
+
+## 8. FlatPress 1.5 RC1 Burnout Report
+
+These two measurements show a direct comparison of the performance differences on a shared web host.
+
+- [FlatPress on PHP8.5 with OPCache without APCu cache](https://fraenkiman.github.io/flatpress/docs/FlatPress-Burnout-Report/bench-20260111-125627-report-without-APCu.html)
+- [FlatPress on PHP8.5 with OPCache with APCu cache](https://fraenkiman.github.io/flatpress/docs/FlatPress-Burnout-Report/bench-20260111-124607-report-with-APCu.html)
+
+<i>Many thanks to Lubomír Ludvík, who provided me with a test instance on milesweb.com.</i>
