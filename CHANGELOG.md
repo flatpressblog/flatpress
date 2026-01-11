@@ -107,6 +107,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - In addition to ``[url`` and ``href``, generic URLs are now also blocked by default. Thank you for reporting the issue to [macadoum from the support forum](https://forum.flatpress.org/viewtopic.php?t=938&start=20#p3334).
 - BBCode plugin update to version 2.0.0
     - Sorted/unsorted lists are displayed correctly in comments. ([#762](https://github.com/flatpressblog/flatpress/issues/762))
+- FavIcon plugin update to version 1.1.1
+    - Optional FlatPress app installation for Android/iOS from shared web hosts stabilized. ([#788](https://github.com/flatpressblog/flatpress/pull/788))
 
 ## Themes
 ### Changes
