@@ -1,6 +1,7 @@
 <?php
 /**
  * FlatPress mbstring polyfill (best-effort)
+ * https://github.com/symfony/polyfill-mbstring
  *
  * Goal: Prevent fatal errors on hosts without ext-mbstring by providing a minimal
  * subset of mb_* functions/constants used by FlatPress and bundled Smarty 5.x.
@@ -27,9 +28,6 @@ if (!defined('MB_CASE_LOWER')) {
 if (!defined('MB_CASE_TITLE')) {
 	define('MB_CASE_TITLE', 2);
 }
-if (!defined('MB_CASE_FOLD')) {
-	define('MB_CASE_FOLD', 3);
-}
 
 if (!function_exists('fp_mbstring_polyfill_normalize_encoding')) {
 	/**
@@ -43,7 +41,8 @@ if (!function_exists('fp_mbstring_polyfill_normalize_encoding')) {
 		}
 		$e = str_replace('_', '-', $e);
 		$e_uc = strtoupper($e);
-		// common aliases
+
+		// Common aliases
 		if ($e_uc === 'UTF8') {
 			return 'UTF-8';
 		}
@@ -67,16 +66,19 @@ if (!function_exists('mb_check_encoding')) {
 		if (!is_string($var)) {
 			return false;
 		}
+
 		$enc = fp_mbstring_polyfill_normalize_encoding($encoding);
 		if (strcasecmp($enc, 'UTF-8') === 0) {
 			return preg_match('//u', $var) === 1;
 		}
-		// Best-effort: for non-UTF-8, we cannot reliably validate without mbstring.
-		// Try iconv round-trip if available.
+
+		// Best effort for non-UTF-8: try iconv roundtrip
 		if (function_exists('iconv')) {
 			$out = @iconv($enc, $enc . '//IGNORE', $var);
 			return $out !== false;
 		}
+
+		// Without iconv, no reliable validation -> "true" as a degrading fallback
 		return true;
 	}
 }
@@ -92,10 +94,11 @@ if (!function_exists('mb_convert_encoding')) {
 		if (!is_string($string)) {
 			$string = (string)$string;
 		}
+
 		$to = fp_mbstring_polyfill_normalize_encoding($to_encoding);
 
-		$from = $from_encoding;
 		// Handle array or comma-separated list
+		$from = $from_encoding;
 		if (is_array($from)) {
 			$from = reset($from);
 		}
@@ -106,11 +109,10 @@ if (!function_exists('mb_convert_encoding')) {
 		$from = fp_mbstring_polyfill_normalize_encoding($from);
 
 		// AUTO detection (very rough)
-		if (strcasecmp($from, 'AUTO') === 0 || strcasecmp($from, 'auto') === 0) {
+		if (strcasecmp($from, 'AUTO') === 0) {
 			if (mb_check_encoding($string, 'UTF-8')) {
 				$from = 'UTF-8';
 			} else {
-				// common legacy fallbacks
 				$guesses = array('Windows-1252', 'ISO-8859-1', 'ISO-8859-15');
 				$from = $guesses[0];
 				if (function_exists('iconv')) {
@@ -125,7 +127,6 @@ if (!function_exists('mb_convert_encoding')) {
 			}
 		}
 
-		// No conversion needed
 		if (strcasecmp($from, $to) === 0) {
 			return $string;
 		}
@@ -138,8 +139,8 @@ if (!function_exists('mb_convert_encoding')) {
 			return $out;
 		}
 
-		// Without iconv we can't convert safely.
-		return false;
+		// Without iconv, no secure conversion -> degrading fallback.
+		return $string;
 	}
 }
 
@@ -153,6 +154,7 @@ if (!function_exists('mb_strlen')) {
 		if (!is_string($string)) {
 			$string = (string)$string;
 		}
+
 		$enc = fp_mbstring_polyfill_normalize_encoding($encoding);
 
 		if (function_exists('iconv_strlen')) {
@@ -183,6 +185,7 @@ if (!function_exists('mb_substr')) {
 		if (!is_string($string)) {
 			$string = (string)$string;
 		}
+
 		$enc = fp_mbstring_polyfill_normalize_encoding($encoding);
 
 		if (function_exists('iconv_substr')) {
@@ -200,12 +203,14 @@ if (!function_exists('mb_substr')) {
 		if (strcasecmp($enc, 'UTF-8') === 0 && preg_match('//u', $string) === 1) {
 			$chars = preg_split('//u', $string, -1, PREG_SPLIT_NO_EMPTY);
 			if (!is_array($chars)) {
-				return $length === null ? substr($string, $start) : substr($string, $start, $length);
+				return $length === null ? substr($string, (int)$start) : substr($string, (int)$start, (int)$length);
 			}
+
 			$start_i = (int)$start;
 			if ($start_i < 0) {
 				$start_i = count($chars) + $start_i;
 			}
+
 			if ($length === null) {
 				$slice = array_slice($chars, $start_i);
 			} else {
@@ -249,18 +254,41 @@ if (!function_exists('mb_convert_case')) {
 	 */
 	function mb_convert_case($string, $mode, $encoding = null) {
 		$s = (string)$string;
-		switch ((int)$mode) {
-			case MB_CASE_UPPER:
-				return mb_strtoupper($s, $encoding);
-			case MB_CASE_LOWER:
-				return mb_strtolower($s, $encoding);
-			case MB_CASE_TITLE:
-				// Best-effort title case (ASCII-focused)
-				return ucwords(mb_strtolower($s, $encoding));
-			case MB_CASE_FOLD:
-			default:
-				return mb_strtolower($s, $encoding);
+		$m = (int)$mode;
+
+		if ($m === (int)MB_CASE_UPPER) {
+			return mb_strtoupper($s, $encoding);
 		}
+		if ($m === (int)MB_CASE_LOWER) {
+			return mb_strtolower($s, $encoding);
+		}
+		if ($m === (int)MB_CASE_TITLE) {
+			// Best-effort Title Case (ASCII-oriented)
+			return ucwords(mb_strtolower($s, $encoding));
+		}
+
+		// Unknown mode -> degrading fallback
+		return mb_strtolower($s, $encoding);
+	}
+}
+
+if (!function_exists('mb_substitute_character')) {
+	/**
+	 * Best-effort stub: only stores the last value set.
+	 * mbstring uses this for conversions; without mbstring, its only task here is
+	 * to prevent fatal errors.
+	 *
+	 * @param mixed $substitute_character
+	 * @return mixed
+	 */
+	function mb_substitute_character($substitute_character = null) {
+		static $current = 'none';
+		if ($substitute_character === null) {
+			return $current;
+		}
+		$prev = $current;
+		$current = $substitute_character;
+		return $prev;
 	}
 }
 
@@ -287,14 +315,18 @@ if (!function_exists('mb_split')) {
 	 * @return array|false
 	 */
 	function mb_split($pattern, $string, $limit = -1) {
-		// Try as provided (might already include delimiters/modifiers)
+		// mb_split expects a pattern without delimiters; we use PCRE as best effort.
+		// If $pattern is already delimited, preg_split may work directly.
 		$result = @preg_split($pattern, $string, $limit);
 		if (is_array($result)) {
 			return $result;
 		}
-		// Fallback: wrap with a safe delimiter and UTF-8 modifier
-		$delim = '~';
-		$wrapped = $delim . $pattern . $delim . 'u';
+
+		// Fallback: Delimit safely and set UTF-8 modifier
+		$delim = '#';
+		$safePattern = str_replace($delim, '\\' . $delim, (string)$pattern);
+		$wrapped = $delim . $safePattern . $delim . 'u';
+
 		$result = @preg_split($wrapped, $string, $limit);
 		return is_array($result) ? $result : false;
 	}
