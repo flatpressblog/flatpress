@@ -3,6 +3,7 @@
 // This is just a list of all the standard includes
 require_once INCLUDES_DIR . 'core.filesystem.php';
 require_once INCLUDES_DIR . 'core.fileio.php';
+require_once INCLUDES_DIR . 'core.mbstring-polyfill.php';
 require_once INCLUDES_DIR . 'core.smarty.php';
 
 // Smarty without Composer: Load PSR-4 stub – automatically finds/fetches the latest stub
@@ -25,7 +26,6 @@ $includes = [
 	'core.wp-formatting.php',
 	'core.wp-default-filters.php',
 
-	'core.mbstring-polyfill.php',
 	'core.utils.php',
 	'core.cache.php',
 	'core.blogdb.php',
