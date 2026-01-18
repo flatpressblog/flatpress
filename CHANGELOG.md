@@ -34,6 +34,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - Fixes the display of orphaned widgets when a plugin has been deactivated and prevents duplicate or missing widget outputs, so that only widgets from active plugins are output. ([#726](https://github.com/flatpressblog/flatpress/pull/726))
 - Fixes a PHP warning ``expects parameter 3 to be integer, array given`` under PHP 7.2 when the admin logs out. ([#774](https://github.com/flatpressblog/flatpress/pull/774))
 - A problem with setting file and directory permissions that occurred with shared web hosts has been fixed. Many thanks to [@RainerBielefeld](https://github.com/RainerBielefeld) and Lubomír Ludvík.
+- A missing multibyte extension no longer causes fatal errors when calling feeds. ([#790](https://github.com/flatpressblog/flatpress/issues/790))
 
 ## Plugins
 ### Changes
