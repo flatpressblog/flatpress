@@ -25,6 +25,7 @@ $includes = [
 	'core.wp-formatting.php',
 	'core.wp-default-filters.php',
 
+	'core.mbstring-polyfill.php',
 	'core.utils.php',
 	'core.cache.php',
 	'core.blogdb.php',
