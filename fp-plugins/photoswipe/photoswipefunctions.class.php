@@ -95,7 +95,7 @@ class PhotoSwipeFunctions {
 		$datasizeAttr = 'data-size="' . $imgsize [0] . 'x' . $imgsize [1] . '" ';
 
 		// set max width of the figure according to the width attribute
-		$styleAttr = isset($attr ['width']) ? ' style="width:' . $attr ['width'] . 'px" ' : '';
+		$styleAttr = isset($attr ['width']) ? ' style="width:' . $attr ['width'] . 'px" ' : ' ';
 
 		// now lets assemble the whole HTML code - including the overlay HTML, if not inserted into the DOM before
 		$imgHtml = "\n\n" . //
