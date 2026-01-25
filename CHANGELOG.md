@@ -110,6 +110,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - Sorted/unsorted lists are displayed correctly in comments. ([#762](https://github.com/flatpressblog/flatpress/issues/762))
 - FavIcon plugin update to version 1.1.1
     - Optional FlatPress app installation for Android/iOS from shared web hosts stabilized. ([#788](https://github.com/flatpressblog/flatpress/pull/788))
+- PhotoSwipe plugin update to version 2.0.5
+    - Performance violation after opening the overlay in Chrome-based browsers fixed. ([#794](https://github.com/flatpressblog/flatpress/issues/794))
 
 ## Themes
 ### Changes
