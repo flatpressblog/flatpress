@@ -112,6 +112,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - Optional FlatPress app installation for Android/iOS from shared web hosts stabilized. ([#788](https://github.com/flatpressblog/flatpress/pull/788))
 - PhotoSwipe plugin update to version 2.0.5
     - Performance violation after opening the overlay in Chrome-based browsers fixed. ([#794](https://github.com/flatpressblog/flatpress/issues/794))
+    - ``getimagesize()`` is no longer called for external images. ([#796](https://github.com/flatpressblog/flatpress/issues/796))
 
 ## Themes
 ### Changes
