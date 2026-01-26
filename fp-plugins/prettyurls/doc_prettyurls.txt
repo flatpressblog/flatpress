@@ -4,34 +4,51 @@ nginx configuration
 # Pretty (recommended)
 location /<FlatPress instance>/ {
 	root /var/www;
-	try_files $uri $uri/ /<FlatPress instance>/index.php?$query_string;
+	try_files $uri $uri/ /<FlatPress instance>/index.php$is_args$args;
 }
+
+# Execute only real PHP files under the instance
 location ~ ^/<FlatPress instance>/.*\.php$ {
 	root /var/www;
+
+	# important: only run genuine files
+	try_files $uri = 404;
+
 	include fastcgi_params;
 	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 	fastcgi_param QUERY_STRING $query_string;
 	fastcgi_pass unix:/run/php/php8.4-fpm.sock; # adjust
 }
+
+# Optional sitemap aliases
 location = /<FlatPress instance>/sitemap {
 	rewrite ^ /<FlatPress instance>/sitemap.php last;
 }
 location = /<FlatPress instance>/sitemap.xml {
 	rewrite ^ /<FlatPress instance>/sitemap.php last;
 }
+
+# Deny .ht* (and similar)
 location ~ ^/<FlatPress instance>/\.ht {
 	deny all;
 }
 
-# Path-Info (only if "Path Info" mode is used)
-location = /index.php {
-	fastcgi_split_path_info ^(.+\.php)(/.*)$;
+# PATH_INFO (only if "Path Info" mode is used)
+location ~ ^/<FlatPress instance>/index\.php(/|$) {
+	root /var/www;
+
 	include fastcgi_params;
+	fastcgi_split_path_info ^(.+\.php)(/.*)$;
+
+	# only execute real index.php
+	try_files $fastcgi_script_name = 404;
+
 	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 	fastcgi_param PATH_INFO $fastcgi_path_info;
 	fastcgi_param QUERY_STRING $query_string;
 	fastcgi_pass unix:/run/php/php8.4-fpm.sock; # adjust
 }
+
 
 Apache configuration (.htaccess in FlatPress root directory)
 ============================================================
