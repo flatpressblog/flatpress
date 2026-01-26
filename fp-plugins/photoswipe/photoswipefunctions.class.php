@@ -83,16 +83,41 @@ class PhotoSwipeFunctions {
 		// add some additional attributes to the <img> tag and close it properly
 		$previewHtml .= ' itemprop="thumbnail" title="' . $titleForAttributes . '">';
 
-		// PhotoSwipe needs to know the dimensions of the image - so we read them
-		$imgsize = $imageIsLocal ? @getimagesize($imgPathRel) : @getimagesize($imgUrl);
-		// use default dimensions as fallback
-		if ($imgsize === false) {
-			$imgsize = array(
-				100,
-				100
-			);
+		// PhotoSwipe needs to know the dimensions of the *full* image.
+		// For local images, we can read this on the server side. For external URLs, we deliberately do NOT call getimagesize().
+		$w = 0;
+		$h = 0;
+
+		if ($imageIsLocal) {
+			$imgsize = @getimagesize($imgPathRel);
+			if (is_array($imgsize) && isset($imgsize [0], $imgsize [1])) {
+				$w = (int)$imgsize [0];
+				$h = (int)$imgsize [1];
+			}
 		}
-		$datasizeAttr = 'data-size="' . $imgsize [0] . 'x' . $imgsize [1] . '" ';
+
+		// Fallback to explicitly provided width/height attributes (BBCode parameters).
+		// If one or both remain 0, JavaScript will determine the natural dimensions at runtime.
+		if ($w < 1 && isset($attr ['width']) && is_scalar($attr ['width'])) {
+			$tmp = (string)$attr ['width'];
+			if (preg_match('/^\d+$/', $tmp)) {
+				$w = (int)$tmp;
+			}
+		}
+		if ($h < 1 && isset($attr ['height']) && is_scalar($attr ['height'])) {
+			$tmp = (string)$attr ['height'];
+			if (preg_match('/^\d+$/', $tmp)) {
+				$h = (int)$tmp;
+			}
+		}
+
+		// Avoid half-known dimensions (e.g. width-only). Let JavaScript determine both dimensions.
+		if ($w < 1 || $h < 1) {
+			$w = 0;
+			$h = 0;
+		}
+
+		$datasizeAttr = 'data-size="' . $w . 'x' . $h . '" ';
 
 		// set max width of the figure according to the width attribute
 		$styleAttr = isset($attr ['width']) ? ' style="width:' . $attr ['width'] . 'px" ' : ' ';
