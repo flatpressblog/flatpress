@@ -1,5 +1,8 @@
-nginx configuration
-===================
+Note: If you cannot find or edit nginx.conf, as is the case with ISPs, check whether your web hosting package includes a WordPress option. It is worth activating and testing this option.
+The following examples assume that FlatPress is located in a subdirectory <FlatPress instance> of the root directory.
+
+NGINX configuration (etc/nginx/nginx.conf) for Automatic, Path Info, HTTP Get and Pretty
+========================================================================================
 
 # Pretty (recommended)
 location /<FlatPress instance>/ {
@@ -47,6 +50,13 @@ location ~ ^/<FlatPress instance>/index\.php(/|$) {
 	fastcgi_param PATH_INFO $fastcgi_path_info;
 	fastcgi_param QUERY_STRING $query_string;
 	fastcgi_pass unix:/run/php/php8.4-fpm.sock; # adjust
+}
+
+
+WordPress web hosting config for NGINX servers for Automatic, HTTP Get and Pretty
+=================================================================================
+location / {
+	try_files $uri $uri/ /<FlatPress instance>/index.php?$args;
 }
 
 
