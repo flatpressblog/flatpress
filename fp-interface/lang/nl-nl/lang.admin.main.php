@@ -22,6 +22,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op8' => 'Thema\'s',
 	'op8d' => 'Schakel tussen thema\'s en stijlen',
 	'op9' => 'Commentaarcentrum',
-	'op9d' => 'Beheer commentaar, maak richtlijnen'
+	'op9d' => 'Beheer commentaar, maak richtlijnen',
+
+	'setup_hide_failed_head' => 'Beveiligingsmelding: setup is nog steeds toegankelijk!',
+	'setup_hide_failed_descr' => 'FlatPress kon de toegangspunten voor setup niet automatisch verbergen. Hernoem setup.php naar .setup.php en de map setup/ naar .setup/ (of weiger toegang via uw webserverconfiguratie).',
+	'setup_hide_failed_items' => 'Getroffen paden:'
 );
 ?>

@@ -22,6 +22,10 @@ $lang['admin']['main']['default'] = array(
 	'op8' => 'Temi',
 	'op8d' => 'Passare da un tema all\'altro e da uno stile all\'altro',
 	'op9' => 'Centro commenti',
-	'op9d' => 'Gestire i commenti, creare linee guida'
+	'op9d' => 'Gestire i commenti, creare linee guida',
+
+	'setup_hide_failed_head' => 'Avviso di sicurezza: la configurazione è ancora accessibile!',
+	'setup_hide_failed_descr' => 'FlatPress non è riuscito a nascondere automaticamente i punti di accesso alla configurazione. Rinominare setup.php in .setup.php e la directory setup/ in .setup/ (oppure negare l\'accesso tramite la configurazione del server web).',
+	'setup_hide_failed_items' => 'Percorsi interessati:'
 );
 ?>

@@ -22,6 +22,10 @@ $lang['admin']['main']['default'] = array(
 	'op8' => 'Thèmes',
 	'op8d' => 'Changer entre les thèmes et les styles',
 	'op9' => 'Centre de commentaires',
-	'op9d' => 'Gérer les commentaires et définir des politiques'
+	'op9d' => 'Gérer les commentaires et définir des politiques',
+
+	'setup_hide_failed_head' => 'Avis de sécurité : la configuration est toujours accessible !',
+	'setup_hide_failed_descr' => 'FlatPress n\'a pas pu masquer automatiquement les points d\'entrée de configuration. Veuillez renommer setup.php en .setup.php et le répertoire setup/ en .setup/ (ou refuser l\'accès via la configuration de votre serveur web).',
+	'setup_hide_failed_items' => 'Chemins concernés :'
 );
 ?>

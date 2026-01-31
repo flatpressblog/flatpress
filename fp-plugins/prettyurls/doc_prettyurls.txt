@@ -76,6 +76,9 @@ Options -Indexes
 
 	RewriteRule ^\.htaccess$ - [F]
 
+	RewriteRule ^\.setup\.php$ - [F,L]
+	RewriteRule ^\.setup/ - [F,L]
+
 	RewriteRule ^sitemap\.xml$ /<FlatPress instance>/sitemap.php [L]
 	RewriteRule ^sitemap$ /<FlatPress instance>/sitemap.php [L]
 

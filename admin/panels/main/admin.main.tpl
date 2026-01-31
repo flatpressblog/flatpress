@@ -1,5 +1,18 @@
 <h2>{$panelstrings.head}</h2>
+
+{if isset($fp_setup_hide_report) && isset($fp_setup_hide_report.errors) && $fp_setup_hide_report.errors|count}
+	<ul class="msgs errors">
+		<li><strong>{$panelstrings.setup_hide_failed_head|default:'Security notice: setup is still accessible'|escape}</strong></li>
+		<li>{$panelstrings.setup_hide_failed_descr|default:'FlatPress could not hide the setup entry points automatically. Please rename setup.php to .setup.php and the setup/ directory to .setup/ (or deny access via your webserver configuration).'|escape}</li>
+		<li>{$panelstrings.setup_hide_failed_items|default:'Affected paths:'|escape}</li>
+		{foreach from=$fp_setup_hide_report.errors item=path}
+			<li><code>{$path|escape}</code></li>
+		{/foreach}
+	</ul>
+{/if}
+
 <p>{$panelstrings.descr}</p>
+
 <dl>
 	<dt class="admin-mainmenu-item">
 		<img src="{$smarty.const.ADMIN_DIR}imgs/newentry.png" class="alignleft" alt="{$panelstrings.op1}"

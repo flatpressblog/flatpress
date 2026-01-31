@@ -1,8 +1,8 @@
 <?php
 
 // Add new protocol for template
-include (ADMIN_DIR . 'panels/admin.defaultpanels.php');
-include (ADMIN_DIR . 'includes/panels.prototypes.php');
+include ADMIN_DIR . 'panels/admin.defaultpanels.php';
+include ADMIN_DIR . 'includes/panels.prototypes.php';
 
 utils_nocache_headers();
 
@@ -224,6 +224,13 @@ $v = $lang ['admin'] [$panel] [$action];
 
 $smarty->assign('panelstrings', $v);
 $smarty->assign('plang', $v);
+
+if ($panel === 'main' && isset($GLOBALS ['fp_setup_hide_report']) && is_array($GLOBALS ['fp_setup_hide_report'])) {
+	$report = $GLOBALS ['fp_setup_hide_report'];
+	if (isset($report ['errors']) && is_array($report ['errors']) && !empty($report ['errors'])) {
+		$smarty->assign('fp_setup_hide_report', $report);
+	}
+}
 
 if (isset($_GET ['mod'])) {
 

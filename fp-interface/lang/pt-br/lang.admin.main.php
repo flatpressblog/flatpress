@@ -22,6 +22,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op8' => 'Temas',
 	'op8d' => 'Alternar entre temas e estilos',
 	'op9' => 'Centro de comentários',
-	'op9d' => 'Gerenciar comentários, criar diretrizes'
+	'op9d' => 'Gerenciar comentários, criar diretrizes',
+
+	'setup_hide_failed_head' => 'Aviso de segurança: a configuração ainda está acessível!',
+	'setup_hide_failed_descr' => 'O FlatPress não conseguiu ocultar automaticamente os pontos de entrada da configuração. Renomeie o arquivo setup.php para .setup.php e o diretório setup/ para .setup/ (ou negue o acesso através da configuração do seu servidor web).',
+	'setup_hide_failed_items' => 'Caminhos afetados:'
 );
 ?>

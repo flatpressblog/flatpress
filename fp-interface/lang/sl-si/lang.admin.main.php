@@ -22,6 +22,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op8' => 'Motive',
 	'op8d' => 'Preklapljanje med temami in slogi',
 	'op9' => 'Središče za pripombe',
-	'op9d' => 'Upravljajte komentarje, ustvarite smernice'
+	'op9d' => 'Upravljajte komentarje, ustvarite smernice',
+
+	'setup_hide_failed_head' => 'Varnostno obvestilo: nastavitve so še vedno dostopne!',
+	'setup_hide_failed_descr' => 'FlatPress ni mogel samodejno skriti dostopnih točk za nastavitve. Preimenujte setup.php v .setup.php in imenik setup/ v .setup/ (ali zavrnite dostop prek konfiguracije vašega spletnega strežnika).',
+	'setup_hide_failed_items' => 'Prizadete poti:'
 );
 ?>
