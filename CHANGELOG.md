@@ -26,6 +26,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 
 ### Security
 - Detection of an HTTP/HTTPS connection ``is_https()`` is significantly more reliable and less susceptible to spoofing. Improved detection for public proxies/CDNs, including Azure and Cloudflare. ([#672](https://github.com/flatpressblog/flatpress/pull/672))
+- After completing the setup, hide setup entry points. If this is not possible, a warning will appear in the admin area. ([#799](https://github.com/flatpressblog/flatpress/issues/799))
 
 ### Bugfixes
 - Correct output when a historical character set encoding is set. ([#670](https://github.com/flatpressblog/flatpress/pull/670))
@@ -128,6 +129,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - Reworked French translation by [@finkiki](https://github.com/finkiki) ([#754](https://github.com/flatpressblog/flatpress/pull/754), [#759](https://github.com/flatpressblog/flatpress/pull/759))
 - Reworked German translation by [@RainerBielefeld](https://github.com/RainerBielefeld) ([#747](https://github.com/flatpressblog/flatpress/pull/747))
 - Minor corrections to the Italian translation by [@eagleman](https://github.com/eagleman)
+- Minor correction in the Japanese language pack ([#798](https://github.com/flatpressblog/flatpress/issues/798))
 
 # 2025-07-15: [FlatPress 1.4.1](https://github.com/flatpressblog/flatpress/releases/tag/1.4.1)
 
