@@ -22,6 +22,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op8' => 'Motivy',
 	'op8d' => 'Přepínejte mezi motivy a styly',
 	'op9' => 'Centrum komentářů',
-	'op9d' => 'Správa komentářů, vytváření pokynů'
+	'op9d' => 'Správa komentářů, vytváření pokynů',
+
+	'setup_hide_failed_head' => 'Bezpečnostní upozornění: nastavení je stále přístupné!',
+	'setup_hide_failed_descr' => 'FlatPress nedokázal automaticky skrýt vstupní body nastavení. Přejmenujte prosím soubor setup.php na .setup.php a adresář setup/ na .setup/ (nebo odepřete přístup prostřednictvím konfigurace vašeho webového serveru).',
+	'setup_hide_failed_items' => 'Dotčené cesty:'
 );
 ?>

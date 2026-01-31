@@ -1333,6 +1333,9 @@ Options -Indexes
 
 	RewriteRule ^\.htaccess$ - [F]
 
+	RewriteRule ^\.setup\.php$ - [F,L]
+	RewriteRule ^\.setup/ - [F,L]
+
 	RewriteRule ^sitemap\.xml$ ' . $blogroot . 'sitemap.php [L]
 	RewriteRule ^sitemap$ ' . $blogroot . 'sitemap.php [L]
 

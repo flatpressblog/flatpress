@@ -22,6 +22,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op8' => 'Temaer',
 	'op8d' => 'Skift mellem temaer og stilarter',
 	'op9' => 'Center for kommentarer',
-	'op9d' => 'Administrer kommentarer, lav retningslinjer'
+	'op9d' => 'Administrer kommentarer, lav retningslinjer',
+
+	'setup_hide_failed_head' => 'Sikkerhedsmeddelelse: opsætningen er stadig tilgængelig!',
+	'setup_hide_failed_descr' => 'FlatPress kunne ikke skjule opsætningens indgangspunkter automatisk. Omdøb venligst setup.php til .setup.php og mappen setup/ til .setup/ (eller nægt adgang via din webserverkonfiguration).',
+	'setup_hide_failed_items' => 'Berørte stier:'
 );
 ?>

@@ -22,6 +22,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op8' => 'Gaiak',
 	'op8d' => 'Aldatu zure blogaren itxura (gaiak eta estiloak).',
 	'op9' => 'Iruzkin-zentroa',
-	'op9d' => 'Kudeatu iruzkinak, politikak sortu.'
+	'op9d' => 'Kudeatu iruzkinak, politikak sortu.',
+
+	'setup_hide_failed_head' => 'Segurtasun-oharra: konfigurazioa oraindik eskuragarri dago!',
+	'setup_hide_failed_descr' => 'FlatPressek ezin izan ditu konfigurazioko sarrera-puntuak automatikoki ezkutatu. Mesedez, aldatu setup.php izena .setup.php-ra eta setup/ direktorioaren izena .setup/-era (edo ukatu sarbidea zure web-zerbitzariaren konfigurazioaren bidez).',
+	'setup_hide_failed_items' => 'Eragindako bideak:'
 );
 ?>

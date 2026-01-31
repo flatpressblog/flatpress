@@ -22,6 +22,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op8' => 'Themes',
 	'op8d' => 'Switch between themes and styles',
 	'op9' => 'Comment Center',
-	'op9d' => 'Manage comments, create guidelines'
+	'op9d' => 'Manage comments, create guidelines',
+
+	'setup_hide_failed_head' => 'Security notice: setup is still accessible!',
+	'setup_hide_failed_descr' => 'FlatPress could not hide the setup entry points automatically. Please rename setup.php to .setup.php and the setup/ directory to .setup/ (or deny access via your webserver configuration).',
+	'setup_hide_failed_items' => 'Affected paths:'
 );
 ?>

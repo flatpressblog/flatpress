@@ -22,6 +22,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op8' => 'Themes',
 	'op8d' => 'Zwischen Themes und Stile wechseln',
 	'op9' => 'Kommentar-Center',
-	'op9d' => 'Kommentare verwalten, Richtlinien erstellen'
+	'op9d' => 'Kommentare verwalten, Richtlinien erstellen',
+
+	'setup_hide_failed_head' => 'Sicherheitshinweis: Setup ist noch erreichbar!',
+	'setup_hide_failed_descr' => 'FlatPress konnte die Setup-Einstiegspunkte nicht automatisch verstecken. Bitte benenne setup.php in .setup.php und das Verzeichnis setup/ in .setup/ um (oder sperre den Zugriff serverseitig).',
+	'setup_hide_failed_items' => 'Betroffene Pfade:'
 );
 ?>

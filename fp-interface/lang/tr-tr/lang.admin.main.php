@@ -22,6 +22,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op8' => 'Temalar',
 	'op8d' => 'Temalar ve stiller arasında geçiş yap',
 	'op9' => 'Yorum Merkezi',
-	'op9d' => 'Yorumları yönetin, kurallar oluşturun'
+	'op9d' => 'Yorumları yönetin, kurallar oluşturun',
+
+	'setup_hide_failed_head' => 'Güvenlik uyarısı: kurulum hala erişilebilir durumda!',
+	'setup_hide_failed_descr' => 'FlatPress, kurulum giriş noktalarını otomatik olarak gizleyemedi. Lütfen setup.php dosyasını .setup.php olarak ve setup/ dizinini .setup/ olarak yeniden adlandırın (veya web sunucusu yapılandırmanız aracılığıyla erişimi reddedin).',
+	'setup_hide_failed_items' => 'Etkilenen yollar:'
 );
 ?>
