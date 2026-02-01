@@ -24,8 +24,8 @@ $lang ['admin'] ['main'] ['default'] = array(
 	'op9' => 'コメントセンター',
 	'op9d' => 'コメントの管理、ガイドラインの作成をします。',
 
-	'setup_hide_failed_head' => 'セキュリティ通知: セットアップがまだアクセス可能です！',
-	'setup_hide_failed_descr' => 'FlatPress はセットアップのエントリポイントを自動的に非表示にできませんでした。setup.php を .setup.php に、setup/ ディレクトリを .setup/ にリネームしてください（またはウェブサーバーの設定でアクセスを拒否してください）。',
+	'setup_hide_failed_head' => 'セキュリティ通知: 初回セットアップにまだアクセス可能です！',
+	'setup_hide_failed_descr' => 'FlatPressはセットアップのエントリポイントを自動で非表示に変更できませんでした。手作業で setup.php を .setup.php に、setup/ ディレクトリを .setup/ にリネームしてください（またはWebサーバのパーミッション設定でそれぞれをアクセス不許可としてください）。',
 	'setup_hide_failed_items' => '影響を受けるパス:'
 );
 ?>
