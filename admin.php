@@ -1,5 +1,6 @@
 <?php
 require_once 'defaults.php';
+require_once INCLUDES_DIR . 'includes.php';
 
 /**
  * After successful installation, hide the setup entry points in the FlatPress root.
@@ -169,7 +170,122 @@ function fp_admin_move_dir(string $src, string $dst): bool {
 	return is_dir($dst) && !is_dir($src);
 }
 
+function fp_admin_setup_hide_apcu_cache_enabled(): bool {
+	static $enabled = null;
+	if ($enabled !== null) {
+		return $enabled;
+	}
+
+	// Core APCu helpers are available only after includes.php has been loaded.
+	if (!function_exists('is_apcu_on') || !is_apcu_on()) {
+		return $enabled = false;
+	}
+
+	if (defined('FP_APCU_SETUP_HIDE_CACHE')) {
+		return $enabled = (bool) FP_APCU_SETUP_HIDE_CACHE;
+	}
+
+	if (isset($_ENV ['FP_APCU_SETUP_HIDE_CACHE'])) {
+		return $enabled = (bool) $_ENV ['FP_APCU_SETUP_HIDE_CACHE'];
+	}
+
+	return $enabled = true;
+}
+
+function fp_admin_setup_hide_apcu_ttl_ok(): int {
+	$ttl = 86400; // default: 1 day
+	if (defined('FP_APCU_SETUP_HIDE_TTL_OK')) {
+		$ttl = (int) FP_APCU_SETUP_HIDE_TTL_OK;
+	} elseif (isset($_ENV ['FP_APCU_SETUP_HIDE_TTL_OK'])) {
+		$ttl = (int) $_ENV ['FP_APCU_SETUP_HIDE_TTL_OK'];
+	}
+	if ($ttl < 0) {
+		$ttl = 0;
+	}
+	return $ttl;
+}
+
+function fp_admin_setup_hide_apcu_ttl_fail(): int {
+	$ttl = 300; // default: 5 minutes
+	if (defined('FP_APCU_SETUP_HIDE_TTL_FAIL')) {
+		$ttl = (int) FP_APCU_SETUP_HIDE_TTL_FAIL;
+	} elseif (isset($_ENV ['FP_APCU_SETUP_HIDE_TTL_FAIL'])) {
+		$ttl = (int) $_ENV ['FP_APCU_SETUP_HIDE_TTL_FAIL'];
+	}
+	if ($ttl < 30) {
+		$ttl = 30;
+	}
+	return $ttl;
+}
+
+/**
+ * Try to read the hide-setup report from APCu. Returns null on cache miss/invalid.
+ * @return array{ts:int,state:string,errors:array<int,string>}|null
+ */
+function fp_admin_setup_hide_apcu_get_report(): ?array {
+	if (!fp_admin_setup_hide_apcu_cache_enabled() || !function_exists('apcu_get')) {
+		return null;
+	}
+
+	$hit = false;
+	$val = apcu_get('admin:setup_hide_report', $hit);
+	if (!$hit || !is_array($val)) {
+		return null;
+	}
+
+	$ts = $val ['ts'] ?? null;
+	$state = $val ['state'] ?? null;
+	$errors = $val ['errors'] ?? array();
+
+	if (!is_int($ts) || !is_string($state) || !is_array($errors)) {
+		return null;
+	}
+
+	// Normalize errors to strings only.
+	$clean = array();
+	foreach ($errors as $e) {
+		if (is_string($e) && $e !== '') {
+			$clean [] = $e;
+		}
+	}
+
+	return array(
+		'ts' => $ts,
+		'state' => $state,
+		'errors' => $clean
+	);
+}
+
+function fp_admin_setup_hide_apcu_set_report(array $report): void {
+	if (!fp_admin_setup_hide_apcu_cache_enabled() || !function_exists('apcu_set')) {
+		return;
+	}
+
+	$state = (string) ($report ['state'] ?? '');
+	$ttl = ($state === 'ok') ? fp_admin_setup_hide_apcu_ttl_ok() : fp_admin_setup_hide_apcu_ttl_fail();
+
+	// Best-effort store; failure must not affect admin.
+	@apcu_set('admin:setup_hide_report', $report, $ttl);
+}
+
 function fp_admin_hide_setup_after_install(): void {
+	static $ran = false;
+	if ($ran) {
+		return;
+	}
+	$ran = true;
+
+	// If APCu is enabled, prefer cached result to avoid filesystem I/O.
+	$cached = fp_admin_setup_hide_apcu_get_report();
+	if (is_array($cached)) {
+		if (!empty($cached ['errors'])) {
+			$GLOBALS ['fp_setup_hide_report'] = array(
+				'errors' => $cached ['errors']
+			);
+		}
+		return;
+	}
+
 	// Only after setup has completed (lockfile exists)
 	if (!defined('LOCKFILE')) {
 		return;
@@ -191,15 +307,11 @@ function fp_admin_hide_setup_after_install(): void {
 	if (is_file($setupPhp) && !file_exists($setupPhpHidden)) {
 		fp_admin_move_file($setupPhp, $setupPhpHidden);
 	}
-	// Ensure restricted permissions even if it already existed.
-	fp_admin_apply_restricted_file_permissions($setupPhpHidden);
 
 	// Hide setup directory
 	if (is_dir($setupDir) && !file_exists($setupDirHidden)) {
 		fp_admin_move_dir($setupDir, $setupDirHidden);
 	}
-	// Ensure restricted permissions even if it already existed.
-	fp_admin_apply_restricted_dir_permissions($setupDirHidden);
 
 	// Report problems for an admin UI warning.
 	$errors = array();
@@ -209,17 +321,23 @@ function fp_admin_hide_setup_after_install(): void {
 	if (is_dir($setupDir)) {
 		$errors [] = 'setup/';
 	}
+
+	$report = array(
+		'ts' => time(),
+		'state' => empty($errors) ? 'ok' : 'fail',
+		'errors' => $errors
+	);
+
+	fp_admin_setup_hide_apcu_set_report($report);
+
 	if (!empty($errors)) {
 		$GLOBALS ['fp_setup_hide_report'] = array(
 			'errors' => $errors
 		);
 	}
-
 }
 
 fp_admin_hide_setup_after_install();
 
-require_once INCLUDES_DIR . 'includes.php';
-
-require ADMIN_DIR . '/main.php'
+require ADMIN_DIR . '/main.php';
 ?>

@@ -659,30 +659,75 @@ Some features use a **dual-layer cache** (APCu + file fallback) to stay fast eve
 
 ---
 
+### 5.5 Setup Hide Result Cache – `admin:setup_hide_report`
+
+**Prefix:** `fp:<NS>:admin:setup_hide_report` via `apcu_key()`  
+**File:** `admin.php`
+
+**Purpose:**
+
+- Minimizes filesystem I/O on `admin.php` by caching the outcome of the “hide setup entry points” routine.
+- Avoids repeated `is_file()` / `is_dir()` checks and, more importantly, avoids repeating expensive recursive permission walks on hosts with slow storage.
+
+**What is cached:**
+
+A small report array:
+
+- `ts` (int): Unix timestamp when the report was produced
+- `state` (`"ok"` / `"fail"`): whether setup entry points are hidden successfully
+- `errors` (string[]): remaining visible entry points (e.g. `setup.php`, `setup/`)
+
+**When it is written:**
+
+- Only after setup completion (`LOCKFILE` exists).
+- Written on cache miss; on cache hit the routine returns early (no I/O).
+
+**TTL / invalidation:**
+
+- `"ok"` state: default **86400s (1 day)**  
+  - configurable via `FP_APCU_SETUP_HIDE_TTL_OK` or env `FP_APCU_SETUP_HIDE_TTL_OK`  
+  - `0` means “no expiry” (until APCu eviction/restart)
+- `"fail"` state: default **300s (5 minutes)**, minimum **30s**  
+  - configurable via `FP_APCU_SETUP_HIDE_TTL_FAIL` or env `FP_APCU_SETUP_HIDE_TTL_FAIL`
+- No explicit invalidation hook; the cache is naturally cleared on APCu reset and can be cleared manually from the Maintain panel.
+
+**Enable/disable:**
+
+- Enabled automatically when APCu is on (`is_apcu_on()`).
+- Can be disabled via:
+  - `FP_APCU_SETUP_HIDE_CACHE` (constant)
+  - `FP_APCU_SETUP_HIDE_CACHE` (env)
+
+**Impact:**  
+Low–Medium (admin-only), but noticeable on slow disks or network filesystems where repeated stat/chmod recursion is costly.
+
+---
+
 ## 6. Weighting and Relevance Summary
 
 The following table summarizes each logical cache group:
 
-| Area                         | Key prefixes (logical)                                                               | Depends on PrettyURLs?   | Invalidation driver                                  | Approx. impact      |
-|------------------------------|--------------------------------------------------------------------------------------|--------------------------|------------------------------------------------------|---------------------|
-| APCu core helpers            | `fp:ns:*`, `apcu_ns()`, `apcu_key()`                                                 | No                       | N/A (meta only)                                      | High (foundational) |
-| File I/O                     | `fp:io:*`                                                                            | No                       | File mtime/size, TTL (default 1h)                    | High                |
-| Entries                      | `fp:entry:parsed:*`                                                                  | No                       | Entry file mtime/size                                | High                |
-| Comments                     | `fp:comments:list:*`, `fp:comments:count:*`                                          | No                       | Comment dir mtime, TTL 300s (APCu) + file fallback   | Medium–High         |
-| Static pages                 | `fp:statics:list:*`                                                                  | No                       | Static dir mtime/size, TTL 600s                      | Medium              |
-| Categories                   | `fp:cats:list:*`, `fp:cats:encoded:*`                                                | No                       | Categories file mtime/size, TTL 600s                 | Medium              |
-| Language                     | `fp:lang:*`                                                                          | No                       | Language file mtime/size, locale                     | Medium–High         |
-| INI parsing (SEO plugin)     | `fp:ini:*`                                                                           | No                       | INI file mtime/size                                  | Low–Medium          |
-| HTTPS/IP env                 | `fp:https:v2:*`, `fp:net:in_cidrs:*`                                                 | No                       | TTL (≈3600s) and local process                       | Low–Medium          |
-| Plugin discovery             | `fp:plugin:*`, `fp:plugins:*`                                                        | No                       | Plugin dir/config mtimes                             | Medium              |
-| Smarty plugin index          | `fp:spi:*`                                                                           | No                       | Dir+token hash, TTL 300s                             | Medium              |
-| Search                       | `fp:search:rev`, `fp:search:v*`                                                      | No                       | Content rev + TTL (5s / 900s)                        | Medium              |
-| BBCode                       | `fp:bbcode:*`                                                                        | No                       | Parser/img/meta mtimes, TTL 300–7200s                | Medium–High         |
-| Archives                     | `fp:archives:v`, `fp:archives:list*`, `fp:archives:html*`                            | **Yes**                  | `plugin_archives_cache_bump()` + PrettyURLs bump     | Medium              |
-| Calendar                     | `fp:calendar:v`, `calendar:*:vN`                                                     | **Yes**                  | `plugin_calendar_cache_bump()` + PrettyURLs bump     | Medium–High         |
-| Storage plugin               | `fp:storage:v`, `fp:storage:aggregate*`, `fp:storage:dirsize*`, `fp:storage:quota*`  | No                       | Storage rescan + TTL                                 | Low–Medium          |
-| PrettyURLs auto-detection    | `prettyurls:*`, `prettyurls:auto:v3:g*:*`                                            | No (but influences URLs) | `apcu_gen` bump on mode/.htaccess changes            | Medium              |
-| Maintain panel tools         | Uses APCu to clear and inspect all keys, no own namespace                            | No                       | Manual admin action                                  | N/A (admin only)    |
+| Area                         | Key prefixes (logical)                                                               | Depends on PrettyURLs?   | Invalidation driver                                  | Approx. impact           |
+|------------------------------|--------------------------------------------------------------------------------------|--------------------------|------------------------------------------------------|--------------------------|
+| APCu core helpers            | `fp:ns:*`, `apcu_ns()`, `apcu_key()`                                                 | No                       | N/A (meta only)                                      | High (foundational)      |
+| File I/O                     | `fp:io:*`                                                                            | No                       | File mtime/size, TTL (default 1h)                    | High                     |
+| Entries                      | `fp:entry:parsed:*`                                                                  | No                       | Entry file mtime/size                                | High                     |
+| Comments                     | `fp:comments:list:*`, `fp:comments:count:*`                                          | No                       | Comment dir mtime, TTL 300s (APCu) + file fallback   | Medium–High              |
+| Static pages                 | `fp:statics:list:*`                                                                  | No                       | Static dir mtime/size, TTL 600s                      | Medium                   |
+| Categories                   | `fp:cats:list:*`, `fp:cats:encoded:*`                                                | No                       | Categories file mtime/size, TTL 600s                 | Medium                   |
+| Language                     | `fp:lang:*`                                                                          | No                       | Language file mtime/size, locale                     | Medium–High              |
+| INI parsing (SEO plugin)     | `fp:ini:*`                                                                           | No                       | INI file mtime/size                                  | Low–Medium               |
+| HTTPS/IP env                 | `fp:https:v2:*`, `fp:net:in_cidrs:*`                                                 | No                       | TTL (≈3600s) and local process                       | Low–Medium               |
+| Plugin discovery             | `fp:plugin:*`, `fp:plugins:*`                                                        | No                       | Plugin dir/config mtimes                             | Medium                   |
+| Smarty plugin index          | `fp:spi:*`                                                                           | No                       | Dir+token hash, TTL 300s                             | Medium                   |
+| Search                       | `fp:search:rev`, `fp:search:v*`                                                      | No                       | Content rev + TTL (5s / 900s)                        | Medium                   |
+| BBCode                       | `fp:bbcode:*`                                                                        | No                       | Parser/img/meta mtimes, TTL 300–7200s                | Medium–High              |
+| Archives                     | `fp:archives:v`, `fp:archives:list*`, `fp:archives:html*`                            | **Yes**                  | `plugin_archives_cache_bump()` + PrettyURLs bump     | Medium                   |
+| Calendar                     | `fp:calendar:v`, `calendar:*:vN`                                                     | **Yes**                  | `plugin_calendar_cache_bump()` + PrettyURLs bump     | Medium–High              |
+| Storage plugin               | `fp:storage:v`, `fp:storage:aggregate*`, `fp:storage:dirsize*`, `fp:storage:quota*`  | No                       | Storage rescan + TTL                                 | Low–Medium               |
+| Admin setup hide             | `fp:admin:setup_hide_report`                                                         | No                       | TTL (ok 86400s, fail 300s) + manual APCu clear       | Low–Medium (admin only)  |
+| PrettyURLs auto-detection    | `prettyurls:*`, `prettyurls:auto:v3:g*:*`                                            | No (but influences URLs) | `apcu_gen` bump on mode/.htaccess changes            | Medium                   |
+| Maintain panel tools         | Uses APCu to clear and inspect all keys, no own namespace                            | No                       | Manual admin action                                  | N/A (admin only)         |
 
 ---
 
@@ -729,6 +774,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.5 „S
 - `fp:storage:dirsize:v1:`
 - `fp:storage:quota`
 - `fp:storage:v`
+- `fp:admin:setup_hide_report`
 - `prettyurls:`
 - `prettyurls:auto:v3:g`
 - `calendar:` (calendar cache key before namespacing via `fp:calendar:v` suffix)
