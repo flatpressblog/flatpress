@@ -7,7 +7,7 @@
  * Date:
  * Purpose:
  * Input:
- * Change-Date: 07.01.2026, by FKM
+ * Change-Date: 04.02.2026, by FKM
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
  *
@@ -54,7 +54,19 @@ class admin_static_write extends AdminPanelActionValidated {
 			$arr ['content'] = apply_filters('content_save_pre', $arr ['content']);
 		}
 
-		$this->smarty->assign('post', $arr);
+		// Content for editing: keep the storage format (with escaped separators)
+		// but show the real separator character in the textarea (e.g. "|" instead of "&#124;").
+		$post = $arr;
+		if (function_exists('fmt_unescape_separator')) {
+			if (isset($post['subject'])) {
+				$post ['subject'] = fmt_unescape_separator($post ['subject']);
+			}
+			if (isset($post['content'])) {
+				$post ['content'] = fmt_unescape_separator($post ['content']);
+			}
+		}
+
+		$this->smarty->assign('post', $post);
 
 		if (THEME_LEGACY_MODE) {
 			theme_entry_filters($arr, $id);
