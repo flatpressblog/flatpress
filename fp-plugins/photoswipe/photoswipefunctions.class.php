@@ -20,6 +20,28 @@ class PhotoSwipeFunctions {
 	private static $lastusedDataIndex = 0;
 
 	/**
+	 * Decode captions/titles that might already contain HTML entities.
+	 *
+	 * Captions created by some plugins are stored with entities (e.g. &amp;). If we escape again
+	 * for attributes, this would result in &amp;amp; and the user would see "&amp;" in the caption.
+	 *
+	 * @param string $text
+	 * @param string $charset
+	 * @return string
+	 */
+	private static function decode_title_entities(string $text, string $charset): string {
+		$decoded = $text;
+		for ($i = 0; $i < 2; $i++) {
+			$tmp = html_entity_decode($decoded, ENT_QUOTES | ENT_HTML5, $charset);
+			if ($tmp === $decoded) {
+				break;
+			}
+			$decoded = $tmp;
+		}
+		return $decoded;
+	}
+
+	/**
 	 * Callback function for [img] BBCode tag. Returns the HTML for a PhotoSwipe image,
 	 * or a standard <img> element if popup="false" is set.
 	 *
@@ -31,7 +53,7 @@ class PhotoSwipeFunctions {
 	 * @return string|bool HTML string or true if $action == "validate".
 	 */
 	static function getImageHtml($action, $attr, $content, $params, $node_object) {
-		global $lang;
+		global $lang, $fp_config;
 
 		if ($action == 'validate') {
 			// not used for now
@@ -59,10 +81,23 @@ class PhotoSwipeFunctions {
 			return $lang ['plugin'] ['photoswipe'] ['label_imagedoesntexist'] . ' ' . $img;
 		}
 
+		// Determine charset for entity decoding/encoding
+		$charset = 'UTF-8';
+		if (isset($fp_config) && is_array($fp_config)) {
+			$locale = $fp_config ['locale'] ?? null;
+			if (is_array($locale)) {
+				$tmp = $locale ['charset'] ?? null;
+				if (is_string($tmp) && $tmp !== '') {
+					$charset = strtoupper($tmp);
+				}
+			}
+		}
+
 		// image title will be empty - or the title from the tag attributes, if given
-		$title = isset($attr ['title']) ? $attr ['title'] : '';
-		// for usage in HTML attributes, we need to remove quotes and HTML tags from the title
-		$titleForAttributes = isset($attr ['title']) ? htmlentities(strip_tags($attr ['title'])) : '';
+		$titleRaw = isset($attr['title']) ? (string)$attr['title'] : '';
+		$titleDecoded = self::decode_title_entities($titleRaw, $charset);
+		$titlePlain = str_replace(array("\r", "\n"), ' ', strip_tags($titleDecoded));
+		$titleEscaped = htmlspecialchars($titlePlain, ENT_QUOTES | ENT_HTML5, $charset);
 
 		// image may float, according the the given float attribute - if not given, use "nofloat" class
 		$floatClasses = 'thumbnail nofloat';
@@ -71,7 +106,7 @@ class PhotoSwipeFunctions {
 		}
 
 		// to get the HTML code for preview image, we use the Flatpress standard function do_bbcode_img()
-		$attr ['title'] = $titleForAttributes;
+		$attr ['title'] = $titlePlain;
 		$previewHtml = do_bbcode_img(null, $attr, null, null, null);
 		// but: we don't need the popup link surrounding the resulting <img> tag
 		$matches = null;
@@ -81,7 +116,7 @@ class PhotoSwipeFunctions {
 			$previewHtml = substr($previewHtml, 0, strlen($previewHtml) - 1);
 		}
 		// add some additional attributes to the <img> tag and close it properly
-		$previewHtml .= ' itemprop="thumbnail" title="' . $titleForAttributes . '">';
+		$previewHtml .= ' itemprop="thumbnail" title="' . $titleEscaped . '">';
 
 		// PhotoSwipe needs to know the dimensions of the *full* image.
 		// For local images, we can read this on the server side. For external URLs, we deliberately do NOT call getimagesize().
@@ -140,11 +175,11 @@ class PhotoSwipeFunctions {
 		'itemprop="contentUrl" ' . //
 		$datasizeAttr . //
 		'data-index="' . self::$lastusedDataIndex . '" ' . //
-		'title="' . htmlentities($title) . '"' . //
+		'title="' . $titleEscaped . '"' . //
 		'>' . //
 		$previewHtml . //
 		'</a>' . //
-		'<figcaption' . $styleAttr . '>' . $title . '</figcaption>' . //
+		'<figcaption' . $styleAttr . '>' . $titleEscaped . '</figcaption>' . //
 		'</figure>' . //
 		'</div>' . //
 		"\n\n";
