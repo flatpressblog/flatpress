@@ -115,6 +115,9 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - PhotoSwipe plugin update to version 2.0.5
     - Performance violation after opening the overlay in Chrome-based browsers fixed. ([#794](https://github.com/flatpressblog/flatpress/issues/794))
     - ``getimagesize()`` is no longer called for external images. ([#796](https://github.com/flatpressblog/flatpress/issues/796))
+    - No double cleansing in image title. ([#802](https://github.com/flatpressblog/flatpress/issues/802))
+-  Gallery captions plugin update to version 1.02
+    - The & character is displayed correctly in the image title. ([#802](https://github.com/flatpressblog/flatpress/issues/802))
 
 ## Themes
 ### Changes
