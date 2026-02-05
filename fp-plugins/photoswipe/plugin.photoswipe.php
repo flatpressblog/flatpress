@@ -56,55 +56,15 @@
  * gallery directory. You may edit them with the Gallery captions plugin.
  */
 
-// Check if the current request is not an RSS feed
-if (!is_rss_feed()) {
-	// Include the plugin's PHP files
-	include_once dirname(__FILE__) . '/photoswipefunctions.class.php';
+// Include the plugin's PHP files
+include_once dirname(__FILE__) . '/photoswipefunctions.class.php';
 
-	// Initialize the BBCode tags of the plugin
-	add_filter('init', 'PhotoSwipeFunctions::initializePluginTags');
+// Initialize the BBCode tags of the plugin
+add_filter('init', 'PhotoSwipeFunctions::initializePluginTags');
 
-	// Inject necessary files into the <head> section
-	add_action('wp_head', 'PhotoSwipeFunctions::pswpHead', 2);
+// Inject necessary files into the <head> section
+add_action('wp_head', 'PhotoSwipeFunctions::pswpHead', 2);
 
-	// Inject necessary JavaScript and Overlay-Container into the footer section
-	add_action('wp_footer', 'PhotoSwipeFunctions::pswpFooter', 10);
-} else {
-	// Optional debugging log entry
-	// error_log('PhotoSwipe plugin has been deactivated for the RSS feed.');
-}
-
-// Function to detect if the current request is for an RSS or Atom feed
-function is_rss_feed() {
-	// Check if 'feed' parameter is set and matches valid feed types
-	if (isset($_GET ['feed']) && in_array(strtolower($_GET ['feed']), ['rss2', 'atom'])) {
-		return true;
-	}
-
-	// Check if 'x' parameter starts with 'feed:'
-	if (isset($_GET ['x']) && strpos(strtolower($_GET ['x']), 'feed:') === 0) {
-		return true;
-	}
-
-	// Fallback for REQUEST_URI if it's not available
-	$request_uri = strtolower($_SERVER ['REQUEST_URI'] ?? ($_SERVER ['SCRIPT_NAME'] . ($_SERVER ['QUERY_STRING'] ?? '')));
-
-	// Check if the request URI explicitly matches a feed endpoint
-	if (preg_match('#/(feed/rss2|feed/atom)(/|$)#', $request_uri)) {
-		return true;
-	}
-
-	// Optional: Check if the content type matches RSS/Atom types
-	if (!empty($_SERVER ['HTTP_ACCEPT'])) {
-		if (strpos($_SERVER ['HTTP_ACCEPT'], 'application/rss+xml') !== false) {
-			return true;
-		}
-		if (strpos($_SERVER ['HTTP_ACCEPT'], 'application/atom+xml') !== false) {
-			return true;
-		}
-	}
-
-	// If none of the conditions match, it's not a feed request
-	return false;
-}
+// Inject necessary JavaScript and Overlay-Container into the footer section
+add_action('wp_footer', 'PhotoSwipeFunctions::pswpFooter', 10);
 ?>
