@@ -99,6 +99,50 @@ class PhotoSwipeFunctions {
 		$titlePlain = str_replace(array("\r", "\n"), ' ', strip_tags($titleDecoded));
 		$titleEscaped = htmlspecialchars($titlePlain, ENT_QUOTES | ENT_HTML5, $charset);
 
+		// In RSS/Atom feeds, output a plain <img> element (no PhotoSwipe wrappers, no thumbnail generation).
+		if (function_exists('is_rss_feed') && is_rss_feed()) {
+			$altRaw = isset($attr ['alt']) ? (string)$attr ['alt'] : $titlePlain;
+			$altDecoded = self::decode_title_entities($altRaw, $charset);
+			$altPlain = str_replace(array("\r", "\n"), ' ', strip_tags($altDecoded));
+			$altEscaped = htmlspecialchars($altPlain, ENT_QUOTES | ENT_HTML5, $charset);
+
+			$wAttr = '';
+			if (isset($attr ['width']) && is_scalar($attr ['width'])) {
+				$tmp = (string)$attr ['width'];
+				if (preg_match('/^\d+$/', $tmp)) {
+					$wAttr = ' width="' . $tmp . '"';
+				}
+			}
+			$hAttr = '';
+			if (isset($attr ['height']) && is_scalar($attr ['height'])) {
+				$tmp = (string)$attr ['height'];
+				if (preg_match('/^\d+$/', $tmp)) {
+					$hAttr = ' height="' . $tmp . '"';
+				}
+			}
+
+			$class = ' class="center"';
+			if (isset($attr ['float']) && is_scalar($attr ['float'])) {
+				$f = strtolower((string)$attr ['float']);
+				if ($f === 'left' || $f === 'right') {
+					$class = ' class="float' . $f . '"';
+				}
+			}
+
+			$src = $imgUrl;
+			if ($imageIsLocal && ($wAttr !== '' || $hAttr !== '')) {
+				$thumbRel = 'fp-content/' . dirname($img) . '/.thumbs/' . basename($img);
+				$thumbPathRel = $thumbRel;
+				bbcode_remap_url($thumbPathRel);
+				if (file_exists($thumbPathRel)) {
+					$src = BLOG_BASEURL . $thumbPathRel;
+				}
+			}
+			$srcUrl = htmlspecialchars($src, ENT_QUOTES | ENT_HTML5, $charset);
+			$hrefUrl = htmlspecialchars($imgUrl, ENT_QUOTES | ENT_HTML5, $charset);
+			return '<a href="' . $hrefUrl . '"><img src="' . $srcUrl . '" alt="' . $altEscaped . '" title="' . $titleEscaped . '"' . $class . $wAttr . $hAttr . '></a>';
+		}
+
 		// image may float, according the the given float attribute - if not given, use "nofloat" class
 		$floatClasses = 'thumbnail nofloat';
 		if (isset($attr ['float'])) {

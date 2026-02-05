@@ -12,6 +12,13 @@
 const GALLERY_CAPTIONS_FILENAME = '.captions.conf';
 
 /**
+ * The name of the captions file (legacy user-land variants, without leading dot)
+ *
+ * @var string
+ */
+const GALLERY_CAPTIONS_ALTFILENAME = 'captions.conf';
+
+/**
  * The name of the captions file (legacy mode for galleries managed with PhotoSwipe plugin version < 1.1)
  *
  * @var string
@@ -55,14 +62,22 @@ function gallery_read_images($galleryDir) {
 	$d = substr_replace($galleryDir, IMAGES_DIR, 0, 7);
 	$fs = new fs_filelister($d);
 	$l = $fs->getlist();
-	foreach ($l as $i => $f) {
-		// remove caption files
-		if ($f === GALLERY_CAPTIONS_FILENAME || $f === GALLERY_CAPTIONS_LEGACYFILENAME) {
-			array_splice($l, $i, 1);
+
+	// Filter out caption metadata files (they must never be treated as images).
+	$exclude = array(
+		GALLERY_CAPTIONS_FILENAME,
+		GALLERY_CAPTIONS_ALTFILENAME,
+		GALLERY_CAPTIONS_LEGACYFILENAME
+	);
+	$out = array();
+	foreach ($l as $f) {
+		if (in_array($f, $exclude, true)) {
+			continue;
 		}
+		$out [] = $f;
 	}
-	sort($l);
-	return $l;
+	sort($out);
+	return $out;
 }
 
 /**
@@ -80,6 +95,11 @@ function gallery_read_captions($galleryDir) {
 	// read captions.conf from gallery dir
 	if (file_exists($galleryDirPathAbs . GALLERY_CAPTIONS_FILENAME)) {
 		$raw = io_load_file($galleryDirPathAbs . GALLERY_CAPTIONS_FILENAME);
+		$captionsFileContent = is_string($raw) ? explode("\n", str_replace(array("\r\n","\r"), "\n", rtrim($raw, "\r\n"))) : array();
+	} //
+	  // legacy mode: support non-hidden captions.conf (without leading dot)
+	elseif (file_exists($galleryDirPathAbs . GALLERY_CAPTIONS_ALTFILENAME)) {
+		$raw = io_load_file($galleryDirPathAbs . GALLERY_CAPTIONS_ALTFILENAME);
 		$captionsFileContent = is_string($raw) ? explode("\n", str_replace(array("\r\n","\r"), "\n", rtrim($raw, "\r\n"))) : array();
 	} //
 	  // legacy mode: if captions.conf is not available, check for texte.conf
