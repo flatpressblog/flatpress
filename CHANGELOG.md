@@ -85,6 +85,8 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - Optional APCu support with file fallback added ([#694](https://github.com/flatpressblog/flatpress/pull/694))
 - Emoticons plugin: update to version 1.1.3
     - New filter that converts Markdown emoticons in entry titles and static page titles to utf-8 emoticons. ([#781](https://github.com/flatpressblog/flatpress/pull/781))
+- PhotoSwipe plugin update to version 2.0.5
+    - Outputting galleries to RSS feeds is possible again ([#809](https://github.com/flatpressblog/flatpress/pull/809))
 
 ### Bugfixes
 - Newsletter plugin: update to version 1.7.3
