@@ -1,0 +1,80 @@
+/**
+ * ===================
+ * Leggero CSS Styles
+ * ===================
+ *
+ * Name: Stringendo
+ * Theme: Leggero
+ * Author: Fraenkiman
+ * Version: 1.40
+ * Module: print.css
+ *
+ * Print stylesheet.
+ */
+
+body {
+	color: #111;
+	background: transparent;
+	font-size: 12pt;
+	line-height: 1.45;
+}
+
+a {
+	color: #111;
+	text-decoration: none;
+}
+
+#column,
+.navigation,
+.admincontrols,
+.readmore,
+#commentform,
+#cookie_banner {
+	display: none !important;
+}
+
+#body-container {
+	max-width: 100%;
+	padding: 0;
+}
+
+#head {
+	border: 0;
+	box-shadow: none;
+	padding: 0 0 10pt 0;
+	background: transparent;
+}
+
+.entry {
+	border: 0;
+	box-shadow: none;
+	padding: 0 0 10pt 0;
+}
+
+.entry-footer {
+	border-top: 1px solid #999;
+	padding-top: 6pt;
+	font-size: 10pt;
+}
+
+blockquote {
+	margin: 10pt 0;
+	padding: 0 0 0 10pt;
+	border-left: 3pt solid #999;
+	background: transparent;
+}
+
+pre {
+	margin: 8pt 0;
+	padding: 8pt;
+	border: 1px dotted #999;
+	background: #f2f2f2;
+	font-size: 9.5pt;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+hr,
+#footer {
+	display: none;
+}
