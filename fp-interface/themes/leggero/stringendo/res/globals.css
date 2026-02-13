@@ -62,20 +62,20 @@ ul.msgs li {
 
 .errors {
 	border-color: rgba(220, 38, 38, .25);
-	background: rgba(254, 226, 226, .55);
+	background: rgb(254 226 226);
 	color: #7f1d1d;
 }
 
 .warnings {
 	border-color: rgba(202, 138, 4, .25);
-	background: rgba(254, 243, 199, .55);
+	background: rgba(254, 243, 199);
 	color: #78350f;
 }
 
 .notifications,
 .enabled {
 	border-color: rgba(22, 163, 74, .25);
-	background: rgba(220, 252, 231, .55);
+	background: rgba(220, 252, 231);
 	color: #14532d;
 }
 
@@ -89,7 +89,7 @@ ul.msgs li {
 
 .field-error {
 	border-color: rgba(220, 38, 38, .55) !important;
-	background: rgba(254, 226, 226, .65) !important;
+	background: rgba(254, 226, 226) !important;
 }
 
 /* Small utility classes often used in templates */
@@ -116,8 +116,12 @@ ul.msgs li {
 	margin: 0;
 }
 
-.bb-btn-tlb .bb-button,
-.emoticons button {
+/*
+ * Important: the general Stringendo button styling uses highly specific selectors.
+ * Keep these selectors equally (or more) specific so the toolbar stays neutral.
+ */
+.bb-btn-tlb button.bb-button,
+.emoticons button[type="button"]:not(.bb-button) {
 	appearance: none;
 	border: 1px solid var(--fp-border, #e2e8f0);
 	background: var(--fp-surface, #ffffff);
@@ -135,17 +139,18 @@ ul.msgs li {
 	margin-top: 0.35rem;
 }
 
-.bb-btn-tlb .bb-button img {
+.bb-btn-tlb button.bb-button img {
 	display: block;
 	width: 18px;
 	height: 18px;
 }
 
-.bb-btn-tlb .bb-button:hover,
-.emoticons button:hover {
+
+.bb-btn-tlb button.bb-button:hover,
+.emoticons button[type="button"]:not(.bb-button):hover {
 	background: var(--fp-surface, #ffffff);
-	border-color: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .45);
-	box-shadow: 0 0 0 4px rgba(var(--fp-accent-3-rgb, 255, 140, 0), .12);
+	border-color: rgba(2, 6, 23, .22);
+	box-shadow: 0 0 0 4px rgba(2, 6, 23, .06);
 }
 
 .emoticons {

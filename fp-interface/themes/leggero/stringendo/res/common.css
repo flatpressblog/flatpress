@@ -562,7 +562,7 @@ select:focus {
 input[type="submit"],
 input[type="button"],
 .link-comments a,
-button:not(.leaflet-control):not(.pswp__button) {
+button:not(.leaflet-control):not(.pswp__button):not(.bb-button) {
 	appearance: none;
 	border: 1px solid rgba(var(--fp-accent-2-rgb, 139, 0, 0), .35);
 	border-radius: 999px;
@@ -577,42 +577,48 @@ button:not(.leaflet-control):not(.pswp__button) {
 input[type="submit"]:hover,
 input[type="button"]:hover,
 .link-comments a:hover,
-button:not(.leaflet-control):not(.pswp__button):hover {
+button:not(.leaflet-control):not(.pswp__button):not(.bb-button):hover {
 	transition-duration: .25s;
 	background: var(--fp-accent-gradient-hover, var(--fp-accent-2, #8b0000));
 }
 
 /**
  * BBCode & emoticon toolbars (frontend + admin): keep neutral icon buttons.
- * Prevents harsh hover accent gradients on small toolbar buttons.
+ * Must override the general button styling (accent gradients) reliably.
  */
-.bb-button,
-.emoticons button {
+.bb-btn-tlb button.bb-button,
+#admin-bbcode-toolbar button.bb-button,
+.emoticons button[type="button"]:not(.bb-button) {
 	appearance: none;
-	border: 1px solid rgba(2, 6, 23, 0.18);
-	border-radius: var(--fp-radius-sm, 10px);
-	background: var(--fp-surface-2, #f1f5f9);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	background: var(--fp-surface, #ffffff);
 	color: var(--fp-text, #0f172a);
-	padding: 4px;
-	min-width: 32px;
-	height: 28px;
+	border-radius: var(--fp-radius-sm, 10px);
+	padding: 0;
+	height: 30px;
+	width: 34px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	box-shadow: 0 1px 6px rgba(2, 6, 23, 0.08);
+	line-height: 1;
+	cursor: pointer;
+	box-shadow: 0 1px 0 rgba(2, 6, 23, .04);
 }
 
-.bb-button:hover,
-.emoticons button:hover {
+.bb-btn-tlb button.bb-button:hover,
+#admin-bbcode-toolbar button.bb-button:hover,
+.emoticons button[type="button"]:not(.bb-button):hover {
 	background: var(--fp-surface, #ffffff);
-	border-color: rgba(var(--fp-accent-2-rgb, 139, 0, 0), 0.35);
-	box-shadow: 0 2px 10px rgba(2, 6, 23, 0.10);
+	border-color: rgba(2, 6, 23, .22);
+	box-shadow: 0 0 0 4px rgba(2, 6, 23, .06);
 }
 
-.bb-button:focus-visible,
-.emoticons button:focus-visible {
+.bb-btn-tlb button.bb-button:focus-visible,
+#admin-bbcode-toolbar button.bb-button:focus-visible,
+.emoticons button[type="button"]:not(.bb-button):focus-visible {
 	outline: none;
-	box-shadow: 0 0 0 4px rgba(var(--fp-focus-rgb, 0, 127, 255), 0.18);
+	border-color: rgba(var(--fp-focus-rgb, 0, 127, 255), .55);
+	box-shadow: 0 0 0 4px rgba(var(--fp-focus-rgb, 0, 127, 255), .18);
 }
 
 input[type="reset"],
@@ -634,7 +640,7 @@ button[type="reset"]:hover {
 
 input[type="submit"]:disabled,
 input[type="button"]:disabled,
-button:not(.leaflet-control):not(.pswp__button):disabled {
+button:not(.leaflet-control):not(.pswp__button):not(.bb-button):disabled {
 	opacity: .6;
 	cursor: not-allowed;
 }
@@ -867,8 +873,7 @@ ol#comments pre code {
 .pswp__img {
 	border-radius: 3px
 }
-
-/**
+/*
  * Widgets that overflow the sidebar can be moved below #main via widgets-under-main.js.
  * Ensure the under-main container spans a full row (no matter the sidebar layout).
  */
