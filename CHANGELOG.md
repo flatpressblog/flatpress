@@ -126,6 +126,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 - Added edit button comment admin controls
 - Leggero theme:
     - If a SEO metatag description of the post is available, it will be displayed as an introduction to the post. [@wjar forum entry](https://forum.flatpress.org/viewtopic.php?t=424&start=10#p3208)
+    - Modern, responsive style with an energetic "Stringendo" accent palette added ([#810](https://github.com/flatpressblog/flatpress/pull/810))
 ### Bugfixes
 - Leggero theme:
     - After a fresh installation, the correct time format is now displayed instead of the default format  ``%b %e, %Y``. ([#662](https://github.com/flatpressblog/flatpress/pull/662))
