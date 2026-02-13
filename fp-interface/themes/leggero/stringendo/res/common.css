@@ -6,7 +6,7 @@
  * Name: Stringendo
  * Theme: Leggero
  * Author: Fraenkiman
- * Version: 1.39
+ * Version: 1.40
  * Module: common.css
  *
  * Modern, bright and responsive presentation layer.
@@ -562,7 +562,7 @@ select:focus {
 input[type="submit"],
 input[type="button"],
 .link-comments a,
-button:not(.leaflet-control) {
+button:not(.leaflet-control):not(.pswp__button) {
 	appearance: none;
 	border: 1px solid rgba(var(--fp-accent-2-rgb, 139, 0, 0), .35);
 	border-radius: 999px;
@@ -577,7 +577,7 @@ button:not(.leaflet-control) {
 input[type="submit"]:hover,
 input[type="button"]:hover,
 .link-comments a:hover,
-button:not(.leaflet-control):hover {
+button:not(.leaflet-control):not(.pswp__button):hover {
 	transition-duration: .25s;
 	background: var(--fp-accent-gradient-hover, var(--fp-accent-2, #8b0000));
 }
@@ -634,7 +634,7 @@ button[type="reset"]:hover {
 
 input[type="submit"]:disabled,
 input[type="button"]:disabled,
-button:not(.leaflet-control):disabled {
+button:not(.leaflet-control):not(.pswp__button):disabled {
 	opacity: .6;
 	cursor: not-allowed;
 }
@@ -867,7 +867,8 @@ ol#comments pre code {
 .pswp__img {
 	border-radius: 3px
 }
-/*
+
+/**
  * Widgets that overflow the sidebar can be moved below #main via widgets-under-main.js.
  * Ensure the under-main container spans a full row (no matter the sidebar layout).
  */
