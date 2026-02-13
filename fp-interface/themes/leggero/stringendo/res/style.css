@@ -1,0 +1,89 @@
+/**
+ * ======================
+ * Leggero CSS Stylesheet
+ * ======================
+ *
+ * Name: Stringendo
+ * Theme: Leggero
+ * Author: Fraenkiman
+ * Version: 1.40
+ * Module: style.css
+ *
+ * This stylesheet only wires together the module files.
+ * The templates are shared across styles and must not be changed.
+ */
+
+@import url('common.css');
+@import url('globals.css');
+@import url('column.css');
+
+/* Small widget & plugin tweaks (keep them minimal and style-agnostic) */
+
+/* Calendar widget */
+.calendar {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.calendar caption {
+	margin-bottom: .4rem;
+	color: var(--fp-muted, #475569);
+	font-weight: 600;
+}
+
+.calendar th,
+.calendar td {
+	border: 1px solid var(--fp-accent-2, #8b0000);
+	padding: .18rem .25rem;
+	text-align: center;
+	font-size: .92em;
+}
+
+.calendar th {
+	background: var(--fp-surface-2, #f1f5f9);
+}
+
+/* Archive toggle icon */
+.togglelink {
+	user-select: none;
+}
+
+/* Last comments widget */
+.last-comments {
+	padding-left: 0;
+}
+
+.comment-quote {
+	margin: .5rem 0;
+	padding: .65rem .8rem;
+	background: var(--fp-surface-2, #f1f5f9);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius-sm, 10px);
+}
+
+/* Cookie banner: keep readable on this style */
+#cookie_banner {
+	left: 0;
+	right: 0;
+	bottom: 0;
+	position: fixed;
+	z-index: 9999;
+	padding: .75rem 1rem;
+	background: rgba(255, 255, 255, .95);
+	border-top: 1px solid var(--fp-border, #e2e8f0);
+	backdrop-filter: blur(8px);
+}
+
+#cookie_banner .buttonbar {
+	max-width: var(--fp-container, 1120px);
+	margin: 0 auto !IMPORTANT;
+}
+
+#cookie_banner input[type="submit"] {
+	white-space: nowrap;
+}
+
+.responsive_bbcode_video button {
+	height: unset !IMPORTANT;
+}

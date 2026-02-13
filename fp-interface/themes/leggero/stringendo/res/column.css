@@ -1,0 +1,203 @@
+/**
+ * ===================
+ * Leggero CSS Styles
+ * ===================
+ *
+ * Name: Stringendo
+ * Theme: Leggero
+ * Author: Fraenkiman
+ * Version: 1.40
+ * Module: column.css
+ *
+ * Sidebar / widgets column.
+ */
+
+#column {
+	flex: 0 0 var(--fp-sidebar, 320px);
+	width: var(--fp-sidebar, 320px);
+	min-width: 0;
+}
+
+/* Sidebar links follow the global visited color (violet), for consistent UX. */
+#column a:link {
+	color: var(--fp-link, var(--fp-accent, #b22222));
+}
+
+#column a:visited {
+	color: var(--fp-link-visited, #800080);
+}
+
+#column a:hover {
+	color: var(--fp-link-hover, var(--fp-accent, #b22222));
+}
+
+@media (min-width: 960px) {
+	#column {
+		position: sticky;
+		top: 1rem;
+		align-self: flex-start;
+	}
+}
+
+@media (max-width: 959px) {
+	#column {
+		width: 100%;
+		flex: 0 0 auto;
+	}
+}
+
+/* Each widget is a card */
+#column > div,
+.stringendo-widgets-under-main > div {
+	background: rgb(247, 240, 223);
+	background: linear-gradient(180deg, rgb(247, 240, 223) 0%, rgb(253, 198, 154) 100%);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius, 14px);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+	padding: var(--fp-space-5, 1.25rem);
+	margin: 0 0 var(--fp-space-5, 1.25rem) 0;
+	overflow: hidden;
+}
+
+/**
+ * When the sidebar is taller than #main on wide screens, JS moves overflow widgets under #main.
+ * Render them as a responsive grid there (order is preserved).
+ */
+.stringendo-widgets-under-main {
+	margin-top: var(--fp-space-5, 1.25rem);
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--fp-space-5, 1.25rem);
+}
+@media (min-width: 640px) {
+	.stringendo-widgets-under-main {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+@media (min-width: 960px) {
+	.stringendo-widgets-under-main {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+/**
+ * Progressive reveal for under-main widget grid:
+ * If frontend fade-in is active, keep this grid hidden until #column finished fading in.
+ */
+html.fp-fadein body:not([class^="admin-"]) .stringendo-widgets-under-main.stringendo-under-hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+html.fp-fadein body:not([class^="admin-"]) .stringendo-widgets-under-main.stringendo-under-show {
+	opacity: 1;
+	transition: opacity 260ms ease-out;
+	pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+	html.fp-fadein body:not([class^="admin-"]) .stringendo-widgets-under-main.stringendo-under-hidden,
+	html.fp-fadein body:not([class^="admin-"]) .stringendo-widgets-under-main.stringendo-under-show {
+		opacity: 1;
+		transition: none;
+		pointer-events: auto;
+	}
+}
+
+.stringendo-widgets-under-main > div {
+	margin: 0;
+}
+
+#column h4,
+.stringendo-widgets-under-main h4 {
+	margin: 0 0 .75rem 0;
+	font-size: 1.05rem;
+	line-height: 1.25;
+	letter-spacing: -0.01em;
+}
+
+#column p,
+.stringendo-widgets-under-main p {
+	margin: 0 0 .75rem 0;
+	color: var(--fp-text, #0f172a);
+}
+
+#column small,
+#column .date,
+.stringendo-widgets-under-main small,
+.stringendo-widgets-under-main .date {
+	color: var(--fp-muted, #475569);
+}
+
+#column ul,
+#column ol,
+.stringendo-widgets-under-main ul,
+.stringendo-widgets-under-main ol {
+	margin: 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+#column li,
+.stringendo-widgets-under-main li {
+	margin: .35rem 0;
+}
+
+#column ul ul,
+#column ol ol,
+.stringendo-widgets-under-main ul ul,
+.stringendo-widgets-under-main ol ol {
+	padding-left: 1.1rem;
+}
+
+#column ul ul,
+.stringendo-widgets-under-main ul ul {
+	border-left: 2px solid rgba(2, 6, 23, .06);
+	margin-left: .35rem;
+}
+
+#column fieldset {
+	margin: 0;
+}
+
+/* Widget: searchbox (button under input) */
+#widget-searchbox form {
+	display: flex;
+	flex-direction: column;
+	gap: .65rem;
+	align-items: stretch;
+}
+
+#widget-searchbox form p {
+	margin: 0;
+}
+
+#widget-searchbox .buttonbar {
+	margin: 0;
+}
+
+#widget-searchbox input[type="submit"] {
+	width: 100%;
+}
+
+
+/* Widget: calendar (keep compact in sidebar) */
+#widget-calendar {
+	overflow: hidden;
+}
+
+#widget-calendar .calendar {
+	width: 100%;
+	table-layout: fixed;
+	font-size: .92rem;
+}
+
+#widget-calendar .calendar th,
+#widget-calendar .calendar td {
+	padding: .18rem .22rem;
+	line-height: 1.2;
+}
+
+#widget-calendar .calendar caption {
+	font-weight: 700;
+	font-size: .95rem;
+	margin-bottom: .35rem;
+}

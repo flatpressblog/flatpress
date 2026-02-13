@@ -1,0 +1,1363 @@
+/**
+ * ===================
+ * Leggero CSS Styles
+ * ===================
+ *
+ * Name: Stringendo
+ * Theme: Leggero
+ * Author: Fraenkiman
+ * Version: 1.40
+ * Module: admin.css
+ *
+ *Admin area adjustments for the Stringendo style.
+ */
+
+@import url('common.css');
+@import url('globals.css');
+
+/**
+ * The global style uses a violet visited color for content links.
+ * In the admin UI, visited links should stay in the normal link color.
+ */
+body[class^="admin-"] a:visited {
+	color: var(--fp-link, var(--fp-accent, #b22222));
+}
+
+/* Admin: reverse entry gradient (requested) */
+body[class^="admin-"] .entry {
+	background: rgb(249, 246, 241);
+	background: linear-gradient(360deg, rgb(255, 219, 166) 0%, rgb(249, 246, 241) 100%);
+}
+
+/* Admin pages do not render the front-end header (#head) */
+body[class^="admin-"] #body-container {
+	max-width: var(--fp-container, 1120px);
+	padding: var(--fp-space-5, 1.25rem);
+}
+
+body[class^="admin-"] #outer-container {
+	margin-top: 0;
+}
+
+/* Slightly smaller overall density in admin */
+body[class^="admin-"] {
+	font-size: 16px;
+}
+
+#cpmain {
+	padding: 0;
+}
+
+/* Small navbar (Start page / Logout) */
+ul#admin-small-nav {
+	margin: 0 0 var(--fp-space-3, .75rem) 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	gap: .75rem;
+	justify-content: flex-end;
+	flex-wrap: wrap;
+	font-size: .92rem;
+}
+
+ul#admin-small-nav a {
+	font-weight: 700;
+}
+
+/* Primary tab menu */
+ul#admin-tabmenu {
+	margin: var(--fp-space-4, 1rem) 0 0 0;
+	padding: .5rem;
+	list-style: none;
+	display: flex;
+	gap: .35rem;
+	flex-wrap: wrap;
+	background: var(--fp-surface-2, #f1f5f9);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: 10px;
+}
+
+ul#admin-tabmenu li {
+	margin: 0;
+}
+
+ul#admin-tabmenu a {
+	display: inline-block;
+	padding: .45rem .8rem;
+	border-radius: 999px;
+	font-weight: 700;
+	color: var(--fp-muted, #475569);
+}
+
+ul#admin-tabmenu a:hover {
+	text-decoration: none;
+	background: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .16);
+	color: var(--fp-text, #0f172a);
+}
+
+ul#admin-tabmenu a.admin-tab-current {
+	background: linear-gradient(135deg, rgba(var(--fp-accent-rgb, 178, 34, 34), .14) 0%, rgba(var(--fp-accent-3-rgb, 255, 140, 0), .18) 100%);
+	border: 1px solid rgba(var(--fp-accent-3-rgb, 255, 140, 0), .25);
+	color: var(--fp-accent-2, #8b0000);
+}
+
+/* Secondary submenu */
+#admin-submenu {
+	margin: .5rem 0 0 0;
+	padding: .5rem;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius-sm, 10px);
+	background: var(--fp-surface, #ffffff);
+	list-style: none;
+	display: flex;
+	gap: .25rem;
+	flex-wrap: wrap;
+}
+
+#admin-submenu li {
+	margin: 0;
+}
+
+#admin-submenu a {
+	display: inline-block;
+	padding: .35rem .7rem;
+	border-radius: 999px;
+	font-weight: 700;
+	color: var(--fp-muted, #475569);
+}
+
+#admin-submenu a:hover,
+#admin-submenu a.active {
+	text-decoration: none;
+	background: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .16);
+	color: var(--fp-text, #0f172a);
+}
+
+#admin-submenu a.active {
+	background: linear-gradient(135deg, rgba(var(--fp-accent-rgb, 178, 34, 34), .14) 0%, rgba(var(--fp-accent-3-rgb, 255, 140, 0), .18) 100%);
+	border: 1px solid rgba(var(--fp-accent-3-rgb, 255, 140, 0), .25);
+	color: var(--fp-accent-2, #8b0000);
+}
+
+#admin-content {
+	padding: var(--fp-space-5, 1.25rem) 0 0 0;
+}
+
+#admin-content h2 {
+	margin: 0 0 var(--fp-space-4, 1rem) 0;
+	font-size: 1.25rem;
+	border: 0;
+}
+
+/* Tables */
+#admin-content table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius-sm, 10px);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+	background: var(--fp-surface, #ffffff);
+	margin-bottom: 2em;
+}
+
+#admin-content th,
+#admin-content td {
+	border-bottom: 1px solid var(--fp-border, #e2e8f0);
+	padding: .65rem .7rem;
+	vertical-align: middle;
+}
+
+/* Widgets > BlockParser: table rows are visually denser and should align vertically */
+body.admin-widgets-blockparser #admin-content table.entrylist th,
+body.admin-widgets-blockparser #admin-content table.entrylist td {
+	vertical-align: middle;
+}
+
+/* Warm accent for field groups */
+body.admin fieldset {
+	border: 1px solid #ff8c00;
+}
+
+#admin-content tr:last-child td {
+	border-bottom: 0;
+}
+
+#admin-content th {
+	background: var(--fp-surface-2, #f1f5f9);
+	font-weight: 500;
+	text-align: left;
+}
+
+#admin-content td {
+	background: var(--fp-surface, #ffffff);
+	font-size: 14px;
+}
+
+#admin-content td.main-cell {
+	/* width: 30%; */
+}
+
+@media (max-width: 1279px) {
+	#admin-content table,
+	#admin-content td {
+		font-size: 12px;
+	}
+}
+
+/**
+ * Plugins table (admin.php?p=plugin)
+ * - keep wide table on desktop
+ * - convert to stacked cards on small screens to prevent horizontal overflow
+ */
+@media (max-width: 810px) {
+	/**
+	 * Important: the global table chrome (#admin-content table) uses overflow:hidden + shadow.
+	 * If we only convert rows to cards, this creates a visible "double shadow".
+	 * Ensure the *table itself* becomes plain/transparent and does not clip card shadows.
+	 */
+	body.admin-plugin-default #admin-content table#plugin-table,
+	#admin-content table#plugin-table,
+	#plugin-table {
+		border: 0;
+		border-radius: 0;
+		box-shadow: none !important;
+		background: transparent !important;
+		overflow: visible !important;
+	}
+
+	#plugin-table thead {
+		display: none;
+	}
+
+	#plugin-table,
+	#plugin-table tbody {
+		display: block;
+		width: 100%;
+		box-shadow: none;
+		background: transparent;
+	}
+
+	#plugin-table tr {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-areas:
+			"name action"
+			"desc desc"
+			"author version";
+		gap: 0;
+		margin: 0 0 var(--fp-space-3, .75rem) 0;
+		border: 1px solid var(--fp-border, #e2e8f0);
+		border-radius: var(--fp-radius-sm, 10px);
+		overflow: hidden;
+		background: var(--fp-surface, #ffffff);
+		box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+	}
+
+	#plugin-table tr.enabled {
+		border-color: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .35);
+	}
+
+	#plugin-table td {
+		border: 0;
+		padding: .65rem .75rem;
+		min-width: 0;
+	}
+
+	#plugin-table td:nth-child(1) {
+		grid-area: name;
+		font-weight: 800;
+		padding-bottom: .25rem;
+		background: var(--fp-surface-2, #f8fafc);
+		border-bottom: 1px solid var(--fp-border, #e2e8f0);
+		line-height: 2em;
+	}
+
+	#plugin-table td:nth-child(5) {
+		grid-area: action;
+		justify-self: end;
+		align-self: center;
+		padding-bottom: .25rem;
+		white-space: nowrap;
+		background: var(--fp-surface-2, #f8fafc);
+		border-bottom: 1px solid var(--fp-border, #e2e8f0);
+		width: 100%;
+		text-align: right;
+		line-height: 2em;
+	}
+
+	#plugin-table td:nth-child(2) {
+		grid-area: desc;
+		padding-top: 0;
+		color: var(--fp-muted, #475569);
+	}
+
+	#plugin-table td:nth-child(3) {
+		grid-area: author;
+		border-top: 1px solid var(--fp-border, #e2e8f0);
+		font-size: .92rem;
+		color: var(--fp-muted, #475569);
+	}
+
+	#plugin-table td:nth-child(4) {
+		grid-area: version;
+		border-top: 1px solid var(--fp-border, #e2e8f0);
+		font-size: .92rem;
+		color: var(--fp-muted, #475569);
+		text-align: right;
+	}
+
+	/* Add lightweight labels for meta rows (localized for DE/EN). */
+	html[lang^="de"] #plugin-table td:nth-child(3)::before { content: "Autor: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="de"] #plugin-table td:nth-child(4)::before { content: "Version: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="en"] #plugin-table td:nth-child(3)::before { content: "Author: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="en"] #plugin-table td:nth-child(4)::before { content: "Version: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="cs"] #plugin-table td:nth-child(3)::before { content: "Autor: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="cs"] #plugin-table td:nth-child(4)::before { content: "Verze: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="da"] #plugin-table td:nth-child(3)::before { content: "Forfatter: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="da"] #plugin-table td:nth-child(4)::before { content: "Version: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="el"] #plugin-table td:nth-child(3)::before { content: "Συγγραφέας: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="el"] #plugin-table td:nth-child(4)::before { content: "Έκδοση: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="es"] #plugin-table td:nth-child(3)::before { content: "Autor: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="es"] #plugin-table td:nth-child(4)::before { content: "Versión: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="eu"] #plugin-table td:nth-child(3)::before { content: "Egilea: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="eu"] #plugin-table td:nth-child(4)::before { content: "Bertsioa: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="fr"] #plugin-table td:nth-child(3)::before { content: "Auteur: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="fr"] #plugin-table td:nth-child(4)::before { content: "Version: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="it"] #plugin-table td:nth-child(3)::before { content: "Autore: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="it"] #plugin-table td:nth-child(4)::before { content: "Versione: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="ja"] #plugin-table td:nth-child(3)::before { content: "著者: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="ja"] #plugin-table td:nth-child(4)::before { content: "バージョン: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="nl"] #plugin-table td:nth-child(3)::before { content: "Auteur: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="nl"] #plugin-table td:nth-child(4)::before { content: "Versie: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="pt"] #plugin-table td:nth-child(3)::before { content: "Autor: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="pt"] #plugin-table td:nth-child(4)::before { content: "Versão: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="ru"] #plugin-table td:nth-child(3)::before { content: "Автор: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="ru"] #plugin-table td:nth-child(4)::before { content: "Версия: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="sl"] #plugin-table td:nth-child(3)::before { content: "Avtor: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="sl"] #plugin-table td:nth-child(4)::before { content: "Različica: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	html[lang^="tr"] #plugin-table td:nth-child(3)::before { content: "Yazar: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="tr"] #plugin-table td:nth-child(4)::before { content: "Sürüm: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
+	#plugin-table td:nth-child(3)::before,
+	#plugin-table td:nth-child(4)::before {
+		display: inline;
+	}
+}
+
+/* Entry editor headline */
+input#subject {
+	font-size: 1.25rem;
+	font-weight: 500;
+}
+
+/* BBCode toolbar in admin: keep as icon buttons */
+#admin-bbcode-toolbar {
+	margin: 0 0 .5rem 0;
+	padding: 0;
+	border: 0;
+	display: block;
+}
+
+#admin-bbcode-toolbar p {
+	margin: 0 0 .35rem 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .35rem;
+	align-items: center;
+}
+
+#admin-bbcode-toolbar p:last-child {
+	margin: 0 0 .35rem 0;
+}
+
+#admin-bbcode-toolbar button,
+#admin-bbcode-toolbar select,
+.emoticons button {
+	font-size: .95rem;
+}
+
+#admin-bbcode-toolbar button,
+.emoticons button {
+	appearance: none;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	background: var(--fp-surface, #ffffff);
+	color: var(--fp-text, #0f172a);
+	border-radius: 10px;
+	padding: 0;
+	height: 30px;
+	width: 34px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1;
+	cursor: pointer;
+	box-shadow: 0 1px 0 rgba(2, 6, 23, .04);
+}
+
+#admin-bbcode-toolbar legend {
+	display: none;
+}
+
+#admin-bbcode-toolbar button img {
+	display: block;
+	width: 18px;
+	height: 18px;
+}
+
+#admin-bbcode-toolbar button:hover,
+.emoticons button:hover {
+	border-color: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .45);
+	box-shadow: 0 0 0 4px rgba(var(--fp-accent-3-rgb, 255, 140, 0), .12);
+}
+
+#admin-bbcode-toolbar select {
+	width: auto;
+	max-width: 100%;
+}
+
+#admin-bbcode-selectbar p {
+	margin-bottom: 0;
+}
+
+/* Emoticons row needs breathing room above the textarea */
+.emoticons {
+	margin: .45rem 0 .85rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .35rem;
+}
+
+/* Entry write: categories tree (match the front-end category widget style) */
+#admin-entry-categories ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#admin-entry-categories li {
+	margin: .15rem 0;
+}
+
+#admin-entry-categories li > label {
+	display: inline-flex;
+	align-items: center;
+	gap: .55rem;
+}
+
+#admin-entry-categories input[type="checkbox"] {
+	margin: 0;
+}
+
+#admin-entry-categories ul ul {
+	margin: .25rem 0 0 .75rem;
+	padding-left: .85rem;
+	border-left: 1px solid var(--fp-border, #e2e8f0);
+}
+
+/* Theme panel: responsive grid instead of floats */
+#current-theme {
+	overflow: hidden;
+}
+
+#current-theme img {
+	max-width: 320px;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius-sm, 10px);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+}
+
+#available-themes ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 1rem;
+}
+
+#available-themes ul li {
+	float: none;
+	width: auto;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius, 14px);
+	background: var(--fp-surface, #ffffff);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+	padding: 1rem;
+	text-align: center;
+}
+
+#available-themes ul li:hover {
+	border-color: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .45);
+}
+
+#available-themes img {
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius-sm, 10px);
+}
+
+/* Config panel: grid layout for dt/dd */
+dl.option-set {
+	display: grid;
+	grid-template-columns: minmax(180px, 280px) 1fr;
+	gap: .65rem 1rem;
+	align-items: center;
+}
+
+dl.option-set dt,
+	dl.option-set dd {
+	margin: 0;
+	position: static;
+	width: auto;
+	text-align: left;
+}
+
+dl.option-set dt {
+	font-weight: 800;
+	color: var(--fp-muted, #475569);
+}
+
+dl.option-set dd {
+	color: var(--fp-text, #0f172a);
+}
+
+@media (max-width: 820px) {
+	dl.option-set {
+		grid-template-columns: 1fr;
+	}
+}
+
+/**
+ * Config panel (admin.php?p=config): label beside control on desktop
+ *
+ * Markup: <div id="admin-config" class="option-set"> ... <dl class="option-list"><dt>..</dt><dd>..</dd>
+ * Goal:
+ * - Desktop: dt label left of dd control, vertically centered to the FIRST control row
+ * - Mobile/Tablet: dt above dd
+ * - Controls aligned to a centered column (not full-width across the whole page)
+ */
+#admin-config dl.option-list {
+	display: grid;
+	grid-template-columns: 1fr minmax(320px, 520px);
+	gap: .65rem 1.25rem;
+	max-width: 980px;
+	margin: 0 auto;
+	align-items: start;
+}
+
+#admin-config dl.option-list dt,
+#admin-config dl.option-list dd {
+	float: none;
+	width: auto;
+	margin: 0;
+	position: static;
+}
+
+#admin-config dl.option-list dt {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	min-height: 2.75rem;
+	font-weight: 500;
+	color: var(--fp-muted, #475569);
+	text-align: right;
+}
+
+#admin-config dl.option-list dd {
+	color: var(--fp-text, #0f172a);
+}
+
+/**
+ * Config (General): keep single-line option rows vertically aligned
+ *
+ * The "Benachrichtigungen" row uses a <label><input type="checkbox">..</label> inside <dd>.
+ * Because the config grid uses align-items:start, that <dd> would otherwise sit at the top of
+ * the row (while <dt> is vertically centered via min-height). On desktop we normalize the <dd>
+ * to the same baseline height and align contents vertically.
+ */
+@media (min-width: 821px) {
+	#admin-config-general dl.option-list dd {
+		min-height: 2.75rem;
+		display: flex;
+		align-items: center;
+	}
+
+	#admin-config-general dl.option-list dd > label {
+		margin: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: .55rem;
+		line-height: 1.25;
+	}
+
+	#admin-config-general dl.option-list dd > label > input[type="checkbox"] {
+		margin: 0;
+		flex: 0 0 auto;
+	}
+}
+
+/* Keep nested helper paragraphs compact (intsetts uses <p> wrappers) */
+#admin-config dl.option-list dd > p {
+	margin: 0;
+}
+
+#admin-config dl.option-list dd p.output,
+#admin-config dl.option-list dd p.text {
+	margin-top: .35rem;
+	color: var(--fp-muted, #475569);
+}
+
+#admin-config dl.option-list dd p.text {
+	display: inline;
+	vertical-align: middle;
+}
+
+.option-set input.textinput ,
+.option-set select.textinput,
+.option-list dd code {
+	width: 20em;
+}
+
+.option-set input.bigtextinput {
+	width: 26em
+}
+
+.option-set input.smalltextinput {
+	width: 5em;
+	vertical-align: middle
+}
+
+/* Read-only code output should look like a field */
+#admin-config dl.option-list dd code {
+	display: block;
+	padding: .55rem .7rem;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius-sm, 10px);
+	background: rgba(2, 6, 23, .02);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	font-size: .92em;
+	overflow-x: auto;
+}
+
+/* International settings contains multi-line dd blocks; keep dt aligned to the first row */
+@media (min-width: 821px) {
+	#admin-config-intsetts dl.option-list dt,
+	#admin-config-intsetts dl.option-list dd {
+		align-self: start;
+	}
+}
+
+@media (max-width: 820px) {
+	#admin-config dl.option-list {
+		grid-template-columns: 1fr;
+		max-width: 100%;
+	}
+	#admin-config dl.option-list dt {
+		justify-content: flex-start;
+		text-align: left;
+		min-height: 0;
+		padding-top: .25rem;
+	}
+}
+
+/* Special action links */
+a.link-disable,
+	a.link-delete,
+	a.link-enable,
+	a.link-general {
+	border-radius: 999px;
+	padding: .35rem .6rem;
+	font-weight: 500;
+}
+
+a.link-delete:hover,
+	a.link-disable:hover {
+	background-color: rgba(220, 38, 38, .12);
+	color: #7f1d1d;
+	text-decoration: none;
+}
+
+a.link-enable:hover {
+	background-color: rgba(22, 163, 74, .12);
+	color: #14532d;
+	text-decoration: none;
+}
+
+a.link-general:hover {
+	background-color: rgba(2, 6, 23, .06);
+	text-decoration: none;
+}
+
+/* Media Manager: keep file-type icons (background-images from plugin stylesheet) visible and not clipped */
+body.admin-uploader-mediamanager #admin-content table.entrylist td.main-cell a.link-general {
+	background-position: .55rem center;
+	background-repeat: no-repeat;
+	background-size: 20px 22px;
+	padding: .35rem .6rem;
+	padding-left: calc(.6rem + 26px);
+}
+
+/* Media Manager table: vertical centering for all cells on desktop */
+@media (min-width: 810px) {
+	body.admin-uploader-mediamanager #admin-content table.entrylist th,
+	body.admin-uploader-mediamanager #admin-content table.entrylist td {
+		vertical-align: middle;
+	}
+}
+
+.admin-uploader-storage #admin-content div div {
+	border: 1px solid var(--fp-accent-3) !IMPORTANT;
+}
+
+/* Media Manager table: fully responsive below 810px (avoid page horizontal scrolling) */
+@media (max-width: 809px) {
+	body.admin-uploader-mediamanager #admin-content table.entrylist {
+		width: 100%;
+		border: 0;
+		background: transparent;
+		/* remove global table chrome to avoid double shadow in card layout */
+		box-shadow: none;
+		border-radius: 0;
+		overflow: visible;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist thead {
+		display: none;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist,
+	body.admin-uploader-mediamanager #admin-content table.entrylist tbody,
+	body.admin-uploader-mediamanager #admin-content table.entrylist tr,
+	body.admin-uploader-mediamanager #admin-content table.entrylist td {
+		display: block;
+		width: 100%;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist tr {
+		margin: 0 0 .85rem;
+		border: 1px solid var(--fp-border, #e2e8f0);
+		border-radius: var(--fp-radius, 14px);
+		background: var(--fp-surface, #ffffff);
+		box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+		overflow: hidden;
+		position: relative;
+		display: grid;
+		grid-template-columns: 1fr 3.25rem; /* filename | checkbox */
+		grid-auto-rows: auto;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist td {
+		border: 0;
+		padding: .6rem .9rem;
+	}
+
+	/* Divider between data rows (not between filename and checkbox header cells) */
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3),
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4),
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5),
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6) {
+		border-top: 1px solid rgba(2, 6, 23, .08);
+	}
+
+	/* Generic "label: value" layout for table cells */
+	body.admin-uploader-mediamanager #admin-content table.entrylist td {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: .75rem;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist td::before {
+		content: '';
+		flex: 0 0 auto;
+		font-weight: 700;
+		color: rgba(15, 23, 42, .7);
+	}
+
+	/* Column labels (no template changes needed) */
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'In Beiträgen genutzt'; }
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Dateigröße'; }
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Hochgeladen am'; }
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Aktion'; }
+
+	/**
+	 * Header row layout: put filename and checkbox into the same grid row
+	 * so the checkbox can be vertically centered reliably (even if the filename wraps).
+	 */
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(1) {
+		grid-column: 2 / 3;
+		grid-row: 1;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		justify-self: stretch;
+		align-self: stretch;
+		background: transparent;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(1)::before {
+		content: none;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(1) input[type="checkbox"] {
+		position: static;
+		margin: 0;
+		width: 1.05rem;
+		height: 1.05rem;
+		accent-color: var(--fp-accent, #b22222);
+	}
+
+	/* Place data cells on their own rows spanning the full card width */
+	body.admin-uploader-mediamanager #admin-content table.entrylist td.main-cell {
+		grid-column: 1 / 2;
+		grid-row: 1;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3) { grid-column: 1 / -1; grid-row: 2; }
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4) { grid-column: 1 / -1; grid-row: 3; }
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5) { grid-column: 1 / -1; grid-row: 4; }
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6) { grid-column: 1 / -1; grid-row: 5; }
+
+	/* File name cell: acts as headline; keep icons and allow wrapping */
+	body.admin-uploader-mediamanager #admin-content table.entrylist td.main-cell {
+		justify-content: flex-start;
+		gap: .5rem;
+		font-weight: 700;
+		min-height: 3.1rem;
+		border-top: 0;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist td.main-cell::before {
+		content: 'Dateiname';
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist td.main-cell a.link-general {
+		max-width: 100%;
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:last-child {
+		padding-bottom: .85rem;
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:last-child a {
+		margin-right: 0;
+	}
+}
+
+/**
+ * ----------------------------
+ * Entry list: filter bar
+ * ----------------------------
+ */
+body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset,
+#admin-bbcode-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .75rem;
+	align-items: center;
+}
+
+body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset .alignleft,
+body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset .alignright {
+	float: none;
+}
+
+body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset select[name="category"] {
+	width: auto;
+	flex: 1 1 360px;
+	max-width: 560px;
+}
+
+body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset input#filter {
+	width: auto;
+	margin-left: auto;
+	margin-bottom: 0.5em;
+}
+
+@media (max-width: 560px) {
+	body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset select[name="category"],
+	body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset input#filter {
+		flex: 1 1 100%;
+		max-width: 100%;
+		margin-left: 0;
+	}
+}
+
+
+/**
+ * ----------------------------
+ * Admin entry list: responsive tiles (< 1080px)
+ * Panel: admin.php?p=entry&action=list
+ * ----------------------------
+ */
+@media (max-width: 1079px) {
+	body.admin-entry-list #admin-content table.entrylist {
+		border: 0;
+		border-radius: 0;
+		box-shadow: none !important;
+		background: transparent !important;
+		overflow: visible !important;
+	}
+
+	body.admin-entry-list #admin-content table.entrylist thead {
+		display: none;
+	}
+
+	body.admin-entry-list #admin-content table.entrylist,
+	body.admin-entry-list #admin-content table.entrylist tbody {
+		display: block;
+		width: 100%;
+		background: transparent;
+		box-shadow: none;
+	}
+
+	body.admin-entry-list #admin-content table.entrylist tbody {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+		gap: var(--fp-space-3, .75rem);
+		padding: 0;
+	}
+
+	body.admin-entry-list #admin-content table.entrylist tr {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		border: 1px solid var(--fp-border, #e2e8f0);
+		border-radius: var(--fp-radius-sm, 10px);
+		background: var(--fp-surface, #ffffff);
+		box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+		overflow: hidden;
+	}
+
+	body.admin-entry-list #admin-content table.entrylist td {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: .75rem;
+		padding: .75rem .95rem;
+		border: 0;
+		border-bottom: 1px solid var(--fp-border, #e2e8f0);
+		text-align: left;
+		line-height: 1.35;
+	}
+
+	body.admin-entry-list #admin-content table.entrylist td:last-child {
+		border-bottom: 0;
+		white-space: normal;
+	}
+
+	/* label/value layout */
+	body.admin-entry-list #admin-content table.entrylist td::before {
+		font-weight: 500;
+		color: var(--fp-muted, #475569);
+		margin-right: auto;
+		min-width: 8.5rem;
+		line-height: 1.2;
+	}
+
+	/* Title cell as card header */
+	body.admin-entry-list #admin-content table.entrylist td.main-cell {
+		order: -1;
+		display: block;
+		/* override global #admin-content td.main-cell { width:30%; } */
+		width: 100%;
+		max-width: 100%;
+		font-weight: 500;
+		font-size: 1rem;
+		border-bottom: 1px solid var(--fp-border, #e2e8f0);
+		background: var(--fp-surface-2, #f8fafc);
+	}
+
+	body.admin-entry-list #admin-content table.entrylist td.main-cell::before {
+		display: none;
+		content: "";
+	}
+
+	body.admin-entry-list #admin-content table.entrylist td.main-cell a {
+		display: block;
+		width: 100%;
+		color: var(--fp-link, #007fff);
+		text-decoration: none;
+	}
+
+	body.admin-entry-list #admin-content table.entrylist td.main-cell a:hover,
+	body.admin-entry-list #admin-content table.entrylist td.main-cell a:focus {
+		text-decoration: underline;
+	}
+
+	/* Actions */
+	body.admin-entry-list #admin-content table.entrylist td:nth-child(5) {
+		justify-content: flex-end;
+		gap: .5rem .75rem;
+	}
+
+	body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before {
+		margin-right: auto;
+	}
+
+	body.admin-entry-list #admin-content table.entrylist td:nth-child(5) a {
+		white-space: nowrap;
+	}
+
+	/* language-specific labels */
+	html[lang^="de"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Datum"; }
+	html[lang^="de"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="de"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Kommentare"; }
+	html[lang^="de"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Aktion"; }
+
+	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Date"; }
+	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Comments"; }
+	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Action"; }
+
+	html[lang^="cs"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Datum"; }
+	html[lang^="cs"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="cs"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Komentáře"; }
+	html[lang^="cs"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Akce"; }
+
+	html[lang^="da"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Dato"; }
+	html[lang^="da"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="da"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Kommentarer"; }
+	html[lang^="da"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Handling"; }
+
+	html[lang^="el"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Ημερομηνία"; }
+	html[lang^="el"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "Αναγνωριστικό"; }
+	html[lang^="el"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Σχόλια"; }
+	html[lang^="el"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Ενέργεια"; }
+
+	html[lang^="es"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Fecha"; }
+	html[lang^="es"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="es"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Comentarios"; }
+	html[lang^="es"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Acción"; }
+
+	html[lang^="eu"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Data"; }
+	html[lang^="eu"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="eu"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Iruzkina"; }
+	html[lang^="eu"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Ekintza"; }
+
+	html[lang^="fr"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Date"; }
+	html[lang^="fr"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="fr"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Commentaires"; }
+	html[lang^="fr"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Action"; }
+
+	html[lang^="it"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Date"; }
+	html[lang^="it"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="it"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Commenti"; }
+	html[lang^="it"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Azione"; }
+
+	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Date"; }
+	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Comments"; }
+	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Action"; }
+
+	html[lang^="ja"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "日付"; }
+	html[lang^="ja"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="ja"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "コメント"; }
+	html[lang^="ja"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "アクション"; }
+
+	html[lang^="nl"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Datum"; }
+	html[lang^="nl"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="nl"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Opmerkingen"; }
+	html[lang^="nl"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Actie"; }
+
+	html[lang^="pt"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Data"; }
+	html[lang^="pt"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="pt"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Comentários"; }
+	html[lang^="pt"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Ação"; }
+
+	html[lang^="ru"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Дата"; }
+	html[lang^="ru"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "Идентификатор"; }
+	html[lang^="ru"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Комментарии"; }
+	html[lang^="ru"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Действие"; }
+
+	html[lang^="sl"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Datum"; }
+	html[lang^="sl"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="sl"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Komentarji"; }
+	html[lang^="sl"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Ukrep"; }
+
+	html[lang^="tr"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Tarih"; }
+	html[lang^="tr"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "Kimlik"; }
+	html[lang^="tr"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Yorumlar"; }
+	html[lang^="tr"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Eylem"; }
+}
+
+/* Keep action links in one line on desktop */
+@media (min-width: 960px) {
+	#admin-content table.entrylist td:last-child {
+		white-space: nowrap;
+	}
+}
+
+#admin-content table.entrylist td:last-child a {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	margin-right: .35rem;
+}
+
+#admin-content table.entrylist td:last-child a:last-child {
+	margin-right: 0;
+}
+
+/**
+ * ----------------------------
+ * Admin main: action tiles (dt+dd pairs)
+ * ----------------------------
+ */
+body.admin-main- #admin-content dl {
+	margin: 0;
+	padding: 0;
+}
+
+body.admin-main- #admin-content dt.admin-mainmenu-item,
+body.admin-main- #admin-content dd.admin-icon-descr {
+	margin: 0;
+	padding: .85rem 1rem;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	background: var(--fp-surface, #ffffff);
+}
+
+/* Header part (icon + title) */
+body.admin-main- #admin-content dt.admin-mainmenu-item {
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	border-radius: var(--fp-radius, 14px) var(--fp-radius, 14px) 0 0;
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+	font-weight: 900;
+}
+
+body.admin-main- #admin-content dt.admin-mainmenu-item img {
+	float: none;
+	margin: 0;
+	width: 34px;
+	height: 34px;
+	opacity: .9;
+}
+
+body.admin-main- #admin-content dt.admin-mainmenu-item a {
+	font-weight: 500;
+	text-decoration: none;
+}
+
+body.admin-main- #admin-content dt.admin-mainmenu-item a:hover {
+	text-decoration: underline;
+}
+
+/* Description part: visually one card with the dt above */
+body.admin-main- #admin-content dd.admin-icon-descr {
+	border-top: 0;
+	border-radius: 0 0 var(--fp-radius, 14px) var(--fp-radius, 14px);
+	color: var(--fp-muted, #475569);
+	margin-top: -1px;
+	margin-bottom: 1rem;
+}
+
+@media (min-width: 980px) {
+	/* Slightly tighter rows on desktop */
+	body.admin-main- #admin-content dt.admin-mainmenu-item,
+	body.admin-main- #admin-content dd.admin-icon-descr {
+		padding: .8rem 1rem;
+	}
+}
+
+/**
+ * ----------------------------
+ * Entry write: date/time changer
+ * ----------------------------
+ */
+body[class^="admin-entry-"] #admin-date fieldset p {
+	margin: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .45rem .6rem;
+	align-items: center;
+}
+
+body[class^="admin-entry-"] #admin-date fieldset p label {
+	margin: 0;
+	display: inline-flex;
+	align-items: center;
+}
+
+body[class^="admin-entry-"] #admin-date select {
+	width: auto;
+	min-width: 5.5ch;
+	padding: .45rem .55rem;
+	margin-bottom: 0;
+}
+
+/**
+ * ----------------------------
+ * Widgets panel: draggable list items
+ * (Admin -> Widgets)
+ * ----------------------------
+ */
+
+/* Remove default list bullets inside the widgets manager */
+body[class^="admin-"] #manage-widgets ul {
+	list-style: none;
+	margin: 0;
+	padding-left: 0;
+}
+
+/* Make draggable items look like compact cards and center the label vertically */
+body[class^="admin-"] #manage-widgets li.widget-class,
+body[class^="admin-"] #manage-widgets li.widget-instance {
+	display: flex;
+	align-items: center;
+	gap: .55rem;
+	padding: .5rem .75rem;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius-sm, 10px);
+	background: var(--fp-surface, #ffffff);
+}
+
+/* The label is inside <p> and contains the drag handle symbol (&#9776;) */
+body[class^="admin-"] #manage-widgets li.widget-class > p,
+body[class^="admin-"] #manage-widgets li.widget-instance > p {
+	margin: 0;
+	display: inline-flex;
+	align-items: center;
+	line-height: 1.2;
+	gap: .5rem;
+	min-height: 2rem;
+	order: 1;
+}
+
+/* Optional widget params input: keep it on the right, without breaking centering */
+body[class^="admin-"] #manage-widgets li.widget-class > input.textinput,
+body[class^="admin-"] #manage-widgets li.widget-instance > input.textinput {
+	order: 2;
+	margin-left: auto;
+	width: 12rem;
+	max-width: 45%;
+}
+
+/* Drop placeholder ("Drop here") */
+body[class^="admin-"] #manage-widgets li.widget-placeholder {
+	box-sizing: border-box;
+	margin: .25rem 0;
+	padding: .55rem .75rem;
+	min-height: 44px;
+	border: 1px dashed rgba(71, 85, 105, .35);
+	border-radius: var(--fp-radius-sm, 10px);
+	background: rgba(2, 6, 23, .02);
+	color: var(--fp-muted, #475569);
+	font-style: italic;
+	line-height: 1.2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+body[class^="admin-"] #manage-widgets li.widget-placeholder::before {
+	font-style: normal;
+	font-weight: 900;
+	opacity: .45;
+	margin-right: .35rem;
+	line-height: 1;
+}
+
+body[class^="admin-"] #manage-widgets li.widget-placeholder.ui-state-highlight {
+	border-color: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .50);
+	background: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .10);
+	color: var(--fp-accent-2, #8b0000);
+}
+
+/**
+ * While dragging/sorting, jQuery UI creates helper/placeholder elements.
+ * Ensure the label stays vertically centered in those states too.
+ */
+body[class^="admin-"] #manage-widgets li.ui-sortable-helper,
+body[class^="admin-"] #manage-widgets li.ui-sortable-placeholder,
+body[class^="admin-"] #manage-widgets li.ui-state-highlight {
+	display: flex !important;
+	align-items: center !important;
+}
+
+/**
+ * Draggable helper elements are cloned into <body> and only get
+ * .widget-available / .widget-installed (the original widget-* class is removed).
+ * The JS sets padding:0 inline, so we must override margins/centering here.
+ */
+body[class^="admin-"] li.widget-available,
+body[class^="admin-"] li.widget-installed {
+	display: flex !important;
+	align-items: center !important;
+	box-sizing: border-box;
+	padding: 0 .5rem !important;
+	gap: .55rem;
+}
+
+body[class^="admin-"] li.widget-available > p,
+body[class^="admin-"] li.widget-installed > p {
+	margin: 0 !important;
+	display: flex !important;
+	align-items: center !important;
+	line-height: 1.2 !important;
+	height: 100%;
+}
+
+/* Some core styles set fixed line-heights while dragging; override them. */
+body[class^="admin-"] #manage-widgets li.ui-sortable-helper > p,
+body[class^="admin-"] #manage-widgets li.ui-sortable-placeholder > p,
+body[class^="admin-"] #manage-widgets li.ui-state-highlight > p {
+	margin: 0 !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	line-height: 1.2 !important;
+	min-height: 2rem;
+}
+
+/**
+ * Mobile / Tablet layout (Admin -> Widgets):
+ * Place the widgetset list UNDER the available widgets panel.
+ */
+@media (max-width: 900px) {
+	body[class^="admin-"] .widgets-center {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		align-items: stretch;
+		gap: 1rem;
+	}
+
+	body[class^="admin-"] #available-widgets,
+	body[class^="admin-"] #admin-widgetset-list {
+		float: none;
+		width: 100%;
+		max-width: 100%;
+		flex: 0 0 auto;
+	}
+
+	body[class^="admin-"] #available-widgets { order: 1; }
+	body[class^="admin-"] #admin-widgetset-list { order: 2; }
+}
+
+/* Footer in admin should stay subtle */
+body[class^="admin-"] #footer {
+	color: var(--fp-muted, #475569);
+}

@@ -1,0 +1,173 @@
+/**
+ * ===================
+ * Leggero CSS Styles
+ * ===================
+ *
+ * Name: Stringendo
+ * Theme: Leggero
+ * Author: Fraenkiman
+ * Version: 1.40
+ * Module: globals.css
+ *
+ * Global helpers and cross-template components.
+ */
+
+/**
+ * Stringendo: etwas "weicheres" Scrollverhalten.
+ * Respektiert dabei Barrierefreiheit (prefers-reduced-motion).
+ */
+html {
+	scroll-behavior: smooth;
+}
+
+/**
+ * Prevent "double smoothing" when the JS inertia wheel scrolling is active.
+ * JS adds the class only on desktop and only when it is safe to do so.
+ */
+html.fp-smooth-scroll {
+	scroll-behavior: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+/* Alignment helpers used across FlatPress templates and plugins */
+.alignleft,
+.floatleft {
+	float: left;
+}
+
+.alignright,
+.floatright {
+	float: right;
+}
+
+/* Notification boxes (front-end and admin) */
+ul.msgs,
+#main ul.msgs,
+#admin-content ul.msgs {
+	padding: 1rem 1.1rem;
+	list-style: none;
+	border-radius: var(--fp-radius-sm, 10px);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+}
+
+ul.msgs li {
+	margin: .25rem 0;
+}
+
+.errors {
+	border-color: rgba(220, 38, 38, .25);
+	background: rgba(254, 226, 226, .55);
+	color: #7f1d1d;
+}
+
+.warnings {
+	border-color: rgba(202, 138, 4, .25);
+	background: rgba(254, 243, 199, .55);
+	color: #78350f;
+}
+
+.notifications,
+.enabled {
+	border-color: rgba(22, 163, 74, .25);
+	background: rgba(220, 252, 231, .55);
+	color: #14532d;
+}
+
+.errors a,
+.warnings a,
+.notifications a,
+.enabled a {
+	color: inherit;
+	font-weight: 600;
+}
+
+.field-error {
+	border-color: rgba(220, 38, 38, .55) !important;
+	background: rgba(254, 226, 226, .65) !important;
+}
+
+/* Small utility classes often used in templates */
+.admincontrols {
+	font-size: .92rem;
+	text-align: right;
+	margin-top: .25rem;
+}
+
+.admincontrols a {
+	font-weight: 700;
+}
+
+/* BBCode toolbar & emoticons (front-end comment form) */
+.bb-btn-tlb {
+	margin-top: .5rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .35rem;
+	align-items: center;
+}
+
+.bb-btn-tlb p {
+	margin: 0;
+}
+
+.bb-btn-tlb .bb-button,
+.emoticons button {
+	appearance: none;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	background: var(--fp-surface, #ffffff);
+	color: var(--fp-text, #0f172a);
+	border-radius: 10px;
+	padding: 0;
+	height: 30px;
+	width: 34px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1;
+	cursor: pointer;
+	box-shadow: 0 1px 0 rgba(2, 6, 23, .04);
+	margin-top: 0.35rem;
+}
+
+.bb-btn-tlb .bb-button img {
+	display: block;
+	width: 18px;
+	height: 18px;
+}
+
+.bb-btn-tlb .bb-button:hover,
+.emoticons button:hover {
+	background: var(--fp-surface, #ffffff);
+	border-color: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .45);
+	box-shadow: 0 0 0 4px rgba(var(--fp-accent-3-rgb, 255, 140, 0), .12);
+}
+
+.emoticons {
+	margin: .45rem 0 .85rem;
+}
+
+/* Keep toolbar icons crisp and aligned */
+#bb_url img,
+#bb_mail img,
+#bb_h2 img,
+#bb_h3 img,
+#bb_h4 img,
+#bb_ul img,
+#bb_ol img,
+#bb_quote img,
+#bb_code img,
+#bb_html img,
+#bb_font img,
+#bb_b img,
+#bb_i img,
+#bb_u img,
+#bb_del img {
+	margin: 0;
+	vertical-align: middle;
+}

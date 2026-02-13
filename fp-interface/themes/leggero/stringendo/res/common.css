@@ -1,0 +1,917 @@
+/**
+ * ===================
+ * Leggero CSS Styles
+ * ===================
+ *
+ * Name: Stringendo
+ * Theme: Leggero
+ * Author: Fraenkiman
+ * Version: 1.39
+ * Module: common.css
+ *
+ * Modern, bright and responsive presentation layer.
+ */
+
+/**
+ * Subtle frontend fade-in (progressive enhancement)
+ * ------------------------------------------------
+ * Enabled by JS adding: html.fp-fadein
+ * Skipped automatically for admin pages and users with reduced motion.
+ */
+
+@keyframes fpStringendoFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fpStringendoFadeInOpacity {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* ---------- Design tokens ---------- */
+:root {
+	/* Let form controls use a light palette */
+	color-scheme: light;
+
+	--fp-container: 1120px;
+	--fp-sidebar: 320px;
+
+	--fp-bg: #f6f7fb;
+	--fp-surface: #ffffff;
+	--fp-surface-2: #f1f5f9;
+	--fp-text: #0f172a;
+	--fp-muted: #475569;
+	--fp-border: #e2e8f0;
+
+	--fp-accent: #b22222;
+	--fp-accent-2: #8b0000;
+	--fp-accent-3: #ff8c00;
+	--fp-accent-4: #4b0082;
+	--fp-accent-soft: #ffe4e6;
+	--fp-accent-soft-2: #ffedd5;
+
+	--fp-link: #007fff;
+	--fp-link-hover: #b22222;
+	--fp-link-visited: #800080;
+
+	--fp-accent-rgb: 178, 34, 34;
+	--fp-accent-2-rgb: 139, 0, 0;
+	--fp-accent-3-rgb: 255, 140, 0;
+	--fp-link-rgb: 0, 127, 255;
+	--fp-focus-rgb: 0, 127, 255;
+
+	--fp-accent-gradient: linear-gradient(135deg, var(--fp-accent-2) 0%, var(--fp-accent-3) 100%);
+	--fp-accent-gradient-hover: linear-gradient(135deg, var(--fp-accent) 0%, var(--fp-accent-3) 100%);
+
+	--fp-shadow-sm: 0 2px 10px rgba(2, 6, 23, 0.06);
+	--fp-shadow: 0 10px 30px rgba(2, 6, 23, 0.10);
+
+	--fp-radius: 14px;
+	--fp-radius-sm: 10px;
+
+	--fp-space-1: .25rem;
+	--fp-space-2: .5rem;
+	--fp-space-3: .75rem;
+	--fp-space-4: 1rem;
+	--fp-space-5: 1.25rem;
+	--fp-space-6: 1.5rem;
+}
+
+/* ---------- Base reset ---------- */
+* {
+	box-sizing: border-box;
+}
+
+html {
+	text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+	font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+	font-size: 16px;
+	line-height: 1.6;
+	color: var(--fp-text, #0f172a);
+	background-color: var(--fp-bg, #f6f7fb);
+	/* SVG pattern + tiny gradient fallback (visible even if SVG fails to load) */
+	background-image: url('../imgs/bg.svg'), radial-gradient(circle at 1px 1px, rgba(var(--fp-accent-3-rgb, 255, 140, 0), .045) 1px, transparent 0);
+	background-repeat: repeat, repeat;
+	background-size: 600px 600px, 36px 36px;
+	background-position: top left, top left;
+	background-attachment: scroll, scroll;
+}
+
+img,
+svg,
+video {
+	max-width: 100%;
+	height: auto;
+}
+
+input,
+textarea,
+select,
+button {
+	font: inherit;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	color: var(--fp-text, #0f172a);
+	line-height: 1.25;
+	letter-spacing: -0.01em;
+}
+
+
+h2, h3, h4 {
+	color: #8b0000;
+}
+/* Improve focus visibility without being loud */
+:focus-visible {
+	outline: 3px solid rgba(var(--fp-focus-rgb, 0, 127, 255), .38);
+	outline-offset: 2px;
+}
+
+/* ---------- Links ---------- */
+a {
+	color: var(--fp-link, var(--fp-accent, #b22222));
+	text-decoration: none;
+	text-underline-offset: 2px;
+}
+
+a:visited {
+	color: var(--fp-link-visited, #800080);
+}
+
+a:hover {
+	text-decoration: underline;
+	color: var(--fp-link-hover, var(--fp-accent, #b22222));
+}
+
+/* ---------- Layout ---------- */
+#body-container {
+	max-width: var(--fp-container, 1120px);
+	margin: 0 auto;
+	padding: var(--fp-space-5, 1.25rem);
+}
+
+#head {
+	background: linear-gradient(180deg, #ff8c00 0%, #8b0000 100%);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius, 14px);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+	padding: var(--fp-space-6, 1.5rem);
+}
+
+#head h1 {
+	margin: 0;
+	font-size: clamp(1.7rem, 2.4vw, 2.35rem);
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+}
+
+#head h1 a {
+	color: #0f172a;
+}
+
+#head .subtitle {
+	margin: var(--fp-space-2, .5rem) 0 0 0;
+	color: #f8f9fc;
+	font-size: 1.02rem;
+}
+
+/* Stringendo: headings a bit more "drängend" */
+h2,
+h3,
+h4 {
+	color: #8b0000;
+}
+
+#outer-container {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: var(--fp-space-5, 1.25rem);
+	margin-top: var(--fp-space-5, 1.25rem);
+}
+
+#main,
+#cpmain {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+	/* Fade-in: main first, then column (frontend only; JS adds html.fp-fadein). */
+	html.fp-fadein body:not([class^="admin-"]) #main {
+		opacity: 0;
+		animation: fpStringendoFadeIn 320ms ease-out 0ms both;
+		will-change: opacity, transform;
+	}
+
+	html.fp-fadein body:not([class^="admin-"]) #column {
+		opacity: 0;
+		animation: fpStringendoFadeInOpacity 260ms ease-out 140ms both;
+		will-change: opacity;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		html.fp-fadein body:not([class^="admin-"]) #main,
+		html.fp-fadein body:not([class^="admin-"]) #column {
+			animation: none;
+			opacity: 1;
+			transform: none;
+			will-change: auto;
+		}
+	}
+
+/* Admin pages use only #cpmain, no sidebar */
+body[class^="admin-"] #outer-container {
+	gap: var(--fp-space-4, 1rem);
+}
+
+@media (max-width: 959px) {
+	#body-container {
+		padding: var(--fp-space-4, 1rem);
+	}
+
+	#outer-container {
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;
+	}
+
+	#main,
+	#cpmain,
+	#column {
+		width: 100%;
+	}
+}
+
+/* ---------- Content blocks ---------- */
+.entry {
+	background: rgb(249, 246, 241);
+	background: linear-gradient(1deg, rgb(255, 219, 166) 0%, rgb(249, 246, 241) 100%);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius, 14px);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+	padding: var(--fp-space-6, 1.5rem);
+	margin: 0 0 var(--fp-space-5, 1.25rem) 0;
+	overflow: hidden;
+}
+
+/* Date heading printed once for same-day entries */
+h2.date {
+	margin: 0 0 var(--fp-space-2, .5rem) 0;
+	font-size: .85rem;
+	font-weight: 800;
+	color: var(--fp-muted, #475569);
+	letter-spacing: .06em;
+	text-transform: uppercase;
+}
+
+.entry-title,
+.entry .title {
+	margin: 0 0 var(--fp-space-3, .75rem) 0;
+	font-size: clamp(1.25rem, 1.4vw, 1.5rem);
+	line-height: 1.25;
+	letter-spacing: -0.01em;
+}
+
+.entry-title a {
+	color: var(--fp-text, #0f172a);
+}
+
+.entry-title a:hover {
+	color: var(--fp-accent-2, #8b0000);
+}
+
+.entry p {
+	margin: 0 0 var(--fp-space-3, .75rem) 0;
+}
+
+.entry p.date {
+	margin: .25rem 0 var(--fp-space-4, 1rem) 0;
+	color: var(--fp-muted, #475569);
+	font-size: .92rem;
+}
+
+/* Typography inside entries, static pages and previews */
+.entry h2:not(.entry-title):not(.date),
+.entry h3,
+.entry h4 {
+	margin: 1.35rem 0 .6rem 0;
+}
+
+.entry h2:not(.entry-title):not(.date) {
+	font-size: 1.3rem;
+}
+
+.entry h3 {
+	font-size: 1.12rem;
+}
+
+.entry h4 {
+	font-size: 1.02rem;
+}
+
+.entry ul,
+.entry ol {
+	margin: 0 0 var(--fp-space-4, 1rem) 0;
+	padding-left: 1.25rem;
+	list-style-position: outside;
+}
+
+.entry ul {
+	list-style: disc;
+}
+
+.entry ol {
+	list-style: decimal;
+}
+
+.entry li {
+	margin: .25rem 0;
+}
+
+/* Nested archive/search lists (entrylist plugin output) */
+.entry ul.entrylist {
+	list-style: none;
+	padding-left: 0;
+	margin: 0 0 var(--fp-space-4, 1rem) 0;
+}
+
+.entry ul.entrylist ul.entrylist {
+	margin-top: .35rem;
+	padding-left: 1rem;
+	border-left: 2px solid var(--fp-border, #e2e8f0);
+}
+
+.entry .entrylist-time {
+	font-variant-numeric: tabular-nums;
+	color: var(--fp-muted, #475569);
+	margin-right: .35rem;
+}
+
+.entry blockquote {
+	margin: var(--fp-space-4, 1rem) 0;
+	padding: .85rem 1rem;
+	border-left: 4px solid var(--fp-accent, #b22222);
+	background: var(--fp-surface-2, #f1f5f9);
+	border-radius: var(--fp-radius-sm, 10px);
+}
+
+.entry blockquote p:last-child {
+	margin-bottom: 0;
+}
+
+.entry hr {
+	border: 0;
+	height: 1px;
+	background: var(--fp-border, #e2e8f0);
+	margin: var(--fp-space-5, 1.25rem) 0;
+}
+
+.entry pre,
+.entry code {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.entry code {
+	background: var(--fp-surface-2, #f1f5f9);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: 8px;
+	padding: .1rem .35rem;
+}
+
+.entry pre {
+	background: var(--fp-surface-2, #f1f5f9);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius-sm, 10px);
+	padding: var(--fp-space-4, 1rem);
+	overflow: auto;
+}
+
+.entry pre code {
+	border: 0;
+	padding: 0;
+}
+
+u {
+	text-decoration-thickness: .08em;
+	text-underline-offset: 2px;
+}
+
+del,
+s {
+	color: var(--fp-muted, #475569);
+}
+
+/* Tables (front-end and some plugin outputs) */
+.entry table,
+table {
+	border-collapse: collapse;
+	max-width: 100%;
+}
+
+.entry table th,
+.entry table td,
+table th,
+table td {
+	border: 1px solid var(--fp-border, #e2e8f0);
+	padding: .55rem .65rem;
+	vertical-align: top;
+}
+
+.entry table th,
+table th {
+	background: var(--fp-surface-2, #f1f5f9);
+	font-weight: 800;
+}
+
+/* Entry footer */
+.entry ul.entry-footer {
+	/* Override generic list styles for .entry ul */
+	list-style: none;
+	padding-left: 0;
+}
+
+.entry-footer {
+	list-style-type: none;
+	padding: 0;
+	margin: var(--fp-space-5, 1.25rem) 0 0 0;
+	border-top: 1px solid var(--fp-accent-3, #ff8c00);
+	padding-top: var(--fp-space-3, .75rem);
+	display: flex;
+	flex-wrap: wrap;
+	gap: .75rem 1.25rem;
+	align-items: baseline;
+	justify-content: space-between;
+	color: var(--fp-muted, #475569);
+	font-size: .92rem;
+}
+
+.entry-footer li {
+	margin: 0;
+}
+
+.entry-footer strong {
+	color: var(--fp-text, #0f172a);
+	font-weight: 800;
+}
+
+.entry-footer a {
+	font-weight: 700;
+}
+
+/* Navigation */
+.navigation {
+	margin: var(--fp-space-4, 1rem) 0 var(--fp-space-6, 1.5rem);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--fp-space-3, .75rem);
+	flex-wrap: wrap;
+}
+
+/**
+ * nextpage/prevpage are rendered as <div class="alignright|alignleft"><a ...></a></div>
+ * and the templates output {nextpage}{prevpage} (next first).
+ * In flex layouts that would invert the visual placement. Fix this without touching templates.
+ */
+.navigation .alignleft,
+.navigation .alignright {
+	float: none;
+	display: flex;
+}
+
+.navigation .alignleft {
+	order: 1;
+}
+
+.navigation .alignright {
+	order: 2;
+	margin-left: auto;
+}
+
+.navigation a {
+	display: inline-block;
+	padding: .5rem .85rem;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: 999px;
+	background: var(--fp-surface, #ffffff);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+}
+
+.navigation a:hover {
+	text-decoration: none;
+	border-color: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .45);
+}
+
+/* ---------- Forms ---------- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+input[type="search"],
+input[type="number"],
+textarea,
+select {
+	width: 100%;
+	max-width: 100%;
+	padding: .55rem .65rem;
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: 10px;
+	background: var(--fp-surface, #ffffff);
+	color: var(--fp-text, #0f172a);
+	box-shadow: inset 0 1px 0 rgba(2, 6, 23, 0.03);
+	margin-bottom: 0.5em;
+}
+
+textarea {
+	min-height: 10rem;
+	resize: vertical;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+	border-color: rgba(var(--fp-focus-rgb, 0, 127, 255), .55);
+	box-shadow: 0 0 0 4px rgba(var(--fp-focus-rgb, 0, 127, 255), .14);
+	outline: none;
+}
+
+input[type="submit"],
+input[type="button"],
+.link-comments a,
+button:not(.leaflet-control) {
+	appearance: none;
+	border: 1px solid rgba(var(--fp-accent-2-rgb, 139, 0, 0), .35);
+	border-radius: 999px;
+	background: var(--fp-accent-gradient, var(--fp-accent, #b22222));
+	color: #ffffff;
+	padding: .55rem 1rem;
+	font-weight: 500;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.link-comments a:hover,
+button:not(.leaflet-control):hover {
+	transition-duration: .25s;
+	background: var(--fp-accent-gradient-hover, var(--fp-accent-2, #8b0000));
+}
+
+/**
+ * BBCode & emoticon toolbars (frontend + admin): keep neutral icon buttons.
+ * Prevents harsh hover accent gradients on small toolbar buttons.
+ */
+.bb-button,
+.emoticons button {
+	appearance: none;
+	border: 1px solid rgba(2, 6, 23, 0.18);
+	border-radius: var(--fp-radius-sm, 10px);
+	background: var(--fp-surface-2, #f1f5f9);
+	color: var(--fp-text, #0f172a);
+	padding: 4px;
+	min-width: 32px;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 1px 6px rgba(2, 6, 23, 0.08);
+}
+
+.bb-button:hover,
+.emoticons button:hover {
+	background: var(--fp-surface, #ffffff);
+	border-color: rgba(var(--fp-accent-2-rgb, 139, 0, 0), 0.35);
+	box-shadow: 0 2px 10px rgba(2, 6, 23, 0.10);
+}
+
+.bb-button:focus-visible,
+.emoticons button:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 4px rgba(var(--fp-focus-rgb, 0, 127, 255), 0.18);
+}
+
+input[type="reset"],
+button[type="reset"] {
+	appearance: none;
+	border: 1px solid rgba(var(--fp-accent-2-rgb, 139, 0, 0), .35);
+	border-radius: 999px;
+	background: transparent;
+	color: var(--fp-accent-2, #8b0000);
+	padding: .55rem 1rem;
+	font-weight: 500;
+	cursor: pointer;
+}
+
+input[type="reset"]:hover,
+button[type="reset"]:hover {
+	background: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .10);
+}
+
+input[type="submit"]:disabled,
+input[type="button"]:disabled,
+button:not(.leaflet-control):disabled {
+	opacity: .6;
+	cursor: not-allowed;
+}
+
+.buttonbar {
+	margin-top: var(--fp-space-4, 1rem);
+	text-align: center;
+}
+
+fieldset {
+	border: 1px solid #ff8c00;
+	border-radius: var(--fp-radius-sm, 10px);
+	padding: var(--fp-space-4, 1rem);
+	margin-bottom: 1em;
+}
+
+legend {
+	padding: 0 .5rem;
+	color: var(--fp-muted, #475569);
+	font-weight: 500;
+}
+
+/* Search page: keep date selects on one line on desktop */
+@media (min-width: 720px) {
+	#search select[name="Date_Day"],
+	#search select[name="Date_Month"],
+	#search select[name="Date_Year"] {
+		width: auto;
+		max-width: none;
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	#search select[name="Date_Day"] {
+		min-width: 5.25rem;
+	}
+
+	#search select[name="Date_Month"] {
+		min-width: 11rem;
+	}
+
+	#search select[name="Date_Year"] {
+		min-width: 7rem;
+	}
+}
+
+/* Search page: categories list (match the sidebar categories widget style) */
+#search fieldset ul {
+	margin: .5rem 0 0 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+#search fieldset ul ul {
+	margin-top: .35rem;
+	padding-left: 1rem;
+	border-left: 2px solid var(--fp-border, #e2e8f0);
+}
+
+#search fieldset ul li {
+	margin: .3rem 0;
+}
+
+#search fieldset ul label {
+	display: inline-flex;
+	align-items: center;
+	gap: .55rem;
+}
+
+#search fieldset ul input[type="radio"] {
+	margin: 0;
+}
+
+/* Comment form: labels come after the input in templates (visual reorder only) */
+#comment-userdata p {
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: stretch;
+	gap: .35rem;
+	margin: 0 0 var(--fp-space-3, .75rem) 0;
+}
+
+#comment-userdata label.textlabel {
+	color: var(--fp-muted, #475569);
+	font-size: .92rem;
+}
+
+/* ---------- Comments list ---------- */
+ol#comments {
+	margin: var(--fp-space-4, 1rem) 0 0 0;
+	padding: 0;
+	list-style-type: decimal;
+	list-style-position: inside;
+}
+
+ol#comments > li {
+	margin: 0 0 var(--fp-space-4, 1rem) 0;
+	padding: var(--fp-space-4, 1rem);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius-sm, 10px);
+	background: var(--fp-surface, #ffffff);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+}
+
+ol#comments > li.comment-admin {
+	border-color: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .45);
+	background: rgba(219, 234, 254, .35);
+}
+
+.comment-name {
+	font-weight: 500;
+}
+
+ol#comments p.date {
+	margin: .25rem 0 .75rem;
+	font-size: .92rem;
+	color: var(--fp-muted, #475569);
+}
+
+ol#comments p {
+	margin: 0 0 .75rem 0;
+}
+
+ol#comments ul,
+ol#comments ol {
+	margin: 0 0 1rem 0;
+	padding-left: 1.25rem;
+	list-style-position: outside;
+}
+
+ol#comments ul {
+	list-style: disc;
+}
+
+ol#comments ol {
+	list-style: decimal;
+}
+
+ol#comments li {
+	/* margin: .25rem 0; */
+	background: rgb(255, 219, 166);
+}
+
+ol#comments blockquote {
+	margin: 1rem 0;
+	padding: .85rem 1rem;
+	border-left: 4px solid var(--fp-accent, #b22222);
+	background: var(--fp-surface-2, #f1f5f9);
+	border-radius: var(--fp-radius-sm, 10px);
+}
+
+ol#comments pre,
+ol#comments code {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+ol#comments code {
+	background: var(--fp-surface-2, #f1f5f9);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: 8px;
+	padding: .1rem .35rem;
+}
+
+ol#comments pre {
+	background: var(--fp-surface-2, #f1f5f9);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius-sm, 10px);
+	padding: 1rem;
+	overflow: auto;
+}
+
+ol#comments pre code {
+	border: 0;
+	padding: 0;
+}
+
+/* ---------- Footer ---------- */
+#footer {
+	margin-top: var(--fp-space-5, 1.25rem);
+	padding: var(--fp-space-4, 1rem);
+	text-align: center;
+	color: var(--fp-muted, #475569);
+}
+
+#footer p {
+	margin: 0;
+}
+
+/* Make floats behave in modern layouts */
+.entry:after,
+#cpmain:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+@media (min-width: 480px) {
+	body {
+		background-attachment: fixed;
+	}
+}
+
+/* PhotoSwipe; responsive */
+@media (max-width: 959px) {
+	div.floatleft,
+	div.floatright,
+	.img-gallery div.photoswipe figure { /* unset photoswipe.css */
+		float: unset;
+	}
+
+	div.floatright,
+	div.floatleft,
+	div.photoswipe.thumbnail.nofloat {
+		margin-left: auto;
+		margin-right: auto;
+		width: unset !IMPORTANT;
+		text-align: center;
+	}
+
+	div.img-gallery {
+		text-align: center;
+	}
+}
+
+.photoswipe figure img {
+	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+	border-radius: 3px;
+}
+
+.pswp__img {
+	border-radius: 3px
+}
+/*
+ * Widgets that overflow the sidebar can be moved below #main via widgets-under-main.js.
+ * Ensure the under-main container spans a full row (no matter the sidebar layout).
+ */
+#outer-container > .stringendo-widgets-under-main {
+	flex: 0 0 100%;
+	width: 100%;
+	order: 10;
+}
+
+/* If the sidebar becomes empty, let #main use the full width */
+#outer-container.stringendo-no-column #column {
+	display: none;
+}
+#outer-container.stringendo-no-column #main,
+#outer-container.stringendo-no-column #cpmain {
+	flex: 1 1 100%;
+}
+
+/* BBCode Video + GDPR-Video */
+.responsive_bbcode_video button {
+	height: unset !IMPORTANT;
+}
+
+.video-link {
+	bottom: 5em !IMPORTANT;
+}
+
+.bbcode_video {
+	background-color: rgba(0, 0, 0, 0.3);
+	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+	border-radius: 3px;
+	margin: 0px 3px 0px 0px;
+}
+
+@media (min-width: 1080px) {
+	.bbcode_video {
+		width: 640px !IMPORTANT;
+		height: 360px !IMPORTANT;
+	}
+}
+
+@media (max-width: 1024px) {
+	.bbcode_video {
+		width: 320px !IMPORTANT;
+		height: 180px !IMPORTANT;
+	}
+}
