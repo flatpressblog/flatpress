@@ -609,8 +609,8 @@ button:not(.leaflet-control):not(.pswp__button):not(.bb-button):hover {
 #admin-bbcode-toolbar button.bb-button:hover,
 .emoticons button[type="button"]:not(.bb-button):hover {
 	background: var(--fp-surface, #ffffff);
-	border-color: rgba(2, 6, 23, .22);
-	box-shadow: 0 0 0 4px rgba(2, 6, 23, .06);
+	border-color: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .45);
+	box-shadow: 0 0 0 4px rgba(var(--fp-accent-3-rgb, 255, 140, 0), .12);
 }
 
 .bb-btn-tlb button.bb-button:focus-visible,
