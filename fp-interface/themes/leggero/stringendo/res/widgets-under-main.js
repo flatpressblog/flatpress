@@ -19,6 +19,9 @@
 
 	var MIN_WIDTH = 960;
 	var UNDER_ID = 'stringendo-widgets-under-main';
+	var BOTTOM_ID = 'columnbottom';
+	var BOTTOM_ANCHOR_ID = 'stringendo-columnbottom-anchor';
+	var ROOT_MOVED_CLASS = 'stringendo-columnbottom-moved';
 	var updateTimer = null;
 
 	function viewportWidth() {
@@ -62,14 +65,48 @@
 		var $under = $('#' + UNDER_ID);
 		if (!$under.length) {
 			$under = $('<div/>', { id: UNDER_ID, 'class': 'stringendo-widgets-under-main' });
-			// Important: keep the sidebar's sticky boundary limited to #outer-container.
-			// If the under-main container is placed inside #outer-container, the sticky
-			// column stays "too long" (it remains sticky while the page is already in
-			// the under-main section). Therefore insert it AFTER #outer-container.
+			/**
+			 * Important: keep the sidebar's sticky boundary limited to #outer-container.
+			 * If the under-main container is placed inside #outer-container, the sticky
+			 * column stays "too long" (it remains sticky while the page is already in
+			 * the under-main section). Therefore insert it AFTER #outer-container.
+			 */
 			$outer.after($under);
 		}
 		syncUnderVisibility($under);
 		return $under;
+	}
+
+	function ensureColumnBottomAnchor($outer) {
+		var $bottom = $('#' + BOTTOM_ID);
+		if (!$bottom.length) {
+			return $();
+		}
+		var $anchor = $('#' + BOTTOM_ANCHOR_ID);
+		if (!$anchor.length) {
+			$anchor = $('<div/>', {
+				id: BOTTOM_ANCHOR_ID,
+				'aria-hidden': 'true'
+			}).css({
+				display: 'none',
+				height: 0,
+				overflow: 'hidden'
+			});
+			// Preserve the original insertion point of #columnbottom inside #outer-container.
+			$bottom.before($anchor);
+		}
+		return $anchor;
+	}
+
+	function restoreColumnBottom($outer) {
+		var $bottom = $('#' + BOTTOM_ID);
+		var $anchor = $('#' + BOTTOM_ANCHOR_ID);
+		if ($bottom.length && $anchor.length && $bottom.parent().length && $bottom.parent()[0] !== $outer[0]) {
+			$anchor.after($bottom);
+		}
+		try {
+			document.documentElement.classList.remove(ROOT_MOVED_CLASS);
+		} catch (e) {}
 	}
 
 	function restoreWidgets($column) {
@@ -78,8 +115,10 @@
 			return;
 		}
 
-		// Keep original order: widgets were moved from bottom and prepended,
-		// so under-main container already stores them in correct sequence.
+		/**
+		 * Keep original order: widgets were moved from bottom and prepended,
+		 * so under-main container already stores them in correct sequence.
+		 */
 		$under.children('div').appendTo($column);
 	}
 
@@ -101,6 +140,7 @@
 
 		// Always reset first, then decide what to do for current viewport.
 		restoreWidgets($column);
+		restoreColumnBottom($outer);
 		$('#' + UNDER_ID).remove();
 		$outer.removeClass('stringendo-widgets-under-main-active stringendo-no-column');
 
@@ -133,6 +173,20 @@
 		var $under = ensureUnderContainer($outer);
 		syncUnderVisibility($under);
 		$outer.addClass('stringendo-widgets-under-main-active');
+
+		/**
+		 * If a bottom widget row exists (#columnbottom), ensure it stays *below* the
+		 * under-main widget grid. This keeps sidebar widgets "under #main" and "above #columnbottom".
+		 */
+		var $bottom = $('#' + BOTTOM_ID);
+		// widgetsbottom.tpl always renders the wrapper; only move it if it actually contains widgets.
+		if ($bottom.length && $bottom.children('div').length) {
+			ensureColumnBottomAnchor($outer);
+			$under.after($bottom);
+			try {
+				document.documentElement.classList.add(ROOT_MOVED_CLASS);
+			} catch (e0) {}
+		}
 
 		// Move bottom widgets under #main until the column fits within main's height span.
 		var safety = 0;
