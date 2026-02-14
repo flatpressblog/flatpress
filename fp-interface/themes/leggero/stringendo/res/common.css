@@ -921,3 +921,13 @@ ol#comments pre code {
 		height: 180px !IMPORTANT;
 	}
 }
+
+/**
+ * widgets-under-main.js may move #columnbottom out of #outer-container so that
+ * overflow sidebar widgets can render above it (under-main grid -> columnbottom).
+ * In that case, re-create the normal vertical spacing that is otherwise provided
+ * by the flex gap inside #outer-container.
+ */
+html.stringendo-columnbottom-moved #columnbottom {
+	margin-top: var(--fp-space-5, 1.25rem);
+}
