@@ -748,8 +748,7 @@ ol#comments > li {
 }
 
 ol#comments > li.comment-admin {
-	border-color: rgba(var(--fp-accent-3-rgb, 255, 140, 0), .45);
-	background: rgba(219, 234, 254, .35);
+	background: var(--fp-accent-soft-2, #ffedd5);
 }
 
 .comment-name {
