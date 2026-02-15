@@ -790,10 +790,80 @@ body.admin-uploader-mediamanager #admin-content table.entrylist td.main-cell a.l
 	}
 
 	/* Column labels (no template changes needed) */
-	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'In Beiträgen genutzt'; }
-	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Dateigröße'; }
-	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Hochgeladen am'; }
-	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Aktion'; }
+	html[lang^="de"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'In Beiträgen genutzt'; }
+	html[lang^="de"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Dateigröße'; }
+	html[lang^="de"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Hochgeladen am'; }
+	html[lang^="de"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Aktion'; }
+
+	html[lang^="en"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Used in posts'; }
+	html[lang^="en"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'File size'; }
+	html[lang^="en"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Uploaded on'; }
+	html[lang^="en"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Action'; }
+
+	html[lang^="cs"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Použito v příspěvcích'; }
+	html[lang^="cs"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Velikost souboru'; }
+	html[lang^="cs"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Nahráno dne'; }
+	html[lang^="cs"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Akce'; }
+
+	html[lang^="da"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Brugt i indlæg'; }
+	html[lang^="da"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Filstørrelse'; }
+	html[lang^="da"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Uploadet den'; }
+	html[lang^="da"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Handling'; }
+
+	html[lang^="el"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Χρησιμοποιήθηκε σε αναρτήσεις'; }
+	html[lang^="el"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Μέγεθος αρχείου'; }
+	html[lang^="el"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Ανεβάστηκε στις'; }
+	html[lang^="el"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Ενέργεια'; }
+
+	html[lang^="es"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Usado en publicaciones'; }
+	html[lang^="es"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Tamaño del archivo'; }
+	html[lang^="es"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Subido el'; }
+	html[lang^="es"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Acción'; }
+
+	html[lang^="eu"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Mezuetan erabili'; }
+	html[lang^="eu"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Fitxategiaren tamaina'; }
+	html[lang^="eu"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Igo zen'; }
+	html[lang^="eu"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Ekintza'; }
+
+	html[lang^="fr"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Utilisé dans les publications'; }
+	html[lang^="fr"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Taille du fichier'; }
+	html[lang^="fr"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Téléchargé le'; }
+	html[lang^="fr"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Action'; }
+
+	html[lang^="it"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Utilizzato nei post'; }
+	html[lang^="it"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Dimensione del file'; }
+	html[lang^="it"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Caricato il'; }
+	html[lang^="it"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Azione'; }
+
+	html[lang^="ja"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: '投稿で使用'; }
+	html[lang^="ja"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'ファイルサイズ'; }
+	html[lang^="ja"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'アップロード日時'; }
+	html[lang^="ja"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'アクション'; }
+
+	html[lang^="nl"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Gebruikt in berichten'; }
+	html[lang^="nl"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Bestandsgrootte'; }
+	html[lang^="nl"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Geüpload op'; }
+	html[lang^="nl"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Actie'; }
+
+	html[lang^="pt"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Usado em publicações'; }
+	html[lang^="pt"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Tamanho do arquivo'; }
+	html[lang^="pt"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Carregado em'; }
+	html[lang^="pt"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Ação'; }
+
+	html[lang^="ru"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Использовано в постах'; }
+	html[lang^="ru"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Размер файла'; }
+	html[lang^="ru"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Загружено'; }
+	html[lang^="ru"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Действие'; }
+
+	html[lang^="sl"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Uporabljeno v objavah'; }
+	html[lang^="sl"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Velikost datoteke'; }
+	html[lang^="sl"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Preneseno dne'; }
+	html[lang^="sl"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Dejanje'; }
+
+	html[lang^="tr"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Gönderilerde kullanıldı'; }
+	html[lang^="tr"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Dosya boyutu'; }
+	html[lang^="tr"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Yüklendiği tarih'; }
+	html[lang^="tr"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Eylem'; }
 
 	/**
 	 * Header row layout: put filename and checkbox into the same grid row
@@ -904,6 +974,30 @@ body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset inpu
 	}
 }
 
+#admin-drafts {
+	padding: 0.4em;
+	color: #555;
+	border-color: rgba(202, 138, 4, .25);
+	background: rgba(254, 243, 199);
+	border-radius: var(--fp-radius-sm, 10px);
+	border: 1px solid var(--fp-border, #e2e8f0);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+	overflow: auto;
+}
+
+#admin-drafts p {
+	font-weight: bold;
+	float: left;
+	padding: 0;
+	margin: 0;
+}
+
+#admin-drafts li {
+	float: left;
+	list-style-position: inside;
+	margin: 0;
+	padding-left: 1em;
+}
 
 /**
  * ----------------------------
@@ -1125,13 +1219,16 @@ body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset inpu
  * Admin main: action tiles (dt+dd pairs)
  * ----------------------------
  */
-body.admin-main- #admin-content dl {
+body.admin-main #admin-content dl,
+body[class^="admin-main-"] #admin-content dl {
 	margin: 0;
 	padding: 0;
 }
 
-body.admin-main- #admin-content dt.admin-mainmenu-item,
-body.admin-main- #admin-content dd.admin-icon-descr {
+body.admin-main #admin-content dt.admin-mainmenu-item,
+body.admin-main #admin-content dd.admin-icon-descr,
+body[class^="admin-main-"] #admin-content dt.admin-mainmenu-item,
+body[class^="admin-main-"] #admin-content dd.admin-icon-descr {
 	margin: 0;
 	padding: .85rem 1rem;
 	border: 1px solid var(--fp-border, #e2e8f0);
@@ -1139,7 +1236,8 @@ body.admin-main- #admin-content dd.admin-icon-descr {
 }
 
 /* Header part (icon + title) */
-body.admin-main- #admin-content dt.admin-mainmenu-item {
+body.admin-main #admin-content dt.admin-mainmenu-item,
+body[class^="admin-main-"] #admin-content dt.admin-mainmenu-item {
 	display: flex;
 	align-items: center;
 	gap: .75rem;
@@ -1148,7 +1246,8 @@ body.admin-main- #admin-content dt.admin-mainmenu-item {
 	font-weight: 900;
 }
 
-body.admin-main- #admin-content dt.admin-mainmenu-item img {
+body.admin-main #admin-content dt.admin-mainmenu-item img,
+body[class^="admin-main-"] #admin-content dt.admin-mainmenu-item img {
 	float: none;
 	margin: 0;
 	width: 34px;
@@ -1156,17 +1255,20 @@ body.admin-main- #admin-content dt.admin-mainmenu-item img {
 	opacity: .9;
 }
 
-body.admin-main- #admin-content dt.admin-mainmenu-item a {
+body.admin-main #admin-content dt.admin-mainmenu-item a,
+body[class^="admin-main-"] #admin-content dt.admin-mainmenu-item a {
 	font-weight: 500;
 	text-decoration: none;
 }
 
-body.admin-main- #admin-content dt.admin-mainmenu-item a:hover {
+body.admin-main #admin-content dt.admin-mainmenu-item a:hover,
+body[class^="admin-main-"] #admin-content dt.admin-mainmenu-item a:hover {
 	text-decoration: underline;
 }
 
 /* Description part: visually one card with the dt above */
-body.admin-main- #admin-content dd.admin-icon-descr {
+body.admin-main #admin-content dd.admin-icon-descr,
+body[class^="admin-main-"] #admin-content dd.admin-icon-descr {
 	border-top: 0;
 	border-radius: 0 0 var(--fp-radius, 14px) var(--fp-radius, 14px);
 	color: var(--fp-muted, #475569);
@@ -1176,8 +1278,10 @@ body.admin-main- #admin-content dd.admin-icon-descr {
 
 @media (min-width: 980px) {
 	/* Slightly tighter rows on desktop */
-	body.admin-main- #admin-content dt.admin-mainmenu-item,
-	body.admin-main- #admin-content dd.admin-icon-descr {
+	body.admin-main #admin-content dt.admin-mainmenu-item,
+	body.admin-main #admin-content dd.admin-icon-descr,
+	body[class^="admin-main-"] #admin-content dt.admin-mainmenu-item,
+	body[class^="admin-main-"] #admin-content dd.admin-icon-descr {
 		padding: .8rem 1rem;
 	}
 }
@@ -1214,7 +1318,6 @@ body[class^="admin-entry-"] #admin-date select {
  * (Admin -> Widgets)
  * ----------------------------
  */
-
 /* Remove default list bullets inside the widgets manager */
 body[class^="admin-"] #manage-widgets ul {
 	list-style: none;

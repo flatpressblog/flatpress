@@ -562,6 +562,7 @@ select:focus {
 input[type="submit"],
 input[type="button"],
 .link-comments a,
+.readmore a,
 button:not(.leaflet-control):not(.pswp__button):not(.bb-button) {
 	appearance: none;
 	border: 1px solid rgba(var(--fp-accent-2-rgb, 139, 0, 0), .35);
@@ -577,6 +578,7 @@ button:not(.leaflet-control):not(.pswp__button):not(.bb-button) {
 input[type="submit"]:hover,
 input[type="button"]:hover,
 .link-comments a:hover,
+.readmore a:hover,
 button:not(.leaflet-control):not(.pswp__button):not(.bb-button):hover {
 	transition-duration: .25s;
 	background: var(--fp-accent-gradient-hover, var(--fp-accent-2, #8b0000));
