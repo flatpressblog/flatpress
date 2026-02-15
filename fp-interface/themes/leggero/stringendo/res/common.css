@@ -95,6 +95,7 @@
 
 html {
 	text-size-adjust: 100%;
+	background-color: var(--fp-bg, #f6f7fb);
 }
 
 body {
