@@ -23,8 +23,14 @@ if (defined('MOD_ADMIN_PANEL') && function_exists('add_action')) {
 			if (!defined('MOD_ADMIN_PANEL')) {
 				return;
 			}
+			$styleUrl = theme_style_geturl('stringendo');
+			$bgRel = 'imgs/bg.svg';
+			$bgUrl = $styleUrl . $bgRel;
+			$bgFs = (defined('ABS_PATH') ? ABS_PATH : '') . THEMES_DIR . THE_THEME . '/stringendo/' . $bgRel;
+
 			echo '
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="preload" as="image" href="' . htmlspecialchars($bgUrl, ENT_QUOTES, 'UTF-8') . '" type="image/svg+xml" fetchpriority="high">
 			';
 		}
 	}
@@ -49,11 +55,12 @@ if (!defined('MOD_ADMIN_PANEL') && function_exists('add_action')) {
 			$styleUrl = theme_style_geturl('stringendo');
 			$jsRel = 'res/widgets-under-main.js';
 			$jsUrl = $styleUrl . $jsRel;
-			$jsFs = (defined('ABS_PATH') ? ABS_PATH : '') . THEMES_DIR . THE_THEME . '/stringendo/' . $jsRel;
-			$ver = is_file($jsFs) ? (string) @filemtime($jsFs) : '1.40';
+			$jsUrl = function_exists('utils_asset_ver') ? utils_asset_ver($jsUrl, defined('SYSTEM_VER') ? (string)SYSTEM_VER : null) : $jsUrl;
 			echo '
-		<script nonce="' . $random_hex . '" src="' . htmlspecialchars($jsUrl, ENT_QUOTES, 'UTF-8') . '?v=' . rawurlencode($ver) . '"></script>'
-			;
+		<!-- BOF of Stingendo intelligent widget bar JS -->
+		<script nonce="' . $random_hex . '" src="' . htmlspecialchars($jsUrl, ENT_QUOTES, 'UTF-8') . '" defer></script>
+		<!-- EOF of Stingendo intelligent widget bar JS -->
+			';
 		}
 	}
 
@@ -75,11 +82,12 @@ if (!defined('MOD_ADMIN_PANEL') && function_exists('add_action')) {
 			$styleUrl = theme_style_geturl('stringendo');
 			$jsRel = 'res/smooth-scroll.js';
 			$jsUrl = $styleUrl . $jsRel;
-			$jsFs = (defined('ABS_PATH') ? ABS_PATH : '') . THEMES_DIR . THE_THEME . '/stringendo/' . $jsRel;
-			$ver = is_file($jsFs) ? (string) @filemtime($jsFs) : '1.40';
+			$jsUrl = function_exists('utils_asset_ver') ? utils_asset_ver($jsUrl, defined('SYSTEM_VER') ? (string)SYSTEM_VER : null) : $jsUrl;
 			echo '
-		<script nonce="' . $random_hex . '" src="' . htmlspecialchars($jsUrl, ENT_QUOTES, 'UTF-8') . '?v=' . rawurlencode($ver) . '" defer></script>'
-			;
+		<!-- BOF of Stingendo smooth scroll JS -->
+		<script nonce="' . $random_hex . '" src="' . htmlspecialchars($jsUrl, ENT_QUOTES, 'UTF-8') . '" defer></script>
+		<!-- EOF of Stingendo smooth scroll JS -->
+			';
 		}
 	}
 
@@ -94,13 +102,23 @@ if (!defined('MOD_ADMIN_PANEL') && function_exists('add_action')) {
 				return;
 			}
 			$random_hex = RANDOM_HEX;
+			$styleUrl = theme_style_geturl('stringendo');
+			$bgRel = 'imgs/bg.svg';
+			$bgUrl = $styleUrl . $bgRel;
+			$bgFs = (defined('ABS_PATH') ? ABS_PATH : '') . THEMES_DIR . THE_THEME . '/stringendo/' . $bgRel;
 
 			echo '
 		<!-- BOF of Stingendo fadein -->
+		<link rel="preload" as="image" href="' . htmlspecialchars($bgUrl, ENT_QUOTES, 'UTF-8') . '" type="image/svg+xml" fetchpriority="high">
 		<script nonce="' . $random_hex . '">
+			/**
+			 * Stingendo fadein init
+			 *   - Sets the class fp-fadein-column-done after the fade-in of #column and fires the event stringendo:columnShown
+			 *   - No effect for bots/search engines, as fp-fadein is only set for non-bots, as before.
+			 */
 			(function(){
 				try {
-					if (location && /\\badmin\\.php\\b/i.test(location.pathname||\'\')) {
+					if (location && /\\badmin\\.php\\b/i.test(location.pathname || \'\')) {
 						return;
 					}
 					var ua = (navigator.userAgent || \'\').toLowerCase();
@@ -131,8 +149,8 @@ if (!defined('MOD_ADMIN_PANEL') && function_exists('add_action')) {
 				} catch (e) {}
 			})();
 		</script>
-		<!-- EOF of Stingendo fadein -->'
-			;
+		<!-- EOF of Stingendo fadein -->
+			';
 		}
 	}
 
