@@ -151,7 +151,7 @@ Tyto prvky se nazývají widgety. Další informace o [url=https://wiki.flatpres
 [h4]Témata[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-S tématem FlatPress-Leggero máte k dispozici 3 šablony stylů - od klasických po moderní. Tyto šablony jsou skvělým začátkem pro vytvoření něčeho vlastního.
+S tématem FlatPress-Leggero máte k dispozici 4 šablony stylů - od klasických po moderní. Tyto šablony jsou skvělým začátkem pro vytvoření něčeho vlastního.
 
 
 [h4]Chcete vědět víc?[/h4]

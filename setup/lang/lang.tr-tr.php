@@ -153,7 +153,7 @@ Bu öğelere [b]widget[/b] denir. Widget\'lar hakkında daha fazla bilgi ve [url
 [h4]Temalar[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-FlatPress-Leggero teması ile 3 farklı stil şablonuna sahip olacaksınız - klasik tarzdan modern tarza kadar. Bu şablonlar, kendinize ait bir şeyler yaratmak için harika bir başlangıçtır.
+FlatPress-Leggero teması ile 4 farklı stil şablonuna sahip olacaksınız - klasik tarzdan modern tarza kadar. Bu şablonlar, kendinize ait bir şeyler yaratmak için harika bir başlangıçtır.
 
 
 [h4]Daha fazlasını öğrenmek ister misiniz?[/h4]

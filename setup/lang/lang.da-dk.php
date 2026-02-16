@@ -155,7 +155,7 @@ Disse elementer kaldes [b]widgets[/b]. Selvfølgelig har [url=https://wiki.flatp
 [h4]Temaer[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-Med FlatPress Leggero-temaet har du 3 stilskabeloner til din rådighed - fra klassisk til moderne. Disse skabeloner er en vidunderlig start på at skabe noget af dit eget.
+Med FlatPress Leggero-temaet har du 4 stilskabeloner til din rådighed - fra klassisk til moderne. Disse skabeloner er en vidunderlig start på at skabe noget af dit eget.
 
 
 [h4]Endnu mere[/h4]

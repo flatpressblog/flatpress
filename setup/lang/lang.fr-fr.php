@@ -153,7 +153,7 @@ Ces éléments sont appelés [b]Widgets[/b]. Bien entendu, le wiki FlatPress dis
 [h4]Thèmes[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-Avec le thème FlatPress Leggero, vous disposez de 3 modèles de style — du classique au moderne. Ces modèles sont un excellent point de départ pour créer quelque chose de personnel.
+Avec le thème FlatPress Leggero, vous disposez de 4 modèles de style — du classique au moderne. Ces modèles sont un excellent point de départ pour créer quelque chose de personnel.
 
 
 [h4]Encore plus[/h4]

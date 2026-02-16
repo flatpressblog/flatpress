@@ -152,7 +152,7 @@ Questi elementi si chiamano [b]widget[/b]. Per saperne di più sui widget e [url
 [h4]Temi[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-Con il tema FlatPress-Leggero si hanno a disposizione 3 modelli di stile, dal classico al moderno. Questi modelli sono un ottimo inizio per creare qualcosa di proprio.
+Con il tema FlatPress-Leggero si hanno a disposizione 4 modelli di stile, dal classico al moderno. Questi modelli sono un ottimo inizio per creare qualcosa di proprio.
 
 
 [h4]Saperne di più[/h4]

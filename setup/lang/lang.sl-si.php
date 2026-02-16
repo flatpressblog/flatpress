@@ -155,7 +155,7 @@ Ti elementi se imenujejo [b]Gradniki[/b]. Seveda je tudi na FlatPress Wiki velik
 [h4]Teme[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-S temo FlatPress Leggero imate na voljo 3 slogovne predloge - od klasične do moderne. Te predloge so odličen začetek za ustvarjanje nečesa lastnega.
+S temo FlatPress Leggero imate na voljo 4 slogovne predloge - od klasične do moderne. Te predloge so odličen začetek za ustvarjanje nečesa lastnega.
 
 [h4]Še več[/h4]
 

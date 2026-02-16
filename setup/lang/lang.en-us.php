@@ -152,7 +152,7 @@ These elements are called [b]widgets[/b]. For more on widgets and [url=https://w
 [h4]Themes[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-With the FlatPress-Leggero theme you have 3 style templates at your disposal - from classic to modern. These templates are a wonderful start to create something of your own.
+With the FlatPress-Leggero theme you have 4 style templates at your disposal - from classic to modern. These templates are a wonderful start to create something of your own.
 
 
 [h4]See more[/h4]
