@@ -152,7 +152,7 @@ Elementu hauei [b]trepeta[/b] deitzen zaie. Trepetei buruz gehiago jakiteko eta 
 [h4]Gaiak[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-FlatPress-Leggero gaiarekin 3 estilo txantiloi dituzu eskura - klasikotik modernora. Txantiloi hauek abiapuntu bikaina dira zure estilo propioa sortzeko.
+FlatPress-Leggero gaiarekin 4 estilo txantiloi dituzu eskura - klasikotik modernora. Txantiloi hauek abiapuntu bikaina dira zure estilo propioa sortzeko.
 
 
 [h4]Ikusi gehiago[/h4]

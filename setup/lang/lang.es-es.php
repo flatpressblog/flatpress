@@ -155,7 +155,7 @@ Estos elementos se denominan [b]Widgets[/b]. Por supuesto, la Wiki de FlatPress 
 [h4]Temas[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-Con el tema Leggero de FlatPress tiene a su disposición 3 plantillas de estilo, desde clásico hasta moderno. Estas plantillas son un magnífico comienzo para crear algo propio.
+Con el tema Leggero de FlatPress tiene a su disposición 4 plantillas de estilo, desde clásico hasta moderno. Estas plantillas son un magnífico comienzo para crear algo propio.
 
 
 [h4]Más información[/h4]

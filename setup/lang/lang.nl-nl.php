@@ -151,7 +151,7 @@ Deze elementen worden genoemd [b]widgets[/b]. Voor meer over widgets en [url=htt
 [h4]Thema\'s[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-Met het FlatPress-Leggero thema heb je 3 stijlsjablonen tot je beschikking - van klassiek tot modern. Deze templates zijn een prachtige start om iets van jezelf te maken.
+Met het FlatPress-Leggero thema heb je 4 stijlsjablonen tot je beschikking - van klassiek tot modern. Deze templates zijn een prachtige start om iets van jezelf te maken.
 
 
 [h4]Zie meer[/h4]

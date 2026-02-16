@@ -155,7 +155,7 @@ Diese Elemente werden [b]Widgets[/b] genannt. Natürlich hat das FlatPress-Wiki 
 [h4]Themes[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-Mit dem FlatPress-Leggero-Theme stehen dir 3 Stil-Vorlagen zur Verfügung - von Klassisch bis Modern. Diese Vorlagen sind ein wunderbarer Start, etwas eigenes zu kreieren.
+Mit dem FlatPress-Leggero-Theme stehen dir 4 Stil-Vorlagen zur Verfügung - von Klassisch bis Modern. Diese Vorlagen sind ein wunderbarer Start, etwas eigenes zu kreieren.
 
 
 [h4]Noch mehr[/h4]
