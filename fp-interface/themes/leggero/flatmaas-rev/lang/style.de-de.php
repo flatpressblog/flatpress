@@ -2,7 +2,7 @@
 /**
  * Style Name: FlatMaas Revisited
  * Style URI: https://www.flatpress.org/
- * Description: Der alte Standard von FlatPress, jetzt im Leggero-Stil.
+ * Description: Der klassische FlatPress-Look – eine behutsam modernisierte Neuauflage des früheren Standard-Stils.
  * Version: 0.705
  * Author: Drudo
  * Author URI: https://www.flatpress.org/

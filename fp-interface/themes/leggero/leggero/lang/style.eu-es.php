@@ -2,7 +2,7 @@
 /**
  * Style Name: Leggero
  * Style URI: https://www.flatpress.org/
- * Description: El estilo Leggero original: claro, reducido y centrado en el contenido, ideal como base sencilla.
+ * Description: Leggero estilo originala: arina, minimalista eta edukian zentratua – oinarrizko oinarri sinple gisa aproposa.
  * Version: 1.2
  * Author: NoWhereMan y Drudo, optimizado por Laborix.
  * Author URI: https://www.flatpress.org/
