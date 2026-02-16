@@ -473,6 +473,7 @@ input#subject {
 /* Theme panel: responsive grid instead of floats */
 #current-theme {
 	overflow: hidden;
+	padding: 0 0 1rem 0;
 }
 
 #current-theme img {
@@ -558,6 +559,7 @@ dl.option-set dd {
 	max-width: 980px;
 	margin: 0 auto;
 	align-items: start;
+	padding: 0 0 1rem 0;
 }
 
 #admin-config dl.option-list dt,
@@ -648,7 +650,7 @@ dl.option-set dd {
 	padding: .55rem .7rem;
 	border: 1px solid var(--fp-border, #e2e8f0);
 	border-radius: var(--fp-radius-sm, 10px);
-	background: rgba(2, 6, 23, .02);
+	background: var(--lt-color-gray-100, #f8f9fc);
 	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 	font-size: .92em;
 	overflow-x: auto;
@@ -1325,6 +1327,10 @@ body[class^="admin-"] #manage-widgets ul {
 	padding-left: 0;
 }
 
+body[class^="admin-"] #manage-widgets li.admin-widgetset {
+	border: 1px solid var(--fp-accent-3, #ff8c00) !IMPORTANT;
+}
+
 /* Make draggable items look like compact cards and center the label vertically */
 body[class^="admin-"] #manage-widgets li.widget-class,
 body[class^="admin-"] #manage-widgets li.widget-instance {
@@ -1366,7 +1372,7 @@ body[class^="admin-"] #manage-widgets li.widget-placeholder {
 	min-height: 44px;
 	border: 1px dashed rgba(71, 85, 105, .35);
 	border-radius: var(--fp-radius-sm, 10px);
-	background: rgba(2, 6, 23, .02);
+	background: var(--lt-color-gray-100, #f8f9fc);
 	color: var(--fp-muted, #475569);
 	font-style: italic;
 	line-height: 1.2;

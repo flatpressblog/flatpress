@@ -2,7 +2,7 @@
 /**
  * Theme Name: Leggero
  * Theme URI: https://www.flatpress.org/
- * Description: Standard FlatPress-temaet, som giver et frisk pust af mintluft.<br><br>Dette tema kommer med <a href="admin.php?p=themes&action=style">forskellige stilarter</a> - prøv dem :)
+ * Description: Standardtemaet fra FlatPress – et stykke FlatPress-historie. Forskellige stilarter fra klassisk til moderne: FlatMaas Revisited, Leggero, Leggero v2 og Stringendo – <a href="admin.php?p=themes&action=style">prøv dem</a> :).
  * Version: 0.705
  * Author: NoWhereMan og Drudo
  * Author URI: https://www.flatpress.org/

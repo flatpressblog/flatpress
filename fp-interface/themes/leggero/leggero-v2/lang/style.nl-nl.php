@@ -2,7 +2,7 @@
 /**
  * Style Name: Leggero V2
  * Style URI: https://www.flatpress.org/
- * Description: Het standaard FlatPress-thema dat een frisse wind laat waaien. Responsive en een geweldige start voor eigen thema's!
+ * Description: Leggero, verder ontwikkeld: meer contrast, duidelijkere typografie en een responsieve lay-out – een sterke start voor je eigen thema's.
  * Version: 1.0
  * Author: NoWhereMan, Drudo, Marc Thibeault en Fraenkiman
  * Author URI: https://www.flatpress.org/

@@ -2,7 +2,7 @@
 /**
  * Style Name: FlatMaas Revisited
  * Style URI: https://www.flatpress.org/
- * Description: FlatPressの旧デフォルトがレッジェーロスタイルとして登場。
+ * Description: クラシックな FlatPress の外観 – 以前の標準スタイルを慎重に現代風にアレンジした新版。
  * Version: 0.705
  * Author: Drudo
  * Author URI: https://www.flatpress.org/
