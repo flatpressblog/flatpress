@@ -1470,3 +1470,12 @@ body[class^="admin-"] #manage-widgets li.ui-state-highlight > p {
 body[class^="admin-"] #footer {
 	color: var(--fp-muted, #475569);
 }
+
+/* Tag plugin */
+#taginput {
+	width: 20em;
+}
+
+#plugin_tag {
+	display: block !IMPORTANT;
+}
