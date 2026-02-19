@@ -35,13 +35,13 @@ html.fp-smooth-scroll {
 }
 
 /* Alignment helpers used across FlatPress templates and plugins */
-.alignleft,
-.floatleft {
+.alignleft:not(.photoswipe):not(.photoswipe *),
+.floatleft:not(.photoswipe):not(.photoswipe *) {
 	float: left;
 }
 
-.alignright,
-.floatright {
+.alignright:not(.photoswipe):not(.photoswipe *),
+.floatright:not(.photoswipe):not(.photoswipe *) {
 	float: right;
 }
 
