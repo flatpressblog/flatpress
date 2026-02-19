@@ -156,7 +156,8 @@ if (!defined('MOD_ADMIN_PANEL') && function_exists('add_action')) {
 
 	add_action('wp_head', 'stringendo_wp_head_fadein', 1);
 	add_action('wp_head', 'stringendo_wp_head_smooth_scroll', 2);
-	add_action('wp_footer', 'stringendo_wp_footer_overflow_widgets', 99);
+	// Load early (wp_head) so the widget layout can be calculated before fade-in completes.
+	add_action('wp_head', 'stringendo_wp_footer_overflow_widgets', 3);
 }
 
 $style ['style_def'] = 'style.css';
