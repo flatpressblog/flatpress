@@ -126,7 +126,7 @@ function plugin_aaspam_comment_form() {
 	$question = sprintf($question, $v1, $v2);
 
 	// echoes the question and the form part
-	echo '<p><label class="textlabel" for="aaspam">' . $lang ['plugin'] ['accessibleantispam'] ['prefix'] . ' <strong>' . $question . ' </strong>(*)</label><br>' . //
+	echo '<p style="display:block;"><label class="textlabel" for="aaspam">' . $lang ['plugin'] ['accessibleantispam'] ['prefix'] . ' <strong>' . $question . ' </strong>(*)</label><br>' . //
 		'<input type="text" name="aaspam" id="aaspam"></p>';
 }
 
