@@ -37,9 +37,13 @@
 
 		{/entry}
 
+		{capture assign='fp_nextpage'}{strip}{nextpage}{/strip}{/capture}
+		{capture assign='fp_prevpage'}{strip}{prevpage}{/strip}{/capture}
+		{if $fp_nextpage != '' || $fp_prevpage != ''}
 			<div class="navigation">
-				{nextpage}{prevpage}
+				{$fp_nextpage nofilter}{$fp_prevpage nofilter}
 			</div>
+		{/if}
 
 		{/entry_block}
 
