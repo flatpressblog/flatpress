@@ -537,13 +537,31 @@ function do_bbcode_code($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
 		return true;
 	}
-	$temp_str = $content;
-	$temp_str = str_replace('<br>', chr(10), $temp_str);
-	$temp_str = str_replace(chr(10) . chr(10), chr(10), $temp_str);
-	$temp_str = str_replace(chr(32), '&nbsp;', $temp_str);
-	if (BBCODE_ALLOW_HTML) {
-		$temp_str = wp_specialchars($temp_str);
+	$temp_str = (string)$content;
+
+	// Normalize newlines (content may already contain <br> markers).
+	$temp_str = str_replace(array("\r\n", "\r"), "\n", $temp_str);
+	$temp_str = str_replace(array('<br />', '<br/>', '<br>'), "\n", $temp_str);
+	$collapsed = preg_replace("/\n{2,}/", "\n", $temp_str);
+	if ($collapsed !== null) {
+		$temp_str = $collapsed;
 	}
+
+	/**
+	 * If HTML is disabled, the post content was pre-escaped (wp_specialchars) on save.
+	 * For code blocks we want to show the original characters again before we escape *everything*
+	 * (with double-encoding) to prevent entities like "&cent;" being rendered as "¢".
+	 */
+	if (!BBCODE_ALLOW_HTML) {
+		$temp_str = strtr($temp_str, array('&lt;' => '<', '&gt;' => '>', '&#038;' => '&'));
+	}
+
+	// Always escape the code block, including existing entities (double-encode).
+	$temp_str = htmlspecialchars($temp_str, ENT_NOQUOTES, 'UTF-8', true);
+
+	// Preserve indentation.
+	$temp_str = str_replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;', $temp_str);
+	$temp_str = str_replace(' ', '&nbsp;', $temp_str);
 	$a = '';
 	if (function_exists('plugin_syntaxhighlighter_foot')) {
 		if (isset($attributes ['default'])) {
