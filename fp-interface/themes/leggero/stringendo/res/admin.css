@@ -29,6 +29,34 @@ body[class^="admin-"] .entry {
 	background: linear-gradient(360deg, rgb(255, 219, 166) 0%, rgb(249, 246, 241) 100%);
 }
 
+
+/**
+ * Admin preview (entry/static write): make code blocks responsive.
+ * The preview uses the front-end template (preview.tpl / previewstatic.tpl)
+ * which renders the content inside #post-preview .entry.
+ */
+body.admin-entry-write #post-preview,
+body.admin-static-write #post-preview {
+	max-width: 100%;
+	min-width: 0;
+}
+
+body.admin-entry-write #post-preview .entry pre,
+body.admin-static-write #post-preview .entry pre {
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: auto;
+	white-space: pre;
+	overflow-wrap: normal;
+	word-break: normal;
+	-webkit-overflow-scrolling: touch;
+}
+
+body.admin-entry-write #post-preview .entry pre code,
+body.admin-static-write #post-preview .entry pre code {
+	white-space: inherit;
+}
+
 /* Admin pages do not render the front-end header (#head) */
 body[class^="admin-"] #body-container {
 	max-width: var(--fp-container, 1120px);
