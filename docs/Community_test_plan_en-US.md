@@ -1,6 +1,6 @@
 ## Summary
 
-- FlatPress 1.5 RC2 – Community Test Plan v1.0
+- FlatPress 1.5 RC3 – Community Test Plan v1.1
 
 <sub><i>I recommend working through the test plan step by step from top to bottom. Otherwise, some test steps may not be performed or may distort the overall result.</i></sub>
 
@@ -10,7 +10,7 @@
 - [ ] Download the latest version of the [Bulk Content Generator](https://github.com/flatpressblog/flatpress-extras/tree/master/fp-tools/gen-bulk).
 - [ ] If possible and available, install the [APCu cache extension](https://github.com/flatpressblog/flatpress/blob/master/docs/APCu_Installation_and_Activation.md) on your web server.
 - [ ] Clear the browser cache of the browsers you want to use for testing and disable all third-party browser add-ons.
-- [ ] [Install FlatPress](https://wiki.flatpress.org/en:doc:basic:installation) on your web server. If you already have a FlatPress instance, install the latest version as a separate instance (e.g., `/fp15-RC2`).
+- [ ] [Install FlatPress](https://wiki.flatpress.org/en:doc:basic:installation) on your web server. If you already have a FlatPress instance, install the latest version as a separate instance (e.g., `/fp15-RC3`).
 - [ ] Copy the Bulk Content Generator to the blog root directory to generate test data.
 - [ ] If necessary, recursively adjust the ownership rights and file and directory permissions.
 - [ ] Open the browser of your choice and then run the setup (``setup.php``).
@@ -31,6 +31,44 @@
 - [ ] Check the local time and correct the time offset if necessary.
 - [ ] Create a new post and publish it.
 - [ ] Check in the frontend whether your newly created post has the correct time.
+
+## RC3 focus tests (new since RC2)
+
+These checks cover changes introduced after commit `0be77be` (Jan 25, 2026) and later.
+
+1) **PhotoSwipe: overlay behavior and external image URLs**
+- [ ] Upload at least 3 local images, create a gallery, and insert it into a post (BBCode toolbar or `[gallery]`).
+- [ ] Open the post in the frontend and click an image to open the PhotoSwipe overlay.
+- [ ] While the overlay is open, try to scroll the page (mouse wheel / touch). **Expected:** the background page must not scroll; the overlay stays stable; no console errors.
+- [ ] Close the overlay. **Expected:** the page scroll works normally again.
+- [ ] Create another post with an external image URL, e.g.  
+  ``[img=https://www.yr.no/en/content/2-7283758/meteogram.svg width="400"]``  
+  (any external JPG/PNG/WebP should also work).
+- [ ] Open that post and click the external image to open the PhotoSwipe overlay. **Expected:** no PHP warnings; no tiny/incorrect “thumb” sizing; the image opens normally.
+
+2) **Feeds: galleries must be visible and readable**
+- [ ] Open the blog RSS2 feed: ``<your-blog>/?x=feed:rss2``
+- [ ] Open the blog Atom feed: ``<your-blog>/?x=feed:atom``
+- [ ] Find the post with the gallery in each feed. **Expected:** gallery images are present and the feed remains readable (no broken layout, no invalid XML errors in the browser/feed reader).
+
+3) **Gallery Captions: no double-escaping in image titles**
+- [ ] Open the admin area → Uploader → Gallery captions.
+- [ ] Add a caption containing special characters, e.g. ``Fish & Chips "Special"`` and save.
+- [ ] Check the caption in the uploader preview and in the frontend gallery view. **Expected:** ``&`` stays ``&`` (no ``&amp;``); no warnings/errors.
+
+4) **No “ghost” next/prev navigation**
+- [ ] Activate the Tag plugin (if not already active) and add tags to a few posts.
+- [ ] Open a tag page that has **only one page** of results (e.g., only 1–2 tagged posts).
+- [ ] **Expected:** no empty navigation bar and no “ghost buttons” when ``{nextpage}`` / ``{prevpage}`` have no output.
+
+5) **BBCode: code blocks must not double-encode entities**
+- [ ] Create a new post containing a code block, e.g.  
+  ``[code]<b>&</b> &cent; <tag>[/code]``
+- [ ] Save and open the post in the frontend. **Expected:** the code block shows the literal characters as text; entities are **not** converted to symbols and are **not** double-encoded.
+
+6) **Stringendo style: stable layout**
+- [ ] Switch theme → Leggero → style **Stringendo**.
+
 
 ## Test areas
 1) **Check the browser console and PHP log file during interaction**
