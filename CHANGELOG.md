@@ -112,6 +112,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - In addition to ``[url`` and ``href``, generic URLs are now also blocked by default. Thank you for reporting the issue to [macadoum from the support forum](https://forum.flatpress.org/viewtopic.php?t=938&start=20#p3334).
 - BBCode plugin update to version 2.0.0
     - Sorted/unsorted lists are displayed correctly in comments. ([#762](https://github.com/flatpressblog/flatpress/issues/762))
+    - No encoding of HTML entities within the BBCode code tag. ([#822](https://github.com/flatpressblog/flatpress/issues/822))
 - FavIcon plugin update to version 1.1.1
     - Optional FlatPress app installation for Android/iOS from shared web hosts stabilized. ([#788](https://github.com/flatpressblog/flatpress/pull/788))
 - PhotoSwipe plugin update to version 2.0.5
@@ -128,6 +129,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - If a SEO metatag description of the post is available, it will be displayed as an introduction to the post. [@wjar forum entry](https://forum.flatpress.org/viewtopic.php?t=424&start=10#p3208)
     - Modern, responsive style with an energetic "Stringendo" accent palette added ([#810](https://github.com/flatpressblog/flatpress/pull/810))
     - Description of the theme and styles revised
+    - No ghost buttons if ``{nextpage}`` and ``{prevpage}`` are empty. ([#821](https://github.com/flatpressblog/flatpress/issues/821))
 ### Bugfixes
 - Leggero theme:
     - After a fresh installation, the correct time format is now displayed instead of the default format  ``%b %e, %Y``. ([#662](https://github.com/flatpressblog/flatpress/pull/662))
