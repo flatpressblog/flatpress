@@ -57,8 +57,6 @@ These checks cover changes introduced after commit `0be77be` (Jan 25, 2026) and 
 - [ ] Check the caption in the uploader preview and in the frontend gallery view. **Expected:** ``&`` stays ``&`` (no ``&amp;``); no warnings/errors.
 
 4) **No “ghost” next/prev navigation**
-- [ ] Activate the Tag plugin (if not already active) and add tags to a few posts.
-- [ ] Open a tag page that has **only one page** of results (e.g., only 1–2 tagged posts).
 - [ ] **Expected:** no empty navigation bar and no “ghost buttons” when ``{nextpage}`` / ``{prevpage}`` have no output.
 
 5) **BBCode: code blocks must not double-encode entities**
