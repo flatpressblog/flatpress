@@ -14,7 +14,7 @@ function cache_exist() {
 }
 
 function check_write($file = SETUPTEMP_FILE, $data = 2) {
-	$ok = @io_write_file($file, $data);
+	$ok = @io_write_file($file, (string)$data);
 	return $ok;
 }
 
@@ -26,9 +26,15 @@ function remove_checkfile() {
 function setupid() {
 	global $setupid;
 	if (isset($_POST ['setupid'])) {
-		$setupid = $_POST ['setupid'];
+		$setupid = (string)$_POST ['setupid'];
 	} else {
-		$setupid = system_generate_id(BLOG_BASEURL . $_SERVER ['HTTP_HOST']);
+		$host = '';
+		if (isset($_SERVER ['HTTP_HOST']) && is_string($_SERVER ['HTTP_HOST'])) {
+			$host = $_SERVER ['HTTP_HOST'];
+		} elseif (isset($_SERVER ['SERVER_NAME']) && is_string($_SERVER ['SERVER_NAME'])) {
+			$host = $_SERVER ['SERVER_NAME'];
+		}
+		$setupid = system_generate_id(BLOG_BASEURL . $host);
 	}
 
 	return $setupid;
@@ -46,7 +52,6 @@ function getstep(&$id) {
 	$MAXST = count($STEPS) - 1;
 
 	$i = 0;
-
 	$setupid = null;
 
 	if (!file_exists(LOCKFILE)) {
@@ -64,11 +69,20 @@ function getstep(&$id) {
 				$i = 1;
 			}
 		} else {
-			$x = explode(',', io_load_file(SETUPTEMP_FILE));
-			if ($x [0] != $setupid) {
+			$tmp = (string)io_load_file(SETUPTEMP_FILE);
+			$x = explode(',', $tmp, 2);
+			$tmp_setupid = isset($x [0]) ? (string)$x [0] : '';
+			if ($tmp_setupid !== $setupid) {
 				die($lang ['err'] ['setuprun2'] . SETUPTEMP_FILE . $lang ['err'] ['setuprun3']);
 			}
-			$i = intval($x [1]);
+			$i = isset($x [1]) ? (int)$x [1] : 0;
+		}
+
+		// Hardening: clamp out-of-range step indexes (e.g. if SETUPTEMP_FILE is corrupted)
+		if ($i < 0) {
+			$i = 0;
+		} elseif ($i > $MAXST) {
+			$i = $MAXST;
 		}
 
 		$libfile = __DIR__ . '/' . $STEPS [$i] . '.lib.php';
@@ -86,6 +100,8 @@ function getstep(&$id) {
 		if (check_step()) {
 			++$i;
 			if ($i >= $MAXST) {
+				// Ensure valid index for the final screen (step3)
+				$i = $MAXST;
 				fs_delete(SETUPTEMP_FILE);
 				io_write_file(LOCKFILE, "locked");
 			} else {
@@ -96,18 +112,36 @@ function getstep(&$id) {
 		}
 	}
 
+	if (!isset($STEPS [$i])) {
+		$i = 0;
+	}
 	$id = $STEPS [$i];
 
 	return $i;
 }
 
 function validate() {
-	global $lang;
-	$fpuser = strip_tags($_POST ['fpuser']);
-	$fppwd = $_POST ['fppwd'];
-	$fppwd2 = $_POST ['fppwd2'];
-	$email = strip_tags($_POST ['email']);
-	$www = strip_tags($_POST ['www']);
+	global $lang, $err;
+
+	/**
+	 * Validate only when the step2 form was actually submitted.
+	 *  On reloads or malformed requests, avoid PHP warnings about missing POST keys.
+	 */
+	$required = array('fpuser', 'fppwd', 'fppwd2', 'email', 'www');
+	foreach ($required as $k) {
+		if (!array_key_exists($k, $_POST)) {
+			$err = array();
+			return false;
+		}
+	}
+
+	$err = array();
+
+	$fpuser = strip_tags((string)$_POST ['fpuser']);
+	$fppwd = (string)$_POST ['fppwd'];
+	$fppwd2 = (string)$_POST ['fppwd2'];
+	$email = strip_tags((string)$_POST ['email']);
+	$www = strip_tags((string)$_POST ['www']);
 	if (!(preg_match('/^[\w]+$/u', $fpuser))) {
 		$err [] = $fpuser . $lang ['err'] ['fpuser2'];
 	}
@@ -123,12 +157,13 @@ function validate() {
 	if (!(preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $www) || preg_match('!^http(s)?://localhost!', $www))) {
 		$err [] = $www . $lang ['err'] ['www'];
 	}
-	if ($www && $www [strlen($www) - 1] != '/') {
+	if ($www !== '' && substr($www, -1) !== '/') {
 		$www .= '/';
 	}
 
 	global $fp_config;
 
+	$user = array();
 	$fp_config ['general'] ['author'] = $user ['userid'] = $fpuser;
 	$user ['password'] = $fppwd;
 
@@ -138,18 +173,25 @@ function validate() {
 	// Set UTC offset according to time zone set in php.ini
 	$timezoneFromIni = new DateTimeZone('UTC'); // UTC as fallback value
 	try {
-		$timezoneFromIni = new DateTimeZone(ini_get('date.timezone'));
-	} catch (Exception $e) {
+		$iniTz = (string)ini_get('date.timezone');
+		if ($iniTz !== '') {
+			$timezoneFromIni = new DateTimeZone($iniTz);
+		}
+	} catch (Throwable $e) {
 		// ignore "Unknown or bad timezone" exceptions - just move on with UTC
 	}
-	// calculate the offset from local time zon to UTC...
-	$now = new DateTime('now', $timezoneFromIni);
-	$timeOffset = $timezoneFromIni->getOffset($now) / 3600;
-	// ... and set it to the FlatPress config
-	$fp_config ['locale'] ['timeoffset'] = $timeOffset;
+	try {
+		// calculate the offset from local time zone to UTC...
+		$now = new DateTime('now', $timezoneFromIni);
+		$timeOffset = $timezoneFromIni->getOffset($now) / 3600;
+		// ... and set it to the FlatPress config
+		$fp_config ['locale'] ['timeoffset'] = $timeOffset;
+	} catch (Throwable $e) {
+		// As a last-resort fallback, keep FlatPress at UTC.
+		$fp_config ['locale'] ['timeoffset'] = 0;
+	}
 
-	if (isset($err)) {
-		$GLOBALS ['err'] = $err;
+	if (!empty($err)) {
 		return false;
 	}
 
@@ -167,8 +209,8 @@ function validate() {
 function print_err() {
 	global $err;
 	global $lang;
-	if (isset($err)) {
-		echo $lang ['err'] ['www'];
+	if (!empty($err)) {
+		echo "<ul>";
 		foreach ($err as $val) {
 			echo "<li>" . $val . "</li>";
 		}
