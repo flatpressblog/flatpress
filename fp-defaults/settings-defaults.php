@@ -11,7 +11,7 @@ $fp_config = array(
 		'maxentries' => '5',
 		'notify' => true,
 		'theme' => 'leggero',
-		'style' => 'leggero-v2',
+		'style' => 'stringendo',
 		'blogid' => 'fpdefid',
 		'charset' => 'utf-8'
 	),
