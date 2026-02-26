@@ -184,7 +184,8 @@ class entry_index {
 				// traverse the full cat tree (in linearized form)
 				// to update categories which eventually aren't
 				// explicitly listed
-				while ($parent = $this->catlist [$cat]) {
+				while (isset($this->catlist[$cat]) && $this->catlist[$cat]) {
+					$parent = $this->catlist[$cat];
 					$categories [] = $parent;
 					$cat = $parent;
 				}
