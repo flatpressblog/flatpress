@@ -41,6 +41,11 @@ body.admin-static-write #post-preview {
 	min-width: 0;
 }
 
+body[class^="admin-"] #admin-post-preview fieldset {
+	max-height: 30em;
+	overflow: auto;
+}
+
 body.admin-entry-write #post-preview .entry pre,
 body.admin-static-write #post-preview .entry pre {
 	max-width: 100%;
