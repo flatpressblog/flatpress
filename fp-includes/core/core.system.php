@@ -103,7 +103,20 @@ function system_guessblogroot() {
 }
 
 function system_guessbaseurl() {
-	return 'http://' . $_SERVER ['HTTP_HOST'] . BLOG_ROOT;
+	if (defined('BLOG_BASEURL')) {
+		return BLOG_BASEURL;
+	}
+	$scheme = (function_exists('is_https') && is_https()) ? 'https://' : 'http://';
+	$host = 'localhost';
+	if (function_exists('canonical_server_host')) {
+		$host = canonical_server_host();
+	} elseif (function_exists('canonical_request_host')) {
+		$host = canonical_request_host();
+	} else {
+		$host = (string)($_SERVER ['SERVER_NAME'] ?? ($_SERVER ['HTTP_HOST'] ?? 'localhost'));
+	}
+	$root = defined('BLOG_ROOT') ? (string)BLOG_ROOT : '/';
+	return $scheme . $host . $root;
 }
 
 function system_getindex() {

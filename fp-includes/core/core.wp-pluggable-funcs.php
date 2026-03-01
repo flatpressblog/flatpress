@@ -270,8 +270,7 @@ if (!function_exists('wp_redirect')) :
 			return false;
 		}
 
-		$location = preg_replace('|[^a-z0-9-~+_.?#=&;,/:%]|i', '', $location);
-		// $location = wp_kses_no_null($location);
+		$location = preg_replace('|[^a-z0-9-~+_.?#=&;,/:%\[\]]|i', '', $location);
 
 		$location = preg_replace('/\0+/', '', $location);
 		$location = preg_replace('/(\\\\0)+/', '', $location);

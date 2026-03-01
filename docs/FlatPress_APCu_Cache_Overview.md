@@ -12,7 +12,7 @@ To view and manage user cache entries, [Joe Watkins'](https://github.com/krakjoe
 
 ### 1.1 `is_apcu_on()`
 
-**File:** `fp-includes/core/core.fileio.php`  
+**File:** `fp-includes/core/core.apcu.php`  
 **Purpose:** Central runtime check if APCu should be used.
 
 - Verifies:
@@ -28,7 +28,7 @@ High. Every APCu-aware function uses this as a guard, so misconfiguration here w
 
 ### 1.2 `apcu_ns()` and `apcu_key()`
 
-**File:** `fp-includes/core/core.fileio.php`  
+**File:** `fp-includes/core/core.apcu.php`  
 
 - `apcu_ns()`:
   - Computes a FlatPress-instance namespace ID based on `ABS_PATH` (or the core include path).
@@ -52,7 +52,7 @@ High. This is the isolation layer between multiple FlatPress instances sharing a
 
 ### 1.3 Wrapper Functions
 
-**File:** `fp-includes/core/core.fileio.php`  
+**File:** `fp-includes/core/core.apcu.php`  
 
 - `apcu_get($key, &$ok = null)`  
 - `apcu_set($key, $val, $ttl = 120)`  
@@ -310,6 +310,34 @@ Low–Medium. Useful for avoiding repeated disk + parsing cost on high-traffic s
 
 **Impact:**  
 Low–Medium. Reduces repeated environment probing, especially under reverse proxies.
+
+---
+
+
+### 2.9 Base URL Config Cache – `fp:config:settings:*`
+
+**Prefix:** `fp:config:settings:<sha1(abs_settings_conf_path)>`  
+**File:** `fp-includes/core/core.connection.php`
+
+**What is cached:**
+
+- Parsed contents of `fp-content/config/settings.conf.php` (the full config array).
+- The normalized canonical base URL string from `general['www']`, used to define `BLOG_BASEURL`.
+- The parsed config is also exposed as `$GLOBALS['EARLY_FP_CONFIG']` so later `config_load()` can reuse it without re-reading the file.
+
+**Invalidation:**
+
+- On each request, FlatPress computes a lightweight file signature (`mtime:size`) via `stat()`.
+- Cache entries store the same signature; if it differs, the file is reloaded and the cache is refreshed.
+- This means configuration changes become effective **immediately on the next request**, even when APCu is enabled.
+
+**TTL:**
+
+- Stored with TTL `3600` seconds (1 hour) as a memory-pressure hint only; signature validation ensures freshness.
+
+**Impact:**
+
+Medium. Saves an include+parse of `settings.conf.php` on every request when `general['www']` is used to define `BLOG_BASEURL`, especially noticeable on shared hosting and under PHP-FPM with APCu enabled.
 
 ---
 
@@ -710,6 +738,7 @@ The following table summarizes each logical cache group:
 | Area                         | Key prefixes (logical)                                                               | Depends on PrettyURLs?   | Invalidation driver                                  | Approx. impact           |
 |------------------------------|--------------------------------------------------------------------------------------|--------------------------|------------------------------------------------------|--------------------------|
 | APCu core helpers            | `fp:ns:*`, `apcu_ns()`, `apcu_key()`                                                 | No                       | N/A (meta only)                                      | High (foundational)      |
+| Base URL Config              | `fp:config:settings:*`                                                               | No                       | File mtime/size via `stat()`, TTL 1h                 | Medium                   |
 | File I/O                     | `fp:io:*`                                                                            | No                       | File mtime/size, TTL (default 1h)                    | High                     |
 | Entries                      | `fp:entry:parsed:*`                                                                  | No                       | Entry file mtime/size                                | High                     |
 | Comments                     | `fp:comments:list:*`, `fp:comments:count:*`                                          | No                       | Comment dir mtime, TTL 300s (APCu) + file fallback   | Medium–High              |
@@ -751,6 +780,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.5 „S
 - `fp:cats:list:`
 - `fp:comments:list:`
 - `fp:comments:count:`
+- `fp:config:settings:`
 - `fp:entry:parsed:`
 - `fp:https:v2:`
 - `fp:ini:`
