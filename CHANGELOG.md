@@ -28,7 +28,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
 ### Security
 - Detection of an HTTP/HTTPS connection ``is_https()`` is significantly more reliable and less susceptible to spoofing. Improved detection for public proxies/CDNs, including Azure and Cloudflare. ([#672](https://github.com/flatpressblog/flatpress/pull/672))
 - After completing the setup, hide setup entry points. If this is not possible, a warning will appear in the admin area. ([#799](https://github.com/flatpressblog/flatpress/issues/799))
-- Reflected XSS and host-based URL poisoning / open redirect fixed. ([#830](https://github.com/flatpressblog/flatpress/pull/830), [#831](https://github.com/flatpressblog/flatpress/pull/831), [#832](https://github.com/flatpressblog/flatpress/pull/832))
+- Reflected XSS and host-based URL poisoning / open redirect fixed. ([#830](https://github.com/flatpressblog/flatpress/pull/830), [#831](https://github.com/flatpressblog/flatpress/pull/831), [#832](https://github.com/flatpressblog/flatpress/pull/832), [#833](https://github.com/flatpressblog/flatpress/pull/833))
 
 ### Bugfixes
 - Correct output when a historical character set encoding is set. ([#670](https://github.com/flatpressblog/flatpress/pull/670))
