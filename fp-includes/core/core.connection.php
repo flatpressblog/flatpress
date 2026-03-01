@@ -497,6 +497,63 @@ function canonical_request_host() {
 }
 
 /**
+ * Strictly validate and normalize the server host (SERVER_NAME + optional SERVER_PORT)
+ * for safe use in URLs.
+ *
+ * @return string
+ */
+function canonical_server_host() {
+	$raw = (string)($_SERVER ['SERVER_NAME'] ?? '');
+	$raw = trim($raw);
+	if ($raw === '') {
+		return 'localhost';
+	}
+	// Reject control chars and obvious breakers early
+	if (preg_match('~[\x00-\x1F\x7F\s<>"\'`\\/]~', $raw)) {
+		return 'localhost';
+	}
+
+	$host = $raw;
+
+	// SERVER_NAME may be an unbracketed IPv6 literal
+	if (substr_count($host, ':') > 1) {
+		if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
+			return 'localhost';
+		}
+		$host = '[' . $host . ']';
+	} else {
+		$host = strtolower($host);
+		// IPv4
+		if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false) {
+			// Hostname: accept common DNS name chars plus underscore for compatibility.
+			if (!preg_match('/^[a-z0-9][a-z0-9._-]{0,251}[a-z0-9]$/', $host)) {
+				// allow single-label like 'localhost'
+				if (!preg_match('/^[a-z0-9][a-z0-9._-]{0,253}$/', $host)) {
+					return 'localhost';
+				}
+			}
+			if (strpos($host, '..') !== false) {
+				return 'localhost';
+			}
+		}
+	}
+
+	$port = (int)($_SERVER ['SERVER_PORT'] ?? 0);
+	if ($port < 1 || $port > 65535) {
+		$port = 0;
+	}
+	// Only append non-default ports
+	if ($port > 0) {
+		$default = is_https() ? 443 : 80;
+		if ($port !== $default) {
+			$host .= ':' . $port;
+		}
+	}
+
+	return $host;
+}
+
+/**
  * Read the configured canonical base URL from settings.conf.php (general['www']).
  * Returns '' if not available/invalid.
  *
@@ -573,7 +630,8 @@ if (!defined('BLOG_BASEURL')) {
 		define('BLOG_BASEURL', $cfg_url);
 		define('BLOG_BASEURL_TRUSTED', true);
 	} else {
-		define('BLOG_BASEURL', $scheme . canonical_request_host() . $blog_root);
+		// Fall back to SERVER_NAME/SERVER_PORT to avoid Host header poisoning.
+		define('BLOG_BASEURL', $scheme . canonical_server_host() . $blog_root);
 		define('BLOG_BASEURL_TRUSTED', false);
 	}
 }
