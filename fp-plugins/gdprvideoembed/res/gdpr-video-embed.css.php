@@ -10,7 +10,7 @@ if (phpversion() >= "4.1.0") {
 }
 
 // load language file
-require_once '../../../defaults.php';
+require_once __DIR__ . '/../../../defaults.php';
 
 if (!defined('ABS_PATH')) {
 	define('ABS_PATH', realpath(__DIR__ . '/../../../') . '/');

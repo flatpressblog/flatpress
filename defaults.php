@@ -125,11 +125,12 @@ define('BPT_SORT', SORT_DESC);
 // https://wiki.selfhtml.org/wiki/HTML/Attribute/nonce
 define('RANDOM_HEX', bin2hex(random_bytes(18)));
 
-// Adding security and HTTPS support
+$fp_script_name = (string)($_SERVER ['SCRIPT_NAME'] ?? '/');
+define('BLOG_ROOT', ('/' === ($v = dirname($fp_script_name)) ? $v : $v . '/'));
+
+// Core APCu Helpers and Namespacing
+include (INCLUDES_DIR . 'core.apcu.php');
+
+// Adding security and HTTPS support (and determining BLOG_BASEURL)
 include (INCLUDES_DIR . 'core.connection.php');
-
-// define('BLOG_ROOT', dirname($_SERVER['PHP_SELF']) . '/');
-define('BLOG_ROOT', ('/' == ($v = dirname($_SERVER ['SCRIPT_NAME'])) ? $v : $v . '/'));
-
-define('BLOG_BASEURL', $scheme . $_SERVER ['HTTP_HOST'] . BLOG_ROOT);
 ?>

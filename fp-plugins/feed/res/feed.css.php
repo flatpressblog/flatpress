@@ -3,8 +3,8 @@ header('Content-Type: text/css; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Cache-Control: max-age=31536000');
 
-require_once '../../../defaults.php';
-$url = BLOG_BASEURL;
+require_once __DIR__ . '/../../../defaults.php';
+$url = BLOG_BASEURL . PLUGINS_DIR . 'feed/res/';
 ?>
 
 .feed-widget {

@@ -19,8 +19,9 @@
 	width: 100%;
 }
 
-.text-center {
+.text-center, #cookie_banner div.buttonbar {
 	text-align: center;
+	margin: 2px;
 }
 
 /* OK-Button */
@@ -28,4 +29,3 @@
 	color: #ffffff;
 	background: #008A17;
 }
-
