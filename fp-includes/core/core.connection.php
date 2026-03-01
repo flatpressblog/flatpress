@@ -347,10 +347,15 @@ function load_fp_config_file($file) {
 	if ($file === '' || !is_file($file) || !is_readable($file)) {
 		return null;
 	}
+	/** @var mixed $fp_config */
 	$fp_config = null;
 	/** @noinspection PhpIncludeInspection */
 	include $file;
-	return is_array($fp_config) ? $fp_config : null;
+	if (!is_array($fp_config) || $fp_config === []) {
+		return null;
+	}
+	/** @var array $fp_config */
+	return $fp_config;
 }
 
 /**

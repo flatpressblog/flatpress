@@ -34,7 +34,8 @@ function config_load($conffile = CONFIG_FILE) {
 			return '';
 		}
 		$path = str_replace('\\', '/', $path);
-		$abs = ($path [0] === '/' || $path [0] === '\\' || preg_match('/^[A-Za-z]:[\\\/]/', $path));
+		// Windows drive letter paths are like "C:/...". Use a non-slash regex delimiter to avoid issues with '/' inside a character class.
+		$abs = ($path [0] === '/' || preg_match('~^[A-Za-z]:/~', $path) === 1);
 		if ($abs) {
 			return $path;
 		}
