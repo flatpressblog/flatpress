@@ -386,11 +386,15 @@ function normalize_baseurl($url) {
 	if ($host === '') {
 		return '';
 	}
-	// Reject characters that could break HTML attributes or headers.
-	// Use a non-slash delimiter because we explicitly reject '/' in the host.
+
+	/**
+	 * Reject characters that could break HTML attributes or headers.
+	 * Use a non-slash delimiter because we explicitly reject '/' in the host.
+	 */
 	if (preg_match('~[\s\x00-\x1F\x7F<>"\'`\\\\/]~u', $host)) {
 		return '';
 	}
+
 	$port = (int)($parts ['port'] ?? 0);
 	if ($port < 0 || $port > 65535) {
 		$port = 0;
@@ -428,8 +432,11 @@ function canonical_request_host() {
 	if ($raw === '') {
 		return 'localhost';
 	}
-	// Reject control chars and obvious breakers early
-	// Use a non-slash delimiter because we explicitly reject '/' in the host.
+
+	/**
+	 * Reject control chars and obvious breakers early
+	 * Use a non-slash delimiter because we explicitly reject '/' in the host.
+	 */
 	if (preg_match('~[\x00-\x1F\x7F\s<>"\'`\\\\/]~', $raw)) {
 		return 'localhost';
 	}
@@ -515,8 +522,20 @@ function canonical_server_host() {
 
 	$host = $raw;
 
+	// SERVER_NAME may be a bracketed IPv6 literal: [::1]
+	if (isset($host [0]) && $host [0] === '[') {
+		if (!preg_match('/^\[([^\]]+)\](?::(\d{1,5}))?$/', $host, $m)) {
+			return 'localhost';
+		}
+		$ip = $m [1];
+		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
+			return 'localhost';
+		}
+		// Ignore any embedded port; SERVER_PORT is appended below.
+		$host = '[' . $ip . ']';
+
 	// SERVER_NAME may be an unbracketed IPv6 literal
-	if (substr_count($host, ':') > 1) {
+	} elseif (substr_count($host, ':') > 1) {
 		if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
 			return 'localhost';
 		}
