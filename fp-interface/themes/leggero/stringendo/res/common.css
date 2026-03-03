@@ -279,7 +279,7 @@ body[class^="admin-"] #outer-container {
 h2.date {
 	margin: 0 0 var(--fp-space-2, .5rem) 0;
 	font-size: .85rem;
-	font-weight: 800;
+	font-weight: 500;
 	color: var(--fp-muted, #475569);
 	letter-spacing: .06em;
 	text-transform: uppercase;
@@ -472,7 +472,7 @@ table th {
 
 .entry-footer strong {
 	color: var(--fp-text, #0f172a);
-	font-weight: 800;
+	font-weight: 700;
 }
 
 .entry-footer a {
@@ -698,9 +698,9 @@ legend {
 }
 
 #search fieldset ul ul {
-	margin-top: .35rem;
+	margin: .25rem 0 0 .30rem;
 	padding-left: 1rem;
-	border-left: 2px solid var(--fp-border, #e2e8f0);
+	border-left: 1px solid var(--lt-color-gray-400, #c2c9d6);
 }
 
 #search fieldset ul li {

@@ -423,6 +423,7 @@ function normalize_baseurl($url) {
 /**
  * Strictly validate and normalize a request host for safe use in URLs.
  * Returns a safe fallback host if invalid.
+ * Required by system_guessbaseurl() in core.system.php
  *
  * @return string
  */
@@ -602,12 +603,12 @@ function configured_blog_baseurl() {
 
 	if (isset($local [$conf]) && is_array($local [$conf]) && ($local [$conf] ['sig'] ?? '') === $sig) {
 		if (isset($local [$conf] ['cfg']) && is_array($local [$conf] ['cfg'])) {
-			$GLOBALS['EARLY_FP_CONFIG'] = $local[$conf]['cfg'];
+			$GLOBALS ['EARLY_FP_CONFIG'] = $local [$conf] ['cfg'];
 		}
 		return (string)($local [$conf] ['www'] ?? '');
 	}
 
-	// Optional APCu cache across requests (namespaced via core.fileio.php apcu_get/apcu_set)
+	// Optional APCu cache across requests (namespaced via core.apcu.php apcu_get/apcu_set)
 	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 	$apcu_key = $apcu_on ? ('config:settings:' . sha1($conf)) : null;
 	if ($apcu_on) {

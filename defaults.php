@@ -1,18 +1,19 @@
 <?php
-
-// defaults.php
-
-// This file defines standard positions of some important
-// dirs or files.
-
-// For security reasons
-// these can't be modified in the common settings panels
-// but only through this file.
-// If you want to change these constants, just change
-// the second parameter.
-
-// We suggest not to define here your owns, but instead
-// inmplementing them as plugins
+/**
+ * defaults.php
+ *
+ * This file defines standard positions of some important
+ * dirs or files.
+ *
+ * For security reasons
+ * these can't be modified in the common settings panels
+ * but only through this file.
+ * If you want to change these constants, just change
+ * the second parameter.
+ *
+ * We suggest not to define here your owns, but instead
+ * inmplementing them as plugins
+ */
 
 // legacy mode; needed with some ill-formed spb files
 define('DUMB_MODE_ENABLED', false);
@@ -34,17 +35,17 @@ define('CORE_DIR_PERMISSIONS', 0750); // 0750 for productive operation
 define('RESTRICTED_FILE_PERMISSIONS', 0644); // 0644 is recommended
 define('RESTRICTED_DIR_PERMISSIONS', 0755); // 0755 is recommended
 
-// For small APCu pools (< 32 MiB), set to 600–1800 s; for standard pools, set it to 1800–3600 s; for large pools, set it to 3600–7200 s.
-$_ENV ['FP_APCU_IO_TTL'] = 3600;
-
 /**
  * First some webserver setup...
  */
 
-// Here's where your server save session-related stuff.
-// If you don't experience any session-related problem, you
-// you can leave it blank and it will default to standard webserver config
+/**
+ * Here's where your server save session-related stuff.
+ * If you don't experience any session-related problem, you
+ * you can leave it blank and it will default to standard webserver config
+ */
 define('SESSION_PATH', '');
+
 // Absolute path to your webserver dir; if you don't experience any problem
 // you can leave this as it is
 define('ABS_PATH', str_replace('\\', '/', dirname(__FILE__)) . '/');
@@ -64,7 +65,6 @@ define('CONFIG_DIR', FP_CONTENT . 'config/');
 define('CONFIG_FILE', CONFIG_DIR . 'settings.conf.php');
 
 /**
- *
  * @deprecated as of FlatPress 1.2 - still here only to be able to update pre-1.2 credentials
  */
 define('HASHSALT_FILE', CONFIG_DIR . 'hashsalt.conf.php');
@@ -90,10 +90,13 @@ define('CACHE_DIR', FP_CONTENT . 'cache/');
 define('FP_SMARTYPLUGINS_DIR', ABS_PATH . FP_INCLUDES . 'fp-smartyplugins/');
 
 define('FP_INTERFACE', 'fp-interface/');
+
 // theme dir
 define('THEMES_DIR', FP_INTERFACE . 'themes/');
+
 // language files
 define('LANG_DIR', FP_INTERFACE . 'lang/');
+
 // misc forms
 define('SHARED_TPLS', ABS_PATH . FP_INTERFACE . 'sharedtpls/');
 
@@ -111,6 +114,7 @@ define('LOCKFILE', FP_CONTENT . '%%setup.lock');
 
 // Here is where all the uploaded images will be saved
 define('IMAGES_DIR', FP_CONTENT . 'images/');
+
 // Here is where all the attachments will be saved
 define('ATTACHS_DIR', FP_CONTENT . 'attachs/');
 
@@ -120,13 +124,27 @@ include (LANG_DIR . 'browserlang.php');
 define('LANG_DEFAULT', $browserLang);
 define('BPT_SORT', SORT_DESC);
 
-// Generates for your scripts in plugins and templates
-// a random hexadecimal value for the nonce attribute
-// https://wiki.selfhtml.org/wiki/HTML/Attribute/nonce
+/**
+ * Generates for your scripts in plugins and templates
+ * a random hexadecimal value for the nonce attribute
+ * https://wiki.selfhtml.org/wiki/HTML/Attribute/nonce
+ */
 define('RANDOM_HEX', bin2hex(random_bytes(18)));
 
 $fp_script_name = (string)($_SERVER ['SCRIPT_NAME'] ?? '/');
 define('BLOG_ROOT', ('/' === ($v = dirname($fp_script_name)) ? $v : $v . '/'));
+
+/**
+ * APCu support
+ * For detailed information, see:
+ * docs/APCu_Installation_and_Activation.md
+ * docs/FlatPress_APCu_Cache_Overview.md
+ *
+ * For small APCu pools (< 32 MiB), set to 600–1800 s;
+ * for standard pools, set it to 1800–3600 s;
+ * for large pools, set it to 3600–7200 s.
+ */
+$_ENV ['FP_APCU_IO_TTL'] = 3600;
 
 // Core APCu Helpers and Namespacing
 include (INCLUDES_DIR . 'core.apcu.php');

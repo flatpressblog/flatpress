@@ -1,6 +1,6 @@
 <?php
 /**
- * Returns the FlatPress APCu namespace ID for this instance, or “” if APCu is disabled.
+ * Returns the FlatPress APCu namespace ID for this instance, or '' if APCu is disabled.
  * Random, stored under deterministic bootstrap key (sha1(ABS_PATH)).
  */
 function apcu_ns(): string {

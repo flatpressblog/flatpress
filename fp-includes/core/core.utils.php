@@ -299,10 +299,31 @@ function utils_redirect($location = "", $absolute_path = false, $red_type = null
 		$location = BLOG_BASEURL . $location;
 	}
 
+	// Hardening: prevent HTTP response splitting via CRLF injection.
+	$location = str_replace(array("\r", "\n"), '', (string) $location);
+
+	// Allow callers to specify an explicit HTTP redirect status code.
+	$status = null;
+	if ($red_type !== null) {
+		$status = (int) $red_type;
+		// Only accept 3xx redirect codes; ignore everything else.
+		if ($status < 300 || $status > 399) {
+			$status = null;
+		}
+	}
+
 	if (function_exists('wp_redirect')) {
-		wp_redirect($location);
+		if ($status !== null) {
+			wp_redirect($location, $status);
+		} else {
+			wp_redirect($location);
+		}
 	} else {
-		header("Location: " . $location);
+		if ($status !== null) {
+			header("Location: " . $location, true, $status);
+		} else {
+			header("Location: " . $location);
+		}
 	}
 
 	exit();
