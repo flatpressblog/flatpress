@@ -498,9 +498,9 @@ input#subject {
 }
 
 #admin-entry-categories ul ul {
-	margin: .25rem 0 0 .75rem;
-	padding-left: .85rem;
-	border-left: 1px solid var(--fp-border, #e2e8f0);
+	margin: .25rem 0 0 .35rem;
+	padding-left: 1.85rem;
+	border-left: 1px solid var(--lt-color-gray-500, #8f96a3);
 }
 
 /* Theme panel: responsive grid instead of floats */
@@ -562,7 +562,7 @@ dl.option-set dt,
 }
 
 dl.option-set dt {
-	font-weight: 800;
+	font-weight: 500;
 	color: var(--fp-muted, #475569);
 }
 
@@ -1511,4 +1511,15 @@ body[class^="admin-"] #footer {
 
 #plugin_tag {
 	display: block !IMPORTANT;
+}
+
+/* Comment center plugin */
+body.admin-entry-commentcenter dl.option-set {
+	align-items: baseline;
+}
+
+/* Newsletter plugin */
+body.admin-plugin-newsletter #admin-content td,
+body.admin-plugin-newsletter #admin-content th {
+	text-align: center;
 }

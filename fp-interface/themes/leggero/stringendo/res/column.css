@@ -150,7 +150,7 @@ html.fp-fadein body:not([class^="admin-"]) .stringendo-widgets-under-main.string
 
 #column ul ul,
 .stringendo-widgets-under-main ul ul {
-	border-left: 2px solid rgba(2, 6, 23, .06);
+	border-left: 1px solid var(--lt-color-gray-400, #c2c9d6);
 	margin-left: .35rem;
 }
 

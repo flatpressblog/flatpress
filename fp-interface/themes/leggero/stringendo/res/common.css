@@ -279,7 +279,7 @@ body[class^="admin-"] #outer-container {
 h2.date {
 	margin: 0 0 var(--fp-space-2, .5rem) 0;
 	font-size: .85rem;
-	font-weight: 800;
+	font-weight: 500;
 	color: var(--fp-muted, #475569);
 	letter-spacing: .06em;
 	text-transform: uppercase;
@@ -425,8 +425,13 @@ s {
 /* Tables (front-end and some plugin outputs) */
 .entry table,
 table {
-	border-collapse: collapse;
 	max-width: 100%;
+	margin-bottom: 2em;
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	border-radius: 10px;
+	border: 1px solid var(--fp-border, #e2e8f0);
 }
 
 .entry table th,
@@ -436,13 +441,22 @@ table td {
 	border: 1px solid var(--fp-border, #e2e8f0);
 	padding: .55rem .65rem;
 	vertical-align: top;
+	background: var(--fp-surface, #ffffff);
 }
 
 .entry table th,
 table th {
 	background: var(--fp-surface-2, #f1f5f9);
-	font-weight: 800;
+	font-weight: 700;
 }
+
+#main table tr:first-child th:last-child { border-top-right-radius: 10px }
+
+#main table tr:first-child th:first-child { border-top-left-radius: 10px }
+
+#main table tr:last-child td:last-child { border-bottom-right-radius: 10px }
+
+#main table tr:last-child td:first-child { border-bottom-left-radius: 10px }
 
 /* Entry footer */
 .entry ul.entry-footer {
@@ -472,7 +486,7 @@ table th {
 
 .entry-footer strong {
 	color: var(--fp-text, #0f172a);
-	font-weight: 800;
+	font-weight: 700;
 }
 
 .entry-footer a {
@@ -698,9 +712,9 @@ legend {
 }
 
 #search fieldset ul ul {
-	margin-top: .35rem;
+	margin: .25rem 0 0 .30rem;
 	padding-left: 1rem;
-	border-left: 2px solid var(--fp-border, #e2e8f0);
+	border-left: 1px solid var(--lt-color-gray-400, #c2c9d6);
 }
 
 #search fieldset ul li {
