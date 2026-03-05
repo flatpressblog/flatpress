@@ -291,6 +291,9 @@ if (is_https()) {
 	$scheme = "http://";
 }
 
+// Preserve the raw request URI for redirects/headers before HTML-escaping $_SERVER['REQUEST_URI']
+$GLOBALS ['RAW_REQUEST_URI'] = (string)($_SERVER ['REQUEST_URI'] ?? '');
+
 // Compatibility with ISS
 $_SERVER ["REQUEST_URI"] = htmlspecialchars($_SERVER ["REQUEST_URI"] ?? '', ENT_QUOTES, "UTF-8");
 if ($_SERVER ["REQUEST_URI"] === '') {
@@ -656,4 +659,117 @@ if (!defined('BLOG_BASEURL')) {
 	}
 }
 
+/**
+ * Enforce HTTPS when the configured/derived BLOG_BASEURL is HTTPS.
+ * This is a canonical upgrade redirect (HTTP -> HTTPS) only.
+ *
+ * Rationale:
+ * - Prevent scheme split-brain (secure cookies/HSTS vs http base url).
+ * - Keep behavior consistent across web servers, CDNs, reverse proxies and load balancers.
+ *
+ * Notes:
+ * - No downgrade redirect (HTTPS -> HTTP).
+ * - Avoids redirect loops behind TLS-terminating proxies by only trusting proxy HTTPS
+ *   hints when there are proxy identity signals (or private REMOTE_ADDR).
+ */
+function enforce_https_if_configured(): void {
+	if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+		return;
+	}
+	if (headers_sent()) {
+		return;
+	}
+	if (!defined('BLOG_BASEURL')) {
+		return;
+	}
+	$parts = @parse_url((string)BLOG_BASEURL);
+	if (!is_array($parts) || strtolower((string)($parts ['scheme'] ?? '')) !== 'https') {
+		return;
+	}
+	// Already HTTPS (origin or accepted proxy detection)
+	if (is_https()) {
+		return;
+	}
+
+	// Loop-avoidance: if a TLS-terminating proxy already indicates HTTPS externally, do not redirect.
+	$remote = (string)($_SERVER ['REMOTE_ADDR'] ?? '');
+	$remote_is_private = (filter_var($remote, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false);
+	$fw = (string)($_SERVER ['HTTP_FORWARDED'] ?? '');
+	$xfp = strtolower((string)($_SERVER ['HTTP_X_FORWARDED_PROTO'] ?? ''));
+	$xssl = strtolower((string)($_SERVER ['HTTP_X_FORWARDED_SSL'] ?? ''));
+	$xs = strtolower((string)($_SERVER ['HTTP_X_FORWARDED_SCHEME'] ?? ''));
+	$cfv = (strpos((string)($_SERVER ['HTTP_CF_VISITOR'] ?? ''), '"scheme":"https"') !== false);
+	$proto_https = (($fw !== '' && preg_match('/(^|[;,\\s])proto\\s*=\\s*https(\\b|$)/i', $fw)) || in_array('https', array_map('trim', explode(',', $xfp)), true));
+	$hint_https = $proto_https || ($xssl === 'on') || ($xs === 'https') || $cfv;
+	$proxy_identity =
+		isset($_SERVER ['HTTP_VIA']) ||
+		isset($_SERVER ['HTTP_X_FORWARDED_FOR']) ||
+		isset($_SERVER ['HTTP_CF_RAY']) ||
+		isset($_SERVER ['HTTP_FASTLY_CLIENT_IP']) ||
+		isset($_SERVER ['HTTP_X_ARR_SSL']) ||
+		isset($_SERVER ['HTTP_X_AZURE_REF']);
+	if ($hint_https && ($remote_is_private || $proxy_identity)) {
+		return;
+	}
+
+	$host = (string)($parts ['host'] ?? '');
+	if ($host === '') {
+		return;
+	}
+	$port = (int)($parts ['port'] ?? 0);
+	$path_base = (string)($parts ['path'] ?? '/');
+	if ($path_base === '') {
+		$path_base = '/';
+	}
+	if ($path_base [0] !== '/') {
+		$path_base = '/' . $path_base;
+	}
+	if (substr($path_base, -1) !== '/') {
+		$path_base .= '/';
+	}
+
+	// Prefer the original/raw request URI (may include query). Fall back to current $_SERVER if missing.
+	$req_uri = (string)($GLOBALS ['RAW_REQUEST_URI'] ?? ($_SERVER ['REQUEST_URI'] ?? '/'));
+	$req_uri = str_replace(["\r", "\n"], '', $req_uri);
+	$req_uri = trim($req_uri);
+	if ($req_uri === '') {
+		$req_uri = '/';
+	}
+	// If the server/proxy provides an absolute URI, reduce it to path+query.
+	if (preg_match('~^https?://~i', $req_uri)) {
+		$p = @parse_url($req_uri);
+		if (is_array($p)) {
+			$req_uri = (string)($p ['path'] ?? '/');
+			if ($req_uri === '') {
+				$req_uri = '/';
+			}
+			if (isset($p ['query']) && $p ['query'] !== '') {
+				$req_uri .= '?' . $p ['query'];
+			}
+		}
+	}
+	if ($req_uri [0] !== '/') {
+		$req_uri = '/' . ltrim($req_uri, '/');
+	}
+
+	// Keep redirects within the blog base path to avoid misrouting on multi-app hosts.
+	$target_path = (strpos($req_uri, $path_base) === 0) ? $req_uri : $path_base;
+
+	$host_for_url = $host;
+	if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false) {
+		$host_for_url = '[' . $host . ']';
+	}
+	$target = 'https://' . $host_for_url;
+	if ($port > 0 && $port !== 443) {
+		$target .= ':' . $port;
+	}
+	$target .= $target_path;
+
+	$method = strtoupper((string)($_SERVER ['REQUEST_METHOD'] ?? 'GET'));
+	$status = ($method === 'GET' || $method === 'HEAD') ? 301 : 307;
+	header('Location: ' . $target, true, $status);
+	exit;
+}
+
+enforce_https_if_configured();
 ?>
