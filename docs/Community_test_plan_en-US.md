@@ -36,7 +36,10 @@
 
 These checks cover changes introduced after commit `0be77be` (Jan 25, 2026) and later.
 
-1) **PhotoSwipe: overlay behavior and external image URLs**
+1) **Blog base URL with HTTPS**
+- [ ] Enter http://<your-flatpress> in the address bar of your browser. Expected behavior: Redirect to https://<your-flatpress>
+
+2) **PhotoSwipe: overlay behavior and external image URLs**
 - [ ] Upload at least 3 local images, create a gallery, and insert it into a post (BBCode toolbar or `[gallery]`).
 - [ ] Open the post in the frontend and click an image to open the PhotoSwipe overlay.
 - [ ] While the overlay is open, try to scroll the page (mouse wheel / touch). **Expected:** the background page must not scroll; the overlay stays stable; no console errors.
@@ -46,25 +49,25 @@ These checks cover changes introduced after commit `0be77be` (Jan 25, 2026) and 
   (any external JPG/PNG/WebP should also work).
 - [ ] Open that post and click the external image to open the PhotoSwipe overlay. **Expected:** no PHP warnings; no tiny/incorrect “thumb” sizing; the image opens normally.
 
-2) **Feeds: galleries must be visible and readable**
+3) **Feeds: galleries must be visible and readable**
 - [ ] Open the blog RSS2 feed: ``<your-blog>/?x=feed:rss2``
 - [ ] Open the blog Atom feed: ``<your-blog>/?x=feed:atom``
 - [ ] Find the post with the gallery in each feed. **Expected:** gallery images are present and the feed remains readable (no broken layout, no invalid XML errors in the browser/feed reader).
 
-3) **Gallery Captions: no double-escaping in image titles**
+4) **Gallery Captions: no double-escaping in image titles**
 - [ ] Open the admin area → Uploader → Gallery captions.
 - [ ] Add a caption containing special characters, e.g. ``Fish & Chips "Special"`` and save.
 - [ ] Check the caption in the uploader preview and in the frontend gallery view. **Expected:** ``&`` stays ``&`` (no ``&amp;``); no warnings/errors.
 
-4) **No “ghost” next/prev navigation**
+5) **No “ghost” next/prev navigation**
 - [ ] **Expected:** no empty navigation bar and no “ghost buttons” when ``{nextpage}`` / ``{prevpage}`` have no output.
 
-5) **BBCode: code blocks must not double-encode entities**
+6) **BBCode: code blocks must not double-encode entities**
 - [ ] Create a new post containing a code block, e.g.  
   ``[code]<b>&</b> &cent; <tag>[/code]``
 - [ ] Save and open the post in the frontend. **Expected:** the code block shows the literal characters as text; entities are **not** converted to symbols and are **not** double-encoded.
 
-6) **Stringendo style: stable layout**
+7) **Stringendo style: stable layout**
 - [ ] Switch theme → Leggero → style **Stringendo**.
 
 
