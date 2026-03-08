@@ -1,4 +1,5 @@
 <link rel="stylesheet" type="text/css" href="{($mmurl|cat:'res/style.css')|ver:$smarty.const.SYSTEM_VER}">
+
 <script nonce="{$smarty.const.RANDOM_HEX}" src="{($mmurl|cat:'res/mediamanager.js')|ver:$smarty.const.SYSTEM_VER}" defer></script>
 
 <h2>{$plang.head}</h2>
@@ -33,7 +34,7 @@
 					&nbsp;
 				</td>
 				<td class="main-cell {if !empty($v.used_in_posts)}type-gallery{else}type-not-use{/if}">
-					<a class="link-general" href="admin.php?p=uploader&action=mediamanager&gallery={$v.name}">{$v.name}</a>
+					<a class="link-general" href="admin.php?p=uploader&action=mediamanager&gallery={$v.name|escape:'url'}">{$v.name}</a>
 				</td>
 				<td>
 				{if $v.usecount>0}
@@ -45,7 +46,7 @@
 				<td>{$v.size}</td>
 				<td>{$v.mtime}</td>
 				<td>
-					<a class="link-delete" href="{wp_nonce_url("{$mmbaseurl}&deletefile={$v.type}-{$v.name}", 'mediamanager_deletefile')}">{$plang.delete}</a>
+					<a class="link-delete" href="{wp_nonce_url("{$mmbaseurl}&deletefile={$v.type}-{$v.name|escape:'url'}", 'mediamanager_deletefile')}">{$plang.delete}</a>
 				</td>
 			</tr>
 		{/foreach}
@@ -80,7 +81,7 @@
 				<td>{$v.size}</td>
 				<td>{$v.mtime}</td>
 				<td>
-					<a class="link-delete" href="{wp_nonce_url("{$mmbaseurl}&deletefile={$v.type}-{$v.name}", 'mediamanager_deletefile')}">{$plang.delete}</a>
+					<a class="link-delete" href="{wp_nonce_url("{$mmbaseurl}&deletefile={$v.type}-{$v.name|escape:'url'}", 'mediamanager_deletefile')}">{$plang.delete}</a>
 				</td>
 			</tr>
 		{/foreach}
@@ -113,7 +114,7 @@
 
 	<p>
 		<label>{$plang.newgallery}:
-		<input type="text" name="mm-newgallery-name">
+		<input type="text" name="mm-newgallery-name" id="mm-newgallery-name" autocomplete="off">
 		</label>
 		<input type="submit" name="mm-newgallery" value="{$plang.add}">
 	</p>
