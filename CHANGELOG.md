@@ -100,6 +100,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - mbstring query for Smarty 5 added
 - Media Manager plugin: update to version 2.0.0
     - Fix Media Manager usage detection for images in subfolders and galleries. ([#547](https://github.com/flatpressblog/flatpress/issues/547))
+    - When entering a gallery name, spaces are converted to underscores for later processing. ([#837](https://github.com/flatpressblog/flatpress/issues/837))
 - PrettyURLs plugin: update to version 3.0.2
     - Unified 301 canonical redirect for plain ``?entry=<id>`` and plain ``?x=entry:<id>``. ([#104](https://github.com/flatpressblog/flatpress/issues/104))
     - Unified 301 canonical redirect for plain ``?page=<id>``, ``?page<n>``and ``x=feed:<rss2|atom>``. ([#93](https://github.com/flatpressblog/flatpress/issues/93))
