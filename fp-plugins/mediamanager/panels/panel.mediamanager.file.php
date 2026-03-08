@@ -517,18 +517,28 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 	 */
 	function onsubmit($data = NULL) {
 		if (isset($_POST ['mm-newgallery'])) {
-			$newgallery = strip_tags($_POST ['mm-newgallery-name']);
-			if ($newgallery == "") {
+			$newgalleryRaw = isset($_POST ['mm-newgallery-name']) ? (string) $_POST ['mm-newgallery-name'] : '';
+			$newgallery = strip_tags($newgalleryRaw);
+			$newgallery = trim($newgallery);
+
+			// Replace whitespace with underscores
+			$newgallery = (string) preg_replace('/\s+/u', '_', $newgallery);
+			$newgallery = (string) preg_replace('/_+/u', '_', $newgallery);
+			$newgallery = trim($newgallery, '_');
+
+			// Keep legacy sanitization
+			$newgallery = str_replace("/", "", $newgallery);
+			$newgallery = str_replace(".", "", $newgallery);
+
+			if ($newgallery === "") {
 				$this->smarty->assign('success', -3);
 				return 2;
 			}
-			$newgallery = str_replace("/", "", $newgallery);
-			$newgallery = str_replace(".", "", $newgallery);
-			// create images folder if not existant
+			// Create images folder if not existant
 			if (!file_exists(ABS_PATH . IMAGES_DIR)) {
 				mkdir(ABS_PATH . IMAGES_DIR);
 			}
-			// now create gallery folder
+			// Now create gallery folder
 			if (mkdir(ABS_PATH . IMAGES_DIR . $newgallery)) {
 				$this->smarty->assign('success', 3);
 			} else {

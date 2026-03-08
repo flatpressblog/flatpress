@@ -235,6 +235,40 @@
 		hidePreviewSoon(0);
 	}
 
+	function sanitizeGalleryName(name) {
+		if (typeof name !== 'string') {
+			return '';
+		}
+		// Replace any whitespace with underscores.
+		name = name.replace(/\s+/g, '_');
+		name = name.replace(/_+/g, '_');
+		name = name.replace(/^_+|_+$/g, '');
+		return name;
+	}
+
+	function initGalleryNameSanitizer() {
+		var input = document.querySelector('input[name="mm-newgallery-name"]');
+		if (!input) {
+			return;
+		}
+		var apply = function () {
+			var v = sanitizeGalleryName(input.value || '');
+			if (v !== input.value) {
+				input.value = v;
+			}
+		};
+		input.addEventListener('blur', apply);
+		var form = input.form || (input.closest ? input.closest('form') : null);
+		if (form) {
+			form.addEventListener('submit', function () {
+				apply();
+			});
+		}
+	}
+
+	// Script is loaded with `defer`, so the DOM is available.
+	initGalleryNameSanitizer();
+
 	var root = document.querySelector('table.entrylist') || document;
 
 	if (SUPPORTS_POINTER) {
