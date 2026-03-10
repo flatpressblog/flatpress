@@ -692,7 +692,7 @@ function seometataginfo_ensure_metafile(&$file_meta) {
 
 	$dir = dirname($file_meta);
 	if (!is_dir($dir)) {
-		@mkdir($dir, 0777, true);
+		@mkdir($dir, DIR_PERMISSIONS, true);
 	}
 
 	if (file_exists($file_meta)) {
@@ -701,7 +701,7 @@ function seometataginfo_ensure_metafile(&$file_meta) {
 
 	$defaultFile = SEOMETA_DEFAULT_DIR . 'metatags.ini';
 	if (!is_dir(SEOMETA_DEFAULT_DIR)) {
-		@mkdir(SEOMETA_DEFAULT_DIR, 0777, true);
+		@mkdir(SEOMETA_DEFAULT_DIR, DIR_PERMISSIONS, true);
 	}
 
 	if (!file_exists($defaultFile)) {
