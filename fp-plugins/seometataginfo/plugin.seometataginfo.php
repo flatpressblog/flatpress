@@ -337,28 +337,35 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	$theme = $fp_config ['general'] ['theme'] ?? '';
 	$style = isset($fp_config ['general'] ['style']) && is_string($fp_config ['general'] ['style']) ? trim($fp_config ['general'] ['style']) : '';
 	$styleSegment = ($style !== '') ? ($style . '/') : '';
-	$previewImage = $BLOG_BASEURL . 'fp-interface/themes/' . $theme . '/' . $styleSegment . 'preview.png';
+	$previewImage = seometataginfo_url_join($BLOG_BASEURL, 'fp-interface/themes/' . $theme . '/' . $styleSegment . 'preview.png');
 
 	echo '
-	<!-- beginning of SEO Metatag Info -->' . "\n";
+		<!-- BOF SEO Metatag Info -->' . "\n";
 
 	if (SEOMETA_GEN_TITLE_META) {
 		$metatitle = apply_filters('wp_title', $fp_config ['general'] ['title'], trim($string ['sep']));
-		echo '	<meta name="title" content="' . htmlspecialchars($metatitle, ENT_QUOTES, $charset) . '">' . "\n";
+		echo '		<meta name="title" content="' . htmlspecialchars($metatitle, ENT_QUOTES, $charset) . '">' . "\n";
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '	<meta property="og:title" content="' . htmlspecialchars($metatitle, ENT_QUOTES, $charset) . '">' . "\n";
+			echo '		<meta property="og:title" content="' . htmlspecialchars($metatitle, ENT_QUOTES, $charset) . '">' . "\n";
 		}
 	}
 
 	if (SEOMETA_GEN_IMAGE_META) {
-		// The minimum permitted image size is 200 x 200 pixels.
-		// The size of the image file must not exceed 8 MB.
-		// Meh, the recommended aspect ratio is 1.91:1 otherwise parts will be cut off
+		/**
+		 * The minimum permitted image size is 200 x 200 pixels.
+		 * The size of the image file must not exceed 8 MB.
+		 * Meh, the recommended aspect ratio is 1.91:1 otherwise parts will be cut off
+		 */
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '	<meta property="og:image" content="'. $previewImage . '">' . "\n";
-			echo '	<meta property="og:image:url" content="'. $previewImage . '">' . "\n";
-			echo '	<meta property="og:image:width" content="800">' . "\n";
-			echo '	<meta property="og:image:height" content="600">' . "\n";
+			echo '		<meta property="og:image" content="' . htmlspecialchars($previewImage, ENT_QUOTES, $charset) . '">' . "\n";
+			echo '		<meta property="og:image:url" content="' . htmlspecialchars($previewImage, ENT_QUOTES, $charset) . '">' . "\n";
+			if (stripos($previewImage, 'https://') === 0) {
+				echo '		<meta property="og:image:secure_url" content="' . htmlspecialchars($previewImage, ENT_QUOTES, $charset) . '">' . "\n";
+			}
+			echo '		<meta property="og:image:type" content="image/png">' . "\n";
+			echo '		<meta property="og:image:alt" content="' . htmlspecialchars(($site_title !== '' ? $site_title : 'Preview'), ENT_QUOTES, $charset) . '">' . "\n";
+			echo '		<meta property="og:image:width" content="800">' . "\n";
+			echo '		<meta property="og:image:height" content="600">' . "\n";
 		}
 	}
 
@@ -383,28 +390,28 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	$encoded_description = htmlspecialchars($final_description, ENT_QUOTES, $charset);
 
 	# Now write the tags
-	echo '	<meta name="description" content="' . $encoded_description . '">' . "\n";
-	echo '	<meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
+	echo '		<meta name="description" content="' . $encoded_description . '">' . "\n";
+	echo '		<meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
 	if (SEOMETA_GEN_OPEN_GRAPH) {
-		echo '	<meta property="og:description" content="' . $encoded_description . '">' . "\n";
+		echo '		<meta property="og:description" content="' . $encoded_description . '">' . "\n";
 	}
 	if (is_single()) {
-		echo '	<meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
+		echo '		<meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '	<meta property="og:type" content="article">' . "\n";
+			echo '		<meta property="og:type" content="article">' . "\n";
 		}
 	} else {
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '	<meta property="og:type" content="website">' . "\n";
+			echo '		<meta property="og:type" content="website">' . "\n";
 		}
 	}
 	if (SEOMETA_GEN_OPEN_GRAPH) {
-		echo '	<meta property="og:locale" content="' . $lang . '">' . "\n";
-		echo '	<meta property="og:site_name" content="' . $site_title . '">' . "\n";
+		echo '		<meta property="og:locale" content="' . $lang . '">' . "\n";
+		echo '		<meta property="og:site_name" content="' . $site_title . '">' . "\n";
 	}
 
 	if ($count > 0) {
-		echo '	<meta name="robots" content="';
+		echo '		<meta name="robots" content="';
 		$data = ($seo_noindex !== '0') ? 'NOINDEX,' : '';
 		$data .= ($seo_nofollow !== '0' ? 'NOFOLLOW,' : '');
 		$data .= ($seo_noarchive !== '0' ? 'NOARCHIVE,' : '');
@@ -414,17 +421,128 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		echo '">' . "\n";
 	}
 	if (SEOMETA_GEN_CANONICAL) {
-		$url = currentPageURL();
+		$url = seometataginfo_build_public_url($BLOG_BASEURL);
 		if (SEOMETA_HIDECOMMENTS === true) {
 			$url = preg_replace('/#comments/', '', $url);
 			$url = preg_replace('/comments\//', '', $url);
 		}
-		echo '	<link rel="canonical" href="' . $url . '">' . "\n";
+		echo '		<link rel="canonical" href="' . htmlspecialchars($url, ENT_QUOTES, $charset) . '">' . "\n";
 		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '	<meta property="og:url" content="' . $url . '">' . "\n";
+			echo '		<meta property="og:url" content="' . htmlspecialchars($url, ENT_QUOTES, $charset) . '">' . "\n";
 		}
 	}
-	echo '	<!-- end of SEO Metatag Info -->' . "\n";
+	echo '		<!-- EOF SEO Metatag Info -->' . "\n";
+}
+
+/**
+ * Joins a base URL with a relative path, guaranteeing exactly one slash.
+ */
+function seometataginfo_url_join($baseUrl, $path) {
+	$baseUrl = is_string($baseUrl) ? trim($baseUrl) : '';
+	$path = is_string($path) ? trim($path) : '';
+	if ($baseUrl === '') {
+		return $path;
+	}
+	return rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
+}
+
+/**
+ * Builds a stable, public-facing URL for canonical/og:url.
+ *
+ * Prefer the configured base URL (general.www) over SERVER_NAME to behave
+ * correctly behind proxies and on shared hosting, and strip common tracking
+ * parameters that would otherwise create duplicate URLs for social scrapers.
+ */
+function seometataginfo_build_public_url($baseUrl) {
+	$baseUrl = is_string($baseUrl) ? trim($baseUrl) : '';
+	$url = currentPageURL();
+	$req = isset($_SERVER ['REQUEST_URI']) ? (string)$_SERVER ['REQUEST_URI'] : '';
+
+	if ($baseUrl !== '' && preg_match('~^https?://~i', $baseUrl) && $req !== '') {
+		$baseUrlNoSlash = rtrim($baseUrl, '/');
+		$basePath = parse_url($baseUrlNoSlash, PHP_URL_PATH);
+		$basePath = is_string($basePath) ? rtrim($basePath, '/') : '';
+
+		$reqPath = $req;
+		$reqQuery = '';
+		$posQ = strpos($req, '?');
+		if ($posQ !== false) {
+			$reqPath = substr($req, 0, $posQ);
+			$reqQuery = substr($req, $posQ);
+		}
+
+		$relPath = $reqPath;
+		if ($basePath !== '' && $basePath !== '/' && strpos($reqPath, $basePath) === 0) {
+			$relPath = substr($reqPath, strlen($basePath));
+		}
+		$relPath = ltrim($relPath, '/');
+		$url = $baseUrlNoSlash . '/' . $relPath . $reqQuery;
+	}
+
+	return seometataginfo_strip_tracking_params($url);
+}
+
+/**
+ * Removes common tracking parameters (fbclid/utm/gclid/...) from an URL.
+ */
+function seometataginfo_strip_tracking_params($url) {
+	if (!is_string($url) || $url === '') {
+		return $url;
+	}
+	$parts = parse_url($url);
+	if (!$parts || empty($parts ['query'])) {
+		return $url;
+	}
+
+	$query = array();
+	parse_str((string)$parts ['query'], $query);
+	$stripKeys = array(
+		'fbclid',
+		'gclid',
+		'yclid',
+		'mc_cid',
+		'mc_eid',
+		'igshid',
+		'_hsenc',
+		'_hsmi',
+		'utm_source',
+		'utm_medium',
+		'utm_campaign',
+		'utm_term',
+		'utm_content',
+	);
+	foreach ($stripKeys as $k) {
+		if (array_key_exists($k, $query)) {
+			unset($query [$k]);
+		}
+	}
+
+	$newQuery = http_build_query($query);
+	$rebuilt = '';
+	if (!empty($parts ['scheme'])) {
+		$rebuilt .= $parts ['scheme'] . '://';
+	}
+	if (!empty($parts ['user'])) {
+		$rebuilt .= $parts ['user'];
+		if (!empty($parts ['pass'])) {
+			$rebuilt .= ':' . $parts ['pass'];
+		}
+		$rebuilt .= '@';
+	}
+	if (!empty($parts ['host'])) {
+		$rebuilt .= $parts ['host'];
+	}
+	if (!empty($parts ['port'])) {
+		$rebuilt .= ':' . $parts ['port'];
+	}
+	$rebuilt .= isset($parts ['path']) ? $parts ['path'] : '';
+	if ($newQuery !== '') {
+		$rebuilt .= '?' . $newQuery;
+	}
+	if (!empty($parts ['fragment'])) {
+		$rebuilt .= '#' . $parts ['fragment'];
+	}
+	return $rebuilt;
 }
 
 function process_meta($file_meta, $type, $id, $sep) {
@@ -516,7 +634,7 @@ function process_category_meta() {
  * Checks if the category with the given ID exists
  *
  * @param int $cat_id
- *			the category ID
+ *   the category ID
  * @return boolean <code>true</code> if the category exists; <code>false</code> otherwise
  */
 function seometa_category_id_exists($cat_id) {
@@ -560,6 +678,56 @@ function seometataginfo_cache_get($id) {
 	return isset($GLOBALS ['seometataginfo_entry_cache'] [$id]) ? $GLOBALS ['seometataginfo_entry_cache'] [$id] : null;
 }
 
+/**
+ * Ensures that a metatags.ini file exists.
+ *
+ * If a page-specific file is missing, copy defaults from default/metatags.ini.
+ * This prevents missing OpenGraph tags on pages where the admin UI has not
+ * explicitly created metatags yet (notably the blog home page).
+ */
+function seometataginfo_ensure_metafile(&$file_meta) {
+	if (!is_string($file_meta) || $file_meta === '') {
+		return;
+	}
+
+	$dir = dirname($file_meta);
+	if (!is_dir($dir)) {
+		@mkdir($dir, 0777, true);
+	}
+
+	if (file_exists($file_meta)) {
+		return;
+	}
+
+	$defaultFile = SEOMETA_DEFAULT_DIR . 'metatags.ini';
+	if (!is_dir(SEOMETA_DEFAULT_DIR)) {
+		@mkdir(SEOMETA_DEFAULT_DIR, 0777, true);
+	}
+
+	if (!file_exists($defaultFile)) {
+		$metatags = "[meta]\n";
+		$metatags .= "description=\n";
+		$metatags .= "keywords=\n";
+		$metatags .= "noindex=0\n";
+		$metatags .= "nofollow=0\n";
+		$metatags .= "noarchive=0\n";
+		$metatags .= "nosnippet=0\n";
+		@io_write_file($defaultFile, $metatags);
+	}
+
+	$src = file_exists($defaultFile) ? io_load_file($defaultFile) : '';
+	if (!is_string($src) || trim($src) === '') {
+		$src = "[meta]\n";
+		$src .= "description=\n";
+		$src .= "keywords=\n";
+		$src .= "noindex=0\n";
+		$src .= "nofollow=0\n";
+		$src .= "noarchive=0\n";
+		$src .= "nosnippet=0\n";
+	}
+	@io_write_file($file_meta, $src);
+}
+
 function plugin_seometataginfo_head($file_meta) {
 	global $fpdb, $fp_params, $fp_config, $smarty;
 
@@ -593,8 +761,20 @@ function plugin_seometataginfo_head($file_meta) {
 			}
 		}
 
-		if (!file_exists($file_meta)) {
-			return;
+		/**
+		 * Ensure we always output SEO/OpenGraph meta tags.
+		 * If a page-specific metatags.ini is missing, fall back to defaults and
+		 * create the file so it can be customized later.
+		 */
+		seometataginfo_ensure_metafile($file_meta);
+		if (!is_string($file_meta) || $file_meta === '' || !file_exists($file_meta)) {
+			$file_meta = SEOMETA_DEFAULT_DIR . 'metatags.ini';
+			seometataginfo_ensure_metafile($file_meta);
+			if (!file_exists($file_meta)) {
+				// Last-resort fallback: still output basic meta tags without touching the filesystem.
+				output_metatags('', '', '0', '0', '0', '0');
+				return;
+			}
 		}
 
 		$cfg = new iniParser($file_meta);

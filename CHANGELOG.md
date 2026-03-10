@@ -95,6 +95,7 @@ Smarty 5 now always runs in multibyte mode. Make sure you use the PHP [multibyte
     - Fixes "Invalid CSRF token" when the widget is visible in the admin area footer.
 - Seo Metatag Info plugin: update to version 2.2.5
     - Fixed: Theme without style causes PHP warning
+    - Preview image is reliably displayed in social media posts ([#841](https://github.com/flatpressblog/flatpress/pull/841))
 - Support plugin: update to version 1.1.1
     - Fixed: Theme without style causes PHP warning
     - mbstring query for Smarty 5 added
