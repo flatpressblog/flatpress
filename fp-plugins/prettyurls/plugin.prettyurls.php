@@ -519,20 +519,23 @@ class Plugin_PrettyURLs {
 		$hasHt = is_file($htPath);
 
 		/**
-		 * Initially, neither PATH_INFO nor Pretty is set in Automatic mode,
-		 * because although we check whether the web server is capable,
-		 * we cannot reliably check whether all conditions are actually met.
+		 * For non-index requests, e.g. contact.php or search.php, we use the preview detector, which simulates a
+		 * normal blog index request and derives the frontend URL mode from this context.
+		 * Explicitly configured modes (1/2/3) are always retained unchanged.
 		 */
-
-		// If not configured or automatic, check htaccess
 		if ($opt === null || $opt === 0) {
-			// If htaccess exists, then Pretty (3), otherwise HTTP Get (2)
-			$opt = $hasHt ? 3 : 2;
-		}
-
-		// Resolve effective mode once, then apply mapping
-		if ($opt === null || $opt === 0 || $opt === 3) {
-			$opt = (int) $this->auto_mode_detect();
+			$isIndexRequest = defined('MOD_INDEX');
+			$scriptName = isset($_SERVER ['SCRIPT_NAME']) ? (string) $_SERVER ['SCRIPT_NAME'] : '';
+			if (!$isIndexRequest || substr($scriptName, -9) !== 'index.php') {
+				$opt = (int) $this->auto_mode_detect_preview();
+			} else {
+				$opt = (int) $this->auto_mode_detect();
+			}
+		} else {
+			$opt = (int) $opt;
+			if ($opt === 3 && !$hasHt) {
+				$opt = 2;
+			}
 		}
 
 		switch ($opt) {
