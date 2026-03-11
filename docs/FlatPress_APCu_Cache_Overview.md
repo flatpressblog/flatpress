@@ -628,7 +628,7 @@ Medium. Avoids repeated expensive environment probing when switching between URL
 ### 5.1 Instance Namespace Bootstrap – `fp:ns:*`
 
 **Prefix:** `fp:ns:<sha1(base_path)>`  
-**File:** `fp-includes/core/core.fileio.php`  
+**File:** `fp-includes/core/core.apcu.php`  
 
 - Holds the current APCu namespace ID (`FP_APCU_NS`) for this FlatPress instance.
 - Written once per namespace rotation; rarely changes.
