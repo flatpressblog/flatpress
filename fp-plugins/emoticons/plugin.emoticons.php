@@ -9,30 +9,30 @@
  */
 
 global $plugin_emoticons;
-// Assigns markdown to HTML Entity
+// Assigns markdown to emoticon
 $plugin_emoticons = array(
-	':smile:' => '&#128516;',
-	':smiley:' => '&#128515;',
-	':wink:' => '&#128521;',
-	':blush:' => '&#128522;',
-	':grin:' => '&#128513;',
-	':smirk:' => '&#128527;',
-	':heart_eyes:' => '&#128525;',
-	':sunglasses:' => '&#128526;',
-	':laughing:' => '&#128518;',
-	':joy:' => '&#128514;',
-	':neutral_face:' => '&#128528;',
-	':flushed:' => '&#128563;',
-	':hushed:' => '&#128558;',
-	':dizzy_face:' => '&#128565;',
-	':cry:' => '&#128546;',
-	':persevere:' => '&#128547;',
-	':worried:' => '&#128543;',
-	':angry:' => '&#128544;',
-	':mag:' => '&#128269;',
-	':hot_beverage:' => '&#9749;',
-	':exclamation:' => '&#10071;',
-	':question:' => '&#10067;'
+	':smile:' => '😄',
+	':smiley:' => '😃',
+	':wink:' => '😉',
+	':blush:' => '😊',
+	':grin:' => '😁',
+	':smirk:' => '😏',
+	':heart_eyes:' => '😍',
+	':sunglasses:' => '😎',
+	':laughing:' => '😆',
+	':joy:' => '😂',
+	':neutral_face:' => '😐',
+	':flushed:' => '😳',
+	':hushed:' => '😮',
+	':dizzy_face:' => '😵',
+	':cry:' => '😢',
+	':persevere:' => '😣',
+	':worried:' => '😟',
+	':angry:' => '😠',
+	':mag:' => '🔍',
+	':hot_beverage:' => '☕',
+	':exclamation:' => '❗',
+	':question:' => '❓'
 );
 
 // Outputs the editor toolbar
