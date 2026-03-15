@@ -1,4 +1,4 @@
-# Currently testing: [FlatPress 1.5 "Stringendo" Release Candidate 2](https://github.com/flatpressblog/flatpress/releases/tag/1.5.rc2)
+# 2026-03-15: [FlatPress 1.5 "Stringendo"](https://github.com/flatpressblog/flatpress/releases/tag/1.5)
 ## Changed requirements
 - FlatPress 1.5 runs under PHP up to **8.5**; minimum required PHP version increases to **7.2**.
 
