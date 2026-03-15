@@ -158,10 +158,10 @@ function remove_bb_code($text) {
  * from newer to older :P
  *
  * @param $entryid string
- *			entry id i.e. entryNNNNNN-NNNNNN
+ *   entry id i.e. entryNNNNNN-NNNNNN
  * @param $comment array
- *			where $comment[0] is $commentid i.e. commentNNNNNN-NNNNNN
- *			and $comment[1] is the actual content array
+ *   where $comment[0] is $commentid i.e. commentNNNNNN-NNNNNN
+ *   and $comment[1] is the actual content array
  */
 function plugin_lastcomments_cache($entryid, $comment) {
 
@@ -364,21 +364,27 @@ function plugin_lastcomments_rssinit() {
 		$dynamic_title = $lang ['plugin'] ['lastcomments'] ['last'] . ' ' . $lastcomments_count . ' ' . $lang ['plugin'] ['lastcomments'] ['comments'];
 
 		// Register all Smarty modifier functions used by the feed-templates
-		if (!isset($smarty->registered_plugins['modifier']['date'])) {
+		if (!isset($smarty->registered_plugins['modifier'] ['date'])) {
 			$smarty->registerPlugin('modifier', 'date', 'date');
 		}
-		if (!isset($smarty->registered_plugins['modifier']['date_rfc3339'])) {
+		if (!isset($smarty->registered_plugins['modifier'] ['date_rfc3339'])) {
 			$smarty->registerPlugin('modifier', 'date_rfc3339', 'theme_smarty_modifier_date_rfc3339');
 		}
-		if (!isset($smarty->registered_plugins['modifier']['fix_encoding_issues'])) {
+		if (!isset($smarty->registered_plugins['modifier'] ['fix_encoding_issues'])) {
 			// This modifier converts characters such as Ã¤ to ä or &#8220; to “. See core.language.php
 			$smarty->registerPlugin('modifier', 'fix_encoding_issues', 'fix_encoding_issues');
+		}
+		if (!isset($smarty->registered_plugins['modifier'] ['wp_specialchars'])) {
+			$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
 		}
 		if (function_exists('BBCode')) {
 			register_modifier_bbcode();
 		}
 		$smarty->registerPlugin('modifier', 'cmnt', 'smarty_modifier_cmnt');
 		$smarty->registerPlugin('modifier', 'remove_bb_code', 'remove_bb_code');
+		$smarty->registerPlugin('modifier', 'plugin_lastcomments_feed_title', 'plugin_lastcomments_feed_title');
+		$smarty->registerPlugin('modifier', 'plugin_lastcomments_feed_comment_rss', 'plugin_lastcomments_feed_comment_rss');
+		$smarty->registerPlugin('modifier', 'plugin_lastcomments_feed_comment_atom', 'plugin_lastcomments_feed_comment_atom');
 
 		$smarty->assign('fp_config', $fp_config);
 		$smarty->assign('flatpress', array(
@@ -426,6 +432,52 @@ function smarty_modifier_cmnt($string, $modifier_name) {
 		return get_comments_link($string);
 	}
 	return $string;
+}
+
+/**
+ * Applies the standard title filter chain for LastComments feed titles.
+ *
+ * @param mixed $subject Raw entry title from the cache/query.
+ * @return string Filtered title string.
+ */
+function plugin_lastcomments_feed_title($subject) {
+	if (!is_string($subject) || $subject === '') {
+		return '';
+	}
+
+	return (string) apply_filters('the_title', $subject);
+}
+
+/**
+ * Applies the standard comment filter chain for LastComments RSS descriptions.
+ *
+ * @param mixed $content Raw comment content.
+ * @return string Filtered comment HTML suitable for RSS descriptions.
+ */
+function plugin_lastcomments_feed_comment_rss($content) {
+	if (!is_string($content) || $content === '') {
+		return '';
+	}
+
+	return trim((string) apply_filters('comment_text', $content));
+}
+
+/**
+ * Builds a plain-text Atom summary from the standard comment filter chain.
+ *
+ * @param mixed $content Raw comment content.
+ * @return string Plain-text summary suitable for Atom.
+ */
+function plugin_lastcomments_feed_comment_atom($content) {
+	$filtered = plugin_lastcomments_feed_comment_rss($content);
+	if ($filtered === '') {
+		return '';
+	}
+
+	$summary = strip_tags($filtered);
+	$summary = preg_replace('/\s+/u', ' ', trim($summary));
+
+	return is_string($summary) ? $summary : trim($filtered);
 }
 
 /**

@@ -40,16 +40,17 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 	{/if}
 
 	{foreach from=$lastcomments_list item=comment}
+
 	<entry>
-		<title>{$comment.subject|escape:"html"}</title>
-		<link href="{$smarty.const.BLOG_BASEURL}{$comment.entry|cmnt:comments_link}#{$comment.id}" />
-		<id>{$smarty.const.BLOG_BASEURL}{$comment.entry|cmnt:comments_link}#{$comment.id}</id>
+		<title>{$comment.subject|plugin_lastcomments_feed_title|escape:"html"}</title>
+		<link href="{$comment.entry|cmnt:comments_link|escape:'html'}#{$comment.id}" />
+		<id>{$comment.entry|cmnt:comments_link|escape:'html'}#{$comment.id}</id>
 		<published>{$comment.date|date_format:"%Y-%m-%dT%H:%M:%SZ"}</published>
 		<updated>{$comment.date|date_format:"%Y-%m-%dT%H:%M:%SZ"}</updated>
 		<summary type="xhtml">
 			<div xmlns="http://www.w3.org/1999/xhtml">
 				<![CDATA[
-				{$comment.name|escape:"html"}: {$comment.content|remove_bb_code|strip_tags|strip|escape:"html"}
+				{$comment.name|escape:"html"}: {$comment.content|plugin_lastcomments_feed_comment_atom|escape:"html"|fix_encoding_issues}
 				]]>
 			</div>
 		</summary>
@@ -66,5 +67,6 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 		</author>
 	</entry>
+
 	{/foreach}
 </feed>

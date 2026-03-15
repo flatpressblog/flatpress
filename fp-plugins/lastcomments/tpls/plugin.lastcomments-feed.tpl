@@ -36,22 +36,25 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 		<generator>FlatPress</generator>
 			{foreach from=$lastcomments_list item=comment}
+
 			<item>
 			{assign var=comm_link value=$comment.entry|cmnt:comments_link}
-				<title>{$comment.subject|escape:'html'}</title>
-				<link>{$smarty.const.BLOG_BASEURL|escape:'html'}{$comm_link|escape:'html'}#{$comment.id}</link>
+
+				<title>{$comment.subject|plugin_lastcomments_feed_title|escape:'html'}</title>
+				<link>{$comm_link|escape:'html'}#{$comment.id}</link>
 				<description>
 					<![CDATA[
-					{$comment.name|escape:'html'}: {$comment.content|bbcode}
+					{$comment.name|escape:'html'}: {$comment.content|plugin_lastcomments_feed_comment_rss|fix_encoding_issues}
 					]]>
 				</description>
 
-				<guid isPermaLink="true">{$smarty.const.BLOG_BASEURL|escape:'html'}{$comm_link|escape:'html'}#{$comment.id}</guid>
+				<guid isPermaLink="true">{$comm_link|escape:'html'}#{$comment.id}</guid>
 
 				<dc:creator>{$comment.name|escape:'html'}</dc:creator>
 
 				<pubDate>{$comment.date}</pubDate>
 			</item>
+
 			{/foreach}
 	</channel>
 </rss>

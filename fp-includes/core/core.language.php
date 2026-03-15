@@ -380,6 +380,82 @@ function fp_decode_named_entities_only($text) {
 }
 
 /**
+ * Returns the Unicode codepoint for a single UTF-8 character.
+ *
+ * @param string $char Single UTF-8 character.
+ * @return int|null Unicode codepoint or null if it cannot be determined.
+ */
+function fp_utf8_codepoint($char) {
+	if (!is_string($char) || $char === '') {
+		return null;
+	}
+
+	$ucs4 = false;
+	if (function_exists('mb_convert_encoding')) {
+		$ucs4 = @mb_convert_encoding($char, 'UCS-4BE', 'UTF-8');
+	} elseif (function_exists('iconv')) {
+		$ucs4 = @iconv('UTF-8', 'UCS-4BE', $char);
+	}
+
+	if (!is_string($ucs4) || strlen($ucs4) !== 4) {
+		return null;
+	}
+
+	$codepoint = unpack('Ncodepoint', $ucs4);
+	if (!is_array($codepoint) || !isset($codepoint ['codepoint'])) {
+		return null;
+	}
+
+	return (int) $codepoint ['codepoint'];
+}
+
+/**
+ * Replaces UTF-8 characters that cannot be represented in the target charset with numeric XML/HTML entities.
+ * Existing ASCII text and entities are left untouched.
+ *
+ * @param string $text UTF-8 text to inspect.
+ * @param string $targetEncoding Target output encoding, e.g. ISO-8859-1.
+ * @return string Text where unsupported codepoints are preserved as numeric entities.
+ */
+function fp_preserve_unrepresentable_chars_as_entities($text, $targetEncoding) {
+	$target = strtoupper(trim((string) $targetEncoding));
+	if (!is_string($text) || $text === '' || $target === '' || $target === 'UTF-8') {
+		return $text;
+	}
+
+	$converted = preg_replace_callback('/[^\x00-\x7F]/u', function($matches) use ($target) {
+		$char = $matches [0];
+		$enc = false;
+		$back = false;
+
+		if (function_exists('mb_convert_encoding')) {
+			$enc = @mb_convert_encoding($char, $target, 'UTF-8');
+			if ($enc !== false) {
+				$back = @mb_convert_encoding($enc, 'UTF-8', $target);
+			}
+		} elseif (function_exists('iconv')) {
+			$enc = @iconv('UTF-8', $target . '//IGNORE', $char);
+			if ($enc !== false && $enc !== '') {
+				$back = @iconv($target, 'UTF-8//IGNORE', $enc);
+			}
+		}
+
+		if ($enc !== false && $enc !== '' && $back !== false && $back === $char) {
+			return $char;
+		}
+
+		$codepoint = fp_utf8_codepoint($char);
+		if ($codepoint === null) {
+			return $char;
+		}
+
+		return '&#x' . strtoupper(dechex($codepoint)) . ';';
+	}, $text);
+
+	return is_string($converted) ? $converted : $text;
+}
+
+/**
  * Function: fix_encoding_issues
  *
  * Description:
@@ -703,6 +779,8 @@ function fp_output_encoding_handler($buffer) {
 
 	// Always convert to target character set with entity fallback
 	if ($target !== 'utf-8') {
+		$fixed = fp_preserve_unrepresentable_chars_as_entities($fixed, $target);
+
 		if (function_exists('mb_convert_encoding')) {
 			$prev = null;
 			if (function_exists('mb_substitute_character')) {
@@ -717,7 +795,7 @@ function fp_output_encoding_handler($buffer) {
 				@mb_substitute_character($prev);
 			}
 		} elseif (function_exists('iconv')) {
-			$conv = @iconv('UTF-8', strtoupper($target) . '//TRANSLIT//IGNORE', $fixed);
+			$conv = @iconv('UTF-8', strtoupper($target) . '//IGNORE', $fixed);
 			if ($conv !== false) {
 				$fixed = $conv;
 			}
