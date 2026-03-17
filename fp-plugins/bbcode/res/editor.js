@@ -150,7 +150,7 @@ function checkTab(evt) {
 }
 
 if (typeof(Event.observe) == 'function') {
-	//prototype is loaded
+	// prototype is loaded
 	Event.observe(window, 'load', tabKeyOverrider, false)
 }
 
@@ -330,7 +330,7 @@ function bb_font() {
 	}
 }
 function onClick_bb_font() {
-	insBBCode('font');
+	insBBCodeWithParams('font', '"Arial"');
 }
 
 // b
