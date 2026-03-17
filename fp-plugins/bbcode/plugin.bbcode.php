@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: BBCode
- * Version: 2.0.0
+ * Version: 2.0.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -26,6 +26,9 @@ function plugin_bbcode_startup() {
 	define('BBCODE_USE_EDITOR', isset($bbconf ['editor']) ? $bbconf ['editor'] : true);
 	define('BBCODE_MASK_ATTACHS', isset($bbconf ['maskattachs']) ? $bbconf ['maskattachs'] : true);
 	define('BBCODE_URL_MAXLEN', isset($bbconf ['url-maxlen']) ? $bbconf ['url-maxlen'] : 40);
+	if (!defined('BBCODE_DEFAULT_FONT_FAMILY')) {
+		define('BBCODE_DEFAULT_FONT_FAMILY', '"Arial"');
+	}
 	if (!file_exists('getfile.php')) {
 		define('BBCODE_USE_WRAPPER', false);
 	} else {
@@ -623,6 +626,32 @@ function do_bbcode_color($action, $attributes, $content, $params, $node_object) 
 }
 
 /**
+ * Resolves the font family configured for the BBCode font tag.
+ *
+ * Empty or missing attributes fall back to the plugin default so that
+ * [font]Text[/font] behaves like [font="Arial"]Text[/font].
+ *
+ * @param array $attributes
+ * @return string
+ */
+function bbcode_get_font_family(array $attributes) {
+	$fontFamily = array_key_exists('default', $attributes) ? trim((string) $attributes ['default']) : '';
+	$fontFamily = $fontFamily !== '' ? $fontFamily : BBCODE_DEFAULT_FONT_FAMILY;
+	$length = strlen($fontFamily);
+
+	if ($length >= 2) {
+		$firstCharacter = $fontFamily [0];
+		$lastCharacter = $fontFamily [$length - 1];
+
+		if (($firstCharacter === '"' && $lastCharacter === '"') || ($firstCharacter === "'" && $lastCharacter === "'")) {
+			$fontFamily = trim(substr($fontFamily, 1, -1));
+		}
+	}
+
+	return $fontFamily;
+}
+
+/**
  * Function to set font.
  *
  * @param string $action
@@ -634,9 +663,10 @@ function do_bbcode_color($action, $attributes, $content, $params, $node_object) 
  */
 function do_bbcode_font($action, $attributes, $content, $params, $node_object) {
 	if ($action === 'validate') {
-	return true;
+		return true;
 	}
-	return '<span style="font-family:' . $attributes ['default'] . ';">' . $content . '</span>';
+
+	return '<span style="font-family:' . htmlspecialchars(bbcode_get_font_family($attributes), ENT_QUOTES, 'UTF-8') . ';">' . $content . '</span>';
 }
 
 /**
