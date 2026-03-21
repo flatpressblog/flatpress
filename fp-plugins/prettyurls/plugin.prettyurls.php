@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: PrettyURLs
- * Version: 3.0.3
+ * Version: 3.0.4
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -279,10 +279,6 @@ class Plugin_PrettyURLs {
 	private function server_rewrite_active() {
 		$req = isset($_SERVER ['REQUEST_URI']) ? (string) $_SERVER ['REQUEST_URI'] : '';
 		$sn = isset($_SERVER ['SCRIPT_NAME']) ? (string) $_SERVER ['SCRIPT_NAME'] : '';
-		// Real redirection active when index.php is executed but not present in the request URI
-		if ($req !== '' && $sn !== '' && strpos($req, 'index.php') === false && substr($sn, -9) === 'index.php') {
-			return true; // vHost/server rewrite (e.g., nginx try_files, Apache vHost)
-		}
 		// IIS URL Rewrite / ISAPI_Rewrite
 		if (!empty($_SERVER ['IIS_WasUrlRewritten']) && $_SERVER ['IIS_WasUrlRewritten'] == '1') {
 			return true;
@@ -298,7 +294,34 @@ class Plugin_PrettyURLs {
 		if (!empty($_SERVER ['REDIRECT_URL'])) {
 			return true;
 		}
+		/**
+		 * Generic front-controller heuristic: hidden index.php can also happen via DirectoryIndex.
+		 * Only treat it as rewrite when an .htaccess is present or the request actually targets a routed path below BLOG_ROOT.
+		 */
+		if ($req !== '' && $sn !== '' && strpos($req, 'index.php') === false && substr($sn, -9) === 'index.php') {
+			if (is_file(rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess')) {
+				return true;
+			}
+			if ($this->request_has_route_path()) {
+				return true;
+			}
+		}
 		return false;
+	}
+
+	private function request_has_route_path() {
+		$req = isset($_SERVER ['REQUEST_URI']) ? (string) $_SERVER ['REQUEST_URI'] : '';
+		if ($req === '') {
+			return false;
+		}
+		$reqPath = (string) parse_url($req, PHP_URL_PATH);
+		if ($reqPath === '') {
+			$reqPath = $req;
+		}
+		$base = defined('BLOG_ROOT') ? (string) BLOG_ROOT : '';
+		$base = rtrim($base, '/');
+		$reqNorm = rtrim($reqPath, '/');
+		return $reqNorm !== '' && $reqNorm !== $base;
 	}
 
 	private function server_can_pathinfo() {
