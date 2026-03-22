@@ -1,3 +1,12 @@
+# Under development: FlatPress 1.5.1 "Stringendo" Bugfix release
+
+## Plugins
+### Bugfixes
+- PrettyURLs plugin: update to version 3.0.4
+    - Fixed an issue with automatic detection when no settings have been configured and there is no .htaccess file. ([#845](https://github.com/flatpressblog/flatpress/issues/845))
+- BBCode plugin: update to version 2.0.1
+    - Fixes the error that occurs when the `font` tag is used without specifying a font. ([#844](https://github.com/flatpressblog/flatpress/pull/844))
+
 # 2026-03-15: [FlatPress 1.5 "Stringendo"](https://github.com/flatpressblog/flatpress/releases/tag/1.5)
 ## Changed requirements
 - FlatPress 1.5 runs under PHP up to **8.5**; minimum required PHP version increases to **7.2**.
