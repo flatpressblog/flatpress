@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: BBCode
- * Version: 2.0.1
+ * Version: 2.0.2
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -91,6 +91,65 @@ add_action('wp_head', 'plugin_bbcode_head');
  * @param string $d
  * @return bool
  */
+
+/**
+ * Normalize a numeric image dimension attribute to a positive integer.
+ *
+ * @param mixed $value
+ * @return int
+ */
+function plugin_bbcode_normalize_dimension($value) {
+	if (!is_scalar($value)) {
+		return 0;
+	}
+
+	$value = trim((string) $value);
+	if ($value === '' || !preg_match('/^\d+$/', $value)) {
+		return 0;
+	}
+
+	return (int) $value;
+}
+
+/**
+ * Build an inline style override for explicit image dimensions if responsive theme CSS
+ * would otherwise override the requested height.
+ *
+ * For local images with generated thumbnails, the thumbnail bitmap already has the
+ * requested aspect ratio. In that case the additional style is not needed.
+ *
+ * @param array $attributes
+ * @param bool $image_is_local
+ * @param mixed $thumbpath
+ * @return string
+ */
+function plugin_bbcode_build_image_style(array $attributes, $image_is_local, $thumbpath) {
+	$requested_width = isset($attributes ['width']) ? plugin_bbcode_normalize_dimension($attributes ['width']) : 0;
+	$requested_height = isset($attributes ['height']) ? plugin_bbcode_normalize_dimension($attributes ['height']) : 0;
+
+	if ($requested_height < 1) {
+		return '';
+	}
+
+	if ($image_is_local && !empty($thumbpath)) {
+		return '';
+	}
+
+	$styles = array();
+
+	if ($requested_width > 0) {
+		$styles[] = 'width:' . $requested_width . 'px';
+		$styles[] = 'height:auto';
+		$styles[] = 'aspect-ratio:' . $requested_width . ' / ' . $requested_height;
+	} else {
+		$styles[] = 'width:auto';
+		$styles[] = 'height:' . $requested_height . 'px';
+	}
+
+	return ' style="' . implode('; ', $styles) . '"';
+}
+
+
 function bbcode_remap_url(&$d) {
 	// nothing to remap if given string is empty
 	if (empty($d)) {
@@ -322,7 +381,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		$height = (int) ($scalefact * $orig_h);
 	} elseif (isset($attributes ['height'])) {
 		// if only height is set we calc proportions
-		$scalefact = $orig_w ? ($attributes ['height'] / $orig_h) : 0;
+		$scalefact = $orig_h ? ($attributes ['height'] / $orig_h) : 0;
 		$height = (int) $attributes ['height'];
 		$width = (int) ($scalefact * $orig_w);
 	}
@@ -365,9 +424,10 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 	}
 	$src = $thumbpath ? (BLOG_BASEURL . $thumbpath) : $absolutepath;
 	$pop = $popup_start ? '' : ' title="' . $title . '"';
+	$img_style = plugin_bbcode_build_image_style($attributes, $image_is_local, $thumbpath);
 
 	// Finally: Put together the whole img tag with all its attributes and return it
-	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '"' . $pop . $float . $img_width . $img_height . $loading . '>' . $popup_end;
+	return $popup_start . '<img src="' . $src . '" alt="' . $alt . '"' . $pop . $float . $img_width . $img_height . $img_style . $loading . '>' . $popup_end;
 }
 
 /**

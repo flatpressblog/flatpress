@@ -29,6 +29,26 @@ class PhotoSwipeFunctions {
 	 * @param string $charset
 	 * @return string
 	 */
+
+	/**
+	 * Normalize a numeric BBCode image dimension to a positive integer.
+	 *
+	 * @param mixed $value
+	 * @return int
+	 */
+	private static function normalizeDimension($value) {
+		if (!is_scalar($value)) {
+			return 0;
+		}
+
+		$value = trim((string) $value);
+		if ($value === '' || !preg_match('/^\d+$/', $value)) {
+			return 0;
+		}
+
+		return (int) $value;
+	}
+
 	private static function decode_title_entities(string $text, string $charset): string {
 		$decoded = $text;
 		for ($i = 0; $i < 2; $i++) {
@@ -199,7 +219,8 @@ class PhotoSwipeFunctions {
 		$datasizeAttr = 'data-size="' . $w . 'x' . $h . '" ';
 
 		// set max width of the figure according to the width attribute
-		$styleAttr = isset($attr ['width']) ? ' style="width:' . $attr ['width'] . 'px" ' : ' ';
+		$requestedWidth = isset($attr ['width']) ? self::normalizeDimension($attr ['width']) : 0;
+		$styleAttr = $requestedWidth > 0 ? ' style="width:' . $requestedWidth . 'px" ' : ' ';
 
 		// now lets assemble the whole HTML code - including the overlay HTML, if not inserted into the DOM before
 		$imgHtml = "\n\n" . //

@@ -1,8 +1,7 @@
 <?php
-
-/*
+/**
  * Plugin Name: Thumbnails
- * Version: 1.1.0
+ * Version: 1.1.1
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -35,7 +34,7 @@ function plugin_thumb_setup() {
  *        
  */
 function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
-	if (!defined('PLUGIN_THUMB_ENABLED')) {
+	if (!defined('PLUGIN_THUMB_ENABLED') || !PLUGIN_THUMB_ENABLED) {
 		return [];
 	}
 
@@ -65,12 +64,21 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 
 	switch ($infos [2]) {
 		case 1:
+			if (!function_exists('imagecreatefromgif')) {
+				return [];
+			}
 			$image = imagecreatefromgif($fpath);
 			break;
 		case 2:
+			if (!function_exists('imagecreatefromjpeg')) {
+				return [];
+			}
 			$image = imagecreatefromjpeg($fpath);
 			break;
 		case 3:
+			if (!function_exists('imagecreatefrompng')) {
+				return [];
+			}
 			$image = imagecreatefrompng($fpath);
 			break;
 		case 18:
@@ -88,7 +96,14 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 
 	// create empty scaled and copy(resized) the picture
 
+	if (!function_exists('imagecreatetruecolor') || !function_exists('imagecopyresampled')) {
+		return [];
+	}
+
 	$scaled = imagecreatetruecolor($new_width, $new_height);
+	if (!$scaled) {
+		return [];
+	}
 	/**
 	 * If gif or png preserve the alpha channel
 	 *
@@ -114,12 +129,21 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	imagecopyresampled($scaled, $image, 0, 0, 0, 0, $new_width, $new_height, $infos [0], $infos [1]);
 
 	if ($output == 'png') {
+		if (!function_exists('imagepng')) {
+			return [];
+		}
 		imagepng($scaled, $thumbpath);
 	} elseif ($output == 'gif') {
+		if (!function_exists('imagegif')) {
+			return [];
+		}
 		imagegif($scaled, $thumbpath);
 	} elseif ($output == 'webp' && function_exists('imagewebp')) {
 		imagewebp($scaled, $thumbpath, 80);
 	} else {
+		if (!function_exists('imagejpeg')) {
+			return [];
+		}
 		imagejpeg($scaled, $thumbpath, 90);
 	}
 
