@@ -1,5 +1,4 @@
-# Under development: FlatPress 1.5.1 "Stringendo" Bugfix release
-
+# 2025-03-24: [FlatPress 1.5.1](https://github.com/flatpressblog/flatpress/releases/tag/1.5.1)
 ## Plugins
 ### Bugfixes
 - PrettyURLs plugin: update to version 3.0.4
