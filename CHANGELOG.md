@@ -1,3 +1,11 @@
+# Under development: FlatPress 1.6
+## Plugins
+### Bugfixes
+- BBCode plugin update to version 2.0.2
+- PhotoSwipe plugin update to version 2.0.6
+- Thumb plugin update zo version 1.1.1
+    - If a height has been set for external images, it will no longer be overridden. ([#848](https://github.com/flatpressblog/flatpress/issues/848))
+
 # 2025-03-24: [FlatPress 1.5.1](https://github.com/flatpressblog/flatpress/releases/tag/1.5.1)
 ## Plugins
 ### Bugfixes
