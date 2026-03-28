@@ -9,6 +9,11 @@
     - Initialize RSS/ ATOM only after PrettyURLs routing, so that feed readers correctly display the latest comments instead of posts ([b9b6730](https://github.com/flatpressblog/flatpress/commit/b9b67309f704ea960648d15c3c5b06552444c7b3))
     - The LastComments feed templates now use the comment link, which has already been properly formatted. ([#851](https://github.com/flatpressblog/flatpress/pull/851))
 
+## Themes
+### Changes
+- Leggero theme:
+    - Depending on your browser or operating system settings, the Stringendo style switches between light and dark modes. ([#852](https://github.com/flatpressblog/flatpress/pull/852))
+
 # 2025-03-24: [FlatPress 1.5.1](https://github.com/flatpressblog/flatpress/releases/tag/1.5.1)
 ## Plugins
 ### Bugfixes
