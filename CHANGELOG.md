@@ -5,6 +5,8 @@
 - PhotoSwipe plugin update to version 2.0.6
 - Thumb plugin update zo version 1.1.1
     - If a height has been set for external images, it will no longer be overridden. ([#848](https://github.com/flatpressblog/flatpress/issues/848))
+- LastComment plugin update to version 1.1.3
+    - Initialize RSS/ ATOM only after PrettyURLs routing, so that feed readers correctly display the latest comments instead of posts ([b9b6730](https://github.com/flatpressblog/flatpress/commit/b9b67309f704ea960648d15c3c5b06552444c7b3))
 
 # 2025-03-24: [FlatPress 1.5.1](https://github.com/flatpressblog/flatpress/releases/tag/1.5.1)
 ## Plugins
@@ -13,8 +15,6 @@
     - Fixed an issue with automatic detection when no settings have been configured and there is no .htaccess file. ([#845](https://github.com/flatpressblog/flatpress/issues/845))
 - BBCode plugin: update to version 2.0.1
     - Fixes the error that occurs when the `font` tag is used without specifying a font. ([#844](https://github.com/flatpressblog/flatpress/pull/844))
-- LastComment plugin update to version 1.1.3
-    - Initialize RSS/ ATOM only after PrettyURLs routing, so that feed readers correctly display the latest comments instead of posts ([b9b6730](https://github.com/flatpressblog/flatpress/commit/b9b67309f704ea960648d15c3c5b06552444c7b3))
 
 # 2026-03-15: [FlatPress 1.5 "Stringendo"](https://github.com/flatpressblog/flatpress/releases/tag/1.5)
 ## Changed requirements
