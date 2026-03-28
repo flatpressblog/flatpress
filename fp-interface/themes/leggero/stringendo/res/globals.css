@@ -6,15 +6,15 @@
  * Name: Stringendo
  * Theme: Leggero
  * Author: Fraenkiman
- * Version: 1.40
+ * Version: 1.5.0
  * Module: globals.css
  *
  * Global helpers and cross-template components.
  */
 
 /**
- * Stringendo: etwas "weicheres" Scrollverhalten.
- * Respektiert dabei Barrierefreiheit (prefers-reduced-motion).
+ * Slightly "smoother" scrolling behavior.
+ * Ensures accessibility (prefers-reduced-motion).
  */
 html {
 	scroll-behavior: smooth;
@@ -88,8 +88,8 @@ ul.msgs li {
 }
 
 .field-error {
-	border-color: rgba(220, 38, 38, .55) !important;
-	background: rgba(254, 226, 226) !important;
+	border-color: rgba(220, 38, 38, .55) !IMPORTANT;
+	background: rgba(254, 226, 226) !IMPORTANT;
 }
 
 /* Small utility classes often used in templates */
@@ -116,7 +116,7 @@ ul.msgs li {
 	margin: 0;
 }
 
-/*
+/**
  * Important: the general Stringendo button styling uses highly specific selectors.
  * Keep these selectors equally (or more) specific so the toolbar stays neutral.
  */
@@ -144,7 +144,6 @@ ul.msgs li {
 	width: 18px;
 	height: 18px;
 }
-
 
 .bb-btn-tlb button.bb-button:hover,
 .emoticons button[type="button"]:not(.bb-button):hover {
@@ -175,4 +174,53 @@ ul.msgs li {
 #bb_del img {
 	margin: 0;
 	vertical-align: middle;
+}
+
+@media (prefers-color-scheme: dark) {
+	.bb-btn-tlb p .bb-button,
+	.bb-btn-tlb button.bb-button {
+		background: var(--fp-accent-gradient, linear-gradient(135deg, #b36b18 0%, #f0b35f 100%));
+		border-color: rgba(var(--fp-accent-2-rgb, 183, 116, 40), 0.55);
+		color: var(--fp-button-text, #000000);
+		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+	}
+
+	.bb-btn-tlb p .bb-button:hover,
+	.bb-btn-tlb button.bb-button:hover {
+		background: var(--fp-accent-gradient-hover, linear-gradient(135deg, #c67a27 0%, #ffd39d 100%));
+		border-color: rgba(var(--fp-accent-2-rgb, 183, 116, 40), 0.65);
+		color: var(--fp-button-text, #000000);
+		box-shadow: 0 0 0 4px rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.16), 0 10px 22px rgba(0, 0, 0, 0.28);
+	}
+
+	.bb-btn-tlb p .bb-button:focus-visible,
+	.bb-btn-tlb button.bb-button:focus-visible {
+		outline: none;
+		border-color: rgba(var(--fp-focus-rgb, 139, 194, 255), 0.68);
+		box-shadow: 0 0 0 4px rgba(var(--fp-focus-rgb, 139, 194, 255), 0.18), 0 10px 22px rgba(0, 0, 0, 0.28);
+	}
+
+	.errors {
+		border-color: rgba(248, 113, 113, 0.42);
+		background: rgba(127, 29, 29, 0.28);
+		color: #fecaca;
+	}
+
+	.warnings {
+		border-color: rgba(245, 158, 11, 0.4);
+		background: rgba(120, 53, 15, 0.28);
+		color: #fde68a;
+	}
+
+	.notifications,
+	.enabled {
+		border-color: rgba(74, 222, 128, 0.36);
+		background: rgba(20, 83, 45, 0.28);
+		color: #bbf7d0;
+	}
+
+	.field-error {
+		border-color: rgba(248, 113, 113, 0.65) !IMPORTANT;
+		background: rgba(127, 29, 29, 0.36) !IMPORTANT;
+	}
 }

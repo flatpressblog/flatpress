@@ -6,10 +6,10 @@
  * Name: Stringendo
  * Theme: Leggero
  * Author: Fraenkiman
- * Version: 1.40
+ * Version: 1.5.0
  * Module: admin.css
  *
- *Admin area adjustments for the Stringendo style.
+ * Admin area adjustments for the Stringendo style.
  */
 
 @import url('common.css');
@@ -28,7 +28,6 @@ body[class^="admin-"] .entry {
 	background: rgb(249, 246, 241);
 	background: linear-gradient(360deg, rgb(255, 219, 166) 0%, rgb(249, 246, 241) 100%);
 }
-
 
 /**
  * Admin preview (entry/static write): make code blocks responsive.
@@ -1522,4 +1521,160 @@ body.admin-entry-commentcenter dl.option-set {
 body.admin-plugin-newsletter #admin-content td,
 body.admin-plugin-newsletter #admin-content th {
 	text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+	body[class^="admin-"] .entry {
+		background: var(--fp-admin-entry-gradient, linear-gradient(180deg, #182538 0%, #0f1724 100%));
+	}
+
+	body.admin fieldset {
+		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.55);
+	}
+
+	ul#admin-tabmenu,
+	#admin-submenu,
+	#admin-content table,
+	#admin-content td,
+	#admin-content th,
+	#admin-drafts {
+		border-color: var(--fp-border, #304158);
+	}
+
+	ul#admin-tabmenu,
+	#admin-content th {
+		background: rgba(24, 34, 51, 0.95);
+	}
+
+	#admin-submenu,
+	#admin-content table,
+	#admin-content td {
+		background: rgba(15, 23, 36, 0.96);
+	}
+
+	ul#admin-tabmenu a:hover,
+	#admin-submenu a:hover,
+	#admin-submenu a.active {
+		background: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.2);
+		color: var(--fp-text, #e7edf7);
+	}
+
+	ul#admin-tabmenu a.admin-tab-current,
+	#admin-submenu a.active {
+		background: linear-gradient(135deg, #c67a27 0%, #f0b35f 100%);
+		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.42);
+		color: var(--fp-button-text, #000000);
+	}
+
+	a.link-delete:hover,
+	a.link-disable:hover {
+		background-color: rgba(248, 113, 113, 0.18);
+		color: #fecaca;
+	}
+
+	a.link-enable:hover {
+		background-color: rgba(74, 222, 128, 0.18);
+		color: #bbf7d0;
+	}
+
+	a.link-general:hover {
+		background-color: rgba(148, 163, 184, 0.14);
+		color: var(--fp-text, #e7edf7);
+	}
+
+	#admin-drafts {
+		color: #e7d6a8;
+		border-color: rgba(245, 158, 11, 0.36);
+		background: rgba(120, 53, 15, 0.28);
+	}
+
+	body[class^="admin-"] code,
+	body[class^="admin-"] pre,
+	body[class^="admin-"] kbd,
+	body[class^="admin-"] samp,
+	body[class^="admin-"] tt,
+	#admin-content dl dd code,
+	#admin-content dl dd pre {
+		background: rgba(24, 34, 51, 0.95);
+		border-color: var(--fp-border, #304158);
+		color: var(--fp-text, #e7edf7);
+	}
+
+	body[class^="admin-"] #manage-widgets li.widget-class,
+	body[class^="admin-"] #manage-widgets li.widget-instance,
+	body[class^="admin-"] #manage-widgets li.widget-placeholder {
+		background: rgba(15, 23, 36, 0.96);
+		border-color: var(--fp-border, #304158);
+	}
+
+	#admin-bbcode-toolbar p .bb-button,
+	.bb-btn-tlb button.bb-button {
+		background: var(--fp-accent-gradient, linear-gradient(135deg, #b36b18 0%, #f0b35f 100%));
+		border-color: rgba(var(--fp-accent-2-rgb, 183, 116, 40), 0.55);
+		color: var(--fp-button-text, #000000);
+		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+	}
+
+	#admin-bbcode-toolbar p .bb-button:hover,
+	#admin-bbcode-toolbar button.bb-button:hover {
+		background: var(--fp-accent-gradient-hover, linear-gradient(135deg, #c67a27 0%, #ffd39d 100%));
+		border-color: rgba(var(--fp-accent-2-rgb, 183, 116, 40), 0.65);
+		color: var(--fp-button-text, #000000);
+		box-shadow: 0 0 0 4px rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.16), 0 10px 22px rgba(0, 0, 0, 0.28);
+	}
+
+	#admin-bbcode-toolbar p .bb-button:focus-visible,
+	#admin-bbcode-toolbar button.bb-button:focus-visible {
+		outline: none;
+		border-color: rgba(var(--fp-focus-rgb, 139, 194, 255), 0.68);
+		box-shadow: 0 0 0 4px rgba(var(--fp-focus-rgb, 139, 194, 255), 0.18), 0 10px 22px rgba(0, 0, 0, 0.28);
+	}
+
+	/* Widget panel */
+	#available-widgets h2,
+	.admin-widgetset h3 {
+		background: var(--fp-surface, #121a28) !IMPORTANT;
+	}
+
+	#available-widgets {
+		background: var(--fp-surface-2, #182235) !IMPORTANT;
+		border: 1px solid rgba(var(--fp-accent-3-rgb), .45) !IMPORTANT;
+	}
+
+	body[class^="admin-"] #manage-widgets li.admin-widgetset {
+		border: 1px solid rgba(var(--fp-accent-3-rgb), .45) !IMPORTANT;
+	}
+
+	body[class^="admin-"] #manage-widgets li.widget-placeholder {
+		background: var(--fp-surface-2, #182235);
+	}
+
+	/* APCu panel */
+	.apcu-status-good {
+		background: rgba(20, 83, 45, .32) !IMPORTANT;
+	}
+
+	.apcu-status-bad {
+		background: rgba(127, 29, 29, .28) !IMPORTANT;
+	}
+
+	.apcu-card {
+		background: var(--qb-highlight-sentence-from-caret-background-color, #4343431a) !IMPORTANT;
+		border: 1px solid rgba(var(--fp-accent-3-rgb), .45) !IMPORTANT;
+	}
+
+	/* Uploader panel */
+	.fp-dropzone {
+		background: var(--fp-muted, #b5c3d6) !IMPORTANT;
+	}
+
+	/* Tag plugin */
+	#tagplace span {
+		background: var(--lt-color-gray-600, #5e636e);
+		border-radius: 3px;
+	}
+
+	#tagplace span:hover {
+		background: var(--lt-color-gray-700, #2f3237);
+	}
 }

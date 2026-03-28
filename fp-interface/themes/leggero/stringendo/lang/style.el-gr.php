@@ -2,8 +2,8 @@
 /**
  * Style Name: Stringendo
  * Style URI: https://www.flatpress.org/
- * Description: Μοντέρνο και ανταποκρινόμενο – με ενεργητική παλέτα τόνων "Stringendo" και έξυπνη γραμμή widget.
- * Version: 1.40
+ * Description: Μοντέρνο και προσαρμοστικό — με ενεργητική παλέτα τόνων "Stringendo", μια έξυπνη γραμμή widget και λειτουργία ανοιχτού/σκοτεινού φόντου.
+ * Version: 1.5.0
  * Author: Fraenkiman
  * Author URI: https://www.flatpress.org/
  */

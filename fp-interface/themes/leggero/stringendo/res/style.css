@@ -6,7 +6,7 @@
  * Name: Stringendo
  * Theme: Leggero
  * Author: Fraenkiman
- * Version: 1.40
+ * Version: 1.5.0
  * Module: style.css
  *
  * This stylesheet only wires together the module files.
@@ -86,4 +86,26 @@
 
 .responsive_bbcode_video button {
 	height: unset !IMPORTANT;
+}
+
+@media (prefers-color-scheme: dark) {
+	#cookie_banner {
+		background: rgba(var(--fp-surface-rgb, 15, 23, 36), 0.94);
+		border-top-color: var(--fp-border, #304158);
+		box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.24);
+	}
+
+	.calendar th {
+		background: rgba(24, 34, 51, 0.95);
+	}
+
+	.calendar th,
+	.calendar td {
+		border-color: rgba(var(--fp-accent-2-rgb, 183, 116, 40), 0.45);
+	}
+
+	.comment-quote {
+		background: rgba(24, 34, 51, 0.92);
+		border-color: var(--fp-border, #304158);
+	}
 }
