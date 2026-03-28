@@ -22,6 +22,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 		<link>{$smarty.const.BLOG_BASEURL|escape:'html'}</link>
 
 		{if $flatpress.subtitle != ""}
+
 		<description>
 			<![CDATA[
 			{$flatpress.subtitle|escape:'html'}
@@ -38,10 +39,12 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 			{foreach from=$lastcomments_list item=comment}
 
 			<item>
-			{assign var=comm_link value=$comment.entry|cmnt:comments_link}
+			{assign var=comm_link value=$comment.link|default:''}
+			{if $comm_link == ''}{assign var=comm_link value=$comment.entry|cmnt:comments_link}{/if}
 
 				<title>{$comment.subject|plugin_lastcomments_feed_title|escape:'html'}</title>
 				<link>{$comm_link|escape:'html'}#{$comment.id}</link>
+
 				<description>
 					<![CDATA[
 					{$comment.name|escape:'html'}: {$comment.content|plugin_lastcomments_feed_comment_rss|fix_encoding_issues}
