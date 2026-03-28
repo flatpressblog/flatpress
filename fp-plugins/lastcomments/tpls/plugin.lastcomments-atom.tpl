@@ -32,6 +32,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 	<id>{$smarty.const.BLOG_BASEURL|escape:'html'}</id>
 
 	{if $flatpress.subtitle != ""}
+
 	<subtitle>
 		<![CDATA[
 		{$flatpress.subtitle|wp_specialchars}
@@ -43,8 +44,11 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 	<entry>
 		<title>{$comment.subject|plugin_lastcomments_feed_title|escape:"html"}</title>
-		<link href="{$comment.entry|cmnt:comments_link|escape:'html'}#{$comment.id}" />
-		<id>{$comment.entry|cmnt:comments_link|escape:'html'}#{$comment.id}</id>
+		{assign var=comm_link value=$comment.link|default:''}
+		{if $comm_link == ''}{assign var=comm_link value=$comment.entry|cmnt:comments_link}{/if}
+
+		<link href="{$comm_link|escape:'html'}#{$comment.id}" />
+		<id>{$comm_link|escape:'html'}#{$comment.id}</id>
 		<published>{$comment.date|date_format:"%Y-%m-%dT%H:%M:%SZ"}</published>
 		<updated>{$comment.date|date_format:"%Y-%m-%dT%H:%M:%SZ"}</updated>
 		<summary type="xhtml">
@@ -58,10 +62,12 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 			<name>{$comment.name|escape:'html'}</name>
 
 			{if $comment.email != ""}
+
 			<email>{$comment.email|escape:'html'}</email>
 			{/if}
 
 			{if $comment.url != ""}
+
 			<uri>{$comment.url|escape:'html'}</uri>
 			{/if}
 
