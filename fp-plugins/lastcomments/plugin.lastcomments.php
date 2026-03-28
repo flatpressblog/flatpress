@@ -607,7 +607,7 @@ function truncate_with_bbcode($content, $maxLength) {
 }
 
 add_action('comment_post', 'plugin_lastcomments_cache', 0, 2);
-add_action('init', 'plugin_lastcomments_rssinit');
+add_action('init', 'plugin_lastcomments_rssinit', 20);
 add_action('wp_head', 'plugin_lastcomments_rsshead');
 register_widget('lastcomments', 'LastComments', 'plugin_lastcomments_widget');
 ?>
