@@ -6,7 +6,7 @@
  * Name: Stringendo
  * Theme: Leggero
  * Author: Fraenkiman
- * Version: 1.40
+ * Version: 1.5.0
  * Module: column.css
  *
  * Sidebar / widgets column.
@@ -178,7 +178,6 @@ html.fp-fadein body:not([class^="admin-"]) .stringendo-widgets-under-main.string
 	width: 100%;
 }
 
-
 /* Widget: calendar (keep compact in sidebar) */
 #widget-calendar {
 	overflow: hidden;
@@ -200,4 +199,17 @@ html.fp-fadein body:not([class^="admin-"]) .stringendo-widgets-under-main.string
 	font-weight: 700;
 	font-size: .95rem;
 	margin-bottom: .35rem;
+}
+
+@media (prefers-color-scheme: dark) {
+	#column > div,
+	.stringendo-widgets-under-main > div {
+		background: var(--fp-widget-gradient, linear-gradient(180deg, #182538 0%, #0f1724 100%));
+		border-color: var(--fp-border, #304158);
+	}
+
+	#column h4,
+	.stringendo-widgets-under-main h4 {
+		color: var(--fp-heading, #ffd39d);
+	}
 }

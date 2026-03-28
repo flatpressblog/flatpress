@@ -1,5 +1,11 @@
 <!-- stringendo-bg.svg | Seamlessly tileable (repeat-x/y), single color, transparent background -->
 <svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+	<style>
+		svg { color: #000000; }
+		@media (prefers-color-scheme: dark) {
+			svg { color: #b77428; }
+		}
+	</style>
 	<defs>
 		<clipPath id="tile">
 			<rect x="0" y="0" width="240" height="240"/>

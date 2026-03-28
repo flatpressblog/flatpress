@@ -6,7 +6,7 @@
  * Name: Stringendo
  * Theme: Leggero
  * Author: Fraenkiman
- * Version: 1.40
+ * Version: 1.5.0
  * Module: common.css
  *
  * Modern, bright and responsive presentation layer.
@@ -137,7 +137,6 @@ h4 {
 	line-height: 1.25;
 	letter-spacing: -0.01em;
 }
-
 
 h2, h3, h4 {
 	color: #8b0000;
@@ -795,11 +794,6 @@ ol#comments ol {
 	list-style: decimal;
 }
 
-ol#comments li {
-	/* margin: .25rem 0; */
-	background: rgb(255, 219, 166);
-}
-
 ol#comments blockquote {
 	margin: 1rem 0;
 	padding: .85rem 1rem;
@@ -889,7 +883,8 @@ ol#comments pre code {
 .pswp__img {
 	border-radius: 3px
 }
-/*
+
+/**
  * Widgets that overflow the sidebar can be moved below #main via widgets-under-main.js.
  * Ensure the under-main container spans a full row (no matter the sidebar layout).
  */
@@ -946,4 +941,162 @@ ol#comments pre code {
  */
 html.stringendo-columnbottom-moved #columnbottom {
 	margin-top: var(--fp-space-5, 1.25rem);
+}
+
+/* Captcha plugin */
+img#captcha {
+	border-radius: 10px;
+}
+
+input#aspam_code {
+	margin-top: 0.3rem;
+}
+
+/* ---------- Automatic dark mode ---------- */
+@media (prefers-color-scheme: dark) {
+	:root {
+		color-scheme: dark;
+		--fp-bg: #060d18;
+		--fp-surface: #0f1724;
+		--fp-surface-2: #182233;
+		--fp-text: #e7edf7;
+		--fp-muted: #a9b5c9;
+		--fp-border: #304158;
+		--fp-accent: #c67a27;
+		--fp-accent-2: #b77428;
+		--fp-accent-3: #f0b35f;
+		--fp-accent-4: #ceb9ff;
+		--fp-accent-soft: #432515;
+		--fp-accent-soft-2: #4c2d16;
+		--fp-link: #8bc2ff;
+		--fp-link-hover: #ffd39d;
+		--fp-link-visited: #d7b9ff;
+		--fp-accent-rgb: 198, 122, 39;
+		--fp-accent-2-rgb: 183, 116, 40;
+		--fp-accent-3-rgb: 240, 179, 95;
+		--fp-link-rgb: 139, 194, 255;
+		--fp-focus-rgb: 139, 194, 255;
+		--fp-accent-gradient: linear-gradient(135deg, #b36b18 0%, #f0b35f 100%);
+		--fp-accent-gradient-hover: linear-gradient(135deg, #c67a27 0%, #ffd39d 100%);
+		--fp-shadow-sm: 0 4px 18px rgba(0, 0, 0, 0.32);
+		--fp-shadow: 0 14px 36px rgba(0, 0, 0, 0.42);
+		--fp-heading: #ffd39d;
+		--fp-header-title: #f8fafc;
+		--fp-header-subtitle: #ffe6c9;
+		--fp-button-text: #000000;
+		--fp-pattern-rgb: 183, 116, 40;
+		--fp-entry-gradient: linear-gradient(180deg, #182538 0%, #0f1724 100%);
+		--fp-widget-gradient: linear-gradient(180deg, #182538 0%, #0f1724 100%);
+		--fp-admin-entry-gradient: linear-gradient(180deg, #182538 0%, #0f1724 100%);
+		--fp-surface-rgb: 15, 23, 36;
+		--lt-color-gray-100: #182233;
+		--lt-color-gray-400: #5a6a82;
+		--lt-color-gray-500: #7c8ea7;
+	}
+
+	html,
+	body {
+		background-color: var(--fp-bg, #060d18);
+	}
+
+	body {
+		background-image: url('../imgs/bg.svg'), radial-gradient(circle at 1px 1px, rgba(var(--fp-pattern-rgb, 183, 116, 40), 0.085) 1px, transparent 0);
+	}
+
+	h2,
+	h3,
+	h4 {
+		color: var(--fp-heading, #ffd39d);
+	}
+
+	#head {
+		background: linear-gradient(180deg, #b77428 0%, #6f3606 100%);
+		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.26);
+		box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+	}
+
+	#head h1 a {
+		color: var(--fp-header-title, #f8fafc);
+	}
+
+	#head .subtitle {
+		color: var(--fp-header-subtitle, #ffe6c9);
+	}
+
+	.navigation a,
+	.entry,
+	ol#comments > li {
+		background: var(--fp-entry-gradient, linear-gradient(180deg, #182538 0%, #0f1724 100%));
+		border-color: var(--fp-border, #304158);
+	}
+
+	ol#comments > li.comment-admin {
+		background: linear-gradient(180deg, rgba(183, 116, 40, 0.24) 0%, rgba(15, 23, 36, 0.95) 100%);
+	}
+
+	.entry-title a,
+	.entry .title,
+	.entry .title a {
+		color: var(--fp-text, #e7edf7);
+	}
+
+	.entry-title a:hover {
+		color: var(--fp-link-hover, #ffd39d);
+	}
+
+	.entry blockquote {
+		background: rgba(24, 34, 51, 0.92);
+		border-left-color: var(--fp-accent-3, #f0b35f);
+	}
+
+	input[type="text"],
+	input[type="email"],
+	input[type="password"],
+	input[type="url"],
+	input[type="search"],
+	input[type="number"],
+	textarea,
+	select {
+		background: rgba(15, 23, 36, 0.96);
+		border-color: var(--fp-border, #304158);
+		color: var(--fp-text, #e7edf7);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+	}
+
+	input[type="submit"],
+	input[type="button"],
+	.link-comments a,
+	.readmore a,
+	button:not(.leaflet-control):not(.pswp__button):not(.bb-button) {
+		color: var(--fp-button-text, #000000);
+		border-color: rgba(var(--fp-accent-2-rgb, 183, 116, 40), 0.55);
+		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+	}
+
+	input[type="submit"]:hover,
+	input[type="button"]:hover,
+	.link-comments a:hover,
+	.readmore a:hover,
+	button:not(.leaflet-control):not(.pswp__button):not(.bb-button):hover {
+		color: var(--fp-button-text, #000000);
+	}
+
+	input[type="reset"],
+	button[type="reset"] {
+		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.45);
+		color: var(--fp-link-hover, #ffd39d);
+	}
+
+	input[type="reset"]:hover,
+	button[type="reset"]:hover {
+		background: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.16);
+	}
+
+	fieldset {
+		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.55);
+	}
+
+	legend {
+		color: var(--fp-text, #e7edf7);
+	}
 }

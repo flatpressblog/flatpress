@@ -2,8 +2,8 @@
 /**
  * Style Name: Stringendo
  * Style URI: https://www.flatpress.org/
- * Description: Modern and responsive - with an energetic "Stringendo" accent palette and smart widget bar.
- * Version:  1.40
+ * Description: Modern and responsive—featuring an energetic "Stringendo" accent palette, a smart widget bar, and light/dark mode.
+ * Version:  1.5.0
  * Author: Fraenkiman
  * Author URI: https://www.flatpress.org/
  */
@@ -11,7 +11,7 @@ $style ['name'] = 'Stringendo';
 $style ['author'] = 'Fraenkiman';
 $style ['www'] = 'https://www.flatpress.org/';
 
-$style ['version'] = '1.40';
+$style ['version'] = '1.5.0';
 
 /**
  * Admin enhancement: add responsive viewport meta in the admin <head> only for Stringendo.

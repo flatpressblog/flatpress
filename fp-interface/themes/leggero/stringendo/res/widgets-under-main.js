@@ -1,6 +1,6 @@
 /**
  * Stringendo – widgets under #main (wide screens)
- * Version: 1.40
+ * Version: 1.5.0
  *
  * Goal:
  * - If viewport >= 960px AND the widget column (#column) would extend below #main,
@@ -63,7 +63,6 @@
 			$under.removeClass('stringendo-under-show').addClass('stringendo-under-hidden');
 		}
 	}
-
 
 	function ensureUnderContainer($outer) {
 		var $under = $('#' + UNDER_ID);
@@ -160,8 +159,10 @@
 			return;
 		}
 
-		// Full pass resets first, then decides what to do for current viewport.
-		// Incremental pass only moves additional widgets if needed.
+		/**
+		 * Full pass resets first, then decides what to do for current viewport.
+		 * Incremental pass only moves additional widgets if needed.
+		 */
 		if (isFull) {
 			restoreWidgets($column);
 			restoreColumnBottom($outer);
@@ -195,8 +196,10 @@
 		var colTop = colOffset.top;
 		var colBottom = colTop + ($column.outerHeight(true) || 0);
 
-		// If the column ends above (or at) the main bottom, keep everything in the column.
-		// In incremental mode, keep already moved widgets under #main (stable, no flicker).
+		/**
+		 * If the column ends above (or at) the main bottom, keep everything in the column.
+		 * In incremental mode, keep already moved widgets under #main (stable, no flicker).
+		 */
 		if (colBottom <= mainBottom) {
 			didFullLayout = didFullLayout || !!isFull;
 			return;
@@ -260,7 +263,6 @@
 		}
 		updateLayout(false);
 	});
-
 
 	// When the column fade-in completed, reveal under-main widget grid (if present).
 	$(window).on('stringendo:columnShown', function () {

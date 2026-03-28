@@ -13,7 +13,6 @@
  * - Disabled on touch devices.
  * - Leaves scrollable containers (overflow:auto/scroll) untouched.
  */
-
 (function () {
 	'use strict';
 
