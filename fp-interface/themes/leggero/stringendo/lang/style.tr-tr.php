@@ -6,4 +6,5 @@
  * Version: 1.5.0
  * Author: Fraenkiman
  * Author URI: https://www.flatpress.org/
+ */
 ?>
