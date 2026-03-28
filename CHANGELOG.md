@@ -7,6 +7,7 @@
     - If a height has been set for external images, it will no longer be overridden. ([#848](https://github.com/flatpressblog/flatpress/issues/848))
 - LastComment plugin update to version 1.1.3
     - Initialize RSS/ ATOM only after PrettyURLs routing, so that feed readers correctly display the latest comments instead of posts ([b9b6730](https://github.com/flatpressblog/flatpress/commit/b9b67309f704ea960648d15c3c5b06552444c7b3))
+    - The LastComments feed templates now use the comment link, which has already been properly formatted. ([#851](https://github.com/flatpressblog/flatpress/pull/851))
 
 # 2025-03-24: [FlatPress 1.5.1](https://github.com/flatpressblog/flatpress/releases/tag/1.5.1)
 ## Plugins
