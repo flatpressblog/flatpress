@@ -3,7 +3,7 @@
 ### Bugfixes
 - BBCode plugin update to version 2.0.2
 - PhotoSwipe plugin update to version 2.0.6
-- Thumb plugin update zo version 1.1.1
+- Thumb plugin update to version 1.1.1
     - If a height has been set for external images, it will no longer be overridden. ([#848](https://github.com/flatpressblog/flatpress/issues/848))
 - LastComment plugin update to version 1.1.3
     - Initialize RSS/ ATOM only after PrettyURLs routing, so that feed readers correctly display the latest comments instead of posts ([b9b6730](https://github.com/flatpressblog/flatpress/commit/b9b67309f704ea960648d15c3c5b06552444c7b3))
