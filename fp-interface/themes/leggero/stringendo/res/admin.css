@@ -1523,6 +1523,11 @@ body.admin-plugin-newsletter #admin-content th {
 	text-align: center;
 }
 
+/* CookieBanner plugin */
+#cookie_banner div.buttonbar {
+	display: none;
+}
+
 @media (prefers-color-scheme: dark) {
 	body[class^="admin-"] .entry {
 		background: var(--fp-admin-entry-gradient, linear-gradient(180deg, #182538 0%, #0f1724 100%));
