@@ -1096,7 +1096,8 @@ input#aspam_code {
 		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.55);
 	}
 
-	legend {
+	legend,
+	#cookie_banner div.buttonbar {
 		color: var(--fp-text, #e7edf7);
 	}
 }
