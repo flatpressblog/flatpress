@@ -17,7 +17,7 @@
 (function ($) {
 	'use strict';
 
-	var MIN_WIDTH = 960;
+	var MIN_WIDTH = 720;
 	var UNDER_ID = 'stringendo-widgets-under-main';
 	var BOTTOM_ID = 'columnbottom';
 	var BOTTOM_ANCHOR_ID = 'stringendo-columnbottom-anchor';
