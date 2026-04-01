@@ -69,14 +69,20 @@
 	grid-template-columns: 1fr;
 	gap: var(--fp-space-5, 1.25rem);
 }
-@media (min-width: 640px) {
+
+@media (min-width: 720px) {
 	.stringendo-widgets-under-main {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 }
-@media (min-width: 960px) {
+@media (min-width: 1024px) {
 	.stringendo-widgets-under-main {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+@media (min-width: 1366px) {
+	.stringendo-widgets-under-main {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 }
 

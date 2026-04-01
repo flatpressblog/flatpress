@@ -44,7 +44,7 @@
 	/* Let form controls use a light palette */
 	color-scheme: light;
 
-	--fp-container: 1120px;
+	--fp-container: 1366px;
 	--fp-sidebar: 320px;
 
 	--fp-bg: #f6f7fb;
@@ -86,6 +86,14 @@
 	--fp-space-4: 1rem;
 	--fp-space-5: 1.25rem;
 	--fp-space-6: 1.5rem;
+
+	--fp-scroll: #6b6c6d;
+}
+
+@media (max-width: 1366px) {
+	:root {
+		--fp-container: 1130px;
+	}
 }
 
 /* ---------- Base reset ---------- */
@@ -165,9 +173,15 @@ a:hover {
 
 /* ---------- Layout ---------- */
 #body-container {
-	max-width: var(--fp-container, 1120px);
+	max-width: var(--fp-container, 1366px);
 	margin: 0 auto;
 	padding: var(--fp-space-5, 1.25rem);
+}
+
+@media (max-width: 1366px) {
+	#body-container {
+		max-width: var(--fp-container, 1130px);
+	}
 }
 
 #head {
@@ -952,7 +966,32 @@ input#aspam_code {
 	margin-top: 0.3rem;
 }
 
-/* ---------- Automatic dark mode ---------- */
+/* Chrome, Edge, and Safari - the right Scrollbar */
+@supports selector(::-webkit-scrollbar) {
+	body::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	body::-webkit-scrollbar-thumb {
+		background-color: var(--fp-scroll, #6b6c6d) !IMPORTANT;
+		border-radius: 3px;
+	}
+}
+
+/* Firefox - the right Scrollbar */
+@supports (-moz-appearance:button) and (contain:paint) {
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: var(--fp-scroll, #6b6c6d) var(--fp-bg, #f6f7fb) !IMPORTANT;
+	}
+}
+
+/* The bottom Scrollbar */
+#scrollIndicator.line {
+	background: var(--fp-scroll, #6b6c6d);
+}
+
+/* ---------- Stringendo dark mode refinements ---------- */
 @media (prefers-color-scheme: dark) {
 	:root {
 		color-scheme: dark;
@@ -992,6 +1031,7 @@ input#aspam_code {
 		--lt-color-gray-100: #182233;
 		--lt-color-gray-400: #5a6a82;
 		--lt-color-gray-500: #7c8ea7;
+		--fp-scroll: #815523;
 	}
 
 	html,
@@ -1099,5 +1139,24 @@ input#aspam_code {
 	legend,
 	#cookie_banner div.buttonbar {
 		color: var(--fp-text, #e7edf7);
+	}
+
+	/* Chrome, Edge, and Safari - the right Scrollbar */
+	@supports selector(::-webkit-scrollbar) {
+		body::-webkit-scrollbar-thumb {
+			background-color: var(--fp-scroll, #815523) !IMPORTANT;
+		}
+	}
+
+	/* Firefox - the right Scrollbar */
+	@supports (-moz-appearance:button) and (contain:paint) {
+		* {
+			scrollbar-color: var(--fp-scroll, #815523) var(--fp-bg, #060d18) !IMPORTANT;
+		}
+	}
+
+	/* The bottom Scrollbar */
+	#scrollIndicator.line {
+		background: var(--fp-scroll, #815523);
 	}
 }
