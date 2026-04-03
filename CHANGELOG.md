@@ -5,7 +5,11 @@
 ## Plugins
 ### Changes
 - SEO Meta Tag Info plugin update to version 2.3.0
-    - Open Graph output of the publication date for posts. ([#856](https://github.com/flatpressblog/flatpress/pull/856))
+    - The following Open Graph meta tags are now also generated for single posts:
+        - ``article:published_time`` - based on the publication date ([#856](https://github.com/flatpressblog/flatpress/pull/856))
+        - ``article:section`` - based on the selected category/subcategory ([#858](https://github.com/flatpressblog/flatpress/pull/858))
+        - ``article:tag`` - based on the tags assigned using the tag plugin ([#858](https://github.com/flatpressblog/flatpress/pull/858))
+        - ``article:author`` - based on the blog author ([#858](https://github.com/flatpressblog/flatpress/pull/858))
 
 ### Bugfixes
 - BBCode plugin update to version 2.0.2
