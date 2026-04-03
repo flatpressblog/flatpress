@@ -91,15 +91,6 @@ function date_time($offset = null) {
 	return time() + (int)$offset * 3600;
 }
 
-/*
- * function date_now($offset=0) {
- * $timestamp = gmtime();
- * $time_stamp = intval($timestamp) + intval($offset) * 60 * 60;
- * return date($format, $time_stamp);
- *
- * }
- */
-
 /**
  * Takes filename and extension as a parameter, strips
  * alphabetic chars (ascii) from filename and "parses" the date;
@@ -144,6 +135,64 @@ function date_from_id($id) {
 	}
 
 	return $arr;
+}
+
+/**
+ * Formats a FlatPress timestamp as ISO 8601 with the blog's configured offset.
+ *
+ * FlatPress stores entry/comment timestamps in its own "UTC + timeoffset" model
+ * (see date_time()). To preserve the same visible local wall time in machine-
+ * readable metadata, the datetime portion is rendered via gmdate() and the
+ * configured FlatPress offset is appended explicitly.
+ *
+ * @param int|float|string|null $timestamp FlatPress timestamp; null falls back to date_time().
+ * @param int|float|string|null $offset Offset in hours; null uses $fp_config['locale']['timeoffset'].
+ * @return string ISO 8601 datetime or an empty string for invalid input.
+ */
+function date_iso8601($timestamp = null, $offset = null) {
+	global $fp_config;
+
+	if ($timestamp === null || $timestamp === 0 || $timestamp === '0') {
+		$timestamp = date_time($offset);
+	}
+
+	if (!is_numeric($timestamp)) {
+		return '';
+	}
+
+	if (!is_numeric($offset)) {
+		if (isset($fp_config ['locale'] ['timeoffset']) && is_numeric($fp_config ['locale'] ['timeoffset'])) {
+			$offset = $fp_config ['locale'] ['timeoffset'];
+		} else {
+			$offset = 0;
+		}
+	}
+
+	$timestamp = (int) $timestamp;
+
+	// Mirrors date_time(), which stores whole-hour offsets.
+	$offset_hours = (int) $offset;
+	$sign = ($offset_hours < 0) ? '-' : '+';
+	$offset_hours = abs($offset_hours);
+	$offset_string = sprintf('%s%02d:00', $sign, $offset_hours);
+
+	return gmdate('Y-m-d\TH:i:s', $timestamp) . $offset_string;
+}
+
+/**
+ * Formats an entry/comment ID (entryYYMMDD-HHMMSS / commentYYMMDD-HHMMSS) as ISO 8601.
+ *
+ * @param string $id FlatPress entry/comment ID
+ * @param int|float|string|null $offset Offset in hours; null uses the FlatPress config
+ * @return string ISO 8601 datetime or an empty string for invalid IDs
+ */
+function date_id_to_iso8601($id, $offset = null) {
+	$arr = date_from_id($id);
+	if (empty($arr) || !isset($arr ['time']) || $arr ['time'] === false) {
+		return '';
+	}
+
+	return date_iso8601($arr ['time'], $offset);
 }
 
 /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: SEO Meta Tag Info
- * Version: 2.2.5
+ * Version: 2.3.0
  * Plugin URI: https://www.flatpress.org
  * Description: This plugin allows editing of SEO meta tags description, keywords and robots for Entries, Statics and Categories. Part of the standard distribution. <a href="./fp-plugins/seometataginfo/doc_seometataginfo.txt" title="Anleitung" target="_blank">[Instructions]</a>
  * Author: FlatPress
@@ -395,10 +395,15 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	if (SEOMETA_GEN_OPEN_GRAPH) {
 		echo '		<meta property="og:description" content="' . $encoded_description . '">' . "\n";
 	}
+	$article_published_time = '';
 	if (is_single()) {
+		$article_published_time = seometataginfo_get_article_published_time();
 		echo '		<meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
 		if (SEOMETA_GEN_OPEN_GRAPH) {
 			echo '		<meta property="og:type" content="article">' . "\n";
+			if ($article_published_time !== '') {
+				echo '		<meta property="article:published_time" content="' . htmlspecialchars($article_published_time, ENT_QUOTES, $charset) . '">' . "\n";
+			}
 		}
 	} else {
 		if (SEOMETA_GEN_OPEN_GRAPH) {
@@ -480,6 +485,58 @@ function seometataginfo_build_public_url($baseUrl) {
 	}
 
 	return seometataginfo_strip_tracking_params($url);
+}
+
+/**
+ * Returns the published time of the current single entry/comments view in ISO 8601.
+ *
+ * Prefer the explicit DATE field stored with the entry; fall back to the entry ID
+ * timestamp if needed so older or incomplete content still gets valid metadata.
+ */
+function seometataginfo_get_article_published_time() {
+	global $fpdb, $fp_params;
+
+	if (!is_single()) {
+		return '';
+	}
+
+	$entry_id = '';
+	$entry = array();
+
+	if (isset($fpdb) && is_object($fpdb) && method_exists($fpdb, 'getQuery')) {
+		$q = &$fpdb->getQuery();
+		if (is_object($q) && method_exists($q, 'peekEntry')) {
+			$peek = @$q->peekEntry();
+			if (is_array($peek) && isset($peek [0])) {
+				$entry_id = is_string($peek [0]) ? $peek [0] : '';
+				$entry = (isset($peek [1]) && is_array($peek [1])) ? $peek [1] : array();
+			}
+		}
+	}
+
+	if ($entry_id === '' && !empty($fp_params ['entry']) && is_string($fp_params ['entry'])) {
+		$entry_id = $fp_params ['entry'];
+	}
+
+	if (empty($entry) && $entry_id !== '' && function_exists('entry_parse')) {
+		$parsed = entry_parse($entry_id);
+		if (is_array($parsed)) {
+			$entry = $parsed;
+		}
+	}
+
+	if (isset($entry ['date']) && is_numeric($entry ['date']) && function_exists('date_iso8601')) {
+		$published = date_iso8601($entry ['date']);
+		if ($published !== '') {
+			return $published;
+		}
+	}
+
+	if ($entry_id !== '' && function_exists('date_id_to_iso8601')) {
+		return date_id_to_iso8601($entry_id);
+	}
+
+	return '';
 }
 
 /**
