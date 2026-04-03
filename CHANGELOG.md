@@ -1,5 +1,12 @@
 # Under development: FlatPress 1.6
+## General
+- New core helpers: ``date_iso8601($timestamp, $offset = null)`` and ``date_id_to_iso8601($id, $offset = null)``. ([#856](https://github.com/flatpressblog/flatpress/pull/856))
+
 ## Plugins
+### Changes
+- SEO Meta Tag Info plugin update to version 2.3.0
+    - Open Graph output of the publication date for posts. ([#856](https://github.com/flatpressblog/flatpress/pull/856))
+
 ### Bugfixes
 - BBCode plugin update to version 2.0.2
 - PhotoSwipe plugin update to version 2.0.6
@@ -13,6 +20,7 @@
 ### Changes
 - Leggero theme:
     - Depending on your browser or operating system settings, the Stringendo style switches between light and dark modes. ([#852](https://github.com/flatpressblog/flatpress/pull/852))
+    - Open Graph prefix added. ([#856](https://github.com/flatpressblog/flatpress/pull/856))
 
 # 2025-03-24: [FlatPress 1.5.1](https://github.com/flatpressblog/flatpress/releases/tag/1.5.1)
 ## Plugins
