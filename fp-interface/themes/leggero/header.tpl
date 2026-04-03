@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{$fp_config.locale.lang}"{if function_exists('plugin_seometataginfo_head')} prefix="og: https://ogp.me/ns#"{/if}>
+{$lang_parts = $fp_config.locale.lang|split:'-'}
+<html lang="{$lang_parts[0]|lower}-{$lang_parts[1]|upper}"{if function_exists('plugin_seometataginfo_head')} prefix="og: https://ogp.me/ns#"{else} xmlns="http://www.w3.org/1999/xhtml"{/if}>
 <head>
 	<title>{$flatpress.title|tag:wp_title:'&laquo;'}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset={$fp_config.locale.charset}">
