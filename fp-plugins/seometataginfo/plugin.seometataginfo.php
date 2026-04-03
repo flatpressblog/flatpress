@@ -17,7 +17,9 @@ global $seo_default;
 global $prepend_description;
 global $prepend_keywords;
 
-// Dynamic definition of allowed characters
+/**
+ * Dynamic definition of allowed characters
+ */
 $unicode_blocks = [
 	'\p{L}', // Letter
 	'\p{N}', // Number
@@ -26,7 +28,9 @@ $unicode_blocks = [
 	'\p{M}', // Mark
 ];
 
-// Additional permitted characters (e.g. emojis, special characters)
+/**
+ * Additional permitted characters (e.g. emojis, special characters)
+ */
 $extra_chars = '-_,©®✓✔➤➔→➥▶⇒➨★❤♥✘✖✆✈⚠️☎️✉👍😄😃😉😊😁😏😍😎😆😂😐😳😮😵😢😣😟😠🔍☕❗❓';
 
 $allowed_characters_regex = '/[^' . implode('', $unicode_blocks) . preg_quote($extra_chars, '/') . ']/u';
@@ -40,40 +44,52 @@ $seo_default = array(
 	'nosnippet' => '0' // "0" or "1"
 );
 
-// prepend the blog title to description and keywords
+/**
+ * prepend the blog title to description and keywords
+ */
 global $fp_config;
 $prepend_description = $fp_config ['general'] ['title'] . ' - ';
 $prepend_keywords = $fp_config ['general'] ['title'] . ', ';
 
-// IMPORTANT: migrate data from previous version
-// Note: If a metatags.ini exists for both
-// an published entry and a draft entry
-// the published entry version will be kept.
-// set 'SEOMETA_MIGRATE_DATA' to 'true' then
-// create a new entry to force data migration.
+/**
+ * IMPORTANT: migrate data from previous version
+ * Note: If a metatags.ini exists for both
+ * an published entry and a draft entry
+ * the published entry version will be kept.
+ * set 'SEOMETA_MIGRATE_DATA' to 'true' then
+ * create a new entry to force data migration.
+ */
 if (!defined('SEOMETA_MIGRATE_DATA')) {
 	define('SEOMETA_MIGRATE_DATA', false);
 }
 
-// generate Open Graph <meta property="og:".. true/false
+/**
+ * generate Open Graph <meta property="og:".. true/false
+ */
 if (!defined('SEOMETA_GEN_OPEN_GRAPH')) {
 	define('SEOMETA_GEN_OPEN_GRAPH', true);
 }
 
-// generate pretty titles e.g.
-// 'Blog Title - Archive - 2011/06' or
-// 'Blog Title - Category - Something Cool'
+/**
+ * generate pretty titles e.g.
+ *   'Blog Title - Archive - 2011/06' or
+ *   'Blog Title - Category - Something Cool'
+ */
 if (!defined('SEOMETA_GEN_TITLE')) {
 	define('SEOMETA_GEN_TITLE', true);
 }
 
-// generate <meta name='title'.. true/false
+/**
+ * generate <meta name='title'.. true/false
+ */
 if (!defined('SEOMETA_GEN_TITLE_META')) {
 	define('SEOMETA_GEN_TITLE_META', true);
 }
 
-// Before the crawler selects any image, we give it the style/ theme preview
-// generate <meta property="og:image".. true/false
+/**
+ * Before the crawler selects any image, we give it the style/ theme preview
+ * generate <meta property="og:image".. true/false
+ */
 if (!defined('SEOMETA_GEN_IMAGE_META')) {
 	define('SEOMETA_GEN_IMAGE_META', true);
 }
@@ -83,10 +99,12 @@ if (!defined('SEOMETA_GEN_CANONICAL')) {
 	define('SEOMETA_GEN_CANONICAL', true);
 }
 
-// force comments to point at page (canonical)
-// e.g.
-// /yy/mm/dd/mypage/comments/ => /yy/mm/dd/mypage/
-// /yy/mm/dd/mypage/comments/#comments => /yy/mm/dd/mypage/
+/**
+ * force comments to point at page (canonical)
+ * e.g.
+ *   /yy/mm/dd/mypage/comments/ => /yy/mm/dd/mypage/
+ *   /yy/mm/dd/mypage/comments/#comments => /yy/mm/dd/mypage/
+ */
 if (!defined('SEOMETA_HIDECOMMENTS')) {
 	define('SEOMETA_HIDECOMMENTS', true);
 }
@@ -396,13 +414,26 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		echo '		<meta property="og:description" content="' . $encoded_description . '">' . "\n";
 	}
 	$article_published_time = '';
+	$article_section = '';
+	$article_tags = array();
 	if (is_single()) {
 		$article_published_time = seometataginfo_get_article_published_time();
+		$article_section = seometataginfo_get_article_section();
+		$article_tags = seometataginfo_get_article_tags();
 		echo '		<meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
 		if (SEOMETA_GEN_OPEN_GRAPH) {
 			echo '		<meta property="og:type" content="article">' . "\n";
+			echo '		<meta property="article:author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
 			if ($article_published_time !== '') {
 				echo '		<meta property="article:published_time" content="' . htmlspecialchars($article_published_time, ENT_QUOTES, $charset) . '">' . "\n";
+			}
+			if ($article_section !== '') {
+				echo '		<meta property="article:section" content="' . htmlspecialchars($article_section, ENT_QUOTES, $charset) . '">' . "\n";
+			}
+			if (!empty($article_tags)) {
+				foreach ($article_tags as $article_tag) {
+					echo '		<meta property="article:tag" content="' . htmlspecialchars($article_tag, ENT_QUOTES, $charset) . '">' . "\n";
+				}
 			}
 		}
 	} else {
@@ -488,42 +519,225 @@ function seometataginfo_build_public_url($baseUrl) {
 }
 
 /**
- * Returns the published time of the current single entry/comments view in ISO 8601.
+ * Resolves the current single-entry context to a stable entry ID and parsed entry data.
  *
- * Prefer the explicit DATE field stored with the entry; fall back to the entry ID
- * timestamp if needed so older or incomplete content still gets valid metadata.
+ * The function prefers the currently queried entry from the FlatPress query object,
+ * then falls back to the requested entry parameter and finally parses the entry file
+ * if necessary. The result is cached for the duration of the request.
+ *
+ * @return array{id:string,entry:array}
  */
-function seometataginfo_get_article_published_time() {
+function seometataginfo_get_current_single_entry_data() {
 	global $fpdb, $fp_params;
 
-	if (!is_single()) {
-		return '';
+	static $cache = null;
+
+	if ($cache !== null) {
+		return $cache;
 	}
 
-	$entry_id = '';
-	$entry = array();
+	$cache = array(
+		'id' => '',
+		'entry' => array()
+	);
+
+	if (!is_single()) {
+		return $cache;
+	}
 
 	if (isset($fpdb) && is_object($fpdb) && method_exists($fpdb, 'getQuery')) {
 		$q = &$fpdb->getQuery();
 		if (is_object($q) && method_exists($q, 'peekEntry')) {
 			$peek = @$q->peekEntry();
 			if (is_array($peek) && isset($peek [0])) {
-				$entry_id = is_string($peek [0]) ? $peek [0] : '';
-				$entry = (isset($peek [1]) && is_array($peek [1])) ? $peek [1] : array();
+				$cache ['id'] = is_string($peek [0]) ? $peek [0] : '';
+				$cache ['entry'] = (isset($peek [1]) && is_array($peek [1])) ? $peek [1] : array();
 			}
 		}
 	}
 
-	if ($entry_id === '' && !empty($fp_params ['entry']) && is_string($fp_params ['entry'])) {
-		$entry_id = $fp_params ['entry'];
+	if ($cache ['id'] === '' && !empty($fp_params ['entry']) && is_string($fp_params ['entry'])) {
+		$cache ['id'] = $fp_params ['entry'];
 	}
 
-	if (empty($entry) && $entry_id !== '' && function_exists('entry_parse')) {
-		$parsed = entry_parse($entry_id);
+	if (empty($cache ['entry']) && $cache ['id'] !== '' && function_exists('entry_parse')) {
+		$parsed = entry_parse($cache ['id']);
 		if (is_array($parsed)) {
-			$entry = $parsed;
+			$cache ['entry'] = $parsed;
 		}
 	}
+
+	return $cache;
+}
+
+/**
+ * Builds a category path from top-level category to leaf category.
+ *
+ * FlatPress stores hierarchical categories in categories.txt. For nested
+ * categories we export a readable path using a stable separator so the
+ * Open Graph section remains understandable outside the CMS context.
+ *
+ * @param string|int $category_id
+ *   The FlatPress category ID.
+ * @param string $separator
+ *   String used between nested category labels.
+ * @return string
+ *   The resolved category path or an empty string when no valid category exists.
+ */
+function seometataginfo_get_category_path($category_id, $separator = '/') {
+	$category_id = is_scalar($category_id) ? trim((string)$category_id) : '';
+	if ($category_id === '' || !preg_match('/^\d+$/', $category_id)) {
+		return '';
+	}
+
+	if (!function_exists('entry_categories_get') || !function_exists('entry_categories_list')) {
+		return '';
+	}
+
+	$defs = entry_categories_get('defs');
+	$parents = entry_categories_list();
+
+	if (!is_array($defs) || !isset($defs [$category_id]) || !is_array($parents)) {
+		return '';
+	}
+
+	$path = array();
+	$seen = array();
+	$current = $category_id;
+
+	while ($current !== '' && $current !== '0' && !isset($seen [$current])) {
+		$seen [$current] = true;
+
+		if (!isset($defs [$current]) || trim((string)$defs [$current]) === '') {
+			break;
+		}
+
+		array_unshift($path, trim((string)$defs [$current]));
+
+		if (!isset($parents [$current])) {
+			break;
+		}
+
+		$parent = trim((string)$parents [$current]);
+		if ($parent === '' || $parent === '0' || $parent === $current) {
+			break;
+		}
+
+		$current = $parent;
+	}
+
+	return !empty($path) ? implode($separator, $path) : '';
+}
+
+/**
+ * Returns the Open Graph article section for the current single entry/comments view.
+ *
+ * Because Open Graph expects a single high-level section string, the plugin uses
+ * the first real FlatPress category assigned to the entry and expands nested
+ * categories to a readable hierarchy path.
+ */
+function seometataginfo_get_article_section() {
+	$data = seometataginfo_get_current_single_entry_data();
+	$entry = isset($data ['entry']) && is_array($data ['entry']) ? $data ['entry'] : array();
+
+	if (empty($entry ['categories']) || !is_array($entry ['categories'])) {
+		return '';
+	}
+
+	foreach ($entry ['categories'] as $category_id) {
+		$category_id = is_scalar($category_id) ? trim((string)$category_id) : '';
+		if ($category_id === '' || !preg_match('/^\d+$/', $category_id) || $category_id === '0') {
+			continue;
+		}
+
+		$section = seometataginfo_get_category_path($category_id);
+		if ($section !== '') {
+			return $section;
+		}
+	}
+
+	return '';
+}
+
+/**
+ * Returns whether the tag plugin is installed and enabled for the current request.
+ */
+function seometataginfo_is_tag_plugin_enabled() {
+	global $fp_plugins;
+
+	if (!is_array($fp_plugins) || !in_array('tag', $fp_plugins, true)) {
+		return false;
+	}
+
+	if (function_exists('plugin_exists') && !plugin_exists('tag')) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Returns the current article tags from the active FlatPress tag plugin.
+ *
+ * The Open Graph protocol models article:tag as an array of strings, so callers
+ * should emit one meta tag per returned item.
+ *
+ * @return string[]
+ */
+function seometataginfo_get_article_tags() {
+	global $plugin_tag;
+
+	if (!is_single() || !seometataginfo_is_tag_plugin_enabled()) {
+		return array();
+	}
+
+	$data = seometataginfo_get_current_single_entry_data();
+	$entry_id = isset($data ['id']) ? trim((string)$data ['id']) : '';
+	$entry = isset($data ['entry']) && is_array($data ['entry']) ? $data ['entry'] : array();
+	$tags = array();
+
+	if (isset($plugin_tag) && is_object($plugin_tag) && isset($plugin_tag->entry_class) && is_object($plugin_tag->entry_class)) {
+		$entry_class = $plugin_tag->entry_class;
+
+		if ($entry_id !== '' && method_exists($entry_class, 'entryTags')) {
+			$tags = $entry_class->entryTags($entry_id);
+		} elseif (!empty($entry ['content']) && is_string($entry ['content']) && method_exists($entry_class, 'tag_list')) {
+			$before = isset($entry_class->tags) && is_array($entry_class->tags) ? $entry_class->tags : array();
+			$entry_class->tag_list($entry ['content']);
+			$tags = isset($entry_class->tags) && is_array($entry_class->tags) ? $entry_class->tags : array();
+			$entry_class->tags = $before;
+		}
+	}
+
+	if (!is_array($tags) || empty($tags)) {
+		return array();
+	}
+
+	$clean = array();
+	foreach ($tags as $tag) {
+		if (!is_scalar($tag)) {
+			continue;
+		}
+		$tag = trim((string)$tag);
+		if ($tag === '') {
+			continue;
+		}
+		$clean [$tag] = $tag;
+	}
+
+	return array_values($clean);
+}
+
+/**
+ * Returns the published time of the current single entry/comments view in ISO 8601.
+ *
+ * Prefer the explicit DATE field stored with the entry; fall back to the entry ID
+ * timestamp if needed so older or incomplete content still gets valid metadata.
+ */
+function seometataginfo_get_article_published_time() {
+	$data = seometataginfo_get_current_single_entry_data();
+	$entry_id = isset($data ['id']) ? (string)$data ['id'] : '';
+	$entry = isset($data ['entry']) && is_array($data ['entry']) ? $data ['entry'] : array();
 
 	if (isset($entry ['date']) && is_numeric($entry ['date']) && function_exists('date_iso8601')) {
 		$published = date_iso8601($entry ['date']);
@@ -919,8 +1133,10 @@ function plugin_seometatags_setup() {
 	return 1;
 }
 
-// The SEO robots.txt admin panel
-// The root directory must be defined in the server configuration file!
+/**
+ * The SEO robots.txt admin panel
+ * The root directory must be defined in the server configuration file!
+ */
 if (class_exists('AdminPanelAction') && !empty($_SERVER ['DOCUMENT_ROOT'])) {
 
 	class admin_plugin_seometataginfo extends AdminPanelAction {
