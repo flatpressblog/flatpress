@@ -48,6 +48,9 @@ $seo_default = array(
  * prepend the blog title to description and keywords
  */
 global $fp_config;
+if ((!isset($fp_config) || !is_array($fp_config)) && isset($GLOBALS ['EARLY_FP_CONFIG']) && is_array($GLOBALS ['EARLY_FP_CONFIG'])) {
+	$fp_config = $GLOBALS ['EARLY_FP_CONFIG'];
+}
 $prepend_description = $fp_config ['general'] ['title'] . ' - ';
 $prepend_keywords = $fp_config ['general'] ['title'] . ', ';
 
@@ -92,6 +95,34 @@ if (!defined('SEOMETA_GEN_TITLE_META')) {
  */
 if (!defined('SEOMETA_GEN_IMAGE_META')) {
 	define('SEOMETA_GEN_IMAGE_META', true);
+}
+
+if (!defined('SEOMETA_OGIMAGE_TARGET_WIDTH')) {
+	define('SEOMETA_OGIMAGE_TARGET_WIDTH', 1200);
+}
+
+if (!defined('SEOMETA_OGIMAGE_TARGET_HEIGHT')) {
+	define('SEOMETA_OGIMAGE_TARGET_HEIGHT', 630);
+}
+
+if (!defined('SEOMETA_OGIMAGE_QUERY_VAR')) {
+	define('SEOMETA_OGIMAGE_QUERY_VAR', 'seometa_ogimage');
+}
+
+if (!defined('SEOMETA_OGIMAGE_FALLBACK_RELATIVE_PATH')) {
+	define('SEOMETA_OGIMAGE_FALLBACK_RELATIVE_PATH', 'fp-plugins/seometataginfo/imgs/og-image.png');
+}
+
+if (!defined('SEOMETA_OGIMAGE_INFO_APCU_TTL')) {
+	define('SEOMETA_OGIMAGE_INFO_APCU_TTL', max(60, (int)($_ENV ['FP_APCU_IO_TTL'] ?? 3600)));
+}
+
+if (!defined('SEOMETA_OGIMAGE_BINARY_APCU_TTL')) {
+	define('SEOMETA_OGIMAGE_BINARY_APCU_TTL', max(60, (int)($_ENV ['FP_APCU_IO_TTL'] ?? 3600)));
+}
+
+if (!defined('SEOMETA_OGIMAGE_BINARY_APCU_MAX_BYTES')) {
+	define('SEOMETA_OGIMAGE_BINARY_APCU_MAX_BYTES', 1572864);
 }
 
 // generate <link rel="canonical".. true/false
@@ -352,10 +383,10 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	$lang = $fp_config ['locale'] ['lang'] ?? '';
 	$site_title = $fp_config ['general'] ['title'] ?? '';
 	$BLOG_BASEURL = $fp_config ['general'] ['www'] ?? '';
-	$theme = $fp_config ['general'] ['theme'] ?? '';
-	$style = isset($fp_config ['general'] ['style']) && is_string($fp_config ['general'] ['style']) ? trim($fp_config ['general'] ['style']) : '';
-	$styleSegment = ($style !== '') ? ($style . '/') : '';
-	$previewImage = seometataginfo_url_join($BLOG_BASEURL, 'fp-interface/themes/' . $theme . '/' . $styleSegment . 'preview.png');
+	$ogImageMeta = array('url' => '', 'secure_url' => '', 'mime' => '', 'width' => 0, 'height' => 0);
+	if (SEOMETA_GEN_IMAGE_META && SEOMETA_GEN_OPEN_GRAPH) {
+		$ogImageMeta = seometataginfo_get_og_image_meta($BLOG_BASEURL);
+	}
 
 	echo '
 		<!-- BOF SEO Metatag Info -->' . "\n";
@@ -368,22 +399,21 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		}
 	}
 
-	if (SEOMETA_GEN_IMAGE_META) {
-		/**
-		 * The minimum permitted image size is 200 x 200 pixels.
-		 * The size of the image file must not exceed 8 MB.
-		 * Meh, the recommended aspect ratio is 1.91:1 otherwise parts will be cut off
-		 */
-		if (SEOMETA_GEN_OPEN_GRAPH) {
-			echo '		<meta property="og:image" content="' . htmlspecialchars($previewImage, ENT_QUOTES, $charset) . '">' . "\n";
-			echo '		<meta property="og:image:url" content="' . htmlspecialchars($previewImage, ENT_QUOTES, $charset) . '">' . "\n";
-			if (stripos($previewImage, 'https://') === 0) {
-				echo '		<meta property="og:image:secure_url" content="' . htmlspecialchars($previewImage, ENT_QUOTES, $charset) . '">' . "\n";
-			}
-			echo '		<meta property="og:image:type" content="image/png">' . "\n";
-			echo '		<meta property="og:image:alt" content="' . htmlspecialchars(($site_title !== '' ? $site_title : 'Preview'), ENT_QUOTES, $charset) . '">' . "\n";
-			echo '		<meta property="og:image:width" content="800">' . "\n";
-			echo '		<meta property="og:image:height" content="600">' . "\n";
+	if (SEOMETA_GEN_IMAGE_META && SEOMETA_GEN_OPEN_GRAPH && !empty($ogImageMeta ['url'])) {
+		echo '		<meta property="og:image" content="' . htmlspecialchars($ogImageMeta ['url'], ENT_QUOTES, $charset) . '">' . "\n";
+		echo '		<meta property="og:image:url" content="' . htmlspecialchars($ogImageMeta ['url'], ENT_QUOTES, $charset) . '">' . "\n";
+		if (!empty($ogImageMeta ['secure_url'])) {
+			echo '		<meta property="og:image:secure_url" content="' . htmlspecialchars($ogImageMeta ['secure_url'], ENT_QUOTES, $charset) . '">' . "\n";
+		}
+		if (!empty($ogImageMeta ['mime'])) {
+			echo '		<meta property="og:image:type" content="' . htmlspecialchars($ogImageMeta ['mime'], ENT_QUOTES, $charset) . '">' . "\n";
+		}
+		echo '		<meta property="og:image:alt" content="' . htmlspecialchars(($site_title !== '' ? $site_title : 'Preview'), ENT_QUOTES, $charset) . '">' . "\n";
+		if (!empty($ogImageMeta ['width'])) {
+			echo '		<meta property="og:image:width" content="' . (int)$ogImageMeta ['width'] . '">' . "\n";
+		}
+		if (!empty($ogImageMeta ['height'])) {
+			echo '		<meta property="og:image:height" content="' . (int)$ogImageMeta ['height'] . '">' . "\n";
 		}
 	}
 
@@ -468,6 +498,669 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		}
 	}
 	echo '		<!-- EOF SEO Metatag Info -->' . "\n";
+}
+
+function seometataginfo_append_query_args($url, $args) {
+	$url = is_string($url) ? trim($url) : '';
+	if ($url === '') {
+		return '';
+	}
+
+	$fragment = '';
+	$fragmentPos = strpos($url, '#');
+	if ($fragmentPos !== false) {
+		$fragment = substr($url, $fragmentPos);
+		$url = substr($url, 0, $fragmentPos);
+	}
+
+	$query = http_build_query(is_array($args) ? $args : array(), '', '&', PHP_QUERY_RFC3986);
+	if ($query === '') {
+		return $url . $fragment;
+	}
+
+	return $url . (strpos($url, '?') === false ? '?' : '&') . $query . $fragment;
+}
+
+function seometataginfo_get_runtime_config() {
+	global $fp_config;
+
+	if (isset($fp_config) && is_array($fp_config) && !empty($fp_config)) {
+		return $fp_config;
+	}
+
+	if (isset($GLOBALS ['EARLY_FP_CONFIG']) && is_array($GLOBALS ['EARLY_FP_CONFIG'])) {
+		return $GLOBALS ['EARLY_FP_CONFIG'];
+	}
+
+	return array();
+}
+
+function seometataginfo_apcu_available() {
+	return function_exists('is_apcu_on') && is_apcu_on();
+}
+
+function seometataginfo_normalize_cache_ttl($ttl, $defaultTtl) {
+	$ttl = (int)$ttl;
+	$defaultTtl = (int)$defaultTtl;
+	if ($ttl < 1) {
+		$ttl = $defaultTtl;
+	}
+	if ($ttl < 1) {
+		$ttl = 3600;
+	}
+	return $ttl;
+}
+
+function seometataginfo_build_image_info($baseUrl, $relativePath, $absolutePath, $mime, $width, $height, $type, $mtime, $sizeBytes) {
+	return array(
+		'relative_path' => (string)$relativePath,
+		'absolute_path' => (string)$absolutePath,
+		'url' => seometataginfo_url_join($baseUrl, $relativePath),
+		'mime' => (string)$mime,
+		'width' => (int)$width,
+		'height' => (int)$height,
+		'type' => (int)$type,
+		'mtime' => (int)$mtime,
+		'size_bytes' => (int)$sizeBytes,
+	);
+}
+
+function seometataginfo_get_image_info_apcu_key($absolutePath, $mtime, $sizeBytes) {
+	return 'seometa:og:imageinfo:v1:' . md5((string)$absolutePath . '|' . (string)$mtime . '|' . (string)$sizeBytes);
+}
+
+function seometataginfo_get_og_image_binary_cache_key($imageInfo, $targetWidth, $targetHeight) {
+	if (!is_array($imageInfo)) {
+		return '';
+	}
+
+	$absolutePath = isset($imageInfo ['absolute_path']) ? (string)$imageInfo ['absolute_path'] : '';
+	$type = isset($imageInfo ['type']) ? (int)$imageInfo ['type'] : 0;
+	$mtime = isset($imageInfo ['mtime']) ? (int)$imageInfo ['mtime'] : 0;
+	$sizeBytes = isset($imageInfo ['size_bytes']) ? (int)$imageInfo ['size_bytes'] : 0;
+	if ($absolutePath === '' || $type < 1) {
+		return '';
+	}
+
+	return 'seometa:og:imagebin:v1:' . md5($absolutePath . '|' . $type . '|' . $mtime . '|' . $sizeBytes . '|' . (int)$targetWidth . 'x' . (int)$targetHeight);
+}
+
+function seometataginfo_get_cached_og_image_binary($imageInfo, $targetWidth, $targetHeight) {
+	if (!seometataginfo_apcu_available()) {
+		return null;
+	}
+
+	$key = seometataginfo_get_og_image_binary_cache_key($imageInfo, $targetWidth, $targetHeight);
+	if ($key === '') {
+		return null;
+	}
+
+	$hit = false;
+	$cached = apcu_get($key, $hit);
+	if (!$hit || !is_array($cached)) {
+		return null;
+	}
+
+	$body = isset($cached ['body']) ? $cached ['body'] : null;
+	$mime = isset($cached ['mime']) ? (string)$cached ['mime'] : '';
+	if (!is_string($body) || $body === '' || $mime === '') {
+		return null;
+	}
+
+	return array(
+		'body' => $body,
+		'mime' => $mime,
+	);
+}
+
+function seometataginfo_store_og_image_binary_cache($imageInfo, $targetWidth, $targetHeight, $body, $mime) {
+	if (!seometataginfo_apcu_available()) {
+		return false;
+	}
+
+	$body = is_string($body) ? $body : '';
+	$mime = is_string($mime) ? $mime : '';
+	if ($body === '' || $mime === '') {
+		return false;
+	}
+
+	$maxBytes = (int)SEOMETA_OGIMAGE_BINARY_APCU_MAX_BYTES;
+	if ($maxBytes > 0 && strlen($body) > $maxBytes) {
+		return false;
+	}
+
+	$key = seometataginfo_get_og_image_binary_cache_key($imageInfo, $targetWidth, $targetHeight);
+	if ($key === '') {
+		return false;
+	}
+
+	$ttl = seometataginfo_normalize_cache_ttl(SEOMETA_OGIMAGE_BINARY_APCU_TTL, 3600);
+	return @apcu_set($key, array('body' => $body, 'mime' => $mime), $ttl);
+}
+
+function seometataginfo_send_image_content_headers($mime, $contentLength) {
+	$mime = is_string($mime) ? trim($mime) : '';
+	if ($mime !== '') {
+		@header('Content-Type: ' . $mime);
+	}
+	if (function_exists('header_remove')) {
+		@header_remove('Content-Length');
+	}
+	$contentLength = (int)$contentLength;
+	if ($contentLength > 0) {
+		@header('Content-Length: ' . $contentLength);
+	}
+}
+
+function seometataginfo_output_binary_image($body, $mime, $imageInfo, $targetWidth, $targetHeight) {
+	$body = is_string($body) ? $body : '';
+	$mime = is_string($mime) ? trim($mime) : '';
+	if ($body === '' || $mime === '' || !is_array($imageInfo)) {
+		return false;
+	}
+
+	seometataginfo_send_image_cache_headers($imageInfo, (int)$targetWidth, (int)$targetHeight);
+	seometataginfo_send_image_content_headers($mime, strlen($body));
+	echo $body;
+	return true;
+}
+
+function seometataginfo_capture_image_resource_output($image, $imageInfo) {
+	if ((!is_object($image) && !is_resource($image)) || !is_array($imageInfo)) {
+		return null;
+	}
+
+	$type = isset($imageInfo ['type']) ? (int)$imageInfo ['type'] : 0;
+	if ($type !== 2 && $type !== 3) {
+		return null;
+	}
+
+	ob_start();
+	$ok = false;
+	if ($type === 3 && function_exists('imagepng')) {
+		$ok = imagepng($image);
+	} elseif ($type === 2 && function_exists('imagejpeg')) {
+		$ok = imagejpeg($image, null, 90);
+	}
+	$body = ob_get_clean();
+	if (!$ok || !is_string($body) || $body === '') {
+		return null;
+	}
+	return $body;
+}
+
+/**
+ * Reads validated image metadata for a relative file path.
+ *
+ * @param string $baseUrl
+ * @param string $relativePath
+ * @return array<string,mixed>
+ */
+function seometataginfo_get_supported_image_info($baseUrl, $relativePath) {
+	static $local = array();
+
+	$imageInfo = seometataginfo_build_image_info($baseUrl, '', '', '', 0, 0, 0, 0, 0);
+	$relativePath = is_string($relativePath) ? trim($relativePath) : '';
+	if ($relativePath === '') {
+		return $imageInfo;
+	}
+
+	$absolutePath = ABS_PATH . ltrim($relativePath, '/');
+	$cacheFingerprint = '';
+	$st = @stat($absolutePath);
+	if (!is_array($st) || !is_file($absolutePath) || !is_readable($absolutePath)) {
+		return $imageInfo;
+	}
+
+	$mtime = (int)($st ['mtime'] ?? 0);
+	$sizeBytes = (int)($st ['size'] ?? 0);
+	$cacheFingerprint = $absolutePath . '|' . $mtime . '|' . $sizeBytes . '|' . (string)$baseUrl;
+	if (isset($local [$cacheFingerprint]) && is_array($local [$cacheFingerprint])) {
+		return $local [$cacheFingerprint];
+	}
+
+	$cachedMeta = null;
+	if (seometataginfo_apcu_available()) {
+		$hit = false;
+		$cachedMeta = apcu_get(seometataginfo_get_image_info_apcu_key($absolutePath, $mtime, $sizeBytes), $hit);
+		if ($hit && is_array($cachedMeta)) {
+			$width = isset($cachedMeta ['width']) ? (int)$cachedMeta ['width'] : 0;
+			$height = isset($cachedMeta ['height']) ? (int)$cachedMeta ['height'] : 0;
+			$type = isset($cachedMeta ['type']) ? (int)$cachedMeta ['type'] : 0;
+			$mime = isset($cachedMeta ['mime']) ? (string)$cachedMeta ['mime'] : '';
+			if ($width > 0 && $height > 0 && in_array($type, array(2, 3), true) && $mime !== '') {
+				return $local [$cacheFingerprint] = seometataginfo_build_image_info(
+					$baseUrl,
+					$relativePath,
+					$absolutePath,
+					$mime,
+					$width,
+					$height,
+					$type,
+					$mtime,
+					$sizeBytes
+				);
+			}
+		}
+	}
+
+	$sizeInfo = @getimagesize($absolutePath);
+	if (!is_array($sizeInfo) || empty($sizeInfo [0]) || empty($sizeInfo [1]) || empty($sizeInfo [2])) {
+		return $imageInfo;
+	}
+
+	$type = (int)$sizeInfo [2];
+	$mime = isset($sizeInfo ['mime']) && is_string($sizeInfo ['mime']) ? trim($sizeInfo ['mime']) : '';
+	if (!in_array($type, array(2, 3), true)) {
+		return $imageInfo;
+	}
+	if ($mime === '') {
+		$mime = ($type === 2) ? 'image/jpeg' : 'image/png';
+	}
+
+	$imageInfo = seometataginfo_build_image_info(
+		$baseUrl,
+		$relativePath,
+		$absolutePath,
+		$mime,
+		(int)$sizeInfo [0],
+		(int)$sizeInfo [1],
+		$type,
+		$mtime,
+		$sizeBytes
+	);
+	$local [$cacheFingerprint] = $imageInfo;
+
+	if (seometataginfo_apcu_available()) {
+		@apcu_set(
+			seometataginfo_get_image_info_apcu_key($absolutePath, $mtime, $sizeBytes),
+			array(
+				'mime' => $mime,
+				'width' => (int)$sizeInfo [0],
+				'height' => (int)$sizeInfo [1],
+				'type' => $type,
+			),
+			seometataginfo_normalize_cache_ttl(SEOMETA_OGIMAGE_INFO_APCU_TTL, 3600)
+		);
+	}
+
+	return $imageInfo;
+}
+
+/**
+ * Returns metadata for the currently active theme preview image.
+ *
+ * The SEO plugin historically used the active theme/style preview image for og:image.
+ * We keep that source as the primary candidate, but community themes/styles may not
+ * ship a preview image. In that case a bundled plugin fallback image is used.
+ *
+ * @param string $baseUrl
+ * @return array<string,mixed>
+ */
+function seometataginfo_get_theme_preview_image_info($baseUrl) {
+	static $cache = array();
+
+	$config = seometataginfo_get_runtime_config();
+	$theme = isset($config ['general'] ['theme']) && is_string($config ['general'] ['theme']) ? trim($config ['general'] ['theme']) : '';
+	$style = isset($config ['general'] ['style']) && is_string($config ['general'] ['style']) ? trim($config ['general'] ['style']) : '';
+	$cacheKey = $theme . '|' . $style . '|' . (string)$baseUrl;
+
+	if (isset($cache [$cacheKey]) && is_array($cache [$cacheKey])) {
+		return $cache [$cacheKey];
+	}
+
+	$cache [$cacheKey] = array(
+		'relative_path' => '',
+		'absolute_path' => '',
+		'url' => '',
+		'mime' => '',
+		'width' => 0,
+		'height' => 0,
+		'type' => 0,
+		'mtime' => 0,
+		'size_bytes' => 0,
+	);
+
+	if ($theme === '') {
+		return $cache [$cacheKey];
+	}
+
+	$candidates = array();
+	if ($style !== '') {
+		$candidates [] = 'fp-interface/themes/' . $theme . '/' . $style . '/preview.png';
+		$candidates [] = 'fp-interface/themes/' . $theme . '/' . $style . '/preview.jpg';
+		$candidates [] = 'fp-interface/themes/' . $theme . '/' . $style . '/preview.jpeg';
+	}
+	$candidates [] = 'fp-interface/themes/' . $theme . '/preview.png';
+	$candidates [] = 'fp-interface/themes/' . $theme . '/preview.jpg';
+	$candidates [] = 'fp-interface/themes/' . $theme . '/preview.jpeg';
+
+	foreach ($candidates as $relativePath) {
+		$imageInfo = seometataginfo_get_supported_image_info($baseUrl, $relativePath);
+		if (!empty($imageInfo ['absolute_path'])) {
+			$cache [$cacheKey] = $imageInfo;
+			break;
+		}
+	}
+
+	return $cache [$cacheKey];
+}
+
+function seometataginfo_get_plugin_fallback_image_info($baseUrl) {
+	static $cache = array();
+
+	$cacheKey = (string)$baseUrl;
+	if (!isset($cache [$cacheKey]) || !is_array($cache [$cacheKey])) {
+		$cache [$cacheKey] = seometataginfo_get_supported_image_info($baseUrl, SEOMETA_OGIMAGE_FALLBACK_RELATIVE_PATH);
+	}
+
+	return $cache [$cacheKey];
+}
+
+function seometataginfo_get_og_image_source_info($baseUrl) {
+	$imageInfo = seometataginfo_get_theme_preview_image_info($baseUrl);
+	if (!empty($imageInfo ['absolute_path'])) {
+		return $imageInfo;
+	}
+
+	return seometataginfo_get_plugin_fallback_image_info($baseUrl);
+}
+
+function seometataginfo_can_transform_og_image($imageInfo) {
+	if (!is_array($imageInfo) || empty($imageInfo ['absolute_path']) || empty($imageInfo ['type'])) {
+		return false;
+	}
+
+	if (!function_exists('imagecreatetruecolor') || !function_exists('imagecopyresampled') || !function_exists('imagefilledrectangle')) {
+		return false;
+	}
+
+	$type = (int)$imageInfo ['type'];
+	if ($type === 2) {
+		return function_exists('imagecreatefromjpeg') && function_exists('imagejpeg');
+	}
+	if ($type === 3) {
+		return function_exists('imagecreatefrompng') && function_exists('imagepng');
+	}
+
+	return false;
+}
+
+function seometataginfo_build_og_image_url($baseUrl, $imageInfo) {
+	$entryPoint = seometataginfo_url_join($baseUrl, 'index.php');
+	if ($entryPoint === '') {
+		return '';
+	}
+
+	$version = '';
+	if (is_array($imageInfo) && !empty($imageInfo ['mtime'])) {
+		$version = (string)(int)$imageInfo ['mtime'];
+	}
+
+	return seometataginfo_append_query_args($entryPoint, array(
+		SEOMETA_OGIMAGE_QUERY_VAR => '1',
+		'v' => $version
+	));
+}
+
+/**
+ * Returns the effective og:image metadata for the current request.
+ *
+ * When GD is available we publish a dynamic 1200x630 endpoint that renders
+ * the transformed image fully in memory. Otherwise we keep the original image.
+ *
+ * @param string $baseUrl
+ * @return array<string,mixed>
+ */
+function seometataginfo_get_og_image_meta($baseUrl) {
+	$imageInfo = seometataginfo_get_og_image_source_info($baseUrl);
+	if (empty($imageInfo ['url'])) {
+		return array(
+			'url' => '',
+			'secure_url' => '',
+			'mime' => '',
+			'width' => 0,
+			'height' => 0,
+		);
+	}
+
+	if (seometataginfo_can_transform_og_image($imageInfo)) {
+		$dynamicUrl = seometataginfo_build_og_image_url($baseUrl, $imageInfo);
+		if ($dynamicUrl !== '') {
+			return array(
+				'url' => $dynamicUrl,
+				'secure_url' => (stripos($dynamicUrl, 'https://') === 0) ? $dynamicUrl : '',
+				'mime' => (string)$imageInfo ['mime'],
+				'width' => (int)SEOMETA_OGIMAGE_TARGET_WIDTH,
+				'height' => (int)SEOMETA_OGIMAGE_TARGET_HEIGHT,
+			);
+		}
+	}
+
+	$url = (string)$imageInfo ['url'];
+	return array(
+		'url' => $url,
+		'secure_url' => (stripos($url, 'https://') === 0) ? $url : '',
+		'mime' => (string)$imageInfo ['mime'],
+		'width' => (int)$imageInfo ['width'],
+		'height' => (int)$imageInfo ['height'],
+	);
+}
+
+function seometataginfo_is_og_image_request() {
+	if (!isset($_GET [SEOMETA_OGIMAGE_QUERY_VAR])) {
+		return false;
+	}
+
+	$value = $_GET [SEOMETA_OGIMAGE_QUERY_VAR];
+	if (is_array($value)) {
+		return false;
+	}
+
+	$value = trim((string)$value);
+	return in_array($value, array('', '1', 'true', 'yes'), true);
+}
+
+function seometataginfo_send_status($code) {
+	$code = (int)$code;
+	if (function_exists('http_response_code')) {
+		http_response_code($code);
+		return;
+	}
+
+	$protocol = isset($_SERVER ['SERVER_PROTOCOL']) && is_string($_SERVER ['SERVER_PROTOCOL']) && $_SERVER ['SERVER_PROTOCOL'] !== '' ? $_SERVER ['SERVER_PROTOCOL'] : 'HTTP/1.1';
+	if ($code === 304) {
+		@header($protocol . ' 304 Not Modified');
+	} elseif ($code === 404) {
+		@header($protocol . ' 404 Not Found');
+	}
+}
+
+function seometataginfo_send_image_cache_headers($imageInfo, $targetWidth, $targetHeight) {
+	if (!is_array($imageInfo)) {
+		return;
+	}
+
+	$mtime = !empty($imageInfo ['mtime']) ? (int)$imageInfo ['mtime'] : time();
+	$etagSource = (string)$mtime . '|' . (string)$targetWidth . 'x' . (string)$targetHeight . '|' . (string)($imageInfo ['absolute_path'] ?? '');
+	$etag = 'W/"' . sha1($etagSource) . '"';
+
+	if (function_exists('header_remove')) {
+		@header_remove('Content-Type');
+	}
+	@header('Cache-Control: public, max-age=86400');
+	@header('ETag: ' . $etag);
+	@header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $mtime) . ' GMT');
+
+	$ifNoneMatch = isset($_SERVER ['HTTP_IF_NONE_MATCH']) ? trim((string)$_SERVER ['HTTP_IF_NONE_MATCH']) : '';
+	$ifModifiedSince = isset($_SERVER ['HTTP_IF_MODIFIED_SINCE']) ? trim((string)$_SERVER ['HTTP_IF_MODIFIED_SINCE']) : '';
+
+	if ($ifNoneMatch !== '' && $ifNoneMatch === $etag) {
+		seometataginfo_send_status(304);
+		exit;
+	}
+
+	if ($ifModifiedSince !== '') {
+		$since = strtotime($ifModifiedSince);
+		if ($since !== false && $since >= $mtime) {
+			seometataginfo_send_status(304);
+			exit;
+		}
+	}
+}
+
+function seometataginfo_output_image_file($imageInfo) {
+	if (!is_array($imageInfo) || empty($imageInfo ['absolute_path']) || empty($imageInfo ['mime'])) {
+		return false;
+	}
+
+	seometataginfo_send_image_cache_headers($imageInfo, (int)($imageInfo ['width'] ?? 0), (int)($imageInfo ['height'] ?? 0));
+	seometataginfo_send_image_content_headers((string)$imageInfo ['mime'], (int)($imageInfo ['size_bytes'] ?? 0));
+	readfile($imageInfo ['absolute_path']);
+	return true;
+}
+
+function seometataginfo_image_create_from_file($imageInfo) {
+	if (!is_array($imageInfo) || empty($imageInfo ['absolute_path']) || empty($imageInfo ['type'])) {
+		return null;
+	}
+
+	$type = (int)$imageInfo ['type'];
+	if ($type === 2 && function_exists('imagecreatefromjpeg')) {
+		return @imagecreatefromjpeg($imageInfo ['absolute_path']);
+	}
+	if ($type === 3 && function_exists('imagecreatefrompng')) {
+		return @imagecreatefrompng($imageInfo ['absolute_path']);
+	}
+
+	return null;
+}
+
+function seometataginfo_output_image_resource($image, $imageInfo) {
+	if (!is_object($image) && !is_resource($image)) {
+		return false;
+	}
+	if (!is_array($imageInfo) || empty($imageInfo ['type'])) {
+		return false;
+	}
+
+	$type = (int)$imageInfo ['type'];
+	if ($type === 3 && function_exists('imagepng')) {
+		@header('Content-Type: image/png');
+		imagepng($image);
+		return true;
+	}
+
+	if ($type === 2 && function_exists('imagejpeg')) {
+		@header('Content-Type: image/jpeg');
+		imagejpeg($image, null, 90);
+		return true;
+	}
+
+	return false;
+}
+
+function seometataginfo_destroy_image_resource(&$image) {
+	if ($image === null) {
+		return;
+	}
+
+	if ((is_resource($image) || is_object($image)) && function_exists('imagedestroy') && (!function_exists('is_php85_plus') || !is_php85_plus())) {
+		imagedestroy($image);
+	}
+	$image = null;
+}
+
+function seometataginfo_render_og_image($imageInfo, $targetWidth, $targetHeight) {
+	$targetWidth = max(1, (int)$targetWidth);
+	$targetHeight = max(1, (int)$targetHeight);
+
+	$cachedBinary = seometataginfo_get_cached_og_image_binary($imageInfo, $targetWidth, $targetHeight);
+	if (is_array($cachedBinary) && isset($cachedBinary ['body'], $cachedBinary ['mime'])) {
+		return seometataginfo_output_binary_image($cachedBinary ['body'], $cachedBinary ['mime'], $imageInfo, $targetWidth, $targetHeight);
+	}
+
+	$source = seometataginfo_image_create_from_file($imageInfo);
+	if ($source === null) {
+		return false;
+	}
+
+	$sourceWidth = !empty($imageInfo ['width']) ? (int)$imageInfo ['width'] : 0;
+	$sourceHeight = !empty($imageInfo ['height']) ? (int)$imageInfo ['height'] : 0;
+	if ($sourceWidth < 1 || $sourceHeight < 1) {
+		seometataginfo_destroy_image_resource($source);
+		return false;
+	}
+
+	$canvas = @imagecreatetruecolor($targetWidth, $targetHeight);
+	if (!$canvas) {
+		seometataginfo_destroy_image_resource($source);
+		return false;
+	}
+
+	imagealphablending($canvas, true);
+	imagesavealpha($canvas, false);
+	$background = imagecolorallocate($canvas, 255, 255, 255);
+	imagefilledrectangle($canvas, 0, 0, $targetWidth, $targetHeight, $background);
+
+	$scale = min($targetWidth / $sourceWidth, $targetHeight / $sourceHeight);
+	$destWidth = max(1, (int)round($sourceWidth * $scale));
+	$destHeight = max(1, (int)round($sourceHeight * $scale));
+	$destX = (int)floor(($targetWidth - $destWidth) / 2);
+	$destY = (int)floor(($targetHeight - $destHeight) / 2);
+
+	$copied = imagecopyresampled($canvas, $source, $destX, $destY, 0, 0, $destWidth, $destHeight, $sourceWidth, $sourceHeight);
+	seometataginfo_destroy_image_resource($source);
+	if (!$copied) {
+		seometataginfo_destroy_image_resource($canvas);
+		return false;
+	}
+
+	$body = null;
+	$mime = isset($imageInfo ['mime']) ? (string)$imageInfo ['mime'] : '';
+	if (seometataginfo_apcu_available()) {
+		$body = seometataginfo_capture_image_resource_output($canvas, $imageInfo);
+		if (is_string($body) && $body !== '') {
+			seometataginfo_store_og_image_binary_cache($imageInfo, $targetWidth, $targetHeight, $body, $mime);
+			$result = seometataginfo_output_binary_image($body, $mime, $imageInfo, $targetWidth, $targetHeight);
+			seometataginfo_destroy_image_resource($canvas);
+			return $result;
+		}
+	}
+
+	seometataginfo_send_image_cache_headers($imageInfo, $targetWidth, $targetHeight);
+	$result = seometataginfo_output_image_resource($canvas, $imageInfo);
+	seometataginfo_destroy_image_resource($canvas);
+
+	return $result;
+}
+
+function seometataginfo_serve_og_image() {
+	$config = seometataginfo_get_runtime_config();
+	$baseUrl = isset($config ['general'] ['www']) ? $config ['general'] ['www'] : '';
+	$imageInfo = seometataginfo_get_og_image_source_info($baseUrl);
+	if (empty($imageInfo ['absolute_path']) || empty($imageInfo ['mime'])) {
+		seometataginfo_send_status(404);
+		return;
+	}
+
+	while (ob_get_level() > 0) {
+		ob_end_clean();
+	}
+
+	if (seometataginfo_can_transform_og_image($imageInfo)) {
+		$served = seometataginfo_render_og_image($imageInfo, (int)SEOMETA_OGIMAGE_TARGET_WIDTH, (int)SEOMETA_OGIMAGE_TARGET_HEIGHT);
+		if ($served) {
+			exit;
+		}
+	}
+
+	if (seometataginfo_output_image_file($imageInfo)) {
+		exit;
+	}
+
+	seometataginfo_send_status(404);
+	exit;
 }
 
 /**
@@ -1103,6 +1796,10 @@ function makePageTitle($title, $sep) {
 }
 
 function plugin_seometataginfo_init() {
+	if (!defined('ADMIN_PANEL') && seometataginfo_is_og_image_request()) {
+		seometataginfo_serve_og_image();
+	}
+
 	if (defined('ADMIN_PANEL')) {
 		return;
 	}
@@ -1113,7 +1810,6 @@ function plugin_seometataginfo_init() {
 }
 
 add_action('init', 'plugin_seometataginfo_init');
-
 
 /**
  * SEO robots.txt part
