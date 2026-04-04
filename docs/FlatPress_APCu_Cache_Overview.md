@@ -1,4 +1,4 @@
-# APCu Cache Overview in FlatPress 1.5 „Stringendo“
+# APCu Cache Overview in FlatPress 1.6.dev
 
 This document summarizes all APCu-backed caches used in FlatPress `1.6.dev`, their purpose, lifetime, invalidation strategy, and rough performance impact.
 
