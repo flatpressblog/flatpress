@@ -1704,6 +1704,10 @@ body.admin-plugin-newsletter #admin-content th {
 		background: var(--lt-color-gray-700, #2f3237);
 	}
 
+	.tagsuggestions {
+		background: var(--fp-surface, #182235);
+	}
+
 	/* Chrome, Edge, and Safari - the right Scrollbar */
 	@supports selector(::-webkit-scrollbar) {
 		body::-webkit-scrollbar-thumb {
