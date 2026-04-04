@@ -551,6 +551,19 @@ function seometataginfo_normalize_cache_ttl($ttl, $defaultTtl) {
 	return $ttl;
 }
 
+function seometataginfo_get_og_image_binary_apcu_max_bytes() {
+	if (!defined('SEOMETA_OGIMAGE_BINARY_APCU_MAX_BYTES')) {
+		return 1572864;
+	}
+
+	$maxBytes = (int)constant('SEOMETA_OGIMAGE_BINARY_APCU_MAX_BYTES');
+	if ($maxBytes < 0) {
+		return 0;
+	}
+
+	return $maxBytes;
+}
+
 function seometataginfo_build_image_info($baseUrl, $relativePath, $absolutePath, $mime, $width, $height, $type, $mtime, $sizeBytes) {
 	return array(
 		'relative_path' => (string)$relativePath,
@@ -624,8 +637,8 @@ function seometataginfo_store_og_image_binary_cache($imageInfo, $targetWidth, $t
 		return false;
 	}
 
-	$maxBytes = (int)SEOMETA_OGIMAGE_BINARY_APCU_MAX_BYTES;
-	if ($maxBytes > 0 && strlen($body) > $maxBytes) {
+	$maxBytes = seometataginfo_get_og_image_binary_apcu_max_bytes();
+	if ($maxBytes !== 0 && strlen($body) > $maxBytes) {
 		return false;
 	}
 
