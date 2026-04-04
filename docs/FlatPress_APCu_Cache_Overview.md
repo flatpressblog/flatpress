@@ -1,6 +1,6 @@
 # APCu Cache Overview in FlatPress 1.5 „Stringendo“
 
-This document summarizes all APCu-backed caches used in FlatPress `1.5 „Stringendo“`, their purpose, lifetime, invalidation strategy, and rough performance impact.
+This document summarizes all APCu-backed caches used in FlatPress `1.6.dev`, their purpose, lifetime, invalidation strategy, and rough performance impact.
 
 It is intended for maintainers, plugin authors, and performance testing.
 
@@ -623,6 +623,84 @@ Medium. Avoids repeated expensive environment probing when switching between URL
 
 ---
 
+### 4.7 SEO MetaTag Info `og:image` Caches – `seometa:og:imageinfo:*`, `seometa:og:imagebin:*`
+
+**Prefixes (logical plugin keys):**
+
+- `seometa:og:imageinfo:v1:<md5(abs_path|mtime|size)>`
+- `seometa:og:imagebin:v1:<md5(abs_path|type|mtime|size|target_width x target_height)>`
+
+**File:** `fp-plugins/seometataginfo/plugin.seometataginfo.php`
+
+**Effective APCu keys:**
+
+- Both keys are written through FlatPress' `apcu_get()` / `apcu_set()` wrappers.
+- When APCu is enabled, they therefore live under the current instance namespace as:
+  - `fp:<NS>:seometa:og:imageinfo:v1:...`
+  - `fp:<NS>:seometa:og:imagebin:v1:...`
+
+**What is cached:**
+
+- `seometa:og:imageinfo:*`
+  - validated source image metadata for the currently selected `og:image` source:
+    - absolute/relative source path is resolved outside the cache key,
+    - width,
+    - height,
+    - image type (`IMAGETYPE_JPEG` / `IMAGETYPE_PNG`),
+    - MIME type.
+  - This avoids repeated `getimagesize()` calls for the same preview/fallback image.
+- `seometa:og:imagebin:*`
+  - the already transformed Open Graph image body generated via GD for the dynamic `1200x630` endpoint,
+  - plus its MIME type.
+  - The cached binary stays in APCu only; FlatPress does **not** write resized images to disk.
+
+**Source selection and fallback order:**
+
+- Active style preview image (for example `preview.png`, `preview.jpg`, `preview.jpeg`)
+- active theme preview image
+- bundled plugin fallback image (`fp-plugins/seometataginfo/imgs/og-image.png`)
+
+**Invalidation:**
+
+- `seometa:og:imageinfo:*`
+  - key includes absolute path, source file `mtime`, and source file size,
+  - therefore any replacement or edit of the source image automatically yields a new cache key on the next request.
+- `seometa:og:imagebin:*`
+  - key includes absolute path, image type, source `mtime`, source size, and target dimensions,
+  - therefore source image updates or future target size changes automatically invalidate prior transformed variants.
+- Both caches are also naturally invalidated by FlatPress APCu namespace rotation (`FP_APCU_NS`), for example after an APCu clear/reset.
+
+**TTL:**
+
+- `seometa:og:imageinfo:*`
+  - controlled by `SEOMETA_OGIMAGE_INFO_APCU_TTL`,
+  - default: `max(60, (int)($_ENV['FP_APCU_IO_TTL'] ?? 3600))`.
+- `seometa:og:imagebin:*`
+  - controlled by `SEOMETA_OGIMAGE_BINARY_APCU_TTL`,
+  - default: `max(60, (int)($_ENV['FP_APCU_IO_TTL'] ?? 3600))`.
+- Binary cache entries are additionally size-limited by `SEOMETA_OGIMAGE_BINARY_APCU_MAX_BYTES` (default `1572864` bytes). Oversized transformed images are served normally but are **not** inserted into APCu.
+
+**Fallback behavior when APCu or GD is unavailable:**
+
+- Without APCu:
+  - the plugin still uses request-local static caching for image metadata during the current request,
+  - but follow-up requests must re-evaluate metadata and re-render the dynamic image when needed.
+- Without GD:
+  - the plugin does not attempt in-memory transformation,
+  - `og:image` falls back to the original preview image or the bundled plugin fallback image.
+
+**Relationship to early config loading:**
+
+- The plugin reads runtime configuration through `seometataginfo_get_runtime_config()`.
+- This first uses the normal `$fp_config` array.
+- If that is not available yet, it falls back to `$GLOBALS['EARLY_FP_CONFIG']`, which is prepared in `fp-includes/core/core.connection.php`.
+- This is **not** an APCu cache key of its own, but it complements the APCu-backed image caches by avoiding an unnecessary second config load during early execution paths.
+
+**Impact:**  
+Medium–High for repeated social crawler hits and repeated requests to the dynamic `og:image` endpoint. The biggest win is avoiding repeated GD resampling/encoding work once a transformed image body is already present in APCu.
+
+---
+
 ## 5. Miscellaneous and Meta Caches
 
 ### 5.1 Instance Namespace Bootstrap – `fp:ns:*`
@@ -746,6 +824,7 @@ The following table summarizes each logical cache group:
 | Categories                   | `fp:cats:list:*`, `fp:cats:encoded:*`                                                | No                       | Categories file mtime/size, TTL 600s                 | Medium                   |
 | Language                     | `fp:lang:*`                                                                          | No                       | Language file mtime/size, locale                     | Medium–High              |
 | INI parsing (SEO plugin)     | `fp:ini:*`                                                                           | No                       | INI file mtime/size                                  | Low–Medium               |
+| SEO `og:image` (SEO plugin)  | `fp:seometa:og:imageinfo:*`, `seometa:og:imagebin:*`                                 | No                       | Source path/type/mtime/size, target size, TTL        | Medium–High              |
 | HTTPS/IP env                 | `fp:https:v2:*`, `fp:net:in_cidrs:*`                                                 | No                       | TTL (≈3600s) and local process                       | Low–Medium               |
 | Plugin discovery             | `fp:plugin:*`, `fp:plugins:*`                                                        | No                       | Plugin dir/config mtimes                             | Medium                   |
 | Smarty plugin index          | `fp:spi:*`                                                                           | No                       | Dir+token hash, TTL 300s                             | Medium                   |
@@ -762,7 +841,7 @@ The following table summarizes each logical cache group:
 
 ## 7. Reference: All APCu Key Prefixes
 
-For completeness, the following logical prefixes are used by FlatPress `1.5 „Stringendo“`:
+For completeness, the following logical prefixes are used by FlatPress `1.6.dev`:
 
 - `fp:archives:html`
 - `fp:archives:list`
@@ -797,6 +876,8 @@ For completeness, the following logical prefixes are used by FlatPress `1.5 „S
 - `fp:plugins:list:v1:`
 - `fp:search:rev`
 - `fp:search:v`
+- `fp:seometa:og:imageinfo:v1:`
+- `fp:seometa:og:imagebin:v1:`
 - `fp:spi:`
 - `fp:statics:list:`
 - `fp:storage:aggregate`
