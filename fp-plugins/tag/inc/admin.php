@@ -16,9 +16,9 @@ class tag_relted_remover extends fs_filelister {
 	/**
 	 * This function checks the files and deletes them.
 	 *
-	 * @param string $directory: The directory of the file to check
-	 * @param string $file: The file name
-	 * @return integer: See fs_filelister class
+	 * @param string $directory The directory of the file to check
+	 * @param string $file The file name
+	 * @return int See fs_filelister class
 	 */
 	function _checkFile($directory, $file) {
 		$f = $directory . $file;
@@ -63,10 +63,8 @@ class plugin_tag_admin {
 	 *
 	 * It manages hooks.
 	 *
-	 * @param
-	 * object &$tagdb: the tag database object
-	 * @param 
-	 * object &$entry: the tag entry object
+	 * @param object $tagdb The tag database object
+	 * @param object $entry The tag entry object
 	 */
 	function __construct(&$tagdb, &$entry) {
 		$this->tagdb = &$tagdb;
@@ -125,9 +123,9 @@ class plugin_tag_admin {
 	 * Function called on entry_save hook.
 	 * It updates the tags database
 	 *
-	 * @param string $id: the entry id
-	 * @param array $array: the entry array
-	 * @returns boolean true (always)
+	 * @param string $id The entry id
+	 * @param array $array The entry array
+	 * @return bool Always true
 	 */
 	function entry_save($id, $array) {
 		$toremove = array();
@@ -192,7 +190,7 @@ class plugin_tag_admin {
 			@unlink(CACHE_DIR . 'tag-widget.tmp');
 		}
 		$remover = new tag_relted_remover();
-		$remover->getList();
+		unset($remover);
 
 		// Clean the cache of ajax
 		if (file_exists(CACHE_DIR . 'tag-ajax.tmp')) {
@@ -208,8 +206,8 @@ class plugin_tag_admin {
 	 * This function is called by hook entry_delete.
 	 * It updates the tag database
 	 *
-	 * @param string $id: The id of the entry that is being deleted.
-	 * @returns boolean true (always)
+	 * @param string $id The id of the entry that is being deleted
+	 * @return bool Always true
 	 */
 	function entry_delete($id) {
 		// D'oh! We need to find in the database because entry doesn't exist anymore!
@@ -249,7 +247,7 @@ class plugin_tag_admin {
 			@unlink(CACHE_DIR . 'tag-widget.tmp');
 		}
 		$remover = new tag_relted_remover();
-		$remover->getList();
+		unset($remover);
 
 		return true;
 	}
@@ -376,8 +374,7 @@ class plugin_tag_admin {
 	/**
 	 * This function removes [tag] from the content.
 	 *
-	 * @param string $content: The entry content
-	 * @return string: $content modified
+	 * @return void
 	 */
 	function simpleremove() {
 		global $smarty;
@@ -390,6 +387,25 @@ class plugin_tag_admin {
 		$this->simplebody = $post ['content'];
 		$post ['content'] = preg_replace('/\[tag\](.*?)\[\/tag\]/is', '', $post ['content']);
 		$smarty->assign('post', $post);
+	}
+
+	/**
+	 * Loads an array variable saved with system_save() from a PHP cache file.
+	 *
+	 * @param string $file Cache file path
+	 * @param string $variable Variable name saved in the cache file
+	 * @return array
+	 */
+	function loadCacheArray($file, $variable) {
+		if (!is_string($file) || $file === '' || !is_file($file)) {
+			return array();
+		}
+
+		${$variable} = null;
+		include $file;
+		$loaded = isset(${$variable}) ? ${$variable} : null;
+
+		return is_array($loaded) ? $loaded : array();
 	}
 
 	/**
@@ -406,10 +422,10 @@ class plugin_tag_admin {
 
 		$f = CACHE_DIR . 'tag-ajax.tmp';
 		$tags = array();
-		if (file_exists($f) && (time() - filemtime($f)) < 3600) {
-			include $f;
+		if (is_file($f) && (time() - filemtime($f)) < 3600) {
+			$tags = $this->loadCacheArray($f, 'tags');
 		}
-		if (!is_array($tags) || count($tags) === 0) {
+		if (count($tags) === 0) {
 			$lister = new tag_lister();
 			$tags = array_keys($lister->makeTagList());
 			natcasesort($tags);

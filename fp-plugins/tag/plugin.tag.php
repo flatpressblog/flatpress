@@ -125,8 +125,8 @@ class plugin_tag {
 	 * called via hook system to be compatible with Flatpress
 	 * style/system.
 	 *
-	 * @param string $tag: the tag you want the link of
-	 * @returns string: The tag URL
+	 * @param string $tag The tag you want the link of
+	 * @return string The tag URL
 	 */
 	function tag_link($tag) {
 		if ($this->rewrite_link) {
@@ -223,9 +223,9 @@ class plugin_tag {
 	 * This is the related entries for Smarty.
 	 * I put here since I don't want to include always the widget class.
 	 *
-	 * @param array $params: The parameters for the function
-	 * @param object $smarty: The Smarty Object
-	 * @return string: The output
+	 * @param array $params The parameters for the function
+	 * @param object $smarty The Smarty object
+	 * @return string The output
 	 */
 	function smarty_related($params, &$smarty) {
 		if (!isset($this->widget_class)) {
@@ -242,7 +242,7 @@ class plugin_tag {
 		}
 
 		$widget = $this->widget_class->tagRelated($params ['id'], $params ['number']);
-		return $widget ['content'];
+		return (isset($widget ['content']) && is_string($widget ['content'])) ? $widget ['content'] : '';
 	}
 
 }

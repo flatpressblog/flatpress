@@ -41,7 +41,7 @@ class plugin_tag_entry {
 	 * The constructor.
 	 * It doesn't do so much.
 	 *
-	 * @param object $tagdb: The tagdb instance
+	 * @param object $tagdb The tagdb instance
 	 */
 	function __construct(&$tagdb) {
 		global $smarty;
@@ -77,12 +77,12 @@ class plugin_tag_entry {
 	 * This function is used as callback from the BBCode class
 	 * to save tags from an entry.
 	 *
-	 * @param string $action: the action (see the BBCode class manual)
-	 * @param array $attributes: ??? (see the BBCode class manual)
-	 * @param string $content: what is content of [tag][/tag]
-	 * @param array $params: ??? (see the BBCode class manual)
-	 * @param ??? $node_obhect: ??? (see the BBCode class manual)
-	 * @returns void string
+	 * @param string $action The action (see the BBCode class manual)
+	 * @param array $attributes Reserved BBCode attributes
+	 * @param string $content The content of [tag][/tag]
+	 * @param array $params Reserved BBCode parameters
+	 * @param mixed $node_object Reserved BBCode node object
+	 * @return bool|string
 	 */
 	function do_bbcode($action, $attributes, $content, $params, $node_object) {
 		if ($action == 'validate') {
@@ -137,8 +137,8 @@ class plugin_tag_entry {
 	 *
 	 * It makes the list of tag from an entry.
 	 *
-	 * @param string $content: the content of the entry
-	 * @returns string: $content without tags
+	 * @param string $content The content of the entry
+	 * @return string Content without tags
 	 */
 	function tag_list($content) {
 		# Clean old tags
@@ -162,10 +162,10 @@ class plugin_tag_entry {
 	 * This is the modifier that is used to auto-list tag (with link) in
 	 * the templates.
 	 *
-	 * @param array $array: the tags of the post ({$tags} in smarty)
-	 * @param string $glue: how to join tags [default: , ]
-	 * @param string $default: if there aren't tags...
-	 * @returns: The tag list or $default
+	 * @param array $array The tags of the post ({$tags} in smarty)
+	 * @param string $glue How to join tags
+	 * @param string $default Fallback if there are no tags
+	 * @return string
 	 */
 	function smarty_modifier($array, $glue = ', ', $default = 'No Tag') {
 		// If there aren't tags, let's return $default
@@ -203,8 +203,8 @@ class plugin_tag_entry {
 	 *
 	 * This function adds the tag list at the entry bottom.
 	 *
-	 * @param $content: The original content of the entry
-	 * @return string: The modified $content
+	 * @param string $content The original content of the entry
+	 * @return string The modified content
 	 */
 	function tag_bottomlist($content) {
 		# If there aren't tags
@@ -234,9 +234,9 @@ class plugin_tag_entry {
 	 * This function is similar to tag_list but it loads the entry
 	 * by his ID and then it returns the tags.
 	 *
-	 * @param string $id: The entry ID
-	 * @param boolean $force: Must I ignore cache?
-	 * @return array: The tags
+	 * @param string $id The entry ID
+	 * @param bool $force Must I ignore cache?
+	 * @return array The tags
 	 */
 	function entryTags($id, $force = false) {
 		if (!$force && isset($this->_cache [$id])) {

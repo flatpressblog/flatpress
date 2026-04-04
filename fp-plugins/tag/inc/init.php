@@ -20,7 +20,7 @@ class plugin_tag_init {
 	 * It adds some callbacks to init hook and to
 	 * prettyurls_unhandled_url hook.
 	 *
-	 * @param object &$tag_db: An object of the tag_db.
+	 * @param object $tag_db An object of the tag database
 	 */
 	function __construct(&$tag_db) {
 		add_filter('init', array(&$this, 'hook'), 25);
@@ -90,7 +90,7 @@ class plugin_tag_init {
 	 *
 	 * This function is used from the walker.
 	 *
-	 * @returns string: The key of the current entry
+	 * @return string|false The key of the current entry
 	 */
 	function current_key() {
 		return current($this->walker_array);
@@ -101,7 +101,7 @@ class plugin_tag_init {
 	 *
 	 * This function is used from the walker.
 	 *
-	 * @returns string: the key of the next entry in the list.
+	 * @return string|false The key of the next entry in the list
 	 */
 	function next() {
 		$n = next($this->walker_array);
@@ -116,7 +116,7 @@ class plugin_tag_init {
 	 *
 	 * This function is used from the walker.
 	 *
-	 * @returns integer: how much entries there are in the tag/walker
+	 * @return int How many entries there are in the tag walker
 	 */
 	function length() {
 		return $this->fpdb_len;
@@ -127,7 +127,7 @@ class plugin_tag_init {
 	 *
 	 * This function is used from FPDB.
 	 *
-	 * @returns &object: $this by reference.
+	 * @return object $this by reference
 	 */
 	function &walker() {
 		$this->valid = true;
@@ -143,8 +143,8 @@ class plugin_tag_init {
 	 * It also creates a patch for PrettyURLs:
 	 * page link doesn't work so good.
 	 *
-	 * @param string $url: the unhandled url
-	 * @returns string: the cleaned $url.
+	 * @param string $url The unhandled URL
+	 * @return string The cleaned URL
 	 */
 	function rewrite($url) {
 		global $fp_params;

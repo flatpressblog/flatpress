@@ -28,9 +28,9 @@ class tag_lister extends fs_filelister {
 	/**
 	 * Filter files (accept only *.txt files)
 	 *
-	 * @param string $directory: The directory of the file to check
-	 * @param string $file: The file name
-	 * @return integer: See fs_filelister class
+	 * @param string $directory The directory of the file to check
+	 * @param string $file The file name
+	 * @return int See fs_filelister class
 	 */
 	function _checkFile($directory, $file) {
 		$f = $directory . "/" . $file;
@@ -43,7 +43,7 @@ class tag_lister extends fs_filelister {
 	/**
 	 * Make the list of tags.
 	 *
-	 * @param boolean $force: I must list or I can use cache?
+	 * @param bool $force I must list or I can use cache?
 	 */
 	function makeTagList($force = false) {
 		// Already done? Return old list!
@@ -64,8 +64,12 @@ class tag_lister extends fs_filelister {
 
 		$tags = array();
 		foreach ($this->_list as $file) {
-			$tag = array();
+			$tag = null;
 			include PLUGIN_TAG_DIR . $file . '.txt';
+
+			if (!is_array($tag)) {
+				continue;
+			}
 
 			// Don't use array_merge because it resets the keys!
 			foreach ($tag as $key => $value) {
@@ -98,15 +102,34 @@ class plugin_tag_db {
 	 */
 	var $rewriteCachesan = array();
 
+	/**
+	 * Loads an array variable saved with system_save() from a PHP cache file.
+	 *
+	 * @param string $file Cache file path
+	 * @param string $variable Variable name saved in the cache file
+	 * @return array
+	 */
+	function loadCacheArray($file, $variable) {
+		if (!is_string($file) || $file === '' || !is_file($file)) {
+			return array();
+		}
+
+		${$variable} = null;
+		include $file;
+		$loaded = isset(${$variable}) ? ${$variable} : null;
+
+		return is_array($loaded) ? $loaded : array();
+	}
+
 	# File IO
 	/**
 	 * open_file
 	 *
 	 * This function open a file of the tag database.
 	 *
-	 * @param string $file: the file, without .txt
-	 * @param boolean $force: force to re-open? [false]
-	 * returns array: The file
+	 * @param string $file The file, without .txt
+	 * @param bool $force Force to re-open?
+	 * @return array The file
 	 */
 	function open_file($file, $force = false) {
 		// Do the double check with the name
@@ -119,7 +142,7 @@ class plugin_tag_db {
 
 		$realfile = PLUGIN_TAG_DIR . $file . '.txt';
 
-		$tag = array();
+		$tag = null;
 		if (file_exists($realfile)) {
 			include $realfile;
 		}
@@ -134,8 +157,8 @@ class plugin_tag_db {
 	 *
 	 * Save an opened file.
 	 *
-	 * @param string $file: The file without .txt
-	 * @returns boolean: Does it succeed in saving the file?
+	 * @param string $file The file without .txt
+	 * @return bool Does it succeed in saving the file?
 	 */
 	function save_file($file) {
 		// Double check the file name
@@ -157,7 +180,7 @@ class plugin_tag_db {
 	 *
 	 * Save ALL opened files.
 	 *
-	 * @returns boolean: does it succeed in all saves?
+	 * @return bool Does it succeed in all saves?
 	 */
 	function save_all() {
 		if (!count($this->files)) {
@@ -179,8 +202,8 @@ class plugin_tag_db {
 	 *
 	 * This function make the cache of the tags.
 	 *
-	 * @param object &$entry_cl: The entry class (by reference)
-	 * @returns boolean: does it succeed in making cache?
+	 * @param object $entry_cl The entry class
+	 * @return bool Does it succeed in making cache?
 	 */
 	function makeCache(&$entry_cl) {
 		// List entries
@@ -222,8 +245,8 @@ class plugin_tag_db {
 	/**
 	 * Return the file ID for a tag.
 	 *
-	 * @param string $tag: The tag
-	 * @return string: The file ID
+	 * @param string $tag The tag
+	 * @return string The file ID
 	 */
 	function tagfile($tag) {
 		$file = substr($tag, 0, 1);
@@ -246,8 +269,8 @@ class plugin_tag_db {
 	 * This function makes the cache for URL-Rewriting
 	 * and returns it.
 	 *
-	 * @param boolean $force: Force to re-make cache? [false]
-	 * @returns array: The cache
+	 * @param bool $force Force to re-make cache?
+	 * @return array The cache
 	 */
 	function rewriteCache($force = false) {
 		// Already done? Return it!
@@ -256,10 +279,9 @@ class plugin_tag_db {
 		}
 
 		// File exists? Load it and return it!
-		if (file_exists(CACHE_DIR . 'tag-rewrite.tmp') && !$force) {
-			$sanitized = array();
-			include CACHE_DIR . 'tag-rewrite.tmp';
-			if (is_array($sanitized)) {
+		if (!$force) {
+			$sanitized = $this->loadCacheArray(CACHE_DIR . 'tag-rewrite.tmp', 'sanitized');
+			if (count($sanitized) > 0) {
 				$this->rewriteCachesan = $sanitized;
 				return $sanitized;
 			}
@@ -307,8 +329,8 @@ class plugin_tag_db {
 	/**
 	 * This function returns all entries that have a tag.
 	 *
-	 * @param string $tag: The tag you want to have the list
-	 * @return array: The entries that have this tag
+	 * @param string $tag The tag you want to have the list
+	 * @return array The entries that have this tag
 	 */
 	function taggedEntries($tag) {
 		$file = $this->open_file($this->tagfile($tag));

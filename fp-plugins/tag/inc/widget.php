@@ -17,12 +17,31 @@ class plugin_tag_widget {
 	 * This function is the constructor of the class.
 	 * It saves by reference the tagdb object and the entry object.
 	 *
-	 * @param object $tagdb: The tagdb object
-	 * @param object $entry: The tag entry object
+	 * @param object $tagdb The tag database object
+	 * @param object $entry The tag entry object
 	 */
 	function __construct(&$tagdb, &$entry) {
 		$this->tagdb = &$tagdb;
 		$this->entry = &$entry;
+	}
+
+	/**
+	 * Loads an array variable saved with system_save() from a PHP cache file.
+	 *
+	 * @param string $file Cache file path
+	 * @param string $variable Variable name saved in the cache file
+	 * @return array
+	 */
+	function loadCacheArray($file, $variable) {
+		if (!is_string($file) || $file === '' || !is_file($file)) {
+			return array();
+		}
+
+		${$variable} = null;
+		include $file;
+		$loaded = isset(${$variable}) ? ${$variable} : null;
+
+		return is_array($loaded) ? $loaded : array();
 	}
 
 	## TAG CLOUD
@@ -30,18 +49,17 @@ class plugin_tag_widget {
 	/**
 	 * This function creates the cache of widget.
 	 *
-	 * @param boolean $force: Force the function to make a new cache?
-	 * @return array: The cache
+	 * @param bool $force Force the function to make a new cache?
+	 * @return array The cache
 	 */
 	function makeCache($force = false) {
 		# Check for already existent cache.
 		if (!empty($this->widgetCache) && !$force) {
 			return $this->widgetCache;
 		}
-		if (file_exists(CACHE_DIR . 'tag-widget.tmp') && !$force) {
-			$cache = array();
-			include CACHE_DIR . 'tag-widget.tmp';
-			if (is_array($cache)) {
+		if (!$force) {
+			$cache = $this->loadCacheArray(CACHE_DIR . 'tag-widget.tmp', 'cache');
+			if (count($cache) > 0) {
 				$this->widgetCache = $cache;
 				return $this->widgetCache;
 			}
@@ -80,9 +98,9 @@ class plugin_tag_widget {
 	/**
 	 * This function return random tags.
 	 *
-	 * @param array $array: The cache array
-	 * @param integer $count: How much tags?
-	 * @return array: The random tags
+	 * @param array $array The cache array
+	 * @param int $num How many tags?
+	 * @return array The random tags
 	 */
 	function getRandom($array, $num) {
 		if ($num >= count($array)) {
@@ -128,8 +146,8 @@ class plugin_tag_widget {
 	/**
 	 * This function converts the relative number of tag to a class.
 	 *
-	 * @param float $rel: The relative number
-	 * @return string: The class
+	 * @param float $rel The relative number
+	 * @return string The class
 	 */
 	function relToClass($rel) {
 		$c = '';
@@ -151,8 +169,8 @@ class plugin_tag_widget {
 	 * This function is the callback for Flatpress Widget System.
 	 * It manages the tagcloud.
 	 *
-	 * @param integer $number: The number of tags to show
-	 * @return array: The couple title/content for FP Widget System
+	 * @param int $number The number of tags to show
+	 * @return array The subject/content pair for FlatPress widgets
 	 */
 	function tagCloud($number = PLUGIN_TAG_MAXC) {
 		$lang = lang_load('plugin:tag');
@@ -200,9 +218,9 @@ class plugin_tag_widget {
 	 * This function is the callback for FlatPress Widget System.
 	 * It manages the related tag widget.
 	 *
-	 * @param string $id: The entry id
-	 * @param integer $number: Number of entries to show
-	 * @return array: The couple title/content for FP Widget System
+	 * @param string $id The entry ID
+	 * @param int $number Number of entries to show
+	 * @return array The subject/content pair for FlatPress widgets
 	 */
 	function tagRelated($id = '', $number = PLUGIN_TAG_REL) {
 		global $fp_params, $post;
@@ -220,10 +238,7 @@ class plugin_tag_widget {
 
 		if (empty($id)) {
 			$post = $oldpost;
-			return array(
-				'subject' => '',
-				'content' => '',
-			);
+			return array();
 		} else {
 			$related = $this->getRelation($id, $number);
 			if (count($related) == 0) {
@@ -256,20 +271,17 @@ class plugin_tag_widget {
 	/**
 	 * This function return the related posts id.
 	 *
-	 * @param string $id: The entry ID
-	 * @param integer $number: How much entries do you need?
-	 * @param boolean $force: Force the relation creation?
-	 * @return array: The related entries
+	 * @param string $id The entry ID
+	 * @param int $number How many entries do you need?
+	 * @param bool $force Force the relation creation?
+	 * @return array The related entries
 	 */
 	function getRelation($id, $number = PLUGIN_TAG_REL, $force = false) {
 		$ym = substr($id, 5, 4);
 		$cachefile = CACHE_DIR . 'tag-related-' . $ym . '.tmp';
 
-		if (file_exists($cachefile) && !$force) {
-			$cache = array();
-
-			include $cachefile;
-
+		if (!$force) {
+			$cache = $this->loadCacheArray($cachefile, 'cache');
 			if (isset($cache [$id]) && is_array($cache [$id])) {
 				$related = $cache [$id];
 				if (count($related) > $number) {
@@ -326,9 +338,9 @@ class plugin_tag_widget {
 	/**
 	 * This function is the callback used to sort the related entries.
 	 *
-	 * @param array $a: Entry 1
-	 * @param array $b: Entry 2
-	 * @return integer: See comparation function
+	 * @param array $a Entry 1
+	 * @param array $b Entry 2
+	 * @return int Comparison result
 	 */
 	function relatedSort($a, $b) {
 		if ($a['called'] != $b ['called']) {

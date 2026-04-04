@@ -35,11 +35,11 @@ class tag_prettyurls {
 	 * The constructor.
 	 * Saves the "original" PrettyURLs and the baseurl
 	 *
-	 * @param onject &$original: The original PrettyURLs
+	 * @param Plugin_PrettyURLs $original The original PrettyURLs instance
 	 */
 	function __construct(&$original) {
 		$this->original = &$original;
-		$this->baseurl = &$original->baseurl;
+		$this->baseurl = property_exists($original, 'baseurl') ? $original->baseurl : null;
 	}
 
 	// The functions called by the hooks.
@@ -87,9 +87,9 @@ class tag_prettyurls {
 	 *
 	 * It just adds tag/$tagname/
 	 *
-	 * @param string $nextprev: NextPage or PrevPage: it depends on the callback to call
-	 * @param integer $v: +1 or -1: the number to sum to the current page
-	 * @returns array: the array with the link and the text (Next/Prev Page)
+	 * @param string $nextprev NextPage or PrevPage: it depends on the callback to call
+	 * @param int $v +1 or -1: the number to sum to the current page
+	 * @return array The array with the link and the text (Next/Prev Page)
 	 */
 	function nextprevlink($nextprev, $v) {
 		global $fp_params, $fpdb;
