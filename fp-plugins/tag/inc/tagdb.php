@@ -1,5 +1,24 @@
 <?php
 /**
+ * Loads a variable saved in a PHP cache file and returns it as array.
+ *
+ * @param string $file Cache file path
+ * @param string $variable Variable name saved in the cache file
+ * @return array
+ */
+function tag_load_array_from_cache_file($file, $variable = 'tag') {
+	if (!is_string($file) || $file === '' || !is_file($file)) {
+		return array();
+	}
+
+	${$variable} = null;
+	include $file;
+	$loaded = isset(${$variable}) ? ${$variable} : null;
+
+	return is_array($loaded) ? $loaded : array();
+}
+
+/**
  * tag_lister class
  *
  * This class is used to make the list
@@ -64,10 +83,8 @@ class tag_lister extends fs_filelister {
 
 		$tags = array();
 		foreach ($this->_list as $file) {
-			$tag = null;
-			include PLUGIN_TAG_DIR . $file . '.txt';
-
-			if (!is_array($tag)) {
+			$tag = tag_load_array_from_cache_file(PLUGIN_TAG_DIR . $file . '.txt');
+			if ($tag === array()) {
 				continue;
 			}
 
@@ -141,13 +158,7 @@ class plugin_tag_db {
 		}
 
 		$realfile = PLUGIN_TAG_DIR . $file . '.txt';
-
-		$tag = null;
-		if (file_exists($realfile)) {
-			include $realfile;
-		}
-
-		$this->files [$file] = is_array($tag) ? $tag : array();
+		$this->files [$file] = tag_load_array_from_cache_file($realfile);
 
 		return $this->files [$file];
 	}
@@ -296,8 +307,7 @@ class plugin_tag_db {
 
 		$tags = array();
 		foreach ($list as $file) {
-			$tag = array();
-			include PLUGIN_TAG_DIR . $file . '.txt';
+			$tag = tag_load_array_from_cache_file(PLUGIN_TAG_DIR . $file . '.txt');
 			$tags = array_merge($tags, array_keys($tag));
 		}
 		if (!count($tags)) {
