@@ -7,15 +7,7 @@
  * @return array
  */
 function tag_load_array_from_cache_file($file, $variable = 'tag') {
-	if (!is_string($file) || $file === '' || !is_file($file)) {
-		return array();
-	}
-
-	${$variable} = null;
-	include $file;
-	$loaded = isset(${$variable}) ? ${$variable} : null;
-
-	return is_array($loaded) ? $loaded : array();
+	return system_load_php_array($file, $variable);
 }
 
 /**
@@ -119,25 +111,6 @@ class plugin_tag_db {
 	 */
 	var $rewriteCachesan = array();
 
-	/**
-	 * Loads an array variable saved with system_save() from a PHP cache file.
-	 *
-	 * @param string $file Cache file path
-	 * @param string $variable Variable name saved in the cache file
-	 * @return array
-	 */
-	function loadCacheArray($file, $variable) {
-		if (!is_string($file) || $file === '' || !is_file($file)) {
-			return array();
-		}
-
-		${$variable} = null;
-		include $file;
-		$loaded = isset(${$variable}) ? ${$variable} : null;
-
-		return is_array($loaded) ? $loaded : array();
-	}
-
 	# File IO
 	/**
 	 * open_file
@@ -216,7 +189,7 @@ class plugin_tag_db {
 	 * @param object $entry_cl The entry class
 	 * @return bool Does it succeed in making cache?
 	 */
-	function makeCache(&$entry_cl) {
+	function makeCache($entry_cl) {
 		// List entries
 		$o = new FPDB_Query(array('start' => 0, 'count' => -1, 'fullparse' => true, 'comments' => false), null);
 
@@ -291,7 +264,7 @@ class plugin_tag_db {
 
 		// File exists? Load it and return it!
 		if (!$force) {
-			$sanitized = $this->loadCacheArray(CACHE_DIR . 'tag-rewrite.tmp', 'sanitized');
+			$sanitized = system_load_php_array(CACHE_DIR . 'tag-rewrite.tmp', 'sanitized');
 			if (count($sanitized) > 0) {
 				$this->rewriteCachesan = $sanitized;
 				return $sanitized;

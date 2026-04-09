@@ -12,6 +12,8 @@ class plugin_tag_widget {
 	var $entry = null;
 	# The tag cloud cache
 	var $widgetCache = array();
+	# Related entry subjects cached per request
+	var $relatedSubjects = array();
 
 	/**
 	 * This function is the constructor of the class.
@@ -20,28 +22,9 @@ class plugin_tag_widget {
 	 * @param object $tagdb The tag database object
 	 * @param object $entry The tag entry object
 	 */
-	function __construct(&$tagdb, &$entry) {
-		$this->tagdb = &$tagdb;
-		$this->entry = &$entry;
-	}
-
-	/**
-	 * Loads an array variable saved with system_save() from a PHP cache file.
-	 *
-	 * @param string $file Cache file path
-	 * @param string $variable Variable name saved in the cache file
-	 * @return array
-	 */
-	function loadCacheArray($file, $variable) {
-		if (!is_string($file) || $file === '' || !is_file($file)) {
-			return array();
-		}
-
-		${$variable} = null;
-		include $file;
-		$loaded = isset(${$variable}) ? ${$variable} : null;
-
-		return is_array($loaded) ? $loaded : array();
+	function __construct($tagdb, $entry) {
+		$this->tagdb = $tagdb;
+		$this->entry = $entry;
 	}
 
 	## TAG CLOUD
@@ -58,7 +41,7 @@ class plugin_tag_widget {
 			return $this->widgetCache;
 		}
 		if (!$force) {
-			$cache = $this->loadCacheArray(CACHE_DIR . 'tag-widget.tmp', 'cache');
+			$cache = system_load_php_array(CACHE_DIR . 'tag-widget.tmp', 'cache');
 			if (count($cache) > 0) {
 				$this->widgetCache = $cache;
 				return $this->widgetCache;
@@ -128,7 +111,7 @@ class plugin_tag_widget {
 			}
 			$extract = $num > count($classes [$i]) ? count($classes [$i]) : $num;
 			$rclass = array_rand($classes [$i], $extract);
-			if ($extract == 1) {
+			if ($extract === 1) {
 				$key = $classes [$i] [$rclass];
 				$random [$key] = $array [$key] ['r'];
 			} else {
@@ -279,57 +262,91 @@ class plugin_tag_widget {
 	function getRelation($id, $number = PLUGIN_TAG_REL, $force = false) {
 		$ym = substr($id, 5, 4);
 		$cachefile = CACHE_DIR . 'tag-related-' . $ym . '.tmp';
+		$cache = array();
 
 		if (!$force) {
-			$cache = $this->loadCacheArray($cachefile, 'cache');
-			if (isset($cache [$id]) && is_array($cache [$id])) {
-				$related = $cache [$id];
-				if (count($related) > $number) {
-					$related = array_slice($related, 0, $number);
+			$cache = system_load_php_array($cachefile, 'cache');
+			if (isset($cache [$id])) {
+				$cached = $cache [$id];
+				if (isset($cached ['entries']) && is_array($cached ['entries'])) {
+					$related = $cached ['entries'];
+				} elseif (is_array($cached)) {
+					$related = $cached;
+				} else {
+					$related = array();
 				}
-				return $related;
+
+				if (count($related) > $number) {
+					$related = array_slice($related, 0, $number, true);
+				}
+
+				return $this->hydrateRelatedSubjects($related);
 			}
 		}
 
 		$tags = $this->entry->entryTags($id);
 
-		if (count($tags) == 0) {
+		if (count($tags) === 0) {
 			return array();
 		}
 
-		$tagdb = &$this->tagdb;
+		$tagdb = $this->tagdb;
 		$related = array();
 
 		foreach ($tags as $tag) {
 			$entries = $tagdb->taggedEntries($tag);
-			if (count($entries) == 0) {
+			if (count($entries) === 0) {
 				continue;
 			}
 			foreach ($entries as $entry) {
-				if ($entry == $id) {
-				} elseif (isset($related[$entry])) {
-					$related [$entry] ['called']++;
-				} else {
-					$date = date_from_id($entry);
-					$o = new FPDB_Query(array('fullparse' => false, 'id' => $entry), null);
-					$o->hasMore();
-					$entrydata = $o->getEntry();
-					$related [$entry] = array(
-						'id' => $entry,
-						'time' => $date ['time'],
-						'called' => 1,
-						'subject' => $entrydata [1] ['subject'],
-					);
+				if ($entry === $id) {
+					continue;
 				}
+				if (isset($related [$entry])) {
+					$related [$entry] ['called']++;
+					continue;
+				}
+				$date = date_from_id($entry);
+				$related [$entry] = array(
+					'id' => $entry,
+					'time' => isset($date ['time']) ? $date ['time'] : 0,
+					'called' => 1,
+				);
 			}
 		}
 
-		uasort($related, array(&$this, 'relatedSort'));
-		$cache [$id] = $related;
+		uasort($related, array($this, 'relatedSort'));
+		$cache [$id] = array('entries' => $related);
 		system_save($cachefile, array('cache' => $cache));
 
 		if (count($related) > $number) {
-			$related = array_slice($related, 0, $number);
+			$related = array_slice($related, 0, $number, true);
+		}
+
+		return $this->hydrateRelatedSubjects($related);
+	}
+
+	/**
+	 * Adds subjects lazily only for the entries that will actually be rendered.
+	 *
+	 * @param array $related Related-entry metadata keyed by entry id
+	 * @return array
+	 */
+	function hydrateRelatedSubjects($related) {
+		foreach ($related as $entryId => $entry) {
+			if (isset($entry ['subject']) && is_string($entry ['subject'])) {
+				$this->relatedSubjects [$entryId] = $entry ['subject'];
+				continue;
+			}
+
+			if (!isset($this->relatedSubjects [$entryId])) {
+				$o = new FPDB_Query(array('fullparse' => false, 'id' => $entryId), null);
+				$o->hasMore();
+				$entrydata = $o->getEntry();
+				$this->relatedSubjects [$entryId] = (isset($entrydata [1] ['subject']) && is_string($entrydata [1] ['subject'])) ? $entrydata [1] ['subject'] : '';
+			}
+
+			$related [$entryId] ['subject'] = $this->relatedSubjects [$entryId];
 		}
 
 		return $related;

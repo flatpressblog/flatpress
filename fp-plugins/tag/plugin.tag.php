@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Tag
- * Version: 2.6.7
+ * Version: 2.6.8
  * Plugin URI: https://flatpress.org
  * Description: Allows using tags in FlatPress. This plugin requires BBCode. Part of the standard distribution.
  * Author: FlatPress
@@ -96,21 +96,21 @@ class plugin_tag {
 
 		// To be compatible with FlatPress style...
 		add_filter('tag_link', array(
-			&$this,
+			$this,
 			'tag_link'
 		), 1, 1);
 
 		// The widgets. They requires FP >= 0.1010
 		register_widget('tag', 'Tag', array(
-			&$this,
+			$this,
 			'tag_cloud'
 		));
 		register_widget('related', 'Related', array(
-			&$this,
+			$this,
 			'tag_related'
 		));
 		$smarty->registerPlugin('function', 'related_entries', array(
-			&$this,
+			$this,
 			'smarty_related'
 		));
 	}
@@ -227,7 +227,7 @@ class plugin_tag {
 	 * @param object $smarty The Smarty object
 	 * @return string The output
 	 */
-	function smarty_related($params, &$smarty) {
+	function smarty_related($params, $smarty = null) {
 		if (!isset($this->widget_class)) {
 			$tag_inc = dirname(__FILE__) . '/inc/';
 			include_once $tag_inc . 'widget.php';

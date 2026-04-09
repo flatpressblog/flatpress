@@ -22,6 +22,13 @@ class plugin_tag_entry {
 	var $_cache = array();
 
 	/**
+	 * Cached tag counts used by the Smarty modifier.
+	 *
+	 * @var array
+	 */
+	var $tagCountCache = array();
+
+	/**
 	 * Merge the tags or delete the current tags?
 	 *
 	 * @var boolean
@@ -43,29 +50,29 @@ class plugin_tag_entry {
 	 *
 	 * @param object $tagdb The tagdb instance
 	 */
-	function __construct(&$tagdb) {
+	function __construct($tagdb) {
 		global $smarty;
 
 		// To list tags in the template
 		$smarty->assign('tags', $this->tags);
 		$smarty->registerPlugin('modifier', 'tagplugin_list', array(
-			&$this,
+			$this,
 			'smarty_modifier'
 		));
 
 		// Save the tagdb instance
-		$this->tagdb = &$tagdb;
+		$this->tagdb = $tagdb;
 
 		// Do the tag list
 		add_filter('the_content', array(
-			&$this,
+			$this,
 			'tag_list'
 		), 0);
 
 		// The automatic bottom list
 		if (PLUGIN_TAG_BL) {
 			add_filter('the_content', array(
-				&$this,
+				$this,
 				'tag_bottomlist'
 			), 50);
 		}
@@ -117,7 +124,7 @@ class plugin_tag_entry {
 	function load_bbcode() {
 		$tag_bbcode = new StringParser_BBCode();
 		$tag_bbcode->addCode('tag', 'callback_replace', array(
-			&$this,
+			$this,
 			'do_bbcode'
 		), array(
 			'usecontent_param' => array(
@@ -181,8 +188,10 @@ class plugin_tag_entry {
 
 		foreach ($array as $tag) {
 			$tagLabel = wp_specialchars($tag, true);
-			$entries = $this->tagdb->taggedEntries($tag);
-			$count = count($entries);
+			if (!isset($this->tagCountCache [$tag])) {
+				$this->tagCountCache [$tag] = count($this->tagdb->taggedEntries($tag));
+			}
+			$count = $this->tagCountCache [$tag];
 			$titleadd = ($count === 1) ? $plang ['oneentry'] : $count . $plang ['entries'];
 			$titleadd = '(' . $titleadd . ')';
 

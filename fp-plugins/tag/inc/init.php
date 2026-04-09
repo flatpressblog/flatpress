@@ -22,10 +22,10 @@ class plugin_tag_init {
 	 *
 	 * @param object $tag_db An object of the tag database
 	 */
-	function __construct(&$tag_db) {
-		add_filter('init', array(&$this, 'hook'), 25);
-		add_filter('prettyurls_unhandled_url', array(&$this, 'rewrite'), 1);
-		$this->tag_db = &$tag_db;
+	function __construct($tag_db) {
+		add_filter('init', array($this, 'hook'), 25);
+		add_filter('prettyurls_unhandled_url', array($this, 'rewrite'), 1);
+		$this->tag_db = $tag_db;
 	}
 
 	/**
@@ -65,7 +65,7 @@ class plugin_tag_init {
 
 		// Create the fake walker and the fake cat
 		$fp_params ['cat'] =- 0xFF;
-		$fpdb->_indexer [-0xFF] = &$this;
+		$fpdb->_indexer [-0xFF] = $this;
 		$this->fpdb_len = $l;
 		reset($this->walker_array);
 

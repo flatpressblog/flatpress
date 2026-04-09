@@ -1,35 +1,4 @@
 <?php
-
-/**
- * This class removes the cache files for related entries.
- */
-class tag_relted_remover extends fs_filelister {
-
-	/**
-	 * Constructor: it calls the constructor of parent class
-	 * and it sets the directory to list.
-	 */
-	function __construct() {
-		parent::__construct(CACHE_DIR);
-	}
-
-	/**
-	 * This function checks the files and deletes them.
-	 *
-	 * @param string $directory The directory of the file to check
-	 * @param string $file The file name
-	 * @return int See fs_filelister class
-	 */
-	function _checkFile($directory, $file) {
-		$f = $directory . $file;
-		if (fnmatch('tag-related*.tmp', $file)) {
-			@unlink($f);
-		}
-		return 0;
-	}
-
-}
-
 /**
  * This class manages all actions in the Admin Panel
  * that are useful for the tag plugin.
@@ -66,19 +35,19 @@ class plugin_tag_admin {
 	 * @param object $tagdb The tag database object
 	 * @param object $entry The tag entry object
 	 */
-	function __construct(&$tagdb, &$entry) {
-		$this->tagdb = &$tagdb;
-		$this->entry = &$entry;
+	function __construct($tagdb, $entry) {
+		$this->tagdb = $tagdb;
+		$this->entry = $entry;
 		add_filter('publish_post', array(
-			&$this,
+			$this,
 			'entry_save'
 		), 5, 2);
 		add_filter('delete_post', array(
-			&$this,
+			$this,
 			'entry_delete'
 		));
 		add_filter('wp_footer', array(
-			&$this,
+			$this,
 			'purge_cache'
 		));
 
@@ -88,33 +57,51 @@ class plugin_tag_admin {
 
 		//add_filter('simple_edit_form', array(
 		add_filter('simple_tag_form', array(
-			&$this,
+			$this,
 			'simple'
 		));
 		add_filter('admin_entry_write_onsave', array(
-			&$this,
+			$this,
 			'simpleadd'
 		));
 		add_filter('admin_entry_write_onsavecontinue', array(
-			&$this,
+			$this,
 			'simpleadd'
 		));
 		add_filter('admin_entry_write_main', array(
-			&$this,
+			$this,
 			'simpleremove'
 		));
 		add_filter('admin_entry_write_onsubmit', array(
-			&$this,
+			$this,
 			'simpleremove'
 		));
 		add_action('wp_head', array(
-			&$this,
+			$this,
 			'simplestyle'
 		), 5);
 		add_action('init', array(
-			&$this,
+			$this,
 			'simpleajax'
 		));
+	}
+
+	/**
+	 * Deletes all related-entry cache files without scanning unrelated cache files.
+	 *
+	 * @return void
+	 */
+	function invalidateRelatedCache() {
+		$files = glob(CACHE_DIR . 'tag-related-*.tmp');
+		if (!is_array($files)) {
+			return;
+		}
+
+		foreach ($files as $file) {
+			if (is_string($file) && is_file($file)) {
+				@unlink($file);
+			}
+		}
 	}
 
 	/**
@@ -162,8 +149,8 @@ class plugin_tag_admin {
 				continue;
 			}
 
-			$k = array_search($id, $f [$toremove [$i]]);
-			if (isset($f [$toremove [$i]] [$k])) {
+			$k = array_search($id, $f [$toremove [$i]], true);
+			if ($k !== false) {
 				unset($f [$toremove [$i]] [$k]);
 			}
 
@@ -189,8 +176,7 @@ class plugin_tag_admin {
 		if (file_exists(CACHE_DIR . 'tag-widget.tmp')) {
 			@unlink(CACHE_DIR . 'tag-widget.tmp');
 		}
-		$remover = new tag_relted_remover();
-		unset($remover);
+		$this->invalidateRelatedCache();
 
 		// Clean the cache of ajax
 		if (file_exists(CACHE_DIR . 'tag-ajax.tmp')) {
@@ -246,8 +232,7 @@ class plugin_tag_admin {
 		if (file_exists(CACHE_DIR . 'tag-widget.tmp')) {
 			@unlink(CACHE_DIR . 'tag-widget.tmp');
 		}
-		$remover = new tag_relted_remover();
-		unset($remover);
+		$this->invalidateRelatedCache();
 
 		return true;
 	}
@@ -390,25 +375,6 @@ class plugin_tag_admin {
 	}
 
 	/**
-	 * Loads an array variable saved with system_save() from a PHP cache file.
-	 *
-	 * @param string $file Cache file path
-	 * @param string $variable Variable name saved in the cache file
-	 * @return array
-	 */
-	function loadCacheArray($file, $variable) {
-		if (!is_string($file) || $file === '' || !is_file($file)) {
-			return array();
-		}
-
-		${$variable} = null;
-		include $file;
-		$loaded = isset(${$variable}) ? ${$variable} : null;
-
-		return is_array($loaded) ? $loaded : array();
-	}
-
-	/**
 	 * This function handles the ajax function of the plugin.
 	 */
 	function simpleajax() {
@@ -421,32 +387,45 @@ class plugin_tag_admin {
 		}
 
 		$f = CACHE_DIR . 'tag-ajax.tmp';
+		$cache = array();
 		$tags = array();
+		$tagsLower = array();
 		if (is_file($f) && (time() - filemtime($f)) < 3600) {
-			$tags = $this->loadCacheArray($f, 'tags');
+			$cache = system_load_php_array($f, 'cache');
+			if (isset($cache ['tags']) && is_array($cache ['tags'])) {
+				$tags = $cache ['tags'];
+			}
+			if (isset($cache ['tags_lc']) && is_array($cache ['tags_lc'])) {
+				$tagsLower = $cache ['tags_lc'];
+			}
 		}
 		if (count($tags) === 0) {
 			$lister = new tag_lister();
 			$tags = array_keys($lister->makeTagList());
 			natcasesort($tags);
 			$tags = array_values($tags);
-			system_save($f, array(
-				'tags' => $tags
-			));
 		}
+		if (count($tagsLower) !== count($tags)) {
+			$tagsLower = array_map('strtolower', $tags);
+		}
+		system_save($f, array(
+			'cache' => array(
+				'tags' => $tags,
+				'tags_lc' => $tagsLower,
+			)
+		));
 
 		$suggs = array();
 		$tag = strtolower(trim((string) $_GET ['tag']));
-		$tagl = array_map('strtolower', $tags);
-		foreach ($tagl as $key => $val) {
-			if ($tag === substr($val, 0, strlen($tag))) {
+		$tagLength = strlen($tag);
+		foreach ($tagsLower as $key => $val) {
+			if ($tag === substr($val, 0, $tagLength)) {
 				$tmp = wp_specialchars($tags [$key]);
-				$suggs [] = '<b>' . substr($tmp, 0, strlen($tag)) . '</b>' . substr($tmp, strlen($tag));
+				$suggs [] = '<b>' . substr($tmp, 0, $tagLength) . '</b>' . substr($tmp, $tagLength);
+				if (count($suggs) >= 10) {
+					break;
+				}
 			}
-		}
-
-		if (count($suggs) > 10) {
-			$suggs = array_slice($suggs, 0, 10);
 		}
 
 		$sugghtml = '';

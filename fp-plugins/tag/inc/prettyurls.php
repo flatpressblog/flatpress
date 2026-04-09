@@ -37,8 +37,8 @@ class tag_prettyurls {
 	 *
 	 * @param Plugin_PrettyURLs $original The original PrettyURLs instance
 	 */
-	function __construct(&$original) {
-		$this->original = &$original;
+	function __construct($original) {
+		$this->original = $original;
 		$this->baseurl = property_exists($original, 'baseurl') ? $original->baseurl : null;
 	}
 
@@ -93,14 +93,14 @@ class tag_prettyurls {
 	 */
 	function nextprevlink($nextprev, $v) {
 		global $fp_params, $fpdb;
-		$this->fp_params = &$fp_params;
+		$this->fp_params = $fp_params;
 		if (!empty($fp_params ['tag'])) {
 			if (empty($this->tag_link)) {
 				return array();
 			}
 			$l = $this->tag_link;
 			// Code by plugin.prettyurls.php, by NoWhereMan
-				$q = &$fpdb->getQuery();
+				$q = $fpdb->getQuery();
 				$method = 'get' . $nextprev;
 				if (!is_object($q) || !is_callable(array($q, $method))) {
 					return array();
