@@ -105,6 +105,210 @@ class plugin_tag_admin {
 	}
 
 	/**
+	 * Normalizes a list of tags for admin input/storage.
+	 *
+	 * Rules:
+	 * - keep Unicode letters and numbers
+	 * - keep hash characters
+	 * - remove other special characters
+	 * - collapse whitespace
+	 * - when a tag contains multiple words, join them in CamelCase
+	 * - deduplicate case-insensitively
+	 *
+	 * @param array $tags Raw tag list
+	 * @return array
+	 */
+	function normalizeTagList($tags) {
+		if (!is_array($tags)) {
+			return array();
+		}
+
+		$normalized = array();
+		foreach ($tags as $tag) {
+			$tag = $this->normalizeSingleTag($tag);
+			if ($tag === '') {
+				continue;
+			}
+
+			$duplicate = false;
+			foreach ($normalized as $existing) {
+				if ($this->tagsEqualCaseInsensitive($existing, $tag)) {
+					$duplicate = true;
+					break;
+				}
+			}
+
+			if (!$duplicate) {
+				$normalized[] = $tag;
+			}
+		}
+
+		return $normalized;
+	}
+
+	/**
+	 * Normalizes one tag from the admin UI.
+	 *
+	 * @param mixed $tag Raw tag value
+	 * @return string
+	 */
+	function normalizeSingleTag($tag) {
+		if (!is_scalar($tag)) {
+			return '';
+		}
+
+		$tag = trim((string) $tag);
+		if ($tag === '') {
+			return '';
+		}
+
+		$clean = preg_replace('/[^\p{L}\p{N}\s#]+/u', '', $tag);
+		if (!is_string($clean)) {
+			$clean = preg_replace('/[^A-Za-z0-9\s#]+/', '', $tag);
+			if (!is_string($clean)) {
+				return '';
+			}
+		}
+
+		$clean = trim($clean);
+		if ($clean === '') {
+			return '';
+		}
+
+		$collapsed = preg_replace('/\s+/u', ' ', $clean);
+		if (!is_string($collapsed)) {
+			$collapsed = preg_replace('/\s+/', ' ', $clean);
+			if (!is_string($collapsed)) {
+				return '';
+			}
+		}
+
+		$collapsed = trim($collapsed);
+		if ($collapsed === '') {
+			return '';
+		}
+
+		$words = preg_split('/\s+/u', $collapsed, -1, PREG_SPLIT_NO_EMPTY);
+		if (!is_array($words) || count($words) === 0) {
+			$words = preg_split('/\s+/', $collapsed, -1, PREG_SPLIT_NO_EMPTY);
+			if (!is_array($words) || count($words) === 0) {
+				return '';
+			}
+		}
+
+		if (count($words) === 1) {
+			$normalized = $words[0];
+		} else {
+			$normalized = '';
+			foreach ($words as $word) {
+				$normalized .= $this->camelCaseWord($word);
+			}
+		}
+
+		if ($normalized === '') {
+			return '';
+		}
+
+		if ($this->tagContainsLettersOrDigits($normalized)) {
+			return $normalized;
+		}
+
+		return '';
+	}
+
+	/**
+	 * Applies a best-effort title-case transformation to one word.
+	 *
+	 * Leading hashes are preserved.
+	 *
+	 * @param string $word
+	 * @return string
+	 */
+	function camelCaseWord($word) {
+		if ($word === '') {
+			return '';
+		}
+
+		$prefix = '';
+		$body = $word;
+		if (preg_match('/^(#+)(.*)$/u', $word, $matches) === 1) {
+			$prefix = $matches [1];
+			$body = $matches [2];
+		}
+
+		if ($body === '') {
+			return $prefix;
+		}
+
+		if (function_exists('mb_convert_case')) {
+			$body = mb_convert_case($body, MB_CASE_TITLE, 'UTF-8');
+		} else {
+			$first = substr($body, 0, 1);
+			$rest = substr($body, 1);
+			$body = strtoupper($first) . strtolower($rest);
+		}
+
+		return $prefix . $body;
+	}
+
+	/**
+	 * Checks whether a normalized tag contains at least one letter or digit.
+	 *
+	 * @param string $tag
+	 * @return bool
+	 */
+	function tagContainsLettersOrDigits($tag) {
+		$result = preg_match('/[\p{L}\p{N}]/u', $tag);
+		if ($result === false) {
+			$result = preg_match('/[A-Za-z0-9]/', $tag);
+		}
+
+		return $result === 1;
+	}
+
+	/**
+	 * Unicode-aware case-insensitive tag comparison.
+	 *
+	 * @param string $left
+	 * @param string $right
+	 * @return bool
+	 */
+	function tagsEqualCaseInsensitive($left, $right) {
+		if ($left === $right) {
+			return true;
+		}
+
+		$pattern = '/^' . preg_quote($left, '/') . '$/iu';
+		$match = preg_match($pattern, $right);
+		if ($match === false) {
+			return strtolower($left) === strtolower($right);
+		}
+
+		return $match === 1;
+	}
+
+	/**
+	 * Unicode-aware case-insensitive prefix check for AJAX suggestions.
+	 *
+	 * @param string $candidate
+	 * @param string $prefix
+	 * @return bool
+	 */
+	function tagStartsWithCaseInsensitive($candidate, $prefix) {
+		if ($prefix === '') {
+			return false;
+		}
+
+		$pattern = '/^' . preg_quote($prefix, '/') . '/iu';
+		$match = preg_match($pattern, $candidate);
+		if ($match === false) {
+			return strpos(strtolower($candidate), strtolower($prefix)) === 0;
+		}
+
+		return $match === 1;
+	}
+
+	/**
 	 * entry_save
 	 *
 	 * Function called on entry_save hook.
@@ -296,14 +500,11 @@ class plugin_tag_admin {
 		if (!empty($_POST ['taginput'])) {
 			$tags = array_merge((array) $tags, explode(',', (string) $_POST ['taginput']));
 		}
-		$tags = array_map('trim', $tags);
-		$tags = array_values(array_unique(array_filter($tags, 'strlen')));
+		$tags = $this->normalizeTagList($tags);
 		$tagsimple = implode(', ', $tags);
 
 		$tagPluginUrl = plugin_geturl('tag');
-		$tagScriptUrl = function_exists('utils_asset_ver')
-			? utils_asset_ver($tagPluginUrl . 'res/tag.js', SYSTEM_VER)
-			: $tagPluginUrl . 'res/tag.js';
+		$tagScriptUrl = function_exists('utils_asset_ver') ? utils_asset_ver($tagPluginUrl . 'res/tag.js', SYSTEM_VER) : $tagPluginUrl . 'res/tag.js';
 
 		$smarty->assign('taglang', $lang ['admin'] ['plugin'] ['tag']);
 		$smarty->assign('tags_simple', $tagsimple);
@@ -341,12 +542,11 @@ class plugin_tag_admin {
 			$tags = substr($tags, 0, -1);
 		}
 		$tags = explode(',', $tags);
-		$tags = array_filter(array_map('trim', $tags), 'strlen');
 
 		$cont = (string) $_POST ['content'];
 		$cont = $this->entry->tag_list($cont);
 		$tags = array_merge($tags, $this->entry->tags);
-		$tags = array_values(array_unique(array_filter(array_map('trim', $tags), 'strlen')));
+		$tags = $this->normalizeTagList($tags);
 
 		$cont = trim($cont);
 		if (count($tags) > 0) {
@@ -389,14 +589,10 @@ class plugin_tag_admin {
 		$f = CACHE_DIR . 'tag-ajax.tmp';
 		$cache = array();
 		$tags = array();
-		$tagsLower = array();
 		if (is_file($f) && (time() - filemtime($f)) < 3600) {
 			$cache = system_load_php_array($f, 'cache');
 			if (isset($cache ['tags']) && is_array($cache ['tags'])) {
 				$tags = $cache ['tags'];
-			}
-			if (isset($cache ['tags_lc']) && is_array($cache ['tags_lc'])) {
-				$tagsLower = $cache ['tags_lc'];
 			}
 		}
 		if (count($tags) === 0) {
@@ -405,23 +601,22 @@ class plugin_tag_admin {
 			natcasesort($tags);
 			$tags = array_values($tags);
 		}
-		if (count($tagsLower) !== count($tags)) {
-			$tagsLower = array_map('strtolower', $tags);
-		}
 		system_save($f, array(
 			'cache' => array(
 				'tags' => $tags,
-				'tags_lc' => $tagsLower,
 			)
 		));
 
 		$suggs = array();
-		$tag = strtolower(trim((string) $_GET ['tag']));
-		$tagLength = strlen($tag);
-		foreach ($tagsLower as $key => $val) {
-			if ($tag === substr($val, 0, $tagLength)) {
+		$tag = $this->normalizeSingleTag((string) $_GET ['tag']);
+		if ($tag === '') {
+			die('');
+		}
+		$tagLength = mb_strlen($tag, 'UTF-8');
+		foreach ($tags as $key => $val) {
+			if ($this->tagStartsWithCaseInsensitive($val, $tag)) {
 				$tmp = wp_specialchars($tags [$key]);
-				$suggs [] = '<b>' . substr($tmp, 0, $tagLength) . '</b>' . substr($tmp, $tagLength);
+				$suggs [] = '<b>' . mb_substr($tmp, 0, $tagLength, 'UTF-8') . '</b>' . mb_substr($tmp, $tagLength, null, 'UTF-8');
 				if (count($suggs) >= 10) {
 					break;
 				}
