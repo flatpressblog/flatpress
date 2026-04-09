@@ -98,7 +98,7 @@ class plugin_tag_admin {
 		}
 
 		foreach ($files as $file) {
-			if (is_string($file) && is_file($file)) {
+			if (is_file($file)) {
 				@unlink($file);
 			}
 		}
