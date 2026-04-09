@@ -3,6 +3,9 @@
 - New core helpers: ``date_iso8601($timestamp, $offset = null)`` and ``date_id_to_iso8601($id, $offset = null)``. ([#856](https://github.com/flatpressblog/flatpress/pull/856))
 
 ## Plugins
+### Additions
+- Tag: With this plugin, you can add keywords to your blog posts. This plugin is required by the Mastodon plugin if you want to enable Mastodon hashtags into tags. ([#857](https://github.com/flatpressblog/flatpress/issues/857))
+
 ### Changes
 - SEO Meta Tag Info plugin update to version 2.3.0
     - The following Open Graph meta tags are now also generated for single posts:
