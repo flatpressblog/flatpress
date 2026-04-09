@@ -9,15 +9,15 @@ FlatPress was initially developed by [Edoardo Vacchi (NoWhereMan)](https://githu
 Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/azett "github.com/azett"). Current development is mainly driven by [Fraenkiman](https://github.com/Fraenkiman).
 
 ## Coding
-- Piero VDFN introduced the plugins Comment Center, jQuery, and LightBox2.
+- Piero VDFN introduced the plugins Comment Center, jQuery, and Tag.
 - Fabrix.xm contributed the Media Manager and Last Comments Admin.
 - The SEO Meta Tag Info plugin was built by Don Prince.
 - [Matthias Mauch](http://www.aadmm.org/)'s [FP-Patch](http://www.aadmm.org/fp-patch/) initially brought FlatPress to PHP 7. Also, he regularly tests FlatPress against new PHP versions.
 - The XML sitemap for search engines was [initially introduced](https://www.igorkromin.net/index.php/2013/02/18/adding-a-google-compatible-sitemap-to-flatpress/) by [Igor Kromin](https://www.igorkromin.net/).
 - The [js script](https://github.com/a-v-l/dsgvo-video-embed) of the GDPR Video embed plugin was originally written by [Dipl.-Ing. Arndt von Lucadou](https://www.lucadou.net/) and was extended by [Fraenkiman](https://github.com/Fraenkiman) to include the Facebook video functionality.
-- The Support plugin, Emoticons plugin, Flatpress Protect plugin and the Newsletter plugin was built by [Fraenkiman](https://github.com/Fraenkiman).
+- The following plugins were contributed by [Fraenkiman](https://github.com/Fraenkiman): Support, Emoticons, FlatPress Protect, Newsletter, GDPR Video Embed and the Mastodon plugin.
 - The JS library [PhotoSwipe](http://photoswipe.com/) utilized in the PhotoSwipe plugin is the work of [Dmytro Semenov](https://dimsemenov.com/).
-- Integration of [caching methods](https://github.com/flatpressblog/flatpress/blob/master/docs/FlatPress_APCu_Cache_Overview.md) and APCu status panel built by  [Fraenkiman](https://github.com/Fraenkiman).
+- Integration of [caching methods](https://github.com/flatpressblog/flatpress/blob/master/docs/FlatPress_APCu_Cache_Overview.md) and APCu status panel built by [Fraenkiman](https://github.com/Fraenkiman).
 
 ## Translation
 - 🇧🇷 Brazilian Portuguese: randy, reworked by [Fabiano Santos](https://github.com/fabianosantosnet)
@@ -41,7 +41,6 @@ FlatPress utilizes the following free frameworks and libraries. Thanks to their 
 - [BBCode Parser](http://christian-seiler.de/projekte/php/bbcode/) by Christian Seiler
 - [jQuery](https://jquery.com/)
 - [jQuery UI](https://jqueryui.com/)
-- [SlimBox2](https://www.digitalia.be/software/slimbox2/) by Christophe Beyls
 - [PhotoSwipe](https://photoswipe.com/) by Dmytro Semenov
 
 ## Other contributions
@@ -49,4 +48,4 @@ FlatPress utilizes the following free frameworks and libraries. Thanks to their 
 - And last but not least: A big shout out to all the security researchers voluntarily reporting possible vulnerabilities in the FlatPress code on platforms like https://huntr.dev, or by opening [issues](https://github.com/flatpressblog/flatpress/issues). You make FlatPress a lot more secure for everyone!
 - Many thanks to Laborix, who used a penetration suite to check FlatPress for possible security vulnerabilities.
 - [harish0x](https://github.com/harish0x) reported XSS vulnerabilities we fixed with FlatPress 1.4.
-- Many thanks to all testers and to Lubomír Ludvík, who let me use his two domains to test FlatPress 1.5 RC1. This allowed me to fix a few minor bugs under real-world conditions.
+- Many thanks to all testers and to [Lubomír Ludvík](http://www.flatpress.cz/), who let me use his two domains to test FlatPress. This allowed me to fix a few minor bugs under real-world conditions.

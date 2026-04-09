@@ -64,6 +64,10 @@ class widget_indexer extends fs_filelister {
 			$var = $fp_registered_widgets [$newid] ['func'];
 			if (is_callable($var)) {
 				$content = call_user_func_array($var, $params);
+				if (!is_array($content) || empty($content)) {
+					$content = array();
+					continue;
+				}
 				if (!isset($content ['id'])) {
 					$content ['id'] = "widget-" . $newid;
 				}
@@ -154,6 +158,7 @@ function smarty_block_widgets($params, $content, &$smarty, &$repeat) {
 			$entry = $fp_widgets->get(($pos));
 			if (!empty($entry)) {
 				$repeat = true;
+				$smarty->assign(array('id' => '', 'subject' => '', 'content' => ''));
 				$smarty->assign($entry);
 				return;
 			}
@@ -169,6 +174,7 @@ function smarty_block_widgets($params, $content, &$smarty, &$repeat) {
 			$entry = $fp_widgets->get(($pos));
 			if (!empty($entry)) {
 				$repeat = true;
+				$smarty->assign(array('id' => '', 'subject' => '', 'content' => ''));
 				$smarty->assign($entry);
 				return $content;
 			}

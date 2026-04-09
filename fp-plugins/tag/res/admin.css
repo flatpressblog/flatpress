@@ -1,0 +1,37 @@
+#tagplace {
+	padding: 4px 0;
+}
+
+#tagplace span {
+	background: #DDDDDD;
+	border: 1px solid #CCCCCC;
+	padding: 0.25em 0.5em;
+	line-height: 2.1em;
+	cursor: default;
+}
+
+#tagplace span:hover { background: #EEEEEE; }
+
+.tagsuggestions {
+	position: absolute;
+	border: 1px solid #CCCCCC;
+	background: #FFFFFF;
+	min-width: 100px;
+}
+
+.tagsuggestions ul {
+	text-align: left;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.tagsuggestions li {
+	margin: 0;
+	padding: 1px 0;
+	cursor: default;
+}
+
+.tagsuggestions li.over {
+	background: #5598D7;
+}

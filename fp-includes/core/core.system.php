@@ -53,6 +53,34 @@ function system_save($file, $array) {
 	return io_write_file($file, $string);
 }
 
+/**
+ * Loads an array variable stored by system_save() from a PHP file.
+ *
+ * This is the companion reader for system_save(): it keeps cache-file loading
+ * centralized in the core so plugins don't duplicate include-based loaders.
+ *
+ * @param string $file File path to include
+ * @param string $variable Variable name stored in the PHP file
+ * @return array
+ */
+function system_load_php_array($file, $variable) {
+	if (!is_string($file) || $file === '' || !is_string($variable) || $variable === '') {
+		return array();
+	}
+	if (!preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $variable)) {
+		return array();
+	}
+	if (!is_file($file)) {
+		return array();
+	}
+
+	${$variable} = null;
+	include $file;
+	$loaded = isset(${$variable}) ? ${$variable} : null;
+
+	return is_array($loaded) ? $loaded : array();
+}
+
 function system_hashsalt_save($force = false) {
 	global $fp_config;
 	if ($force || !file_exists(HASHSALT_FILE)) {
@@ -182,6 +210,7 @@ function system_init() {
 
 	$GLOBALS ['fp_config'] = config_load();
 
+	set_locale();
 	normalize_to_utf8();
 	set_default_html_ct();
 	if (PHP_SAPI !== 'cli') {
@@ -198,8 +227,6 @@ function system_init() {
 
 	$GLOBALS ['lang'] = lang_load();
 
-	set_locale();
-
 	plugin_loadall();
 
 	// init smarty
@@ -211,6 +238,11 @@ function system_init() {
 	// Smarty debug console
 	$smarty->setDebugging(false); // true or false
 	//$smarty->clearCompiledTemplate();
+
+	if (!isset($smarty->registered_plugins['modifier'] ['trim'])) {
+		// Fraenkiman: is used to selectively hide widgets
+		$smarty->registerPlugin('modifier', 'trim', 'trim'); 
+	}
 
 	do_action('init');
 	ob_end_clean();
