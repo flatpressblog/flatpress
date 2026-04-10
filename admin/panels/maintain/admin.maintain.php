@@ -411,10 +411,10 @@ class admin_maintain_apcu extends AdminPanelAction {
 			return sprintf('%.1f %s', $bytes, $units [$i]);
 		};
 
-		// Heuristics: good if hit rate >= 85% and some free memory available
+		// Heuristics: good if hit rate >= 65% and some free memory available
 		$status = 'good';
 		$status_code = 1;
-		if (!$hit_rate_valid || $hit_rate < 0.85 || ($free_pct !== null && $free_pct < 5.0)) {
+		if (!$hit_rate_valid || $hit_rate < 0.65 || ($free_pct !== null && $free_pct < 5.0)) {
 			$status = 'bad';
 			$status_code = -1;
 		}
