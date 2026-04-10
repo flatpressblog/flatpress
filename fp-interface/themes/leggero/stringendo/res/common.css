@@ -612,6 +612,12 @@ button:not(.leaflet-control):not(.pswp__button):not(.bb-button):hover {
 	background: var(--fp-accent-gradient-hover, var(--fp-accent-2, #8b0000));
 }
 
+.link-comments a,
+.readmore {
+	display: inline-flex;
+	align-items: center;
+}
+
 /**
  * BBCode & emoticon toolbars (frontend + admin): keep neutral icon buttons.
  * Must override the general button styling (accent gradients) reliably.
