@@ -1,5 +1,40 @@
 <?php
 /**
+ * Returns whether an environment flag is truthy.
+ *
+ * Accepted truthy values: 1, true, on, yes.
+ *
+ * @param string $name
+ * @param bool $default
+ * @return bool
+ */
+function fp_apcu_env_flag($name, $default = false): bool {
+	$value = getenv((string) $name);
+	if ($value === false && isset($_ENV [(string) $name])) {
+		$value = $_ENV [(string) $name];
+	}
+	if ($value === false || $value === null) {
+		return (bool) $default;
+	}
+	if (is_bool($value)) {
+		return $value;
+	}
+	if (is_int($value) || is_float($value)) {
+		return ((int) $value) !== 0;
+	}
+	if (is_string($value)) {
+		$value = strtolower(trim($value));
+		if ($value === '' || $value === '0' || $value === 'false' || $value === 'off' || $value === 'no') {
+			return false;
+		}
+		if ($value === '1' || $value === 'true' || $value === 'on' || $value === 'yes') {
+			return true;
+		}
+	}
+	return (bool) $default;
+}
+
+/**
  * Returns the FlatPress APCu namespace ID for this instance, or '' if APCu is disabled.
  * Random, stored under deterministic bootstrap key (sha1(ABS_PATH)).
  */
@@ -43,6 +78,11 @@ function apcu_key($key): string {
 
 /**
  * Increment with instance prefix.
+ *
+ * @param string $key
+ * @param int $step
+ * @param bool $success
+ * @return int|false
  */
 function apcu_incr($key, $step = 1, &$success = null) {
 	if (!is_apcu_on()) {
@@ -51,11 +91,31 @@ function apcu_incr($key, $step = 1, &$success = null) {
 		}
 		return false;
 	}
-	return apcu_inc(apcu_key((string)$key), (int)$step, $success);
+	return apcu_inc(apcu_key((string) $key), (int) $step, $success);
 }
 
 /**
- * APCu availability for this request. CLI/phpdbg -> false, except apc.enable_cli=1.
+ * Delete a value from APCu with instance prefix.
+ *
+ * @param string $key
+ * @return bool
+ */
+function apcu_delete_key($key): bool {
+	if (!is_apcu_on()) {
+		return false;
+	}
+	return (bool) apcu_delete(apcu_key((string) $key));
+}
+
+/**
+ * APCu availability for this request.
+ *
+ * In CLI/phpdbg, APCu is considered off unless one of these is true:
+ *   - the runtime enables apc.enable_cli
+ *   - FP_APCU_ENABLE_CLI=1 is present in the environment
+ *
+ * The environment override exists so FlatPress can simulate APCu-backed code
+ * paths in automated CLI tests even on systems without APCu CLI support.
  */
 function is_apcu_on(): bool {
 	static $on = null;
@@ -70,7 +130,7 @@ function is_apcu_on(): bool {
 	} else {
 		$on = (bool) @ini_get('apc.enabled');
 	}
-	if ($on && in_array(PHP_SAPI, ['cli', 'phpdbg'], true) && !((bool) @ini_get('apc.enable_cli'))) {
+	if ($on && in_array(PHP_SAPI, ['cli', 'phpdbg'], true) && !((bool) @ini_get('apc.enable_cli')) && !fp_apcu_env_flag('FP_APCU_ENABLE_CLI', false)) {
 		$on = false;
 	}
 	if ($on) {
@@ -82,6 +142,7 @@ function is_apcu_on(): bool {
 /**
  * Fetch from APCu with instance prefix.
  * 2-Arg form: sets $ok=true on hit; 1-Arg form: same as apcu_fetch($key).
+ *
  * @param string $key
  * @param bool $ok
  * @return mixed|null
@@ -97,17 +158,18 @@ function apcu_get($key, &$ok = null) {
 	if ($ok !== null) {
 		return apcu_fetch(apcu_key((string) $key), $ok);
 	}
-	// One-Arg Form
 	return apcu_fetch(apcu_key((string) $key));
 }
 
 /**
  * Store a value in APCu. TTL=0 means no expiry; no-op if APCu is off.
+ *
  * @param string $key
  * @param mixed $val
  * @param int $ttl
+ * @return bool
  */
-function apcu_set($key, $val, $ttl = 120) {
+function apcu_set($key, $val, $ttl = 120): bool {
 	if (!is_apcu_on()) {
 		return false;
 	}
@@ -115,6 +177,6 @@ function apcu_set($key, $val, $ttl = 120) {
 	if ($ttl < 0) {
 		$ttl = 0;
 	}
-	return apcu_store(apcu_key((string) $key), $val, $ttl);
+	return (bool) apcu_store(apcu_key((string) $key), $val, $ttl);
 }
 ?>

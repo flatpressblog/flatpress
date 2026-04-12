@@ -30,18 +30,41 @@ In practice, this approach is useful for fragments that are:
 
 ## 2.1 Storage location
 
-Cached fragments are written below:
+FlatPress chooses the storage backend automatically:
+
+1. **APCu**, when APCu is available for the current request
+2. **Filesystem fallback** below `CACHE_DIR`, when APCu is unavailable
+
+### APCu backend
+
+Logical APCu keys look like this:
+
+```text
+smarty:block:<group>:<hash>
+```
+
+Because FlatPress routes APCu calls through `apcu_key()`, the effective key in shared memory is:
+
+```text
+fp:<NS>:smarty:block:<group>:<hash>
+```
+
+### Filesystem fallback
+
+When APCu is unavailable, cached fragments are written below:
 
 ```text
 CACHE_DIR/smarty-block-cache/<group>/<hash-prefix>/<hash>.cache.php
 ```
 
-The cache file stores a serialized payload with:
+The filesystem payload stores:
 
 - creation timestamp,
 - TTL,
 - template timestamp,
 - rendered fragment content.
+
+The APCu payload stores the same logical fields as an array rather than as a serialized file.
 
 ## 2.2 Cache key composition
 
@@ -65,15 +88,15 @@ Template metadata is included so that the cache is invalidated automatically whe
 
 On block open:
 
-1. FlatPress builds the cache state.
-2. It tries to read the fragment from the cache file.
+1. FlatPress builds the cache state, including the fragment backend (`apcu` or `file`).
+2. It tries to read the fragment from APCu first when APCu is available, otherwise from the filesystem fallback.
 3. On a hit, the cached HTML/XML is returned immediately and the inner template code is skipped.
 
 On block close:
 
 1. FlatPress receives the rendered fragment content.
-2. It serializes the payload.
-3. It writes the fragment to the cache file.
+2. It builds the cache payload.
+3. It stores the payload in APCu or writes it to the filesystem fallback, depending on the resolved backend.
 
 ## 2.4 Invalidation
 
@@ -81,7 +104,9 @@ A cached fragment is discarded when:
 
 - the TTL has expired,
 - the template source timestamp no longer matches,
-- the file cannot be decoded as a valid cache payload.
+- the stored payload cannot be decoded as a valid cache payload.
+
+With APCu enabled, expiry is enforced both by APCu's own TTL handling and by FlatPress' payload validation. With the filesystem fallback, FlatPress removes stale cache files on the next read attempt.
 
 ---
 
@@ -132,6 +157,22 @@ This prevents guest/admin output from being mixed by default. It can be set to `
 Boolean-like flag. Default: `false`.
 
 Enable this for fragments whose output depends on the current request path or query string, such as filtered feeds.
+
+
+## 3.1 Backend selection note
+
+The block implementation currently resolves the backend automatically:
+
+- **`apcu`** if `is_apcu_on()` is true
+- **`file`** otherwise
+
+This keeps one template syntax for both environments:
+
+- production hosts with APCu use RAM-backed fragments
+- hosts without APCu keep the proven file-backed fallback
+- CLI regression tests can exercise the APCu code path through the dedicated `FP_APCU_ENABLE_CLI=1` test override
+
+On Windows, APCu is documented as a per-process cache under process-based SAPIs. The feature still works correctly there, but fragment reuse may be limited to requests handled by the same process.
 
 ---
 
@@ -364,17 +405,17 @@ Avoid block caches when the fragment is:
 
 ## 7. Current summary table
 
-| Area | File | id | ttl | group | Extra variance | Why it is cached |
-|---|---|---|---:|---|---|---|
-| Leggero top widgets | `fp-interface/themes/leggero/widgetstop.tpl` | `theme_leggero_widgets_top` | 3600 | `theme-leggero` | `vary_login=false` | Stable top navigation/widget fragment |
-| Leggero bottom widgets | `fp-interface/themes/leggero/widgetsbottom.tpl` | `theme_leggero_widgets_bottom` | 3600 | `theme-leggero` | `vary_login=false` | Stable bottom navigation/widget fragment |
-| Categories widget | `fp-plugins/categories/tpls/widget.tpl` | `plugin_categories_widget` | 1800 | `widget-categories` | `vary=$categories_showcount`, `vary_login=false` | Reused sidebar widget with limited variants |
-| Main RSS feed | `fp-interface/sharedtpls/rss.tpl` | `shared_feed_rss` | 120 | `feeds-main` | `vary_request=true`, `vary_login=false` | Repeated polling by feed readers |
-| Main Atom feed | `fp-interface/sharedtpls/atom.tpl` | `shared_feed_atom` | 120 | `feeds-main` | `vary_request=true`, `vary_login=false` | Repeated polling by feed readers |
-| Comment RSS feed | `fp-interface/sharedtpls/comment-rss.tpl` | `shared_comment_feed_rss` | 60 | `feeds-comments` | `vary_request=true`, `vary_login=false` | Short-lived per-request comment feed cache |
-| Comment Atom feed | `fp-interface/sharedtpls/comment-atom.tpl` | `shared_comment_feed_atom` | 60 | `feeds-comments` | `vary_request=true`, `vary_login=false` | Short-lived per-request comment feed cache |
-| LastComments RSS feed | `fp-plugins/lastcomments/tpls/plugin.lastcomments-feed.tpl` | `plugin_lastcomments_feed_rss` | 60 | `feeds-lastcomments` | `vary_request=true`, `vary_login=false` | Short-lived public plugin feed cache |
-| LastComments Atom feed | `fp-plugins/lastcomments/tpls/plugin.lastcomments-atom.tpl` | `plugin_lastcomments_feed_atom` | 60 | `feeds-lastcomments` | `vary_request=true`, `vary_login=false` | Short-lived public plugin feed cache |
+| Area                     | File                                                           | id                                 | ttl  | group                   | Extra variance                                     | Preferred backend   | Why it is cached                              |
+|--------------------------|----------------------------------------------------------------|------------------------------------|-----:|-------------------------|----------------------------------------------------|---------------------|-----------------------------------------------|
+| Leggero top widgets      | `fp-interface/themes/leggero/widgetstop.tpl`                   | `theme_leggero_widgets_top`        | 3600 | `theme-leggero`         | `vary_login=false`                                 | APCu, file fallback | Stable top navigation/widget fragment         |
+| Leggero bottom widgets   | `fp-interface/themes/leggero/widgetsbottom.tpl`                | `theme_leggero_widgets_bottom`     | 3600 | `theme-leggero`         | `vary_login=false`                                 | APCu, file fallback | Stable bottom navigation/widget fragment      |
+| Categories widget        | `fp-plugins/categories/tpls/widget.tpl`                        | `plugin_categories_widget`         | 1800 | `widget-categories`     | `vary=$categories_showcount`, `vary_login=false`   | APCu, file fallback | Reused sidebar widget with limited variants   |
+| Main RSS feed            | `fp-interface/sharedtpls/rss.tpl`                              | `shared_feed_rss`                  | 120  | `feeds-main`            | `vary_request=true`, `vary_login=false`            | APCu, file fallback | Repeated polling by feed readers              |
+| Main Atom feed           | `fp-interface/sharedtpls/atom.tpl`                             | `shared_feed_atom`                 | 120  | `feeds-main`            | `vary_request=true`, `vary_login=false`            | APCu, file fallback | Repeated polling by feed readers              |
+| Comment RSS feed         | `fp-interface/sharedtpls/comment-rss.tpl`                      | `shared_comment_feed_rss`          | 60   | `feeds-comments`        | `vary_request=true`, `vary_login=false`            | APCu, file fallback | Short-lived per-request comment feed cache    |
+| Comment Atom feed        | `fp-interface/sharedtpls/comment-atom.tpl`                     | `shared_comment_feed_atom`         | 60   | `feeds-comments`        | `vary_request=true`, `vary_login=false`            | APCu, file fallback | Short-lived per-request comment feed cache    |
+| LastComments RSS feed    | `fp-plugins/lastcomments/tpls/plugin.lastcomments-feed.tpl`    | `plugin_lastcomments_feed_rss`     | 60   | `feeds-lastcomments`    | `vary_request=true`, `vary_login=false`            | APCu, file fallback | Short-lived public plugin feed cache          |
+| LastComments Atom feed   | `fp-plugins/lastcomments/tpls/plugin.lastcomments-atom.tpl`    | `plugin_lastcomments_feed_atom`    | 60   | `feeds-lastcomments`    | `vary_request=true`, `vary_login=false`            | APCu, file fallback | Short-lived public plugin feed cache          |
 
 ---
 
