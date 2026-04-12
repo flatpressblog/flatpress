@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="{$fp_config.locale.charset}"?>
+{cache id='plugin_lastcomments_feed_atom' ttl=60 group='feeds-lastcomments' vary_request=true vary_login=false}
 <!--
 
              _                                  ______                     _ 
@@ -20,9 +21,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 	<title>{$flatpress.title|escape:'html'} » {$dynamic_title|escape:'html'}</title>
 	<link href="{$smarty.const.BLOG_BASEURL|escape:'html'}" rel="alternate" />
 	<link href="{$atom_link|escape:'html'}" rel="self" type="application/atom+xml" />
-	<generator uri="https://www.flatpress.org" version="{$smarty.const.SYSTEM_VER}">
-		FlatPress
-	</generator>
+	<generator uri="https://www.flatpress.org" version="{$smarty.const.SYSTEM_VER}">FlatPress</generator>
 	<rights>{$flatpress.author|escape:'html'} {'Y'|date}</rights>
 	<updated>{$smarty.now|date_rfc3339}</updated>
 	<author>
@@ -76,3 +75,5 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 	{/foreach}
 </feed>
+
+{/cache}

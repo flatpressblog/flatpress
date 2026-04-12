@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="{$fp_config.locale.charset}"?>
+{cache id='plugin_lastcomments_feed_rss' ttl=60 group='feeds-lastcomments' vary_request=true vary_login=false}
 <!--
 
   _____     _____    _____   ___             ______                     _ 
@@ -61,3 +62,5 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 			{/foreach}
 	</channel>
 </rss>
+
+{/cache}

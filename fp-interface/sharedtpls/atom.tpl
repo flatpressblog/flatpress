@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="{$fp_config.locale.charset}"?>
+{cache id='shared_feed_atom' ttl=120 group='feeds-main' vary_request=true vary_login=false}
 <!--
 
              _                                  ______                     _ 
@@ -21,6 +22,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 	<title>{$flatpress.title|escape:'html'} » {$lang.main.entries|escape:'html'}</title>
 
 	{if $flatpress.subtitle!=""}
+
 	<subtitle>{$flatpress.subtitle|escape:'html'}</subtitle>
 	{/if}
 
@@ -38,6 +40,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 	{entry_block}
 	{entry}
+
 	<entry>
 
 		<title>{$subject|tag:the_title|escape:'html'}</title>
@@ -45,6 +48,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 		<id>{$id|link:post_link|escape:'html'}</id>
 		{assign var=the_date value=$date|date_rfc3339}
+
 		<published>{$the_date}</published>
 		<updated>{$the_date}</updated>
 		<content type="xhtml">
@@ -56,13 +60,17 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 		</content>
 
 		{if isset($enclosure)}
+
 			{foreach from=$enclosure item=encl}
+
 			<link rel="enclosure" href="{$encl.url|escape:'html'}" title="{$encl.title|escape:'html'}" length="{$encl.length|escape:'html'}" type="{$encl.type|escape:'html'}" />
 			{/foreach}
 		{/if}
 
 	</entry>
+
 	{/entry}
 	{/entry_block}
 
 </feed>
+{/cache}
