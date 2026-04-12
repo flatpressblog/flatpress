@@ -3,8 +3,9 @@
  * Smarty {cache}{/cache} block plugin
  *
  * Purpose:
- *   Cache rendered block output in FlatPress' CACHE_DIR even when
- *   global Smarty output caching is disabled.
+ *   Cache rendered block output even when global Smarty output caching is
+ *   disabled. When APCu is available, FlatPress stores fragment payloads in
+ *   RAM first. Otherwise it falls back to CACHE_DIR on the filesystem.
  *
  * Supported attributes:
  *   - id / key      Optional explicit cache key. Recommended for repeated
@@ -34,6 +35,8 @@
  *     vary_logged_in=false) for truly public fragments.
  *   - Request-based variance can be enabled per block via
  *     vary_request=true (or vary_route=true).
+ *   - Storage backend selection is automatic: APCu when available,
+ *     filesystem fallback otherwise.
  */
 
 /**
@@ -310,6 +313,16 @@ function fp_smarty_cache_runtime_vary($template, array $params = []) {
 }
 
 /**
+ * @return string
+ */
+function fp_smarty_cache_backend() {
+	if (function_exists('is_apcu_on') && is_apcu_on()) {
+		return 'apcu';
+	}
+	return 'file';
+}
+
+/**
  * @param mixed $params
  * @param mixed $template
  * @return array<string,mixed>
@@ -353,6 +366,7 @@ function fp_smarty_cache_build_state($params, $template) {
 	$cacheRoot = defined('CACHE_DIR') ? CACHE_DIR : sys_get_temp_dir();
 	$cacheRoot = rtrim((string) $cacheRoot, '/\\');
 	$file = $cacheRoot . DIRECTORY_SEPARATOR . 'smarty-block-cache' . DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR . substr($hash, 0, 2) . DIRECTORY_SEPARATOR . $hash . '.cache.php';
+	$apcuKey = 'smarty:block:' . $group . ':' . $hash;
 
 	return [
 		'enabled' => $enabled,
@@ -360,27 +374,64 @@ function fp_smarty_cache_build_state($params, $template) {
 		'group' => $group,
 		'slot' => $slot,
 		'hash' => $hash,
+		'backend' => fp_smarty_cache_backend(),
+		'apcu_key' => $apcuKey,
 		'file' => $file,
 		'template_stamp' => (int) $meta ['source_timestamp'],
 	];
 }
 
 /**
+ * @param mixed $raw
+ * @return array<string,mixed>|null
+ */
+function fp_smarty_cache_decode_payload($raw) {
+	if (is_array($raw)) {
+		return $raw;
+	}
+	if (is_string($raw) && $raw !== '') {
+		$payload = @unserialize($raw);
+		if (is_array($payload)) {
+			return $payload;
+		}
+	}
+	return null;
+}
+
+/**
  * @param array<string,mixed> $state
+ * @return void
+ */
+function fp_smarty_cache_delete(array $state) {
+	$backend = isset($state ['backend']) ? (string) $state ['backend'] : 'file';
+	if ($backend === 'apcu') {
+		$key = isset($state ['apcu_key']) ? (string) $state ['apcu_key'] : '';
+		if ($key === '') {
+			return;
+		}
+		if (function_exists('apcu_delete_key')) {
+			apcu_delete_key($key);
+			return;
+		}
+		if (function_exists('apcu_delete') && function_exists('apcu_key') && function_exists('is_apcu_on') && is_apcu_on()) {
+			@apcu_delete(apcu_key($key));
+		}
+		return;
+	}
+
+	$file = isset($state ['file']) ? (string) $state ['file'] : '';
+	if ($file !== '') {
+		@unlink($file);
+	}
+}
+
+/**
+ * @param array<string,mixed> $state
+ * @param mixed $raw
  * @return string|null
  */
-function fp_smarty_cache_read(array $state) {
-	$file = isset($state ['file']) ? (string) $state ['file'] : '';
-	if ($file === '' || !is_file($file)) {
-		return null;
-	}
-
-	$raw = function_exists('io_load_file') ? io_load_file($file) : @file_get_contents($file);
-	if (!is_string($raw) || $raw === '') {
-		return null;
-	}
-
-	$payload = @unserialize($raw);
+function fp_smarty_cache_validate_payload(array $state, $raw) {
+	$payload = fp_smarty_cache_decode_payload($raw);
 	if (!is_array($payload)) {
 		return null;
 	}
@@ -391,16 +442,17 @@ function fp_smarty_cache_read(array $state) {
 	$currentTemplateStamp = isset($state ['template_stamp']) ? (int) $state ['template_stamp'] : 0;
 
 	if ($currentTemplateStamp > 0 && $cachedTemplateStamp > 0 && $cachedTemplateStamp !== $currentTemplateStamp) {
-		@unlink($file);
+		fp_smarty_cache_delete($state);
 		return null;
 	}
 
 	if ($ttl > 0 && $created > 0 && ($created + $ttl) < time()) {
-		@unlink($file);
+		fp_smarty_cache_delete($state);
 		return null;
 	}
 
 	if (!isset($payload ['content']) || !is_string($payload ['content'])) {
+		fp_smarty_cache_delete($state);
 		return null;
 	}
 
@@ -409,24 +461,72 @@ function fp_smarty_cache_read(array $state) {
 
 /**
  * @param array<string,mixed> $state
+ * @return string|null
+ */
+function fp_smarty_cache_read(array $state) {
+	$backend = isset($state ['backend']) ? (string) $state ['backend'] : 'file';
+
+	if ($backend === 'apcu') {
+		$key = isset($state ['apcu_key']) ? (string) $state ['apcu_key'] : '';
+		if ($key === '' || !function_exists('apcu_get')) {
+			return null;
+		}
+		$ok = false;
+		$raw = apcu_get($key, $ok);
+		if (!$ok) {
+			return null;
+		}
+		return fp_smarty_cache_validate_payload($state, $raw);
+	}
+
+	$file = isset($state ['file']) ? (string) $state ['file'] : '';
+	if ($file === '' || !is_file($file)) {
+		return null;
+	}
+
+	$raw = function_exists('io_load_file') ? io_load_file($file) : @file_get_contents($file);
+	if (!is_string($raw) || $raw === '') {
+		return null;
+	}
+
+	return fp_smarty_cache_validate_payload($state, $raw);
+}
+
+/**
+ * @param array<string,mixed> $state
  * @param string $content
  * @return bool
  */
 function fp_smarty_cache_write(array $state, $content) {
+	$payload = [
+		'created' => time(),
+		'ttl' => (int) ($state ['ttl'] ?? 3600),
+		'template_stamp' => (int) ($state ['template_stamp'] ?? 0),
+		'content' => (string) $content,
+	];
+	$backend = isset($state ['backend']) ? (string) $state ['backend'] : 'file';
+
+	if ($backend === 'apcu') {
+		$key = isset($state ['apcu_key']) ? (string) $state ['apcu_key'] : '';
+		if ($key === '' || !function_exists('apcu_set')) {
+			return false;
+		}
+		$ttl = (int) ($state ['ttl'] ?? 3600);
+		if ($ttl < 0) {
+			$ttl = 0;
+		}
+		return (bool) apcu_set($key, $payload, $ttl);
+	}
+
 	$file = isset($state ['file']) ? (string) $state ['file'] : '';
 	if ($file === '') {
 		return false;
 	}
 
-	$payload = serialize([
-		'created' => time(),
-		'ttl' => (int) ($state ['ttl'] ?? 3600),
-		'template_stamp' => (int) ($state ['template_stamp'] ?? 0),
-		'content' => (string) $content,
-	]);
+	$serialized = serialize($payload);
 
 	if (function_exists('io_write_file')) {
-		return (bool) io_write_file($file, $payload);
+		return (bool) io_write_file($file, $serialized);
 	}
 
 	$dir = dirname($file);
@@ -435,7 +535,7 @@ function fp_smarty_cache_write(array $state, $content) {
 			return false;
 		}
 	}
-	return @file_put_contents($file, $payload, LOCK_EX) !== false;
+	return @file_put_contents($file, $serialized, LOCK_EX) !== false;
 }
 
 /**

@@ -18,8 +18,11 @@ To view and manage user cache entries, [Joe Watkins'](https://github.com/krakjoe
 - Verifies:
   - `apcu_fetch()` exists.
   - APCu is enabled (`apcu_enabled()` or `apc.enabled`).
-  - In CLI/phpdbg, `apc.enable_cli` must be true.
+  - In CLI/phpdbg, `apc.enable_cli` must be true **or** the dedicated test override `FP_APCU_ENABLE_CLI=1` must be present.
 - Result is memoized per request in a static variable.
+
+**Note:**  
+`FP_APCU_ENABLE_CLI=1` exists only so FlatPress can simulate APCu-backed code paths in CLI-based regression tests. It does **not** bypass a genuinely disabled APCu extension.
 
 **Impact:**  
 High. Every APCu-aware function uses this as a guard, so misconfiguration here would disable all caches.
@@ -56,13 +59,15 @@ High. This is the isolation layer between multiple FlatPress instances sharing a
 
 - `apcu_get($key, &$ok = null)`  
 - `apcu_set($key, $val, $ttl = 120)`  
-- `apcu_incr($key, $step = 1, &$success = null)`
+- `apcu_incr($key, $step = 1, &$success = null)`  
+- `apcu_delete_key($key)`
 
-All three:
+These helpers:
 
 - Short-circuit if `is_apcu_on()` is false.
 - Normalize keys through `apcu_key()`, except where raw `apcu_*` functions are used deliberately.
 - Respect TTL (`$ttl`) for `apcu_set`.
+- Give other subsystems a central, instance-safe delete path (`apcu_delete_key`) for invalidation and cleanup.
 
 **Impact:**  
 High. Most APCu usage flows through these helpers.
@@ -312,7 +317,6 @@ Low–Medium. Useful for avoiding repeated disk + parsing cost on high-traffic s
 Low–Medium. Reduces repeated environment probing, especially under reverse proxies.
 
 ---
-
 
 ### 2.9 Base URL Config Cache – `fp:config:settings:*`
 
@@ -701,6 +705,62 @@ Medium–High for repeated social crawler hits and repeated requests to the dyna
 
 ---
 
+### 4.8 Smarty Block Fragment Cache – `fp:smarty:block:<group>:<hash>`
+
+**Files:**
+
+- `fp-includes/fp-smartyplugins/block.cache.php`
+- `fp-interface/themes/leggero/widgetstop.tpl`
+- `fp-interface/themes/leggero/widgetsbottom.tpl`
+- `fp-plugins/categories/tpls/widget.tpl`
+- `fp-interface/sharedtpls/rss.tpl`
+- `fp-interface/sharedtpls/atom.tpl`
+- `fp-interface/sharedtpls/comment-rss.tpl`
+- `fp-interface/sharedtpls/comment-atom.tpl`
+- `fp-plugins/lastcomments/tpls/plugin.lastcomments-feed.tpl`
+- `fp-plugins/lastcomments/tpls/plugin.lastcomments-atom.tpl`
+
+**What is cached:**
+
+FlatPress' custom Smarty `{cache}{/cache}` block stores rendered fragment payloads in APCu **when APCu is available**. The payload mirrors the filesystem fallback and contains:
+
+- creation timestamp
+- TTL
+- template timestamp
+- rendered fragment content
+
+**Logical key format:**
+
+- `smarty:block:<group>:<hash>`
+
+Because all wrapper calls pass through `apcu_key()`, the effective APCu key is:
+
+- `fp:<NS>:smarty:block:<group>:<hash>`
+
+**Current fragment groups:**
+
+- `theme-leggero`
+- `widget-categories`
+- `feeds-main`
+- `feeds-comments`
+- `feeds-lastcomments`
+
+**Invalidation:**
+
+- APCu TTL expiry via `apcu_store(..., $ttl)`
+- template source timestamp changing
+- malformed payloads
+- natural APCu eviction under memory pressure
+
+**Fallback behavior:**
+
+If APCu is not available for the current request, the same fragment cache automatically falls back to the existing file-backed storage below `CACHE_DIR/smarty-block-cache/...`.
+
+**Impact:**  
+Medium–High. For hot widget and feed fragments this removes the filesystem read/write step entirely and replaces it with an in-memory APCu fetch/store round-trip.
+
+---
+
 ## 5. Miscellaneous and Meta Caches
 
 ### 5.1 Instance Namespace Bootstrap – `fp:ns:*`
@@ -825,6 +885,7 @@ The following table summarizes each logical cache group:
 | Language                     | `fp:lang:*`                                                                          | No                       | Language file mtime/size, locale                     | Medium–High              |
 | INI parsing (SEO plugin)     | `fp:ini:*`                                                                           | No                       | INI file mtime/size                                  | Low–Medium               |
 | SEO `og:image` (SEO plugin)  | `fp:seometa:og:imageinfo:*`, `seometa:og:imagebin:*`                                 | No                       | Source path/type/mtime/size, target size, TTL        | Medium–High              |
+| Smarty block fragments       | `fp:smarty:block:*`                                                                  | No                       | TTL, template timestamp, APCu eviction or file fallback | Medium–High           |
 | HTTPS/IP env                 | `fp:https:v2:*`, `fp:net:in_cidrs:*`                                                 | No                       | TTL (≈3600s) and local process                       | Low–Medium               |
 | Plugin discovery             | `fp:plugin:*`, `fp:plugins:*`                                                        | No                       | Plugin dir/config mtimes                             | Medium                   |
 | Smarty plugin index          | `fp:spi:*`                                                                           | No                       | Dir+token hash, TTL 300s                             | Medium                   |
@@ -879,6 +940,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.6.dev`
 - `fp:seometa:og:imageinfo:v1:`
 - `fp:seometa:og:imagebin:v1:`
 - `fp:spi:`
+- `fp:smarty:block:`
 - `fp:statics:list:`
 - `fp:storage:aggregate`
 - `fp:storage:dirsize:`
