@@ -365,9 +365,56 @@ class admin_widgets_default extends AdminPanelAction {
 		$fp_widgets = isset($_POST ['widgets']) ? $_POST ['widgets'] : array();
 		$success = system_save(CONFIG_DIR . 'widgets.conf.php', compact('fp_widgets'));
 
+		$this->cleartplcache();
+
 		$this->smarty->assign('success', ($success) ? 1 : -1);
 
 		return PANEL_REDIRECT_CURRENT;
+	}
+
+	function cleartplcache() {
+		global $smarty;
+
+		try {
+			$tpl = new tpl_deleter();
+			unset($tpl);
+
+			$smarty->clearAllCache();
+			$smarty->clearCompiledTemplate();
+			$smarty->setCompileCheck(\Smarty\Smarty::COMPILECHECK_ON);
+			$smarty->setForceCompile(true);
+
+			if (!file_exists(CACHE_DIR)) {
+				fs_mkdir(CACHE_DIR);
+			}
+
+			if (!file_exists(COMPILE_DIR)) {
+				fs_mkdir(COMPILE_DIR);
+			}
+
+			return true;
+		} catch (Exception $e) {
+			trigger_error("Error when clearing the cache: " . $e->getMessage(), E_USER_WARNING);
+			return false;
+		}
+	}
+
+}
+
+class tpl_deleter extends fs_filelister {
+
+	function __construct() {
+
+		$this->_directory = CACHE_DIR;
+		parent::__construct();
+	}
+
+	function _checkFile($directory, $file) {
+		if ($file != CACHE_FILE) {
+			array_push($this->_list, $file);
+			fs_delete($directory . "/" . $file);
+		}
+		return 0;
 	}
 
 }

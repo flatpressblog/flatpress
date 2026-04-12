@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="{$fp_config.locale.charset}"?>
-	{entry_block}
-		{entry}
-		{assign var=the_comment_link value=$id|link:comments_link}
+{entry_block}
+	{entry}
+	{assign var=the_comment_link value=$id|link:comments_link}
+
+	{cache id='shared_comment_feed_rss' ttl=60 group='feeds-comments' vary_request=true vary_login=false}
 
 <!--
 
@@ -31,6 +33,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 		<link>{$the_comment_link|escape:'html'}</link>
 
 		{if $flatpress.subtitle!=""}
+
 		<description>
 			<![CDATA[
 			{$flatpress.subtitle|escape:'html'}
@@ -47,27 +50,31 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 		{comment_block}
 			{comment}
-			<item>
 
-				<title>{$name|escape:'html'}</title>
-				<link>{$the_comment_link|escape:'html'}#{$id}</link>
-				<description>
-					<![CDATA[
-					{$content|tag:the_content}
-					]]>
-				</description>
+		<item>
 
-				<guid isPermaLink="true">{$the_comment_link|escape:'html'}#{$id}</guid>
+			<title>{$name|escape:'html'}</title>
+			<link>{$the_comment_link|escape:'html'}#{$id}</link>
 
-				<dc:creator>{$name|escape:'html'}</dc:creator>
-				<pubDate>{'r'|date:$date}</pubDate>
+			<description>
+				<![CDATA[
+				{$content|tag:the_content}
+				]]>
+			</description>
 
-			</item>
+			<guid isPermaLink="true">{$the_comment_link|escape:'html'}#{$id}</guid>
+
+			<dc:creator>{$name|escape:'html'}</dc:creator>
+			<pubDate>{'r'|date:$date}</pubDate>
+
+		</item>
 			{/comment}
 		{/comment_block}
 
-		{/entry}
-	{/entry_block}
+	{/cache}
+
+	{/entry}
+{/entry_block}
 
 	</channel>
 </rss>

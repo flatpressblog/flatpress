@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="{$fp_config.locale.charset}"?>
+{cache id='shared_feed_rss' ttl=120 group='feeds-main' vary_request=true vary_login=false}
 <!--
 
   _____     _____    _____   ___             ______                     _ 
@@ -23,6 +24,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 		<link>{$flatpress.www|escape:'html'}</link>
 
 		{if $flatpress.subtitle!=""}
+
 		<description>
 			<![CDATA[
 			{$flatpress.subtitle|escape:'html'}
@@ -38,6 +40,7 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 
 		{entry_block}
 			{entry}
+
 			<item>
 
 				<title>{$subject|tag:the_title|wp_specialchars}</title>
@@ -48,27 +51,35 @@ Visit https://aboutfeeds.com to get started with newsreaders and subscribing. It
 					]]>
 				</description>
 				{if ($categories)}
+
 				<category>
 					<![CDATA[
 					{$categories|@filed:false}
 					]]>
 				</category>
 				{/if}
+
 				<guid isPermaLink="true">{$id|link:post_link|escape:'html'}</guid>
 
 				{*<author>{$flatpress.email} ({$flatpress.author})</author>*}
+
 				<pubDate>{'r'|date:$date}</pubDate>
 				<comments>{$id|link:comments_link|escape:'html'}</comments>
 
 				{if isset($enclosure)}
-					{foreach from=$enclosure item=encl} 
+
+					{foreach from=$enclosure item=encl}
+
 					<enclosure url="{$encl.url|escape:'html'}" length="{$encl.length|escape:'html'}" type="{$encl.type|escape:'html'}" />
 					{/foreach}
 				{/if}
 
 			</item>
+
 			{/entry}
 		{/entry_block}
 
 	</channel>
 </rss>
+
+{/cache}
