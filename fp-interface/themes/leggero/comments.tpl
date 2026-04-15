@@ -19,13 +19,13 @@
 					else default fallback on displaying plain $name"
 
 				*}
-				{$url|notempty:"<a href=\"$url\" rel=\"nofollow\" title=\"Visit $url\">$name</a>"|default:$name}
+				{if $url}<a href="{$url|wp_specialchars:1}" rel="nofollow" title="Visit {$url|wp_specialchars:1}">{$name|wp_specialchars:1}</a>{else}{$name|wp_specialchars:1}{/if}
 				</strong>
 
 				{include file="shared:commentadminctrls.tpl"} {* this shows edit/delete links *}
 
 				<p class="date">
-				<a href="{$entryid|link:comments_link}#{$id}" title="Permalink to {$name}'s comment">{$date|date_format_daily} {$lang.entryauthor.at} {$date|date_format:"`$fp_config.locale.timeformat`"}</a>
+				<a href="{$entryid|link:comments_link}#{$id}" title="Permalink to {$name|wp_specialchars:1}'s comment">{$date|date_format_daily} {$lang.entryauthor.at} {$date|date_format:"`$fp_config.locale.timeformat`"}</a>
 				</p>
 
 				{$content|tag:comment_text}
