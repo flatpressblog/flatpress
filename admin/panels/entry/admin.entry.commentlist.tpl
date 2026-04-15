@@ -49,8 +49,8 @@
 					{*<td><input type="checkbox"></td>*}
 					<td>{$date|date_format:"%D, %T"}</td>
 					<td class="main_cell">{$content|strip_tags|truncate:70}</td>
-					<td>{if $url}<a href="{$url}">{$name}</a>{else}{$name}{/if}</td>
-					<td><a href="mailto:{$email}">{$email}</a></td>
+					<td>{if $url}<a href="{$url|wp_specialchars:1}">{$name|wp_specialchars:1}</a>{else}{$name|wp_specialchars:1}{/if}</td>
+					<td><a href="mailto:{$email|wp_specialchars:1}">{$email|wp_specialchars:1}</a></td>
 					<td>{$ip_address}</td>
 					<td>
 						<a class="link-general" href="{"`$panel_url`&entry=`$entryid`"|action_link:commedit|cmd_link:comment:$id}">

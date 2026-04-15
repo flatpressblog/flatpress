@@ -113,11 +113,24 @@ function sanitize_contact($data, $filter = FILTER_UNSAFE_RAW) {
 
 // Add https to url if not given
 function ensure_https_url($url) {
-	$url = trim(stripslashes($url));
-	if (!empty($url) && !preg_match('/^https?:\/\//i', $url)) {
+	$url = trim(stripslashes((string)$url));
+	if ($url === '') {
+		return '';
+	}
+	if (!preg_match('/^https?:\/\//i', $url)) {
 		$url = 'https://' . $url;
 	}
-	return (filter_var($url, FILTER_VALIDATE_URL) && !preg_match('/^(file|php|data|ftp):/i', $url)) ? $url : '';
+	if (preg_match('/[\x00-\x20\x7F<>"\'`\\\\]/', $url)) {
+		return '';
+	}
+	if (!filter_var($url, FILTER_VALIDATE_URL)) {
+		return '';
+	}
+	$parts = parse_url($url);
+	if ($parts === false || empty($parts ['scheme']) || empty($parts ['host'])) {
+		return '';
+	}
+	return preg_match('/^https?$/i', $parts ['scheme']) ? $url : '';
 }
 
 function contactform() {
