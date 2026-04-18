@@ -15,6 +15,8 @@
         - ``article:section`` - based on the selected category/subcategory ([#858](https://github.com/flatpressblog/flatpress/pull/858))
         - ``article:tag`` - based on the tags assigned using the tag plugin ([#858](https://github.com/flatpressblog/flatpress/pull/858))
         - ``article:author`` - based on the blog author ([#858](https://github.com/flatpressblog/flatpress/pull/858))
+- BBCode plugin: update to version 2.0.3
+    - The HTML button is only displayed if inline HTML is allowed in BBCode. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
 
 ### Bugfixes
 - BBCode plugin update to version 2.0.2
@@ -24,6 +26,8 @@
 - LastComment plugin update to version 1.1.3
     - Initialize RSS/ ATOM only after PrettyURLs routing, so that feed readers correctly display the latest comments instead of posts ([b9b6730](https://github.com/flatpressblog/flatpress/commit/b9b67309f704ea960648d15c3c5b06552444c7b3))
     - The LastComments feed templates now use the comment link, which has already been properly formatted. ([#851](https://github.com/flatpressblog/flatpress/pull/851))
+- BBCode plugin: update to version 2.0.3
+    - Selective escaping to allow Markdown autolinks when inline HTML is disabled. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
 
 ## Themes
 ### Changes
@@ -36,9 +40,8 @@
 ### Bugfixes
 - PrettyURLs plugin: update to version 3.0.4
     - Fixed an issue with automatic detection when no settings have been configured and there is no .htaccess file. ([#845](https://github.com/flatpressblog/flatpress/issues/845))
-- BBCode plugin: update to version 2.0.3
+- BBCode plugin: update to version 2.0.1
     - Fixes the error that occurs when the `font` tag is used without specifying a font. ([#844](https://github.com/flatpressblog/flatpress/pull/844))
-    - Selective escaping to allow Markdown autolinks when inline HTML is disabled. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
 
 # 2026-03-15: [FlatPress 1.5 "Stringendo"](https://github.com/flatpressblog/flatpress/releases/tag/1.5)
 ## Changed requirements
