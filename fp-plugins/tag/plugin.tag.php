@@ -43,9 +43,9 @@ function plugin_tag_get_bbcode_parser_file() {
 	$candidates[] = dirname(__FILE__) . '/../bbcode/inc/stringparser_bbcode.class.php';
 
 	foreach ($candidates as $candidate) {
-		$dependency = is_string($candidate) ? dirname($candidate) . '/stringparser.class.php' : '';
+		$dependency = dirname($candidate) . '/stringparser.class.php';
 
-		if (is_string($candidate) && $candidate !== '' && is_file($candidate) && is_file($dependency)) {
+		if (is_file($candidate) && is_file($dependency)) {
 			$parserFile = $candidate;
 			return $parserFile;
 		}
