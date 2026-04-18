@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * Plugin Name: FootNotes
- * Version: 1.0.1
+ * Version: 1.0.2
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -78,9 +78,8 @@ function plugin_footnotes_filter($text) {
 
 	$footnotes_obj = new footnotes_class($id = $smarty->getTemplateVars('id'));
 
-	// *STRONG* emphasis
-	$text = preg_replace('|(?<!\S)\*(?=\S) (?! \*) (.+?) (?<=\S) \*(?!>\w)|xs', '<strong>$1</strong>', $text);
-	// _emphasis_ (italic)
+	// emphasis (italic)
+	$text = preg_replace('|(?<!\S)\*(?=\S) (?! \*) (.+?) (?<=\S) \*(?!>\w)|xs', '<em>$1</em>', $text);
 	$text = preg_replace('|(?<!\S)\_(?=\S) (?! \_) (.+?) (?<=\S) \_(?!>\w)|xs', '<em>$1</em>', $text);
 
 	// heading
