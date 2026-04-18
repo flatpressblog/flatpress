@@ -40,48 +40,15 @@ if (!defined('PLUGIN_MASTODON_IMPORTED_MEDIA_WIDTH')) {
 }
 
 /**
- * @phpstan-type MastodonOptions array{
- *     instance_url:string,
- *     username:string,
- *     password:string,
- *     sync_time:string,
- *     sync_start_date:string,
- *     update_local_from_remote:string,
- *     import_synced_comments_as_entries:string,
- *     client_id:string,
- *     client_secret:string,
- *     access_token:string,
- *     authorization_code:string,
- *     last_authorize_url:string,
- *     app_scopes?:string,
- *     token_scopes?:string
- * }
- * @phpstan-type MastodonStats array{
- *     imported_entries:int,
- *     updated_entries:int,
- *     exported_entries:int,
- *     updated_remote_entries:int,
- *     imported_comments:int,
- *     exported_comments:int,
- *     updated_remote_comments:int
- * }
- * @phpstan-type MastodonState array{
- *     version:int,
- *     last_run:string,
- *     last_error:string,
- *     last_remote_status_id:string,
- *     entries:array<string, array<string, mixed>>,
- *     entries_remote:array<string, string>,
- *     comments:array<string, array<string, mixed>>,
- *     comments_remote:array<string, string>,
- *     stats:MastodonStats
- * }
+ * Internal runtime data structures:
+ * - plugin options are normalized associative arrays with string values
+ * - runtime state is a nested associative array persisted as JSON
  */
 
 
 /**
  * Return the default plugin option values.
- * @return MastodonOptions
+ * @return array<string, string>
  */
 function plugin_mastodon_default_options() {
 	return array(
@@ -102,7 +69,7 @@ function plugin_mastodon_default_options() {
 
 /**
  * Return the default runtime state structure.
- * @return MastodonState
+ * @return array<string, mixed>
  */
 function plugin_mastodon_default_state() {
 	return array(
@@ -205,7 +172,7 @@ function plugin_mastodon_runtime_cache_clear($bucket = '') {
 function plugin_mastodon_fp_config() {
 	$cached = plugin_mastodon_runtime_cache_get('core', 'fp_config', $hit);
 	if ($hit && is_array($cached)) {
-		return $cached;
+		return plugin_mastodon_state_normalize($cached);
 	}
 
 	$config = array();
@@ -223,10 +190,10 @@ function plugin_mastodon_fp_config() {
 		}
 	}
 
-	if (!isset($GLOBALS ['EARLY_FP_CONFIG']) && is_array($config) && $config !== array()) {
+	if (!isset($GLOBALS ['EARLY_FP_CONFIG']) && $config !== array()) {
 		$GLOBALS ['EARLY_FP_CONFIG'] = $config;
 	}
-	if (!isset($GLOBALS ['fp_config']) && is_array($config) && $config !== array()) {
+	if (!isset($GLOBALS ['fp_config']) && $config !== array()) {
 		$GLOBALS ['fp_config'] = $config;
 	}
 	return plugin_mastodon_runtime_cache_set('core', 'fp_config', $config);
@@ -393,19 +360,35 @@ function plugin_mastodon_file_prestat_signature($prestat) {
 
 /**
  * Load the saved plugin options and merge them with defaults.
- * @return MastodonOptions
+ * @return array<string, string>
  */
 function plugin_mastodon_get_options() {
+	$defaults = plugin_mastodon_default_options();
 	$cached = plugin_mastodon_runtime_cache_get('options', 'normalized', $hit);
 	if ($hit && is_array($cached)) {
-		return $cached;
+		$options = array_merge($defaults, $cached);
+		foreach (array_keys($defaults) as $optionKey) {
+			$options [$optionKey] = isset($options [$optionKey]) ? (string) $options [$optionKey] : (string) $defaults [$optionKey];
+		}
+		$options ['instance_url'] = plugin_mastodon_normalize_instance_url($options ['instance_url']);
+		$options ['sync_time'] = plugin_mastodon_normalize_sync_time($options ['sync_time']);
+		$options ['sync_start_date'] = plugin_mastodon_normalize_sync_start_date($options ['sync_start_date']);
+		$options ['update_local_from_remote'] = plugin_mastodon_normalize_update_local_from_remote($options ['update_local_from_remote']);
+		$options ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries($options ['import_synced_comments_as_entries']);
+		return $options;
 	}
 
-	$defaults = plugin_mastodon_default_options();
 	$config = plugin_mastodon_fp_config_value(array('plugins', 'mastodon'), array());
 	if (!is_array($config)) {
 		$config = array();
 	}
+	$normalizedConfig = array();
+	foreach (array_keys($defaults) as $optionKey) {
+		if (isset($config [$optionKey])) {
+			$normalizedConfig [$optionKey] = (string) $config [$optionKey];
+		}
+	}
+	$config = $normalizedConfig;
 
 	foreach (array('password', 'client_secret', 'access_token', 'authorization_code') as $secretKey) {
 		if (isset($config [$secretKey]) && $config [$secretKey] !== '') {
@@ -416,15 +399,16 @@ function plugin_mastodon_get_options() {
 	$options = array_merge($defaults, $config);
 	$options ['instance_url'] = plugin_mastodon_normalize_instance_url($options ['instance_url']);
 	$options ['sync_time'] = plugin_mastodon_normalize_sync_time($options ['sync_time']);
-	$options ['sync_start_date'] = plugin_mastodon_normalize_sync_start_date(isset($options ['sync_start_date']) ? $options ['sync_start_date'] : '');
-	$options ['update_local_from_remote'] = plugin_mastodon_normalize_update_local_from_remote(isset($options ['update_local_from_remote']) ? $options ['update_local_from_remote'] : '');
-	$options ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries(isset($options ['import_synced_comments_as_entries']) ? $options ['import_synced_comments_as_entries'] : '');
-	return plugin_mastodon_runtime_cache_set('options', 'normalized', $options);
+	$options ['sync_start_date'] = plugin_mastodon_normalize_sync_start_date($options ['sync_start_date']);
+	$options ['update_local_from_remote'] = plugin_mastodon_normalize_update_local_from_remote($options ['update_local_from_remote']);
+	$options ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries($options ['import_synced_comments_as_entries']);
+	plugin_mastodon_runtime_cache_set('options', 'normalized', $options);
+	return $options;
 }
 
 /**
  * Persist plugin options.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return bool
  */
 function plugin_mastodon_save_options($options) {
@@ -812,7 +796,7 @@ function plugin_mastodon_normalize_update_local_from_remote($value) {
 
 /**
  * Check whether remote Mastodon updates may overwrite already existing local FlatPress content.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return bool
  */
 function plugin_mastodon_should_update_local_from_remote($options) {
@@ -837,7 +821,7 @@ function plugin_mastodon_normalize_import_synced_comments_as_entries($value) {
 
 /**
  * Check whether a remote Mastodon status that is already mapped to a local FlatPress comment may also be imported as an entry.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return bool
  */
 function plugin_mastodon_should_import_synced_comments_as_entries($options) {
@@ -906,7 +890,7 @@ function plugin_mastodon_remote_status_date_key($remoteStatus) {
 
 /**
  * Determine whether a content date passes the configured sync start date.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param string $dateKey
  * @return bool
  */
@@ -924,7 +908,7 @@ function plugin_mastodon_date_matches_sync_start($options, $dateKey) {
 
 /**
  * Determine whether a local FlatPress item should be synchronized.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param array<string, mixed> $item
  * @param string $fallbackId
  * @return bool
@@ -935,7 +919,7 @@ function plugin_mastodon_local_item_matches_sync_start($options, $item, $fallbac
 
 /**
  * Determine whether a remote Mastodon status should be synchronized.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param array<string, mixed> $remoteStatus
  * @return bool
  */
@@ -964,7 +948,7 @@ function plugin_mastodon_log($message) {
 
 /**
  * Load the persisted runtime state from disk.
- * @return MastodonState
+ * @return array<string, mixed>
  */
 function plugin_mastodon_state_read() {
 	plugin_mastodon_ensure_state_dir();
@@ -978,7 +962,7 @@ function plugin_mastodon_state_read() {
 	$signature = plugin_mastodon_file_prestat_signature($prestat);
 	$cached = plugin_mastodon_runtime_cache_get('state', $signature, $hit);
 	if ($hit && is_array($cached)) {
-		return $cached;
+		return plugin_mastodon_state_normalize($cached);
 	}
 
 	$legacySignature = plugin_mastodon_runtime_cache_get('state', '__signature__', $legacyHit);
@@ -996,12 +980,13 @@ function plugin_mastodon_state_read() {
 	}
 	$state = plugin_mastodon_state_normalize(array_merge($defaults, $data));
 	plugin_mastodon_runtime_cache_set('state', '__signature__', $signature);
-	return plugin_mastodon_runtime_cache_set('state', $signature, $state);
+	plugin_mastodon_runtime_cache_set('state', $signature, $state);
+	return $state;
 }
 
 /**
  * Persist the runtime state to disk.
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, mixed> $state
  * @return bool
  */
 function plugin_mastodon_state_write($state) {
@@ -1025,8 +1010,8 @@ function plugin_mastodon_state_write($state) {
 
 /**
  * Normalize a runtime state array and fill in missing keys.
- * @param MastodonState|array<string, mixed> $state
- * @return MastodonState
+ * @param array<string, mixed> $state
+ * @return array<string, mixed>
  */
 function plugin_mastodon_state_normalize($state) {
 	$defaults = plugin_mastodon_default_state();
@@ -1052,7 +1037,7 @@ function plugin_mastodon_state_comment_key($entryId, $commentId) {
 
 /**
  * Store the mapping between a local entry and a remote status.
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, mixed> $state
  * @param string $localId
  * @param string $remoteId
  * @param string $source
@@ -1076,8 +1061,8 @@ function plugin_mastodon_state_set_entry_mapping(&$state, $localId, $remoteId, $
 
 /**
  * Store the mapping between a local comment and a remote status.
- * @param MastodonOptions|array<string, mixed> $options
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
  * @param string $entryId
  * @param string $commentId
  * @param string $remoteId
@@ -1110,7 +1095,7 @@ function plugin_mastodon_state_set_comment_mapping(&$state, $entryId, $commentId
 
 /**
  * Return mapping metadata for a local entry.
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, mixed> $state
  * @param string $localId
  * @return array<string, mixed>
  */
@@ -1121,7 +1106,7 @@ function plugin_mastodon_state_get_entry_meta($state, $localId) {
 
 /**
  * Return mapping metadata for a local comment.
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, mixed> $state
  * @param string $entryId
  * @param string $commentId
  * @return array<string, mixed>
@@ -1262,7 +1247,7 @@ function plugin_mastodon_detect_local_comment_parent_id($entryId, $comment) {
 
 /**
  * Resolve the remote reply target for a local comment export.
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, mixed> $state
  * @param string $entryId
  * @param array<string, mixed> $comment
  * @param string $defaultRemoteId
@@ -1487,12 +1472,10 @@ function plugin_mastodon_enabled_plugin_state($pluginId) {
 				$configFile = CONFIG_DIR . 'plugins.conf.php';
 			}
 			if ($configFile !== '' && @file_exists($configFile)) {
-				$fp_plugins = null;
+				$fp_plugins = array();
 				include $configFile;
-				if (is_array($fp_plugins)) {
-					$plugins = $fp_plugins;
-					$pluginsResolved = true;
-				}
+				$plugins = $fp_plugins;
+				$pluginsResolved = true;
 			}
 		}
 	}
@@ -1814,9 +1797,6 @@ function plugin_mastodon_strip_trailing_mastodon_hashtag_footer($content, $remot
 		$matched [$key] = true;
 	}
 
-	if (empty($matched)) {
-		return $content;
-	}
 
 	array_splice($lines, $index, 1);
 	return trim((string) preg_replace("/\n{3,}/", "\n\n", implode("\n", $lines)));
@@ -2164,6 +2144,9 @@ function plugin_mastodon_dom_node_to_flatpress($node) {
 		return "\n----\n";
 	}
 	if ($name === 'img') {
+		if (!($node instanceof DOMElement)) {
+			return '';
+		}
 		$alt = trim((string) $node->getAttribute('alt'));
 		$class = ' ' . strtolower(trim((string) $node->getAttribute('class'))) . ' ';
 		if ($alt !== '' && preg_match('/^:[A-Za-z0-9_+\-]+:$/', $alt)) {
@@ -2205,6 +2188,9 @@ function plugin_mastodon_dom_node_to_flatpress($node) {
 		return $item === '' ? '' : '[*] ' . $item . "\n";
 	}
 	if ($name === 'a') {
+		if (!($node instanceof DOMElement)) {
+			return plugin_mastodon_plain_text_from_bbcode(plugin_mastodon_dom_children_to_flatpress($node));
+		}
 		$href = plugin_mastodon_absolute_url($node->getAttribute('href'));
 		$label = plugin_mastodon_plain_text_from_bbcode(plugin_mastodon_dom_children_to_flatpress($node));
 		$label = trim(preg_replace('/\s+/u', ' ', $label));
@@ -2991,7 +2977,7 @@ function plugin_mastodon_media_download($url, $headers) {
  * Build FlatPress BBCode for imported remote media attachments.
  *
  * Note: Imported media is stored inside the plugin runtime tree before BBCode is generated.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param array<string, mixed> $remoteStatus
  * @return string
  */
@@ -3126,7 +3112,7 @@ function plugin_mastodon_extend_time_limit($minimumSeconds = 60) {
 
 /**
  * Load and cache the Mastodon instance configuration document.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return array<string, mixed>
  */
 function plugin_mastodon_instance_configuration($options) {
@@ -3156,7 +3142,7 @@ function plugin_mastodon_instance_configuration($options) {
 
 /**
  * Return the media attachment limit of the configured instance.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return int
  */
 function plugin_mastodon_instance_media_limit($options) {
@@ -3169,7 +3155,7 @@ function plugin_mastodon_instance_media_limit($options) {
 
 /**
  * Return the media description length limit of the configured instance.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return int
  */
 function plugin_mastodon_instance_media_description_limit($options) {
@@ -3182,7 +3168,7 @@ function plugin_mastodon_instance_media_description_limit($options) {
 
 /**
  * Return the per-URL character budget used by the configured instance.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return int
  */
 function plugin_mastodon_instance_url_reserved_length($options) {
@@ -3434,7 +3420,7 @@ function plugin_mastodon_http_request_multipart($method, $url, $headers, $fields
 
 /**
  * Fetch the current processing status of a Mastodon media attachment.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param string $mediaId
  * @return array<string, mixed>
  */
@@ -3444,7 +3430,7 @@ function plugin_mastodon_fetch_media_attachment($options, $mediaId) {
 
 /**
  * Wait briefly until an asynchronously uploaded Mastodon media attachment is ready.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param string $mediaId
  * @param int $maxAttempts
  * @return array<string, mixed>
@@ -3490,7 +3476,7 @@ function plugin_mastodon_wait_for_media_attachment($options, $mediaId, $maxAttem
  * Upload local media items to Mastodon and collect the created media IDs.
  *
  * Note: Media uploads may intentionally fall back to text-only export when the current token lacks write:media.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param array<int, array<string, mixed>> $mediaItems
  * @param int $limit
  * @return array<string, mixed>
@@ -3641,8 +3627,8 @@ function plugin_mastodon_compare_local_entries_for_export($left, $right) {
 }
 
 /**
- * List local FlatPress entry identifiers.
- * @return array<int, string>
+ * List local FlatPress entries ordered for export.
+ * @return array<string, array<string, mixed>>
  */
 function plugin_mastodon_list_local_entries() {
 	$files = array();
@@ -3678,15 +3664,12 @@ function plugin_mastodon_list_local_entries() {
 
 /**
  * Parse raw HTTP response headers.
- * @param string $rawHeaders
- * @return array{code:int, headers:array<int, string>}
+ * @param array<int, string> $rawHeaders
+ * @return array{code:int, headers:array<string, string>}
  */
 function plugin_mastodon_parse_http_response_headers($rawHeaders) {
 	$responseHeaders = array();
 	$code = 0;
-	if (!is_array($rawHeaders)) {
-		$rawHeaders = array();
-	}
 	foreach ($rawHeaders as $line) {
 		if (!is_string($line)) {
 			continue;
@@ -3897,7 +3880,7 @@ function plugin_mastodon_http_request($method, $url, $headers, $body, $contentTy
 
 /**
  * Call the Mastodon API and return the raw HTTP response.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param string $method
  * @param string $path
  * @param array<string, mixed> $params
@@ -3941,7 +3924,7 @@ function plugin_mastodon_mastodon_api($options, $method, $path, $params, $auth) 
 
 /**
  * Call the Mastodon API and decode a JSON response.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param string $method
  * @param string $path
  * @param array<string, mixed> $params
@@ -3989,7 +3972,7 @@ function plugin_mastodon_response_error_message($response) {
 
 /**
  * Register the FlatPress application on the configured Mastodon instance.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return array<string, mixed>
  */
 function plugin_mastodon_register_app(&$options) {
@@ -4011,7 +3994,7 @@ function plugin_mastodon_register_app(&$options) {
 
 /**
  * Build the OAuth authorization URL.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return string
  */
 function plugin_mastodon_build_authorize_url($options) {
@@ -4030,7 +4013,7 @@ function plugin_mastodon_build_authorize_url($options) {
 
 /**
  * Exchange an OAuth authorization code for an access token.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param int $code
  * @return array<string, mixed>
  */
@@ -4058,7 +4041,7 @@ function plugin_mastodon_exchange_code_for_token(&$options, $code) {
 
 /**
  * Verify the currently configured access token.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return array<string, mixed>
  */
 function plugin_mastodon_verify_credentials($options) {
@@ -4075,7 +4058,7 @@ function plugin_mastodon_verify_credentials($options) {
 
 /**
  * Return the status character limit of the configured instance.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @return int
  */
 function plugin_mastodon_instance_character_limit($options) {
@@ -4088,7 +4071,7 @@ function plugin_mastodon_instance_character_limit($options) {
 
 /**
  * Fetch statuses for the authenticated Mastodon account.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param string $accountId
  * @param string $sinceId
  * @return array<int, array<string, mixed>>
@@ -4136,7 +4119,7 @@ function plugin_mastodon_fetch_account_statuses($options, $accountId, $sinceId) 
 
 /**
  * Fetch the conversation context for a Mastodon status.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param string $statusId
  * @return array<string, mixed>
  */
@@ -4147,7 +4130,7 @@ function plugin_mastodon_fetch_status_context($options, $statusId) {
 
 /**
  * Create a Mastodon status.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param string $text
  * @param string $inReplyToId
  * @param array<int, string> $mediaIds
@@ -4171,7 +4154,7 @@ function plugin_mastodon_create_status($options, $text, $inReplyToId, $mediaIds)
 
 /**
  * Update an existing Mastodon status.
- * @param MastodonOptions|array<string, mixed> $options
+ * @param array<string, string> $options
  * @param string $remoteId
  * @param string $text
  * @param array<int, string> $mediaIds
@@ -4298,8 +4281,8 @@ function plugin_mastodon_build_comment_status_text($entryId, $entry, $comment, $
 
 /**
  * Import a remote Mastodon status into FlatPress as an entry.
- * @param MastodonOptions|array<string, mixed> $options
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
  * @param array<string, mixed> $remoteStatus
  * @return bool|string|array<string, mixed>
  */
@@ -4395,8 +4378,8 @@ function plugin_mastodon_import_remote_entry(&$options, &$state, $remoteStatus) 
 
 /**
  * Import a remote Mastodon reply into FlatPress as a comment.
- * @param MastodonOptions|array<string, mixed> $options
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
  * @param string $entryId
  * @param array<string, mixed> $remoteComment
  * @param string $parentCommentId
@@ -4468,8 +4451,8 @@ function plugin_mastodon_import_remote_comment(&$options, &$state, $entryId, $re
 
 /**
  * Import remote Mastodon replies from a fetched thread context.
- * @param MastodonOptions|array<string, mixed> $options
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
  * @param string $entryId
  * @param string $statusId
  * @param array<string, mixed> $context
@@ -4542,7 +4525,7 @@ function plugin_mastodon_import_remote_context_descendants(&$options, &$state, $
 		}
 		if (!$progress) {
 			foreach ($remaining as $descendant) {
-				if (!is_array($descendant) || empty($descendant ['id'])) {
+				if (empty($descendant ['id'])) {
 					continue;
 				}
 				$parentRemoteId = isset($descendant ['in_reply_to_id']) ? (string) $descendant ['in_reply_to_id'] : '';
@@ -4556,7 +4539,7 @@ function plugin_mastodon_import_remote_context_descendants(&$options, &$state, $
 
 /**
  * Collect known synchronized entry threads that should have their Mastodon reply context refreshed.
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, mixed> $state
  * @param array<int, string> $skipRemoteIds
  * @return array<string, string>
  */
@@ -4590,8 +4573,8 @@ function plugin_mastodon_collect_known_entry_context_targets($state, $skipRemote
 
 /**
  * Synchronize remote Mastodon content into FlatPress.
- * @param MastodonOptions|array<string, mixed> $options
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
  * @return bool
  */
 function plugin_mastodon_sync_remote_to_local(&$options, &$state) {
@@ -4649,8 +4632,8 @@ function plugin_mastodon_sync_remote_to_local(&$options, &$state) {
 
 /**
  * Synchronize local FlatPress content to Mastodon.
- * @param MastodonOptions|array<string, mixed> $options
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
  * @return bool
  */
 function plugin_mastodon_sync_local_to_remote(&$options, &$state) {
@@ -4778,8 +4761,8 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state) {
 
 /**
  * Determine whether the scheduled synchronization is currently due.
- * @param MastodonOptions|array<string, mixed> $options
- * @param MastodonState|array<string, mixed> $state
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
  * @param int $timestamp
  * @return bool
  */
