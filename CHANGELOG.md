@@ -19,7 +19,6 @@
     - The HTML button is only displayed if inline HTML is allowed in BBCode. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
 
 ### Bugfixes
-- BBCode plugin update to version 2.0.2
 - PhotoSwipe plugin update to version 2.0.6
 - Thumb plugin update to version 1.1.1
     - If a height has been set for external images, it will no longer be overridden. ([#848](https://github.com/flatpressblog/flatpress/issues/848))
