@@ -114,14 +114,42 @@ class plugin_tag_entry {
 	}
 
 	/**
+	 * Ensures the BBCode parser class is available without activating the BBCode plugin.
+	 *
+	 * @return bool True if the parser class can be used, false otherwise.
+	 */
+	function ensure_bbcode_parser() {
+		if (class_exists('StringParser_BBCode', false)) {
+			return true;
+		}
+
+		if (!function_exists('plugin_tag_get_bbcode_parser_file')) {
+			return false;
+		}
+
+		$parserFile = plugin_tag_get_bbcode_parser_file();
+		if ($parserFile === false) {
+			return false;
+		}
+
+		require_once $parserFile;
+
+		return class_exists('StringParser_BBCode', false);
+	}
+
+	/**
 	 * load_bbcode
 	 *
 	 * This function create a new instance of StringParser_BBCode
 	 * and add to it the 'tag' tag.
 	 *
-	 * returns object: the StringParser_BBCode instance
+	 * @return StringParser_BBCode|false The parser instance or false when unavailable.
 	 */
 	function load_bbcode() {
+		if (!$this->ensure_bbcode_parser()) {
+			return false;
+		}
+
 		$tag_bbcode = new StringParser_BBCode();
 		$tag_bbcode->addCode('tag', 'callback_replace', array(
 			$this,
@@ -154,7 +182,7 @@ class plugin_tag_entry {
 		$this->merge = true;
 		# Load the tag parser and parse them
 		$tag_bbcode = $this->load_bbcode();
-		if (false !== $post = $tag_bbcode->parse($content)) {
+		if ($tag_bbcode && false !== $post = $tag_bbcode->parse($content)) {
 			$content = $post;
 		}
 		# Disable tag merge

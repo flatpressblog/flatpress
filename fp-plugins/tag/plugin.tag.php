@@ -27,8 +27,44 @@ define('PLUGIN_TAG_ALLOW_NOT', false);
 // Never create the cache
 define('PLUGIN_TAG_NOCACHE', false);
 
+function plugin_tag_get_bbcode_parser_file() {
+	static $parserFile = null;
+
+	if ($parserFile !== null) {
+		return $parserFile;
+	}
+
+	$candidates = array();
+
+	if (function_exists('plugin_getdir')) {
+		$candidates[] = plugin_getdir('bbcode') . '/inc/stringparser_bbcode.class.php';
+	}
+
+	$candidates[] = dirname(__FILE__) . '/../bbcode/inc/stringparser_bbcode.class.php';
+
+	foreach ($candidates as $candidate) {
+		$dependency = is_string($candidate) ? dirname($candidate) . '/stringparser.class.php' : '';
+
+		if (is_string($candidate) && $candidate !== '' && is_file($candidate) && is_file($dependency)) {
+			$parserFile = $candidate;
+			return $parserFile;
+		}
+	}
+
+	$parserFile = false;
+	return $parserFile;
+}
+
+function plugin_tag_has_bbcode_parser() {
+	if (function_exists('plugin_bbcode_init') || class_exists('StringParser_BBCode', false)) {
+		return true;
+	}
+
+	return plugin_tag_get_bbcode_parser_file() !== false;
+}
+
 function plugin_tag_setup() {
-	return function_exists('plugin_bbcode_init') ? 1 : -1;
+	return plugin_tag_has_bbcode_parser() ? 1 : -1;
 }
 
 class plugin_tag {

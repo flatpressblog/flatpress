@@ -4,7 +4,7 @@
  *
  * Type:
  * Name:
- * Date: 30.12.2024
+ * Date: 18.04.2026
  * Purpose: Provides the option to edit comments
  * Input:
  *
@@ -133,10 +133,16 @@ class admin_entry_commedit extends AdminPanelActionValidated {
 
 		$comment = comment_parse($_REQUEST ['entry'], $_REQUEST ['comment']);
 
-		if (isset($comment ['loggedin']) || user_loggedin()) {
-			$content ['loggedin'] = $comment ['loggedin'];
-			$content ['ip-address'] = $comment ['ip-address'];
-			$content ['date'] = $comment ['date'];
+		if (is_array($comment) && (array_key_exists('loggedin', $comment) || user_loggedin())) {
+			if (array_key_exists('loggedin', $comment)) {
+				$content ['loggedin'] = $comment ['loggedin'];
+			}
+			if (array_key_exists('ip-address', $comment)) {
+				$content ['ip-address'] = $comment ['ip-address'];
+			}
+			if (array_key_exists('date', $comment)) {
+				$content ['date'] = $comment ['date'];
+			}
 			$success = comment_save($_REQUEST ['entry'], $content);
 			$this->smarty->assign('success', $success ? 1 : -1);
 		}
