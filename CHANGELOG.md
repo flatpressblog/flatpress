@@ -27,6 +27,8 @@
     - The LastComments feed templates now use the comment link, which has already been properly formatted. ([#851](https://github.com/flatpressblog/flatpress/pull/851))
 - BBCode plugin: update to version 2.0.3
     - Selective escaping to allow Markdown autolinks when inline HTML is disabled. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
+- FootNotes plugin update to version 1.0.2
+    - ``*Text*`` is no longer incorrectly displayed in bold ([extras #60](https://github.com/flatpressblog/flatpress-extras/issues/60))
 
 ## Themes
 ### Changes
