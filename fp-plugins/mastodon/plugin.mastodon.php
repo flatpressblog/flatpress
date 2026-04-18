@@ -3665,7 +3665,7 @@ function plugin_mastodon_list_local_entries() {
 /**
  * Parse raw HTTP response headers.
  * @param array<int, string> $rawHeaders
- * @return array{code:int, headers:array<int, string>}
+ * @return array{code:int, headers:array<string, string>}
  */
 function plugin_mastodon_parse_http_response_headers($rawHeaders) {
 	$responseHeaders = array();
