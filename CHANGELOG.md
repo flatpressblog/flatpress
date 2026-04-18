@@ -7,6 +7,7 @@
 ## Plugins
 ### Additions
 - Tag: With this plugin, you can add keywords to your blog posts. This plugin is required by the Mastodon plugin if you want to enable Mastodon hashtags into tags. ([#857](https://github.com/flatpressblog/flatpress/issues/857))
+- Mastodon: The plugin toots your entries and their comments to Mastodon. Content from your Mastodon account is integrated into your blog. ([#857](https://github.com/flatpressblog/flatpress/issues/857))
 
 ### Changes
 - SEO Meta Tag Info plugin update to version 2.3.0
