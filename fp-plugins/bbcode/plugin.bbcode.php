@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: BBCode
- * Version: 2.0.2
+ * Version: 2.0.3
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -48,7 +48,7 @@ function plugin_bbcode_startup() {
 	// filter part
 	add_filter('title_save_pre', 'wp_specialchars', 1);
 	if (!BBCODE_ALLOW_HTML) {
-		add_filter('content_save_pre', 'wp_specialchars', 1);
+		add_filter('content_save_pre', 'plugin_bbcode_escape_disallowed_html_preserving_markdown_autolinks', 1);
 	}
 	add_filter('pre_comment_author_name', 'wp_specialchars');
 	add_filter('pre_comment_content', 'wp_specialchars');
@@ -69,6 +69,95 @@ function plugin_bbcode_startup() {
 plugin_bbcode_startup();
 
 /**
+ * Returns true when the given token is a Markdown automatic link that should
+ * survive the BBCode save-time HTML escaping.
+ *
+ * Supported safe targets:
+ * - http:// and https:// URLs
+ * - mailto: links
+ * - bare email addresses
+ *
+ * Everything else inside angle brackets is escaped so that disabling inline
+ * HTML keeps blocking raw markup and script payloads.
+ *
+ * @param string $token Full token including surrounding angle brackets
+ * @return bool
+ */
+function plugin_bbcode_is_markdown_autolink_token($token) {
+	$token = trim((string)$token);
+	$length = strlen($token);
+
+	if ($length < 3 || $token [0] !== '<' || $token [$length - 1] !== '>') {
+		return false;
+	}
+
+	$inner = trim(substr($token, 1, -1));
+	if ($inner === '') {
+		return false;
+	}
+
+	// Markdown autolinks must not contain whitespace or control characters.
+	if (preg_match('/[\s\x00-\x1F\x7F]/', $inner)) {
+		return false;
+	}
+
+	// Bare email address: <user@example.com>
+	if (filter_var($inner, FILTER_VALIDATE_EMAIL) !== false) {
+		return true;
+	}
+
+	// Explicit mailto link: <mailto:user@example.com>
+	if (stripos($inner, 'mailto:') === 0) {
+		$email = substr($inner, 7);
+		return $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+	}
+
+	$parts = parse_url($inner);
+	if ($parts === false || !isset($parts ['scheme'])) {
+		return false;
+	}
+
+	$scheme = strtolower((string)$parts ['scheme']);
+	if (!in_array($scheme, array('http', 'https'), true)) {
+		return false;
+	}
+
+	return filter_var($inner, FILTER_VALIDATE_URL) !== false;
+}
+
+/**
+ * Escapes raw HTML when BBCode inline HTML is disabled, but keeps safe Markdown
+ * automatic links (<http://...>, <mailto:...>, <user@example.com>) untouched so
+ * that Parsedown can still turn them into links.
+ *
+ * @param mixed $text
+ * @return string
+ */
+function plugin_bbcode_escape_disallowed_html_preserving_markdown_autolinks($text) {
+	if (!is_string($text)) {
+		$text = (string)$text;
+	}
+
+	if ($text === '' || strpos($text, '<') === false) {
+		return $text;
+	}
+
+	$pattern = '/<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<\?[\s\S]*?\?>|<![^>\n]*>|<[^<>\n]+>/u';
+
+	$result = preg_replace_callback($pattern, function ($matches) {
+		$token = (string)$matches [0];
+
+		if (plugin_bbcode_is_markdown_autolink_token($token)) {
+			return $token;
+		}
+
+		return wp_specialchars($token);
+	}, $text);
+
+	return is_string($result) ? $result : $text;
+}
+
+/**
  * Adds the plugin's CSS and JS to the HTML head.
  */
 function plugin_bbcode_head() {
@@ -84,13 +173,6 @@ function plugin_bbcode_head() {
 		<!-- EOF bbcode plugin -->';
 }
 add_action('wp_head', 'plugin_bbcode_head');
-
-/**
- * Remaps the URL so that there's no hint to your attachs/ directory.
- *
- * @param string $d
- * @return bool
- */
 
 /**
  * Normalize a numeric image dimension attribute to a positive integer.
@@ -138,18 +220,23 @@ function plugin_bbcode_build_image_style(array $attributes, $image_is_local, $th
 	$styles = array();
 
 	if ($requested_width > 0) {
-		$styles[] = 'width:' . $requested_width . 'px';
-		$styles[] = 'height:auto';
-		$styles[] = 'aspect-ratio:' . $requested_width . ' / ' . $requested_height;
+		$styles [] = 'width:' . $requested_width . 'px';
+		$styles [] = 'height:auto';
+		$styles [] = 'aspect-ratio:' . $requested_width . ' / ' . $requested_height;
 	} else {
-		$styles[] = 'width:auto';
-		$styles[] = 'height:' . $requested_height . 'px';
+		$styles [] = 'width:auto';
+		$styles [] = 'height:' . $requested_height . 'px';
 	}
 
 	return ' style="' . implode('; ', $styles) . '"';
 }
 
-
+/**
+ * Remaps the URL so that there's no hint to your attachs/ directory.
+ *
+ * @param string $d
+ * @return bool
+ */
 function bbcode_remap_url(&$d) {
 	// nothing to remap if given string is empty
 	if (empty($d)) {

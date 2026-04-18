@@ -20,7 +20,10 @@
 		<button class="bb-button" type="button" id="bb_ol" accesskey="" title="{$lang.admin.plugin.bbcode.editor.orderedlisttitle}"><img src="{$smarty.const.BLOG_BASEURL}fp-plugins/bbcode/res/toolbaricons/ol.svg" alt="ol"></button>
 		<button class="bb-button" type="button" id="bb_quote" accesskey="" title="{$lang.admin.plugin.bbcode.editor.quotetitle}"><img src="{$smarty.const.BLOG_BASEURL}fp-plugins/bbcode/res/toolbaricons/quote.svg" alt="quote"></button>
 		<button class="bb-button" type="button" id="bb_code" accesskey="" title="{$lang.admin.plugin.bbcode.editor.codetitle}"><img src="{$smarty.const.BLOG_BASEURL}fp-plugins/bbcode/res/toolbaricons/code.svg" alt="code"></button>
+		{if isset($smarty.const.BBCODE_ALLOW_HTML) && $smarty.const.BBCODE_ALLOW_HTML}
+
 		<button class="bb-button" type="button" id="bb_html" accesskey="" title="{$lang.admin.plugin.bbcode.editor.htmltitle}"><img src="{$smarty.const.BLOG_BASEURL}fp-plugins/bbcode/res/toolbaricons/html.svg" alt="html"></button>
+		{/if}
 		&nbsp;
 	</p>
 	<p>
@@ -43,6 +46,7 @@
 		&nbsp;
 	</p>
 	{if function_exists('is_rss_feed')}
+
 	<p>
 		{$lang.admin.plugin.bbcode.editor.gallery|default:"Gallery: "}{html_options name=galleryselect values=$galleries_values output=$galleries_list id="bb_gallery" style="width: 10em;"}
 		&nbsp;
