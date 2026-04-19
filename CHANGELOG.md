@@ -4,6 +4,9 @@
 - RSS and Atom feeds and the Categories widget use the Smarty block cache instead of having to go through the Smarty compiler every time. ([#864](https://github.com/flatpressblog/flatpress/pull/864))
 - If APCu is available, the Smarty cache fragments are stored in the APCu cache instead of on disk. ([#865](https://github.com/flatpressblog/flatpress/pull/865))
 
+### Security
+- An XSS vulnerability in the comment and contact forms has been fixed. ([#866](https://github.com/flatpressblog/flatpress/pull/866))
+
 ## Plugins
 ### Additions
 - Tag: With this plugin, you can add keywords to your blog posts. This plugin is required by the Mastodon plugin if you want to enable Mastodon hashtags into tags. ([#857](https://github.com/flatpressblog/flatpress/issues/857))
