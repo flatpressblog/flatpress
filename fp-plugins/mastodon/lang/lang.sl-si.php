@@ -31,7 +31,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'temp_dir' => 'Izvajalni imenik',
 	'last_run' => 'Zadnja sinhronizacija',
 	'last_deletion_run' => 'Zadnja sinhronizacija brisanja',
-	'last_deletion_run' => 'Zadnja sinhronizacija brisanja',
 	'last_error' => 'Zadnja napaka',
 	'stats_head' => 'Števci zadnje sinhronizacije',
 	'content' => 'Vsebina',

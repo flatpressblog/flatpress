@@ -31,7 +31,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'temp_dir' => '実行ディレクトリ',
 	'last_run' => '前回の同期',
 	'last_deletion_run' => '前回の削除同期',
-	'last_deletion_run' => '前回の削除同期',
 	'last_error' => '最後のエラー',
 	'stats_head' => '前回同期のカウンター',
 	'content' => '内容',
