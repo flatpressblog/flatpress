@@ -32,7 +32,7 @@ The plugin works with the following mapping:
 
 You need:
 
-- a working FlatPress 1.5.1 Stringendo installation
+- a working FlatPress ≥ 1.5.1 Stringendo installation
 - PHP **7.2 to 8.5**
 - the plugin files from this package
 
@@ -96,7 +96,7 @@ You will see a Mastodon post as a **FlatPress comment** when it is a reply insid
 
 ### Scheduling
 
-- The default daily synchronization time is **23:00**
+- The default daily synchronization time is **03:00**
 - If the plugin has **never run before**, the first sync is due immediately
 - The time can be changed in the plugin settings
 - Scheduled sync runs only when a normal **web request** reaches FlatPress
