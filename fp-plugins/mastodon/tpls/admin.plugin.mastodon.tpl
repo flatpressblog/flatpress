@@ -64,7 +64,6 @@
 	</div>
 	</fieldset>
 
-
 	<fieldset><legend>{$plang.oauth_head|escape}</legend>
 		<p>{$plang.oauth_desc|escape}</p>
 		<div class="buttonbar">
@@ -118,6 +117,10 @@
 			<td>{if $mastodon_state.last_run}{$mastodon_state.last_run|escape}{else}-{/if}</td>
 		</tr>
 		<tr>
+			<td>{$plang.last_deletion_run|escape}</td>
+			<td>{if $mastodon_state.last_deletion_run}{$mastodon_state.last_deletion_run|escape}{else}-{/if}</td>
+		</tr>
+		<tr>
 			<td>{$plang.last_error|escape}</td>
 			<td>{if $mastodon_state.last_error}{$mastodon_state.last_error|escape}{else}-{/if}</td>
 		</tr>
@@ -140,5 +143,9 @@
 		<tr><td>{$plang.stats_imported_comments|escape}</td><td>{$mastodon_state.stats.imported_comments|default:0}</td></tr>
 		<tr><td>{$plang.stats_exported_comments|escape}</td><td>{$mastodon_state.stats.exported_comments|default:0}</td></tr>
 		<tr><td>{$plang.stats_updated_remote_comments|escape}</td><td>{$mastodon_state.stats.updated_remote_comments|default:0}</td></tr>
+		<tr><td>{$plang.stats_deleted_local_entries|escape}</td><td>{$mastodon_state.stats.deleted_local_entries|default:0}</td></tr>
+		<tr><td>{$plang.stats_deleted_local_comments|escape}</td><td>{$mastodon_state.stats.deleted_local_comments|default:0}</td></tr>
+		<tr><td>{$plang.stats_deleted_remote_entries|escape}</td><td>{$mastodon_state.stats.deleted_remote_entries|default:0}</td></tr>
+		<tr><td>{$plang.stats_deleted_remote_comments|escape}</td><td>{$mastodon_state.stats.deleted_remote_comments|default:0}</td></tr>
 	</tbody>
 </table>
