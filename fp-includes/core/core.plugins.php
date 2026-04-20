@@ -503,16 +503,18 @@ function plugin_sanitize_metadata_html($html) {
 		'code' => true,
 		'kbd' => true,
 		'samp' => true,
-		'span' => true
+		'span' => true,
+		'ul' => true,
+		'li' => true
 	);
 
 	if (!class_exists('DOMDocument')) {
 		$html = preg_replace('~<(script|style|iframe|object|embed|svg|math|form|button|textarea|select)\b[^>]*>.*?</\1\s*>~is', '', $html);
 		$html = preg_replace('~<(input)\b[^>]*>~i', '', $html);
-		$html = strip_tags($html, '<a><br><b><strong><i><em><code><kbd><samp><span>');
+		$html = strip_tags($html, '<a><br><b><strong><i><em><code><kbd><samp><span><ul><li>');
 		$html = preg_replace('~<br\s*/?>~i', '<br>', $html);
-		$html = preg_replace('~<(b|strong|i|em|code|kbd|samp|span)(?:\s[^>]*)?>~i', '<$1>', $html);
-		$html = preg_replace('~</(b|strong|i|em|code|kbd|samp|span)\s*>~i', '</$1>', $html);
+		$html = preg_replace('~<(b|strong|i|em|code|kbd|samp|span|ul|li)(?:\s[^>]*)?>~i', '<$1>', $html);
+		$html = preg_replace('~</(b|strong|i|em|code|kbd|samp|span|ul|li)\s*>~i', '</$1>', $html);
 		$html = preg_replace_callback('~<a\b([^>]*)>~i', function ($matches) {
 			$attrs = '';
 			$raw_attrs = (string) $matches [1];
