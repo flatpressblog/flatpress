@@ -326,6 +326,272 @@ function smarty_function_plugin_getdir($params, &$smarty) {
 	return plugin_getdir($id);
 }
 
+function plugin_sanitize_metadata_url($url) {
+	$url = trim((string) $url);
+	$url = trim($url, "\"' \t\n\r\0\x0B");
+	if ($url === '') {
+		return '';
+	}
+	$url = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
+
+	// Block control characters.
+	if (preg_match('/[\x00-\x1F\x7F]/', $url)) {
+		return '';
+	}
+
+	// Allow safe relative URLs.
+	if (preg_match('~^(?:/|\./|\.\./|\?|#)~', $url)) {
+		return $url;
+	}
+
+	$parts = parse_url($url);
+	if ($parts === false || !isset($parts ['scheme'])) {
+		return '';
+	}
+
+	$scheme = strtolower((string) $parts ['scheme']);
+	if (!in_array($scheme, array('http', 'https', 'mailto'), true)) {
+		return '';
+	}
+
+	return $url;
+}
+
+function plugin_escape_metadata_html($value) {
+	return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+
+function plugin_sanitize_metadata_attr_identifier($value) {
+	$value = trim((string) $value);
+	if ($value === '') {
+		return '';
+	}
+
+	return preg_replace('/[^A-Za-z0-9_\-:]/', '', $value);
+}
+
+function plugin_sanitize_metadata_attr_tokens($value) {
+	$value = trim((string) $value);
+	if ($value === '') {
+		return '';
+	}
+
+	$value = preg_replace('/[^A-Za-z0-9_\-:\s]/', '', $value);
+	$value = preg_replace('/\s+/', ' ', $value);
+
+	return trim((string) $value);
+}
+
+function plugin_render_sanitized_metadata_nodes($nodes, $allowed_tags) {
+	$html = '';
+
+	foreach ($nodes as $node) {
+		$html .= plugin_render_sanitized_metadata_node($node, $allowed_tags);
+	}
+
+	return $html;
+}
+
+function plugin_render_sanitized_metadata_node($node, $allowed_tags) {
+	if ($node->nodeType === XML_TEXT_NODE || $node->nodeType === XML_CDATA_SECTION_NODE) {
+		return plugin_escape_metadata_html($node->nodeValue);
+	}
+
+	if ($node->nodeType !== XML_ELEMENT_NODE) {
+		return '';
+	}
+
+	$tag = strtolower($node->nodeName);
+	$drop_tags = array(
+		'script' => true,
+		'style' => true,
+		'iframe' => true,
+		'object' => true,
+		'embed' => true,
+		'svg' => true,
+		'math' => true,
+		'form' => true,
+		'input' => true,
+		'button' => true,
+		'textarea' => true,
+		'select' => true,
+		'option' => true
+	);
+	if (isset($drop_tags [$tag])) {
+		return '';
+	}
+	if (!isset($allowed_tags [$tag])) {
+		return plugin_render_sanitized_metadata_nodes($node->childNodes, $allowed_tags);
+	}
+
+	$attrs = '';
+	if ($tag === 'a') {
+		$href = plugin_sanitize_metadata_url($node->getAttribute('href'));
+		if ($href !== '') {
+			$attrs .= ' href="' . plugin_escape_metadata_html($href) . '"';
+		}
+
+		$title = trim((string) $node->getAttribute('title'));
+		if ($title !== '') {
+			$attrs .= ' title="' . plugin_escape_metadata_html($title) . '"';
+		}
+
+		$id = plugin_sanitize_metadata_attr_identifier($node->getAttribute('id'));
+		if ($id !== '') {
+			$attrs .= ' id="' . plugin_escape_metadata_html($id) . '"';
+		}
+
+		$class = plugin_sanitize_metadata_attr_tokens($node->getAttribute('class'));
+		if ($class !== '') {
+			$attrs .= ' class="' . plugin_escape_metadata_html($class) . '"';
+		}
+
+		$target = strtolower(trim((string) $node->getAttribute('target')));
+		if (in_array($target, array('_blank', '_self', '_parent', '_top'), true)) {
+			$attrs .= ' target="' . plugin_escape_metadata_html($target) . '"';
+		}
+
+		$rel = plugin_sanitize_metadata_attr_tokens($node->getAttribute('rel'));
+		if ($target === '_blank') {
+			$rels = preg_split('/\s+/', $rel, -1, PREG_SPLIT_NO_EMPTY);
+			if (!is_array($rels)) {
+				$rels = array();
+			}
+			if (!in_array('noopener', $rels, true)) {
+				$rels [] = 'noopener';
+			}
+			if (!in_array('noreferrer', $rels, true)) {
+				$rels [] = 'noreferrer';
+			}
+			$rel = trim(implode(' ', array_unique($rels)));
+		}
+		if ($rel !== '') {
+			$attrs .= ' rel="' . plugin_escape_metadata_html($rel) . '"';
+		}
+	} elseif ($tag === 'span') {
+		$id = plugin_sanitize_metadata_attr_identifier($node->getAttribute('id'));
+		if ($id !== '') {
+			$attrs .= ' id="' . plugin_escape_metadata_html($id) . '"';
+		}
+
+		$class = plugin_sanitize_metadata_attr_tokens($node->getAttribute('class'));
+		if ($class !== '') {
+			$attrs .= ' class="' . plugin_escape_metadata_html($class) . '"';
+		}
+	}
+
+	if ($tag === 'br') {
+		return '<br>';
+	}
+
+	return '<' . $tag . $attrs . '>' . plugin_render_sanitized_metadata_nodes($node->childNodes, $allowed_tags) . '</' . $tag . '>';
+}
+
+function plugin_sanitize_metadata_html($html) {
+	$html = trim((string) $html);
+	if ($html === '') {
+		return '';
+	}
+
+	$allowed_tags = array(
+		'a' => true,
+		'br' => true,
+		'b' => true,
+		'strong' => true,
+		'i' => true,
+		'em' => true,
+		'code' => true,
+		'kbd' => true,
+		'samp' => true,
+		'span' => true
+	);
+
+	if (!class_exists('DOMDocument')) {
+		$html = preg_replace('~<(script|style|iframe|object|embed|svg|math|form|button|textarea|select)\b[^>]*>.*?</\1\s*>~is', '', $html);
+		$html = preg_replace('~<(input)\b[^>]*>~i', '', $html);
+		$html = strip_tags($html, '<a><br><b><strong><i><em><code><kbd><samp><span>');
+		$html = preg_replace('~<br\s*/?>~i', '<br>', $html);
+		$html = preg_replace('~<(b|strong|i|em|code|kbd|samp|span)(?:\s[^>]*)?>~i', '<$1>', $html);
+		$html = preg_replace('~</(b|strong|i|em|code|kbd|samp|span)\s*>~i', '</$1>', $html);
+		$html = preg_replace_callback('~<a\b([^>]*)>~i', function ($matches) {
+			$attrs = '';
+			$raw_attrs = (string) $matches [1];
+			$attr_names = array('href', 'title', 'id', 'class', 'target', 'rel');
+
+			foreach ($attr_names as $attr_name) {
+				if (!preg_match('~\b' . preg_quote($attr_name, '~') . '\s*=\s*("([^"]*)"|\'([^\']*)\'|([^\s>]+))~i', $raw_attrs, $attr_match)) {
+					continue;
+				}
+
+				$value = '';
+				if (isset($attr_match [2]) && $attr_match [2] !== '') {
+					$value = $attr_match [2];
+				} elseif (isset($attr_match [3]) && $attr_match [3] !== '') {
+					$value = $attr_match [3];
+				} elseif (isset($attr_match [4])) {
+					$value = $attr_match [4];
+				}
+
+				if ($attr_name === 'href') {
+					$value = plugin_sanitize_metadata_url($value);
+				} elseif ($attr_name === 'title') {
+					$value = trim((string) $value);
+				} elseif ($attr_name === 'id') {
+					$value = plugin_sanitize_metadata_attr_identifier($value);
+				} else {
+					$value = plugin_sanitize_metadata_attr_tokens($value);
+				}
+
+				if ($attr_name === 'target' && !in_array(strtolower($value), array('_blank', '_self', '_parent', '_top'), true)) {
+					$value = '';
+				}
+
+				if ($value === '') {
+					continue;
+				}
+
+				$attrs .= ' ' . $attr_name . '="' . plugin_escape_metadata_html($value) . '"';
+			}
+
+			if (preg_match('~\btarget\s*=\s*("([^"]*)"|\'([^\']*)\'|([^\s>]+))~i', $raw_attrs, $target_match)) {
+				$target = '';
+				if (isset($target_match [2]) && $target_match [2] !== '') {
+					$target = strtolower($target_match [2]);
+				} elseif (isset($target_match [3]) && $target_match [3] !== '') {
+					$target = strtolower($target_match [3]);
+				} elseif (isset($target_match [4])) {
+					$target = strtolower($target_match [4]);
+				}
+
+				if ($target === '_blank' && strpos($attrs, ' rel=') === false) {
+					$attrs .= ' rel="noopener noreferrer"';
+				}
+			}
+
+			return '<a' . $attrs . '>';
+		}, $html);
+
+		return $html;
+	}
+
+	$old_errors = libxml_use_internal_errors(true);
+	$dom = new DOMDocument('1.0', 'UTF-8');
+	$loaded = $dom->loadHTML('<?xml encoding="UTF-8"><div>' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+	libxml_clear_errors();
+	libxml_use_internal_errors($old_errors);
+
+	if (!$loaded) {
+		return strip_tags($html);
+	}
+
+	$container = $dom->getElementsByTagName('div')->item(0);
+	if (!$container) {
+		return strip_tags($html);
+	}
+
+	return plugin_render_sanitized_metadata_nodes($container->childNodes, $allowed_tags);
+}
+
 /**
  * Read plugin metadata (name, description, author, version) from its info source.
  */
@@ -356,25 +622,25 @@ function plugin_getinfo($plugin) {
 
 	$version = '';
 	if (preg_match('|Version:(.*)|i', $plugin_data, $m_ver)) {
-		$version = trim($m_ver [1]);
+		$version = sanitize_text_field($m_ver [1]);
 	}
 
-	$name = isset($m_name [1]) ? trim($m_name [1]) : $plugin;
-	$description = isset($m_desc [1]) ? wptexturize(trim($m_desc [1])) : '';
-	$author_text = isset($m_author [1]) ? trim($m_author [1]) : '';
-	$author_uri = isset($m_auri [1]) ? trim($m_auri [1]) : '';
-	$plugin_uri = isset($m_puri [1]) ? trim($m_puri [1]) : '';
+	$name = isset($m_name [1]) ? sanitize_text_field($m_name [1]) : $plugin;
+	$description = isset($m_desc [1]) ? plugin_sanitize_metadata_html($m_desc [1]) : '';
+	$author_text = isset($m_author [1]) ? sanitize_text_field($m_author [1]) : '';
+	$author_uri = isset($m_auri [1]) ? plugin_sanitize_metadata_url($m_auri [1]) : '';
+	$plugin_uri = isset($m_puri [1]) ? plugin_sanitize_metadata_url($m_puri [1]) : '';
 
-	$title = $name;
+	$title = plugin_escape_metadata_html($name);
 	if ($plugin_uri !== '' && $name !== '') {
 		// '" title="'.__('Visit plugin homepage').'">'.
-		$title = '<a href="' . $plugin_uri . '">' . $name . '</a>';
+		$title = '<a href="' . plugin_escape_metadata_html($plugin_uri) . '">' . plugin_escape_metadata_html($name) . '</a>';
 	}
 
-	$author = $author_text;
+	$author = plugin_escape_metadata_html($author_text);
 	if ($author_uri !== '' && $author_text !== '') {
 		// . '" title="'.__('Visit author homepage').
-		$author = '<a href="' . $author_uri . '">' . $author_text . '</a>';
+		$author = '<a href="' . plugin_escape_metadata_html($author_uri) . '">' . plugin_escape_metadata_html($author_text) . '</a>';
 	}
 
 	$out = array(
