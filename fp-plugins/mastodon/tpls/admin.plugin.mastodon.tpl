@@ -57,6 +57,14 @@
 					{$plang.import_synced_comments_as_entries_desc|escape}
 				</label>
 			</dd>
+
+			<dt><label for="delete_sync_enabled">{$plang.delete_sync_enabled|escape}</label></dt>
+			<dd>
+				<label>
+					<input type="checkbox" id="delete_sync_enabled" name="delete_sync_enabled" value="1"{if $mastodon_cfg.delete_sync_enabled eq '1'} checked="checked"{/if}>
+					{$plang.delete_sync_enabled_desc|escape}
+				</label>
+			</dd>
 		</dl>
 
 	<div class="buttonbar">
@@ -136,16 +144,19 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr><td>{$plang.stats_imported_entries|escape}</td><td>{$mastodon_state.stats.imported_entries|default:0}</td></tr>
-		<tr><td>{$plang.stats_updated_entries|escape}</td><td>{$mastodon_state.stats.updated_entries|default:0}</td></tr>
-		<tr><td>{$plang.stats_exported_entries|escape}</td><td>{$mastodon_state.stats.exported_entries|default:0}</td></tr>
-		<tr><td>{$plang.stats_updated_remote_entries|escape}</td><td>{$mastodon_state.stats.updated_remote_entries|default:0}</td></tr>
-		<tr><td>{$plang.stats_imported_comments|escape}</td><td>{$mastodon_state.stats.imported_comments|default:0}</td></tr>
-		<tr><td>{$plang.stats_exported_comments|escape}</td><td>{$mastodon_state.stats.exported_comments|default:0}</td></tr>
-		<tr><td>{$plang.stats_updated_remote_comments|escape}</td><td>{$mastodon_state.stats.updated_remote_comments|default:0}</td></tr>
-		<tr><td>{$plang.stats_deleted_local_entries|escape}</td><td>{$mastodon_state.stats.deleted_local_entries|default:0}</td></tr>
-		<tr><td>{$plang.stats_deleted_local_comments|escape}</td><td>{$mastodon_state.stats.deleted_local_comments|default:0}</td></tr>
-		<tr><td>{$plang.stats_deleted_remote_entries|escape}</td><td>{$mastodon_state.stats.deleted_remote_entries|default:0}</td></tr>
-		<tr><td>{$plang.stats_deleted_remote_comments|escape}</td><td>{$mastodon_state.stats.deleted_remote_comments|default:0}</td></tr>
+		<tr><th colspan="2">{$plang.last_run|escape}</th></tr>
+		<tr><td>{$plang.stats_imported_entries|escape}</td><td>{$mastodon_state.content_stats.imported_entries|default:0}</td></tr>
+		<tr><td>{$plang.stats_updated_entries|escape}</td><td>{$mastodon_state.content_stats.updated_entries|default:0}</td></tr>
+		<tr><td>{$plang.stats_exported_entries|escape}</td><td>{$mastodon_state.content_stats.exported_entries|default:0}</td></tr>
+		<tr><td>{$plang.stats_updated_remote_entries|escape}</td><td>{$mastodon_state.content_stats.updated_remote_entries|default:0}</td></tr>
+		<tr><td>{$plang.stats_imported_comments|escape}</td><td>{$mastodon_state.content_stats.imported_comments|default:0}</td></tr>
+		<tr><td>{$plang.stats_updated_local_comments|escape}</td><td>{$mastodon_state.content_stats.updated_local_comments|default:0}</td></tr>
+		<tr><td>{$plang.stats_exported_comments|escape}</td><td>{$mastodon_state.content_stats.exported_comments|default:0}</td></tr>
+		<tr><td>{$plang.stats_updated_remote_comments|escape}</td><td>{$mastodon_state.content_stats.updated_remote_comments|default:0}</td></tr>
+		<tr><th colspan="2">{$plang.last_deletion_run|escape}</th></tr>
+		<tr><td>{$plang.stats_deleted_local_entries|escape}</td><td>{$mastodon_state.deletion_stats.deleted_local_entries|default:0}</td></tr>
+		<tr><td>{$plang.stats_deleted_local_comments|escape}</td><td>{$mastodon_state.deletion_stats.deleted_local_comments|default:0}</td></tr>
+		<tr><td>{$plang.stats_deleted_remote_entries|escape}</td><td>{$mastodon_state.deletion_stats.deleted_remote_entries|default:0}</td></tr>
+		<tr><td>{$plang.stats_deleted_remote_comments|escape}</td><td>{$mastodon_state.deletion_stats.deleted_remote_comments|default:0}</td></tr>
 	</tbody>
 </table>

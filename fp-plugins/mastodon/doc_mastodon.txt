@@ -109,6 +109,13 @@ You will see a Mastodon post as a **FlatPress comment** when it is a reply insid
 
 In simple words: if nobody visits your FlatPress site after the scheduled time, the automatic sync will wait until the next normal page request.
 
+==== Decoupled deletion synchronization run ====
+
+  * Deletions are synchronized separately from content synchronization.
+  * Entries and comments prior to the set synchronization date remain unchanged on both sides.
+  * The admin option **Enable deletion synchronization** controls whether this follow-up delete pass runs at all.
+    If the option is disabled, content synchronization still runs, but no follow-up deletions are executed and pending delete work is cleared.
+
 ==== Tag support ====
 
   * Tag synchronization works only when the FlatPress **Tag** plugin is active.
@@ -137,6 +144,7 @@ The plugin stores these configuration values:
   * OAuth client secret
   * OAuth authorization code
   * OAuth access token
+  * the **Enable deletion synchronization** toggle
 
 However, the code uses the **OAuth access token** for API access.
 
@@ -515,3 +523,15 @@ The safest order is:
 
 ===== License =====
 The plugin's code is licensed under the FlatPress Project License.
+
+===== FAQ =====
+
+  * **Q:** Why aren't the texts of posts and comments formatted the same way in Mastodon as they are in FlatPress?
+  * **A:** The plugin intentionally uses the official REST API ''POST /api/v1/statuses'' or ''PUT /api/v1/statuses/:id''.
+           There, Mastodon explicitly documents the status parameter as the //text content of the status//.
+           For editable sources, you should use the plain-text representation, and the server generates the corresponding HTML from it.
+
+  * **Q:** Why doesn't the plugin support video and audio content?
+  * **A:** The plugin's synchronization relies on standard web requests.
+           Every communication with Mastodon, every media upload, every import of a reply thread, and every additional file access takes time within the same PHP request,
+           which is also responsible for rendering a page at the same time.
