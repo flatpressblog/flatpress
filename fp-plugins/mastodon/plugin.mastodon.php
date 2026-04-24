@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 1.7.0
+ * Version: 1.7.1
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -3640,6 +3640,61 @@ function plugin_mastodon_fetch_media_attachment($options, $mediaId) {
 }
 
 /**
+ * Delete an uploaded Mastodon media attachment before it is attached to a final status.
+ * @param array<string, string> $options
+ * @param string $mediaId
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_delete_media_attachment($options, $mediaId) {
+	$mediaId = trim((string) $mediaId);
+	if ($mediaId === '') {
+		return array('ok' => false, 'code' => 0, 'headers' => array(), 'body' => '', 'error' => 'missing_media_id');
+	}
+	$response = plugin_mastodon_mastodon_api($options, 'DELETE', '/api/v1/media/' . rawurlencode($mediaId), array(), true);
+	if ((isset($response['code']) ? (int) $response['code'] : 0) === 404) {
+		$response['ok'] = true;
+		$response['error'] = '';
+	}
+	return $response;
+}
+
+/**
+ * Best-effort cleanup for uploaded Mastodon media that never reached a final status request.
+ * @param array<string, string> $options
+ * @param array<int, string> $mediaIds
+ * @return array{ok:bool, deleted:array<int, string>, failed:array<string, string>}
+ */
+function plugin_mastodon_cleanup_uploaded_media($options, $mediaIds) {
+	$mediaIds = is_array($mediaIds) ? $mediaIds : array();
+	$uniqueIds = array();
+	foreach ($mediaIds as $mediaId) {
+		$mediaId = trim((string) $mediaId);
+		if ($mediaId === '' || isset($uniqueIds[$mediaId])) {
+			continue;
+		}
+		$uniqueIds[$mediaId] = true;
+	}
+	$mediaIds = array_keys($uniqueIds);
+	$deleted = array();
+	$failed = array();
+	foreach ($mediaIds as $mediaId) {
+		plugin_mastodon_extend_time_limit(60);
+		$response = plugin_mastodon_delete_media_attachment($options, $mediaId);
+		if (!empty($response['ok'])) {
+			$deleted[] = $mediaId;
+			continue;
+		}
+		$failed[$mediaId] = plugin_mastodon_response_error_message($response);
+		plugin_mastodon_log('Uploaded Mastodon media cleanup failed for ' . $mediaId . ': ' . $failed[$mediaId]);
+	}
+	return array(
+		'ok' => empty($failed),
+		'deleted' => $deleted,
+		'failed' => $failed
+	);
+}
+
+/**
  * Wait briefly until an asynchronously uploaded Mastodon media attachment is ready.
  * @param array<string, string> $options
  * @param string $mediaId
@@ -3735,7 +3790,15 @@ function plugin_mastodon_upload_media_items($options, $mediaItems, $limit) {
 			$data = array();
 		}
 		$response ['json'] = $data;
-		if (!$response ['ok'] || empty($data ['id'])) {
+		$currentMediaId = !empty($data ['id']) ? trim((string) $data ['id']) : '';
+		if (!$response ['ok'] || $currentMediaId === '') {
+			$cleanupIds = $mediaIds;
+			if ($currentMediaId !== '') {
+				$cleanupIds [] = $currentMediaId;
+			}
+			if (!empty($cleanupIds)) {
+				plugin_mastodon_cleanup_uploaded_media($options, $cleanupIds);
+			}
 			return array(
 				'ok' => false,
 				'media_ids' => $mediaIds,
@@ -3745,8 +3808,11 @@ function plugin_mastodon_upload_media_items($options, $mediaItems, $limit) {
 			);
 		}
 		if ((isset($response ['code']) ? (int) $response ['code'] : 0) === 202 || (empty($data ['url']) && !empty($data ['preview_url']))) {
-			$ready = plugin_mastodon_wait_for_media_attachment($options, (string) $data ['id']);
+			$ready = plugin_mastodon_wait_for_media_attachment($options, $currentMediaId);
 			if (empty($ready ['ok']) || empty($ready ['json'] ['url'])) {
+				$cleanupIds = $mediaIds;
+				$cleanupIds [] = $currentMediaId;
+				plugin_mastodon_cleanup_uploaded_media($options, $cleanupIds);
 				return array(
 					'ok' => false,
 					'media_ids' => $mediaIds,
@@ -3756,7 +3822,7 @@ function plugin_mastodon_upload_media_items($options, $mediaItems, $limit) {
 				);
 			}
 		}
-		$mediaIds [] = (string) $data ['id'];
+		$mediaIds [] = $currentMediaId;
 	}
 	if ($skipped > 0) {
 		plugin_mastodon_log('Skipped ' . $skipped . ' local media attachment(s) because the Mastodon instance allows only ' . $limit . ' attachment(s) per status.');
@@ -4921,6 +4987,9 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state) {
 					plugin_mastodon_state_set_entry_mapping($state, $entryId, $meta ['remote_id'], 'local', $hash, isset($updated ['json'] ['url']) ? $updated ['json'] ['url'] : '', plugin_mastodon_parse_iso_datetime(isset($updated ['json'] ['edited_at']) ? $updated ['json'] ['edited_at'] : ''), plugin_mastodon_local_item_date_key($entry, $entryId), plugin_mastodon_remote_status_date_key(isset($updated ['json']) && is_array($updated ['json']) ? $updated ['json'] : array()));
 					$state ['content_stats'] ['updated_remote_entries']++;
 				} else {
+					if (!empty($mediaIds)) {
+						plugin_mastodon_cleanup_uploaded_media($options, $mediaIds);
+					}
 					$hadFailure = true;
 					$state ['last_error'] = 'local_entry_update_failed: ' . $entryId . ' (' . plugin_mastodon_response_error_message($updated) . ')';
 					plugin_mastodon_log('Local entry update failed for ' . $entryId . ': ' . plugin_mastodon_response_error_message($updated));
@@ -4934,6 +5003,9 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state) {
 				$state ['content_stats'] ['exported_entries']++;
 				$meta = plugin_mastodon_state_get_entry_meta($state, $entryId);
 			} else {
+				if (!empty($mediaIds)) {
+					plugin_mastodon_cleanup_uploaded_media($options, $mediaIds);
+				}
 				$hadFailure = true;
 				$state ['last_error'] = 'local_entry_export_failed: ' . $entryId . ' (' . plugin_mastodon_response_error_message($created) . ')';
 				plugin_mastodon_log('Local entry export failed for ' . $entryId . ': ' . plugin_mastodon_response_error_message($created));
