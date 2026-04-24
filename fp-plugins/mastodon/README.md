@@ -129,6 +129,7 @@ In simple words: if nobody visits your FlatPress site after the scheduled time, 
 - Mastodon import currently handles **image** attachments
 - Mastodon video and audio attachments are **not** imported by this plugin
 - If a Mastodon instance allows only a limited number of media attachments, extra images are skipped and logged
+- If media uploads succeed but the final Mastodon status creation or update fails in the same request, the plugin now performs a best-effort cleanup of those unattached Mastodon media uploads through `DELETE /api/v1/media/:id` before the request ends
 
 ### Authentication
 
