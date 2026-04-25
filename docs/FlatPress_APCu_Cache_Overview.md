@@ -761,6 +761,66 @@ Medium–High. For hot widget and feed fragments this removes the filesystem rea
 
 ---
 
+### 4.9 Mastodon Plugin Instance Snapshot Cache – `mastodon:instance_document:<sha1(instance_url)>`
+
+**File:** `fp-plugins/mastodon/plugin.mastodon.php`  
+
+The Mastodon plugin uses APCu as a short-lived hot cache for the compact instance-information document derived from `GET /api/v2/instance`.
+
+**Logical key:**
+
+- `mastodon:instance_document:<sha1(instance_url)>`
+
+**Effective APCu key:**
+
+- Stored through the FlatPress APCu wrappers, so when APCu is enabled the runtime key becomes  
+  `fp:<NS>:mastodon:instance_document:<sha1(instance_url)>`
+
+**Payload:**
+
+A compacted subset of the Mastodon instance document, for example:
+
+- `domain`, `title`, `version`, `api_versions`
+- selected `configuration` limits such as status length, media limits, and URL metadata
+- registration/contact/usage details used by the Mastodon admin diagnostics table
+
+The plugin intentionally stores only the compacted document, not the full raw `/api/v2/instance` response.
+
+**When it is written / refreshed:**
+
+- When a saved instance snapshot from plugin options is decoded and seeded back into APCu
+- After a successful manual instance-information refresh in the Mastodon admin area
+- After a successful live fetch through `plugin_mastodon_instance_document()`
+- After saving Mastodon plugin options that already contain a valid instance snapshot
+
+**Read path / cache layering:**
+
+`plugin_mastodon_instance_document()` resolves data in this order:
+
+1. request-local runtime cache
+2. persisted snapshot from Mastodon plugin options
+3. APCu hot cache
+4. live `GET /api/v2/instance` request (only when network access is allowed)
+
+This means APCu is **not** the authoritative storage layer. The durable source is the plugin configuration snapshot; APCu only reduces repeated decode/network work on later requests.
+
+**TTL / invalidation:**
+
+- APCu TTL: `900` seconds (15 minutes)
+- Explicit invalidation when the configured Mastodon `instance_url` changes
+- Explicit deletion when the current configuration no longer contains a valid saved instance snapshot
+- Naturally invalidated by APCu eviction/reset and FlatPress namespace rotation
+
+**Fallback behavior:**
+
+- Without APCu, the plugin still works by using the saved snapshot in plugin options and, if allowed, a live network fetch.
+- Without a saved snapshot and with network access disabled, the admin table shows that no cached instance information is currently available.
+
+**Impact:**  
+Low–Medium. This cache does not affect every request, but it avoids repeated `/api/v2/instance` fetches and repeated snapshot decoding in the Mastodon admin diagnostics and in capability/limit lookups that reuse instance metadata.
+
+---
+
 ## 5. Miscellaneous and Meta Caches
 
 ### 5.1 Instance Namespace Bootstrap – `fp:ns:*`
@@ -894,6 +954,7 @@ The following table summarizes each logical cache group:
 | Archives                     | `fp:archives:v`, `fp:archives:list*`, `fp:archives:html*`                            | **Yes**                  | `plugin_archives_cache_bump()` + PrettyURLs bump     | Medium                   |
 | Calendar                     | `fp:calendar:v`, `calendar:*:vN`                                                     | **Yes**                  | `plugin_calendar_cache_bump()` + PrettyURLs bump     | Medium–High              |
 | Storage plugin               | `fp:storage:v`, `fp:storage:aggregate*`, `fp:storage:dirsize*`, `fp:storage:quota*`  | No                       | Storage rescan + TTL                                 | Low–Medium               |
+| Mastodon instance snapshot   | `fp:mastodon:instance_document:<sha1(instance_url)>`                                 | No                       | TTL 900s, `instance_url` change, snapshot refresh    | Low–Medium               |
 | Admin setup hide             | `fp:admin:setup_hide_report`                                                         | No                       | TTL (ok 86400s, fail 300s) + manual APCu clear       | Low–Medium (admin only)  |
 | PrettyURLs auto-detection    | `prettyurls:*`, `prettyurls:auto:v3:g*:*`                                            | No (but influences URLs) | `apcu_gen` bump on mode/.htaccess changes            | Medium                   |
 | Maintain panel tools         | Uses APCu to clear and inspect all keys, no own namespace                            | No                       | Manual admin action                                  | N/A (admin only)         |
@@ -927,6 +988,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.6.dev`
 - `fp:io:`
 - `fp:lang:`
 - `fp:net:in_cidrs:`
+- `fp:mastodon:instance_document:`
 - `fp:ns:`
 - `fp:plugin:dir:v2:`
 - `fp:plugin:exists:v2:`
