@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 1.7.1
+ * Version: 1.8.0
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -64,7 +64,8 @@ function plugin_mastodon_default_options() {
 		'client_secret' => '',
 		'access_token' => '',
 		'authorization_code' => '',
-		'last_authorize_url' => ''
+		'last_authorize_url' => '',
+		'oauth_registered_scopes' => ''
 	);
 }
 
@@ -120,12 +121,132 @@ function plugin_mastodon_default_state() {
 }
 
 /**
- * Return the OAuth scopes requested by the plugin.
+ * Return the legacy OAuth scopes used before scope discovery was added.
  * @return string
  */
-function plugin_mastodon_oauth_scopes() {
+function plugin_mastodon_oauth_legacy_scopes() {
 	return 'read:accounts read:statuses write:statuses write:media';
 }
+
+/**
+ * Return the stricter OAuth scopes preferred on current Mastodon instances.
+ * @return string
+ */
+function plugin_mastodon_oauth_profile_scopes() {
+	return 'profile read:statuses write:statuses write:media';
+}
+
+/**
+ * Fetch OAuth authorization server metadata for the configured Mastodon instance.
+ * @param array<string, string> $options
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_oauth_server_metadata($options) {
+	$instanceUrl = plugin_mastodon_normalize_instance_url(isset($options ['instance_url']) ? $options ['instance_url'] : '');
+	if ($instanceUrl === '') {
+		return array('ok' => false, 'code' => 0, 'headers' => array(), 'body' => '', 'json' => array(), 'error' => 'Missing instance URL');
+	}
+	$cacheKey = sha1($instanceUrl);
+	$cached = plugin_mastodon_runtime_cache_get('oauth_server_metadata', $cacheKey, $hit);
+	if ($hit && is_array($cached)) {
+		return $cached;
+	}
+	$response = plugin_mastodon_mastodon_json($options, 'GET', '/.well-known/oauth-authorization-server', array(), false);
+	return plugin_mastodon_runtime_cache_set('oauth_server_metadata', $cacheKey, $response);
+}
+
+/**
+ * Return the OAuth scopes supported by the configured Mastodon instance, if discoverable.
+ * @param array<string, string> $options
+ * @return array<int, string>
+ */
+function plugin_mastodon_oauth_supported_scopes($options) {
+	$response = plugin_mastodon_oauth_server_metadata($options);
+	if (empty($response ['ok']) || empty($response ['json']) || !is_array($response ['json'])) {
+		return array();
+	}
+	$scopes = array();
+	if (!empty($response ['json'] ['scopes_supported']) && is_array($response ['json'] ['scopes_supported'])) {
+		foreach ($response ['json'] ['scopes_supported'] as $scope) {
+			$scope = trim((string) $scope);
+			if ($scope !== '') {
+				$scopes [] = $scope;
+			}
+		}
+	} elseif (!empty($response ['json'] ['scopes_supported']) && is_string($response ['json'] ['scopes_supported'])) {
+		$rawScopes = preg_split('/\s+/', trim((string) $response ['json'] ['scopes_supported']));
+		if (is_array($rawScopes)) {
+			foreach ($rawScopes as $scope) {
+				$scope = trim((string) $scope);
+				if ($scope !== '') {
+					$scopes [] = $scope;
+				}
+			}
+		}
+	}
+	if (empty($scopes)) {
+		return array();
+	}
+	$scopes = array_values(array_unique($scopes));
+	return $scopes;
+}
+
+/**
+ * Determine whether the configured Mastodon instance advertises support for a scope.
+ * @param array<string, string> $options
+ * @param string $scope
+ * @return bool
+ */
+function plugin_mastodon_oauth_scope_supported($options, $scope) {
+	$scope = trim((string) $scope);
+	if ($scope === '') {
+		return false;
+	}
+	$supportedScopes = plugin_mastodon_oauth_supported_scopes($options);
+	if (empty($supportedScopes)) {
+		return false;
+	}
+	return in_array($scope, $supportedScopes, true);
+}
+
+/**
+ * Return the preferred OAuth scopes for the configured Mastodon instance.
+ *
+ * Newer instances that advertise the `profile` scope use it to keep the token narrower.
+ * Older instances or discovery failures fall back to `read:accounts` for compatibility.
+ *
+ * @param array<string, string> $options
+ * @return string
+ */
+function plugin_mastodon_oauth_preferred_scopes($options) {
+	if (plugin_mastodon_oauth_scope_supported($options, 'profile')) {
+		return plugin_mastodon_oauth_profile_scopes();
+	}
+	return plugin_mastodon_oauth_legacy_scopes();
+}
+
+/**
+ * Return the OAuth scopes that the currently registered app may safely request.
+ *
+ * Existing installations without a stored registration scope are treated as legacy
+ * registrations so that the plugin does not suddenly request `profile` for an app
+ * that was originally registered with `read:accounts`.
+ *
+ * @param array<string, string> $options
+ * @return string
+ */
+function plugin_mastodon_oauth_scopes($options = array()) {
+	$options = is_array($options) ? $options : array();
+	$storedScopes = trim((string) (isset($options ['oauth_registered_scopes']) ? $options ['oauth_registered_scopes'] : ''));
+	if ($storedScopes !== '') {
+		return $storedScopes;
+	}
+	if (!empty($options ['client_id']) || !empty($options ['client_secret'])) {
+		return plugin_mastodon_oauth_legacy_scopes();
+	}
+	return plugin_mastodon_oauth_preferred_scopes($options);
+}
+
 
 /**
  * Return a value from the request-local plugin cache.
@@ -402,6 +523,7 @@ function plugin_mastodon_get_options() {
 		$options ['update_local_from_remote'] = plugin_mastodon_normalize_update_local_from_remote($options ['update_local_from_remote']);
 		$options ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries($options ['import_synced_comments_as_entries']);
 		$options ['delete_sync_enabled'] = plugin_mastodon_normalize_delete_sync_enabled($options ['delete_sync_enabled']);
+		$options ['oauth_registered_scopes'] = trim((string) $options ['oauth_registered_scopes']);
 		return $options;
 	}
 
@@ -430,6 +552,7 @@ function plugin_mastodon_get_options() {
 	$options ['update_local_from_remote'] = plugin_mastodon_normalize_update_local_from_remote($options ['update_local_from_remote']);
 	$options ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries($options ['import_synced_comments_as_entries']);
 	$options ['delete_sync_enabled'] = plugin_mastodon_normalize_delete_sync_enabled($options ['delete_sync_enabled']);
+	$options ['oauth_registered_scopes'] = trim((string) $options ['oauth_registered_scopes']);
 	plugin_mastodon_runtime_cache_set('options', 'normalized', $options);
 	return $options;
 }
@@ -443,7 +566,7 @@ function plugin_mastodon_save_options($options) {
 	$defaults = plugin_mastodon_default_options();
 	$merged = array_merge($defaults, is_array($options) ? $options : array());
 
-	foreach (array('instance_url', 'username', 'sync_time', 'sync_start_date', 'update_local_from_remote', 'import_synced_comments_as_entries', 'delete_sync_enabled', 'last_authorize_url') as $plainKey) {
+	foreach (array('instance_url', 'username', 'sync_time', 'sync_start_date', 'update_local_from_remote', 'import_synced_comments_as_entries', 'delete_sync_enabled', 'last_authorize_url', 'oauth_registered_scopes') as $plainKey) {
 		plugin_addoption('mastodon', $plainKey, (string) $merged [$plainKey]);
 	}
 
@@ -470,6 +593,7 @@ function plugin_mastodon_save_options($options) {
 		$merged ['update_local_from_remote'] = plugin_mastodon_normalize_update_local_from_remote((string) $merged ['update_local_from_remote']);
 		$merged ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries((string) $merged ['import_synced_comments_as_entries']);
 		$merged ['delete_sync_enabled'] = plugin_mastodon_normalize_delete_sync_enabled((string) $merged ['delete_sync_enabled']);
+		$merged ['oauth_registered_scopes'] = trim((string) $merged ['oauth_registered_scopes']);
 		plugin_mastodon_runtime_cache_set('core', 'fp_config', is_array($GLOBALS ['EARLY_FP_CONFIG']) ? $GLOBALS ['EARLY_FP_CONFIG'] : array());
 		plugin_mastodon_runtime_cache_set('options', 'normalized', $merged);
 		if ($merged ['delete_sync_enabled'] !== '1') {
@@ -4256,13 +4380,14 @@ function plugin_mastodon_register_app(&$options) {
 	$params = array(
 		'client_name' => PLUGIN_MASTODON_APP_NAME,
 		'redirect_uris' => 'urn:ietf:wg:oauth:2.0:oob',
-		'scopes' => plugin_mastodon_oauth_scopes(),
+		'scopes' => plugin_mastodon_oauth_preferred_scopes($options),
 		'website' => defined('BLOG_BASEURL') ? BLOG_BASEURL : ''
 	);
 	$response = plugin_mastodon_mastodon_json($options, 'POST', '/api/v1/apps', $params, false);
 	if (!empty($response ['json'] ['client_id']) && !empty($response ['json'] ['client_secret'])) {
 		$options ['client_id'] = (string) $response ['json'] ['client_id'];
 		$options ['client_secret'] = (string) $response ['json'] ['client_secret'];
+		$options ['oauth_registered_scopes'] = plugin_mastodon_oauth_preferred_scopes($options);
 		$options ['last_authorize_url'] = plugin_mastodon_build_authorize_url($options);
 		plugin_mastodon_save_options($options);
 	}
@@ -4283,7 +4408,7 @@ function plugin_mastodon_build_authorize_url($options) {
 		'client_id' => $options ['client_id'],
 		'redirect_uri' => 'urn:ietf:wg:oauth:2.0:oob',
 		'response_type' => 'code',
-		'scope' => plugin_mastodon_oauth_scopes()
+		'scope' => plugin_mastodon_oauth_scopes($options)
 	);
 	return $base . '/oauth/authorize?' . http_build_query($query, '', '&');
 }
@@ -4305,12 +4430,15 @@ function plugin_mastodon_exchange_code_for_token(&$options, $code) {
 		'client_secret' => isset($options ['client_secret']) ? $options ['client_secret'] : '',
 		'redirect_uri' => 'urn:ietf:wg:oauth:2.0:oob',
 		'code' => $code,
-		'scope' => plugin_mastodon_oauth_scopes()
+		'scope' => plugin_mastodon_oauth_scopes($options)
 	);
 	$response = plugin_mastodon_mastodon_json($options, 'POST', '/oauth/token', $params, false);
 	if (!empty($response ['json'] ['access_token'])) {
 		$options ['access_token'] = (string) $response ['json'] ['access_token'];
 		$options ['authorization_code'] = '';
+		if (empty($options ['oauth_registered_scopes'])) {
+			$options ['oauth_registered_scopes'] = plugin_mastodon_oauth_scopes($options);
+		}
 		plugin_mastodon_save_options($options);
 	}
 	return $response;
