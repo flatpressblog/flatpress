@@ -116,7 +116,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		6 => 'Mastodon örneği bilgileri başarıyla yenilendi.',
 		-2 => 'Mastodon uygulaması kaydedilemedi.',
 		-3 => 'Yetkilendirme kodu bir belirteçle değiştirilemedi.',
-		-4 => 'Senkronizasyon başarısız oldu. Lütfen aşağıdaki durumu ve fp-content/mastodon/sync.log dosyasını kontrol edin.'
+		-4 => 'Senkronizasyon başarısız oldu. Lütfen aşağıdaki durumu ve fp-content/mastodon/sync.log dosyasını kontrol edin.',
 		-6 => 'Mastodon örneği bilgileri alınamadı.',
 	)
 );
