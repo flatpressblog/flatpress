@@ -98,6 +98,17 @@
 		</div>
 	</fieldset>
 
+	<fieldset><legend>{$plang.instance_info_head|escape}</legend>
+		{*
+		<p>{$plang.instance_info_intro|escape}</p>
+		<p><small>{$plang.instance_info_cached_note|escape}</small></p>
+		*}
+		<div class="buttonbar">
+			<input type="submit" name="mastodon_refresh_instance_info" value="{$plang.instance_info_refresh|escape}">
+		</div>
+	</fieldset>
+
+
 	<div class="buttonbar">
 		<input type="submit" name="mastodon_run_now" value="{$plang.run_now|escape}">
 	</div>
@@ -158,3 +169,31 @@
 		<tr><td>{$plang.stats_deleted_remote_comments|escape}</td><td>{$mastodon_state.deletion_stats.deleted_remote_comments|default:0}</td></tr>
 	</tbody>
 </table>
+
+<h3>{$plang.instance_info_head|escape}</h3>
+{if $mastodon_instance_info_rows|@count gt 0}
+<table>
+	<thead>
+		<tr>
+			<th>{$plang.description|escape}</th>
+			<th>{$plang.output|escape}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{foreach from=$mastodon_instance_info_rows item=instance_row}
+		<tr>
+			<td>{$instance_row.label|escape}</td>
+			<td>
+				{if $instance_row.url}
+					<a href="{$instance_row.url|escape}" target="_blank" rel="noopener noreferrer">{$instance_row.value|escape}</a>
+				{else}
+					{$instance_row.value|escape}
+				{/if}
+			</td>
+		</tr>
+		{/foreach}
+	</tbody>
+</table>
+{else}
+<p>{$plang.instance_info_empty|escape}</p>
+{/if}

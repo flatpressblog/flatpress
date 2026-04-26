@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 1.8.0
+ * Version: 1.9.0
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -65,8 +65,365 @@ function plugin_mastodon_default_options() {
 		'access_token' => '',
 		'authorization_code' => '',
 		'last_authorize_url' => '',
-		'oauth_registered_scopes' => ''
+		'oauth_registered_scopes' => '',
+		'instance_info_url' => '',
+		'instance_info_json' => '',
+		'instance_info_fetched_at' => '',
+		'instance_info_error' => '',
+		'instance_info_error_at' => ''
 	);
+}
+
+/**
+ * Remove any stored Mastodon instance information from the plugin options.
+ * @param array<string, string> $options
+ * @return array<string, string>
+ */
+function plugin_mastodon_clear_saved_instance_info($options) {
+	$options = is_array($options) ? $options : array();
+	foreach (array('instance_info_url', 'instance_info_json', 'instance_info_fetched_at', 'instance_info_error', 'instance_info_error_at') as $key) {
+		$options [$key] = '';
+	}
+	return $options;
+}
+
+/**
+ * Reduce a live Mastodon instance document to the stable subset that is useful for the plugin.
+ *
+ * The cached snapshot intentionally keeps only the fields that are used for capability
+ * checks, export budgeting, and the admin diagnostics table. This keeps the FlatPress
+ * configuration compact while still preserving the exact Mastodon version string and the
+ * most relevant instance limits.
+ *
+ * @param array<string, mixed> $document
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_compact_instance_document($document) {
+	if (!is_array($document)) {
+		return array();
+	}
+
+	$compact = array();
+	foreach (array('domain', 'title', 'version', 'source_url', 'description') as $key) {
+		if (isset($document [$key])) {
+			$value = trim((string) $document [$key]);
+			if ($value !== '') {
+				$compact [$key] = $value;
+			}
+		}
+	}
+
+	if (!empty($document ['languages']) && is_array($document ['languages'])) {
+		$languages = array();
+		foreach ($document ['languages'] as $language) {
+			$language = trim((string) $language);
+			if ($language !== '') {
+				$languages [] = $language;
+			}
+		}
+		if (!empty($languages)) {
+			$compact ['languages'] = array_values(array_unique($languages));
+		}
+	}
+
+	if (!empty($document ['usage']) && is_array($document ['usage']) && !empty($document ['usage'] ['users']) && is_array($document ['usage'] ['users'])) {
+		$usage = array();
+		if (isset($document ['usage'] ['users'] ['active_month'])) {
+			$usage ['users'] = array('active_month' => max(0, (int) $document ['usage'] ['users'] ['active_month']));
+		}
+		if (!empty($usage)) {
+			$compact ['usage'] = $usage;
+		}
+	}
+
+	if (!empty($document ['api_versions']) && is_array($document ['api_versions'])) {
+		$apiVersions = array();
+		foreach ($document ['api_versions'] as $apiName => $apiVersion) {
+			$key = trim((string) $apiName);
+			if ($key === '') {
+				continue;
+			}
+			if (is_int($apiVersion) || is_float($apiVersion) || (is_string($apiVersion) && preg_match('/^-?\d+(?:\.\d+)?$/', trim($apiVersion)))) {
+				$apiVersions [$key] = (int) $apiVersion;
+			} else {
+				$apiVersion = trim((string) $apiVersion);
+				if ($apiVersion !== '') {
+					$apiVersions [$key] = $apiVersion;
+				}
+			}
+		}
+		if (!empty($apiVersions)) {
+			$compact ['api_versions'] = $apiVersions;
+		}
+	}
+
+	if (!empty($document ['contact']) && is_array($document ['contact'])) {
+		$contact = array();
+		if (!empty($document ['contact'] ['email'])) {
+			$contact ['email'] = trim((string) $document ['contact'] ['email']);
+		}
+		if (!empty($document ['contact'] ['account']) && is_array($document ['contact'] ['account'])) {
+			$account = array();
+			foreach (array('acct', 'url') as $key) {
+				if (!empty($document ['contact'] ['account'] [$key])) {
+					$account [$key] = trim((string) $document ['contact'] ['account'] [$key]);
+				}
+			}
+			if (!empty($account)) {
+				$contact ['account'] = $account;
+			}
+		}
+		if (!empty($contact)) {
+			$compact ['contact'] = $contact;
+		}
+	}
+
+	if (isset($document ['rules']) && is_array($document ['rules'])) {
+		$compact ['rules_count'] = count($document ['rules']);
+	}
+
+	if (!empty($document ['registrations']) && is_array($document ['registrations'])) {
+		$registrations = array();
+		foreach (array('enabled', 'approval_required', 'reason_required') as $boolKey) {
+			if (array_key_exists($boolKey, $document ['registrations'])) {
+				$registrations [$boolKey] = (bool) $document ['registrations'] [$boolKey];
+			}
+		}
+		foreach (array('message', 'url') as $stringKey) {
+			if (isset($document ['registrations'] [$stringKey])) {
+				$value = trim((string) $document ['registrations'] [$stringKey]);
+				if ($value !== '') {
+					$registrations [$stringKey] = $value;
+				}
+			}
+		}
+		if (isset($document ['registrations'] ['min_age']) && $document ['registrations'] ['min_age'] !== null && $document ['registrations'] ['min_age'] !== '') {
+			$registrations ['min_age'] = max(0, (int) $document ['registrations'] ['min_age']);
+		}
+		if (!empty($registrations)) {
+			$compact ['registrations'] = $registrations;
+		}
+	}
+
+	if (!empty($document ['configuration']) && is_array($document ['configuration'])) {
+		$configuration = array();
+
+		if (!empty($document ['configuration'] ['urls']) && is_array($document ['configuration'] ['urls'])) {
+			$urls = array();
+			foreach (array('streaming', 'status', 'about', 'privacy_policy', 'terms_of_service') as $urlKey) {
+				if (isset($document ['configuration'] ['urls'] [$urlKey])) {
+					$value = trim((string) $document ['configuration'] ['urls'] [$urlKey]);
+					if ($value !== '') {
+						$urls [$urlKey] = $value;
+					}
+				}
+			}
+			if (!empty($urls)) {
+				$configuration ['urls'] = $urls;
+			}
+		}
+
+		if (!empty($document ['configuration'] ['statuses']) && is_array($document ['configuration'] ['statuses'])) {
+			$statuses = array();
+			foreach (array('max_characters', 'max_media_attachments', 'characters_reserved_per_url') as $intKey) {
+				if (isset($document ['configuration'] ['statuses'] [$intKey]) && $document ['configuration'] ['statuses'] [$intKey] !== '') {
+					$statuses [$intKey] = max(0, (int) $document ['configuration'] ['statuses'] [$intKey]);
+				}
+			}
+			if (!empty($statuses)) {
+				$configuration ['statuses'] = $statuses;
+			}
+		}
+
+		if (!empty($document ['configuration'] ['media_attachments']) && is_array($document ['configuration'] ['media_attachments'])) {
+			$media = array();
+			foreach (array('description_limit', 'image_size_limit', 'image_matrix_limit', 'video_size_limit', 'video_frame_rate_limit', 'video_matrix_limit') as $intKey) {
+				if (isset($document ['configuration'] ['media_attachments'] [$intKey]) && $document ['configuration'] ['media_attachments'] [$intKey] !== '') {
+					$media [$intKey] = max(0, (int) $document ['configuration'] ['media_attachments'] [$intKey]);
+				}
+			}
+			if (!empty($document ['configuration'] ['media_attachments'] ['supported_mime_types']) && is_array($document ['configuration'] ['media_attachments'] ['supported_mime_types'])) {
+				$mimeTypes = array();
+				foreach ($document ['configuration'] ['media_attachments'] ['supported_mime_types'] as $mimeType) {
+					$mimeType = trim((string) $mimeType);
+					if ($mimeType !== '') {
+						$mimeTypes [] = $mimeType;
+					}
+				}
+				if (!empty($mimeTypes)) {
+					$media ['supported_mime_types'] = array_values(array_unique($mimeTypes));
+				}
+			}
+			if (!empty($media)) {
+				$configuration ['media_attachments'] = $media;
+			}
+		}
+
+		if (!empty($document ['configuration'] ['translation']) && is_array($document ['configuration'] ['translation'])) {
+			$translation = array();
+			if (array_key_exists('enabled', $document ['configuration'] ['translation'])) {
+				$translation ['enabled'] = (bool) $document ['configuration'] ['translation'] ['enabled'];
+			}
+			if (!empty($translation)) {
+				$configuration ['translation'] = $translation;
+			}
+		}
+
+		if (!empty($document ['configuration'] ['timelines_access']) && is_array($document ['configuration'] ['timelines_access'])) {
+			$timelinesAccess = array();
+			foreach (array('live_feeds', 'hashtag_feeds') as $groupKey) {
+				if (empty($document ['configuration'] ['timelines_access'] [$groupKey]) || !is_array($document ['configuration'] ['timelines_access'] [$groupKey])) {
+					continue;
+				}
+				$group = array();
+				foreach (array('local', 'remote') as $accessKey) {
+					if (!empty($document ['configuration'] ['timelines_access'] [$groupKey] [$accessKey])) {
+						$group [$accessKey] = trim((string) $document ['configuration'] ['timelines_access'] [$groupKey] [$accessKey]);
+					}
+				}
+				if (!empty($group)) {
+					$timelinesAccess [$groupKey] = $group;
+				}
+			}
+			if (!empty($timelinesAccess)) {
+				$configuration ['timelines_access'] = $timelinesAccess;
+			}
+		}
+
+		if (!empty($configuration)) {
+			$compact ['configuration'] = $configuration;
+		}
+	}
+
+	return $compact;
+}
+
+/**
+ * Read a previously stored Mastodon instance snapshot from the plugin options.
+ * @param array<string, string> $options
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_saved_instance_document($options) {
+	$options = is_array($options) ? $options : array();
+	$instanceUrl = plugin_mastodon_normalize_instance_url(isset($options ['instance_url']) ? $options ['instance_url'] : '');
+	if ($instanceUrl === '') {
+		return array();
+	}
+	$storedUrl = plugin_mastodon_normalize_instance_url(isset($options ['instance_info_url']) ? $options ['instance_info_url'] : '');
+	if ($storedUrl !== '' && $storedUrl !== $instanceUrl) {
+		return array();
+	}
+	$json = trim((string) (isset($options ['instance_info_json']) ? $options ['instance_info_json'] : ''));
+	if ($json === '') {
+		return array();
+	}
+
+	$cacheKey = sha1($instanceUrl . '|' . $json);
+	$cached = plugin_mastodon_runtime_cache_get('instance_document_saved', $cacheKey, $hit);
+	if ($hit && is_array($cached)) {
+		return $cached;
+	}
+
+	$decoded = json_decode($json, true);
+	if (!is_array($decoded)) {
+		return array();
+	}
+	$document = plugin_mastodon_compact_instance_document($decoded);
+	if ($document === array()) {
+		return array();
+	}
+	plugin_mastodon_runtime_cache_set('instance_document_saved', $cacheKey, $document);
+	plugin_mastodon_apcu_store('instance_document:' . sha1($instanceUrl), $document, 900);
+	return $document;
+}
+
+/**
+ * Persist a compact Mastodon instance snapshot inside the plugin configuration.
+ *
+ * Keeping the snapshot in the FlatPress plugin configuration makes the data available on
+ * every supported host, survives PHP worker restarts, and lets the plugin reuse the values
+ * immediately on later requests without adding a mandatory network round-trip.
+ *
+ * @param array<string, string> $options
+ * @param array<string, mixed> $document
+ * @return bool
+ */
+function plugin_mastodon_store_instance_document($options, $document) {
+	$options = is_array($options) ? $options : array();
+	$instanceUrl = plugin_mastodon_normalize_instance_url(isset($options ['instance_url']) ? $options ['instance_url'] : '');
+	$document = plugin_mastodon_compact_instance_document($document);
+	if ($instanceUrl === '' || $document === array()) {
+		return false;
+	}
+
+	$json = json_encode($document, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	if (!is_string($json) || $json === '') {
+		return false;
+	}
+
+	$normalizedOptions = plugin_mastodon_clear_saved_instance_info($options);
+	$normalizedOptions ['instance_info_url'] = $instanceUrl;
+	$normalizedOptions ['instance_info_json'] = $json;
+	$normalizedOptions ['instance_info_fetched_at'] = gmdate('c');
+	$normalizedOptions ['instance_info_error'] = '';
+	$normalizedOptions ['instance_info_error_at'] = '';
+
+	$storedDocument = plugin_mastodon_saved_instance_document($normalizedOptions);
+	$changed = (
+		trim((string) (isset($options ['instance_info_url']) ? $options ['instance_info_url'] : '')) !== $instanceUrl
+		|| trim((string) (isset($options ['instance_info_json']) ? $options ['instance_info_json'] : '')) !== $json
+		|| $storedDocument !== $document
+	);
+	if (!$changed && trim((string) (isset($options ['instance_info_fetched_at']) ? $options ['instance_info_fetched_at'] : '')) !== '') {
+		plugin_mastodon_apcu_store('instance_document:' . sha1($instanceUrl), $document, 900);
+		plugin_mastodon_runtime_cache_set('instance_document', $instanceUrl, $document);
+		return true;
+	}
+
+	$result = plugin_mastodon_save_options($normalizedOptions);
+	if ($result) {
+		plugin_mastodon_apcu_store('instance_document:' . sha1($instanceUrl), $document, 900);
+		plugin_mastodon_runtime_cache_set('instance_document', $instanceUrl, $document);
+	}
+	return $result;
+}
+
+/**
+ * Persist the latest instance-information refresh error for the admin diagnostics view.
+ * @param array<string, string> $options
+ * @param string $message
+ * @return bool
+ */
+function plugin_mastodon_store_instance_error($options, $message) {
+	$options = is_array($options) ? $options : array();
+	$message = trim((string) $message);
+	if ($message === '') {
+		$message = 'request_failed';
+	}
+	$options ['instance_info_error'] = $message;
+	$options ['instance_info_error_at'] = gmdate('c');
+	return plugin_mastodon_save_options($options);
+}
+
+/**
+ * Force a live refresh of the Mastodon instance information and persist the compact snapshot.
+ * @param array<string, string> $options
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_refresh_instance_information($options) {
+	$response = plugin_mastodon_mastodon_json($options, 'GET', '/api/v2/instance', array(), false);
+	if (!empty($response ['ok']) && !empty($response ['json']) && is_array($response ['json'])) {
+		$document = plugin_mastodon_compact_instance_document($response ['json']);
+		if ($document !== array()) {
+			plugin_mastodon_store_instance_document($options, $document);
+			$response ['json'] = $document;
+			return $response;
+		}
+		$response ['ok'] = false;
+		$response ['error'] = 'invalid_instance_document';
+	}
+	plugin_mastodon_store_instance_error($options, plugin_mastodon_response_error_message($response));
+	return $response;
 }
 
 /**
@@ -247,20 +604,18 @@ function plugin_mastodon_oauth_scopes($options = array()) {
 	return plugin_mastodon_oauth_preferred_scopes($options);
 }
 
-
 /**
  * Return a value from the request-local plugin cache.
- * @param string $bucket
- * @param string $key
- * @param bool|null $hit
+ *
+ * @param string $bucket Cache bucket name.
+ * @param string $key Cache entry key.
+ * @param-out bool $hit Whether the requested cache entry was found.
  * @return mixed
  */
-function plugin_mastodon_runtime_cache_get($bucket, $key, &$hit = null) {
+function plugin_mastodon_runtime_cache_get($bucket, $key, &$hit = false) {
 	$bucket = (string) $bucket;
 	$key = (string) $key;
-	if ($hit !== null) {
-		$hit = false;
-	}
+	$hit = false;
 	if (!isset($GLOBALS ['plugin_mastodon_runtime_cache']) || !is_array($GLOBALS ['plugin_mastodon_runtime_cache'])) {
 		$GLOBALS ['plugin_mastodon_runtime_cache'] = array();
 	}
@@ -268,9 +623,7 @@ function plugin_mastodon_runtime_cache_get($bucket, $key, &$hit = null) {
 		return null;
 	}
 	if (array_key_exists($key, $GLOBALS ['plugin_mastodon_runtime_cache'] [$bucket])) {
-		if ($hit !== null) {
-			$hit = true;
-		}
+		$hit = true;
 		return $GLOBALS ['plugin_mastodon_runtime_cache'] [$bucket] [$key];
 	}
 	return null;
@@ -436,9 +789,7 @@ function plugin_mastodon_apcu_cache_key($suffix) {
  * @return mixed
  */
 function plugin_mastodon_apcu_fetch($suffix, &$hit = null) {
-	if ($hit !== null) {
-		$hit = false;
-	}
+	$hit = false;
 	if (!plugin_mastodon_apcu_enabled() || !function_exists('apcu_get')) {
 		return null;
 	}
@@ -564,9 +915,17 @@ function plugin_mastodon_get_options() {
  */
 function plugin_mastodon_save_options($options) {
 	$defaults = plugin_mastodon_default_options();
+	$previousOptions = plugin_mastodon_get_options();
 	$merged = array_merge($defaults, is_array($options) ? $options : array());
 
-	foreach (array('instance_url', 'username', 'sync_time', 'sync_start_date', 'update_local_from_remote', 'import_synced_comments_as_entries', 'delete_sync_enabled', 'last_authorize_url', 'oauth_registered_scopes') as $plainKey) {
+	$previousInstanceUrl = plugin_mastodon_normalize_instance_url(isset($previousOptions ['instance_url']) ? $previousOptions ['instance_url'] : '');
+	$merged ['instance_url'] = plugin_mastodon_normalize_instance_url(isset($merged ['instance_url']) ? $merged ['instance_url'] : '');
+	$mergedInstanceInfoUrl = plugin_mastodon_normalize_instance_url(isset($merged ['instance_info_url']) ? $merged ['instance_info_url'] : '');
+	if ($previousInstanceUrl !== '' && $merged ['instance_url'] !== $previousInstanceUrl && $mergedInstanceInfoUrl !== $merged ['instance_url']) {
+		$merged = plugin_mastodon_clear_saved_instance_info($merged);
+	}
+
+	foreach (array('instance_url', 'username', 'sync_time', 'sync_start_date', 'update_local_from_remote', 'import_synced_comments_as_entries', 'delete_sync_enabled', 'last_authorize_url', 'oauth_registered_scopes', 'instance_info_url', 'instance_info_json', 'instance_info_fetched_at', 'instance_info_error', 'instance_info_error_at') as $plainKey) {
 		plugin_addoption('mastodon', $plainKey, (string) $merged [$plainKey]);
 	}
 
@@ -582,6 +941,8 @@ function plugin_mastodon_save_options($options) {
 	$result = plugin_saveoptions('mastodon');
 	plugin_mastodon_runtime_cache_clear('options');
 	plugin_mastodon_runtime_cache_clear('core');
+	plugin_mastodon_runtime_cache_clear('instance_document');
+	plugin_mastodon_runtime_cache_clear('instance_document_saved');
 	if ($result) {
 		global $fp_config;
 		if (isset($fp_config) && is_array($fp_config)) {
@@ -594,6 +955,19 @@ function plugin_mastodon_save_options($options) {
 		$merged ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries((string) $merged ['import_synced_comments_as_entries']);
 		$merged ['delete_sync_enabled'] = plugin_mastodon_normalize_delete_sync_enabled((string) $merged ['delete_sync_enabled']);
 		$merged ['oauth_registered_scopes'] = trim((string) $merged ['oauth_registered_scopes']);
+		if ($previousInstanceUrl !== '' && $previousInstanceUrl !== $merged ['instance_url']) {
+			plugin_mastodon_apcu_delete('instance_document:' . sha1($previousInstanceUrl));
+		}
+		if ($merged ['instance_url'] !== '') {
+			if (!empty($merged ['instance_info_json'])) {
+				$storedDocument = plugin_mastodon_saved_instance_document($merged);
+				if ($storedDocument !== array()) {
+					plugin_mastodon_apcu_store('instance_document:' . sha1($merged ['instance_url']), $storedDocument, 900);
+				}
+			} else {
+				plugin_mastodon_apcu_delete('instance_document:' . sha1($merged ['instance_url']));
+			}
+		}
 		plugin_mastodon_runtime_cache_set('core', 'fp_config', is_array($GLOBALS ['EARLY_FP_CONFIG']) ? $GLOBALS ['EARLY_FP_CONFIG'] : array());
 		plugin_mastodon_runtime_cache_set('options', 'normalized', $merged);
 		if ($merged ['delete_sync_enabled'] !== '1') {
@@ -1438,6 +1812,89 @@ function plugin_mastodon_state_remove_comment_mapping(&$state, $entryId, $commen
 function plugin_mastodon_state_get_entry_meta($state, $localId) {
 	$localId = (string) $localId;
 	return isset($state ['entries'] [$localId]) && is_array($state ['entries'] [$localId]) ? $state ['entries'] [$localId] : array();
+}
+
+/**
+ * Persist media metadata for a synchronized local entry.
+ * @param array<string, mixed> $state
+ * @param string $localId
+ * @param array<int, array<string, string>> $remoteMedia
+ * @param string $attachmentSignature
+ * @param string $descriptionSignature
+ * @return void
+ */
+function plugin_mastodon_state_set_entry_media_meta(&$state, $localId, $remoteMedia, $attachmentSignature, $descriptionSignature) {
+	$localId = (string) $localId;
+	if ($localId === '' || empty($state ['entries'] [$localId]) || !is_array($state ['entries'] [$localId])) {
+		return;
+	}
+	if (!empty($remoteMedia) && is_array($remoteMedia)) {
+		$state ['entries'] [$localId] ['remote_media'] = array_values($remoteMedia);
+	} else {
+		unset($state ['entries'] [$localId] ['remote_media']);
+	}
+	$attachmentSignature = trim((string) $attachmentSignature);
+	if ($attachmentSignature !== '') {
+		$state ['entries'] [$localId] ['local_media_attachment_signature'] = $attachmentSignature;
+	} else {
+		unset($state ['entries'] [$localId] ['local_media_attachment_signature']);
+	}
+	$descriptionSignature = trim((string) $descriptionSignature);
+	if ($descriptionSignature !== '') {
+		$state ['entries'] [$localId] ['local_media_description_signature'] = $descriptionSignature;
+	} else {
+		unset($state ['entries'] [$localId] ['local_media_description_signature']);
+	}
+}
+
+/**
+ * Return sanitized remote-media descriptors stored inside one entry mapping.
+ * @param array<string, mixed> $meta
+ * @return array<int, array<string, string>>
+ */
+function plugin_mastodon_state_entry_remote_media($meta) {
+	$meta = is_array($meta) ? $meta : array();
+	$remoteMedia = array();
+	if (empty($meta ['remote_media']) || !is_array($meta ['remote_media'])) {
+		return $remoteMedia;
+	}
+	foreach ($meta ['remote_media'] as $item) {
+		if (!is_array($item) || empty($item ['id'])) {
+			continue;
+		}
+		$descriptor = array(
+			'id' => trim((string) $item ['id']),
+			'description' => isset($item ['description']) ? trim((string) $item ['description']) : ''
+		);
+		if ($descriptor ['id'] === '') {
+			continue;
+		}
+		if (isset($item ['focus'])) {
+			$descriptor ['focus'] = trim((string) $item ['focus']);
+		}
+		$remoteMedia [] = $descriptor;
+	}
+	return $remoteMedia;
+}
+
+/**
+ * Return the stored attachment-signature for one entry mapping.
+ * @param array<string, mixed> $meta
+ * @return string
+ */
+function plugin_mastodon_state_entry_media_attachment_signature($meta) {
+	$meta = is_array($meta) ? $meta : array();
+	return !empty($meta ['local_media_attachment_signature']) ? trim((string) $meta ['local_media_attachment_signature']) : '';
+}
+
+/**
+ * Return the stored description-signature for one entry mapping.
+ * @param array<string, mixed> $meta
+ * @return string
+ */
+function plugin_mastodon_state_entry_media_description_signature($meta) {
+	$meta = is_array($meta) ? $meta : array();
+	return !empty($meta ['local_media_description_signature']) ? trim((string) $meta ['local_media_description_signature']) : '';
 }
 
 /**
@@ -3222,6 +3679,72 @@ function plugin_mastodon_collect_local_entry_media($entry) {
 }
 
 /**
+ * Normalize local entry media items for signature and export planning.
+ * @param array<int, array<string, mixed>> $mediaItems
+ * @param int $limit
+ * @return array{items:array<int, array<string, mixed>>, skipped:int}
+ */
+function plugin_mastodon_prepare_entry_media_items($mediaItems, $limit) {
+	$mediaItems = is_array($mediaItems) ? $mediaItems : array();
+	$limit = max(0, (int) $limit);
+	$prepared = array();
+	$skipped = 0;
+	foreach ($mediaItems as $item) {
+		if (empty($item ['absolute_path']) || !is_file((string) $item ['absolute_path'])) {
+			continue;
+		}
+		if ($limit > 0 && count($prepared) >= $limit) {
+			$skipped++;
+			continue;
+		}
+		$prepared [] = $item;
+	}
+	return array('items' => $prepared, 'skipped' => $skipped);
+}
+
+/**
+ * Build a signature for the actual media payload of local entry attachments.
+ * @param array<int, array<string, mixed>> $mediaItems
+ * @return string
+ */
+function plugin_mastodon_entry_media_attachment_signature_from_items($mediaItems) {
+	$signatureParts = array();
+	foreach ((array) $mediaItems as $item) {
+		if (empty($item ['absolute_path']) || !is_file((string) $item ['absolute_path'])) {
+			continue;
+		}
+		$signatureParts [] = implode('|', array(
+			isset($item ['relative_path']) ? (string) $item ['relative_path'] : '',
+			(string) @filesize((string) $item ['absolute_path']),
+			(string) @filemtime((string) $item ['absolute_path'])
+		));
+	}
+	if (empty($signatureParts)) {
+		return '';
+	}
+	return sha1(implode("\n", $signatureParts));
+}
+
+/**
+ * Build a signature for local entry media descriptions.
+ * @param array<int, array<string, mixed>> $mediaItems
+ * @return string
+ */
+function plugin_mastodon_entry_media_description_signature_from_items($mediaItems) {
+	$signatureParts = array();
+	foreach ((array) $mediaItems as $item) {
+		$signatureParts [] = implode('|', array(
+			isset($item ['relative_path']) ? (string) $item ['relative_path'] : '',
+			isset($item ['description']) ? (string) $item ['description'] : ''
+		));
+	}
+	if (empty($signatureParts)) {
+		return '';
+	}
+	return sha1(implode("\n", $signatureParts));
+}
+
+/**
  * Build a signature for media references contained in entry content.
  * @param mixed $content
  * @return string
@@ -3231,20 +3754,11 @@ function plugin_mastodon_entry_media_signature($content) {
 	if ($content === '') {
 		return '';
 	}
-	$signatureParts = array();
 	$media = plugin_mastodon_collect_local_entry_media(array('content' => $content));
-	foreach ($media as $item) {
-		if (empty($item ['absolute_path']) || !is_file($item ['absolute_path'])) {
-			continue;
-		}
-		$signatureParts [] = implode('|', array(
-			isset($item ['relative_path']) ? (string) $item ['relative_path'] : '',
-			isset($item ['description']) ? (string) $item ['description'] : '',
-			(string) @filesize($item ['absolute_path']),
-			(string) @filemtime($item ['absolute_path'])
-		));
-	}
-	return sha1(implode("\n", $signatureParts));
+	return sha1(implode("\n", array(
+		plugin_mastodon_entry_media_attachment_signature_from_items($media),
+		plugin_mastodon_entry_media_description_signature_from_items($media)
+	)));
 }
 
 /**
@@ -3296,6 +3810,112 @@ function plugin_mastodon_remote_media_description($attachment) {
 		}
 	}
 	return '';
+}
+
+/**
+ * Resolve the stored focus string for a remote attachment, if any.
+ * @param array<string, mixed> $attachment
+ * @return string
+ */
+function plugin_mastodon_remote_media_focus($attachment) {
+	$attachment = is_array($attachment) ? $attachment : array();
+	if (empty($attachment ['meta'] ['focus']) || !is_array($attachment ['meta'] ['focus'])) {
+		return '';
+	}
+	$focus = $attachment ['meta'] ['focus'];
+	if (!isset($focus ['x']) || !isset($focus ['y']) || !is_numeric($focus ['x']) || !is_numeric($focus ['y'])) {
+		return '';
+	}
+	return sprintf('%.6F,%.6F', (float) $focus ['x'], (float) $focus ['y']);
+}
+
+/**
+ * Build sanitized remote-media descriptors from a Mastodon status payload.
+ * @param array<string, mixed> $remoteStatus
+ * @return array<int, array<string, string>>
+ */
+function plugin_mastodon_remote_media_descriptors_from_status($remoteStatus) {
+	$remoteMedia = array();
+	foreach (plugin_mastodon_remote_status_image_attachments($remoteStatus) as $attachment) {
+		$attachmentId = !empty($attachment ['id']) ? trim((string) $attachment ['id']) : '';
+		if ($attachmentId === '') {
+			continue;
+		}
+		$descriptor = array(
+			'id' => $attachmentId,
+			'description' => plugin_mastodon_remote_media_description($attachment)
+		);
+		$focus = plugin_mastodon_remote_media_focus($attachment);
+		if ($focus !== '') {
+			$descriptor ['focus'] = $focus;
+		}
+		$remoteMedia [] = $descriptor;
+	}
+	return $remoteMedia;
+}
+
+/**
+ * Build remote-media descriptors from freshly uploaded media IDs and the current local descriptions.
+ * @param array<int, string> $mediaIds
+ * @param array<int, array<string, mixed>> $mediaItems
+ * @param array<string, string> $options
+ * @return array<int, array<string, string>>
+ */
+function plugin_mastodon_remote_media_descriptors_from_media_ids($mediaIds, $mediaItems, $options) {
+	$descriptionLimit = plugin_mastodon_instance_media_description_limit($options);
+	$descriptors = array();
+	$mediaIds = is_array($mediaIds) ? array_values($mediaIds) : array();
+	$mediaItems = is_array($mediaItems) ? array_values($mediaItems) : array();
+	$count = min(count($mediaIds), count($mediaItems));
+	for ($index = 0; $index < $count; $index++) {
+		$mediaId = trim((string) $mediaIds [$index]);
+		if ($mediaId === '') {
+			continue;
+		}
+		$description = isset($mediaItems [$index] ['description']) ? trim((string) $mediaItems [$index] ['description']) : '';
+		if ($descriptionLimit > 0 && $description !== '') {
+			$description = plugin_mastodon_limit_text($description, $descriptionLimit);
+		}
+		$descriptors [] = array(
+			'id' => $mediaId,
+			'description' => $description
+		);
+	}
+	return $descriptors;
+}
+
+/**
+ * Build media_attributes descriptors for PUT /api/v1/statuses/:id.
+ * @param array<int, array<string, string>> $remoteMedia
+ * @param array<int, array<string, mixed>> $mediaItems
+ * @param array<string, string> $options
+ * @return array<int, array<string, string>>
+ */
+function plugin_mastodon_status_media_attributes($remoteMedia, $mediaItems, $options) {
+	$remoteMedia = is_array($remoteMedia) ? array_values($remoteMedia) : array();
+	$mediaItems = is_array($mediaItems) ? array_values($mediaItems) : array();
+	$descriptionLimit = plugin_mastodon_instance_media_description_limit($options);
+	$attributes = array();
+	$count = min(count($remoteMedia), count($mediaItems));
+	for ($index = 0; $index < $count; $index++) {
+		$mediaId = !empty($remoteMedia [$index] ['id']) ? trim((string) $remoteMedia [$index] ['id']) : '';
+		if ($mediaId === '') {
+			continue;
+		}
+		$description = isset($mediaItems [$index] ['description']) ? trim((string) $mediaItems [$index] ['description']) : '';
+		if ($descriptionLimit > 0 && $description !== '') {
+			$description = plugin_mastodon_limit_text($description, $descriptionLimit);
+		}
+		$attribute = array(
+			'id' => $mediaId,
+			'description' => $description
+		);
+		if (!empty($remoteMedia [$index] ['focus'])) {
+			$attribute ['focus'] = trim((string) $remoteMedia [$index] ['focus']);
+		}
+		$attributes [] = $attribute;
+	}
+	return $attributes;
 }
 
 /**
@@ -3446,33 +4066,92 @@ function plugin_mastodon_extend_time_limit($minimumSeconds = 60) {
 }
 
 /**
+ * Load and cache the full Mastodon instance document returned by /api/v2/instance.
+ * @param array<string, string> $options
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_instance_document($options, $allowNetwork = true) {
+	$base = plugin_mastodon_normalize_instance_url(isset($options ['instance_url']) ? $options ['instance_url'] : '');
+	if ($base === '') {
+		return array();
+	}
+
+	$cached = plugin_mastodon_runtime_cache_get('instance_document', $base, $hit);
+	if ($hit && is_array($cached) && $cached !== array()) {
+		return $cached;
+	}
+
+	$stored = plugin_mastodon_saved_instance_document($options);
+	if ($stored !== array()) {
+		return plugin_mastodon_runtime_cache_set('instance_document', $base, $stored);
+	}
+
+	$apcuKey = 'instance_document:' . sha1($base);
+	$apcuValue = plugin_mastodon_apcu_fetch($apcuKey, $apcuHit);
+	if ($apcuHit && is_array($apcuValue) && $apcuValue !== array()) {
+		$document = plugin_mastodon_compact_instance_document($apcuValue);
+		if ($document !== array()) {
+			return plugin_mastodon_runtime_cache_set('instance_document', $base, $document);
+		}
+	}
+
+	if (!$allowNetwork) {
+		return array();
+	}
+
+	$response = plugin_mastodon_mastodon_json($options, 'GET', '/api/v2/instance', array(), false);
+	$document = (!empty($response ['ok']) && !empty($response ['json']) && is_array($response ['json'])) ? plugin_mastodon_compact_instance_document($response ['json']) : array();
+	if ($document !== array()) {
+		plugin_mastodon_apcu_store($apcuKey, $document, 900);
+		plugin_mastodon_store_instance_document($options, $document);
+		return plugin_mastodon_runtime_cache_set('instance_document', $base, $document);
+	}
+	return array();
+}
+
+/**
+ * Return the Mastodon version string advertised by /api/v2/instance, if any.
+ * @param array<string, string> $options
+ * @return string
+ */
+function plugin_mastodon_instance_version($options) {
+	$document = plugin_mastodon_instance_document($options);
+	if (!empty($document ['version']) && is_string($document ['version'])) {
+		return trim((string) $document ['version']);
+	}
+	return '';
+}
+
+/**
+ * Determine whether the configured Mastodon instance should support media description updates on already-posted statuses.
+ *
+ * Mastodon added `media_attributes` support on `PUT /api/v1/statuses/:id` in 4.1.0.
+ * When the instance version cannot be determined, the helper safely returns false so
+ * the caller can fall back to re-uploading media for description-only changes.
+ *
+ * @param array<string, string> $options
+ * @return bool
+ */
+function plugin_mastodon_instance_supports_status_media_attributes($options) {
+	$version = plugin_mastodon_instance_version($options);
+	if ($version === '') {
+		return false;
+	}
+	$normalized = preg_replace('/[^0-9.].*$/', '', $version);
+	if (!is_string($normalized) || $normalized === '' || !preg_match('/^\d+(?:\.\d+){0,3}$/', $normalized)) {
+		return false;
+	}
+	return version_compare($normalized, '4.1.0', '>=');
+}
+
+/**
  * Load and cache the Mastodon instance configuration document.
  * @param array<string, string> $options
  * @return array<string, mixed>
  */
 function plugin_mastodon_instance_configuration($options) {
-	static $cache = array();
-	$base = plugin_mastodon_normalize_instance_url(isset($options ['instance_url']) ? $options ['instance_url'] : '');
-	if ($base === '') {
-		return array();
-	}
-	if (isset($cache [$base])) {
-		return $cache [$base];
-	}
-
-	$apcuKey = 'instance_configuration:' . sha1($base);
-	$apcuValue = plugin_mastodon_apcu_fetch($apcuKey, $apcuHit);
-	if ($apcuHit && is_array($apcuValue)) {
-		$cache [$base] = $apcuValue;
-		return $cache [$base];
-	}
-
-	$response = plugin_mastodon_mastodon_json($options, 'GET', '/api/v2/instance', array(), false);
-	$cache [$base] = ($response ['ok'] && !empty($response ['json'] ['configuration']) && is_array($response ['json'] ['configuration'])) ? $response ['json'] ['configuration'] : array();
-	if ($cache [$base] !== array()) {
-		plugin_mastodon_apcu_store($apcuKey, $cache [$base], 900);
-	}
-	return $cache [$base];
+	$document = plugin_mastodon_instance_document($options);
+	return (!empty($document ['configuration']) && is_array($document ['configuration'])) ? $document ['configuration'] : array();
 }
 
 /**
@@ -3663,6 +4342,9 @@ function plugin_mastodon_http_request_multipart($method, $url, $headers, $fields
 			'body' => isset($mock ['body']) ? (string) $mock ['body'] : '',
 			'error' => isset($mock ['error']) ? (string) $mock ['error'] : ''
 		);
+	}
+	if (!empty($GLOBALS ['plugin_mastodon_test_http_no_network'])) {
+		return array('ok' => false, 'code' => 599, 'headers' => array(), 'body' => '', 'error' => 'missing_test_http_response');
 	}
 
 	if (function_exists('curl_init')) {
@@ -3955,6 +4637,103 @@ function plugin_mastodon_upload_media_items($options, $mediaItems, $limit) {
 }
 
 /**
+ * Decide whether a local entry update can reuse already-uploaded Mastodon media or needs a fresh upload.
+ *
+ * The planner distinguishes between attachment-content changes and description-only changes.
+ * When the actual files are unchanged, the plugin can reuse the stored Mastodon media IDs.
+ * On instances that support `media_attributes` (Mastodon 4.1+), description-only edits can
+ * be applied in-place; older or unknown instances safely fall back to re-uploading the media.
+ *
+ * @param array<string, string> $options
+ * @param array<string, mixed> $entryMeta
+ * @param array<int, array<string, mixed>> $mediaItems
+ * @param int $mediaLimit
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_prepare_entry_media_sync_plan($options, $entryMeta, $mediaItems, $mediaLimit) {
+	$prepared = plugin_mastodon_prepare_entry_media_items($mediaItems, $mediaLimit);
+	$effectiveMediaItems = isset($prepared ['items']) && is_array($prepared ['items']) ? $prepared ['items'] : array();
+	$skipped = isset($prepared ['skipped']) ? (int) $prepared ['skipped'] : 0;
+	$attachmentSignature = plugin_mastodon_entry_media_attachment_signature_from_items($effectiveMediaItems);
+	$descriptionSignature = plugin_mastodon_entry_media_description_signature_from_items($effectiveMediaItems);
+	$remoteMedia = plugin_mastodon_state_entry_remote_media($entryMeta);
+	$remoteMediaIds = array();
+	foreach ($remoteMedia as $remoteMediaItem) {
+		if (!empty($remoteMediaItem ['id'])) {
+			$remoteMediaIds [] = (string) $remoteMediaItem ['id'];
+		}
+	}
+
+	$storedAttachmentSignature = plugin_mastodon_state_entry_media_attachment_signature($entryMeta);
+	$storedDescriptionSignature = plugin_mastodon_state_entry_media_description_signature($entryMeta);
+	$descriptionChanged = ($storedDescriptionSignature !== $descriptionSignature);
+	$attachmentsChanged = ($storedAttachmentSignature !== $attachmentSignature);
+
+	if (empty($effectiveMediaItems)) {
+		return array(
+			'mode' => 'none',
+			'media_items' => array(),
+			'media_ids' => array(),
+			'media_attributes' => array(),
+			'remote_media' => array(),
+			'attachment_signature' => '',
+			'description_signature' => '',
+			'skipped' => $skipped,
+			'description_changed' => false,
+			'attachments_changed' => false
+		);
+	}
+
+	$canReuseRemoteMedia = !empty($remoteMediaIds)
+		&& count($remoteMediaIds) === count($effectiveMediaItems)
+		&& $storedAttachmentSignature !== ''
+		&& !$attachmentsChanged;
+
+	if (!$canReuseRemoteMedia) {
+		return array(
+			'mode' => 'upload',
+			'media_items' => $effectiveMediaItems,
+			'media_ids' => array(),
+			'media_attributes' => array(),
+			'remote_media' => array(),
+			'attachment_signature' => $attachmentSignature,
+			'description_signature' => $descriptionSignature,
+			'skipped' => $skipped,
+			'description_changed' => $descriptionChanged,
+			'attachments_changed' => $attachmentsChanged
+		);
+	}
+
+	if ($descriptionChanged && !plugin_mastodon_instance_supports_status_media_attributes($options)) {
+		return array(
+			'mode' => 'upload',
+			'media_items' => $effectiveMediaItems,
+			'media_ids' => array(),
+			'media_attributes' => array(),
+			'remote_media' => array(),
+			'attachment_signature' => $attachmentSignature,
+			'description_signature' => $descriptionSignature,
+			'skipped' => $skipped,
+			'description_changed' => true,
+			'attachments_changed' => false
+		);
+	}
+
+	return array(
+		'mode' => 'reuse',
+		'media_items' => $effectiveMediaItems,
+		'media_ids' => $remoteMediaIds,
+		'media_attributes' => $descriptionChanged ? plugin_mastodon_status_media_attributes($remoteMedia, $effectiveMediaItems, $options) : array(),
+		'remote_media' => $remoteMedia,
+		'attachment_signature' => $attachmentSignature,
+		'description_signature' => $descriptionSignature,
+		'skipped' => $skipped,
+		'description_changed' => $descriptionChanged,
+		'attachments_changed' => false
+	);
+}
+
+/**
  * Collect entry files recursively from the FlatPress content tree.
  * @param string $dir
  * @param array<int, string> $files
@@ -4133,8 +4912,47 @@ function plugin_mastodon_stream_context_request($url, $context) {
 }
 
 /**
- * Build an application/x-www-form-urlencoded query string.
- * @param array<string, mixed> $params
+ * Detect whether a value is a numerically indexed list.
+ *
+ * @param mixed $value Candidate value to inspect.
+ * @return bool
+ */
+function plugin_mastodon_array_is_list($value) {
+	if (!is_array($value)) {
+		return false;
+	}
+	$expected = 0;
+	foreach ($value as $key => $unused) {
+		if ($key !== $expected) {
+			return false;
+		}
+		$expected++;
+	}
+	return true;
+}
+
+/**
+ * Detect whether a list contains only scalar-compatible form values.
+ *
+ * @param mixed $value Candidate value to inspect.
+ * @return bool
+ */
+function plugin_mastodon_array_contains_only_form_scalars($value) {
+	if (!is_array($value)) {
+		return false;
+	}
+	foreach ($value as $item) {
+		if (is_array($item) || is_object($item)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * Build an application/x-www-form-urlencoded query string for Mastodon requests.
+ *
+ * @param mixed $params Request parameters.
  * @return string
  */
 function plugin_mastodon_http_build_query($params) {
@@ -4145,8 +4963,26 @@ function plugin_mastodon_http_build_query($params) {
 	$parts = array();
 	$append = function ($key, $value) use (&$parts, &$append) {
 		if (is_array($value)) {
-			foreach ($value as $item) {
-				$append($key . '[]', $item);
+			if (plugin_mastodon_array_is_list($value) && plugin_mastodon_array_contains_only_form_scalars($value)) {
+				foreach ($value as $childValue) {
+					$append($key . '[]', $childValue);
+				}
+				return;
+			}
+			if (plugin_mastodon_array_is_list($value)) {
+				foreach ($value as $childValue) {
+					if (is_array($childValue)) {
+						foreach ($childValue as $childKey => $nestedValue) {
+							$append($key . '[][' . (string) $childKey . ']', $nestedValue);
+						}
+					} else {
+						$append($key . '[]', $childValue);
+					}
+				}
+				return;
+			}
+			foreach ($value as $childKey => $childValue) {
+				$append($key . '[' . (string) $childKey . ']', $childValue);
 			}
 			return;
 		}
@@ -4207,6 +5043,9 @@ function plugin_mastodon_http_request($method, $url, $headers, $body, $contentTy
 			'body' => isset($mock ['body']) ? (string) $mock ['body'] : '',
 			'error' => isset($mock ['error']) ? (string) $mock ['error'] : ''
 		);
+	}
+	if (!empty($GLOBALS ['plugin_mastodon_test_http_no_network'])) {
+		return array('ok' => false, 'code' => 599, 'headers' => array(), 'body' => '', 'error' => 'missing_test_http_response');
 	}
 
 	if ($contentType !== '') {
@@ -4598,17 +5437,22 @@ function plugin_mastodon_create_status($options, $text, $inReplyToId, $mediaIds)
  * @param string $remoteId
  * @param string $text
  * @param array<int, string> $mediaIds
+ * @param array<int, array<string, string>> $mediaAttributes
  * @return array<string, mixed>
  */
-function plugin_mastodon_update_status($options, $remoteId, $text, $mediaIds) {
+function plugin_mastodon_update_status($options, $remoteId, $text, $mediaIds, $mediaAttributes = array()) {
 	$params = array('status' => $text);
 	$mediaIds = is_array($mediaIds) ? array_values(array_filter($mediaIds, 'strlen')) : array();
+	$mediaAttributes = is_array($mediaAttributes) ? array_values($mediaAttributes) : array();
 	$language = plugin_mastodon_configured_status_language();
 	if ($language !== '') {
 		$params ['language'] = $language;
 	}
 	if (!empty($mediaIds)) {
 		$params ['media_ids'] = $mediaIds;
+	}
+	if (!empty($mediaAttributes)) {
+		$params ['media_attributes'] = $mediaAttributes;
 	}
 	return plugin_mastodon_mastodon_json($options, 'PUT', '/api/v1/statuses/' . rawurlencode($remoteId), $params, true);
 }
@@ -5097,25 +5941,46 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state) {
 			}
 
 			$mediaItems = plugin_mastodon_collect_local_entry_media($entry);
-			$upload = plugin_mastodon_upload_media_items($options, $mediaItems, $mediaLimit);
-		if (!$upload ['ok']) {
-			$hadFailure = true;
-			$state ['last_error'] = 'local_entry_media_upload_failed: ' . $entryId . ' (' . $upload ['error'] . ')';
-			plugin_mastodon_log('Local entry media upload failed for ' . $entryId . ': ' . $upload ['error']);
-			continue;
-		}
-		$mediaIds = isset($upload ['media_ids']) && is_array($upload ['media_ids']) ? $upload ['media_ids'] : array();
+			$mediaPlan = plugin_mastodon_prepare_entry_media_sync_plan($options, $meta, $mediaItems, $mediaLimit);
+			$mediaIds = isset($mediaPlan ['media_ids']) && is_array($mediaPlan ['media_ids']) ? $mediaPlan ['media_ids'] : array();
+			$mediaAttributes = isset($mediaPlan ['media_attributes']) && is_array($mediaPlan ['media_attributes']) ? $mediaPlan ['media_attributes'] : array();
+			$effectiveMediaItems = isset($mediaPlan ['media_items']) && is_array($mediaPlan ['media_items']) ? $mediaPlan ['media_items'] : array();
+			$mediaAttachmentSignature = isset($mediaPlan ['attachment_signature']) ? (string) $mediaPlan ['attachment_signature'] : '';
+			$mediaDescriptionSignature = isset($mediaPlan ['description_signature']) ? (string) $mediaPlan ['description_signature'] : '';
+			$resolvedRemoteMedia = isset($mediaPlan ['remote_media']) && is_array($mediaPlan ['remote_media']) ? $mediaPlan ['remote_media'] : array();
+			$uploadedNewMedia = false;
+			if (!empty($mediaPlan ['skipped'])) {
+				plugin_mastodon_log('Skipped ' . (int) $mediaPlan ['skipped'] . ' local media attachment(s) because the Mastodon instance allows only ' . $mediaLimit . ' attachment(s) per status.');
+			}
+
+			if (($mediaPlan ['mode'] === 'upload') && !empty($effectiveMediaItems)) {
+				$upload = plugin_mastodon_upload_media_items($options, $effectiveMediaItems, count($effectiveMediaItems));
+				if (!$upload ['ok']) {
+					$hadFailure = true;
+					$state ['last_error'] = 'local_entry_media_upload_failed: ' . $entryId . ' (' . $upload ['error'] . ')';
+					plugin_mastodon_log('Local entry media upload failed for ' . $entryId . ': ' . $upload ['error']);
+					continue;
+				}
+				$mediaIds = isset($upload ['media_ids']) && is_array($upload ['media_ids']) ? $upload ['media_ids'] : array();
+				$resolvedRemoteMedia = plugin_mastodon_remote_media_descriptors_from_media_ids($mediaIds, $effectiveMediaItems, $options);
+				$uploadedNewMedia = !empty($mediaIds);
+			}
 
 		if (!empty($meta ['remote_id'])) {
 			if (!empty($meta ['hash']) && $meta ['hash'] === $hash) {
 				// no change
 			} else {
-				$updated = plugin_mastodon_update_status($options, $meta ['remote_id'], $text, $mediaIds);
+				$updated = plugin_mastodon_update_status($options, $meta ['remote_id'], $text, $mediaIds, $mediaAttributes);
 				if ($updated ['ok'] && !empty($updated ['json'] ['id'])) {
 					plugin_mastodon_state_set_entry_mapping($state, $entryId, $meta ['remote_id'], 'local', $hash, isset($updated ['json'] ['url']) ? $updated ['json'] ['url'] : '', plugin_mastodon_parse_iso_datetime(isset($updated ['json'] ['edited_at']) ? $updated ['json'] ['edited_at'] : ''), plugin_mastodon_local_item_date_key($entry, $entryId), plugin_mastodon_remote_status_date_key(isset($updated ['json']) && is_array($updated ['json']) ? $updated ['json'] : array()));
+					$updatedRemoteMedia = plugin_mastodon_remote_media_descriptors_from_status(isset($updated ['json']) && is_array($updated ['json']) ? $updated ['json'] : array());
+					if (!empty($updatedRemoteMedia)) {
+						$resolvedRemoteMedia = $updatedRemoteMedia;
+					}
+					plugin_mastodon_state_set_entry_media_meta($state, $entryId, $resolvedRemoteMedia, $mediaAttachmentSignature, $mediaDescriptionSignature);
 					$state ['content_stats'] ['updated_remote_entries']++;
 				} else {
-					if (!empty($mediaIds)) {
+					if ($uploadedNewMedia && !empty($mediaIds)) {
 						plugin_mastodon_cleanup_uploaded_media($options, $mediaIds);
 					}
 					$hadFailure = true;
@@ -5128,10 +5993,15 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state) {
 			$created = plugin_mastodon_create_status($options, $text, '', $mediaIds);
 			if ($created ['ok'] && !empty($created ['json'] ['id'])) {
 				plugin_mastodon_state_set_entry_mapping($state, $entryId, $created ['json'] ['id'], 'local', $hash, isset($created ['json'] ['url']) ? $created ['json'] ['url'] : '', plugin_mastodon_parse_iso_datetime(isset($created ['json'] ['created_at']) ? $created ['json'] ['created_at'] : ''), plugin_mastodon_local_item_date_key($entry, $entryId), plugin_mastodon_remote_status_date_key(isset($created ['json']) && is_array($created ['json']) ? $created ['json'] : array()));
+				$createdRemoteMedia = plugin_mastodon_remote_media_descriptors_from_status(isset($created ['json']) && is_array($created ['json']) ? $created ['json'] : array());
+				if (!empty($createdRemoteMedia)) {
+					$resolvedRemoteMedia = $createdRemoteMedia;
+				}
+				plugin_mastodon_state_set_entry_media_meta($state, $entryId, $resolvedRemoteMedia, $mediaAttachmentSignature, $mediaDescriptionSignature);
 				$state ['content_stats'] ['exported_entries']++;
 				$meta = plugin_mastodon_state_get_entry_meta($state, $entryId);
 			} else {
-				if (!empty($mediaIds)) {
+				if ($uploadedNewMedia && !empty($mediaIds)) {
 					plugin_mastodon_cleanup_uploaded_media($options, $mediaIds);
 				}
 				$hadFailure = true;
@@ -5471,6 +6341,141 @@ function plugin_mastodon_maybe_sync() {
 }
 add_action('init', 'plugin_mastodon_maybe_sync', 20);
 
+
+/**
+ * Return a localized yes/no/unknown label for admin diagnostics.
+ * @param mixed $value
+ * @return string
+ */
+function plugin_mastodon_admin_boolean_label($value) {
+	if ($value === null || $value === '') {
+		return plugin_mastodon_lang_string('bool_unknown', 'Unknown');
+	}
+	return !empty($value) ? plugin_mastodon_lang_string('bool_yes', 'Yes') : plugin_mastodon_lang_string('bool_no', 'No');
+}
+
+/**
+ * Add one admin diagnostics row when the value is available.
+ * @param array<int, array<string, string>> $rows
+ * @param string $label
+ * @param string $value
+ * @param string $url
+ * @return array<int, array<string, string>>
+ */
+function plugin_mastodon_admin_add_info_row($rows, $label, $value, $url = '') {
+	$label = trim((string) $label);
+	$value = trim((string) $value);
+	$url = trim((string) $url);
+	if ($label === '' || $value === '') {
+		return is_array($rows) ? $rows : array();
+	}
+	$rows = is_array($rows) ? $rows : array();
+	$rows [] = array(
+		'label' => $label,
+		'value' => $value,
+		'url' => $url
+	);
+	return $rows;
+}
+
+/**
+ * Summarize the registration state advertised by the Mastodon instance.
+ * @param array<string, mixed> $document
+ * @return string
+ */
+function plugin_mastodon_instance_registration_summary($document) {
+	$registrations = (!empty($document ['registrations']) && is_array($document ['registrations'])) ? $document ['registrations'] : array();
+	if ($registrations === array()) {
+		return plugin_mastodon_lang_string('bool_unknown', 'Unknown');
+	}
+	$parts = array();
+	if (array_key_exists('enabled', $registrations)) {
+		$parts [] = !empty($registrations ['enabled']) ? plugin_mastodon_lang_string('instance_info_registrations_open', 'Open') : plugin_mastodon_lang_string('instance_info_registrations_closed', 'Closed');
+	}
+	if (!empty($registrations ['approval_required'])) {
+		$parts [] = plugin_mastodon_lang_string('instance_info_registrations_approval_required', 'Approval required');
+	}
+	if (isset($registrations ['min_age']) && $registrations ['min_age'] !== '') {
+		$parts [] = sprintf(plugin_mastodon_lang_string('instance_info_registrations_min_age', 'Minimum age: %d'), (int) $registrations ['min_age']);
+	}
+	if (array_key_exists('reason_required', $registrations) && !empty($registrations ['reason_required'])) {
+		$parts [] = plugin_mastodon_lang_string('instance_info_registrations_reason_required', 'Reason required');
+	}
+	return empty($parts) ? plugin_mastodon_lang_string('bool_unknown', 'Unknown') : implode(' · ', $parts);
+}
+
+/**
+ * Build the rows for the admin instance-information diagnostics table.
+ * @param array<string, string> $options
+ * @return array<int, array<string, string>>
+ */
+function plugin_mastodon_admin_instance_info_rows($options) {
+	$options = is_array($options) ? $options : array();
+	$document = plugin_mastodon_instance_document($options, false);
+	$rows = array();
+	$rows = plugin_mastodon_admin_add_info_row(
+		$rows,
+		plugin_mastodon_lang_string('instance_info_cache_state', 'Cache state'),
+		$document !== array() ? plugin_mastodon_lang_string('instance_info_cache_state_cached', 'Saved snapshot available') : plugin_mastodon_lang_string('instance_info_cache_state_missing', 'No saved snapshot available')
+	);
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_last_refresh', 'Last refresh'), isset($options ['instance_info_fetched_at']) ? (string) $options ['instance_info_fetched_at'] : '');
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_last_error', 'Last refresh error'), isset($options ['instance_info_error']) ? (string) $options ['instance_info_error'] : '');
+
+	if ($document === array()) {
+		return $rows;
+	}
+
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_domain', 'Domain'), isset($document ['domain']) ? (string) $document ['domain'] : '');
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_title', 'Title'), isset($document ['title']) ? (string) $document ['title'] : '');
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_version', 'Exact version'), isset($document ['version']) ? (string) $document ['version'] : '');
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_api_version', 'API compatibility version'), isset($document ['api_versions'] ['mastodon']) ? (string) $document ['api_versions'] ['mastodon'] : '');
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_description', 'Description'), isset($document ['description']) ? (string) $document ['description'] : '');
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_source_url', 'Source URL'), isset($document ['source_url']) ? (string) $document ['source_url'] : '', isset($document ['source_url']) ? (string) $document ['source_url'] : '');
+
+	if (!empty($document ['languages']) && is_array($document ['languages'])) {
+		$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_languages', 'Languages'), implode(', ', $document ['languages']));
+	}
+	if (isset($document ['usage'] ['users'] ['active_month'])) {
+		$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_active_month', 'Active users (4 weeks)'), (string) (int) $document ['usage'] ['users'] ['active_month']);
+	}
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_registrations', 'Registrations'), plugin_mastodon_instance_registration_summary($document));
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_registration_url', 'Registration URL'), !empty($document ['registrations'] ['url']) ? (string) $document ['registrations'] ['url'] : '', !empty($document ['registrations'] ['url']) ? (string) $document ['registrations'] ['url'] : '');
+	if (isset($document ['rules_count'])) {
+		$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_rules', 'Published rules'), (string) (int) $document ['rules_count']);
+	}
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_contact_email', 'Contact email'), !empty($document ['contact'] ['email']) ? (string) $document ['contact'] ['email'] : '');
+	$contactAccountValue = '';
+	$contactAccountUrl = '';
+	if (!empty($document ['contact'] ['account']) && is_array($document ['contact'] ['account'])) {
+		$contactAccountValue = !empty($document ['contact'] ['account'] ['acct']) ? (string) $document ['contact'] ['account'] ['acct'] : '';
+		$contactAccountUrl = !empty($document ['contact'] ['account'] ['url']) ? (string) $document ['contact'] ['account'] ['url'] : '';
+		if ($contactAccountValue === '' && $contactAccountUrl !== '') {
+			$contactAccountValue = $contactAccountUrl;
+		}
+	}
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_contact_account', 'Contact account'), $contactAccountValue, $contactAccountUrl);
+	foreach (array(
+		'about' => 'instance_info_about_url',
+		'status' => 'instance_info_status_url',
+		'privacy_policy' => 'instance_info_privacy_policy_url',
+		'terms_of_service' => 'instance_info_terms_of_service_url',
+		'streaming' => 'instance_info_streaming_url'
+	) as $urlKey => $labelKey) {
+		$url = !empty($document ['configuration'] ['urls'] [$urlKey]) ? (string) $document ['configuration'] ['urls'] [$urlKey] : '';
+		$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string($labelKey, ucwords(str_replace('_', ' ', $urlKey)) . ' URL'), $url, $url);
+	}
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_status_character_limit', 'Status character limit'), isset($document ['configuration'] ['statuses'] ['max_characters']) ? (string) (int) $document ['configuration'] ['statuses'] ['max_characters'] : '');
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_media_limit', 'Media attachments per status'), isset($document ['configuration'] ['statuses'] ['max_media_attachments']) ? (string) (int) $document ['configuration'] ['statuses'] ['max_media_attachments'] : '');
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_media_description_limit', 'Media description limit'), isset($document ['configuration'] ['media_attachments'] ['description_limit']) ? (string) (int) $document ['configuration'] ['media_attachments'] ['description_limit'] : '');
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_url_reserved_length', 'Reserved characters per URL'), isset($document ['configuration'] ['statuses'] ['characters_reserved_per_url']) ? (string) (int) $document ['configuration'] ['statuses'] ['characters_reserved_per_url'] : '');
+	$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_translation', 'Translations API available'), isset($document ['configuration'] ['translation'] ['enabled']) ? plugin_mastodon_admin_boolean_label($document ['configuration'] ['translation'] ['enabled']) : '');
+	if (!empty($document ['configuration'] ['media_attachments'] ['supported_mime_types']) && is_array($document ['configuration'] ['media_attachments'] ['supported_mime_types'])) {
+		$rows = plugin_mastodon_admin_add_info_row($rows, plugin_mastodon_lang_string('instance_info_supported_mime_types', 'Supported media MIME types'), implode(', ', $document ['configuration'] ['media_attachments'] ['supported_mime_types']));
+	}
+
+	return $rows;
+}
+
 /**
  * Assign plugin data to Smarty for the admin panel.
  * @param Smarty $smarty
@@ -5501,6 +6506,8 @@ function plugin_mastodon_admin_assign(&$smarty) {
 	$smarty->assign('mastodon_state', $state);
 	$smarty->assign('mastodon_authorize_url', $authorizeUrl);
 	$smarty->assign('mastodon_temp_dir', PLUGIN_MASTODON_STATE_DIR);
+	$smarty->assign('mastodon_instance_info_rows', plugin_mastodon_admin_instance_info_rows($options));
+	$smarty->assign('mastodon_instance_info_available', plugin_mastodon_instance_document($options, false) !== array());
 	$smarty->assign('mastodon_companion_plugins_head', plugin_mastodon_lang_string('companion_plugins_head', 'Companion FlatPress plugins'));
 	$smarty->assign('mastodon_companion_plugins_intro', plugin_mastodon_lang_string('companion_plugins_intro', 'For the full Mastodon feature set, activate these FlatPress plugins as well.'));
 	$smarty->assign('mastodon_companion_plugins', plugin_mastodon_companion_plugins_status());
@@ -5545,6 +6552,19 @@ if (class_exists('AdminPanelAction')) {
 				$code = trim(isset($_POST ['authorization_code']) ? (string) $_POST ['authorization_code'] : '');
 				$response = plugin_mastodon_exchange_code_for_token($options, $code);
 				$this->smarty->assign('success', $response ['ok'] ? 3 : -3);
+			} elseif (isset($_POST ['mastodon_refresh_instance_info'])) {
+				$options ['instance_url'] = plugin_mastodon_normalize_instance_url(isset($_POST ['instance_url']) ? $_POST ['instance_url'] : $options ['instance_url']);
+				if ($options ['instance_url'] === '') {
+					$options = plugin_mastodon_clear_saved_instance_info($options);
+					plugin_mastodon_save_options($options);
+					$this->smarty->assign('success', -6);
+				} else {
+					if ($options ['instance_url'] !== plugin_mastodon_normalize_instance_url(plugin_mastodon_get_options()['instance_url'])) {
+						plugin_mastodon_save_options($options);
+					}
+					$response = plugin_mastodon_refresh_instance_information($options);
+					$this->smarty->assign('success', !empty($response ['ok']) ? 6 : -6);
+				}
 			} elseif (isset($_POST ['mastodon_run_now'])) {
 				$result = plugin_mastodon_run_sync(true);
 				$this->smarty->assign('success', $result ['ok'] ? 4 : -4);
