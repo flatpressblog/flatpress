@@ -606,12 +606,13 @@ function plugin_mastodon_oauth_scopes($options = array()) {
 
 /**
  * Return a value from the request-local plugin cache.
- * @param string $bucket
- * @param string $key
- * @param bool|null $hit
+ *
+ * @param string $bucket Cache bucket name.
+ * @param string $key Cache entry key.
+ * @param-out bool $hit Whether the requested cache entry was found.
  * @return mixed
  */
-function plugin_mastodon_runtime_cache_get($bucket, $key, &$hit = null) {
+function plugin_mastodon_runtime_cache_get($bucket, $key, &$hit = false) {
 	$bucket = (string) $bucket;
 	$key = (string) $key;
 	$hit = false;
@@ -4911,9 +4912,10 @@ function plugin_mastodon_stream_context_request($url, $context) {
 }
 
 /**
- * Build an application/x-www-form-urlencoded query string.
- * @param array<string, mixed> $params
- * @return string
+ * Detect whether a value is a numerically indexed list.
+ *
+ * @param mixed $value Candidate value to inspect.
+ * @return bool
  */
 function plugin_mastodon_array_is_list($value) {
 	if (!is_array($value)) {
