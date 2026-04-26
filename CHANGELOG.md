@@ -16,7 +16,7 @@
 - Mastodon: The plugin toots your entries and their comments to Mastodon. Content from your Mastodon account is integrated into your blog. ([#857](https://github.com/flatpressblog/flatpress/issues/857))
 
 ### Changes
-- SEO Meta Tag Info plugin update to version 2.3.0
+- SEO Meta Tag Info plugin update to version 2.3.1
     - The following Open Graph meta tags are now also generated for single posts:
         - ``article:published_time`` - based on the publication date ([#856](https://github.com/flatpressblog/flatpress/pull/856))
         - ``article:section`` - based on the selected category/subcategory ([#858](https://github.com/flatpressblog/flatpress/pull/858))
@@ -36,6 +36,8 @@
     - Selective escaping to allow Markdown autolinks when inline HTML is disabled. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
 - FootNotes plugin update to version 1.0.2
     - ``*Text*`` is no longer incorrectly displayed in bold ([extras #60](https://github.com/flatpressblog/flatpress-extras/issues/60))
+- SEO Meta Tag Info plugin update to version 2.3.1
+    - A missing key when changing the language no longer causes an error ([Thank you very much to Laborix](https://forum.flatpress.org/viewtopic.php?p=3631#p3626))
 
 ## Themes
 ### Changes
