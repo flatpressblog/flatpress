@@ -6,6 +6,7 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'head' => 'SEO robots.txt',
 	'description1' => 'Het <code>robots.txt</code>-bestand regelt de crawlers van een zoekmachine en het gedrag van de crawlers op je FlatPress-blog. ' . //
 		'Hier kunt u een <code>rotots.txt</code>-bestand maken en bewerken voor zoekmachineoptimalisatie.',
+	'cantsave' => 'U kunt dit bestand niet bewerken omdat het niet <strong>schrijfbaar</strong> is. U kunt schrijfmachtigingen geven of een kopie maken en plakken in een bestand en vervolgens handmatig uploaden.',
 	'location' => '<strong>Opslaglocatie:</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
 	'submit' => 'robots.txt opslaan',
 

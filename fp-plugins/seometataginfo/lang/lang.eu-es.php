@@ -6,6 +6,8 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'head' => 'SEO robots.txt',
 	'description1' => '<code>robots.txt</code> fitxategiak bilaketa-motor baten arakatzaileak eta arakatzaileen portaera kontrolatzen ditu zure FlatPress blogean. ' . //
 		'Hemen <code>rotots.txt</code> fitxategi bat sortu eta editatu dezakezu bilaketa-motorren optimizaziorako.',
+	'cantsave' => 'Ezin duzu fitxategi hau editatu, ez baita <strong>idatzigarria</strong>. Idazteko baimena eman diezaiokezu FlatPressi edo kopiatu' . //
+    ' eta fitxategi berri batera itsatsi eta gero eskuz igo.',
 	'location' => '<strong>Biltegiratzearen kokapena:</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
 	'submit' => 'Gorde robots.txt fitxategia',
 

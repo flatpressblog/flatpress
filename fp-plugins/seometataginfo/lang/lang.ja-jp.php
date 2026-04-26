@@ -6,6 +6,8 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'head' => 'SEO robots.txt',
 	'description1' => '<code>robots.txt</code>ファイルは、検索エンジンのクローラーと、あなたのFlatPressブログ上でのクローラーの動作を制御します。 ' . //
 		'ここでは、検索エンジン最適化のための<code>robots.txt</code>ファイルを作成・編集することができます。',
+	'cantsave' => 'このファイルを編集できません、なぜなら <strong>書き込み許可</strong>されてないからです。' .
+		'書き込み許可を与えたり、ファイルにコピー＆ペーストしてアップロードすることもできます。',
 	'location' => '<strong>保管場所:</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
 	'submit' => 'robots.txtを保存する',
 

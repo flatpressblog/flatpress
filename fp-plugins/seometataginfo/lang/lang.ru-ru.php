@@ -6,6 +6,7 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'head' => 'SEO robots.txt',
 	'description1' => 'Файл <code>robots.txt</code> контролирует краулеров поисковых систем и их поведение на вашем блоге FlatPress. ' . //
 		'Здесь вы можете создать и отредактировать файл <code>rotots.txt</code> для оптимизации поисковых систем.',
+	'cantsave' => 'Вы не можете редактировать этот файл, поскольку он  <strong>недоступен для записи</strong>. Вы можете дать разрешение на запись или скопировать и вставить в файл, а затем загрузить вручную.',
 	'location' => '<strong>Место хранения:</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
 	'submit' => 'Сохраните robots.txt',
 
