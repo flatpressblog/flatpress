@@ -5,6 +5,7 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	// SEO robots.txt kısmı 1
 	'head' => 'SEO robots.txt',
 	'description1' => '<code>robots.txt</code> dosyası, arama motorlarının tarayıcılarını ve FlatPress blogunuzdaki tarayıcıların davranışlarını kontrol eder. Burada, arama motoru optimizasyonu için bir <code>robots.txt</code> dosyası oluşturabilir ve düzenleyebilirsiniz.',
+	'cantsave' => 'Bu dosyayı düzenleyemezsiniz çünkü <strong>yazılabilir</strong> değil. Yazma izni verebilirsiniz ya da dosyayı kopyalayıp yapıştırarak manuel olarak yükleyebilirsiniz.',
 	'location' => '<strong>Depolama yeri:</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
 	'submit' => 'robots.txt dosyasını kaydet',
 

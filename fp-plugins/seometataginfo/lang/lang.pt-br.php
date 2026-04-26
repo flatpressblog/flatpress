@@ -6,6 +6,7 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'head' => 'SEO robots.txt',
 	'description1' => 'O arquivo <code>robots.txt</code> controla os rastreadores de um mecanismo de pesquisa e o comportamento dos rastreadores em seu blog do FlatPress. ' . //
 		'Aqui você pode criar e editar um arquivo <code>rotots.txt</code> para otimização de mecanismos de pesquisa.',
+	'cantsave' => 'Você não pode editar este arquivo, porque ele não é <strong>gravável</strong>. Você pode conceder permissão de gravação ou copiar e colar em um arquivo e fazer o upload.',
 	'location' => '<strong>Local de armazenamento:</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
 	'submit' => 'Salvar o arquivo robots.txt',
 

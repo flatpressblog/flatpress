@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: SEO Meta Tag Info
- * Version: 2.3.0
+ * Version: 2.3.1
  * Plugin URI: https://www.flatpress.org
  * Description: This plugin allows editing of SEO meta tags description, keywords and robots for Entries, Statics and Categories. Part of the standard distribution. <a href="./fp-plugins/seometataginfo/doc_seometataginfo.txt" title="Anleitung" target="_blank">[Instructions]</a>
  * Author: FlatPress
@@ -1824,6 +1824,44 @@ function plugin_seometataginfo_init() {
 
 add_action('init', 'plugin_seometataginfo_init');
 
+
+/**
+ * Returns an admin string for the SEO Meta Tag Info plugin with safe fallbacks.
+ *
+ * This prevents template warnings when a translation pack does not provide
+ * a bundled key yet (for example after a plugin update).
+ *
+ * @param string $key
+ * @param string $default
+ * @return string
+ */
+function seometataginfo_get_admin_string($key, $default = '') {
+	static $cache = array();
+
+	$key = is_string($key) ? trim($key) : '';
+	if ($key === '') {
+		return is_string($default) ? $default : '';
+	}
+
+	if (array_key_exists($key, $cache)) {
+		return $cache [$key];
+	}
+
+	$value = '';
+
+	$lang = lang_load('plugin:seometataginfo');
+	if (isset($lang ['admin'] ['plugin'] ['seometataginfo'] [$key]) && is_string($lang ['admin'] ['plugin'] ['seometataginfo'] [$key])) {
+		$value = $lang ['admin'] ['plugin'] ['seometataginfo'] [$key];
+	}
+
+	if ($value === '' && is_string($default)) {
+		$value = $default;
+	}
+
+	$cache [$key] = $value;
+	return $value;
+}
+
 /**
  * SEO robots.txt part
  */
@@ -1885,6 +1923,7 @@ Disallow: ' . $blogroot . 'fp-content/attachs/
 			}
 
 			$this->smarty->assign('cantsave', (!is_writable($_SERVER ['DOCUMENT_ROOT']) || (file_exists($f) && !is_writable($f))));
+			$this->smarty->assign('robots_cantsave', seometataginfo_get_admin_string('cantsave', 'You can\'t edit this file, because it\'s not <strong>writable</strong>. You can give writing permission or copy and paste to a file and then upload manually.'));
 			$this->smarty->assign('robots', $txt);
 		}
 

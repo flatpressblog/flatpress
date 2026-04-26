@@ -6,6 +6,7 @@ $lang ['admin'] ['plugin'] ['seometataginfo'] = array(
 	'head' => 'SEO robots.txt',
 	'description1' => 'Datoteka <code>robots.txt</code> nadzira brskalnike iskalnikov in njihovo obnašanje na vašem blogu FlatPress. ' . //
 		'Tu lahko ustvarite in urejate datoteko <code>rotots.txt</code> za optimizacijo za iskalnike.',
+	'cantsave' => 'Datoteke ne morete urejati, ker ni <strong>zapisljiva</strong>. Lahko podelite dovoljenja za pisanje ali kopirate in prilepite v datoteko ter jo nato naložite ročno.',
 	'location' => '<strong>Lokacija shranjevanja:</strong> ' . $_SERVER ['DOCUMENT_ROOT'] . '/',
 	'submit' => 'Shranite robots.txt',
 

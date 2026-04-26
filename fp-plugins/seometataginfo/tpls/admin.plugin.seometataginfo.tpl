@@ -12,7 +12,7 @@
 
 	<div class="buttonbar">
 	{if $cantsave}
-		<p><em>{$plang.cantsave}</em></p>
+		<p><em>{$robots_cantsave}</em></p>
 	{else}
 		<p>{$lang.admin.plugin.seometataginfo.location}</p>
 		<input type="submit" name="robots-submit" value="{$plang.submit}">
