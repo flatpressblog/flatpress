@@ -2181,7 +2181,7 @@ function plugin_mastodon_list_local_comment_ids($entryId) {
 		return array();
 	}
 	while (($file = readdir($handle)) !== false) {
-		if (!is_string($file) || $file === '' || $file [0] === '.') {
+		if ($file === '' || $file [0] === '.') {
 			continue;
 		}
 		if (!fnmatch('comment*' . EXT, $file)) {
