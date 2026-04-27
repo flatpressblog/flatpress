@@ -1,498 +1,375 @@
 ====== FlatPress Mastodon Plugin User Guide ======
 
 Author: [[https://frank-web.dedyn.io|Fraenkiman]]
+
 ===== What this plugin does =====
 
-The plugin synchronizes FlatPress content with one Mastodon account in **both directions**:
+The Mastodon plugin connects one FlatPress installation with one Mastodon account.
+
+It can synchronize content in **both directions**:
 
   * FlatPress entry -> Mastodon status
   * FlatPress comment -> Mastodon reply
   * FlatPress reply to a comment -> Mastodon reply to that reply
   * Mastodon top-level status -> FlatPress entry
-  * Mastodon reply inside the imported thread -> FlatPress comment
+  * Mastodon reply inside a known imported thread -> FlatPress comment
 
-The plugin also synchronizes **images** for FlatPress entries and Mastodon statuses.
+The plugin can also synchronize:
 
-When the FlatPress **Tag** plugin is active, the plugin also synchronizes **entry tags** in both directions:
-
-  * FlatPress entry tags -> Mastodon hashtags
-  * Mastodon hashtags -> FlatPress entry tags
+  * images from FlatPress entries to Mastodon
+  * image attachments from Mastodon to FlatPress
+  * FlatPress entry tags and Mastodon hashtags when the FlatPress **Tag** plugin is active
 
 ===== Important concept =====
 
-Mastodon does not have a separate “comment” object in the way a blog does. In practice, comments are represented as **replies**.
+Mastodon does not have a separate “comment” object like a blog.
 
-The plugin works with the following mapping:
+In Mastodon, comments are simply **replies** inside a thread.
 
-  * **Entry -> Mastodon status without ''in_reply_to_id''**
-  * **Comment on an entry -> Mastodon status with ''in_reply_to_id'' pointing to the entry status**
-  * **Comment on a comment -> Mastodon status with ''in_reply_to_id'' pointing to the parent reply**
+The plugin therefore uses this mapping:
+
+  * **Entry** -> Mastodon status without ''in_reply_to_id''
+  * **Comment on an entry** -> Mastodon reply to the entry status
+  * **Comment on a comment** -> Mastodon reply to the parent reply
+
+That means a synchronized discussion can continue on both sides as one thread.
 
 ===== Requirements =====
 
-==== FlatPress side ====
-
 You need:
 
-  * a working FlatPress ≥ 1.5.1 Stringendo installation
+  * [[en:doc:basic:upgrade|FlatPress 1.5.1 Stringendo]] or newer
   * PHP **7.2 to 8.5**
-  * the plugin files from this package
 
-==== Companion FlatPress plugins for the full feature set ====
+The plugin uses:
 
-For the complete FlatPress-side experience of synchronized Mastodon content, also activate these plugins:
-
-  * BBCode
-  * PhotoSwipe
-  * Tag
-  * Emoticons
-
-BBCode renders imported links, formatting, images and galleries. PhotoSwipe provides the intended image/gallery presentation. Tag synchronizes FlatPress tags and Mastodon hashtags. Emoticons renders imported Mastodon emoji shortcodes as FlatPress emoticons.
-
-==== PHP features used by the plugin ====
-
-The code uses these PHP features and transports:
-
-  * **cURL** for HTTP requests when available
+  * **cURL** when available
   * **''allow_url_fopen''** as a fallback if cURL is not available
   * **JSON**
-  * **DOMDocument / libxml** for best HTML-to-BBCode conversion
-  * **OpenSSL** to encrypt stored secrets when available
+  * **DOMDocument / libxml** for the best HTML-to-BBCode conversion
+  * **OpenSSL** to protect stored secrets when available
 
-==== Optional FlatPress plugin for tag synchronization ====
+===== Recommended FlatPress plugins =====
 
-If you want to synchronize entry tags between FlatPress and Mastodon, also enable:
+For the best result with synchronized Mastodon content, also enable these FlatPress plugins:
 
-  * the FlatPress **Tag** plugin
+  * **BBCode**
+  * **PhotoSwipe**
+  * **[[tag|Tag]]**
+  * **Emoticons**
 
-==== Recommended but not strictly required ====
+They improve the result like this:
 
-  * **OpenSSL enabled**
-    * Without OpenSSL, secrets fall back to a plain base64 storage format.
-  * **DOM extension enabled**
-    * Without DOM, Mastodon HTML import still has a fallback, but formatting quality can be lower.
-  * **A public FlatPress website**
-    * If your FlatPress site only runs on ''localhost'', Mastodon readers cannot open your blog links from the fediverse.
+  * **BBCode** renders imported formatting, links, images and galleries properly.
+  * **PhotoSwipe** improves image and gallery display.
+  * **Tag** enables tag / hashtag synchronization.
+  * **Emoticons** renders imported emoji shortcodes more nicely.
 
-===== Current limitations and behavior =====
+===== What the plugin currently does and does not do =====
 
-==== Visibility and privacy ====
+==== Visibility ====
 
-  * Exported FlatPress entries are posted to Mastodon with **public** visibility.
-  * Exported FlatPress comments are also posted as **public** replies.
-  * Imported Mastodon statuses with visibility **''private''** or **''direct''** are **not** imported into FlatPress.
-  * Imported Mastodon replies with visibility **''private''** or **''direct''** are also skipped.
+  * Exported FlatPress entries are posted to Mastodon as **public** statuses.
+  * Exported FlatPress comments are posted to Mastodon as **public** replies.
+  * Mastodon statuses or replies with visibility **private** or **direct** are not imported into FlatPress.
 
-==== What is imported from Mastodon ====
+==== Text and formatting ====
 
-The plugin fetches statuses from the **authenticated Mastodon account** and uses these rules:
+  * FlatPress content is converted to Mastodon-friendly plain text during export.
+  * Mastodon HTML is converted to FlatPress-friendly BBCode during import.
+  * If you enable **Update existing local content from Mastodon**, already imported local entries and comments may be refreshed from Mastodon later. In that mode the plugin keeps local texts within a practical size limit.
 
-  * top-level statuses are imported as FlatPress entries
-  * replies are **not** fetched as top-level entries
-  * boosts / reblogs are **not** imported as entries
-  * for each imported top-level status, the plugin loads the thread context
-  * visible descendant replies in that thread are imported as FlatPress comments
+==== Images and media ====
 
-This means you will see a Mastodon post as a **FlatPress entry** when it is a top-level post from the connected account.
+  * FlatPress **entries** can export local images referenced by ''[img]'' and ''[gallery]''.
+  * FlatPress **comments do not export images**.
+  * Mastodon image attachments can be imported into FlatPress.
+  * Mastodon video and audio attachments are currently not imported by this plugin.
+  * If the Mastodon server has media limits, extra images are skipped instead of breaking the whole synchronization.
+  * When the plugin already knows an image description, it sends that description during the initial Mastodon media upload.
+  * If only the image description changes later, the plugin can update the description on supported Mastodon servers without re-uploading the image.
 
-You will see a Mastodon post as a **FlatPress comment** when it is a reply inside the thread of an imported top-level status.
-
-==== Scheduling ====
-
-  * The default daily synchronization time is **03:00**
-  * If the plugin has **never run before**, the first sync is due immediately
-  * The time can be changed in the plugin settings
-  * Scheduled sync runs only when a normal **web request** reaches FlatPress
-  * The automatic sync does **not** run during CLI execution
-  * The automatic sync is skipped for HTTP **POST** requests
-  * There is also a **Run synchronization now** button in the admin panel
-
-In simple words: if nobody visits your FlatPress site after the scheduled time, the automatic sync will wait until the next normal page request.
-
-==== Decoupled deletion synchronization run ====
-
-  * Deletions are synchronized separately from content synchronization.
-  * Entries and comments prior to the set synchronization date remain unchanged on both sides.
-  * The admin option **Enable deletion synchronization** controls whether this follow-up delete pass runs at all.
-    If the option is disabled, content synchronization still runs, but no follow-up deletions are executed and pending delete work is cleared.
-
-==== Tag support ====
+==== Tags ====
 
   * Tag synchronization works only when the FlatPress **Tag** plugin is active.
-  * FlatPress **entries** can export tags to Mastodon.
-  * FlatPress **comments** do not support tags and therefore do not export tags.
-  * Mastodon top-level statuses can import hashtags into FlatPress entries.
-  * Mastodon replies imported as FlatPress comments do not get tags.
-  * FlatPress tags are synchronized to Mastodon as **hashtags** with a leading ''#''.
-  * Mastodon hashtags are synchronized to FlatPress **without** the leading ''#''.
-  * If tags are removed on FlatPress or on Mastodon, the next synchronization updates the other side accordingly.
+  * FlatPress entry tags are exported as Mastodon hashtags.
+  * Mastodon hashtags are imported as FlatPress entry tags.
+  * Comments do not carry tags.
 
-==== Media support ====
+===== How scheduling works =====
 
-  * FlatPress **entries** can export images from ''[img]'' and ''[gallery]''
-  * FlatPress **comments do not export images**
-  * Mastodon import currently handles **image** attachments
-  * Mastodon video and audio attachments are **not** imported by this plugin
-  * If a Mastodon instance allows only a limited number of media attachments, extra images are skipped and logged
-  * If media uploads succeed but the final Mastodon status creation or update fails in the same request, the plugin now performs a best-effort cleanup of those unattached Mastodon media uploads through ''DELETE /api/v1/media/:id'' before the request ends
+  * The default daily synchronization time is **03:00**.
+  * You can change the time in the plugin settings.
+  * Automatic synchronization runs only on a normal website request after the due time.
+  * It does not run during CLI execution.
+  * It is skipped for HTTP **POST** requests.
+  * If nobody visits the site after the scheduled time, the automatic synchronization waits until the next normal page request.
 
-==== Authentication ====
+There is also a **Run synchronization now** button in the plugin settings for a manual run.
 
-The plugin stores these configuration values:
+==== Deletion synchronization runs later ====
 
-  * Mastodon URL
-  * OAuth client ID
-  * OAuth client secret
-  * OAuth authorization code
-  * OAuth access token
-  * the **Enable deletion synchronization** toggle
-
-However, the code uses the **OAuth access token** for API access.
+The plugin separates normal synchronization from deletion synchronization.
 
 That means:
 
-  * synchronization works only after an **OAuth access token** has been created and stored
+  * content synchronization runs first
+  * deletion synchronization is marked as pending
+  * the delete check runs in a **later follow-up request**
 
-===== Files to install =====
+This keeps the main synchronization request shorter and more stable.
 
-Copy these items from [[res:plugins:mastodon#download|the plugin package]] into your FlatPress installation:
+The option **Enable deletion synchronization** controls whether that follow-up delete pass is used at all.
+
+===== Admin page overview =====
+
+In **Plugins -> Mastodon** you will see these areas:
+
+==== 1. Basic settings ====
+
+Here you set:
+
+  * **Username**
+  * **Mastodon URL**
+  * **Daily sync time**
+  * **Synchronization start date**
+
+The **Synchronization start date** is useful when you do not want to import or export much older content.
+
+==== 2. More options ====
+
+These switches are especially important:
+
+  * **Update existing local content from Mastodon**  
+    Allows already imported FlatPress entries and comments to be refreshed from Mastodon later.
+
+  * **Import comments as entries as well**  
+    Allows certain synchronized Mastodon replies to also appear as FlatPress entries. Leave this disabled if you want to avoid duplicate content and keep thread replies mainly in the comment area.
+
+  * **Enable deletion synchronization**  
+    Enables the separate follow-up delete pass.
+
+==== 3. OAuth helper ====
+
+This section is used only to connect FlatPress to your Mastodon account.
+
+The usual order is:
+
+  - save the basic settings
+  - click **Register Mastodon app**
+  - open the shown authorization URL
+  - allow the app on Mastodon
+  - copy the shown code back into FlatPress
+  - click **Exchange code for token**
+
+Without a valid access token, synchronization cannot work.
+
+==== 4. Mastodon instance information ====
+
+This section lets you manually fetch information about your Mastodon server, for example:
+
+  * exact Mastodon version
+  * API compatibility version
+  * server limits relevant to synchronization
+
+This is mainly a diagnostic aid. It is not required before every synchronization.
+
+==== 5. Status and counters ====
+
+The lower part of the page shows:
+
+  * the last synchronization time
+  * the last deletion synchronization time
+  * the last error
+  * counters for imported, updated, exported and deleted entries and comments
+
+The deletion counters belong to the separate follow-up delete pass and can therefore change later than the normal synchronization counters.
+
+===== Installation and first setup =====
+
+==== Step 1: Install the plugin ====
+
+Copy this folder into your FlatPress installation:
 
   * ''fp-plugins/mastodon/''
 
-After copying the plugin folder, log in to FlatPress and enable the plugin in the **Plugins** area.
+Then activate the plugin in the FlatPress admin area.
 
-===== Where to find the plugin in FlatPress =====
+==== Step 2: Enter the Mastodon server URL ====
 
-After activation, open the admin area and go to:
-
-  * **Plugins**
-  * **Mastodon**
-
-There you will find:
-
-  * connection settings
-  * OAuth helper
-  * manual synchronization
-  * last sync status
-  * counters for imported and exported entries and comments
-
-===== Step 1: Find your Mastodon URL =====
-
-Your **Mastodon URL** is the base URL of the Mastodon server where your account exists.
-
-Examples:
+Use only the base URL of your Mastodon server, for example:
 
   * ''https://mastodon.social''
   * ''https://fosstodon.org''
-  * ''https://example.instance''
+  * ''https://example.social''
 
-Use only the server address, not a specific profile page.
-
-Good examples:
-
-  * ''https://mastodon.social''
-  * ''https://mastodon.example''
-
-Do **not** use something like:
+Do **not** enter a profile or status URL such as:
 
   * ''https://mastodon.social/@yourname''
-  * ''https://mastodon.social/web/statuses/1234567890''
+  * ''https://mastodon.social/web/statuses/123456789''
 
-===== Step 2: Save the basic settings =====
+==== Step 3: Save the basic settings ====
 
-In the plugin page, fill in:
+Save at least:
 
+  * **Username**
   * **Mastodon URL**
   * **Daily sync time**
 
-Then click:
+You can also set a **Synchronization start date** now.
 
-  * **Save settings**
+==== Step 4: Register the Mastodon app ====
 
-===== Step 3: Register the Mastodon app =====
+Click **Register Mastodon app**.
 
-In the **OAuth helper** section, click:
+The plugin then stores the technical app information it needs for OAuth.
 
-  * **Register Mastodon app**
+==== Step 5: Authorize the app ====
 
-What the plugin does internally:
+Open the shown authorization URL in your browser, approve the app and copy the displayed authorization code.
 
-  * it creates an OAuth application on your Mastodon instance
-  * it uses the app name **FlatPress Mastodon**
-  * it requests these scopes:
-    * ''read:accounts''
-    * ''read:statuses''
-    * ''write:statuses''
-    * ''write:media''
+==== Step 6: Exchange the code for a token ====
 
-After successful registration, the plugin stores:
+Paste the code into the plugin page and click **Exchange code for token**.
 
-  * client ID
-  * client secret
-  * authorization URL
+After that, FlatPress has the access token it needs for synchronization.
 
-===== Step 4: Open the Authorization URL =====
+==== Step 7: Optional: fetch Mastodon instance information ====
 
-After the app is registered, the plugin shows an **Authorization URL**.
+You can click **Fetch Mastodon instance information** to store a snapshot of your server information in the admin area.
 
-Open that URL in your browser.
+This is helpful when you want to check:
 
-What you should do there:
+  * the exact Mastodon version
+  * media and text limits
+  * whether the server reports useful compatibility information
 
-  - log in to Mastodon if your server asks you to log in
-  - review the app permissions
-  - approve the app
+==== Step 8: Run the first synchronization ====
 
-The plugin registers the special out-of-band redirect URI:
+Click **Run synchronization now**.
 
-  * ''urn:ietf:wg:oauth:2.0:oob''
-
-Because of that, Mastodon does **not** send you back to FlatPress. Instead, Mastodon shows you an **authorization code** on screen.
-
-===== Step 5: Copy the authorization code =====
-
-Copy the code shown by Mastodon after approval.
-
-Then return to FlatPress and paste it into:
-
-  * **Authorization code**
-
-===== Step 6: Create the OAuth access token =====
-
-Click:
-
-  * **Exchange code for token**
-
-If the exchange is successful:
-
-  * the plugin stores the OAuth access token
-  * the authorization code field is cleared
-  * the token state in the admin page changes to **Access token available**
-
-At this point, synchronization can start.
-
-===== Step 7: Run the first synchronization =====
-
-Click:
-
-  * **Run synchronization now**
-
-Also check:
+After the run, also check:
 
   * **Last sync**
   * **Last error**
-  * sync counters
-  * ''fp-content/mastodon/sync.log'' for detailed technical messages
+  * the counters in the admin area
 
-===== How import and export work =====
+For technical details you can additionally inspect:
+
+  * ''fp-content/plugin_mastodon/state.json''
+  * ''fp-content/plugin_mastodon/sync.log''
+
+===== How synchronization works in practice =====
 
 ==== FlatPress -> Mastodon ====
 
 === Entry export ===
 
-A FlatPress entry is exported as:
+A FlatPress entry becomes one Mastodon top-level status.
 
-  * one Mastodon status
-  * **without** ''in_reply_to_id''
+The exported text is built from:
 
-The status text is built from:
-
-  * entry subject
-  * entry content converted from FlatPress formatting to Mastodon-friendly plain text
-  * a public entry link, if the FlatPress URL is public and usable
-
-If the FlatPress site is only local, such as ''localhost'', the plugin suppresses non-public links in Mastodon.
+  * the entry subject
+  * the entry content converted into Mastodon-friendly text
+  * a public entry link when the blog URL is publicly usable
 
 === Comment export ===
 
-A FlatPress comment is exported as:
+A FlatPress comment becomes one Mastodon reply to the synchronized entry.
 
-  * one Mastodon status
-  * **with** ''in_reply_to_id'' pointing to the Mastodon status of the FlatPress entry
+If the comment is itself a reply to another FlatPress comment, it becomes a Mastodon reply to that parent reply.
 
-The text is based on the comment content.
+This keeps reply chains intact on Mastodon.
 
-If the comment author is not the default internal author names, the plugin prefixes the text with:
+=== What happens on imported Mastodon threads ===
 
-  * ''Comment by <name>:''
+If a Mastodon top-level status was already imported as a FlatPress entry, and you then write a new FlatPress comment under that entry, the plugin exports that new FlatPress comment as a Mastodon reply in the existing Mastodon thread.
 
-=== Reply-to-comment export ===
-
-If a FlatPress comment contains a valid parent comment reference, it is exported as:
-
-  * one Mastodon status
-  * **with** ''in_reply_to_id'' pointing to the Mastodon status of the parent comment
-
-This keeps reply chains threaded on Mastodon.
-
-=== Tag export ===
-
-When the FlatPress **Tag** plugin is active, the plugin reads the local entry tags and appends them to the exported Mastodon entry:
-
-  * on a **new line**
-  * at the **end** of the Mastodon entry
-  * as Mastodon **hashtags** with a leading ''#''
-
-If no tags exist, no hashtag line is added.
-
-If tags were removed from the FlatPress entry, the next update of the already synchronized Mastodon status removes that hashtag line again.
-
-=== Image export ===
-
-For FlatPress entries, the plugin detects:
-
-  * ''[img=...]''
-  * ''[gallery=...]''
-
-The plugin uploads the referenced local image files to Mastodon and attaches them as media.
-
-The raw BBCode tags themselves are removed from the exported Mastodon text.
-
-FlatPress comments do not export images.
+The same applies to replies to local FlatPress comments inside that thread.
 
 ==== Mastodon -> FlatPress ====
 
-=== Entry import ===
+=== Top-level status import ===
 
-A Mastodon top-level status from the connected account is imported as a FlatPress entry when all of these are true:
+A Mastodon top-level status from the connected account can become a FlatPress entry.
 
-  * it belongs to the authenticated account
-  * it is fetched as a top-level status
-  * it is not a reblog / boost
-  * it is not excluded by visibility rules
+=== Reply import inside known threads ===
 
-The imported FlatPress entry contains:
+Replies that belong to a known imported Mastodon thread are imported as FlatPress comments under the matching FlatPress entry.
 
-  * a generated subject line
-  * content converted from Mastodon HTML to FlatPress-style BBCode
-  * the Mastodon author name
-  * the Mastodon timestamp
-  * a footer link back to Mastodon
-  * synchronized tags from the Mastodon status, when the FlatPress **Tag** plugin is active
+If a reply belongs under a previously synchronized FlatPress comment, it is imported as a reply to that local comment.
 
-=== Comment import ===
+This also applies when another Mastodon member replies inside that known thread.
 
-Replies from the imported Mastodon thread are imported as FlatPress comments.
+=== About “Import comments as entries as well” ===
+**Tip of the day:**
+Mastodon limits posts to a maximum of 500 characters.
+If your FlatPress posts and comments are longer than 500 characters and you want to keep them that way, disable the "Update existing local content from Mastodon" option.
 
-The plugin reads the thread context of the imported top-level status and imports descendant replies.
+When this option is disabled, thread replies should stay in the comment area instead of also appearing as separate FlatPress entries.
 
-If a reply is itself a reply to another reply, the plugin stores the local parent relation with ''replyto'', so the reply structure is preserved in data.
+When the option is enabled, the plugin may additionally import certain synchronized replies as entries as well.
 
-=== Tag import ===
+If you mainly want a blog-like discussion structure, leaving the option disabled is usually the safer choice.
 
-When the FlatPress **Tag** plugin is active, the plugin imports Mastodon hashtags into the FlatPress entry:
+===== Where plugin data is stored =====
 
-  * Mastodon hashtags are stored as FlatPress entry tags
-  * the leading ''#'' is removed
-  * only entry imports use tags; imported comments do not
+The plugin stores its working data in:
 
-If tags were removed from the Mastodon status, the next allowed update of the synchronized FlatPress entry removes the corresponding local tags again.
+  * ''fp-content/plugin_mastodon/state.json''
+  * ''fp-content/plugin_mastodon/sync.log''
 
-=== Image import ===
-
-If a Mastodon status contains image attachments:
-
-  * one imported image becomes a FlatPress ''[img=...]''
-  * multiple imported images become a FlatPress ''[gallery=...]''
-
-The files are stored under:
-
-  * ''fp-content/images/mastodon/status-<mastodon-status-id>/''
-
-If image descriptions exist on Mastodon, the plugin saves them as gallery captions where possible.
-
-===== When you will see a Mastodon post as a FlatPress entry or comment =====
-
-==== You will see it as a FlatPress entry when: ====
-
-**Tip of the day:**\\ Mastodon limits posts to a maximum of 500 characters. If your FlatPress posts and comments are longer than 500 characters and you want to keep them that way, disable the "//Update existing local content from Mastodon//" option.
-
-  * it is a top-level status of the connected Mastodon account
-  * it is fetched from the account status timeline
-  * it is visible enough to import
-  * it passes the plugin filters
-
-==== You will see it as a FlatPress comment when: ====
-
-  * it is a descendant reply inside the thread of an imported top-level status
-  * it is visible enough to import
-  * it is not blocked because its parent reply was skipped
-
-==== You will not see it imported when: ====
-
-  * it has visibility ''direct''
-  * it has visibility ''private''
-  * it is only a boost / reblog
-  * it is outside the imported thread logic
-  * its parent reply is not importable and the reply chain cannot be preserved correctly
-
-===== Where the plugin stores its working data =====
-
-The plugin uses these runtime files and folders:
-
-  * ''fp-content/mastodon/state.json''  
-    Stores mappings, sync state, and counters
-
-  * ''fp-content/mastodon/sync.lock''  
-    Prevents parallel sync runs
-
-  * ''fp-content/mastodon/sync.log''  
-    Technical log for troubleshooting
-
-  * ''fp-content/mastodon/tmp/''  
-    Temporary files during media import
-
-Imported Mastodon images are stored in:
+Imported Mastodon images are stored under:
 
   * ''fp-content/images/mastodon/''
+
+OAuth and plugin settings are stored in the FlatPress configuration.
 
 ===== Troubleshooting =====
 
 ==== “No access token saved” ====
 
-You have not completed the OAuth flow yet.
+The OAuth setup is not finished yet.
 
-Solution:
+Do this:
 
-  - save your instance URL
+  - save the Mastodon URL
   - click **Register Mastodon app**
-  - open the **Authorization URL**
+  - open the authorization URL
   - approve the app on Mastodon
-  - paste the shown code into FlatPress
+  - paste the shown code back into FlatPress
   - click **Exchange code for token**
 
 ==== “The synchronization finished successfully” but nothing new appears ====
 
 Check these points:
 
-  * Is the post already mapped in ''state.json''?
-  * Is the sync simply **not due** yet?
-  * Is the post private or direct on Mastodon?
-  * Is the FlatPress entry still a draft?
-  * Did Mastodon reject the post because of text length, media limits, or authorization?
+  * Is the content older than the configured **Synchronization start date**?
+  * Is the Mastodon post private or direct?
+  * Is the local FlatPress entry still a draft?
+  * Is the content already synchronized and therefore only counted as an update or not changed at all?
+  * Is the automatic run simply not due yet?
 
-Then check:
+Also check:
 
-  * ''fp-content/mastodon/sync.log''
-  * the counters in the plugin admin page
+  * the counters in the plugin page
+  * ''fp-content/plugin_mastodon/sync.log''
+
+==== Comments are not where I expected them ====
+
+Remember these rules:
+
+  * top-level Mastodon posts become FlatPress entries
+  * replies inside a known imported thread become FlatPress comments
+  * if **Import comments as entries as well** is disabled, replies should normally stay in the comment area only
 
 ==== Images are missing on Mastodon ====
 
 Check these points:
 
-  * Are the images inside a FlatPress entry and not only in comments?
+  * Are the images in a FlatPress entry and not only in comments?
   * Are they referenced with ''[img]'' or ''[gallery]''?
-  * Does the stored token include permission to upload media?
-  * Does your Mastodon server allow the image count and file type?
-
-==== Tags are missing or not updated ====
-
-Check these points:
-
-  * Is the FlatPress **Tag** plugin enabled?
-  * Are you synchronizing an **entry** and not a comment?
-  * Were the tags removed on one side and has a new sync already been run?
-  * Is the option to update existing local content from Mastodon enabled when you expect remote tag deletions or remote tag changes to update an already imported FlatPress entry?
+  * Does the Mastodon server allow the number and type of uploaded images?
 
 ==== Imported Mastodon images are missing in FlatPress ====
 
@@ -500,14 +377,14 @@ Check these points:
 
   * Are the attachments really images and not video/audio?
   * Can FlatPress write to ''fp-content/images/mastodon/''?
-  * Can your server download the image files from the Mastodon media host?
+  * Can the web server download files from the Mastodon media host?
 
 ===== Security notes =====
 
-  * The plugin stores secrets in FlatPress configuration.
-  * If OpenSSL is available, the plugin encrypts stored secrets.
-  * If OpenSSL is not available, the plugin falls back to a weaker plain base64 storage format.
-  * Protect your FlatPress admin area and your server backups carefully.
+  * The plugin stores connection secrets in FlatPress configuration.
+  * When OpenSSL is available, those secrets are protected more strongly.
+  * Protect your FlatPress admin access and your backups carefully.
+
 
 ===== Practical recommendation =====
 
@@ -519,20 +396,22 @@ The safest order is:
   - authorize the app on Mastodon
   - exchange the authorization code for a token
   - run a manual sync
-  - check ''last sync'', ''last error'', and ''sync.log''
-  - only then rely on the automatic daily sync
 
 ===== License =====
 The plugin's code is licensed under the FlatPress Project License.
 
+
 ===== FAQ =====
 
-  * **Q:** Why aren't the texts of posts and comments formatted the same way in Mastodon as they are in FlatPress?
-  * **A:** The plugin intentionally uses the official REST API ''POST /api/v1/statuses'' or ''PUT /api/v1/statuses/:id''.
-           There, Mastodon explicitly documents the status parameter as the //text content of the status//.
-           For editable sources, you should use the plain-text representation, and the server generates the corresponding HTML from it.
+  * **Q:** Why do Mastodon texts not look exactly like the original FlatPress formatting?
+  * **A:** The plugin converts FlatPress formatting into Mastodon-friendly text. Mastodon itself stores and renders statuses differently from a blog system, so the result is intentionally adapted instead of copied 1:1.
 
-  * **Q:** Why doesn't the plugin support video and audio content?
-  * **A:** The plugin's synchronization relies on standard web requests.
-           Every communication with Mastodon, every media upload, every import of a reply thread, and every additional file access takes time within the same PHP request,
-           which is also responsible for rendering a page at the same time.
+  * **Q:** Why are videos and audio not imported?
+  * **A:** The plugin currently focuses on text threads and image attachments. Video and audio handling is not part of the current import feature set.
+
+  * **Q:** Why can the deletion counters change later than the synchronization counters?
+  * **A:** Because the deletion pass runs in a later follow-up request, not in the main synchronization request.
+
+**Support**
+
+Please ask for help on the [[https://forum.flatpress.org/viewtopic.php?t=1006|FlatPress Forum]]

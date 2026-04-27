@@ -58,6 +58,14 @@
 				</label>
 			</dd>
 			<br>
+			<dt><label for="quote_imported_reply_parent">{$plang.quote_imported_reply_parent|escape}</label></dt>
+			<dd>
+				<label>
+					<input type="checkbox" id="quote_imported_reply_parent" name="quote_imported_reply_parent" value="1"{if $mastodon_cfg.quote_imported_reply_parent eq '1'} checked="checked"{/if}>
+					{$plang.quote_imported_reply_parent_desc|escape}
+				</label>
+			</dd>
+			<br>
 			<dt><label for="delete_sync_enabled">{$plang.delete_sync_enabled|escape}</label></dt>
 			<dd>
 				<label>
