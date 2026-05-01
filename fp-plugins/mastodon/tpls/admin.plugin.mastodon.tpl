@@ -29,7 +29,7 @@
 			<dd><input type="url" class="regular-text" id="instance_url" name="instance_url" value="{$mastodon_cfg.instance_url|escape}"></dd>
 
 			<dt><label for="sync_time">{$plang.sync_time|escape}</label></dt>
-			<dd><input type="time" id="sync_time" name="sync_time" value="{$mastodon_cfg.sync_time|escape}"> <small>{$mastodon_cfg.sync_time_offset_label|escape}</small></dd>
+			<dd><input type="time" id="sync_time" name="sync_time" value="{$mastodon_cfg.sync_time|escape}"> <small>({$mastodon_cfg.sync_time_offset_label|escape})</small></dd>
 
 			<dt><label for="sync_start_date">{$plang.sync_start_date|escape}</label></dt>
 			<dd><input type="date" id="sync_start_date" name="sync_start_date" value="{$mastodon_cfg.sync_start_date|escape}"></dd>
