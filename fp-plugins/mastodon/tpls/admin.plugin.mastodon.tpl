@@ -29,7 +29,7 @@
 			<dd><input type="url" class="regular-text" id="instance_url" name="instance_url" value="{$mastodon_cfg.instance_url|escape}"></dd>
 
 			<dt><label for="sync_time">{$plang.sync_time|escape}</label></dt>
-			<dd><input type="time" id="sync_time" name="sync_time" value="{$mastodon_cfg.sync_time|escape}"></dd>
+			<dd><input type="time" id="sync_time" name="sync_time" value="{$mastodon_cfg.sync_time|escape}"> <small>{$mastodon_cfg.sync_time_offset_label|escape}</small></dd>
 
 			<dt><label for="sync_start_date">{$plang.sync_start_date|escape}</label></dt>
 			<dd><input type="date" id="sync_start_date" name="sync_start_date" value="{$mastodon_cfg.sync_start_date|escape}"></dd>
@@ -141,11 +141,11 @@
 		</tr>
 		<tr>
 			<td>{$plang.last_run|escape}</td>
-			<td>{if $mastodon_state.last_run}{$mastodon_state.last_run|escape}{else}-{/if}</td>
+			<td>{if $mastodon_state.last_run_local}{$mastodon_state.last_run_local|escape}{else}-{/if}</td>
 		</tr>
 		<tr>
 			<td>{$plang.last_deletion_run|escape}</td>
-			<td>{if $mastodon_state.last_deletion_run}{$mastodon_state.last_deletion_run|escape}{else}-{/if}</td>
+			<td>{if $mastodon_state.last_deletion_run_local}{$mastodon_state.last_deletion_run_local|escape}{else}-{/if}</td>
 		</tr>
 		<tr>
 			<td>{$plang.last_error|escape}</td>
