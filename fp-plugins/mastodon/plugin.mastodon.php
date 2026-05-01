@@ -7067,7 +7067,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 			plugin_mastodon_extend_time_limit(120);
 			$commentKey = (string) $commentKey;
 			$meta = isset($state ['comments'] [$commentKey]) && is_array($state ['comments'] [$commentKey]) ? $state ['comments'] [$commentKey] : array();
-			if (!is_array($meta) || empty($meta ['entry_id']) || empty($meta ['comment_id'])) {
+			if (empty($meta ['entry_id']) || empty($meta ['comment_id'])) {
 				if ($commentKey !== '' && isset($state ['pending_comment_remote_rechecks'] [$commentKey])) {
 					unset($state ['pending_comment_remote_rechecks'] [$commentKey]);
 				}
