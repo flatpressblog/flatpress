@@ -18,6 +18,8 @@ The plugin can also synchronize:
 
   * images from FlatPress entries to Mastodon
   * image attachments from Mastodon to FlatPress
+  * audio and video from FlatPress entries to Mastodon when the FlatPress **AudioVideo** plugin is active
+  * Mastodon audio and video attachments to FlatPress AudioVideo player tags
   * FlatPress entry tags and Mastodon hashtags when the FlatPress **Tag** plugin is active
 
 ===== Important concept =====
@@ -55,6 +57,7 @@ For the best result with synchronized Mastodon content, also enable these FlatPr
 
   * **BBCode**
   * **PhotoSwipe**
+  * **AudioVideo**
   * **[[tag|Tag]]**
   * **Emoticons**
 
@@ -62,6 +65,7 @@ They improve the result like this:
 
   * **BBCode** renders imported formatting, links, images and galleries properly.
   * **PhotoSwipe** improves image and gallery display.
+  * **AudioVideo** renders imported and synchronized audio/video attachments as HTML5 media players.
   * **Tag** enables tag / hashtag synchronization.
   * **Emoticons** renders imported emoji shortcodes more nicely.
 
@@ -82,12 +86,16 @@ They improve the result like this:
 ==== Images and media ====
 
   * FlatPress **entries** can export local images referenced by ''[img]'' and ''[gallery]''.
-  * FlatPress **comments do not export images**.
+  * FlatPress **entries** can export local audio referenced by ''[audioplayer]'' and local video referenced by ''[videoplayer]'' when the AudioVideo plugin is active.
+  * FlatPress **comments do not export images, audio or video**.
   * Mastodon image attachments can be imported into FlatPress.
-  * Mastodon video and audio attachments are currently not imported by this plugin.
-  * If the Mastodon server has media limits, extra images are skipped instead of breaking the whole synchronization.
-  * When the plugin already knows an image description, it sends that description during the initial Mastodon media upload.
-  * If only the image description changes later, the plugin can update the description on supported Mastodon servers without re-uploading the image.
+  * Mastodon audio attachments can be imported into FlatPress as ''[audioplayer]'' tags.
+  * Mastodon video and GIFV attachments can be imported into FlatPress as ''[videoplayer]'' tags; available preview images are stored as video posters.
+  * If the Mastodon server has media limits, extra media attachments are skipped instead of breaking the whole synchronization.
+  * When the plugin already knows a media description, it sends that description during the initial Mastodon media upload.
+  * If only the media description changes later, the plugin can update the description on supported Mastodon servers without re-uploading the file.
+  * Audio, video and GIFV uploads may be processed asynchronously by Mastodon. The plugin waits for the uploaded media to become ready and uses longer bounded polling windows for audio/video than for images.
+  * Remote audio/video imports try alternate direct media URLs when the first download URL is temporarily unavailable.
 
 ==== Tags ====
 
@@ -273,6 +281,15 @@ The exported text is built from:
   * the entry content converted into Mastodon-friendly text
   * a public entry link when the blog URL is publicly usable
 
+Local media in the entry can be attached to the Mastodon status:
+
+  * ''[img]'' and ''[gallery]'' become Mastodon image uploads
+  * ''[audioplayer]'' becomes a Mastodon audio upload
+  * ''[videoplayer]'' becomes a Mastodon video upload
+  * a local ''poster'' attribute on ''[videoplayer]'' is sent as the Mastodon media thumbnail when usable
+
+Mastodon instances can take longer to process audio and video than images. The plugin therefore polls the Mastodon media endpoint until the uploaded attachment reports its final media URL or a bounded timeout is reached.
+
 === Comment export ===
 
 A FlatPress comment becomes one Mastodon reply to the synchronized entry.
@@ -292,6 +309,15 @@ The same applies to replies to local FlatPress comments inside that thread.
 === Top-level status import ===
 
 A Mastodon top-level status from the connected account can become a FlatPress entry.
+
+Media attachments are imported with FlatPress-native markup:
+
+  * one image becomes an ''[img]'' tag
+  * multiple images become a ''[gallery]'' tag
+  * audio becomes an ''[audioplayer]'' tag
+  * video and GIFV become a ''[videoplayer]'' tag
+
+If a video preview image is available, it is stored and referenced as the video poster.
 
 === Reply import inside known threads ===
 
@@ -320,6 +346,14 @@ The plugin stores its working data in:
   * ''fp-content/plugin_mastodon/sync.log''
 
 Imported Mastodon images are stored under:
+
+  * ''fp-content/images/mastodon/''
+
+Imported Mastodon audio and video files are stored under:
+
+  * ''fp-content/attachs/mastodon/''
+
+Imported video poster images are stored under:
 
   * ''fp-content/images/mastodon/''
 
@@ -363,21 +397,44 @@ Remember these rules:
   * replies inside a known imported thread become FlatPress comments
   * if **Import comments as entries as well** is disabled, replies should normally stay in the comment area only
 
-==== Images are missing on Mastodon ====
+==== Media is missing on Mastodon ====
 
 Check these points:
 
-  * Are the images in a FlatPress entry and not only in comments?
-  * Are they referenced with ''[img]'' or ''[gallery]''?
-  * Does the Mastodon server allow the number and type of uploaded images?
+  * Is the media in a FlatPress entry and not only in comments?
+  * Are images referenced with ''[img]'' or ''[gallery]''?
+  * Are audio files referenced with ''[audioplayer]''?
+  * Are video files referenced with ''[videoplayer]''?
+  * Are the local files stored below ''fp-content/attachs/'' or ''fp-content/images/''?
+  * Does the Mastodon server allow the number, MIME type and size of the uploaded media?
+  * For large audio or video files, check ''fp-content/plugin_mastodon/sync.log'' for media processing messages.
 
-==== Imported Mastodon images are missing in FlatPress ====
+==== Imported Mastodon media is missing in FlatPress ====
 
 Check these points:
 
-  * Are the attachments really images and not video/audio?
+  * Are the attachments public and downloadable by the web server?
   * Can FlatPress write to ''fp-content/images/mastodon/''?
+  * Can FlatPress write to ''fp-content/attachs/mastodon/''?
   * Can the web server download files from the Mastodon media host?
+  * Is the FlatPress **AudioVideo** plugin active when you want imported audio/video to render as players?
+
+==== Audio or video upload reports ''media_processing_timeout'' ====
+
+Mastodon may accept an audio or video upload first and then process it asynchronously.
+
+The plugin waits longer for audio/video than for images, but processing can still fail when:
+
+  * the file is larger than the Mastodon instance allows
+  * the Mastodon server rejects the MIME type
+  * the server-side transcoder is overloaded
+  * the web host stops long-running PHP requests too early
+
+Check:
+
+  * the Mastodon instance media limits in the plugin admin page
+  * ''fp-content/plugin_mastodon/sync.log''
+  * the real file type and file size of the referenced media
 
 ===== Security notes =====
 
@@ -406,8 +463,8 @@ The plugin's code is licensed under the FlatPress Project License.
   * **Q:** Why do Mastodon texts not look exactly like the original FlatPress formatting?
   * **A:** The plugin converts FlatPress formatting into Mastodon-friendly text. Mastodon itself stores and renders statuses differently from a blog system, so the result is intentionally adapted instead of copied 1:1.
 
-  * **Q:** Why are videos and audio not imported?
-  * **A:** The plugin currently focuses on text threads and image attachments. Video and audio handling is not part of the current import feature set.
+  * **Q:** Can videos and audio be synchronized?
+  * **A:** Yes. FlatPress entries can export local ''[audioplayer]'' and ''[videoplayer]'' media to Mastodon, and Mastodon audio/video attachments can be imported into FlatPress when the AudioVideo plugin is available. FlatPress comments do not synchronize media attachments.
 
   * **Q:** Why can the deletion counters change later than the synchronization counters?
   * **A:** Because the deletion pass runs in a later follow-up request, not in the main synchronization request.
