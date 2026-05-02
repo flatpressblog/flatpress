@@ -11,9 +11,9 @@ The layout is intentionally hierarchical so responsibilities, call paths, and im
 - The focus is the Mastodon plugin PHP code.
 - The document is organized by responsibility and call path.
 - Recently added FlatPress configuration reuse, centralized plugin-state detection, and FlatPress I/O helpers are reflected explicitly.
-- The companion-plugin diagnostics for BBCode, PhotoSwipe, Tag, and Emoticons are covered.
+- The companion-plugin diagnostics for BBCode, PhotoSwipe, AudioVideo, Tag, and Emoticons are covered.
 - The admin-side Mastodon instance-information snapshot, manual refresh button, exact-version display, and reuse of cached instance capabilities for later sync runs are covered.
-- Mastodon instance-dependent URL budgeting, bounded PHP execution-budget refreshes, OAuth scope discovery with a strict `profile`-scope preference and an older-instance fallback to `read:accounts`, asynchronous media-upload readiness polling, best-effort cleanup of unattached uploaded Mastodon media before a failed final posting finishes, follow-up deletion synchronization, the admin toggle that can disable deletion synchronization, comment tombstones that block stale re-imports of deleted remote replies, early protection of locally deleted exported FlatPress comments before the next content sync, local reattachment of surviving descendant replies to the synchronized entry status during deletion follow-up, targeted descendant-recheck queues with a dedicated `comment_rechecks` follow-up scope, and the separate persistence of content-sync and deletion-sync counters are reflected explicitly.
+- Mastodon instance-dependent URL budgeting, bounded PHP execution-budget refreshes, OAuth scope discovery with a strict `profile`-scope preference and an older-instance fallback to `read:accounts`, media-type-aware asynchronous media-upload readiness polling for longer AudioVideo processing, best-effort cleanup of unattached uploaded Mastodon media before a failed final posting finishes, follow-up deletion synchronization, the admin toggle that can disable deletion synchronization, comment tombstones that block stale re-imports of deleted remote replies, early protection of locally deleted exported FlatPress comments before the next content sync, local reattachment of surviving descendant replies to the synchronized entry status during deletion follow-up, targeted descendant-recheck queues with a dedicated `comment_rechecks` follow-up scope, and the separate persistence of content-sync and deletion-sync counters are reflected explicitly.
 - FlatPress timeoffset-aware remote import timestamps for Mastodon statuses and replies are reflected explicitly.
 - FlatPress-local admin time display for the daily synchronization time, last content sync, and last deletion sync is reflected explicitly while keeping the stored synchronization time in UTC.
 - Friendly deletion-sync guards for normalized comment mapping metadata are reflected explicitly.
@@ -43,11 +43,15 @@ The layout is intentionally hierarchical so responsibilities, call paths, and im
 Current export behavior uses these endpoints in a version-aware way:
 - `POST /api/v2/media` carries the initial media `description` whenever the FlatPress entry already knows the alt text.
 - `PUT /api/v1/statuses/:id` reuses stored `media_ids` for unchanged attachments and, on Mastodon 4.1+, can update changed alt text in place through `media_attributes` without re-uploading the file payload.
+- `POST /api/v2/media` is preferred over deprecated `POST /api/v1/media`; audio, video, and GIFV uploads may return `202` and require polling `GET /api/v1/media/:id` until `url` is available. The plugin now uses longer, media-type-aware polling windows for audio/video/GIFV and treats pending audio/video responses without `preview_url` as still processing when the attachment ID/type is recognizable.
+- Remote media import retries alternate direct media URLs (`url`, `remote_url`, and for images `preview_url`) and uses longer transfer timeouts for downloaded media, so temporary object-storage or CDN failures do not immediately lose AudioVideo imports.
+- Current Mastodon media entities can be `image`, `gifv`, `video`, or `audio`; `audio` was added after early Mastodon media APIs, so import/export code must tolerate older payloads and unknown attachment types.
+- Instance-provided limits from `/api/v2/instance` are authoritative when available: `statuses.max_media_attachments`, `media_attachments.supported_mime_types`, `image_size_limit`, `video_size_limit`, `audio_size_limit`, and description limits. Public defaults still commonly include 4 media per status, one video/audio per status, and server-specific size/transcoding limits.
 
 ## Function count
 
-The plugin file currently contains **243** callable functions/methods documented in this organigram:
-- **240** top-level plugin functions
+The plugin file currently contains **246** callable functions/methods documented in this organigram:
+- **243** top-level plugin functions
 - **3** admin panel class methods (`setup()`, `main()`, `onsubmit()`)
 
 ## High-level call flow
@@ -83,12 +87,13 @@ The plugin file currently contains **243** callable functions/methods documented
   - budgets status length via `plugin_mastodon_instance_url_reserved_length()`, `plugin_mastodon_status_text_length()`, and `plugin_mastodon_limit_status_text()`
   - refreshes the request time budget for long-running export loops and Mastodon communication through `plugin_mastodon_extend_time_limit()`
   - derives the Mastodon `language` value through `plugin_mastodon_configured_status_language()` and `plugin_mastodon_normalize_status_language()`
-  - collects local images and galleries with `plugin_mastodon_collect_local_entry_media()`
+  - collects local images, galleries, AudioVideo `[audioplayer]` tags, and AudioVideo `[videoplayer]` tags with `plugin_mastodon_collect_local_entry_media()`
   - normalizes media items and computes attachment/description signatures with `plugin_mastodon_prepare_entry_media_items()`, `plugin_mastodon_entry_media_attachment_signature_from_items()`, and `plugin_mastodon_entry_media_description_signature_from_items()`
   - prepares a per-entry sync strategy with `plugin_mastodon_prepare_entry_media_sync_plan()`
   - uploads media through `plugin_mastodon_upload_media_items()` only when attachments really changed or when an older/unknown Mastodon version cannot edit descriptions in place
-  - sends initial alt text in `POST /api/v2/media`, reuses stored remote `media_ids` for text-only edits, and on Mastodon 4.1+ forwards changed alt text through `plugin_mastodon_status_media_attributes()` and `plugin_mastodon_update_status()`
-  - waits for asynchronously processed media through `plugin_mastodon_fetch_media_attachment()` and `plugin_mastodon_wait_for_media_attachment()` when required
+  - sends initial descriptions in `POST /api/v2/media`, including image alt text and AudioVideo description/title/alt attributes; video posters become Mastodon thumbnails when the local poster file is usable
+  - reuses stored remote `media_ids` for text-only edits, and on Mastodon 4.1+ forwards changed descriptions through `plugin_mastodon_status_media_attributes()` and `plugin_mastodon_update_status()`
+  - waits for asynchronously processed media through `plugin_mastodon_fetch_media_attachment()` and `plugin_mastodon_wait_for_media_attachment()` when required; `plugin_mastodon_media_processing_attempts()` gives audio, video, and GIFV uploads a longer bounded polling window than images
   - performs best-effort cleanup of unattached uploaded media through `plugin_mastodon_delete_media_attachment()` and `plugin_mastodon_cleanup_uploaded_media()` when a media upload or the final status create/update request fails
   - persists mappings and cached remote media metadata with `plugin_mastodon_state_set_entry_mapping()`, `plugin_mastodon_state_set_entry_media_meta()`, and `plugin_mastodon_state_set_comment_mapping()`
   - scans comment IDs directly with `plugin_mastodon_list_local_comment_ids()` so new local comments are not missed when FlatPress comment-list caches lag behind the filesystem
@@ -193,6 +198,7 @@ The plugin file currently contains **243** callable functions/methods documented
 - `plugin_mastodon_tag_plugin_active()` — line 2867 — Determine whether the Tag plugin is active for the current FlatPress request.
 - `plugin_mastodon_bbcode_plugin_active()` — line 2884 — Determine whether the BBCode plugin is active for the current FlatPress request.
 - `plugin_mastodon_photoswipe_plugin_active()` — line 2901 — Determine whether the PhotoSwipe plugin is active for the current FlatPress request.
+- `plugin_mastodon_audiovideo_plugin_active()` — current source — Determine whether the AudioVideo plugin is active for the current FlatPress request.
 - `plugin_mastodon_emoticons_plugin_active()` — line 2918 — Determine whether the Emoticons plugin is active for the current FlatPress request.
 - `plugin_mastodon_companion_plugins_status()` — line 2933 — Return the status of companion FlatPress plugins used for the full Mastodon feature set.
 
@@ -315,19 +321,29 @@ The plugin file currently contains **243** callable functions/methods documented
 - `plugin_mastodon_bbcode_attr_escape()` — line 4056 — Escape a value for safe BBCode attribute usage.
 - `plugin_mastodon_media_guess_mime_type()` — line 4068 — Guess the MIME type of a local media file.
 - `plugin_mastodon_media_parse_tag_attributes()` — line 4104 — Parse key/value attributes from a FlatPress media tag.
-- `plugin_mastodon_collect_local_entry_media()` — line 4135 — Collect local images referenced by an entry or gallery tag.
+- `plugin_mastodon_instance_supported_media_mime_types()` — current source — Return the MIME types advertised by the configured Mastodon instance.
+- `plugin_mastodon_instance_media_size_limit()` — current source — Return the configured byte-size limit for an image, video/GIFV, or audio upload.
+- `plugin_mastodon_validate_local_media_item()` — current source — Validate one local media file against available instance MIME and byte-size limits before upload.
+- `plugin_mastodon_media_extract_default_path()` — current source — Extract the default path parameter from FlatPress media BBCode such as `[img=...]`, `[gallery=...]`, `[audioplayer="..."]`, and `[videoplayer="..."]`.
+- `plugin_mastodon_add_local_media_item()` — current source — Add one normalized local media item while deduplicating and enforcing an expected media family.
+- `plugin_mastodon_collect_local_entry_media()` — line 4135 — Collect local images, galleries, audio, video, and video poster thumbnails referenced by an entry.
 - `plugin_mastodon_prepare_entry_media_items()` — line 4259 — Normalize collected local media items into reusable path/description tuples.
 - `plugin_mastodon_entry_media_attachment_signature_from_items()` — line 4282 — Hash only the attachment identity of normalized media items.
 - `plugin_mastodon_entry_media_description_signature_from_items()` — line 4305 — Hash only the alt-text portion of normalized media items.
 - `plugin_mastodon_entry_media_signature()` — line 4324 — Build a combined attachment+description signature for media references contained in entry content.
+- `plugin_mastodon_remote_media_attachment_type()` — current source — Normalize a Mastodon attachment type, including extension-based fallbacks for older or incomplete payloads.
+- `plugin_mastodon_remote_status_media_attachments()` — current source — Extract supported image, audio, video, and GIFV attachments from a remote Mastodon status.
 - `plugin_mastodon_remote_status_image_attachments()` — line 4341 — Extract image attachments from a remote Mastodon status.
 - `plugin_mastodon_remote_media_source_url()` — line 4364 — Resolve the best downloadable source URL for a remote attachment.
+- `plugin_mastodon_remote_media_source_urls()` — current source — Resolve direct-download fallback candidates for a remote attachment; audio/video/GIFV avoid `preview_url` as a file-source fallback, while images may use it.
 - `plugin_mastodon_remote_media_description()` — line 4378 — Resolve the best description for a remote attachment.
 - `plugin_mastodon_remote_media_focus()` — line 4392 — Normalize a Mastodon media focus string when present.
 - `plugin_mastodon_remote_media_descriptors_from_status()` — line 4409 — Extract reusable media descriptors (`id`, `description`, `focus`) from a Mastodon status payload.
 - `plugin_mastodon_remote_media_descriptors_from_media_ids()` — line 4436 — Build fallback reusable media descriptors from already-known IDs and local media items.
-- `plugin_mastodon_media_download()` — line 4499 — Download a remote media asset.
-- `plugin_mastodon_build_imported_media_bbcode()` — line 4511 — Build FlatPress BBCode for imported remote media attachments.
+- `plugin_mastodon_media_download()` — line 4499 — Download a remote media asset with an extended media-transfer timeout.
+- `plugin_mastodon_remote_download_basename()` — current source — Build a safe local basename for a downloaded remote image, audio, video, GIFV, or poster.
+- `plugin_mastodon_store_remote_media_url()` — current source — Download and persist one remote media URL.
+- `plugin_mastodon_build_imported_media_bbcode()` — line 4511 — Build FlatPress BBCode for imported remote media attachments: images become `[img]`/`[gallery]`, audio becomes `[audioplayer]`, and video/GIFV becomes `[videoplayer]` with an imported poster when available; alternate direct media URLs are retried before an attachment is skipped.
 - `plugin_mastodon_collect_entry_files()` — line 5314 — Collect entry files recursively from the FlatPress content tree.
 - `plugin_mastodon_local_item_timestamp()` — line 5341 — Resolve the best timestamp for a local FlatPress item.
 - `plugin_mastodon_compare_local_entries_for_export()` — line 5367 — Compare local FlatPress entries for Mastodon export order.
@@ -349,8 +365,10 @@ The plugin file currently contains **243** callable functions/methods documented
 - `plugin_mastodon_limit_status_text()` — line 4806 — Truncate status text using Mastodon URL-budget rules.
 - `plugin_mastodon_http_request_multipart()` — line 4884 — Perform a multipart HTTP request.
 - `plugin_mastodon_fetch_media_attachment()` — line 5016 — Fetch a single Mastodon media attachment by ID.
-- `plugin_mastodon_wait_for_media_attachment()` — line 5082 — Poll an asynchronously processed Mastodon media attachment until it is ready or times out.
-- `plugin_mastodon_upload_media_items()` — line 5128 — Upload local media items to Mastodon and collect the created media IDs.
+- `plugin_mastodon_media_processing_attempts()` — current source — Calculate media-type- and size-aware polling attempts for asynchronous Mastodon media processing.
+- `plugin_mastodon_media_transfer_timeout()` — current source — Calculate longer upload transfer timeouts for audio/video/GIFV while keeping image uploads lighter.
+- `plugin_mastodon_wait_for_media_attachment()` — line 5082 — Poll an asynchronously processed Mastodon media attachment until it is ready or times out, including pending audio/video responses without `preview_url`.
+- `plugin_mastodon_upload_media_items()` — line 5128 — Upload local media items to Mastodon and collect the created media IDs; AudioVideo posters are sent as Mastodon `thumbnail` multipart fields for video uploads.
 - `plugin_mastodon_parse_http_response_headers()` — line 5422 — Parse raw HTTP response headers.
 - `plugin_mastodon_stream_context_request()` — line 5452 — Perform an HTTP request through a stream context fallback.
 - `plugin_mastodon_status_media_attributes()` — line 4466 — Build the `media_attributes` array used for in-place status edits of already attached media.
@@ -429,10 +447,12 @@ The current plugin version includes dedicated function groups for:
 - status language export derived from the FlatPress locale configuration
 - optional remote overwrite of existing local content
 - optional import of already synchronized comments as entries
-- companion-plugin status reporting for BBCode, PhotoSwipe, Tag, and Emoticons
+- companion-plugin status reporting for BBCode, PhotoSwipe, AudioVideo, Tag, and Emoticons
 - tag synchronization through the FlatPress Tag plugin BBCode
 - emoji conversion between FlatPress-style shortcodes and Mastodon-style Unicode
-- bidirectional media synchronization for entry images and galleries
+- bidirectional media synchronization for entry images, galleries, audio, and video
+- AudioVideo `[audioplayer]` and `[videoplayer]` export from FlatPress entries to Mastodon media uploads
+- Mastodon `audio`, `video`, and `gifv` attachment import into `fp-content/attachs/mastodon/...` with FlatPress AudioVideo BBCode
 - initial alt-text upload through `/api/v2/media` plus cached remote media descriptors for later edits
 - reuse of stored Mastodon `media_ids` for text-only entry updates without redundant media re-upload
 - Mastodon-version-aware in-place alt-text updates through status `media_attributes` on Mastodon 4.1+
@@ -567,6 +587,8 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_media_parse_tag_attributes()` — line 4104 — Parse key/value attributes from a FlatPress media tag.
 - `plugin_mastodon_media_prepare_directory()` — line 3975 — Ensure that a media directory exists.
 - `plugin_mastodon_media_relative_to_absolute()` — line 3962 — Resolve a FlatPress media path to an absolute file path.
+- `plugin_mastodon_media_processing_attempts()` — current source — Calculate media-type- and size-aware polling attempts for asynchronous Mastodon media processing.
+- `plugin_mastodon_media_transfer_timeout()` — current source — Calculate media-type- and size-aware HTTP transfer timeouts for uploads.
 - `plugin_mastodon_normalize_comment_parent_id()` — line 2496 — Normalize a stored local comment parent identifier.
 - `plugin_mastodon_normalize_delete_sync_enabled()` — line 1457 — Normalize the toggle that enables or disables the follow-up deletion synchronization.
 - `plugin_mastodon_normalize_head_username()` — line 1159 — Normalize the configured Mastodon username for HTML head metadata.
@@ -597,6 +619,7 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_register_app()` — line 5790 — Register the FlatPress application on the configured Mastodon instance with the preferred discoverable scope set.
 - `plugin_mastodon_remote_media_description()` — line 4378 — Resolve the best description for a remote attachment.
 - `plugin_mastodon_remote_media_source_url()` — line 4364 — Resolve the best downloadable source URL for a remote attachment.
+- `plugin_mastodon_remote_media_source_urls()` — current source — Resolve direct-download fallback candidates for a remote attachment.
 - `plugin_mastodon_remote_status_date_key()` — line 1509 — Determine the date key of a remote Mastodon status.
 - `plugin_mastodon_remote_status_image_attachments()` — line 4341 — Extract image attachments from a remote Mastodon status.
 - `plugin_mastodon_remote_status_is_importable()` — line 2475 — Determine whether a remote Mastodon status may be imported.
