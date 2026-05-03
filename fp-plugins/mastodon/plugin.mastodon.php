@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.2.0
+ * Version: 2.2.2
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -18,10 +18,18 @@ if (!defined('PLUGIN_MASTODON_STATE_DIR')) {
 	define('PLUGIN_MASTODON_STATE_DIR', FP_CONTENT . 'plugin_mastodon' . DIRECTORY_SEPARATOR);
 }
 if (!defined('PLUGIN_MASTODON_STATE_FILE')) {
+	/**
+	 * Internal runtime data structures:
+	 * - plugin options are normalized associative arrays with string values
+	 * - runtime state is a nested associative array persisted as JSON
+	 */
 	define('PLUGIN_MASTODON_STATE_FILE', PLUGIN_MASTODON_STATE_DIR . 'state.json');
 }
 if (!defined('PLUGIN_MASTODON_LOCK_FILE')) {
 	define('PLUGIN_MASTODON_LOCK_FILE', PLUGIN_MASTODON_STATE_DIR . 'sync.lock');
+}
+if (!defined('PLUGIN_MASTODON_GUARD_FILE')) {
+	define('PLUGIN_MASTODON_GUARD_FILE', PLUGIN_MASTODON_STATE_DIR . 'sync.guard.json');
 }
 if (!defined('PLUGIN_MASTODON_LOG_FILE')) {
 	define('PLUGIN_MASTODON_LOG_FILE', PLUGIN_MASTODON_STATE_DIR . 'sync.log');
@@ -41,13 +49,26 @@ if (!defined('PLUGIN_MASTODON_IMPORTED_MEDIA_WIDTH')) {
 if (!defined('PLUGIN_MASTODON_PENDING_COMMENT_RECHECK_LIMIT')) {
 	define('PLUGIN_MASTODON_PENDING_COMMENT_RECHECK_LIMIT', 3);
 }
-
-/**
- * Internal runtime data structures:
- * - plugin options are normalized associative arrays with string values
- * - runtime state is a nested associative array persisted as JSON
- */
-
+// ttl for sync guards
+if (!defined('PLUGIN_MASTODON_STATE_FALLBACK_TTL')) {
+	define('PLUGIN_MASTODON_STATE_FALLBACK_TTL', 300);
+}
+if (!defined('PLUGIN_MASTODON_COOLDOWN_TTL')) {
+	define('PLUGIN_MASTODON_COOLDOWN_TTL', 300);
+}
+// Rate limit and budget guards
+if (!defined('PLUGIN_MASTODON_RUN_REQUEST_BUDGET')) {
+	define('PLUGIN_MASTODON_RUN_REQUEST_BUDGET', 240);
+}
+if (!defined('PLUGIN_MASTODON_RUN_MEDIA_UPLOAD_BUDGET')) {
+	define('PLUGIN_MASTODON_RUN_MEDIA_UPLOAD_BUDGET', 24);
+}
+if (!defined('PLUGIN_MASTODON_RUN_DELETE_BUDGET')) {
+	define('PLUGIN_MASTODON_RUN_DELETE_BUDGET', 24);
+}
+if (!defined('PLUGIN_MASTODON_RATE_LIMIT_REMAINING_FLOOR')) {
+	define('PLUGIN_MASTODON_RATE_LIMIT_REMAINING_FLOOR', 10);
+}
 
 /**
  * Return the default plugin option values.
@@ -886,6 +907,26 @@ function plugin_mastodon_io_read_file_uncached($file, $assumeExists = false) {
 }
 
 /**
+ * Return the FlatPress file permission mode for runtime files.
+ * @return int
+ */
+function plugin_mastodon_file_permissions_mode() {
+	return defined('FILE_PERMISSIONS') ? (int) constant('FILE_PERMISSIONS') : 0644;
+}
+
+/**
+ * Apply FlatPress FILE_PERMISSIONS to a runtime file.
+ * @param string $file
+ * @return bool
+ */
+function plugin_mastodon_apply_file_permissions($file) {
+	if (!@file_exists($file) || !@is_file($file)) {
+		return false;
+	}
+	return @chmod($file, plugin_mastodon_file_permissions_mode());
+}
+
+/**
  * Write a file through the FlatPress I/O layer when available.
  * @param string $file
  * @param string $payload
@@ -893,9 +934,17 @@ function plugin_mastodon_io_read_file_uncached($file, $assumeExists = false) {
  */
 function plugin_mastodon_io_write_file($file, $payload) {
 	if (function_exists('io_write_file')) {
-		return (bool) io_write_file($file, $payload);
+		$written = (bool) io_write_file($file, $payload);
+		if ($written) {
+			plugin_mastodon_apply_file_permissions($file);
+		}
+		return $written;
 	}
-	return (@file_put_contents($file, $payload) !== false);
+	if (@file_put_contents($file, $payload) === false) {
+		return false;
+	}
+	plugin_mastodon_apply_file_permissions($file);
+	return true;
 }
 
 /**
@@ -977,6 +1026,456 @@ function plugin_mastodon_apcu_delete($suffix) {
 	}
 	$cacheKey = plugin_mastodon_apcu_cache_key($suffix);
 	@apcu_delete($cacheKey);
+}
+
+/**
+ * Return the APCu key used for the short-lived last-known-good state fallback.
+ * @return string
+ */
+function plugin_mastodon_state_fallback_key() {
+	return 'state:last_known_good:v1';
+}
+
+/**
+ * Store a normalized runtime state in APCu for a short emergency fallback window.
+ * @param array<string, mixed> $state
+ * @return bool
+ */
+function plugin_mastodon_state_fallback_store($state) {
+	$state = plugin_mastodon_state_normalize(is_array($state) ? $state : array());
+	return plugin_mastodon_apcu_store(plugin_mastodon_state_fallback_key(), array(
+		'stored_at' => time(),
+		'state' => $state
+	), PLUGIN_MASTODON_STATE_FALLBACK_TTL);
+}
+
+/**
+ * Fetch the short-lived last-known-good state fallback from APCu.
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_state_fallback_read() {
+	$hit = false;
+	$value = plugin_mastodon_apcu_fetch(plugin_mastodon_state_fallback_key(), $hit);
+	if (!$hit || !is_array($value) || !isset($value ['state']) || !is_array($value ['state'])) {
+		return array();
+	}
+	if (isset($value ['stored_at']) && ((int) $value ['stored_at']) > 0 && ((int) $value ['stored_at']) + PLUGIN_MASTODON_STATE_FALLBACK_TTL < time()) {
+		plugin_mastodon_apcu_delete(plugin_mastodon_state_fallback_key());
+		return array();
+	}
+	return plugin_mastodon_state_normalize($value ['state']);
+}
+
+/**
+ * Normalize the cooldown guard kind.
+ * @param string $kind
+ * @return string
+ */
+function plugin_mastodon_sync_guard_kind($kind) {
+	$kind = trim((string) $kind);
+	return $kind === 'deletion' ? 'deletion' : 'content';
+}
+
+/**
+ * Return the APCu key used for a sync cooldown guard.
+ * @param string $kind
+ * @return string
+ */
+function plugin_mastodon_sync_guard_apcu_key($kind) {
+	return 'sync_guard:' . plugin_mastodon_sync_guard_kind($kind) . ':v1';
+}
+
+/**
+ * Return true when one guard entry is still active.
+ * @param mixed $entry
+ * @param int $now
+ * @return bool
+ */
+function plugin_mastodon_sync_guard_entry_active($entry, $now) {
+	return is_array($entry) && isset($entry ['expires_at']) && (int) $entry ['expires_at'] > (int) $now;
+}
+
+/**
+ * Store one cooldown guard in APCu.
+ * @param string $kind
+ * @param array<string, mixed> $entry
+ * @param int $now
+ * @return bool
+ */
+function plugin_mastodon_sync_guard_apcu_store($kind, $entry, $now) {
+	$ttl = isset($entry ['expires_at']) ? ((int) $entry ['expires_at'] - (int) $now) : PLUGIN_MASTODON_COOLDOWN_TTL;
+	if ($ttl < 1) {
+		return false;
+	}
+	return plugin_mastodon_apcu_store(plugin_mastodon_sync_guard_apcu_key($kind), $entry, $ttl);
+}
+
+/**
+ * Read and prune the file-backed cooldown guard.
+ * @param int $now
+ * @return array<string, array<string, mixed>>
+ */
+function plugin_mastodon_sync_guard_file_read($now) {
+	$prestat = plugin_mastodon_file_prestat(PLUGIN_MASTODON_GUARD_FILE);
+	if (empty($prestat ['exists'])) {
+		return array();
+	}
+	$json = plugin_mastodon_io_read_file_uncached(PLUGIN_MASTODON_GUARD_FILE, true);
+	if (!is_string($json) || trim($json) === '') {
+		return array();
+	}
+	$data = json_decode($json, true);
+	if (!is_array($data)) {
+		return array();
+	}
+	$guards = array();
+	foreach (array('content', 'deletion') as $kind) {
+		if (isset($data [$kind]) && plugin_mastodon_sync_guard_entry_active($data [$kind], $now)) {
+			$guards [$kind] = $data [$kind];
+		}
+	}
+	return $guards;
+}
+
+/**
+ * Write the file-backed cooldown guard.
+ * @param array<string, array<string, mixed>> $guards
+ * @return bool
+ */
+function plugin_mastodon_sync_guard_file_write($guards) {
+	plugin_mastodon_ensure_state_dir();
+	$payload = array('version' => 1);
+	foreach (array('content', 'deletion') as $kind) {
+		if (isset($guards [$kind]) && is_array($guards [$kind])) {
+			$payload [$kind] = $guards [$kind];
+		}
+	}
+	$json = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	if (!is_string($json)) {
+		return false;
+	}
+	return plugin_mastodon_io_write_file(PLUGIN_MASTODON_GUARD_FILE, $json . PHP_EOL);
+}
+
+/**
+ * Return true when a recent scheduled sync/deletion pass should cool down.
+ * @param string $kind
+ * @param int|null $now
+ * @return bool
+ */
+function plugin_mastodon_sync_guard_active($kind, $now = null) {
+	$kind = plugin_mastodon_sync_guard_kind($kind);
+	$now = $now === null ? time() : (int) $now;
+
+	$hit = false;
+	$apcuEntry = plugin_mastodon_apcu_fetch(plugin_mastodon_sync_guard_apcu_key($kind), $hit);
+	if ($hit && plugin_mastodon_sync_guard_entry_active($apcuEntry, $now)) {
+		return true;
+	}
+
+	$guards = plugin_mastodon_sync_guard_file_read($now);
+	if (isset($guards [$kind]) && plugin_mastodon_sync_guard_entry_active($guards [$kind], $now)) {
+		plugin_mastodon_sync_guard_apcu_store($kind, $guards [$kind], $now);
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Mark a short cooldown guard for a scheduled sync/deletion pass.
+ * @param string $kind
+ * @param string $reason
+ * @param int|null $now
+ * @return bool
+ */
+function plugin_mastodon_sync_guard_mark($kind, $reason, $now = null) {
+	$kind = plugin_mastodon_sync_guard_kind($kind);
+	$now = $now === null ? time() : (int) $now;
+	$entry = array(
+		'started_at' => $now,
+		'expires_at' => $now + PLUGIN_MASTODON_COOLDOWN_TTL,
+		'reason' => trim((string) $reason)
+	);
+	$apcuOk = plugin_mastodon_sync_guard_apcu_store($kind, $entry, $now);
+	$guards = plugin_mastodon_sync_guard_file_read($now);
+	$guards [$kind] = $entry;
+	$fileOk = plugin_mastodon_sync_guard_file_write($guards);
+	return $apcuOk || $fileOk;
+}
+
+/**
+ * Clear one sync cooldown guard.
+ * @param string $kind
+ * @param int|null $now
+ * @return bool
+ */
+function plugin_mastodon_sync_guard_clear($kind, $now = null) {
+	$kind = plugin_mastodon_sync_guard_kind($kind);
+	$now = $now === null ? time() : (int) $now;
+	plugin_mastodon_apcu_delete(plugin_mastodon_sync_guard_apcu_key($kind));
+	$guards = plugin_mastodon_sync_guard_file_read($now);
+	if (isset($guards [$kind])) {
+		unset($guards [$kind]);
+	}
+	return plugin_mastodon_sync_guard_file_write($guards);
+}
+
+/**
+ * Return the default Mastodon API budgets for one synchronization run.
+ * @return array<string, int>
+ */
+function plugin_mastodon_rate_limit_default_budgets() {
+	$budgets = array(
+		'requests' => (int) PLUGIN_MASTODON_RUN_REQUEST_BUDGET,
+		'media_uploads' => (int) PLUGIN_MASTODON_RUN_MEDIA_UPLOAD_BUDGET,
+		'deletes' => (int) PLUGIN_MASTODON_RUN_DELETE_BUDGET,
+		'remote_remaining_floor' => (int) PLUGIN_MASTODON_RATE_LIMIT_REMAINING_FLOOR
+	);
+	if (isset($GLOBALS ['plugin_mastodon_test_rate_limit_budgets']) && is_array($GLOBALS ['plugin_mastodon_test_rate_limit_budgets'])) {
+		foreach ($budgets as $key => $value) {
+			if (isset($GLOBALS ['plugin_mastodon_test_rate_limit_budgets'] [$key]) && is_numeric($GLOBALS ['plugin_mastodon_test_rate_limit_budgets'] [$key])) {
+				$budgets [$key] = (int) $GLOBALS ['plugin_mastodon_test_rate_limit_budgets'] [$key];
+			}
+		}
+	}
+	foreach ($budgets as $key => $value) {
+		$budgets [$key] = max(0, (int) $value);
+	}
+	return $budgets;
+}
+
+/**
+ * Start a per-run Mastodon API rate-limit guard.
+ * @param string $scope
+ * @return void
+ */
+function plugin_mastodon_rate_limit_guard_start($scope) {
+	$budgets = plugin_mastodon_rate_limit_default_budgets();
+	$GLOBALS ['plugin_mastodon_rate_limit_guard'] = array(
+		'active' => true,
+		'scope' => trim((string) $scope),
+		'requests_budget' => $budgets ['requests'],
+		'requests_used' => 0,
+		'media_uploads_budget' => $budgets ['media_uploads'],
+		'media_uploads_used' => 0,
+		'deletes_budget' => $budgets ['deletes'],
+		'deletes_used' => 0,
+		'remote_remaining_floor' => $budgets ['remote_remaining_floor'],
+		'remote_limit' => null,
+		'remote_remaining' => null,
+		'remote_reset' => '',
+		'blocked_reason' => '',
+		'blocked_logged' => false
+	);
+}
+
+/**
+ * Stop the current per-run Mastodon API rate-limit guard while keeping its summary inspectable.
+ * @return void
+ */
+function plugin_mastodon_rate_limit_guard_stop() {
+	if (!isset($GLOBALS ['plugin_mastodon_rate_limit_guard']) || !is_array($GLOBALS ['plugin_mastodon_rate_limit_guard'])) {
+		return;
+	}
+	$GLOBALS ['plugin_mastodon_rate_limit_guard'] ['active'] = false;
+}
+
+/**
+ * Return whether a per-run Mastodon API rate-limit guard is active.
+ * @return bool
+ */
+function plugin_mastodon_rate_limit_guard_active() {
+	return isset($GLOBALS ['plugin_mastodon_rate_limit_guard']) && is_array($GLOBALS ['plugin_mastodon_rate_limit_guard']) && !empty($GLOBALS ['plugin_mastodon_rate_limit_guard'] ['active']);
+}
+
+/**
+ * Return the current rate-limit guard summary.
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_rate_limit_guard_summary() {
+	return isset($GLOBALS ['plugin_mastodon_rate_limit_guard']) && is_array($GLOBALS ['plugin_mastodon_rate_limit_guard']) ? $GLOBALS ['plugin_mastodon_rate_limit_guard'] : array();
+}
+
+/**
+ * Normalize a response header map for rate-limit checks.
+ * @param mixed $headers
+ * @return array<string, string>
+ */
+function plugin_mastodon_rate_limit_headers($headers) {
+	$normalized = array();
+	if (!is_array($headers)) {
+		return $normalized;
+	}
+	foreach ($headers as $name => $value) {
+		$name = strtolower(trim((string) $name));
+		if ($name === '') {
+			continue;
+		}
+		$normalized [$name] = trim((string) $value);
+	}
+	return $normalized;
+}
+
+/**
+ * Determine whether a Mastodon API request consumes one of the stricter per-run budgets.
+ * @param string $method
+ * @param string $target
+ * @return string
+ */
+function plugin_mastodon_rate_limit_request_kind($method, $target) {
+	$method = strtoupper(trim((string) $method));
+	$target = (string) $target;
+	$path = $target;
+	if (preg_match('#^https?://#i', $path)) {
+		$parts = parse_url($path);
+		$path = isset($parts ['path']) ? (string) $parts ['path'] : '';
+	}
+	if ($method === 'POST' && preg_match('#/api/v[12]/media/?$#', $path)) {
+		return 'media_upload';
+	}
+	if (($method === 'DELETE' && preg_match('#/api/v1/statuses/[^/?]+#', $path)) || ($method === 'POST' && preg_match('#/api/v1/statuses/[^/?]+/unreblog#', $path))) {
+		return 'status_delete';
+	}
+	return 'request';
+}
+
+/**
+ * Mark the current rate-limit guard as blocked.
+ * @param string $reason
+ * @return string
+ */
+function plugin_mastodon_rate_limit_block($reason) {
+	$reason = trim((string) $reason);
+	if ($reason === '') {
+		$reason = 'rate_limit_budget_exhausted';
+	}
+	if (isset($GLOBALS ['plugin_mastodon_rate_limit_guard']) && is_array($GLOBALS ['plugin_mastodon_rate_limit_guard'])) {
+		$GLOBALS ['plugin_mastodon_rate_limit_guard'] ['blocked_reason'] = $reason;
+		if (empty($GLOBALS ['plugin_mastodon_rate_limit_guard'] ['blocked_logged'])) {
+			$summary = plugin_mastodon_rate_limit_guard_summary();
+			$message = 'Mastodon rate-limit guard stopped synchronization: ' . $reason;
+			if (!empty($summary)) {
+				$message .= ' (scope=' . (isset($summary ['scope']) ? (string) $summary ['scope'] : 'unknown')
+					. ', requests=' . (isset($summary ['requests_used']) ? (int) $summary ['requests_used'] : 0) . '/' . (isset($summary ['requests_budget']) ? (int) $summary ['requests_budget'] : 0)
+					. ', media_uploads=' . (isset($summary ['media_uploads_used']) ? (int) $summary ['media_uploads_used'] : 0) . '/' . (isset($summary ['media_uploads_budget']) ? (int) $summary ['media_uploads_budget'] : 0)
+					. ', deletes=' . (isset($summary ['deletes_used']) ? (int) $summary ['deletes_used'] : 0) . '/' . (isset($summary ['deletes_budget']) ? (int) $summary ['deletes_budget'] : 0);
+				if (isset($summary ['remote_remaining']) && $summary ['remote_remaining'] !== null) {
+					$message .= ', remote_remaining=' . (int) $summary ['remote_remaining'];
+				}
+				if (!empty($summary ['remote_reset'])) {
+					$message .= ', remote_reset=' . (string) $summary ['remote_reset'];
+				}
+				$message .= ')';
+			}
+			plugin_mastodon_log($message);
+			$GLOBALS ['plugin_mastodon_rate_limit_guard'] ['blocked_logged'] = true;
+		}
+	}
+	return $reason;
+}
+
+/**
+ * Reserve budget for one Mastodon API request.
+ * @param string $method
+ * @param string $target
+ * @return string Empty string means the request may proceed.
+ */
+function plugin_mastodon_rate_limit_acquire($method, $target) {
+	if (!plugin_mastodon_rate_limit_guard_active()) {
+		return '';
+	}
+	$guard = &$GLOBALS ['plugin_mastodon_rate_limit_guard'];
+	$kind = plugin_mastodon_rate_limit_request_kind($method, $target);
+	if (!empty($guard ['blocked_reason'])) {
+		$blockedReason = (string) $guard ['blocked_reason'];
+		if (!(($blockedReason === 'rate_limit_media_upload_budget_exhausted' && $kind !== 'media_upload') || ($blockedReason === 'rate_limit_delete_budget_exhausted' && $kind !== 'status_delete'))) {
+			return $blockedReason;
+		}
+	}
+	$remaining = isset($guard ['remote_remaining']) && is_numeric($guard ['remote_remaining']) ? (int) $guard ['remote_remaining'] : null;
+	$floor = isset($guard ['remote_remaining_floor']) ? max(0, (int) $guard ['remote_remaining_floor']) : 0;
+	if ($remaining !== null && $remaining <= $floor) {
+		return plugin_mastodon_rate_limit_block('rate_limit_remote_remaining_low');
+	}
+	if (isset($guard ['requests_budget']) && (int) $guard ['requests_budget'] > 0 && (int) $guard ['requests_used'] >= (int) $guard ['requests_budget']) {
+		return plugin_mastodon_rate_limit_block('rate_limit_request_budget_exhausted');
+	}
+	if ($kind === 'media_upload' && isset($guard ['media_uploads_budget']) && (int) $guard ['media_uploads_budget'] > 0 && (int) $guard ['media_uploads_used'] >= (int) $guard ['media_uploads_budget']) {
+		return plugin_mastodon_rate_limit_block('rate_limit_media_upload_budget_exhausted');
+	}
+	if ($kind === 'status_delete' && isset($guard ['deletes_budget']) && (int) $guard ['deletes_budget'] > 0 && (int) $guard ['deletes_used'] >= (int) $guard ['deletes_budget']) {
+		return plugin_mastodon_rate_limit_block('rate_limit_delete_budget_exhausted');
+	}
+	$guard ['requests_used'] = isset($guard ['requests_used']) ? ((int) $guard ['requests_used']) + 1 : 1;
+	if ($kind === 'media_upload') {
+		$guard ['media_uploads_used'] = isset($guard ['media_uploads_used']) ? ((int) $guard ['media_uploads_used']) + 1 : 1;
+	}
+	if ($kind === 'status_delete') {
+		$guard ['deletes_used'] = isset($guard ['deletes_used']) ? ((int) $guard ['deletes_used']) + 1 : 1;
+	}
+	return '';
+}
+
+/**
+ * Update the current per-run guard from Mastodon rate-limit response headers.
+ * @param array<string, mixed> $response
+ * @return void
+ */
+function plugin_mastodon_rate_limit_observe_response($response) {
+	if (!plugin_mastodon_rate_limit_guard_active()) {
+		return;
+	}
+	$response = is_array($response) ? $response : array();
+	$headers = plugin_mastodon_rate_limit_headers(isset($response ['headers']) ? $response ['headers'] : array());
+	if (isset($headers ['x-ratelimit-limit']) && is_numeric($headers ['x-ratelimit-limit'])) {
+		$GLOBALS ['plugin_mastodon_rate_limit_guard'] ['remote_limit'] = (int) $headers ['x-ratelimit-limit'];
+	}
+	if (isset($headers ['x-ratelimit-remaining']) && is_numeric($headers ['x-ratelimit-remaining'])) {
+		$GLOBALS ['plugin_mastodon_rate_limit_guard'] ['remote_remaining'] = (int) $headers ['x-ratelimit-remaining'];
+	}
+	if (isset($headers ['x-ratelimit-reset'])) {
+		$GLOBALS ['plugin_mastodon_rate_limit_guard'] ['remote_reset'] = (string) $headers ['x-ratelimit-reset'];
+	}
+	if ((isset($response ['code']) ? (int) $response ['code'] : 0) === 429) {
+		plugin_mastodon_rate_limit_block('rate_limit_remote_exhausted');
+	}
+}
+
+/**
+ * Return the current rate-limit block reason, if any.
+ * @return string
+ */
+function plugin_mastodon_rate_limit_blocked_reason() {
+	if (!isset($GLOBALS ['plugin_mastodon_rate_limit_guard']) || !is_array($GLOBALS ['plugin_mastodon_rate_limit_guard'])) {
+		return '';
+	}
+	return !empty($GLOBALS ['plugin_mastodon_rate_limit_guard'] ['blocked_reason']) ? (string) $GLOBALS ['plugin_mastodon_rate_limit_guard'] ['blocked_reason'] : '';
+}
+
+/**
+ * Build a synthetic API response for locally blocked Mastodon requests.
+ * @param string $reason
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_rate_limit_blocked_response($reason) {
+	$reason = plugin_mastodon_rate_limit_block($reason);
+	$body = json_encode(array('error' => $reason));
+	return array(
+		'ok' => false,
+		'code' => 429,
+		'headers' => array(),
+		'body' => is_string($body) ? $body : '',
+		'error' => $reason
+	);
+}
+
+/**
+ * Return the rate-limit reason that should be written to sync state, if any.
+ * @return string
+ */
+function plugin_mastodon_rate_limit_state_error() {
+	$reason = plugin_mastodon_rate_limit_blocked_reason();
+	return $reason !== '' ? $reason : '';
 }
 
 /**
@@ -1764,6 +2263,12 @@ function plugin_mastodon_state_read() {
 	$prestat = plugin_mastodon_file_prestat(PLUGIN_MASTODON_STATE_FILE);
 	if (empty($prestat ['exists'])) {
 		plugin_mastodon_runtime_cache_clear('state');
+		$fallbackState = plugin_mastodon_state_fallback_read();
+		if ($fallbackState !== array()) {
+			plugin_mastodon_runtime_cache_set('state', '__signature__', 'apcu-fallback');
+			plugin_mastodon_runtime_cache_set('state', 'apcu-fallback', $fallbackState);
+			return $fallbackState;
+		}
 		return $defaults;
 	}
 
@@ -1780,15 +2285,24 @@ function plugin_mastodon_state_read() {
 
 	$json = plugin_mastodon_io_read_file_uncached(PLUGIN_MASTODON_STATE_FILE, !empty($prestat ['exists']));
 	if (!is_string($json) || trim($json) === '') {
+		$fallbackState = plugin_mastodon_state_fallback_read();
+		if ($fallbackState !== array()) {
+			return $fallbackState;
+		}
 		return $defaults;
 	}
 	$data = json_decode($json, true);
 	if (!is_array($data)) {
+		$fallbackState = plugin_mastodon_state_fallback_read();
+		if ($fallbackState !== array()) {
+			return $fallbackState;
+		}
 		return $defaults;
 	}
 	$state = plugin_mastodon_state_normalize($data);
 	plugin_mastodon_runtime_cache_set('state', '__signature__', $signature);
 	plugin_mastodon_runtime_cache_set('state', $signature, $state);
+	plugin_mastodon_state_fallback_store($state);
 	return $state;
 }
 
@@ -1807,6 +2321,7 @@ function plugin_mastodon_state_write($state) {
 	$payload = $json . PHP_EOL;
 	$written = plugin_mastodon_io_write_file(PLUGIN_MASTODON_STATE_FILE, $payload);
 	plugin_mastodon_runtime_cache_clear('state');
+	plugin_mastodon_state_fallback_store($state);
 	if ($written) {
 		$prestat = plugin_mastodon_file_prestat(PLUGIN_MASTODON_STATE_FILE);
 		$signature = plugin_mastodon_file_prestat_signature($prestat);
@@ -5937,7 +6452,13 @@ function plugin_mastodon_upload_media_items($options, $mediaItems, $limit) {
 		if (!empty($options ['access_token'])) {
 			$headers [] = 'Authorization: Bearer ' . $options ['access_token'];
 		}
-		$response = plugin_mastodon_http_request_multipart('POST', plugin_mastodon_normalize_instance_url(isset($options ['instance_url']) ? $options ['instance_url'] : '') . '/api/v2/media', $headers, $fields, plugin_mastodon_media_transfer_timeout($mediaType, $fileSize));
+		$rateLimitReason = plugin_mastodon_rate_limit_acquire('POST', '/api/v2/media');
+		if ($rateLimitReason !== '') {
+			$response = plugin_mastodon_rate_limit_blocked_response($rateLimitReason);
+		} else {
+			$response = plugin_mastodon_http_request_multipart('POST', plugin_mastodon_normalize_instance_url(isset($options ['instance_url']) ? $options ['instance_url'] : '') . '/api/v2/media', $headers, $fields, plugin_mastodon_media_transfer_timeout($mediaType, $fileSize));
+			plugin_mastodon_rate_limit_observe_response($response);
+		}
 		$data = json_decode(isset($response ['body']) ? $response ['body'] : '', true);
 		if (!is_array($data)) {
 			$data = array();
@@ -6504,7 +7025,12 @@ function plugin_mastodon_mastodon_api($options, $method, $path, $params, $auth) 
 		}
 	}
 
+	$rateLimitReason = plugin_mastodon_rate_limit_acquire($method, $path);
+	if ($rateLimitReason !== '') {
+		return plugin_mastodon_rate_limit_blocked_response($rateLimitReason);
+	}
 	$response = plugin_mastodon_http_request($method, $url, $headers, $body, $contentType);
+	plugin_mastodon_rate_limit_observe_response($response);
 	if (!$response ['ok']) {
 		plugin_mastodon_log('HTTP ' . $method . ' ' . $url . ' failed: ' . $response ['code'] . ' ' . $response ['error'] . ' ' . plugin_mastodon_limit_text($response ['body'], 400));
 	}
@@ -7399,7 +7925,8 @@ function plugin_mastodon_sync_remote_to_local(&$options, &$state) {
 	plugin_mastodon_extend_time_limit(180);
 	$verify = plugin_mastodon_verify_credentials($options);
 	if (!$verify ['ok'] || empty($verify ['json'] ['id'])) {
-		$state ['last_error'] = 'verify_credentials_failed';
+		$rateLimitError = plugin_mastodon_rate_limit_state_error();
+		$state ['last_error'] = $rateLimitError !== '' ? $rateLimitError : 'verify_credentials_failed';
 		return false;
 	}
 
@@ -7444,6 +7971,11 @@ function plugin_mastodon_sync_remote_to_local(&$options, &$state) {
 
 	if ($maxRemoteId !== '') {
 		$state ['last_remote_status_id'] = $maxRemoteId;
+	}
+	$rateLimitError = plugin_mastodon_rate_limit_state_error();
+	if ($rateLimitError !== '') {
+		$state ['last_error'] = $rateLimitError;
+		return false;
 	}
 	return true;
 }
@@ -7645,7 +8177,11 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state) {
 		}
 	}
 
-	return !$hadFailure;
+	$rateLimitError = plugin_mastodon_rate_limit_state_error();
+	if ($rateLimitError !== '' && !$hadFailure) {
+		$state ['last_error'] = $rateLimitError;
+	}
+	return !$hadFailure && $rateLimitError === '';
 }
 
 /**
@@ -7678,6 +8214,12 @@ function plugin_mastodon_run_deletion_sync($force) {
 	if (!$force && empty($state ['deletions_pending'])) {
 		return array('ok' => true, 'state' => $state, 'message' => 'no_deletions_pending');
 	}
+	if (!$force && plugin_mastodon_sync_guard_active('deletion')) {
+		return array('ok' => true, 'state' => $state, 'message' => 'deletion_sync_cooldown');
+	}
+	if (!$force) {
+		plugin_mastodon_sync_guard_mark('deletion', 'scheduled_deletion_sync');
+	}
 
 	plugin_mastodon_ensure_state_dir();
 	$lockHandle = @fopen(PLUGIN_MASTODON_LOCK_FILE, 'c+');
@@ -7686,10 +8228,12 @@ function plugin_mastodon_run_deletion_sync($force) {
 		plugin_mastodon_state_write($state);
 		return array('ok' => false, 'state' => $state, 'message' => 'lock_open_failed');
 	}
+	plugin_mastodon_apply_file_permissions(PLUGIN_MASTODON_LOCK_FILE);
 	if (!@flock($lockHandle, LOCK_EX | LOCK_NB)) {
 		return array('ok' => true, 'state' => $state, 'message' => 'sync_locked');
 	}
 
+	plugin_mastodon_rate_limit_guard_start('deletion_sync');
 	$state ['last_error'] = '';
 	$state ['deletion_stats'] = plugin_mastodon_default_state() ['deletion_stats'];
 	$hadFailure = false;
@@ -7815,6 +8359,13 @@ function plugin_mastodon_run_deletion_sync($force) {
 	}
 
 	$pendingCommentRechecksRemaining = plugin_mastodon_process_pending_comment_remote_rechecks($options, $state, $childIndex, $hadFailure);
+	$rateLimitError = plugin_mastodon_rate_limit_state_error();
+	if ($rateLimitError !== '') {
+		$hadFailure = true;
+		if ($state ['last_error'] === '') {
+			$state ['last_error'] = $rateLimitError;
+		}
+	}
 
 	if (!$hadFailure) {
 		$state ['last_deletion_run'] = date('Y-m-d H:i:s');
@@ -7837,11 +8388,17 @@ function plugin_mastodon_run_deletion_sync($force) {
 		plugin_mastodon_log('Deletion synchronization failed');
 	}
 
-	plugin_mastodon_state_write($state);
+	$stateWriteOk = plugin_mastodon_state_write($state);
+	if (!$stateWriteOk && !$hadFailure) {
+		$state ['last_error'] = 'state_write_failed_after_deletion_sync';
+		plugin_mastodon_state_fallback_store($state);
+		plugin_mastodon_log('Deletion synchronization completed but state.json could not be persisted');
+	}
 	@flock($lockHandle, LOCK_UN);
 	@fclose($lockHandle);
+	plugin_mastodon_rate_limit_guard_stop();
 
-	return array('ok' => !$hadFailure, 'state' => $state, 'message' => $state ['last_error'] === '' ? 'ok' : $state ['last_error']);
+	return array('ok' => (!$hadFailure && $stateWriteOk), 'state' => $state, 'message' => $state ['last_error'] === '' ? 'ok' : $state ['last_error']);
 }
 
 /**
@@ -7892,6 +8449,12 @@ function plugin_mastodon_run_sync($force) {
 	if (!$force && !plugin_mastodon_sync_due($options, $state, time())) {
 		return array('ok' => true, 'state' => $state, 'message' => 'not_due');
 	}
+	if (!$force && plugin_mastodon_sync_guard_active('content')) {
+		return array('ok' => true, 'state' => $state, 'message' => 'sync_cooldown');
+	}
+	if (!$force) {
+		plugin_mastodon_sync_guard_mark('content', 'scheduled_content_sync');
+	}
 
 	plugin_mastodon_ensure_state_dir();
 	$lockHandle = @fopen(PLUGIN_MASTODON_LOCK_FILE, 'c+');
@@ -7900,10 +8463,12 @@ function plugin_mastodon_run_sync($force) {
 		plugin_mastodon_state_write($state);
 		return array('ok' => false, 'state' => $state, 'message' => 'lock_open_failed');
 	}
+	plugin_mastodon_apply_file_permissions(PLUGIN_MASTODON_LOCK_FILE);
 	if (!@flock($lockHandle, LOCK_EX | LOCK_NB)) {
 		return array('ok' => true, 'state' => $state, 'message' => 'sync_locked');
 	}
 
+	plugin_mastodon_rate_limit_guard_start('content_sync');
 	$state ['last_error'] = '';
 	$state ['content_stats'] = plugin_mastodon_default_state() ['content_stats'];
 
@@ -7928,11 +8493,17 @@ function plugin_mastodon_run_sync($force) {
 		plugin_mastodon_log('Synchronization failed');
 	}
 
-	plugin_mastodon_state_write($state);
+	$stateWriteOk = plugin_mastodon_state_write($state);
+	if (!$stateWriteOk && $okRemote && $okLocal) {
+		$state ['last_error'] = 'state_write_failed_after_sync';
+		plugin_mastodon_state_fallback_store($state);
+		plugin_mastodon_log('Synchronization completed but state.json could not be persisted');
+	}
 	@flock($lockHandle, LOCK_UN);
 	@fclose($lockHandle);
+	plugin_mastodon_rate_limit_guard_stop();
 
-	return array('ok' => ($okRemote && $okLocal), 'state' => $state, 'message' => $state ['last_error'] === '' ? 'ok' : $state ['last_error']);
+	return array('ok' => ($okRemote && $okLocal && $stateWriteOk), 'state' => $state, 'message' => $state ['last_error'] === '' ? 'ok' : $state ['last_error']);
 }
 
 /**
