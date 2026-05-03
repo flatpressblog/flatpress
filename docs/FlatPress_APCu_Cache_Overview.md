@@ -821,6 +821,65 @@ Low–Medium. This cache does not affect every request, but it avoids repeated `
 
 ---
 
+### 4.10 Mastodon State Fallback and Synchronization Guards – `mastodon:state:*`, `mastodon:sync_guard:*`
+
+**File:** `fp-plugins/mastodon/plugin.mastodon.php`  
+
+The Mastodon plugin also uses APCu for short-lived resilience around scheduled synchronization state.
+
+**Logical keys:**
+
+- `mastodon:state:last_known_good`
+- `mastodon:sync_guard:content:v1`
+- `mastodon:sync_guard:deletion:v1`
+
+**Effective APCu keys:**
+
+All three keys are stored through the Mastodon APCu wrapper, which calls the FlatPress APCu wrappers. With APCu enabled, the runtime keys therefore become:
+
+- `fp:<NS>:mastodon:state:last_known_good`
+- `fp:<NS>:mastodon:sync_guard:content:v1`
+- `fp:<NS>:mastodon:sync_guard:deletion:v1`
+
+**What is cached:**
+
+- `mastodon:state:last_known_good`
+  - the most recently normalized valid Mastodon synchronization state,
+  - wrapped with a `stored_at` timestamp,
+  - used only as a short-lived "last known good" fallback when `fp-content/plugin_mastodon/state.json` is missing, empty, unreadable, or invalid.
+- `mastodon:sync_guard:content:v1`
+  - a small guard payload for non-forced scheduled content synchronization.
+- `mastodon:sync_guard:deletion:v1`
+  - a small guard payload for non-forced scheduled deletion synchronization.
+
+**TTL / invalidation:**
+
+- State fallback TTL: `PLUGIN_MASTODON_STATE_FALLBACK_TTL`, currently `300` seconds (5 minutes).
+- Synchronization guard TTL: `PLUGIN_MASTODON_COOLDOWN_TTL`, currently `300` seconds (5 minutes).
+- The state fallback is refreshed after valid state reads and after state writes, including cases where the durable file write fails.
+- Guard entries expire naturally after the cooldown window.
+- Guard entries can also be cleared explicitly by `plugin_mastodon_sync_guard_clear()`.
+- All entries are naturally invalidated by APCu eviction/reset and FlatPress namespace rotation.
+
+**File-backed companion layer:**
+
+- Durable state remains `fp-content/plugin_mastodon/state.json`.
+- The cooldown guard also has a file companion: `fp-content/plugin_mastodon/sync.guard.json`.
+- The file guard is intentionally tiny and TTL-based. It protects hosts where APCu is unavailable or where PHP workers do not share the same APCu pool.
+
+**Runtime behavior:**
+
+- Forced/manual synchronization bypasses the cooldown guards.
+- Non-forced scheduled content and deletion synchronization check the APCu guard first.
+- If APCu misses, the plugin checks `sync.guard.json`.
+- If the file guard is still active, it is seeded back into APCu for the remaining TTL.
+- This prevents repeated expensive Mastodon synchronization attempts on every or every second web request when `state.json` cannot be persisted reliably.
+
+**Impact:**  
+Medium for Mastodon-enabled sites under unfavorable hosting conditions. The APCu entries are small, but they stabilize request-time synchronization and prevent repeated media/status work when the durable state file is temporarily unavailable.
+
+---
+
 ## 5. Miscellaneous and Meta Caches
 
 ### 5.1 Instance Namespace Bootstrap – `fp:ns:*`
@@ -869,7 +928,7 @@ Admin-only, but critical for debugging and manual cache reset.
 
 ---
 
-### 5.4 File Fallback Layers (Calendar, Storage)
+### 5.4 File Fallback Layers (Calendar, Storage, Mastodon)
 
 Some features use a **dual-layer cache** (APCu + file fallback) to stay fast even when APCu is unavailable.
 
@@ -882,6 +941,13 @@ Some features use a **dual-layer cache** (APCu + file fallback) to stay fast eve
   - Additional JSON fallbacks:
     - `storage.dirsize.*.json`, `storage.quota.json`, `storage.dirsize.json`  
       (TTL-based; refreshed on demand; not globally purged on version bumps).
+
+- **Mastodon** (`fp-plugins/mastodon/plugin.mastodon.php`)
+  - Durable state: `fp-content/plugin_mastodon/state.json`.
+  - Last-known-good APCu fallback: `mastodon:state:last_known_good` with TTL 300s.
+  - File cooldown guard: `fp-content/plugin_mastodon/sync.guard.json`.
+  - APCu cooldown guards: `mastodon:sync_guard:content:v1` and `mastodon:sync_guard:deletion:v1`, each with TTL 300s.
+  - The file guard is used as a small shared fallback when APCu is unavailable or not shared between workers.
 
 ---
 
@@ -955,6 +1021,8 @@ The following table summarizes each logical cache group:
 | Calendar                     | `fp:calendar:v`, `calendar:*:vN`                                                     | **Yes**                  | `plugin_calendar_cache_bump()` + PrettyURLs bump     | Medium–High              |
 | Storage plugin               | `fp:storage:v`, `fp:storage:aggregate*`, `fp:storage:dirsize*`, `fp:storage:quota*`  | No                       | Storage rescan + TTL                                 | Low–Medium               |
 | Mastodon instance snapshot   | `fp:mastodon:instance_document:<sha1(instance_url)>`                                 | No                       | TTL 900s, `instance_url` change, snapshot refresh    | Low–Medium               |
+| Mastodon state fallback      | `fp:mastodon:state:last_known_good`                                                  | No                       | TTL 300s, refreshed after valid state read/write      | Medium                   |
+| Mastodon sync guards         | `fp:mastodon:sync_guard:content:v1`, `fp:mastodon:sync_guard:deletion:v1`            | No                       | TTL 300s + file guard `sync.guard.json`               | Medium                   |
 | Admin setup hide             | `fp:admin:setup_hide_report`                                                         | No                       | TTL (ok 86400s, fail 300s) + manual APCu clear       | Low–Medium (admin only)  |
 | PrettyURLs auto-detection    | `prettyurls:*`, `prettyurls:auto:v3:g*:*`                                            | No (but influences URLs) | `apcu_gen` bump on mode/.htaccess changes            | Medium                   |
 | Maintain panel tools         | Uses APCu to clear and inspect all keys, no own namespace                            | No                       | Manual admin action                                  | N/A (admin only)         |
@@ -989,6 +1057,9 @@ For completeness, the following logical prefixes are used by FlatPress `1.6.dev`
 - `fp:lang:`
 - `fp:net:in_cidrs:`
 - `fp:mastodon:instance_document:`
+- `fp:mastodon:state:last_known_good`
+- `fp:mastodon:sync_guard:content:v1`
+- `fp:mastodon:sync_guard:deletion:v1`
 - `fp:ns:`
 - `fp:plugin:dir:v2:`
 - `fp:plugin:exists:v2:`
