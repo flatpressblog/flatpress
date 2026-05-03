@@ -2651,7 +2651,6 @@ function plugin_mastodon_resolve_comment_reply_target($state, $entryId, $comment
 	);
 }
 
-
 /**
  * Determine whether a local parent comment should be exported before its child reply.
  * @param array<string, string> $options
@@ -3480,6 +3479,7 @@ function plugin_mastodon_plain_text_from_bbcode($text) {
 	$text = preg_replace('!\[img\](.*?)\[/img\]!is', '', $text);
 	$text = preg_replace('!\[\s*img\b[^\]]*\]!is', '', $text);
 	$text = preg_replace('!\[\s*gallery\b[^\]]*\]!is', '', $text);
+	$text = preg_replace('!\[\s*(audio|video)player\b[^\]]*\].*?\[\s*/\s*\1player\s*\]!is', '', $text);
 	$text = preg_replace('!\[\s*(?:audio|video)player\b[^\]]*\]!is', '', $text);
 	$text = preg_replace('!\[(\/?)(b|i|u|h1|h2|h3|h4|list|\*|left|right|center|justify|color|size|font|flash|youtube|video|audio|mail|html|raw|more|table|tr|td|th|caption|tbody|thead|tfoot|quote|code)(=[^\]]*)?\]!is', '', $text);
 	$text = strip_tags($text);
@@ -3950,6 +3950,7 @@ function plugin_mastodon_flatpress_to_mastodon($text) {
 
 	$text = preg_replace('!\[\s*img\b[^\]]*\]!is', '', $text);
 	$text = preg_replace('!\[\s*gallery\b[^\]]*\]!is', '', $text);
+	$text = preg_replace('!\[\s*(audio|video)player\b[^\]]*\].*?\[\s*/\s*\1player\s*\]!is', '', $text);
 	$text = preg_replace('!\[\s*(?:audio|video)player\b[^\]]*\]!is', '', $text);
 
 	$text = preg_replace_callback(
@@ -4212,6 +4213,28 @@ function plugin_mastodon_bbcode_attr_escape($value) {
 }
 
 /**
+ * Escape plain text embedded between BBCode tags.
+ * @param mixed $value
+ * @return string
+ */
+function plugin_mastodon_bbcode_text_escape($value) {
+	$value = trim((string) $value);
+	if ($value === '') {
+		return '';
+	}
+	$value = str_replace(array("\r\n", "\r"), "\n", $value);
+	$value = preg_replace("/[ \t]+\n/u", "\n", $value);
+	if (!is_string($value)) {
+		return '';
+	}
+	$value = preg_replace("/\n{3,}/u", "\n\n", $value);
+	if (!is_string($value)) {
+		return '';
+	}
+	return str_replace(array('[', ']'), array('&#91;', '&#93;'), trim($value));
+}
+
+/**
  * Guess the MIME type of a local media file.
  * @param string $path
  * @return string
@@ -4465,6 +4488,32 @@ function plugin_mastodon_media_parse_tag_attributes($text) {
 }
 
 /**
+ * Normalize optional AudioVideo BBCode content into a Mastodon media description.
+ * @param mixed $content
+ * @return string
+ */
+function plugin_mastodon_media_description_from_bbcode_content($content) {
+	if (!is_scalar($content)) {
+		return '';
+	}
+	$description = trim((string) $content);
+	if ($description === '') {
+		return '';
+	}
+	$description = strip_tags($description);
+	$withoutBbcode = preg_replace('/\[[^\]]+\]/u', ' ', $description);
+	if (is_string($withoutBbcode)) {
+		$description = $withoutBbcode;
+	}
+	$description = plugin_mastodon_html_entity_decode($description);
+	$normalized = preg_replace('/\s+/u', ' ', $description);
+	if (is_string($normalized)) {
+		$description = $normalized;
+	}
+	return trim($description);
+}
+
+/**
  * Extract the default path parameter from a FlatPress media tag attribute string.
  * @param string $attrText
  * @return string
@@ -4637,7 +4686,7 @@ function plugin_mastodon_collect_local_entry_media($entry) {
 		if (stripos($content, '[' . $tagName) === false) {
 			continue;
 		}
-		if (!preg_match_all('/\[\s*' . $tagName . '\b([^\]]*)\]/iu', $content, $matches, PREG_SET_ORDER)) {
+		if (!preg_match_all('/\[\s*' . $tagName . '\b([^\]]*)\](?:([\s\S]*?)\[\s*\/\s*' . $tagName . '\s*\])?/iu', $content, $matches, PREG_SET_ORDER)) {
 			continue;
 		}
 		foreach ($matches as $match) {
@@ -4651,11 +4700,13 @@ function plugin_mastodon_collect_local_entry_media($entry) {
 				continue;
 			}
 
-			$description = '';
-			foreach (array('description', 'title', 'alt') as $descriptionKey) {
-				if (!empty($attributes [$descriptionKey])) {
-					$description = $attributes [$descriptionKey];
-					break;
+			$description = isset($match [2]) ? plugin_mastodon_media_description_from_bbcode_content($match [2]) : '';
+			if ($description === '') {
+				foreach (array('description', 'title', 'alt') as $descriptionKey) {
+					if (!empty($attributes [$descriptionKey])) {
+						$description = $attributes [$descriptionKey];
+						break;
+					}
 				}
 			}
 
@@ -5172,7 +5223,8 @@ function plugin_mastodon_build_imported_media_bbcode(&$options, $remoteStatus) {
 			'type' => $type === 'audio' ? 'audio' : 'video',
 			'relative_path' => 'attachs/mastodon/status-' . $remoteId . '/' . $basename,
 			'poster' => $posterRelative,
-			'loop' => $type === 'gifv' ? '1' : ''
+			'loop' => $type === 'gifv' ? '1' : '',
+			'description' => plugin_mastodon_remote_media_description($attachment)
 		);
 	}
 
@@ -5230,8 +5282,13 @@ function plugin_mastodon_build_imported_media_bbcode(&$options, $remoteStatus) {
 				continue;
 			}
 			$type = isset($item ['type']) ? (string) $item ['type'] : '';
+			$description = !empty($item ['description']) ? plugin_mastodon_bbcode_text_escape($item ['description']) : '';
 			if ($type === 'audio') {
-				$bbcodeParts [] = '[audioplayer="' . plugin_mastodon_bbcode_attr_escape($relative) . '" controls="1"]';
+				$tag = '[audioplayer="' . plugin_mastodon_bbcode_attr_escape($relative) . '" controls="1"]';
+				if ($description !== '') {
+					$tag .= $description . '[/audioplayer]';
+				}
+				$bbcodeParts [] = $tag;
 			} else {
 				$tag = '[videoplayer="' . plugin_mastodon_bbcode_attr_escape($relative) . '" controls="1"';
 				if (!empty($item ['loop'])) {
@@ -5241,6 +5298,9 @@ function plugin_mastodon_build_imported_media_bbcode(&$options, $remoteStatus) {
 					$tag .= ' poster="' . plugin_mastodon_bbcode_attr_escape((string) $item ['poster']) . '"';
 				}
 				$tag .= ']';
+				if ($description !== '') {
+					$tag .= $description . '[/videoplayer]';
+				}
 				$bbcodeParts [] = $tag;
 			}
 		}
@@ -5796,8 +5856,7 @@ function plugin_mastodon_wait_for_media_attachment($options, $mediaId, $maxAttem
 		$code = isset($response ['code']) ? (int) $response ['code'] : 0;
 		$responseType = !empty($response ['json'] ['type']) ? strtolower((string) $response ['json'] ['type']) : $mediaType;
 		$hasKnownAttachment = !empty($response ['json'] ['id']) && (string) $response ['json'] ['id'] === $mediaId;
-		$stillProcessing = ($code === 202 || $code === 206)
-			|| (!empty($response ['ok']) && empty($response ['json'] ['url']) && (!empty($response ['json'] ['preview_url']) || $hasKnownAttachment || $responseType === 'audio' || $responseType === 'video' || $responseType === 'gifv'));
+		$stillProcessing = ($code === 202 || $code === 206) || (!empty($response ['ok']) && empty($response ['json'] ['url']) && (!empty($response ['json'] ['preview_url']) || $hasKnownAttachment || $responseType === 'audio' || $responseType === 'video' || $responseType === 'gifv'));
 		if (!$stillProcessing) {
 			return $response;
 		}
@@ -7787,7 +7846,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 
 /**
  * Determine whether the scheduled synchronization is currently due.
-
+ *
  * @param array<string, string> $options
  * @param array<string, mixed> $state
  * @param int $timestamp
