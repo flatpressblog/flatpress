@@ -33,6 +33,17 @@
 
 			<dt><label for="sync_start_date">{$plang.sync_start_date|escape}</label></dt>
 			<dd><input type="date" id="sync_start_date" name="sync_start_date" value="{$mastodon_cfg.sync_start_date|escape}"></dd>
+
+			<dt>{$plang.sync_scheduled_window_days|escape}</dt>
+			<dd>
+				{foreach from=$mastodon_scheduled_window_choices item=window_choice}
+					<label>
+						<input type="radio" name="sync_scheduled_window_days" value="{$window_choice.value|escape}"{if $mastodon_cfg.sync_scheduled_window_days eq $window_choice.value} checked="checked"{/if}>
+						{$window_choice.label|escape}
+					</label>
+				{/foreach}
+				<br><small>{$plang.sync_scheduled_window_days_desc|escape}</small>
+			</dd>
 		</dl>
 
 	<div class="buttonbar">
@@ -63,6 +74,14 @@
 				<label>
 					<input type="checkbox" id="quote_imported_reply_parent" name="quote_imported_reply_parent" value="1"{if $mastodon_cfg.quote_imported_reply_parent eq '1'} checked="checked"{/if}>
 					{$plang.quote_imported_reply_parent_desc|escape}
+				</label>
+			</dd>
+			<br>
+			<dt><label for="old_thread_reply_check">{$plang.old_thread_reply_check|escape}</label></dt>
+			<dd>
+				<label>
+					<input type="checkbox" id="old_thread_reply_check" name="old_thread_reply_check" value="1"{if $mastodon_cfg.old_thread_reply_check eq '1'} checked="checked"{/if}>
+					{$plang.old_thread_reply_check_desc|escape}
 				</label>
 			</dd>
 			<br>
