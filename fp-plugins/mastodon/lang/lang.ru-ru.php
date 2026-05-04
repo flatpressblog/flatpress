@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
