@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -10,6 +10,11 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'password' => 'Geslo za Mastodon',
 	'sync_time' => 'Dnevni čas sinhronizacije',
 	'sync_start_date' => 'Sinhroniziraj od datuma',
+	'sync_scheduled_window_days' => 'Avtomatsko časovno okno za načrtovana izvajanja',
+	'sync_scheduled_window_days_desc' => 'Načrtovana dnevna izvajanja sinhronizirajo le to zadnje časovno okno, vendar zgornji datum ostaja trajna spodnja meja. Ročni izvajanji še vedno uporabljata le zgornji datum',
+	'sync_scheduled_window_7_days' => '7 dni',
+	'sync_scheduled_window_14_days' => '14 dni',
+	'sync_scheduled_window_30_days' => '30 dni',
 	'more_options' => 'Dodatne možnosti',
 	'update_local_from_remote' => 'Posodobi obstoječo lokalno vsebino iz Mastodona',
 	'update_local_from_remote_desc' => 'Ko je omogočeno, lahko spremembe iz Mastodona prepišejo že obstoječe lokalne vnose in komentarje FlatPressa. Objave in komentarji na FlatPressu se nato skrajšajo na 500 znakov.',
@@ -19,6 +24,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'import_synced_comments_as_entries_desc' => 'Ko je omogočeno, se lahko statusi Mastodona, ki so že preslikani na lokalni komentar FlatPressa, uvozijo tudi kot vnosi FlatPressa. To je privzeto onemogočeno, da se prepreči podvojena vsebina.',
 	'quote_imported_reply_parent' => 'Ob uvozu citiraj komentar Mastodona, na katerega je odgovorjeno',
 	'quote_imported_reply_parent_desc' => 'Ko je omogočeno, se uvoženi odgovori Mastodona na drug komentar začnejo z blokom citata, ki prikaže uporabnika, kateremu je bilo odgovorjeno, in besedilo komentarja.',
+	'old_thread_reply_check' => 'Preveri stare niti za odgovore',
+	'old_thread_reply_check_desc' => 'Ko je omogočeno, vtičnik preveri starejše sinhronizirane niti Mastodona za nove odgovore v majhnih krožnih serijah.',
 	'reply_quote_author_format' => '%s je napisal/-a:',
 	'save' => 'Shrani nastavitve',
 	'oauth_head' => 'Pomočnik OAuth',

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -10,6 +10,11 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'password' => 'Mastodon parolası',
 	'sync_time' => 'Günlük senkronizasyon saati',
 	'sync_start_date' => 'Şu tarihten itibaren senkronize et',
+	'sync_scheduled_window_days' => 'Zamanlanmış çalıştırmalar için otomatik zaman aralığı',
+	'sync_scheduled_window_days_desc' => 'Zamanlanmış günlük çalıştırmalar yalnızca bu son zaman aralığını senkronize eder, ancak yukarıdaki tarih kalıcı alt sınır olarak kalır. Manuel çalıştırmalarda ise yine yalnızca yukarıdaki tarih kullanılır.',
+	'sync_scheduled_window_7_days' => '7 gün',
+	'sync_scheduled_window_14_days' => '14 gün',
+	'sync_scheduled_window_30_days' => '30 gün',
 	'more_options' => 'Ek seçenekler',
 	'update_local_from_remote' => 'Mevcut yerel içeriği Mastodon’dan güncelle',
 	'update_local_from_remote_desc' => 'Etkinleştirildiğinde, Mastodon’daki değişiklikler mevcut yerel FlatPress girdilerinin ve yorumlarının üzerine yazabilir. FlatPress’teki gönderiler ve yorumlar 500 karaktere kısaltılır.',
@@ -19,6 +24,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'import_synced_comments_as_entries_desc' => 'Etkinleştirildiğinde, zaten yerel bir FlatPress yorumuyla eşlenmiş olan Mastodon durumları FlatPress girdisi olarak da içe aktarılabilir. Yinelenen içerikten kaçınmak için bu seçenek varsayılan olarak devre dışıdır.',
 	'quote_imported_reply_parent' => 'İçe aktarımda yanıt verilen Mastodon yorumunu alıntıla',
 	'quote_imported_reply_parent_desc' => 'Etkinleştirildiğinde, başka bir yoruma verilen içe aktarılmış Mastodon yanıtları, yanıt verilen kullanıcıyı ve yorum metnini gösteren bir alıntı bloğuyla başlar.',
+	'old_thread_reply_check' => 'Eski konuları yanıtlar için kontrol et',
+	'old_thread_reply_check_desc' => 'Etkinleştirildiğinde, eklenti senkronize edilmiş eski Mastodon konuları küçük dönen gruplar halinde yeni yanıtlar için kontrol eder.',
 	'reply_quote_author_format' => '%s yazdı:',
 	'save' => 'Ayarları kaydet',
 	'oauth_head' => 'OAuth yardımcısı',

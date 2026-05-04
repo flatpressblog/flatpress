@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -10,6 +10,11 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'password' => 'Contraseña de Mastodon',
 	'sync_time' => 'Hora diaria de sincronización',
 	'sync_start_date' => 'Sincronizar desde la fecha',
+	'sync_scheduled_window_days' => 'Ventana automática para ejecuciones programadas',
+	'sync_scheduled_window_days_desc' => 'Las ejecuciones diarias programadas solo sincronizan esta ventana reciente, pero la fecha indicada anteriormente sigue siendo el límite inferior permanente. Las ejecuciones manuales siguen utilizando únicamente la fecha anterior.',
+	'sync_scheduled_window_7_days' => '7 días',
+	'sync_scheduled_window_14_days' => '14 días',
+	'sync_scheduled_window_30_days' => '30 días',
 	'more_options' => 'Opciones adicionales',
 	'update_local_from_remote' => 'Actualizar el contenido local existente desde Mastodon',
 	'update_local_from_remote_desc' => 'Cuando está activado, los cambios de Mastodon pueden sobrescribir entradas y comentarios locales de FlatPress ya existentes. Las entradas y los comentarios de FlatPress se acortarán entonces a 500 caracteres.',
@@ -19,6 +24,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'import_synced_comments_as_entries_desc' => 'Cuando está activado, los estados de Mastodon que ya están asociados a un comentario local de FlatPress también pueden importarse como entradas de FlatPress. Esta opción está desactivada por defecto para evitar contenido duplicado.',
 	'quote_imported_reply_parent' => 'Citar al importar el comentario de Mastodon al que se responde',
 	'quote_imported_reply_parent_desc' => 'Cuando está activado, las respuestas de Mastodon importadas a otro comentario comienzan con un bloque de cita que muestra el usuario citado y el texto del comentario.',
+	'old_thread_reply_check' => 'Comprobar respuestas en hilos antiguos',
+	'old_thread_reply_check_desc' => 'Cuando está habilitado, el complemento comprueba los hilos antiguos sincronizados de Mastodon en busca de nuevas respuestas en pequeños lotes rotativos.',
 	'reply_quote_author_format' => '%s escribió:',
 	'save' => 'Guardar ajustes',
 	'oauth_head' => 'Asistente de OAuth',
