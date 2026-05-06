@@ -8848,6 +8848,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 	plugin_mastodon_extend_time_limit(180);
 	$options = plugin_mastodon_get_options();
 	$state = plugin_mastodon_state_read();
+	$force = (bool) $force;
 
 	if ($options ['instance_url'] === '') {
 		$state ['last_error'] = 'missing_instance_url';
@@ -9153,13 +9154,23 @@ function plugin_mastodon_sync_due($options, $state, $timestamp) {
 
 /**
  * Run a full synchronization cycle.
+ *
+ * The first flag controls whether the run is triggered explicitly and should
+ * bypass the daily due check. The second flag controls whether automatic
+ * scheduled windows are ignored. Keeping both concepts separate allows a
+ * manual admin run to behave like the scheduled run while still offering an
+ * explicit full check.
+ *
  * @param bool $force
+ * @param bool|null $fullWindow
  * @return array<string, mixed>
  */
-function plugin_mastodon_run_sync($force) {
+function plugin_mastodon_run_sync($force, $fullWindow = null) {
 	plugin_mastodon_extend_time_limit(180);
 	$options = plugin_mastodon_get_options();
 	$state = plugin_mastodon_state_read();
+	$force = (bool) $force;
+	$fullWindow = $fullWindow === null ? $force : (bool) $fullWindow;
 
 	if ($options ['instance_url'] === '') {
 		$state ['last_error'] = 'missing_instance_url';
@@ -9202,10 +9213,10 @@ function plugin_mastodon_run_sync($force) {
 		plugin_mastodon_log('Protected ' . $protectedDeletedExportedComments . ' locally deleted exported FlatPress comment mapping(s) from stale Mastodon context re-imports before content synchronization');
 	}
 
-	$okRemote = plugin_mastodon_sync_remote_to_local($options, $state, $force);
+	$okRemote = plugin_mastodon_sync_remote_to_local($options, $state, $fullWindow);
 	$okLocal = false;
 	if ($okRemote) {
-		$okLocal = plugin_mastodon_sync_local_to_remote($options, $state, $force);
+		$okLocal = plugin_mastodon_sync_local_to_remote($options, $state, $fullWindow);
 	}
 
 	if ($okRemote && $okLocal) {
@@ -9496,7 +9507,13 @@ if (class_exists('AdminPanelAction')) {
 					$this->smarty->assign('success', !empty($response ['ok']) ? 6 : -6);
 				}
 			} elseif (isset($_POST ['mastodon_run_now'])) {
-				$result = plugin_mastodon_run_sync(true);
+				$result = plugin_mastodon_run_sync(true, false);
+				$this->smarty->assign('success', $result ['ok'] ? 4 : -4);
+			} elseif (isset($_POST ['mastodon_run_full_now'])) {
+				$result = plugin_mastodon_run_sync(true, true);
+				$this->smarty->assign('success', $result ['ok'] ? 4 : -4);
+			} elseif (isset($_POST ['mastodon_run_full_deletion'])) {
+				$result = plugin_mastodon_run_deletion_sync(true);
 				$this->smarty->assign('success', $result ['ok'] ? 4 : -4);
 			} elseif (isset($_POST ['mastodon_clear_token'])) {
 				$options ['access_token'] = '';

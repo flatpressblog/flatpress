@@ -136,9 +136,14 @@
 	</fieldset>
 
 
-	<div class="buttonbar">
-		<input type="submit" name="mastodon_run_now" value="{$plang.run_now|escape}">
-	</div>
+	<fieldset><legend>{$plang.manual_runs_head|escape}</legend>
+		<p>{$plang.manual_runs_desc|escape}</p>
+		<div class="buttonbar">
+			<input type="submit" name="mastodon_run_now" value="{$plang.run_now|escape}">
+			<input type="submit" name="mastodon_run_full_now" value="{$plang.run_full_now|escape}">
+			<input type="submit" name="mastodon_run_full_deletion" value="{$plang.run_full_deletion|escape}">
+		</div>
+	</fieldset>
 {/html_form}
 
 <h3>{$plang.status_head|escape}</h3>
