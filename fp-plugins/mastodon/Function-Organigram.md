@@ -19,6 +19,7 @@ The layout is intentionally hierarchical so responsibilities, call paths, and im
 - Friendly deletion-sync guards for normalized comment mapping metadata are reflected explicitly.
 - The default-enabled option to quote the replied-to Mastodon comment during comment import, including the replied-to user label, is reflected explicitly.
 - The admin text for the known-thread reply-check option now explains that enabling it imports replies on already synchronized threads at the cost of additional Mastodon API requests.
+- The admin panel now separates normal manual synchronization from explicit full admin runs: the normal button bypasses the daily due check but still respects the automatic 7/14/30-day window, while full synchronization and full deletion checks intentionally ignore that window but still obey budgets, persistent rate-limit windows, locks, and progress cursors.
 - Export-side conversion of active Emoticons plugin shortcodes to standard Unicode emoji for FlatPress entry titles, entry bodies, comment author labels, and comment bodies is reflected explicitly.
 - All plugin functions and admin panel methods currently present in the file are covered.
 - Function summaries are derived from the current source file PHPDoc and verified against the function names and their location in the file.
@@ -53,8 +54,8 @@ Current export behavior uses these endpoints in a version-aware way:
 
 ## Function count
 
-The plugin file currently contains **311** callable functions/methods documented in this organigram:
-- **308** top-level plugin functions
+The plugin file currently contains **314** callable functions/methods documented in this organigram:
+- **311** top-level plugin functions
 - **3** admin panel class methods (`setup()`, `main()`, `onsubmit()`)
 
 ## High-level call flow
@@ -75,7 +76,7 @@ The plugin file currently contains **311** callable functions/methods documented
   Refreshes the shared-request PHP execution budget through `plugin_mastodon_extend_time_limit()`, protects locally deleted exported FlatPress comment mappings through `plugin_mastodon_protect_locally_deleted_exported_comments()` so stale Mastodon thread context cannot resurrect them during the same request, and then executes the two main directions in order:
   1. `plugin_mastodon_sync_remote_to_local()`
   2. `plugin_mastodon_sync_local_to_remote()`
-  Non-forced scheduled runs are gated by `plugin_mastodon_sync_guard_active()` and mark a 5-minute `content` cooldown through `plugin_mastodon_sync_guard_mark()` before network work starts. After acquiring the sync lock, the function starts a per-run Mastodon API guard through `plugin_mastodon_rate_limit_guard_start()`, so general requests, media uploads, status deletes, persistent cross-run media/delete windows, persistent account-status paging windows, and Mastodon `X-RateLimit-*` headers can stop the run cleanly. If both directions finish successfully, the function marks a follow-up deletion pass as pending for a later web request and stores a `deletions_not_before` timestamp at least 5 minutes after the completed content sync. A completed sync is reported as failed if `plugin_mastodon_state_write()` cannot persist the updated state; the updated state is still placed in the short APCu fallback cache when APCu is available.
+  The first boolean argument means "explicitly triggered / bypass the daily due check"; the optional second boolean controls whether the automatic scheduled window is ignored. This keeps normal admin-triggered synchronization aligned with scheduled behavior (`true, false`) while preserving explicit full checks (`true, true`). Non-forced scheduled runs are gated by `plugin_mastodon_sync_guard_active()` and mark a 5-minute `content` cooldown through `plugin_mastodon_sync_guard_mark()` before network work starts. After acquiring the sync lock, the function starts a per-run Mastodon API guard through `plugin_mastodon_rate_limit_guard_start()`, so general requests, media uploads, status deletes, persistent cross-run media/delete windows, persistent account-status paging windows, and Mastodon `X-RateLimit-*` headers can stop the run cleanly. If both directions finish successfully, the function marks a follow-up deletion pass as pending for a later web request and stores a `deletions_not_before` timestamp at least 5 minutes after the completed content sync. A completed sync is reported as failed if `plugin_mastodon_state_write()` cannot persist the updated state; the updated state is still placed in the short APCu fallback cache when APCu is available.
 
 - `plugin_mastodon_run_deletion_sync()`  
   Runs the real deletion synchronization in a separate follow-up request. It first checks `plugin_mastodon_should_run_deletion_sync()` so the user-controlled admin toggle can disable the delete pass, then checks `plugin_mastodon_deletion_sync_due()` so the delete pass cannot start before the persisted 5-minute separation window has passed. It applies the same 5-minute cooldown guard with the `deletion` kind for non-forced scheduled runs, starts the per-run Mastodon API guard after acquiring the sync lock, and every remote status delete must pass both the per-run delete budget and the persistent cross-run delete window. It resets only `deletion_stats` while preserving `content_stats` from the last content sync, gates all mapped items through `plugin_mastodon_mapping_matches_sync_start()` so the delete pass stays inside the manual sync-start window, and uses `plugin_mastodon_mapping_matches_deletion_lookup_window()` to limit only remote existence lookups for still-existing local items to the automatic scheduled 7/14/30-day window. Local deletions are still propagated to Mastodon when they are inside the manual sync-start range, even if they are outside the automatic scheduled window. Large full delete passes advance through `deletion_cursor_entries` and `deletion_cursor_comments` via `plugin_mastodon_mapping_keys_after_cursor()`, so later runs continue after the last successfully checked mapping instead of repeating the first batch. The function then either runs the full reconciliation pass or a targeted `comment_rechecks` follow-up scope via `plugin_mastodon_state_has_comment_recheck_scope()`. Direct descendants of newly deleted replies are queued with `plugin_mastodon_queue_comment_descendant_remote_rechecks()`, surviving direct child replies can be reattached to the synchronized entry status through `plugin_mastodon_reattach_local_comment_to_entry_status()`, and pending deep-thread cleanup is processed breadth-first through `plugin_mastodon_process_pending_comment_remote_rechecks()`. A successful delete pass is reported as failed if the resulting state cannot be persisted.
@@ -134,7 +135,9 @@ The plugin file currently contains **311** callable functions/methods documented
   - configuration normalization and storage
   - OAuth app registration
   - authorization code exchange
-  - manual synchronization
+  - normal manual synchronization with scheduled-window behavior
+  - explicit full synchronization from the manual start date
+  - explicit full deletion reconciliation from the manual start date
   - explicit instance-information refreshes for the admin table
   - deferred deletion synchronization on later non-POST requests
 
