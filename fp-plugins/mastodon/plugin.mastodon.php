@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.2.2
+ * Version: 2.3.0
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -530,6 +530,8 @@ function plugin_mastodon_default_state() {
 		'comment_tombstones' => array(),
 		'pending_comment_remote_rechecks' => array(),
 		'old_thread_context_cursor' => '',
+		'deletion_cursor_entries' => '',
+		'deletion_cursor_comments' => '',
 		'content_stats' => plugin_mastodon_default_content_stats(),
 		'deletion_stats' => plugin_mastodon_default_deletion_stats()
 	);
@@ -2319,7 +2321,7 @@ function plugin_mastodon_should_quote_imported_reply_parent($options) {
 }
 
 /**
- * Normalize the toggle that enables rotating context checks for old synchronized Mastodon threads.
+ * Normalize the toggle that enables rotating context checks for known synchronized Mastodon threads.
  * @param mixed $value
  * @return string
  */
@@ -2328,7 +2330,7 @@ function plugin_mastodon_normalize_old_thread_reply_check($value) {
 }
 
 /**
- * Check whether old synchronized Mastodon threads should be checked for replies in rotating batches.
+ * Check whether known synchronized Mastodon threads should be checked for replies in rotating batches.
  * @param array<string, string> $options
  * @return bool
  */
@@ -2581,6 +2583,94 @@ function plugin_mastodon_mapping_matches_sync_start($options, $meta, $localFallb
 }
 
 /**
+ * Return the most stable date key available for a synchronized mapping.
+ *
+ * The deletion sync uses this for the automatic scheduled window only when the
+ * local object still exists and the run is not forced. Local deletions still
+ * remain governed by the manual sync start date, so older local deletions do
+ * not leave orphaned Mastodon statuses behind.
+ *
+ * @param array<string, mixed> $meta
+ * @param string $localFallbackId
+ * @return string
+ */
+function plugin_mastodon_mapping_effective_date_key($meta, $localFallbackId = '') {
+	$meta = is_array($meta) ? $meta : array();
+	$source = isset($meta ['source']) ? strtolower(trim((string) $meta ['source'])) : '';
+	$localDateKey = '';
+	if (!empty($meta ['local_date_key'])) {
+		$localDateKey = plugin_mastodon_normalize_sync_start_date((string) $meta ['local_date_key']);
+	}
+	if ($localDateKey === '') {
+		$localDateKey = plugin_mastodon_local_item_date_key(array(), $localFallbackId);
+	}
+	$remoteDateKey = '';
+	if (!empty($meta ['remote_date_key'])) {
+		$remoteDateKey = plugin_mastodon_normalize_sync_start_date((string) $meta ['remote_date_key']);
+	}
+	if ($remoteDateKey === '') {
+		$remoteDateKey = plugin_mastodon_datetime_date_key(isset($meta ['remote_updated_at']) ? (string) $meta ['remote_updated_at'] : '');
+	}
+	if ($source === 'remote' && $remoteDateKey !== '') {
+		return $remoteDateKey;
+	}
+	if ($source === 'local' && $localDateKey !== '') {
+		return $localDateKey;
+	}
+	if ($localDateKey !== '') {
+		return $localDateKey;
+	}
+	if ($remoteDateKey !== '') {
+		return $remoteDateKey;
+	}
+	return '';
+}
+
+/**
+ * Determine whether an existing local mapping should be remotely checked for deletion in this run.
+ *
+ * @param array<string, string> $options
+ * @param array<string, mixed> $meta
+ * @param string $localFallbackId
+ * @param bool $force
+ * @return bool
+ */
+function plugin_mastodon_mapping_matches_deletion_lookup_window($options, $meta, $localFallbackId, $force) {
+	if (!plugin_mastodon_mapping_matches_sync_start($options, $meta, $localFallbackId)) {
+		return false;
+	}
+	if ($force) {
+		return true;
+	}
+	$dateKey = plugin_mastodon_mapping_effective_date_key($meta, $localFallbackId);
+	if ($dateKey === '') {
+		return true;
+	}
+	return plugin_mastodon_date_matches_content_window($options, $dateKey, false);
+}
+
+/**
+ * Return mapping keys ordered after a saved deletion cursor.
+ *
+ * @param array<int, string> $keys
+ * @param string $cursor
+ * @return array<int, string>
+ */
+function plugin_mastodon_mapping_keys_after_cursor($keys, $cursor) {
+	$keys = is_array($keys) ? array_values(array_map('strval', $keys)) : array();
+	sort($keys, SORT_STRING);
+	$cursor = (string) $cursor;
+	if ($cursor === '' || empty($keys)) {
+		return $keys;
+	}
+	$position = array_search($cursor, $keys, true);
+	if ($position === false) {
+		return $keys;
+	}
+	return array_slice($keys, ((int) $position) + 1);
+}
+
+/**
  * Ensure that the plugin runtime directory exists.
  * @return bool
  */
@@ -2716,6 +2806,8 @@ function plugin_mastodon_state_normalize($state) {
 	$state ['last_error'] = isset($state ['last_error']) ? (string) $state ['last_error'] : '';
 	$state ['last_remote_status_id'] = isset($state ['last_remote_status_id']) ? (string) $state ['last_remote_status_id'] : '';
 	$state ['old_thread_context_cursor'] = isset($state ['old_thread_context_cursor']) ? (string) $state ['old_thread_context_cursor'] : '';
+	$state ['deletion_cursor_entries'] = isset($state ['deletion_cursor_entries']) ? (string) $state ['deletion_cursor_entries'] : '';
+	$state ['deletion_cursor_comments'] = isset($state ['deletion_cursor_comments']) ? (string) $state ['deletion_cursor_comments'] : '';
 	$legacyContentStats = array();
 	foreach (array_keys($defaults ['content_stats']) as $key) {
 		if (isset($legacyStats [$key])) {
@@ -8362,7 +8454,7 @@ function plugin_mastodon_import_remote_context_descendants(&$options, &$state, $
 }
 
 /**
- * Return the maximum number of older known threads checked for replies per content sync run.
+ * Return the maximum number of known synchronized threads checked for replies per content sync run.
  * @return int
  */
 function plugin_mastodon_old_thread_context_rotation_limit() {
@@ -8770,6 +8862,8 @@ function plugin_mastodon_run_deletion_sync($force) {
 	if (!plugin_mastodon_should_run_deletion_sync($options)) {
 		plugin_mastodon_state_set_deletions_pending($state, false, 'full');
 		$state ['pending_comment_remote_rechecks'] = array();
+		$state ['deletion_cursor_entries'] = '';
+		$state ['deletion_cursor_comments'] = '';
 		$state ['last_error'] = '';
 		plugin_mastodon_state_write($state);
 		return array('ok' => true, 'state' => $state, 'message' => 'deletion_sync_disabled');
@@ -8796,6 +8890,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 	}
 	plugin_mastodon_apply_file_permissions(PLUGIN_MASTODON_LOCK_FILE);
 	if (!@flock($lockHandle, LOCK_EX | LOCK_NB)) {
+		@fclose($lockHandle);
 		return array('ok' => true, 'state' => $state, 'message' => 'sync_locked');
 	}
 
@@ -8803,14 +8898,25 @@ function plugin_mastodon_run_deletion_sync($force) {
 	$state ['last_error'] = '';
 	$state ['deletion_stats'] = plugin_mastodon_default_state() ['deletion_stats'];
 	$hadFailure = false;
+	$deletionInterrupted = false;
 	$childIndex = plugin_mastodon_build_comment_remote_child_index($state);
 	$commentRecheckOnly = plugin_mastodon_state_has_comment_recheck_scope($state) && !empty($state ['pending_comment_remote_rechecks']);
 
 	if (!$commentRecheckOnly) {
-		$entryMappings = isset($state ['entries']) && is_array($state ['entries']) ? array_keys($state ['entries']) : array();
+		$entryMappingKeys = isset($state ['entries']) && is_array($state ['entries']) ? array_keys($state ['entries']) : array();
+		$entryMappings = plugin_mastodon_mapping_keys_after_cursor($entryMappingKeys, isset($state ['deletion_cursor_entries']) ? (string) $state ['deletion_cursor_entries'] : '');
+		$processedEntryMappings = 0;
+
 		foreach ($entryMappings as $localEntryId) {
+			if (plugin_mastodon_rate_limit_state_error() !== '') {
+				$deletionInterrupted = true;
+				break;
+			}
 			plugin_mastodon_extend_time_limit(120);
 			$localEntryId = (string) $localEntryId;
+			$entryCursorBefore = isset($state ['deletion_cursor_entries']) ? (string) $state ['deletion_cursor_entries'] : '';
+			$state ['deletion_cursor_entries'] = $localEntryId;
+			$processedEntryMappings++;
 			$meta = plugin_mastodon_state_get_entry_meta($state, $localEntryId);
 			if (empty($meta ['remote_id'])) {
 				plugin_mastodon_state_remove_entry_mapping($state, $localEntryId);
@@ -8832,6 +8938,16 @@ function plugin_mastodon_run_deletion_sync($force) {
 				$hadFailure = true;
 				$state ['last_error'] = 'entry_remote_delete_failed: ' . $localEntryId . ' (' . plugin_mastodon_response_error_message($deleted) . ')';
 				plugin_mastodon_log('Deletion sync failed to delete remote status for local entry ' . $localEntryId . ': ' . plugin_mastodon_response_error_message($deleted));
+				if (plugin_mastodon_rate_limit_state_error() !== '') {
+					$state ['deletion_cursor_entries'] = $entryCursorBefore;
+					$deletionInterrupted = true;
+					break;
+				}
+				continue;
+			}
+
+			if (!plugin_mastodon_mapping_matches_deletion_lookup_window($options, $meta, $localEntryId, $force)) {
+				plugin_mastodon_log('Skipping remote deletion lookup for entry ' . $localEntryId . ' because it is outside the scheduled deletion lookup window');
 				continue;
 			}
 
@@ -8848,76 +8964,116 @@ function plugin_mastodon_run_deletion_sync($force) {
 				$hadFailure = true;
 				$state ['last_error'] = 'entry_remote_lookup_failed: ' . $localEntryId . ' (' . plugin_mastodon_response_error_message($remote) . ')';
 				plugin_mastodon_log('Deletion sync failed to fetch remote status for local entry ' . $localEntryId . ': ' . plugin_mastodon_response_error_message($remote));
+				if (plugin_mastodon_rate_limit_state_error() !== '') {
+					$state ['deletion_cursor_entries'] = $entryCursorBefore;
+					$deletionInterrupted = true;
+					break;
+				}
 			}
 		}
 
-		$commentMappings = isset($state ['comments']) && is_array($state ['comments']) ? array_keys($state ['comments']) : array();
-		foreach ($commentMappings as $commentKey) {
-			plugin_mastodon_extend_time_limit(120);
-			$commentKey = (string) $commentKey;
-			$meta = isset($state ['comments'] [$commentKey]) && is_array($state ['comments'] [$commentKey]) ? $state ['comments'] [$commentKey] : array();
-			if (empty($meta ['entry_id']) || empty($meta ['comment_id'])) {
-				if ($commentKey !== '' && isset($state ['pending_comment_remote_rechecks'] [$commentKey])) {
-					unset($state ['pending_comment_remote_rechecks'] [$commentKey]);
+		if (!$deletionInterrupted && $processedEntryMappings >= count($entryMappings)) {
+			$state ['deletion_cursor_entries'] = '';
+		}
+
+		if (!$deletionInterrupted) {
+			$commentMappingKeys = isset($state ['comments']) && is_array($state ['comments']) ? array_keys($state ['comments']) : array();
+			$commentMappings = plugin_mastodon_mapping_keys_after_cursor($commentMappingKeys, isset($state ['deletion_cursor_comments']) ? (string) $state ['deletion_cursor_comments'] : '');
+			$processedCommentMappings = 0;
+
+			foreach ($commentMappings as $commentKey) {
+				if (plugin_mastodon_rate_limit_state_error() !== '') {
+					$deletionInterrupted = true;
+					break;
 				}
-				continue;
-			}
-			$entryId = (string) $meta ['entry_id'];
-			$commentId = (string) $meta ['comment_id'];
-			$commentMeta = plugin_mastodon_state_get_comment_meta($state, $entryId, $commentId);
-			if (empty($commentMeta ['remote_id'])) {
-				plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
-				plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
-				continue;
-			}
-			if (!plugin_mastodon_mapping_matches_sync_start($options, $commentMeta, $commentId)) {
-				plugin_mastodon_log('Skipping deletion sync for comment ' . $entryId . '/' . $commentId . ' because it is older than the configured sync start date');
-				plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
-				continue;
-			}
-			if (plugin_mastodon_state_get_pending_comment_remote_recheck($state, $entryId, $commentId) !== array()) {
-				continue;
-			}
-			$remoteId = (string) $commentMeta ['remote_id'];
-			$localExists = (bool) comment_exists($entryId, $commentId);
-			if (!$localExists) {
-				$deleted = plugin_mastodon_delete_status($options, $remoteId, true);
-				if (!empty($deleted ['ok']) || plugin_mastodon_status_missing_response($deleted)) {
-					$queuedDescendants = plugin_mastodon_queue_comment_descendant_remote_rechecks($state, $childIndex, $remoteId);
-					plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'local_deleted_remote_deleted');
-					plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
-					plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
-					$state ['deletion_stats'] ['deleted_remote_comments']++;
-					if ($queuedDescendants > 0) {
-						plugin_mastodon_log('Queued ' . $queuedDescendants . ' direct local descendant comment(s) for follow-up verification after deleting remote comment ' . $remoteId);
+				plugin_mastodon_extend_time_limit(120);
+				$commentKey = (string) $commentKey;
+				$commentCursorBefore = isset($state ['deletion_cursor_comments']) ? (string) $state ['deletion_cursor_comments'] : '';
+				$state ['deletion_cursor_comments'] = $commentKey;
+				$processedCommentMappings++;
+				$meta = isset($state ['comments'] [$commentKey]) && is_array($state ['comments'] [$commentKey]) ? $state ['comments'] [$commentKey] : array();
+				if (empty($meta ['entry_id']) || empty($meta ['comment_id'])) {
+					if ($commentKey !== '' && isset($state ['pending_comment_remote_rechecks'] [$commentKey])) {
+						unset($state ['pending_comment_remote_rechecks'] [$commentKey]);
 					}
 					continue;
 				}
-				$hadFailure = true;
-				$state ['last_error'] = 'comment_remote_delete_failed: ' . $entryId . '/' . $commentId . ' (' . plugin_mastodon_response_error_message($deleted) . ')';
-				plugin_mastodon_log('Deletion sync failed to delete remote status for local comment ' . $entryId . '/' . $commentId . ': ' . plugin_mastodon_response_error_message($deleted));
-				continue;
+				$entryId = (string) $meta ['entry_id'];
+				$commentId = (string) $meta ['comment_id'];
+				$commentMeta = plugin_mastodon_state_get_comment_meta($state, $entryId, $commentId);
+				if (empty($commentMeta ['remote_id'])) {
+					plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
+					plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
+					continue;
+				}
+				if (!plugin_mastodon_mapping_matches_sync_start($options, $commentMeta, $commentId)) {
+					plugin_mastodon_log('Skipping deletion sync for comment ' . $entryId . '/' . $commentId . ' because it is older than the configured sync start date');
+					plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
+					continue;
+				}
+				if (plugin_mastodon_state_get_pending_comment_remote_recheck($state, $entryId, $commentId) !== array()) {
+					continue;
+				}
+				$remoteId = (string) $commentMeta ['remote_id'];
+				$localExists = (bool) comment_exists($entryId, $commentId);
+				if (!$localExists) {
+					$deleted = plugin_mastodon_delete_status($options, $remoteId, true);
+					if (!empty($deleted ['ok']) || plugin_mastodon_status_missing_response($deleted)) {
+						$queuedDescendants = plugin_mastodon_queue_comment_descendant_remote_rechecks($state, $childIndex, $remoteId);
+						plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'local_deleted_remote_deleted');
+						plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
+						plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
+						$state ['deletion_stats'] ['deleted_remote_comments']++;
+						if ($queuedDescendants > 0) {
+							plugin_mastodon_log('Queued ' . $queuedDescendants . ' direct local descendant comment(s) for follow-up verification after deleting remote comment ' . $remoteId);
+						}
+						continue;
+					}
+					$hadFailure = true;
+					$state ['last_error'] = 'comment_remote_delete_failed: ' . $entryId . '/' . $commentId . ' (' . plugin_mastodon_response_error_message($deleted) . ')';
+					plugin_mastodon_log('Deletion sync failed to delete remote status for local comment ' . $entryId . '/' . $commentId . ': ' . plugin_mastodon_response_error_message($deleted));
+					if (plugin_mastodon_rate_limit_state_error() !== '') {
+						$state ['deletion_cursor_comments'] = $commentCursorBefore;
+						$deletionInterrupted = true;
+						break;
+					}
+					continue;
+				}
+
+				if (!plugin_mastodon_mapping_matches_deletion_lookup_window($options, $commentMeta, $commentId, $force)) {
+					plugin_mastodon_log('Skipping remote deletion lookup for comment ' . $entryId . '/' . $commentId . ' because it is outside the scheduled deletion lookup window');
+					continue;
+				}
+
+				$remote = plugin_mastodon_fetch_status($options, $remoteId);
+				if (plugin_mastodon_status_missing_response($remote)) {
+					$queuedDescendants = plugin_mastodon_queue_comment_descendant_remote_rechecks($state, $childIndex, $remoteId);
+					if (comment_exists($entryId, $commentId)) {
+						comment_delete($entryId, $commentId);
+					}
+					plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'remote_missing_local_deleted');
+					plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
+					plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
+					$state ['deletion_stats'] ['deleted_local_comments']++;
+					if ($queuedDescendants > 0) {
+						plugin_mastodon_log('Queued ' . $queuedDescendants . ' direct local descendant comment(s) for follow-up verification after remote comment ' . $remoteId . ' disappeared');
+					}
+					continue;
+				}
+				if (empty($remote ['ok'])) {
+					$hadFailure = true;
+					$state ['last_error'] = 'comment_remote_lookup_failed: ' . $entryId . '/' . $commentId . ' (' . plugin_mastodon_response_error_message($remote) . ')';
+					plugin_mastodon_log('Deletion sync failed to fetch remote status for local comment ' . $entryId . '/' . $commentId . ': ' . plugin_mastodon_response_error_message($remote));
+					if (plugin_mastodon_rate_limit_state_error() !== '') {
+						$state ['deletion_cursor_comments'] = $commentCursorBefore;
+						$deletionInterrupted = true;
+						break;
+					}
+				}
 			}
 
-			$remote = plugin_mastodon_fetch_status($options, $remoteId);
-			if (plugin_mastodon_status_missing_response($remote)) {
-				$queuedDescendants = plugin_mastodon_queue_comment_descendant_remote_rechecks($state, $childIndex, $remoteId);
-				if (comment_exists($entryId, $commentId)) {
-					comment_delete($entryId, $commentId);
-				}
-				plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'remote_missing_local_deleted');
-				plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
-				plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
-				$state ['deletion_stats'] ['deleted_local_comments']++;
-				if ($queuedDescendants > 0) {
-					plugin_mastodon_log('Queued ' . $queuedDescendants . ' direct local descendant comment(s) for follow-up verification after remote comment ' . $remoteId . ' disappeared');
-				}
-				continue;
-			}
-			if (empty($remote ['ok'])) {
-				$hadFailure = true;
-				$state ['last_error'] = 'comment_remote_lookup_failed: ' . $entryId . '/' . $commentId . ' (' . plugin_mastodon_response_error_message($remote) . ')';
-				plugin_mastodon_log('Deletion sync failed to fetch remote status for local comment ' . $entryId . '/' . $commentId . ': ' . plugin_mastodon_response_error_message($remote));
+			if (!$deletionInterrupted && $processedCommentMappings >= count($commentMappings)) {
+				$state ['deletion_cursor_comments'] = '';
 			}
 		}
 	} else {
@@ -8928,14 +9084,14 @@ function plugin_mastodon_run_deletion_sync($force) {
 	$rateLimitError = plugin_mastodon_rate_limit_state_error();
 	if ($rateLimitError !== '') {
 		$hadFailure = true;
-		if ($state ['last_error'] === '') {
-			$state ['last_error'] = $rateLimitError;
-		}
+		$state ['last_error'] = $rateLimitError;
 	}
 
 	if (!$hadFailure) {
 		$deletionCompletionTimestamp = time();
 		$state ['last_deletion_run'] = date('Y-m-d H:i:s', $deletionCompletionTimestamp);
+		$state ['deletion_cursor_entries'] = '';
+		$state ['deletion_cursor_comments'] = '';
 		plugin_mastodon_state_set_deletions_pending($state, $pendingCommentRechecksRemaining, $pendingCommentRechecksRemaining ? 'comment_rechecks' : 'full', date('Y-m-d H:i:s', $deletionCompletionTimestamp + PLUGIN_MASTODON_COOLDOWN_TTL));
 		$state ['last_error'] = '';
 		if ($pendingCommentRechecksRemaining) {
@@ -8968,6 +9124,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 
 	return array('ok' => (!$hadFailure && $stateWriteOk), 'state' => $state, 'message' => $state ['last_error'] === '' ? 'ok' : $state ['last_error']);
 }
+
 
 /**
  * Determine whether the scheduled synchronization is currently due.
