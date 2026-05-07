@@ -123,6 +123,7 @@ That means:
 - content synchronization runs first
 - deletion synchronization is marked as pending
 - the delete check runs in a **later follow-up request**
+- at least **five minutes** must pass after the completed content synchronization before the delete pass may start
 
 This keeps the main synchronization request shorter and more stable.
 
@@ -196,9 +197,10 @@ The deletion counters belong to the separate follow-up delete pass and can there
 
 ### Step 1: Install the plugin
 
-Copy this folder into your FlatPress installation:
+Copy these directories to your FlatPress root directory:
 
-- `fp-plugins/mastodon/`
+- `fp-plugins/`
+- `fp-includes/`
 
 Then activate the plugin in the FlatPress admin area.
 
@@ -339,6 +341,7 @@ If you mainly want a blog-like discussion structure, leaving the option disabled
 The plugin stores its working data in:
 
 - `fp-content/plugin_mastodon/state.json`
+- `fp-content/plugin_mastodon/scheduler-state.json`
 - `fp-content/plugin_mastodon/sync.log`
 
 Imported Mastodon images are stored under:
@@ -451,6 +454,7 @@ Check:
 
 ## Resources for Developers:
 - [Functional Organization Chart](Function-Organigram.md)
+- [Process Flows](Plugin-Process-Flow.md)
 
 ## For advanced testing
 

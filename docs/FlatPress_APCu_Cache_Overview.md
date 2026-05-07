@@ -821,32 +821,36 @@ Low–Medium. This cache does not affect every request, but it avoids repeated `
 
 ---
 
-### 4.10 Mastodon State Fallback and Synchronization Guards – `mastodon:state:*`, `mastodon:sync_guard:*`
+### 4.10 Mastodon Scheduler Summary and Synchronization Guards - `fp:io:*`, `mastodon:sync_guard:*`
 
 **File:** `fp-plugins/mastodon/plugin.mastodon.php`  
 
-The Mastodon plugin also uses APCu for short-lived resilience around scheduled synchronization state.
+For normal request-time scheduler checks, the plugin uses a compact file-backed summary:
+
+- `fp-content/plugin_mastodon/scheduler-state.json`
+
+This summary is read through the FlatPress/APCu-capable file I/O path, so small valid reads can benefit from the core `fp:io:*` hotcache instead of decoding the large full `state.json` mapping file on every frontend request.
 
 **Logical keys:**
 
-- `mastodon:state:last_known_good`
 - `mastodon:sync_guard:content:v1`
 - `mastodon:sync_guard:deletion:v1`
 
-**Effective APCu keys:**
+The scheduler summary has no dedicated Mastodon APCu key. When cached, it is cached by the central file I/O layer using the normal `fp:io:*` key shape for the concrete file, mtime, and size.
 
-All three keys are stored through the Mastodon APCu wrapper, which calls the FlatPress APCu wrappers. With APCu enabled, the runtime keys therefore become:
+**Effective dedicated Mastodon APCu keys:**
 
-- `fp:<NS>:mastodon:state:last_known_good`
+The guard keys are stored through the Mastodon APCu wrapper, which calls the FlatPress APCu wrappers. With APCu enabled, the runtime keys therefore become:
+
 - `fp:<NS>:mastodon:sync_guard:content:v1`
 - `fp:<NS>:mastodon:sync_guard:deletion:v1`
 
 **What is cached:**
 
-- `mastodon:state:last_known_good`
-  - the most recently normalized valid Mastodon synchronization state,
-  - wrapped with a `stored_at` timestamp,
-  - used only as a short-lived "last known good" fallback when `fp-content/plugin_mastodon/state.json` is missing, empty, unreadable, or invalid.
+- `scheduler-state.json` through core `fp:io:*`
+  - compact scheduler metadata such as last run timestamps, deletion follow-up timing, last error/status information, and current statistics,
+  - no large entry/comment/media mapping arrays,
+  - rebuilt from `state.json` when missing, invalid, or stale.
 - `mastodon:sync_guard:content:v1`
   - a small guard payload for non-forced scheduled content synchronization.
 - `mastodon:sync_guard:deletion:v1`
@@ -854,17 +858,19 @@ All three keys are stored through the Mastodon APCu wrapper, which calls the Fla
 
 **TTL / invalidation:**
 
-- State fallback TTL: `PLUGIN_MASTODON_STATE_FALLBACK_TTL`, currently `300` seconds (5 minutes).
+- Scheduler summary file reads follow the central file I/O APCu settings, especially `FP_APCU_IO_TTL` and `FP_APCU_IO_MAX_BYTES`.
 - Synchronization guard TTL: `PLUGIN_MASTODON_COOLDOWN_TTL`, currently `300` seconds (5 minutes).
-- The state fallback is refreshed after valid state reads and after state writes, including cases where the durable file write fails.
+- The scheduler summary is refreshed after successful full-state writes and is invalidated by file mtime/size changes through the core I/O cache key.
 - Guard entries expire naturally after the cooldown window.
 - Guard entries can also be cleared explicitly by `plugin_mastodon_sync_guard_clear()`.
-- All entries are naturally invalidated by APCu eviction/reset and FlatPress namespace rotation.
+- APCu-backed entries are naturally invalidated by APCu eviction/reset and FlatPress namespace rotation.
 
 **File-backed companion layer:**
 
 - Durable state remains `fp-content/plugin_mastodon/state.json`.
+- Scheduler summary remains `fp-content/plugin_mastodon/scheduler-state.json`.
 - The cooldown guard also has a file companion: `fp-content/plugin_mastodon/sync.guard.json`.
+- `sync.log` is append-only with rotation and is not an APCu cache. High-volume skip messages are aggregated before they are flushed to the log.
 - The file guard is intentionally tiny and TTL-based. It protects hosts where APCu is unavailable or where PHP workers do not share the same APCu pool.
 
 **Runtime behavior:**
@@ -876,7 +882,7 @@ All three keys are stored through the Mastodon APCu wrapper, which calls the Fla
 - This prevents repeated expensive Mastodon synchronization attempts on every or every second web request when `state.json` cannot be persisted reliably.
 
 **Impact:**  
-Medium for Mastodon-enabled sites under unfavorable hosting conditions. The APCu entries are small, but they stabilize request-time synchronization and prevent repeated media/status work when the durable state file is temporarily unavailable.
+Medium for Mastodon-enabled sites under unfavorable hosting conditions. The APCu entries are small: scheduler summary reads use the shared file hotcache, while the dedicated guards prevent repeated media/status work during the cooldown window.
 
 ---
 
@@ -944,9 +950,11 @@ Some features use a **dual-layer cache** (APCu + file fallback) to stay fast eve
 
 - **Mastodon** (`fp-plugins/mastodon/plugin.mastodon.php`)
   - Durable state: `fp-content/plugin_mastodon/state.json`.
-  - Last-known-good APCu fallback: `mastodon:state:last_known_good` with TTL 300s.
+  - The former full-state APCu fallback has been removed; no large Mastodon mapping state is stored in APCu.
+  - Compact scheduler summary: `fp-content/plugin_mastodon/scheduler-state.json`, read through the central APCu-capable `fp:io:*` file I/O path.
   - File cooldown guard: `fp-content/plugin_mastodon/sync.guard.json`.
   - APCu cooldown guards: `mastodon:sync_guard:content:v1` and `mastodon:sync_guard:deletion:v1`, each with TTL 300s.
+  - Rotated append-only log: `fp-content/plugin_mastodon/sync.log` plus retained rotated log files; repeated skip events are aggregated before logging.
   - The file guard is used as a small shared fallback when APCu is unavailable or not shared between workers.
 
 ---
@@ -1021,7 +1029,7 @@ The following table summarizes each logical cache group:
 | Calendar                     | `fp:calendar:v`, `calendar:*:vN`                                                     | **Yes**                  | `plugin_calendar_cache_bump()` + PrettyURLs bump     | Medium–High              |
 | Storage plugin               | `fp:storage:v`, `fp:storage:aggregate*`, `fp:storage:dirsize*`, `fp:storage:quota*`  | No                       | Storage rescan + TTL                                 | Low–Medium               |
 | Mastodon instance snapshot   | `fp:mastodon:instance_document:<sha1(instance_url)>`                                 | No                       | TTL 900s, `instance_url` change, snapshot refresh    | Low–Medium               |
-| Mastodon state fallback      | `fp:mastodon:state:last_known_good`                                                  | No                       | TTL 300s, refreshed after valid state read/write      | Medium                   |
+| Mastodon scheduler summary   | core `fp:io:*` for `scheduler-state.json`                                            | No                       | File mtime/size via core I/O, rebuilt from `state.json` when stale | Medium       |
 | Mastodon sync guards         | `fp:mastodon:sync_guard:content:v1`, `fp:mastodon:sync_guard:deletion:v1`            | No                       | TTL 300s + file guard `sync.guard.json`               | Medium                   |
 | Admin setup hide             | `fp:admin:setup_hide_report`                                                         | No                       | TTL (ok 86400s, fail 300s) + manual APCu clear       | Low–Medium (admin only)  |
 | PrettyURLs auto-detection    | `prettyurls:*`, `prettyurls:auto:v3:g*:*`                                            | No (but influences URLs) | `apcu_gen` bump on mode/.htaccess changes            | Medium                   |
@@ -1057,7 +1065,6 @@ For completeness, the following logical prefixes are used by FlatPress `1.6.dev`
 - `fp:lang:`
 - `fp:net:in_cidrs:`
 - `fp:mastodon:instance_document:`
-- `fp:mastodon:state:last_known_good`
 - `fp:mastodon:sync_guard:content:v1`
 - `fp:mastodon:sync_guard:deletion:v1`
 - `fp:ns:`
