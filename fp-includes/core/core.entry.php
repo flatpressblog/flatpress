@@ -344,13 +344,13 @@ function entry_timetokey($time) {
 }
 
 function entry_keytotime($key) {
-	$arr ['y'] = substr($key, 0, 2);
-	$arr ['m'] = substr($key, 2, 2);
-	$arr ['d'] = substr($key, 4, 2);
+	$arr ['y'] = (int) substr($key, 0, 2);
+	$arr ['m'] = (int) substr($key, 2, 2);
+	$arr ['d'] = (int) substr($key, 4, 2);
 
-	$arr ['H'] = substr($key, 6, 2);
-	$arr ['M'] = substr($key, 8, 2);
-	$arr ['S'] = substr($key, 10, 2);
+	$arr ['H'] = (int) substr($key, 6, 2);
+	$arr ['M'] = (int) substr($key, 8, 2);
+	$arr ['S'] = (int) substr($key, 10, 2);
 
 	return mktime($arr ['H'], $arr ['M'], $arr ['S'], $arr ['m'], $arr ['d'], $arr ['y']);
 }
@@ -785,12 +785,17 @@ function entry_save($entry, $id = null, $update_index = true) {
 	$delete_cats = array();
 	$all_cats = @$entry ['categories'];
 	$update_title = true;
-	if ($old_entry = entry_parse($id)) {
+	$old_entry = entry_parse($id);
+	$is_update = is_array($old_entry);
+	if ($is_update) {
+		$old_cats = (isset($old_entry ['categories']) && is_array($old_entry ['categories'])) ? $old_entry ['categories'] : array();
 		if ($all_cats) {
-			$delete_cats = array_diff($old_entry ['categories'], $all_cats);
+			$delete_cats = array_diff($old_cats, $all_cats);
 		}
-		$all_cats = $all_cats ? array_merge($all_cats, $old_entry ['categories']) : $old_entry ['categories'];
-		$update_title = $entry ['subject'] != $old_entry ['subject'];
+		$all_cats = $all_cats ? array_merge($all_cats, $old_cats) : $old_cats;
+		$entry_subject = isset($entry ['subject']) ? (string) $entry ['subject'] : '';
+		$old_subject = isset($old_entry ['subject']) ? (string) $old_entry ['subject'] : '';
+		$update_title = $entry_subject != $old_subject;
 	}
 
 	/**
@@ -838,6 +843,14 @@ function entry_save($entry, $id = null, $update_index = true) {
 		} else {
 			// SUCCESS : delete draft, move comments along
 			draft_to_entry($id);
+			$saved_entry = entry_parse($id);
+			if (!is_array($saved_entry)) {
+				$saved_entry = $entry;
+			}
+			if (!is_array($old_entry)) {
+				$old_entry = array();
+			}
+			do_action('entry_saved', $id, $saved_entry, $old_entry, $is_update);
 			return $id;
 		}
 	}
@@ -861,15 +874,24 @@ function entry_delete($id) {
 	 * $f = bdb_idtofile($id);
 	 */
 
+	$old_entry = entry_parse($id);
+	if (!is_array($old_entry)) {
+		$old_entry = array();
+	}
+
 	$d = entry_dir($id);
 	fs_delete_recursive($d);
 
 	$obj = & entry_init();
-	$obj->delete($id, entry_parse($id));
+	$obj->delete($id, $old_entry);
 
 	do_action('delete_post', $id);
 
-	return fs_delete($f);
+	$deleted = fs_delete($f);
+	if ($deleted) {
+		do_action('entry_deleted', $id, $old_entry);
+	}
+	return $deleted;
 }
 
 function entry_purge_cache() {
