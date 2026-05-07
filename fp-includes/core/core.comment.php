@@ -248,12 +248,22 @@ function comment_save($id, $comment) {
 		$comment ['DATE'] = date_time();
 	}
 	$comment_id = bdb_idfromtime(BDB_COMMENT, $comment ['DATE']);
+	$old_comment = comment_parse($entryid, $comment_id);
+	$is_update = is_array($old_comment);
 	$f = $comment_dir . $comment_id . EXT;
 	$str = utils_kimplode($comment);
 	if (io_write_file($f, $str)) {
 		// Invalidate cached comment count for this entry (file cache + APCu).
 		@unlink(comment_count_cachefile($entryid));
 		do_action('comment_save', $entryid, $comment_id);
+		$saved_comment = comment_parse($entryid, $comment_id);
+		if (!is_array($saved_comment)) {
+			$saved_comment = array_change_key_case($comment, CASE_LOWER);
+		}
+		if (!is_array($old_comment)) {
+			$old_comment = array();
+		}
+		do_action('comment_saved', $entryid, $comment_id, $saved_comment, $old_comment, $is_update);
 		return $comment_id;
 	}
 
@@ -277,12 +287,16 @@ function comment_save($id, $comment) {
 function comment_delete($id, $comment_id) {
 	// Pre-delete event
 	do_action('comment_delete', $id, $comment_id);
+	$old_comment = comment_parse($id, $comment_id);
+	if (!is_array($old_comment)) {
+		$old_comment = array();
+	}
 	$comment_dir = bdb_idtofile($id, BDB_COMMENT);
 	$f = $comment_dir . $comment_id . EXT;
 	$ok = fs_delete($f);
 	if ($ok) {
 		// Post-delete event for cache invalidation
-		do_action('comment_deleted', $id, $comment_id);
+		do_action('comment_deleted', $id, $comment_id, $old_comment);
 		@unlink(comment_count_cachefile($id));
 	}
 	return $ok;

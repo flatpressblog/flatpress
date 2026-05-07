@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.3.0
+ * Version: 2.4.1
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -25,6 +25,16 @@ if (!defined('PLUGIN_MASTODON_STATE_FILE')) {
 	 */
 	define('PLUGIN_MASTODON_STATE_FILE', PLUGIN_MASTODON_STATE_DIR . 'state.json');
 }
+if (!defined('PLUGIN_MASTODON_SCHEDULER_STATE_FILE')) {
+	/**
+	 * Small request-time scheduler summary derived from state.json.
+	 *
+	 * This file intentionally contains only due-check and admin summary fields
+	 * so regular frontend requests do not have to load the full synchronization
+	 * mappings from state.json when no sync is due.
+	 */
+	define('PLUGIN_MASTODON_SCHEDULER_STATE_FILE', PLUGIN_MASTODON_STATE_DIR . 'scheduler-state.json');
+}
 if (!defined('PLUGIN_MASTODON_LOCK_FILE')) {
 	define('PLUGIN_MASTODON_LOCK_FILE', PLUGIN_MASTODON_STATE_DIR . 'sync.lock');
 }
@@ -36,6 +46,15 @@ if (!defined('PLUGIN_MASTODON_RATE_LIMIT_WINDOW_FILE')) {
 }
 if (!defined('PLUGIN_MASTODON_LOG_FILE')) {
 	define('PLUGIN_MASTODON_LOG_FILE', PLUGIN_MASTODON_STATE_DIR . 'sync.log');
+}
+if (!defined('PLUGIN_MASTODON_LOG_MAX_BYTES')) {
+	/**
+	 * Rotate sync.log before appending when it reaches roughly one MiB.
+	 */
+	define('PLUGIN_MASTODON_LOG_MAX_BYTES', 1048576);
+}
+if (!defined('PLUGIN_MASTODON_LOG_ROTATE_FILES')) {
+	define('PLUGIN_MASTODON_LOG_ROTATE_FILES', 3);
 }
 if (!defined('PLUGIN_MASTODON_APP_NAME')) {
 	define('PLUGIN_MASTODON_APP_NAME', 'FlatPress Mastodon');
@@ -732,7 +751,7 @@ function plugin_mastodon_runtime_cache_clear($bucket = '') {
 function plugin_mastodon_fp_config() {
 	$cached = plugin_mastodon_runtime_cache_get('core', 'fp_config', $hit);
 	if ($hit && is_array($cached)) {
-		return plugin_mastodon_state_normalize($cached);
+		return $cached;
 	}
 
 	$config = array();
@@ -915,6 +934,9 @@ function plugin_mastodon_format_admin_datetime($value) {
  * @return string|false
  */
 function plugin_mastodon_io_read_file($file, $prestat = null) {
+	if (isset($GLOBALS ['plugin_mastodon_test_file_reads']) && is_array($GLOBALS ['plugin_mastodon_test_file_reads'])) {
+		$GLOBALS ['plugin_mastodon_test_file_reads'] [] = (string) $file;
+	}
 	if (function_exists('io_load_file')) {
 		return io_load_file($file, $prestat);
 	}
@@ -928,6 +950,9 @@ function plugin_mastodon_io_read_file($file, $prestat = null) {
  * @return string|false
  */
 function plugin_mastodon_io_read_file_uncached($file, $assumeExists = false) {
+	if (isset($GLOBALS ['plugin_mastodon_test_uncached_file_reads']) && is_array($GLOBALS ['plugin_mastodon_test_uncached_file_reads'])) {
+		$GLOBALS ['plugin_mastodon_test_uncached_file_reads'] [] = (string) $file;
+	}
 	if (function_exists('io_load_file_uncached')) {
 		return io_load_file_uncached($file, (bool) $assumeExists);
 	}
@@ -980,21 +1005,108 @@ function plugin_mastodon_io_write_file($file, $payload) {
 }
 
 /**
- * Append to a file via the FlatPress I/O layer.
+ * Append to a file without re-reading and rewriting the complete payload.
  * @param string $file
  * @param string $payload
  * @return bool
  */
 function plugin_mastodon_io_append_file($file, $payload) {
-	$existing = '';
-	$prestat = plugin_mastodon_file_prestat($file);
-	if (!empty($prestat ['exists'])) {
-		$loaded = plugin_mastodon_io_read_file($file, $prestat);
-		if (is_string($loaded)) {
-			$existing = $loaded;
+	$payload = (string) $payload;
+	$dir = dirname((string) $file);
+	if (function_exists('fs_mkdir')) {
+		if (!fs_mkdir($dir)) {
+			return false;
+		}
+	} elseif (!is_dir($dir) && !@mkdir($dir, 0777, true)) {
+		return false;
+	}
+
+	$lockFile = (string) $file . '.lock';
+	$lockHandle = @fopen($lockFile, 'c+');
+	if ($lockHandle) {
+		plugin_mastodon_apply_file_permissions($lockFile);
+		if (@flock($lockHandle, LOCK_EX)) {
+			plugin_mastodon_io_rotate_file_if_needed($file, strlen($payload));
+			$written = @file_put_contents($file, $payload, FILE_APPEND | LOCK_EX);
+			if ($written !== false) {
+				plugin_mastodon_apply_file_permissions($file);
+			}
+			@flock($lockHandle, LOCK_UN);
+			@fclose($lockHandle);
+			return $written !== false;
+		}
+		@fclose($lockHandle);
+	}
+
+	plugin_mastodon_io_rotate_file_if_needed($file, strlen($payload));
+	$written = @file_put_contents($file, $payload, FILE_APPEND | LOCK_EX);
+	if ($written !== false) {
+		plugin_mastodon_apply_file_permissions($file);
+	}
+	return $written !== false;
+}
+
+/**
+ * Return the maximum sync.log size before rotation.
+ * @return int
+ */
+function plugin_mastodon_log_max_bytes() {
+	if (isset($GLOBALS ['plugin_mastodon_test_log_max_bytes']) && is_numeric($GLOBALS ['plugin_mastodon_test_log_max_bytes'])) {
+		return max(0, (int) $GLOBALS ['plugin_mastodon_test_log_max_bytes']);
+	}
+	return max(0, (int) PLUGIN_MASTODON_LOG_MAX_BYTES);
+}
+
+/**
+ * Return the number of retained sync.log rotation files.
+ * @return int
+ */
+function plugin_mastodon_log_rotate_files() {
+	if (isset($GLOBALS ['plugin_mastodon_test_log_rotate_files']) && is_numeric($GLOBALS ['plugin_mastodon_test_log_rotate_files'])) {
+		return max(0, (int) $GLOBALS ['plugin_mastodon_test_log_rotate_files']);
+	}
+	return max(0, (int) PLUGIN_MASTODON_LOG_ROTATE_FILES);
+}
+
+/**
+ * Rotate an append-only log file when the next append would exceed the size cap.
+ * @param string $file
+ * @param int $appendBytes
+ * @return void
+ */
+function plugin_mastodon_io_rotate_file_if_needed($file, $appendBytes) {
+	$maxBytes = plugin_mastodon_log_max_bytes();
+	if ($maxBytes <= 0) {
+		return;
+	}
+	clearstatcache(true, $file);
+	$currentSize = @is_file($file) ? (int) @filesize($file) : 0;
+	if ($currentSize <= 0 || ($currentSize + max(0, (int) $appendBytes)) <= $maxBytes) {
+		return;
+	}
+
+	$rotateFiles = plugin_mastodon_log_rotate_files();
+	if ($rotateFiles <= 0) {
+		@unlink($file);
+		return;
+	}
+
+	$oldest = $file . '.' . $rotateFiles;
+	if (@is_file($oldest)) {
+		@unlink($oldest);
+	}
+	for ($index = $rotateFiles - 1; $index >= 1; $index--) {
+		$source = $file . '.' . $index;
+		$target = $file . '.' . ($index + 1);
+		if (@is_file($source)) {
+			@rename($source, $target);
+			plugin_mastodon_apply_file_permissions($target);
 		}
 	}
-	return plugin_mastodon_io_write_file($file, $existing . (string) $payload);
+	if (@is_file($file)) {
+		@rename($file, $file . '.1');
+		plugin_mastodon_apply_file_permissions($file . '.1');
+	}
 }
 
 /**
@@ -1053,7 +1165,14 @@ function plugin_mastodon_apcu_store($suffix, $value, $ttl) {
  * @return void
  */
 function plugin_mastodon_apcu_delete($suffix) {
-	if (!plugin_mastodon_apcu_enabled() || !function_exists('apcu_delete')) {
+	if (!plugin_mastodon_apcu_enabled()) {
+		return;
+	}
+	if (function_exists('apcu_delete_key')) {
+		@apcu_delete_key('mastodon:' . (string) $suffix);
+		return;
+	}
+	if (!function_exists('apcu_delete')) {
 		return;
 	}
 	$cacheKey = plugin_mastodon_apcu_cache_key($suffix);
@@ -1061,7 +1180,7 @@ function plugin_mastodon_apcu_delete($suffix) {
 }
 
 /**
- * Return the APCu key used for the short-lived last-known-good state fallback.
+ * Return the legacy APCu key that used to hold a full last-known-good state fallback.
  * @return string
  */
 function plugin_mastodon_state_fallback_key() {
@@ -1069,33 +1188,22 @@ function plugin_mastodon_state_fallback_key() {
 }
 
 /**
- * Store a normalized runtime state in APCu for a short emergency fallback window.
+ * Remove the legacy full-state APCu fallback instead of storing large mapping arrays.
  * @param array<string, mixed> $state
  * @return bool
  */
 function plugin_mastodon_state_fallback_store($state) {
-	$state = plugin_mastodon_state_normalize(is_array($state) ? $state : array());
-	return plugin_mastodon_apcu_store(plugin_mastodon_state_fallback_key(), array(
-		'stored_at' => time(),
-		'state' => $state
-	), PLUGIN_MASTODON_STATE_FALLBACK_TTL);
+	plugin_mastodon_apcu_delete(plugin_mastodon_state_fallback_key());
+	return false;
 }
 
 /**
- * Fetch the short-lived last-known-good state fallback from APCu.
+ * Full-state APCu fallback is intentionally disabled to avoid multi-MiB APCu entries.
  * @return array<string, mixed>
  */
 function plugin_mastodon_state_fallback_read() {
-	$hit = false;
-	$value = plugin_mastodon_apcu_fetch(plugin_mastodon_state_fallback_key(), $hit);
-	if (!$hit || !is_array($value) || !isset($value ['state']) || !is_array($value ['state'])) {
-		return array();
-	}
-	if (isset($value ['stored_at']) && ((int) $value ['stored_at']) > 0 && ((int) $value ['stored_at']) + PLUGIN_MASTODON_STATE_FALLBACK_TTL < time()) {
-		plugin_mastodon_apcu_delete(plugin_mastodon_state_fallback_key());
-		return array();
-	}
-	return plugin_mastodon_state_normalize($value ['state']);
+	plugin_mastodon_apcu_delete(plugin_mastodon_state_fallback_key());
+	return array();
 }
 
 /**
@@ -2383,6 +2491,9 @@ function plugin_mastodon_local_item_date_key($item, $fallbackId = '') {
 	$fallbackId = trim((string) $fallbackId);
 	if ($fallbackId !== '' && function_exists('date_from_id')) {
 		$fallbackTimestamp = date_from_id($fallbackId);
+		if (is_array($fallbackTimestamp) && isset($fallbackTimestamp ['time'])) {
+			$fallbackTimestamp = $fallbackTimestamp ['time'];
+		}
 		if (is_numeric($fallbackTimestamp)) {
 			return plugin_mastodon_timestamp_date_key((int) $fallbackTimestamp);
 		}
@@ -2686,7 +2797,72 @@ function plugin_mastodon_ensure_state_dir() {
 function plugin_mastodon_log($message) {
 	plugin_mastodon_ensure_state_dir();
 	$line = '[' . gmdate('Y-m-d H:i:s') . ' UTC] ' . trim((string) $message) . PHP_EOL;
-		plugin_mastodon_io_append_file(PLUGIN_MASTODON_LOG_FILE, $line);
+	plugin_mastodon_io_append_file(PLUGIN_MASTODON_LOG_FILE, $line);
+}
+
+/**
+ * Aggregate high-volume skip messages until the current sync phase ends.
+ * @param string $bucket
+ * @param string $singular
+ * @param string $plural
+ * @param string $itemId
+ * @param string $reason
+ * @return void
+ */
+function plugin_mastodon_log_skip($bucket, $singular, $plural, $itemId, $reason) {
+	$key = (string) $bucket;
+	if ($key === '') {
+		plugin_mastodon_log('Skipping ' . (string) $singular . ' ' . (string) $itemId . ' ' . (string) $reason);
+		return;
+	}
+	if (!isset($GLOBALS ['plugin_mastodon_skip_log_summaries']) || !is_array($GLOBALS ['plugin_mastodon_skip_log_summaries'])) {
+		$GLOBALS ['plugin_mastodon_skip_log_summaries'] = array();
+	}
+	if (!isset($GLOBALS ['plugin_mastodon_skip_log_summaries'] [$key]) || !is_array($GLOBALS ['plugin_mastodon_skip_log_summaries'] [$key])) {
+		$GLOBALS ['plugin_mastodon_skip_log_summaries'] [$key] = array(
+			'count' => 0,
+			'singular' => (string) $singular,
+			'plural' => (string) $plural,
+			'first' => '',
+			'last' => '',
+			'reason' => trim((string) $reason)
+		);
+	}
+	$GLOBALS ['plugin_mastodon_skip_log_summaries'] [$key] ['count'] = (int) $GLOBALS ['plugin_mastodon_skip_log_summaries'] [$key] ['count'] + 1;
+	if ((string) $GLOBALS ['plugin_mastodon_skip_log_summaries'] [$key] ['first'] === '') {
+		$GLOBALS ['plugin_mastodon_skip_log_summaries'] [$key] ['first'] = (string) $itemId;
+	}
+	$GLOBALS ['plugin_mastodon_skip_log_summaries'] [$key] ['last'] = (string) $itemId;
+}
+
+/**
+ * Flush aggregated skip log messages.
+ * @return void
+ */
+function plugin_mastodon_log_flush_skip_summaries() {
+	if (!isset($GLOBALS ['plugin_mastodon_skip_log_summaries']) || !is_array($GLOBALS ['plugin_mastodon_skip_log_summaries'])) {
+		return;
+	}
+	$summaries = $GLOBALS ['plugin_mastodon_skip_log_summaries'];
+	$GLOBALS ['plugin_mastodon_skip_log_summaries'] = array();
+	foreach ($summaries as $summary) {
+		if (!is_array($summary)) {
+			continue;
+		}
+		$count = isset($summary ['count']) ? (int) $summary ['count'] : 0;
+		if ($count <= 0) {
+			continue;
+		}
+		$label = $count === 1 ? (string) $summary ['singular'] : (string) $summary ['plural'];
+		$reason = trim(isset($summary ['reason']) ? (string) $summary ['reason'] : '');
+		$first = isset($summary ['first']) ? (string) $summary ['first'] : '';
+		$last = isset($summary ['last']) ? (string) $summary ['last'] : '';
+		$range = '';
+		if ($first !== '') {
+			$range = $first === $last ? ' (item: ' . $first . ')' : ' (first: ' . $first . ', last: ' . $last . ')';
+		}
+		plugin_mastodon_log('Skipped ' . $count . ' ' . $label . ($reason !== '' ? ' ' . $reason : '') . $range);
+	}
 }
 
 /**
@@ -2699,12 +2875,6 @@ function plugin_mastodon_state_read() {
 	$prestat = plugin_mastodon_file_prestat(PLUGIN_MASTODON_STATE_FILE);
 	if (empty($prestat ['exists'])) {
 		plugin_mastodon_runtime_cache_clear('state');
-		$fallbackState = plugin_mastodon_state_fallback_read();
-		if ($fallbackState !== array()) {
-			plugin_mastodon_runtime_cache_set('state', '__signature__', 'apcu-fallback');
-			plugin_mastodon_runtime_cache_set('state', 'apcu-fallback', $fallbackState);
-			return $fallbackState;
-		}
 		return $defaults;
 	}
 
@@ -2721,25 +2891,168 @@ function plugin_mastodon_state_read() {
 
 	$json = plugin_mastodon_io_read_file_uncached(PLUGIN_MASTODON_STATE_FILE, !empty($prestat ['exists']));
 	if (!is_string($json) || trim($json) === '') {
-		$fallbackState = plugin_mastodon_state_fallback_read();
-		if ($fallbackState !== array()) {
-			return $fallbackState;
-		}
 		return $defaults;
 	}
 	$data = json_decode($json, true);
 	if (!is_array($data)) {
-		$fallbackState = plugin_mastodon_state_fallback_read();
-		if ($fallbackState !== array()) {
-			return $fallbackState;
-		}
 		return $defaults;
 	}
 	$state = plugin_mastodon_state_normalize($data);
 	plugin_mastodon_runtime_cache_set('state', '__signature__', $signature);
 	plugin_mastodon_runtime_cache_set('state', $signature, $state);
-	plugin_mastodon_state_fallback_store($state);
 	return $state;
+}
+
+/**
+ * Return an empty scheduler state derived from the full default state.
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_scheduler_state_default() {
+	$defaults = plugin_mastodon_default_state();
+	return array(
+		'version' => (int) $defaults ['version'],
+		'last_run' => '',
+		'last_deletion_run' => '',
+		'deletions_pending' => 0,
+		'deletions_pending_scope' => $defaults ['deletions_pending_scope'],
+		'deletions_not_before' => '',
+		'last_error' => '',
+		'content_stats' => $defaults ['content_stats'],
+		'deletion_stats' => $defaults ['deletion_stats'],
+		'source_state_signature' => '',
+		'updated_at' => ''
+	);
+}
+
+/**
+ * Return the current stat-based signature of the full state file.
+ * @return string
+ */
+function plugin_mastodon_scheduler_source_signature() {
+	return plugin_mastodon_file_prestat_signature(plugin_mastodon_file_prestat(PLUGIN_MASTODON_STATE_FILE));
+}
+
+/**
+ * Normalize a scheduler summary without touching full mapping arrays.
+ * @param array<string, mixed> $state
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_scheduler_state_normalize($state) {
+	$defaults = plugin_mastodon_scheduler_state_default();
+	$input = is_array($state) ? $state : array();
+	$normalized = array_merge($defaults, $input);
+	$normalized ['version'] = (int) (isset($normalized ['version']) ? $normalized ['version'] : $defaults ['version']);
+	$normalized ['last_run'] = isset($normalized ['last_run']) ? (string) $normalized ['last_run'] : '';
+	$normalized ['last_deletion_run'] = isset($normalized ['last_deletion_run']) ? (string) $normalized ['last_deletion_run'] : '';
+	$normalized ['deletions_pending'] = !empty($normalized ['deletions_pending']) ? 1 : 0;
+	$normalized ['deletions_pending_scope'] = plugin_mastodon_normalize_deletions_pending_scope(isset($normalized ['deletions_pending_scope']) ? $normalized ['deletions_pending_scope'] : $defaults ['deletions_pending_scope']);
+	$normalized ['deletions_not_before'] = plugin_mastodon_parse_iso_datetime(isset($normalized ['deletions_not_before']) ? (string) $normalized ['deletions_not_before'] : '');
+	$normalized ['last_error'] = isset($normalized ['last_error']) ? (string) $normalized ['last_error'] : '';
+	$normalized ['source_state_signature'] = isset($normalized ['source_state_signature']) ? (string) $normalized ['source_state_signature'] : '';
+	$normalized ['updated_at'] = isset($normalized ['updated_at']) ? (string) $normalized ['updated_at'] : '';
+
+	$contentStats = isset($input ['content_stats']) && is_array($input ['content_stats']) ? $input ['content_stats'] : array();
+	$normalized ['content_stats'] = $defaults ['content_stats'];
+	foreach (array_keys($defaults ['content_stats']) as $key) {
+		if (isset($contentStats [$key])) {
+			$normalized ['content_stats'] [$key] = (int) $contentStats [$key];
+		}
+	}
+
+	$deletionStats = isset($input ['deletion_stats']) && is_array($input ['deletion_stats']) ? $input ['deletion_stats'] : array();
+	$normalized ['deletion_stats'] = $defaults ['deletion_stats'];
+	foreach (array_keys($defaults ['deletion_stats']) as $key) {
+		if (isset($deletionStats [$key])) {
+			$normalized ['deletion_stats'] [$key] = (int) $deletionStats [$key];
+		}
+	}
+
+	return $normalized;
+}
+
+/**
+ * Build the lightweight scheduler summary from a full runtime state.
+ * @param array<string, mixed> $state
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_scheduler_state_from_state($state) {
+	$state = plugin_mastodon_state_normalize(is_array($state) ? $state : array());
+	return plugin_mastodon_scheduler_state_normalize(array(
+		'version' => $state ['version'],
+		'last_run' => $state ['last_run'],
+		'last_deletion_run' => $state ['last_deletion_run'],
+		'deletions_pending' => $state ['deletions_pending'],
+		'deletions_pending_scope' => $state ['deletions_pending_scope'],
+		'deletions_not_before' => $state ['deletions_not_before'],
+		'last_error' => $state ['last_error'],
+		'content_stats' => $state ['content_stats'],
+		'deletion_stats' => $state ['deletion_stats']
+	));
+}
+
+/**
+ * Persist the lightweight scheduler state. Failure only disables the request-time optimization.
+ * @param array<string, mixed> $state
+ * @return bool
+ */
+function plugin_mastodon_scheduler_state_write($state) {
+	plugin_mastodon_ensure_state_dir();
+	$schedulerState = plugin_mastodon_scheduler_state_normalize(is_array($state) ? $state : array());
+	$schedulerState ['source_state_signature'] = plugin_mastodon_scheduler_source_signature();
+	$schedulerState ['updated_at'] = date('Y-m-d H:i:s');
+	$json = json_encode($schedulerState, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	if (!is_string($json)) {
+		return false;
+	}
+	$written = plugin_mastodon_io_write_file(PLUGIN_MASTODON_SCHEDULER_STATE_FILE, $json . PHP_EOL);
+	plugin_mastodon_runtime_cache_clear('scheduler_state');
+	if ($written) {
+		$prestat = plugin_mastodon_file_prestat(PLUGIN_MASTODON_SCHEDULER_STATE_FILE);
+		$signature = plugin_mastodon_file_prestat_signature($prestat) . '|' . $schedulerState ['source_state_signature'];
+		plugin_mastodon_runtime_cache_set('scheduler_state', '__signature__', $signature);
+		plugin_mastodon_runtime_cache_set('scheduler_state', $signature, $schedulerState);
+	}
+	return $written;
+}
+
+/**
+ * Load the lightweight scheduler summary and rebuild it conservatively when stale.
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_scheduler_state_read() {
+	plugin_mastodon_ensure_state_dir();
+	$sourceSignature = plugin_mastodon_scheduler_source_signature();
+	$prestat = plugin_mastodon_file_prestat(PLUGIN_MASTODON_SCHEDULER_STATE_FILE);
+	if (!empty($prestat ['exists'])) {
+		$signature = plugin_mastodon_file_prestat_signature($prestat) . '|' . $sourceSignature;
+		$cached = plugin_mastodon_runtime_cache_get('scheduler_state', $signature, $hit);
+		if ($hit && is_array($cached)) {
+			return plugin_mastodon_scheduler_state_normalize($cached);
+		}
+
+		$legacySignature = plugin_mastodon_runtime_cache_get('scheduler_state', '__signature__', $legacyHit);
+		if ($legacyHit && $legacySignature !== $signature) {
+			plugin_mastodon_runtime_cache_clear('scheduler_state');
+		}
+
+		$json = plugin_mastodon_io_read_file(PLUGIN_MASTODON_SCHEDULER_STATE_FILE, $prestat);
+		if (is_string($json) && trim($json) !== '') {
+			$data = json_decode($json, true);
+			if (is_array($data)) {
+				$schedulerState = plugin_mastodon_scheduler_state_normalize($data);
+				if ($schedulerState ['source_state_signature'] === $sourceSignature) {
+					plugin_mastodon_runtime_cache_set('scheduler_state', '__signature__', $signature);
+					plugin_mastodon_runtime_cache_set('scheduler_state', $signature, $schedulerState);
+					return $schedulerState;
+				}
+			}
+		}
+	}
+
+	$state = plugin_mastodon_state_read();
+	$schedulerState = plugin_mastodon_scheduler_state_from_state($state);
+	plugin_mastodon_scheduler_state_write($schedulerState);
+	return $schedulerState;
 }
 
 /**
@@ -2757,12 +3070,12 @@ function plugin_mastodon_state_write($state) {
 	$payload = $json . PHP_EOL;
 	$written = plugin_mastodon_io_write_file(PLUGIN_MASTODON_STATE_FILE, $payload);
 	plugin_mastodon_runtime_cache_clear('state');
-	plugin_mastodon_state_fallback_store($state);
 	if ($written) {
 		$prestat = plugin_mastodon_file_prestat(PLUGIN_MASTODON_STATE_FILE);
 		$signature = plugin_mastodon_file_prestat_signature($prestat);
 		plugin_mastodon_runtime_cache_set('state', '__signature__', $signature);
 		plugin_mastodon_runtime_cache_set('state', $signature, $state);
+		plugin_mastodon_scheduler_state_write(plugin_mastodon_scheduler_state_from_state($state));
 	}
 	return $written;
 }
@@ -3057,6 +3370,213 @@ function plugin_mastodon_state_remove_dirty_comment(&$state, $entryId, $commentI
 function plugin_mastodon_state_has_dirty_comment($state, $entryId, $commentId) {
 	$key = plugin_mastodon_state_comment_key($entryId, $commentId);
 	return isset($state ['dirty_comments']) && is_array($state ['dirty_comments']) && isset($state ['dirty_comments'] [$key]);
+}
+
+/**
+ * Increase the local-write guard depth while the plugin mirrors remote Mastodon data into FlatPress.
+ * @return void
+ */
+function plugin_mastodon_local_write_guard_enter() {
+	if (!isset($GLOBALS ['plugin_mastodon_local_write_guard_depth']) || !is_numeric($GLOBALS ['plugin_mastodon_local_write_guard_depth'])) {
+		$GLOBALS ['plugin_mastodon_local_write_guard_depth'] = 0;
+	}
+	$GLOBALS ['plugin_mastodon_local_write_guard_depth'] = (int) $GLOBALS ['plugin_mastodon_local_write_guard_depth'] + 1;
+}
+
+/**
+ * Decrease the local-write guard depth after a plugin-owned FlatPress write.
+ * @return void
+ */
+function plugin_mastodon_local_write_guard_leave() {
+	if (!isset($GLOBALS ['plugin_mastodon_local_write_guard_depth']) || !is_numeric($GLOBALS ['plugin_mastodon_local_write_guard_depth'])) {
+		$GLOBALS ['plugin_mastodon_local_write_guard_depth'] = 0;
+		return;
+	}
+	$GLOBALS ['plugin_mastodon_local_write_guard_depth'] = max(0, (int) $GLOBALS ['plugin_mastodon_local_write_guard_depth'] - 1);
+}
+
+/**
+ * Return whether FlatPress write hooks are currently triggered by Mastodon remote mirroring.
+ * @return bool
+ */
+function plugin_mastodon_local_write_guard_active() {
+	return isset($GLOBALS ['plugin_mastodon_local_write_guard_depth']) && (int) $GLOBALS ['plugin_mastodon_local_write_guard_depth'] > 0;
+}
+
+/**
+ * Check whether dirty tracking should persist state for a local FlatPress write hook.
+ * @return array<string, string>
+ */
+function plugin_mastodon_dirty_tracking_options() {
+	if (plugin_mastodon_local_write_guard_active()) {
+		return array();
+	}
+	$options = plugin_mastodon_get_options();
+	if ($options ['instance_url'] === '' || $options ['access_token'] === '') {
+		return array();
+	}
+	return $options;
+}
+
+/**
+ * Mark a local FlatPress entry write as dirty for a later Mastodon sync.
+ * @param string $entryId
+ * @param array<string, mixed> $entry
+ * @param array<string, mixed> $oldEntry
+ * @param bool $isUpdate
+ * @return void
+ */
+function plugin_mastodon_on_entry_saved($entryId, $entry, $oldEntry = array(), $isUpdate = false) {
+	$options = plugin_mastodon_dirty_tracking_options();
+	if ($options === array()) {
+		return;
+	}
+	$entryId = trim((string) $entryId);
+	$entry = is_array($entry) ? $entry : array();
+	if ($entryId === '' || $entry === array()) {
+		return;
+	}
+	if (isset($entry ['categories']) && is_array($entry ['categories']) && in_array('draft', $entry ['categories'], true)) {
+		return;
+	}
+	$state = plugin_mastodon_state_read();
+	$meta = plugin_mastodon_state_get_entry_meta($state, $entryId);
+	if (!empty($meta ['source']) && strtolower((string) $meta ['source']) === 'remote') {
+		return;
+	}
+	if (!plugin_mastodon_local_item_matches_sync_start($options, $entry, $entryId)) {
+		plugin_mastodon_state_remove_dirty_entry($state, $entryId);
+		plugin_mastodon_state_write($state);
+		return;
+	}
+	$entryHash = plugin_mastodon_entry_hash($entry);
+	$hasRemoteMapping = !empty($meta ['remote_id']);
+	$hashChanged = empty($meta ['hash']) || (string) $meta ['hash'] !== $entryHash;
+	$insideActiveWindow = plugin_mastodon_local_item_matches_content_window($options, $entry, $entryId, false);
+	if ($hasRemoteMapping && $hashChanged) {
+		plugin_mastodon_state_set_dirty_entry($state, $entryId, $entryHash);
+		plugin_mastodon_state_write($state);
+		return;
+	}
+	if (!$hasRemoteMapping && !$insideActiveWindow) {
+		plugin_mastodon_state_remove_dirty_entry($state, $entryId);
+		plugin_mastodon_state_write($state);
+		return;
+	}
+	if ($insideActiveWindow) {
+		plugin_mastodon_state_remove_dirty_entry($state, $entryId);
+		plugin_mastodon_state_write($state);
+	}
+}
+
+/**
+ * Mark a local FlatPress entry deletion for the Mastodon deletion sync.
+ * @param string $entryId
+ * @param array<string, mixed> $oldEntry
+ * @return void
+ */
+function plugin_mastodon_on_entry_deleted($entryId, $oldEntry = array()) {
+	$options = plugin_mastodon_dirty_tracking_options();
+	if ($options === array()) {
+		return;
+	}
+	$entryId = trim((string) $entryId);
+	if ($entryId === '') {
+		return;
+	}
+	$state = plugin_mastodon_state_read();
+	$meta = plugin_mastodon_state_get_entry_meta($state, $entryId);
+	plugin_mastodon_state_remove_dirty_entry($state, $entryId);
+	if (!empty($meta ['remote_id'])) {
+		plugin_mastodon_state_set_deletions_pending($state, true, 'full', '');
+		plugin_mastodon_state_write($state);
+	}
+}
+
+/**
+ * Mark a local FlatPress comment write as dirty for a later Mastodon sync.
+ * @param string $entryId
+ * @param string $commentId
+ * @param array<string, mixed> $comment
+ * @param array<string, mixed> $oldComment
+ * @param bool $isUpdate
+ * @return void
+ */
+function plugin_mastodon_on_comment_saved($entryId, $commentId, $comment = array(), $oldComment = array(), $isUpdate = false) {
+	$options = plugin_mastodon_dirty_tracking_options();
+	if ($options === array()) {
+		return;
+	}
+	$entryId = trim((string) $entryId);
+	$commentId = trim((string) $commentId);
+	$comment = is_array($comment) ? $comment : array();
+	if ($entryId === '' || $commentId === '' || $comment === array()) {
+		return;
+	}
+	if (!plugin_mastodon_local_item_matches_sync_start($options, $comment, $commentId)) {
+		$state = plugin_mastodon_state_read();
+		plugin_mastodon_state_remove_dirty_comment($state, $entryId, $commentId);
+		plugin_mastodon_state_write($state);
+		return;
+	}
+	$entry = entry_parse($entryId);
+	if (!$entry || !is_array($entry)) {
+		return;
+	}
+	$state = plugin_mastodon_state_read();
+	$commentMeta = plugin_mastodon_state_get_comment_meta($state, $entryId, $commentId);
+	if (!empty($commentMeta ['source']) && strtolower((string) $commentMeta ['source']) === 'remote') {
+		return;
+	}
+	$entryMeta = plugin_mastodon_state_get_entry_meta($state, $entryId);
+	$commentHash = plugin_mastodon_comment_hash($comment);
+	$hasCommentRemoteMapping = !empty($commentMeta ['remote_id']);
+	$commentHashChanged = empty($commentMeta ['hash']) || (string) $commentMeta ['hash'] !== $commentHash;
+	$insideActiveWindow = plugin_mastodon_local_item_matches_content_window($options, $comment, $commentId, false);
+	if ($hasCommentRemoteMapping && $commentHashChanged) {
+		plugin_mastodon_state_set_dirty_comment($state, $entryId, $commentId, $commentHash);
+		plugin_mastodon_state_write($state);
+		return;
+	}
+	if (!$hasCommentRemoteMapping && $insideActiveWindow) {
+		if (empty($entryMeta ['remote_id']) && empty($entryMeta ['source']) && plugin_mastodon_local_item_matches_sync_start($options, $entry, $entryId)) {
+			plugin_mastodon_state_set_dirty_entry($state, $entryId, plugin_mastodon_entry_hash($entry));
+		}
+		plugin_mastodon_state_remove_dirty_comment($state, $entryId, $commentId);
+		plugin_mastodon_state_write($state);
+		return;
+	}
+	if (!$hasCommentRemoteMapping) {
+		plugin_mastodon_state_remove_dirty_comment($state, $entryId, $commentId);
+		plugin_mastodon_state_write($state);
+		return;
+	}
+}
+
+/**
+ * Mark a local FlatPress comment deletion for the Mastodon deletion sync.
+ * @param string $entryId
+ * @param string $commentId
+ * @param array<string, mixed> $oldComment
+ * @return void
+ */
+function plugin_mastodon_on_comment_deleted($entryId, $commentId, $oldComment = array()) {
+	$options = plugin_mastodon_dirty_tracking_options();
+	if ($options === array()) {
+		return;
+	}
+	$entryId = trim((string) $entryId);
+	$commentId = trim((string) $commentId);
+	if ($entryId === '' || $commentId === '') {
+		return;
+	}
+	$state = plugin_mastodon_state_read();
+	$meta = plugin_mastodon_state_get_comment_meta($state, $entryId, $commentId);
+	plugin_mastodon_state_remove_dirty_comment($state, $entryId, $commentId);
+	if (!empty($meta ['remote_id'])) {
+		plugin_mastodon_state_set_deletions_pending($state, true, 'full', '');
+		plugin_mastodon_state_write($state);
+	}
 }
 
 /**
@@ -3541,7 +4061,12 @@ function plugin_mastodon_process_pending_comment_remote_rechecks($options, &$sta
 		if (plugin_mastodon_status_missing_response($remote)) {
 			$queuedChildren = plugin_mastodon_queue_comment_descendant_remote_rechecks($state, $childIndex, $remoteId);
 			if (comment_exists($entryId, $commentId)) {
-				comment_delete($entryId, $commentId);
+				plugin_mastodon_local_write_guard_enter();
+				try {
+					comment_delete($entryId, $commentId);
+				} finally {
+					plugin_mastodon_local_write_guard_leave();
+				}
 			}
 			plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'pending_remote_missing_local_deleted');
 			plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
@@ -5171,11 +5696,6 @@ function plugin_mastodon_safe_filename($filename) {
 }
 
 /**
- * Resolve a FlatPress media path to an absolute file path.
- * @param string $relativePath
- * @return string
- */
-/**
  * Normalize a FlatPress media path relative to fp-content.
  * @param string $relativePath
  * @return string
@@ -5198,6 +5718,11 @@ function plugin_mastodon_normalize_media_relative_path($relativePath) {
 	return $relativePath;
 }
 
+/**
+ * Resolve a FlatPress media path to an absolute file path.
+ * @param string $relativePath
+ * @return string
+ */
 function plugin_mastodon_media_relative_to_absolute($relativePath) {
 	$relativePath = plugin_mastodon_normalize_media_relative_path($relativePath);
 	if ($relativePath === '') {
@@ -7214,6 +7739,9 @@ function plugin_mastodon_local_item_timestamp($item, $fallbackId = '') {
 	$fallbackId = trim((string) $fallbackId);
 	if ($fallbackId !== '' && function_exists('date_from_id')) {
 		$fallbackTimestamp = date_from_id($fallbackId);
+		if (is_array($fallbackTimestamp) && isset($fallbackTimestamp ['time'])) {
+			$fallbackTimestamp = $fallbackTimestamp ['time'];
+		}
 		if (is_numeric($fallbackTimestamp)) {
 			return (int) $fallbackTimestamp;
 		}
@@ -7247,6 +7775,116 @@ function plugin_mastodon_compare_local_entries_for_export($left, $right) {
 }
 
 /**
+ * Increment a simulation-only local-entry parse counter when enabled.
+ * @param string $entryId
+ * @return void
+ */
+function plugin_mastodon_test_note_local_entry_parse($entryId) {
+	if (!isset($GLOBALS ['plugin_mastodon_test_local_entry_parse_count'])) {
+		return;
+	}
+	$GLOBALS ['plugin_mastodon_test_local_entry_parse_count'] = (int) $GLOBALS ['plugin_mastodon_test_local_entry_parse_count'] + 1;
+}
+
+/**
+ * Return entry identifiers that are explicitly queued by dirty entry/comment hooks.
+ * @param array<string, mixed> $state
+ * @return array<string, bool>
+ */
+function plugin_mastodon_dirty_entry_id_lookup($state) {
+	$lookup = array();
+	if (isset($state ['dirty_entries']) && is_array($state ['dirty_entries'])) {
+		foreach (array_keys($state ['dirty_entries']) as $entryId) {
+			$entryId = trim((string) $entryId);
+			if ($entryId !== '') {
+				$lookup [$entryId] = true;
+			}
+		}
+	}
+	if (isset($state ['dirty_comments']) && is_array($state ['dirty_comments'])) {
+		foreach ($state ['dirty_comments'] as $dirtyComment) {
+			if (is_array($dirtyComment) && !empty($dirtyComment ['entry_id'])) {
+				$entryId = trim((string) $dirtyComment ['entry_id']);
+				if ($entryId !== '') {
+					$lookup [$entryId] = true;
+				}
+			}
+		}
+	}
+	return $lookup;
+}
+
+/**
+ * Determine whether a local entry file should be parsed during a scheduled local-to-remote pass.
+ * @param array<string, string> $options
+ * @param array<string, bool> $dirtyEntryLookup
+ * @param string $entryId
+ * @param bool $force
+ * @return bool
+ */
+function plugin_mastodon_should_parse_local_entry_for_sync($options, $dirtyEntryLookup, $entryId, $force) {
+	$entryId = trim((string) $entryId);
+	if ($entryId === '') {
+		return false;
+	}
+	if ((bool) $force) {
+		return true;
+	}
+	if (isset($dirtyEntryLookup [$entryId])) {
+		return true;
+	}
+	return plugin_mastodon_date_matches_content_window($options, plugin_mastodon_local_item_date_key(array(), $entryId), false);
+}
+
+/**
+ * List local FlatPress entries for a local-to-remote synchronization pass.
+ *
+ * Manual full synchronizations keep the legacy repair behavior and scan every entry. Scheduled
+ * synchronizations parse only active-window entries plus entries queued by post-success dirty hooks.
+ *
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
+ * @param bool $force
+ * @return array<string, array<string, mixed>>
+ */
+function plugin_mastodon_list_local_entries_for_sync($options, $state, $force) {
+	$dirtyEntryLookup = plugin_mastodon_dirty_entry_id_lookup($state);
+	$files = array();
+	plugin_mastodon_collect_entry_files(CONTENT_DIR, $files);
+	sort($files, SORT_STRING);
+	$entryRecords = array();
+	foreach ($files as $file) {
+		$id = basename($file, EXT);
+		if (!plugin_mastodon_should_parse_local_entry_for_sync($options, $dirtyEntryLookup, $id, $force)) {
+			continue;
+		}
+		plugin_mastodon_test_note_local_entry_parse($id);
+		$entry = entry_parse($id);
+		if (!$entry || !is_array($entry)) {
+			continue;
+		}
+		if (isset($entry ['categories']) && is_array($entry ['categories']) && in_array('draft', $entry ['categories'], true)) {
+			continue;
+		}
+		$entryRecords [] = array(
+			'id' => $id,
+			'entry' => $entry,
+			'timestamp' => plugin_mastodon_local_item_timestamp($entry, $id)
+		);
+	}
+	usort($entryRecords, 'plugin_mastodon_compare_local_entries_for_export');
+	$entries = array();
+	foreach ($entryRecords as $entryRecord) {
+		$entryId = isset($entryRecord ['id']) ? (string) $entryRecord ['id'] : '';
+		if ($entryId === '') {
+			continue;
+		}
+		$entries [$entryId] = isset($entryRecord ['entry']) && is_array($entryRecord ['entry']) ? $entryRecord ['entry'] : array();
+	}
+	return $entries;
+}
+
+/**
  * List local FlatPress entries ordered for export.
  * @return array<string, array<string, mixed>>
  */
@@ -7257,6 +7895,7 @@ function plugin_mastodon_list_local_entries() {
 	$entryRecords = array();
 	foreach ($files as $file) {
 		$id = basename($file, EXT);
+		plugin_mastodon_test_note_local_entry_parse($id);
 		$entry = entry_parse($id);
 		if (!$entry || !is_array($entry)) {
 			continue;
@@ -8098,7 +8737,12 @@ function plugin_mastodon_import_remote_entry(&$options, &$state, $remoteStatus) 
 		if (is_array($existing) && !empty($existing ['date'])) {
 			$entry ['date'] = $existing ['date'];
 		}
-		$result = entry_save($entry, $localId);
+		plugin_mastodon_local_write_guard_enter();
+		try {
+			$result = entry_save($entry, $localId);
+		} finally {
+			plugin_mastodon_local_write_guard_leave();
+		}
 		if (is_string($result) && $result !== '') {
 			plugin_mastodon_state_set_entry_mapping($state, $result, $remoteId, 'remote', $hash, $url, $remoteUpdatedAt, plugin_mastodon_local_item_date_key($entry, $result), plugin_mastodon_remote_status_date_key($remoteStatus));
 			$state ['content_stats'] ['updated_entries']++;
@@ -8107,7 +8751,12 @@ function plugin_mastodon_import_remote_entry(&$options, &$state, $remoteStatus) 
 		return false;
 	}
 
-	$result = entry_save($entry, null);
+	plugin_mastodon_local_write_guard_enter();
+	try {
+		$result = entry_save($entry, null);
+	} finally {
+		plugin_mastodon_local_write_guard_leave();
+	}
 	if (is_string($result) && $result !== '') {
 		plugin_mastodon_state_set_entry_mapping($state, $result, $remoteId, 'remote', $hash, $url, $remoteUpdatedAt, plugin_mastodon_local_item_date_key($entry, $result), plugin_mastodon_remote_status_date_key($remoteStatus));
 		$state ['content_stats'] ['imported_entries']++;
@@ -8338,7 +8987,12 @@ function plugin_mastodon_import_remote_comment(&$options, &$state, $entryId, $re
 		}
 	}
 
-	$result = comment_save($entryId, $comment);
+	plugin_mastodon_local_write_guard_enter();
+	try {
+		$result = comment_save($entryId, $comment);
+	} finally {
+		plugin_mastodon_local_write_guard_leave();
+	}
 	if (is_string($result) && $result !== '') {
 		plugin_mastodon_state_set_comment_mapping($state, $entryId, $result, $remoteId, 'remote', $hash, isset($remoteComment ['url']) ? (string) $remoteComment ['url'] : '', $remoteUpdatedAt, $parentCommentId, $inReplyToRemoteId, plugin_mastodon_local_item_date_key($comment, $result), plugin_mastodon_remote_status_date_key($remoteComment));
 		$state ['content_stats'] ['imported_comments']++;
@@ -8398,7 +9052,7 @@ function plugin_mastodon_import_remote_context_descendants(&$options, &$state, $
 			if (!plugin_mastodon_remote_status_matches_sync_start($options, $descendant)) {
 				$blockedRemoteIds [$descendantId] = true;
 				$progress = true;
-				plugin_mastodon_log('Skipping remote reply ' . $descendantId . ' because it is older than the configured sync start date');
+				plugin_mastodon_log_skip('remote_reply_before_sync_start', 'remote reply', 'remote replies', $descendantId, 'because they are older than the configured sync start date');
 				continue;
 			}
 			$parentRemoteId = isset($descendant ['in_reply_to_id']) ? (string) $descendant ['in_reply_to_id'] : '';
@@ -8576,7 +9230,7 @@ function plugin_mastodon_sync_remote_to_local(&$options, &$state, $force = true)
 			continue;
 		}
 		if (!plugin_mastodon_remote_status_matches_content_window($options, $status, $force)) {
-			plugin_mastodon_log('Skipping remote status ' . $statusId . ' because it is outside the active synchronization date window');
+			plugin_mastodon_log_skip('remote_status_outside_content_window', 'remote status', 'remote statuses', $statusId, 'because they are outside the active synchronization date window');
 			continue;
 		}
 		$entryId = plugin_mastodon_import_remote_entry($options, $state, $status);
@@ -8618,7 +9272,7 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state, $force = true)
 	$force = (bool) $force;
 	$charLimit = plugin_mastodon_instance_character_limit($options);
 	$mediaLimit = plugin_mastodon_instance_media_limit($options);
-	$entries = plugin_mastodon_list_local_entries();
+	$entries = plugin_mastodon_list_local_entries_for_sync($options, $state, $force);
 	$hadFailure = false;
 	foreach ($entries as $entryId => $entry) {
 		plugin_mastodon_extend_time_limit(120);
@@ -8717,7 +9371,7 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state, $force = true)
 				}
 			}
 		} else {
-			plugin_mastodon_log('Skipping local entry ' . $entryId . ' because it is outside the active synchronization date window');
+			plugin_mastodon_log_skip('local_entry_outside_content_window', 'local entry', 'local entries', $entryId, 'because they are outside the active synchronization date window');
 		}
 
 		$entryMeta = plugin_mastodon_state_get_entry_meta($state, $entryId);
@@ -8741,7 +9395,7 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state, $force = true)
 				continue;
 			}
 			if (!plugin_mastodon_local_item_matches_sync_start($options, $comment, $commentId)) {
-				plugin_mastodon_log('Skipping local comment ' . $entryId . '/' . $commentId . ' because it is older than the configured sync start date');
+				plugin_mastodon_log_skip('local_comment_before_sync_start', 'local comment', 'local comments', $entryId . '/' . $commentId, 'because they are older than the configured sync start date');
 				continue;
 			}
 			$commentHash = plugin_mastodon_comment_hash($comment);
@@ -8753,7 +9407,7 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state, $force = true)
 					plugin_mastodon_log('Queued older changed local comment ' . $entryId . '/' . $commentId . ' for synchronization outside the scheduled window');
 				}
 				if (!$commentQueuedDirty) {
-					plugin_mastodon_log('Skipping local comment ' . $entryId . '/' . $commentId . ' because it is outside the active synchronization date window');
+					plugin_mastodon_log_skip('local_comment_outside_content_window', 'local comment', 'local comments', $entryId . '/' . $commentId, 'because they are outside the active synchronization date window');
 					continue;
 				}
 			}
@@ -8924,7 +9578,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 				continue;
 			}
 			if (!plugin_mastodon_mapping_matches_sync_start($options, $meta, $localEntryId)) {
-				plugin_mastodon_log('Skipping deletion sync for entry ' . $localEntryId . ' because it is older than the configured sync start date');
+				plugin_mastodon_log_skip('deletion_entry_before_sync_start', 'deletion entry mapping', 'deletion entry mappings', $localEntryId, 'because they are older than the configured sync start date');
 				continue;
 			}
 			$remoteId = (string) $meta ['remote_id'];
@@ -8948,14 +9602,19 @@ function plugin_mastodon_run_deletion_sync($force) {
 			}
 
 			if (!plugin_mastodon_mapping_matches_deletion_lookup_window($options, $meta, $localEntryId, $force)) {
-				plugin_mastodon_log('Skipping remote deletion lookup for entry ' . $localEntryId . ' because it is outside the scheduled deletion lookup window');
+				plugin_mastodon_log_skip('deletion_entry_outside_lookup_window', 'remote deletion entry lookup', 'remote deletion entry lookups', $localEntryId, 'because they are outside the scheduled deletion lookup window');
 				continue;
 			}
 
 			$remote = plugin_mastodon_fetch_status($options, $remoteId);
 			if (plugin_mastodon_status_missing_response($remote)) {
 				if (entry_exists($localEntryId)) {
-					entry_delete($localEntryId);
+					plugin_mastodon_local_write_guard_enter();
+					try {
+						entry_delete($localEntryId);
+					} finally {
+						plugin_mastodon_local_write_guard_leave();
+					}
 				}
 				plugin_mastodon_state_remove_entry_mapping($state, $localEntryId);
 				$state ['deletion_stats'] ['deleted_local_entries']++;
@@ -9008,7 +9667,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 					continue;
 				}
 				if (!plugin_mastodon_mapping_matches_sync_start($options, $commentMeta, $commentId)) {
-					plugin_mastodon_log('Skipping deletion sync for comment ' . $entryId . '/' . $commentId . ' because it is older than the configured sync start date');
+					plugin_mastodon_log_skip('deletion_comment_before_sync_start', 'deletion comment mapping', 'deletion comment mappings', $entryId . '/' . $commentId, 'because they are older than the configured sync start date');
 					plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
 					continue;
 				}
@@ -9042,7 +9701,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 				}
 
 				if (!plugin_mastodon_mapping_matches_deletion_lookup_window($options, $commentMeta, $commentId, $force)) {
-					plugin_mastodon_log('Skipping remote deletion lookup for comment ' . $entryId . '/' . $commentId . ' because it is outside the scheduled deletion lookup window');
+					plugin_mastodon_log_skip('deletion_comment_outside_lookup_window', 'remote deletion comment lookup', 'remote deletion comment lookups', $entryId . '/' . $commentId, 'because they are outside the scheduled deletion lookup window');
 					continue;
 				}
 
@@ -9050,7 +9709,12 @@ function plugin_mastodon_run_deletion_sync($force) {
 				if (plugin_mastodon_status_missing_response($remote)) {
 					$queuedDescendants = plugin_mastodon_queue_comment_descendant_remote_rechecks($state, $childIndex, $remoteId);
 					if (comment_exists($entryId, $commentId)) {
-						comment_delete($entryId, $commentId);
+						plugin_mastodon_local_write_guard_enter();
+						try {
+							comment_delete($entryId, $commentId);
+						} finally {
+							plugin_mastodon_local_write_guard_leave();
+						}
 					}
 					plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'remote_missing_local_deleted');
 					plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
@@ -9080,6 +9744,8 @@ function plugin_mastodon_run_deletion_sync($force) {
 	} else {
 		plugin_mastodon_log('Deletion synchronization is running in targeted descendant recheck mode');
 	}
+
+	plugin_mastodon_log_flush_skip_summaries();
 
 	$pendingCommentRechecksRemaining = plugin_mastodon_process_pending_comment_remote_rechecks($options, $state, $childIndex, $hadFailure);
 	$rateLimitError = plugin_mastodon_rate_limit_state_error();
@@ -9116,7 +9782,6 @@ function plugin_mastodon_run_deletion_sync($force) {
 	$stateWriteOk = plugin_mastodon_state_write($state);
 	if (!$stateWriteOk && !$hadFailure) {
 		$state ['last_error'] = 'state_write_failed_after_deletion_sync';
-		plugin_mastodon_state_fallback_store($state);
 		plugin_mastodon_log('Deletion synchronization completed but state.json could not be persisted');
 	}
 	@flock($lockHandle, LOCK_UN);
@@ -9125,7 +9790,6 @@ function plugin_mastodon_run_deletion_sync($force) {
 
 	return array('ok' => (!$hadFailure && $stateWriteOk), 'state' => $state, 'message' => $state ['last_error'] === '' ? 'ok' : $state ['last_error']);
 }
-
 
 /**
  * Determine whether the scheduled synchronization is currently due.
@@ -9219,6 +9883,8 @@ function plugin_mastodon_run_sync($force, $fullWindow = null) {
 		$okLocal = plugin_mastodon_sync_local_to_remote($options, $state, $fullWindow);
 	}
 
+	plugin_mastodon_log_flush_skip_summaries();
+
 	if ($okRemote && $okLocal) {
 		$completionTimestamp = time();
 		$state ['last_run'] = date('Y-m-d H:i:s', $completionTimestamp);
@@ -9233,7 +9899,6 @@ function plugin_mastodon_run_sync($force, $fullWindow = null) {
 	$stateWriteOk = plugin_mastodon_state_write($state);
 	if (!$stateWriteOk && $okRemote && $okLocal) {
 		$state ['last_error'] = 'state_write_failed_after_sync';
-		plugin_mastodon_state_fallback_store($state);
 		plugin_mastodon_log('Synchronization completed but state.json could not be persisted');
 	}
 	@flock($lockHandle, LOCK_UN);
@@ -9256,10 +9921,10 @@ function plugin_mastodon_maybe_sync() {
 	}
 
 	$options = plugin_mastodon_get_options();
-	$state = plugin_mastodon_state_read();
 	if ($options ['instance_url'] === '' || $options ['access_token'] === '') {
 		return;
 	}
+	$state = plugin_mastodon_scheduler_state_read();
 	if (plugin_mastodon_sync_due($options, $state, time())) {
 		plugin_mastodon_run_sync(false);
 		return;
@@ -9269,6 +9934,10 @@ function plugin_mastodon_maybe_sync() {
 	}
 }
 add_action('init', 'plugin_mastodon_maybe_sync', 20);
+add_action('entry_saved', 'plugin_mastodon_on_entry_saved', 10, 4);
+add_action('entry_deleted', 'plugin_mastodon_on_entry_deleted', 10, 2);
+add_action('comment_saved', 'plugin_mastodon_on_comment_saved', 10, 5);
+add_action('comment_deleted', 'plugin_mastodon_on_comment_deleted', 10, 3);
 
 /**
  * Return a localized yes/no/unknown label for admin diagnostics.
@@ -9411,7 +10080,7 @@ function plugin_mastodon_admin_instance_info_rows($options) {
  */
 function plugin_mastodon_admin_assign(&$smarty) {
 	$options = plugin_mastodon_get_options();
-	$state = plugin_mastodon_state_read();
+	$state = plugin_mastodon_scheduler_state_read();
 	$authorizeUrl = plugin_mastodon_build_authorize_url($options);
 	if ($authorizeUrl === '' && !empty($options ['last_authorize_url'])) {
 		$authorizeUrl = $options ['last_authorize_url'];
