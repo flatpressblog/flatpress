@@ -51,22 +51,18 @@ The plugin uses:
   * **DOMDocument / libxml** for the best HTML-to-BBCode conversion
   * **OpenSSL** to protect stored secrets when available
 
+Mastodon compatibility range:
+**Technical:** >= 4.0.0 as of November 2022
+**Recommended:** >= 4.4.0 as of July 2025
+
 ===== Recommended FlatPress plugins =====
 
 For the best result with synchronized Mastodon content, also enable these FlatPress plugins:
 
-  * **BBCode**
-  * **PhotoSwipe**
-  * **AudioVideo**
-  * **[[tag|Tag]]**
-  * **Emoticons**
-
-They improve the result like this:
-
   * **BBCode** renders imported formatting, links, images and galleries properly.
   * **PhotoSwipe** improves image and gallery display.
   * **AudioVideo** renders imported and synchronized audio/video attachments as HTML5 media players.
-  * **Tag** enables tag / hashtag synchronization.
+  * **[[tag|Tag]]** enables tag / hashtag synchronization.
   * **Emoticons** renders imported emoji shortcodes more nicely.
 
 ===== What the plugin currently does and does not do =====
@@ -144,6 +140,24 @@ Here you set:
 
 The **Synchronization start date** is useful when you do not want to import or export much older content.
 
+I recommend setting the start date once and then not changing it. You can change the start date in the following scenarios:
+
+| **Action**                                             |                                                                       **Recommendation** |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------: |
+| Historical initial import / backfill                   |                                                   Extend **backward in 7–14-day blocks** |
+| Many gallery/video posts in the history                | Rather by **number of media items**, not by days: max. approx. 20–24 media items per run |
+
+Automatic window for scheduled runs (specific guidelines).
+
+| **Usage scenario**                                     |                                                           **Recommendation** |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------: |
+| Normal blog, few media files, few comments             |                                                                  **14 days** |
+| Very quiet blog, hardly any media, few old changes     |                                                          **30 days maximum** |
+| Media-heavy: galleries, audio, video                   |                                                                   **7 days** |
+| Many comments or many old edits                        |                                                                **7–14 days** |
+
+Tip: If you see error messages indicating that limits have been reached, select a shorter time frame, such as 7 days.
+
 ==== 2. More options ====
 
 These switches are especially important:
@@ -155,7 +169,16 @@ These switches are especially important:
     Allows certain synchronized Mastodon replies to also appear as FlatPress entries. Leave this disabled if you want to avoid duplicate content and keep thread replies mainly in the comment area.
 
   * **Enable deletion synchronization**  
-    Enables the separate follow-up delete pass.
+    Enables the separate follow-up delete pass. Deletion synchronization ensures that posts/ statuses, comments/ replies deleted on one side are also deleted on the other.
+
+**Behavior of deletion synchronizations:**
+| **Case                                                  | **Behavior**                                                                                          |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Scheduled deletion sync, local content still exists     | Remote existence check only within the automatic 7/14/30-day window                                   |
+| Scheduled deletion sync, local content has been deleted | Mastodon status/reply will still be deleted, provided it is within the **Synchronization start date** |
+| Manual/Force deletion run                               | May continue to check completely                                                                      |
+| Pending child rechecks                                  | Are not blocked by the automatic window                                                               |
+| Large mapping sets                                      | Are distributed across multiple runs using a cursor                                                   |
 
 ==== 3. OAuth helper ====
 
@@ -342,8 +365,11 @@ If you mainly want a blog-like discussion structure, leaving the option disabled
 
 The plugin stores its working data in:
 
-  * ''fp-content/plugin_mastodon/state.json''
   * ''fp-content/plugin_mastodon/sync.log''
+  * ''fp-content/plugin_mastodon/sync.guard.json''
+  * ''fp-content/plugin_mastodon/state.json''
+  * ''fp-content/plugin_mastodon/scheduler-state.json''
+  * ''fp-content/plugin_mastodon/rate-limit-windows.json''
 
 Imported Mastodon images are stored under:
 

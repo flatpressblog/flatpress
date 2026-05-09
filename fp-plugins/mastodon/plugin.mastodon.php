@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.4.1
+ * Version: 2.4.2
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -3016,6 +3016,27 @@ function plugin_mastodon_scheduler_state_write($state) {
 }
 
 /**
+ * Decode a scheduler-state JSON payload only when it matches the current full-state signature.
+ * @param string|false|null $json
+ * @param string $sourceSignature
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_scheduler_state_decode_fresh($json, $sourceSignature) {
+	if (!is_string($json) || trim($json) === '') {
+		return array();
+	}
+	$data = json_decode($json, true);
+	if (!is_array($data)) {
+		return array();
+	}
+	$schedulerState = plugin_mastodon_scheduler_state_normalize($data);
+	if ($schedulerState ['source_state_signature'] !== (string) $sourceSignature) {
+		return array();
+	}
+	return $schedulerState;
+}
+
+/**
  * Load the lightweight scheduler summary and rebuild it conservatively when stale.
  * @return array<string, mixed>
  */
@@ -3036,15 +3057,20 @@ function plugin_mastodon_scheduler_state_read() {
 		}
 
 		$json = plugin_mastodon_io_read_file(PLUGIN_MASTODON_SCHEDULER_STATE_FILE, $prestat);
-		if (is_string($json) && trim($json) !== '') {
-			$data = json_decode($json, true);
-			if (is_array($data)) {
-				$schedulerState = plugin_mastodon_scheduler_state_normalize($data);
-				if ($schedulerState ['source_state_signature'] === $sourceSignature) {
-					plugin_mastodon_runtime_cache_set('scheduler_state', '__signature__', $signature);
-					plugin_mastodon_runtime_cache_set('scheduler_state', $signature, $schedulerState);
-					return $schedulerState;
-				}
+		$schedulerState = plugin_mastodon_scheduler_state_decode_fresh($json, $sourceSignature);
+		if ($schedulerState !== array()) {
+			plugin_mastodon_runtime_cache_set('scheduler_state', '__signature__', $signature);
+			plugin_mastodon_runtime_cache_set('scheduler_state', $signature, $schedulerState);
+			return $schedulerState;
+		}
+
+		$uncachedJson = plugin_mastodon_io_read_file_uncached(PLUGIN_MASTODON_SCHEDULER_STATE_FILE, true);
+		if ($uncachedJson !== $json) {
+			$schedulerState = plugin_mastodon_scheduler_state_decode_fresh($uncachedJson, $sourceSignature);
+			if ($schedulerState !== array()) {
+				plugin_mastodon_runtime_cache_set('scheduler_state', '__signature__', $signature);
+				plugin_mastodon_runtime_cache_set('scheduler_state', $signature, $schedulerState);
+				return $schedulerState;
 			}
 		}
 	}
@@ -7042,6 +7068,30 @@ function plugin_mastodon_instance_supports_status_media_attributes($options) {
 }
 
 /**
+ * Determine whether cached instance information confirms support for the
+ * delete_media query parameter on DELETE /api/v1/statuses/:id.
+ *
+ * Mastodon added the optional delete_media parameter in 4.4.0. This helper
+ * intentionally uses cached or stored instance information only, so deletion
+ * synchronization does not spend an additional network request merely to decide
+ * which DELETE shape to use.
+ *
+ * @param array<string, string> $options
+ * @return bool|null True/false when the cached version is known, null when it is unknown.
+ */
+function plugin_mastodon_instance_supports_status_delete_media($options) {
+	$document = plugin_mastodon_instance_document($options, false);
+	if (empty($document ['version']) || !is_string($document ['version'])) {
+		return null;
+	}
+	$normalized = preg_replace('/[^0-9.].*$/', '', trim((string) $document ['version']));
+	if (!is_string($normalized) || $normalized === '' || !preg_match('/^\d+(?:\.\d+){0,3}$/', $normalized)) {
+		return null;
+	}
+	return version_compare($normalized, '4.4.0', '>=');
+}
+
+/**
  * Load and cache the Mastodon instance configuration document.
  * @param array<string, string> $options
  * @return array<string, mixed>
@@ -8477,10 +8527,45 @@ function plugin_mastodon_fetch_status($options, $statusId) {
  */
 function plugin_mastodon_delete_status($options, $statusId, $deleteMedia = true) {
 	$path = '/api/v1/statuses/' . rawurlencode((string) $statusId);
-	if ($deleteMedia) {
-		$path .= '?delete_media=1';
+	$deleteMediaSupported = $deleteMedia ? plugin_mastodon_instance_supports_status_delete_media($options) : false;
+	$useDeleteMediaParameter = $deleteMedia && $deleteMediaSupported !== false;
+	$requestPath = $path;
+	if ($useDeleteMediaParameter) {
+		$requestPath .= '?delete_media=1';
 	}
-	return plugin_mastodon_mastodon_json($options, 'DELETE', $path, array(), true);
+
+	$response = plugin_mastodon_mastodon_json($options, 'DELETE', $requestPath, array(), true);
+	if ($useDeleteMediaParameter && empty($response ['ok']) && plugin_mastodon_delete_status_should_retry_without_delete_media($response)) {
+		plugin_mastodon_log('Retrying Mastodon status deletion without delete_media for status ' . (string) $statusId . ' after response ' . (isset($response ['code']) ? (string) (int) $response ['code'] : '0'));
+		$fallback = plugin_mastodon_mastodon_json($options, 'DELETE', $path, array(), true);
+		$fallback ['delete_media_fallback_attempted'] = true;
+		$fallback ['delete_media_first_code'] = isset($response ['code']) ? (int) $response ['code'] : 0;
+		$fallback ['delete_media_first_error'] = plugin_mastodon_response_error_message($response);
+		return $fallback;
+	}
+	return $response;
+}
+
+/**
+ * Check whether a failed status deletion may be caused by Mastodon versions
+ * before 4.4.0 not understanding the optional delete_media query parameter.
+ *
+ * @param array<string, mixed> $response
+ * @return bool
+ */
+function plugin_mastodon_delete_status_should_retry_without_delete_media($response) {
+	if (plugin_mastodon_rate_limit_state_error() !== '') {
+		return false;
+	}
+	$code = isset($response ['code']) ? (int) $response ['code'] : 0;
+	if ($code === 400 || $code === 405 || $code === 422) {
+		return true;
+	}
+	if ($code === 0) {
+		$message = strtolower(plugin_mastodon_response_error_message($response));
+		return $message !== '' && strpos($message, 'delete_media') !== false;
+	}
+	return false;
 }
 
 /**
