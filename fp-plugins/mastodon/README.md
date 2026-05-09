@@ -505,6 +505,7 @@ Fixed runtime and request budgets:
 | Default sync time                      |                                   `03:00` |
 | Sync cooldown                          |                             `300` seconds |
 | State fallback TTL                     |                             `300` seconds |
+
 The plugin thus combines its own internal budgets with Mastodon’s Remote-RateLimit headers.
 Throttling occurs upon an HTTP 429 response or if X-RateLimit-Remaining is too low.
 
