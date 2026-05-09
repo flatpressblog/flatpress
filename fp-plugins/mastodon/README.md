@@ -51,8 +51,8 @@ The plugin uses:
 - **OpenSSL** to protect stored secrets when available
 
 Mastodon compatibility range:
-**Technical:** >= 4.0.0 as of November 2022
-**Recommended:** >= 4.4.0 as of July 2025
+- **Technical:** >= 4.0.0 as of November 2022
+- **Recommended:** >= 4.4.0 as of July 2025
 
 ## Recommended FlatPress plugins
 
