@@ -50,17 +50,13 @@ The plugin uses:
 - **DOMDocument / libxml** for the best HTML-to-BBCode conversion
 - **OpenSSL** to protect stored secrets when available
 
+Mastodon compatibility range:
+**Technical:** >= 4.0.0 as of November 2022
+**Recommended:** >= 4.4.0 as of July 2025
+
 ## Recommended FlatPress plugins
 
 For the best result with synchronized Mastodon content, also enable these FlatPress plugins:
-
-- **BBCode**
-- **PhotoSwipe**
-- **AudioVideo**
-- **Tag**
-- **Emoticons**
-
-They improve the result like this:
 
 - **BBCode** renders imported formatting, links, images and galleries properly.
 - **PhotoSwipe** improves image and gallery display.
@@ -144,6 +140,24 @@ Here you set:
 
 The **Synchronization start date** is useful when you do not want to import or export much older content.
 
+I recommend setting the **start date** once and then not changing it. You can change the start date in the following scenarios:
+
+| **Action**                                             |                                                                       **Recommendation** |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------: |
+| Historical initial import / backfill                   |                                                   Extend **backward in 7–14-day blocks** |
+| Many gallery/video posts in the history                | Rather by **number of media items**, not by days: max. approx. 20–24 media items per run |
+
+**Automatic window for scheduled runs** (specific guidelines).
+
+| **Usage scenario**                                     |                                                           **Recommendation** |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------: |
+| Normal blog, few media files, few comments             |                                                                  **14 days** |
+| Very quiet blog, hardly any media, few old changes     |                                                          **30 days maximum** |
+| Media-heavy: galleries, audio, video                   |                                                                   **7 days** |
+| Many comments or many old edits                        |                                                                **7–14 days** |
+
+Tip: If you see error messages indicating that limits have been reached, select a shorter time frame, such as 7 days.
+
 ### 2. More options
 
 These switches are especially important:
@@ -155,7 +169,16 @@ These switches are especially important:
   Allows certain synchronized Mastodon replies to also appear as FlatPress entries. Leave this disabled if you want to avoid duplicate content and keep thread replies mainly in the comment area.
 
 - **Enable deletion synchronization**  
-  Enables the separate follow-up delete pass.
+  Enables the separate follow-up delete pass. Deletion synchronization ensures that posts/ statuses, comments/ replies deleted on one side are also deleted on the other.
+
+**Behavior of deletion synchronizations:**
+| **Case**                                                | **Behavior**                                                                                          |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Scheduled deletion sync, local content still exists     | Remote existence check only within the automatic 7/14/30-day window                                   |
+| Scheduled deletion sync, local content has been deleted | Mastodon status/reply will still be deleted, provided it is within the **Synchronization start date** |
+| Manual/Force deletion run                               | May continue to check completely                                                                      |
+| Pending child rechecks                                  | Are not blocked by the automatic window                                                               |
+| Large mapping sets                                      | Are distributed across multiple runs using a cursor                                                   |
 
 ### 3. OAuth helper
 
@@ -265,8 +288,11 @@ After the run, also check:
 
 For technical details you can additionally inspect:
 
-- `fp-content/plugin_mastodon/state.json`
 - `fp-content/plugin_mastodon/sync.log`
+- `fp-content/plugin_mastodon/sync.guard.json`
+- `fp-content/plugin_mastodon/state.json`
+- `fp-content/plugin_mastodon/scheduler-state.json`
+- `fp-content/plugin_mastodon/rate-limit-windows.json`
 
 ## How synchronization works in practice
 
@@ -451,6 +477,73 @@ Check:
 
   **Q:** Why can the deletion counters change later than the synchronization counters?  
   **A:** Because the deletion pass runs in a later follow-up request, not in the main synchronization request.
+
+## Notes for Developers:
+These protection mechanisms should always apply to both manual and scheduled runs:
+| **Protection**                          | **Manual runs too?** | **Reason**                               |
+| --------------------------------------- | -------------------: | ---------------------------------------- |
+| 240 API requests per run                |                  Yes | Mastodon limit protection                |
+| 24 media uploads per 30 minutes         |                  Yes | protects media limit                     |
+| 24 deletions per 30 minutes             |                  Yes | protects delete limit                    |
+| Paging window                           |                  Yes | protects paging bucket                   |
+| Remote remaining floor                  |                  Yes | protects against scarce Mastodon headers |
+| Progress cursor in delete sync          |                  Yes | prevents repetition of the same mappings |
+| Safely process pending child rechecks   |                  Yes | data consistency                         |
+
+Fixed runtime and request budgets:
+| **Category**                           |                                 **Limit** |
+| -------------------------------------- | ----------------------------------------: |
+| Request budget per sync run            |                                     `240` |
+| Media upload budget per sync run       |                                      `24` |
+| Delete budget per sync run             |                                      `24` |
+| Media upload window                    |             `24` uploads / `1800` seconds |
+| Delete window                          |             `24` deletes / `1800` seconds |
+| Status page window                     |        `300` status pages / `900` seconds |
+| Remote Rate Limit Floor                |    stops at `X-RateLimit-Remaining <= 10` |
+| Max. status pages during remote import |                                       `5` |
+| Status page limit per API page         |                                      `40` |
+| Default sync time                      |                                   `03:00` |
+| Sync cooldown                          |                             `300` seconds |
+| State fallback TTL                     |                             `300` seconds |
+The plugin thus combines its own internal budgets with Mastodon’s Remote-RateLimit headers.
+Throttling occurs upon an HTTP 429 response or if X-RateLimit-Remaining is too low.
+
+Content, Characters, and Media:
+| **Category**                | **Primary Source**                                                      |                                           **Fallback** |
+| --------------------------- | ----------------------------------------------------------------------- | -----------------------------------------------------: |
+| Status character limit      | `/api/v2/instance → configuration.statuses.max_characters`              |                                                  `500` |
+| Reserved characters per URL | `/api/v2/instance → configuration.statuses.characters_reserved_per_url` |                                                   `23` |
+| Max. media attachments      | `/api/v2/instance → configuration.statuses.max_media_attachments`       |                                                    `4` |
+| Media description limit     | `/api/v2/instance → configuration.media_attachments.description_limit`  |                                                 `1500` |
+| Image size limit            | `/api/v2/instance → configuration.media_attachments.image_size_limit`   |                              no local limit if unknown |
+| Video/audio size limit      | `/api/v2/instance → video_size_limit` / `audio_size_limit`              |    Audio falls back to video, otherwise no local limit |
+
+Media Processing:
+| **Area**                                     | **Limit / Behavior**                                               |
+| -------------------------------------------- | ------------------------------------------------------------------ |
+| Imported media width in FlatPress BBCode     | `320`                                                              |
+| Image/other media processing attempts        | `12`                                                               |
+| Video/GIFV processing attempts               | `60`, from 10 MiB `75`, from 50 MiB `90`                           |
+| Audio processing attempts                    | `60`, from 50 MiB `75`                                             |
+| Image/other upload timeouts                  | approx. `90` seconds                                               |
+| Video/GIFV/audio upload timeouts             | approx. `180` seconds, from 50 MiB `300` seconds                   |
+| Media polling                                | `GET /api/v1/media/:id`, retry wait time roughly `0.1–5.0` seconds |
+| cURL redirect limit                          | `5`                                                                |
+| cURL connect timeout                         | `15` seconds                                                       |
+
+Persistence, Logs, and Regression Protection:
+| **Category**                | **Limit / File**                                  |
+| --------------------------- | ------------------------------------------------- |
+| State file                  | `fp-content/plugin_mastodon/state.json`           |
+| Scheduler state             | `fp-content/plugin_mastodon/scheduler-state.json` |
+| Sync lock                   | `sync.lock`                                       |
+| Guard file                  | `sync.guard.json`                                 |
+| Rate Limit Window           | `rate-limit-windows.json`                         |
+| Sync Log                    | `sync.log`                                        |
+| Max. Log Size               | `1 MiB`                                           |
+| Rotated Log Files           | `3`                                               |
+| Pending Comment Rechecks    | `3`                                               |
+| Old Thread Context Rotation | `3`                                               |
 
 ## Resources for Developers:
 - [Functional Organization Chart](Function-Organigram.md)
