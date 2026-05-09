@@ -547,7 +547,7 @@ Persistence, Logs, and Regression Protection:
 | Old Thread Context Rotation | `3`                                               |
 
 ## Resources for Developers:
-- [Functional Organization Chart](Function-Organigram.md)
+- [Function Organization Chart](Function-Organigram.md)
 - [Process Flows](Plugin-Process-Flow.md)
 
 ## For advanced testing
