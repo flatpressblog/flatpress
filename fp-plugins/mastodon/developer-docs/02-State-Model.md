@@ -67,15 +67,17 @@ flowchart TD
 
 A mapped entry typically carries:
 
-| Key                           | Meaning                                                          |
-|-------------------------------|------------------------------------------------------------------|
-| `remote_id`                   | Mastodon status ID for the local entry.                          |
-| `hash`                        | Content hash used to skip unchanged local entries.               |
-| `date_key` / timestamps       | Used for sync window decisions.                                  |
-| `remote_media`                | Stored remote media descriptors for reuse and cleanup decisions. |
-| `media_attachment_signature`  | Signature of local media files/paths/types.                      |
-| `media_description_signature` | Signature of local media descriptions/alt text.                  |
-| `remote_source` flags         | Indicates whether a local entry originated from Mastodon.        |
+| Key                           | Meaning                                                                                                           |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| `remote_id`                   | Mastodon status ID for the local entry.                                                                           |
+| `hash`                        | Content hash used to skip unchanged local entries.                                                                |
+| `date_key` / timestamps       | Used for sync window decisions.                                                                                   |
+| `remote_media`                | Stored remote media descriptors for the effective Mastodon media selection, used for reuse and cleanup decisions. |
+| `media_attachment_signature`  | Signature of the selected local status media files/paths/types, not every media tag found in the FlatPress entry. |
+| `media_description_signature` | Signature of descriptions/alt text for the selected status media set.                                             |
+| `remote_source` flags         | Indicates whether a local entry originated from Mastodon.                                                         |
+
+The media signatures are computed after `plugin_mastodon_select_status_media_items()` has reduced the collected media to one Mastodon-compatible family. For example, if an entry contains images, audio, and video, only the selected image set contributes to the stored media signatures and remote media descriptors. The raw FlatPress content hash still includes the content itself, so ignored media changes can still make the entry dirty, but they do not force an invalid mixed-media Mastodon status.
 
 ### Comment metadata in `comments`
 

@@ -1,4 +1,4 @@
-# 06 — Mastodon Plugin Process Flows
+# 06 — Process Flows
 
 ## Scope and important state files
 
@@ -393,10 +393,13 @@ flowchart LR
     Cleanup --> Media --> Tags --> Result
 ```
 
-### 2.3 Local media collection and validation
+### 2.3 Local media collection, validation, and Mastodon media-family selection
 
 The plugin scans entries for image, gallery, audio, and video markup, then validates the
-corresponding files against instance capabilities and internal budgets.
+corresponding files against instance capabilities and internal budgets. The collector keeps
+all recognized local media candidates, but the export planner selects only one media family
+before upload because Mastodon accepts either multiple images or one audio/video attachment
+per status.
 
 ```mermaid
 flowchart TD
@@ -409,10 +412,15 @@ flowchart TD
     Items["plugin_mastodon_prepare_entry_media_items"]
     Mime["Guess MIME type and media type"]
     Limits["Instance media limits from /api/v2/instance<br/>supported_mime_types, size limits, description_limit"]
-    Rules{"Uploadable under Mastodon rules?"}
+    Rules{"Uploadable file?"}
     Reject["Skip item and log validation reason"]
-    Accepted["Accepted local media item"]
-    AttachmentLimit["Apply max_media_attachments and one audio/video style constraints"]
+    Accepted["Validated local media candidates"]
+    Selector["plugin_mastodon_select_status_media_items"]
+    HasImages{"Any image candidates?"}
+    HasAudio{"Any audio candidates?"}
+    UseImages["Use images only<br/>up to max_media_attachments"]
+    UseAudio["Use exactly one audio"]
+    UseVideo["Use exactly one video<br/>poster remains thumbnail only"]
     PlanInput["Input for media sync plan"]
 
     EntryContent --> Collect
@@ -422,13 +430,21 @@ flowchart TD
     Collect --> Video --> Items
     Items --> Mime --> Limits --> Rules
     Rules -- "No" --> Reject
-    Rules -- "Yes" --> Accepted --> AttachmentLimit --> PlanInput
+    Rules -- "Yes" --> Accepted --> Selector
+    Selector --> HasImages
+    HasImages -- "Yes" --> UseImages --> PlanInput
+    HasImages -- "No" --> HasAudio
+    HasAudio -- "Yes" --> UseAudio --> PlanInput
+    HasAudio -- "No" --> UseVideo --> PlanInput
 ```
+
+Selection priority is deterministic: images first, otherwise audio, otherwise video. Skipped
+media are logged and counted in the media plan; they do not make the sync fail.
 
 ### 2.4 Media reuse, upload, update, and cleanup lifecycle
 
-The media plan decides whether existing remote IDs can be reused, whether alt text can be
-updated in place through `media_attributes`, or whether files must be uploaded again.
+The media plan receives the selected Mastodon-compatible media family, then decides whether existing remote IDs can be reused, whether alt text can be
+updated in place through `media_attributes`, or whether files must be uploaded again. Attachment and description signatures are based on the selected media set.
 
 ```mermaid
 flowchart TD

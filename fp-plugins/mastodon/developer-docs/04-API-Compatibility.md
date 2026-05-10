@@ -27,9 +27,22 @@ The current plugin implementation is best described as:
 | Create status           | POST   | /api/v1/statuses                        | 0.0.0                                     | write:statuses          | No create fallback.                                                                                     | plugin_mastodon_create_status                                        |
 | Edit status             | PUT    | /api/v1/statuses/:id                    | 3.5.0                                     | write:statuses          | No delete-and-redraft fallback. `media_attributes` are only used when instance version is >= 4.1.0.     | plugin_mastodon_update_status                                        |
 | Delete status           | DELETE | /api/v1/statuses/:id?delete_media=1     | status delete 0.0.0; `delete_media` 4.4.0 | write:statuses          | Known < 4.4 omits parameter; unknown may retry without parameter on 400/405/422 or delete_media errors. | plugin_mastodon_delete_status                                        |
-| Upload media            | POST   | /api/v2/media                           | 3.1.3                                     | write:media             | No deprecated `/api/v1/media` upload fallback.                                                          | plugin_mastodon_upload_media_items                                   |
+| Upload media            | POST   | /api/v2/media                           | 3.1.3; `thumbnail` parameter 3.2.0        | write:media             | No deprecated `/api/v1/media` upload fallback. Video posters are sent as upload thumbnails.             | plugin_mastodon_upload_media_items                                   |
 | Poll media              | GET    | /api/v1/media/:id                       | 3.1.3                                     | write:media             | Media-type-aware polling and timeout windows.                                                           | plugin_mastodon_wait_for_media_attachment                            |
 | Delete unattached media | DELETE | /api/v1/media/:id                       | 4.4.0                                     | write:media             | Used for cleanup. 404 is tolerated as already gone.                                                     | plugin_mastodon_delete_media_attachment                              |
+
+## Mastodon status media-family rule
+
+The status endpoint accepts `media_ids[]`, but Mastodon status validation rejects mixed media families when audio or video is present. User-facing Mastodon limits are the safest developer rule: up to several images may be attached to one post, but only one video or one audio file may be attached to one post. The plugin therefore never sends image+video, image+audio, or audio+video media IDs in one status.
+
+The local export policy is deterministic:
+
+1. If one or more images are present, export images only, up to `configuration.statuses.max_media_attachments`.
+2. Otherwise, if audio is present, export exactly one audio attachment.
+3. Otherwise, if video is present, export exactly one video attachment.
+4. A FlatPress video `poster` image is passed as the `/api/v2/media` `thumbnail` field for the selected video upload; it is never appended as a second `media_id`.
+
+The low-level upload helper can upload the media items it receives, but `plugin_mastodon_prepare_entry_media_sync_plan()` calls `plugin_mastodon_select_status_media_items()` before signatures, reuse checks, uploads, and final `POST`/`PUT /api/v1/statuses`.
 
 ## Instance-derived limits and internal defaults
 
@@ -116,13 +129,15 @@ flowchart TD
 sequenceDiagram
     participant Plugin
     participant Mastodon
-    Plugin->>Mastodon: POST /api/v2/media
+    Plugin->>Plugin: collect all local media
+    Plugin->>Plugin: select one status media family
+    Plugin->>Mastodon: POST /api/v2/media with file, description, optional thumbnail
     Mastodon-->>Plugin: 200 ready or 202 processing
     loop until ready or budget exhausted
         Plugin->>Mastodon: GET /api/v1/media/:id
         Mastodon-->>Plugin: MediaAttachment
     end
-    Plugin->>Mastodon: POST or PUT /api/v1/statuses
+    Plugin->>Mastodon: POST or PUT /api/v1/statuses with compatible media_ids[]
     alt status create/update fails after upload
         Plugin->>Mastodon: DELETE /api/v1/media/:id
     end
