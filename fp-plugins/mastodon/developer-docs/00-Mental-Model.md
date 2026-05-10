@@ -16,6 +16,8 @@ It maps FlatPress objects to Mastodon objects:
 | FlatPress tags       | Hashtag footer / imported `[tag]` BBCode | Requires the FlatPress Tag companion plugin for tag storage/rendering.                                                |
 | Local delete         | Remote delete or tombstone/recheck       | Deletion sync reconciles missing local and remote objects later.                                                      |
 
+Media export has one additional compatibility rule that developers must keep in mind: one Mastodon status may carry multiple images, or exactly one audio/video attachment, but not a mixed audio/video/image set. The plugin therefore collects all local media for change detection and diagnostics, then selects one exportable media family per status before upload: images first, otherwise one audio item, otherwise one video item with its poster sent only as an upload thumbnail.
+
 ```mermaid
 flowchart LR
     FP[FlatPress entries comments media tags]

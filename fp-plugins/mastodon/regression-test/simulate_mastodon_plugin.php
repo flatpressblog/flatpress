@@ -2819,6 +2819,122 @@ $allOk = test_result(
 	))
 ) && $allOk;
 
+$mediaSelectionOptions = plugin_mastodon_default_options();
+$mixedImageAudioVideoContent = 'Mixed media policy entry' . "\n\n"
+	. '[videoplayer="attachs/mastodon-sim/demo-video.mp4" controls="1" width="320" height="180" poster="images/mastodon-sim/video-poster.png"]Video fixture from endtag[/videoplayer]' . "\n\n"
+	. '[audioplayer="attachs/mastodon-sim/demo-audio.mp3" controls="1"]Audio fixture from endtag[/audioplayer]' . "\n\n"
+	. '[img=images/mastodon-sim/single-image.jpg width="320" title="Image wins over audio and video"]';
+$mixedImageAudioVideoMedia = plugin_mastodon_collect_local_entry_media(array('content' => $mixedImageAudioVideoContent));
+$mixedImageAudioVideoPlan = plugin_mastodon_prepare_entry_media_sync_plan($mediaSelectionOptions, array(), $mixedImageAudioVideoMedia, 4);
+$allOk = test_result(
+	'Mastodon media planner exports only images when an entry mixes image, audio and video media',
+	isset($mixedImageAudioVideoPlan ['media_items'] [0] ['media_type'])
+		&& count($mixedImageAudioVideoPlan ['media_items']) === 1
+		&& (string) $mixedImageAudioVideoPlan ['media_items'] [0] ['media_type'] === 'image'
+		&& isset($mixedImageAudioVideoPlan ['skipped'])
+		&& (int) $mixedImageAudioVideoPlan ['skipped'] === 2,
+	json_encode(array('plan' => $mixedImageAudioVideoPlan, 'collected' => $mixedImageAudioVideoMedia))
+) && $allOk;
+
+$audioVideoPlan = plugin_mastodon_prepare_entry_media_sync_plan($mediaSelectionOptions, array(), $audioVideoMedia, 4);
+$allOk = test_result(
+	'Mastodon media planner exports exactly one audio attachment when an entry mixes audio and video media',
+	isset($audioVideoPlan ['media_items'] [0] ['media_type'])
+		&& count($audioVideoPlan ['media_items']) === 1
+		&& (string) $audioVideoPlan ['media_items'] [0] ['media_type'] === 'audio'
+		&& (string) $audioVideoPlan ['media_items'] [0] ['description'] === 'Audio fixture from endtag'
+		&& isset($audioVideoPlan ['skipped'])
+		&& (int) $audioVideoPlan ['skipped'] === 1,
+	json_encode($audioVideoPlan)
+) && $allOk;
+
+$videoOnlyContent = '[videoplayer="attachs/mastodon-sim/demo-video.mp4" controls="1" width="320" height="180" poster="images/mastodon-sim/video-poster.png"]Video fixture from endtag[/videoplayer]';
+$videoOnlyMedia = plugin_mastodon_collect_local_entry_media(array('content' => $videoOnlyContent));
+$videoOnlyPlan = plugin_mastodon_prepare_entry_media_sync_plan($mediaSelectionOptions, array(), $videoOnlyMedia, 4);
+$allOk = test_result(
+	'Mastodon media planner exports one video and keeps its poster as an upload thumbnail only',
+	isset($videoOnlyPlan ['media_items'] [0] ['media_type'])
+		&& count($videoOnlyPlan ['media_items']) === 1
+		&& (string) $videoOnlyPlan ['media_items'] [0] ['media_type'] === 'video'
+		&& !empty($videoOnlyPlan ['media_items'] [0] ['thumbnail_absolute_path'])
+		&& empty($videoOnlyPlan ['media_items'] [1])
+		&& isset($videoOnlyPlan ['skipped'])
+		&& (int) $videoOnlyPlan ['skipped'] === 0,
+	json_encode($videoOnlyPlan)
+) && $allOk;
+
+$galleryLimitTwoPlan = plugin_mastodon_prepare_entry_media_sync_plan($mediaSelectionOptions, array(), $galleryMedia, 2);
+$allOk = test_result(
+	'Mastodon media planner keeps multiple images up to the Mastodon media limit',
+	isset($galleryLimitTwoPlan ['media_items'] [0] ['media_type'], $galleryLimitTwoPlan ['media_items'] [1] ['media_type'])
+		&& count($galleryLimitTwoPlan ['media_items']) === 2
+		&& (string) $galleryLimitTwoPlan ['media_items'] [0] ['media_type'] === 'image'
+		&& (string) $galleryLimitTwoPlan ['media_items'] [1] ['media_type'] === 'image'
+		&& isset($galleryLimitTwoPlan ['skipped'])
+		&& (int) $galleryLimitTwoPlan ['skipped'] === max(0, count($galleryMedia) - 2),
+	json_encode(array('plan' => $galleryLimitTwoPlan, 'gallery_count' => count($galleryMedia)))
+) && $allOk;
+
+$audioSelectedUploadOptions = plugin_mastodon_default_options();
+$audioSelectedUploadOptions ['instance_url'] = 'https://mastodon-audio-selection.example';
+$audioSelectedUploadOptions ['access_token'] = 'token-audio-selection';
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'POST ' . $audioSelectedUploadOptions ['instance_url'] . '/api/v2/media' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			'id' => 'selected-audio-upload-1',
+			'type' => 'audio',
+			'url' => $audioSelectedUploadOptions ['instance_url'] . '/media/selected-audio-upload-1.mp3'
+		))
+	)
+);
+$audioSelectedUpload = plugin_mastodon_upload_media_items($audioSelectedUploadOptions, $audioVideoPlan ['media_items'], count($audioVideoPlan ['media_items']));
+$audioSelectedMultipartRequests = simulate_multipart_http_requests();
+$audioSelectedMultipart = isset($audioSelectedMultipartRequests [0] ['multipart']) && is_array($audioSelectedMultipartRequests [0] ['multipart']) ? $audioSelectedMultipartRequests [0] ['multipart'] : array();
+$allOk = test_result(
+	'Mastodon export uploads only the selected audio item from an audio/video FlatPress entry',
+	!empty($audioSelectedUpload ['ok'])
+		&& isset($audioSelectedUpload ['media_ids'] [0])
+		&& (string) $audioSelectedUpload ['media_ids'] [0] === 'selected-audio-upload-1'
+		&& count($audioSelectedMultipartRequests) === 1
+		&& isset($audioSelectedMultipart ['description'])
+		&& (string) $audioSelectedMultipart ['description'] === 'Audio fixture from endtag'
+		&& empty($audioSelectedMultipart ['thumbnail']),
+	json_encode(array('upload' => $audioSelectedUpload, 'requests' => $audioSelectedMultipartRequests))
+) && $allOk;
+
+$videoSelectedUploadOptions = plugin_mastodon_default_options();
+$videoSelectedUploadOptions ['instance_url'] = 'https://mastodon-video-selection.example';
+$videoSelectedUploadOptions ['access_token'] = 'token-video-selection';
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'POST ' . $videoSelectedUploadOptions ['instance_url'] . '/api/v2/media' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			'id' => 'selected-video-upload-1',
+			'type' => 'video',
+			'url' => $videoSelectedUploadOptions ['instance_url'] . '/media/selected-video-upload-1.mp4'
+		))
+	)
+);
+$videoSelectedUpload = plugin_mastodon_upload_media_items($videoSelectedUploadOptions, $videoOnlyPlan ['media_items'], count($videoOnlyPlan ['media_items']));
+$videoSelectedMultipartRequests = simulate_multipart_http_requests();
+$videoSelectedMultipart = isset($videoSelectedMultipartRequests [0] ['multipart']) && is_array($videoSelectedMultipartRequests [0] ['multipart']) ? $videoSelectedMultipartRequests [0] ['multipart'] : array();
+$allOk = test_result(
+	'Mastodon export sends a video poster as upload thumbnail instead of a second media ID',
+	!empty($videoSelectedUpload ['ok'])
+		&& isset($videoSelectedUpload ['media_ids'] [0])
+		&& (string) $videoSelectedUpload ['media_ids'] [0] === 'selected-video-upload-1'
+		&& count($videoSelectedMultipartRequests) === 1
+		&& isset($videoSelectedMultipart ['description'])
+		&& (string) $videoSelectedMultipart ['description'] === 'Video fixture from endtag'
+		&& !empty($videoSelectedMultipart ['thumbnail'] ['__file_path']),
+	json_encode(array('upload' => $videoSelectedUpload, 'requests' => $videoSelectedMultipartRequests))
+) && $allOk;
+
 simulate_delete_recursive($simRoot . '/fp-content/images/mastodon');
 $GLOBALS ['plugin_mastodon_test_http_responses'] ['GET https://files.example/single.jpg'] = array(
 	'ok' => true,

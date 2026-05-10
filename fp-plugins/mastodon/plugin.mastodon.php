@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.4.2
+ * Version: 2.4.3
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -6367,9 +6367,78 @@ function plugin_mastodon_collect_local_entry_media($entry) {
 }
 
 /**
+ * Select a Mastodon-compatible media set for one status.
+ *
+ * Mastodon accepts multiple images, but only a single audio or video attachment per status.
+ * To avoid 422 responses when a FlatPress entry mixes media classes, the exporter uses one
+ * deterministic media family per status: images first, then one audio attachment, then one video.
+ * Video poster images remain upload thumbnails on the video item and never become standalone
+ * status media IDs through this selector.
+ *
+ * @param array<int, array<string, mixed>> $mediaItems
+ * @param int $limit
+ * @param int $skipped
+ * @return array<int, array<string, mixed>>
+ */
+function plugin_mastodon_select_status_media_items($mediaItems, $limit, &$skipped) {
+	$mediaItems = is_array($mediaItems) ? $mediaItems : array();
+	$limit = max(0, (int) $limit);
+	$skipped = max(0, (int) $skipped);
+	if (empty($mediaItems)) {
+		return array();
+	}
+	if ($limit < 1) {
+		$skipped += count($mediaItems);
+		return array();
+	}
+
+	$groups = array(
+		'image' => array(),
+		'audio' => array(),
+		'video' => array()
+	);
+	foreach ($mediaItems as $item) {
+		$mediaType = !empty($item ['media_type']) ? strtolower((string) $item ['media_type']) : '';
+		if ($mediaType === 'gifv') {
+			$mediaType = 'video';
+		}
+		if (!isset($groups [$mediaType])) {
+			$skipped++;
+			continue;
+		}
+		$groups [$mediaType] [] = $item;
+	}
+
+	$selected = array();
+	$policy = '';
+	$policySkipped = 0;
+	if (!empty($groups ['image'])) {
+		$selected = array_slice($groups ['image'], 0, $limit);
+		$policy = 'image';
+		$policySkipped = (count($groups ['image']) - count($selected)) + count($groups ['audio']) + count($groups ['video']);
+	} elseif (!empty($groups ['audio'])) {
+		$selected = array_slice($groups ['audio'], 0, 1);
+		$policy = 'audio';
+		$policySkipped = (count($groups ['audio']) - count($selected)) + count($groups ['video']);
+	} elseif (!empty($groups ['video'])) {
+		$selected = array_slice($groups ['video'], 0, 1);
+		$policy = 'video';
+		$policySkipped = count($groups ['video']) - count($selected);
+	}
+
+	if ($policySkipped > 0) {
+		$skipped += $policySkipped;
+		plugin_mastodon_log('Skipped ' . $policySkipped . ' local media attachment(s) to keep one Mastodon-compatible media family for this status; selected ' . $policy . ' media.');
+	}
+
+	return $selected;
+}
+
+/**
  * Normalize local entry media items for signature and export planning.
  * @param array<int, array<string, mixed>> $mediaItems
  * @param int $limit
+ * @param array<string, string> $options
  * @return array{items:array<int, array<string, mixed>>, skipped:int}
  */
 function plugin_mastodon_prepare_entry_media_items($mediaItems, $limit, $options = array()) {
@@ -6389,12 +6458,9 @@ function plugin_mastodon_prepare_entry_media_items($mediaItems, $limit, $options
 			plugin_mastodon_log('Skipped local media attachment ' . $relativePath . ' before upload: ' . (isset($validation ['reason']) ? (string) $validation ['reason'] : 'unsupported'));
 			continue;
 		}
-		if ($limit > 0 && count($prepared) >= $limit) {
-			$skipped++;
-			continue;
-		}
 		$prepared [] = $item;
 	}
+	$prepared = plugin_mastodon_select_status_media_items($prepared, $limit, $skipped);
 	return array('items' => $prepared, 'skipped' => $skipped);
 }
 
@@ -9393,7 +9459,7 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state, $force = true)
 			$resolvedRemoteMedia = isset($mediaPlan ['remote_media']) && is_array($mediaPlan ['remote_media']) ? $mediaPlan ['remote_media'] : array();
 			$uploadedNewMedia = false;
 			if (!empty($mediaPlan ['skipped'])) {
-				plugin_mastodon_log('Skipped ' . (int) $mediaPlan ['skipped'] . ' local media attachment(s) because the Mastodon instance allows only ' . $mediaLimit . ' attachment(s) per status.');
+				plugin_mastodon_log('Skipped ' . (int) $mediaPlan ['skipped'] . ' local media attachment(s) because Mastodon accepts either multiple images or one audio/video attachment per status, with an instance limit of ' . $mediaLimit . ' attachment(s).');
 			}
 
 			if (($mediaPlan ['mode'] === 'upload') && !empty($effectiveMediaItems)) {
