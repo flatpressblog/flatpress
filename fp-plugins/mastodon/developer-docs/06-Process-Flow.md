@@ -1,16 +1,4 @@
-# Mastodon Plugin Process Flows
-
-This document describes the current FlatPress Mastodon plugin flow as implemented in
-`fp-plugins/mastodon/plugin.mastodon.php`, the related post-success hooks in the FlatPress
-core, the large regression harness in `simulate_mastodon_plugin.php`, and the companion
-plugin dependencies used to render imported content.
-
-The diagrams are intentionally implementation-oriented. They are meant to help developers
-answer three recurring maintenance questions:
-
-1. Which state file or mapping is authoritative at a given point?
-2. Which Mastodon API endpoint is used, and which compatibility fallback exists?
-3. Which path is optimized for ordinary web requests, scheduled runs, or manual repair runs?
+# 06 — Mastodon Plugin Process Flows
 
 ## Scope and important state files
 
