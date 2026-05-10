@@ -538,6 +538,14 @@ function simulate_count_file_reads_for_path($path) {
 }
 
 /**
+ * Return the local entry parse count recorded by the Mastodon sync test harness.
+ * @return int
+ */
+function simulate_local_entry_parse_count() {
+	return isset($GLOBALS ['plugin_mastodon_test_local_entry_parse_count']) ? (int) $GLOBALS ['plugin_mastodon_test_local_entry_parse_count'] : 0;
+}
+
+/**
  * Create a large synthetic Mastodon state without creating content files on disk.
  * @param int $entryCount
  * @param int $commentsPerEntry
@@ -5109,7 +5117,7 @@ $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
 );
 $largeTargetedRunState = plugin_mastodon_state_read();
 $largeTargetedOk = plugin_mastodon_sync_local_to_remote($largeTargetedOptions, $largeTargetedRunState, false);
-$largeTargetedParseCount = (int) $GLOBALS ['plugin_mastodon_test_local_entry_parse_count'];
+$largeTargetedParseCount = simulate_local_entry_parse_count();
 unset($GLOBALS ['plugin_mastodon_test_local_entry_parse_count']);
 $largeTargetedRequests = simulate_recorded_http_requests();
 $largeTargetedPutSeen = simulate_first_http_request($largeTargetedRequests, 'PUT', '/api/v1/statuses/large-dirty-remote-1') !== array();
