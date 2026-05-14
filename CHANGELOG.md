@@ -1,5 +1,7 @@
 # Under development: FlatPress 1.6
 ## General
+- Template engine Smarty:
+  - Updated to version 5.8.0 with PHP 8.5 support
 - New core helpers: ``date_iso8601($timestamp, $offset = null)`` and ``date_id_to_iso8601($id, $offset = null)``. ([#856](https://github.com/flatpressblog/flatpress/pull/856))
 - RSS and Atom feeds and the Categories widget use the Smarty block cache instead of having to go through the Smarty compiler every time. ([#864](https://github.com/flatpressblog/flatpress/pull/864))
 - If APCu is available, the Smarty cache fragments are stored in the APCu cache instead of on disk. ([#865](https://github.com/flatpressblog/flatpress/pull/865))
