@@ -171,65 +171,64 @@ class iniParser {
 
 	/**
 	 * Saves the entire array to the INI file.
+	 *
+	 * @param string|null $filename
+	 * @return bool
 	 */
 	function save($filename = null) {
-		if ($filename == null) {
+		if ($filename === null || $filename === '') {
 			$filename = $this->_iniFilename;
 		}
-		if (true) {
-			$tmpFile = $filename . '.tmp.' . getmypid() . '.' . uniqid('', true);
-			$dir = dirname($filename);
-			if (!@is_dir($dir) || !@is_writable($dir)) {
-				return false;
-			}
-			$lock = @fopen($filename . '.lock', 'c');
-			if ($lock) {
-				@flock($lock, LOCK_EX);
-			}
-			$SFfdescriptor = @fopen($tmpFile, "wb");
-			if (!$SFfdescriptor) {
-				if ($lock) {
-					@flock($lock, LOCK_UN);
-					fclose($lock);
-				}
-				return false;
-			}
-			// blocking exclusive lock
-			if (!@flock($SFfdescriptor, LOCK_EX)) {
-				fclose($SFfdescriptor);
-				@unlink($tmpFile);
-				return false;
-			}
-			foreach ($this->_iniParsedArray as $section => $array) {
-				fwrite($SFfdescriptor, "[" . $section . "]\n");
-				foreach ($array as $key => $value) {
-					fwrite($SFfdescriptor, $key . ' = ' . $value . "\n");
-				}
-				fwrite($SFfdescriptor, "\n");
-			}
-			fflush($SFfdescriptor);
-			@flock($SFfdescriptor, LOCK_UN);
-			fclose($SFfdescriptor);
-
-			$ok = @rename($tmpFile, $filename);
-			if (!$ok) {
-				@unlink($filename);
-				$ok = @rename($tmpFile, $filename);
-			}
-			if (!$ok) {
-				@unlink($tmpFile);
-				return false;
-			}
-			@chmod($filename, FILE_PERMISSIONS);
+		$tmpFile = $filename . '.tmp.' . getmypid() . '.' . uniqid('', true);
+		$dir = dirname($filename);
+		if (!@is_dir($dir) || !@is_writable($dir)) {
+			return false;
+		}
+		$lock = @fopen($filename . '.lock', 'c');
+		if ($lock) {
+			@flock($lock, LOCK_EX);
+		}
+		$SFfdescriptor = @fopen($tmpFile, "wb");
+		if (!$SFfdescriptor) {
 			if ($lock) {
 				@flock($lock, LOCK_UN);
 				fclose($lock);
 			}
-			clearstatcache(true, $filename);
-			return true;
-		} else {
 			return false;
 		}
+		// blocking exclusive lock
+		if (!@flock($SFfdescriptor, LOCK_EX)) {
+			fclose($SFfdescriptor);
+			@unlink($tmpFile);
+			return false;
+		}
+		foreach ($this->_iniParsedArray as $section => $array) {
+			fwrite($SFfdescriptor, "[" . $section . "]\n");
+			foreach ($array as $key => $value) {
+				fwrite($SFfdescriptor, $key . ' = ' . $value . "\n");
+			}
+			fwrite($SFfdescriptor, "\n");
+		}
+		fflush($SFfdescriptor);
+		@flock($SFfdescriptor, LOCK_UN);
+		fclose($SFfdescriptor);
+
+		$ok = @rename($tmpFile, $filename);
+		if (!$ok) {
+			@unlink($filename);
+			$ok = @rename($tmpFile, $filename);
+		}
+		if (!$ok) {
+			@unlink($tmpFile);
+			return false;
+		}
+		@chmod($filename, FILE_PERMISSIONS);
+		if ($lock) {
+			@flock($lock, LOCK_UN);
+			fclose($lock);
+		}
+		clearstatcache(true, $filename);
+		return true;
 	}
 
 }

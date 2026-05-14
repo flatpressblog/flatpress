@@ -1,3 +1,6 @@
+<?php
+$l = isset($l) && is_array($l) ? $l : array('head' => '', 'descr' => '%s %s %s');
+?>
 <h2><?php echo $l ['head']; ?></h2>
 <div class="post">
 

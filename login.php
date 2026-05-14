@@ -94,39 +94,40 @@ function login_main() {
 			});
 
 			$content = (SHARED_TPLS . 'login.tpl');
-		} elseif (user_loggedin()) {
+		} else {
 			add_filter('wp_head', function () {
 				// Login redirects to Admin Area
 				myredirect('admin.php');
 			});
 
 			$content = (SHARED_TPLS . 'login_success.tpl');
-		} else {
-			utils_redirect();
 		}
-	} elseif (sess_remove('logout_done')) {
+	} else {
+		$logoutDone = (bool)sess_remove('logout_done');
+		if ($logoutDone) {
 			//add_filter('wp_head', function () {
 				//myredirect('.');
 			//});
 
-		$content = (SHARED_TPLS . 'login_success.tpl');
-	} elseif (empty($_POST)) {
-		$content = (SHARED_TPLS . 'login.tpl');
-	} else {
-		// CSRF token verification
-		if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== $_SESSION ['csrf_token']) {
+			$content = (SHARED_TPLS . 'login_success.tpl');
+		} elseif (empty($_POST)) {
 			$content = (SHARED_TPLS . 'login.tpl');
-		} elseif (login_validate()) {
-			// Validate after a POST and reset CSRF token after successful verification
-			unset($_SESSION ['csrf_token']);
-			$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
-			$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
-			utils_redirect('login.php');
-			exit();
 		} else {
-			// Assign sanitized inputs here
-			$smarty->assign('user', $_POST ['user'] ?? '');
-			$content = (SHARED_TPLS . 'login.tpl');
+			// CSRF token verification
+			if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== $_SESSION ['csrf_token']) {
+				$content = (SHARED_TPLS . 'login.tpl');
+			} elseif (login_validate()) {
+				// Validate after a POST and reset CSRF token after successful verification
+				unset($_SESSION ['csrf_token']);
+				$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
+				$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
+				utils_redirect('login.php');
+				exit();
+			} else {
+				// Assign sanitized inputs here
+				$smarty->assign('user', $_POST ['user'] ?? '');
+				$content = (SHARED_TPLS . 'login.tpl');
+			}
 		}
 	}
 

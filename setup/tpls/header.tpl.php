@@ -1,3 +1,6 @@
+<?php
+$lang = isset($lang) && is_array($lang) ? $lang : array('setup' => array('setup' => 'Setup'));
+?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="<?php echo LANG_DEFAULT; ?>">
 <head>

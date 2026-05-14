@@ -46,6 +46,9 @@ parameters:
     - BBCODE_DEFAULT_FONT_FAMILY
     - BBCODE_USE_WRAPPER
     - BBCODE_USE_FILEWRAPPER
+    - SEARCHBOX_BIG
+    - PLUGIN_TAG_BL
+    - PLUGIN_TAG_NOCACHE
 
   # Scan for type resolution, but do not analyze
   scanDirectories:

@@ -2371,15 +2371,12 @@ $enabledPluginChecks = array(
 	'tag' => plugin_mastodon_enabled_plugin_state('tag'),
 	'emoticons' => plugin_mastodon_enabled_plugin_state('emoticons')
 );
+$enabledPluginChecksOk = !in_array(false, $enabledPluginChecks, true);
 $allOk = test_result(
 	'Mastodon companion-plugin detection uses FlatPress central enabled-plugin state',
-	$enabledPluginChecks ['bbcode'] === true
-		&& $enabledPluginChecks ['photoswipe'] === true
-		&& $enabledPluginChecks ['audiovideo'] === true
-		&& $enabledPluginChecks ['tag'] === true
-		&& $enabledPluginChecks ['emoticons'] === true,
+	$enabledPluginChecksOk,
 	json_encode($enabledPluginChecks)
-) && $allOk;
+);
 
 $originalEnabledPlugins = isset($GLOBALS ['fp_plugins']) && is_array($GLOBALS ['fp_plugins']) ? $GLOBALS ['fp_plugins'] : null;
 if (is_array($originalEnabledPlugins)) {

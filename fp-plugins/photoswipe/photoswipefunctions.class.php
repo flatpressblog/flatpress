@@ -189,7 +189,7 @@ class PhotoSwipeFunctions {
 
 		if ($imageIsLocal) {
 			$imgsize = @getimagesize($imgPathRel);
-			if (is_array($imgsize) && isset($imgsize [0], $imgsize [1])) {
+			if ($imgsize !== false) {
 				$w = (int)$imgsize [0];
 				$h = (int)$imgsize [1];
 			}

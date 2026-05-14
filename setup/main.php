@@ -76,7 +76,8 @@ function chmod_r($path, $filemode, $dirmode) {
 chmod_r(BASE_DIR, FILE_PERMISSIONS, DIR_PERMISSIONS);
 
 // Sets the local language based on the browser
-$language = @$_POST ['language'] ? $_POST ['language'] : $browserLang;
+$browserLang = isset($browserLang) && is_string($browserLang) && $browserLang !== '' ? $browserLang : (defined('LANG_DEFAULT') ? (string)LANG_DEFAULT : 'en-us');
+$language = isset($_POST ['language']) && is_string($_POST ['language']) && $_POST ['language'] !== '' ? $_POST ['language'] : $browserLang;
 
 $lf = 'lang.' . $language . '.php';
 if (!preg_match('|^lang\.[a-z]{2}-[a-z]{2}\.php$|', $lf)) {
@@ -84,12 +85,17 @@ if (!preg_match('|^lang\.[a-z]{2}-[a-z]{2}\.php$|', $lf)) {
 }
 
 include __DIR__ . '/lang/' . $lf;
+$setupMainVars = get_defined_vars();
+$lang = isset($setupMainVars ['lang']) && is_array($setupMainVars ['lang']) ? $setupMainVars ['lang'] : array();
 include __DIR__ . '/lib/main.lib.php';
 
 $step = null;
 
 $id = getstep($step);
 
+if (!isset($lang [$step]) || !is_array($lang [$step])) {
+	$lang [$step] = array();
+}
 $l = &$lang [$step];
 
 include __DIR__ . '/tpls/header.tpl.php';

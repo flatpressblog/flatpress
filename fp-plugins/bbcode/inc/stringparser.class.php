@@ -410,6 +410,7 @@ class StringParser {
 	 *
 	 * @access protected
 	 * @return bool
+	 * @phpstan-impure
 	 */
 	function _reparseAfterCurrentBlock() {
 		// this should definitely not happen!
@@ -504,6 +505,7 @@ class StringParser {
 	 * @param string $needle
 	 *        	The needle that was found
 	 * @return bool
+	 * @phpstan-impure
 	 */
 	function _handleStatus($status, $needle) {
 		$this->_appendText($needle);
