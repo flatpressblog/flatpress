@@ -59,7 +59,7 @@ function get_cookie_options($expiry = 0, $is_session = false) {
 			'httponly' => COOKIE_HTTPONLY,
 			'samesite' => version_compare(PHP_VERSION, '7.3', '>=') ? SAMESITE_VALUE : null,
 		];
-		if (is_string(COOKIE_DOMAIN) && COOKIE_DOMAIN !== '') {
+		if (COOKIE_DOMAIN !== '') {
 			$opts ['domain'] = COOKIE_DOMAIN;
 		}
 		return $opts;
@@ -73,7 +73,7 @@ function get_cookie_options($expiry = 0, $is_session = false) {
 		'httponly' => COOKIE_HTTPONLY,
 	];
 
-	if (is_string(COOKIE_DOMAIN) && COOKIE_DOMAIN !== '') {
+	if (COOKIE_DOMAIN !== '') {
 		$options ['domain'] = COOKIE_DOMAIN;
 	}
 
@@ -106,7 +106,7 @@ function fp_setcookie($name, $value = '', $expires = 0) {
 		$path .= '; SameSite=' . SAMESITE_VALUE;
 	}
 
-	$domain = (is_string(COOKIE_DOMAIN) && COOKIE_DOMAIN !== '') ? COOKIE_DOMAIN : '';
+	$domain = COOKIE_DOMAIN !== '' ? COOKIE_DOMAIN : '';
 
 	return setcookie($name, $value, (int)$expires, $path, $domain, COOKIE_SECURE, COOKIE_HTTPONLY);
 }
@@ -118,7 +118,7 @@ function fp_setcookie($name, $value = '', $expires = 0) {
 function sess_setup() {
 	if (session_status() === PHP_SESSION_NONE) {
 		// Activate strict mode to prevent session fixation attacks
-		ini_set('session.use_strict_mode', 1);
+		ini_set('session.use_strict_mode', '1');
 
 		// Set session timeout duration (e.g., 3600 seconds = 60 minutes)
 		$timeout_duration = 3600;
@@ -129,11 +129,11 @@ function sess_setup() {
 				$timeout_duration = $cfg;
 			}
 		}
-		ini_set('session.gc_maxlifetime', $timeout_duration);
+		ini_set('session.gc_maxlifetime', (string) $timeout_duration);
 
 		// Optimize Garbage Collection (adjust to session load)
-		ini_set('session.gc_probability', 1);
-		ini_set('session.gc_divisor', 50);
+		ini_set('session.gc_probability', '1');
+		ini_set('session.gc_divisor', '50');
 
 		$session_cookie_options = get_cookie_options(0, true);
 
@@ -145,10 +145,10 @@ function sess_setup() {
 			if (defined('SAMESITE_VALUE') && SAMESITE_VALUE !== '') {
 				$path .= '; SameSite=' . SAMESITE_VALUE;
 			}
-			ini_set('session.cookie_httponly', 1);
-			ini_set('session.cookie_secure', COOKIE_SECURE);
+			ini_set('session.cookie_httponly', '1');
+			ini_set('session.cookie_secure', COOKIE_SECURE ? '1' : '0');
 			ini_set('session.cookie_path', $path);
-			$domain = (is_string(COOKIE_DOMAIN) && COOKIE_DOMAIN !== '') ? COOKIE_DOMAIN : '';
+			$domain = COOKIE_DOMAIN !== '' ? COOKIE_DOMAIN : '';
 			session_set_cookie_params(0, $path, $domain, COOKIE_SECURE, COOKIE_HTTPONLY);
 		}
 

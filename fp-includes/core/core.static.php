@@ -187,8 +187,9 @@ function smarty_block_static($params, $content, &$smarty, &$repeat) {
 	return $content;
 }
 
-$smarty->registerPlugin('block', 'statics', 'smarty_block_statics');
-$smarty->registerPlugin('block', 'static_block', 'smarty_block_statics');
-$smarty->registerPlugin('block', 'static', 'smarty_block_static');
-
+if (isset($smarty)) {
+	$smarty->registerPlugin('block', 'statics', 'smarty_block_statics');
+	$smarty->registerPlugin('block', 'static_block', 'smarty_block_statics');
+	$smarty->registerPlugin('block', 'static', 'smarty_block_static');
+}
 ?>

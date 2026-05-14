@@ -461,7 +461,7 @@ function entry_parse($id, $raw = false) {
  * function entry_get_comments
  *
  * @param string $id Entry ID
- * @param array $entry Entry content array by ref; 'commentcount' field is added to the array
+ * @param int $count Comment count, filled by reference
  *
  * @return comment_indexer Comment indexer as reference
  *
@@ -579,7 +579,7 @@ function entry_categories_list() {
 	$idstack = array(0);
 	$indentstack = array();
 
-	// $categories = array(0=>null);
+	$categories = array();
 	$lastindent = 0;
 	$lastid = 0;
 	$parent = 0;

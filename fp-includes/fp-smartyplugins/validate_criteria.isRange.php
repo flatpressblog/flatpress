@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Project:     SmartyValidate: Form Validator for the Smarty Template Engine
  * File:        validate_criteria.isRange.php
@@ -30,8 +29,8 @@
  *
  * @param string $value the value being tested
  * @param boolean $empty if field can be empty
- * @param array params validate parameter values
- * @param array formvars form var values
+ * @param array $params validate parameter values
+ * @param array $formvars form var values
  */
 function smarty_validate_criteria_isRange($value, $empty, &$params, &$formvars) {
 
@@ -59,5 +58,4 @@ function smarty_validate_criteria_isRange($value, $empty, &$params, &$formvars) 
 
 	return ($value >= $_low && $value <= $_high);
 }
-
 ?>

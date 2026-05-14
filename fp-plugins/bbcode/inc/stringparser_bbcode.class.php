@@ -164,7 +164,7 @@ class StringParser_BBCode extends StringParser {
 	 *        	The name of the code
 	 * @param string $callback_type
 	 *        	See documentation
-	 * @param string $callback_func
+	 * @param mixed $callback_func
 	 *        	The callback function to call
 	 * @param array $callback_params
 	 *        	The callback parameters
@@ -1505,7 +1505,7 @@ class StringParser_BBCode extends StringParser {
 		if ($found === false || ($this->_caseSensitive && $this->getCodeFlag($found, 'case_sensitive', 'boolean', true))) {
 			return false;
 		}
-		return $rname;
+		return $found;
 	}
 
 }

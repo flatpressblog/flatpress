@@ -18,8 +18,9 @@ if (function_exists('system_init')) {
 	plugin_loadall();
 }
 
+$fp_config = isset($fp_config) && is_array($fp_config) ? $fp_config : (function_exists('config_load') ? config_load() : array());
+
 header('Content-Type: text/xml; charset=utf-8');
-error_reporting(E_ALL);
 $offset = $fp_config ['locale'] ['timeoffset'];
 
 // prepare XML head
@@ -78,3 +79,4 @@ foreach ($statics as $currentstatic) {
 // done with the static pages
 
 echo '</urlset>';
+?>

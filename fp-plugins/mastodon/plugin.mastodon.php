@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.4.3
+ * Version: 2.4.4
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -267,7 +267,7 @@ function plugin_mastodon_compact_instance_document($document) {
 				}
 			}
 		}
-		if (isset($document ['registrations'] ['min_age']) && $document ['registrations'] ['min_age'] !== null && $document ['registrations'] ['min_age'] !== '') {
+		if (isset($document ['registrations'] ['min_age']) && $document ['registrations'] ['min_age'] !== '') {
 			$registrations ['min_age'] = max(0, (int) $document ['registrations'] ['min_age']);
 		}
 		if (!empty($registrations)) {
@@ -427,7 +427,7 @@ function plugin_mastodon_store_instance_document($options, $document) {
 	}
 
 	$json = json_encode($document, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-	if (!is_string($json) || $json === '') {
+	if (!is_string($json)) {
 		return false;
 	}
 
@@ -1688,7 +1688,7 @@ function plugin_mastodon_rate_limit_block($reason) {
 					. ', requests=' . (isset($summary ['requests_used']) ? (int) $summary ['requests_used'] : 0) . '/' . (isset($summary ['requests_budget']) ? (int) $summary ['requests_budget'] : 0)
 					. ', media_uploads=' . (isset($summary ['media_uploads_used']) ? (int) $summary ['media_uploads_used'] : 0) . '/' . (isset($summary ['media_uploads_budget']) ? (int) $summary ['media_uploads_budget'] : 0)
 					. ', deletes=' . (isset($summary ['deletes_used']) ? (int) $summary ['deletes_used'] : 0) . '/' . (isset($summary ['deletes_budget']) ? (int) $summary ['deletes_budget'] : 0);
-				if (isset($summary ['remote_remaining']) && $summary ['remote_remaining'] !== null) {
+				if (isset($summary ['remote_remaining'])) {
 					$message .= ', remote_remaining=' . (int) $summary ['remote_remaining'];
 				}
 				if (!empty($summary ['remote_reset'])) {
@@ -1813,6 +1813,7 @@ function plugin_mastodon_rate_limit_blocked_response($reason) {
 /**
  * Return the rate-limit reason that should be written to sync state, if any.
  * @return string
+ * @phpstan-impure
  */
 function plugin_mastodon_rate_limit_state_error() {
 	$reason = plugin_mastodon_rate_limit_blocked_reason();
@@ -1848,7 +1849,7 @@ function plugin_mastodon_file_prestat_signature($prestat) {
 	if (empty($prestat ['exists'])) {
 		return 'missing';
 	}
-	return (isset($prestat ['mt']) && $prestat ['mt'] !== null ? (string) $prestat ['mt'] : 'na') . ':' . (isset($prestat ['sz']) && $prestat ['sz'] !== null ? (string) $prestat ['sz'] : 'na');
+	return (isset($prestat ['mt']) ? (string) $prestat ['mt'] : 'na') . ':' . (isset($prestat ['sz']) ? (string) $prestat ['sz'] : 'na');
 }
 
 /**
@@ -2264,7 +2265,7 @@ function plugin_mastodon_normalize_status_language($locale) {
 		return '';
 	}
 
-	return isset($matches [1]) ? (string) $matches [1] : '';
+	return (string) $matches [1];
 }
 
 /**
@@ -3215,7 +3216,6 @@ function plugin_mastodon_state_set_entry_mapping(&$state, $localId, $remoteId, $
 
 /**
  * Store the mapping between a local comment and a remote status.
- * @param array<string, string> $options
  * @param array<string, mixed> $state
  * @param string $entryId
  * @param string $commentId
@@ -3226,6 +3226,8 @@ function plugin_mastodon_state_set_entry_mapping(&$state, $localId, $remoteId, $
  * @param string $remoteUpdatedAt
  * @param string $parentCommentId
  * @param string $inReplyToRemoteId
+ * @param string $localDateKey
+ * @param string $remoteDateKey
  * @return void
  */
 function plugin_mastodon_state_set_comment_mapping(&$state, $entryId, $commentId, $remoteId, $source, $hash, $remoteUrl, $remoteUpdatedAt, $parentCommentId = '', $inReplyToRemoteId = '', $localDateKey = '', $remoteDateKey = '') {
@@ -3766,9 +3768,6 @@ function plugin_mastodon_protect_locally_deleted_exported_comments($options, &$s
 		$entryId = (string) $meta ['entry_id'];
 		$commentId = (string) $meta ['comment_id'];
 		$remoteId = (string) $meta ['remote_id'];
-		if ($entryId === '' || $commentId === '' || $remoteId === '') {
-			continue;
-		}
 		if (!plugin_mastodon_mapping_matches_sync_start($options, $meta, $commentId)) {
 			continue;
 		}
@@ -4341,7 +4340,7 @@ function plugin_mastodon_list_local_comment_ids($entryId) {
 		return array();
 	}
 	while (($file = readdir($handle)) !== false) {
-		if ($file === '' || $file [0] === '.') {
+		if ($file [0] === '.') {
 			continue;
 		}
 		if (!fnmatch('comment*' . EXT, $file)) {
@@ -5302,7 +5301,7 @@ function plugin_mastodon_dom_node_to_flatpress($node) {
 		return "\n[code]\n" . trim($inner) . "\n[/code]\n";
 	}
 	if ($name === 'code') {
-		$parentName = ($node->parentNode && isset($node->parentNode->nodeName)) ? strtolower((string) $node->parentNode->nodeName) : '';
+		$parentName = $node->parentNode ? strtolower((string) $node->parentNode->nodeName) : '';
 		if ($parentName === 'pre') {
 			return plugin_mastodon_html_entity_decode($node->textContent);
 		}
@@ -6251,7 +6250,7 @@ function plugin_mastodon_collect_local_entry_media($entry) {
 
 	if (preg_match_all('/\[\s*gallery\b([^\]]*)\]/iu', $content, $galleryMatches, PREG_SET_ORDER)) {
 		foreach ($galleryMatches as $match) {
-			$attrText = isset($match [1]) ? (string) $match [1] : '';
+			$attrText = (string) $match [1];
 			$galleryDir = plugin_mastodon_media_extract_default_path($attrText);
 			if ($galleryDir === '' && preg_match('/=\s*["\']?([^\s\]"\']+)/u', $attrText, $pathMatch)) {
 				$galleryDir = trim((string) $pathMatch [1]);
@@ -6291,7 +6290,7 @@ function plugin_mastodon_collect_local_entry_media($entry) {
 
 	if (preg_match_all('/\[\s*img\b([^\]]*)\]/iu', $content, $imgMatches, PREG_SET_ORDER)) {
 		foreach ($imgMatches as $match) {
-			$attrText = isset($match [1]) ? (string) $match [1] : '';
+			$attrText = (string) $match [1];
 			$relativePath = plugin_mastodon_media_extract_default_path($attrText);
 			if ($relativePath === '' && preg_match('/=\s*["\']?([^\s\]"\']+)/u', $attrText, $pathMatch)) {
 				$relativePath = trim((string) $pathMatch [1]);
@@ -6328,7 +6327,7 @@ function plugin_mastodon_collect_local_entry_media($entry) {
 			continue;
 		}
 		foreach ($matches as $match) {
-			$attrText = isset($match [1]) ? (string) $match [1] : '';
+			$attrText = (string) $match [1];
 			$attributes = plugin_mastodon_media_parse_tag_attributes($attrText);
 			$relativePath = plugin_mastodon_media_extract_default_path($attrText);
 			if ($relativePath === '' && !empty($attributes ['src'])) {
@@ -6981,11 +6980,8 @@ function plugin_mastodon_build_imported_media_bbcode(&$options, $remoteStatus) {
 			return implode("\n\n", $bbcodeParts);
 		}
 		foreach ($avItems as $item) {
-			$relative = isset($item ['relative_path']) ? (string) $item ['relative_path'] : '';
-			if ($relative === '') {
-				continue;
-			}
-			$type = isset($item ['type']) ? (string) $item ['type'] : '';
+			$relative = (string) $item ['relative_path'];
+			$type = (string) $item ['type'];
 			$description = !empty($item ['description']) ? plugin_mastodon_bbcode_text_escape($item ['description']) : '';
 			if ($type === 'audio') {
 				$tag = '[audioplayer="' . plugin_mastodon_bbcode_attr_escape($relative) . '" controls="1"]';
@@ -7225,8 +7221,8 @@ function plugin_mastodon_status_text_length($text, $urlReservedLength = 23) {
 	$length = 0;
 	$offset = 0;
 	foreach ($matches [0] as $match) {
-		$url = isset($match [0]) ? (string) $match [0] : '';
-		$position = isset($match [1]) ? (int) $match [1] : 0;
+		$url = (string) $match [0];
+		$position = (int) $match [1];
 		$segment = substr($text, $offset, $position - $offset);
 		$length += function_exists('mb_strlen') ? mb_strlen($segment, 'UTF-8') : strlen($segment);
 		$length += $urlReservedLength;
@@ -7269,8 +7265,8 @@ function plugin_mastodon_limit_status_text($text, $limit, $urlReservedLength = 2
 	$offset = 0;
 	$truncated = false;
 	foreach ($matches [0] as $match) {
-		$url = isset($match [0]) ? (string) $match [0] : '';
-		$position = isset($match [1]) ? (int) $match [1] : 0;
+		$url = (string) $match [0];
+		$position = (int) $match [1];
 		$segment = substr($text, $offset, $position - $offset);
 		$segmentLength = function_exists('mb_strlen') ? mb_strlen($segment, 'UTF-8') : strlen($segment);
 		$available = $budget - $consumed;
@@ -7991,11 +7987,11 @@ function plugin_mastodon_list_local_entries_for_sync($options, $state, $force) {
 	usort($entryRecords, 'plugin_mastodon_compare_local_entries_for_export');
 	$entries = array();
 	foreach ($entryRecords as $entryRecord) {
-		$entryId = isset($entryRecord ['id']) ? (string) $entryRecord ['id'] : '';
+		$entryId = (string) $entryRecord ['id'];
 		if ($entryId === '') {
 			continue;
 		}
-		$entries [$entryId] = isset($entryRecord ['entry']) && is_array($entryRecord ['entry']) ? $entryRecord ['entry'] : array();
+		$entries [$entryId] = $entryRecord ['entry'];
 	}
 	return $entries;
 }
@@ -8028,11 +8024,11 @@ function plugin_mastodon_list_local_entries() {
 	usort($entryRecords, 'plugin_mastodon_compare_local_entries_for_export');
 	$entries = array();
 	foreach ($entryRecords as $entryRecord) {
-		$entryId = isset($entryRecord ['id']) ? (string) $entryRecord ['id'] : '';
+		$entryId = (string) $entryRecord ['id'];
 		if ($entryId === '') {
 			continue;
 		}
-		$entries [$entryId] = isset($entryRecord ['entry']) && is_array($entryRecord ['entry']) ? $entryRecord ['entry'] : array();
+		$entries [$entryId] = $entryRecord ['entry'];
 	}
 	return $entries;
 }
@@ -8965,7 +8961,7 @@ function plugin_mastodon_strip_leading_quote_block($content) {
 	$depth = 0;
 	foreach ($matches [0] as $match) {
 		$token = strtolower((string) $match [0]);
-		$offset = isset($match [1]) ? (int) $match [1] : 0;
+		$offset = (int) $match [1];
 		if ($token === '[quote]') {
 			$depth++;
 		} else {
@@ -9306,7 +9302,7 @@ function plugin_mastodon_collect_known_entry_context_targets(&$state, $skipRemot
 			continue;
 		}
 		$remoteId = (string) $meta ['remote_id'];
-		if ($remoteId === '' || isset($skipLookup [$remoteId]) || !entry_exists($localEntryId)) {
+		if (isset($skipLookup [$remoteId]) || !entry_exists($localEntryId)) {
 			continue;
 		}
 		if (!plugin_mastodon_mapping_matches_sync_start($options, $meta, $localEntryId)) {
@@ -9574,9 +9570,9 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state, $force = true)
 			$processedComments = false;
 			foreach ($pendingComments as $commentRecord) {
 				plugin_mastodon_extend_time_limit(120);
-				$commentId = isset($commentRecord ['comment_id']) ? (string) $commentRecord ['comment_id'] : '';
-				$comment = isset($commentRecord ['comment']) && is_array($commentRecord ['comment']) ? $commentRecord ['comment'] : array();
-				if ($commentId === '' || $comment === array()) {
+				$commentId = (string) $commentRecord ['comment_id'];
+				$comment = $commentRecord ['comment'];
+				if ($commentId === '') {
 					$processedComments = true;
 					continue;
 				}
@@ -9630,8 +9626,8 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state, $force = true)
 		}
 		if (!empty($pendingComments)) {
 			foreach ($pendingComments as $commentRecord) {
-				$commentId = isset($commentRecord ['comment_id']) ? (string) $commentRecord ['comment_id'] : '';
-				$parentCommentId = plugin_mastodon_detect_local_comment_parent_id($entryId, isset($commentRecord ['comment']) && is_array($commentRecord ['comment']) ? $commentRecord ['comment'] : array());
+				$commentId = (string) $commentRecord ['comment_id'];
+				$parentCommentId = plugin_mastodon_detect_local_comment_parent_id($entryId, $commentRecord ['comment']);
 				plugin_mastodon_log('Deferred local comment export for ' . $entryId . '/' . $commentId . ' because parent comment ' . $parentCommentId . ' is not synchronized yet');
 			}
 		}

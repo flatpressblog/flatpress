@@ -309,7 +309,7 @@ function search_do($keywords) {
 
 	// BOF caching fast-path
 	$search_rev = search_content_rev_fast();
-	$search_key = search_cache_key(isset($srchkeywords) ? $srchkeywords : $keywords, $params, ((!empty($params['fullparse']) && $params['fullparse']) ? 'yes' : 'no'), $search_rev);
+	$search_key = search_cache_key(isset($srchkeywords) ? $srchkeywords : $keywords, $params, $fts, $search_rev);
 	$search_cached = search_cache_get($search_key);
 	if (is_array($search_cached)) {
 		$list = $search_cached;
@@ -363,14 +363,14 @@ function search_do($keywords) {
 
 	// Store into cache with final state and normalized parameters
 	$kw = isset($srchkeywords) ? $srchkeywords : $keywords;
-	$params ['start'] = isset($params ['start']) ? (int)$params ['start'] : 0;
-	$params ['count'] = isset($params ['count']) ? (int)$params ['count'] : -1;
+	$params ['start'] = (int)$params ['start'];
+	$params ['count'] = (int)$params ['count'];
 	if (isset($params ['cats'])) {
 		$cats = array_map('strval', (array)$params ['cats']);
 		sort($cats, SORT_STRING);
 		$params ['cats'] = $cats;
 	}
-	$is_full = (($fts === 'yes') || (!empty($params ['fullparse']) && $params ['fullparse']));
+	$is_full = ($fts === 'yes');
 	$search_rev = search_content_rev_fast();
 	$search_key = search_cache_key($kw, $params, $is_full ? 'yes' : 'no', $search_rev);
 	search_cache_set($search_key, $list);

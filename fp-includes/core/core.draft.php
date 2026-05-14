@@ -148,14 +148,9 @@ function draft_delete($id) {
 	return fs_delete($f);
 }
 
-/*
- * function draft_from_entry($entryid) {
- * $dir = entry_dir($entryid);
- * //$dir2 = str_replace('entry', 'draft', $dir);
- * $dir2 = draft_dir($entryid);
- * @rename($dir, $dir2);
- * @rename($dir.EXT, $dir2.EXT);
- * }
+/**
+ * Previously used draft_from_entry() migration helper:
+ * function draft_from_entry($entryid) { ... }
  */
 function draft_to_entry($draftid) {
 	$dir = draft_dir($draftid);
@@ -174,6 +169,7 @@ function smarty_block_draftlist($params, $content, &$smarty, &$repeat) {
 	}
 }
 
-$smarty->registerPlugin('block', 'draft_block', 'smarty_block_draftlist');
-
+if (isset($smarty)) {
+	$smarty->registerPlugin('block', 'draft_block', 'smarty_block_draftlist');
+}
 ?>

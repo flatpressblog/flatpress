@@ -1,5 +1,4 @@
 <?php
-
 /**
  * add maintain panel
  *
@@ -535,9 +534,7 @@ class admin_maintain_default extends AdminPanelAction {
 		switch ($do) {
 			case 'rebuild':
 				{
-					if (substr(INDEX_DIR, -1) == '/') {
-						$oldidx = substr(INDEX_DIR, 0, -1);
-					}
+					$oldidx = rtrim(INDEX_DIR, '/');
 
 					$movedir = $oldidx . time();
 
@@ -552,7 +549,7 @@ class admin_maintain_default extends AdminPanelAction {
 							@unlink($movedir);
 							clearstatcache(true, $movedir);
 							usleep(20000);
-							$mv = @rename($oldidx, $movedir) ?: (@copy($oldidx, $movedir) && @unlink($oldidx));
+							$ret = @rename($oldidx, $movedir) ?: (@copy($oldidx, $movedir) && @unlink($oldidx));
 						}
 
 						if (!$ret) {
@@ -563,8 +560,6 @@ class admin_maintain_default extends AdminPanelAction {
 
 					new s_entry_crawler();
 					exit("\nDONE \nPlease, select the back arrow in your browser");
-
-					return PANEL_NOREDIRECT;
 				}
 			case 'restorechmods':
 				{
@@ -655,5 +650,4 @@ class admin_maintain_default extends AdminPanelAction {
 	}
 
 }
-
 ?>

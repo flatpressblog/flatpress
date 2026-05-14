@@ -194,6 +194,9 @@ function comment_parse($entryid, $id) {
 	return array_change_key_case($arr, CASE_LOWER);
 }
 
+/**
+ * @phpstan-impure
+ */
 function comment_exists($entryid, $id) {
 	if (!preg_match('|^comment[0-9]{6}-[0-9]{6}$|', $id)) {
 		return false;

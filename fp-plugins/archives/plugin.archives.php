@@ -5,7 +5,7 @@
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  * Description: Adds an Archive widget element. Part of the standard distribution.
- * Version: 1.1.1
+ * Version: 1.1.2
  */
 class plugin_archives_monthlist extends fs_filelister {
 
@@ -39,11 +39,11 @@ class plugin_archives_monthlist extends fs_filelister {
 
 	function _exitingDir($directory = null, $file = null) {
 		$y = $this->_year;
+		$list = '';
+		$linearlist = array();
 
 		if ($mos = & $this->_months) {
 			sort($mos);
-			$list = '';
-			$linearlist = array();
 			foreach ($mos as $mth) {
 				$lnk = get_month_link($y, $mth);
 				$the_month = theme_date_format(mktime(0, 0, 0, $mth, 1, 0), '%B');
@@ -291,7 +291,7 @@ function plugin_archives_head() {
 	$js = utils_asset_ver($pdir . 'res/togglearchive.js', SYSTEM_VER);
 
 	echo '
-		<!-- archives -->
+		<!-- BOF archives -->
 		<script nonce="' . $random_hex . '" src="' . $js . '" defer></script>
 		<link rel="stylesheet" type="text/css" href="' . $css . '">
 	';
@@ -299,12 +299,12 @@ function plugin_archives_head() {
 	foreach (plugin_archives_cached_list() as $y => $months) {
 		foreach ($months as $ttl => $link) {
 			echo "
-			<link rel=\"archives\" title=\"" . $ttl . "\" href=\"" . $link . "\">";
+		<link rel=\"archives\" title=\"" . $ttl . "\" href=\"" . $link . "\">";
 		}
 	}
 
 	echo '
-		<!-- end of archives -->' . "\n";
+		<!-- EOF archives -->' . "\n";
 }
 add_filter('wp_head', 'plugin_archives_head');
 
@@ -312,7 +312,7 @@ function plugin_archives_footer() {
 	$random_hex = RANDOM_HEX;
 
 	echo '
-		<!-- archives -->
+		<!-- BOF archives -->
 		<script nonce="' . $random_hex . '">
 			/**
 			 * Making the archive widget interactive
@@ -335,7 +335,7 @@ function plugin_archives_footer() {
 				});
 			}
 		</script>
-		<!-- end of archives -->
+		<!-- EOF archives -->
 	';
 }
 add_filter('wp_footer', 'plugin_archives_footer');

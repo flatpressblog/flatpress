@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: BBCode
- * Version: 2.0.3
+ * Version: 2.0.4
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -335,9 +335,9 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 /**
  * Function to include images.
  *
- * @param string $action 'validate' or 'render'
+ * @param string|null $action 'validate' or 'render'
  * @param array $attributes Array of tag attributes like 'alt', 'width', 'popup', etc.
- * @param string $content Content between tags (usually empty)
+ * @param string|null $content Content between tags (usually empty)
  * @param mixed $params Not used
  * @param mixed $node_object Not used
  * @return string|true Returns rendered HTML or true if validating
@@ -521,7 +521,7 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
  * Function for email links
  *
  * @param string $action
- * @param array $attr
+ * @param array $attributes
  * @param string $content
  * @param mixed $params
  *        	Not used
@@ -713,7 +713,7 @@ function do_bbcode_code($action, $attributes, $content, $params, $node_object) {
 	$temp_str = str_replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;', $temp_str);
 	$temp_str = str_replace(' ', '&nbsp;', $temp_str);
 	$a = '';
-	if (function_exists('plugin_syntaxhighlighter_foot')) {
+	if (function_exists('plugin_syntaxhighlighter_foot') && function_exists('plugin_syntaxhighlighter_add')) {
 		if (isset($attributes ['default'])) {
 			$a = $attributes ['default'];
 			$p = explode(':', $a);
@@ -839,7 +839,7 @@ function do_bbcode_size($action, $attributes, $content, $params, $node_object) {
  * Function to align elements.
  *
  * @param string $action
- * @param array $attributes
+ * @param array $attr
  * @param string $content
  * @param mixed $params
  *        	Not used
@@ -1456,7 +1456,7 @@ function bbcode2html($html) {
 			// [list=#] / [list=1] / [list=a] (or any [list=...]) -> ordered
 			if ($type === 'o') {
 				$isOrdered = true;
-			} elseif ($param !== null && $param !== '') {
+			} elseif ($param !== null) {
 				$isOrdered = true;
 			}
 

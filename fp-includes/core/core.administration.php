@@ -8,7 +8,7 @@
 		}
 
 		return wp_specialchars(
-				apply_filter('admin_panel_link', 
+				apply_filters('admin_panel_link', 
 						$link, 
 						$page, 
 						$action, 
@@ -57,7 +57,16 @@
 
 	function admin_getpaneldir($id) {
 		global $fpadminpanels;
-		if (array_intersect( $fpadminpanels, array( array($id, true)))) { // is plugin
+		$id = (string) $id;
+		$isPluginPanel = false;
+		foreach ((array) $fpadminpanels as $panel) {
+			if (is_array($panel) && isset($panel [0]) && (string) $panel [0] === $id && !empty($panel [1])) {
+				$isPluginPanel = true;
+				break;
+			}
+		}
+
+		if ($isPluginPanel) {
 			return ABS_PATH . plugin_getdir($id);
 		} else {
 			return ABS_PATH . ADMIN_DIR . $id;

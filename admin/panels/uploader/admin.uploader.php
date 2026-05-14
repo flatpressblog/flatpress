@@ -1,5 +1,4 @@
 <?php
-
 /**
  * uploader control panel
  *
@@ -8,7 +7,7 @@
  * Date:
  * Purpose:
  * Input:
- * Change-Date: 03.01.2026, by FKM
+ * Change-Date: 11.05.2026, by FKM
  *
  * @author NoWhereMan <real_nowhereman at users dot sf dot com>
  *
@@ -459,7 +458,7 @@ class admin_uploader_default extends AdminPanelAction {
 			} else {
 				$mime = @mime_content_type($tmp_name);
 			}
-			if ($mime === false || $mime === null) {
+			if ($mime === false) {
 				$upload_errors [] = (string)$name . ' (MIME detection failed)';
 				continue;
 			}
@@ -558,7 +557,7 @@ class admin_uploader_default extends AdminPanelAction {
 		}
 
 		$info = @getimagesize($filepath);
-		if ($info === false || !isset($info [0], $info [1])) {
+		if ($info === false) {
 			return false;
 		}
 

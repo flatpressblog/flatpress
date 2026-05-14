@@ -38,6 +38,13 @@ if (!file_exists($langFile)) {
 if (is_readable($langFile)) {
 	require_once $langFile;
 }
+$cssVars = get_defined_vars();
+$cssLang = isset($cssVars ['lang']) && is_array($cssVars ['lang']) ? $cssVars ['lang'] : array();
+$pluginLang = isset($cssLang ['plugin']) && is_array($cssLang ['plugin']) ? $cssLang ['plugin'] : array();
+$gdprvideoembedLang = isset($pluginLang ['gdprvideoembed']) && is_array($pluginLang ['gdprvideoembed']) ? $pluginLang ['gdprvideoembed'] : array();
+$noscript_1 = isset($gdprvideoembedLang ['noscript_1']) ? (string)$gdprvideoembedLang ['noscript_1'] : '';
+$noscript_2 = isset($gdprvideoembedLang ['noscript_2']) ? (string)$gdprvideoembedLang ['noscript_2'] : '';
+$noscript_3 = isset($gdprvideoembedLang ['noscript_3']) ? (string)$gdprvideoembedLang ['noscript_3'] : '';
 ?>
 /**
  * Name: GDPR video embed
@@ -50,7 +57,7 @@ if (is_readable($langFile)) {
 .responsive_bbcode_video iframe { display: inline-block }
 
 .responsive_bbcode_video iframe[data-src] {
-	background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><text text-anchor="middle" alignment-baseline="central" y="50%" font-size="1em" fill="black"><tspan x="50%" dy="-1.5em"><?php echo $lang ['plugin'] ['gdprvideoembed'] ['noscript_1']; ?></tspan><tspan x="50%" dy="1.5em"><?php echo $lang ['plugin'] ['gdprvideoembed'] ['noscript_2']; ?></tspan><tspan x="50%" dy="1.5em"><?php echo $lang ['plugin'] ['gdprvideoembed'] ['noscript_3']; ?></tspan></text></svg>');
+	background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><text text-anchor="middle" alignment-baseline="central" y="50%" font-size="1em" fill="black"><tspan x="50%" dy="-1.5em"><?php echo $noscript_1; ?></tspan><tspan x="50%" dy="1.5em"><?php echo $noscript_2; ?></tspan><tspan x="50%" dy="1.5em"><?php echo $noscript_3; ?></tspan></text></svg>');
 }
 
 .responsive_bbcode_video,

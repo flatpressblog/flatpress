@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  *
  * useful snippet http://ontosys.com/php/cache.html, but looks like it doesn't in this case
  *
@@ -29,7 +29,7 @@ function thumb_send($fpath) {
 
 	list($w, $h) = $infos;
 
-	$isWebP = (isset($infos [2]) && $infos [2] === 18);
+	$isWebP = ($infos [2] === 18);
 
 	if ($w <= $MAX && $h <= $MAX) {
 		switch ($infos [2]) {

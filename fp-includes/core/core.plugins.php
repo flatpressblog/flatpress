@@ -233,7 +233,7 @@ function plugin_do($id, $type = null) {
  */
 function plugin_require($id) {
 	return !plugin_loaded($id);
-	/*
+	/**
 	 * global $smarty;
 	 * $smarty->trigger_error("A plugin required <strong>$id</strong> to be loaded to work properly, but $id ".
 	 * "does not appear to be loaded. Maybe the plugins have been loaded in the wrong sequence. ".
@@ -659,5 +659,7 @@ function plugin_getinfo($plugin) {
 	return $out;
 }
 
-$smarty->registerPlugin('function', 'plugin_getdir', 'smarty_function_plugin_getdir');
+if (isset($smarty)) {
+	$smarty->registerPlugin('function', 'plugin_getdir', 'smarty_function_plugin_getdir');
+}
 ?>

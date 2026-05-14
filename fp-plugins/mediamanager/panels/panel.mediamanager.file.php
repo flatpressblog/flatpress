@@ -548,6 +548,7 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		}
 
 		$folder = "";
+		$mmbaseurl = "admin.php?p=uploader&action=mediamanager";
 		if (isset($_GET ['gallery'])) {
 			$mmbaseurl .= "&gallery=" . $_GET ['gallery'];
 			$folder = str_replace("/", "", $_GET ['gallery']) . "/";

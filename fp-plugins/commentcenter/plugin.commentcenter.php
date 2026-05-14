@@ -1,8 +1,7 @@
 <?php
-
 /**
  * Plugin Name: Comment Center
- * Version: 1.1.4
+ * Version: 1.1.5
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -12,6 +11,26 @@
 /**
  * This class interacts with Flaptress comment system.
  */
+if (!function_exists('plugin_commentcenter_load_array_from_file')) {
+	/**
+	 * Loads a FlatPress system_save() file and returns one array variable from its scope.
+	 *
+	 * @param string $file The file to include.
+	 * @param string $variableName The variable to read from the include scope.
+	 * @return array<string,mixed>
+	 */
+	function plugin_commentcenter_load_array_from_file($file, $variableName) {
+		if (!file_exists($file)) {
+			return array();
+		}
+
+		include $file;
+		$loadedVars = get_defined_vars();
+
+		return isset($loadedVars [$variableName]) && is_array($loadedVars [$variableName]) ? $loadedVars [$variableName] : array();
+	}
+}
+
 class plugin_commentcenter {
 
 	// The plugin configuration
@@ -44,7 +63,7 @@ class plugin_commentcenter {
 	/**
 	 * This function loads the configuration of the plugin.
 	 *
-	 * @param bool $foce:
+	 * @param bool $force:
 	 *			Force to load it?
 	 * @return array The configuration
 	 */
@@ -272,8 +291,7 @@ class plugin_commentcenter {
 			return $this->policies;
 		}
 
-		include $f;
-		$this->policies = $policies;
+		$this->policies = plugin_commentcenter_load_array_from_file($f, 'policies');
 		return $this->policies;
 	}
 

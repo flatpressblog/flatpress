@@ -56,7 +56,7 @@ function smarty_validate_criteria_isCCNum($value, $empty, &$params, &$formvars) 
 		if ($_even_odd) {
 			$_digit = $_digit * 2;
 			if ($_digit > 9) {
-				$_digit = (int) substr($_digit, 1, 1) + 1;
+				$_digit -= 9;
 			}
 		}
 		$_even_odd = 1 - $_even_odd;
@@ -69,5 +69,4 @@ function smarty_validate_criteria_isCCNum($value, $empty, &$params, &$formvars) 
 	return true;
 
 }
-
 ?>

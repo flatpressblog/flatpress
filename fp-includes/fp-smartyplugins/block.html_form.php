@@ -5,7 +5,6 @@
  * @subpackage plugins
  */
 
-
 /**
  * Smarty {html_submit} function plugin
  *
@@ -24,8 +23,9 @@
  *           
  * @author     NoWhereMan <real_nowhereman at users dot sf dot net>
  * @version    1.0
- * @param array
- * @param Smarty
+ * @param array $params
+ * @param string|null $content
+ * @param Smarty $smarty
  * @return string
  */
 
@@ -64,5 +64,4 @@ function smarty_block_html_form($params, $content, &$smarty) {
 	// SECOND RUN: Return content + closing </form>!
 	return $content . '</form>';
 }
-
 ?>

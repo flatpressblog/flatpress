@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Project:     SmartyValidate: Form Validator for the Smarty Template Engine
  * File:        validate_criteria.isFileType.php
@@ -31,8 +30,8 @@
  *
  * @param string $value the value being tested
  * @param boolean $empty if field can be empty
- * @param array params validate parameter values
- * @param array formvars form var values
+ * @param array $params validate parameter values
+ * @param array $formvars form var values
  */
 function smarty_validate_criteria_isValidEntryId($value, $empty, &$params, &$formvars) {
 
@@ -42,5 +41,4 @@ function smarty_validate_criteria_isValidEntryId($value, $empty, &$params, &$for
 
 	return !preg_match('/[^a-z0-9\-_]/i',$value);
 }
-
 ?>

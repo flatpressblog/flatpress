@@ -4,7 +4,7 @@
  *
  * Type:
  * Name:
- * Date: 18.04.2026
+ * Date: 12.05.2026
  * Purpose: Provides the option to edit comments
  * Input:
  *
@@ -60,38 +60,45 @@ class admin_entry_commedit extends AdminPanelActionValidated {
 	var $nosuchcomment = false;
 
 	function commedit_validate() {
-		$lerr = & $lang ['admin'] ['entry'] ['commedit'] ['error'];
+		global $lang;
+
+		$lerr = isset($lang ['admin'] ['entry'] ['commedit'] ['error']) && is_array($lang ['admin'] ['entry'] ['commedit'] ['error']) ? $lang ['admin'] ['entry'] ['commedit'] ['error'] : array();
 		$errors = array();
+		$name = isset($_POST ['name']) ? trim(stripslashes((string)$_POST ['name'])) : '';
+		$email = isset($_POST ['email']) ? trim(stripslashes((string)$_POST ['email'])) : '';
+		$url = isset($_POST ['url']) ? trim(stripslashes((string)$_POST ['url'])) : '';
+		$content = isset($_POST ['content']) ? stripslashes((string)$_POST ['content']) : '';
 
 		// check name
 		if (!$name) {
-			$errors ['name'] = $lerr ['name'];
+			$errors ['name'] = isset($lerr ['name']) ? $lerr ['name'] : 'name';
 		}
 
 		// check email
 		if ($email) {
 			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-				$errors ['email'] = $lerr ['email'];
+				$errors ['email'] = isset($lerr ['email']) ? $lerr ['email'] : 'email';
 			}
 		}
 
 		// check url
 		if ($url) {
 			if (!filter_var($url, FILTER_VALIDATE_URL)) {
-				$errors ['url'] = $lerr ['url'];
+				$errors ['url'] = isset($lerr ['url']) ? $lerr ['url'] : 'url';
 			}
 		}
 
 		// check content
 		if (!$content) {
-			$errors ['content'] = $lerr ['content'];
+			$errors ['content'] = isset($lerr ['content']) ? $lerr ['content'] : 'content';
 		}
 
 		// assign error messages to template
 		if ($errors) {
-			$smarty->assign('error', $errors);
+			$this->smarty->assign('error', $errors);
 			return false;
 		}
+		return true;
 	}
 
 	function setup() {

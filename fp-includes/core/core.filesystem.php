@@ -102,13 +102,18 @@ class fs_pathlister extends fs_filelister {
 
 // dir list
 function fs_list_dirs($dir) {
+	$files = array();
 	$dh = opendir($dir);
+	if ($dh === false) {
+		return $files;
+	}
 	while (false !== ($filename = readdir($dh))) {
 		if (($filename [0] != '.')) {
 			// $id = lang_id($filename);
 			$files [] = $filename;
 		}
 	}
+	closedir($dh);
 	sort($files);
 	return $files;
 }
@@ -121,7 +126,7 @@ function fs_list_dirs($dir) {
  * <p>Recursively creates dirs.</p>
  * <p>Returns true on success, else false</p>
  *
- * @param string $path
+ * @param string $dir
  *        	Directory or directories to create
  * @param int $mode
  *        	octal mode value; same as UNIX chmod; defaults to 0777 (rwrwrw);

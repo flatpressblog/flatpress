@@ -69,6 +69,7 @@ function lang_load($postfix = null) {
 
 	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 
+	$lang = null;
 	$lang_loaded = false;
 	if (isset($fp_lang_req [$ckey]) && is_array($fp_lang_req [$ckey])) {
 		$lang = $fp_lang_req [$ckey];
@@ -96,6 +97,10 @@ function lang_load($postfix = null) {
 		if ($apcu_on) {
 			@apcu_set($ckey, $lang, 0);
 		}
+	}
+
+	if (!is_array($lang)) {
+		return $GLOBALS ['lang'];
 	}
 
 	$GLOBALS ['lang'] = array_merge_recursive($lang, $old_lang);
@@ -281,16 +286,16 @@ function set_locale() {
 
 	$supportedLocales = [];
 	/** @phpstan-ignore-next-line */
-	if (function_exists('shell_exec') && is_callable('shell_exec') && stripos(ini_get('disable_functions'), 'shell_exec') === false) {
+	if (DIRECTORY_SEPARATOR !== '\\' && function_exists('shell_exec') && is_callable('shell_exec') && stripos(ini_get('disable_functions'), 'shell_exec') === false) {
 		// Checks the supported locales with locale -a and only uses valid combinations
-		$output = shell_exec('timeout 5s locale -a');
+		$output = shell_exec('locale -a 2>/dev/null');
 		if ($output !== null) {
 			$supportedLocales = explode("\n", trim($output));
 		}
 	}
 
 	// Check whether a locale is already set
-	$currentLocale = setlocale(LC_TIME, 0);
+	$currentLocale = setlocale(LC_TIME, '0');
 	if ($debug) {
 		error_log('set_locale -> Current locale before change: ' . $currentLocale);
 	}

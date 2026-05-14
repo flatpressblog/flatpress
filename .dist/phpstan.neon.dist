@@ -1,22 +1,60 @@
 
 parameters:
   phpVersion:
-    min: 70100 # PHP 7.2
-    max: 80400 # PHP 8.5
-  level: 4  # Medium level
+    min: 70200 # PHP 7.2
+    max: 80500 # PHP 8.5
+  level: 5 # Medium level
 
   # Minimal Bootstrap (without Composer)
   bootstrapFiles:
     - phpstan-bootstrap.php
 
+  dynamicConstantNames:
+    - ADMIN_PANEL
+    - ADMIN_PANEL_ACTION
+    - BASE_DIR
+    - BLOG_BASEURL
+    - BLOG_ROOT
+    - INDEX
+    - MOD_BLOG
+    - LANG_DEFAULT
+    - RANDOM_HEX
+    - THE_THEME
+    - THEME_LEGACY_MODE
+    - THEMES_DIR
+    - CONTENT_DIR
+    - CACHE_DIR
+    - INDEX_DIR
+    - IMAGES_DIR
+    - ATTACHS_DIR
+    - COOKIEHASH
+    - COOKIE_PREFIX
+    - COOKIEPATH
+    - SITECOOKIEPATH
+    - COOKIE_DOMAIN
+    - COOKIE_SECURE
+    - COOKIE_HTTPONLY
+    - SAMESITE_VALUE
+    - SESS_COOKIE
+    - USER
+    - GMT
+    - BBCODE_ALLOW_HTML
+    - BBCODE_ENABLE_COMMENTS
+    - BBCODE_USE_EDITOR
+    - BBCODE_MASK_ATTACHS
+    - BBCODE_URL_MAXLEN
+    - BBCODE_DEFAULT_FONT_FAMILY
+    - BBCODE_USE_WRAPPER
+    - BBCODE_USE_FILEWRAPPER
+
   # Scan for type resolution, but do not analyze
   scanDirectories:
-    - ../fp-includes/smarty-5.7.0/src
+    - ../fp-includes/smarty-5.8.0/src
     - ../fp-includes/fp-smartyplugins
 
   excludePaths:
     analyse:
-      - ../fp-includes/smarty-5.7.0/**
+      - ../fp-includes/smarty-5.8.0/**
       - ../fp-content/compile/**
       - ../fp-content/cache/**
 
@@ -24,68 +62,16 @@ parameters:
     - ..
 
   ignoreErrors:
-    # Dynamic and global variables
-    - '#Variable \$.* might not be defined#'
-    - '#Undefined variable: \$.*#'
-
-    # Plugins, dynamic methods and properties
-    - '#Function .* not found.*#'
-
-    # Constants (dynamic, possibly loaded from config)
-    - '#Constant .* not found.*#'
-
-    # Old PHPDoc tags and formatting issues
-    - '#PHPDoc tag @param has invalid value \(.*\)#'
-    - '#PHPDoc tag @param references unknown parameter.*#'
-    - '#PHPDoc tag @param has invalid value \(string\): Unexpected token.*#'
-    - '#PHPDoc tag @var has invalid value \(.*\)#'
-    - '#PHPDoc tag @var has invalid value \(.*root node.*\)#'
-    - '#PHPDoc tag @var has invalid value \(.*\): Unexpected token.*#'
-    - '#phpDoc.parseError#'
-
     # Ignore error “does not accept null” only in Smarty core
     - message: '#Property .* does not accept null#'
       paths:
-        - ../fp-includes/smarty-5.7.0/src/*.php
+        - ../fp-includes/smarty-5.8.0/src/*.php
 
     # Ignore error “Call to undefined method” only in Smarty core
     - message: '#Call to an undefined method Smarty_Internal_.*::.*#'
       paths:
-        - ../fp-includes/smarty-5.7.0/src/.*\.php
-
-    # Comparison of incorrect types
-    # - '#Comparison operation .* is always (true|false)#'
-
-    # FlatPress/Smarty: dynamic conditions (noise filter)
-    - '#If condition is always (true|false)#'
-    - '#Elseif condition is always true#'
-    - '#Right side of && is always true#'
-    - '#Left side of && is always true#'
-    - '#Left side of && is always false#'
-    - '#Result of && is always false#'
-    - '#Result of \|\| is always (true|false)#'
-    - '#Negated boolean expression is always (false|true)#'
-    - '#Strict comparison using (===|!==) between [^ ]+ and [^ ]+ will always evaluate to (true|false)#'
-    - '#Loose comparison using (==|!=) between [^ ]+ and [^ ]+ will always evaluate to (true|false)#'
-    - '#Unreachable statement - code above always terminates.#'
-    - '#Ternary operator condition is always (true|false)#'
-    - '#Dead code - code above always terminates.#'
-    - '#Expression ".*" on a separate line does not do anything.#'
-    - '#Offset .+ on .+ always exists and is not nullable.#'
-    - '#Property .+ in isset\(\) is not nullable.#'
-
-    # FlatPress/Smarty/Plugins: Frequent cosmetic warnings
-    - '#staticMethod.resultUnused#'
-    - '#return.unusedType#'
-    - '#parameterByRef.unusedType#'
-    - '#function.impossibleType#'
-    - '#function.alreadyNarrowedType#'
-    - '#instanceof.alwaysTrue#'
-    - '#instanceof.alwaysFalse#'
+        - ../fp-includes/smarty-5.8.0/src/.*\.php
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
   treatPhpDocTypesAsCertain: false
-
-  # Deactivates warnings via dynamic properties (e.g. Smarty::__get)
-  # checkDynamicProperties: false

@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * Plugin Name: Calendar
- * Version: 1.2.1
+ * Version: 1.2.2
  * Type: Block
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
@@ -315,7 +315,7 @@ function find_prev_month_with_entries($year, $month) {
 		), null);
 
 		if ($q->hasMore()) {
-			return get_month_link($year, str_pad($month, 2, '0', STR_PAD_LEFT));
+			return get_month_link($year, str_pad((string) $month, 2, '0', STR_PAD_LEFT));
 		}
 
 		// Cancel if the year goes back too far (default: 2006, year of birth of FlatPress)
@@ -347,7 +347,7 @@ function find_next_month_with_entries($year, $month) {
 		), null);
 
 		if ($q->hasMore()) {
-			return get_month_link($year, str_pad($month, 2, '0', STR_PAD_LEFT));
+			return get_month_link($year, str_pad((string) $month, 2, '0', STR_PAD_LEFT));
 		}
 
 		// Cancel if the year goes too far into the future (default: current year plus 2 years)
