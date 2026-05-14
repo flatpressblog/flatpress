@@ -1,3 +1,10 @@
+<?php
+$l = isset($l) && is_array($l) ? $l : array('head' => '', 'descr' => '%s', 'fpuser' => '', 'fppwd' => '', 'fppwd2' => '', 'www' => '', 'email' => '');
+$setupid = isset($setupid) ? (string)$setupid : '';
+$language = isset($language) ? (string)$language : '';
+$err = isset($err) && is_array($err) ? $err : array();
+$lang = isset($lang) && is_array($lang) ? $lang : array('buttonbar' => array('next' => 'Next'));
+?>
 <h2><?php echo $l ['head']; ?></h2>
 <div class="errors">
 

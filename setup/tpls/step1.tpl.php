@@ -1,5 +1,10 @@
 <?php
 
+	$l = isset($l) && is_array($l) ? $l : array('head' => '', 'descr' => '%s', 'descrw' => '%s');
+	$setupid = isset($setupid) ? (string)$setupid : '';
+	$err = isset($err) ? $err : array();
+	$lang = isset($lang) && is_array($lang) ? $lang : array('buttonbar' => array('next' => 'Next'));
+
 	$o = new fs_filelister('./setup/lang/');
 	$languages = $o->getList();
 
