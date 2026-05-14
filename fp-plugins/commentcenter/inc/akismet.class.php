@@ -1,6 +1,6 @@
 <?php
 /**
- * 13.06.2025
+ * 13.05.2026
  *
  * Akismet class
  *
@@ -46,9 +46,9 @@ class AkismetObject {
 	/**
 	 * Add a new error to the errors array in the object
 	 *
-	 * @param String $name
+	 * @param int|string $name
 	 *			A name (array key) for the error
-	 * @param String $string
+	 * @param string $message
 	 *			The error message
 	 * @return void
 	 */
@@ -60,7 +60,7 @@ class AkismetObject {
 	/**
 	 * Return a specific error message from the errors array
 	 *
-	 * @param String $name
+	 * @param int|string $name
 	 *			The name of the error you want
 	 * @return mixed Returns a String if the error exists, a false boolean if it does not exist
 	 */
@@ -84,7 +84,7 @@ class AkismetObject {
 	/**
 	 * Check if a certain error exists
 	 *
-	 * @param String $name
+	 * @param int|string $name
 	 *			The name of the error you want
 	 * @return boolean
 	 */

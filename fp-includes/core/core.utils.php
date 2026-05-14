@@ -12,6 +12,7 @@
 // other flags are the same of array_multisort() php function ;)
 function utils_sksort($arr, $key, $flag = SORT_ASC) {
 	if ($arr) {
+		$sorter = array();
 		foreach ($arr as $val) {
 			$sorter [] = $val [$key];
 		}
@@ -178,7 +179,7 @@ class Tokenizer {
  * a hyphen (-), or an underscore (_) are accepted. Other keys will be skipped.
  *
  * @param string $string    The delimited input string to parse.
- * @param string $delims    One or more delimiter characters (default: "|").
+ * @param string $delim     One or more delimiter characters (default: "|").
  * @param bool   $keyupper  Whether to only accept keys with [A-Z\-_] (default: true).
  *
  * @return array<string, string> Associative array of parsed and filtered key-value pairs.
@@ -239,7 +240,6 @@ function utils_kimplode($arr, $delim = '|') {
 }
 
 /**
- *
  * @todo send mail to admin
  */
 function &utils_explode_recursive($array, &$string, $rdelim, $ldelim = '', $outerldelim = '', $outerrdelim = '') {
@@ -329,11 +329,10 @@ function utils_redirect($location = "", $absolute_path = false, $red_type = null
 	exit();
 }
 
-/*
+/**
  * utils_geturlstring()
  *
  * @return string complete url string as displayed in the browser
- *
  */
 function utils_geturlstring() {
 	$str = BLOG_BASEURL . $_SERVER ['PHP_SELF'];
@@ -359,7 +358,7 @@ function utils_array_merge($arr1, $arr2) {
 	return array_merge($arr1, $arr2);
 }
 
-/*
+/**
  * Simple function to replicate PHP 5 behaviour
  */
 function utils_microtime() {
@@ -482,7 +481,7 @@ function utils_validateIPv6($IP) {
 	// Check if part is in IPv4 format
 	if (strpos($IP, '.')) {
 		$lastcolon = strrpos($IP, ':');
-		if (!($lastcolon && validateIPv4(substr($IP, $lastcolon + 1)))) {
+		if (!($lastcolon && utils_validateIPv4(substr($IP, $lastcolon + 1)))) {
 			return false;
 		}
 		// replace IPv4 part with dummy
@@ -669,7 +668,7 @@ function utils_geturl($url) {
 		if ($fp === false) {
 			$ret ['errno'] = 1;
 			$last = error_get_last();
-			$ret ['errmsg'] = (is_array($last) && isset($last ['message'])) ? $last ['message'] : 'Unable to fetch URL';
+			$ret ['errmsg'] = is_array($last) ? $last ['message'] : 'Unable to fetch URL';
 			$ret ['content'] = '';
 		} else {
 			$content = stream_get_contents($fp);
@@ -769,7 +768,7 @@ function utils_asset_ver(string $path, $version = null): string {
 	}
 
 	// If still nothing: return original path
-	if ($ver === null || $ver === '') {
+	if ($ver === null) {
 		return $path;
 	}
 

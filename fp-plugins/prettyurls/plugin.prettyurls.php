@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: PrettyURLs
- * Version: 3.0.4
+ * Version: 3.0.5
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -17,6 +17,19 @@ if (!defined('PRETTYURLS_TITLES')) {
 define('PRETTYURLS_PATHINFO', !file_exists(ABS_PATH . '.htaccess'));
 define('PRETTYURLS_CACHE', CACHE_DIR . '%%prettyurls-index.tmp');
 define('PRETTYURLS_CATS', CACHE_DIR . '%%prettyurls-cats.tmp');
+
+/**
+ * Return whether PrettyURLs should use title-based URL slugs.
+ *
+ * The constant can be defined by local configuration before the plugin is
+ * loaded, so use constant() instead of relying on the default value inferred
+ * from this file.
+ *
+ * @return bool
+ */
+function plugin_prettyurls_titles_enabled() {
+	return defined('PRETTYURLS_TITLES') && (bool)constant('PRETTYURLS_TITLES');
+}
 
 /**
  * File existance check
@@ -86,7 +99,7 @@ class Plugin_PrettyURLs {
 	function permalink($str, $id) {
 		global $fpdb, $post;
 
-		if (isset($post) && PRETTYURLS_TITLES) {
+		if (isset($post) && plugin_prettyurls_titles_enabled()) {
 			$title = sanitize_title($post ['subject']);
 		} else {
 			$title = $id;
@@ -128,7 +141,7 @@ class Plugin_PrettyURLs {
 	}
 
 	function categorylink($str, $catid) {
-		if (PRETTYURLS_TITLES) {
+		if (plugin_prettyurls_titles_enabled()) {
 			if (@$this->categories [$catid]) {
 				return $this->baseurl . "category/" . $this->categories[$catid] . "/";
 			} else {
@@ -186,7 +199,7 @@ class Plugin_PrettyURLs {
 		// $this->categories contains sanitized category names, so we have to sanitize before the search
 		$sanitizedtitle = sanitize_title($matches [1]);
 
-		if (PRETTYURLS_TITLES) {
+		if (plugin_prettyurls_titles_enabled()) {
 			if ($c = array_search($sanitizedtitle, $this->categories)) {
 				$this->fp_params ['cat'] = $c;
 			} else {
@@ -221,7 +234,7 @@ class Plugin_PrettyURLs {
 		// the cache contains (md5'ed) sanitized entry names, so we have to sanitize before handling it
 		$sanitizedtitle = sanitize_title($matches [1]);
 
-		if (!PRETTYURLS_TITLES) {
+		if (!plugin_prettyurls_titles_enabled()) {
 			$this->fp_params ['entry'] = $sanitizedtitle;
 			return;
 		}
@@ -610,7 +623,7 @@ class Plugin_PrettyURLs {
 			$url = '';
 		}
 
-		if (PRETTYURLS_TITLES) {
+		if (plugin_prettyurls_titles_enabled()) {
 			// if ($f = io_load_file(PRETTYURLS_CACHE))
 			$this->index = array(); // unserialize($f);
 
@@ -815,7 +828,7 @@ class Plugin_PrettyURLs {
 
 		if ($q->single) {
 			$date = date_from_id($id);
-			if (PRETTYURLS_TITLES) {
+			if (plugin_prettyurls_titles_enabled()) {
 				$title = sanitize_title($caption);
 			} else {
 				$title = $id;
@@ -916,6 +929,7 @@ class Plugin_PrettyURLs {
 		// Routes: page/N, paged/N, category/NAME, tag/NAME, archive[s]/YYYY(/MM)?, static/SLUG, entry/SLUG
 		// Redirect only if there are no extra query params (besides 'u' in GET style).
 		$plugin_prettyurls = isset($GLOBALS ['plugin_prettyurls']) ? $GLOBALS ['plugin_prettyurls'] : null;
+		$opt = 0;
 		if ($plugin_prettyurls && isset($plugin_prettyurls->mode)) {
 			$opt = (int)$plugin_prettyurls->mode;
 		}
@@ -1030,7 +1044,7 @@ class Plugin_PrettyURLs {
 					}
 				}
 			} else {
-				if (is_string($qry) && $qry !== '' && $qry !== null) {
+				if (is_string($qry) && $qry !== '') {
 					$extra = true;
 				}
 			}
@@ -1068,7 +1082,7 @@ class Plugin_PrettyURLs {
 		$base = isset($plugin_prettyurls->baseurl) ? $plugin_prettyurls->baseurl : BLOG_BASEURL;
 
 		// Never assume Pretty base when unresolved
-		if ((!isset($plugin_prettyurls->baseurl) || $plugin_prettyurls->baseurl === null) && $this->get_mode() == 0) {
+		if (!isset($plugin_prettyurls->baseurl) && $this->get_mode() == 0) {
 			$auto = method_exists($plugin_prettyurls,'auto_mode_detect_preview') ? (int)$plugin_prettyurls->auto_mode_detect_preview() : (int)$plugin_prettyurls->auto_mode_detect();
 			if ($auto === 1) {
 				$base = BLOG_BASEURL . 'index.php/'; // Path Info
@@ -1266,7 +1280,7 @@ add_filter('day_link', array(
 	'daylink'
 ), 0, 4);
 
-if (PRETTYURLS_TITLES) {
+if (plugin_prettyurls_titles_enabled()) {
 	add_filter('publish_post', array(
 		&$plugin_prettyurls,
 		'cache_add'

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Project: SmartyValidate: Form Validator for the Smarty Template Engine
  * File: validate_criteria.isEmail.php
@@ -30,8 +29,8 @@
  *
  * @param string $value the being tested
  * @param bool $empty if field can be empty
- * @param array params validate parameter values
- * @param array formvars form var values
+ * @param array $params validate parameter values
+ * @param array $formvars form var values
  * @return bool
  */
 function smarty_validate_criteria_isEmail($value, $empty, &$params, &$formvars) {
@@ -55,5 +54,4 @@ function smarty_validate_criteria_isEmail($value, $empty, &$params, &$formvars) 
 
 	return true;
 }
-
 ?>

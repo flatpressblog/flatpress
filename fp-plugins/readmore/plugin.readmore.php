@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: ReadMore
- * Version: 1.0.2
+ * Version: 1.0.3
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -30,7 +30,10 @@
 function plugin_readmore_main($string) {
 	global $fp_params;
 
-	$MODE = 'manual';
+	$MODE = defined('PLUGIN_READMORE_MODE') ? (string) constant('PLUGIN_READMORE_MODE') : 'manual';
+	if (!in_array($MODE, array('auto', 'manual', 'semiauto', 'sentence'), true)) {
+		$MODE = 'manual';
+	}
 
 	$CHOP_AT = 4; // characters or sentences
 
@@ -41,11 +44,7 @@ function plugin_readmore_main($string) {
 	$q = & $fpdb->getQuery();
 
 	if (($q && !$q->single) && !isset($_GET ['page'])) {
-		if ($q) {
-			list ($id) = $q->getLastEntry();
-		} else {
-			$id = '';
-		}
+		list ($id) = $q->getLastEntry();
 
 		if ($MODE == 'auto' || $MODE == 'semiauto') {
 			if (strlen($string) > $CHOP_AT) {
@@ -77,5 +76,4 @@ function plugin_readmore_main($string) {
 }
 
 add_filter('the_content', 'plugin_readmore_main', 1);
-
 ?>

@@ -835,7 +835,7 @@ class FPDB_transaction {
 	function __construct($id_cat = 0) {
 		$this->_index = INDEX_DIR . 'index-' . $id_cat;
 
-		$this->_tree = caching_SBPT(fopen($this->_cachefile . '.dat', 'r'), fopen($this->_cachefile . '.strings.dat', 'r'), $this->_offset, $this->_chunksize, $this->_keysize);
+		$this->_tree = new caching_SBPT(fopen($this->_cachefile . '.dat', 'rb'), fopen($this->_cachefile . '.strings.dat', 'rb'), 256, $this->_offset, $this->_chunksize, $this->_keysize);
 	}
 
 }
@@ -1006,16 +1006,17 @@ function smarty_function_prevpage($params) {
 	return "<div class=\"alignleft\"><a href=\"" . $link . "\">" . $caption . "</a></div>";
 }
 
-$smarty->registerPlugin('block', 'comment', 'smarty_block_comment');
-$smarty->registerPlugin('block', 'comments', 'smarty_block_comments');
-$smarty->registerPlugin('block', 'comment_block', 'smarty_block_comments');
+if (isset($smarty)) {
+	$smarty->registerPlugin('block', 'comment', 'smarty_block_comment');
+	$smarty->registerPlugin('block', 'comments', 'smarty_block_comments');
+	$smarty->registerPlugin('block', 'comment_block', 'smarty_block_comments');
 
-$smarty->registerPlugin('block', 'entries', 'smarty_block_entries');
-$smarty->registerPlugin('block', 'entry_block', 'smarty_block_entries');
+	$smarty->registerPlugin('block', 'entries', 'smarty_block_entries');
+	$smarty->registerPlugin('block', 'entry_block', 'smarty_block_entries');
 
-$smarty->registerPlugin('block', 'entry', 'smarty_block_entry');
+	$smarty->registerPlugin('block', 'entry', 'smarty_block_entry');
 
-$smarty->registerPlugin('function', 'nextpage', 'smarty_function_nextpage');
-$smarty->registerPlugin('function', 'prevpage', 'smarty_function_prevpage');
-
+	$smarty->registerPlugin('function', 'nextpage', 'smarty_function_nextpage');
+	$smarty->registerPlugin('function', 'prevpage', 'smarty_function_prevpage');
+}
 ?>

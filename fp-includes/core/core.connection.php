@@ -457,7 +457,7 @@ function canonical_request_host() {
 		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
 			return 'localhost';
 		}
-		if (isset($m [2]) && $m [2] !== '') {
+		if (isset($m [2])) {
 			$p = (int)$m [2];
 			if ($p >= 1 && $p <= 65535) {
 				$port = ':' . $p;

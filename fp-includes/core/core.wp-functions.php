@@ -87,7 +87,7 @@ function wp_remote_fopen($uri) {
 		$handle = curl_init();
 		curl_setopt($handle, CURLOPT_URL, $uri);
 		curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 1);
-		curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 		$buffer = curl_exec($handle);
 		if (!is_php85_plus()) {
 			curl_close($handle);
@@ -97,5 +97,4 @@ function wp_remote_fopen($uri) {
 		return false;
 	}
 }
-
 ?>

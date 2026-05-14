@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LastComments
  * Type: Block
- * Version: 1.1.3
+ * Version: 1.1.4
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -56,6 +56,8 @@ function plugin_lastcomments_widget() {
 	}
 
 	$content = '<ul class="last-comments">';
+	$subject = '';
+	$entry = array();
 
 	// Add string translation
 

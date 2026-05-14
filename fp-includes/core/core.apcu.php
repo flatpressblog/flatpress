@@ -13,7 +13,7 @@ function fp_apcu_env_flag($name, $default = false): bool {
 	if ($value === false && isset($_ENV [(string) $name])) {
 		$value = $_ENV [(string) $name];
 	}
-	if ($value === false || $value === null) {
+	if ($value === false) {
 		return (bool) $default;
 	}
 	if (is_bool($value)) {

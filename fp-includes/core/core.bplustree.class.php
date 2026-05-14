@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  *
  * PHP B+tree library
  * ==============
@@ -215,7 +214,7 @@ class pairs {
 	 */
 	var $count;
 
-	/*
+	/**
 	 * Constructor
 	 * @param array $a array of the first elements of each pair
 	 * @parma array $b array of the second elements of each pair
@@ -230,7 +229,7 @@ class pairs {
 		$this->count = $v;
 	}
 
-	/*
+	/**
 	 * returns a slice of the current Couplets object as a new Couplets object
 	 * (works like array_slice())
 	 * @param integer $offset offset from the start of the array (count starting from zero)
@@ -668,7 +667,7 @@ class BPlusTree_Node {
 		// if ($x == NOROOMERROR) {print_r(debug_backtrace());fail();}
 	}
 
-	/*
+	/**
 	 *
 	 * links a seek position $position to the key $key
 	 *
@@ -711,7 +710,6 @@ class BPlusTree_Node {
 			unset($keys [$last]);
 			$keys = array_values($keys); // reset array indices
 			                             // array_splice($keys, $last, 1);
-			                             
 			// store the index
 			$indices = & $this->indices;
 			// echo "inserting $position before ", var_dump($indices,1), "\n";
@@ -869,7 +867,7 @@ class BPlusTree_Node {
 	 * if leaf returns the next leaf on the right
 	 */
 	function &next() {
-		if (($this->flag & BPT_LEAF_FLAG) != BPT_FLAG_LEAF) {
+		if (($this->flag & BPT_FLAG_LEAF) != BPT_FLAG_LEAF) {
 			trigger_error("cannot get next for non-leaf", E_USER_ERROR);
 		}
 		$place = $this->indices [$this->size];
@@ -882,7 +880,7 @@ class BPlusTree_Node {
 		}
 	}
 
-	/*
+	/**
 	 * function &prev() {
 	 * if (($this->flag & BPT_LEAF_FLAG) != BPT_FLAG_LEAF) {
 	 * trigger_error("cannot get next for non-leaf", E_USER_ERROR);
@@ -992,7 +990,7 @@ class BPlusTree_Node {
 	 *
 	 * @param int $first_position
 	 *        	leftmost pointer (to less-than child)
-	 * @param object $keys_indices
+	 * @param object $keys_positions
 	 *        	object of type {@link pairs}
 	 *        	
 	 */
@@ -1085,7 +1083,7 @@ class BPlusTree_Node {
 		return $neighbour;
 	}
 
-	/*
+	/**
 	 * function &prevneighbour() {
 	 * if (($this->flag & BPT_FLAG_LEAF) != BPT_FLAG_LEAF)
 	 * trigger_error('cannot get leaf neighbour for non-leaf');
@@ -1156,7 +1154,7 @@ class BPlusTree_Node {
 		$this->validkeys = $prev; // validkeys-1
 	}
 
-	/*
+	/**
 	 * add self to free list, retunr position as new free position
 	 *
 	 * @param int $freenodeposition current last free node
@@ -1243,7 +1241,6 @@ class BPlusTree_Node {
 	 *
 	 * @param bool $force
 	 *        	forces write back if fifo is enabled, defaults to false
-	 *        	
 	 */
 	function store($force = false) {
 
@@ -1481,7 +1478,6 @@ class BPlusTree_Node {
 	}
 
 	/**
-	 *
 	 * @param int $size
 	 *        	defaults to 33
 	 *        	
@@ -1570,7 +1566,7 @@ class BPlusTree {
 	 *
 	 * @param resource $infile
 	 *        	resource of open file
-	 * @param int $position
+	 * @param int $pos
 	 *        	offset from the beginning of the file (usually 0)
 	 * @param int $nodesize
 	 *        	size of the node
@@ -1642,7 +1638,7 @@ class BPlusTree {
 	/**
 	 * updates the head of the freelist and writes back to file
 	 *
-	 * @param int $position
+	 * @param int $pos
 	 *        	seek position of the head of the freelist
 	 */
 	function update_freelist($pos) {
@@ -2464,7 +2460,7 @@ class BPlusWalker {
 				}
 				$this->node_index = $index;
 				$testk = $keys [$index];
-				/*
+				/**
 				 * if ($testk>$keylower ||
 				 * ($this->includelower && $testk==$keylower)) {
 				 * $this->valid = true;
@@ -2617,8 +2613,8 @@ class SBPlusTree extends BPlusTree {
 			fseek($this->stringfile, $seek);
 		}
 		// nul-pad string
-		if (strlen($s > $this->maxstring)) {
-			$x = substr($s, 0, $this->maxstring);
+		if (strlen($s) > $this->maxstring) {
+			$s = substr($s, 0, $this->maxstring);
 		}
 		$x = str_pad($s, $this->maxstring, chr(0));
 		fwrite($this->stringfile, $x);
@@ -2711,7 +2707,6 @@ class BPlusUtils {
 
 	function recopy_tree($fromtree, $totree) {
 		list ($f, $p, $n, $k) = $totree->init_params();
-		// ....
 	}
 
 }

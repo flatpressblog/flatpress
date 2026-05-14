@@ -681,6 +681,11 @@ expr(res)        ::= expr(e1) isin(c) value(v).  {
     res = c . e1.',(array)'.v.')';
 }
 
+                 // regex matching
+ expr(res)        ::= expr(e1) matchop(c) value(e2). {
+    res = c . e2 . ',' . e1 . ') ';
+}
+
 // null coalescing
 nullcoalescing(res)        ::= expr(v) QMARK QMARK expr(e2). {
     res = v.' ?? '.e2;
@@ -1062,12 +1067,22 @@ object(res)    ::= varindexed(vi) objectchain(oc). {
     }
 }
 
+                    // optional objectchain - empty
+optobjectchain(res) ::= . {
+    res = '';
+}
+
+                    // optional objectchain - present
+optobjectchain(res) ::= objectchain(oc). {
+    res = oc;
+}
+
                     // single element
 objectchain(res) ::= objectelement(oe). {
     res  = oe;
 }
 
-                    // chain of elements 
+                    // chain of elements
 objectchain(res) ::= objectchain(oc) objectelement(oe). {
     res  = oc.oe;
 }
@@ -1111,7 +1126,7 @@ objectelement(res)::= PTR method(f).  {
 //
 // function
 //
-function(res)     ::= ns1(f) OPENP variablelist(v) CLOSEP. {
+function(res)     ::= ns1(f) OPENP variablelist(v) CLOSEP optobjectchain(oc). {
 
     if (f == 'isset') {
         res = '(true';
@@ -1125,15 +1140,15 @@ function(res)     ::= ns1(f) OPENP variablelist(v) CLOSEP. {
                 res .= ' && (' . $value . ' !== null)';
             }
         }
-        res .= ')';
+        res .= ')' . oc;
     } elseif (f == 'empty') {
         if (count(v) != 1) {
             throw new CompilerException("Invalid number of arguments for empty. empty expects at exactly one parameter.");
         }
         if (is_array(v[0])) {
-            res .= '( !' . v[0][0] . ' || empty(' . v[0][1] . '))';
+            res = '( !' . v[0][0] . ' || empty(' . v[0][1] . '))' . oc;
         } else {
-            res = 'false == ' . v[0];
+            res = 'false == ' . v[0] . oc;
         }
     } else {
         $p = array();
@@ -1144,7 +1159,7 @@ function(res)     ::= ns1(f) OPENP variablelist(v) CLOSEP. {
                 $p[] = $value;
             }
         }
-        res = $this->compiler->compileModifierInExpression(f, $p);
+        res = $this->compiler->compileModifierInExpression(f, $p) . oc;
     }
 }
 
@@ -1244,6 +1259,11 @@ static_class_access(res)       ::= ID(v). {
     res = array(v, '');
 }
 
+                  // static class constant with object chain
+static_class_access(res)       ::= ID(v) objectchain(oc). {
+    res = array(v, oc);
+}
+
                   // static class variables
 static_class_access(res)       ::=  DOLLARID(v) arrayindex(a). {
     res = array(v, a, 'property');
@@ -1301,6 +1321,10 @@ scond(res)  ::= SINGLECOND(o). {
         );
    $op = strtolower(str_replace(' ', '', o));
    res = $scond[$op];
+}
+
+matchop(res) ::= MATCHES(o). {
+    res = 'preg_match(';
 }
 
 //

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: SEO Meta Tag Info
- * Version: 2.3.1
+ * Version: 2.3.2
  * Plugin URI: https://www.flatpress.org
  * Description: This plugin allows editing of SEO meta tags description, keywords and robots for Entries, Statics and Categories. Part of the standard distribution. <a href="./fp-plugins/seometataginfo/doc_seometataginfo.txt" title="Anleitung" target="_blank">[Instructions]</a>
  * Author: FlatPress
@@ -138,6 +138,19 @@ if (!defined('SEOMETA_GEN_CANONICAL')) {
  */
 if (!defined('SEOMETA_HIDECOMMENTS')) {
 	define('SEOMETA_HIDECOMMENTS', true);
+}
+
+/**
+ * Return a boolean SEO Meta Tag Info setting.
+ *
+ * The plugin exposes its feature switches as constants that may be defined by
+ * local configuration before the plugin is loaded.
+ *
+ * @param string $name
+ * @return bool
+ */
+function seometataginfo_flag($name) {
+	return defined($name) && (bool)constant($name);
 }
 
 // define storage
@@ -366,7 +379,7 @@ if (defined('SYSTEM_VER') && version_compare(SYSTEM_VER, '0.1010', '>=') && defi
 	}
 
 	# Init the class
-	if (SEOMETA_MIGRATE_DATA) {
+	if (seometataginfo_flag('SEOMETA_MIGRATE_DATA')) {
 		migrate_old(); // migrate old data from previous version of plugin
 	}
 	new plugin_seometatags_entry();
@@ -384,22 +397,22 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	$site_title = $fp_config ['general'] ['title'] ?? '';
 	$BLOG_BASEURL = $fp_config ['general'] ['www'] ?? '';
 	$ogImageMeta = array('url' => '', 'secure_url' => '', 'mime' => '', 'width' => 0, 'height' => 0);
-	if (SEOMETA_GEN_IMAGE_META && SEOMETA_GEN_OPEN_GRAPH) {
+	if (seometataginfo_flag('SEOMETA_GEN_IMAGE_META') && seometataginfo_flag('SEOMETA_GEN_OPEN_GRAPH')) {
 		$ogImageMeta = seometataginfo_get_og_image_meta($BLOG_BASEURL);
 	}
 
 	echo '
 		<!-- BOF SEO Metatag Info -->' . "\n";
 
-	if (SEOMETA_GEN_TITLE_META) {
+	if (seometataginfo_flag('SEOMETA_GEN_TITLE_META')) {
 		$metatitle = apply_filters('wp_title', $fp_config ['general'] ['title'], trim($string ['sep']));
 		echo '		<meta name="title" content="' . htmlspecialchars($metatitle, ENT_QUOTES, $charset) . '">' . "\n";
-		if (SEOMETA_GEN_OPEN_GRAPH) {
+		if (seometataginfo_flag('SEOMETA_GEN_OPEN_GRAPH')) {
 			echo '		<meta property="og:title" content="' . htmlspecialchars($metatitle, ENT_QUOTES, $charset) . '">' . "\n";
 		}
 	}
 
-	if (SEOMETA_GEN_IMAGE_META && SEOMETA_GEN_OPEN_GRAPH && !empty($ogImageMeta ['url'])) {
+	if (seometataginfo_flag('SEOMETA_GEN_IMAGE_META') && seometataginfo_flag('SEOMETA_GEN_OPEN_GRAPH') && !empty($ogImageMeta ['url'])) {
 		echo '		<meta property="og:image" content="' . htmlspecialchars($ogImageMeta ['url'], ENT_QUOTES, $charset) . '">' . "\n";
 		echo '		<meta property="og:image:url" content="' . htmlspecialchars($ogImageMeta ['url'], ENT_QUOTES, $charset) . '">' . "\n";
 		if (!empty($ogImageMeta ['secure_url'])) {
@@ -440,7 +453,7 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	# Now write the tags
 	echo '		<meta name="description" content="' . $encoded_description . '">' . "\n";
 	echo '		<meta name="keywords" content="' . $prepend_keywords . $seo_keywords . '">' . "\n";
-	if (SEOMETA_GEN_OPEN_GRAPH) {
+	if (seometataginfo_flag('SEOMETA_GEN_OPEN_GRAPH')) {
 		echo '		<meta property="og:description" content="' . $encoded_description . '">' . "\n";
 	}
 	$article_published_time = '';
@@ -451,7 +464,7 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		$article_section = seometataginfo_get_article_section();
 		$article_tags = seometataginfo_get_article_tags();
 		echo '		<meta name="author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
-		if (SEOMETA_GEN_OPEN_GRAPH) {
+		if (seometataginfo_flag('SEOMETA_GEN_OPEN_GRAPH')) {
 			echo '		<meta property="og:type" content="article">' . "\n";
 			echo '		<meta property="article:author" content="' . $fp_config ['general'] ['author'] . '">' . "\n";
 			if ($article_published_time !== '') {
@@ -467,11 +480,11 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 			}
 		}
 	} else {
-		if (SEOMETA_GEN_OPEN_GRAPH) {
+		if (seometataginfo_flag('SEOMETA_GEN_OPEN_GRAPH')) {
 			echo '		<meta property="og:type" content="website">' . "\n";
 		}
 	}
-	if (SEOMETA_GEN_OPEN_GRAPH) {
+	if (seometataginfo_flag('SEOMETA_GEN_OPEN_GRAPH')) {
 		echo '		<meta property="og:locale" content="' . $lang . '">' . "\n";
 		echo '		<meta property="og:site_name" content="' . $site_title . '">' . "\n";
 	}
@@ -486,14 +499,14 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		echo $data;
 		echo '">' . "\n";
 	}
-	if (SEOMETA_GEN_CANONICAL) {
+	if (seometataginfo_flag('SEOMETA_GEN_CANONICAL')) {
 		$url = seometataginfo_build_public_url($BLOG_BASEURL);
-		if (SEOMETA_HIDECOMMENTS === true) {
+		if (seometataginfo_flag('SEOMETA_HIDECOMMENTS')) {
 			$url = preg_replace('/#comments/', '', $url);
 			$url = preg_replace('/comments\//', '', $url);
 		}
 		echo '		<link rel="canonical" href="' . htmlspecialchars($url, ENT_QUOTES, $charset) . '">' . "\n";
-		if (SEOMETA_GEN_OPEN_GRAPH) {
+		if (seometataginfo_flag('SEOMETA_GEN_OPEN_GRAPH')) {
 			echo '		<meta property="og:url" content="' . htmlspecialchars($url, ENT_QUOTES, $charset) . '">' . "\n";
 		}
 	}
@@ -763,7 +776,7 @@ function seometataginfo_get_supported_image_info($baseUrl, $relativePath) {
 	}
 
 	$type = (int)$sizeInfo [2];
-	$mime = isset($sizeInfo ['mime']) && is_string($sizeInfo ['mime']) ? trim($sizeInfo ['mime']) : '';
+	$mime = trim($sizeInfo ['mime']);
 	if (!in_array($type, array(2, 3), true)) {
 		return $imageInfo;
 	}
@@ -1311,7 +1324,7 @@ function seometataginfo_get_category_path($category_id, $separator = '/') {
 	$seen = array();
 	$current = $category_id;
 
-	while ($current !== '' && $current !== '0' && !isset($seen [$current])) {
+	while ($current !== '0' && !isset($seen [$current])) {
 		$seen [$current] = true;
 
 		if (!isset($defs [$current]) || trim((string)$defs [$current]) === '') {
@@ -1817,7 +1830,7 @@ function plugin_seometataginfo_init() {
 		return;
 	}
 
-	if (SEOMETA_GEN_TITLE) {
+	if (seometataginfo_flag('SEOMETA_GEN_TITLE')) {
 		add_filter('wp_title', 'makePageTitle', 10, 2);
 	}
 }

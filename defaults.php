@@ -121,7 +121,11 @@ define('ATTACHS_DIR', FP_CONTENT . 'attachs/');
 set_include_path(ABS_PATH);
 
 include (LANG_DIR . 'browserlang.php');
+if (!isset($browserLang) || !is_string($browserLang) || $browserLang === '') {
+	$browserLang = 'en-us';
+}
 define('LANG_DEFAULT', $browserLang);
+
 define('BPT_SORT', SORT_DESC);
 
 /**

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Smarty plugin
  * -------------------------------------------------------------
@@ -58,7 +57,12 @@ function smarty_function_list_categories($params, $template) {
 function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 	global $smarty, $fpdb;
 
-	extract($params);
+	$ild = isset($params ['ild']) ? (string)$params ['ild'] : '<li>';
+	$ird = isset($params ['ird']) ? (string)$params ['ird'] : "</li>\n";
+	$old = isset($params ['old']) ? (string)$params ['old'] : "<ul>\n";
+	$ord = isset($params ['ord']) ? (string)$params ['ord'] : "</ul>\n";
+	$before = '';
+	$after = '';
 
 	if (empty($lines)) {
 		$l = count($indentstack) - 1;
@@ -76,6 +80,7 @@ function do_print_categories_list(&$lines, &$indentstack, &$result, $params) {
 	$v = reset($lines);
 	$vt = ltrim($v);
 
+	$text = '';
 	$indent = utils_countdashes($vt, $text);
 	$indent_old = end($indentstack);
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Newsletter
- * Version: 1.7.3
+ * Version: 1.7.4
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
  * Author URI: https://flatpress.org
@@ -115,7 +115,9 @@ function plugin_newsletter_rmw_file(string $file, callable $callback): bool {
 	rewind($fp);
 	$content = $size > 0 ? fread($fp, $size) : '';
 	// Split into lines and remove empty ones
-	$lines = $content === '' ? [] : array_filter(explode("\n", str_replace(["\r\n","\r"], "\n", rtrim($content, "\r\n"))), 'strlen');
+	$lines = $content === '' ? [] : array_filter(explode("\n", str_replace(["\r\n","\r"], "\n", rtrim($content, "\r\n"))), function ($line) {
+		return $line !== '';
+	});
 
 	$newLines = $callback($lines);
 	rewind($fp);
@@ -152,9 +154,11 @@ function plugin_newsletter_read_lines(string $file): array {
 	if ($content === '') {
 		return [];
 	}
-	// Normiere auf "\n" und splitte
+	// Normalize to “\n” and split
 	$normalized = str_replace(["\r\n", "\r"], "\n", rtrim($content, "\r\n"));
-	return array_filter(explode("\n", $normalized), 'strlen');
+	return array_filter(explode("\n", $normalized), function ($line) {
+		return $line !== '';
+	});
 }
 
 /**
@@ -1575,7 +1579,6 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 		});
 	});
 }
-
 
 // Plugin file is loaded with every request - Trigger update check
 plugin_newsletter_maybe_update_blocklist();

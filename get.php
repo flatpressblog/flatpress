@@ -4,9 +4,12 @@
  * Module: get.php
  * Function: BBCODE_USE_FILEWRAPPER
  * Purpose: Mask the path of the attachs dir
- * Change-Date: 23.11.2024, by FKM
+ * Change-Date: 12.05.2026, by FKM
  */
 require_once 'defaults.php';
+
+$fp_config = isset($fp_config) && is_array($fp_config) ? $fp_config : array();
+$lang = isset($lang) && is_array($lang) ? $lang : array();
 
 // Load language file
 if (defined('CONFIG_DIR')) {
@@ -16,7 +19,7 @@ if (defined('CONFIG_DIR')) {
 		require_once $settings_file;
 	}
 }
-$langId = $fp_config ['locale'] ['lang'];
+$langId = isset($fp_config ['locale'] ['lang']) ? (string)$fp_config ['locale'] ['lang'] : 'en-us';
 $langFile = ABS_PATH . PLUGINS_DIR . 'bbcode/lang/lang.' . $langId . '.php';
 
 if (!file_exists($langFile)) {
@@ -25,7 +28,7 @@ if (!file_exists($langFile)) {
 }
 require_once $langFile;
 
-$lang = $lang ['plugin'] ['bbcode'];
+$lang = isset($lang ['plugin'] ['bbcode']) && is_array($lang ['plugin'] ['bbcode']) ? $lang ['plugin'] ['bbcode'] : array();
 
 // Load the validation
 require_once ABS_PATH . PLUGINS_DIR . 'bbcode/inc/isValidFileDownloadUrl.php';

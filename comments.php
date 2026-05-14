@@ -13,7 +13,7 @@ if (!defined('MOD_INDEX')) {
 	}
 }
 
-$module = comment_main($module);
+$module = comment_main(isset($module) ? $module : null);
 
 function comment_main($module) {
 	global $fpdb, $fp_params, $smarty, $fp_config, $current_entry;
@@ -71,8 +71,12 @@ function comment_feed() {
 		$entry_title = 'Undefined Title';
 	}
 
-	echo "\n" . '<link rel="alternate" type="application/rss+xml" title="' . $entry_title . ' » ' . $lang ['main'] ['comments'] . ' | RSS 2.0" href="' . theme_comments_feed_link('rss2', $fp_params ['entry']) . '">';
-	echo "\n" . '<link rel="alternate" type="application/atom+xml" title="' . $entry_title . ' » ' . $lang ['main'] ['comments'] . ' | Atom 1.0" href="' . theme_comments_feed_link('atom', $fp_params ['entry']) . '">' . "\n";
+	echo '
+		<!-- BOF Comments RSS and Atom Feed -->
+		<link rel="alternate" type="application/rss+xml" title="' . $entry_title . ' » ' . $lang ['main'] ['comments'] . ' | RSS 2.0" href="' . theme_comments_feed_link('rss2', $fp_params ['entry']) . '">
+		<link rel="alternate" type="application/atom+xml" title="' . $entry_title . ' » ' . $lang ['main'] ['comments'] . ' | Atom 1.0" href="' . theme_comments_feed_link('atom', $fp_params ['entry']) . '">
+		<!-- EOF Comments RSS and Atom Feed -->
+	';
 }
 add_action('wp_head', 'comment_feed');
 
@@ -354,5 +358,4 @@ function commentform() {
 		}
 	}
 }
-
 ?>

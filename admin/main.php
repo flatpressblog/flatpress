@@ -11,7 +11,7 @@ define('MOD_ADMIN_PANEL', 1);
 // Deactivate OPcache when the theme panel is called up
 if (function_exists('opcache_get_status') && ini_get('opcache.enable')) {
 	if (isset($_GET ['p']) && $_GET ['p'] === 'themes') {
-		ini_set('opcache.enable', 0);
+		ini_set('opcache.enable', '0');
 	}
 }
 
@@ -24,7 +24,7 @@ function wp_nonce_ays($action = '') {
 	die('We apologize, an error occurred.' . ($action ? ' Action: ' . htmlspecialchars($action) : ''));
 }
 
-/*
+/**
  * function admin_is_user_loggedin() {
  * return ($u=user_loggedin()) && utils_checkreferer() ;
  * }
@@ -220,7 +220,10 @@ admin_panelstrings('admin.' . ADMIN_PANEL);
 theme_init($smarty);
 $smarty->registerPlugin('function', 'controlpanel', 'showcontrolpanel');
 
-$v = $lang ['admin'] [$panel] [$action];
+$panel = isset($panel) ? (string)$panel : (defined('ADMIN_PANEL') ? (string)ADMIN_PANEL : 'main');
+$action = isset($action) ? (string)$action : (defined('ADMIN_PANEL_ACTION') ? (string)ADMIN_PANEL_ACTION : 'default');
+$lang = isset($lang) && is_array($lang) ? $lang : array();
+$v = isset($lang ['admin'] [$panel] [$action]) && is_array($lang ['admin'] [$panel] [$action]) ? $lang ['admin'] [$panel] [$action] : array();
 
 $smarty->assign('panelstrings', $v);
 $smarty->assign('plang', $v);
@@ -244,5 +247,4 @@ if (isset($_GET ['mod'])) {
 } else {
 	$smarty->display('admin.tpl');
 }
-
 ?>

@@ -53,6 +53,7 @@ function config_load($conffile = CONFIG_FILE) {
 		$resolved = $resolve($conffile);
 	}
 
+	$fp_config = array();
 	include $resolved;
 
 	return $fp_config;

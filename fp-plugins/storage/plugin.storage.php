@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Storage
  * Description: Displays storage information from FlatPress. Part of the standard distribution.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
  * Author URI: https://flatpress.org
@@ -319,9 +319,10 @@ if (class_exists('AdminPanelAction')) {
 		return (float) ($val * pow(1024, isset($pow [$u]) ? $pow [$u] : 0));
 	}
 
-	/**
+	 /**
 	 * Detects per-user webspace quota via `quota` (preferred), config constant, or filesystem fallback; caches result (APCu+JSON).
-	 * @param string $root Root path for filesystem fallback; @param int $ttl Cache TTL in seconds.
+	 * @param string $root Root path for filesystem fallback.
+	 * @param int $ttl Cache TTL in seconds.
 	 * @return array{total_bytes:float,used_bytes:float|null,free_bytes:float|null,source:string}
 	 */
 	function plugin_storage_detect_webspace_quota($root, $ttl = 3600) {
@@ -426,7 +427,8 @@ if (class_exists('AdminPanelAction')) {
 
 		/**
 		 * Scales a number by successive powers of $base and returns the compact value with its unit exponent.
-		 * @param float|int $number Input value; @param int $base Typically 1000 or 1024.
+		 * @param float|int $num Input value.
+		 * @param int $sep Typically 1000 or 1024.
 		 * @return array{0:string,1:int} [formattedValue, exponentIndex]
 		 */
 		function format_number($num, $sep) {
@@ -628,6 +630,7 @@ if (class_exists('AdminPanelAction')) {
 			$ttl = 120;
 			$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 			$ck = 'fp:storage:dirsize:v1:' . sha1($root);
+			$cf = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/storage.dirsize.json';
 			$sz = false;
 			if ($apcu_on) {
 				$ok = false;
@@ -638,7 +641,6 @@ if (class_exists('AdminPanelAction')) {
 			}
 			if ($sz === false) {
 				// Try file cache fallback
-				$cf = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/storage.dirsize.json';
 				if (@file_exists($cf)) {
 					$mt = @filemtime($cf);
 					if ($mt !== false && (time() - (int)$mt) < $ttl) {

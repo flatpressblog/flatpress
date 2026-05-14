@@ -54,7 +54,7 @@ class Smarty extends \Smarty\TemplateBase {
 	/**
 	 * smarty version
 	 */
-	const SMARTY_VERSION = '5.7.0';
+	const SMARTY_VERSION = '5.8.0';
 
 	/**
 	 * define caching modes
@@ -1344,10 +1344,8 @@ class Smarty extends \Smarty\TemplateBase {
 			}
 			$_filepath = (string)$_file;
 			if ($_file->isDir()) {
-				if (!$_compile->isDot()) {
-					// delete folder if empty
-					@rmdir($_file->getPathname());
-				}
+				// delete folder if empty
+				@rmdir($_file->getPathname());
 			} else {
 				// delete only php files
 				if (substr($_filepath, -4) !== '.php') {
@@ -1385,8 +1383,6 @@ class Smarty extends \Smarty\TemplateBase {
 						&& (!function_exists('ini_get') || strlen(ini_get('opcache.restrict_api')) < 1)
 					) {
 						opcache_invalidate($_filepath, true);
-					} elseif (function_exists('apc_delete_file')) {
-						apc_delete_file($_filepath);
 					}
 				}
 			}

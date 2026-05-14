@@ -1,5 +1,11 @@
 <?php
 
+if (!function_exists('htd')) {
+	function htd($text) {
+		return $text;
+	}
+}
+
 function wptexturize($text) {
 	$output = '';
 	// Capture tags and everything inside them
@@ -642,13 +648,14 @@ function funky_javascript_fix($text) {
 	return $text;
 }
 
-/*
+/**
  * balanceTags
  *
  * Balances Tags of string using a modified stack.
  *
- * @param text Text to be balanced
- * @return Returns balanced text
+ * @param string $text Text to be balanced.
+ * @param int $is_comment Whether the text is a comment.
+ * @return string Balanced text.
  * @author Leonard Lin (leonard@acm.org)
  * @version v1.1
  * @date November 4, 2001
@@ -801,7 +808,7 @@ function addslashes_gpc($gpc) {
 
 function antispambot($emailaddy, $mailto = 0) {
 	$emailNOSPAMaddy = '';
-	srand((float) microtime() * 1000000);
+	srand((int) ((float) microtime() * 1000000));
 	for($i = 0; $i < strlen($emailaddy); $i = $i + 1) {
 		$j = floor(rand(0, 1 + $mailto));
 		if ($j == 0) {
@@ -830,7 +837,7 @@ function wp_rel_nofollow($text) {
 	return $text;
 }
 
-/*
+/**
  * function convert_smilies($text) {
  * global $wp_smiliessearch, $wp_smiliesreplace;
  * $output = '';
@@ -898,8 +905,13 @@ function wp_iso_descrambler($string) {
 // give it a date, it will give you the same date as GMT
 function get_gmt_from_date($string) {
 	// note: this only substracts $time_difference from the given date
-	preg_match('#([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})#', $string, $matches);
-	$string_time = gmmktime($matches [4], $matches [5], $matches [6], $matches [2], $matches [3], $matches [1]);
+	if (!preg_match('#([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})#', $string, $matches)) {
+		return $string;
+	}
+	$string_time = gmmktime((int) $matches [4], (int) $matches [5], (int) $matches [6], (int) $matches [2], (int) $matches [3], (int) $matches [1]);
+	if ($string_time === false) {
+		return $string;
+	}
 	$string_gmt = gmdate('Y-m-d H:i:s', $string_time - get_settings('gmt_offset') * 3600);
 	return $string_gmt;
 }
@@ -907,8 +919,13 @@ function get_gmt_from_date($string) {
 // give it a GMT date, it will give you the same date with $time_difference added
 function get_date_from_gmt($string) {
 	// note: this only adds $time_difference to the given date
-	preg_match('#([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})#', $string, $matches);
-	$string_time = gmmktime($matches [4], $matches [5], $matches [6], $matches [2], $matches [3], $matches [1]);
+	if (!preg_match('#([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})#', $string, $matches)) {
+		return $string;
+	}
+	$string_time = gmmktime((int) $matches [4], (int) $matches [5], (int) $matches [6], (int) $matches [2], (int) $matches [3], (int) $matches [1]);
+	if ($string_time === false) {
+		return $string;
+	}
 	$string_localtime = gmdate('Y-m-d H:i:s', $string_time + get_settings('gmt_offset') * 3600);
 	return $string_localtime;
 }
@@ -930,13 +947,18 @@ function iso8601_timezone_to_offset($timezone) {
 // converts an iso8601 date to MySQL DateTime format used by post_date[_gmt]
 function iso8601_to_datetime($date_string, $timezone = USER) {
 	if ($timezone == GMT) {
-		preg_match('#([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(Z|[\+|\-][0-9]{2,4}){0,1}#', $date_string, $date_bits);
+		if (!preg_match('#([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(Z|[\+|\-][0-9]{2,4}){0,1}#', $date_string, $date_bits)) {
+			return $date_string;
+		}
 		if (!empty($date_bits [7])) { // we have a timezone, so let's compute an offset
 			$offset = iso8601_timezone_to_offset($date_bits [7]);
 		} else { // we don't have a timezone, so we assume user local timezone (not server's!)
 			$offset = 3600 * get_settings('gmt_offset');
 		}
-		$timestamp = gmmktime($date_bits [4], $date_bits [5], $date_bits [6], $date_bits [2], $date_bits [3], $date_bits [1]);
+		$timestamp = gmmktime((int) $date_bits [4], (int) $date_bits [5], (int) $date_bits [6], (int) $date_bits [2], (int) $date_bits [3], (int) $date_bits [1]);
+		if ($timestamp === false) {
+			return $date_string;
+		}
 		$timestamp -= $offset;
 		return gmdate('Y-m-d H:i:s', $timestamp);
 	} elseif ($timezone == USER) {
@@ -967,23 +989,23 @@ function human_time_diff($from, $to = '') {
 	if ($diff <= 3600) {
 		$mins = round($diff / 60);
 		if ($mins <= 1) {
-			$since = __('1 min');
+			$since = htd('1 min');
 		} else {
-			$since = sprintf(__('%s mins'), $mins);
+			$since = sprintf(htd('%s mins'), $mins);
 		}
 	} elseif ($diff <= 86400) {
 		$hours = round($diff / 3600);
 		if ($hours <= 1) {
-			$since = __('1 hour');
+			$since = htd('1 hour');
 		} else {
-			$since = sprintf(__('%s hours'), $hours);
+			$since = sprintf(htd('%s hours'), $hours);
 		}
 	} else {
 		$days = round($diff / 86400);
 		if ($days <= 1) {
-			$since = __('1 day');
+			$since = htd('1 day');
 		} else {
-			$since = sprintf(__('%s days'), $days);
+			$since = sprintf(htd('%s days'), $days);
 		}
 	}
 
@@ -1274,5 +1296,4 @@ function ent2ncr($text) {
 	}
 	return $text;
 }
-
 ?>

@@ -1,8 +1,8 @@
 <?php
-/*
+/**
  * Plugin Name: Support
  * Description: Shows support data in the Maintain menu. Part of the standard distribution.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
  * Author URI: https://flatpress.org
@@ -105,6 +105,8 @@ if (class_exists('AdminPanelAction')) {
 				/** @phpstan-ignore-next-line */
 				require $pluginConfigPath;
 			}
+			$pluginConfigVars = get_defined_vars();
+			$fp_plugins = isset($pluginConfigVars ['fp_plugins']) && is_array($pluginConfigVars ['fp_plugins']) ? $pluginConfigVars ['fp_plugins'] : array();
 			global $fp_config;
 
 			$BASE_DIR = defined('BASE_DIR') ? BASE_DIR : null;

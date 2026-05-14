@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The plugin's configuration panel
  *
@@ -76,7 +75,7 @@ class admin_uploader_gallerycaptions extends AdminPanelAction {
 		$currentGalleryImages = array();
 		// current gallery's captions
 		$captionsOfCurrentGallery = array();
-		if (is_string($currentGallery) && $currentGallery !== '') {
+		if (is_string($currentGallery)) {
 			// current gallery's images
 			$currentGalleryImages = gallery_read_images('images/' . $currentGallery);
 			$captionsOfCurrentGallery = gallery_read_captions('images/' . $currentGallery);

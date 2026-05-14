@@ -1,5 +1,20 @@
 <?php
 /**
+ * Read a value from a theme configuration array.
+ *
+ * Theme configuration files are included at runtime and may extend the default
+ * $theme array with keys PHPStan cannot infer from the static initializer.
+ *
+ * @param array<string,mixed> $source
+ * @param string $key
+ * @param mixed $default
+ * @return mixed
+ */
+function theme_array_value(array $source, $key, $default = null) {
+	return array_key_exists($key, $source) ? $source [$key] : $default;
+}
+
+/**
  * Loads and initializes theme settings.
  *
  * @global array $fp_config
@@ -68,15 +83,17 @@ function theme_loadsettings() {
 		} else {
 			define('THEME_LEGACY_MODE', false);
 
-			if ($theme ['default_style']) {
+			$defaultStyle = theme_array_value($theme, 'default_style');
+			if (is_string($defaultStyle) && $defaultStyle !== '') {
 
 				if (!isset($fp_config ['general'] ['style'])) {
-					$fp_config ['general'] ['style'] = $theme ['default_style'];
+					$fp_config ['general'] ['style'] = $defaultStyle;
 				}
 
 				include(THEMES_DIR . THE_THEME . "/" . $fp_config ['general'] ['style'] . "/style.conf.php");
+				$themeVars = get_defined_vars();
 
-				$theme ['style'] = $style;
+				$theme ['style'] = isset($themeVars ['style']) && is_array($themeVars ['style']) ? $themeVars ['style'] : array();
 			} else {
 
 				$theme ['style'] = array(
@@ -307,7 +324,9 @@ function get_wp_head() {
 	}
 }
 
-$smarty->registerPlugin('function', 'header', 'get_wp_head');
+if (isset($smarty)) {
+	$smarty->registerPlugin('function', 'header', 'get_wp_head');
+}
 
 /**
  * Output the configured footer HTML.
@@ -328,7 +347,9 @@ function get_wp_footer() {
 	do_action('wp_footer');
 }
 
-$smarty->registerPlugin('function', 'footer', 'get_wp_footer');
+if (isset($smarty)) {
+	$smarty->registerPlugin('function', 'footer', 'get_wp_footer');
+}
 
 /**
  * Send the Content-Type header with the configured charset.
@@ -429,7 +450,9 @@ function smarty_block_page($params, $content) {
 	return $content;
 }
 
-$smarty->registerPlugin('block', 'page', 'smarty_block_page');
+if (isset($smarty)) {
+	$smarty->registerPlugin('block', 'page', 'smarty_block_page');
+}
 
 /**
  * Apply a filter swapping ($hook, $var, ...rest) for Smarty modifier usage.
@@ -791,7 +814,7 @@ function theme_entry_categories($cats, $link = true, $separator = ', '): ?string
 			$filed [] = (string)$name;
 		}
 	}
-	return $filed ? implode((string)$separator, $filed) : null;
+	return implode((string)$separator, $filed);
 }
 
 /**
@@ -839,5 +862,4 @@ function &theme_comments_filters(&$contentarr, $key) {
 
 	return $contentarr;
 }
-
 ?>

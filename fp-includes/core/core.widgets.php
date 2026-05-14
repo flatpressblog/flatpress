@@ -52,16 +52,16 @@ class widget_indexer extends fs_filelister {
 			}
 
 			$newid = $id;
-			if (@$params) {
-				$params = explode(',', $params);
-			} else {
-				$params = array();
+			$params = array();
+			if (is_array($id)) {
+				$newid = isset($id [0]) ? $id [0] : '';
+				$params = array_slice($id, 1);
 			}
 			$key = is_int($newid) ? $newid : (string)$newid;
 			if ($key === '' || !isset($fp_registered_widgets [$key])) {
 				continue;
 			}
-			$var = $fp_registered_widgets [$newid] ['func'];
+			$var = $fp_registered_widgets [$key] ['func'];
 			if (is_callable($var)) {
 				$content = call_user_func_array($var, $params);
 				if (!is_array($content) || empty($content)) {
@@ -182,9 +182,9 @@ function smarty_block_widgets($params, $content, &$smarty, &$repeat) {
 		}
 	}
 
-	return $content;
 }
 
-$smarty->registerPlugin('block', 'widgets', 'smarty_block_widgets');
-
+if (isset($smarty)) {
+	$smarty->registerPlugin('block', 'widgets', 'smarty_block_widgets');
+}
 ?>

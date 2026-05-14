@@ -517,7 +517,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 			$succ = -5;
 		} else {
 
-			include $f;
+			$comment = plugin_commentcenter_load_array_from_file($f, 'comment');
 
 			$entry = substr($id, 1, 18);
 			$ham = false;
@@ -599,11 +599,12 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This function is the callback for the deletecomm action.
 	 *
-	 * @param int $id:
+	 * @param string $id:
 	 *        	The id of the comment you wish to delete
 	 * @return int Redirect option
 	 */
 	function dodeletecomm($id) {
+		$id = (string) $id;
 		$plugin = &$this->plugin;
 		$smarty = &$this->smarty;
 
@@ -614,7 +615,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 
 		$f = $plugin->pl_dir . $id . '.txt';
 		if (file_exists($f)) {
-			include $f;
+			$comment = plugin_commentcenter_load_array_from_file($f, 'comment');
 			$delete [$entry] ['del'] [$commid] = $comment;
 			$smarty->assign('entries', $delete);
 		} else {
@@ -649,7 +650,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 			$commid = substr($commbig, 21, 20);
 			$f = $plugin->pl_dir . $commbig . '.txt';
 			if (file_exists($f)) {
-				include $f;
+				$comment = plugin_commentcenter_load_array_from_file($f, 'comment');
 				$remove [$entry] ['del'] [$commid] = $comment;
 			}
 		}
@@ -758,11 +759,12 @@ class admin_entry_commentcenter extends AdminPanelAction {
 	/**
 	 * This function is the callback for the deletecomm2 action.
 	 *
-	 * @param int $id:
+	 * @param string $id:
 	 *        	The id of the comment you wish to delete
 	 * @return int Redirect option
 	 */
 	function dodeletecomm2($id) {
+		$id = (string) $id;
 		$smarty = &$this->smarty;
 
 		$smarty->assign('admin_resource', 'plugin:commentcenter/deletecomm');

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Project:     FlatPress
  * File:        validate_criteria.isValidPassword.php
@@ -31,8 +30,8 @@
  *
  * @param string $value the value being tested
  * @param boolean $empty if field can be empty
- * @param array params validate parameter values
- * @param array formvars form var values
+ * @param array $params validate parameter values
+ * @param array $formvars form var values
  */
 function smarty_validate_criteria_isValidPassword($value, $empty, &$params, &$formvars) {
 	if(!isset($params['field2'])) {
@@ -46,5 +45,4 @@ function smarty_validate_criteria_isValidPassword($value, $empty, &$params, &$fo
 	return user_login($formvars[$params['field']], $formvars[$params['field2']]);
 
 }
-
 ?>
