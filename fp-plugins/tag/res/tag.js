@@ -4,6 +4,10 @@ if ('undefined' == typeof bbtCustomFunctions) {
 if (undefined != typeof window.jQuery) {
 	(function($) {
 
+		function trimText(value) {
+			return value == null ? '' : String(value).trim();
+		}
+
 		var vdfnTag = {
 			/**
 			 * This is the tag input
@@ -66,15 +70,15 @@ if (undefined != typeof window.jQuery) {
 
 				// Remove [tag] from textarea
 				vdfnTag.rmTextarea();
-				$('textarea#content').blur(vdfnTag.rmTextarea);
+				$('textarea#content').on('blur', vdfnTag.rmTextarea);
 
 				// Init our system
 				vdfnTag.add();
 				target.val('');
-				target.keydown(vdfnTag.keypress).focus(vdfnTag.keypress);
+				target.on('keydown', vdfnTag.keypress).on('focus', vdfnTag.keypress);
 
 				// Restore the tag in the input at the submissum of the form
-				$('form').submit(vdfnTag.onsubmit);
+				$('form').on('submit', vdfnTag.onsubmit);
 			},
 
 			/**
@@ -83,11 +87,11 @@ if (undefined != typeof window.jQuery) {
 			 */
 			'add' : function() {
 				var target = $(vdfnTag.input);
-				var tags = $.trim(target.val()).split(',');
+				var tags = trimText(target.val()).split(',');
 
 				// Parse every tag
 				for (var i = 0; i < tags.length; i++) {
-					tags[i] = $.trim(tags[i]);
+					tags[i] = trimText(tags[i]);
 
 					if (tags[i] === '') {
 						// Not a real tag
@@ -95,7 +99,7 @@ if (undefined != typeof window.jQuery) {
 						// Don't duplicate
 					} else {
 						var span = $('<span></span>').text(tags[i]).attr('title', vdfnTagRemove);
-						span.click(function() {
+						span.on('click', function() {
 							var tag = $(this).text();
 							vdfnTag.current.splice(vdfnTag.current.indexOf(tag), 1);
 							$(this).remove();
@@ -146,7 +150,7 @@ if (undefined != typeof window.jQuery) {
 				});
 
 				tagadd += target.val();
-				target.unbind();
+				target.off();
 				target.val(tagadd);
 			},
 
@@ -234,11 +238,11 @@ if (undefined != typeof window.jQuery) {
 					'width' : widthval
 				});
 
-				$('.tagsuggestions li').click(function() {
+				$('.tagsuggestions li').on('click', function() {
 					$(vdfnTag.input).val($(this).text());
 					vdfnTag.add();
 					return false;
-				}).mouseover(vdfnTag.suggover).mouseout(vdfnTag.suggout);
+				}).on('mouseover', vdfnTag.suggover).on('mouseout', vdfnTag.suggout);
 
 				target.one('blur', vdfnTag.destroySugg);
 			},
@@ -270,7 +274,7 @@ if (undefined != typeof window.jQuery) {
 				if (iskeyboard) {
 					$(vdfnTag.input).val($(element).text());
 				} else {
-					$(vdfnTag.input).unbind('blur');
+					$(vdfnTag.input).off('blur');
 				}
 			},
 
@@ -293,7 +297,7 @@ if (undefined != typeof window.jQuery) {
 			}
 		};
 
-		$(document).ready(vdfnTag.init);
+		$(vdfnTag.init);
 
 		/**
 		 * This function modifies the default behavior of BBToolbar's
@@ -303,7 +307,7 @@ if (undefined != typeof window.jQuery) {
 		 */
 		bbtCustomFunctions.tag = function() {
 			var target = $(vdfnTag.input);
-			target.focus();
+			target.trigger('focus');
 			$(window).scrollTop(target.offset().top);
 			return false;
 		};

@@ -76,7 +76,7 @@ global $lang;
 
 					// Add autoplay button
 					if ($('.pswp__button--autoplay').length === 0) {
-						$('<button class="pswp__button pswp__button--autoplay" title="<?php echo htmlspecialchars($lang['plugin']['photoswipe']['tooltip_autoplaybutton'], ENT_QUOTES); ?>"></button>').insertAfter('.pswp__button--zoom');
+						$('<button class="pswp__button pswp__button--autoplay" title="<?php echo htmlspecialchars($lang ['plugin'] ['photoswipe'] ['tooltip_autoplaybutton'], ENT_QUOTES); ?>"></button>').insertAfter('.pswp__button--zoom');
 					}
 
 					// Autoplay function
@@ -86,12 +86,12 @@ global $lang;
 						if (_autoplayId) {
 							clearInterval(_autoplayId);
 							_autoplayId = null;
-							$(this).removeClass('stop').attr('title', '<?php echo htmlspecialchars($lang['plugin']['photoswipe']['tooltip_autoplaybutton'], ENT_QUOTES); ?>');
+							$(this).removeClass('stop').attr('title', '<?php echo htmlspecialchars($lang ['plugin'] ['photoswipe'] ['tooltip_autoplaybutton'], ENT_QUOTES); ?>');
 						} else {
 							_autoplayId = setInterval(() => {
 								lightBox.next();
 							}, 5000);
-							$(this).addClass('stop').attr('title', '<?php echo htmlspecialchars($lang['plugin']['photoswipe']['tooltip_autoplaybutton_stop'], ENT_QUOTES); ?>');
+							$(this).addClass('stop').attr('title', '<?php echo htmlspecialchars($lang ['plugin'] ['photoswipe'] ['tooltip_autoplaybutton_stop'], ENT_QUOTES); ?>');
 						}
 					});
 
@@ -166,6 +166,4 @@ global $lang;
 				});
 			}
 
-			$(document).ready(function () {
-				initPhotoSwipePlugin();
-			});
+			$(initPhotoSwipePlugin);

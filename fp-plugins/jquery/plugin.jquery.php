@@ -10,9 +10,9 @@
 function plugin_jquery_head() {
 	$random_hex = RANDOM_HEX;
 	$pdir = plugin_geturl('jquery');
-	$css = utils_asset_ver($pdir . 'res/jqueryui/1.14.1/jquery-ui.css', SYSTEM_VER);
-	$js = utils_asset_ver($pdir . 'res/jquery/3.7.1/jquery-3.7.1.js', SYSTEM_VER);
-	$jsUi = utils_asset_ver($pdir . 'res/jqueryui/1.14.1/jquery-ui.js', SYSTEM_VER);
+	$css = utils_asset_ver($pdir . 'res/jqueryui/1.14.2/jquery-ui.css', SYSTEM_VER);
+	$js = utils_asset_ver($pdir . 'res/jquery/4.0.0/jquery-4.0.0.js', SYSTEM_VER);
+	$jsUi = utils_asset_ver($pdir . 'res/jqueryui/1.14.2/jquery-ui.js', SYSTEM_VER);
 
 	echo '
 		<!-- start of jsUtils -->
