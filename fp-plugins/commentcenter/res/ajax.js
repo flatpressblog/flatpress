@@ -88,7 +88,7 @@ function checkboxa() {
 	tdend=rel.indexOf(']');
 	td=rel.substr(tdbegin+1, tdend-tdbegin-1);
 	check=rel.substr(0, tdbegin)=='selectAll';
-	$('.'+td+' input[type=checkbox]').attr('checked', check);
+	$('.' + td + ' input[type=checkbox]').prop('checked', check);
 	return false;
 }
 
@@ -102,15 +102,15 @@ function radioEdit() {
 
 	reDone=false;
 
-	$('input[type=radio]').click(radioClick).each(function() {
-		if($(this).attr('checked')) {
+	$('input[type=radio]').on('click', radioClick).each(function() {
+		if ($(this).prop('checked')) {
 			reDone=true;
-			$(this).click();
+			$(this).trigger('click');
 		}
 	});
 
 	if(!reDone) {
-		$('input[value=all_entries]').click().attr('checked', false);
+		$('input[value=all_entries]').trigger('click').prop('checked', false);
 	}
 }
 
@@ -147,9 +147,9 @@ function akismetOptionsReady() {
 		return;
 	}
 
-	$('input[name=akismet_check]').click(akismetOptionsReady);
+	$('input[name=akismet_check]').off('click', akismetOptionsReady).on('click', akismetOptionsReady);
 
-	status=$('input[name=akismet_check]').attr('checked');
+	status=$('input[name=akismet_check]').prop('checked');
 
 	el=$('.akismet_opts');
 
@@ -162,12 +162,12 @@ function akismetOptionsReady() {
 	return true;
 }
 
-$(document).ready(function() {
+$(function() {
 	window.setTimeout(fpRemoveNotifies, 3000);
-	$('a[rel*="polup"]').click(clickPolicy);
-	$('a[rel*="poldown"]').click(clickPolicy);
+	$('a[rel*="polup"]').on('click', clickPolicy);
+	$('a[rel*="poldown"]').on('click', clickPolicy);
 
-	$('.commentcenter_select').css('display', 'block').find('a').click(checkboxa);
+	$('.commentcenter_select').css('display', 'block').find('a').on('click', checkboxa);
 
 	radioEdit();
 	akismetOptionsReady();

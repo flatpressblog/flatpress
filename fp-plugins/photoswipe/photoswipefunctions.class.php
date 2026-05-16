@@ -393,7 +393,7 @@ class PhotoSwipeFunctions {
 	static function pswpHead() {
 		$random_hex = RANDOM_HEX;
 		$pdir = plugin_geturl('photoswipe');
-		$jQueryOldJs = utils_asset_ver($pdir . 'res/jquery-2.2.2/jquery-2.2.2.min.js', SYSTEM_VER);
+		$jQueryOldJs = utils_asset_ver($pdir . 'res/jquery-3.7.1/jquery-3.7.1.js', SYSTEM_VER);
 		$pswpUiJs = utils_asset_ver($pdir . 'res/photoswipe-4.1.3/photoswipe-ui-default.js', SYSTEM_VER);
 		$pswpJs = utils_asset_ver($pdir . 'res/photoswipe-4.1.3/photoswipe.js', SYSTEM_VER);
 		$pswpSkinCss = utils_asset_ver($pdir . 'res/photoswipe-4.1.3/default-skin/default-skin.css', SYSTEM_VER);

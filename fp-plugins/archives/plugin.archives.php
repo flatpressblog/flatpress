@@ -320,14 +320,14 @@ function plugin_archives_footer() {
 			var pluginArchive = \'\';
 			function toggleArchive(pdir) {
 				pluginArchive = pdir;
-				$(document).ready(function () {
+				$(function () {
 					$(\'#widget-archives ul > li.archive-year, #footernav ul > li.archive-year\') .each(function (index) {
 						const uniqueId = \'archive-\' + index;
 							$(this).find(\'.togglelink\').attr(\'aria-controls\', uniqueId);
 						$(this).children(\'ul\').attr(\'id\', uniqueId);
 						const toggleEl = $(this).children(\'.togglelink\')[0];
 						toggle(toggleEl);
-						$(toggleEl).click(function () {
+						$(toggleEl).on(\'click\', function () {
 							toggle(this);
 							return false;
 						});
