@@ -234,12 +234,29 @@ class admin_config_default extends AdminPanelActionValidated {
 					$success = 2;
 				}
 			}
+		} else {
+			$current_user = isset($_SESSION ['userid']) ? $_SESSION ['userid'] : null;
+			if (is_string($current_user) && $current_user !== '') {
+				$admin = user_get($current_user);
+				if (is_array($admin)) {
+					$admin ['www'] = $postData ['www'];
+					$admin ['email'] = $postData ['email'];
+					user_add($admin);
+				}
+			}
 		}
 
+		$config_saved = config_save();
 		if ($success === null) {
-			$success = config_save() ? 1 : -1;
-		} else {
-			config_save();
+			$success = $config_saved ? 1 : -1;
+		} elseif (!$config_saved) {
+			$success = -1;
+		}
+
+		if ($config_saved && function_exists('fp_setup_migration_mode') && fp_setup_migration_mode()) {
+			if (function_exists('fp_setup_migration_write_lockfile') && !fp_setup_migration_write_lockfile()) {
+				$success = -1;
+			}
 		}
 
 		// Re-assign values directly to Smarty template to reflect changes
