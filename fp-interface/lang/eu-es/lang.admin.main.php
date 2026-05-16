@@ -26,6 +26,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 
 	'setup_hide_failed_head' => 'Segurtasun-oharra: konfigurazioa oraindik eskuragarri dago!',
 	'setup_hide_failed_descr' => 'FlatPressek ezin izan ditu konfigurazioko sarrera-puntuak automatikoki ezkutatu. Mesedez, aldatu setup.php izena .setup.php-ra eta setup/ direktorioaren izena .setup/-era (edo ukatu sarbidea zure web-zerbitzariaren konfigurazioaren bidez).',
-	'setup_hide_failed_items' => 'Eragindako bideak:'
+	'setup_hide_failed_items' => 'Eragindako bideak:',
+	'location_migration_head' => 'Kokapen-migrazio modua aktibo dago',
+	'location_migration_descr' => 'Ireki konfigurazioa, egiaztatu blogaren oinarrizko URLa eta gorde konfigurazioa migrazioa osatzeko.',
+	'location_migration_current_url' => 'Aldi baterako hautemandako blogaren oinarrizko URLa:',
+	'location_migration_config_link' => 'Ireki konfigurazioa'
 );
 ?>

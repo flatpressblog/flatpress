@@ -26,6 +26,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 
 	'setup_hide_failed_head' => 'セキュリティ通知: 初回セットアップにまだアクセス可能です！',
 	'setup_hide_failed_descr' => 'FlatPressはセットアップのエントリポイントを自動で非表示に変更できませんでした。手作業で setup.php を .setup.php に、setup/ ディレクトリを .setup/ にリネームしてください（またはWebサーバのパーミッション設定でそれぞれをアクセス不許可としてください）。',
-	'setup_hide_failed_items' => '影響を受けるパス:'
+	'setup_hide_failed_items' => '影響を受けるパス:',
+	'location_migration_head' => 'ロケーション移行モードが有効です',
+	'location_migration_descr' => '移行を完了するには、設定を開き、ブログのベースURLを確認して設定を保存してください。',
+	'location_migration_current_url' => '一時的に検出されたブログのベースURL:',
+	'location_migration_config_link' => '設定を開く'
 );
 ?>

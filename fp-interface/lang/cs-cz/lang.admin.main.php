@@ -26,6 +26,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 
 	'setup_hide_failed_head' => 'Bezpečnostní upozornění: nastavení je stále přístupné!',
 	'setup_hide_failed_descr' => 'FlatPress nedokázal automaticky skrýt vstupní body nastavení. Přejmenujte prosím soubor setup.php na .setup.php a adresář setup/ na .setup/ (nebo odepřete přístup prostřednictvím konfigurace vašeho webového serveru).',
-	'setup_hide_failed_items' => 'Dotčené cesty:'
+	'setup_hide_failed_items' => 'Dotčené cesty:',
+	'location_migration_head' => 'Režim migrace umístění je aktivní',
+	'location_migration_descr' => 'Otevřete prosím konfiguraci, zkontrolujte základní URL blogu a uložte konfiguraci, aby byla migrace dokončena.',
+	'location_migration_current_url' => 'Dočasně zjištěná základní URL blogu:',
+	'location_migration_config_link' => 'Otevřít konfiguraci'
 );
 ?>

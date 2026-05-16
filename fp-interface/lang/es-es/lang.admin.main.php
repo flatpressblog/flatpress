@@ -26,6 +26,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 
 	'setup_hide_failed_head' => 'Aviso de seguridad: ¡la configuración sigue siendo accesible!',
 	'setup_hide_failed_descr' => 'FlatPress no ha podido ocultar automáticamente los puntos de entrada de la configuración. Cambie el nombre de setup.php a .setup.php y el directorio setup/ a .setup/ (o deniegue el acceso a través de la configuración de su servidor web).',
-	'setup_hide_failed_items' => 'Rutas afectadas:'
+	'setup_hide_failed_items' => 'Rutas afectadas:',
+	'location_migration_head' => 'El modo de migración de ubicación está activo',
+	'location_migration_descr' => 'Abra la configuración, compruebe la URL base del blog y guarde la configuración para completar la migración.',
+	'location_migration_current_url' => 'URL base del blog detectada temporalmente:',
+	'location_migration_config_link' => 'Abrir configuración'
 );
 ?>

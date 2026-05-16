@@ -645,11 +645,259 @@ function configured_blog_baseurl() {
 	return $www;
 }
 
-// Define BLOG_BASEURL here (preferred) to avoid Host header injection.
+/**
+ * Returns true when an existing installation intentionally entered migration mode:
+ * settings.conf.php exists, but the setup lock marker is missing.
+ *
+ * This deliberately does not compare host names. DNS aliases, DynDNS, CDN CNAMEs,
+ * split-DNS and reverse proxies are valid operating modes and must not trigger
+ * migration automatically.
+ *
+ * @return bool
+ */
+function fp_setup_migration_mode() {
+	static $active = null;
+	if ($active !== null) {
+		return $active;
+	}
+	if (!defined('CONFIG_FILE') || !defined('LOCKFILE')) {
+		return $active = false;
+	}
+
+	$config = resolve_abspath((string)CONFIG_FILE);
+	$lock = resolve_abspath((string)LOCKFILE);
+
+	return $active = ($config !== '' && is_file($config) && $lock !== '' && !is_file($lock));
+}
+
+/**
+ * Derive the currently requested public base URL for the explicit migration mode.
+ *
+ * The request host is used only in migration mode and only as a temporary runtime
+ * value. It is not persisted unless an authenticated admin saves the config form.
+ * canonical_request_host() validates the host syntax and falls back safely.
+ *
+ * @return string
+ */
+function fp_setup_migration_current_baseurl() {
+	$scheme = (function_exists('is_https') && is_https()) ? 'https://' : 'http://';
+	$host = function_exists('canonical_request_host') ? canonical_request_host() : 'localhost';
+	if ($host === '' || $host === 'localhost') {
+		$serverHost = function_exists('canonical_server_host') ? canonical_server_host() : '';
+		if ($serverHost !== '') {
+			$host = $serverHost;
+		}
+	}
+	$root = defined('BLOG_ROOT') ? (string)BLOG_ROOT : '/';
+	if ($root === '') {
+		$root = '/';
+	}
+	if ($root [0] !== '/') {
+		$root = '/' . $root;
+	}
+	if (substr($root, -1) !== '/') {
+		$root .= '/';
+	}
+
+	$url = normalize_baseurl($scheme . $host . $root);
+	if ($url !== '') {
+		return $url;
+	}
+
+	$fallbackHost = function_exists('canonical_server_host') ? canonical_server_host() : 'localhost';
+	$url = normalize_baseurl($scheme . $fallbackHost . $root);
+	return $url !== '' ? $url : 'http://localhost/';
+}
+
+/**
+ * Normalize a filesystem path for prefix checks and marker payloads.
+ *
+ * @param string $path
+ * @return string
+ */
+function fp_setup_migration_normalize_path($path) {
+	$path = str_replace('\\', '/', (string)$path);
+	return rtrim($path, '/');
+}
+
+/**
+ * Return the cache marker path used to avoid repeated expensive directory scans
+ * within one migration on the same filesystem location.
+ *
+ * @return string
+ */
+function fp_setup_migration_cache_marker() {
+	return resolve_abspath((string)CACHE_DIR . '%%migration.cache-cleared');
+}
+
+/**
+ * Build the cache-clear context for the current migration.
+ *
+ * @return string
+ */
+function fp_setup_migration_cache_context() {
+	$config = defined('CONFIG_FILE') ? resolve_abspath((string)CONFIG_FILE) : '';
+	$stat = ($config !== '' && is_file($config)) ? @stat($config) : false;
+	$mtime = is_array($stat) ? (int)($stat ['mtime'] ?? 0) : 0;
+	$size = is_array($stat) ? (int)($stat ['size'] ?? 0) : 0;
+
+	return sha1(fp_setup_migration_normalize_path((string)ABS_PATH) . '|' . $config . '|' . $mtime . '|' . $size);
+}
+
+/**
+ * Safely clear contents of a FlatPress cache-like directory without following
+ * symlinks and without deleting the base directory itself.
+ *
+ * @param string $directory
+ * @return bool
+ */
+function fp_setup_migration_clear_directory($directory) {
+	$path = resolve_abspath((string)$directory);
+	if ($path === '' || !is_dir($path) || is_link($path)) {
+		return false;
+	}
+
+	$contentRoot = resolve_abspath((string)FP_CONTENT);
+	$contentRootReal = realpath($contentRoot);
+	$pathReal = realpath($path);
+	if ($contentRootReal === false || $pathReal === false) {
+		return false;
+	}
+
+	$contentRootNorm = fp_setup_migration_normalize_path($contentRootReal);
+	$pathNorm = fp_setup_migration_normalize_path($pathReal);
+	if ($pathNorm === $contentRootNorm || strpos($pathNorm . '/', $contentRootNorm . '/') !== 0) {
+		return false;
+	}
+
+	$ok = true;
+	try {
+		$iterator = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator($pathReal, FilesystemIterator::SKIP_DOTS),
+			RecursiveIteratorIterator::CHILD_FIRST
+		);
+
+		foreach ($iterator as $item) {
+			/** @var SplFileInfo $item */
+			$itemPath = $item->getPathname();
+			if ($item->isLink() || $item->isFile()) {
+				if (!@unlink($itemPath) && file_exists($itemPath)) {
+					$ok = false;
+				}
+				continue;
+			}
+			if ($item->isDir()) {
+				if (!@rmdir($itemPath) && is_dir($itemPath)) {
+					$ok = false;
+				}
+			}
+		}
+	} catch (Exception $e) {
+		return false;
+	}
+
+	return $ok;
+}
+
+/**
+ * Clear cache and compile artifacts when an existing installation enters
+ * explicit migration mode by deleting %%setup.lock.
+ *
+ * @return bool
+ */
+function fp_setup_migration_clear_artifacts() {
+	if (!fp_setup_migration_mode()) {
+		return false;
+	}
+
+	$marker = fp_setup_migration_cache_marker();
+	$context = fp_setup_migration_cache_context();
+	if ($marker !== '' && is_file($marker)) {
+		$oldContext = @file_get_contents($marker);
+		if (is_string($oldContext) && trim($oldContext) === $context) {
+			return true;
+		}
+	}
+
+	$cacheOk = fp_setup_migration_clear_directory((string)CACHE_DIR);
+	$compileOk = fp_setup_migration_clear_directory((string)COMPILE_DIR);
+
+	if ($marker !== '') {
+		$markerDir = dirname($marker);
+		if (!is_dir($markerDir)) {
+			@mkdir($markerDir, DIR_PERMISSIONS, true);
+		}
+		@file_put_contents($marker, $context . "\n", LOCK_EX);
+		@chmod($marker, FILE_PERMISSIONS);
+	}
+
+	if (function_exists('apcu_delete_key')) {
+		@apcu_delete_key('config:settings:' . sha1(resolve_abspath((string)CONFIG_FILE)));
+	}
+
+	return $cacheOk || $compileOk;
+}
+
+/**
+ * Mark the explicit migration as completed after settings.conf.php was saved.
+ *
+ * @return bool
+ */
+function fp_setup_migration_write_lockfile() {
+	if (!defined('LOCKFILE')) {
+		return false;
+	}
+	$lock = resolve_abspath((string)LOCKFILE);
+	if ($lock === '') {
+		return false;
+	}
+	$dir = dirname($lock);
+	if (!is_dir($dir) && !@mkdir($dir, DIR_PERMISSIONS, true) && !is_dir($dir)) {
+		return false;
+	}
+	$result = @file_put_contents($lock, 'locked', LOCK_EX);
+	if ($result === false) {
+		return false;
+	}
+	@chmod($lock, FILE_PERMISSIONS);
+
+	if (is_file($lock)) {
+		$marker = function_exists('fp_setup_migration_cache_marker') ? fp_setup_migration_cache_marker() : '';
+		if ($marker !== '' && is_file($marker)) {
+			@unlink($marker);
+		}
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Define BLOG_BASEURL here (preferred) to avoid Host header injection.
+ */
 if (!defined('BLOG_BASEURL')) {
 	$blog_root = defined('BLOG_ROOT') ? (string)BLOG_ROOT : '/';
 	$cfg_url = configured_blog_baseurl();
-	if ($cfg_url !== '') {
+
+	if (fp_setup_migration_mode()) {
+		$migration_url = fp_setup_migration_current_baseurl();
+		define('FP_SETUP_MIGRATION_MODE', true);
+		define('BLOG_BASEURL', $migration_url);
+		define('BLOG_BASEURL_TRUSTED', false);
+		define('BLOG_BASEURL_MIGRATION_CANDIDATE', $migration_url);
+
+		$cfg_file = resolve_abspath((string)CONFIG_FILE);
+		$migration_cfg = load_fp_config_file($cfg_file);
+		if (is_array($migration_cfg)) {
+			if (!isset($migration_cfg ['general']) || !is_array($migration_cfg ['general'])) {
+				$migration_cfg ['general'] = array();
+			}
+			$migration_cfg ['general'] ['www'] = $migration_url;
+			$GLOBALS ['EARLY_FP_CONFIG'] = $migration_cfg;
+		}
+
+		fp_setup_migration_clear_artifacts();
+	} elseif ($cfg_url !== '') {
 		define('BLOG_BASEURL', $cfg_url);
 		define('BLOG_BASEURL_TRUSTED', true);
 	} else {
@@ -657,6 +905,9 @@ if (!defined('BLOG_BASEURL')) {
 		define('BLOG_BASEURL', $scheme . canonical_server_host() . $blog_root);
 		define('BLOG_BASEURL_TRUSTED', false);
 	}
+}
+if (!defined('FP_SETUP_MIGRATION_MODE')) {
+	define('FP_SETUP_MIGRATION_MODE', false);
 }
 
 /**
@@ -673,6 +924,9 @@ if (!defined('BLOG_BASEURL')) {
  *   hints when there are proxy identity signals (or private REMOTE_ADDR).
  */
 function enforce_https_if_configured(): void {
+	if (fp_setup_migration_mode()) {
+		return;
+	}
 	if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
 		return;
 	}

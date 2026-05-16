@@ -26,6 +26,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 
 	'setup_hide_failed_head' => 'Sikkerhedsmeddelelse: opsætningen er stadig tilgængelig!',
 	'setup_hide_failed_descr' => 'FlatPress kunne ikke skjule opsætningens indgangspunkter automatisk. Omdøb venligst setup.php til .setup.php og mappen setup/ til .setup/ (eller nægt adgang via din webserverkonfiguration).',
-	'setup_hide_failed_items' => 'Berørte stier:'
+	'setup_hide_failed_items' => 'Berørte stier:',
+	'location_migration_head' => 'Tilstand for lokationsmigrering er aktiv',
+	'location_migration_descr' => 'Åbn venligst konfigurationen, kontroller bloggens basis-URL, og gem konfigurationen for at afslutte migreringen.',
+	'location_migration_current_url' => 'Midlertidigt registreret basis-URL for bloggen:',
+	'location_migration_config_link' => 'Åbn konfiguration'
 );
 ?>

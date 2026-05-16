@@ -26,6 +26,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 
 	'setup_hide_failed_head' => 'Güvenlik uyarısı: kurulum hala erişilebilir durumda!',
 	'setup_hide_failed_descr' => 'FlatPress, kurulum giriş noktalarını otomatik olarak gizleyemedi. Lütfen setup.php dosyasını .setup.php olarak ve setup/ dizinini .setup/ olarak yeniden adlandırın (veya web sunucusu yapılandırmanız aracılığıyla erişimi reddedin).',
-	'setup_hide_failed_items' => 'Etkilenen yollar:'
+	'setup_hide_failed_items' => 'Etkilenen yollar:',
+	'location_migration_head' => 'Konum geçiş modu etkin',
+	'location_migration_descr' => 'Geçişi tamamlamak için lütfen yapılandırmayı açın, blog temel URL’sini kontrol edin ve yapılandırmayı kaydedin.',
+	'location_migration_current_url' => 'Geçici olarak algılanan blog temel URL’si:',
+	'location_migration_config_link' => 'Yapılandırmayı aç'
 );
 ?>

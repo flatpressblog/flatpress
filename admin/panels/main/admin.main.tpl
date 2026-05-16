@@ -11,6 +11,17 @@
 	</ul>
 {/if}
 
+{if isset($fp_setup_migration_notice)}
+	<ul class="msgs errors">
+		<li><strong>{$panelstrings.location_migration_head|default:'Location migration mode is active'|escape}</strong></li>
+		<li>{$panelstrings.location_migration_descr|default:'Please open the configuration, check the Blog base URL and save the configuration to complete the migration.'|escape}</li>
+		{if isset($fp_setup_migration_notice.candidate_url) && $fp_setup_migration_notice.candidate_url ne ''}
+			<li>{$panelstrings.location_migration_current_url|default:'Temporarily detected Blog base URL:'|escape} <code>{$fp_setup_migration_notice.candidate_url|escape}</code></li>
+		{/if}
+		<li><a href="{$fp_setup_migration_notice.config_url|default:'admin.php?p=config'|escape}">{$panelstrings.location_migration_config_link|default:'Open configuration'|escape}</a></li>
+	</ul>
+{/if}
+
 <p>{$panelstrings.descr}</p>
 
 <dl>

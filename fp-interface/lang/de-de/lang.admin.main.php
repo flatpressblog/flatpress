@@ -26,6 +26,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 
 	'setup_hide_failed_head' => 'Sicherheitshinweis: Setup ist noch erreichbar!',
 	'setup_hide_failed_descr' => 'FlatPress konnte die Setup-Einstiegspunkte nicht automatisch verstecken. Bitte benenne setup.php in .setup.php und das Verzeichnis setup/ in .setup/ um (oder sperre den Zugriff serverseitig).',
-	'setup_hide_failed_items' => 'Betroffene Pfade:'
+	'setup_hide_failed_items' => 'Betroffene Pfade:',
+	'location_migration_head' => 'Lokation-Migrationsmodus ist aktiv',
+	'location_migration_descr' => 'Bitte öffne die Konfiguration, prüfe die URL des Blogs und speichere die Konfiguration, um den Umzug abzuschließen.',
+	'location_migration_current_url' => 'Temporär erkannte URL des Blogs:',
+	'location_migration_config_link' => 'Konfiguration öffnen'
 );
 ?>

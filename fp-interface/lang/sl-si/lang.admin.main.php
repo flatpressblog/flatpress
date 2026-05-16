@@ -26,6 +26,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 
 	'setup_hide_failed_head' => 'Varnostno obvestilo: nastavitve so še vedno dostopne!',
 	'setup_hide_failed_descr' => 'FlatPress ni mogel samodejno skriti dostopnih točk za nastavitve. Preimenujte setup.php v .setup.php in imenik setup/ v .setup/ (ali zavrnite dostop prek konfiguracije vašega spletnega strežnika).',
-	'setup_hide_failed_items' => 'Prizadete poti:'
+	'setup_hide_failed_items' => 'Prizadete poti:',
+	'location_migration_head' => 'Način selitve lokacije je aktiven',
+	'location_migration_descr' => 'Odprite konfiguracijo, preverite osnovni URL bloga in shranite konfiguracijo, da dokončate selitev.',
+	'location_migration_current_url' => 'Začasno zaznan osnovni URL bloga:',
+	'location_migration_config_link' => 'Odpri konfiguracijo'
 );
 ?>

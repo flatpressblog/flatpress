@@ -26,6 +26,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 
 	'setup_hide_failed_head' => 'Beveiligingsmelding: setup is nog steeds toegankelijk!',
 	'setup_hide_failed_descr' => 'FlatPress kon de toegangspunten voor setup niet automatisch verbergen. Hernoem setup.php naar .setup.php en de map setup/ naar .setup/ (of weiger toegang via uw webserverconfiguratie).',
-	'setup_hide_failed_items' => 'Getroffen paden:'
+	'setup_hide_failed_items' => 'Getroffen paden:',
+	'location_migration_head' => 'Locatiemigratiemodus is actief',
+	'location_migration_descr' => 'Open de configuratie, controleer de basis-URL van de blog en sla de configuratie op om de migratie te voltooien.',
+	'location_migration_current_url' => 'Tijdelijk gedetecteerde basis-URL van de blog:',
+	'location_migration_config_link' => 'Configuratie openen'
 );
 ?>
