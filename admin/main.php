@@ -228,6 +228,14 @@ $v = isset($lang ['admin'] [$panel] [$action]) && is_array($lang ['admin'] [$pan
 $smarty->assign('panelstrings', $v);
 $smarty->assign('plang', $v);
 
+if ($panel === 'main' && function_exists('fp_setup_migration_mode') && fp_setup_migration_mode()) {
+	$migrationCandidate = defined('BLOG_BASEURL_MIGRATION_CANDIDATE') ? (string)BLOG_BASEURL_MIGRATION_CANDIDATE : (defined('BLOG_BASEURL') ? (string)BLOG_BASEURL : '');
+	$smarty->assign('fp_setup_migration_notice', array(
+		'config_url' => 'admin.php?p=config',
+		'candidate_url' => $migrationCandidate
+	));
+}
+
 if ($panel === 'main' && isset($GLOBALS ['fp_setup_hide_report']) && is_array($GLOBALS ['fp_setup_hide_report'])) {
 	$report = $GLOBALS ['fp_setup_hide_report'];
 	if (isset($report ['errors']) && is_array($report ['errors']) && !empty($report ['errors'])) {

@@ -26,6 +26,10 @@ $lang ['admin'] ['main'] ['default'] = array(
 
 	'setup_hide_failed_head' => 'Уведомление о безопасности: настройка по-прежнему доступна!',
 	'setup_hide_failed_descr' => 'FlatPress не смог автоматически скрыть точки входа в настройку. Пожалуйста, переименуйте файл setup.php в .setup.php, а каталог setup/ в .setup/ (или запретите доступ через настройки вашего веб-сервера).',
-	'setup_hide_failed_items' => 'Затронутые пути:'
+	'setup_hide_failed_items' => 'Затронутые пути:',
+	'location_migration_head' => 'Режим миграции расположения активен',
+	'location_migration_descr' => 'Откройте конфигурацию, проверьте базовый URL блога и сохраните конфигурацию, чтобы завершить миграцию.',
+	'location_migration_current_url' => 'Временно обнаруженный базовый URL блога:',
+	'location_migration_config_link' => 'Открыть конфигурацию'
 );
 ?>
