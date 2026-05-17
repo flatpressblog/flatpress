@@ -1,9 +1,9 @@
 # Under development: FlatPress 1.6
 ## General
 - Added "Location Migration Mode" ([#897](https://github.com/flatpressblog/flatpress/pull/897))
-- The PHP code is now fully compliant with PHPStan Level 5
+- The PHP code is now fully compliant with PHPStan Level 5 ([#893](https://github.com/flatpressblog/flatpress/pull/893), [#894](https://github.com/flatpressblog/flatpress/pull/894))
 - Template engine Smarty:
-  - Updated to version 5.8.0 with PHP 8.5 support
+  - Updated to version 5.8.0 with PHP 8.5 support ([#893](https://github.com/flatpressblog/flatpress/pull/893))
 - New core helpers: ``date_iso8601($timestamp, $offset = null)`` and ``date_id_to_iso8601($id, $offset = null)``. ([#856](https://github.com/flatpressblog/flatpress/pull/856))
 - RSS and Atom feeds and the Categories widget use the Smarty block cache instead of having to go through the Smarty compiler every time. ([#864](https://github.com/flatpressblog/flatpress/pull/864))
 - If APCu is available, the Smarty cache fragments are stored in the APCu cache instead of on disk. ([#865](https://github.com/flatpressblog/flatpress/pull/865))
@@ -30,11 +30,11 @@
     - The HTML button is only displayed if inline HTML is allowed in BBCode. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
 - jQuery plugin update to version 2.2.2 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - includes jQuery 4.0.0 and jQueryUI 1.14.2
-- Archives plugin update to version 1.1.2
+- Archives plugin update to version 1.1.2 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
-- CookieBanner update to version 1.0.4
+- CookieBanner update to version 1.0.4 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
-- PhotoSwipe update to version 2.0.7
+- PhotoSwipe update to version 2.0.7 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
 
 ### Bugfixes
