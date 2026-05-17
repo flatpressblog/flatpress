@@ -32,6 +32,8 @@
     - includes jQuery 4.0.0 and jQueryUI 1.14.2
 - Archives plugin update to version 1.1.2 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
+- Comment Center update to version 1.1.5 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
+    - jQuery / JS legacy code have been updated
 - CookieBanner update to version 1.0.4 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
 - PhotoSwipe update to version 2.0.7 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
