@@ -1,5 +1,6 @@
 # Under development: FlatPress 1.6
 ## General
+- Added "Location Migration Mode" ([#897](https://github.com/flatpressblog/flatpress/pull/897))
 - The PHP code is now fully compliant with PHPStan Level 5
 - Template engine Smarty:
   - Updated to version 5.8.0 with PHP 8.5 support
@@ -27,6 +28,14 @@
         - ``article:author`` - based on the blog author ([#858](https://github.com/flatpressblog/flatpress/pull/858))
 - BBCode plugin: update to version 2.0.3
     - The HTML button is only displayed if inline HTML is allowed in BBCode. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
+- jQuery plugin update to version 2.2.2 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
+    - includes jQuery 4.0.0 and jQueryUI 1.14.2
+- Archives plugin update to version 1.1.2
+    - jQuery / JS legacy code have been updated
+- CookieBanner update to version 1.0.4
+    - jQuery / JS legacy code have been updated
+- PhotoSwipe update to version 2.0.7
+    - jQuery / JS legacy code have been updated
 
 ### Bugfixes
 - PhotoSwipe plugin update to version 2.0.6
