@@ -4,7 +4,7 @@
  * Plugin URI: https://flatpress.org
  * Description: Displays a discreet banner that informs the visitor about the use of cookies and provides a link to the <a href="./admin.php?p=static&action=write&page=privacy-policy" title="Edit me!" >privacy policy</a>. Part of the standard distribution. <a href="#" id="DeleteCookie" title="Reset CookieBanner">[Reset]</a>
  * Author: FlatPress
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author URI: http://flatpress.org
  */
 
