@@ -40,7 +40,7 @@
     - jQuery / JS legacy code have been updated
 
 ### Bugfixes
-- PhotoSwipe plugin update to version 2.0.6
+- PhotoSwipe plugin update to version 2.0.7
 - Thumb plugin update to version 1.1.1
     - If a height has been set for external images, it will no longer be overridden. ([#848](https://github.com/flatpressblog/flatpress/issues/848))
 - LastComment plugin update to version 1.1.3
