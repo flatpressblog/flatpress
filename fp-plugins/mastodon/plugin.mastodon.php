@@ -7888,7 +7888,7 @@ function plugin_mastodon_collect_entry_files_from_month($monthDir, $year, $month
 	$pattern = '/^entry' . preg_quote($year . $month, '/') . '\d{2}-\d{6}\.txt$/';
 	$monthDir = rtrim((string) $monthDir, '/\\');
 	foreach ($items as $item) {
-		if (!is_string($item) || !preg_match($pattern, $item)) {
+		if (!preg_match($pattern, $item)) {
 			continue;
 		}
 		$path = $monthDir . DIRECTORY_SEPARATOR . $item;
@@ -7946,7 +7946,7 @@ function plugin_mastodon_collect_entry_files($dir, &$files) {
 	}
 	$foundFlatPressMonth = false;
 	foreach ($items as $year) {
-		if (!is_string($year) || !plugin_mastodon_is_two_digit_path_segment($year)) {
+		if (!plugin_mastodon_is_two_digit_path_segment($year)) {
 			continue;
 		}
 		$yearDir = $root . DIRECTORY_SEPARATOR . $year;
@@ -7958,7 +7958,7 @@ function plugin_mastodon_collect_entry_files($dir, &$files) {
 			continue;
 		}
 		foreach ($months as $month) {
-			if (!is_string($month) || !plugin_mastodon_is_two_digit_path_segment($month)) {
+			if (!plugin_mastodon_is_two_digit_path_segment($month)) {
 				continue;
 			}
 			$monthDir = $yearDir . DIRECTORY_SEPARATOR . $month;
@@ -7989,7 +7989,7 @@ function plugin_mastodon_collect_scheduled_entry_files($dir, $options, &$files) 
 	}
 	$foundFlatPressMonth = false;
 	foreach ($items as $year) {
-		if (!is_string($year) || !plugin_mastodon_is_two_digit_path_segment($year)) {
+		if (!plugin_mastodon_is_two_digit_path_segment($year)) {
 			continue;
 		}
 		$yearDir = $root . DIRECTORY_SEPARATOR . $year;
@@ -8001,7 +8001,7 @@ function plugin_mastodon_collect_scheduled_entry_files($dir, $options, &$files) 
 			continue;
 		}
 		foreach ($months as $month) {
-			if (!is_string($month) || !plugin_mastodon_is_two_digit_path_segment($month)) {
+			if (!plugin_mastodon_is_two_digit_path_segment($month)) {
 				continue;
 			}
 			$monthDir = $yearDir . DIRECTORY_SEPARATOR . $month;
