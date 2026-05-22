@@ -2364,6 +2364,102 @@ $GLOBALS ['plugin_mastodon_test_http_no_network'] = !simulate_request_flag('live
 
 $allOk = true;
 
+$scannerFixtureRoot = PLUGIN_MASTODON_STATE_DIR . 'entry-scanner-comments-skip';
+simulate_delete_recursive($scannerFixtureRoot);
+$scannerMonthDir = $scannerFixtureRoot . DIRECTORY_SEPARATOR . '26' . DIRECTORY_SEPARATOR . '05';
+$scannerCommentsDir = $scannerMonthDir . DIRECTORY_SEPARATOR . 'entry260521-120000' . DIRECTORY_SEPARATOR . 'comments';
+mkdir($scannerCommentsDir, 0777, true);
+file_put_contents($scannerMonthDir . DIRECTORY_SEPARATOR . 'entry260521-120000' . EXT, 'real entry fixture');
+file_put_contents($scannerCommentsDir . DIRECTORY_SEPARATOR . 'entry260521-120000' . EXT, 'duplicate entry-like file below comments');
+file_put_contents($scannerCommentsDir . DIRECTORY_SEPARATOR . 'entry260521-120001' . EXT, 'unrelated entry-like file below comments');
+$scannerFiles = array();
+plugin_mastodon_collect_entry_files($scannerFixtureRoot, $scannerFiles);
+sort($scannerFiles, SORT_STRING);
+$scannerBasenames = array();
+foreach ($scannerFiles as $scannerFile) {
+	$scannerBasenames [] = basename((string) $scannerFile);
+}
+$scannerTestOk = test_result(
+	'Entry file scanner skips comment directories while keeping real FlatPress entries',
+	count($scannerFiles) === 1 && $scannerBasenames === array('entry260521-120000' . EXT),
+	json_encode(array('files' => $scannerFiles, 'basenames' => $scannerBasenames))
+);
+if (!$scannerTestOk) {
+	$allOk = false;
+}
+
+// Scheduled direct YY/MM scan keeps active-window entries and parent entries from dirty comments, but skips old clean entries.
+$scheduledScannerOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
+$scheduledScannerOptions ['sync_start_date'] = '2034-01-01';
+$scheduledScannerOptions ['sync_scheduled_window_days'] = '7';
+$GLOBALS ['plugin_mastodon_test_now'] = strtotime('2035-01-15 12:00:00 UTC');
+$scheduledOldCleanEntryId = 'entry341220-120000';
+$scheduledDirtyCommentEntryId = 'entry341221-120000';
+$scheduledRecentEntryId = 'entry350114-120000';
+$scheduledDirtyCommentId = 'comment341221-120500';
+simulate_write_entry_fixture($scheduledOldCleanEntryId, array(
+	'version' => system_ver(),
+	'subject' => 'Scheduled scanner old clean entry',
+	'content' => 'Old clean entry outside the scheduled window.',
+	'author' => 'Simulation',
+	'date' => strtotime('2034-12-20 12:00:00 UTC')
+));
+simulate_write_entry_fixture($scheduledDirtyCommentEntryId, array(
+	'version' => system_ver(),
+	'subject' => 'Scheduled scanner dirty comment parent',
+	'content' => 'Old parent entry outside the scheduled window but required by a dirty comment.',
+	'author' => 'Simulation',
+	'date' => strtotime('2034-12-21 12:00:00 UTC')
+));
+simulate_write_comment_fixture($scheduledDirtyCommentEntryId, $scheduledDirtyCommentId, array(
+	'version' => system_ver(),
+	'name' => 'Simulation',
+	'content' => 'Dirty comment parent must force the old entry into scheduled candidates.',
+	'date' => strtotime('2034-12-21 12:05:00 UTC')
+));
+simulate_write_entry_fixture($scheduledRecentEntryId, array(
+	'version' => system_ver(),
+	'subject' => 'Scheduled scanner recent entry',
+	'content' => 'Recent entry inside the scheduled window.',
+	'author' => 'Simulation',
+	'date' => strtotime('2035-01-14 12:00:00 UTC')
+));
+$scheduledScannerState = plugin_mastodon_default_state();
+$scheduledScannerState ['dirty_comments'] [$scheduledDirtyCommentEntryId . ':' . $scheduledDirtyCommentId] = array(
+	'entry_id' => $scheduledDirtyCommentEntryId,
+	'comment_id' => $scheduledDirtyCommentId,
+	'hash' => 'dirty-comment-hash',
+	'queued_at' => '2035-01-15 12:00:00'
+);
+$scheduledScannerDirtyLookup = plugin_mastodon_dirty_entry_id_lookup($scheduledScannerState);
+$scheduledScannerFiles = plugin_mastodon_collect_entry_files_for_sync($scheduledScannerOptions, $scheduledScannerDirtyLookup, false);
+$scheduledScannerBasenames = array();
+foreach ($scheduledScannerFiles as $scheduledScannerFile) {
+	$scheduledScannerBasenames [] = basename((string) $scheduledScannerFile, EXT);
+}
+sort($scheduledScannerBasenames, SORT_STRING);
+$scheduledScannerTestOk = test_result(
+	'Scheduled direct YY/MM scanner keeps active-window entries and dirty-comment parents',
+	in_array($scheduledRecentEntryId, $scheduledScannerBasenames, true)
+		&& in_array($scheduledDirtyCommentEntryId, $scheduledScannerBasenames, true)
+		&& !in_array($scheduledOldCleanEntryId, $scheduledScannerBasenames, true),
+	json_encode(array(
+		'basenames' => $scheduledScannerBasenames,
+		'old_clean_entry' => $scheduledOldCleanEntryId,
+		'dirty_comment_parent' => $scheduledDirtyCommentEntryId,
+		'recent_entry' => $scheduledRecentEntryId
+	))
+);
+if (!$scheduledScannerTestOk) {
+	$allOk = false;
+}
+simulate_delete_entry_fixture($scheduledOldCleanEntryId);
+simulate_delete_entry_fixture($scheduledDirtyCommentEntryId);
+simulate_delete_entry_fixture($scheduledRecentEntryId);
+unset($GLOBALS ['plugin_mastodon_test_now']);
+
+simulate_delete_recursive($scannerFixtureRoot);
+
 $enabledPluginChecks = array(
 	'bbcode' => plugin_mastodon_enabled_plugin_state('bbcode'),
 	'photoswipe' => plugin_mastodon_enabled_plugin_state('photoswipe'),
@@ -2372,11 +2468,14 @@ $enabledPluginChecks = array(
 	'emoticons' => plugin_mastodon_enabled_plugin_state('emoticons')
 );
 $enabledPluginChecksOk = !in_array(false, $enabledPluginChecks, true);
-$allOk = test_result(
+$enabledPluginTestOk = test_result(
 	'Mastodon companion-plugin detection uses FlatPress central enabled-plugin state',
 	$enabledPluginChecksOk,
 	json_encode($enabledPluginChecks)
 );
+if (!$enabledPluginTestOk) {
+	$allOk = false;
+}
 
 $originalEnabledPlugins = isset($GLOBALS ['fp_plugins']) && is_array($GLOBALS ['fp_plugins']) ? $GLOBALS ['fp_plugins'] : null;
 if (is_array($originalEnabledPlugins)) {
@@ -5111,6 +5210,40 @@ $allOk = test_result(
 		'dirty_comments' => isset($dirtyCommentHookState ['dirty_comments']) ? $dirtyCommentHookState ['dirty_comments'] : array()
 	))
 ) && $allOk;
+
+$dirtyCommentSyncOptions = $seededOptions;
+$dirtyCommentSyncOptions ['sync_start_date'] = '2034-01-01';
+$dirtyCommentSyncOptions ['sync_scheduled_window_days'] = '7';
+$dirtyCommentSyncOptions ['access_token'] = 'token123';
+plugin_mastodon_save_options($dirtyCommentSyncOptions);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v2/instance' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))
+	),
+	'PUT ' . $instanceUrl . '/api/v1/statuses/dirty-comment-remote-1' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'dirty-comment-remote-1', 'url' => $instanceUrl . '/@flatpress/dirty-comment-remote-1', 'edited_at' => '2035-01-15T12:00:00Z'))
+	)
+);
+$dirtyCommentRunState = plugin_mastodon_state_read();
+$dirtyCommentSyncOk = plugin_mastodon_sync_local_to_remote($dirtyCommentSyncOptions, $dirtyCommentRunState, false);
+$dirtyCommentRequests = simulate_recorded_http_requests();
+$dirtyCommentPutSeen = simulate_first_http_request($dirtyCommentRequests, 'PUT', '/api/v1/statuses/dirty-comment-remote-1') !== array();
+$allOk = test_result(
+	'Scheduled sync updates older dirty comments through direct YY/MM dirty-parent candidates',
+	$dirtyCommentSyncOk
+		&& $dirtyCommentPutSeen
+		&& !plugin_mastodon_state_has_dirty_comment($dirtyCommentRunState, $dirtyCommentEntryId, $dirtyCommentId),
+	json_encode(array(
+		'put_seen' => $dirtyCommentPutSeen,
+		'dirty_comments' => isset($dirtyCommentRunState ['dirty_comments']) ? $dirtyCommentRunState ['dirty_comments'] : array()
+	))
+) && $allOk;
+
 entry_delete($dirtyCommentEntryId);
 unset($GLOBALS ['plugin_mastodon_test_now']);
 

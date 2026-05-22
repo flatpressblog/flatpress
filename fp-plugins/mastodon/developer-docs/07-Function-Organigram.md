@@ -14,7 +14,7 @@ The layout is intentionally hierarchical so responsibilities, call paths, and im
 - Recently added FlatPress configuration reuse, centralized plugin-state detection, FlatPress I/O helpers, explicit `FILE_PERMISSIONS` handling for Mastodon runtime files, the compact APCu-capable scheduler-state summary, append-only rotated sync logging, and file-backed synchronization cooldown guards are reflected explicitly.
 - The companion-plugin diagnostics for BBCode, PhotoSwipe, AudioVideo, Tag, and Emoticons are covered.
 - The admin-side Mastodon instance-information snapshot, manual refresh button, exact-version display, and reuse of cached instance capabilities for later sync runs are covered.
-- Mastodon instance-dependent URL budgeting, cached instance-version capability checks for status media-attribute edits and `delete_media` status deletion cleanup, bounded PHP execution-budget refreshes, central per-run Mastodon API rate-limit guards with request/media-upload/delete budgets, persistent cross-run media-upload/delete/account-status-page windows, OAuth scope discovery with a strict `profile`-scope preference and an older-instance fallback to `read:accounts`, media-type-aware asynchronous media-upload readiness polling for longer AudioVideo processing, AudioVideo optional endtag descriptions for local export and remote import, scheduled-run recent-content windows, Core post-success-hook-driven dirty queues for changed older mapped content, a Mastodon local-write guard for remote mirror operations, targeted non-full local candidate lists, optional rotating known-thread reply checks, best-effort cleanup of unattached uploaded Mastodon media before a failed final posting finishes, follow-up deletion synchronization with scheduled-window-limited remote existence lookups and progress cursors for large mapping sets, the admin toggle that can disable deletion synchronization, comment tombstones that block stale re-imports of deleted remote replies, early protection of locally deleted exported FlatPress comments before the next content sync, local reattachment of surviving descendant replies to the synchronized entry status during deletion follow-up, targeted descendant-recheck queues with a dedicated `comment_rechecks` follow-up scope, 5-minute scheduled-sync cooldown guards, state-write failure reporting, and the separate persistence of content-sync and deletion-sync counters are reflected explicitly.
+- Mastodon instance-dependent URL budgeting, cached instance-version capability checks for status media-attribute edits and `delete_media` status deletion cleanup, bounded PHP execution-budget refreshes, central per-run Mastodon API rate-limit guards with request/media-upload/delete budgets, persistent cross-run media-upload/delete/account-status-page windows, OAuth scope discovery with a strict `profile`-scope preference and an older-instance fallback to `read:accounts`, media-type-aware asynchronous media-upload readiness polling for longer AudioVideo processing, AudioVideo optional endtag descriptions for local export and remote import, scheduled-run recent-content windows, Core post-success-hook-driven dirty queues for changed older mapped content, a Mastodon local-write guard for remote mirror operations, targeted direct `YY/MM` non-full local candidate lists, optional rotating known-thread reply checks, best-effort cleanup of unattached uploaded Mastodon media before a failed final posting finishes, follow-up deletion synchronization with scheduled-window-limited remote existence lookups and progress cursors for large mapping sets, the admin toggle that can disable deletion synchronization, comment tombstones that block stale re-imports of deleted remote replies, early protection of locally deleted exported FlatPress comments before the next content sync, local reattachment of surviving descendant replies to the synchronized entry status during deletion follow-up, targeted descendant-recheck queues with a dedicated `comment_rechecks` follow-up scope, 5-minute scheduled-sync cooldown guards, state-write failure reporting, and the separate persistence of content-sync and deletion-sync counters are reflected explicitly.
 - FlatPress timeoffset-aware remote import timestamps for Mastodon statuses and replies are reflected explicitly.
 - FlatPress-local admin time display for the daily synchronization time, last content sync, and last deletion sync is reflected explicitly while keeping the stored synchronization time in UTC.
 - Friendly deletion-sync guards for normalized comment mapping metadata are reflected explicitly.
@@ -122,9 +122,16 @@ Current export behavior uses these endpoints in a version-aware way:
 
 ## Function count
 
-The plugin file currently contains **337** callable functions/methods documented in this organigram:
-- **334** top-level plugin functions
+The plugin file currently contains **350** callable functions/methods documented in this organigram:
+- **347** top-level plugin functions
 - **3** admin panel class methods (`setup()`, `main()`, `onsubmit()`)
+
+
+Docs consistency can be rechecked with:
+
+```bash
+php fp-plugins/mastodon/developer-docs/check-consistency.php
+```
 
 ## High-level call flow
 
@@ -154,7 +161,7 @@ The plugin file currently contains **337** callable functions/methods documented
 
 - `plugin_mastodon_sync_local_to_remote()`
   - loads options and persisted state
-  - retrieves export candidates with `plugin_mastodon_list_local_entries_for_sync()`: scheduled/non-full runs parse only the active recent-content window plus dirty-entry targets, while explicit full repair runs keep the complete local scan
+  - retrieves export candidates with `plugin_mastodon_list_local_entries_for_sync()`: scheduled/non-full runs scan only canonical `YY/MM` months that can intersect the active recent-content window plus dirty-entry/comment-parent targets, while explicit full repair runs keep the complete canonical local scan
   - applies the permanent `sync_start_date` lower bound and, for scheduled non-forced runs, the selected 7/14/30-day recent-content window
   - relies on Core post-success hooks to queue changed older mapped entries/comments and local mapped deletions, so scheduled/non-full runs do not parse all old files merely to discover dirty work
   - orders entries with `plugin_mastodon_compare_local_entries_for_export()`
@@ -217,16 +224,16 @@ The FlatPress Core emits the new `entry_saved`, `entry_deleted`, `comment_saved`
 ## A. Entry points and admin integration
 
 - `plugin_mastodon_head()` — line 2217 — Print Mastodon profile metadata into the HTML head.
-- `plugin_mastodon_maybe_sync()` — line 10062 — Run the scheduled synchronization when the current request is due, using the compact scheduler summary before any full state load.
-- `plugin_mastodon_run_sync()` — line 9979 — Run a full synchronization cycle.
-- `plugin_mastodon_run_deletion_sync()` — line 9648 — Run the deferred deletion synchronization in a follow-up request after content sync completed, with scheduled-window-limited remote existence lookups and progress cursors.
-- `plugin_mastodon_sync_due()` — line 9949 — Determine whether the scheduled synchronization is currently due.
-- `plugin_mastodon_admin_boolean_label()` — line 10094 — Return a localized yes/no/unknown label for admin diagnostics.
-- `plugin_mastodon_admin_add_info_row()` — line 10109 — Add one populated admin diagnostics row to the instance-information table.
-- `plugin_mastodon_admin_assign()` — line 10228 — Assign plugin data to Smarty for the admin panel, including compact scheduler status/statistics and cached instance-information rows.
-- `setup()` — line 10276 — Register the Mastodon admin panel template and assign plugin data to Smarty.
-- `main()` — line 10281 — Keep the admin panel lifecycle compatible with FlatPress without extra processing.
-- `onsubmit()` — line 10285 — Process configuration saves, OAuth actions, authorization-code exchange, manual instance-information refreshes, and the manual synchronization trigger.
+- `plugin_mastodon_maybe_sync()` — line 10282 — Run the scheduled synchronization when the current request is due, using the compact scheduler summary before any full state load.
+- `plugin_mastodon_run_sync()` — line 10199 — Run a full synchronization cycle.
+- `plugin_mastodon_run_deletion_sync()` — line 9868 — Run the deferred deletion synchronization in a follow-up request after content sync completed, with scheduled-window-limited remote existence lookups and progress cursors.
+- `plugin_mastodon_sync_due()` — line 10169 — Determine whether the scheduled synchronization is currently due.
+- `plugin_mastodon_admin_boolean_label()` — line 10314 — Return a localized yes/no/unknown label for admin diagnostics.
+- `plugin_mastodon_admin_add_info_row()` — line 10329 — Add one populated admin diagnostics row to the instance-information table.
+- `plugin_mastodon_admin_assign()` — line 10448 — Assign plugin data to Smarty for the admin panel, including compact scheduler status/statistics and cached instance-information rows.
+- `setup()` — line 10496 — Register the Mastodon admin panel template and assign plugin data to Smarty.
+- `main()` — line 10501 — Keep the admin panel lifecycle compatible with FlatPress without extra processing.
+- `onsubmit()` — line 10505 — Process configuration saves, OAuth actions, authorization-code exchange, manual instance-information refreshes, and the manual synchronization trigger.
 
 ## B. Defaults, configuration, secrets, and centralized FlatPress feature toggles
 
@@ -427,6 +434,7 @@ The FlatPress Core emits the new `entry_saved`, `entry_deleted`, `comment_saved`
 - `plugin_mastodon_normalize_comment_parent_id()` — line 4235 — Normalize a stored local comment parent identifier.
 - `plugin_mastodon_detect_local_comment_parent_id()` — line 4252 — Detect the local parent comment identifier from comment data.
 - `plugin_mastodon_resolve_comment_reply_target()` — line 4274 — Resolve the remote reply target for a local comment export.
+- `plugin_mastodon_local_comment_parent_export_pending()` — line 4299 — Determine whether a local parent comment must be exported before its child reply can target the parent Mastodon reply.
 - `plugin_mastodon_list_local_comment_ids()` — line 4327 — Scan the FlatPress comment directory directly so local reply export is not blocked by stale comment-list caches.
 
 ## E. Text, URLs, language strings, tags, emojis, and BBCode/HTML conversion
@@ -469,10 +477,10 @@ The FlatPress Core emits the new `entry_saved`, `entry_deleted`, `comment_saved`
 
 - `plugin_mastodon_entry_hash()` — line 5670 — Build a change-detection hash for a FlatPress entry.
 - `plugin_mastodon_comment_hash()` — line 5682 — Build a change-detection hash for a FlatPress comment.
-- `plugin_mastodon_remote_status_author_label()` — line 8920 — Build a readable author label for quoted Mastodon replies.
-- `plugin_mastodon_strip_leading_quote_block()` — line 8953 — Remove one leading BBCode quote block so imported reply quotes do not compound indefinitely.
-- `plugin_mastodon_imported_reply_quote_payload()` — line 8986 — Resolve the author and body that should be quoted for an imported Mastodon reply.
-- `plugin_mastodon_build_imported_reply_quote()` — line 9029 — Build the optional BBCode quote block for an imported Mastodon reply.
+- `plugin_mastodon_remote_status_author_label()` — line 9140 — Build a readable author label for quoted Mastodon replies.
+- `plugin_mastodon_strip_leading_quote_block()` — line 9173 — Remove one leading BBCode quote block so imported reply quotes do not compound indefinitely.
+- `plugin_mastodon_imported_reply_quote_payload()` — line 9206 — Resolve the author and body that should be quoted for an imported Mastodon reply.
+- `plugin_mastodon_build_imported_reply_quote()` — line 9249 — Build the optional BBCode quote block for an imported Mastodon reply.
 - `plugin_mastodon_safe_path_component()` — line 5700 — Sanitize a string so it can be used as a path component.
 - `plugin_mastodon_safe_filename()` — line 5715 — Sanitize a file name for local storage.
 - `plugin_mastodon_normalize_media_relative_path()` — line 5728 — Normalize a FlatPress media path and reject absolute, URL, or traversal paths.
@@ -511,14 +519,23 @@ The FlatPress Core emits the new `entry_saved`, `entry_deleted`, `comment_saved`
 - `plugin_mastodon_remote_download_basename()` — line 6779 — Build a safe local basename for a downloaded remote image, audio, video, GIFV, or poster.
 - `plugin_mastodon_store_remote_media_url()` — line 6809 — Download and persist one remote media URL.
 - `plugin_mastodon_build_imported_media_bbcode()` — line 6831 — Build FlatPress BBCode for imported remote media attachments: images become `[img]`/`[gallery]`, audio becomes `[audioplayer]`, and video/GIFV becomes `[videoplayer]` with imported optional description endtag text and an imported poster when available; alternate direct media URLs are retried before an attachment is skipped.
-- `plugin_mastodon_collect_entry_files()` — line 7819 — Collect entry files recursively from the FlatPress content tree.
-- `plugin_mastodon_local_item_timestamp()` — line 7846 — Resolve the best timestamp for a local FlatPress item.
-- `plugin_mastodon_compare_local_entries_for_export()` — line 7875 — Compare local FlatPress entries for Mastodon export order.
-- `plugin_mastodon_test_note_local_entry_parse()` — line 7894 — Simulation-only no-op counter hook used to prove targeted scheduled scans avoid parsing all old local entries.
-- `plugin_mastodon_dirty_entry_id_lookup()` — line 7906 — Collect local entry IDs that must be parsed because an entry or one of its comments is present in the dirty queues.
-- `plugin_mastodon_should_parse_local_entry_for_sync()` — line 7937 — Decide whether one entry belongs to the active scheduled window, the dirty target set, or an explicit full scan.
-- `plugin_mastodon_list_local_entries_for_sync()` — line 7962 — Build the local export candidate list for scheduled/non-full runs from active-window entries plus dirty targets while preserving full repair scans.
-- `plugin_mastodon_list_local_entries()` — line 8003 — List local FlatPress entry identifiers.
+- `plugin_mastodon_is_two_digit_path_segment()` — line 7818 — Validate FlatPress `YY`/`MM` content-tree path segments for the direct scanner.
+- `plugin_mastodon_two_digit_year_to_full_year()` — line 7827 — Map FlatPress two-digit years to the full year used for month-window comparisons.
+- `plugin_mastodon_entry_month_end_date_key()` — line 7838 — Compute the last possible date key for one FlatPress `YY/MM` directory.
+- `plugin_mastodon_entry_month_may_match_scheduled_window()` — line 7860 — Decide whether a month can contain scheduled-sync candidates.
+- `plugin_mastodon_collect_entry_files_from_month()` — line 7880 — Collect only canonical `entryYYMMDD-HHMMSS.txt` files directly from one `YY/MM` directory.
+- `plugin_mastodon_collect_entry_files_legacy()` — line 7913 — Fallback for unexpected non-canonical content trees while still skipping comment/non-entry branches.
+- `plugin_mastodon_collect_entry_files()` — line 7941 — Collect all canonical local entry files for full repair/admin paths using the direct `YY/MM` scanner.
+- `plugin_mastodon_collect_scheduled_entry_files()` — line 7984 — Collect scheduled candidates from relevant canonical months without entering entry/comment subdirectories.
+- `plugin_mastodon_add_dirty_entry_files()` — line 8029 — Append canonical parent-entry files from dirty entry/comment queues.
+- `plugin_mastodon_collect_entry_files_for_sync()` — line 8049 — Combine full or scheduled scanner output with dirty-parent augmentation.
+- `plugin_mastodon_local_item_timestamp()` — line 8068 — Resolve the best timestamp for a local FlatPress item.
+- `plugin_mastodon_compare_local_entries_for_export()` — line 8097 — Compare local FlatPress entries for Mastodon export order.
+- `plugin_mastodon_test_note_local_entry_parse()` — line 8116 — Simulation-only no-op counter hook used to prove targeted scheduled scans avoid parsing all old local entries.
+- `plugin_mastodon_dirty_entry_id_lookup()` — line 8128 — Collect local entry IDs that must be parsed because an entry or one of its comments is present in the dirty queues.
+- `plugin_mastodon_should_parse_local_entry_for_sync()` — line 8159 — Decide whether one entry belongs to the active scheduled window, the dirty target set, or an explicit full scan.
+- `plugin_mastodon_list_local_entries_for_sync()` — line 8184 — Build the local export candidate list for scheduled/non-full runs from active-window entries plus dirty targets while preserving full repair scans.
+- `plugin_mastodon_list_local_entries()` — line 8223 — List local FlatPress entry identifiers.
 
 ## G. HTTP transport, PHP timeout budgeting, instance capability lookup, status-length budgeting, OAuth, Mastodon API calls, and media upload
 
@@ -531,8 +548,8 @@ The FlatPress Core emits the new `entry_saved`, `entry_deleted`, `comment_saved`
 - `plugin_mastodon_instance_media_limit()` — line 7171 — Return the media attachment limit of the configured instance.
 - `plugin_mastodon_instance_media_description_limit()` — line 7184 — Return the media description length limit of the configured instance.
 - `plugin_mastodon_instance_url_reserved_length()` — line 7197 — Return the reserved Mastodon character budget used for each URL.
-- `plugin_mastodon_instance_registration_summary()` — line 10130 — Summarize the cached registration policy advertised by the instance for the admin diagnostics table.
-- `plugin_mastodon_admin_instance_info_rows()` — line 10156 — Build the localized admin-table rows from the cached instance-information snapshot without forcing another live request.
+- `plugin_mastodon_instance_registration_summary()` — line 10350 — Summarize the cached registration policy advertised by the instance for the admin diagnostics table.
+- `plugin_mastodon_admin_instance_info_rows()` — line 10376 — Build the localized admin-table rows from the cached instance-information snapshot without forcing another live request.
 - `plugin_mastodon_status_text_length()` — line 7211 — Calculate the Mastodon-visible status length with instance URL budgeting.
 - `plugin_mastodon_limit_status_text()` — line 7243 — Truncate status text using Mastodon URL-budget rules.
 - `plugin_mastodon_http_request_multipart()` — line 7322 — Perform a multipart HTTP request.
@@ -541,49 +558,49 @@ The FlatPress Core emits the new `entry_saved`, `entry_deleted`, `comment_saved`
 - `plugin_mastodon_media_transfer_timeout()` — line 7544 — Calculate longer upload transfer timeouts for audio/video/GIFV while keeping image uploads lighter.
 - `plugin_mastodon_wait_for_media_attachment()` — line 7564 — Poll an asynchronously processed Mastodon media attachment until it is ready or times out, including pending audio/video responses without `preview_url`.
 - `plugin_mastodon_upload_media_items()` — line 7613 — Upload local media items to Mastodon and collect the created media IDs; AudioVideo posters are sent as Mastodon `thumbnail` multipart fields for video uploads.
-- `plugin_mastodon_parse_http_response_headers()` — line 8041 — Parse raw HTTP response headers.
-- `plugin_mastodon_stream_context_request()` — line 8071 — Perform an HTTP request through a stream context fallback.
+- `plugin_mastodon_parse_http_response_headers()` — line 8261 — Parse raw HTTP response headers.
+- `plugin_mastodon_stream_context_request()` — line 8291 — Perform an HTTP request through a stream context fallback.
 - `plugin_mastodon_status_media_attributes()` — line 6732 — Build the `media_attributes` array used for in-place status edits of already attached media.
 - `plugin_mastodon_prepare_entry_media_sync_plan()` — line 7730 — Decide whether an entry should upload fresh media, reuse stored IDs, or reuse IDs plus `media_attributes`.
-- `plugin_mastodon_array_is_list()` — line 8111 — Detect whether a PHP array is a zero-based list that should use `[]` form-field notation.
-- `plugin_mastodon_array_contains_only_form_scalars()` — line 8131 — Detect whether a list can be serialized as repeated scalar `[]` fields.
-- `plugin_mastodon_http_build_query()` — line 8149 — Build an application/x-www-form-urlencoded query string, emitting Rack-compatible Mastodon array fields such as `media_ids[]` and nested `media_attributes[][description]`.
-- `plugin_mastodon_http_request()` — line 8205 — Perform an HTTP request using cURL or the stream fallback.
-- `plugin_mastodon_mastodon_api()` — line 8323 — Call the Mastodon API and return the raw HTTP response.
-- `plugin_mastodon_mastodon_json()` — line 8372 — Call the Mastodon API and decode a JSON response.
-- `plugin_mastodon_response_error_message()` — line 8387 — Extract the most useful error message from an API response.
+- `plugin_mastodon_array_is_list()` — line 8331 — Detect whether a PHP array is a zero-based list that should use `[]` form-field notation.
+- `plugin_mastodon_array_contains_only_form_scalars()` — line 8351 — Detect whether a list can be serialized as repeated scalar `[]` fields.
+- `plugin_mastodon_http_build_query()` — line 8369 — Build an application/x-www-form-urlencoded query string, emitting Rack-compatible Mastodon array fields such as `media_ids[]` and nested `media_attributes[][description]`.
+- `plugin_mastodon_http_request()` — line 8425 — Perform an HTTP request using cURL or the stream fallback.
+- `plugin_mastodon_mastodon_api()` — line 8543 — Call the Mastodon API and return the raw HTTP response.
+- `plugin_mastodon_mastodon_json()` — line 8592 — Call the Mastodon API and decode a JSON response.
+- `plugin_mastodon_response_error_message()` — line 8607 — Extract the most useful error message from an API response.
 - `plugin_mastodon_oauth_legacy_scopes()` — line 563 — Return the legacy OAuth scope string used by older registrations.
 - `plugin_mastodon_oauth_profile_scopes()` — line 571 — Return the stricter scope string that uses `profile` for `verify_credentials`.
 - `plugin_mastodon_oauth_server_metadata()` — line 580 — Discover OAuth server metadata from `/.well-known/oauth-authorization-server`.
 - `plugin_mastodon_oauth_supported_scopes()` — line 599 — Extract the discoverable scope list from OAuth server metadata.
 - `plugin_mastodon_oauth_scope_supported()` — line 636 — Check whether the configured Mastodon instance supports a given OAuth scope.
 - `plugin_mastodon_oauth_preferred_scopes()` — line 657 — Prefer `profile` on current instances and fall back to `read:accounts` on older ones.
-- `plugin_mastodon_register_app()` — line 8416 — Register the FlatPress application on the configured Mastodon instance with the preferred discoverable scope set.
-- `plugin_mastodon_build_authorize_url()` — line 8439 — Build the OAuth authorization URL using the scopes that the registered app may safely request.
-- `plugin_mastodon_exchange_code_for_token()` — line 8459 — Exchange an OAuth authorization code for an access token using the same negotiated scope string.
-- `plugin_mastodon_verify_credentials()` — line 8489 — Verify the currently configured access token.
-- `plugin_mastodon_instance_character_limit()` — line 8506 — Return the status character limit of the configured instance.
-- `plugin_mastodon_fetch_account_statuses()` — line 8521 — Fetch statuses for the authenticated Mastodon account.
-- `plugin_mastodon_fetch_status_context()` — line 8568 — Fetch the conversation context for a Mastodon status.
-- `plugin_mastodon_fetch_status()` — line 8579 — Fetch a single Mastodon status.
-- `plugin_mastodon_delete_status()` — line 8590 — Delete a Mastodon status; cached Mastodon versions before 4.4.0 omit `delete_media=1`, while unknown servers first try the media-cleanup variant and retry once without the query parameter on legacy-style rejection responses.
-- `plugin_mastodon_delete_status_should_retry_without_delete_media()` — line 8618 — Decide whether a failed status DELETE should be retried without `delete_media=1`, while avoiding retries for missing statuses or active rate-limit stops.
-- `plugin_mastodon_status_missing_response()` — line 8638 — Check whether an API response means that the referenced Mastodon status no longer exists.
-- `plugin_mastodon_create_status()` — line 8651 — Create a Mastodon status.
-- `plugin_mastodon_update_status()` — line 8678 — Update an existing Mastodon status.
+- `plugin_mastodon_register_app()` — line 8636 — Register the FlatPress application on the configured Mastodon instance with the preferred discoverable scope set.
+- `plugin_mastodon_build_authorize_url()` — line 8659 — Build the OAuth authorization URL using the scopes that the registered app may safely request.
+- `plugin_mastodon_exchange_code_for_token()` — line 8679 — Exchange an OAuth authorization code for an access token using the same negotiated scope string.
+- `plugin_mastodon_verify_credentials()` — line 8709 — Verify the currently configured access token.
+- `plugin_mastodon_instance_character_limit()` — line 8726 — Return the status character limit of the configured instance.
+- `plugin_mastodon_fetch_account_statuses()` — line 8741 — Fetch statuses for the authenticated Mastodon account.
+- `plugin_mastodon_fetch_status_context()` — line 8788 — Fetch the conversation context for a Mastodon status.
+- `plugin_mastodon_fetch_status()` — line 8799 — Fetch a single Mastodon status.
+- `plugin_mastodon_delete_status()` — line 8810 — Delete a Mastodon status; cached Mastodon versions before 4.4.0 omit `delete_media=1`, while unknown servers first try the media-cleanup variant and retry once without the query parameter on legacy-style rejection responses.
+- `plugin_mastodon_delete_status_should_retry_without_delete_media()` — line 8838 — Decide whether a failed status DELETE should be retried without `delete_media=1`, while avoiding retries for missing statuses or active rate-limit stops.
+- `plugin_mastodon_status_missing_response()` — line 8858 — Check whether an API response means that the referenced Mastodon status no longer exists.
+- `plugin_mastodon_create_status()` — line 8871 — Create a Mastodon status.
+- `plugin_mastodon_update_status()` — line 8898 — Update an existing Mastodon status.
 
 ## H. Import/export builders and synchronization orchestration
 
-- `plugin_mastodon_build_entry_status_text()` — line 8704 — Build the status body used when exporting a FlatPress entry.
-- `plugin_mastodon_build_comment_status_text()` — line 8772 — Build the status body used when exporting a FlatPress comment.
-- `plugin_mastodon_import_remote_entry()` — line 8810 — Import a remote Mastodon status into FlatPress as an entry.
-- `plugin_mastodon_import_remote_comment()` — line 9071 — Import a remote Mastodon reply into FlatPress as a comment while respecting comment tombstones, including early tombstones for locally deleted exported comments.
-- `plugin_mastodon_import_remote_context_descendants()` — line 9160 — Import remote Mastodon replies from a fetched thread context while blocking tombstoned parent/child replies.
-- `plugin_mastodon_old_thread_context_rotation_limit()` — line 9261 — Return the maximum number of known synchronized threads checked for replies per content sync run.
-- `plugin_mastodon_collect_known_entry_context_targets()` — line 9277 — Collect known synchronized entry threads for optional rotating reply-context refreshes while respecting the synchronization start-date window.
-- `plugin_mastodon_sync_remote_to_local()` — line 9350 — Synchronize remote Mastodon content into FlatPress with the durable start-date lower bound, scheduled-run window, and optional known-thread reply rotation.
-- `plugin_mastodon_sync_local_to_remote()` — line 9417 — Synchronize local FlatPress content to Mastodon, including remote-sourced entry comment export, scheduled-run window filtering, dirty-queue processing, media-plan reuse of stored `media_ids`, and version-aware in-place alt-text updates.
-- `plugin_mastodon_run_deletion_sync()` — line 9648 — Reconcile mapped deletions between FlatPress and Mastodon in a separate follow-up request, limiting scheduled remote existence lookups to the active window while cursoring large mapping sets.
+- `plugin_mastodon_build_entry_status_text()` — line 8924 — Build the status body used when exporting a FlatPress entry.
+- `plugin_mastodon_build_comment_status_text()` — line 8992 — Build the status body used when exporting a FlatPress comment.
+- `plugin_mastodon_import_remote_entry()` — line 9030 — Import a remote Mastodon status into FlatPress as an entry.
+- `plugin_mastodon_import_remote_comment()` — line 9291 — Import a remote Mastodon reply into FlatPress as a comment while respecting comment tombstones, including early tombstones for locally deleted exported comments.
+- `plugin_mastodon_import_remote_context_descendants()` — line 9380 — Import remote Mastodon replies from a fetched thread context while blocking tombstoned parent/child replies.
+- `plugin_mastodon_old_thread_context_rotation_limit()` — line 9481 — Return the maximum number of known synchronized threads checked for replies per content sync run.
+- `plugin_mastodon_collect_known_entry_context_targets()` — line 9497 — Collect known synchronized entry threads for optional rotating reply-context refreshes while respecting the synchronization start-date window.
+- `plugin_mastodon_sync_remote_to_local()` — line 9570 — Synchronize remote Mastodon content into FlatPress with the durable start-date lower bound, scheduled-run window, and optional known-thread reply rotation.
+- `plugin_mastodon_sync_local_to_remote()` — line 9637 — Synchronize local FlatPress content to Mastodon, including remote-sourced entry comment export, scheduled-run window filtering, dirty-queue processing, media-plan reuse of stored `media_ids`, and version-aware in-place alt-text updates.
+- `plugin_mastodon_run_deletion_sync()` — line 9868 — Reconcile mapped deletions between FlatPress and Mastodon in a separate follow-up request, limiting scheduled remote existence lookups to the active window while cursoring large mapping sets.
 
 ## Recommended reading order for new developers
 
@@ -655,10 +672,10 @@ When changing the plugin, these clusters usually need to stay in sync:
 A change in one of these areas often requires corresponding updates in the simulation script.
 
 ## Alphabetical appendix
-- `main()` — line 10281 — Keep the admin panel lifecycle compatible with FlatPress without extra processing.
-- `onsubmit()` — line 10285 — Process configuration saves, OAuth actions, including app registration and authorization-code exchange, and the manual synchronization trigger.
+- `main()` — line 10501 — Keep the admin panel lifecycle compatible with FlatPress without extra processing.
+- `onsubmit()` — line 10505 — Process configuration saves, OAuth actions, including app registration and authorization-code exchange, and the manual synchronization trigger.
 - `plugin_mastodon_absolute_url()` — line 4468 — Convert a URL or path into an absolute URL when possible.
-- `plugin_mastodon_admin_assign()` — line 10228 — Assign plugin data to Smarty for the admin panel.
+- `plugin_mastodon_admin_assign()` — line 10448 — Assign plugin data to Smarty for the admin panel.
 - `plugin_mastodon_apcu_cache_key()` — line 1125 — Build the namespaced APCu key used by this plugin.
 - `plugin_mastodon_apcu_delete()` — line 1167 — Delete a value from APCu using FlatPress `apcu_delete_key()` when available.
 - `plugin_mastodon_apcu_enabled()` — line 1116 — Check whether shared APCu caching is available for the plugin.
@@ -700,23 +717,23 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_bbcode_text_escape()` — line 5857 — Escape plain text embedded between BBCode tags.
 - `plugin_mastodon_bbcode_plugin_active()` — line 4622 — Determine whether the BBCode plugin is active for the current FlatPress request.
 - `plugin_mastodon_blog_base_url()` — line 4415 — Return the absolute base URL of the current FlatPress installation.
-- `plugin_mastodon_build_authorize_url()` — line 8439 — Build the OAuth authorization URL using the scopes that the registered app may safely request.
-- `plugin_mastodon_build_comment_status_text()` — line 8772 — Build the status body used when exporting a FlatPress comment.
-- `plugin_mastodon_build_entry_status_text()` — line 8704 — Build the status body used when exporting a FlatPress entry.
+- `plugin_mastodon_build_authorize_url()` — line 8659 — Build the OAuth authorization URL using the scopes that the registered app may safely request.
+- `plugin_mastodon_build_comment_status_text()` — line 8992 — Build the status body used when exporting a FlatPress comment.
+- `plugin_mastodon_build_entry_status_text()` — line 8924 — Build the status body used when exporting a FlatPress entry.
 - `plugin_mastodon_build_flatpress_tag_bbcode()` — line 4920 — Build Tag plugin BBCode from a list of remote Mastodon tags.
 - `plugin_mastodon_build_imported_media_bbcode()` — line 6831 — Build FlatPress BBCode for imported remote media attachments, including AudioVideo optional description endtag text.
 - `plugin_mastodon_cleanup_imported_text()` — line 5178 — Clean imported text before saving it to FlatPress.
 - `plugin_mastodon_cleanup_uploaded_media()` — line 7484 — Best-effort cleanup for uploaded Mastodon media that never reached a final status request.
-- `plugin_mastodon_collect_entry_files()` — line 7819 — Collect entry files recursively from the FlatPress content tree.
-- `plugin_mastodon_collect_known_entry_context_targets()` — line 9277 — Collect known synchronized entry threads that should have their Mastodon reply context refreshed while respecting the synchronization start-date window.
+- `plugin_mastodon_collect_entry_files()` — line 7941 — Collect canonical entry files directly from FlatPress `YY/MM` content directories.
+- `plugin_mastodon_collect_known_entry_context_targets()` — line 9497 — Collect known synchronized entry threads that should have their Mastodon reply context refreshed while respecting the synchronization start-date window.
 - `plugin_mastodon_collect_local_entry_media()` — line 6236 — Collect local images, galleries, AudioVideo media, optional AudioVideo endtag descriptions, and video poster thumbnails referenced by an entry.
 - `plugin_mastodon_select_status_media_items()` — line 6382 — Apply the Mastodon status media-family rule before media signatures, reuse checks, uploads, and final status requests.
 - `plugin_mastodon_comment_hash()` — line 5682 — Build a change-detection hash for a FlatPress comment.
 - `plugin_mastodon_comment_parent_fields()` — line 4226 — Return the comment fields that may contain a parent reference.
 - `plugin_mastodon_companion_plugins_status()` — line 4688 — Return the status of companion FlatPress plugins used for the full Mastodon feature set.
-- `plugin_mastodon_compare_local_entries_for_export()` — line 7875 — Compare local FlatPress entries for Mastodon export order.
+- `plugin_mastodon_compare_local_entries_for_export()` — line 8097 — Compare local FlatPress entries for Mastodon export order.
 - `plugin_mastodon_configured_status_language()` — line 2279 — Read the configured FlatPress locale and return the Mastodon language code.
-- `plugin_mastodon_create_status()` — line 8651 — Create a Mastodon status.
+- `plugin_mastodon_create_status()` — line 8871 — Create a Mastodon status.
 - `plugin_mastodon_date_matches_content_window()` — line 2595 — Combine the durable sync-start lower bound with the scheduled-run recent-content window.
 - `plugin_mastodon_date_matches_sync_start()` — line 2560 — Determine whether a content date passes the configured sync start date.
 - `plugin_mastodon_datetime_date_key()` — line 2536 — Normalize a stored date/datetime string to the sync-start date-key format.
@@ -725,9 +742,10 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_default_options()` — line 120 — Return the default plugin option values.
 - `plugin_mastodon_default_state()` — line 533 — Return the default runtime state structure, including the targeted deletion-follow-up scope marker and deletion progress cursors.
 - `plugin_mastodon_delete_media_attachment()` — line 7465 — Delete an uploaded Mastodon media attachment before it is attached to a final status.
-- `plugin_mastodon_delete_status()` — line 8590 — Delete a Mastodon status; cached Mastodon versions before 4.4.0 omit `delete_media=1`, while unknown servers first try the media-cleanup variant and retry once without the query parameter on legacy-style rejection responses.
-- `plugin_mastodon_delete_status_should_retry_without_delete_media()` — line 8618 — Decide whether a failed status DELETE should be retried without `delete_media=1`, while avoiding retries for missing statuses or active rate-limit stops.
+- `plugin_mastodon_delete_status()` — line 8810 — Delete a Mastodon status; cached Mastodon versions before 4.4.0 omit `delete_media=1`, while unknown servers first try the media-cleanup variant and retry once without the query parameter on legacy-style rejection responses.
+- `plugin_mastodon_delete_status_should_retry_without_delete_media()` — line 8838 — Decide whether a failed status DELETE should be retried without `delete_media=1`, while avoiding retries for missing statuses or active rate-limit stops.
 - `plugin_mastodon_detect_local_comment_parent_id()` — line 4252 — Detect the local parent comment identifier from comment data.
+- `plugin_mastodon_local_comment_parent_export_pending()` — line 4299 — Determine whether a local parent comment must be exported before its child reply can target the parent Mastodon reply.
 - `plugin_mastodon_dom_children_to_flatpress()` — line 5232 — Convert DOM child nodes into FlatPress BBCode text.
 - `plugin_mastodon_dom_node_to_flatpress()` — line 5250 — Convert a single DOM node into FlatPress BBCode text.
 - `plugin_mastodon_domains_match()` — line 5164 — Determine whether two host names belong to the same domain family.
@@ -738,16 +756,16 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_ensure_state_dir()` — line 2789 — Ensure that the plugin runtime directory exists.
 - `plugin_mastodon_entry_hash()` — line 5670 — Build a change-detection hash for a FlatPress entry.
 - `plugin_mastodon_entry_media_signature()` — line 6513 — Build a signature for media references contained in entry content.
-- `plugin_mastodon_exchange_code_for_token()` — line 8459 — Exchange an OAuth authorization code for an access token using the same negotiated scope string.
+- `plugin_mastodon_exchange_code_for_token()` — line 8679 — Exchange an OAuth authorization code for an access token using the same negotiated scope string.
 - `plugin_mastodon_extension_from_mime_type()` — line 5980 — Resolve a safe file extension from a MIME type.
 - `plugin_mastodon_extend_time_limit()` — line 7027 — Refresh or raise the PHP execution time budget for long-running Mastodon work without lowering an existing higher or unlimited limit.
 - `plugin_mastodon_extract_flatpress_tags()` — line 4767 — Extract FlatPress Tag plugin labels from an entry body.
 - `plugin_mastodon_extract_url_token()` — line 4451 — Extract the URL token from a BBCode or attribute fragment.
 - `plugin_mastodon_fediverse_creator_value()` — line 2199 — Build the fediverse creator meta value.
-- `plugin_mastodon_fetch_account_statuses()` — line 8521 — Fetch statuses for the authenticated Mastodon account.
+- `plugin_mastodon_fetch_account_statuses()` — line 8741 — Fetch statuses for the authenticated Mastodon account.
 - `plugin_mastodon_fetch_media_attachment()` — line 7455 — Fetch a single Mastodon media attachment by ID.
-- `plugin_mastodon_fetch_status()` — line 8579 — Fetch a single Mastodon status.
-- `plugin_mastodon_fetch_status_context()` — line 8568 — Fetch the conversation context for a Mastodon status.
+- `plugin_mastodon_fetch_status()` — line 8799 — Fetch a single Mastodon status.
+- `plugin_mastodon_fetch_status_context()` — line 8788 — Fetch the conversation context for a Mastodon status.
 - `plugin_mastodon_file_prestat()` — line 1828 — Read a cheap file metadata snapshot for cache validation.
 - `plugin_mastodon_file_prestat_signature()` — line 1848 — Convert a file metadata snapshot into a stable cache signature.
 - `plugin_mastodon_flatpress_to_mastodon()` — line 5531 — Convert FlatPress content into Mastodon-ready plain text.
@@ -764,14 +782,14 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_guess_subject()` — line 4364 — Guess a subject line from imported plain text.
 - `plugin_mastodon_head()` — line 2217 — Print Mastodon profile metadata into the HTML head.
 - `plugin_mastodon_html_entity_decode()` — line 4406 — Decode HTML entities using the plugin defaults.
-- `plugin_mastodon_http_build_query()` — line 8149 — Build an application/x-www-form-urlencoded query string.
-- `plugin_mastodon_http_request()` — line 8205 — Perform an HTTP request using cURL or the stream fallback.
+- `plugin_mastodon_http_build_query()` — line 8369 — Build an application/x-www-form-urlencoded query string.
+- `plugin_mastodon_http_request()` — line 8425 — Perform an HTTP request using cURL or the stream fallback.
 - `plugin_mastodon_http_request_multipart()` — line 7322 — Perform a multipart HTTP request.
-- `plugin_mastodon_import_remote_comment()` — line 9071 — Import a remote Mastodon reply into FlatPress as a comment while respecting comment tombstones, including early tombstones for locally deleted exported comments.
-- `plugin_mastodon_import_remote_context_descendants()` — line 9160 — Import remote Mastodon replies from a fetched thread context while blocking tombstoned parent/child replies.
-- `plugin_mastodon_import_remote_entry()` — line 8810 — Import a remote Mastodon status into FlatPress as an entry.
+- `plugin_mastodon_import_remote_comment()` — line 9291 — Import a remote Mastodon reply into FlatPress as a comment while respecting comment tombstones, including early tombstones for locally deleted exported comments.
+- `plugin_mastodon_import_remote_context_descendants()` — line 9380 — Import remote Mastodon replies from a fetched thread context while blocking tombstoned parent/child replies.
+- `plugin_mastodon_import_remote_entry()` — line 9030 — Import a remote Mastodon status into FlatPress as an entry.
 - `plugin_mastodon_instance_authority()` — line 2153 — Return the Mastodon instance authority used in fediverse creator metadata.
-- `plugin_mastodon_instance_character_limit()` — line 8506 — Return the status character limit of the configured instance.
+- `plugin_mastodon_instance_character_limit()` — line 8726 — Return the status character limit of the configured instance.
 - `plugin_mastodon_instance_configuration()` — line 7161 — Load and cache the Mastodon instance configuration document.
 - `plugin_mastodon_instance_media_description_limit()` — line 7184 — Return the media description length limit of the configured instance.
 - `plugin_mastodon_instance_media_limit()` — line 7171 — Return the media attachment limit of the configured instance.
@@ -780,30 +798,30 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_io_read_file()` — line 936 — Read a file through the FlatPress I/O layer when available, allowing the core APCu file hotcache for small files.
 - `plugin_mastodon_io_read_file_uncached()` — line 952 — Read a file without FlatPress request-local caches.
 - `plugin_mastodon_file_permissions_mode()` — line 970 — Return the FlatPress `FILE_PERMISSIONS` mode used for plugin runtime files.
-- `plugin_mastodon_admin_add_info_row()` — line 10109 — Add one admin diagnostics row when the value is available.
-- `plugin_mastodon_admin_boolean_label()` — line 10094 — Return a localized yes/no/unknown label for admin diagnostics.
+- `plugin_mastodon_admin_add_info_row()` — line 10329 — Add one admin diagnostics row when the value is available.
+- `plugin_mastodon_admin_boolean_label()` — line 10314 — Return a localized yes/no/unknown label for admin diagnostics.
 - `plugin_mastodon_apply_file_permissions()` — line 979 — Apply FlatPress `FILE_PERMISSIONS` to a plugin runtime file.
 - `plugin_mastodon_io_write_file()` — line 992 — Write a file through the FlatPress I/O layer when available and enforce `FILE_PERMISSIONS` after successful writes.
 - `plugin_mastodon_is_public_host()` — line 5050 — Determine whether a host name resolves to a public endpoint.
 - `plugin_mastodon_lang_string()` — line 4510 — Return a localized plugin string or a provided fallback.
 - `plugin_mastodon_limit_status_text()` — line 7243 — Truncate status text using Mastodon URL-budget rules.
 - `plugin_mastodon_limit_text()` — line 5648 — Limit text to a maximum number of characters.
-- `plugin_mastodon_list_local_entries()` — line 8003 — List local FlatPress entry identifiers.
+- `plugin_mastodon_list_local_entries()` — line 8223 — List local FlatPress entry identifiers.
 - `plugin_mastodon_local_item_date_key()` — line 2487 — Determine the date key of a local FlatPress entry or comment.
 - `plugin_mastodon_local_item_matches_content_window()` — line 2629 — Determine whether a local FlatPress item is inside the active content synchronization window.
 - `plugin_mastodon_local_item_matches_sync_start()` — line 2617 — Determine whether a local FlatPress item should be synchronized.
-- `plugin_mastodon_local_item_timestamp()` — line 7846 — Resolve the best timestamp for a local FlatPress item.
+- `plugin_mastodon_local_item_timestamp()` — line 8068 — Resolve the best timestamp for a local FlatPress item.
 - `plugin_mastodon_log()` — line 2798 — Append a line to the rotated append-only plugin sync log.
 - `plugin_mastodon_log_flush_skip_summaries()` — line 2843 — Flush aggregated skip counters as concise summary lines.
 - `plugin_mastodon_log_max_bytes()` — line 1053 — Return the sync.log rotation size limit.
 - `plugin_mastodon_log_rotate_files()` — line 1064 — Return the number of retained rotated sync logs.
 - `plugin_mastodon_log_skip()` — line 2813 — Aggregate high-volume skip messages by reason until the current sync phase ends.
 - `plugin_mastodon_mapping_matches_sync_start()` — line 2661 — Determine whether a stored synchronization mapping still belongs to the active sync-start window.
-- `plugin_mastodon_mastodon_api()` — line 8323 — Call the Mastodon API and return the raw HTTP response.
+- `plugin_mastodon_mastodon_api()` — line 8543 — Call the Mastodon API and return the raw HTTP response.
 - `plugin_mastodon_mastodon_hashtag_footer()` — line 4809 — Convert FlatPress tag labels into a Mastodon hashtag footer line.
 - `plugin_mastodon_mastodon_html_to_flatpress()` — line 5429 — Convert Mastodon HTML content into FlatPress BBCode.
-- `plugin_mastodon_mastodon_json()` — line 8372 — Call the Mastodon API and decode a JSON response.
-- `plugin_mastodon_maybe_sync()` — line 10062 — Run the scheduled synchronization when the current request is due.
+- `plugin_mastodon_mastodon_json()` — line 8592 — Call the Mastodon API and decode a JSON response.
+- `plugin_mastodon_maybe_sync()` — line 10282 — Run the scheduled synchronization when the current request is due.
 - `plugin_mastodon_media_copy_tree()` — line 5807 — Copy a directory tree used for media synchronization.
 - `plugin_mastodon_media_delete_tree()` — line 5780 — Delete a directory tree used for imported media.
 - `plugin_mastodon_media_download()` — line 6765 — Download a remote media asset.
@@ -835,8 +853,8 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_oauth_scopes()` — line 674 — Return the OAuth scopes that the currently registered app may safely request.
 - `plugin_mastodon_oauth_server_metadata()` — line 580 — Discover and cache OAuth authorization-server metadata from `/.well-known/oauth-authorization-server`.
 - `plugin_mastodon_oauth_supported_scopes()` — line 599 — Parse the discoverable OAuth scopes supported by the configured Mastodon instance.
-- `plugin_mastodon_old_thread_context_rotation_limit()` — line 9261 — Return the maximum number of known synchronized threads checked for replies per content sync run.
-- `plugin_mastodon_parse_http_response_headers()` — line 8041 — Parse raw HTTP response headers.
+- `plugin_mastodon_old_thread_context_rotation_limit()` — line 9481 — Return the maximum number of known synchronized threads checked for replies per content sync run.
+- `plugin_mastodon_parse_http_response_headers()` — line 8261 — Parse raw HTTP response headers.
 - `plugin_mastodon_parse_iso_datetime()` — line 4142 — Parse an ISO date/time string into FlatPress date format.
 - `plugin_mastodon_parse_iso_timestamp()` — line 4160 — Parse an ISO date/time value into a Unix timestamp.
 - `plugin_mastodon_photoswipe_plugin_active()` — line 4639 — Determine whether the PhotoSwipe plugin is active for the current FlatPress request.
@@ -846,7 +864,7 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_public_comments_url()` — line 5386 — Return the public comments URL for a FlatPress entry.
 - `plugin_mastodon_public_entry_url()` — line 5359 — Return the public URL for a FlatPress entry.
 - `plugin_mastodon_public_url_for_mastodon()` — line 5073 — Return a Mastodon-safe public URL or an empty string.
-- `plugin_mastodon_register_app()` — line 8416 — Register the FlatPress application on the configured Mastodon instance with the preferred discoverable scope set.
+- `plugin_mastodon_register_app()` — line 8636 — Register the FlatPress application on the configured Mastodon instance with the preferred discoverable scope set.
 - `plugin_mastodon_remote_media_description()` — line 6636 — Resolve the best description for a remote attachment.
 - `plugin_mastodon_remote_media_source_url()` — line 6596 — Resolve the best downloadable source URL for a remote attachment.
 - `plugin_mastodon_remote_media_source_urls()` — line 6614 — Resolve direct-download fallback candidates for a remote attachment.
@@ -862,9 +880,9 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_replace_unicode_emoticons_with_shortcodes()` — line 5028 — Replace Unicode emoticons with FlatPress shortcodes.
 - `plugin_mastodon_resolve_comment_reply_target()` — line 4274 — Resolve the remote reply target for a local comment export.
 - `plugin_mastodon_list_local_comment_ids()` — line 4327 — Scan the FlatPress comment directory directly so local reply export is not blocked by stale comment-list caches.
-- `plugin_mastodon_response_error_message()` — line 8387 — Extract the most useful error message from an API response.
-- `plugin_mastodon_run_deletion_sync()` — line 9648 — Run the deferred deletion synchronization in a follow-up request after content sync completed, with scheduled-window-limited remote existence lookups and progress cursors.
-- `plugin_mastodon_run_sync()` — line 9979 — Run a full synchronization cycle.
+- `plugin_mastodon_response_error_message()` — line 8607 — Extract the most useful error message from an API response.
+- `plugin_mastodon_run_deletion_sync()` — line 9868 — Run the deferred deletion synchronization in a follow-up request after content sync completed, with scheduled-window-limited remote existence lookups and progress cursors.
+- `plugin_mastodon_run_sync()` — line 10199 — Run a full synchronization cycle.
 - `plugin_mastodon_runtime_cache_clear()` — line 736 — Clear one request-local plugin cache bucket or the complete cache.
 - `plugin_mastodon_runtime_cache_get()` — line 694 — Return a value from the request-local plugin cache.
 - `plugin_mastodon_runtime_cache_set()` — line 718 — Store a value in the request-local plugin cache.
@@ -919,19 +937,19 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_state_set_dirty_entry()` — line 3315 — Add an older changed entry to the persistent dirty queue.
 - `plugin_mastodon_state_set_entry_mapping()` — line 3194 — Store the mapping between a local entry and a remote status.
 - `plugin_mastodon_state_write()` — line 3090 — Persist the runtime state to disk and refresh the compact scheduler summary after successful writes, without caching the full state in APCu.
-- `plugin_mastodon_status_missing_response()` — line 8638 — Check whether an API response means that the referenced Mastodon status no longer exists.
+- `plugin_mastodon_status_missing_response()` — line 8858 — Check whether an API response means that the referenced Mastodon status no longer exists.
 - `plugin_mastodon_status_text_length()` — line 7211 — Calculate the Mastodon-visible status length with instance URL budgeting.
-- `plugin_mastodon_stream_context_request()` — line 8071 — Perform an HTTP request through a stream context fallback.
+- `plugin_mastodon_stream_context_request()` — line 8291 — Perform an HTTP request through a stream context fallback.
 - `plugin_mastodon_strip_flatpress_tag_bbcode()` — line 4792 — Remove Tag plugin BBCode blocks from entry content.
 - `plugin_mastodon_strip_trailing_mastodon_hashtag_footer()` — line 4857 — Remove a trailing Mastodon hashtag footer from imported plain text.
 - `plugin_mastodon_subject_line_is_noise()` — line 5136 — Determine whether an extracted line should be ignored as a subject.
-- `plugin_mastodon_sync_due()` — line 9949 — Determine whether the scheduled synchronization is currently due.
-- `plugin_mastodon_sync_local_to_remote()` — line 9417 — Synchronize local FlatPress content to Mastodon.
-- `plugin_mastodon_sync_remote_to_local()` — line 9350 — Synchronize remote Mastodon content into FlatPress.
+- `plugin_mastodon_sync_due()` — line 10169 — Determine whether the scheduled synchronization is currently due.
+- `plugin_mastodon_sync_local_to_remote()` — line 9637 — Synchronize local FlatPress content to Mastodon.
+- `plugin_mastodon_sync_remote_to_local()` — line 9570 — Synchronize remote Mastodon content into FlatPress.
 - `plugin_mastodon_tag_plugin_active()` — line 4605 — Determine whether the Tag plugin is active for the current FlatPress request.
 - `plugin_mastodon_timestamp_date_key()` — line 2473 — Convert a FlatPress-adjusted timestamp into a stable date key.
-- `plugin_mastodon_update_status()` — line 8678 — Update an existing Mastodon status.
+- `plugin_mastodon_update_status()` — line 8898 — Update an existing Mastodon status.
 - `plugin_mastodon_upload_media_items()` — line 7613 — Upload local media items to Mastodon and collect the created media IDs.
-- `plugin_mastodon_verify_credentials()` — line 8489 — Verify the currently configured access token.
+- `plugin_mastodon_verify_credentials()` — line 8709 — Verify the currently configured access token.
 - `plugin_mastodon_wait_for_media_attachment()` — line 7564 — Poll an asynchronously processed Mastodon media attachment until it is ready or times out.
-- `setup()` — line 10276 — Register the Mastodon admin panel template and assign plugin data to Smarty.
+- `setup()` — line 10496 — Register the Mastodon admin panel template and assign plugin data to Smarty.
