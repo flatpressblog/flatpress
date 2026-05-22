@@ -201,8 +201,8 @@ function simulate_prepare_sandbox($sourceRoot) {
 function simulate_request_flag($name) {
 	$name = (string) $name;
 	if (PHP_SAPI === 'cli') {
-		global $argv;
-		if (is_array($argv) && in_array('--' . $name, $argv, true)) {
+		$cliArguments = isset($_SERVER ['argv']) ? (array) $_SERVER ['argv'] : array();
+		if (in_array('--' . $name, $cliArguments, true)) {
 			return true;
 		}
 	}
@@ -8142,6 +8142,40 @@ $allOk = test_result(
 		&& (string) $remoteEntryManualChildRequest ['in_reply_to_id'] === '931',
 	json_encode(array(
 		'child_meta' => $remoteEntryManualChildMeta,
+		'child_request' => $remoteEntryManualChildRequest
+	))
+) && $allOk;
+
+$remoteEntryManualParentRequestIndex = -1;
+$remoteEntryManualChildRequestIndex = -1;
+if (!empty($remoteEntryManualCommentExport ['http_requests']) && is_array($remoteEntryManualCommentExport ['http_requests'])) {
+	foreach ($remoteEntryManualCommentExport ['http_requests'] as $requestIndex => $request) {
+		if (!is_array($request) || empty($request ['method']) || empty($request ['url']) || strtoupper((string) $request ['method']) !== 'POST' || strpos((string) $request ['url'], '/api/v1/statuses') === false) {
+			continue;
+		}
+		$parsed = simulate_parse_http_request_body($request);
+		$statusText = isset($parsed ['status']) ? (string) $parsed ['status'] : '';
+		if ($remoteEntryManualParentRequestIndex < 0 && strpos($statusText, 'Remote-thread parent comment body') !== false) {
+			$remoteEntryManualParentRequestIndex = (int) $requestIndex;
+		}
+		if ($remoteEntryManualChildRequestIndex < 0 && strpos($statusText, 'Remote-thread child comment body') !== false) {
+			$remoteEntryManualChildRequestIndex = (int) $requestIndex;
+		}
+	}
+}
+
+$allOk = test_result(
+	'Unsynchronized local parent comment is exported before local child reply',
+	$remoteEntryManualParentRequestIndex >= 0
+		&& $remoteEntryManualChildRequestIndex > $remoteEntryManualParentRequestIndex
+		&& !empty($remoteEntryManualParentMeta ['remote_id'])
+		&& !empty($remoteEntryManualChildMeta ['remote_id'])
+		&& isset($remoteEntryManualChildRequest ['in_reply_to_id'])
+		&& (string) $remoteEntryManualChildRequest ['in_reply_to_id'] === (string) $remoteEntryManualParentMeta ['remote_id'],
+	json_encode(array(
+		'parent_request_index' => $remoteEntryManualParentRequestIndex,
+		'child_request_index' => $remoteEntryManualChildRequestIndex,
+		'parent_meta' => $remoteEntryManualParentMeta,
 		'child_request' => $remoteEntryManualChildRequest
 	))
 ) && $allOk;
