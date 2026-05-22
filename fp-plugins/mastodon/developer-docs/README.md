@@ -36,3 +36,13 @@ The plugin code should remain compatible with:
 - Smarty 4.x/5.x admin template usage, including Smarty 5.8.0.
 - PHPStan Level 5 style expectations: normalize mixed arrays, avoid ambiguous return shapes where practical, and keep side effects explicit.
 - Shared hosting constraints: non-blocking locks, finite request budgets, finite media/delete windows, no unbounded background loops.
+
+## Documentation consistency check
+
+After changing the plugin, the simulation harness or this documentation set, run:
+
+```bash
+php fp-plugins/mastodon/developer-docs/check-consistency.php
+```
+
+The checker compares the regression matrix with `simulate_mastodon_plugin.php`, the function organigram with `plugin.mastodon.php`, and the documented OAuth helper names with the current implementation.

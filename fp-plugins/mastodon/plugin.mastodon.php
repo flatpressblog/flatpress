@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.4.4
+ * Version: 2.4.5
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -7811,12 +7811,106 @@ function plugin_mastodon_prepare_entry_media_sync_plan($options, $entryMeta, $me
 }
 
 /**
- * Collect entry files recursively from the FlatPress content tree.
+ * Determine whether a FlatPress content-tree path segment is a two-digit date segment.
+ * @param string $value
+ * @return bool
+ */
+function plugin_mastodon_is_two_digit_path_segment($value) {
+	return preg_match('/^\d{2}$/', (string) $value) === 1;
+}
+
+/**
+ * Convert a FlatPress two-digit year segment into the full year used by PHP's legacy date parser.
+ * @param string $year
+ * @return int
+ */
+function plugin_mastodon_two_digit_year_to_full_year($year) {
+	$year = (int) $year;
+	return $year >= 70 ? 1900 + $year : 2000 + $year;
+}
+
+/**
+ * Return the last date key that can occur inside a FlatPress YY/MM content directory.
+ * @param string $year
+ * @param string $month
+ * @return string
+ */
+function plugin_mastodon_entry_month_end_date_key($year, $month) {
+	if (!plugin_mastodon_is_two_digit_path_segment($year) || !plugin_mastodon_is_two_digit_path_segment($month)) {
+		return '';
+	}
+	$monthNumber = (int) $month;
+	if ($monthNumber < 1 || $monthNumber > 12) {
+		return '';
+	}
+	$timestamp = gmmktime(12, 0, 0, $monthNumber + 1, 0, plugin_mastodon_two_digit_year_to_full_year($year));
+	if ($timestamp === false) {
+		return '';
+	}
+	return gmdate('Y-m-d', $timestamp);
+}
+
+/**
+ * Determine whether a FlatPress YY/MM directory can contain scheduled-sync entry candidates.
+ * @param array<string, string> $options
+ * @param string $year
+ * @param string $month
+ * @return bool
+ */
+function plugin_mastodon_entry_month_may_match_scheduled_window($options, $year, $month) {
+	$monthEnd = plugin_mastodon_entry_month_end_date_key($year, $month);
+	if ($monthEnd === '') {
+		return true;
+	}
+	if (!plugin_mastodon_date_matches_sync_start($options, $monthEnd)) {
+		return false;
+	}
+	$windowStart = plugin_mastodon_scheduled_window_start_date($options);
+	return $windowStart === '' || strcmp($monthEnd, $windowStart) >= 0;
+}
+
+/**
+ * Collect direct entry files from one canonical FlatPress YY/MM content directory.
+ * @param string $monthDir
+ * @param string $year
+ * @param string $month
+ * @param array<int, string> $files
+ * @return void
+ */
+function plugin_mastodon_collect_entry_files_from_month($monthDir, $year, $month, &$files) {
+	if (!plugin_mastodon_is_two_digit_path_segment($year) || !plugin_mastodon_is_two_digit_path_segment($month)) {
+		return;
+	}
+	$items = @scandir($monthDir);
+	if (!is_array($items)) {
+		return;
+	}
+	$pattern = '/^entry' . preg_quote($year . $month, '/') . '\d{2}-\d{6}\.txt$/';
+	$monthDir = rtrim((string) $monthDir, '/\\');
+	foreach ($items as $item) {
+		if (!preg_match($pattern, $item)) {
+			continue;
+		}
+		$path = $monthDir . DIRECTORY_SEPARATOR . $item;
+		if (!is_file($path)) {
+			continue;
+		}
+		$entryId = basename($item, EXT);
+		$date = function_exists('date_from_id') ? date_from_id($entryId) : array();
+		if (!is_array($date) || !isset($date ['y'], $date ['m'], $date ['time']) || $date ['time'] === false || (string) $date ['y'] !== $year || (string) $date ['m'] !== $month) {
+			continue;
+		}
+		$files [] = $path;
+	}
+}
+
+/**
+ * Legacy fallback for non-canonical content trees.
  * @param string $dir
  * @param array<int, string> $files
  * @return void
  */
-function plugin_mastodon_collect_entry_files($dir, &$files) {
+function plugin_mastodon_collect_entry_files_legacy($dir, &$files) {
 	$items = @scandir($dir);
 	if (!is_array($items)) {
 		return;
@@ -7827,14 +7921,142 @@ function plugin_mastodon_collect_entry_files($dir, &$files) {
 		}
 		$path = rtrim($dir, '/\\') . DIRECTORY_SEPARATOR . $item;
 		if (is_dir($path)) {
-			if (basename($path) === 'drafts' || basename($path) === 'static' || basename($path) === 'seometa') {
+			$directoryName = basename($path);
+			if ($directoryName === 'drafts' || $directoryName === 'static' || $directoryName === 'seometa' || $directoryName === 'comments') {
 				continue;
 			}
-			plugin_mastodon_collect_entry_files($path, $files);
+			plugin_mastodon_collect_entry_files_legacy($path, $files);
 		} elseif (preg_match('/^entry\d{6}-\d{6}\.txt$/', $item)) {
 			$files [] = $path;
 		}
 	}
+}
+
+/**
+ * Collect canonical entry files directly from FlatPress YY/MM content directories.
+ * @param string $dir
+ * @param array<int, string> $files
+ * @return void
+ */
+function plugin_mastodon_collect_entry_files($dir, &$files) {
+	$root = rtrim((string) $dir, '/\\');
+	$items = @scandir($root);
+	if (!is_array($items)) {
+		return;
+	}
+	$foundFlatPressMonth = false;
+	foreach ($items as $year) {
+		if (!plugin_mastodon_is_two_digit_path_segment($year)) {
+			continue;
+		}
+		$yearDir = $root . DIRECTORY_SEPARATOR . $year;
+		if (!is_dir($yearDir)) {
+			continue;
+		}
+		$months = @scandir($yearDir);
+		if (!is_array($months)) {
+			continue;
+		}
+		foreach ($months as $month) {
+			if (!plugin_mastodon_is_two_digit_path_segment($month)) {
+				continue;
+			}
+			$monthDir = $yearDir . DIRECTORY_SEPARATOR . $month;
+			if (!is_dir($monthDir)) {
+				continue;
+			}
+			$foundFlatPressMonth = true;
+			plugin_mastodon_collect_entry_files_from_month($monthDir, $year, $month, $files);
+		}
+	}
+	if (!$foundFlatPressMonth) {
+		plugin_mastodon_collect_entry_files_legacy($root, $files);
+	}
+}
+
+/**
+ * Collect scheduled-sync entry candidates directly from relevant FlatPress YY/MM content directories.
+ * @param string $dir
+ * @param array<string, string> $options
+ * @param array<int, string> $files
+ * @return void
+ */
+function plugin_mastodon_collect_scheduled_entry_files($dir, $options, &$files) {
+	$root = rtrim((string) $dir, '/\\');
+	$items = @scandir($root);
+	if (!is_array($items)) {
+		return;
+	}
+	$foundFlatPressMonth = false;
+	foreach ($items as $year) {
+		if (!plugin_mastodon_is_two_digit_path_segment($year)) {
+			continue;
+		}
+		$yearDir = $root . DIRECTORY_SEPARATOR . $year;
+		if (!is_dir($yearDir)) {
+			continue;
+		}
+		$months = @scandir($yearDir);
+		if (!is_array($months)) {
+			continue;
+		}
+		foreach ($months as $month) {
+			if (!plugin_mastodon_is_two_digit_path_segment($month)) {
+				continue;
+			}
+			$monthDir = $yearDir . DIRECTORY_SEPARATOR . $month;
+			if (!is_dir($monthDir)) {
+				continue;
+			}
+			$foundFlatPressMonth = true;
+			if (!plugin_mastodon_entry_month_may_match_scheduled_window($options, $year, $month)) {
+				continue;
+			}
+			plugin_mastodon_collect_entry_files_from_month($monthDir, $year, $month, $files);
+		}
+	}
+	if (!$foundFlatPressMonth) {
+		plugin_mastodon_collect_entry_files_legacy($root, $files);
+	}
+}
+
+/**
+ * Append existing dirty entry files by canonical FlatPress ID.
+ * @param array<string, bool> $dirtyEntryLookup
+ * @param array<int, string> $files
+ * @return void
+ */
+function plugin_mastodon_add_dirty_entry_files($dirtyEntryLookup, &$files) {
+	foreach (array_keys($dirtyEntryLookup) as $entryId) {
+		$entryId = trim((string) $entryId);
+		if ($entryId === '' || !preg_match('/^entry\d{6}-\d{6}$/', $entryId)) {
+			continue;
+		}
+		$file = function_exists('entry_exists') ? entry_exists($entryId) : false;
+		if (is_string($file) && $file !== '') {
+			$files [] = $file;
+		}
+	}
+}
+
+/**
+ * Collect local entry files for a local-to-remote synchronization pass.
+ * @param array<string, string> $options
+ * @param array<string, bool> $dirtyEntryLookup
+ * @param bool $force
+ * @return array<int, string>
+ */
+function plugin_mastodon_collect_entry_files_for_sync($options, $dirtyEntryLookup, $force) {
+	$files = array();
+	if ((bool) $force) {
+		plugin_mastodon_collect_entry_files(CONTENT_DIR, $files);
+	} else {
+		plugin_mastodon_collect_scheduled_entry_files(CONTENT_DIR, $options, $files);
+		plugin_mastodon_add_dirty_entry_files($dirtyEntryLookup, $files);
+	}
+	$files = array_values(array_unique($files));
+	sort($files, SORT_STRING);
+	return $files;
 }
 
 /**
@@ -7961,9 +8183,7 @@ function plugin_mastodon_should_parse_local_entry_for_sync($options, $dirtyEntry
  */
 function plugin_mastodon_list_local_entries_for_sync($options, $state, $force) {
 	$dirtyEntryLookup = plugin_mastodon_dirty_entry_id_lookup($state);
-	$files = array();
-	plugin_mastodon_collect_entry_files(CONTENT_DIR, $files);
-	sort($files, SORT_STRING);
+	$files = plugin_mastodon_collect_entry_files_for_sync($options, $dirtyEntryLookup, $force);
 	$entryRecords = array();
 	foreach ($files as $file) {
 		$id = basename($file, EXT);
