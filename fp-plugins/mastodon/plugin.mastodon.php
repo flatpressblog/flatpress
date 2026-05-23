@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.4.5
+ * Version: 2.4.6
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -8040,7 +8040,7 @@ function plugin_mastodon_add_dirty_entry_files($dirtyEntryLookup, &$files) {
 }
 
 /**
- * Collect local entry files for a local-to-remote synchronization pass.
+ * Collect local entry files for a local-to-remote synchronization pass; scheduled runs add all dirty parents without a hard cap.
  * @param array<string, string> $options
  * @param array<string, bool> $dirtyEntryLookup
  * @param bool $force

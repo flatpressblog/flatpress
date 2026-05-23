@@ -297,6 +297,31 @@ function simulate_delete_entry_fixture($entryId) {
 }
 
 /**
+ * Return sorted entry ids selected by the Mastodon local-to-remote sync candidate list.
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
+ * @param bool $force
+ * @return array<int, string>
+ */
+function simulate_entry_ids_for_sync($options, $state, $force) {
+	$entries = plugin_mastodon_list_local_entries_for_sync($options, $state, $force);
+	$ids = array_keys(is_array($entries) ? $entries : array());
+	sort($ids, SORT_STRING);
+	return $ids;
+}
+
+/**
+ * Delete all entry fixtures in a list.
+ * @param array<int, string> $entryIds
+ * @return void
+ */
+function simulate_delete_entry_fixtures($entryIds) {
+	foreach ($entryIds as $entryId) {
+		simulate_delete_entry_fixture((string) $entryId);
+	}
+}
+
+/**
  * Write an arbitrary sandbox fixture file.
  * @param string $path
  * @param string $contents
@@ -2458,6 +2483,214 @@ simulate_delete_entry_fixture($scheduledDirtyCommentEntryId);
 simulate_delete_entry_fixture($scheduledRecentEntryId);
 unset($GLOBALS ['plugin_mastodon_test_now']);
 
+// Scheduled direct scanner guardrails for the configurable 7/14/30-day admin window.
+$scheduledWindowOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
+$scheduledWindowOptions ['sync_start_date'] = '2035-01-01';
+
+$scheduled7Ids = array('entry360107-120000', 'entry360108-120000', 'entry360115-120000');
+$GLOBALS ['plugin_mastodon_test_now'] = strtotime('2036-01-15 12:00:00 UTC');
+$scheduledWindowOptions ['sync_scheduled_window_days'] = '7';
+simulate_write_entry_fixture($scheduled7Ids [0], array(
+	'version' => system_ver(),
+	'subject' => 'Seven-day scanner old entry',
+	'content' => 'This clean entry is just outside the 7-day scheduled window.',
+	'author' => 'Simulation',
+	'date' => strtotime('2036-01-07 12:00:00 UTC')
+));
+simulate_write_entry_fixture($scheduled7Ids [1], array(
+	'version' => system_ver(),
+	'subject' => 'Seven-day scanner lower-bound entry',
+	'content' => 'This clean entry is exactly at the 7-day scheduled window lower bound.',
+	'author' => 'Simulation',
+	'date' => strtotime('2036-01-08 12:00:00 UTC')
+));
+simulate_write_entry_fixture($scheduled7Ids [2], array(
+	'version' => system_ver(),
+	'subject' => 'Seven-day scanner current entry',
+	'content' => 'This clean entry is inside the 7-day scheduled window.',
+	'author' => 'Simulation',
+	'date' => strtotime('2036-01-15 12:00:00 UTC')
+));
+$scheduled7ParsedIds = simulate_entry_ids_for_sync($scheduledWindowOptions, plugin_mastodon_default_state(), false);
+$allOk = test_result(
+	'Scheduled direct scanner honors the 7-day admin window at parse stage',
+	!in_array($scheduled7Ids [0], $scheduled7ParsedIds, true)
+		&& in_array($scheduled7Ids [1], $scheduled7ParsedIds, true)
+		&& in_array($scheduled7Ids [2], $scheduled7ParsedIds, true),
+	json_encode(array('parsed_ids' => $scheduled7ParsedIds, 'fixture_ids' => $scheduled7Ids))
+) && $allOk;
+simulate_delete_entry_fixtures($scheduled7Ids);
+unset($GLOBALS ['plugin_mastodon_test_now']);
+
+$scheduled14Ids = array('entry351221-120000', 'entry351222-120000', 'entry360105-120000');
+$GLOBALS ['plugin_mastodon_test_now'] = strtotime('2036-01-05 12:00:00 UTC');
+$scheduledWindowOptions ['sync_scheduled_window_days'] = '14';
+simulate_write_entry_fixture($scheduled14Ids [0], array(
+	'version' => system_ver(),
+	'subject' => 'Fourteen-day scanner old December entry',
+	'content' => 'This clean entry is outside the 14-day scheduled window.',
+	'author' => 'Simulation',
+	'date' => strtotime('2035-12-21 12:00:00 UTC')
+));
+simulate_write_entry_fixture($scheduled14Ids [1], array(
+	'version' => system_ver(),
+	'subject' => 'Fourteen-day scanner December boundary entry',
+	'content' => 'This clean entry is exactly at the 14-day scheduled window lower bound.',
+	'author' => 'Simulation',
+	'date' => strtotime('2035-12-22 12:00:00 UTC')
+));
+simulate_write_entry_fixture($scheduled14Ids [2], array(
+	'version' => system_ver(),
+	'subject' => 'Fourteen-day scanner January entry',
+	'content' => 'This clean entry is inside the 14-day scheduled window.',
+	'author' => 'Simulation',
+	'date' => strtotime('2036-01-05 12:00:00 UTC')
+));
+$scheduled14ParsedIds = simulate_entry_ids_for_sync($scheduledWindowOptions, plugin_mastodon_default_state(), false);
+$allOk = test_result(
+	'Scheduled direct scanner honors the 14-day admin window across a month boundary',
+	!in_array($scheduled14Ids [0], $scheduled14ParsedIds, true)
+		&& in_array($scheduled14Ids [1], $scheduled14ParsedIds, true)
+		&& in_array($scheduled14Ids [2], $scheduled14ParsedIds, true),
+	json_encode(array('parsed_ids' => $scheduled14ParsedIds, 'fixture_ids' => $scheduled14Ids))
+) && $allOk;
+simulate_delete_entry_fixtures($scheduled14Ids);
+unset($GLOBALS ['plugin_mastodon_test_now']);
+
+$scheduled30Ids = array('entry351130-120000', 'entry351216-120000', 'entry360115-120000');
+$GLOBALS ['plugin_mastodon_test_now'] = strtotime('2036-01-15 12:00:00 UTC');
+$scheduledWindowOptions ['sync_scheduled_window_days'] = '30';
+simulate_write_entry_fixture($scheduled30Ids [0], array(
+	'version' => system_ver(),
+	'subject' => 'Thirty-day scanner old November entry',
+	'content' => 'This clean entry is outside the 30-day scheduled window.',
+	'author' => 'Simulation',
+	'date' => strtotime('2035-11-30 12:00:00 UTC')
+));
+simulate_write_entry_fixture($scheduled30Ids [1], array(
+	'version' => system_ver(),
+	'subject' => 'Thirty-day scanner December boundary entry',
+	'content' => 'This clean entry is exactly at the 30-day scheduled window lower bound.',
+	'author' => 'Simulation',
+	'date' => strtotime('2035-12-16 12:00:00 UTC')
+));
+simulate_write_entry_fixture($scheduled30Ids [2], array(
+	'version' => system_ver(),
+	'subject' => 'Thirty-day scanner January entry',
+	'content' => 'This clean entry is inside the 30-day scheduled window.',
+	'author' => 'Simulation',
+	'date' => strtotime('2036-01-15 12:00:00 UTC')
+));
+$scheduled30ParsedIds = simulate_entry_ids_for_sync($scheduledWindowOptions, plugin_mastodon_default_state(), false);
+$allOk = test_result(
+	'Scheduled direct scanner honors the 30-day admin window across a year boundary',
+	!in_array($scheduled30Ids [0], $scheduled30ParsedIds, true)
+		&& in_array($scheduled30Ids [1], $scheduled30ParsedIds, true)
+		&& in_array($scheduled30Ids [2], $scheduled30ParsedIds, true),
+	json_encode(array('parsed_ids' => $scheduled30ParsedIds, 'fixture_ids' => $scheduled30Ids))
+) && $allOk;
+simulate_delete_entry_fixtures($scheduled30Ids);
+unset($GLOBALS ['plugin_mastodon_test_now']);
+
+$dirtyEntryGuardIds = array('entry360101-120000', 'entry360102-120000', 'entry360103-120000', 'entry360104-120000', 'entry360105-120000');
+$GLOBALS ['plugin_mastodon_test_now'] = strtotime('2036-02-15 12:00:00 UTC');
+$scheduledWindowOptions ['sync_scheduled_window_days'] = '7';
+$dirtyEntryGuardState = plugin_mastodon_default_state();
+foreach ($dirtyEntryGuardIds as $dirtyEntryGuardIndex => $dirtyEntryGuardId) {
+	simulate_write_entry_fixture($dirtyEntryGuardId, array(
+		'version' => system_ver(),
+		'subject' => 'Dirty entry guard fixture ' . (string) $dirtyEntryGuardIndex,
+		'content' => 'Older dirty entries are mandatory candidates and must not be capped at three.',
+		'author' => 'Simulation',
+		'date' => strtotime('2036-01-' . str_pad((string) ($dirtyEntryGuardIndex + 1), 2, '0', STR_PAD_LEFT) . ' 12:00:00 UTC')
+	));
+	$dirtyEntryGuardState ['dirty_entries'] [$dirtyEntryGuardId] = array(
+		'hash' => 'dirty-entry-' . (string) $dirtyEntryGuardIndex,
+		'queued_at' => '2036-02-15 12:00:00'
+	);
+}
+$dirtyEntryGuardParsedIds = simulate_entry_ids_for_sync($scheduledWindowOptions, $dirtyEntryGuardState, false);
+$dirtyEntryGuardFound = 0;
+foreach ($dirtyEntryGuardIds as $dirtyEntryGuardId) {
+	if (in_array($dirtyEntryGuardId, $dirtyEntryGuardParsedIds, true)) {
+		$dirtyEntryGuardFound++;
+	}
+}
+$allOk = test_result(
+	'Scheduled direct scanner treats more than three dirty entries as mandatory candidates',
+	$dirtyEntryGuardFound === count($dirtyEntryGuardIds),
+	json_encode(array('parsed_ids' => $dirtyEntryGuardParsedIds, 'dirty_ids' => $dirtyEntryGuardIds))
+) && $allOk;
+simulate_delete_entry_fixtures($dirtyEntryGuardIds);
+unset($GLOBALS ['plugin_mastodon_test_now']);
+
+$dirtyCommentGuardEntryIds = array('entry360106-120000', 'entry360107-120000', 'entry360108-120000', 'entry360109-120000');
+$GLOBALS ['plugin_mastodon_test_now'] = strtotime('2036-02-15 12:00:00 UTC');
+$dirtyCommentGuardState = plugin_mastodon_default_state();
+foreach ($dirtyCommentGuardEntryIds as $dirtyCommentGuardIndex => $dirtyCommentGuardEntryId) {
+	$dirtyCommentGuardCommentId = 'comment3601' . str_pad((string) ($dirtyCommentGuardIndex + 6), 2, '0', STR_PAD_LEFT) . '-120500';
+	simulate_write_entry_fixture($dirtyCommentGuardEntryId, array(
+		'version' => system_ver(),
+		'subject' => 'Dirty comment parent guard fixture ' . (string) $dirtyCommentGuardIndex,
+		'content' => 'Older parents of dirty comments are mandatory candidates and must not be capped at three.',
+		'author' => 'Simulation',
+		'date' => strtotime('2036-01-' . str_pad((string) ($dirtyCommentGuardIndex + 6), 2, '0', STR_PAD_LEFT) . ' 12:00:00 UTC')
+	));
+	simulate_write_comment_fixture($dirtyCommentGuardEntryId, $dirtyCommentGuardCommentId, array(
+		'version' => system_ver(),
+		'name' => 'Simulation',
+		'content' => 'Dirty comment parent guard fixture.',
+		'date' => strtotime('2036-01-' . str_pad((string) ($dirtyCommentGuardIndex + 6), 2, '0', STR_PAD_LEFT) . ' 12:05:00 UTC')
+	));
+	$dirtyCommentGuardState ['dirty_comments'] [$dirtyCommentGuardEntryId . ':' . $dirtyCommentGuardCommentId] = array(
+		'entry_id' => $dirtyCommentGuardEntryId,
+		'comment_id' => $dirtyCommentGuardCommentId,
+		'hash' => 'dirty-comment-' . (string) $dirtyCommentGuardIndex,
+		'queued_at' => '2036-02-15 12:00:00'
+	);
+}
+$dirtyCommentGuardParsedIds = simulate_entry_ids_for_sync($scheduledWindowOptions, $dirtyCommentGuardState, false);
+$dirtyCommentGuardFound = 0;
+foreach ($dirtyCommentGuardEntryIds as $dirtyCommentGuardEntryId) {
+	if (in_array($dirtyCommentGuardEntryId, $dirtyCommentGuardParsedIds, true)) {
+		$dirtyCommentGuardFound++;
+	}
+}
+$allOk = test_result(
+	'Scheduled direct scanner treats more than three dirty-comment parents as mandatory candidates',
+	$dirtyCommentGuardFound === count($dirtyCommentGuardEntryIds),
+	json_encode(array('parsed_ids' => $dirtyCommentGuardParsedIds, 'dirty_parent_ids' => $dirtyCommentGuardEntryIds))
+) && $allOk;
+simulate_delete_entry_fixtures($dirtyCommentGuardEntryIds);
+unset($GLOBALS ['plugin_mastodon_test_now']);
+
+$forceScannerIds = array('entry340101-120000', 'entry360215-120000');
+$forceScannerOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
+$forceScannerOptions ['sync_start_date'] = '2036-01-01';
+$forceScannerOptions ['sync_scheduled_window_days'] = '7';
+simulate_write_entry_fixture($forceScannerIds [0], array(
+	'version' => system_ver(),
+	'subject' => 'Force scanner older entry',
+	'content' => 'Manual force sync must keep the all-YY/MM repair path.',
+	'author' => 'Simulation',
+	'date' => strtotime('2034-01-01 12:00:00 UTC')
+));
+simulate_write_entry_fixture($forceScannerIds [1], array(
+	'version' => system_ver(),
+	'subject' => 'Force scanner current entry',
+	'content' => 'Manual force sync must also include current entries.',
+	'author' => 'Simulation',
+	'date' => strtotime('2036-02-15 12:00:00 UTC')
+));
+$forceScannerParsedIds = simulate_entry_ids_for_sync($forceScannerOptions, plugin_mastodon_default_state(), true);
+$allOk = test_result(
+	'Manual force sync keeps the direct all-YY/MM scanner repair path',
+	in_array($forceScannerIds [0], $forceScannerParsedIds, true)
+		&& in_array($forceScannerIds [1], $forceScannerParsedIds, true),
+	json_encode(array('parsed_ids' => $forceScannerParsedIds, 'fixture_ids' => $forceScannerIds))
+) && $allOk;
+simulate_delete_entry_fixtures($forceScannerIds);
+
 simulate_delete_recursive($scannerFixtureRoot);
 
 $enabledPluginChecks = array(
@@ -4593,7 +4826,7 @@ $options ['access_token'] = 'token123';
 plugin_mastodon_save_options($options);
 plugin_mastodon_runtime_cache_clear();
 
-// Regression test: when multiple local entries are exported in one batch, older entries must be posted first.
+
 // Regression test: when multiple local entries are exported in one batch, older entries must be posted first.
 simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
 mkdir($simRoot . '/fp-content/plugin_mastodon', 0777, true);
