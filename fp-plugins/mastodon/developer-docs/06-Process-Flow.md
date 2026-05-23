@@ -135,7 +135,8 @@ flowchart TD
 flowchart TD
     Start["plugin_mastodon_list_local_entries_for_sync"]
     DirtyLookup["Build lookup from dirty_entries and dirty_comments"]
-    CollectFiles["Collect canonical CONTENT_DIR/YY/MM/entry*.txt candidates<br/>full scan for force, scheduled months + dirty parents otherwise"]
+    CollectFiles["Collect canonical CONTENT_DIR/YY/MM/entry*.txt candidates<br/>full scan for force, scheduled 7/14/30-day months otherwise"]
+    AddDirty["Append all dirty_entries and dirty_comments parents<br/>mandatory, no hard cap"]
     NextFile["Next entry file"]
     Force{"manual full sync force=true?"}
     Dirty{"Entry ID in dirty lookup?"}
@@ -147,7 +148,7 @@ flowchart TD
     Sort["Sort by local item timestamp"]
     Result["Return selected entries"]
 
-    Start --> DirtyLookup --> CollectFiles --> NextFile
+    Start --> DirtyLookup --> CollectFiles --> AddDirty --> NextFile
     NextFile --> Force
     Force -- "Yes" --> Parse
     Force -- "No" --> Dirty
@@ -161,7 +162,7 @@ flowchart TD
     NextFile --> Sort --> Result
 ```
 
-The collector reads only canonical FlatPress `YY/MM/entry*.txt` files directly from month directories. Manual full syncs scan all canonical months. Scheduled/non-full syncs scan only months that can intersect the active content window and then append canonical parent entries from `dirty_entries` and `dirty_comments`. Local comments are still evaluated later per selected parent entry via the comment-listing path, so entry-like files below comment storage must not inflate the local entry candidate set.
+The collector reads only canonical FlatPress `YY/MM/entry*.txt` files directly from month directories. Manual full syncs scan all canonical months. Scheduled/non-full syncs scan only months that can intersect the admin-selected 7/14/30-day active content window and then append every canonical parent entry from `dirty_entries` and `dirty_comments`. Dirty candidates are mandatory and intentionally have no simple three-item hard cap; a future throttle would need a persisted rotating cursor, logging and a full-sync bypass. Local comments are still evaluated later per selected parent entry via the comment-listing path, so entry-like files below comment storage must not inflate the local entry candidate set.
 
 ### 1.2 FlatPress entry to Mastodon status
 
@@ -1153,8 +1154,8 @@ flowchart TD
 
 Key implications for developers:
 
-- Scheduled content syncs are optimized for large blogs by using direct `YY/MM` month scans, post-success dirty queues and
-  date-window selection.
+- Scheduled content syncs are optimized for large blogs by using direct `YY/MM` month scans bound to the admin-selected
+  7/14/30-day window, plus uncapped mandatory post-success dirty-entry and dirty-comment-parent candidates.
 - Manual full syncs deliberately remain exhaustive and should not be replaced by dirty queues.
 - Deletion syncs need the full mapping state because they compare local existence with remote
   status existence and maintain tombstones and descendant rechecks.
