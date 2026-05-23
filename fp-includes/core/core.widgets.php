@@ -109,6 +109,13 @@ function get_registered_widgetsets($widgetset) {
  *
  * $limit_params_to = array()) indexed array of arrays, containing
  * allowed parameters (not impl.)
+ *
+ * @param string $widgetid
+ * @param string $widgetname
+ * @param callable $widget_func
+ * @param int $num_params
+ * @param array<int, array<int, string>> $limit_params_to
+ * @return void
  */
 function register_widget($widgetid, $widgetname, $widget_func, $num_params = 0, $limit_params_to = array()) {
 	global $fp_registered_widgets;

@@ -49,7 +49,7 @@ class LayoutDefault {
 		$this->theme = theme_loadsettings();
 		$GLOBALS ['theme'] = $this->theme;
 
-		$this->lang = lang_load();
+		$this->lang = lang_load('default');
 		$GLOBALS ['lang'] = $this->lang;
 
 		// user_loggedin() or sess_setup();
@@ -83,8 +83,7 @@ class LayoutDefault {
 		do_action('shutdown');
 	}
 
-	/*
-	 *
+	/**
 	 * function post_message($module, $ring, $message) {
 	 * $this->message_queue[$module][$ring][]=$message;
 	 *
@@ -161,5 +160,4 @@ class Abstract_LayoutDialog extends LayoutDefault {
 	}
 
 }
-
 ?>
