@@ -219,13 +219,12 @@ function system_init() {
 
 	cookie_setup();
 	sess_setup();
-	user_loggedin();
 
 	ob_start();
 
 	$GLOBALS ['theme'] = theme_loadsettings();
 
-	$GLOBALS ['lang'] = lang_load();
+	$GLOBALS ['lang'] = lang_load('default');
 
 	plugin_loadall();
 
@@ -274,5 +273,4 @@ function system_dpr($action, $content) {
 		echo "<pre style='position:absolute'>" . $p . "</pre>";
 	});
 }
-
 ?>

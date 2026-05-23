@@ -21,7 +21,7 @@ function plugin_cookiebanner_getlang() {
 		return $cache;
 	}
 	$cache = lang_load('plugin:cookiebanner');
-	return is_array($cache) ? $cache : array();
+	return $cache;
 }
 
 /**
@@ -114,7 +114,6 @@ function plugin_cookiebanner_footer() {
 }
 
 add_action('wp_footer', 'plugin_cookiebanner_footer', 0);
-
 
 function plugin_cookiebanner_privacypolicy() {
 
