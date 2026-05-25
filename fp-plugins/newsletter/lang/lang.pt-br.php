@@ -37,17 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'Não há assinantes disponíveis',
 	'delete_subscriber' => 'Excluir este endereço',
 	'delete_confirm' => 'Deseja realmente excluir este endereço?',
-	'desc_batch' => 'Aqui você pode especificar para quantos assinantes um boletim informativo é enviado por dia. '. //
-		'Pergunte ao seu provedor de e-mail quantos e-mails podem ser enviados por dia. ' . //
-		'O boletim informativo é enviado automaticamente a todos os assinantes no início do mês. ' . //
-		'Se nenhum envio automático estiver em execução no momento, você também poderá iniciar o envio do boletim informativo imediatamente. ' . //
-		'Se o envio imediato não tiver sido concluído até o dia 28 do mês, todos os assinantes não receberão automaticamente o boletim informativo regular até o mês seguinte.',
+	'desc_batch' => 'Aqui você define quantos e-mails o plugin envia em cada dia de envio. ' . //
+		'Escolha um valor abaixo do limite diário do seu provedor de e-mail. ' . //
+		'No início do mês, o boletim informativo regular é iniciado automaticamente e, se necessário, enviado em lotes diários até alcançar todos os assinantes. ' . //
+		'Se nenhum envio estiver em andamento, você também pode iniciar um envio manual; o envio manual usa o mesmo limite diário. ' . //
+		'Se um envio manual ainda estiver em andamento no início de um novo mês, o envio mensal automático será adiado para o mês seguinte.',
 	'icon_sent_title' => 'Já entregue nesta expedição',
 	'icon_sent_alt' => 'Entregue',
 	'icon_queued_title' => 'Programado para o próximo lote',
 	'icon_queued_alt' => 'Programado',
-	'send_all_button' => 'Enviar newsletter para todos os assinantes agora',
-	'send_all_confirm' => 'Deseja enviar o boletim informativo a todos os assinantes agora?',
+	'send_now_button' => 'Envie a newsletter aos assinantes agora',
+	'send_now_confirm' => 'Gostaria de enviar a newsletter aos assinantes agora?',
 	'send_type_monthly' => 'Envio mensal.',
 	'send_type_manual'  => 'Envio manual.',
 	'sub_remaining' => 'Ainda a ser enviado:',
@@ -60,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'O boletim informativo é enviado a todos os assinantes.',
+	1 => 'A newsletter é enviada aos assinantes.',
 	-2 => 'Esse plug-in requer o plug-in LastEntries integrado no FlatPress. Por favor, ative-o previamente na área de plugins!',
 	2 => 'As configurações foram salvas.'
 );

@@ -37,17 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'Nessun abbonato disponibile',
 	'delete_subscriber' => 'Cancella questo indirizzo',
 	'delete_confirm' => 'Vuoi davvero cancellare questo indirizzo?',
-	'desc_batch' => 'Qui è possibile specificare il numero di iscritti a cui inviare una newsletter al giorno. '. //
-		'Chiedete al vostro provider di posta elettronica quante e-mail possono essere inviate al giorno. ' . //
-		'La newsletter viene inviata automaticamente a tutti gli abbonati all\'inizio del mese. ' . //
-		'Se non è in corso un invio automatico, è possibile avviare l\'invio immediato della newsletter. ' . //
-		'Se l\'invio immediato non è stato completato entro il 28 del mese, tutti gli abbonati riceveranno automaticamente la newsletter regolare solo il mese successivo.',
+	'desc_batch' => 'Qui imposti quante e-mail il plugin invia in ogni giorno di invio. ' . //
+		'Scegli un valore inferiore al limite giornaliero del tuo provider di posta. ' . //
+		'All\'inizio del mese, la newsletter regolare parte automaticamente e, se necessario, viene inviata in lotti giornalieri finché tutti gli iscritti sono stati raggiunti. ' . //
+		'Se non è in corso alcun invio, puoi avviarne uno anche manualmente; l\'invio manuale usa lo stesso limite giornaliero. ' . //
+		'Se all\'inizio di un nuovo mese è ancora in corso un invio manuale, l\'invio mensile automatico viene rimandato al mese successivo.',
 	'icon_sent_title' => 'Già consegnato in questo invio',
 	'icon_sent_alt' => 'Consegnato',
 	'icon_queued_title' => 'Programmato per il prossimo lotto',
 	'icon_queued_alt' => 'Programmato',
-	'send_all_button' => 'Invia ora la newsletter a tutti gli iscritti',
-	'send_all_confirm' => 'Si desidera inviare subito la newsletter a tutti gli iscritti?',
+	'send_now_button' => 'Invia subito la newsletter agli iscritti',
+	'send_now_confirm' => 'Vuoi inviare subito la newsletter agli iscritti?',
 	'send_type_monthly' => 'Invio mensile.',
 	'send_type_manual'  => 'Invio manuale.',
 	'sub_remaining' => 'Ancora da inviare:',
@@ -60,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'La newsletter viene inviata a tutti gli iscritti.',
+	1 => 'La newsletter viene inviata agli iscritti.',
 	-2 => 'Questo plugin richiede il plugin LastEntries integrato in FlatPress. Si prega di attivarlo preventivamente nell\'area plugin!',
 	2 => 'Le impostazioni sono state salvate.'
 );

@@ -37,17 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'Nejsou k dispozici žádní odběratelé',
 	'delete_subscriber' => 'Smazat tuto adresu',
 	'delete_confirm' => 'Opravdu chcete tuto adresu smazat?',
-	'desc_batch' => 'Zde můžete zadat, kolika odběratelům se newsletter denně odešle. '. //
-		'Zeptejte se svého poskytovatele e-mailu, kolik e-mailů lze denně odeslat. ' . //
-		'Newsletter je automaticky odeslán všem odběratelům na začátku měsíce. ' . //
-		'Pokud v současné době není spuštěno žádné automatické rozesílání, můžete rozesílání newsletteru iniciovat také okamžitě. ' . //
-		'Pokud nebude okamžité rozesílání ukončeno do 28. dne v měsíci, budou všichni odběratelé dostávat pravidelný newsletter automaticky až v následujícím měsíci.',
+	'desc_batch' => 'Zde určíte, kolik e-mailů plugin odešle za jeden den rozesílání. ' . //
+		'Zvolte hodnotu, která je nižší než denní limit vašeho poskytovatele e-mailu. ' . //
+		'Na začátku měsíce se běžný newsletter spustí automaticky a v případě potřeby se odesílá v denních dávkách, dokud nejsou osloveni všichni odběratelé. ' . //
+		'Pokud právě žádné rozesílání neběží, můžete ho spustit také ručně; i ruční rozesílání používá stejný denní limit. ' . //
+		'Pokud na začátku nového měsíce stále běží ruční rozesílání, automatické měsíční rozesílání se přesune na další měsíc.',
 	'icon_sent_title' => 'Již doručeno v této zásilce',
 	'icon_sent_alt' => 'Dodáno',
 	'icon_queued_title' => 'Naplánováno pro další dávku',
 	'icon_queued_alt' => 'Naplánováno',
-	'send_all_button' => 'Odeslat newsletter všem odběratelům nyní',
-	'send_all_confirm' => 'Chcete zaslat newsletter všem odběratelům nyní?',
+	'send_now_button' => 'Odešlete nyní newsletter odběratelům',
+	'send_now_confirm' => 'Chcete nyní odeslat newsletter odběratelům?',
 	'send_type_monthly' => 'Měsíční rozesílání.',
 	'send_type_manual'  => 'Ruční rozesílání.',
 	'sub_remaining' => 'Ještě je třeba odeslat:',
@@ -60,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'Zpravodaj je zasílán všem odběratelům.',
+	1 => 'Newsletter se zasílá předplatitelům.',
 	-2 => 'Tento plugin vyžaduje plugin LastEntries integrovaný v aplikaci FlatPress. Aktivujte jej prosím předem v oblasti pro zásuvné moduly!',
 	2 => 'Nastavení bylo uloženo.'
 );

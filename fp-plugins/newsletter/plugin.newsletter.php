@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Newsletter
- * Version: 1.7.4
+ * Version: 1.7.5
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
  * Author URI: https://flatpress.org
@@ -59,6 +59,51 @@ if (!defined('PLUGIN_NEWSLETTER_BATCH_SIZE')) {
 
 function plugin_newsletter_setup() {
 	return function_exists('plugin_lastentries_widget') ? 1 : -2;
+}
+
+/**
+ * Ensures that the newsletter storage directory exists before state files are
+ * touched by request handlers or maintenance tasks.
+ */
+function plugin_newsletter_ensure_storage_dir(): bool {
+	if (is_dir(PLUGIN_NEWSLETTER_DIR)) {
+		return true;
+	}
+
+	return @mkdir(PLUGIN_NEWSLETTER_DIR, DIR_PERMISSIONS, true);
+}
+
+/**
+ * Checks the admin CSRF token without mutating newsletter state.
+ */
+function plugin_newsletter_admin_csrf_is_valid(): bool {
+	$expected = (string)($_SESSION ['newsletter_admin_csrf_token'] ?? '');
+	$actual = (string)($_POST ['csrf_token'] ?? '');
+
+	return $expected !== '' && hash_equals($expected, $actual);
+}
+
+/**
+ * Prepares a manual dispatch after CSRF validation has succeeded.
+ *
+ * @return bool true when a manual dispatch may start, false when another batch is running
+ */
+function plugin_newsletter_prepare_manual_dispatch(string $offsetFile, string $subFile, string $manualFlagFile): bool {
+	$offsetLines = plugin_newsletter_read_lines($offsetFile);
+	$offset = (int) trim($offsetLines [0] ?? '0');
+
+	$subs = plugin_newsletter_read_lines($subFile);
+	$total = count($subs);
+
+	if ($offset > 0 && $offset < $total) {
+		return false;
+	}
+
+	if (!file_exists($manualFlagFile)) {
+		return file_put_contents($manualFlagFile, 'manual', LOCK_EX) !== false;
+	}
+
+	return true;
 }
 
 // Copy bundled static pages (only once) into content/static/
@@ -261,16 +306,11 @@ function plugin_newsletter_http_get(string $url, ?int &$httpCode = null, ?string
 	return null;
 }
 
-// Initialization on every page request
-plugin_newsletter_init();
-
 /**
  * Initializes directory, processes forms and checks dispatch date
  */
 function plugin_newsletter_init() {
-	if (!is_dir(PLUGIN_NEWSLETTER_DIR)) {
-		@mkdir(PLUGIN_NEWSLETTER_DIR, DIR_PERMISSIONS, true);
-	}
+	plugin_newsletter_ensure_storage_dir();
 
 	$sub_file = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
 	$date_file = PLUGIN_NEWSLETTER_DIR . 'next-send-date.txt';
@@ -325,37 +365,24 @@ function plugin_newsletter_init() {
 		exit;
 	}
 
-	// Admin: Sends the newsletter immediately to all subscribers
-	if ($_SERVER ['REQUEST_METHOD'] === 'POST' && isset($_POST ['newsletter_send_all'])) {
+	// Admin: Sends the newsletter immediately to now subscribers
+	if ($_SERVER ['REQUEST_METHOD'] === 'POST' && isset($_POST ['newsletter_send_now'])) {
 
-		// No manual dispensing during a running batch
-		$offsetLines = plugin_newsletter_read_lines($offset_file);
-		$offset = (int) trim($offsetLines [0] ?? '0');
-
-		// Determine total number of subscribers
-		$subs = plugin_newsletter_read_lines($sub_file);
-		$total = count($subs);
-
-		// If offset >0 and <total, another batch is still running.
-		if ($offset > 0 && $offset < $total) {
-			// Cancel
-			header('Location: ' . $_SERVER ['REQUEST_URI']);
-			exit;
-		}
-
-		// Create a flag indicating manual batch dispatch is in progress
-		if (!file_exists($manual_flag_file)) {
-			file_put_contents($manual_flag_file, 'manual', LOCK_EX);
-		}
-
-		// Check CSRF token (Admin "Send all")
-		if (!hash_equals($_SESSION ['newsletter_admin_csrf_token'] ?? '', $_POST ['csrf_token'] ?? '')) {
+		// Check CSRF token before any newsletter state file is changed.
+		if (!plugin_newsletter_admin_csrf_is_valid()) {
 			header('HTTP/1.1 400 Bad Request');
 			exit('Invalid CSRF token');
 		}
 
+		// No manual dispatch during a running batch and create the manual flag
+		// only after the CSRF token was accepted.
+		if (!plugin_newsletter_prepare_manual_dispatch($offset_file, $sub_file, $manual_flag_file)) {
+			header('Location: ' . $_SERVER ['REQUEST_URI']);
+			exit;
+		}
+
 		// Send and then redirect back with a success flag
-		plugin_newsletter_send_all($sub_file);
+		plugin_newsletter_send_now($sub_file);
 		$redirect = isset($_SERVER ['HTTP_REFERER']) ? $_SERVER ['HTTP_REFERER'] : $_SERVER ['REQUEST_URI'];
 		$separator = (strpos($redirect, '?') !== false) ? '&' : '?';
 		header('Location: ' . $redirect . $separator . 'success=1');
@@ -378,59 +405,30 @@ function plugin_newsletter_init() {
 	plugin_newsletter_check_and_send($date_file, $sub_file);
 }
 
+// Keep disposable-domain protection available before request handlers process subscriptions.
+plugin_newsletter_maybe_update_blocklist(true);
+
+// Initialization on every page request
+plugin_newsletter_init();
+
 /**
  * Processes the confirmation link (double opt-in).
  */
 function plugin_newsletter_handle_confirm() {
 
-	$email = $_GET ['email'] ?? '';
-	$token = $_GET ['token'] ?? '';
-	if (!filter_var($email, FILTER_VALIDATE_EMAIL) || empty($token)) {
+	$email = trim((string)($_GET ['email'] ?? ''));
+	$token = (string)($_GET ['token'] ?? '');
+	if (plugin_newsletter_prepare_email_for_validation($email) === null || $token === '') {
 		header('Location: ' . BLOG_BASEURL . '?page=invalid-token');
 		exit;
 	}
 
-	$pending_file = PLUGIN_NEWSLETTER_DIR . 'pending.txt';
-	if (!file_exists($pending_file)) {
-		header('Location: ' . BLOG_BASEURL . '?page=invalid-token');
-		exit;
-	}
-
-	$lines = plugin_newsletter_read_lines($pending_file);
-	$remaining = [];
-	$confirmed = false;
-	$now = time();
-	$expiry = 24 * 3600; // 24 hours in seconds
-	foreach ($lines as $line) {
-		list($enc_email, $token_line, $timestamp) = explode('|', $line);
-		$dec_email = plugin_newsletter_decrypt($enc_email);
-
-		// Check process
-		if ($now - (int)$timestamp > $expiry) {
-			// Expired: simply remove from pending
-			continue;
-		}
-
-		// Check token & e-mail
-		if (!$confirmed && $dec_email === $email && hash_equals($token_line, $token)) {
-			// Transfer to final list
-			$sub_file = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
-			// Add confirmed subscriber
-			plugin_newsletter_rmw_file($sub_file, function(array $lines) use ($enc_email, $timestamp): array {
-				$lines [] = $enc_email . '|' . $timestamp;
-				return $lines;
-			});
-			$confirmed = true;
-		} else {
-			// Still outstanding
-			$remaining [] = $line;
-		}
-	}
-
-	// Update pending list - overwrite pending list with remaining entries
-	plugin_newsletter_rmw_file($pending_file, function(array $lines) use ($remaining): array {
-		return $remaining;
-	});
+	$confirmed = plugin_newsletter_confirm_pending_token(
+		PLUGIN_NEWSLETTER_DIR . 'pending.txt',
+		PLUGIN_NEWSLETTER_DIR . 'subscribers.txt',
+		$email,
+		$token
+	);
 
 	// Forwarding depending on the result
 	if ($confirmed) {
@@ -475,8 +473,8 @@ function plugin_newsletter_widget(){
 		'</form>';
 	return ['subject' => $lang ['plugin'] ['newsletter'] ['subject'], 'content' => $html];
 }
-register_widget('newsletter', 'Newsletter', 'plugin_newsletter_widget');
 
+register_widget('newsletter', 'Newsletter', 'plugin_newsletter_widget');
 
 /**
  * Selects encryption method (OpenSSL or Sodium)
@@ -533,6 +531,436 @@ function plugin_newsletter_decrypt($data) {
 }
 
 /**
+ * Builds a stable comparison key for stored e-mail addresses.
+ *
+ * The local part is kept unchanged because it can be case-sensitive according
+ * to mail standards. The domain part is normalized to lower-case ASCII so that
+ * different domain casing or Unicode/IDN notation does not create duplicate
+ * pending or subscriber entries.
+ *
+ * @param string $email Plain e-mail address
+ * @return string Normalized comparison key
+ */
+function plugin_newsletter_email_compare_key(string $email): string {
+	$email = trim($email);
+	$pos = strrpos($email, '@');
+	if ($pos === false) {
+		return $email;
+	}
+
+	$local = substr($email, 0, $pos);
+	$domain = substr($email, $pos + 1);
+	$asciiDomain = plugin_newsletter_normalize_domain($domain);
+
+	return $local . '@' . ($asciiDomain ?? strtolower($domain));
+}
+
+/**
+ * Normalizes a domain name to lower-case ASCII for DNS, cache and comparison use.
+ *
+ * If ext/intl is available, IDN domains are converted to Punycode using UTS #46
+ * when supported by the PHP build. Without ext/intl, non-ASCII domains are
+ * rejected because PHP DNS functions cannot query them portably.
+ *
+ * @param string $domain Domain part without local part
+ * @return string|null Lower-case ASCII domain or null when unsupported/invalid
+ */
+function plugin_newsletter_normalize_domain(string $domain): ?string {
+	$domain = trim($domain);
+	$domain = rtrim($domain, '.');
+	if ($domain === '') {
+		return null;
+	}
+
+	if (preg_match('//u', $domain) !== 1) {
+		return null;
+	}
+
+	if (preg_match('/[\x00-\x20\x7F]|\p{Z}/u', $domain) === 1) {
+		return null;
+	}
+
+	if (function_exists('idn_to_ascii')) {
+		$flags = defined('IDNA_DEFAULT') ? IDNA_DEFAULT : 0;
+		$variant = defined('INTL_IDNA_VARIANT_UTS46') ? INTL_IDNA_VARIANT_UTS46 : 0;
+		$asciiDomain = idn_to_ascii($domain, $flags, $variant);
+		if (!is_string($asciiDomain) || $asciiDomain === '') {
+			return null;
+		}
+		$domain = $asciiDomain;
+	} elseif (preg_match('/[^\x00-\x7F]/', $domain) === 1) {
+		return null;
+	}
+
+	$domain = strtolower($domain);
+	if (strlen($domain) > 253) {
+		return null;
+	}
+
+	$labels = explode('.', $domain);
+	if (count($labels) < 2) {
+		return null;
+	}
+
+	foreach ($labels as $label) {
+		$length = strlen($label);
+		if ($length < 1 || $length > 63) {
+			return null;
+		}
+		if (!preg_match('/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/', $label)) {
+			return null;
+		}
+	}
+
+	return $domain;
+}
+
+/**
+ * Extracts and normalizes the domain part from an e-mail address.
+ *
+ * @param string|null $email Plain e-mail address
+ * @return string|null Lower-case ASCII domain or null when unavailable/invalid
+ */
+function plugin_newsletter_get_email_domain($email): ?string {
+	if (!is_string($email)) {
+		return null;
+	}
+
+	$email = trim($email);
+	$pos = strrpos($email, '@');
+	if ($pos === false || $pos === 0 || $pos === strlen($email) - 1) {
+		return null;
+	}
+
+	return plugin_newsletter_normalize_domain(substr($email, $pos + 1));
+}
+
+/**
+ * Decrypts the e-mail part of a subscriber row.
+ *
+ * Subscriber rows are stored as encryptedEmail|UnixTimestamp. Older code paths
+ * sometimes passed the whole row to the decryptor, which made domain extraction
+ * fail for DNS-cache cleanup. This helper always extracts the first column.
+ *
+ * @param string $line Raw row from subscribers.txt
+ * @return string|null Plain e-mail address or null when the row cannot be read
+ */
+function plugin_newsletter_decrypt_subscriber_email(string $line): ?string {
+	$parts = explode('|', $line, 2);
+	$encrypted = trim($parts[0] ?? '');
+	if ($encrypted === '') {
+		return null;
+	}
+
+	$email = plugin_newsletter_decrypt($encrypted);
+	return is_string($email) && $email !== '' ? $email : null;
+}
+
+/**
+ * Parses an address for syntax validation and returns the normalized DNS form.
+ *
+ * The primary ASCII path still uses FILTER_VALIDATE_EMAIL. When the local part
+ * contains UTF-8 characters, PHP's filter_var() commonly rejects it even though
+ * SMTPUTF8/EAI addresses can be valid. In that case this function falls back to
+ * a conservative UTF-8 dot-atom validation and keeps DNS lookups on the
+ * normalized ASCII domain.
+ *
+ * @param string $email Plain e-mail address
+ * @return array{email:string,local:string,domain:string,is_eai:bool}|null
+ */
+function plugin_newsletter_prepare_email_for_validation(string $email): ?array {
+	$email = trim($email);
+	if ($email === '' || preg_match('//u', $email) !== 1) {
+		return null;
+	}
+
+	if (preg_match('/[\x00-\x20\x7F]|\p{Z}/u', $email) === 1) {
+		return null;
+	}
+
+	$firstAt = strpos($email, '@');
+	$lastAt = strrpos($email, '@');
+	if ($firstAt === false || $firstAt !== $lastAt || $firstAt === 0 || $firstAt === strlen($email) - 1) {
+		return null;
+	}
+
+	$local = substr($email, 0, $firstAt);
+	$domain = substr($email, $firstAt + 1);
+	$asciiDomain = plugin_newsletter_normalize_domain($domain);
+	if ($asciiDomain === null) {
+		return null;
+	}
+
+	$normalizedEmail = $local . '@' . $asciiDomain;
+	if (strlen($local) > 64 || strlen($normalizedEmail) > 254) {
+		return null;
+	}
+
+	if ($local[0] === '.' || substr($local, -1) === '.' || strpos($local, '..') !== false) {
+		return null;
+	}
+
+	$isAsciiLocal = preg_match('/^[\x00-\x7F]+$/', $local) === 1;
+	$asciiLocalRegex = '/^[A-Za-z0-9.!#$%&\'*+\/=?^_`{|}~-]+$/';
+	$eaiLocalRegex = '/^[\p{L}\p{N}\p{M}.!#$%&\'*+\/=?^_`{|}~\-]+$/u';
+
+	if ($isAsciiLocal) {
+		if (!preg_match($asciiLocalRegex, $local)) {
+			return null;
+		}
+		if (!filter_var($normalizedEmail, FILTER_VALIDATE_EMAIL)) {
+			return null;
+		}
+	} else {
+		if (!preg_match($eaiLocalRegex, $local)) {
+			return null;
+		}
+	}
+
+	return [
+		'email' => $normalizedEmail,
+		'local' => $local,
+		'domain' => $asciiDomain,
+		'is_eai' => !$isAsciiLocal,
+	];
+}
+
+/**
+ * Compares two plain e-mail addresses using the newsletter storage semantics.
+ *
+ * @param string|null $storedEmail Decrypted address from a storage file
+ * @param string      $email       Address from the current request
+ * @return bool true when both addresses identify the same mailbox entry
+ */
+function plugin_newsletter_email_matches($storedEmail, string $email): bool {
+	if (!is_string($storedEmail) || $storedEmail === '') {
+		return false;
+	}
+
+	return plugin_newsletter_email_compare_key($storedEmail) === plugin_newsletter_email_compare_key($email);
+}
+
+/**
+ * Checks whether an address is already present in subscribers.txt.
+ *
+ * @param string $subFile Path to subscribers.txt
+ * @param string $email   Plain e-mail address
+ * @return bool true if the address is already confirmed
+ */
+function plugin_newsletter_subscriber_exists(string $subFile, string $email): bool {
+	foreach (plugin_newsletter_read_lines($subFile) as $line) {
+		if (plugin_newsletter_email_matches(plugin_newsletter_decrypt_subscriber_email($line), $email)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Adds a confirmed subscriber exactly once and removes duplicate rows for the
+ * same e-mail address while preserving the first existing row.
+ *
+ * @param string $subFile        Path to subscribers.txt
+ * @param string $encryptedEmail Encrypted address from pending.txt
+ * @param string $timestamp      Subscription timestamp to persist
+ * @param string $email          Plain e-mail address for duplicate detection
+ * @return bool true when a new subscriber row was appended
+ */
+function plugin_newsletter_add_subscriber_once(string $subFile, string $encryptedEmail, string $timestamp, string $email): bool {
+	$added = false;
+
+	plugin_newsletter_rmw_file($subFile, function(array $lines) use ($encryptedEmail, $timestamp, $email, &$added): array {
+		$result = [];
+		$exists = false;
+
+		foreach ($lines as $line) {
+			if (plugin_newsletter_email_matches(plugin_newsletter_decrypt_subscriber_email($line), $email)) {
+				if (!$exists) {
+					$result [] = $line;
+					$exists = true;
+				}
+				continue;
+			}
+
+			$result [] = $line;
+		}
+
+		if (!$exists) {
+			$result [] = $encryptedEmail . '|' . $timestamp;
+			$added = true;
+		}
+
+		return $result;
+	});
+
+	return $added;
+}
+
+/**
+ * Stores a pending confirmation token and replaces older pending tokens for the
+ * same address. This keeps exactly one active confirmation link per e-mail.
+ *
+ * @param string $pendingFile    Path to pending.txt
+ * @param string $encryptedEmail Encrypted address to store
+ * @param string $token          Confirmation token
+ * @param int    $timestamp      Creation timestamp
+ * @param string $email          Plain e-mail address for duplicate detection
+ * @return bool true when the file update succeeded
+ */
+function plugin_newsletter_store_pending_token_once(string $pendingFile, string $encryptedEmail, string $token, int $timestamp, string $email): bool {
+	$expiry = 24 * 3600;
+
+	return plugin_newsletter_rmw_file($pendingFile, function(array $lines) use ($encryptedEmail, $token, $timestamp, $email, $expiry): array {
+		$filtered = [];
+
+		foreach ($lines as $line) {
+			$parts = explode('|', $line, 3);
+			if (count($parts) < 3) {
+				continue;
+			}
+
+			list($storedData, , $storedTimestamp) = $parts;
+			if ($timestamp - (int)$storedTimestamp > $expiry) {
+				continue;
+			}
+
+			if (plugin_newsletter_email_matches(plugin_newsletter_decrypt($storedData), $email)) {
+				continue;
+			}
+
+			$filtered [] = $line;
+		}
+
+		$filtered [] = $encryptedEmail . '|' . $token . '|' . $timestamp;
+		return $filtered;
+	});
+}
+
+/**
+ * Confirms one pending token, transfers the address to subscribers.txt at most
+ * once, and removes every pending token for the confirmed address.
+ *
+ * @param string $pendingFile Path to pending.txt
+ * @param string $subFile     Path to subscribers.txt
+ * @param string $email       Plain e-mail address from the confirmation link
+ * @param string $token       Token from the confirmation link
+ * @return bool true when the token matched a non-expired pending entry
+ */
+function plugin_newsletter_confirm_pending_token(string $pendingFile, string $subFile, string $email, string $token): bool {
+	if (!file_exists($pendingFile)) {
+		return false;
+	}
+
+	$confirmed = false;
+	$now = time();
+	$expiry = 24 * 3600; // 24 hours in seconds
+
+	plugin_newsletter_rmw_file($pendingFile, function(array $lines) use ($email, $token, $now, $expiry, $subFile, &$confirmed): array {
+		$entries = [];
+		$matchedEntry = null;
+
+		foreach ($lines as $line) {
+			$parts = explode('|', $line, 3);
+			if (count($parts) < 3) {
+				continue;
+			}
+
+			list($encEmail, $tokenLine, $timestamp) = $parts;
+
+			// Expired: remove from pending.
+			if ($now - (int)$timestamp > $expiry) {
+				continue;
+			}
+
+			$decEmail = plugin_newsletter_decrypt($encEmail);
+			$entry = [
+				'line' => $line,
+				'enc_email' => $encEmail,
+				'token' => $tokenLine,
+				'timestamp' => $timestamp,
+				'email' => $decEmail,
+			];
+
+			if ($matchedEntry === null && plugin_newsletter_email_matches($decEmail, $email) && hash_equals($tokenLine, $token)) {
+				$matchedEntry = $entry;
+			}
+
+			$entries [] = $entry;
+		}
+
+		if ($matchedEntry !== null) {
+			plugin_newsletter_add_subscriber_once($subFile, $matchedEntry ['enc_email'], $matchedEntry ['timestamp'], $email);
+			$confirmed = true;
+		}
+
+		$remaining = [];
+		foreach ($entries as $entry) {
+			// Once a confirmation succeeded, invalidate all other pending tokens for
+			// the same address so older links cannot create duplicate subscribers.
+			if ($confirmed && plugin_newsletter_email_matches($entry ['email'], $email)) {
+				continue;
+			}
+
+			$remaining [] = $entry ['line'];
+		}
+
+		return $remaining;
+	});
+
+	return $confirmed;
+}
+
+/**
+ * Removes DNS-cache entries whose domains no longer belong to subscribers.
+ *
+ * @param string $cacheFile  Path to newsletter-dns-cache.txt
+ * @param string $markerFile Path to dns-cleanup-marker.txt
+ * @param string $subFile    Path to subscribers.txt
+ * @param int    $now        Current Unix timestamp
+ * @return void
+ */
+function plugin_newsletter_cleanup_dns_cache(string $cacheFile, string $markerFile, string $subFile, int $now): void {
+	$linesCache = plugin_newsletter_read_lines($cacheFile);
+	$cacheTmp = [];
+	foreach ($linesCache as $lineCache) {
+		list($d, $st, $exp) = explode('|', $lineCache, 3) + [null, null, null];
+		$cacheDomain = is_string($d) ? plugin_newsletter_normalize_domain($d) : null;
+		if ($cacheDomain === null || !in_array($st, ['valid', 'invalid'], true)) {
+			continue;
+		}
+		$cacheTmp [$cacheDomain] = ['status' => $st, 'expires' => (int)$exp];
+	}
+
+	$subsLines = plugin_newsletter_read_lines($subFile);
+	$subDomains = [];
+	foreach ($subsLines as $subscriberLine) {
+		$emailDec = plugin_newsletter_decrypt_subscriber_email($subscriberLine);
+		$dSub = plugin_newsletter_get_email_domain($emailDec);
+		if ($dSub !== null) {
+			$subDomains [$dSub] = true;
+		}
+	}
+
+	foreach ($cacheTmp as $dTmp => $infoTmp) {
+		if (!isset($subDomains [$dTmp])) {
+			unset($cacheTmp [$dTmp]);
+		}
+	}
+
+	if ($fpCh = @fopen($cacheFile, 'w')) {
+		flock($fpCh, LOCK_EX);
+		foreach ($cacheTmp as $dCh => $infoCh) {
+			fwrite($fpCh, $dCh . '|' . $infoCh ['status'] . '|' . $infoCh ['expires'] . PHP_EOL);
+		}
+		flock($fpCh, LOCK_UN);
+		fclose($fpCh);
+	}
+
+	file_put_contents($markerFile, (string)$now, LOCK_EX);
+}
+
+/**
  * Determines the real client IP for rate limiting and Honeypot check
  */
 function plugin_newsletter_get_client_ip(): string {
@@ -555,35 +983,14 @@ function plugin_newsletter_get_client_ip(): string {
  * Validates an email address for newsletter subscription.
  */
 function plugin_newsletter_is_valid_email(string $email): bool {
-	// Cleanup + IDN-Support
-	$email = trim($email);
-	if (strpos($email, '@') === false) {
-		return false;
-	}
-	list($local, $domain) = explode('@', $email, 2);
-	if (function_exists('idn_to_ascii')) {
-		$asciiDomain = idn_to_ascii($domain, IDNA_DEFAULT, defined('INTL_IDNA_VARIANT_UTS46') ? INTL_IDNA_VARIANT_UTS46 : IDNA_DEFAULT);
-		if ($asciiDomain === false) {
-			return false;
-		}
-		$email = $local . '@' . $asciiDomain;
-	}
-
-	// Quick basic check incl. EAI domains according to Punycode
-	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+	$prepared = plugin_newsletter_prepare_email_for_validation($email);
+	if ($prepared === null) {
 		return false;
 	}
 
-	// RFC-5322/6530-6533 Regex + length limits
-	$rfcRegex = '/^(?=.{1,254}$)(?=.{1,64}@)[\p{L}\p{N}.!#$%&\'*+\/=?^_`{|}~\-]+@(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,63}$/xu';
-	if (!preg_match($rfcRegex, $email)) {
-		return false;
-	}
-
+	$email = $prepared ['email'];
+	$domain = $prepared ['domain'];
 	$logFile = PLUGIN_NEWSLETTER_DIR . 'failed-emails.txt';
-
-	// DNS lookup for mail hosts
-	[, $domain] = explode('@', $email, 2);
 
 	// Prepare cache file, cleanup marker and current time
 	$cacheFile = CACHE_DIR . 'newsletter-dns-cache.txt';
@@ -595,49 +1002,19 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 	$lastRun = (int) ($markerLines [0] ?? '0');
 
 	// Monthly cleaning of the DNS-cache: once after the 28th, not more than once a month
-	if (date('j') >= 28 && date('Ym', $lastRun) !== date('Ym')) {
-		$linesCache = plugin_newsletter_read_lines($cacheFile);
-		$cacheTmp = [];
-		foreach ($linesCache as $lineCache) {
-			list($d, $st, $exp) = explode('|', $lineCache, 3) + [null, null, null];
-			$cacheTmp [$d] = ['status' => $st, 'expires' => (int)$exp];
-		}
-		$subFile = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
-		$subsLines = plugin_newsletter_read_lines($subFile);
-		$subDomains = [];
-		foreach ($subsLines as $encEmail) {
-			$emailDec = plugin_newsletter_decrypt(trim($encEmail));
-			if (strpos($emailDec, '@') !== false) {
-				list(, $dSub) = explode('@', $emailDec, 2);
-				$subDomains [$dSub] = true;
-			}
-		}
-		// Remove cache entries for domains no longer in subscribers
-		foreach ($cacheTmp as $dTmp => $infoTmp) {
-			if (!isset($subDomains [$dTmp])) {
-				unset($cacheTmp [$dTmp]);
-			}
-		}
-		if ($fpCh = @fopen($cacheFile, 'w')) {
-			flock($fpCh, LOCK_EX);
-			foreach ($cacheTmp as $dCh => $infoCh) {
-				fwrite($fpCh, $dCh . '|' . $infoCh ['status'] . '|' . $infoCh ['expires'] . PHP_EOL);
-			}
-			flock($fpCh, LOCK_UN);
-			fclose($fpCh);
-		}
-		unset($subsLines, $subDomains, $emailDec, $dSub);
-		unset($linesCache, $cacheTmp);
-
-		// Update cleanup marker to prevent rerun this month
-		file_put_contents($markerFile, $now, LOCK_EX);
+	if (date('j', $now) >= 28 && date('Ym', $lastRun) !== date('Ym', $now)) {
+		plugin_newsletter_cleanup_dns_cache($cacheFile, $markerFile, PLUGIN_NEWSLETTER_DIR . 'subscribers.txt', $now);
 	}
 
 	// Load existing cache
 	$cache = [];
 	foreach (plugin_newsletter_read_lines($cacheFile) as $lineCache) {
 		list($d, $st, $exp) = explode('|', $lineCache, 3) + [null, null, null];
-		$cache [$d] = ['status' => $st, 'expires' => (int)$exp];
+		$cacheDomain = is_string($d) ? plugin_newsletter_normalize_domain($d) : null;
+		if ($cacheDomain === null || !in_array($st, ['valid', 'invalid'], true)) {
+			continue;
+		}
+		$cache [$cacheDomain] = ['status' => $st, 'expires' => (int)$exp];
 	}
 
 	// Check cached entry
@@ -656,29 +1033,40 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 		$mailHosts = [];
 		$weights = [];
 
+		$hasDnsLookup = function_exists('getmxrr') || function_exists('dns_get_record') || function_exists('checkdnsrr');
+		if (!$hasDnsLookup) {
+			// Restricted hosts may disable DNS functions. Accept syntactically valid
+			// addresses instead of rejecting legitimate subscribers.
+			return true;
+		}
+
 		// MX records via getmxrr()
-		if (function_exists('getmxrr') && getmxrr($domain, $mailHosts, $weights)) {
+		if (function_exists('getmxrr') && @getmxrr($domain, $mailHosts, $weights)) {
 			array_multisort($weights, $mailHosts);
 		} else {
 			// Fallback: dns_get_record(), distinction DNS error vs. no record
-			$mxRecords = dns_get_record($domain, DNS_MX);
+			$mxRecords = function_exists('dns_get_record') ? @dns_get_record($domain, DNS_MX) : false;
 			if ($mxRecords === false) {
-				// Temporary DNS error (SERVFAIL/Timeout): valid for the time being, without logging
+				// Temporary DNS error, unavailable DNS API, SERVFAIL or timeout:
+				// valid for the time being, without logging.
 				return true;
 			}
 			if (!empty($mxRecords)) {
 				foreach ($mxRecords as $mx) {
-					$mailHosts [] = $mx ['target'];
-					$weights [] = $mx ['pri'];
+					if (isset($mx ['target'], $mx ['pri'])) {
+						$mailHosts [] = $mx ['target'];
+						$weights [] = $mx ['pri'];
+					}
 				}
-				array_multisort($weights, $mailHosts);
+				if (!empty($mailHosts)) {
+					array_multisort($weights, $mailHosts);
+				}
 			// Last fallback option: A-Record or AAAA-Record
-			} elseif (checkdnsrr($domain, 'A') || checkdnsrr($domain, 'AAAA')) {
+			} elseif (function_exists('checkdnsrr') && (@checkdnsrr($domain, 'A') || @checkdnsrr($domain, 'AAAA'))) {
 				$mailHosts [] = $domain;
 			} else {
 				// No mail host found - logging with 3 error threshold in 96 days
 				$now = time();
-				$logFile = PLUGIN_NEWSLETTER_DIR . 'failed-emails.txt';
 				$windowSeconds = 96 * 86400; // 96 days
 				$maxFailures = 3; // Permanently invalid from the 3rd error
 
@@ -739,9 +1127,9 @@ function plugin_newsletter_is_valid_email(string $email): bool {
 
 		// If successful, clean up any previously logged entries for this address
 		if (!empty($mailHosts)) {
-			$lines = plugin_newsletter_read_lines($logFile);
 			plugin_newsletter_rmw_file($logFile, function(array $lines) use ($email): array {
-				return array_filter($lines, function(string $enc) use ($email): bool {
+				return array_filter($lines, function(string $line) use ($email): bool {
+					list($enc) = explode('|', $line, 2);
 					return plugin_newsletter_decrypt(trim($enc)) !== $email;
 				});
 			});
@@ -954,10 +1342,16 @@ function plugin_newsletter_handle_subscribe() {
 	}
 
 	// Block disposable and temporary email domains
-	$domain = substr(strrchr($email, '@'), 1);
+	$domain = plugin_newsletter_get_email_domain($email);
 	$blockfile = PLUGIN_NEWSLETTER_DIR . 'disposable-email-blocklist.txt';
-	$blocked = array_map('strtolower', plugin_newsletter_read_lines($blockfile));
-	if (in_array(strtolower($domain), $blocked, true)) {
+	$blocked = [];
+	foreach (plugin_newsletter_read_lines($blockfile) as $blockedDomain) {
+		$normalizedBlockedDomain = plugin_newsletter_normalize_domain($blockedDomain);
+		if ($normalizedBlockedDomain !== null) {
+			$blocked [$normalizedBlockedDomain] = true;
+		}
+	}
+	if ($domain !== null && isset($blocked [$domain])) {
 		header('Location: ' . BLOG_BASEURL . '?page=invalid-email');
 		exit;
 	}
@@ -986,14 +1380,10 @@ function plugin_newsletter_handle_subscribe() {
 
 	// Check if the user is already subscribed
 	$sub_file = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
-	$sub_lines = plugin_newsletter_read_lines($sub_file);
-	foreach ($sub_lines as $sub_line) {
-		list($sub_data) = explode('|', $sub_line, 2);
-		if (plugin_newsletter_decrypt($sub_data) === $email) {
-			// Already confirmed – redirect to confirmation page
-			header('Location: ' . BLOG_BASEURL . '?page=subscription-confirmed');
-			exit;
-		}
+	if (plugin_newsletter_subscriber_exists($sub_file, $email)) {
+		// Already confirmed – redirect to confirmation page
+		header('Location: ' . BLOG_BASEURL . '?page=subscription-confirmed');
+		exit;
 	}
 
 	// Determine FlatPress character set
@@ -1004,15 +1394,9 @@ function plugin_newsletter_handle_subscribe() {
 	$encrypted = plugin_newsletter_encrypt($email);
 	$time = time();
 
-	// Write to pending list
+	// Write to pending list. Only the newest token for this address remains valid.
 	$pending_file = PLUGIN_NEWSLETTER_DIR . 'pending.txt';
-	if (!file_exists($pending_file)) {
-		touch($pending_file);
-	}
-	plugin_newsletter_rmw_file($pending_file, function(array $lines) use ($encrypted, $token, $time): array {
-		$lines [] = $encrypted . '|'. $token .'|'. $time;
-		return $lines;
-	});
+	plugin_newsletter_store_pending_token_once($pending_file, $encrypted, $token, $time, $email);
 
 	// Send confirmation e-mail
 	$from = plugin_newsletter_sanitize_from_email($fp_config ['general'] ['email'] ?? '');
@@ -1203,11 +1587,10 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 		// Only get the next batch
 		$batch = array_slice($subscribers, $offset, $batchSize);
 		foreach ($batch as $line) {
-			list($data) = explode('|', $line);
-			$email = plugin_newsletter_decrypt($data);
+			$email = plugin_newsletter_decrypt_subscriber_email($line);
 
 			// Monthly validation of subscriber e-mail addresses (syntax, and DNS fallback)
-			if (!plugin_newsletter_is_valid_email($email)) {
+			if (!is_string($email) || !plugin_newsletter_is_valid_email($email)) {
 				// Removing invalid subscribers from the subscriber list
 				plugin_newsletter_rmw_file($subFile, function(array $lines) use ($line): array {
 					return array_filter($lines, function($l) use ($line) {
@@ -1257,7 +1640,7 @@ function plugin_newsletter_check_and_send($dateFile, $subFile) {
 /**
  * Processes and sends the newsletter to all subscribers.
  */
-function plugin_newsletter_send_all($subFile) {
+function plugin_newsletter_send_now($subFile) {
 	global $fp_config;
 	$lang = lang_load('plugin:newsletter');
 	$title = $fp_config ['general'] ['title'];
@@ -1490,7 +1873,17 @@ if (class_exists('AdminPanelAction')) {
  *
  * @return void
  */
-function plugin_newsletter_maybe_update_blocklist(): void {
+function plugin_newsletter_maybe_update_blocklist(bool $silent = false): void {
+
+	if (!plugin_newsletter_ensure_storage_dir()) {
+		$message = '[Newsletter plugin] The newsletter storage directory could not be created; blocklist update skipped.';
+		if ($silent) {
+			error_log($message);
+		} else {
+			trigger_error($message, E_USER_WARNING);
+		}
+		return;
+	}
 
 	$remote = NEWSLETTER_BLOCKLIST_URL;
 
@@ -1551,7 +1944,12 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 
 	if (!is_string($data) || $data === '') {
 		$detail = $err ?: 'unknown error';
-		trigger_error(sprintf('[Newsletter plugin] The blocklist URL "%s" could not be fetched (%s).', $remoteUsed, $detail), E_USER_WARNING);
+		$message = sprintf('[Newsletter plugin] The blocklist URL "%s" could not be fetched (%s).', $remoteUsed, $detail);
+		if ($silent) {
+			error_log($message);
+		} else {
+			trigger_error($message, E_USER_WARNING);
+		}
 		return;
 	}
 
@@ -1568,18 +1966,22 @@ function plugin_newsletter_maybe_update_blocklist(): void {
 
 	// Remove subscribers with blocklist domains
 	$subsFile = PLUGIN_NEWSLETTER_DIR . 'subscribers.txt';
-	$blocklist = array_map('strtolower', plugin_newsletter_read_lines($local));
+	$blocklist = [];
+	foreach (plugin_newsletter_read_lines($local) as $blockedDomain) {
+		$normalizedBlockedDomain = plugin_newsletter_normalize_domain($blockedDomain);
+		if ($normalizedBlockedDomain !== null) {
+			$blocklist [$normalizedBlockedDomain] = true;
+		}
+	}
 	plugin_newsletter_rmw_file($subsFile, function(array $lines) use ($blocklist): array {
-		// Only keep subscriptions whose domain is not on the block list
+		// Only keep subscriptions whose domain is not on the block list.
+		// Unreadable legacy rows are preserved here and can be handled by dispatch
+		// validation later instead of being deleted during a blocklist refresh.
 		return array_filter($lines, function(string $line) use ($blocklist): bool {
-			list($enc) = explode('|', $line, 2);
-			$email = plugin_newsletter_decrypt($enc);
-			$domain = strtolower(substr(strrchr($email, '@'), 1));
-			return !in_array($domain, $blocklist, true);
+			$email = plugin_newsletter_decrypt_subscriber_email($line);
+			$domain = plugin_newsletter_get_email_domain($email);
+			return $domain === null || !isset($blocklist [$domain]);
 		});
 	});
 }
-
-// Plugin file is loaded with every request - Trigger update check
-plugin_newsletter_maybe_update_blocklist();
 ?>

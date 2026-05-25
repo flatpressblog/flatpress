@@ -1,13 +1,13 @@
 Newsletter Plugin
 =================
- Version:  1.7.0
+ Version:  1.7.5
  Plugin URI:  https://flatpress.org
  Author:  FlatPress
 
 Overview
 --------
 This FlatPress plugin provides a GDPR-compliant newsletter subscription widget with encrypted subscriber storage, double opt-in confirmation,
-advanced email validation (including IDN/Punycode support), DNS caching, and blocklist filtering, all integrated with flexible dispatch scheduling (monthly or staggered batches).
+advanced email validation (including EAI-aware Unicode local-part fallback plus IDN/Punycode domain support where ext/intl is available), DNS caching, and blocklist filtering. Disposable-domain blocklist maintenance runs before request handlers process subscription forms, so a freshly downloaded initial blocklist can protect the very first subscription request. Dispatch scheduling remains flexible (monthly or staggered batches).
 
 Requirements
 ------------
@@ -39,14 +39,35 @@ Storage & Encryption
 -  Subscriber List (`subscribers.txt`):  Each line stores `base64(iv|ciphertext)|UnixTimestamp`.
 -  Pending List (`pending.txt`):  For double opt-in; lines are `base64(iv|ciphertext)|token|UnixTimestamp`.
 -  Encryption:  AES-256-CBC via OpenSSL or libsodium secretbox. Keys are derived from `PLUGIN_NEWSLETTER_KEY` (blog ID), salted/hashed for sodium.
--  DNS Cache (`newsletter-dns-cache.txt`) & Cleanup Marker (dns-cleanup-marker.txt):  Caches MX lookup results with monthly pruning for performance.
--  Blocklist (`disposable-email-blocklist.txt`):  Stores blacklisted domains and is updated monthly from a remote source to prevent sending to unwanted addresses.
+-  DNS Cache (`newsletter-dns-cache.txt`) & Cleanup Marker (`dns-cleanup-marker.txt`):  Caches DNS lookup results with monthly pruning. Cleanup reads subscriber rows as `encryptedEmail|UnixTimestamp`, decrypts only the first column, and normalizes domains before cache comparison.
+-  Blocklist (`disposable-email-blocklist.txt`):  Stores blacklisted domains and is updated from a remote source to prevent sending to unwanted addresses. On clean installations the plugin tries to bootstrap this file before subscription handling; later updates run monthly from the 25th day onward. Blocklist comparisons use the same normalized domain representation as validation.
+
+Validation Details
+------------------
+-  ASCII addresses still pass through `FILTER_VALIDATE_EMAIL` after domain normalization.
+-  Unicode/EAI local parts use a conservative UTF-8 dot-atom fallback when `FILTER_VALIDATE_EMAIL` cannot validate them.
+-  Domains are normalized to lower-case ASCII. IDN domains require PHP's `intl` extension for reliable Punycode conversion; without it, non-ASCII domains are rejected instead of being queried incorrectly.
+-  DNS validation uses cached positive/negative results, MX lookup, `dns_get_record()` fallback, and A/AAAA fallback. If a host disables DNS APIs or returns a temporary DNS error, syntactically valid addresses are accepted temporarily instead of being rejected immediately.
+-  Repeated no-host DNS failures are still tracked in `failed-emails.txt` and become invalid after the configured threshold.
+
+Blocklist Bootstrap
+-------------------
+The disposable-domain blocklist updater is called before `plugin_newsletter_init()` handles GET or POST actions. This preserves the existing throttling rules, but fixes the first-request gap on clean installations:
+
+-  If the local blocklist is missing, one initial download attempt is made before a subscription form can be accepted.
+-  Failed initial attempts are throttled for one hour through `disposable-email-blocklist.last_attempt.txt`.
+-  Failed pre-request attempts are logged silently via `error_log()` to avoid breaking redirects or headers before the request handler runs.
+-  If the remote source is unavailable, the plugin continues with syntax, DNS, consent, CSRF, and rate-limit checks; the blocklist is applied as soon as a later download succeeds.
+
+Admin Send-Now CSRF
+-------------------
+The admin "send now" request validates the admin CSRF token before `manual-flag.txt` can be created. Invalid or missing CSRF tokens therefore leave no manual-dispatch marker behind. A running batch still prevents a new manual dispatch from starting.
 
 Subscription Workflow
 ---------------------
 1.  Widget  (`plugin_newsletter_widget()`): Displays an email input, privacy checkbox (linking to your privacy policy), and CSRF protection token.
-2.  Handle Subscribe: `plugin_newsletter_handle_subscribe()` validates CSRF, email format, and consent; writes a pending entry; sends a confirmation email with a unique token link (`?newsletter_action=confirm&email=…&token=…`).
-3.  Confirm: `plugin_newsletter_handle_confirm()` checks token expiry (24h), moves confirmed entries to `subscribers.txt`, purges expired pending entries, and redirects to the appropriate static page.
+2.  Handle Subscribe: `plugin_newsletter_handle_subscribe()` validates CSRF, email format, and consent; writes exactly one active pending entry per e-mail address through `plugin_newsletter_store_pending_token_once()`; sends a confirmation email with the newest unique token link (`?newsletter_action=confirm&email=…&token=…`). Older still-pending tokens for the same address are invalidated.
+3.  Confirm: `plugin_newsletter_handle_confirm()` delegates to `plugin_newsletter_confirm_pending_token()`, checks token expiry (24h), moves confirmed entries to `subscribers.txt` at most once, removes all pending tokens for the confirmed address, purges expired pending entries, and redirects to the appropriate static page.
 
 Unsubscribe
 -----------
@@ -60,7 +81,7 @@ All dispatch logic is handled by `plugin_newsletter_check_and_send($dateFile, $s
 -  Monthly Purge:  On the 1st of each month, clears `pending.txt` and resets `batch-offset.txt`.
 -  Next Send Date:  Sets initial send for the 1st of next month at 03:00 if no date is saved; thereafter reads and compares against current time.
 -  Batch Dispatch:  Sends up to `PLUGIN_NEWSLETTER_BATCH_SIZE` subscribers per invocation at 03:00 daily, updates offset, and schedules the next run (next day or next month).
--  Full Send:  `plugin_newsletter_send_all($subFile)` builds email content with last entries and comments widget outputs, then sends HTML emails with proper headers.
+-  Full Send:  `plugin_newsletter_send_now($subFile)` builds email content with last entries and comments widget outputs, then sends HTML emails with proper headers.
    It now skips subscribers whose domains appear in the blocklist.
 
 Admin Panel Integration
@@ -74,12 +95,16 @@ Smarty Variables:
 
 Actions:
 -  Delete Subscriber:  POST `newsletter_delete` with CSRF token invokes `plugin_newsletter_handle_admin_delete()`.
--  Send Now:  POST `newsletter_send_all` with CSRF token triggers an immediate full send and redirects with success flag.
+-  Send Now:  POST `newsletter_send_now` with CSRF token triggers an immediate full send and redirects with success flag.
 -  Settings:  POST `newsletter_save_settings` to update `batch_size`, uses `plugin_addoption()` and `plugin_saveoptions()`, then displays success message.
 
 Localization
 ------------
 Text strings are defined in `lang/<locale>/lang.<locale>.php`; the German example is `lang/de-de.php` for translations of widget labels, messages, and admin UI.
+
+Developer Documentation
+-----------------------
+Implementation-oriented developer notes, state diagrams, Mermaid process diagrams, and regression scenarios are maintained in `developer-docs/`.
 
 FAQ
 ---

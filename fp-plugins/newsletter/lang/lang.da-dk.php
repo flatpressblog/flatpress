@@ -37,17 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'Ingen tilgængelige abonnenter',
 	'delete_subscriber' => 'Slet denne adresse',
 	'delete_confirm' => 'Ønsker du virkelig at slette denne adresse?',
-	'desc_batch' => 'Her kan du angive, hvor mange abonnenter et nyhedsbrev skal sendes til pr. dag. '. //
-		'Spørg din e-mailudbyder, hvor mange e-mails der kan sendes pr. dag. ' . //
-		'Nyhedsbrevet sendes automatisk til alle abonnenter i begyndelsen af måneden. ' . //
-		'Hvis der ikke kører en automatisk udsendelse i øjeblikket, kan du også starte udsendelsen af nyhedsbrevet med det samme. ' . //
-		'Hvis den øjeblikkelige udsendelse ikke er gennemført inden den 28. i måneden, vil alle abonnenter først automatisk modtage det almindelige nyhedsbrev i den efterfølgende måned.',
+	'desc_batch' => 'Her angiver du, hvor mange e-mails pluginet sender pr. udsendelsesdag. ' . //
+		'Vælg en værdi, der ligger under din e-mailudbyders daglige grænse. ' . //
+		'I begyndelsen af måneden starter det almindelige nyhedsbrev automatisk og sendes om nødvendigt i daglige batches, indtil alle abonnenter er nået. ' . //
+		'Hvis der ikke kører en udsendelse, kan du også starte den manuelt; den manuelle udsendelse bruger samme dagsgrænse. ' . //
+		'Hvis en manuel udsendelse stadig kører, når en ny måned begynder, udskydes den automatiske månedlige udsendelse til næste måned.',
 	'icon_sent_title' => 'Allerede leveret i denne forsendelse',
 	'icon_sent_alt' => 'Leveret',
 	'icon_queued_title' => 'Planlagt til næste batch',
 	'icon_queued_alt' => 'Planlagt',
-	'send_all_button' => 'Send nyhedsbrev til alle abonnenter nu',
-	'send_all_confirm' => 'Vil du sende nyhedsbrevet til alle abonnenter nu?',
+	'send_now_button' => 'Send nyhedsbrevet til abonnenterne nu',
+	'send_now_confirm' => 'Vil du sende nyhedsbrevet til abonnenterne nu?',
 	'send_type_monthly' => 'Månedlig udsendelse.',
 	'send_type_manual'  => 'Manuel udsendelse.',
 	'sub_remaining' => 'Skal stadig sendes:',
@@ -60,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'Nyhedsbrevet sendes til alle abonnenter.',
+	1 => 'Nyhedsbrevet sendes ud til abonnenterne.',
 	-2 => 'Dette plugin kræver LastEntries-plugin\'et, der er integreret i FlatPress. Aktivér det venligst på forhånd i plugin-området!',
 	2 => 'Indstillingerne er blevet gemt.'
 );
