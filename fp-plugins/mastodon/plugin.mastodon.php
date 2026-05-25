@@ -4514,7 +4514,7 @@ function plugin_mastodon_lang_string($key, $default) {
 		$strings = array();
 		if (function_exists('lang_load')) {
 			$lang = lang_load('plugin:mastodon');
-			if (is_array($lang) && isset($lang ['admin'] ['plugin'] ['mastodon']) && is_array($lang ['admin'] ['plugin'] ['mastodon'])) {
+			if (isset($lang ['admin'] ['plugin'] ['mastodon']) && is_array($lang ['admin'] ['plugin'] ['mastodon'])) {
 				$strings = $lang ['admin'] ['plugin'] ['mastodon'];
 			}
 		}
