@@ -37,16 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'Aucun abonné disponible',
 	'delete_subscriber' => 'Supprimer',
 	'delete_confirm' => 'Voulez-vous vraiment supprimer cette adresse ?',
-	'desc_batch' => 'Définissez ici combien d’abonnés peuvent recevoir la newsletter par jour. '. //
-		'Renseignez-vous auprès de votre fournisseur d’e-mails pour connaître les limites d’envoi. ' . //
-		'La newsletter est envoyée automatiquement à tous les abonnés au début du mois. ' . //
-		'Si aucun envoi automatique n’est en cours, vous pouvez également lancer un envoi immédiat.',
+	'desc_batch' => 'Définissez ici le nombre d’e-mails que le plugin envoie par jour d’envoi. ' . //
+		'Choisissez une valeur inférieure à la limite quotidienne de votre fournisseur d’e-mails. ' . //
+		'Au début du mois, la newsletter régulière démarre automatiquement et, si nécessaire, elle est envoyée par lots quotidiens jusqu’à ce que tous les abonnés soient atteints. ' . //
+		'Si aucun envoi n’est en cours, vous pouvez aussi lancer un envoi manuel ; cet envoi manuel utilise la même limite quotidienne. ' . //
+		'Si un envoi manuel est encore en cours au début d’un nouveau mois, l’envoi automatique mensuel est reporté au mois suivant.',
 	'icon_sent_title' => 'Déjà distribué dans cet envoi',
 	'icon_sent_alt' => 'Livré',
 	'icon_queued_title' => 'Planifié pour le lot suivant',
 	'icon_queued_alt' => 'Planifié',
-	'send_all_button' => 'Envoyer maintenant la newsletter à tous les abonnés',
-	'send_all_confirm' => 'Souhaitez-vous envoyer la newsletter maintenant à tous les abonnés ?',
+	'send_now_button' => 'Envoyez dès maintenant la newsletter aux abonnés',
+	'send_now_confirm' => 'Souhaitez-vous envoyer dès maintenant la newsletter aux abonnés?',
 	'send_type_monthly' => 'Envoi mensuel.',
 	'send_type_manual'  => 'Envoi manuel.',
 	'sub_remaining' => 'Encore à envoyer:',
@@ -59,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'La newsletter est envoyée à tous les abonnés.',
+	1 => 'La newsletter est envoyée aux abonnés.',
 	-2 => 'Ce plugin nécessite le plugin LastEntries intégré dans FlatPress. Veuillez l’activer au préalable dans la gestion des plugins&nbsp;!',
 	2 => 'Les paramètres ont été enregistrés.'
 );

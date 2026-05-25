@@ -37,17 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'Ez dago harpidedunik',
 	'delete_subscriber' => 'Ezabatu',
 	'delete_confirm' => 'Benetan helbide hau ezabatu nahi duzu?',
-	'desc_batch' => 'Hemen zehaztu dezakezu buletina egunean zenbat harpideduni bidaliko zaien. '. //
-		'Galdetu zure posta elektroniko hornitzaileari zenbat mezu elektroniko bidali daitezkeen egunean. ' . //
-		'Buletina automatikoki bidaltzen zaie harpidedun guztiei hilaren hasieran. ' . //
-		'Une honetan bidalketa automatikorik ez badago martxan, buletinaren bidalketa berehala ere aktibatu dezakezu. ' . //
-		'Hilaren 28rako berehalako bidalketa osatu ez bada, harpidedun guztiek ez dute automatikoki jasoko ohiko buletina hurrengo hilabetera arte.',
+	'desc_batch' => 'Hemen zehazten duzu pluginak bidalketa-egun bakoitzean zenbat mezu elektroniko bidaliko dituen. ' . //
+		'Aukeratu zure posta-hornitzailearen eguneko mugaren azpitik dagoen balio bat. ' . //
+		'Hilaren hasieran ohiko buletina automatikoki hasten da eta, behar izanez gero, eguneroko multzotan bidaltzen da harpidedun guztiengana iritsi arte. ' . //
+		'Une honetan bidalketarik martxan ez badago, eskuz ere abiaraz dezakezu; eskuzko bidalketak eguneko muga bera erabiltzen du. ' . //
+		'Hilabete berri bat hastean eskuzko bidalketa bat oraindik martxan badago, hileko bidalketa automatikoa hurrengo hilabetera atzeratzen da.',
 	'icon_sent_title' => 'Bidalketa honetan dagoeneko entregatu dira',
 	'icon_sent_alt' => 'Entregatua',
 	'icon_queued_title' => 'Hurrengo multzorako programatuta',
 	'icon_queued_alt' => 'Programatuta',
-	'send_all_button' => 'Bidali buletina harpidedun guztiei orain',
-	'send_all_confirm' => 'Buletina harpidedun guztiei bidali nahi diezu orain?',
+	'send_now_button' => 'Bidali orain buletina harpidetuei',
+	'send_now_confirm' => 'Orain bidali nahi al duzu buletina harpidetuei?',
 	'send_type_monthly' => 'Hileroko bidalketa.',
 	'send_type_manual'  => 'Eskuzko bidalketa.',
 	'sub_remaining' => 'Oraindik bidali beharrekoak:',
@@ -60,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'Buletina harpidedun guztiei bidalti zaie.',
+	1 => 'Buletina harpidetuei bidaltzen zaie.',
 	-2 => 'Plugin honek FlatPressen integratutako LastEntries plugina behar du. Mesedez, gaitu aldez aurretik pluginen kontrol-panelean!',
 	2 => 'Ezarpenak ondo gorde dira.'
 );

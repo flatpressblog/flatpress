@@ -37,17 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'Mevcut abone yok',
 	'delete_subscriber' => 'Bu adresi silin',
 	'delete_confirm' => 'Bu adresi gerçekten silmek istiyor musunuz?',
-	'desc_batch' => 'Burada bir bültenin günde kaç aboneye gönderileceğini belirleyebilirsiniz. '. //
-		'E-posta sağlayıcınıza günde kaç e-posta gönderilebileceğini sorun. ' . //
-		'Bülten, ayın başında tüm abonelere otomatik olarak gönderilir. ' . //
-		'Otomatik gönderim o anda çalışmıyorsa, bülten gönderimini hemen de başlatabilirsiniz. ' . //
-		'Anında gönderim ayın 28\'ine kadar tamamlanmamışsa, tüm aboneler bir sonraki aya kadar düzenli bülteni otomatik olarak almayacaktır.',
+	'desc_batch' => 'Burada eklentinin her gönderim gününde kaç e-posta göndereceğini belirlersiniz. ' . //
+		'E-posta sağlayıcınızın günlük gönderim sınırının altında bir değer seçin. ' . //
+		'Ayın başında normal bülten otomatik olarak başlar ve gerekirse tüm abonelere ulaşılana kadar günlük partiler halinde gönderilir. ' . //
+		'O anda çalışan bir gönderim yoksa, gönderimi elle de başlatabilirsiniz; elle gönderim de aynı günlük sınırı kullanır. ' . //
+		'Yeni bir ay başladığında elle gönderim hâlâ devam ediyorsa, otomatik aylık gönderim bir sonraki aya ertelenir.',
 	'icon_sent_title' => 'Bu sevkiyatta zaten teslim edildi',
 	'icon_sent_alt' => 'Teslim edildi',
 	'icon_queued_title' => 'Bir sonraki parti için planlandı',
 	'icon_queued_alt' => 'Planlanmış',
-	'send_all_button' => 'Bülteni şimdi tüm abonelere gönder',
-	'send_all_confirm' => 'Bülteni şimdi tüm abonelere göndermek istiyor musunuz?',
+	'send_now_button' => 'Haber bültenini abonelere şimdi gönder',
+	'send_now_confirm' => 'Haber bültenini abonelere şimdi göndermek istiyor musun?',
 	'send_type_monthly' => 'Aylık gönderim.',
 	'send_type_manual'  => 'Manuel gönderim.',
 	'sub_remaining' => 'Hala gönderilecek:',
@@ -60,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'Bülten tüm abonelere gönderilir.',
+	1 => 'Haber bülteni abonelere gönderilir.',
 	-2 => 'Bu eklenti, FlatPress\'e entegre edilmiş LastEntries eklentisini gerektirir. Lütfen eklenti alanında önceden etkinleştirin!',
 	2 => 'Ayarlar kaydedildi.'
 );

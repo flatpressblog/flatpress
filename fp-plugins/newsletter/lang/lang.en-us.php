@@ -37,17 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'No subscribers available',
 	'delete_subscriber' => 'Delete',
 	'delete_confirm' => 'Do you really want to delete this address?',
-	'desc_batch' => 'Here you can specify how many subscribers a newsletter is sent to per day. '. //
-		'Ask your email provider how many emails can be sent per day. ' . //
-		'The newsletter is automatically sent to all subscribers at the beginning of the month. ' . //
-		'If no automatic dispatch is currently running, you can also trigger the newsletter dispatch immediately. ' . //
-		'If immediate dispatch has not been completed by the 28th of the month, all subscribers will not automatically receive the regular newsletter until the month after next.',
+	'desc_batch' => 'Here you set how many emails the plugin sends on each sending day. ' . //
+		'Choose a value below your email provider\'s daily sending limit. ' . //
+		'At the beginning of the month, the regular newsletter starts automatically and, if necessary, is sent in daily batches until all subscribers have been reached. ' . //
+		'If no send-out is currently running, you can also start one manually; the manual send-out uses the same daily limit. ' . //
+		'If a manual send-out is still running when a new month begins, the automatic monthly send-out is postponed until the next month.',
 	'icon_sent_title' => 'Already delivered in this shipment',
 	'icon_sent_alt' => 'Delivered',
 	'icon_queued_title' => 'Scheduled for next batch',
 	'icon_queued_alt' => 'Scheduled',
-	'send_all_button' => 'Send newsletter to all subscribers now',
-	'send_all_confirm' => 'Would you like to send the newsletter to all subscribers now?',
+	'send_now_button' => 'Send newsletter to the subscribers now',
+	'send_now_confirm' => 'Would you like to send the newsletter to the subscribers now?',
 	'send_type_monthly' => 'Monthly dispatch.',
 	'send_type_manual'  => 'Manual dispatch.',
 	'sub_remaining' => 'Still to be sent:',
@@ -60,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'Newsletter is sent to all subscribers.',
+	1 => 'The newsletter is sent to subscribers.',
 	-2 => 'This plugin requires the LastEntries plugin integrated in FlatPress. Please activate it beforehand in the plugin area!',
 	2 => 'Settings have been saved.'
 );

@@ -56,14 +56,14 @@
 		{/html_form}
 
 		<div class="buttonbar">
-			<form id="newsletter-sendall" method="post">
+			<form id="newsletter-sendnow" method="post">
 				<input type="hidden" name="csrf_token" value="{$newsletter_csrf_token}">
 				{if $batch_pending}
 					<div class="newsletter-status">
 						<p>{$batch_type} {$lang.admin.plugin.newsletter.sub_remaining|escape} <strong>{$subscribers_remaining}</strong></p>
 					</div>
 				{else}
-					<input type="submit" style="cursor: pointer;" name="newsletter_send_all" value="{$lang.admin.plugin.newsletter.send_all_button|escape}">
+					<input type="submit" style="cursor: pointer;" name="newsletter_send_now" value="{$lang.admin.plugin.newsletter.send_now_button|escape}">
 				{/if}
 			</form>
 		</div>
@@ -73,10 +73,10 @@
 			 * Newletter plugin admin
 			 */
 			document.addEventListener('DOMContentLoaded', function(){
-				var sendAll = document.getElementById('newsletter-sendall');
-				if (sendAll) {
-					sendAll.addEventListener('submit', function(e){
-						if (!confirm('{$lang.admin.plugin.newsletter.send_all_confirm|escape}')) {
+				var sendNow = document.getElementById('newsletter-sendnow');
+				if (sendNow) {
+					sendNow.addEventListener('submit', function(e){
+						if (!confirm('{$lang.admin.plugin.newsletter.send_now_confirm|escape}')) {
 							e.preventDefault();
 						}
 					});

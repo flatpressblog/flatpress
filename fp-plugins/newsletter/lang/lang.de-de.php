@@ -37,17 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'Keine Abonnenten vorhanden',
 	'delete_subscriber' => 'Löschen',
 	'delete_confirm' => 'Möchtest du diese Adresse wirklich löschen?',
-	'desc_batch' => 'Hier kannst du festlegen, an wie viele Abonnenten pro Tag ein Newsletter versendet wird. '. //
-		'Erkundige dich bei deinem E-Mail-Anbieter, wie viel E-Mails pro Tag versendet werden können. ' . //
-		'Der Newsletter wird zu Beginn des Monats automatisch an alle Abonnenten versendet. ' . //
-		'Wenn gerade kein automatischer Versand läuft, kannst du auch sofort den Newsletterversand anstoßen. ' . //
-		'Wenn bis zum 28 des Monats der sofortige Versand noch nicht abgeschlossen ist, erhalten alle Abonnenten erst im übernächsten Monat automatisch den regulären Newsletter.',
+	'desc_batch' => 'Hier legst du fest, wie viele E-Mails das Plugin pro Versandtag verschickt. ' . //
+		'Wähle einen Wert, der unter dem Tageslimit deines E-Mail-Anbieters liegt. ' . //
+		'Am Monatsanfang startet der reguläre Newsletter automatisch und wird bei Bedarf in Tagespaketen versendet, bis alle Abonnenten erreicht wurden. ' . //
+		'Ist gerade kein Versand aktiv, kannst du den Versand auch manuell starten; auch dieser manuelle Versand nutzt dieselbe Tagesbegrenzung. ' . //
+		'Läuft beim Start eines neuen Monats noch ein manueller Versand, wird der automatische Monatsversand auf den nächsten Monat verschoben.',
 	'icon_sent_title' => 'In diesem Versand bereits zugestellt',
 	'icon_sent_alt' => 'Zugestellt',
 	'icon_queued_title' => 'Für nächste Charge eingeplant',
 	'icon_queued_alt' => 'Eingeplant',
-	'send_all_button' => 'Newsletter jetzt an alle Abonnenten versenden',
-	'send_all_confirm' => 'Möchtest du den Newsletter jetzt an alle Abonnenten versenden?',
+	'send_now_button' => 'Newsletter jetzt an die Abonnenten versenden',
+	'send_now_confirm' => 'Möchtest du den Newsletter jetzt an die Abonnenten versenden?',
 	'send_type_monthly' => 'Monatlicher Versand.',
 	'send_type_manual'  => 'Manueller Versand.',
 	'sub_remaining' => 'Noch zu versenden:',
@@ -60,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'Newsletter wird an alle Abonnenten versendet.',
+	1 => 'Newsletter wird an die Abonnenten versendet.',
 	-2 => 'Dieses Plugin benötigt das in FlatPress integrierte LastEntries Plugin. Bitte dieses vorher im Plugin Bereich aktivieren!',
 	2 => 'Einstellungen wurden gespeichert.'
 );

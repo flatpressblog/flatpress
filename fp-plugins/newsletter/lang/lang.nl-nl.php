@@ -37,17 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'Geen abonnees beschikbaar',
 	'delete_subscriber' => 'Dit adres verwijderen',
 	'delete_confirm' => 'Wilt u dit adres echt verwijderen?',
-	'desc_batch' => 'Hier kun je opgeven naar hoeveel abonnees een nieuwsbrief per dag wordt verzonden. '. //
-		'Vraag je e-mailprovider hoeveel e-mails per dag kunnen worden verzonden. ' . //
-		'De nieuwsbrief wordt automatisch verzonden naar alle abonnees aan het begin van de maand. ' . //
-		'Als er momenteel geen automatische verzending loopt, kun je de verzending van de nieuwsbrief ook onmiddellijk starten. ' . //
-		'Als onmiddellijke verzending niet is voltooid op de 28e van de maand, zullen alle abonnees de reguliere nieuwsbrief pas automatisch ontvangen in de daaropvolgende maand.',
+	'desc_batch' => 'Hier stel je in hoeveel e-mails de plugin per verzenddag verstuurt. ' . //
+		'Kies een waarde onder de daglimiet van je e-mailprovider. ' . //
+		'Aan het begin van de maand start de reguliere nieuwsbrief automatisch en wordt deze zo nodig in dagelijkse batches verzonden totdat alle abonnees zijn bereikt. ' . //
+		'Als er geen verzending loopt, kun je ook handmatig een verzending starten; deze handmatige verzending gebruikt dezelfde daglimiet. ' . //
+		'Als er bij het begin van een nieuwe maand nog een handmatige verzending loopt, wordt de automatische maandelijkse verzending uitgesteld tot de volgende maand.',
 	'icon_sent_title' => 'Reeds geleverd in deze zending',
 	'icon_sent_alt' => 'Geleverd',
 	'icon_queued_title' => 'Gepland voor volgende batch',
 	'icon_queued_alt' => 'Gepland',
-	'send_all_button' => 'Stuur de nieuwsbrief nu naar alle abonnees',
-	'send_all_confirm' => 'Wil je de nieuwsbrief nu naar alle abonnees sturen?',
+	'send_now_button' => 'Stuur de nieuwsbrief nu naar de abonnees',
+	'send_now_confirm' => 'Wilt u de nieuwsbrief nu naar de abonnees sturen?',
 	'send_type_monthly' => 'Maandelijkse verzending.',
 	'send_type_manual'  => 'Handmatige verzending.',
 	'sub_remaining' => 'Nog te versturen:',
@@ -60,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'Nieuwsbrief wordt verstuurd naar alle abonnees.',
+	1 => 'De nieuwsbrief wordt naar de abonnees verstuurd.',
 	-2 => 'Deze plugin vereist de LastEntries plugin die is geïntegreerd in FlatPress. Activeer deze eerst in de plugin omgeving!',
 	2 => 'Instellingen zijn opgeslagen.'
 );

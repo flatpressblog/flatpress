@@ -37,17 +37,17 @@ $lang ['admin'] ['plugin'] ['newsletter'] = array(
 	'newsletter_no_subscribers' => 'Naročniki niso na voljo',
 	'delete_subscriber' => 'Izbriši ta naslov',
 	'delete_confirm' => 'Ali res želite izbrisati ta naslov?',
-	'desc_batch' => 'Tu lahko določite, koliko naročnikom se glasilo pošlje na dan. '. //
-		'Vprašajte svojega ponudnika e-pošte, koliko e-poštnih sporočil lahko pošljete na dan. ' . //
-		'Glasilo se samodejno pošlje vsem naročnikom na začetku meseca. ' . //
-		'Če trenutno ne poteka samodejno pošiljanje, lahko pošiljanje glasila sprožite tudi takoj. ' . //
-		'Če takojšnje pošiljanje ni zaključeno do 28. dne v mesecu, bodo vsi naročniki samodejno prejeli redne novice šele v naslednjem mesecu.',
+	'desc_batch' => 'Tukaj določite, koliko e-poštnih sporočil vtičnik pošlje na posamezen dan pošiljanja. ' . //
+		'Izberite vrednost, ki je nižja od dnevne omejitve vašega ponudnika e-pošte. ' . //
+		'Na začetku meseca se redno glasilo zažene samodejno in se po potrebi pošilja v dnevnih paketih, dokler niso doseženi vsi naročniki. ' . //
+		'Če pošiljanje trenutno ne poteka, ga lahko zaženete tudi ročno; ročno pošiljanje uporablja isto dnevno omejitev. ' . //
+		'Če ob začetku novega meseca ročno pošiljanje še vedno poteka, se samodejno mesečno pošiljanje prestavi na naslednji mesec.',
 	'icon_sent_title' => 'Že dostavljeno v tej pošiljki',
 	'icon_sent_alt' => 'Dostavljeno',
 	'icon_queued_title' => 'Načrtovano za naslednjo pošiljko',
 	'icon_queued_alt' => 'Načrtovano',
-	'send_all_button' => 'Zdaj pošljite novice vsem naročnikom',
-	'send_all_confirm' => 'Ali želite zdaj poslati novice vsem naročnikom?',
+	'send_now_button' => 'Pošljite glasilo naročnikom zdaj',
+	'send_now_confirm' => 'Ali želite glasilo naročnikom poslati zdaj?',
 	'send_type_monthly' => 'Mesečno pošiljanje.',
 	'send_type_manual'  => 'Ročno pošiljanje.',
 	'sub_remaining' => 'Še vedno je treba poslati:',
@@ -60,7 +60,7 @@ $lang ['plugin'] ['newsletter'] ['errors'] = array (
 );
 
 $lang ['admin'] ['plugin'] ['newsletter'] ['msgs'] = array(
-	1 => 'Glasilo je poslano vsem naročnikom.',
+	1 => 'Novice se pošiljajo naročnikom.',
 	-2 => 'Ta vtičnik zahteva vtičnik LastEntries, ki je integriran v FlatPress. Prosimo, da ga predhodno aktivirate v območju za vtičnike!',
 	2 => 'Nastavitve so shranjene.'
 );
