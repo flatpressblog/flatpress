@@ -28,16 +28,23 @@
         - ``article:author`` - based on the blog author ([#858](https://github.com/flatpressblog/flatpress/pull/858))
 - BBCode plugin: update to version 2.0.3
     - The HTML button is only displayed if inline HTML is allowed in BBCode. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
-- jQuery plugin update to version 2.2.2 ([#896](https://github.com/flatpressblog/flatpress/pull/896))<br><sub><i>Note: Edge Legacy, Internet Explorer 9–10, iOS 7+, and the Android browser on Android 4.0+ are no longer supported. If you need support for these legacy browsers, you must disable the jQuery plugin so that PhotoSwipe uses the older jQuery 3.7.1 version.</i></sub>
+- jQuery plugin update to version 2.2.2 ([#896](https://github.com/flatpressblog/flatpress/pull/896))<br><sub><i>Note: Edge Legacy, Internet Explorer 9–10, iOS 7+, and the Android browser on Android 4.0+ are no longer supported. If you need support for these legacy browsers, you must disable the jQuery plugin so that PhotoSwipe uses the older jQuery plugin 3.7.1 version.</i></sub>
     - includes jQuery 4.0.0 and jQueryUI 1.14.2
 - Archives plugin update to version 1.1.2 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
-- Comment Center update to version 1.1.5 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
+- Comment Center plugin update to version 1.1.5 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
-- CookieBanner update to version 1.0.4 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
+- CookieBanner plugin update to version 1.0.4 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
-- PhotoSwipe update to version 2.0.7 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
+- PhotoSwipe plugin update to version 2.0.7 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
+- Newsletter plugin update to version 1.7.5 ([#901](https://github.com/flatpressblog/flatpress/pull/901))
+    - Clarified the description in the admin area.
+    - Improved DNS cache domain detection and EAI/Unicode local part validation.
+    - Fixed the DNS cache cleanup so that subscriber lines are correctly parsed as encryptedEmail|timestamp.
+    - Re-registering the same email address replaces older, still-open pending tokens.
+        - Old confirmation links for the same address are thereby invalidated.
+    - If a local blocklist is missing, a download is attempted before the first form processing.
 
 ### Bugfixes
 - PhotoSwipe plugin update to version 2.0.7
