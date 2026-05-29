@@ -9,7 +9,8 @@ The plugin keeps a compact scheduler layer and a full synchronization layer.
   deletion sync is due without loading the full mapping state.
 - `fp-content/plugin_mastodon/state.json` is the full synchronization state. It contains
   entry/comment mappings, reverse remote mappings, dirty queues, tombstones, media metadata,
-  cursors, statistics, and last-error information.
+  cursors, statistics, and last-error information, and is written as compact JSON without
+  `JSON_PRETTY_PRINT` to keep large-state writes smaller and faster.
 - `sync.lock` serializes real content/deletion sync runs.
 - `sync.guard.json` stores short cooldown markers for content and deletion runs.
 - `rate-limit-windows.json` stores persistent cross-request windows for media uploads,
@@ -33,7 +34,7 @@ flowchart TD
     FullState["Load full state.json"]
     ContentSync["plugin_mastodon_run_sync"]
     DeletionSync["plugin_mastodon_run_deletion_sync"]
-    StateWrite["Write state.json"]
+    StateWrite["Write compact state.json"]
     SchedulerWrite["Write scheduler-state.json"]
     RateWindow["Persist rate-limit-windows.json"]
     Log["Append and rotate sync.log"]
@@ -1022,7 +1023,7 @@ flowchart TD
         EntryDeletion["plugin_mastodon_on_entry_deleted sets deletions_pending when mapped"]
         CommentDirty["plugin_mastodon_on_comment_saved sets dirty_comments or queues parent entry"]
         CommentDeletion["plugin_mastodon_on_comment_deleted sets deletions_pending when mapped"]
-        StateWrite["Write state.json and scheduler-state.json"]
+        StateWrite["Write compact state.json and scheduler-state.json"]
         Stop["Ignore hook to avoid false dirty/deletion markers"]
     end
 
@@ -1079,7 +1080,7 @@ flowchart TD
     HardFailure["Hard failure: keep dirty/pending marker"]
     UploadFailure["Status failed after media upload"]
     Cleanup["Best-effort cleanup uploaded media"]
-    StateWrite["Write state.json and scheduler summary"]
+    StateWrite["Write compact state.json and scheduler summary"]
     StateOK{"State write succeeded?"}
     LastError["Set last_error and log diagnostics"]
     Retry["Keep cooldown/pending marker for future run"]
@@ -1106,21 +1107,53 @@ suite can verify state transitions, API requests, media handling, and edge-case 
 ```mermaid
 flowchart TD
     Script["simulate_mastodon_plugin.php"]
-    Sandbox["Create FlatPress-like sandbox"]
+    OutputMode{"--summary or SIMULATE_MASTODON_SUMMARY=1?"}
+    VerboseOutput["Verbose per-test details"]
+    SummaryOutput["Compact per-test details"]
+    SandboxPolicy{"Include live fp-content/content?"}
+    MinimalSandbox["Create sandbox without live fp-content/content"]
+    LiveSandbox["Explicit live-content smoke sandbox"]
+    EmptyContent["Create empty fp-content/content"]
     CoreStubs["Load FlatPress includes and test helpers"]
     Plugin["require fp-plugins/mastodon/plugin.mastodon.php"]
-    Fixtures["Create entries, comments, media files, options, and state fixtures"]
+    Fixtures["Create deterministic entries, comments, media files, options, and state fixtures"]
     HTTPQueue["Mock Mastodon HTTP response queue"]
     RunSync["Call real plugin sync/deletion functions"]
-    Assertions["test_result assertions"]
+    Assertions["test_result / test_warn / test_skip assertions"]
+    CompactWrite["Assert state.json compact-write roundtrip"]
+    SmallState["Always-on 300x10 scheduler-state regression"]
+    MemoryGuard["Check memory before building 3000x10 state"]
+    CIRaise["CI: try to raise memory_limit to 384M"]
+    LargeState["Run 3000x10 scheduler-state regression"]
+    Warn["Shared-host low memory: emit WARN"]
+    Skip["CI cannot raise memory: emit SKIP"]
     InspectState["Inspect state.json, scheduler-state.json, files, and captured API calls"]
+    FinalSummary["Always print Exit-code and OK/FAIL/WARN/SKIP counters"]
     OptionalLive["Optional --live-auth credentials smoke test"]
+    Cleanup["Delete temporary sandbox"]
 
-    Script --> Sandbox --> CoreStubs --> Plugin --> Fixtures
+    Script --> OutputMode
+    OutputMode -- "No" --> VerboseOutput --> SandboxPolicy
+    OutputMode -- "Yes" --> SummaryOutput --> SandboxPolicy
+    SandboxPolicy -- "default" --> MinimalSandbox --> EmptyContent --> CoreStubs
+    SandboxPolicy -- "--include-live-content or env flag" --> LiveSandbox --> CoreStubs
+    CoreStubs --> Plugin --> Fixtures
     Fixtures --> HTTPQueue --> RunSync --> Assertions
-    Assertions --> InspectState
+    Assertions --> CompactWrite --> SmallState --> MemoryGuard
+    MemoryGuard -- "enough memory" --> LargeState --> InspectState
+    MemoryGuard -- "CI + low limit" --> CIRaise
+    CIRaise -- "raised" --> LargeState
+    CIRaise -- "not raised" --> Skip --> InspectState
+    MemoryGuard -- "non-CI low limit" --> Warn --> InspectState
+    Assertions --> InspectState --> FinalSummary --> Cleanup
     Script -. "only when explicitly requested" .-> OptionalLive
 ```
+
+The simulation sandbox deliberately excludes live `fp-content/content` in the default regression run. It still copies configuration and plugin files, creates an empty content directory, and then seeds deterministic fixtures. This prevents production-like 3000x10 blogs from spending most of the request copying and deleting live entries/comments before the first assertion. Explicit live-content smoke coverage remains available with `--include-live-content` or `SIMULATE_MASTODON_INCLUDE_LIVE_CONTENT=1`.
+
+The output mode is independent of the assertions. Normal output keeps full details for one-file diagnostics. Summary output can be requested with `--summary` or `SIMULATE_MASTODON_SUMMARY=1`; it keeps the status and test name, but collapses verbose details to short text or JSON key summaries. Both output modes always end with the same counter block: `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]`, and `[SKIP]`.
+
+The compact-state regression first verifies that legacy pretty-printed `state.json` files remain readable and that new `state.json` writes are compact JSON while preserving all mapping queues. The large `3000x10` scheduler-state regression is intentionally guarded before its synthetic state is built. On 128 MiB shared-hosting-style PHP limits, the large PHP array plus full JSON string can exhaust memory before the compact scheduler-state behavior is reached. The smaller `300x10` state test always runs; the heavy test runs when memory is sufficient, warns in low-memory non-CI environments, and is skipped in CI only after an attempted memory-limit raise fails. The CI skip branch can be tested deterministically with `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1`.
 
 ## 8. Operational guarantees and intentional behavior
 

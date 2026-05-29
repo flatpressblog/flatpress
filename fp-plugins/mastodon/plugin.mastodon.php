@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.4.6
+ * Version: 2.4.7
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -3090,7 +3090,7 @@ function plugin_mastodon_scheduler_state_read() {
 function plugin_mastodon_state_write($state) {
 	plugin_mastodon_ensure_state_dir();
 	$state = plugin_mastodon_state_normalize($state);
-	$json = json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	$json = json_encode($state, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 	if (!is_string($json)) {
 		return false;
 	}

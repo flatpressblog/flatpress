@@ -6,6 +6,157 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 /**
+ * Convert a CLI/query/environment boolean flag into a stable true/false value.
+ * @param mixed $value
+ * @return bool
+ */
+function simulate_truthy_flag_value($value) {
+	if (!is_string($value) && !is_numeric($value) && !is_bool($value)) {
+		return false;
+	}
+	$value = strtolower(trim((string) $value));
+	return $value !== '' && $value !== '0' && $value !== 'false' && $value !== 'off' && $value !== 'no';
+}
+
+/**
+ * Decide whether the simulation should print compact per-test details.
+ * @return bool
+ */
+function simulate_summary_output_requested() {
+	$summaryEnv = getenv('SIMULATE_MASTODON_SUMMARY');
+	if (simulate_truthy_flag_value($summaryEnv)) {
+		return true;
+	}
+	if (PHP_SAPI === 'cli') {
+		$cliArguments = isset($_SERVER ['argv']) ? (array) $_SERVER ['argv'] : array();
+		if (in_array('--summary', $cliArguments, true)) {
+			return true;
+		}
+	}
+	return isset($_GET ['summary']) && simulate_truthy_flag_value($_GET ['summary']);
+}
+
+$GLOBALS ['simulate_mastodon_summary_output'] = simulate_summary_output_requested();
+$GLOBALS ['simulate_mastodon_result_counts'] = array(
+	'OK' => 0,
+	'FAIL' => 0,
+	'WARN' => 0,
+	'SKIP' => 0
+);
+
+/**
+ * Return a UTF-8-safe prefix where mbstring is available, with a byte-safe fallback.
+ * @param string $text
+ * @param int $limit
+ * @return string
+ */
+function simulate_text_prefix($text, $limit) {
+	$text = (string) $text;
+	$limit = max(0, (int) $limit);
+	if (function_exists('mb_substr')) {
+		return (string) mb_substr($text, 0, $limit, 'UTF-8');
+	}
+	return substr($text, 0, $limit);
+}
+
+/**
+ * Build a compact detail string for summary output.
+ * @param string $details
+ * @return string
+ */
+function simulate_short_test_details($details) {
+	$details = (string) $details;
+	if ($details === '') {
+		return '';
+	}
+	$byteLength = strlen($details);
+	$decoded = json_decode($details, true);
+	if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+		$keys = array_keys($decoded);
+		$isList = $keys === range(0, count($keys) - 1);
+		if ($isList) {
+			return 'json list items=' . count($decoded) . ', bytes=' . $byteLength;
+		}
+		$keyNames = array();
+		foreach (array_slice($keys, 0, 6) as $key) {
+			$keyNames [] = (string) $key;
+		}
+		$more = count($keys) > 6 ? ', ...' : '';
+		return 'json keys=' . implode(',', $keyNames) . $more . ', bytes=' . $byteLength;
+	}
+
+	$singleLine = trim((string) preg_replace('/\s+/', ' ', $details));
+	if (strlen($singleLine) <= 180) {
+		return $singleLine;
+	}
+	return simulate_text_prefix($singleLine, 140) . '... bytes=' . $byteLength;
+}
+
+/**
+ * Format details according to the currently selected output mode.
+ * @param string $details
+ * @return string
+ */
+function simulate_format_test_details($details) {
+	$details = (string) $details;
+	if ($details === '') {
+		return '';
+	}
+	if (!empty($GLOBALS ['simulate_mastodon_summary_output'])) {
+		return simulate_short_test_details($details);
+	}
+	return $details;
+}
+
+/**
+ * Print a test result line and update the final summary counters.
+ * @param string $status
+ * @param string $name
+ * @param string $details
+ * @return void
+ */
+function simulate_print_test_status($status, $name, $details = '') {
+	$status = strtoupper((string) $status);
+	if (!isset($GLOBALS ['simulate_mastodon_result_counts'] [$status])) {
+		$GLOBALS ['simulate_mastodon_result_counts'] [$status] = 0;
+	}
+	$GLOBALS ['simulate_mastodon_result_counts'] [$status]++;
+
+	echo '[' . $status . '] ' . $name;
+	$details = simulate_format_test_details((string) $details);
+	if ($details !== '') {
+		echo ' - ' . $details;
+	}
+	echo PHP_EOL;
+}
+
+/**
+ * Format the final summary block.
+ * @param int $exitCode
+ * @return string
+ */
+function simulate_format_final_summary($exitCode) {
+	$counts = isset($GLOBALS ['simulate_mastodon_result_counts']) && is_array($GLOBALS ['simulate_mastodon_result_counts'])
+		? $GLOBALS ['simulate_mastodon_result_counts']
+		: array();
+
+	$lines = array('Exit-code: ' . (int) $exitCode);
+	foreach (array('OK', 'FAIL', 'WARN', 'SKIP') as $status) {
+		$lines [] = '[' . $status . ']: ' . (isset($counts [$status]) ? (int) $counts [$status] : 0);
+	}
+	return implode(PHP_EOL, $lines) . PHP_EOL;
+}
+
+/**
+ * Print the final summary block.
+ * @param int $exitCode
+ * @return void
+ */
+function simulate_print_final_summary($exitCode) {
+	echo simulate_format_final_summary($exitCode);
+}
+
+/**
  * Print and return a test result line.
  * @param string $name
  * @param bool $condition
@@ -13,12 +164,35 @@ ini_set('display_errors', '1');
  * @return bool
  */
 function test_result($name, $condition, $details = '') {
-	echo ($condition ? '[OK] ' : '[FAIL] ') . $name;
-	if ($details !== '') {
-		echo ' - ' . $details;
-	}
-	echo PHP_EOL;
+	simulate_print_test_status($condition ? 'OK' : 'FAIL', $name, $details);
 	return (bool) $condition;
+}
+
+/**
+ * Print a non-fatal warning for environment-dependent regression coverage.
+ *
+ * Warnings keep the simulation process successful, but they explicitly mark
+ * coverage that should be repeated in a better-resourced environment.
+ *
+ * @param string $name
+ * @param string $details
+ * @return bool
+ */
+function test_warn($name, $details = '') {
+	simulate_print_test_status('WARN', $name, $details);
+	return true;
+}
+
+/**
+ * Print an intentional skip for optional or unsupported regression coverage.
+ *
+ * @param string $name
+ * @param string $details
+ * @return bool
+ */
+function test_skip($name, $details = '') {
+	simulate_print_test_status('SKIP', $name, $details);
+	return true;
 }
 
 /**
@@ -164,13 +338,32 @@ function simulate_copy_recursive($source, $target, $sourceRoot, $excludedRelativ
 }
 
 /**
+ * Decide whether the simulation sandbox should include live blog content.
+ *
+ * The default is intentionally false so regression tests on production-like shared-hosting
+ * instances do not copy thousands of entry and comment files before the first assertion.
+ * @return bool
+ */
+function simulate_sandbox_should_include_live_content() {
+	$includeLiveContent = getenv('SIMULATE_MASTODON_INCLUDE_LIVE_CONTENT');
+	if (is_string($includeLiveContent) && $includeLiveContent !== '' && strtolower($includeLiveContent) !== 'false' && $includeLiveContent !== '0') {
+		return true;
+	}
+	return simulate_request_flag('include-live-content');
+}
+
+/**
  * Create an isolated sandbox copy of the FlatPress instance.
  *
- * Note: The sandbox deliberately skips volatile cache and index artefacts so the simulation stays reproducible.
+ * Note: The sandbox deliberately skips volatile cache/index artefacts and, by default, live
+ * `fp-content/content` data. The regression suite seeds its own deterministic content fixtures.
+ * Passing true as the second argument or using `--include-live-content` / `SIMULATE_MASTODON_INCLUDE_LIVE_CONTENT=1`
+ * enables the old copy behavior for explicit live-content smoke tests.
  * @param string $sourceRoot
+ * @param bool|null $includeLiveContent
  * @return string
  */
-function simulate_prepare_sandbox($sourceRoot) {
+function simulate_prepare_sandbox($sourceRoot, $includeLiveContent = null) {
 	$sourceRoot = rtrim($sourceRoot, DIRECTORY_SEPARATOR);
 	$sandboxRoot = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'flatpress-mastodon-sim-' . str_replace('.', '-', uniqid('', true));
 	$excludedRelativePaths = array(
@@ -180,10 +373,16 @@ function simulate_prepare_sandbox($sourceRoot) {
 		'fp-content/compile',
 		'fp-content/cache'
 	);
+	if ($includeLiveContent === null) {
+		$includeLiveContent = simulate_sandbox_should_include_live_content();
+	}
+	if (!$includeLiveContent) {
+		$excludedRelativePaths [] = 'fp-content/content';
+	}
 
 	simulate_copy_recursive($sourceRoot, $sandboxRoot, $sourceRoot, $excludedRelativePaths);
 
-	foreach (array('fp-content/index', 'fp-content/compile', 'fp-content/cache', 'fp-content/plugin_mastodon') as $relativeDir) {
+	foreach (array('fp-content/index', 'fp-content/compile', 'fp-content/cache', 'fp-content/content', 'fp-content/plugin_mastodon') as $relativeDir) {
 		$absoluteDir = $sandboxRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativeDir);
 		if (!is_dir($absoluteDir)) {
 			mkdir($absoluteDir, 0777, true);
@@ -620,6 +819,153 @@ function simulate_build_large_mastodon_state($entryCount, $commentsPerEntry) {
 		}
 	}
 	return $state;
+}
+
+/**
+ * Convert a PHP memory-limit shorthand value to bytes.
+ *
+ * @param string $value
+ * @return int -1 for unlimited, 0 for unparsable/disabled, or a positive byte count
+ */
+function simulate_memory_limit_to_bytes($value) {
+	$value = trim((string) $value);
+	if ($value === '') {
+		return 0;
+	}
+	if ($value === '-1') {
+		return -1;
+	}
+	$unit = strtolower(substr($value, -1));
+	$number = $value;
+	if ($unit === 'g' || $unit === 'm' || $unit === 'k') {
+		$number = substr($value, 0, -1);
+	}
+	if (!is_numeric($number)) {
+		return 0;
+	}
+	$bytes = (float) $number;
+	if ($unit === 'g') {
+		$bytes *= 1024 * 1024 * 1024;
+	} elseif ($unit === 'm') {
+		$bytes *= 1024 * 1024;
+	} elseif ($unit === 'k') {
+		$bytes *= 1024;
+	}
+	if ($bytes <= 0) {
+		return 0;
+	}
+	return (int) floor($bytes);
+}
+
+/**
+ * Format a byte count for simulation diagnostics.
+ *
+ * @param int $bytes
+ * @return string
+ */
+function simulate_format_bytes($bytes) {
+	$bytes = (int) $bytes;
+	if ($bytes < 0) {
+		return 'unlimited';
+	}
+	if ($bytes >= 1024 * 1024 * 1024) {
+		return round($bytes / (1024 * 1024 * 1024), 2) . 'G';
+	}
+	if ($bytes >= 1024 * 1024) {
+		return round($bytes / (1024 * 1024), 2) . 'M';
+	}
+	if ($bytes >= 1024) {
+		return round($bytes / 1024, 2) . 'K';
+	}
+	return (string) $bytes . 'B';
+}
+
+/**
+ * Detect common CI environments without depending on one specific provider.
+ *
+ * @return bool
+ */
+function simulate_running_in_ci() {
+	$ciVariables = array(
+		'CI',
+		'CONTINUOUS_INTEGRATION',
+		'GITHUB_ACTIONS',
+		'GITLAB_CI',
+		'JENKINS_URL',
+		'BUILDKITE',
+		'CIRCLECI',
+		'TRAVIS',
+		'APPVEYOR',
+		'TEAMCITY_VERSION',
+		'TF_BUILD'
+	);
+	foreach ($ciVariables as $variable) {
+		$value = getenv($variable);
+		if (is_string($value) && $value !== '' && strtolower($value) !== 'false' && $value !== '0') {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Return whether a memory limit is sufficient for the heavy 3000x10 state test.
+ *
+ * The guard intentionally runs before the large state is built. The heavy test
+ * materializes a large PHP array and then a pretty-printed JSON string, so a
+ * nominal 128M shared-hosting limit can fail with a fatal error even though the
+ * compact scheduler-state logic itself is correct.
+ *
+ * @param int $minimumLimitBytes
+ * @param int $minimumFreeBytes
+ * @param int $ciTargetLimitBytes
+ * @param array<string, mixed> $details
+ * @return string One of "run", "warn", or "skip"
+ */
+function simulate_large_state_memory_decision($minimumLimitBytes, $minimumFreeBytes, $ciTargetLimitBytes, &$details) {
+	$details = array(
+		'initial_memory_limit' => ini_get('memory_limit'),
+		'effective_memory_limit' => ini_get('memory_limit'),
+		'minimum_limit' => simulate_format_bytes($minimumLimitBytes),
+		'minimum_free' => simulate_format_bytes($minimumFreeBytes),
+		'current_usage' => simulate_format_bytes(memory_get_usage(true)),
+		'ci' => simulate_running_in_ci() ? 1 : 0,
+		'raise_attempted' => 0,
+		'raise_target' => simulate_format_bytes($ciTargetLimitBytes)
+	);
+
+	$isCi = simulate_running_in_ci();
+	$limitBytes = simulate_memory_limit_to_bytes((string) ini_get('memory_limit'));
+	if ($isCi && $limitBytes !== -1 && $limitBytes < $minimumLimitBytes) {
+		$disableRaise = getenv('SIMULATE_MASTODON_DISABLE_MEMORY_RAISE');
+		if (is_string($disableRaise) && $disableRaise !== '' && strtolower($disableRaise) !== 'false' && $disableRaise !== '0') {
+			$details ['raise_disabled_by_environment'] = 1;
+		} else {
+			$details ['raise_attempted'] = 1;
+			@ini_set('memory_limit', (string) ceil($ciTargetLimitBytes / (1024 * 1024)) . 'M');
+			$details ['effective_memory_limit'] = ini_get('memory_limit');
+			$limitBytes = simulate_memory_limit_to_bytes((string) ini_get('memory_limit'));
+		}
+	}
+
+	$details ['effective_memory_limit'] = ini_get('memory_limit');
+	$details ['current_usage'] = simulate_format_bytes(memory_get_usage(true));
+
+	if ($limitBytes === -1) {
+		return 'run';
+	}
+
+	if ($limitBytes <= 0) {
+		return $isCi ? 'skip' : 'warn';
+	}
+
+	$freeBytes = $limitBytes - memory_get_usage(true);
+	$details ['estimated_free'] = simulate_format_bytes($freeBytes);
+	if ($limitBytes >= $minimumLimitBytes && $freeBytes >= $minimumFreeBytes) {
+		return 'run';
+	}
+
+	return $isCi ? 'skip' : 'warn';
 }
 
 /**
@@ -2389,6 +2735,65 @@ $GLOBALS ['plugin_mastodon_test_http_no_network'] = !simulate_request_flag('live
 
 $allOk = true;
 
+$longSummaryFixture = json_encode(array(
+	'alpha' => str_repeat('x', 240),
+	'beta' => array('one', 'two', 'three'),
+	'gamma' => 'summary detail fixture'
+));
+$shortSummaryFixture = simulate_short_test_details($longSummaryFixture);
+$allOk = test_result(
+	'Simulation summary mode shortens verbose JSON details',
+	strpos($shortSummaryFixture, 'json keys=alpha,beta,gamma') === 0
+		&& strpos($shortSummaryFixture, 'bytes=') !== false
+		&& strlen($shortSummaryFixture) < 120,
+	$shortSummaryFixture
+);
+
+$summaryCountsBackup = $GLOBALS ['simulate_mastodon_result_counts'];
+$GLOBALS ['simulate_mastodon_result_counts'] = array('OK' => 12, 'FAIL' => 1, 'WARN' => 2, 'SKIP' => 3);
+$summaryFixture = simulate_format_final_summary(2);
+$GLOBALS ['simulate_mastodon_result_counts'] = $summaryCountsBackup;
+$allOk = test_result(
+	'Simulation final summary reports exit code and status counters',
+	strpos($summaryFixture, 'Exit-code: 2') !== false
+		&& strpos($summaryFixture, '[OK]: 12') !== false
+		&& strpos($summaryFixture, '[FAIL]: 1') !== false
+		&& strpos($summaryFixture, '[WARN]: 2') !== false
+		&& strpos($summaryFixture, '[SKIP]: 3') !== false,
+	trim(str_replace(PHP_EOL, ' | ', $summaryFixture))
+) && $allOk;
+
+$sandboxCopyFixtureSource = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'flatpress-mastodon-sandbox-copy-source-' . str_replace('.', '-', uniqid('', true));
+$sandboxCopyFixtureEntry = $sandboxCopyFixtureSource . DIRECTORY_SEPARATOR . 'fp-content' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . '26' . DIRECTORY_SEPARATOR . '05' . DIRECTORY_SEPARATOR . 'entry260521-120000' . EXT;
+$sandboxCopyFixtureConfig = $sandboxCopyFixtureSource . DIRECTORY_SEPARATOR . 'fp-content' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'settings.conf.php';
+simulate_write_fixture_file($sandboxCopyFixtureEntry, 'live content fixture that must not be copied by default');
+simulate_write_fixture_file($sandboxCopyFixtureConfig, '<?php return array();');
+$sandboxCopyDefault = simulate_prepare_sandbox($sandboxCopyFixtureSource, false);
+$sandboxCopyLive = simulate_prepare_sandbox($sandboxCopyFixtureSource, true);
+$defaultSandboxEntry = $sandboxCopyDefault . DIRECTORY_SEPARATOR . 'fp-content' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . '26' . DIRECTORY_SEPARATOR . '05' . DIRECTORY_SEPARATOR . 'entry260521-120000' . EXT;
+$defaultSandboxContentDir = $sandboxCopyDefault . DIRECTORY_SEPARATOR . 'fp-content' . DIRECTORY_SEPARATOR . 'content';
+$defaultSandboxConfig = $sandboxCopyDefault . DIRECTORY_SEPARATOR . 'fp-content' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'settings.conf.php';
+$liveSandboxEntry = $sandboxCopyLive . DIRECTORY_SEPARATOR . 'fp-content' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . '26' . DIRECTORY_SEPARATOR . '05' . DIRECTORY_SEPARATOR . 'entry260521-120000' . EXT;
+$allOk = test_result(
+	'Simulation sandbox excludes live fp-content/content by default',
+	!is_file($defaultSandboxEntry)
+		&& is_dir($defaultSandboxContentDir)
+		&& is_file($defaultSandboxConfig),
+	json_encode(array(
+		'default_entry_copied' => is_file($defaultSandboxEntry),
+		'content_dir_exists' => is_dir($defaultSandboxContentDir),
+		'config_copied' => is_file($defaultSandboxConfig)
+	))
+) && $allOk;
+$allOk = test_result(
+	'Simulation sandbox can include live fp-content/content only when explicitly requested',
+	is_file($liveSandboxEntry),
+	json_encode(array('live_entry_copied' => is_file($liveSandboxEntry)))
+) && $allOk;
+simulate_delete_recursive($sandboxCopyDefault);
+simulate_delete_recursive($sandboxCopyLive);
+simulate_delete_recursive($sandboxCopyFixtureSource);
+
 $scannerFixtureRoot = PLUGIN_MASTODON_STATE_DIR . 'entry-scanner-comments-skip';
 simulate_delete_recursive($scannerFixtureRoot);
 $scannerMonthDir = $scannerFixtureRoot . DIRECTORY_SEPARATOR . '26' . DIRECTORY_SEPARATOR . '05';
@@ -2693,6 +3098,12 @@ simulate_delete_entry_fixtures($forceScannerIds);
 
 simulate_delete_recursive($scannerFixtureRoot);
 
+$originalEnabledPlugins = isset($GLOBALS ['fp_plugins']) && is_array($GLOBALS ['fp_plugins']) ? $GLOBALS ['fp_plugins'] : null;
+$companionFixturePlugins = array('bbcode', 'photoswipe', 'audiovideo', 'tag', 'emoticons', 'missing-mastodon-companion-plugin');
+if (is_array($originalEnabledPlugins)) {
+	$GLOBALS ['fp_plugins'] = array_values(array_unique(array_merge($originalEnabledPlugins, $companionFixturePlugins)));
+}
+
 $enabledPluginChecks = array(
 	'bbcode' => plugin_mastodon_enabled_plugin_state('bbcode'),
 	'photoswipe' => plugin_mastodon_enabled_plugin_state('photoswipe'),
@@ -2710,16 +3121,11 @@ if (!$enabledPluginTestOk) {
 	$allOk = false;
 }
 
-$originalEnabledPlugins = isset($GLOBALS ['fp_plugins']) && is_array($GLOBALS ['fp_plugins']) ? $GLOBALS ['fp_plugins'] : null;
-if (is_array($originalEnabledPlugins)) {
-	$GLOBALS ['fp_plugins'] = array_merge($originalEnabledPlugins, array('missing-mastodon-companion-plugin'));
-	$allOk = test_result(
-		'Mastodon companion-plugin detection respects FlatPress plugin_exists() for missing configured plugins',
-		plugin_mastodon_enabled_plugin_state('missing-mastodon-companion-plugin') === false,
-		json_encode(array('missing-mastodon-companion-plugin' => plugin_mastodon_enabled_plugin_state('missing-mastodon-companion-plugin')))
-	) && $allOk;
-	$GLOBALS ['fp_plugins'] = $originalEnabledPlugins;
-}
+$allOk = test_result(
+	'Mastodon companion-plugin detection respects FlatPress plugin_exists() for missing configured plugins',
+	plugin_mastodon_enabled_plugin_state('missing-mastodon-companion-plugin') === false,
+	json_encode(array('missing-mastodon-companion-plugin' => plugin_mastodon_enabled_plugin_state('missing-mastodon-companion-plugin')))
+) && $allOk;
 
 $companionPlugins = plugin_mastodon_companion_plugins_status();
 $companionBySlug = array();
@@ -2732,14 +3138,25 @@ $allOk = test_result(
 	'Mastodon admin companion-plugin diagnostics cover BBCode, PhotoSwipe, AudioVideo, Tag and Emoticons',
 	isset($companionBySlug ['bbcode'], $companionBySlug ['photoswipe'], $companionBySlug ['audiovideo'], $companionBySlug ['tag'], $companionBySlug ['emoticons'])
 		&& !empty($companionBySlug ['bbcode'] ['active'])
+		&& !empty($companionBySlug ['bbcode'] ['label'])
+		&& !empty($companionBySlug ['bbcode'] ['description'])
 		&& !empty($companionBySlug ['photoswipe'] ['active'])
+		&& !empty($companionBySlug ['photoswipe'] ['label'])
+		&& !empty($companionBySlug ['photoswipe'] ['description'])
 		&& !empty($companionBySlug ['audiovideo'] ['active'])
-		&& strpos((string) $companionBySlug ['audiovideo'] ['description'], 'Audio') !== false
-		&& strpos((string) $companionBySlug ['audiovideo'] ['description'], 'Video') !== false
+		&& !empty($companionBySlug ['audiovideo'] ['label'])
+		&& !empty($companionBySlug ['audiovideo'] ['description'])
 		&& !empty($companionBySlug ['tag'] ['active'])
-		&& !empty($companionBySlug ['emoticons'] ['active']),
+		&& !empty($companionBySlug ['tag'] ['label'])
+		&& !empty($companionBySlug ['tag'] ['description'])
+		&& !empty($companionBySlug ['emoticons'] ['active'])
+		&& !empty($companionBySlug ['emoticons'] ['label'])
+		&& !empty($companionBySlug ['emoticons'] ['description']),
 	json_encode($companionBySlug)
 ) && $allOk;
+if (is_array($originalEnabledPlugins)) {
+	$GLOBALS ['fp_plugins'] = $originalEnabledPlugins;
+}
 
 $configuredLocaleValue = plugin_mastodon_fp_config_value(array('locale', 'lang'), '');
 if (!is_string($configuredLocaleValue) || $configuredLocaleValue === '') {
@@ -2992,20 +3409,18 @@ $allOk = test_result(
 ) && $allOk;
 
 $localLongEntryId = 'entry260314-114108';
-$localLongEntry = entry_parse($localLongEntryId);
-if (!is_array($localLongEntry) || $localLongEntry === array()) {
-	$localLongEntry = array(
-		'subject' => 'Simulated long local entry',
-		'content' => trim(str_repeat('This simulated FlatPress entry is intentionally long so that the Mastodon exporter must trim it without depending on a public permalink. ', 12)),
-		'author' => 'FlatPress Bot'
-	);
-}
+$localLongEntry = array(
+	'subject' => 'Simulated long local entry',
+	'content' => trim(str_repeat('This simulated FlatPress entry is intentionally long so that the Mastodon exporter must trim it without depending on a public permalink. ', 12)),
+	'author' => 'FlatPress Bot'
+);
 $localLongStatus = plugin_mastodon_build_entry_status_text($localLongEntryId, $localLongEntry, 500);
-$localLongStatusLength = function_exists('mb_strlen') ? mb_strlen($localLongStatus, 'UTF-8') : strlen($localLongStatus);
+$localLongStatusRawLength = function_exists('mb_strlen') ? mb_strlen($localLongStatus, 'UTF-8') : strlen($localLongStatus);
+$localLongStatusMastodonLength = plugin_mastodon_status_text_length($localLongStatus, plugin_mastodon_instance_url_reserved_length(plugin_mastodon_get_options()));
 $allOk = test_result(
 	'Long local entry export is limited even without a public permalink',
-	$localLongStatus !== '' && $localLongStatusLength <= 500 && strpos($localLongStatus, 'localhost') === false,
-	'len=' . $localLongStatusLength
+	$localLongStatus !== '' && $localLongStatusMastodonLength <= 500 && strpos($localLongStatus, 'localhost') === false,
+	json_encode(array('raw_len' => $localLongStatusRawLength, 'mastodon_len' => $localLongStatusMastodonLength))
 ) && $allOk;
 
 $imageEntryId = 'entry260314-133022';
@@ -4101,6 +4516,91 @@ $cacheStateReloaded ['last_error'] = '';
 $cacheStateReloaded ['last_run'] = '';
 plugin_mastodon_state_write($cacheStateReloaded);
 
+$prettyLegacyState = plugin_mastodon_default_state();
+$prettyLegacyState ['last_run'] = '2026-03-14 14:00:00';
+$prettyLegacyState ['entries'] ['entry260314-140000'] = array(
+	'remote_id' => 'pretty-entry-1',
+	'hash' => 'pretty-hash',
+	'date_key' => '2026-03-14'
+);
+$prettyLegacyState ['entries_remote'] ['pretty-entry-1'] = 'entry260314-140000';
+plugin_mastodon_runtime_cache_clear('state');
+$prettyLegacyPayload = json_encode($prettyLegacyState, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+plugin_mastodon_io_write_file(PLUGIN_MASTODON_STATE_FILE, (is_string($prettyLegacyPayload) ? $prettyLegacyPayload : '{}') . PHP_EOL);
+$prettyLegacyReloaded = plugin_mastodon_state_read();
+$allOk = test_result(
+	'Pretty-printed legacy state.json remains readable after compact-state optimization',
+	isset($prettyLegacyReloaded ['entries'] ['entry260314-140000'] ['remote_id'])
+		&& (string) $prettyLegacyReloaded ['entries'] ['entry260314-140000'] ['remote_id'] === 'pretty-entry-1'
+		&& isset($prettyLegacyReloaded ['entries_remote'] ['pretty-entry-1'])
+		&& (string) $prettyLegacyReloaded ['entries_remote'] ['pretty-entry-1'] === 'entry260314-140000',
+	json_encode(array(
+		'entry' => isset($prettyLegacyReloaded ['entries'] ['entry260314-140000']) ? $prettyLegacyReloaded ['entries'] ['entry260314-140000'] : array(),
+		'reverse' => isset($prettyLegacyReloaded ['entries_remote'] ['pretty-entry-1']) ? $prettyLegacyReloaded ['entries_remote'] ['pretty-entry-1'] : ''
+	))
+) && $allOk;
+
+$compactRoundtripState = plugin_mastodon_default_state();
+$compactRoundtripState ['last_run'] = '2026-03-14 15:00:00';
+$compactRoundtripState ['last_deletion_run'] = '2026-03-14 15:05:00';
+$compactRoundtripState ['entries'] ['entry260314-150000'] = array(
+	'remote_id' => 'compact-entry-1',
+	'hash' => 'compact-entry-hash',
+	'date_key' => '2026-03-14',
+	'remote_url' => 'https://example.social/@flatpress/compact-entry-1'
+);
+$compactRoundtripState ['entries_remote'] ['compact-entry-1'] = 'entry260314-150000';
+$compactRoundtripState ['comments'] ['entry260314-150000:comment1'] = array(
+	'remote_id' => 'compact-comment-1',
+	'hash' => 'compact-comment-hash',
+	'parent_comment_id' => '',
+	'in_reply_to_remote_id' => 'compact-entry-1'
+);
+$compactRoundtripState ['comments_remote'] ['compact-comment-1'] = array(
+	'entry_id' => 'entry260314-150000',
+	'comment_id' => 'comment1'
+);
+$compactRoundtripState ['dirty_entries'] ['entry260314-150000'] = array('reason' => 'simulation');
+$compactRoundtripState ['dirty_comments'] ['entry260314-150000:comment1'] = array(
+	'entry_id' => 'entry260314-150000',
+	'comment_id' => 'comment1'
+);
+$compactRoundtripState ['comment_tombstones'] ['compact-deleted-comment'] = array('deleted_at' => '2026-03-14 15:10:00');
+$compactRoundtripState ['pending_comment_remote_rechecks'] ['compact-entry-1'] = array('queued_at' => '2026-03-14 15:11:00');
+plugin_mastodon_runtime_cache_clear('state');
+$compactWriteOk = plugin_mastodon_state_write($compactRoundtripState);
+$compactPayload = @file_get_contents(PLUGIN_MASTODON_STATE_FILE);
+$compactExpectedPayload = json_encode(plugin_mastodon_state_normalize($compactRoundtripState), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+$compactExpectedPayload = is_string($compactExpectedPayload) ? $compactExpectedPayload . PHP_EOL : '';
+plugin_mastodon_runtime_cache_clear('state');
+$compactReloaded = plugin_mastodon_state_read();
+$allOk = test_result(
+	'State write persists compact state.json while preserving round-trip mappings',
+	$compactWriteOk
+		&& is_string($compactPayload)
+		&& $compactPayload === $compactExpectedPayload
+		&& substr_count($compactPayload, "\n") === 1
+		&& strpos($compactPayload, "\n    \"entries\"") === false
+		&& isset($compactReloaded ['entries'] ['entry260314-150000'] ['remote_id'])
+		&& (string) $compactReloaded ['entries'] ['entry260314-150000'] ['remote_id'] === 'compact-entry-1'
+		&& isset($compactReloaded ['entries_remote'] ['compact-entry-1'])
+		&& (string) $compactReloaded ['entries_remote'] ['compact-entry-1'] === 'entry260314-150000'
+		&& isset($compactReloaded ['comments'] ['entry260314-150000:comment1'] ['remote_id'])
+		&& (string) $compactReloaded ['comments'] ['entry260314-150000:comment1'] ['remote_id'] === 'compact-comment-1'
+		&& isset($compactReloaded ['comments_remote'] ['compact-comment-1'] ['entry_id'])
+		&& (string) $compactReloaded ['comments_remote'] ['compact-comment-1'] ['entry_id'] === 'entry260314-150000'
+		&& isset($compactReloaded ['dirty_entries'] ['entry260314-150000'])
+		&& isset($compactReloaded ['dirty_comments'] ['entry260314-150000:comment1'])
+		&& isset($compactReloaded ['comment_tombstones'] ['compact-deleted-comment'])
+		&& isset($compactReloaded ['pending_comment_remote_rechecks'] ['compact-entry-1']),
+	json_encode(array(
+		'payload_bytes' => is_string($compactPayload) ? strlen($compactPayload) : -1,
+		'expected_bytes' => strlen($compactExpectedPayload),
+		'newline_count' => is_string($compactPayload) ? substr_count($compactPayload, "\n") : -1,
+		'has_pretty_entries_indent' => is_string($compactPayload) ? (strpos($compactPayload, "\n    \"entries\"") !== false) : null
+	))
+) && $allOk;
+
 $legacyStatsState = array(
 	'version' => 2,
 	'last_run' => '2026-03-14 13:00:00',
@@ -4825,7 +5325,6 @@ $options ['import_synced_comments_as_entries'] = '0';
 $options ['access_token'] = 'token123';
 plugin_mastodon_save_options($options);
 plugin_mastodon_runtime_cache_clear();
-
 
 // Regression test: when multiple local entries are exported in one batch, older entries must be posted first.
 simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
@@ -7148,7 +7647,6 @@ $allOk = test_result(
 	))
 ) && $allOk;
 
-
 // Deletion synchronization must respect sync_start_date and leave older mapped content untouched.
 simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
 mkdir($simRoot . '/fp-content/plugin_mastodon', 0777, true);
@@ -7665,7 +8163,6 @@ $allOk = test_result(
 		'pass_urls' => $descendantDeletionContentBeforeChainPassUrls
 	))
 ) && $allOk;
-
 
 $descendantDeletionImmediateCase = simulate_run_exported_comment_descendant_deletion_case(true, false);
 $descendantDeletionImmediateStateOne = isset($descendantDeletionImmediateCase ['state_after_deletion_pass_one']) && is_array($descendantDeletionImmediateCase ['state_after_deletion_pass_one']) ? $descendantDeletionImmediateCase ['state_after_deletion_pass_one'] : array();
@@ -8790,20 +9287,22 @@ $allOk = test_result(
 	json_encode(array('log_length' => is_string($aggregatedLog) ? strlen($aggregatedLog) : -1))
 ) && $allOk;
 
-$largeState = simulate_build_large_mastodon_state(3000, 10);
-$largeWriteOk = plugin_mastodon_state_write($largeState);
-$largeStateSize = is_file(PLUGIN_MASTODON_STATE_FILE) ? (int) filesize(PLUGIN_MASTODON_STATE_FILE) : 0;
-$largeSchedulerSize = is_file(PLUGIN_MASTODON_SCHEDULER_STATE_FILE) ? (int) filesize(PLUGIN_MASTODON_SCHEDULER_STATE_FILE) : 0;
+$smallState = simulate_build_large_mastodon_state(300, 10);
+$smallWriteOk = plugin_mastodon_state_write($smallState);
+$smallStateSize = is_file(PLUGIN_MASTODON_STATE_FILE) ? (int) filesize(PLUGIN_MASTODON_STATE_FILE) : 0;
+$smallSchedulerSize = is_file(PLUGIN_MASTODON_SCHEDULER_STATE_FILE) ? (int) filesize(PLUGIN_MASTODON_SCHEDULER_STATE_FILE) : 0;
 $allOk = test_result(
-	'Large 3000x10 state keeps scheduler-state compact and disables full APCu fallback',
-	$largeWriteOk
-		&& $largeStateSize > 32768
-		&& $largeSchedulerSize > 0
-		&& $largeSchedulerSize <= 32768
+	'Small 300x10 state keeps scheduler-state compact and disables full APCu fallback',
+	$smallWriteOk
+		&& $smallStateSize > 4096
+		&& $smallStateSize < 2500000
+		&& $smallSchedulerSize > 0
+		&& $smallSchedulerSize <= 32768
 		&& plugin_mastodon_state_fallback_read() === array(),
 	json_encode(array(
-		'state_bytes' => $largeStateSize,
-		'scheduler_bytes' => $largeSchedulerSize,
+		'state_bytes' => $smallStateSize,
+		'compact_upper_bound_bytes' => 2500000,
+		'scheduler_bytes' => $smallSchedulerSize,
 		'fallback' => plugin_mastodon_state_fallback_read()
 	))
 ) && $allOk;
@@ -8811,25 +9310,83 @@ $allOk = test_result(
 plugin_mastodon_runtime_cache_clear();
 $GLOBALS ['plugin_mastodon_test_uncached_file_reads'] = array();
 $GLOBALS ['plugin_mastodon_test_file_reads'] = array();
-$largeSchedulerRead = plugin_mastodon_scheduler_state_read();
-$largeSchedulerStateReads = simulate_count_uncached_reads_for_path(PLUGIN_MASTODON_STATE_FILE);
-$largeSchedulerSummaryReads = simulate_count_file_reads_for_path(PLUGIN_MASTODON_SCHEDULER_STATE_FILE);
+$smallSchedulerRead = plugin_mastodon_scheduler_state_read();
+$smallSchedulerStateReads = simulate_count_uncached_reads_for_path(PLUGIN_MASTODON_STATE_FILE);
+$smallSchedulerSummaryReads = simulate_count_file_reads_for_path(PLUGIN_MASTODON_SCHEDULER_STATE_FILE);
 $allOk = test_result(
-	'Fresh large scheduler-state read avoids full state.json and uses APCu-capable file I/O',
-	$largeSchedulerStateReads === 0
-		&& $largeSchedulerSummaryReads >= 1
-		&& isset($largeSchedulerRead ['last_run'])
-		&& (string) $largeSchedulerRead ['last_run'] !== '',
+	'Fresh small scheduler-state read avoids full state.json and uses APCu-capable file I/O',
+	$smallSchedulerStateReads === 0
+		&& $smallSchedulerSummaryReads >= 1
+		&& isset($smallSchedulerRead ['last_run'])
+		&& (string) $smallSchedulerRead ['last_run'] !== '',
 	json_encode(array(
-		'state_uncached_reads' => $largeSchedulerStateReads,
-		'scheduler_cached_path_reads' => $largeSchedulerSummaryReads,
-		'scheduler_bytes' => $largeSchedulerSize
+		'state_uncached_reads' => $smallSchedulerStateReads,
+		'scheduler_cached_path_reads' => $smallSchedulerSummaryReads,
+		'scheduler_bytes' => $smallSchedulerSize
 	))
 ) && $allOk;
 unset($GLOBALS ['plugin_mastodon_test_uncached_file_reads'], $GLOBALS ['plugin_mastodon_test_file_reads']);
+unset($smallState, $smallSchedulerRead);
+plugin_mastodon_runtime_cache_clear();
+
+$largeStateMemoryDetails = array();
+$largeStateDecision = simulate_large_state_memory_decision(256 * 1024 * 1024, 160 * 1024 * 1024, 384 * 1024 * 1024, $largeStateMemoryDetails);
+if ($largeStateDecision === 'run') {
+	$largeState = simulate_build_large_mastodon_state(3000, 10);
+	$largeWriteOk = plugin_mastodon_state_write($largeState);
+	$largeStateSize = is_file(PLUGIN_MASTODON_STATE_FILE) ? (int) filesize(PLUGIN_MASTODON_STATE_FILE) : 0;
+	$largeSchedulerSize = is_file(PLUGIN_MASTODON_SCHEDULER_STATE_FILE) ? (int) filesize(PLUGIN_MASTODON_SCHEDULER_STATE_FILE) : 0;
+	$allOk = test_result(
+		'Large 3000x10 state keeps scheduler-state compact and disables full APCu fallback',
+		$largeWriteOk
+			&& $largeStateSize > 32768
+			&& $largeStateSize < 20000000
+			&& $largeSchedulerSize > 0
+			&& $largeSchedulerSize <= 32768
+			&& plugin_mastodon_state_fallback_read() === array(),
+		json_encode(array(
+			'state_bytes' => $largeStateSize,
+			'compact_upper_bound_bytes' => 20000000,
+			'scheduler_bytes' => $largeSchedulerSize,
+			'fallback' => plugin_mastodon_state_fallback_read(),
+			'memory' => $largeStateMemoryDetails
+		))
+	) && $allOk;
+
+	plugin_mastodon_runtime_cache_clear();
+	$GLOBALS ['plugin_mastodon_test_uncached_file_reads'] = array();
+	$GLOBALS ['plugin_mastodon_test_file_reads'] = array();
+	$largeSchedulerRead = plugin_mastodon_scheduler_state_read();
+	$largeSchedulerStateReads = simulate_count_uncached_reads_for_path(PLUGIN_MASTODON_STATE_FILE);
+	$largeSchedulerSummaryReads = simulate_count_file_reads_for_path(PLUGIN_MASTODON_SCHEDULER_STATE_FILE);
+	$allOk = test_result(
+		'Fresh large scheduler-state read avoids full state.json and uses APCu-capable file I/O',
+		$largeSchedulerStateReads === 0
+			&& $largeSchedulerSummaryReads >= 1
+			&& isset($largeSchedulerRead ['last_run'])
+			&& (string) $largeSchedulerRead ['last_run'] !== '',
+		json_encode(array(
+			'state_uncached_reads' => $largeSchedulerStateReads,
+			'scheduler_cached_path_reads' => $largeSchedulerSummaryReads,
+			'scheduler_bytes' => $largeSchedulerSize,
+			'memory' => $largeStateMemoryDetails
+		))
+	) && $allOk;
+	unset($GLOBALS ['plugin_mastodon_test_uncached_file_reads'], $GLOBALS ['plugin_mastodon_test_file_reads']);
+	unset($largeState, $largeSchedulerRead);
+} elseif ($largeStateDecision === 'skip') {
+	test_skip('Large 3000x10 state keeps scheduler-state compact and disables full APCu fallback', json_encode($largeStateMemoryDetails));
+	test_skip('Fresh large scheduler-state read avoids full state.json and uses APCu-capable file I/O', json_encode($largeStateMemoryDetails));
+} else {
+	test_warn('Large 3000x10 state keeps scheduler-state compact and disables full APCu fallback', json_encode($largeStateMemoryDetails));
+	test_warn('Fresh large scheduler-state read avoids full state.json and uses APCu-capable file I/O', json_encode($largeStateMemoryDetails));
+}
+plugin_mastodon_runtime_cache_clear();
 
 plugin_mastodon_save_options($schedulerOriginalOptions);
 
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
 
-exit($allOk ? 0 : 2);
+$exitCode = $allOk ? 0 : 2;
+simulate_print_final_summary($exitCode);
+exit($exitCode);

@@ -364,7 +364,7 @@ The FlatPress Core emits the new `entry_saved`, `entry_deleted`, `comment_saved`
 - `plugin_mastodon_scheduler_state_write()` — line 2999 — Persist the compact scheduler summary; write failures only disable the optimization.
 - `plugin_mastodon_scheduler_state_decode_fresh()` — line 3025 — Decode a scheduler-state JSON payload only when its embedded full-state signature is current, allowing a stale FlatPress cached read to be corrected before loading full `state.json`.
 - `plugin_mastodon_scheduler_state_read()` — line 3044 — Load the compact scheduler summary through the APCu-capable FlatPress file I/O path, retry with an uncached scheduler-state read if a host returns stale cached content, and rebuild from full state only when missing, invalid, or truly stale.
-- `plugin_mastodon_state_write()` — line 3090 — Persist the runtime state to disk and refresh the compact scheduler summary after successful writes, without caching the full state in APCu.
+- `plugin_mastodon_state_write()` — line 3090 — Persist the runtime state to disk as compact JSON and refresh the compact scheduler summary after successful writes, without caching the full state in APCu.
 - `plugin_mastodon_normalize_deletions_pending_scope()` — line 3115 — Normalize the targeted deletion-follow-up scope marker.
 - `plugin_mastodon_state_normalize()` — line 3128 — Normalize a runtime state array and fill in missing keys.
 - `plugin_mastodon_state_comment_key()` — line 3179 — Build the compound state key used for comment mappings.
@@ -936,7 +936,7 @@ A change in one of these areas often requires corresponding updates in the simul
 - `plugin_mastodon_state_set_dirty_comment()` — line 3361 — Add an older changed comment to the persistent dirty queue.
 - `plugin_mastodon_state_set_dirty_entry()` — line 3315 — Add an older changed entry to the persistent dirty queue.
 - `plugin_mastodon_state_set_entry_mapping()` — line 3194 — Store the mapping between a local entry and a remote status.
-- `plugin_mastodon_state_write()` — line 3090 — Persist the runtime state to disk and refresh the compact scheduler summary after successful writes, without caching the full state in APCu.
+- `plugin_mastodon_state_write()` — line 3090 — Persist the runtime state to disk as compact JSON and refresh the compact scheduler summary after successful writes, without caching the full state in APCu.
 - `plugin_mastodon_status_missing_response()` — line 8858 — Check whether an API response means that the referenced Mastodon status no longer exists.
 - `plugin_mastodon_status_text_length()` — line 7211 — Calculate the Mastodon-visible status length with instance URL budgeting.
 - `plugin_mastodon_stream_context_request()` — line 8291 — Perform an HTTP request through a stream context fallback.
