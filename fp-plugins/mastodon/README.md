@@ -434,6 +434,8 @@ Check these points:
 - Does the Mastodon server allow the number, MIME type and size of the uploaded media?
 - For large audio or video files, check `fp-content/plugin_mastodon/sync.log` for media processing messages.
 
+**Notice:** Mastodon allows either multiple images or one audio/video attachment per post.
+
 ### Imported Mastodon media is missing in FlatPress
 
 Check these points:

@@ -37,6 +37,40 @@ The plugin code should remain compatible with:
 - PHPStan Level 5 style expectations: normalize mixed arrays, avoid ambiguous return shapes where practical, and keep side effects explicit.
 - Shared hosting constraints: non-blocking locks, finite request budgets, finite media/delete windows, no unbounded background loops.
 
+## Simulation harness quick reference
+
+Run the full deterministic regression harness from the FlatPress root:
+
+```bash
+php simulate_mastodon_plugin.php
+```
+
+The harness copies the current FlatPress tree into an isolated temporary sandbox, excludes live `fp-content/content` by default, seeds deterministic fixtures, mocks Mastodon HTTP calls unless live auth is explicitly requested, and ends with a counter block containing `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]`, and `[SKIP]`.
+
+### Simulation parameters
+
+| Parameter or query string                             | Environment variable                       | Description                                                                                                              |
+|-------------------------------------------------------|--------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `--summary` or `?summary=1`                           | `SIMULATE_MASTODON_SUMMARY=1`              | Prints compact per-test details for browser/shared-hosting runs while keeping all assertions.                            |
+| `--include-live-content` or `?include-live-content=1` | `SIMULATE_MASTODON_INCLUDE_LIVE_CONTENT=1` | Copies the source `fp-content/content` tree into the sandbox for explicit live-content smoke tests.                      |
+| `--live-auth` or `?live-auth=1`                       | —                                          | Enables the optional read-only credential smoke test and allows the harness to contact the configured Mastodon instance. |
+| —                                                     | `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1` | Prevents CI memory-limit raising so the large-state `[SKIP]` branch can be tested deterministically.                     |
+
+### Recommended commands
+
+| Use case                        | Command                                                                                                         |
+|---------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| Full local regression           | `php simulate_mastodon_plugin.php`                                                                              |
+| Browser/shared-hosting output   | `php simulate_mastodon_plugin.php --summary`                                                                    |
+| Environment-driven summary mode | `SIMULATE_MASTODON_SUMMARY=1 php simulate_mastodon_plugin.php`                                                  |
+| Explicit live-content smoke run | `php simulate_mastodon_plugin.php --include-live-content --summary`                                             |
+| Optional live credential smoke  | `php simulate_mastodon_plugin.php --live-auth --summary`                                                        |
+| CI large-state skip branch      | `CI=1 SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1 php -d memory_limit=128M simulate_mastodon_plugin.php --summary` |
+
+### Memory and CI behavior
+
+The small `300x10` state regression always runs. The heavy `3000x10` state regression checks memory before building its large synthetic state. Non-CI low-memory runs emit `[WARN]`; CI runs first try to raise `memory_limit` to 384M and emit `[SKIP]` if that is not possible. CI detection accepts common variables such as `CI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL`, `BUILDKITE`, `CIRCLECI`, `TRAVIS`, `APPVEYOR`, `TEAMCITY_VERSION`, and `TF_BUILD`.
+
 ## Documentation consistency check
 
 After changing the plugin, the simulation harness or this documentation set, run:

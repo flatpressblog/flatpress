@@ -4,7 +4,7 @@
 
 | File                                                 | Responsibility                                                      | Read by                                            | Written by                           |
 |------------------------------------------------------|---------------------------------------------------------------------|----------------------------------------------------|--------------------------------------|
-| `fp-content/plugin_mastodon/state.json`              | Authoritative full synchronization state.                           | Sync, deletion sync, admin full diagnostics.       | `plugin_mastodon_state_write()`.     |
+| `fp-content/plugin_mastodon/state.json`              | Authoritative full synchronization state, written as compact JSON.  | Sync, deletion sync, admin full diagnostics.       | `plugin_mastodon_state_write()`.     |
 | `fp-content/plugin_mastodon/scheduler-state.json`    | Compact request-time status summary.                                | `plugin_mastodon_maybe_sync()`, admin diagnostics. | state writes and scheduler helpers.  |
 | `fp-content/plugin_mastodon/sync.lock`               | Non-blocking file lock preventing concurrent content/deletion runs. | content and deletion orchestrators.                | Opened/locked by run functions.      |
 | `fp-content/plugin_mastodon/sync.guard.json`         | File-backed cooldown guard.                                         | scheduled content/deletion paths.                  | `plugin_mastodon_sync_guard_mark()`. |
@@ -108,6 +108,11 @@ A mapped comment typically carries:
 5. Tombstones must be consulted before importing remote replies from a context response.
 6. Large `state.json` files must not be loaded during the ordinary fast scheduler path when `scheduler-state.json` is fresh.
 7. Every state write should refresh the compact scheduler state so admin and frontend checks remain cheap.
+8. `state.json` writes use compact JSON without `JSON_PRETTY_PRINT`; old pretty-printed files remain readable because both forms are ordinary JSON.
+
+## Full-state write format
+
+`state.json` is intentionally written as compact JSON. This keeps the authoritative mapping state human-inspectable enough for diagnostics while avoiding the whitespace overhead of pretty-printed JSON on large installations. The read path still accepts legacy pretty-printed files without migration, and `scheduler-state.json` remains the small request-time summary that protects normal frontend requests from loading the full mapping state.
 
 ## Content and deletion counters
 
