@@ -2,25 +2,25 @@
 
 ## Files and responsibilities
 
-| File                                                            | Responsibility                                                                   | Read by                                            | Written by                                    |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------- | --------------------------------------------- |
-| `fp-content/plugin_mastodon/state.json`                         | Compact main synchronization index, global cursors, reverse maps and queues.     | Sync, deletion sync, admin diagnostics.            | `plugin_mastodon_state_write()` / repair.     |
-| `fp-content/plugin_mastodon/state-comments/YY/MM/entry*.json`   | Per-entry comment mapping shards for high-volume comment metadata.               | StateStore helpers, sync and deletion paths.       | Shard write helpers via temp file + rename.   |
-| `fp-content/plugin_mastodon/state.json.migration-backup-*.json` | Timestamped safety copy of a legacy inline-comment state before split migration. | Manual recovery and diagnostics.                   | Legacy migration before any shard rewrite.    |
-| `fp-content/plugin_mastodon/scheduler-state.json`               | Compact request-time status summary.                                             | `plugin_mastodon_maybe_sync()`, admin diagnostics. | state writes and scheduler helpers.           |
-| `fp-content/plugin_mastodon/sync.lock`                          | Non-blocking file lock preventing concurrent content/deletion runs.              | content and deletion orchestrators.                | Opened/locked by run functions.               |
-| `fp-content/plugin_mastodon/state-write.lock`                   | Short lock serializing multi-file state mutations outside and inside sync runs.  | state read/write and repair helpers.               | `plugin_mastodon_state_write_lock_acquire()`. |
-| `fp-plugins/mastodon/mastodon-state-cli.php`                    | Optional CLI entry point for read-only diagnostics or shard repair.              | CLI operators on development/hosting shells.       | Invokes diagnostic or repair helpers only.    |
-| `fp-content/plugin_mastodon/sync.guard.json`                    | File-backed cooldown guard.                                                      | scheduled content/deletion paths.                  | `plugin_mastodon_sync_guard_mark()`.          |
-| `fp-content/plugin_mastodon/rate-limit-windows.json`            | Persistent cross-run upload/delete/status-page budgets.                          | rate-limit guard.                                  | rate-limit guard.                             |
-| `fp-content/plugin_mastodon/sync.log`                           | Append-only operational log with bounded rotation.                               | administrators and tests.                          | `plugin_mastodon_log()`.                      |
+| File                                                            | Responsibility                                                                        | Read by                                            | Written by                                    |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------- | --------------------------------------------- |
+| `fp-content/plugin_mastodon/state.json`                         | Compact main synchronization index, global cursors, reverse maps and queues.          | Sync, deletion sync, admin diagnostics.            | `plugin_mastodon_state_write()` / repair.     |
+| `fp-content/plugin_mastodon/state-comments/YY/MM/entry*.json`   | Per-entry comment mapping shards for high-volume comment metadata.                    | StateStore helpers, sync and deletion paths.       | Shard write helpers via temp file + rename.   |
+| `fp-content/plugin_mastodon/state.json.migration-backup-*.json` | Timestamped safety copy of a legacy inline-comment state before split migration.      | Manual recovery and diagnostics.                   | Legacy migration before any shard rewrite.    |
+| `fp-content/plugin_mastodon/scheduler-state.json`               | Compact request-time status summary.                                                  | `plugin_mastodon_maybe_sync()`, admin diagnostics. | state writes and scheduler helpers.           |
+| `fp-content/plugin_mastodon/sync.lock`                          | Non-blocking file lock preventing concurrent content/deletion runs.                   | content and deletion orchestrators.                | Opened/locked by run functions.               |
+| `fp-content/plugin_mastodon/state-write.lock`                   | Short lock serializing multi-file state mutations outside and inside sync runs.       | state read/write and repair helpers.               | `plugin_mastodon_state_write_lock_acquire()`. |
+| `fp-plugins/mastodon/mastodon-state-cli.php`                    | Optional CLI entry point for read-only diagnostics or shard repair.                   | CLI operators on development/hosting shells.       | Invokes diagnostic or repair helpers only.    |
+| `fp-content/plugin_mastodon/sync.guard.json`                    | File-backed cooldown guard; APCu uses the same key suffix through FlatPress wrappers. | scheduled content/deletion paths.                  | `plugin_mastodon_sync_guard_mark()`.          |
+| `fp-content/plugin_mastodon/rate-limit-windows.json`            | Persistent cross-run upload/delete/status-page budgets.                               | rate-limit guard.                                  | rate-limit guard.                             |
+| `fp-content/plugin_mastodon/sync.log`                           | Append-only operational log with bounded rotation.                                    | administrators and tests.                          | `plugin_mastodon_log()`.                      |
 
 ## Split comment-shard model
 
 `state.json` remains the main authoritative index, but high-volume comment mappings are now
 stored in per-entry shard files under `state-comments/YY/MM/entryYYMMDD-HHMMSS.json`.
 
-The main file keeps `entries`, `entries_remote`, `comments_remote`, dirty queues, cursors,
+The main file keeps `entries`, `entries_remote`, `comments_remote`, dirty queues, notification and rotation cursors,
 tombstones, pending rechecks, counters and `comment_shards` metadata. The inline `comments`
 array in new `state.json` writes is intentionally empty. `plugin_mastodon_state_read()`
 reconstructs the runtime state from the main file and referenced shards so existing call
@@ -43,7 +43,6 @@ shards after the deletion lock has been acquired because it must evaluate every 
 mapping and descendant relationship; the scheduler fast path still uses `scheduler-state.json`
 and does not load comment shards.
 
-
 ## `state.json` fields
 
 | Field                           | Type                                    | Meaning                                               | Usually written by                         | Usually read by                                         |
@@ -56,15 +55,16 @@ and does not load comment shards.
 | deletions_not_before            | UTC datetime string                     | Earliest follow-up deletion run time.                 | state_set_deletions_pending.               | deletion_sync_due.                                      |
 | last_error                      | string                                  | Last operational error or rate-limit reason.          | sync and deletion paths.                   | admin diagnostics, scheduler summary.                   |
 | last_remote_status_id           | string                                  | Newest seen imported remote top-level status.         | remote-to-local sync.                      | next remote import since_id/max logic.                  |
+| last_remote_notification_id     | string                                  | Newest processed mention notification hint.           | notification hint pass.                    | next notifications since_id logic.                      |
 | entries                         | map localEntryId -> meta                | Local FlatPress entry mapped to a Mastodon status.    | local export, remote import.               | updates, media reuse, deletions.                        |
 | entries_remote                  | map remoteStatusId -> localEntryId      | Reverse lookup preventing duplicate imported entries. | state_set_entry_mapping.                   | remote import, context import.                          |
 | comments                        | map entryId:commentId -> meta           | Local FlatPress comment mapped to a Mastodon reply.   | comment export/import.                     | reply export, deletion sync.                            |
 | comments_remote                 | map remoteStatusId -> local comment key | Reverse lookup for imported/exported replies.         | state_set_comment_mapping.                 | context import, duplicate prevention.                   |
 | dirty_entries                   | map localEntryId -> metadata            | Local entries that need export/update.                | entry saved hook, admin/manual paths.      | local-to-remote sync.                                   |
-| dirty_comments                  | map commentKey -> metadata              | Local comments that need export/update.               | comment saved hook.                        | comment export and pending resolution.                  |
+| dirty_comments                  | map commentKey -> metadata              | Local comments queued for export/update.              | comment saved hook incl. fresh comments.   | comment export and pending resolution.                  |
 | comment_tombstones              | map remoteStatusId -> metadata          | Remote replies intentionally not to be re-imported.   | deletion sync, local deletion protection.  | remote reply import.                                    |
 | pending_comment_remote_rechecks | map scope -> metadata                   | Remote reply descendants to revisit later.            | context import, deletion sync.             | follow-up deletion/comment reconciliation.              |
-| old_thread_context_cursor       | string                                  | Cursor for rotating known old thread context checks.  | remote context collection.                 | old_thread_reply_check.                                 |
+| old_thread_context_cursor       | string                                  | Cursor for rotating known old thread context checks.  | remote context collection.                 | old_thread_reply_check and context limit.               |
 | deletion_cursor_entries         | string                                  | Cursor for large entry deletion sweeps.               | run_deletion_sync.                         | next deletion pass.                                     |
 | deletion_cursor_comments        | string                                  | Cursor for large comment deletion sweeps.             | run_deletion_sync.                         | next deletion pass.                                     |
 | content_stats                   | object                                  | Counters for the last content sync.                   | run_sync.                                  | admin diagnostics.                                      |
@@ -215,7 +215,6 @@ The streaming legacy migration is intentionally narrow. It only handles the know
 
 Migration is fail-closed: if the migration backup, a shard write or the compact main-state write fails, the read path falls back to the legacy state instead of claiming success. Re-running the migration is safe because a later flush for the same entry merges already-written shard comments with the current legacy batch before replacing the shard.
 
-
 ### State-write error marker
 
 The state-write path now records the concrete request-local failure reason with
@@ -224,7 +223,6 @@ The state-write path now records the concrete request-local failure reason with
 `plugin_mastodon_state_write_with_last_error()` so a failed shard write, lock
 acquisition, JSON encode or compact-main-state write is copied into the runtime
 `last_error` field before the caller reports failure.
-
 
 ### Admin and CLI maintenance access
 
@@ -242,7 +240,6 @@ machine-comparable.
 | `plugin_mastodon_state_create_migration_backup()` | Copies legacy `state.json` before split migration.                   | Fails closed: no migration when backup creation fails.       |
 | `plugin_mastodon_state_diagnose_comment_shards()` | Scans shard files, metadata and `comments_remote`.                   | Read-only; reports errors, warnings and rebuilt maps.        |
 | `plugin_mastodon_state_repair_comment_shards()`   | Rebuilds `comment_shards.entries` and `comments_remote` from shards. | Writes only the compact main state under `state-write.lock`. |
-
 
 ## Dedicated maintenance UI
 

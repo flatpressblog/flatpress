@@ -13,23 +13,24 @@ The current plugin implementation is best described as:
 
 ## Endpoint matrix
 
-| Purpose                 | Method | Endpoint                                | API history                               | Auth/scope              | Fallback behavior in plugin                                                                             | Main function(s)                                                     |
-| ----------------------- | ------ | --------------------------------------- | ----------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| OAuth discovery         | GET    | /.well-known/oauth-authorization-server | 4.3.0                                     | Public                  | If unavailable, use legacy `read:accounts` instead of `profile`.                                        | plugin_mastodon_oauth_server_metadata / plugin_mastodon_oauth_scopes |
-| App registration        | POST   | /api/v1/apps                            | 0.0.0                                     | Public                  | No alternate endpoint. Existing registrations keep stored scopes.                                       | plugin_mastodon_register_app                                         |
-| Authorize URL           | GET    | /oauth/authorize                        | 0.1.0 era OAuth                           | Browser                 | No endpoint fallback; generated URL uses stored app credentials.                                        | plugin_mastodon_build_authorize_url()                                |
-| Token exchange          | POST   | /oauth/token                            | 0.1.0 era OAuth                           | Public/client           | No endpoint fallback.                                                                                   | plugin_mastodon_exchange_code_for_token()                            |
-| Verify credentials      | GET    | /api/v1/accounts/verify_credentials     | 0.0.0                                     | User token              | Scope fallback: `profile` on current servers, `read:accounts` on older servers.                         | plugin_mastodon_verify_credentials                                   |
-| Instance info           | GET    | /api/v2/instance                        | 4.0.0                                     | Public                  | No `/api/v1/instance` API fallback; internal defaults are used if fields are missing.                   | plugin_mastodon_instance_document                                    |
-| Account statuses        | GET    | /api/v1/accounts/:id/statuses           | 0.0.0                                     | Public or read:statuses | Budgeted paging; limit 40, up to 5 plugin pages.                                                        | plugin_mastodon_fetch_account_statuses                               |
-| Status context          | GET    | /api/v1/statuses/:id/context            | 0.0.0                                     | Public or read:statuses | Failures produce no descendants for that target; later rechecks may be queued.                          | plugin_mastodon_fetch_status_context                                 |
-| Single status           | GET    | /api/v1/statuses/:id                    | 0.0.0                                     | Public or read:statuses | 404/410 are treated as missing/deleted.                                                                 | plugin_mastodon_fetch_status                                         |
-| Create status           | POST   | /api/v1/statuses                        | 0.0.0                                     | write:statuses          | No create fallback.                                                                                     | plugin_mastodon_create_status                                        |
-| Edit status             | PUT    | /api/v1/statuses/:id                    | 3.5.0                                     | write:statuses          | No delete-and-redraft fallback. `media_attributes` are only used when instance version is >= 4.1.0.     | plugin_mastodon_update_status                                        |
-| Delete status           | DELETE | /api/v1/statuses/:id?delete_media=1     | status delete 0.0.0; `delete_media` 4.4.0 | write:statuses          | Known < 4.4 omits parameter; unknown may retry without parameter on 400/405/422 or delete_media errors. | plugin_mastodon_delete_status                                        |
-| Upload media            | POST   | /api/v2/media                           | 3.1.3; `thumbnail` parameter 3.2.0        | write:media             | No deprecated `/api/v1/media` upload fallback. Video posters are sent as upload thumbnails.             | plugin_mastodon_upload_media_items                                   |
-| Poll media              | GET    | /api/v1/media/:id                       | 3.1.3                                     | write:media             | Media-type-aware polling and timeout windows.                                                           | plugin_mastodon_wait_for_media_attachment                            |
-| Delete unattached media | DELETE | /api/v1/media/:id                       | 4.4.0                                     | write:media             | Used for cleanup. 404 is tolerated as already gone.                                                     | plugin_mastodon_delete_media_attachment                              |
+| Purpose                 | Method | Endpoint                                | API history                               | Auth/scope              | Fallback behavior in plugin                                                                                                                         | Main function(s)                                                     |
+| ----------------------- | ------ | --------------------------------------- | ----------------------------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| OAuth discovery         | GET    | /.well-known/oauth-authorization-server | 4.3.0                                     | Public                  | If unavailable for a new app, use `read:accounts` plus `read:notifications` instead of `profile`; existing legacy clients keep their stored scopes. | plugin_mastodon_oauth_server_metadata / plugin_mastodon_oauth_scopes |
+| App registration        | POST   | /api/v1/apps                            | 0.0.0                                     | Public                  | No alternate endpoint. Existing registrations keep stored scopes.                                                                                   | plugin_mastodon_register_app                                         |
+| Authorize URL           | GET    | /oauth/authorize                        | 0.1.0 era OAuth                           | Browser                 | No endpoint fallback; generated URL uses stored app credentials.                                                                                    | plugin_mastodon_build_authorize_url()                                |
+| Token exchange          | POST   | /oauth/token                            | 0.1.0 era OAuth                           | Public/client           | No endpoint fallback.                                                                                                                               | plugin_mastodon_exchange_code_for_token()                            |
+| Verify credentials      | GET    | /api/v1/accounts/verify_credentials     | 0.0.0                                     | User token              | Scope fallback: `profile` on current servers, `read:accounts` on older servers.                                                                     | plugin_mastodon_verify_credentials                                   |
+| Instance info           | GET    | /api/v2/instance                        | 4.0.0                                     | Public                  | No `/api/v1/instance` API fallback; internal defaults are used if fields are missing.                                                               | plugin_mastodon_instance_document                                    |
+| Account statuses        | GET    | /api/v1/accounts/:id/statuses           | 0.0.0                                     | Public or read:statuses | Budgeted paging; limit 40, up to 5 plugin pages.                                                                                                    | plugin_mastodon_fetch_account_statuses                               |
+| Notifications           | GET    | /api/v1/notifications                   | 0.0.0; limit 80 from 4.1, safe limit 30   | read:notifications      | Optional hint layer; skipped when the current app/token lacks the scope.                                                                            | plugin_mastodon_fetch_reply_notifications                            |
+| Status context          | GET    | /api/v1/statuses/:id/context            | 0.0.0                                     | Public or read:statuses | Failures produce no descendants for that target; later rechecks may be queued.                                                                      | plugin_mastodon_fetch_status_context                                 |
+| Single status           | GET    | /api/v1/statuses/:id                    | 0.0.0                                     | Public or read:statuses | 404/410 are treated as missing/deleted.                                                                                                             | plugin_mastodon_fetch_status                                         |
+| Create status           | POST   | /api/v1/statuses                        | 0.0.0                                     | write:statuses          | No create fallback.                                                                                                                                 | plugin_mastodon_create_status                                        |
+| Edit status             | PUT    | /api/v1/statuses/:id                    | 3.5.0                                     | write:statuses          | No delete-and-redraft fallback. `media_attributes` are only used when instance version is >= 4.1.0.                                                 | plugin_mastodon_update_status                                        |
+| Delete status           | DELETE | /api/v1/statuses/:id?delete_media=1     | status delete 0.0.0; `delete_media` 4.4.0 | write:statuses          | Known < 4.4 omits parameter; unknown may retry without parameter on 400/405/422 or delete_media errors.                                             | plugin_mastodon_delete_status                                        |
+| Upload media            | POST   | /api/v2/media                           | 3.1.3; `thumbnail` parameter 3.2.0        | write:media             | No deprecated `/api/v1/media` upload fallback. Video posters are sent as upload thumbnails.                                                         | plugin_mastodon_upload_media_items                                   |
+| Poll media              | GET    | /api/v1/media/:id                       | 3.1.3                                     | write:media             | Media-type-aware polling and timeout windows.                                                                                                       | plugin_mastodon_wait_for_media_attachment                            |
+| Delete unattached media | DELETE | /api/v1/media/:id                       | 4.4.0                                     | write:media             | Used for cleanup. 404 is tolerated as already gone.                                                                                                 | plugin_mastodon_delete_media_attachment                              |
 
 ## Mastodon status media-family rule
 
@@ -61,26 +62,27 @@ The plugin reads `/api/v2/instance` and uses `configuration` values when present
 
 ## Internal budgets and operational limits
 
-| Name                                              | Value   | Purpose                                                                |
-| ------------------------------------------------- | ------- | ---------------------------------------------------------------------- |
-| PLUGIN_MASTODON_DEFAULT_SYNC_TIME                 | 03:00   | Default scheduled sync time.                                           |
-| PLUGIN_MASTODON_MAX_STATUS_PAGES                  | 5       | Maximum account-status pages imported in one remote pass.              |
-| Mastodon account-status page limit                | 40      | The plugin requests the API maximum for /api/v1/accounts/:id/statuses. |
-| PLUGIN_MASTODON_IMPORTED_MEDIA_WIDTH              | 320     | Width used in imported FlatPress image markup.                         |
-| PLUGIN_MASTODON_PENDING_COMMENT_RECHECK_LIMIT     | 3       | Remote reply recheck attempts per pending comment scope.               |
-| PLUGIN_MASTODON_OLD_THREAD_CONTEXT_ROTATION_LIMIT | 3       | Old-thread context targets rotated per run.                            |
-| PLUGIN_MASTODON_STATE_FALLBACK_TTL                | 300s    | Fallback cache TTL for state-related helpers.                          |
-| PLUGIN_MASTODON_COOLDOWN_TTL                      | 300s    | File/APCu cooldown guard for scheduled sync paths.                     |
-| PLUGIN_MASTODON_RUN_REQUEST_BUDGET                | 240     | Per-run general Mastodon API request budget.                           |
-| PLUGIN_MASTODON_RUN_MEDIA_UPLOAD_BUDGET           | 24      | Per-run media upload budget.                                           |
-| PLUGIN_MASTODON_RUN_DELETE_BUDGET                 | 24      | Per-run remote status delete budget.                                   |
-| PLUGIN_MASTODON_WINDOW_MEDIA_UPLOAD_TTL           | 1800s   | Persistent upload budget window.                                       |
-| PLUGIN_MASTODON_WINDOW_DELETE_TTL                 | 1800s   | Persistent delete budget window.                                       |
-| PLUGIN_MASTODON_WINDOW_STATUS_PAGE_BUDGET         | 300     | Cross-run status page budget.                                          |
-| PLUGIN_MASTODON_WINDOW_STATUS_PAGE_TTL            | 900s    | Persistent account-status paging budget window.                        |
-| PLUGIN_MASTODON_RATE_LIMIT_REMAINING_FLOOR        | 10      | Stop before the remote server's remaining quota is exhausted.          |
-| PLUGIN_MASTODON_LOG_MAX_BYTES                     | 1048576 | Rotate sync.log when it grows beyond 1 MiB.                            |
-| PLUGIN_MASTODON_LOG_ROTATE_FILES                  | 3       | Keep up to three rotated sync logs.                                    |
+| Name                                              | Value   | Purpose                                                                                                                         |
+| ------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| PLUGIN_MASTODON_DEFAULT_SYNC_TIME                 | 03:00   | Default scheduled sync time.                                                                                                    |
+| PLUGIN_MASTODON_MAX_STATUS_PAGES                  | 5       | Maximum account-status pages imported in one remote pass.                                                                       |
+| Mastodon account-status page limit                | 40      | The plugin requests the API maximum for /api/v1/accounts/:id/statuses.                                                          |
+| PLUGIN_MASTODON_IMPORTED_MEDIA_WIDTH              | 320     | Width used in imported FlatPress image markup.                                                                                  |
+| PLUGIN_MASTODON_PENDING_COMMENT_RECHECK_LIMIT     | 3       | Remote reply recheck attempts per pending comment scope.                                                                        |
+| PLUGIN_MASTODON_OLD_THREAD_CONTEXT_ROTATION_LIMIT | 3       | Default old-thread context targets rotated per run; admin value clamps to 1-10.                                                 |
+| PLUGIN_MASTODON_NOTIFICATION_PAGE_LIMIT           | 30      | Safe Mastodon >= 4.0 notification page size used for mention hints.                                                             |
+| PLUGIN_MASTODON_STATE_FALLBACK_TTL                | 300s    | Fallback cache TTL for state-related helpers.                                                                                   |
+| PLUGIN_MASTODON_COOLDOWN_TTL                      | 300s    | File/APCu cooldown guard for scheduled sync paths; APCu access uses FlatPress `apcu_get`/`apcu_set`/`apcu_delete_key` wrappers. |
+| PLUGIN_MASTODON_RUN_REQUEST_BUDGET                | 240     | Per-run general Mastodon API request budget.                                                                                    |
+| PLUGIN_MASTODON_RUN_MEDIA_UPLOAD_BUDGET           | 24      | Per-run media upload budget.                                                                                                    |
+| PLUGIN_MASTODON_RUN_DELETE_BUDGET                 | 24      | Per-run remote status delete budget.                                                                                            |
+| PLUGIN_MASTODON_WINDOW_MEDIA_UPLOAD_TTL           | 1800s   | Persistent upload budget window.                                                                                                |
+| PLUGIN_MASTODON_WINDOW_DELETE_TTL                 | 1800s   | Persistent delete budget window.                                                                                                |
+| PLUGIN_MASTODON_WINDOW_STATUS_PAGE_BUDGET         | 300     | Cross-run status page budget.                                                                                                   |
+| PLUGIN_MASTODON_WINDOW_STATUS_PAGE_TTL            | 900s    | Persistent account-status paging budget window.                                                                                 |
+| PLUGIN_MASTODON_RATE_LIMIT_REMAINING_FLOOR        | 10      | Stop before the remote server's remaining quota is exhausted.                                                                   |
+| PLUGIN_MASTODON_LOG_MAX_BYTES                     | 1048576 | Rotate sync.log when it grows beyond 1 MiB.                                                                                     |
+| PLUGIN_MASTODON_LOG_ROTATE_FILES                  | 3       | Keep up to three rotated sync logs.                                                                                             |
 
 ## API fallback diagrams
 
@@ -92,15 +94,16 @@ flowchart TD
     Discovery[GET well-known OAuth server metadata]
     Profile{profile advertised?}
     Stored{Existing app has stored scopes?}
-    UseProfile[profile read:statuses write:statuses write:media]
-    UseLegacy[read:accounts read:statuses write:statuses write:media]
+    UseProfile[profile read:statuses read:notifications write:statuses write:media]
+    UseCompatible[read:accounts read:statuses read:notifications write:statuses write:media]
+    UseLegacy[stored legacy client scopes]
 
     Start --> Stored
-    Stored -- legacy registration --> UseLegacy
+    Stored -- existing legacy registration --> UseLegacy
     Stored -- none/current --> Discovery
     Discovery --> Profile
     Profile -- yes --> UseProfile
-    Profile -- no or unavailable --> UseLegacy
+    Profile -- no or unavailable --> UseCompatible
 ```
 
 ### Status deletion compatibility
@@ -150,6 +153,7 @@ sequenceDiagram
 - Mastodon media API: https://docs.joinmastodon.org/methods/media/
 - Mastodon apps API: https://docs.joinmastodon.org/methods/apps/
 - Mastodon accounts API: https://docs.joinmastodon.org/methods/accounts/
+- Mastodon notifications API: https://docs.joinmastodon.org/methods/notifications/
 - Mastodon OAuth methods and discovery: https://docs.joinmastodon.org/methods/oauth/
 - Mastodon OAuth scopes: https://docs.joinmastodon.org/api/oauth-scopes/
 
@@ -163,7 +167,8 @@ sequenceDiagram
 | Media MIME/size support                  | `/api/v2/instance` configuration            | Validate conservatively; do not invent server limits.               |
 | Status `media_attributes` update         | Parsed instance version `>= 4.1.0`          | Treat as unsupported and re-upload when descriptions changed.       |
 | Status delete `delete_media` parameter   | Cached/stored instance version `>= 4.4.0`   | Try with parameter, retry without on known legacy-style failures.   |
-| OAuth `profile` scope                    | OAuth discovery `scopes_supported`          | Fall back to `read:accounts`.                                       |
+| OAuth `profile` scope                    | OAuth discovery `scopes_supported`          | Fall back to compatible `read:accounts` scope set for new apps.     |
+| OAuth `read:notifications` scope         | Stored/current OAuth scope set              | Skip notification hints and keep context rotation fallback.         |
 
 ## API change playbooks
 

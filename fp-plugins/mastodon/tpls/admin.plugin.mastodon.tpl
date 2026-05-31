@@ -83,6 +83,17 @@
 					<input type="checkbox" id="old_thread_reply_check" name="old_thread_reply_check" value="1"{if $mastodon_cfg.old_thread_reply_check eq '1'} checked="checked"{/if}>
 					{$plang.old_thread_reply_check_desc|escape}
 				</label>
+				<br><small>{if $mastodon_cfg.reply_notifications_available eq '1'}{$plang.reply_notifications_scope_active|escape}{else}{$plang.reply_notifications_scope_missing|escape}{/if}</small>
+			</dd>
+			<br>
+			<dt><label for="old_thread_context_limit">{$plang.old_thread_context_limit|escape}</label></dt>
+			<dd>
+				<select class="textinput" id="old_thread_context_limit" name="old_thread_context_limit">
+					{foreach from=$mastodon_old_thread_context_limit_choices item=old_thread_context_limit_choice}
+						<option value="{$old_thread_context_limit_choice.value|escape}"{if $mastodon_cfg.old_thread_context_limit eq $old_thread_context_limit_choice.value} selected="selected"{/if}>{$old_thread_context_limit_choice.label|escape}</option>
+					{/foreach}
+				</select>
+				<br><small>{$plang.old_thread_context_limit_desc|escape}</small>
 			</dd>
 			<br>
 			<dt><label for="delete_sync_enabled">{$plang.delete_sync_enabled|escape}</label></dt>

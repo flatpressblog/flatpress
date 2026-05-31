@@ -15,7 +15,7 @@ The plugin keeps a compact scheduler layer and a full synchronization layer.
   mappings per parent entry. Legacy inline comment states are backed up and migrated on the next
   state read that detects inline comments.
 - `sync.lock` serializes real content/deletion sync runs.
-- `sync.guard.json` stores short cooldown markers for content and deletion runs.
+- `sync.guard.json` stores short cooldown markers for content and deletion runs; when APCu is active, the same guard key suffix is stored, fetched, and deleted through FlatPress `core.apcu.php` wrappers.
 - `rate-limit-windows.json` stores persistent cross-request windows for media uploads,
   status deletes, and status-page fetches.
 - `sync.log` plus rotated `sync.log.1` to `sync.log.3` stores operational diagnostics.
@@ -110,6 +110,7 @@ flowchart TD
         EntryCursor["deletion_cursor_entries"]
         CommentCursor["deletion_cursor_comments"]
         OldThreadCursor["old_thread_context_cursor"]
+        NotificationCursor["last_remote_notification_id"]
     end
 
     subgraph Safety["Safety and accounting"]
@@ -244,15 +245,20 @@ sequenceDiagram
 ### 1.3 FlatPress comment and comment reply export
 
 FlatPress comments are exported only after the parent entry has a remote status mapping. Nested
-comment replies are delayed until their local parent comment has a remote mapping.
+comment replies are delayed until their local parent comment has a remote mapping. A fresh unmapped
+comment inside the active scheduled content window is persisted as `dirty_comments` when its old
+parent entry is already mapped, so automatic and normal manual sync can load just that parent shard
+instead of scanning all old comment folders.
 
 ```mermaid
 flowchart TD
     CommentSaved["FlatPress comment_save succeeded"]
     Hook["comment_saved hook -> plugin_mastodon_on_comment_saved"]
     Guard{"plugin-owned local-write guard active?"}
+    SyncStart{"Comment matches sync_start_date?"}
     EntryMapped{"Parent entry has remote status?"}
     CommentMapped{"Comment already has remote status?"}
+    ActiveWindow{"Fresh comment inside active content window?"}
     ParentLocal["Detect local parent comment"]
     ParentPending{"Parent comment exists but export still pending?"}
     DirtyComment["Add dirty_comments[entry_id/comment_id]"]
@@ -262,11 +268,15 @@ flowchart TD
 
     CommentSaved --> Hook --> Guard
     Guard -- "Yes" --> NoExport --> Persist
-    Guard -- "No" --> EntryMapped
-    EntryMapped -- "No" --> DirtyEntry --> Persist
+    Guard -- "No" --> SyncStart
+    SyncStart -- "No" --> NoExport
+    SyncStart -- "Yes" --> EntryMapped
+    EntryMapped -- "No, parent is local and eligible" --> DirtyEntry --> Persist
     EntryMapped -- "Yes" --> CommentMapped
-    CommentMapped -- "Yes" --> DirtyComment --> Persist
-    CommentMapped -- "No" --> ParentLocal --> ParentPending
+    CommentMapped -- "Yes, hash changed" --> DirtyComment --> Persist
+    CommentMapped -- "No" --> ActiveWindow
+    ActiveWindow -- "No" --> NoExport
+    ActiveWindow -- "Yes" --> ParentLocal --> ParentPending
     ParentPending -- "Yes" --> DirtyComment
     ParentPending -- "No" --> DirtyComment
 ```
@@ -378,6 +388,41 @@ flowchart TD
     Progress -- "Progress made" --> NextReply
     Progress -- "No progress" --> ForceImport --> Guard
 ```
+
+
+### 1.5 Notification reply-hint pass
+
+The notification pass is optional and runs only when old-thread reply checks are enabled and the
+current stored OAuth scope set contains `read:notifications`. Direct mapped-parent notifications
+are imported without a context request. Unresolved notification replies can spend the same
+admin-configured old-thread context budget that normal rotation would otherwise use.
+
+```mermaid
+flowchart TD
+    Start["Remote-to-local sync"]
+    Scope{"old_thread_reply_check and read:notifications?"}
+    Fetch["GET /api/v1/notifications?types[]=mention&limit=30"]
+    Reply{"Notification status is a reply?"}
+    ParentKnown{"Parent remote id maps to entry/comment?"}
+    Direct["Import reply directly as FlatPress comment"]
+    Budget{"Context budget left?"}
+    Context["GET /api/v1/statuses/:id/context"]
+    ImportChain["Import ancestor chain below known entry"]
+    Rotate["Use remaining budget for normal old-thread rotation"]
+    Cursor["Advance last_remote_notification_id only after processed hints"]
+
+    Start --> Scope
+    Scope -- "No" --> Rotate
+    Scope -- "Yes" --> Fetch --> Reply
+    Reply -- "No" --> Cursor
+    Reply -- "Yes" --> ParentKnown
+    ParentKnown -- "Yes" --> Direct --> Cursor
+    ParentKnown -- "No" --> Budget
+    Budget -- "Yes" --> Context --> ImportChain --> Cursor
+    Budget -- "No" --> Rotate
+    Cursor --> Rotate
+```
+
 
 ## 2. Text, URLs, tags, media, and companion plugins
 
@@ -656,6 +701,7 @@ flowchart TD
         Authorize["GET /oauth/authorize"]
         Token["POST /oauth/token"]
         Verify["GET /api/v1/accounts/verify_credentials"]
+        Notifications["GET /api/v1/notifications"]
     end
 
     subgraph Instance["Instance limits and capabilities"]
@@ -719,8 +765,7 @@ flowchart TD
 
 ### 3.3 OAuth scope compatibility
 
-The OAuth scope path prefers modern discovery when available and keeps a legacy fallback for
-older Mastodon instances.
+The OAuth scope path prefers modern discovery when available, requests `read:notifications` for new registrations, and keeps stored legacy clients stable until they are re-registered.
 
 ```mermaid
 flowchart TD
@@ -728,8 +773,9 @@ flowchart TD
     Discovery["GET /.well-known/oauth-authorization-server"]
     DiscoveryOK{"Discovery document available?"}
     ProfileSupported{"profile scope advertised?"}
-    Modern["Use profile-capable scope set"]
-    Legacy["Use legacy read:accounts-compatible scope set"]
+    Modern["Use profile + read:notifications scope set"]
+    Compatible["Use read:accounts + read:notifications scope set"]
+    Legacy["Use stored legacy client scopes"]
     Register["POST /api/v1/apps or use saved client"]
     Authorize["GET /oauth/authorize"]
     Token["POST /oauth/token"]
@@ -738,8 +784,8 @@ flowchart TD
     Start --> Discovery --> DiscoveryOK
     DiscoveryOK -- "Yes" --> ProfileSupported
     ProfileSupported -- "Yes" --> Modern --> Register
-    ProfileSupported -- "No" --> Legacy --> Register
-    DiscoveryOK -- "No / 404 / failed" --> Legacy
+    ProfileSupported -- "No" --> Compatible --> Register
+    DiscoveryOK -- "No / 404 / failed" --> Compatible
     Register --> Authorize --> Token --> Verify
 ```
 
@@ -811,7 +857,7 @@ stateDiagram-v2
 ### 4.1 Daily scheduled content synchronization
 
 The scheduled content sync is started from the `init` hook. Ordinary POST requests, missing
-configuration, active cooldowns, and a not-due scheduler summary all return quickly.
+configuration, active cooldowns, and a not-due scheduler summary all return quickly. APCu-backed cooldown markers are always accessed through FlatPress `apcu_get()`, `apcu_set()`, and `apcu_delete_key()` so file and APCu guards clear consistently on shared hosting.
 
 ```mermaid
 flowchart TD
@@ -821,7 +867,9 @@ flowchart TD
     Configured{"Instance URL and access token configured?"}
     Scheduler["Read scheduler-state.json"]
     Due{"plugin_mastodon_sync_due?"}
+    GuardLookup["Read cooldown via FlatPress APCu wrapper and sync.guard.json"]
     Cooldown{"Content sync cooldown active?"}
+    GuardClear["APCu/file guard clear uses matching FlatPress wrapper key"]
     Lock["Acquire sync.lock non-blocking"]
     RateGuard["Start API rate/budget guard"]
     FullState["Load full state.json"]
@@ -842,9 +890,9 @@ flowchart TD
     Configured -- "No" --> End
     Configured -- "Yes" --> Scheduler --> Due
     Due -- "No" --> End
-    Due -- "Yes" --> Cooldown
+    Due -- "Yes" --> GuardLookup --> Cooldown
     Cooldown -- "Active" --> End
-    Cooldown -- "Clear" --> Lock
+    Cooldown -- "Clear" --> GuardClear --> Lock
     Lock --> RateGuard --> FullState --> Protect --> Stats --> RemoteToLocal --> LocalToRemote --> FlushSkips --> MarkDeletion
     MarkDeletion -- "Yes" --> Pending --> Write
     MarkDeletion -- "No" --> Write
@@ -1186,7 +1234,7 @@ The simulation sandbox deliberately excludes live `fp-content/content` in the de
 
 The output mode is independent of the assertions. Normal output keeps full details for one-file diagnostics. Summary output can be requested with `--summary` or `SIMULATE_MASTODON_SUMMARY=1`; it keeps the status and test name, but collapses verbose details to short text or JSON key summaries. Both output modes always end with the same counter block: `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]`, and `[SKIP]`.
 
-The compact-state regression first verifies that legacy pretty-printed `state.json` files remain readable and that new `state.json` writes are compact JSON while preserving all mapping queues. The large `3000x10` scheduler-state regression is intentionally guarded before its synthetic state is built. On 128 MiB shared-hosting-style PHP limits, the large PHP array plus full JSON string can exhaust memory before the compact scheduler-state behavior is reached. The smaller `300x10` state test always runs; the heavy test runs when memory is sufficient, warns in low-memory non-CI environments, and is skipped in CI only after an attempted memory-limit raise fails. The CI skip branch can be tested deterministically with `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1`.
+The APCu cooldown regression verifies that a marked content guard is no longer active after `plugin_mastodon_sync_guard_clear()`; this catches mismatched FlatPress wrapper key usage on APCu-enabled shared hosts. The compact-state regression first verifies that legacy pretty-printed `state.json` files remain readable and that new `state.json` writes are compact JSON while preserving all mapping queues. The large `3000x10` scheduler-state regression is intentionally guarded before its synthetic state is built. On 128 MiB shared-hosting-style PHP limits, the large PHP array plus full JSON string can exhaust memory before the compact scheduler-state behavior is reached. The smaller `300x10` state test always runs; the heavy test runs when memory is sufficient, warns in low-memory non-CI environments, and is skipped in CI only after an attempted memory-limit raise fails. The CI skip branch can be tested deterministically with `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1`.
 
 ## 8. Operational guarantees and intentional behavior
 

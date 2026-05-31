@@ -22,9 +22,10 @@ Media export has one additional compatibility rule that developers must keep in 
 flowchart LR
     FP[FlatPress entries comments media tags]
     Hooks[FlatPress post-success hooks]
-    State[state.json full mappings dirty flags tombstones cursors]
+    State[state.json full mappings dirty flags tombstones notification cursor]
     Scheduler[scheduler-state.json compact request summary]
     Guards[sync.lock sync.guard.json rate-limit-windows.json]
+    Notifications[Mastodon mention notifications]
     API[Mastodon API]
     Sim[simulate_mastodon_plugin.php regression harness]
 
@@ -33,6 +34,8 @@ flowchart LR
     State <--> Scheduler
     State <--> Guards
     State <--> API
+    API <--> Notifications
+    Notifications --> State
     API <--> FP
     Sim --> FP
     Sim --> State
@@ -40,6 +43,8 @@ flowchart LR
 ```
 
 ## The main rule
+
+Notification hints are intentionally a hint layer: they can import replies on old Mastodon threads quickly when `read:notifications` is authorized, while context rotation remains the bounded fallback.
 
 Do not reason about a single function in isolation. The important question is usually:
 

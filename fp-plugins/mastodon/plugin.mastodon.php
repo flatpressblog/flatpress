@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.4.7
+ * Version: 2.5.0
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -92,6 +92,9 @@ if (!defined('PLUGIN_MASTODON_PENDING_COMMENT_RECHECK_LIMIT')) {
 if (!defined('PLUGIN_MASTODON_OLD_THREAD_CONTEXT_ROTATION_LIMIT')) {
 	define('PLUGIN_MASTODON_OLD_THREAD_CONTEXT_ROTATION_LIMIT', 3);
 }
+if (!defined('PLUGIN_MASTODON_NOTIFICATION_PAGE_LIMIT')) {
+	define('PLUGIN_MASTODON_NOTIFICATION_PAGE_LIMIT', 30);
+}
 // ttl for sync guards
 if (!defined('PLUGIN_MASTODON_STATE_FALLBACK_TTL')) {
 	define('PLUGIN_MASTODON_STATE_FALLBACK_TTL', 300);
@@ -147,6 +150,7 @@ function plugin_mastodon_default_options() {
 		'import_synced_comments_as_entries' => '0',
 		'quote_imported_reply_parent' => '1',
 		'old_thread_reply_check' => '0',
+		'old_thread_context_limit' => '3',
 		'delete_sync_enabled' => '1',
 		'client_id' => '',
 		'client_secret' => '',
@@ -558,6 +562,7 @@ function plugin_mastodon_default_state() {
 		'deletions_not_before' => '',
 		'last_error' => '',
 		'last_remote_status_id' => '',
+		'last_remote_notification_id' => '',
 		'entries' => array(),
 		'entries_remote' => array(),
 		'comments' => array(),
@@ -593,7 +598,15 @@ function plugin_mastodon_oauth_legacy_scopes() {
  * @return string
  */
 function plugin_mastodon_oauth_profile_scopes() {
-	return 'profile read:statuses write:statuses write:media';
+	return 'profile read:statuses read:notifications write:statuses write:media';
+}
+
+/**
+ * Return the broad OAuth scopes used for new registrations when scope discovery is unavailable.
+ * @return string
+ */
+function plugin_mastodon_oauth_compatible_scopes() {
+	return 'read:accounts read:statuses read:notifications write:statuses write:media';
 }
 
 /**
@@ -682,7 +695,7 @@ function plugin_mastodon_oauth_preferred_scopes($options) {
 	if (plugin_mastodon_oauth_scope_supported($options, 'profile')) {
 		return plugin_mastodon_oauth_profile_scopes();
 	}
-	return plugin_mastodon_oauth_legacy_scopes();
+	return plugin_mastodon_oauth_compatible_scopes();
 }
 
 /**
@@ -705,6 +718,47 @@ function plugin_mastodon_oauth_scopes($options = array()) {
 		return plugin_mastodon_oauth_legacy_scopes();
 	}
 	return plugin_mastodon_oauth_preferred_scopes($options);
+}
+
+/**
+ * Split an OAuth scope string into unique normalized scope tokens.
+ * @param string $scopes
+ * @return array<int, string>
+ */
+function plugin_mastodon_oauth_scope_list($scopes) {
+	$rawScopes = preg_split('/\s+/', trim((string) $scopes));
+	if (!is_array($rawScopes)) {
+		return array();
+	}
+	$list = array();
+	foreach ($rawScopes as $scope) {
+		$scope = trim((string) $scope);
+		if ($scope !== '') {
+			$list [$scope] = true;
+		}
+	}
+	ksort($list, SORT_STRING);
+	return array_keys($list);
+}
+
+/**
+ * Determine whether a scope set contains a required OAuth scope token.
+ * @param string $scopes
+ * @param string $requiredScope
+ * @return bool
+ */
+function plugin_mastodon_oauth_scopes_include($scopes, $requiredScope) {
+	$requiredScope = trim((string) $requiredScope);
+	return $requiredScope !== '' && in_array($requiredScope, plugin_mastodon_oauth_scope_list($scopes), true);
+}
+
+/**
+ * Determine whether the configured app/token scope set can use notification polling.
+ * @param array<string, string> $options
+ * @return bool
+ */
+function plugin_mastodon_oauth_notifications_scope_available($options) {
+	return plugin_mastodon_oauth_scopes_include(plugin_mastodon_oauth_scopes($options), 'read:notifications');
 }
 
 /**
@@ -1142,22 +1196,19 @@ function plugin_mastodon_apcu_enabled() {
 }
 
 /**
- * Build the namespaced APCu key used by this plugin.
+ * Build the plugin APCu key suffix passed to the FlatPress APCu wrappers.
  * @param string $suffix
  * @return string
  */
 function plugin_mastodon_apcu_cache_key($suffix) {
-	$suffix = 'mastodon:' . (string) $suffix;
-	if (function_exists('apcu_key')) {
-		return apcu_key($suffix);
-	}
-	return $suffix;
+	return 'mastodon:' . (string) $suffix;
 }
 
 /**
  * Fetch a value from APCu through the FlatPress namespace helper.
  * @param string $suffix
  * @param bool|null $hit
+ * @param-out bool|null $hit
  * @return mixed
  */
 function plugin_mastodon_apcu_fetch($suffix, &$hit = null) {
@@ -1165,7 +1216,7 @@ function plugin_mastodon_apcu_fetch($suffix, &$hit = null) {
 	if (!plugin_mastodon_apcu_enabled() || !function_exists('apcu_get')) {
 		return null;
 	}
-	return apcu_get('mastodon:' . (string) $suffix, $hit);
+	return apcu_get(plugin_mastodon_apcu_cache_key($suffix), $hit);
 }
 
 /**
@@ -1180,27 +1231,19 @@ function plugin_mastodon_apcu_store($suffix, $value, $ttl) {
 		return false;
 	}
 	$ttl = max(0, (int) $ttl);
-	return (bool) apcu_set('mastodon:' . (string) $suffix, $value, $ttl);
+	return (bool) apcu_set(plugin_mastodon_apcu_cache_key($suffix), $value, $ttl);
 }
 
 /**
- * Delete a value from APCu using the FlatPress namespace key builder.
+ * Delete a value from APCu through the FlatPress namespace helper.
  * @param string $suffix
- * @return void
+ * @return bool
  */
 function plugin_mastodon_apcu_delete($suffix) {
-	if (!plugin_mastodon_apcu_enabled()) {
-		return;
+	if (!plugin_mastodon_apcu_enabled() || !function_exists('apcu_delete_key')) {
+		return false;
 	}
-	if (function_exists('apcu_delete_key')) {
-		@apcu_delete_key('mastodon:' . (string) $suffix);
-		return;
-	}
-	if (!function_exists('apcu_delete')) {
-		return;
-	}
-	$cacheKey = plugin_mastodon_apcu_cache_key($suffix);
-	@apcu_delete($cacheKey);
+	return (bool) @apcu_delete_key(plugin_mastodon_apcu_cache_key($suffix));
 }
 
 /**
@@ -1896,6 +1939,7 @@ function plugin_mastodon_get_options() {
 		$options ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries($options ['import_synced_comments_as_entries']);
 		$options ['quote_imported_reply_parent'] = plugin_mastodon_normalize_quote_imported_reply_parent($options ['quote_imported_reply_parent']);
 		$options ['old_thread_reply_check'] = plugin_mastodon_normalize_old_thread_reply_check($options ['old_thread_reply_check']);
+		$options ['old_thread_context_limit'] = plugin_mastodon_normalize_old_thread_context_limit($options ['old_thread_context_limit']);
 		$options ['delete_sync_enabled'] = plugin_mastodon_normalize_delete_sync_enabled($options ['delete_sync_enabled']);
 		$options ['oauth_registered_scopes'] = trim((string) $options ['oauth_registered_scopes']);
 		return $options;
@@ -1928,6 +1972,7 @@ function plugin_mastodon_get_options() {
 	$options ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries($options ['import_synced_comments_as_entries']);
 	$options ['quote_imported_reply_parent'] = plugin_mastodon_normalize_quote_imported_reply_parent($options ['quote_imported_reply_parent']);
 	$options ['old_thread_reply_check'] = plugin_mastodon_normalize_old_thread_reply_check($options ['old_thread_reply_check']);
+	$options ['old_thread_context_limit'] = plugin_mastodon_normalize_old_thread_context_limit($options ['old_thread_context_limit']);
 	$options ['delete_sync_enabled'] = plugin_mastodon_normalize_delete_sync_enabled($options ['delete_sync_enabled']);
 	$options ['oauth_registered_scopes'] = trim((string) $options ['oauth_registered_scopes']);
 	plugin_mastodon_runtime_cache_set('options', 'normalized', $options);
@@ -1953,8 +1998,9 @@ function plugin_mastodon_save_options($options) {
 
 	$merged ['sync_scheduled_window_days'] = plugin_mastodon_normalize_scheduled_window_days(isset($merged ['sync_scheduled_window_days']) ? $merged ['sync_scheduled_window_days'] : '');
 	$merged ['old_thread_reply_check'] = plugin_mastodon_normalize_old_thread_reply_check(isset($merged ['old_thread_reply_check']) ? $merged ['old_thread_reply_check'] : '');
+	$merged ['old_thread_context_limit'] = plugin_mastodon_normalize_old_thread_context_limit(isset($merged ['old_thread_context_limit']) ? $merged ['old_thread_context_limit'] : '');
 
-	foreach (array('instance_url', 'username', 'sync_time', 'sync_start_date', 'sync_scheduled_window_days', 'update_local_from_remote', 'import_synced_comments_as_entries', 'quote_imported_reply_parent', 'old_thread_reply_check', 'delete_sync_enabled', 'last_authorize_url', 'oauth_registered_scopes', 'instance_info_url', 'instance_info_json', 'instance_info_fetched_at', 'instance_info_error', 'instance_info_error_at') as $plainKey) {
+	foreach (array('instance_url', 'username', 'sync_time', 'sync_start_date', 'sync_scheduled_window_days', 'update_local_from_remote', 'import_synced_comments_as_entries', 'quote_imported_reply_parent', 'old_thread_reply_check', 'old_thread_context_limit', 'delete_sync_enabled', 'last_authorize_url', 'oauth_registered_scopes', 'instance_info_url', 'instance_info_json', 'instance_info_fetched_at', 'instance_info_error', 'instance_info_error_at') as $plainKey) {
 		plugin_addoption('mastodon', $plainKey, (string) $merged [$plainKey]);
 	}
 
@@ -1983,6 +2029,7 @@ function plugin_mastodon_save_options($options) {
 		$merged ['update_local_from_remote'] = plugin_mastodon_normalize_update_local_from_remote((string) $merged ['update_local_from_remote']);
 		$merged ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries((string) $merged ['import_synced_comments_as_entries']);
 		$merged ['quote_imported_reply_parent'] = plugin_mastodon_normalize_quote_imported_reply_parent((string) $merged ['quote_imported_reply_parent']);
+		$merged ['old_thread_context_limit'] = plugin_mastodon_normalize_old_thread_context_limit((string) $merged ['old_thread_context_limit']);
 		$merged ['delete_sync_enabled'] = plugin_mastodon_normalize_delete_sync_enabled((string) $merged ['delete_sync_enabled']);
 		$merged ['oauth_registered_scopes'] = trim((string) $merged ['oauth_registered_scopes']);
 		if ($previousInstanceUrl !== '' && $previousInstanceUrl !== $merged ['instance_url']) {
@@ -2469,6 +2516,43 @@ function plugin_mastodon_normalize_old_thread_reply_check($value) {
  */
 function plugin_mastodon_should_check_old_thread_replies($options) {
 	return plugin_mastodon_normalize_old_thread_reply_check(isset($options ['old_thread_reply_check']) ? $options ['old_thread_reply_check'] : '') === '1';
+}
+
+/**
+ * Normalize the number of old synchronized threads refreshed per content sync run.
+ * @param mixed $value
+ * @return string
+ */
+function plugin_mastodon_normalize_old_thread_context_limit($value) {
+	$value = (int) trim((string) $value);
+	if ($value < 1) {
+		return '1';
+	}
+	if ($value > 10) {
+		return '10';
+	}
+	return (string) $value;
+}
+
+/**
+ * Return the admin choices for the old-thread context refresh limit.
+ * @return array<int, array<string, string>>
+ */
+function plugin_mastodon_old_thread_context_limit_choices() {
+	$choices = array();
+	for ($limit = 1; $limit <= 10; $limit++) {
+		$choices [] = array('value' => (string) $limit, 'label' => (string) $limit);
+	}
+	return $choices;
+}
+
+/**
+ * Check whether reply-notification polling may be used for old-thread hints.
+ * @param array<string, string> $options
+ * @return bool
+ */
+function plugin_mastodon_should_poll_reply_notifications($options) {
+	return plugin_mastodon_should_check_old_thread_replies($options) && plugin_mastodon_oauth_notifications_scope_available($options);
 }
 
 /**
@@ -4375,6 +4459,7 @@ function plugin_mastodon_state_normalize($state) {
 	$state ['deletions_not_before'] = plugin_mastodon_parse_iso_datetime(isset($state ['deletions_not_before']) ? (string) $state ['deletions_not_before'] : '');
 	$state ['last_error'] = isset($state ['last_error']) ? (string) $state ['last_error'] : '';
 	$state ['last_remote_status_id'] = isset($state ['last_remote_status_id']) ? (string) $state ['last_remote_status_id'] : '';
+	$state ['last_remote_notification_id'] = isset($state ['last_remote_notification_id']) ? (string) $state ['last_remote_notification_id'] : '';
 	$state ['old_thread_context_cursor'] = isset($state ['old_thread_context_cursor']) ? (string) $state ['old_thread_context_cursor'] : '';
 	$state ['deletion_cursor_entries'] = isset($state ['deletion_cursor_entries']) ? (string) $state ['deletion_cursor_entries'] : '';
 	$state ['deletion_cursor_comments'] = isset($state ['deletion_cursor_comments']) ? (string) $state ['deletion_cursor_comments'] : '';
@@ -4991,10 +5076,13 @@ function plugin_mastodon_on_comment_saved($entryId, $commentId, $comment = array
 		return;
 	}
 	if (!$hasCommentRemoteMapping && $insideActiveWindow) {
-		if (empty($entryMeta ['remote_id']) && empty($entryMeta ['source']) && plugin_mastodon_local_item_matches_sync_start($options, $entry, $entryId)) {
+		if (!empty($entryMeta ['remote_id'])) {
+			plugin_mastodon_state_set_dirty_comment($state, $entryId, $commentId, $commentHash);
+		} elseif (empty($entryMeta ['source']) && plugin_mastodon_local_item_matches_sync_start($options, $entry, $entryId)) {
 			plugin_mastodon_state_set_dirty_entry($state, $entryId, plugin_mastodon_entry_hash($entry));
+		} else {
+			plugin_mastodon_state_remove_dirty_comment($state, $entryId, $commentId);
 		}
-		plugin_mastodon_state_remove_dirty_comment($state, $entryId, $commentId);
 		plugin_mastodon_state_write($state);
 		return;
 	}
@@ -10349,6 +10437,29 @@ function plugin_mastodon_fetch_status_context($options, $statusId) {
 }
 
 /**
+ * Fetch recent mention notifications that may point to replies on older synchronized threads.
+ * @param array<string, string> $options
+ * @param string $sinceId
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_fetch_reply_notifications($options, $sinceId) {
+	$params = array(
+		'limit' => PLUGIN_MASTODON_NOTIFICATION_PAGE_LIMIT,
+		'types' => array('mention')
+	);
+	$sinceId = trim((string) $sinceId);
+	if ($sinceId !== '') {
+		$params ['since_id'] = $sinceId;
+	}
+	$response = plugin_mastodon_mastodon_json($options, 'GET', '/api/v1/notifications', $params, true);
+	if (!$response ['ok']) {
+		return array('ok' => false, 'items' => array(), 'error' => isset($response ['error']) ? (string) $response ['error'] : '');
+	}
+	$items = isset($response ['json']) && is_array($response ['json']) ? $response ['json'] : array();
+	return array('ok' => true, 'items' => $items, 'error' => '');
+}
+
+/**
  * Fetch a single Mastodon status.
  * @param array<string, string> $options
  * @param string $statusId
@@ -10931,6 +11042,166 @@ function plugin_mastodon_import_remote_comment(&$options, &$state, $entryId, $re
 }
 
 /**
+ * Import one remote reply directly from a mention notification when its parent is already mapped locally.
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
+ * @param array<string, mixed> $status
+ * @param string $refreshedRemoteEntryId Remote entry id whose thread was refreshed/imported.
+ * @return bool
+ */
+function plugin_mastodon_import_remote_notification_reply(&$options, &$state, $status, &$refreshedRemoteEntryId = '') {
+	$statusId = isset($status ['id']) ? (string) $status ['id'] : '';
+	$parentRemoteId = isset($status ['in_reply_to_id']) ? (string) $status ['in_reply_to_id'] : '';
+	$refreshedRemoteEntryId = '';
+	if ($statusId === '' || $parentRemoteId === '' || isset($state ['comments_remote'] [$statusId])) {
+		return false;
+	}
+	if (!plugin_mastodon_remote_status_is_importable($status) || !plugin_mastodon_remote_status_matches_sync_start($options, $status)) {
+		return false;
+	}
+	if (isset($state ['entries_remote'] [$parentRemoteId])) {
+		$entryId = (string) $state ['entries_remote'] [$parentRemoteId];
+		if ($entryId !== '' && entry_exists($entryId)) {
+			$refreshedRemoteEntryId = $parentRemoteId;
+			return plugin_mastodon_import_remote_comment($options, $state, $entryId, $status, '', $parentRemoteId, array($statusId => $status)) !== false;
+		}
+	}
+	if (isset($state ['comments_remote'] [$parentRemoteId]) && is_array($state ['comments_remote'] [$parentRemoteId])) {
+		$parentRef = $state ['comments_remote'] [$parentRemoteId];
+		$entryId = isset($parentRef ['entry_id']) ? (string) $parentRef ['entry_id'] : '';
+		$commentId = isset($parentRef ['comment_id']) ? (string) $parentRef ['comment_id'] : '';
+		if ($entryId !== '' && $commentId !== '' && entry_exists($entryId)) {
+			$refreshedRemoteEntryId = isset($state ['entries'] [$entryId] ['remote_id']) ? (string) $state ['entries'] [$entryId] ['remote_id'] : '';
+			return plugin_mastodon_import_remote_comment($options, $state, $entryId, $status, $commentId, $parentRemoteId, array($statusId => $status)) !== false;
+		}
+	}
+	return false;
+}
+
+/**
+ * Import a notification reply through its context when the direct parent is not mapped yet.
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
+ * @param array<string, mixed> $status
+ * @param array<string, mixed> $context
+ * @param string $refreshedRemoteEntryId Remote entry id whose context was imported.
+ * @return bool
+ */
+function plugin_mastodon_import_remote_notification_context(&$options, &$state, $status, $context, &$refreshedRemoteEntryId = '') {
+	$statusId = isset($status ['id']) ? (string) $status ['id'] : '';
+	$refreshedRemoteEntryId = '';
+	if ($statusId === '' || !plugin_mastodon_remote_status_is_importable($status) || !plugin_mastodon_remote_status_matches_sync_start($options, $status)) {
+		return false;
+	}
+	$ancestors = isset($context ['ancestors']) && is_array($context ['ancestors']) ? array_values($context ['ancestors']) : array();
+	$descendants = isset($context ['descendants']) && is_array($context ['descendants']) ? array_values($context ['descendants']) : array();
+	$rootRemoteId = '';
+	$entryId = '';
+	$rootIndex = -1;
+	foreach ($ancestors as $index => $ancestor) {
+		if (!is_array($ancestor) || empty($ancestor ['id'])) {
+			continue;
+		}
+		$ancestorId = (string) $ancestor ['id'];
+		if (isset($state ['entries_remote'] [$ancestorId])) {
+			$mappedEntryId = (string) $state ['entries_remote'] [$ancestorId];
+			if ($mappedEntryId !== '' && entry_exists($mappedEntryId)) {
+				$rootRemoteId = $ancestorId;
+				$entryId = $mappedEntryId;
+				$rootIndex = (int) $index;
+				break;
+			}
+		}
+	}
+	if ($rootRemoteId === '' || $entryId === '') {
+		return false;
+	}
+	$combined = array();
+	for ($index = $rootIndex + 1; $index < count($ancestors); $index++) {
+		if (isset($ancestors [$index]) && is_array($ancestors [$index])) {
+			$combined [] = $ancestors [$index];
+		}
+	}
+	$combined [] = $status;
+	foreach ($descendants as $descendant) {
+		if (is_array($descendant)) {
+			$combined [] = $descendant;
+		}
+	}
+	$refreshedRemoteEntryId = $rootRemoteId;
+	plugin_mastodon_import_remote_context_descendants($options, $state, $entryId, $rootRemoteId, array('descendants' => $combined));
+	return isset($state ['comments_remote'] [$statusId]);
+}
+
+/**
+ * Process mention notifications as prioritized hints for replies on older synchronized threads.
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
+ * @param int $contextBudget
+ * @return array<string, mixed> Contains used_contexts and refreshed_context_ids.
+ */
+function plugin_mastodon_process_remote_reply_notifications(&$options, &$state, $contextBudget) {
+	$resultSummary = array('used_contexts' => 0, 'refreshed_context_ids' => array());
+	if (!plugin_mastodon_should_poll_reply_notifications($options)) {
+		return $resultSummary;
+	}
+	$contextBudget = max(0, (int) $contextBudget);
+	$sinceId = isset($state ['last_remote_notification_id']) ? (string) $state ['last_remote_notification_id'] : '';
+	$result = plugin_mastodon_fetch_reply_notifications($options, $sinceId);
+	if (empty($result ['ok'])) {
+		plugin_mastodon_log('Skipping reply-notification hints because notifications could not be fetched');
+		return $resultSummary;
+	}
+	$items = isset($result ['items']) && is_array($result ['items']) ? $result ['items'] : array();
+	$maxProcessedNotificationId = $sinceId;
+	$usedContexts = 0;
+	$refreshedContextIds = array();
+	foreach ($items as $notification) {
+		if (!is_array($notification)) {
+			continue;
+		}
+		$notificationId = isset($notification ['id']) ? (string) $notification ['id'] : '';
+		$type = isset($notification ['type']) ? (string) $notification ['type'] : '';
+		$status = isset($notification ['status']) && is_array($notification ['status']) ? $notification ['status'] : array();
+		if ($notificationId === '') {
+			continue;
+		}
+		$processed = false;
+		if ($type !== 'mention' || empty($status ['id']) || empty($status ['in_reply_to_id'])) {
+			$processed = true;
+		} elseif (isset($state ['comments_remote'] [(string) $status ['id']])) {
+			$processed = true;
+		} elseif (!plugin_mastodon_remote_status_is_importable($status) || !plugin_mastodon_remote_status_matches_sync_start($options, $status)) {
+			$processed = true;
+		} else {
+			$refreshedRemoteEntryId = '';
+			if (plugin_mastodon_import_remote_notification_reply($options, $state, $status, $refreshedRemoteEntryId)) {
+				if ($refreshedRemoteEntryId !== '') {
+					$refreshedContextIds [$refreshedRemoteEntryId] = true;
+				}
+				$processed = true;
+			} elseif ($usedContexts < $contextBudget) {
+				$context = plugin_mastodon_fetch_status_context($options, (string) $status ['id']);
+				$usedContexts++;
+				if (plugin_mastodon_import_remote_notification_context($options, $state, $status, $context, $refreshedRemoteEntryId) && $refreshedRemoteEntryId !== '') {
+					$refreshedContextIds [$refreshedRemoteEntryId] = true;
+				}
+				$processed = true;
+			}
+		}
+		if ($processed && ($maxProcessedNotificationId === '' || strcmp($notificationId, $maxProcessedNotificationId) > 0)) {
+			$maxProcessedNotificationId = $notificationId;
+		}
+	}
+	if ($maxProcessedNotificationId !== $sinceId) {
+		$state ['last_remote_notification_id'] = $maxProcessedNotificationId;
+	}
+	$resultSummary ['used_contexts'] = $usedContexts;
+	$resultSummary ['refreshed_context_ids'] = array_keys($refreshedContextIds);
+	return $resultSummary;
+}
+
+/**
  * Import remote Mastodon replies from a fetched thread context.
  * @param array<string, string> $options
  * @param array<string, mixed> $state
@@ -11041,12 +11312,13 @@ function plugin_mastodon_import_remote_context_descendants(&$options, &$state, $
  * Return the maximum number of known synchronized threads checked for replies per content sync run.
  * @return int
  */
-function plugin_mastodon_old_thread_context_rotation_limit() {
-	$limit = (int) PLUGIN_MASTODON_OLD_THREAD_CONTEXT_ROTATION_LIMIT;
+function plugin_mastodon_old_thread_context_rotation_limit($options = array()) {
 	if (isset($GLOBALS ['plugin_mastodon_test_old_thread_context_rotation_limit']) && is_numeric($GLOBALS ['plugin_mastodon_test_old_thread_context_rotation_limit'])) {
-		$limit = (int) $GLOBALS ['plugin_mastodon_test_old_thread_context_rotation_limit'];
+		return max(0, (int) $GLOBALS ['plugin_mastodon_test_old_thread_context_rotation_limit']);
 	}
-	return max(0, $limit);
+	$options = is_array($options) ? $options : array();
+	$limit = isset($options ['old_thread_context_limit']) ? plugin_mastodon_normalize_old_thread_context_limit($options ['old_thread_context_limit']) : (string) PLUGIN_MASTODON_OLD_THREAD_CONTEXT_ROTATION_LIMIT;
+	return (int) $limit;
 }
 
 /**
@@ -11057,12 +11329,12 @@ function plugin_mastodon_old_thread_context_rotation_limit() {
  * @param bool $force
  * @return array<string, string>
  */
-function plugin_mastodon_collect_known_entry_context_targets(&$state, $skipRemoteIds = array(), $options = array(), $force = false) {
+function plugin_mastodon_collect_known_entry_context_targets(&$state, $skipRemoteIds = array(), $options = array(), $force = false, $limit = null) {
 	$targets = array();
 	if (!plugin_mastodon_should_check_old_thread_replies($options)) {
 		return $targets;
 	}
-	$limit = plugin_mastodon_old_thread_context_rotation_limit();
+	$limit = $limit === null ? plugin_mastodon_old_thread_context_rotation_limit($options) : (int) $limit;
 	if ($limit <= 0) {
 		return $targets;
 	}
@@ -11172,7 +11444,18 @@ function plugin_mastodon_sync_remote_to_local(&$options, &$state, $force = true)
 		$refreshedContextIds [$statusId] = true;
 	}
 
-	$contextTargets = plugin_mastodon_collect_known_entry_context_targets($state, array_keys($refreshedContextIds), $options, $force);
+	$contextLimit = plugin_mastodon_old_thread_context_rotation_limit($options);
+	$notificationSummary = plugin_mastodon_process_remote_reply_notifications($options, $state, $contextLimit);
+	$notificationContextRequests = isset($notificationSummary ['used_contexts']) ? (int) $notificationSummary ['used_contexts'] : 0;
+	if (!empty($notificationSummary ['refreshed_context_ids']) && is_array($notificationSummary ['refreshed_context_ids'])) {
+		foreach ($notificationSummary ['refreshed_context_ids'] as $refreshedContextId) {
+			$refreshedContextId = (string) $refreshedContextId;
+			if ($refreshedContextId !== '') {
+				$refreshedContextIds [$refreshedContextId] = true;
+			}
+		}
+	}
+	$contextTargets = plugin_mastodon_collect_known_entry_context_targets($state, array_keys($refreshedContextIds), $options, $force, max(0, $contextLimit - $notificationContextRequests));
 	foreach ($contextTargets as $remoteEntryId => $localEntryId) {
 		plugin_mastodon_extend_time_limit(120);
 		$context = plugin_mastodon_fetch_status_context($options, $remoteEntryId);
@@ -12193,6 +12476,8 @@ function plugin_mastodon_admin_assign(&$smarty) {
 		'import_synced_comments_as_entries' => $options ['import_synced_comments_as_entries'],
 		'quote_imported_reply_parent' => $options ['quote_imported_reply_parent'],
 		'old_thread_reply_check' => $options ['old_thread_reply_check'],
+		'old_thread_context_limit' => $options ['old_thread_context_limit'],
+		'reply_notifications_available' => plugin_mastodon_should_poll_reply_notifications($options) ? '1' : '0',
 		'delete_sync_enabled' => $options ['delete_sync_enabled'],
 		'client_id' => $options ['client_id'],
 		'client_secret' => $options ['client_secret'] !== '' ? '••••••••' : '',
@@ -12205,6 +12490,7 @@ function plugin_mastodon_admin_assign(&$smarty) {
 
 	$smarty->assign('mastodon_state', $adminState);
 	$smarty->assign('mastodon_scheduled_window_choices', plugin_mastodon_scheduled_window_choices());
+	$smarty->assign('mastodon_old_thread_context_limit_choices', plugin_mastodon_old_thread_context_limit_choices());
 	$smarty->assign('mastodon_authorize_url', $authorizeUrl);
 	$smarty->assign('mastodon_temp_dir', PLUGIN_MASTODON_STATE_DIR);
 	$smarty->assign('mastodon_instance_info_rows', plugin_mastodon_admin_instance_info_rows($options));
@@ -12248,6 +12534,7 @@ if (class_exists('AdminPanelAction')) {
 				$options ['import_synced_comments_as_entries'] = plugin_mastodon_normalize_import_synced_comments_as_entries(isset($_POST ['import_synced_comments_as_entries']) ? $_POST ['import_synced_comments_as_entries'] : '');
 				$options ['quote_imported_reply_parent'] = plugin_mastodon_normalize_quote_imported_reply_parent(isset($_POST ['quote_imported_reply_parent']) ? $_POST ['quote_imported_reply_parent'] : '');
 				$options ['old_thread_reply_check'] = plugin_mastodon_normalize_old_thread_reply_check(isset($_POST ['old_thread_reply_check']) ? $_POST ['old_thread_reply_check'] : '');
+				$options ['old_thread_context_limit'] = plugin_mastodon_normalize_old_thread_context_limit(isset($_POST ['old_thread_context_limit']) ? $_POST ['old_thread_context_limit'] : '');
 				$options ['delete_sync_enabled'] = plugin_mastodon_normalize_delete_sync_enabled(isset($_POST ['delete_sync_enabled']) ? $_POST ['delete_sync_enabled'] : '');
 				$options ['authorization_code'] = trim(isset($_POST ['authorization_code']) ? (string) $_POST ['authorization_code'] : '');
 				plugin_mastodon_save_options($options);
