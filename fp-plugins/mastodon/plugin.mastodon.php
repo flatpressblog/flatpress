@@ -35,8 +35,26 @@ if (!defined('PLUGIN_MASTODON_SCHEDULER_STATE_FILE')) {
 	 */
 	define('PLUGIN_MASTODON_SCHEDULER_STATE_FILE', PLUGIN_MASTODON_STATE_DIR . 'scheduler-state.json');
 }
+if (!defined('PLUGIN_MASTODON_COMMENT_SHARD_DIR')) {
+	/**
+	 * Per-entry comment mapping shards.
+	 *
+	 * The authoritative state.json keeps global sync metadata and reverse indices.
+	 * High-volume comment mappings are stored by parent entry so synchronization
+	 * code can evolve toward bounded worksets without changing Mastodon API
+	 * payloads.
+	 */
+	define('PLUGIN_MASTODON_COMMENT_SHARD_DIR', PLUGIN_MASTODON_STATE_DIR . 'state-comments' . DIRECTORY_SEPARATOR);
+}
 if (!defined('PLUGIN_MASTODON_LOCK_FILE')) {
 	define('PLUGIN_MASTODON_LOCK_FILE', PLUGIN_MASTODON_STATE_DIR . 'sync.lock');
+}
+if (!defined('PLUGIN_MASTODON_STATE_WRITE_LOCK_FILE')) {
+	/**
+	 * Serializes all state.json/comment-shard mutations, including post-save
+	 * dirty hooks that do not run under the long-lived synchronization lock.
+	 */
+	define('PLUGIN_MASTODON_STATE_WRITE_LOCK_FILE', PLUGIN_MASTODON_STATE_DIR . 'state-write.lock');
 }
 if (!defined('PLUGIN_MASTODON_GUARD_FILE')) {
 	define('PLUGIN_MASTODON_GUARD_FILE', PLUGIN_MASTODON_STATE_DIR . 'sync.guard.json');
@@ -544,6 +562,12 @@ function plugin_mastodon_default_state() {
 		'entries_remote' => array(),
 		'comments' => array(),
 		'comments_remote' => array(),
+		'comment_shards' => array(
+			'version' => 1,
+			'storage' => 'inline',
+			'count' => 0,
+			'entries' => array()
+		),
 		'dirty_entries' => array(),
 		'dirty_comments' => array(),
 		'comment_tombstones' => array(),
@@ -1977,7 +2001,7 @@ function plugin_mastodon_save_options($options) {
 		plugin_mastodon_runtime_cache_set('core', 'fp_config', is_array($GLOBALS ['EARLY_FP_CONFIG']) ? $GLOBALS ['EARLY_FP_CONFIG'] : array());
 		plugin_mastodon_runtime_cache_set('options', 'normalized', $merged);
 		if ($merged ['delete_sync_enabled'] !== '1') {
-			$state = plugin_mastodon_state_read();
+			$state = plugin_mastodon_state_read(array());
 			$stateChanged = false;
 			if (!empty($state ['deletions_pending'])) {
 				$state ['deletions_pending'] = 0;
@@ -2791,6 +2815,1173 @@ function plugin_mastodon_ensure_state_dir() {
 }
 
 /**
+ * Ensure that the comment-shard directory exists.
+ * @return bool
+ */
+function plugin_mastodon_ensure_comment_shard_dir() {
+	return plugin_mastodon_ensure_state_dir() && fs_mkdir(PLUGIN_MASTODON_COMMENT_SHARD_DIR);
+}
+
+/**
+ * Return whether a string looks like a FlatPress entry id.
+ * @param string $entryId
+ * @return bool
+ */
+function plugin_mastodon_state_is_entry_id($entryId) {
+	return (bool) preg_match('/^entry[0-9]{6}-[0-9]{6}$/', (string) $entryId);
+}
+
+/**
+ * Return the entry id portion from a compound comment-state key.
+ * @param string $commentKey
+ * @return string
+ */
+function plugin_mastodon_state_entry_id_from_comment_key($commentKey) {
+	$parts = explode(':', (string) $commentKey, 2);
+	$entryId = isset($parts [0]) ? (string) $parts [0] : '';
+	return plugin_mastodon_state_is_entry_id($entryId) ? $entryId : '';
+}
+
+/**
+ * Return the shard path for an entry's comment mappings.
+ * @param string $entryId
+ * @return string
+ */
+function plugin_mastodon_state_comment_shard_file($entryId) {
+	$entryId = (string) $entryId;
+	if (!plugin_mastodon_state_is_entry_id($entryId)) {
+		return '';
+	}
+	$year = substr($entryId, 5, 2);
+	$month = substr($entryId, 7, 2);
+	return PLUGIN_MASTODON_COMMENT_SHARD_DIR . $year . DIRECTORY_SEPARATOR . $month . DIRECTORY_SEPARATOR . $entryId . '.json';
+}
+
+/**
+ * Return the relative shard path used in state metadata.
+ * @param string $entryId
+ * @return string
+ */
+function plugin_mastodon_state_comment_shard_relative_path($entryId) {
+	$entryId = (string) $entryId;
+	if (!plugin_mastodon_state_is_entry_id($entryId)) {
+		return '';
+	}
+	return substr($entryId, 5, 2) . '/' . substr($entryId, 7, 2) . '/' . $entryId . '.json';
+}
+
+/**
+ * Write a JSON payload atomically when possible.
+ * @param string $file
+ * @param string $payload
+ * @return bool
+ */
+function plugin_mastodon_state_write_json_file($file, $payload) {
+	$file = (string) $file;
+	if (isset($GLOBALS ['plugin_mastodon_test_write_json_log']) && is_array($GLOBALS ['plugin_mastodon_test_write_json_log'])) {
+		$GLOBALS ['plugin_mastodon_test_write_json_log'] [] = $file;
+	}
+	if (isset($GLOBALS ['plugin_mastodon_test_write_json_fail_for'])) {
+		$failFor = $GLOBALS ['plugin_mastodon_test_write_json_fail_for'];
+		if (!is_array($failFor)) {
+			$failFor = array($failFor);
+		}
+		foreach ($failFor as $needle) {
+			$needle = (string) $needle;
+			if ($needle !== '' && (basename($file) === $needle || strpos($file, $needle) !== false)) {
+				return false;
+			}
+		}
+	}
+	$dir = dirname($file);
+	if (!is_dir($dir) && !@mkdir($dir, 0777, true)) {
+		return false;
+	}
+	$tmp = $file . '.tmp.' . str_replace('.', '', uniqid('', true));
+	if (@file_put_contents($tmp, $payload) === false) {
+		@unlink($tmp);
+		return false;
+	}
+	plugin_mastodon_apply_file_permissions($tmp);
+	if (!@rename($tmp, $file)) {
+		@unlink($tmp);
+		return false;
+	}
+	plugin_mastodon_apply_file_permissions($file);
+	return true;
+}
+
+/**
+ * Acquire the short state-write lock used for multi-file state mutations.
+ * @return resource|false
+ */
+function plugin_mastodon_state_write_lock_acquire() {
+	plugin_mastodon_ensure_state_dir();
+	$handle = @fopen(PLUGIN_MASTODON_STATE_WRITE_LOCK_FILE, 'c+');
+	if (!$handle) {
+		return false;
+	}
+	plugin_mastodon_apply_file_permissions(PLUGIN_MASTODON_STATE_WRITE_LOCK_FILE);
+	$deadline = microtime(true) + 5.0;
+	do {
+		if (@flock($handle, LOCK_EX | LOCK_NB)) {
+			return $handle;
+		}
+		usleep(50000);
+	} while (microtime(true) < $deadline);
+	@fclose($handle);
+	return false;
+}
+
+/**
+ * Release a state-write lock handle.
+ * @param resource|false $handle
+ * @return void
+ */
+function plugin_mastodon_state_write_lock_release($handle) {
+	if (is_resource($handle)) {
+		@flock($handle, LOCK_UN);
+		@fclose($handle);
+	}
+}
+
+/**
+ * Decode a JSON string literal starting at the current offset.
+ * @param string $json
+ * @param int $offset
+ * @return string|null
+ */
+function plugin_mastodon_json_decode_string_at($json, &$offset) {
+	$length = strlen($json);
+	if ($offset >= $length || $json[$offset] !== '"') {
+		return null;
+	}
+	$start = $offset;
+	$offset++;
+	$escaped = false;
+	while ($offset < $length) {
+		$char = $json[$offset];
+		if ($escaped) {
+			$escaped = false;
+			$offset++;
+			continue;
+		}
+		if ($char === '\\') {
+			$escaped = true;
+			$offset++;
+			continue;
+		}
+		if ($char === '"') {
+			$offset++;
+			$literal = substr($json, $start, $offset - $start);
+			$value = json_decode($literal, true);
+			return is_string($value) ? $value : null;
+		}
+		$offset++;
+	}
+	return null;
+}
+
+/**
+ * Skip JSON whitespace in a string scanner.
+ * @param string $json
+ * @param int $offset
+ * @return void
+ */
+function plugin_mastodon_json_skip_ws($json, &$offset) {
+	$length = strlen($json);
+	while ($offset < $length) {
+		$char = $json[$offset];
+		if ($char !== ' ' && $char !== "\t" && $char !== "\r" && $char !== "\n") {
+			break;
+		}
+		$offset++;
+	}
+}
+
+/**
+ * Find a top-level JSON property value in an object payload without decoding the whole object.
+ * @param string $json
+ * @param string $property
+ * @return array<string, int>
+ */
+function plugin_mastodon_json_top_level_property_bounds($json, $property) {
+	$length = strlen($json);
+	$offset = 0;
+	plugin_mastodon_json_skip_ws($json, $offset);
+	if ($offset >= $length || $json[$offset] !== '{') {
+		return array();
+	}
+	$offset++;
+	while ($offset < $length) {
+		plugin_mastodon_json_skip_ws($json, $offset);
+		if ($offset < $length && $json[$offset] === '}') {
+			return array();
+		}
+		$nameStart = $offset;
+		$name = plugin_mastodon_json_decode_string_at($json, $offset);
+		if ($name === null) {
+			return array();
+		}
+		plugin_mastodon_json_skip_ws($json, $offset);
+		if ($offset >= $length || $json[$offset] !== ':') {
+			return array();
+		}
+		$offset++;
+		plugin_mastodon_json_skip_ws($json, $offset);
+		$valueStart = $offset;
+		$depth = 0;
+		$inString = false;
+		$escaped = false;
+		while ($offset < $length) {
+			$char = $json[$offset];
+			if ($inString) {
+				if ($escaped) {
+					$escaped = false;
+				} elseif ($char === '\\') {
+					$escaped = true;
+				} elseif ($char === '"') {
+					$inString = false;
+				}
+				$offset++;
+				continue;
+			}
+			if ($char === '"') {
+				$inString = true;
+				$offset++;
+				continue;
+			}
+			if ($char === '{' || $char === '[') {
+				$depth++;
+				$offset++;
+				continue;
+			}
+			if ($char === '}' || $char === ']') {
+				if ($depth === 0) {
+					break;
+				}
+				$depth--;
+				$offset++;
+				continue;
+			}
+			if ($char === ',' && $depth === 0) {
+				break;
+			}
+			$offset++;
+		}
+		$valueEnd = $offset;
+		if ((string) $name === (string) $property) {
+			$propertyStart = $nameStart;
+			$propertyEnd = $valueEnd;
+			$scan = $offset;
+			plugin_mastodon_json_skip_ws($json, $scan);
+			if ($scan < $length && $json[$scan] === ',') {
+				$propertyEnd = $scan + 1;
+			} else {
+				$scan = $propertyStart - 1;
+				while ($scan >= 0 && ($json[$scan] === ' ' || $json[$scan] === "\t" || $json[$scan] === "\r" || $json[$scan] === "\n")) {
+					$scan--;
+				}
+				if ($scan >= 0 && $json[$scan] === ',') {
+					$propertyStart = $scan;
+				}
+			}
+			return array(
+				'property_start' => $propertyStart,
+				'property_end' => $propertyEnd,
+				'value_start' => $valueStart,
+				'value_end' => $valueEnd
+			);
+		}
+		plugin_mastodon_json_skip_ws($json, $offset);
+		if ($offset < $length && $json[$offset] === ',') {
+			$offset++;
+			continue;
+		}
+	}
+	return array();
+}
+
+/**
+ * Create a timestamped backup of the legacy main state before an inline-to-shard migration mutates it.
+ * @return string|false Backup path on success, false on failure
+ */
+function plugin_mastodon_state_create_migration_backup() {
+	if (!@is_file(PLUGIN_MASTODON_STATE_FILE)) {
+		return '';
+	}
+	$dir = dirname(PLUGIN_MASTODON_STATE_FILE);
+	if (!@is_dir($dir) && !@mkdir($dir, 0777, true)) {
+		return false;
+	}
+	$suffix = gmdate('Ymd-His') . '-' . str_replace('.', '', uniqid('', true));
+	$backupFile = $dir . DIRECTORY_SEPARATOR . 'state.json.migration-backup-' . $suffix . '.json';
+	if (!@copy(PLUGIN_MASTODON_STATE_FILE, $backupFile)) {
+		return false;
+	}
+	plugin_mastodon_apply_file_permissions($backupFile);
+	return $backupFile;
+}
+
+/**
+ * Iterate a legacy inline comments object and persist per-entry shards without building one giant comments array.
+ * @param string $commentsJson
+ * @return array<string, array<string, mixed>>|false
+ */
+function plugin_mastodon_state_migrate_inline_comments_to_shards($commentsJson) {
+	$commentsJson = trim((string) $commentsJson);
+	if ($commentsJson === '' || $commentsJson === '{}') {
+		return array();
+	}
+	$length = strlen($commentsJson);
+	$offset = 0;
+	plugin_mastodon_json_skip_ws($commentsJson, $offset);
+	if ($offset >= $length || $commentsJson[$offset] !== '{') {
+		return false;
+	}
+	$offset++;
+	$currentEntryId = '';
+	$currentComments = array();
+	$entries = array();
+
+	$flush = function () use (&$currentEntryId, &$currentComments, &$entries) {
+		if (strlen((string) $currentEntryId) === 0 || count($currentComments) === 0) {
+			$currentEntryId = '';
+			$currentComments = array();
+			return true;
+		}
+		$file = plugin_mastodon_state_comment_shard_file($currentEntryId);
+		if ($file === '') {
+			return false;
+		}
+		$existingComments = plugin_mastodon_state_read_comment_shard($currentEntryId);
+		if ($existingComments !== array()) {
+			$currentComments = array_merge($existingComments, $currentComments);
+		}
+		ksort($currentComments, SORT_STRING);
+		$payload = array(
+			'version' => 1,
+			'entry_id' => $currentEntryId,
+			'count' => count($currentComments),
+			'updated_at' => date('Y-m-d H:i:s'),
+			'comments' => $currentComments
+		);
+		$json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		if (!is_string($json) || !plugin_mastodon_state_write_json_file($file, $json . PHP_EOL)) {
+			return false;
+		}
+		$entries[$currentEntryId] = array(
+			'path' => plugin_mastodon_state_comment_shard_relative_path($currentEntryId),
+			'count' => count($currentComments),
+			'mtime' => (int) @filemtime($file)
+		);
+		$currentEntryId = '';
+		$currentComments = array();
+		return true;
+	};
+
+	while ($offset < $length) {
+		plugin_mastodon_json_skip_ws($commentsJson, $offset);
+		if ($offset < $length && $commentsJson[$offset] === '}') {
+			break;
+		}
+		$key = plugin_mastodon_json_decode_string_at($commentsJson, $offset);
+		if ($key === null) {
+			return false;
+		}
+		plugin_mastodon_json_skip_ws($commentsJson, $offset);
+		if ($offset >= $length || $commentsJson[$offset] !== ':') {
+			return false;
+		}
+		$offset++;
+		plugin_mastodon_json_skip_ws($commentsJson, $offset);
+		$valueStart = $offset;
+		$depth = 0;
+		$inString = false;
+		$escaped = false;
+		while ($offset < $length) {
+			$char = $commentsJson[$offset];
+			if ($inString) {
+				if ($escaped) {
+					$escaped = false;
+				} elseif ($char === '\\') {
+					$escaped = true;
+				} elseif ($char === '"') {
+					$inString = false;
+				}
+				$offset++;
+				continue;
+			}
+			if ($char === '"') {
+				$inString = true;
+				$offset++;
+				continue;
+			}
+			if ($char === '{' || $char === '[') {
+				$depth++;
+				$offset++;
+				continue;
+			}
+			if ($char === '}' || $char === ']') {
+				if ($depth === 0) {
+					break;
+				}
+				$depth--;
+				$offset++;
+				continue;
+			}
+			if ($char === ',' && $depth === 0) {
+				break;
+			}
+			$offset++;
+		}
+		$valueJson = substr($commentsJson, $valueStart, $offset - $valueStart);
+		$meta = json_decode($valueJson, true);
+		if (is_array($meta)) {
+			$entryId = !empty($meta['entry_id']) ? (string) $meta['entry_id'] : plugin_mastodon_state_entry_id_from_comment_key((string) $key);
+			if (plugin_mastodon_state_is_entry_id($entryId)) {
+				if ($currentEntryId !== '' && $entryId !== $currentEntryId) {
+					if (!$flush()) {
+						return false;
+					}
+				}
+				$currentEntryId = $entryId;
+				$currentComments[(string) $key] = $meta;
+			}
+		}
+		plugin_mastodon_json_skip_ws($commentsJson, $offset);
+		if ($offset < $length && $commentsJson[$offset] === ',') {
+			$offset++;
+			continue;
+		}
+	}
+	if (!$flush()) {
+		return false;
+	}
+	ksort($entries, SORT_STRING);
+	return $entries;
+}
+
+/**
+ * Migrate legacy inline comment mappings to per-entry shards without decoding the high-volume comments array.
+ * @param string $json
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_state_try_streaming_legacy_migration($json) {
+	$commentsBounds = plugin_mastodon_json_top_level_property_bounds($json, 'comments');
+	if ($commentsBounds === array()) {
+		return array();
+	}
+	$commentsJson = substr($json, $commentsBounds['value_start'], $commentsBounds['value_end'] - $commentsBounds['value_start']);
+	if (trim($commentsJson) === '{}' || trim($commentsJson) === '[]') {
+		return array();
+	}
+	$commentsRemovedJson = substr($json, 0, $commentsBounds['value_start']) . '{}' . substr($json, $commentsBounds['value_end']);
+	$main = json_decode($commentsRemovedJson, true);
+	if (!is_array($main)) {
+		return array();
+	}
+	$lock = plugin_mastodon_state_write_lock_acquire();
+	if (!$lock) {
+		return array();
+	}
+	$backupFile = plugin_mastodon_state_create_migration_backup();
+	if ($backupFile === false) {
+		plugin_mastodon_state_write_lock_release($lock);
+		return array();
+	}
+	$entries = plugin_mastodon_state_migrate_inline_comments_to_shards($commentsJson);
+	if ($entries === false) {
+		plugin_mastodon_state_write_lock_release($lock);
+		return array();
+	}
+	$main = plugin_mastodon_state_normalize($main);
+	$main['comments'] = array();
+	$main['comment_shards'] = array(
+		'version' => 1,
+		'storage' => 'per_entry',
+		'count' => count($entries),
+		'entries' => $entries
+	);
+	$mainJson = json_encode($main, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	if (!is_string($mainJson) || !plugin_mastodon_state_write_json_file(PLUGIN_MASTODON_STATE_FILE, $mainJson . PHP_EOL)) {
+		plugin_mastodon_state_write_lock_release($lock);
+		return array();
+	}
+	plugin_mastodon_state_write_lock_release($lock);
+	plugin_mastodon_runtime_cache_clear('state');
+	return $main;
+}
+
+/**
+ * Return the entry ids referenced by pending comment rechecks.
+ * @param array<string, mixed> $state
+ * @return array<int, string>
+ */
+function plugin_mastodon_state_pending_recheck_entry_ids($state) {
+	$ids = array();
+	$queue = isset($state['pending_comment_remote_rechecks']) && is_array($state['pending_comment_remote_rechecks']) ? $state['pending_comment_remote_rechecks'] : array();
+	foreach ($queue as $record) {
+		if (is_array($record) && !empty($record['entry_id'])) {
+			$entryId = (string) $record['entry_id'];
+			if (plugin_mastodon_state_is_entry_id($entryId)) {
+				$ids[$entryId] = true;
+			}
+		}
+	}
+	ksort($ids, SORT_STRING);
+	return array_keys($ids);
+}
+
+/**
+ * Drop one loaded comment shard from a partial state's in-memory working set.
+ * @param array<string, mixed> $state
+ * @param string $entryId
+ * @return void
+ */
+function plugin_mastodon_state_unload_comment_shard_from_memory(&$state, $entryId) {
+	$entryId = (string) $entryId;
+	if ($entryId === '' || !isset($state['comments']) || !is_array($state['comments'])) {
+		return;
+	}
+	foreach (array_keys($state['comments']) as $commentKey) {
+		if (plugin_mastodon_state_entry_id_from_comment_key((string) $commentKey) === $entryId) {
+			unset($state['comments'][$commentKey]);
+		}
+	}
+	$loaded = array();
+	foreach (plugin_mastodon_state_loaded_comment_entry_ids($state) as $loadedEntryId) {
+		if ((string) $loadedEntryId !== $entryId) {
+			$loaded[] = (string) $loadedEntryId;
+		}
+	}
+	$state['__comment_shards_partial'] = true;
+	$state['__comment_shard_loaded_entry_ids'] = $loaded;
+}
+
+/**
+ * Group comment mappings by their parent entry id.
+ * @param array<string, mixed> $state
+ * @return array<string, array<string, array<string, mixed>>>
+ */
+function plugin_mastodon_state_group_comments_by_entry($state) {
+	$groups = array();
+	$comments = plugin_mastodon_state_comment_mappings($state);
+	foreach ($comments as $commentKey => $meta) {
+		if (!is_array($meta)) {
+			continue;
+		}
+		$entryId = !empty($meta ['entry_id']) ? (string) $meta ['entry_id'] : plugin_mastodon_state_entry_id_from_comment_key((string) $commentKey);
+		if (!plugin_mastodon_state_is_entry_id($entryId)) {
+			continue;
+		}
+		if (!isset($groups [$entryId])) {
+			$groups [$entryId] = array();
+		}
+		$groups [$entryId] [(string) $commentKey] = $meta;
+	}
+	ksort($groups, SORT_STRING);
+	foreach (array_keys($groups) as $entryId) {
+		ksort($groups [$entryId], SORT_STRING);
+	}
+	return $groups;
+}
+
+/**
+ * Load one per-entry comment shard.
+ * @param string $entryId
+ * @return array<string, array<string, mixed>>
+ */
+function plugin_mastodon_state_read_comment_shard($entryId) {
+	if (isset($GLOBALS ['plugin_mastodon_test_comment_shard_read_count'])) {
+		$GLOBALS ['plugin_mastodon_test_comment_shard_read_count'] = (int) $GLOBALS ['plugin_mastodon_test_comment_shard_read_count'] + 1;
+	}
+	if (isset($GLOBALS ['plugin_mastodon_test_comment_shard_read_ids']) && is_array($GLOBALS ['plugin_mastodon_test_comment_shard_read_ids'])) {
+		$GLOBALS ['plugin_mastodon_test_comment_shard_read_ids'] [] = (string) $entryId;
+	}
+	$file = plugin_mastodon_state_comment_shard_file($entryId);
+	if ($file === '' || !@is_file($file)) {
+		return array();
+	}
+	$json = plugin_mastodon_io_read_file_uncached($file, true);
+	if (!is_string($json) || trim($json) === '') {
+		return array();
+	}
+	$data = json_decode($json, true);
+	if (!is_array($data)) {
+		return array();
+	}
+	$comments = isset($data ['comments']) && is_array($data ['comments']) ? $data ['comments'] : array();
+	$normalized = array();
+	foreach ($comments as $commentKey => $meta) {
+		if (is_array($meta)) {
+			$normalized [(string) $commentKey] = $meta;
+		}
+	}
+	ksort($normalized, SORT_STRING);
+	return $normalized;
+}
+
+/**
+ * Write all per-entry comment shards.
+ * @param array<string, mixed> $state
+ * @return array{ok:bool,entries:array<string, array<string, mixed>>,error:string}
+ */
+function plugin_mastodon_state_write_comment_shards($state) {
+	$groups = plugin_mastodon_state_group_comments_by_entry($state);
+	$partial = plugin_mastodon_state_comment_shards_partial($state);
+	$loaded = array();
+	foreach (plugin_mastodon_state_loaded_comment_entry_ids($state) as $entryId) {
+		$loaded [(string) $entryId] = true;
+	}
+	$existingShards = plugin_mastodon_state_comment_shard_entries($state);
+	$entries = $partial ? $existingShards : array();
+	if (!plugin_mastodon_ensure_comment_shard_dir()) {
+		return array('ok' => false, 'entries' => array(), 'error' => 'comment_shard_write_failed');
+	}
+	if ($partial) {
+		foreach (array_keys($loaded) as $entryId) {
+			if (!isset($groups [$entryId])) {
+				$file = plugin_mastodon_state_comment_shard_file($entryId);
+				if ($file !== '' && @is_file($file)) {
+					@unlink($file);
+				}
+				unset($entries [$entryId]);
+			}
+		}
+	}
+	foreach ($groups as $entryId => $comments) {
+		if ($partial && empty($loaded [$entryId])) {
+			continue;
+		}
+		$file = plugin_mastodon_state_comment_shard_file($entryId);
+		if ($file === '') {
+			return array('ok' => false, 'entries' => array(), 'error' => 'comment_shard_file_invalid: ' . $entryId);
+		}
+		$payload = array(
+			'version' => 1,
+			'entry_id' => $entryId,
+			'count' => count($comments),
+			'updated_at' => date('Y-m-d H:i:s'),
+			'comments' => $comments
+		);
+		$json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		if (!is_string($json) || !plugin_mastodon_state_write_json_file($file, $json . PHP_EOL)) {
+			return array('ok' => false, 'entries' => array(), 'error' => 'comment_shard_write_failed: ' . $entryId);
+		}
+		$entries [$entryId] = array(
+			'path' => plugin_mastodon_state_comment_shard_relative_path($entryId),
+			'count' => count($comments),
+			'mtime' => (int) @filemtime($file)
+		);
+	}
+	ksort($entries, SORT_STRING);
+	return array('ok' => true, 'entries' => $entries, 'error' => '');
+}
+
+/**
+ * Build the main state payload without high-volume inline comment mappings.
+ * @param array<string, mixed> $state
+ * @param array<string, array<string, mixed>> $shardEntries
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_state_main_payload($state, $shardEntries) {
+	$main = $state;
+	unset($main ['__comment_shards_partial'], $main ['__comment_shard_loaded_entry_ids']);
+	$main ['comments'] = array();
+	$main ['comment_shards'] = array(
+		'version' => 1,
+		'storage' => 'per_entry',
+		'count' => count($shardEntries),
+		'entries' => $shardEntries
+	);
+	return $main;
+}
+
+/**
+ * Load comment shards into a state array.
+ * @param array<string, mixed> $state
+ * @param array<int, string>|null $entryIds
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_state_load_comment_shards($state, $entryIds = null) {
+	if (!isset($state ['comments']) || !is_array($state ['comments'])) {
+		plugin_mastodon_state_set_comment_mappings($state, array());
+	}
+	$entries = plugin_mastodon_state_comment_shard_entries($state);
+	$partial = is_array($entryIds);
+	$wanted = array();
+	if ($partial) {
+		foreach ($entryIds as $entryId) {
+			$entryId = (string) $entryId;
+			if ($entryId !== '') {
+				$wanted [$entryId] = true;
+			}
+		}
+		ksort($wanted, SORT_STRING);
+		$state ['__comment_shards_partial'] = true;
+		$state ['__comment_shard_loaded_entry_ids'] = array_keys($wanted);
+	}
+	if ($entries === array()) {
+		return $state;
+	}
+	foreach ($entries as $entryId => $meta) {
+		$entryId = (string) $entryId;
+		if ($partial && empty($wanted [$entryId])) {
+			continue;
+		}
+		$comments = plugin_mastodon_state_read_comment_shard($entryId);
+		foreach ($comments as $commentKey => $commentMeta) {
+			$state ['comments'] [$commentKey] = $commentMeta;
+		}
+	}
+	ksort($state ['comments'], SORT_STRING);
+	return $state;
+}
+
+/**
+ * Return whether a state array only contains a subset of comment shards.
+ * @param array<string, mixed> $state
+ * @return bool
+ */
+function plugin_mastodon_state_comment_shards_partial($state) {
+	return !empty($state ['__comment_shards_partial']);
+}
+
+/**
+ * Return the entry ids whose comment shards are loaded in a partial state.
+ * @param array<string, mixed> $state
+ * @return array<int, string>
+ */
+function plugin_mastodon_state_loaded_comment_entry_ids($state) {
+	$loaded = isset($state ['__comment_shard_loaded_entry_ids']) && is_array($state ['__comment_shard_loaded_entry_ids']) ? $state ['__comment_shard_loaded_entry_ids'] : array();
+	$ids = array();
+	foreach ($loaded as $entryId) {
+		$entryId = (string) $entryId;
+		if ($entryId !== '') {
+			$ids [$entryId] = true;
+		}
+	}
+	ksort($ids, SORT_STRING);
+	return array_keys($ids);
+}
+
+/**
+ * Check whether one entry's comment shard is loaded into the state array.
+ * @param array<string, mixed> $state
+ * @param string $entryId
+ * @return bool
+ */
+function plugin_mastodon_state_comment_entry_loaded($state, $entryId) {
+	if (!plugin_mastodon_state_comment_shards_partial($state)) {
+		return true;
+	}
+	$entryId = (string) $entryId;
+	return $entryId !== '' && in_array($entryId, plugin_mastodon_state_loaded_comment_entry_ids($state), true);
+}
+
+/**
+ * Mark one entry's comment shard as loaded in a partial state.
+ * @param array<string, mixed> $state
+ * @param string $entryId
+ * @return void
+ */
+function plugin_mastodon_state_mark_comment_entry_loaded(&$state, $entryId) {
+	$entryId = (string) $entryId;
+	if ($entryId === '') {
+		return;
+	}
+	$loaded = plugin_mastodon_state_loaded_comment_entry_ids($state);
+	if (!in_array($entryId, $loaded, true)) {
+		$loaded [] = $entryId;
+		sort($loaded, SORT_STRING);
+	}
+	$state ['__comment_shards_partial'] = true;
+	$state ['__comment_shard_loaded_entry_ids'] = $loaded;
+}
+
+/**
+ * Load one entry comment shard into a partial state when needed.
+ * @param array<string, mixed> $state
+ * @param string $entryId
+ * @return void
+ */
+function plugin_mastodon_state_load_comment_shard_into(&$state, $entryId) {
+	$entryId = (string) $entryId;
+	if ($entryId === '' || plugin_mastodon_state_comment_entry_loaded($state, $entryId)) {
+		return;
+	}
+	if (!isset($state ['comments']) || !is_array($state ['comments'])) {
+		plugin_mastodon_state_set_comment_mappings($state, array());
+	}
+	$comments = plugin_mastodon_state_read_comment_shard($entryId);
+	foreach ($comments as $commentKey => $commentMeta) {
+		$state ['comments'] [(string) $commentKey] = $commentMeta;
+	}
+	ksort($state ['comments'], SORT_STRING);
+	plugin_mastodon_state_mark_comment_entry_loaded($state, $entryId);
+}
+
+/**
+ * Return entry ids with known comment shards.
+ * @param array<string, mixed> $state
+ * @return array<int, string>
+ */
+function plugin_mastodon_state_comment_shard_entry_ids($state) {
+	$entries = plugin_mastodon_state_comment_shard_entries($state);
+	$ids = array();
+	foreach (array_keys($entries) as $entryId) {
+		$entryId = (string) $entryId;
+		if ($entryId !== '') {
+			$ids [$entryId] = true;
+		}
+	}
+	ksort($ids, SORT_STRING);
+	return array_keys($ids);
+}
+
+/**
+ * Load every comment shard into a state array for full-map maintenance paths.
+ * @param array<string, mixed> $state
+ * @return void
+ */
+function plugin_mastodon_state_load_all_comment_shards_into(&$state) {
+	foreach (plugin_mastodon_state_comment_shard_entry_ids($state) as $entryId) {
+		plugin_mastodon_state_load_comment_shard_into($state, $entryId);
+	}
+	unset($state ['__comment_shards_partial'], $state ['__comment_shard_loaded_entry_ids']);
+}
+
+
+/**
+ * Return all comment shard files currently present on disk keyed by entry id.
+ * @return array<string, string>
+ */
+function plugin_mastodon_state_comment_shard_files() {
+	$filesByEntry = array();
+	$dir = PLUGIN_MASTODON_COMMENT_SHARD_DIR;
+	if (!@is_dir($dir)) {
+		return $filesByEntry;
+	}
+	$years = @scandir($dir);
+	if (!is_array($years)) {
+		return $filesByEntry;
+	}
+	foreach ($years as $year) {
+		if ($year === '.' || $year === '..') {
+			continue;
+		}
+		$yearDir = $dir . $year . DIRECTORY_SEPARATOR;
+		if (!@is_dir($yearDir)) {
+			continue;
+		}
+		$months = @scandir($yearDir);
+		if (!is_array($months)) {
+			continue;
+		}
+		foreach ($months as $month) {
+			if ($month === '.' || $month === '..') {
+				continue;
+			}
+			$monthDir = $yearDir . $month . DIRECTORY_SEPARATOR;
+			if (!@is_dir($monthDir)) {
+				continue;
+			}
+			$files = @scandir($monthDir);
+			if (!is_array($files)) {
+				continue;
+			}
+			foreach ($files as $fileName) {
+				if (!preg_match('/^(entry[0-9]{6}-[0-9]{6})\.json$/', $fileName, $match)) {
+					continue;
+				}
+				$entryId = (string) $match [1];
+				$filesByEntry [$entryId] = $monthDir . $fileName;
+			}
+		}
+	}
+	ksort($filesByEntry, SORT_STRING);
+	return $filesByEntry;
+}
+
+/**
+ * Scan shard files and compare them with the main-state metadata and reverse comment index.
+ * @param array<string, mixed>|null $state
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_state_diagnose_comment_shards($state = null) {
+	if ($state === null) {
+		$state = plugin_mastodon_state_read(array());
+	} else {
+		$state = plugin_mastodon_state_normalize(is_array($state) ? $state : array());
+	}
+	$errors = array();
+	$warnings = array();
+	$entries = array();
+	$rebuiltRemote = array();
+	$knownShards = plugin_mastodon_state_comment_shard_entries($state);
+	$filesByEntry = plugin_mastodon_state_comment_shard_files();
+	$commentCount = 0;
+
+	foreach ($filesByEntry as $entryId => $file) {
+		$json = plugin_mastodon_io_read_file_uncached($file, true);
+		if (!is_string($json) || trim($json) === '') {
+			$errors [] = 'empty shard: ' . $entryId;
+			continue;
+		}
+		$data = json_decode($json, true);
+		if (!is_array($data)) {
+			$errors [] = 'invalid shard JSON: ' . $entryId;
+			continue;
+		}
+		if (isset($data ['entry_id']) && (string) $data ['entry_id'] !== (string) $entryId) {
+			$errors [] = 'entry_id mismatch in shard: ' . $entryId;
+			continue;
+		}
+		$comments = isset($data ['comments']) && is_array($data ['comments']) ? $data ['comments'] : array();
+		if (isset($data ['count']) && (int) $data ['count'] !== count($comments)) {
+			$warnings [] = 'count mismatch in shard: ' . $entryId;
+		}
+		foreach ($comments as $commentKey => $meta) {
+			if (!is_array($meta)) {
+				$warnings [] = 'non-array comment metadata in shard: ' . $entryId . '/' . (string) $commentKey;
+				continue;
+			}
+			$commentEntryId = !empty($meta ['entry_id']) ? (string) $meta ['entry_id'] : plugin_mastodon_state_entry_id_from_comment_key((string) $commentKey);
+			if ($commentEntryId !== (string) $entryId) {
+				$warnings [] = 'comment entry mismatch in shard: ' . $entryId . '/' . (string) $commentKey;
+			}
+			$commentId = !empty($meta ['comment_id']) ? (string) $meta ['comment_id'] : '';
+			if ($commentId === '') {
+				$keyParts = explode(':', (string) $commentKey, 2);
+				$commentId = isset($keyParts [1]) ? (string) $keyParts [1] : '';
+			}
+			$remoteId = !empty($meta ['remote_id']) ? (string) $meta ['remote_id'] : '';
+			if ($remoteId !== '' && $commentId !== '') {
+				$rebuiltRemote [$remoteId] = array(
+					'entry_id' => (string) $entryId,
+					'comment_id' => $commentId
+				);
+			}
+			$commentCount++;
+		}
+		$entries [$entryId] = array(
+			'path' => plugin_mastodon_state_comment_shard_relative_path($entryId),
+			'count' => count($comments),
+			'mtime' => (int) @filemtime($file)
+		);
+		if (!isset($knownShards [$entryId])) {
+			$warnings [] = 'shard file missing from main metadata: ' . $entryId;
+		}
+	}
+
+	foreach (array_keys($knownShards) as $entryId) {
+		$entryId = (string) $entryId;
+		if ($entryId !== '' && !isset($filesByEntry [$entryId])) {
+			$warnings [] = 'main metadata references missing shard: ' . $entryId;
+		}
+	}
+
+	$currentRemote = plugin_mastodon_state_comment_remote_mappings($state);
+	foreach ($currentRemote as $remoteId => $ref) {
+		$remoteId = (string) $remoteId;
+		if (!is_array($ref)) {
+			$warnings [] = 'non-array comments_remote reference: ' . $remoteId;
+			continue;
+		}
+		if (!isset($rebuiltRemote [$remoteId])) {
+			$warnings [] = 'comments_remote reference without shard comment: ' . $remoteId;
+			continue;
+		}
+		$expected = $rebuiltRemote [$remoteId];
+		$currentEntryId = isset($ref ['entry_id']) ? (string) $ref ['entry_id'] : '';
+		$currentCommentId = isset($ref ['comment_id']) ? (string) $ref ['comment_id'] : '';
+		if ($currentEntryId !== (string) $expected ['entry_id'] || $currentCommentId !== (string) $expected ['comment_id']) {
+			$warnings [] = 'comments_remote reference mismatch: ' . $remoteId;
+		}
+	}
+
+	ksort($entries, SORT_STRING);
+	ksort($rebuiltRemote, SORT_STRING);
+	return array(
+		'ok' => $errors === array() && $warnings === array(),
+		'errors' => $errors,
+		'warnings' => $warnings,
+		'entries' => $entries,
+		'comments_remote' => $rebuiltRemote,
+		'stats' => array(
+			'shard_files' => count($filesByEntry),
+			'shard_metadata_entries' => count($knownShards),
+			'comments' => $commentCount,
+			'comments_remote' => count($rebuiltRemote)
+		)
+	);
+}
+
+/**
+ * Rebuild the main shard metadata and global comments_remote reverse index from shard files.
+ * @param array<string, mixed>|null $state
+ * @param bool $persist
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_state_repair_comment_shards($state = null, $persist = false) {
+	if ($state === null) {
+		$state = plugin_mastodon_state_read(array());
+	} else {
+		$state = plugin_mastodon_state_normalize(is_array($state) ? $state : array());
+	}
+	$diagnostics = plugin_mastodon_state_diagnose_comment_shards($state);
+	$diagnostics ['repaired'] = false;
+	if (!$persist || !empty($diagnostics ['errors'])) {
+		return $diagnostics;
+	}
+	$lockHandle = plugin_mastodon_state_write_lock_acquire();
+	if (!$lockHandle) {
+		$diagnostics ['errors'] [] = 'state-write lock unavailable';
+		return $diagnostics;
+	}
+	try {
+		plugin_mastodon_state_set_comment_mappings($state, array());
+		plugin_mastodon_state_set_comment_remote_mappings($state, isset($diagnostics ['comments_remote']) && is_array($diagnostics ['comments_remote']) ? $diagnostics ['comments_remote'] : array());
+		$entries = isset($diagnostics ['entries']) && is_array($diagnostics ['entries']) ? $diagnostics ['entries'] : array();
+		$mainState = plugin_mastodon_state_main_payload($state, $entries);
+		$json = json_encode($mainState, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		if (is_string($json) && plugin_mastodon_state_write_json_file(PLUGIN_MASTODON_STATE_FILE, $json . PHP_EOL)) {
+			$diagnostics ['repaired'] = true;
+			plugin_mastodon_runtime_cache_clear('state');
+			plugin_mastodon_scheduler_state_write(plugin_mastodon_scheduler_state_from_state($mainState));
+		} else {
+			$diagnostics ['errors'] [] = 'main state repair write failed';
+		}
+	} finally {
+		plugin_mastodon_state_write_lock_release($lockHandle);
+	}
+	return $diagnostics;
+}
+
+/**
+ * Remove shard files that are no longer referenced by the main state.
+ * @param array<string, array<string, mixed>> $referencedEntries
+ * @return void
+ */
+function plugin_mastodon_state_cleanup_stale_comment_shards($referencedEntries) {
+	$dir = PLUGIN_MASTODON_COMMENT_SHARD_DIR;
+	if (!@is_dir($dir)) {
+		return;
+	}
+	$referenced = array();
+	foreach (array_keys($referencedEntries) as $entryId) {
+		$file = plugin_mastodon_state_comment_shard_file($entryId);
+		if ($file !== '') {
+			$referenced [$file] = true;
+		}
+	}
+	$years = @scandir($dir);
+	if (!is_array($years)) {
+		return;
+	}
+	foreach ($years as $year) {
+		if ($year === '.' || $year === '..') {
+			continue;
+		}
+		$yearDir = $dir . $year . DIRECTORY_SEPARATOR;
+		if (!@is_dir($yearDir)) {
+			continue;
+		}
+		$months = @scandir($yearDir);
+		if (!is_array($months)) {
+			continue;
+		}
+		foreach ($months as $month) {
+			if ($month === '.' || $month === '..') {
+				continue;
+			}
+			$monthDir = $yearDir . $month . DIRECTORY_SEPARATOR;
+			if (!@is_dir($monthDir)) {
+				continue;
+			}
+			$files = @scandir($monthDir);
+			if (!is_array($files)) {
+				continue;
+			}
+			foreach ($files as $fileName) {
+				if ($fileName === '.' || $fileName === '..' || substr($fileName, -5) !== '.json') {
+					continue;
+				}
+				$file = $monthDir . $fileName;
+				if (empty($referenced [$file])) {
+					@unlink($file);
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Return a recovered state if comment shards were written but the main state is missing.
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_state_recover_from_comment_shards() {
+	$state = plugin_mastodon_default_state();
+	$entries = array();
+	$dir = PLUGIN_MASTODON_COMMENT_SHARD_DIR;
+	if (!@is_dir($dir)) {
+		return $state;
+	}
+	$years = @scandir($dir);
+	if (!is_array($years)) {
+		return $state;
+	}
+	foreach ($years as $year) {
+		if ($year === '.' || $year === '..') {
+			continue;
+		}
+		$yearDir = $dir . $year . DIRECTORY_SEPARATOR;
+		if (!@is_dir($yearDir)) {
+			continue;
+		}
+		$months = @scandir($yearDir);
+		if (!is_array($months)) {
+			continue;
+		}
+		foreach ($months as $month) {
+			if ($month === '.' || $month === '..') {
+				continue;
+			}
+			$monthDir = $yearDir . $month . DIRECTORY_SEPARATOR;
+			if (!@is_dir($monthDir)) {
+				continue;
+			}
+			$files = @scandir($monthDir);
+			if (!is_array($files)) {
+				continue;
+			}
+			foreach ($files as $fileName) {
+				if (!preg_match('/^(entry[0-9]{6}-[0-9]{6})\.json$/', $fileName, $match)) {
+					continue;
+				}
+				$entryId = (string) $match [1];
+				$entries [$entryId] = array(
+					'path' => plugin_mastodon_state_comment_shard_relative_path($entryId),
+					'count' => count(plugin_mastodon_state_read_comment_shard($entryId)),
+					'mtime' => (int) @filemtime($monthDir . $fileName)
+				);
+			}
+		}
+	}
+	if ($entries === array()) {
+		return $state;
+	}
+	$state ['comment_shards'] = array(
+		'version' => 1,
+		'storage' => 'per_entry',
+		'count' => count($entries),
+		'entries' => $entries
+	);
+	return plugin_mastodon_state_load_comment_shards($state);
+}
+
+/**
  * Append a line to the plugin sync log.
  * @param string $message
  * @return void
@@ -2870,17 +4061,18 @@ function plugin_mastodon_log_flush_skip_summaries() {
  * Load the persisted runtime state from disk.
  * @return array<string, mixed>
  */
-function plugin_mastodon_state_read() {
+function plugin_mastodon_state_read($commentEntryIds = null) {
 	plugin_mastodon_ensure_state_dir();
 	$defaults = plugin_mastodon_default_state();
 	$prestat = plugin_mastodon_file_prestat(PLUGIN_MASTODON_STATE_FILE);
 	if (empty($prestat ['exists'])) {
 		plugin_mastodon_runtime_cache_clear('state');
-		return $defaults;
+		return plugin_mastodon_state_normalize(plugin_mastodon_state_recover_from_comment_shards());
 	}
 
 	$signature = plugin_mastodon_file_prestat_signature($prestat);
-	$cached = plugin_mastodon_runtime_cache_get('state', $signature, $hit);
+	$cacheSuffix = is_array($commentEntryIds) ? ('subset:' . md5(implode('|', array_map('strval', $commentEntryIds)))) : 'full';
+	$cached = plugin_mastodon_runtime_cache_get('state', $signature . '|' . $cacheSuffix, $hit);
 	if ($hit && is_array($cached)) {
 		return plugin_mastodon_state_normalize($cached);
 	}
@@ -2894,13 +4086,19 @@ function plugin_mastodon_state_read() {
 	if (!is_string($json) || trim($json) === '') {
 		return $defaults;
 	}
-	$data = json_decode($json, true);
-	if (!is_array($data)) {
-		return $defaults;
+	$migrated = plugin_mastodon_state_try_streaming_legacy_migration($json);
+	if ($migrated !== array()) {
+		$state = plugin_mastodon_state_normalize($migrated);
+	} else {
+		$data = json_decode($json, true);
+		if (!is_array($data)) {
+			return $defaults;
+		}
+		$state = plugin_mastodon_state_normalize($data);
 	}
-	$state = plugin_mastodon_state_normalize($data);
+	$state = plugin_mastodon_state_load_comment_shards($state, is_array($commentEntryIds) ? $commentEntryIds : null);
 	plugin_mastodon_runtime_cache_set('state', '__signature__', $signature);
-	plugin_mastodon_runtime_cache_set('state', $signature, $state);
+	plugin_mastodon_runtime_cache_set('state', $signature . '|' . $cacheSuffix, $state);
 	return $state;
 }
 
@@ -3076,7 +4274,7 @@ function plugin_mastodon_scheduler_state_read() {
 		}
 	}
 
-	$state = plugin_mastodon_state_read();
+	$state = plugin_mastodon_state_read(array());
 	$schedulerState = plugin_mastodon_scheduler_state_from_state($state);
 	plugin_mastodon_scheduler_state_write($schedulerState);
 	return $schedulerState;
@@ -3089,20 +4287,52 @@ function plugin_mastodon_scheduler_state_read() {
  */
 function plugin_mastodon_state_write($state) {
 	plugin_mastodon_ensure_state_dir();
-	$state = plugin_mastodon_state_normalize($state);
-	$json = json_encode($state, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-	if (!is_string($json)) {
+	plugin_mastodon_state_write_error_clear();
+	$lockHandle = plugin_mastodon_state_write_lock_acquire();
+	if (!$lockHandle) {
+		plugin_mastodon_state_write_error_set('state_write_lock_unavailable');
+		plugin_mastodon_log('State write skipped because the state-write lock could not be acquired');
 		return false;
 	}
-	$payload = $json . PHP_EOL;
-	$written = plugin_mastodon_io_write_file(PLUGIN_MASTODON_STATE_FILE, $payload);
-	plugin_mastodon_runtime_cache_clear('state');
-	if ($written) {
-		$prestat = plugin_mastodon_file_prestat(PLUGIN_MASTODON_STATE_FILE);
-		$signature = plugin_mastodon_file_prestat_signature($prestat);
-		plugin_mastodon_runtime_cache_set('state', '__signature__', $signature);
-		plugin_mastodon_runtime_cache_set('state', $signature, $state);
-		plugin_mastodon_scheduler_state_write(plugin_mastodon_scheduler_state_from_state($state));
+	$written = false;
+	try {
+		$state = plugin_mastodon_state_normalize($state);
+		$shardWrite = plugin_mastodon_state_write_comment_shards($state);
+		if (empty($shardWrite ['ok'])) {
+			$error = !empty($shardWrite ['error']) ? (string) $shardWrite ['error'] : 'comment_shard_write_failed';
+			plugin_mastodon_state_write_error_set($error);
+			plugin_mastodon_log('State write failed while writing comment shards: ' . $error);
+			return false;
+		}
+		$shardEntries = isset($shardWrite ['entries']) && is_array($shardWrite ['entries']) ? $shardWrite ['entries'] : array();
+		$mainState = plugin_mastodon_state_main_payload($state, $shardEntries);
+		$json = json_encode($mainState, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		if (!is_string($json)) {
+			plugin_mastodon_state_write_error_set('state_json_encode_failed');
+			plugin_mastodon_log('State write failed because the main state could not be JSON-encoded');
+			return false;
+		}
+		$payload = $json . PHP_EOL;
+		$written = plugin_mastodon_state_write_json_file(PLUGIN_MASTODON_STATE_FILE, $payload);
+		plugin_mastodon_runtime_cache_clear('state');
+		if ($written) {
+			plugin_mastodon_state_write_error_clear();
+			if (!plugin_mastodon_state_comment_shards_partial($state)) {
+				plugin_mastodon_state_cleanup_stale_comment_shards($shardEntries);
+			}
+			$prestat = plugin_mastodon_file_prestat(PLUGIN_MASTODON_STATE_FILE);
+			$signature = plugin_mastodon_file_prestat_signature($prestat);
+			plugin_mastodon_runtime_cache_set('state', '__signature__', $signature);
+			if (!plugin_mastodon_state_comment_shards_partial($state)) {
+				plugin_mastodon_runtime_cache_set('state', $signature . '|full', $state);
+			}
+			plugin_mastodon_scheduler_state_write(plugin_mastodon_scheduler_state_from_state($state));
+		} else {
+			plugin_mastodon_state_write_error_set('state_main_write_failed');
+			plugin_mastodon_log('State write failed while replacing the main state file');
+		}
+	} finally {
+		plugin_mastodon_state_write_lock_release($lockHandle);
 	}
 	return $written;
 }
@@ -3132,7 +4362,7 @@ function plugin_mastodon_state_normalize($state) {
 	$hasContentStats = isset($input ['content_stats']) && is_array($input ['content_stats']);
 	$hasDeletionStats = isset($input ['deletion_stats']) && is_array($input ['deletion_stats']);
 	$state = array_merge($defaults, $input);
-	foreach (array('entries', 'entries_remote', 'comments', 'comments_remote', 'dirty_entries', 'dirty_comments', 'comment_tombstones', 'pending_comment_remote_rechecks') as $key) {
+	foreach (array('entries', 'entries_remote', 'comments', 'comments_remote', 'comment_shards', 'dirty_entries', 'dirty_comments', 'comment_tombstones', 'pending_comment_remote_rechecks') as $key) {
 		if (!isset($state [$key]) || !is_array($state [$key])) {
 			$state [$key] = $defaults [$key];
 		}
@@ -3178,6 +4408,184 @@ function plugin_mastodon_state_normalize($state) {
  */
 function plugin_mastodon_state_comment_key($entryId, $commentId) {
 	return (string) $entryId . ':' . (string) $commentId;
+}
+
+/**
+ * Return the loaded comment mapping array from a state object.
+ * @param array<string, mixed> $state
+ * @return array<string, array<string, mixed>>
+ */
+function plugin_mastodon_state_comment_mappings($state) {
+	$comments = isset($state ['comments']) && is_array($state ['comments']) ? $state ['comments'] : array();
+	$result = array();
+	foreach ($comments as $commentKey => $meta) {
+		if (is_array($meta)) {
+			$result [(string) $commentKey] = $meta;
+		}
+	}
+	ksort($result, SORT_STRING);
+	return $result;
+}
+
+/**
+ * Replace the loaded comment mapping array in a state object.
+ * @param array<string, mixed> $state
+ * @param array<string, mixed> $comments
+ * @return void
+ */
+function plugin_mastodon_state_set_comment_mappings(&$state, $comments) {
+	$normalized = array();
+	if (is_array($comments)) {
+		foreach ($comments as $commentKey => $meta) {
+			if (is_array($meta)) {
+				$normalized [(string) $commentKey] = $meta;
+			}
+		}
+	}
+	ksort($normalized, SORT_STRING);
+	$state ['comments'] = $normalized;
+}
+
+/**
+ * Return the global remote-comment reverse index.
+ * @param array<string, mixed> $state
+ * @return array<string, array<string, string>>
+ */
+function plugin_mastodon_state_comment_remote_mappings($state) {
+	$remoteMappings = isset($state ['comments_remote']) && is_array($state ['comments_remote']) ? $state ['comments_remote'] : array();
+	$result = array();
+	foreach ($remoteMappings as $remoteId => $ref) {
+		if (!is_array($ref)) {
+			continue;
+		}
+		$entryId = isset($ref ['entry_id']) ? (string) $ref ['entry_id'] : '';
+		$commentId = isset($ref ['comment_id']) ? (string) $ref ['comment_id'] : '';
+		if ($entryId !== '' && $commentId !== '') {
+			$result [(string) $remoteId] = array(
+				'entry_id' => $entryId,
+				'comment_id' => $commentId
+			);
+		}
+	}
+	ksort($result, SORT_STRING);
+	return $result;
+}
+
+/**
+ * Replace the global remote-comment reverse index in a state object.
+ * @param array<string, mixed> $state
+ * @param array<string, mixed> $remoteMappings
+ * @return void
+ */
+function plugin_mastodon_state_set_comment_remote_mappings(&$state, $remoteMappings) {
+	$normalized = array();
+	if (is_array($remoteMappings)) {
+		foreach ($remoteMappings as $remoteId => $ref) {
+			if (!is_array($ref)) {
+				continue;
+			}
+			$entryId = isset($ref ['entry_id']) ? (string) $ref ['entry_id'] : '';
+			$commentId = isset($ref ['comment_id']) ? (string) $ref ['comment_id'] : '';
+			if ($remoteId !== '' && $entryId !== '' && $commentId !== '') {
+				$normalized [(string) $remoteId] = array(
+					'entry_id' => $entryId,
+					'comment_id' => $commentId
+				);
+			}
+		}
+	}
+	ksort($normalized, SORT_STRING);
+	$state ['comments_remote'] = $normalized;
+}
+
+/**
+ * Return the main-state metadata for per-entry comment shards.
+ * @param array<string, mixed> $state
+ * @return array<string, array<string, mixed>>
+ */
+function plugin_mastodon_state_comment_shard_entries($state) {
+	$shards = isset($state ['comment_shards']) && is_array($state ['comment_shards']) ? $state ['comment_shards'] : array();
+	$entries = isset($shards ['entries']) && is_array($shards ['entries']) ? $shards ['entries'] : array();
+	$result = array();
+	foreach ($entries as $entryId => $meta) {
+		if (is_array($meta) && (string) $entryId !== '') {
+			$result [(string) $entryId] = $meta;
+		}
+	}
+	ksort($result, SORT_STRING);
+	return $result;
+}
+
+/**
+ * Replace the main-state metadata for per-entry comment shards.
+ * @param array<string, mixed> $state
+ * @param array<string, array<string, mixed>> $entries
+ * @return void
+ */
+function plugin_mastodon_state_set_comment_shard_entries(&$state, $entries) {
+	$normalized = array();
+	foreach ($entries as $entryId => $meta) {
+		if (is_array($meta) && (string) $entryId !== '') {
+			$normalized [(string) $entryId] = $meta;
+		}
+	}
+	ksort($normalized, SORT_STRING);
+	$state ['comment_shards'] = array(
+		'version' => 1,
+		'storage' => 'per_entry',
+		'count' => count($normalized),
+		'entries' => $normalized
+	);
+}
+
+/**
+ * Store a state write error for callers that need a last_error message even when persistence fails.
+ * @param string $error
+ * @return void
+ */
+function plugin_mastodon_state_write_error_set($error) {
+	$GLOBALS ['plugin_mastodon_state_write_last_error'] = trim((string) $error);
+}
+
+/**
+ * Clear the last state write error marker.
+ * @return void
+ */
+function plugin_mastodon_state_write_error_clear() {
+	$GLOBALS ['plugin_mastodon_state_write_last_error'] = '';
+}
+
+/**
+ * Return the last state write error marker from the current request.
+ * @return string
+ */
+function plugin_mastodon_state_write_last_error() {
+	return isset($GLOBALS ['plugin_mastodon_state_write_last_error']) ? (string) $GLOBALS ['plugin_mastodon_state_write_last_error'] : '';
+}
+
+/**
+ * Persist state and copy a failed write reason into the caller-visible last_error field.
+ * @param array<string, mixed> $state
+ * @param string $fallback
+ * @return bool
+ */
+function plugin_mastodon_state_write_with_last_error(&$state, $fallback = 'state_write_failed') {
+	$ok = plugin_mastodon_state_write($state);
+	if ($ok) {
+		return true;
+	}
+	$error = plugin_mastodon_state_write_last_error();
+	if ($error === '') {
+		$error = trim((string) $fallback);
+	}
+	if ($error === '') {
+		$error = 'state_write_failed';
+	}
+	if (!is_array($state)) {
+		$state = array();
+	}
+	$state ['last_error'] = $error;
+	return false;
 }
 
 /**
@@ -3231,6 +4639,9 @@ function plugin_mastodon_state_set_entry_mapping(&$state, $localId, $remoteId, $
  * @return void
  */
 function plugin_mastodon_state_set_comment_mapping(&$state, $entryId, $commentId, $remoteId, $source, $hash, $remoteUrl, $remoteUpdatedAt, $parentCommentId = '', $inReplyToRemoteId = '', $localDateKey = '', $remoteDateKey = '') {
+	if (plugin_mastodon_state_comment_shards_partial($state)) {
+		plugin_mastodon_state_mark_comment_entry_loaded($state, $entryId);
+	}
 	$key = plugin_mastodon_state_comment_key($entryId, $commentId);
 	$localDateKey = plugin_mastodon_normalize_sync_start_date($localDateKey);
 	if ($localDateKey === '') {
@@ -3240,7 +4651,8 @@ function plugin_mastodon_state_set_comment_mapping(&$state, $entryId, $commentId
 	if ($remoteDateKey === '') {
 		$remoteDateKey = plugin_mastodon_datetime_date_key($remoteUpdatedAt);
 	}
-	$state ['comments'] [$key] = array(
+	$comments = plugin_mastodon_state_comment_mappings($state);
+	$comments [$key] = array(
 		'entry_id' => (string) $entryId,
 		'comment_id' => (string) $commentId,
 		'remote_id' => (string) $remoteId,
@@ -3253,10 +4665,13 @@ function plugin_mastodon_state_set_comment_mapping(&$state, $entryId, $commentId
 		'local_date_key' => $localDateKey,
 		'remote_date_key' => $remoteDateKey
 	);
-	$state ['comments_remote'] [(string) $remoteId] = array(
+	plugin_mastodon_state_set_comment_mappings($state, $comments);
+	$remoteMappings = plugin_mastodon_state_comment_remote_mappings($state);
+	$remoteMappings [(string) $remoteId] = array(
 		'entry_id' => (string) $entryId,
 		'comment_id' => (string) $commentId
 	);
+	plugin_mastodon_state_set_comment_remote_mappings($state, $remoteMappings);
 }
 
 /**
@@ -3288,16 +4703,25 @@ function plugin_mastodon_state_remove_entry_mapping(&$state, $localId) {
  * @return void
  */
 function plugin_mastodon_state_remove_comment_mapping(&$state, $entryId, $commentId) {
+	if (plugin_mastodon_state_comment_shards_partial($state) && !plugin_mastodon_state_comment_entry_loaded($state, $entryId)) {
+		plugin_mastodon_state_load_comment_shard_into($state, $entryId);
+	}
 	$key = plugin_mastodon_state_comment_key($entryId, $commentId);
-	if (!isset($state ['comments'] [$key]) || !is_array($state ['comments'] [$key])) {
+	$comments = plugin_mastodon_state_comment_mappings($state);
+	if (!isset($comments [$key])) {
 		return;
 	}
-	$remoteId = !empty($state ['comments'] [$key] ['remote_id']) ? (string) $state ['comments'] [$key] ['remote_id'] : '';
-	unset($state ['comments'] [$key]);
-	if ($remoteId !== '' && isset($state ['comments_remote'] [$remoteId]) && is_array($state ['comments_remote'] [$remoteId])) {
-		$remoteRef = $state ['comments_remote'] [$remoteId];
-		if ((isset($remoteRef ['entry_id']) ? (string) $remoteRef ['entry_id'] : '') === (string) $entryId && (isset($remoteRef ['comment_id']) ? (string) $remoteRef ['comment_id'] : '') === (string) $commentId) {
-			unset($state ['comments_remote'] [$remoteId]);
+	$remoteId = !empty($comments [$key] ['remote_id']) ? (string) $comments [$key] ['remote_id'] : '';
+	unset($comments [$key]);
+	plugin_mastodon_state_set_comment_mappings($state, $comments);
+	if ($remoteId !== '') {
+		$remoteMappings = plugin_mastodon_state_comment_remote_mappings($state);
+		if (isset($remoteMappings [$remoteId]) && is_array($remoteMappings [$remoteId])) {
+			$remoteRef = $remoteMappings [$remoteId];
+			if ((isset($remoteRef ['entry_id']) ? (string) $remoteRef ['entry_id'] : '') === (string) $entryId && (isset($remoteRef ['comment_id']) ? (string) $remoteRef ['comment_id'] : '') === (string) $commentId) {
+				unset($remoteMappings [$remoteId]);
+				plugin_mastodon_state_set_comment_remote_mappings($state, $remoteMappings);
+			}
 		}
 	}
 	if (isset($state ['dirty_comments'] [$key])) {
@@ -3467,7 +4891,7 @@ function plugin_mastodon_on_entry_saved($entryId, $entry, $oldEntry = array(), $
 	if (isset($entry ['categories']) && is_array($entry ['categories']) && in_array('draft', $entry ['categories'], true)) {
 		return;
 	}
-	$state = plugin_mastodon_state_read();
+	$state = plugin_mastodon_state_read(array());
 	$meta = plugin_mastodon_state_get_entry_meta($state, $entryId);
 	if (!empty($meta ['source']) && strtolower((string) $meta ['source']) === 'remote') {
 		return;
@@ -3512,7 +4936,7 @@ function plugin_mastodon_on_entry_deleted($entryId, $oldEntry = array()) {
 	if ($entryId === '') {
 		return;
 	}
-	$state = plugin_mastodon_state_read();
+	$state = plugin_mastodon_state_read(array());
 	$meta = plugin_mastodon_state_get_entry_meta($state, $entryId);
 	plugin_mastodon_state_remove_dirty_entry($state, $entryId);
 	if (!empty($meta ['remote_id'])) {
@@ -3542,7 +4966,7 @@ function plugin_mastodon_on_comment_saved($entryId, $commentId, $comment = array
 		return;
 	}
 	if (!plugin_mastodon_local_item_matches_sync_start($options, $comment, $commentId)) {
-		$state = plugin_mastodon_state_read();
+		$state = plugin_mastodon_state_read(array($entryId));
 		plugin_mastodon_state_remove_dirty_comment($state, $entryId, $commentId);
 		plugin_mastodon_state_write($state);
 		return;
@@ -3551,7 +4975,7 @@ function plugin_mastodon_on_comment_saved($entryId, $commentId, $comment = array
 	if (!$entry || !is_array($entry)) {
 		return;
 	}
-	$state = plugin_mastodon_state_read();
+	$state = plugin_mastodon_state_read(array($entryId));
 	$commentMeta = plugin_mastodon_state_get_comment_meta($state, $entryId, $commentId);
 	if (!empty($commentMeta ['source']) && strtolower((string) $commentMeta ['source']) === 'remote') {
 		return;
@@ -3598,7 +5022,7 @@ function plugin_mastodon_on_comment_deleted($entryId, $commentId, $oldComment = 
 	if ($entryId === '' || $commentId === '') {
 		return;
 	}
-	$state = plugin_mastodon_state_read();
+	$state = plugin_mastodon_state_read(array($entryId));
 	$meta = plugin_mastodon_state_get_comment_meta($state, $entryId, $commentId);
 	plugin_mastodon_state_remove_dirty_comment($state, $entryId, $commentId);
 	if (!empty($meta ['remote_id'])) {
@@ -3710,7 +5134,8 @@ function plugin_mastodon_state_entry_media_description_signature($meta) {
  */
 function plugin_mastodon_state_get_comment_meta($state, $entryId, $commentId) {
 	$key = plugin_mastodon_state_comment_key($entryId, $commentId);
-	return isset($state ['comments'] [$key]) && is_array($state ['comments'] [$key]) ? $state ['comments'] [$key] : array();
+	$comments = plugin_mastodon_state_comment_mappings($state);
+	return isset($comments [$key]) ? $comments [$key] : array();
 }
 
 /**
@@ -3755,32 +5180,39 @@ function plugin_mastodon_state_has_comment_tombstone($state, $remoteId) {
  */
 function plugin_mastodon_protect_locally_deleted_exported_comments($options, &$state) {
 	$protected = 0;
-	$commentMappings = isset($state ['comments']) && is_array($state ['comments']) ? array_keys($state ['comments']) : array();
-	foreach ($commentMappings as $commentKey) {
-		$commentKey = (string) $commentKey;
-		$meta = isset($state ['comments'] [$commentKey]) && is_array($state ['comments'] [$commentKey]) ? $state ['comments'] [$commentKey] : array();
-		if (empty($meta ['entry_id']) || empty($meta ['comment_id']) || empty($meta ['remote_id'])) {
-			continue;
+	$commentSources = array();
+	$loadedComments = isset($state ['comments']) && is_array($state ['comments']) ? $state ['comments'] : array();
+	if ($loadedComments !== array()) {
+		$commentSources [] = $loadedComments;
+	} elseif (!plugin_mastodon_state_comment_shards_partial($state)) {
+		$commentSources [] = $loadedComments;
+	}
+	foreach ($commentSources as $comments) {
+		foreach ($comments as $commentKey => $meta) {
+			$commentKey = (string) $commentKey;
+			if (!is_array($meta) || empty($meta ['entry_id']) || empty($meta ['comment_id']) || empty($meta ['remote_id'])) {
+				continue;
+			}
+			if (!isset($meta ['source']) || (string) $meta ['source'] !== 'local') {
+				continue;
+			}
+			$entryId = (string) $meta ['entry_id'];
+			$commentId = (string) $meta ['comment_id'];
+			$remoteId = (string) $meta ['remote_id'];
+			if (!plugin_mastodon_mapping_matches_sync_start($options, $meta, $commentId)) {
+				continue;
+			}
+			if (comment_exists($entryId, $commentId)) {
+				continue;
+			}
+			if (plugin_mastodon_state_has_comment_tombstone($state, $remoteId)) {
+				continue;
+			}
+			plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'local_deleted_pending_remote_delete');
+			plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
+			$protected++;
+			plugin_mastodon_log('Protecting remote reply ' . $remoteId . ' from stale re-import because exported local comment ' . $entryId . '/' . $commentId . ' was deleted before deletion synchronization ran');
 		}
-		if (!isset($meta ['source']) || (string) $meta ['source'] !== 'local') {
-			continue;
-		}
-		$entryId = (string) $meta ['entry_id'];
-		$commentId = (string) $meta ['comment_id'];
-		$remoteId = (string) $meta ['remote_id'];
-		if (!plugin_mastodon_mapping_matches_sync_start($options, $meta, $commentId)) {
-			continue;
-		}
-		if (comment_exists($entryId, $commentId)) {
-			continue;
-		}
-		if (plugin_mastodon_state_has_comment_tombstone($state, $remoteId)) {
-			continue;
-		}
-		plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'local_deleted_pending_remote_delete');
-		plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
-		$protected++;
-		plugin_mastodon_log('Protecting remote reply ' . $remoteId . ' from stale re-import because exported local comment ' . $entryId . '/' . $commentId . ' was deleted before deletion synchronization ran');
 	}
 	if ($protected > 0) {
 		plugin_mastodon_state_set_deletions_pending($state, true, 'full');
@@ -3964,21 +5396,24 @@ function plugin_mastodon_state_has_comment_recheck_scope($state) {
  */
 function plugin_mastodon_build_comment_remote_child_index($state) {
 	$index = array();
-	if (empty($state ['comments']) || !is_array($state ['comments'])) {
-		return $index;
+	$commentSources = array();
+	if (!empty($state ['comments']) && is_array($state ['comments'])) {
+		$commentSources [] = $state ['comments'];
 	}
-	foreach ($state ['comments'] as $commentMeta) {
-		if (!is_array($commentMeta) || empty($commentMeta ['entry_id']) || empty($commentMeta ['comment_id']) || empty($commentMeta ['remote_id'])) {
-			continue;
+	foreach ($commentSources as $comments) {
+		foreach ($comments as $commentMeta) {
+			if (!is_array($commentMeta) || empty($commentMeta ['entry_id']) || empty($commentMeta ['comment_id']) || empty($commentMeta ['remote_id'])) {
+				continue;
+			}
+			$parentRemoteId = !empty($commentMeta ['in_reply_to_remote_id']) ? trim((string) $commentMeta ['in_reply_to_remote_id']) : '';
+			if ($parentRemoteId === '') {
+				continue;
+			}
+			if (!isset($index [$parentRemoteId]) || !is_array($index [$parentRemoteId])) {
+				$index [$parentRemoteId] = array();
+			}
+			$index [$parentRemoteId] [] = $commentMeta;
 		}
-		$parentRemoteId = !empty($commentMeta ['in_reply_to_remote_id']) ? trim((string) $commentMeta ['in_reply_to_remote_id']) : '';
-		if ($parentRemoteId === '') {
-			continue;
-		}
-		if (!isset($index [$parentRemoteId]) || !is_array($index [$parentRemoteId])) {
-			$index [$parentRemoteId] = array();
-		}
-		$index [$parentRemoteId] [] = $commentMeta;
 	}
 	return $index;
 }
@@ -4521,6 +5956,90 @@ function plugin_mastodon_lang_string($key, $default) {
 	}
 
 	return isset($strings [$key]) && is_string($strings [$key]) && $strings [$key] !== '' ? $strings [$key] : (string) $default;
+}
+
+
+/**
+ * Return Mastodon admin-language strings with guaranteed maintenance fallbacks.
+ *
+ * Hidden FlatPress admin actions do not always expose the plugin language array
+ * through $plang in the same way as the visible plugin settings page. The
+ * maintenance templates therefore use this dedicated, explicitly assigned array
+ * so Smarty 5.8 never emits undefined-array-key warnings when optional language
+ * keys are missing from the current runtime context.
+ *
+ * @return array<string, string>
+ */
+function plugin_mastodon_admin_language_strings() {
+	global $lang;
+
+	$defaults = array(
+		'description' => 'Description',
+		'output' => 'Output',
+		'state_maintenance_head' => 'State diagnostics and repair',
+		'state_maintenance_desc' => 'Check and repair the per-entry comment-shard metadata and the global remote-comment index. Repair only rewrites local plugin state files.',
+		'state_maintenance_desc_short' => 'Advanced state diagnostics and repair are available on a separate maintenance page.',
+		'state_maintenance_open' => 'Open state maintenance',
+		'state_maintenance_back' => 'Back to Mastodon settings',
+		'state_maintenance_actions_head' => 'State maintenance actions',
+		'state_maintenance_actions_desc' => 'Diagnostics are read-only. Repair rewrites only local plugin state files.',
+		'state_maintenance_diagnose' => 'Diagnose comment shards',
+		'state_maintenance_repair' => 'Repair comment-shard state',
+		'state_maintenance_result_head' => 'State diagnostics result',
+		'state_maintenance_status' => 'Diagnostics status',
+		'state_maintenance_status_ok' => 'Consistent',
+		'state_maintenance_status_attention' => 'Needs attention',
+		'state_maintenance_warnings' => 'Warnings',
+		'state_maintenance_errors' => 'Errors',
+		'state_maintenance_stat_shard_files' => 'Shard files',
+		'state_maintenance_stat_shard_metadata_entries' => 'Shard metadata entries',
+		'state_maintenance_stat_comments' => 'Stored comments',
+		'state_maintenance_stat_comments_remote' => 'Remote comment index entries',
+		'state_maintenance_stat_repaired' => 'Repair performed',
+		'bool_yes' => 'Yes',
+		'bool_no' => 'No',
+		'bool_unknown' => 'Unknown'
+	);
+	$defaultMsgs = array(
+		7 => 'Comment-shard diagnostics completed.',
+		8 => 'Comment-shard state repaired.',
+		-7 => 'Comment-shard diagnostics found warnings or errors.',
+		-8 => 'Comment-shard repair could not complete cleanly.'
+	);
+	$panelStrings = $defaults;
+	$panelStrings ['msgs'] = $defaultMsgs;
+
+	if (function_exists('lang_load')) {
+		$loadedLang = lang_load('plugin:mastodon');
+		if (isset($loadedLang ['admin'] ['plugin'] ['mastodon']) && is_array($loadedLang ['admin'] ['plugin'] ['mastodon'])) {
+			foreach ($loadedLang ['admin'] ['plugin'] ['mastodon'] as $key => $value) {
+				if (!is_string($key)) {
+					continue;
+				}
+				if ($key === 'msgs' && is_array($value)) {
+					$panelStrings ['msgs'] = $value + $defaultMsgs;
+					continue;
+				}
+				$panelStrings [$key] = $value;
+				if (is_string($value) && $value !== '') {
+					$defaults [$key] = $value;
+				}
+			}
+		}
+	}
+
+	if (!isset($lang) || !is_array($lang)) {
+		$lang = array();
+	}
+	if (!isset($lang ['admin']) || !is_array($lang ['admin'])) {
+		$lang ['admin'] = array();
+	}
+	if (!isset($lang ['admin'] ['plugin']) || !is_array($lang ['admin'] ['plugin'])) {
+		$lang ['admin'] ['plugin'] = array();
+	}
+	$lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $panelStrings;
+
+	return $defaults;
 }
 
 /**
@@ -8149,6 +9668,45 @@ function plugin_mastodon_dirty_entry_id_lookup($state) {
 }
 
 /**
+ * Return entry ids whose comment shards may be needed by the current content-sync workset.
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
+ * @param bool $force
+ * @return array<int, string>
+ */
+function plugin_mastodon_content_sync_comment_entry_ids($options, $state, $force) {
+	$dirtyEntryLookup = plugin_mastodon_dirty_entry_id_lookup($state);
+	$files = plugin_mastodon_collect_entry_files_for_sync($options, $dirtyEntryLookup, $force);
+	$ids = array();
+	foreach ($files as $file) {
+		$entryId = basename((string) $file, EXT);
+		if ($entryId !== '' && plugin_mastodon_should_parse_local_entry_for_sync($options, $dirtyEntryLookup, $entryId, $force)) {
+			$ids[$entryId] = true;
+		}
+	}
+	foreach (plugin_mastodon_state_pending_recheck_entry_ids($state) as $entryId) {
+		$ids[$entryId] = true;
+	}
+	ksort($ids, SORT_STRING);
+	return array_keys($ids);
+}
+
+/**
+ * Load comment shards needed for the current content synchronization workset.
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
+ * @param bool $force
+ * @return array<int, string>
+ */
+function plugin_mastodon_state_load_content_sync_comment_workset($options, &$state, $force) {
+	$entryIds = plugin_mastodon_content_sync_comment_entry_ids($options, $state, $force);
+	foreach ($entryIds as $entryId) {
+		plugin_mastodon_state_load_comment_shard_into($state, $entryId);
+	}
+	return $entryIds;
+}
+
+/**
  * Determine whether a local entry file should be parsed during a scheduled local-to-remote pass.
  * @param array<string, string> $options
  * @param array<string, bool> $dirtyEntryLookup
@@ -9293,6 +10851,10 @@ function plugin_mastodon_import_remote_comment(&$options, &$state, $entryId, $re
 	if ($remoteId === '' || $entryId === '' || !plugin_mastodon_remote_status_is_importable($remoteComment)) {
 		return false;
 	}
+	plugin_mastodon_state_load_comment_shard_into($state, $entryId);
+	if (isset($state ['comments_remote'] [$remoteId]) && is_array($state ['comments_remote'] [$remoteId]) && !empty($state ['comments_remote'] [$remoteId] ['entry_id'])) {
+		plugin_mastodon_state_load_comment_shard_into($state, (string) $state ['comments_remote'] [$remoteId] ['entry_id']);
+	}
 	if (plugin_mastodon_state_has_comment_tombstone($state, $remoteId)) {
 		plugin_mastodon_log('Skipping remote reply ' . $remoteId . ' because it was deleted locally earlier and is protected by a tombstone');
 		return false;
@@ -9383,6 +10945,7 @@ function plugin_mastodon_import_remote_context_descendants(&$options, &$state, $
 	if ($entryId === '' || $statusId === '' || empty($context ['descendants']) || !is_array($context ['descendants'])) {
 		return;
 	}
+	plugin_mastodon_state_load_comment_shard_into($state, $entryId);
 
 	$pending = array_values($context ['descendants']);
 	$contextStatuses = array();
@@ -9643,6 +11206,7 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state, $force = true)
 	$hadFailure = false;
 	foreach ($entries as $entryId => $entry) {
 		plugin_mastodon_extend_time_limit(120);
+		plugin_mastodon_state_load_comment_shard_into($state, $entryId);
 		$meta = plugin_mastodon_state_get_entry_meta($state, $entryId);
 		$entrySource = !empty($meta ['source']) ? strtolower((string) $meta ['source']) : 'local';
 		$skipEntryStatusSync = ($entrySource === 'remote');
@@ -9868,7 +11432,7 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state, $force = true)
 function plugin_mastodon_run_deletion_sync($force) {
 	plugin_mastodon_extend_time_limit(180);
 	$options = plugin_mastodon_get_options();
-	$state = plugin_mastodon_state_read();
+	$state = plugin_mastodon_state_read(array());
 	$force = (bool) $force;
 
 	if ($options ['instance_url'] === '') {
@@ -9921,7 +11485,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 	$state ['deletion_stats'] = plugin_mastodon_default_state() ['deletion_stats'];
 	$hadFailure = false;
 	$deletionInterrupted = false;
-	$childIndex = plugin_mastodon_build_comment_remote_child_index($state);
+	$childIndex = array();
 	$commentRecheckOnly = plugin_mastodon_state_has_comment_recheck_scope($state) && !empty($state ['pending_comment_remote_rechecks']);
 
 	if (!$commentRecheckOnly) {
@@ -10004,107 +11568,145 @@ function plugin_mastodon_run_deletion_sync($force) {
 		}
 
 		if (!$deletionInterrupted) {
-			$commentMappingKeys = isset($state ['comments']) && is_array($state ['comments']) ? array_keys($state ['comments']) : array();
-			$commentMappings = plugin_mastodon_mapping_keys_after_cursor($commentMappingKeys, isset($state ['deletion_cursor_comments']) ? (string) $state ['deletion_cursor_comments'] : '');
+			$commentShardEntryIds = plugin_mastodon_state_comment_shard_entry_ids($state);
+			$commentCursor = isset($state ['deletion_cursor_comments']) ? (string) $state ['deletion_cursor_comments'] : '';
 			$processedCommentMappings = 0;
+			$remainingCommentMappings = 0;
 
-			foreach ($commentMappings as $commentKey) {
+			$commentCursorEntryId = plugin_mastodon_state_entry_id_from_comment_key($commentCursor);
+			foreach ($commentShardEntryIds as $commentShardEntryId) {
 				if (plugin_mastodon_rate_limit_state_error() !== '') {
 					$deletionInterrupted = true;
 					break;
 				}
-				plugin_mastodon_extend_time_limit(120);
-				$commentKey = (string) $commentKey;
-				$commentCursorBefore = isset($state ['deletion_cursor_comments']) ? (string) $state ['deletion_cursor_comments'] : '';
-				$state ['deletion_cursor_comments'] = $commentKey;
-				$processedCommentMappings++;
-				$meta = isset($state ['comments'] [$commentKey]) && is_array($state ['comments'] [$commentKey]) ? $state ['comments'] [$commentKey] : array();
-				if (empty($meta ['entry_id']) || empty($meta ['comment_id'])) {
-					if ($commentKey !== '' && isset($state ['pending_comment_remote_rechecks'] [$commentKey])) {
-						unset($state ['pending_comment_remote_rechecks'] [$commentKey]);
+				$commentShardEntryId = (string) $commentShardEntryId;
+				if ($commentCursorEntryId !== '' && strcmp($commentShardEntryId, $commentCursorEntryId) < 0) {
+					continue;
+				}
+				plugin_mastodon_state_load_comment_shard_into($state, $commentShardEntryId);
+				$commentMappingKeys = array();
+				$allComments = isset($state ['comments']) && is_array($state ['comments']) ? $state ['comments'] : array();
+				foreach (array_keys($allComments) as $candidateCommentKey) {
+					if (plugin_mastodon_state_entry_id_from_comment_key((string) $candidateCommentKey) === $commentShardEntryId) {
+						$commentMappingKeys [] = (string) $candidateCommentKey;
 					}
-					continue;
 				}
-				$entryId = (string) $meta ['entry_id'];
-				$commentId = (string) $meta ['comment_id'];
-				$commentMeta = plugin_mastodon_state_get_comment_meta($state, $entryId, $commentId);
-				if (empty($commentMeta ['remote_id'])) {
-					plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
-					plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
-					continue;
-				}
-				if (!plugin_mastodon_mapping_matches_sync_start($options, $commentMeta, $commentId)) {
-					plugin_mastodon_log_skip('deletion_comment_before_sync_start', 'deletion comment mapping', 'deletion comment mappings', $entryId . '/' . $commentId, 'because they are older than the configured sync start date');
-					plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
-					continue;
-				}
-				if (plugin_mastodon_state_get_pending_comment_remote_recheck($state, $entryId, $commentId) !== array()) {
-					continue;
-				}
-				$remoteId = (string) $commentMeta ['remote_id'];
-				$localExists = (bool) comment_exists($entryId, $commentId);
-				if (!$localExists) {
-					$deleted = plugin_mastodon_delete_status($options, $remoteId, true);
-					if (!empty($deleted ['ok']) || plugin_mastodon_status_missing_response($deleted)) {
-						$queuedDescendants = plugin_mastodon_queue_comment_descendant_remote_rechecks($state, $childIndex, $remoteId);
-						plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'local_deleted_remote_deleted');
-						plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
-						plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
-						$state ['deletion_stats'] ['deleted_remote_comments']++;
-						if ($queuedDescendants > 0) {
-							plugin_mastodon_log('Queued ' . $queuedDescendants . ' direct local descendant comment(s) for follow-up verification after deleting remote comment ' . $remoteId);
+				sort($commentMappingKeys, SORT_STRING);
+				$remainingCommentMappings += count($commentMappingKeys);
+				$commentMappings = plugin_mastodon_mapping_keys_after_cursor($commentMappingKeys, $commentCursor);
+				$shardChanged = false;
+				$childIndex = plugin_mastodon_build_comment_remote_child_index($state);
+
+				foreach ($commentMappings as $commentKey) {
+					if (plugin_mastodon_rate_limit_state_error() !== '') {
+						$deletionInterrupted = true;
+						break;
+					}
+					plugin_mastodon_extend_time_limit(120);
+					$commentKey = (string) $commentKey;
+					$commentCursorBefore = isset($state ['deletion_cursor_comments']) ? (string) $state ['deletion_cursor_comments'] : '';
+					$state ['deletion_cursor_comments'] = $commentKey;
+					$processedCommentMappings++;
+					$meta = isset($state ['comments'] [$commentKey]) && is_array($state ['comments'] [$commentKey]) ? $state ['comments'] [$commentKey] : array();
+					if (empty($meta ['entry_id']) || empty($meta ['comment_id'])) {
+						if ($commentKey !== '' && isset($state ['pending_comment_remote_rechecks'] [$commentKey])) {
+							unset($state ['pending_comment_remote_rechecks'] [$commentKey]);
+							$shardChanged = true;
 						}
 						continue;
 					}
-					$hadFailure = true;
-					$state ['last_error'] = 'comment_remote_delete_failed: ' . $entryId . '/' . $commentId . ' (' . plugin_mastodon_response_error_message($deleted) . ')';
-					plugin_mastodon_log('Deletion sync failed to delete remote status for local comment ' . $entryId . '/' . $commentId . ': ' . plugin_mastodon_response_error_message($deleted));
-					if (plugin_mastodon_rate_limit_state_error() !== '') {
-						$state ['deletion_cursor_comments'] = $commentCursorBefore;
-						$deletionInterrupted = true;
-						break;
+					$entryId = (string) $meta ['entry_id'];
+					$commentId = (string) $meta ['comment_id'];
+					$commentMeta = plugin_mastodon_state_get_comment_meta($state, $entryId, $commentId);
+					if (empty($commentMeta ['remote_id'])) {
+						plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
+						plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
+						$shardChanged = true;
+						continue;
 					}
-					continue;
-				}
+					if (!plugin_mastodon_mapping_matches_sync_start($options, $commentMeta, $commentId)) {
+						plugin_mastodon_log_skip('deletion_comment_before_sync_start', 'deletion comment mapping', 'deletion comment mappings', $entryId . '/' . $commentId, 'because they are older than the configured sync start date');
+						plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
+						$shardChanged = true;
+						continue;
+					}
+					if (plugin_mastodon_state_get_pending_comment_remote_recheck($state, $entryId, $commentId) !== array()) {
+						continue;
+					}
+					$remoteId = (string) $commentMeta ['remote_id'];
+					$localExists = (bool) comment_exists($entryId, $commentId);
+					if (!$localExists) {
+						$deleted = plugin_mastodon_delete_status($options, $remoteId, true);
+						if (!empty($deleted ['ok']) || plugin_mastodon_status_missing_response($deleted)) {
+							$queuedDescendants = plugin_mastodon_queue_comment_descendant_remote_rechecks($state, $childIndex, $remoteId);
+							plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'local_deleted_remote_deleted');
+							plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
+							plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
+							$state ['deletion_stats'] ['deleted_remote_comments']++;
+							$shardChanged = true;
+							if ($queuedDescendants > 0) {
+								plugin_mastodon_log('Queued ' . $queuedDescendants . ' direct local descendant comment(s) for follow-up verification after deleting remote comment ' . $remoteId);
+							}
+							continue;
+						}
+						$hadFailure = true;
+						$state ['last_error'] = 'comment_remote_delete_failed: ' . $entryId . '/' . $commentId . ' (' . plugin_mastodon_response_error_message($deleted) . ')';
+						plugin_mastodon_log('Deletion sync failed to delete remote status for local comment ' . $entryId . '/' . $commentId . ': ' . plugin_mastodon_response_error_message($deleted));
+						if (plugin_mastodon_rate_limit_state_error() !== '') {
+							$state ['deletion_cursor_comments'] = $commentCursorBefore;
+							$deletionInterrupted = true;
+							break;
+						}
+						continue;
+					}
 
-				if (!plugin_mastodon_mapping_matches_deletion_lookup_window($options, $commentMeta, $commentId, $force)) {
-					plugin_mastodon_log_skip('deletion_comment_outside_lookup_window', 'remote deletion comment lookup', 'remote deletion comment lookups', $entryId . '/' . $commentId, 'because they are outside the scheduled deletion lookup window');
-					continue;
-				}
+					if (!plugin_mastodon_mapping_matches_deletion_lookup_window($options, $commentMeta, $commentId, $force)) {
+						plugin_mastodon_log_skip('deletion_comment_outside_lookup_window', 'remote deletion comment lookup', 'remote deletion comment lookups', $entryId . '/' . $commentId, 'because they are outside the scheduled deletion lookup window');
+						continue;
+					}
 
-				$remote = plugin_mastodon_fetch_status($options, $remoteId);
-				if (plugin_mastodon_status_missing_response($remote)) {
-					$queuedDescendants = plugin_mastodon_queue_comment_descendant_remote_rechecks($state, $childIndex, $remoteId);
-					if (comment_exists($entryId, $commentId)) {
-						plugin_mastodon_local_write_guard_enter();
-						try {
-							comment_delete($entryId, $commentId);
-						} finally {
-							plugin_mastodon_local_write_guard_leave();
+					$remote = plugin_mastodon_fetch_status($options, $remoteId);
+					if (plugin_mastodon_status_missing_response($remote)) {
+						$queuedDescendants = plugin_mastodon_queue_comment_descendant_remote_rechecks($state, $childIndex, $remoteId);
+						if (comment_exists($entryId, $commentId)) {
+							plugin_mastodon_local_write_guard_enter();
+							try {
+								comment_delete($entryId, $commentId);
+							} finally {
+								plugin_mastodon_local_write_guard_leave();
+							}
+						}
+						plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'remote_missing_local_deleted');
+						plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
+						plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
+						$state ['deletion_stats'] ['deleted_local_comments']++;
+						$shardChanged = true;
+						if ($queuedDescendants > 0) {
+							plugin_mastodon_log('Queued ' . $queuedDescendants . ' direct local descendant comment(s) for follow-up verification after remote comment ' . $remoteId . ' disappeared');
+						}
+						continue;
+					}
+					if (empty($remote ['ok'])) {
+						$hadFailure = true;
+						$state ['last_error'] = 'comment_remote_lookup_failed: ' . $entryId . '/' . $commentId . ' (' . plugin_mastodon_response_error_message($remote) . ')';
+						plugin_mastodon_log('Deletion sync failed to fetch remote status for local comment ' . $entryId . '/' . $commentId . ': ' . plugin_mastodon_response_error_message($remote));
+						if (plugin_mastodon_rate_limit_state_error() !== '') {
+							$state ['deletion_cursor_comments'] = $commentCursorBefore;
+							$deletionInterrupted = true;
+							break;
 						}
 					}
-					plugin_mastodon_state_set_comment_tombstone($state, $remoteId, $entryId, $commentId, 'remote_missing_local_deleted');
-					plugin_mastodon_state_remove_pending_comment_remote_recheck($state, $entryId, $commentId);
-					plugin_mastodon_state_remove_comment_mapping($state, $entryId, $commentId);
-					$state ['deletion_stats'] ['deleted_local_comments']++;
-					if ($queuedDescendants > 0) {
-						plugin_mastodon_log('Queued ' . $queuedDescendants . ' direct local descendant comment(s) for follow-up verification after remote comment ' . $remoteId . ' disappeared');
-					}
-					continue;
 				}
-				if (empty($remote ['ok'])) {
-					$hadFailure = true;
-					$state ['last_error'] = 'comment_remote_lookup_failed: ' . $entryId . '/' . $commentId . ' (' . plugin_mastodon_response_error_message($remote) . ')';
-					plugin_mastodon_log('Deletion sync failed to fetch remote status for local comment ' . $entryId . '/' . $commentId . ': ' . plugin_mastodon_response_error_message($remote));
-					if (plugin_mastodon_rate_limit_state_error() !== '') {
-						$state ['deletion_cursor_comments'] = $commentCursorBefore;
-						$deletionInterrupted = true;
-						break;
-					}
+
+				if ($deletionInterrupted) {
+					break;
+				}
+				if (!$shardChanged) {
+					plugin_mastodon_state_unload_comment_shard_from_memory($state, $commentShardEntryId);
 				}
 			}
 
-			if (!$deletionInterrupted && $processedCommentMappings >= count($commentMappings)) {
+			if (!$deletionInterrupted && $processedCommentMappings >= $remainingCommentMappings) {
 				$state ['deletion_cursor_comments'] = '';
 			}
 		}
@@ -10114,6 +11716,10 @@ function plugin_mastodon_run_deletion_sync($force) {
 
 	plugin_mastodon_log_flush_skip_summaries();
 
+	foreach (plugin_mastodon_state_pending_recheck_entry_ids($state) as $pendingRecheckEntryId) {
+		plugin_mastodon_state_load_comment_shard_into($state, $pendingRecheckEntryId);
+	}
+	$childIndex = plugin_mastodon_build_comment_remote_child_index($state);
 	$pendingCommentRechecksRemaining = plugin_mastodon_process_pending_comment_remote_rechecks($options, $state, $childIndex, $hadFailure);
 	$rateLimitError = plugin_mastodon_rate_limit_state_error();
 	if ($rateLimitError !== '') {
@@ -10146,10 +11752,12 @@ function plugin_mastodon_run_deletion_sync($force) {
 		plugin_mastodon_log('Deletion synchronization failed');
 	}
 
-	$stateWriteOk = plugin_mastodon_state_write($state);
+	$stateWriteOk = plugin_mastodon_state_write_with_last_error($state, 'state_write_failed_after_deletion_sync');
 	if (!$stateWriteOk && !$hadFailure) {
-		$state ['last_error'] = 'state_write_failed_after_deletion_sync';
-		plugin_mastodon_log('Deletion synchronization completed but state.json could not be persisted');
+		if ($state ['last_error'] === '') {
+			$state ['last_error'] = 'state_write_failed_after_deletion_sync';
+		}
+		plugin_mastodon_log('Deletion synchronization completed but state.json could not be persisted: ' . $state ['last_error']);
 	}
 	@flock($lockHandle, LOCK_UN);
 	@fclose($lockHandle);
@@ -10199,7 +11807,7 @@ function plugin_mastodon_sync_due($options, $state, $timestamp) {
 function plugin_mastodon_run_sync($force, $fullWindow = null) {
 	plugin_mastodon_extend_time_limit(180);
 	$options = plugin_mastodon_get_options();
-	$state = plugin_mastodon_state_read();
+	$state = plugin_mastodon_state_read(array());
 	$force = (bool) $force;
 	$fullWindow = $fullWindow === null ? $force : (bool) $fullWindow;
 
@@ -10239,6 +11847,7 @@ function plugin_mastodon_run_sync($force, $fullWindow = null) {
 	$state ['last_error'] = '';
 	$state ['content_stats'] = plugin_mastodon_default_state() ['content_stats'];
 
+	plugin_mastodon_state_load_content_sync_comment_workset($options, $state, $fullWindow);
 	$protectedDeletedExportedComments = plugin_mastodon_protect_locally_deleted_exported_comments($options, $state);
 	if ($protectedDeletedExportedComments > 0) {
 		plugin_mastodon_log('Protected ' . $protectedDeletedExportedComments . ' locally deleted exported FlatPress comment mapping(s) from stale Mastodon context re-imports before content synchronization');
@@ -10263,10 +11872,12 @@ function plugin_mastodon_run_sync($force, $fullWindow = null) {
 		plugin_mastodon_log('Synchronization failed');
 	}
 
-	$stateWriteOk = plugin_mastodon_state_write($state);
+	$stateWriteOk = plugin_mastodon_state_write_with_last_error($state, 'state_write_failed_after_sync');
 	if (!$stateWriteOk && $okRemote && $okLocal) {
-		$state ['last_error'] = 'state_write_failed_after_sync';
-		plugin_mastodon_log('Synchronization completed but state.json could not be persisted');
+		if ($state ['last_error'] === '') {
+			$state ['last_error'] = 'state_write_failed_after_sync';
+		}
+		plugin_mastodon_log('Synchronization completed but state.json could not be persisted: ' . $state ['last_error']);
 	}
 	@flock($lockHandle, LOCK_UN);
 	@fclose($lockHandle);
@@ -10440,6 +12051,122 @@ function plugin_mastodon_admin_instance_info_rows($options) {
 	return $rows;
 }
 
+
+/**
+ * Build a local admin-panel link for Mastodon plugin pages.
+ * @param string $action
+ * @return string
+ */
+function plugin_mastodon_admin_panel_link($action) {
+	$action = preg_replace('/[^a-z0-9_\\-]/i', '', (string) $action);
+	if ($action === '') {
+		$action = 'mastodon';
+	}
+	if (function_exists('admin_getpanellink')) {
+		$link = admin_getpanellink('plugin', $action);
+		if (function_exists('htmlspecialchars_decode')) {
+			return htmlspecialchars_decode($link, ENT_QUOTES);
+		}
+		return str_replace(array('&amp;', '&#038;'), '&', $link);
+	}
+	$baseUrl = defined('BLOG_BASEURL') ? BLOG_BASEURL : '';
+	return $baseUrl . 'admin.php?p=plugin&action=' . rawurlencode($action);
+}
+
+/**
+ * Decide whether the current request targets the dedicated Mastodon maintenance page.
+ * @return bool
+ */
+function plugin_mastodon_admin_is_maintenance_request() {
+	return isset($_REQUEST ['action']) && (string) $_REQUEST ['action'] === 'mastodon_maintenance';
+}
+
+/**
+ * Return an empty admin maintenance result container.
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_admin_empty_state_maintenance_result() {
+	return array(
+		'available' => false,
+		'ok' => false,
+		'repaired' => false,
+		'stats_rows' => array(),
+		'errors' => array(),
+		'warnings' => array()
+	);
+}
+
+/**
+ * Convert comment-shard diagnostics into template-friendly admin rows.
+ * @param array<string, mixed> $diagnostics
+ * @return array<string, mixed>
+ */
+function plugin_mastodon_admin_state_maintenance_result($diagnostics) {
+	$diagnostics = is_array($diagnostics) ? $diagnostics : array();
+	$stats = isset($diagnostics ['stats']) && is_array($diagnostics ['stats']) ? $diagnostics ['stats'] : array();
+	$rows = array();
+	foreach (array(
+		'shard_files' => plugin_mastodon_lang_string('state_maintenance_stat_shard_files', 'Shard files'),
+		'shard_metadata_entries' => plugin_mastodon_lang_string('state_maintenance_stat_shard_metadata_entries', 'Shard metadata entries'),
+		'comments' => plugin_mastodon_lang_string('state_maintenance_stat_comments', 'Stored comments'),
+		'comments_remote' => plugin_mastodon_lang_string('state_maintenance_stat_comments_remote', 'Remote comment index entries')
+	) as $key => $label) {
+		$rows [] = array(
+			'label' => $label,
+			'value' => isset($stats [$key]) ? (string) (int) $stats [$key] : '0'
+		);
+	}
+	$rows [] = array(
+		'label' => plugin_mastodon_lang_string('state_maintenance_stat_repaired', 'Repair performed'),
+		'value' => !empty($diagnostics ['repaired']) ? plugin_mastodon_lang_string('bool_yes', 'Yes') : plugin_mastodon_lang_string('bool_no', 'No')
+	);
+	$errors = isset($diagnostics ['errors']) && is_array($diagnostics ['errors']) ? array_values($diagnostics ['errors']) : array();
+	$warnings = isset($diagnostics ['warnings']) && is_array($diagnostics ['warnings']) ? array_values($diagnostics ['warnings']) : array();
+	return array(
+		'available' => true,
+		'ok' => !empty($diagnostics ['ok']) && $errors === array() && $warnings === array(),
+		'repaired' => !empty($diagnostics ['repaired']),
+		'stats_rows' => $rows,
+		'errors' => $errors,
+		'warnings' => $warnings
+	);
+}
+
+/**
+ * Print command-line comment-shard diagnostics or perform a repair.
+ *
+ * @param array<int, string>|null $arguments
+ * @return int
+ */
+function plugin_mastodon_cli_comment_shard_maintenance($arguments = null) {
+	$arguments = is_array($arguments) ? array_values($arguments) : (isset($_SERVER ['argv']) && is_array($_SERVER ['argv']) ? array_slice($_SERVER ['argv'], 1) : array());
+	$command = isset($arguments [0]) ? (string) $arguments [0] : '';
+	$repair = in_array($command, array('repair', 'repair-comment-shards', '--repair-comment-shards'), true);
+	$diagnose = $repair || in_array($command, array('', 'diagnose', 'diagnose-comment-shards', '--diagnose-comment-shards'), true);
+	if (!$diagnose) {
+		echo 'Usage: php fp-plugins/mastodon/mastodon-state-cli.php [diagnose|repair]' . PHP_EOL;
+		return 2;
+	}
+	$result = $repair ? plugin_mastodon_state_repair_comment_shards(null, true) : plugin_mastodon_state_diagnose_comment_shards(null);
+	$stats = isset($result ['stats']) && is_array($result ['stats']) ? $result ['stats'] : array();
+	echo ($repair ? 'Mastodon comment-shard repair' : 'Mastodon comment-shard diagnostics') . PHP_EOL;
+	foreach (array('shard_files', 'shard_metadata_entries', 'comments', 'comments_remote') as $key) {
+		echo $key . ': ' . (isset($stats [$key]) ? (int) $stats [$key] : 0) . PHP_EOL;
+	}
+	if (!empty($result ['repaired'])) {
+		echo 'repaired: yes' . PHP_EOL;
+	}
+	$errors = isset($result ['errors']) && is_array($result ['errors']) ? $result ['errors'] : array();
+	$warnings = isset($result ['warnings']) && is_array($result ['warnings']) ? $result ['warnings'] : array();
+	foreach ($warnings as $warning) {
+		echo 'warning: ' . (string) $warning . PHP_EOL;
+	}
+	foreach ($errors as $error) {
+		echo 'error: ' . (string) $error . PHP_EOL;
+	}
+	return empty($errors) ? 0 : 1;
+}
+
 /**
  * Assign plugin data to Smarty for the admin panel.
  * @param mixed $smarty
@@ -10485,6 +12212,10 @@ function plugin_mastodon_admin_assign(&$smarty) {
 	$smarty->assign('mastodon_companion_plugins_head', plugin_mastodon_lang_string('companion_plugins_head', 'Companion FlatPress plugins'));
 	$smarty->assign('mastodon_companion_plugins_intro', plugin_mastodon_lang_string('companion_plugins_intro', 'For the full Mastodon feature set, activate these FlatPress plugins as well.'));
 	$smarty->assign('mastodon_companion_plugins', plugin_mastodon_companion_plugins_status());
+	$smarty->assign('mastodon_state_maintenance_result', plugin_mastodon_admin_empty_state_maintenance_result());
+	$smarty->assign('mastodon_lang', plugin_mastodon_admin_language_strings());
+	$smarty->assign('mastodon_admin_main_url', plugin_mastodon_admin_panel_link('mastodon'));
+	$smarty->assign('mastodon_admin_maintenance_url', plugin_mastodon_admin_panel_link('mastodon_maintenance'));
 }
 
 if (class_exists('AdminPanelAction')) {
@@ -10504,6 +12235,7 @@ if (class_exists('AdminPanelAction')) {
 
 		function onsubmit($data = null) {
 			$options = plugin_mastodon_get_options();
+			$stateMaintenanceResult = array();
 
 			if (isset($_POST ['mastodon_save'])) {
 				$options ['instance_url'] = plugin_mastodon_normalize_instance_url(isset($_POST ['instance_url']) ? $_POST ['instance_url'] : '');
@@ -10542,6 +12274,15 @@ if (class_exists('AdminPanelAction')) {
 					$response = plugin_mastodon_refresh_instance_information($options);
 					$this->smarty->assign('success', !empty($response ['ok']) ? 6 : -6);
 				}
+			} elseif (isset($_POST ['mastodon_diagnose_state'])) {
+				$diagnostics = plugin_mastodon_state_diagnose_comment_shards(null);
+				$stateMaintenanceResult = plugin_mastodon_admin_state_maintenance_result($diagnostics);
+				$this->smarty->assign('success', !empty($diagnostics ['ok']) ? 7 : -7);
+			} elseif (isset($_POST ['mastodon_repair_state'])) {
+				$diagnostics = plugin_mastodon_state_repair_comment_shards(null, true);
+				$stateMaintenanceResult = plugin_mastodon_admin_state_maintenance_result($diagnostics);
+				$repairOk = empty($diagnostics ['errors']) && (!empty($diagnostics ['repaired']) || empty($diagnostics ['warnings']));
+				$this->smarty->assign('success', $repairOk ? 8 : -8);
 			} elseif (isset($_POST ['mastodon_run_now'])) {
 				$result = plugin_mastodon_run_sync(true, false);
 				$this->smarty->assign('success', $result ['ok'] ? 4 : -4);
@@ -10559,10 +12300,51 @@ if (class_exists('AdminPanelAction')) {
 			}
 
 			plugin_mastodon_admin_assign($this->smarty);
+			if ($stateMaintenanceResult !== array()) {
+				$this->smarty->assign('mastodon_state_maintenance_result', $stateMaintenanceResult);
+			}
 			return 0;
 		}
 	}
 
+
+	class admin_plugin_mastodon_maintenance extends AdminPanelAction {
+
+		var $langres = 'plugin:mastodon';
+
+		function setup() {
+			$this->smarty->assign('admin_resource', 'plugin:mastodon/admin.plugin.mastodon.maintenance');
+			plugin_mastodon_admin_assign($this->smarty);
+		}
+
+		function main() {
+			return 0;
+		}
+
+		function onsubmit($data = null) {
+			$stateMaintenanceResult = array();
+
+			if (isset($_POST ['mastodon_diagnose_state'])) {
+				$diagnostics = plugin_mastodon_state_diagnose_comment_shards(null);
+				$stateMaintenanceResult = plugin_mastodon_admin_state_maintenance_result($diagnostics);
+				$this->smarty->assign('success', !empty($diagnostics ['ok']) ? 7 : -7);
+			} elseif (isset($_POST ['mastodon_repair_state'])) {
+				$diagnostics = plugin_mastodon_state_repair_comment_shards(null, true);
+				$stateMaintenanceResult = plugin_mastodon_admin_state_maintenance_result($diagnostics);
+				$repairOk = empty($diagnostics ['errors']) && (!empty($diagnostics ['repaired']) || empty($diagnostics ['warnings']));
+				$this->smarty->assign('success', $repairOk ? 8 : -8);
+			}
+
+			plugin_mastodon_admin_assign($this->smarty);
+			if ($stateMaintenanceResult !== array()) {
+				$this->smarty->assign('mastodon_state_maintenance_result', $stateMaintenanceResult);
+			}
+			return 0;
+		}
+	}
+
+
 	admin_addpanelaction('plugin', 'mastodon', true);
+	admin_addpanelaction('plugin', 'mastodon_maintenance', false);
 }
 ?>

@@ -144,6 +144,7 @@
 			<input type="submit" name="mastodon_run_full_deletion" value="{$plang.run_full_deletion|escape}">
 		</div>
 	</fieldset>
+
 {/html_form}
 
 <h3>{$plang.status_head|escape}</h3>
@@ -229,3 +230,10 @@
 {else}
 <p>{$plang.instance_info_empty|escape}</p>
 {/if}
+
+<fieldset><legend>{$mastodon_lang.state_maintenance_head|escape}</legend>
+	<p>{$mastodon_lang.state_maintenance_desc_short|escape}</p>
+	<div class="buttonbar">
+		<a class="link-general" href="{$mastodon_admin_maintenance_url|escape}">{$mastodon_lang.state_maintenance_open|escape}</a>
+	</div>
+</fieldset>
