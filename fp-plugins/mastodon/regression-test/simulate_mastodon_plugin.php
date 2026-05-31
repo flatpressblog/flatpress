@@ -2513,6 +2513,7 @@ function simulate_run_remote_entry_local_comment_export_case($force) {
 	$options ['access_token'] = 'token123';
 	plugin_mastodon_save_options($options);
 	plugin_mastodon_runtime_cache_clear();
+	plugin_mastodon_sync_guard_clear('content');
 
 	simulate_delete_recursive(ABS_PATH . FP_CONTENT . 'content');
 	@mkdir(ABS_PATH . FP_CONTENT . 'content', 0777, true);
@@ -3904,12 +3905,22 @@ $guardNow = strtotime('2026-03-13 23:05:00');
 plugin_mastodon_sync_guard_clear('content', $guardNow);
 $guardMarked = plugin_mastodon_sync_guard_mark('content', 'simulation_guard_test', $guardNow);
 $guardActive = plugin_mastodon_sync_guard_active('content', $guardNow + 60);
+$guardCleared = plugin_mastodon_sync_guard_clear('content', $guardNow + 120);
+$guardActiveAfterClear = plugin_mastodon_sync_guard_active('content', $guardNow + 121);
+$guardMarkedAgain = plugin_mastodon_sync_guard_mark('content', 'simulation_guard_test_expiry', $guardNow);
 $guardExpired = plugin_mastodon_sync_guard_active('content', $guardNow + PLUGIN_MASTODON_COOLDOWN_TTL + 1);
 plugin_mastodon_sync_guard_clear('content', $guardNow + PLUGIN_MASTODON_COOLDOWN_TTL + 1);
 $allOk = test_result(
 	'Scheduled content synchronization uses a short file/APCu cooldown guard',
-	$guardMarked && $guardActive && !$guardExpired,
-	json_encode(array('marked' => $guardMarked, 'active' => $guardActive, 'expired' => $guardExpired))
+	$guardMarked && $guardActive && $guardCleared && !$guardActiveAfterClear && $guardMarkedAgain && !$guardExpired,
+	json_encode(array(
+		'marked' => $guardMarked,
+		'active' => $guardActive,
+		'cleared' => $guardCleared,
+		'active_after_clear' => $guardActiveAfterClear,
+		'marked_again' => $guardMarkedAgain,
+		'expired' => $guardExpired
+	))
 ) && $allOk;
 
 $fallbackState = plugin_mastodon_default_state();
@@ -6745,7 +6756,308 @@ $allOk = test_result(
 		'last_run' => isset($automaticThreadStateAfter ['last_run']) ? $automaticThreadStateAfter ['last_run'] : ''
 	))
 ) && $allOk;
+plugin_mastodon_sync_guard_clear('content');
 unset($GLOBALS ['plugin_mastodon_test_now']);
+
+// Notification hints import new replies on old synchronized Mastodon threads before the slow rotation fallback.
+$notificationThreadOptions = $oldThreadRotateOptions;
+$notificationThreadOptions ['old_thread_reply_check'] = '1';
+$notificationThreadOptions ['old_thread_context_limit'] = '1';
+$notificationThreadOptions ['oauth_registered_scopes'] = 'read:accounts read:statuses read:notifications write:statuses write:media';
+plugin_mastodon_save_options($notificationThreadOptions);
+
+$notificationEntryState = plugin_mastodon_default_state();
+$notificationEntryState ['last_remote_status_id'] = 'notification-last-status';
+$notificationEntryState ['last_remote_notification_id'] = 'notification-100';
+plugin_mastodon_state_set_entry_mapping($notificationEntryState, $oldThreadRotateEntryAId, 'notification-entry-root', 'local', plugin_mastodon_entry_hash(entry_parse($oldThreadRotateEntryAId)), $instanceUrl . '/@flatpress/notification-entry-root', '2034-12-20 08:00:00');
+plugin_mastodon_state_write($notificationEntryState);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&since_id=notification-last-status' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	),
+	'GET ' . $instanceUrl . '/api/v1/notifications?limit=30&types%5B%5D=mention&since_id=notification-100' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			array(
+				'id' => 'notification-101',
+				'type' => 'mention',
+				'status' => array(
+					'id' => 'notification-entry-reply',
+					'visibility' => 'public',
+					'in_reply_to_id' => 'notification-entry-root',
+					'created_at' => '2035-01-15T03:10:00Z',
+					'content' => '<p>Notification reply on an old mapped entry</p>',
+					'url' => $instanceUrl . '/@alice/notification-entry-reply',
+					'account' => array(
+						'id' => 'acct2',
+						'acct' => 'alice@example.net',
+						'display_name' => 'Alice',
+						'url' => 'https://example.net/@alice'
+					)
+				)
+			)
+		))
+	)
+);
+$notificationEntryState = plugin_mastodon_state_read();
+$notificationEntryOk = plugin_mastodon_sync_remote_to_local($notificationThreadOptions, $notificationEntryState, false);
+$notificationEntryRequests = simulate_recorded_http_requests();
+$notificationEntryContextRequests = 0;
+foreach ($notificationEntryRequests as $request) {
+	if (is_array($request) && strpos((string) (isset($request ['url']) ? $request ['url'] : ''), '/context') !== false) {
+		$notificationEntryContextRequests++;
+	}
+}
+$notificationEntryRef = isset($notificationEntryState ['comments_remote'] ['notification-entry-reply']) ? $notificationEntryState ['comments_remote'] ['notification-entry-reply'] : array();
+$notificationEntryComment = (!empty($notificationEntryRef ['entry_id']) && !empty($notificationEntryRef ['comment_id']))
+	? comment_parse($notificationEntryRef ['entry_id'], $notificationEntryRef ['comment_id'])
+	: array();
+$allOk = test_result(
+	'Notification hints import a new reply on an old mapped Mastodon entry without context rotation',
+	$notificationEntryOk
+		&& $notificationEntryContextRequests === 0
+		&& !empty($notificationEntryRef)
+		&& isset($notificationEntryComment ['content']) && strpos((string) $notificationEntryComment ['content'], 'Notification reply on an old mapped entry') !== false
+		&& isset($notificationEntryState ['last_remote_notification_id']) && (string) $notificationEntryState ['last_remote_notification_id'] === 'notification-101',
+	json_encode(array(
+		'ref' => $notificationEntryRef,
+		'comment' => $notificationEntryComment,
+		'context_requests' => $notificationEntryContextRequests,
+		'last_notification' => isset($notificationEntryState ['last_remote_notification_id']) ? $notificationEntryState ['last_remote_notification_id'] : '',
+		'requests' => $notificationEntryRequests
+	))
+) && $allOk;
+
+$notificationParentComment = array(
+	'version' => system_ver(),
+	'name' => 'Known parent',
+	'content' => 'Already imported parent reply.',
+	'date' => strtotime('2035-01-10 08:30:00 UTC')
+);
+$notificationParentCommentId = comment_save($oldThreadRotateEntryAId, $notificationParentComment);
+$notificationReplyState = plugin_mastodon_default_state();
+$notificationReplyState ['last_remote_status_id'] = 'notification-reply-last-status';
+$notificationReplyState ['last_remote_notification_id'] = 'notification-200';
+plugin_mastodon_state_set_entry_mapping($notificationReplyState, $oldThreadRotateEntryAId, 'notification-reply-root', 'local', plugin_mastodon_entry_hash(entry_parse($oldThreadRotateEntryAId)), $instanceUrl . '/@flatpress/notification-reply-root', '2034-12-20 08:00:00');
+$notificationParentParsed = comment_parse($oldThreadRotateEntryAId, $notificationParentCommentId);
+plugin_mastodon_state_set_comment_mapping($notificationReplyState, $oldThreadRotateEntryAId, $notificationParentCommentId, 'notification-parent-reply', 'remote', plugin_mastodon_comment_hash($notificationParentParsed), $instanceUrl . '/@bob/notification-parent-reply', '2035-01-10 08:30:00', '', 'notification-reply-root', plugin_mastodon_local_item_date_key($notificationParentParsed, $notificationParentCommentId), '2035-01-10');
+plugin_mastodon_state_write($notificationReplyState);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&since_id=notification-reply-last-status' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	),
+	'GET ' . $instanceUrl . '/api/v1/notifications?limit=30&types%5B%5D=mention&since_id=notification-200' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			array(
+				'id' => 'notification-201',
+				'type' => 'mention',
+				'status' => array(
+					'id' => 'notification-child-reply',
+					'visibility' => 'public',
+					'in_reply_to_id' => 'notification-parent-reply',
+					'created_at' => '2035-01-15T03:20:00Z',
+					'content' => '<p>Notification reply to an old known reply</p>',
+					'url' => $instanceUrl . '/@carol/notification-child-reply',
+					'account' => array(
+						'id' => 'acct3',
+						'acct' => 'carol@example.net',
+						'display_name' => 'Carol',
+						'url' => 'https://example.net/@carol'
+					)
+				)
+			)
+		))
+	)
+);
+$notificationReplyState = plugin_mastodon_state_read();
+$notificationReplyOk = plugin_mastodon_sync_remote_to_local($notificationThreadOptions, $notificationReplyState, false);
+$notificationReplyRef = isset($notificationReplyState ['comments_remote'] ['notification-child-reply']) ? $notificationReplyState ['comments_remote'] ['notification-child-reply'] : array();
+$notificationReplyComment = (!empty($notificationReplyRef ['entry_id']) && !empty($notificationReplyRef ['comment_id']))
+	? comment_parse($notificationReplyRef ['entry_id'], $notificationReplyRef ['comment_id'])
+	: array();
+$allOk = test_result(
+	'Notification hints import a new reply on an old mapped Mastodon reply with reply metadata',
+	$notificationReplyOk
+		&& !empty($notificationReplyRef)
+		&& isset($notificationReplyComment ['replyto']) && (string) $notificationReplyComment ['replyto'] === (string) $notificationParentCommentId
+		&& isset($notificationReplyState ['last_remote_notification_id']) && (string) $notificationReplyState ['last_remote_notification_id'] === 'notification-201',
+	json_encode(array(
+		'ref' => $notificationReplyRef,
+		'comment' => $notificationReplyComment,
+		'last_notification' => isset($notificationReplyState ['last_remote_notification_id']) ? $notificationReplyState ['last_remote_notification_id'] : ''
+	))
+) && $allOk;
+
+$notificationContextState = plugin_mastodon_default_state();
+$notificationContextState ['last_remote_status_id'] = 'notification-context-last-status';
+$notificationContextState ['last_remote_notification_id'] = 'notification-300';
+plugin_mastodon_state_set_entry_mapping($notificationContextState, $oldThreadRotateEntryBId, 'notification-context-root', 'local', plugin_mastodon_entry_hash(entry_parse($oldThreadRotateEntryBId)), $instanceUrl . '/@flatpress/notification-context-root', '2034-12-21 08:00:00');
+plugin_mastodon_state_write($notificationContextState);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&since_id=notification-context-last-status' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	),
+	'GET ' . $instanceUrl . '/api/v1/notifications?limit=30&types%5B%5D=mention&since_id=notification-300' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			array(
+				'id' => 'notification-301',
+				'type' => 'mention',
+				'status' => array(
+					'id' => 'notification-context-child',
+					'visibility' => 'public',
+					'in_reply_to_id' => 'notification-context-parent',
+					'created_at' => '2035-01-15T03:30:00Z',
+					'content' => '<p>Notification child reply after an unmapped parent</p>',
+					'url' => $instanceUrl . '/@erin/notification-context-child',
+					'account' => array(
+						'id' => 'acct5',
+						'acct' => 'erin@example.net',
+						'display_name' => 'Erin',
+						'url' => 'https://example.net/@erin'
+					)
+				)
+			)
+		))
+	),
+	'GET ' . $instanceUrl . '/api/v1/statuses/notification-context-child/context' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			'ancestors' => array(
+				array(
+					'id' => 'notification-context-root',
+					'visibility' => 'public',
+					'in_reply_to_id' => null,
+					'created_at' => '2034-12-21T08:00:00Z',
+					'content' => '<p>Root entry</p>',
+					'account' => array('id' => 'acct1', 'acct' => 'flatpress', 'display_name' => 'FlatPress')
+				),
+				array(
+					'id' => 'notification-context-parent',
+					'visibility' => 'public',
+					'in_reply_to_id' => 'notification-context-root',
+					'created_at' => '2035-01-14T09:00:00Z',
+					'content' => '<p>Unmapped parent reply from context</p>',
+					'url' => $instanceUrl . '/@dave/notification-context-parent',
+					'account' => array(
+						'id' => 'acct4',
+						'acct' => 'dave@example.net',
+						'display_name' => 'Dave',
+						'url' => 'https://example.net/@dave'
+					)
+				)
+			),
+			'descendants' => array()
+		))
+	)
+);
+$notificationContextState = plugin_mastodon_state_read();
+$notificationContextOk = plugin_mastodon_sync_remote_to_local($notificationThreadOptions, $notificationContextState, false);
+$notificationContextRequests = simulate_recorded_http_requests();
+$notificationContextChildRef = isset($notificationContextState ['comments_remote'] ['notification-context-child']) ? $notificationContextState ['comments_remote'] ['notification-context-child'] : array();
+$notificationContextParentRef = isset($notificationContextState ['comments_remote'] ['notification-context-parent']) ? $notificationContextState ['comments_remote'] ['notification-context-parent'] : array();
+$notificationContextRootRotationRequests = 0;
+$notificationContextChildContextRequests = 0;
+foreach ($notificationContextRequests as $request) {
+	if (!is_array($request) || empty($request ['url'])) {
+		continue;
+	}
+	$requestUrl = (string) $request ['url'];
+	if (strpos($requestUrl, '/api/v1/statuses/notification-context-root/context') !== false) {
+		$notificationContextRootRotationRequests++;
+	}
+	if (strpos($requestUrl, '/api/v1/statuses/notification-context-child/context') !== false) {
+		$notificationContextChildContextRequests++;
+	}
+}
+$allOk = test_result(
+	'Notification context hints use the old-thread budget before normal rotation',
+	$notificationContextOk
+		&& !empty($notificationContextParentRef)
+		&& !empty($notificationContextChildRef)
+		&& $notificationContextChildContextRequests === 1
+		&& $notificationContextRootRotationRequests === 0,
+	json_encode(array(
+		'parent_ref' => $notificationContextParentRef,
+		'child_ref' => $notificationContextChildRef,
+		'child_context_requests' => $notificationContextChildContextRequests,
+		'root_rotation_requests' => $notificationContextRootRotationRequests,
+		'requests' => $notificationContextRequests
+	))
+) && $allOk;
+
+$notificationMissingScopeState = plugin_mastodon_default_state();
+$notificationMissingScopeState ['last_remote_status_id'] = 'notification-missing-scope-status';
+$notificationMissingScopeState ['last_remote_notification_id'] = 'notification-400';
+plugin_mastodon_state_set_entry_mapping($notificationMissingScopeState, $oldThreadRotateEntryAId, 'notification-missing-scope-root', 'local', plugin_mastodon_entry_hash(entry_parse($oldThreadRotateEntryAId)), $instanceUrl . '/@flatpress/notification-missing-scope-root', '2034-12-20 08:00:00');
+plugin_mastodon_state_write($notificationMissingScopeState);
+$notificationMissingScopeOptions = $notificationThreadOptions;
+$notificationMissingScopeOptions ['oauth_registered_scopes'] = plugin_mastodon_oauth_legacy_scopes();
+plugin_mastodon_save_options($notificationMissingScopeOptions);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&since_id=notification-missing-scope-status' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	),
+	'GET ' . $instanceUrl . '/api/v1/statuses/notification-missing-scope-root/context' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('descendants' => array()))
+	)
+);
+$notificationMissingScopeState = plugin_mastodon_state_read();
+$notificationMissingScopeOk = plugin_mastodon_sync_remote_to_local($notificationMissingScopeOptions, $notificationMissingScopeState, false);
+$notificationMissingScopeRequests = simulate_recorded_http_requests();
+$notificationMissingScopeNotificationRequests = 0;
+foreach ($notificationMissingScopeRequests as $request) {
+	if (is_array($request) && strpos((string) (isset($request ['url']) ? $request ['url'] : ''), '/api/v1/notifications') !== false) {
+		$notificationMissingScopeNotificationRequests++;
+	}
+}
+$allOk = test_result(
+	'Reply-notification polling is skipped until read:notifications is authorized',
+	$notificationMissingScopeOk && $notificationMissingScopeNotificationRequests === 0,
+	json_encode(array(
+		'notification_requests' => $notificationMissingScopeNotificationRequests,
+		'requests' => $notificationMissingScopeRequests
+	))
+) && $allOk;
 
 entry_delete($oldThreadRotateEntryAId);
 entry_delete($oldThreadRotateEntryBId);
@@ -9179,6 +9491,7 @@ $allOk = test_result(
 // OAuth scope discovery regression tests
 $oauthProfileScopes = plugin_mastodon_oauth_profile_scopes();
 $oauthLegacyScopes = plugin_mastodon_oauth_legacy_scopes();
+$oauthCompatibleScopes = plugin_mastodon_oauth_compatible_scopes();
 
 $oauthOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
 $oauthOptions ['instance_url'] = $instanceUrl;
@@ -9274,11 +9587,11 @@ foreach (simulate_recorded_http_requests() as $request) {
 $legacyAuthorizeQuery = array();
 parse_str((string) parse_url($legacyAuthorizeUrl, PHP_URL_QUERY), $legacyAuthorizeQuery);
 $allOk = test_result(
-	'OAuth scope discovery falls back to read:accounts on older Mastodon instances',
+	'OAuth scope discovery falls back to read:accounts plus notifications on older Mastodon instances',
 	$legacyRegisterResponse ['ok']
-		&& $legacyRegisterScopes === $oauthLegacyScopes
-		&& isset($legacyAuthorizeQuery ['scope']) && (string) $legacyAuthorizeQuery ['scope'] === $oauthLegacyScopes
-		&& isset($legacyOAuthOptions ['oauth_registered_scopes']) && (string) $legacyOAuthOptions ['oauth_registered_scopes'] === $oauthLegacyScopes,
+		&& $legacyRegisterScopes === $oauthCompatibleScopes
+		&& isset($legacyAuthorizeQuery ['scope']) && (string) $legacyAuthorizeQuery ['scope'] === $oauthCompatibleScopes
+		&& isset($legacyOAuthOptions ['oauth_registered_scopes']) && (string) $legacyOAuthOptions ['oauth_registered_scopes'] === $oauthCompatibleScopes,
 	json_encode(array(
 		'register_scopes' => $legacyRegisterScopes,
 		'authorize_scope' => isset($legacyAuthorizeQuery ['scope']) ? $legacyAuthorizeQuery ['scope'] : '',
@@ -10075,6 +10388,116 @@ if ($largeStateDecision === 'run') {
 	test_warn('Fresh large scheduler-state read avoids full state.json and uses APCu-capable file I/O', json_encode($largeStateMemoryDetails));
 }
 plugin_mastodon_runtime_cache_clear();
+
+
+// Regression test: automatic scheduled sync must export a new current comment on an old mapped entry via dirty_comments.
+simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
+mkdir($simRoot . '/fp-content/plugin_mastodon', 0777, true);
+plugin_mastodon_state_write(plugin_mastodon_default_state());
+$GLOBALS ['plugin_mastodon_test_now'] = strtotime('2026-05-31 17:00:00 UTC');
+
+$automaticOldCommentOptions = $seededOptions;
+$automaticOldCommentOptions ['sync_start_date'] = '2026-01-01';
+$automaticOldCommentOptions ['sync_scheduled_window_days'] = '7';
+$automaticOldCommentOptions ['update_local_from_remote'] = '0';
+$automaticOldCommentOptions ['old_thread_reply_check'] = '0';
+$automaticOldCommentOptions ['access_token'] = 'token123';
+plugin_mastodon_save_options($automaticOldCommentOptions);
+
+$automaticOldCommentEntry = array(
+	'version' => system_ver(),
+	'subject' => 'Old mapped entry with a fresh comment',
+	'content' => 'This entry is outside the scheduled window but already has a Mastodon status.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-04-19 12:00:00 UTC')
+);
+$automaticOldCommentEntryId = entry_save($automaticOldCommentEntry, null);
+$automaticOldCommentEntryParsed = entry_parse($automaticOldCommentEntryId);
+for ($automaticOldCommentIndex = 1; $automaticOldCommentIndex <= 10; $automaticOldCommentIndex++) {
+	comment_save($automaticOldCommentEntryId, array(
+		'version' => system_ver(),
+		'name' => 'Simulation',
+		'content' => 'Existing older comment ' . (string) $automaticOldCommentIndex,
+		'date' => strtotime('2026-04-19 12:' . str_pad((string) $automaticOldCommentIndex, 2, '0', STR_PAD_LEFT) . ':00 UTC')
+	));
+}
+
+$automaticOldCommentState = plugin_mastodon_default_state();
+plugin_mastodon_state_set_entry_mapping($automaticOldCommentState, $automaticOldCommentEntryId, 'automatic-old-entry-remote-1', 'local', plugin_mastodon_entry_hash($automaticOldCommentEntryParsed), $instanceUrl . '/@flatpress/automatic-old-entry-remote-1', '2026-04-19 12:00:00');
+plugin_mastodon_state_write($automaticOldCommentState);
+
+$automaticFreshComment = array(
+	'version' => system_ver(),
+	'name' => 'Regression Author',
+	'content' => 'Fresh 2026-05-31 16:48 comment on an old mapped entry',
+	'date' => strtotime('2026-05-31 16:48:00 UTC')
+);
+$automaticFreshCommentId = comment_save($automaticOldCommentEntryId, $automaticFreshComment);
+$automaticOldCommentHookState = plugin_mastodon_state_read(array($automaticOldCommentEntryId));
+$automaticOldCommentHookQueued = plugin_mastodon_state_has_dirty_comment($automaticOldCommentHookState, $automaticOldCommentEntryId, $automaticFreshCommentId);
+
+$GLOBALS ['plugin_mastodon_test_local_entry_parse_count'] = 0;
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	),
+	'GET ' . $instanceUrl . '/api/v2/instance' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))
+	),
+	'POST ' . $instanceUrl . '/api/v1/statuses' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'automatic-old-comment-remote-1', 'url' => $instanceUrl . '/@flatpress/automatic-old-comment-remote-1', 'created_at' => '2026-05-31T16:48:00Z'))
+	)
+);
+$automaticOldCommentResult = plugin_mastodon_run_sync(false);
+$automaticOldCommentStateAfter = isset($automaticOldCommentResult ['state']) && is_array($automaticOldCommentResult ['state']) ? $automaticOldCommentResult ['state'] : plugin_mastodon_state_read(array($automaticOldCommentEntryId));
+$automaticOldCommentParseCount = simulate_local_entry_parse_count();
+unset($GLOBALS ['plugin_mastodon_test_local_entry_parse_count']);
+$automaticOldCommentRequests = simulate_recorded_http_requests();
+$automaticOldCommentRequest = array();
+foreach ($automaticOldCommentRequests as $request) {
+	if (!is_array($request) || strtoupper((string) (isset($request ['method']) ? $request ['method'] : '')) !== 'POST' || strpos((string) (isset($request ['url']) ? $request ['url'] : ''), '/api/v1/statuses') === false) {
+		continue;
+	}
+	$parsed = array();
+	parse_str(isset($request ['body']) ? (string) $request ['body'] : '', $parsed);
+	if (isset($parsed ['status']) && strpos((string) $parsed ['status'], 'Fresh 2026-05-31 16:48 comment') !== false) {
+		$automaticOldCommentRequest = $parsed;
+		break;
+	}
+}
+$automaticOldCommentMeta = plugin_mastodon_state_get_comment_meta($automaticOldCommentStateAfter, $automaticOldCommentEntryId, $automaticFreshCommentId);
+$allOk = test_result(
+	'Automatic scheduled sync exports a new current comment on an old mapped entry through dirty_comments',
+	!empty($automaticOldCommentResult ['ok'])
+		&& $automaticOldCommentHookQueued
+		&& !empty($automaticOldCommentMeta ['remote_id'])
+		&& !plugin_mastodon_state_has_dirty_comment($automaticOldCommentStateAfter, $automaticOldCommentEntryId, $automaticFreshCommentId)
+		&& $automaticOldCommentRequest !== array()
+		&& isset($automaticOldCommentRequest ['in_reply_to_id'])
+		&& (string) $automaticOldCommentRequest ['in_reply_to_id'] === 'automatic-old-entry-remote-1'
+		&& $automaticOldCommentParseCount <= 2,
+	json_encode(array(
+		'run_message' => isset($automaticOldCommentResult ['message']) ? $automaticOldCommentResult ['message'] : '',
+		'hook_queued' => $automaticOldCommentHookQueued,
+		'parse_count' => $automaticOldCommentParseCount,
+		'comment_meta' => $automaticOldCommentMeta,
+		'request' => $automaticOldCommentRequest
+	))
+) && $allOk;
+entry_delete($automaticOldCommentEntryId);
+unset($GLOBALS ['plugin_mastodon_test_now']);
 
 plugin_mastodon_save_options($schedulerOriginalOptions);
 
