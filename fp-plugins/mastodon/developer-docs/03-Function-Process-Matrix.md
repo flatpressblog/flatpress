@@ -57,14 +57,14 @@ flowchart TD
 
 ## Change impact examples
 
-| Change area              | First functions to inspect                                                                                                        | State to inspect                                | Tests to inspect                         |
-|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|------------------------------------------|
-| Mastodon delete behavior | `plugin_mastodon_delete_status()`, `plugin_mastodon_run_deletion_sync()`                                                          | `deletions_pending`, cursors, tombstones        | Delete fallback and deletion sync tests  |
-| Media alt text update    | `plugin_mastodon_prepare_entry_media_sync_plan()`, `plugin_mastodon_status_media_attributes()`, `plugin_mastodon_update_status()` | entry media signatures, `remote_media`          | Media reuse and description update tests |
-| Remote reply import      | `plugin_mastodon_import_remote_comment()`, `plugin_mastodon_import_remote_context_descendants()`                                  | `comments_remote`, tombstones, pending rechecks | Reply tree and tombstone tests           |
-| Scheduler performance    | `plugin_mastodon_maybe_sync()`, scheduler-state helpers                                                                           | `scheduler-state.json`, large `state.json`      | Compact scheduler/large state tests      |
-| OAuth scopes             | `plugin_mastodon_oauth_scopes()`, discovery helpers                                                                               | options `oauth_registered_scopes`               | Scope discovery tests                    |
-| Text conversion          | BBCode/HTML/text helper functions                                                                                                 | usually no state                                | HTML/BBCode/URL/tag/emoji tests          |
+| Change area                | First functions to inspect                                                                                                          | State to inspect                                  | Tests to inspect                           |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------ |
+| Mastodon delete behavior   | `plugin_mastodon_delete_status()`, `plugin_mastodon_run_deletion_sync()`                                                            | `deletions_pending`, cursors, tombstones          | Delete fallback and deletion sync tests    |
+| Media alt text update      | `plugin_mastodon_prepare_entry_media_sync_plan()`, `plugin_mastodon_status_media_attributes()`, `plugin_mastodon_update_status()`   | entry media signatures, `remote_media`            | Media reuse and description update tests   |
+| Remote reply import        | `plugin_mastodon_import_remote_comment()`, `plugin_mastodon_import_remote_context_descendants()`                                    | `comments_remote`, tombstones, pending rechecks   | Reply tree and tombstone tests             |
+| Scheduler performance      | `plugin_mastodon_maybe_sync()`, scheduler-state helpers                                                                             | `scheduler-state.json`, large `state.json`        | Compact scheduler/large state tests        |
+| OAuth scopes               | `plugin_mastodon_oauth_scopes()`, discovery helpers                                                                                 | options `oauth_registered_scopes`                 | Scope discovery tests                      |
+| Text conversion            | BBCode/HTML/text helper functions                                                                                                   | usually no state                                  | HTML/BBCode/URL/tag/emoji tests            |
 
 ## Reading guidance
 
@@ -74,13 +74,13 @@ flowchart TD
 
 ## Side-effect boundaries and compatibility rules
 
-| Rule                                                                                               | Reason                                                            |
-|----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
-| Keep pure text/BBCode/URL conversion helpers free of file and HTTP side effects.                   | They are heavily tested and should remain deterministic.          |
-| Keep Mastodon endpoint strings centralized in API wrapper functions.                               | Makes fallback and budget behavior auditable.                     |
-| Use mapping helpers for `entries`, `entries_remote`, `comments` and `comments_remote`.             | Prevents one-way mapping corruption.                              |
-| Do not load full `state.json` in ordinary request fast paths when `scheduler-state.json` is fresh. | Required for large FlatPress installations and shared hosting.    |
-| Do not introduce PHP syntax newer than PHP 7.2.                                                    | Plugin target includes PHP 7.2 through 8.5.                       |
-| Avoid dynamic shapes that PHPStan Level 5 cannot follow without normalization.                     | Normalize arrays before reads; use clear guards for mixed values. |
-| Keep Smarty-facing admin values as simple arrays/scalars.                                          | Maintains compatibility with Smarty 4.x/5.x templates.            |
-| Add regression tests for any new long-lived state key.                                             | State bugs are often delayed until a later scheduled run.         |
+| Rule                                                                                                 | Reason                                                              |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Keep pure text/BBCode/URL conversion helpers free of file and HTTP side effects.                     | They are heavily tested and should remain deterministic.            |
+| Keep Mastodon endpoint strings centralized in API wrapper functions.                                 | Makes fallback and budget behavior auditable.                       |
+| Use mapping helpers for `entries`, `entries_remote`, `comments` and `comments_remote`.               | Prevents one-way mapping corruption.                                |
+| Do not load full `state.json` in ordinary request fast paths when `scheduler-state.json` is fresh.   | Required for large FlatPress installations and shared hosting.      |
+| Do not introduce PHP syntax newer than PHP 7.2.                                                      | Plugin target includes PHP 7.2 through 8.5.                         |
+| Avoid dynamic shapes that PHPStan Level 5 cannot follow without normalization.                       | Normalize arrays before reads; use clear guards for mixed values.   |
+| Keep Smarty-facing admin values as simple arrays/scalars.                                            | Maintains compatibility with Smarty 4.x/5.x templates.              |
+| Add regression tests for any new long-lived state key.                                               | State bugs are often delayed until a later scheduled run.           |

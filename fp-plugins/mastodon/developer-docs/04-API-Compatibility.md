@@ -4,12 +4,12 @@
 
 The current plugin implementation is best described as:
 
-| Range      | Status                                                                                                                                                          |
-|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `< 4.0.0`  | Not supported by the current documented plugin target because `/api/v2/instance` is the capability source and there is no `/api/v1/instance` API fallback.      |
-| `>= 4.0.0` | Technical target. Core endpoints used by the plugin are available; newer capability fields may be missing and internal defaults apply.                          |
-| `>= 4.4.0` | Recommended for full documented delete/media-cleanup behavior because `delete_media` on status delete and `DELETE /api/v1/media/:id` are documented from 4.4.0. |
-| Future 4.x | No hard upper bound is encoded. Continue checking official Mastodon API changelogs before changing endpoint behavior.                                           |
+| Range        | Status                                                                                                                                                            |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `< 4.0.0`    | Not supported by the current documented plugin target because `/api/v2/instance` is the capability source and there is no `/api/v1/instance` API fallback.        |
+| `>= 4.0.0`   | Technical target. Core endpoints used by the plugin are available; newer capability fields may be missing and internal defaults apply.                            |
+| `>= 4.4.0`   | Recommended for full documented delete/media-cleanup behavior because `delete_media` on status delete and `DELETE /api/v1/media/:id` are documented from 4.4.0.   |
+| Future 4.x   | No hard upper bound is encoded. Continue checking official Mastodon API changelogs before changing endpoint behavior.                                             |
 
 ## Endpoint matrix
 
@@ -17,8 +17,8 @@ The current plugin implementation is best described as:
 | ----------------------- | ------ | --------------------------------------- | ----------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | OAuth discovery         | GET    | /.well-known/oauth-authorization-server | 4.3.0                                     | Public                  | If unavailable, use legacy `read:accounts` instead of `profile`.                                        | plugin_mastodon_oauth_server_metadata / plugin_mastodon_oauth_scopes |
 | App registration        | POST   | /api/v1/apps                            | 0.0.0                                     | Public                  | No alternate endpoint. Existing registrations keep stored scopes.                                       | plugin_mastodon_register_app                                         |
-| Authorize URL           | GET    | /oauth/authorize                        | 0.1.0 era OAuth                           | Browser                 | No endpoint fallback; generated URL uses stored app credentials.                                        | plugin_mastodon_build_authorize_url()                                        |
-| Token exchange          | POST   | /oauth/token                            | 0.1.0 era OAuth                           | Public/client           | No endpoint fallback.                                                                                   | plugin_mastodon_exchange_code_for_token()                                        |
+| Authorize URL           | GET    | /oauth/authorize                        | 0.1.0 era OAuth                           | Browser                 | No endpoint fallback; generated URL uses stored app credentials.                                        | plugin_mastodon_build_authorize_url()                                |
+| Token exchange          | POST   | /oauth/token                            | 0.1.0 era OAuth                           | Public/client           | No endpoint fallback.                                                                                   | plugin_mastodon_exchange_code_for_token()                            |
 | Verify credentials      | GET    | /api/v1/accounts/verify_credentials     | 0.0.0                                     | User token              | Scope fallback: `profile` on current servers, `read:accounts` on older servers.                         | plugin_mastodon_verify_credentials                                   |
 | Instance info           | GET    | /api/v2/instance                        | 4.0.0                                     | Public                  | No `/api/v1/instance` API fallback; internal defaults are used if fields are missing.                   | plugin_mastodon_instance_document                                    |
 | Account statuses        | GET    | /api/v1/accounts/:id/statuses           | 0.0.0                                     | Public or read:statuses | Budgeted paging; limit 40, up to 5 plugin pages.                                                        | plugin_mastodon_fetch_account_statuses                               |
@@ -48,16 +48,16 @@ The low-level upload helper can upload the media items it receives, but `plugin_
 
 The plugin reads `/api/v2/instance` and uses `configuration` values when present. Missing values fall back to safe internal defaults.
 
-| Limit                       | Instance field                                         | Default/fallback                                                                          |
-|-----------------------------|--------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| Status max characters       | `configuration.statuses.max_characters`                | `500`                                                                                     |
-| Reserved characters per URL | `configuration.statuses.characters_reserved_per_url`   | `23`                                                                                      |
-| Max media attachments       | `configuration.statuses.max_media_attachments`         | `4`                                                                                       |
-| Media description length    | `configuration.media_attachments.description_limit`    | `1500`                                                                                    |
-| Supported MIME types        | `configuration.media_attachments.supported_mime_types` | Plugin validates broadly when unknown.                                                    |
-| Image size limit            | `configuration.media_attachments.image_size_limit`     | No local size rejection when unknown.                                                     |
-| Video size limit            | `configuration.media_attachments.video_size_limit`     | No local size rejection when unknown.                                                     |
-| Audio size limit            | `configuration.media_attachments.audio_size_limit`     | Falls back to video size if explicit audio limit is absent; otherwise no local rejection. |
+| Limit                         | Instance field                                           | Default/fallback                                                                            |
+| ----------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Status max characters         | `configuration.statuses.max_characters`                  | `500`                                                                                       |
+| Reserved characters per URL   | `configuration.statuses.characters_reserved_per_url`     | `23`                                                                                        |
+| Max media attachments         | `configuration.statuses.max_media_attachments`           | `4`                                                                                         |
+| Media description length      | `configuration.media_attachments.description_limit`      | `1500`                                                                                      |
+| Supported MIME types          | `configuration.media_attachments.supported_mime_types`   | Plugin validates broadly when unknown.                                                      |
+| Image size limit              | `configuration.media_attachments.image_size_limit`       | No local size rejection when unknown.                                                       |
+| Video size limit              | `configuration.media_attachments.video_size_limit`       | No local size rejection when unknown.                                                       |
+| Audio size limit              | `configuration.media_attachments.audio_size_limit`       | Falls back to video size if explicit audio limit is absent; otherwise no local rejection.   |
 
 ## Internal budgets and operational limits
 
@@ -155,15 +155,15 @@ sequenceDiagram
 
 ## Capability sources
 
-| Capability                             | Source                                    | Unknown behavior                                                  |
-|----------------------------------------|-------------------------------------------|-------------------------------------------------------------------|
-| Status character limit                 | `/api/v2/instance` configuration          | Use `500`.                                                        |
-| URL reserved length                    | `/api/v2/instance` configuration          | Use `23`.                                                         |
-| Max media attachments                  | `/api/v2/instance` configuration          | Use `4`.                                                          |
-| Media MIME/size support                | `/api/v2/instance` configuration          | Validate conservatively; do not invent server limits.             |
-| Status `media_attributes` update       | Parsed instance version `>= 4.1.0`        | Treat as unsupported and re-upload when descriptions changed.     |
-| Status delete `delete_media` parameter | Cached/stored instance version `>= 4.4.0` | Try with parameter, retry without on known legacy-style failures. |
-| OAuth `profile` scope                  | OAuth discovery `scopes_supported`        | Fall back to `read:accounts`.                                     |
+| Capability                               | Source                                      | Unknown behavior                                                    |
+| ---------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------- |
+| Status character limit                   | `/api/v2/instance` configuration            | Use `500`.                                                          |
+| URL reserved length                      | `/api/v2/instance` configuration            | Use `23`.                                                           |
+| Max media attachments                    | `/api/v2/instance` configuration            | Use `4`.                                                            |
+| Media MIME/size support                  | `/api/v2/instance` configuration            | Validate conservatively; do not invent server limits.               |
+| Status `media_attributes` update         | Parsed instance version `>= 4.1.0`          | Treat as unsupported and re-upload when descriptions changed.       |
+| Status delete `delete_media` parameter   | Cached/stored instance version `>= 4.4.0`   | Try with parameter, retry without on known legacy-style failures.   |
+| OAuth `profile` scope                    | OAuth discovery `scopes_supported`          | Fall back to `read:accounts`.                                       |
 
 ## API change playbooks
 

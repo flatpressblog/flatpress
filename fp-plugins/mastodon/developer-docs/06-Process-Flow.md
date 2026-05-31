@@ -7,15 +7,48 @@ The plugin keeps a compact scheduler layer and a full synchronization layer.
 - `fp-content/plugin_mastodon/scheduler-state.json` is the compact scheduler summary used on
   ordinary requests. It tells the plugin whether a scheduled content sync or a follow-up
   deletion sync is due without loading the full mapping state.
-- `fp-content/plugin_mastodon/state.json` is the full synchronization state. It contains
-  entry/comment mappings, reverse remote mappings, dirty queues, tombstones, media metadata,
-  cursors, statistics, and last-error information, and is written as compact JSON without
-  `JSON_PRETTY_PRINT` to keep large-state writes smaller and faster.
+- `fp-content/plugin_mastodon/state.json` is the compact main synchronization index. It contains
+  entry mappings, reverse remote maps, dirty queues, tombstones, media metadata, cursors,
+  statistics, last-error information and `comment_shards` metadata. New writes keep inline
+  `comments` empty.
+- `fp-content/plugin_mastodon/state-comments/YY/MM/entry*.json` stores high-volume comment
+  mappings per parent entry. Legacy inline comment states are backed up and migrated on the next
+  state read that detects inline comments.
 - `sync.lock` serializes real content/deletion sync runs.
 - `sync.guard.json` stores short cooldown markers for content and deletion runs.
 - `rate-limit-windows.json` stores persistent cross-request windows for media uploads,
   status deletes, and status-page fetches.
 - `sync.log` plus rotated `sync.log.1` to `sync.log.3` stores operational diagnostics.
+
+```mermaid
+flowchart TD
+    StateWrite["plugin_mastodon_state_write(runtime state)"]
+    Normalize["Normalize state"]
+    Partial{"Partial comment-shard working set?"}
+    GroupLoaded["Group loaded entry comments only"]
+    GroupAll["Group all comments"]
+    Preserve["Preserve untouched comment_shards metadata"]
+    WriteShards["Write changed state-comments/YY/MM/entry*.json via temp file + rename"]
+    ShardFailure["Return failure before state.json changes"]
+    MainPayload["Build compact main state with empty comments + comment_shards index"]
+    WriteMain["Write state.json"]
+    MainFailure["Return failure; shards remain repairable"]
+    Scheduler["Refresh scheduler-state.json"]
+    Cleanup["Full write only: remove stale comment shard files"]
+
+    StateWrite --> Normalize --> Partial
+    Partial -->|yes| GroupLoaded --> Preserve --> WriteShards
+    Partial -->|no| GroupAll --> WriteShards
+    WriteShards -->|failure| ShardFailure
+    WriteShards -->|success| MainPayload --> WriteMain
+    WriteMain -->|failure| MainFailure
+    WriteMain -->|success| Scheduler --> Cleanup
+```
+
+Partial state reads are used when a caller knows the affected entry ids. The write path preserves
+unloaded shards so a dirty-comment hook or one local-sync entry cannot accidentally delete other
+comment mappings. Full maintenance paths can still load every shard explicitly after acquiring
+the synchronization lock.
 
 ```mermaid
 flowchart TD
@@ -1196,3 +1229,194 @@ Key implications for developers:
   falls back to plain `DELETE /api/v1/statuses/:id` for older Mastodon behavior.
 - Companion plugins improve rendering and feature completeness, but the Mastodon plugin still
   stores importable FlatPress markup even when a companion renderer is currently inactive.
+
+
+## Split-state write serialization and legacy migration
+
+```mermaid
+flowchart TD
+    Caller["State mutation caller"]
+    Lock["Acquire state-write.lock"]
+    Shards["Write loaded per-entry comment shards"]
+    ShardFail["Shard write failed"]
+    Main["Write compact state.json"]
+    MainFail["Main write failed; repair can rebuild index from shards"]
+    Scheduler["Refresh scheduler-state.json"]
+    Release["Release state-write.lock"]
+
+    Caller --> Lock --> Shards
+    Shards -->|failure| ShardFail --> Release
+    Shards -->|success| Main
+    Main -->|failure| MainFail --> Release
+    Main -->|success| Scheduler --> Release
+```
+
+## Shard/cursor deletion synchronization
+
+```mermaid
+flowchart TD
+    Start["Deletion sync after sync.lock"]
+    Entries["Process entry mappings by deletion_cursor_entries"]
+    Cursor["Read deletion_cursor_comments"]
+    ShardList["List comment shard entry ids"]
+    Skip["Skip shards before cursor entry"]
+    Load["Load one comment shard"]
+    ChildIndex["Build child index from loaded shard"]
+    Comments["Process comments after cursor"]
+    Unload{"Shard changed?"}
+    Drop["Unload unchanged shard from memory"]
+    Keep["Keep changed shard for final partial write"]
+    Rechecks["Load pending recheck shards"]
+    Write["Partial state write preserves unloaded shards"]
+    Start --> Entries --> Cursor --> ShardList --> Skip --> Load --> ChildIndex --> Comments --> Unload
+    Unload -- "no" --> Drop --> ShardList
+    Unload -- "yes" --> Keep --> ShardList
+    ShardList --> Rechecks --> Write
+```
+
+## Large legacy inline-comment migration
+
+```mermaid
+flowchart TD
+    Read["state_read() prestats state.json"]
+    Check["Find top-level comments object"]
+    Lock["Acquire state-write.lock"]
+    Backup["Create state.json.migration-backup-*.json"]
+    Extract["Extract comments object without full state json_decode"]
+    Current["Buffer current entry comments"]
+    Existing["Read existing shard for same entry"]
+    Merge["Merge existing + current comments"]
+    Shard["Write per-entry comment shard via temp file + rename"]
+    Compact["Rewrite compact state.json with comments empty"]
+    Decode["Continue normal normalized state read"]
+    Fallback["Return legacy normalized state"]
+
+    Read --> Check
+    Check -- "no inline comments" --> Decode
+    Check -- "inline comments present" --> Lock --> Backup
+    Backup -- "failure" --> Fallback
+    Backup -- "success" --> Extract --> Current --> Existing --> Merge --> Shard
+    Shard -- "failure" --> Fallback
+    Shard -- "success" --> Compact
+    Compact -- "failure" --> Fallback
+    Compact -- "success" --> Decode
+```
+
+## Comment-shard diagnostics and repair
+
+```mermaid
+flowchart TD
+    Start["plugin_mastodon_state_diagnose_comment_shards()"]
+    Files["Scan state-comments/YY/MM/*.json"]
+    Validate["Validate JSON, entry_id and count"]
+    Rebuild["Rebuild comment_shards.entries and comments_remote in memory"]
+    Compare["Compare rebuilt data with main state metadata"]
+    Report["Return ok/errors/warnings/stats"]
+    Repair{"Repair requested?"}
+    Lock["Acquire state-write.lock"]
+    Write["Write compact state.json with rebuilt indexes"]
+    Done["Return repair result"]
+
+    Start --> Files --> Validate --> Rebuild --> Compare --> Report --> Repair
+    Repair -- "no" --> Done
+    Repair -- "yes and no shard errors" --> Lock --> Write --> Done
+```
+
+## Admin and CLI shard-maintenance entry points
+
+```mermaid
+flowchart TD
+    AdminButton["Admin panel diagnose/repair buttons"]
+    CliScript["mastodon-state-cli.php diagnose|repair"]
+    Formatter["Build admin/CLI maintenance result"]
+    Diagnose["plugin_mastodon_state_diagnose_comment_shards()"]
+    Repair["plugin_mastodon_state_repair_comment_shards()"]
+    StateWrite["plugin_mastodon_state_write_with_last_error()"]
+    Output["Return web message or CLI exit code"]
+
+    AdminButton --> Formatter
+    CliScript --> Formatter
+    Formatter --> Diagnose
+    Formatter --> Repair
+    Repair --> StateWrite
+    Diagnose --> Output
+    StateWrite --> Output
+```
+
+## State-write failure propagation
+
+```mermaid
+flowchart TD
+    Write["plugin_mastodon_state_write()"]
+    Failure{"Failure kind"}
+    Lock["state_write_lock_unavailable"]
+    Shard["comment_shard_write_failed"]
+    Json["state_json_encode_failed"]
+    Main["state_main_write_failed"]
+    Marker["plugin_mastodon_state_write_error_set()"]
+    Wrapper["plugin_mastodon_state_write_with_last_error()"]
+    LastError["runtime state last_error"]
+
+    Write --> Failure
+    Failure --> Lock --> Marker
+    Failure --> Shard --> Marker
+    Failure --> Json --> Marker
+    Failure --> Main --> Marker
+    Marker --> Wrapper --> LastError
+```
+
+## 6. Admin maintenance page separation
+
+The regular Mastodon plugin page keeps configuration, authorization and manual synchronization visible for normal users. Advanced comment-shard diagnostics and repair are intentionally routed to a separate maintenance action/template. Every `lang.*.php` file registers `mastodon_maintenance` as an early FlatPress admin-panel alias for the normal `mastodon` plugin strings, so `shared:errorlist.tpl` can resolve `panelstrings.msgs` before `plugin_mastodon_admin_assign()` runs. The maintenance UI also uses the explicitly assigned `mastodon_lang` array, which is merged from the plugin language file plus safe English fallbacks; this prevents Smarty 5.8 undefined-array-key warnings when hidden admin actions do not expose the full plugin `$plang` context.
+
+```mermaid
+flowchart TD
+    Main["admin.plugin.mastodon.tpl"]
+    Button["State maintenance button"]
+    Maint["admin.plugin.mastodon.maintenance.tpl"]
+    PanelAlias["lang.* mastodon_maintenance panelstrings alias"]
+    ErrorList["shared:errorlist.tpl success/error messages"]
+    Lang["mastodon_lang fallback array"]
+    Diagnose["mastodon_diagnose_state"]
+    Repair["mastodon_repair_state"]
+    Result["Diagnostic result table"]
+
+    Main --> Button
+    Button --> Maint
+    PanelAlias --> ErrorList
+    ErrorList --> Maint
+    Lang --> Main
+    Lang --> Maint
+    Maint --> Diagnose
+    Maint --> Repair
+    Diagnose --> Result
+    Repair --> Result
+```
+
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant Core as FlatPress admin core
+    participant Main as Main settings template
+    participant Maint as Maintenance template
+    participant Plugin as plugin.mastodon.php
+    participant Panel as panelstrings.msgs
+    participant Lang as mastodon_lang
+    participant State as state.json + comment shards
+
+    Admin->>Core: Open plugin or maintenance action
+    Core->>Panel: Read mastodon or mastodon_maintenance from lang.*.php
+    Panel-->>Core: Success/error messages for shared:errorlist.tpl
+    Core->>Plugin: Run plugin admin assignment
+    Plugin->>Lang: Assign localized maintenance strings plus fallbacks
+    Lang-->>Main: Safe labels for compact maintenance link
+    Main-->>Admin: Show compact maintenance link only
+    Admin->>Maint: Open dedicated maintenance page
+    Lang-->>Maint: Safe labels for headings, buttons and result table
+    Admin->>Plugin: Diagnose or repair
+    Plugin->>State: Validate metadata, shards and comments_remote
+    State-->>Plugin: Stats, warnings and errors
+    Plugin-->>Maint: Template-friendly result rows
+    Panel-->>Maint: Localized shared success/error message
+    Maint-->>Admin: Display result and back link
+```

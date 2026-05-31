@@ -93,6 +93,51 @@ function mastodon_docs_extract_organigram_functions($content) {
 	return $functions;
 }
 
+
+function mastodon_docs_extract_function_entries_without_description($content) {
+	$missing = array();
+	if (preg_match_all('/^-\s+`([A-Za-z_][A-Za-z0-9_]*)\(\)`\s+—\s+line\s+(\d+)(?:\s+—\s*(.*))?$/mu', $content, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+		foreach ($matches as $match) {
+			$name = (string) $match [1] [0];
+			$description = isset($match [3] [0]) ? trim((string) $match [3] [0]) : '';
+			if ($description === '') {
+				if (!isset($missing [$name])) {
+					$missing [$name] = array();
+				}
+				$missing [$name] [] = mastodon_docs_line_for_offset($content, (int) $match [0] [1]);
+			}
+		}
+	}
+	ksort($missing, SORT_STRING);
+	return $missing;
+}
+
+function mastodon_docs_section_contains_described_function_entries($content, $heading) {
+	$position = strpos($content, $heading);
+	if ($position === false) {
+		return false;
+	}
+	$next = strpos($content, "\n## ", $position + strlen($heading));
+	$section = $next === false ? substr($content, $position) : substr($content, $position, $next - $position);
+	return preg_match('/^-\s+`[A-Za-z_][A-Za-z0-9_]*\(\)`\s+—\s+line\s+\d+\s+—\s+\S/mu', $section) === 1;
+}
+
+function mastodon_docs_extract_backticked_function_references($content) {
+	$functions = array();
+	if (preg_match_all('/`([A-Za-z_][A-Za-z0-9_]*)\(\)`/u', $content, $matches, PREG_OFFSET_CAPTURE)) {
+		foreach ($matches [1] as $match) {
+			$name = (string) $match [0];
+			$offset = (int) $match [1];
+			if (!isset($functions [$name])) {
+				$functions [$name] = array();
+			}
+			$functions [$name] [] = mastodon_docs_line_for_offset($content, $offset);
+		}
+	}
+	ksort($functions, SORT_STRING);
+	return $functions;
+}
+
 $pluginContent = mastodon_docs_read_file($pluginFile, $errors);
 $simulationContent = mastodon_docs_read_file($simulationFile, $errors);
 $apiDocContent = mastodon_docs_read_file($apiDocFile, $errors);
@@ -155,6 +200,35 @@ if ($pluginContent !== '' && $organigramDocContent !== '') {
 			$errors [] = 'Function organigram documents unknown function: ' . $name;
 		}
 	}
+
+	$functionEntriesWithoutDescription = mastodon_docs_extract_function_entries_without_description($organigramDocContent);
+	foreach ($functionEntriesWithoutDescription as $name => $lines) {
+		$errors [] = 'Function organigram entry for "' . $name . '" has no description on line(s): ' . implode(', ', $lines);
+	}
+
+	$requiredOrganigramSections = array(
+		'## A. Entry points and admin integration',
+		'## B. Defaults, configuration, secrets, and centralized FlatPress feature toggles',
+		'## C. Caching, filesystem helpers, logging, and persisted state',
+		'## D. Date, timestamp, visibility, and threading helpers',
+		'## E. Text, URLs, language strings, tags, emojis, and BBCode/HTML conversion',
+		'## F. Local content access, media processing, hashing, and export ordering',
+		'## G. HTTP transport, PHP timeout budgeting, instance capability lookup, status-length budgeting, OAuth, Mastodon API calls, and media upload',
+		'## H. Import/export builders and synchronization orchestration',
+		'## Alphabetical appendix / Generated function catalog'
+	);
+	foreach ($requiredOrganigramSections as $heading) {
+		if (!mastodon_docs_section_contains_described_function_entries($organigramDocContent, $heading)) {
+			$errors [] = 'Function organigram section has no described function entries: ' . $heading;
+		}
+	}
+
+	$referencedFunctions = mastodon_docs_extract_backticked_function_references($organigramDocContent);
+	foreach ($referencedFunctions as $name => $lines) {
+		if (!isset($actualFunctions [$name])) {
+			$errors [] = 'Function organigram references unknown function "' . $name . '" on line(s): ' . implode(', ', $lines);
+		}
+	}
 }
 
 if ($apiDocContent !== '') {
@@ -181,3 +255,4 @@ if ($errors !== array()) {
 
 echo '[OK] Mastodon developer documentation is consistent with plugin.mastodon.php and simulate_mastodon_plugin.php.' . PHP_EOL;
 exit(0);
+?>
