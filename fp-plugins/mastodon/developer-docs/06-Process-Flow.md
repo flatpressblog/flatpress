@@ -389,7 +389,6 @@ flowchart TD
     Progress -- "No progress" --> ForceImport --> Guard
 ```
 
-
 ### 1.5 Notification reply-hint pass
 
 The notification pass is optional and runs only when old-thread reply checks are enabled and the
@@ -422,7 +421,6 @@ flowchart TD
     Budget -- "No" --> Rotate
     Cursor --> Rotate
 ```
-
 
 ## 2. Text, URLs, tags, media, and companion plugins
 
@@ -857,7 +855,7 @@ stateDiagram-v2
 ### 4.1 Daily scheduled content synchronization
 
 The scheduled content sync is started from the `init` hook. Ordinary POST requests, missing
-configuration, active cooldowns, and a not-due scheduler summary all return quickly. APCu-backed cooldown markers are always accessed through FlatPress `apcu_get()`, `apcu_set()`, and `apcu_delete_key()` so file and APCu guards clear consistently on shared hosting.
+configuration, active cooldowns, and a not-due scheduler summary all return quickly. The daily due check treats stored `sync_time` and `last_run` as UTC, while admin display converts them through the FlatPress `locale.timeoffset`; this keeps the automatic run independent of PHP's default timezone. APCu-backed cooldown markers are always accessed through FlatPress `apcu_get()`, `apcu_set()`, and `apcu_delete_key()` so file and APCu guards clear consistently on shared hosting.
 
 ```mermaid
 flowchart TD
@@ -866,6 +864,7 @@ flowchart TD
     Options["Load plugin options"]
     Configured{"Instance URL and access token configured?"}
     Scheduler["Read scheduler-state.json"]
+    UtcDue["Build UTC target from stored sync_time"]
     Due{"plugin_mastodon_sync_due?"}
     GuardLookup["Read cooldown via FlatPress APCu wrapper and sync.guard.json"]
     Cooldown{"Content sync cooldown active?"}
@@ -879,7 +878,7 @@ flowchart TD
     LocalToRemote["plugin_mastodon_sync_local_to_remote"]
     FlushSkips["Flush aggregated skip-log summaries"]
     MarkDeletion{"Deletion sync enabled?"}
-    Pending["Set deletions_pending and deletions_not_before"]
+    Pending["Set deletions_pending and deletions_not_before as UTC"]
     Write["Write state and scheduler summary"]
     Release["Release lock and stop rate guard"]
     End["Return to normal FlatPress request"]
@@ -888,7 +887,7 @@ flowchart TD
     Method -- "Yes" --> End
     Method -- "No" --> Options --> Configured
     Configured -- "No" --> End
-    Configured -- "Yes" --> Scheduler --> Due
+    Configured -- "Yes" --> Scheduler --> UtcDue --> Due
     Due -- "No" --> End
     Due -- "Yes" --> GuardLookup --> Cooldown
     Cooldown -- "Active" --> End
@@ -1243,13 +1242,13 @@ flowchart TD
     Goal["Large FlatPress archive"]
     OrdinaryRequest["Ordinary frontend GET"]
     ScheduledRun["Scheduled content sync"]
-    DeletionRun["Follow-up deletion sync"]
+    DeletionRun["Follow-up deletion sync with UTC cooldown"]
     ManualRun["Manual full admin sync"]
     SchedulerOnly["Uses compact scheduler-state.json first"]
     TargetedScan["Scans active window plus dirty entries/comments"]
     FullStateNeeded["Loads full state.json because mappings are required"]
     FullRepair["Full repair scan remains available"]
-    Budgets["Local budgets and Mastodon rate-limit headers stop safely"]
+    Budgets["UTC due checks plus local budgets and Mastodon rate-limit headers stop safely"]
     NoFalseDirty["Local-write guard prevents plugin-owned writes from becoming local dirty markers"]
     Compatibility["Mastodon >= 4.0.0 path with documented delete_media fallback for older than 4.4.0"]
 
@@ -1270,6 +1269,7 @@ Key implications for developers:
 
 - Scheduled content syncs are optimized for large blogs by using direct `YY/MM` month scans bound to the admin-selected
   7/14/30-day window, plus uncapped mandatory post-success dirty-entry and dirty-comment-parent candidates.
+- Automatic daily due checks keep the existing stored-UTC `sync_time` semantics, write new technical state timestamps with `gmdate()`, and therefore do not move when PHP's default timezone is changed by a host or another plugin.
 - Manual full syncs deliberately remain exhaustive and should not be replaced by dirty queues.
 - Deletion syncs need the full mapping state because they compare local existence with remote
   status existence and maintain tombstones and descendant rechecks.
@@ -1277,7 +1277,6 @@ Key implications for developers:
   falls back to plain `DELETE /api/v1/statuses/:id` for older Mastodon behavior.
 - Companion plugins improve rendering and feature completeness, but the Mastodon plugin still
   stores importable FlatPress markup even when a companion renderer is currently inactive.
-
 
 ## Split-state write serialization and legacy migration
 

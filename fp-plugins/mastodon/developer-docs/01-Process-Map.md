@@ -47,7 +47,7 @@ flowchart TD
 
 | ID  | Process                             | Trigger                                                             | Core behavior                                                                                                                                   | Primary state                                                                  | Regression focus                                                                           |
 | --- | ----------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| P1  | Scheduled content sync              | Frontend `init` hook via `plugin_mastodon_maybe_sync()`             | Reads compact scheduler-state first; may call `plugin_mastodon_run_sync(false)`.                                                                | scheduler-state.json, sync.guard.json, sync.lock, state.json                   | Simulation scheduler, cooldown, compact-state and large-state tests.                       |
+| P1  | Scheduled content sync              | Frontend `init` hook via `plugin_mastodon_maybe_sync()`             | Reads compact scheduler-state first; UTC-normalized due checks decide whether to call `plugin_mastodon_run_sync(false)`.                        | scheduler-state.json, sync.guard.json, sync.lock, state.json                   | Scheduler, timezone, cooldown, compact-state and large-state tests.                        |
 | P2  | Manual content sync                 | Admin actions in `plugin_mastodon_admin_assign()`                   | Calls `plugin_mastodon_run_sync(true, ...)` and bypasses due window; still respects lock and budgets.                                           | state.json, sync.lock, rate-limit-windows.json                                 | Manual normal/full synchronization tests.                                                  |
 | P3  | Remote top-level status import      | Content sync when `update_local_from_remote` is enabled             | Verifies account, pages statuses, filters, converts HTML/media/tags, saves FlatPress entries.                                                   | entries, entries_remote, last_remote_status_id, content_stats                  | Remote import and content-window tests.                                                    |
 | P4  | Remote reply import                 | Remote context pass for known imported/exported threads             | Fetches context descendants, resolves parent comments, queues rechecks or tombstones.                                                           | comments, comments_remote, comment_tombstones, pending_comment_remote_rechecks | Reply tree, self-reply, quote, comment-as-entry tests.                                     |
@@ -67,6 +67,7 @@ flowchart TD
 flowchart TD
     Start[Request or admin action]
     Config{Instance URL and token available?}
+    TimeBasis[Stored UTC sync_time and UTC state timestamps]
     Due{Due or forced?}
     Cooldown{Scheduled cooldown active?}
     Lock{sync.lock acquired?}
@@ -78,7 +79,7 @@ flowchart TD
 
     Start --> Config
     Config -- no --> Write
-    Config -- yes --> Due
+    Config -- yes --> TimeBasis --> Due
     Due -- no --> Stop
     Due -- yes --> Cooldown
     Cooldown -- yes and not forced --> Stop
@@ -91,7 +92,7 @@ flowchart TD
     Write --> Stop
 ```
 
-Manual sync bypasses the daily due check and can request a full window, but it still uses `sync.lock`, request budgets, media/delete windows and state writes. This matters on shared hosting: manual repair must not become unbounded.
+Manual sync bypasses the daily due check and can request a full window, but it still uses `sync.lock`, request budgets, media/delete windows and UTC state writes. The automatic due check treats stored `sync_time`, `last_run`, `last_deletion_run` and `deletions_not_before` as UTC so host or plugin changes to PHP's default timezone do not shift the daily 03:00-style FlatPress-local schedule. This matters on shared hosting: manual repair must not become unbounded.
 
 ## P3/P4 — Remote import
 
@@ -174,6 +175,7 @@ flowchart TD
     Start[Scheduled follow-up or admin deletion sync]
     Enabled{delete_sync_enabled?}
     Pending{pending or forced?}
+    UtcCooldown[Parse deletions_not_before as UTC]
     Due{due?}
     Lock{sync.lock acquired?}
     Entries[Find missing local mapped entries]
@@ -185,13 +187,13 @@ flowchart TD
     Retry{Legacy error 400 405 422 or delete_media message?}
     RetryOld[Retry DELETE without delete_media]
     Tombstone[Write tombstone or queue descendants recheck]
-    State[Update cursors pending stats last_deletion_run]
+    State[Update cursors pending stats last_deletion_run UTC]
 
     Start --> Enabled
     Enabled -- no --> State
     Enabled -- yes --> Pending
     Pending -- no and not forced --> State
-    Pending --> Due
+    Pending --> UtcCooldown --> Due
     Due -- no --> State
     Due -- yes --> Lock
     Lock -- yes --> Entries --> Version
