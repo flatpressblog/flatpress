@@ -322,7 +322,7 @@ function simulate_file_mode_matches($path, $expectedMode) {
 function simulate_allow_pending_deletion_sync() {
 	$state = plugin_mastodon_state_read();
 	if (!empty($state ['deletions_pending'])) {
-		$state ['deletions_not_before'] = date('Y-m-d H:i:s', time() - 1);
+		$state ['deletions_not_before'] = gmdate('Y-m-d H:i:s', time() - 1);
 		plugin_mastodon_state_write($state);
 	}
 }
@@ -3901,6 +3901,84 @@ $state ['last_run'] = '2026-03-12 23:10:00';
 $allOk = test_result('Next day after 23:00 is due', plugin_mastodon_sync_due($options, $state, strtotime('2026-03-13 23:05:00'))) && $allOk;
 $allOk = test_result('Before configured time is not due', !plugin_mastodon_sync_due($options, $state, strtotime('2026-03-13 22:59:00'))) && $allOk;
 
+$originalTimezoneForScheduler = date_default_timezone_get();
+$timezoneIndependentOptions = plugin_mastodon_default_options();
+$timezoneIndependentOptions ['sync_time'] = '01:00';
+$timezoneIndependentState = plugin_mastodon_default_state();
+$timezoneIndependentState ['last_run'] = '2026-05-31 01:10:00';
+$timezoneIndependenceChecks = array();
+foreach (array('UTC', 'Europe/Berlin', 'America/New_York', 'Asia/Kolkata') as $timezoneName) {
+	date_default_timezone_set($timezoneName);
+	$timezoneIndependenceChecks [$timezoneName] = array(
+		'before' => plugin_mastodon_sync_due($timezoneIndependentOptions, $timezoneIndependentState, gmmktime(0, 59, 0, 6, 1, 2026)),
+		'at' => plugin_mastodon_sync_due($timezoneIndependentOptions, $timezoneIndependentState, gmmktime(1, 0, 0, 6, 1, 2026)),
+		'same_day' => plugin_mastodon_sync_due($timezoneIndependentOptions, array('last_run' => '2026-06-01 01:05:00'), gmmktime(23, 0, 0, 6, 1, 2026))
+	);
+}
+date_default_timezone_set($originalTimezoneForScheduler);
+$timezoneIndependentSyncOk = true;
+foreach ($timezoneIndependenceChecks as $timezoneCheck) {
+	$timezoneIndependentSyncOk = $timezoneIndependentSyncOk && !$timezoneCheck ['before'] && $timezoneCheck ['at'] && !$timezoneCheck ['same_day'];
+}
+$allOk = test_result(
+	'Scheduled synchronization due checks use stored UTC time regardless of PHP default timezone',
+	$timezoneIndependentSyncOk,
+	json_encode($timezoneIndependenceChecks)
+) && $allOk;
+
+$timezoneIndependentDeletionState = plugin_mastodon_default_state();
+$timezoneIndependentDeletionState ['deletions_pending'] = 1;
+$timezoneIndependentDeletionState ['deletions_not_before'] = '2026-06-01 01:05:00';
+$timezoneIndependentDeletionChecks = array();
+foreach (array('UTC', 'Europe/Berlin', 'America/New_York', 'Asia/Kolkata') as $timezoneName) {
+	date_default_timezone_set($timezoneName);
+	$timezoneIndependentDeletionChecks [$timezoneName] = array(
+		'before' => plugin_mastodon_deletion_sync_due($timezoneIndependentDeletionState, gmmktime(1, 4, 59, 6, 1, 2026)),
+		'at' => plugin_mastodon_deletion_sync_due($timezoneIndependentDeletionState, gmmktime(1, 5, 0, 6, 1, 2026))
+	);
+}
+date_default_timezone_set($originalTimezoneForScheduler);
+$timezoneIndependentDeletionOk = true;
+foreach ($timezoneIndependentDeletionChecks as $timezoneCheck) {
+	$timezoneIndependentDeletionOk = $timezoneIndependentDeletionOk && !$timezoneCheck ['before'] && $timezoneCheck ['at'];
+}
+$allOk = test_result(
+	'Pending deletion synchronization due checks use UTC cooldowns regardless of PHP default timezone',
+	$timezoneIndependentDeletionOk,
+	json_encode($timezoneIndependentDeletionChecks)
+) && $allOk;
+
+$originalFpConfigForAdminDate = $GLOBALS ['fp_config'];
+$originalEarlyFpConfigForAdminDate = $GLOBALS ['EARLY_FP_CONFIG'];
+$adminDateConfig = $originalFpConfigForAdminDate;
+if (!isset($adminDateConfig ['locale']) || !is_array($adminDateConfig ['locale'])) {
+	$adminDateConfig ['locale'] = array();
+}
+$adminDateConfig ['locale'] ['timeoffset'] = 2;
+$adminDateConfig ['locale'] ['dateformat'] = '%Y-%m-%d';
+$adminDateConfig ['locale'] ['timeformat'] = '%H:%M';
+$GLOBALS ['fp_config'] = $adminDateConfig;
+$GLOBALS ['EARLY_FP_CONFIG'] = $adminDateConfig;
+plugin_mastodon_runtime_cache_clear('core');
+$adminDateTimezoneChecks = array();
+foreach (array('UTC', 'Europe/Berlin', 'America/New_York', 'Asia/Kolkata') as $timezoneName) {
+	date_default_timezone_set($timezoneName);
+	$adminDateTimezoneChecks [$timezoneName] = plugin_mastodon_format_admin_datetime('2026-06-01 01:00:00');
+}
+date_default_timezone_set($originalTimezoneForScheduler);
+$GLOBALS ['fp_config'] = $originalFpConfigForAdminDate;
+$GLOBALS ['EARLY_FP_CONFIG'] = $originalEarlyFpConfigForAdminDate;
+plugin_mastodon_runtime_cache_clear('core');
+$adminDateTimezoneOk = true;
+foreach ($adminDateTimezoneChecks as $formattedValue) {
+	$adminDateTimezoneOk = $adminDateTimezoneOk && strpos((string) $formattedValue, '2026-06-01 03:00') !== false && strpos((string) $formattedValue, 'UTC+02:00') !== false;
+}
+$allOk = test_result(
+	'Admin state timestamps are formatted with FlatPress timeoffset regardless of PHP default timezone',
+	$adminDateTimezoneOk,
+	json_encode($adminDateTimezoneChecks)
+) && $allOk;
+
 $guardNow = strtotime('2026-03-13 23:05:00');
 plugin_mastodon_sync_guard_clear('content', $guardNow);
 $guardMarked = plugin_mastodon_sync_guard_mark('content', 'simulation_guard_test', $guardNow);
@@ -4255,8 +4333,8 @@ $allOk = test_result(
 	))
 ) && $allOk;
 
-$originalFpConfigForTimeoffset = isset($GLOBALS ['fp_config']) && is_array($GLOBALS ['fp_config']) ? $GLOBALS ['fp_config'] : array();
-$originalEarlyFpConfigForTimeoffset = isset($GLOBALS ['EARLY_FP_CONFIG']) && is_array($GLOBALS ['EARLY_FP_CONFIG']) ? $GLOBALS ['EARLY_FP_CONFIG'] : array();
+$originalFpConfigForTimeoffset = $GLOBALS ['fp_config'];
+$originalEarlyFpConfigForTimeoffset = $GLOBALS ['EARLY_FP_CONFIG'];
 $fractionalTimeoffsetConfig = $originalFpConfigForTimeoffset;
 if (!isset($fractionalTimeoffsetConfig ['locale']) || !is_array($fractionalTimeoffsetConfig ['locale'])) {
 	$fractionalTimeoffsetConfig ['locale'] = array();

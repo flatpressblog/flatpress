@@ -48,11 +48,11 @@ and does not load comment shards.
 | Field                           | Type                                    | Meaning                                               | Usually written by                         | Usually read by                                         |
 | ------------------------------- | --------------------------------------- | ----------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------- |
 | version                         | integer                                 | State schema version, currently 5.                    | default_state; normalization on read.      | state read/write, migrations, diagnostics.              |
-| last_run                        | UTC datetime string                     | Last completed content sync timestamp.                | run_sync.                                  | scheduler-state summary, admin diagnostics, due checks. |
-| last_deletion_run               | UTC datetime string                     | Last completed deletion sync timestamp.               | run_deletion_sync.                         | scheduler-state summary, admin diagnostics.             |
+| last_run                        | UTC datetime string                     | Last completed content sync timestamp.                | run_sync via `gmdate()`.                   | scheduler-state summary and UTC due check.              |
+| last_deletion_run               | UTC datetime string                     | Last completed deletion sync timestamp.               | run_deletion_sync via `gmdate()`.          | scheduler-state summary and admin display.              |
 | deletions_pending               | 0/1                                     | Whether follow-up deletion sync work exists.          | delete hooks, state_set_deletions_pending. | maybe_sync, run_deletion_sync.                          |
 | deletions_pending_scope         | full\|entries\|comments                 | Limits what deletion work is currently needed.        | state_set_deletions_pending.               | deletion sync candidate selection.                      |
-| deletions_not_before            | UTC datetime string                     | Earliest follow-up deletion run time.                 | state_set_deletions_pending.               | deletion_sync_due.                                      |
+| deletions_not_before            | UTC datetime string                     | Earliest follow-up deletion run time.                 | state_set_deletions_pending.               | UTC deletion_sync_due cooldown.                         |
 | last_error                      | string                                  | Last operational error or rate-limit reason.          | sync and deletion paths.                   | admin diagnostics, scheduler summary.                   |
 | last_remote_status_id           | string                                  | Newest seen imported remote top-level status.         | remote-to-local sync.                      | next remote import since_id/max logic.                  |
 | last_remote_notification_id     | string                                  | Newest processed mention notification hint.           | notification hint pass.                    | next notifications since_id logic.                      |
@@ -190,7 +190,9 @@ flowchart TD
 
 ## Completed Split-State Guardrails
 
-The split-state implementation now uses five additional guardrails:
+The split-state implementation now uses six additional guardrails:
+
+UTC timestamp guardrail: scheduler and deletion due checks parse stored state datetimes as UTC, write new technical state timestamps with `gmdate()`, and only apply the FlatPress `locale.timeoffset` when formatting admin-local values or building FlatPress-local date keys.
 
 - A short-lived `state-write.lock` serializes every `state.json` and comment-shard mutation, including FlatPress dirty hooks that run outside the long content/deletion sync lock.
 - Partial states carry internal loaded-shard markers. `plugin_mastodon_state_write()` updates only loaded comment shards and preserves unloaded shards.

@@ -982,8 +982,8 @@ function plugin_mastodon_format_admin_datetime($value) {
 	if ($value === '') {
 		return '';
 	}
-	$timestamp = strtotime($value);
-	if ($timestamp === false) {
+	$timestamp = plugin_mastodon_parse_iso_timestamp($value);
+	if ($timestamp <= 0) {
 		return $value;
 	}
 	$localTimestamp = (int) $timestamp + plugin_mastodon_fp_timeoffset_seconds();
@@ -993,15 +993,18 @@ function plugin_mastodon_format_admin_datetime($value) {
 	if ($format === '') {
 		$format = '%Y-%m-%d %H:%M:%S';
 	}
-	if (function_exists('date_strformat')) {
-		try {
+	$previousTimezone = date_default_timezone_get();
+	date_default_timezone_set('UTC');
+	try {
+		if (function_exists('date_strformat')) {
 			$formatted = date_strformat($format, $localTimestamp);
-		} catch (Exception $exception) {
-			$formatted = date('Y-m-d H:i:s', $localTimestamp);
+		} else {
+			$formatted = gmdate('Y-m-d H:i:s', $localTimestamp);
 		}
-	} else {
-		$formatted = date('Y-m-d H:i:s', $localTimestamp);
+	} catch (Exception $exception) {
+		$formatted = gmdate('Y-m-d H:i:s', $localTimestamp);
 	}
+	date_default_timezone_set($previousTimezone);
 	return trim((string) $formatted) . ' (' . plugin_mastodon_fp_timeoffset_label() . ')';
 }
 
@@ -3247,7 +3250,7 @@ function plugin_mastodon_state_migrate_inline_comments_to_shards($commentsJson) 
 			'version' => 1,
 			'entry_id' => $currentEntryId,
 			'count' => count($currentComments),
-			'updated_at' => date('Y-m-d H:i:s'),
+			'updated_at' => gmdate('Y-m-d H:i:s'),
 			'comments' => $currentComments
 		);
 		$json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
@@ -3546,7 +3549,7 @@ function plugin_mastodon_state_write_comment_shards($state) {
 			'version' => 1,
 			'entry_id' => $entryId,
 			'count' => count($comments),
-			'updated_at' => date('Y-m-d H:i:s'),
+			'updated_at' => gmdate('Y-m-d H:i:s'),
 			'comments' => $comments
 		);
 		$json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
@@ -4282,7 +4285,7 @@ function plugin_mastodon_scheduler_state_write($state) {
 	plugin_mastodon_ensure_state_dir();
 	$schedulerState = plugin_mastodon_scheduler_state_normalize(is_array($state) ? $state : array());
 	$schedulerState ['source_state_signature'] = plugin_mastodon_scheduler_source_signature();
-	$schedulerState ['updated_at'] = date('Y-m-d H:i:s');
+	$schedulerState ['updated_at'] = gmdate('Y-m-d H:i:s');
 	$json = json_encode($schedulerState, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 	if (!is_string($json)) {
 		return false;
@@ -5245,7 +5248,7 @@ function plugin_mastodon_state_set_comment_tombstone(&$state, $remoteId, $entryI
 		'entry_id' => (string) $entryId,
 		'comment_id' => (string) $commentId,
 		'reason' => trim((string) $reason),
-		'deleted_at' => date('Y-m-d H:i:s')
+		'deleted_at' => gmdate('Y-m-d H:i:s')
 	);
 }
 
@@ -5418,7 +5421,7 @@ function plugin_mastodon_state_set_pending_comment_remote_recheck(&$state, $entr
 		'remote_id' => trim((string) $remoteId),
 		'ancestor_remote_id' => trim((string) $ancestorRemoteId),
 		'attempts' => $currentAttempts,
-		'queued_at' => !empty($existing ['queued_at']) ? (string) $existing ['queued_at'] : date('Y-m-d H:i:s'),
+		'queued_at' => !empty($existing ['queued_at']) ? (string) $existing ['queued_at'] : gmdate('Y-m-d H:i:s'),
 		'last_checked_at' => !empty($existing ['last_checked_at']) ? (string) $existing ['last_checked_at'] : ''
 	);
 }
@@ -5453,16 +5456,16 @@ function plugin_mastodon_deletion_sync_due($state, $timestamp = null) {
 	$timestamp = $timestamp === null ? time() : (int) $timestamp;
 	$notBefore = plugin_mastodon_parse_iso_datetime(isset($state ['deletions_not_before']) ? (string) $state ['deletions_not_before'] : '');
 	if ($notBefore === '' && !empty($state ['last_run'])) {
-		$lastRun = strtotime((string) $state ['last_run']);
-		if ($lastRun !== false) {
-			$notBefore = date('Y-m-d H:i:s', $lastRun + PLUGIN_MASTODON_COOLDOWN_TTL);
+		$lastRun = plugin_mastodon_parse_iso_timestamp((string) $state ['last_run']);
+		if ($lastRun > 0) {
+			$notBefore = gmdate('Y-m-d H:i:s', $lastRun + PLUGIN_MASTODON_COOLDOWN_TTL);
 		}
 	}
 	if ($notBefore === '') {
 		return true;
 	}
-	$notBeforeTimestamp = strtotime($notBefore);
-	if ($notBeforeTimestamp === false) {
+	$notBeforeTimestamp = plugin_mastodon_parse_iso_timestamp($notBefore);
+	if ($notBeforeTimestamp <= 0) {
 		return true;
 	}
 	return $timestamp >= $notBeforeTimestamp;
@@ -5643,7 +5646,7 @@ function plugin_mastodon_process_pending_comment_remote_rechecks($options, &$sta
 		$attempts++;
 		if ($attempts < (int) PLUGIN_MASTODON_PENDING_COMMENT_RECHECK_LIMIT) {
 			plugin_mastodon_state_set_pending_comment_remote_recheck($state, $entryId, $commentId, $remoteId, $ancestorRemoteId, $attempts);
-			$state ['pending_comment_remote_rechecks'] [$commentKey] ['last_checked_at'] = date('Y-m-d H:i:s');
+			$state ['pending_comment_remote_rechecks'] [$commentKey] ['last_checked_at'] = gmdate('Y-m-d H:i:s');
 			$pendingRemaining = true;
 			plugin_mastodon_log('Keeping local comment ' . $entryId . '/' . $commentId . ' for one more follow-up verification because ancestor remote comment ' . $ancestorRemoteId . ' disappeared but reply ' . $remoteId . ' still exists remotely' . ($reattachedToEntryStatus ? ' and was reattached to the synchronized entry status' : '') . ' (attempt ' . $attempts . '/' . (int) PLUGIN_MASTODON_PENDING_COMMENT_RECHECK_LIMIT . ')');
 		} else {
@@ -5668,7 +5671,8 @@ function plugin_mastodon_parse_iso_datetime($value) {
 		return '';
 	}
 	try {
-		$date = new DateTime($value);
+		$date = new DateTime($value, new DateTimeZone('UTC'));
+		$date->setTimezone(new DateTimeZone('UTC'));
 		return $date->format('Y-m-d H:i:s');
 	} catch (Exception $e) {
 		return '';
@@ -5689,10 +5693,11 @@ function plugin_mastodon_parse_iso_timestamp($value) {
 		return (int) $value;
 	}
 	try {
-		$date = new DateTime($value);
+		$date = new DateTime($value, new DateTimeZone('UTC'));
+		$date->setTimezone(new DateTimeZone('UTC'));
 		return (int) $date->format('U');
 	} catch (Exception $e) {
-		$timestamp = @strtotime($value);
+		$timestamp = @strtotime($value . ' UTC');
 		return $timestamp === false ? 0 : (int) $timestamp;
 	}
 }
@@ -12012,10 +12017,10 @@ function plugin_mastodon_run_deletion_sync($force) {
 
 	if (!$hadFailure) {
 		$deletionCompletionTimestamp = time();
-		$state ['last_deletion_run'] = date('Y-m-d H:i:s', $deletionCompletionTimestamp);
+		$state ['last_deletion_run'] = gmdate('Y-m-d H:i:s', $deletionCompletionTimestamp);
 		$state ['deletion_cursor_entries'] = '';
 		$state ['deletion_cursor_comments'] = '';
-		plugin_mastodon_state_set_deletions_pending($state, $pendingCommentRechecksRemaining, $pendingCommentRechecksRemaining ? 'comment_rechecks' : 'full', date('Y-m-d H:i:s', $deletionCompletionTimestamp + PLUGIN_MASTODON_COOLDOWN_TTL));
+		plugin_mastodon_state_set_deletions_pending($state, $pendingCommentRechecksRemaining, $pendingCommentRechecksRemaining ? 'comment_rechecks' : 'full', gmdate('Y-m-d H:i:s', $deletionCompletionTimestamp + PLUGIN_MASTODON_COOLDOWN_TTL));
 		$state ['last_error'] = '';
 		if ($pendingCommentRechecksRemaining) {
 			plugin_mastodon_log('Deletion synchronization completed with pending descendant reply rechecks');
@@ -12023,7 +12028,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 			plugin_mastodon_log('Deletion synchronization completed successfully');
 		}
 	} else {
-		$deletionRetryNotBefore = date('Y-m-d H:i:s', time() + PLUGIN_MASTODON_COOLDOWN_TTL);
+		$deletionRetryNotBefore = gmdate('Y-m-d H:i:s', time() + PLUGIN_MASTODON_COOLDOWN_TTL);
 		if ($pendingCommentRechecksRemaining) {
 			plugin_mastodon_state_set_deletions_pending($state, true, 'comment_rechecks', $deletionRetryNotBefore);
 		} else {
@@ -12063,15 +12068,16 @@ function plugin_mastodon_sync_due($options, $state, $timestamp) {
 		return true;
 	}
 	$syncTime = plugin_mastodon_normalize_sync_time(isset($options ['sync_time']) ? $options ['sync_time'] : '');
-	$target = strtotime(date('Y-m-d', $timestamp) . ' ' . $syncTime . ':00');
-	if ($target === false || $timestamp < $target) {
+	list($hour, $minute) = array_map('intval', explode(':', $syncTime, 2));
+	$target = gmmktime($hour, $minute, 0, (int) gmdate('m', $timestamp), (int) gmdate('d', $timestamp), (int) gmdate('Y', $timestamp));
+	if ($timestamp < $target) {
 		return false;
 	}
-	$lastRun = strtotime((string) $state ['last_run']);
-	if ($lastRun === false) {
+	$lastRun = plugin_mastodon_parse_iso_timestamp((string) $state ['last_run']);
+	if ($lastRun <= 0) {
 		return true;
 	}
-	return date('Y-m-d', $lastRun) !== date('Y-m-d', $timestamp);
+	return gmdate('Y-m-d', $lastRun) !== gmdate('Y-m-d', $timestamp);
 }
 
 /**
@@ -12146,8 +12152,8 @@ function plugin_mastodon_run_sync($force, $fullWindow = null) {
 
 	if ($okRemote && $okLocal) {
 		$completionTimestamp = time();
-		$state ['last_run'] = date('Y-m-d H:i:s', $completionTimestamp);
-		plugin_mastodon_state_set_deletions_pending($state, plugin_mastodon_should_run_deletion_sync($options), 'full', date('Y-m-d H:i:s', $completionTimestamp + PLUGIN_MASTODON_COOLDOWN_TTL));
+		$state ['last_run'] = gmdate('Y-m-d H:i:s', $completionTimestamp);
+		plugin_mastodon_state_set_deletions_pending($state, plugin_mastodon_should_run_deletion_sync($options), 'full', gmdate('Y-m-d H:i:s', $completionTimestamp + PLUGIN_MASTODON_COOLDOWN_TTL));
 		$state ['last_error'] = '';
 		plugin_mastodon_log('Synchronization completed successfully');
 	} elseif ($state ['last_error'] === '') {
