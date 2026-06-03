@@ -37,12 +37,12 @@ function mastodon_docs_read_file($file, &$errors) {
 	return $content;
 }
 
-function mastodon_docs_line_for_offset($content, $offset) {
-	return substr_count(substr($content, 0, (int) $offset), "\n") + 1;
-}
-
 function mastodon_docs_normalize_line_endings($content) {
 	return str_replace(array("\r\n", "\r"), "\n", $content);
+}
+
+function mastodon_docs_line_for_offset($content, $offset) {
+	return substr_count(substr($content, 0, (int) $offset), "\n") + 1;
 }
 
 function mastodon_docs_extract_test_results($content) {
@@ -158,8 +158,9 @@ $regressionDocContent = mastodon_docs_read_file($regressionDocFile, $errors);
 $flowDocContent = mastodon_docs_read_file($flowDocFile, $errors);
 $organigramDocContent = mastodon_docs_read_file($organigramDocFile, $errors);
 
-if ($simulationContent !== '' && $regressionSimulationContent !== '' && mastodon_docs_normalize_line_endings($simulationContent) !== mastodon_docs_normalize_line_endings($regressionSimulationContent)) {
-	$errors [] = 'Regression-test simulator copy differs from root simulate_mastodon_plugin.php after line-ending normalization.';
+if ($simulationContent !== '' && $regressionSimulationContent !== ''
+	&& mastodon_docs_normalize_line_endings($simulationContent) !== mastodon_docs_normalize_line_endings($regressionSimulationContent)) {
+	$errors [] = 'Regression-test simulator copy differs from root simulate_mastodon_plugin.php.';
 }
 
 if ($simulationContent !== '' && $regressionDocContent !== '') {
@@ -285,7 +286,7 @@ $oneWayRequiredDocs = array(
 			'Admin UI direction gate',
 			'mastodon_remote_import_options_hidden marker',
 			'plugin_mastodon_companion_plugins_status() hides import-only helpers',
-			'regression-test simulator copy must stay content-identical to the root harness after line-ending normalization',
+			'regression-test simulator copy must stay content-identical to the root harness after CRLF/LF line-ending normalization',
 			'Unlink stale remote mapping and queue dirty_entries',
 			'Unlink stale remote mapping and queue dirty_comments'
 		)
@@ -303,8 +304,8 @@ $oneWayRequiredDocs = array(
 	)
 );
 foreach ($oneWayRequiredDocs as $docName => $docData) {
-	$docContent = isset($docData [0]) ? (string) $docData [0] : '';
-	$requiredSnippets = isset($docData [1]) && is_array($docData [1]) ? $docData [1] : array();
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
 	foreach ($requiredSnippets as $requiredSnippet) {
 		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
 			$errors [] = $docName . ' missing one-way-mode documentation snippet: ' . (string) $requiredSnippet;

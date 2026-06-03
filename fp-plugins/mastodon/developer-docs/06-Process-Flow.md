@@ -1242,7 +1242,7 @@ flowchart TD
 `simulate_mastodon_plugin.php` loads the real plugin code from the checked-out tree. It replaces
 the external Mastodon side with deterministic fixtures and mock HTTP responses so the regression
 suite can verify state transitions, API requests, media handling, and edge-case conversion logic.
-The `fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.php` regression-test simulator copy must stay content-identical to the root harness after line-ending normalization; `check-consistency.php` verifies this so UI, one-way-mode, and synchronization assertions cannot drift between the two locations.
+The `fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.php` regression-test simulator copy must stay content-identical to the root harness after CRLF/LF line-ending normalization; `check-consistency.php` verifies this so UI, one-way-mode, and synchronization assertions cannot drift between the two locations.
 
 ```mermaid
 flowchart TD
