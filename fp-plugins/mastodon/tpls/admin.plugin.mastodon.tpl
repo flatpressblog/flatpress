@@ -52,7 +52,19 @@
 	</fieldset>
 
 	<fieldset><legend>{$plang.more_options|escape}</legend>
+		{if $mastodon_cfg.disable_remote_import eq '1'}
+			<input type="hidden" name="mastodon_remote_import_options_hidden" value="1">
+		{/if}
 		<dl class="option-list">
+			<dt><label for="disable_remote_import">{$plang.disable_remote_import|escape}</label></dt>
+			<dd>
+				<label>
+					<input type="checkbox" id="disable_remote_import" name="disable_remote_import" value="1"{if $mastodon_cfg.disable_remote_import eq '1'} checked="checked"{/if}>
+					{$plang.disable_remote_import_desc|escape}
+				</label>
+			</dd>
+			<br>
+			{if $mastodon_cfg.disable_remote_import neq '1'}
 			<dt><label for="update_local_from_remote">{$plang.update_local_from_remote|escape}</label></dt>
 			<dd>
 				<label>
@@ -61,6 +73,8 @@
 				</label>
 			</dd>
 			<br>
+			{/if}
+			{if $mastodon_cfg.disable_remote_import neq '1'}
 			<dt><label for="import_synced_comments_as_entries">{$plang.import_synced_comments_as_entries|escape}</label></dt>
 			<dd>
 				<label>
@@ -96,11 +110,12 @@
 				<br><small>{$plang.old_thread_context_limit_desc|escape}</small>
 			</dd>
 			<br>
+			{/if}
 			<dt><label for="delete_sync_enabled">{$plang.delete_sync_enabled|escape}</label></dt>
 			<dd>
 				<label>
 					<input type="checkbox" id="delete_sync_enabled" name="delete_sync_enabled" value="1"{if $mastodon_cfg.delete_sync_enabled eq '1'} checked="checked"{/if}>
-					{$plang.delete_sync_enabled_desc|escape}
+					{if $mastodon_cfg.disable_remote_import eq '1'}{$plang.delete_sync_enabled_desc_one_way|escape}{else}{$plang.delete_sync_enabled_desc|escape}{/if}
 				</label>
 			</dd>
 		</dl>
@@ -148,7 +163,7 @@
 
 
 	<fieldset><legend>{$plang.manual_runs_head|escape}</legend>
-		<p>{$plang.manual_runs_desc|escape}</p>
+		<p>{if $mastodon_cfg.disable_remote_import eq '1'}{$plang.manual_runs_desc_one_way|escape}{else}{$plang.manual_runs_desc|escape}{/if}</p>
 		<div class="buttonbar">
 			<input type="submit" name="mastodon_run_now" value="{$plang.run_now|escape}">
 			<input type="submit" name="mastodon_run_full_now" value="{$plang.run_full_now|escape}">
@@ -199,16 +214,22 @@
 		</tr>
 	</thead>
 	<tbody>
+		{if $mastodon_cfg.disable_remote_import neq '1'}
 		<tr><td>{$plang.stats_imported_entries|escape}</td><td>{$mastodon_state.content_stats.imported_entries|default:0}</td></tr>
 		<tr><td>{$plang.stats_updated_entries|escape}</td><td>{$mastodon_state.content_stats.updated_entries|default:0}</td></tr>
+		{/if}
 		<tr><td>{$plang.stats_exported_entries|escape}</td><td>{$mastodon_state.content_stats.exported_entries|default:0}</td></tr>
 		<tr><td>{$plang.stats_updated_remote_entries|escape}</td><td>{$mastodon_state.content_stats.updated_remote_entries|default:0}</td></tr>
+		{if $mastodon_cfg.disable_remote_import neq '1'}
 		<tr><td>{$plang.stats_imported_comments|escape}</td><td>{$mastodon_state.content_stats.imported_comments|default:0}</td></tr>
 		<tr><td>{$plang.stats_updated_local_comments|escape}</td><td>{$mastodon_state.content_stats.updated_local_comments|default:0}</td></tr>
+		{/if}
 		<tr><td>{$plang.stats_exported_comments|escape}</td><td>{$mastodon_state.content_stats.exported_comments|default:0}</td></tr>
 		<tr><td>{$plang.stats_updated_remote_comments|escape}</td><td>{$mastodon_state.content_stats.updated_remote_comments|default:0}</td></tr>
+		{if $mastodon_cfg.disable_remote_import neq '1'}
 		<tr><td>{$plang.stats_deleted_local_entries|escape}</td><td>{$mastodon_state.deletion_stats.deleted_local_entries|default:0}</td></tr>
 		<tr><td>{$plang.stats_deleted_local_comments|escape}</td><td>{$mastodon_state.deletion_stats.deleted_local_comments|default:0}</td></tr>
+		{/if}
 		<tr><td>{$plang.stats_deleted_remote_entries|escape}</td><td>{$mastodon_state.deletion_stats.deleted_remote_entries|default:0}</td></tr>
 		<tr><td>{$plang.stats_deleted_remote_comments|escape}</td><td>{$mastodon_state.deletion_stats.deleted_remote_comments|default:0}</td></tr>
 	</tbody>

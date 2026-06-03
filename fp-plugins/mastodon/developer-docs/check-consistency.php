@@ -13,8 +13,13 @@
 $rootDir = dirname(__DIR__, 3);
 $pluginFile = $rootDir . '/fp-plugins/mastodon/plugin.mastodon.php';
 $simulationFile = $rootDir . '/simulate_mastodon_plugin.php';
+$regressionSimulationFile = $rootDir . '/fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.php';
+$mentalModelDocFile = __DIR__ . '/00-Mental-Model.md';
+$processMapDocFile = __DIR__ . '/01-Process-Map.md';
+$stateModelDocFile = __DIR__ . '/02-State-Model.md';
 $apiDocFile = __DIR__ . '/04-API-Compatibility.md';
 $regressionDocFile = __DIR__ . '/05-Regression-Test-Matrix.md';
+$flowDocFile = __DIR__ . '/06-Process-Flow.md';
 $organigramDocFile = __DIR__ . '/07-Function-Organigram.md';
 
 $errors = array();
@@ -34,6 +39,10 @@ function mastodon_docs_read_file($file, &$errors) {
 
 function mastodon_docs_line_for_offset($content, $offset) {
 	return substr_count(substr($content, 0, (int) $offset), "\n") + 1;
+}
+
+function mastodon_docs_normalize_line_endings($content) {
+	return str_replace(array("\r\n", "\r"), "\n", $content);
 }
 
 function mastodon_docs_extract_test_results($content) {
@@ -140,9 +149,18 @@ function mastodon_docs_extract_backticked_function_references($content) {
 
 $pluginContent = mastodon_docs_read_file($pluginFile, $errors);
 $simulationContent = mastodon_docs_read_file($simulationFile, $errors);
+$regressionSimulationContent = mastodon_docs_read_file($regressionSimulationFile, $errors);
+$mentalModelDocContent = mastodon_docs_read_file($mentalModelDocFile, $errors);
+$processMapDocContent = mastodon_docs_read_file($processMapDocFile, $errors);
+$stateModelDocContent = mastodon_docs_read_file($stateModelDocFile, $errors);
 $apiDocContent = mastodon_docs_read_file($apiDocFile, $errors);
 $regressionDocContent = mastodon_docs_read_file($regressionDocFile, $errors);
+$flowDocContent = mastodon_docs_read_file($flowDocFile, $errors);
 $organigramDocContent = mastodon_docs_read_file($organigramDocFile, $errors);
+
+if ($simulationContent !== '' && $regressionSimulationContent !== '' && mastodon_docs_normalize_line_endings($simulationContent) !== mastodon_docs_normalize_line_endings($regressionSimulationContent)) {
+	$errors [] = 'Regression-test simulator copy differs from root simulate_mastodon_plugin.php after line-ending normalization.';
+}
 
 if ($simulationContent !== '' && $regressionDocContent !== '') {
 	$actualTests = mastodon_docs_extract_test_results($simulationContent);
@@ -227,6 +245,69 @@ if ($pluginContent !== '' && $organigramDocContent !== '') {
 	foreach ($referencedFunctions as $name => $lines) {
 		if (!isset($actualFunctions [$name])) {
 			$errors [] = 'Function organigram references unknown function "' . $name . '" on line(s): ' . implode(', ', $lines);
+		}
+	}
+}
+
+
+$oneWayRequiredDocs = array(
+	'00-Mental-Model.md' => array(
+		$mentalModelDocContent,
+		array(
+			'disable_remote_import',
+			'FlatPress-to-Mastodon export active',
+			'one-way admin UI hides import-only controls',
+			'remotely deleted status must not delete the still-existing FlatPress object'
+		)
+	),
+	'01-Process-Map.md' => array(
+		$processMapDocContent,
+		array(
+			'Content sync when `disable_remote_import` is off',
+			'admin save preserves hidden import options',
+			'one-way mode unlinks stale mappings and queues re-export'
+		)
+	),
+	'02-State-Model.md' => array(
+		$stateModelDocContent,
+		array(
+			'Explicit one-way mode state lifecycle',
+			'Admin save with hidden import UI',
+			'one-way remote-missing repair',
+			'import-only companion diagnostics',
+			'do not create a tombstone'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'optional `disable_remote_import` setting is an explicit direction gate',
+			'Admin UI direction gate',
+			'mastodon_remote_import_options_hidden marker',
+			'plugin_mastodon_companion_plugins_status() hides import-only helpers',
+			'regression-test simulator copy must stay content-identical to the root harness after line-ending normalization',
+			'Unlink stale remote mapping and queue dirty_entries',
+			'Unlink stale remote mapping and queue dirty_comments'
+		)
+	),
+	'07-Function-Organigram.md' => array(
+		$organigramDocContent,
+		array(
+			'disable_remote_import enabled?',
+			'hides import-only companion diagnostics',
+			'plugin_mastodon_admin_apply_save_post()',
+			'plugin_mastodon_should_import_remote_to_local()',
+			'plugin_mastodon_state_unlink_entry_remote_for_reexport()',
+			'plugin_mastodon_state_unlink_comment_remote_for_reexport()'
+		)
+	)
+);
+foreach ($oneWayRequiredDocs as $docName => $docData) {
+	$docContent = isset($docData [0]) ? (string) $docData [0] : '';
+	$requiredSnippets = isset($docData [1]) && is_array($docData [1]) ? $docData [1] : array();
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing one-way-mode documentation snippet: ' . (string) $requiredSnippet;
 		}
 	}
 }

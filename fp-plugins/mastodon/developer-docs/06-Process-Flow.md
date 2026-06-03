@@ -134,7 +134,33 @@ flowchart TD
     RemoteMedia --> Entries
 ```
 
-## 1. Bidirectional content synchronization
+## 1. Bidirectional content synchronization and optional one-way mode
+
+The optional `disable_remote_import` setting is an explicit direction gate: FlatPress-to-Mastodon export and local-deletion propagation continue, but Mastodon responses must not create, update or delete FlatPress entries/comments.
+
+### 1.0 Admin UI direction gate
+
+The admin page mirrors the same direction gate. In one-way mode it hides Mastodon-to-FlatPress import controls, `read:notifications` hints, import-only/local-write counters and import-only companion diagnostics, but keeps export, OAuth, instance, token, state-maintenance, deletion-sync output and export helper diagnostics visible. The save handler preserves hidden import options from the previous configuration so switching back to bidirectional mode restores them unchanged.
+
+```mermaid
+flowchart TD
+    Open["Open Mastodon admin settings"]
+    OneWay{"disable_remote_import enabled?"}
+    Bi["Show import options, read:notifications hint and all counters"]
+    Hide["Hide import options, notification hint, import-only/local-write counters and import-only companion diagnostics"]
+    Marker["Submit mastodon_remote_import_options_hidden marker"]
+    Save["plugin_mastodon_admin_apply_save_post"]
+    Preserve{"Marker present from previous one-way page?"}
+    Keep["Preserve stored import options"]
+    Store["Save visible export, OAuth, instance, token, state and deletion settings"]
+
+    Open --> OneWay
+    OneWay -- "No" --> Bi --> Save
+    OneWay -- "Yes" --> Hide --> Marker --> Save
+    Save --> Preserve
+    Preserve -- "Yes" --> Keep --> Store
+    Preserve -- "No" --> Store
+```
 
 ### 1.1 FlatPress entry candidate selection and dirty decision
 
@@ -310,12 +336,14 @@ flowchart TD
 
 The remote-to-local path imports top-level statuses owned by the configured Mastodon account,
 filters them by visibility/window/source, converts HTML to FlatPress markup, imports remote
-media, and writes through the local-write guard.
+media, and writes through the local-write guard. In explicit one-way mode, this phase returns
+before account verification, paging or local FlatPress writes happen.
 
 ```mermaid
 sequenceDiagram
     autonumber
     participant Sync as plugin_mastodon_sync_remote_to_local
+    participant Options as Mastodon options
     participant API as Mastodon API
     participant Filter as Import filters
     participant Convert as HTML/media/tag conversion
@@ -323,10 +351,14 @@ sequenceDiagram
     participant Core as FlatPress Core
     participant State as state.json
 
-    Sync->>API: GET /api/v1/accounts/verify_credentials
-    API-->>Sync: Account ID
-    Sync->>API: GET /api/v1/accounts/:id/statuses with paging and local budgets
-    API-->>Sync: Status list
+    Sync->>Options: plugin_mastodon_should_import_remote_to_local
+    alt disable_remote_import enabled
+        Sync-->>State: Skip Mastodon-to-FlatPress import; keep FlatPress-to-Mastodon export active
+    else Remote import enabled
+        Sync->>API: GET /api/v1/accounts/verify_credentials
+        API-->>Sync: Account ID
+        Sync->>API: GET /api/v1/accounts/:id/statuses with paging and local budgets
+        API-->>Sync: Status list
     loop Each remote top-level status
         Sync->>Filter: visibility, reblog/reply, sync_start_date, scheduled window, known local-source mapping
         alt Not importable
@@ -343,16 +375,20 @@ sequenceDiagram
             Sync->>State: Store entries, entries_remote, last_remote_status_id, source metadata
         end
     end
+    end
 ```
 
 ### 1.5 Mastodon replies in a known imported thread to FlatPress comments
 
 After importing or refreshing a known entry status, the plugin fetches the Mastodon context and
 walks descendants. This path must avoid resurrecting locally deleted comments, must not break
-thread order, and must cope with temporarily unresolved parents.
+thread order, and must cope with temporarily unresolved parents. When `disable_remote_import` is
+enabled, this context path is skipped together with the rest of remote-to-local import.
 
 ```mermaid
 flowchart TD
+    Enabled{"disable_remote_import enabled?"}
+    Skip["Skip context import"]
     EntryMapped["Known imported entry mapping"]
     FetchContext["GET /api/v1/statuses/:id/context"]
     Descendants["Read descendants"]
@@ -372,7 +408,8 @@ flowchart TD
     Progress{"Progress in this pass?"}
     ForceImport["Force remaining import with unresolved parent reference only when safe"]
 
-    EntryMapped --> FetchContext --> Descendants --> BuildIndex --> NextReply
+    Enabled -- "Yes" --> Skip
+    Enabled -- "No" --> EntryMapped --> FetchContext --> Descendants --> BuildIndex --> NextReply
     NextReply --> Importable
     Importable -- "No" --> NextReply
     Importable -- "Yes" --> Tombstone
@@ -391,7 +428,7 @@ flowchart TD
 
 ### 1.5 Notification reply-hint pass
 
-The notification pass is optional and runs only when old-thread reply checks are enabled and the
+The notification pass is optional and runs only when old-thread reply checks are enabled, `disable_remote_import` is off, and the
 current stored OAuth scope set contains `read:notifications`. Direct mapped-parent notifications
 are imported without a context request. Unresolved notification replies can spend the same
 admin-configured old-thread context budget that normal rotation would otherwise use.
@@ -399,6 +436,7 @@ admin-configured old-thread context budget that normal rotation would otherwise 
 ```mermaid
 flowchart TD
     Start["Remote-to-local sync"]
+    ImportEnabled{"disable_remote_import off?"}
     Scope{"old_thread_reply_check and read:notifications?"}
     Fetch["GET /api/v1/notifications?types[]=mention&limit=30"]
     Reply{"Notification status is a reply?"}
@@ -410,7 +448,9 @@ flowchart TD
     Rotate["Use remaining budget for normal old-thread rotation"]
     Cursor["Advance last_remote_notification_id only after processed hints"]
 
-    Start --> Scope
+    Start --> ImportEnabled
+    ImportEnabled -- "No" --> Rotate
+    ImportEnabled -- "Yes" --> Scope
     Scope -- "No" --> Rotate
     Scope -- "Yes" --> Fetch --> Reply
     Reply -- "No" --> Cursor
@@ -654,25 +694,34 @@ flowchart LR
 ### 2.7 Companion plugin dependency overview
 
 The Mastodon plugin can store imported content without all companion plugins, but these plugins
-determine whether imported markup renders correctly in the FlatPress frontend.
+determine whether imported markup renders correctly in the FlatPress frontend. In explicit
+one-way mode, plugin_mastodon_companion_plugins_status() hides import-only helpers
+(BBCode, PhotoSwipe and AudioVideo) and shows only export helpers with export-only
+descriptions.
 
 ```mermaid
 flowchart TD
     MastodonPlugin["Mastodon plugin"]
+    Mode{"disable_remote_import enabled?"}
     ImportedContent["Imported and synchronized content"]
+    ExportedContent["FlatPress-to-Mastodon export"]
     BBCode["BBCode plugin"]
     PhotoSwipe["PhotoSwipe plugin"]
     AudioVideo["AudioVideo plugin"]
     Tag["Tag plugin"]
     Emoticons["Emoticons plugin"]
 
-    MastodonPlugin --> ImportedContent
+    MastodonPlugin --> Mode
+    Mode -->|"No: bidirectional"| ImportedContent
+    Mode -->|"Yes: one-way"| ExportedContent
 
     BBCode -->|"Renders imported formatting, links, images, and galleries"| ImportedContent
-    PhotoSwipe -->|"Enhances image and gallery presentation"| ImportedContent
-    AudioVideo -->|"Renders audio/video attachments as HTML5 media players"| ImportedContent
-    Tag -->|"Enables FlatPress tags and Mastodon hashtags in both directions"| ImportedContent
-    Emoticons -->|"Renders imported emoji shortcodes more nicely"| ImportedContent
+    PhotoSwipe -->|"Enhances imported image and gallery presentation"| ImportedContent
+    AudioVideo -->|"Renders imported audio/video attachments as HTML5 media players"| ImportedContent
+    Tag -->|"Bidirectional: FlatPress tags and Mastodon hashtags"| ImportedContent
+    Tag -->|"One-way: export FlatPress tags as hashtags"| ExportedContent
+    Emoticons -->|"Bidirectional: render imported emoji shortcodes"| ImportedContent
+    Emoticons -->|"One-way: export local shortcodes as Unicode emoji"| ExportedContent
 
     MastodonPlugin -. "plugin_mastodon_bbcode_plugin_active" .-> BBCode
     MastodonPlugin -. "plugin_mastodon_photoswipe_plugin_active" .-> PhotoSwipe
@@ -901,8 +950,8 @@ flowchart TD
 ### 4.2 Follow-up deletion synchronization
 
 The deletion sync is intentionally separate from the content sync. It compares stored mappings
-against local files and remote statuses. Local deletions are propagated to Mastodon; remote
-deletions are reflected back into FlatPress under the local-write guard.
+against local files and remote statuses. Local deletions are propagated to Mastodon. Remote
+deletions are reflected back into FlatPress under the local-write guard only while remote import is enabled; explicit one-way mode instead removes the stale remote mapping and queues the still-local object for export.
 
 ```mermaid
 flowchart TD
@@ -921,7 +970,9 @@ flowchart TD
     EntryLookupWindow{"Remote lookup window allows check?"}
     FetchRemoteEntry["GET /api/v1/statuses/:id"]
     MissingRemoteEntry{"Remote entry missing 404/410?"}
+    RemoteImportEntry{"remote import enabled?"}
     DeleteLocalEntry["entry_delete under local-write guard"]
+    UnlinkEntry["Unlink stale remote mapping and queue dirty_entries"]
     CommentLoop["Iterate comment mappings with cursor"]
     CommentScope{"Mapping inside sync_start_date?"}
     CommentLocal{"Local comment exists?"}
@@ -930,7 +981,9 @@ flowchart TD
     CommentLookupWindow{"Remote lookup window allows check?"}
     FetchRemoteComment["GET /api/v1/statuses/:id"]
     MissingRemoteComment{"Remote comment missing 404/410?"}
+    RemoteImportComment{"remote import enabled?"}
     DeleteLocalComment["comment_delete under local-write guard"]
+    UnlinkComment["Unlink stale remote mapping and queue dirty_comments"]
     ProcessRechecks["Process pending_comment_remote_rechecks"]
     Complete{"Failures or rate limit?"}
     ClearPending["Clear pending flags and cursors"]
@@ -952,7 +1005,9 @@ flowchart TD
     EntryLocal -- "Yes" --> EntryLookupWindow
     EntryLookupWindow -- "No" --> CommentLoop
     EntryLookupWindow -- "Yes" --> FetchRemoteEntry --> MissingRemoteEntry
-    MissingRemoteEntry -- "Yes" --> DeleteLocalEntry --> CommentLoop
+    MissingRemoteEntry -- "Yes" --> RemoteImportEntry
+    RemoteImportEntry -- "Yes" --> DeleteLocalEntry --> CommentLoop
+    RemoteImportEntry -- "No" --> UnlinkEntry --> CommentLoop
     MissingRemoteEntry -- "No" --> CommentLoop
     CommentLoop --> CommentScope
     CommentScope -- "No" --> ProcessRechecks
@@ -961,7 +1016,9 @@ flowchart TD
     CommentLocal -- "Yes" --> CommentLookupWindow
     CommentLookupWindow -- "No" --> ProcessRechecks
     CommentLookupWindow -- "Yes" --> FetchRemoteComment --> MissingRemoteComment
-    MissingRemoteComment -- "Yes" --> DeleteLocalComment --> QueueDesc --> ProcessRechecks
+    MissingRemoteComment -- "Yes" --> RemoteImportComment
+    RemoteImportComment -- "Yes" --> DeleteLocalComment --> QueueDesc --> ProcessRechecks
+    RemoteImportComment -- "No" --> UnlinkComment --> ProcessRechecks
     MissingRemoteComment -- "No" --> ProcessRechecks
     RecheckOnly -- "Yes" --> ProcessRechecks
     ProcessRechecks --> Complete
@@ -994,9 +1051,11 @@ sequenceDiagram
     Del->>State: Update mapping/tombstone/cursor or keep pending for retry
 
     Del->>API: GET /api/v1/statuses/:id for still-local mapped item
-    alt Remote missing
+    alt Remote missing and remote import enabled
         Del->>Core: entry_delete/comment_delete under local-write guard
         Del->>State: Queue descendant rechecks and tombstones when needed
+    else Remote missing and disable_remote_import enabled
+        Del->>State: Unlink stale remote mapping and queue dirty entry/comment for re-export
     end
 ```
 
@@ -1183,6 +1242,7 @@ flowchart TD
 `simulate_mastodon_plugin.php` loads the real plugin code from the checked-out tree. It replaces
 the external Mastodon side with deterministic fixtures and mock HTTP responses so the regression
 suite can verify state transitions, API requests, media handling, and edge-case conversion logic.
+The `fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.php` regression-test simulator copy must stay content-identical to the root harness after line-ending normalization; `check-consistency.php` verifies this so UI, one-way-mode, and synchronization assertions cannot drift between the two locations.
 
 ```mermaid
 flowchart TD

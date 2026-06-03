@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Options supplémentaires',
 	'update_local_from_remote' => 'Mettre à jour le contenu local existant depuis Mastodon',
 	'update_local_from_remote_desc' => 'Lorsqu’elle est activée, les modifications de Mastodon peuvent écraser des entrées et commentaires FlatPress déjà existants localement. Les publications et les commentaires sur FlatPress sont alors limités à 500 caractères.',
+	'disable_remote_import' => 'Désactiver l’import de Mastodon vers FlatPress',
+	'disable_remote_import_desc' => 'Lorsque cette option est activée, FlatPress envoie toujours les billets et commentaires vers Mastodon, mais Mastodon ne crée, ne met à jour ni ne supprime aucun contenu FlatPress.',
 	'import_synced_comments_as_entries' => 'Importer aussi les commentaires comme entrées',
 	'delete_sync_enabled' => 'Activer la synchronisation des suppressions',
 	'delete_sync_enabled_desc' => 'Lorsqu’elle est activée, l’extension exécute aussi, dans une requête ultérieure, la synchronisation des suppressions entre FlatPress et Mastodon.',
+	'delete_sync_enabled_desc_one_way' => 'Si activé, les suppressions locales sont encore envoyées à Mastodon. Les statuts Mastodon manquants laissent le contenu FlatPress intact et sont mis en file pour réexport.',
 	'import_synced_comments_as_entries_desc' => 'Lorsqu’elle est activée, les statuts Mastodon déjà associés à un commentaire local FlatPress peuvent également être importés comme entrées FlatPress. Cette option est désactivée par défaut afin d’éviter les contenus dupliqués.',
 	'quote_imported_reply_parent' => 'Citer à l’importation le commentaire Mastodon auquel il est répondu',
 	'quote_imported_reply_parent_desc' => 'Lorsque cette option est activée, les réponses Mastodon importées à un autre commentaire commencent par un bloc de citation indiquant l’utilisateur cité et le texte du commentaire.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Lancer la synchronisation normale',
 	'manual_runs_head' => 'Synchronisation manuelle',
 	'manual_runs_desc' => 'L’exécution manuelle normale se comporte comme l’exécution planifiée et respecte la fenêtre automatique. Les exécutions complètes ignorent cette fenêtre, tout en respectant les limites de Mastodon et peuvent continuer sur plusieurs passages.',
+	'manual_runs_desc_one_way' => 'L’exécution manuelle normale exporte le contenu FlatPress vers Mastodon. En mode unidirectionnel, le contenu Mastodon n’est ni importé, ni mis à jour, ni supprimé dans FlatPress ; les exécutions complètes ignorent la fenêtre automatique.',
 	'run_full_now' => 'Synchronisation complète depuis la date de début',
 	'run_full_deletion' => 'Continuer le contrôle complet des suppressions',
 	'status_head' => 'Statut',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'Aucun jeton d’accès enregistré',
 	'companion_plugins_head' => 'Plugins FlatPress complémentaires',
 	'companion_plugins_intro' => 'Pour bénéficier de toutes les fonctionnalités Mastodon, ces plugins FlatPress devraient également être activés.',
+	'companion_plugins_intro_one_way' => 'En mode unidirectionnel, seuls les assistants pour exporter de FlatPress vers Mastodon sont affichés.',
 	'companion_status_active' => 'Actif',
 	'companion_status_missing' => 'Non actif',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Necessaire pour afficher les pieces jointes audio et video Mastodon importees et synchronisees sous forme de lecteurs multimedias HTML5 FlatPress.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'Permet la synchronisation bidirectionnelle des tags FlatPress et des hashtags Mastodon.',
+	'companion_tag_desc_one_way' => 'Exporte les tags FlatPress comme hashtags Mastodon.',
 	'companion_emoticons_label' => 'Émoticônes',
 	'companion_emoticons_desc' => 'Affiche les shortcodes emoji importés de Mastodon dans les entrées et commentaires comme des émoticônes FlatPress.',
+	'companion_emoticons_desc_one_way' => 'Convertit les raccourcis Emoticons de FlatPress en emoji Unicode avant export vers Mastodon.',
 	'comment_by_format' => 'Commentaire de %s :',
 	'instance_info_head' => 'Informations sur l\'instance Mastodon',
 	'instance_info_intro' => 'Ce tableau affiche les dernières informations enregistrées concernant l\'instance Mastodon configurée, y compris la chaîne de version exacte.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'Les informations de l\'instance Mastodon n\'ont pas pu être récupérées.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>

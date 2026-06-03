@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Weitere Optionen',
 	'update_local_from_remote' => 'Vorhandene FlatPress-Inhalte aus Mastodon aktualisieren',
 	'update_local_from_remote_desc' => 'Wenn aktiviert, dürfen bereits vorhandene FlatPress-Beiträge und -Kommentare durch Änderungen aus Mastodon überschrieben werden. FlatPress Eintäge und Kommentare werden dann auf 500 Zeichen gekürzt.',
+	'disable_remote_import' => 'Import von Mastodon nach FlatPress deaktivieren',
+	'disable_remote_import_desc' => 'Wenn aktiviert, sendet FlatPress Beiträge und Kommentare weiter an Mastodon; Mastodon legt jedoch keine FlatPress-Inhalte an, aktualisiert oder löscht sie nicht.',
 	'import_synced_comments_as_entries' => 'Kommentare zusätzlich als Beiträge importieren',
 	'delete_sync_enabled' => 'Löschsynchronisation aktivieren',
 	'delete_sync_enabled_desc' => 'Wenn aktiviert, führt das Plugin in einem späteren Folge-Request auch die Löschsynchronisation zwischen FlatPress und Mastodon aus.',
+	'delete_sync_enabled_desc_one_way' => 'Wenn aktiviert, werden lokale Löschungen weiterhin an Mastodon übertragen. Fehlende Mastodon-Statusmeldungen lassen FlatPress-Inhalte unverändert und werden für den erneuten Export vorgemerkt.',
 	'import_synced_comments_as_entries_desc' => 'Wenn aktiviert, dürfen Mastodon-Statusmeldungen, die bereits einem lokalen FlatPress-Kommentar zugeordnet sind, zusätzlich als FlatPress-Beitrag importiert werden. Standardmäßig ist dies deaktiviert, um doppelte Inhalte zu vermeiden.',
 	'quote_imported_reply_parent' => 'Beantworteten Mastodon-Kommentar beim Import zitieren',
 	'quote_imported_reply_parent_desc' => 'Wenn aktiviert, beginnen importierte Mastodon-Antworten auf einen anderen Kommentar mit einem Zitatblock, der den beantworteten Benutzer und den Kommentartext zeigt.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Normale Synchronisierung jetzt ausführen',
 	'manual_runs_head' => 'Manuelle Synchronisierung',
 	'manual_runs_desc' => 'Der normale manuelle Lauf verhält sich wie der geplante Lauf und beachtet das automatische Fenster. Die vollständigen Läufe ignorieren dieses Fenster, beachten aber weiterhin Mastodon-Limits und können über mehrere Läufe fortgesetzt werden.',
+	'manual_runs_desc_one_way' => 'Der normale manuelle Lauf exportiert FlatPress-Inhalte nach Mastodon. Im Einwegmodus werden Mastodon-Inhalte in FlatPress nicht importiert, aktualisiert oder gelöscht; vollständige Läufe ignorieren das automatische Fenster.',
 	'run_full_now' => 'Vollständige Synchronisierung ab Startdatum',
 	'run_full_deletion' => 'Vollständigen Löschabgleich fortsetzen',
 	'status_head' => 'Status',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'Kein Access-Token gespeichert',
 	'companion_plugins_head' => 'Begleitende FlatPress-Plugins',
 	'companion_plugins_intro' => 'Für den vollen Mastodon-Funktionsumfang sollten auch diese FlatPress-Plugins aktiviert sein.',
+	'companion_plugins_intro_one_way' => 'Im Einwegmodus werden nur Helfer für den Export von FlatPress nach Mastodon angezeigt.',
 	'companion_status_active' => 'Aktiv',
 	'companion_status_missing' => 'Nicht aktiv',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Erforderlich, damit importierte und synchronisierte Mastodon-Audio- und Videoanhänge als FlatPress-HTML5-Medienplayer dargestellt werden.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'Ermöglicht die Synchronisierung von FlatPress-Tags und Mastodon-Hashtags in beide Richtungen.',
+	'companion_tag_desc_one_way' => 'Exportiert FlatPress-Tags als Mastodon-Hashtags.',
 	'companion_emoticons_label' => 'Emoticons',
 	'companion_emoticons_desc' => 'Stellt importierte Mastodon-Emoji-Shortcodes in Beiträgen und Kommentaren als FlatPress-Emoticons dar.',
+	'companion_emoticons_desc_one_way' => 'Wandelt FlatPress-Emoticon-Kürzel vor dem Export nach Mastodon in Unicode-Emoji um.',
 	'comment_by_format' => 'Kommentar von %s:',
 	'instance_info_head' => 'Mastodon-Instanzinformationen',
 	'instance_info_intro' => 'Diese Tabelle zeigt die zuletzt gespeicherten Instanzinformationen der konfigurierten Mastodon-Instanz, einschließlich der genauen Versionsangabe.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'Die Mastodon-Instanzinformationen konnten nicht abgerufen werden.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>

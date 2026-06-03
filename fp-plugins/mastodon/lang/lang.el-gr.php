@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Πρόσθετες επιλογές',
 	'update_local_from_remote' => 'Ενημέρωση υπαρχόμενου τοπικού περιεχομένου από το Mastodon',
 	'update_local_from_remote_desc' => 'Όταν είναι ενεργοποιημένο, οι αλλαγές από το Mastodon μπορούν να αντικαταστήσουν ήδη υπάρχουσες τοπικές εγγραφές και σχόλια του FlatPress. Οι αναρτήσεις και τα σχόλια στο FlatPress περιορίζονται τότε στα 500 χαρακτήρες.',
+	'disable_remote_import' => 'Απενεργοποίηση εισαγωγής από Mastodon σε FlatPress',
+	'disable_remote_import_desc' => 'Όταν είναι ενεργό, το FlatPress συνεχίζει να στέλνει άρθρα και σχόλια στο Mastodon, αλλά το Mastodon δεν δημιουργεί, δεν ενημερώνει και δεν διαγράφει περιεχόμενο στο FlatPress.',
 	'import_synced_comments_as_entries' => 'Εισαγωγή σχολίων και ως εγγραφές',
 	'delete_sync_enabled' => 'Ενεργοποίηση συγχρονισμού διαγραφών',
 	'delete_sync_enabled_desc' => 'Όταν είναι ενεργό, το πρόσθετο εκτελεί επίσης σε μεταγενέστερο αίτημα τον συγχρονισμό διαγραφών μεταξύ FlatPress και Mastodon.',
+	'delete_sync_enabled_desc_one_way' => 'Όταν είναι ενεργό, οι τοπικές διαγραφές αποστέλλονται ακόμη στο Mastodon. Καταστάσεις Mastodon που λείπουν αφήνουν το περιεχόμενο FlatPress ανέπαφο και μπαίνουν σε ουρά για επανεξαγωγή.',
 	'import_synced_comments_as_entries_desc' => 'Όταν είναι ενεργοποιημένο, καταστάσεις Mastodon που έχουν ήδη αντιστοιχιστεί σε τοπικό σχόλιο FlatPress μπορούν επίσης να εισαχθούν ως εγγραφές FlatPress. Από προεπιλογή είναι απενεργοποιημένο για να αποφεύγεται το διπλό περιεχόμενο.',
 	'quote_imported_reply_parent' => 'Παράθεση του σχολίου Mastodon στο οποίο γίνεται απάντηση κατά την εισαγωγή',
 	'quote_imported_reply_parent_desc' => 'Όταν είναι ενεργό, οι εισαγόμενες απαντήσεις Mastodon σε άλλο σχόλιο ξεκινούν με ένα μπλοκ παράθεσης που δείχνει τον χρήστη και το κείμενο του σχολίου στο οποίο έγινε απάντηση.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Εκτέλεση κανονικού συγχρονισμού τώρα',
 	'manual_runs_head' => 'Χειροκίνητος συγχρονισμός',
 	'manual_runs_desc' => 'Η κανονική χειροκίνητη εκτέλεση συμπεριφέρεται όπως η προγραμματισμένη και σέβεται το αυτόματο παράθυρο. Οι πλήρεις εκτελέσεις αγνοούν αυτό το παράθυρο, αλλά εξακολουθούν να σέβονται τα όρια του Mastodon και μπορούν να συνεχιστούν σε πολλές εκτελέσεις.',
+	'manual_runs_desc_one_way' => 'Η κανονική χειροκίνητη εκτέλεση εξάγει περιεχόμενο FlatPress στο Mastodon. Στη μονόδρομη λειτουργία, περιεχόμενο Mastodon δεν εισάγεται, δεν ενημερώνεται και δεν διαγράφεται στο FlatPress· οι πλήρεις εκτελέσεις αγνοούν το αυτόματο παράθυρο.',
 	'run_full_now' => 'Πλήρης συγχρονισμός από την αρχική ημερομηνία',
 	'run_full_deletion' => 'Συνέχιση πλήρους ελέγχου διαγραφών',
 	'status_head' => 'Κατάσταση',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'Δεν έχει αποθηκευτεί διακριτικό πρόσβασης',
 	'companion_plugins_head' => 'Συνοδευτικά πρόσθετα FlatPress',
 	'companion_plugins_intro' => 'Για πλήρη λειτουργικότητα του Mastodon θα πρέπει να είναι ενεργά και αυτά τα πρόσθετα του FlatPress.',
+	'companion_plugins_intro_one_way' => 'Στη μονόδρομη λειτουργία εμφανίζονται μόνο βοηθητικά πρόσθετα για εξαγωγή από το FlatPress στο Mastodon.',
 	'companion_status_active' => 'Ενεργό',
 	'companion_status_missing' => 'Μη ενεργό',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Απαιτείται για την αναπαραγωγή των εισαγόμενων και συγχρονισμένων συνημμένων ήχου και βίντεο του Mastodon μέσω των προγραμμάτων αναπαραγωγής πολυμέσων FlatPress HTML5.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'Επιτρέπει αμφίδρομο συγχρονισμό των ετικετών FlatPress και των hashtag του Mastodon.',
+	'companion_tag_desc_one_way' => 'Εξάγει ετικέτες FlatPress ως hashtag του Mastodon.',
 	'companion_emoticons_label' => 'Emoticons',
 	'companion_emoticons_desc' => 'Εμφανίζει τα εισαγμένα emoji shortcodes του Mastodon σε άρθρα και σχόλια ως emoticons του FlatPress.',
+	'companion_emoticons_desc_one_way' => 'Μετατρέπει συντομεύσεις Emoticons του FlatPress σε Unicode emoji πριν από την εξαγωγή στο Mastodon.',
 	'comment_by_format' => 'Σχόλιο από %s:',
 	'instance_info_head' => 'Πληροφορίες για την παρουσία Mastodon',
 	'instance_info_intro' => 'Ο πίνακας αυτός εμφανίζει τις τελευταίες αποθηκευμένες πληροφορίες για την διαμορφωμένη παρουσία Mastodon, συμπεριλαμβανομένης της ακριβούς συμβολοσειράς έκδοσης.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'Δεν ήταν δυνατή η λήψη των πληροφοριών της παρουσίας Mastodon.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>

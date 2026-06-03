@@ -45,30 +45,30 @@ and does not load comment shards.
 
 ## `state.json` fields
 
-| Field                           | Type                                    | Meaning                                               | Usually written by                         | Usually read by                                         |
-| ------------------------------- | --------------------------------------- | ----------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------- |
-| version                         | integer                                 | State schema version, currently 5.                    | default_state; normalization on read.      | state read/write, migrations, diagnostics.              |
-| last_run                        | UTC datetime string                     | Last completed content sync timestamp.                | run_sync via `gmdate()`.                   | scheduler-state summary and UTC due check.              |
-| last_deletion_run               | UTC datetime string                     | Last completed deletion sync timestamp.               | run_deletion_sync via `gmdate()`.          | scheduler-state summary and admin display.              |
-| deletions_pending               | 0/1                                     | Whether follow-up deletion sync work exists.          | delete hooks, state_set_deletions_pending. | maybe_sync, run_deletion_sync.                          |
-| deletions_pending_scope         | full\|entries\|comments                 | Limits what deletion work is currently needed.        | state_set_deletions_pending.               | deletion sync candidate selection.                      |
-| deletions_not_before            | UTC datetime string                     | Earliest follow-up deletion run time.                 | state_set_deletions_pending.               | UTC deletion_sync_due cooldown.                         |
-| last_error                      | string                                  | Last operational error or rate-limit reason.          | sync and deletion paths.                   | admin diagnostics, scheduler summary.                   |
-| last_remote_status_id           | string                                  | Newest seen imported remote top-level status.         | remote-to-local sync.                      | next remote import since_id/max logic.                  |
-| last_remote_notification_id     | string                                  | Newest processed mention notification hint.           | notification hint pass.                    | next notifications since_id logic.                      |
-| entries                         | map localEntryId -> meta                | Local FlatPress entry mapped to a Mastodon status.    | local export, remote import.               | updates, media reuse, deletions.                        |
-| entries_remote                  | map remoteStatusId -> localEntryId      | Reverse lookup preventing duplicate imported entries. | state_set_entry_mapping.                   | remote import, context import.                          |
-| comments                        | map entryId:commentId -> meta           | Local FlatPress comment mapped to a Mastodon reply.   | comment export/import.                     | reply export, deletion sync.                            |
-| comments_remote                 | map remoteStatusId -> local comment key | Reverse lookup for imported/exported replies.         | state_set_comment_mapping.                 | context import, duplicate prevention.                   |
-| dirty_entries                   | map localEntryId -> metadata            | Local entries that need export/update.                | entry saved hook, admin/manual paths.      | local-to-remote sync.                                   |
-| dirty_comments                  | map commentKey -> metadata              | Local comments queued for export/update.              | comment saved hook incl. fresh comments.   | comment export and pending resolution.                  |
-| comment_tombstones              | map remoteStatusId -> metadata          | Remote replies intentionally not to be re-imported.   | deletion sync, local deletion protection.  | remote reply import.                                    |
-| pending_comment_remote_rechecks | map scope -> metadata                   | Remote reply descendants to revisit later.            | context import, deletion sync.             | follow-up deletion/comment reconciliation.              |
-| old_thread_context_cursor       | string                                  | Cursor for rotating known old thread context checks.  | remote context collection.                 | old_thread_reply_check and context limit.               |
-| deletion_cursor_entries         | string                                  | Cursor for large entry deletion sweeps.               | run_deletion_sync.                         | next deletion pass.                                     |
-| deletion_cursor_comments        | string                                  | Cursor for large comment deletion sweeps.             | run_deletion_sync.                         | next deletion pass.                                     |
-| content_stats                   | object                                  | Counters for the last content sync.                   | run_sync.                                  | admin diagnostics.                                      |
-| deletion_stats                  | object                                  | Counters for the last deletion sync.                  | run_deletion_sync.                         | admin diagnostics.                                      |
+| Field                           | Type                                    | Meaning                                               | Usually written by                                                      | Usually read by                                            |
+| ------------------------------- | --------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------- |
+| version                         | integer                                 | State schema version, currently 5.                    | default_state; normalization on read.                                   | state read/write, migrations, diagnostics.                 |
+| last_run                        | UTC datetime string                     | Last completed content sync timestamp.                | run_sync via `gmdate()`.                                                | scheduler-state summary and UTC due check.                 |
+| last_deletion_run               | UTC datetime string                     | Last completed deletion sync timestamp.               | run_deletion_sync via `gmdate()`.                                       | scheduler-state summary and admin display.                 |
+| deletions_pending               | 0/1                                     | Whether follow-up deletion sync work exists.          | delete hooks, state_set_deletions_pending.                              | maybe_sync, run_deletion_sync.                             |
+| deletions_pending_scope         | full\|entries\|comments                 | Limits what deletion work is currently needed.        | state_set_deletions_pending.                                            | deletion sync candidate selection.                         |
+| deletions_not_before            | UTC datetime string                     | Earliest follow-up deletion run time.                 | state_set_deletions_pending.                                            | UTC deletion_sync_due cooldown.                            |
+| last_error                      | string                                  | Last operational error or rate-limit reason.          | sync and deletion paths.                                                | admin diagnostics, scheduler summary.                      |
+| last_remote_status_id           | string                                  | Newest seen imported remote top-level status.         | remote-to-local sync.                                                   | next remote import since_id/max logic.                     |
+| last_remote_notification_id     | string                                  | Newest processed mention notification hint.           | notification hint pass.                                                 | next notifications since_id logic.                         |
+| entries                         | map localEntryId -> meta                | Local FlatPress entry mapped to a Mastodon status.    | local export, remote import.                                            | updates, media reuse, deletions; one-way unlink/re-export. |
+| entries_remote                  | map remoteStatusId -> localEntryId      | Reverse lookup preventing duplicate imported entries. | state_set_entry_mapping.                                                | remote import, context import.                             |
+| comments                        | map entryId:commentId -> meta           | Local FlatPress comment mapped to a Mastodon reply.   | comment export/import.                                                  | reply export, deletion sync; one-way unlink/re-export.     |
+| comments_remote                 | map remoteStatusId -> local comment key | Reverse lookup for imported/exported replies.         | state_set_comment_mapping.                                              | context import, duplicate prevention.                      |
+| dirty_entries                   | map localEntryId -> metadata            | Local entries that need export/update.                | entry saved hook, admin/manual paths, one-way remote-missing repair.    | local-to-remote sync.                                      |
+| dirty_comments                  | map commentKey -> metadata              | Local comments queued for export/update.              | comment saved hook incl. fresh comments, one-way remote-missing repair. | comment export and pending resolution.                     |
+| comment_tombstones              | map remoteStatusId -> metadata          | Remote replies intentionally not to be re-imported.   | deletion sync, local deletion protection.                               | remote reply import.                                       |
+| pending_comment_remote_rechecks | map scope -> metadata                   | Remote reply descendants to revisit later.            | context import, deletion sync.                                          | follow-up deletion/comment reconciliation.                 |
+| old_thread_context_cursor       | string                                  | Cursor for rotating known old thread context checks.  | remote context collection.                                              | old_thread_reply_check and context limit.                  |
+| deletion_cursor_entries         | string                                  | Cursor for large entry deletion sweeps.               | run_deletion_sync.                                                      | next deletion pass.                                        |
+| deletion_cursor_comments        | string                                  | Cursor for large comment deletion sweeps.             | run_deletion_sync.                                                      | next deletion pass.                                        |
+| content_stats                   | object                                  | Counters for the last content sync.                   | run_sync.                                                               | admin diagnostics.                                         |
+| deletion_stats                  | object                                  | Counters for the last deletion sync.                  | run_deletion_sync.                                                      | admin diagnostics.                                         |
 
 ## Important nested metadata
 
@@ -252,3 +252,21 @@ Comment-shard diagnostics and repair are reachable from a separate admin action/
 | Main admin page      | Configuration, authorization, manual sync and status.  | Yes                       |
 | Maintenance page     | Comment-shard diagnostics and repair result display.   | Diagnose: no; repair: yes |
 | CLI maintenance tool | Scriptable diagnostics and repair for administrators.  | Diagnose: no; repair: yes |
+
+
+## Explicit one-way mode state lifecycle
+
+`disable_remote_import` is a configuration value rather than a new state file. Its state effects are intentionally limited:
+
+| Situation                                  | State action in one-way mode                                                                     | Reason                                                                                       |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Remote account-status/content import       | Do not create or update `entries`, `entries_remote`, `comments` or `comments_remote`.            | Mastodon must not become a local-content source.                                             |
+| Remote status missing for a local entry    | Remove `entries[entry_id]` and matching `entries_remote[remote_id]`, then add `dirty_entries`.   | The local entry remains authoritative and should be exported again with a new remote status. |
+| Remote reply missing for a local comment   | Remove the comment mapping and matching `comments_remote[remote_id]`, then add `dirty_comments`. | The local comment remains authoritative and should be exported again as a new reply.         |
+| Pending descendant recheck remote missing  | Drop the stale recheck/mapping and add `dirty_comments`; do not create a tombstone.              | A tombstone would block the intended re-export of still-local content.                       |
+| Admin save with hidden import UI           | Keep stored import options; save visible one-way, export and deletion options.                   | Hiding controls must not erase bidirectional preferences.                                    |
+
+Local deletions are not changed by this option: if a mapped FlatPress entry or comment disappears locally, deletion sync may still delete the corresponding Mastodon status and remove the mapping.
+
+The admin page does not add one-way state. It only suppresses import-only controls, notification hints, import-only companion diagnostics and local-write counters while the save path keeps the previously stored import settings intact.
+

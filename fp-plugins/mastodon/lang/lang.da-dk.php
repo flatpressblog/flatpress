@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Yderligere indstillinger',
 	'update_local_from_remote' => 'Opdater eksisterende lokalt indhold fra Mastodon',
 	'update_local_from_remote_desc' => 'Når dette er aktiveret, kan ændringer fra Mastodon overskrive allerede eksisterende lokale FlatPress-indlæg og kommentarer. Indlæg og kommentarer på FlatPress bliver derefter forkortet til 500 tegn.',
+	'disable_remote_import' => 'Deaktivér import fra Mastodon til FlatPress',
+	'disable_remote_import_desc' => 'Når dette er slået til, sender FlatPress stadig indlæg og kommentarer til Mastodon, men Mastodon opretter, opdaterer eller sletter ikke indhold i FlatPress.',
 	'import_synced_comments_as_entries' => 'Importér også kommentarer som indlæg',
 	'delete_sync_enabled' => 'Aktivér synkronisering af sletninger',
 	'delete_sync_enabled_desc' => 'Når den er aktiveret, kører pluginet også den efterfølgende synkronisering af sletninger mellem FlatPress og Mastodon i en senere forespørgsel.',
+	'delete_sync_enabled_desc_one_way' => 'Når aktiveret sendes lokale sletninger stadig til Mastodon. Manglende Mastodon-statusser bevarer FlatPress-indholdet og sættes i kø til ny eksport.',
 	'import_synced_comments_as_entries_desc' => 'Når dette er aktiveret, kan Mastodon-statusser, der allerede er knyttet til en lokal FlatPress-kommentar, også importeres som FlatPress-indlæg. Dette er som standard deaktiveret for at undgå duplikeret indhold.',
 	'quote_imported_reply_parent' => 'Citér den Mastodon-kommentar, der svares på, ved import',
 	'quote_imported_reply_parent_desc' => 'Når dette er aktiveret, begynder importerede Mastodon-svar til en anden kommentar med en citatblok, der viser den bruger, der svares til, og kommentarteksten.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Kør normal synkronisering nu',
 	'manual_runs_head' => 'Manuel synkronisering',
 	'manual_runs_desc' => 'Den normale manuelle kørsel opfører sig som den planlagte kørsel og respekterer det automatiske vindue. Fulde kørsler ignorerer vinduet, men respekterer stadig Mastodon-grænser og kan fortsætte over flere kørsler.',
+	'manual_runs_desc_one_way' => 'Den normale manuelle kørsel eksporterer FlatPress-indhold til Mastodon. I envejs-tilstand importeres, opdateres eller slettes Mastodon-indhold ikke i FlatPress; fulde kørsler ignorerer det automatiske vindue.',
 	'run_full_now' => 'Fuld synkronisering fra startdato',
 	'run_full_deletion' => 'Fortsæt fuld sletningskontrol',
 	'status_head' => 'Status',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'Intet adgangstoken gemt',
 	'companion_plugins_head' => 'Supplerende FlatPress-plugins',
 	'companion_plugins_intro' => 'For fuld Mastodon-funktionalitet bør disse FlatPress-plugins også være aktiveret.',
+	'companion_plugins_intro_one_way' => 'I envejs-tilstand vises kun hjælpeplugins til eksport fra FlatPress til Mastodon.',
 	'companion_status_active' => 'Aktiv',
 	'companion_status_missing' => 'Ikke aktiv',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Nødvendigt for at kunne afspille importerede og synkroniserede lyd- og videobilag fra Mastodon i FlatPress HTML5-medieafspillere.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'Muliggør tovejssynkronisering af FlatPress-tags og Mastodon-hashtags.',
+	'companion_tag_desc_one_way' => 'Eksporterer FlatPress-tags som Mastodon-hashtags.',
 	'companion_emoticons_label' => 'Emotikoner',
 	'companion_emoticons_desc' => 'Viser importerede Mastodon-emoji-shortcodes i indlæg og kommentarer som FlatPress-emotikoner.',
+	'companion_emoticons_desc_one_way' => 'Konverterer FlatPress Emoticons-kortkoder til Unicode-emoji før eksport til Mastodon.',
 	'comment_by_format' => 'Kommentar af %s:',
 	'instance_info_head' => 'Oplysninger om Mastodon-instansen',
 	'instance_info_intro' => 'Denne tabel viser de senest gemte oplysninger om den konfigurerede Mastodon-instans, herunder den nøjagtige versionsstreng.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'Oplysningerne om Mastodon-instansen kunne ikke hentes.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>

@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Ek seçenekler',
 	'update_local_from_remote' => 'Mevcut yerel içeriği Mastodon’dan güncelle',
 	'update_local_from_remote_desc' => 'Etkinleştirildiğinde, Mastodon’daki değişiklikler mevcut yerel FlatPress girdilerinin ve yorumlarının üzerine yazabilir. FlatPress’teki gönderiler ve yorumlar 500 karaktere kısaltılır.',
+	'disable_remote_import' => 'Mastodon’dan FlatPress’e içe aktarmayı devre dışı bırak',
+	'disable_remote_import_desc' => 'Etkinleştirildiğinde FlatPress yazıları ve yorumları Mastodon’a göndermeye devam eder; Mastodon ise FlatPress içeriği oluşturmaz, güncellemez veya silmez.',
 	'import_synced_comments_as_entries' => 'Yorumları ayrıca girdi olarak içe aktar',
 	'delete_sync_enabled' => 'Silme senkronizasyonunu etkinleştir',
 	'delete_sync_enabled_desc' => 'Etkinleştirildiğinde eklenti, daha sonraki bir istekte FlatPress ile Mastodon arasındaki silme senkronizasyonunu da çalıştırır.',
+	'delete_sync_enabled_desc_one_way' => 'Etkinleştirildiğinde yerel silmeler Mastodon’a gönderilmeye devam eder. Eksik Mastodon durumları FlatPress içeriğini korur ve yeniden dışa aktarma kuyruğuna alınır.',
 	'import_synced_comments_as_entries_desc' => 'Etkinleştirildiğinde, zaten yerel bir FlatPress yorumuyla eşlenmiş olan Mastodon durumları FlatPress girdisi olarak da içe aktarılabilir. Yinelenen içerikten kaçınmak için bu seçenek varsayılan olarak devre dışıdır.',
 	'quote_imported_reply_parent' => 'İçe aktarımda yanıt verilen Mastodon yorumunu alıntıla',
 	'quote_imported_reply_parent_desc' => 'Etkinleştirildiğinde, başka bir yoruma verilen içe aktarılmış Mastodon yanıtları, yanıt verilen kullanıcıyı ve yorum metnini gösteren bir alıntı bloğuyla başlar.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Normal eşitlemeyi şimdi çalıştır',
 	'manual_runs_head' => 'Elle eşitleme',
 	'manual_runs_desc' => 'Normal elle çalıştırma zamanlanmış çalışma gibi davranır ve otomatik pencereye uyar. Tam çalışmalar bu pencereyi yok sayar, ancak Mastodon sınırlarına yine de uyar ve birkaç çalışmada devam edebilir.',
+	'manual_runs_desc_one_way' => 'Normal elle çalıştırma FlatPress içeriğini Mastodon’a dışa aktarır. Tek yönlü modda Mastodon içeriği FlatPress’e içe aktarılmaz, güncellenmez veya silinmez; tam çalıştırmalar otomatik pencereyi yok sayar.',
 	'run_full_now' => 'Başlangıç tarihinden tam eşitleme',
 	'run_full_deletion' => 'Tam silme denetimine devam et',
 	'status_head' => 'Durum',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'Kaydedilmiş erişim belirteci yok',
 	'companion_plugins_head' => 'Tamamlayıcı FlatPress eklentileri',
 	'companion_plugins_intro' => 'Mastodon\'un tüm işlevlerinden yararlanmak için bu FlatPress eklentileri de etkin olmalıdır.',
+	'companion_plugins_intro_one_way' => 'Tek yönlü modda yalnızca FlatPress ten Mastodon a dışa aktarma yardımcıları gösterilir.',
 	'companion_status_active' => 'Etkin',
 	'companion_status_missing' => 'Etkin değil',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Ice aktarilan ve esitlenen Mastodon ses ve video eklerini FlatPress HTML5 medya oynaticilari olarak gostermek icin gereklidir.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'FlatPress etiketleri ile Mastodon hashtag\'lerinin çift yönlü eşitlenmesini sağlar.',
+	'companion_tag_desc_one_way' => 'FlatPress etiketlerini Mastodon hashtag leri olarak dışa aktarır.',
 	'companion_emoticons_label' => 'Emoticons',
 	'companion_emoticons_desc' => 'Mastodon\'dan içe aktarılan emoji kısa kodlarını yazı ve yorumlarda FlatPress emoticon\'ları olarak gösterir.',
+	'companion_emoticons_desc_one_way' => 'Mastodon a dışa aktarmadan önce FlatPress Emoticons kısayollarını Unicode emoji ye dönüştürür.',
 	'comment_by_format' => '%s tarafından yorum:',
 	'instance_info_head' => 'Mastodon sunucu bilgileri',
 	'instance_info_intro' => 'Bu tablo, yapılandırılmış Mastodon sunucusunun tam sürüm dizesi de dahil olmak üzere en son kaydedilmiş sunucu bilgilerini gösterir.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'Mastodon örneği bilgileri alınamadı.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>
