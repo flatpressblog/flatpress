@@ -289,10 +289,6 @@ After the run, also check:
 For technical details you can additionally inspect:
 
 - `fp-content/plugin_mastodon/sync.log`
-- `fp-content/plugin_mastodon/sync.guard.json`
-- `fp-content/plugin_mastodon/state.json`
-- `fp-content/plugin_mastodon/scheduler-state.json`
-- `fp-content/plugin_mastodon/rate-limit-windows.json`
 
 ## How synchronization works in practice
 
@@ -367,7 +363,12 @@ If you mainly want a blog-like discussion structure, leaving the option disabled
 The plugin stores its working data in:
 
 - `fp-content/plugin_mastodon/state.json`
+- `fp-content/plugin_mastodon/state-comments/YY/MM/entry*.json`
 - `fp-content/plugin_mastodon/scheduler-state.json`
+- `fp-content/plugin_mastodon/sync.log`
+- `fp-content/plugin_mastodon/state-write.lock`
+- `fp-content/plugin_mastodon/sync.guard.json`
+- `fp-content/plugin_mastodon/rate-limit-windows.json`
 - `fp-content/plugin_mastodon/sync.log`
 
 Imported Mastodon images are stored under:

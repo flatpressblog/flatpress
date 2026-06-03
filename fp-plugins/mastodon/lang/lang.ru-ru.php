@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Дополнительные параметры',
 	'update_local_from_remote' => 'Обновлять существующее локальное содержимое из Mastodon',
 	'update_local_from_remote_desc' => 'Если включено, изменения из Mastodon могут перезаписывать уже существующие локальные записи и комментарии FlatPress. Сообщения и комментарии в FlatPress будут сокращены до 500 символов.',
+	'disable_remote_import' => 'Отключить импорт из Mastodon в FlatPress',
+	'disable_remote_import_desc' => 'Если включено, FlatPress по-прежнему отправляет записи и комментарии в Mastodon, но Mastodon не создает, не обновляет и не удаляет содержимое FlatPress.',
 	'import_synced_comments_as_entries' => 'Импортировать комментарии также как записи',
 	'delete_sync_enabled' => 'Включить синхронизацию удалений',
 	'delete_sync_enabled_desc' => 'Если включено, плагин также выполняет в следующем запросе синхронизацию удалений между FlatPress и Mastodon.',
+	'delete_sync_enabled_desc_one_way' => 'Если включено, локальные удаления по-прежнему отправляются в Mastodon. Отсутствующие статусы Mastodon не затрагивают содержимое FlatPress и ставятся в очередь на повторный экспорт.',
 	'import_synced_comments_as_entries_desc' => 'Если включено, статусы Mastodon, уже сопоставленные с локальным комментарием FlatPress, также могут импортироваться как записи FlatPress. По умолчанию эта возможность отключена, чтобы избежать дублирования содержимого.',
 	'quote_imported_reply_parent' => 'Цитировать при импорте комментарий Mastodon, на который дан ответ',
 	'quote_imported_reply_parent_desc' => 'Если включено, импортированные ответы Mastodon на другой комментарий начинаются с блока цитаты, который показывает пользователя, которому ответили, и текст комментария.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Запустить обычную синхронизацию',
 	'manual_runs_head' => 'Ручная синхронизация',
 	'manual_runs_desc' => 'Обычный ручной запуск ведет себя как запланированный и учитывает автоматическое окно. Полные запуски игнорируют это окно, но всё равно соблюдают лимиты Mastodon и могут продолжаться в несколько запусков.',
+	'manual_runs_desc_one_way' => 'Обычный ручной запуск экспортирует содержимое FlatPress в Mastodon. В одностороннем режиме содержимое Mastodon не импортируется, не обновляется и не удаляется в FlatPress; полные запуски игнорируют автоматическое окно.',
 	'run_full_now' => 'Полная синхронизация с начальной даты',
 	'run_full_deletion' => 'Продолжить полную проверку удалений',
 	'status_head' => 'Состояние',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'Токен доступа не сохранён',
 	'companion_plugins_head' => 'Сопутствующие плагины FlatPress',
 	'companion_plugins_intro' => 'Для полной функциональности Mastodon также должны быть активированы эти плагины FlatPress.',
+	'companion_plugins_intro_one_way' => 'В одностороннем режиме показаны только помощники для экспорта из FlatPress в Mastodon.',
 	'companion_status_active' => 'Активен',
 	'companion_status_missing' => 'Не активен',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Требуется отображение импортированных и синхронизированных аудио- и видеовложений Mastodon с помощью медиаплееров FlatPress HTML5.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'Позволяет двусторонне синхронизировать теги FlatPress и хэштеги Mastodon.',
+	'companion_tag_desc_one_way' => 'Экспортирует теги FlatPress как хэштеги Mastodon.',
 	'companion_emoticons_label' => 'Эмотиконы',
 	'companion_emoticons_desc' => 'Показывает импортированные из Mastodon emoji-shortcodes в записях и комментариях как эмотиконы FlatPress.',
+	'companion_emoticons_desc_one_way' => 'Преобразует сокращения Emoticons FlatPress в Unicode-эмодзи перед экспортом в Mastodon.',
 	'comment_by_format' => 'Комментарий от %s:',
 	'instance_info_head' => 'Информация об инстансе Mastodon',
 	'instance_info_intro' => 'В этой таблице отображается последняя сохраненная информация о настроенном инстансе Mastodon, включая точную строку версии.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'Не удалось получить информацию об экземпляре Mastodon.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>

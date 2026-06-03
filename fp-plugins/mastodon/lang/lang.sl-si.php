@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Dodatne možnosti',
 	'update_local_from_remote' => 'Posodobi obstoječo lokalno vsebino iz Mastodona',
 	'update_local_from_remote_desc' => 'Ko je omogočeno, lahko spremembe iz Mastodona prepišejo že obstoječe lokalne vnose in komentarje FlatPressa. Objave in komentarji na FlatPressu se nato skrajšajo na 500 znakov.',
+	'disable_remote_import' => 'Onemogoči uvoz iz Mastodona v FlatPress',
+	'disable_remote_import_desc' => 'Ko je omogočeno, FlatPress še vedno pošilja prispevke in komentarje v Mastodon, Mastodon pa ne ustvarja, posodablja ali briše vsebine v FlatPressu.',
 	'import_synced_comments_as_entries' => 'Uvozi komentarje tudi kot vnose',
 	'delete_sync_enabled' => 'Omogoči sinhronizacijo brisanja',
 	'delete_sync_enabled_desc' => 'Če je omogočeno, vtičnik v naslednjem zahtevku izvede tudi sinhronizacijo brisanja med FlatPressom in Mastodonom.',
+	'delete_sync_enabled_desc_one_way' => 'Ko je omogočeno, se lokalni izbrisi še vedno pošiljajo v Mastodon. Manjkajoče objave Mastodon pustijo vsebino FlatPress nedotaknjeno in jo uvrstijo za ponovni izvoz.',
 	'import_synced_comments_as_entries_desc' => 'Ko je omogočeno, se lahko statusi Mastodona, ki so že preslikani na lokalni komentar FlatPressa, uvozijo tudi kot vnosi FlatPressa. To je privzeto onemogočeno, da se prepreči podvojena vsebina.',
 	'quote_imported_reply_parent' => 'Ob uvozu citiraj komentar Mastodona, na katerega je odgovorjeno',
 	'quote_imported_reply_parent_desc' => 'Ko je omogočeno, se uvoženi odgovori Mastodona na drug komentar začnejo z blokom citata, ki prikaže uporabnika, kateremu je bilo odgovorjeno, in besedilo komentarja.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Zaženi običajno sinhronizacijo',
 	'manual_runs_head' => 'Ročna sinhronizacija',
 	'manual_runs_desc' => 'Običajni ročni zagon se obnaša kot načrtovani zagon in upošteva samodejno okno. Popolni zagoni to okno prezrejo, vendar še vedno upoštevajo omejitve Mastodona in se lahko nadaljujejo v več zagonih.',
+	'manual_runs_desc_one_way' => 'Običajni ročni zagon izvozi vsebino FlatPress v Mastodon. V enosmernem načinu se vsebina Mastodon v FlatPress ne uvaža, posodablja ali briše; celotni zagoni prezrejo samodejno okno.',
 	'run_full_now' => 'Popolna sinhronizacija od začetnega datuma',
 	'run_full_deletion' => 'Nadaljuj popolno preverjanje izbrisov',
 	'status_head' => 'Stanje',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'Noben dostopni žeton ni shranjen',
 	'companion_plugins_head' => 'Dodatni FlatPress vtičniki',
 	'companion_plugins_intro' => 'Za polno funkcionalnost Mastodona morajo biti omogočeni tudi ti FlatPress vtičniki.',
+	'companion_plugins_intro_one_way' => 'V enosmernem načinu so prikazani le pomočniki za izvoz iz FlatPressa v Mastodon.',
 	'companion_status_active' => 'Aktiven',
 	'companion_status_missing' => 'Ni aktiven',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Potrebno za prikaz uvozenih in sinhroniziranih zvocnih ter video prilog Mastodon kot FlatPress HTML5 predstavnostnih predvajalnikov.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'Omogoča dvosmerno sinhronizacijo oznak FlatPress in hashtagov Mastodon.',
+	'companion_tag_desc_one_way' => 'Izvozi oznake FlatPress kot hashtage Mastodon.',
 	'companion_emoticons_label' => 'Emotikoni',
 	'companion_emoticons_desc' => 'Uvožene emoji shortkode iz Mastodona v objavah in komentarjih prikaže kot FlatPress emotikone.',
+	'companion_emoticons_desc_one_way' => 'Pred izvozom v Mastodon pretvori bližnjice Emoticons v Unicode emoji.',
 	'comment_by_format' => 'Komentar avtorja %s:',
 	'instance_info_head' => 'Podatki o Mastodonovi instanci',
 	'instance_info_intro' => 'Ta preglednica prikazuje zadnje shranjene podatke o nastavljeni Mastodonovi instanci, vključno z natančnim nizom različice.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'Podatkov o primerku Mastodona ni bilo mogoče pridobiti.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>

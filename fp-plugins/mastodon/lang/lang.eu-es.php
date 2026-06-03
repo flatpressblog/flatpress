@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Aukera gehigarriak',
 	'update_local_from_remote' => 'Lehendik dagoen tokiko edukia Mastodontik eguneratu',
 	'update_local_from_remote_desc' => 'Gaituta dagoenean, Mastodoneko aldaketek lehendik dauden FlatPress-eko sarrera eta iruzkin lokalak gainidatz ditzakete. Ondoren, FlatPresseko mezuak eta iruzkinak 500 karaktereetara laburbiltzen dira.',
+	'disable_remote_import' => 'Desgaitu Mastodonetik FlatPressera inportatzea',
+	'disable_remote_import_desc' => 'Gaituta dagoenean, FlatPress-ek sarrerak eta iruzkinak Mastodonera bidaltzen jarraitzen du, baina Mastodonek ez du FlatPress edukirik sortzen, eguneratzen edo ezabatzen.',
 	'import_synced_comments_as_entries' => 'Iruzkinak sarrera gisa ere inportatu',
 	'delete_sync_enabled' => 'Aktibatu ezabaketen sinkronizazioa',
 	'delete_sync_enabled_desc' => 'Aktibatuta dagoenean, pluginak geroagoko eskaera batean FlatPress eta Mastodon arteko ezabaketen sinkronizazioa ere exekutatzen du.',
+	'delete_sync_enabled_desc_one_way' => 'Aktibatuta dagoenean, tokiko ezabatzeak Mastodonera bidaltzen dira oraindik. Falta diren Mastodon egoerek FlatPress edukia bere horretan uzten dute eta berriro esportatzeko ilaran jartzen dira.',
 	'import_synced_comments_as_entries_desc' => 'Gaituta dagoenean, dagoeneko FlatPress-eko tokiko iruzkin bati lotutako Mastodon egoerak FlatPress-eko sarrera gisa ere inporta daitezke. Berez desgaituta dago, eduki bikoiztuak saihesteko.',
 	'quote_imported_reply_parent' => 'Erantzuten zaion Mastodon iruzkina inportatzean aipatzea',
 	'quote_imported_reply_parent_desc' => 'Gaituta dagoenean, beste iruzkin bati emandako Mastodon erantzun inportatuek erantzundako erabiltzailea eta iruzkinaren testua erakusten dituen aipamen-bloke batekin hasten dira.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Exekutatu sinkronizazio normala orain',
 	'manual_runs_head' => 'Eskuzko sinkronizazioa',
 	'manual_runs_desc' => 'Eskuzko exekuzio normala programatutakoaren moduan portatzen da eta leiho automatikoa errespetatzen du. Exekuzio osoek leiho hori ez dute kontuan hartzen, baina Mastodonen mugak betetzen dituzte eta hainbat exekuziotan jarrai dezakete.',
+	'manual_runs_desc_one_way' => 'Eskuzko exekuzio arruntak FlatPress edukia Mastodonera esportatzen du. Norabide bakarreko moduan, Mastodoneko edukia ez da FlatPressen inportatzen, eguneratzen edo ezabatzen; exekuzio osoek leiho automatikoa baztertzen dute.',
 	'run_full_now' => 'Sinkronizazio osoa hasiera-datatik',
 	'run_full_deletion' => 'Jarraitu ezabaketen egiaztapen osoa',
 	'status_head' => 'Egoera',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'Ez da sarbide-tokenik gorde',
 	'companion_plugins_head' => 'FlatPress plugin osagarriak',
 	'companion_plugins_intro' => 'Mastodon-en funtzionalitate osoa izateko, FlatPress-eko plugin hauek ere aktibatuta egon beharko lukete.',
+	'companion_plugins_intro_one_way' => 'Norabide bakarreko moduan, FlatPressetik Mastodonera esportatzeko laguntzaileak bakarrik erakusten dira.',
 	'companion_status_active' => 'Aktibo',
 	'companion_status_missing' => 'Ez aktibo',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Inportatu eta sinkronizatu diren Mastodon audio eta bideo eranskinak FlatPress HTML5 media-jokalari gisa bistaratzeko beharrezkoa da.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'FlatPress etiketak eta Mastodon hashtagak bi noranzkoetan sinkronizatzea ahalbidetzen du.',
+	'companion_tag_desc_one_way' => 'FlatPress etiketak Mastodoneko hashtag gisa esportatzen ditu.',
 	'companion_emoticons_label' => 'Emotikonoak',
 	'companion_emoticons_desc' => 'Mastodontik inportatutako emoji shortcodak sarrera eta iruzkinetan FlatPress emotikono gisa bistaratzen ditu.',
+	'companion_emoticons_desc_one_way' => 'FlatPress Emoticons laburbideak Unicode emoji bihurtzen ditu Mastodonera esportatu aurretik.',
 	'comment_by_format' => '%s(r)en iruzkina:',
 	'instance_info_head' => 'Mastodon instantziaren informazioa',
 	'instance_info_intro' => 'Taula honek konfiguratutako Mastodon instantziaren azken gordetako informazioa erakusten du, bertsio-kate zehatza barne.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'Mastodon instantziaren informazioa ezin izan da eskuratu.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>

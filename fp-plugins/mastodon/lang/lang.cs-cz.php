@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Další možnosti',
 	'update_local_from_remote' => 'Aktualizovat existující místní obsah z Mastodonu',
 	'update_local_from_remote_desc' => 'Je-li plugin aktivován, mohou být stávající příspěvky a komentáře z FlatPressu přepsány změnami z Mastodonu. Příspěvky a komentáře z FlatPressu budou poté zkráceny na 500 znaků.',
+	'disable_remote_import' => 'Vypnout import z Mastodonu do FlatPress',
+	'disable_remote_import_desc' => 'Když je zapnuto, FlatPress dál odesílá příspěvky a komentáře do Mastodonu, ale Mastodon nevytváří, neaktualizuje ani nemaže obsah ve FlatPress.',
 	'import_synced_comments_as_entries' => 'Importovat komentáře také jako záznamy',
 	'delete_sync_enabled' => 'Povolit synchronizaci mazání',
 	'delete_sync_enabled_desc' => 'Je-li zapnuto, plugin v pozdějším následném požadavku provede také synchronizaci mazání mezi FlatPress a Mastodonem.',
+	'delete_sync_enabled_desc_one_way' => 'Je-li zapnuto, místní smazání se dál odesílají na Mastodon. Chybějící statusy na Mastodonu ponechají obsah FlatPress beze změny a zařadí se k opětovnému exportu.',
 	'import_synced_comments_as_entries_desc' => 'Pokud je tato funkce aktivována, mohou být statusy z Mastodonu, které jsou již přiřazeny k místnímu komentáři ve FlatPress, navíc importovány jako příspěvky ve FlatPress. Ve výchozím nastavení je tato funkce deaktivována, aby se zabránilo duplicitnímu obsahu.',
 	'quote_imported_reply_parent' => 'Při importu citovat komentář Mastodonu, na který se odpovídá',
 	'quote_imported_reply_parent_desc' => 'Je-li zapnuto, importované odpovědi z Mastodonu na jiný komentář začínají blokem citace, který zobrazuje autora původního komentáře a jeho text.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Spustit běžnou synchronizaci',
 	'manual_runs_head' => 'Ruční synchronizace',
 	'manual_runs_desc' => 'Běžný ruční běh se chová jako plánovaný běh a respektuje automatické okno. Úplné běhy toto okno ignorují, ale stále respektují limity Mastodonu a mohou pokračovat ve více bězích.',
+	'manual_runs_desc_one_way' => 'Běžný ruční běh exportuje obsah FlatPress na Mastodon. V jednosměrném režimu se obsah z Mastodonu do FlatPress neimportuje, neaktualizuje ani nemaže; úplné běhy ignorují automatické okno.',
 	'run_full_now' => 'Úplná synchronizace od počátečního data',
 	'run_full_deletion' => 'Pokračovat v úplné kontrole mazání',
 	'status_head' => 'Stav',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'Nebyl uložen žádný přístupový token',
 	'companion_plugins_head' => 'Doplňkové FlatPress pluginy',
 	'companion_plugins_intro' => 'Pro plnou funkčnost Mastodon pluginu by měly být aktivní také tyto pluginy FlatPressu.',
+	'companion_plugins_intro_one_way' => 'V jednosměrném režimu se zobrazují jen pomocné pluginy pro export z FlatPressu na Mastodon.',
 	'companion_status_active' => 'Aktivní',
 	'companion_status_missing' => 'Neaktivní',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Je nutné, aby se importované a synchronizované zvukové a video přílohy z Mastodonu zobrazovaly jako přehrávače médií FlatPress HTML5.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'Umožňuje obousměrnou synchronizaci značek FlatPressu a hashtagů z Mastodonu.',
+	'companion_tag_desc_one_way' => 'Exportuje tagy FlatPressu jako hashtagy Mastodonu.',
 	'companion_emoticons_label' => 'Emotikony',
 	'companion_emoticons_desc' => 'Zobrazuje importované emoji shortcody z Mastodonu v příspěvcích a komentářích jako emotikony FlatPressu.',
+	'companion_emoticons_desc_one_way' => 'Před exportem na Mastodon převádí zkratky emotikonů FlatPressu na Unicode emoji.',
 	'comment_by_format' => 'Komentář od %s:',
 	'instance_info_head' => 'Informace o instanci Mastodonu',
 	'instance_info_intro' => 'Tato tabulka zobrazuje naposledy uložené informace o nakonfigurované instanci Mastodonu, včetně přesného řetězce verze.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'Informace o instanci Mastodonu nebylo možné načíst.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>

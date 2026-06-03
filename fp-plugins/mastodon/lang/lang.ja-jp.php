@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => '追加オプション',
 	'update_local_from_remote' => 'Mastodon から既存のローカル内容を更新する',
 	'update_local_from_remote_desc' => '有効にすると、Mastodon からの変更によって既存の FlatPress のローカルエントリーやコメントが上書きされる場合があります。 FlatPressの投稿やコメントは、500文字に短縮されます。',
+	'disable_remote_import' => 'Mastodon から FlatPress への取り込みを無効化',
+	'disable_remote_import_desc' => '有効にすると、FlatPress は投稿とコメントを Mastodon へ送信し続けますが、Mastodon から FlatPress の内容を作成・更新・削除しません。',
 	'import_synced_comments_as_entries' => 'コメントもエントリーとして取り込む',
 	'delete_sync_enabled' => '削除同期を有効化',
 	'delete_sync_enabled_desc' => '有効にすると、プラグインは後続の別リクエストで FlatPress と Mastodon 間の削除同期も実行します。',
+	'delete_sync_enabled_desc_one_way' => '有効にすると、ローカル削除は引き続きMastodonへ送信されます。見つからないMastodon投稿があってもFlatPressの内容は残り、再エクスポート待ちになります。',
 	'import_synced_comments_as_entries_desc' => '有効にすると、すでにローカルの FlatPress コメントに対応付けられている Mastodon ステータスも FlatPress エントリーとして取り込めます。重複コンテンツを避けるため、既定では無効です。',
 	'quote_imported_reply_parent' => 'インポート時に返信先のMastodonコメントを引用する',
 	'quote_imported_reply_parent_desc' => '有効にすると、別のコメントへのMastodon返信をインポートした際に、返信先のユーザー名とコメント本文を示す引用ブロックを先頭に追加します。',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => '通常の同期を今すぐ実行',
 	'manual_runs_head' => '手動同期',
 	'manual_runs_desc' => '通常の手動実行は予約実行と同じように動作し、自動期間を尊重します。完全実行はこの期間を無視しますが、Mastodon の制限は引き続き守り、複数回に分けて続行できます。',
+	'manual_runs_desc_one_way' => '通常の手動実行はFlatPressの内容をMastodonへエクスポートします。一方向モードでは、Mastodonの内容はFlatPressへインポート、更新、削除されません。完全実行は自動期間を無視します。',
 	'run_full_now' => '開始日から完全同期',
 	'run_full_deletion' => '完全な削除チェックを続行',
 	'status_head' => '状態',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => '保存されたアクセストークンはありません',
 	'companion_plugins_head' => '関連するFlatPressプラグイン',
 	'companion_plugins_intro' => 'Mastodon の機能をフルに利用するには、これらの FlatPress プラグインも有効にする必要があります。',
+	'companion_plugins_intro_one_way' => '一方向モードでは、FlatPressからMastodonへのエクスポートに役立つプラグインだけを表示します。',
 	'companion_status_active' => '有効',
 	'companion_status_missing' => '無効',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'インポートおよび同期されたMastodonの音声・動画添付ファイルを、FlatPressのHTML5メディアプレーヤーとして表示する必要があります。',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'FlatPress のタグと Mastodon のハッシュタグを双方向で同期できるようにします。',
+	'companion_tag_desc_one_way' => 'FlatPressタグをMastodonのハッシュタグとしてエクスポートします。',
 	'companion_emoticons_label' => 'Emoticons',
 	'companion_emoticons_desc' => 'Mastodon から取り込んだ絵文字ショートコードを、投稿やコメント内で FlatPress の Emoticons として表示します。',
+	'companion_emoticons_desc_one_way' => 'Mastodonへエクスポートする前に、FlatPress Emoticonsの短縮記法をUnicode絵文字に変換します。',
 	'comment_by_format' => '%s によるコメント:',
 	'instance_info_head' => 'Mastodonインスタンス情報',
 	'instance_info_intro' => 'この表には、設定済みのMastodonインスタンスの最後に保存されたインスタンス情報（正確なバージョン文字列を含む）が表示されています。',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'Mastodonインスタンス情報を取得できませんでした。',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>

@@ -287,7 +287,6 @@ After the run, also check:
 
 For technical details you can additionally inspect:
 
-  * ''fp-content/plugin_mastodon/state.json''
   * ''fp-content/plugin_mastodon/sync.log''
 
 ===== How synchronization works in practice =====
@@ -368,6 +367,7 @@ The plugin stores its working data in:
   * ''fp-content/plugin_mastodon/sync.log''
   * ''fp-content/plugin_mastodon/sync.guard.json''
   * ''fp-content/plugin_mastodon/state.json''
+  * ''fp-content/plugin_mastodon/state-comments/YY/MM/entry*.json''
   * ''fp-content/plugin_mastodon/scheduler-state.json''
   * ''fp-content/plugin_mastodon/rate-limit-windows.json''
 

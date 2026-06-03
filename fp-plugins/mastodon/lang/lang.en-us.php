@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Additional options',
 	'update_local_from_remote' => 'Update existing local content from Mastodon',
 	'update_local_from_remote_desc' => 'When enabled, changes from Mastodon may overwrite already existing local FlatPress entries and comments. FlatPress posts and comments are then truncated to 500 characters.',
+	'disable_remote_import' => 'Disable Mastodon-to-FlatPress import',
+	'disable_remote_import_desc' => 'When enabled, FlatPress still sends posts and comments to Mastodon, but Mastodon does not create, update or delete FlatPress content.',
 	'import_synced_comments_as_entries' => 'Import comments as entries as well',
 	'delete_sync_enabled' => 'Enable deletion synchronization',
 	'delete_sync_enabled_desc' => 'When enabled, the plugin also runs the follow-up deletion synchronization between FlatPress and Mastodon in a later request.',
+	'delete_sync_enabled_desc_one_way' => 'When enabled, local deletions are still sent to Mastodon. Missing Mastodon statuses keep FlatPress content intact and are queued for re-export.',
 	'import_synced_comments_as_entries_desc' => 'When enabled, Mastodon statuses that are already mapped to a local FlatPress comment may also be imported as FlatPress entries. This is disabled by default to avoid duplicate content.',
 	'quote_imported_reply_parent' => 'Quote replied-to Mastodon comment on import',
 	'quote_imported_reply_parent_desc' => 'When enabled, imported Mastodon replies to another comment begin with a quote block that shows the replied-to user and comment text.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Run normal synchronization now',
 	'manual_runs_head' => 'Manual synchronization',
 	'manual_runs_desc' => 'The normal manual run behaves like the scheduled run and respects the automatic window. The full runs ignore that window, but still obey Mastodon rate limits and may continue over several runs.',
+	'manual_runs_desc_one_way' => 'The normal manual run exports FlatPress content to Mastodon. In one-way mode, Mastodon content is not imported, updated or deleted in FlatPress; full runs ignore the automatic window.',
 	'run_full_now' => 'Run full synchronization from start date',
 	'run_full_deletion' => 'Continue full deletion check',
 	'status_head' => 'Status',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'No access token saved',
 	'companion_plugins_head' => 'Companion FlatPress plugins',
 	'companion_plugins_intro' => 'For the full Mastodon feature set, activate these FlatPress plugins as well.',
+	'companion_plugins_intro_one_way' => 'In one-way mode, only FlatPress-to-Mastodon export helpers are shown.',
 	'companion_status_active' => 'Active',
 	'companion_status_missing' => 'Not active',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Required to render imported and synchronized Mastodon audio and video attachments as FlatPress HTML5 media players.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'Enables synchronized FlatPress tags and Mastodon hashtags in both directions.',
+	'companion_tag_desc_one_way' => 'Exports FlatPress tags as Mastodon hashtags.',
 	'companion_emoticons_label' => 'Emoticons',
 	'companion_emoticons_desc' => 'Renders imported Mastodon emoji shortcodes as FlatPress emoticons in entries and comments.',
+	'companion_emoticons_desc_one_way' => 'Converts FlatPress Emoticons shortcodes to Unicode emoji before exporting to Mastodon.',
 	'comment_by_format' => 'Comment by %s:',
 	'instance_info_head' => 'Mastodon instance information',
 	'instance_info_intro' => 'This table shows the last saved instance information of the configured Mastodon instance, including the exact version string.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'The Mastodon instance information could not be fetched.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>

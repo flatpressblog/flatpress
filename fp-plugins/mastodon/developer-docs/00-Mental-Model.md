@@ -15,6 +15,8 @@ It maps FlatPress objects to Mastodon objects:
 | AudioVideo BBCode      | Audio/video media attachments              | Requires the FlatPress AudioVideo companion plugin for rendering imported content.                                      |
 | FlatPress tags         | Hashtag footer / imported `[tag]` BBCode   | Requires the FlatPress Tag companion plugin for tag storage/rendering.                                                  |
 | Local delete           | Remote delete or tombstone/recheck         | Deletion sync reconciles missing local and remote objects later.                                                        |
+| One-way import mode    | FlatPress-owned source of truth            | Optional `disable_remote_import` keeps FlatPress-to-Mastodon export active but blocks Mastodon-created local writes.    |
+| One-way admin UI       | Mode-aware settings/status display         | Hides import-only controls, notification hints and local-write counters; preserves hidden import settings on save.      |
 
 Media export has one additional compatibility rule that developers must keep in mind: one Mastodon status may carry multiple images, or exactly one audio/video attachment, but not a mixed audio/video/image set. The plugin therefore collects all local media for change detection and diagnostics, then selects one exportable media family per status before upload: images first, otherwise one audio item, otherwise one video item with its poster sent only as an upload thumbnail.
 
@@ -28,6 +30,7 @@ flowchart LR
     Notifications[Mastodon mention notifications]
     API[Mastodon API]
     Sim[simulate_mastodon_plugin.php regression harness]
+    AdminUI[Mastodon admin settings and status UI]
 
     FP --> Hooks
     Hooks --> State
@@ -36,7 +39,12 @@ flowchart LR
     State <--> API
     API <--> Notifications
     Notifications --> State
+    OneWay[disable_remote_import option]
     API <--> FP
+    OneWay --> State
+    OneWay --> AdminUI
+    OneWay -. blocks Mastodon-to-FlatPress writes .-> FP
+    AdminUI -. hides import-only controls and counters .-> FP
     Sim --> FP
     Sim --> State
     Sim --> API
@@ -44,19 +52,21 @@ flowchart LR
 
 ## The main rule
 
-Notification hints are intentionally a hint layer: they can import replies on old Mastodon threads quickly when `read:notifications` is authorized, while context rotation remains the bounded fallback.
+Notification hints are intentionally a hint layer: they can import replies on old Mastodon threads quickly when `read:notifications` is authorized, while context rotation remains the bounded fallback. When `disable_remote_import` is enabled, notification hints and context rotation are skipped as local-write sources; FlatPress still exports local entries and comments to Mastodon.
+
+The admin UI follows the same direction gate. With one-way mode active it hides Mastodon-to-FlatPress import options, notification-scope hints and import-only/local-write counters, but the save handler preserves those hidden import settings so they come back unchanged if bidirectional synchronization is re-enabled. The one-way admin UI hides import-only controls, notification-scope hints and import-only/local-write counters while preserving hidden import settings on save.
 
 Do not reason about a single function in isolation. The important question is usually:
 
 > Which state field is written now, and which later sync path will read it?
 
-Example: a locally deleted mapped comment does not merely remove a local file. It may mark `deletions_pending`, later enter deletion sync, create or respect a comment tombstone, queue descendant rechecks, and prevent a deleted remote reply from being imported again.
+Example: a locally deleted mapped comment does not merely remove a local file. It may mark `deletions_pending`, later enter deletion sync, create or respect a comment tombstone, queue descendant rechecks, and prevent a deleted remote reply from being imported again. Conversely, in explicit one-way mode a remotely deleted status must not delete the still-existing FlatPress object; it unlinks the stale remote mapping and queues the local entry or comment for re-export.
 
 ## Runtime layers
 
 | Layer                     | Purpose                                                                   | Main files/functions                                                                                               |
 | ------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Configuration             | Instance URL, OAuth credentials, feature toggles, cached instance info.   | `plugin_mastodon_default_options()`, FlatPress config storage.                                                     |
+| Configuration             | Instance URL, OAuth credentials, feature toggles, cached instance info.   | `plugin_mastodon_default_options()`, FlatPress config storage, `disable_remote_import`.                            |
 | Full sync state           | Authoritative mapping and dirty/deletion state.                           | `state.json`, `plugin_mastodon_state_read()`, `plugin_mastodon_state_write()`.                                     |
 | Compact scheduler state   | Fast request-time status without loading huge mapping arrays.             | `scheduler-state.json`, `plugin_mastodon_scheduler_state_read()`.                                                  |
 | Locks and guards          | Prevent concurrent or too frequent sync runs on shared hosting.           | `sync.lock`, `sync.guard.json`, `plugin_mastodon_sync_guard_active()`, `plugin_mastodon_sync_guard_mark()`.        |
@@ -83,6 +93,7 @@ The simulation executes the real Mastodon plugin code against a local FlatPress-
 1. Read the one-page model above and keep `state.json` as the central mental anchor.
 2. Locate the affected process ID in `01-Process-Map.md`.
 3. Check whether the process is local-to-remote, remote-to-local, deletion-only, or admin-only.
+4. One-way mode is a direction gate: it never blocks FlatPress-to-Mastodon export, but it blocks Mastodon-to-FlatPress create, update and delete effects.
 4. Read the corresponding state fields in `02-State-Model.md`.
 5. Find the implementation functions in `03-Function-Process-Matrix.md`.
 6. If Mastodon is contacted, check endpoint version and fallback behavior in `04-API-Compatibility.md`.

@@ -3184,7 +3184,7 @@ $allOk = test_result(
 	json_encode(array('missing-mastodon-companion-plugin' => plugin_mastodon_enabled_plugin_state('missing-mastodon-companion-plugin')))
 ) && $allOk;
 
-$companionPlugins = plugin_mastodon_companion_plugins_status();
+$companionPlugins = plugin_mastodon_companion_plugins_status(array('disable_remote_import' => '0'));
 $companionBySlug = array();
 foreach ($companionPlugins as $companionPlugin) {
 	if (is_array($companionPlugin) && !empty($companionPlugin ['slug'])) {
@@ -3210,6 +3210,24 @@ $allOk = test_result(
 		&& !empty($companionBySlug ['emoticons'] ['label'])
 		&& !empty($companionBySlug ['emoticons'] ['description']),
 	json_encode($companionBySlug)
+) && $allOk;
+
+$oneWayCompanionPlugins = plugin_mastodon_companion_plugins_status(array('disable_remote_import' => '1'));
+$oneWayCompanionBySlug = array();
+foreach ($oneWayCompanionPlugins as $oneWayCompanionPlugin) {
+	if (is_array($oneWayCompanionPlugin) && !empty($oneWayCompanionPlugin ['slug'])) {
+		$oneWayCompanionBySlug [(string) $oneWayCompanionPlugin ['slug']] = $oneWayCompanionPlugin;
+	}
+}
+$oneWayTagDesc = plugin_mastodon_lang_string('companion_tag_desc_one_way', 'Exports FlatPress tags as Mastodon hashtags.');
+$oneWayEmoticonsDesc = plugin_mastodon_lang_string('companion_emoticons_desc_one_way', 'Converts FlatPress Emoticons shortcodes to Unicode emoji before exporting to Mastodon.');
+$allOk = test_result(
+	'One-way companion-plugin diagnostics hide import-only helpers and describe export helpers',
+	!isset($oneWayCompanionBySlug ['bbcode'], $oneWayCompanionBySlug ['photoswipe'], $oneWayCompanionBySlug ['audiovideo'])
+		&& isset($oneWayCompanionBySlug ['tag'], $oneWayCompanionBySlug ['emoticons'])
+		&& isset($oneWayCompanionBySlug ['tag'] ['description']) && $oneWayCompanionBySlug ['tag'] ['description'] === $oneWayTagDesc
+		&& isset($oneWayCompanionBySlug ['emoticons'] ['description']) && $oneWayCompanionBySlug ['emoticons'] ['description'] === $oneWayEmoticonsDesc,
+	json_encode($oneWayCompanionBySlug)
 ) && $allOk;
 if (is_array($originalEnabledPlugins)) {
 	$GLOBALS ['fp_plugins'] = $originalEnabledPlugins;
@@ -10576,6 +10594,479 @@ $allOk = test_result(
 ) && $allOk;
 entry_delete($automaticOldCommentEntryId);
 unset($GLOBALS ['plugin_mastodon_test_now']);
+
+
+// Regression test: the explicit one-way mode must be disabled by default, saved from the admin form, and translated everywhere.
+$oneWayDefaultOptions = plugin_mastodon_default_options();
+$oneWayAdminLanguageOk = true;
+$oneWayLanguageFiles = glob($simRoot . '/fp-plugins/mastodon/lang/lang.*.php');
+if (!is_array($oneWayLanguageFiles)) {
+	$oneWayLanguageFiles = array();
+}
+sort($oneWayLanguageFiles, SORT_STRING);
+foreach ($oneWayLanguageFiles as $oneWayLanguageFile) {
+	$oneWayLangEntries = simulate_mastodon_read_admin_plugin_language_entries((string) $oneWayLanguageFile);
+	$oneWayPluginLang = isset($oneWayLangEntries ['mastodon']) && is_array($oneWayLangEntries ['mastodon']) ? $oneWayLangEntries ['mastodon'] : array();
+	$oneWayRequiredAdminKeys = array(
+		'disable_remote_import',
+		'disable_remote_import_desc',
+		'delete_sync_enabled_desc_one_way',
+		'manual_runs_desc_one_way',
+		'companion_plugins_intro_one_way',
+		'companion_tag_desc_one_way',
+		'companion_emoticons_desc_one_way'
+	);
+	foreach ($oneWayRequiredAdminKeys as $oneWayRequiredAdminKey) {
+		if (empty($oneWayPluginLang [$oneWayRequiredAdminKey])) {
+			$oneWayAdminLanguageOk = false;
+			break 2;
+		}
+	}
+}
+$oneWayTemplate = @file_get_contents($simRoot . '/fp-plugins/mastodon/tpls/admin.plugin.mastodon.tpl');
+$oneWayAdminOptions = $seededOptions;
+$oneWayAdminOptions ['disable_remote_import'] = '1';
+$oneWayAdminOptions ['access_token'] = 'token123';
+plugin_mastodon_save_options($oneWayAdminOptions);
+$oneWayAdminSmarty = new SimulateSmartyCollector();
+plugin_mastodon_admin_assign($oneWayAdminSmarty);
+$oneWayAdminCfg = isset($oneWayAdminSmarty->assigned ['mastodon_cfg']) && is_array($oneWayAdminSmarty->assigned ['mastodon_cfg']) ? $oneWayAdminSmarty->assigned ['mastodon_cfg'] : array();
+$allOk = test_result(
+	'One-way mode option is disabled by default, normalized, assigned to admin UI, templated and translated',
+		isset($oneWayDefaultOptions ['disable_remote_import'])
+		&& (string) $oneWayDefaultOptions ['disable_remote_import'] === '0'
+		&& plugin_mastodon_normalize_disable_remote_import('on') === '1'
+		&& plugin_mastodon_normalize_disable_remote_import('false') === '0'
+		&& !plugin_mastodon_should_import_remote_to_local(array('disable_remote_import' => '1'))
+		&& plugin_mastodon_should_import_remote_to_local(array('disable_remote_import' => '0'))
+		&& isset($oneWayAdminCfg ['disable_remote_import'])
+		&& (string) $oneWayAdminCfg ['disable_remote_import'] === '1'
+		&& is_string($oneWayTemplate)
+		&& strpos($oneWayTemplate, 'name="disable_remote_import"') !== false
+		&& count($oneWayLanguageFiles) === 15
+		&& $oneWayAdminLanguageOk,
+	json_encode(array(
+		'default' => isset($oneWayDefaultOptions ['disable_remote_import']) ? $oneWayDefaultOptions ['disable_remote_import'] : null,
+		'admin_cfg' => $oneWayAdminCfg,
+		'language_file_count' => count($oneWayLanguageFiles),
+		'languages_ok' => $oneWayAdminLanguageOk
+	))
+) && $allOk;
+
+$oneWayImportHiddenOptions = $seededOptions;
+$oneWayImportHiddenOptions ['disable_remote_import'] = '1';
+$oneWayImportHiddenOptions ['update_local_from_remote'] = '1';
+$oneWayImportHiddenOptions ['import_synced_comments_as_entries'] = '1';
+$oneWayImportHiddenOptions ['quote_imported_reply_parent'] = '1';
+$oneWayImportHiddenOptions ['old_thread_reply_check'] = '1';
+$oneWayImportHiddenOptions ['old_thread_context_limit'] = '9';
+$oneWayImportHiddenPost = array(
+	'instance_url' => $instanceUrl,
+	'username' => 'flatpress',
+	'sync_time' => '09:30',
+	'sync_start_date' => '2026-01-01',
+	'sync_scheduled_window_days' => '14',
+	'disable_remote_import' => '1',
+	'mastodon_remote_import_options_hidden' => '1',
+	'delete_sync_enabled' => '1'
+);
+$oneWayImportHiddenSaved = plugin_mastodon_admin_apply_save_post($oneWayImportHiddenOptions, $oneWayImportHiddenPost);
+$allOk = test_result(
+	'One-way admin save preserves hidden import options while keeping one-way mode enabled',
+	isset($oneWayImportHiddenSaved ['disable_remote_import'])
+		&& (string) $oneWayImportHiddenSaved ['disable_remote_import'] === '1'
+		&& isset($oneWayImportHiddenSaved ['update_local_from_remote']) && (string) $oneWayImportHiddenSaved ['update_local_from_remote'] === '1'
+		&& isset($oneWayImportHiddenSaved ['import_synced_comments_as_entries']) && (string) $oneWayImportHiddenSaved ['import_synced_comments_as_entries'] === '1'
+		&& isset($oneWayImportHiddenSaved ['quote_imported_reply_parent']) && (string) $oneWayImportHiddenSaved ['quote_imported_reply_parent'] === '1'
+		&& isset($oneWayImportHiddenSaved ['old_thread_reply_check']) && (string) $oneWayImportHiddenSaved ['old_thread_reply_check'] === '1'
+		&& isset($oneWayImportHiddenSaved ['old_thread_context_limit']) && (string) $oneWayImportHiddenSaved ['old_thread_context_limit'] === '9',
+	json_encode(array(
+		'saved' => $oneWayImportHiddenSaved
+	))
+) && $allOk;
+
+$oneWayDisablePost = $oneWayImportHiddenPost;
+unset($oneWayDisablePost ['disable_remote_import']);
+$oneWayDisabledSaved = plugin_mastodon_admin_apply_save_post($oneWayImportHiddenOptions, $oneWayDisablePost);
+$allOk = test_result(
+	'One-way admin save preserves hidden import options when one-way mode is disabled in the same submit',
+	isset($oneWayDisabledSaved ['disable_remote_import'])
+		&& (string) $oneWayDisabledSaved ['disable_remote_import'] === '0'
+		&& isset($oneWayDisabledSaved ['update_local_from_remote']) && (string) $oneWayDisabledSaved ['update_local_from_remote'] === '1'
+		&& isset($oneWayDisabledSaved ['import_synced_comments_as_entries']) && (string) $oneWayDisabledSaved ['import_synced_comments_as_entries'] === '1'
+		&& isset($oneWayDisabledSaved ['quote_imported_reply_parent']) && (string) $oneWayDisabledSaved ['quote_imported_reply_parent'] === '1'
+		&& isset($oneWayDisabledSaved ['old_thread_reply_check']) && (string) $oneWayDisabledSaved ['old_thread_reply_check'] === '1'
+		&& isset($oneWayDisabledSaved ['old_thread_context_limit']) && (string) $oneWayDisabledSaved ['old_thread_context_limit'] === '9',
+	json_encode(array(
+		'saved' => $oneWayDisabledSaved
+	))
+) && $allOk;
+
+$bidirectionalUncheckedOptions = $oneWayImportHiddenOptions;
+$bidirectionalUncheckedOptions ['disable_remote_import'] = '0';
+$bidirectionalUncheckedPost = $oneWayImportHiddenPost;
+unset($bidirectionalUncheckedPost ['disable_remote_import']);
+unset($bidirectionalUncheckedPost ['mastodon_remote_import_options_hidden']);
+$bidirectionalUncheckedSaved = plugin_mastodon_admin_apply_save_post($bidirectionalUncheckedOptions, $bidirectionalUncheckedPost);
+$allOk = test_result(
+	'Bidirectional admin save still stores visible unchecked import options as disabled',
+	isset($bidirectionalUncheckedSaved ['disable_remote_import'])
+		&& (string) $bidirectionalUncheckedSaved ['disable_remote_import'] === '0'
+		&& isset($bidirectionalUncheckedSaved ['update_local_from_remote']) && (string) $bidirectionalUncheckedSaved ['update_local_from_remote'] === '0'
+		&& isset($bidirectionalUncheckedSaved ['import_synced_comments_as_entries']) && (string) $bidirectionalUncheckedSaved ['import_synced_comments_as_entries'] === '0'
+		&& isset($bidirectionalUncheckedSaved ['quote_imported_reply_parent']) && (string) $bidirectionalUncheckedSaved ['quote_imported_reply_parent'] === '0'
+		&& isset($bidirectionalUncheckedSaved ['old_thread_reply_check']) && (string) $bidirectionalUncheckedSaved ['old_thread_reply_check'] === '0'
+		&& isset($bidirectionalUncheckedSaved ['old_thread_context_limit']) && (string) $bidirectionalUncheckedSaved ['old_thread_context_limit'] === '1',
+	json_encode(array(
+		'saved' => $bidirectionalUncheckedSaved
+	))
+) && $allOk;
+
+$oneWayTemplateImportBlockOk = is_string($oneWayTemplate)
+	&& strpos($oneWayTemplate, 'name="mastodon_remote_import_options_hidden"') !== false
+	&& strpos($oneWayTemplate, '$mastodon_cfg.disable_remote_import neq \'1\'') !== false
+	&& strpos($oneWayTemplate, 'name="update_local_from_remote"') !== false
+	&& strpos($oneWayTemplate, 'name="import_synced_comments_as_entries"') !== false
+	&& strpos($oneWayTemplate, 'name="quote_imported_reply_parent"') !== false
+	&& strpos($oneWayTemplate, 'name="old_thread_reply_check"') !== false
+	&& strpos($oneWayTemplate, 'name="old_thread_context_limit"') !== false
+	&& strpos($oneWayTemplate, 'reply_notifications_scope_active') !== false
+	&& strpos($oneWayTemplate, 'reply_notifications_scope_missing') !== false;
+$oneWayTemplateStatsOk = is_string($oneWayTemplate)
+	&& strpos($oneWayTemplate, 'stats_imported_entries') !== false
+	&& strpos($oneWayTemplate, 'stats_updated_entries') !== false
+	&& strpos($oneWayTemplate, 'stats_imported_comments') !== false
+	&& strpos($oneWayTemplate, 'stats_updated_local_comments') !== false
+	&& strpos($oneWayTemplate, 'stats_deleted_local_entries') !== false
+	&& strpos($oneWayTemplate, 'stats_deleted_local_comments') !== false
+	&& substr_count($oneWayTemplate, '$mastodon_cfg.disable_remote_import neq \'1\'') >= 4;
+$allOk = test_result(
+	'One-way admin template hides import controls, notification hints and import-only counters',
+	$oneWayTemplateImportBlockOk && $oneWayTemplateStatsOk,
+	json_encode(array(
+		'import_block_ok' => $oneWayTemplateImportBlockOk,
+		'stats_ok' => $oneWayTemplateStatsOk
+	))
+) && $allOk;
+
+$oneWayTemplateRelevantOutputsOk = is_string($oneWayTemplate)
+	&& strpos($oneWayTemplate, 'name="mastodon_run_now"') !== false
+	&& strpos($oneWayTemplate, 'name="mastodon_run_full_now"') !== false
+	&& strpos($oneWayTemplate, 'name="mastodon_run_full_deletion"') !== false
+	&& strpos($oneWayTemplate, 'name="mastodon_register_app"') !== false
+	&& strpos($oneWayTemplate, 'name="mastodon_exchange_code"') !== false
+	&& strpos($oneWayTemplate, 'name="mastodon_refresh_instance_info"') !== false
+	&& strpos($oneWayTemplate, 'name="mastodon_clear_token"') !== false
+	&& strpos($oneWayTemplate, 'mastodon_admin_maintenance_url') !== false
+	&& strpos($oneWayTemplate, 'delete_sync_enabled_desc_one_way') !== false
+	&& strpos($oneWayTemplate, 'manual_runs_desc_one_way') !== false
+	&& strpos($oneWayTemplate, 'stats_exported_entries') !== false
+	&& strpos($oneWayTemplate, 'stats_updated_remote_entries') !== false
+	&& strpos($oneWayTemplate, 'stats_exported_comments') !== false
+	&& strpos($oneWayTemplate, 'stats_updated_remote_comments') !== false
+	&& strpos($oneWayTemplate, 'stats_deleted_remote_entries') !== false
+	&& strpos($oneWayTemplate, 'stats_deleted_remote_comments') !== false;
+$allOk = test_result(
+	'One-way admin template keeps export, OAuth, instance, token, state and deletion outputs visible',
+	$oneWayTemplateRelevantOutputsOk,
+	json_encode(array(
+		'relevant_outputs_ok' => $oneWayTemplateRelevantOutputsOk
+	))
+) && $allOk;
+
+$oneWayAssignedCompanions = isset($oneWayAdminSmarty->assigned ['mastodon_companion_plugins']) && is_array($oneWayAdminSmarty->assigned ['mastodon_companion_plugins']) ? $oneWayAdminSmarty->assigned ['mastodon_companion_plugins'] : array();
+$oneWayAssignedCompanionBySlug = array();
+foreach ($oneWayAssignedCompanions as $oneWayAssignedCompanion) {
+	if (is_array($oneWayAssignedCompanion) && !empty($oneWayAssignedCompanion ['slug'])) {
+		$oneWayAssignedCompanionBySlug [(string) $oneWayAssignedCompanion ['slug']] = $oneWayAssignedCompanion;
+	}
+}
+$oneWayAssignedIntro = isset($oneWayAdminSmarty->assigned ['mastodon_companion_plugins_intro']) ? (string) $oneWayAdminSmarty->assigned ['mastodon_companion_plugins_intro'] : '';
+$allOk = test_result(
+	'One-way admin assignment hides import-only companion plugins and uses one-way companion intro',
+	!isset($oneWayAssignedCompanionBySlug ['bbcode'], $oneWayAssignedCompanionBySlug ['photoswipe'], $oneWayAssignedCompanionBySlug ['audiovideo'])
+		&& isset($oneWayAssignedCompanionBySlug ['tag'], $oneWayAssignedCompanionBySlug ['emoticons'])
+		&& $oneWayAssignedIntro === plugin_mastodon_lang_string('companion_plugins_intro_one_way', 'In one-way mode, only FlatPress-to-Mastodon export helpers are shown.'),
+	json_encode(array(
+		'intro' => $oneWayAssignedIntro,
+		'companions' => $oneWayAssignedCompanionBySlug
+	))
+) && $allOk;
+
+// Regression test: when one-way mode is enabled, remote statuses and replies do not create FlatPress content, while local content is still exported.
+simulate_delete_recursive($simRoot . '/fp-content/content');
+mkdir($simRoot . '/fp-content/content', 0777, true);
+simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
+mkdir($simRoot . '/fp-content/plugin_mastodon', 0777, true);
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$oneWaySyncOptions = $seededOptions;
+$oneWaySyncOptions ['disable_remote_import'] = '1';
+$oneWaySyncOptions ['update_local_from_remote'] = '1';
+$oneWaySyncOptions ['old_thread_reply_check'] = '1';
+$oneWaySyncOptions ['access_token'] = 'token123';
+$oneWaySyncOptions ['sync_start_date'] = '2026-01-01';
+plugin_mastodon_save_options($oneWaySyncOptions);
+$oneWaySyncState = plugin_mastodon_default_state();
+plugin_mastodon_state_write($oneWaySyncState);
+$oneWayLocalEntry = array(
+	'version' => system_ver(),
+	'subject' => 'One-way local entry',
+	'content' => 'This local FlatPress entry must still be exported to Mastodon.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-05-31 18:00:00 UTC')
+);
+$oneWayLocalEntryId = entry_save($oneWayLocalEntry, null);
+$oneWayRemoteStatus = array(
+	'id' => 'oneway-remote-entry-1',
+	'visibility' => 'public',
+	'in_reply_to_id' => null,
+	'created_at' => '2026-05-31T18:10:00Z',
+	'content' => '<p>This remote status must not become a FlatPress entry.</p>',
+	'url' => $instanceUrl . '/@flatpress/oneway-remote-entry-1',
+	'account' => array('id' => 'acct1', 'acct' => 'flatpress', 'display_name' => 'FlatPress Bot', 'url' => $instanceUrl . '/@flatpress')
+);
+$oneWayRemoteReply = array(
+	'id' => 'oneway-remote-reply-1',
+	'visibility' => 'public',
+	'in_reply_to_id' => 'oneway-local-export-1',
+	'created_at' => '2026-05-31T18:12:00Z',
+	'content' => '<p>This remote reply must not become a FlatPress comment.</p>',
+	'url' => $instanceUrl . '/@flatpress/oneway-remote-reply-1',
+	'account' => array('id' => 'acct2', 'acct' => 'reply@example.net', 'display_name' => 'Reply User', 'url' => 'https://example.net/@reply')
+);
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array('ok' => true, 'code' => 200, 'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true' => array('ok' => true, 'code' => 200, 'body' => json_encode(array($oneWayRemoteStatus))),
+	'GET ' . $instanceUrl . '/api/v1/statuses/oneway-local-export-1/context' => array('ok' => true, 'code' => 200, 'body' => json_encode(array('descendants' => array($oneWayRemoteReply)))),
+	'GET ' . $instanceUrl . '/api/v2/instance' => array('ok' => true, 'code' => 200, 'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))),
+	'POST ' . $instanceUrl . '/api/v1/statuses' => array('ok' => true, 'code' => 200, 'body' => json_encode(array('id' => 'oneway-local-export-1', 'url' => $instanceUrl . '/@flatpress/oneway-local-export-1', 'created_at' => '2026-05-31T18:00:00Z')))
+);
+$oneWaySyncResult = plugin_mastodon_run_sync(true, true);
+$oneWaySyncStateAfter = isset($oneWaySyncResult ['state']) && is_array($oneWaySyncResult ['state']) ? $oneWaySyncResult ['state'] : plugin_mastodon_state_read(array($oneWayLocalEntryId));
+$oneWaySyncRequests = simulate_recorded_http_requests();
+$oneWayRemoteReadRequests = 0;
+$oneWayStatusPostRequests = 0;
+foreach ($oneWaySyncRequests as $oneWayRequest) {
+	if (!is_array($oneWayRequest) || empty($oneWayRequest ['method']) || empty($oneWayRequest ['url'])) {
+		continue;
+	}
+	$oneWayRequestLine = strtoupper(strtoupper((string) $oneWayRequest ['method']) . ' ' . (string) $oneWayRequest ['url']);
+	if (strpos($oneWayRequestLine, 'GET ' . strtoupper($instanceUrl) . '/API/V1/ACCOUNTS/') !== false || strpos($oneWayRequestLine, '/CONTEXT') !== false || strpos($oneWayRequestLine, '/API/V1/NOTIFICATIONS') !== false) {
+		$oneWayRemoteReadRequests++;
+	}
+	if (strpos($oneWayRequestLine, 'POST ' . strtoupper($instanceUrl) . '/API/V1/STATUSES') === 0) {
+		$oneWayStatusPostRequests++;
+	}
+}
+$oneWayDirectState = plugin_mastodon_default_state();
+$oneWayDirectEntryImport = plugin_mastodon_import_remote_entry($oneWaySyncOptions, $oneWayDirectState, $oneWayRemoteStatus);
+$oneWayDirectCommentImport = plugin_mastodon_import_remote_comment($oneWaySyncOptions, $oneWayDirectState, $oneWayLocalEntryId, $oneWayRemoteReply);
+$allOk = test_result(
+	'One-way mode blocks Mastodon-to-FlatPress imports while FlatPress-to-Mastodon export still runs',
+		!empty($oneWaySyncResult ['ok'])
+		&& $oneWayStatusPostRequests === 1
+		&& $oneWayRemoteReadRequests === 0
+		&& isset($oneWaySyncStateAfter ['entries'] [$oneWayLocalEntryId] ['remote_id'])
+		&& (string) $oneWaySyncStateAfter ['entries'] [$oneWayLocalEntryId] ['remote_id'] === 'oneway-local-export-1'
+		&& empty($oneWaySyncStateAfter ['entries_remote'] ['oneway-remote-entry-1'])
+		&& empty($oneWaySyncStateAfter ['comments_remote'] ['oneway-remote-reply-1'])
+		&& $oneWayDirectEntryImport === false
+		&& $oneWayDirectCommentImport === false,
+	json_encode(array(
+		'result' => $oneWaySyncResult,
+		'remote_read_requests' => $oneWayRemoteReadRequests,
+		'status_post_requests' => $oneWayStatusPostRequests,
+		'requests' => $oneWaySyncRequests,
+		'direct_entry_import' => $oneWayDirectEntryImport,
+		'direct_comment_import' => $oneWayDirectCommentImport
+	))
+) && $allOk;
+entry_delete($oneWayLocalEntryId);
+
+// Regression test: one-way deletion sync must keep local content when remote statuses vanished, unlink stale mappings and queue re-export.
+simulate_delete_recursive($simRoot . '/fp-content/content');
+mkdir($simRoot . '/fp-content/content', 0777, true);
+simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
+mkdir($simRoot . '/fp-content/plugin_mastodon', 0777, true);
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$oneWayDeleteOptions = $seededOptions;
+$oneWayDeleteOptions ['disable_remote_import'] = '1';
+$oneWayDeleteOptions ['delete_sync_enabled'] = '1';
+$oneWayDeleteOptions ['access_token'] = 'token123';
+$oneWayDeleteOptions ['sync_start_date'] = '2026-01-01';
+plugin_mastodon_save_options($oneWayDeleteOptions);
+$oneWayDeleteEntry = array(
+	'version' => system_ver(),
+	'subject' => 'One-way deletion entry',
+	'content' => 'This entry must survive a missing remote status.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-05-31 18:30:00 UTC')
+);
+$oneWayDeleteEntryId = entry_save($oneWayDeleteEntry, null);
+$oneWayDeleteCommentEntry = array(
+	'version' => system_ver(),
+	'subject' => 'One-way deletion comment entry',
+	'content' => 'This mapped entry remains available for comment re-export.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-05-31 18:35:00 UTC')
+);
+$oneWayDeleteCommentEntryId = entry_save($oneWayDeleteCommentEntry, null);
+$oneWayDeleteComment = array(
+	'version' => system_ver(),
+	'name' => 'Simulation',
+	'content' => 'This comment must survive a missing remote reply.',
+	'date' => strtotime('2026-05-31 18:40:00 UTC')
+);
+$oneWayDeleteCommentId = comment_save($oneWayDeleteCommentEntryId, $oneWayDeleteComment);
+$oneWayDeleteState = plugin_mastodon_default_state();
+$oneWayDeleteState ['deletions_pending'] = 1;
+plugin_mastodon_state_set_entry_mapping($oneWayDeleteState, $oneWayDeleteEntryId, 'oneway-delete-entry-missing', 'local', plugin_mastodon_entry_hash(entry_parse($oneWayDeleteEntryId)), $instanceUrl . '/@flatpress/oneway-delete-entry-missing', '2026-05-31 18:30:00', plugin_mastodon_local_item_date_key(entry_parse($oneWayDeleteEntryId), $oneWayDeleteEntryId), '2026-05-31');
+plugin_mastodon_state_set_entry_mapping($oneWayDeleteState, $oneWayDeleteCommentEntryId, 'oneway-delete-entry-existing', 'local', plugin_mastodon_entry_hash(entry_parse($oneWayDeleteCommentEntryId)), $instanceUrl . '/@flatpress/oneway-delete-entry-existing', '2026-05-31 18:35:00', plugin_mastodon_local_item_date_key(entry_parse($oneWayDeleteCommentEntryId), $oneWayDeleteCommentEntryId), '2026-05-31');
+plugin_mastodon_state_set_comment_mapping($oneWayDeleteState, $oneWayDeleteCommentEntryId, $oneWayDeleteCommentId, 'oneway-delete-comment-missing', 'local', plugin_mastodon_comment_hash(comment_parse($oneWayDeleteCommentEntryId, $oneWayDeleteCommentId)), $instanceUrl . '/@flatpress/oneway-delete-comment-missing', '2026-05-31 18:40:00', '', 'oneway-delete-entry-existing', plugin_mastodon_local_item_date_key(comment_parse($oneWayDeleteCommentEntryId, $oneWayDeleteCommentId), $oneWayDeleteCommentId), '2026-05-31');
+plugin_mastodon_state_write($oneWayDeleteState);
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/statuses/oneway-delete-entry-missing' => array('ok' => false, 'code' => 404, 'body' => json_encode(array('error' => 'Record not found'))),
+	'GET ' . $instanceUrl . '/api/v1/statuses/oneway-delete-entry-existing' => array('ok' => true, 'code' => 200, 'body' => json_encode(array('id' => 'oneway-delete-entry-existing', 'url' => $instanceUrl . '/@flatpress/oneway-delete-entry-existing', 'created_at' => '2026-05-31T18:35:00Z'))),
+	'GET ' . $instanceUrl . '/api/v1/statuses/oneway-delete-comment-missing' => array('ok' => false, 'code' => 404, 'body' => json_encode(array('error' => 'Record not found')))
+);
+$oneWayDeleteResult = plugin_mastodon_run_deletion_sync(true);
+$oneWayDeleteStateAfter = isset($oneWayDeleteResult ['state']) && is_array($oneWayDeleteResult ['state']) ? $oneWayDeleteResult ['state'] : plugin_mastodon_state_read(array($oneWayDeleteEntryId, $oneWayDeleteCommentEntryId));
+$oneWayDeleteRequests = simulate_recorded_http_requests();
+$oneWayDeleteDeleteRequests = 0;
+foreach ($oneWayDeleteRequests as $oneWayDeleteRequest) {
+	if (is_array($oneWayDeleteRequest) && !empty($oneWayDeleteRequest ['method']) && strtoupper((string) $oneWayDeleteRequest ['method']) === 'DELETE') {
+		$oneWayDeleteDeleteRequests++;
+	}
+}
+$allOk = test_result(
+	'One-way deletion sync keeps local content, removes stale remote mappings and queues re-export',
+		!empty($oneWayDeleteResult ['ok'])
+		&& entry_exists($oneWayDeleteEntryId)
+		&& comment_exists($oneWayDeleteCommentEntryId, $oneWayDeleteCommentId)
+		&& empty($oneWayDeleteStateAfter ['entries'] [$oneWayDeleteEntryId])
+		&& empty($oneWayDeleteStateAfter ['entries_remote'] ['oneway-delete-entry-missing'])
+		&& empty($oneWayDeleteStateAfter ['comments_remote'] ['oneway-delete-comment-missing'])
+		&& plugin_mastodon_state_has_dirty_entry($oneWayDeleteStateAfter, $oneWayDeleteEntryId)
+		&& plugin_mastodon_state_has_dirty_comment($oneWayDeleteStateAfter, $oneWayDeleteCommentEntryId, $oneWayDeleteCommentId)
+		&& isset($oneWayDeleteStateAfter ['deletion_stats'] ['deleted_local_entries'])
+		&& (int) $oneWayDeleteStateAfter ['deletion_stats'] ['deleted_local_entries'] === 0
+		&& isset($oneWayDeleteStateAfter ['deletion_stats'] ['deleted_local_comments'])
+		&& (int) $oneWayDeleteStateAfter ['deletion_stats'] ['deleted_local_comments'] === 0
+		&& $oneWayDeleteDeleteRequests === 0,
+	json_encode(array(
+		'result' => $oneWayDeleteResult,
+		'state' => $oneWayDeleteStateAfter,
+		'delete_requests' => $oneWayDeleteDeleteRequests
+	))
+) && $allOk;
+
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v2/instance' => array('ok' => true, 'code' => 200, 'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))),
+	'POST ' . $instanceUrl . '/api/v1/statuses' => array(
+		array('ok' => true, 'code' => 200, 'body' => json_encode(array('id' => 'oneway-delete-entry-reexported', 'url' => $instanceUrl . '/@flatpress/oneway-delete-entry-reexported', 'created_at' => '2026-05-31T18:50:00Z'))),
+		array('ok' => true, 'code' => 200, 'body' => json_encode(array('id' => 'oneway-delete-comment-reexported', 'url' => $instanceUrl . '/@flatpress/oneway-delete-comment-reexported', 'created_at' => '2026-05-31T18:51:00Z')))
+	)
+);
+$oneWayReexportResult = plugin_mastodon_run_sync(true, true);
+$oneWayReexportStateAfter = isset($oneWayReexportResult ['state']) && is_array($oneWayReexportResult ['state']) ? $oneWayReexportResult ['state'] : plugin_mastodon_state_read(array($oneWayDeleteEntryId, $oneWayDeleteCommentEntryId));
+$oneWayReexportRequests = simulate_recorded_http_requests();
+$oneWayReexportRemoteReadRequests = 0;
+$oneWayReexportPostRequests = 0;
+foreach ($oneWayReexportRequests as $oneWayReexportRequest) {
+	if (!is_array($oneWayReexportRequest) || empty($oneWayReexportRequest ['method']) || empty($oneWayReexportRequest ['url'])) {
+		continue;
+	}
+	$oneWayReexportLine = strtoupper(strtoupper((string) $oneWayReexportRequest ['method']) . ' ' . (string) $oneWayReexportRequest ['url']);
+	if (strpos($oneWayReexportLine, 'GET ' . strtoupper($instanceUrl) . '/API/V1/ACCOUNTS/') !== false || strpos($oneWayReexportLine, '/CONTEXT') !== false || strpos($oneWayReexportLine, '/API/V1/NOTIFICATIONS') !== false) {
+		$oneWayReexportRemoteReadRequests++;
+	}
+	if (strpos($oneWayReexportLine, 'POST ' . strtoupper($instanceUrl) . '/API/V1/STATUSES') === 0) {
+		$oneWayReexportPostRequests++;
+	}
+}
+$oneWayReexportCommentMeta = plugin_mastodon_state_get_comment_meta($oneWayReexportStateAfter, $oneWayDeleteCommentEntryId, $oneWayDeleteCommentId);
+$allOk = test_result(
+	'One-way content sync re-exports local objects whose remote mappings were unlinked after remote deletion',
+		!empty($oneWayReexportResult ['ok'])
+		&& $oneWayReexportRemoteReadRequests === 0
+		&& $oneWayReexportPostRequests === 2
+		&& isset($oneWayReexportStateAfter ['entries'] [$oneWayDeleteEntryId] ['remote_id'])
+		&& (string) $oneWayReexportStateAfter ['entries'] [$oneWayDeleteEntryId] ['remote_id'] === 'oneway-delete-entry-reexported'
+		&& isset($oneWayReexportCommentMeta ['remote_id'])
+		&& (string) $oneWayReexportCommentMeta ['remote_id'] === 'oneway-delete-comment-reexported'
+		&& !plugin_mastodon_state_has_dirty_entry($oneWayReexportStateAfter, $oneWayDeleteEntryId)
+		&& !plugin_mastodon_state_has_dirty_comment($oneWayReexportStateAfter, $oneWayDeleteCommentEntryId, $oneWayDeleteCommentId),
+	json_encode(array(
+		'result' => $oneWayReexportResult,
+		'remote_read_requests' => $oneWayReexportRemoteReadRequests,
+		'post_requests' => $oneWayReexportPostRequests,
+		'entry_meta' => isset($oneWayReexportStateAfter ['entries'] [$oneWayDeleteEntryId]) ? $oneWayReexportStateAfter ['entries'] [$oneWayDeleteEntryId] : array(),
+		'comment_meta' => $oneWayReexportCommentMeta,
+		'requests' => $oneWayReexportRequests
+	))
+) && $allOk;
+entry_delete($oneWayDeleteEntryId);
+entry_delete($oneWayDeleteCommentEntryId);
+
+// Regression test: pending descendant rechecks must not delete local comments in one-way mode.
+simulate_delete_recursive($simRoot . '/fp-content/content');
+mkdir($simRoot . '/fp-content/content', 0777, true);
+simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
+mkdir($simRoot . '/fp-content/plugin_mastodon', 0777, true);
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$oneWayPendingOptions = $seededOptions;
+$oneWayPendingOptions ['disable_remote_import'] = '1';
+$oneWayPendingOptions ['delete_sync_enabled'] = '1';
+$oneWayPendingOptions ['access_token'] = 'token123';
+$oneWayPendingOptions ['sync_start_date'] = '2026-01-01';
+plugin_mastodon_save_options($oneWayPendingOptions);
+$oneWayPendingEntry = array(
+	'version' => system_ver(),
+	'subject' => 'One-way pending recheck entry',
+	'content' => 'Entry for pending descendant recheck.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-05-31 19:00:00 UTC')
+);
+$oneWayPendingEntryId = entry_save($oneWayPendingEntry, null);
+$oneWayPendingComment = array(
+	'version' => system_ver(),
+	'name' => 'Simulation',
+	'content' => 'This pending comment must not be deleted locally.',
+	'date' => strtotime('2026-05-31 19:05:00 UTC')
+);
+$oneWayPendingCommentId = comment_save($oneWayPendingEntryId, $oneWayPendingComment);
+$oneWayPendingState = plugin_mastodon_default_state();
+$oneWayPendingState ['deletions_pending'] = 1;
+$oneWayPendingState ['deletions_pending_scope'] = 'comment_rechecks';
+plugin_mastodon_state_set_entry_mapping($oneWayPendingState, $oneWayPendingEntryId, 'oneway-pending-entry-existing', 'local', plugin_mastodon_entry_hash(entry_parse($oneWayPendingEntryId)), $instanceUrl . '/@flatpress/oneway-pending-entry-existing', '2026-05-31 19:00:00', plugin_mastodon_local_item_date_key(entry_parse($oneWayPendingEntryId), $oneWayPendingEntryId), '2026-05-31');
+plugin_mastodon_state_set_comment_mapping($oneWayPendingState, $oneWayPendingEntryId, $oneWayPendingCommentId, 'oneway-pending-comment-missing', 'local', plugin_mastodon_comment_hash(comment_parse($oneWayPendingEntryId, $oneWayPendingCommentId)), $instanceUrl . '/@flatpress/oneway-pending-comment-missing', '2026-05-31 19:05:00', '', 'oneway-pending-entry-existing', plugin_mastodon_local_item_date_key(comment_parse($oneWayPendingEntryId, $oneWayPendingCommentId), $oneWayPendingCommentId), '2026-05-31');
+plugin_mastodon_state_set_pending_comment_remote_recheck($oneWayPendingState, $oneWayPendingEntryId, $oneWayPendingCommentId, 'oneway-pending-comment-missing', 'oneway-ancestor-missing');
+plugin_mastodon_state_write($oneWayPendingState);
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/statuses/oneway-pending-comment-missing' => array('ok' => false, 'code' => 404, 'body' => json_encode(array('error' => 'Record not found')))
+);
+$oneWayPendingResult = plugin_mastodon_run_deletion_sync(true);
+$oneWayPendingStateAfter = isset($oneWayPendingResult ['state']) && is_array($oneWayPendingResult ['state']) ? $oneWayPendingResult ['state'] : plugin_mastodon_state_read(array($oneWayPendingEntryId));
+$allOk = test_result(
+	'One-way pending descendant rechecks keep local comments and queue them for re-export instead of deleting them',
+		!empty($oneWayPendingResult ['ok'])
+		&& comment_exists($oneWayPendingEntryId, $oneWayPendingCommentId)
+		&& empty($oneWayPendingStateAfter ['pending_comment_remote_rechecks'])
+		&& empty($oneWayPendingStateAfter ['comments_remote'] ['oneway-pending-comment-missing'])
+		&& plugin_mastodon_state_has_dirty_comment($oneWayPendingStateAfter, $oneWayPendingEntryId, $oneWayPendingCommentId)
+		&& isset($oneWayPendingStateAfter ['deletion_stats'] ['deleted_local_comments'])
+		&& (int) $oneWayPendingStateAfter ['deletion_stats'] ['deleted_local_comments'] === 0,
+	json_encode(array('result' => $oneWayPendingResult, 'state' => $oneWayPendingStateAfter))
+) && $allOk;
+entry_delete($oneWayPendingEntryId);
+
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+
 
 plugin_mastodon_save_options($schedulerOriginalOptions);
 

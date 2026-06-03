@@ -18,9 +18,12 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'more_options' => 'Aanvullende opties',
 	'update_local_from_remote' => 'Bestaande lokale inhoud vanuit Mastodon bijwerken',
 	'update_local_from_remote_desc' => 'Wanneer ingeschakeld, mogen wijzigingen uit Mastodon reeds bestaande lokale FlatPress-berichten en reacties overschrijven. Berichten en reacties op FlatPress worden vervolgens ingekort tot 500 tekens.',
+	'disable_remote_import' => 'Import van Mastodon naar FlatPress uitschakelen',
+	'disable_remote_import_desc' => 'Wanneer ingeschakeld, blijft FlatPress berichten en reacties naar Mastodon sturen, maar Mastodon maakt, wijzigt of verwijdert geen FlatPress-inhoud.',
 	'import_synced_comments_as_entries' => 'Reacties ook als berichten importeren',
 	'delete_sync_enabled' => 'Synchronisatie van verwijderingen inschakelen',
 	'delete_sync_enabled_desc' => 'Wanneer ingeschakeld voert de plugin in een later verzoek ook de synchronisatie van verwijderingen tussen FlatPress en Mastodon uit.',
+	'delete_sync_enabled_desc_one_way' => 'Indien ingeschakeld worden lokale verwijderingen nog steeds naar Mastodon gestuurd. Ontbrekende Mastodon-statussen laten FlatPress-inhoud intact en worden klaargezet voor opnieuw exporteren.',
 	'import_synced_comments_as_entries_desc' => 'Wanneer ingeschakeld, mogen Mastodon-statussen die al aan een lokale FlatPress-reactie zijn gekoppeld ook als FlatPress-bericht worden geïmporteerd. Dit staat standaard uit om dubbele inhoud te voorkomen.',
 	'quote_imported_reply_parent' => 'Beantwoorde Mastodon-opmerking bij import citeren',
 	'quote_imported_reply_parent_desc' => 'Wanneer ingeschakeld, beginnen geïmporteerde Mastodon-antwoorden op een andere opmerking met een citaatblok dat de beantwoorde gebruiker en de tekst van de opmerking toont.',
@@ -43,6 +46,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'run_now' => 'Normale synchronisatie nu uitvoeren',
 	'manual_runs_head' => 'Handmatige synchronisatie',
 	'manual_runs_desc' => 'De normale handmatige run gedraagt zich als de geplande run en respecteert het automatische venster. Volledige runs negeren dat venster, maar houden nog steeds rekening met Mastodon-limieten en kunnen over meerdere runs doorgaan.',
+	'manual_runs_desc_one_way' => 'De normale handmatige run exporteert FlatPress-inhoud naar Mastodon. In eenrichtingsmodus wordt Mastodon-inhoud niet geïmporteerd, bijgewerkt of verwijderd in FlatPress; volledige runs negeren het automatische venster.',
 	'run_full_now' => 'Volledige synchronisatie vanaf startdatum',
 	'run_full_deletion' => 'Volledige verwijderingscontrole voortzetten',
 	'status_head' => 'Status',
@@ -72,6 +76,7 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'token_missing' => 'Geen toegangstoken opgeslagen',
 	'companion_plugins_head' => 'Aanvullende FlatPress-plugins',
 	'companion_plugins_intro' => 'Voor de volledige Mastodon-functionaliteit moeten ook deze FlatPress-plugins zijn geactiveerd.',
+	'companion_plugins_intro_one_way' => 'In eenrichtingsmodus worden alleen helpers voor export van FlatPress naar Mastodon getoond.',
 	'companion_status_active' => 'Actief',
 	'companion_status_missing' => 'Niet actief',
 	'companion_bbcode_label' => 'BBCode',
@@ -82,8 +87,10 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'companion_audiovideo_desc' => 'Vereist om geimporteerde en gesynchroniseerde Mastodon-audio- en videobijlagen als FlatPress HTML5-mediaspelers weer te geven.',
 	'companion_tag_label' => 'Tag',
 	'companion_tag_desc' => 'Maakt tweerichtingssynchronisatie van FlatPress-tags en Mastodon-hashtags mogelijk.',
+	'companion_tag_desc_one_way' => 'Exporteert FlatPress-tags als Mastodon-hashtags.',
 	'companion_emoticons_label' => 'Emoticons',
 	'companion_emoticons_desc' => 'Toont uit Mastodon geïmporteerde emoji-shortcodes in berichten en reacties als FlatPress-emoticons.',
+	'companion_emoticons_desc_one_way' => 'Zet FlatPress Emoticons-snelcodes om naar Unicode-emoji vóór export naar Mastodon.',
 	'comment_by_format' => 'Reactie van %s:',
 	'instance_info_head' => 'Informatie over de Mastodon-instantie',
 	'instance_info_intro' => 'Deze tabel toont de laatst opgeslagen informatie over de geconfigureerde Mastodon-instantie, inclusief de exacte versiereeks.',
@@ -164,5 +171,6 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 		-6 => 'De Mastodon-instantie-informatie kon niet worden opgehaald.',
 	)
 );
+
 $lang ['admin'] ['plugin'] ['mastodon_maintenance'] = $lang ['admin'] ['plugin'] ['mastodon'];
 ?>
