@@ -388,53 +388,51 @@ filters them by visibility/window/source, converts HTML to FlatPress markup, imp
 media, and writes through the local-write guard. On Mastodon 4.6/API-v10 instances the account
 status request is additionally hardened with `exclude_direct=true`; compatible-server rejections
 are retried once without the optional parameter, and older or unknown instance snapshots keep
-the legacy query. In explicit one-way mode, this phase returns before import-specific account-status paging or local FlatPress writes happen. The separate `plugin_mastodon_run_sync()` profile-cache refresh has already verified the account and refreshed the local avatar/profile cache when possible.
+the legacy query. In explicit one-way mode, this phase returns before import-specific account-status
+paging or local FlatPress writes happen. The separate `plugin_mastodon_run_sync()` profile-cache
+refresh has already verified the account and refreshed the local avatar/profile cache when possible.
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    participant Sync as plugin_mastodon_sync_remote_to_local
-    participant Options as Mastodon options
-    participant API as Mastodon API
-    participant Filter as Import filters
-    participant Convert as HTML/media/tag conversion
-    participant Guard as Local-write guard
-    participant Core as FlatPress Core
-    participant State as state.json
+flowchart TD
+    Start["plugin_mastodon_sync_remote_to_local()"]
+    Gate{"Remote import enabled?"}
+    Skip["Return: skip Mastodon-to-FlatPress import; FlatPress-to-Mastodon export remains active"]
+    Verify["GET /api/v1/accounts/verify_credentials"]
+    VerifyOk{"Account ID available?"}
+    Error["Set last_error and abort remote import"]
+    Capability["Read cached /api/v2/instance version and api_versions"]
+    Capable{"Mastodon >= 4.6.0 or API v10?"}
+    StatusNew["GET /api/v1/accounts/:id/statuses with exclude_direct=true"]
+    Reject{"Optional exclude_direct filter rejected?"}
+    StatusLegacy["GET /api/v1/accounts/:id/statuses without exclude_direct"]
+    StatusList["Account status page(s)"]
+    Next{"Next top-level status?"}
+    Filter{"Visibility, reblog/reply, sync window and source mapping allow import?"}
+    SkipStatus["Aggregate skip reason"]
+    Convert["Convert Mastodon HTML/media/tags to FlatPress markup"]
+    Guard["Enter plugin-owned local-write guard"]
+    Save["entry_save imported entry"]
+    Ignore["entry_saved hook ignored by guard"]
+    Map["Store entries, entries_remote, last_remote_status_id and source metadata"]
+    Done["Remote-to-local status import complete"]
 
-    Sync->>Options: plugin_mastodon_should_import_remote_to_local
-    alt disable_remote_import enabled
-        Sync-->>State: Skip Mastodon-to-FlatPress import; keep FlatPress-to-Mastodon export active
-    else Remote import enabled
-        Sync->>API: GET /api/v1/accounts/verify_credentials
-        API-->>Sync: Account ID
-        Sync->>API: Check cached `/api/v2/instance` version / api_versions
-        alt Mastodon >= 4.6.0 or API v10
-            Sync->>API: GET /api/v1/accounts/:id/statuses with exclude_direct=true, paging and local budgets
-            alt Server rejects optional filter
-                API-->>Sync: 400/405/422 legacy-style error
-                Sync->>API: Retry same page without exclude_direct
-            end
-        else Older or unknown account-status capability
-            Sync->>API: GET /api/v1/accounts/:id/statuses with paging and local budgets
-        end
-        API-->>Sync: Status list
-    loop Each remote top-level status
-        Sync->>Filter: visibility, reblog/reply, sync_start_date, scheduled window, known local-source mapping
-        alt Not importable
-            Filter-->>Sync: Aggregate skip reason
-        else Importable
-            Sync->>Convert: Mastodon HTML -> FlatPress BBCode
-            Convert->>Convert: links, quotes, code, lists, mentions, emoji, invisible spans
-            Convert->>Convert: download remote media and append BBCode
-            Convert->>Convert: import remote tags as FlatPress [tag] metadata when possible
-            Sync->>Guard: Enter plugin-owned local-write guard
-            Guard->>Core: entry_save imported entry
-            Core-->>Guard: entry_saved hook fires but is ignored by guard
-            Sync->>Guard: Leave local-write guard
-            Sync->>State: Store entries, entries_remote, last_remote_status_id, source metadata
-        end
-    end
+    Start --> Gate
+    Gate -- "No: disable_remote_import" --> Skip
+    Gate -- "Yes" --> Verify
+    Verify --> VerifyOk
+    VerifyOk -- "No" --> Error
+    VerifyOk -- "Yes" --> Capability
+    Capability --> Capable
+    Capable -- "Yes" --> StatusNew --> Reject
+    Reject -- "Yes" --> StatusLegacy
+    Reject -- "No" --> StatusList
+    Capable -- "No" --> StatusLegacy
+    StatusLegacy --> StatusList
+    StatusList --> Next
+    Next -- "No more statuses" --> Done
+    Next -- "Status available" --> Filter
+    Filter -- "No" --> SkipStatus --> Next
+    Filter -- "Yes" --> Convert --> Guard --> Save --> Ignore --> Map --> Next
 ```
 
 ### 1.5 Mastodon replies in a known imported thread to FlatPress comments
