@@ -183,6 +183,44 @@ flowchart TD
     RemoteMedia --> Entries
 ```
 
+## Comment author link target decision
+
+Imported Mastodon replies are rendered as FlatPress comments. The comment author link target decision is deliberately separate from the import path: the importer stores the Mastodon profile URL from `account.url`, while `fp-interface/themes/leggero/comments.tpl` asks `modifier.is_external_url.php` whether that URL leaves the configured blog. The modifier can rely on `BLOG_BASEURL`/`BLOG_ROOT` because `defaults.php` loads `core.connection.php` before Smarty registers and executes the modifier.
+
+```mermaid
+flowchart TD
+    Url["Comment author URL"]
+    Present{"URL present?"}
+    Relative{"Relative or root-relative URL?"}
+    Parse["Parse absolute http(s) URL"]
+    BaseMatch{"Host/port match FlatPress base?"}
+    Subdir{"Non-root blog base and URL below it?"}
+    RootBase{"Blog base is domain root?"}
+    RootKnown{"Known FlatPress route, entry point, asset path, or existing static page?"}
+    SameTab["Render link without target"]
+    NewTab["Render link with target=&quot;_blank&quot;"]
+    Harden["Add rel=&quot;nofollow noopener noreferrer&quot;"]
+    Plain["Render name without link"]
+
+    Url --> Present
+    Present -- no --> Plain
+    Present -- yes --> Relative
+    Relative -- yes --> SameTab
+    Relative -- no --> Parse
+    Parse --> BaseMatch
+    BaseMatch -- no --> NewTab
+    BaseMatch -- yes --> Subdir
+    Subdir -- yes --> SameTab
+    Subdir -- no --> RootBase
+    RootBase -- yes --> RootKnown
+    RootBase -- no --> NewTab
+    RootKnown -- yes --> SameTab
+    RootKnown -- no --> NewTab
+    NewTab --> Harden
+```
+
+Relative URL or configured blog-base match? Those URLs remain in the current tab because they stay inside the FlatPress blog. Absolute `http` or `https` URLs outside the configured blog base, including external Mastodon profile URLs, open in a new browser tab/window and receive `noopener`/`noreferrer`. When the configured blog base is the domain root, unknown same-host root paths are treated as external unless they match known FlatPress routes, FlatPress entry points, FlatPress-owned asset directories or an existing static page.
+
 ## 1. Bidirectional content synchronization and optional one-way mode
 
 The optional `disable_remote_import` setting is an explicit direction gate: FlatPress-to-Mastodon export and local-deletion propagation continue, but Mastodon responses must not create, update or delete FlatPress entries/comments.
@@ -410,6 +448,8 @@ flowchart TD
     Filter{"Visibility, reblog/reply, sync window and source mapping allow import?"}
     SkipStatus["Aggregate skip reason"]
     Convert["Convert Mastodon HTML/media/tags to FlatPress markup"]
+    StatusUrl["Read Status.url single-toot source link"]
+    Footer["Append [url=... target=_blank rel=&quot;nofollow noopener noreferrer&quot;]Mastodon[/url]"]
     Guard["Enter plugin-owned local-write guard"]
     Save["entry_save imported entry"]
     Ignore["entry_saved hook ignored by guard"]
@@ -432,8 +472,10 @@ flowchart TD
     Next -- "No more statuses" --> Done
     Next -- "Status available" --> Filter
     Filter -- "No" --> SkipStatus --> Next
-    Filter -- "Yes" --> Convert --> Guard --> Save --> Ignore --> Map --> Next
+    Filter -- "Yes" --> Convert --> StatusUrl --> Footer --> Guard --> Save --> Ignore --> Map --> Next
 ```
+
+The imported entry footer uses `Status.url`, which is the Mastodon single-status/toot URL, not the author `account.url`. `plugin_mastodon_imported_status_footer_bbcode()` adds `target="_blank"` and `rel="nofollow noopener noreferrer"` through FlatPress BBCode URL attributes; comment author links use the separate external-URL modifier path.
 
 ### 1.5 Mastodon replies in a known imported thread to FlatPress comments
 

@@ -11477,6 +11477,24 @@ function plugin_mastodon_build_comment_status_text($entryId, $entry, $comment, $
 }
 
 /**
+ * Build the FlatPress BBCode footer that links an imported entry back to its
+ * source Mastodon status. The link points to the single status/toot, not to the
+ * author's profile, and is opened in a new tab via FlatPress' BBCode URL
+ * attributes.
+ *
+ * @param string $url Mastodon Status.url from the remote payload.
+ * @return string
+ */
+function plugin_mastodon_imported_status_footer_bbcode($url) {
+	$url = trim(plugin_mastodon_extract_url_token((string) $url));
+	if ($url === '') {
+		return '';
+	}
+
+	return '[url=' . $url . ' target=_blank rel="nofollow noopener noreferrer"]Mastodon[/url]';
+}
+
+/**
  * Import a remote Mastodon status into FlatPress as an entry.
  * @param array<string, string> $options
  * @param array<string, mixed> $state
@@ -11525,10 +11543,7 @@ function plugin_mastodon_import_remote_entry(&$options, &$state, $remoteStatus) 
 	}
 
 	$url = isset($remoteStatus ['url']) ? (string) $remoteStatus ['url'] : '';
-	$footer = '';
-	if ($url !== '') {
-		$footer = "[url=" . $url . ']Mastodon[/url]';
-	}
+	$footer = plugin_mastodon_imported_status_footer_bbcode($url);
 	$entryContent = trim((string) $content);
 	if (plugin_mastodon_tag_plugin_active()) {
 		$tagBbcode = plugin_mastodon_build_flatpress_tag_bbcode($remoteTags);

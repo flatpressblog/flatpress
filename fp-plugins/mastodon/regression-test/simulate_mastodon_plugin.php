@@ -3625,9 +3625,32 @@ $allOk = test_result(
 	trim(isset($mentionEntry ['content']) ? $mentionEntry ['content'] : '') . ' | subject=' . (isset($mentionEntry ['subject']) ? $mentionEntry ['subject'] : '')
 ) && $allOk;
 $allOk = test_result(
-	'Imported Mastodon entry keeps the Mastodon link on a new line',
-	!empty($mentionEntry ['content']) && strpos((string) $mentionEntry ['content'], "\n[url=https://mastodon.social/@spacesjut/123]Mastodon[/url]") !== false,
+	'Imported Mastodon entry keeps the Mastodon status link on a new line with target blank',
+	!empty($mentionEntry ['content']) && strpos((string) $mentionEntry ['content'], "\n[url=https://mastodon.social/@spacesjut/123 target=_blank rel=\"nofollow noopener noreferrer\"]Mastodon[/url]") !== false,
 	isset($mentionEntry ['content']) ? (string) $mentionEntry ['content'] : ''
+) && $allOk;
+
+$statusFooterBbcode = plugin_mastodon_imported_status_footer_bbcode('https://mastodon.social/@spacesjut/123');
+$allOk = test_result(
+	'Imported Mastodon status footer BBCode opens the single toot in a new tab',
+	$statusFooterBbcode === '[url=https://mastodon.social/@spacesjut/123 target=_blank rel="nofollow noopener noreferrer"]Mastodon[/url]',
+	$statusFooterBbcode
+) && $allOk;
+$statusFooterMastodonText = plugin_mastodon_flatpress_to_mastodon($statusFooterBbcode);
+$allOk = test_result(
+	'Imported Mastodon status footer attributes are stripped for outbound Mastodon text',
+	strpos($statusFooterMastodonText, 'target=_blank') === false
+		&& strpos($statusFooterMastodonText, 'rel="nofollow noopener noreferrer"') === false
+		&& $statusFooterMastodonText === 'Mastodon https://mastodon.social/@spacesjut/123',
+	$statusFooterMastodonText
+) && $allOk;
+$statusFooterHtml = function_exists('BBCode') ? BBCode($statusFooterBbcode) : '';
+$allOk = test_result(
+	'Imported Mastodon status footer renders target blank HTML for the single toot',
+	strpos($statusFooterHtml, 'href="https://mastodon.social/@spacesjut/123"') !== false
+		&& strpos($statusFooterHtml, 'target="_blank"') !== false
+		&& strpos($statusFooterHtml, 'rel="nofollow noopener noreferrer"') !== false,
+	$statusFooterHtml
 ) && $allOk;
 
 $emojiImportHtml = '<p>Emoji 😄 <img src="https://mastodon.social/emoji/smile.png" alt=":wink:" class="emojione"></p>';
@@ -3652,6 +3675,87 @@ $allOk = test_result(
 	'FlatPress URLs lose HTML-like attributes and omit localhost links',
 	strpos($mastoAttrs, 'target=_blank') === false && strpos($mastoAttrs, 'rel=external') === false && strpos($mastoAttrs, 'FlatPress https://www.flatpress.org') !== false && strpos($mastoAttrs, 'localhost') === false && strpos($mastoAttrs, 'About') !== false,
 	$mastoAttrs
+) && $allOk;
+
+$externalUrlModifierFile = $simRoot . '/fp-includes/fp-smartyplugins/modifier.is_external_url.php';
+if (is_file($externalUrlModifierFile)) {
+	require_once $externalUrlModifierFile;
+}
+$previousFpConfigForExternalUrlTest = isset($GLOBALS ['fp_config']) && is_array($GLOBALS ['fp_config']) ? $GLOBALS ['fp_config'] : null;
+if (!isset($GLOBALS ['fp_config']) || !is_array($GLOBALS ['fp_config'])) {
+	$GLOBALS ['fp_config'] = array();
+}
+if (!isset($GLOBALS ['fp_config'] ['general']) || !is_array($GLOBALS ['fp_config'] ['general'])) {
+	$GLOBALS ['fp_config'] ['general'] = array();
+}
+if (defined('STATIC_DIR') && defined('EXT')) {
+	simulate_write_fixture_file(STATIC_DIR . 'about' . EXT, 'SUBJECT=About' . PHP_EOL . 'CONTENT=About page' . PHP_EOL);
+}
+$externalUrlCaseSets = array(
+	'subdirectory blog base' => array(
+		'base' => 'https://blog.example/flatpress/',
+		'cases' => array(
+			'remote Mastodon profile' => array('https://example.net/@alice', true),
+			'absolute internal blog entry' => array('https://blog.example/flatpress/entry260314-080000', false),
+			'absolute internal blog base without trailing slash' => array('https://blog.example/flatpress', false),
+			'same host outside configured blog base' => array('https://blog.example/elsewhere', true),
+			'root-relative blog URL' => array('/flatpress/entry260314-080000', false),
+			'relative blog URL' => array('static.php?page=about', false),
+			'non-browser mail URL' => array('mailto:alice@example.net', false),
+			'protocol-relative external profile' => array('//example.net/@alice', true)
+		)
+	),
+	'domain root blog base' => array(
+		'base' => 'https://blog.example/',
+		'cases' => array(
+			'root blog home' => array('https://blog.example/', false),
+			'root blog index entry point' => array('https://blog.example/index.php', false),
+			'root pretty static page that exists' => array('https://blog.example/about/', false),
+			'root pretty date entry' => array('https://blog.example/2026/03/14/tagged-entry/', false),
+			'root path-info date entry' => array('https://blog.example/index.php/2026/03/14/tagged-entry/', false),
+			'root get-mode date entry' => array('https://blog.example/?u=/2026/03/14/tagged-entry/', false),
+			'root FlatPress-owned asset path' => array('https://blog.example/fp-plugins/mastodon/plugin.mastodon.php', false),
+			'root unknown same-host app path' => array('https://blog.example/other-app/', true),
+			'root unknown single segment without static page' => array('https://blog.example/shop/', true),
+			'root external Mastodon profile' => array('https://example.net/@alice', true)
+		)
+	)
+);
+$externalUrlResults = array();
+$externalUrlChecksOk = function_exists('smarty_modifier_is_external_url');
+if ($externalUrlChecksOk) {
+	foreach ($externalUrlCaseSets as $caseSetLabel => $caseSet) {
+		$GLOBALS ['fp_config'] ['general'] ['www'] = (string) $caseSet ['base'];
+		foreach ((array) $caseSet ['cases'] as $label => $case) {
+			$urlToCheck = (string) $case [0];
+			$expectedExternal = (bool) $case [1];
+			$actualExternal = smarty_modifier_is_external_url($urlToCheck);
+			$externalUrlResults [$caseSetLabel . ': ' . $label] = array(
+				'base' => (string) $caseSet ['base'],
+				'url' => $urlToCheck,
+				'expected' => $expectedExternal,
+				'actual' => $actualExternal
+			);
+			if ($actualExternal !== $expectedExternal) {
+				$externalUrlChecksOk = false;
+			}
+		}
+	}
+}
+if ($previousFpConfigForExternalUrlTest !== null) {
+	$GLOBALS ['fp_config'] = $previousFpConfigForExternalUrlTest;
+}
+$commentsTemplate = @file_get_contents($simRoot . '/fp-interface/themes/leggero/comments.tpl');
+if (!is_string($commentsTemplate)) {
+	$commentsTemplate = '';
+}
+$allOk = test_result(
+	'Comment author target blank is limited to external URLs',
+	$externalUrlChecksOk
+		&& strpos($commentsTemplate, '$url|is_external_url') !== false
+		&& strpos($commentsTemplate, 'target="_blank"') !== false
+		&& strpos($commentsTemplate, 'rel="nofollow noopener noreferrer"') !== false,
+	json_encode($externalUrlResults)
 ) && $allOk;
 
 $taggedEntry = array(
@@ -3690,7 +3794,7 @@ $allOk = test_result(
 	!empty($remoteTaggedEntry ['content'])
 		&& strpos((string) $remoteTaggedEntry ['content'], '[tag]News, Neu[/tag]') !== false
 		&& strpos((string) $remoteTaggedEntry ['content'], '#News #Neu') === false
-		&& strpos((string) $remoteTaggedEntry ['content'], "\n[url=https://mastodon.social/@flatpress/777]Mastodon[/url]") !== false,
+		&& strpos((string) $remoteTaggedEntry ['content'], "\n[url=https://mastodon.social/@flatpress/777 target=_blank rel=\"nofollow noopener noreferrer\"]Mastodon[/url]") !== false,
 	isset($remoteTaggedEntry ['content']) ? (string) $remoteTaggedEntry ['content'] : ''
 ) && $allOk;
 
@@ -12276,3 +12380,4 @@ $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
 $exitCode = $allOk ? 0 : 2;
 simulate_print_final_summary($exitCode);
 exit($exitCode);
+?>

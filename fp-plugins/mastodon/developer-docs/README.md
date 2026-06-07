@@ -19,15 +19,17 @@ It is written for developers who need to make safe changes without breaking sync
 
 Use these starting points when the requested change is framed by behavior rather than by function name:
 
-| Requested change                           | Start reading                            | Then inspect                                         |
-| ------------------------------------------ | ---------------------------------------- | ---------------------------------------------------- |
-| "Posts do not appear on Mastodon"          | `01-Process-Map.md` P5/P7                | `04-API-Compatibility.md`, local export tests        |
-| "Imported replies are wrong or duplicated" | `01-Process-Map.md` P4                   | `02-State-Model.md` tombstones/rechecks, reply tests |
-| "Deletion is unsafe or incomplete"         | `01-Process-Map.md` P9                   | Delete endpoint fallback, deletion sync tests        |
-| "State repair or diagnostics are needed"   | `02-State-Model.md` maintenance sections | Admin maintenance fieldset, `mastodon-state-cli.php` |
-| "Admin page reports stale or wrong state"  | P12 and scheduler state                  | State summary and admin assignment tests             |
-| "Large sites are slow"                     | P1, budgets and scheduler state          | Large-state and rate-limit tests                     |
-| "Mastodon API behavior changed"            | `04-API-Compatibility.md`                | endpoint matrix, capability helpers, targeted tests  |
+| Requested change                                                 | Start reading                                     | Then inspect                                                                                                |
+| ---------------------------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| "Posts do not appear on Mastodon"                                | `01-Process-Map.md` P5/P7                         | `04-API-Compatibility.md`, local export tests                                                               |
+| "Imported replies are wrong or duplicated"                       | `01-Process-Map.md` P4                            | `02-State-Model.md` tombstones/rechecks, reply tests                                                        |
+| "Deletion is unsafe or incomplete"                               | `01-Process-Map.md` P9                            | Delete endpoint fallback, deletion sync tests                                                               |
+| "State repair or diagnostics are needed"                         | `02-State-Model.md` maintenance sections          | Admin maintenance fieldset, `mastodon-state-cli.php`                                                        |
+| "Admin page reports stale or wrong state"                        | P12 and scheduler state                           | State summary and admin assignment tests                                                                    |
+| "Large sites are slow"                                           | P1, budgets and scheduler state                   | Large-state and rate-limit tests                                                                            |
+| "Mastodon API behavior changed"                                  | `04-API-Compatibility.md`                         | endpoint matrix, capability helpers, targeted tests                                                         |
+| "Comment author links open new tabs only for external URLs"      | `01-Process-Map.md` P14                           | `comments.tpl`, `modifier.is_external_url.php`, target-decision test including root-install same-host paths |
+| "Imported status source links open the single toot in a new tab" | `01-Process-Map.md` P3, `04-API-Compatibility.md` | `plugin_mastodon_imported_status_footer_bbcode()`, status-footer target tests                               |
 
 ## Compatibility target for maintainers
 
