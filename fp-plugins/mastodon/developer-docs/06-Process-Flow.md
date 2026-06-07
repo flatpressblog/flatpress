@@ -435,7 +435,6 @@ sequenceDiagram
             Sync->>State: Store entries, entries_remote, last_remote_status_id, source metadata
         end
     end
-    end
 ```
 
 ### 1.5 Mastodon replies in a known imported thread to FlatPress comments
