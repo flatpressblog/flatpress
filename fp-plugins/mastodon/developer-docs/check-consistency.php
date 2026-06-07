@@ -313,6 +313,138 @@ foreach ($oneWayRequiredDocs as $docName => $docData) {
 	}
 }
 
+$guardIsolationRequiredDocs = array(
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'dirty-comment scheduled-run regression clears the `content` sync guard',
+			'APCu guard can survive sandbox directory cleanup'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'Dirty-comment scheduled fixture clears content guard',
+			'earlier cooldown assertions cannot survive through APCu'
+		)
+	)
+);
+foreach ($guardIsolationRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing scheduler-guard isolation documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
+$importedRemoteReplyDeleteRequiredDocs = array(
+	'02-State-Model.md' => array(
+		$stateModelDocContent,
+		array(
+			'imported-reply local delete',
+			'local_deleted_imported_remote_ignored',
+			'without an outbound status `DELETE`',
+			'Context refreshes must preserve existing `source=local` comment ownership'
+		)
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'Locally deleted imported remote replies',
+			'edited-remote-reply case',
+			'without remote DELETE',
+			'preserves `source=local` ownership'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'locally deleted imported remote replies',
+			'comment source remote and entry still exists?',
+			'without outbound Mastodon `DELETE` requests',
+			'preserve existing source ownership'
+		)
+	)
+);
+foreach ($importedRemoteReplyDeleteRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing imported-remote-reply local-delete documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
+$instanceCapabilityRequiredDocs = array(
+	'01-Process-Map.md' => array(
+		$processMapDocContent,
+		array(
+			'prefers `api_versions[mastodon]` for capabilities',
+			'negatively caches failed live instance lookups per request'
+		)
+	),
+	'03-Function-Process-Matrix.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/03-Function-Process-Matrix.md', $errors),
+		array(
+			'plugin_mastodon_instance_document_api_version',
+			'per-request failed cache'
+		)
+	),
+	'04-API-Compatibility.md' => array(
+		$apiDocContent,
+		array(
+			'api_versions[mastodon] >= 4',
+			'Unattached media cleanup delete',
+			'plugin_mastodon_instance_supports_mastodon_api_v4()',
+			'plugin_mastodon_instance_supports_media_delete()',
+			'negatively cached per PHP request',
+			'failed live lookup is negatively cached'
+		)
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'Nightly Mastodon versions use cached api_versions',
+			'Machine-readable api_versions are preferred',
+			'Failed instance-information lookups are negatively cached',
+			'api_versions below unattached media delete support skip uploaded media cleanup DELETE requests',
+			'Unknown unattached media delete capability stays best-effort without an instance lookup'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'api_versions[mastodon]',
+			'Failed lookup already cached',
+			'short instance timeout',
+			'plugin_mastodon_instance_supports_mastodon_api_v4()',
+			'plugin_mastodon_instance_supports_media_delete()',
+			'version-gated DELETE /api/v1/media/:id'
+		)
+	),
+	'07-Function-Organigram.md' => array(
+		$organigramDocContent,
+		array(
+			'plugin_mastodon_instance_document_api_version()',
+			'plugin_mastodon_normalized_instance_version()',
+			'plugin_mastodon_instance_supports_mastodon_api_v4()',
+			'plugin_mastodon_instance_supports_media_delete()'
+		)
+	)
+);
+foreach ($instanceCapabilityRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing instance-capability documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
 if ($apiDocContent !== '') {
 	if (strpos($apiDocContent, 'plugin_mastodon_authorize_url') !== false) {
 		$errors [] = 'API compatibility doc still references plugin_mastodon_authorize_url.';

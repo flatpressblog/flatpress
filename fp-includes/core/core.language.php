@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Loads a language resource and merges it into the global language registry.
+ *
+ * @phpstan-impure
+ */
 function lang_load($postfix = null) {
 	global $fp_config;
 

@@ -1,0 +1,36 @@
+/*
+ * FlatPress Mastodon plugin frontend styles.
+ *
+ * The widget is intentionally compact so it fits narrow theme sidebars and
+ * mobile layouts without forcing a fixed width.
+ */
+
+.mastodon-profile-widget {
+	max-width: 100%;
+	overflow-wrap: anywhere;
+	word-wrap: break-word;
+	word-break: normal;
+	line-height: 1.35;
+}
+
+.mastodon-profile-widget a {
+	display: inline-block;
+	text-decoration: none;
+}
+
+.mastodon-profile-widget img {
+	display: block;
+	width: 120px;
+	max-width: 100%;
+	height: auto;
+	border-radius: 15%;
+	margin: 0 0 .45em;
+}
+
+.mastodon-profile-widget-name {
+	/* font-weight: 700; */
+}
+
+.mastodon-profile-widget-acct {
+	/* font-size: .95em; */
+}

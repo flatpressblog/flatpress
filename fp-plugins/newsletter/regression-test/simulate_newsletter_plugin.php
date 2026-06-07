@@ -110,8 +110,18 @@ function user_loggedin(): bool {
 	return true;
 }
 
+/**
+ * Mirrors FlatPress' global language loader API for the simulation harness.
+ *
+ * @phpstan-impure
+ */
 function lang_load(string $resource): array {
-	return [
+	static $loaded = false;
+	if ($loaded && isset($GLOBALS['lang']) && is_array($GLOBALS['lang'])) {
+		return $GLOBALS['lang'];
+	}
+
+	$lang = [
 		'plugin' => [
 			'newsletter' => [
 				'csrf_error' => 'Invalid CSRF token',
@@ -133,6 +143,9 @@ function lang_load(string $resource): array {
 			],
 		],
 	];
+	$GLOBALS['lang'] = array_merge_recursive($lang, isset($GLOBALS['lang']) && is_array($GLOBALS['lang']) ? $GLOBALS['lang'] : []);
+	$loaded = true;
+	return $GLOBALS['lang'];
 }
 
 require $baseDir . '/fp-plugins/newsletter/plugin.newsletter.php';
@@ -537,8 +550,18 @@ function user_loggedin(): bool {
 	return true;
 }
 
+/**
+ * Mirrors FlatPress' global language loader API for generated child simulations.
+ *
+ * @phpstan-impure
+ */
 function lang_load(string $resource): array {
-	return [
+	static $loaded = false;
+	if ($loaded && isset($GLOBALS['lang']) && is_array($GLOBALS['lang'])) {
+		return $GLOBALS['lang'];
+	}
+
+	$lang = [
 		'plugin' => [
 			'newsletter' => [
 				'csrf_error' => 'Invalid CSRF token',
@@ -560,6 +583,9 @@ function lang_load(string $resource): array {
 			],
 		],
 	];
+	$GLOBALS['lang'] = array_merge_recursive($lang, isset($GLOBALS['lang']) && is_array($GLOBALS['lang']) ? $GLOBALS['lang'] : []);
+	$loaded = true;
+	return $GLOBALS['lang'];
 }
 
 __REQUEST_BOOTSTRAP__

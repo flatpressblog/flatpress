@@ -4,33 +4,53 @@
 
 The current plugin implementation is best described as:
 
-| Range        | Status                                                                                                                                                            |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `< 4.0.0`    | Not supported by the current documented plugin target because `/api/v2/instance` is the capability source and there is no `/api/v1/instance` API fallback.        |
-| `>= 4.0.0`   | Technical target. Core endpoints used by the plugin are available; newer capability fields may be missing and internal defaults apply.                            |
-| `>= 4.4.0`   | Recommended for full documented delete/media-cleanup behavior because `delete_media` on status delete and `DELETE /api/v1/media/:id` are documented from 4.4.0.   |
-| Future 4.x   | No hard upper bound is encoded. Continue checking official Mastodon API changelogs before changing endpoint behavior.                                             |
+| Range      | Status                                                                                                                                                          |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `< 4.0.0`  | Not supported by the current documented plugin target because `/api/v2/instance` is the capability source and there is no `/api/v1/instance` API fallback.      |
+| `>= 4.0.0` | Technical target. Core endpoints used by the plugin are available; newer capability fields may be missing and internal defaults apply.                          |
+| `>= 4.4.0` | Recommended for full documented delete/media-cleanup behavior because `delete_media` on status delete and `DELETE /api/v1/media/:id` are documented from 4.4.0. |
+| `>= 4.6.0` | Enables the privacy hardening `exclude_direct=true` for account-status imports when cached instance information or API version 10 confirms support.             |
+| Future 4.x | No hard upper bound is encoded. Continue checking official Mastodon API changelogs before changing endpoint behavior.                                           |
 
 ## Endpoint matrix
 
-| Purpose                 | Method | Endpoint                                | API history                               | Auth/scope              | Fallback behavior in plugin                                                                                                                         | Main function(s)                                                     |
-| ----------------------- | ------ | --------------------------------------- | ----------------------------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| OAuth discovery         | GET    | /.well-known/oauth-authorization-server | 4.3.0                                     | Public                  | If unavailable for a new app, use `read:accounts` plus `read:notifications` instead of `profile`; existing legacy clients keep their stored scopes. | plugin_mastodon_oauth_server_metadata / plugin_mastodon_oauth_scopes |
-| App registration        | POST   | /api/v1/apps                            | 0.0.0                                     | Public                  | No alternate endpoint. Existing registrations keep stored scopes.                                                                                   | plugin_mastodon_register_app                                         |
-| Authorize URL           | GET    | /oauth/authorize                        | 0.1.0 era OAuth                           | Browser                 | No endpoint fallback; generated URL uses stored app credentials.                                                                                    | plugin_mastodon_build_authorize_url()                                |
-| Token exchange          | POST   | /oauth/token                            | 0.1.0 era OAuth                           | Public/client           | No endpoint fallback.                                                                                                                               | plugin_mastodon_exchange_code_for_token()                            |
-| Verify credentials      | GET    | /api/v1/accounts/verify_credentials     | 0.0.0                                     | User token              | Scope fallback: `profile` on current servers, `read:accounts` on older servers.                                                                     | plugin_mastodon_verify_credentials                                   |
-| Instance info           | GET    | /api/v2/instance                        | 4.0.0                                     | Public                  | No `/api/v1/instance` API fallback; internal defaults are used if fields are missing.                                                               | plugin_mastodon_instance_document                                    |
-| Account statuses        | GET    | /api/v1/accounts/:id/statuses           | 0.0.0                                     | Public or read:statuses | Budgeted paging; limit 40, up to 5 plugin pages.                                                                                                    | plugin_mastodon_fetch_account_statuses                               |
-| Notifications           | GET    | /api/v1/notifications                   | 0.0.0; limit 80 from 4.1, safe limit 30   | read:notifications      | Optional hint layer; skipped when the current app/token lacks the scope.                                                                            | plugin_mastodon_fetch_reply_notifications                            |
-| Status context          | GET    | /api/v1/statuses/:id/context            | 0.0.0                                     | Public or read:statuses | Failures produce no descendants for that target; later rechecks may be queued.                                                                      | plugin_mastodon_fetch_status_context                                 |
-| Single status           | GET    | /api/v1/statuses/:id                    | 0.0.0                                     | Public or read:statuses | 404/410 are treated as missing/deleted.                                                                                                             | plugin_mastodon_fetch_status                                         |
-| Create status           | POST   | /api/v1/statuses                        | 0.0.0                                     | write:statuses          | No create fallback.                                                                                                                                 | plugin_mastodon_create_status                                        |
-| Edit status             | PUT    | /api/v1/statuses/:id                    | 3.5.0                                     | write:statuses          | No delete-and-redraft fallback. `media_attributes` are only used when instance version is >= 4.1.0.                                                 | plugin_mastodon_update_status                                        |
-| Delete status           | DELETE | /api/v1/statuses/:id?delete_media=1     | status delete 0.0.0; `delete_media` 4.4.0 | write:statuses          | Known < 4.4 omits parameter; unknown may retry without parameter on 400/405/422 or delete_media errors.                                             | plugin_mastodon_delete_status                                        |
-| Upload media            | POST   | /api/v2/media                           | 3.1.3; `thumbnail` parameter 3.2.0        | write:media             | No deprecated `/api/v1/media` upload fallback. Video posters are sent as upload thumbnails.                                                         | plugin_mastodon_upload_media_items                                   |
-| Poll media              | GET    | /api/v1/media/:id                       | 3.1.3                                     | write:media             | Media-type-aware polling and timeout windows.                                                                                                       | plugin_mastodon_wait_for_media_attachment                            |
-| Delete unattached media | DELETE | /api/v1/media/:id                       | 4.4.0                                     | write:media             | Used for cleanup. 404 is tolerated as already gone.                                                                                                 | plugin_mastodon_delete_media_attachment                              |
+| Purpose                 | Method | Endpoint                                | API history                                       | Auth/scope              | Fallback behavior in plugin                                                                                                                                                                                                                                | Main function(s)                                                     |
+| ----------------------- | ------ | --------------------------------------- | ------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| OAuth discovery         | GET    | /.well-known/oauth-authorization-server | 4.3.0                                             | Public                  | If unavailable for a new app, use `read:accounts` plus `read:notifications` instead of `profile`; existing legacy clients keep their stored scopes.                                                                                                        | plugin_mastodon_oauth_server_metadata / plugin_mastodon_oauth_scopes |
+| App registration        | POST   | /api/v1/apps                            | 0.0.0                                             | Public                  | No alternate endpoint. Existing registrations keep stored scopes.                                                                                                                                                                                          | plugin_mastodon_register_app                                         |
+| Authorize URL           | GET    | /oauth/authorize                        | 0.1.0 era OAuth                                   | Browser                 | No endpoint fallback; generated URL uses stored app credentials.                                                                                                                                                                                           | plugin_mastodon_build_authorize_url()                                |
+| Token exchange          | POST   | /oauth/token                            | 0.1.0 era OAuth                                   | Public/client           | No endpoint fallback.                                                                                                                                                                                                                                      | plugin_mastodon_exchange_code_for_token()                            |
+| Verify credentials      | GET    | /api/v1/accounts/verify_credentials     | 0.0.0                                             | User token              | Scope fallback: `profile` on current servers, `read:accounts` on older servers; successful account payloads refresh the local public profile-widget cache when avatar data is available.                                                                   | plugin_mastodon_verify_credentials                                   |
+| Instance info           | GET    | /api/v2/instance                        | 4.0.0; `api_versions` 4.3.0                       | Public                  | No `/api/v1/instance` API fallback; compact snapshots include status/media/translation/timeline/account limits, failures are negatively cached per PHP request, and safe defaults apply.                                                                   | plugin_mastodon_instance_document                                    |
+| Account statuses        | GET    | /api/v1/accounts/:id/statuses           | 0.0.0; `exclude_direct` 4.6.0 / API v10           | Public or read:statuses | Budgeted paging; known 4.6/API v10 servers receive `exclude_direct=true`; compatible-server 400/405/422 failures retry once without it; older or unknown support keeps the legacy query and local visibility filters still reject direct/private statuses. | plugin_mastodon_fetch_account_statuses                               |
+| Notifications           | GET    | /api/v1/notifications                   | 0.0.0; limit 80 from 4.1; `fallback` 4.6.0        | read:notifications      | Optional hint layer; skipped when the current app/token lacks the scope; 4.6 fallback payloads are ignored when a normal mention status is present.                                                                                                        | plugin_mastodon_fetch_reply_notifications                            |
+| Status context          | GET    | /api/v1/statuses/:id/context            | 0.0.0                                             | Public or read:statuses | Failures produce no descendants for that target; later rechecks may be queued.                                                                                                                                                                             | plugin_mastodon_fetch_status_context                                 |
+| Single status           | GET    | /api/v1/statuses/:id                    | 0.0.0                                             | Public or read:statuses | 404/410 are treated as missing/deleted.                                                                                                                                                                                                                    | plugin_mastodon_fetch_status                                         |
+| Create status           | POST   | /api/v1/statuses                        | 0.0.0                                             | write:statuses          | No create fallback.                                                                                                                                                                                                                                        | plugin_mastodon_create_status                                        |
+| Edit status             | PUT    | /api/v1/statuses/:id                    | 3.5.0; `media_attributes` documented              | write:statuses          | No delete-and-redraft fallback. `api_versions[mastodon]` is preferred; otherwise human version >= 4.1.0 enables media-description updates.                                                                                                                 | plugin_mastodon_update_status                                        |
+| Delete status           | DELETE | /api/v1/statuses/:id?delete_media=1     | status delete 0.0.0; `delete_media` 4.4.0, API v4 | write:statuses          | `api_versions[mastodon] >= 4` enables `delete_media`; lower API versions omit it; unknown support retries without it on legacy-style errors.                                                                                                               | plugin_mastodon_delete_status                                        |
+| Upload media            | POST   | /api/v2/media                           | 3.1.3; `thumbnail` parameter 3.2.0                | write:media             | No deprecated `/api/v1/media` upload fallback. Video posters are sent as upload thumbnails.                                                                                                                                                                | plugin_mastodon_upload_media_items                                   |
+| Poll media              | GET    | /api/v1/media/:id                       | 3.1.3                                             | write:media             | Media-type-aware polling and timeout windows.                                                                                                                                                                                                              | plugin_mastodon_wait_for_media_attachment                            |
+| Delete unattached media | DELETE | /api/v1/media/:id                       | 4.4.0, API v4                                     | write:media             | `api_versions[mastodon] >= 4` or version >= 4.4.0 enables cleanup; known older servers skip it; unknown support stays best-effort.                                                                                                                         | plugin_mastodon_delete_media_attachment                              |
+
+## Profile-widget account cache
+
+The compact Mastodon widget does not add a frontend API endpoint dependency. `plugin_mastodon_run_sync()` refreshes the profile/avatar cache via `GET /api/v1/accounts/verify_credentials` before content import/export work, including automatic scheduled runs, manual runs and explicit one-way/export-only mode. The cache stores only public fields in `fp-content/plugin_mastodon/profile/profile.json` and stores the downloaded avatar below `fp-content/plugin_mastodon/profile/`. Normal widget rendering reads only those local files and returns no widget when the cache or local avatar is incomplete. Its stylesheet is a local FlatPress asset, `fp-plugins/mastodon/res/mastodon.css`, emitted by `plugin_mastodon_head()` through `utils_asset_ver()` so frontend markup stays free of inline CSS.
+
+| Cached field    | Source account field                     | Runtime rule                                                                                  |
+| --------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Display name    | `display_name`, fallback `acct`          | Public text is normalized and escaped again during widget rendering.                          |
+| Account handle  | `acct`, fallback `username`              | Stored without a leading `@`; rendered with one leading `@`.                                  |
+| Profile link    | `url`, fallback configured instance/user | Only absolute HTTP(S) URLs are accepted.                                                      |
+| Avatar file     | `avatar_static`, fallback `avatar`       | Remote image is downloaded during refresh, MIME-checked and then served locally by FlatPress. |
+| Avatar alt text | `avatar_description`, localized fallback | Mastodon 4.6/API-v9 descriptions are used when present; older payloads get a fallback string. |
+| Refresh trigger  | `verify_credentials` during `run_sync`    | The sync result is not decided solely by widget-cache refresh success; remote import may reuse the cached account payload. |
+
+## Mastodon 4.6 account-status privacy hardening
+
+`plugin_mastodon_fetch_account_statuses()` now treats `exclude_direct=true` as an additive Mastodon 4.6/API-v10 capability. The parameter is sent only when cached `/api/v2/instance` data confirms Mastodon `>= 4.6.0` or `api_versions.mastodon >= 10`. If a compatible server or fork still rejects the parameter with a legacy-style client error, the same page request is retried once without `exclude_direct`. This keeps Mastodon `>= 4.0.0` instances compatible while reducing the chance that direct statuses enter the import path on current servers. The existing local `visibility` checks remain the final safety net.
+
+The compact instance snapshot also preserves `configuration.accounts.*` limits from Mastodon 4.6. They are currently informational because the plugin does not edit Mastodon profiles, but retaining them keeps admin diagnostics and future profile-related extensions deterministic.
 
 ## Mastodon status media-family rule
 
@@ -47,18 +67,18 @@ The low-level upload helper can upload the media items it receives, but `plugin_
 
 ## Instance-derived limits and internal defaults
 
-The plugin reads `/api/v2/instance` and uses `configuration` values when present. Missing values fall back to safe internal defaults.
+The plugin reads `/api/v2/instance` with a short instance-information timeout and uses `configuration` values when present. Missing values fall back to safe internal defaults. A failed live lookup is negatively cached in request-local memory so later helper calls in the same PHP request do not repeat the same slow or failing network request.
 
-| Limit                         | Instance field                                           | Default/fallback                                                                            |
-| ----------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Status max characters         | `configuration.statuses.max_characters`                  | `500`                                                                                       |
-| Reserved characters per URL   | `configuration.statuses.characters_reserved_per_url`     | `23`                                                                                        |
-| Max media attachments         | `configuration.statuses.max_media_attachments`           | `4`                                                                                         |
-| Media description length      | `configuration.media_attachments.description_limit`      | `1500`                                                                                      |
-| Supported MIME types          | `configuration.media_attachments.supported_mime_types`   | Plugin validates broadly when unknown.                                                      |
-| Image size limit              | `configuration.media_attachments.image_size_limit`       | No local size rejection when unknown.                                                       |
-| Video size limit              | `configuration.media_attachments.video_size_limit`       | No local size rejection when unknown.                                                       |
-| Audio size limit              | `configuration.media_attachments.audio_size_limit`       | Falls back to video size if explicit audio limit is absent; otherwise no local rejection.   |
+| Limit                       | Instance field                                         | Default/fallback                                                                          |
+| --------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Status max characters       | `configuration.statuses.max_characters`                | `500`                                                                                     |
+| Reserved characters per URL | `configuration.statuses.characters_reserved_per_url`   | `23`                                                                                      |
+| Max media attachments       | `configuration.statuses.max_media_attachments`         | `4`                                                                                       |
+| Media description length    | `configuration.media_attachments.description_limit`    | `1500`                                                                                    |
+| Supported MIME types        | `configuration.media_attachments.supported_mime_types` | Plugin validates broadly when unknown.                                                    |
+| Image size limit            | `configuration.media_attachments.image_size_limit`     | No local size rejection when unknown.                                                     |
+| Video size limit            | `configuration.media_attachments.video_size_limit`     | No local size rejection when unknown.                                                     |
+| Audio size limit            | `configuration.media_attachments.audio_size_limit`     | Falls back to video size if explicit audio limit is absent; otherwise no local rejection. |
 
 ## Internal budgets and operational limits
 
@@ -68,6 +88,8 @@ The plugin reads `/api/v2/instance` and uses `configuration` values when present
 | PLUGIN_MASTODON_MAX_STATUS_PAGES                  | 5       | Maximum account-status pages imported in one remote pass.                                                                       |
 | Mastodon account-status page limit                | 40      | The plugin requests the API maximum for /api/v1/accounts/:id/statuses.                                                          |
 | PLUGIN_MASTODON_IMPORTED_MEDIA_WIDTH              | 320     | Width used in imported FlatPress image markup.                                                                                  |
+| PLUGIN_MASTODON_PROFILE_AVATAR_MAX_BYTES          | 5 MiB   | Maximum accepted downloaded profile avatar size for the local widget cache.                                                     |
+| PLUGIN_MASTODON_PROFILE_REQUEST_TIMEOUT           | 15s     | Short timeout for account/profile-cache refresh HTTP work.                                                                      |
 | PLUGIN_MASTODON_PENDING_COMMENT_RECHECK_LIMIT     | 3       | Remote reply recheck attempts per pending comment scope.                                                                        |
 | PLUGIN_MASTODON_OLD_THREAD_CONTEXT_ROTATION_LIMIT | 3       | Default old-thread context targets rotated per run; admin value clamps to 1-10.                                                 |
 | PLUGIN_MASTODON_NOTIFICATION_PAGE_LIMIT           | 30      | Safe Mastodon >= 4.0 notification page size used for mention hints.                                                             |
@@ -142,7 +164,12 @@ sequenceDiagram
     end
     Plugin->>Mastodon: POST or PUT /api/v1/statuses with compatible media_ids[]
     alt status create/update fails after upload
-        Plugin->>Mastodon: DELETE /api/v1/media/:id
+        Plugin->>Plugin: check api_versions[mastodon] or cached version
+        alt known unsupported before API v4 / 4.4.0
+            Plugin->>Plugin: skip unsupported cleanup DELETE
+        else supported or unknown
+            Plugin->>Mastodon: DELETE /api/v1/media/:id
+        end
     end
 ```
 
@@ -159,16 +186,18 @@ sequenceDiagram
 
 ## Capability sources
 
-| Capability                               | Source                                      | Unknown behavior                                                    |
-| ---------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------- |
-| Status character limit                   | `/api/v2/instance` configuration            | Use `500`.                                                          |
-| URL reserved length                      | `/api/v2/instance` configuration            | Use `23`.                                                           |
-| Max media attachments                    | `/api/v2/instance` configuration            | Use `4`.                                                            |
-| Media MIME/size support                  | `/api/v2/instance` configuration            | Validate conservatively; do not invent server limits.               |
-| Status `media_attributes` update         | Parsed instance version `>= 4.1.0`          | Treat as unsupported and re-upload when descriptions changed.       |
-| Status delete `delete_media` parameter   | Cached/stored instance version `>= 4.4.0`   | Try with parameter, retry without on known legacy-style failures.   |
-| OAuth `profile` scope                    | OAuth discovery `scopes_supported`          | Fall back to compatible `read:accounts` scope set for new apps.     |
-| OAuth `read:notifications` scope         | Stored/current OAuth scope set              | Skip notification hints and keep context rotation fallback.         |
+| Capability                             | Source                                                                           | Unknown behavior                                                  |
+| -------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Status character limit                 | `/api/v2/instance` configuration                                                 | Use `500`.                                                        |
+| URL reserved length                    | `/api/v2/instance` configuration                                                 | Use `23`.                                                         |
+| Max media attachments                  | `/api/v2/instance` configuration                                                 | Use `4`.                                                          |
+| Media MIME/size support                | `/api/v2/instance` configuration                                                 | Validate conservatively; do not invent server limits.             |
+| Status `media_attributes` update       | Prefer `api_versions[mastodon]`; otherwise parsed version `>= 4.1.0`             | Treat as unsupported and re-upload when descriptions changed.     |
+| Status delete `delete_media` parameter | Prefer `api_versions[mastodon] >= 4`; otherwise cached/stored version `>= 4.4.0` | Try with parameter, retry without on known legacy-style failures. |
+| Unattached media cleanup delete        | Prefer `api_versions[mastodon] >= 4`; otherwise cached/stored version `>= 4.4.0` | Skip when known unsupported; unknown remains best-effort.         |
+| OAuth `profile` scope                  | OAuth discovery `scopes_supported`                                               | Fall back to compatible `read:accounts` scope set for new apps.   |
+| OAuth `read:notifications` scope       | Stored/current OAuth scope set                                                   | Skip notification hints and keep context rotation fallback.       |
+| Profile avatar description             | Account payload field `avatar_description`                                       | Use localized fallback alt text when absent.                      |
 
 ## API change playbooks
 
@@ -185,6 +214,8 @@ sequenceDiagram
 
 1. Identify whether the decision is version-based, field-based, response-code-based or transport-error-based.
 2. Prefer cached instance information for scheduled/deletion paths to avoid extra requests.
+3. Prefer machine-readable `api_versions[mastodon]` over complex human-readable version strings for capability decisions.
+4. Cache failed live instance-information lookups per PHP request and use defaults rather than repeating slow network calls.
 3. Avoid fallback retry loops that can exceed budgets.
 4. Preserve the first response metadata if the fallback response is returned to callers.
 5. Add tests for known old version, known current version and unknown version if all three branches exist.
@@ -193,6 +224,14 @@ sequenceDiagram
 
 1. Check both export and import paths.
 2. Check instance limits and local validation.
-3. Check upload cleanup on status create/update failure.
+3. Check upload cleanup on status create/update failure, including the shared `plugin_mastodon_instance_supports_mastodon_api_v4()` helper and the `plugin_mastodon_instance_supports_media_delete()` capability gate.
 4. Check description-only changes and `media_attributes` capability.
 5. Check that remote media import still has URL fallback order and safe local filenames.
+
+### Changing profile-widget behavior
+
+1. Keep the widget callback local-cache-only: no Mastodon API calls and no remote avatar downloads while rendering a page.
+2. Refresh the cache from an already authenticated account/profile path.
+3. Never store access tokens, client secrets or authorization headers in `profile.json`.
+4. Keep the local avatar MIME allow-list conservative and reject SVG or unknown bodies.
+5. Add simulation coverage for missing cache, successful cache refresh, no-HTTP rendering, fallback alt text and all language files.
