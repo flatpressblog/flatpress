@@ -2,16 +2,16 @@
 
 ## Harness model
 `simulate_mastodon_plugin.php` loads the real Mastodon plugin and simulates the FlatPress and Mastodon boundaries. The plugin code itself is not replaced. The HTTP layer, fixture content, media files and some FlatPress services are controlled by the harness so behavior is deterministic.
-Normal run checked for this documentation set after the Mastodon profile-widget CSS extraction:
+Normal run checked for this documentation set after the imported Mastodon status-link target update:
 ```text
 php simulate_mastodon_plugin.php --summary
 Exit-code: 0
-[OK]: 247
+[OK]: 251
 [FAIL]: 0
 [WARN]: 0
 [SKIP]: 0
 ```
-Static `test_result()` calls found in the script: `248`.
+Static `test_result()` calls found in the script: `252`.
 One test is optional and only runs with `--live-auth`:
 
 ```text
@@ -24,13 +24,13 @@ The catalog below is generated from all static `test_result()` calls and therefo
 
 | Category                           | Static tests |
 | ---------------------------------- | ------------ |
-| Regular simulation tests           | 247          |
+| Regular simulation tests           | 251          |
 | Optional live/auth smoke           | 1            |
-| Total static `test_result()` calls | 248          |
+| Total static `test_result()` calls | 252          |
 
 ## What the harness proves well
 
-The harness now also checks that advanced comment-shard maintenance controls are not embedded in the main settings template, are available from a dedicated maintenance template, that notification-based reply hints import old-thread replies before the slower rotation fallback, and that the optional explicit one-way mode blocks Mastodon-to-FlatPress imports while preserving FlatPress-to-Mastodon exports, keeps hidden import settings intact in the admin save path, hides import-only admin UI output, hides import-only companion-plugin diagnostics while keeping export helpers, re-exports local objects after remote deletion, and keeps locally deleted imported external Mastodon replies tombstoned even when the remote author edits the reply before the next content sync. It also verifies that Mastodon instance capability detection prefers machine-readable `api_versions[mastodon]`, handles nightly version strings, preserves compact `configuration.accounts` snapshots, loads the widget stylesheet through `plugin_mastodon_head()` as a versioned `res/mastodon.css` asset, refreshes the profile-widget cache during automatic and manual one-way sync paths, sends `exclude_direct=true` only when account-status support is known, retries without it for compatible-server rejections, ignores notification fallback payloads when the normal mention status is present, preserves long remote media descriptions, avoids repeated failed `/api/v2/instance` requests within one PHP request, keeps safe defaults when instance information is temporarily unavailable, version-gates unattached media cleanup deletes, and renders the compact Mastodon profile widget solely from a local public profile cache with a locally stored avatar.
+The harness now also checks that imported Mastodon status footer links render with `target="_blank"` and `rel="nofollow noopener noreferrer"` while those BBCode attributes are stripped from outbound Mastodon text. It also checks that advanced comment-shard maintenance controls are not embedded in the main settings template, are available from a dedicated maintenance template, that notification-based reply hints import old-thread replies before the slower rotation fallback, and that the optional explicit one-way mode blocks Mastodon-to-FlatPress imports while preserving FlatPress-to-Mastodon exports, keeps hidden import settings intact in the admin save path, hides import-only admin UI output, hides import-only companion-plugin diagnostics while keeping export helpers, re-exports local objects after remote deletion, and keeps locally deleted imported external Mastodon replies tombstoned even when the remote author edits the reply before the next content sync. It also verifies that Mastodon instance capability detection prefers machine-readable `api_versions[mastodon]`, handles nightly version strings, preserves compact `configuration.accounts` snapshots, loads the widget stylesheet through `plugin_mastodon_head()` as a versioned `res/mastodon.css` asset, refreshes the profile-widget cache during automatic and manual one-way sync paths, sends `exclude_direct=true` only when account-status support is known, retries without it for compatible-server rejections, ignores notification fallback payloads when the normal mention status is present, preserves long remote media descriptions, avoids repeated failed `/api/v2/instance` requests within one PHP request, keeps safe defaults when instance information is temporarily unavailable, version-gates unattached media cleanup deletes, and renders the compact Mastodon profile widget solely from a local public profile cache with a locally stored avatar.
 
 | Area                                     | What is real                                                                                                                 | What is simulated                                                               |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
@@ -43,6 +43,8 @@ The harness now also checks that advanced comment-shard maintenance controls are
 | Admin assignment                         | Real admin assignment function and Smarty variable preparation.                                                              | Test harness Smarty object.                                                     |
 | Entry scanner pruning                    | Real direct `YY/MM/entry*.txt` collector, scheduled-window month pruning and dirty-parent augmentation.                      | Synthetic trees with entry-like files below `comments/` plus targeted fixtures. |
 | Profile widget                           | Real cache reader, widget callback, local avatar path validation and language files.                                         | Mocked `verify_credentials` account payload and avatar download.                |
+
+The harness additionally verifies that external Mastodon profile URLs receive `target="_blank"` while relative and configured blog-base comment author URLs stay in the current tab. For FlatPress installations directly in the domain root, the same test also covers recognized PrettyURLs/PATH_INFO/GET routes, FlatPress-owned asset paths, existing static pages and unknown same-host root paths.
 
 ## Sandbox-content isolation policy
 
@@ -84,258 +86,262 @@ The media-family policy is protected by dedicated tests. These tests call the re
 
 ## Full static test catalog
 
-| Line  | Static test name                                                                                                                                                 |
-| ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 3141  | Simulation summary mode shortens verbose JSON details                                                                                                            |
-| 3153  | Simulation final summary reports exit code and status counters                                                                                                   |
-| 3174  | Simulation sandbox excludes live fp-content/content by default                                                                                                   |
-| 3185  | Simulation sandbox can include live fp-content/content only when explicitly requested                                                                            |
-| 3209  | Entry file scanner skips comment directories while keeping real FlatPress entries                                                                                |
-| 3268  | Scheduled direct YY/MM scanner keeps active-window entries and dirty-comment parents                                                                             |
-| 3317  | Scheduled direct scanner honors the 7-day admin window at parse stage                                                                                            |
-| 3352  | Scheduled direct scanner honors the 14-day admin window across a month boundary                                                                                  |
-| 3387  | Scheduled direct scanner honors the 30-day admin window across a year boundary                                                                                   |
-| 3421  | Scheduled direct scanner treats more than three dirty entries as mandatory candidates                                                                            |
-| 3461  | Scheduled direct scanner treats more than three dirty-comment parents as mandatory candidates                                                                    |
-| 3488  | Manual force sync keeps the direct all-YY/MM scanner repair path                                                                                                 |
-| 3512  | Mastodon companion-plugin detection uses FlatPress central enabled-plugin state                                                                                  |
-| 3521  | Mastodon companion-plugin detection respects FlatPress plugin_exists() for missing configured plugins                                                            |
-| 3534  | Mastodon admin companion-plugin diagnostics cover BBCode, PhotoSwipe, AudioVideo, Tag and Emoticons                                                              |
-| 3564  | One-way companion-plugin diagnostics hide import-only helpers and describe export helpers                                                                        |
-| 3583  | FlatPress locale is normalized to a Mastodon language code                                                                                                       |
-| 3601  | Mastodon HTML -> FlatPress BBCode                                                                                                                                |
-| 3622  | Mastodon mention noise is cleaned for FlatPress                                                                                                                  |
-| 3627  | Imported Mastodon entry keeps the Mastodon link on a new line                                                                                                    |
-| 3635  | Mastodon emojis become FlatPress emoticons                                                                                                                       |
-| 3643  | FlatPress BBCode -> Mastodon text                                                                                                                                |
-| 3651  | FlatPress URLs lose HTML-like attributes and omit localhost links                                                                                                |
-| 3663  | FlatPress entry tags become a Mastodon hashtag footer                                                                                                            |
-| 3688  | Mastodon tags become FlatPress tag BBCode without a visible hashtag footer                                                                                       |
-| 3711  | Removing Mastodon tags removes FlatPress tag BBCode on update                                                                                                    |
-| 3724  | FlatPress entry without tag BBCode has no Mastodon hashtag footer                                                                                                |
-| 3737  | Mastodon head metadata uses the configured instance URL and username                                                                                             |
-| 3750  | Mastodon head metadata tolerates usernames stored with a leading at-sign                                                                                         |
-| 3763  | Mastodon head metadata stays silent when no username is configured                                                                                               |
-| 3777  | Actual FlatPress comment exports as readable Mastodon reply                                                                                                      |
-| 3787  | FlatPress comment export appends the public comment link on a new line                                                                                           |
-| 3798  | FlatPress entry export converts Emoticons plugin shortcodes in titles and bodies to Unicode emoji for Mastodon                                                   |
-| 3817  | FlatPress comment export converts Emoticons plugin shortcodes in author lines and bodies to Unicode emoji for Mastodon                                           |
-| 3835  | Long local entry export is limited even without a public permalink                                                                                               |
-| 3844  | FlatPress single-image entry exposes one uploadable media item                                                                                                   |
-| 3854  | FlatPress gallery entry exposes uploadable media items and keeps raw gallery BBCode out of Mastodon text                                                         |
-| 3907  | FlatPress AudioVideo entry exposes described audio/video media items and strips raw player BBCode from Mastodon text                                             |
-| 3927  | AudioVideo BBCode parser renders optional description endtags as media attributes and keeps legacy single tags working                                           |
-| 3963  | Mastodon media upload sends AudioVideo files with descriptions and video thumbnail                                                                               |
-| 3988  | Mastodon media planner exports only images when an entry mixes image, audio and video media                                                                      |
-| 3999  | Mastodon media planner exports exactly one audio attachment when an entry mixes audio and video media                                                            |
-| 4013  | Mastodon media planner exports one video and keeps its poster as an upload thumbnail only                                                                        |
-| 4026  | Mastodon media planner keeps multiple images up to the Mastodon media limit                                                                                      |
-| 4055  | Mastodon export uploads only the selected audio item from an audio/video FlatPress entry                                                                         |
-| 4085  | Mastodon export sends a video poster as upload thumbnail instead of a second media ID                                                                            |
-| 4117  | Mastodon single image imports into a FlatPress image tag and stored file                                                                                         |
-| 4141  | Mastodon import preserves long remote media descriptions without corrupting FlatPress image markup                                                               |
-| 4185  | Mastodon multiple images import into a FlatPress gallery with captions                                                                                           |
-| 4234  | Mastodon audio and video attachments import into FlatPress AudioVideo BBCode and stored files                                                                    |
-| 4273  | Mastodon audio/video import retries alternate direct media URLs when the first download candidate fails                                                          |
-| 4287  | First sync is immediately due                                                                                                                                    |
-| 4290  | Next day after 23:00 is due                                                                                                                                      |
-| 4291  | Before configured time is not due                                                                                                                                |
-| 4312  | Scheduled synchronization due checks use stored UTC time regardless of PHP default timezone                                                                      |
-| 4334  | Pending deletion synchronization due checks use UTC cooldowns regardless of PHP default timezone                                                                 |
-| 4365  | Admin state timestamps are formatted with FlatPress timeoffset regardless of PHP default timezone                                                                |
-| 4380  | Scheduled content synchronization uses a short file/APCu cooldown guard                                                                                          |
-| 4397  | Full Mastodon state fallback is not stored in APCu                                                                                                               |
-| 4429  | Central Mastodon rate-limit guard stops requests after the per-run request budget                                                                                |
-| 4463  | Central Mastodon rate-limit guard stops media uploads after the per-run media budget                                                                             |
-| 4487  | Central Mastodon rate-limit guard stops status deletions after the per-run delete budget                                                                         |
-| 4513  | Cached Mastodon versions before 4.4 delete statuses without the delete_media query parameter                                                                     |
-| 4537  | Status deletion retries without delete_media when an older Mastodon server rejects the query parameter                                                           |
-| 4567  | Persistent Mastodon media-upload window budget is shared across forced runs                                                                                      |
-| 4597  | Persistent media-upload window budget is written to the synchronization last error                                                                               |
-| 4624  | Persistent Mastodon delete window budget is shared across forced runs                                                                                            |
-| 4648  | Persistent delete window budget is written to the synchronization last error                                                                                     |
-| 4675  | Persistent Mastodon account-status paging window budget is shared across forced runs                                                                             |
-| 4698  | Persistent account-status paging window budget is written to the synchronization last error                                                                      |
-| 4713  | Admin synchronization time converts stored UTC to FlatPress local time and back                                                                                  |
-| 4735  | Admin synchronization time conversion supports fractional FlatPress offsets                                                                                      |
-| 4751  | Sync start date normalization accepts valid ISO dates                                                                                                            |
-| 4757  | Local and remote date helpers derive stable date keys                                                                                                            |
-| 4766  | Remote-to-local update toggle normalizes safely                                                                                                                  |
-| 4777  | Comment-as-entry import toggle normalizes safely                                                                                                                 |
-| 4792  | State entry mapping created                                                                                                                                      |
-| 4793  | State comment mapping created                                                                                                                                    |
-| 4844  | Mastodon runtime files in fp-content/plugin_mastodon use FlatPress FILE_PERMISSIONS                                                                              |
-| 5036  | OAuth code exchange                                                                                                                                              |
-| 5044  | State cache stays fresh after writing state.json                                                                                                                 |
-| 5065  | Pretty-printed legacy state.json remains readable after compact-state optimization                                                                               |
-| 5113  | State write persists compact split state.json while preserving round-trip mappings                                                                               |
-| 5178  | Split comment shards support bounded per-entry state reads                                                                                                       |
-| 5202  | Partial split-state writes preserve unloaded comment shards                                                                                                      |
-| 5246  | Legacy inline comment state migrates to per-entry comment shards on write                                                                                        |
-| 5321  | Legacy inline migration preserves non-contiguous comments and creates a migration backup                                                                         |
-| 5380  | Comment-shard diagnostics detect stale metadata and repair the reverse index from shards                                                                         |
-| 5401  | CLI comment-shard diagnostics entry point returns a machine-checkable status                                                                                     |
-| 5436  | Shard-write failures leave the main state unchanged and return failure                                                                                           |
-| 5475  | Main-state write failures after shard writes remain repairable from shard files                                                                                  |
-| 5512  | Legacy combined stats are migrated into separate content and deletion counters                                                                                   |
-| 5536  | Instance configuration cache avoids repeated /api/v2/instance requests                                                                                           |
-| 5563  | Nightly Mastodon versions use cached api_versions for status edit and delete capabilities                                                                        |
-| 5586  | Machine-readable api_versions are preferred over complex human-readable Mastodon version strings                                                                 |
-| 5615  | api_versions below delete_media support suppress the delete_media query even with a nightly version string                                                       |
-| 5641  | api_versions below unattached media delete support skip uploaded media cleanup DELETE requests                                                                   |
-| 5664  | Cached Mastodon versions before 4.4 skip unattached media DELETE cleanup requests                                                                                |
-| 5698  | Unknown unattached media delete capability stays best-effort without an instance lookup                                                                          |
-| 5737  | Mastodon API version 4 deletes unattached uploaded media during cleanup                                                                                          |
-| 5768  | Mastodon 4.6 configuration.accounts limits survive compact instance snapshots                                                                                    |
-| 5800  | Mastodon 4.6.0-nightly account-status import sends exclude_direct for privacy                                                                                    |
-| 5832  | Mastodon API version 10 account-status import sends exclude_direct even on forked version strings                                                                |
-| 5868  | Account-status import retries without exclude_direct when a compatible server rejects the parameter                                                              |
-| 5903  | Cached Mastodon versions before 4.6 keep account-status import compatible without exclude_direct                                                                 |
-| 5932  | Failed instance-information lookups are negatively cached per request and fall back to defaults                                                                  |
-| 5969  | Mastodon URL budgeting respects characters_reserved_per_url when limiting plain-text exports                                                                     |
-| 6006  | Entry export uses clean Mastodon text and suppresses localhost permalinks                                                                                        |
-| 6014  | Comment export is reply-like, localized and emoji-aware                                                                                                          |
-| 6039  | Remote entry imported through sync with Mastodon media visible in FlatPress                                                                                      |
-| 6045  | Deletion sync is queued for a follow-up request instead of running inside the content sync request                                                               |
-| 6051  | Content sync updates the synchronization timestamp and counters while leaving the deletion timestamp for the follow-up request                                   |
-| 6070  | Private mention status is skipped during Mastodon import                                                                                                         |
-| 6076  | Remote imported entry keeps a stable FlatPress date                                                                                                              |
-| 6082  | Remote comment imported through sync                                                                                                                             |
-| 6088  | Nested remote comment keeps parent mapping metadata                                                                                                              |
-| 6094  | Private mention reply is skipped during Mastodon import                                                                                                          |
-| 6132  | Entry export creates a top-level Mastodon status                                                                                                                 |
-| 6138  | Comment to entry exports with in_reply_to_id on the entry status                                                                                                 |
-| 6144  | Comment to comment exports with in_reply_to_id on the parent reply                                                                                               |
-| 6150  | Entry and comment exports include the configured Mastodon language code                                                                                          |
-| 6169  | Deletion sync waits at least five minutes after a completed content sync                                                                                         |
-| 6221  | Create and update status requests include the configured Mastodon language code                                                                                  |
-| 6264  | Initial Mastodon media uploads include the attachment description in POST /api/v2/media                                                                          |
-| 6296  | Unchanged entry media is reused without a new upload when only the post text changes                                                                             |
-| 6369  | Mastodon 4.1+ updates changed image descriptions through status media_attributes without re-uploading media                                                      |
-| 6406  | Older Mastodon versions fall back to a fresh upload when only the media description changes                                                                      |
-| 6493  | Full local-to-remote sync reuses stored media IDs when the attachments did not change                                                                            |
-| 6593  | Full sync updates changed media descriptions through status media_attributes on Mastodon 4.1+                                                                    |
-| 6716  | Batch entry export keeps older FlatPress entries below newer ones on Mastodon                                                                                    |
-| 6818  | New local comment on an already synchronized older entry is exported to Mastodon                                                                                 |
-| 6913  | Known synchronized entry mappings older than the sync start date do not trigger context refreshes                                                                |
-| 6987  | Scheduled content synchronization respects the automatic recent-content window                                                                                   |
-| 7013  | Productive content-sync workset loads only active scheduled comment shards                                                                                       |
-| 7072  | Normal manual synchronization bypasses the daily due check but still respects the automatic window                                                               |
-| 7134  | Explicit full manual synchronization bypasses the automatic window while keeping normal limits                                                                   |
-| 7213  | Older changed mapped FlatPress entries are synchronized through the dirty queue                                                                                  |
-| 7265  | Post-success comment hook queues older changed mapped comments                                                                                                   |
-| 7295  | Scheduled sync updates older dirty comments through direct YY/MM dirty-parent candidates                                                                         |
-| 7342  | Remote-write guard suppresses dirty tracking for Mastodon-owned entry_save calls                                                                                 |
-| 7431  | Large scheduled dirty-tracking sync parses only active-window and dirty entries                                                                                  |
-| 7514  | Optional old-thread reply checks rotate through known synchronized threads                                                                                       |
-| 7555  | Disabled old-thread reply checks do not refresh known synchronized entry contexts                                                                                |
-| 7621  | Automatic scheduled synchronization rotates known synchronized threads through the full sync path                                                                |
-| 7707  | Notification hints import a new reply on an old mapped Mastodon entry without context rotation                                                                   |
-| 7723  | Notification fallback payloads are ignored when a normal mention status is available                                                                             |
-| 7792  | Notification hints import a new reply on an old mapped Mastodon reply with reply metadata                                                                        |
-| 7897  | Notification context hints use the old-thread budget before normal rotation                                                                                      |
-| 7948  | Reply-notification polling is skipped until read:notifications is authorized                                                                                     |
-| 8071  | Remote updates do not overwrite existing local content when the toggle is disabled                                                                               |
-| 8091  | Remote updates overwrite existing local content when the toggle is enabled                                                                                       |
-| 8116  | FlatPress single-image entry exports Mastodon media_ids and strips raw image BBCode                                                                              |
-| 8127  | FlatPress gallery entry exports Mastodon media_ids up to the instance limit and strips raw gallery BBCode                                                        |
-| 8263  | Sync start date filters local exports by entry and comment date                                                                                                  |
-| 8349  | Sync start date filters remote imports by status and reply date                                                                                                  |
-| 8441  | Remote Mastodon imports honor the FlatPress timeoffset for stored entry/comment dates and ordering keys                                                          |
-| 8512  | Remote sync start filtering respects the FlatPress timeoffset near midnight                                                                                      |
-| 8577  | Sync reports local export failures instead of silently succeeding                                                                                                |
-| 8595  | Shared-request synchronization refreshes the PHP execution budget for long Mastodon work                                                                         |
-| 8678  | Synchronized local comments are not imported as duplicate entries from Mastodon by default                                                                       |
-| 8770  | Synchronized local comments may be imported as entries when the toggle is enabled                                                                                |
-| 8902  | Local FlatPress comments on imported Mastodon entries sync back to Mastodon, including nested replies                                                            |
-| 8978  | Asynchronous Mastodon media uploads are polled until the attachment is ready                                                                                     |
-| 9002  | Long-running Mastodon media uploads refresh the PHP execution budget for upload and polling                                                                      |
-| 9074  | Slow asynchronous Mastodon video uploads keep polling beyond the old short retry window                                                                          |
-| 9140  | Mastodon audio uploads keep polling even when pending responses have no preview_url                                                                              |
-| 9205  | Follow-up deletion sync removes remote Mastodon content after local FlatPress deletion                                                                           |
-| 9230  | Follow-up deletion sync updates last_deletion_run without overwriting the last synchronization timestamp or content counters                                     |
-| 9286  | Deletion sync falls back to DELETE without delete_media for older Mastodon servers                                                                               |
-| 9349  | Follow-up deletion sync removes mirrored FlatPress content after remote Mastodon deletion                                                                        |
-| 9404  | Deletion sync skips old locally deleted mappings outside the sync start date window                                                                              |
-| 9454  | Deletion sync skips old remotely mirrored mappings outside the sync start date window                                                                            |
-| 9511  | Scheduled deletion sync skips remote lookups outside the automatic scheduled window                                                                              |
-| 9584  | Scheduled deletion sync still propagates old local deletions outside the automatic window                                                                        |
-| 9645  | Large scheduled deletion syncs resume from the saved entry cursor                                                                                                |
-| 9729  | Large scheduled deletion syncs resume from the saved comment cursor inside one entry shard                                                                       |
-| 9774  | Disabling deletion synchronization clears pending delete work without issuing deletion requests                                                                  |
-| 9794  | Content sync before deletion sync protects a locally deleted exported FlatPress comment from stale re-import                                                     |
-| 9813  | Deletion sync after the protected content sync reattaches the imported descendant reply to the synchronized entry status and keeps a later verification pending  |
-| 9842  | Deletion sync keeps imported descendants for a later follow-up verification when Mastodon still returns the child reply once                                     |
-| 9859  | Tombstones prevent re-importing the deleted exported parent comment while descendant rechecks are still pending                                                  |
-| 9872  | A later follow-up deletion sync removes the imported descendant once Mastodon reports the child reply missing                                                    |
-| 9903  | Content sync before deletion sync also protects a locally deleted exported FlatPress comment when the imported descendant reply already has its own child        |
-| 9923  | Deletion sync after the protected content sync keeps the descendant child below the reattached reply and verifies both remote replies in the same pass           |
-| 9963  | Deletion sync removes imported descendants immediately when Mastodon already reports the child reply missing in the first follow-up pass                         |
-| 9994  | Hybrid descendant rechecks keep only the direct child queued after the first stale follow-up pass of a deeper reply chain                                        |
-| 10013 | Hybrid descendant rechecks remove the direct child and its direct child within the same targeted follow-up request                                               |
-| 10038 | Locally deleted imported external Mastodon reply is tombstoned immediately and not re-imported unchanged                                                         |
-| 10063 | Locally deleted imported external Mastodon reply is not re-imported after the remote author edits it                                                             |
-| 10086 | Deletion sync treats locally deleted imported remote replies as local ignore decisions without remote DELETE                                                     |
-| 10168 | Remote Mastodon comment updates increment the local-comment update counter instead of the entry counter                                                          |
-| 10200 | Admin assignment exposes split sync counters, local admin timestamps, and the deletion-sync option                                                               |
-| 10290 | Admin maintenance actions are separated into a dedicated template reached from the main plugin page                                                              |
-| 10381 | Media upload cleanup deletes already uploaded attachments when a later media upload fails                                                                        |
-| 10448 | Media upload cleanup deletes uploaded attachments when final status creation fails                                                                               |
-| 10506 | OAuth scope discovery prefers the profile scope on current Mastodon instances                                                                                    |
-| 10552 | OAuth scope discovery falls back to read:accounts plus notifications on older Mastodon instances                                                                 |
-| 10604 | Existing registered apps keep the legacy read:accounts scope until they are re-registered                                                                        |
-| 10695 | Instance information refresh persists a compact snapshot including the exact Mastodon version                                                                    |
-| 10741 | Admin assignment exposes cached instance-information rows without triggering another live instance request                                                       |
-| 10758 | Changing the configured instance URL invalidates the saved instance-information snapshot                                                                         |
-| 10796 | Sync-related instance limit helpers reuse the stored instance snapshot without another /api/v2/instance request                                                  |
-| 10818 | Manual sync exports FlatPress comments on remote-sourced entries to Mastodon replies                                                                             |
-| 10836 | Replies to FlatPress comments on remote-sourced entries are exported as replies to the parent Mastodon reply                                                     |
-| 10866 | Unsynchronized local parent comment is exported before local child reply                                                                                         |
-| 10886 | Non-forced sync exports FlatPress comments on remote-sourced entries to Mastodon replies                                                                         |
-| 10909 | Manual sync exports Emoticons plugin shortcodes from FlatPress entries to Unicode emoji in Mastodon status requests                                              |
-| 10925 | Manual sync exports Emoticons plugin shortcodes from FlatPress comments to Unicode emoji in Mastodon reply requests                                              |
-| 10946 | Manual sync imports another Mastodon member reply to an exported FlatPress comment only as a FlatPress comment when comment-as-entry import is disabled          |
-| 10972 | Non-forced sync imports another Mastodon member reply to an exported FlatPress comment only as a FlatPress comment when comment-as-entry import is disabled      |
-| 10995 | Another Mastodon member reply to an exported FlatPress comment is still imported as a FlatPress comment when comment-as-entry import is enabled                  |
-| 11012 | Disabling the quote option imports a Mastodon reply to an exported FlatPress comment without a leading quote block                                               |
-| 11026 | Imported Mastodon replies to another Mastodon reply quote the replied-to Mastodon user and text by default                                                       |
-| 11045 | Disabling the quote option imports Mastodon reply-to-reply comments without a leading quote block                                                                |
-| 11059 | Manual sync imports a Mastodon self-reply to an exported FlatPress comment only as a FlatPress comment                                                           |
-| 11083 | Non-forced sync imports a Mastodon self-reply to an exported FlatPress comment only as a FlatPress comment                                                       |
-| 11136 | Scheduler state is written as a compact summary without full mapping arrays                                                                                      |
-| 11155 | Fresh scheduler-state read uses the APCu-capable FlatPress I/O path and does not load full state.json                                                            |
-| 11184 | Stale scheduler-state falls back to the full state and rebuilds the summary                                                                                      |
-| 11205 | Manual admin synchronization still loads the full state before reporting configuration errors                                                                    |
-| 11224 | sync.log uses append-only writes with size-based rotation                                                                                                        |
-| 11250 | Large skip volumes are logged as aggregate summaries                                                                                                             |
-| 11263 | Small 300x10 state keeps scheduler-state compact and disables full APCu fallback                                                                                 |
-| 11285 | Fresh small scheduler-state read avoids full state.json and uses APCu-capable file I/O                                                                           |
-| 11308 | Large 3000x10 state keeps scheduler-state compact and disables full APCu fallback                                                                                |
-| 11331 | Fresh large scheduler-state read avoids full state.json and uses APCu-capable file I/O                                                                           |
-| 11445 | Automatic scheduled sync exports a new current comment on an old mapped entry through dirty_comments                                                             |
-| 11501 | One-way mode option is disabled by default, normalized, assigned to admin UI, templated and translated                                                           |
-| 11541 | One-way admin save preserves hidden import options while keeping one-way mode enabled                                                                            |
-| 11558 | One-way admin save preserves hidden import options when one-way mode is disabled in the same submit                                                              |
-| 11578 | Bidirectional admin save still stores visible unchecked import options as disabled                                                                               |
-| 11610 | One-way admin template hides import controls, notification hints and import-only counters                                                                        |
-| 11636 | One-way admin template keeps export, OAuth, instance, token, state and deletion outputs visible                                                                  |
-| 11652 | One-way admin assignment hides import-only companion plugins and uses one-way companion intro                                                                    |
-| 11758 | One-way mode blocks Mastodon-to-FlatPress imports while FlatPress-to-Mastodon export still runs                                                                  |
-| 11845 | Automatic one-way content sync refreshes the Mastodon widget profile cache without remote import reads                                                           |
-| 11919 | One-way deletion sync keeps local content, removes stale remote mappings and queues re-export                                                                    |
-| 11994 | One-way content sync re-exports local objects whose remote mappings were unlinked after remote deletion                                                          |
-| 12063 | One-way pending descendant rechecks keep local comments and queue them for re-export instead of deleting them                                                    |
-| 12084 | Mastodon widget remains hidden and performs no HTTP requests while its local profile cache is missing                                                            |
-| 12127 | Mastodon widget profile cache is refreshed from verify_credentials and stores only public profile data plus a local avatar                                       |
-| 12152 | Mastodon widget renders compact local-cache markup without remote API calls or inline CSS                                                                        |
-| 12176 | Mastodon widget stylesheet is loaded by plugin_mastodon_head as a versioned CSS asset                                                                            |
-| 12191 | Mastodon widget profile refresh reuses the cached avatar when the Mastodon avatar URL is unchanged                                                               |
-| 12218 | Mastodon widget uses a localized fallback avatar alt text for Mastodon 4.0-4.5 account payloads without avatar_description                                       |
-| 12237 | Mastodon widget hides incomplete local profile caches instead of falling back to remote avatar URLs                                                              |
-| 12262 | Mastodon widget is registered and translated in all FlatPress plugin language files                                                                              |
+| Line  | Static test name                                                                                                                                                |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3141  | Simulation summary mode shortens verbose JSON details                                                                                                           |
+| 3153  | Simulation final summary reports exit code and status counters                                                                                                  |
+| 3174  | Simulation sandbox excludes live fp-content/content by default                                                                                                  |
+| 3185  | Simulation sandbox can include live fp-content/content only when explicitly requested                                                                           |
+| 3209  | Entry file scanner skips comment directories while keeping real FlatPress entries                                                                               |
+| 3268  | Scheduled direct YY/MM scanner keeps active-window entries and dirty-comment parents                                                                            |
+| 3317  | Scheduled direct scanner honors the 7-day admin window at parse stage                                                                                           |
+| 3352  | Scheduled direct scanner honors the 14-day admin window across a month boundary                                                                                 |
+| 3387  | Scheduled direct scanner honors the 30-day admin window across a year boundary                                                                                  |
+| 3421  | Scheduled direct scanner treats more than three dirty entries as mandatory candidates                                                                           |
+| 3461  | Scheduled direct scanner treats more than three dirty-comment parents as mandatory candidates                                                                   |
+| 3488  | Manual force sync keeps the direct all-YY/MM scanner repair path                                                                                                |
+| 3512  | Mastodon companion-plugin detection uses FlatPress central enabled-plugin state                                                                                 |
+| 3521  | Mastodon companion-plugin detection respects FlatPress plugin_exists() for missing configured plugins                                                           |
+| 3534  | Mastodon admin companion-plugin diagnostics cover BBCode, PhotoSwipe, AudioVideo, Tag and Emoticons                                                             |
+| 3564  | One-way companion-plugin diagnostics hide import-only helpers and describe export helpers                                                                       |
+| 3583  | FlatPress locale is normalized to a Mastodon language code                                                                                                      |
+| 3601  | Mastodon HTML -> FlatPress BBCode                                                                                                                               |
+| 3622  | Mastodon mention noise is cleaned for FlatPress                                                                                                                 |
+| 3627  | Imported Mastodon entry keeps the Mastodon status link on a new line with target blank                                                                          |
+| 3634  | Imported Mastodon status footer BBCode opens the single toot in a new tab                                                                                       |
+| 3640  | Imported Mastodon status footer attributes are stripped for outbound Mastodon text                                                                              |
+| 3648  | Imported Mastodon status footer renders target blank HTML for the single toot                                                                                   |
+| 3658  | Mastodon emojis become FlatPress emoticons                                                                                                                      |
+| 3666  | FlatPress BBCode -> Mastodon text                                                                                                                               |
+| 3674  | FlatPress URLs lose HTML-like attributes and omit localhost links                                                                                               |
+| 3752  | Comment author target blank is limited to external URLs                                                                                                         |
+| 3767  | FlatPress entry tags become a Mastodon hashtag footer                                                                                                           |
+| 3792  | Mastodon tags become FlatPress tag BBCode without a visible hashtag footer                                                                                      |
+| 3815  | Removing Mastodon tags removes FlatPress tag BBCode on update                                                                                                   |
+| 3828  | FlatPress entry without tag BBCode has no Mastodon hashtag footer                                                                                               |
+| 3841  | Mastodon head metadata uses the configured instance URL and username                                                                                            |
+| 3854  | Mastodon head metadata tolerates usernames stored with a leading at-sign                                                                                        |
+| 3867  | Mastodon head metadata stays silent when no username is configured                                                                                              |
+| 3881  | Actual FlatPress comment exports as readable Mastodon reply                                                                                                     |
+| 3891  | FlatPress comment export appends the public comment link on a new line                                                                                          |
+| 3902  | FlatPress entry export converts Emoticons plugin shortcodes in titles and bodies to Unicode emoji for Mastodon                                                  |
+| 3921  | FlatPress comment export converts Emoticons plugin shortcodes in author lines and bodies to Unicode emoji for Mastodon                                          |
+| 3939  | Long local entry export is limited even without a public permalink                                                                                              |
+| 3948  | FlatPress single-image entry exposes one uploadable media item                                                                                                  |
+| 3958  | FlatPress gallery entry exposes uploadable media items and keeps raw gallery BBCode out of Mastodon text                                                        |
+| 4011  | FlatPress AudioVideo entry exposes described audio/video media items and strips raw player BBCode from Mastodon text                                            |
+| 4031  | AudioVideo BBCode parser renders optional description endtags as media attributes and keeps legacy single tags working                                          |
+| 4067  | Mastodon media upload sends AudioVideo files with descriptions and video thumbnail                                                                              |
+| 4092  | Mastodon media planner exports only images when an entry mixes image, audio and video media                                                                     |
+| 4103  | Mastodon media planner exports exactly one audio attachment when an entry mixes audio and video media                                                           |
+| 4117  | Mastodon media planner exports one video and keeps its poster as an upload thumbnail only                                                                       |
+| 4130  | Mastodon media planner keeps multiple images up to the Mastodon media limit                                                                                     |
+| 4159  | Mastodon export uploads only the selected audio item from an audio/video FlatPress entry                                                                        |
+| 4189  | Mastodon export sends a video poster as upload thumbnail instead of a second media ID                                                                           |
+| 4221  | Mastodon single image imports into a FlatPress image tag and stored file                                                                                        |
+| 4245  | Mastodon import preserves long remote media descriptions without corrupting FlatPress image markup                                                              |
+| 4289  | Mastodon multiple images import into a FlatPress gallery with captions                                                                                          |
+| 4338  | Mastodon audio and video attachments import into FlatPress AudioVideo BBCode and stored files                                                                   |
+| 4377  | Mastodon audio/video import retries alternate direct media URLs when the first download candidate fails                                                         |
+| 4391  | First sync is immediately due                                                                                                                                   |
+| 4394  | Next day after 23:00 is due                                                                                                                                     |
+| 4395  | Before configured time is not due                                                                                                                               |
+| 4416  | Scheduled synchronization due checks use stored UTC time regardless of PHP default timezone                                                                     |
+| 4438  | Pending deletion synchronization due checks use UTC cooldowns regardless of PHP default timezone                                                                |
+| 4469  | Admin state timestamps are formatted with FlatPress timeoffset regardless of PHP default timezone                                                               |
+| 4484  | Scheduled content synchronization uses a short file/APCu cooldown guard                                                                                         |
+| 4501  | Full Mastodon state fallback is not stored in APCu                                                                                                              |
+| 4533  | Central Mastodon rate-limit guard stops requests after the per-run request budget                                                                               |
+| 4567  | Central Mastodon rate-limit guard stops media uploads after the per-run media budget                                                                            |
+| 4591  | Central Mastodon rate-limit guard stops status deletions after the per-run delete budget                                                                        |
+| 4617  | Cached Mastodon versions before 4.4 delete statuses without the delete_media query parameter                                                                    |
+| 4641  | Status deletion retries without delete_media when an older Mastodon server rejects the query parameter                                                          |
+| 4671  | Persistent Mastodon media-upload window budget is shared across forced runs                                                                                     |
+| 4701  | Persistent media-upload window budget is written to the synchronization last error                                                                              |
+| 4728  | Persistent Mastodon delete window budget is shared across forced runs                                                                                           |
+| 4752  | Persistent delete window budget is written to the synchronization last error                                                                                    |
+| 4779  | Persistent Mastodon account-status paging window budget is shared across forced runs                                                                            |
+| 4802  | Persistent account-status paging window budget is written to the synchronization last error                                                                     |
+| 4817  | Admin synchronization time converts stored UTC to FlatPress local time and back                                                                                 |
+| 4839  | Admin synchronization time conversion supports fractional FlatPress offsets                                                                                     |
+| 4855  | Sync start date normalization accepts valid ISO dates                                                                                                           |
+| 4861  | Local and remote date helpers derive stable date keys                                                                                                           |
+| 4870  | Remote-to-local update toggle normalizes safely                                                                                                                 |
+| 4881  | Comment-as-entry import toggle normalizes safely                                                                                                                |
+| 4896  | State entry mapping created                                                                                                                                     |
+| 4897  | State comment mapping created                                                                                                                                   |
+| 4948  | Mastodon runtime files in fp-content/plugin_mastodon use FlatPress FILE_PERMISSIONS                                                                             |
+| 5140  | OAuth code exchange                                                                                                                                             |
+| 5148  | State cache stays fresh after writing state.json                                                                                                                |
+| 5169  | Pretty-printed legacy state.json remains readable after compact-state optimization                                                                              |
+| 5217  | State write persists compact split state.json while preserving round-trip mappings                                                                              |
+| 5282  | Split comment shards support bounded per-entry state reads                                                                                                      |
+| 5306  | Partial split-state writes preserve unloaded comment shards                                                                                                     |
+| 5350  | Legacy inline comment state migrates to per-entry comment shards on write                                                                                       |
+| 5425  | Legacy inline migration preserves non-contiguous comments and creates a migration backup                                                                        |
+| 5484  | Comment-shard diagnostics detect stale metadata and repair the reverse index from shards                                                                        |
+| 5505  | CLI comment-shard diagnostics entry point returns a machine-checkable status                                                                                    |
+| 5540  | Shard-write failures leave the main state unchanged and return failure                                                                                          |
+| 5579  | Main-state write failures after shard writes remain repairable from shard files                                                                                 |
+| 5616  | Legacy combined stats are migrated into separate content and deletion counters                                                                                  |
+| 5640  | Instance configuration cache avoids repeated /api/v2/instance requests                                                                                          |
+| 5667  | Nightly Mastodon versions use cached api_versions for status edit and delete capabilities                                                                       |
+| 5690  | Machine-readable api_versions are preferred over complex human-readable Mastodon version strings                                                                |
+| 5719  | api_versions below delete_media support suppress the delete_media query even with a nightly version string                                                      |
+| 5745  | api_versions below unattached media delete support skip uploaded media cleanup DELETE requests                                                                  |
+| 5768  | Cached Mastodon versions before 4.4 skip unattached media DELETE cleanup requests                                                                               |
+| 5802  | Unknown unattached media delete capability stays best-effort without an instance lookup                                                                         |
+| 5841  | Mastodon API version 4 deletes unattached uploaded media during cleanup                                                                                         |
+| 5872  | Mastodon 4.6 configuration.accounts limits survive compact instance snapshots                                                                                   |
+| 5904  | Mastodon 4.6.0-nightly account-status import sends exclude_direct for privacy                                                                                   |
+| 5936  | Mastodon API version 10 account-status import sends exclude_direct even on forked version strings                                                               |
+| 5972  | Account-status import retries without exclude_direct when a compatible server rejects the parameter                                                             |
+| 6007  | Cached Mastodon versions before 4.6 keep account-status import compatible without exclude_direct                                                                |
+| 6036  | Failed instance-information lookups are negatively cached per request and fall back to defaults                                                                 |
+| 6073  | Mastodon URL budgeting respects characters_reserved_per_url when limiting plain-text exports                                                                    |
+| 6110  | Entry export uses clean Mastodon text and suppresses localhost permalinks                                                                                       |
+| 6118  | Comment export is reply-like, localized and emoji-aware                                                                                                         |
+| 6143  | Remote entry imported through sync with Mastodon media visible in FlatPress                                                                                     |
+| 6149  | Deletion sync is queued for a follow-up request instead of running inside the content sync request                                                              |
+| 6155  | Content sync updates the synchronization timestamp and counters while leaving the deletion timestamp for the follow-up request                                  |
+| 6174  | Private mention status is skipped during Mastodon import                                                                                                        |
+| 6180  | Remote imported entry keeps a stable FlatPress date                                                                                                             |
+| 6186  | Remote comment imported through sync                                                                                                                            |
+| 6192  | Nested remote comment keeps parent mapping metadata                                                                                                             |
+| 6198  | Private mention reply is skipped during Mastodon import                                                                                                         |
+| 6236  | Entry export creates a top-level Mastodon status                                                                                                                |
+| 6242  | Comment to entry exports with in_reply_to_id on the entry status                                                                                                |
+| 6248  | Comment to comment exports with in_reply_to_id on the parent reply                                                                                              |
+| 6254  | Entry and comment exports include the configured Mastodon language code                                                                                         |
+| 6273  | Deletion sync waits at least five minutes after a completed content sync                                                                                        |
+| 6325  | Create and update status requests include the configured Mastodon language code                                                                                 |
+| 6368  | Initial Mastodon media uploads include the attachment description in POST /api/v2/media                                                                         |
+| 6400  | Unchanged entry media is reused without a new upload when only the post text changes                                                                            |
+| 6473  | Mastodon 4.1+ updates changed image descriptions through status media_attributes without re-uploading media                                                     |
+| 6510  | Older Mastodon versions fall back to a fresh upload when only the media description changes                                                                     |
+| 6597  | Full local-to-remote sync reuses stored media IDs when the attachments did not change                                                                           |
+| 6697  | Full sync updates changed media descriptions through status media_attributes on Mastodon 4.1+                                                                   |
+| 6820  | Batch entry export keeps older FlatPress entries below newer ones on Mastodon                                                                                   |
+| 6922  | New local comment on an already synchronized older entry is exported to Mastodon                                                                                |
+| 7017  | Known synchronized entry mappings older than the sync start date do not trigger context refreshes                                                               |
+| 7091  | Scheduled content synchronization respects the automatic recent-content window                                                                                  |
+| 7117  | Productive content-sync workset loads only active scheduled comment shards                                                                                      |
+| 7176  | Normal manual synchronization bypasses the daily due check but still respects the automatic window                                                              |
+| 7238  | Explicit full manual synchronization bypasses the automatic window while keeping normal limits                                                                  |
+| 7317  | Older changed mapped FlatPress entries are synchronized through the dirty queue                                                                                 |
+| 7369  | Post-success comment hook queues older changed mapped comments                                                                                                  |
+| 7399  | Scheduled sync updates older dirty comments through direct YY/MM dirty-parent candidates                                                                        |
+| 7446  | Remote-write guard suppresses dirty tracking for Mastodon-owned entry_save calls                                                                                |
+| 7535  | Large scheduled dirty-tracking sync parses only active-window and dirty entries                                                                                 |
+| 7618  | Optional old-thread reply checks rotate through known synchronized threads                                                                                      |
+| 7659  | Disabled old-thread reply checks do not refresh known synchronized entry contexts                                                                               |
+| 7725  | Automatic scheduled synchronization rotates known synchronized threads through the full sync path                                                               |
+| 7811  | Notification hints import a new reply on an old mapped Mastodon entry without context rotation                                                                  |
+| 7827  | Notification fallback payloads are ignored when a normal mention status is available                                                                            |
+| 7896  | Notification hints import a new reply on an old mapped Mastodon reply with reply metadata                                                                       |
+| 8001  | Notification context hints use the old-thread budget before normal rotation                                                                                     |
+| 8052  | Reply-notification polling is skipped until read:notifications is authorized                                                                                    |
+| 8175  | Remote updates do not overwrite existing local content when the toggle is disabled                                                                              |
+| 8195  | Remote updates overwrite existing local content when the toggle is enabled                                                                                      |
+| 8220  | FlatPress single-image entry exports Mastodon media_ids and strips raw image BBCode                                                                             |
+| 8231  | FlatPress gallery entry exports Mastodon media_ids up to the instance limit and strips raw gallery BBCode                                                       |
+| 8367  | Sync start date filters local exports by entry and comment date                                                                                                 |
+| 8453  | Sync start date filters remote imports by status and reply date                                                                                                 |
+| 8545  | Remote Mastodon imports honor the FlatPress timeoffset for stored entry/comment dates and ordering keys                                                         |
+| 8616  | Remote sync start filtering respects the FlatPress timeoffset near midnight                                                                                     |
+| 8681  | Sync reports local export failures instead of silently succeeding                                                                                               |
+| 8699  | Shared-request synchronization refreshes the PHP execution budget for long Mastodon work                                                                        |
+| 8782  | Synchronized local comments are not imported as duplicate entries from Mastodon by default                                                                      |
+| 8874  | Synchronized local comments may be imported as entries when the toggle is enabled                                                                               |
+| 9006  | Local FlatPress comments on imported Mastodon entries sync back to Mastodon, including nested replies                                                           |
+| 9082  | Asynchronous Mastodon media uploads are polled until the attachment is ready                                                                                    |
+| 9106  | Long-running Mastodon media uploads refresh the PHP execution budget for upload and polling                                                                     |
+| 9178  | Slow asynchronous Mastodon video uploads keep polling beyond the old short retry window                                                                         |
+| 9244  | Mastodon audio uploads keep polling even when pending responses have no preview_url                                                                             |
+| 9309  | Follow-up deletion sync removes remote Mastodon content after local FlatPress deletion                                                                          |
+| 9334  | Follow-up deletion sync updates last_deletion_run without overwriting the last synchronization timestamp or content counters                                    |
+| 9390  | Deletion sync falls back to DELETE without delete_media for older Mastodon servers                                                                              |
+| 9453  | Follow-up deletion sync removes mirrored FlatPress content after remote Mastodon deletion                                                                       |
+| 9508  | Deletion sync skips old locally deleted mappings outside the sync start date window                                                                             |
+| 9558  | Deletion sync skips old remotely mirrored mappings outside the sync start date window                                                                           |
+| 9615  | Scheduled deletion sync skips remote lookups outside the automatic scheduled window                                                                             |
+| 9688  | Scheduled deletion sync still propagates old local deletions outside the automatic window                                                                       |
+| 9749  | Large scheduled deletion syncs resume from the saved entry cursor                                                                                               |
+| 9833  | Large scheduled deletion syncs resume from the saved comment cursor inside one entry shard                                                                      |
+| 9878  | Disabling deletion synchronization clears pending delete work without issuing deletion requests                                                                 |
+| 9898  | Content sync before deletion sync protects a locally deleted exported FlatPress comment from stale re-import                                                    |
+| 9917  | Deletion sync after the protected content sync reattaches the imported descendant reply to the synchronized entry status and keeps a later verification pending |
+| 9946  | Deletion sync keeps imported descendants for a later follow-up verification when Mastodon still returns the child reply once                                    |
+| 9963  | Tombstones prevent re-importing the deleted exported parent comment while descendant rechecks are still pending                                                 |
+| 9976  | A later follow-up deletion sync removes the imported descendant once Mastodon reports the child reply missing                                                   |
+| 10007 | Content sync before deletion sync also protects a locally deleted exported FlatPress comment when the imported descendant reply already has its own child       |
+| 10027 | Deletion sync after the protected content sync keeps the descendant child below the reattached reply and verifies both remote replies in the same pass          |
+| 10067 | Deletion sync removes imported descendants immediately when Mastodon already reports the child reply missing in the first follow-up pass                        |
+| 10098 | Hybrid descendant rechecks keep only the direct child queued after the first stale follow-up pass of a deeper reply chain                                       |
+| 10117 | Hybrid descendant rechecks remove the direct child and its direct child within the same targeted follow-up request                                              |
+| 10142 | Locally deleted imported external Mastodon reply is tombstoned immediately and not re-imported unchanged                                                        |
+| 10167 | Locally deleted imported external Mastodon reply is not re-imported after the remote author edits it                                                            |
+| 10190 | Deletion sync treats locally deleted imported remote replies as local ignore decisions without remote DELETE                                                    |
+| 10272 | Remote Mastodon comment updates increment the local-comment update counter instead of the entry counter                                                         |
+| 10304 | Admin assignment exposes split sync counters, local admin timestamps, and the deletion-sync option                                                              |
+| 10394 | Admin maintenance actions are separated into a dedicated template reached from the main plugin page                                                             |
+| 10485 | Media upload cleanup deletes already uploaded attachments when a later media upload fails                                                                       |
+| 10552 | Media upload cleanup deletes uploaded attachments when final status creation fails                                                                              |
+| 10610 | OAuth scope discovery prefers the profile scope on current Mastodon instances                                                                                   |
+| 10656 | OAuth scope discovery falls back to read:accounts plus notifications on older Mastodon instances                                                                |
+| 10708 | Existing registered apps keep the legacy read:accounts scope until they are re-registered                                                                       |
+| 10799 | Instance information refresh persists a compact snapshot including the exact Mastodon version                                                                   |
+| 10845 | Admin assignment exposes cached instance-information rows without triggering another live instance request                                                      |
+| 10862 | Changing the configured instance URL invalidates the saved instance-information snapshot                                                                        |
+| 10900 | Sync-related instance limit helpers reuse the stored instance snapshot without another /api/v2/instance request                                                 |
+| 10922 | Manual sync exports FlatPress comments on remote-sourced entries to Mastodon replies                                                                            |
+| 10940 | Replies to FlatPress comments on remote-sourced entries are exported as replies to the parent Mastodon reply                                                    |
+| 10970 | Unsynchronized local parent comment is exported before local child reply                                                                                        |
+| 10990 | Non-forced sync exports FlatPress comments on remote-sourced entries to Mastodon replies                                                                        |
+| 11013 | Manual sync exports Emoticons plugin shortcodes from FlatPress entries to Unicode emoji in Mastodon status requests                                             |
+| 11029 | Manual sync exports Emoticons plugin shortcodes from FlatPress comments to Unicode emoji in Mastodon reply requests                                             |
+| 11050 | Manual sync imports another Mastodon member reply to an exported FlatPress comment only as a FlatPress comment when comment-as-entry import is disabled         |
+| 11076 | Non-forced sync imports another Mastodon member reply to an exported FlatPress comment only as a FlatPress comment when comment-as-entry import is disabled     |
+| 11099 | Another Mastodon member reply to an exported FlatPress comment is still imported as a FlatPress comment when comment-as-entry import is enabled                 |
+| 11116 | Disabling the quote option imports a Mastodon reply to an exported FlatPress comment without a leading quote block                                              |
+| 11130 | Imported Mastodon replies to another Mastodon reply quote the replied-to Mastodon user and text by default                                                      |
+| 11149 | Disabling the quote option imports Mastodon reply-to-reply comments without a leading quote block                                                               |
+| 11163 | Manual sync imports a Mastodon self-reply to an exported FlatPress comment only as a FlatPress comment                                                          |
+| 11187 | Non-forced sync imports a Mastodon self-reply to an exported FlatPress comment only as a FlatPress comment                                                      |
+| 11240 | Scheduler state is written as a compact summary without full mapping arrays                                                                                     |
+| 11259 | Fresh scheduler-state read uses the APCu-capable FlatPress I/O path and does not load full state.json                                                           |
+| 11288 | Stale scheduler-state falls back to the full state and rebuilds the summary                                                                                     |
+| 11309 | Manual admin synchronization still loads the full state before reporting configuration errors                                                                   |
+| 11328 | sync.log uses append-only writes with size-based rotation                                                                                                       |
+| 11354 | Large skip volumes are logged as aggregate summaries                                                                                                            |
+| 11367 | Small 300x10 state keeps scheduler-state compact and disables full APCu fallback                                                                                |
+| 11389 | Fresh small scheduler-state read avoids full state.json and uses APCu-capable file I/O                                                                          |
+| 11412 | Large 3000x10 state keeps scheduler-state compact and disables full APCu fallback                                                                               |
+| 11435 | Fresh large scheduler-state read avoids full state.json and uses APCu-capable file I/O                                                                          |
+| 11549 | Automatic scheduled sync exports a new current comment on an old mapped entry through dirty_comments                                                            |
+| 11605 | One-way mode option is disabled by default, normalized, assigned to admin UI, templated and translated                                                          |
+| 11645 | One-way admin save preserves hidden import options while keeping one-way mode enabled                                                                           |
+| 11662 | One-way admin save preserves hidden import options when one-way mode is disabled in the same submit                                                             |
+| 11682 | Bidirectional admin save still stores visible unchecked import options as disabled                                                                              |
+| 11714 | One-way admin template hides import controls, notification hints and import-only counters                                                                       |
+| 11740 | One-way admin template keeps export, OAuth, instance, token, state and deletion outputs visible                                                                 |
+| 11756 | One-way admin assignment hides import-only companion plugins and uses one-way companion intro                                                                   |
+| 11862 | One-way mode blocks Mastodon-to-FlatPress imports while FlatPress-to-Mastodon export still runs                                                                 |
+| 11949 | Automatic one-way content sync refreshes the Mastodon widget profile cache without remote import reads                                                          |
+| 12023 | One-way deletion sync keeps local content, removes stale remote mappings and queues re-export                                                                   |
+| 12098 | One-way content sync re-exports local objects whose remote mappings were unlinked after remote deletion                                                         |
+| 12167 | One-way pending descendant rechecks keep local comments and queue them for re-export instead of deleting them                                                   |
+| 12188 | Mastodon widget remains hidden and performs no HTTP requests while its local profile cache is missing                                                           |
+| 12231 | Mastodon widget profile cache is refreshed from verify_credentials and stores only public profile data plus a local avatar                                      |
+| 12256 | Mastodon widget renders compact local-cache markup without remote API calls or inline CSS                                                                       |
+| 12280 | Mastodon widget stylesheet is loaded by plugin_mastodon_head as a versioned CSS asset                                                                           |
+| 12295 | Mastodon widget profile refresh reuses the cached avatar when the Mastodon avatar URL is unchanged                                                              |
+| 12322 | Mastodon widget uses a localized fallback avatar alt text for Mastodon 4.0-4.5 account payloads without avatar_description                                      |
+| 12341 | Mastodon widget hides incomplete local profile caches instead of falling back to remote avatar URLs                                                             |
+| 12366 | Mastodon widget is registered and translated in all FlatPress plugin language files                                                                             |
 
 ### Optional live/auth smoke
 
-| Line  | Static test name                                                                                                                                                |
-| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 5994  | Configured credentials verify (read-only smoke test)                                                                                                             |
+| Line | Static test name                                     |
+| ---- | ---------------------------------------------------- |
+| 6098 | Configured credentials verify (read-only smoke test) |

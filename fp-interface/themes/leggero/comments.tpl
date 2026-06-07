@@ -19,7 +19,18 @@
 					else default fallback on displaying plain $name"
 
 				*}
-				{if $url}<a href="{$url|wp_specialchars:1}" rel="nofollow" title="Visit {$url|wp_specialchars:1}">{$name|wp_specialchars:1}</a>{else}{$name|wp_specialchars:1}{/if}
+				{if $url}
+					{if $url|is_external_url}
+
+						<a href="{$url|wp_specialchars:1}" target="_blank" rel="nofollow noopener noreferrer" title="Visit {$url|wp_specialchars:1}">{$name|wp_specialchars:1}</a>
+					{else}
+
+						<a href="{$url|wp_specialchars:1}" rel="nofollow" title="Visit {$url|wp_specialchars:1}">{$name|wp_specialchars:1}</a>
+					{/if}
+				{else}
+
+					{$name|wp_specialchars:1}
+				{/if}
 				</strong>
 
 				{include file="shared:commentadminctrls.tpl"} {* this shows edit/delete links *}

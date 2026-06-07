@@ -33,18 +33,24 @@ The current plugin implementation is best described as:
 | Poll media              | GET    | /api/v1/media/:id                       | 3.1.3                                             | write:media             | Media-type-aware polling and timeout windows.                                                                                                                                                                                                              | plugin_mastodon_wait_for_media_attachment                            |
 | Delete unattached media | DELETE | /api/v1/media/:id                       | 4.4.0, API v4                                     | write:media             | `api_versions[mastodon] >= 4` or version >= 4.4.0 enables cleanup; known older servers skip it; unknown support stays best-effort.                                                                                                                         | plugin_mastodon_delete_media_attachment                              |
 
+## Imported status source links
+
+Imported Mastodon statuses that become FlatPress entries use Mastodon `Status.url` for the automatic source footer. This URL is the single status/toot permalink, while the author profile remains available separately as `account.url`. The plugin therefore builds the footer with `plugin_mastodon_imported_status_footer_bbcode()` as `[url=... target=_blank rel="nofollow noopener noreferrer"]Mastodon[/url]`, so opening the source status leaves the FlatPress blog in place.
+
+The footer is intentionally limited to the imported entry source link. Imported reply author links continue to use the comment-author URL path and `modifier.is_external_url.php`; ordinary links that were already present in the Mastodon HTML body keep their source `href` during HTML-to-BBCode conversion.
+
 ## Profile-widget account cache
 
 The compact Mastodon widget does not add a frontend API endpoint dependency. `plugin_mastodon_run_sync()` refreshes the profile/avatar cache via `GET /api/v1/accounts/verify_credentials` before content import/export work, including automatic scheduled runs, manual runs and explicit one-way/export-only mode. The cache stores only public fields in `fp-content/plugin_mastodon/profile/profile.json` and stores the downloaded avatar below `fp-content/plugin_mastodon/profile/`. Normal widget rendering reads only those local files and returns no widget when the cache or local avatar is incomplete. Its stylesheet is a local FlatPress asset, `fp-plugins/mastodon/res/mastodon.css`, emitted by `plugin_mastodon_head()` through `utils_asset_ver()` so frontend markup stays free of inline CSS.
 
-| Cached field    | Source account field                     | Runtime rule                                                                                  |
-| --------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Display name    | `display_name`, fallback `acct`          | Public text is normalized and escaped again during widget rendering.                          |
-| Account handle  | `acct`, fallback `username`              | Stored without a leading `@`; rendered with one leading `@`.                                  |
-| Profile link    | `url`, fallback configured instance/user | Only absolute HTTP(S) URLs are accepted.                                                      |
-| Avatar file     | `avatar_static`, fallback `avatar`       | Remote image is downloaded during refresh, MIME-checked and then served locally by FlatPress. |
-| Avatar alt text | `avatar_description`, localized fallback | Mastodon 4.6/API-v9 descriptions are used when present; older payloads get a fallback string. |
-| Refresh trigger  | `verify_credentials` during `run_sync`    | The sync result is not decided solely by widget-cache refresh success; remote import may reuse the cached account payload. |
+| Cached field    | Source account field                     | Runtime rule                                                                                                               |
+| --------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Display name    | `display_name`, fallback `acct`          | Public text is normalized and escaped again during widget rendering.                                                       |
+| Account handle  | `acct`, fallback `username`              | Stored without a leading `@`; rendered with one leading `@`.                                                               |
+| Profile link    | `url`, fallback configured instance/user | Only absolute HTTP(S) URLs are accepted.                                                                                   |
+| Avatar file     | `avatar_static`, fallback `avatar`       | Remote image is downloaded during refresh, MIME-checked and then served locally by FlatPress.                              |
+| Avatar alt text | `avatar_description`, localized fallback | Mastodon 4.6/API-v9 descriptions are used when present; older payloads get a fallback string.                              |
+| Refresh trigger | `verify_credentials` during `run_sync`   | The sync result is not decided solely by widget-cache refresh success; remote import may reuse the cached account payload. |
 
 ## Mastodon 4.6 account-status privacy hardening
 

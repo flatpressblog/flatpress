@@ -14,6 +14,12 @@ $rootDir = dirname(__DIR__, 3);
 $pluginFile = $rootDir . '/fp-plugins/mastodon/plugin.mastodon.php';
 $simulationFile = $rootDir . '/simulate_mastodon_plugin.php';
 $regressionSimulationFile = $rootDir . '/fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.php';
+$regressionSimulationFallbackFile = $rootDir . '/fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_';
+if (!is_file($regressionSimulationFile) && is_file($regressionSimulationFallbackFile)) {
+	$regressionSimulationFile = $regressionSimulationFallbackFile;
+}
+$commentTemplateFile = $rootDir . '/fp-interface/themes/leggero/comments.tpl';
+$externalUrlModifierFile = $rootDir . '/fp-includes/fp-smartyplugins/modifier.is_external_url.php';
 $mentalModelDocFile = __DIR__ . '/00-Mental-Model.md';
 $processMapDocFile = __DIR__ . '/01-Process-Map.md';
 $stateModelDocFile = __DIR__ . '/02-State-Model.md';
@@ -39,6 +45,51 @@ function mastodon_docs_read_file($file, &$errors) {
 
 function mastodon_docs_normalize_line_endings($content) {
 	return str_replace(array("\r\n", "\r"), "\n", $content);
+}
+
+
+function mastodon_docs_is_cli() {
+	return PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg';
+}
+
+function mastodon_docs_prepare_text_output() {
+	if (!mastodon_docs_is_cli() && !headers_sent()) {
+		header('Content-Type: text/plain; charset=UTF-8');
+	}
+}
+
+function mastodon_docs_write_line($message, $preferStderr) {
+	$line = $message . PHP_EOL;
+	mastodon_docs_prepare_text_output();
+
+	if ($preferStderr && mastodon_docs_is_cli()) {
+		if (defined('STDERR')) {
+			$stderr = constant('STDERR');
+			if (is_resource($stderr)) {
+				fwrite($stderr, $line);
+				return;
+			}
+		}
+		$stderrHandle = @fopen('php://stderr', 'ab');
+		if (is_resource($stderrHandle)) {
+			fwrite($stderrHandle, $line);
+			fclose($stderrHandle);
+			return;
+		}
+	}
+
+	echo $line;
+	if (!mastodon_docs_is_cli()) {
+		flush();
+	}
+}
+
+function mastodon_docs_write_failure($message) {
+	mastodon_docs_write_line('[FAIL] ' . $message, true);
+}
+
+function mastodon_docs_write_success() {
+	mastodon_docs_write_line('[OK] Mastodon developer documentation is consistent with plugin.mastodon.php and simulate_mastodon_plugin.php.', false);
 }
 
 function mastodon_docs_line_for_offset($content, $offset) {
@@ -157,6 +208,8 @@ $apiDocContent = mastodon_docs_read_file($apiDocFile, $errors);
 $regressionDocContent = mastodon_docs_read_file($regressionDocFile, $errors);
 $flowDocContent = mastodon_docs_read_file($flowDocFile, $errors);
 $organigramDocContent = mastodon_docs_read_file($organigramDocFile, $errors);
+$commentTemplateContent = mastodon_docs_read_file($commentTemplateFile, $errors);
+$externalUrlModifierContent = mastodon_docs_read_file($externalUrlModifierFile, $errors);
 
 if ($simulationContent !== '' && $regressionSimulationContent !== ''
 	&& mastodon_docs_normalize_line_endings($simulationContent) !== mastodon_docs_normalize_line_endings($regressionSimulationContent)) {
@@ -249,7 +302,6 @@ if ($pluginContent !== '' && $organigramDocContent !== '') {
 		}
 	}
 }
-
 
 $oneWayRequiredDocs = array(
 	'00-Mental-Model.md' => array(
@@ -460,13 +512,170 @@ if ($apiDocContent !== '') {
 	}
 }
 
+
+$importedStatusFooterRequiredDocs = array(
+	'00-Mental-Model.md' => array(
+		$mentalModelDocContent,
+		array(
+			'Imported status source link',
+			'Status.url` source link'
+		)
+	),
+	'01-Process-Map.md' => array(
+		$processMapDocContent,
+		array(
+			'Imported status source footer',
+			'plugin_mastodon_imported_status_footer_bbcode()'
+		)
+	),
+	'03-Function-Process-Matrix.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/03-Function-Process-Matrix.md', $errors),
+		array(
+			'plugin_mastodon_imported_status_footer_bbcode',
+			'target=_blank rel="nofollow noopener noreferrer"'
+		)
+	),
+	'04-API-Compatibility.md' => array(
+		$apiDocContent,
+		array(
+			'Imported status source links',
+			'Status.url` for the automatic source footer'
+		)
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'Imported Mastodon status footer BBCode opens the single toot in a new tab',
+			'Imported Mastodon status footer renders target blank HTML for the single toot'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'Status.url single-toot source link',
+			'Append [url=... target=_blank rel=&quot;nofollow noopener noreferrer&quot;]Mastodon[/url]'
+		)
+	),
+	'07-Function-Organigram.md' => array(
+		$organigramDocContent,
+		array(
+			'plugin_mastodon_imported_status_footer_bbcode()',
+			'Build the FlatPress BBCode footer that links an imported entry back to its source Mastodon status with a new-tab target.'
+		)
+	),
+	'README.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
+		array(
+			'Imported status source links open the single toot in a new tab',
+			'plugin_mastodon_imported_status_footer_bbcode()'
+		)
+	)
+);
+foreach ($importedStatusFooterRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing imported-status-footer documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
+if ($pluginContent !== '') {
+	$importedStatusFooterRequiredPluginSnippets = array(
+		'function plugin_mastodon_imported_status_footer_bbcode(',
+		'target=_blank rel="nofollow noopener noreferrer"',
+		'$footer = plugin_mastodon_imported_status_footer_bbcode($url);'
+	);
+	foreach ($importedStatusFooterRequiredPluginSnippets as $requiredPluginSnippet) {
+		if (strpos($pluginContent, $requiredPluginSnippet) === false) {
+			$errors [] = 'Plugin missing imported-status-footer implementation snippet: ' . $requiredPluginSnippet;
+		}
+	}
+}
+
+$externalCommentAuthorLinkRequiredDocs = array(
+	'00-Mental-Model.md' => array(
+		$mentalModelDocContent,
+		array(
+			'Imported Mastodon reply author links',
+			'only external profile URLs receive `target="_blank"`'
+		)
+	),
+	'01-Process-Map.md' => array(
+		$processMapDocContent,
+		array(
+			'Frontend comment author-link rendering',
+			'unknown same-host root paths'
+		)
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'Comment author target blank is limited to external URLs',
+			'unknown same-host root paths'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'Comment author link target decision',
+			'Known FlatPress route, entry point, asset path, or existing static page?'
+		)
+	),
+	'README.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
+		array(
+			'Comment author links open new tabs only for external URLs',
+			'modifier.is_external_url.php'
+		)
+	)
+);
+foreach ($externalCommentAuthorLinkRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing external comment-author-link documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
+if ($commentTemplateContent !== '') {
+	if (strpos($commentTemplateContent, '$url|is_external_url') === false) {
+		$errors [] = 'Leggero comments template does not use the is_external_url modifier for comment author links.';
+	}
+	if (strpos($commentTemplateContent, 'target="_blank"') === false) {
+		$errors [] = 'Leggero comments template does not add target="_blank" for external comment author links.';
+	}
+	if (strpos($commentTemplateContent, 'rel="nofollow noopener noreferrer"') === false) {
+		$errors [] = 'Leggero comments template does not pair external target="_blank" links with noopener/noreferrer.';
+	}
+}
+
+if ($externalUrlModifierContent !== '') {
+	$requiredModifierSnippets = array(
+		'function smarty_modifier_is_external_url(',
+		'Relative and root-relative links stay inside the current blog.',
+		'smarty_modifier_is_external_url_blog_bases()',
+		'smarty_modifier_is_external_url_root_blog_url_is_internal(',
+		'smarty_modifier_is_external_url_path_matches_flatpress_route(',
+		'smarty_modifier_is_external_url_path_is_inside('
+	);
+	foreach ($requiredModifierSnippets as $requiredModifierSnippet) {
+		if (strpos($externalUrlModifierContent, $requiredModifierSnippet) === false) {
+			$errors [] = 'External URL Smarty modifier missing required implementation snippet: ' . $requiredModifierSnippet;
+		}
+	}
+}
+
 if ($errors !== array()) {
 	foreach ($errors as $error) {
-		fwrite(STDERR, '[FAIL] ' . $error . PHP_EOL);
+		mastodon_docs_write_failure($error);
 	}
 	exit(1);
 }
 
-echo '[OK] Mastodon developer documentation is consistent with plugin.mastodon.php and simulate_mastodon_plugin.php.' . PHP_EOL;
+mastodon_docs_write_success();
 exit(0);
 ?>
