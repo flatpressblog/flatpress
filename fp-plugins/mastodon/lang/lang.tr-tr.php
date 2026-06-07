@@ -1,6 +1,13 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
+
+$lang ['plugin'] ['mastodon'] = array(
+	'subject' => 'Mastodon',
+	'avatar_alt_format' => '%s profil resmi',
+	'profile_link_title' => 'Mastodon profilini aç'
+);
+
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'head' => 'Mastodon senkronizasyonu',
 	'intro' => 'Bu eklenti FlatPress girdilerini ve yorumlarını Mastodon ile senkronize eder.',

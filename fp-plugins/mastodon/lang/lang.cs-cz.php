@@ -1,6 +1,13 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
+
+$lang ['plugin'] ['mastodon'] = array(
+	'subject' => 'Mastodon',
+	'avatar_alt_format' => 'Profilový obrázek uživatele %s',
+	'profile_link_title' => 'Otevřít profil na Mastodonu'
+);
+
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'head' => 'Synchronizace Mastodon',
 	'intro' => 'Tento plugin synchronizuje příspěvky a komentáře z FlatPressu s Mastodonem.',

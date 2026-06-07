@@ -252,6 +252,31 @@ function simulate_mastodon_read_admin_plugin_language_entries($file) {
 }
 
 /**
+ * Load one Mastodon plugin language file in isolation and return its public widget entries.
+ *
+ * @param string $file
+ * @return array<string, mixed>
+ */
+function simulate_mastodon_read_widget_language_entries($file) {
+	if (!is_file($file)) {
+		return array();
+	}
+
+	$lang = array();
+	include $file;
+	$lang = simulate_mastodon_as_mixed($lang);
+
+	if (!is_array($lang)) {
+		return array();
+	}
+
+	$pluginStrings = (isset($lang ['plugin']) && is_array($lang ['plugin'])) ? $lang ['plugin'] : array();
+	$widgetStrings = (isset($pluginStrings ['mastodon']) && is_array($pluginStrings ['mastodon'])) ? $pluginStrings ['mastodon'] : array();
+
+	return $widgetStrings;
+}
+
+/**
  * Minimal Smarty-like collector for admin assignment tests.
  */
 class SimulateSmartyCollector {
@@ -1541,6 +1566,321 @@ function simulate_run_remote_reply_to_reply_quote_case($force, $quoteImportedRep
 		'child_comment_ref' => $childCommentRef,
 		'child_comment' => $childComment,
 		'http_requests' => simulate_recorded_http_requests()
+	);
+}
+
+/**
+ * Reproduce local deletion of an imported external Mastodon reply before the next content sync sees it again.
+ * @param bool $editRemoteBeforeNextSync
+ * @return array<string, mixed>
+ */
+function simulate_run_deleted_imported_remote_comment_tombstone_case($editRemoteBeforeNextSync) {
+	$editRemoteBeforeNextSync = (bool) $editRemoteBeforeNextSync;
+	$configuredOptions = plugin_mastodon_get_options();
+	$options = simulate_seed_options_from_config($configuredOptions);
+	$options ['sync_start_date'] = '';
+	$options ['sync_scheduled_window_days'] = '14';
+	$options ['update_local_from_remote'] = '1';
+	$options ['import_synced_comments_as_entries'] = '0';
+	$options ['quote_imported_reply_parent'] = '1';
+	$options ['old_thread_reply_check'] = '1';
+	$options ['delete_sync_enabled'] = '1';
+	$options ['access_token'] = 'token123';
+	plugin_mastodon_save_options($options);
+	plugin_mastodon_runtime_cache_clear();
+
+	simulate_delete_recursive(ABS_PATH . FP_CONTENT . 'content');
+	@mkdir(ABS_PATH . FP_CONTENT . 'content', 0777, true);
+	simulate_delete_recursive(ABS_PATH . FP_CONTENT . 'images/mastodon');
+	plugin_mastodon_state_write(plugin_mastodon_default_state());
+
+	$instanceUrl = plugin_mastodon_normalize_instance_url($options ['instance_url']);
+	$instanceResponse = array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			'version' => '4.5.0-sim',
+			'api_versions' => array('mastodon' => 7),
+			'configuration' => array(
+				'statuses' => array(
+					'max_characters' => 500,
+					'characters_reserved_per_url' => 23
+				),
+				'media_attachments' => array(
+					'image_size_limit' => 1048576,
+					'image_matrix_limit' => 16777216,
+					'video_size_limit' => 41943040,
+					'video_frame_rate_limit' => 60,
+					'video_matrix_limit' => 2304000,
+					'max_description_length' => 1500,
+					'max_remote_url_size' => 2048,
+					'supported_mime_types' => array('image/jpeg'),
+					'max_media_attachments' => 4
+				)
+			)
+		))
+	);
+	$entry = array(
+		'version' => system_ver(),
+		'subject' => 'Imported reply local delete root',
+		'content' => 'Root entry for imported reply local deletion testing.',
+		'author' => 'Simulation',
+		'date' => strtotime('2027-05-01 08:00:00 UTC')
+	);
+	$entryId = entry_save($entry, null);
+	$entry = entry_parse($entryId);
+
+	$localCommentOne = array(
+		'version' => system_ver(),
+		'name' => 'FlatPress Local One',
+		'content' => 'First exported FlatPress comment.',
+		'date' => strtotime('2027-05-02 08:00:00 UTC')
+	);
+	$localCommentOneId = comment_save($entryId, $localCommentOne);
+	$localCommentOne = comment_parse($entryId, $localCommentOneId);
+	$localCommentOne ['id'] = (string) $localCommentOneId;
+
+	$localCommentTwo = array(
+		'version' => system_ver(),
+		'name' => 'FlatPress Local Two',
+		'content' => 'Second exported FlatPress comment.',
+		'date' => strtotime('2027-05-02 08:05:00 UTC')
+	);
+	$localCommentTwoId = comment_save($entryId, $localCommentTwo);
+	$localCommentTwo = comment_parse($entryId, $localCommentTwoId);
+	$localCommentTwo ['id'] = (string) $localCommentTwoId;
+
+	$remoteRootStatus = array(
+		'id' => '9900',
+		'visibility' => 'public',
+		'created_at' => '2027-05-01T08:00:00Z',
+		'content' => '<p>Root entry for imported reply local deletion testing.</p>',
+		'url' => $instanceUrl . '/@flatpress/9900',
+		'account' => array(
+			'id' => 'acct1',
+			'acct' => 'flatpress',
+			'display_name' => 'FlatPress Bot',
+			'url' => $instanceUrl . '/@flatpress'
+		)
+	);
+	$remoteCommentOne = array(
+		'id' => '9901',
+		'visibility' => 'public',
+		'in_reply_to_id' => '9900',
+		'in_reply_to_account_id' => 'acct1',
+		'created_at' => '2027-05-02T08:00:00Z',
+		'content' => '<p>First exported FlatPress comment.</p>',
+		'url' => $instanceUrl . '/@flatpress/9901',
+		'account' => array(
+			'id' => 'acct1',
+			'acct' => 'flatpress',
+			'display_name' => 'FlatPress Bot',
+			'url' => $instanceUrl . '/@flatpress'
+		)
+	);
+	$remoteCommentTwo = array(
+		'id' => '9902',
+		'visibility' => 'public',
+		'in_reply_to_id' => '9900',
+		'in_reply_to_account_id' => 'acct1',
+		'created_at' => '2027-05-02T08:05:00Z',
+		'content' => '<p>Second exported FlatPress comment.</p>',
+		'url' => $instanceUrl . '/@flatpress/9902',
+		'account' => array(
+			'id' => 'acct1',
+			'acct' => 'flatpress',
+			'display_name' => 'FlatPress Bot',
+			'url' => $instanceUrl . '/@flatpress'
+		)
+	);
+	$remoteExternalReply = array(
+		'id' => '9903',
+		'visibility' => 'public',
+		'in_reply_to_id' => '9901',
+		'in_reply_to_account_id' => 'acct1',
+		'created_at' => '2027-05-03T08:00:00Z',
+		'content' => '<p>External reply to the first FlatPress comment.</p>',
+		'url' => 'https://example.net/@alice/9903',
+		'account' => array(
+			'id' => 'acct9',
+			'acct' => 'alice@example.net',
+			'display_name' => 'Alice Example',
+			'url' => 'https://example.net/@alice'
+		)
+	);
+
+	$state = plugin_mastodon_default_state();
+	plugin_mastodon_state_set_entry_mapping($state, $entryId, '9900', 'local', plugin_mastodon_entry_hash($entry), $instanceUrl . '/@flatpress/9900', plugin_mastodon_parse_iso_datetime('2027-05-01T08:00:00Z'), plugin_mastodon_local_item_date_key($entry, $entryId), plugin_mastodon_remote_status_date_key($remoteRootStatus));
+	plugin_mastodon_state_set_comment_mapping($state, $entryId, $localCommentOneId, '9901', 'local', plugin_mastodon_comment_hash($localCommentOne), $instanceUrl . '/@flatpress/9901', plugin_mastodon_parse_iso_datetime('2027-05-02T08:00:00Z'), '', '9900', plugin_mastodon_local_item_date_key($localCommentOne, $localCommentOneId), plugin_mastodon_remote_status_date_key($remoteCommentOne));
+	plugin_mastodon_state_set_comment_mapping($state, $entryId, $localCommentTwoId, '9902', 'local', plugin_mastodon_comment_hash($localCommentTwo), $instanceUrl . '/@flatpress/9902', plugin_mastodon_parse_iso_datetime('2027-05-02T08:05:00Z'), '', '9900', plugin_mastodon_local_item_date_key($localCommentTwo, $localCommentTwoId), plugin_mastodon_remote_status_date_key($remoteCommentTwo));
+	plugin_mastodon_state_write($state);
+
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+		'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+			'ok' => true,
+			'code' => 200,
+			'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+		),
+		'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true' => array(
+			'ok' => true,
+			'code' => 200,
+			'body' => json_encode(array())
+		),
+		'GET ' . $instanceUrl . '/api/v1/statuses/9900/context' => array(
+			'ok' => true,
+			'code' => 200,
+			'body' => json_encode(array('descendants' => array($remoteCommentOne, $remoteCommentTwo, $remoteExternalReply)))
+		),
+		'GET ' . $instanceUrl . '/api/v2/instance' => $instanceResponse
+	);
+	$initialSyncResult = plugin_mastodon_run_sync(true);
+	$stateAfterInitialSync = plugin_mastodon_state_read();
+	$importedReplyRef = isset($stateAfterInitialSync ['comments_remote'] ['9903']) && is_array($stateAfterInitialSync ['comments_remote'] ['9903']) ? $stateAfterInitialSync ['comments_remote'] ['9903'] : array();
+	$importedReplyCommentId = !empty($importedReplyRef ['comment_id']) ? (string) $importedReplyRef ['comment_id'] : '';
+	$importedReplyExistsBeforeDelete = $importedReplyCommentId !== '' && comment_exists($entryId, $importedReplyCommentId);
+
+	if ($importedReplyCommentId !== '') {
+		comment_delete($entryId, $importedReplyCommentId);
+	}
+	$stateAfterLocalDelete = plugin_mastodon_state_read();
+
+	$remoteReplySeenAgain = $remoteExternalReply;
+	if ($editRemoteBeforeNextSync) {
+		$remoteReplySeenAgain ['content'] = '<p>External reply was edited after the FlatPress admin deleted the imported comment.</p>';
+		$remoteReplySeenAgain ['edited_at'] = '2027-05-03T10:00:00Z';
+	}
+
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+		'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+			'ok' => true,
+			'code' => 200,
+			'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+		),
+		'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&since_id=9900' => array(
+			'ok' => true,
+			'code' => 200,
+			'body' => json_encode(array())
+		),
+		'GET ' . $instanceUrl . '/api/v1/statuses/9900/context' => array(
+			'ok' => true,
+			'code' => 200,
+			'body' => json_encode(array('descendants' => array($remoteCommentOne, $remoteCommentTwo, $remoteReplySeenAgain)))
+		),
+		'GET ' . $instanceUrl . '/api/v2/instance' => $instanceResponse
+	);
+	$nextContentSyncResult = plugin_mastodon_run_sync(true);
+	$stateAfterNextContentSync = plugin_mastodon_state_read();
+	$importedReplyExistsAfterNextSync = $importedReplyCommentId !== '' && comment_exists($entryId, $importedReplyCommentId);
+	$reimportedReplyRef = isset($stateAfterNextContentSync ['comments_remote'] ['9903']) && is_array($stateAfterNextContentSync ['comments_remote'] ['9903']) ? $stateAfterNextContentSync ['comments_remote'] ['9903'] : array();
+
+	return array(
+		'initial_sync_result' => $initialSyncResult,
+		'state_after_initial_sync' => $stateAfterInitialSync,
+		'entry_id' => $entryId,
+		'local_comment_one_id' => $localCommentOneId,
+		'local_comment_two_id' => $localCommentTwoId,
+		'imported_reply_ref' => $importedReplyRef,
+		'imported_reply_comment_id' => $importedReplyCommentId,
+		'imported_reply_exists_before_delete' => $importedReplyExistsBeforeDelete,
+		'state_after_local_delete' => $stateAfterLocalDelete,
+		'next_content_sync_result' => $nextContentSyncResult,
+		'state_after_next_content_sync' => $stateAfterNextContentSync,
+		'imported_reply_exists_after_next_sync' => $importedReplyExistsAfterNextSync,
+		'reimported_reply_ref' => $reimportedReplyRef,
+		'requests_after_next_content_sync' => simulate_recorded_http_requests()
+	);
+}
+
+/**
+ * Reproduce a legacy/pending deletion-sync state for a locally deleted imported remote reply.
+ * @return array<string, mixed>
+ */
+function simulate_run_deleted_imported_remote_comment_deletion_sync_cleanup_case() {
+	$configuredOptions = plugin_mastodon_get_options();
+	$options = simulate_seed_options_from_config($configuredOptions);
+	$options ['sync_start_date'] = '';
+	$options ['sync_scheduled_window_days'] = '14';
+	$options ['update_local_from_remote'] = '1';
+	$options ['delete_sync_enabled'] = '1';
+	$options ['access_token'] = 'token123';
+	plugin_mastodon_save_options($options);
+	plugin_mastodon_runtime_cache_clear();
+
+	simulate_delete_recursive(ABS_PATH . FP_CONTENT . 'content');
+	@mkdir(ABS_PATH . FP_CONTENT . 'content', 0777, true);
+	simulate_delete_recursive(ABS_PATH . FP_CONTENT . 'images/mastodon');
+	plugin_mastodon_state_write(plugin_mastodon_default_state());
+
+	$instanceUrl = plugin_mastodon_normalize_instance_url($options ['instance_url']);
+	$entry = array(
+		'version' => system_ver(),
+		'subject' => 'Imported reply deletion sync cleanup root',
+		'content' => 'Root entry for imported reply deletion-sync cleanup testing.',
+		'author' => 'Simulation',
+		'date' => strtotime('2027-05-04 08:00:00 UTC')
+	);
+	$entryId = entry_save($entry, null);
+	$entry = entry_parse($entryId);
+	$importedComment = array(
+		'version' => system_ver(),
+		'loggedin' => '0',
+		'name' => 'Alice Example',
+		'url' => 'https://example.net/@alice',
+		'content' => 'Imported external reply that was deleted locally before cleanup.',
+		'date' => strtotime('2027-05-04 08:05:00 UTC')
+	);
+	$importedCommentId = comment_save($entryId, $importedComment);
+	$importedComment = comment_parse($entryId, $importedCommentId);
+	$importedComment ['id'] = (string) $importedCommentId;
+
+	$remoteRootStatus = array(
+		'id' => '9910',
+		'created_at' => '2027-05-04T08:00:00Z'
+	);
+	$remoteImportedReply = array(
+		'id' => '9911',
+		'created_at' => '2027-05-04T08:05:00Z'
+	);
+
+	$state = plugin_mastodon_default_state();
+	plugin_mastodon_state_set_entry_mapping($state, $entryId, '9910', 'local', plugin_mastodon_entry_hash($entry), $instanceUrl . '/@flatpress/9910', plugin_mastodon_parse_iso_datetime('2027-05-04T08:00:00Z'), plugin_mastodon_local_item_date_key($entry, $entryId), plugin_mastodon_remote_status_date_key($remoteRootStatus));
+	plugin_mastodon_state_set_comment_mapping($state, $entryId, $importedCommentId, '9911', 'remote', plugin_mastodon_comment_hash($importedComment), 'https://example.net/@alice/9911', plugin_mastodon_parse_iso_datetime('2027-05-04T08:05:00Z'), '', '9910', plugin_mastodon_local_item_date_key($importedComment, $importedCommentId), plugin_mastodon_remote_status_date_key($remoteImportedReply));
+	plugin_mastodon_state_set_deletions_pending($state, true, 'full', '');
+	plugin_mastodon_state_write($state);
+
+	$commentFile = comment_exists($entryId, $importedCommentId);
+	if ($commentFile) {
+		@unlink($commentFile);
+	}
+
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+		'GET ' . $instanceUrl . '/api/v1/statuses/9910' => array(
+			'ok' => true,
+			'code' => 200,
+			'body' => json_encode(array('id' => '9910'))
+		)
+	);
+	simulate_allow_pending_deletion_sync();
+	$deletionSyncResult = plugin_mastodon_run_deletion_sync(true);
+	$stateAfterDeletionSync = plugin_mastodon_state_read();
+	$requests = simulate_recorded_http_requests();
+	$deleteRequests = array();
+	foreach ($requests as $request) {
+		if (is_array($request) && isset($request ['method']) && strtoupper((string) $request ['method']) === 'DELETE') {
+			$deleteRequests [] = $request;
+		}
+	}
+
+	return array(
+		'deletion_sync_result' => $deletionSyncResult,
+		'entry_id' => $entryId,
+		'imported_comment_id' => $importedCommentId,
+		'state_after_deletion_sync' => $stateAfterDeletionSync,
+		'requests_after_deletion_sync' => $requests,
+		'delete_requests_after_deletion_sync' => $deleteRequests
 	);
 }
 
@@ -3780,6 +4120,37 @@ $allOk = test_result(
 	$singleMediaBbcode
 ) && $allOk;
 
+$longRemoteMediaDescription = substr(str_repeat('Lange Mastodon-Medienbeschreibung ', 400), 0, 10000);
+$GLOBALS ['plugin_mastodon_test_http_responses'] ['GET https://files.example/long-media-description.jpg'] = array(
+	'ok' => true,
+	'code' => 200,
+	'headers' => array('content-type' => 'image/jpeg'),
+	'body' => 'jpeg-data-long-description'
+);
+$longMediaBbcode = plugin_mastodon_build_imported_media_bbcode($remoteSingleMediaOptions, array(
+	'id' => 'long-media-description',
+	'media_attachments' => array(
+		array(
+			'id' => 'att-long-description',
+			'type' => 'image',
+			'url' => 'https://files.example/long-media-description.jpg',
+			'description' => $longRemoteMediaDescription
+		)
+	)
+));
+$allOk = test_result(
+	'Mastodon import preserves long remote media descriptions without corrupting FlatPress image markup',
+	strpos($longMediaBbcode, '[img=images/mastodon/status-long-media-description/01-long-media-description.jpg') !== false
+		&& strpos($longMediaBbcode, 'title="') !== false
+		&& strlen($longMediaBbcode) > 10000
+		&& is_file($simRoot . '/fp-content/images/mastodon/status-long-media-description/01-long-media-description.jpg'),
+	json_encode(array(
+		'bbcode_length' => strlen($longMediaBbcode),
+		'description_length' => strlen($longRemoteMediaDescription),
+		'stored' => is_file($simRoot . '/fp-content/images/mastodon/status-long-media-description/01-long-media-description.jpg')
+	))
+) && $allOk;
+
 $GLOBALS ['plugin_mastodon_test_http_responses'] ['GET https://files.example/gallery-a.png'] = array(
 	'ok' => true,
 	'code' => 200,
@@ -5168,6 +5539,418 @@ $allOk = test_result(
 	'instance_requests=' . $instanceConfigRequests
 ) && $allOk;
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$instanceCapabilityHttpResponsesBackup = $GLOBALS ['plugin_mastodon_test_http_responses'];
+
+$nightlyCapabilityOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$nightlyCapabilityOptions ['instance_url'] = 'https://nightly.example';
+$nightlyCapabilityOptions ['instance_info_url'] = 'https://nightly.example';
+$nightlyCapabilityJson = json_encode(array(
+	'version' => '4.6.0-nightly.2026-06-02',
+	'api_versions' => array('mastodon' => 7)
+));
+$nightlyCapabilityOptions ['instance_info_json'] = is_string($nightlyCapabilityJson) ? $nightlyCapabilityJson : '';
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array();
+$nightlyMediaAttributesSupported = plugin_mastodon_instance_supports_status_media_attributes($nightlyCapabilityOptions);
+$nightlyDeleteMediaSupported = plugin_mastodon_instance_supports_status_delete_media($nightlyCapabilityOptions);
+$nightlyCapabilityRequests = 0;
+foreach (simulate_recorded_http_requests() as $request) {
+	if (is_array($request) && !empty($request ['url']) && (string) $request ['url'] === 'https://nightly.example/api/v2/instance') {
+		$nightlyCapabilityRequests++;
+	}
+}
+$allOk = test_result(
+	'Nightly Mastodon versions use cached api_versions for status edit and delete capabilities',
+	$nightlyMediaAttributesSupported === true
+		&& $nightlyDeleteMediaSupported === true
+		&& $nightlyCapabilityRequests === 0,
+	json_encode(array(
+		'media_attributes_supported' => $nightlyMediaAttributesSupported,
+		'delete_media_supported' => $nightlyDeleteMediaSupported,
+		'instance_requests' => $nightlyCapabilityRequests
+	))
+) && $allOk;
+
+$apiVersionOverrideOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$apiVersionOverrideOptions ['instance_url'] = 'https://api-version-override.example';
+$apiVersionOverrideOptions ['instance_info_url'] = 'https://api-version-override.example';
+$apiVersionOverrideJson = json_encode(array(
+	'version' => '3.5.0+hometown-compat',
+	'api_versions' => array('mastodon' => 4)
+));
+$apiVersionOverrideOptions ['instance_info_json'] = is_string($apiVersionOverrideJson) ? $apiVersionOverrideJson : '';
+plugin_mastodon_runtime_cache_clear();
+$apiOverrideMediaAttributesSupported = plugin_mastodon_instance_supports_status_media_attributes($apiVersionOverrideOptions);
+$apiOverrideDeleteMediaSupported = plugin_mastodon_instance_supports_status_delete_media($apiVersionOverrideOptions);
+$allOk = test_result(
+	'Machine-readable api_versions are preferred over complex human-readable Mastodon version strings',
+	$apiOverrideMediaAttributesSupported === true
+		&& $apiOverrideDeleteMediaSupported === true,
+	json_encode(array(
+		'media_attributes_supported' => $apiOverrideMediaAttributesSupported,
+		'delete_media_supported' => $apiOverrideDeleteMediaSupported
+	))
+) && $allOk;
+
+$apiVersionLegacyDeleteOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$apiVersionLegacyDeleteOptions ['instance_url'] = 'https://api-version-legacy-delete.example';
+$apiVersionLegacyDeleteOptions ['instance_info_url'] = 'https://api-version-legacy-delete.example';
+$apiVersionLegacyDeleteJson = json_encode(array(
+	'version' => '4.6.0-nightly.2026-06-02',
+	'api_versions' => array('mastodon' => 3)
+));
+$apiVersionLegacyDeleteOptions ['instance_info_json'] = is_string($apiVersionLegacyDeleteJson) ? $apiVersionLegacyDeleteJson : '';
+$GLOBALS ['plugin_mastodon_test_rate_limit_budgets'] = array('requests' => 10, 'media_uploads' => 24, 'deletes' => 1, 'remote_remaining_floor' => 0);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'DELETE https://api-version-legacy-delete.example/api/v1/statuses/api-version-delete-1' => array('ok' => true, 'code' => 200, 'headers' => array('X-RateLimit-Remaining' => '298'), 'body' => '{}')
+);
+plugin_mastodon_runtime_cache_clear();
+plugin_mastodon_rate_limit_guard_start('simulation_api_version_legacy_delete_without_media_parameter');
+$apiVersionLegacyDeleteResult = plugin_mastodon_delete_status($apiVersionLegacyDeleteOptions, 'api-version-delete-1', true);
+$apiVersionLegacyDeleteSummary = plugin_mastodon_rate_limit_guard_summary();
+plugin_mastodon_rate_limit_guard_stop();
+$apiVersionLegacyDeleteRequests = simulate_recorded_http_requests();
+$allOk = test_result(
+	'api_versions below delete_media support suppress the delete_media query even with a nightly version string',
+	!empty($apiVersionLegacyDeleteResult ['ok'])
+		&& count($apiVersionLegacyDeleteRequests) === 1
+		&& isset($apiVersionLegacyDeleteRequests [0] ['url']) && (string) $apiVersionLegacyDeleteRequests [0] ['url'] === 'https://api-version-legacy-delete.example/api/v1/statuses/api-version-delete-1'
+		&& isset($apiVersionLegacyDeleteSummary ['deletes_used']) && (int) $apiVersionLegacyDeleteSummary ['deletes_used'] === 1,
+	json_encode(array(
+		'result' => $apiVersionLegacyDeleteResult,
+		'summary' => $apiVersionLegacyDeleteSummary,
+		'requests' => $apiVersionLegacyDeleteRequests
+	))
+) && $allOk;
+
+$apiVersionLegacyMediaDeleteOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$apiVersionLegacyMediaDeleteOptions ['instance_url'] = 'https://api-version-legacy-media-delete.example';
+$apiVersionLegacyMediaDeleteOptions ['instance_info_url'] = 'https://api-version-legacy-media-delete.example';
+$apiVersionLegacyMediaDeleteJson = json_encode(array(
+	'version' => '4.6.0-nightly.2026-06-02',
+	'api_versions' => array('mastodon' => 3)
+));
+$apiVersionLegacyMediaDeleteOptions ['instance_info_json'] = is_string($apiVersionLegacyMediaDeleteJson) ? $apiVersionLegacyMediaDeleteJson : '';
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array();
+$apiVersionLegacyMediaCleanup = plugin_mastodon_cleanup_uploaded_media($apiVersionLegacyMediaDeleteOptions, array('legacy-media-delete-1', 'legacy-media-delete-2'));
+$apiVersionLegacyMediaDeleteRequests = simulate_recorded_http_requests();
+$allOk = test_result(
+	'api_versions below unattached media delete support skip uploaded media cleanup DELETE requests',
+	!empty($apiVersionLegacyMediaCleanup ['ok'])
+		&& isset($apiVersionLegacyMediaCleanup ['deleted']) && $apiVersionLegacyMediaCleanup ['deleted'] === array()
+		&& isset($apiVersionLegacyMediaCleanup ['skipped']) && $apiVersionLegacyMediaCleanup ['skipped'] === array('legacy-media-delete-1', 'legacy-media-delete-2')
+		&& isset($apiVersionLegacyMediaCleanup ['failed']) && $apiVersionLegacyMediaCleanup ['failed'] === array()
+		&& count($apiVersionLegacyMediaDeleteRequests) === 0,
+	json_encode(array(
+		'cleanup' => $apiVersionLegacyMediaCleanup,
+		'requests' => $apiVersionLegacyMediaDeleteRequests
+	))
+) && $allOk;
+
+$versionLegacyMediaDeleteOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$versionLegacyMediaDeleteOptions ['instance_url'] = 'https://version-legacy-media-delete.example';
+$versionLegacyMediaDeleteOptions ['instance_info_url'] = 'https://version-legacy-media-delete.example';
+$versionLegacyMediaDeleteJson = json_encode(array('version' => '4.3.9'));
+$versionLegacyMediaDeleteOptions ['instance_info_json'] = is_string($versionLegacyMediaDeleteJson) ? $versionLegacyMediaDeleteJson : '';
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array();
+$versionLegacyMediaDelete = plugin_mastodon_delete_media_attachment($versionLegacyMediaDeleteOptions, 'version-legacy-media-delete-1');
+$versionLegacyMediaDeleteRequests = simulate_recorded_http_requests();
+$allOk = test_result(
+	'Cached Mastodon versions before 4.4 skip unattached media DELETE cleanup requests',
+	!empty($versionLegacyMediaDelete ['ok'])
+		&& !empty($versionLegacyMediaDelete ['skipped'])
+		&& count($versionLegacyMediaDeleteRequests) === 0,
+	json_encode(array(
+		'response' => $versionLegacyMediaDelete,
+		'requests' => $versionLegacyMediaDeleteRequests
+	))
+) && $allOk;
+
+$unknownMediaDeleteOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$unknownMediaDeleteOptions ['instance_url'] = 'https://unknown-media-delete.example';
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_rate_limit_budgets'] = array('requests' => 10, 'media_uploads' => 24, 'deletes' => 2, 'remote_remaining_floor' => 0);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'DELETE https://unknown-media-delete.example/api/v1/media/unknown-media-delete-1' => array('ok' => true, 'code' => 200, 'headers' => array('X-RateLimit-Remaining' => '298'), 'body' => '')
+);
+plugin_mastodon_rate_limit_guard_start('simulation_unknown_media_delete_best_effort');
+$unknownMediaDeleteResult = plugin_mastodon_delete_media_attachment($unknownMediaDeleteOptions, 'unknown-media-delete-1');
+$unknownMediaDeleteSummary = plugin_mastodon_rate_limit_guard_summary();
+plugin_mastodon_rate_limit_guard_stop();
+$unknownMediaDeleteRequests = simulate_recorded_http_requests();
+$unknownMediaDeleteInstanceRequests = 0;
+$unknownMediaDeleteActualDeletes = 0;
+foreach ($unknownMediaDeleteRequests as $request) {
+	if (is_array($request) && !empty($request ['url']) && (string) $request ['url'] === 'https://unknown-media-delete.example/api/v2/instance') {
+		$unknownMediaDeleteInstanceRequests++;
+	}
+	if (is_array($request) && !empty($request ['method']) && strtoupper((string) $request ['method']) === 'DELETE' && !empty($request ['url']) && (string) $request ['url'] === 'https://unknown-media-delete.example/api/v1/media/unknown-media-delete-1') {
+		$unknownMediaDeleteActualDeletes++;
+	}
+}
+$allOk = test_result(
+	'Unknown unattached media delete capability stays best-effort without an instance lookup',
+	!empty($unknownMediaDeleteResult ['ok'])
+		&& $unknownMediaDeleteInstanceRequests === 0
+		&& $unknownMediaDeleteActualDeletes === 1,
+	json_encode(array(
+		'response' => $unknownMediaDeleteResult,
+		'summary' => $unknownMediaDeleteSummary,
+		'instance_requests' => $unknownMediaDeleteInstanceRequests,
+		'delete_requests' => $unknownMediaDeleteActualDeletes,
+		'requests' => $unknownMediaDeleteRequests
+	))
+) && $allOk;
+
+$apiVersionSupportedMediaDeleteOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$apiVersionSupportedMediaDeleteOptions ['instance_url'] = 'https://api-version-media-delete.example';
+$apiVersionSupportedMediaDeleteOptions ['instance_info_url'] = 'https://api-version-media-delete.example';
+$apiVersionSupportedMediaDeleteJson = json_encode(array(
+	'version' => '4.4+hometown-123',
+	'api_versions' => array('mastodon' => 4)
+));
+$apiVersionSupportedMediaDeleteOptions ['instance_info_json'] = is_string($apiVersionSupportedMediaDeleteJson) ? $apiVersionSupportedMediaDeleteJson : '';
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_rate_limit_budgets'] = array('requests' => 10, 'media_uploads' => 24, 'deletes' => 2, 'remote_remaining_floor' => 0);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'DELETE https://api-version-media-delete.example/api/v1/media/api-version-media-delete-1' => array('ok' => true, 'code' => 200, 'headers' => array('X-RateLimit-Remaining' => '298'), 'body' => '')
+);
+plugin_mastodon_rate_limit_guard_start('simulation_api_version_media_delete_supported');
+$apiVersionSupportedMediaDeleteResult = plugin_mastodon_delete_media_attachment($apiVersionSupportedMediaDeleteOptions, 'api-version-media-delete-1');
+$apiVersionSupportedMediaDeleteSummary = plugin_mastodon_rate_limit_guard_summary();
+plugin_mastodon_rate_limit_guard_stop();
+$apiVersionSupportedMediaDeleteRequests = simulate_recorded_http_requests();
+$apiVersionSupportedMediaDeleteActualDeletes = 0;
+foreach ($apiVersionSupportedMediaDeleteRequests as $request) {
+	if (is_array($request) && !empty($request ['method']) && strtoupper((string) $request ['method']) === 'DELETE' && !empty($request ['url']) && (string) $request ['url'] === 'https://api-version-media-delete.example/api/v1/media/api-version-media-delete-1') {
+		$apiVersionSupportedMediaDeleteActualDeletes++;
+	}
+}
+$allOk = test_result(
+	'Mastodon API version 4 deletes unattached uploaded media during cleanup',
+	!empty($apiVersionSupportedMediaDeleteResult ['ok'])
+		&& $apiVersionSupportedMediaDeleteActualDeletes === 1,
+	json_encode(array(
+		'response' => $apiVersionSupportedMediaDeleteResult,
+		'summary' => $apiVersionSupportedMediaDeleteSummary,
+		'delete_requests' => $apiVersionSupportedMediaDeleteActualDeletes,
+		'requests' => $apiVersionSupportedMediaDeleteRequests
+	))
+) && $allOk;
+
+$compactAccountsInstance = plugin_mastodon_compact_instance_document(array(
+	'domain' => 'accounts.example',
+	'version' => '4.6.0',
+	'api_versions' => array('mastodon' => 10),
+	'configuration' => array(
+		'statuses' => array('max_characters' => 500, 'max_media_attachments' => 4),
+		'accounts' => array(
+			'max_display_name_length' => 30,
+			'max_note_length' => 500,
+			'max_featured_tags' => 10,
+			'max_pinned_statuses' => 5,
+			'max_profile_fields' => 4,
+			'profile_field_name_limit' => 255,
+			'profile_field_value_limit' => 2047,
+			'ignored_future_field' => 'kept out intentionally'
+		)
+	)
+));
+$compactAccountsConfig = (isset($compactAccountsInstance ['configuration'] ['accounts']) && is_array($compactAccountsInstance ['configuration'] ['accounts'])) ? $compactAccountsInstance ['configuration'] ['accounts'] : array();
+$allOk = test_result(
+	'Mastodon 4.6 configuration.accounts limits survive compact instance snapshots',
+	isset($compactAccountsConfig ['max_display_name_length']) && (int) $compactAccountsConfig ['max_display_name_length'] === 30
+		&& isset($compactAccountsConfig ['max_note_length']) && (int) $compactAccountsConfig ['max_note_length'] === 500
+		&& isset($compactAccountsConfig ['max_featured_tags']) && (int) $compactAccountsConfig ['max_featured_tags'] === 10
+		&& isset($compactAccountsConfig ['max_pinned_statuses']) && (int) $compactAccountsConfig ['max_pinned_statuses'] === 5
+		&& isset($compactAccountsConfig ['max_profile_fields']) && (int) $compactAccountsConfig ['max_profile_fields'] === 4
+		&& isset($compactAccountsConfig ['profile_field_name_limit']) && (int) $compactAccountsConfig ['profile_field_name_limit'] === 255
+		&& isset($compactAccountsConfig ['profile_field_value_limit']) && (int) $compactAccountsConfig ['profile_field_value_limit'] === 2047
+		&& !isset($compactAccountsConfig ['ignored_future_field']),
+	json_encode($compactAccountsConfig)
+) && $allOk;
+
+$excludeDirectNightlyOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$excludeDirectNightlyOptions ['instance_url'] = 'https://exclude-direct-nightly.example';
+$excludeDirectNightlyOptions ['instance_info_url'] = 'https://exclude-direct-nightly.example';
+$excludeDirectNightlyJson = json_encode(array('version' => '4.6.0-nightly.2026-06-02'));
+$excludeDirectNightlyOptions ['instance_info_json'] = is_string($excludeDirectNightlyJson) ? $excludeDirectNightlyJson : '';
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET https://exclude-direct-nightly.example/api/v1/accounts/acct-nightly/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&exclude_direct=true&since_id=since-nightly' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			array('id' => 'nightly-public', 'visibility' => 'public')
+		))
+	)
+);
+$excludeDirectNightlyStatuses = plugin_mastodon_fetch_account_statuses($excludeDirectNightlyOptions, 'acct-nightly', 'since-nightly');
+$excludeDirectNightlyRequests = simulate_recorded_http_requests();
+$excludeDirectNightlyUrl = isset($excludeDirectNightlyRequests [0] ['url']) ? (string) $excludeDirectNightlyRequests [0] ['url'] : '';
+$allOk = test_result(
+	'Mastodon 4.6.0-nightly account-status import sends exclude_direct for privacy',
+	count($excludeDirectNightlyStatuses) === 1
+		&& strpos($excludeDirectNightlyUrl, 'exclude_direct=true') !== false,
+	json_encode(array(
+		'statuses' => $excludeDirectNightlyStatuses,
+		'requests' => $excludeDirectNightlyRequests
+	))
+) && $allOk;
+
+$excludeDirectApiOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$excludeDirectApiOptions ['instance_url'] = 'https://exclude-direct-api.example';
+$excludeDirectApiOptions ['instance_info_url'] = 'https://exclude-direct-api.example';
+$excludeDirectApiJson = json_encode(array(
+	'version' => '4.5.9+hometown-compat',
+	'api_versions' => array('mastodon' => 10)
+));
+$excludeDirectApiOptions ['instance_info_json'] = is_string($excludeDirectApiJson) ? $excludeDirectApiJson : '';
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET https://exclude-direct-api.example/api/v1/accounts/acct-api/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&exclude_direct=true&since_id=since-api' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			array('id' => 'api-public', 'visibility' => 'public')
+		))
+	)
+);
+$excludeDirectApiStatuses = plugin_mastodon_fetch_account_statuses($excludeDirectApiOptions, 'acct-api', 'since-api');
+$excludeDirectApiRequests = simulate_recorded_http_requests();
+$excludeDirectApiUrl = isset($excludeDirectApiRequests [0] ['url']) ? (string) $excludeDirectApiRequests [0] ['url'] : '';
+$allOk = test_result(
+	'Mastodon API version 10 account-status import sends exclude_direct even on forked version strings',
+	count($excludeDirectApiStatuses) === 1
+		&& strpos($excludeDirectApiUrl, 'exclude_direct=true') !== false
+		&& strpos($excludeDirectApiUrl, 'since_id=since-api') !== false,
+	json_encode(array(
+		'statuses' => $excludeDirectApiStatuses,
+		'requests' => $excludeDirectApiRequests
+	))
+) && $allOk;
+
+$excludeDirectFallbackOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$excludeDirectFallbackOptions ['instance_url'] = 'https://exclude-direct-fallback.example';
+$excludeDirectFallbackOptions ['instance_info_url'] = 'https://exclude-direct-fallback.example';
+$excludeDirectFallbackJson = json_encode(array('version' => '4.6.0'));
+$excludeDirectFallbackOptions ['instance_info_json'] = is_string($excludeDirectFallbackJson) ? $excludeDirectFallbackJson : '';
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET https://exclude-direct-fallback.example/api/v1/accounts/acct-fallback/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&exclude_direct=true&since_id=since-fallback' => array(
+		'ok' => false,
+		'code' => 422,
+		'body' => json_encode(array('error' => 'Unknown parameter: exclude_direct'))
+	),
+	'GET https://exclude-direct-fallback.example/api/v1/accounts/acct-fallback/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&since_id=since-fallback' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			array('id' => 'fallback-public', 'visibility' => 'public')
+		))
+	)
+);
+$excludeDirectFallbackStatuses = plugin_mastodon_fetch_account_statuses($excludeDirectFallbackOptions, 'acct-fallback', 'since-fallback');
+$excludeDirectFallbackRequests = simulate_recorded_http_requests();
+$excludeDirectFallbackFirstUrl = isset($excludeDirectFallbackRequests [0] ['url']) ? (string) $excludeDirectFallbackRequests [0] ['url'] : '';
+$excludeDirectFallbackSecondUrl = isset($excludeDirectFallbackRequests [1] ['url']) ? (string) $excludeDirectFallbackRequests [1] ['url'] : '';
+$allOk = test_result(
+	'Account-status import retries without exclude_direct when a compatible server rejects the parameter',
+	count($excludeDirectFallbackStatuses) === 1
+		&& isset($excludeDirectFallbackStatuses [0] ['id']) && (string) $excludeDirectFallbackStatuses [0] ['id'] === 'fallback-public'
+		&& count($excludeDirectFallbackRequests) === 2
+		&& strpos($excludeDirectFallbackFirstUrl, 'exclude_direct=true') !== false
+		&& strpos($excludeDirectFallbackSecondUrl, 'exclude_direct=true') === false,
+	json_encode(array(
+		'statuses' => $excludeDirectFallbackStatuses,
+		'requests' => $excludeDirectFallbackRequests
+	))
+) && $allOk;
+
+$excludeDirectLegacyOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$excludeDirectLegacyOptions ['instance_url'] = 'https://exclude-direct-legacy.example';
+$excludeDirectLegacyOptions ['instance_info_url'] = 'https://exclude-direct-legacy.example';
+$excludeDirectLegacyJson = json_encode(array(
+	'version' => '4.5.9',
+	'api_versions' => array('mastodon' => 9)
+));
+$excludeDirectLegacyOptions ['instance_info_json'] = is_string($excludeDirectLegacyJson) ? $excludeDirectLegacyJson : '';
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET https://exclude-direct-legacy.example/api/v1/accounts/acct-legacy/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&since_id=since-legacy' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			array('id' => 'legacy-public', 'visibility' => 'public')
+		))
+	)
+);
+$excludeDirectLegacyStatuses = plugin_mastodon_fetch_account_statuses($excludeDirectLegacyOptions, 'acct-legacy', 'since-legacy');
+$excludeDirectLegacyRequests = simulate_recorded_http_requests();
+$excludeDirectLegacyUrl = isset($excludeDirectLegacyRequests [0] ['url']) ? (string) $excludeDirectLegacyRequests [0] ['url'] : '';
+$allOk = test_result(
+	'Cached Mastodon versions before 4.6 keep account-status import compatible without exclude_direct',
+	count($excludeDirectLegacyStatuses) === 1
+		&& strpos($excludeDirectLegacyUrl, 'exclude_direct=true') === false,
+	json_encode(array(
+		'statuses' => $excludeDirectLegacyStatuses,
+		'requests' => $excludeDirectLegacyRequests
+	))
+) && $allOk;
+
+$failedInstanceOptions = plugin_mastodon_clear_saved_instance_info(simulate_seed_options_from_config($options));
+$failedInstanceOptions ['instance_url'] = 'https://offline-instance.example';
+$failedInstanceOptions ['access_token'] = 'token-offline-instance';
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET https://offline-instance.example/api/v2/instance' => array('ok' => false, 'code' => 503, 'body' => json_encode(array('error' => 'maintenance')), 'error' => 'maintenance')
+);
+$failedCharacterLimit = plugin_mastodon_instance_character_limit($failedInstanceOptions);
+$failedMediaLimit = plugin_mastodon_instance_media_limit($failedInstanceOptions);
+$failedUrlReservedLength = plugin_mastodon_instance_url_reserved_length($failedInstanceOptions);
+$failedDescriptionLimit = plugin_mastodon_instance_media_description_limit($failedInstanceOptions);
+$failedMediaAttributesSupported = plugin_mastodon_instance_supports_status_media_attributes($failedInstanceOptions);
+$failedInstanceRequests = 0;
+foreach (simulate_recorded_http_requests() as $request) {
+	if (is_array($request) && !empty($request ['url']) && (string) $request ['url'] === 'https://offline-instance.example/api/v2/instance') {
+		$failedInstanceRequests++;
+	}
+}
+$allOk = test_result(
+	'Failed instance-information lookups are negatively cached per request and fall back to defaults',
+	$failedCharacterLimit === 500
+		&& $failedMediaLimit === 4
+		&& $failedUrlReservedLength === 23
+		&& $failedDescriptionLimit === 1500
+		&& $failedMediaAttributesSupported === false
+		&& $failedInstanceRequests === 1,
+	json_encode(array(
+		'character_limit' => $failedCharacterLimit,
+		'media_limit' => $failedMediaLimit,
+		'url_reserved_length' => $failedUrlReservedLength,
+		'description_limit' => $failedDescriptionLimit,
+		'media_attributes_supported' => $failedMediaAttributesSupported,
+		'instance_requests' => $failedInstanceRequests
+	))
+) && $allOk;
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = $instanceCapabilityHttpResponsesBackup;
+unset($GLOBALS ['plugin_mastodon_test_rate_limit_budgets']);
+plugin_mastodon_rate_limit_window_clear();
+plugin_mastodon_runtime_cache_clear();
 
 $urlReservedLength = plugin_mastodon_instance_url_reserved_length($options);
 $urlAwareText = 'Alpha ' . $instanceUrl . '/this/is/a/very/very/long/path/that-remains-a-single-link';
@@ -6899,6 +7682,10 @@ $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
 						'display_name' => 'Alice',
 						'url' => 'https://example.net/@alice'
 					)
+				),
+				'fallback' => array(
+					'type' => 'mention',
+					'text' => 'Fallback payload must not replace the normal mention status'
 				)
 			)
 		))
@@ -6929,6 +7716,18 @@ $allOk = test_result(
 		'comment' => $notificationEntryComment,
 		'context_requests' => $notificationEntryContextRequests,
 		'last_notification' => isset($notificationEntryState ['last_remote_notification_id']) ? $notificationEntryState ['last_remote_notification_id'] : '',
+		'requests' => $notificationEntryRequests
+	))
+) && $allOk;
+
+$allOk = test_result(
+	'Notification fallback payloads are ignored when a normal mention status is available',
+	$notificationEntryOk
+		&& isset($notificationEntryComment ['content'])
+		&& strpos((string) $notificationEntryComment ['content'], 'Notification reply on an old mapped entry') !== false
+		&& strpos((string) $notificationEntryComment ['content'], 'Fallback payload must not replace') === false,
+	json_encode(array(
+		'comment' => $notificationEntryComment,
 		'requests' => $notificationEntryRequests
 	))
 ) && $allOk;
@@ -9232,6 +10031,75 @@ $allOk = test_result(
 	))
 ) && $allOk;
 
+$deletedImportedRemoteUneditedCase = simulate_run_deleted_imported_remote_comment_tombstone_case(false);
+$deletedImportedRemoteUneditedStateAfterInitial = isset($deletedImportedRemoteUneditedCase ['state_after_initial_sync']) && is_array($deletedImportedRemoteUneditedCase ['state_after_initial_sync']) ? $deletedImportedRemoteUneditedCase ['state_after_initial_sync'] : array();
+$deletedImportedRemoteUneditedStateAfterDelete = isset($deletedImportedRemoteUneditedCase ['state_after_local_delete']) && is_array($deletedImportedRemoteUneditedCase ['state_after_local_delete']) ? $deletedImportedRemoteUneditedCase ['state_after_local_delete'] : array();
+$deletedImportedRemoteUneditedStateAfterNextSync = isset($deletedImportedRemoteUneditedCase ['state_after_next_content_sync']) && is_array($deletedImportedRemoteUneditedCase ['state_after_next_content_sync']) ? $deletedImportedRemoteUneditedCase ['state_after_next_content_sync'] : array();
+$allOk = test_result(
+	'Locally deleted imported external Mastodon reply is tombstoned immediately and not re-imported unchanged',
+		!empty($deletedImportedRemoteUneditedCase ['initial_sync_result'] ['ok'])
+		&& !empty($deletedImportedRemoteUneditedCase ['imported_reply_exists_before_delete'])
+		&& isset($deletedImportedRemoteUneditedStateAfterInitial ['comments'] [$deletedImportedRemoteUneditedCase ['entry_id'] . ':' . $deletedImportedRemoteUneditedCase ['local_comment_one_id']] ['source'])
+		&& (string) $deletedImportedRemoteUneditedStateAfterInitial ['comments'] [$deletedImportedRemoteUneditedCase ['entry_id'] . ':' . $deletedImportedRemoteUneditedCase ['local_comment_one_id']] ['source'] === 'local'
+		&& !empty($deletedImportedRemoteUneditedStateAfterDelete ['comment_tombstones'] ['9903'])
+		&& empty($deletedImportedRemoteUneditedStateAfterDelete ['comments_remote'] ['9903'])
+		&& empty($deletedImportedRemoteUneditedCase ['imported_reply_exists_after_next_sync'])
+		&& empty($deletedImportedRemoteUneditedCase ['reimported_reply_ref'])
+		&& !empty($deletedImportedRemoteUneditedStateAfterNextSync ['comment_tombstones'] ['9903']),
+	json_encode(array(
+		'initial_sync_result' => $deletedImportedRemoteUneditedCase ['initial_sync_result'],
+		'state_after_initial_sync' => $deletedImportedRemoteUneditedStateAfterInitial,
+		'state_after_local_delete' => $deletedImportedRemoteUneditedStateAfterDelete,
+		'next_content_sync_result' => $deletedImportedRemoteUneditedCase ['next_content_sync_result'],
+		'state_after_next_content_sync' => $deletedImportedRemoteUneditedStateAfterNextSync,
+		'reimported_reply_ref' => $deletedImportedRemoteUneditedCase ['reimported_reply_ref']
+	))
+) && $allOk;
+
+$deletedImportedRemoteEditedCase = simulate_run_deleted_imported_remote_comment_tombstone_case(true);
+$deletedImportedRemoteEditedStateAfterInitial = isset($deletedImportedRemoteEditedCase ['state_after_initial_sync']) && is_array($deletedImportedRemoteEditedCase ['state_after_initial_sync']) ? $deletedImportedRemoteEditedCase ['state_after_initial_sync'] : array();
+$deletedImportedRemoteEditedStateAfterDelete = isset($deletedImportedRemoteEditedCase ['state_after_local_delete']) && is_array($deletedImportedRemoteEditedCase ['state_after_local_delete']) ? $deletedImportedRemoteEditedCase ['state_after_local_delete'] : array();
+$deletedImportedRemoteEditedStateAfterNextSync = isset($deletedImportedRemoteEditedCase ['state_after_next_content_sync']) && is_array($deletedImportedRemoteEditedCase ['state_after_next_content_sync']) ? $deletedImportedRemoteEditedCase ['state_after_next_content_sync'] : array();
+$allOk = test_result(
+	'Locally deleted imported external Mastodon reply is not re-imported after the remote author edits it',
+		!empty($deletedImportedRemoteEditedCase ['initial_sync_result'] ['ok'])
+		&& !empty($deletedImportedRemoteEditedCase ['imported_reply_exists_before_delete'])
+		&& isset($deletedImportedRemoteEditedStateAfterInitial ['comments'] [$deletedImportedRemoteEditedCase ['entry_id'] . ':' . $deletedImportedRemoteEditedCase ['local_comment_one_id']] ['source'])
+		&& (string) $deletedImportedRemoteEditedStateAfterInitial ['comments'] [$deletedImportedRemoteEditedCase ['entry_id'] . ':' . $deletedImportedRemoteEditedCase ['local_comment_one_id']] ['source'] === 'local'
+		&& !empty($deletedImportedRemoteEditedStateAfterDelete ['comment_tombstones'] ['9903'])
+		&& empty($deletedImportedRemoteEditedStateAfterDelete ['comments_remote'] ['9903'])
+		&& empty($deletedImportedRemoteEditedCase ['imported_reply_exists_after_next_sync'])
+		&& empty($deletedImportedRemoteEditedCase ['reimported_reply_ref'])
+		&& !empty($deletedImportedRemoteEditedStateAfterNextSync ['comment_tombstones'] ['9903']),
+	json_encode(array(
+		'initial_sync_result' => $deletedImportedRemoteEditedCase ['initial_sync_result'],
+		'state_after_initial_sync' => $deletedImportedRemoteEditedStateAfterInitial,
+		'state_after_local_delete' => $deletedImportedRemoteEditedStateAfterDelete,
+		'next_content_sync_result' => $deletedImportedRemoteEditedCase ['next_content_sync_result'],
+		'state_after_next_content_sync' => $deletedImportedRemoteEditedStateAfterNextSync,
+		'reimported_reply_ref' => $deletedImportedRemoteEditedCase ['reimported_reply_ref']
+	))
+) && $allOk;
+
+$deletedImportedRemoteCleanupCase = simulate_run_deleted_imported_remote_comment_deletion_sync_cleanup_case();
+$deletedImportedRemoteCleanupState = isset($deletedImportedRemoteCleanupCase ['state_after_deletion_sync']) && is_array($deletedImportedRemoteCleanupCase ['state_after_deletion_sync']) ? $deletedImportedRemoteCleanupCase ['state_after_deletion_sync'] : array();
+$allOk = test_result(
+	'Deletion sync treats locally deleted imported remote replies as local ignore decisions without remote DELETE',
+		!empty($deletedImportedRemoteCleanupCase ['deletion_sync_result'] ['ok'])
+		&& !empty($deletedImportedRemoteCleanupState ['comment_tombstones'] ['9911'])
+		&& empty($deletedImportedRemoteCleanupState ['comments_remote'] ['9911'])
+		&& empty($deletedImportedRemoteCleanupState ['deletions_pending'])
+		&& empty($deletedImportedRemoteCleanupCase ['delete_requests_after_deletion_sync'])
+		&& isset($deletedImportedRemoteCleanupState ['deletion_stats'] ['deleted_remote_comments'])
+		&& (int) $deletedImportedRemoteCleanupState ['deletion_stats'] ['deleted_remote_comments'] === 0,
+	json_encode(array(
+		'deletion_sync_result' => $deletedImportedRemoteCleanupCase ['deletion_sync_result'],
+		'state_after_deletion_sync' => $deletedImportedRemoteCleanupState,
+		'requests_after_deletion_sync' => $deletedImportedRemoteCleanupCase ['requests_after_deletion_sync'],
+		'delete_requests_after_deletion_sync' => $deletedImportedRemoteCleanupCase ['delete_requests_after_deletion_sync']
+	))
+) && $allOk;
+
 plugin_mastodon_save_options($options);
 
 simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
@@ -9357,7 +10225,6 @@ $allOk = test_result(
 		'state' => $assignedState
 	))
 ) && $allOk;
-
 
 $mainAdminTemplate = @file_get_contents(PLUGIN_MASTODON_DIR . 'tpls/admin.plugin.mastodon.tpl');
 $maintenanceAdminTemplate = @file_get_contents(PLUGIN_MASTODON_DIR . 'tpls/admin.plugin.mastodon.maintenance.tpl');
@@ -10485,7 +11352,6 @@ if ($largeStateDecision === 'run') {
 }
 plugin_mastodon_runtime_cache_clear();
 
-
 // Regression test: automatic scheduled sync must export a new current comment on an old mapped entry via dirty_comments.
 simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
 mkdir($simRoot . '/fp-content/plugin_mastodon', 0777, true);
@@ -10556,6 +11422,8 @@ $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
 		'body' => json_encode(array('id' => 'automatic-old-comment-remote-1', 'url' => $instanceUrl . '/@flatpress/automatic-old-comment-remote-1', 'created_at' => '2026-05-31T16:48:00Z'))
 	)
 );
+// Keep this scheduled-run fixture isolated from earlier cooldown-guard tests on both file-backed and APCu-backed hosts.
+plugin_mastodon_sync_guard_clear('content');
 $automaticOldCommentResult = plugin_mastodon_run_sync(false);
 $automaticOldCommentStateAfter = isset($automaticOldCommentResult ['state']) && is_array($automaticOldCommentResult ['state']) ? $automaticOldCommentResult ['state'] : plugin_mastodon_state_read(array($automaticOldCommentEntryId));
 $automaticOldCommentParseCount = simulate_local_entry_parse_count();
@@ -10594,7 +11462,6 @@ $allOk = test_result(
 ) && $allOk;
 entry_delete($automaticOldCommentEntryId);
 unset($GLOBALS ['plugin_mastodon_test_now']);
-
 
 // Regression test: the explicit one-way mode must be disabled by default, saved from the admin form, and translated everywhere.
 $oneWayDefaultOptions = plugin_mastodon_default_options();
@@ -10835,8 +11702,22 @@ $oneWayRemoteReply = array(
 	'url' => $instanceUrl . '/@flatpress/oneway-remote-reply-1',
 	'account' => array('id' => 'acct2', 'acct' => 'reply@example.net', 'display_name' => 'Reply User', 'url' => 'https://example.net/@reply')
 );
+$oneWayProfilePng = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jz6kAAAAASUVORK5CYII=', true);
+$oneWayProfilePng = is_string($oneWayProfilePng) ? $oneWayProfilePng : 'png';
+$oneWayProfileAvatarUrl = $instanceUrl . '/system/accounts/avatars/original/oneway-profile.png';
+$oneWayProfileAccount = array(
+	'id' => 'acct1',
+	'username' => 'flatpress',
+	'acct' => 'flatpress',
+	'display_name' => 'FlatPress Profile',
+	'url' => $instanceUrl . '/@flatpress',
+	'avatar_static' => $oneWayProfileAvatarUrl,
+	'avatar' => $oneWayProfileAvatarUrl,
+	'avatar_description' => 'One-way profile avatar'
+);
 $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
-	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array('ok' => true, 'code' => 200, 'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))),
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array('ok' => true, 'code' => 200, 'body' => json_encode($oneWayProfileAccount)),
+	'GET ' . $oneWayProfileAvatarUrl => array('ok' => true, 'code' => 200, 'headers' => array('content-type' => 'image/png'), 'body' => $oneWayProfilePng),
 	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true' => array('ok' => true, 'code' => 200, 'body' => json_encode(array($oneWayRemoteStatus))),
 	'GET ' . $instanceUrl . '/api/v1/statuses/oneway-local-export-1/context' => array('ok' => true, 'code' => 200, 'body' => json_encode(array('descendants' => array($oneWayRemoteReply)))),
 	'GET ' . $instanceUrl . '/api/v2/instance' => array('ok' => true, 'code' => 200, 'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))),
@@ -10847,11 +11728,22 @@ $oneWaySyncStateAfter = isset($oneWaySyncResult ['state']) && is_array($oneWaySy
 $oneWaySyncRequests = simulate_recorded_http_requests();
 $oneWayRemoteReadRequests = 0;
 $oneWayStatusPostRequests = 0;
+$oneWayVerifyRequests = 0;
+$oneWayAvatarRequests = 0;
 foreach ($oneWaySyncRequests as $oneWayRequest) {
 	if (!is_array($oneWayRequest) || empty($oneWayRequest ['method']) || empty($oneWayRequest ['url'])) {
 		continue;
 	}
 	$oneWayRequestLine = strtoupper(strtoupper((string) $oneWayRequest ['method']) . ' ' . (string) $oneWayRequest ['url']);
+	$oneWayRequestUrl = (string) $oneWayRequest ['url'];
+	if ($oneWayRequestLine === 'GET ' . strtoupper($instanceUrl) . '/API/V1/ACCOUNTS/VERIFY_CREDENTIALS') {
+		$oneWayVerifyRequests++;
+		continue;
+	}
+	if (strtoupper((string) $oneWayRequest ['method']) === 'GET' && $oneWayRequestUrl === $oneWayProfileAvatarUrl) {
+		$oneWayAvatarRequests++;
+		continue;
+	}
 	if (strpos($oneWayRequestLine, 'GET ' . strtoupper($instanceUrl) . '/API/V1/ACCOUNTS/') !== false || strpos($oneWayRequestLine, '/CONTEXT') !== false || strpos($oneWayRequestLine, '/API/V1/NOTIFICATIONS') !== false) {
 		$oneWayRemoteReadRequests++;
 	}
@@ -10859,6 +11751,7 @@ foreach ($oneWaySyncRequests as $oneWayRequest) {
 		$oneWayStatusPostRequests++;
 	}
 }
+$oneWayProfileCache = plugin_mastodon_profile_cache_read(true);
 $oneWayDirectState = plugin_mastodon_default_state();
 $oneWayDirectEntryImport = plugin_mastodon_import_remote_entry($oneWaySyncOptions, $oneWayDirectState, $oneWayRemoteStatus);
 $oneWayDirectCommentImport = plugin_mastodon_import_remote_comment($oneWaySyncOptions, $oneWayDirectState, $oneWayLocalEntryId, $oneWayRemoteReply);
@@ -10867,6 +11760,10 @@ $allOk = test_result(
 		!empty($oneWaySyncResult ['ok'])
 		&& $oneWayStatusPostRequests === 1
 		&& $oneWayRemoteReadRequests === 0
+		&& $oneWayVerifyRequests === 1
+		&& $oneWayAvatarRequests === 1
+		&& isset($oneWayProfileCache ['display_name']) && (string) $oneWayProfileCache ['display_name'] === 'FlatPress Profile'
+		&& isset($oneWayProfileCache ['avatar_file']) && plugin_mastodon_profile_relative_to_absolute((string) $oneWayProfileCache ['avatar_file']) !== ''
 		&& isset($oneWaySyncStateAfter ['entries'] [$oneWayLocalEntryId] ['remote_id'])
 		&& (string) $oneWaySyncStateAfter ['entries'] [$oneWayLocalEntryId] ['remote_id'] === 'oneway-local-export-1'
 		&& empty($oneWaySyncStateAfter ['entries_remote'] ['oneway-remote-entry-1'])
@@ -10877,12 +11774,91 @@ $allOk = test_result(
 		'result' => $oneWaySyncResult,
 		'remote_read_requests' => $oneWayRemoteReadRequests,
 		'status_post_requests' => $oneWayStatusPostRequests,
+		'verify_requests' => $oneWayVerifyRequests,
+		'avatar_requests' => $oneWayAvatarRequests,
+		'profile_cache' => $oneWayProfileCache,
 		'requests' => $oneWaySyncRequests,
 		'direct_entry_import' => $oneWayDirectEntryImport,
 		'direct_comment_import' => $oneWayDirectCommentImport
 	))
 ) && $allOk;
 entry_delete($oneWayLocalEntryId);
+
+// Regression test: automatic scheduled one-way synchronization refreshes the profile widget cache even when remote import is disabled.
+simulate_delete_recursive($simRoot . '/fp-content/content');
+mkdir($simRoot . '/fp-content/content', 0777, true);
+simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
+mkdir($simRoot . '/fp-content/plugin_mastodon', 0777, true);
+plugin_mastodon_runtime_cache_clear();
+plugin_mastodon_sync_guard_clear('content');
+$oneWayAutomaticOptions = $seededOptions;
+$oneWayAutomaticOptions ['disable_remote_import'] = '1';
+$oneWayAutomaticOptions ['access_token'] = 'token123';
+$oneWayAutomaticOptions ['sync_start_date'] = '2026-01-01';
+$oneWayAutomaticOptions ['sync_time'] = '00:00';
+plugin_mastodon_save_options($oneWayAutomaticOptions);
+$oneWayAutomaticState = plugin_mastodon_default_state();
+plugin_mastodon_state_write($oneWayAutomaticState);
+$oneWayAutomaticPng = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jz6kAAAAASUVORK5CYII=', true);
+$oneWayAutomaticPng = is_string($oneWayAutomaticPng) ? $oneWayAutomaticPng : 'png';
+$oneWayAutomaticAvatarUrl = $instanceUrl . '/system/accounts/avatars/original/oneway-automatic-profile.png';
+$oneWayAutomaticAccount = array(
+	'id' => 'acct1',
+	'username' => 'flatpress',
+	'acct' => 'flatpress',
+	'display_name' => 'FlatPress Scheduled Profile',
+	'url' => $instanceUrl . '/@flatpress',
+	'avatar_static' => $oneWayAutomaticAvatarUrl,
+	'avatar' => $oneWayAutomaticAvatarUrl,
+	'avatar_description' => 'Scheduled profile avatar'
+);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array('ok' => true, 'code' => 200, 'body' => json_encode($oneWayAutomaticAccount)),
+	'GET ' . $oneWayAutomaticAvatarUrl => array('ok' => true, 'code' => 200, 'headers' => array('content-type' => 'image/png'), 'body' => $oneWayAutomaticPng)
+);
+$oneWayAutomaticResult = plugin_mastodon_run_sync(false);
+$oneWayAutomaticRequests = simulate_recorded_http_requests();
+$oneWayAutomaticVerifyRequests = 0;
+$oneWayAutomaticAvatarRequests = 0;
+$oneWayAutomaticImportRequests = 0;
+foreach ($oneWayAutomaticRequests as $oneWayAutomaticRequest) {
+	if (!is_array($oneWayAutomaticRequest) || empty($oneWayAutomaticRequest ['method']) || empty($oneWayAutomaticRequest ['url'])) {
+		continue;
+	}
+	$oneWayAutomaticLine = strtoupper(strtoupper((string) $oneWayAutomaticRequest ['method']) . ' ' . (string) $oneWayAutomaticRequest ['url']);
+	$oneWayAutomaticUrl = (string) $oneWayAutomaticRequest ['url'];
+	if ($oneWayAutomaticLine === 'GET ' . strtoupper($instanceUrl) . '/API/V1/ACCOUNTS/VERIFY_CREDENTIALS') {
+		$oneWayAutomaticVerifyRequests++;
+		continue;
+	}
+	if (strtoupper((string) $oneWayAutomaticRequest ['method']) === 'GET' && $oneWayAutomaticUrl === $oneWayAutomaticAvatarUrl) {
+		$oneWayAutomaticAvatarRequests++;
+		continue;
+	}
+	if (strpos($oneWayAutomaticLine, 'GET ' . strtoupper($instanceUrl) . '/API/V1/ACCOUNTS/') !== false || strpos($oneWayAutomaticLine, '/CONTEXT') !== false || strpos($oneWayAutomaticLine, '/API/V1/NOTIFICATIONS') !== false) {
+		$oneWayAutomaticImportRequests++;
+	}
+}
+$oneWayAutomaticProfileCache = plugin_mastodon_profile_cache_read(true);
+plugin_mastodon_sync_guard_clear('content');
+$allOk = test_result(
+	'Automatic one-way content sync refreshes the Mastodon widget profile cache without remote import reads',
+		!empty($oneWayAutomaticResult ['ok'])
+		&& $oneWayAutomaticVerifyRequests === 1
+		&& $oneWayAutomaticAvatarRequests === 1
+		&& $oneWayAutomaticImportRequests === 0
+		&& isset($oneWayAutomaticProfileCache ['display_name']) && (string) $oneWayAutomaticProfileCache ['display_name'] === 'FlatPress Scheduled Profile'
+		&& isset($oneWayAutomaticProfileCache ['avatar_description']) && (string) $oneWayAutomaticProfileCache ['avatar_description'] === 'Scheduled profile avatar',
+	json_encode(array(
+		'result' => $oneWayAutomaticResult,
+		'verify_requests' => $oneWayAutomaticVerifyRequests,
+		'avatar_requests' => $oneWayAutomaticAvatarRequests,
+		'import_requests' => $oneWayAutomaticImportRequests,
+		'profile_cache' => $oneWayAutomaticProfileCache,
+		'requests' => $oneWayAutomaticRequests
+	))
+) && $allOk;
 
 // Regression test: one-way deletion sync must keep local content when remote statuses vanished, unlink stale mappings and queue re-export.
 simulate_delete_recursive($simRoot . '/fp-content/content');
@@ -10964,7 +11940,21 @@ $allOk = test_result(
 
 plugin_mastodon_runtime_cache_clear();
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$oneWayReexportPng = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jz6kAAAAASUVORK5CYII=', true);
+$oneWayReexportPng = is_string($oneWayReexportPng) ? $oneWayReexportPng : 'png';
+$oneWayReexportAvatarUrl = $instanceUrl . '/system/accounts/avatars/original/oneway-reexport-profile.png';
+$oneWayReexportAccount = array(
+	'id' => 'acct1',
+	'username' => 'flatpress',
+	'acct' => 'flatpress',
+	'display_name' => 'FlatPress Reexport Profile',
+	'url' => $instanceUrl . '/@flatpress',
+	'avatar_static' => $oneWayReexportAvatarUrl,
+	'avatar' => $oneWayReexportAvatarUrl
+);
 $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array('ok' => true, 'code' => 200, 'body' => json_encode($oneWayReexportAccount)),
+	'GET ' . $oneWayReexportAvatarUrl => array('ok' => true, 'code' => 200, 'headers' => array('content-type' => 'image/png'), 'body' => $oneWayReexportPng),
 	'GET ' . $instanceUrl . '/api/v2/instance' => array('ok' => true, 'code' => 200, 'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))),
 	'POST ' . $instanceUrl . '/api/v1/statuses' => array(
 		array('ok' => true, 'code' => 200, 'body' => json_encode(array('id' => 'oneway-delete-entry-reexported', 'url' => $instanceUrl . '/@flatpress/oneway-delete-entry-reexported', 'created_at' => '2026-05-31T18:50:00Z'))),
@@ -10976,11 +11966,22 @@ $oneWayReexportStateAfter = isset($oneWayReexportResult ['state']) && is_array($
 $oneWayReexportRequests = simulate_recorded_http_requests();
 $oneWayReexportRemoteReadRequests = 0;
 $oneWayReexportPostRequests = 0;
+$oneWayReexportVerifyRequests = 0;
+$oneWayReexportAvatarRequests = 0;
 foreach ($oneWayReexportRequests as $oneWayReexportRequest) {
 	if (!is_array($oneWayReexportRequest) || empty($oneWayReexportRequest ['method']) || empty($oneWayReexportRequest ['url'])) {
 		continue;
 	}
 	$oneWayReexportLine = strtoupper(strtoupper((string) $oneWayReexportRequest ['method']) . ' ' . (string) $oneWayReexportRequest ['url']);
+	$oneWayReexportUrl = (string) $oneWayReexportRequest ['url'];
+	if ($oneWayReexportLine === 'GET ' . strtoupper($instanceUrl) . '/API/V1/ACCOUNTS/VERIFY_CREDENTIALS') {
+		$oneWayReexportVerifyRequests++;
+		continue;
+	}
+	if (strtoupper((string) $oneWayReexportRequest ['method']) === 'GET' && $oneWayReexportUrl === $oneWayReexportAvatarUrl) {
+		$oneWayReexportAvatarRequests++;
+		continue;
+	}
 	if (strpos($oneWayReexportLine, 'GET ' . strtoupper($instanceUrl) . '/API/V1/ACCOUNTS/') !== false || strpos($oneWayReexportLine, '/CONTEXT') !== false || strpos($oneWayReexportLine, '/API/V1/NOTIFICATIONS') !== false) {
 		$oneWayReexportRemoteReadRequests++;
 	}
@@ -10988,12 +11989,16 @@ foreach ($oneWayReexportRequests as $oneWayReexportRequest) {
 		$oneWayReexportPostRequests++;
 	}
 }
+$oneWayReexportProfileCache = plugin_mastodon_profile_cache_read(true);
 $oneWayReexportCommentMeta = plugin_mastodon_state_get_comment_meta($oneWayReexportStateAfter, $oneWayDeleteCommentEntryId, $oneWayDeleteCommentId);
 $allOk = test_result(
 	'One-way content sync re-exports local objects whose remote mappings were unlinked after remote deletion',
 		!empty($oneWayReexportResult ['ok'])
 		&& $oneWayReexportRemoteReadRequests === 0
 		&& $oneWayReexportPostRequests === 2
+		&& $oneWayReexportVerifyRequests === 1
+		&& $oneWayReexportAvatarRequests === 1
+		&& isset($oneWayReexportProfileCache ['display_name']) && (string) $oneWayReexportProfileCache ['display_name'] === 'FlatPress Reexport Profile'
 		&& isset($oneWayReexportStateAfter ['entries'] [$oneWayDeleteEntryId] ['remote_id'])
 		&& (string) $oneWayReexportStateAfter ['entries'] [$oneWayDeleteEntryId] ['remote_id'] === 'oneway-delete-entry-reexported'
 		&& isset($oneWayReexportCommentMeta ['remote_id'])
@@ -11004,6 +12009,9 @@ $allOk = test_result(
 		'result' => $oneWayReexportResult,
 		'remote_read_requests' => $oneWayReexportRemoteReadRequests,
 		'post_requests' => $oneWayReexportPostRequests,
+		'verify_requests' => $oneWayReexportVerifyRequests,
+		'avatar_requests' => $oneWayReexportAvatarRequests,
+		'profile_cache' => $oneWayReexportProfileCache,
 		'entry_meta' => isset($oneWayReexportStateAfter ['entries'] [$oneWayDeleteEntryId]) ? $oneWayReexportStateAfter ['entries'] [$oneWayDeleteEntryId] : array(),
 		'comment_meta' => $oneWayReexportCommentMeta,
 		'requests' => $oneWayReexportRequests
@@ -11065,8 +12073,201 @@ $allOk = test_result(
 ) && $allOk;
 entry_delete($oneWayPendingEntryId);
 
+// Regression test: the Mastodon profile widget must use only locally cached public profile data and a locally stored avatar.
+simulate_delete_recursive(ABS_PATH . FP_CONTENT . 'plugin_mastodon');
+@mkdir(ABS_PATH . FP_CONTENT . 'plugin_mastodon', 0777, true);
+plugin_mastodon_runtime_cache_clear();
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array();
+$widgetEmpty = plugin_mastodon_widget();
+$widgetEmptyRequests = simulate_recorded_http_requests();
+$allOk = test_result(
+	'Mastodon widget remains hidden and performs no HTTP requests while its local profile cache is missing',
+	$widgetEmpty === array() && $widgetEmptyRequests === array(),
+	json_encode(array('widget' => $widgetEmpty, 'requests' => $widgetEmptyRequests))
+) && $allOk;
 
+$widgetPng = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jz6kAAAAASUVORK5CYII=', true);
+$widgetPng = is_string($widgetPng) ? $widgetPng : 'png';
+$widgetAvatarUrl = $instanceUrl . '/system/accounts/avatars/original/widget-avatar.png';
+$widgetAccount = array(
+	'id' => 'widget-account-1',
+	'username' => 'Fraenkiman',
+	'acct' => 'Fraenkiman',
+	'display_name' => 'Frank Hochmuth',
+	'url' => $instanceUrl . '/@Fraenkiman',
+	'avatar_static' => $widgetAvatarUrl,
+	'avatar' => $instanceUrl . '/system/accounts/avatars/original/widget-avatar-animated.gif',
+	'avatar_description' => 'Porträtfoto von Frank Hochmuth'
+);
+$widgetOptions = $seededOptions;
+$widgetOptions ['instance_url'] = $instanceUrl;
+$widgetOptions ['access_token'] = 'token123';
+plugin_mastodon_save_options($widgetOptions);
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_profile_avatar_responses'] = array();
+$GLOBALS ['plugin_mastodon_test_profile_cache_events'] = array();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array('ok' => true, 'code' => 200, 'body' => json_encode($widgetAccount)),
+	'GET ' . $widgetAvatarUrl => array('ok' => true, 'code' => 200, 'headers' => array('content-type' => 'image/png'), 'body' => $widgetPng)
+);
+$widgetVerifyResponse = plugin_mastodon_verify_credentials($widgetOptions);
+$widgetProfileCacheRaw = @file_get_contents(PLUGIN_MASTODON_PROFILE_FILE);
+$widgetProfileCache = is_string($widgetProfileCacheRaw) ? json_decode($widgetProfileCacheRaw, true) : array();
+$widgetProfileCache = is_array($widgetProfileCache) ? $widgetProfileCache : array();
+$widgetAvatarAbsolute = isset($widgetProfileCache ['avatar_file']) ? plugin_mastodon_profile_relative_to_absolute((string) $widgetProfileCache ['avatar_file']) : '';
+$widgetVerifyRequests = simulate_recorded_http_requests();
+$widgetVerifyAvatarGetCount = 0;
+foreach ($widgetVerifyRequests as $widgetVerifyRequest) {
+	if (is_array($widgetVerifyRequest) && isset($widgetVerifyRequest ['method'], $widgetVerifyRequest ['url']) && strtoupper((string) $widgetVerifyRequest ['method']) === 'GET' && (string) $widgetVerifyRequest ['url'] === $widgetAvatarUrl) {
+		$widgetVerifyAvatarGetCount++;
+	}
+}
+$allOk = test_result(
+	'Mastodon widget profile cache is refreshed from verify_credentials and stores only public profile data plus a local avatar',
+	!empty($widgetVerifyResponse ['ok'])
+		&& isset($widgetProfileCache ['display_name']) && (string) $widgetProfileCache ['display_name'] === 'Frank Hochmuth'
+		&& isset($widgetProfileCache ['acct']) && (string) $widgetProfileCache ['acct'] === 'Fraenkiman'
+		&& isset($widgetProfileCache ['profile_url']) && (string) $widgetProfileCache ['profile_url'] === $instanceUrl . '/@Fraenkiman'
+		&& isset($widgetProfileCache ['avatar_file']) && (string) $widgetProfileCache ['avatar_file'] === 'plugin_mastodon/profile/avatar.png'
+		&& $widgetAvatarAbsolute !== '' && is_file($widgetAvatarAbsolute)
+		&& isset($widgetProfileCache ['avatar_description']) && (string) $widgetProfileCache ['avatar_description'] === 'Porträtfoto von Frank Hochmuth'
+		&& is_string($widgetProfileCacheRaw) && strpos($widgetProfileCacheRaw, 'token123') === false
+		&& $widgetVerifyAvatarGetCount === 1,
+	json_encode(array(
+		'verify_ok' => !empty($widgetVerifyResponse ['ok']),
+		'cache' => $widgetProfileCache,
+		'avatar_absolute' => $widgetAvatarAbsolute,
+		'requests' => $widgetVerifyRequests
+	))
+) && $allOk;
+
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array();
+$widgetRendered = plugin_mastodon_widget();
+$widgetRenderRequests = simulate_recorded_http_requests();
+$widgetSubject = isset($widgetRendered ['subject']) ? (string) $widgetRendered ['subject'] : '';
+$widgetContent = isset($widgetRendered ['content']) ? (string) $widgetRendered ['content'] : '';
+$allOk = test_result(
+	'Mastodon widget renders compact local-cache markup without remote API calls or inline CSS',
+	$widgetSubject === 'Mastodon'
+		&& strpos($widgetContent, 'mastodon-profile-widget') !== false
+		&& strpos($widgetContent, 'Frank Hochmuth') !== false
+		&& strpos($widgetContent, '@Fraenkiman') !== false
+		&& strpos($widgetContent, 'href="' . htmlspecialchars($instanceUrl . '/@Fraenkiman', ENT_QUOTES, 'UTF-8') . '"') !== false
+		&& strpos($widgetContent, 'fp-content/plugin_mastodon/profile/avatar.png') !== false
+		&& strpos($widgetContent, 'alt="Porträtfoto von Frank Hochmuth"') !== false
+		&& strpos($widgetContent, 'loading="lazy"') !== false
+		&& strpos($widgetContent, 'decoding="async"') !== false
+		&& strpos($widgetContent, '<style') === false
+		&& strpos($widgetContent, 'mastodon.css') === false
+		&& strpos($widgetContent, 'https://files.example') === false
+		&& $widgetRenderRequests === array(),
+	json_encode(array('subject' => $widgetSubject, 'content' => $widgetContent, 'requests' => $widgetRenderRequests))
+) && $allOk;
+
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+ob_start();
+plugin_mastodon_head();
+$widgetHeadMarkup = trim((string) ob_get_clean());
+$widgetHeadRequests = simulate_recorded_http_requests();
+$widgetCssUrl = utils_asset_ver(plugin_geturl('mastodon') . 'res/mastodon.css', SYSTEM_VER);
+$allOk = test_result(
+	'Mastodon widget stylesheet is loaded by plugin_mastodon_head as a versioned CSS asset',
+	strpos($widgetHeadMarkup, '<link rel="stylesheet" href="' . htmlspecialchars($widgetCssUrl, ENT_QUOTES, 'UTF-8') . '">') !== false
+		&& strpos($widgetHeadMarkup, 'res/mastodon.css') !== false
+		&& strpos($widgetHeadMarkup, '?v=') !== false
+		&& strpos($widgetHeadMarkup, '<style') === false
+		&& $widgetHeadRequests === array(),
+	json_encode(array('head' => $widgetHeadMarkup, 'css' => $widgetCssUrl, 'requests' => $widgetHeadRequests))
+) && $allOk;
+
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array();
+$widgetReuseOk = plugin_mastodon_refresh_profile_cache_from_account($widgetOptions, $widgetAccount);
+$widgetReuseRequests = simulate_recorded_http_requests();
+$allOk = test_result(
+	'Mastodon widget profile refresh reuses the cached avatar when the Mastodon avatar URL is unchanged',
+	$widgetReuseOk && $widgetReuseRequests === array(),
+	json_encode(array('reuse_ok' => $widgetReuseOk, 'requests' => $widgetReuseRequests))
+) && $allOk;
+
+simulate_delete_recursive(ABS_PATH . FP_CONTENT . 'plugin_mastodon');
+@mkdir(ABS_PATH . FP_CONTENT . 'plugin_mastodon', 0777, true);
+$widgetLegacyAvatarUrl = $instanceUrl . '/system/accounts/avatars/original/widget-legacy-avatar.png';
+$widgetLegacyAccount = array(
+	'id' => 'widget-account-legacy',
+	'username' => 'legacyuser',
+	'acct' => 'legacyuser',
+	'display_name' => 'Legacy User',
+	'url' => $instanceUrl . '/@legacyuser',
+	'avatar_static' => $widgetLegacyAvatarUrl,
+	'avatar' => $widgetLegacyAvatarUrl
+);
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $widgetLegacyAvatarUrl => array('ok' => true, 'code' => 200, 'headers' => array('content-type' => 'image/png'), 'body' => $widgetPng)
+);
+$widgetLegacyRefreshOk = plugin_mastodon_refresh_profile_cache_from_account($widgetOptions, $widgetLegacyAccount);
+$widgetLegacyRendered = plugin_mastodon_widget();
+$widgetLegacyContent = isset($widgetLegacyRendered ['content']) ? (string) $widgetLegacyRendered ['content'] : '';
+$widgetFallbackAlt = sprintf(plugin_mastodon_widget_lang_string('avatar_alt_format', 'Profile picture of %s'), 'Legacy User');
+$allOk = test_result(
+	'Mastodon widget uses a localized fallback avatar alt text for Mastodon 4.0-4.5 account payloads without avatar_description',
+	$widgetLegacyRefreshOk
+		&& strpos($widgetLegacyContent, 'Legacy User') !== false
+		&& strpos($widgetLegacyContent, 'alt="' . htmlspecialchars($widgetFallbackAlt, ENT_QUOTES, 'UTF-8') . '"') !== false,
+	json_encode(array('refresh_ok' => $widgetLegacyRefreshOk, 'fallback_alt' => $widgetFallbackAlt, 'content' => $widgetLegacyContent))
+) && $allOk;
+
+$widgetBrokenProfile = array(
+	'display_name' => 'Broken User',
+	'acct' => 'brokenuser',
+	'profile_url' => $instanceUrl . '/@brokenuser',
+	'avatar_file' => 'plugin_mastodon/profile/missing.png',
+	'avatar_description' => 'missing local avatar'
+);
+plugin_mastodon_profile_cache_write($widgetBrokenProfile);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$widgetBrokenRendered = plugin_mastodon_widget();
+$widgetBrokenRequests = simulate_recorded_http_requests();
+$allOk = test_result(
+	'Mastodon widget hides incomplete local profile caches instead of falling back to remote avatar URLs',
+	$widgetBrokenRendered === array() && $widgetBrokenRequests === array(),
+	json_encode(array('widget' => $widgetBrokenRendered, 'requests' => $widgetBrokenRequests))
+) && $allOk;
+
+$widgetLanguageFiles = glob($simRoot . '/fp-plugins/mastodon/lang/lang.*.php');
+if (!is_array($widgetLanguageFiles)) {
+	$widgetLanguageFiles = array();
+}
+sort($widgetLanguageFiles, SORT_STRING);
+$widgetLanguageMissing = array();
+foreach ($widgetLanguageFiles as $widgetLanguageFile) {
+	$widgetLanguageEntries = simulate_mastodon_read_widget_language_entries((string) $widgetLanguageFile);
+	foreach (array('subject', 'avatar_alt_format', 'profile_link_title') as $widgetLanguageRequiredKey) {
+		if (empty($widgetLanguageEntries [$widgetLanguageRequiredKey]) || !is_string($widgetLanguageEntries [$widgetLanguageRequiredKey])) {
+			$widgetLanguageMissing [] = basename((string) $widgetLanguageFile) . ':' . $widgetLanguageRequiredKey;
+		}
+	}
+}
+$widgetRegistrationOk = false;
+if (isset($GLOBALS ['fp_registered_widgets']) && is_array($GLOBALS ['fp_registered_widgets']) && isset($GLOBALS ['fp_registered_widgets'] ['mastodon']) && is_array($GLOBALS ['fp_registered_widgets'] ['mastodon'])) {
+	$registeredWidget = $GLOBALS ['fp_registered_widgets'] ['mastodon'];
+	$widgetRegistrationOk = isset($registeredWidget ['func']) && (string) $registeredWidget ['func'] === 'plugin_mastodon_widget';
+}
+$allOk = test_result(
+	'Mastodon widget is registered and translated in all FlatPress plugin language files',
+	count($widgetLanguageFiles) === 15 && $widgetLanguageMissing === array() && $widgetRegistrationOk,
+	json_encode(array(
+		'language_file_count' => count($widgetLanguageFiles),
+		'missing' => $widgetLanguageMissing,
+		'registered' => $widgetRegistrationOk
+	))
+) && $allOk;
 
 plugin_mastodon_save_options($schedulerOriginalOptions);
 

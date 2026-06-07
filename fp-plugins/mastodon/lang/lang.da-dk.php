@@ -1,6 +1,13 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
+
+$lang ['plugin'] ['mastodon'] = array(
+	'subject' => 'Mastodon',
+	'avatar_alt_format' => 'Profilbillede af %s',
+	'profile_link_title' => 'Åbn Mastodon-profil'
+);
+
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'head' => 'Mastodon-synkronisering',
 	'intro' => 'Dette plugin synkroniserer FlatPress-indlæg og kommentarer med Mastodon.',

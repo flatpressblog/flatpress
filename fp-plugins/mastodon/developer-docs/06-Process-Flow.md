@@ -19,6 +19,7 @@ The plugin keeps a compact scheduler layer and a full synchronization layer.
 - `rate-limit-windows.json` stores persistent cross-request windows for media uploads,
   status deletes, and status-page fetches.
 - `sync.log` plus rotated `sync.log.1` to `sync.log.3` stores operational diagnostics.
+- `fp-content/plugin_mastodon/profile/profile.json` plus `profile/avatar.*` stores public profile-widget data and the local avatar cache. It contains no access token, client secret or authorization header.
 
 ```mermaid
 flowchart TD
@@ -61,11 +62,19 @@ flowchart TD
     Due{"Content sync due?"}
     DeleteDue{"Deletion sync due and deletions pending?"}
     NoWork["Fast path: no Mastodon HTTP, no full state load"]
+    HeadCss["plugin_mastodon_head"]
+    CssAsset["Versioned res/mastodon.css link"]
+    Widget["plugin_mastodon_widget"]
+    ProfileCache["Read local profile cache and avatar only"]
+    WidgetComplete{"Complete local widget cache?"}
+    RenderWidget["Render compact Mastodon widget"]
+    HideWidget["Return no widget"]
     Lock["Acquire sync.lock for real work"]
     GuardFile["sync.guard.json cooldown check"]
     RateGuard["Start local API budget guard"]
     FullState["Load full state.json"]
     ContentSync["plugin_mastodon_run_sync"]
+    ProfileRefresh["Refresh profile/avatar cache via verify_credentials"]
     DeletionSync["plugin_mastodon_run_deletion_sync"]
     StateWrite["Write compact state.json"]
     SchedulerWrite["Write scheduler-state.json"]
@@ -73,15 +82,53 @@ flowchart TD
     Log["Append and rotate sync.log"]
 
     Request --> Init --> Options --> SchedulerRead --> SchedulerStale
+    Request --> HeadCss --> ProfileCache
+    HeadCss --> CssAsset
+    Request --> Widget --> ProfileCache --> WidgetComplete
+    WidgetComplete -- "Yes" --> RenderWidget
+    WidgetComplete -- "No" --> HideWidget
     SchedulerStale -- "Yes" --> FullStateForSummary --> SchedulerWrite --> Due
     SchedulerStale -- "No" --> Due
     Due -- "No" --> DeleteDue
     DeleteDue -- "No" --> NoWork
-    Due -- "Yes" --> GuardFile --> Lock --> RateGuard --> FullState --> ContentSync
+    Due -- "Yes" --> GuardFile --> Lock --> RateGuard --> FullState --> ProfileRefresh --> ContentSync
     DeleteDue -- "Yes" --> GuardFile --> Lock --> RateGuard --> FullState --> DeletionSync
     ContentSync --> StateWrite --> SchedulerWrite --> RateWindow --> Log
     DeletionSync --> StateWrite --> SchedulerWrite --> RateWindow --> Log
 ```
+
+### Compact profile widget cache flow
+
+```mermaid
+flowchart TD
+    Sync["plugin_mastodon_run_sync scheduled/manual"]
+    Verify["verify_credentials account payload"]
+    PublicFields["display_name acct url avatar_static avatar_description"]
+    AvatarFetch["Download avatar with short timeout and MIME allow-list"]
+    ProfileDir["fp-content/plugin_mastodon/profile/"]
+    Json["profile.json public data only"]
+    Avatar["avatar.png/jpg/gif/webp"]
+    Widget["plugin_mastodon_widget"]
+    Stylesheet["plugin_mastodon_head loads res/mastodon.css?v=SYSTEM_VER"]
+    LocalOnly{"JSON and local avatar valid?"}
+    Output["Widget: Mastodon, avatar, display name, @acct"]
+    Empty["No widget output"]
+
+    Sync --> Verify
+    Verify --> PublicFields
+    PublicFields --> AvatarFetch
+    AvatarFetch --> ProfileDir
+    ProfileDir --> Json
+    ProfileDir --> Avatar
+    Widget --> Json
+    Widget --> Avatar
+    Widget --> LocalOnly
+    LocalOnly -- yes --> Output
+    LocalOnly -- yes --> Stylesheet
+    LocalOnly -- no --> Empty
+```
+
+The widget render path must remain local-cache-only. Cache refresh belongs to `plugin_mastodon_run_sync()` and account verification work that already talks to Mastodon; ordinary theme/sidebar rendering only reads the JSON and local avatar file. Scheduled, manual and one-way/export-only content syncs therefore check profile/avatar changes before import/export work, while `plugin_mastodon_head()` performs the equally cheap local-cache check and emits the versioned `res/mastodon.css` link when the widget can render. The widget HTML itself contains no inline stylesheet. Missing or incomplete data is treated as a clean "no widget" condition so CMS response time does not depend on Mastodon availability.
 
 ### Full state schema and mapping lifecycle
 
@@ -116,6 +163,7 @@ flowchart TD
     subgraph Safety["Safety and accounting"]
         Tombstones["comment_tombstones"]
         ProtectedDeletes["protected local deleted exported comments"]
+        ImportedIgnores["locally deleted imported remote replies"]
         ContentStats["content_stats"]
         DeletionStats["deletion_stats"]
         LastError["last_error"]
@@ -131,6 +179,7 @@ flowchart TD
     DirtyComments --> Comments
     PendingRechecks --> CommentsRemote
     Tombstones --> CommentsRemote
+    ImportedIgnores --> Tombstones
     RemoteMedia --> Entries
 ```
 
@@ -264,7 +313,7 @@ sequenceDiagram
     end
 
     alt Status request fails after new uploads
-        Sync->>Cleanup: DELETE /api/v1/media/:id for uploaded but unattached media
+        Sync->>Cleanup: version-gated DELETE /api/v1/media/:id for uploaded but unattached media
     end
 ```
 
@@ -336,8 +385,10 @@ flowchart TD
 
 The remote-to-local path imports top-level statuses owned by the configured Mastodon account,
 filters them by visibility/window/source, converts HTML to FlatPress markup, imports remote
-media, and writes through the local-write guard. In explicit one-way mode, this phase returns
-before account verification, paging or local FlatPress writes happen.
+media, and writes through the local-write guard. On Mastodon 4.6/API-v10 instances the account
+status request is additionally hardened with `exclude_direct=true`; compatible-server rejections
+are retried once without the optional parameter, and older or unknown instance snapshots keep
+the legacy query. In explicit one-way mode, this phase returns before import-specific account-status paging or local FlatPress writes happen. The separate `plugin_mastodon_run_sync()` profile-cache refresh has already verified the account and refreshed the local avatar/profile cache when possible.
 
 ```mermaid
 sequenceDiagram
@@ -357,7 +408,16 @@ sequenceDiagram
     else Remote import enabled
         Sync->>API: GET /api/v1/accounts/verify_credentials
         API-->>Sync: Account ID
-        Sync->>API: GET /api/v1/accounts/:id/statuses with paging and local budgets
+        Sync->>API: Check cached `/api/v2/instance` version / api_versions
+        alt Mastodon >= 4.6.0 or API v10
+            Sync->>API: GET /api/v1/accounts/:id/statuses with exclude_direct=true, paging and local budgets
+            alt Server rejects optional filter
+                API-->>Sync: 400/405/422 legacy-style error
+                Sync->>API: Retry same page without exclude_direct
+            end
+        else Older or unknown account-status capability
+            Sync->>API: GET /api/v1/accounts/:id/statuses with paging and local budgets
+        end
         API-->>Sync: Status list
     loop Each remote top-level status
         Sync->>Filter: visibility, reblog/reply, sync_start_date, scheduled window, known local-source mapping
@@ -381,7 +441,7 @@ sequenceDiagram
 ### 1.5 Mastodon replies in a known imported thread to FlatPress comments
 
 After importing or refreshing a known entry status, the plugin fetches the Mastodon context and
-walks descendants. This path must avoid resurrecting locally deleted comments, must not break
+walks descendants. This path must avoid resurrecting locally deleted comments, including source=remote replies tombstoned by the FlatPress admin, must not break
 thread order, and must cope with temporarily unresolved parents. When `disable_remote_import` is
 enabled, this context path is skipped together with the rest of remote-to-local import.
 
@@ -395,8 +455,9 @@ flowchart TD
     BuildIndex["Build remote child index and lookup"]
     NextReply["Next descendant reply"]
     Importable{"Public/importable and inside sync-start window?"}
-    Tombstone{"comment_tombstone or protected local delete?"}
+    Tombstone{"comment_tombstone or protected local delete/ignore?"}
     AlreadyMapped{"Already mapped to local comment?"}
+    PreserveSource["Update content/hash but preserve existing source ownership"]
     ParentKnown{"Parent is entry status or known/imported reply?"}
     Pending["Keep pending for later pass or pending_comment_remote_rechecks"]
     Quote{"quote_imported_reply_parent enabled?"}
@@ -415,7 +476,7 @@ flowchart TD
     Importable -- "Yes" --> Tombstone
     Tombstone -- "Yes" --> NextReply
     Tombstone -- "No" --> AlreadyMapped
-    AlreadyMapped -- "Yes" --> Recheck --> NextReply
+    AlreadyMapped -- "Yes" --> PreserveSource --> Recheck --> NextReply
     AlreadyMapped -- "No" --> ParentKnown
     ParentKnown -- "No" --> Pending --> Progress
     ParentKnown -- "Yes" --> Quote
@@ -780,34 +841,44 @@ flowchart TD
 ### 3.2 Instance version and capability decisions
 
 `/api/v2/instance` is the central source for instance limits. If a field is missing, the plugin
-uses conservative internal defaults. It does not fall back to `/api/v1/instance`.
+uses conservative internal defaults. It does not fall back to `/api/v1/instance`. Capability
+decisions prefer machine-readable `api_versions[mastodon]` over human-readable version strings,
+which keeps forks and nightly strings such as `4.6.0-nightly.2026-06-02` deterministic. A failed
+live instance-information request is negatively cached for the current PHP request so repeated
+limit helpers do not repeat the same slow network call.
 
 ```mermaid
 flowchart TD
     NeedCaps["Need limits or API capability"]
-    Cache["Read saved compact instance document / runtime cache"]
+    Cache["Read runtime, saved or APCu compact instance document"]
     HasDoc{"Cached document usable?"}
-    Fetch["GET /api/v2/instance"]
+    Failed{"Failed lookup already cached<br/>for this PHP request?"}
+    Fetch["GET /api/v2/instance<br/>short instance timeout"]
     OK{"Response OK?"}
     Store["Store compact instance document"]
+    Negative["Set request-local failed marker"]
     Defaults["Use internal defaults<br/>500 chars, 23 URL reserve, 4 media, 1500 desc limit"]
-    Version["Parse version string"]
+    ApiVersion{"api_versions[mastodon] present?"}
+    ApiCaps["Use API version capability thresholds<br/>delete_media >= 4"]
+    Version["Parse normalized human version string"]
     MediaAttrs{"version >= 4.1.0?"}
     DeleteMedia{"version >= 4.4.0?"}
-    Unknown{"version unknown?"}
+    Unknown{"capability unknown?"}
     Capabilities["Capability result for current request"]
 
     NeedCaps --> Cache --> HasDoc
-    HasDoc -- "No" --> Fetch --> OK
-    OK -- "Yes" --> Store --> Version
-    OK -- "No" --> Defaults --> Unknown
-    HasDoc -- "Yes" --> Version
-    Version --> MediaAttrs
-    Version --> DeleteMedia
-    Version --> Unknown
-    MediaAttrs --> Capabilities
-    DeleteMedia --> Capabilities
-    Unknown --> Capabilities
+    HasDoc -- "Yes" --> ApiVersion
+    HasDoc -- "No" --> Failed
+    Failed -- "Yes" --> Defaults
+    Failed -- "No" --> Fetch --> OK
+    OK -- "Yes" --> Store --> ApiVersion
+    OK -- "No" --> Negative --> Defaults
+    Defaults --> Unknown
+    ApiVersion -- "Yes" --> ApiCaps --> Capabilities
+    ApiVersion -- "No" --> Version
+    Version --> MediaAttrs --> Capabilities
+    Version --> DeleteMedia --> Capabilities
+    Version --> Unknown --> Capabilities
 ```
 
 ### 3.3 OAuth scope compatibility
@@ -839,17 +910,19 @@ flowchart TD
 ### 3.4 Status deletion fallback for Mastodon before 4.4.0
 
 Mastodon has long supported deleting a status through `DELETE /api/v1/statuses/:id`. The
-`delete_media` query parameter is newer. The plugin therefore omits the parameter when a cached
-instance version proves that the server is older than 4.4.0, and it retries once without the
-parameter when an unknown server rejects the first request.
+`delete_media` query parameter is newer. `plugin_mastodon_instance_supports_mastodon_api_v4()` centralizes the shared API-v4 / 4.4 capability decision. The plugin therefore omits the parameter when cached
+`api_versions[mastodon]` is below 4 or, without API-version data, when the stored instance version
+proves that the server is older than 4.4.0. It retries once without the parameter when an unknown
+server rejects the first request.
 
 ```mermaid
 flowchart TD
     Delete["plugin_mastodon_delete_status(status_id, deleteMedia=true)"]
-    Version["plugin_mastodon_instance_supports_status_delete_media"]
+    Version["plugin_mastodon_instance_supports_status_delete_media() → plugin_mastodon_instance_supports_mastodon_api_v4()"]
+    ApiOld{"api_versions[mastodon] below 4?"}
     KnownOld{"Cached version says older than 4.4.0?"}
-    KnownNew{"Cached version says 4.4.0 or newer?"}
-    Unknown{"Version unknown?"}
+    KnownNew{"API version >= 4 or version >= 4.4.0?"}
+    Unknown{"Capability unknown?"}
     PlainFirst["DELETE /api/v1/statuses/:id"]
     WithParam["DELETE /api/v1/statuses/:id?delete_media=1"]
     Response{"Response OK or 404/410 handled by caller?"}
@@ -858,7 +931,9 @@ flowchart TD
     Return["Return final response to deletion sync"]
 
     Delete --> Version
-    Version --> KnownOld
+    Version --> ApiOld
+    ApiOld -- "Yes" --> PlainFirst --> Return
+    ApiOld -- "No / unavailable" --> KnownOld
     KnownOld -- "Yes" --> PlainFirst --> Return
     KnownOld -- "No" --> KnownNew
     KnownNew -- "Yes" --> WithParam --> Response
@@ -951,7 +1026,7 @@ flowchart TD
 
 The deletion sync is intentionally separate from the content sync. It compares stored mappings
 against local files and remote statuses. Local deletions are propagated to Mastodon. Remote
-deletions are reflected back into FlatPress under the local-write guard only while remote import is enabled; explicit one-way mode instead removes the stale remote mapping and queues the still-local object for export.
+deletions are reflected back into FlatPress under the local-write guard only while remote import is enabled; explicit one-way mode instead removes the stale remote mapping and queues the still-local object for export. A locally deleted imported remote reply (`source=remote`) is different from a locally authored/exported comment: it is a FlatPress-local ignore decision, so deletion sync tombstones and unmaps it without attempting a Mastodon status `DELETE` while the parent entry still exists.
 
 ```mermaid
 flowchart TD
@@ -976,6 +1051,8 @@ flowchart TD
     CommentLoop["Iterate comment mappings with cursor"]
     CommentScope{"Mapping inside sync_start_date?"}
     CommentLocal{"Local comment exists?"}
+    CommentSource{"comment source remote and entry still exists?"}
+    IgnoreRemoteComment["Set comment_tombstone and remove mapping without DELETE"]
     DeleteRemoteComment["Delete remote comment status"]
     QueueDesc["Queue descendant remote rechecks"]
     CommentLookupWindow{"Remote lookup window allows check?"}
@@ -1012,7 +1089,9 @@ flowchart TD
     CommentLoop --> CommentScope
     CommentScope -- "No" --> ProcessRechecks
     CommentScope -- "Yes" --> CommentLocal
-    CommentLocal -- "No" --> DeleteRemoteComment --> QueueDesc --> ProcessRechecks
+    CommentLocal -- "No" --> CommentSource
+    CommentSource -- "Yes" --> IgnoreRemoteComment --> ProcessRechecks
+    CommentSource -- "No" --> DeleteRemoteComment --> QueueDesc --> ProcessRechecks
     CommentLocal -- "Yes" --> CommentLookupWindow
     CommentLookupWindow -- "No" --> ProcessRechecks
     CommentLookupWindow -- "Yes" --> FetchRemoteComment --> MissingRemoteComment
@@ -1036,7 +1115,10 @@ sequenceDiagram
     participant Core as FlatPress Core
 
     Del->>State: Select mapped entry/comment whose local item disappeared
-    Del->>Caps: Check cached support for status delete_media
+    alt Missing comment was imported from remote and parent entry still exists
+        Del->>State: Set comment_tombstone and remove comments_remote mapping without DELETE
+    else Missing local object should be propagated remotely
+        Del->>Caps: Check cached support for status delete_media
     alt Cached Mastodon version before 4.4.0
         Del->>API: DELETE /api/v1/statuses/:id
     else Cached version 4.4.0 or newer
@@ -1047,8 +1129,9 @@ sequenceDiagram
             Del->>API: DELETE /api/v1/statuses/:id
         end
     end
-    API-->>Del: OK, 404/410 already gone, or failure
-    Del->>State: Update mapping/tombstone/cursor or keep pending for retry
+        API-->>Del: OK, 404/410 already gone, or failure
+        Del->>State: Update mapping/tombstone/cursor or keep pending for retry
+    end
 
     Del->>API: GET /api/v1/statuses/:id for still-local mapped item
     alt Remote missing and remote import enabled
@@ -1258,6 +1341,7 @@ flowchart TD
     Plugin["require fp-plugins/mastodon/plugin.mastodon.php"]
     Fixtures["Create deterministic entries, comments, media files, options, and state fixtures"]
     HTTPQueue["Mock Mastodon HTTP response queue"]
+    GuardIsolation["Dirty-comment scheduled fixture clears content guard"]
     RunSync["Call real plugin sync/deletion functions"]
     Assertions["test_result / test_warn / test_skip assertions"]
     CompactWrite["Assert state.json compact-write roundtrip"]
@@ -1279,6 +1363,7 @@ flowchart TD
     SandboxPolicy -- "--include-live-content or env flag" --> LiveSandbox --> CoreStubs
     CoreStubs --> Plugin --> Fixtures
     Fixtures --> HTTPQueue --> RunSync --> Assertions
+    Fixtures -. "APCu/file cooldown isolation" .-> GuardIsolation --> RunSync
     Assertions --> CompactWrite --> SmallState --> MemoryGuard
     MemoryGuard -- "enough memory" --> LargeState --> InspectState
     MemoryGuard -- "CI + low limit" --> CIRaise
@@ -1293,7 +1378,9 @@ The simulation sandbox deliberately excludes live `fp-content/content` in the de
 
 The output mode is independent of the assertions. Normal output keeps full details for one-file diagnostics. Summary output can be requested with `--summary` or `SIMULATE_MASTODON_SUMMARY=1`; it keeps the status and test name, but collapses verbose details to short text or JSON key summaries. Both output modes always end with the same counter block: `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]`, and `[SKIP]`.
 
-The APCu cooldown regression verifies that a marked content guard is no longer active after `plugin_mastodon_sync_guard_clear()`; this catches mismatched FlatPress wrapper key usage on APCu-enabled shared hosts. The compact-state regression first verifies that legacy pretty-printed `state.json` files remain readable and that new `state.json` writes are compact JSON while preserving all mapping queues. The large `3000x10` scheduler-state regression is intentionally guarded before its synthetic state is built. On 128 MiB shared-hosting-style PHP limits, the large PHP array plus full JSON string can exhaust memory before the compact scheduler-state behavior is reached. The smaller `300x10` state test always runs; the heavy test runs when memory is sufficient, warns in low-memory non-CI environments, and is skipped in CI only after an attempted memory-limit raise fails. The CI skip branch can be tested deterministically with `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1`.
+The APCu cooldown regression verifies that a marked content guard is no longer active after `plugin_mastodon_sync_guard_clear()`; this catches mismatched FlatPress wrapper key usage on APCu-enabled shared hosts. The dirty-comment scheduled-run regression also clears the `content` guard immediately before its own non-forced `plugin_mastodon_run_sync(false)` call, so earlier cooldown assertions cannot survive through APCu and mask the `dirty_comments` export path as `sync_cooldown`. The compact-state regression first verifies that legacy pretty-printed `state.json` files remain readable and that new `state.json` writes are compact JSON while preserving all mapping queues. The large `3000x10` scheduler-state regression is intentionally guarded before its synthetic state is built. On 128 MiB shared-hosting-style PHP limits, the large PHP array plus full JSON string can exhaust memory before the compact scheduler-state behavior is reached. The smaller `300x10` state test always runs; the heavy test runs when memory is sufficient, warns in low-memory non-CI environments, and is skipped in CI only after an attempted memory-limit raise fails. The CI skip branch can be tested deterministically with `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1`.
+
+The locally deleted imported remote reply tombstone regressions exercise both a normal context replay and an edited remote reply replay. They ensure `comment_tombstones` block re-import before hash comparison and that deletion sync treats legacy missing `source=remote` comments as local ignore decisions without outbound Mastodon `DELETE` requests.
 
 ## 8. Operational guarantees and intentional behavior
 
@@ -1527,3 +1614,36 @@ sequenceDiagram
     Panel-->>Maint: Localized shared success/error message
     Maint-->>Admin: Display result and back link
 ```
+
+### 3.4 Unattached media cleanup capability gate
+
+When media upload succeeds but the final status create/update fails, uploaded but unattached media should be cleaned up only when the shared `plugin_mastodon_instance_supports_mastodon_api_v4()` helper says the instance is known to support `DELETE /api/v1/media/:id` or when support is still unknown. Known Mastodon 4.0-4.3 / API-version-below-4 instances skip the endpoint so cleanup never adds an unsupported API call to an already failing export path.
+
+```mermaid
+flowchart TD
+    Cleanup["plugin_mastodon_cleanup_uploaded_media(media_ids)"]
+    Gate["plugin_mastodon_instance_supports_media_delete() → plugin_mastodon_instance_supports_mastodon_api_v4()"]
+    ApiOld{"api_versions[mastodon] below 4?"}
+    VersionOld{"Cached version older than 4.4.0?"}
+    Supported{"API version >= 4 or version >= 4.4.0?"}
+    Unknown{"Capability unknown?"}
+    Skip["Mark cleanup skipped; no Mastodon request"]
+    Delete["DELETE /api/v1/media/:id"]
+    Gone{"404?"}
+    Success["Treat as cleaned up"]
+    Failure["Record cleanup failure"]
+
+    Cleanup --> Gate --> ApiOld
+    ApiOld -- yes --> Skip
+    ApiOld -- no or missing --> VersionOld
+    VersionOld -- yes --> Skip
+    VersionOld -- no --> Supported
+    Supported -- yes --> Delete
+    Supported -- no --> Unknown
+    Unknown -- yes --> Delete
+    Delete --> Gone
+    Gone -- yes --> Success
+    Gone -- no --> Success
+    Delete -- non-2xx except 404 --> Failure
+```
+
