@@ -545,7 +545,7 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, 
 
 	// Normalize to UTF-8
 	if (!mb_check_encoding($text, 'UTF-8')) {
-		$possible = ['ISO-8859-1', 'ISO-8859-2', 'ISO-8859-5', 'ISO-8859-7', 'ISO-8859-9', 'ISO-8859-15', 'Shift_JIS'];
+		$possible = ['ISO-8859-1', 'ISO-8859-2', 'ISO-8859-5', 'ISO-8859-7', 'ISO-8859-9', 'ISO-8859-15', 'Shift_JIS', 'GBK'];
 		foreach ($possible as $enc) {
 			$converted = @mb_convert_encoding($text, 'UTF-8', $enc);
 			if ($converted !== false && mb_check_encoding($converted, 'UTF-8')) {
@@ -750,6 +750,9 @@ function fp_output_encoding_handler($buffer) {
 		}
 		// Language-specific candidates
 		switch (substr($lang, 0, 2)) {
+			case 'cn':
+				$detect = array_merge($detect, ['GBK']);
+				break;
 			case 'en':
 			case 'pt':
 				$detect = array_merge($detect, ['ISO-8859-1']);
@@ -879,6 +882,14 @@ function normalize_to_utf8() {
 				if (!in_array($sj, $detect, true)) {
 					// ja-JP
 					$detect [] = $sj;
+				}
+			}
+			break;
+		case 'cn':
+			foreach (['GBK'] as $gb) {
+				if (!in_array($gb, $detect, true)) {
+					// cn-CN
+					$detect [] = $gb;
 				}
 			}
 			break;
