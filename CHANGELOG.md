@@ -66,6 +66,9 @@
     - Depending on your browser or operating system settings, the Stringendo style switches between light and dark modes. ([#852](https://github.com/flatpressblog/flatpress/pull/852))
     - Open Graph prefix added. ([#856](https://github.com/flatpressblog/flatpress/pull/856))
 
+## Internationalization
+- Chinese translation by [Qingfeng Xiyu](http://zp.qfxy.net/) ([#913](https://github.com/flatpressblog/flatpress/pull/913))
+
 # 2025-03-24: [FlatPress 1.5.1](https://github.com/flatpressblog/flatpress/releases/tag/1.5.1)
 ## Plugins
 ### Bugfixes
