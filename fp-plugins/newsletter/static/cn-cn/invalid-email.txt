@@ -1,0 +1,3 @@
+SUBJECT|电子邮件地址无效！|CONTENT|
+电子邮件地址无效。请重试。
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|新闻简报|

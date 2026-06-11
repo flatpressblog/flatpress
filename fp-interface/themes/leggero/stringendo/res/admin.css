@@ -347,6 +347,9 @@ body.admin fieldset {
 	html[lang^="en"] #plugin-table td:nth-child(3)::before { content: "Author: "; font-weight: 700; color: var(--fp-text, #0f172a); }
 	html[lang^="en"] #plugin-table td:nth-child(4)::before { content: "Version: "; font-weight: 700; color: var(--fp-text, #0f172a); }
 
+	html[lang^="cn"] #plugin-table td:nth-child(3)::before { content: "作者: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="cn"] #plugin-table td:nth-child(4)::before { content: "版本: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+
 	html[lang^="cs"] #plugin-table td:nth-child(3)::before { content: "Autor: "; font-weight: 700; color: var(--fp-text, #0f172a); }
 	html[lang^="cs"] #plugin-table td:nth-child(4)::before { content: "Verze: "; font-weight: 700; color: var(--fp-text, #0f172a); }
 
@@ -834,6 +837,11 @@ body.admin-uploader-mediamanager #admin-content table.entrylist td.main-cell a.l
 	html[lang^="en"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Uploaded on'; }
 	html[lang^="en"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Action'; }
 
+	html[lang^="cn"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: '用于文章'; }
+	html[lang^="cn"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: '文件大小'; }
+	html[lang^="cn"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: '上传日期'; }
+	html[lang^="cn"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: '操作'; }
+
 	html[lang^="cs"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Použito v příspěvcích'; }
 	html[lang^="cs"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Velikost souboru'; }
 	html[lang^="cs"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Nahráno dne'; }
@@ -1158,6 +1166,11 @@ body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset inpu
 	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
 	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Comments"; }
 	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Action"; }
+
+	html[lang^="cn"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "日期"; }
+	html[lang^="cn"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="cn"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "评论数"; }
+	html[lang^="cn"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "操作"; }
 
 	html[lang^="cs"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Datum"; }
 	html[lang^="cs"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }

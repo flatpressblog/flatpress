@@ -26,6 +26,7 @@ FlatPress is a lightweight, easy-to-set-up blogging engine. Plain and simple, ju
 - __Comments__ function with spam protection
 - __Free software__ under [GNU GPLv2](LICENSE.md)
 - Supported languages:
+[<img src="docs/assets/cn.svg" alt="CN" height="12" />](## "简体中文")
 [<img src="docs/assets/cz.svg" alt="CZ" height="12" />](## "Čeština")
 [<img src="docs/assets/dk.svg" alt="DK" height="12" />](## "Dansk")
 [<img src="docs/assets/de.svg" alt="DE" height="12" />](## "Deutsch")
