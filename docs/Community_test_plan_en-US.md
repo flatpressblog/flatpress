@@ -1,89 +1,400 @@
+# FlatPress 1.6.dev – Community Test Plan
+
 ## Summary
 
-- FlatPress 1.5 RC2 – Community Test Plan v1.0
+This test plan is for the community test of **FlatPress 1.6.dev v1.0**.
 
-<sub><i>I recommend working through the test plan step by step from top to bottom. Otherwise, some test steps may not be performed or may distort the overall result.</i></sub>
+FlatPress 1.6.dev focuses on the changes made after FlatPress 1.5.1, especially:
+
+- the move to the 1.6 development line,
+- Smarty 5.8.0 and PHP 8.5 compatibility,
+- improved caching for feeds and widgets,
+- Location Migration Mode,
+- the new Tag and Mastodon plugins,
+- SEO/Open Graph improvements,
+- plugin updates and bug fixes,
+- light/dark mode improvements for the Stringendo style,
+- a new Chinese translation,
+- and security hardening for comments and the contact form.
+
+Please work through the plan step by step if possible. If you only have limited time, choose one of the quick test tracks below and then report what you tested.
+
+## Quick test tracks
+
+Choose the track that best matches your environment.
+
+### Track A: Fresh installation
+
+Use this track if you install FlatPress 1.6.dev from scratch.
+
+- [ ] [Install FlatPress 1.6.dev](https://wiki.flatpress.org/en:doc:basic:installation) in a new test directory, for example `/fp16-dev-ebe6e85`.
+- [ ] Run `setup.php`.
+- [ ] Log in to the admin area.
+- [ ] Create one post, one static page, and one comment.
+- [ ] Activate the bundled plugins you want to test.
+- [ ] Check the front end, admin area, feeds, and PHP error log.
+
+### Track B: Update from FlatPress 1.5.1
+
+Use this track if you already have a FlatPress 1.5.1 test blog.
+
+- [ ] Make a full backup of the test blog.
+- [ ] Copy the backup to a separate test directory.
+- [ ] Update the copied test blog to FlatPress 1.6.dev.
+- [ ] Check whether the blog URL and file paths are still correct.
+- [ ] Test Location Migration Mode if the blog was moved to a different directory or domain.
+- [ ] Rebuild the index and purge the theme/template cache.
+- [ ] Check posts, static pages, comments, uploads, feeds, widgets, and plugins.
+
+### Track C: Big blog and caching
+
+Use this track if you can test a larger amount of content.
+
+- [ ] Create or import many entries and comments.
+- [ ] If possible, also test with APCu enabled.
+- [ ] Open the home page, categories, archives, search results, feeds, and admin lists.
+- [ ] Watch for slow pages, timeouts, blank pages, PHP warnings, and browser console (Ctrl + Shift + I) errors.
 
 ## Preparation
-1) **Preparation**
-- [ ] Download [the latest developer version](https://github.com/flatpressblog/flatpress/archive/refs/heads/master.zip) or [the latest release candidate](https://github.com/flatpressblog/flatpress/releases) of [FlatPress](https://github.com/flatpressblog/flatpress).
-- [ ] Download the latest version of the [Bulk Content Generator](https://github.com/flatpressblog/flatpress-extras/tree/master/fp-tools/gen-bulk).
-- [ ] If possible and available, install the [APCu cache extension](https://github.com/flatpressblog/flatpress/blob/master/docs/APCu_Installation_and_Activation.md) on your web server.
-- [ ] Clear the browser cache of the browsers you want to use for testing and disable all third-party browser add-ons.
-- [ ] [Install FlatPress](https://wiki.flatpress.org/en:doc:basic:installation) on your web server. If you already have a FlatPress instance, install the latest version as a separate instance (e.g., `/fp15-RC2`).
-- [ ] Copy the Bulk Content Generator to the blog root directory to generate test data.
-- [ ] If necessary, recursively adjust the ownership rights and file and directory permissions.
-- [ ] Open the browser of your choice and then run the setup (``setup.php``).
-- [ ] Then run the Bulk Content Generator (``https://<your-flatpress>/gen-bulk.php?n=3000&k=10&seed=1234&spread=1080``) in your browser and wait until the summary is displayed.
-- [ ] Log in to the admin area, click on "Rebuild the FlatPress index" in the Maintenance menu, and wait until the summary is displayed.
-- [ ] "Purge theme and templates cache" in the Maintenance menu.
-- [ ] Activate all plugins that are part of the distribution.
-- [ ] Place missing widgets in the right widget bar.
 
-2) **Checking the preparation**
-- [ ] Log in to the admin area, open the "Uploader" menu -> "Storage".
-- [ ] Check in the storage menu whether there are 3000 entries with 10 comments each.
-- [ ] Check in the Storage menu whether 10 static pages are available.
-- [ ] Check the PHP log file to see if any errors or warnings occurred during preparation.
+1) **Prepare a safe test environment**
 
-3) **Check that the time offset is correct and correct it if necessary.**
-- [ ] Log in to the admin area, open the configuration menu -> "International settings" section.
-- [ ] Check the local time and correct the time offset if necessary.
-- [ ] Create a new post and publish it.
-- [ ] Check in the frontend whether your newly created post has the correct time.
+- [ ] Do **not** test on your production blog without a complete backup.
+- [ ] Note your PHP version.
+- [ ] Note whether the PHP `mbstring` extension is enabled.
+- [ ] Note whether APCu is available and enabled.
+- [ ] Note your web server software, operating system, browser, and browser version.
+- [ ] Clear the browser cache before testing.
+- [ ] Disable browser extensions that may change pages, block scripts, or inject content.
+- [ ] Keep the PHP error log open if you can.
+
+2) **Install or update FlatPress**
+
+- [ ] Download FlatPress 1.6.dev or the current 1.6 development package from the official GitHub release or master branch.
+- [ ] Install it as a separate test instance, for example `/fp16-dev-ebe6e85`.
+- [ ] If you are updating, use a copied test blog, not your live blog.
+- [ ] Run `setup.php` for a fresh installation.
+- [ ] Log in to the admin area.
+- [ ] Go to **Maintain** and run **Rebuild the FlatPress index**.
+- [ ] Go to **Maintain** and run **Purge theme and templates cache**.
+- [ ] Activate the bundled plugins that you want to test.
+- [ ] Add the needed widgets to a widget bar.
+
+3) **Optional: create test data**
+
+- [ ] Use the [Bulk Content Generator](https://github.com/flatpressblog/flatpress-extras/tree/master/fp-tools/gen-bulk) if you want to test many entries and comments.
+- [ ] After generating test data, rebuild the index.
+- [ ] Check the front end and admin area after rebuilding.
+
+4) **Check date and time**
+
+- [ ] Open **Configuration → International settings**.
+- [ ] Check whether the local time is correct.
+- [ ] Create a new post.
+- [ ] Open the post in the front end.
+- [ ] Expected: the displayed date and time are correct.
 
 ## Test areas
-1) **Check the browser console and PHP log file during interaction**
-- [ ] Open your browser's developer tools (Ctrl + Shift + I).
-- [ ] Check the developer tools console to see if any warnings or errors are displayed.
-- [ ] Open a static page in the frontend (e.g., ``static.php?page=about``) and check the console to see if any warnings or errors are displayed.
-- [ ] In the frontend, click on all links, if possible without leaving any gaps, and check the accessibility as well as for warnings or errors in the console.
-- [ ] Blog, entry, and comment RSS/ATOM feeds; check readability.
-- [ ] Log in to the admin area and click on all menus and submenus as completely as possible, checking accessibility and looking for warnings or errors in the console.
-- [ ] Check the PHP log file to see if any errors or warnings occurred during the interactions.
 
-2) **Setting file and directory permissions**
-- [ ] Log in to the admin area, and trigger Maintenance -> "Restore authorizations for productive operation".
-- [ ] Then check whether the admin area and the front end are still working as expected.
+### 1. Basic front end and admin area
 
-3) **Performance & Caching**
-- [ ] Access blog posts: Home page, entries, comments, category, search – loading should be consistently fast, no 500 errors/timeouts.
-- [ ] Activate APCu (if available) and test again; note any differences.
-- [ ] Open image lists/galleries and check whether media lists respond quickly.
+- [ ] Open the home page.
+- [ ] Open a single post.
+- [ ] Open a static page, for example `static.php?page=about`.
+- [ ] Open a category page.
+- [ ] Open the search page and search for a word that exists in a post.
+- [ ] Add a comment to a post.
+- [ ] Log in to the admin area.
+- [ ] Open all main admin menus and submenus.
+- [ ] Expected: pages load without blank screens, layout breaks, PHP warnings, or browser console errors.
 
-4) **Admin area**
-- [ ] Adjust the inactivity timeout under "Configuration → FlatPress Protect → Idle timeout for admin session"; check automatic logout after timeout. Automatic logout should occur after a timeout during an action.
-- [ ] Uploader/media management: Upload files/images, check thumbnails, insert into post.
-- [ ] Themes/Widgets: Change style, change widget order, control in frontend.
-- [ ] Check the hit rate in the admin area -> Maintenance -> APCu status. After extensive testing, this should not be below 85%.
-- [ ] Manage entries; select the number of entries displayed per page.
+### 2. Installation, update, and Location Migration Mode
 
-5) **Plugins (random samples)**
-- [ ] Newsletter: Registration (valid/invalid/disposable emails), double opt-in, bulk mailing with status display.
-- [ ] BBCode Editor: Test new buttons (font); preview and save.
-- [ ] BBCode Editor: Upload images, create a gallery, and place the new gallery in an entry.
-- [ ] BBCode Editor: Sorted/unsorted lists in comments; comment on an entry with a list.
-- [ ] GDPR Video embed: Insert a YouTube video, e.g. ``https://www.youtube.com/watch?v=o6rBK0BqL2w`` into a new post; check the frontend.
-- [ ] PrettyURLs: Activate, check links in the frontend. Repeat the test with all PrettyURLs modes.
-- [ ] PrettyURLs: Open a feed reader or feed browser add-on and check whether all feeds are accessible and readable. Repeat the test with all PrettyURLs modes.
-- [ ] Storage (formerly Stats): Check capacity displays and "Top Comments" only with the Postviews plugin enabled.
-- [ ] Media Manager: Folder icons, usage detection (gallery vs. single image).
-- [ ] Media Manager: Preview images on mouseover.
-- [ ] Archives: Open and close, link check.
-- [ ] Calendar: Link check; previous vs. next month and daily links. Deactivate the plugin without removing the widget; check the frontend to see if there are any side effects.
-- [ ] SEO Metatag info: Enter a description for a newly created post; check in the frontend whether an introduction is displayed.
-- [ ] FlatPress Protect: Upload SVG file (must fail), activate corresponding option in the configuration menu -> FlatPress Protect, upload SVG file again.
+Use this section especially when you update or move an existing test blog.
 
-6) **Internationalization**
-- [ ] Switch language between German/English/Basque/French; check frontend/backend for missing/incorrect translations.
+- [ ] Move a copy of a FlatPress test blog to a different directory or local test domain.
+- [ ] Open the moved blog.
+- [ ] Check whether links, images, uploads, feeds, and admin links point to the new location.
+- [ ] Enable or test Location Migration Mode according to the available admin options and documentation.
+- [ ] Rebuild the index and purge caches.
+- [ ] Expected: the moved blog works with the new location and does not keep broken links to the old path.
 
-7) **Safety & Robustness**
-- [ ] Incorrect form entries (contact/comment/newsletter) with special characters/emojis; expected validation.
-- [ ] Post titles with special characters (``= & ~ £ $ € "``)/emojis (😄😃😉😊); expenses expected.
-- [ ] iFrames in posts; Expected: external content is blocked, but not [videos from YouTube, Vimeo, and Facebook](https://wiki.flatpress.org/doc:plugins:bbcode#videos).
-- [ ] Check the browser console and PHP log for warnings/errors during all actions.
+### 3. PHP, Smarty, and error logs
 
-### Reporting
-Please report bugs with clear step-by-step descriptions, expected vs. actual behavior, screenshots, and PHP log extracts in the [GitHub issue tracker](https://github.com/flatpressblog/flatpress/issues). If you're not familiar with GitHub, feel free to use the [FlatPress support forum](https://forum.flatpress.org/) instead.
+FlatPress 1.6.dev should work with PHP 7.2 up to current PHP 8.5 test environments.
 
-**Thanks a lot!**
+- [ ] Test with at least one PHP version available to you.
+- [ ] If possible, test with PHP 7.2, a current stable PHP 8.x version, and PHP 8.5.
+- [ ] Check that the blog works with Smarty 5.8.0.
+- [ ] Open the front end after purging the theme/template cache.
+- [ ] Open the admin area after purging the theme/template cache.
+- [ ] Expected: templates compile successfully and no Smarty-related fatal error appears.
+- [ ] Check the PHP error log after browsing the front end and admin area.
+
+### 4. Caching, APCu, feeds, and performance
+
+- [ ] Open the home page several times.
+- [ ] Open a category page several times.
+- [ ] Open the Categories widget.
+- [ ] Open RSS and Atom feeds for posts.
+- [ ] Open RSS and Atom feeds for comments.
+- [ ] If APCu is available, enable it and repeat the same checks.
+- [ ] In the admin area, open the APCu status or cache overview if available.
+- [ ] Expected: repeated requests stay fast, feeds remain readable, and there are no cache-related warnings or stale pages.
+- [ ] Disable APCu again if you can and repeat a small sample.
+- [ ] Expected: FlatPress also works without APCu.
+
+### 5. Admin plugin management and widgets
+
+- [ ] Open **Plugins** in the admin area.
+- [ ] Check that plugin names and descriptions are readable.
+- [ ] Expected: plugin management does not show broken quotes or strange typographic quote characters.
+- [ ] Activate and deactivate a few bundled plugins.
+- [ ] Add and remove widgets.
+- [ ] Change widget order.
+- [ ] Check the front end after each change.
+- [ ] Expected: only widgets from active plugins are displayed, and the page remains usable.
+
+### 6. Stringendo style, Leggero theme, and dark mode
+
+- [ ] Select the Leggero theme with the Stringendo style.
+- [ ] Open the front end in normal light mode.
+- [ ] Switch your browser or operating system to dark mode.
+- [ ] Reload the blog.
+- [ ] Expected: the Stringendo style follows light/dark mode and remains readable.
+- [ ] Check posts, comments, forms, widgets, and static pages.
+- [ ] Check the CookieBanner plugin in light and dark mode.
+- [ ] Expected: the cookie banner is readable and visually integrated in both modes.
+- [ ] Check the page source.
+- [ ] Expected: the Open Graph prefix is present in the page header.
+
+### 7. Comment and contact form security regression tests
+
+Do not try to attack a live site. Use harmless test strings only.
+
+- [ ] Open a post with comments enabled.
+- [ ] Submit a normal comment.
+- [ ] Submit a comment containing special characters such as `<`, `>`, `"`, `'`, `&`, and emojis.
+- [ ] Submit a comment containing harmless text that looks like HTML, for example `<b>test</b>`.
+- [ ] Open the contact form if it is enabled.
+- [ ] Repeat the same harmless special-character tests.
+- [ ] Expected: input is displayed safely, no script runs, the page layout is not broken, and no PHP warning appears.
+- [ ] Check the PHP error log.
+
+### 8. Tag plugin
+
+The Tag plugin is new in FlatPress 1.6.dev.
+
+- [ ] Activate the Tag plugin.
+- [ ] Create a new post with several tags.
+- [ ] Use lowercase tags, uppercase tags, mixed-case tags, and tags with spaces or hyphens.
+- [ ] Save the post.
+- [ ] Open the post in the front end.
+- [ ] Expected: the tags are displayed correctly.
+- [ ] Click each tag.
+- [ ] Expected: each tag page lists the correct posts.
+- [ ] Edit the post and change the tags.
+- [ ] Expected: removed tags disappear and new tags are searchable/clickable.
+- [ ] Create a second post using one of the same tags.
+- [ ] Expected: the tag page lists both posts.
+- [ ] Deactivate the Tag plugin and open the front end.
+- [ ] Expected: the blog does not crash and posts remain readable.
+
+### 9. Mastodon plugin
+
+Use a test Mastodon account if possible. Do not test with private or sensitive content.
+
+- [ ] Activate the Mastodon plugin.
+- [ ] Read the included [Mastodon plugin documentation](https://github.com/flatpressblog/flatpress/blob/master/fp-plugins/mastodon/README.md).
+- [ ] Enter the required Mastodon settings.
+- [ ] Save the settings.
+- [ ] Create a test post.
+- [ ] Publish the post.
+- [ ] Expected: the plugin posts to Mastodon only when configured to do so.
+- [ ] Test a post with tags if the Tag plugin is active.
+- [ ] Expected: tags and hashtags behave as described in the plugin settings.
+- [ ] Test the optional one-way mode if available.
+- [ ] Expected: one-way mode does not import or synchronize content in the opposite direction.
+- [ ] Test the Mastodon profile widget.
+- [ ] Expected: the profile widget displays the local profile/avatar cache and does not break the page if the Mastodon server is unavailable.
+- [ ] Check times and dates shown for Mastodon content.
+- [ ] Expected: time zones are displayed correctly.
+- [ ] Check links in the Mastodon widget.
+- [ ] Expected: internal and external links are handled safely and correctly.
+
+### 10. SEO Meta Tag Info and Open Graph output
+
+- [ ] Activate the SEO Meta Tag Info plugin.
+- [ ] Create or edit a post.
+- [ ] Add a description, keywords, and robots settings if available.
+- [ ] Add a category and several tags.
+- [ ] Save the post.
+- [ ] Open the post in the front end.
+- [ ] View the page source.
+- [ ] Expected: standard SEO meta tags are present.
+- [ ] Expected: `article:published_time` is present and contains an ISO-like date/time value.
+- [ ] Expected: `article:section` reflects the selected category or subcategory.
+- [ ] Expected: `article:tag` reflects the post tags.
+- [ ] Expected: `article:author` reflects the blog author.
+- [ ] Change the blog language.
+- [ ] Expected: the plugin settings page does not show missing language-key errors.
+
+### 11. BBCode and Markdown/autolink regressions
+
+- [ ] Activate the BBCode plugin.
+- [ ] Create a post using common BBCode tags such as `[b]`, `[i]`, `[url]`, `[img]`, and lists.
+- [ ] Preview the post.
+- [ ] Save the post.
+- [ ] Expected: preview and saved post match.
+- [ ] Check the BBCode toolbar.
+- [ ] Expected: the HTML button is only shown when inline HTML is allowed.
+- [ ] Disable inline HTML if the option is available.
+- [ ] Add a plain URL or Markdown-style autolink.
+- [ ] Expected: autolinks still work safely.
+- [ ] Deactivate the BBCode plugin.
+- [ ] Open existing posts and tag-related pages.
+- [ ] Expected: the blog does not crash when BBCode is disabled.
+
+### 12. jQuery-dependent user interface tests
+
+FlatPress 1.6.dev includes a newer jQuery plugin with jQuery 4.0.0 and jQuery UI 1.14.2.
+
+- [ ] Open admin pages that use JavaScript.
+- [ ] Open the uploader and media-related dialogs.
+- [ ] Test widget ordering.
+- [ ] Test Comment Center actions.
+- [ ] Test Archives widget toggles.
+- [ ] Test PhotoSwipe image opening and gallery navigation.
+- [ ] Test CookieBanner reset and display.
+- [ ] Open the browser developer tools.
+- [ ] Expected: no JavaScript errors appear in the console.
+
+### 13. Newsletter plugin
+
+- [ ] Activate the Newsletter plugin.
+- [ ] Open the Newsletter admin page.
+- [ ] Expected: the description is clear and readable.
+- [ ] Register with a normal valid email address.
+- [ ] Register the same email address again before confirmation.
+- [ ] Expected: the new pending token replaces the old pending token.
+- [ ] Try an invalid email address.
+- [ ] Try a Unicode/EAI-style address if your mail setup supports it.
+- [ ] Expected: validation is clear and no PHP warning appears.
+- [ ] If your environment allows DNS checks, test a domain that does not exist.
+- [ ] Expected: DNS and domain checks behave as described.
+- [ ] If the local disposable-domain blocklist is missing, test first form processing.
+- [ ] Expected: FlatPress attempts to fetch or use the blocklist without breaking the form.
+- [ ] Check the PHP error log.
+
+### 14. LastComments, PrettyURLs, and feeds
+
+- [ ] Activate LastComments and PrettyURLs.
+- [ ] Test every PrettyURLs mode that is available in your setup.
+- [ ] Add a new comment.
+- [ ] Open the LastComments widget.
+- [ ] Open LastComments RSS and Atom feeds.
+- [ ] Expected: the newest comments are shown, not the newest posts.
+- [ ] Expected: comment links point to the correct comments.
+- [ ] Disable PrettyURLs and repeat a small sample.
+- [ ] Expected: feeds and comment links still work.
+
+### 15. Other plugin regression tests
+
+Run these tests if you have time.
+
+#### Thumb plugin
+
+- [ ] Insert an external image with width and height settings.
+- [ ] Expected: a configured external image height is not overwritten.
+
+#### FootNotes plugin
+
+- [ ] Create a post with footnotes.
+- [ ] Add normal text containing `*Text*`.
+- [ ] Expected: `*Text*` is not incorrectly rendered as bold text.
+
+#### PhotoSwipe plugin
+
+- [ ] Create a post with a single image.
+- [ ] Create a post with an image gallery.
+- [ ] Open both in the front end.
+- [ ] Expected: images open correctly and gallery navigation works.
+
+#### Archives plugin
+
+- [ ] Add the Archives widget.
+- [ ] Open and close archive sections.
+- [ ] Click month and year links.
+- [ ] Expected: archive links work and no JavaScript error appears.
+
+#### Comment Center plugin
+
+- [ ] Add several comments.
+- [ ] Open Comment Center in the admin area.
+- [ ] Approve, reject, or edit comments.
+- [ ] Expected: actions are saved correctly and the front end updates.
+
+#### CookieBanner plugin
+
+- [ ] Activate the CookieBanner plugin.
+- [ ] Open the front end in a private browser window.
+- [ ] Expected: the banner appears.
+- [ ] Accept or close it.
+- [ ] Expected: the banner does not reappear until reset or cookies are cleared.
+- [ ] Test again in dark mode.
+
+### 16. Internationalization
+
+- [ ] Switch the blog language to English.
+- [ ] Switch the blog language to German.
+- [ ] Switch the blog language to Chinese.
+- [ ] If you can, also test other bundled languages.
+- [ ] Open the front end and admin area after each switch.
+- [ ] Expected: pages remain usable and there are no missing language strings in normal screens.
+- [ ] Check plugin admin panels for new or changed plugins: Tag, Mastodon, SEO Meta Tag Info, Newsletter, and CookieBanner.
+- [ ] Expected: translated labels are readable, or missing translations are easy to identify and report.
+
+### 17. Accessibility and mobile checks
+
+- [ ] Test the front end on a narrow/mobile viewport.
+- [ ] Test the admin area on a narrow/mobile viewport.
+- [ ] Use keyboard navigation for menus, forms, and buttons.
+- [ ] Check form labels in the comment form, contact form, newsletter form, and admin settings.
+- [ ] Expected: important functions remain reachable and readable.
+
+### 18. Final smoke test
+
+Before you report your result, please run this short final check.
+
+- [ ] Rebuild the FlatPress index.
+- [ ] Purge the theme/template cache.
+- [ ] Open the home page.
+- [ ] Open one post.
+- [ ] Open one static page.
+- [ ] Open one feed.
+- [ ] Open the admin dashboard.
+- [ ] Check the browser console.
+- [ ] Check the PHP error log.
+- [ ] Expected: no new warning, fatal error, broken layout, or blank page appears.
+
+## Reporting
+
+Please report bugs with:
+
+- FlatPress version or commit hash,
+- fresh install or update test,
+- PHP version,
+- web server and operating system,
+- browser and browser version,
+- active theme/style,
+- active plugins,
+- whether APCu is enabled,
+- exact steps to reproduce,
+- expected result,
+- actual result,
+- screenshots if useful,
+- relevant PHP log messages.
+
+Report bugs in the [GitHub issue tracker](https://github.com/flatpressblog/flatpress/issues). If you are not familiar with GitHub, use the [FlatPress support forum](https://forum.flatpress.org/) instead.
+
+**Thanks a lot for helping to test FlatPress 1.6.dev!**
