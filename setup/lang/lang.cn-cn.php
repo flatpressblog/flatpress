@@ -101,90 +101,92 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = '欢迎来到FlatPress！';
-$lang ['samplecontent'] ['entry'] ['content'] = '这是 [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url] 一篇介绍几个特征的样本文章。
+$lang ['samplecontent'] ['entry'] ['content'] = '这是一篇示例文章，用来展示 [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url] 的一些功能。
 
-［more］更多标签允许您在摘录和完整文章之间创建“跳转”。
+［more］标签可以在摘要和完整文章之间创建一个“跳转”。
 
 [more]
 
 
-[h4]首页样式[/h4]
+[h4]样式与格式[/h4]
 
-设置内容样式和格式的默认方式是[url=https://wiki.flatpress.org/doc:plugins:bbcodetarget=_blank rel=external]BBcode[/url]（公告板代码）。BBCode是一种设计帖子风格的简单方法。大多数常见代码都是允许的。比如[b]代表[b]bold[/b]（html:sstrong），[i]代表[i]斜体[/i]（html/em），等等。
+设置内容样式和格式的默认方式是 [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url]（bulletin board code，公告板代码）。BBCode 是一种为文章设置样式的简单方法。大多数常见代码都可以使用。例如，［b］用于 [b]粗体[/b]（HTML：strong），［i］用于 [i]斜体[/i]（HTML：em）等。
 
-[quote]还有[b]引用[/b]块来显示您最喜欢的引用。。[/quote]
+[quote]也可以使用 [b]引用[/b] 块来显示您喜欢的引文。[/quote]
 
-[code]“code”以等宽的方式显示你的片段。它还支持缩进内容。[/code]
+[code]而 ［code］ 会以等宽字体显示代码片段。
+它还支持
+   带缩进的内容。[/code]
 
-“img”和“url”标签还有特殊选项。有关详细信息，请参见[url=https://wiki.flatpress.org/doc:plugins:bbcode请看FlatPress official website。
+［img］和［url］标签也有特殊选项。更多信息可在 [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki[/url] 中找到。
 
 
-[h4]条目（帖子）和静态页面[/h4]
+[h4]文章（日志）和静态页面[/h4]
 
-您现在阅读的样本是博客文章，“自我介绍”是固定页面。不能对固定页面进行评论。另外，不会与博客文章同时显示。
+这是一篇文章，而 [url=static.php?page=about]简介[/url] 是一个 [b]静态页面[/b]。静态页面也是一篇文章，但不能评论，也不会与博客的普通文章一起显示。
 
-固定页面适合宣传和告知等。也可以指定为网站的首页。甚至可以运营不是博客网站的网站。要将固定页面指定为“站点顶部（优先显示）页面”，请打开管理员页面的设置。
+静态页面适合创建一般信息页面。您也可以将其中一个静态页面设为访问者看到的 [b]首页[/b]。这意味着使用 FlatPress 也可以运行一个完整的非博客网站。将静态页面设为起始页的选项位于 [url=admin.php]管理区域[/url] 的 [b]选项面板[/b] 中。
 
 
 [h4]插件[/h4]
 
-FlatPress具有非常高的可定制性[url=https://wiki.flatpress.org/doc:plugins:standard可以通过target插件扩展功能。顺便说一下，BBCode本身也是插件的功能。
+FlatPress 非常易于定制，并支持使用 [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]插件[/url] 扩展功能。BBCode 本身也是一个插件。
 
-我们制作了一个样例页面来介绍FlatPress隐藏的珠玉功能：）
-有两个固定页面等着你编辑：
-
+我们还创建了一些示例内容，用来展示 FlatPress 中一些不太显眼但很实用的功能 :)
+您可以找到两个 [b]静态页面[/b]，随时可填充自己的内容：
 [list]
-[*][url=static.php?page=about]简介[/url]
-[*][url=static.php?page=menu]菜单[/url]（请注意，此页面中的链接也将出现在您的侧边栏上——这就是[b]blockparser小部件[/b]的神奇之处。请参阅[url=https://wiki.flatpress.org/doc:faqtarget=_blank rel=external]常见问题解答[/url]以及更多内容！）
+[*][url=static.php?page=about]关于我[/url]
+[*][url=static.php?page=menu]菜单[/url]（请注意，此页面中的链接也会出现在侧边栏中——这就是 [b]blockparser 小部件[/b] 的魔力。更多信息请参阅 [url=https://wiki.flatpress.org/doc:faq target=_blank rel=external]FAQ[/url]！）
 [/list]
 
-[b] 块解析器小部件[/b]。请参阅[url=https://wiki.flatpress.org/doc:faqtarget=_blank rel=external]常见问题解答[/url]以及更多内容！）。
-也可以使用“gallery”标签以图片库为单位进行放置。那个方法多么简单[url=https://wiki.flatpress.org/doc:plugins:photoswipe在这里可以学习。
+使用 [b]PhotoSwipe 插件[/b]，现在可以更轻松地插入图片，既可以作为 float="left" 或 float="right" 对齐的单张图片，并被文字环绕。
+您还可以使用 ［gallery］元素向访问者展示完整图库。它有多么容易使用，[url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]可以在这里了解[/url]。
 
 
 [h4]小部件[/h4]
 
-侧边栏上没有一个固定部件。此文章栏周边的侧栏上的所有部件都可以自由配置，其中大部分都可以自定义。有些功能在管理员页面上提供了设置面板。
+侧边栏中没有一个固定不变的元素。您在本文周围栏位中看到的所有元素都可以完全自由定位，而且其中大多数也可以自定义。有些主题甚至在管理区域中提供设置面板。
 
-这些元素被称为[b]小部件[/b]。有关小部件和[url的更多信息=https://wiki.flatpress.org/doc:tips:widgetstarget=_blank rel=external]一些获得良好效果的技巧[/url]，请查看[url=https://wiki.flatpress.org/target=_blank rel=external]wiki[/url]。
+这些元素称为 [b]小部件[/b]。若要了解更多有关小部件的信息以及获得漂亮效果的 [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]一些技巧[/url]，请查看 [url=https://wiki.flatpress.org/ target=_blank rel=external]wiki[/url]。
 
 
 [h4]主题[/h4]
 
 [gallery="images/Leggero-Themepreview/" width="140"]
-FlatPress-Leggero主题提供了从经典到现代的四种自由样式。这些模板是创建自己的东西的极好的起点。
+使用 FlatPress-Leggero 主题时，您可以使用从经典到现代的 4 种样式模板。这些模板是创建您自己设计的绝佳起点。
 
 
 [h4]了解更多[/h4]
 
-你想知道更多吗？
+想了解更多吗？
 
 [list]
-[*]点击[url=https://www.flatpress.org/?xtarget=_blank rel=external]官方博客[/url]了解FlatPress世界发生了什么。
-[*]访问[url=https://forum.flatpress.org/target=_blank rel=external]论坛[/url]用于支持和闲聊。
-[*]从[url获取[b]精彩主题[/b]=https://wiki.flatpress.org/res:themestarget=_blank rel=external]其他用户的提交[/url]！
-[*]查看[url=https://wiki.flatpress.org/res:pluginstarget=_blank rel=external]插件[/url]。
-[*]获取[url=https://wiki.flatpress.org/res:languagetarget=_blank rel=external]翻译包[/url]用于您的语言。
-[*]您也可以在[url上关注FlatPress=https://fosstodon.org/@flatpress target=_blank rel=external]乳齿象[/url]。
+[*]关注 [url=https://www.flatpress.org/?x target=_blank rel=external]官方博客[/url]，了解 FlatPress 世界中发生的事情。
+[*]访问 [url=https://forum.flatpress.org/ target=_blank rel=external]论坛[/url] 获取支持或闲聊。
+[*]从 [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]其他用户的投稿[/url] 中获取 [b]优秀主题[/b]！
+[*]查看 [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]插件[/url]。
+[*]获取适用于您语言的 [url=https://wiki.flatpress.org/res:language target=_blank rel=external]翻译包[/url]。
+[*]您也可以在 [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url] 上关注 FlatPress。
 [/list]
 
 
-[h4]有什么我能帮忙的吗？[/h4]
+[h4]我可以怎样帮忙？[/h4]
 
 [list]
-[*]使用[url支持该项目=https://www.flatpress.org/home/static.php?page=donatetarget=_blank rel=external]小额捐款[/url]。
-[*][url=https://www.flatpress.org/contact/target=_blank rel=external]联系我们[/url]报告错误或提出改进建议。
-[*]在[url上为FlatPress的发展做出贡献=https://github.com/flatpressblog/flatpresstarget=_blank rel=external]GitHub[/url]。
-[*]将FlatPress或文档翻译成[url=https://wiki.flatpress.org/res:languagetarget=_blank rel=external]您的语言[/url]。
-[*]在[url上分享您的知识并与其他FlatPress用户联系=https://forum.flatpress.org/target=_blank rel=external论坛[/url]。
-[*]传播这个词！ :)
+[*]通过 [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]小额捐款[/url] 支持项目。
+[*]通过 [url=https://www.flatpress.org/contact/ target=_blank rel=external]联系我们[/url] 报告错误或提出改进建议。
+[*]在 [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url] 上参与 FlatPress 的开发。
+[*]将 FlatPress 或文档翻译成 [url=https://wiki.flatpress.org/res:language target=_blank rel=external]您的语言[/url]。
+[*]在 [url=https://forum.flatpress.org/ target=_blank rel=external]论坛[/url] 分享知识，并与其他 FlatPress 用户联系。
+[*]请帮忙传播！ :)
 [/list]
 
 
-[h4]]现在怎么办？[/h4]
+[h4]接下来做什么？[/h4]
 
-现在，您可以[url=login.php]登录[/url]进入[url=admin.php]管理区域[/url][并开始发布！
-玩得开心 :)
+现在您可以 [url=login.php]登录[/url] 进入 [url=admin.php]管理区域[/url] 并开始发布文章！
+
+祝您使用愉快！ :)
 
 [i][url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url] 团队[/i]
 
