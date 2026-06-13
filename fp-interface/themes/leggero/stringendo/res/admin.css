@@ -982,7 +982,8 @@ body.admin-uploader-mediamanager #admin-content table.entrylist td.main-cell a.l
  * Entry list: filter bar
  * ----------------------------
  */
-body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset,
+body.admin-entry-list #admin-content form[action*="p=entry"] fieldset,
+body.admin-entry-list #admin-content form[action*="p=static"] fieldset,
 #admin-bbcode-toolbar {
 	display: flex;
 	flex-wrap: wrap;
@@ -990,26 +991,26 @@ body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset,
 	align-items: center;
 }
 
-body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset .alignleft,
-body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset .alignright {
+body.admin-entry-list #admin-content form[action*="p=entry"] fieldset .alignleft,
+body.admin-entry-list #admin-content form[action*="p=entry"] fieldset .alignright {
 	float: none;
 }
 
-body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset select[name="category"] {
+body.admin-entry-list #admin-content form[action*="p=entry"] fieldset select[name="category"] {
 	width: auto;
 	flex: 1 1 360px;
 	max-width: 560px;
 }
 
-body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset input#filter {
+body.admin-entry-list #admin-content form[action*="p=entry"] fieldset input#filter {
 	width: auto;
 	margin-left: auto;
 	margin-bottom: 0.5em;
 }
 
 @media (max-width: 560px) {
-	body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset select[name="category"],
-	body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset input#filter {
+	body.admin-entry-list #admin-content form[action*="p=entry"] fieldset select[name="category"],
+	body.admin-entry-list #admin-content form[action*="p=entry"] fieldset input#filter {
 		flex: 1 1 100%;
 		max-width: 100%;
 		margin-left: 0;
