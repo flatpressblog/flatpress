@@ -1,7 +1,7 @@
 <?php
 $langconf = array();
 $langconf ['id'] = '简体中文 (CN)';
-$langconf ['locale'] = 'cn-cn';
+$langconf ['locale'] = 'zh-cn';
 $langconf ['charsets'] [0] = 'utf-8';
 $langconf ['charsets'] [1] = 'GBK';
 
