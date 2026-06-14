@@ -1,0 +1,58 @@
+Audio and Video Player
+______________________
+======================
+
+Description
+============
+This plugin provides simple players for audio and video files. It uses standard HTML5 elements and requires neither Flash nor any other external browser plugins. The player is very easy to use (see examples below) and can be configured using various parameters.
+
+
+Usage Examples
+==============
+Simple audio player:
+[audioplayer="attachs/file.mp3"]
+
+Audio player with additional options:
+[audioplayer="attachs/file.mp3" controls="0" autoplay="1" loop="1"]
+
+Audio player with optional description text:
+[audioplayer="attachs/file.mp3" controls="1"]A short audio description[/audioplayer]
+
+Simple video player:
+[videoplayer="attachs/file.mp4"]
+
+Video player with additional options:
+[videoplayer="attachs/file.mp4" controls="0" autoplay="1" loop="1" width="640" height="480" poster="images/posterimage.jpg"]
+
+Video player with optional description text:
+[videoplayer="attachs/file.mp4" controls="1" poster="images/posterimage.jpg"]A short video or poster description[/videoplayer]
+
+
+Parameters
+==========
+Each of the following parameters is optional. If not specified, the default value is used.
+For Boolean parameters, the following values are considered "true": true, 1, yes, ja, si.
+
+Both Audio and Video
+--------------------
+* Controls: Show player controls (default is yes)
+* Autoplay: Play immediately (default is no)
+* loop: Loop playback (default is no)
+
+Video Only
+----------
+* Width: The width of the video's display area (default is the width of the video itself)
+* Height: The height of the video's display area (default is the height of the video itself)
+* Poster: The poster frame image that is displayed until the user plays or seeks the video (default is the first frame of the video). Must be an uploaded image file.
+
+Optional Description
+--------------------
+Audio and video player tags may either be used as a single BBCode tag or with a closing tag.
+Text between the opening and closing tag is used as the media description. The player writes it to the HTML5 media element as accessible label and title text.
+For videos with a poster image, the same description also labels the video element while the poster frame is shown.
+If the closing tag is omitted, the legacy description/title/alt attributes can still be used by integrations that provide them.
+
+
+HTML+CSS
+========
+The player is displayed as a <audio> / <video> element with the CSS class "audiovideo". For more details, see the documentation for these standard HTML5 elements. The specified parameters (see above) are set accordingly on the player element.

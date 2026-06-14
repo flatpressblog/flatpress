@@ -17,6 +17,7 @@
 ## Plugins
 ### Additions
 - Tag: With this plugin, you can add keywords to your blog posts. This plugin is required by the Mastodon plugin if you want to enable Mastodon hashtags into tags. ([#857](https://github.com/flatpressblog/flatpress/issues/857))
+- Audio and Video: A simple HTML5 audio and video player. This plugin is required by the Mastodon plugin to display imported and synced Mastodon audio and video attachments using the FlatPress HTML5 media player.
 - Mastodon: The plugin toots your entries and their comments to Mastodon. Content from your Mastodon account is integrated into your blog. ([#857](https://github.com/flatpressblog/flatpress/issues/857))
 
 ### Changes
