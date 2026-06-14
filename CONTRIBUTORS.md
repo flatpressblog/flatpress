@@ -16,7 +16,8 @@ Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/
 - The XML sitemap for search engines was [initially introduced](https://www.igorkromin.net/index.php/2013/02/18/adding-a-google-compatible-sitemap-to-flatpress/) by [Igor Kromin](https://www.igorkromin.net/).
 - The [js script](https://github.com/a-v-l/dsgvo-video-embed) of the GDPR Video embed plugin was originally written by [Dipl.-Ing. Arndt von Lucadou](https://www.lucadou.net/) and was extended by [Fraenkiman](https://github.com/Fraenkiman) to include the Facebook video functionality.
 - The following plugins were contributed by [Fraenkiman](https://github.com/Fraenkiman): Support, Emoticons, FlatPress Protect, Newsletter, GDPR Video Embed and the Mastodon plugin.
-- The JS library [PhotoSwipe](http://photoswipe.com/) utilized in the PhotoSwipe plugin is the work of [Dmytro Semenov](https://dimsemenov.com/).
+- The JS library [PhotoSwipe](http://photoswipe.com/) utilized in the PhotoSwipe plugin is the work of [Dmytro Semenov](https://dimsemenov.com/). The plugin created by [Arvid Zimmermann](https://github.com/azett "github.com/azett").
+- The Audio and Video plugin was also developed by [Arvid Zimmermann](https://codeberg.org/azett "codeberg.org/azett").
 - Integration of [caching methods](https://github.com/flatpressblog/flatpress/blob/master/docs/FlatPress_APCu_Cache_Overview.md) and APCu status panel built by [Fraenkiman](https://github.com/Fraenkiman).
 
 ## Translation
