@@ -750,7 +750,7 @@ function fp_output_encoding_handler($buffer) {
 		}
 		// Language-specific candidates
 		switch (substr($lang, 0, 2)) {
-			case 'cn':
+			case 'zh':
 				$detect = array_merge($detect, ['GBK']);
 				break;
 			case 'en':
@@ -885,10 +885,10 @@ function normalize_to_utf8() {
 				}
 			}
 			break;
-		case 'cn':
+		case 'zh':
 			foreach (['GBK'] as $gb) {
 				if (!in_array($gb, $detect, true)) {
-					// cn-CN
+					// zh-CN
 					$detect [] = $gb;
 				}
 			}
