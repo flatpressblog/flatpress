@@ -1,15 +1,15 @@
 <?php
 $lang ['admin'] ['config'] ['default'] = array(
 	'head' => '设置',
-	'descr' => '自定义和配置FlatPress安装',
+	'descr' => '自定义并配置 FlatPress 安装',
 	'submit' => '保存更改',
 
 	'sysfset' => '常规设置',
-	'syswarning' => '<big>警告!</big>这个设置需要谨慎和准确。否则FlatPress（可能）将出现故障。',
-	'blog_root' => '<strong>FlatPress的绝对路径</strong> Note: ' . //
-		'一般来说，这个不需要编辑吧。FlatPress无法检查是否正确，请仔细编辑。',
-	'www' => '<strong>博客URL</strong>. 以子目录结尾的博客URL <br>' . //
-		'例: http://www.mydomain.com/flatpress/ (末尾需要加斜线)',
+	'syswarning' => '<big>警告！</big>请谨慎并准确地填写这些设置，否则 FlatPress 可能无法正常工作。',
+	'blog_root' => '<strong>FlatPress 的绝对路径</strong>。注意：' . //
+		'通常不需要编辑此项。FlatPress 无法自动检查该路径是否正确，请谨慎修改。',
+	'www' => '<strong>博客 URL</strong>。如果博客位于子目录中，URL 必须以斜线结尾。<br>' . //
+		'示例：http://www.mydomain.com/flatpress/（末尾需要斜线）',
 
 	// ------
 	'gensetts' => '系统设置',
@@ -23,23 +23,23 @@ $lang ['admin'] ['config'] ['default'] = array(
 	'startpage' => '博客首页',
 	'stdstartpage' => '默认设置',
 	'blogurl' => '博客网址',
-	'blogemail' => '管理员E-mail',
+	'blogemail' => '管理员电子邮件',
 	'notifications' => '通知设置',
-	'mailnotify' => '一有评论就用邮件通知。',
+	'mailnotify' => '有新评论时发送电子邮件通知。',
 	'blogmaxentries' => '在博客的一页上显示的文章数',
 	'langchoice' => '语言选择',
 
 	'intsetts' => '本地设置',
 	'utctime' => '<abbr title="世界时间">UTC</abbr>时间：',
-	'timeoffset' => '投稿时加算的时间（在中国的推荐值：8）',
+	'timeoffset' => '发布时间使用的时区偏移（中国大陆推荐值：8）',
 	'hours' => '时间',
 	'timeformat' => '时间显示的默认格式（在中国的推荐值：%H:%M:%S）',
-	'dateformat' => '显示日期的默认格式（在中国的建议值：%Y, %B %e, %A',
+	'dateformat' => '默认日期显示格式（中国大陆推荐值：%Y年%m月%d日，%A）',
 	'dateformatshort' => '缩短日期显示的默认格式（在中国的推荐值：%Y-%m-%d）',
 	'output' => '当前设置中的显示示例',
-	'charset' => '要使用的字符代码',
-	'charsettip' => '使用的文字代码是将utf-8 ' . //
-		'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="FlatPress支持哪个字符编码？">推荐</a>。)'
+	'charset' => '要使用的字符编码',
+	'charsettip' => '推荐使用 utf-8 字符编码。' . //
+		'<a class="hint" href="https://wiki.flatpress.org/doc:techfaq#character_encoding" target="_blank" title="FlatPress 支持哪些字符编码？">了解更多</a>。'
 );
 
 $lang ['admin'] ['config'] ['default'] ['msgs'] = array(
@@ -57,10 +57,10 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'timeformat' => '请用时间显示用的表记指定。',
 	'dateformat' => '请以显示日期的形式指定。',
 	'dateformatshort' => '请使用缩短日期的格式。',
-	'charset' => 'You must insert a charset id.(请正确填写文字代码名)',
-	'lang' => 'The language you chose is not available.(禁用选择语言)',
-	'admin' => '管理员名称可以包含字母、数字和下划线（仅限一个字符）。',
-	'password' => '密码必须6个字母以上，空格除外。',
+	'charset' => '请输入有效的字符编码名称。',
+	'lang' => '所选语言不可用。',
+	'admin' => '管理员名称只能包含字母、数字和下划线。',
+	'password' => '密码必须至少包含 6 个非空格字符。',
 	'confirm_password' => '密码不匹配。'
 );
 ?>

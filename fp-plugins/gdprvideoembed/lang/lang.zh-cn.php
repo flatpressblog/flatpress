@@ -2,50 +2,50 @@
 $lang ['plugin'] ['gdprvideoembed'] = array(
 
 	// for translated content in script file
-	'head_youtube' => 'YouTube嵌入视频',
-	'hint_youtube' => '<p><b>注意:</b> 这个嵌入式视频YouTube, LLC, 901 Cherry Ave, San Bruno, CA 94066, USA来定义自定义外观。<br>' .//
-		'播放期间将建立到YouTube服务器的连接。这将通知您访问YouTube的页面。 ' . //
-		'YouTube登录账号的话，YouTube可以确定那个阅览行动是你。 ' . //
-		'事先从YouTube账户注销，可以防止这种情况发生。</p>' . //
-		'<p>YouTube视频开始后，提供商将使用cookie收集有关用户行为的信息。</p>' . //
-		'<p>Google Ads 如果禁用程序中的cookie存储，则在观看YouTube视频时无需期待此类cookie。 ' . //
-		'但是，YouTube也会在其他Cookie中存储非个人使用信息。。 ' . //
-		'如果你想阻止这种情况，你必须阻止在浏览器中存储Cookie。</p>' . //
-		'<p>您可以在“YouTube”的提供商隐私政策中找到有关数据保护的更多信息，网址为: ' . //
-		'<a href="https://policies.google.com/privacy?hl=ja&gl=jp" title="访问: https://policies.google.com/privacy?hl=ja&gl=jp" rel="noopener" target="_blank">https://policies.google.com/privacy?hl=ja&gl=jp</a></p>',
-	'link_title_youtube' => 'Youtube观看视频',
+	'head_youtube' => '嵌入式 YouTube 视频',
+	'hint_youtube' => '<p><b>注意：</b>此嵌入式视频由 YouTube, LLC, 901 Cherry Ave, San Bruno, CA 94066, USA 提供。<br>' .//
+		'播放期间会与 YouTube 服务器建立连接。YouTube 会获知您访问了本页面。 ' . //
+		'如果您已登录 YouTube 账号，YouTube 可以将此次浏览行为关联到您的账号。 ' . //
+		'您可以在播放前退出 YouTube 账号，以避免这种关联。</p>' . //
+		'<p>YouTube 视频开始播放后，提供商可能会使用 Cookie 收集有关用户行为的信息。</p>' . //
+		'<p>如果您已在 Google Ads 设置中停用个性化广告的 Cookie 存储，观看 YouTube 视频时通常不会出现此类 Cookie。' . //
+		'但是，YouTube 也可能在其他 Cookie 中保存非个人使用信息。' . //
+		'若要阻止这种情况，请在浏览器中阻止 Cookie 存储。</p>' . //
+		'<p>有关 YouTube 数据保护的更多信息，请参阅提供商的隐私政策：' . //
+		'<a href="https://policies.google.com/privacy?hl=zh-CN" title="访问：https://policies.google.com/privacy?hl=zh-CN" rel="noopener" target="_blank">https://policies.google.com/privacy?hl=zh-CN</a></p>',
+	'link_title_youtube' => '观看 YouTube 视频',
 
-	'head_vimeo' => '嵌入式视频',
-	'hint_vimeo' => '<p><b>注:</b> 此嵌入式视频由Vimeo公司提供，地址：美国纽约州西18街555号，邮编：10011。<br>' . //
-		'在回放期间建立到视频服务器的连接。这将告知您正在访问哪些页面。 ' . //
-		'Vimeo登录账号的时候，Vimeo可以确定那个阅览行动是你。 ' . //
-		'您可以通过提前注销您的视频帐户来防止这种情况发生。</p>' . //
-		'<p>Vimeo视频开始后，提供商将使用cookie收集有关用户行为的信息。</p>' . //
-		'<p>Vimeo有关数据保护的详细信息，请参阅以下供应商隐私政策。: ' . //
-		'<a href="https://vimeo.com/privacy" title="访问: https://vimeo.com/privacy" rel="noopener" target="_blank">https://vimeo.com/privacy</a></p>',
-	'link_title_vimeo' => 'Vimeo观看视频',
+	'head_vimeo' => '嵌入式 Vimeo 视频',
+	'hint_vimeo' => '<p><b>注意：</b>此嵌入式视频由 Vimeo, Inc., 555 West 18th Street, New York, New York 10011, USA 提供。<br>' . //
+		'播放期间会与 Vimeo 服务器建立连接。Vimeo 会获知您访问了哪些页面。 ' . //
+		'如果您已登录 Vimeo 账号，Vimeo 可以将此次浏览行为关联到您的账号。 ' . //
+		'您可以在播放前退出 Vimeo 账号，以避免这种关联。</p>' . //
+		'<p>Vimeo 视频开始播放后，提供商可能会使用 Cookie 收集有关用户行为的信息。</p>' . //
+		'<p>有关 Vimeo 数据保护的更多信息，请参阅提供商的隐私政策：' . //
+		'<a href="https://vimeo.com/privacy" title="访问：https://vimeo.com/privacy" rel="noopener" target="_blank">https://vimeo.com/privacy</a></p>',
+	'link_title_vimeo' => '观看 Vimeo 视频',
 
-	'head_facebook' => '嵌入式Facebook视频',
-	'hint_facebook' => '<p><b>注:</b> 这段嵌入式视频由Facebook，Inc，1 Hacker Way，Menlo Park，CA94025，USA提供。<br>' . //
-		'视频播放后，将建立到Facebook服务器的连接。这将通知Facebook您正在访问哪些页面。 ' . //
-		'如果你登录Facebook账户，Facebook可以确定其浏览行为是你。 ' . //
-		'提前从Facebook账户注销，可以防止这一点。</p>' . //
-		'<p>Facebook视频开始后，提供商将使用cookie收集有关用户行为的信息。</p>' . //
-		'<p>以下供应商的隐私政策提供了有关Facebook数据保护的详细信息。: ' . //
-		'<a href="https://www.facebook.com/policy.php" title="点击: https://www.facebook.com/policy.php" rel="noopener" target="_blank">https://www.facebook.com/policy.php</a></p>',
-	'link_title_facebook' => 'Facebook观看视频',
+	'head_facebook' => '嵌入式 Facebook 视频',
+	'hint_facebook' => '<p><b>注意：</b>此嵌入式视频由 Facebook, Inc., 1 Hacker Way, Menlo Park, CA 94025, USA 提供。<br>' . //
+		'视频播放后会与 Facebook 服务器建立连接。Facebook 会获知您访问了哪些页面。 ' . //
+		'如果您已登录 Facebook 账号，Facebook 可以将此次浏览行为关联到您的账号。 ' . //
+		'您可以在播放前退出 Facebook 账号，以避免这种关联。</p>' . //
+		'<p>Facebook 视频开始播放后，提供商可能会使用 Cookie 收集有关用户行为的信息。</p>' . //
+		'<p>有关 Facebook 数据保护的更多信息，请参阅提供商的隐私政策：' . //
+		'<a href="https://www.facebook.com/policy.php" title="访问：https://www.facebook.com/policy.php" rel="noopener" target="_blank">https://www.facebook.com/policy.php</a></p>',
+	'link_title_facebook' => '观看 Facebook 视频',
 
 	'link' => '视频链接',
-	'button_title' => '在这个页面上看视频',
-	'button' => '视频播放',
+	'button_title' => '在此页面上观看视频',
+	'button' => '播放视频',
 
 	// for translated content in css file
-	'noscript_1' => '这个视频是JavaScript',
-	'noscript_2' => '关闭渲染',
-	'noscript_3' => '无法播放。'
+	'noscript_1' => '此视频需要启用 JavaScript。',
+	'noscript_2' => '当前 JavaScript 已关闭，',
+	'noscript_3' => '因此无法播放。'
 );
 
 $lang ['plugin'] ['gdprvideoembed'] ['errors'] = array (
-	-1 => '要使用此插件，BBcode插件必须处于活动状态。'
+	-1 => '要使用此插件，必须启用 BBCode 插件。'
 );
 ?>

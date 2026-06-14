@@ -3,8 +3,8 @@ $lang ['admin'] ['entry'] ['submenu'] ['commentcenter'] = '评论中心';
 $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	// Header of the panel
 	'title' => '评论中心',
-	'desc1' => '此面板管理您对博客文章的评论.',
-	'desc2' => '可以：:',
+	 'desc1' => '此面板用于管理博客文章的评论。',
+	 'desc2' => '您可以：',
 
 	// Links
 	'lpolicies' => '管理策略',
@@ -20,10 +20,10 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'criteria' => '目标文章',
 	'behavoir' => '指定行为',
 	'options' => '选项',
-	'entry' => '记录',
-	'entries' => '记录集',
+	 'entry' => '文章',
+	 'entries' => '文章',
 	'categories' => '文章类别',
-	'nopolicies' => '没有一个政策',
+	 'nopolicies' => '没有策略',
 	'all_entries' => '所有文章',
 	'fol_entries' => '对以下文章应用策略：',
 	'fol_cats' => '将策略应用于以下文章类别：',
@@ -35,7 +35,7 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'down' => '下一页',
 	'edit' => '编辑',
 	'delete' => '删除',
-	'newpol' => '添加新评论',
+	 'newpol' => '添加新策略',
 	'del_selected' => '删除选定的评论',
 	'select_all' => '选择全部',
 	'deselect_all' => '取消选择所有项',
@@ -43,40 +43,40 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	// Configuration page
 	'configure' => '设置评论中心',
 	'desc_conf' => '在此设定评论中心的选项。',
-	'log_all' => '记录阻止的注释',
-	'log_all_long' => '要记录已阻止的注释，请勾选。',
-	'email_alert' => 'email通知评论',
-	'email_alert_long' => '要通过email通知投稿了需要批准的评论，请选中。',
+	 'log_all' => '记录被阻止的评论',
+	 'log_all_long' => '勾选后会记录被阻止的评论。',
+	 'email_alert' => '通过电子邮件通知评论',
+	 'email_alert_long' => '勾选后，当有评论需要审核时会通过电子邮件通知。',
 	'akismet' => 'Akismet',
 	'akismet_use' => '启用Akismet检查',
-	'akismet_use_long' => '<a href="https://akismet.com/" target="_blank">Akismet</a>使用的话，可以减少评论的垃圾邮件。',
-	'akismet_key' => 'Akismet Key',
-	'akismet_key_long' => '<a href="https://akismet.com/signup/" target="_blank">Akismet服务</a>提供的<a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">Akismet Key</a>请在这里填写。',
-	'akismet_url' => 'Akismet检查对象博客的基础URL',
-	'akismet_url_long' => 'Akismet的免费服务，好像只有一个域名可以使用。如果保持空白，<code>%s</code> 会被使用吧。',
+	 'akismet_use_long' => '使用 <a href="https://akismet.com/" target="_blank">Akismet</a> 可以减少垃圾评论。',
+	 'akismet_key' => 'Akismet 密钥',
+	 'akismet_key_long' => '请在这里填写 <a href="https://akismet.com/signup/" target="_blank">Akismet 服务</a>提供的 <a class="hint externlink" href="https://akismet.com/support/getting-started/api-key/" target="_blank">Akismet 密钥</a>。',
+	 'akismet_url' => 'Akismet 检查的博客基础 URL',
+	 'akismet_url_long' => 'Akismet 免费服务通常只能用于一个域名。如果留空，将使用 <code>%s</code>。',
 	'save_conf' => '保存设置',
 
 	// Edit policy page
-	'apply_to' => '申请',
+	 'apply_to' => '应用到',
 	'editpol' => '编辑策略',
 	'createpol' => '创建策略',
 	'some_entries' => '指定的文章',
 	'properties' => '具有指定属性的文章',
-	'se_desc' => '选择了适用对象「%s」请用ID指定适用策略的报道。',
-	'se_fill' => '指定文章的<a href="admin.php?p=entry">ID</a>请填写，填写形式：(<code>entryYYMMDD-HHMMSS</code>).',
+	 'se_desc' => '选择适用对象“%s”时，请用 ID 指定要应用此策略的文章。',
+	 'se_fill' => '请填写指定文章的 <a href="admin.php?p=entry">ID</a>，格式为：<code>entryYYMMDD-HHMMSS</code>。',
 	'po_title' => '指定属性',
-	'po_desc' => '选择了适用对象「%s」请指定适用策略的报道的属性。',
-	'po_comp' => '请在下面指定一个以上。均未指定时，将所有文章作为适用对象。',
+	 'po_desc' => '选择适用对象“%s”时，请指定要应用此策略的文章属性。',
+	 'po_comp' => '请在下面至少指定一项。如果均未指定，则策略将应用于所有文章。',
 	'po_time' => '按天数指定',
-	'po_older' => '适用于早于以下日期的条目',
-	'days' => '对经过一天以上的报道适用政策。',
+	 'po_older' => '适用于早于以下日期的文章',
+	 'days' => '将策略应用于超过指定天数的文章。',
 	'save_policy' => '保存策略',
 
 	// Delete policies page
 	'del_policies' => '删除策略',
 	'del_descs' => '尝试删除此策略： ',
 	'del_descm' => '您将要删除这些策略： ',
-	'sure' => '可以吗？',
+	 'sure' => '确定吗？',
 	'del_subs' => '是的，请删除',
 	'del_subm' => '是的，请把这些全部删除',
 	'del_cancel' => '不，请不要删除',
@@ -92,9 +92,9 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 	'app_actions' => '操作',
 	'app_publish' => '批准并公开',
 	'app_delete' => '删除',
-	'app_nocomms' => '没有一个评论',
+	 'app_nocomms' => '没有评论',
 	'app_pselected' => '批准并发布选定的评论',
-	'app_dselected' => '清除选定注释',
+	 'app_dselected' => '删除选定的评论',
 	'app_other' => '其他评论',
 	'app_akismet' => '垃圾评论',
 	'app_spamdesc' => 'Akismet已阻止的评论',
@@ -108,9 +108,9 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Manage comments page
 	'man_searcht' => '搜索（管理发布评论）',
-	'man_searchd' => '想管理评论的文章的<a href="admin.php?p=entry">ID</a>请填写，填写形式: (<code>entryYYMMDD-HHMMSS</code>).',
+	 'man_searchd' => '请填写要管理评论的文章 <a href="admin.php?p=entry">ID</a>，格式为：<code>entryYYMMDD-HHMMSS</code>。',
 	'man_search' => '查找',
-	'man_commfor' => '%s 评论',
+	 'man_commfor' => '%s 的评论',
 	'man_spam' => 'Akismet垃圾',
 
 	// The simple edit
@@ -123,10 +123,10 @@ $lang ['admin'] ['entry'] ['commentcenter'] = array(
 
 	// Akismet warnings
 	'akismet_errors' => array(
-		-1 => 'Akismet Key栏是空的。请填写。',
+		 -1 => 'Akismet 密钥栏为空，请填写。',
 		-2 => 'Akismet无法连接到服务。',
 		-3 => 'Akismet通讯错误',
-		-4 => 'Akismet Key无效。'
+		 -4 => 'Akismet 密钥无效。'
 	),
 
 	// Messages
@@ -167,21 +167,20 @@ $lang ['plugin'] ['commentcenter'] = array(
 	'approvation' => '评论被保存了，管理员批准后显示。',
 
 	// Mail for comments
-	'mail_subj' => '%s ：要批准的新注释'
+	 'mail_subj' => '%s：有新的评论需要审核'
 );
 
-$lang ['plugin'] ['commentcenter'] ['mail_text'] = '%toname% 先生,
+$lang ['plugin'] ['commentcenter'] ['mail_text'] = '%toname%：
 
-"%fromname%" %frommail% 先生的评论"%entrytitle%"的评论
-为了被表示需要你的承认。
+"%fromname%" <%frommail%> 在文章 "%entrytitle%" 中提交了一条评论，
+该评论需要您的审核。
 
-以下是投稿的评论:
+评论内容如下：
 ―――――――――――――――――
 %content%
 ―――――――――――――――――
 
-FlatPress登录的管理区域，确认在评论中心被阻止的评论。
-以上，请多关照。
+请登录 FlatPress 管理区域，并在评论中心中审核被拦截的评论。
 
 %blogtitle%
 

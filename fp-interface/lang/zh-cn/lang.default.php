@@ -6,21 +6,21 @@ $lang ['main'] = array(
 	'prevpage' => '&laquo; 上一页',
 	'entry' => '博客文章',
 	'entries' => '博客文章',
-	'static' => '菜单栏',
+	'static' => '静态页面',
 	'preview' => '编辑/预览',
 
 	'filed_under' => '归档 ',
 
 	'add_entry' => '新建博客文章',
-	'add_comment' => '添加注释',
-	'add_static' => '新建菜单',
+	'add_comment' => '添加评论',
+	'add_static' => '新建静态页面',
 
 	'btn_edit' => '编辑',
 	'btn_delete' => '删除',
 
-	'nocomments' => '添加注释',
-	'comment' => '1有评论',
-	'comments' => '有评论',
+	'nocomments' => '添加评论',
+	'comment' => '1 条评论',
+	'comments' => '条评论',
 
 	'rss' => 'RSS订阅',
 	'atom' => 'Atom订阅'
@@ -34,8 +34,8 @@ $lang ['search'] = array(
 	'fulltext' => '搜索全文',
 
 	'fset2' => '指定日期',
-	'datedescr' => '可以指定日期缩小。可以指定年、年月日、年月日。 ' . //
-		'如果不指定日期，请留空。',
+	'datedescr' => '可以通过日期缩小搜索范围。可指定年份、年月或年月日。' . //
+		'如果不按日期筛选，请留空。',
 
 	'fset3' => '按类别搜索',
 	'catdescr' => '从所有类别中搜索时，请不要选择任何一个。',
@@ -45,7 +45,7 @@ $lang ['search'] = array(
 
 	'headres' => '搜索结果',
 	'descrres' => '<strong>%s</strong> 搜索结果:',
-	'descrnores' => '<strong>%s</strong> 中找到最佳实践。',
+	'descrnores' => '没有找到与 <strong>%s</strong> 匹配的结果。',
 
 	'moreopts' => '附加选项',
 
@@ -59,14 +59,14 @@ $lang ['search'] ['error'] = array(
 
 $lang ['staticauthor'] = array(
 	// "Published by" in static pages
-	'published_by' => '发行方',
-	'on' => 'on'
+	'published_by' => '发布者',
+	'on' => '发布于'
 );
 
 $lang ['entryauthor'] = array(
 	// "Posted by" in entry pages
-	'posted_by' => '发帖人',
-	'at' => 'at'
+	'posted_by' => '发布者',
+	'at' => '发布于'
 );
 
 $lang ['entry'] = array();
@@ -75,13 +75,13 @@ $lang ['entry'] ['flags'] = array();
 $lang ['entry'] ['flags'] ['long'] = array(
 	'draft' => '<strong>草稿</strong>: 不公开',
 	//'static' => '<strong>Static entry</strong>: normally hidden, to reach the entry put ?page=title-of-the-entry in url (experimental)',
-	'commslock' => '<strong>注释保护</strong>: 无法填写评论'
+	'commslock' => '<strong>评论保护</strong>: 无法发表评论'
 );
 
 $lang ['entry'] ['flags'] ['short'] = array(
 	'draft' => '草稿',
 	//'static' => 'Static',
-	'commslock' => '注释保护'
+	'commslock' => '评论保护'
 );
 
 $lang ['entry'] ['categories'] = array(
@@ -121,16 +121,16 @@ $lang ['login'] ['error'] = array(
 );
 
 $lang ['comments'] = array(
-	'head' => '注释',
+	'head' => '评论',
 	'descr' => '请在下面的表格中填写评论。',
 	'fieldset1' => '填写个人资料',
 	'name' => '您的名字 (*)',
 	'email' => '电子邮件地址:',
 	'www' => 'URL:',
-	'cookie' => '存储在浏览器中',
+	'cookie' => '在浏览器中保存个人信息',
 	'fieldset2' => '填写评论',
 	'comment' => '评论 (*):',
-	'fieldset3' => '送信',
+	'fieldset3' => '发送',
 	'submit' => '发送',
 	'reset' => '重置',
 	'success' => '评论已发布。',
