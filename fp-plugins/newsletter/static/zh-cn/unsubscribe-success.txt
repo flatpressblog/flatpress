@@ -1,3 +1,3 @@
-SUBJECT|您已取消订阅新闻简报！|CONTENT|
+SUBJECT|您已取消订阅新闻通讯！|CONTENT|
 如果您仍想获取最新信息，请订阅我的 Atom 或 RSS 源。
-|DATE|1321009871|VERSION|fp-1.4|AUTHOR|新闻简报|
+|DATE|1321009871|VERSION|fp-1.4|AUTHOR|新闻通讯|

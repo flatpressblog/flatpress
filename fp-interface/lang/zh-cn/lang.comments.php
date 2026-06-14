@@ -1,20 +1,20 @@
 <?php
-$lang ['comments'] ['mail'] = '%toname% 大人,
+$lang ['comments'] ['mail'] = '%toname%：
 
-"%fromname%" %frommail% 先生在下一篇报道中写了评论。
+"%fromname%" <%frommail%> 在以下文章中发表了评论。
 
-題名:
+标题：
 %entrytitle%
 
-直接链接到注释url:
+评论的直接链接：
 %commentlink%
 
-写的评论:
+评论内容：
 ***************
 %content%
 ***************
 
-以上,
+此致
 %blogtitle%
 
 ';

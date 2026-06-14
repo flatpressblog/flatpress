@@ -8,29 +8,29 @@ $lang ['admin'] ['entry'] ['submenu'] = array(
 /* default action */
 $lang ['admin'] ['entry'] ['list'] = array(
 	'head' => '文章管理',
-	'descr' => '选择要编辑的文章。<a href="admin.php?p=entry&amp;action=write">单击此处新建文章</a>。' . //
-		'或者<a href="admin.php?p=entry&amp;action=cats">编辑类别</a>中所述修改相应参数的值。',
+	'descr' => '请选择要编辑的文章，或<a href="admin.php?p=entry&amp;action=write">新建文章</a>。' . //
+		'您也可以<a href="admin.php?p=entry&amp;action=cats">编辑类别</a>。',
 	'drafts' => '草稿: ',
-	'filter' => '类别过滤器（可以用类别名称缩小文章): ',
+	'filter' => '类别筛选器（可按类别缩小文章范围）：',
 	'nofilter' => '显示全部',
 	'filterbtn' => '应用筛选器',
 	'sel' => '选择', // checkbox
 	'date' => '创建时间',
 	'title' => '标题',
 	'author' => '作者',
-	'comms' => '注释数', // comments
-	'action' => '请选择工作',
+	'comms' => '评论数', // comments
+	'action' => '请选择操作',
 	'act_del' => '删除',
 	'act_view' => '查看',
 	'act_edit' => '编辑',
-	'perpage_show' => '表示',
+	'perpage_show' => '显示',
 	'perpage_entries' => '文章/页面'
 );
 
 /* write action */
 $lang ['admin'] ['entry'] ['write'] = array(
 	'head' => '创建/编辑文章',
-	'descr' => '编辑表单以填写条目',
+	'descr' => '编辑表单以撰写文章',
 	'uploader' => '上传器',
 	'fieldset1' => '编辑',
 	'subject' => '标题 (*):',
@@ -40,14 +40,14 @@ $lang ['admin'] ['entry'] ['write'] = array(
 	'preview' => '预览',
 	'savecontinue' => '保存并继续',
 	'categories' => '类别',
-	'nocategories' => '未创建类别。 <a href="admin.php?p=entry&amp;action=cats">管理类别</a>请转到页面创建。 ' . //
-		'如果需要的话，首先<a href="#save">保存</a>请做。',
+	'nocategories' => '尚未创建类别。请前往<a href="admin.php?p=entry&amp;action=cats">管理类别</a>页面创建。' . //
+		'如有需要，请先<a href="#save">保存</a>当前文章。',
 	'saveopts' => '保存选项',
-	'success' => '报道被公开了。',
+	'success' => '文章已发布。',
 	'otheropts' => '其他选项',
 	'commmsg' => '管理这篇文章的评论。',
 	'delmsg' => '删除此文章。'
-	// 'back' => 'Back discarding changes',
+	// 'back' => '返回并放弃更改',
 );
 
 $lang ['admin'] ['entry'] ['list'] ['msgs'] = array(
@@ -95,11 +95,11 @@ $lang ['admin'] ['entry'] ['commentlist'] ['msgs'] = array(
 
 $lang ['admin'] ['entry'] ['commedit'] = array(
 	'head' => '编辑评论: ',
-	'descr' => '在这里，可以自由编辑评论的填写者名、邮件地址、web网站url。<br><br>',
+	'descr' => '在这里可以编辑评论者姓名、电子邮件地址和网站 URL。<br><br>',
 	'content' => '内容',
 	'date' => '日期',
 	'author' => '评论者',
-	'www' => 'web网站',
+	'www' => '网站',
 	'email' => '电子邮件地址',
 	'ip' => 'IP地址',
 	'loggedin' => '管理员填写',
@@ -110,7 +110,7 @@ $lang ['admin'] ['entry'] ['commedit'] = array(
 $lang ['admin'] ['entry'] ['commedit'] ['error'] = array(
 	'name' => '请填写名字。',
 	'email' => '请正确填写邮件地址。',
-	'url' => '请确认web站点url。 <strong>http://</strong>或<strong>https://</strong>开头。',
+	'url' => '请确认网站 URL 是否正确，应以 <strong>http://</strong> 或 <strong>https://</strong> 开头。',
 	'content' => '无评论。'
 );
 
@@ -124,7 +124,7 @@ $lang ['admin'] ['entry'] ['delete'] = array(
 	'head' => '删除文章',
 	'descr' => '您将要删除下一篇文章: ',
 	'preview' => '预览',
-	'confirm' => '是否继续此操作?',
+	'confirm' => '确定要继续此操作吗？',
 	'fset' => '删除',
 	'ok' => '是的，删除这篇文章。',
 	'cancel' => '否，返回管理员页面。',
