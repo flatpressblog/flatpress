@@ -10,7 +10,7 @@ FlatPress 1.6.dev focuses on the changes made after FlatPress 1.5.1, especially:
 - Smarty 5.8.0 and PHP 8.5 compatibility,
 - improved caching for feeds and widgets,
 - Location Migration Mode,
-- the new Tag and Mastodon plugins,
+- the new Tag, Audio and Video and Mastodon plugins,
 - SEO/Open Graph improvements,
 - plugin updates and bug fixes,
 - light/dark mode improvements for the Stringendo style,
@@ -113,10 +113,11 @@ Use this track if you can test a larger amount of content.
 Use this section especially when you update or move an existing test blog.
 
 - [ ] Move a copy of a FlatPress test blog to a different directory or local test domain.
+- [ ] Delete `fp-content/%%setup.lock`.
 - [ ] Open the moved blog.
+- [ ] Check and save the configuration in the admin area.
 - [ ] Check whether links, images, uploads, feeds, and admin links point to the new location.
-- [ ] Enable or test Location Migration Mode according to the available admin options and documentation.
-- [ ] Rebuild the index and purge caches.
+- [ ] Enable or test site migration mode according to the available administrator options.
 - [ ] Expected: the moved blog works with the new location and does not keep broken links to the old path.
 
 ### 3. PHP, Smarty, and error logs
@@ -200,7 +201,21 @@ The Tag plugin is new in FlatPress 1.6.dev.
 - [ ] Deactivate the Tag plugin and open the front end.
 - [ ] Expected: the blog does not crash and posts remain readable.
 
-### 9. Mastodon plugin
+### 10. Audio und Video plugin
+
+This plugin provides simple HTML5 players for audio and video files.
+
+- [ ] Activate the Audio und Video plugin.
+- [ ] Upload an `*.mp3` and an `*.mp4` file.
+- [ ] Create a new post with an audio clip.
+- [ ] Create a new post with a video clip, optionally including a short video or poster description
+- [ ] Save the post.
+- [ ] Open the post in the front end.
+- [ ] Expected: The audio or video file plays in an HTML5 player.
+- [ ] Deactivate the Audio und Video plugin and open the front end.
+- [ ] Expected: the blog does not crash and posts remain readable.
+
+### 10. Mastodon plugin
 
 Use a test Mastodon account if possible. Do not test with private or sensitive content.
 
@@ -222,7 +237,7 @@ Use a test Mastodon account if possible. Do not test with private or sensitive c
 - [ ] Check links in the Mastodon widget.
 - [ ] Expected: internal and external links are handled safely and correctly.
 
-### 10. SEO Meta Tag Info and Open Graph output
+### 11. SEO Meta Tag Info and Open Graph output
 
 - [ ] Activate the SEO Meta Tag Info plugin.
 - [ ] Create or edit a post.
@@ -239,7 +254,7 @@ Use a test Mastodon account if possible. Do not test with private or sensitive c
 - [ ] Change the blog language.
 - [ ] Expected: the plugin settings page does not show missing language-key errors.
 
-### 11. BBCode and Markdown/autolink regressions
+### 12. BBCode and Markdown/autolink regressions
 
 - [ ] Activate the BBCode plugin.
 - [ ] Create a post using common BBCode tags such as `[b]`, `[i]`, `[url]`, `[img]`, and lists.
@@ -255,7 +270,7 @@ Use a test Mastodon account if possible. Do not test with private or sensitive c
 - [ ] Open existing posts and tag-related pages.
 - [ ] Expected: the blog does not crash when BBCode is disabled.
 
-### 12. jQuery-dependent user interface tests
+### 13. jQuery-dependent user interface tests
 
 FlatPress 1.6.dev includes a newer jQuery plugin with jQuery 4.0.0 and jQuery UI 1.14.2.
 
@@ -269,7 +284,7 @@ FlatPress 1.6.dev includes a newer jQuery plugin with jQuery 4.0.0 and jQuery UI
 - [ ] Open the browser developer tools.
 - [ ] Expected: no JavaScript errors appear in the console.
 
-### 13. Newsletter plugin
+### 14. Newsletter plugin
 
 - [ ] Activate the Newsletter plugin.
 - [ ] Open the Newsletter admin page.
@@ -286,7 +301,7 @@ FlatPress 1.6.dev includes a newer jQuery plugin with jQuery 4.0.0 and jQuery UI
 - [ ] Expected: FlatPress attempts to fetch or use the blocklist without breaking the form.
 - [ ] Check the PHP error log.
 
-### 14. LastComments, PrettyURLs, and feeds
+### 15. LastComments, PrettyURLs, and feeds
 
 - [ ] Activate LastComments and PrettyURLs.
 - [ ] Test every PrettyURLs mode that is available in your setup.
@@ -298,7 +313,7 @@ FlatPress 1.6.dev includes a newer jQuery plugin with jQuery 4.0.0 and jQuery UI
 - [ ] Disable PrettyURLs and repeat a small sample.
 - [ ] Expected: feeds and comment links still work.
 
-### 15. Other plugin regression tests
+### 16. Other plugin regression tests
 
 Run these tests if you have time.
 
