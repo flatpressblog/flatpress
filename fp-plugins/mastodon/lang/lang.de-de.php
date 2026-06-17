@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Profilbild von %s',
-	'profile_link_title' => 'Mastodon-Profil öffnen'
+	'profile_link_title' => 'Mastodon-Profil öffnen',
+	'optin_label' => 'Ich bin einverstanden. <em>Dein Kommentar wird über meinen Mastodon-Account veröffentlicht und im Fediverse verbreitet.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Wenn aktiviert, dürfen bereits vorhandene FlatPress-Beiträge und -Kommentare durch Änderungen aus Mastodon überschrieben werden. FlatPress Eintäge und Kommentare werden dann auf 500 Zeichen gekürzt.',
 	'disable_remote_import' => 'Import von Mastodon nach FlatPress deaktivieren',
 	'disable_remote_import_desc' => 'Wenn aktiviert, sendet FlatPress Beiträge und Kommentare weiter an Mastodon; Mastodon legt jedoch keine FlatPress-Inhalte an, aktualisiert oder löscht sie nicht.',
+	'disable_comment_reply_sync' => 'Kommentar-/Antwort-Sync deaktivieren',
+	'disable_comment_reply_sync_desc' => 'Wenn aktiviert, werden Kommentare und Mastodon-Antworten nicht synchronisiert. Beiträge bleiben aktiv.',
 	'import_synced_comments_as_entries' => 'Kommentare zusätzlich als Beiträge importieren',
 	'delete_sync_enabled' => 'Löschsynchronisation aktivieren',
 	'delete_sync_enabled_desc' => 'Wenn aktiviert, führt das Plugin in einem späteren Folge-Request auch die Löschsynchronisation zwischen FlatPress und Mastodon aus.',

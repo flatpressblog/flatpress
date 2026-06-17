@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Profil-irudia: %s',
-	'profile_link_title' => 'Ireki Mastodon profila'
+	'profile_link_title' => 'Ireki Mastodon profila',
+	'optin_label' => 'Ados nago. <em>Zure iruzkina nire Mastodon kontuaren bidez argitaratuko da eta Fediverse-n zabalduko da.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Gaituta dagoenean, Mastodoneko aldaketek lehendik dauden FlatPress-eko sarrera eta iruzkin lokalak gainidatz ditzakete. Ondoren, FlatPresseko mezuak eta iruzkinak 500 karaktereetara laburbiltzen dira.',
 	'disable_remote_import' => 'Desgaitu Mastodonetik FlatPressera inportatzea',
 	'disable_remote_import_desc' => 'Gaituta dagoenean, FlatPress-ek sarrerak eta iruzkinak Mastodonera bidaltzen jarraitzen du, baina Mastodonek ez du FlatPress edukirik sortzen, eguneratzen edo ezabatzen.',
+	'disable_comment_reply_sync' => 'Desgaitu iruzkin/erantzunen sinkronizazioa',
+	'disable_comment_reply_sync_desc' => 'Aktibatuta badago, iruzkinak eta Mastodoneko erantzunak ez dira sinkronizatuko. Sarrerak sinkronizatzen jarraitzen dute.',
 	'import_synced_comments_as_entries' => 'Iruzkinak sarrera gisa ere inportatu',
 	'delete_sync_enabled' => 'Aktibatu ezabaketen sinkronizazioa',
 	'delete_sync_enabled_desc' => 'Aktibatuta dagoenean, pluginak geroagoko eskaera batean FlatPress eta Mastodon arteko ezabaketen sinkronizazioa ere exekutatzen du.',

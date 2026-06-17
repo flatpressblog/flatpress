@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => '%s 的头像',
-	'profile_link_title' => '打开 Mastodon 个人资料'
+	'profile_link_title' => '打开 Mastodon 个人资料',
+	'optin_label' => '我同意。 <em>你的评论将通过我的 Mastodon 账号发布，并在联邦宇宙中传播。</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => '启用后，来自 Mastodon 的更改可能会覆盖已经存在的本地 FlatPress 文章和评论。FlatPress 文章和评论随后会被截断为 500 个字符。',
 	'disable_remote_import' => '禁用 Mastodon 到 FlatPress 的导入',
 	'disable_remote_import_desc' => '启用后，FlatPress 仍会向 Mastodon 发送文章和评论，但 Mastodon 不会在 FlatPress 中创建、更新或删除内容。',
+	'disable_comment_reply_sync' => '停用评论/回复同步',
+	'disable_comment_reply_sync_desc' => '启用后，不同步评论和 Mastodon 回复。文章仍会同步。',
 	'import_synced_comments_as_entries' => '也将评论作为文章导入',
 	'delete_sync_enabled' => '启用删除同步',
 	'delete_sync_enabled_desc' => '启用后，插件还会在后续请求中运行 FlatPress 与 Mastodon 之间的删除同步。',

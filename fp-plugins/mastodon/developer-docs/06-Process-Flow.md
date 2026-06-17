@@ -153,6 +153,7 @@ flowchart TD
     subgraph WorkQueues["Work queues and cursors"]
         DirtyEntries["dirty_entries"]
         DirtyComments["dirty_comments"]
+        CommentOptins["comment_reply_optins"]
         PendingRechecks["pending_comment_remote_rechecks"]
         EntryCursor["deletion_cursor_entries"]
         CommentCursor["deletion_cursor_comments"]
@@ -223,7 +224,7 @@ Relative URL or configured blog-base match? Those URLs remain in the current tab
 
 ## 1. Bidirectional content synchronization and optional one-way mode
 
-The optional `disable_remote_import` setting is an explicit direction gate: FlatPress-to-Mastodon export and local-deletion propagation continue, but Mastodon responses must not create, update or delete FlatPress entries/comments.
+The optional `disable_remote_import` setting is an explicit direction gate: FlatPress-to-Mastodon export and local-deletion propagation continue, but Mastodon responses must not create, update or delete FlatPress entries/comments. The separate `disable_comment_reply_sync` setting is narrower: entry synchronization continues, while FlatPress comments, Mastodon replies, reply notifications/contexts and reply deletion follow-ups are skipped.
 
 ### 1.0 Admin UI direction gate
 
@@ -247,6 +248,74 @@ flowchart TD
     Save --> Preserve
     Preserve -- "Yes" --> Keep --> Store
     Preserve -- "No" --> Store
+```
+
+### 1.0a Comment/reply synchronization gate
+
+The `disable_comment_reply_sync` option is checked before every fachliche Grenze that can create, import, update or delete a comment/reply. It is deliberately independent of the one-way gate: in one-way mode it disables the remaining FlatPress-comment-to-Mastodon export; in bidirectional mode it disables both comment/reply directions.
+
+```mermaid
+flowchart TD
+    Start["Sync or FlatPress comment hook"]
+    Gate{"disable_comment_reply_sync enabled?"}
+    EntrySync["Continue entry import/export/deletion logic"]
+    ClearDirty["Clear dirty_comments and pending reply rechecks/cursors where relevant"]
+    SkipLocal["Skip local comment export and comment deletion tombstones"]
+    SkipRemote["Skip Mastodon context descendants and notification replies"]
+    Allow["Gate off: normal comment/reply sync paths"]
+
+    Start --> Gate
+    Gate -- "Yes" --> EntrySync
+    Gate -- "Yes" --> ClearDirty
+    Gate -- "Yes, local hook/export" --> SkipLocal
+    Gate -- "Yes, remote import" --> SkipRemote
+    Gate -- "No" --> Allow
+```
+
+### 1.0b Visitor opt-in for FlatPress comment-to-Mastodon reply export
+
+The `{comment_mastodon}` Smarty hook is a narrow template bridge. The Mastodon plugin decides whether the notice is needed from the comment/reply synchronization gate, not from the current token state. That allows a visitor approval to be captured even before Mastodon credentials are completed. Missing approval does not reject the local FlatPress comment; it only prevents later Mastodon/Fediverse publication. If CommentCenter holds a visitor comment for moderation, `commentcenter_comment_logged` stores the opt-in grant before the later admin approval writes the final comment. Authenticated FlatPress comments receive an authenticated state grant only when the stored comment payload carries FlatPress's `LOGGEDIN` marker. A current admin session alone is not enough, because CommentCenter can publish visitor comments while an administrator is logged in.
+
+```mermaid
+flowchart TD
+    Form["comment-form.tpl renders {comment_mastodon}"]
+    Hook["do_action('comment_mastodon')"]
+    Required{"comment/reply sync active?"}
+    Checkbox["Show checkbox and short Fediverse notice"]
+    Silent["Render nothing"]
+    VisitorSubmit["Visitor submits FlatPress comment"]
+    Moderated{"CommentCenter holds for approval?"}
+    CCLogged["commentcenter_comment_logged hook"]
+    AdminApproval["Admin approves pending visitor comment"]
+    AdminSubmit["Comment payload carries LOGGEDIN"]
+    Saved["comment_saved hook"]
+    Grant{"Grant source available or already stored?"}
+    StoreFrontend["Store comment_reply_optins[entry:comment] source=frontend"]
+    StoreAuth["Store comment_reply_optins[entry:comment] source=authenticated"]
+    LocalOnly["Store local comment only; no grant marker"]
+    Credentials{"instance URL and token complete?"}
+    Queue["Queue dirty_comments when entry/comment are exportable"]
+    Deferred["Keep grant only; later sync may export after credentials are completed"]
+    ExportGuard{"local comment export allowed?"}
+    PostReply["POST /api/v1/statuses with in_reply_to_id"]
+    SkipExport["Skip Mastodon reply export; keep comment local"]
+
+    Form --> Hook --> Required
+    Required -- "Yes" --> Checkbox --> VisitorSubmit
+    Required -- "No" --> Silent --> VisitorSubmit
+    VisitorSubmit --> Moderated
+    Moderated -- "No" --> Saved
+    Moderated -- "Yes with checkbox" --> CCLogged --> StoreFrontend --> AdminApproval --> Saved
+    Moderated -- "Yes without checkbox" --> AdminApproval
+    AdminSubmit --> Saved
+    Saved --> Grant
+    Grant -- "Visitor checkbox checked or stored state grant" --> StoreFrontend --> Credentials
+    Grant -- "Stored LOGGEDIN marker" --> StoreAuth --> Credentials
+    Grant -- "No grant" --> LocalOnly --> ExportGuard
+    Credentials -- "Yes" --> Queue --> ExportGuard
+    Credentials -- "No" --> Deferred --> ExportGuard
+    ExportGuard -- "Stored grant or existing mapping" --> PostReply
+    ExportGuard -- "No grant for new visitor/admin-session comment" --> SkipExport
 ```
 
 ### 1.1 FlatPress entry candidate selection and dirty decision
@@ -282,9 +351,9 @@ flowchart TD
 ```mermaid
 flowchart TD
     Start["plugin_mastodon_list_local_entries_for_sync"]
-    DirtyLookup["Build lookup from dirty_entries and dirty_comments"]
+    DirtyLookup["Build lookup from dirty_entries and dirty_comments<br/>dirty_comments only when comment/reply gate is off"]
     CollectFiles["Collect canonical CONTENT_DIR/YY/MM/entry*.txt candidates<br/>full scan for force, scheduled 7/14/30-day months otherwise"]
-    AddDirty["Append all dirty_entries and dirty_comments parents<br/>mandatory, no hard cap"]
+    AddDirty["Append all dirty_entries and allowed dirty_comments parents<br/>mandatory, no hard cap"]
     NextFile["Next entry file"]
     Force{"manual full sync force=true?"}
     Dirty{"Entry ID in dirty lookup?"}
@@ -357,7 +426,7 @@ sequenceDiagram
 
 ### 1.3 FlatPress comment and comment reply export
 
-FlatPress comments are exported only after the parent entry has a remote status mapping. Nested
+FlatPress comments are exported only when `disable_comment_reply_sync` is off and after the parent entry has a remote status mapping. Nested
 comment replies are delayed until their local parent comment has a remote mapping. A fresh unmapped
 comment inside the active scheduled content window is persisted as `dirty_comments` when its old
 parent entry is already mapped, so automatic and normal manual sync can load just that parent shard
@@ -368,6 +437,7 @@ flowchart TD
     CommentSaved["FlatPress comment_save succeeded"]
     Hook["comment_saved hook -> plugin_mastodon_on_comment_saved"]
     Guard{"plugin-owned local-write guard active?"}
+    CommentGate{"disable_comment_reply_sync enabled?"}
     SyncStart{"Comment matches sync_start_date?"}
     EntryMapped{"Parent entry has remote status?"}
     CommentMapped{"Comment already has remote status?"}
@@ -381,7 +451,9 @@ flowchart TD
 
     CommentSaved --> Hook --> Guard
     Guard -- "Yes" --> NoExport --> Persist
-    Guard -- "No" --> SyncStart
+    Guard -- "No" --> CommentGate
+    CommentGate -- "Yes" --> NoExport
+    CommentGate -- "No" --> SyncStart
     SyncStart -- "No" --> NoExport
     SyncStart -- "Yes" --> EntryMapped
     EntryMapped -- "No, parent is local and eligible" --> DirtyEntry --> Persist
@@ -397,6 +469,7 @@ flowchart TD
 ```mermaid
 flowchart TD
     Candidate["Comment candidate selected for export"]
+    CommentGate{"disable_comment_reply_sync enabled?"}
     EntryRemote{"Entry remote_id exists?"}
     DetectParent["plugin_mastodon_detect_local_comment_parent_id"]
     Resolve["plugin_mastodon_resolve_comment_reply_target"]
@@ -409,7 +482,9 @@ flowchart TD
     Mapping["Store comments and comments_remote with parent_comment_id and in_reply_to_remote_id"]
     ClearDirty["Clear dirty comment marker"]
 
-    Candidate --> EntryRemote
+    Candidate --> CommentGate
+    CommentGate -- "Yes" --> ClearDirty
+    CommentGate -- "No" --> EntryRemote
     EntryRemote -- "No" --> LogDeferred
     EntryRemote -- "Yes" --> DetectParent --> Resolve --> ParentRemote
     ParentRemote -- "Yes" --> ReplyToParent --> Mapping --> ClearDirty
@@ -480,13 +555,11 @@ The imported entry footer uses `Status.url`, which is the Mastodon single-status
 ### 1.5 Mastodon replies in a known imported thread to FlatPress comments
 
 After importing or refreshing a known entry status, the plugin fetches the Mastodon context and
-walks descendants. This path must avoid resurrecting locally deleted comments, including source=remote replies tombstoned by the FlatPress admin, must not break
-thread order, and must cope with temporarily unresolved parents. When `disable_remote_import` is
-enabled, this context path is skipped together with the rest of remote-to-local import.
+walks descendants. This path must avoid resurrecting locally deleted comments, including `source=remote` replies tombstoned by the FlatPress admin and exported `source=local` replies waiting for remote deletion, must not break thread order, and must cope with temporarily unresolved parents. The normal delete hook is the primary protection. The import boundary is an independent repair guard: it resolves `comments_remote[remoteId]`, loads only that referenced comment shard and creates `local_deleted_pending_remote_delete` when the exported local file is missing. When `disable_remote_import` or `disable_comment_reply_sync` is enabled, this context path is skipped together with the rest of the remote reply/comment import path.
 
 ```mermaid
 flowchart TD
-    Enabled{"disable_remote_import enabled?"}
+    Enabled{"disable_remote_import or disable_comment_reply_sync enabled?"}
     Skip["Skip context import"]
     EntryMapped["Known imported entry mapping"]
     FetchContext["GET /api/v1/statuses/:id/context"]
@@ -495,8 +568,11 @@ flowchart TD
     NextReply["Next descendant reply"]
     Importable{"Public/importable and inside sync-start window?"}
     Tombstone{"comment_tombstone or protected local delete/ignore?"}
+    MissingExport{"comments_remote points to missing source=local file?"}
+    TargetedShard["Load only referenced shard and set local_deleted_pending_remote_delete"]
     AlreadyMapped{"Already mapped to local comment?"}
     PreserveSource["Update content/hash but preserve existing source ownership"]
+    Conflict{"Remote ID already owned by another local comment?"}
     ParentKnown{"Parent is entry status or known/imported reply?"}
     Pending["Keep pending for later pass or pending_comment_remote_rechecks"]
     Quote{"quote_imported_reply_parent enabled?"}
@@ -514,9 +590,13 @@ flowchart TD
     Importable -- "No" --> NextReply
     Importable -- "Yes" --> Tombstone
     Tombstone -- "Yes" --> NextReply
-    Tombstone -- "No" --> AlreadyMapped
+    Tombstone -- "No" --> MissingExport
+    MissingExport -- "Yes" --> TargetedShard --> NextReply
+    MissingExport -- "No" --> AlreadyMapped
     AlreadyMapped -- "Yes" --> PreserveSource --> Recheck --> NextReply
-    AlreadyMapped -- "No" --> ParentKnown
+    AlreadyMapped -- "No" --> Conflict
+    Conflict -- "Yes, reject" --> NextReply
+    Conflict -- "No" --> ParentKnown
     ParentKnown -- "No" --> Pending --> Progress
     ParentKnown -- "Yes" --> Quote
     Quote -- "Yes" --> AddQuote --> Import
@@ -528,7 +608,7 @@ flowchart TD
 
 ### 1.5 Notification reply-hint pass
 
-The notification pass is optional and runs only when old-thread reply checks are enabled, `disable_remote_import` is off, and the
+The notification pass is optional and runs only when old-thread reply checks are enabled, `disable_remote_import` is off, `disable_comment_reply_sync` is off, and the
 current stored OAuth scope set contains `read:notifications`. Direct mapped-parent notifications
 are imported without a context request. Unresolved notification replies can spend the same
 admin-configured old-thread context budget that normal rotation would otherwise use.
@@ -536,7 +616,7 @@ admin-configured old-thread context budget that normal rotation would otherwise 
 ```mermaid
 flowchart TD
     Start["Remote-to-local sync"]
-    ImportEnabled{"disable_remote_import off?"}
+    ImportEnabled{"disable_remote_import and disable_comment_reply_sync off?"}
     Scope{"old_thread_reply_check and read:notifications?"}
     Fetch["GET /api/v1/notifications?types[]=mention&limit=30"]
     Reply{"Notification status is a reply?"}
@@ -1018,7 +1098,7 @@ stateDiagram-v2
 ### 4.1 Daily scheduled content synchronization
 
 The scheduled content sync is started from the `init` hook. Ordinary POST requests, missing
-configuration, active cooldowns, and a not-due scheduler summary all return quickly. The daily due check treats stored `sync_time` and `last_run` as UTC, while admin display converts them through the FlatPress `locale.timeoffset`; this keeps the automatic run independent of PHP's default timezone. APCu-backed cooldown markers are always accessed through FlatPress `apcu_get()`, `apcu_set()`, and `apcu_delete_key()` so file and APCu guards clear consistently on shared hosting.
+configuration, active cooldowns, and a not-due scheduler summary all return quickly. The daily due check treats stored `sync_time` and `last_run` as UTC, while admin display converts them through the FlatPress `locale.timeoffset`; this keeps the automatic run independent of PHP's default timezone. APCu-backed cooldown markers are always accessed through FlatPress `apcu_get()`, `apcu_set()`, and `apcu_delete_key()` so file and APCu guards clear consistently on shared hosting. The initial protection scan remains bounded to loaded comment shards. Correctness does not depend on that workset because the delete hook creates the tombstone immediately and the remote-import boundary can load one reverse-indexed shard defensively.
 
 ```mermaid
 flowchart TD
@@ -1035,7 +1115,8 @@ flowchart TD
     Lock["Acquire sync.lock non-blocking"]
     RateGuard["Start API rate/budget guard"]
     FullState["Load full state.json"]
-    Protect["Protect locally deleted exported comments"]
+    Protect["Protect locally deleted exported comments in currently loaded shards"]
+    ImportGuard["Each remote reply import rechecks its reverse-indexed shard"]
     Stats["Reset content_stats and last_error"]
     RemoteToLocal["plugin_mastodon_sync_remote_to_local"]
     LocalToRemote["plugin_mastodon_sync_local_to_remote"]
@@ -1055,7 +1136,8 @@ flowchart TD
     Due -- "Yes" --> GuardLookup --> Cooldown
     Cooldown -- "Active" --> End
     Cooldown -- "Clear" --> GuardClear --> Lock
-    Lock --> RateGuard --> FullState --> Protect --> Stats --> RemoteToLocal --> LocalToRemote --> FlushSkips --> MarkDeletion
+    Lock --> RateGuard --> FullState --> Protect --> Stats --> RemoteToLocal
+    RemoteToLocal --> ImportGuard --> LocalToRemote --> FlushSkips --> MarkDeletion
     MarkDeletion -- "Yes" --> Pending --> Write
     MarkDeletion -- "No" --> Write
     Write --> Release --> End
@@ -1065,10 +1147,16 @@ flowchart TD
 
 The deletion sync is intentionally separate from the content sync. It compares stored mappings
 against local files and remote statuses. Local deletions are propagated to Mastodon. Remote
-deletions are reflected back into FlatPress under the local-write guard only while remote import is enabled; explicit one-way mode instead removes the stale remote mapping and queues the still-local object for export. A locally deleted imported remote reply (`source=remote`) is different from a locally authored/exported comment: it is a FlatPress-local ignore decision, so deletion sync tombstones and unmaps it without attempting a Mastodon status `DELETE` while the parent entry still exists.
+deletions are reflected back into FlatPress under the local-write guard only while remote import is enabled; explicit one-way mode instead removes the stale remote mapping and queues the still-local object for export. When `disable_comment_reply_sync` is enabled, deletion sync keeps entry reconciliation active but skips comment/reply deletion follow-ups and clears pending reply rechecks/cursors. A locally deleted imported remote reply (`source=remote`) is different from a locally authored/exported comment: it is a FlatPress-local ignore decision, so deletion sync tombstones and unmaps it without attempting a Mastodon status `DELETE` while the parent entry still exists.
+
+For a locally authored/exported `source=local` comment, `plugin_mastodon_on_comment_deleted()` writes `local_deleted_pending_remote_delete` immediately and preserves the mapping. This makes content-before-deletion scheduling safe: even an old thread outside the partial content window cannot be resurrected while the later deletion run still has the remote ID needed for the owned status `DELETE`.
 
 ```mermaid
 flowchart TD
+    Hook["FlatPress comment_deleted hook"]
+    HookSource{"Mapped comment source?"}
+    HookLocal["source=local: tombstone now, preserve mapping, mark deletion pending"]
+    HookRemote["source=remote: ignore tombstone, remove mapping, no remote DELETE"]
     Start["plugin_mastodon_run_deletion_sync"]
     Options["Load options and full state"]
     Enabled{"Deletion sync enabled?"}
@@ -1087,6 +1175,7 @@ flowchart TD
     RemoteImportEntry{"remote import enabled?"}
     DeleteLocalEntry["entry_delete under local-write guard"]
     UnlinkEntry["Unlink stale remote mapping and queue dirty_entries"]
+    CommentGate{"comment/reply sync enabled?"}
     CommentLoop["Iterate comment mappings with cursor"]
     CommentScope{"Mapping inside sync_start_date?"}
     CommentLocal{"Local comment exists?"}
@@ -1100,12 +1189,16 @@ flowchart TD
     RemoteImportComment{"remote import enabled?"}
     DeleteLocalComment["comment_delete under local-write guard"]
     UnlinkComment["Unlink stale remote mapping and queue dirty_comments"]
+    SkipComments["Skip comment/reply deletion follow-up and clear pending reply rechecks/cursors"]
     ProcessRechecks["Process pending_comment_remote_rechecks"]
     Complete{"Failures or rate limit?"}
     ClearPending["Clear pending flags and cursors"]
     Retry["Keep deletions_pending with cooldown"]
     Write["Write state and scheduler summary"]
 
+    Hook --> HookSource
+    HookSource -- "local" --> HookLocal --> Start
+    HookSource -- "remote" --> HookRemote --> Write
     Start --> Options --> Enabled
     Enabled -- "No" --> ClearPending --> Write
     Enabled -- "Yes" --> Pending
@@ -1115,16 +1208,18 @@ flowchart TD
     Due -- "Yes" --> Lock --> RateGuard --> RecheckOnly
     RecheckOnly -- "No" --> EntryLoop
     EntryLoop --> EntryScope
-    EntryScope -- "No" --> CommentLoop
+    EntryScope -- "No" --> CommentGate
     EntryScope -- "Yes" --> EntryLocal
     EntryLocal -- "No" --> DeleteRemoteEntry --> CommentLoop
     EntryLocal -- "Yes" --> EntryLookupWindow
-    EntryLookupWindow -- "No" --> CommentLoop
+    EntryLookupWindow -- "No" --> CommentGate
     EntryLookupWindow -- "Yes" --> FetchRemoteEntry --> MissingRemoteEntry
     MissingRemoteEntry -- "Yes" --> RemoteImportEntry
     RemoteImportEntry -- "Yes" --> DeleteLocalEntry --> CommentLoop
     RemoteImportEntry -- "No" --> UnlinkEntry --> CommentLoop
-    MissingRemoteEntry -- "No" --> CommentLoop
+    MissingRemoteEntry -- "No" --> CommentGate
+    CommentGate -- "No" --> SkipComments --> Complete
+    CommentGate -- "Yes" --> CommentLoop
     CommentLoop --> CommentScope
     CommentScope -- "No" --> ProcessRechecks
     CommentScope -- "Yes" --> CommentLocal
@@ -1138,7 +1233,7 @@ flowchart TD
     RemoteImportComment -- "Yes" --> DeleteLocalComment --> QueueDesc --> ProcessRechecks
     RemoteImportComment -- "No" --> UnlinkComment --> ProcessRechecks
     MissingRemoteComment -- "No" --> ProcessRechecks
-    RecheckOnly -- "Yes" --> ProcessRechecks
+    RecheckOnly -- "Yes" --> CommentGate
     ProcessRechecks --> Complete
     Complete -- "No failures" --> ClearPending --> Write
     Complete -- "Failures or rate limit" --> Retry --> Write
@@ -1147,12 +1242,15 @@ flowchart TD
 ```mermaid
 sequenceDiagram
     autonumber
+    participant Hook as comment_deleted hook
     participant Del as Deletion sync
     participant State as state.json
     participant Caps as Instance capability cache
     participant API as Mastodon API
     participant Core as FlatPress Core
 
+    Hook->>State: For deleted source=local comment set pending-delete tombstone and preserve mapping
+    Hook->>State: For deleted source=remote comment set ignore tombstone and remove mapping
     Del->>State: Select mapped entry/comment whose local item disappeared
     alt Missing comment was imported from remote and parent entry still exists
         Del->>State: Set comment_tombstone and remove comments_remote mapping without DELETE
@@ -1421,6 +1519,8 @@ The APCu cooldown regression verifies that a marked content guard is no longer a
 
 The locally deleted imported remote reply tombstone regressions exercise both a normal context replay and an edited remote reply replay. They ensure `comment_tombstones` block re-import before hash comparison and that deletion sync treats legacy missing `source=remote` comments as local ignore decisions without outbound Mastodon `DELETE` requests.
 
+The exported-comment deletion-invariant regressions use an old entry outside the scheduled window and cover both `plugin_mastodon_run_sync(true, false)` and `plugin_mastodon_run_sync(false)`. They assert that the delete hook tombstones before content sync, the context response imports zero replacement comments and the original mapping remains available for deletion sync. A bypass-hook fixture proves the targeted import-boundary fallback, and a mapping fixture proves duplicate remote-ID rejection plus obsolete reverse-index cleanup during a legitimate remap.
+
 ## 8. Operational guarantees and intentional behavior
 
 ```mermaid
@@ -1436,6 +1536,7 @@ flowchart TD
     FullRepair["Full repair scan remains available"]
     Budgets["UTC due checks plus local budgets and Mastodon rate-limit headers stop safely"]
     NoFalseDirty["Local-write guard prevents plugin-owned writes from becoming local dirty markers"]
+    DeleteInvariant["Immediate tombstone plus targeted import guard prevents stale reply resurrection"]
     Compatibility["Mastodon >= 4.0.0 path with documented delete_media fallback for older than 4.4.0"]
 
     Goal --> OrdinaryRequest --> SchedulerOnly
@@ -1446,7 +1547,9 @@ flowchart TD
     DeletionRun --> Budgets
     ManualRun --> Budgets
     ScheduledRun --> NoFalseDirty
+    ScheduledRun --> DeleteInvariant
     DeletionRun --> NoFalseDirty
+    DeletionRun --> DeleteInvariant
     ManualRun --> NoFalseDirty
     DeletionRun --> Compatibility
 ```
@@ -1459,6 +1562,9 @@ Key implications for developers:
 - Manual full syncs deliberately remain exhaustive and should not be replaced by dirty queues.
 - Deletion syncs need the full mapping state because they compare local existence with remote
   status existence and maintain tombstones and descendant rechecks.
+- Content-sync correctness for deleted exported comments does not require a full shard load: the
+  delete hook creates the tombstone immediately, and the import guard loads at most the shard named
+  by `comments_remote[remoteId]` when repairing a missed hook.
 - Status deletion uses `delete_media=1` only when it is supported or plausibly supported, and
   falls back to plain `DELETE /api/v1/statuses/:id` for older Mastodon behavior.
 - Companion plugins improve rendering and feature completeness, but the Mastodon plugin still

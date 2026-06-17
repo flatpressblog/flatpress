@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Profilbillede af %s',
-	'profile_link_title' => 'Åbn Mastodon-profil'
+	'profile_link_title' => 'Åbn Mastodon-profil',
+	'optin_label' => 'Jeg accepterer. <em>Din kommentar offentliggøres via min Mastodon-konto og deles i Fediverse.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Når dette er aktiveret, kan ændringer fra Mastodon overskrive allerede eksisterende lokale FlatPress-indlæg og kommentarer. Indlæg og kommentarer på FlatPress bliver derefter forkortet til 500 tegn.',
 	'disable_remote_import' => 'Deaktivér import fra Mastodon til FlatPress',
 	'disable_remote_import_desc' => 'Når dette er slået til, sender FlatPress stadig indlæg og kommentarer til Mastodon, men Mastodon opretter, opdaterer eller sletter ikke indhold i FlatPress.',
+	'disable_comment_reply_sync' => 'Deaktiver kommentar-/svarsync',
+	'disable_comment_reply_sync_desc' => 'Når dette er slået til, synkroniseres kommentarer og Mastodon-svar ikke. Indlæg synkroniseres stadig.',
 	'import_synced_comments_as_entries' => 'Importér også kommentarer som indlæg',
 	'delete_sync_enabled' => 'Aktivér synkronisering af sletninger',
 	'delete_sync_enabled_desc' => 'Når den er aktiveret, kører pluginet også den efterfølgende synkronisering af sletninger mellem FlatPress og Mastodon i en senere forespørgsel.',

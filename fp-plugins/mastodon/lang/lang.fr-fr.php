@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Photo de profil de %s',
-	'profile_link_title' => 'Ouvrir le profil Mastodon'
+	'profile_link_title' => 'Ouvrir le profil Mastodon',
+	'optin_label' => 'J’accepte. <em>Votre commentaire sera publié via mon compte Mastodon et diffusé dans le Fediverse.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Lorsqu’elle est activée, les modifications de Mastodon peuvent écraser des entrées et commentaires FlatPress déjà existants localement. Les publications et les commentaires sur FlatPress sont alors limités à 500 caractères.',
 	'disable_remote_import' => 'Désactiver l’import de Mastodon vers FlatPress',
 	'disable_remote_import_desc' => 'Lorsque cette option est activée, FlatPress envoie toujours les billets et commentaires vers Mastodon, mais Mastodon ne crée, ne met à jour ni ne supprime aucun contenu FlatPress.',
+	'disable_comment_reply_sync' => 'Désactiver la synchro commentaires/réponses',
+	'disable_comment_reply_sync_desc' => 'Si activé, les commentaires et réponses Mastodon ne sont pas synchronisés. Les billets continuent de l’être.',
 	'import_synced_comments_as_entries' => 'Importer aussi les commentaires comme entrées',
 	'delete_sync_enabled' => 'Activer la synchronisation des suppressions',
 	'delete_sync_enabled_desc' => 'Lorsqu’elle est activée, l’extension exécute aussi, dans une requête ultérieure, la synchronisation des suppressions entre FlatPress et Mastodon.',

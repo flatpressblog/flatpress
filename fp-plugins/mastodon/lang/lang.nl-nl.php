@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Profielfoto van %s',
-	'profile_link_title' => 'Mastodon-profiel openen'
+	'profile_link_title' => 'Mastodon-profiel openen',
+	'optin_label' => 'Ik ga akkoord. <em>Je reactie wordt via mijn Mastodon-account gepubliceerd en in het Fediverse gedeeld.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Wanneer ingeschakeld, mogen wijzigingen uit Mastodon reeds bestaande lokale FlatPress-berichten en reacties overschrijven. Berichten en reacties op FlatPress worden vervolgens ingekort tot 500 tekens.',
 	'disable_remote_import' => 'Import van Mastodon naar FlatPress uitschakelen',
 	'disable_remote_import_desc' => 'Wanneer ingeschakeld, blijft FlatPress berichten en reacties naar Mastodon sturen, maar Mastodon maakt, wijzigt of verwijdert geen FlatPress-inhoud.',
+	'disable_comment_reply_sync' => 'Commentaar-/antwoord-synchronisatie uitschakelen',
+	'disable_comment_reply_sync_desc' => 'Indien actief worden reacties en Mastodon-antwoorden niet gesynchroniseerd. Berichten blijven synchroniseren.',
 	'import_synced_comments_as_entries' => 'Reacties ook als berichten importeren',
 	'delete_sync_enabled' => 'Synchronisatie van verwijderingen inschakelen',
 	'delete_sync_enabled_desc' => 'Wanneer ingeschakeld voert de plugin in een later verzoek ook de synchronisatie van verwijderingen tussen FlatPress en Mastodon uit.',

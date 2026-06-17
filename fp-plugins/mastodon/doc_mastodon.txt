@@ -102,7 +102,7 @@ For the best result with synchronized Mastodon content, also enable these FlatPr
 
 ===== How scheduling works =====
 
-  * The default daily synchronization time is **03:00**.
+  * The default daily synchronization time is **03:00** UTC.
   * You can change the time in the plugin settings.
   * Automatic synchronization runs only on a normal website request after the due time.
   * It does not run during CLI execution.
@@ -314,6 +314,8 @@ Mastodon instances can take longer to process audio and video than images. The p
 
 === Comment export ===
 
+If you synchronize your visitors' comments to Mastodon/the Fediverse, don't forget to mention it in your privacy policy.
+
 A FlatPress comment becomes one Mastodon reply to the synchronized entry.
 
 If the comment is itself a reply to another FlatPress comment, it becomes a Mastodon reply to that parent reply.
@@ -349,16 +351,6 @@ If a reply belongs under a previously synchronized FlatPress comment, it is impo
 
 This also applies when another Mastodon member replies inside that known thread.
 
-=== About “Import comments as entries as well” ===
-**Tip of the day:**
-Mastodon limits posts to a maximum of 500 characters.
-If your FlatPress posts and comments are longer than 500 characters and you want to keep them that way, disable the "Update existing local content from Mastodon" option.
-
-When this option is disabled, thread replies should stay in the comment area instead of also appearing as separate FlatPress entries.
-
-When the option is enabled, the plugin may additionally import certain synchronized replies as entries as well.
-
-If you mainly want a blog-like discussion structure, leaving the option disabled is usually the safer choice.
 
 ===== Where plugin data is stored =====
 

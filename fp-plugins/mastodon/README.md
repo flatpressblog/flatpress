@@ -101,7 +101,7 @@ For the best result with synchronized Mastodon content, also enable these FlatPr
 
 ## How scheduling works
 
-- The default daily synchronization time is **03:00**.
+- The default daily synchronization time is **03:00** UTC.
 - You can change the time in the plugin settings.
 - Automatic synchronization runs only on a normal website request after the due time.
 - It does not run during CLI execution.
@@ -162,11 +162,14 @@ Tip: If you see error messages indicating that limits have been reached, select 
 
 These switches are especially important:
 
-- **Update existing local content from Mastodon**  
-  Allows already imported FlatPress entries and comments to be refreshed from Mastodon later.
+- **Optional one-way mode**  
+  You can disable the Mastodon-to-FlatPress import.
 
-- **Import comments as entries as well**  
-  Allows certain synchronized Mastodon replies to also appear as FlatPress entries. Leave this disabled if you want to avoid duplicate content and keep thread replies mainly in the comment area.
+- **Disable comment/reply sync**  
+  Comments and Mastodon replies are not synchronized.
+
+- **Check known synchronized Mastodon threads for new replies**  
+  The plugin refreshes already synchronized entry threads in small rotating batches.
 
 - **Enable deletion synchronization**  
   Enables the separate follow-up delete pass. Deletion synchronization ensures that posts/ statuses, comments/ replies deleted on one side are also deleted on the other.
@@ -362,14 +365,14 @@ If you mainly want a blog-like discussion structure, leaving the option disabled
 
 The plugin stores its working data in:
 
+- `fp-content/plugin_mastodon/sync.log`
+- `fp-content/plugin_mastodon/sync.guard.json`
 - `fp-content/plugin_mastodon/state.json`
 - `fp-content/plugin_mastodon/state-comments/YY/MM/entry*.json`
 - `fp-content/plugin_mastodon/scheduler-state.json`
-- `fp-content/plugin_mastodon/sync.log`
-- `fp-content/plugin_mastodon/state-write.lock`
-- `fp-content/plugin_mastodon/sync.guard.json`
 - `fp-content/plugin_mastodon/rate-limit-windows.json`
-- `fp-content/plugin_mastodon/sync.log`
+- `fp-content/plugin_mastodon/profile/avatar.*`
+- `fp-content/plugin_mastodon/profile/profile.json`
 
 Imported Mastodon images are stored under:
 

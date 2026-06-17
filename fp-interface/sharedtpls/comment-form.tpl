@@ -71,6 +71,7 @@
 
 			{* do action *}
 			{comment_form}
+			{comment_mastodon}
 
 		</div>
 
