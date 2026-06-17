@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => '%s のプロフィール画像',
-	'profile_link_title' => 'Mastodonプロフィールを開く'
+	'profile_link_title' => 'Mastodonプロフィールを開く',
+	'optin_label' => '同意します。 <em>あなたのコメントは私のMastodonアカウントで公開され、Fediverseに共有されます。</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => '有効にすると、Mastodon からの変更によって既存の FlatPress のローカルエントリーやコメントが上書きされる場合があります。 FlatPressの投稿やコメントは、500文字に短縮されます。',
 	'disable_remote_import' => 'Mastodon から FlatPress への取り込みを無効化',
 	'disable_remote_import_desc' => '有効にすると、FlatPress は投稿とコメントを Mastodon へ送信し続けますが、Mastodon から FlatPress の内容を作成・更新・削除しません。',
+	'disable_comment_reply_sync' => 'コメント/返信の同期を無効化',
+	'disable_comment_reply_sync_desc' => '有効にすると、コメントとMastodon返信は同期されません。記事の同期は続きます。',
 	'import_synced_comments_as_entries' => 'コメントもエントリーとして取り込む',
 	'delete_sync_enabled' => '削除同期を有効化',
 	'delete_sync_enabled_desc' => '有効にすると、プラグインは後続の別リクエストで FlatPress と Mastodon 間の削除同期も実行します。',

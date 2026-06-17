@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Foto de perfil de %s',
-	'profile_link_title' => 'Abrir perfil do Mastodon'
+	'profile_link_title' => 'Abrir perfil do Mastodon',
+	'optin_label' => 'Eu concordo. <em>Seu comentário será publicado pela minha conta Mastodon e compartilhado no Fediverso.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Quando ativado, alterações do Mastodon podem sobrescrever entradas e comentários locais do FlatPress que já existam. As postagens e comentários no FlatPress serão então reduzidos para 500 caracteres.',
 	'disable_remote_import' => 'Desativar importação do Mastodon para o FlatPress',
 	'disable_remote_import_desc' => 'Quando ativado, o FlatPress continua enviando posts e comentários ao Mastodon, mas o Mastodon não cria, atualiza nem exclui conteúdo no FlatPress.',
+	'disable_comment_reply_sync' => 'Desativar sincronização de comentários/respostas',
+	'disable_comment_reply_sync_desc' => 'Quando ativado, comentários e respostas do Mastodon não são sincronizados. Posts continuam sincronizando.',
 	'import_synced_comments_as_entries' => 'Importar comentários também como entradas',
 	'delete_sync_enabled' => 'Ativar sincronização de exclusões',
 	'delete_sync_enabled_desc' => 'Quando ativado, o plugin também executa em uma solicitação posterior a sincronização de exclusões entre o FlatPress e o Mastodon.',

@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Profilna slika uporabnika %s',
-	'profile_link_title' => 'Odpri profil Mastodon'
+	'profile_link_title' => 'Odpri profil Mastodon',
+	'optin_label' => 'Strinjam se. <em>Vaš komentar bo objavljen prek mojega računa Mastodon in deljen v Fediverse.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Ko je omogočeno, lahko spremembe iz Mastodona prepišejo že obstoječe lokalne vnose in komentarje FlatPressa. Objave in komentarji na FlatPressu se nato skrajšajo na 500 znakov.',
 	'disable_remote_import' => 'Onemogoči uvoz iz Mastodona v FlatPress',
 	'disable_remote_import_desc' => 'Ko je omogočeno, FlatPress še vedno pošilja prispevke in komentarje v Mastodon, Mastodon pa ne ustvarja, posodablja ali briše vsebine v FlatPressu.',
+	'disable_comment_reply_sync' => 'Onemogoči sinhronizacijo komentarjev/odgovorov',
+	'disable_comment_reply_sync_desc' => 'Ko je vklopljeno, se komentarji in odgovori Mastodon ne sinhronizirajo. Prispevki se še sinhronizirajo.',
 	'import_synced_comments_as_entries' => 'Uvozi komentarje tudi kot vnose',
 	'delete_sync_enabled' => 'Omogoči sinhronizacijo brisanja',
 	'delete_sync_enabled_desc' => 'Če je omogočeno, vtičnik v naslednjem zahtevku izvede tudi sinhronizacijo brisanja med FlatPressom in Mastodonom.',

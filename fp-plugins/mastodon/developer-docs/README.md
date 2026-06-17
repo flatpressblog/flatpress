@@ -19,17 +19,19 @@ It is written for developers who need to make safe changes without breaking sync
 
 Use these starting points when the requested change is framed by behavior rather than by function name:
 
-| Requested change                                                 | Start reading                                     | Then inspect                                                                                                |
-| ---------------------------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| "Posts do not appear on Mastodon"                                | `01-Process-Map.md` P5/P7                         | `04-API-Compatibility.md`, local export tests                                                               |
-| "Imported replies are wrong or duplicated"                       | `01-Process-Map.md` P4                            | `02-State-Model.md` tombstones/rechecks, reply tests                                                        |
-| "Deletion is unsafe or incomplete"                               | `01-Process-Map.md` P9                            | Delete endpoint fallback, deletion sync tests                                                               |
-| "State repair or diagnostics are needed"                         | `02-State-Model.md` maintenance sections          | Admin maintenance fieldset, `mastodon-state-cli.php`                                                        |
-| "Admin page reports stale or wrong state"                        | P12 and scheduler state                           | State summary and admin assignment tests                                                                    |
-| "Large sites are slow"                                           | P1, budgets and scheduler state                   | Large-state and rate-limit tests                                                                            |
-| "Mastodon API behavior changed"                                  | `04-API-Compatibility.md`                         | endpoint matrix, capability helpers, targeted tests                                                         |
-| "Comment author links open new tabs only for external URLs"      | `01-Process-Map.md` P14                           | `comments.tpl`, `modifier.is_external_url.php`, target-decision test including root-install same-host paths |
-| "Imported status source links open the single toot in a new tab" | `01-Process-Map.md` P3, `04-API-Compatibility.md` | `plugin_mastodon_imported_status_footer_bbcode()`, status-footer target tests                               |
+| Requested change                                                 | Start reading                                     | Then inspect                                                                                                                                                                              |
+| ---------------------------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Posts do not appear on Mastodon"                                | `01-Process-Map.md` P5/P7                         | `04-API-Compatibility.md`, local export tests                                                                                                                                             |
+| "Imported replies are wrong or duplicated"                       | `01-Process-Map.md` P4                            | `02-State-Model.md` tombstones/rechecks, reply tests                                                                                                                                      |
+| "Disable comment/reply synchronization"                          | `01-Process-Map.md` P2b/P4/P4a/P6/P9/P10          | `02-State-Model.md` comment/reply gate lifecycle, `06-Process-Flow.md` gate diagrams, regression tests                                                                                    |
+| "Require visitor approval before exporting comments to Mastodon" | `01-Process-Map.md` P2c/P6/P10                    | `02-State-Model.md` comment_reply_optins, CommentCenter moderation grant, authenticated export grants, credential-deferred opt-ins, `06-Process-Flow.md` opt-in diagram, regression tests |
+| "Deletion is unsafe or incomplete"                               | `01-Process-Map.md` P4/P9                         | Immediate tombstones, import-boundary fallback, remote-ID ownership, delete endpoint fallback and partial-sync tests                                                                      |
+| "State repair or diagnostics are needed"                         | `02-State-Model.md` maintenance sections          | Admin maintenance fieldset, `mastodon-state-cli.php`                                                                                                                                      |
+| "Admin page reports stale or wrong state"                        | P12 and scheduler state                           | State summary and admin assignment tests                                                                                                                                                  |
+| "Large sites are slow"                                           | P1, budgets and scheduler state                   | Large-state and rate-limit tests                                                                                                                                                          |
+| "Mastodon API behavior changed"                                  | `04-API-Compatibility.md`                         | endpoint matrix, capability helpers, targeted tests                                                                                                                                       |
+| "Comment author links open new tabs only for external URLs"      | `01-Process-Map.md` P14                           | `comments.tpl`, `modifier.is_external_url.php`, target-decision test including root-install same-host paths                                                                               |
+| "Imported status source links open the single toot in a new tab" | `01-Process-Map.md` P3, `04-API-Compatibility.md` | `plugin_mastodon_imported_status_footer_bbcode()`, status-footer target tests                                                                                                             |
 
 ## Compatibility target for maintainers
 
@@ -39,6 +41,16 @@ The plugin code should remain compatible with:
 - Smarty 4.x/5.x admin template usage, including Smarty 5.8.0.
 - PHPStan Level 5 style expectations: normalize mixed arrays, avoid ambiguous return shapes where practical, and keep side effects explicit.
 - Shared hosting constraints: non-blocking locks, finite request budgets, finite media/delete windows, no unbounded background loops.
+
+## Static analysis
+
+Run the combined Mastodon plugin and simulator analysis from the FlatPress root:
+
+```bash
+php -d memory_limit=3200M .dist/phpstan.phar analyse -c .dist/phpstan.neon.dist --level=5 --memory-limit=3200M fp-plugins/mastodon/plugin.mastodon.php simulate_mastodon_plugin.php
+```
+
+The distributed configuration checks the declared PHP 7.2 through 8.5 range and scans Smarty 5.8.0 types without analyzing Smarty core itself.
 
 ## Simulation harness quick reference
 
@@ -86,7 +98,7 @@ The checker compares the regression matrix with `simulate_mastodon_plugin.php`, 
 
 ## Current split-state guardrails
 
-The Mastodon plugin documentation now covers the per-entry comment-shard model, migration backup files, shard diagnostics/repair helpers and the 128-MB simulation workflow. The most relevant entry points are:
+The Mastodon plugin documentation now covers the per-entry comment-shard model, migration backup files, shard diagnostics/repair helpers, the exported-comment deletion invariant and the 128-MB simulation workflow. The most relevant entry points are:
 
 | Topic                         | Document                                                       |
 | ----------------------------- | -------------------------------------------------------------- |

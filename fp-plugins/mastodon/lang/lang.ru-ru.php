@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Изображение профиля %s',
-	'profile_link_title' => 'Открыть профиль Mastodon'
+	'profile_link_title' => 'Открыть профиль Mastodon',
+	'optin_label' => 'Я согласен. <em>Ваш комментарий будет опубликован через мой аккаунт Mastodon и распространён в Fediverse.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Если включено, изменения из Mastodon могут перезаписывать уже существующие локальные записи и комментарии FlatPress. Сообщения и комментарии в FlatPress будут сокращены до 500 символов.',
 	'disable_remote_import' => 'Отключить импорт из Mastodon в FlatPress',
 	'disable_remote_import_desc' => 'Если включено, FlatPress по-прежнему отправляет записи и комментарии в Mastodon, но Mastodon не создает, не обновляет и не удаляет содержимое FlatPress.',
+	'disable_comment_reply_sync' => 'Отключить синхронизацию комментариев/ответов',
+	'disable_comment_reply_sync_desc' => 'Если включено, комментарии и ответы Mastodon не синхронизируются. Записи продолжают синхронизироваться.',
 	'import_synced_comments_as_entries' => 'Импортировать комментарии также как записи',
 	'delete_sync_enabled' => 'Включить синхронизацию удалений',
 	'delete_sync_enabled_desc' => 'Если включено, плагин также выполняет в следующем запросе синхронизацию удалений между FlatPress и Mastodon.',

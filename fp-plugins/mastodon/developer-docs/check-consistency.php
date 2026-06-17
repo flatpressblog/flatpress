@@ -365,6 +365,168 @@ foreach ($oneWayRequiredDocs as $docName => $docData) {
 	}
 }
 
+
+$commentReplySyncRequiredDocs = array(
+	'00-Mental-Model.md' => array(
+		$mentalModelDocContent,
+		array(
+			'disable_comment_reply_sync',
+			'Comment/reply sync gate',
+			'keeps entry sync active'
+		)
+	),
+	'01-Process-Map.md' => array(
+		$processMapDocContent,
+		array(
+			'Comment/reply synchronization gate',
+			'disable_comment_reply_sync',
+			'Comment/reply disable'
+		)
+	),
+	'02-State-Model.md' => array(
+		$stateModelDocContent,
+		array(
+			'Comment/reply synchronization gate lifecycle',
+			'clear `dirty_comments`',
+			'skip context descendants and notification replies'
+		)
+	),
+	'03-Function-Process-Matrix.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/03-Function-Process-Matrix.md', $errors),
+		array(
+			'plugin_mastodon_should_sync_comments_and_replies',
+			'Central option gate for all comment/reply synchronization boundaries'
+		)
+	),
+	'04-API-Compatibility.md' => array(
+		$apiDocContent,
+		array(
+			'Comment/reply synchronization gate compatibility',
+			'does not require any new Mastodon API capability',
+			'Mastodon `>= 4.0.0` compatibility is preserved'
+		)
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'Disabled comment/reply sync keeps local comments off Mastodon',
+			'Disabled comment/reply sync imports Mastodon entries without fetching reply contexts or notifications',
+			'Disabled comment/reply sync skips remote reply deletion follow-up'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'Comment/reply synchronization gate',
+			'disable_comment_reply_sync enabled?',
+			'Skip comment/reply deletion follow-up'
+		)
+	),
+	'07-Function-Organigram.md' => array(
+		$organigramDocContent,
+		array(
+			'plugin_mastodon_normalize_disable_comment_reply_sync()',
+			'plugin_mastodon_should_sync_comments_and_replies()',
+			'plugin_mastodon_state_remove_dirty_comments_for_entry()'
+		)
+	),
+	'README.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
+		array(
+			'Disable comment/reply synchronization',
+			'comment/reply gate lifecycle'
+		)
+	)
+);
+foreach ($commentReplySyncRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing comment/reply-sync gate documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
+
+$commentReplyOptinRequiredDocs = array(
+	'00-Mental-Model.md' => array(
+		$mentalModelDocContent,
+		array(
+			'{comment_mastodon}',
+			'comment_reply_optins',
+			'comments without that marker stay local'
+		)
+	),
+	'01-Process-Map.md' => array(
+		$processMapDocContent,
+		array(
+			'Visitor comment Mastodon opt-in',
+			'comments without that marker are accepted locally'
+		)
+	),
+	'02-State-Model.md' => array(
+		$stateModelDocContent,
+		array(
+			'Comment-to-reply opt-in markers',
+			'comment_reply_optins',
+			'no error is shown'
+		)
+	),
+	'03-Function-Process-Matrix.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/03-Function-Process-Matrix.md', $errors),
+		array(
+			'plugin_mastodon_comment_to_reply_optin_required',
+			'plugin_mastodon_local_comment_export_allowed'
+		)
+	),
+	'04-API-Compatibility.md' => array(
+		$apiDocContent,
+		array(
+			'Visitor comment opt-in compatibility',
+			'do not add a Mastodon endpoint'
+		)
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'Mastodon comment opt-in is required only when local comments may be exported',
+			'Local visitor comment without Mastodon opt-in is not eligible for Mastodon export'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'Visitor opt-in for FlatPress comment-to-Mastodon reply export',
+			'comment_reply_optins[entry:comment]'
+		)
+	),
+	'07-Function-Organigram.md' => array(
+		$organigramDocContent,
+		array(
+			'plugin_mastodon_optin_comment_to_reply()',
+			'plugin_mastodon_state_set_comment_reply_optin()',
+			'plugin_mastodon_local_comment_export_allowed()'
+		)
+	),
+	'README.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
+		array(
+			'Require visitor approval before exporting comments to Mastodon',
+			'comment_reply_optins'
+		)
+	)
+);
+foreach ($commentReplyOptinRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing comment-to-reply opt-in documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
 $guardIsolationRequiredDocs = array(
 	'05-Regression-Test-Matrix.md' => array(
 		$regressionDocContent,
@@ -429,6 +591,109 @@ foreach ($importedRemoteReplyDeleteRequiredDocs as $docName => $docData) {
 		}
 	}
 }
+
+
+$exportedCommentDeleteInvariantRequiredDocs = array(
+	'00-Mental-Model.md' => array(
+		$mentalModelDocContent,
+		array(
+			'local_deleted_pending_remote_delete',
+			'one Mastodon reply ID may belong to exactly one local comment mapping'
+		)
+	),
+	'01-Process-Map.md' => array(
+		$processMapDocContent,
+		array(
+			'`comments_remote` is the authoritative one-to-one owner index',
+			'loads only that entry\'s comment shard'
+		)
+	),
+	'02-State-Model.md' => array(
+		$stateModelDocContent,
+		array(
+			'Locally deleted mapped replies',
+			'local_deleted_pending_remote_delete',
+			'One remote reply ID may be owned by exactly one local comment key'
+		)
+	),
+	'03-Function-Process-Matrix.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/03-Function-Process-Matrix.md', $errors),
+		array(
+			'plugin_mastodon_state_comment_mapping_conflict',
+			'plugin_mastodon_protect_missing_local_exported_comment_by_remote_id'
+		)
+	),
+	'04-API-Compatibility.md' => array(
+		$apiDocContent,
+		array(
+			'Exported-comment deletion invariant compatibility',
+			'Mastodon `>= 4.0.0` compatibility is preserved'
+		)
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'Normal manual partial content sync keeps an old locally deleted exported comment tombstoned without stale re-import',
+			'Automatic scheduled partial content sync keeps an old locally deleted exported comment tombstoned without stale re-import',
+			'Remote import defensively tombstones a missing source=local comment when the deletion hook was bypassed',
+			'Comment mapping rejects duplicate remote ids and removes the previous reverse id on a legitimate remap'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'local_deleted_pending_remote_delete',
+			'the import guard loads at most the shard named'
+		)
+	),
+	'07-Function-Organigram.md' => array(
+		$organigramDocContent,
+		array(
+			'plugin_mastodon_state_comment_mapping_conflict()',
+			'plugin_mastodon_protect_missing_local_exported_comment_by_remote_id()'
+		)
+	),
+	'README.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
+		array(
+			'exported-comment deletion invariant'
+		)
+	)
+);
+foreach ($exportedCommentDeleteInvariantRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing exported-comment deletion-invariant documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
+$exportedCommentDeleteInvariantPluginSnippets = array(
+	'function plugin_mastodon_state_comment_mapping_conflict',
+	'function plugin_mastodon_protect_missing_local_exported_comment_by_remote_id',
+	"'local_deleted_pending_remote_delete'",
+	'Refusing duplicate remote comment mapping'
+);
+foreach ($exportedCommentDeleteInvariantPluginSnippets as $requiredPluginSnippet) {
+	if ($pluginContent !== '' && strpos($pluginContent, $requiredPluginSnippet) === false) {
+		$errors [] = 'Plugin missing exported-comment deletion-invariant implementation snippet: ' . $requiredPluginSnippet;
+	}
+}
+
+$exportedCommentDeleteInvariantSimulationSnippets = array(
+	'Normal manual partial content sync keeps an old locally deleted exported comment tombstoned without stale re-import',
+	'Automatic scheduled partial content sync keeps an old locally deleted exported comment tombstoned without stale re-import',
+	'Remote import defensively tombstones a missing source=local comment when the deletion hook was bypassed',
+	'Comment mapping rejects duplicate remote ids and removes the previous reverse id on a legitimate remap'
+);
+foreach ($exportedCommentDeleteInvariantSimulationSnippets as $requiredSimulationSnippet) {
+	if ($simulationContent !== '' && strpos($simulationContent, $requiredSimulationSnippet) === false) {
+		$errors [] = 'Simulation missing exported-comment deletion-invariant regression: ' . $requiredSimulationSnippet;
+	}
+}
+
 
 $instanceCapabilityRequiredDocs = array(
 	'01-Process-Map.md' => array(

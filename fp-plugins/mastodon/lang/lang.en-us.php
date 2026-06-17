@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Profile picture of %s',
-	'profile_link_title' => 'Open Mastodon profile'
+	'profile_link_title' => 'Open Mastodon profile',
+	'optin_label' => 'I agree. <em>Your comment will be published via my Mastodon account and shared in the Fediverse.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'When enabled, changes from Mastodon may overwrite already existing local FlatPress entries and comments. FlatPress posts and comments are then truncated to 500 characters.',
 	'disable_remote_import' => 'Disable Mastodon-to-FlatPress import',
 	'disable_remote_import_desc' => 'When enabled, FlatPress still sends posts and comments to Mastodon, but Mastodon does not create, update or delete FlatPress content.',
+	'disable_comment_reply_sync' => 'Disable comment/reply sync',
+	'disable_comment_reply_sync_desc' => 'When enabled, comments and Mastodon replies are not synchronized. Entries still sync.',
 	'import_synced_comments_as_entries' => 'Import comments as entries as well',
 	'delete_sync_enabled' => 'Enable deletion synchronization',
 	'delete_sync_enabled_desc' => 'When enabled, the plugin also runs the follow-up deletion synchronization between FlatPress and Mastodon in a later request.',

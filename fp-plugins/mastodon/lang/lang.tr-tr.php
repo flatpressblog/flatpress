@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => '%s profil resmi',
-	'profile_link_title' => 'Mastodon profilini aç'
+	'profile_link_title' => 'Mastodon profilini aç',
+	'optin_label' => 'Kabul ediyorum. <em>Yorumun Mastodon hesabım üzerinden yayımlanacak ve Fediverse’te paylaşılacak.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Etkinleştirildiğinde, Mastodon’daki değişiklikler mevcut yerel FlatPress girdilerinin ve yorumlarının üzerine yazabilir. FlatPress’teki gönderiler ve yorumlar 500 karaktere kısaltılır.',
 	'disable_remote_import' => 'Mastodon’dan FlatPress’e içe aktarmayı devre dışı bırak',
 	'disable_remote_import_desc' => 'Etkinleştirildiğinde FlatPress yazıları ve yorumları Mastodon’a göndermeye devam eder; Mastodon ise FlatPress içeriği oluşturmaz, güncellemez veya silmez.',
+	'disable_comment_reply_sync' => 'Yorum/yanıt eşitlemesini kapat',
+	'disable_comment_reply_sync_desc' => 'Etkinse yorumlar ve Mastodon yanıtları eşitlenmez. Yazılar eşitlenmeye devam eder.',
 	'import_synced_comments_as_entries' => 'Yorumları ayrıca girdi olarak içe aktar',
 	'delete_sync_enabled' => 'Silme senkronizasyonunu etkinleştir',
 	'delete_sync_enabled_desc' => 'Etkinleştirildiğinde eklenti, daha sonraki bir istekte FlatPress ile Mastodon arasındaki silme senkronizasyonunu da çalıştırır.',

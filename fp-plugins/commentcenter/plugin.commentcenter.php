@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Comment Center
- * Version: 1.1.5
+ * Version: 1.1.6
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -426,9 +426,13 @@ class plugin_commentcenter {
 		if (!empty($why)) {
 			$comment ['log_reason'] = $why;
 		}
-		return system_save($f, array(
+		$saved = system_save($f, array(
 			'comment' => $comment
 		));
+		if ($saved) {
+			do_action('commentcenter_comment_logged', $entry, $comment, $why, $f);
+		}
+		return $saved;
 	}
 
 	/**

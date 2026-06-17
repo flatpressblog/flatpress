@@ -64,7 +64,16 @@
 				</label>
 			</dd>
 			<br>
+			<dt><label for="disable_comment_reply_sync">{$plang.disable_comment_reply_sync|escape}</label></dt>
+			<dd>
+				<label>
+					<input type="checkbox" id="disable_comment_reply_sync" name="disable_comment_reply_sync" value="1"{if $mastodon_cfg.disable_comment_reply_sync eq '1'} checked="checked"{/if}>
+					{$plang.disable_comment_reply_sync_desc|escape}
+				</label>
+			</dd>
+			<br>
 			{if $mastodon_cfg.disable_remote_import neq '1'}
+			{*
 			<dt><label for="update_local_from_remote">{$plang.update_local_from_remote|escape}</label></dt>
 			<dd>
 				<label>
@@ -73,8 +82,10 @@
 				</label>
 			</dd>
 			<br>
+			*}
 			{/if}
 			{if $mastodon_cfg.disable_remote_import neq '1'}
+			{*
 			<dt><label for="import_synced_comments_as_entries">{$plang.import_synced_comments_as_entries|escape}</label></dt>
 			<dd>
 				<label>
@@ -83,6 +94,7 @@
 				</label>
 			</dd>
 			<br>
+			*}
 			<dt><label for="quote_imported_reply_parent">{$plang.quote_imported_reply_parent|escape}</label></dt>
 			<dd>
 				<label>
@@ -161,7 +173,6 @@
 		</div>
 	</fieldset>
 
-
 	<fieldset><legend>{$plang.manual_runs_head|escape}</legend>
 		<p>{if $mastodon_cfg.disable_remote_import eq '1'}{$plang.manual_runs_desc_one_way|escape}{else}{$plang.manual_runs_desc|escape}{/if}</p>
 		<div class="buttonbar">
@@ -220,18 +231,24 @@
 		{/if}
 		<tr><td>{$plang.stats_exported_entries|escape}</td><td>{$mastodon_state.content_stats.exported_entries|default:0}</td></tr>
 		<tr><td>{$plang.stats_updated_remote_entries|escape}</td><td>{$mastodon_state.content_stats.updated_remote_entries|default:0}</td></tr>
-		{if $mastodon_cfg.disable_remote_import neq '1'}
+		{if $mastodon_cfg.disable_remote_import neq '1' and $mastodon_cfg.disable_comment_reply_sync neq '1'}
 		<tr><td>{$plang.stats_imported_comments|escape}</td><td>{$mastodon_state.content_stats.imported_comments|default:0}</td></tr>
 		<tr><td>{$plang.stats_updated_local_comments|escape}</td><td>{$mastodon_state.content_stats.updated_local_comments|default:0}</td></tr>
 		{/if}
+		{if $mastodon_cfg.disable_comment_reply_sync neq '1'}
 		<tr><td>{$plang.stats_exported_comments|escape}</td><td>{$mastodon_state.content_stats.exported_comments|default:0}</td></tr>
 		<tr><td>{$plang.stats_updated_remote_comments|escape}</td><td>{$mastodon_state.content_stats.updated_remote_comments|default:0}</td></tr>
+		{/if}
 		{if $mastodon_cfg.disable_remote_import neq '1'}
 		<tr><td>{$plang.stats_deleted_local_entries|escape}</td><td>{$mastodon_state.deletion_stats.deleted_local_entries|default:0}</td></tr>
+		{/if}
+		{if $mastodon_cfg.disable_remote_import neq '1' and $mastodon_cfg.disable_comment_reply_sync neq '1'}
 		<tr><td>{$plang.stats_deleted_local_comments|escape}</td><td>{$mastodon_state.deletion_stats.deleted_local_comments|default:0}</td></tr>
 		{/if}
 		<tr><td>{$plang.stats_deleted_remote_entries|escape}</td><td>{$mastodon_state.deletion_stats.deleted_remote_entries|default:0}</td></tr>
+		{if $mastodon_cfg.disable_comment_reply_sync neq '1'}
 		<tr><td>{$plang.stats_deleted_remote_comments|escape}</td><td>{$mastodon_state.deletion_stats.deleted_remote_comments|default:0}</td></tr>
+		{/if}
 	</tbody>
 </table>
 

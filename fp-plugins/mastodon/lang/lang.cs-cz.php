@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Profilový obrázek uživatele %s',
-	'profile_link_title' => 'Otevřít profil na Mastodonu'
+	'profile_link_title' => 'Otevřít profil na Mastodonu',
+	'optin_label' => 'Souhlasím. <em>Tvůj komentář zveřejním přes svůj účet Mastodon a ve Fediverse.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Je-li plugin aktivován, mohou být stávající příspěvky a komentáře z FlatPressu přepsány změnami z Mastodonu. Příspěvky a komentáře z FlatPressu budou poté zkráceny na 500 znaků.',
 	'disable_remote_import' => 'Vypnout import z Mastodonu do FlatPress',
 	'disable_remote_import_desc' => 'Když je zapnuto, FlatPress dál odesílá příspěvky a komentáře do Mastodonu, ale Mastodon nevytváří, neaktualizuje ani nemaže obsah ve FlatPress.',
+	'disable_comment_reply_sync' => 'Vypnout synchronizaci komentářů/odpovědí',
+	'disable_comment_reply_sync_desc' => 'Je-li zapnuto, komentáře a odpovědi z Mastodonu se nesynchronizují. Příspěvky zůstávají aktivní.',
 	'import_synced_comments_as_entries' => 'Importovat komentáře také jako záznamy',
 	'delete_sync_enabled' => 'Povolit synchronizaci mazání',
 	'delete_sync_enabled_desc' => 'Je-li zapnuto, plugin v pozdějším následném požadavku provede také synchronizaci mazání mezi FlatPress a Mastodonem.',

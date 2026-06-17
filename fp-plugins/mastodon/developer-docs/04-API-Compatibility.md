@@ -12,6 +12,28 @@ The current plugin implementation is best described as:
 | `>= 4.6.0` | Enables the privacy hardening `exclude_direct=true` for account-status imports when cached instance information or API version 10 confirms support.             |
 | Future 4.x | No hard upper bound is encoded. Continue checking official Mastodon API changelogs before changing endpoint behavior.                                           |
 
+
+## Comment/reply synchronization gate compatibility
+
+`disable_comment_reply_sync` does not require any new Mastodon API capability. It is a local plugin gate in front of already-supported comment/reply paths:
+
+| Path blocked by the gate        | API endpoint avoided while disabled             | Compatibility effect                                                                 |
+| ------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Local comment export            | `POST /api/v1/statuses` with `in_reply_to_id`   | Entry `POST`/`PUT` synchronization continues; only reply-status creation is skipped. |
+| Remote reply context import     | `GET /api/v1/statuses/:id/context` for replies  | Top-level status import can continue on Mastodon `>= 4.0.0`.                         |
+| Notification reply hints        | `GET /api/v1/notifications` for mention replies | OAuth scope and notification API behavior are unchanged when the gate is off.        |
+| Comment/reply deletion followup | reply-status lookup/delete and pending rechecks | Entry deletion reconciliation continues; reply side effects are skipped.             |
+
+Because the gate only suppresses local plugin calls, Mastodon `>= 4.0.0` compatibility is preserved without version-specific branching. When the gate is off, the documented endpoint behavior below remains unchanged.
+
+## Exported-comment deletion invariant compatibility
+
+The immediate `source=local` tombstone, the targeted import-boundary fallback and the one-to-one `comments_remote` ownership check are entirely local state rules. They add no Mastodon endpoint, request parameter or response-field dependency. The later owned-reply deletion continues to use the existing status-delete capability path and its pre-4.4 `delete_media` fallback, so Mastodon `>= 4.0.0` compatibility is preserved.
+
+## Visitor comment opt-in compatibility
+
+The optional `{comment_mastodon}` checkbox, authenticated-author exception and `comment_reply_optins` export guard are entirely local FlatPress behavior. They do not add a Mastodon endpoint, request parameter or response dependency. When the visitor does not opt in, the plugin simply skips the local comment-to-reply `POST /api/v1/statuses` call and continues normal entry synchronization, so Mastodon `>= 4.0.0` compatibility is unchanged.
+
 ## Endpoint matrix
 
 | Purpose                 | Method | Endpoint                                | API history                                       | Auth/scope              | Fallback behavior in plugin                                                                                                                                                                                                                                | Main function(s)                                                     |

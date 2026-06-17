@@ -1,11 +1,11 @@
 <?php
 $lang ['admin'] ['plugin'] ['submenu'] ['mastodon'] = 'Mastodon';
 
-
 $lang ['plugin'] ['mastodon'] = array(
 	'subject' => 'Mastodon',
 	'avatar_alt_format' => 'Εικόνα προφίλ του/της %s',
-	'profile_link_title' => 'Άνοιγμα προφίλ Mastodon'
+	'profile_link_title' => 'Άνοιγμα προφίλ Mastodon',
+	'optin_label' => 'Συμφωνώ. <em>Το σχόλιό σου θα δημοσιευτεί μέσω του λογαριασμού μου στο Mastodon και θα διαδοθεί στο Fediverse.</em>'
 );
 
 $lang ['admin'] ['plugin'] ['mastodon'] = array(
@@ -27,6 +27,8 @@ $lang ['admin'] ['plugin'] ['mastodon'] = array(
 	'update_local_from_remote_desc' => 'Όταν είναι ενεργοποιημένο, οι αλλαγές από το Mastodon μπορούν να αντικαταστήσουν ήδη υπάρχουσες τοπικές εγγραφές και σχόλια του FlatPress. Οι αναρτήσεις και τα σχόλια στο FlatPress περιορίζονται τότε στα 500 χαρακτήρες.',
 	'disable_remote_import' => 'Απενεργοποίηση εισαγωγής από Mastodon σε FlatPress',
 	'disable_remote_import_desc' => 'Όταν είναι ενεργό, το FlatPress συνεχίζει να στέλνει άρθρα και σχόλια στο Mastodon, αλλά το Mastodon δεν δημιουργεί, δεν ενημερώνει και δεν διαγράφει περιεχόμενο στο FlatPress.',
+	'disable_comment_reply_sync' => 'Απενεργοποίηση συγχρονισμού σχολίων/απαντήσεων',
+	'disable_comment_reply_sync_desc' => 'Όταν είναι ενεργό, σχόλια και απαντήσεις Mastodon δεν συγχρονίζονται. Τα άρθρα συνεχίζουν να συγχρονίζονται.',
 	'import_synced_comments_as_entries' => 'Εισαγωγή σχολίων και ως εγγραφές',
 	'delete_sync_enabled' => 'Ενεργοποίηση συγχρονισμού διαγραφών',
 	'delete_sync_enabled_desc' => 'Όταν είναι ενεργό, το πρόσθετο εκτελεί επίσης σε μεταγενέστερο αίτημα τον συγχρονισμό διαγραφών μεταξύ FlatPress και Mastodon.',

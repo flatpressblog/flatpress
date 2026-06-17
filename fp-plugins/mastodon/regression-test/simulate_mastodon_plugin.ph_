@@ -1146,6 +1146,23 @@ $simulateDefaultRateLimitWindowBudgets = array(
 );
 $GLOBALS ['plugin_mastodon_test_rate_limit_window_budgets'] = $simulateDefaultRateLimitWindowBudgets;
 plugin_mastodon_rate_limit_window_clear();
+
+/**
+ * Mark a simulated local visitor comment as opted in for Mastodon/Fediverse reply export.
+ * @param array<string, mixed> $state
+ * @param string|false|null $entryId
+ * @param string|false|null $commentId
+ * @return void
+ */
+function simulate_mastodon_grant_comment_reply_optin(&$state, $entryId, $commentId, $source = 'frontend') {
+	$entryId = is_scalar($entryId) ? (string) $entryId : '';
+	$commentId = is_scalar($commentId) ? (string) $commentId : '';
+	if ($entryId === '' || $commentId === '') {
+		return;
+	}
+	plugin_mastodon_state_set_comment_reply_optin($state, $entryId, $commentId, '2026-01-01 00:00:00', $source);
+}
+
 if (file_exists($simRoot . '/fp-plugins/audiovideo/audiovideoplugin.class.php')) {
 	require_once $simRoot . '/fp-plugins/audiovideo/audiovideoplugin.class.php';
 }
@@ -2133,11 +2150,23 @@ function simulate_run_exported_comment_descendant_deletion_case($force, $staleCh
  * Reproduce the exact content-sync-before-deletion-sync sequence for one deleted exported FlatPress comment with a remote descendant reply.
  * @param bool $force
  * @param bool $staleChildLookup
+ * @param array<string, mixed> $contentRun
  * @return array<string, mixed>
  */
-function simulate_run_exported_comment_descendant_content_before_deletion_case($force, $staleChildLookup) {
+function simulate_run_exported_comment_descendant_content_before_deletion_case($force, $staleChildLookup, $contentRun = array()) {
 	$force = (bool) $force;
 	$staleChildLookup = (bool) $staleChildLookup;
+	$contentRun = is_array($contentRun) ? $contentRun : array();
+	$contentForce = array_key_exists('force', $contentRun) ? (bool) $contentRun ['force'] : $force;
+	$contentFullWindow = array_key_exists('full_window', $contentRun) ? (bool) $contentRun ['full_window'] : null;
+	$makeScheduledDue = !empty($contentRun ['make_scheduled_due']);
+	$deleteWithoutHook = !empty($contentRun ['delete_without_hook']);
+	$testNow = isset($contentRun ['test_now']) && is_numeric($contentRun ['test_now']) ? (int) $contentRun ['test_now'] : null;
+	$hadPreviousTestNow = array_key_exists('plugin_mastodon_test_now', $GLOBALS);
+	$previousTestNow = $hadPreviousTestNow ? $GLOBALS ['plugin_mastodon_test_now'] : null;
+	if ($testNow !== null) {
+		$GLOBALS ['plugin_mastodon_test_now'] = $testNow;
+	}
 	$configuredOptions = plugin_mastodon_get_options();
 	$options = simulate_seed_options_from_config($configuredOptions);
 	$options ['sync_start_date'] = '';
@@ -2262,7 +2291,20 @@ function simulate_run_exported_comment_descendant_content_before_deletion_case($
 	$childRefAfterInitialSync = isset($stateAfterInitialSync ['comments_remote'] ['9812']) && is_array($stateAfterInitialSync ['comments_remote'] ['9812']) ? $stateAfterInitialSync ['comments_remote'] ['9812'] : array();
 	$childCommentId = !empty($childRefAfterInitialSync ['comment_id']) ? (string) $childRefAfterInitialSync ['comment_id'] : '';
 
-	comment_delete($entryId, $localCommentId);
+	if ($deleteWithoutHook) {
+		$localCommentFile = comment_exists($entryId, $localCommentId);
+		if ($localCommentFile) {
+			@unlink($localCommentFile);
+		}
+	} else {
+		comment_delete($entryId, $localCommentId);
+	}
+	$stateAfterLocalDelete = plugin_mastodon_state_read();
+	if ($makeScheduledDue) {
+		$stateAfterLocalDelete ['last_run'] = '';
+		plugin_mastodon_state_write($stateAfterLocalDelete);
+		$stateAfterLocalDelete = plugin_mastodon_state_read();
+	}
 
 	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
 	$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
@@ -2307,7 +2349,7 @@ function simulate_run_exported_comment_descendant_content_before_deletion_case($
 			))
 		)
 	);
-	$contentSyncBeforeDeletionResult = plugin_mastodon_run_sync($force);
+	$contentSyncBeforeDeletionResult = plugin_mastodon_run_sync($contentForce, $contentFullWindow);
 	$stateAfterContentSyncBeforeDeletion = plugin_mastodon_state_read();
 	$parentRefAfterContentSyncBeforeDeletion = isset($stateAfterContentSyncBeforeDeletion ['comments_remote'] ['9811']) && is_array($stateAfterContentSyncBeforeDeletion ['comments_remote'] ['9811']) ? $stateAfterContentSyncBeforeDeletion ['comments_remote'] ['9811'] : array();
 	$commentIdsAfterContentSyncBeforeDeletion = plugin_mastodon_list_local_comment_ids($entryId);
@@ -2343,12 +2385,13 @@ function simulate_run_exported_comment_descendant_content_before_deletion_case($
 	$childMetaAfterDeletionPass = ($childCommentId !== '') ? plugin_mastodon_state_get_comment_meta($stateAfterDeletionPass, $entryId, $childCommentId) : array();
 	$childParentAfterDeletionPass = ($childExistsAfterDeletionPass && is_array($childCommentAfterDeletionPass)) ? plugin_mastodon_detect_local_comment_parent_id($entryId, $childCommentAfterDeletionPass) : '';
 
-	return array(
+	$result = array(
 		'initial_sync_result' => $initialSyncResult,
 		'initial_child_ref' => $childRefAfterInitialSync,
 		'entry_id' => $entryId,
 		'local_comment_id' => $localCommentId,
 		'child_comment_id' => $childCommentId,
+		'state_after_local_delete' => $stateAfterLocalDelete,
 		'content_sync_before_deletion_result' => $contentSyncBeforeDeletionResult,
 		'state_after_content_sync_before_deletion' => $stateAfterContentSyncBeforeDeletion,
 		'parent_ref_after_content_sync_before_deletion' => $parentRefAfterContentSyncBeforeDeletion,
@@ -2362,6 +2405,17 @@ function simulate_run_exported_comment_descendant_content_before_deletion_case($
 		'child_parent_after_deletion_pass' => $childParentAfterDeletionPass,
 		'requests_after_deletion_pass' => simulate_recorded_http_requests()
 	);
+	if (!$contentForce) {
+		plugin_mastodon_sync_guard_clear('content');
+	}
+	if ($testNow !== null) {
+		if ($hadPreviousTestNow) {
+			$GLOBALS ['plugin_mastodon_test_now'] = $previousTestNow;
+		} else {
+			unset($GLOBALS ['plugin_mastodon_test_now']);
+		}
+	}
+	return $result;
 }
 
 /**
@@ -2898,6 +2952,8 @@ function simulate_run_remote_entry_local_comment_export_case($force) {
 		'created_at' => '2027-02-12T10:00:00Z'
 	);
 	plugin_mastodon_state_set_entry_mapping($state, $entryId, '930', 'remote', plugin_mastodon_entry_hash($entry), $instanceUrl . '/@flatpress/930', plugin_mastodon_parse_iso_datetime('2027-02-12T10:00:00Z'), plugin_mastodon_local_item_date_key($entry, $entryId), plugin_mastodon_remote_status_date_key($remoteRootStatus));
+	simulate_mastodon_grant_comment_reply_optin($state, $entryId, $parentCommentId);
+	simulate_mastodon_grant_comment_reply_optin($state, $entryId, $childCommentId);
 	plugin_mastodon_state_write($state);
 
 	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
@@ -3038,6 +3094,10 @@ function simulate_run_emoticon_export_sync_case($force) {
 	$commentId = comment_save($entryId, $comment);
 	$comment = comment_parse($entryId, $commentId);
 	$comment ['id'] = (string) $commentId;
+
+	$state = plugin_mastodon_state_read(array($entryId));
+	simulate_mastodon_grant_comment_reply_optin($state, $entryId, $commentId);
+	plugin_mastodon_state_write($state);
 
 	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
 	$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
@@ -4814,14 +4874,23 @@ unset($GLOBALS ['plugin_mastodon_test_rate_limit_budgets']);
 unset($GLOBALS ['plugin_mastodon_test_http_responses']);
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
 
+$configuredOffsetMinutesForSyncTime = (int) round(plugin_mastodon_fp_timeoffset_seconds() / 60);
+$expectedLocalMinutesFor2300 = (23 * 60 + $configuredOffsetMinutesForSyncTime) % (24 * 60);
+if ($expectedLocalMinutesFor2300 < 0) {
+	$expectedLocalMinutesFor2300 += 24 * 60;
+}
+$expectedLocalTimeFor2300 = sprintf('%02d:%02d', (int) floor($expectedLocalMinutesFor2300 / 60), $expectedLocalMinutesFor2300 % 60);
+$actualLocalTimeFor2300 = plugin_mastodon_sync_time_utc_to_local('23:00');
+$actualRoundTripUtcFor2300 = plugin_mastodon_sync_time_local_to_utc($actualLocalTimeFor2300);
 $allOk = test_result(
 	'Admin synchronization time converts stored UTC to FlatPress local time and back',
-	plugin_mastodon_sync_time_utc_to_local('23:00') === '01:00'
-		&& plugin_mastodon_sync_time_local_to_utc('01:00') === '23:00'
-		&& plugin_mastodon_fp_timeoffset_label() === 'UTC+02:00',
+	$actualLocalTimeFor2300 === $expectedLocalTimeFor2300
+		&& $actualRoundTripUtcFor2300 === '23:00'
+		&& plugin_mastodon_fp_timeoffset_label() !== '',
 	json_encode(array(
-		'local' => plugin_mastodon_sync_time_utc_to_local('23:00'),
-		'utc' => plugin_mastodon_sync_time_local_to_utc('01:00'),
+		'expected_local' => $expectedLocalTimeFor2300,
+		'local' => $actualLocalTimeFor2300,
+		'utc' => $actualRoundTripUtcFor2300,
 		'label' => plugin_mastodon_fp_timeoffset_label()
 	))
 ) && $allOk;
@@ -4889,12 +4958,96 @@ $allOk = test_result(
 	'import_synced_comments_as_entries'
 ) && $allOk;
 
+$defaultCommentReplyOptions = plugin_mastodon_default_options();
+$adminCommentReplyOptions = plugin_mastodon_admin_apply_save_post($defaultCommentReplyOptions, array(
+	'instance_url' => 'https://mastodon.example',
+	'username' => 'flatpress',
+	'sync_time' => '12:00',
+	'sync_start_date' => '',
+	'sync_scheduled_window_days' => '14',
+	'disable_remote_import' => '1',
+	'disable_comment_reply_sync' => '1',
+	'delete_sync_enabled' => '1'
+));
+$allOk = test_result(
+	'Comment/reply synchronization disable toggle normalizes and saves safely',
+	isset($defaultCommentReplyOptions ['disable_comment_reply_sync'])
+		&& $defaultCommentReplyOptions ['disable_comment_reply_sync'] === '0'
+		&& plugin_mastodon_normalize_disable_comment_reply_sync('1') === '1'
+		&& plugin_mastodon_normalize_disable_comment_reply_sync('on') === '1'
+		&& plugin_mastodon_normalize_disable_comment_reply_sync('') === '0'
+		&& plugin_mastodon_normalize_disable_comment_reply_sync('false') === '0'
+		&& !plugin_mastodon_should_sync_comments_and_replies(array('disable_comment_reply_sync' => '1'))
+		&& plugin_mastodon_should_sync_comments_and_replies(array('disable_comment_reply_sync' => '0'))
+		&& isset($adminCommentReplyOptions ['disable_comment_reply_sync'])
+		&& $adminCommentReplyOptions ['disable_comment_reply_sync'] === '1',
+	json_encode(array(
+		'default' => isset($defaultCommentReplyOptions ['disable_comment_reply_sync']) ? $defaultCommentReplyOptions ['disable_comment_reply_sync'] : '',
+		'admin' => isset($adminCommentReplyOptions ['disable_comment_reply_sync']) ? $adminCommentReplyOptions ['disable_comment_reply_sync'] : ''
+	))
+) && $allOk;
+
+$previousOptinOptions = plugin_mastodon_get_options();
+$optinRequiredOptions = $defaultCommentReplyOptions;
+$optinRequiredOptions ['instance_url'] = 'https://mastodon.example';
+$optinRequiredOptions ['access_token'] = 'token123';
+$optinDisabledOptions = $optinRequiredOptions;
+$optinDisabledOptions ['disable_comment_reply_sync'] = '1';
+$optinOneWayOptions = $optinRequiredOptions;
+$optinOneWayOptions ['disable_remote_import'] = '1';
+$optinNoTokenOptions = $optinRequiredOptions;
+$optinNoTokenOptions ['access_token'] = '';
+$_POST ['mastodon_comment_optin'] = '1';
+$optinPostTrue = plugin_mastodon_comment_to_reply_optin_submitted();
+unset($_POST ['mastodon_comment_optin']);
+$allOk = test_result(
+	'Mastodon comment opt-in is required only when local comments may be exported',
+	plugin_mastodon_comment_to_reply_optin_required($optinRequiredOptions)
+		&& plugin_mastodon_comment_to_reply_optin_required($optinOneWayOptions)
+		&& !plugin_mastodon_comment_to_reply_optin_required($optinDisabledOptions)
+		&& plugin_mastodon_comment_to_reply_optin_required($optinNoTokenOptions)
+		&& $optinPostTrue
+		&& !plugin_mastodon_comment_to_reply_optin_submitted(),
+	json_encode(array(
+		'required' => plugin_mastodon_comment_to_reply_optin_required($optinRequiredOptions),
+		'one_way' => plugin_mastodon_comment_to_reply_optin_required($optinOneWayOptions),
+		'disabled' => plugin_mastodon_comment_to_reply_optin_required($optinDisabledOptions),
+		'no_token' => plugin_mastodon_comment_to_reply_optin_required($optinNoTokenOptions)
+	))
+) && $allOk;
+
+plugin_mastodon_save_options($optinRequiredOptions);
+plugin_mastodon_runtime_cache_clear('options');
+ob_start();
+plugin_mastodon_optin_comment_to_reply();
+$optinMarkup = (string) ob_get_clean();
+plugin_mastodon_save_options($optinDisabledOptions);
+plugin_mastodon_runtime_cache_clear('options');
+ob_start();
+plugin_mastodon_optin_comment_to_reply();
+$optinDisabledMarkup = (string) ob_get_clean();
+$allOk = test_result(
+	'Mastodon comment opt-in markup is shown only while comment/reply sync is active',
+	strpos($optinMarkup, 'mastodon_comment_optin') !== false
+		&& strpos($optinMarkup, '<em>') !== false
+		&& $optinDisabledMarkup === '',
+	json_encode(array(
+		'markup' => $optinMarkup,
+		'disabled_markup' => $optinDisabledMarkup
+	))
+) && $allOk;
+plugin_mastodon_save_options($previousOptinOptions);
+plugin_mastodon_runtime_cache_clear('options');
+
 // State persistence
 $state = plugin_mastodon_default_state();
 plugin_mastodon_state_set_entry_mapping($state, 'entry260313-120000', '100', 'local', 'abc', 'https://mastodon.example/@user/100', '2026-03-13 12:00:00');
 plugin_mastodon_state_set_comment_mapping($state, 'entry260313-120000', 'comment260313-121000', '101', 'local', 'def', 'https://mastodon.example/@user/101', '2026-03-13 12:10:00', 'comment260313-120500', '100');
 $allOk = test_result('State entry mapping created', isset($state ['entries'] ['entry260313-120000'] ['remote_id']) && $state ['entries'] ['entry260313-120000'] ['remote_id'] === '100') && $allOk;
 $allOk = test_result('State comment mapping created', isset($state ['comments_remote'] ['101'] ['comment_id']) && $state ['comments_remote'] ['101'] ['comment_id'] === 'comment260313-121000' && isset($state ['comments'] ['entry260313-120000:comment260313-121000'] ['parent_comment_id']) && $state ['comments'] ['entry260313-120000:comment260313-121000'] ['parent_comment_id'] === 'comment260313-120500') && $allOk;
+plugin_mastodon_state_set_comment_reply_optin($state, 'entry260313-120000', 'comment260313-122000', '2026-03-13 12:20:00');
+$allOk = test_result('State comment-to-reply opt-in marker created', plugin_mastodon_state_has_comment_reply_optin($state, 'entry260313-120000', 'comment260313-122000') && plugin_mastodon_local_comment_export_allowed($state, 'entry260313-120000', 'comment260313-122000', array())) && $allOk;
+$allOk = test_result('Local visitor comment without Mastodon opt-in is not eligible for Mastodon export', !plugin_mastodon_local_comment_export_allowed($state, 'entry260313-120000', 'comment260313-123000', array())) && $allOk;
 
 // Fresh sandbox state
 simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
@@ -4982,7 +5135,13 @@ $seededOptions = simulate_seed_options_from_config($configuredOptions);
 $options = $seededOptions;
 $options ['sync_start_date'] = '';
 $options ['update_local_from_remote'] = '0';
+$options ['disable_comment_reply_sync'] = '0';
 plugin_mastodon_save_options($options);
+$allOk = test_result(
+	'Initial local thread comment/reply sync is enabled',
+	plugin_mastodon_should_sync_comments_and_replies(plugin_mastodon_get_options()),
+	json_encode(plugin_mastodon_get_options())
+) && $allOk;
 
 $instanceUrl = plugin_mastodon_normalize_instance_url($options ['instance_url']);
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
@@ -6121,6 +6280,18 @@ $allOk = test_result(
 	$commentStatus
 ) && $allOk;
 
+$localThreadOptinState = plugin_mastodon_state_read(array($localThreadEntryId));
+simulate_mastodon_grant_comment_reply_optin($localThreadOptinState, $localThreadEntryId, $localThreadParentCommentId);
+simulate_mastodon_grant_comment_reply_optin($localThreadOptinState, $localThreadEntryId, $localThreadChildCommentId);
+$localThreadParentCommentParsed = comment_parse($localThreadEntryId, $localThreadParentCommentId);
+if (is_array($localThreadParentCommentParsed)) {
+	plugin_mastodon_state_set_dirty_comment($localThreadOptinState, $localThreadEntryId, $localThreadParentCommentId, plugin_mastodon_comment_hash($localThreadParentCommentParsed));
+}
+$localThreadChildCommentParsed = comment_parse($localThreadEntryId, $localThreadChildCommentId);
+if (is_array($localThreadChildCommentParsed)) {
+	plugin_mastodon_state_set_dirty_comment($localThreadOptinState, $localThreadEntryId, $localThreadChildCommentId, plugin_mastodon_comment_hash($localThreadChildCommentParsed));
+}
+plugin_mastodon_state_write($localThreadOptinState);
 $result = plugin_mastodon_run_sync(true);
 $state = plugin_mastodon_state_read();
 $syncDeleteRequests = 0;
@@ -6179,7 +6350,7 @@ $allOk = test_result(
 
 $allOk = test_result(
 	'Remote imported entry keeps a stable FlatPress date',
-	$importedEntryId === 'entry260313-013000' && isset($importedEntry ['date']) && (int) $importedEntry ['date'] === $expectedImportedTs,
+	$importedEntryId === 'entry' . gmdate('ymd-His', $expectedImportedTs) && isset($importedEntry ['date']) && (int) $importedEntry ['date'] === $expectedImportedTs,
 	($importedEntryId !== '' ? $importedEntryId : 'missing') . ' | date=' . (isset($importedEntry ['date']) ? (string) $importedEntry ['date'] : 'missing')
 ) && $allOk;
 
@@ -6873,6 +7044,7 @@ plugin_mastodon_state_set_entry_mapping(
 	$instanceUrl . '/@flatpress/old-entry-remote-700',
 	'2026-03-14 08:00:00'
 );
+simulate_mastodon_grant_comment_reply_optin($oldCommentState, $oldSyncedEntryId, $newCommentOnOldEntryId);
 plugin_mastodon_state_write($oldCommentState);
 
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
@@ -6929,6 +7101,165 @@ $allOk = test_result(
 		'export_ok' => $oldCommentExportOk,
 		'comment_meta' => $oldCommentMeta,
 		'request' => $oldCommentRequest
+	))
+) && $allOk;
+
+// Regression test: disabling comment/reply sync must keep local comments off Mastodon while entries remain mapped.
+simulate_delete_recursive($simRoot . '/fp-content/content');
+mkdir($simRoot . '/fp-content/content', 0777, true);
+simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
+mkdir($simRoot . '/fp-content/plugin_mastodon', 0777, true);
+plugin_mastodon_state_write(plugin_mastodon_default_state());
+
+$disabledCommentEntry = array(
+	'version' => system_ver(),
+	'subject' => 'Comment sync disabled entry',
+	'content' => 'This entry stays mapped while comments are not exported.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-03-14 10:00:00 UTC')
+);
+$disabledCommentEntryId = entry_save($disabledCommentEntry, null);
+$disabledCommentEntry = entry_parse($disabledCommentEntryId);
+$disabledLocalComment = array(
+	'version' => system_ver(),
+	'name' => 'No Export Author',
+	'content' => 'This local comment must stay out of Mastodon.',
+	'date' => strtotime('2026-03-15 10:30:00 UTC')
+);
+$disabledLocalCommentId = comment_save($disabledCommentEntryId, $disabledLocalComment);
+$disabledLocalCommentParsed = comment_parse($disabledCommentEntryId, $disabledLocalCommentId);
+
+$disabledCommentOptions = $seededOptions;
+$disabledCommentOptions ['sync_start_date'] = '2026-03-01';
+$disabledCommentOptions ['access_token'] = 'token123';
+$disabledCommentOptions ['disable_comment_reply_sync'] = '1';
+plugin_mastodon_save_options($disabledCommentOptions);
+
+$disabledCommentState = plugin_mastodon_default_state();
+plugin_mastodon_state_set_entry_mapping(
+	$disabledCommentState,
+	$disabledCommentEntryId,
+	'disabled-comment-entry-remote',
+	'local',
+	plugin_mastodon_entry_hash($disabledCommentEntry),
+	$instanceUrl . '/@flatpress/disabled-comment-entry-remote',
+	'2026-03-14 10:00:00'
+);
+plugin_mastodon_state_set_dirty_comment($disabledCommentState, $disabledCommentEntryId, $disabledLocalCommentId, plugin_mastodon_comment_hash($disabledLocalCommentParsed));
+plugin_mastodon_state_write($disabledCommentState);
+
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v2/instance' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))
+	)
+);
+
+$disabledCommentState = plugin_mastodon_state_read(array($disabledCommentEntryId));
+$disabledCommentSyncOk = plugin_mastodon_sync_local_to_remote($disabledCommentOptions, $disabledCommentState, false);
+$disabledCommentReplyPosts = 0;
+foreach (simulate_recorded_http_requests() as $request) {
+	if (!is_array($request) || empty($request ['url']) || strpos((string) $request ['url'], '/api/v1/statuses') === false || strtoupper((string) (isset($request ['method']) ? $request ['method'] : '')) !== 'POST') {
+		continue;
+	}
+	$parsed = simulate_parse_http_request_body($request);
+	if (!empty($parsed ['in_reply_to_id']) || (isset($parsed ['status']) && strpos((string) $parsed ['status'], 'This local comment must stay out of Mastodon.') !== false)) {
+		$disabledCommentReplyPosts++;
+	}
+}
+$disabledCommentMeta = plugin_mastodon_state_get_comment_meta($disabledCommentState, $disabledCommentEntryId, $disabledLocalCommentId);
+$allOk = test_result(
+	'Disabled comment/reply sync keeps local comments off Mastodon',
+	$disabledCommentSyncOk
+		&& $disabledCommentReplyPosts === 0
+		&& empty($disabledCommentMeta ['remote_id'])
+		&& !plugin_mastodon_state_has_dirty_comment($disabledCommentState, $disabledCommentEntryId, $disabledLocalCommentId),
+	json_encode(array(
+		'sync_ok' => $disabledCommentSyncOk,
+		'reply_posts' => $disabledCommentReplyPosts,
+		'comment_meta' => $disabledCommentMeta,
+		'dirty' => plugin_mastodon_state_has_dirty_comment($disabledCommentState, $disabledCommentEntryId, $disabledLocalCommentId),
+		'requests' => simulate_recorded_http_requests()
+	))
+) && $allOk;
+
+// Regression test: disabling comment/reply sync must not delete remote replies during deletion sync.
+simulate_delete_recursive($simRoot . '/fp-content/plugin_mastodon');
+mkdir($simRoot . '/fp-content/plugin_mastodon', 0777, true);
+plugin_mastodon_state_write(plugin_mastodon_default_state());
+
+$disabledDeletionEntry = array(
+	'version' => system_ver(),
+	'subject' => 'Comment deletion sync disabled entry',
+	'content' => 'This entry stays mapped while comment deletion sync is disabled.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-03-14 11:00:00 UTC')
+);
+$disabledDeletionEntryId = entry_save($disabledDeletionEntry, null);
+$disabledDeletionEntry = entry_parse($disabledDeletionEntryId);
+$disabledDeletionComment = array(
+	'version' => system_ver(),
+	'name' => 'No Delete Author',
+	'content' => 'This mapped comment is deleted locally but not remotely.',
+	'date' => strtotime('2026-03-14 11:30:00 UTC')
+);
+$disabledDeletionCommentId = comment_save($disabledDeletionEntryId, $disabledDeletionComment);
+$disabledDeletionCommentParsed = comment_parse($disabledDeletionEntryId, $disabledDeletionCommentId);
+
+$disabledDeletionOptions = $seededOptions;
+$disabledDeletionOptions ['sync_start_date'] = '2026-03-01';
+$disabledDeletionOptions ['access_token'] = 'token123';
+$disabledDeletionOptions ['disable_comment_reply_sync'] = '1';
+$disabledDeletionOptions ['delete_sync_enabled'] = '1';
+plugin_mastodon_save_options($disabledDeletionOptions);
+
+$disabledDeletionState = plugin_mastodon_default_state();
+plugin_mastodon_state_set_entry_mapping($disabledDeletionState, $disabledDeletionEntryId, 'disabled-deletion-entry-remote', 'local', plugin_mastodon_entry_hash($disabledDeletionEntry), $instanceUrl . '/@flatpress/disabled-deletion-entry-remote', '2026-03-14 11:00:00');
+plugin_mastodon_state_set_comment_mapping($disabledDeletionState, $disabledDeletionEntryId, $disabledDeletionCommentId, 'disabled-deletion-comment-remote', 'local', plugin_mastodon_comment_hash($disabledDeletionCommentParsed), $instanceUrl . '/@flatpress/disabled-deletion-comment-remote', '2026-03-14 11:30:00', '', 'disabled-deletion-entry-remote');
+plugin_mastodon_state_set_deletions_pending($disabledDeletionState, true, 'full', '');
+plugin_mastodon_state_write($disabledDeletionState);
+comment_delete($disabledDeletionEntryId, $disabledDeletionCommentId);
+simulate_allow_pending_deletion_sync();
+
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/statuses/disabled-deletion-entry-remote' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			'id' => 'disabled-deletion-entry-remote',
+			'visibility' => 'public',
+			'created_at' => '2026-03-14T11:00:00Z',
+			'content' => '<p>Still remote.</p>',
+			'url' => $instanceUrl . '/@flatpress/disabled-deletion-entry-remote'
+		))
+	)
+);
+$disabledDeletionResult = plugin_mastodon_run_deletion_sync(true);
+$disabledDeletionDeleteRequests = 0;
+foreach (simulate_recorded_http_requests() as $request) {
+	if (!is_array($request) || strtoupper((string) (isset($request ['method']) ? $request ['method'] : '')) !== 'DELETE') {
+		continue;
+	}
+	if (strpos((string) (isset($request ['url']) ? $request ['url'] : ''), 'disabled-deletion-comment-remote') !== false) {
+		$disabledDeletionDeleteRequests++;
+	}
+}
+$disabledDeletionStateAfter = plugin_mastodon_state_read(array($disabledDeletionEntryId));
+$disabledDeletionCommentMetaAfter = plugin_mastodon_state_get_comment_meta($disabledDeletionStateAfter, $disabledDeletionEntryId, $disabledDeletionCommentId);
+$allOk = test_result(
+	'Disabled comment/reply sync skips remote reply deletion follow-up',
+	!empty($disabledDeletionResult ['ok'])
+		&& $disabledDeletionDeleteRequests === 0
+		&& !empty($disabledDeletionCommentMetaAfter ['remote_id'])
+		&& (string) $disabledDeletionCommentMetaAfter ['remote_id'] === 'disabled-deletion-comment-remote',
+	json_encode(array(
+		'result' => $disabledDeletionResult,
+		'delete_requests' => $disabledDeletionDeleteRequests,
+		'comment_meta_after' => $disabledDeletionCommentMetaAfter,
+		'requests' => simulate_recorded_http_requests()
 	))
 ) && $allOk;
 
@@ -7665,6 +7996,100 @@ $allOk = test_result(
 	))
 ) && $allOk;
 
+// Regression test: disabling comment/reply sync keeps Mastodon entries importing but skips contexts and notifications.
+$replySyncDisabledRemoteState = plugin_mastodon_default_state();
+$replySyncDisabledRemoteState ['last_remote_status_id'] = 'reply-sync-disabled-last';
+plugin_mastodon_state_set_entry_mapping($replySyncDisabledRemoteState, $oldThreadRotateEntryAId, 'reply-sync-disabled-known-root', 'local', plugin_mastodon_entry_hash(entry_parse($oldThreadRotateEntryAId)), $instanceUrl . '/@flatpress/reply-sync-disabled-known-root', '2034-12-20 08:00:00');
+plugin_mastodon_state_write($replySyncDisabledRemoteState);
+
+$replySyncDisabledRemoteOptions = $oldThreadRotateOptions;
+$replySyncDisabledRemoteOptions ['disable_comment_reply_sync'] = '1';
+$replySyncDisabledRemoteOptions ['old_thread_reply_check'] = '1';
+$replySyncDisabledRemoteOptions ['oauth_registered_scopes'] = 'read:accounts read:statuses read:notifications write:statuses write:media';
+plugin_mastodon_save_options($replySyncDisabledRemoteOptions);
+
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true&since_id=reply-sync-disabled-last' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array(
+			array(
+				'id' => 'reply-sync-disabled-new-root',
+				'visibility' => 'public',
+				'created_at' => '2035-01-15T05:00:00Z',
+				'content' => '<p>Remote entry should import while replies stay disabled.</p>',
+				'url' => $instanceUrl . '/@flatpress/reply-sync-disabled-new-root',
+				'account' => array(
+					'id' => 'acct1',
+					'acct' => 'flatpress@mastodon.example',
+					'display_name' => 'FlatPress',
+					'url' => $instanceUrl . '/@flatpress'
+				)
+			)
+		))
+	),
+	'GET ' . $instanceUrl . '/api/v1/statuses/reply-sync-disabled-new-root/context' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('descendants' => array(
+			array(
+				'id' => 'reply-sync-disabled-child',
+				'visibility' => 'public',
+				'in_reply_to_id' => 'reply-sync-disabled-new-root',
+				'created_at' => '2035-01-15T05:05:00Z',
+				'content' => '<p>This child must not import.</p>',
+				'url' => $instanceUrl . '/@alice/reply-sync-disabled-child',
+				'account' => array('id' => 'acct2', 'acct' => 'alice@example.net', 'display_name' => 'Alice', 'url' => 'https://example.net/@alice')
+			)
+		)))
+	),
+	'GET ' . $instanceUrl . '/api/v1/notifications?limit=30&types%5B%5D=mention' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	)
+);
+$replySyncDisabledRemoteState = plugin_mastodon_state_read();
+$replySyncDisabledRemoteOk = plugin_mastodon_sync_remote_to_local($replySyncDisabledRemoteOptions, $replySyncDisabledRemoteState, false);
+$replySyncDisabledContextRequests = 0;
+$replySyncDisabledNotificationRequests = 0;
+foreach (simulate_recorded_http_requests() as $request) {
+	$url = is_array($request) && isset($request ['url']) ? (string) $request ['url'] : '';
+	if (strpos($url, '/context') !== false) {
+		$replySyncDisabledContextRequests++;
+	}
+	if (strpos($url, '/api/v1/notifications') !== false) {
+		$replySyncDisabledNotificationRequests++;
+	}
+}
+$allOk = test_result(
+	'Disabled comment/reply sync imports Mastodon entries without fetching reply contexts or notifications',
+	$replySyncDisabledRemoteOk
+		&& $replySyncDisabledContextRequests === 0
+		&& $replySyncDisabledNotificationRequests === 0
+		&& isset($replySyncDisabledRemoteState ['entries_remote'] ['reply-sync-disabled-new-root'])
+		&& !isset($replySyncDisabledRemoteState ['comments_remote'] ['reply-sync-disabled-child']),
+	json_encode(array(
+		'ok' => $replySyncDisabledRemoteOk,
+		'context_requests' => $replySyncDisabledContextRequests,
+		'notification_requests' => $replySyncDisabledNotificationRequests,
+		'entry_ref' => isset($replySyncDisabledRemoteState ['entries_remote'] ['reply-sync-disabled-new-root']) ? $replySyncDisabledRemoteState ['entries_remote'] ['reply-sync-disabled-new-root'] : '',
+		'requests' => simulate_recorded_http_requests()
+	))
+) && $allOk;
+
+
+$replySyncDisabledRemoteImportedEntryId = isset($replySyncDisabledRemoteState ['entries_remote'] ['reply-sync-disabled-new-root']) ? (string) $replySyncDisabledRemoteState ['entries_remote'] ['reply-sync-disabled-new-root'] : '';
+if ($replySyncDisabledRemoteImportedEntryId !== '' && entry_exists($replySyncDisabledRemoteImportedEntryId)) {
+	entry_delete($replySyncDisabledRemoteImportedEntryId);
+}
+
 // Automatic scheduled content runs must keep rotating known synchronized threads through the full run_sync(false) path.
 $automaticThreadState = plugin_mastodon_default_state();
 $automaticThreadState ['last_run'] = '2000-01-01 00:00:00';
@@ -8292,6 +8717,8 @@ $newEntryComment = array(
 $newEntryCommentId = comment_save($newExportEntryId, $newEntryComment);
 
 $startDateState = plugin_mastodon_default_state();
+simulate_mastodon_grant_comment_reply_optin($startDateState, $newExportEntryId, $oldEntryCommentId);
+simulate_mastodon_grant_comment_reply_optin($startDateState, $newExportEntryId, $newEntryCommentId);
 $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
 	'GET ' . $instanceUrl . '/api/v2/instance' => array(
 		'ok' => true,
@@ -8935,6 +9362,9 @@ $importedEntryCommentOneId = is_string($importedEntryCommentEntryId) ? comment_s
 $importedEntryCommentTwoId = is_string($importedEntryCommentEntryId) ? comment_save($importedEntryCommentEntryId, $importedEntryCommentTwo) : false;
 $importedEntryCommentThree ['replyto'] = is_string($importedEntryCommentOneId) ? $importedEntryCommentOneId : '';
 $importedEntryCommentThreeId = is_string($importedEntryCommentEntryId) ? comment_save($importedEntryCommentEntryId, $importedEntryCommentThree) : false;
+simulate_mastodon_grant_comment_reply_optin($importedEntryCommentState, $importedEntryCommentEntryId, $importedEntryCommentOneId);
+simulate_mastodon_grant_comment_reply_optin($importedEntryCommentState, $importedEntryCommentEntryId, $importedEntryCommentTwoId);
+simulate_mastodon_grant_comment_reply_optin($importedEntryCommentState, $importedEntryCommentEntryId, $importedEntryCommentThreeId);
 
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
 $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
@@ -9938,6 +10368,150 @@ $allOk = test_result(
 	))
 ) && $allOk;
 
+
+// Partial manual and scheduled content runs must preserve the local-delete invariant even when the entry shard is outside the automatic window.
+$partialManualDeleteCase = simulate_run_exported_comment_descendant_content_before_deletion_case(true, true, array(
+	'force' => true,
+	'full_window' => false,
+	'test_now' => strtotime('2027-05-20 12:00:00 UTC')
+));
+$partialManualDeleteStateAfterHook = isset($partialManualDeleteCase ['state_after_local_delete']) && is_array($partialManualDeleteCase ['state_after_local_delete']) ? $partialManualDeleteCase ['state_after_local_delete'] : array();
+$partialManualDeleteContentState = isset($partialManualDeleteCase ['state_after_content_sync_before_deletion']) && is_array($partialManualDeleteCase ['state_after_content_sync_before_deletion']) ? $partialManualDeleteCase ['state_after_content_sync_before_deletion'] : array();
+$partialManualDeleteRemoteMappingCount = 0;
+if (!empty($partialManualDeleteContentState ['comments']) && is_array($partialManualDeleteContentState ['comments'])) {
+	foreach ($partialManualDeleteContentState ['comments'] as $commentMeta) {
+		if (is_array($commentMeta) && isset($commentMeta ['remote_id']) && (string) $commentMeta ['remote_id'] === '9811') {
+			$partialManualDeleteRemoteMappingCount++;
+		}
+	}
+}
+$partialManualDeleteCommentIds = isset($partialManualDeleteCase ['comment_ids_after_content_sync_before_deletion']) && is_array($partialManualDeleteCase ['comment_ids_after_content_sync_before_deletion']) ? $partialManualDeleteCase ['comment_ids_after_content_sync_before_deletion'] : array();
+sort($partialManualDeleteCommentIds);
+$allOk = test_result(
+	'Normal manual partial content sync keeps an old locally deleted exported comment tombstoned without stale re-import',
+		!empty($partialManualDeleteCase ['content_sync_before_deletion_result'] ['ok'])
+		&& !empty($partialManualDeleteStateAfterHook ['comment_tombstones'] ['9811'])
+		&& isset($partialManualDeleteStateAfterHook ['comment_tombstones'] ['9811'] ['reason'])
+		&& (string) $partialManualDeleteStateAfterHook ['comment_tombstones'] ['9811'] ['reason'] === 'local_deleted_pending_remote_delete'
+		&& !empty($partialManualDeleteContentState ['comment_tombstones'] ['9811'])
+		&& isset($partialManualDeleteContentState ['content_stats'] ['imported_comments'])
+		&& (int) $partialManualDeleteContentState ['content_stats'] ['imported_comments'] === 0
+		&& isset($partialManualDeleteContentState ['comments_remote'] ['9811'] ['comment_id'])
+		&& (string) $partialManualDeleteContentState ['comments_remote'] ['9811'] ['comment_id'] === (string) $partialManualDeleteCase ['local_comment_id']
+		&& $partialManualDeleteRemoteMappingCount === 1
+		&& empty($partialManualDeleteCase ['parent_exists_after_content_sync_before_deletion'])
+		&& $partialManualDeleteCommentIds === array($partialManualDeleteCase ['child_comment_id']),
+	json_encode(array(
+		'state_after_local_delete' => $partialManualDeleteStateAfterHook,
+		'content_sync_before_deletion_result' => $partialManualDeleteCase ['content_sync_before_deletion_result'],
+		'state_after_content_sync_before_deletion' => $partialManualDeleteContentState,
+		'remote_mapping_count' => $partialManualDeleteRemoteMappingCount,
+		'comment_ids' => $partialManualDeleteCommentIds
+	))
+) && $allOk;
+
+$scheduledPartialDeleteCase = simulate_run_exported_comment_descendant_content_before_deletion_case(true, true, array(
+	'force' => false,
+	'full_window' => false,
+	'make_scheduled_due' => true,
+	'test_now' => strtotime('2027-05-20 12:00:00 UTC')
+));
+$scheduledPartialDeleteStateAfterHook = isset($scheduledPartialDeleteCase ['state_after_local_delete']) && is_array($scheduledPartialDeleteCase ['state_after_local_delete']) ? $scheduledPartialDeleteCase ['state_after_local_delete'] : array();
+$scheduledPartialDeleteContentState = isset($scheduledPartialDeleteCase ['state_after_content_sync_before_deletion']) && is_array($scheduledPartialDeleteCase ['state_after_content_sync_before_deletion']) ? $scheduledPartialDeleteCase ['state_after_content_sync_before_deletion'] : array();
+$scheduledPartialDeleteRemoteMappingCount = 0;
+if (!empty($scheduledPartialDeleteContentState ['comments']) && is_array($scheduledPartialDeleteContentState ['comments'])) {
+	foreach ($scheduledPartialDeleteContentState ['comments'] as $commentMeta) {
+		if (is_array($commentMeta) && isset($commentMeta ['remote_id']) && (string) $commentMeta ['remote_id'] === '9811') {
+			$scheduledPartialDeleteRemoteMappingCount++;
+		}
+	}
+}
+$allOk = test_result(
+	'Automatic scheduled partial content sync keeps an old locally deleted exported comment tombstoned without stale re-import',
+		!empty($scheduledPartialDeleteCase ['content_sync_before_deletion_result'] ['ok'])
+		&& isset($scheduledPartialDeleteCase ['content_sync_before_deletion_result'] ['message'])
+		&& (string) $scheduledPartialDeleteCase ['content_sync_before_deletion_result'] ['message'] === 'ok'
+		&& !empty($scheduledPartialDeleteStateAfterHook ['comment_tombstones'] ['9811'])
+		&& !empty($scheduledPartialDeleteContentState ['comment_tombstones'] ['9811'])
+		&& isset($scheduledPartialDeleteContentState ['content_stats'] ['imported_comments'])
+		&& (int) $scheduledPartialDeleteContentState ['content_stats'] ['imported_comments'] === 0
+		&& isset($scheduledPartialDeleteContentState ['comments_remote'] ['9811'] ['comment_id'])
+		&& (string) $scheduledPartialDeleteContentState ['comments_remote'] ['9811'] ['comment_id'] === (string) $scheduledPartialDeleteCase ['local_comment_id']
+		&& $scheduledPartialDeleteRemoteMappingCount === 1
+		&& empty($scheduledPartialDeleteCase ['parent_exists_after_content_sync_before_deletion']),
+	json_encode(array(
+		'state_after_local_delete' => $scheduledPartialDeleteStateAfterHook,
+		'content_sync_before_deletion_result' => $scheduledPartialDeleteCase ['content_sync_before_deletion_result'],
+		'state_after_content_sync_before_deletion' => $scheduledPartialDeleteContentState,
+		'remote_mapping_count' => $scheduledPartialDeleteRemoteMappingCount
+	))
+) && $allOk;
+
+$defensiveMissingLocalCase = simulate_run_exported_comment_descendant_content_before_deletion_case(true, true, array(
+	'force' => true,
+	'full_window' => false,
+	'delete_without_hook' => true,
+	'test_now' => strtotime('2027-05-20 12:00:00 UTC')
+));
+$defensiveMissingLocalStateBeforeSync = isset($defensiveMissingLocalCase ['state_after_local_delete']) && is_array($defensiveMissingLocalCase ['state_after_local_delete']) ? $defensiveMissingLocalCase ['state_after_local_delete'] : array();
+$defensiveMissingLocalContentState = isset($defensiveMissingLocalCase ['state_after_content_sync_before_deletion']) && is_array($defensiveMissingLocalCase ['state_after_content_sync_before_deletion']) ? $defensiveMissingLocalCase ['state_after_content_sync_before_deletion'] : array();
+$defensiveMissingLocalRemoteMappingCount = 0;
+if (!empty($defensiveMissingLocalContentState ['comments']) && is_array($defensiveMissingLocalContentState ['comments'])) {
+	foreach ($defensiveMissingLocalContentState ['comments'] as $commentMeta) {
+		if (is_array($commentMeta) && isset($commentMeta ['remote_id']) && (string) $commentMeta ['remote_id'] === '9811') {
+			$defensiveMissingLocalRemoteMappingCount++;
+		}
+	}
+}
+$allOk = test_result(
+	'Remote import defensively tombstones a missing source=local comment when the deletion hook was bypassed',
+		empty($defensiveMissingLocalStateBeforeSync ['comment_tombstones'] ['9811'])
+		&& !empty($defensiveMissingLocalCase ['content_sync_before_deletion_result'] ['ok'])
+		&& !empty($defensiveMissingLocalContentState ['comment_tombstones'] ['9811'])
+		&& isset($defensiveMissingLocalContentState ['comment_tombstones'] ['9811'] ['reason'])
+		&& (string) $defensiveMissingLocalContentState ['comment_tombstones'] ['9811'] ['reason'] === 'local_deleted_pending_remote_delete'
+		&& isset($defensiveMissingLocalContentState ['content_stats'] ['imported_comments'])
+		&& (int) $defensiveMissingLocalContentState ['content_stats'] ['imported_comments'] === 0
+		&& isset($defensiveMissingLocalContentState ['comments_remote'] ['9811'] ['comment_id'])
+		&& (string) $defensiveMissingLocalContentState ['comments_remote'] ['9811'] ['comment_id'] === (string) $defensiveMissingLocalCase ['local_comment_id']
+		&& $defensiveMissingLocalRemoteMappingCount === 1
+		&& empty($defensiveMissingLocalCase ['parent_exists_after_content_sync_before_deletion']),
+	json_encode(array(
+		'state_before_content_sync' => $defensiveMissingLocalStateBeforeSync,
+		'content_sync_before_deletion_result' => $defensiveMissingLocalCase ['content_sync_before_deletion_result'],
+		'state_after_content_sync' => $defensiveMissingLocalContentState,
+		'remote_mapping_count' => $defensiveMissingLocalRemoteMappingCount
+	))
+) && $allOk;
+
+// Remote reply ids are one-to-one: conflicting local mappings are rejected and legitimate remaps clear the old reverse id.
+$remoteConflictState = plugin_mastodon_default_state();
+$remoteConflictFirstStored = plugin_mastodon_state_set_comment_mapping($remoteConflictState, 'entry270101-100000', 'comment270101-100100', '9950', 'local', 'hash-a', $instanceUrl . '/@flatpress/9950', '2027-01-01 10:01:00');
+$remoteConflictSecondStored = plugin_mastodon_state_set_comment_mapping($remoteConflictState, 'entry270101-100000', 'comment270101-100200', '9950', 'remote', 'hash-b', 'https://example.net/@alice/9950', '2027-01-01 10:02:00');
+$remoteConflictStateAfterReject = $remoteConflictState;
+$remoteConflictRemapStored = plugin_mastodon_state_set_comment_mapping($remoteConflictState, 'entry270101-100000', 'comment270101-100100', '9951', 'local', 'hash-a2', $instanceUrl . '/@flatpress/9951', '2027-01-01 10:03:00');
+$allOk = test_result(
+	'Comment mapping rejects duplicate remote ids and removes the previous reverse id on a legitimate remap',
+		$remoteConflictFirstStored
+		&& !$remoteConflictSecondStored
+		&& isset($remoteConflictStateAfterReject ['comments_remote'] ['9950'] ['comment_id'])
+		&& (string) $remoteConflictStateAfterReject ['comments_remote'] ['9950'] ['comment_id'] === 'comment270101-100100'
+		&& empty($remoteConflictStateAfterReject ['comments'] ['entry270101-100000:comment270101-100200'])
+		&& $remoteConflictRemapStored
+		&& empty($remoteConflictState ['comments_remote'] ['9950'])
+		&& isset($remoteConflictState ['comments_remote'] ['9951'] ['comment_id'])
+		&& (string) $remoteConflictState ['comments_remote'] ['9951'] ['comment_id'] === 'comment270101-100100'
+		&& isset($remoteConflictState ['comments'] ['entry270101-100000:comment270101-100100'] ['remote_id'])
+		&& (string) $remoteConflictState ['comments'] ['entry270101-100000:comment270101-100100'] ['remote_id'] === '9951',
+	json_encode(array(
+		'first_stored' => $remoteConflictFirstStored,
+		'second_stored' => $remoteConflictSecondStored,
+		'state_after_reject' => $remoteConflictStateAfterReject,
+		'remap_stored' => $remoteConflictRemapStored,
+		'state_after_remap' => $remoteConflictState
+	))
+) && $allOk;
+
 // Deletion synchronization must tombstone locally deleted exported comments and recheck imported descendants in later follow-up passes.
 $descendantDeletionStaleCase = simulate_run_exported_comment_descendant_deletion_case(true, true);
 $descendantDeletionStaleStateOne = isset($descendantDeletionStaleCase ['state_after_deletion_pass_one']) && is_array($descendantDeletionStaleCase ['state_after_deletion_pass_one']) ? $descendantDeletionStaleCase ['state_after_deletion_pass_one'] : array();
@@ -10309,7 +10883,7 @@ $allOk = test_result(
 		&& isset($assignedState ['last_run_local']) && (string) $assignedState ['last_run_local'] === $expectedLastRunLocal
 		&& isset($assignedState ['last_deletion_run_local']) && (string) $assignedState ['last_deletion_run_local'] === $expectedLastDeletionRunLocal
 		&& isset($assignedCfg ['sync_time']) && (string) $assignedCfg ['sync_time'] === plugin_mastodon_sync_time_utc_to_local(isset($assignedCfg ['sync_time_utc']) ? (string) $assignedCfg ['sync_time_utc'] : '')
-		&& isset($assignedCfg ['sync_time_offset_label']) && (string) $assignedCfg ['sync_time_offset_label'] === 'UTC+02:00'
+		&& isset($assignedCfg ['sync_time_offset_label']) && (string) $assignedCfg ['sync_time_offset_label'] === plugin_mastodon_fp_timeoffset_label()
 		&& isset($assignedState ['content_stats'] ['imported_entries']) && (int) $assignedState ['content_stats'] ['imported_entries'] === 7
 		&& isset($assignedState ['content_stats'] ['updated_local_comments']) && (int) $assignedState ['content_stats'] ['updated_local_comments'] === 8
 		&& isset($assignedState ['content_stats'] ['exported_comments']) && (int) $assignedState ['content_stats'] ['exported_comments'] === 6
@@ -10403,7 +10977,7 @@ $allOk = test_result(
 		&& strpos($maintenanceAdminTemplate, 'mastodon_repair_state') !== false
 		&& strpos($maintenanceAdminTemplate, 'mastodon_admin_main_url') !== false
 		&& strpos($maintenanceAdminTemplate, '$plang.state_maintenance_') === false
-		&& $maintenanceLanguageAliasChecked === 15
+		&& $maintenanceLanguageAliasChecked === 16
 		&& $maintenanceLanguageAliasMissing === array()
 		&& isset($maintenancePanelStrings ['state_maintenance_head'])
 		&& isset($maintenancePanelMessages [7])
@@ -11498,7 +12072,9 @@ $automaticFreshComment = array(
 	'content' => 'Fresh 2026-05-31 16:48 comment on an old mapped entry',
 	'date' => strtotime('2026-05-31 16:48:00 UTC')
 );
+$_POST ['mastodon_comment_optin'] = '1';
 $automaticFreshCommentId = comment_save($automaticOldCommentEntryId, $automaticFreshComment);
+unset($_POST ['mastodon_comment_optin']);
 $automaticOldCommentHookState = plugin_mastodon_state_read(array($automaticOldCommentEntryId));
 $automaticOldCommentHookQueued = plugin_mastodon_state_has_dirty_comment($automaticOldCommentHookState, $automaticOldCommentEntryId, $automaticFreshCommentId);
 
@@ -11567,6 +12143,546 @@ $allOk = test_result(
 entry_delete($automaticOldCommentEntryId);
 unset($GLOBALS ['plugin_mastodon_test_now']);
 
+// Regression test: authenticated FlatPress comments carry a stored LOGGEDIN marker;
+// those comments must still be eligible for Mastodon reply export without a public visitor opt-in.
+$adminOptinOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
+$adminOptinOptions ['sync_start_date'] = '';
+$adminOptinOptions ['update_local_from_remote'] = '0';
+$adminOptinOptions ['disable_remote_import'] = '0';
+$adminOptinOptions ['disable_comment_reply_sync'] = '0';
+$adminOptinOptions ['access_token'] = 'token123';
+plugin_mastodon_save_options($adminOptinOptions);
+plugin_mastodon_runtime_cache_clear();
+
+$adminOptinEntry = array(
+	'version' => system_ver(),
+	'subject' => 'Admin comment opt-in bypass root',
+	'content' => 'Mapped entry used to verify authenticated local comment export.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-06-16 10:00:00 UTC')
+);
+$adminOptinEntryId = entry_save($adminOptinEntry, null);
+$adminOptinEntryParsed = entry_parse($adminOptinEntryId);
+$adminOptinState = plugin_mastodon_default_state();
+plugin_mastodon_state_set_entry_mapping($adminOptinState, $adminOptinEntryId, 'admin-optin-entry-remote-1', 'local', plugin_mastodon_entry_hash($adminOptinEntryParsed), $instanceUrl . '/@flatpress/admin-optin-entry-remote-1', '2026-06-01 10:00:00');
+plugin_mastodon_state_write($adminOptinState);
+
+$adminLocalComment = array(
+	'version' => system_ver(),
+	'name' => 'Admin',
+	'content' => 'Authenticated FlatPress admin comment without visitor opt-in',
+	'loggedin' => true,
+	'date' => strtotime('2026-06-16 10:05:00 UTC')
+);
+$adminLocalCommentId = comment_save($adminOptinEntryId, $adminLocalComment);
+$adminOptinParsedComment = comment_parse($adminOptinEntryId, $adminLocalCommentId);
+$adminOptinHookState = plugin_mastodon_state_read(array($adminOptinEntryId));
+$adminOptinHookQueued = plugin_mastodon_state_has_dirty_comment($adminOptinHookState, $adminOptinEntryId, $adminLocalCommentId);
+$adminOptinStored = plugin_mastodon_state_has_comment_reply_optin($adminOptinHookState, $adminOptinEntryId, $adminLocalCommentId);
+
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	),
+	'GET ' . $instanceUrl . '/api/v2/instance' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))
+	),
+	'POST ' . $instanceUrl . '/api/v1/statuses' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'admin-optin-comment-remote-1', 'url' => $instanceUrl . '/@flatpress/admin-optin-comment-remote-1', 'created_at' => '2026-06-16T10:05:00Z'))
+	)
+);
+plugin_mastodon_sync_guard_clear('content');
+$adminOptinResult = plugin_mastodon_run_sync(false);
+$adminOptinStateAfter = isset($adminOptinResult ['state']) && is_array($adminOptinResult ['state']) ? $adminOptinResult ['state'] : plugin_mastodon_state_read(array($adminOptinEntryId));
+$adminOptinRequests = simulate_recorded_http_requests();
+$adminOptinRequest = array();
+foreach ($adminOptinRequests as $request) {
+	if (!is_array($request) || strtoupper((string) (isset($request ['method']) ? $request ['method'] : '')) !== 'POST' || strpos((string) (isset($request ['url']) ? $request ['url'] : ''), '/api/v1/statuses') === false) {
+		continue;
+	}
+	$parsed = array();
+	parse_str(isset($request ['body']) ? (string) $request ['body'] : '', $parsed);
+	if (isset($parsed ['status']) && strpos((string) $parsed ['status'], 'Authenticated FlatPress admin comment') !== false) {
+		$adminOptinRequest = $parsed;
+		break;
+	}
+}
+$adminOptinMeta = plugin_mastodon_state_get_comment_meta($adminOptinStateAfter, $adminOptinEntryId, $adminLocalCommentId);
+$allOk = test_result(
+	'Authenticated FlatPress comments export after a stored LOGGEDIN marker without visitor opt-in',
+		plugin_mastodon_local_comment_from_authenticated_author(array('loggedin' => '1'))
+		&& plugin_mastodon_state_has_comment_reply_optin($adminOptinHookState, $adminOptinEntryId, $adminLocalCommentId)
+		&& plugin_mastodon_local_comment_export_allowed($adminOptinHookState, $adminOptinEntryId, $adminLocalCommentId, array(), $adminOptinParsedComment)
+		&& !plugin_mastodon_local_comment_export_allowed(plugin_mastodon_default_state(), $adminOptinEntryId, $adminLocalCommentId, array(), array('name' => 'Visitor'))
+		&& !empty($adminOptinResult ['ok'])
+		&& $adminOptinHookQueued
+		&& $adminOptinStored
+		&& !empty($adminOptinMeta ['remote_id'])
+		&& $adminOptinRequest !== array()
+		&& isset($adminOptinRequest ['in_reply_to_id'])
+		&& (string) $adminOptinRequest ['in_reply_to_id'] === 'admin-optin-entry-remote-1',
+	json_encode(array(
+		'run_message' => isset($adminOptinResult ['message']) ? $adminOptinResult ['message'] : '',
+		'hook_queued' => $adminOptinHookQueued,
+		'grant_stored' => $adminOptinStored,
+		'comment_id' => $adminLocalCommentId,
+		'parsed_comment' => $adminOptinParsedComment,
+		'guard_depth' => isset($GLOBALS ['plugin_mastodon_local_write_guard_depth']) ? $GLOBALS ['plugin_mastodon_local_write_guard_depth'] : null,
+		'options' => plugin_mastodon_get_options(),
+		'comment_meta' => $adminOptinMeta,
+		'request' => $adminOptinRequest
+	))
+) && $allOk;
+entry_delete($adminOptinEntryId);
+
+// Regression test: an admin session must not turn a visitor comment without
+// frontend opt-in into an authenticated Mastodon export grant.
+$adminSessionVisitorOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
+$adminSessionVisitorOptions ['sync_start_date'] = '';
+$adminSessionVisitorOptions ['update_local_from_remote'] = '0';
+$adminSessionVisitorOptions ['disable_remote_import'] = '0';
+$adminSessionVisitorOptions ['disable_comment_reply_sync'] = '0';
+$adminSessionVisitorOptions ['access_token'] = 'token123';
+plugin_mastodon_save_options($adminSessionVisitorOptions);
+plugin_mastodon_runtime_cache_clear();
+
+$adminSessionVisitorEntry = array(
+	'version' => system_ver(),
+	'subject' => 'Admin session visitor comment root',
+	'content' => 'Mapped entry used to verify that admin sessions do not approve visitor comments.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-06-16 10:10:00 UTC')
+);
+$adminSessionVisitorEntryId = entry_save($adminSessionVisitorEntry, null);
+$adminSessionVisitorEntryParsed = entry_parse($adminSessionVisitorEntryId);
+$adminSessionVisitorState = plugin_mastodon_default_state();
+plugin_mastodon_state_set_entry_mapping($adminSessionVisitorState, $adminSessionVisitorEntryId, 'admin-session-visitor-entry-remote-1', 'local', plugin_mastodon_entry_hash($adminSessionVisitorEntryParsed), $instanceUrl . '/@flatpress/admin-session-visitor-entry-remote-1', '2026-06-01 10:10:00');
+plugin_mastodon_state_write($adminSessionVisitorState);
+
+$adminSessionVisitorComment = array(
+	'version' => system_ver(),
+	'name' => 'Visitor Without Optin',
+	'content' => 'Visitor comment saved during an admin session but without Mastodon opt-in',
+	'date' => strtotime('2026-06-16 10:11:00 UTC')
+);
+$adminSessionPreviousLogin = isset($_SESSION ['loggedin']) ? $_SESSION ['loggedin'] : null;
+$_SESSION ['loggedin'] = true;
+$adminSessionVisitorCommentId = comment_save($adminSessionVisitorEntryId, $adminSessionVisitorComment);
+if ($adminSessionPreviousLogin === null) {
+	unset($_SESSION ['loggedin']);
+} else {
+	$_SESSION ['loggedin'] = $adminSessionPreviousLogin;
+}
+$adminSessionVisitorParsedComment = comment_parse($adminSessionVisitorEntryId, $adminSessionVisitorCommentId);
+$adminSessionVisitorHookState = plugin_mastodon_state_read(array($adminSessionVisitorEntryId));
+$adminSessionVisitorGrantStored = plugin_mastodon_state_has_comment_reply_optin($adminSessionVisitorHookState, $adminSessionVisitorEntryId, $adminSessionVisitorCommentId);
+$adminSessionVisitorQueued = plugin_mastodon_state_has_dirty_comment($adminSessionVisitorHookState, $adminSessionVisitorEntryId, $adminSessionVisitorCommentId);
+$adminSessionVisitorAllowed = plugin_mastodon_local_comment_export_allowed($adminSessionVisitorHookState, $adminSessionVisitorEntryId, $adminSessionVisitorCommentId, array(), $adminSessionVisitorParsedComment);
+
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	),
+	'GET ' . $instanceUrl . '/api/v2/instance' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))
+	),
+	'POST ' . $instanceUrl . '/api/v1/statuses' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'admin-session-unrelated-remote-1', 'url' => $instanceUrl . '/@flatpress/admin-session-unrelated-remote-1', 'created_at' => '2026-06-16T10:12:00Z'))
+	)
+);
+plugin_mastodon_sync_guard_clear('content');
+$adminSessionVisitorResult = plugin_mastodon_run_sync(true);
+$adminSessionVisitorStateAfter = isset($adminSessionVisitorResult ['state']) && is_array($adminSessionVisitorResult ['state']) ? $adminSessionVisitorResult ['state'] : plugin_mastodon_state_read(array($adminSessionVisitorEntryId));
+$adminSessionVisitorRequests = simulate_recorded_http_requests();
+$adminSessionVisitorPosted = false;
+foreach ($adminSessionVisitorRequests as $request) {
+	if (!is_array($request) || strtoupper((string) (isset($request ['method']) ? $request ['method'] : '')) !== 'POST' || strpos((string) (isset($request ['url']) ? $request ['url'] : ''), '/api/v1/statuses') === false) {
+		continue;
+	}
+	$parsed = array();
+	parse_str(isset($request ['body']) ? (string) $request ['body'] : '', $parsed);
+	if (isset($parsed ['status']) && strpos((string) $parsed ['status'], 'Visitor comment saved during an admin session') !== false) {
+		$adminSessionVisitorPosted = true;
+		break;
+	}
+}
+$adminSessionVisitorMeta = plugin_mastodon_state_get_comment_meta($adminSessionVisitorStateAfter, $adminSessionVisitorEntryId, $adminSessionVisitorCommentId);
+$allOk = test_result(
+	'Admin session does not grant Mastodon export to visitor comments without opt-in',
+		!$adminSessionVisitorGrantStored
+		&& !$adminSessionVisitorQueued
+		&& !$adminSessionVisitorAllowed
+		&& !plugin_mastodon_local_comment_from_authenticated_author($adminSessionVisitorParsedComment)
+		&& !empty($adminSessionVisitorResult ['ok'])
+		&& empty($adminSessionVisitorMeta ['remote_id'])
+		&& !$adminSessionVisitorPosted,
+	json_encode(array(
+		'run_message' => isset($adminSessionVisitorResult ['message']) ? $adminSessionVisitorResult ['message'] : '',
+		'grant_stored' => $adminSessionVisitorGrantStored,
+		'hook_queued' => $adminSessionVisitorQueued,
+		'allowed' => $adminSessionVisitorAllowed,
+		'parsed_comment' => $adminSessionVisitorParsedComment,
+		'comment_meta' => $adminSessionVisitorMeta,
+		'requests' => $adminSessionVisitorRequests
+	))
+) && $allOk;
+entry_delete($adminSessionVisitorEntryId);
+
+// Regression test: CommentCenter moderation must preserve an explicit visitor opt-in.
+// Visitor comments requiring approval are written to CommentCenter first, so the
+// normal comment_saved hook is not reached during the visitor POST.
+$commentCenterOptinOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
+$commentCenterOptinOptions ['sync_start_date'] = '';
+$commentCenterOptinOptions ['update_local_from_remote'] = '0';
+$commentCenterOptinOptions ['disable_remote_import'] = '0';
+$commentCenterOptinOptions ['disable_comment_reply_sync'] = '0';
+$commentCenterOptinOptions ['access_token'] = 'token123';
+plugin_mastodon_save_options($commentCenterOptinOptions);
+plugin_mastodon_runtime_cache_clear();
+
+$commentCenterOptinEntry = array(
+	'version' => system_ver(),
+	'subject' => 'CommentCenter visitor opt-in root',
+	'content' => 'Mapped entry used to verify moderated visitor opt-in export.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-06-16 10:20:00 UTC')
+);
+$commentCenterOptinEntryId = entry_save($commentCenterOptinEntry, null);
+$commentCenterOptinEntryParsed = entry_parse($commentCenterOptinEntryId);
+$commentCenterOptinState = plugin_mastodon_default_state();
+plugin_mastodon_state_set_entry_mapping($commentCenterOptinState, $commentCenterOptinEntryId, 'commentcenter-optin-entry-remote-1', 'local', plugin_mastodon_entry_hash($commentCenterOptinEntryParsed), $instanceUrl . '/@flatpress/commentcenter-optin-entry-remote-1', '2026-06-01 10:20:00');
+plugin_mastodon_state_write($commentCenterOptinState);
+
+$commentCenterOptinComment = array(
+	'version' => system_ver(),
+	'name' => 'Moderated Visitor',
+	'content' => 'Visitor opt-in comment moderated by CommentCenter',
+	'date' => strtotime('2026-06-16 10:21:00 UTC')
+);
+$commentCenterOptinComment ['id'] = bdb_idfromtime(BDB_COMMENT, $commentCenterOptinComment ['date']);
+$_POST ['mastodon_comment_optin'] = '1';
+do_action('commentcenter_comment_logged', $commentCenterOptinEntryId, $commentCenterOptinComment, 'confirm', 'simulated-commentcenter-pending-file');
+unset($_POST ['mastodon_comment_optin']);
+$commentCenterPendingState = plugin_mastodon_state_read(array($commentCenterOptinEntryId));
+$commentCenterPendingGrantStored = plugin_mastodon_state_has_comment_reply_optin($commentCenterPendingState, $commentCenterOptinEntryId, $commentCenterOptinComment ['id']);
+$commentCenterPendingQueued = plugin_mastodon_state_has_dirty_comment($commentCenterPendingState, $commentCenterOptinEntryId, $commentCenterOptinComment ['id']);
+
+$commentCenterPreviousLogin = isset($_SESSION ['loggedin']) ? $_SESSION ['loggedin'] : null;
+$_SESSION ['loggedin'] = true;
+$commentCenterApprovedComment = $commentCenterOptinComment;
+unset($commentCenterApprovedComment ['id']);
+$commentCenterApprovedCommentId = comment_save($commentCenterOptinEntryId, $commentCenterApprovedComment);
+if ($commentCenterPreviousLogin === null) {
+	unset($_SESSION ['loggedin']);
+} else {
+	$_SESSION ['loggedin'] = $commentCenterPreviousLogin;
+}
+$commentCenterApprovedCommentParsed = comment_parse($commentCenterOptinEntryId, $commentCenterApprovedCommentId);
+$commentCenterApprovedState = plugin_mastodon_state_read(array($commentCenterOptinEntryId));
+$commentCenterApprovedGrantStored = plugin_mastodon_state_has_comment_reply_optin($commentCenterApprovedState, $commentCenterOptinEntryId, $commentCenterApprovedCommentId);
+$commentCenterApprovedQueued = plugin_mastodon_state_has_dirty_comment($commentCenterApprovedState, $commentCenterOptinEntryId, $commentCenterApprovedCommentId);
+
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	),
+	'GET ' . $instanceUrl . '/api/v2/instance' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))
+	),
+	'POST ' . $instanceUrl . '/api/v1/statuses' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'commentcenter-optin-comment-remote-1', 'url' => $instanceUrl . '/@flatpress/commentcenter-optin-comment-remote-1', 'created_at' => '2026-06-16T10:21:00Z'))
+	)
+);
+plugin_mastodon_sync_guard_clear('content');
+$commentCenterOptinResult = plugin_mastodon_run_sync(false);
+$commentCenterOptinStateAfter = isset($commentCenterOptinResult ['state']) && is_array($commentCenterOptinResult ['state']) ? $commentCenterOptinResult ['state'] : plugin_mastodon_state_read(array($commentCenterOptinEntryId));
+$commentCenterOptinRequests = simulate_recorded_http_requests();
+$commentCenterOptinRequest = array();
+foreach ($commentCenterOptinRequests as $request) {
+	if (!is_array($request) || strtoupper((string) (isset($request ['method']) ? $request ['method'] : '')) !== 'POST' || strpos((string) (isset($request ['url']) ? $request ['url'] : ''), '/api/v1/statuses') === false) {
+		continue;
+	}
+	$parsed = array();
+	parse_str(isset($request ['body']) ? (string) $request ['body'] : '', $parsed);
+	if (isset($parsed ['status']) && strpos((string) $parsed ['status'], 'Visitor opt-in comment moderated by CommentCenter') !== false) {
+		$commentCenterOptinRequest = $parsed;
+		break;
+	}
+}
+$commentCenterOptinMeta = plugin_mastodon_state_get_comment_meta($commentCenterOptinStateAfter, $commentCenterOptinEntryId, $commentCenterApprovedCommentId);
+$allOk = test_result(
+	'CommentCenter preserves visitor Mastodon opt-in until admin approval and export',
+	$commentCenterPendingGrantStored
+		&& !$commentCenterPendingQueued
+		&& $commentCenterApprovedCommentId === $commentCenterOptinComment ['id']
+		&& $commentCenterApprovedGrantStored
+		&& $commentCenterApprovedQueued
+		&& !plugin_mastodon_local_comment_from_authenticated_author($commentCenterApprovedCommentParsed)
+		&& !empty($commentCenterOptinResult ['ok'])
+		&& !empty($commentCenterOptinMeta ['remote_id'])
+		&& $commentCenterOptinRequest !== array()
+		&& isset($commentCenterOptinRequest ['in_reply_to_id'])
+		&& (string) $commentCenterOptinRequest ['in_reply_to_id'] === 'commentcenter-optin-entry-remote-1',
+	json_encode(array(
+		'pending_grant_stored' => $commentCenterPendingGrantStored,
+		'pending_queued' => $commentCenterPendingQueued,
+		'approved_id' => $commentCenterApprovedCommentId,
+		'approved_grant_stored' => $commentCenterApprovedGrantStored,
+		'approved_queued' => $commentCenterApprovedQueued,
+		'approved_comment' => $commentCenterApprovedCommentParsed,
+		'run_message' => isset($commentCenterOptinResult ['message']) ? $commentCenterOptinResult ['message'] : '',
+		'comment_meta' => $commentCenterOptinMeta,
+		'request' => $commentCenterOptinRequest
+	))
+) && $allOk;
+entry_delete($commentCenterOptinEntryId);
+
+// Regression test: a visitor opt-in must be stored even when Mastodon credentials
+// are not complete yet, so a later manual or scheduled sync can export the comment.
+$deferredOptinOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
+$deferredOptinOptions ['sync_start_date'] = '';
+$deferredOptinOptions ['update_local_from_remote'] = '0';
+$deferredOptinOptions ['disable_remote_import'] = '0';
+$deferredOptinOptions ['disable_comment_reply_sync'] = '0';
+$deferredOptinOptions ['instance_url'] = $instanceUrl;
+$deferredOptinOptions ['access_token'] = '';
+plugin_mastodon_save_options($deferredOptinOptions);
+plugin_mastodon_runtime_cache_clear();
+
+$deferredOptinEntry = array(
+	'version' => system_ver(),
+	'subject' => 'Deferred visitor opt-in root',
+	'content' => 'Mapped entry used after credentials are completed.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-06-16 10:30:00 UTC')
+);
+$deferredOptinEntryId = entry_save($deferredOptinEntry, null);
+$deferredOptinEntryParsed = entry_parse($deferredOptinEntryId);
+$deferredOptinState = plugin_mastodon_default_state();
+plugin_mastodon_state_set_entry_mapping($deferredOptinState, $deferredOptinEntryId, 'deferred-optin-entry-remote-1', 'local', plugin_mastodon_entry_hash($deferredOptinEntryParsed), $instanceUrl . '/@flatpress/deferred-optin-entry-remote-1', '2026-06-01 10:30:00');
+plugin_mastodon_state_write($deferredOptinState);
+
+$deferredOptinComment = array(
+	'version' => system_ver(),
+	'name' => 'Visitor',
+	'content' => 'Visitor opt-in saved before credentials are complete',
+	'date' => strtotime('2026-06-16 10:35:00 UTC')
+);
+$_POST ['mastodon_comment_optin'] = '1';
+$deferredOptinCommentId = comment_save($deferredOptinEntryId, $deferredOptinComment);
+unset($_POST ['mastodon_comment_optin']);
+$deferredOptinHookState = plugin_mastodon_state_read(array($deferredOptinEntryId));
+$deferredOptinStored = plugin_mastodon_state_has_comment_reply_optin($deferredOptinHookState, $deferredOptinEntryId, $deferredOptinCommentId);
+$deferredOptinQueuedBeforeCredentials = plugin_mastodon_state_has_dirty_comment($deferredOptinHookState, $deferredOptinEntryId, $deferredOptinCommentId);
+
+$deferredOptinOptions ['access_token'] = 'token123';
+plugin_mastodon_save_options($deferredOptinOptions);
+plugin_mastodon_runtime_cache_clear();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	),
+	'GET ' . $instanceUrl . '/api/v2/instance' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))
+	),
+	'POST ' . $instanceUrl . '/api/v1/statuses' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'deferred-optin-comment-remote-1', 'url' => $instanceUrl . '/@flatpress/deferred-optin-comment-remote-1', 'created_at' => '2026-06-16T10:35:00Z'))
+	)
+);
+plugin_mastodon_sync_guard_clear('content');
+$deferredOptinResult = plugin_mastodon_run_sync(false);
+$deferredOptinStateAfter = isset($deferredOptinResult ['state']) && is_array($deferredOptinResult ['state']) ? $deferredOptinResult ['state'] : plugin_mastodon_state_read(array($deferredOptinEntryId));
+$deferredOptinRequests = simulate_recorded_http_requests();
+$deferredOptinRequest = array();
+foreach ($deferredOptinRequests as $request) {
+	if (!is_array($request) || strtoupper((string) (isset($request ['method']) ? $request ['method'] : '')) !== 'POST' || strpos((string) (isset($request ['url']) ? $request ['url'] : ''), '/api/v1/statuses') === false) {
+		continue;
+	}
+	$parsed = array();
+	parse_str(isset($request ['body']) ? (string) $request ['body'] : '', $parsed);
+	if (isset($parsed ['status']) && strpos((string) $parsed ['status'], 'Visitor opt-in saved before credentials') !== false) {
+		$deferredOptinRequest = $parsed;
+		break;
+	}
+}
+$deferredOptinMeta = plugin_mastodon_state_get_comment_meta($deferredOptinStateAfter, $deferredOptinEntryId, $deferredOptinCommentId);
+$allOk = test_result(
+	'Visitor opt-in is stored without complete credentials and later permits comment export',
+	$deferredOptinStored
+		&& !$deferredOptinQueuedBeforeCredentials
+		&& !empty($deferredOptinResult ['ok'])
+		&& !empty($deferredOptinMeta ['remote_id'])
+		&& $deferredOptinRequest !== array()
+		&& isset($deferredOptinRequest ['in_reply_to_id'])
+		&& (string) $deferredOptinRequest ['in_reply_to_id'] === 'deferred-optin-entry-remote-1',
+	json_encode(array(
+		'stored' => $deferredOptinStored,
+		'queued_before_credentials' => $deferredOptinQueuedBeforeCredentials,
+		'run_message' => isset($deferredOptinResult ['message']) ? $deferredOptinResult ['message'] : '',
+		'comment_meta' => $deferredOptinMeta,
+		'request' => $deferredOptinRequest
+	))
+) && $allOk;
+entry_delete($deferredOptinEntryId);
+
+// Regression test: an opted-in visitor reply must not be blocked forever by a
+// local parent comment that was not opted in and therefore cannot be exported.
+$visitorOptinOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
+$visitorOptinOptions ['sync_start_date'] = '';
+$visitorOptinOptions ['update_local_from_remote'] = '0';
+$visitorOptinOptions ['disable_remote_import'] = '0';
+$visitorOptinOptions ['disable_comment_reply_sync'] = '0';
+$visitorOptinOptions ['access_token'] = 'token123';
+plugin_mastodon_save_options($visitorOptinOptions);
+plugin_mastodon_runtime_cache_clear();
+
+$visitorOptinEntry = array(
+	'version' => system_ver(),
+	'subject' => 'Visitor opt-in child reply root',
+	'content' => 'Mapped entry used to verify opted-in child reply export.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-06-16 11:00:00 UTC')
+);
+$visitorOptinEntryId = entry_save($visitorOptinEntry, null);
+$visitorOptinEntryParsed = entry_parse($visitorOptinEntryId);
+$visitorOptinState = plugin_mastodon_default_state();
+plugin_mastodon_state_set_entry_mapping($visitorOptinState, $visitorOptinEntryId, 'visitor-optin-entry-remote-1', 'local', plugin_mastodon_entry_hash($visitorOptinEntryParsed), $instanceUrl . '/@flatpress/visitor-optin-entry-remote-1', '2026-06-01 11:00:00');
+plugin_mastodon_state_write($visitorOptinState);
+
+$visitorParentComment = array(
+	'version' => system_ver(),
+	'name' => 'Visitor Parent',
+	'content' => 'Visitor parent without Mastodon opt-in',
+	'date' => strtotime('2026-06-16 11:05:00 UTC')
+);
+$visitorParentCommentId = comment_save($visitorOptinEntryId, $visitorParentComment);
+$visitorChildComment = array(
+	'version' => system_ver(),
+	'name' => 'Visitor Child',
+	'content' => 'Visitor child reply with Mastodon opt-in',
+	'replyto' => $visitorParentCommentId,
+	'date' => strtotime('2026-06-16 11:06:00 UTC')
+);
+$_POST ['mastodon_comment_optin'] = '1';
+$visitorChildCommentId = comment_save($visitorOptinEntryId, $visitorChildComment);
+unset($_POST ['mastodon_comment_optin']);
+$visitorOptinHookState = plugin_mastodon_state_read(array($visitorOptinEntryId));
+$visitorChildQueued = plugin_mastodon_state_has_dirty_comment($visitorOptinHookState, $visitorOptinEntryId, $visitorChildCommentId);
+$visitorParentPending = plugin_mastodon_local_comment_parent_export_pending($visitorOptinOptions, $visitorOptinHookState, $visitorOptinEntryId, $visitorParentCommentId);
+
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+	'GET ' . $instanceUrl . '/api/v1/accounts/verify_credentials' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'acct1', 'username' => 'flatpress'))
+	),
+	'GET ' . $instanceUrl . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array())
+	),
+	'GET ' . $instanceUrl . '/api/v2/instance' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('configuration' => array('statuses' => array('max_characters' => 500, 'max_media_attachments' => 4))))
+	),
+	'POST ' . $instanceUrl . '/api/v1/statuses' => array(
+		'ok' => true,
+		'code' => 200,
+		'body' => json_encode(array('id' => 'visitor-optin-child-remote-1', 'url' => $instanceUrl . '/@flatpress/visitor-optin-child-remote-1', 'created_at' => '2026-06-16T11:06:00Z'))
+	)
+);
+plugin_mastodon_sync_guard_clear('content');
+$visitorOptinResult = plugin_mastodon_run_sync(false);
+$visitorOptinStateAfter = isset($visitorOptinResult ['state']) && is_array($visitorOptinResult ['state']) ? $visitorOptinResult ['state'] : plugin_mastodon_state_read(array($visitorOptinEntryId));
+$visitorOptinRequests = simulate_recorded_http_requests();
+$visitorOptinRequest = array();
+foreach ($visitorOptinRequests as $request) {
+	if (!is_array($request) || strtoupper((string) (isset($request ['method']) ? $request ['method'] : '')) !== 'POST' || strpos((string) (isset($request ['url']) ? $request ['url'] : ''), '/api/v1/statuses') === false) {
+		continue;
+	}
+	$parsed = array();
+	parse_str(isset($request ['body']) ? (string) $request ['body'] : '', $parsed);
+	if (isset($parsed ['status']) && strpos((string) $parsed ['status'], 'Visitor child reply with Mastodon opt-in') !== false) {
+		$visitorOptinRequest = $parsed;
+		break;
+	}
+}
+$visitorChildMeta = plugin_mastodon_state_get_comment_meta($visitorOptinStateAfter, $visitorOptinEntryId, $visitorChildCommentId);
+$visitorParentMeta = plugin_mastodon_state_get_comment_meta($visitorOptinStateAfter, $visitorOptinEntryId, $visitorParentCommentId);
+$allOk = test_result(
+	'Opted-in visitor replies export even when their local parent has no Mastodon opt-in',
+	!empty($visitorOptinResult ['ok'])
+		&& $visitorChildQueued
+		&& !$visitorParentPending
+		&& empty($visitorParentMeta ['remote_id'])
+		&& !empty($visitorChildMeta ['remote_id'])
+		&& $visitorOptinRequest !== array()
+		&& isset($visitorOptinRequest ['in_reply_to_id'])
+		&& (string) $visitorOptinRequest ['in_reply_to_id'] === 'visitor-optin-entry-remote-1',
+	json_encode(array(
+		'run_message' => isset($visitorOptinResult ['message']) ? $visitorOptinResult ['message'] : '',
+		'child_queued' => $visitorChildQueued,
+		'parent_id' => $visitorParentCommentId,
+		'child_id' => $visitorChildCommentId,
+		'guard_depth' => isset($GLOBALS ['plugin_mastodon_local_write_guard_depth']) ? $GLOBALS ['plugin_mastodon_local_write_guard_depth'] : null,
+		'parent_pending' => $visitorParentPending,
+		'parent_meta' => $visitorParentMeta,
+		'child_meta' => $visitorChildMeta,
+		'request' => $visitorOptinRequest
+	))
+) && $allOk;
+entry_delete($visitorOptinEntryId);
+
 // Regression test: the explicit one-way mode must be disabled by default, saved from the admin form, and translated everywhere.
 $oneWayDefaultOptions = plugin_mastodon_default_options();
 $oneWayAdminLanguageOk = true;
@@ -11614,7 +12730,7 @@ $allOk = test_result(
 		&& (string) $oneWayAdminCfg ['disable_remote_import'] === '1'
 		&& is_string($oneWayTemplate)
 		&& strpos($oneWayTemplate, 'name="disable_remote_import"') !== false
-		&& count($oneWayLanguageFiles) === 15
+		&& count($oneWayLanguageFiles) === 16
 		&& $oneWayAdminLanguageOk,
 	json_encode(array(
 		'default' => isset($oneWayDefaultOptions ['disable_remote_import']) ? $oneWayDefaultOptions ['disable_remote_import'] : null,
@@ -12005,6 +13121,7 @@ $oneWayDeleteState ['deletions_pending'] = 1;
 plugin_mastodon_state_set_entry_mapping($oneWayDeleteState, $oneWayDeleteEntryId, 'oneway-delete-entry-missing', 'local', plugin_mastodon_entry_hash(entry_parse($oneWayDeleteEntryId)), $instanceUrl . '/@flatpress/oneway-delete-entry-missing', '2026-05-31 18:30:00', plugin_mastodon_local_item_date_key(entry_parse($oneWayDeleteEntryId), $oneWayDeleteEntryId), '2026-05-31');
 plugin_mastodon_state_set_entry_mapping($oneWayDeleteState, $oneWayDeleteCommentEntryId, 'oneway-delete-entry-existing', 'local', plugin_mastodon_entry_hash(entry_parse($oneWayDeleteCommentEntryId)), $instanceUrl . '/@flatpress/oneway-delete-entry-existing', '2026-05-31 18:35:00', plugin_mastodon_local_item_date_key(entry_parse($oneWayDeleteCommentEntryId), $oneWayDeleteCommentEntryId), '2026-05-31');
 plugin_mastodon_state_set_comment_mapping($oneWayDeleteState, $oneWayDeleteCommentEntryId, $oneWayDeleteCommentId, 'oneway-delete-comment-missing', 'local', plugin_mastodon_comment_hash(comment_parse($oneWayDeleteCommentEntryId, $oneWayDeleteCommentId)), $instanceUrl . '/@flatpress/oneway-delete-comment-missing', '2026-05-31 18:40:00', '', 'oneway-delete-entry-existing', plugin_mastodon_local_item_date_key(comment_parse($oneWayDeleteCommentEntryId, $oneWayDeleteCommentId), $oneWayDeleteCommentId), '2026-05-31');
+simulate_mastodon_grant_comment_reply_optin($oneWayDeleteState, $oneWayDeleteCommentEntryId, $oneWayDeleteCommentId);
 plugin_mastodon_state_write($oneWayDeleteState);
 $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
 	'GET ' . $instanceUrl . '/api/v1/statuses/oneway-delete-entry-missing' => array('ok' => false, 'code' => 404, 'body' => json_encode(array('error' => 'Record not found'))),
@@ -12365,7 +13482,7 @@ if (isset($GLOBALS ['fp_registered_widgets']) && is_array($GLOBALS ['fp_register
 }
 $allOk = test_result(
 	'Mastodon widget is registered and translated in all FlatPress plugin language files',
-	count($widgetLanguageFiles) === 15 && $widgetLanguageMissing === array() && $widgetRegistrationOk,
+	count($widgetLanguageFiles) === 16 && $widgetLanguageMissing === array() && $widgetRegistrationOk,
 	json_encode(array(
 		'language_file_count' => count($widgetLanguageFiles),
 		'missing' => $widgetLanguageMissing,
