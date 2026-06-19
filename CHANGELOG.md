@@ -14,6 +14,9 @@
 ### Security
 - An XSS vulnerability in the comment and contact forms has been fixed. ([#866](https://github.com/flatpressblog/flatpress/pull/866))
 
+### Bugfixes
+- Fix 4-byte UTF-8 encoding in ``utf8_uri_encode()`` to prevent emoji-based PrettyURLs from generating invalid slugs. ([#925](https://github.com/flatpressblog/flatpress/issues/925))
+
 ## Plugins
 ### Additions
 - Tag: With this plugin, you can add keywords to your blog posts. This plugin is required by the Mastodon plugin if you want to enable Mastodon hashtags into tags. ([#857](https://github.com/flatpressblog/flatpress/issues/857))
