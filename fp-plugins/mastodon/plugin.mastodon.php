@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon and provides a Mastodon profile widget. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.8.0
+ * Version: 2.8.1
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -2705,7 +2705,8 @@ function plugin_mastodon_optin_comment_to_reply() {
 	}
 
 	$label = plugin_mastodon_widget_lang_string('optin_label', '<em>Your comment will be published via my Mastodon account and shared in the Fediverse.</em> I agree.');
-	echo '<p class="mastodon-comment-optin"><label for="mastodon_comment_optin"><input type="checkbox" id="mastodon_comment_optin" name="mastodon_comment_optin" value="1"> ' . $label . '</label></p>';
+	$checked = plugin_mastodon_comment_to_reply_optin_submitted() ? ' checked="checked"' : '';
+	echo '<p class="mastodon-comment-optin"><label for="mastodon_comment_optin"><input type="checkbox" id="mastodon_comment_optin" name="mastodon_comment_optin" value="1"' . $checked . '> ' . $label . '</label></p>';
 }
 
 /**
@@ -2745,7 +2746,41 @@ function plugin_mastodon_on_commentcenter_comment_logged($entryId, $comment = ar
 		return;
 	}
 	$state = plugin_mastodon_state_read(array($entryId));
-	plugin_mastodon_state_set_comment_reply_optin($state, $entryId, $commentId, '', 'frontend');
+	plugin_mastodon_state_set_comment_reply_optin($state, $entryId, $commentId, '', 'frontend', $file);
+	plugin_mastodon_state_write($state);
+}
+
+/**
+ * Remove an opt-in grant when CommentCenter permanently discards its pending comment.
+ *
+ * If a final comment with the same id already exists, only the pending-file
+ * marker is finalized. This avoids revoking a valid grant when an obsolete
+ * duplicate pending file is removed after publication.
+ *
+ * @param string $entryId
+ * @param string $commentId
+ * @param array<string, mixed> $comment
+ * @param string $file
+ * @return void
+ */
+function plugin_mastodon_on_commentcenter_comment_discarded($entryId, $commentId, $comment = array(), $file = '') {
+	$entryId = trim((string) $entryId);
+	$commentId = trim((string) $commentId);
+	if ($entryId === '' || $commentId === '') {
+		return;
+	}
+	$state = plugin_mastodon_state_read(array($entryId));
+	if (function_exists('comment_exists') && comment_exists($entryId, $commentId)) {
+		if (plugin_mastodon_state_finalize_comment_reply_optin($state, $entryId, $commentId)) {
+			plugin_mastodon_state_write($state);
+		}
+		return;
+	}
+	if (!plugin_mastodon_state_has_comment_reply_optin($state, $entryId, $commentId)) {
+		return;
+	}
+	plugin_mastodon_state_remove_comment_reply_optin($state, $entryId, $commentId);
+	plugin_mastodon_state_remove_dirty_comment($state, $entryId, $commentId);
 	plugin_mastodon_state_write($state);
 }
 
@@ -4810,11 +4845,13 @@ function plugin_mastodon_state_comment_reply_optins($state) {
 				$commentId = isset($parts [1]) ? (string) $parts [1] : '';
 			}
 			if ($entryId !== '' && $commentId !== '') {
+				$pendingFile = isset($meta ['pending_file']) ? basename(str_replace('\\', '/', (string) $meta ['pending_file'])) : '';
 				$result [$commentKey] = array(
 					'entry_id' => $entryId,
 					'comment_id' => $commentId,
 					'granted_at' => isset($meta ['granted_at']) ? (string) $meta ['granted_at'] : '',
-					'source' => isset($meta ['source']) ? (string) $meta ['source'] : 'frontend'
+					'source' => isset($meta ['source']) ? (string) $meta ['source'] : 'frontend',
+					'pending_file' => $pendingFile
 				);
 			}
 		} elseif (!empty($meta)) {
@@ -4829,7 +4866,8 @@ function plugin_mastodon_state_comment_reply_optins($state) {
 					'entry_id' => $entryId,
 					'comment_id' => $commentId,
 					'granted_at' => '',
-					'source' => 'frontend'
+					'source' => 'frontend',
+					'pending_file' => ''
 				);
 			}
 		}
@@ -4840,13 +4878,20 @@ function plugin_mastodon_state_comment_reply_optins($state) {
 
 /**
  * Persist a visitor opt-in marker for later local-comment export.
+ *
+ * CommentCenter can attach the basename of its pending file. The pending marker
+ * is cleared when the final FlatPress comment is saved. Keeping only the
+ * basename avoids host-specific absolute paths in state.json.
+ *
  * @param array<string, mixed> $state
  * @param string $entryId
  * @param string $commentId
  * @param string $grantedAt
+ * @param string $source
+ * @param string $pendingFile
  * @return void
  */
-function plugin_mastodon_state_set_comment_reply_optin(&$state, $entryId, $commentId, $grantedAt = '', $source = 'frontend') {
+function plugin_mastodon_state_set_comment_reply_optin(&$state, $entryId, $commentId, $grantedAt = '', $source = 'frontend', $pendingFile = '') {
 	$key = plugin_mastodon_state_comment_key($entryId, $commentId);
 	if ($key === ':') {
 		return;
@@ -4855,14 +4900,80 @@ function plugin_mastodon_state_set_comment_reply_optin(&$state, $entryId, $comme
 	if ($source === '') {
 		$source = 'frontend';
 	}
+	$pendingFile = basename(str_replace('\\', '/', trim((string) $pendingFile)));
+	if ($pendingFile !== '' && !preg_match('/^eentry[0-9]{6}-[0-9]{6}_ccomment[0-9]{6}-[0-9]{6}\.txt$/', $pendingFile)) {
+		$pendingFile = '';
+	}
 	$optins = plugin_mastodon_state_comment_reply_optins($state);
 	$optins [$key] = array(
 		'entry_id' => (string) $entryId,
 		'comment_id' => (string) $commentId,
 		'granted_at' => $grantedAt !== '' ? (string) $grantedAt : gmdate('Y-m-d H:i:s'),
-		'source' => $source
+		'source' => $source,
+		'pending_file' => $pendingFile
 	);
 	$state ['comment_reply_optins'] = $optins;
+}
+
+/**
+ * Mark a CommentCenter opt-in grant as belonging to a final FlatPress comment.
+ * @param array<string, mixed> $state
+ * @param string $entryId
+ * @param string $commentId
+ * @return bool
+ */
+function plugin_mastodon_state_finalize_comment_reply_optin(&$state, $entryId, $commentId) {
+	$key = plugin_mastodon_state_comment_key($entryId, $commentId);
+	$optins = plugin_mastodon_state_comment_reply_optins($state);
+	if (!isset($optins [$key]) || !is_array($optins [$key]) || empty($optins [$key] ['pending_file'])) {
+		return false;
+	}
+	$optins [$key] ['pending_file'] = '';
+	$state ['comment_reply_optins'] = $optins;
+	return true;
+}
+
+/**
+ * Remove stale CommentCenter grants whose pending file and final comment are gone.
+ *
+ * Only records carrying pending_file trigger filesystem checks, so ordinary
+ * visitor/admin grants do not add disk I/O to a synchronization run.
+ *
+ * @param array<string, mixed> $state
+ * @return int Number of removed orphan grants.
+ */
+function plugin_mastodon_state_prune_orphaned_pending_comment_reply_optins(&$state) {
+	$optins = plugin_mastodon_state_comment_reply_optins($state);
+	$removed = 0;
+	$changed = false;
+	foreach ($optins as $key => $meta) {
+		if (!is_array($meta) || empty($meta ['pending_file'])) {
+			continue;
+		}
+		$entryId = isset($meta ['entry_id']) ? (string) $meta ['entry_id'] : '';
+		$commentId = isset($meta ['comment_id']) ? (string) $meta ['comment_id'] : '';
+		if ($entryId === '' || $commentId === '') {
+			unset($optins [$key]);
+			$removed++;
+			$changed = true;
+			continue;
+		}
+		if (function_exists('comment_exists') && comment_exists($entryId, $commentId)) {
+			$optins [$key] ['pending_file'] = '';
+			$changed = true;
+			continue;
+		}
+		$pendingPath = defined('FP_CONTENT') ? (defined('ABS_PATH') ? ABS_PATH : '') . FP_CONTENT . 'plugin_commentcenter/' . basename((string) $meta ['pending_file']) : '';
+		if ($pendingPath === '' || !is_file($pendingPath)) {
+			unset($optins [$key]);
+			$removed++;
+			$changed = true;
+		}
+	}
+	if ($changed) {
+		$state ['comment_reply_optins'] = $optins;
+	}
+	return $removed;
 }
 
 /**
@@ -5615,6 +5726,7 @@ function plugin_mastodon_on_comment_saved($entryId, $commentId, $comment = array
 	if (!empty($commentMeta ['source']) && strtolower((string) $commentMeta ['source']) === 'remote') {
 		return;
 	}
+	$pendingGrantFinalized = plugin_mastodon_state_finalize_comment_reply_optin($state, $entryId, $commentId);
 	$grantSource = plugin_mastodon_local_comment_export_grant_source($options, $comment, $isUpdate);
 	if ($grantSource !== '') {
 		plugin_mastodon_state_set_comment_reply_optin($state, $entryId, $commentId, '', $grantSource);
@@ -5622,7 +5734,7 @@ function plugin_mastodon_on_comment_saved($entryId, $commentId, $comment = array
 	$mayExportNewLocalComment = $grantSource !== '' || plugin_mastodon_state_has_comment_reply_optin($state, $entryId, $commentId);
 	if (trim((string) (isset($options ['instance_url']) ? $options ['instance_url'] : '')) === ''
 		|| trim((string) (isset($options ['access_token']) ? $options ['access_token'] : '')) === '') {
-		if ($grantSource !== '') {
+		if ($grantSource !== '' || $pendingGrantFinalized) {
 			plugin_mastodon_state_write($state);
 		}
 		return;
@@ -13582,6 +13694,10 @@ function plugin_mastodon_run_sync($force, $fullWindow = null) {
 	}
 
 	plugin_mastodon_rate_limit_guard_start('content_sync');
+	$orphanedPendingOptinsRemoved = plugin_mastodon_state_prune_orphaned_pending_comment_reply_optins($state);
+	if ($orphanedPendingOptinsRemoved > 0) {
+		plugin_mastodon_log('Removed ' . $orphanedPendingOptinsRemoved . ' orphaned CommentCenter Mastodon opt-in grant(s)');
+	}
 	$state ['last_error'] = '';
 	$state ['content_stats'] = plugin_mastodon_default_state() ['content_stats'];
 
@@ -13652,8 +13768,9 @@ function plugin_mastodon_maybe_sync() {
 	}
 }
 add_action('init', 'plugin_mastodon_maybe_sync', 20);
-add_action('comment_mastodon', 'plugin_mastodon_optin_comment_to_reply', 1);
+add_action('comment_mastodon', 'plugin_mastodon_optin_comment_to_reply', 1, 0);
 add_action('commentcenter_comment_logged', 'plugin_mastodon_on_commentcenter_comment_logged', 10, 4);
+add_action('commentcenter_comment_discarded', 'plugin_mastodon_on_commentcenter_comment_discarded', 10, 4);
 add_action('entry_saved', 'plugin_mastodon_on_entry_saved', 10, 4);
 add_action('entry_deleted', 'plugin_mastodon_on_entry_deleted', 10, 2);
 add_action('comment_saved', 'plugin_mastodon_on_comment_saved', 10, 5);

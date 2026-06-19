@@ -43,7 +43,7 @@ class admin_entry_commentcenter extends AdminPanelAction {
 		'commdelok_2',
 		'ccancel_2'
 	);
-	
+
 	var $plugin;
 
 	/**
@@ -679,11 +679,13 @@ class admin_entry_commentcenter extends AdminPanelAction {
 		if (empty($_POST ['select'])) {
 			$s = -6;
 		} else {
+			$removed = 0;
 			foreach ($_POST ['select'] as $commid => $check) {
-				$f = $this->plugin->pl_dir . $commid . '.txt';
-				@unlink($f);
+				if ($this->plugin->discardLoggedComment((string) $commid)) {
+					$removed++;
+				}
 			}
-			$s = 6;
+			$s = $removed > 0 ? 6 : -6;
 		}
 		$this->smarty->assign('success', $s);
 		$this->_redirect('approve_list');

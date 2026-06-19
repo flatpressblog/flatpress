@@ -6,12 +6,12 @@ Normal run checked for this documentation set after the exported-comment deletio
 ```text
 php simulate_mastodon_plugin.php --summary
 Exit-code: 0
-[OK]: 269
+[OK]: 272
 [FAIL]: 0
 [WARN]: 0
 [SKIP]: 0
 ```
-Static `test_result()` calls found in the script: `270`.
+Static `test_result()` calls found in the script: `273`.
 One test is optional and only runs with `--live-auth`:
 
 ```text
@@ -24,13 +24,13 @@ The catalog below is generated from all static `test_result()` calls and therefo
 
 | Category                           | Static tests |
 | ---------------------------------- | ------------ |
-| Regular simulation tests           | 269          |
+| Regular simulation tests           | 272          |
 | Optional live/auth smoke           | 1            |
-| Total static `test_result()` calls | 270          |
+| Total static `test_result()` calls | 273          |
 
 ## What the harness proves well
 
-The harness now also checks that imported Mastodon status footer links render with `target="_blank"` and `rel="nofollow noopener noreferrer"` while those BBCode attributes are stripped from outbound Mastodon text. It also checks that advanced comment-shard maintenance controls are not embedded in the main settings template, are available from a dedicated maintenance template, that notification-based reply hints import old-thread replies before the slower rotation fallback, and that the central `disable_comment_reply_sync` gate disables FlatPress comment export, Mastodon reply import, reply-notification/context imports and reply deletion follow-ups while keeping entry synchronization active, that the optional `{comment_mastodon}` visitor opt-in is shown only while local comments may be exported, that FlatPress/admin comments with a stored `LOGGEDIN` marker export without a public visitor marker, that visitor opt-ins are persisted even before credentials are complete, that local visitor comments without a stored opt-in marker stay local even when saved during an admin session, and that opted-in visitor replies are not blocked by non-opted-in local parents, and that the optional explicit one-way mode blocks Mastodon-to-FlatPress imports while preserving FlatPress-to-Mastodon exports, keeps hidden import settings intact in the admin save path, hides import-only admin UI output, hides import-only companion-plugin diagnostics while keeping export helpers, re-exports local objects after remote deletion, and keeps locally deleted imported external Mastodon replies tombstoned even when the remote author edits the reply before the next content sync. It also verifies that Mastodon instance capability detection prefers machine-readable `api_versions[mastodon]`, handles nightly version strings, preserves compact `configuration.accounts` snapshots, loads the widget stylesheet through `plugin_mastodon_head()` as a versioned `res/mastodon.css` asset, refreshes the profile-widget cache during automatic and manual one-way sync paths, sends `exclude_direct=true` only when account-status support is known, retries without it for compatible-server rejections, ignores notification fallback payloads when the normal mention status is present, preserves long remote media descriptions, avoids repeated failed `/api/v2/instance` requests within one PHP request, keeps safe defaults when instance information is temporarily unavailable, version-gates unattached media cleanup deletes, and renders the compact Mastodon profile widget solely from a local public profile cache with a locally stored avatar.
+The harness now also checks the real `comment_validate` filter chain with CommentCenter moderation, the direct save path with the CommentCenter filter explicitly removed, preservation of the checked Mastodon opt-in after unrelated validation errors, explicit hook priorities/argument counts, and cleanup of rejected or externally orphaned pending grants. The complete simulator remains green when CommentCenter is absent from the active plugin configuration; CommentCenter-specific assertions become not applicable while the direct FlatPress save path remains fully exercised. It also checks that imported Mastodon status footer links render with `target="_blank"` and `rel="nofollow noopener noreferrer"` while those BBCode attributes are stripped from outbound Mastodon text. It also checks that advanced comment-shard maintenance controls are not embedded in the main settings template, are available from a dedicated maintenance template, that notification-based reply hints import old-thread replies before the slower rotation fallback, and that the central `disable_comment_reply_sync` gate disables FlatPress comment export, Mastodon reply import, reply-notification/context imports and reply deletion follow-ups while keeping entry synchronization active, that the optional `{comment_mastodon}` visitor opt-in is shown only while local comments may be exported, that FlatPress/admin comments with a stored `LOGGEDIN` marker export without a public visitor marker, that visitor opt-ins are persisted even before credentials are complete, that local visitor comments without a stored opt-in marker stay local even when saved during an admin session, and that opted-in visitor replies are not blocked by non-opted-in local parents, and that the optional explicit one-way mode blocks Mastodon-to-FlatPress imports while preserving FlatPress-to-Mastodon exports, keeps hidden import settings intact in the admin save path, hides import-only admin UI output, hides import-only companion-plugin diagnostics while keeping export helpers, re-exports local objects after remote deletion, and keeps locally deleted imported external Mastodon replies tombstoned even when the remote author edits the reply before the next content sync. It also verifies that Mastodon instance capability detection prefers machine-readable `api_versions[mastodon]`, handles nightly version strings, preserves compact `configuration.accounts` snapshots, loads the widget stylesheet through `plugin_mastodon_head()` as a versioned `res/mastodon.css` asset, refreshes the profile-widget cache during automatic and manual one-way sync paths, sends `exclude_direct=true` only when account-status support is known, retries without it for compatible-server rejections, ignores notification fallback payloads when the normal mention status is present, preserves long remote media descriptions, avoids repeated failed `/api/v2/instance` requests within one PHP request, keeps safe defaults when instance information is temporarily unavailable, version-gates unattached media cleanup deletes, and renders the compact Mastodon profile widget solely from a local public profile cache with a locally stored avatar.
 
 | Area                                     | What is real                                                                                                                 | What is simulated                                                               |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
@@ -341,26 +341,29 @@ The media-family policy is protected by dedicated tests. These tests call the re
 | 12125 | Automatic scheduled sync exports a new current comment on an old mapped entry through dirty_comments                                                            |
 | 12223 | Authenticated FlatPress comments export after a stored LOGGEDIN marker without visitor opt-in                                                                   |
 | 12334 | Admin session does not grant Mastodon export to visitor comments without opt-in                                                                                 |
-| 12449 | CommentCenter preserves visitor Mastodon opt-in until admin approval and export                                                                                 |
-| 12557 | Visitor opt-in is stored without complete credentials and later permits comment export                                                                          |
-| 12662 | Opted-in visitor replies export even when their local parent has no Mastodon opt-in                                                                             |
-| 12721 | One-way mode option is disabled by default, normalized, assigned to admin UI, templated and translated                                                          |
-| 12761 | One-way admin save preserves hidden import options while keeping one-way mode enabled                                                                           |
-| 12778 | One-way admin save preserves hidden import options when one-way mode is disabled in the same submit                                                             |
-| 12798 | Bidirectional admin save still stores visible unchecked import options as disabled                                                                              |
-| 12830 | One-way admin template hides import controls, notification hints and import-only counters                                                                       |
-| 12856 | One-way admin template keeps export, OAuth, instance, token, state and deletion outputs visible                                                                 |
-| 12872 | One-way admin assignment hides import-only companion plugins and uses one-way companion intro                                                                   |
-| 12978 | One-way mode blocks Mastodon-to-FlatPress imports while FlatPress-to-Mastodon export still runs                                                                 |
-| 13065 | Automatic one-way content sync refreshes the Mastodon widget profile cache without remote import reads                                                          |
-| 13140 | One-way deletion sync keeps local content, removes stale remote mappings and queues re-export                                                                   |
-| 13215 | One-way content sync re-exports local objects whose remote mappings were unlinked after remote deletion                                                         |
-| 13284 | One-way pending descendant rechecks keep local comments and queue them for re-export instead of deleting them                                                   |
-| 13305 | Mastodon widget remains hidden and performs no HTTP requests while its local profile cache is missing                                                           |
-| 13348 | Mastodon widget profile cache is refreshed from verify_credentials and stores only public profile data plus a local avatar                                      |
-| 13373 | Mastodon widget renders compact local-cache markup without remote API calls or inline CSS                                                                       |
-| 13397 | Mastodon widget stylesheet is loaded by plugin_mastodon_head as a versioned CSS asset                                                                           |
-| 13412 | Mastodon widget profile refresh reuses the cached avatar when the Mastodon avatar URL is unchanged                                                              |
-| 13439 | Mastodon widget uses a localized fallback avatar alt text for Mastodon 4.0-4.5 account payloads without avatar_description                                      |
-| 13458 | Mastodon widget hides incomplete local profile caches instead of falling back to remote avatar URLs                                                             |
-| 13483 | Mastodon widget is registered and translated in all FlatPress plugin language files                                                                             |
+| 12400 | Visitor Mastodon opt-in checkbox preserves POST state and hook priorities/signatures are explicit                                                               |
+| 12502 | Visitor opt-in persists through the direct FlatPress save path when CommentCenter is disabled                                                                   |
+| 12681 | CommentCenter preserves visitor Mastodon opt-in until admin approval and export                                                                                 |
+| 12819 | CommentCenter rejection and bounded pruning remove orphaned pending opt-in grants                                                                               |
+| 12925 | Visitor opt-in is stored without complete credentials and later permits comment export                                                                          |
+| 13030 | Opted-in visitor replies export even when their local parent has no Mastodon opt-in                                                                             |
+| 13089 | One-way mode option is disabled by default, normalized, assigned to admin UI, templated and translated                                                          |
+| 13129 | One-way admin save preserves hidden import options while keeping one-way mode enabled                                                                           |
+| 13146 | One-way admin save preserves hidden import options when one-way mode is disabled in the same submit                                                             |
+| 13166 | Bidirectional admin save still stores visible unchecked import options as disabled                                                                              |
+| 13198 | One-way admin template hides import controls, notification hints and import-only counters                                                                       |
+| 13224 | One-way admin template keeps export, OAuth, instance, token, state and deletion outputs visible                                                                 |
+| 13240 | One-way admin assignment hides import-only companion plugins and uses one-way companion intro                                                                   |
+| 13346 | One-way mode blocks Mastodon-to-FlatPress imports while FlatPress-to-Mastodon export still runs                                                                 |
+| 13433 | Automatic one-way content sync refreshes the Mastodon widget profile cache without remote import reads                                                          |
+| 13508 | One-way deletion sync keeps local content, removes stale remote mappings and queues re-export                                                                   |
+| 13583 | One-way content sync re-exports local objects whose remote mappings were unlinked after remote deletion                                                         |
+| 13652 | One-way pending descendant rechecks keep local comments and queue them for re-export instead of deleting them                                                   |
+| 13673 | Mastodon widget remains hidden and performs no HTTP requests while its local profile cache is missing                                                           |
+| 13716 | Mastodon widget profile cache is refreshed from verify_credentials and stores only public profile data plus a local avatar                                      |
+| 13741 | Mastodon widget renders compact local-cache markup without remote API calls or inline CSS                                                                       |
+| 13765 | Mastodon widget stylesheet is loaded by plugin_mastodon_head as a versioned CSS asset                                                                           |
+| 13780 | Mastodon widget profile refresh reuses the cached avatar when the Mastodon avatar URL is unchanged                                                              |
+| 13807 | Mastodon widget uses a localized fallback avatar alt text for Mastodon 4.0-4.5 account payloads without avatar_description                                      |
+| 13826 | Mastodon widget hides incomplete local profile caches instead of falling back to remote avatar URLs                                                             |
+| 13851 | Mastodon widget is registered and translated in all FlatPress plugin language files                                                                             |

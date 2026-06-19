@@ -274,21 +274,28 @@ flowchart TD
 
 ### 1.0b Visitor opt-in for FlatPress comment-to-Mastodon reply export
 
-The `{comment_mastodon}` Smarty hook is a narrow template bridge. The Mastodon plugin decides whether the notice is needed from the comment/reply synchronization gate, not from the current token state. That allows a visitor approval to be captured even before Mastodon credentials are completed. Missing approval does not reject the local FlatPress comment; it only prevents later Mastodon/Fediverse publication. If CommentCenter holds a visitor comment for moderation, `commentcenter_comment_logged` stores the opt-in grant before the later admin approval writes the final comment. Authenticated FlatPress comments receive an authenticated state grant only when the stored comment payload carries FlatPress's `LOGGEDIN` marker. A current admin session alone is not enough, because CommentCenter can publish visitor comments while an administrator is logged in.
+The `{comment_mastodon}` Smarty hook is a narrow template bridge. The Mastodon plugin decides whether the notice is needed from the comment/reply synchronization gate, not from the current token state. A checked value is rendered again when another comment validator redisplays the same POST. Missing approval does not reject the local FlatPress comment; it only prevents later Mastodon/Fediverse publication.
+
+With CommentCenter disabled, the normal `comment_saved` hook stores the grant directly. If CommentCenter holds a visitor comment for moderation, `commentcenter_comment_logged` stores the grant plus a portable pending-file basename before the later admin decision. Approval writes the final comment and clears the pending marker; rejection emits `commentcenter_comment_discarded` and removes it. A bounded sync-time prune checks only grants that still carry `pending_file` and removes one only when both the pending file and final FlatPress comment are absent. Authenticated FlatPress comments receive an authenticated state grant only when the stored comment payload carries FlatPress's `LOGGEDIN` marker. A current admin session alone is not enough.
 
 ```mermaid
 flowchart TD
     Form["comment-form.tpl renders {comment_mastodon}"]
-    Hook["do_action('comment_mastodon')"]
+    Hook["do_action('comment_mastodon') priority 1, accepted_args 0"]
     Required{"comment/reply sync active?"}
-    Checkbox["Show checkbox and short Fediverse notice"]
+    Checkbox["Show checkbox and short notice; retain checked POST state"]
     Silent["Render nothing"]
     VisitorSubmit["Visitor submits FlatPress comment"]
-    Moderated{"CommentCenter holds for approval?"}
-    CCLogged["commentcenter_comment_logged hook"]
-    AdminApproval["Admin approves pending visitor comment"]
+    Moderated{"CommentCenter active and holds for approval?"}
+    DirectSave["Normal FlatPress comment_save"]
+    CCLogged["commentcenter_comment_logged priority 10"]
+    PendingGrant["Store frontend grant plus pending_file basename"]
+    AdminDecision{"Admin approves pending comment?"}
+    CCDiscard["commentcenter_comment_discarded priority 10"]
+    RemovePending["Remove pending opt-in grant"]
+    Saved["comment_saved priority 10"]
+    Finalize["Clear pending_file but keep grant"]
     AdminSubmit["Comment payload carries LOGGEDIN"]
-    Saved["comment_saved hook"]
     Grant{"Grant source available or already stored?"}
     StoreFrontend["Store comment_reply_optins[entry:comment] source=frontend"]
     StoreAuth["Store comment_reply_optins[entry:comment] source=authenticated"]
@@ -296,6 +303,8 @@ flowchart TD
     Credentials{"instance URL and token complete?"}
     Queue["Queue dirty_comments when entry/comment are exportable"]
     Deferred["Keep grant only; later sync may export after credentials are completed"]
+    Prune{"Grant still has pending_file at sync?"}
+    PendingExists{"Pending file or final comment exists?"}
     ExportGuard{"local comment export allowed?"}
     PostReply["POST /api/v1/statuses with in_reply_to_id"]
     SkipExport["Skip Mastodon reply export; keep comment local"]
@@ -304,16 +313,24 @@ flowchart TD
     Required -- "Yes" --> Checkbox --> VisitorSubmit
     Required -- "No" --> Silent --> VisitorSubmit
     VisitorSubmit --> Moderated
-    Moderated -- "No" --> Saved
-    Moderated -- "Yes with checkbox" --> CCLogged --> StoreFrontend --> AdminApproval --> Saved
-    Moderated -- "Yes without checkbox" --> AdminApproval
+    Moderated -- "No / CommentCenter disabled" --> DirectSave --> Saved
+    Moderated -- "Yes with checkbox" --> CCLogged --> PendingGrant --> AdminDecision
+    Moderated -- "Yes without checkbox" --> AdminDecision
+    AdminDecision -- "Approve" --> Saved
+    AdminDecision -- "Reject" --> CCDiscard --> RemovePending
     AdminSubmit --> Saved
-    Saved --> Grant
+    Saved --> Finalize --> Grant
     Grant -- "Visitor checkbox checked or stored state grant" --> StoreFrontend --> Credentials
     Grant -- "Stored LOGGEDIN marker" --> StoreAuth --> Credentials
     Grant -- "No grant" --> LocalOnly --> ExportGuard
-    Credentials -- "Yes" --> Queue --> ExportGuard
-    Credentials -- "No" --> Deferred --> ExportGuard
+    Credentials -- "Yes" --> Queue --> Prune
+    Credentials -- "No" --> Deferred --> Prune
+    Prune -- "No" --> ExportGuard
+    Prune -- "Yes" --> PendingExists
+    PendingExists -- "Final comment exists" --> Finalize
+    PendingExists -- "Pending file exists" --> ExportGuard
+    PendingExists -- "Neither exists" --> RemovePending
+    Finalize --> ExportGuard
     ExportGuard -- "Stored grant or existing mapping" --> PostReply
     ExportGuard -- "No grant for new visitor/admin-session comment" --> SkipExport
 ```
