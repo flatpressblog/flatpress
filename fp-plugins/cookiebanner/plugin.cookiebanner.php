@@ -4,7 +4,7 @@
  * Plugin URI: https://flatpress.org
  * Description: Displays a discreet banner that informs the visitor about the use of cookies and provides a link to the <a href="./admin.php?p=static&action=write&page=privacy-policy" title="Edit me!" >privacy policy</a>. Part of the standard distribution. <a href="#" id="DeleteCookie" title="Reset CookieBanner">[Reset]</a>
  * Author: FlatPress
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author URI: http://flatpress.org
  */
 
@@ -59,7 +59,7 @@ function plugin_cookiebanner_head() {
 ';
 }
 
-add_action('wp_head', 'plugin_cookiebanner_head', 0);
+add_action('wp_head', 'plugin_cookiebanner_head', 2);
 
 function plugin_cookiebanner_footer() {
 
@@ -113,7 +113,7 @@ function plugin_cookiebanner_footer() {
 ';
 }
 
-add_action('wp_footer', 'plugin_cookiebanner_footer', 0);
+add_action('wp_footer', 'plugin_cookiebanner_footer', 5);
 
 function plugin_cookiebanner_privacypolicy() {
 
@@ -124,5 +124,6 @@ function plugin_cookiebanner_privacypolicy() {
 	echo '<p><em>' . $notice_text . '</em></p>';
 }
 
-add_action('comment_form', 'plugin_cookiebanner_privacypolicy', 0);
+add_action('comment_form', 'plugin_cookiebanner_privacypolicy', 10);
+
 ?>

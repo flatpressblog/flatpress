@@ -48,7 +48,7 @@
 					} elseif ($accepted_args > 1) {
 						$the_args = array_slice($all_args, 0, $accepted_args);
 					} elseif($accepted_args == 0) {
-						$the_args = NULL;
+						$the_args = array();
 					} else {
 						$the_args = $all_args;
 					}
@@ -130,7 +130,7 @@
 					} elseif ($accepted_args > 1) {
 						$the_args = array_slice($args, 0, $accepted_args);
 					} elseif($accepted_args == 0) {
-						$the_args = NULL;
+						$the_args = array();
 					} else {
 						$the_args = $args;
 					}

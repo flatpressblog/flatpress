@@ -12352,6 +12352,174 @@ $allOk = test_result(
 ) && $allOk;
 entry_delete($adminSessionVisitorEntryId);
 
+// Regression test: the opt-in checkbox preserves a submitted value after another
+// comment validator rejects the same POST, and hook signatures stay deterministic.
+$checkboxOptinOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
+$checkboxOptinOptions ['disable_comment_reply_sync'] = '0';
+plugin_mastodon_save_options($checkboxOptinOptions);
+plugin_mastodon_runtime_cache_clear();
+$checkboxPreviousPost = $_POST;
+$_POST = array_diff_key($_POST, array('mastodon_comment_optin' => true));
+ob_start();
+plugin_mastodon_optin_comment_to_reply();
+$checkboxFreshHtml = (string) ob_get_clean();
+$_POST ['mastodon_comment_optin'] = '1';
+ob_start();
+plugin_mastodon_optin_comment_to_reply();
+$checkboxRetainedHtml = (string) ob_get_clean();
+$_POST = $checkboxPreviousPost;
+$commentMastodonHookArgs = null;
+$commentCenterLoggedHookArgs = null;
+$commentCenterDiscardedHookArgs = null;
+$commentCenterValidatePriority = false;
+if (isset($GLOBALS ['wp_filter']) && is_array($GLOBALS ['wp_filter'])) {
+	foreach (isset($GLOBALS ['wp_filter'] ['comment_mastodon'] ['1']) && is_array($GLOBALS ['wp_filter'] ['comment_mastodon'] ['1']) ? $GLOBALS ['wp_filter'] ['comment_mastodon'] ['1'] : array() as $hook) {
+		if (is_array($hook) && isset($hook ['function']) && $hook ['function'] === 'plugin_mastodon_optin_comment_to_reply') {
+			$commentMastodonHookArgs = isset($hook ['accepted_args']) ? (int) $hook ['accepted_args'] : null;
+		}
+	}
+	foreach (isset($GLOBALS ['wp_filter'] ['commentcenter_comment_logged'] ['10']) && is_array($GLOBALS ['wp_filter'] ['commentcenter_comment_logged'] ['10']) ? $GLOBALS ['wp_filter'] ['commentcenter_comment_logged'] ['10'] : array() as $hook) {
+		if (is_array($hook) && isset($hook ['function']) && $hook ['function'] === 'plugin_mastodon_on_commentcenter_comment_logged') {
+			$commentCenterLoggedHookArgs = isset($hook ['accepted_args']) ? (int) $hook ['accepted_args'] : null;
+		}
+	}
+	foreach (isset($GLOBALS ['wp_filter'] ['commentcenter_comment_discarded'] ['10']) && is_array($GLOBALS ['wp_filter'] ['commentcenter_comment_discarded'] ['10']) ? $GLOBALS ['wp_filter'] ['commentcenter_comment_discarded'] ['10'] : array() as $hook) {
+		if (is_array($hook) && isset($hook ['function']) && $hook ['function'] === 'plugin_mastodon_on_commentcenter_comment_discarded') {
+			$commentCenterDiscardedHookArgs = isset($hook ['accepted_args']) ? (int) $hook ['accepted_args'] : null;
+		}
+	}
+	foreach (isset($GLOBALS ['wp_filter'] ['comment_validate'] ['10']) && is_array($GLOBALS ['wp_filter'] ['comment_validate'] ['10']) ? $GLOBALS ['wp_filter'] ['comment_validate'] ['10'] : array() as $hook) {
+		if (is_array($hook) && isset($hook ['function']) && is_array($hook ['function']) && isset($hook ['function'] [0], $hook ['function'] [1])
+			&& is_object($hook ['function'] [0]) && get_class($hook ['function'] [0]) === 'plugin_commentcenter' && $hook ['function'] [1] === 'validate') {
+			$commentCenterValidatePriority = isset($hook ['accepted_args']) && (int) $hook ['accepted_args'] === 2;
+		}
+	}
+}
+$commentCenterConfiguredForHookTest = isset($GLOBALS ['plugin_commentcenter']) && is_object($GLOBALS ['plugin_commentcenter']);
+$commentCenterValidateConfigurationOk = !$commentCenterConfiguredForHookTest || $commentCenterValidatePriority;
+$allOk = test_result(
+	'Visitor Mastodon opt-in checkbox preserves POST state and hook priorities/signatures are explicit',
+	strpos($checkboxFreshHtml, 'checked="checked"') === false
+		&& strpos($checkboxRetainedHtml, 'checked="checked"') !== false
+		&& $commentMastodonHookArgs === 0
+		&& $commentCenterLoggedHookArgs === 4
+		&& $commentCenterDiscardedHookArgs === 4
+		&& $commentCenterValidateConfigurationOk,
+	json_encode(array(
+		'fresh_html' => $checkboxFreshHtml,
+		'retained_html' => $checkboxRetainedHtml,
+		'comment_mastodon_args' => $commentMastodonHookArgs,
+		'commentcenter_logged_args' => $commentCenterLoggedHookArgs,
+		'commentcenter_discarded_args' => $commentCenterDiscardedHookArgs,
+		'commentcenter_loaded' => $commentCenterConfiguredForHookTest,
+		'commentcenter_validate_priority_10_args_2' => $commentCenterValidatePriority,
+		'commentcenter_validate_configuration_ok' => $commentCenterValidateConfigurationOk
+	))
+) && $allOk;
+
+// Regression test: disabling CommentCenter must leave the normal FlatPress
+// validation/save path able to persist an explicit visitor opt-in.
+$commentCenterDisabledPlugin = isset($GLOBALS ['plugin_commentcenter']) && is_object($GLOBALS ['plugin_commentcenter']) ? $GLOBALS ['plugin_commentcenter'] : null;
+$commentCenterDisabledCallback = is_object($commentCenterDisabledPlugin) ? array($commentCenterDisabledPlugin, 'validate') : null;
+if (is_array($commentCenterDisabledCallback)) {
+	remove_filter('comment_validate', $commentCenterDisabledCallback, 10, 2);
+}
+$commentCenterDisabledFilterAbsent = true;
+foreach (isset($GLOBALS ['wp_filter'] ['comment_validate'] ['10']) && is_array($GLOBALS ['wp_filter'] ['comment_validate'] ['10']) ? $GLOBALS ['wp_filter'] ['comment_validate'] ['10'] : array() as $hook) {
+	if (is_array($hook) && isset($hook ['function']) && is_array($commentCenterDisabledCallback) && $hook ['function'] == $commentCenterDisabledCallback) {
+		$commentCenterDisabledFilterAbsent = false;
+	}
+}
+$commentCenterDisabledEntry = array(
+	'version' => system_ver(),
+	'subject' => 'CommentCenter disabled opt-in root',
+	'content' => 'Direct core comment path without CommentCenter.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-06-16 10:15:00 UTC')
+);
+$commentCenterDisabledEntryId = entry_save($commentCenterDisabledEntry, null);
+$commentCenterDisabledEntryParsed = entry_parse($commentCenterDisabledEntryId);
+$commentCenterDisabledState = plugin_mastodon_default_state();
+plugin_mastodon_state_set_entry_mapping($commentCenterDisabledState, $commentCenterDisabledEntryId, 'commentcenter-disabled-entry-remote-1', 'local', plugin_mastodon_entry_hash($commentCenterDisabledEntryParsed), $instanceUrl . '/@flatpress/commentcenter-disabled-entry-remote-1', '2026-06-01 10:15:00');
+plugin_mastodon_state_write($commentCenterDisabledState);
+$commentCenterDisabledComment = array(
+	'version' => system_ver(),
+	'name' => 'Direct Visitor',
+	'content' => 'Visitor opt-in without CommentCenter',
+	'date' => strtotime('2026-06-16 10:16:00 UTC')
+);
+$commentCenterDisabledPreviousFpParams = isset($GLOBALS ['fp_params']) ? $GLOBALS ['fp_params'] : array();
+$commentCenterDisabledPreviousPostData = isset($GLOBALS ['post']) ? $GLOBALS ['post'] : array();
+$commentCenterDisabledPreviousPostedContent = isset($_POST ['content']) ? $_POST ['content'] : null;
+$commentCenterDisabledPreviousAaspamPost = isset($_POST ['aaspam']) ? $_POST ['aaspam'] : null;
+$commentCenterDisabledPreviousAaspamSession = isset($_SESSION ['aaspam']) ? $_SESSION ['aaspam'] : null;
+$commentCenterDisabledPreviousLoggedin = isset($_SESSION ['loggedin']) ? $_SESSION ['loggedin'] : null;
+unset($_SESSION ['loggedin']);
+$GLOBALS ['fp_params'] ['entry'] = $commentCenterDisabledEntryId;
+$GLOBALS ['post'] = is_array($GLOBALS ['post']) ? $GLOBALS ['post'] : array();
+$GLOBALS ['post'] ['categories'] = array();
+$_POST ['content'] = $commentCenterDisabledComment ['content'];
+$_POST ['mastodon_comment_optin'] = '1';
+$_POST ['aaspam'] = '11';
+sess_add('aaspam', '11');
+$commentCenterDisabledValidation = apply_filters('comment_validate', true, $commentCenterDisabledComment);
+$commentCenterDisabledCommentId = $commentCenterDisabledValidation ? comment_save($commentCenterDisabledEntryId, $commentCenterDisabledComment) : false;
+unset($_POST ['mastodon_comment_optin']);
+if ($commentCenterDisabledPreviousPostedContent === null) {
+	unset($_POST ['content']);
+} else {
+	$_POST ['content'] = $commentCenterDisabledPreviousPostedContent;
+}
+if ($commentCenterDisabledPreviousAaspamPost === null) {
+	unset($_POST ['aaspam']);
+} else {
+	$_POST ['aaspam'] = $commentCenterDisabledPreviousAaspamPost;
+}
+if ($commentCenterDisabledPreviousAaspamSession === null) {
+	unset($_SESSION ['aaspam']);
+} else {
+	$_SESSION ['aaspam'] = $commentCenterDisabledPreviousAaspamSession;
+}
+if ($commentCenterDisabledPreviousLoggedin === null) {
+	unset($_SESSION ['loggedin']);
+} else {
+	$_SESSION ['loggedin'] = $commentCenterDisabledPreviousLoggedin;
+}
+$GLOBALS ['fp_params'] = $commentCenterDisabledPreviousFpParams;
+$GLOBALS ['post'] = $commentCenterDisabledPreviousPostData;
+if (is_array($commentCenterDisabledCallback)) {
+	add_filter('comment_validate', $commentCenterDisabledCallback, 10, 2);
+}
+$commentCenterDisabledHookState = plugin_mastodon_state_read(array($commentCenterDisabledEntryId));
+$commentCenterDisabledParsedComment = $commentCenterDisabledCommentId ? comment_parse($commentCenterDisabledEntryId, $commentCenterDisabledCommentId) : false;
+$commentCenterDisabledGrant = $commentCenterDisabledCommentId ? plugin_mastodon_state_has_comment_reply_optin($commentCenterDisabledHookState, $commentCenterDisabledEntryId, $commentCenterDisabledCommentId) : false;
+$commentCenterDisabledAllowed = $commentCenterDisabledCommentId && is_array($commentCenterDisabledParsedComment)
+	? plugin_mastodon_local_comment_export_allowed($commentCenterDisabledHookState, $commentCenterDisabledEntryId, $commentCenterDisabledCommentId, array(), $commentCenterDisabledParsedComment)
+	: false;
+$commentCenterDisabledPendingFile = $commentCenterDisabledCommentId && is_object($commentCenterDisabledPlugin)
+	? $commentCenterDisabledPlugin->pl_dir . 'e' . $commentCenterDisabledEntryId . '_c' . $commentCenterDisabledCommentId . '.txt'
+	: '';
+$allOk = test_result(
+	'Visitor opt-in persists through the direct FlatPress save path when CommentCenter is disabled',
+	$commentCenterDisabledFilterAbsent
+		&& $commentCenterDisabledValidation === true
+		&& is_string($commentCenterDisabledCommentId)
+		&& $commentCenterDisabledCommentId !== ''
+		&& $commentCenterDisabledGrant
+		&& $commentCenterDisabledAllowed
+		&& ($commentCenterDisabledPendingFile === '' || !is_file($commentCenterDisabledPendingFile)),
+	json_encode(array(
+		'commentcenter_initially_loaded' => is_object($commentCenterDisabledPlugin),
+		'filter_absent' => $commentCenterDisabledFilterAbsent,
+		'validation' => $commentCenterDisabledValidation,
+		'comment_id' => $commentCenterDisabledCommentId,
+		'grant' => $commentCenterDisabledGrant,
+		'allowed' => $commentCenterDisabledAllowed,
+		'pending_file' => $commentCenterDisabledPendingFile
+	))
+) && $allOk;
+entry_delete($commentCenterDisabledEntryId);
+
 // Regression test: CommentCenter moderation must preserve an explicit visitor opt-in.
 // Visitor comments requiring approval are written to CommentCenter first, so the
 // normal comment_saved hook is not reached during the visitor POST.
@@ -12384,12 +12552,70 @@ $commentCenterOptinComment = array(
 	'date' => strtotime('2026-06-16 10:21:00 UTC')
 );
 $commentCenterOptinComment ['id'] = bdb_idfromtime(BDB_COMMENT, $commentCenterOptinComment ['date']);
+$commentCenterPlugin = isset($GLOBALS ['plugin_commentcenter']) && is_object($GLOBALS ['plugin_commentcenter']) ? $GLOBALS ['plugin_commentcenter'] : null;
+$commentCenterPreviousFpParams = $GLOBALS ['fp_params'];
+$commentCenterPreviousPost = $GLOBALS ['post'];
+$commentCenterPreviousPolicies = is_object($commentCenterPlugin) && isset($commentCenterPlugin->policies) ? $commentCenterPlugin->policies : array();
+$commentCenterPreviousConf = is_object($commentCenterPlugin) && isset($commentCenterPlugin->conf) ? $commentCenterPlugin->conf : array();
+$commentCenterPreviousEmailAlert = isset($GLOBALS ['fp_config'] ['plugins'] ['commentcenter'] ['email_alert']) ? $GLOBALS ['fp_config'] ['plugins'] ['commentcenter'] ['email_alert'] : null;
+$GLOBALS ['fp_config'] ['plugins'] ['commentcenter'] ['email_alert'] = false;
+$GLOBALS ['fp_params'] ['entry'] = $commentCenterOptinEntryId;
+$GLOBALS ['post'] = is_array($GLOBALS ['post']) ? $GLOBALS ['post'] : array();
+$GLOBALS ['post'] ['categories'] = array();
+$GLOBALS ['post'] ['subject'] = 'CommentCenter visitor opt-in root';
+if (is_object($commentCenterPlugin)) {
+	$commentCenterPlugin->policies = array(array('do' => '0', 'is_all' => true));
+	$commentCenterPlugin->conf = array('akismet_check' => 0, 'email_alert' => 0, 'log_all' => 0);
+}
+$commentCenterPreviousPostedContent = isset($_POST ['content']) ? $_POST ['content'] : null;
+$commentCenterPreviousAaspamPost = isset($_POST ['aaspam']) ? $_POST ['aaspam'] : null;
+$commentCenterPreviousAaspamSession = isset($_SESSION ['aaspam']) ? $_SESSION ['aaspam'] : null;
+$commentCenterPreviousLoggedinSession = isset($_SESSION ['loggedin']) ? $_SESSION ['loggedin'] : null;
+unset($_SESSION ['loggedin']);
+$_POST ['content'] = $commentCenterOptinComment ['content'];
 $_POST ['mastodon_comment_optin'] = '1';
-do_action('commentcenter_comment_logged', $commentCenterOptinEntryId, $commentCenterOptinComment, 'confirm', 'simulated-commentcenter-pending-file');
+$_POST ['aaspam'] = '7';
+sess_add('aaspam', '7');
+$commentCenterValidationResult = is_object($commentCenterPlugin) ? apply_filters('comment_validate', true, $commentCenterOptinComment) : true;
 unset($_POST ['mastodon_comment_optin']);
+if ($commentCenterPreviousPostedContent === null) {
+	unset($_POST ['content']);
+} else {
+	$_POST ['content'] = $commentCenterPreviousPostedContent;
+}
+if ($commentCenterPreviousAaspamPost === null) {
+	unset($_POST ['aaspam']);
+} else {
+	$_POST ['aaspam'] = $commentCenterPreviousAaspamPost;
+}
+if ($commentCenterPreviousAaspamSession === null) {
+	unset($_SESSION ['aaspam']);
+} else {
+	$_SESSION ['aaspam'] = $commentCenterPreviousAaspamSession;
+}
+if ($commentCenterPreviousLoggedinSession === null) {
+	unset($_SESSION ['loggedin']);
+} else {
+	$_SESSION ['loggedin'] = $commentCenterPreviousLoggedinSession;
+}
+$GLOBALS ['fp_params'] = $commentCenterPreviousFpParams;
+$GLOBALS ['post'] = $commentCenterPreviousPost;
+if (is_object($commentCenterPlugin)) {
+	$commentCenterPlugin->policies = $commentCenterPreviousPolicies;
+	$commentCenterPlugin->conf = $commentCenterPreviousConf;
+}
+if ($commentCenterPreviousEmailAlert === null) {
+	unset($GLOBALS ['fp_config'] ['plugins'] ['commentcenter'] ['email_alert']);
+} else {
+	$GLOBALS ['fp_config'] ['plugins'] ['commentcenter'] ['email_alert'] = $commentCenterPreviousEmailAlert;
+}
+$commentCenterPendingFile = is_object($commentCenterPlugin) ? $commentCenterPlugin->pl_dir . 'e' . $commentCenterOptinEntryId . '_c' . $commentCenterOptinComment ['id'] . '.txt' : '';
 $commentCenterPendingState = plugin_mastodon_state_read(array($commentCenterOptinEntryId));
 $commentCenterPendingGrantStored = plugin_mastodon_state_has_comment_reply_optin($commentCenterPendingState, $commentCenterOptinEntryId, $commentCenterOptinComment ['id']);
 $commentCenterPendingQueued = plugin_mastodon_state_has_dirty_comment($commentCenterPendingState, $commentCenterOptinEntryId, $commentCenterOptinComment ['id']);
+$commentCenterPendingOptins = plugin_mastodon_state_comment_reply_optins($commentCenterPendingState);
+$commentCenterPendingKey = plugin_mastodon_state_comment_key($commentCenterOptinEntryId, $commentCenterOptinComment ['id']);
+$commentCenterPendingMeta = isset($commentCenterPendingOptins [$commentCenterPendingKey]) && is_array($commentCenterPendingOptins [$commentCenterPendingKey]) ? $commentCenterPendingOptins [$commentCenterPendingKey] : array();
 
 $commentCenterPreviousLogin = isset($_SESSION ['loggedin']) ? $_SESSION ['loggedin'] : null;
 $_SESSION ['loggedin'] = true;
@@ -12405,6 +12631,12 @@ $commentCenterApprovedCommentParsed = comment_parse($commentCenterOptinEntryId, 
 $commentCenterApprovedState = plugin_mastodon_state_read(array($commentCenterOptinEntryId));
 $commentCenterApprovedGrantStored = plugin_mastodon_state_has_comment_reply_optin($commentCenterApprovedState, $commentCenterOptinEntryId, $commentCenterApprovedCommentId);
 $commentCenterApprovedQueued = plugin_mastodon_state_has_dirty_comment($commentCenterApprovedState, $commentCenterOptinEntryId, $commentCenterApprovedCommentId);
+$commentCenterApprovedOptins = plugin_mastodon_state_comment_reply_optins($commentCenterApprovedState);
+$commentCenterApprovedKey = plugin_mastodon_state_comment_key($commentCenterOptinEntryId, $commentCenterApprovedCommentId);
+$commentCenterApprovedOptinMeta = isset($commentCenterApprovedOptins [$commentCenterApprovedKey]) && is_array($commentCenterApprovedOptins [$commentCenterApprovedKey]) ? $commentCenterApprovedOptins [$commentCenterApprovedKey] : array();
+if ($commentCenterPendingFile !== '' && is_file($commentCenterPendingFile)) {
+	@unlink($commentCenterPendingFile);
+}
 
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
 $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
@@ -12448,21 +12680,32 @@ foreach ($commentCenterOptinRequests as $request) {
 $commentCenterOptinMeta = plugin_mastodon_state_get_comment_meta($commentCenterOptinStateAfter, $commentCenterOptinEntryId, $commentCenterApprovedCommentId);
 $allOk = test_result(
 	'CommentCenter preserves visitor Mastodon opt-in until admin approval and export',
-	$commentCenterPendingGrantStored
+		!is_object($commentCenterPlugin)
+		|| ($commentCenterValidationResult === false
+		&& $commentCenterPendingFile !== ''
+		&& $commentCenterPendingGrantStored
 		&& !$commentCenterPendingQueued
+		&& isset($commentCenterPendingMeta ['pending_file'])
+		&& (string) $commentCenterPendingMeta ['pending_file'] === basename($commentCenterPendingFile)
 		&& $commentCenterApprovedCommentId === $commentCenterOptinComment ['id']
 		&& $commentCenterApprovedGrantStored
+		&& empty($commentCenterApprovedOptinMeta ['pending_file'])
 		&& $commentCenterApprovedQueued
 		&& !plugin_mastodon_local_comment_from_authenticated_author($commentCenterApprovedCommentParsed)
 		&& !empty($commentCenterOptinResult ['ok'])
 		&& !empty($commentCenterOptinMeta ['remote_id'])
 		&& $commentCenterOptinRequest !== array()
 		&& isset($commentCenterOptinRequest ['in_reply_to_id'])
-		&& (string) $commentCenterOptinRequest ['in_reply_to_id'] === 'commentcenter-optin-entry-remote-1',
+		&& (string) $commentCenterOptinRequest ['in_reply_to_id'] === 'commentcenter-optin-entry-remote-1'),
 	json_encode(array(
+		'commentcenter_loaded' => is_object($commentCenterPlugin),
+		'validation_result' => $commentCenterValidationResult,
+		'pending_file' => $commentCenterPendingFile,
+		'pending_meta' => $commentCenterPendingMeta,
 		'pending_grant_stored' => $commentCenterPendingGrantStored,
 		'pending_queued' => $commentCenterPendingQueued,
 		'approved_id' => $commentCenterApprovedCommentId,
+		'approved_optin_meta' => $commentCenterApprovedOptinMeta,
 		'approved_grant_stored' => $commentCenterApprovedGrantStored,
 		'approved_queued' => $commentCenterApprovedQueued,
 		'approved_comment' => $commentCenterApprovedCommentParsed,
@@ -12472,6 +12715,131 @@ $allOk = test_result(
 	))
 ) && $allOk;
 entry_delete($commentCenterOptinEntryId);
+
+// Regression test: rejecting a pending CommentCenter comment must remove its
+// Mastodon opt-in grant, while the bounded fallback pruner removes only stale
+// pending-file grants and leaves ordinary grants untouched.
+$commentCenterDiscardOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
+$commentCenterDiscardOptions ['sync_start_date'] = '';
+$commentCenterDiscardOptions ['disable_comment_reply_sync'] = '0';
+plugin_mastodon_save_options($commentCenterDiscardOptions);
+plugin_mastodon_runtime_cache_clear();
+$commentCenterDiscardPlugin = isset($GLOBALS ['plugin_commentcenter']) && is_object($GLOBALS ['plugin_commentcenter']) ? $GLOBALS ['plugin_commentcenter'] : null;
+$commentCenterDiscardEntry = array(
+	'version' => system_ver(),
+	'subject' => 'CommentCenter discarded opt-in root',
+	'content' => 'Pending visitor opt-in must be cleaned after rejection.',
+	'author' => 'Simulation',
+	'date' => strtotime('2026-06-16 10:25:00 UTC')
+);
+$commentCenterDiscardEntryId = entry_save($commentCenterDiscardEntry, null);
+plugin_mastodon_state_write(plugin_mastodon_default_state());
+$commentCenterDiscardComment = array(
+	'version' => system_ver(),
+	'name' => 'Rejected Visitor',
+	'content' => 'Pending visitor comment with opt-in',
+	'date' => strtotime('2026-06-16 10:26:00 UTC')
+);
+$commentCenterDiscardComment ['id'] = bdb_idfromtime(BDB_COMMENT, $commentCenterDiscardComment ['date']);
+$commentCenterDiscardPreviousFpParams = $GLOBALS ['fp_params'];
+$commentCenterDiscardPreviousPostData = $GLOBALS ['post'];
+$commentCenterDiscardPreviousPolicies = is_object($commentCenterDiscardPlugin) && isset($commentCenterDiscardPlugin->policies) ? $commentCenterDiscardPlugin->policies : array();
+$commentCenterDiscardPreviousConf = is_object($commentCenterDiscardPlugin) && isset($commentCenterDiscardPlugin->conf) ? $commentCenterDiscardPlugin->conf : array();
+$commentCenterDiscardPreviousEmailAlert = isset($GLOBALS ['fp_config'] ['plugins'] ['commentcenter'] ['email_alert']) ? $GLOBALS ['fp_config'] ['plugins'] ['commentcenter'] ['email_alert'] : null;
+$GLOBALS ['fp_config'] ['plugins'] ['commentcenter'] ['email_alert'] = false;
+$commentCenterDiscardPreviousPostedContent = isset($_POST ['content']) ? $_POST ['content'] : null;
+$commentCenterDiscardPreviousAaspamPost = isset($_POST ['aaspam']) ? $_POST ['aaspam'] : null;
+$commentCenterDiscardPreviousAaspamSession = isset($_SESSION ['aaspam']) ? $_SESSION ['aaspam'] : null;
+$commentCenterDiscardPreviousLoggedin = isset($_SESSION ['loggedin']) ? $_SESSION ['loggedin'] : null;
+unset($_SESSION ['loggedin']);
+$GLOBALS ['fp_params'] ['entry'] = $commentCenterDiscardEntryId;
+$GLOBALS ['post'] = is_array($GLOBALS ['post']) ? $GLOBALS ['post'] : array();
+$GLOBALS ['post'] ['categories'] = array();
+$GLOBALS ['post'] ['subject'] = 'CommentCenter discarded opt-in root';
+if (is_object($commentCenterDiscardPlugin)) {
+	$commentCenterDiscardPlugin->policies = array(array('do' => '0', 'is_all' => true));
+	$commentCenterDiscardPlugin->conf = array('akismet_check' => 0, 'email_alert' => 0, 'log_all' => 0);
+}
+$_POST ['content'] = $commentCenterDiscardComment ['content'];
+$_POST ['mastodon_comment_optin'] = '1';
+$_POST ['aaspam'] = '13';
+sess_add('aaspam', '13');
+$commentCenterDiscardValidation = is_object($commentCenterDiscardPlugin) ? apply_filters('comment_validate', true, $commentCenterDiscardComment) : true;
+unset($_POST ['mastodon_comment_optin']);
+if ($commentCenterDiscardPreviousPostedContent === null) {
+	unset($_POST ['content']);
+} else {
+	$_POST ['content'] = $commentCenterDiscardPreviousPostedContent;
+}
+if ($commentCenterDiscardPreviousAaspamPost === null) {
+	unset($_POST ['aaspam']);
+} else {
+	$_POST ['aaspam'] = $commentCenterDiscardPreviousAaspamPost;
+}
+if ($commentCenterDiscardPreviousAaspamSession === null) {
+	unset($_SESSION ['aaspam']);
+} else {
+	$_SESSION ['aaspam'] = $commentCenterDiscardPreviousAaspamSession;
+}
+if ($commentCenterDiscardPreviousLoggedin === null) {
+	unset($_SESSION ['loggedin']);
+} else {
+	$_SESSION ['loggedin'] = $commentCenterDiscardPreviousLoggedin;
+}
+$GLOBALS ['fp_params'] = $commentCenterDiscardPreviousFpParams;
+$GLOBALS ['post'] = $commentCenterDiscardPreviousPostData;
+if (is_object($commentCenterDiscardPlugin)) {
+	$commentCenterDiscardPlugin->policies = $commentCenterDiscardPreviousPolicies;
+	$commentCenterDiscardPlugin->conf = $commentCenterDiscardPreviousConf;
+}
+if ($commentCenterDiscardPreviousEmailAlert === null) {
+	unset($GLOBALS ['fp_config'] ['plugins'] ['commentcenter'] ['email_alert']);
+} else {
+	$GLOBALS ['fp_config'] ['plugins'] ['commentcenter'] ['email_alert'] = $commentCenterDiscardPreviousEmailAlert;
+}
+$commentCenterDiscardRecordId = 'e' . $commentCenterDiscardEntryId . '_c' . $commentCenterDiscardComment ['id'];
+$commentCenterDiscardFile = is_object($commentCenterDiscardPlugin) ? $commentCenterDiscardPlugin->pl_dir . $commentCenterDiscardRecordId . '.txt' : '';
+$commentCenterDiscardStateBefore = plugin_mastodon_state_read(array($commentCenterDiscardEntryId));
+$commentCenterDiscardGrantBefore = plugin_mastodon_state_has_comment_reply_optin($commentCenterDiscardStateBefore, $commentCenterDiscardEntryId, $commentCenterDiscardComment ['id']);
+$commentCenterDiscarded = is_object($commentCenterDiscardPlugin) ? $commentCenterDiscardPlugin->discardLoggedComment($commentCenterDiscardRecordId) : false;
+$commentCenterDiscardStateAfter = plugin_mastodon_state_read(array($commentCenterDiscardEntryId));
+$commentCenterDiscardGrantAfter = plugin_mastodon_state_has_comment_reply_optin($commentCenterDiscardStateAfter, $commentCenterDiscardEntryId, $commentCenterDiscardComment ['id']);
+
+$orphanPruneState = plugin_mastodon_default_state();
+$orphanPruneEntryId = 'entry260616-104000';
+$orphanPruneCommentId = 'comment260616-104100';
+$ordinaryGrantEntryId = 'entry260616-104200';
+$ordinaryGrantCommentId = 'comment260616-104300';
+plugin_mastodon_state_set_comment_reply_optin($orphanPruneState, $orphanPruneEntryId, $orphanPruneCommentId, '2026-06-16 10:41:00', 'frontend', 'e' . $orphanPruneEntryId . '_c' . $orphanPruneCommentId . '.txt');
+plugin_mastodon_state_set_comment_reply_optin($orphanPruneState, $ordinaryGrantEntryId, $ordinaryGrantCommentId, '2026-06-16 10:43:00', 'frontend');
+$orphanPrunedCount = plugin_mastodon_state_prune_orphaned_pending_comment_reply_optins($orphanPruneState);
+$orphanGrantRemains = plugin_mastodon_state_has_comment_reply_optin($orphanPruneState, $orphanPruneEntryId, $orphanPruneCommentId);
+$ordinaryGrantRemains = plugin_mastodon_state_has_comment_reply_optin($orphanPruneState, $ordinaryGrantEntryId, $ordinaryGrantCommentId);
+
+$allOk = test_result(
+	'CommentCenter rejection and bounded pruning remove orphaned pending opt-in grants',
+	!is_object($commentCenterDiscardPlugin)
+	|| ($commentCenterDiscardValidation === false
+		&& $commentCenterDiscardFile !== ''
+		&& $commentCenterDiscardGrantBefore
+		&& $commentCenterDiscarded
+		&& !is_file($commentCenterDiscardFile)
+		&& !$commentCenterDiscardGrantAfter
+		&& $orphanPrunedCount === 1
+		&& !$orphanGrantRemains
+		&& $ordinaryGrantRemains),
+	json_encode(array(
+		'validation' => $commentCenterDiscardValidation,
+		'pending_file' => $commentCenterDiscardFile,
+		'grant_before' => $commentCenterDiscardGrantBefore,
+		'discarded' => $commentCenterDiscarded,
+		'grant_after' => $commentCenterDiscardGrantAfter,
+		'orphan_pruned_count' => $orphanPrunedCount,
+		'orphan_remains' => $orphanGrantRemains,
+		'ordinary_grant_remains' => $ordinaryGrantRemains
+	))
+) && $allOk;
+entry_delete($commentCenterDiscardEntryId);
 
 // Regression test: a visitor opt-in must be stored even when Mastodon credentials
 // are not complete yet, so a later manual or scheduled sync can export the comment.

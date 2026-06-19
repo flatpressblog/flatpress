@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Comment Center
- * Version: 1.1.6
+ * Version: 1.1.7
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -433,6 +433,32 @@ class plugin_commentcenter {
 			do_action('commentcenter_comment_logged', $entry, $comment, $why, $f);
 		}
 		return $saved;
+	}
+
+	/**
+	 * Permanently discard one pending CommentCenter comment.
+	 *
+	 * The dedicated hook lets optional plugins remove state that was associated
+	 * with the pending record. It is emitted only after the file was deleted.
+	 *
+	 * @param string $id Pending record id without the .txt suffix.
+	 * @return bool
+	 */
+	function discardLoggedComment($id) {
+		$id = trim((string) $id);
+		if (!preg_match('/^e(entry[0-9]{6}-[0-9]{6})_c(comment[0-9]{6}-[0-9]{6})$/', $id, $matches)) {
+			return false;
+		}
+		$f = $this->pl_dir . $id . '.txt';
+		if (!is_file($f)) {
+			return false;
+		}
+		$comment = plugin_commentcenter_load_array_from_file($f, 'comment');
+		if (!@unlink($f)) {
+			return false;
+		}
+		do_action('commentcenter_comment_discarded', $matches [1], $matches [2], $comment, $f);
+		return true;
 	}
 
 	/**

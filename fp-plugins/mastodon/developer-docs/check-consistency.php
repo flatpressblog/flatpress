@@ -455,14 +455,14 @@ $commentReplyOptinRequiredDocs = array(
 		array(
 			'{comment_mastodon}',
 			'comment_reply_optins',
-			'comments without that marker stay local'
+			'Visitor comments without a grant stay local'
 		)
 	),
 	'01-Process-Map.md' => array(
 		$processMapDocContent,
 		array(
 			'Visitor comment Mastodon opt-in',
-			'comments without that marker are accepted locally'
+			'Direct saves work without CommentCenter'
 		)
 	),
 	'02-State-Model.md' => array(
@@ -523,6 +523,79 @@ foreach ($commentReplyOptinRequiredDocs as $docName => $docData) {
 	foreach ($requiredSnippets as $requiredSnippet) {
 		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
 			$errors [] = $docName . ' missing comment-to-reply opt-in documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
+$commentReplyOptinLifecycleRequiredDocs = array(
+	'00-Mental-Model.md' => array(
+		$mentalModelDocContent,
+		array(
+			'remains checked when another validator redisplays the submitted form',
+			'rejection or a later bounded sync prune removes orphaned pending grants'
+		)
+	),
+	'01-Process-Map.md' => array(
+		$processMapDocContent,
+		array(
+			'preserves the checked state after unrelated validation errors',
+			'Direct saves work without CommentCenter',
+			'removed on rejection/orphan pruning'
+		)
+	),
+	'02-State-Model.md' => array(
+		$stateModelDocContent,
+		array(
+			'pending_file',
+			'commentcenter_comment_discarded',
+			'bounded orphan pruner'
+		)
+	),
+	'03-Function-Process-Matrix.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/03-Function-Process-Matrix.md', $errors),
+		array(
+			'plugin_mastodon_on_commentcenter_comment_discarded',
+			'plugin_mastodon_state_prune_orphaned_pending_comment_reply_optins'
+		)
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'Visitor Mastodon opt-in checkbox preserves POST state and hook priorities/signatures are explicit',
+			'Visitor opt-in persists through the direct FlatPress save path when CommentCenter is disabled',
+			'CommentCenter rejection and bounded pruning remove orphaned pending opt-in grants'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'commentcenter_comment_discarded',
+			'retain checked POST state',
+			'bounded sync-time prune'
+		)
+	),
+	'07-Function-Organigram.md' => array(
+		$organigramDocContent,
+		array(
+			'plugin_mastodon_on_commentcenter_comment_discarded()',
+			'plugin_mastodon_state_finalize_comment_reply_optin()',
+			'plugin_mastodon_state_prune_orphaned_pending_comment_reply_optins()'
+		)
+	),
+	'README.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
+		array(
+			'direct path without CommentCenter',
+			'rejection/orphan cleanup'
+		)
+	)
+);
+foreach ($commentReplyOptinLifecycleRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing comment opt-in lifecycle documentation snippet: ' . (string) $requiredSnippet;
 		}
 	}
 }
