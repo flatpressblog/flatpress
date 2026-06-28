@@ -173,7 +173,7 @@ function plugin_mastodon_default_options() {
 		'disable_comment_reply_sync' => '0',
 		'import_synced_comments_as_entries' => '0',
 		'quote_imported_reply_parent' => '1',
-		'old_thread_reply_check' => '0',
+		'old_thread_reply_check' => '1',
 		'old_thread_context_limit' => '3',
 		'delete_sync_enabled' => '1',
 		'client_id' => '',
