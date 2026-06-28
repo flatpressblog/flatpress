@@ -31,7 +31,7 @@ $fp_widgets = array (
 		// 'lastcomments',
 		'searchbox',
 		'feed',
-		'newsletter',
+		// 'newsletter',
 		'mastodon'
 	),
 
