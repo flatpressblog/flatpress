@@ -16,7 +16,7 @@ $fp_config = array(
 		'charset' => 'utf-8'
 	),
 	'locale' => array(
-		'timeoffset' => '2',
+		'timeoffset' => '0',
 		'timeformat' => '%H:%M:%S',
 		'dateformat' => '%A, %B %e, %Y',
 		'dateformatshort' => '%Y-%m-%d',
