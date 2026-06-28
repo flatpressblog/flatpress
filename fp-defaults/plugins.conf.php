@@ -14,7 +14,7 @@ $fp_plugins = array(
 		// you'll loose some features, but you will be able to use html
 		// as a default
 	'blockparser',
-	'calendar',
+	// 'calendar',
 	'categories',
 	'commentcenter', // including Akismet interface
 	'cookiebanner',
@@ -31,7 +31,7 @@ $fp_plugins = array(
 	'lastentries',
 	'mastodon',
 	'mediamanager',
-	'newsletter',
+	// 'newsletter',
 	'photoswipe',
 	'postviews', // Counts and displays entry views
 	'prettyurls', // PrettyURLs with NGINX? see https://wiki.flatpress.org/res:plugins:prettyurls#nginx
