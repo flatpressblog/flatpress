@@ -53,6 +53,9 @@ $fp_config = array(
 			'allowImageMetadata' => false,
 			'allowVisitorIp' => false
 		),
+		'mastodon' => array (
+			'quote_imported_reply_parent' => '1'
+		),
 	),
 );
 
