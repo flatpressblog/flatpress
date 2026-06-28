@@ -54,9 +54,9 @@ $fp_config = array(
 			'allowVisitorIp' => false
 		),
 		'mastodon' => array (
-			'quote_imported_reply_parent' => '1'
+			'quote_imported_reply_parent' => '1',
+			'old_thread_reply_check' => '1'
 		),
 	),
 );
-
 ?>
