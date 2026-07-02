@@ -54,13 +54,14 @@ The distributed configuration checks the declared PHP 7.2 through 8.5 range and 
 
 ## Simulation harness quick reference
 
-Run the full deterministic regression harness from the FlatPress root:
+Run the full deterministic regression harness from the FlatPress root. The content-identical copy under `fp-plugins/mastodon/regression-test/` can also resolve the blog root when invoked directly:
 
 ```bash
 php simulate_mastodon_plugin.php
+php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_
 ```
 
-The harness copies the current FlatPress tree into an isolated temporary sandbox, excludes live `fp-content/content` by default, seeds deterministic fixtures, mocks Mastodon HTTP calls unless live auth is explicitly requested, and ends with a counter block containing `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]`, and `[SKIP]`.
+The harness copies the current FlatPress tree into an isolated temporary sandbox, excludes live `fp-content/content` by default, seeds deterministic fixtures, freezes the plugin clock around date-window-sensitive fixture groups, snapshots and restores mutable option fixtures, mocks Mastodon HTTP calls unless live auth is explicitly requested, and ends with a counter block containing `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]`, and `[SKIP]`.
 
 ### Simulation parameters
 

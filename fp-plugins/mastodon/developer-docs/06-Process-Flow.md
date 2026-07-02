@@ -1476,14 +1476,16 @@ flowchart TD
 
 ## 7. Simulation and regression-test architecture
 
-`simulate_mastodon_plugin.php` loads the real plugin code from the checked-out tree. It replaces
+Both the root `simulate_mastodon_plugin.php` and its content-identical `fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_` copy resolve the FlatPress blog root before creating the sandbox. The nested copy falls back three directories only when `defaults.php` is not beside the script. The harness then loads the real plugin code from the checked-out tree. It replaces
 the external Mastodon side with deterministic fixtures and mock HTTP responses so the regression
 suite can verify state transitions, API requests, media handling, and edge-case conversion logic.
 The `fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.php` regression-test simulator copy must stay content-identical to the root harness after CRLF/LF line-ending normalization; `check-consistency.php` verifies this so UI, one-way-mode, and synchronization assertions cannot drift between the two locations.
 
 ```mermaid
 flowchart TD
-    Script["simulate_mastodon_plugin.php"]
+    Script["Root or regression-test simulator entry point"]
+    SourceRoot{"defaults.php beside script?"}
+    RootFallback["Resolve FlatPress root three directories above regression-test copy"]
     OutputMode{"--summary or SIMULATE_MASTODON_SUMMARY=1?"}
     VerboseOutput["Verbose per-test details"]
     SummaryOutput["Compact per-test details"]
@@ -1494,6 +1496,8 @@ flowchart TD
     CoreStubs["Load FlatPress includes and test helpers"]
     Plugin["require fp-plugins/mastodon/plugin.mastodon.php"]
     Fixtures["Create deterministic entries, comments, media files, options, and state fixtures"]
+    FixedClock["Freeze plugin_mastodon_test_now for date-window-sensitive fixture groups"]
+    ScopedOptions["Snapshot, override, and restore mutable admin option fixtures"]
     HTTPQueue["Mock Mastodon HTTP response queue"]
     GuardIsolation["Dirty-comment scheduled fixture clears content guard"]
     RunSync["Call real plugin sync/deletion functions"]
@@ -1510,13 +1514,16 @@ flowchart TD
     OptionalLive["Optional --live-auth credentials smoke test"]
     Cleanup["Delete temporary sandbox"]
 
-    Script --> OutputMode
+    Script --> SourceRoot
+    SourceRoot -- "Yes" --> OutputMode
+    SourceRoot -- "No" --> RootFallback --> OutputMode
     OutputMode -- "No" --> VerboseOutput --> SandboxPolicy
     OutputMode -- "Yes" --> SummaryOutput --> SandboxPolicy
     SandboxPolicy -- "default" --> MinimalSandbox --> EmptyContent --> CoreStubs
     SandboxPolicy -- "--include-live-content or env flag" --> LiveSandbox --> CoreStubs
     CoreStubs --> Plugin --> Fixtures
-    Fixtures --> HTTPQueue --> RunSync --> Assertions
+    Fixtures --> FixedClock --> HTTPQueue --> RunSync --> Assertions
+    Fixtures --> ScopedOptions --> Assertions
     Fixtures -. "APCu/file cooldown isolation" .-> GuardIsolation --> RunSync
     Assertions --> CompactWrite --> SmallState --> MemoryGuard
     MemoryGuard -- "enough memory" --> LargeState --> InspectState
@@ -1532,7 +1539,7 @@ The simulation sandbox deliberately excludes live `fp-content/content` in the de
 
 The output mode is independent of the assertions. Normal output keeps full details for one-file diagnostics. Summary output can be requested with `--summary` or `SIMULATE_MASTODON_SUMMARY=1`; it keeps the status and test name, but collapses verbose details to short text or JSON key summaries. Both output modes always end with the same counter block: `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]`, and `[SKIP]`.
 
-The APCu cooldown regression verifies that a marked content guard is no longer active after `plugin_mastodon_sync_guard_clear()`; this catches mismatched FlatPress wrapper key usage on APCu-enabled shared hosts. The dirty-comment scheduled-run regression also clears the `content` guard immediately before its own non-forced `plugin_mastodon_run_sync(false)` call, so earlier cooldown assertions cannot survive through APCu and mask the `dirty_comments` export path as `sync_cooldown`. The compact-state regression first verifies that legacy pretty-printed `state.json` files remain readable and that new `state.json` writes are compact JSON while preserving all mapping queues. The large `3000x10` scheduler-state regression is intentionally guarded before its synthetic state is built. On 128 MiB shared-hosting-style PHP limits, the large PHP array plus full JSON string can exhaust memory before the compact scheduler-state behavior is reached. The smaller `300x10` state test always runs; the heavy test runs when memory is sufficient, warns in low-memory non-CI environments, and is skipped in CI only after an attempted memory-limit raise fails. The CI skip branch can be tested deterministically with `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1`.
+The APCu cooldown regression verifies that a marked content guard is no longer active after `plugin_mastodon_sync_guard_clear()`; this catches mismatched FlatPress wrapper key usage on APCu-enabled shared hosts. The dirty-comment scheduled-run regression also clears the `content` guard immediately before its own non-forced `plugin_mastodon_run_sync(false)` call, so earlier cooldown assertions cannot survive through APCu and mask the `dirty_comments` export path as `sync_cooldown`. Date-window-sensitive comment-export fixtures freeze `$GLOBALS['plugin_mastodon_test_now']` to a fixed UTC instant and unset the hook after the related group, which keeps fixed FlatPress IDs and filenames reproducible without bypassing the scheduled-window code. The admin-assignment fixture similarly snapshots, overrides and restores the normalized plugin options so assertions for `old_thread_reply_check` and `delete_sync_enabled` cannot inherit state from earlier scenarios. The compact-state regression first verifies that legacy pretty-printed `state.json` files remain readable and that new `state.json` writes are compact JSON while preserving all mapping queues. The large `3000x10` scheduler-state regression is intentionally guarded before its synthetic state is built. On 128 MiB shared-hosting-style PHP limits, the large PHP array plus full JSON string can exhaust memory before the compact scheduler-state behavior is reached. The smaller `300x10` state test always runs; the heavy test runs when memory is sufficient, warns in low-memory non-CI environments, and is skipped in CI only after an attempted memory-limit raise fails. The CI skip branch can be tested deterministically with `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1`.
 
 The locally deleted imported remote reply tombstone regressions exercise both a normal context replay and an edited remote reply replay. They ensure `comment_tombstones` block re-import before hash comparison and that deletion sync treats legacy missing `source=remote` comments as local ignore decisions without outbound Mastodon `DELETE` requests.
 

@@ -1111,6 +1111,12 @@ function simulate_seed_regression_fixtures() {
 }
 
 $sourceRoot = __DIR__;
+if (!is_file($sourceRoot . '/defaults.php')) {
+	$regressionCopySourceRoot = dirname(__DIR__, 3);
+	if (is_file($regressionCopySourceRoot . '/defaults.php')) {
+		$sourceRoot = $regressionCopySourceRoot;
+	}
+}
 $sandboxRoot = simulate_prepare_sandbox($sourceRoot);
 register_shutdown_function(function () use ($sandboxRoot) {
 	simulate_delete_recursive($sandboxRoot);
@@ -10857,7 +10863,16 @@ $allOk = test_result(
 ) && $allOk;
 plugin_mastodon_save_options($options);
 
-// Admin assignment must expose deletion sync status counters for the admin template.
+// Admin assignment must expose deletion sync status counters and explicitly
+// configured boolean options for the admin template without inheriting state
+// from an earlier regression scenario.
+$adminPreviousOptions = plugin_mastodon_get_options();
+$adminOptions = $adminPreviousOptions;
+$adminOptions ['sync_scheduled_window_days'] = '14';
+$adminOptions ['old_thread_reply_check'] = '0';
+$adminOptions ['delete_sync_enabled'] = '1';
+plugin_mastodon_save_options($adminOptions);
+
 $adminState = plugin_mastodon_default_state();
 $adminState ['last_run'] = '2026-04-01 10:00:00';
 $adminState ['last_deletion_run'] = '2026-04-01 10:05:00';
@@ -10876,7 +10891,7 @@ $assignedCfg = isset($adminSmarty->assigned ['mastodon_cfg']) && is_array($admin
 $expectedLastRunLocal = plugin_mastodon_format_admin_datetime($adminState ['last_run']);
 $expectedLastDeletionRunLocal = plugin_mastodon_format_admin_datetime($adminState ['last_deletion_run']);
 $allOk = test_result(
-	'Admin assignment exposes split sync counters, local admin timestamps, and the deletion-sync option',
+	'Admin assignment exposes split sync counters, local timestamps, old-thread and deletion-sync options',
 	!empty($assignedState)
 		&& isset($assignedState ['last_deletion_run'])
 		&& $assignedState ['last_deletion_run'] === '2026-04-01 10:05:00'
@@ -10895,14 +10910,17 @@ $allOk = test_result(
 		&& isset($adminSmarty->assigned ['mastodon_scheduled_window_choices']) && is_array($adminSmarty->assigned ['mastodon_scheduled_window_choices']) && count($adminSmarty->assigned ['mastodon_scheduled_window_choices']) === 3
 		&& isset($adminSmarty->assigned ['mastodon_state_maintenance_result']) && is_array($adminSmarty->assigned ['mastodon_state_maintenance_result'])
 		&& empty($adminSmarty->assigned ['mastodon_state_maintenance_result'] ['available'])
-		&& isset($assignedCfg ['old_thread_reply_check']) && (string) $assignedCfg ['old_thread_reply_check'] === '0'
-		&& isset($assignedCfg ['delete_sync_enabled']) && (string) $assignedCfg ['delete_sync_enabled'] === '1',
+		&& isset($assignedCfg ['old_thread_reply_check'])
+		&& (string) $assignedCfg ['old_thread_reply_check'] === $adminOptions ['old_thread_reply_check']
+		&& isset($assignedCfg ['delete_sync_enabled'])
+		&& (string) $assignedCfg ['delete_sync_enabled'] === $adminOptions ['delete_sync_enabled'],
 	json_encode(array(
 		'assigned_keys' => array_keys($adminSmarty->assigned),
 		'cfg' => $assignedCfg,
 		'state' => $assignedState
 	))
 ) && $allOk;
+plugin_mastodon_save_options($adminPreviousOptions);
 
 $mainAdminTemplate = @file_get_contents(PLUGIN_MASTODON_DIR . 'tpls/admin.plugin.mastodon.tpl');
 $maintenanceAdminTemplate = @file_get_contents(PLUGIN_MASTODON_DIR . 'tpls/admin.plugin.mastodon.maintenance.tpl');
@@ -12143,6 +12161,11 @@ $allOk = test_result(
 entry_delete($automaticOldCommentEntryId);
 unset($GLOBALS ['plugin_mastodon_test_now']);
 
+// Freeze the scheduled synchronization window for the following comment-export
+// regression fixtures. The fixed clock keeps entry IDs, comment IDs, filenames,
+// request payloads, and diagnostics reproducible regardless of the wall clock.
+$GLOBALS ['plugin_mastodon_test_now'] = strtotime('2026-06-16 12:00:00 UTC');
+
 // Regression test: authenticated FlatPress comments carry a stored LOGGEDIN marker;
 // those comments must still be eligible for Mastodon reply export without a public visitor opt-in.
 $adminOptinOptions = simulate_seed_options_from_config(plugin_mastodon_get_options());
@@ -13050,6 +13073,8 @@ $allOk = test_result(
 	))
 ) && $allOk;
 entry_delete($visitorOptinEntryId);
+
+unset($GLOBALS ['plugin_mastodon_test_now']);
 
 // Regression test: the explicit one-way mode must be disabled by default, saved from the admin form, and translated everywhere.
 $oneWayDefaultOptions = plugin_mastodon_default_options();
