@@ -626,6 +626,54 @@ foreach ($guardIsolationRequiredDocs as $docName => $docData) {
 	}
 }
 
+$fixtureIsolationRequiredImplementation = array(
+	"\$GLOBALS ['plugin_mastodon_test_now'] = strtotime('2026-06-16 12:00:00 UTC');",
+	"unset(\$GLOBALS ['plugin_mastodon_test_now']);",
+	'plugin_mastodon_save_options($adminPreviousOptions);',
+	'$regressionCopySourceRoot = dirname(__DIR__, 3);'
+);
+foreach ($fixtureIsolationRequiredImplementation as $requiredSnippet) {
+	if ($simulationContent !== '' && strpos($simulationContent, $requiredSnippet) === false) {
+		$errors [] = 'Simulation harness missing deterministic fixture-isolation snippet: ' . $requiredSnippet;
+	}
+}
+
+$fixtureIsolationRequiredDocs = array(
+	'README.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
+		array(
+			'freezes the plugin clock around date-window-sensitive fixture groups',
+			'snapshots and restores mutable option fixtures',
+			'regression-test/simulate_mastodon_plugin.ph_'
+		)
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'Date-window fixture isolation policy',
+			'Mutable option fixture isolation policy',
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'Freeze plugin_mastodon_test_now for date-window-sensitive fixture groups',
+			'Snapshot, override, and restore mutable admin option fixtures',
+			'cannot inherit state from earlier scenarios',
+			'Resolve FlatPress root three directories above regression-test copy'
+		)
+	)
+);
+foreach ($fixtureIsolationRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing deterministic fixture-isolation documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
 $importedRemoteReplyDeleteRequiredDocs = array(
 	'02-State-Model.md' => array(
 		$stateModelDocContent,
