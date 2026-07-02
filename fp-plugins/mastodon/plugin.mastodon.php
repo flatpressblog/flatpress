@@ -7158,7 +7158,7 @@ function plugin_mastodon_extract_flatpress_tags($content) {
 	}
 
 	$tags = array();
-	if (preg_match_all('!\[tag\](.*?)\[/tag\]!is', $content, $matches) && !empty($matches[1])) {
+	if (preg_match_all('!\[tag\](.*?)\[/tag\]!is', $content, $matches) > 0) {
 		foreach ($matches [1] as $tagGroup) {
 			$parts = explode(',', (string) $tagGroup);
 			foreach ($parts as $part) {
