@@ -6,7 +6,9 @@ If you think someone's missing here, please let us know.
 ## The team
 FlatPress was initially developed by [Edoardo Vacchi (NoWhereMan)](https://github.com/evacchi "github.com/evacchi"). Edoardo was supported by Hydra, [drudo](https://drudotec.wordpress.com/ "drudotec.wordpress.com"), giulio, alcor, and Tychondriax.<br>
 <br>
-Since 2018, FlatPress is taken care of by [Arvid Zimmermann](https://github.com/azett "github.com/azett"). Current development is mainly driven by [Fraenkiman](https://github.com/Fraenkiman).
+From 2018 to 2026, FlatPress was taken by [Arvid Zimmermann](https://github.com/azett "github.com/azett").
+
+Since 2026, [Frank Hochmuth (Fraenkiman)](https://github.com/Fraenkiman "github.com/Fraenkiman") has been taken the FlatPress project.
 
 ## Coding
 - Piero VDFN introduced the plugins Comment Center, jQuery, and Tag.
