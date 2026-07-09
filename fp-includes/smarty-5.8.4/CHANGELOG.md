@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.8.4] - 2026-06-29
+- Fixed a `TypeError` on PHP 8 when `Security::$static_classes` was set to a non-array value (e.g. the string `'none'`) to disable static class access; any non-array value now cleanly denies access. Use `Security::$static_classes = null` to disable access to all static classes.
+- Security: the built-in `stream:` resource type now validates the nested stream wrapper against the security policy, so a template such as `stream:php://filter/...` can no longer bypass `Security::$streams` (including `Security::$streams = null`) to read local files (CWE-22)
+
+
+## [5.8.3] - 2026-06-28
+- fixed a regression from #1189 where a child template's block override no longer applied to a template {include}d by the parent [#1192](https://github.com/smarty-php/smarty/issues/1192)
+
+
+## [5.8.2] - 2026-06-24
+- Security: prevent symlinks inside a trusted `secure_dir`/template directory from being used to read files outside of it (CWE-22 path traversal), affecting `{include}` and `{fetch}` of local files
+- Security: `{html_image}` now escapes the `file`, `path_prefix`, `href`/`link`, `width` and `height` attributes (it already escaped `alt` and pass-through attributes), and `{html_select_date}` casts `day_size`/`month_size`/`year_size` to int (matching `{html_select_time}`), preventing untrusted values passed into these attributes from breaking out of the generated HTML (CWE-79)
+- Security: `{fetch}` no longer follows HTTP redirects for remote resources while a security policy is active, preventing an open redirect on a trusted host from bypassing `trusted_uri` (CWE-918 server-side request forgery)
+- Fixed "Attempt to assign property step on null" error when using a {for} loop inside a block of an extended template [#1036](https://github.com/smarty-php/smarty/issues/1036)
+
+
+## [5.8.1] - 2026-06-23
+- Re-activated unit tests for user literals, which were previously disabled due to a bug in refactoring to v5.
+- fixed a bug where child template's block content leaked into subsequent rendering of the parent template [#1189](https://github.com/smarty-php/smarty/issues/1189)
+- Moved all unit test-generated output from inside the working tree to tmp files [#1178](https://github.com/smarty-php/smarty/issues/1178)
+
+
 ## [5.8.0] - 2026-02-15
 - Added support for Backed Enums for php versions >= 8.1 [#1171](https://github.com/smarty-php/smarty/pull/1171)
 - Added support for new 'matches' operator doing regex matching [#1169](https://github.com/smarty-php/smarty/pull/1169)

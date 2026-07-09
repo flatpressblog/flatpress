@@ -3,7 +3,7 @@
 - Added "Location Migration Mode" ([#897](https://github.com/flatpressblog/flatpress/pull/897))
 - The PHP code is now fully compliant with PHPStan Level 5 ([#893](https://github.com/flatpressblog/flatpress/pull/893), [#894](https://github.com/flatpressblog/flatpress/pull/894))
 - Template engine Smarty:
-  - Updated to version 5.8.0 with PHP 8.5 support ([#893](https://github.com/flatpressblog/flatpress/pull/893))
+  - Updated to version 5.8.4 with PHP 8.5 support ([#932](https://github.com/flatpressblog/flatpress/pull/932))
 - New core helpers: ``date_iso8601($timestamp, $offset = null)`` and ``date_id_to_iso8601($id, $offset = null)``. ([#856](https://github.com/flatpressblog/flatpress/pull/856))
 - RSS and Atom feeds and the Categories widget use the Smarty block cache instead of having to go through the Smarty compiler every time. ([#864](https://github.com/flatpressblog/flatpress/pull/864))
 - If APCu is available, the Smarty cache fragments are stored in the APCu cache instead of on disk. ([#865](https://github.com/flatpressblog/flatpress/pull/865))
