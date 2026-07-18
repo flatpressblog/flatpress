@@ -1,4 +1,4 @@
-name: "PHPStan Static Analysis for FlatPress"
+name: "PHPStan"
 
 on:
   push:
