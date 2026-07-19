@@ -229,7 +229,7 @@ Remote import must respect local deletion protection. A remote reply with a tomb
 flowchart TD
     Dirty[Dirty entry or comment]
     Parent{Reply target known?}
-    Text[Build Mastodon text with URL budget tags emoji]
+    Text[Build Mastodon text with URL spans budget tags emoji]
     MediaPlan{Entry media plan}
     Upload[POST api v2 media]
     Poll[GET api v1 media id until ready]
@@ -255,6 +255,8 @@ flowchart TD
     Create -- failure after upload --> Cleanup
     Update -- failure after upload --> Cleanup
 ```
+
+URL-aware text budgeting runs before the media plan. `plugin_mastodon_status_text_url_spans()` extracts only the Mastodon-countable URL core, so punctuation after `https://...` such as commas and full stops remains in the normal text budget instead of being hidden in `characters_reserved_per_url`.
 
 The media plan is one of the most important extension points. It compares attachment signatures and description signatures. If attachments did not change, the plugin can reuse remote media IDs. If only descriptions changed and the instance supports status `media_attributes` according to `api_versions[mastodon]` or the version fallback, it updates alt text without re-uploading. Otherwise it re-uploads.
 

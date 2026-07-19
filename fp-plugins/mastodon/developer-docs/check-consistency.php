@@ -816,6 +816,97 @@ foreach ($exportedCommentDeleteInvariantSimulationSnippets as $requiredSimulatio
 }
 
 
+
+$urlPunctuationBudgetRequiredDocs = array(
+	'00-Mental-Model.md' => array(
+		$mentalModelDocContent,
+		array(
+			'plugin_mastodon_status_text_url_spans()',
+			'sentence punctuation immediately after a link is normal text'
+		)
+	),
+	'01-Process-Map.md' => array(
+		$processMapDocContent,
+		array(
+			'URL-aware text budgeting',
+			'punctuation after `https://...`'
+		)
+	),
+	'03-Function-Process-Matrix.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/03-Function-Process-Matrix.md', $errors),
+		array(
+			'plugin_mastodon_status_text_url_spans',
+			'URL punctuation-budget regression tests'
+		)
+	),
+	'04-API-Compatibility.md' => array(
+		$apiDocContent,
+		array(
+			'configuration.statuses.characters_reserved_per_url',
+			'trailing sentence punctuation such as `,` or `.` outside the URL span'
+		)
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array(
+			'Mastodon URL budgeting counts trailing punctuation outside the URL placeholder',
+			'URL-aware status budgeting at punctuation boundaries'
+		)
+	),
+	'06-Process-Flow.md' => array(
+		$flowDocContent,
+		array(
+			'plugin_mastodon_status_text_url_spans',
+			'trim punctuation boundaries'
+		)
+	),
+	'07-Function-Organigram.md' => array(
+		$organigramDocContent,
+		array(
+			'plugin_mastodon_status_text_url_spans()',
+			'leave trailing sentence punctuation outside the URL placeholder budget'
+		)
+	),
+	'README.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
+		array(
+			'Mastodon rejects a post as over 500 characters when URLs are present',
+			'URL-punctuation budgeting documentation'
+		)
+	)
+);
+foreach ($urlPunctuationBudgetRequiredDocs as $docName => $docData) {
+	$docContent = (string) $docData [0];
+	$requiredSnippets = $docData [1];
+	foreach ($requiredSnippets as $requiredSnippet) {
+		if ($docContent !== '' && strpos($docContent, (string) $requiredSnippet) === false) {
+			$errors [] = $docName . ' missing URL-punctuation budget documentation snippet: ' . (string) $requiredSnippet;
+		}
+	}
+}
+
+$urlPunctuationBudgetPluginSnippets = array(
+	'function plugin_mastodon_status_text_url_spans(',
+	'plugin_mastodon_status_text_url_spans($text)',
+	'Sentence punctuation appended after an URL'
+);
+foreach ($urlPunctuationBudgetPluginSnippets as $requiredPluginSnippet) {
+	if ($pluginContent !== '' && strpos($pluginContent, $requiredPluginSnippet) === false) {
+		$errors [] = 'Plugin missing URL-punctuation budget implementation snippet: ' . $requiredPluginSnippet;
+	}
+}
+
+$urlPunctuationBudgetSimulationSnippets = array(
+	'Mastodon URL budgeting counts trailing punctuation outside the URL placeholder',
+	'$punctuatedUrlSpans = plugin_mastodon_status_text_url_spans($punctuatedUrlStatus);'
+);
+foreach ($urlPunctuationBudgetSimulationSnippets as $requiredSimulationSnippet) {
+	if ($simulationContent !== '' && strpos($simulationContent, $requiredSimulationSnippet) === false) {
+		$errors [] = 'Simulation missing URL-punctuation budget regression: ' . $requiredSimulationSnippet;
+	}
+}
+
+
 $instanceCapabilityRequiredDocs = array(
 	'01-Process-Map.md' => array(
 		$processMapDocContent,

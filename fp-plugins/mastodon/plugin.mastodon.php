@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon and provides a Mastodon profile widget. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.8.1
+ * Version: 2.8.2
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -9691,6 +9691,58 @@ function plugin_mastodon_instance_url_reserved_length($options) {
 }
 
 /**
+ * Extract Mastodon-countable URL spans from a plain-text status.
+ *
+ * Mastodon gives the configured URL budget only to URL entities that its formatter
+ * can parse. Sentence punctuation appended after an URL therefore remains normal
+ * text and must not disappear into the fixed URL placeholder budget.
+ *
+ * @param string $text
+ * @return array<int, array{url: string, position: int, length: int}>
+ */
+function plugin_mastodon_status_text_url_spans($text) {
+	$text = (string) $text;
+	$spans = array();
+	$matches = array();
+	if ($text === '' || !preg_match_all('~https?://[^\s<>"\x00-\x1F\x7F]+~iu', $text, $matches, PREG_OFFSET_CAPTURE)) {
+		return $spans;
+	}
+
+	foreach ($matches [0] as $match) {
+		$candidate = (string) $match [0];
+		$position = (int) $match [1];
+
+		do {
+			$previousCandidate = $candidate;
+			$candidate = preg_replace('/[.,;:!?]+$/u', '', $candidate);
+			$candidate = is_string($candidate) ? $candidate : $previousCandidate;
+
+			foreach (array(')' => '(', ']' => '[', '}' => '{') as $closing => $opening) {
+				while ($candidate !== '' && substr($candidate, -1) === $closing && substr_count($candidate, $closing) > substr_count($candidate, $opening)) {
+					$candidate = substr($candidate, 0, -1);
+				}
+			}
+		} while ($candidate !== $previousCandidate);
+
+		if ($candidate === '' || !preg_match('~^https?://~i', $candidate)) {
+			continue;
+		}
+		$host = @parse_url($candidate, PHP_URL_HOST);
+		if (!is_string($host) || trim($host) === '') {
+			continue;
+		}
+
+		$spans [] = array(
+			'url' => $candidate,
+			'position' => $position,
+			'length' => strlen($candidate)
+		);
+	}
+
+	return $spans;
+}
+
+/**
  * Calculate the Mastodon-visible length of a plain-text status.
  * @param string $text
  * @param int $urlReservedLength
@@ -9702,19 +9754,20 @@ function plugin_mastodon_status_text_length($text, $urlReservedLength = 23) {
 	if ($text === '') {
 		return 0;
 	}
-	if (!preg_match_all('~https?://[^\s<>"]+~iu', $text, $matches, PREG_OFFSET_CAPTURE)) {
+	$urlSpans = plugin_mastodon_status_text_url_spans($text);
+	if ($urlSpans === array()) {
 		return function_exists('mb_strlen') ? mb_strlen($text, 'UTF-8') : strlen($text);
 	}
 
 	$length = 0;
 	$offset = 0;
-	foreach ($matches [0] as $match) {
-		$url = (string) $match [0];
-		$position = (int) $match [1];
+	foreach ($urlSpans as $span) {
+		$position = (int) $span ['position'];
+		$urlLength = (int) $span ['length'];
 		$segment = substr($text, $offset, $position - $offset);
 		$length += function_exists('mb_strlen') ? mb_strlen($segment, 'UTF-8') : strlen($segment);
 		$length += $urlReservedLength;
-		$offset = $position + strlen($url);
+		$offset = $position + $urlLength;
 	}
 	$tail = substr($text, $offset);
 	$length += function_exists('mb_strlen') ? mb_strlen($tail, 'UTF-8') : strlen($tail);
@@ -9745,16 +9798,17 @@ function plugin_mastodon_limit_status_text($text, $limit, $urlReservedLength = 2
 	$budget = $limit - 1;
 	$result = '';
 	$consumed = 0;
-	$matches = array();
-	if (!preg_match_all('~https?://[^\s<>"]+~iu', $text, $matches, PREG_OFFSET_CAPTURE)) {
+	$urlSpans = plugin_mastodon_status_text_url_spans($text);
+	if ($urlSpans === array()) {
 		return plugin_mastodon_limit_text($text, $limit);
 	}
 
 	$offset = 0;
 	$truncated = false;
-	foreach ($matches [0] as $match) {
-		$url = (string) $match [0];
-		$position = (int) $match [1];
+	foreach ($urlSpans as $span) {
+		$position = (int) $span ['position'];
+		$urlLength = (int) $span ['length'];
+		$url = substr($text, $position, $urlLength);
 		$segment = substr($text, $offset, $position - $offset);
 		$segmentLength = function_exists('mb_strlen') ? mb_strlen($segment, 'UTF-8') : strlen($segment);
 		$available = $budget - $consumed;
@@ -9774,7 +9828,7 @@ function plugin_mastodon_limit_status_text($text, $limit, $urlReservedLength = 2
 		}
 		$result .= $url;
 		$consumed += $urlReservedLength;
-		$offset = $position + strlen($url);
+		$offset = $position + $urlLength;
 	}
 
 	if (!$truncated) {

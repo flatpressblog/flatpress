@@ -664,7 +664,7 @@ flowchart TD
 ### 2.1 Local-to-remote status-text pipeline
 
 The status-text builder intentionally keeps Mastodon-visible length calculation separate from
-FlatPress storage. Mastodon counts each URL as the instance's configured URL budget.
+FlatPress storage. Mastodon counts each recognized URL as the instance's configured URL budget, while punctuation immediately after the URL remains normal text.
 
 ```mermaid
 flowchart LR
@@ -678,12 +678,13 @@ flowchart LR
     Footer["Build plugin-owned hashtag footer"]
     Join["Join body and footer"]
     InstanceLimits["Load /api/v2/instance limits<br/>max_characters and URL reserved length"]
+    UrlSpans["plugin_mastodon_status_text_url_spans<br/>trim punctuation boundaries"]
     Budget["plugin_mastodon_status_text_length"]
     Truncate["plugin_mastodon_limit_status_text"]
     Result["Mastodon status text"]
 
     Source --> StripMeta --> BBCode --> MediaRefs --> Links --> Emoji --> Tags --> Footer --> Join
-    Join --> InstanceLimits --> Budget
+    Join --> InstanceLimits --> UrlSpans --> Budget
     Budget --> Truncate --> Result
 ```
 

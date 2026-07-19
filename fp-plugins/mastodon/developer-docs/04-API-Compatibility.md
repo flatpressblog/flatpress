@@ -108,6 +108,8 @@ The plugin reads `/api/v2/instance` with a short instance-information timeout an
 | Video size limit            | `configuration.media_attachments.video_size_limit`     | No local size rejection when unknown.                                                     |
 | Audio size limit            | `configuration.media_attachments.audio_size_limit`     | Falls back to video size if explicit audio limit is absent; otherwise no local rejection. |
 
+For status text length, `configuration.statuses.characters_reserved_per_url` is applied only to the URL entity that Mastodon will parse. `plugin_mastodon_status_text_url_spans()` intentionally leaves trailing sentence punctuation such as `,` or `.` outside the URL span, so those characters remain part of the normal text budget and the local export limit matches Mastodon server validation more closely.
+
 ## Internal budgets and operational limits
 
 | Name                                              | Value   | Purpose                                                                                                                         |
