@@ -3931,8 +3931,9 @@ ob_start();
 plugin_mastodon_head();
 $headMarkupWithoutUser = trim((string) ob_get_clean());
 $allOk = test_result(
-	'Mastodon head metadata stays silent when no username is configured',
-	$headMarkupWithoutUser === '',
+	'Mastodon head metadata omits profile metadata when no username is configured',
+	strpos($headMarkupWithoutUser, '<link rel="me"') === false
+		&& strpos($headMarkupWithoutUser, 'fediverse:creator') === false,
 	$headMarkupWithoutUser
 ) && $allOk;
 
@@ -6247,6 +6248,30 @@ $allOk = test_result(
 		'limited' => $urlAwareLimited,
 		'comment' => $urlAwareComment,
 		'comment_length' => plugin_mastodon_status_text_length($urlAwareComment, $urlReservedLength)
+	))
+) && $allOk;
+
+$punctuatedUrlStatus = str_repeat('A', 426) . ' https://forum.flatpress.org/, https://github.com/Fraenkiman https://wiki.flatpress.org/.';
+$punctuatedUrlOverLimit = $punctuatedUrlStatus . ' Zusatz';
+$punctuatedUrlLimited = plugin_mastodon_limit_status_text($punctuatedUrlOverLimit, 500, $urlReservedLength);
+$punctuatedUrlSpans = plugin_mastodon_status_text_url_spans($punctuatedUrlStatus);
+$allOk = test_result(
+	'Mastodon URL budgeting counts trailing punctuation outside the URL placeholder',
+	$urlReservedLength === 23
+		&& count($punctuatedUrlSpans) === 3
+		&& isset($punctuatedUrlSpans [0] ['url'], $punctuatedUrlSpans [2] ['url'])
+		&& $punctuatedUrlSpans [0] ['url'] === 'https://forum.flatpress.org/'
+		&& $punctuatedUrlSpans [2] ['url'] === 'https://wiki.flatpress.org/'
+		&& plugin_mastodon_status_text_length($punctuatedUrlStatus, $urlReservedLength) === 500
+		&& plugin_mastodon_limit_status_text($punctuatedUrlStatus, 500, $urlReservedLength) === $punctuatedUrlStatus
+		&& $punctuatedUrlLimited !== $punctuatedUrlOverLimit
+		&& plugin_mastodon_status_text_length($punctuatedUrlLimited, $urlReservedLength) <= 500,
+	json_encode(array(
+		'reserved' => $urlReservedLength,
+		'spans' => $punctuatedUrlSpans,
+		'base_length' => plugin_mastodon_status_text_length($punctuatedUrlStatus, $urlReservedLength),
+		'limited_length' => plugin_mastodon_status_text_length($punctuatedUrlLimited, $urlReservedLength),
+		'limited' => $punctuatedUrlLimited
 	))
 ) && $allOk;
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();

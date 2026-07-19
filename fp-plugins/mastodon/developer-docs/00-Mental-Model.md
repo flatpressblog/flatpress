@@ -24,6 +24,8 @@ It maps FlatPress objects to Mastodon objects:
 
 Media export has one additional compatibility rule that developers must keep in mind: one Mastodon status may carry multiple images, or exactly one audio/video attachment, but not a mixed audio/video/image set. The plugin therefore collects all local media for change detection and diagnostics, then selects one exportable media family per status before upload: images first, otherwise one audio item, otherwise one video item with its poster sent only as an upload thumbnail.
 
+Status export has a similar budgeting rule: Mastodon counts each recognized URL as the instance's `characters_reserved_per_url` value, but sentence punctuation immediately after a link is normal text. Local text limiting therefore runs through `plugin_mastodon_status_text_url_spans()` before `plugin_mastodon_status_text_length()` and `plugin_mastodon_limit_status_text()` so a trailing comma or full stop cannot be hidden inside the URL placeholder budget.
+
 ```mermaid
 flowchart LR
     FP[FlatPress entries comments media tags]
