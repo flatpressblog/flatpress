@@ -76,7 +76,15 @@ function static_parse($id) {
 }
 
 function static_isvalid($id) {
-	return preg_match('![^./\\\\]+!', $id);
+	if (!is_string($id) || $id === '') {
+		return false;
+	}
+
+	if (strpos($id, "\0") !== false) {
+		return false;
+	}
+
+	return preg_match('/\A[\p{L}\p{N}_-]+\z/u', $id) === 1;
 }
 
 function static_save($entry, $id, $oldid = null) {

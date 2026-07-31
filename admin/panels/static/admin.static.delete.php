@@ -48,8 +48,8 @@ class admin_static_delete extends AdminPanelAction {
 		// Clean up input
 		$id = sanitize_text_field($this->page);
 
-		// Validate static pages directly here
-		if (empty($id) || !preg_match('/^[a-zA-Z0-9-_]+$/', $id)) {
+		// Keep the existing ASCII admin policy, but share the Core safety check.
+		if (empty($id) || !static_isvalid($id) || !preg_match('/^[a-zA-Z0-9-_]+$/', $id)) {
 			// Error status
 			$this->smarty->assign('success', -1);
 			return 1;

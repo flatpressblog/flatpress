@@ -137,6 +137,10 @@ class Plugin_PrettyURLs {
 	}
 
 	function staticlink($str, $id) {
+		if (!static_isvalid($id)) {
+			return $str;
+		}
+
 		return $this->baseurl . $id . "/";
 	}
 
@@ -226,8 +230,13 @@ class Plugin_PrettyURLs {
 	}
 
 	function handle_static($matches) {
+		if (!isset($matches [1]) || !static_isvalid($matches [1])) {
+			return isset($matches [0]) ? $matches [0] : '';
+		}
+
 		$this->fp_params ['page'] = $matches [1];
 		$this->status = 2;
+		return '';
 	}
 
 	function handle_entry($matches) {
@@ -1160,8 +1169,13 @@ class Plugin_PrettyURLs {
 			}
 			$target = $base . 'page/' . $pn . '/';
 		} elseif ($has_page) {
-			$id = preg_replace('/[^A-Za-z0-9_-]/', '', (string) $_GET ['page']);
-			if ($id === '') {
+			$rawId = (string) $_GET ['page'];
+			if (!static_isvalid($rawId)) {
+				return;
+			}
+
+			$id = preg_replace('/[^A-Za-z0-9_-]/', '', $rawId);
+			if ($id === '' || !static_isvalid($id)) {
 				return;
 			}
 			// Build via staticlink() to respect all modes
