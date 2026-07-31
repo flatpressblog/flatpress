@@ -61,6 +61,10 @@ while ($q->hasMore()) {
 $statics = static_getlist();
 foreach ($statics as $currentstatic) {
 	$currentStaticData = static_parse($currentstatic);
+	if (!is_array($currentStaticData)) {
+		continue;
+	}
+
 	$loc = BLOG_BASEURL . '?page=' . $currentstatic;
 
 	// If current static has no date, use timestamp of now

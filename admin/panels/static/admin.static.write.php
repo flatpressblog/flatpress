@@ -125,7 +125,12 @@ class admin_static_write extends AdminPanelActionValidated {
 			'/[^\p{L}\p{N}_-]/u'
 		], '', $id);
 
-		return trim(str_replace(' ', '', $id));
+		if (!is_string($id)) {
+			return '';
+		}
+
+		$id = trim(str_replace(' ', '', $id));
+		return static_isvalid($id) ? $id : '';
 	}
 
 	function makePageTitle($title, $sep) {

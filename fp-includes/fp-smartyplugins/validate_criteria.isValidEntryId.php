@@ -39,6 +39,7 @@ function smarty_validate_criteria_isValidEntryId($value, $empty, &$params, &$for
 		return false;
 	}
 
-	return !preg_match('/[^a-z0-9\-_]/i',$value);
+	// Keep the existing ASCII editor policy, but share the Core safety check.
+	return static_isvalid($value) && !preg_match('/[^a-z0-9\-_]/i', $value);
 }
 ?>
