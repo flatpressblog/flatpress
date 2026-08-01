@@ -13,6 +13,7 @@
 
 ### Security
 - An XSS vulnerability in the comment and contact forms has been fixed. ([#866](https://github.com/flatpressblog/flatpress/pull/866))
+- A security vulnerability that listed and disclosed unpublished drafts has been fixed. ([#936](https://github.com/flatpressblog/flatpress/pull/936))
 
 ### Bugfixes
 - Fix 4-byte UTF-8 encoding in ``utf8_uri_encode()`` to prevent emoji-based PrettyURLs from generating invalid slugs. ([#925](https://github.com/flatpressblog/flatpress/issues/925))
