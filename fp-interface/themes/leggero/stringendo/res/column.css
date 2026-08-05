@@ -6,7 +6,7 @@
  * Name: Stringendo
  * Theme: Leggero
  * Author: Fraenkiman
- * Version: 1.5.0
+ * Version: 1.5.2
  * Module: column.css
  *
  * Sidebar / widgets column.
@@ -39,7 +39,7 @@
 	}
 }
 
-@media (max-width: 959px) {
+@media (max-width: 1079px) {
 	#column {
 		width: 100%;
 		flex: 0 0 auto;
@@ -49,8 +49,7 @@
 /* Each widget is a card */
 #column > div,
 .stringendo-widgets-under-main > div {
-	background: rgb(247, 240, 223);
-	background: linear-gradient(180deg, rgb(247, 240, 223) 0%, rgb(253, 198, 154) 100%);
+	background: var(--fp-widget-bg, linear-gradient(180deg, rgb(247, 240, 223) 0%, rgb(253, 198, 154) 100%));
 	border: 1px solid var(--fp-border, #e2e8f0);
 	border-radius: var(--fp-radius, 14px);
 	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
@@ -70,6 +69,13 @@
 	gap: var(--fp-space-5, 1.25rem);
 }
 
+/* When no widgets were moved, keep the (JS-created) container out of the layout. */
+.stringendo-widgets-under-main:empty,
+.stringendo-widgets-under-main.stringendo-under-empty {
+	display: none;
+	margin-top: 0;
+}
+
 @media (min-width: 720px) {
 	.stringendo-widgets-under-main {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -85,6 +91,21 @@
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 }
+
+#columntop ul,
+#columnbottom ul {
+	padding: 0 0.5rem;
+}
+
+#columntop li,
+#columnbottom li {
+	margin: 0 0.5rem;
+}
+
+#columnbottom {
+	margin-top: var(--fp-space-5, 1.25rem);
+}
+
 
 /**
  * Progressive reveal for under-main widget grid:
@@ -205,17 +226,4 @@ html.fp-fadein body:not([class^="admin-"]) .stringendo-widgets-under-main.string
 	font-weight: 700;
 	font-size: .95rem;
 	margin-bottom: .35rem;
-}
-
-@media (prefers-color-scheme: dark) {
-	#column > div,
-	.stringendo-widgets-under-main > div {
-		background: var(--fp-widget-gradient, linear-gradient(180deg, #182538 0%, #0f1724 100%));
-		border-color: var(--fp-border, #304158);
-	}
-
-	#column h4,
-	.stringendo-widgets-under-main h4 {
-		color: var(--fp-heading, #ffd39d);
-	}
 }

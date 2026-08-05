@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Spanish
  */
 $lang ['setup'] = array(
@@ -99,6 +99,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]Contacto[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Menú inferior';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Aviso legal[/url]
+[*][url=static.php?page=privacy-policy]Política de privacidad[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Bienvenido a FlatPress!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Esta es una entrada de ejemplo. Esto muestra algunas de las funciones del [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
@@ -196,6 +202,9 @@ Que te diviertas! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Acerca de';
 $lang ['samplecontent'] ['about'] ['content'] = 'Escribe aquí algo sobre ti y sobre este blog. ([url=admin.php?p=static&action=write&page=about]Edítame![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Aviso legal';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]¡Edítame![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Política de privacidad';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'En algunos países, si utiliza el servicio Akismet Antispam, por ejemplo, es necesario proporcionar a sus visitantes una política de privacidad. También puede ser necesaria una política de privacidad si el visitante puede utilizar el formulario de contacto o la función de comentarios.

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Français
  */
 $lang ['setup'] = array(
@@ -95,6 +95,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=?paged=1]Blog[/url]
 [*][url=static.php?page=about]À propos[/url]
 [*][url=contact.php]Contact[/url]
+[/list]';
+
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Menu du bas';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Mentions légales[/url]
+[*][url=static.php?page=privacy-policy]Politique de confidentialité[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Bienvenue sur FlatPress !';
@@ -193,14 +199,17 @@ Amusez-vous bien ! :)
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'À propos';
-$lang ['samplecontent'] ['about'] ['content'] = 'Écrivez ici quelque chose sur vous et sur ce blog. ([url=admin.php?p=static&amp;action=write&amp;page=about]Modifiez-moi ![/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Écrivez ici quelque chose sur vous et sur ce blog. ([url=admin.php?p=static&amp;action=write&amp;page=about]Modifier cette page![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Mentions légales';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Modifier cette page![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Déclaration de confidentialité';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Dans certains pays, si vous utilisez par exemple le service Akismet Antispam, il est nécessaire de fournir à vos visiteurs une déclaration de confidentialité. Une déclaration de confidentialité peut également être nécessaire si le visiteur peut utiliser le formulaire de contact ou la fonction de commentaire.
 
 [b]Conseil :[/b] il existe de nombreux modèles et générateurs sur Internet.
 
-Vous pouvez les insérer à cet endroit. ([url=admin.php?p=static&amp;action=write&amp;page=privacy-policy]Modifiez-moi ![/url])
+Vous pouvez les insérer à cet endroit. ([url=admin.php?p=static&amp;action=write&amp;page=privacy-policy]Modifier cette page![/url])
 
 Si vous activez le plugin CookieBanner, le formulaire de contact et la fonction de commentaire permettront à vos visiteurs d’accéder directement à cette page.
 ';

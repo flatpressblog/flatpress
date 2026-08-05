@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Deutsch
  */
 $lang ['setup'] = array(
@@ -99,6 +99,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]Kontakt[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Bottom Menü';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Impressum[/url]
+[*][url=static.php?page=privacy-policy]Datenschutzerklärung[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Willkommen bei FlatPress!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Das ist ein Beispiel-Beitrag. Er zeigt dir einige Funktionen von [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
@@ -196,6 +202,9 @@ Viel Spaß! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Über';
 $lang ['samplecontent'] ['about'] ['content'] = 'Schreib hier etwas über dich und diesen Blog. ([url=admin.php?p=static&action=write&page=about]Bearbeite mich![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Impressum';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Bearbeite mich![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Datenschutzerklärung';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'In einigen Ländern ist es notwendig, wenn du zum Beispiel den Dienst von Akismet Antispam nutzt, deinen Besucherns eine Datenschutzerklärung bereitzustellen. Eine Datenschutzerklärung kann ebenfalls notwendig sein, wenn der Besucher das Kontaktformular oder die Kommentarfunktion nutzen kann.

@@ -1,9 +1,9 @@
 /**
  * Stringendo – widgets under #main (wide screens)
- * Version: 1.5.0
+ * Version: 1.5.2
  *
  * Goal:
- * - If viewport >= 960px AND the widget column (#column) would extend below #main,
+ * - On wide layouts (>= 720px), if the widget column (#column) would extend below #main,
  *   move only the *overflowing* widgets under #main in a responsive grid.
  * - Preserve widget order.
  * - If the right column is empty, expand #main to full width.
@@ -11,7 +11,7 @@
  * Notes:
  * - We recalculate after window "load" (images loaded) to avoid moving widgets
  *   too early and leaving the right column empty on pages that later become taller.
- * - No external dependencies besides jQuery.
+ * - No external dependencies besides jQuery (jQuery is loaded by FlatPress).
  */
 
 (function ($) {
@@ -19,14 +19,7 @@
 
 	var MIN_WIDTH = 720;
 	var UNDER_ID = 'stringendo-widgets-under-main';
-	var BOTTOM_ID = 'columnbottom';
-	var BOTTOM_ANCHOR_ID = 'stringendo-columnbottom-anchor';
-	var ROOT_MOVED_CLASS = 'stringendo-columnbottom-moved';
-	var updateTimer = null;
-	var rafToken = null;
-	var didFullLayout = false;
-	var raf = window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function (cb) { return window.setTimeout(cb, 16); };
-	var caf = window.cancelAnimationFrame ? window.cancelAnimationFrame.bind(window) : function (id) { window.clearTimeout(id); };
+	var rafId = 0;
 
 	function viewportWidth() {
 		return (window.innerWidth || document.documentElement.clientWidth || 0);
@@ -64,52 +57,22 @@
 		}
 	}
 
+
+
 	function ensureUnderContainer($outer) {
 		var $under = $('#' + UNDER_ID);
 		if (!$under.length) {
-			$under = $('<div/>', { id: UNDER_ID, 'class': 'stringendo-widgets-under-main' });
-			/**
-			 * Important: keep the sidebar's sticky boundary limited to #outer-container.
-			 * If the under-main container is placed inside #outer-container, the sticky
-			 * column stays "too long" (it remains sticky while the page is already in
-			 * the under-main section). Therefore insert it AFTER #outer-container.
-			 */
-			$outer.after($under);
+			$under = $('<div/>', { id: UNDER_ID, 'class': 'stringendo-widgets-under-main stringendo-under-empty' });
+			// Keep the sticky boundary limited to #outer-container: render the under-main grid outside it.
+			var $bottom = $('#columnbottom');
+			if ($bottom.length) {
+				$under.insertBefore($bottom);
+			} else {
+				$outer.after($under);
+			}
 		}
 		syncUnderVisibility($under);
 		return $under;
-	}
-
-	function ensureColumnBottomAnchor($outer) {
-		var $bottom = $('#' + BOTTOM_ID);
-		if (!$bottom.length) {
-			return $();
-		}
-		var $anchor = $('#' + BOTTOM_ANCHOR_ID);
-		if (!$anchor.length) {
-			$anchor = $('<div/>', {
-				id: BOTTOM_ANCHOR_ID,
-				'aria-hidden': 'true'
-			}).css({
-				display: 'none',
-				height: 0,
-				overflow: 'hidden'
-			});
-			// Preserve the original insertion point of #columnbottom inside #outer-container.
-			$bottom.before($anchor);
-		}
-		return $anchor;
-	}
-
-	function restoreColumnBottom($outer) {
-		var $bottom = $('#' + BOTTOM_ID);
-		var $anchor = $('#' + BOTTOM_ANCHOR_ID);
-		if ($bottom.length && $anchor.length && $bottom.parent().length && $bottom.parent()[0] !== $outer[0]) {
-			$anchor.after($bottom);
-		}
-		try {
-			document.documentElement.classList.remove(ROOT_MOVED_CLASS);
-		} catch (e) {}
 	}
 
 	function restoreWidgets($column) {
@@ -126,57 +89,42 @@
 	}
 
 	function scheduleUpdate() {
-		if (updateTimer) {
-			clearTimeout(updateTimer);
-			updateTimer = null;
+		// Throttle to the next frame (fast, avoids timer cascades).
+		var raf = window.requestAnimationFrame;
+		var caf = window.cancelAnimationFrame;
+		if (!raf) {
+			setTimeout(updateLayout, 16);
+			return;
 		}
-		if (rafToken) {
-			caf(rafToken);
-			rafToken = null;
+		if (rafId && caf) {
+			try { caf(rafId); } catch (e) {}
 		}
-		// Use rAF to coalesce multiple triggers into a single layout pass.
-		rafToken = raf(function () {
-			rafToken = null;
-			updateLayout(true);
+		rafId = raf(function () {
+			rafId = 0;
+			updateLayout();
 		});
 	}
 
-	/**
-	 * Full layout pass:
-	 * - Restores widgets and columnbottom to the original state
-	 * - Moves only overflowing widgets under #main
-	 *
-	 * Incremental pass:
-	 * - Only moves additional widgets if the column still overflows
-	 * - Never moves widgets back (stable, avoids "double" reveals)
-	 */
-	function updateLayout(isFull) {
+	function updateLayout() {
 		var $outer = $('#outer-container');
 		var $column = $('#column');
-		var $main = $('#main,#cpmain').first();
+		var $main = $('#main, #cpmain').first();
 
 		if (!$outer.length || !$column.length || !$main.length) {
 			return;
 		}
 
-		/**
-		 * Full pass resets first, then decides what to do for current viewport.
-		 * Incremental pass only moves additional widgets if needed.
-		 */
-		if (isFull) {
-			restoreWidgets($column);
-			restoreColumnBottom($outer);
-			$('#' + UNDER_ID).remove();
-			$outer.removeClass('stringendo-widgets-under-main-active stringendo-no-column');
+
+		// Always reset first, then decide what to do for current viewport.
+		restoreWidgets($column);
+		var $underExisting = $('#' + UNDER_ID);
+		if ($underExisting.length) {
+			$underExisting.addClass('stringendo-under-empty');
 		}
+		$outer.removeClass('stringendo-widgets-under-main-active stringendo-no-column');
 
 		// Narrow layouts stack anyway.
 		if (!isWide()) {
-			if (isFull) {
-				// Ensure we clean up any previously created under-container.
-				$('#' + UNDER_ID).remove();
-				$outer.removeClass('stringendo-widgets-under-main-active stringendo-no-column');
-			}
 			return;
 		}
 
@@ -196,12 +144,13 @@
 		var colTop = colOffset.top;
 		var colBottom = colTop + ($column.outerHeight(true) || 0);
 
-		/**
-		 * If the column ends above (or at) the main bottom, keep everything in the column.
-		 * In incremental mode, keep already moved widgets under #main (stable, no flicker).
-		 */
+		// If the column ends above (or at) the main bottom, keep everything in the column.
 		if (colBottom <= mainBottom) {
-			didFullLayout = didFullLayout || !!isFull;
+			return;
+		}
+
+		var diff = colBottom - mainBottom;
+		if (diff <= 0) {
 			return;
 		}
 
@@ -209,65 +158,55 @@
 		syncUnderVisibility($under);
 		$outer.addClass('stringendo-widgets-under-main-active');
 
-		/**
-		 * If a bottom widget row exists (#columnbottom), ensure it stays *below* the
-		 * under-main widget grid. This keeps sidebar widgets "under #main" and "above #columnbottom".
-		 */
-		var $bottom = $('#' + BOTTOM_ID);
-		// widgetsbottom.tpl always renders the wrapper; only move it if it actually contains widgets.
-		if ($bottom.length && $bottom.children('div').length) {
-			ensureColumnBottomAnchor($outer);
-			$under.after($bottom);
-			try {
-				document.documentElement.classList.add(ROOT_MOVED_CLASS);
-			} catch (e0) {}
+		// Move only as many bottom widgets as needed (reduces reflow vs. iterative measuring).
+		var moved = 0;
+		var i;
+		for (i = $widgets.length - 1; i >= 0; i--) {
+			var $w = $widgets.eq(i);
+			moved += ($w.outerHeight(true) || 0);
+			$w.prependTo($under);
+			if (moved >= diff) {
+				break;
+			}
 		}
 
-		// Move bottom widgets under #main until the column fits within main's height span.
+		// Small safety net for edge cases (collapsing margins etc.).
 		var safety = 0;
-		while ($column.children('div').length && safety < 200) {
+		while ($column.children('div').length && safety < 10) {
 			colBottom = colTop + ($column.outerHeight(true) || 0);
 			if (colBottom <= mainBottom) {
 				break;
 			}
-
 			$column.children('div').last().prependTo($under);
 			safety++;
+		}
+
+		if ($under.children('div').length) {
+			$under.removeClass('stringendo-under-empty');
 		}
 
 		// Hide the empty right column if everything was moved.
 		if (!$column.children('div').length) {
 			$outer.addClass('stringendo-no-column');
 		}
-
-		didFullLayout = didFullLayout || !!isFull;
 	}
 
-	// Run as early as possible (defer scripts run after parsing, before DOMContentLoaded).
-	scheduleUpdate();
-
 	$(function () {
-		// Safety: run again on DOM ready.
+		// Initial attempt (DOM ready).
 		scheduleUpdate();
-		// If fade-in is active, keep late recalcs minimal to avoid visible "double" reveals.
-		if (hasFadeIn()) {
-			setTimeout(scheduleUpdate, 180);
-		}
 	});
 
-	// After images are loaded, main height can change. Use incremental pass to avoid flicker.
-	$(window).on('load', function () {
-		if (!didFullLayout) {
-			updateLayout(true);
-			return;
-		}
-		updateLayout(false);
-	});
+	// After images are loaded, main height can change significantly.
+	$(window).on('load', scheduleUpdate);
+
+	// BFCache restores (back/forward) can skip normal load.
+	$(window).on('pageshow', scheduleUpdate);
 
 	// When the column fade-in completed, reveal under-main widget grid (if present).
 	$(window).on('stringendo:columnShown', function () {
 		syncUnderVisibility($('#' + UNDER_ID));
 	});
+
 	// Re-evaluate when viewport changes.
 	$(window).on('resize orientationchange', scheduleUpdate);
 

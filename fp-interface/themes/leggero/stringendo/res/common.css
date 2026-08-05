@@ -6,7 +6,7 @@
  * Name: Stringendo
  * Theme: Leggero
  * Author: Fraenkiman
- * Version: 1.5.0
+ * Version: 1.5.2
  * Module: common.css
  *
  * Modern, bright and responsive presentation layer.
@@ -41,58 +41,103 @@
 
 /* ---------- Design tokens ---------- */
 :root {
-	/* Let form controls use a light palette */
-	color-scheme: light;
-
+	/* Let form controls follow the active browser/system palette */
+	color-scheme: light dark;
 	--fp-container: 1366px;
 	--fp-sidebar: 320px;
-
 	--fp-bg: #f6f7fb;
 	--fp-surface: #ffffff;
 	--fp-surface-2: #f1f5f9;
 	--fp-text: #0f172a;
 	--fp-muted: #475569;
 	--fp-border: #e2e8f0;
-
 	--fp-accent: #b22222;
 	--fp-accent-2: #8b0000;
 	--fp-accent-3: #ff8c00;
 	--fp-accent-4: #4b0082;
 	--fp-accent-soft: #ffe4e6;
 	--fp-accent-soft-2: #ffedd5;
-
 	--fp-link: #007fff;
 	--fp-link-hover: #b22222;
 	--fp-link-visited: #800080;
-
 	--fp-accent-rgb: 178, 34, 34;
 	--fp-accent-2-rgb: 139, 0, 0;
 	--fp-accent-3-rgb: 255, 140, 0;
 	--fp-link-rgb: 0, 127, 255;
 	--fp-focus-rgb: 0, 127, 255;
-
 	--fp-accent-gradient: linear-gradient(135deg, var(--fp-accent-2) 0%, var(--fp-accent-3) 100%);
 	--fp-accent-gradient-hover: linear-gradient(135deg, var(--fp-accent) 0%, var(--fp-accent-3) 100%);
-
 	--fp-shadow-sm: 0 2px 10px rgba(2, 6, 23, 0.06);
 	--fp-shadow: 0 10px 30px rgba(2, 6, 23, 0.10);
-
 	--fp-radius: 14px;
 	--fp-radius-sm: 10px;
-
 	--fp-space-1: .25rem;
 	--fp-space-2: .5rem;
 	--fp-space-3: .75rem;
 	--fp-space-4: 1rem;
 	--fp-space-5: 1.25rem;
 	--fp-space-6: 1.5rem;
-
+	--fp-search-mag: rgba(15, 23, 42, .55);
+	--fp-heading: #8b0000;
+	--fp-header-gradient: linear-gradient(180deg, #ff8c00 0%, #8b0000 100%);
+	--fp-header-title: #0f172a;
+	--fp-header-subtitle: #f8f9fc;
+	--fp-header-link: #f8f9fc;
+	--fp-entry-bg: linear-gradient(1deg, rgb(255, 219, 166) 0%, rgb(249, 246, 241) 100%);
+	--fp-widget-bg: linear-gradient(180deg, rgb(247, 240, 223) 0%, rgb(253, 198, 154) 100%);
+	--fp-admin-entry-bg: linear-gradient(360deg, rgb(255, 219, 166) 0%, rgb(249, 246, 241) 100%);
+	--fp-cookie-bg: rgba(255, 255, 255, .95);
+	--fp-cookie-border: var(--fp-border, #e2e8f0);
+	--fp-pattern-dot-rgb: 255, 140, 0;
+	--fp-button-text: #ffffff;
 	--fp-scroll: #6b6c6d;
 }
 
 @media (max-width: 1366px) {
 	:root {
 		--fp-container: 1130px;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		color-scheme: dark;
+		--fp-bg: #060d18;
+		--fp-surface: #121a28;
+		--fp-surface-2: #182235;
+		--fp-text: #eef4ff;
+		--fp-muted: #b5c3d6;
+		--fp-border: #2a3850;
+		--fp-accent: #ff8c00;
+		--fp-accent-2: #ffb347;
+		--fp-accent-3: #ffd166;
+		--fp-accent-4: #c792ea;
+		--fp-accent-soft: #3a1820;
+		--fp-accent-soft-2: #342314;
+		--fp-link: #7cc5ff;
+		--fp-link-hover: #ffd166;
+		--fp-link-visited: #d8b4fe;
+		--fp-accent-rgb: 255, 140, 0;
+		--fp-accent-2-rgb: 255, 179, 71;
+		--fp-accent-3-rgb: 255, 209, 102;
+		--fp-link-rgb: 124, 197, 255;
+		--fp-focus-rgb: 124, 197, 255;
+		--fp-shadow-sm: 0 12px 26px rgba(0, 0, 0, 0.32);
+		--fp-shadow: 0 18px 48px rgba(0, 0, 0, 0.42);
+		--fp-search-mag: rgba(238, 244, 255, .68);
+		--fp-heading: #ffb347;
+		--fp-header-gradient: linear-gradient(180deg, #5a1f0d 0%, #1f0b05 100%);
+		--fp-header-title: #fff1d6;
+		--fp-header-subtitle: #ffd9a0;
+		--fp-header-link: #ffe5bd;
+		--fp-entry-bg: linear-gradient(180deg, rgba(28, 20, 13, .95) 0%, rgba(16, 22, 34, .98) 100%);
+		--fp-widget-bg: linear-gradient(180deg, rgba(43, 30, 17, .96) 0%, rgba(20, 27, 41, .98) 100%);
+		--fp-admin-entry-bg: linear-gradient(180deg, rgba(51, 35, 20, .96) 0%, rgba(18, 24, 38, .98) 100%);
+		--fp-cookie-bg: rgba(11, 18, 32, .96);
+		--fp-cookie-border: #2a3850;
+		--fp-pattern-dot-rgb: 183, 116, 40;
+		--fp-button-text: #000000;
+		--fp-scroll: #815523;
 	}
 }
 
@@ -116,11 +161,19 @@ body {
 	color: var(--fp-text, #0f172a);
 	background-color: var(--fp-bg, #f6f7fb);
 	/* SVG pattern + tiny gradient fallback (visible even if SVG fails to load) */
-	background-image: url('../imgs/bg.svg'), radial-gradient(circle at 1px 1px, rgba(var(--fp-accent-3-rgb, 255, 140, 0), .045) 1px, transparent 0);
+	background-image: url('../imgs/bg.svg'), radial-gradient(circle at 1px 1px, rgba(var(--fp-pattern-dot-rgb, 255, 140, 0), .045) 1px, transparent 0);
 	background-repeat: repeat, repeat;
 	background-size: 600px 600px, 36px 36px;
 	background-position: top left, top left;
 	background-attachment: scroll, scroll;
+}
+
+#background-image {
+	display: none;
+}
+
+#background-svg {
+	display: none;
 }
 
 img,
@@ -147,8 +200,9 @@ h4 {
 }
 
 h2, h3, h4 {
-	color: #8b0000;
+	color: var(--fp-heading, #8b0000);
 }
+
 /* Improve focus visibility without being loud */
 :focus-visible {
 	outline: 3px solid rgba(var(--fp-focus-rgb, 0, 127, 255), .38);
@@ -173,6 +227,7 @@ a:hover {
 
 /* ---------- Layout ---------- */
 #body-container {
+	/* max-width: var(--fp-container, 1279px); */
 	max-width: var(--fp-container, 1366px);
 	margin: 0 auto;
 	padding: var(--fp-space-5, 1.25rem);
@@ -185,35 +240,127 @@ a:hover {
 }
 
 #head {
-	background: linear-gradient(180deg, #ff8c00 0%, #8b0000 100%);
+	background: var(--fp-header-gradient, linear-gradient(180deg, #ff8c00 0%, #8b0000 100%));
 	border: 1px solid var(--fp-border, #e2e8f0);
 	border-radius: var(--fp-radius, 14px);
 	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
 	padding: var(--fp-space-6, 1.5rem);
+	/* Layout: title/subtitle left, feeds+search right */
+	display: grid;
+	grid-template-columns: 1fr minmax(14rem, 22rem);
+	grid-template-areas:
+		"title noprint"
+		"subtitle noprint";
+	column-gap: var(--fp-space-5, 1.25rem);
+	row-gap: .1rem;
 }
 
 #head h1 {
+	grid-area: title;
 	margin: 0;
 	font-size: clamp(1.7rem, 2.4vw, 2.35rem);
 	line-height: 1.15;
 	letter-spacing: -0.02em;
+	text-align: left;
 }
 
 #head h1 a {
-	color: #0f172a;
+	color: var(--fp-header-title, #0f172a);
 }
 
 #head .subtitle {
+	grid-area: subtitle;
 	margin: var(--fp-space-2, .5rem) 0 0 0;
-	color: #f8f9fc;
+	color: var(--fp-header-subtitle, #f8f9fc);
 	font-size: 1.02rem;
+	text-align: left;
+}
+
+/* Header right block: RSS/Atom/help + search */
+#head .noprint {
+	grid-area: noprint;
+	justify-self: end;
+	align-self: start;
+	text-align: right;
+	line-height: 1.35;
+	color: var(--fp-header-link, var(--fp-surface, rgba(248, 249, 252, 1)));
+}
+
+#head .noprint a {
+	color: var(--fp-header-link, var(--fp-surface, rgba(248, 249, 252, 1)));
+}
+
+#head .noprint form {
+	margin: .35rem 0 0 0;
+	position: relative;
+}
+
+#head .noprint input[type="text"] {
+	margin: 0;
+	padding-right: 2.35rem;
+}
+
+#head .noprint input[type="text"]::placeholder {
+	color: var(--fp-search-mag, rgba(15, 23, 42, .55));
+	opacity: 1;
+}
+
+/* Search button inside the input, neutral (no gradient/background) */
+#head .noprint button.search-button {
+	position: absolute;
+	right: .25rem;
+	top: 50%;
+	transform: translateY(-50%);
+	appearance: none;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	padding: 0;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 999px;
+	color: var(--fp-search-mag, rgba(15, 23, 42, .55));
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1;
+}
+
+#head .noprint button.search-button:hover {
+	background: transparent;
+}
+
+#head .noprint button.search-button:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 4px rgba(var(--fp-focus-rgb, 0, 127, 255), .18);
+}
+
+#head .noprint button.search-button i {
+	color: inherit;
+}
+
+/* Responsive: stack header blocks on small screens */
+@media (max-width: 799px) {
+	#head {
+		grid-template-columns: 1fr;
+		grid-template-areas:
+			"title"
+			"subtitle"
+			"noprint";
+	}
+
+	#head .noprint {
+		justify-self: stretch;
+		text-align: right;
+		margin-top: .6rem;
+	}
 }
 
 /* Stringendo: headings a bit more "drängend" */
 h2,
 h3,
 h4 {
-	color: #8b0000;
+	color: var(--fp-heading, #8b0000);
 }
 
 #outer-container {
@@ -224,41 +371,47 @@ h4 {
 	margin-top: var(--fp-space-5, 1.25rem);
 }
 
+/* Keep the optional top widget bar as a full-width row inside the flex layout. */
+#columntop {
+	flex: 0 0 100%;
+	order: 0;
+}
+
 #main,
 #cpmain {
 	flex: 1 1 0;
 	min-width: 0;
 }
 
-	/* Fade-in: main first, then column (frontend only; JS adds html.fp-fadein). */
-	html.fp-fadein body:not([class^="admin-"]) #main {
-		opacity: 0;
-		animation: fpStringendoFadeIn 320ms ease-out 0ms both;
-		will-change: opacity, transform;
-	}
+/* Fade-in: main first, then column (frontend only; JS adds html.fp-fadein). */
+html.fp-fadein body:not([class^="admin-"]) #main {
+	opacity: 0;
+	animation: fpStringendoFadeIn 320ms ease-out 0ms both;
+	will-change: opacity, transform;
+}
 
+html.fp-fadein body:not([class^="admin-"]) #column {
+	opacity: 0;
+	animation: fpStringendoFadeInOpacity 260ms ease-out 140ms both;
+	will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html.fp-fadein body:not([class^="admin-"]) #main,
 	html.fp-fadein body:not([class^="admin-"]) #column {
-		opacity: 0;
-		animation: fpStringendoFadeInOpacity 260ms ease-out 140ms both;
-		will-change: opacity;
+		animation: none;
+		opacity: 1;
+		transform: none;
+		will-change: auto;
 	}
-
-	@media (prefers-reduced-motion: reduce) {
-		html.fp-fadein body:not([class^="admin-"]) #main,
-		html.fp-fadein body:not([class^="admin-"]) #column {
-			animation: none;
-			opacity: 1;
-			transform: none;
-			will-change: auto;
-		}
-	}
+}
 
 /* Admin pages use only #cpmain, no sidebar */
 body[class^="admin-"] #outer-container {
 	gap: var(--fp-space-4, 1rem);
 }
 
-@media (max-width: 959px) {
+@media (max-width: 1079px) {
 	#body-container {
 		padding: var(--fp-space-4, 1rem);
 	}
@@ -278,8 +431,7 @@ body[class^="admin-"] #outer-container {
 
 /* ---------- Content blocks ---------- */
 .entry {
-	background: rgb(249, 246, 241);
-	background: linear-gradient(1deg, rgb(255, 219, 166) 0%, rgb(249, 246, 241) 100%);
+	background: var(--fp-entry-bg, linear-gradient(1deg, rgb(255, 219, 166) 0%, rgb(249, 246, 241) 100%));
 	border: 1px solid var(--fp-border, #e2e8f0);
 	border-radius: var(--fp-radius, 14px);
 	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
@@ -291,11 +443,10 @@ body[class^="admin-"] #outer-container {
 /* Date heading printed once for same-day entries */
 h2.date {
 	margin: 0 0 var(--fp-space-2, .5rem) 0;
-	font-size: .85rem;
-	font-weight: 500;
+	font-size: .92rem;
 	color: var(--fp-muted, #475569);
 	letter-spacing: .06em;
-	text-transform: uppercase;
+	font-weight: normal;
 }
 
 .entry-title,
@@ -414,7 +565,10 @@ h2.date {
 
 .entry pre {
 	background: var(--fp-surface-2, #f1f5f9);
-	border: 1px solid var(--fp-border, #e2e8f0);
+	border-left: 5px solid var(--fp-accent);
+	border-right: 1px solid var(--fp-accent);
+	border-top: 1px solid var(--fp-accent);
+	border-bottom: 1px solid var(--fp-accent);
 	border-radius: var(--fp-radius-sm, 10px);
 	padding: var(--fp-space-4, 1rem);
 	overflow: auto;
@@ -499,7 +653,7 @@ table th {
 
 .entry-footer strong {
 	color: var(--fp-text, #0f172a);
-	font-weight: 700;
+	font-weight: 800;
 }
 
 .entry-footer a {
@@ -596,11 +750,16 @@ button:not(.leaflet-control):not(.pswp__button):not(.bb-button) {
 	border: 1px solid rgba(var(--fp-accent-2-rgb, 139, 0, 0), .35);
 	border-radius: 999px;
 	background: var(--fp-accent-gradient, var(--fp-accent, #b22222));
-	color: #ffffff;
+	color: var(--fp-button-text, #ffffff);
 	padding: .55rem 1rem;
 	font-weight: 500;
 	cursor: pointer;
 	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1.4;
+	text-align: center;
 }
 
 input[type="submit"]:hover,
@@ -610,12 +769,6 @@ input[type="button"]:hover,
 button:not(.leaflet-control):not(.pswp__button):not(.bb-button):hover {
 	transition-duration: .25s;
 	background: var(--fp-accent-gradient-hover, var(--fp-accent-2, #8b0000));
-}
-
-.link-comments a,
-.readmore {
-	display: inline-flex;
-	align-items: center;
 }
 
 /**
@@ -686,8 +839,18 @@ button:not(.leaflet-control):not(.pswp__button):not(.bb-button):disabled {
 	text-align: center;
 }
 
+.webshare {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	width: 2em;
+	height: 2em;
+	margin: 0.3em 0em 0.3em 0em;
+}
+
 fieldset {
-	border: 1px solid #ff8c00;
+	border: 1px solid rgba(var(--fp-accent-3-rgb, 255, 140, 0), .45);
 	border-radius: var(--fp-radius-sm, 10px);
 	padding: var(--fp-space-4, 1rem);
 	margin-bottom: 1em;
@@ -814,6 +977,10 @@ ol#comments ol {
 	list-style: decimal;
 }
 
+ol#comments li {
+	background: rgb(255, 219, 166);
+}
+
 ol#comments blockquote {
 	margin: 1rem 0;
 	padding: .85rem 1rem;
@@ -879,14 +1046,23 @@ ol#comments pre code {
 	div.floatright,
 	.img-gallery div.photoswipe figure { /* unset photoswipe.css */
 		float: unset;
+		
+	}
+
+	div.photoswipe figure { /* unset photoswipe.css */
+		margin: auto !IMPORTANT;
+	}
+
+	div.photoswipe figcaption {
+		width: 100% !IMPORTANT;
 	}
 
 	div.floatright,
 	div.floatleft,
 	div.photoswipe.thumbnail.nofloat {
+		width: unset !IMPORTANT;
 		margin-left: auto;
 		margin-right: auto;
-		width: unset !IMPORTANT;
 		text-align: center;
 	}
 
@@ -900,18 +1076,20 @@ ol#comments pre code {
 	border-radius: 3px;
 }
 
+div.photoswipe figcaption {
+	font-size: 12px !IMPORTANT;
+}
+
 .pswp__img {
 	border-radius: 3px
 }
 
 /**
  * Widgets that overflow the sidebar can be moved below #main via widgets-under-main.js.
- * Ensure the under-main container spans a full row (no matter the sidebar layout).
+ * The under-main container lives outside #outer-container and spans the full content width.
  */
-#outer-container > .stringendo-widgets-under-main {
-	flex: 0 0 100%;
+.stringendo-widgets-under-main {
 	width: 100%;
-	order: 10;
 }
 
 /* If the sidebar becomes empty, let #main use the full width */
@@ -924,6 +1102,44 @@ ol#comments pre code {
 }
 
 /* BBCode Video + GDPR-Video */
+.responsive_bbcode_video {
+	position: relative;
+	display: block;
+	box-sizing: border-box;
+	max-width: 100%;
+	width: 560px;
+	height: 315px;
+	margin-bottom: 0.5rem;
+}
+
+.responsive_bbcode_video > .video-responsive_bbcode_video {
+	position: relative;
+	display: block;
+	box-sizing: border-box;
+	width: 100% !IMPORTANT;
+	height: 100% !IMPORTANT;
+	max-width: 100%;
+	background-color: var(--qb-highlight-style-error-selected-background-color, #4343431a);
+	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.responsive_bbcode_video.video-float-left {
+	float: left;
+	margin: 0 1rem 0.5rem 0;
+}
+
+.responsive_bbcode_video.video-float-right {
+	float: right;
+	margin: 0 0 0.5rem 1rem;
+}
+
+.responsive_bbcode_video.video-float-nofloat {
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .responsive_bbcode_video button {
 	height: unset !IMPORTANT;
 }
@@ -939,30 +1155,6 @@ ol#comments pre code {
 	margin: 0px 3px 0px 0px;
 }
 
-@media (min-width: 1080px) {
-	.bbcode_video {
-		width: 640px !IMPORTANT;
-		height: 360px !IMPORTANT;
-	}
-}
-
-@media (max-width: 1024px) {
-	.bbcode_video {
-		width: 320px !IMPORTANT;
-		height: 180px !IMPORTANT;
-	}
-}
-
-/**
- * widgets-under-main.js may move #columnbottom out of #outer-container so that
- * overflow sidebar widgets can render above it (under-main grid -> columnbottom).
- * In that case, re-create the normal vertical spacing that is otherwise provided
- * by the flex gap inside #outer-container.
- */
-html.stringendo-columnbottom-moved #columnbottom {
-	margin-top: var(--fp-space-5, 1.25rem);
-}
-
 /* Captcha plugin */
 img#captcha {
 	border-radius: 10px;
@@ -972,6 +1164,110 @@ input#aspam_code {
 	margin-top: 0.3rem;
 }
 
+/* Desktop PC */
+@media (max-width: 1365px) {
+	.bbcode_video,
+	.responsive_bbcode_video {
+		width: 470px;
+		height: 265px;
+	}
+}
+
+@media (max-width: 1279px) {
+	.bbcode_video,
+	.responsive_bbcode_video {
+		/* width: 400px; */
+		/* height: 225px; */
+	}
+}
+
+/* mobile Device */
+@media (max-width: 1079px) {
+	.bbcode_video,
+	.responsive_bbcode_video {
+		width: 640px;
+		height: 360px;
+	}
+}
+
+@media (max-width: 959px) {
+	.bbcode_video,
+	.responsive_bbcode_video {
+		width: 480px;
+		height: 270px;
+	}
+}
+
+@media (max-width: 919px) {
+	.bbcode_video,
+	.responsive_bbcode_video {
+		/* width: 400px; */
+		/* height: 225px; */
+	}
+}
+
+@media (max-width: 799px) {
+	.bbcode_video,
+	.responsive_bbcode_video {
+		/* width: 320px; */
+		/* height: 180px; */
+	}
+}
+
+@media (max-width: 719px) {
+	.responsive_bbcode_video {
+		float: unset !IMPORTANT;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1.777 / 1;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.responsive_bbcode_video > .video-responsive_bbcode_video {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100% !IMPORTANT;
+		height: 100% !IMPORTANT;
+	}
+
+	.bbcode_video {
+		float: unset ! IMPORTANT;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.bbcode_video.nofloat {
+	margin-bottom: 0.5rem;
+}
+
+#columntop, #columnbottom {
+	width: 100%;
+	text-align: center;
+}
+
+#columntop ul li, #columnbottom ul li {
+	display: inline;
+}
+
+#columntop > div, #columnbottom > div {
+	background: var(--fp-widget-bg, linear-gradient(180deg, rgb(247, 240, 223) 0%, rgb(253, 198, 154) 100%));
+	border: 1px solid var(--fp-border, #e2e8f0);
+	border-radius: var(--fp-radius, 14px);
+	box-shadow: var(--fp-shadow-sm, 0 2px 10px rgba(2, 6, 23, 0.06));
+	margin: 0;
+	overflow: hidden;
+}
+
+#columnbottom > div {
+	margin: 0 0 var(--fp-space-5, 1.25rem) 0;
+}
+
 /* Chrome, Edge, and Safari - the right Scrollbar */
 @supports selector(::-webkit-scrollbar) {
 	body::-webkit-scrollbar {
@@ -979,7 +1275,7 @@ input#aspam_code {
 	}
 
 	body::-webkit-scrollbar-thumb {
-		background-color: var(--fp-scroll, #6b6c6d) !IMPORTANT;
+		background-color: var(--fp-scroll, #6b6c6d);
 		border-radius: 3px;
 	}
 }
@@ -988,8 +1284,13 @@ input#aspam_code {
 @supports (-moz-appearance:button) and (contain:paint) {
 	* {
 		scrollbar-width: thin;
-		scrollbar-color: var(--fp-scroll, #6b6c6d) var(--fp-bg, #f6f7fb) !IMPORTANT;
+		scrollbar-color: var(--fp-scroll, #6b6c6d) var(--fp-bg, #f6f7fb);
 	}
+}
+
+/* The bottom Scrollbar */
+#scrollIndicator.line {
+	background: var(--fp-scroll, #6b6c6d);
 }
 
 /* The bottom Scrollbar */
@@ -999,165 +1300,66 @@ input#aspam_code {
 
 /* ---------- Stringendo dark mode refinements ---------- */
 @media (prefers-color-scheme: dark) {
-	:root {
-		color-scheme: dark;
-		--fp-bg: #060d18;
-		--fp-surface: #0f1724;
-		--fp-surface-2: #182233;
-		--fp-text: #e7edf7;
-		--fp-muted: #a9b5c9;
-		--fp-border: #304158;
-		--fp-accent: #c67a27;
-		--fp-accent-2: #b77428;
-		--fp-accent-3: #f0b35f;
-		--fp-accent-4: #ceb9ff;
-		--fp-accent-soft: #432515;
-		--fp-accent-soft-2: #4c2d16;
-		--fp-link: #8bc2ff;
-		--fp-link-hover: #ffd39d;
-		--fp-link-visited: #d7b9ff;
-		--fp-accent-rgb: 198, 122, 39;
-		--fp-accent-2-rgb: 183, 116, 40;
-		--fp-accent-3-rgb: 240, 179, 95;
-		--fp-link-rgb: 139, 194, 255;
-		--fp-focus-rgb: 139, 194, 255;
-		--fp-accent-gradient: linear-gradient(135deg, #b36b18 0%, #f0b35f 100%);
-		--fp-accent-gradient-hover: linear-gradient(135deg, #c67a27 0%, #ffd39d 100%);
-		--fp-shadow-sm: 0 4px 18px rgba(0, 0, 0, 0.32);
-		--fp-shadow: 0 14px 36px rgba(0, 0, 0, 0.42);
-		--fp-heading: #ffd39d;
-		--fp-header-title: #f8fafc;
-		--fp-header-subtitle: #ffe6c9;
-		--fp-button-text: #000000;
-		--fp-pattern-rgb: 183, 116, 40;
-		--fp-entry-gradient: linear-gradient(180deg, #182538 0%, #0f1724 100%);
-		--fp-widget-gradient: linear-gradient(180deg, #182538 0%, #0f1724 100%);
-		--fp-admin-entry-gradient: linear-gradient(180deg, #182538 0%, #0f1724 100%);
-		--fp-surface-rgb: 15, 23, 36;
-		--lt-color-gray-100: #182233;
-		--lt-color-gray-400: #5a6a82;
-		--lt-color-gray-500: #7c8ea7;
-		--fp-scroll: #815523;
-	}
-
-	html,
 	body {
-		background-color: var(--fp-bg, #060d18);
-	}
-
-	body {
-		background-image: url('../imgs/bg.svg'), radial-gradient(circle at 1px 1px, rgba(var(--fp-pattern-rgb, 183, 116, 40), 0.085) 1px, transparent 0);
-	}
-
-	h2,
-	h3,
-	h4 {
-		color: var(--fp-heading, #ffd39d);
-	}
-
-	#head {
-		background: linear-gradient(180deg, #b77428 0%, #6f3606 100%);
-		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.26);
-		box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+		background-image: url('../imgs/bg.svg'), radial-gradient(circle at 1px 1px, rgba(var(--fp-pattern-dot-rgb, 183, 116, 40), .12) 1px, transparent 0);
 	}
 
 	#head h1 a {
-		color: var(--fp-header-title, #f8fafc);
-	}
-
-	#head .subtitle {
-		color: var(--fp-header-subtitle, #ffe6c9);
-	}
-
-	.navigation a,
-	.entry,
-	ol#comments > li {
-		background: var(--fp-entry-gradient, linear-gradient(180deg, #182538 0%, #0f1724 100%));
-		border-color: var(--fp-border, #304158);
+		text-shadow: 0 1px 0 rgba(0, 0, 0, .28);
 	}
 
 	ol#comments > li.comment-admin {
-		background: linear-gradient(180deg, rgba(183, 116, 40, 0.24) 0%, rgba(15, 23, 36, 0.95) 100%);
+		background: rgba(var(--fp-accent-3-rgb, 255, 209, 102), .12);
 	}
 
-	.entry-title a,
-	.entry .title,
-	.entry .title a {
-		color: var(--fp-text, #e7edf7);
+	ol#comments li {
+		background: var(--qb-highlight-selection-toolbox-word-background-color, #4343431a);
 	}
 
-	.entry-title a:hover {
-		color: var(--fp-link-hover, #ffd39d);
-	}
-
-	.entry blockquote {
-		background: rgba(24, 34, 51, 0.92);
-		border-left-color: var(--fp-accent-3, #f0b35f);
-	}
-
-	input[type="text"],
-	input[type="email"],
-	input[type="password"],
-	input[type="url"],
-	input[type="search"],
-	input[type="number"],
-	textarea,
-	select {
-		background: rgba(15, 23, 36, 0.96);
-		border-color: var(--fp-border, #304158);
-		color: var(--fp-text, #e7edf7);
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
-	}
-
-	input[type="submit"],
-	input[type="button"],
-	.link-comments a,
-	.readmore a,
-	button:not(.leaflet-control):not(.pswp__button):not(.bb-button) {
-		color: var(--fp-button-text, #000000);
-		border-color: rgba(var(--fp-accent-2-rgb, 183, 116, 40), 0.55);
-		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
-	}
-
-	input[type="submit"]:hover,
-	input[type="button"]:hover,
-	.link-comments a:hover,
-	.readmore a:hover,
-	button:not(.leaflet-control):not(.pswp__button):not(.bb-button):hover {
+	/* BBCode toolbar */
+	.bb-btn-tlb p .bb-button {
+		border-color: rgba(var(--fp-accent-2-rgb, 255, 179, 71), .35);
+		background: var(--fp-accent-gradient, linear-gradient(135deg, var(--fp-accent-2, #ffb347) 0%, var(--fp-accent-3, #ffd166) 100%));
 		color: var(--fp-button-text, #000000);
 	}
 
-	input[type="reset"],
-	button[type="reset"] {
-		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.45);
-		color: var(--fp-link-hover, #ffd39d);
+	.bb-btn-tlb p .bb-button:hover {
+		background: var(--fp-accent-gradient-hover, linear-gradient(135deg, var(--fp-accent, #ff8c00) 0%, var(--fp-accent-3, #ffd166) 100%));
+		border-color: rgba(var(--fp-accent-2-rgb, 255, 179, 71), .45);
 	}
 
-	input[type="reset"]:hover,
-	button[type="reset"]:hover {
-		background: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.16);
+	.bb-btn-tlb p .bb-button:focus-visible {
+		border-color: rgba(var(--fp-focus-rgb, 124, 197, 255), .55);
+		box-shadow: 0 0 0 4px rgba(var(--fp-focus-rgb, 124, 197, 255), .18);
 	}
 
-	fieldset {
-		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.55);
+	/* PhotoSwipe plugin */
+	.photoswipe figure img,
+	.responsive_bbcode_video > .video-responsive_bbcode_video,
+	.bbcode_video,
+	.responsive_bbcode_video iframe[data-src] {
+		box-shadow: 0 10px 24px rgba(0, 0, 0, .35);
+		color: var(--lt-color-gray-500, #8f96a3);
+		background: var(--fp-surface-2, #f1f5f9);
+		border: 1px solid var(--fp-border, #e2e8f0);
 	}
 
-	legend,
+	/* CookieBanner plugin */
 	#cookie_banner div.buttonbar {
-		color: var(--fp-text, #e7edf7);
+		color: var(--fp-text, #eef4ff);
 	}
 
 	/* Chrome, Edge, and Safari - the right Scrollbar */
 	@supports selector(::-webkit-scrollbar) {
 		body::-webkit-scrollbar-thumb {
-			background-color: var(--fp-scroll, #815523) !IMPORTANT;
+			background-color: var(--fp-scroll, #815523);
 		}
 	}
 
 	/* Firefox - the right Scrollbar */
 	@supports (-moz-appearance:button) and (contain:paint) {
 		* {
-			scrollbar-color: var(--fp-scroll, #815523) var(--fp-bg, #060d18) !IMPORTANT;
+			scrollbar-color: var(--fp-scroll, #815523) var(--fp-bg, #060d18);
 		}
 	}
 

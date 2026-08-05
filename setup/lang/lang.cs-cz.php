@@ -99,6 +99,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]Kontakt[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Dolní nabídka';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Právní upozornění[/url]
+[*][url=static.php?page=privacy-policy]Zásady ochrany osobních údajů[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Vítejte ve FlatPressu!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Tento článek vám ukáže některé z možností [url=https://www.flatpress.org target=_blank rel=external]FlatPressu[/url].
 
@@ -192,6 +198,9 @@ Bavte se! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'O mně';
 $lang ['samplecontent'] ['about'] ['content'] = 'Sem napište něco o sobě. ([url=admin.php?p=static&action=write&page=about]Editovat![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Právní upozornění';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Upravit![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Zásady ochrany osobních údajů';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'V některých zemích, například pokud používáte službu Akismet Antispam, je nutné poskytnout návštěvníkům zásady ochrany osobních údajů. Zásady ochrany osobních údajů mohou být nezbytné také v případě, že návštěvník může použít kontaktní formulář nebo funkci komentáře.

@@ -1,27 +1,22 @@
-		</div>
-		
-		
-		<div id="footer">
-			{action hook=wp_footer}
-			
-			<!--
-			
-				Even though your not required to do this, we'd appreciate
-				a lot if you didn't remove the notice above.
-				
-				This way we'll get a better ranking on search engines
-				and you'll spread the FlatPress word all around the world :)
-				
-				If you really want to remove it, you may want to
-				consider doing at least a small donation.  
-			
-			-->
-			
-			<p>
-			This blog is proudly powered by <a href="https://www.flatpress.org/">FlatPress</a>.
-			</p>
-		</div> <!-- end of #footer -->
+ 
+			</div>
+			<!-- end #outer-container -->
 
-	</div>
-</body>
+			{if !isset($smarty.const.MOD_ADMIN_PANEL)}
+				{include file="widgetsbottom.tpl"}
+			{/if}
+
+			<!-- beginn of #footer -->
+			<div id="footer">
+				{action hook=wp_footer}
+				<p>
+				Powered by <a href="https://github.com/flatpressblog/flatpress" target="_blank" rel="noopener noreferrer">FlatPress</a>.
+				</p>
+			</div>
+			<!-- end of #footer -->
+
+		</div>
+		<!-- end #body-container -->
+		{action hook=end_footer}
+	</body>
 </html>

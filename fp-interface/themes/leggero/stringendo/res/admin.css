@@ -6,7 +6,7 @@
  * Name: Stringendo
  * Theme: Leggero
  * Author: Fraenkiman
- * Version: 1.5.0
+ * Version: 1.5.2
  * Module: admin.css
  *
  * Admin area adjustments for the Stringendo style.
@@ -21,44 +21,6 @@
  */
 body[class^="admin-"] a:visited {
 	color: var(--fp-link, var(--fp-accent, #b22222));
-}
-
-/* Admin: reverse entry gradient (requested) */
-body[class^="admin-"] .entry {
-	background: rgb(249, 246, 241);
-	background: linear-gradient(360deg, rgb(255, 219, 166) 0%, rgb(249, 246, 241) 100%);
-}
-
-/**
- * Admin preview (entry/static write): make code blocks responsive.
- * The preview uses the front-end template (preview.tpl / previewstatic.tpl)
- * which renders the content inside #post-preview .entry.
- */
-body.admin-entry-write #post-preview,
-body.admin-static-write #post-preview {
-	max-width: 100%;
-	min-width: 0;
-}
-
-body[class^="admin-"] #admin-post-preview fieldset {
-	max-height: 30em;
-	overflow: auto;
-}
-
-body.admin-entry-write #post-preview .entry pre,
-body.admin-static-write #post-preview .entry pre {
-	max-width: 100%;
-	overflow-x: auto;
-	overflow-y: auto;
-	white-space: pre;
-	overflow-wrap: normal;
-	word-break: normal;
-	-webkit-overflow-scrolling: touch;
-}
-
-body.admin-entry-write #post-preview .entry pre code,
-body.admin-static-write #post-preview .entry pre code {
-	white-space: inherit;
 }
 
 /* Admin pages do not render the front-end header (#head) */
@@ -209,7 +171,7 @@ body.admin-widgets-blockparser #admin-content table.entrylist td {
 
 /* Warm accent for field groups */
 body.admin fieldset {
-	border: 1px solid #ff8c00;
+	border: 1px solid rgba(var(--fp-accent-3-rgb, 255, 140, 0), .45);
 }
 
 #admin-content tr:last-child td {
@@ -227,11 +189,7 @@ body.admin fieldset {
 	font-size: 14px;
 }
 
-#admin-content td.main-cell {
-	/* width: 30%; */
-}
-
-@media (max-width: 1279px) {
+@media (max-width: 1280px) {
 	#admin-content table,
 	#admin-content td {
 		font-size: 12px;
@@ -347,8 +305,8 @@ body.admin fieldset {
 	html[lang^="en"] #plugin-table td:nth-child(3)::before { content: "Author: "; font-weight: 700; color: var(--fp-text, #0f172a); }
 	html[lang^="en"] #plugin-table td:nth-child(4)::before { content: "Version: "; font-weight: 700; color: var(--fp-text, #0f172a); }
 
-	html[lang^="zh"] #plugin-table td:nth-child(3)::before { content: "作者: "; font-weight: 700; color: var(--fp-text, #0f172a); }
-	html[lang^="zh"] #plugin-table td:nth-child(4)::before { content: "版本: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="cn"] #plugin-table td:nth-child(3)::before { content: "作者: "; font-weight: 700; color: var(--fp-text, #0f172a); }
+	html[lang^="cn"] #plugin-table td:nth-child(4)::before { content: "版本: "; font-weight: 700; color: var(--fp-text, #0f172a); }
 
 	html[lang^="cs"] #plugin-table td:nth-child(3)::before { content: "Autor: "; font-weight: 700; color: var(--fp-text, #0f172a); }
 	html[lang^="cs"] #plugin-table td:nth-child(4)::before { content: "Verze: "; font-weight: 700; color: var(--fp-text, #0f172a); }
@@ -399,6 +357,41 @@ body.admin fieldset {
 input#subject {
 	font-size: 1.25rem;
 	font-weight: 500;
+}
+
+/**
+ * Entry/static write: preview code blocks must never force page overflow.
+ * Ensure <pre> stays within its container and scrolls horizontally when needed.
+ *
+ * NOTE: The preview output uses front-end markup (.entry), so we scope to the
+ * preview wrapper to avoid changing the public site styling.
+ */
+body[class^="admin-"] #admin-post-preview,
+body[class^="admin-"] #admin-post-preview #post-preview,
+body[class^="admin-"] #admin-post-preview .entry {
+	min-width: 0;
+	max-width: 100%;
+}
+
+body[class^="admin-"] #admin-post-preview pre {
+	box-sizing: border-box;
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: auto;
+	white-space: pre;
+	word-break: normal;
+	overflow-wrap: normal;
+}
+
+body[class^="admin-"] #admin-post-preview pre code {
+	white-space: inherit;
+	word-break: inherit;
+	overflow-wrap: inherit;
+}
+
+body[class^="admin-"] #admin-post-preview fieldset {
+	max-height: 30em;
+	overflow: auto;
 }
 
 /* BBCode toolbar in admin: keep as icon buttons */
@@ -468,6 +461,10 @@ input#subject {
 
 #admin-bbcode-selectbar p {
 	margin-bottom: 0;
+}
+
+fieldset#admin-bbcode-selectbar p select {
+	margin-top: 0.5em;
 }
 
 /* Emoticons row needs breathing room above the textarea */
@@ -687,7 +684,7 @@ dl.option-set dd {
 	border-radius: var(--fp-radius-sm, 10px);
 	background: var(--lt-color-gray-100, #f8f9fc);
 	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-	font-size: .92em;
+	font-size: 1.1em;
 	overflow-x: auto;
 }
 
@@ -837,10 +834,10 @@ body.admin-uploader-mediamanager #admin-content table.entrylist td.main-cell a.l
 	html[lang^="en"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: 'Uploaded on'; }
 	html[lang^="en"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: 'Action'; }
 
-	html[lang^="zh"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: '用于文章'; }
-	html[lang^="zh"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: '文件大小'; }
-	html[lang^="zh"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: '上传日期'; }
-	html[lang^="zh"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: '操作'; }
+	html[lang^="cn"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: '用于文章'; }
+	html[lang^="cn"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: '文件大小'; }
+	html[lang^="cn"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5)::before { content: '上传日期'; }
+	html[lang^="cn"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6)::before { content: '操作'; }
 
 	html[lang^="cs"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3)::before { content: 'Použito v příspěvcích'; }
 	html[lang^="cs"] body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4)::before { content: 'Velikost souboru'; }
@@ -982,8 +979,8 @@ body.admin-uploader-mediamanager #admin-content table.entrylist td.main-cell a.l
  * Entry list: filter bar
  * ----------------------------
  */
-body.admin-entry-list #admin-content form[action*="p=entry"] fieldset,
-body.admin-entry-list #admin-content form[action*="p=static"] fieldset,
+body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset,
+body[class^="admin-static-"] #admin-content form[action*="p=static"] fieldset,
 #admin-bbcode-toolbar {
 	display: flex;
 	flex-wrap: wrap;
@@ -991,18 +988,18 @@ body.admin-entry-list #admin-content form[action*="p=static"] fieldset,
 	align-items: center;
 }
 
-body.admin-entry-list #admin-content form[action*="p=entry"] fieldset .alignleft,
-body.admin-entry-list #admin-content form[action*="p=entry"] fieldset .alignright {
+body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset .alignleft,
+body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset .alignright {
 	float: none;
 }
 
-body.admin-entry-list #admin-content form[action*="p=entry"] fieldset select[name="category"] {
+body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset select[name="category"] {
 	width: auto;
 	flex: 1 1 360px;
 	max-width: 560px;
 }
 
-body.admin-entry-list #admin-content form[action*="p=entry"] fieldset input#filter {
+body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset input#filter {
 	width: auto;
 	margin-left: auto;
 	margin-bottom: 0.5em;
@@ -1011,6 +1008,15 @@ body.admin-entry-list #admin-content form[action*="p=entry"] fieldset input#filt
 @media (max-width: 560px) {
 	body.admin-entry-list #admin-content form[action*="p=entry"] fieldset select[name="category"],
 	body.admin-entry-list #admin-content form[action*="p=entry"] fieldset input#filter {
+		flex: 1 1 100%;
+		max-width: 100%;
+		margin-left: 0;
+	}
+}
+
+@media (max-width: 560px) {
+	body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset select[name="category"],
+	body[class^="admin-entry-"] #admin-content form[action*="p=entry"] fieldset input#filter {
 		flex: 1 1 100%;
 		max-width: 100%;
 		margin-left: 0;
@@ -1048,7 +1054,7 @@ body.admin-entry-list #admin-content form[action*="p=entry"] fieldset input#filt
  * Panel: admin.php?p=entry&action=list
  * ----------------------------
  */
-@media (max-width: 1079px) {
+@media (max-width: 1080px) {
 	body.admin-entry-list #admin-content table.entrylist {
 		border: 0;
 		border-radius: 0;
@@ -1168,10 +1174,10 @@ body.admin-entry-list #admin-content form[action*="p=entry"] fieldset input#filt
 	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "Comments"; }
 	html[lang^="en"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "Action"; }
 
-	html[lang^="zh"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "日期"; }
-	html[lang^="zh"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
-	html[lang^="zh"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "评论数"; }
-	html[lang^="zh"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "操作"; }
+	html[lang^="cn"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "日期"; }
+	html[lang^="cn"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
+	html[lang^="cn"] body.admin-entry-list #admin-content table.entrylist td:nth-child(4)::before { content: "评论数"; }
+	html[lang^="cn"] body.admin-entry-list #admin-content table.entrylist td:nth-child(5)::before { content: "操作"; }
 
 	html[lang^="cs"] body.admin-entry-list #admin-content table.entrylist td:nth-child(1)::before { content: "Datum"; }
 	html[lang^="cs"] body.admin-entry-list #admin-content table.entrylist td:nth-child(3)::before { content: "ID"; }
@@ -1360,6 +1366,10 @@ body[class^="admin-entry-"] #admin-date select {
 	margin-bottom: 0;
 }
 
+fieldset#plugin_datechanger label {
+	margin-bottom: 0.5em;
+}
+
 /**
  * ----------------------------
  * Widgets panel: draggable list items
@@ -1526,6 +1536,10 @@ body[class^="admin-"] #footer {
 	display: block !IMPORTANT;
 }
 
+#tagplace span {
+	cursor: pointer;
+}
+
 /* Comment center plugin */
 body.admin-entry-commentcenter dl.option-set {
 	align-items: baseline;
@@ -1542,6 +1556,11 @@ body.admin-plugin-newsletter #admin-content th {
 	display: none;
 }
 
+/* Bottom menu */
+#columnbottom ul {
+	padding: 0 0.5rem;
+}
+
 /* Chrome, Edge, and Safari - the right Scrollbar */
 @supports selector(::-webkit-scrollbar) {
 	body::-webkit-scrollbar {
@@ -1549,7 +1568,7 @@ body.admin-plugin-newsletter #admin-content th {
 	}
 
 	body::-webkit-scrollbar-thumb {
-		background-color: var(--fp-scroll, #6b6c6d) !IMPORTANT;
+		background-color: var(--fp-scroll, #6b6c6d);
 		border-radius: 3px;
 	}
 }
@@ -1558,116 +1577,70 @@ body.admin-plugin-newsletter #admin-content th {
 @supports (-moz-appearance:button) and (contain:paint) {
 	* {
 		scrollbar-width: thin;
-		scrollbar-color: var(--fp-scroll, #6b6c6d) var(--fp-bg, #f6f7fb) !IMPORTANT;
+		scrollbar-color: var(--fp-scroll, #6b6c6d) var(--fp-bg, #f6f7fb);
 	}
+}
+
+/* The bottom Scrollbar */
+#scrollIndicator.line {
+	background: var(--fp-scroll, #6b6c6d);
 }
 
 /* ---------- Admin dark mode refinements ---------- */
 @media (prefers-color-scheme: dark) {
-	body[class^="admin-"] .entry {
-		background: var(--fp-admin-entry-gradient, linear-gradient(180deg, #182538 0%, #0f1724 100%));
-	}
-
-	body.admin fieldset {
-		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.55);
-	}
-
-	ul#admin-tabmenu,
-	#admin-submenu,
-	#admin-content table,
-	#admin-content td,
-	#admin-content th,
-	#admin-drafts {
-		border-color: var(--fp-border, #304158);
-	}
-
-	ul#admin-tabmenu,
-	#admin-content th {
-		background: rgba(24, 34, 51, 0.95);
-	}
-
-	#admin-submenu,
-	#admin-content table,
-	#admin-content td {
-		background: rgba(15, 23, 36, 0.96);
-	}
-
-	ul#admin-tabmenu a:hover,
-	#admin-submenu a:hover,
-	#admin-submenu a.active {
-		background: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.2);
-		color: var(--fp-text, #e7edf7);
-	}
-
-	ul#admin-tabmenu a.admin-tab-current,
-	#admin-submenu a.active {
-		background: linear-gradient(135deg, #c67a27 0%, #f0b35f 100%);
-		border-color: rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.42);
-		color: var(--fp-button-text, #000000);
+	body[class^="admin-"] #admin-content td::before,
+	body[class^="admin-"] #admin-content table.entrylist td::before {
+		color: var(--fp-muted, #b5c3d6);
 	}
 
 	a.link-delete:hover,
 	a.link-disable:hover {
-		background-color: rgba(248, 113, 113, 0.18);
+		background-color: rgba(248, 113, 113, .16);
 		color: #fecaca;
 	}
 
 	a.link-enable:hover {
-		background-color: rgba(74, 222, 128, 0.18);
+		background-color: rgba(74, 222, 128, .16);
 		color: #bbf7d0;
 	}
 
 	a.link-general:hover {
-		background-color: rgba(148, 163, 184, 0.14);
-		color: var(--fp-text, #e7edf7);
+		background-color: rgba(148, 163, 184, .14);
+		color: var(--fp-text, #eef4ff);
 	}
 
 	#admin-drafts {
-		color: #e7d6a8;
-		border-color: rgba(245, 158, 11, 0.36);
-		background: rgba(120, 53, 15, 0.28);
+		color: #fde68a;
+		border-color: rgba(251, 191, 36, .34);
+		background: rgba(120, 53, 15, .24);
 	}
 
-	body[class^="admin-"] code,
-	body[class^="admin-"] pre,
-	body[class^="admin-"] kbd,
-	body[class^="admin-"] samp,
-	body[class^="admin-"] tt,
-	#admin-content dl dd code,
-	#admin-content dl dd pre {
-		background: rgba(24, 34, 51, 0.95);
-		border-color: var(--fp-border, #304158);
-		color: var(--fp-text, #e7edf7);
-	}
-
-	body[class^="admin-"] #manage-widgets li.widget-class,
-	body[class^="admin-"] #manage-widgets li.widget-instance,
-	body[class^="admin-"] #manage-widgets li.widget-placeholder {
-		background: rgba(15, 23, 36, 0.96);
-		border-color: var(--fp-border, #304158);
-	}
-
-	#admin-bbcode-toolbar p .bb-button,
-	.bb-btn-tlb button.bb-button {
-		background: var(--fp-accent-gradient, linear-gradient(135deg, #b36b18 0%, #f0b35f 100%));
-		border-color: rgba(var(--fp-accent-2-rgb, 183, 116, 40), 0.55);
+	#admin-bbcode-toolbar p .bb-button {
+		border-color: rgba(var(--fp-accent-2-rgb, 255, 179, 71), .35);
+		background: var(--fp-accent-gradient, linear-gradient(135deg, var(--fp-accent-2, #ffb347) 0%, var(--fp-accent-3, #ffd166) 100%));
 		color: var(--fp-button-text, #000000);
-		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
 	}
 
-	#admin-bbcode-toolbar p .bb-button:hover,
-	#admin-bbcode-toolbar button.bb-button:hover {
-		background: var(--fp-accent-gradient-hover, linear-gradient(135deg, #c67a27 0%, #ffd39d 100%));
-		border-color: rgba(var(--fp-accent-2-rgb, 183, 116, 40), 0.65);
-		color: var(--fp-button-text, #000000);
-		box-shadow: 0 0 0 4px rgba(var(--fp-accent-3-rgb, 240, 179, 95), 0.16), 0 10px 22px rgba(0, 0, 0, 0.28);
+	#admin-bbcode-toolbar p .bb-button:hover {
+		background: var(--fp-accent-gradient-hover, linear-gradient(135deg, var(--fp-accent, #ff8c00) 0%, var(--fp-accent-3, #ffd166) 100%));
+		border-color: rgba(var(--fp-accent-2-rgb, 255, 179, 71), .45);
 	}
 
-	#admin-bbcode-toolbar p .bb-button:focus-visible,
-	#admin-bbcode-toolbar button.bb-button:focus-visible {
-		outline: none;
-		border-color: rgba(var(--fp-focus-rgb, 139, 194, 255), 0.68);
-		box-shadow: 0 0 0 4px rgba(var(--fp-focus-rgb, 139, 194, 255), 0.18), 0 10px 22px rgba(0, 0, 0, 0.28);
+	#admin-bbcode-toolbar p .bb-button:focus-visible {
+		border-color: rgba(var(--fp-focus-rgb, 124, 197, 255), .55);
+		box-shadow: 0 0 0 4px rgba(var(--fp-focus-rgb, 124, 197, 255), .18);
+	}
+
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(3),
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(4),
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(5),
+	body.admin-uploader-mediamanager #admin-content table.entrylist td:nth-child(6) {
+		border-top-color: rgba(181, 195, 214, .16);
+	}
+
+	/* Config panel */
+	#admin-config dl.option-list dd code {
+		background: var(--fp-surface, #121a28);
 	}
 
 	/* Widget panel */
@@ -1689,25 +1662,6 @@ body.admin-plugin-newsletter #admin-content th {
 		background: var(--fp-surface-2, #182235);
 	}
 
-	/* APCu panel */
-	.apcu-status-good {
-		background: rgba(20, 83, 45, .32) !IMPORTANT;
-	}
-
-	.apcu-status-bad {
-		background: rgba(127, 29, 29, .28) !IMPORTANT;
-	}
-
-	.apcu-card {
-		background: var(--qb-highlight-sentence-from-caret-background-color, #4343431a) !IMPORTANT;
-		border: 1px solid rgba(var(--fp-accent-3-rgb), .45) !IMPORTANT;
-	}
-
-	/* Uploader panel */
-	.fp-dropzone {
-		background: var(--fp-muted, #b5c3d6) !IMPORTANT;
-	}
-
 	/* Tag plugin */
 	#tagplace span {
 		background: var(--lt-color-gray-600, #5e636e);
@@ -1722,17 +1676,41 @@ body.admin-plugin-newsletter #admin-content th {
 		background: var(--fp-surface, #182235);
 	}
 
+	/* APCu panel */
+	.apcu-status-good {
+		background: rgba(20, 83, 45, .32) !IMPORTANT;
+	}
+
+	.apcu-status-bad {
+		background: rgba(127, 29, 29, .28) !IMPORTANT;
+	}
+
+	.apcu-card {
+		background: var(--qb-highlight-sentence-from-caret-background-color) #4343431a !IMPORTANT;
+		border: 1px solid rgba(var(--fp-accent-3-rgb), .45) !IMPORTANT;
+	}
+
+	/* Uploader panel */
+	.fp-dropzone {
+		background: var(--fp-muted, #b5c3d6) !IMPORTANT;
+	}
+
 	/* Chrome, Edge, and Safari - the right Scrollbar */
 	@supports selector(::-webkit-scrollbar) {
 		body::-webkit-scrollbar-thumb {
-			background-color: var(--fp-scroll, #815523) !IMPORTANT;
+			background-color: var(--fp-scroll, #815523);
 		}
 	}
 
 	/* Firefox - the right Scrollbar */
 	@supports (-moz-appearance:button) and (contain:paint) {
 		* {
-			scrollbar-color: var(--fp-scroll, #815523) var(--fp-bg, #060d18) !IMPORTANT;
+			scrollbar-color: var(--fp-scroll, #815523) var(--fp-bg, #060d18);
 		}
+	}
+
+	/* The bottom Scrollbar */
+	#scrollIndicator.line {
+		background: var(--fp-scroll, #815523);
 	}
 }

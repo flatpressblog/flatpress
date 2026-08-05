@@ -1,67 +1,71 @@
 {include file="header.tpl"}
+{include file="widgetstop.tpl"}
+				<div id="main">
+			{entry_block}
+				{entry}
+					{include file="entry-default.tpl"}
+					{comment_block}
 
-		<div id="main">
-		{entry_block}
-		{entry}
-			{include file="entry-default.tpl"}
-		{comment_block}
-		<ol id="comments">
-		{comment}
-			<li id="{$id}" {$loggedin|notempty:"class=\"comment-admin\""}>
+					<ol id="comments">
+						{comment}
 
-				<strong class='comment-name'>
-				{*
-					using this tag combo, the name is displayed as a link only
-					if user entered a URL.
+						<li id="{$id}"{$loggedin|notempty:" class=\"comment-admin\""}>
 
-					Syntax is quite intuitive:
-					"if $url is not empty, show $name between a tags, 
-					else default fallback on displaying plain $name"
+							<strong class="comment-name">
 
-				*}
-				{if $url}
-					{if $url|is_external_url}
+							{if $url}
+								{if $url|is_external_url}
 
-						<a href="{$url|wp_specialchars:1}" target="_blank" rel="nofollow noopener noreferrer" title="Visit {$url|wp_specialchars:1}">{$name|wp_specialchars:1}</a>
-					{else}
+									<a href="{$url|wp_specialchars:1}" target="_blank" rel="nofollow noopener noreferrer" title="Visit {$url|wp_specialchars:1}">{$name|wp_specialchars:1}</a>
+								{else}
 
-						<a href="{$url|wp_specialchars:1}" rel="nofollow" title="Visit {$url|wp_specialchars:1}">{$name|wp_specialchars:1}</a>
-					{/if}
-				{else}
+									<a href="{$url|wp_specialchars:1}" rel="nofollow" title="Visit {$url|wp_specialchars:1}">{$name|wp_specialchars:1}</a>
+								{/if}
+							{else}
 
-					{$name|wp_specialchars:1}
+								{$name|wp_specialchars:1}
+							{/if}
+							</strong>
+
+							{include file="shared:commentadminctrls.tpl"}
+
+							<p class="date">
+
+								<a href="{$entryid|link:comments_link}#{$id}" title="Permalink to {$name|wp_specialchars:1}'s comment">{$date|date_format_daily} {$lang.entryauthor.at} {$date|date_format:"`$fp_config.locale.timeformat`"}</a>
+							</p>
+
+							{$content|tag:comment_text}
+
+						</li>
+
+						{/comment}
+
+					</ol>
+					{/comment_block}
+
+				{/entry}
+
+				{capture assign='fp_nextpage'}{strip}{nextpage}{/strip}{/capture}
+				{capture assign='fp_prevpage'}{strip}{prevpage}{/strip}{/capture}
+				{if $fp_nextpage != '' || $fp_prevpage != ''}
+
+					<div class="navigation">
+
+						{$fp_nextpage nofilter}{$fp_prevpage nofilter}
+
+					</div>
+
 				{/if}
-				</strong>
 
-				{include file="shared:commentadminctrls.tpl"} {* this shows edit/delete links *}
+			{/entry_block}
 
-				<p class="date">
-				<a href="{$entryid|link:comments_link}#{$id}" title="Permalink to {$name|wp_specialchars:1}'s comment">{$date|date_format_daily} {$lang.entryauthor.at} {$date|date_format:"`$fp_config.locale.timeformat`"}</a>
-				</p>
+			{include file="shared:comment-form.tpl"}
 
-				{$content|tag:comment_text}
+				</div>
 
-			</li>
-		{/comment}
-		</ol>
-		{/comment_block}
+			{include file="widgets.tpl"}
 
-		{/entry}
-
-		{capture assign='fp_nextpage'}{strip}{nextpage}{/strip}{/capture}
-		{capture assign='fp_prevpage'}{strip}{prevpage}{/strip}{/capture}
-		{if $fp_nextpage != '' || $fp_prevpage != ''}
-			<div class="navigation">
-				{$fp_nextpage nofilter}{$fp_prevpage nofilter}
-			</div>
-		{/if}
-
-		{/entry_block}
-
-		{include file="shared:comment-form.tpl"}
-
-		</div>
-
-		{include file="widgets.tpl"}
-
+	{*
+		<hr>
+	*}
 {include file="footer.tpl"}

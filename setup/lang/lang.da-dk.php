@@ -99,6 +99,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]Kontakt[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Menuen nederst';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Juridisk meddelelse[/url]
+[*][url=static.php?page=privacy-policy]Privatlivspolitik[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Velkommen til FlatPress!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Dette er et eksempel på et indlæg. Det viser dig nogle af [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url]\' funktioner.
 
@@ -196,6 +202,9 @@ God fornøjelse! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Om';
 $lang ['samplecontent'] ['about'] ['content'] = 'Skriv noget om dig selv og denne blog her. ([url=admin.php?p=static&action=write&page=about]Arbejd med mig![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Juridisk meddelelse';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Rediger mig![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Privatlivspolitik';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'I nogle lande, f.eks. hvis du bruger Akismet Antispam-tjenesten, er det nødvendigt at give dine besøgende en privatlivspolitik. En privatlivspolitik kan også være nødvendig, hvis den besøgende kan bruge kontaktformularen eller kommentarfunktionen.

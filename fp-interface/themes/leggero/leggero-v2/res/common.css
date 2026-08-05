@@ -246,10 +246,10 @@ h4 { font-size: 1.2em }
 	#main {
 		float:left;
 		position: relative;
-		width: 365px;
+		width: 347px;
 		font-size: 100%;
 		padding: 25px;
-		margin: 20px;
+		margin: 0 20px 20px 20px;
 		background-color: rgba(255,255,255,0.9);
 		border-radius: 3px
 	}
@@ -286,21 +286,21 @@ h4 { font-size: 1.2em }
 
 	#body-container { max-width: 738px }
 
-	#main { width: 413px }
+	#main { width: 395px }
 }
 
 @media (min-width: 820px) { /* Tablet */
 
 	#body-container { max-width: 790px }
 
-	#main { width: 465px }
+	#main { width: 432px }
 }
 
 @media (min-width: 960px) { /* Tablet landscape and Netbook */
 
 	#body-container { max-width: 930px }
 
-	#main { width: 605px }
+	#main { width: 570px }
 
 	.responsive_bbcode_video { text-align: unset }
 
@@ -315,7 +315,7 @@ h4 { font-size: 1.2em }
 
 	#body-container { max-width: 994px }
 
-	#main { width: 669px }
+	#main { width: 635px }
 
 	.bbcode_video {
 		max-width: 480px !IMPORTANT;
@@ -328,7 +328,7 @@ h4 { font-size: 1.2em }
 
 	#body-container { max-width: 1250px }
 
-	#main { width: 925px }
+	#main { width: 885px }
 
 	.bbcode_video {
 	max-width: 560px !IMPORTANT;
@@ -341,27 +341,27 @@ h4 { font-size: 1.2em }
 
 	#body-container { max-width: 80% }
 
-	#main { width: 78% }
+	#main { width: 76% }
 }
 
 @media (min-width: 2048px) {
 
-	#main { width: 80% }
+	#main { width: 78% }
 }
 
 @media (min-width: 2400px) {
 
-	#main { width: 83% }
+	#main { width: 81% }
 }
 
 @media (min-width: 3200px) {
 
-	#main { width: 87% }
+	#main { width: 85% }
 }
 
 @media (min-width: 3840px) {
 
-	#main { width: 89% }
+	#main { width: 88% }
 }
 
 

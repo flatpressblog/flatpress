@@ -7,7 +7,7 @@ $fp_widgets = array (
 	 */
 
 	'top' => array (
-		// (no widgets)
+		0 => 'blockparser:menu'
 	),
 
 	/**
@@ -22,21 +22,19 @@ $fp_widgets = array (
 
 	// Right side widgets
 	'right' => array (
-		'adminarea',
-		'blockparser:menu',
-		'categories',
-		'archives',
-		//'calendar', // quite time consuming, not really recommended
-		'lastentries',
-		// 'lastcomments',
-		'searchbox',
-		'feed',
-		// 'newsletter',
-		'mastodon'
+		0 => 'categories',
+		1 => 'archives',
+		2 => 'lastentries',
+		3 => 'lastcomments',
+		4 => 'searchbox',
+		5 => 'feed',
+		6 => 'newsletter',
+		7 => 'mastodon'
 	),
 
 	'bottom' => array (
-		// (no widgets)
+		0 => 'blockparser:bottommenu',
+		1 => 'adminarea'
 	),
 );
 ?>

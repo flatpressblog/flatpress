@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Russian
  */
 $lang ['setup'] = array(
@@ -99,6 +99,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]Контакты[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Нижнее меню';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Правовая информация[/url]
+[*][url=static.php?page=privacy-policy]Политика конфиденциальности[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'FlatPress';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Добро пожаловать во FlatPress! Это примерная запись, опубликованная для того, чтобы показать вам некоторые возможности [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
@@ -192,7 +198,10 @@ FlatPress очень хорошо настраивается и поддержи
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Обо мне';
-$lang ['samplecontent'] ['about'] ['content'] = 'Напишите что-нибудь о себе здесь. ([url=admin.php?p=static&action=write&page=about]Редактировать[/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Напишите что-нибудь о себе здесь. ([url=admin.php?p=static&action=write&page=about]Редактировать![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Правовая информация';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Редактировать![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Политика конфиденциальности';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'В некоторых странах, например, если вы используете службу Akismet Antispam, необходимо предоставить посетителям политику конфиденциальности. Политика конфиденциальности также может потребоваться, если посетитель может использовать контактную форму или функцию комментариев.

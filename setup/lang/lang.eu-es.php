@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Euskara (ES)
  */
 $lang ['setup'] = array(
@@ -99,6 +99,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]Harremanetan jarri[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Beheko menu';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Legezko oharra[/url]
+[*][url=static.php?page=privacy-policy]Pribatutasun politika[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Ongi etorri FlatPressera!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Sarrera baten adibide bat da hau, [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url]en ezaugarri batzuk erakusteko argitaratua.
 
@@ -193,6 +199,9 @@ Ondo pasa! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Honi buruz';
 $lang ['samplecontent'] ['about'] ['content'] = 'Idatzi zerbait zure buruari buruz hemen. ([url=admin.php?p=static&action=write&page=about]Editatu nazazu![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Legezko oharra';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Editatu nazazu![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Pribatutasun-politika';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Herrialde batzuetan Akismet Antispam zerbitzua erabiltzen baduzu, beharrezkoa izaten da bisitariei pribatutasun-politikan honen berri ematea. Pribatutasun-politika bat ere beharrezkoa izan daiteke bisitariak harremanetarako formularioa edo iruzkinen funtzioa erabil dezaten.
