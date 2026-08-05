@@ -70,7 +70,7 @@
 - Leggero theme:
     - Depending on your browser or operating system settings, the Stringendo style switches between light and dark modes. ([#852](https://github.com/flatpressblog/flatpress/pull/852))
     - Open Graph prefix added. ([#856](https://github.com/flatpressblog/flatpress/pull/856))
-    - The Leggero theme now supports a widget top and bottom for simple blockparser widgets. ([#937](https://github.com/flatpressblog/flatpress/pull/937))
+    - The Leggero theme now supports a widget top and bottombar for simple blockparser widgets. ([#937](https://github.com/flatpressblog/flatpress/pull/937))
 
 ## Internationalization
 - Chinese translation by [Qingfeng Xiyu](http://zp.qfxy.net/) ([#913](https://github.com/flatpressblog/flatpress/pull/913))
