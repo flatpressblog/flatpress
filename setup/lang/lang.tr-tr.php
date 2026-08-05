@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Turkish
  */
 $lang ['setup'] = array(
@@ -99,6 +99,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]İletişim[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Alt Menü';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Yasal Uyarı[/url]
+[*][url=static.php?page=privacy-policy]Gizlilik Politikası[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'FlatPress\'e hoşgeldiniz!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Bu, [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url]\'in bazı özelliklerini göstermek için yayınlanmış örnek bir yazıdır.
 
@@ -194,6 +200,9 @@ Tadını çıkarın! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Hakkında';
 $lang ['samplecontent'] ['about'] ['content'] = 'Kendiniz hakkında bir şeyler yazın burada. ([url=admin.php?p=static&action=write&page=about]Beni düzenle![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Yasal Uyarı';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Beni Düzenle![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Gizlilik Politikası';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Kimi ülkelerde, örneğin Akismet Antispam hizmetini kullanıyorsanız, ziyaretçilerinize bir gizlilik politikası bilgilendirmesi sunmanız gerekebilir. Ayrıca, ziyaretçi iletişim formunu veya yorum fonksiyonunu kullanabiliyorsalar, başka bir gizlilik politikası bilgilendirmesi daha gerekebilir.

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Nederlands
  */
 $lang ['setup'] = array(
@@ -99,6 +99,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]Contact[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Menu onderaan';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Juridische kennisgeving[/url]
+[*][url=static.php?page=privacy-policy]Privacybeleid[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Welkom bij FlatPress!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Dit is een voorbeeld vermelding, om je enkele functies te tonen van [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
@@ -191,7 +197,10 @@ Veel plezier! :)
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'About';
-$lang ['samplecontent'] ['about'] ['content'] = 'Schrijf hier iets over jezelf. ([url=admin.php?p=static&action=write&page=about]Edit me![/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Schrijf hier iets over jezelf. ([url=admin.php?p=static&action=write&page=about]Bewerk mij![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Juridische kennisgeving';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Bewerk mij![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Privacybeleid';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'In sommige landen, als u bijvoorbeeld de Akismet Antispam-service gebruikt, is het noodzakelijk om uw bezoekers te voorzien van een privacybeleid. Een privacybeleid kan ook nodig zijn als de bezoeker het contactformulier of de commentaarfunctie kan gebruiken.

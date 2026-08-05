@@ -1,13 +1,14 @@
-/*
-===================
-Leggero CSS Styles
-===================
-
-Name: Leggero v2
-Author: Laborix
-Version: 1.0
-Module: print.css
-*/
+/**
+ * ===================
+ * Leggero CSS Styles
+ * ===================
+ * 
+ * Name: Leggero v2
+ * Author: Laborix and Fraenkiman
+ * Version: 1.0
+ * Module: print.css
+ * License: FlatPress is licensed under the GNU General Public License v2.0
+ */
 
 body {
 	color: #333;
@@ -20,23 +21,53 @@ a {
 	text-decoration: none
 }
 
-h1 { font-size: 130% }
+h1 {
+	font-size: 130%
+}
 
-h2 { font-size: 130% }
+h2 {
+	font-size: 130%;
+}
 
-h3 { font-size: 100% }
+h3 {
+	font-size: 100%
+}
 
-h4 { font-size: 100% }
+h4 {
+	font-size: 100%
+}
 
-.date { font-size: 100% }
+.date {
+	font-size: 100%
+}
 
-#column { display: none }
+#head h1 a {
+	color: #000000
+}
 
-.admincontrols { display: none }
+#head p.subtitle {
+	color: #000000
+}
 
-.readmore { display: none }
+#column {
+	display: none
+}
 
-.navigation { display: none }
+div#column h4 {
+	color: #000000
+}
+
+.admincontrols {
+	display: none
+}
+
+.readmore {
+	display: none
+}
+
+.navigation {
+	display: none
+}
 
 .entry-footer {
 	clear: both;
@@ -69,10 +100,39 @@ pre {
 	word-break: break-all
 }
 
-.link-comments { display: none }
+pre,
+code {
+	font-family: "Lucida Console", Monaco, monospace !IMPORTANT;
+	font-size: 90%
+}
 
-hr { display: none }
+.link-comments {
+	display: none
+}
 
-#footer { display: none }
+hr {
+	display: none
+}
 
-#commentform { display: none }
+#footer {
+	display: none
+}
+
+#commentform {
+	display: none
+}
+
+#head div.noprint, /* RSS Feed und Suche */
+#columntop, /* Topmenu */
+#columnbottom, /* Bottommenu */
+div.other_contact_options, /* Share- und Kontaktbuttons */
+div#cookieGuardMsg.visible, /* CookieGuard */
+#background-image,
+div.webshare-buttons button,
+div#topcontrol { /* Zurueck nach oben- Button */
+	display: none
+}
+
+* {
+	font-family: "Open Sans", sans-serif
+}

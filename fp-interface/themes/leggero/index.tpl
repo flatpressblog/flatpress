@@ -1,25 +1,32 @@
 {include file="header.tpl"}
 
-		<div id="main">
+{include file="widgetstop.tpl"}
 
-		{entry_block}
+				<div id="main">
 
-			{entry}
-			{include file='entry-default.tpl'}
-			{/entry}
+				{entry_block}
 
-			{capture assign='fp_nextpage'}{strip}{nextpage}{/strip}{/capture}
-			{capture assign='fp_prevpage'}{strip}{prevpage}{/strip}{/capture}
-			{if $fp_nextpage != '' || $fp_prevpage != ''}
-			<div class="navigation">
-				{$fp_nextpage nofilter}{$fp_prevpage nofilter}
-			</div>
-			{/if}
+					{entry}
 
-		{/entry_block}
+					{include file="entry-default.tpl"}
 
-		</div>
+					{/entry}
+
+					{* include file="shared:entry_webshare_button.tpl" *}
+
+					{capture assign='fp_nextpage'}{strip}{nextpage}{/strip}{/capture}
+					{capture assign='fp_prevpage'}{strip}{prevpage}{/strip}{/capture}
+					{if $fp_nextpage != '' || $fp_prevpage != ''}
+					<div class="navigation">
+						{$fp_nextpage nofilter}{$fp_prevpage nofilter}
+					</div>
+					{/if}
+
+				{/entry_block}
+
+				</div>
 
 		{include file="widgets.tpl"}
+
 
 {include file="footer.tpl"}

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Japanese
  */
 $lang ['setup'] = array(
@@ -104,6 +104,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]お問い合わせ[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = '下部メニュー';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]法的通知[/url]
+[*][url=static.php?page=privacy-policy]プライバシーポリシー[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'FlatPressへ ようこそ!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'これは [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url] の特徴をいくつかご紹介するサンプル記事です。
 
@@ -198,6 +204,9 @@ FlatPress-Leggeroテーマでは、クラシックからモダンまで4つの�
 
 $lang ['samplecontent'] ['about'] ['subject'] = '自己紹介';
 $lang ['samplecontent'] ['about'] ['content'] = 'ここに自己紹介を何か書いてみましょう! ([url=admin.php?p=static&action=write&page=about]さっそく編集![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = '法的通知';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]さっそく編集![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'プライバシーポリシー';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = '国によっては、例えばAkismet Antispamサービスを利用する場合、訪問者にプライバシーポリシーを提供する必要があります。また、訪問者がコンタクトフォームやコメント機能を利用する場合にも、プライバシーポリシーが必要になることがあります。

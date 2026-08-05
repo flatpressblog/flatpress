@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Italian
  */
 $lang ['setup'] = array(
@@ -99,6 +99,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]Contatti[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Menu in basso';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Note legali[/url]
+[*][url=static.php?page=privacy-policy]Informativa sulla privacy[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Benvenuto su FlatPress!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Questo è un articolo di prova, inserito per mostrarti alcune delle funzioni di [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
@@ -193,6 +199,9 @@ Buon divertimento! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Chi sono';
 $lang ['samplecontent'] ['about'] ['content'] = 'Scrivi qui qualcosa su di te. ([url=admin.php?p=static&action=write&page=about]Modificami![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Note legali';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Modificami![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Informativa sulla privacy';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'In alcuni Paesi, se si utilizza il servizio Akismet Antispam, ad esempio, è necessario fornire ai visitatori un\'informativa sulla privacy. Un\'informativa sulla privacy può essere necessaria anche se il visitatore può utilizzare il modulo di contatto o la funzione di commento.

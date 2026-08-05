@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Slovenian
  */
 $lang ['setup'] = array(
@@ -9,11 +9,11 @@ $lang ['setup'] = array(
 $lang ['locked'] = array(
 	'head' => 'Namestitev je zaklenjena',
 	'descr' => 'Zdi se, da se namestitev že izvaja: Datoteka zaklepa <code>%s</code> že obstaja.
-		
+
 		Če želite znova zagnati namestitev, najprej izbrišite to datoteko.
-		
+
 		<strong >Pozor!</strong> Datoteka <code>setup.php</code> in imenik <code>setup/</code> ne smeta ostati na strežniku, zato ju po končani namestitvi izbrišite!
-		
+
 		<ul>
 		<li><a href="%s">Ok, pelji me na moj blog</a></li>
 		<li><a href="%s">Datoteko sem izbrisal, ponovno zaženite namestitev</a></li>
@@ -22,7 +22,7 @@ $lang ['locked'] = array(
 
 $lang ['err'] = array(
 	'setuprun1' => 'Namestitev se izvaja.',
-	
+
 	'setuprun2' => 'Namestitev je že v teku: Če ste skrbnik, lahko izbrišete ',
 	'setuprun3' => ' za ponovni zagon.',
 	'writeerror' => 'Napake pri pisanju',
@@ -42,19 +42,19 @@ $lang ['err'] = array(
 $lang ['step1'] = array(
 	'head' => 'Dobrodošli v FlatPress!',
 	'descr' => 'Hvala, ker ste izbrali <strong>FlatPress</strong>.
-		
+
 		Preden lahko začnete z novim blogom, morate določiti nekaj malenkosti.
-		
+
 		Toda brez skrbi, to ne bo trajalo dolgo!',
 	'descrl1' => 'Izberite jezik.',
 	'descrl2' => '<a class="hint" onclick="toggleinfo();">Ni na seznamu?</a>',
 	'descrlang' => 'Če na seznamu ne najdete svojega jezika, preverite, ali je na voljo ustrezen <a href="https://wiki.flatpress.org/res:language" target="_blank" rel="external">jezikovni paket</a> :
-		
+
 		<pre>%s</pre>
-		
+
 		Če želite namestiti jezikovni paket, preprosto naložite njegovo vsebino v imenik <code>flatpress/</code>. Nato <a href="./setup.php">znova zaženite namestitev</a>.',
 	'descrw' => 'Za zagon programa FlatPress potrebujete le imenik, v katerega je mogoče pisati.
-		
+
 		<pre>%s</pre>'
 );
 
@@ -71,17 +71,17 @@ $lang ['step2'] = array(
 $lang ['step3'] = array(
 	'head' => 'Pripravljen',
 	'descr' => '<strong>To je to.</strong>
-		
+
 		Ne gre verjeti?
-		
+
 		Ne, pravzaprav se šele začenja! Toda bloganje je zdaj vaše delo. ;)
-		
+
 		<ul>
 		<li>Na <a href="%s">glavno stran vašega bloga</a></li>
 		<li>Zabavajte se z bloganjem! <a href="%s">Prijavite se zdaj</a></li>
 		<li>Želite pohvaliti ali kritizirati? Obiščite nas na <a href="https://www.flatpress.org/" target="_blank" rel="external">FlatPress.org</a>!</li>
 		</ul>
-		
+
 		Hvala, ker ste izbrali FlatPress!'
 );
 
@@ -97,6 +97,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=?paged=1]Blog[/url]
 [*][url=static.php?page=about]O[/url]
 [*][url=contact.php]Pišite na[/url]
+[/list]';
+
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Spodnji meni';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Pravno obvestilo[/url]
+[*][url=static.php?page=privacy-policy]Politika zasebnosti[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Dobrodošli v FlatPress!';
@@ -194,6 +200,9 @@ Zabavajte se! :)
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'O';
 $lang ['samplecontent'] ['about'] ['content'] = 'Tukaj napišite nekaj o sebi in tem blogu. ([url=admin.php?p=static&action=write&page=about]Delajte z mano![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Pravno obvestilo';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Uredi me![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Politika zasebnosti';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Če uporabljate na primer storitev Akismet Antispam, je treba v nekaterih državah svojim obiskovalcem zagotoviti pravilnik o zasebnosti. Pravilnik o zasebnosti je morda potreben tudi, če lahko obiskovalec uporabi kontaktni obrazec ali funkcijo za komentiranje.

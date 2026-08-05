@@ -99,6 +99,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]Επικοινωνία[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Κάτω μενού';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]Νομική γνωστοποίηση[/url]
+[*][url=static.php?page=privacy-policy]Πολιτική απορρήτου[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Καλώς ήρθατε στην FlatPress!';
 $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δείγμα ανάρτησης. Σας δείχνει μερικές από τις λειτουργίες του [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
 
@@ -196,6 +202,9 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Σχετικά με το';
 $lang ['samplecontent'] ['about'] ['content'] = 'Γράψτε κάτι για τον εαυτό σας και αυτό το ιστολόγιο εδώ. ([url=admin.php?p=static&action=write&page=about]Δούλεψε με![/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Νομική γνωστοποίηση';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Επεξεργασία![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Πολιτική απορρήτου';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Σε ορισμένες χώρες, εάν χρησιμοποιείτε την υπηρεσία Akismet Antispam, για παράδειγμα, είναι απαραίτητο να παρέχετε στους επισκέπτες σας μια πολιτική απορρήτου. Μια πολιτική απορρήτου μπορεί επίσης να είναι απαραίτητη εάν ο επισκέπτης μπορεί να χρησιμοποιήσει τη φόρμα επικοινωνίας ή τη λειτουργία σχολίων.

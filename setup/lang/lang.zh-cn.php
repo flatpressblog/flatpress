@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Simplified Chinese
  */
 $lang ['setup'] = array(
@@ -100,6 +100,12 @@ $lang ['samplecontent'] ['menu'] ['content'] = '[list]
 [*][url=contact.php]联系我们[/url]
 [/list]';
 
+$lang ['samplecontent'] ['bottommenu'] ['subject'] = '底部菜单';
+$lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
+[*][url=static.php?page=legal-notice]法律声明[/url]
+[*][url=static.php?page=privacy-policy]隐私政策[/url]
+[/list]';
+
 $lang ['samplecontent'] ['entry'] ['subject'] = '欢迎来到FlatPress！';
 $lang ['samplecontent'] ['entry'] ['content'] = '这是一篇示例文章，用来展示 [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url] 的一些功能。
 
@@ -194,6 +200,9 @@ FlatPress 非常易于定制，并支持使用 [url=https://wiki.flatpress.org/d
 
 $lang ['samplecontent'] ['about'] ['subject'] = '简介';
 $lang ['samplecontent'] ['about'] ['content'] = '在这里写点自我介绍吧！ ([url=admin.php?p=static&action=write&page=about]马上编辑！[/url])';
+
+$lang ['samplecontent'] ['legal-notice'] ['subject'] = '法律声明';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]编辑我！[/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = '隐私政策';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = '在某些国家/地区，例如使用 Akismet 反垃圾评论服务时，需要向访问者提供隐私政策。另外，访问者在使用联系表单和评论功能时，也可能需要隐私政策。

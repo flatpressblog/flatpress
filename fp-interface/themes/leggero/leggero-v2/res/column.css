@@ -1,30 +1,149 @@
-/*
-===================
-Leggero CSS Styles
-===================
+/**
+ * ===================
+ * Leggero CSS Styles
+ * ===================
+ *
+ * Name: Leggero v2
+ * Author: NoWhereMan, Drudo, Marc Thibeault and Fraenkiman
+ * Version: 1.0
+ * Module: common.css
+ * Description: This design adapts to different screen sizes
+ * License: FlatPress is licensed under the GNU General Public License v2.0
+ */
 
-Name: Leggero v2
-Author: NoWhereMan, Drudo, Marc Thibeault and Fraenkiman
-Version: 1.0
-Module: style.css
-*/
-
-/* ===== NORMAL DESIGN ===== */
-@media (min-width: 720px) {
+/* ===== NORMAL DESIGN (min. 720) ===== */
+ @media (min-width: 720px) {
 	/* ===== COLUMN ===== */
 	#column {
-		width: 215px;
-		margin: 0px 20px 0px 0px;
+		width: 243px;
 		display: inline-block;
-		font-size: 90%;
+		font-size: 93%;
 		height: 1%;
 		margin-bottom: 5px;
+		color: white;
+		float: right;
+		margin: -2.0em 0.6em 0em 0em
+	}
+
+	#widget_calendar { /* Calendar-Widget */
+		font-size: 95%
+	}
+
+	.comment-quote { /* Last Comments-Widget */
+		font-size: 85%
+	}
+
+	.feed-widget { /* Feed-Buttons Widget */
+		margin: 0px;
+		height: 14px
+	}
+
+	/* ===== TOP BAR ===== */
+	#columntop,
+	#columnbottom {
+		margin: 10px;
+		background: none;
+		border: none;
+		font-size: 93%;
+		clear: both;
 		color: white
 	}
-}
+	
+	#columntop {
+		min-height: 20px
+	}
+	
+	#columntop ul {
+		list-style-type: none;
+		margin-bottom: 0.5em
+	}
+	
+	#columntop li,
+	#columnbottom li {
+		padding: 0px 10px
+	}
+	
+	#columntop ul  li,
+	#columnbottom ul li {
+		display: inline
+	}
+
+	/* ===== BOTTOM BAR ===== */
+	#columnbottom {
+		text-align: center
+	}
+
+	#columnbottom ul {
+		list-style-type: none
+	}
+ }
+
+/* ===== NORMAL DESIGN (min. 900) ===== */
+ @media (min-width: 900px) {
+	/* ===== COLUMN ===== */
+	#column {
+		width: 248px;
+		font-size: 95%;
+		margin: -2.0em 1.3em 0em 0em
+	}
+
+	/* ===== TOP BAR ===== */
+	#columntop,
+	#columnbottom {
+		font-size: 95%
+	}
+
+	.feed-widget { /* Feed-Buttons Widget */
+		margin: 0px;
+		height: 16px
+	}
+ }
+
+/* ===== NORMAL DESIGN (min. 1024) ===== */
+ @media (min-width: 1024px) {
+	/* ===== COLUMN ===== */
+	#column {
+		font-size: 96%
+	}
+
+	/* ===== TOP BAR ===== */
+	#columntop,
+	#columnbottom {
+		font-size: 96%
+	}
+ }
+
+/* ===== NORMAL DESIGN (min. 1280) ===== */
+ @media (min-width: 1280px) {
+	/* ===== COLUMN ===== */
+	#column {
+		/* font-size: 96% */
+	}
+
+	/* ===== TOP BAR ===== */
+	#columntop,
+	#columnbottom {
+		/* font-size: 96% */
+	}
+ }
+
+/* ===== NORMAL DESIGN (min. 1440) ===== */
+ @media (min-width: 1440px) {
+	/* ===== COLUMN ===== */
+	#column {
+		width: 254px;
+		font-size: 100%
+	}
+
+	/* ===== TOP BAR ===== */
+	#columntop,
+	#columnbottom {
+		font-size: 100%
+	}
+ }
 
 
-/* ===== RESPONSIVE DESIGN ===== */
+/* ===== RESPONSIVE DESIGN (max. 719) ===== */
 @media (max-width: 719px) {
 	/* ===== COLUMN ===== */
 	#column {
@@ -36,27 +155,87 @@ Module: style.css
 		margin: 5px auto;
 		color: white
 	}
+
+	.feed-widget { /* Feed-Buttons Widget */
+		margin: 0px;
+		height: 12px
+	}
+
+	div#widget-fontsizeselect,  /* hides the widget */
+	div#widget-categories {
+		display: none
+	}
+
+	/* ===== TOP BAR ===== */
+	#columntop,
+	#columnbottom {
+		margin: 10px;
+		background: none;
+		border: none;
+		font-size: 100%;
+		text-align: center;
+		color: white
+	}
+
+	#columntop {
+		min-height: 20px
+	}
+
+	#columntop ul {
+		list-style-type: none;
+		margin-bottom: 0.5em
+	}
+
+	#columntop li,
+	#columnbottom li {
+		padding: 0px 4px
+	}
+	
+	#columntop ul li,
+	#columnbottom ul li {
+		display: inline
+	}
+	
+	/* ===== BOTTOM BAR ===== */
+	#columnbottom ul {
+		list-style-type: none
+	}
 }
 
 #column h4 {
 	/* Titles of the sections */
-	margin-bottom: .5em;
+	margin-bottom: 0.5em;
 	color: white
 }
 
-#column p, #column div { margin: 5px 0px }
+#column p,
+#column div {
+	margin: 5px 0px
+}
 
 
 /* === List === */
-#column ul li table { font-size: 100% }
-
+#column ul li table {
+	font-size: 100%
+}
+ 
 #column ul {
 	list-style-type: none;
 	margin-right: 10px;
-	margin-bottom: .5em;
+	margin-bottom: 0.5em;
 	padding-left: 1em
 }
 
-#column fieldset { margin: 0 5px 0 5px }
+#column fieldset {
+	margin: 0 5px 0 5px
+}
 
-#column legend { font-size: 100% }
+#column legend {
+	font-size: 100%
+}
+
+#column img {
+	max-width: 100%;
+	margin: 5px 0px
+}
+

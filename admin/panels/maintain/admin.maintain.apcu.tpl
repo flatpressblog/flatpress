@@ -15,6 +15,8 @@
 .apcu-label { font-size: 0.9em; color: #666; }
 .apcu-value { font-weight: bold; }
 .apcu-actions { margin: 0.5em 0 1em 0; }
+.apcu-button { display: inline-block; padding: 0.4em 0.9em; border-radius: 4px; border: 1px solid #a94442; background: #f2dede; color: #a94442; text-decoration: none; font-weight: bold; }
+.apcu-button:hover { background: #e4b9b9; }
 .apcu-clear-result { margin: 0.25em 0 1em 0; }
 @media (max-width: 720px) {
 	.apcu-panel { padding: 0 0.25em; }
@@ -22,6 +24,8 @@
 </style>
 
 <div class="apcu-panel">
+
+	<p><a href="admin.php?p=maintain">{$panelstrings.back}</a></p>
 
 	<p>{$panelstrings.descr}</p>
 
@@ -51,12 +55,6 @@
 		<div class="apcu-card">
 			<div class="apcu-label">apc.shm_size</div>
 			<div class="apcu-value">{$apcu.shm_size_ini}</div>
-		</div>
-		<div class="apcu-card">
-			<div class="apcu-label">{$panelstrings.memory_type}</div>
-			<div class="apcu-value">
-				{if $apcu.memory_type}{$apcu.memory_type}{else}{$panelstrings.memory_type_unknown}{/if}
-			</div>
 		</div>
 		<div class="apcu-card">
 			<div class="apcu-label">{$panelstrings.num_slots}</div>
@@ -101,10 +99,6 @@
 					&nbsp;&ndash;&nbsp;{$apcu.free_pct_str}%
 				{/if}
 			</div>
-		</div>
-		<div class="apcu-card">
-			<div class="apcu-label">{$panelstrings.cache_type}</div>
-			<div class="apcu-value">{$panelstrings.cache_user_only}</div>
 		</div>
 	</div>
 

@@ -25,6 +25,15 @@ function check_step() {
 				'author' => 'FlatPress'
 			), 'menu');
 		}
+		if (!static_exists('bottommenu')) {
+			static_save(array(
+				'subject' => $vl ['bottommenu'] ['subject'],
+				'content' => $vl ['bottommenu'] ['content'],
+				'date' => date_time(),
+				'version' => system_ver(),
+				'author' => 'FlatPress'
+			), 'bottommenu');
+		}
 		if (!static_exists('about')) {
 			static_save(array(
 				'subject' => $vl ['about'] ['subject'],
@@ -33,6 +42,15 @@ function check_step() {
 				'version' => system_ver(),
 				'author' => 'FlatPress'
 			), 'about');
+		}
+		if (!static_exists('legal-notice')) {
+			static_save(array(
+				'subject' => $vl ['legal-notice'] ['subject'],
+				'content' => $vl ['legal-notice'] ['content'],
+				'date' => date_time(),
+				'version' => system_ver(),
+				'author' => 'FlatPress'
+			), 'legal-notice');
 		}
 		if (!static_exists('privacy-policy')) {
 			static_save(array(

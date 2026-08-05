@@ -1,18 +1,20 @@
-/*
-===================
-FlatMaas CSS Styles
-===================
-Ispired by: http://csszengarden.com/?cssfile=http://maas-online.nl/zengarden/layout.css
-Home page: http://www.maas-online.nl
--------------------
+/**
+ * ===================
+ * FlatMaas CSS Styles
+ * ===================
+ * Ispired by: http://csszengarden.com/?cssfile=http://maas-online.nl/zengarden/layout.css
+ * Home page: http://www.maas-online.nl
+ * -------------------
+ *
+ * Name: FlatMaas
+ * Author: Luciano Porro (drudo), reworked by Fraenkiman
+ * Version: 1.0.0
+ */
 
-Name: FlatMaas
-Author: Luciano Porro (drudo)
-Version: 0.0.1
-*/
 
-
-body { text-align: center }
+body {
+	text-align: center
+}
 
 /* ==== Structure with fixed width ==== */
 #body-container { /* Simplified Box Model Hack */
@@ -24,7 +26,9 @@ body { text-align: center }
 	background-color: white
 }
 
-body > div#body-container { width: 760px }
+body > div#body-container {
+	width: 760px
+}
 
 #head {
 	padding: 5px;
@@ -39,6 +43,12 @@ body > div#body-container { width: 760px }
 	padding: 2px 5px;
 	margin-bottom: 5px;
 	background: #999977
+}
+
+div#head p img {
+	float: right;
+	border: 0;
+	height: 75px
 }
 
 #outer-container {
@@ -57,13 +67,18 @@ body > div#body-container { width: 760px }
 	border: solid 1px #ccc;
 	width: 205px;
 	font-size: 75%;
-	height: 1%
+	height:1%
 }
 
-#main + #column { width: 195px; font-size: 80% }
+#main + #column {
+	width: 195px;
+	font-size: 80%
+}
 
-#column ul li table { font-size: 100% }
-	
+#column ul li table {
+	font-size: 100%
+}
+
 #column ul {
 	margin-right: 10px;
 	display: block;
@@ -72,7 +87,7 @@ body > div#body-container { width: 760px }
 }
 
 #main {
-	float:left;
+	float: left;
 	text-align: justify;
 	position: relative;
 	margin: 5px;
@@ -80,7 +95,9 @@ body > div#body-container { width: 760px }
 	font-size: 100%
 }
 
-#outer-container > #main { width: 540px }
+#outer-container > #main {
+	width: 530px
+}
 
 #footer {
 	clear: both;
@@ -107,15 +124,37 @@ body {
 	background: #EEEEDD
 }
 
-hr { display: none }
+hr {
+	display: none
+}
 
-p { margin: .5em 0 }
+p {
+	margin: 0.5em 0
+}
 
-	/* in the specific ID */
-	#column p, #column div { margin: 10px 5px }
-	#main p { line-height: 1.5em; margin-top: 1.2em }
+/* in the specific ID */
+#column p,
+#column div {
+	margin: 10px 5px
+}
 
-	
+#main p {
+	line-height: 1.5em;
+	margin-top: 1.2em
+}
+
+#main .entry img {
+	max-width: 100%;
+	height: auto
+}
+
+#main .entry figure,
+#main .entry .photoswipe {
+	max-width: 100%;
+	overflow: hidden
+}
+
+
 /* == Headers == */
 h1 { /* Title of the blog */
 	font-size: 1.6em;
@@ -135,6 +174,11 @@ h1 { /* Title of the blog */
 	height: 12px
 }
 
+#head div.noprint {
+	float: right;
+	text-align: right;
+}
+
 h2 { /* Titles of the entry */
 	font-size: 1.4em;
 	color: #333333;
@@ -147,42 +191,42 @@ h2 { /* Titles of the entry */
 	background: transparent url('../imgs/entry.png') center left no-repeat
 }
 
-.entry-title a { color: #333333 !IMPORTANT }
+.entry-title a {
+	color: #333333 !IMPORTANT
+}
 
-h3 { margin: 0;
+h3 {
+	margin: 0;
 	font-size: 1.3em;
 	padding: 1em 0 0.2em 0
 }
 
-h4 { font-size: 1.2em }
-
-/* in the specific ID */
-#column h4 {
-	/* Titles of the sections in #column */
-	color: white;
-	font-family: "Gill Sans", "Trebuchet MS", Helvetica, sans-serif;
-	margin: 0 5px 5px 5px;
-	padding: .2em .5em;
-	background: #BBBB99 url('../imgs/sf_h4.png') bottom left repeat-x
+h4 {
+	font-size: 1.2em
 }
 
-#main h4 { margin: 1.5em 0 1em 0 }
+	/* in the specific ID */
+	#column h4 {
+		/* Titles of the sections in #column */
+		color: white;
+		font-family: "Gill Sans", "Trebuchet MS", Helvetica, sans-serif;
+		margin: 0 5px 5px 5px;
+		padding: 0.2em 0.5em;
+		background: #BBBB99 url('../imgs/sf_h4.png') bottom left repeat-x
+	}
 
-img { border: none }
+	#main h4 {
+		margin: 1.5em 0 1em 0
+	}
 
-/* in the specific ID */
-#main img { margin: .5em }
-
-#main .entry img {
-	max-width: 100%;
-	height: auto
+img {
+	border: none
 }
 
-#main .entry figure,
-#main .entry .photoswipe {
-	max-width: 100%;
-	overflow: hidden
-}
+	/* in the specific ID */
+	#main img {
+		margin: 0.5em
+	}
 
 blockquote {
 	color: #666666;
@@ -191,9 +235,13 @@ blockquote {
 	background: #eeeeee url('../imgs/blockquote.png') bottom left no-repeat
 }
 
-blockquote p { margin: 0; margin-top: unset !IMPORTANT }
+blockquote p {
+	margin: 0;
+	margin-top: unset !IMPORTANT
+}
 
-pre, code {
+pre,
+code {
 	color: #666666;
 	font-size: 1.1em;
 	font-family: "Lucida Console", Monaco, monospace;
@@ -210,9 +258,17 @@ pre {
 	padding: 5px
 }
 
-ul, li, ol { margin: 0; padding: 0 }
+ul,
+li,
+ol {
+	margin: 0;
+	padding: 0
+}
 
-ul { padding-top: 0.3em; padding-bottom: 0.3em }
+ul {
+	padding-top: 0.3em;
+	padding-bottom: 0.3em
+}
 
 
 /* == List in MAIN == */
@@ -221,7 +277,9 @@ ul { padding-top: 0.3em; padding-bottom: 0.3em }
 	padding: 0 0 0 1.6em
 }
 
-#main ul li:before { content: "\00BB \0020" }
+#main ul li:before {
+	content: "\00BB \0020"
+}
 
 #main ol {
 	list-style-position: inside;
@@ -247,40 +305,55 @@ a:hover {
 	text-decoration: underline
 }
 
-h3 a, h3 a:link, h3 a:visited { color: #333 }
+h3 a,
+h3 a:link,
+h3 a:visited {
+	color: #333
+}
 
-#subheader a:link, #subheader a:visited, #footer a:link, #footer a:visited  {
+#subheader a:link,
+#subheader a:visited,
+#footer a:link,
+#footer a:visited {
 	color: white;
 	text-decoration: none;
 	font-weight: bold
 }
 
-#subheader a:hover, #footer a:hover { color: white; text-decoration: underline }
+#subheader a:hover,
+#footer a:hover {
+	color: white;
+	text-decoration: underline
+}
 
 
 /* == Form == */
-form { margin: 1em 0 }
+form {
+	margin: 1em 0
+}
 
 fieldset {
 	margin: 0 0 1em 0;
-	padding: .5em;
+	padding: 0.5em;
 	border: 1px solid #999977
 }
-
 	/* in the specific ID */
-	#column fieldset { margin: 0 5px 0 5px }
+	#column fieldset {
+		margin: 0 5px 0 5px
+	}
 
 legend {
 	color: #666666;
 	font-size: 80%;
 	font-style: oblique
 }
-
 	/* in the specific ID */
-	#column legend { font-size: 100% }
+	#column legend {
+		font-size: 100%
+	}
 
 input {
-	margin-top: .1em;
+	margin-top: 0.1em;
 	border: 1px solid #999977;
 	background-color: #EEEEDD
 }
@@ -292,13 +365,15 @@ input:hover {
 
 input[type=radio], input[type=checkbox] { height: 12px }
 
-select { background-color: #EEEEDD }
+select {
+	background-color: #EEEEDD
+}
 
 textarea {
 	width: 99%;
 	font-size: 100%;
 	font-family: verdana, Helvetica, Arial, sans-serif;
-	margin-top: .1em;
+	margin-top: 0.1em;
 	border: 1px solid #999977;
 	background-color: #EEEEDD
 }
@@ -314,14 +389,14 @@ textarea:hover {
 	font-size: 80%;
 	font-style: oblique;
 	color: #F1F1F1;
-	margin: .5em 0 0 0
+	margin: 0.5em 0 0 0
 }
 
 .date { /* Date under titles of the entry */
 	font-size: 80%;
 	font-style: oblique;
 	color: gray;
-	margin: .2em 0 .8em 0
+	margin: 0.2em 0 0.8em 0
 }
 
 .entry {
@@ -335,7 +410,7 @@ textarea:hover {
 	font-size: 80%;
 	text-align: center;
 	color: gray;
-	margin: .5em 0 0 0;
+	margin: 0.5em 0 0 0;
 	clear: both
 }
 
@@ -347,13 +422,21 @@ textarea:hover {
 	background: #EEEEDD
 }
 
-.floatLeft { float: left } /* don't touch this class!! */
+.floatLeft { /* don't touch this class!! */
+	float: left 
+}
 
-.floatRight { float: right } /* don't touch this class!! */
+.floatRight { /* don't touch this class!! */
+	float: right
+} 
 
-.imageColumn { text-align: center }
+.imageColumn {
+	text-align: center
+}
 
-.imageColumn img { margin: 2px 0px }
+.imageColumn img {
+	margin: 2px 0px
+}
 
 .admincontrols {
 	text-align: right;
@@ -365,9 +448,13 @@ textarea:hover {
 	margin-bottom: 5em
 }
 
-.alignleft { float: left }
+.alignleft {
+	float: left
+}
 
-.alignright { float: right }
+.alignright {
+	float: right
+}
 
 
 /* notifications */
@@ -412,9 +499,6 @@ textarea:hover {
 	background: #fdd
 }
 
-/* Search form */
-#search label { vertical-align: middle }
-
 /* Search-widget */
 div#widget-searchbox ul,
 div#widget-searchbox li {
@@ -426,15 +510,22 @@ div#widget-searchbox div.buttonbar p input {
 	margin: 0 -5px
 }
 
-form#search ul { list-style-type: none }
+form#search ul {
+	list-style-type: none
+}
 
-form#search ul li:before { content: none }
+form#search ul li:before {
+	content: none
+}
 
 /* Calendar-widget */
-#widget_calendar table.calendar { font-size: 90% }
+#widget_calendar table.calendar {
+	font-size: 90%
+}
 
 /* Feed-widget */
-.feed-widget { height: 12px !IMPORTANT; }
+.feed-widget { height: 12px !IMPORTANT }
+
 
 /* BBcode toolbar for comments */
 .bb-btn-tlb p { display: table-cell }
@@ -470,4 +561,20 @@ form#search ul li:before { content: none }
 	margin: 0;
 	vertical-align: middle;
 	padding: 0
+}
+
+/* ===== TOP/ BOTTOM BAR ===== */
+#columntop,
+#columnbottom {
+	text-align: center;
+	clear: both;
+}
+
+#columntop ul,
+#columnbottom ul {
+	list-style-type: none
+}
+
+#columntop ul li, #columnbottom ul li {
+	display: inline;
 }

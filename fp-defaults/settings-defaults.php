@@ -29,8 +29,9 @@ $fp_config = array(
 	'plugins' => array(
 		'blockparser' => array(
 			'pages' => array(
-				'menu',
-				'about'
+				0 => 'menu',
+				1 => 'bottommenu',
+				2 => 'about'
 			),
 		),
 		'bbcode' => array (
