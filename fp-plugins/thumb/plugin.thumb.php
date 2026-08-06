@@ -110,7 +110,7 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 	 * Added by Piero VDFN
 	 * Kudos to http://www.php.net/manual/en/function.imagecopyresampled.php#104028
 	 */
-	if ($infos[2] == 1 || $infos[2] == 3 || $infos[2] == 18) {
+	if ($infos [2] == 1 || $infos [2] == 3 || $infos [2] == 18) {
 		imagecolortransparent($scaled, imagecolorallocatealpha($scaled, 0, 0, 0, 127));
 		imagealphablending($scaled, false);
 		imagesavealpha($scaled, true);
@@ -158,7 +158,7 @@ function plugin_thumb_create($fpath, $infos, $new_width, $new_height) {
 function plugin_thumb_bbcodehook($actualpath, $props, $newsize) {
 	list ($width, $height) = $newsize;
 	if ($thumb = plugin_thumb_create($actualpath, $props, $width, $height)) {
-		$thumb = BBCODE_USE_WRAPPER ? ("getfile.php?f=" . basename($actualpath) . '&amp;thumb=true') : $thumb [0];
+		$thumb = $thumb [0];
 	}
 	return $thumb;
 }

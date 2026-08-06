@@ -255,8 +255,8 @@ function bbcode_remap_url(&$d) {
 	}
 
 	// NWM: "attachs/" is interpreted as a keyword, and it is translated to the actual path of ATTACHS_DIR
-	// CHANGE! we use the getfile.php script to mask the actual path of the attachs dir!
-	// FKM: We now use a get.php script to hide the attachs directory
+	// Attachment downloads can be routed through get.php to hide ATTACHS_DIR.
+	// Image paths remain direct filesystem/public paths; get.php is download-only.
 	// DMKE: I got an idea about an integer-id based download/media manager... work-in-progress
 	if (strpos($d, ':') === false) {
 		// if is relative url
@@ -275,13 +275,8 @@ function bbcode_remap_url(&$d) {
 			$d = BBCODE_USE_FILEWRAPPER ? 'get.php?f=' . urlencode(basename($d)) : substr_replace($d, ATTACHS_DIR, 0, 8);
 			return true;
 		}
-		if (substr($d, 0, 8) == 'attachs/') {
-			$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) . '&amp;dl=true' : substr_replace($d, ATTACHS_DIR, 0, 8);
-			return true;
-		}
 		if (substr($d, 0, 7) == 'images/') {
 			$d = substr_replace($d, IMAGES_DIR, 0, 7);
-			$d = BBCODE_USE_WRAPPER ? 'getfile.php?f=' . basename($d) : $d;
 		}
 		return true;
 	}
