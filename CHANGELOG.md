@@ -25,7 +25,7 @@
 - Mastodon: The plugin toots your entries and their comments to Mastodon. Content from your Mastodon account is integrated into your blog. ([#857](https://github.com/flatpressblog/flatpress/issues/857))
 
 ### Changes
-- SEO Meta Tag Info plugin update to version 2.3.1
+- SEO Meta Tag Info plugin update to version 2.3.2
     - The following Open Graph meta tags are now also generated for single posts:
         - ``article:published_time`` - based on the publication date ([#856](https://github.com/flatpressblog/flatpress/pull/856))
         - ``article:section`` - based on the selected category/subcategory ([#858](https://github.com/flatpressblog/flatpress/pull/858))
