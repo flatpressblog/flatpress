@@ -1,0 +1,158 @@
+<?php
+/**
+ * Validate the SEO media probe against the real BBCode + PhotoSwipe grammar
+ * from this patched FlatPress tree.
+ *
+ * Usage:
+ *   php validate_target_parser.php
+ */
+
+error_reporting(E_ALL);
+
+$root = realpath(__DIR__ . '/../../../');
+if ($root === false) {
+	fwrite(STDERR, "Cannot resolve FlatPress root.\n");
+	exit(2);
+}
+$root = rtrim(str_replace('\\', '/', $root), '/') . '/';
+
+define('ABS_PATH', $root);
+define('FP_CONTENT', 'fp-content/');
+define('IMAGES_DIR', FP_CONTENT . 'images/');
+define('BLOG_BASEURL', 'https://example.test/');
+define('BLOG_ROOT', '/');
+define('DIR_PERMISSIONS', 0777);
+
+$GLOBALS ['regression_filters'] = array();
+
+function plugin_getdir($name) {
+	return ABS_PATH . 'fp-plugins/' . $name;
+}
+function plugin_geturl($name) {
+	return BLOG_BASEURL . 'fp-plugins/' . $name . '/';
+}
+function plugin_getoptions($name) {
+	if ($name === 'bbcode') {
+		return array(
+			'escape-html' => true,
+			'comments' => false,
+			'editor' => false,
+			'maskattachs' => false,
+			'url-maxlen' => 40
+		);
+	}
+	return array();
+}
+function add_filter($tag, $callback, $priority = 10, $acceptedArgs = 1) {
+	if (!isset($GLOBALS ['regression_filters'] [$tag])) {
+		$GLOBALS ['regression_filters'] [$tag] = array();
+	}
+	$GLOBALS ['regression_filters'] [$tag] [] = $callback;
+	return true;
+}
+function add_action($tag, $callback, $priority = 10, $acceptedArgs = 1) {
+	return add_filter($tag, $callback, $priority, $acceptedArgs);
+}
+function apply_filters($tag, $value) {
+	if (!empty($GLOBALS ['regression_filters'] [$tag])) {
+		foreach ($GLOBALS ['regression_filters'] [$tag] as $callback) {
+			$value = call_user_func($callback, $value);
+		}
+	}
+	return $value;
+}
+function wp_specialchars($value, $quotes = 0) {
+	return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+function is_apcu_on() {
+	return false;
+}
+function lang_load($id) {
+	return array();
+}
+
+if (!chdir($root)) {
+	fwrite(STDERR, "Cannot switch to FlatPress root.\n");
+	exit(2);
+}
+
+require $root . 'fp-plugins/bbcode/plugin.bbcode.php';
+require $root . 'fp-plugins/photoswipe/plugin.photoswipe.php';
+
+// In FlatPress this happens on the init hook.
+PhotoSwipeFunctions::initializePluginTags();
+
+require $root . 'fp-plugins/seometataginfo/inc/og-content-image.php';
+
+$results = array();
+$failed = 0;
+
+function parser_regression_assert($name, $ok, $details = '') {
+	global $results, $failed;
+	$results [] = array(
+		'name' => $name,
+		'status' => $ok ? 'PASS' : 'FAIL',
+		'details' => (string) $details
+	);
+	if (!$ok) {
+		$failed++;
+	}
+}
+
+$cases = array(
+	'actual_bbcode_img_detected' => array('[img="images/x.jpg" width="20"]', 'img', 'images/x.jpg'),
+	'actual_photoswipe_gallery_detected' => array('[gallery="images/g"]', 'gallery', 'images/g'),
+	'actual_photoswipeimage_alias_detected' => array('[photoswipeimage="images/x.jpg"]', 'photoswipeimage', 'images/x.jpg'),
+	'actual_photoswipegallery_alias_detected' => array('[photoswipegallery="images/g"]', 'photoswipegallery', 'images/g')
+);
+
+foreach ($cases as $name => $case) {
+	$probe = seometataginfo_content_probe_media($case [0]);
+	$token = isset($probe ['tokens'] [0]) && is_array($probe ['tokens'] [0]) ? $probe ['tokens'] [0] : array();
+	$actualTag = isset($token ['tag']) ? (string) $token ['tag'] : '';
+	$actualSource = isset($token ['attributes'] ['default']) ? (string) $token ['attributes'] ['default'] : '';
+	parser_regression_assert(
+		$name,
+		count($probe ['tokens']) === 1 && $actualTag === $case [1] && $actualSource === $case [2],
+		'tag=' . $actualTag . '; source=' . $actualSource
+	);
+}
+
+$probe = seometataginfo_content_probe_media('[code][img="images/x.jpg"][/code]');
+parser_regression_assert(
+	'actual_bbcode_code_blocks_nested_image',
+	empty($probe ['tokens']),
+	'tokens=' . count($probe ['tokens']) . '; html=' . (isset($probe ['html']) ? $probe ['html'] : '')
+);
+
+// The SEO probe replaces PhotoSwipe media callbacks on a clone. It must not
+// advance PhotoSwipe's request-local data index.
+$beforeIndex = null;
+$afterIndex = null;
+try {
+	$property = new ReflectionProperty('PhotoSwipeFunctions', 'lastusedDataIndex');
+	$property->setAccessible(true);
+	$beforeIndex = $property->getValue();
+	seometataginfo_content_probe_media('[img="images/x.jpg"] [gallery="images/g"]');
+	$afterIndex = $property->getValue();
+} catch (Exception $e) {
+	$beforeIndex = 'reflection-error';
+	$afterIndex = $e->getMessage();
+}
+parser_regression_assert(
+	'probe_does_not_advance_photoswipe_index',
+	$beforeIndex !== 'reflection-error' && $beforeIndex === $afterIndex,
+	'before=' . (string) $beforeIndex . '; after=' . (string) $afterIndex
+);
+
+$summary = array(
+	'php_version' => PHP_VERSION,
+	'total' => count($results),
+	'passed' => count($results) - $failed,
+	'failed' => $failed,
+	'results' => $results
+);
+
+echo json_encode($summary, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+exit(min(1, (int)$failed));
+?>
