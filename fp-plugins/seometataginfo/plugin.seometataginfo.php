@@ -10,6 +10,7 @@
 
 // SEE 'readme.txt' for information
 require ('inc/hw-helpers.php');
+require ('inc/og-content-image.php');
 require ('inc/class.iniparser.php');
 require ('inc/migrate_data.php');
 
@@ -97,6 +98,10 @@ if (!defined('SEOMETA_GEN_IMAGE_META')) {
 	define('SEOMETA_GEN_IMAGE_META', true);
 }
 
+/**
+ * On most social media platforms, images must be at least 200x200 pixels.
+ * Recommended aspect ratio: 1.91:1, for example, 1200 x 630 pixels
+ */
 if (!defined('SEOMETA_OGIMAGE_TARGET_WIDTH')) {
 	define('SEOMETA_OGIMAGE_TARGET_WIDTH', 1200);
 }
@@ -107,6 +112,16 @@ if (!defined('SEOMETA_OGIMAGE_TARGET_HEIGHT')) {
 
 if (!defined('SEOMETA_OGIMAGE_QUERY_VAR')) {
 	define('SEOMETA_OGIMAGE_QUERY_VAR', 'seometa_ogimage');
+}
+
+/**
+ * Optional local content-image source for the dynamic OG endpoint.
+ *
+ * Only paths validated by seometataginfo_content_normalize_local_image_path()
+ * are accepted. Theme/style previews keep using the source-less endpoint.
+ */
+if (!defined('SEOMETA_OGIMAGE_SOURCE_QUERY_VAR')) {
+	define('SEOMETA_OGIMAGE_SOURCE_QUERY_VAR', 'seometa_ogsource');
 }
 
 if (!defined('SEOMETA_OGIMAGE_FALLBACK_RELATIVE_PATH')) {
@@ -534,6 +549,77 @@ function seometataginfo_append_query_args($url, $args) {
 	return $url . (strpos($url, '?') === false ? '?' : '&') . $query . $fragment;
 }
 
+/**
+ * Normalize a query parameter name that was copied from HTML source with an
+ * encoded ampersand separator.
+ *
+ * Example:
+ *   ?seometa_ogimage=1&amp;seometa_ogsource=...
+ *
+ * When such a URL is requested literally, PHP exposes the second key as
+ * "amp;seometa_ogsource". Browsers/crawlers normally decode HTML entities
+ * before requesting the URL, but accepting the literal form makes the
+ * endpoint robust for copied source URLs and similarly double-escaped forms.
+ *
+ * @param string $name
+ * @return string
+ */
+function seometataginfo_normalize_query_parameter_name($name) {
+	$name = trim((string)$name);
+	while (stripos($name, 'amp;') === 0) {
+		$name = substr($name, 4);
+	}
+	return $name;
+}
+
+/**
+ * Read one scalar query parameter without mutating the global request.
+ *
+ * The exact key always has precedence. If it is absent, keys prefixed by one
+ * or more literal "amp;" fragments are considered aliases. Array values stay
+ * invalid, matching the previous request-validation behavior.
+ *
+ * @param string $name
+ * @return array{present:bool,valid:bool,value:string}
+ */
+function seometataginfo_get_query_parameter($name) {
+	$result = array(
+		'present' => false,
+		'valid' => false,
+		'value' => ''
+	);
+
+	$name = trim((string)$name);
+	if ($name === '') {
+		return $result;
+	}
+
+	if (array_key_exists($name, $_GET)) {
+		$result ['present'] = true;
+		$value = $_GET [$name];
+		if (!is_array($value)) {
+			$result ['valid'] = true;
+			$result ['value'] = (string)$value;
+		}
+		return $result;
+	}
+
+	foreach ($_GET as $key => $value) {
+		if (!is_string($key) || seometataginfo_normalize_query_parameter_name($key) !== $name) {
+			continue;
+		}
+
+		$result ['present'] = true;
+		if (!is_array($value)) {
+			$result ['valid'] = true;
+			$result ['value'] = (string)$value;
+		}
+		return $result;
+	}
+
+	return $result;
+}
+
 function seometataginfo_get_runtime_config() {
 	global $fp_config;
 
@@ -912,7 +998,20 @@ function seometataginfo_can_transform_og_image($imageInfo) {
 	return false;
 }
 
-function seometataginfo_build_og_image_url($baseUrl, $imageInfo) {
+/**
+ * Build the public URL for the dynamic 1200x630 OG-image endpoint.
+ *
+ * A validated content-image path can be included so the later crawler request
+ * can reproduce the selected source without needing the original page context.
+ * Theme/style previews deliberately omit this parameter and retain the
+ * historical source-selection path.
+ *
+ * @param string $baseUrl
+ * @param array $imageInfo
+ * @param string $contentSource Relative local content-image path or empty string
+ * @return string
+ */
+function seometataginfo_build_og_image_url($baseUrl, $imageInfo, $contentSource = '') {
 	$entryPoint = seometataginfo_url_join($baseUrl, 'index.php');
 	if ($entryPoint === '') {
 		return '';
@@ -923,24 +1022,34 @@ function seometataginfo_build_og_image_url($baseUrl, $imageInfo) {
 		$version = (string)(int)$imageInfo ['mtime'];
 	}
 
-	return seometataginfo_append_query_args($entryPoint, array(
+	$args = array(
 		SEOMETA_OGIMAGE_QUERY_VAR => '1',
 		'v' => $version
-	));
+	);
+
+	$contentSource = seometataginfo_content_normalize_local_image_path($contentSource);
+	if ($contentSource !== '') {
+		$args [SEOMETA_OGIMAGE_SOURCE_QUERY_VAR] = $contentSource;
+	}
+
+	return seometataginfo_append_query_args($entryPoint, $args);
 }
 
 /**
- * Returns the effective og:image metadata for the current request.
+ * Convert validated source metadata to public OG metadata.
  *
- * When GD is available we publish a dynamic 1200x630 endpoint that renders
- * the transformed image fully in memory. Otherwise we keep the original image.
+ * JPEG/PNG sources are published through the existing 1200x630 endpoint when
+ * GD support is available. The renderer uses a proportional "contain" fit, so
+ * source pixels are never stretched. Unsupported/remote images retain the
+ * direct-URL fallback rather than being downloaded or proxied.
  *
  * @param string $baseUrl
+ * @param array $imageInfo
+ * @param string $contentSource
  * @return array<string,mixed>
  */
-function seometataginfo_get_og_image_meta($baseUrl) {
-	$imageInfo = seometataginfo_get_og_image_source_info($baseUrl);
-	if (empty($imageInfo ['url'])) {
+function seometataginfo_prepare_og_image_meta($baseUrl, $imageInfo, $contentSource = '') {
+	if (!is_array($imageInfo) || empty($imageInfo ['url'])) {
 		return array(
 			'url' => '',
 			'secure_url' => '',
@@ -951,12 +1060,12 @@ function seometataginfo_get_og_image_meta($baseUrl) {
 	}
 
 	if (seometataginfo_can_transform_og_image($imageInfo)) {
-		$dynamicUrl = seometataginfo_build_og_image_url($baseUrl, $imageInfo);
+		$dynamicUrl = seometataginfo_build_og_image_url($baseUrl, $imageInfo, $contentSource);
 		if ($dynamicUrl !== '') {
 			return array(
 				'url' => $dynamicUrl,
 				'secure_url' => (stripos($dynamicUrl, 'https://') === 0) ? $dynamicUrl : '',
-				'mime' => (string)$imageInfo ['mime'],
+				'mime' => isset($imageInfo ['mime']) ? (string)$imageInfo ['mime'] : '',
 				'width' => (int)SEOMETA_OGIMAGE_TARGET_WIDTH,
 				'height' => (int)SEOMETA_OGIMAGE_TARGET_HEIGHT,
 			);
@@ -967,23 +1076,76 @@ function seometataginfo_get_og_image_meta($baseUrl) {
 	return array(
 		'url' => $url,
 		'secure_url' => (stripos($url, 'https://') === 0) ? $url : '',
-		'mime' => (string)$imageInfo ['mime'],
-		'width' => (int)$imageInfo ['width'],
-		'height' => (int)$imageInfo ['height'],
+		'mime' => isset($imageInfo ['mime']) ? (string)$imageInfo ['mime'] : '',
+		'width' => isset($imageInfo ['width']) ? (int)$imageInfo ['width'] : 0,
+		'height' => isset($imageInfo ['height']) ? (int)$imageInfo ['height'] : 0,
 	);
 }
 
+/**
+ * Resolve an explicitly requested local content source for the OG endpoint.
+ *
+ * @param string $baseUrl
+ * @return array{requested:bool,image_info:array}
+ */
+function seometataginfo_get_requested_content_og_image_info($baseUrl) {
+	$result = array(
+		'requested' => false,
+		'image_info' => array()
+	);
+
+	$parameter = seometataginfo_get_query_parameter(SEOMETA_OGIMAGE_SOURCE_QUERY_VAR);
+	if (empty($parameter ['present'])) {
+		return $result;
+	}
+
+	$result ['requested'] = true;
+	if (empty($parameter ['valid'])) {
+		return $result;
+	}
+
+	$relativePath = seometataginfo_content_normalize_local_image_path((string)$parameter ['value']);
+	if ($relativePath === '') {
+		return $result;
+	}
+
+	$imageInfo = seometataginfo_content_local_image_meta($relativePath, $baseUrl);
+	if (!empty($imageInfo ['absolute_path'])) {
+		$result ['image_info'] = $imageInfo;
+	}
+
+	return $result;
+}
+
+/**
+ * Returns the effective og:image metadata for the current request.
+ *
+ * Local entry/static/gallery images use the same dynamic 1200x630 renderer as
+ * the style preview. The renderer preserves the source aspect ratio and centers
+ * the scaled image on the target canvas. Remote images remain direct URLs to
+ * avoid server-side downloads/SSRF behavior.
+ *
+ * @param string $baseUrl
+ * @return array<string,mixed>
+ */
+function seometataginfo_get_og_image_meta($baseUrl) {
+	$contentImageMeta = seometataginfo_get_content_og_image_meta($baseUrl);
+	if (!empty($contentImageMeta ['url'])) {
+		$contentSource = isset($contentImageMeta ['relative_path']) ? (string)$contentImageMeta ['relative_path'] : '';
+		return seometataginfo_prepare_og_image_meta($baseUrl, $contentImageMeta, $contentSource);
+	}
+
+	$imageInfo = seometataginfo_get_og_image_source_info($baseUrl);
+	return seometataginfo_prepare_og_image_meta($baseUrl, $imageInfo);
+}
+
 function seometataginfo_is_og_image_request() {
-	if (!isset($_GET [SEOMETA_OGIMAGE_QUERY_VAR])) {
+	$parameter = seometataginfo_get_query_parameter(SEOMETA_OGIMAGE_QUERY_VAR);
+	if (empty($parameter ['present']) || empty($parameter ['valid'])) {
 		return false;
 	}
 
-	$value = $_GET [SEOMETA_OGIMAGE_QUERY_VAR];
-	if (is_array($value)) {
-		return false;
-	}
-
-	$value = trim((string)$value);
+	$value = trim((string)$parameter ['value']);
 	return in_array($value, array('', '1', 'true', 'yes'), true);
 }
 
@@ -1097,6 +1259,36 @@ function seometataginfo_destroy_image_resource(&$image) {
 	$image = null;
 }
 
+/**
+ * Calculate a centered proportional "contain" rectangle.
+ *
+ * The same scale factor is applied to both axes; therefore no source image is
+ * stretched or squashed when placed on the 1.91:1 OG canvas.
+ *
+ * @param int $sourceWidth
+ * @param int $sourceHeight
+ * @param int $targetWidth
+ * @param int $targetHeight
+ * @return array{x:int,y:int,width:int,height:int}
+ */
+function seometataginfo_calculate_og_contain_box($sourceWidth, $sourceHeight, $targetWidth, $targetHeight) {
+	$sourceWidth = max(1, (int)$sourceWidth);
+	$sourceHeight = max(1, (int)$sourceHeight);
+	$targetWidth = max(1, (int)$targetWidth);
+	$targetHeight = max(1, (int)$targetHeight);
+
+	$scale = min($targetWidth / $sourceWidth, $targetHeight / $sourceHeight);
+	$destWidth = max(1, (int)round($sourceWidth * $scale));
+	$destHeight = max(1, (int)round($sourceHeight * $scale));
+
+	return array(
+		'x' => (int)floor(($targetWidth - $destWidth) / 2),
+		'y' => (int)floor(($targetHeight - $destHeight) / 2),
+		'width' => $destWidth,
+		'height' => $destHeight
+	);
+}
+
 function seometataginfo_render_og_image($imageInfo, $targetWidth, $targetHeight) {
 	$targetWidth = max(1, (int)$targetWidth);
 	$targetHeight = max(1, (int)$targetHeight);
@@ -1129,13 +1321,20 @@ function seometataginfo_render_og_image($imageInfo, $targetWidth, $targetHeight)
 	$background = imagecolorallocate($canvas, 255, 255, 255);
 	imagefilledrectangle($canvas, 0, 0, $targetWidth, $targetHeight, $background);
 
-	$scale = min($targetWidth / $sourceWidth, $targetHeight / $sourceHeight);
-	$destWidth = max(1, (int)round($sourceWidth * $scale));
-	$destHeight = max(1, (int)round($sourceHeight * $scale));
-	$destX = (int)floor(($targetWidth - $destWidth) / 2);
-	$destY = (int)floor(($targetHeight - $destHeight) / 2);
+	$box = seometataginfo_calculate_og_contain_box($sourceWidth, $sourceHeight, $targetWidth, $targetHeight);
 
-	$copied = imagecopyresampled($canvas, $source, $destX, $destY, 0, 0, $destWidth, $destHeight, $sourceWidth, $sourceHeight);
+	$copied = imagecopyresampled(
+		$canvas,
+		$source,
+		$box ['x'],
+		$box ['y'],
+		0,
+		0,
+		$box ['width'],
+		$box ['height'],
+		$sourceWidth,
+		$sourceHeight
+	);
 	seometataginfo_destroy_image_resource($source);
 	if (!$copied) {
 		seometataginfo_destroy_image_resource($canvas);
@@ -1164,7 +1363,16 @@ function seometataginfo_render_og_image($imageInfo, $targetWidth, $targetHeight)
 function seometataginfo_serve_og_image() {
 	$config = seometataginfo_get_runtime_config();
 	$baseUrl = isset($config ['general'] ['www']) ? $config ['general'] ['www'] : '';
-	$imageInfo = seometataginfo_get_og_image_source_info($baseUrl);
+
+	$requestedContent = seometataginfo_get_requested_content_og_image_info($baseUrl);
+	if (!empty($requestedContent ['requested'])) {
+		$imageInfo = isset($requestedContent ['image_info']) && is_array($requestedContent ['image_info'])
+			? $requestedContent ['image_info']
+			: array();
+	} else {
+		$imageInfo = seometataginfo_get_og_image_source_info($baseUrl);
+	}
+
 	if (empty($imageInfo ['absolute_path']) || empty($imageInfo ['mime'])) {
 		seometataginfo_send_status(404);
 		return;
