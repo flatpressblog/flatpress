@@ -1,0 +1,253 @@
+{
+    "php_version": "8.4.23",
+    "total": 49,
+    "passed": 49,
+    "failed": 0,
+    "results": [
+        {
+            "name": "3_single_entry_first_image_original",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/single.png; actual=https://example.test/flatpress/fp-content/images/single.png"
+        },
+        {
+            "name": "3_single_entry_not_thumbnail",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/single.png"
+        },
+        {
+            "name": "local_image_keeps_validated_transform_source",
+            "status": "PASS",
+            "details": "{\"relative_path\":\"fp-content\\/images\\/single.png\",\"type\":3}"
+        },
+        {
+            "name": "single_image_explicit_title_becomes_og_alt",
+            "status": "PASS",
+            "details": "expected=Single image title; actual=Single image title"
+        },
+        {
+            "name": "single_image_without_title_keeps_alt_empty_for_site_fallback",
+            "status": "PASS",
+            "details": "expected=; actual="
+        },
+        {
+            "name": "single_image_alt_attribute_does_not_replace_missing_title",
+            "status": "PASS",
+            "details": "expected=; actual="
+        },
+        {
+            "name": "single_image_title_entities_are_normalized_without_double_escape",
+            "status": "PASS",
+            "details": "expected=A & B; actual=A & B"
+        },
+        {
+            "name": "4_single_entry_first_gallery_image_original",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-main/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-main/a.png"
+        },
+        {
+            "name": "gallery_selected_image_uses_gallery_caption",
+            "status": "PASS",
+            "details": "expected=First; actual=First"
+        },
+        {
+            "name": "5_static_page_first_image_original",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/single.png; actual=https://example.test/flatpress/fp-content/images/single.png"
+        },
+        {
+            "name": "6_static_page_first_gallery_image_original",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-main/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-main/a.png"
+        },
+        {
+            "name": "source_order_gallery_before_image",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-main/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-main/a.png"
+        },
+        {
+            "name": "source_order_image_before_gallery",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/single.png; actual=https://example.test/flatpress/fp-content/images/single.png"
+        },
+        {
+            "name": "multiple_images_first_original_wins",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/single.png; actual=https://example.test/flatpress/fp-content/images/single.png"
+        },
+        {
+            "name": "empty_first_gallery_then_second_gallery",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-main/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-main/a.png"
+        },
+        {
+            "name": "photoswipeimage_original",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/single.png; actual=https://example.test/flatpress/fp-content/images/single.png"
+        },
+        {
+            "name": "photoswipegallery_first_original",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-main/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-main/a.png"
+        },
+        {
+            "name": "invalid_image_then_valid_gallery",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-main/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-main/a.png"
+        },
+        {
+            "name": "empty_gallery_then_valid_image",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/single.png; actual=https://example.test/flatpress/fp-content/images/single.png"
+        },
+        {
+            "name": "gallery_skips_non_image_first_file",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-invalid-first/b.png; actual=https://example.test/flatpress/fp-content/images/gallery-invalid-first/b.png"
+        },
+        {
+            "name": "gallery_caption_is_bound_to_selected_valid_file",
+            "status": "PASS",
+            "details": "expected=Selected & caption; actual=Selected & caption"
+        },
+        {
+            "name": "gallery_missing_first_caption_does_not_select_later_image",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-later-caption/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-later-caption/a.png"
+        },
+        {
+            "name": "gallery_missing_first_caption_keeps_alt_empty_for_site_fallback",
+            "status": "PASS",
+            "details": "expected=; actual="
+        },
+        {
+            "name": "thumbnail_present_original_still_selected",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/stream.png; actual=https://example.test/flatpress/fp-content/images/stream.png"
+        },
+        {
+            "name": "thumbnail_path_never_published",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/stream.png"
+        },
+        {
+            "name": "popup_false_still_original",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/single.png; actual=https://example.test/flatpress/fp-content/images/single.png"
+        },
+        {
+            "name": "external_image_direct_url_no_download",
+            "status": "PASS",
+            "details": "expected=https://cdn.example.test/original.jpg; actual=https://cdn.example.test/original.jpg"
+        },
+        {
+            "name": "external_image_explicit_title_is_preserved",
+            "status": "PASS",
+            "details": "expected=Remote title; actual=Remote title"
+        },
+        {
+            "name": "external_image_has_no_local_transform_source",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "readmore_manual_image_before_more_visible",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/before-more.png; actual=https://example.test/flatpress/fp-content/images/before-more.png"
+        },
+        {
+            "name": "readmore_manual_image_after_more_hidden",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "readmore_manual_gallery_after_more_hidden",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "readmore_manual_gallery_before_more_visible",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-main/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-main/a.png"
+        },
+        {
+            "name": "readmore_inactive_full_stream_content",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/after-more.png; actual=https://example.test/flatpress/fp-content/images/after-more.png"
+        },
+        {
+            "name": "single_entry_image_after_more_allowed",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/after-more.png; actual=https://example.test/flatpress/fp-content/images/after-more.png"
+        },
+        {
+            "name": "static_page_gallery_after_more_allowed",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-main/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-main/a.png"
+        },
+        {
+            "name": "readmore_auto_four_chars_hides_media_marker",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "readmore_semiauto_four_chars_hides_media_marker",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "readmore_sentence_media_before_fourth_sentence_visible",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "readmore_sentence_media_after_fourth_sentence_hidden",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "bbcode_code_literal_not_media",
+            "status": "PASS",
+            "details": "tokens=0"
+        },
+        {
+            "name": "1_stream_multiple_entries_first_visible_image_original",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/stream.png; actual=https://example.test/flatpress/fp-content/images/stream.png"
+        },
+        {
+            "name": "stream_scan_restores_current_query",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "2_stream_multiple_entries_first_gallery_image_original",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-main/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-main/a.png"
+        },
+        {
+            "name": "stream_hidden_first_entry_media_falls_to_second_entry",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/second.png; actual=https://example.test/flatpress/fp-content/images/second.png"
+        },
+        {
+            "name": "stream_hidden_title_does_not_override_visible_second_title",
+            "status": "PASS",
+            "details": "expected=Visible second title; actual=Visible second title"
+        },
+        {
+            "name": "photoswipe_disabled_tags_not_recognized",
+            "status": "PASS",
+            "details": "tokens=0"
+        },
+        {
+            "name": "path_traversal_rejected",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "gallery_read_images_order_is_used",
+            "status": "PASS",
+            "details": "[\"a.png\",\"b.png\"]"
+        }
+    ]
+}

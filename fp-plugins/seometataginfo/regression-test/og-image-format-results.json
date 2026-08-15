@@ -1,0 +1,113 @@
+{
+    "php_version": "8.4.23",
+    "total": 21,
+    "passed": 21,
+    "failed": 0,
+    "results": [
+        {
+            "name": "html_escaped_query_fixture_is_self_contained",
+            "status": "PASS",
+            "details": "/tmp/flatpress-seometa-og-format-2004/fp-content/images/repo-independent-og-source.png"
+        },
+        {
+            "name": "local_source_metadata_is_transformable_png",
+            "status": "PASS",
+            "details": "{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/format-source.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/format-source.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"alt\":\"\",\"relative_path\":\"fp-content\\/images\\/format-source.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-format-2004\\/fp-content\\/images\\/format-source.png\",\"type\":3,\"mtime\":1786803499,\"size_bytes\":68}"
+        },
+        {
+            "name": "content_image_is_published_via_dynamic_og_endpoint",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/index.php?seometa_ogimage=1&v=1786803499&seometa_ogsource=fp-content%2Fimages%2Fformat-source.png"
+        },
+        {
+            "name": "dynamic_content_meta_advertises_1200x630",
+            "status": "PASS",
+            "details": "width=1200; height=630"
+        },
+        {
+            "name": "dynamic_content_meta_preserves_image_alt_text",
+            "status": "PASS",
+            "details": "Prepared image title"
+        },
+        {
+            "name": "og_image_alt_prefers_selected_image_title",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "og_image_alt_falls_back_to_site_title",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "og_image_alt_uses_preview_only_when_site_title_is_empty",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "dynamic_endpoint_rehydrates_validated_content_source",
+            "status": "PASS",
+            "details": "fp-content/images/format-source.png"
+        },
+        {
+            "name": "literal_html_escaped_query_rehydrates_reported_content_source",
+            "status": "PASS",
+            "details": "{\"get\":{\"seometa_ogimage\":\"1\",\"amp;v\":\"1786722663\",\"amp;seometa_ogsource\":\"fp-content\\/images\\/repo-independent-og-source.png\"},\"request\":{\"requested\":true,\"image_info\":{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"alt\":\"\",\"relative_path\":\"fp-content\\/images\\/repo-independent-og-source.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-format-2004\\/fp-content\\/images\\/repo-independent-og-source.png\",\"type\":3,\"mtime\":1786803499,\"size_bytes\":68}}}"
+        },
+        {
+            "name": "double_html_escaped_query_rehydrates_content_source",
+            "status": "PASS",
+            "details": "{\"get\":{\"seometa_ogimage\":\"1\",\"amp;amp;v\":\"1786722663\",\"amp;amp;seometa_ogsource\":\"fp-content\\/images\\/repo-independent-og-source.png\"},\"request\":{\"requested\":true,\"image_info\":{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"alt\":\"\",\"relative_path\":\"fp-content\\/images\\/repo-independent-og-source.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-format-2004\\/fp-content\\/images\\/repo-independent-og-source.png\",\"type\":3,\"mtime\":1786803499,\"size_bytes\":68}}}"
+        },
+        {
+            "name": "literal_html_escaped_og_flag_is_recognized",
+            "status": "PASS",
+            "details": "{\"foo\":\"bar\",\"amp;seometa_ogimage\":\"1\",\"amp;seometa_ogsource\":\"fp-content\\/images\\/repo-independent-og-source.png\"}"
+        },
+        {
+            "name": "exact_query_parameter_precedes_escaped_alias",
+            "status": "PASS",
+            "details": "{\"seometa_ogimage\":\"1\",\"seometa_ogsource\":\"fp-content\\/images\\/repo-independent-og-source.png\",\"amp;seometa_ogsource\":\"fp-content\\/images\\/..\\/config\\/invalid.png\"}"
+        },
+        {
+            "name": "escaped_alias_with_blog_root_path_is_normalized",
+            "status": "PASS",
+            "details": "{\"seometa_ogimage\":\"1\",\"amp;seometa_ogsource\":\"\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\"}"
+        },
+        {
+            "name": "escaped_alias_traversal_is_rejected_without_theme_fallback",
+            "status": "PASS",
+            "details": "{\"requested\":true,\"image_info\":[]}"
+        },
+        {
+            "name": "dynamic_endpoint_rejects_path_traversal",
+            "status": "PASS",
+            "details": "{\"requested\":true,\"image_info\":[]}"
+        },
+        {
+            "name": "contain_geometry_landscape_16_9",
+            "status": "PASS",
+            "details": "{\"x\":40,\"y\":0,\"width\":1120,\"height\":630}; ratio_error=0"
+        },
+        {
+            "name": "contain_geometry_portrait_9_16",
+            "status": "PASS",
+            "details": "{\"x\":423,\"y\":0,\"width\":354,\"height\":630}; ratio_error=0.00059523809523809"
+        },
+        {
+            "name": "contain_geometry_square",
+            "status": "PASS",
+            "details": "{\"x\":285,\"y\":0,\"width\":630,\"height\":630}; ratio_error=0"
+        },
+        {
+            "name": "contain_geometry_already_1200x630",
+            "status": "PASS",
+            "details": "{\"x\":0,\"y\":0,\"width\":1200,\"height\":630}; ratio_error=0"
+        },
+        {
+            "name": "remote_image_remains_direct_without_server_side_fetch",
+            "status": "PASS",
+            "details": "{\"url\":\"https:\\/\\/cdn.example.test\\/original.jpg\",\"secure_url\":\"https:\\/\\/cdn.example.test\\/original.jpg\",\"mime\":\"\",\"width\":0,\"height\":0,\"alt\":\"\"}"
+        }
+    ]
+}
