@@ -377,10 +377,10 @@ There is no stretching and no crop operation.
 
 ```mermaid
 flowchart LR
-    S[Source W × H] --> R[scale = min(1200/W, 630/H)]
-    R --> D[Destination w = round(W×scale)\nh = round(H×scale)]
-    D --> C[Center on 1200×630 white canvas]
-    C --> O[JPEG or PNG response]
+    S["Source W × H"] --> R["scale = min(1200 / W, 630 / H)"]
+    R --> D["Destination w = round(W × scale)<br/>h = round(H × scale)"]
+    D --> C["Center on 1200 × 630 white canvas"]
+    C --> O["JPEG or PNG response"]
 ```
 
 ## 16. Failure paths
