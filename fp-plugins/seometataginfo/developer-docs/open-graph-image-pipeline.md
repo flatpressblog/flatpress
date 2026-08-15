@@ -296,7 +296,7 @@ Browsers normally decode HTML entities before requesting a URL. A developer may 
 ?seometa_ogimage=1&amp;v=1786722663&amp;seometa_ogsource=fp-content%2Fimages%2Frepo-independent-og-source.png
 ```
 
-The historical bug report used `avm-gelaende.png`, but that file belongs to one installed test instance and is not shipped by the FlatPress repository. Developer documentation and automated tests therefore use a neutral temporary fixture name and must not assume the presence of that instance-specific image.
+Developer documentation and automated tests therefore use a neutral temporary fixture name and must not assume the presence of that instance-specific image.
 
 PHP parses the later keys as:
 
