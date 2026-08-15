@@ -10,7 +10,11 @@ Reads a defined feature-switch constant and returns its boolean value.
 
 ### `output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, $seo_noarchive, $seo_nosnippet)`
 
-Central normal-page metadata emitter. Builds Open Graph image metadata, title, description, keywords, robots, article metadata, canonical URL, and Open Graph URL/type/locale/site name.
+Central normal-page metadata emitter. Builds Open Graph image metadata, title, description, keywords, robots, article metadata, canonical URL, and Open Graph URL/type/locale/site name. `og:image:alt` uses the selected image metadata first and the configured site title as fallback.
+
+### `seometataginfo_get_og_image_alt_text($imageMeta, $siteTitle)`
+
+Returns the selected image's normalized `alt` metadata when non-empty, otherwise the configured site title, and finally `Preview` only if both are empty.
 
 ### `makePageTitle($title, $sep)`
 
@@ -149,7 +153,7 @@ Builds public dynamic endpoint URL with `seometa_ogimage`, `v`, and optional val
 
 ### `seometataginfo_prepare_og_image_meta($baseUrl, $imageInfo, $contentSource = '')`
 
-Returns public OG metadata. Transformable local sources use the dynamic 1200 × 630 endpoint; otherwise the direct source URL is used.
+Returns public OG metadata. Transformable local sources use the dynamic 1200 × 630 endpoint; otherwise the direct source URL is used. The internal plain-text `alt` value is preserved through either branch.
 
 ### `seometataginfo_get_requested_content_og_image_info($baseUrl)`
 
@@ -306,6 +310,10 @@ Methods:
 
 Returns canonical empty image metadata structure.
 
+### `seometataginfo_content_normalize_image_alt($value)`
+
+Normalizes a scalar BBCode image title or Gallery caption for `og:image:alt`: up to two entity-decoding passes, markup removal, CR/LF replacement, and trim. Final HTML attribute escaping remains the output layer's responsibility.
+
 ### `seometataginfo_content_unset_global($key)`
 
 Unsets a global key through a helper so static analysis does not incorrectly infer constructor side effects.
@@ -355,11 +363,11 @@ Dispatches remote versus local image resolution.
 
 ### `seometataginfo_content_gallery_meta($source, $baseUrl)`
 
-Validates gallery and selects first valid original image according to `gallery_read_images()`.
+Validates gallery and selects the first valid original image according to `gallery_read_images()`. After selection, reads `gallery_read_captions()` and binds only the selected filename's normalized caption to the internal `alt` field.
 
 ### `seometataginfo_content_resolve_token($token, $baseUrl)`
 
-Dispatches image versus gallery marker.
+Dispatches image versus gallery marker. For `[img]`/`[photoswipeimage]`, only the explicit parsed `title` attribute is normalized into the internal `alt` field; BBCode `alt` is not used as the SEO description.
 
 ### `seometataginfo_find_first_content_image_meta($content, $baseUrl, $applyReadMore)`
 

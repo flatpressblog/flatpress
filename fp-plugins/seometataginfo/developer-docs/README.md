@@ -11,6 +11,7 @@ Relevant plugin versions:
 | PhotoSwipe | 2.0.7 | `[gallery]`, `[photoswipegallery]`, `[photoswipeimage]`, and `[img]` override |
 | Thumbnails | 1.1.1 | Preview/thumbnail generation behind `bbcode_img_scale` |
 | ReadMore | 1.0.4 | Stream visibility boundary |
+| Gallery captions | 1.0.3 | Author-managed per-gallery image titles persisted through FlatPress gallery helpers |
 | FlatPress | 1.6.dev | Query, gallery, entry, hook, and filesystem APIs |
 
 The current target range used by the project is **PHP 7.2 through PHP 8.5** and **Smarty 4.5.5 through Smarty 5.8.4**. The Open Graph image pipeline itself does not require Smarty-specific syntax.
@@ -36,6 +37,8 @@ The image pipeline also depends on behavior defined by:
 - `../../photoswipe/photoswipefunctions.class.php`
 - `../../thumb/plugin.thumb.php`
 - `../../readmore/plugin.readmore.php`
+- `../../gallerycaptions/plugin.gallerycaptions.php`
+- `../../gallerycaptions/admin_uploader_gallerycaptions.class.php`
 - `../../../fp-includes/core/core.gallery.php`
 - `../../../fp-includes/core/core.fpdb.class.php`
 
@@ -61,6 +64,7 @@ SEO Meta Tag Info has several responsibilities that should remain conceptually s
 - emit Open Graph metadata;
 - derive article metadata for single-entry views;
 - select a content-aware Open Graph image;
+- derive `og:image:alt` from the selected image's explicit BBCode `title` or Gallery caption, with site-title fallback;
 - serve locally generated 1200 × 630 Open Graph image responses;
 - expose per-entry SEO description/keywords to Smarty entry templates;
 - provide an administration panel for the host-level `robots.txt`;
@@ -74,7 +78,7 @@ Developers changing the image pipeline should preserve these invariants:
 
 1. **Original media selection:** SEO selection is based on the original image source, never on a `.thumbs` preview.
 2. **Source order:** the first valid visible media occurrence wins.
-3. **Gallery order:** `gallery_read_images()` defines gallery ordering.
+3. **Gallery order:** `gallery_read_images()` defines gallery ordering, while `gallery_read_captions()` supplies the title for the exact selected gallery file.
 4. **ReadMore visibility:** a multi-entry stream must not publish media that ReadMore hides.
 5. **Single/static completeness:** single entries and static pages may select media after `[more]`.
 6. **No live media rendering during probing:** probing must not create thumbnails or advance PhotoSwipe state.
@@ -84,6 +88,8 @@ Developers changing the image pipeline should preserve these invariants:
 10. **No distortion:** transformable local JPEG/PNG sources are fitted proportionally onto the configured OG canvas.
 11. **Explicit invalid source does not become theme preview:** a requested but invalid `seometa_ogsource` remains an invalid content-image request.
 12. **HTML-escaped query tolerance:** copied URLs containing literal `&amp;` / repeated `amp;` parameter prefixes are accepted without weakening parameter precedence or path validation.
+13. **Image-description binding:** an explicit `[img ... title="..."]` or the Gallery caption of the exact selected file becomes `og:image:alt`; missing/empty titles fall back to `general.title` and never change image selection.
+14. **No alt substitution:** a BBCode `alt` attribute, filename, IPTC title, thumbnail title, or caption from a later gallery image must not substitute for a missing user image title.
 
 ## Architectural overview
 
@@ -97,8 +103,9 @@ flowchart LR
     F --> G[Content-aware image resolver]
     G --> H[BBCode parser clone / media markers]
     H --> I[ReadMore visibility, when stream]
-    I --> J[Original image or first gallery image]
-    J --> K[OG metadata preparation]
+    I --> J[Original image or first valid gallery image]
+    J --> JA[Bind explicit image title / exact gallery caption]
+    JA --> K[OG metadata preparation]
     K --> L[1200 x 630 endpoint for transformable local JPEG/PNG]
     K --> M[Direct URL fallback for remote/unsupported media]
     F --> N[Description / keywords / robots / canonical / article metadata]

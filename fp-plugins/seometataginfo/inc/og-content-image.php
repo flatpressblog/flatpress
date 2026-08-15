@@ -21,12 +21,53 @@ function seometataginfo_content_empty_image_meta() {
 		'mime' => '',
 		'width' => 0,
 		'height' => 0,
+		'alt' => '',
 		'relative_path' => '',
 		'absolute_path' => '',
 		'type' => 0,
 		'mtime' => 0,
 		'size_bytes' => 0
 	);
+}
+
+/**
+ * Normalize a user-provided image title/caption for og:image:alt.
+ *
+ * BBCode title attributes and Gallery captions values may already contain
+ * HTML entities. Decode at most twice (matching PhotoSwipe's compatibility
+ * handling), remove markup and line breaks, and leave final HTML escaping to
+ * the meta-tag output layer.
+ *
+ * @param mixed $value
+ * @return string
+ */
+function seometataginfo_content_normalize_image_alt($value) {
+	if (!is_scalar($value)) {
+		return '';
+	}
+
+	$charset = 'UTF-8';
+	if (isset($GLOBALS ['fp_config']) && is_array($GLOBALS ['fp_config'])
+		&& isset($GLOBALS ['fp_config'] ['locale']) && is_array($GLOBALS ['fp_config'] ['locale'])
+		&& isset($GLOBALS ['fp_config'] ['locale'] ['charset'])
+		&& is_string($GLOBALS ['fp_config'] ['locale'] ['charset'])
+		&& trim($GLOBALS ['fp_config'] ['locale'] ['charset']) !== '') {
+		$charset = strtoupper(trim($GLOBALS ['fp_config'] ['locale'] ['charset']));
+	}
+
+	$text = (string)$value;
+	for ($i = 0; $i < 2; $i++) {
+		$decoded = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, $charset);
+		if ($decoded === $text) {
+			break;
+		}
+		$text = $decoded;
+	}
+
+	$text = strip_tags($text);
+	$text = str_replace(array("\r", "\n"), ' ', $text);
+
+	return trim($text);
 }
 
 /**
@@ -243,6 +284,7 @@ function seometataginfo_content_remote_image_meta($url) {
 		'mime' => '',
 		'width' => 0,
 		'height' => 0,
+		'alt' => '',
 		'relative_path' => '',
 		'absolute_path' => '',
 		'type' => 0,
@@ -395,6 +437,7 @@ function seometataginfo_content_local_image_meta($source, $baseUrl) {
 		'mime' => $mime,
 		'width' => (int)$size [0],
 		'height' => (int)$size [1],
+		'alt' => '',
 		'relative_path' => $relativePath,
 		'absolute_path' => $absolutePath,
 		'type' => $type,
@@ -422,6 +465,47 @@ function seometataginfo_content_image_meta($source, $baseUrl) {
 	}
 
 	return seometataginfo_content_local_image_meta($decoded, $baseUrl);
+}
+
+/**
+ * Rehydrate an explicitly requested local content source for the dynamic
+ * Open Graph image endpoint.
+ *
+ * The query helper also accepts literal HTML-escaped parameter names such as
+ * "amp;seometa_ogsource". Presence is kept separate from validity so an
+ * explicit invalid source cannot silently fall back to the theme preview.
+ *
+ * @param string $baseUrl
+ * @return array{requested:bool,image_info:array}
+ */
+function seometataginfo_get_requested_content_og_image_info($baseUrl) {
+	$result = array(
+		'requested' => false,
+		'image_info' => array()
+	);
+
+	$parameter = seometataginfo_get_query_parameter(SEOMETA_OGIMAGE_SOURCE_QUERY_VAR);
+	if (empty($parameter ['present'])) {
+		return $result;
+	}
+
+	$result ['requested'] = true;
+	if (empty($parameter ['valid'])) {
+		return $result;
+	}
+
+	$source = seometataginfo_content_normalize_local_image_path($parameter ['value']);
+	if ($source === '') {
+		return $result;
+	}
+
+	$imageInfo = seometataginfo_content_local_image_meta($source, $baseUrl);
+	if (empty($imageInfo ['absolute_path']) || empty($imageInfo ['mime'])) {
+		return $result;
+	}
+
+	$result ['image_info'] = $imageInfo;
+	return $result;
 }
 
 /**
@@ -497,9 +581,21 @@ function seometataginfo_content_gallery_meta($source, $baseUrl) {
 		}
 
 		$meta = seometataginfo_content_image_meta($galleryDir . $file, $baseUrl);
-		if (!empty($meta ['url'])) {
-			return $meta;
+		if (empty($meta ['url'])) {
+			continue;
 		}
+
+		// Bind the caption to the exact valid image selected above. A missing
+		// caption never changes image selection; output_metatags() will fall back
+		// to the configured site title.
+		if (function_exists('gallery_read_captions')) {
+			$captions = gallery_read_captions($galleryDir);
+			if (is_array($captions) && array_key_exists($file, $captions)) {
+				$meta ['alt'] = seometataginfo_content_normalize_image_alt($captions [$file]);
+			}
+		}
+
+		return $meta;
 	}
 
 	return $empty;
@@ -533,7 +629,11 @@ function seometataginfo_content_resolve_token($token, $baseUrl) {
 		return seometataginfo_content_gallery_meta($source, $baseUrl);
 	}
 	if ($tag === 'img' || $tag === 'photoswipeimage') {
-		return seometataginfo_content_image_meta($source, $baseUrl);
+		$meta = seometataginfo_content_image_meta($source, $baseUrl);
+		if (!empty($meta ['url']) && array_key_exists('title', $attributes)) {
+			$meta ['alt'] = seometataginfo_content_normalize_image_alt($attributes ['title']);
+		}
+		return $meta;
 	}
 
 	return $empty;

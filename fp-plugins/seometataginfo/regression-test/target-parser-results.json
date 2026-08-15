@@ -1,0 +1,43 @@
+{
+    "php_version": "8.4.23",
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "results": [
+        {
+            "name": "actual_bbcode_img_detected",
+            "status": "PASS",
+            "details": "tag=img; source=images/x.jpg"
+        },
+        {
+            "name": "actual_photoswipe_gallery_detected",
+            "status": "PASS",
+            "details": "tag=gallery; source=images/g"
+        },
+        {
+            "name": "actual_photoswipeimage_alias_detected",
+            "status": "PASS",
+            "details": "tag=photoswipeimage; source=images/x.jpg"
+        },
+        {
+            "name": "actual_photoswipegallery_alias_detected",
+            "status": "PASS",
+            "details": "tag=photoswipegallery; source=images/g"
+        },
+        {
+            "name": "actual_photoswipe_overridden_img_preserves_title_attribute",
+            "status": "PASS",
+            "details": "title=Parser title"
+        },
+        {
+            "name": "actual_bbcode_code_blocks_nested_image",
+            "status": "PASS",
+            "details": "tokens=0; html=<pre>[img=\"images/x.jpg\"]</pre>"
+        },
+        {
+            "name": "probe_does_not_advance_photoswipe_index",
+            "status": "PASS",
+            "details": "before=0; after=0"
+        }
+    ]
+}

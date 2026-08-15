@@ -131,6 +131,8 @@ A token marker missing from the visible excerpt is treated as hidden. Once a hid
 
 `seometataginfo_content_image_meta()` distinguishes:
 
+The source resolver itself does not invent a description. For parsed `[img]` and `[photoswipeimage]` tokens, `seometataginfo_content_resolve_token()` separately reads only the explicit `title` attribute and normalizes it through `seometataginfo_content_normalize_image_alt()`. A BBCode `alt` attribute is intentionally not used as the Open Graph image description.
+
 ### Remote HTTP(S)
 
 `seometataginfo_content_remote_image_meta()`:
@@ -202,7 +204,55 @@ This reuse is intentional. `gallery_read_images()`:
 
 The SEO resolver then checks filenames in that exact order and returns the first file that resolves to valid image metadata. Invalid/non-image files can therefore be skipped without changing gallery ordering.
 
-## 9. Why thumbnails are never selected
+## 9. `og:image:alt` resolution
+
+Image selection and image description are intentionally separate.
+
+### Single images
+
+For `[img]` and `[photoswipeimage]`:
+
+1. resolve and validate the image source;
+2. if the selected token contains an explicit scalar `title`, normalize it;
+3. store the normalized value in the internal image metadata `alt` field;
+4. if `title` is absent, empty, or normalizes to empty text, keep `alt` empty.
+
+The following do **not** become SEO fallbacks:
+
+- the BBCode `alt` attribute;
+- basename-derived renderer titles;
+- IPTC-derived titles;
+- thumbnail markup.
+
+### Gallery images
+
+`seometataginfo_content_gallery_meta()` first determines the first valid image using `gallery_read_images()` and the normal image validator. Only after that exact file has been selected does it read `gallery_read_captions()` and look up the caption by that filename.
+
+A missing caption never advances to a later image. This guarantees that image selection remains based on visible source order, not caption availability.
+
+### Text normalization and output fallback
+
+`seometataginfo_content_normalize_image_alt()`:
+
+- accepts only scalar input;
+- decodes HTML entities at most twice for compatibility with stored/legacy caption values;
+- removes markup;
+- replaces CR/LF with spaces;
+- trims the result;
+- leaves final HTML escaping to `output_metatags()`.
+
+`seometataginfo_prepare_og_image_meta()` preserves the internal `alt` value through both direct-URL and dynamic 1200 × 630 paths.
+
+`seometataginfo_get_og_image_alt_text()` then applies the final output rule:
+
+```text
+selected explicit image title / selected gallery caption
+    -> if non-empty: og:image:alt
+    -> otherwise: fp_config.general.title
+    -> if site title is also empty: "Preview"
+```
+
+## 10. Why thumbnails are never selected
 
 BBCode's `do_bbcode_img()` can call:
 
@@ -220,7 +270,7 @@ The final `<img src>` can therefore point to the preview rather than the origina
 
 The SEO pipeline avoids this by reading the BBCode tag attributes directly from the marker token and resolving that original source. It does not call `do_bbcode_img()` while probing.
 
-## 10. Dynamic 1200 × 630 endpoint
+## 11. Dynamic 1200 × 630 endpoint
 
 For transformable local JPEG/PNG images, `seometataginfo_prepare_og_image_meta()` publishes a dynamic URL:
 
@@ -238,7 +288,7 @@ The crawler's later request is handled by:
 
 The explicit local source is revalidated for that independent request. The original page context is not required.
 
-## 11. Copied HTML URLs and `&amp;`
+## 12. Copied HTML URLs and `&amp;`
 
 Browsers normally decode HTML entities before requesting a URL. A developer may nevertheless copy a literal source URL such as:
 
@@ -267,7 +317,7 @@ Rules:
 
 This is tolerance for copied HTML source, not a relaxation of filesystem security.
 
-## 12. Explicit invalid source behavior
+## 13. Explicit invalid source behavior
 
 `seometataginfo_get_requested_content_og_image_info()` returns both:
 
@@ -284,7 +334,7 @@ Therefore:
 
 This distinction prevents a malformed or traversal-like content URL from silently returning a visually unrelated theme image.
 
-## 13. Transformability
+## 14. Transformability
 
 `seometataginfo_can_transform_og_image()` requires:
 
@@ -296,7 +346,7 @@ This distinction prevents a malformed or traversal-like content URL from silentl
 
 Remote images and unsupported local formats remain direct URL fallbacks in normal metadata generation.
 
-## 14. Aspect-ratio-preserving render
+## 15. Aspect-ratio-preserving render
 
 Default target:
 
@@ -333,7 +383,7 @@ flowchart LR
     C --> O[JPEG or PNG response]
 ```
 
-## 15. Failure paths
+## 16. Failure paths
 
 A dynamic OG request can fail when:
 

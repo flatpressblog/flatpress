@@ -114,6 +114,8 @@ When APCu is active, mtime and file size contribute to the INI cache token. The 
 
 This cache is separate from the OG image caches.
 
+Image-description metadata is intentionally **not** part of the transformed-image binary cache key or dynamic endpoint query. Two pages can therefore reference the same source image with different `og:image:alt` text without generating duplicate image bytes. The description travels only in normal page metadata.
+
 ## 7. Browser/crawler HTTP caching
 
 `seometataginfo_send_image_cache_headers()` emits:

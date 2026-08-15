@@ -8,6 +8,7 @@ The plugin handles data from several trust domains:
 - persisted SEO INI files;
 - URL query parameters;
 - BBCode content written by site authors;
+- persisted Gallery captions written through the Gallery captions admin feature;
 - local filesystem image/gallery paths;
 - remote image URLs;
 - request headers used for conditional caching;
@@ -141,6 +142,8 @@ When adding new metadata values, preserve the distinction between:
 
 Do not rely on only one of those layers for all contexts.
 
+The same output-layer rule applies to `og:image:alt`. BBCode `title` and Gallery captions are normalized to plain text by `seometataginfo_content_normalize_image_alt()` and are escaped with `htmlspecialchars()` only when the meta attribute is emitted. This avoids both markup injection and accidental double escaping of already entity-encoded captions.
+
 ## 10. robots.txt write surface
 
 The robots admin panel writes to:
@@ -185,4 +188,6 @@ At minimum preserve tests for:
 - invalid explicit source not falling back to theme preview;
 - code-block content not becoming media;
 - remote image no-fetch behavior;
+- exact gallery-caption/file binding;
+- missing title/caption preserving image selection and using site-title fallback at output;
 - active query/global-state restoration.

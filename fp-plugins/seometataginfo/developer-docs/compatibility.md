@@ -38,6 +38,7 @@ The current plugin uses constructs available in the supported baseline, includin
 - null-coalescing operator;
 - scalar casts;
 - `parse_url`, `getimagesize`, `realpath`;
+- `html_entity_decode`, `strip_tags`, `str_replace`, and scalar checks for image-description normalization;
 - GD functions behind `function_exists()` checks.
 
 ## 3. GD object/resource difference
@@ -64,9 +65,11 @@ Smarty usage is limited to stable APIs:
 - `assign(...)`;
 - existing FlatPress form/template helpers in the admin template.
 
-No new Smarty plugin syntax is required by the content-image feature.
+No new Smarty plugin syntax is required by the content-image feature or the `og:image:alt` title/caption feature.
 
 The current `admin.plugin.seometataginfo.tpl` uses ordinary variable interpolation, `{include}`, `{html_form}`, `{if}`, and `escape`.
+
+Gallery-caption lookup happens in PHP through `gallery_read_captions()` and does not introduce any Smarty dependency.
 
 ## 5. Webserver portability
 

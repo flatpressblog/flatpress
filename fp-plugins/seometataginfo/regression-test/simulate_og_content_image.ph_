@@ -6,7 +6,8 @@
  *   php simulate_og_content_image.php
  *
  * The simulation uses the real FlatPress StringParser_BBCode class, the real
- * gallery_read_images() helper, the patched ReadMore boundary helper and the
+ * gallery_read_images()/gallery_read_captions() helpers, the patched ReadMore
+ * boundary helper and the
  * patched SEO content image resolver. It supplies only a minimal FPDB stub for
  * deterministic stream windows.
  */
@@ -48,8 +49,13 @@ function get_comments_link($id) {
 	return BLOG_BASEURL . '?entry=' . rawurlencode((string)$id);
 }
 
+function is_apcu_on() {
+	return false;
+}
+
 require_once $flatpressRoot . 'fp-plugins/bbcode/inc/stringparser_bbcode.class.php';
 require_once $flatpressRoot . 'fp-includes/core/core.filesystem.php';
+require_once $flatpressRoot . 'fp-includes/core/core.fileio.php';
 require_once $flatpressRoot . 'fp-includes/core/core.gallery.php';
 
 function regression_dummy_media($action, $attributes, $content, $params, $node_object) {
@@ -244,6 +250,11 @@ function regression_expect_url($name, $meta, $expected) {
 	regression_assert($name, $actual === $expected, 'expected=' . $expected . '; actual=' . $actual);
 }
 
+function regression_expect_alt($name, $meta, $expected) {
+	$actual = is_array($meta) && isset($meta ['alt']) ? (string)$meta ['alt'] : '';
+	regression_assert($name, $actual === $expected, 'expected=' . $expected . '; actual=' . $actual);
+}
+
 try {
 	regression_mkdir(ABS_PATH . IMAGES_DIR);
 
@@ -263,10 +274,24 @@ try {
 	// Empty gallery.
 	regression_mkdir(ABS_PATH . IMAGES_DIR . 'gallery-empty');
 
-	// Gallery where first sorted file is not an image.
+	// Gallery where first sorted file is not an image. Its caption must not leak
+	// to the valid second image selected by the SEO resolver.
 	regression_mkdir(ABS_PATH . IMAGES_DIR . 'gallery-invalid-first');
 	file_put_contents(ABS_PATH . IMAGES_DIR . 'gallery-invalid-first/a.txt', 'not an image');
 	regression_write_png(IMAGES_DIR . 'gallery-invalid-first/b.png');
+	file_put_contents(
+		ABS_PATH . IMAGES_DIR . 'gallery-invalid-first/.captions.conf',
+		"a.txt=Wrong caption\nb.png=Selected &amp;amp; caption\n"
+	);
+
+	// First valid image has no caption while a later valid image does. The later
+	// caption must never change the selected OG image.
+	regression_write_png(IMAGES_DIR . 'gallery-later-caption/a.png');
+	regression_write_png(IMAGES_DIR . 'gallery-later-caption/b.png');
+	file_put_contents(
+		ABS_PATH . IMAGES_DIR . 'gallery-later-caption/.captions.conf',
+		"b.png=Later caption\n"
+	);
 
 	// gallery_read_images() resolves IMAGES_DIR relative to the FlatPress working directory.
 	// Mirror the real index.php runtime after the temporary fixture exists.
@@ -294,8 +319,21 @@ try {
 		))
 	);
 
+	$meta = seometataginfo_find_first_content_image_meta('[img="images/single.png" title="Single image title"]', $base, false);
+	regression_expect_alt('single_image_explicit_title_becomes_og_alt', $meta, 'Single image title');
+
+	$meta = seometataginfo_find_first_content_image_meta('[img="images/single.png"]', $base, false);
+	regression_expect_alt('single_image_without_title_keeps_alt_empty_for_site_fallback', $meta, '');
+
+	$meta = seometataginfo_find_first_content_image_meta('[img="images/single.png" alt="Ignored alternative"]', $base, false);
+	regression_expect_alt('single_image_alt_attribute_does_not_replace_missing_title', $meta, '');
+
+	$meta = seometataginfo_find_first_content_image_meta('[img="images/single.png" title="A &amp;amp; B"]', $base, false);
+	regression_expect_alt('single_image_title_entities_are_normalized_without_double_escape', $meta, 'A & B');
+
 	$meta = seometataginfo_find_first_content_image_meta('[gallery="images/gallery-main"]', $base, false);
 	regression_expect_url('4_single_entry_first_gallery_image_original', $meta, $base . IMAGES_DIR . 'gallery-main/a.png');
+	regression_expect_alt('gallery_selected_image_uses_gallery_caption', $meta, 'First');
 
 	$meta = seometataginfo_find_first_content_image_meta('Static [img="images/single.png" popup="false"]', $base, false);
 	regression_expect_url('5_static_page_first_image_original', $meta, $base . IMAGES_DIR . 'single.png');
@@ -331,6 +369,11 @@ try {
 
 	$meta = seometataginfo_find_first_content_image_meta('[gallery="images/gallery-invalid-first"]', $base, false);
 	regression_expect_url('gallery_skips_non_image_first_file', $meta, $base . IMAGES_DIR . 'gallery-invalid-first/b.png');
+	regression_expect_alt('gallery_caption_is_bound_to_selected_valid_file', $meta, 'Selected & caption');
+
+	$meta = seometataginfo_find_first_content_image_meta('[gallery="images/gallery-later-caption"]', $base, false);
+	regression_expect_url('gallery_missing_first_caption_does_not_select_later_image', $meta, $base . IMAGES_DIR . 'gallery-later-caption/a.png');
+	regression_expect_alt('gallery_missing_first_caption_keeps_alt_empty_for_site_fallback', $meta, '');
 
 	// Thumbnail/popup/external handling.
 	$meta = seometataginfo_find_first_content_image_meta('[img="images/stream.png" width="1" height="1"]', $base, false);
@@ -340,8 +383,9 @@ try {
 	$meta = seometataginfo_find_first_content_image_meta('[img="images/single.png" popup="false"]', $base, false);
 	regression_expect_url('popup_false_still_original', $meta, $base . IMAGES_DIR . 'single.png');
 
-	$meta = seometataginfo_find_first_content_image_meta('[img="https://cdn.example.test/original.jpg" width="20"]', $base, false);
+	$meta = seometataginfo_find_first_content_image_meta('[img="https://cdn.example.test/original.jpg" width="20" title="Remote title"]', $base, false);
 	regression_expect_url('external_image_direct_url_no_download', $meta, 'https://cdn.example.test/original.jpg');
+	regression_expect_alt('external_image_explicit_title_is_preserved', $meta, 'Remote title');
 	regression_assert(
 		'external_image_has_no_local_transform_source',
 		empty($meta ['relative_path']) && empty($meta ['absolute_path']),
@@ -419,11 +463,12 @@ try {
 
 	// Stream query: media hidden behind [more] in entry 1, visible image in entry 2.
 	$GLOBALS ['regression_entries'] = array(
-		'e1' => array('content' => 'Intro [more] [img="images/after-more.png"]'),
-		'e2' => array('content' => '[img="images/second.png"]')
+		'e1' => array('content' => 'Intro [more] [img="images/after-more.png" title="Hidden title"]'),
+		'e2' => array('content' => '[img="images/second.png" title="Visible second title"]')
 	);
 	$meta = seometataginfo_get_stream_content_image_meta($base);
 	regression_expect_url('stream_hidden_first_entry_media_falls_to_second_entry', $meta, $base . IMAGES_DIR . 'second.png');
+	regression_expect_alt('stream_hidden_title_does_not_override_visible_second_title', $meta, 'Visible second title');
 
 	// PhotoSwipe-specific tags are recognized only while they are registered
 	// in the active BBCode parser. Removing them simulates PhotoSwipe disabled.

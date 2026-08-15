@@ -177,6 +177,7 @@ try {
 		json_encode($sourceMeta)
 	);
 
+	$sourceMeta ['alt'] = 'Prepared image title';
 	$publicMeta = seometataginfo_prepare_og_image_meta(
 		BLOG_BASEURL,
 		$sourceMeta,
@@ -201,6 +202,23 @@ try {
 		'dynamic_content_meta_advertises_1200x630',
 		(int) $publicMeta ['width'] === 1200 && (int) $publicMeta ['height'] === 630,
 		'width=' . (int) $publicMeta ['width'] . '; height=' . (int) $publicMeta ['height']
+	);
+	format_assert(
+		'dynamic_content_meta_preserves_image_alt_text',
+		isset($publicMeta ['alt']) && (string) $publicMeta ['alt'] === 'Prepared image title',
+		isset($publicMeta ['alt']) ? (string) $publicMeta ['alt'] : ''
+	);
+	format_assert(
+		'og_image_alt_prefers_selected_image_title',
+		seometataginfo_get_og_image_alt_text(array('alt' => 'Selected title'), 'Regression') === 'Selected title'
+	);
+	format_assert(
+		'og_image_alt_falls_back_to_site_title',
+		seometataginfo_get_og_image_alt_text(array('alt' => ''), 'Regression') === 'Regression'
+	);
+	format_assert(
+		'og_image_alt_uses_preview_only_when_site_title_is_empty',
+		seometataginfo_get_og_image_alt_text(array('alt' => ''), '') === 'Preview'
 	);
 
 	$_GET [SEOMETA_OGIMAGE_SOURCE_QUERY_VAR] = IMAGES_DIR . 'format-source.png';

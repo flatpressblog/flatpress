@@ -111,6 +111,18 @@ flowchart TD
     O --> P
 ```
 
+
+### Image description flow
+
+The selected image metadata now carries a plain-text `alt` field used only for Open Graph description output:
+
+- `[img]` / `[photoswipeimage]`: the explicit parsed `title` attribute is normalized and attached to the selected source;
+- `[gallery]` / `[photoswipegallery]`: after the first valid gallery file is selected, `gallery_read_captions()` is queried and only that file's caption is attached;
+- missing/empty title/caption: the resolver leaves `alt` empty;
+- `output_metatags()` resolves the final fallback through `seometataginfo_get_og_image_alt_text()`, using `general.title` and finally `Preview` only when the configured site title itself is empty.
+
+This keeps title availability separate from image eligibility: an uncaptioned earlier image still wins over a later captioned image.
+
 ## 6. Why the parser is cloned
 
 `seometataginfo_content_probe_media()` calls `plugin_bbcode_init()` and **clones** the active parser. It does not run the real media callbacks.

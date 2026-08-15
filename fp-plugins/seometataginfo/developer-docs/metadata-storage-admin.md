@@ -163,6 +163,14 @@ When Open Graph is enabled:
 - `og:site_name`
 - `og:url`
 
+`og:image:alt` is not stored in the SEO INI schema. It is derived per request from the selected content image:
+
+- explicit BBCode `title` for `[img]` / `[photoswipeimage]`;
+- persisted Gallery caption for the exact selected gallery file;
+- otherwise `$fp_config['general']['title']`.
+
+Gallery captions remain gallery data managed through `gallery_write_captions()` / `gallery_read_captions()`, not SEO metadata under `CONTENT_DIR . seometa/`.
+
 Single entries use `og:type=article`; other contexts use `og:type=website`.
 
 ### Article metadata for single entries

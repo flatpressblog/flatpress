@@ -400,6 +400,29 @@ if (defined('SYSTEM_VER') && version_compare(SYSTEM_VER, '0.1010', '>=') && defi
 	new plugin_seometatags_entry();
 }
 
+/**
+ * Resolve the Open Graph image description.
+ *
+ * Content images carry a normalized user title/caption in the internal `alt`
+ * field. If it is missing or empty, fall back to the configured site title.
+ * "Preview" remains the final technical fallback for an empty site title.
+ *
+ * @param array $imageMeta
+ * @param mixed $siteTitle
+ * @return string
+ */
+function seometataginfo_get_og_image_alt_text($imageMeta, $siteTitle) {
+	if (is_array($imageMeta) && isset($imageMeta ['alt']) && is_scalar($imageMeta ['alt'])) {
+		$alt = trim((string)$imageMeta ['alt']);
+		if ($alt !== '') {
+			return $alt;
+		}
+	}
+
+	$siteTitle = is_scalar($siteTitle) ? trim((string)$siteTitle) : '';
+	return $siteTitle !== '' ? $siteTitle : 'Preview';
+}
+
 function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, $seo_noarchive, $seo_nosnippet) {
 	global $prepend_description;
 	global $prepend_keywords;
@@ -411,7 +434,7 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 	$lang = $fp_config ['locale'] ['lang'] ?? '';
 	$site_title = $fp_config ['general'] ['title'] ?? '';
 	$BLOG_BASEURL = $fp_config ['general'] ['www'] ?? '';
-	$ogImageMeta = array('url' => '', 'secure_url' => '', 'mime' => '', 'width' => 0, 'height' => 0);
+	$ogImageMeta = array('url' => '', 'secure_url' => '', 'mime' => '', 'width' => 0, 'height' => 0, 'alt' => '');
 	if (seometataginfo_flag('SEOMETA_GEN_IMAGE_META') && seometataginfo_flag('SEOMETA_GEN_OPEN_GRAPH')) {
 		$ogImageMeta = seometataginfo_get_og_image_meta($BLOG_BASEURL);
 	}
@@ -436,7 +459,8 @@ function output_metatags($seo_desc, $seo_keywords, $seo_noindex, $seo_nofollow, 
 		if (!empty($ogImageMeta ['mime'])) {
 			echo '		<meta property="og:image:type" content="' . htmlspecialchars($ogImageMeta ['mime'], ENT_QUOTES, $charset) . '">' . "\n";
 		}
-		echo '		<meta property="og:image:alt" content="' . htmlspecialchars(($site_title !== '' ? $site_title : 'Preview'), ENT_QUOTES, $charset) . '">' . "\n";
+		$ogImageAlt = seometataginfo_get_og_image_alt_text($ogImageMeta, $site_title);
+		echo '		<meta property="og:image:alt" content="' . htmlspecialchars($ogImageAlt, ENT_QUOTES, $charset) . '">' . "\n";
 		if (!empty($ogImageMeta ['width'])) {
 			echo '		<meta property="og:image:width" content="' . (int)$ogImageMeta ['width'] . '">' . "\n";
 		}
@@ -1049,6 +1073,10 @@ function seometataginfo_build_og_image_url($baseUrl, $imageInfo, $contentSource 
  * @return array<string,mixed>
  */
 function seometataginfo_prepare_og_image_meta($baseUrl, $imageInfo, $contentSource = '') {
+	$alt = is_array($imageInfo) && isset($imageInfo ['alt']) && is_scalar($imageInfo ['alt'])
+		? (string)$imageInfo ['alt']
+		: '';
+
 	if (!is_array($imageInfo) || empty($imageInfo ['url'])) {
 		return array(
 			'url' => '',
@@ -1056,6 +1084,7 @@ function seometataginfo_prepare_og_image_meta($baseUrl, $imageInfo, $contentSour
 			'mime' => '',
 			'width' => 0,
 			'height' => 0,
+			'alt' => '',
 		);
 	}
 
@@ -1068,6 +1097,7 @@ function seometataginfo_prepare_og_image_meta($baseUrl, $imageInfo, $contentSour
 				'mime' => isset($imageInfo ['mime']) ? (string)$imageInfo ['mime'] : '',
 				'width' => (int)SEOMETA_OGIMAGE_TARGET_WIDTH,
 				'height' => (int)SEOMETA_OGIMAGE_TARGET_HEIGHT,
+				'alt' => $alt,
 			);
 		}
 	}
@@ -1079,42 +1109,8 @@ function seometataginfo_prepare_og_image_meta($baseUrl, $imageInfo, $contentSour
 		'mime' => isset($imageInfo ['mime']) ? (string)$imageInfo ['mime'] : '',
 		'width' => isset($imageInfo ['width']) ? (int)$imageInfo ['width'] : 0,
 		'height' => isset($imageInfo ['height']) ? (int)$imageInfo ['height'] : 0,
+		'alt' => $alt,
 	);
-}
-
-/**
- * Resolve an explicitly requested local content source for the OG endpoint.
- *
- * @param string $baseUrl
- * @return array{requested:bool,image_info:array}
- */
-function seometataginfo_get_requested_content_og_image_info($baseUrl) {
-	$result = array(
-		'requested' => false,
-		'image_info' => array()
-	);
-
-	$parameter = seometataginfo_get_query_parameter(SEOMETA_OGIMAGE_SOURCE_QUERY_VAR);
-	if (empty($parameter ['present'])) {
-		return $result;
-	}
-
-	$result ['requested'] = true;
-	if (empty($parameter ['valid'])) {
-		return $result;
-	}
-
-	$relativePath = seometataginfo_content_normalize_local_image_path((string)$parameter ['value']);
-	if ($relativePath === '') {
-		return $result;
-	}
-
-	$imageInfo = seometataginfo_content_local_image_meta($relativePath, $baseUrl);
-	if (!empty($imageInfo ['absolute_path'])) {
-		$result ['image_info'] = $imageInfo;
-	}
-
-	return $result;
 }
 
 /**

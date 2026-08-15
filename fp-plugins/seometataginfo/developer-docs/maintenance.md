@@ -8,10 +8,11 @@ When adding features, keep these layers distinct:
 2. **media probing** — where media occurs in parser/source order;
 3. **visibility** — whether ReadMore exposes it in a stream;
 4. **source resolution** — original local/remote/gallery media;
-5. **public OG metadata** — dynamic endpoint versus direct URL;
-6. **dynamic response** — validation, caching, transform, output.
+5. **image description** — explicit image `title` or exact selected gallery caption;
+6. **public OG metadata** — dynamic endpoint versus direct URL plus final site-title fallback;
+7. **dynamic response** — validation, caching, transform, output.
 
-Do not collapse all six stages into one HTML-scraping function.
+Do not collapse these stages into one HTML-scraping function.
 
 ## 2. Adding a new BBCode media tag
 
@@ -108,6 +109,19 @@ php fp-plugins/seometataginfo/regression-test/simulate_og_content_image.php
 ```
 
 Also verify that PhotoSwipe's internal `lastusedDataIndex` is not changed by an SEO head request.
+
+### Image-title contract
+
+If BBCode, PhotoSwipe, or Gallery captions changes how titles are parsed or persisted, preserve these SEO rules:
+
+1. source selection happens before title fallback;
+2. `[img]` uses only the explicit parsed `title` attribute;
+3. Gallery uses the caption keyed by the exact selected valid filename;
+4. missing title/caption never advances to a later image;
+5. `general.title` fallback is applied only at metadata output;
+6. the description does not participate in transformed-image cache identity.
+
+After such changes rerun both parser validation and content-image simulation.
 
 ## 8. Changing Thumb
 

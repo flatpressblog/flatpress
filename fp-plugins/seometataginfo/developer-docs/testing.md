@@ -16,12 +16,14 @@ Generated JSON result files are also present, but the PHP scripts are the author
 
 ## 2. Generated result artifacts
 
-In the current `flatpress-master-3415-05` snapshot, the checked-in result JSON files were refreshed after the regression run:
+In the patched snapshot, the checked-in result JSON files were refreshed after the regression run on PHP 8.4.23:
 
-- `simulate_og_content_image.php`: 39 assertions, 39 passed;
-- `validate_target_parser.php`: 6 assertions, 6 passed;
+- `simulate_og_content_image.php`: 49 assertions, 49 passed;
+- `validate_target_parser.php`: 7 assertions, 7 passed;
 - `compare_readmore_behavior.php`: 75 comparisons, 75 passed;
-- `validate_og_image_format.php`: 17 assertions, 17 passed.
+- `validate_og_image_format.php`: 21 assertions, 21 passed.
+
+Total: **152/152 PASS**.
 
 The PHP scripts remain the authoritative test definitions. Result JSON files are generated artifacts and can become stale after a test script changes.
 
@@ -43,6 +45,12 @@ Current test definitions cover:
 - thumbnail exclusion;
 - transform-source metadata;
 - first gallery image in a single entry;
+- explicit single-image `title` propagation to internal OG alt metadata;
+- missing/empty single-image title staying empty for site-title fallback;
+- BBCode `alt` not substituting for a missing `title`;
+- entity decoding for image titles;
+- Gallery caption binding to the exact selected valid file;
+- missing first-image caption not selecting a later captioned image;
 - static image/gallery;
 - source ordering between gallery and image;
 - multiple images;
@@ -79,6 +87,7 @@ This loads the target BBCode/PhotoSwipe parser behavior and checks:
 - real `[img]` detection;
 - PhotoSwipe gallery detection;
 - legacy PhotoSwipe image/gallery aliases;
+- explicit `title` survives the actual PhotoSwipe-overridden `[img]` parser registration;
 - nested image inside `[code]` does not become media;
 - probe does not advance PhotoSwipe's internal image index.
 
@@ -94,8 +103,6 @@ php fp-plugins/seometataginfo/regression-test/validate_og_image_format.php
 
 ### Instance-only reproduction asset
 
-The originally reported failure used `avm-gelaende.png`. That file is an image uploaded to a specific installed FlatPress test instance; it is **not part of the FlatPress repository/distribution** and must never be a prerequisite for the regression suite.
-
 The regression therefore creates its own valid PNG under the temporary fixture `ABS_PATH` and exercises the same URL/query shape with the neutral name `repo-independent-og-source.png`. The test is valid on a clean repository checkout, on an installed instance with unrelated user images, and on CI without any user content.
 
 The **current script** includes assertions for:
@@ -103,6 +110,10 @@ The **current script** includes assertions for:
 - transformable local PNG metadata;
 - dynamic content endpoint URL selection;
 - advertised 1200 × 630 dimensions;
+- image-description preservation through dynamic OG metadata preparation;
+- explicit image title preferred over site title;
+- site-title fallback when image title/caption is empty;
+- final `Preview` fallback only when the site title is also empty;
 - rehydration of validated content source;
 - proof that the HTML-entity query test uses a self-contained temporary fixture rather than repository/user content;
 - literal `&amp;` query copied from HTML source, using a repository-independent temporary image fixture;
@@ -164,7 +175,7 @@ php .dist/phpstan.phar analyse \
   --error-format=table
 ```
 
-The configuration targets PHP 7.2–8.5.
+The configuration targets PHP 7.2–8.5. In this patched snapshot PHPStan 2.2.7 level 5 completed with **0 errors** before the regression run and again with **0 errors** afterward.
 
 ### Regression stubs and symbol collisions
 
@@ -174,6 +185,7 @@ When maintaining PHPStan configuration:
 
 - analyze production code with production symbols;
 - do not let test-only stub declarations redefine production signatures;
+- exclude `fp-plugins/*/regression-test/**` from both production analysis and production symbol scanning;
 - still execute regression scripts separately.
 
 Do not suppress a genuine production diagnostic merely because test stubs also exist.
@@ -188,6 +200,7 @@ find fp-plugins/seometataginfo \
      fp-plugins/photoswipe \
      fp-plugins/thumb \
      fp-plugins/readmore \
+     fp-plugins/gallerycaptions \
      -name '*.php' -print0 |
 while IFS= read -r -d '' file; do
     php -l "$file" || exit 1
@@ -211,7 +224,11 @@ Recommended minimum cases:
 7. `popup=false`;
 8. dynamic OG endpoint URL copied from rendered HTML;
 9. literal `&amp;` copy of that endpoint URL;
-10. invalid/traversal source returns failure rather than theme preview.
+10. invalid/traversal source returns failure rather than theme preview;
+11. single image with `title` emits that text as `og:image:alt`;
+12. single image without `title` emits the configured site title as `og:image:alt`;
+13. gallery with a caption emits the selected file's caption;
+14. gallery without a caption retains the same selected image and falls back to the site title.
 
 Verify both:
 
@@ -242,5 +259,7 @@ Before merging changes to the image subsystem:
 - no `.thumbs` URL becomes selected as `og:image`;
 - active query and PhotoSwipe state remain unchanged after probe;
 - invalid local source does not fall back to theme preview;
+- selected image title/caption is bound to the exact selected source;
+- absent image title/caption falls back to `general.title` without changing source selection;
 - remote URLs are not fetched;
 - PHP 7.2 syntax compatibility is preserved.

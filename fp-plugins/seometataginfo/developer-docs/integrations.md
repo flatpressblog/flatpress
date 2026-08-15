@@ -9,6 +9,8 @@ flowchart LR
     SEO --> PS[PhotoSwipe 2.0.7]
     SEO -. understands preview behavior .-> TH[Thumbnails 1.1.1]
     SEO --> GAL[core.gallery.php]
+    SEO --> GC[Gallery captions 1.0.3]
+    GC --> GAL
     SEO --> Q[FPDB_Query]
     SEO --> ENTRY[entry_parse / static_parse]
     BB --> TH
@@ -89,7 +91,7 @@ gallery_read_captions($dir)
 
 and then renders each file through `getImageHtml()`.
 
-SEO deliberately calls only `gallery_read_images()` for selection. It does not render the gallery.
+SEO does not render the gallery. It calls `gallery_read_images()` for source order and, after the exact valid file has been selected, `gallery_read_captions()` for that file's Open Graph image description.
 
 ### Deactivated PhotoSwipe
 
@@ -162,6 +164,23 @@ It:
 4. sorts filenames.
 
 SEO reuses this function rather than implementing its own directory scan.
+
+### Gallery captions
+
+The Gallery captions plugin is primarily the authoring/admin writer for per-image captions. It sanitizes submitted values and persists them through `gallery_write_captions()`.
+
+SEO does **not** depend on the Gallery captions admin class or on a frontend plugin callback. It reads the canonical persisted data through the FlatPress core function `gallery_read_captions()`, which is the same reader PhotoSwipe uses.
+
+For a selected gallery file `<file>`:
+
+```text
+gallery_read_images() -> choose first valid <file>
+gallery_read_captions() -> caption[<file>] only
+```
+
+If that key is absent or empty, the image remains selected and `og:image:alt` falls back to the configured site title.
+
+This separation means Gallery captions can remain an optional authoring feature while SEO consumes the core gallery data format directly.
 
 ## 7. FPDB query
 

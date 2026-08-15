@@ -1,28 +1,48 @@
 {
     "php_version": "8.4.23",
-    "total": 17,
-    "passed": 17,
+    "total": 21,
+    "passed": 21,
     "failed": 0,
     "results": [
         {
             "name": "html_escaped_query_fixture_is_self_contained",
             "status": "PASS",
-            "details": "/tmp/flatpress-seometa-og-format-969/fp-content/images/repo-independent-og-source.png"
+            "details": "/tmp/flatpress-seometa-og-format-2004/fp-content/images/repo-independent-og-source.png"
         },
         {
             "name": "local_source_metadata_is_transformable_png",
             "status": "PASS",
-            "details": "{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/format-source.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/format-source.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"relative_path\":\"fp-content\\/images\\/format-source.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-format-969\\/fp-content\\/images\\/format-source.png\",\"type\":3,\"mtime\":1786737546,\"size_bytes\":68}"
+            "details": "{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/format-source.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/format-source.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"alt\":\"\",\"relative_path\":\"fp-content\\/images\\/format-source.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-format-2004\\/fp-content\\/images\\/format-source.png\",\"type\":3,\"mtime\":1786803499,\"size_bytes\":68}"
         },
         {
             "name": "content_image_is_published_via_dynamic_og_endpoint",
             "status": "PASS",
-            "details": "https://example.test/flatpress/index.php?seometa_ogimage=1&v=1786737546&seometa_ogsource=fp-content%2Fimages%2Fformat-source.png"
+            "details": "https://example.test/flatpress/index.php?seometa_ogimage=1&v=1786803499&seometa_ogsource=fp-content%2Fimages%2Fformat-source.png"
         },
         {
             "name": "dynamic_content_meta_advertises_1200x630",
             "status": "PASS",
             "details": "width=1200; height=630"
+        },
+        {
+            "name": "dynamic_content_meta_preserves_image_alt_text",
+            "status": "PASS",
+            "details": "Prepared image title"
+        },
+        {
+            "name": "og_image_alt_prefers_selected_image_title",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "og_image_alt_falls_back_to_site_title",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "og_image_alt_uses_preview_only_when_site_title_is_empty",
+            "status": "PASS",
+            "details": ""
         },
         {
             "name": "dynamic_endpoint_rehydrates_validated_content_source",
@@ -32,12 +52,12 @@
         {
             "name": "literal_html_escaped_query_rehydrates_reported_content_source",
             "status": "PASS",
-            "details": "{\"get\":{\"seometa_ogimage\":\"1\",\"amp;v\":\"1786722663\",\"amp;seometa_ogsource\":\"fp-content\\/images\\/repo-independent-og-source.png\"},\"request\":{\"requested\":true,\"image_info\":{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"relative_path\":\"fp-content\\/images\\/repo-independent-og-source.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-format-969\\/fp-content\\/images\\/repo-independent-og-source.png\",\"type\":3,\"mtime\":1786737546,\"size_bytes\":68}}}"
+            "details": "{\"get\":{\"seometa_ogimage\":\"1\",\"amp;v\":\"1786722663\",\"amp;seometa_ogsource\":\"fp-content\\/images\\/repo-independent-og-source.png\"},\"request\":{\"requested\":true,\"image_info\":{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"alt\":\"\",\"relative_path\":\"fp-content\\/images\\/repo-independent-og-source.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-format-2004\\/fp-content\\/images\\/repo-independent-og-source.png\",\"type\":3,\"mtime\":1786803499,\"size_bytes\":68}}}"
         },
         {
             "name": "double_html_escaped_query_rehydrates_content_source",
             "status": "PASS",
-            "details": "{\"get\":{\"seometa_ogimage\":\"1\",\"amp;amp;v\":\"1786722663\",\"amp;amp;seometa_ogsource\":\"fp-content\\/images\\/repo-independent-og-source.png\"},\"request\":{\"requested\":true,\"image_info\":{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"relative_path\":\"fp-content\\/images\\/repo-independent-og-source.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-format-969\\/fp-content\\/images\\/repo-independent-og-source.png\",\"type\":3,\"mtime\":1786737546,\"size_bytes\":68}}}"
+            "details": "{\"get\":{\"seometa_ogimage\":\"1\",\"amp;amp;v\":\"1786722663\",\"amp;amp;seometa_ogsource\":\"fp-content\\/images\\/repo-independent-og-source.png\"},\"request\":{\"requested\":true,\"image_info\":{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/repo-independent-og-source.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"alt\":\"\",\"relative_path\":\"fp-content\\/images\\/repo-independent-og-source.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-format-2004\\/fp-content\\/images\\/repo-independent-og-source.png\",\"type\":3,\"mtime\":1786803499,\"size_bytes\":68}}}"
         },
         {
             "name": "literal_html_escaped_og_flag_is_recognized",
@@ -87,7 +107,7 @@
         {
             "name": "remote_image_remains_direct_without_server_side_fetch",
             "status": "PASS",
-            "details": "{\"url\":\"https:\\/\\/cdn.example.test\\/original.jpg\",\"secure_url\":\"https:\\/\\/cdn.example.test\\/original.jpg\",\"mime\":\"\",\"width\":0,\"height\":0}"
+            "details": "{\"url\":\"https:\\/\\/cdn.example.test\\/original.jpg\",\"secure_url\":\"https:\\/\\/cdn.example.test\\/original.jpg\",\"mime\":\"\",\"width\":0,\"height\":0,\"alt\":\"\"}"
         }
     ]
 }
