@@ -2,7 +2,7 @@
 
 ## Scope
 
-Relevant plugin versions:
+Relevant versions in this target snapshot:
 
 | Component | Version | Role in this documentation |
 |---|---:|---|
@@ -23,7 +23,9 @@ This is developer documentation, not end-user documentation. The short end-user 
 When this documentation and the code disagree, **the current target code wins**. The most important implementation files are:
 
 - `../plugin.seometataginfo.php`
-- `../inc/og-content-image.php`
+- `../inc/og-content-image.php` — SEO compatibility/context facade
+- `../../../fp-includes/core/core.contentmedia.php` — canonical content-media resolver shared with the sitemap
+- `../../../sitemap.php` — second consumer of the shared resolver
 - `../inc/hw-helpers.php`
 - `../inc/class.iniparser.php`
 - `../inc/migrate_data.php`
@@ -41,6 +43,7 @@ The image pipeline also depends on behavior defined by:
 - `../../gallerycaptions/admin_uploader_gallerycaptions.class.php`
 - `../../../fp-includes/core/core.gallery.php`
 - `../../../fp-includes/core/core.fpdb.class.php`
+- `../../../fp-includes/core/core.contentmedia.php`
 
 ## Documentation map
 
@@ -70,7 +73,7 @@ SEO Meta Tag Info has several responsibilities that should remain conceptually s
 - provide an administration panel for the host-level `robots.txt`;
 - migrate older SEO metadata layouts when explicitly enabled.
 
-The content-aware image feature is deliberately implemented inside the SEO plugin. BBCode, PhotoSwipe, and Thumb are treated as rendering semantics and dependencies; they do not contain SEO-specific logic.
+The generic content-media discovery is deliberately implemented in FlatPress core (`core.contentmedia.php`) so SEO metadata and `sitemap.php` share identical original-image, gallery and ReadMore semantics. `inc/og-content-image.php` remains the SEO compatibility/context facade and contains SEO-specific dispatch/fallback behavior. BBCode, PhotoSwipe, Thumb and Gallery captions remain rendering/data dependencies; they do not contain SEO-specific selection logic.
 
 ## Key invariants
 
@@ -100,9 +103,10 @@ flowchart LR
     C -- yes --> D[Validate requested local source]
     D --> E[Render or stream image response]
     C -- no --> F[wp_head metadata routing]
-    F --> G[Content-aware image resolver]
-    G --> H[BBCode parser clone / media markers]
-    H --> I[ReadMore visibility, when stream]
+    F --> G[SEO compatibility/context facade]
+    G --> H[Shared core.contentmedia resolver]
+    H --> I0[BBCode parser clone / media markers]
+    I0 --> I[ReadMore visibility, when stream]
     I --> J[Original image or first valid gallery image]
     J --> JA[Bind explicit image title / exact gallery caption]
     JA --> K[OG metadata preparation]

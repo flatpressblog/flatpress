@@ -1,0 +1,234 @@
+{
+    "php_version": "8.4.23",
+    "fixture": "isolated temporary FlatPress installation; source fp-content excluded",
+    "total": 45,
+    "passed": 45,
+    "failed": 0,
+    "results": [
+        {
+            "name": "fixture_source_tree_copied_without_instance_content",
+            "status": "PASS",
+            "details": "source fp-content excluded"
+        },
+        {
+            "name": "fixture_runtime_directories_created",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "fixture_configuration_created",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "fixture_images_created",
+            "status": "PASS",
+            "details": "count=8"
+        },
+        {
+            "name": "fixture_setup_exits_successfully",
+            "status": "PASS",
+            "details": "exit=0; stderr="
+        },
+        {
+            "name": "fixture_setup_has_no_stderr",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "child_process_exits_successfully",
+            "status": "PASS",
+            "details": "exit=0; stderr="
+        },
+        {
+            "name": "child_process_has_no_stderr",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "sitemap_is_balanced_utf8_xml_subset",
+            "status": "PASS",
+            "details": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">\n<url>\n<loc>https://example.test/flatpress/</loc>\n<lastmod>2026-08-16T07:12:04+00:00</lastmod>\n<changefreq>daily</changefreq>\n<priority>1.0"
+        },
+        {
+            "name": "sitemap_protocol_09_default_namespace",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "image_sitemap_namespace_11",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "xml_declaration_is_utf8",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "fixture_output_does_not_reference_installed_instance_assets",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "no_thumbnail_path_is_published",
+            "status": "PASS",
+            "details": ".thumbs occurrence=0"
+        },
+        {
+            "name": "fixture_sitemap_contains_expected_url_count",
+            "status": "PASS",
+            "details": "count=7"
+        },
+        {
+            "name": "url_0_has_exactly_one_loc",
+            "status": "PASS",
+            "details": "loc_count=1"
+        },
+        {
+            "name": "url_0_has_at_most_one_selected_image",
+            "status": "PASS",
+            "details": "image=1; image_loc=1"
+        },
+        {
+            "name": "url_0_image_loc_is_absolute_http_url",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/stream-original.png"
+        },
+        {
+            "name": "url_1_has_exactly_one_loc",
+            "status": "PASS",
+            "details": "loc_count=1"
+        },
+        {
+            "name": "url_1_has_at_most_one_selected_image",
+            "status": "PASS",
+            "details": "image=1; image_loc=1"
+        },
+        {
+            "name": "url_1_image_loc_is_absolute_http_url",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/hidden-after-more.png"
+        },
+        {
+            "name": "url_2_has_exactly_one_loc",
+            "status": "PASS",
+            "details": "loc_count=1"
+        },
+        {
+            "name": "url_2_has_at_most_one_selected_image",
+            "status": "PASS",
+            "details": "image=1; image_loc=1"
+        },
+        {
+            "name": "url_2_image_loc_is_absolute_http_url",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/stream-original.png"
+        },
+        {
+            "name": "url_3_has_exactly_one_loc",
+            "status": "PASS",
+            "details": "loc_count=1"
+        },
+        {
+            "name": "url_3_has_at_most_one_selected_image",
+            "status": "PASS",
+            "details": "image=1; image_loc=1"
+        },
+        {
+            "name": "url_3_image_loc_is_absolute_http_url",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/gallery/a-first.png"
+        },
+        {
+            "name": "url_4_has_exactly_one_loc",
+            "status": "PASS",
+            "details": "loc_count=1"
+        },
+        {
+            "name": "url_4_has_at_most_one_selected_image",
+            "status": "PASS",
+            "details": "image=1; image_loc=1"
+        },
+        {
+            "name": "url_4_image_loc_is_absolute_http_url",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/scaled-original.png"
+        },
+        {
+            "name": "url_5_has_exactly_one_loc",
+            "status": "PASS",
+            "details": "loc_count=1"
+        },
+        {
+            "name": "url_5_has_at_most_one_selected_image",
+            "status": "PASS",
+            "details": "image=0; image_loc=0"
+        },
+        {
+            "name": "url_6_has_exactly_one_loc",
+            "status": "PASS",
+            "details": "loc_count=1"
+        },
+        {
+            "name": "url_6_has_at_most_one_selected_image",
+            "status": "PASS",
+            "details": "image=1; image_loc=1"
+        },
+        {
+            "name": "url_6_image_loc_is_absolute_http_url",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/static-gallery/a-static.png"
+        },
+        {
+            "name": "frontpage_stream_skips_media_after_readmore_and_uses_next_original",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/stream-original.png"
+        },
+        {
+            "name": "single_entry_ignores_readmore_and_uses_hidden_original",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/hidden-after-more.png"
+        },
+        {
+            "name": "entry_gallery_uses_first_sorted_fixture_original",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/gallery/a-first.png"
+        },
+        {
+            "name": "entry_scaled_image_uses_fixture_original_not_thumbnail",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/scaled-original.png"
+        },
+        {
+            "name": "entry_without_image_has_no_image_extension_node",
+            "status": "PASS",
+            "details": "<url>\n<loc>https://example.test/flatpress/2026/08/13/no-image/</loc>\n<lastmod>2026-08-13T12:00:00+00:00</lastmod>\n</url>"
+        },
+        {
+            "name": "static_page_uses_prettyurls_filtered_link",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/about/"
+        },
+        {
+            "name": "static_gallery_uses_first_sorted_fixture_original",
+            "status": "PASS",
+            "details": "https://example.test/flatpress/fp-content/images/static-gallery/a-static.png"
+        },
+        {
+            "name": "renderer_escapes_url_ampersand_and_angle_bracket",
+            "status": "PASS",
+            "details": "<url>\n<loc>https://example.test/?a=1&amp;b=&lt;x&gt;</loc>\n<lastmod>2026-08-16T00:00:00+00:00</lastmod>\n<image:image>\n<image:loc>https://cdn.example.test/image.png?x=1&amp;y=2</image:loc>\n</image:image>\n</url>"
+        },
+        {
+            "name": "renderer_escapes_image_url_ampersand",
+            "status": "PASS",
+            "details": "<url>\n<loc>https://example.test/?a=1&amp;b=&lt;x&gt;</loc>\n<lastmod>2026-08-16T00:00:00+00:00</lastmod>\n<image:image>\n<image:loc>https://cdn.example.test/image.png?x=1&amp;y=2</image:loc>\n</image:image>\n</url>"
+        },
+        {
+            "name": "renderer_sample_is_balanced_xml_subset",
+            "status": "PASS",
+            "details": "<url>\n<loc>https://example.test/?a=1&amp;b=&lt;x&gt;</loc>\n<lastmod>2026-08-16T00:00:00+00:00</lastmod>\n<image:image>\n<image:loc>https://cdn.example.test/image.png?x=1&amp;y=2</image:loc>\n</image:image>\n</url>"
+        }
+    ]
+}

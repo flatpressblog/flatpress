@@ -16,7 +16,7 @@ The main file then defines feature flags, Open Graph constants, storage-director
 The include order matters because:
 
 - `hw-helpers.php` supplies context helpers such as `is_single()`, `is_static()`, and `currentPageURL()` only when the corresponding function is not already defined;
-- `og-content-image.php` relies on constants/functions defined by FlatPress at runtime but is safe to load before it is invoked;
+- `og-content-image.php` is a compatibility/context facade. Generic media discovery is provided by `fp-includes/core/core.contentmedia.php`, which is loaded by the FlatPress core include list; the facade has a guarded `require_once` fallback for isolated regression harnesses;
 - `iniParser` is used later by metadata routing and admin entry handling;
 - migration helpers depend on the SEO storage constants and are invoked only after those constants are defined.
 
@@ -93,7 +93,8 @@ Therefore the image subsystem operates on the current FlatPress data/query model
 flowchart TD
     A[output_metatags] --> B[seometataginfo_get_og_image_meta]
     B --> C[seometataginfo_get_content_og_image_meta]
-    C --> D{Context}
+    C --> C2[shared core.contentmedia API]
+    C2 --> D{Context}
     D -- static --> E[Static raw content]
     D -- single --> F[Current entry raw content]
     D -- stream --> G[Independent FPDB_Query scan]
@@ -154,7 +155,7 @@ Two areas use temporary global state and explicitly restore it.
 
 Creating `new FPDB_Query(...)` changes `$GLOBALS['current_query']` as a constructor side effect. Entry parsing may also change `$GLOBALS['post']`.
 
-`seometataginfo_get_stream_content_image_meta()` saves both keys, scans in `try`, and restores/unsets them in `finally`.
+`seometataginfo_get_stream_content_image_meta()` delegates to the canonical `content_media_get_stream_image_meta()` implementation, which saves both keys, scans in `try`, and restores/unsets them in `finally`.
 
 This is a critical regression invariant.
 

@@ -1,7 +1,7 @@
 {
     "php_version": "8.4.23",
-    "total": 49,
-    "passed": 49,
+    "total": 53,
+    "passed": 53,
     "failed": 0,
     "results": [
         {
@@ -233,6 +233,26 @@
             "name": "stream_hidden_title_does_not_override_visible_second_title",
             "status": "PASS",
             "details": "expected=Visible second title; actual=Visible second title"
+        },
+        {
+            "name": "core_and_seo_facade_resolve_same_original_image",
+            "status": "PASS",
+            "details": "{\"core\":{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/single.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/single.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"alt\":\"Shared\",\"relative_path\":\"fp-content\\/images\\/single.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-regression-4265\\/fp-content\\/images\\/single.png\",\"type\":3,\"mtime\":1786861108,\"size_bytes\":68},\"seo\":{\"url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/single.png\",\"secure_url\":\"https:\\/\\/example.test\\/flatpress\\/fp-content\\/images\\/single.png\",\"mime\":\"image\\/png\",\"width\":1,\"height\":1,\"alt\":\"Shared\",\"relative_path\":\"fp-content\\/images\\/single.png\",\"absolute_path\":\"\\/tmp\\/flatpress-seometa-og-regression-4265\\/fp-content\\/images\\/single.png\",\"type\":3,\"mtime\":1786861108,\"size_bytes\":68}}"
+        },
+        {
+            "name": "sitemap_frontpage_stream_first_visible_gallery_original",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/gallery-main/a.png; actual=https://example.test/flatpress/fp-content/images/gallery-main/a.png"
+        },
+        {
+            "name": "sitemap_frontpage_does_not_scan_beyond_maxentries",
+            "status": "PASS",
+            "details": ""
+        },
+        {
+            "name": "sitemap_frontpage_static_startpage_complete_content",
+            "status": "PASS",
+            "details": "expected=https://example.test/flatpress/fp-content/images/after-more.png; actual=https://example.test/flatpress/fp-content/images/after-more.png"
         },
         {
             "name": "photoswipe_disabled_tags_not_recognized",

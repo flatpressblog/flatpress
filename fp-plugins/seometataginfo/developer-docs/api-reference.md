@@ -304,7 +304,35 @@ Methods:
 - `save_static($title)` — static-page save bridge;
 - `__construct()` — registers editor hooks.
 
-## 11. Content image resolver (`inc/og-content-image.php`)
+## 11. Shared content-media resolver and SEO compatibility facade
+
+The canonical implementation now lives in `fp-includes/core/core.contentmedia.php` so `sitemap.php` and SEO metadata cannot drift on original-image, gallery or ReadMore semantics.
+
+`inc/og-content-image.php` remains a compatibility/context facade. Existing `seometataginfo_*` helper names are intentionally preserved and delegate to the canonical core functions:
+
+| SEO compatibility helper | Canonical core implementation |
+|---|---|
+| `seometataginfo_content_empty_image_meta()` | `content_media_empty_image_meta()` |
+| `seometataginfo_content_normalize_image_alt()` | `content_media_normalize_image_alt()` |
+| `seometataginfo_content_unset_global()` | `content_media_unset_global()` |
+| media probe callbacks | `content_media_probe_*()` |
+| `seometataginfo_content_probe_replace_code()` | `content_media_probe_replace_code()` |
+| `seometataginfo_content_probe_media()` | `content_media_probe_media()` |
+| `seometataginfo_content_remote_image_meta()` | `content_media_remote_image_meta()` |
+| `seometataginfo_content_path_is_within()` | `content_media_path_is_within()` |
+| `seometataginfo_content_normalize_local_image_path()` | `content_media_normalize_local_image_path()` |
+| `seometataginfo_content_local_image_meta()` | `content_media_local_image_meta()` |
+| `seometataginfo_content_image_meta()` | `content_media_image_meta()` |
+| `seometataginfo_content_gallery_meta()` | `content_media_gallery_meta()` |
+| `seometataginfo_content_resolve_token()` | `content_media_resolve_token()` |
+| `seometataginfo_find_first_content_image_meta()` | `content_media_find_first_image_meta()` |
+| `seometataginfo_get_current_static_content()` | `content_media_get_current_static_content()` |
+| `seometataginfo_get_stream_query_params()` | `content_media_get_stream_query_params()` |
+| `seometataginfo_get_stream_content_image_meta()` | `content_media_get_stream_image_meta()` |
+
+The core additionally exposes `content_media_get_frontpage_image_meta($baseUrl)` for consumers such as `sitemap.php`. The SEO-only `seometataginfo_get_content_og_image_meta()` remains in the facade because it applies SEO page-context rules, including the intentional search-page fallback policy.
+
+The compatibility helpers below remain supported API within the plugin and retain their existing behavior.
 
 ### `seometataginfo_content_empty_image_meta()`
 

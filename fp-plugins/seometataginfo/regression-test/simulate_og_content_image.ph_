@@ -138,7 +138,11 @@ class FPDB_Query {
 		unset($id);
 		$this->params = new RegressionQueryParams();
 		$this->params->start = isset($params ['start']) ? (int)$params ['start'] : 0;
-		$this->params->count = isset($params ['count']) ? (int)$params ['count'] : count($GLOBALS ['regression_stream_ids']);
+		$this->params->count = isset($params ['count'])
+			? (int)$params ['count']
+			: (isset($GLOBALS ['fp_config'] ['general'] ['maxentries'])
+				? (int)$GLOBALS ['fp_config'] ['general'] ['maxentries']
+				: count($GLOBALS ['regression_stream_ids']));
 		foreach (array('category', 'exclude', 'y', 'm', 'd') as $key) {
 			if (array_key_exists($key, $params)) {
 				$this->params->{$key} = $params [$key];
@@ -191,6 +195,12 @@ class RegressionFPDB {
 function entry_parse($id) {
 	return isset($GLOBALS ['regression_entries'] [$id])
 		? $GLOBALS ['regression_entries'] [$id]
+		: false;
+}
+
+function static_parse($id) {
+	return isset($GLOBALS ['regression_statics'] [$id])
+		? $GLOBALS ['regression_statics'] [$id]
 		: false;
 }
 
@@ -469,6 +479,56 @@ try {
 	$meta = seometataginfo_get_stream_content_image_meta($base);
 	regression_expect_url('stream_hidden_first_entry_media_falls_to_second_entry', $meta, $base . IMAGES_DIR . 'second.png');
 	regression_expect_alt('stream_hidden_title_does_not_override_visible_second_title', $meta, 'Visible second title');
+
+	// Shared core API must be the canonical implementation used by the SEO
+	// compatibility facade.
+	$coreMeta = content_media_find_first_image_meta('[img="images/single.png" title="Shared"]', $base, false);
+	$seoMeta = seometataginfo_find_first_content_image_meta('[img="images/single.png" title="Shared"]', $base, false);
+	regression_assert(
+		'core_and_seo_facade_resolve_same_original_image',
+		isset($coreMeta ['url'], $seoMeta ['url'])
+			&& $coreMeta ['url'] === $seoMeta ['url']
+			&& $coreMeta ['alt'] === $seoMeta ['alt'],
+		json_encode(array('core' => $coreMeta, 'seo' => $seoMeta))
+	);
+
+	// Sitemap front page helper: blog mode scans only the configured first
+	// stream window and applies ReadMore visibility to every entry.
+	$GLOBALS ['fp_config'] = array(
+		'general' => array(
+			'startpage' => null,
+			'maxentries' => 2
+		)
+	);
+	$GLOBALS ['regression_stream_ids'] = array('e1', 'e2', 'e3');
+	$GLOBALS ['regression_entries'] = array(
+		'e1' => array('content' => 'Intro [more] [img="images/after-more.png"]'),
+		'e2' => array('content' => '[gallery="images/gallery-main"]'),
+		'e3' => array('content' => '[img="images/second.png"]')
+	);
+	$meta = content_media_get_frontpage_image_meta($base);
+	regression_expect_url('sitemap_frontpage_stream_first_visible_gallery_original', $meta, $base . IMAGES_DIR . 'gallery-main/a.png');
+
+	$GLOBALS ['regression_entries'] = array(
+		'e1' => array('content' => 'No media.'),
+		'e2' => array('content' => 'Still no media.'),
+		'e3' => array('content' => '[img="images/second.png"]')
+	);
+	$meta = content_media_get_frontpage_image_meta($base);
+	regression_assert(
+		'sitemap_frontpage_does_not_scan_beyond_maxentries',
+		empty($meta ['url']),
+		isset($meta ['url']) ? (string)$meta ['url'] : ''
+	);
+
+	// Configured static start pages are inspected as complete pages; [more] is
+	// not a stream boundary there.
+	$GLOBALS ['fp_config'] ['general'] ['startpage'] = 'landing';
+	$GLOBALS ['regression_statics'] = array(
+		'landing' => array('content' => 'Landing [more] [img="images/after-more.png"]')
+	);
+	$meta = content_media_get_frontpage_image_meta($base);
+	regression_expect_url('sitemap_frontpage_static_startpage_complete_content', $meta, $base . IMAGES_DIR . 'after-more.png');
 
 	// PhotoSwipe-specific tags are recognized only while they are registered
 	// in the active BBCode parser. Removing them simulates PhotoSwipe disabled.

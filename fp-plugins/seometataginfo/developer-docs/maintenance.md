@@ -20,8 +20,8 @@ If another plugin introduces a new media tag that should participate in `og:imag
 
 1. verify when/how that tag is registered in the active BBCode parser;
 2. add a marker callback;
-3. add the tag/callback pair in `seometataginfo_content_probe_media()`;
-4. extend `seometataginfo_content_resolve_token()` with its original-source semantics;
+3. add the tag/callback pair in the canonical `content_media_probe_media()` implementation;
+4. extend `content_media_resolve_token()` with its original-source semantics;
 5. keep the cloned parser's original content type, nesting rules, callback params, and flags;
 6. test behavior when the providing plugin is enabled and disabled;
 7. test placement inside `[code]` or other restricted parser contexts;
@@ -127,7 +127,7 @@ After such changes rerun both parser validation and content-image simulation.
 
 SEO should continue to ignore `.thumbs`.
 
-If Thumb changes its directory name or rendering contract, the SEO resolver usually should **not** need to change, because it selects from original tag attributes.
+If Thumb changes its directory name or rendering contract, the shared content-media resolver usually should **not** need to change, because it selects from original tag attributes.
 
 A requirement to modify SEO because of a thumbnail-path change is a warning sign that selection may have become coupled to rendered HTML.
 
