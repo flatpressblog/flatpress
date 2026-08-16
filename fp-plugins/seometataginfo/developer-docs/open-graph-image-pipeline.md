@@ -2,7 +2,7 @@
 
 ## 1. Selection goal
 
-The content-aware Open Graph implementation selects the first valid **original** image that corresponds to what the current page shows.
+The content-aware Open Graph implementation selects the first valid **original** image that corresponds to what the current page shows. Generic discovery is performed by `fp-includes/core/core.contentmedia.php`; the SEO plugin keeps the page-context compatibility facade and OG-specific fallback/formatting policy.
 
 Supported media tags are determined from the active BBCode grammar:
 
@@ -76,37 +76,38 @@ The probe does **not** render actual image/gallery callbacks.
 
 ```mermaid
 sequenceDiagram
-    participant SEO as SEO resolver
+    participant SEO as SEO facade
     participant BB as Active BBCode parser
     participant CLONE as Cloned parser
     participant RM as ReadMore
-    participant RES as Media resolver
+    participant RES as core.contentmedia
 
-    SEO->>BB: plugin_bbcode_init()
-    BB-->>SEO: active parser
-    SEO->>CLONE: clone parser
-    SEO->>CLONE: replace registered media callbacks with marker callbacks
-    SEO->>CLONE: parse(raw content)
-    CLONE-->>SEO: parsed text + ordered markers/tokens
+    SEO->>RES: request content image
+    RES->>BB: plugin_bbcode_init()
+    BB-->>RES: active parser
+    RES->>CLONE: clone parser
+    RES->>CLONE: replace registered media callbacks with marker callbacks
+    RES->>CLONE: parse(raw content)
+    CLONE-->>RES: parsed text + ordered markers/tokens
     alt stream and ReadMore active
-        SEO->>RM: plugin_readmore_get_stream_excerpt(parsed marker text)
-        RM-->>SEO: visible prefix
+        RES->>RM: plugin_readmore_get_stream_excerpt(parsed marker text)
+        RM-->>RES: visible prefix
     end
-    SEO->>RES: resolve markers in source order
+    RES->>RES: resolve markers in source order
     RES-->>SEO: first valid original image metadata
 ```
 
 Marker shape is internal and intentionally opaque:
 
 ```text
-__FPSEOMEDIA_<content-hash-prefix>_<counter>__
+__FPCONTENTMEDIA_<content-hash-prefix>_<counter>__
 ```
 
 The marker exists only to determine visibility/order. It is never emitted to the public page.
 
 ## 5. ReadMore visibility
 
-In streams, `seometataginfo_find_first_content_image_meta()` calls `plugin_readmore_get_stream_excerpt()` when:
+In streams, the compatibility wrapper `seometataginfo_find_first_content_image_meta()` delegates to `content_media_find_first_image_meta()`, which calls `plugin_readmore_get_stream_excerpt()` when:
 
 - ReadMore exposes that helper;
 - stream visibility is being applied;
@@ -202,7 +203,7 @@ This reuse is intentional. `gallery_read_images()`:
 - excludes `.captions.conf`, `captions.conf`, and legacy `texte.conf`;
 - sorts the remaining filenames with `sort()`.
 
-The SEO resolver then checks filenames in that exact order and returns the first file that resolves to valid image metadata. Invalid/non-image files can therefore be skipped without changing gallery ordering.
+The shared content-media resolver then checks filenames in that exact order and returns the first file that resolves to valid image metadata. Invalid/non-image files can therefore be skipped without changing gallery ordering.
 
 ## 9. `og:image:alt` resolution
 

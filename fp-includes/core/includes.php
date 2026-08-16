@@ -50,6 +50,7 @@ $includes = [
 	// 'core.layout.php',
 	'core.users.php',
 	'core.gallery.php',
+	'core.contentmedia.php',
 ];
 
 foreach ($includes as $file) {

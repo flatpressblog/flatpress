@@ -107,7 +107,7 @@ This is safer and easier to debug than returning the theme preview, because a ma
 
 ## 7. Parser side effects
 
-The SEO probe clones the BBCode parser and replaces media callbacks.
+The shared content-media probe used by SEO and the sitemap clones the BBCode parser and replaces media callbacks.
 
 Security/stability benefit:
 

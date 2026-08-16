@@ -4,22 +4,24 @@
 
 ```mermaid
 flowchart LR
-    SEO[SEO Meta Tag Info] --> BB[BBCode 2.0.4]
-    SEO --> RM[ReadMore 1.0.4]
-    SEO --> PS[PhotoSwipe 2.0.7]
-    SEO -. understands preview behavior .-> TH[Thumbnails 1.1.1]
-    SEO --> GAL[core.gallery.php]
-    SEO --> GC[Gallery captions 1.0.3]
+    SEO[SEO Meta Tag Info] --> CM[core.contentmedia.php]
+    SITE[sitemap.php] --> CM
+    CM --> BB[BBCode 2.0.4]
+    CM --> RM[ReadMore 1.0.4]
+    CM --> PS[PhotoSwipe 2.0.7 grammar]
+    CM -. understands preview behavior .-> TH[Thumbnails 1.1.1]
+    CM --> GAL[core.gallery.php]
+    CM --> GC[Gallery captions data]
     GC --> GAL
-    SEO --> Q[FPDB_Query]
-    SEO --> ENTRY[entry_parse / static_parse]
+    CM --> Q[FPDB_Query]
+    CM --> ENTRY[entry_parse / static_parse]
     BB --> TH
     PS --> BB
     PS --> GAL
     RM --> Q
 ```
 
-The arrows do not all represent direct function calls. Some represent semantic dependencies that the SEO resolver deliberately mirrors without invoking the renderer.
+The arrows do not all represent direct function calls. Some represent semantic dependencies that the shared content-media resolver deliberately mirrors without invoking the renderer. SEO and the sitemap are separate consumers of that resolver.
 
 ## 2. BBCode
 
@@ -35,7 +37,7 @@ bbcode_init            -> extension point
 
 `plugin_bbcode_init()` constructs the parser and applies the `bbcode_init` filter before returning it.
 
-SEO calls `plugin_bbcode_init()` to obtain the **active grammar**, then clones the parser.
+The shared resolver calls `plugin_bbcode_init()` to obtain the **active grammar**, then clones the parser.
 
 ### `[img]`
 
@@ -78,7 +80,7 @@ PhotoSwipe's `getImageHtml()`:
 - puts the original in PhotoSwipe's `href`/`contentUrl` path;
 - increments a class-wide `lastusedDataIndex` when PhotoSwipe markup is produced.
 
-SEO's cloned-parser marker callbacks avoid calling `getImageHtml()`, so probing does not advance this index.
+The shared resolver's cloned-parser marker callbacks avoid calling `getImageHtml()`, so probing does not advance this index.
 
 ### Gallery rendering
 
@@ -91,17 +93,17 @@ gallery_read_captions($dir)
 
 and then renders each file through `getImageHtml()`.
 
-SEO does not render the gallery. It calls `gallery_read_images()` for source order and, after the exact valid file has been selected, `gallery_read_captions()` for that file's Open Graph image description.
+The shared resolver does not render the gallery. It calls `gallery_read_images()` for source order and, after the exact valid file has been selected, `gallery_read_captions()` for that file's Open Graph image description.
 
 ### Deactivated PhotoSwipe
 
-Because SEO only replaces media codes that are registered in the active parser:
+Because the shared resolver only replaces media codes that are registered in the active parser:
 
 - normal BBCode `[img]` still works;
 - PhotoSwipe-specific aliases are not treated as valid media unless registered;
-- `[gallery]` is not invented by SEO when the active parser does not define it.
+- `[gallery]` is not invented by the shared resolver when the active parser does not define it.
 
-This prevents SEO metadata from advertising media the page renderer itself would not recognize.
+This prevents SEO metadata or sitemap output from advertising media the page renderer itself would not recognize.
 
 ## 4. Thumbnails
 
@@ -119,7 +121,7 @@ It stores generated thumbnails in:
 
 Thumb currently supports creation paths for GIF, JPEG, PNG, and WebP when the corresponding GD functions exist.
 
-The SEO resolver does not call the thumbnail filter. Its only contract with Thumb is an invariant:
+The shared resolver does not call the thumbnail filter. Its only contract with Thumb is an invariant:
 
 > `.thumbs` is display-preview infrastructure and must never become the selected Open Graph content source.
 
@@ -142,13 +144,13 @@ plugin_readmore_get_stream_excerpt()
 
 The latter contains the same chopping algorithm used by `plugin_readmore_main()` but does not build links or inspect the current query.
 
-SEO uses this helper only for stream visibility.
+The shared resolver uses this helper only for stream visibility.
 
 ### Why the helper receives probe HTML
 
 ReadMore normally sees content after the BBCode filter stage in the standard plugin ordering.
 
-The SEO probe therefore parses the content with the real BBCode grammar (media callbacks replaced by markers) and gives the resulting text to `plugin_readmore_get_stream_excerpt()`.
+The shared probe therefore parses the content with the real BBCode grammar (media callbacks replaced by markers) and gives the resulting text to `plugin_readmore_get_stream_excerpt()`.
 
 This avoids maintaining a second, slightly different ReadMore algorithm inside SEO.
 
@@ -163,13 +165,13 @@ It:
 3. excludes caption metadata files;
 4. sorts filenames.
 
-SEO reuses this function rather than implementing its own directory scan.
+The shared resolver reuses this function rather than implementing its own directory scan.
 
 ### Gallery captions
 
 The Gallery captions plugin is primarily the authoring/admin writer for per-image captions. It sanitizes submitted values and persists them through `gallery_write_captions()`.
 
-SEO does **not** depend on the Gallery captions admin class or on a frontend plugin callback. It reads the canonical persisted data through the FlatPress core function `gallery_read_captions()`, which is the same reader PhotoSwipe uses.
+The shared resolver does **not** depend on the Gallery captions admin class or on a frontend plugin callback. It reads the canonical persisted data through the FlatPress core function `gallery_read_captions()`, which is the same reader PhotoSwipe uses.
 
 For a selected gallery file `<file>`:
 
