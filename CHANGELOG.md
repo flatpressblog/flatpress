@@ -63,12 +63,16 @@
 - LastComment plugin update to version 1.1.3
     - Initialize RSS/ ATOM only after PrettyURLs routing, so that feed readers correctly display the latest comments instead of posts ([b9b6730](https://github.com/flatpressblog/flatpress/commit/b9b67309f704ea960648d15c3c5b06552444c7b3))
     - The LastComments feed templates now use the comment link, which has already been properly formatted. ([#851](https://github.com/flatpressblog/flatpress/pull/851))
-- BBCode plugin: update to version 2.0.3
+- BBCode plugin: update to version 2.0.4
     - Selective escaping to allow Markdown autolinks when inline HTML is disabled. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
 - FootNotes plugin update to version 1.0.2
     - ``*Text*`` is no longer incorrectly displayed in bold ([extras #60](https://github.com/flatpressblog/flatpress-extras/issues/60))
 - SEO Meta Tag Info plugin update to version 2.3.1
     - A missing key when changing the language no longer causes an error ([Thank you very much to Laborix](https://forum.flatpress.org/viewtopic.php?p=3631#p3626))
+
+### Security
+- BBCode plugin: update to version 2.0.4
+    - An XSS vulnerability in the BBCode plugin has been fixed. ([#941](https://github.com/flatpressblog/flatpress/pull/941))
 
 ## Themes
 ### Changes
