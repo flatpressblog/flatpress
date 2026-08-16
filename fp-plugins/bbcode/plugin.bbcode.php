@@ -194,6 +194,50 @@ function plugin_bbcode_normalize_dimension($value) {
 }
 
 /**
+ * Escapes a value for use inside an HTML attribute.
+ *
+ * @param mixed $value
+ * @return string
+ */
+function plugin_bbcode_escape_html_attribute($value) {
+	return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/**
+ * Normalizes a [video] width/height attribute to a positive integer string.
+ *
+ * @param mixed $value
+ * @param string $fallback
+ * @return string
+ */
+function plugin_bbcode_video_dimension($value, $fallback) {
+	$dimension = plugin_bbcode_normalize_dimension($value);
+	return $dimension > 0 ? (string) $dimension : $fallback;
+}
+
+/**
+ * Returns a safe CSS class suffix for [video] float positioning.
+ *
+ * @param mixed $value
+ * @return string
+ */
+function plugin_bbcode_video_float_class($value) {
+	if (!is_scalar($value)) {
+		return 'nofloat';
+	}
+
+	$value = strtolower(trim((string) $value));
+	$allowed = array(
+		'left' => true,
+		'right' => true,
+		'center' => true,
+		'nofloat' => true
+	);
+
+	return isset($allowed [$value]) ? $value : 'nofloat';
+}
+
+/**
  * Build an inline style override for explicit image dimensions if responsive theme CSS
  * would otherwise override the requested height.
  *
@@ -584,9 +628,9 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 	}
 
 	// Check the [video] element's attributes width, height and float
-	$width = isset($attr ['width']) ? $attr ['width'] : '560';
-	$height = isset($attr ['height']) ? $attr ['height'] : '315';
-	$floatClass = isset($attr ['float']) ? $attr ['float'] : 'nofloat';
+	$width = isset($attr ['width']) ? plugin_bbcode_video_dimension($attr ['width'], '560') : '560';
+	$height = isset($attr ['height']) ? plugin_bbcode_video_dimension($attr ['height'], '315') : '315';
+	$floatClass = isset($attr ['float']) ? plugin_bbcode_video_float_class($attr ['float']) : 'nofloat';
 
 	$query = array();
 	if (array_key_exists('query', $vurl)) {
@@ -607,7 +651,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 		case 'youtube':
 			$output = '<div class="responsive_bbcode_video">' . //
 					'<iframe class="bbcode_video bbcode_video_youtube ' . $floatClass . '" ' . //
-						$src . '="https://www.youtube-nocookie.com/embed/' . $query ['v'] . '" ' . //
+						$src . '="' . plugin_bbcode_escape_html_attribute('https://www.youtube-nocookie.com/embed/' . (isset($query ['v']) ? $query ['v'] : '')) . '" ' . //
 						'width="' . $width . '" ' . //
 						'height="' . $height . '" ' . //
 						'allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture">' . //
@@ -619,7 +663,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/', '', $vurl ['path']);
 			$output = '<div class="responsive_bbcode_video">' . //
 					'<iframe class="bbcode_video bbcode_video_vimeo ' . $floatClass . '" ' . //
-						$src . '="https://player.vimeo.com/video/' . $vid . '?dnt=1?color=' . $vid . '&title=0&byline=0&portrait=0" ' . //
+						$src . '="' . plugin_bbcode_escape_html_attribute('https://player.vimeo.com/video/' . $vid . '?dnt=1?color=' . $vid . '&title=0&byline=0&portrait=0') . '" ' . //
 						'width="' . $width . '" ' . //
 						'height="' . $height . '" ' . //
 						'allow="autoplay; fullscreen">' . //
@@ -631,12 +675,12 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 			$vid = isset($query ['sec']) ? $query ['sec'] : str_replace('/video/', '', $vurl ['path']);
 			$output = '<div class="responsive_bbcode_video">' . //
 					'<iframe class="bbcode_video bbcode_video_facebook ' . $floatClass . '" ' . //
-						$src . '="https://www.facebook.com/plugins/video.php?' . //
+						$src . '="' . plugin_bbcode_escape_html_attribute('https://www.facebook.com/plugins/video.php?' . //
 						'width=' . $width . //
 						'&height=' . $height . //
 						'&href=https://www.facebook.com' . $vid . //
 						'&show_text=false' . //
-						'&t=0" ' . //
+						'&t=0') . '" ' . //
 						'width="' . $width . '" ' . //
 						'height="' . $height . '" ' . //
 						'frameborder="0" ' . //
@@ -658,7 +702,7 @@ function do_bbcode_video($action, $attr, $content, $params, $node_object) {
 				// ... we need to prepend it with the blog base URL
 				$videoPath = BLOG_BASEURL . $videoPath;
 			}
-			$output = '<div class="responsive_bbcode_video"><video class="bbcode_video bbcode_video_html5 ' . $floatClass . '" width="' . $width . '" height="' . $height . '" controls><source src="' . $videoPath . '">Your browser does not support the video tag</video></div>';
+			$output = '<div class="responsive_bbcode_video"><video class="bbcode_video bbcode_video_html5 ' . $floatClass . '" width="' . $width . '" height="' . $height . '" controls><source src="' . plugin_bbcode_escape_html_attribute($videoPath) . '">Your browser does not support the video tag</video></div>';
 			break;
 			// $output = null;
 	}
