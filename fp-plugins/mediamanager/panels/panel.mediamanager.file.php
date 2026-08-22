@@ -8,7 +8,7 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 
 	var $finfo;
 
-	var $conf;
+	var $usage_index = array();
 
 	var $langres = 'plugin:mediamanager';
 
@@ -108,55 +108,11 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		return $sum;
 	}
 
-	/**
-	 * Detect used gallery folders by scanning entries once.
-	 * Returns an array of lowercase gallery names.
-	 * Used only when no usecount data is available yet.
-	 */
-	function detect_used_galleries() {
-		$found = array();
-		$q = new FPDB_Query(array('start' => 0, 'count' => -1, 'fullparse' => false), null);
-
-		// IMG: [img="images/<relpath>" ...] or [img=images/<relpath> ...]
-		// - optional " or ' after '='
-		// - Path ends before space, ], " or '
-		// - additional attributes allowed
-		$reImg = "/\\[\\s*img\\b[^\\]]*?=\\s*[\"']?images\\/([^\\s\\]\"']+)/iu";
-
-		// GALLERY: [gallery=\"images/<folder>/\" ...] or without Quotes/Slash
-		// - optional " or ' after '='
-		// - optional trailing slash
-		// - additional attributes allowed
-		$reGal = "/\\[\\s*gallery\\b[^\\]]*?=\\s*[\"']?images\\/([^\\s\\]\\/\"']+)/iu";
-
-		while ($q->hasMore()) {
-			list($entryId, $e) = $q->getEntry();
-			if (empty($e ['content'])) {
-				continue;
-			}
-			$c = $e ['content'];
-			if (preg_match_all($reImg, $c, $m)) {
-				foreach ($m [1] as $rel) {
-					$p = strpos($rel, '/');
-					if ($p !== false) {
-						$g = strtolower(substr($rel, 0, $p));
-						$found [$g] = true;
-					}
-				}
-			}
-			if (preg_match_all($reGal, $c, $mg)) {
-				foreach ($mg [1] as $g) {
-					$found [strtolower($g)] = true;
-				}
-			}
-		}
-		return array_keys($found);
-	}
-
 	 /**
 	 * Get formatted file information including size and modified time.
 	 *
 	 * @param string $filepath Absolute filesystem path.
+	 * @param string $type Media Manager item type.
 	 * @return array{
 	 *   name:string,
 	 *   relpath:string,
@@ -167,7 +123,7 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 	 *   use_via_gallery:bool
 	 * }|null
 	 */
-	function getFileInfo($filepath) {
+	function getFileInfo($filepath, $type = 'images') {
 		global $fp_config;
 
 		// Prevents the capture of .dlctr (Igor Kromins DownloadCounter) files
@@ -213,22 +169,16 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 			"mtime" => date_strformat($fp_config ['locale'] ['dateformatshort'], $file_mtime)
 		);
 
-		// Read via relative path, fallback to old key (base name) for backward compatibility
-		if (isset($this->conf ['usecount'] [$info ['relpath']])) {
-			$info ['usecount'] = $this->conf ['usecount'] [$info ['relpath']];
-		} elseif (isset($this->conf ['usecount'] [basename($filepath)])) {
-			$info ['usecount'] = $this->conf ['usecount'] [basename($filepath)];
-		} else {
-			$info ['usecount'] = null;
-		}
+		$info ['usecount'] = mediamanager_usage_count_for($this->usage_index, $info ['relpath'], $type);
 
-		// Gallery name and usage flag
-		$info ['gallery'] = (strpos($rel, '/')!== false) ? substr($rel, 0 ,strpos($rel, '/')) : null;
-		if (isset($this->conf ['useflags'] [$info ['relpath']])) {
-			$flags = $this->conf ['useflags'] [$info ['relpath']];
-			$info ['use_via_gallery'] = is_array($flags) && !empty($flags ['gallery']);
-		} else {
-			$info ['use_via_gallery'] = false;
+		// Gallery name and whether an image is also covered by an explicit
+		// [gallery] reference. This keeps the existing template data contract.
+		$info ['gallery'] = (strpos($rel, '/') !== false) ? substr($rel, 0, strpos($rel, '/')) : null;
+		$info ['use_via_gallery'] = false;
+		if ($type === 'images' && $info ['gallery'] !== null) {
+			$galleryKey = mediamanager_usage_normalize_key($info ['gallery']);
+			$info ['use_via_gallery'] = isset($this->usage_index ['gallery_explicit'] [$galleryKey])
+				&& (int)$this->usage_index ['gallery_explicit'] [$galleryKey] > 0;
 		}
 
 		return $info;
@@ -343,39 +293,18 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 		}
 
 		$weburl = plugin_geturl('mediamanager');
-		$this->conf = plugin_getoptions('mediamanager');
 
-		// Build usage map from usecount if available
-		$this->used_galleries = array();
-		if (isset($this->conf ['usecount']) && is_array($this->conf ['usecount'])) {
-			foreach ($this->conf['usecount'] as $k => $v) {
-				if ((int)$v > 0) {
-					// images/<gallery>/<file> -> gallery
-					// <gallery> (gallery item) -> gallery
-					$g = strtolower((strpos($k, '/') !== false) ? substr($k, 0, strpos($k, '/')) : $k);
-					if ($g !== '') {
-						$this->used_galleries [$g] = true;
-					}
-				}
-			}
-		}
-		// First-load fallback: if empty, detect directly from entries (one pass)
-		if (empty($this->used_galleries)) {
-			$det = $this->detect_used_galleries();
-			foreach ($det as $g) {
-				$this->used_galleries [strtolower($g)] = true;
-			}
-		}
-
+		// Item actions do not depend on entry usage data. Handle them before a
+		// possible first-run/recovery rebuild of the usage index.
 		if ($this->doItemActions($folder, $mmbaseurl)) {
 			return;
 		}
 
+		$this->usage_index = mediamanager_usage_get_index();
+		$this->used_galleries = mediamanager_usage_used_galleries($this->usage_index);
+
 		$files = array();
 		$galleries = array();
-
-		$files_needupdate = array();
-		$galleries_needupdate = array();
 
 		// Galleries (always from IMAGES_DIR)
 		if (file_exists(ABS_PATH . IMAGES_DIR)) {
@@ -383,15 +312,12 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 				while (false !== ($file = readdir($dir))) {
 					$fullpath = ABS_PATH . IMAGES_DIR . $file;
 					if (!fs_is_directorycomponent($file) && !fs_is_hidden_file($file) && is_dir($fullpath)) {
-						$info = $this->getFileInfo($fullpath);
+						$info = $this->getFileInfo($fullpath, 'gallery');
 						if ($info) {
 							$info ['type'] = "gallery";
 							// Mark folder usage for template icon
 							$info ['used_in_posts'] = !empty($this->used_galleries [strtolower($info ['name'])]);
 							$galleries [$fullpath] = $info;
-							if (is_null($info ['usecount'])) {
-								$galleries_needupdate [] = $fullpath;
-							}
 						}
 					}
 				}
@@ -405,14 +331,11 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 				while (false !== ($file = readdir($dir))) {
 					if (!fs_is_directorycomponent($file) && !fs_is_hidden_file($file)) {
 						$fullpath = ABS_PATH . ATTACHS_DIR . $file;
-						$info = $this->getFileInfo($fullpath);
+						$info = $this->getFileInfo($fullpath, 'attachs');
 						if ($info) {
 							$info ['type'] = "attachs";
 							$info ['url'] = BLOG_ROOT . ATTACHS_DIR . $file;
 							$files [$fullpath] = $info;
-							if (is_null($info ['usecount'])) {
-								$files_needupdate [] = $fullpath;
-							}
 						}
 					}
 				}
@@ -426,24 +349,17 @@ class admin_uploader_mediamanager extends AdminPanelAction {
 				while (false !== ($file = readdir($dir))) {
 					$fullpath = ABS_PATH . IMAGES_DIR . $folder . $file;
 					if (!fs_is_directorycomponent($file) && !fs_is_hidden_file($file) && !is_dir($fullpath)) {
-						$info = $this->getFileInfo($fullpath);
+						$info = $this->getFileInfo($fullpath, 'images');
 						if ($info) {
 							$info ['type'] = "images";
 							$info ['url'] = BLOG_ROOT . IMAGES_DIR . $folder . $file;
 							$files [$fullpath] = $info;
-							// Always maintain, not just in the root folder
-							if (is_null($info ['usecount'])) {
-								$files_needupdate [] = $fullpath;
-							}
 						}
 					}
 				}
 				closedir($dir);
 			}
 		}
-
-		mediamanager_updateUseCountArr($files, $files_needupdate);
-		mediamanager_updateUseCountArr($galleries, $galleries_needupdate);
 
 		// Derive used_in_posts after counts/flags were updated
 		if (!empty($galleries)) {

@@ -886,6 +886,83 @@ Medium for Mastodon-enabled sites under unfavorable hosting conditions. The APCu
 
 ---
 
+### 4.11 Media Manager Usage Index – `mediamanager:usage-index:v1`
+
+**Logical APCu key:** `mediamanager:usage-index:v1`  
+**Effective APCu key:** `fp:<NS>:mediamanager:usage-index:v1`  
+**Files:**
+
+- `fp-plugins/mediamanager/inc/usage-index.php`
+- `fp-plugins/mediamanager/panels/panel.mediamanager.file.php`
+
+**Portable file-backed layer:**
+
+- `fp-content/cache/mediamanager.useindex.json`
+- `fp-content/cache/mediamanager.useindex.lock`
+- `fp-content/cache/mediamanager.useindex.dirty`
+
+The JSON index is a **regenerable runtime artifact**. Entry files remain the source of truth. It replaces the historical Media Manager `usecount` array in `settings.conf.php`; after the first successful index persistence, the obsolete `usecount` plugin option is removed best-effort.
+
+**What is cached:**
+
+- Direct image-reference counts per normalized relative image path.
+- Explicit `[gallery]` reference counts per gallery.
+- Per-gallery counts for entries that use the gallery either explicitly or through an image in that gallery.
+- Direct-image/explicit-gallery overlap counts, so one entry is never double-counted when it references both.
+- Compact per-entry media contributions. These make `entry_saved` and `entry_deleted` updates idempotent, including concurrent cases where a recovery rebuild completes before a waiting hook updates the cache.
+
+**Build and update behavior:**
+
+- Missing, corrupt, or dirty state triggers one locked full rebuild.
+- The rebuild performs one lightweight `FPDB_Query` over the entry index with `fullparse => false`.
+- Each returned entry ID is then loaded exactly once with `entry_parse()`. This reads the entry content without constructing `FPDB_CommentList` objects or changing the historical `FPDB_QueryParams` semantics in core.
+- Successful entry writes update only the changed entry through the `entry_saved` hook.
+- Successful entry deletions remove only the deleted contribution through the `entry_deleted` hook.
+- Preview and other `content_save_pre` paths no longer invalidate the complete Media Manager usage state.
+- If no Media Manager index exists yet, entry saves do not force an O(N) rebuild; the first Media Manager request builds it once.
+
+**Write and concurrency safety:**
+
+- Writers serialize with `flock()` on `mediamanager.useindex.lock`.
+- The JSON payload is written with core `io_write_file()` using the same-directory temp-file/rename path and `fsync` when available.
+- A tokenized dirty marker prevents readers from trusting an index while a committed entry change is being folded in.
+- One writer never clears a newer writer's dirty token.
+- Per-entry contributions make repeated or reordered commit application idempotent.
+- If locking or persistence is unavailable, entry saving still succeeds. The Media Manager falls back to a correct in-memory rebuild and never treats the cache as authoritative content.
+
+**APCu layer:**
+
+- The plugin uses only the central helpers from `core.apcu.php`:
+  - `apcu_get()`
+  - `apcu_set()`
+  - `apcu_delete_key()`
+- The logical key is automatically isolated by `apcu_key()` under the current FlatPress instance namespace.
+- APCu stores the complete validated index together with the file signature.
+- File signature fields are device, inode, mtime, ctime, size, and the index generation read from the small JSON header.
+- A signature mismatch causes a JSON reload, so the file-backed layer remains authoritative across workers or hosting setups that do not share one APCu pool.
+- TTL: `600` seconds. The TTL limits retention; file signature validation provides freshness.
+
+**Media-count semantics:**
+
+For an image inside a gallery, the displayed use count is the set union of:
+
+- entries that reference that exact image, and
+- entries that explicitly reference its gallery.
+
+The stored overlap counter subtracts entries present in both sets. Gallery use counts likewise count each entry once whether the gallery is referenced explicitly or only through an image inside it. This preserves the existing Media Manager UX while allowing newly added files in an already-used gallery to show the correct count without rescanning every entry.
+
+**Fallback behavior:**
+
+- APCu unavailable: JSON index remains the normal portable cache.
+- JSON index missing/corrupt/dirty: one locked full rebuild from entry files.
+- JSON persistence unavailable: correct in-memory rebuild for the current request.
+- Cache failure never blocks or rolls back an entry write.
+
+**Impact:**  
+High on large FlatPress installations. Normal entry edits change the usage index in O(media references of one entry) instead of invalidating an O(all entries) rebuild. APCu reduces JSON decoding and disk reads further but is not required for correctness or performance scaling.
+
+---
+
 ## 5. Miscellaneous and Meta Caches
 
 ### 5.1 Instance Namespace Bootstrap – `fp:ns:*`
@@ -1007,33 +1084,34 @@ Low–Medium (admin-only), but noticeable on slow disks or network filesystems w
 
 The following table summarizes each logical cache group:
 
-| Area                         | Key prefixes (logical)                                                               | Depends on PrettyURLs?   | Invalidation driver                                  | Approx. impact           |
-|------------------------------|--------------------------------------------------------------------------------------|--------------------------|------------------------------------------------------|--------------------------|
-| APCu core helpers            | `fp:ns:*`, `apcu_ns()`, `apcu_key()`                                                 | No                       | N/A (meta only)                                      | High (foundational)      |
-| Base URL Config              | `fp:config:settings:*`                                                               | No                       | File mtime/size via `stat()`, TTL 1h                 | Medium                   |
-| File I/O                     | `fp:io:*`                                                                            | No                       | File mtime/size, TTL (default 1h)                    | High                     |
-| Entries                      | `fp:entry:parsed:*`                                                                  | No                       | Entry file mtime/size                                | High                     |
-| Comments                     | `fp:comments:list:*`, `fp:comments:count:*`                                          | No                       | Comment dir mtime, TTL 300s (APCu) + file fallback   | Medium–High              |
-| Static pages                 | `fp:statics:list:*`                                                                  | No                       | Static dir mtime/size, TTL 600s                      | Medium                   |
-| Categories                   | `fp:cats:list:*`, `fp:cats:encoded:*`                                                | No                       | Categories file mtime/size, TTL 600s                 | Medium                   |
-| Language                     | `fp:lang:*`                                                                          | No                       | Language file mtime/size, locale                     | Medium–High              |
-| INI parsing (SEO plugin)     | `fp:ini:*`                                                                           | No                       | INI file mtime/size                                  | Low–Medium               |
-| SEO `og:image` (SEO plugin)  | `fp:seometa:og:imageinfo:*`, `seometa:og:imagebin:*`                                 | No                       | Source path/type/mtime/size, target size, TTL        | Medium–High              |
-| Smarty block fragments       | `fp:smarty:block:*`                                                                  | No                       | TTL, template timestamp, APCu eviction or file fallback | Medium–High           |
-| HTTPS/IP env                 | `fp:https:v2:*`, `fp:net:in_cidrs:*`                                                 | No                       | TTL (≈3600s) and local process                       | Low–Medium               |
-| Plugin discovery             | `fp:plugin:*`, `fp:plugins:*`                                                        | No                       | Plugin dir/config mtimes                             | Medium                   |
-| Smarty plugin index          | `fp:spi:*`                                                                           | No                       | Dir+token hash, TTL 300s                             | Medium                   |
-| Search                       | `fp:search:rev`, `fp:search:v*`                                                      | No                       | Content rev + TTL (5s / 900s)                        | Medium                   |
-| BBCode                       | `fp:bbcode:*`                                                                        | No                       | Parser/img/meta mtimes, TTL 300–7200s                | Medium–High              |
-| Archives                     | `fp:archives:v`, `fp:archives:list*`, `fp:archives:html*`                            | **Yes**                  | `plugin_archives_cache_bump()` + PrettyURLs bump     | Medium                   |
-| Calendar                     | `fp:calendar:v`, `calendar:*:vN`                                                     | **Yes**                  | `plugin_calendar_cache_bump()` + PrettyURLs bump     | Medium–High              |
-| Storage plugin               | `fp:storage:v`, `fp:storage:aggregate*`, `fp:storage:dirsize*`, `fp:storage:quota*`  | No                       | Storage rescan + TTL                                 | Low–Medium               |
-| Mastodon instance snapshot   | `fp:mastodon:instance_document:<sha1(instance_url)>`                                 | No                       | TTL 900s, `instance_url` change, snapshot refresh    | Low–Medium               |
-| Mastodon scheduler summary   | core `fp:io:*` for `scheduler-state.json`                                            | No                       | File mtime/size via core I/O, rebuilt from `state.json` when stale | Medium       |
-| Mastodon sync guards         | `fp:mastodon:sync_guard:content:v1`, `fp:mastodon:sync_guard:deletion:v1`            | No                       | TTL 300s + file guard `sync.guard.json`               | Medium                   |
-| Admin setup hide             | `fp:admin:setup_hide_report`                                                         | No                       | TTL (ok 86400s, fail 300s) + manual APCu clear       | Low–Medium (admin only)  |
-| PrettyURLs auto-detection    | `prettyurls:*`, `prettyurls:auto:v3:g*:*`                                            | No (but influences URLs) | `apcu_gen` bump on mode/.htaccess changes            | Medium                   |
-| Maintain panel tools         | Uses APCu to clear and inspect all keys, no own namespace                            | No                       | Manual admin action                                  | N/A (admin only)         |
+| Area                        | Key prefixes (logical)                                                              | Depends on PrettyURLs?   | Invalidation driver                                                | Approx. impact          |
+|-----------------------------|-------------------------------------------------------------------------------------|--------------------------|--------------------------------------------------------------------|-------------------------|
+| APCu core helpers           | `fp:ns:*`, `apcu_ns()`, `apcu_key()`                                                | No                       | N/A (meta only)                                                    | High (foundational)     |
+| Base URL Config             | `fp:config:settings:*`                                                              | No                       | File mtime/size via `stat()`, TTL 1h                               | Medium                  |
+| File I/O                    | `fp:io:*`                                                                           | No                       | File mtime/size, TTL (default 1h)                                  | High                    |
+| Entries                     | `fp:entry:parsed:*`                                                                 | No                       | Entry file mtime/size                                              | High                    |
+| Comments                    | `fp:comments:list:*`, `fp:comments:count:*`                                         | No                       | Comment dir mtime, TTL 300s (APCu) + file fallback                 | Medium–High             |
+| Static pages                | `fp:statics:list:*`                                                                 | No                       | Static dir mtime/size, TTL 600s                                    | Medium                  |
+| Categories                  | `fp:cats:list:*`, `fp:cats:encoded:*`                                               | No                       | Categories file mtime/size, TTL 600s                               | Medium                  |
+| Language                    | `fp:lang:*`                                                                         | No                       | Language file mtime/size, locale                                   | Medium–High             |
+| INI parsing (SEO plugin)    | `fp:ini:*`                                                                          | No                       | INI file mtime/size                                                | Low–Medium              |
+| SEO `og:image` (SEO plugin) | `fp:seometa:og:imageinfo:*`, `seometa:og:imagebin:*`                                | No                       | Source path/type/mtime/size, target size, TTL                      | Medium–High             |
+| Smarty block fragments      | `fp:smarty:block:*`                                                                 | No                       | TTL, template timestamp, APCu eviction or file fallback            | Medium–High             |
+| HTTPS/IP env                | `fp:https:v2:*`, `fp:net:in_cidrs:*`                                                | No                       | TTL (≈3600s) and local process                                     | Low–Medium              |
+| Plugin discovery            | `fp:plugin:*`, `fp:plugins:*`                                                       | No                       | Plugin dir/config mtimes                                           | Medium                  |
+| Smarty plugin index         | `fp:spi:*`                                                                          | No                       | Dir+token hash, TTL 300s                                           | Medium                  |
+| Search                      | `fp:search:rev`, `fp:search:v*`                                                     | No                       | Content rev + TTL (5s / 900s)                                      | Medium                  |
+| BBCode                      | `fp:bbcode:*`                                                                       | No                       | Parser/img/meta mtimes, TTL 300–7200s                              | Medium–High             |
+| Archives                    | `fp:archives:v`, `fp:archives:list*`, `fp:archives:html*`                           | **Yes**                  | `plugin_archives_cache_bump()` + PrettyURLs bump                   | Medium                  |
+| Calendar                    | `fp:calendar:v`, `calendar:*:vN`                                                    | **Yes**                  | `plugin_calendar_cache_bump()` + PrettyURLs bump                   | Medium–High             |
+| Storage plugin              | `fp:storage:v`, `fp:storage:aggregate*`, `fp:storage:dirsize*`, `fp:storage:quota*` | No                       | Storage rescan + TTL                                               | Low–Medium              |
+| Mastodon instance snapshot  | `fp:mastodon:instance_document:<sha1(instance_url)>`                                | No                       | TTL 900s, `instance_url` change, snapshot refresh                  | Low–Medium              |
+| Media Manager usage index   | `mediamanager:usage-index:v1`                                                       | No                       | `entry_saved`/`entry_deleted`, dirty recovery                      | High (large sites)      |
+| Mastodon scheduler summary  | core `fp:io:*` for `scheduler-state.json`                                           | No                       | File mtime/size via core I/O, rebuilt from `state.json` when stale | Medium                  |
+| Mastodon sync guards        | `fp:mastodon:sync_guard:content:v1`, `fp:mastodon:sync_guard:deletion:v1`           | No                       | TTL 300s + file guard `sync.guard.json`                            | Medium                  |
+| Admin setup hide            | `fp:admin:setup_hide_report`                                                        | No                       | TTL (ok 86400s, fail 300s) + manual APCu clear                     | Low–Medium (admin only) |
+| PrettyURLs auto-detection   | `prettyurls:*`, `prettyurls:auto:v3:g*:*`                                           | No (but influences URLs) | `apcu_gen` bump on mode/.htaccess changes                          | Medium                  |
+| Maintain panel tools        | Uses APCu to clear and inspect all keys, no own namespace                           | No                       | Manual admin action                                                | N/A (admin only)        |
 
 ---
 
@@ -1064,6 +1142,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.6.dev`
 - `fp:io:`
 - `fp:lang:`
 - `fp:net:in_cidrs:`
+- `fp:mediamanager:usage-index:v1`
 - `fp:mastodon:instance_document:`
 - `fp:mastodon:sync_guard:content:v1`
 - `fp:mastodon:sync_guard:deletion:v1`
