@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Storage
  * Description: Displays storage information from FlatPress. Part of the standard distribution.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Plugin URI: https://flatpress.org
  * Author: FlatPress
  * Author URI: https://flatpress.org
@@ -11,13 +11,18 @@ if (class_exists('AdminPanelAction')) {
 
 	// ---- BOF: Caching helpers ----
 	/**
-	 * Returns a versioned APCu namespace suffix for Storage plugin caching (":vN") or "" if APCu is unavailable; memoized per request.
+	 * Returns a versioned APCu namespace suffix for Storage plugin caching (":vN") or "" if APCu is unavailable.
 	 * Reads "fp:storage:v" from APCu and initializes it to 1 when missing, enabling global cache invalidation by version bump.
+	 *
+	 * The namespace is memoized per request so a concurrent mutation cannot move an in-progress scan into a newer generation.
+	 * The mutation request itself refreshes its memoized value immediately after a successful bump.
+	 *
+	 * @param bool $refresh Force a fresh namespace read for the current request.
 	 * @return string Namespace suffix to append to cache keys.
 	 */
-	function plugin_storage_cache_ns() {
+	function plugin_storage_cache_ns($refresh = false) {
 		static $ns = null;
-		if ($ns !== null) {
+		if (!$refresh && $ns !== null) {
 			return $ns;
 		}
 		$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
@@ -33,22 +38,43 @@ if (class_exists('AdminPanelAction')) {
 	}
 
 	/**
-	 * Globally invalidates Storage plugin caches by bumping the APCu namespace version and purging file-based cache files.
-	 * Increments APCu key "fp:storage:v" (creating it if absent) and best-effort unlinks JSON caches under fp-content/cache (e.g., storage.dirsize.*, storage.quota.json).
+	 * Invalidates Storage caches after a successful content mutation.
+	 *
+	 * File fallbacks are purged regardless of APCu availability. APCu-backed data is invalidated
+	 * by bumping the Storage namespace. Cache invalidation is best effort and never affects the
+	 * success of the entry/comment write that triggered it.
+	 *
 	 * @return void
 	 */
 	function plugin_storage_cache_bump() {
+		$cfdir = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/';
+		@unlink($cfdir . 'storage.aggregate.json');
+		@unlink($cfdir . 'storage.dirsize.json');
+
 		if (!(function_exists('is_apcu_on') && is_apcu_on())) {
 			return;
 		}
+
 		$ok = false;
 		apcu_incr('fp:storage:v', 1, $ok);
 		if (!$ok) {
 			@apcu_set('fp:storage:v', 1);
 		}
-		// File fallback best-effort purge
-		$cf = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/storage.aggregate.json';
-		@unlink($cf);
+		plugin_storage_cache_ns(true);
+	}
+
+	/**
+	 * Verifies that an in-progress scan still belongs to the current APCu generation.
+	 * Without APCu there is no process-shared generation token, so the JSON fallback remains best effort.
+	 *
+	 * @param string $expectedNs
+	 * @return bool
+	 */
+	function plugin_storage_cache_generation_is_current($expectedNs) {
+		if (!(function_exists('is_apcu_on') && is_apcu_on())) {
+			return true;
+		}
+		return plugin_storage_cache_ns(true) === (string)$expectedNs;
 	}
 
 	/**
@@ -94,16 +120,279 @@ if (class_exists('AdminPanelAction')) {
 		if ($apcu_on) {
 			@apcu_set('fp:storage:aggregate' . plugin_storage_cache_ns(), $payload, 300);
 		}
-		// Also write JSON fallback
+		// Also write JSON fallback atomically; a cache write failure must not affect the admin view.
 		$cf = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/storage.aggregate.json';
-		@io_write_file($cf, json_encode($payload));
+		$json = json_encode($payload);
+		if (is_string($json)) {
+			@io_write_file($cf, $json);
+		}
 	}
-	// Hook-based invalidation
+
+	/**
+	 * Returns an absolute, slash-normalized filesystem path without requiring realpath().
+	 * This keeps the Storage scanner portable to shared hosts, Windows/IIS and paths that may not yet exist.
+	 *
+	 * @param string $path
+	 * @return string
+	 */
+	function plugin_storage_absolute_path($path) {
+		$path = str_replace('\\', '/', (string)$path);
+		if ($path === '') {
+			return '';
+		}
+		if ($path[0] === '/' || preg_match('~^[A-Za-z]:/~', $path) || strpos($path, '//') === 0) {
+			return rtrim($path, '/');
+		}
+		$base = defined('ABS_PATH') ? (string)ABS_PATH : (defined('BASE_DIR') ? (string)BASE_DIR : '');
+		$base = rtrim(str_replace('\\', '/', $base), '/');
+		return $base === '' ? rtrim($path, '/') : $base . '/' . ltrim($path, '/');
+	}
+
+	/**
+	 * Tests whether $path is located below $root. The comparison is case-insensitive on Windows.
+	 *
+	 * @param string $path
+	 * @param string $root
+	 * @return bool
+	 */
+	function plugin_storage_path_is_within($path, $root) {
+		$path = str_replace('\\', '/', (string)$path);
+		$root = rtrim(str_replace('\\', '/', (string)$root), '/') . '/';
+		if (DIRECTORY_SEPARATOR === '\\') {
+			$path = strtolower($path);
+			$root = strtolower($root);
+		}
+		return strncmp($path, $root, strlen($root)) === 0;
+	}
+
+	/**
+	 * Matches FlatPress data filenames without fnmatch(), which is not available on every PHP/webhost combination.
+	 *
+	 * @param string $filename
+	 * @param string $prefix
+	 * @return bool
+	 */
+	function plugin_storage_data_filename_matches($filename, $prefix) {
+		$filename = (string)$filename;
+		$prefix = (string)$prefix;
+		if (strpos($filename, $prefix) !== 0) {
+			return false;
+		}
+		$ext = defined('EXT') ? (string)EXT : '.txt';
+		return strlen($filename) >= strlen($ext) && substr($filename, -strlen($ext)) === $ext;
+	}
+
+	/**
+	 * Returns the APCu key for the FlatPress root-size cache.
+	 *
+	 * @param string $root
+	 * @return string
+	 */
+	function plugin_storage_root_cache_key($root) {
+		return 'fp:storage:dirsize:root:' . sha1((string)$root) . plugin_storage_cache_ns();
+	}
+
+	/**
+	 * Returns a cached FlatPress root size or null on miss.
+	 *
+	 * @param string $root
+	 * @param int $ttl
+	 * @return float|null
+	 */
+	function plugin_storage_root_size_get_cached($root, $ttl = 120) {
+		$ttl = max(1, (int)$ttl);
+		$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
+		if ($apcu_on) {
+			$ok = false;
+			$val = apcu_get(plugin_storage_root_cache_key($root), $ok);
+			if ($ok && is_array($val) && isset($val ['size'])) {
+				return (float)$val ['size'];
+			}
+		}
+
+		$cf = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/storage.dirsize.json';
+		if (@file_exists($cf)) {
+			$mt = @filemtime($cf);
+			if ($mt !== false && (time() - (int)$mt) < $ttl) {
+				$raw = @io_load_file($cf);
+				if (is_string($raw)) {
+					$jd = @json_decode($raw, true);
+					if (is_array($jd) && isset($jd ['size'])) {
+						$size = (float)$jd ['size'];
+						if ($apcu_on) {
+							$remaining = max(1, $ttl - (time() - (int)$mt));
+							@apcu_set(plugin_storage_root_cache_key($root), array('size' => $size, 'ts' => (int)$mt), $remaining);
+						}
+						return $size;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Stores the FlatPress root size in APCu and the atomic JSON fallback.
+	 *
+	 * @param string $root
+	 * @param float $size
+	 * @param int $ttl
+	 * @return void
+	 */
+	function plugin_storage_root_size_set_cached($root, $size, $ttl = 120) {
+		$ttl = max(1, (int)$ttl);
+		$payload = array('size' => (float)$size, 'ts' => time());
+		if (function_exists('is_apcu_on') && is_apcu_on()) {
+			@apcu_set(plugin_storage_root_cache_key($root), $payload, $ttl);
+		}
+		$cf = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/storage.dirsize.json';
+		$json = json_encode($payload);
+		if (is_string($json)) {
+			@io_write_file($cf, $json);
+		}
+	}
+
+	/**
+	 * Streams filesystem metrics without materializing a full path list.
+	 *
+	 * When both $collectContent and $collectRootSize are true, a single traversal of $scanRoot
+	 * computes the content aggregates and the full FlatPress size. Symlinks are never followed.
+	 *
+	 * @param string $scanRoot
+	 * @param string $contentRoot
+	 * @param bool $collectContent
+	 * @param bool $collectRootSize
+	 * @param bool $doTopTen
+	 * @return array
+	 */
+	function plugin_storage_scan_metrics($scanRoot, $contentRoot, $collectContent, $collectRootSize, $doTopTen) {
+		$result = array(
+			'entry_file_count' => 0,
+			'entries_size' => 0.0,
+			'comments_count' => 0,
+			'comments_size' => 0.0,
+			'per_entry' => array(),
+			'root_size' => 0.0
+		);
+
+		$scanRoot = plugin_storage_absolute_path($scanRoot);
+		$contentRoot = plugin_storage_absolute_path($contentRoot);
+		if ($scanRoot === '' || !@is_dir($scanRoot)) {
+			return $result;
+		}
+
+		try {
+			$rdi = new RecursiveDirectoryIterator($scanRoot, FilesystemIterator::SKIP_DOTS);
+			$it = new RecursiveIteratorIterator(
+				$rdi,
+				RecursiveIteratorIterator::LEAVES_ONLY,
+				RecursiveIteratorIterator::CATCH_GET_CHILD
+			);
+
+			foreach ($it as $fi) {
+				/** @var SplFileInfo $fi */
+				try {
+					if ($fi->isLink() || !$fi->isFile()) {
+						continue;
+					}
+					$fs = $fi->getSize();
+				} catch (Throwable $e) {
+					// A file may disappear or become unreadable during the scan; skip it like the legacy best-effort scanner.
+					continue;
+				}
+
+				$size = (is_int($fs) || is_float($fs)) ? (float)$fs : 0.0;
+				if ($collectRootSize) {
+					$result ['root_size'] += $size;
+				}
+				if (!$collectContent) {
+					continue;
+				}
+
+				$path = $fi->getPathname();
+				if ($collectRootSize && !plugin_storage_path_is_within($path, $contentRoot)) {
+					continue;
+				}
+
+				$base = $fi->getFilename();
+				if (plugin_storage_data_filename_matches($base, 'entry')) {
+					$result ['entry_file_count']++;
+					$result ['entries_size'] += $size;
+					continue;
+				}
+				if (plugin_storage_data_filename_matches($base, 'comment')) {
+					$result ['comments_count']++;
+					$result ['comments_size'] += $size;
+					if ($doTopTen) {
+						$d1 = dirname($path); // .../comments
+						$d2 = dirname($d1); // .../entryYYYYMM-HHMMSS
+						$eid = basename($d2);
+						$result ['per_entry'] [$eid] = isset($result ['per_entry'] [$eid]) ? $result ['per_entry'] [$eid] + 1 : 1;
+					}
+				}
+			}
+		} catch (Throwable $e) {
+			// Best-effort diagnostics: keep any metrics collected before an unexpected filesystem error.
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Converts raw streaming-scan counters to the aggregate Storage cache payload.
+	 *
+	 * @param array $scan
+	 * @param bool $doTopTen
+	 * @return array
+	 */
+	function plugin_storage_aggregate_from_scan(array $scan, $doTopTen) {
+		$entriesCount = (int)($scan ['entry_file_count'] ?? 0);
+		$topten = array();
+		$idx = @entry_cached_index(0);
+
+		if ($idx) {
+			$len = $idx->length();
+			if (is_int($len) || is_float($len)) {
+				$indexCount = (int)$len;
+				if ($indexCount > 0 || $entriesCount === 0) {
+					$entriesCount = $indexCount;
+				}
+			}
+		}
+
+		$perEntry = isset($scan ['per_entry']) && is_array($scan ['per_entry']) ? $scan ['per_entry'] : array();
+		if ($doTopTen && !empty($perEntry)) {
+			arsort($perEntry);
+			$i = 0;
+			foreach ($perEntry as $entryId => $commentCount) {
+				if ($i >= 10) {
+					break;
+				}
+				$subject = '';
+				if ($idx) {
+					$ekey = entry_idtokey($entryId);
+					$subject = $idx->getitem($ekey);
+				}
+				$topten [$entryId] = array('subject' => $subject, 'comments' => (int)$commentCount);
+				$i++;
+			}
+		}
+
+		return array(
+			'entries_count' => $entriesCount,
+			'entries_size' => (float)($scan ['entries_size'] ?? 0),
+			'comments_count' => (int)($scan ['comments_count'] ?? 0),
+			'comments_size' => (float)($scan ['comments_size'] ?? 0),
+			'topten' => $doTopTen ? $topten : array(),
+			'ts' => time()
+		);
+	}
+	// Invalidate only after successful writes/deletions. Failed mutations must not make the next Storage view cold.
 	if (function_exists('add_action')) {
-		add_action('publish_post', 'plugin_storage_cache_bump', 10, 1);
-		add_action('delete_post', 'plugin_storage_cache_bump', 10, 1);
-		add_action('comment_save', 'plugin_storage_cache_bump', 10, 2);
-		add_action('comment_delete', 'plugin_storage_cache_bump', 10, 2);
+		add_action('entry_saved', 'plugin_storage_cache_bump', 10, 0);
+		add_action('entry_deleted', 'plugin_storage_cache_bump', 10, 0);
+		add_action('comment_saved', 'plugin_storage_cache_bump', 10, 0);
+		add_action('comment_deleted', 'plugin_storage_cache_bump', 10, 0);
 	}
 
 	/**
@@ -478,88 +767,44 @@ if (class_exists('AdminPanelAction')) {
 			// Feature gate for top 10
 			$doTopTen = plugin_storage_postviews_active();
 
-			// Try hot cache first
+			// Resolve both cache states before scanning. If both are cold, one root traversal can satisfy both.
+			$storageNs = plugin_storage_cache_ns();
+			$root = defined('BASE_DIR') ? BASE_DIR : dirname(__FILE__, 3);
+			$rootTtl = 120;
+			$rootSize = plugin_storage_root_size_get_cached($root, $rootTtl);
 			$cached = plugin_storage_cache_get();
-			if (is_array($cached)) {
-				// Populate from cached raw values
-				$entries ['count'] = (int)($cached ['entries_count'] ?? 0);
-				$entries ['size'] = (float)($cached ['entries_size'] ?? 0);
-				$entries ['comments'] = (int)($cached ['comments_count'] ?? 0);
-				$entries ['topten'] = $doTopTen ? (array)($cached ['topten'] ?? array()) : array();
-				$comments ['count'] = (int)($cached ['comments_count'] ?? 0);
-				$comments ['size'] = (float)($cached ['comments_size'] ?? 0);
-			} else {
-				// Compute once and cache
-				$idx = @entry_cached_index(0);
-				if ($idx) {
-					$len = $idx->length();
-					if (is_int($len) || is_float($len)) {
-						$entries ['count'] = (int)$len;
-					}
-				}
-				$perEntry = $doTopTen ? array() : null; // id => comment_count
-				$entryFileCount = 0; // Fallback if index missing
-				$pl = new fs_pathlister(CONTENT_DIR);
-				$files = (array) $pl->getList();
-				foreach ($files as $path) {
-					$base = basename($path);
-					if (fnmatch('entry*' . EXT, $base)) {
-						$entryFileCount++;
-						$id = basename($path, EXT);
-						$sz = @filesize($path);
-						if ($sz !== false) {
-							$entries ['size'] += (float)$sz;
-						}
-						$e = @bdb_parse_entry($id);
-						continue;
-					}
-					if (fnmatch('comment*' . EXT, $base)) {
-						$cid = basename($path, EXT);
-						$d1 = dirname($path); // .../comments
-						$d2 = dirname($d1); // .../entryYYYYMM-HHMMSS
-						$eid = basename($d2);
-						$comments ['count']++;
-						$sz = @filesize($path);
-						if ($sz !== false) {
-							$comments ['size'] += (float)$sz;
-						}
-						if ($doTopTen) {
-							$perEntry [$eid] = isset($perEntry [$eid]) ? $perEntry [$eid] + 1 : 1;
-						}
-					}
-				}
-				if (!$entries ['count'] && $entryFileCount) {
-					$entries ['count'] = $entryFileCount;
-				}
-				$entries ['comments'] = $comments ['count'];
 
-				if ($doTopTen && !empty($perEntry)) {
-					arsort($perEntry);
-					$i = 0;
-					foreach ($perEntry as $k => $v) {
-						if ($i >= 10) {
-							break;
-						}
-					$subject = '';
-					if ($idx) {
-						$ekey = entry_idtokey($k);
-						$subject = $idx->getitem($ekey);
-					}
-						$entries ['topten'] [$k] = array('subject' => $subject, 'comments' => $v);
-						$i++;
-					}
+			if (!is_array($cached)) {
+				$rootAbs = plugin_storage_absolute_path($root);
+				$contentAbs = plugin_storage_absolute_path(CONTENT_DIR);
+				$canCombine = ($rootSize === null)
+					&& $rootAbs !== ''
+					&& $contentAbs !== ''
+					&& plugin_storage_path_is_within($contentAbs, $rootAbs);
+
+				if ($canCombine) {
+					$scan = plugin_storage_scan_metrics($rootAbs, $contentAbs, true, true, $doTopTen);
+					$rootSize = (float)($scan ['root_size'] ?? 0);
+				} else {
+					$scan = plugin_storage_scan_metrics(CONTENT_DIR, CONTENT_DIR, true, false, $doTopTen);
 				}
 
-				// Store raw values for future fast path
-				plugin_storage_cache_set(array(
-					'entries_count' => (int)$entries ['count'],
-					'entries_size'  => (float)$entries ['size'],
-					'comments_count'=> (int)$comments ['count'],
-					'comments_size' => (float)$comments ['size'],
-					'topten' => $doTopTen ? $entries ['topten'] : array(),
-					'ts' => time()
-				));
+				$cached = plugin_storage_aggregate_from_scan($scan, $doTopTen);
+				if (plugin_storage_cache_generation_is_current($storageNs)) {
+					if ($canCombine) {
+						plugin_storage_root_size_set_cached($root, $rootSize, $rootTtl);
+					}
+					plugin_storage_cache_set($cached);
+				}
 			}
+
+			// Populate view-model values from the raw aggregate payload.
+			$entries ['count'] = (int)($cached ['entries_count'] ?? 0);
+			$entries ['size'] = (float)($cached ['entries_size'] ?? 0);
+			$entries ['comments'] = (int)($cached ['comments_count'] ?? 0);
+			$entries ['topten'] = $doTopTen ? (array)($cached ['topten'] ?? array()) : array();
+			$comments ['count'] = (int)($cached ['comments_count'] ?? 0);
+			$comments ['size'] = (float)($cached ['comments_size'] ?? 0);
 
 			$decunit = array('', 'Thousand', 'Million', 'Billion', 'Trillion', 'Zillion', 'Gazillion');
 			$binunit = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB');
@@ -626,66 +871,15 @@ if (class_exists('AdminPanelAction')) {
 
 			// FlatPress folder total and disk usage
 			$storage = array('fp_size' => '0 Bytes', 'fp_size_bytes' => 0.0, 'total' => 'n/a', 'total_bytes' => 0.0, 'free' => 'n/a', 'free_bytes' => 0.0, 'pct' => 'n/a');
-			$root = defined('BASE_DIR') ? BASE_DIR : dirname(__FILE__, 3);
-			$ttl = 120;
-			$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
-			$ck = 'fp:storage:dirsize:v1:' . sha1($root);
-			$cf = (defined('FP_CONTENT') ? FP_CONTENT : 'fp-content/') . 'cache/storage.dirsize.json';
-			$sz = false;
-			if ($apcu_on) {
-				$ok = false;
-				$val = apcu_get($ck, $ok);
-				if ($ok && is_array($val) && isset($val ['size'])) {
-					$sz = (float)$val ['size'];
+			$sz = $rootSize;
+			if ($sz === null) {
+				$rootScan = plugin_storage_scan_metrics($root, CONTENT_DIR, false, true, false);
+				$sz = (float)($rootScan ['root_size'] ?? 0);
+				if (plugin_storage_cache_generation_is_current($storageNs)) {
+					plugin_storage_root_size_set_cached($root, $sz, $rootTtl);
 				}
 			}
-			if ($sz === false) {
-				// Try file cache fallback
-				if (@file_exists($cf)) {
-					$mt = @filemtime($cf);
-					if ($mt !== false && (time() - (int)$mt) < $ttl) {
-						$raw = io_load_file($cf);
-						if ($raw !== false) {
-							$jd = @json_decode($raw, true);
-							if (is_array($jd) && isset($jd ['size'])) {
-								$sz = (float)$jd ['size'];
-							}
-						}
-					}
-				}
-			}
-			if ($sz === false) {
-				$sz = 0.0;
-				try {
-					$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS));
-					foreach ($it as $fi) {
-						/** @var SplFileInfo $fi */
-						if ($fi->isLink()) {
-							continue;
-						}
-						if ($fi->isFile()) {
-							$fs = @$fi->getSize();
-							if (is_int($fs) || is_float($fs)) {
-								$sz += (float)$fs;
-							}
-						}
-					}
-				} catch (Throwable $e) {
-					// ignore
-				}
-				if ($apcu_on) {
-					@apcu_set($ck, array('size' => $sz), $ttl);
-				}
-				// Write file cache
-				$payload = json_encode(array('size' => $sz));
-				if (function_exists('io_write_file')) {
-					@io_write_file($cf, $payload);
-				} else {
-					if (plugin_storage_can_use('file_put_contents')) {
-						@file_put_contents($cf, $payload);
-					}
-				}
-			}
+
 			$storage ['fp_size_bytes'] = (float)$sz;
 			list($cnt, $approx) = $this->format_number((float)$sz, 1024);
 			$storage ['fp_size'] = $cnt . ' ' . $binunit [$approx];

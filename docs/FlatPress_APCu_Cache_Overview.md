@@ -560,13 +560,13 @@ Medium–High in widgets-heavy setups. Calendar widgets are often present on eve
 - `fp:storage:aggregate:vN`
 - `fp:storage:dirsize:<channel>[:nth][:ncc]:vN`
 - `fp:storage:quota:vN`
-- `fp:storage:dirsize:v1:<sha1(root)>` (FlatPress folder total size)
+- `fp:storage:dirsize:root:<sha1(root)>:vN` (FlatPress folder total size)
 
 **File:** `fp-plugins/storage/plugin.storage.php`  
 
 **What is cached:**
 
-- Storage aggregates (entries/comments counters, top lists, etc.).
+- Storage aggregates (entry/comment counters and byte sizes, plus the optional Top-10 comment list).
 - Directory size computations:
   - Per storage channel (e.g. `images`, `attachs`), optionally excluding `.thumbs` (`:nth`)  
     and/or `.captions.conf` (`:ncc`).
@@ -585,20 +585,40 @@ Medium–High in widgets-heavy setups. Calendar widgets are often present on eve
   - APCu: `fp:storage:quota:vN` with default TTL 3600s (payload includes `ts`).
   - File fallback: `fp-content/cache/storage.quota.json` with TTL = `$ttl` (based on file mtime).
 - FlatPress folder total size:
-  - APCu: `fp:storage:dirsize:v1:<sha1(root)>` with TTL 120s.
+  - APCu: `fp:storage:dirsize:root:<sha1(root)>:vN` with TTL 120s.
   - File fallback: `fp-content/cache/storage.dirsize.json` with TTL 120s.
+
+**Cold rebuild path:**
+
+- The Storage panel resolves the aggregate cache and FlatPress-root-size cache before traversing the filesystem.
+- If both caches are cold and `CONTENT_DIR` is below `BASE_DIR`, one `RecursiveDirectoryIterator` traversal of the FlatPress root computes both result sets.
+- If only the aggregate is cold, only `CONTENT_DIR` is streamed.
+- If only the root-size cache is cold, only the root-size metric is collected.
+- Entry and comment files are counted and sized directly from `SplFileInfo`; the Storage scanner does **not** call `bdb_parse_entry()` and does not materialize a complete `fs_pathlister` array.
+- Symbolic links are not followed. `RecursiveIteratorIterator::CATCH_GET_CHILD` and per-file exception handling preserve best-effort behavior on restrictive/shared-host filesystems.
 
 **Invalidation:**
 
-- Namespaced via `plugin_storage_cache_ns()` reading `fp:storage:v`.
-- Version bump via `plugin_storage_cache_bump()` (`apcu_incr('fp:storage:v', …)`) is triggered by:
-  - `publish_post`, `delete_post`, `comment_save`, `comment_delete`
-- File invalidation:
-  - `plugin_storage_cache_bump()` deletes **only** `storage.aggregate.json` (best effort).  
-    Other file fallbacks rely on their TTL and are refreshed on demand.
+- APCu data is namespaced through `plugin_storage_cache_ns()` and `fp:storage:v`.
+- The namespace value is memoized for the current request so an in-progress scan remains tied to the generation it started with. After a successful bump, the mutation request refreshes its own memoized namespace immediately.
+- `plugin_storage_cache_bump()` is bound only to post-success hooks:
+  - `entry_saved`
+  - `entry_deleted`
+  - `comment_saved`
+  - `comment_deleted`
+- The file fallbacks `storage.aggregate.json` and `storage.dirsize.json` are purged on every bump **even when APCu is unavailable**.
+- When APCu is available, the same bump increments `fp:storage:v`, invalidating aggregate, root-size, channel-size and quota APCu keys by generation.
+- Channel JSON fallbacks (`storage.dirsize.*.json`) and `storage.quota.json` are not purged by content mutations; they retain their own TTL-based refresh because entry/comment writes do not change image/attachment content or hosting quota limits directly.
+
+**Write safety:**
+
+- Before an APCu-backed cold scan is persisted, the Storage plugin rechecks the generation it started with. If a concurrent successful mutation bumped `fp:storage:v`, that scan result is used only for the current response and is **not** written into the newer APCu generation or its JSON fallback.
+- Aggregate and root-size JSON fallbacks are written through `io_write_file()`, i.e. temp-file + rename atomic replacement.
+- Cache write or cache purge failures are best effort and never participate in the success/failure decision of entry or comment writes.
+- APCu remains optional. With APCu disabled, the same Storage metrics and invalidation semantics continue to work through the JSON fallbacks; cross-request generation detection is not available without a shared in-memory backend, so the short file TTL remains the final stale-data bound for external/concurrent changes that bypass normal hooks.
 
 **Impact:**  
-Low–Medium. Mostly relevant for admin and diagnostics; not on every frontend request.
+Medium–High for large installations in the Storage admin panel. The warm path stays cache-backed, while a complete aggregate/root cache miss avoids per-entry parsing, full path-list materialization and a second full FlatPress-tree traversal.
 
 ---
 
@@ -1020,10 +1040,13 @@ Some features use a **dual-layer cache** (APCu + file fallback) to stay fast eve
   - Invalidation: version bump (`fp:calendar:v`) plus file purge (`calendar-*.html`) on `plugin_calendar_cache_bump()`.
 
 - **Storage** (`fp-plugins/storage/plugin.storage.php`)
-  - Aggregate JSON: `fp-content/cache/storage.aggregate.json` (purged on `plugin_storage_cache_bump()` when APCu is on).
+  - Aggregate JSON: `fp-content/cache/storage.aggregate.json`.
+  - FlatPress root-size JSON: `fp-content/cache/storage.dirsize.json`.
+  - Both files are purged by `plugin_storage_cache_bump()` after successful entry/comment mutations, regardless of APCu availability.
   - Additional JSON fallbacks:
-    - `storage.dirsize.*.json`, `storage.quota.json`, `storage.dirsize.json`  
-      (TTL-based; refreshed on demand; not globally purged on version bumps).
+    - `storage.dirsize.*.json`, `storage.quota.json`  
+      (TTL-based; refreshed on demand; not purged by entry/comment cache bumps).
+  - Storage JSON writes use the core atomic `io_write_file()` path.
 
 - **Mastodon** (`fp-plugins/mastodon/plugin.mastodon.php`)
   - Durable state: `fp-content/plugin_mastodon/state.json`.
@@ -1104,7 +1127,7 @@ The following table summarizes each logical cache group:
 | BBCode                      | `fp:bbcode:*`                                                                       | No                       | Parser/img/meta mtimes, TTL 300–7200s                              | Medium–High             |
 | Archives                    | `fp:archives:v`, `fp:archives:list*`, `fp:archives:html*`                           | **Yes**                  | `plugin_archives_cache_bump()` + PrettyURLs bump                   | Medium                  |
 | Calendar                    | `fp:calendar:v`, `calendar:*:vN`                                                    | **Yes**                  | `plugin_calendar_cache_bump()` + PrettyURLs bump                   | Medium–High             |
-| Storage plugin              | `fp:storage:v`, `fp:storage:aggregate*`, `fp:storage:dirsize*`, `fp:storage:quota*` | No                       | Storage rescan + TTL                                               | Low–Medium              |
+| Storage plugin              | `fp:storage:v`, `fp:storage:aggregate*`, `fp:storage:dirsize*`, `fp:storage:quota*` | No                       | Post-success hooks + generation bump + JSON purge/TTL              | Medium–High             |
 | Mastodon instance snapshot  | `fp:mastodon:instance_document:<sha1(instance_url)>`                                | No                       | TTL 900s, `instance_url` change, snapshot refresh                  | Low–Medium              |
 | Media Manager usage index   | `mediamanager:usage-index:v1`                                                       | No                       | `entry_saved`/`entry_deleted`, dirty recovery                      | High (large sites)      |
 | Mastodon scheduler summary  | core `fp:io:*` for `scheduler-state.json`                                           | No                       | File mtime/size via core I/O, rebuilt from `state.json` when stale | Medium                  |
@@ -1163,7 +1186,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.6.dev`
 - `fp:statics:list:`
 - `fp:storage:aggregate`
 - `fp:storage:dirsize:`
-- `fp:storage:dirsize:v1:`
+- `fp:storage:dirsize:root:`
 - `fp:storage:quota`
 - `fp:storage:v`
 - `fp:admin:setup_hide_report`
