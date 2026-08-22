@@ -53,8 +53,12 @@
     - Re-registering the same email address replaces older, still-open pending tokens.
         - Old confirmation links for the same address are thereby invalidated.
     - If a local blocklist is missing, a download is attempted before the first form processing.
-- ReadMore plugin update zu version 1.0.4
+- ReadMore plugin update to version 1.0.4
     - Revised visibility layer ([#939](https://github.com/flatpressblog/flatpress/pull/939))
+- Staroge plugin update to 1.0.3
+    - Removed unnecessary entry processing and unnecessary cache invalidations. ([#943](https://github.com/flatpressblog/flatpress/pull/943))
+- Mediamanger plugin update to version 2.0.2
+    - Incremental, file-based usage index. ([#942](https://github.com/flatpressblog/flatpress/pull/942))
 
 ### Bugfixes
 - PhotoSwipe plugin update to version 2.0.7
