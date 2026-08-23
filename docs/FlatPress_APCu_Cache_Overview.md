@@ -263,6 +263,11 @@ Medium. All category link generation benefits, but categories change rarely.
 
 - `@apcu_set($ckey, $lang, 0);` (no expiry).
 
+**Locale setup performance note:**
+
+- `set_locale()` now tries the configured locale/charset candidates directly with PHP `setlocale()`.
+- Language selection, FlatPress language files, configured output charset, and the existing `setlocale()` fallback sequence remain independent of APCu.
+
 **Impact:**  
 High on multi-language setups; otherwise medium.
 
@@ -344,6 +349,138 @@ Low–Medium. Reduces repeated environment probing, especially under reverse pro
 Medium. Saves an include+parse of `settings.conf.php` on every request when `general['www']` is used to define `BLOG_BASEURL`, especially noticeable on shared hosting and under PHP-FPM with APCu enabled.
 
 ---
+
+
+### 2.10 Main Stream Offset Anchors – `fp:fpdb:offset-anchors:v1:*`
+
+**Logical APCu prefix:** `fp:fpdb:offset-anchors:v1:<sha1(index_signature)>`  
+**Files:**
+
+- `fp-includes/core/core.fpdb.class.php`
+- `fp-includes/core/core.entry.php`
+- `fp-includes/core/core.fileio.php`
+- `fp-includes/core/core.apcu.php`
+
+**Purpose:**
+
+- Accelerates deep pages of the normal chronological entry stream.
+- Stores only structural B+ tree navigation data:
+  - absolute entry-index offset,
+  - key at that offset,
+  - preceding key required to preserve `FPDB_Query::getPrevId()` semantics.
+- It does **not** cache entry content, rendered HTML, comments, language output, or Smarty results.
+
+**Why absolute offsets are used:**
+
+`admin.php?p=config` can change `general.maxentries`, and callers can pass an explicit `count` or `start`.  
+The cache therefore never binds an anchor to a page number.
+
+Examples:
+
+- `page=9, count=5` -> absolute start offset `40`
+- `page=3, count=20` -> absolute start offset `40`
+- `start=40` -> absolute start offset `40`
+
+All three can safely reuse the same structural anchor.
+
+**Eligibility:**
+
+The optimization is deliberately limited to the unfiltered main entry stream:
+
+- main index/category `0`,
+- no entry-ID query,
+- no random query,
+- no year/month/day filter,
+- no category filter,
+- no exclude index,
+- positive `count`,
+- start offset at or beyond the current anchor step.
+
+All other query forms continue through the original B+ tree walker unchanged.
+
+**Anchor spacing:**
+
+- Default fixed step: `128`.
+- Optional host override: `FP_FPDB_ANCHOR_STEP`.
+- Accepted range is clamped to `16..4096`.
+- For very large indexes the effective step grows automatically to keep the fixed anchor map at roughly no more than `8192` anchors.
+- Optional switch `FP_FPDB_OFFSET_ANCHORS=0|false|off|no` disables the optimization completely.
+
+**Validity signature:**
+
+The main-index signature contains:
+
+- cache schema version,
+- `%%fpdb-index-generation.tmp` generation token,
+- main index file mtime,
+- main index file size,
+- current B+ tree length.
+
+`entry_index_generation_bump()` rotates the token only when the ordered main-index key set changes:
+
+- a new main-index key is inserted,
+- a main-index key is deleted.
+
+Title-only and category-only edits do not move stream offsets and therefore do not force an unnecessary generation change.
+
+The token is written through `io_write_file()`. If it cannot be created or safely rotated, offset-anchor reuse is disabled and FlatPress stays on the original walker.
+
+**Backend and fallback order:**
+
+```text
+request-local anchor map
+          |
+          v
+APCu namespaced hot cache
+          |
+          v
+fp-content/cache/%%fpdb-offset-anchors-v1.json
+          |
+          v
+original B+ tree walker
+```
+
+The pipes are intentionally aligned to make the fallback direction explicit.
+
+- APCu is optional and uses the normal `is_apcu_on()`, `apcu_get()`, and `apcu_set()` wrappers.
+- APCu TTL: `3600` seconds.
+- The JSON fallback is regenerable runtime data and is written atomically through `io_write_file()`.
+- Cache-file reads use `io_load_file_uncached()` because the anchor layer already provides its own request/APCu hierarchy and generation validation.
+- If APCu is missing, full, disabled, or rejects a store, the file fallback remains available.
+- If the file cache is missing, corrupt, read-only, or cannot be written, the B+ tree walker remains authoritative.
+- Cache failures can reduce performance only; they must not change query results or entry write success.
+
+**Warm-up behavior:**
+
+- The first deep request for a new index generation still walks the original B+ tree and learns fixed-step anchors on that path.
+- Following requests can start at the nearest verified anchor and walk only the remaining distance.
+- Shallow pages below the anchor step do not perform generation or anchor-file lookups.
+
+**Write and concurrency safety:**
+
+- The B+ tree format and its insert/delete/rebalance implementation are unchanged.
+- An anchor is accepted only when its key is still the exact walker key and the index signature remains unchanged after positioning.
+- Newly learned anchors are persisted only if the signature still matches immediately before the write.
+- The generation/cache files are not sources of truth and are safe to delete during cache maintenance.
+
+**Language / charset safety:**
+
+Offset anchors contain only index keys and offsets. They are independent of:
+
+- FlatPress language,
+- output charset,
+- date/month translations,
+- theme,
+- Smarty,
+- rendered content.
+
+Changing language or charset therefore does not require anchor invalidation.
+
+**Impact:**  
+Low on shallow pages by design; high on deep entry-stream pagination of large blogs after warm-up.
+
+---
+
 
 ## 3. Plugin and Template Infrastructure Caches
 
@@ -481,8 +618,8 @@ Medium. Particularly useful when image metadata is frequently queried.
 **Prefixes:**
 
 - `fp:archives:v`
-- `fp:archives:list:vN:<sig>`
-- `fp:archives:html:vN:<sig>`
+- `fp:archives:list:vN:loc-<sha1(lang|charset)>:<sig>`
+- `fp:archives:html:vN:loc-<sha1(lang|charset)>:<sig>`
 
 **File:** `fp-plugins/archives/plugin.archives.php`  
 
@@ -492,6 +629,13 @@ Medium. Particularly useful when image metadata is frequently queried.
 - `fp:archives:html:` – Pre-rendered HTML for the archive widget, including links.
 
 Both store BLOG_BASEURL as a placeholder `%BLOG_BASEURL%` and expand it on read.
+
+**Language and charset isolation:**
+
+- The APCu key contains `sha1(lowercase(lang) . '|' . lowercase(charset))`.
+- The request-local archive cache uses the same locale/charset context.
+- Switching the configured FlatPress language or output charset therefore cannot reuse a previously rendered month list from another locale.
+- This matters because archive labels contain translated month names from the active FlatPress language data.
 
 **Invalidation:**
 
@@ -1113,6 +1257,7 @@ The following table summarizes each logical cache group:
 | Base URL Config             | `fp:config:settings:*`                                                              | No                       | File mtime/size via `stat()`, TTL 1h                               | Medium                  |
 | File I/O                    | `fp:io:*`                                                                           | No                       | File mtime/size, TTL (default 1h)                                  | High                    |
 | Entries                     | `fp:entry:parsed:*`                                                                 | No                       | Entry file mtime/size                                              | High                    |
+| Stream offset anchors       | `fp:fpdb:offset-anchors:v1:*`                                                       | No                       | Main-index generation + mtime/size/length                          | High on deep pages      |
 | Comments                    | `fp:comments:list:*`, `fp:comments:count:*`                                         | No                       | Comment dir mtime, TTL 300s (APCu) + file fallback                 | Medium–High             |
 | Static pages                | `fp:statics:list:*`                                                                 | No                       | Static dir mtime/size, TTL 600s                                    | Medium                  |
 | Categories                  | `fp:cats:list:*`, `fp:cats:encoded:*`                                               | No                       | Categories file mtime/size, TTL 600s                               | Medium                  |
@@ -1125,7 +1270,7 @@ The following table summarizes each logical cache group:
 | Smarty plugin index         | `fp:spi:*`                                                                          | No                       | Dir+token hash, TTL 300s                                           | Medium                  |
 | Search                      | `fp:search:rev`, `fp:search:v*`                                                     | No                       | Content rev + TTL (5s / 900s)                                      | Medium                  |
 | BBCode                      | `fp:bbcode:*`                                                                       | No                       | Parser/img/meta mtimes, TTL 300–7200s                              | Medium–High             |
-| Archives                    | `fp:archives:v`, `fp:archives:list*`, `fp:archives:html*`                           | **Yes**                  | `plugin_archives_cache_bump()` + PrettyURLs bump                   | Medium                  |
+| Archives                    | `fp:archives:v`, `fp:archives:list*`, `fp:archives:html*`                           | **Yes**                  | Generation/PrettyURLs bump + language/charset key                  | Medium                  |
 | Calendar                    | `fp:calendar:v`, `calendar:*:vN`                                                    | **Yes**                  | `plugin_calendar_cache_bump()` + PrettyURLs bump                   | Medium–High             |
 | Storage plugin              | `fp:storage:v`, `fp:storage:aggregate*`, `fp:storage:dirsize*`, `fp:storage:quota*` | No                       | Post-success hooks + generation bump + JSON purge/TTL              | Medium–High             |
 | Mastodon instance snapshot  | `fp:mastodon:instance_document:<sha1(instance_url)>`                                | No                       | TTL 900s, `instance_url` change, snapshot refresh                  | Low–Medium              |
@@ -1160,6 +1305,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.6.dev`
 - `fp:comments:count:`
 - `fp:config:settings:`
 - `fp:entry:parsed:`
+- `fp:fpdb:offset-anchors:v1:`
 - `fp:https:v2:`
 - `fp:ini:`
 - `fp:io:`
