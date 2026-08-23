@@ -1,5 +1,68 @@
 <?php
 
+/**
+ * Returns the cache-generation token for the ordered main entry index.
+ *
+ * Offset anchors are read accelerators only. If the cache directory is not
+ * writable, returning false disables the optimization and the original
+ * B+ tree walker remains authoritative.
+ *
+ * @return string|false
+ */
+function entry_index_generation_read() {
+	$file = CACHE_DIR . '%%fpdb-index-generation.tmp';
+
+	// A read-only generation token cannot be rotated safely after writes.
+	// Disable anchor reuse instead of risking stale offsets.
+	if (is_file($file) && (!is_writable($file) || !is_writable(dirname($file)))) {
+		return false;
+	}
+
+	$raw = io_load_file_uncached($file);
+	if (is_string($raw) && trim($raw) !== '') {
+		return trim($raw);
+	}
+
+	try {
+		$random = bin2hex(random_bytes(12));
+	} catch (\Exception $e) {
+		$random = str_replace('.', '', uniqid('', true));
+	}
+	$token = sprintf('%.6F', microtime(true)) . '-' . $random;
+
+	if (!io_write_file($file, $token . "\n")) {
+		return false;
+	}
+
+	return $token;
+}
+
+/**
+ * Rotates the main entry-index generation after an ordered key-set mutation.
+ *
+ * A failed cache write must never make an entry save/delete fail. Removing
+ * the token disables offset-anchor reuse until a fresh token can be created.
+ *
+ * @return bool
+ */
+function entry_index_generation_bump() {
+	$file = CACHE_DIR . '%%fpdb-index-generation.tmp';
+
+	try {
+		$random = bin2hex(random_bytes(12));
+	} catch (\Exception $e) {
+		$random = str_replace('.', '', uniqid('', true));
+	}
+	$token = sprintf('%.6F', microtime(true)) . '-' . $random;
+
+	if (io_write_file($file, $token . "\n")) {
+		return true;
+	}
+
+	io_delete_file($file);
+	return false;
+}
+
 class entry_cached_index extends caching_SBPT {
  // cache_filelister {
 	var $position = 0;
@@ -24,7 +87,6 @@ class entry_cached_index extends caching_SBPT {
 
 		$this->open();
 	}
-
 }
 
 class entry_index {
@@ -153,6 +215,7 @@ class entry_index {
 
 		$main = & $this->get_index();
 		$seek = null;
+		$main_key_existed = ($main->has_key($key) !== false);
 
 		// title must not be updated, let's get the offset value from has_key
 		if (!$update_title) {
@@ -212,6 +275,12 @@ class entry_index {
 			}
 		}
 
+		// Only insertion/removal of an ordered main-index key changes offsets.
+		// Title/category-only edits keep existing offset anchors valid.
+		if (!$main_key_existed) {
+			entry_index_generation_bump();
+		}
+
 		return $this->_lock_release();
 	}
 
@@ -237,9 +306,9 @@ class entry_index {
 			}
 		}
 
+		entry_index_generation_bump();
 		return $this->_lock_release();
 	}
-
 }
 
 class entry_archives extends fs_filelister {
@@ -297,7 +366,6 @@ class entry_archives extends fs_filelister {
 	function getCount() {
 		return $this->_count;
 	}
-
 }
 
 /**

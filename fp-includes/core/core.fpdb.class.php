@@ -1,5 +1,194 @@
 <?php
 
+/**
+ * Read-only offset-anchor cache for the unfiltered main entry stream.
+ *
+ * The B+ tree remains authoritative. Anchors only remember a key at a known
+ * absolute offset and are ignored whenever the main-index generation changes.
+ * Backend order is request-local memory -> APCu -> regenerable file cache.
+ */
+class FPDB_OffsetAnchorCache {
+
+	private static $local = array();
+
+	/**
+	 * Allows hosts to disable the optimization without changing FlatPress.
+	 * Default: enabled.
+	 *
+	 * @return bool
+	 */
+	static function enabled() {
+		$value = getenv('FP_FPDB_OFFSET_ANCHORS');
+		if ($value === false && isset($_ENV ['FP_FPDB_OFFSET_ANCHORS'])) {
+			$value = $_ENV ['FP_FPDB_OFFSET_ANCHORS'];
+		}
+		if ($value === false || $value === '') {
+			return true;
+		}
+
+		$value = strtolower(trim((string)$value));
+		return !in_array($value, array('0', 'false', 'off', 'no'), true);
+	}
+
+	/**
+	 * Returns an anchor spacing that stays bounded for very large indexes.
+	 * The environment override is optional and clamped to a safe range.
+	 *
+	 * @param int $index_length
+	 * @return int
+	 */
+	static function step($index_length = 0) {
+		$step = 128;
+		$value = getenv('FP_FPDB_ANCHOR_STEP');
+		if ($value === false && isset($_ENV ['FP_FPDB_ANCHOR_STEP'])) {
+			$value = $_ENV ['FP_FPDB_ANCHOR_STEP'];
+		}
+		if ($value !== false && is_numeric($value)) {
+			$step = (int)$value;
+		}
+
+		$step = max(16, min(4096, $step));
+		$index_length = max(0, (int)$index_length);
+
+		// Keep the persistent map at roughly <= 8192 fixed anchors.
+		if ($index_length > 0) {
+			$bounded = (int)ceil($index_length / 8192);
+			$step = max($step, $bounded);
+		}
+
+		return $step;
+	}
+
+	/**
+	 * Builds the validity signature for the ordered main index.
+	 *
+	 * The generation token handles same-second/same-size mutations through
+	 * FlatPress. mtime/size/length additionally detect most external changes.
+	 *
+	 * @param BPlusTree $entry_index
+	 * @return string|false
+	 */
+	static function signature(&$entry_index) {
+		if (!self::enabled()) {
+			return false;
+		}
+
+		$generation = entry_index_generation_read();
+		if ($generation === false || $generation === '') {
+			return false;
+		}
+
+		$file = INDEX_DIR . 'index-0.dat';
+		clearstatcache(true, $file);
+		$mtime = @filemtime($file);
+		$size = @filesize($file);
+		$length = $entry_index->length();
+
+		if ($mtime === false || $size === false || $length === false) {
+			return false;
+		}
+
+		return 'v1:' . $generation . ':' . (int)$mtime . ':' . (int)$size . ':' . (int)$length;
+	}
+
+	/**
+	 * @param mixed $anchors
+	 * @return array<int,array{key:string,prev:string}>
+	 */
+	private static function normalize_anchors($anchors) {
+		$normalized = array();
+		if (!is_array($anchors)) {
+			return $normalized;
+		}
+
+		foreach ($anchors as $offset => $anchor) {
+			if (!is_numeric($offset) || (int)$offset < 0 || !is_array($anchor)) {
+				continue;
+			}
+			$key = isset($anchor ['key']) && is_string($anchor ['key']) ? $anchor ['key'] : '';
+			$prev = isset($anchor ['prev']) && is_string($anchor ['prev']) ? $anchor ['prev'] : '';
+			if ($key === '') {
+				continue;
+			}
+			$normalized [(int)$offset] = array(
+				'key' => $key,
+				'prev' => $prev
+			);
+		}
+
+		ksort($normalized, SORT_NUMERIC);
+		return $normalized;
+	}
+
+	/**
+	 * @param string $signature
+	 * @return array<int,array{key:string,prev:string}>
+	 */
+	static function load($signature) {
+		if (isset(self::$local [$signature])) {
+			return self::$local [$signature];
+		}
+
+		$key = 'fp:fpdb:offset-anchors:v1:' . sha1($signature);
+		if (function_exists('is_apcu_on') && is_apcu_on()) {
+			$hit = false;
+			$payload = apcu_get($key, $hit);
+			if ($hit && is_array($payload) && isset($payload ['signature']) && $payload ['signature'] === $signature) {
+				$anchors = self::normalize_anchors(isset($payload ['anchors']) ? $payload ['anchors'] : array());
+				return self::$local [$signature] = $anchors;
+			}
+		}
+
+		$file = CACHE_DIR . '%%fpdb-offset-anchors-v1.json';
+		$raw = io_load_file_uncached($file);
+		if (is_string($raw) && $raw !== '') {
+			$payload = json_decode($raw, true);
+			if (is_array($payload) && isset($payload ['version'], $payload ['signature']) &&
+				(int)$payload ['version'] === 1 && $payload ['signature'] === $signature) {
+				$anchors = self::normalize_anchors(isset($payload ['anchors']) ? $payload ['anchors'] : array());
+				self::$local [$signature] = $anchors;
+				if (function_exists('is_apcu_on') && is_apcu_on()) {
+					apcu_set($key, array(
+						'version' => 1,
+						'signature' => $signature,
+						'anchors' => $anchors
+					), 3600);
+				}
+				return $anchors;
+			}
+		}
+
+		return self::$local [$signature] = array();
+	}
+
+	/**
+	 * @param string $signature
+	 * @param array<int,array{key:string,prev:string}> $anchors
+	 * @return void
+	 */
+	static function store($signature, $anchors) {
+		$anchors = self::normalize_anchors($anchors);
+		self::$local [$signature] = $anchors;
+
+		$payload = array(
+			'version' => 1,
+			'signature' => $signature,
+			'anchors' => $anchors
+		);
+
+		if (function_exists('is_apcu_on') && is_apcu_on()) {
+			apcu_set('fp:fpdb:offset-anchors:v1:' . sha1($signature), $payload, 3600);
+		}
+
+		$json = json_encode($payload);
+		if (is_string($json)) {
+			// Best effort only: failure leaves the B+ tree path fully functional.
+			io_write_file(CACHE_DIR . '%%fpdb-offset-anchors-v1.json', $json . "\n");
+		}
+	}
+}
+
+
 class FPDB_QueryParams {
 
 	var $id = null;
@@ -138,7 +327,6 @@ class FPDB_QueryParams {
 		$params = utils_kexplode(strtolower($str), ',:', false);
 		$this->validate_array($params);
 	}
-
 }
 
 class FPDB_Query {
@@ -183,6 +371,14 @@ class FPDB_Query {
 	var $comments = null;
 
 	var $preventry = array();
+
+	var $offset_anchor_signature = null;
+
+	var $offset_anchor_step = 0;
+
+	var $offset_anchor_map = array();
+
+	var $offset_anchor_dirty = false;
 
 	function __construct($params, $ID) {
 		global $current_query;
@@ -298,6 +494,131 @@ class FPDB_Query {
 		}
 	}
 
+	/**
+	 * Only the unfiltered chronological main stream is anchor-safe.
+	 *
+	 * @return bool
+	 */
+	function _offset_anchor_eligible() {
+		$qp = &$this->params;
+
+		return FPDB_OffsetAnchorCache::enabled() &&
+			!$this->single &&
+			!$qp->id &&
+			!$qp->random &&
+			!$qp->y &&
+			!$qp->m &&
+			!$qp->d &&
+			(int)$qp->category === 0 &&
+			!$qp->exclude &&
+			(int)$qp->start > 0 &&
+			(int)$qp->count > 0;
+	}
+
+	/**
+	 * Repositions the walker to the nearest verified absolute-offset anchor.
+	 *
+	 * @param BPlusTree $entry_index
+	 * @param int $index_count
+	 * @return void
+	 */
+	function _prepare_offset_anchor(&$entry_index, $index_count) {
+		if (!$this->_offset_anchor_eligible()) {
+			return;
+		}
+
+		$this->offset_anchor_step = FPDB_OffsetAnchorCache::step($index_count);
+		$target = (int)$this->params->start;
+
+		// Shallow pages are already faster with the original walker and should
+		// not pay generation/file-cache lookup overhead.
+		if ($target < $this->offset_anchor_step) {
+			return;
+		}
+
+		$signature = FPDB_OffsetAnchorCache::signature($entry_index);
+		if ($signature === false) {
+			return;
+		}
+
+		$this->offset_anchor_signature = $signature;
+		$this->offset_anchor_map = FPDB_OffsetAnchorCache::load($signature);
+		$best_offset = -1;
+		$best_anchor = null;
+
+		foreach ($this->offset_anchor_map as $offset => $anchor) {
+			$offset = (int)$offset;
+			if ($offset > 0 && $offset <= $target && $offset > $best_offset) {
+				$best_offset = $offset;
+				$best_anchor = $anchor;
+			}
+		}
+
+		if ($best_offset <= 0 || !is_array($best_anchor) || empty($best_anchor ['key'])) {
+			return;
+		}
+
+		$anchor_key = (string)$best_anchor ['key'];
+		$anchor_walker = &$entry_index->walker($anchor_key, true, null, null);
+
+		if (!$anchor_walker->valid || $anchor_walker->current_key() !== $anchor_key) {
+			return;
+		}
+
+		// Recheck after positioning so an index mutation cannot validate an
+		// anchor against a generation that changed while this request ran.
+		if (FPDB_OffsetAnchorCache::signature($entry_index) !== $signature) {
+			return;
+		}
+
+		$this->walker = &$anchor_walker;
+		$this->pointer = $best_offset;
+
+		$prev_key = isset($best_anchor ['prev']) && is_string($best_anchor ['prev']) ? $best_anchor ['prev'] : '';
+		$this->currentid = $prev_key !== '' ? entry_keytoid($prev_key) : '';
+	}
+
+	/**
+	 * Records a fixed-step anchor encountered by the original walker.
+	 *
+	 * @param string $key
+	 * @return void
+	 */
+	function _capture_offset_anchor($key) {
+		if (!is_string($this->offset_anchor_signature) || $this->offset_anchor_signature === '' ||
+			$this->offset_anchor_step <= 0 || $this->pointer <= 0 ||
+			($this->pointer % $this->offset_anchor_step) !== 0 ||
+			isset($this->offset_anchor_map [$this->pointer])) {
+			return;
+		}
+
+		$prev_key = $this->currentid !== '' ? entry_idtokey($this->currentid) : '';
+		$this->offset_anchor_map [$this->pointer] = array(
+			'key' => $key,
+			'prev' => $prev_key
+		);
+		$this->offset_anchor_dirty = true;
+	}
+
+	/**
+	 * Persists newly learned anchors only if the index generation is unchanged.
+	 *
+	 * @return void
+	 */
+	function _flush_offset_anchors() {
+		if (!$this->offset_anchor_dirty || !is_string($this->offset_anchor_signature) ||
+			$this->offset_anchor_signature === '' || !$this->main_idx) {
+			return;
+		}
+
+		$current_signature = FPDB_OffsetAnchorCache::signature($this->main_idx);
+		if ($current_signature === $this->offset_anchor_signature) {
+			FPDB_OffsetAnchorCache::store($this->offset_anchor_signature, $this->offset_anchor_map);
+		}
+
+		$this->offset_anchor_dirty = false;
+	}
+
 	function _prepare_list(&$entry_index) {
 		$qp = &$this->params;
 
@@ -338,6 +659,8 @@ class FPDB_Query {
 				$index_count = $qp->start = $qp->count = 0;
 			}
 		}
+
+		$this->_prepare_offset_anchor($entry_index, $index_count);
 	}
 
 	function _get_random_id(&$entry_index) {
@@ -477,6 +800,7 @@ class FPDB_Query {
 
 			$this->previd = $this->currentid;
 			$key = $this->walker->current_key();
+			$this->_capture_offset_anchor($key);
 			$id = $this->currentid = entry_keytoid($key);
 
 			if ($this->single) {
@@ -488,6 +812,13 @@ class FPDB_Query {
 			$this->walker->next();
 			$this->pointer++;
 		}
+
+		// A requested offset can itself be a fixed-step anchor. The loop above
+		// stops before processing that key, so capture it explicitly.
+		if ($this->walker->valid && $this->pointer === (int)$qp->start) {
+			$this->_capture_offset_anchor($this->walker->current_key());
+		}
+		$this->_flush_offset_anchors();
 
 		// if there is a secondary (not) idx
 		if ($this->secondary_idx) {
@@ -660,7 +991,6 @@ class FPDB_Query {
 			);
 		}
 	}
-
 }
 
 class FPDB_CommentList {
@@ -707,7 +1037,6 @@ class FPDB_CommentList {
 		);
 		return $couplet;
 	}
-
 }
 
 class FPDB {
@@ -813,7 +1142,6 @@ class FPDB {
 		}
 		return $o;
 	}
-
 }
 
 class FPDB_transaction {
@@ -837,7 +1165,6 @@ class FPDB_transaction {
 
 		$this->_tree = new caching_SBPT(fopen($this->_cachefile . '.dat', 'rb'), fopen($this->_cachefile . '.strings.dat', 'rb'), 256, $this->_offset, $this->_chunksize, $this->_keysize);
 	}
-
 }
 
 // SMARTY FUNCTIONS ----------------------------------------------------

@@ -161,7 +161,6 @@ class lang_indexer extends fs_filelister {
 
 		return 0;
 	}
-
 }
 
 function lang_list() {
@@ -182,13 +181,13 @@ function lang_list() {
  * Features:
  * - Validates and applies locale settings using combinations of `locale names` and `charsets`.
  * - Logs debug messages if the `DEBUG` constant is defined and enabled.
- * - Uses `locale -a` to verify available locales when supported.
+ * - Tries configured locale/charset candidates directly with `setlocale()`.
  * - Provides a fallback mechanism to `en_US.UTF-8` if no suitable locale is found.
  * - Ensures robust error handling and compatibility across different server setups.
  *
  * Requirements:
  * - `lang.conf.php` must define locale and charset mappings.
- * - If `locale -a` is unavailable, the function attempts direct locale setting.
+ * - No external locale-discovery process is required; unavailable candidates fail safely.
  *
  * Debugging:
  * - Enable detailed logging by defining the `DEBUG` constant as `true` in the configuration.
@@ -289,16 +288,6 @@ function set_locale() {
 		error_log('set_locale -> Adding charset variations. Current charset: ' . $charset);
 	}
 
-	$supportedLocales = [];
-	/** @phpstan-ignore-next-line */
-	if (DIRECTORY_SEPARATOR !== '\\' && function_exists('shell_exec') && is_callable('shell_exec') && stripos(ini_get('disable_functions'), 'shell_exec') === false) {
-		// Checks the supported locales with locale -a and only uses valid combinations
-		$output = shell_exec('locale -a 2>/dev/null');
-		if ($output !== null) {
-			$supportedLocales = explode("\n", trim($output));
-		}
-	}
-
 	// Check whether a locale is already set
 	$currentLocale = setlocale(LC_TIME, '0');
 	if ($debug) {
@@ -315,45 +304,25 @@ function set_locale() {
 	if (defined('LC_NUMERIC')) $localeCategories [] = LC_NUMERIC;
 	if (defined('LC_COLLATE')) $localeCategories [] = LC_COLLATE;
 
-	// If supportedLocales is not empty, validate against it
-	if (!empty($supportedLocales)) {
-		foreach ($localeVariantsWithCharsets as $variant) {
-			foreach ($localeCategories as $category) {
-				$currentLocale = @setlocale($category, $variant);
-				if ($currentLocale === false) {
-					if ($debug) {
-						error_log('set_locale -> Failed to set locale for category ' . $category . ': ' . $variant);
-					}
-				} else {
-					if ($debug) {
-						error_log('set_locale -> Locale set for category ' . $category . ': ' . $currentLocale);
-					}
-					$selectedLocale = $currentLocale;
+	// Try candidates directly. setlocale() is the authoritative and portable
+	// capability check; probing the host with an external `locale -a` process
+	// adds latency and is unavailable on many shared hosts.
+	foreach ($localeVariantsWithCharsets as $variant) {
+		foreach ($localeCategories as $category) {
+			$currentLocale = @setlocale($category, $variant);
+			if ($currentLocale === false) {
+				if ($debug) {
+					error_log('set_locale -> No set locale for category ' . $category . ': ' . $variant);
 				}
-			}
-			if ($selectedLocale) {
-				break;
+			} else {
+				if ($debug) {
+					error_log('set_locale -> Locale set for category ' . $category . ': ' . $currentLocale);
+				}
+				$selectedLocale = $currentLocale;
 			}
 		}
-	} else {
-		// If locale -a is not available, try setting directly
-		foreach ($localeVariantsWithCharsets as $variant) {
-			foreach ($localeCategories as $category) {
-				$currentLocale = @setlocale($category, $variant);
-				if ($currentLocale === false) {
-					if ($debug) {
-						error_log('set_locale -> No set locale for category ' . $category . ': ' . $variant);
-					}
-				} else {
-					if ($debug) {
-						error_log('set_locale -> Locale set for category ' . $category . ': ' . $variant);
-					}
-					$selectedLocale = $variant;
-				}
-			}
-			if ($selectedLocale) {
-				break;
-			}
+		if ($selectedLocale) {
+			break;
 		}
 	}
 

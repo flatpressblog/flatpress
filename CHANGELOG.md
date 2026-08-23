@@ -8,6 +8,7 @@
 - RSS and Atom feeds and the Categories widget use the Smarty block cache instead of having to go through the Smarty compiler every time. ([#864](https://github.com/flatpressblog/flatpress/pull/864))
 - If APCu is available, the Smarty cache fragments are stored in the APCu cache instead of on disk. ([#865](https://github.com/flatpressblog/flatpress/pull/865))
 - The sitemap returns an image from a post, if available. ([#940](https://github.com/flatpressblog/flatpress/pull/940))
+- Post navigation now uses secure, absolute offset anchors with request, APCu, and file cache fallbacks ([#944](https://github.com/flatpressblog/flatpress/pull/944))
 
 - Admin area:
     - No typographic quotes in the plugin management. ([#874](https://github.com/flatpressblog/flatpress/pull/874))
@@ -40,6 +41,7 @@
     - includes jQuery 4.0.0 and jQueryUI 1.14.2
 - Archives plugin update to version 1.1.2 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
+    - The archives cache has been made language- and character set-safe ([#944](https://github.com/flatpressblog/flatpress/pull/944))
 - Comment Center plugin update to version 1.1.5 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
     - jQuery / JS legacy code have been updated
 - CookieBanner plugin update to version 1.0.4 ([#896](https://github.com/flatpressblog/flatpress/pull/896))

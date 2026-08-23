@@ -229,27 +229,46 @@ function plugin_archives_cache_prepare_for_store($value) {
 	return $value;
 }
 
-function plugin_archives_cached_list() {
-	static $local = null;
-	if ($local !== null) {
-		return $local;
-	}
+/**
+ * Cache-key context for localized archive output.
+ *
+ * Archive labels contain translated month names. Charset is included as well
+ * because FlatPress can serve legacy output encodings configured per locale.
+ *
+ * @return string
+ */
+function plugin_archives_cache_locale_context() {
 	global $fp_config;
+
+	$lang = isset($fp_config ['locale'] ['lang']) ? strtolower((string)$fp_config ['locale'] ['lang']) : 'en-us';
+	$charset = isset($fp_config ['locale'] ['charset']) ? strtolower((string)$fp_config ['locale'] ['charset']) : 'utf-8';
+
+	return ':loc-' . sha1($lang . '|' . $charset);
+}
+
+function plugin_archives_cached_list() {
+	static $local = array();
+
 	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 	$ns = plugin_archives_cache_ns();
+	$locale_context = plugin_archives_cache_locale_context();
 	$sig = plugin_archives_mtime_sig_cached();
-	$key = 'fp:archives:list' . $ns . ':' . $sig;
+	$local_key = $locale_context . ':' . $sig;
+	if (isset($local [$local_key])) {
+		return $local [$local_key];
+	}
+	$key = 'fp:archives:list' . $ns . $locale_context . ':' . $sig;
 	if ($apcu_on) {
 		$hit = false;
 		$val = apcu_get($key, $hit);
 		if ($hit && is_array($val)) {
 			$val = plugin_archives_cache_expand_baseurl_list($val);
-			return $local = $val;
+			return $local [$local_key] = $val;
 		}
 	}
 	$obj = new plugin_archives_monthlist();
 	$list = $obj->getList();
-	$local = $list;
+	$local [$local_key] = $list;
 	if ($apcu_on) {
 		@apcu_set($key, plugin_archives_cache_prepare_for_store($list), 900);
 	}
@@ -257,26 +276,28 @@ function plugin_archives_cached_list() {
 }
 
 function plugin_archives_cached_html() {
-	static $local = null;
-	if ($local !== null) {
-		return $local;
-	}
-	global $fp_config;
+	static $local = array();
+
 	$apcu_on = function_exists('is_apcu_on') ? is_apcu_on() : false;
 	$ns = plugin_archives_cache_ns();
+	$locale_context = plugin_archives_cache_locale_context();
 	$sig = plugin_archives_mtime_sig_cached();
-	$key = 'fp:archives:html' . $ns . ':' . $sig;
+	$local_key = $locale_context . ':' . $sig;
+	if (isset($local [$local_key])) {
+		return $local [$local_key];
+	}
+	$key = 'fp:archives:html' . $ns . $locale_context . ':' . $sig;
 	if ($apcu_on) {
 		$hit = false;
 		$val = apcu_get($key, $hit);
 		if ($hit && is_string($val)) {
 			$val = plugin_archives_cache_expand_baseurl_html($val);
-			return $local = $val;
+			return $local [$local_key] = $val;
 		}
 	}
 	$obj = new plugin_archives_monthlist();
 	$html = $obj->getHtmlList();
-	$local = $html;
+	$local [$local_key] = $html;
 	if ($apcu_on) {
 		@apcu_set($key, plugin_archives_cache_prepare_for_store($html), 900);
 	}
