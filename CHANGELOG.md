@@ -78,7 +78,7 @@
 
 ### Security
 - BBCode plugin: update to version 2.0.4
-    - An XSS vulnerability in the BBCode plugin has been fixed. ([#941](https://github.com/flatpressblog/flatpress/pull/941))
+    - An XSS vulnerability in the BBCode plugin has been fixed. ([#941](https://github.com/flatpressblog/flatpress/pull/941), [#945](https://github.com/flatpressblog/flatpress/pull/945))
 
 ## Themes
 ### Changes
