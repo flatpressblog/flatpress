@@ -525,9 +525,11 @@ function do_bbcode_img($action, $attributes, $content, $params, $node_object) {
 		}
 	}
 
-	// Calculating the "loading" attribute of the image.
-	// For details, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-loading
-	// -> "lazy" is default (see https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading)
+	/**
+	 * Calculating the "loading" attribute of the image.
+	 * For details, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-loading
+	 * -> "lazy" is default (see https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading)
+	 */
 	$loadingValue = 'lazy';
 	// Use img attribute value if explicitly set
 	if (isset($attributes ['loading'])) {
@@ -808,7 +810,8 @@ function do_bbcode_color($action, $attributes, $content, $params, $node_object) 
 	if ($action == 'validate') {
 		return true;
 	}
-	return '<span style="color:' . $attributes ['default'] . ';">' . $content . '</span>';
+	$color = isset($attributes ['default']) ? $attributes ['default'] : '';
+	return '<span style="color:' . plugin_bbcode_escape_html_attribute($color) . ';">' . $content . '</span>';
 }
 
 /**
@@ -871,7 +874,8 @@ function do_bbcode_size($action, $attributes, $content, $params, $node_object) {
 	if ($action == 'validate') {
 		return true;
 	}
-	return '<span style="font-size:' . $attributes ['default'] . ';">' . $content . '</span>';
+	$size = isset($attributes ['default']) ? $attributes ['default'] : '';
+	return '<span style="font-size:' . plugin_bbcode_escape_html_attribute($size) . ';">' . $content . '</span>';
 }
 
 /**
@@ -887,7 +891,8 @@ function do_bbcode_size($action, $attributes, $content, $params, $node_object) {
  * @return string
  */
 function do_bbcode_align($action, $attr, $content, $params, $node_object) {
-	return '<div style="text-align:' . $attr ['default'] . '">' . $content . '</div>';
+	$align = isset($attr ['default']) ? $attr ['default'] : '';
+	return '<div style="text-align:' . plugin_bbcode_escape_html_attribute($align) . '">' . $content . '</div>';
 }
 
 /**
@@ -958,7 +963,7 @@ function &plugin_bbcode_init() {
 	$bbcode->setGlobalCaseSensitive(false); // don't care about case sensitivity: img == IMG == Img
 	$bbcode->setMixedAttributeTypes(true);
 
-	/*
+	/**
 	 * Tags that are same in BBCode and HTML ([i]...[/i] => <i>...</i>)
 	 */
 	$bbcode_tags_simple = array(
@@ -997,7 +1002,7 @@ function &plugin_bbcode_init() {
 		$bbcode->setCodeFlag($bbtag, 'closetag', BBCODE_CLOSETAG_MUSTEXIST);
 	}
 
-	/*
+	/**
 	 * other tags
 	 */
 	// underlined text
@@ -1568,9 +1573,6 @@ function plugin_bbcode_undoHtml($text) {
 	return $text;
 }
 
-// ------------------------------------------------------------------------------
-// obfuscate mail adresses
-// ------------------------------------------------------------------------------
 /**
  * Obfuscates the given email adress with the given mode.
  * Thanks for spam-me-not.php to Rolf Offermanns!
