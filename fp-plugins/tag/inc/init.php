@@ -1,4 +1,81 @@
 <?php
+class plugin_tag_walker {
+
+	// The entry keys provided by the tag index
+	var $keys = array();
+
+	// Current position in the entry key list
+	var $position = 0;
+
+	// Is the walker still valid?
+	var $valid = false;
+
+	/**
+	 * plugin_tag_walker
+	 *
+	 * Each FPDB query gets its own walker instance, so nested or parallel
+	 * queries do not consume the cursor of the original tag query.
+	 *
+	 * @param array $keys The ordered entry keys for the selected tag
+	 */
+	function __construct($keys) {
+		$this->keys = $keys;
+		$this->valid = isset($this->keys [0]);
+	}
+
+	/**
+	 * current_key
+	 *
+	 * @return string|false The key of the current entry
+	 */
+	function current_key() {
+		if (!$this->valid || !isset($this->keys [$this->position])) {
+			return false;
+		}
+
+		return $this->keys [$this->position];
+	}
+
+	/**
+	 * current_value
+	 *
+	 * Return the title stored in the main entry index for the current key.
+	 *
+	 * @return string|false The title of the current entry
+	 */
+	function current_value() {
+		global $fpdb;
+
+		$key = $this->current_key();
+		if ($key === false) {
+			return false;
+		}
+
+		$entry_index = &$fpdb->get_index(0);
+		if (!$entry_index) {
+			return false;
+		}
+
+		return $entry_index->getitem($key);
+	}
+
+	/**
+	 * next
+	 *
+	 * @return string|false The key of the next entry in the list
+	 */
+	function next() {
+		$this->position++;
+		$this->valid = isset($this->keys [$this->position]);
+
+		if (!$this->valid) {
+			return false;
+		}
+
+		return $this->keys [$this->position];
+	}
+}
+
 class plugin_tag_init {
 
 	// The tag_db object, null for now
@@ -86,32 +163,6 @@ class plugin_tag_init {
 	}
 
 	/**
-	 * current_key
-	 *
-	 * This function is used from the walker.
-	 *
-	 * @return string|false The key of the current entry
-	 */
-	function current_key() {
-		return current($this->walker_array);
-	}
-
-	/**
-	 * next
-	 *
-	 * This function is used from the walker.
-	 *
-	 * @return string|false The key of the next entry in the list
-	 */
-	function next() {
-		$n = next($this->walker_array);
-		if ($n === false) {
-			$this->valid = false;
-		}
-		return $n;
-	}
-
-	/**
 	 * length
 	 *
 	 * This function is used from the walker.
@@ -126,12 +177,15 @@ class plugin_tag_init {
 	 * walker
 	 *
 	 * This function is used from FPDB.
+	 * Each call returns an independent walker so parallel queries
+	 * cannot consume each other's cursor.
 	 *
-	 * @return object $this by reference
+	 * @return object A new tag walker by reference
 	 */
 	function &walker() {
 		$this->valid = true;
-		return $this;
+		$walker = new plugin_tag_walker($this->walker_array);
+		return $walker;
 	}
 
 	/**
