@@ -11,8 +11,9 @@
 // FIXME: Add a config option in the plugin panel to set this value
 define('ITEMSPERPAGE', 50);
 
+require_once plugin_getdir('mediamanager') . '/inc/usage-index.php';
+
 if (class_exists('AdminPanelAction')) {
-	require_once plugin_getdir('mediamanager') . '/inc/usage-index.php';
 	include (plugin_getdir('mediamanager') . '/panels/panel.mediamanager.file.php');
 }
 
