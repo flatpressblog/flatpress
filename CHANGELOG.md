@@ -18,6 +18,8 @@
 - A security vulnerability that listed and disclosed unpublished drafts has been fixed. ([#936](https://github.com/flatpressblog/flatpress/pull/936))
 
 ### Bugfixes
+- Public URL detection now separates backend and browser-visible scheme/port on TLS-terminating proxies and avoids leaking an internal port such as `:80` into HTTPS URLs.
+- The update check now exposes transport/HTTP diagnostics when outbound server-to-server access is blocked.
 - Fix 4-byte UTF-8 encoding in ``utf8_uri_encode()`` to prevent emoji-based PrettyURLs from generating invalid slugs. ([#925](https://github.com/flatpressblog/flatpress/issues/925))
 
 ## Plugins
@@ -75,6 +77,8 @@
     - ``*Text*`` is no longer incorrectly displayed in bold ([extras #60](https://github.com/flatpressblog/flatpress-extras/issues/60))
 - SEO Meta Tag Info plugin update to version 2.3.1
     - A missing key when changing the language no longer causes an error ([Thank you very much to Laborix](https://forum.flatpress.org/viewtopic.php?p=3631#p3626))
+- PrettyURLs update to version 3.0.6
+    - Automatic mode now requires positive rewrite evidence and falls back to HTTP Get when rewrite support cannot be proven; explicit Pretty mode remains available for NGINX.
 
 ### Security
 - BBCode plugin: update to version 2.0.4

@@ -1,0 +1,154 @@
+<?php
+/**
+ * Regression checks for public URL / reverse-proxy detection.
+ * Run from the repository root with:
+ *   php tests/connection_proxy_regression.ph_
+ */
+
+function fp_regression_assert($condition, $message) {
+	if (!$condition) {
+		echo "FAIL: " . $message . PHP_EOL;
+		exit(1);
+	}
+	echo "PASS: " . $message . PHP_EOL;
+}
+
+$fixtureRoot = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'flatpress-connection-regression-' . getmypid();
+@mkdir($fixtureRoot, 0777, true);
+$configFile = $fixtureRoot . DIRECTORY_SEPARATOR . 'settings.conf.php';
+$lockFile = $fixtureRoot . DIRECTORY_SEPARATOR . 'setup.lock';
+@file_put_contents($lockFile, 'locked');
+
+function fp_regression_write_config($configFile, $trust) {
+	$content = "<?php\n\$fp_config = array('general' => array('www' => 'https://example.test/blog/', 'trust_forwarded_scheme' => " . ($trust ? 'true' : 'false') . "));\n?>\n";
+	file_put_contents($configFile, $content);
+	clearstatcache(true, $configFile);
+}
+
+fp_regression_write_config($configFile, false);
+
+define('ABS_PATH', $fixtureRoot . DIRECTORY_SEPARATOR);
+define('CONFIG_FILE', $configFile);
+define('LOCKFILE', $lockFile);
+define('BLOG_ROOT', '/blog/');
+define('CACHE_DIR', $fixtureRoot . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR);
+define('COMPILE_DIR', $fixtureRoot . DIRECTORY_SEPARATOR . 'compile' . DIRECTORY_SEPARATOR);
+define('FP_CONTENT', $fixtureRoot . DIRECTORY_SEPARATOR);
+define('DIR_PERMISSIONS', 0755);
+define('FILE_PERMISSIONS', 0644);
+
+$_SERVER = array(
+	'SERVER_NAME' => 'example.test',
+	'SERVER_PORT' => '80',
+	'REQUEST_SCHEME' => 'http',
+	'HTTP_X_FORWARDED_PROTO' => 'https',
+	'REQUEST_URI' => '/blog/',
+	'SCRIPT_NAME' => '/blog/index.php',
+	'REQUEST_METHOD' => 'GET',
+	'REMOTE_ADDR' => '8.8.8.8'
+);
+
+require dirname(__DIR__) . '/fp-includes/core/core.connection.php';
+
+$candidate = fp_setup_baseurl_candidate();
+fp_regression_assert($candidate === 'https://example.test/blog/', 'setup candidate uses forwarded HTTPS without exposing backend :80');
+
+$context = fp_public_request_context();
+fp_regression_assert($context ['scheme'] === 'http' && $context ['source'] === 'origin', 'single untrusted X-Forwarded-Proto is not trusted at runtime');
+fp_regression_assert(fp_should_trust_forwarded_scheme_for_url('https://example.test/blog/'), 'setup/config confirmation can persist forwarded-scheme trust for a matching host');
+fp_regression_assert(!fp_should_trust_forwarded_scheme_for_url('https://other.example/blog/'), 'forwarded-scheme trust is not persisted for a different host');
+
+// Some hosting stacks may set HTTPS=on even though the PHP backend still runs
+// on HTTP port 80. The forwarded HTTPS candidate must win for setup/public-port
+// purposes, but only after the normal trust/candidate policy has accepted it.
+$_SERVER ['HTTPS'] = 'on';
+$_SERVER ['REQUEST_SCHEME'] = 'http';
+$_SERVER ['SERVER_PORT'] = '80';
+$_SERVER ['HTTP_X_FORWARDED_PROTO'] = 'https';
+fp_regression_write_config($configFile, false);
+$candidate = fp_setup_baseurl_candidate();
+fp_regression_assert($candidate === 'https://example.test/blog/', 'HTTPS=on plus backend HTTP:80 does not leak :80 into the setup candidate');
+fp_regression_assert(fp_should_trust_forwarded_scheme_for_url('https://example.test/blog/'), 'setup confirmation persists forwarded transport trust when HTTPS=on masks backend HTTP:80');
+
+fp_regression_write_config($configFile, true);
+$context = fp_public_request_context();
+fp_regression_assert($context ['scheme'] === 'https' && $context ['port'] === 443 && $context ['source'] === 'configured-proxy', 'persisted trust normalizes HTTPS=on plus backend HTTP:80 to public 443');
+
+unset($_SERVER ['HTTPS']);
+$_SERVER ['REQUEST_SCHEME'] = 'http';
+$_SERVER ['SERVER_PORT'] = '80';
+fp_regression_write_config($configFile, false);
+
+fp_regression_assert(!fp_https_redirect_required('https://example.test/blog/', false, false), 'untrusted first-install HTTPS proposal never triggers canonical redirect');
+fp_regression_assert(fp_https_redirect_required('https://example.test/blog/', true, false), 'trusted configured HTTPS URL may trigger an HTTP-to-HTTPS redirect');
+fp_regression_assert(!fp_https_redirect_required('https://example.test/blog/', true, true), 'trusted configured HTTPS URL does not redirect an already-HTTPS request');
+
+fp_regression_write_config($configFile, true);
+$context = fp_public_request_context();
+fp_regression_assert($context ['scheme'] === 'https' && $context ['port'] === 443 && $context ['source'] === 'configured-proxy', 'persisted trust recognizes TLS termination and uses public port 443');
+fp_regression_assert(canonical_server_host() === 'example.test', 'canonical server host does not append backend port 80 to public HTTPS');
+fp_regression_assert(fp_current_public_url('/blog/example/?a=1') === 'https://example.test/blog/example/?a=1', 'central public URL helper uses canonical HTTPS origin without backend :80');
+
+$_SERVER ['HTTP_X_FORWARDED_PROTO'] = 'https,http';
+$context = fp_public_request_context();
+fp_regression_assert($context ['scheme'] === 'http', 'mixed forwarded schemes remain ambiguous and are not trusted');
+
+$_SERVER ['HTTP_X_FORWARDED_PROTO'] = 'https';
+$_SERVER ['HTTP_X_FORWARDED_FOR'] = '198.51.100.20';
+fp_regression_write_config($configFile, false);
+$context = fp_public_request_context();
+fp_regression_assert($context ['scheme'] === 'https' && $context ['source'] === 'proxy-heuristic', 'proxy identity plus HTTPS hint is accepted');
+unset($_SERVER ['HTTP_X_FORWARDED_FOR']);
+
+$_SERVER ['REMOTE_ADDR'] = '10.0.0.2';
+$context = fp_public_request_context();
+fp_regression_assert($context ['scheme'] === 'https' && $context ['source'] === 'trusted-proxy', 'private reverse-proxy hop plus HTTPS hint is accepted');
+
+$_SERVER ['REMOTE_ADDR'] = '8.8.8.8';
+$_SERVER ['HTTP_X_FORWARDED_PROTO'] = '';
+$_SERVER ['REQUEST_SCHEME'] = 'https';
+$_SERVER ['SERVER_PORT'] = '8443';
+$context = fp_public_request_context();
+fp_regression_assert($context ['scheme'] === 'https' && $context ['port'] === 8443 && $context ['source'] === 'origin', 'direct HTTPS on non-default port 8443 is preserved');
+
+$_SERVER ['HTTP_X_FORWARDED_PROTO'] = 'https';
+$context = fp_public_request_context(array(), true);
+fp_regression_assert($context ['scheme'] === 'https' && $context ['port'] === 8443 && $context ['source'] === 'origin', 'untrusted forwarded HTTPS does not rewrite a coherent direct HTTPS :8443 origin');
+
+$_SERVER ['REQUEST_SCHEME'] = 'http';
+$_SERVER ['SERVER_PORT'] = '8080';
+$context = fp_public_request_context();
+fp_regression_assert($context ['scheme'] === 'http' && $context ['port'] === 8080, 'direct HTTP on non-default port 8080 is preserved');
+
+$_SERVER ['SERVER_PORT'] = '80';
+$_SERVER ['HTTP_X_FORWARDED_PROTO'] = 'https';
+$_SERVER ['HTTP_X_FORWARDED_PORT'] = '8443';
+$candidate = fp_setup_baseurl_candidate();
+fp_regression_assert($candidate === 'https://example.test:8443/blog/', 'explicit public forwarded port is retained in setup candidate');
+
+$_SERVER ['HTTP_X_FORWARDED_PORT'] = '443,8443';
+$candidate = fp_setup_baseurl_candidate();
+fp_regression_assert($candidate === 'http://example.test/blog/', 'ambiguous forwarded ports invalidate the forwarded candidate instead of guessing a public origin');
+
+$_SERVER ['HTTP_X_FORWARDED_PORT'] = '443';
+$candidate = fp_setup_baseurl_candidate();
+fp_regression_assert($candidate === 'https://example.test/blog/', 'default forwarded HTTPS port 443 is omitted from the public URL');
+unset($_SERVER ['HTTP_X_FORWARDED_PORT']);
+
+$_SERVER ['HTTP_X_FORWARDED_PROTO'] = 'http';
+$_SERVER ['REQUEST_SCHEME'] = 'https';
+$_SERVER ['SERVER_PORT'] = '443';
+$context = fp_public_request_context();
+fp_regression_assert($context ['scheme'] === 'https' && $context ['source'] === 'origin', 'a contradictory untrusted forwarded scheme cannot downgrade coherent direct HTTPS');
+
+$_SERVER ['SERVER_NAME'] = "bad.example\r\nX-Test: injected";
+fp_regression_assert(canonical_server_name() === 'localhost', 'invalid SERVER_NAME cannot be injected into generated URLs');
+
+@unlink($configFile);
+@unlink($lockFile);
+@rmdir($fixtureRoot . DIRECTORY_SEPARATOR . 'cache');
+@rmdir($fixtureRoot . DIRECTORY_SEPARATOR . 'compile');
+@rmdir($fixtureRoot);
+
+echo PHP_EOL . "All connection/proxy regression checks passed." . PHP_EOL;
+exit(0);

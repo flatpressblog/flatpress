@@ -14,7 +14,7 @@
 {html_form}
 
 	<h3>{$plang.mode}</h3>
-	<dl>
+	<dl id="prettyurls-mode-capabilities" data-pathinfo-probe-url="{$capability_probe_pathinfo_url|escape:'html'}" data-get-probe-url="{$capability_probe_get_url|escape:'html'}" data-pretty-probe-url="{$capability_probe_pretty_url|escape:'html'}">
 		<dt>
 			<label>
 				<input type="radio" name="mode" value="0"{if $pconfig.mode == 0} checked=checked{/if}> {$plang.auto}
@@ -23,23 +23,27 @@
 		<dd>{$plang.autodescr}</dd>
 		<dt>
 			<label>
-				<input type="radio" name="mode" value="1"{if not $can_pathinfo} disabled="disabled"{/if}{if $can_pathinfo and $pconfig.mode == 1} checked=checked{/if}> {$plang.pathinfo} {if $can_pathinfo && isset($auto_mode_index) && $auto_mode_index == 1} <img src="{$check_icon_url}" alt="auto" width="12" height="12" style="vertical-align:middle;">{/if}
+				<input type="radio" name="mode" value="1"{if not $can_pathinfo} disabled="disabled"{/if}{if $pconfig.mode == 1} checked=checked{/if}> {$plang.pathinfo}
+				<span data-prettyurls-capability="pathinfo"{if not isset($detected_pathinfo) or not $detected_pathinfo} hidden="hidden"{/if}><img src="{$check_icon_url}" alt="" width="12" height="12" style="vertical-align:middle;"></span>
 			</label>
 		</dt>
 		<dd>{$plang.pathinfodescr}</dd>
 		<dt>
 			<label>
-				<input type="radio" name="mode" value="2"{if not $can_get} disabled="disabled"{/if}{if $can_get and $pconfig.mode == 2} checked=checked{/if}> {$plang.httpget} {if $can_get && isset($auto_mode_index) && $auto_mode_index == 2} <img src="{$check_icon_url}" alt="auto" width="12" height="12" style="vertical-align: middle;">{/if}
+				<input type="radio" name="mode" value="2"{if not $can_get} disabled="disabled"{/if}{if $can_get and $pconfig.mode == 2} checked=checked{/if}> {$plang.httpget}
+				<span data-prettyurls-capability="get"{if not isset($detected_get) or not $detected_get} hidden="hidden"{/if}><img src="{$check_icon_url}" alt="" width="12" height="12" style="vertical-align:middle;"></span>
 			</label>
 		</dt>
 		<dd>{$plang.httpgetdescr}</dd>
 		<dt>
 			<label>
-				<input type="radio" name="mode" value="3"{if not $can_pretty} disabled="disabled"{/if}{if $can_pretty and $pconfig.mode == 3} checked=checked{/if}> {$plang.pretty} {if $can_pretty && isset($auto_mode_index) && $auto_mode_index == 3} <img src="{$check_icon_url}" alt="auto" width="12" height="12" style="vertical-align: middle;">{/if}
+				<input type="radio" name="mode" value="3"{if $pconfig.mode == 3} checked=checked{/if}> {$plang.pretty}
+				<span data-prettyurls-capability="pretty"{if not isset($detected_pretty) or not $detected_pretty} hidden="hidden"{/if}><img src="{$check_icon_url}" alt="" width="12" height="12" style="vertical-align:middle;"></span>
 			</label>
 		</dt>
 		<dd>{$plang.prettydescr}</dd>
 	</dl>
+	<script nonce="{$random_hex|escape:'html'}" src="{$capability_probe_script_url|escape:'html'}" defer></script>
 
 	<div class="buttonbar">
 		<input type="submit" name="saveopt" value="{$plang.saveopt}">

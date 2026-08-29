@@ -605,7 +605,8 @@ function utils_geturl($url) {
 		'errno' => 1,
 		'errmsg' => '',
 		'http_code' => 0,
-		'content' => ''
+		'content' => '',
+		'transport' => 'none'
 	);
 
 	// Preferred transport: cURL
@@ -640,6 +641,7 @@ function utils_geturl($url) {
 		$header ['errno'] = $err;
 		$header ['errmsg'] = $errmsg;
 		$header ['content'] = $content;
+		$header ['transport'] = 'curl';
 
 		return $header;
 	}
@@ -660,6 +662,7 @@ function utils_geturl($url) {
 		$ret = $default;
 		$ret ['errno'] = 0;
 		$ret ['url'] = $url;
+		$ret ['transport'] = 'stream';
 
 		// Use fopen() + stream_get_meta_data() to get headers without relying on $http_response_header
 		$fp = @fopen($url, 'rb', false, $context);

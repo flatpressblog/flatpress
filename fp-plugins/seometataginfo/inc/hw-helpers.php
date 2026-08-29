@@ -151,20 +151,15 @@ if (!function_exists('pathinfo_filename')) {
 if (!function_exists('currentPageURL')) {
 
 	function currentPageURL() {
-
-		$protocol = is_https() ? "https" : "http";
-
-		$port = $_SERVER ['SERVER_PORT'];
-
-		if (!empty($_SERVER ['HTTP_X_FORWARDED_PORT'])) {
-			$port = $_SERVER ['HTTP_X_FORWARDED_PORT'];
+		if (function_exists('fp_current_public_url')) {
+			return fp_current_public_url();
 		}
 
-		$portString = (!in_array($port, ["80", "443"])) ? ":" . $port : "";
-
-		$curpageURL = $protocol . "://" . $_SERVER ["SERVER_NAME"] . $portString . $_SERVER ["REQUEST_URI"];
-
-		return $curpageURL;
+		// Compatibility fallback for unusual bootstrap contexts where core.connection.php was not loaded.
+		$protocol = function_exists('is_https') && is_https() ? "https" : "http";
+		$host = isset($_SERVER ["SERVER_NAME"]) ? (string)$_SERVER ["SERVER_NAME"] : 'localhost';
+		$requestUri = isset($_SERVER ["REQUEST_URI"]) ? (string)$_SERVER ["REQUEST_URI"] : '/';
+		return $protocol . "://" . $host . $requestUri;
 	}
 }
 

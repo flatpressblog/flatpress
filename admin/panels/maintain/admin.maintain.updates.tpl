@@ -5,3 +5,6 @@
 <h5>{$panelstrings.notice}</h5>
 <p>{$notice}</p>
 {/if}
+{if $success == -1 && $update_diagnostic}
+<p><code>{$update_diagnostic|escape:'html'}</code></p>
+{/if}

@@ -2,6 +2,7 @@
 $fp_config = array(
 	'general' => array(
 		'www' => 'http://localhost',
+		'trust_forwarded_scheme' => false,
 		'title' => 'FlatPress',
 		'subtitle' => 'My FlatPress blog',
 		'footer' => '',

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: PrettyURLs
- * Version: 3.0.5
+ * Version: 3.0.6
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
@@ -17,6 +17,7 @@ if (!defined('PRETTYURLS_TITLES')) {
 define('PRETTYURLS_PATHINFO', !file_exists(ABS_PATH . '.htaccess'));
 define('PRETTYURLS_CACHE', CACHE_DIR . '%%prettyurls-index.tmp');
 define('PRETTYURLS_CATS', CACHE_DIR . '%%prettyurls-cats.tmp');
+define('PRETTYURLS_CAPABILITY_PROBE', '__flatpress_prettyurls_probe__');
 
 /**
  * Return whether PrettyURLs should use title-based URL slugs.
@@ -298,36 +299,42 @@ class Plugin_PrettyURLs {
 		$_GET ['feed'] = 'lastcomments-' . $type;
 	}
 
+	/**
+	 * Return true only for positive rewrite signals that are specific enough to
+	 * prove FlatPress front-controller routing. REDIRECT_URL alone is deliberately
+	 * ignored because shared hosts may set it for unrelated platform rewrites.
+	 *
+	 * @return bool
+	 */
 	private function server_rewrite_active() {
 		$req = isset($_SERVER ['REQUEST_URI']) ? (string) $_SERVER ['REQUEST_URI'] : '';
 		$sn = isset($_SERVER ['SCRIPT_NAME']) ? (string) $_SERVER ['SCRIPT_NAME'] : '';
-		// IIS URL Rewrite / ISAPI_Rewrite
+
+		// Marker set by the FlatPress-generated Apache configuration when mod_rewrite is active.
+		if ((!empty($_SERVER ['FLATPRESS_PRETTYURLS']) && $_SERVER ['FLATPRESS_PRETTYURLS'] === '1')
+			|| (!empty($_SERVER ['REDIRECT_FLATPRESS_PRETTYURLS']) && $_SERVER ['REDIRECT_FLATPRESS_PRETTYURLS'] === '1')) {
+			return true;
+		}
+
+		// IIS URL Rewrite / ISAPI_Rewrite.
 		if (!empty($_SERVER ['IIS_WasUrlRewritten']) && $_SERVER ['IIS_WasUrlRewritten'] == '1') {
 			return true;
 		}
-		// Only trust HTTP_X_REWRITE_URL as a rewrite signal on IIS and when index.php is the executing script.
 		if (!empty($_SERVER ['HTTP_X_REWRITE_URL'])) {
 			$isIIS = !empty($_SERVER ['SERVER_SOFTWARE']) && stripos((string) $_SERVER ['SERVER_SOFTWARE'], 'IIS') !== false;
 			if ($isIIS && substr($sn, -9) === 'index.php') {
 				return true;
 			}
 		}
-		// Server sets REDIRECT_URL during rewriting
-		if (!empty($_SERVER ['REDIRECT_URL'])) {
+
+		/**
+		 * Generic live proof: a routed path without index.php reached index.php.
+		 * DirectoryIndex alone cannot satisfy request_has_route_path().
+		 */
+		if ($req !== '' && $sn !== '' && strpos($req, 'index.php') === false && substr($sn, -9) === 'index.php' && $this->request_has_route_path()) {
 			return true;
 		}
-		/**
-		 * Generic front-controller heuristic: hidden index.php can also happen via DirectoryIndex.
-		 * Only treat it as rewrite when an .htaccess is present or the request actually targets a routed path below BLOG_ROOT.
-		 */
-		if ($req !== '' && $sn !== '' && strpos($req, 'index.php') === false && substr($sn, -9) === 'index.php') {
-			if (is_file(rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess')) {
-				return true;
-			}
-			if ($this->request_has_route_path()) {
-				return true;
-			}
-		}
+
 		return false;
 	}
 
@@ -343,15 +350,19 @@ class Plugin_PrettyURLs {
 		$base = defined('BLOG_ROOT') ? (string) BLOG_ROOT : '';
 		$base = rtrim($base, '/');
 		$reqNorm = rtrim($reqPath, '/');
-		return $reqNorm !== '' && $reqNorm !== $base;
+		if ($reqNorm === '' || $reqNorm === $base) {
+			return false;
+		}
+		if ($base !== '' && strpos($reqNorm . '/', $base . '/') !== 0) {
+			return false;
+		}
+		return true;
 	}
 
 	private function server_can_pathinfo() {
-		// Real server signals (also via ProxyFCGISetEnvIf/SetEnv)
 		if (!empty($_SERVER ['PATH_INFO']) || !empty($_SERVER ['ORIG_PATH_INFO'])) {
 			return true;
 		}
-		// Without explicit PATH_INFO and with cgi.fix_pathinfo=0: not available
 		$fix = @ini_get('cgi.fix_pathinfo');
 		if ($fix !== false && (string) $fix === '0') {
 			return false;
@@ -359,101 +370,143 @@ class Plugin_PrettyURLs {
 		return false;
 	}
 
+	private function server_pathinfo_selectable() {
+		if ($this->server_can_pathinfo()) {
+			return true;
+		}
+		$fix = @ini_get('cgi.fix_pathinfo');
+		$sapi = PHP_SAPI;
+		$isFastCgi = strpos($sapi, 'cgi') !== false || strpos($sapi, 'fpm') !== false;
+		return !($fix !== false && (string) $fix === '0' && !$isFastCgi);
+	}
+
 	/**
-	 * Locks or unlocks the radios
-	 * Preview of server capabilities outside the admin area.
-	 * Delivers: can_pretty (Rewrite), can_pathinfo, can_get.
+	 * Preview of mode availability and positively detected server capabilities.
+	 * The can_* values control whether a mode may be selected. The detected_*
+	 * values are stricter and are used only for the green capability indicators
+	 * in the admin UI. Pretty remains manually selectable even when rewrite
+	 * support cannot be proven automatically (important for NGINX).
+	 *
+	 * HTTP Get is also verified by an authenticated same-origin browser probe so
+	 * every green check has the same meaning: the tested URL form actually
+	 * reaches FlatPress on this web host.
+	 *
+	 * @return array{can_pretty:bool,can_pathinfo:bool,can_get:bool,detected_pretty:bool,detected_pathinfo:bool,detected_get:bool}
 	 */
 	public function modes_capabilities_preview() {
-		$htPath = rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess';
-		$hasHt = is_file($htPath);
-
-		$bak = array(
-			'REQUEST_URI' => isset($_SERVER ['REQUEST_URI']) ? $_SERVER ['REQUEST_URI'] : null,
-			'SCRIPT_NAME' => isset($_SERVER ['SCRIPT_NAME']) ? $_SERVER ['SCRIPT_NAME'] : null,
-			'PATH_INFO' => isset($_SERVER ['PATH_INFO']) ? $_SERVER ['PATH_INFO'] : null,
-			'ORIG_PATH_INFO' => isset($_SERVER ['ORIG_PATH_INFO']) ? $_SERVER ['ORIG_PATH_INFO'] : null,
-			'PHP_SELF' => isset($_SERVER ['PHP_SELF']) ? $_SERVER ['PHP_SELF'] : null,
-			'QUERY_STRING' => isset($_SERVER ['QUERY_STRING']) ? $_SERVER ['QUERY_STRING'] : null,
-			'IIS_WasUrlRewritten' => isset($_SERVER ['IIS_WasUrlRewritten']) ? $_SERVER ['IIS_WasUrlRewritten'] : null,
-			'HTTP_X_REWRITE_URL' => isset($_SERVER ['HTTP_X_REWRITE_URL']) ? $_SERVER ['HTTP_X_REWRITE_URL'] : null,
-			'REDIRECT_URL' => isset($_SERVER ['REDIRECT_URL']) ? $_SERVER ['REDIRECT_URL'] : null,
-		 );
-
-		$root = rtrim(BLOG_ROOT, '/');
-
-		// Test rewrite capability (request without index.php)
-		$_SERVER ['REQUEST_URI'] = $root . '/';
-		$_SERVER ['SCRIPT_NAME'] = $root . '/index.php';
-		unset($_SERVER ['PATH_INFO'], $_SERVER ['ORIG_PATH_INFO']);
-		$_SERVER ['PHP_SELF'] = $_SERVER ['SCRIPT_NAME'];
-		$_SERVER ['QUERY_STRING'] = '';
-		unset($_SERVER ['IIS_WasUrlRewritten'], $_SERVER ['HTTP_X_REWRITE_URL'], $_SERVER ['REDIRECT_URL']);
-		$can_pretty = $this->server_rewrite_active();
-
-		// Path info:
-		$fix = @ini_get('cgi.fix_pathinfo');
-		$can_pathinfo = false;
-		if (!($fix !== false && (string)$fix === '0')) {
-			// Evaluate live environment
-			if (!empty($bak ['PATH_INFO']) || !empty($bak ['ORIG_PATH_INFO'])) {
-				$can_pathinfo = true;
-			} else {
-				// Fallback: REQUEST_URI begins with base and has additional segments
-				$base = defined('BLOG_ROOT') ? BLOG_ROOT : '';
-				if (substr($base, -10) === '/index.php') {
-					// Safely remove '/index.php'
-					$base = substr($base, 0, -10);
-				}
-				$baseNorm = rtrim((string)$base, '/');
-
-				if (!empty($bak ['REQUEST_URI'])) {
-					$req = (string)$bak ['REQUEST_URI'];
-					// Remove query string
-					$qpos = strpos($req, '?');
-					if ($qpos !== false) {
-						$req = substr($req, 0, $qpos);
-					}
-					$reqNorm = rtrim($req, '/');
-
-					if ($baseNorm === '' || strpos($reqNorm, $baseNorm) === 0) {
-						$suffix = substr($reqNorm, strlen($baseNorm));
-						// Additional segments present? (e.g., ‘/page’ or ‘/page/1’)
-						if ($suffix !== '' && $suffix [0] === '/' && strlen($suffix) > 1) {
-							$can_pathinfo = true;
-						}
-					}
-				}
-			}
-		}
-
-		// Restore
-		foreach ($bak as $k => $v) {
-			if ($v === null) {
-				unset($_SERVER [$k]);
-			} else {
-				$_SERVER [$k] = $v;
-			}
-		}
-
 		return array(
-			'can_pretty' => (bool) $can_pretty,
-			'can_pathinfo' => (bool) $can_pathinfo,
+			'can_pretty' => true,
+			'can_pathinfo' => $this->server_pathinfo_selectable(),
 			'can_get' => true,
+			/**
+			 * Only positive request-time evidence is shown immediately. The admin
+			 * page performs same-origin browser probes to verify capabilities that
+			 * cannot be proven from the current admin.php request alone.
+			 */
+			'detected_pretty' => $this->server_rewrite_active(),
+			'detected_pathinfo' => $this->server_can_pathinfo(),
+			/**
+			 * The normal admin request does not prove that the ?u=/... URL form
+			 * survives the web-server stack. The browser probe verifies it.
+			 */
+			'detected_get' => false,
 		);
 	}
 
 	/**
-	 * Auto mode detection with request cache and optional APCu.
-	 * Returns: 3=Pretty, 1=PATH_INFO, 2=GET
+	 * Verify that a browser capability probe reached FlatPress through the mode
+	 * it is testing. This deliberately relies on the actual web-server request
+	 * instead of inferring support from .htaccess existence, REDIRECT_URL, SAPI,
+	 * or cgi.fix_pathinfo alone.
+	 *
+	 * @param string $mode pathinfo|get|pretty
+	 * @return bool
+	 */
+	public function capability_probe_matches($mode) {
+		$mode = strtolower((string)$mode);
+		$scriptName = (string)($_SERVER ['SCRIPT_NAME'] ?? '');
+		if (substr($scriptName, -9) !== 'index.php') {
+			return false;
+		}
+
+		$probeSegment = '/' . PRETTYURLS_CAPABILITY_PROBE . '/';
+		if ($mode === 'pathinfo') {
+			$pathInfos = array(
+				(string)($_SERVER ['PATH_INFO'] ?? ''),
+				(string)($_SERVER ['ORIG_PATH_INFO'] ?? '')
+			);
+			foreach ($pathInfos as $pathInfo) {
+				if ($pathInfo === '') {
+					continue;
+				}
+				$normalized = '/' . trim(str_replace('\\', '/', $pathInfo), '/') . '/';
+				if ($normalized === $probeSegment || substr($normalized, -strlen('/index.php' . $probeSegment)) === '/index.php' . $probeSegment) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		if ($mode === 'get') {
+			$requestUri = (string)($_SERVER ['REQUEST_URI'] ?? '');
+			$requestPath = (string)parse_url($requestUri, PHP_URL_PATH);
+			$root = rtrim((string)BLOG_ROOT, '/');
+			$expectedPath = ($root === '' ? '' : $root) . '/';
+			$u = isset($_GET ['u']) ? '/' . trim(str_replace('\\', '/', (string)$_GET ['u']), '/') . '/' : '';
+			return $requestPath === $expectedPath && $u === $probeSegment;
+		}
+
+		if ($mode === 'pretty') {
+			$requestUri = (string)($_SERVER ['REQUEST_URI'] ?? '');
+			$requestPath = (string)parse_url($requestUri, PHP_URL_PATH);
+			$root = rtrim((string)BLOG_ROOT, '/');
+			$expected = $root . $probeSegment;
+			return $requestPath === $expected;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Serve the authenticated same-origin capability probe used by the plugin
+	 * admin page. It is read-only and intentionally returns no page content.
+	 *
+	 * @return void
+	 */
+	public function serve_capability_probe() {
+		$mode = isset($_GET ['prettyurls_probe']) ? strtolower((string)$_GET ['prettyurls_probe']) : '';
+		if ($mode !== 'pathinfo' && $mode !== 'get' && $mode !== 'pretty') {
+			return;
+		}
+
+		$loggedIn = function_exists('user_loggedin') && user_loggedin();
+		$matches = $loggedIn && $this->capability_probe_matches($mode);
+		if (!headers_sent()) {
+			header('Cache-Control: no-store, no-cache, must-revalidate');
+			header('Pragma: no-cache');
+			header('Content-Type: text/plain; charset=UTF-8');
+			if ($matches) {
+				http_response_code(200);
+			} else {
+				http_response_code(404);
+			}
+		}
+		if ($matches) {
+			echo 'flatpress-prettyurls-probe:' . $mode;
+		}
+		exit;
+	}
+
+	/**
+	 * Automatic mode detector.
+	 * Returns: 3=Pretty, 1=PATH_INFO, 2=GET.
 	 */
 	function auto_mode_detect() {
-		$htPath = rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess';
-		$hasHt = is_file($htPath);
 		$sn = isset($_SERVER ['SCRIPT_NAME']) ? (string) $_SERVER ['SCRIPT_NAME'] : '';
 		$sw = isset($_SERVER ['SERVER_SOFTWARE']) ? (string) $_SERVER ['SERVER_SOFTWARE'] : '';
 		$flags = implode('|', array(
-			$hasHt ? 'ht1' : 'ht0',
+			(!empty($_SERVER ['FLATPRESS_PRETTYURLS']) && $_SERVER ['FLATPRESS_PRETTYURLS'] === '1') ? 'fp1' : 'fp0',
+			(!empty($_SERVER ['REDIRECT_FLATPRESS_PRETTYURLS']) && $_SERVER ['REDIRECT_FLATPRESS_PRETTYURLS'] === '1') ? 'rfp1' : 'rfp0',
 			(!empty($_SERVER ['IIS_WasUrlRewritten']) && $_SERVER ['IIS_WasUrlRewritten'] == '1') ? 'iis1' : 'iis0',
 			!empty($_SERVER ['HTTP_X_REWRITE_URL']) ? 'xrw1' : 'xrw0',
 			!empty($_SERVER ['REDIRECT_URL']) ? 'redir1' : 'redir0',
@@ -461,20 +514,19 @@ class Plugin_PrettyURLs {
 			!empty($_SERVER ['ORIG_PATH_INFO']) ? 'opi1' : 'opi0',
 			(!empty($_SERVER ['PHP_SELF']) && strpos((string) $_SERVER ['PHP_SELF'], 'index.php/') !== false) ? 'ps1' : 'ps0',
 			((isset($_SERVER ['REQUEST_URI']) && strpos((string) $_SERVER ['REQUEST_URI'], 'index.php/') !== false)) ? 'ru1' : 'ru0',
+			isset($_SERVER ['REQUEST_URI']) ? (string)$_SERVER ['REQUEST_URI'] : '',
 			$sn,
 			$sw
 		));
-		// Version/namespace prefix for separating different implementations
 		$gen = (int) plugin_getoptions('prettyurls', 'apcu_gen');
 		if ($gen < 1) {
 			$gen = 1;
 		}
-		$key = 'prettyurls:auto:v3:g' . $gen . ':' . md5($flags);
+		$key = 'prettyurls:auto:v4:g' . $gen . ':' . md5($flags);
 		static $reqCache = array();
 		if (isset($reqCache [$key])) {
 			return (int) $reqCache [$key];
 		}
-		// Only use APCu via Core wrapper with FP namespace
 		if (function_exists('is_apcu_on') && is_apcu_on() && function_exists('apcu_get')) {
 			$ok = false;
 			$val = apcu_get('prettyurls:' . $key, $ok);
@@ -483,54 +535,24 @@ class Plugin_PrettyURLs {
 				return (int) $val;
 			}
 		}
-		$mode = ($this->server_rewrite_active() ? 3 : ($this->server_can_pathinfo() ? 1 : 2));
+
+		$mode = $this->server_rewrite_active() ? 3 : ($this->server_can_pathinfo() ? 1 : 2);
 		$reqCache [$key] = (int) $mode;
 		if (function_exists('is_apcu_on') && is_apcu_on() && function_exists('apcu_set')) {
-			// Keep TTL small; namespacing is done in core.fileio.php via apcu_key()
 			apcu_set('prettyurls:' . $key, (int) $mode, 120);
 		}
 		return (int) $mode;
 	}
 
 	/**
-	 * Preview: automatic mode specifically for calling index.php without any additional parameters.
-	 * Uses a minimally manipulated SERVER environment and then restores it.
-	 * Returns: 3=Pretty, 1=PATH_INFO, 2=GET
+	 * The admin/non-index preview intentionally uses the same detector as the
+	 * frontend. One implementation prevents the UI and generated links from
+	 * disagreeing about Auto mode.
+	 *
+	 * @return int
 	 */
 	function auto_mode_detect_preview() {
-		$htPath = rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess';
-		$hasHt = is_file($htPath);
-		// Save original
-		$bak = array(
-			'REQUEST_URI' => isset($_SERVER ['REQUEST_URI']) ? $_SERVER ['REQUEST_URI'] : null,
-			'SCRIPT_NAME' => isset($_SERVER ['SCRIPT_NAME']) ? $_SERVER ['SCRIPT_NAME'] : null,
-			'PATH_INFO' => isset($_SERVER ['PATH_INFO']) ? $_SERVER ['PATH_INFO'] : null,
-			'ORIG_PATH_INFO' => isset($_SERVER ['ORIG_PATH_INFO']) ? $_SERVER ['ORIG_PATH_INFO'] : null,
-			'PHP_SELF' => isset($_SERVER ['PHP_SELF']) ? $_SERVER ['PHP_SELF'] : null,
-			'QUERY_STRING' => isset($_SERVER ['QUERY_STRING']) ? $_SERVER ['QUERY_STRING'] : null,
-			'IIS_WasUrlRewritten' => isset($_SERVER ['IIS_WasUrlRewritten']) ? $_SERVER ['IIS_WasUrlRewritten'] : null,
-			'HTTP_X_REWRITE_URL' => isset($_SERVER ['HTTP_X_REWRITE_URL']) ? $_SERVER ['HTTP_X_REWRITE_URL'] : null,
-			'REDIRECT_URL' => isset($_SERVER ['REDIRECT_URL']) ? $_SERVER ['REDIRECT_URL'] : null,
-		);
-		$root = rtrim(BLOG_ROOT, '/');
-		// Simulate index call without additional parameters
-		$_SERVER ['REQUEST_URI'] = $root . '/';
-		$_SERVER ['SCRIPT_NAME'] = $root . '/index.php';
-		unset($_SERVER ['PATH_INFO'], $_SERVER ['ORIG_PATH_INFO']);
-		$_SERVER ['PHP_SELF'] = $_SERVER ['SCRIPT_NAME'];
-		$_SERVER ['QUERY_STRING'] = '';
-		unset($_SERVER ['IIS_WasUrlRewritten'], $_SERVER ['HTTP_X_REWRITE_URL'], $_SERVER ['REDIRECT_URL']);
-		// Determine mode
-		$mode = ($hasHt && $this->server_rewrite_active()) ? 3 : ($this->server_can_pathinfo() ? 1 : 2);
-		// Reset environment
-		foreach ($bak as $k => $v) {
-			if ($v === null) {
-				unset($_SERVER [$k]);
-			} else {
-				$_SERVER [$k] = $v;
-			}
-		}
-		return (int) $mode;
+		return (int) $this->auto_mode_detect();
 	}
 
 	/**
@@ -560,12 +582,9 @@ class Plugin_PrettyURLs {
 			$pathinfo = '';
 		}
 
-		$htPath = rtrim(ABS_PATH, "/\\") . DIRECTORY_SEPARATOR . '.htaccess';
-		$hasHt = is_file($htPath);
-
 		/**
-		 * For non-index requests, e.g. contact.php or search.php, we use the preview detector, which simulates a
-		 * normal blog index request and derives the frontend URL mode from this context.
+		 * For non-index requests, e.g. contact.php or search.php, the preview uses the exact same conservative
+		 * detector as the frontend so generated links cannot disagree with Auto mode.
 		 * Explicitly configured modes (1/2/3) are always retained unchanged.
 		 */
 		if ($opt === null || $opt === 0) {
@@ -577,10 +596,8 @@ class Plugin_PrettyURLs {
 				$opt = (int) $this->auto_mode_detect();
 			}
 		} else {
+			// Explicit modes are authoritative. Pretty must remain usable on NGINX and other servers without .htaccess.
 			$opt = (int) $opt;
-			if ($opt === 3 && !$hasHt) {
-				$opt = 2;
-			}
 		}
 
 		switch ($opt) {
@@ -701,7 +718,7 @@ class Plugin_PrettyURLs {
 				'handle_entry'
 			), $url);
 			// if status = 2
-			/*
+			/**
 			 * utils_error(404);
 			 */
 
@@ -934,9 +951,11 @@ class Plugin_PrettyURLs {
 		if (!defined('MOD_INDEX')) {
 			return;
 		}
-		// === Cross-mode canonicalization for common routes ===
-		// Routes: page/N, paged/N, category/NAME, tag/NAME, archive[s]/YYYY(/MM)?, static/SLUG, entry/SLUG
-		// Redirect only if there are no extra query params (besides 'u' in GET style).
+		/**
+		 * === Cross-mode canonicalization for common routes ===
+		 * Routes: page/N, paged/N, category/NAME, tag/NAME, archive[s]/YYYY(/MM)?, static/SLUG, entry/SLUG
+		 * Redirect only if there are no extra query params (besides 'u' in GET style).
+		 */
 		$plugin_prettyurls = isset($GLOBALS ['plugin_prettyurls']) ? $GLOBALS ['plugin_prettyurls'] : null;
 		$opt = 0;
 		if ($plugin_prettyurls && isset($plugin_prettyurls->mode)) {
@@ -1227,6 +1246,7 @@ class Plugin_PrettyURLs {
 
 global $plugin_prettyurls;
 $plugin_prettyurls = new Plugin_PrettyURLs();
+$plugin_prettyurls->serve_capability_probe();
 $plugin_prettyurls->categories(false);
 
 if (!defined('MOD_ADMIN_PANEL')) {
@@ -1348,32 +1368,49 @@ if (class_exists('AdminPanelAction')) {
 			}
 			$this->smarty->assign('auto_mode_index', (int) $auto_mode_index);
 
-			// Assign capabilities outside the admin area to the template
-			$can_pretty = false;
-			$can_pathinfo = false;
+			/**
+			 * Assign selectable modes and positively detected server capabilities.
+			 * Green checks must describe host capabilities, not the mode chosen by Auto.
+			 */
+			$can_pretty = true;
+			$can_pathinfo = true;
 			$can_get = true;
+			$detected_pretty = ($auto_mode_index === 3);
+			$detected_pathinfo = ($auto_mode_index === 1);
+			$detected_get = false;
 			if (isset($plugin_prettyurls) && is_object($plugin_prettyurls) && method_exists($plugin_prettyurls, 'modes_capabilities_preview')) {
 				$caps = (array) $plugin_prettyurls->modes_capabilities_preview();
 				$can_pretty = !empty($caps ['can_pretty']);
 				$can_pathinfo = !empty($caps ['can_pathinfo']);
 				$can_get = !empty($caps ['can_get']);
-			} else {
-				// Fallback: derive only from auto_mode_index
-				$can_get = true;
-				$can_pretty = ($auto_mode_index === 3);
-				$can_pathinfo = ($auto_mode_index === 1);
+				$detected_pretty = !empty($caps ['detected_pretty']);
+				$detected_pathinfo = !empty($caps ['detected_pathinfo']);
+				$detected_get = !empty($caps ['detected_get']);
 			}
 			$this->smarty->assign('can_pretty', (bool) $can_pretty);
 			$this->smarty->assign('can_pathinfo', (bool) $can_pathinfo);
 			$this->smarty->assign('can_get', (bool) $can_get);
+			$this->smarty->assign('detected_pretty', (bool) $detected_pretty);
+			$this->smarty->assign('detected_pathinfo', (bool) $detected_pathinfo);
+			$this->smarty->assign('detected_get', (bool) $detected_get);
 
+			$random_hex = RANDOM_HEX;
+			$capability_probe_script_url = BLOG_BASEURL . 'fp-plugins/prettyurls/res/capability-probe.js';
+			$capability_probe_script_url = utils_asset_ver($capability_probe_script_url, SYSTEM_VER);
+			$this->smarty->assign('random_hex', $random_hex);
 			$this->smarty->assign('check_icon_url', BLOG_BASEURL . 'fp-plugins/prettyurls/res/check-green.svg');
+			$this->smarty->assign('capability_probe_pathinfo_url', BLOG_BASEURL . 'index.php/' . PRETTYURLS_CAPABILITY_PROBE . '/?prettyurls_probe=pathinfo');
+			$this->smarty->assign('capability_probe_get_url', BLOG_BASEURL . '?u=/' . PRETTYURLS_CAPABILITY_PROBE . '/&prettyurls_probe=get');
+			$this->smarty->assign('capability_probe_pretty_url', BLOG_BASEURL . PRETTYURLS_CAPABILITY_PROBE . '/?prettyurls_probe=pretty');
+			$this->smarty->assign('capability_probe_script_url', $capability_probe_script_url);
+
 			$blogroot = BLOG_ROOT;
 			$f = ABS_PATH . '.htaccess';
 			$txt = io_load_file($f);
 			if (!$txt) {
 
 				$txt = '
+# BEGIN FlatPress PrettyURLs
 AddType application/x-httpd-php .php
 Options -Indexes
 
@@ -1384,6 +1421,7 @@ Options -Indexes
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 	RewriteBase ' . $blogroot . '
+	RewriteRule ^ - [E=FLATPRESS_PRETTYURLS:1]
 
 	RewriteRule ^\.htaccess$ - [F]
 
@@ -1393,11 +1431,14 @@ Options -Indexes
 	RewriteRule ^sitemap\.xml$ ' . $blogroot . 'sitemap.php [L]
 	RewriteRule ^sitemap$ ' . $blogroot . 'sitemap.php [L]
 
+	RewriteRule ^index\.php/' . PRETTYURLS_CAPABILITY_PROBE . '/$ - [L]
+
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
 
 	RewriteRule . ' . $blogroot . 'index.php [L]
-</IfModule>';
+</IfModule>
+# END FlatPress PrettyURLs';
 			}
 
 			$this->smarty->assign('cantsave', (!is_writable(ABS_PATH) || (file_exists($f) && !is_writable($f))));

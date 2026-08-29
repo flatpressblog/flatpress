@@ -179,8 +179,11 @@ class admin_config_default extends AdminPanelActionValidated {
 		}
 
 		// Update and save the configuration
+		$trustForwardedScheme = function_exists('fp_should_trust_forwarded_scheme_for_url') ? fp_should_trust_forwarded_scheme_for_url($postData ['www']) : !empty($fp_config ['general'] ['trust_forwarded_scheme']);
+
 		$fp_config ['general'] = array(
 			'www' => $postData ['www'],
+			'trust_forwarded_scheme' => $trustForwardedScheme,
 			'title' => wp_specialchars(stripslashes($postData ['title'])),
 			'subtitle' => wp_specialchars(stripslashes($postData ['subtitle'])),
 			'footer' => wp_specialchars(stripslashes($postData ['blogfooter'])),

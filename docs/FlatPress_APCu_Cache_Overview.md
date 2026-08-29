@@ -295,25 +295,25 @@ Low–Medium. Useful for avoiding repeated disk + parsing cost on high-traffic s
 
 ---
 
-### 2.8 Network/Environment Caches – `fp:https:v2:*`, `fp:net:in_cidrs:*`
+### 2.8 Network/Environment Caches – `fp:https:v3:*`, `fp:net:in_cidrs:*`
 
 **Prefixes:**
 
-- `fp:https:v2:<sha1(env_state)>`
+- `fp:https:v3:<sha1(env_state)>`
 - `fp:net:in_cidrs:<ip>|<sha1(sorted_unique_cidrs)>`
 
 **File:** `fp-includes/core/core.connection.php`  
 
 **What is cached:**
 
-- `fp:https:v2:` – Result of “are we effectively running under HTTPS?” considering proxies and server vars.
+- `fp:https:v3:` – Result of “are we effectively running under HTTPS?” considering proxies and server vars.
 - `fp:net:in_cidrs:` – Boolean results of “IP is in these CIDRs” checks.
 
 **Invalidation:**
 
 - HTTPS detection:
   - TTL is controlled via env `FP_HTTPS_CACHE_TTL` (seconds), default 120.
-  - Key is a SHA1 over a JSON-encoded “env state” including relevant `$_SERVER` values and the normalized trusted proxy list.
+  - Key is a SHA1 over a JSON-encoded “env state” including relevant `$_SERVER` values, the normalized trusted proxy list, the canonical configured URL, and persisted forwarded-scheme trust.
 - CIDR membership checks:
   - TTL is fixed at 3600 seconds.
   - Key includes the IP plus a SHA1 over the normalized CIDR list.
@@ -771,20 +771,20 @@ Medium–High for large installations in the Storage admin panel. The warm path 
 **Prefixes:**
 
 - `prettyurls:<auto_detection_result_key>`
-- `prettyurls:auto:v3:g<gen>:<md5(flags)>` (internal logical key; stored as `'prettyurls:' . $key`)
+- `prettyurls:auto:v4:g<gen>:<md5(flags)>` (internal logical key; stored as `'prettyurls:' . $key`)
 
 **File:** `fp-plugins/prettyurls/plugin.prettyurls.php`  
 
 **What is cached:**
 
 - Results of automatic PrettyURLs mode detection (3=Pretty, 1=PATH_INFO, 2=GET).
-- Results of `auto_mode_detect_preview()` for index.php preview.
+- The same conservative detector is used for frontend and admin preview; generic `REDIRECT_URL` alone is not considered rewrite proof.
 
 **Invalidation:**
 
 - Namespaced via plugin option `apcu_gen`:
   - On relevant config changes (`mode` change or successful `.htaccess` regeneration), PrettyURLs increments `apcu_gen`.
-  - Effective key becomes `prettyurls:auto:v3:g<gen>:…` so old results go cold.
+  - Effective key becomes `prettyurls:auto:v4:g<gen>:…` so old results go cold.
 
 **Impact:**  
 Medium. Avoids repeated expensive environment probing when switching between URL modes.
@@ -1142,7 +1142,7 @@ Low individually, but foundational for all namespaced cores.
 
 ---
 
-### 5.2 HTTPS and CIDR Probes – `fp:https:v2:*`, `fp:net:in_cidrs:*`
+### 5.2 HTTPS and CIDR Probes – `fp:https:v3:*`, `fp:net:in_cidrs:*`
 
 Already covered in section 2.8, but worth summarizing:
 
@@ -1265,7 +1265,7 @@ The following table summarizes each logical cache group:
 | INI parsing (SEO plugin)    | `fp:ini:*`                                                                          | No                       | INI file mtime/size                                                | Low–Medium              |
 | SEO `og:image` (SEO plugin) | `fp:seometa:og:imageinfo:*`, `seometa:og:imagebin:*`                                | No                       | Source path/type/mtime/size, target size, TTL                      | Medium–High             |
 | Smarty block fragments      | `fp:smarty:block:*`                                                                 | No                       | TTL, template timestamp, APCu eviction or file fallback            | Medium–High             |
-| HTTPS/IP env                | `fp:https:v2:*`, `fp:net:in_cidrs:*`                                                | No                       | TTL (≈3600s) and local process                                     | Low–Medium              |
+| HTTPS/IP env                | `fp:https:v3:*`, `fp:net:in_cidrs:*`                                                | No                       | TTL (≈3600s) and local process                                     | Low–Medium              |
 | Plugin discovery            | `fp:plugin:*`, `fp:plugins:*`                                                       | No                       | Plugin dir/config mtimes                                           | Medium                  |
 | Smarty plugin index         | `fp:spi:*`                                                                          | No                       | Dir+token hash, TTL 300s                                           | Medium                  |
 | Search                      | `fp:search:rev`, `fp:search:v*`                                                     | No                       | Content rev + TTL (5s / 900s)                                      | Medium                  |
@@ -1278,7 +1278,7 @@ The following table summarizes each logical cache group:
 | Mastodon scheduler summary  | core `fp:io:*` for `scheduler-state.json`                                           | No                       | File mtime/size via core I/O, rebuilt from `state.json` when stale | Medium                  |
 | Mastodon sync guards        | `fp:mastodon:sync_guard:content:v1`, `fp:mastodon:sync_guard:deletion:v1`           | No                       | TTL 300s + file guard `sync.guard.json`                            | Medium                  |
 | Admin setup hide            | `fp:admin:setup_hide_report`                                                        | No                       | TTL (ok 86400s, fail 300s) + manual APCu clear                     | Low–Medium (admin only) |
-| PrettyURLs auto-detection   | `prettyurls:*`, `prettyurls:auto:v3:g*:*`                                           | No (but influences URLs) | `apcu_gen` bump on mode/.htaccess changes                          | Medium                  |
+| PrettyURLs auto-detection   | `prettyurls:*`, `prettyurls:auto:v4:g*:*`                                           | No (but influences URLs) | `apcu_gen` bump on mode/.htaccess changes                          | Medium                  |
 | Maintain panel tools        | Uses APCu to clear and inspect all keys, no own namespace                           | No                       | Manual admin action                                                | N/A (admin only)        |
 
 ---
@@ -1306,7 +1306,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.6.dev`
 - `fp:config:settings:`
 - `fp:entry:parsed:`
 - `fp:fpdb:offset-anchors:v1:`
-- `fp:https:v2:`
+- `fp:https:v3:`
 - `fp:ini:`
 - `fp:io:`
 - `fp:lang:`
@@ -1337,7 +1337,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.6.dev`
 - `fp:storage:v`
 - `fp:admin:setup_hide_report`
 - `prettyurls:`
-- `prettyurls:auto:v3:g`
+- `prettyurls:auto:v4:g`
 - `calendar:` (calendar cache key before namespacing via `fp:calendar:v` suffix)
 
 All of these are either:
