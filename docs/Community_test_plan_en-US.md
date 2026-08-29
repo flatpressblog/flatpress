@@ -132,6 +132,9 @@ Create clearly recognizable test data. Avoid real addresses, secrets, and person
 
 - [ ] Run `setup.php` in a new installation.
 - [ ] Complete setup using a normal blog URL.
+- [ ] On a TLS-terminating proxy test host, verify a public HTTPS request forwarded to PHP as HTTP/80 is proposed as `https://.../` without `:80`.
+- [ ] Confirm the proposed URL and complete setup, then reload through HTTPS.
+- [ ] Expected: HTTPS remains detected after setup.
 - [ ] Open the admin area after setup.
 - [ ] Expected: setup completes without a blank page or permission warning that is unrelated to the actual host.
 - [ ] Expected: FlatPress creates its installation lock.
@@ -171,6 +174,15 @@ Create clearly recognizable test data. Avoid real addresses, secrets, and person
 - [ ] Expected: the request upgrades to the configured HTTPS URL without a redirect loop.
 - [ ] When testing behind a reverse proxy or CDN, repeat the login, admin, entry, feed, and asset checks.
 - [ ] Expected: the visible URL and generated links stay consistent with the configured public URL.
+- [ ] With only a client-supplied/untrusted `X-Forwarded-Proto: https` and no persisted proxy trust, verify FlatPress does not treat a plain HTTP request as HTTPS.
+- [ ] With conflicting forwarded schemes such as `https,http`, verify FlatPress treats the proxy scheme as ambiguous.
+- [ ] Test a public non-default port and confirm it is preserved, while an internal backend port is not leaked into the public URL.
+
+#### Update-check diagnostics
+
+- [ ] Run the update check with normal outbound HTTPS access.
+- [ ] Repeat on a test environment where outbound server-to-server HTTPS is blocked.
+- [ ] Expected: FlatPress reports technical diagnostic details (transport, HTTP status or transport error) without attempting to bypass the host restriction.
 
 ### 3. PHP, Smarty, caching, APCu, feeds, and freshness
 
@@ -250,7 +262,13 @@ Create clearly recognizable test data. Avoid real addresses, secrets, and person
 
 - [ ] Activate PrettyURLs.
 - [ ] Open its admin page before saving any custom mode.
-- [ ] Expected: a supported mode is detected without requiring an existing `.htaccess` file.
+- [ ] Expected: without positive rewrite proof, Automatic safely falls back to HTTP Get.
+- [ ] On Apache, create the PrettyURLs `.htaccess`, reload, and confirm Automatic detects Pretty from the FlatPress rewrite marker.
+- [ ] Verify the green check icons describe host capabilities rather than the mode selected by Automatic: the browser probe must show PATH Info only when the probe suffix actually reaches `index.php` as PATH_INFO/ORIG_PATH_INFO, Pretty only when the clean probe path reaches the FlatPress front controller, and HTTP Get must have no capability check.
+- [ ] Remove the FlatPress PrettyURLs `.htaccess`, reload the admin page, and confirm the Pretty green check disappears; recreate the `.htaccess`, reload, and confirm the Pretty probe succeeds only when rewrite routing is actually active.
+- [ ] With the generated `.htaccess` present, confirm the dedicated PATH_INFO probe is not swallowed by the Pretty catch-all rule and that PATH Info keeps its check only when the host really supports it.
+- [ ] Verify that a generic host-provided `REDIRECT_URL` without FlatPress rewrite proof does not select Pretty.
+- [ ] On NGINX or another server configured outside `.htaccess`, select Pretty explicitly and confirm FlatPress does not silently fall back to HTTP Get.
 - [ ] Test every PrettyURLs mode offered as supported by the current web server.
 - [ ] Expected: unsupported modes are not presented as safe choices.
 - [ ] Create an entry title containing `😀`, accented letters, and non-Latin text.

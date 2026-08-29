@@ -4,6 +4,7 @@ $setupid = isset($setupid) ? (string)$setupid : '';
 $language = isset($language) ? (string)$language : '';
 $err = isset($err) && is_array($err) ? $err : array();
 $lang = isset($lang) && is_array($lang) ? $lang : array('buttonbar' => array('next' => 'Next'));
+$setupBaseUrl = function_exists('fp_setup_baseurl_candidate') ? fp_setup_baseurl_candidate() : (string)BLOG_BASEURL;
 ?>
 <h2><?php echo $l ['head']; ?></h2>
 <div class="errors">
@@ -62,7 +63,7 @@ $lang = isset($lang) && is_array($lang) ? $lang : array('buttonbar' => array('ne
 			<label for="www"> <?php echo $l ['www']; ?> </label>
 		</dt>
 		<dd>
-			<input type="text" id="www" name="www" value="<?php echo BLOG_BASEURL; ?>">
+			<input type="text" id="www" name="www" value="<?php echo htmlspecialchars($setupBaseUrl, ENT_QUOTES, 'UTF-8'); ?>">
 		</dd>
 
 		<dt>

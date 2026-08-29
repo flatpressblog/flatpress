@@ -489,12 +489,16 @@ class admin_maintain_updates extends AdminPanelAction {
 			'errno' => 1,
 			'errmsg' => '',
 			'http_code' => 0,
-			'content' => ''
+			'content' => '',
+			'transport' => 'none'
 		);
 
 		$errno = (int) $file ['errno'];
 		$http_code = (int) $file ['http_code'];
 		$content = $file ['content'];
+		$transport = (string) $file ['transport'];
+		$diagnostic = '';
+		$errorType = '';
 
 		if ($errno === 0 && ($http_code === 0 || $http_code < 400) && $content !== null && $content !== false && $content !== '') {
 			$parsed = utils_kexplode($content);
@@ -514,12 +518,42 @@ class admin_maintain_updates extends AdminPanelAction {
 			$success = -1;
 		}
 
+		if ($success === -1) {
+			if ($transport === 'none') {
+				$errorType = 'no_transport';
+			} elseif ($errno !== 0) {
+				$errorType = 'transport_error';
+			} elseif ($http_code >= 400) {
+				$errorType = 'http_error';
+			} elseif ($content === null || $content === false || $content === '') {
+				$errorType = 'empty_response';
+			} else {
+				$errorType = 'invalid_response';
+			}
+
+			$parts = array('type=' . $errorType, 'transport=' . $transport);
+			if ($http_code > 0) {
+				$parts [] = 'http=' . $http_code;
+			}
+			if ($errno !== 0) {
+				$parts [] = 'errno=' . $errno;
+			}
+			$errmsg = trim((string)$file ['errmsg']);
+			if ($errmsg !== '') {
+				$parts [] = 'error=' . preg_replace('/[\r\n]+/', ' ', $errmsg);
+			}
+			$parts [] = 'target=' . $this->web;
+			$diagnostic = implode('; ', $parts);
+		}
+
 		$this->smarty->assign('stableversion', $ver ['stable']);
 		$this->smarty->assign('unstableversion', $ver ['unstable']);
 		$this->smarty->assign('notice', $ver ['notice']);
 		$this->smarty->assign('fpweb', $this->fpweb);
 		$this->smarty->assign('sfweb', $this->sfweb);
 		$this->smarty->assign('success', $success);
+		$this->smarty->assign('update_error_type', $errorType);
+		$this->smarty->assign('update_diagnostic', $diagnostic);
 	}
 
 }

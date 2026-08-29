@@ -1,0 +1,173 @@
+<?php
+/**
+ * Regression checks for PrettyURLs automatic mode and capability detection.
+ * Run from the repository root with:
+ *   php tests/prettyurls_auto_mode_regression.ph_
+ */
+
+function pretty_regression_assert($condition, $message) {
+	if (!$condition) {
+		echo "FAIL: " . $message . PHP_EOL;
+		exit(1);
+	}
+	echo "PASS: " . $message . PHP_EOL;
+}
+
+$fixtureRoot = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'flatpress-prettyurls-regression-' . getmypid();
+@mkdir($fixtureRoot . DIRECTORY_SEPARATOR . 'cache', 0777, true);
+
+define('ABS_PATH', $fixtureRoot . DIRECTORY_SEPARATOR);
+define('CACHE_DIR', $fixtureRoot . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR);
+define('BLOG_ROOT', '/blog/');
+define('BLOG_BASEURL', 'https://example.test/blog/');
+define('MOD_ADMIN_PANEL', 1);
+
+$GLOBALS ['pretty_regression_mode'] = 0;
+function plugin_getoptions($plugin, $key) {
+	return $key === 'mode' ? $GLOBALS ['pretty_regression_mode'] : 1;
+}
+function entry_categories_get($what) { return array(); }
+function io_write_file($file, $data) {
+	@mkdir(dirname($file), 0777, true);
+	return file_put_contents($file, $data) !== false;
+}
+function io_load_file($file) { return is_file($file) ? file_get_contents($file) : false; }
+function add_filter(...$args) { $GLOBALS ['pretty_regression_hooks'] [] = $args; return true; }
+function add_action(...$args) { $GLOBALS ['pretty_regression_hooks'] [] = $args; return true; }
+function is_apcu_on() { return false; }
+
+$_GET = array();
+$_SERVER = array(
+	'REQUEST_URI' => '/blog/',
+	'SCRIPT_NAME' => '/blog/index.php',
+	'PHP_SELF' => '/blog/index.php',
+	'SERVER_SOFTWARE' => 'Apache',
+	'REDIRECT_URL' => '/blog/'
+);
+
+require dirname(__DIR__) . '/fp-plugins/prettyurls/plugin.prettyurls.php';
+
+$plugin = new Plugin_PrettyURLs();
+pretty_regression_assert($plugin->auto_mode_detect() === 2, 'generic REDIRECT_URL alone falls back to HTTP Get');
+$caps = $plugin->modes_capabilities_preview();
+pretty_regression_assert(empty($caps ['detected_pretty']), 'generic REDIRECT_URL alone does not claim Pretty capability');
+pretty_regression_assert(empty($caps ['detected_pathinfo']), 'request without PATH_INFO does not claim PATH_INFO capability');
+pretty_regression_assert(empty($caps ['detected_get']), 'normal admin request does not claim HTTP Get before the browser probe');
+
+$template = file_get_contents(dirname(__DIR__) . '/fp-plugins/prettyurls/tpls/admin.plugin.prettyurls.tpl');
+pretty_regression_assert(is_string($template) && $template !== '', 'PrettyURLs admin template is readable');
+if (is_string($template)) {
+	$httpGetLine = '';
+	foreach (preg_split('/\R/', $template) as $line) {
+		if (strpos($line, 'name="mode" value="2"') !== false) {
+			$httpGetLine = $line;
+			break;
+		}
+	}
+	pretty_regression_assert(strpos($template, 'data-prettyurls-capability="pathinfo"') !== false, 'PATH_INFO green check has its own capability marker');
+	pretty_regression_assert(strpos($template, 'data-prettyurls-capability="get"') !== false, 'HTTP Get green check has its own capability marker');
+	pretty_regression_assert(strpos($template, 'data-prettyurls-capability="pretty"') !== false, 'Pretty green check has its own capability marker');
+	pretty_regression_assert(strpos($template, 'data-pathinfo-probe-url=') !== false && strpos($template, 'data-get-probe-url=') !== false && strpos($template, 'data-pretty-probe-url=') !== false, 'admin template exposes same-origin capability probe URLs for all routable modes');
+	pretty_regression_assert(strpos($template, "nonce=\"{\$random_hex|escape:'html'}\"") !== false, 'capability probe script carries the FlatPress CSP nonce');
+	pretty_regression_assert(strpos($template, '$capability_probe_script_url') !== false, 'admin template loads the versioned capability probe script');
+	pretty_regression_assert($httpGetLine !== '' && strpos($template, 'data-prettyurls-capability="get"') !== false, 'HTTP Get exposes a capability indicator');
+}
+
+$probeJs = file_get_contents(dirname(__DIR__) . '/fp-plugins/prettyurls/res/capability-probe.js');
+pretty_regression_assert(is_string($probeJs) && strpos($probeJs, 'XMLHttpRequest') !== false, 'browser probe uses dependency-free same-origin XMLHttpRequest');
+pretty_regression_assert(is_string($probeJs) && strpos($probeJs, 'request.status === 200') !== false, 'browser probe requires an explicit successful response');
+pretty_regression_assert(is_string($probeJs) && strpos($probeJs, "request.responseText === 'flatpress-prettyurls-probe:' + mode") !== false, 'browser probe requires the exact FlatPress capability response token');
+pretty_regression_assert(is_string($probeJs) && strpos($probeJs, "data-get-probe-url") !== false && strpos($probeJs, "'get'") !== false, 'browser probe verifies HTTP Get through a real same-origin request');
+$pluginSource = file_get_contents(dirname(__DIR__) . '/fp-plugins/prettyurls/plugin.prettyurls.php');
+pretty_regression_assert(is_string($pluginSource) && strpos($pluginSource, "function_exists('user_loggedin') && user_loggedin()") !== false, 'capability probe endpoint requires an authenticated FlatPress session');
+pretty_regression_assert(is_string($pluginSource) && strpos($pluginSource, "echo 'flatpress-prettyurls-probe:' . \$mode") !== false, 'capability probe endpoint returns the exact response token expected by the browser');
+pretty_regression_assert(is_string($pluginSource) && strpos($pluginSource, '$random_hex = RANDOM_HEX;') !== false, 'PrettyURLs admin assigns the core CSP nonce for capability-probe.js');
+pretty_regression_assert(is_string($pluginSource) && strpos($pluginSource, 'utils_asset_ver($capability_probe_script_url, SYSTEM_VER)') !== false, 'capability-probe.js URL is versioned with utils_asset_ver()');
+
+// PATH_INFO is only reported as supported when a real PATH_INFO suffix reaches index.php.
+$_SERVER ['REQUEST_URI'] = '/blog/index.php/' . PRETTYURLS_CAPABILITY_PROBE . '/?prettyurls_probe=pathinfo';
+$_SERVER ['SCRIPT_NAME'] = '/blog/index.php';
+$_SERVER ['PHP_SELF'] = '/blog/index.php/' . PRETTYURLS_CAPABILITY_PROBE . '/';
+unset($_SERVER ['PATH_INFO'], $_SERVER ['ORIG_PATH_INFO']);
+pretty_regression_assert(!$plugin->capability_probe_matches('pathinfo'), 'PATH_INFO probe does not pass without a real PATH_INFO server variable');
+$_SERVER ['PATH_INFO'] = '/' . PRETTYURLS_CAPABILITY_PROBE . '/';
+pretty_regression_assert($plugin->capability_probe_matches('pathinfo'), 'PATH_INFO probe passes when the server supplies the requested PATH_INFO suffix');
+unset($_SERVER ['PATH_INFO']);
+$_SERVER ['ORIG_PATH_INFO'] = '/blog/index.php/' . PRETTYURLS_CAPABILITY_PROBE . '/';
+pretty_regression_assert($plugin->capability_probe_matches('pathinfo'), 'PATH_INFO probe accepts the common ORIG_PATH_INFO form');
+unset($_SERVER ['ORIG_PATH_INFO']);
+
+// HTTP Get is only reported as supported when the actual ?u=/... URL form
+// reaches index.php and preserves the probe route parameter.
+$_GET = array(
+	'u' => '/' . PRETTYURLS_CAPABILITY_PROBE . '/',
+	'prettyurls_probe' => 'get'
+);
+$_SERVER ['REQUEST_URI'] = '/blog/?u=/' . PRETTYURLS_CAPABILITY_PROBE . '/&prettyurls_probe=get';
+$_SERVER ['SCRIPT_NAME'] = '/blog/index.php';
+$_SERVER ['PHP_SELF'] = '/blog/index.php';
+pretty_regression_assert($plugin->capability_probe_matches('get'), 'HTTP Get probe passes when ?u=/... reaches the directory index with the route intact');
+unset($_GET ['u']);
+pretty_regression_assert(!$plugin->capability_probe_matches('get'), 'HTTP Get probe rejects a request whose u route parameter was lost');
+$_GET ['u'] = '/' . PRETTYURLS_CAPABILITY_PROBE . '/';
+$_SERVER ['REQUEST_URI'] = '/blog/index.php?u=/' . PRETTYURLS_CAPABILITY_PROBE . '/&prettyurls_probe=get';
+pretty_regression_assert(!$plugin->capability_probe_matches('get'), 'HTTP Get probe verifies the same directory-root URL form that PrettyURLs generates');
+$_GET = array();
+
+// Pretty is only reported as supported when a clean routed path actually reaches index.php.
+$_SERVER ['REQUEST_URI'] = '/blog/' . PRETTYURLS_CAPABILITY_PROBE . '/?prettyurls_probe=pretty';
+$_SERVER ['SCRIPT_NAME'] = '/blog/index.php';
+$_SERVER ['PHP_SELF'] = '/blog/index.php';
+pretty_regression_assert($plugin->capability_probe_matches('pretty'), 'Pretty probe passes when the clean probe path reaches index.php');
+$_SERVER ['REQUEST_URI'] = '/blog/not-the-probe/';
+pretty_regression_assert(!$plugin->capability_probe_matches('pretty'), 'Pretty probe rejects unrelated routed paths');
+$_SERVER ['SCRIPT_NAME'] = '/blog/static.php';
+$_SERVER ['REQUEST_URI'] = '/blog/' . PRETTYURLS_CAPABILITY_PROBE . '/';
+pretty_regression_assert(!$plugin->capability_probe_matches('pretty'), 'Pretty probe requires index.php as the front controller');
+
+// Server-side positive evidence remains valid even before the browser probe runs.
+$_SERVER ['SCRIPT_NAME'] = '/blog/index.php';
+$_SERVER ['REQUEST_URI'] = '/blog/';
+$_SERVER ['FLATPRESS_PRETTYURLS'] = '1';
+pretty_regression_assert($plugin->auto_mode_detect() === 3, 'FlatPress rewrite environment marker enables Pretty automatically');
+$caps = $plugin->modes_capabilities_preview();
+pretty_regression_assert(!empty($caps ['detected_pretty']), 'FlatPress rewrite marker positively detects Pretty capability');
+unset($_SERVER ['FLATPRESS_PRETTYURLS'], $_SERVER ['REDIRECT_URL']);
+
+$_SERVER ['REQUEST_URI'] = '/blog/2026/08/28/example/';
+pretty_regression_assert($plugin->auto_mode_detect() === 3, 'real routed path reaching index.php proves rewrite support');
+
+$_SERVER ['REQUEST_URI'] = '/blog/index.php/2026/08/28/example/';
+$_SERVER ['PATH_INFO'] = '/2026/08/28/example/';
+pretty_regression_assert($plugin->auto_mode_detect() === 1, 'real PATH_INFO request selects PATH_INFO mode');
+$caps = $plugin->modes_capabilities_preview();
+pretty_regression_assert(!empty($caps ['detected_pathinfo']), 'real PATH_INFO signal positively detects PATH_INFO capability');
+unset($_SERVER ['PATH_INFO']);
+
+// The generated and distributed Apache configurations must not rewrite the
+// PATH_INFO probe into Pretty mode, otherwise the capability check would lie.
+$htaccessTxt = file_get_contents(dirname(__DIR__) . '/fp-plugins/prettyurls/htaccess.txt');
+$htaccessNew = file_get_contents(dirname(__DIR__) . '/fp-plugins/prettyurls/htaccess-new');
+$probeRule = 'RewriteRule ^index\\.php/__flatpress_prettyurls_probe__/$ - [L]';
+pretty_regression_assert(is_string($pluginSource) && strpos($pluginSource, "RewriteRule ^index\\.php/' . PRETTYURLS_CAPABILITY_PROBE . '/$ - [L]") !== false, 'generated Apache configuration exempts the PATH_INFO probe from Pretty rewriting');
+pretty_regression_assert(is_string($htaccessTxt) && strpos($htaccessTxt, $probeRule) !== false, 'documented htaccess.txt exempts the PATH_INFO capability probe');
+pretty_regression_assert(is_string($htaccessNew) && strpos($htaccessNew, $probeRule) !== false, 'legacy htaccess-new example exempts the PATH_INFO capability probe');
+
+$_SERVER ['REQUEST_URI'] = '/blog/';
+$_SERVER ['SCRIPT_NAME'] = '/blog/index.php';
+$GLOBALS ['pretty_regression_mode'] = 3;
+$explicitPretty = new Plugin_PrettyURLs();
+$explicitPretty->get_url();
+pretty_regression_assert((int)$explicitPretty->mode === 3, 'explicit Pretty mode remains active without .htaccess (NGINX-compatible)');
+
+$GLOBALS ['pretty_regression_mode'] = 2;
+$explicitGet = new Plugin_PrettyURLs();
+$explicitGet->get_url();
+pretty_regression_assert((int)$explicitGet->mode === 2, 'explicit HTTP Get mode remains authoritative');
+
+@unlink(CACHE_DIR . '%%prettyurls-cats.tmp');
+@rmdir(CACHE_DIR);
+@rmdir($fixtureRoot);
+
+echo PHP_EOL . "All PrettyURLs auto-mode/capability regression checks passed." . PHP_EOL;
+exit(0);

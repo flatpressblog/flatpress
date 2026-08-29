@@ -168,6 +168,7 @@ function validate() {
 	$user ['password'] = $fppwd;
 
 	$fp_config ['general'] ['www'] = $user ['www'] = $www;
+	$fp_config ['general'] ['trust_forwarded_scheme'] = function_exists('fp_should_trust_forwarded_scheme_for_url') ? fp_should_trust_forwarded_scheme_for_url($www) : false;
 	$fp_config ['general'] ['email'] = $user ['email'] = $email;
 
 	// Set UTC offset according to time zone set in php.ini
