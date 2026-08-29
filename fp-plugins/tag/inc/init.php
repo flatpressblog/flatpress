@@ -87,9 +87,6 @@ class plugin_tag_init {
 	// How many entries there are...
 	var $fpdb_len = 0;
 
-	// Is the walker still valid?
-	var $valid = false;
-
 	/**
 	 * plugin_tag_init
 	 *
@@ -144,7 +141,6 @@ class plugin_tag_init {
 		$fp_params ['cat'] =- 0xFF;
 		$fpdb->_indexer [-0xFF] = $this;
 		$this->fpdb_len = $l;
-		reset($this->walker_array);
 
 		// Solve problems with Frontpage plugin
 		if (isset($fp_params ['not']) && @!constant('PLUGIN_TAG_ALLOW_NOT')) {
@@ -183,7 +179,6 @@ class plugin_tag_init {
 	 * @return object A new tag walker by reference
 	 */
 	function &walker() {
-		$this->valid = true;
 		$walker = new plugin_tag_walker($this->walker_array);
 		return $walker;
 	}
