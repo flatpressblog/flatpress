@@ -2,7 +2,7 @@
 /**
  * Regression checks for public URL / reverse-proxy detection.
  * Run from the repository root with:
- *   php tests/connection_proxy_regression.ph_
+ *   php fp-plugins/prettyurls/regression-tests/connection_proxy_regression.ph_
  */
 
 function fp_regression_assert($condition, $message) {
@@ -48,7 +48,10 @@ $_SERVER = array(
 	'REMOTE_ADDR' => '8.8.8.8'
 );
 
-require dirname(__DIR__) . '/fp-includes/core/core.connection.php';
+$repoRoot = dirname(__DIR__, 3);
+$coreConnection = $repoRoot . '/fp-includes/core/core.connection.php';
+fp_regression_assert(is_file($coreConnection), 'repository-relative core.connection.php path resolves from regression-tests directory');
+require $coreConnection;
 
 $candidate = fp_setup_baseurl_candidate();
 fp_regression_assert($candidate === 'https://example.test/blog/', 'setup candidate uses forwarded HTTPS without exposing backend :80');
