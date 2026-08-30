@@ -295,18 +295,18 @@ Low–Medium. Useful for avoiding repeated disk + parsing cost on high-traffic s
 
 ---
 
-### 2.8 Network/Environment Caches – `fp:https:v3:*`, `fp:net:in_cidrs:*`
+### 2.8 Network/Environment Caches – `fp:https:v4:*`, `fp:net:in_cidrs:*`
 
 **Prefixes:**
 
-- `fp:https:v3:<sha1(env_state)>`
+- `fp:https:v4:<sha1(env_state)>`
 - `fp:net:in_cidrs:<ip>|<sha1(sorted_unique_cidrs)>`
 
 **File:** `fp-includes/core/core.connection.php`  
 
 **What is cached:**
 
-- `fp:https:v3:` – Result of “are we effectively running under HTTPS?” considering proxies and server vars.
+- `fp:https:v4:` – Result of “are we effectively running under HTTPS?” considering proxies and server vars.
 - `fp:net:in_cidrs:` – Boolean results of “IP is in these CIDRs” checks.
 
 **Invalidation:**
@@ -1142,7 +1142,7 @@ Low individually, but foundational for all namespaced cores.
 
 ---
 
-### 5.2 HTTPS and CIDR Probes – `fp:https:v3:*`, `fp:net:in_cidrs:*`
+### 5.2 HTTPS and CIDR Probes – `fp:https:v4:*`, `fp:net:in_cidrs:*`
 
 Already covered in section 2.8, but worth summarizing:
 
@@ -1265,7 +1265,7 @@ The following table summarizes each logical cache group:
 | INI parsing (SEO plugin)    | `fp:ini:*`                                                                          | No                       | INI file mtime/size                                                | Low–Medium              |
 | SEO `og:image` (SEO plugin) | `fp:seometa:og:imageinfo:*`, `seometa:og:imagebin:*`                                | No                       | Source path/type/mtime/size, target size, TTL                      | Medium–High             |
 | Smarty block fragments      | `fp:smarty:block:*`                                                                 | No                       | TTL, template timestamp, APCu eviction or file fallback            | Medium–High             |
-| HTTPS/IP env                | `fp:https:v3:*`, `fp:net:in_cidrs:*`                                                | No                       | TTL (≈3600s) and local process                                     | Low–Medium              |
+| HTTPS/IP env                | `fp:https:v4:*`, `fp:net:in_cidrs:*`                                                | No                       | HTTPS TTL 120s by default; CIDR TTL 3600s; local process           | Low–Medium              |
 | Plugin discovery            | `fp:plugin:*`, `fp:plugins:*`                                                       | No                       | Plugin dir/config mtimes                                           | Medium                  |
 | Smarty plugin index         | `fp:spi:*`                                                                          | No                       | Dir+token hash, TTL 300s                                           | Medium                  |
 | Search                      | `fp:search:rev`, `fp:search:v*`                                                     | No                       | Content rev + TTL (5s / 900s)                                      | Medium                  |
@@ -1306,7 +1306,7 @@ For completeness, the following logical prefixes are used by FlatPress `1.6.dev`
 - `fp:config:settings:`
 - `fp:entry:parsed:`
 - `fp:fpdb:offset-anchors:v1:`
-- `fp:https:v3:`
+- `fp:https:v4:`
 - `fp:ini:`
 - `fp:io:`
 - `fp:lang:`

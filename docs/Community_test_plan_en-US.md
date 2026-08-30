@@ -264,13 +264,13 @@ Create clearly recognizable test data. Avoid real addresses, secrets, and person
 - [ ] Open its admin page before saving any custom mode.
 - [ ] Expected: without positive rewrite proof, Automatic safely falls back to HTTP Get.
 - [ ] On Apache, create the PrettyURLs `.htaccess`, reload, and confirm Automatic detects Pretty from the FlatPress rewrite marker.
-- [ ] Verify the green check icons describe host capabilities rather than the mode selected by Automatic: the browser probe must show PATH Info only when the probe suffix actually reaches `index.php` as PATH_INFO/ORIG_PATH_INFO, Pretty only when the clean probe path reaches the FlatPress front controller, and HTTP Get must have no capability check.
+- [ ] Verify the green check icons describe host capabilities rather than the mode selected by Automatic: the browser probe must show PATH Info only when the probe suffix actually reaches `index.php` as PATH_INFO/ORIG_PATH_INFO, HTTP Get only when the generated `?u=/...` request reaches `index.php` with the expected route parameter intact, and Pretty only when the clean probe path reaches the FlatPress front controller.
 - [ ] Remove the FlatPress PrettyURLs `.htaccess`, reload the admin page, and confirm the Pretty green check disappears; recreate the `.htaccess`, reload, and confirm the Pretty probe succeeds only when rewrite routing is actually active.
 - [ ] With the generated `.htaccess` present, confirm the dedicated PATH_INFO probe is not swallowed by the Pretty catch-all rule and that PATH Info keeps its check only when the host really supports it.
 - [ ] Verify that a generic host-provided `REDIRECT_URL` without FlatPress rewrite proof does not select Pretty.
 - [ ] On NGINX or another server configured outside `.htaccess`, select Pretty explicitly and confirm FlatPress does not silently fall back to HTTP Get.
-- [ ] Test every PrettyURLs mode offered as supported by the current web server.
-- [ ] Expected: unsupported modes are not presented as safe choices.
+- [ ] Test every PrettyURLs mode that receives a green capability check on the current web server.
+- [ ] Expected: a green check appears only after positive request-time evidence or a successful browser probe; absence of a check does not prevent an administrator from explicitly selecting Pretty for externally configured NGINX/rewrite setups.
 - [ ] Create an entry title containing `😀`, accented letters, and non-Latin text.
 - [ ] Save and open the entry.
 - [ ] Expected: the generated slug is valid, stable, and reachable.
