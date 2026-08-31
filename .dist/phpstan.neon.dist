@@ -60,6 +60,8 @@ parameters:
       - ../fp-includes/smarty-5.8.4/**
       - ../fp-content/compile/**
       - ../fp-content/cache/**
+      - ../.setup.php (?)
+      - ../.setup/** (?)
 
   paths:
     - ..
