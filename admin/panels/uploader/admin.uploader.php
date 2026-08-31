@@ -449,6 +449,7 @@ class admin_uploader_default extends AdminPanelAction {
 			 */
 			if (function_exists('finfo_open')) {
 				$finfo = finfo_open(FILEINFO_MIME_TYPE);
+				// @phpstan-ignore argument.type (PHPStan 2.2.10 reports the PHP 7.x fileinfo resource arm as incompatible in ranged phpVersion analysis)
 				$mime = $finfo ? @finfo_file($finfo, $tmp_name) : false;
 				if ($finfo) {
 					if (!is_php85_plus()) {

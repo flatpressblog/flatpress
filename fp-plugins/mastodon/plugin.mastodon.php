@@ -9915,41 +9915,44 @@ function plugin_mastodon_http_request_multipart($method, $url, $headers, $fields
 		}
 		$responseHeaders = array();
 		$ch = curl_init($url);
-		$options = array(
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_MAXREDIRS => 5,
-			CURLOPT_CONNECTTIMEOUT => 15,
-			CURLOPT_TIMEOUT => $timeout,
-			CURLOPT_CUSTOMREQUEST => $method,
-			CURLOPT_HTTPHEADER => $headers,
-			CURLOPT_POSTFIELDS => $payload,
-			CURLOPT_HEADERFUNCTION => function ($curl, $headerLine) use (&$responseHeaders) {
-				$len = strlen($headerLine);
-				$headerLine = trim($headerLine);
-				if ($headerLine !== '' && strpos($headerLine, ':') !== false) {
-					list($name, $value) = explode(':', $headerLine, 2);
-					$responseHeaders [strtolower(trim($name))] = trim($value);
-				}
-				return $len;
-			},
-			CURLOPT_USERAGENT => 'FlatPress-Mastodon/0.1'
-		);
-		curl_setopt_array($ch, $options);
-		$responseBody = curl_exec($ch);
-		$errorNo = curl_errno($ch);
-		$error = curl_error($ch);
-		$code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		if (!is_php85_plus()) {
-			curl_close($ch);
+		if ($ch !== false) {
+			$options = array(
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_MAXREDIRS => 5,
+				CURLOPT_CONNECTTIMEOUT => 15,
+				CURLOPT_TIMEOUT => $timeout,
+				CURLOPT_CUSTOMREQUEST => $method,
+				CURLOPT_HTTPHEADER => $headers,
+				CURLOPT_POSTFIELDS => $payload,
+				CURLOPT_HEADERFUNCTION => function ($curl, $headerLine) use (&$responseHeaders) {
+					$len = strlen($headerLine);
+					$headerLine = trim($headerLine);
+					if ($headerLine !== '' && strpos($headerLine, ':') !== false) {
+						list($name, $value) = explode(':', $headerLine, 2);
+						$responseHeaders [strtolower(trim($name))] = trim($value);
+					}
+					return $len;
+				},
+				CURLOPT_USERAGENT => 'FlatPress-Mastodon/0.1'
+			);
+			curl_setopt_array($ch, $options);
+			$responseBody = curl_exec($ch);
+			$errorNo = curl_errno($ch);
+			$error = curl_error($ch);
+			// @phpstan-ignore argument.type (PHPStan 2.2.10 reports the PHP 7.x cURL resource arm as incompatible in ranged phpVersion analysis)
+			$code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			if (!is_php85_plus()) {
+				curl_close($ch);
+			}
+			return array(
+				'ok' => ($errorNo === 0 && $code >= 200 && $code < 300),
+				'code' => $code,
+				'headers' => $responseHeaders,
+				'body' => is_string($responseBody) ? $responseBody : '',
+				'error' => (string) $error
+			);
 		}
-		return array(
-			'ok' => ($errorNo === 0 && $code >= 200 && $code < 300),
-			'code' => $code,
-			'headers' => $responseHeaders,
-			'body' => is_string($responseBody) ? $responseBody : '',
-			'error' => (string) $error
-		);
 	}
 
 	$boundary = '----FlatPressMastodon' . md5(uniqid('', true));
@@ -11062,44 +11065,47 @@ function plugin_mastodon_http_request($method, $url, $headers, $body, $contentTy
 	if (function_exists('curl_init')) {
 		$responseHeaders = array();
 		$ch = curl_init($url);
-		$options = array(
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_MAXREDIRS => 5,
-			CURLOPT_CONNECTTIMEOUT => 15,
-			CURLOPT_TIMEOUT => $timeout,
-			CURLOPT_CUSTOMREQUEST => $method,
-			CURLOPT_HTTPHEADER => $headers,
-			CURLOPT_HEADERFUNCTION => function ($curl, $headerLine) use (&$responseHeaders) {
-				$len = strlen($headerLine);
-				$headerLine = trim($headerLine);
-				if ($headerLine !== '' && strpos($headerLine, ':') !== false) {
-					list($name, $value) = explode(':', $headerLine, 2);
-					$responseHeaders [strtolower(trim($name))] = trim($value);
-				}
-				return $len;
-			},
-			CURLOPT_USERAGENT => 'FlatPress-Mastodon/0.1'
-		);
+		if ($ch !== false) {
+			$options = array(
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_MAXREDIRS => 5,
+				CURLOPT_CONNECTTIMEOUT => 15,
+				CURLOPT_TIMEOUT => $timeout,
+				CURLOPT_CUSTOMREQUEST => $method,
+				CURLOPT_HTTPHEADER => $headers,
+				CURLOPT_HEADERFUNCTION => function ($curl, $headerLine) use (&$responseHeaders) {
+					$len = strlen($headerLine);
+					$headerLine = trim($headerLine);
+					if ($headerLine !== '' && strpos($headerLine, ':') !== false) {
+						list($name, $value) = explode(':', $headerLine, 2);
+						$responseHeaders [strtolower(trim($name))] = trim($value);
+					}
+					return $len;
+				},
+				CURLOPT_USERAGENT => 'FlatPress-Mastodon/0.1'
+			);
 
-		if ($method === 'POST' || $method === 'PUT' || $method === 'PATCH' || $method === 'DELETE') {
-			$options [CURLOPT_POSTFIELDS] = $body;
+			if ($method === 'POST' || $method === 'PUT' || $method === 'PATCH' || $method === 'DELETE') {
+				$options [CURLOPT_POSTFIELDS] = $body;
+			}
+			curl_setopt_array($ch, $options);
+			$responseBody = curl_exec($ch);
+			$errorNo = curl_errno($ch);
+			$error = curl_error($ch);
+			// @phpstan-ignore argument.type (PHPStan 2.2.10 reports the PHP 7.x cURL resource arm as incompatible in ranged phpVersion analysis)
+			$code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			if (!is_php85_plus()) {
+				curl_close($ch);
+			}
+			return array(
+				'ok' => ($errorNo === 0 && $code >= 200 && $code < 300),
+				'code' => $code,
+				'headers' => $responseHeaders,
+				'body' => is_string($responseBody) ? $responseBody : '',
+				'error' => (string) $error
+			);
 		}
-		curl_setopt_array($ch, $options);
-		$responseBody = curl_exec($ch);
-		$errorNo = curl_errno($ch);
-		$error = curl_error($ch);
-		$code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		if (!is_php85_plus()) {
-			curl_close($ch);
-		}
-		return array(
-			'ok' => ($errorNo === 0 && $code >= 200 && $code < 300),
-			'code' => $code,
-			'headers' => $responseHeaders,
-			'body' => is_string($responseBody) ? $responseBody : '',
-			'error' => (string) $error
-		);
 	}
 
 	if (ini_get('allow_url_fopen')) {
@@ -11551,6 +11557,7 @@ function plugin_mastodon_profile_avatar_type($body, $headers) {
 	if (function_exists('finfo_open')) {
 		$finfo = @finfo_open(FILEINFO_MIME_TYPE);
 		if ($finfo) {
+			// @phpstan-ignore argument.type (PHPStan 2.2.10 reports the PHP 7.x fileinfo resource arm as incompatible in ranged phpVersion analysis)
 			$detected = @finfo_buffer($finfo, $body);
 			@finfo_close($finfo);
 			$detected = is_string($detected) ? strtolower(trim($detected)) : '';

@@ -624,26 +624,29 @@ function utils_geturl($url) {
 		);
 
 		$ch = curl_init($url);
-		curl_setopt_array($ch, $options);
-		$content = curl_exec($ch);
-		$err = curl_errno($ch);
-		$errmsg = curl_error($ch);
-		$header = curl_getinfo($ch);
-		if (!is_php85_plus()) {
-			curl_close($ch);
-		}
+		if ($ch !== false) {
+			curl_setopt_array($ch, $options);
+			$content = curl_exec($ch);
+			$err = curl_errno($ch);
+			$errmsg = curl_error($ch);
+			// @phpstan-ignore argument.type (PHPStan 2.2.10 reports the PHP 7.x cURL resource arm as incompatible in ranged phpVersion analysis)
+			$header = curl_getinfo($ch);
+			if (!is_php85_plus()) {
+				curl_close($ch);
+			}
 
-		if (!is_array($header)) {
-			$header = array();
-		}
-		// Ensure required keys exist for callers.
-		$header += $default;
-		$header ['errno'] = $err;
-		$header ['errmsg'] = $errmsg;
-		$header ['content'] = $content;
-		$header ['transport'] = 'curl';
+			if (!is_array($header)) {
+				$header = array();
+			}
+			// Ensure required keys exist for callers.
+			$header += $default;
+			$header ['errno'] = $err;
+			$header ['errmsg'] = $errmsg;
+			$header ['content'] = $content;
+			$header ['transport'] = 'curl';
 
-		return $header;
+			return $header;
+		}
 	}
 
 	// Fallback transport: allow_url_fopen (common on shared hosting without cURL)

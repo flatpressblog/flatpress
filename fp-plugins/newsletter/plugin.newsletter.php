@@ -240,6 +240,7 @@ function plugin_newsletter_http_get(string $url, ?int &$httpCode = null, ?string
 			$data = curl_exec($ch);
 			$errno = curl_errno($ch);
 			$errstr = curl_error($ch);
+			// @phpstan-ignore argument.type (PHPStan 2.2.10 reports the PHP 7.x cURL resource arm as incompatible in ranged phpVersion analysis)
 			$code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			if (!is_php85_plus()) {
 				curl_close($ch);
