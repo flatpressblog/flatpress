@@ -160,12 +160,12 @@ body {
 	line-height: 1.6;
 	color: var(--fp-text, #0f172a);
 	background-color: var(--fp-bg, #f6f7fb);
-	/* SVG pattern + tiny gradient fallback (visible even if SVG fails to load) */
-	background-image: url('../imgs/bg.svg'), radial-gradient(circle at 1px 1px, rgba(var(--fp-pattern-dot-rgb, 255, 140, 0), .045) 1px, transparent 0);
-	background-repeat: repeat, repeat;
-	background-size: 600px 600px, 36px 36px;
-	background-position: top left, top left;
-	background-attachment: scroll, scroll;
+	/* SVG background pattern */
+	background-image: url('../imgs/bg.svg');
+	background-repeat: repeat;
+	background-size: 600px 600px;
+	background-position: top left;
+	background-attachment: scroll;
 }
 
 #background-image {
