@@ -14,10 +14,10 @@
 	<thead>
 		<tr>
 			{*<th>{$panelstrings.sel}</th>*}
-			<th>{$panelstrings.name}</th>
-			<th class="main-cell">{$panelstrings.title}</th>
-			<th>{$panelstrings.author}</th>
-			<th>{$panelstrings.action}</th>
+			<th scope="col">{$panelstrings.name}</th>
+			<th scope="col" class="main-cell">{$panelstrings.title}</th>
+			<th scope="col">{$panelstrings.author}</th>
+			<th scope="col">{$panelstrings.action}</th>
 		</tr>
 	</thead>
 
@@ -25,15 +25,15 @@
 	{static}
 		<tr>
 			{*<td><input type="checkbox"></td>*}
-			<td>{$id}</td>
+			<td data-label="{$panelstrings.name|escape:'html'}">{$id}</td>
 			<td class="main-cell">
 				<a class="link-general" href="{$panel_url|action_link:write}&amp;page={$id}">
 					{$subject|truncate:70|tag:the_title}
 				</a>
 			</td>
 
-			<td>{$author}</td>
-			<td>
+			<td data-label="{$panelstrings.author|escape:'html'}">{$author}</td>
+			<td data-label="{$panelstrings.action|escape:'html'}">
 				<a class="link-general" href="{$id|link:page_link}">
 					{$panelstrings.act_view}
 				</a>
