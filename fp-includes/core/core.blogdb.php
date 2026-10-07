@@ -190,7 +190,7 @@ function bdb_parse_entry($id, $type = null) {
 		$__bdb_entry_cache [$file] = $entry;
 
 		// Fill APCu parsed-entry cache (bounded TTL)
-		if ($apcu_on && isset($mt) && $mt !== false) {
+		if ($apcu_on && $mt !== false) {
 			$sz = isset($sz) ? $sz : (int) @filesize($file);
 			$akey = 'fp:entry:parsed:' . basename($file) . ':' . $mt . ':' . $sz;
 			$ttl = max(0, (int) ($_ENV ['FP_APCU_ENTRY_TTL'] ?? 600));

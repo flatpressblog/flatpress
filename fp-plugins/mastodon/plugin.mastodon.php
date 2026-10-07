@@ -6655,7 +6655,7 @@ function plugin_mastodon_guess_subject($text) {
 		if ($line === '') {
 			continue;
 		}
-		if ($candidate === '' && plugin_mastodon_subject_line_is_noise($line)) {
+		if (plugin_mastodon_subject_line_is_noise($line)) {
 			continue;
 		}
 		$candidate = $line;
