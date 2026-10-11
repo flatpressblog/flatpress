@@ -365,8 +365,14 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	$the_url = $local ? (BLOG_BASEURL . $url) : $url;
 	// DMKE: uh?
 	$content = $content;
-	$rel = isset($attributes ['rel']) ? ' rel="' . $attributes ['rel'] . '"' : '';
-	$target = isset($attributes ['target']) ? ' target="'. $attributes ['target'] . '"' : '';
+	// Open URL links in a new tab by default; keep explicitly requested targets.
+	$targetValue = isset($attributes ['target']) ? (string) $attributes ['target'] : '_blank';
+	$relValue = isset($attributes ['rel']) ? trim((string) $attributes ['rel']) : '';
+	if (strcasecmp($targetValue, '_blank') === 0 && !preg_match('/(?:^|\s)noopener(?:\s|$)/i', $relValue)) {
+		$relValue = trim($relValue . ' noopener');
+	}
+	$rel = $relValue !== '' ? ' rel="' . plugin_bbcode_escape_html_attribute($relValue) . '"' : '';
+	$target = ' target="' . plugin_bbcode_escape_html_attribute($targetValue) . '"';
 	$extern = !$local ? ' class="externlink" title="' . $lang ['plugin'] ['bbcode'] ['go_to'] . ' ' . $the_url . '"' : '';
 	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target . '>' . $content . '</a>';
 }
