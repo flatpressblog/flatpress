@@ -93,20 +93,20 @@ $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Меню';
 $lang ['samplecontent'] ['menu'] ['content'] = '[list]
-[*][url=?]Домашняя[/url]
-[*][url=?paged=1]Блог[/url]
-[*][url=static.php?page=about]Обо мне[/url]
-[*][url=contact.php]Контакты[/url]
+[*][url=? target=_self]Домашняя[/url]
+[*][url=?paged=1 target=_self]Блог[/url]
+[*][url=static.php?page=about target=_self]Обо мне[/url]
+[*][url=contact.php target=_self]Контакты[/url]
 [/list]';
 
 $lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Нижнее меню';
 $lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
-[*][url=static.php?page=legal-notice]Правовая информация[/url]
-[*][url=static.php?page=privacy-policy]Политика конфиденциальности[/url]
+[*][url=static.php?page=legal-notice target=_self]Правовая информация[/url]
+[*][url=static.php?page=privacy-policy target=_self]Политика конфиденциальности[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'FlatPress';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Добро пожаловать во FlatPress! Это примерная запись, опубликованная для того, чтобы показать вам некоторые возможности [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Добро пожаловать во FlatPress! Это примерная запись, опубликованная для того, чтобы показать вам некоторые возможности [url=https://www.flatpress.org rel=external]FlatPress[/url].
 
 Тег more позволяет создать "переход" между отрывком и полным текстом статьи.
 
@@ -115,7 +115,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Добро пожаловать
 
 [h4]Стилизация[/h4]
 
-По умолчанию стилизация и форматирование содержимого выполняется с помощью [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode-разметки[/url] (bulletin board code). BBCode — это простой способ стилизовать ваши сообщения. Допускается использование наиболее распространенных кодов. Например, [b] для [b]жирного[/b] (html: strong), [i] для [i]курсива[/i] (html: em), etc.
+По умолчанию стилизация и форматирование содержимого выполняется с помощью [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]BBcode-разметки[/url] (bulletin board code). BBCode — это простой способ стилизовать ваши сообщения. Допускается использование наиболее распространенных кодов. Например, [b] для [b]жирного[/b] (html: strong), [i] для [i]курсива[/i] (html: em), etc.
 
 [quote]Также есть [b]quote[/b] для отображения ваших любимых цитат.[/quote]
 
@@ -123,36 +123,36 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Добро пожаловать
 Он также поддерживает
    отступы.[/code]
 
-Теги img и url также имеют специальные опции. Подробнее об этом можно узнать в разделе на [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki[/url].
+Теги img и url также имеют специальные опции. Подробнее об этом можно узнать в разделе на [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]FlatPress-Wiki[/url].
 
 
 [h4]Записи (посты) и статические страницы[/h4]
 
-Это запись, а [url=static.php?page=about]Обо мне[/url] — это [b]статическая страница[/b]. Статическая страница — это запись (пост), которую нельзя комментировать, и которая не появляется вместе с обычными записями блога.
+Это запись, а [url=static.php?page=about target=_self]Обо мне[/url] — это [b]статическая страница[/b]. Статическая страница — это запись (пост), которую нельзя комментировать, и которая не появляется вместе с обычными записями блога.
 
-Статические страницы полезны для создания страниц с общей информацией. Вы также можете сделать одну из этих страниц [b]начальной страницей[/b] для посетителей. Это означает, что с помощью FlatPress вы можете запустить полноценный сайт, не являющийся блогом. Возможность сделать статическую страницу Главной (стартовой) находится в [b]панеле опций[/b] в [url=admin.php]зоне администрирования[/url].
+Статические страницы полезны для создания страниц с общей информацией. Вы также можете сделать одну из этих страниц [b]начальной страницей[/b] для посетителей. Это означает, что с помощью FlatPress вы можете запустить полноценный сайт, не являющийся блогом. Возможность сделать статическую страницу Главной (стартовой) находится в [b]панеле опций[/b] в [url=admin.php target=_self]зоне администрирования[/url].
 
 
 [h4]Плагины[/h4]
 
-FlatPress очень хорошо настраивается и поддерживает [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]плагины[/url] для расширения своих возможностей. BBCode является самостоятельным плагином.
+FlatPress очень хорошо настраивается и поддерживает [url=https://wiki.flatpress.org/doc:plugins:standard rel=external]плагины[/url] для расширения своих возможностей. BBCode является самостоятельным плагином.
 
 Мы создали еще несколько примеров контента, чтобы показать вам некоторые из скрытых функций и жемчужин FP :)
 Вы можете найти две [b]статические страницы[/b], готовые к наполнению Вашим контентом:
 [list]
-[*][url=static.php?page=about]Обо мне[/url]
-[*][url=static.php?page=menu]Меню[/url] (обратите внимание, что ссылки на этой странице будут появляться и в боковой панели — такова магия [b]виджета blockparser[/b]. Об этом и о многом другом читайте в разделе [url=https://wiki.flatpress.org/doc:faq target=_blank rel=external]FAQ[/url]!)
+[*][url=static.php?page=about target=_self]Обо мне[/url]
+[*][url=static.php?page=menu target=_self]Меню[/url] (обратите внимание, что ссылки на этой странице будут появляться и в боковой панели — такова магия [b]виджета blockparser[/b]. Об этом и о многом другом читайте в разделе [url=https://wiki.flatpress.org/doc:faq rel=external]FAQ[/url]!)
 [/list]
 
 С помощью плагина [b]PhotoSwipe[/b] вы можете размещать свои изображения еще проще, либо как float="left", либо как float="right", выровненные по одному изображению, заключенному в текст.
-Вы даже можете использовать элемент \'gallery\', чтобы представить посетителям целые галереи. Как это работает, [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]вы можете узнать здесь[/url].
+Вы даже можете использовать элемент \'gallery\', чтобы представить посетителям целые галереи. Как это работает, [url=https://wiki.flatpress.org/doc:plugins:photoswipe rel=external]вы можете узнать здесь[/url].
 
 
 [h4]Виджеты[/h4]
 
 В боковой панели нет ни одного фиксированного элемента. Все элементы, которые вы можете найти в полосах, окружающих этот текст, полностью позиционируются, и большинство из них также настраиваются. Некоторые темы даже предоставляют интерфейс панели в области администрирования.  
 
-Эти элементы называются [b]виджетами[/b]. Подробнее о виджетах и [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]некоторых советах[/url] по получению красивых эффектов вы можете узнать на [url=https://wiki.flatpress.org/ target=_blank rel=external]wiki[/url].
+Эти элементы называются [b]виджетами[/b]. Подробнее о виджетах и [url=https://wiki.flatpress.org/doc:tips:widgets rel=external]некоторых советах[/url] по получению красивых эффектов вы можете узнать на [url=https://wiki.flatpress.org/ rel=external]wiki[/url].
 
 
 [h4]Темы[/h4]
@@ -166,49 +166,49 @@ FlatPress очень хорошо настраивается и поддержи
 Хотите узнать больше?
 
 [list]
-[*]Следите за [url=https://www.flatpress.org/?x target=_blank rel=external]официальным блогом[/url], чтобы знать, что происходит в мире FlatPress.
-[*]Посетите [url=https://forum.flatpress.org/ target=_blank rel=external]форум[/url], чтобы получить поддержку и пообщаться.
-[*]Используйте [b]отличные темы[/b], [url=https://wiki.flatpress.org/res:themes target=_blank rel=external] созданные другими пользователями[/url]!
-[*]Посмотрите [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]плагины[/url].
-[*]Используйте [url=https://wiki.flatpress.org/res:language target=_blank rel=external]языковой пакет[/url] для Вашего языка.
-[*]Вы также можете следить за FlatPress на [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Следите за [url=https://www.flatpress.org/?x rel=external]официальным блогом[/url], чтобы знать, что происходит в мире FlatPress.
+[*]Посетите [url=https://forum.flatpress.org/ rel=external]форум[/url], чтобы получить поддержку и пообщаться.
+[*]Используйте [b]отличные темы[/b], [url=https://wiki.flatpress.org/res:themes rel=external] созданные другими пользователями[/url]!
+[*]Посмотрите [url=https://wiki.flatpress.org/res:plugins rel=external]плагины[/url].
+[*]Используйте [url=https://wiki.flatpress.org/res:language rel=external]языковой пакет[/url] для Вашего языка.
+[*]Вы также можете следить за FlatPress на [url=https://fosstodon.org/@flatpress rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]Как я могу помочь?[/h4]
 
 [list]
-[*]Поддержите проект [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]небольшим пожертвованием[/url]
-[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Свяжитесь с нами[/url], чтобы сообщить об ошибках или предложить улучшения.
-[*]Участвуйте в разработке FlatPress на [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
-[*]Переведите FlatPress или документацию на [url=https://wiki.flatpress.org/res:language target=_blank rel=external]Ваш язык[/url].
-[*]Делитесь своими знаниями и общайтесь с другими пользователями FlatPress на [url=https://forum.flatpress.org/ target=_blank rel=external]форуме[/url].
+[*]Поддержите проект [url=https://www.flatpress.org/home/static.php?page=donate rel=external]небольшим пожертвованием[/url]
+[*][url=https://www.flatpress.org/contact/ rel=external]Свяжитесь с нами[/url], чтобы сообщить об ошибках или предложить улучшения.
+[*]Участвуйте в разработке FlatPress на [url=https://github.com/flatpressblog/flatpress rel=external]GitHub[/url].
+[*]Переведите FlatPress или документацию на [url=https://wiki.flatpress.org/res:language rel=external]Ваш язык[/url].
+[*]Делитесь своими знаниями и общайтесь с другими пользователями FlatPress на [url=https://forum.flatpress.org/ rel=external]форуме[/url].
 [*]Распространяйте информацию! :)
 [/list]
 
 
 [h4]И что теперь?[/h4]
 
-Теперь вы можете [url=login.php]Войти в систему[/url], чтобы попасть в [url=admin.php]зону администрирования[/url] и начать публиковать!
+Теперь вы можете [url=login.php target=_self]Войти в систему[/url], чтобы попасть в [url=admin.php target=_self]зону администрирования[/url] и начать публиковать!
 
 Развлекайтесь! :)
 
-[i]Команда [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url][/i]
+[i]Команда [url=https://www.flatpress.org rel=external]FlatPress[/url][/i]
 
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Обо мне';
-$lang ['samplecontent'] ['about'] ['content'] = 'Напишите что-нибудь о себе здесь. ([url=admin.php?p=static&action=write&page=about]Редактировать![/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Напишите что-нибудь о себе здесь. ([url=admin.php?p=static&action=write&page=about target=_self]Редактировать![/url])';
 
 $lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Правовая информация';
-$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Редактировать![/url])';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice target=_self]Редактировать![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Политика конфиденциальности';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'В некоторых странах, например, если вы используете службу Akismet Antispam, необходимо предоставить посетителям политику конфиденциальности. Политика конфиденциальности также может потребоваться, если посетитель может использовать контактную форму или функцию комментариев.
 
 [b]Совет:[/b] В интернете есть множество шаблонов и генераторов.
 
-Вы можете вставить их сюда. ([url=admin.php?p=static&action=write&page=privacy-policy]Отредактируйте меня![/url])
+Вы можете вставить их сюда. ([url=admin.php?p=static&action=write&page=privacy-policy target=_self]Отредактируйте меня![/url])
 
 Если вы активируете плагин CookieBanner, ваши посетители смогут перейти непосредственно на эту страницу в контактной форме и в функции комментариев.
 ';

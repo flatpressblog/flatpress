@@ -45,6 +45,14 @@
 		{$plang.attachsdir_long} </p>
 	</dd>
 
+	<dt><label for="bb-url-new-window">
+		{$plang.url_new_window}
+	</label></dt>
+	<dd>
+		<p><input type="checkbox" name="bb-url-new-window" id="bb-url-new-window" aria-describedby="bb-url-new-window-description" {if $bbconf['url-new-window']|default:false}checked{/if}>
+		<span id="bb-url-new-window-description">{$plang.url_new_window_long}</span></p>
+	</dd>
+
 	<dt><label for="bb-maxlen">
 		{$plang.urlmaxlen}
 	</label></dt>

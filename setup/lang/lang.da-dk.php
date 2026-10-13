@@ -93,20 +93,20 @@ $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Menu';
 $lang ['samplecontent'] ['menu'] ['content'] = '[list]
-[*][url=?]Hjemmeside[/url]
-[*][url=?paged=1]Blog[/url]
-[*][url=static.php?page=about]Om[/url]
-[*][url=contact.php]Kontakt[/url]
+[*][url=? target=_self]Hjemmeside[/url]
+[*][url=?paged=1 target=_self]Blog[/url]
+[*][url=static.php?page=about target=_self]Om[/url]
+[*][url=contact.php target=_self]Kontakt[/url]
 [/list]';
 
 $lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Menuen nederst';
 $lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
-[*][url=static.php?page=legal-notice]Juridisk meddelelse[/url]
-[*][url=static.php?page=privacy-policy]Privatlivspolitik[/url]
+[*][url=static.php?page=legal-notice target=_self]Juridisk meddelelse[/url]
+[*][url=static.php?page=privacy-policy target=_self]Privatlivspolitik[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Velkommen til FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Dette er et eksempel på et indlæg. Det viser dig nogle af [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url]\' funktioner.
+$lang ['samplecontent'] ['entry'] ['content'] = 'Dette er et eksempel på et indlæg. Det viser dig nogle af [url=https://www.flatpress.org rel=external]FlatPress[/url]\' funktioner.
 
 "more"-elementet giver dig mulighed for at springe fra artikeloversigten til den komplette artikel.
 
@@ -115,7 +115,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Dette er et eksempel på et ind
 
 [h4]Formatering af tekst[/h4]
 
-I FlatPress formaterer du dit indhold med [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (bulletin board code). Det er meget nemt med BBCode. Vil du have nogle eksempler? [b] laver [b]fed tekst[/b], [i] [i]kursiv[/i].
+I FlatPress formaterer du dit indhold med [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]BBcode[/url] (bulletin board code). Det er meget nemt med BBCode. Vil du have nogle eksempler? [b] laver [b]fed tekst[/b], [i] [i]kursiv[/i].
 
 [quote]Elementet [b]quote[/b] kan bruges til at markere citater.[/quote]
 
@@ -123,39 +123,39 @@ I FlatPress formaterer du dit indhold med [url=https://wiki.flatpress.org/doc:pl
 Den kan også
    repræsentere indrykninger.[/code]
 
-Elementerne \'img\' (billeder) og \'url\' (links) har særlige muligheder. Du kan finde ud af mere om dette i [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki.[/url].
+Elementerne \'img\' (billeder) og \'url\' (links) har særlige muligheder. Du kan finde ud af mere om dette i [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]FlatPress-Wiki.[/url].
 
 
 [h4]Indlæg (blogartikler) og statiske sider[/h4]
 
-Dette er en post, mens [url=static.php?page=about]Om[/url] er en [b]statisk side[/b]. En statisk side kan, i modsætning til et indlæg, ikke kommenteres og vises ikke i oversigterne over blogindlæg.
+Dette er en post, mens [url=static.php?page=about target=_self]Om[/url] er en [b]statisk side[/b]. En statisk side kan, i modsætning til et indlæg, ikke kommenteres og vises ikke i oversigterne over blogindlæg.
 
 Statiske sider er nyttige til generel information, f.eks. en fast startside eller et aftryk. Du kan endda helt undvære blogfunktionerne og bruge FlatPress til at oprette en hjemmeside kun med statiske sider.
 
-I [url=admin.php]administrationsområdet[/url] kan du oprette poster og statiske sider - og definere, om startsiden på din FlatPress-blog skal være en statisk side eller blogoversigten.
+I [url=admin.php target=_self]administrationsområdet[/url] kan du oprette poster og statiske sider - og definere, om startsiden på din FlatPress-blog skal være en statisk side eller blogoversigten.
 
 
 [h4]Plugins[/h4]
 
-Du kan i vid udstrækning tilpasse FlatPress til dine behov ved at udvide det med [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]Plugins[/url]. BBCode er for eksempel et plugin.
+Du kan i vid udstrækning tilpasse FlatPress til dine behov ved at udvide det med [url=https://wiki.flatpress.org/doc:plugins:standard rel=external]Plugins[/url]. BBCode er for eksempel et plugin.
 
 Her er nogle flere eksempler på indhold, der viser dig endnu flere FlatPress-funktioner :)
 
 To statiske sider er allerede forberedt til dig:
 [list]
-[*][url=static.php?page=about]Om[/url]
-[*][url=static.php?page=menu]Menu[/url] (Indholdet af denne statiske side vises også i sidebjælken på din blog - det er magien ved [b]blockparser-widget[/b]. [url=https://wiki.flatpress.org/ target=_blank rel=external]FlatPress-Wiki[/url] har oplysninger om dette og meget mere!)
+[*][url=static.php?page=about target=_self]Om[/url]
+[*][url=static.php?page=menu target=_self]Menu[/url] (Indholdet af denne statiske side vises også i sidebjælken på din blog - det er magien ved [b]blockparser-widget[/b]. [url=https://wiki.flatpress.org/ rel=external]FlatPress-Wiki[/url] har oplysninger om dette og meget mere!)
 [/list]
 
 Med [b]PhotoSwipe-pluginet[/b] kan du nu placere dine billeder endnu nemmere, enten som et float="left"- eller float="right"-justeret enkeltbillede, omgivet af teksten.
-Du kan endda præsentere hele gallerier for dine besøgende med elementet \'gallery\'. Du kan finde ud af, hvor nemt det er [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]her.[/url].
+Du kan endda præsentere hele gallerier for dine besøgende med elementet \'gallery\'. Du kan finde ud af, hvor nemt det er [url=https://wiki.flatpress.org/doc:plugins:photoswipe rel=external]her.[/url].
 
 
 [h4]Widgets[/h4]
 
 Ingen af elementerne i sidepanelet på din blog er faste, du kan flytte dem, fjerne dem og tilføje nye i administrationsområdet.
 
-Disse elementer kaldes [b]widgets[/b]. Selvfølgelig har [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]FlatPress Wiki[/url] også en masse nyttige oplysninger om dette emne.
+Disse elementer kaldes [b]widgets[/b]. Selvfølgelig har [url=https://wiki.flatpress.org/doc:tips:widgets rel=external]FlatPress Wiki[/url] også en masse nyttige oplysninger om dette emne.
 
 
 [h4]Temaer[/h4]
@@ -169,49 +169,49 @@ Med FlatPress Leggero-temaet har du 4 stilskabeloner til din rådighed - fra kla
 Vil du gerne vide mere om FlatPress?
 
 [list]
-[*]I [url=https://www.flatpress.org/?x target=_blank rel=external]projektbloggen[/url] kan du finde ud af, hvad der i øjeblikket foregår i FlatPress-projektet.
-[*]Besøg [url=https://forum.flatpress.org/ target=_blank rel=external]support forum[/url] for support og kontakt med andre FlatPress-brugere.
-[*]Download fantastiske [b]temaer[/b] skabt af fællesskabet fra [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]Wiki[/url].
-[*]Der er også gode [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url] der.
-[*]Få [url=https://wiki.flatpress.org/res:language]oversættelsespakken[/url] til dit sprog.
-[*]Du kan også følge FlatPress på [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]I [url=https://www.flatpress.org/?x rel=external]projektbloggen[/url] kan du finde ud af, hvad der i øjeblikket foregår i FlatPress-projektet.
+[*]Besøg [url=https://forum.flatpress.org/ rel=external]support forum[/url] for support og kontakt med andre FlatPress-brugere.
+[*]Download fantastiske [b]temaer[/b] skabt af fællesskabet fra [url=https://wiki.flatpress.org/res:themes rel=external]Wiki[/url].
+[*]Der er også gode [url=https://wiki.flatpress.org/res:plugins rel=external]plugins[/url] der.
+[*]Få [url=https://wiki.flatpress.org/res:language rel=external]oversættelsespakken[/url] til dit sprog.
+[*]Du kan også følge FlatPress på [url=https://fosstodon.org/@flatpress rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]Hvordan kan jeg støtte FlatPress?[/h4]
 
 [list]
-[*]Støt projektet med en [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]lille donation[/url].
-[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Rapporter[/url] fejl, der er opstået, eller send os forslag til forbedringer.
-[*]Programmører er velkomne til at støtte os på [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
-[*]Oversæt FlatPress og dens dokumentation til [url=https://wiki.flatpress.org/res:language target=_blank rel=external]dit sprog[/url].
-[*]Vær en del af FlatPress-fællesskabet i [url=https://forum.flatpress.org/ target=_blank rel=external]supportforummet[/url].
+[*]Støt projektet med en [url=https://www.flatpress.org/home/static.php?page=donate rel=external]lille donation[/url].
+[*][url=https://www.flatpress.org/contact/ rel=external]Rapporter[/url] fejl, der er opstået, eller send os forslag til forbedringer.
+[*]Programmører er velkomne til at støtte os på [url=https://github.com/flatpressblog/flatpress rel=external]GitHub[/url].
+[*]Oversæt FlatPress og dens dokumentation til [url=https://wiki.flatpress.org/res:language rel=external]dit sprog[/url].
+[*]Vær en del af FlatPress-fællesskabet i [url=https://forum.flatpress.org/ rel=external]supportforummet[/url].
 [*]Fortæl verden, hvor fantastisk FlatPress er! :)
 [/list]
 
 
 [h4]Så hvad nu?[/h4]
 
-[url=login.php]Log ind[/url] for at begynde at blogge i [url=admin.php]Administrationsrapporten[/url].
+[url=login.php target=_self]Log ind[/url] for at begynde at blogge i [url=admin.php target=_self]Administrationsrapporten[/url].
 
 God fornøjelse! :)
 
-[i][url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url]-teamet[/i]
+[i][url=https://www.flatpress.org rel=external]FlatPress[/url]-teamet[/i]
 
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Om';
-$lang ['samplecontent'] ['about'] ['content'] = 'Skriv noget om dig selv og denne blog her. ([url=admin.php?p=static&action=write&page=about]Arbejd med mig![/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Skriv noget om dig selv og denne blog her. ([url=admin.php?p=static&action=write&page=about target=_self]Arbejd med mig![/url])';
 
 $lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Juridisk meddelelse';
-$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Rediger mig![/url])';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice target=_self]Rediger mig![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Privatlivspolitik';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'I nogle lande, f.eks. hvis du bruger Akismet Antispam-tjenesten, er det nødvendigt at give dine besøgende en privatlivspolitik. En privatlivspolitik kan også være nødvendig, hvis den besøgende kan bruge kontaktformularen eller kommentarfunktionen.
 
 [b]Tip:[/b] Der findes masser af skabeloner og generatorer på internettet.
 
-Du kan indsætte dem her. ([url=admin.php?p=static&action=write&page=privacy-policy]Rediger mig![/url])
+Du kan indsætte dem her. ([url=admin.php?p=static&action=write&page=privacy-policy target=_self]Rediger mig![/url])
 
 Hvis du aktiverer CookieBanner-pluginet, vil dine besøgende kunne gå direkte til denne side i kontaktformularen og i kommentarfunktionen.
 ';
