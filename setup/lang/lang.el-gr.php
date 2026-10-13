@@ -93,20 +93,20 @@ $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Μενού';
 $lang ['samplecontent'] ['menu'] ['content'] = '[list]
-[*][url=?]Αρχική σελίδα[/url]
-[*][url=?paged=1]Blog[/url]
-[*][url=static.php?page=about]Σχετικά με το[/url]
-[*][url=contact.php]Επικοινωνία[/url]
+[*][url=? target=_self]Αρχική σελίδα[/url]
+[*][url=?paged=1 target=_self]Blog[/url]
+[*][url=static.php?page=about target=_self]Σχετικά με το[/url]
+[*][url=contact.php target=_self]Επικοινωνία[/url]
 [/list]';
 
 $lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Κάτω μενού';
 $lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
-[*][url=static.php?page=legal-notice]Νομική γνωστοποίηση[/url]
-[*][url=static.php?page=privacy-policy]Πολιτική απορρήτου[/url]
+[*][url=static.php?page=legal-notice target=_self]Νομική γνωστοποίηση[/url]
+[*][url=static.php?page=privacy-policy target=_self]Πολιτική απορρήτου[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Καλώς ήρθατε στην FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δείγμα ανάρτησης. Σας δείχνει μερικές από τις λειτουργίες του [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δείγμα ανάρτησης. Σας δείχνει μερικές από τις λειτουργίες του [url=https://www.flatpress.org rel=external]FlatPress[/url].
 
 Το στοιχείο "more" σας επιτρέπει να μεταβείτε από το περίγραμμα του άρθρου στο πλήρες άρθρο.
 
@@ -115,7 +115,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 
 [h4]Μορφοποίηση κειμένου[/h4]
 
-Στο FlatPress μορφοποιείτε το περιεχόμενό σας με [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (Bulletin-Board-Code). Αυτό είναι πολύ εύκολο με το BBCode. Θέλετε μερικά παραδείγματα; [b] κάνει [b]έντονο κείμενο[/b], [i] [i]πλάγιο[/i].
+Στο FlatPress μορφοποιείτε το περιεχόμενό σας με [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]BBcode[/url] (Bulletin-Board-Code). Αυτό είναι πολύ εύκολο με το BBCode. Θέλετε μερικά παραδείγματα; [b] κάνει [b]έντονο κείμενο[/b], [i] [i]πλάγιο[/i].
 
 [quote]Το στοιχείο [b]quote[/b] μπορεί να χρησιμοποιηθεί για τη σήμανση εισαγωγικών.[/quote]
 
@@ -123,39 +123,39 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 Μπορεί επίσης να
    να αναπαριστά εσοχές.[/code]
 
-Τα στοιχεία \'img\' (εικόνες) και \'url\' (σύνδεσμοι) έχουν ειδικές επιλογές. Μπορείτε να μάθετε περισσότερα σχετικά με αυτό στο [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki[/url].
+Τα στοιχεία \'img\' (εικόνες) και \'url\' (σύνδεσμοι) έχουν ειδικές επιλογές. Μπορείτε να μάθετε περισσότερα σχετικά με αυτό στο [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]FlatPress-Wiki[/url].
 
 
 [h4]Καταχωρήσεις (άρθρα ιστολογίου) και στατικές σελίδες[/h4]
 
-Αυτή είναι μια καταχώρηση, ενώ η [url=static.php?page=about]Σχετικά με το[/url] είναι μια [b]στατική σελίδα[/b]. Μια στατική σελίδα, σε αντίθεση με μια καταχώρηση, δεν μπορεί να σχολιαστεί και δεν εμφανίζεται στις λίστες των καταχωρήσεων του ιστολογίου.
+Αυτή είναι μια καταχώρηση, ενώ η [url=static.php?page=about target=_self]Σχετικά με το[/url] είναι μια [b]στατική σελίδα[/b]. Μια στατική σελίδα, σε αντίθεση με μια καταχώρηση, δεν μπορεί να σχολιαστεί και δεν εμφανίζεται στις λίστες των καταχωρήσεων του ιστολογίου.
 
 Οι στατικές σελίδες είναι χρήσιμες για γενικές πληροφορίες, για παράδειγμα μια σταθερή αρχική σελίδα ή το αποτύπωμα. Θα μπορούσατε ακόμη και να απαρνηθείτε εντελώς τις λειτουργίες του ιστολογίου και να χρησιμοποιήσετε το FlatPress για να δημιουργήσετε έναν ιστότοπο με μόνο στατικές σελίδες.
 
-Στην [url=admin.php]περιοχή διαχείρισης[/url] μπορείτε να δημιουργήσετε καταχωρήσεις και στατικές σελίδες - και να ορίσετε αν η αρχική σελίδα του ιστολογίου σας FlatPress θα είναι μια στατική σελίδα ή η επισκόπηση του ιστολογίου.
+Στην [url=admin.php target=_self]περιοχή διαχείρισης[/url] μπορείτε να δημιουργήσετε καταχωρήσεις και στατικές σελίδες - και να ορίσετε αν η αρχική σελίδα του ιστολογίου σας FlatPress θα είναι μια στατική σελίδα ή η επισκόπηση του ιστολογίου.
 
 
 [h4]Plugins[/h4]
 
-Μπορείτε να προσαρμόσετε εκτενώς το FlatPress στις ανάγκες σας επεκτείνοντάς το με [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]Plugins[/url]. Το BBCode, για παράδειγμα, είναι ένα plugin.
+Μπορείτε να προσαρμόσετε εκτενώς το FlatPress στις ανάγκες σας επεκτείνοντάς το με [url=https://wiki.flatpress.org/doc:plugins:standard rel=external]Plugins[/url]. Το BBCode, για παράδειγμα, είναι ένα plugin.
 
 Εδώ είναι μερικά ακόμα δείγματα περιεχομένου που σας δείχνουν ακόμα περισσότερα χαρακτηριστικά του FlatPress :)
 
 Δύο στατικές σελίδες είναι ήδη έτοιμες για εσάς:
 [list]
-[*][url=static.php?page=about]Σχετικά με το[/url]
-[*][url=static.php?page=menu]Μενού[/url] (Το περιεχόμενο αυτής της στατικής σελίδας εμφανίζεται επίσης στην πλαϊνή μπάρα του ιστολογίου σας - αυτή είναι η μαγεία του [b]blockparser widget[/b]. Το [url=https://wiki.flatpress.org/ target=_blank rel=external]FlatPress-Wiki[/url] έχει πληροφορίες σχετικά με αυτό, και πολλά άλλα!)
+[*][url=static.php?page=about target=_self]Σχετικά με το[/url]
+[*][url=static.php?page=menu target=_self]Μενού[/url] (Το περιεχόμενο αυτής της στατικής σελίδας εμφανίζεται επίσης στην πλαϊνή μπάρα του ιστολογίου σας - αυτή είναι η μαγεία του [b]blockparser widget[/b]. Το [url=https://wiki.flatpress.org/ rel=external]FlatPress-Wiki[/url] έχει πληροφορίες σχετικά με αυτό, και πολλά άλλα!)
 [/list]
 
 Με το πρόσθετο [b]PhotoSwipe-Plugin[/b] μπορείτε τώρα να τοποθετήσετε τις εικόνες σας ακόμα πιο εύκολα, είτε ως float="left"- είτε ως float="right" ευθυγραμμισμένη μεμονωμένη εικόνα, που περιβάλλεται από το κείμενο.
-Μπορείτε ακόμη και να παρουσιάσετε ολόκληρες γκαλερί στους επισκέπτες σας με το στοιχείο \'gallery\'. Μπορείτε να μάθετε πόσο εύκολο είναι [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]εδώ[/url].
+Μπορείτε ακόμη και να παρουσιάσετε ολόκληρες γκαλερί στους επισκέπτες σας με το στοιχείο \'gallery\'. Μπορείτε να μάθετε πόσο εύκολο είναι [url=https://wiki.flatpress.org/doc:plugins:photoswipe rel=external]εδώ[/url].
 
 
 [h4]Widgets[/h4]
 
 Κανένα από τα στοιχεία στην πλαϊνή μπάρα του ιστολογίου σας δεν είναι σταθερό, μπορείτε να τα μετακινήσετε, να τα αφαιρέσετε και να προσθέσετε νέα στην περιοχή διαχείρισης.
 
-Αυτά τα στοιχεία ονομάζονται [b]widgets[/b]. Φυσικά, το FlatPress Wiki έχει πολλές χρήσιμες πληροφορίες σχετικά με αυτό το θέμα [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]επίσης[/url].
+Αυτά τα στοιχεία ονομάζονται [b]widgets[/b]. Φυσικά, το FlatPress Wiki έχει πολλές χρήσιμες πληροφορίες σχετικά με αυτό το θέμα [url=https://wiki.flatpress.org/doc:tips:widgets rel=external]επίσης[/url].
 
 
 [h4]Θέματα[/h4]
@@ -169,49 +169,49 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Αυτό είναι ένα δε
 Θα θέλατε να μάθετε περισσότερα για το FlatPress?
 
 [list]
-[*]Στο [url=https://www.flatpress.org/?x target=_blank rel=external]blog του έργου[/url] μπορείτε να μάθετε τι συμβαίνει αυτή τη στιγμή στο έργο FlatPress.
-[*]Επισκεφθείτε το [url=https://forum.flatpress.org/ target=_blank rel=external]Φόρουμ υποστήριξης[/url] για υποστήριξη και επικοινωνία με άλλους χρήστες του FlatPress.
-[*]Κατεβάστε σπουδαία θέματα [b]δημιουργημένα από την κοινότητα[/b] από το [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]Wiki[/url].
-[*]Υπάρχουν επίσης σπουδαία [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url] εκεί.
-[*]Αποκτήστε [url=https://wiki.flatpress.org/res:language target=_blank rel=external]πακέτο μεταφράσεων[/url] για τη γλώσσα σας.
-[*]Μπορείτε επίσης να ακολουθήσετε την FlatPress στα [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Στο [url=https://www.flatpress.org/?x rel=external]blog του έργου[/url] μπορείτε να μάθετε τι συμβαίνει αυτή τη στιγμή στο έργο FlatPress.
+[*]Επισκεφθείτε το [url=https://forum.flatpress.org/ rel=external]Φόρουμ υποστήριξης[/url] για υποστήριξη και επικοινωνία με άλλους χρήστες του FlatPress.
+[*]Κατεβάστε σπουδαία θέματα [b]δημιουργημένα από την κοινότητα[/b] από το [url=https://wiki.flatpress.org/res:themes rel=external]Wiki[/url].
+[*]Υπάρχουν επίσης σπουδαία [url=https://wiki.flatpress.org/res:plugins rel=external]plugins[/url] εκεί.
+[*]Αποκτήστε [url=https://wiki.flatpress.org/res:language rel=external]πακέτο μεταφράσεων[/url] για τη γλώσσα σας.
+[*]Μπορείτε επίσης να ακολουθήσετε την FlatPress στα [url=https://fosstodon.org/@flatpress rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]Πώς μπορώ να υποστηρίξω το FlatPress?[/h4]
 
 [list]
-[*]Υποστηρίξτε το έργο με μια [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]μικρή δωρεά[/url].
-[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Αναφέρετε[/url] σφάλματα που έχουν εμφανιστεί ή στείλτε μας προτάσεις για βελτίωση.
-[*]Οι προγραμματιστές είναι ευπρόσδεκτοι να μας υποστηρίξουν στο [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
-[*]Μεταφράστε το FlatPress και την τεκμηρίωσή του στη [url=https://wiki.flatpress.org/res:language target=_blank rel=external]γλώσσα σας[/url].
-[*]Γίνετε μέλος της κοινότητας του FlatPress στο [url=https://forum.flatpress.org/ target=_blank rel=external]Φόρουμ υποστήριξης[/url].
+[*]Υποστηρίξτε το έργο με μια [url=https://www.flatpress.org/home/static.php?page=donate rel=external]μικρή δωρεά[/url].
+[*][url=https://www.flatpress.org/contact/ rel=external]Αναφέρετε[/url] σφάλματα που έχουν εμφανιστεί ή στείλτε μας προτάσεις για βελτίωση.
+[*]Οι προγραμματιστές είναι ευπρόσδεκτοι να μας υποστηρίξουν στο [url=https://github.com/flatpressblog/flatpress rel=external]GitHub[/url].
+[*]Μεταφράστε το FlatPress και την τεκμηρίωσή του στη [url=https://wiki.flatpress.org/res:language rel=external]γλώσσα σας[/url].
+[*]Γίνετε μέλος της κοινότητας του FlatPress στο [url=https://forum.flatpress.org/ rel=external]Φόρουμ υποστήριξης[/url].
 [*]Πείτε στον κόσμο πόσο σπουδαίο είναι το FlatPress! :)
 [/list]
 
 
 [h4]Λοιπόν, τι κάνουμε τώρα?[/h4]
 
-[url=login.php]Συνδεθείτε[/url] για να ξεκινήσετε να γράφετε ιστολόγια στην [url=admin.php]Έκθεση διαχείρισης[/url].
+[url=login.php target=_self]Συνδεθείτε[/url] για να ξεκινήσετε να γράφετε ιστολόγια στην [url=admin.php target=_self]Έκθεση διαχείρισης[/url].
 
 Καλή διασκέδαση! :)
 
-[i]Η ομάδα [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url][/i]
+[i]Η ομάδα [url=https://www.flatpress.org rel=external]FlatPress[/url][/i]
 
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Σχετικά με το';
-$lang ['samplecontent'] ['about'] ['content'] = 'Γράψτε κάτι για τον εαυτό σας και αυτό το ιστολόγιο εδώ. ([url=admin.php?p=static&action=write&page=about]Δούλεψε με![/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Γράψτε κάτι για τον εαυτό σας και αυτό το ιστολόγιο εδώ. ([url=admin.php?p=static&action=write&page=about target=_self]Δούλεψε με![/url])';
 
 $lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Νομική γνωστοποίηση';
-$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Επεξεργασία![/url])';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice target=_self]Επεξεργασία![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Πολιτική απορρήτου';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Σε ορισμένες χώρες, εάν χρησιμοποιείτε την υπηρεσία Akismet Antispam, για παράδειγμα, είναι απαραίτητο να παρέχετε στους επισκέπτες σας μια πολιτική απορρήτου. Μια πολιτική απορρήτου μπορεί επίσης να είναι απαραίτητη εάν ο επισκέπτης μπορεί να χρησιμοποιήσει τη φόρμα επικοινωνίας ή τη λειτουργία σχολίων.
 
 [b]Συμβουλή:[/b] Υπάρχουν πολλά πρότυπα και γεννήτριες στο διαδίκτυο.
 
-Μπορείτε να τα εισάγετε εδώ. ([url=admin.php?p=static&action=write&page=privacy-policy]Επεξεργαστείτε με![/url])
+Μπορείτε να τα εισάγετε εδώ. ([url=admin.php?p=static&action=write&page=privacy-policy target=_self]Επεξεργαστείτε με![/url])
 
 Εάν ενεργοποιήσετε το πρόσθετο CookieBanner, οι επισκέπτες σας θα μπορούν να μεταβούν απευθείας σε αυτή τη σελίδα στη φόρμα επικοινωνίας και στη λειτουργία σχολιασμού.
 ';

@@ -93,20 +93,20 @@ $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Menu';
 $lang ['samplecontent'] ['menu'] ['content'] = '[list]
-[*][url=?]Home[/url]
-[*][url=?paged=1]Blog[/url]
-[*][url=static.php?page=about]About[/url]
-[*][url=contact.php]Contact[/url]
+[*][url=? target=_self]Home[/url]
+[*][url=?paged=1 target=_self]Blog[/url]
+[*][url=static.php?page=about target=_self]About[/url]
+[*][url=contact.php target=_self]Contact[/url]
 [/list]';
 
 $lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Bottom Menu';
 $lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
-[*][url=static.php?page=legal-notice]Legal Notice[/url]
-[*][url=static.php?page=privacy-policy]Privacy Policy[/url]
+[*][url=static.php?page=legal-notice target=_self]Legal Notice[/url]
+[*][url=static.php?page=privacy-policy target=_self]Privacy Policy[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Welcome to FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'This is a sample entry, posted to show you some of the features of [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'This is a sample entry, posted to show you some of the features of [url=https://www.flatpress.org rel=external]FlatPress[/url].
 
 The more tag allows you to create a "jump" between an excerpt and the complete article.
 
@@ -115,7 +115,7 @@ The more tag allows you to create a "jump" between an excerpt and the complete a
 
 [h4]Styling[/h4]
 
-The default way to style and format your content is [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (bulletin board code). BBCode is an easy way to style your posts. Most common codes are allowed. Like [b] for [b]bold[/b] (html: strong), [i] for [i]italics[/i] (html: em), etc.
+The default way to style and format your content is [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]BBcode[/url] (bulletin board code). BBCode is an easy way to style your posts. Most common codes are allowed. Like [b] for [b]bold[/b] (html: strong), [i] for [i]italics[/i] (html: em), etc.
 
 [quote]There are also [b]quote[/b] blocks to display your favourite quotations.[/quote]
 
@@ -123,36 +123,36 @@ The default way to style and format your content is [url=https://wiki.flatpress.
 It also supports
    indented content.[/code]
 
-img and url tag have also special options. You can find out more on the [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki[/url].
+img and url tag have also special options. You can find out more on the [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]FlatPress-Wiki[/url].
 
 
 [h4]Entries (posts) and Static pages[/h4]
 
-This is an entry, while [url=static.php?page=about]About[/url] is a [b]static page[/b]. A static page is an entry (a post) which cannot be commented, and which does not appear together with the normal posts of the blog.
+This is an entry, while [url=static.php?page=about target=_self]About[/url] is a [b]static page[/b]. A static page is an entry (a post) which cannot be commented, and which does not appear together with the normal posts of the blog.
 
-Static pages are useful to create general information pages. You can also make one of these pages the [b]opening page[/b] for your visitors. This means that with FlatPress you could also run a complete non-blog site. The option to make a static page your start page is in the [b]option panel[/b] of the [url=admin.php]admin area[/url].
+Static pages are useful to create general information pages. You can also make one of these pages the [b]opening page[/b] for your visitors. This means that with FlatPress you could also run a complete non-blog site. The option to make a static page your start page is in the [b]option panel[/b] of the [url=admin.php target=_self]admin area[/url].
 
 
 [h4]Plugins[/h4]
 
-FlatPress is very customizable, and supports [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]plugins[/url] to extend its power. BBCode is a plugin itself.
+FlatPress is very customizable, and supports [url=https://wiki.flatpress.org/doc:plugins:standard rel=external]plugins[/url] to extend its power. BBCode is a plugin itself.
 
 We have created some more sample content, to show you some of the FP well hidden functions and gems :)
 You can find two [b]static pages[/b] ready to accept your contents:
 [list]
-[*][url=static.php?page=about]About me[/url]
-[*][url=static.php?page=menu]Menu[/url] (notice that the links in this page will appear on your sidebar as well - this is the magic of the [b]blockparser widget[/b]. See the [url=https://wiki.flatpress.org/doc:faq target=_blank rel=external]FAQ[/url] for this and more!)
+[*][url=static.php?page=about target=_self]About me[/url]
+[*][url=static.php?page=menu target=_self]Menu[/url] (notice that the links in this page will appear on your sidebar as well - this is the magic of the [b]blockparser widget[/b]. See the [url=https://wiki.flatpress.org/doc:faq rel=external]FAQ[/url] for this and more!)
 [/list]
 
 With the [b]PhotoSwipe plugin[/b] you can now place your images even easier, either as float="left"- or float="right" aligned single image, enclosed by the text.
-You can even use the \'gallery\' element to present entire galleries to your visitors. How easy it works, [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]you can learn here[/url].
+You can even use the \'gallery\' element to present entire galleries to your visitors. How easy it works, [url=https://wiki.flatpress.org/doc:plugins:photoswipe rel=external]you can learn here[/url].
 
 
 [h4]Widgets[/h4]
 
 There isn\'t a single fixed element in the sidebar(s). All the elements you can find in the bars surrounding this text are completely positionable, and most of them are customizable as well. Some themes even provide a panel interface in the admin area.  
 
-These elements are called [b]widgets[/b]. For more on widgets and [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]some tips[/url] to get nice effects, take a look at the [url=https://wiki.flatpress.org/ target=_blank rel=external]wiki[/url].
+These elements are called [b]widgets[/b]. For more on widgets and [url=https://wiki.flatpress.org/doc:tips:widgets rel=external]some tips[/url] to get nice effects, take a look at the [url=https://wiki.flatpress.org/ rel=external]wiki[/url].
 
 
 [h4]Themes[/h4]
@@ -166,49 +166,49 @@ With the FlatPress-Leggero theme you have 4 style templates at your disposal - f
 Want to see more?
 
 [list]
-[*]Follow the [url=https://www.flatpress.org/?x target=_blank rel=external]official blog[/url] to know what\'s going on in the FlatPress world.
-[*]Visit the [url=https://forum.flatpress.org/ target=_blank rel=external]forum[/url] for support and chit-chat.
-[*]Get [b]great themes[/b] from [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]other users\' submissions[/url]!
-[*]Check out the [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugins[/url].
-[*]Get [url=https://wiki.flatpress.org/res:language target=_blank rel=external]translation pack[/url] for your language.
-[*]You can also follow FlatPress on [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]Follow the [url=https://www.flatpress.org/?x rel=external]official blog[/url] to know what\'s going on in the FlatPress world.
+[*]Visit the [url=https://forum.flatpress.org/ rel=external]forum[/url] for support and chit-chat.
+[*]Get [b]great themes[/b] from [url=https://wiki.flatpress.org/res:themes rel=external]other users\' submissions[/url]!
+[*]Check out the [url=https://wiki.flatpress.org/res:plugins rel=external]plugins[/url].
+[*]Get [url=https://wiki.flatpress.org/res:language rel=external]translation pack[/url] for your language.
+[*]You can also follow FlatPress on [url=https://fosstodon.org/@flatpress rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]How can I help?[/h4]
 
 [list]
-[*]Support the project with a [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]small donation[/url].
-[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Contact us[/url] to report bugs or suggest improvements.
-[*]Contribute to the development of FlatPress on [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
-[*]Translate FlatPress or the documentation into [url=https://wiki.flatpress.org/res:language target=_blank rel=external]your language[/url].
-[*]Share your knowledge and get connected with other FlatPress users on the [url=https://forum.flatpress.org/ target=_blank rel=external]forum[/url].
+[*]Support the project with a [url=https://www.flatpress.org/home/static.php?page=donate rel=external]small donation[/url].
+[*][url=https://www.flatpress.org/contact/ rel=external]Contact us[/url] to report bugs or suggest improvements.
+[*]Contribute to the development of FlatPress on [url=https://github.com/flatpressblog/flatpress rel=external]GitHub[/url].
+[*]Translate FlatPress or the documentation into [url=https://wiki.flatpress.org/res:language rel=external]your language[/url].
+[*]Share your knowledge and get connected with other FlatPress users on the [url=https://forum.flatpress.org/ rel=external]forum[/url].
 [*]Spread the word! :)
 [/list]
 
 
 [h4]And what now?[/h4]
 
-Now you can [url=login.php]Login[/url] to get to the [url=admin.php]Administration Area[/url] and start posting!
+Now you can [url=login.php target=_self]Login[/url] to get to the [url=admin.php target=_self]Administration Area[/url] and start posting!
 
 Have fun! :)
 
-[i]The [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url] Team[/i]
+[i]The [url=https://www.flatpress.org rel=external]FlatPress[/url] Team[/i]
 
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'About';
-$lang ['samplecontent'] ['about'] ['content'] = 'Write something about yourself here. ([url=admin.php?p=static&action=write&page=about]Edit me![/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Write something about yourself here. ([url=admin.php?p=static&action=write&page=about target=_self]Edit me![/url])';
 
 $lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Legal Notice';
-$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Edit me![/url])';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice target=_self]Edit me![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Privacy policy';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'In some countries, if you use the Akismet Antispam service, for example, it is necessary to provide your visitors with a privacy policy. A privacy policy may also be necessary if the visitor can use the contact form or the comment function.
 
 [b]Tip:[/b] There are lots of templates and generators on the Internet.
 
-You can insert them here. ([url=admin.php?p=static&action=write&page=privacy-policy]Edit me![/url])
+You can insert them here. ([url=admin.php?p=static&action=write&page=privacy-policy target=_self]Edit me![/url])
 
 If you activate the CookieBanner plugin, your visitors will be able to go directly to this page in the contact form and in the comment function.
 ';

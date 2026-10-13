@@ -93,20 +93,20 @@ $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Menü';
 $lang ['samplecontent'] ['menu'] ['content'] = '[list]
-[*][url=?]Anasayfa[/url]
-[*][url=?paged=1]Blog[/url]
-[*][url=static.php?page=about]Hakkında[/url]
-[*][url=contact.php]İletişim[/url]
+[*][url=? target=_self]Anasayfa[/url]
+[*][url=?paged=1 target=_self]Blog[/url]
+[*][url=static.php?page=about target=_self]Hakkında[/url]
+[*][url=contact.php target=_self]İletişim[/url]
 [/list]';
 
 $lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Alt Menü';
 $lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
-[*][url=static.php?page=legal-notice]Yasal Uyarı[/url]
-[*][url=static.php?page=privacy-policy]Gizlilik Politikası[/url]
+[*][url=static.php?page=legal-notice target=_self]Yasal Uyarı[/url]
+[*][url=static.php?page=privacy-policy target=_self]Gizlilik Politikası[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'FlatPress\'e hoşgeldiniz!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Bu, [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url]\'in bazı özelliklerini göstermek için yayınlanmış örnek bir yazıdır.
+$lang ['samplecontent'] ['entry'] ['content'] = 'Bu, [url=https://www.flatpress.org rel=external]FlatPress[/url]\'in bazı özelliklerini göstermek için yayınlanmış örnek bir yazıdır.
 
 Daha fazla etiketini kullanarak bir "bağantı" yaratabilir ve giriş alıntısından yazının tam halini içeren sayfaya gidebilirsiniz.
 
@@ -115,7 +115,7 @@ Daha fazla etiketini kullanarak bir "bağantı" yaratabilir ve giriş alıntıs�
 
 [h4]Biçimlendirme[/h4]
 
-İçeriğinizi biçimlendirmek için kullanılan varsayılan yöntem [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url]\'dur (forum kodu ya da tartışma panosu kodu). BBCode gönderilerinizi biçimlendirmenin kolay bir yoludur. Yaygın kodların çoğunu kullanabilirsiniz. Örneğin [b]kalın[/b] yapmak için [b] (html: strong), [i]italik[/i] yapmak için [i] (html: em) ve benzeri.
+İçeriğinizi biçimlendirmek için kullanılan varsayılan yöntem [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]BBcode[/url]\'dur (forum kodu ya da tartışma panosu kodu). BBCode gönderilerinizi biçimlendirmenin kolay bir yoludur. Yaygın kodların çoğunu kullanabilirsiniz. Örneğin [b]kalın[/b] yapmak için [b] (html: strong), [i]italik[/i] yapmak için [i] (html: em) ve benzeri.
 
 [quote]Ayrıca sevdiğiniz alıntıları göstermek için [b]alıntı[/b] blokları da vardır.[/quote]
 
@@ -124,36 +124,36 @@ Daha fazla etiketini kullanarak bir "bağantı" yaratabilir ve giriş alıntıs�
 Ayrıca
    girintili içerikleri de destekler.[/code]
 
-Ayrıca img ve url etiketleri de özel seçeneklere sahiptir. Daha fazla bilgi edinmek için [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki\'yi[/url] inceleyebilirsiniz.
+Ayrıca img ve url etiketleri de özel seçeneklere sahiptir. Daha fazla bilgi edinmek için [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]FlatPress-Wiki\'yi[/url] inceleyebilirsiniz.
 
 
 [h4]Yazılar (gönderiler) ve Statik Sayfalar[/h4]
 
-Bu bir yazıdır, [url=static.php?page=about]Hakkında[/url] ise bir [b]statik sayfa[/b]dır. Statik sayfa, yorum yapılamayan ve blogun normal gönderileriyle birlikte görünmeyen bir yazıdır.
+Bu bir yazıdır, [url=static.php?page=about target=_self]Hakkında[/url] ise bir [b]statik sayfa[/b]dır. Statik sayfa, yorum yapılamayan ve blogun normal gönderileriyle birlikte görünmeyen bir yazıdır.
 
-Statik sayfalar, genel bilgi sayfaları oluşturmak için kullanışlıdır. Bu sayfalardan birini ziyaretçileriniz için [b]başlangıç sayfası[/b] yapabilirsiniz. Yani FlatPress ile blog olmayan bir site de yapabilirsiniz. Statik sayfanızı başlangıç sayfası yapmak için [b]seçenekler paneli[/b] yönetim alanında [url=admin.php]yönetici paneli[/url]nde bulunmaktadır.
+Statik sayfalar, genel bilgi sayfaları oluşturmak için kullanışlıdır. Bu sayfalardan birini ziyaretçileriniz için [b]başlangıç sayfası[/b] yapabilirsiniz. Yani FlatPress ile blog olmayan bir site de yapabilirsiniz. Statik sayfanızı başlangıç sayfası yapmak için [b]seçenekler paneli[/b] yönetim alanında [url=admin.php target=_self]yönetici paneli[/url]nde bulunmaktadır.
 
 
 [h4]Eklentiler[/h4]
 
-FlatPress gayet özelleştirilebilir ve [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]eklentiler[/url] ile gücünü arttırabilir. Hatta BBCode\'un kendisi bir eklenti olarak çalışır.
+FlatPress gayet özelleştirilebilir ve [url=https://wiki.flatpress.org/doc:plugins:standard rel=external]eklentiler[/url] ile gücünü arttırabilir. Hatta BBCode\'un kendisi bir eklenti olarak çalışır.
 
 Size FP\'nin iyi gizlenmiş özellikleri ve püf noktalarını göstermek için daha fazla içerik yarattık :)
 
 İşte içeriklerinizi kabul etmeye hazır iki [b]statik sayfa[/b]:
 [list]
-[*][url=static.php?page=about]Hakkımda[/url]
-[*][url=static.php?page=menu]Menü[/url] (bu sayfadaki bağlantıların yan menünüzde de görüneceğini unutmayın - işte bu [b]blockparser widget[/b]ının büyüsü. Daha fazla bilgi için [url=https://wiki.flatpress.org/doc:faq target=_blank rel=external]SSS[/url]\'ları inceleyin!)
+[*][url=static.php?page=about target=_self]Hakkımda[/url]
+[*][url=static.php?page=menu target=_self]Menü[/url] (bu sayfadaki bağlantıların yan menünüzde de görüneceğini unutmayın - işte bu [b]blockparser widget[/b]ının büyüsü. Daha fazla bilgi için [url=https://wiki.flatpress.org/doc:faq rel=external]SSS[/url]\'ları inceleyin!)
 [/list]
 
 [b]PhotoSwipe eklentisi[/b] ile artık resimlerinizi çok daha kolay bir şekilde yerleştirebilirsiniz. Resimler, metinle çevrelenmiş şekilde, ya da float="left" (sola hizalı) ya da float="right" (sağa hizalı) olarak tek bir resim olarak yerleştirilebilir.
-Ayrıca, ziyaretçilerinize tüm galerileri sunmak için "galeri" öğesini de kullanabilirsiniz. Ne kadar kolay çalıştığını [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]buradan öğrenebilirsiniz[/url].
+Ayrıca, ziyaretçilerinize tüm galerileri sunmak için "galeri" öğesini de kullanabilirsiniz. Ne kadar kolay çalıştığını [url=https://wiki.flatpress.org/doc:plugins:photoswipe rel=external]buradan öğrenebilirsiniz[/url].
 
 [h4]Widget\'lar[/h4]
 
 Yan menülerde sabit bir öğe yoktur. Bu metni çevreleyen menülerde bulacağınız tüm öğeler konumlandırılabilir ve çoğu da özelleştirilebilir. Bazı temalar yönetim alanında bir panel arayüzü de sağlar.  
 
-Bu öğelere [b]widget[/b] denir. Widget\'lar hakkında daha fazla bilgi ve [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]güzel efektler elde etmek için ipuçları[/url] için [url=https://wiki.flatpress.org/ target=_blank rel=external]wiki[/url]\'yi inceleyebilirsiniz.
+Bu öğelere [b]widget[/b] denir. Widget\'lar hakkında daha fazla bilgi ve [url=https://wiki.flatpress.org/doc:tips:widgets rel=external]güzel efektler elde etmek için ipuçları[/url] için [url=https://wiki.flatpress.org/ rel=external]wiki[/url]\'yi inceleyebilirsiniz.
 
 
 [h4]Temalar[/h4]
@@ -167,49 +167,49 @@ FlatPress-Leggero teması ile 4 farklı stil şablonuna sahip olacaksınız - kl
 Daha fazlasını öğrenmek ister misiniz?
 
 [list]
-[*][url=https://www.flatpress.org/?x target=_blank rel=external]Resmi blogu[/url]nu takip ederek FlatPress dünyasında neler olup bittiğini öğrenin.
-[*][url=https://forum.flatpress.org/ target=_blank rel=external]Forum[/url]\'u ziyaret edin, destek alın ve sohbet edin.
-[*][b]Harika temalar[/b] edinmek için [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]diğer kullanıcıların gönderilerini[/url] keşfedin!
-[*][url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]Eklentiler[/url]i keşfedin.
-[*][url=https://wiki.flatpress.org/res:language target=_blank rel=external]Dil paketi[/url] edinin.
-[*]FlatPress\'i [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url] üzerinden takip edebilirsiniz.
+[*][url=https://www.flatpress.org/?x rel=external]Resmi blogu[/url]nu takip ederek FlatPress dünyasında neler olup bittiğini öğrenin.
+[*][url=https://forum.flatpress.org/ rel=external]Forum[/url]\'u ziyaret edin, destek alın ve sohbet edin.
+[*][b]Harika temalar[/b] edinmek için [url=https://wiki.flatpress.org/res:themes rel=external]diğer kullanıcıların gönderilerini[/url] keşfedin!
+[*][url=https://wiki.flatpress.org/res:plugins rel=external]Eklentiler[/url]i keşfedin.
+[*][url=https://wiki.flatpress.org/res:language rel=external]Dil paketi[/url] edinin.
+[*]FlatPress\'i [url=https://fosstodon.org/@flatpress rel=external]Mastodon[/url] üzerinden takip edebilirsiniz.
 [/list]
 
 
 [h4]Nasıl destek olabilirim?[/h4]
 
 [list]
-[*]Projeye [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]küçük bir bağışta[/url] bulunarak destek olun.
-[*]Hataları bildirmek ya da iyileştirme önerileri sunmak için: [url=https://www.flatpress.org/contact/ target=_blank rel=external]Bize ulaşın[/url].
-[*]FlatPress gelişimine [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url] üzerinden katkıda bulunun.
-[*]FlatPress\'i ya da belgelerini [url=https://wiki.flatpress.org/res:language target=_blank rel=external]kendi dilinize çevirin[/url].
-[*]Bilginizi paylaşın ve diğer FlatPress kullanıcılarıyla [url=https://forum.flatpress.org/ target=_blank rel=external]forum[/url]da bağlantı kurun.
+[*]Projeye [url=https://www.flatpress.org/home/static.php?page=donate rel=external]küçük bir bağışta[/url] bulunarak destek olun.
+[*]Hataları bildirmek ya da iyileştirme önerileri sunmak için: [url=https://www.flatpress.org/contact/ rel=external]Bize ulaşın[/url].
+[*]FlatPress gelişimine [url=https://github.com/flatpressblog/flatpress rel=external]GitHub[/url] üzerinden katkıda bulunun.
+[*]FlatPress\'i ya da belgelerini [url=https://wiki.flatpress.org/res:language rel=external]kendi dilinize çevirin[/url].
+[*]Bilginizi paylaşın ve diğer FlatPress kullanıcılarıyla [url=https://forum.flatpress.org/ rel=external]forum[/url]da bağlantı kurun.
 [*]İnsanlara bahsedin ve hakkında konuşun! :)
 [/list]
 
 
 [h4]Şimdi ne yapmalı?[/h4]
 
-Artık [url=login.php]giriş yapın[/url] yönetim alanına gidin ve yazı eklemeye başlayın!
+Artık [url=login.php target=_self]giriş yapın[/url] yönetim alanına gidin ve yazı eklemeye başlayın!
 
 Tadını çıkarın! :)
 
-[i][url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url] Ekibi[/i]
+[i][url=https://www.flatpress.org rel=external]FlatPress[/url] Ekibi[/i]
 
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Hakkında';
-$lang ['samplecontent'] ['about'] ['content'] = 'Kendiniz hakkında bir şeyler yazın burada. ([url=admin.php?p=static&action=write&page=about]Beni düzenle![/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Kendiniz hakkında bir şeyler yazın burada. ([url=admin.php?p=static&action=write&page=about target=_self]Beni düzenle![/url])';
 
 $lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Yasal Uyarı';
-$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Beni Düzenle![/url])';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice target=_self]Beni Düzenle![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Gizlilik Politikası';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Kimi ülkelerde, örneğin Akismet Antispam hizmetini kullanıyorsanız, ziyaretçilerinize bir gizlilik politikası bilgilendirmesi sunmanız gerekebilir. Ayrıca, ziyaretçi iletişim formunu veya yorum fonksiyonunu kullanabiliyorsalar, başka bir gizlilik politikası bilgilendirmesi daha gerekebilir.
 
 [b]İpucu:[/b] İnternette bu konu ile ilgili birçok şablon ve oluşturucu bulunmaktadır.
 
-Bunları buraya ekleyebilirsiniz. ([url=admin.php?p=static&action=write&page=privacy-policy]Beni düzenle![/url])
+Bunları buraya ekleyebilirsiniz. ([url=admin.php?p=static&action=write&page=privacy-policy target=_self]Beni düzenle![/url])
 
 CookieBanner eklentisini etkinleştirirseniz, ziyaretçileriniz iletişim formunda ve yorum fonksiyonunda doğrudan bu sayfaya gidebilecektir.
 ';

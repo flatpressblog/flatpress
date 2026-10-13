@@ -93,20 +93,20 @@ $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Meni';
 $lang ['samplecontent'] ['menu'] ['content'] = '[list]
-[*][url=?]Domača stran[/url]
-[*][url=?paged=1]Blog[/url]
-[*][url=static.php?page=about]O[/url]
-[*][url=contact.php]Pišite na[/url]
+[*][url=? target=_self]Domača stran[/url]
+[*][url=?paged=1 target=_self]Blog[/url]
+[*][url=static.php?page=about target=_self]O[/url]
+[*][url=contact.php target=_self]Pišite na[/url]
 [/list]';
 
 $lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Spodnji meni';
 $lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
-[*][url=static.php?page=legal-notice]Pravno obvestilo[/url]
-[*][url=static.php?page=privacy-policy]Politika zasebnosti[/url]
+[*][url=static.php?page=legal-notice target=_self]Pravno obvestilo[/url]
+[*][url=static.php?page=privacy-policy target=_self]Politika zasebnosti[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Dobrodošli v FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'To je vzorčna objava, ki vam prikazuje nekatere funkcije [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'To je vzorčna objava, ki vam prikazuje nekatere funkcije [url=https://www.flatpress.org rel=external]FlatPress[/url].
 
 Element "more" vam omogoča preskok z osnutka članka na celoten članek.
 
@@ -115,7 +115,7 @@ Element "more" vam omogoča preskok z osnutka članka na celoten članek.
 
 [h4]Oblikovanje besedila[/h4]
 
-V programu FlatPress vsebino oblikujete s kodo [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (Bulletin-Board-Code). To je zelo enostavno z uporabo kode BBCode. Primeri? [b] naredi [b]krepko besedilo[/b], [i] [i]besedilo v poševnem tisku[/i].
+V programu FlatPress vsebino oblikujete s kodo [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]BBcode[/url] (Bulletin-Board-Code). To je zelo enostavno z uporabo kode BBCode. Primeri? [b] naredi [b]krepko besedilo[/b], [i] [i]besedilo v poševnem tisku[/i].
 
 [quote]Element [b]quote[/b] lahko uporabite za označevanje citatov. [/quote]
 
@@ -123,39 +123,39 @@ V programu FlatPress vsebino oblikujete s kodo [url=https://wiki.flatpress.org/d
 Lahko tudi
    predstavlja vdolbine.[/code]
 
-Elementa \'img\' (slike) in \'url\' (povezave) imata posebne možnosti. Več o tem si lahko preberete v [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki[/url].
+Elementa \'img\' (slike) in \'url\' (povezave) imata posebne možnosti. Več o tem si lahko preberete v [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]FlatPress-Wiki[/url].
 
 
 [h4]Vnosi (blog članki) in statične strani[/h4]
 
-To je vnos, medtem ko je [url=static.php?page=about]O[/url][b]statična stran[/b]. Statične strani za razliko od zapisa ni mogoče komentirati in ni prikazana v seznamu blogovskih zapisov.
+To je vnos, medtem ko je [url=static.php?page=about target=_self]O[/url][b]statična stran[/b]. Statične strani za razliko od zapisa ni mogoče komentirati in ni prikazana v seznamu blogovskih zapisov.
 
 Statične strani so uporabne za splošne informacije, na primer fiksna začetna stran ali odtis. Lahko se celo popolnoma odpoveste funkcijam bloga in uporabite FlatPress za ustvarjanje spletnega mesta samo s statičnimi stranmi.
 
-V [url=admin.php]upravnem območju[/url] lahko ustvarite vnose in statične strani ter določite, ali naj bo začetna stran vašega bloga FlatPress statična stran ali pregled bloga.
+V [url=admin.php target=_self]upravnem območju[/url] lahko ustvarite vnose in statične strani ter določite, ali naj bo začetna stran vašega bloga FlatPress statična stran ali pregled bloga.
 
 
 [h4]Vtičniki[/h4]
 
-FlatPress lahko v veliki meri prilagodite svojim potrebam tako, da ga razširite z [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]vtičniki[/url]. BBCode je na primer vtičnik.
+FlatPress lahko v veliki meri prilagodite svojim potrebam tako, da ga razširite z [url=https://wiki.flatpress.org/doc:plugins:standard rel=external]vtičniki[/url]. BBCode je na primer vtičnik.
 
 Tukaj je še nekaj vzorčne vsebine, ki vam pokaže še več funkcij FlatPress :)
 
 Za vas sta že pripravljeni dve statični strani:
 [list]
-[*][url=static.php?page=about]O[/url]
-[*][url=static.php?page=menu]Meni[/url] (Vsebina te statične strani se prikaže tudi v stranski vrstici vašega bloga - v tem je čar gradnika [b]Blockparser-Widgets[/b]. Na [url=https://wiki.flatpress.org/ target=_blank rel=external]FlatPress-Wiki[/url] najdete informacije o tem in še veliko več!)
+[*][url=static.php?page=about target=_self]O[/url]
+[*][url=static.php?page=menu target=_self]Meni[/url] (Vsebina te statične strani se prikaže tudi v stranski vrstici vašega bloga - v tem je čar gradnika [b]Blockparser-Widgets[/b]. Na [url=https://wiki.flatpress.org/ rel=external]FlatPress-Wiki[/url] najdete informacije o tem in še veliko več!)
 [/list]
 
 Z vtičnikom [b]PhotoSwipe-Plugin[/b] lahko zdaj še lažje postavite svoje slike, bodisi kot float="left"-  ali  float="right" poravnano posamezno sliko, obdano z besedilom.
-Element \'gallery\' lahko uporabite tudi za predstavitev celotnih galerij obiskovalcem. Kako enostavno je to [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]tukaj[/url].
+Element \'gallery\' lahko uporabite tudi za predstavitev celotnih galerij obiskovalcem. Kako enostavno je to [url=https://wiki.flatpress.org/doc:plugins:photoswipe rel=external]tukaj[/url].
 
 
 [h4]Gradniki[/h4]
 
 Nobeden od elementov v stranski vrstici vašega bloga ni fiksiran, lahko jih premikate, odstranjujete in dodajate nove v območju za upravljanje.
 
-Ti elementi se imenujejo [b]Gradniki[/b]. Seveda je tudi na FlatPress Wiki veliko koristnih informacij [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]o tej temi[/url].
+Ti elementi se imenujejo [b]Gradniki[/b]. Seveda je tudi na FlatPress Wiki veliko koristnih informacij [url=https://wiki.flatpress.org/doc:tips:widgets rel=external]o tej temi[/url].
 
 
 [h4]Teme[/h4]
@@ -168,48 +168,48 @@ S temo FlatPress Leggero imate na voljo 4 slogovne predloge - od klasične do mo
 Želite izvedeti več o platformi FlatPress?
 
 [list]
-[*]V [url=https://www.flatpress.org/?x target=_blank rel=external]projektnem blogu[/url] lahko izveste, kaj se trenutno dogaja v projektu FlatPress.
-[*]Obiščite [url=https://forum.flatpress.org/ target=_blank rel=external]podporni forum[/url] za podporo in stik z drugimi uporabniki FlatPress.
-[*]Iz [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]wikija[/url] lahko prenesete odlične [b]teme[/b], ki jih je ustvarila skupnost.
-[*]Obstajajo tudi odlični [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]vtičniki[/url] tam.
-[*]FlatPressu lahko sledite tudi na [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url].
+[*]V [url=https://www.flatpress.org/?x rel=external]projektnem blogu[/url] lahko izveste, kaj se trenutno dogaja v projektu FlatPress.
+[*]Obiščite [url=https://forum.flatpress.org/ rel=external]podporni forum[/url] za podporo in stik z drugimi uporabniki FlatPress.
+[*]Iz [url=https://wiki.flatpress.org/res:themes rel=external]wikija[/url] lahko prenesete odlične [b]teme[/b], ki jih je ustvarila skupnost.
+[*]Obstajajo tudi odlični [url=https://wiki.flatpress.org/res:plugins rel=external]vtičniki[/url] tam.
+[*]FlatPressu lahko sledite tudi na [url=https://fosstodon.org/@flatpress rel=external]Mastodon[/url].
 [/list]
 
 
 [h4]Kako lahko podpiram FlatPress?[/h4]
 
 [list]
-[*]Podprite projekt z [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]majhno donacijo[/url].
-[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Prijavite[/url] nastale napake ali nam pošljite predloge za izboljšave.
-[*]Programerji nas lahko podpirajo na [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url].
-[*]Prevedite FlatPress in njegovo dokumentacijo v [url=https://wiki.flatpress.org/res:language target=_blank rel=external]vaš jezik[/url].
-[*]Bodite del skupnosti FlatPress na [url=https://forum.flatpress.org/ target=_blank rel=external]forumu podpore[/url].
+[*]Podprite projekt z [url=https://www.flatpress.org/home/static.php?page=donate rel=external]majhno donacijo[/url].
+[*][url=https://www.flatpress.org/contact/ rel=external]Prijavite[/url] nastale napake ali nam pošljite predloge za izboljšave.
+[*]Programerji nas lahko podpirajo na [url=https://github.com/flatpressblog/flatpress rel=external]GitHub[/url].
+[*]Prevedite FlatPress in njegovo dokumentacijo v [url=https://wiki.flatpress.org/res:language rel=external]vaš jezik[/url].
+[*]Bodite del skupnosti FlatPress na [url=https://forum.flatpress.org/ rel=external]forumu podpore[/url].
 [*]Povejte svetu, kako odličen je FlatPress! :)
 [/list]
 
 
 [h4]Kaj zdaj?[/h4]
 
-[url=login.php]Prijavite se[/url] in začnite pisati blog v [url=admin.php]Administrativno poročilo[/url].
+[url=login.php target=_self]Prijavite se[/url] in začnite pisati blog v [url=admin.php target=_self]Administrativno poročilo[/url].
 
 Zabavajte se! :)
 
-[i]Ekipa podjetja [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url][/i]
+[i]Ekipa podjetja [url=https://www.flatpress.org rel=external]FlatPress[/url][/i]
 
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'O';
-$lang ['samplecontent'] ['about'] ['content'] = 'Tukaj napišite nekaj o sebi in tem blogu. ([url=admin.php?p=static&action=write&page=about]Delajte z mano![/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Tukaj napišite nekaj o sebi in tem blogu. ([url=admin.php?p=static&action=write&page=about target=_self]Delajte z mano![/url])';
 
 $lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Pravno obvestilo';
-$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Uredi me![/url])';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice target=_self]Uredi me![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Politika zasebnosti';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Če uporabljate na primer storitev Akismet Antispam, je treba v nekaterih državah svojim obiskovalcem zagotoviti pravilnik o zasebnosti. Pravilnik o zasebnosti je morda potreben tudi, če lahko obiskovalec uporabi kontaktni obrazec ali funkcijo za komentiranje.
 
 [b]Nasvet:[/b] Na spletu je na voljo veliko predlog in generatorjev.
 
-Lahko jih vstavite tukaj. ([url=admin.php?p=static&action=write&page=privacy-policy]Uredi me![/url])
+Lahko jih vstavite tukaj. ([url=admin.php?p=static&action=write&page=privacy-policy target=_self]Uredi me![/url])
 
 Če aktivirate vtičnik CookieBanner, bodo lahko vaši obiskovalci v kontaktnem obrazcu in v funkciji za komentiranje prešli neposredno na to stran.
 ';

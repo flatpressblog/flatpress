@@ -93,20 +93,20 @@ $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Menü';
 $lang ['samplecontent'] ['menu'] ['content'] = '[list]
-[*][url=?]Startseite[/url]
-[*][url=?paged=1]Blog[/url]
-[*][url=static.php?page=about]Über[/url]
-[*][url=contact.php]Kontakt[/url]
+[*][url=? target=_self]Startseite[/url]
+[*][url=?paged=1 target=_self]Blog[/url]
+[*][url=static.php?page=about target=_self]Über[/url]
+[*][url=contact.php target=_self]Kontakt[/url]
 [/list]';
 
 $lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Bottom Menü';
 $lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
-[*][url=static.php?page=legal-notice]Impressum[/url]
-[*][url=static.php?page=privacy-policy]Datenschutzerklärung[/url]
+[*][url=static.php?page=legal-notice target=_self]Impressum[/url]
+[*][url=static.php?page=privacy-policy target=_self]Datenschutzerklärung[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Willkommen bei FlatPress!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Das ist ein Beispiel-Beitrag. Er zeigt dir einige Funktionen von [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url].
+$lang ['samplecontent'] ['entry'] ['content'] = 'Das ist ein Beispiel-Beitrag. Er zeigt dir einige Funktionen von [url=https://www.flatpress.org rel=external]FlatPress[/url].
 
 Das "more"-Element erlaubt es dir, vom Anriss des Beitrags zum kompletten Artikel zu springen.
 
@@ -115,7 +115,7 @@ Das "more"-Element erlaubt es dir, vom Anriss des Beitrags zum kompletten Artike
 
 [h4]Textformatierung[/h4]
 
-In FlatPress formatierst du deine Inhalte mit [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (Bulletin-Board-Code). Mit BBCode geht das sehr einfach. Beispiele gefällig? [b] macht [b]fetten Text[/b], [i] [i]kursiven[/i].
+In FlatPress formatierst du deine Inhalte mit [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]BBcode[/url] (Bulletin-Board-Code). Mit BBCode geht das sehr einfach. Beispiele gefällig? [b] macht [b]fetten Text[/b], [i] [i]kursiven[/i].
 
 [quote]Mit dem [b]quote[/b]-Element lassen sich Zitate auszeichnen.[/quote]
 
@@ -123,39 +123,39 @@ In FlatPress formatierst du deine Inhalte mit [url=https://wiki.flatpress.org/do
 Es kann auch
    Einrückungen darstellen.[/code]
 
-Die Elemente \'img\' (Bilder) und \'url\' (Links) haben spezielle Optionen. Mehr darüber erfährst du im [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPress-Wiki[/url].
+Die Elemente \'img\' (Bilder) und \'url\' (Links) haben spezielle Optionen. Mehr darüber erfährst du im [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]FlatPress-Wiki[/url].
 
 
 [h4]Einträge (Blogartikel) und statische Seiten[/h4]
 
-Das hier ist ein Eintrag, während [url=static.php?page=about]Über[/url] eine [b]statische Seite[/b] ist. Eine statische Seite kann im Gegensatz zum Eintrag nicht kommentiert werden und taucht auch nicht in den Auflistungen der Blogeinträge auf.
+Das hier ist ein Eintrag, während [url=static.php?page=about target=_self]Über[/url] eine [b]statische Seite[/b] ist. Eine statische Seite kann im Gegensatz zum Eintrag nicht kommentiert werden und taucht auch nicht in den Auflistungen der Blogeinträge auf.
 
 Statische Seiten lassen sich prima für generelle Informationen einsetzen, zum Beispiel eine feste Startseite oder das Impressum. Man könnte sogar komplett auf die Blog-Funktionen verzichten und mit FlatPress eine Website mit ausschließlich statischen Seiten erstellen.
 
-Im [url=admin.php]Administrationsbereich[/url] kannst du Einträge und statische Seiten erstellen - und festlegen, ob die Startseite deines FlatPress-Blogs eine statische Seite oder die Blog-Übersicht sein soll.
+Im [url=admin.php target=_self]Administrationsbereich[/url] kannst du Einträge und statische Seiten erstellen - und festlegen, ob die Startseite deines FlatPress-Blogs eine statische Seite oder die Blog-Übersicht sein soll.
 
 
 [h4]Plugins[/h4]
 
-Du kannst FlatPress umfassend an deine Bedürfnisse anpassen, indem du es mit [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]Plugins[/url] erweiterst. BBCode ist z.B. ein Plugin.
+Du kannst FlatPress umfassend an deine Bedürfnisse anpassen, indem du es mit [url=https://wiki.flatpress.org/doc:plugins:standard rel=external]Plugins[/url] erweiterst. BBCode ist z.B. ein Plugin.
 
 Es folgt noch etwas mehr Beispiel-Inhalt, der dir noch mehr FlatPress-Funktionen zeigt :)
 
 Zwei statische Seiten sind für dich schon vorbereitet:
 [list]
-[*][url=static.php?page=about]Über[/url]
-[*][url=static.php?page=menu]Menü[/url] (Der Inhalt dieser statischen Seite taucht auch in der Seitenleiste deines Blogs auf - das ist die Magie des [b]Blockparser-Widgets[/b]. Das [url=https://wiki.flatpress.org/ target=_blank rel=external]FlatPress-Wiki[/url] hat Informationen dazu, und noch viel mehr!)
+[*][url=static.php?page=about target=_self]Über[/url]
+[*][url=static.php?page=menu target=_self]Menü[/url] (Der Inhalt dieser statischen Seite taucht auch in der Seitenleiste deines Blogs auf - das ist die Magie des [b]Blockparser-Widgets[/b]. Das [url=https://wiki.flatpress.org/ rel=external]FlatPress-Wiki[/url] hat Informationen dazu, und noch viel mehr!)
 [/list]
 
 Mit dem [b]PhotoSwipe-Plugin[/b] platzierst du jetzt noch einfacher deine Bilder, wahlweise als float="left" oder float="right" ausgerichtetes Einzelbild, vom Text umschlossen.
-Du kannst sogar mit dem Element \'gallery\' deinen Besuchern ganze Galerien präsentieren. Wie einfach es funktioniert, [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]erfährst du hier[/url].
+Du kannst sogar mit dem Element \'gallery\' deinen Besuchern ganze Galerien präsentieren. Wie einfach es funktioniert, [url=https://wiki.flatpress.org/doc:plugins:photoswipe rel=external]erfährst du hier[/url].
 
 
 [h4]Widgets[/h4]
 
 Keines der Elemente in der Seitenleiste deines Blogs ist fest vorgegeben, du kannst sie im Administrationsbereich verschieben, entfernen und neue hinzufügen.
 
-Diese Elemente werden [b]Widgets[/b] genannt. Natürlich hat das FlatPress-Wiki auch zu diesem Thema [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]viele hilfreiche Informationen[/url].
+Diese Elemente werden [b]Widgets[/b] genannt. Natürlich hat das FlatPress-Wiki auch zu diesem Thema [url=https://wiki.flatpress.org/doc:tips:widgets rel=external]viele hilfreiche Informationen[/url].
 
 
 [h4]Themes[/h4]
@@ -169,49 +169,49 @@ Mit dem FlatPress-Leggero-Theme stehen dir 4 Stil-Vorlagen zur Verfügung - von 
 Du möchtest gern mehr über FlatPress wissen?
 
 [list]
-[*]Im [url=https://www.flatpress.org/?x target=_blank rel=external]Projekt-Blog[/url] erfährst du, was im FlatPress-Projekt aktuell los ist.
-[*]Besuche das [url=https://forum.flatpress.org/ target=_blank rel=external]Supportforum[/url] für Unterstützung und den Kontakt zu anderen FlatPress-Benutzern.
-[*]Lade dir großartige von der Community erstellte [b]Themes[/b] aus dem [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]Wiki[/url] herunter.
-[*]Dort gibt es auch tolle [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]Plugins[/url].
-[*]Hole dir das [url=https://wiki.flatpress.org/res:language target=_blank rel=external]Übersetzungspaket[/url] für deine Sprache.
-[*]FlatPress kannst du auch auf [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url] folgen.
+[*]Im [url=https://www.flatpress.org/?x rel=external]Projekt-Blog[/url] erfährst du, was im FlatPress-Projekt aktuell los ist.
+[*]Besuche das [url=https://forum.flatpress.org/ rel=external]Supportforum[/url] für Unterstützung und den Kontakt zu anderen FlatPress-Benutzern.
+[*]Lade dir großartige von der Community erstellte [b]Themes[/b] aus dem [url=https://wiki.flatpress.org/res:themes rel=external]Wiki[/url] herunter.
+[*]Dort gibt es auch tolle [url=https://wiki.flatpress.org/res:plugins rel=external]Plugins[/url].
+[*]Hole dir das [url=https://wiki.flatpress.org/res:language rel=external]Übersetzungspaket[/url] für deine Sprache.
+[*]FlatPress kannst du auch auf [url=https://fosstodon.org/@flatpress rel=external]Mastodon[/url] folgen.
 [/list]
 
 
 [h4]Wie kann ich FlatPress unterstützen?[/h4]
 
 [list]
-[*]Unterstütze das Projekt mit einer [url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external]kleinen Spende[/url].
-[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Melde[/url] aufgetretene Fehler oder schick uns Verbesserungsvorschläge.
-[*]Programmierer sind herzlich eingeladen, uns auf [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url] zu unterstützen.
-[*]Übersetze FlatPress und seine Dokumentation in [url=https://wiki.flatpress.org/res:language target=_blank rel=external]deine Sprache[/url].
-[*]Sei ein Teil der FlatPress-Gemeinschaft im [url=https://forum.flatpress.org/ target=_blank rel=external]Supportforum[/url].
+[*]Unterstütze das Projekt mit einer [url=https://www.flatpress.org/home/static.php?page=donate rel=external]kleinen Spende[/url].
+[*][url=https://www.flatpress.org/contact/ rel=external]Melde[/url] aufgetretene Fehler oder schick uns Verbesserungsvorschläge.
+[*]Programmierer sind herzlich eingeladen, uns auf [url=https://github.com/flatpressblog/flatpress rel=external]GitHub[/url] zu unterstützen.
+[*]Übersetze FlatPress und seine Dokumentation in [url=https://wiki.flatpress.org/res:language rel=external]deine Sprache[/url].
+[*]Sei ein Teil der FlatPress-Gemeinschaft im [url=https://forum.flatpress.org/ rel=external]Supportforum[/url].
 [*]Erzähl der Welt, wie toll FlatPress ist! :)
 [/list]
 
 
 [h4]So, und nun?[/h4]
 
-[url=login.php]Logge dich ein[/url], um im [url=admin.php]Administrationsbereich[/url] mit dem Bloggen zu beginnen.
+[url=login.php target=_self]Logge dich ein[/url], um im [url=admin.php target=_self]Administrationsbereich[/url] mit dem Bloggen zu beginnen.
 
 Viel Spaß! :)
 
-[i]Das [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url]-Team[/i]
+[i]Das [url=https://www.flatpress.org rel=external]FlatPress[/url]-Team[/i]
 
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Über';
-$lang ['samplecontent'] ['about'] ['content'] = 'Schreib hier etwas über dich und diesen Blog. ([url=admin.php?p=static&action=write&page=about]Bearbeite mich![/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Schreib hier etwas über dich und diesen Blog. ([url=admin.php?p=static&action=write&page=about target=_self]Bearbeite mich![/url])';
 
 $lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Impressum';
-$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Bearbeite mich![/url])';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice target=_self]Bearbeite mich![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Datenschutzerklärung';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'In einigen Ländern ist es notwendig, wenn du zum Beispiel den Dienst von Akismet Antispam nutzt, deinen Besucherns eine Datenschutzerklärung bereitzustellen. Eine Datenschutzerklärung kann ebenfalls notwendig sein, wenn der Besucher das Kontaktformular oder die Kommentarfunktion nutzen kann.
 
 [b]Tipp:[/b] Es gibt im Internet jede Menge Vorlagen und Generatoren.
 
-An dieser Stelle kannst du diese dann einfügen. ([url=admin.php?p=static&action=write&page=privacy-policy]Bearbeite mich![/url])
+An dieser Stelle kannst du diese dann einfügen. ([url=admin.php?p=static&action=write&page=privacy-policy target=_self]Bearbeite mich![/url])
 
 Wenn du das CookieBanner Plugin aktivierst, wird im Kontaktformular und in der Kommentarfunktion deinen Besuchern es möglich sein, direkt zu dieser Seite zu gelangen.
 ';

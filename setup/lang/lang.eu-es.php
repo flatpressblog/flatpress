@@ -93,20 +93,20 @@ $lang ['samplecontent'] = array();
 
 $lang ['samplecontent'] ['menu'] ['subject'] = 'Menua';
 $lang ['samplecontent'] ['menu'] ['content'] = '[list]
-[*][url=?]Hasiera[/url]
-[*][url=?paged=1]Bloga[/url]
-[*][url=static.php?page=about]Honi buruz[/url]
-[*][url=contact.php]Harremanetan jarri[/url]
+[*][url=? target=_self]Hasiera[/url]
+[*][url=?paged=1 target=_self]Bloga[/url]
+[*][url=static.php?page=about target=_self]Honi buruz[/url]
+[*][url=contact.php target=_self]Harremanetan jarri[/url]
 [/list]';
 
 $lang ['samplecontent'] ['bottommenu'] ['subject'] = 'Beheko menu';
 $lang ['samplecontent'] ['bottommenu'] ['content'] = '[list]
-[*][url=static.php?page=legal-notice]Legezko oharra[/url]
-[*][url=static.php?page=privacy-policy]Pribatutasun politika[/url]
+[*][url=static.php?page=legal-notice target=_self]Legezko oharra[/url]
+[*][url=static.php?page=privacy-policy target=_self]Pribatutasun politika[/url]
 [/list]';
 
 $lang ['samplecontent'] ['entry'] ['subject'] = 'Ongi etorri FlatPressera!';
-$lang ['samplecontent'] ['entry'] ['content'] = 'Sarrera baten adibide bat da hau, [url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url]en ezaugarri batzuk erakusteko argitaratua.
+$lang ['samplecontent'] ['entry'] ['content'] = 'Sarrera baten adibide bat da hau, [url=https://www.flatpress.org rel=external]FlatPress[/url]en ezaugarri batzuk erakusteko argitaratua.
 
 "more" etiketak pasarte baten eta artikulu osoaren artean "jauzi" bat sortzeko aukera ematen dizu.
 
@@ -115,7 +115,7 @@ $lang ['samplecontent'] ['entry'] ['content'] = 'Sarrera baten adibide bat da ha
 
 [h4]Estiloa[/h4]
 
-Zure edukiari formatua esta estiloa emateko modu lehenetsia [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]BBcode[/url] (bulletin board code) da. BBCode zure argitalpenen estiloa aldatzeko modu erraza da. Kode ohikoenak onartzen dira. Adibidez: [b] hizki [b]lodiak[/b] idazteko (html: strong), [i] hizki [i]etzanak[/i] idazteko (html: em), etab.
+Zure edukiari formatua esta estiloa emateko modu lehenetsia [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]BBcode[/url] (bulletin board code) da. BBCode zure argitalpenen estiloa aldatzeko modu erraza da. Kode ohikoenak onartzen dira. Adibidez: [b] hizki [b]lodiak[/b] idazteko (html: strong), [i] hizki [i]etzanak[/i] idazteko (html: em), etab.
 
 [quote]Zure aipamen gogokoenak erakusteko [b]aipamen[/b] blokeak ere badaude.[/quote]
 
@@ -123,36 +123,36 @@ Zure edukiari formatua esta estiloa emateko modu lehenetsia [url=https://wiki.fl
 Eduki indentatua ere
    onartzen du.[/code]
 
-"img" eta "url" etiketek ere aukera bereziak dituzte. Informazio gehiago aurki dezakezu [url=https://wiki.flatpress.org/doc:plugins:bbcode target=_blank rel=external]FlatPressen wikian[/url].
+"img" eta "url" etiketek ere aukera bereziak dituzte. Informazio gehiago aurki dezakezu [url=https://wiki.flatpress.org/doc:plugins:bbcode rel=external]FlatPressen wikian[/url].
 
 
 [h4]Sarrerak (argitalpenak) eta orrialde estatikoak[/h4]
 
-Hau sarrera bat da, eta [url=static.php?page=about]Honi buruz[/url] [b]orrialde estatiko[/b] bat da. Orrialde estatiko bat komentatu ezin den eta blogaren ohiko argitalpenekin batera agertzen ez den sarrera (argitalpen) bat da.
+Hau sarrera bat da, eta [url=static.php?page=about target=_self]Honi buruz[/url] [b]orrialde estatiko[/b] bat da. Orrialde estatiko bat komentatu ezin den eta blogaren ohiko argitalpenekin batera agertzen ez den sarrera (argitalpen) bat da.
 
-Orrialde estatikoak informazio orokorreko orrialdeak sortzeko baliagarriak dira. Orrialde horietako bat bisitarientzako [b]hasiera orrialde[/b] bihur dezakezu. Horrek esan nahi du FlatPressekin blogik gabeko gune oso bat ere exekutatu dezakezula. Orrialde estatiko bat hasierako orrialde bihurtzeko aukera [url=admin.php]kontrol-paneleko[/url] [b]ezarpenen eremuan[/b] dago.
+Orrialde estatikoak informazio orokorreko orrialdeak sortzeko baliagarriak dira. Orrialde horietako bat bisitarientzako [b]hasiera orrialde[/b] bihur dezakezu. Horrek esan nahi du FlatPressekin blogik gabeko gune oso bat ere exekutatu dezakezula. Orrialde estatiko bat hasierako orrialde bihurtzeko aukera [url=admin.php target=_self]kontrol-paneleko[/url] [b]ezarpenen eremuan[/b] dago.
 
 
 [h4]Pluginak[/h4]
 
-FlatPress oso pertsonalizagarria da, eta [url=https://wiki.flatpress.org/doc:plugins:standard target=_blank rel=external]pluginak[/url] onartzen ditu bere potentzia handitzeko. BBCode bera plugin bat da.
+FlatPress oso pertsonalizagarria da, eta [url=https://wiki.flatpress.org/doc:plugins:standard rel=external]pluginak[/url] onartzen ditu bere potentzia handitzeko. BBCode bera plugin bat da.
 
 FlatPressen beste funtzio eta harribitxi ezkutu batzuk erakusteko, eduki adibide gehiago sortu ditugu :)
 Bi [b]orrialde estatiko[/b] aurki ditzakezu zure edukia onartzeko prest:
 [list]
-[*][url=static.php?page=about]Honi buruz[/url]
-[*][url=static.php?page=menu]Menua[/url] (kontuan izan orrialde honetako estekak alboko barran ere agertuko direla - hau [b]BlockParser trepetaren[/b] magia baino ez da. Ikusi [url=https://wiki.flatpress.org/doc:faq target=_blank rel=external]FAQ[/url] hau eta gehiagorako!)
+[*][url=static.php?page=about target=_self]Honi buruz[/url]
+[*][url=static.php?page=menu target=_self]Menua[/url] (kontuan izan orrialde honetako estekak alboko barran ere agertuko direla - hau [b]BlockParser trepetaren[/b] magia baino ez da. Ikusi [url=https://wiki.flatpress.org/doc:faq rel=external]FAQ[/url] hau eta gehiagorako!)
 [/list]
 
 [b]PhotoSwipe plugin[/b]arekin irudiak are errazago jar ditzakezu orain, float="left" edo float="right" lerrokatutako irudi bakar gisa, testuz inguratuta.
-\'gallery\' elementua ere erabil dezakezu argazki galeria osoak bisitariei aurkezteko. [url=https://wiki.flatpress.org/doc:plugins:photoswipe target=_blank rel=external]Hemen ikas dezakezu[/url]  zein erraza den.
+\'gallery\' elementua ere erabil dezakezu argazki galeria osoak bisitariei aurkezteko. [url=https://wiki.flatpress.org/doc:plugins:photoswipe rel=external]Hemen ikas dezakezu[/url]  zein erraza den.
 
 
 [h4]Trepetak (widgetak)[/h4]
 
 Ez dago elementu finko bakar bat ere alboko barran(etan). Testu hau inguratzen duten barretan aurki ditzakezun elementu guztien kokalekua aldatu daiteke, eta gehienak pertsonalizagarriak ere badira. Gai batzuek ezarpen-panel berezia ere eskaintzen dute kontrol-panelean.
 
-Elementu hauei [b]trepeta[/b] deitzen zaie. Trepetei buruz gehiago jakiteko eta zure blogean efektu ederrak lortzeko bisitatu [url=https://wiki.flatpress.org/doc:tips:widgets target=_blank rel=external]trepetei buruzko aholkuak wikian[/url] edo bisitatu [url=https://wiki.flatpress.org/ target=_blank rel=external]FlatPressen wikia[/url].
+Elementu hauei [b]trepeta[/b] deitzen zaie. Trepetei buruz gehiago jakiteko eta zure blogean efektu ederrak lortzeko bisitatu [url=https://wiki.flatpress.org/doc:tips:widgets rel=external]trepetei buruzko aholkuak wikian[/url] edo bisitatu [url=https://wiki.flatpress.org/ rel=external]FlatPressen wikia[/url].
 
 
 [h4]Gaiak[/h4]
@@ -166,49 +166,49 @@ FlatPress-Leggero gaiarekin 4 estilo txantiloi dituzu eskura - klasikotik modern
 Gehiago ikusi nahi duzu?
 
 [list]
-[*]Jarrai ezazu [url=https://www.flatpress.org/?x target=_blank rel=external]blog ofiziala[/url] FlatPress munduan gertatzen ari dena jakiteko.
-[*]Bisitatu [url=https://forum.flatpress.org/ target=_blank rel=external]foroa[/url] laguntza jasotzeko.
-[*]Lortu beste [url=https://wiki.flatpress.org/res:themes target=_blank rel=external]erabiltzaile batzuek[/url] sortutako [b]gai ederrak[/b]!
-[*]Aurkitu [url=https://wiki.flatpress.org/res:plugins target=_blank rel=external]plugin berriak[/url].
-[*]Deskargatu bloga zure hizkuntzan erakusteko [url=https://wiki.flatpress.org/res:language target=_blank rel=external]hizkuntza paketea[/url].
-[*]FlatPress ere [url=https://fosstodon.org/@flatpress target=_blank rel=external]Mastodon[/url]en jarrai dezakezu.
+[*]Jarrai ezazu [url=https://www.flatpress.org/?x rel=external]blog ofiziala[/url] FlatPress munduan gertatzen ari dena jakiteko.
+[*]Bisitatu [url=https://forum.flatpress.org/ rel=external]foroa[/url] laguntza jasotzeko.
+[*]Lortu beste [url=https://wiki.flatpress.org/res:themes rel=external]erabiltzaile batzuek[/url] sortutako [b]gai ederrak[/b]!
+[*]Aurkitu [url=https://wiki.flatpress.org/res:plugins rel=external]plugin berriak[/url].
+[*]Deskargatu bloga zure hizkuntzan erakusteko [url=https://wiki.flatpress.org/res:language rel=external]hizkuntza paketea[/url].
+[*]FlatPress ere [url=https://fosstodon.org/@flatpress rel=external]Mastodon[/url]en jarrai dezakezu.
 [/list]
 
 
 [h4]Nola lagundu dezaket?[/h4]
 
 [list]
-[*]Lagundu proiektua dohaintza txiki batekin[url=https://www.flatpress.org/home/static.php?page=donate target=_blank rel=external][/url].
-[*][url=https://www.flatpress.org/contact/ target=_blank rel=external]Jarri gurekin harremanetan[/url] akatsen berri emateko edo hobekuntzak iradokitzeko.
-[*]Lagundu FlatPressen garapenean [url=https://github.com/flatpressblog/flatpress target=_blank rel=external]GitHub[/url]en.
-[*]Itzuli FlatPress edo dokumentazioa [url=https://wiki.flatpress.org/res:language target=_blank rel=external]zure hizkuntzara[/url].
-[*]Partekatu zure ezagutza eta konektatu beste FlatPress erabiltzaileekin [url=https://forum.flatpress.org/ target=_blank rel=external]foroan[/url].
+[*]Lagundu proiektua dohaintza txiki batekin[url=https://www.flatpress.org/home/static.php?page=donate rel=external][/url].
+[*][url=https://www.flatpress.org/contact/ rel=external]Jarri gurekin harremanetan[/url] akatsen berri emateko edo hobekuntzak iradokitzeko.
+[*]Lagundu FlatPressen garapenean [url=https://github.com/flatpressblog/flatpress rel=external]GitHub[/url]en.
+[*]Itzuli FlatPress edo dokumentazioa [url=https://wiki.flatpress.org/res:language rel=external]zure hizkuntzara[/url].
+[*]Partekatu zure ezagutza eta konektatu beste FlatPress erabiltzaileekin [url=https://forum.flatpress.org/ rel=external]foroan[/url].
 [*]Zabaldu mezua! :)
 [/list]
 
 
 [h4]Eta orain zer?[/h4]
 
-Orain [url=login.php]saioa hasi[/url] egin dezakezu [url=admin.php]kontrol-panelera[/url] sartzeko eta argitaratzen hasteko!
+Orain [url=login.php target=_self]saioa hasi[/url] egin dezakezu [url=admin.php target=_self]kontrol-panelera[/url] sartzeko eta argitaratzen hasteko!
 
 Ondo pasa! :)
 
-[i][url=https://www.flatpress.org target=_blank rel=external]FlatPress[/url] Taldea[/i]
+[i][url=https://www.flatpress.org rel=external]FlatPress[/url] Taldea[/i]
 
 ';
 
 $lang ['samplecontent'] ['about'] ['subject'] = 'Honi buruz';
-$lang ['samplecontent'] ['about'] ['content'] = 'Idatzi zerbait zure buruari buruz hemen. ([url=admin.php?p=static&action=write&page=about]Editatu nazazu![/url])';
+$lang ['samplecontent'] ['about'] ['content'] = 'Idatzi zerbait zure buruari buruz hemen. ([url=admin.php?p=static&action=write&page=about target=_self]Editatu nazazu![/url])';
 
 $lang ['samplecontent'] ['legal-notice'] ['subject'] = 'Legezko oharra';
-$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice]Editatu nazazu![/url])';
+$lang ['samplecontent'] ['legal-notice'] ['content'] = '([url=admin.php?p=static&action=write&page=legal-notice target=_self]Editatu nazazu![/url])';
 
 $lang ['samplecontent'] ['privacy-policy'] ['subject'] = 'Pribatutasun-politika';
 $lang ['samplecontent'] ['privacy-policy'] ['content'] = 'Herrialde batzuetan Akismet Antispam zerbitzua erabiltzen baduzu, beharrezkoa izaten da bisitariei pribatutasun-politikan honen berri ematea. Pribatutasun-politika bat ere beharrezkoa izan daiteke bisitariak harremanetarako formularioa edo iruzkinen funtzioa erabil dezaten.
 
 [b]Tip:[/b] Txantiloi eta sorgailu ugari daude Interneten.
 
-Hemen txerta ditzakezu. ([url=admin.php?p=static&action=write&page=privacy-policy]Editatu nazazu![/url])
+Hemen txerta ditzakezu. ([url=admin.php?p=static&action=write&page=privacy-policy target=_self]Editatu nazazu![/url])
 
 CookieBanner plugina aktibatzen baduzu, zure bisitariek zuzenean joan ahal izango dira orrialde honetara harremanetarako formulariotik eta iruzkin editoreatik.
 ';
