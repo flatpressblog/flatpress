@@ -365,14 +365,16 @@ function do_bbcode_url($action, $attributes, $content, $params, $node_object) {
 	$the_url = $local ? (BLOG_BASEURL . $url) : $url;
 	// DMKE: uh?
 	$content = $content;
-	// Open URL links in a new tab by default; keep explicitly requested targets.
-	$targetValue = isset($attributes ['target']) ? (string) $attributes ['target'] : '_blank';
+	// Use the configured default unless the BBCode explicitly requests a target.
+	$bbconf = plugin_getoptions('bbcode');
+	$defaultTarget = !empty($bbconf ['url-new-window']) ? '_blank' : '';
+	$targetValue = isset($attributes ['target']) ? (string) $attributes ['target'] : $defaultTarget;
 	$relValue = isset($attributes ['rel']) ? trim((string) $attributes ['rel']) : '';
 	if (strcasecmp($targetValue, '_blank') === 0 && !preg_match('/(?:^|\s)noopener(?:\s|$)/i', $relValue)) {
 		$relValue = trim($relValue . ' noopener');
 	}
 	$rel = $relValue !== '' ? ' rel="' . plugin_bbcode_escape_html_attribute($relValue) . '"' : '';
-	$target = ' target="' . plugin_bbcode_escape_html_attribute($targetValue) . '"';
+	$target = $targetValue !== '' ? ' target="' . plugin_bbcode_escape_html_attribute($targetValue) . '"' : '';
 	$extern = !$local ? ' class="externlink" title="' . $lang ['plugin'] ['bbcode'] ['go_to'] . ' ' . $the_url . '"' : '';
 	return '<a' . $extern . ' href="' . $the_url . '"' . $rel . $target . '>' . $content . '</a>';
 }
@@ -1475,12 +1477,18 @@ function plugin_bbcode_comment($text) {
  */
 function bbcode2html($html) {
 	static $preg = null;
-	if ($preg === null) {
+	static $previousNewWindow = null;
+	$bbconf = plugin_getoptions('bbcode');
+	$newWindow = !empty($bbconf ['url-new-window']);
+	if ($preg === null || $previousNewWindow !== $newWindow) {
+		$previousNewWindow = $newWindow;
+		$urlTarget = $newWindow ? ' target="_blank"' : '';
+		$urlRel = $newWindow ? 'external noopener' : 'external';
 		$preg = array(
 			// [url]
-			'/(?<!\\\\)\[url(?::\w+)?\]www\.(.*?)\[\/url(?::\w+)?\]/si' => '<a href="https://www.\\1" target="_blank" class="externlink" rel="external">\\1</a>',
-			'/(?<!\\\\)\[url(?::\w+)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\1</a>',
-			'/(?<!\\\\)\[url(?::\w+)?=(.*?)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1" target="_blank" class="externlink" rel="external">\\2</a>',
+			'/(?<!\\\\)\[url(?::\w+)?\]www\.(.*?)\[\/url(?::\w+)?\]/si' => '<a href="https://www.\\1"' . $urlTarget . ' class="externlink" rel="' . $urlRel . '">\\1</a>',
+			'/(?<!\\\\)\[url(?::\w+)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1"' . $urlTarget . ' class="externlink" rel="' . $urlRel . '">\\1</a>',
+			'/(?<!\\\\)\[url(?::\w+)?=(.*?)?\](.*?)\[\/url(?::\w+)?\]/si' => '<a href="\\1"' . $urlTarget . ' class="externlink" rel="' . $urlRel . '">\\2</a>',
 			// [list]
 			'/(?<!\\\\)(?:\s*<br\s*\/?>\s*)?\[\*(?::\w+)?\](.*?)(?=(?:\s*<br\s*\/?>\s*)?\[\*|(?:\s*<br\s*\/?>\s*)?\[\/?list)/si' => '<li>\\1</li>',
 		);
