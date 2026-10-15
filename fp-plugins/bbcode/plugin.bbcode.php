@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: BBCode
- * Version: 2.0.4
+ * Version: 2.1.0
  * Plugin URI: https://www.flatpress.org
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
