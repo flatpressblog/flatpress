@@ -52,12 +52,12 @@ parameters:
 
   # Scan for type resolution, but do not analyze
   scanDirectories:
-    - ../fp-includes/smarty-5.8.4/src
+    - ../fp-includes/smarty-5.8.5/src
     - ../fp-includes/fp-smartyplugins
 
   excludePaths:
     analyse:
-      - ../fp-includes/smarty-5.8.4/**
+      - ../fp-includes/smarty-5.8.5/**
       - ../fp-content/compile/**
       - ../fp-content/cache/**
       - ../.setup.php (?)
@@ -70,12 +70,12 @@ parameters:
     # Ignore error “does not accept null” only in Smarty core
     - message: '#Property .* does not accept null#'
       paths:
-        - ../fp-includes/smarty-5.8.4/src/*.php
+        - ../fp-includes/smarty-5.8.5/src/*.php
 
     # Ignore error “Call to undefined method” only in Smarty core
     - message: '#Call to an undefined method Smarty_Internal_.*::.*#'
       paths:
-        - ../fp-includes/smarty-5.8.4/src/.*\.php
+        - ../fp-includes/smarty-5.8.5/src/.*\.php
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
