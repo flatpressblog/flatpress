@@ -1,38 +1,156 @@
+/**
+ * Insert a single editing transaction so native Undo/Redo also covers BBCode.
+ * execCommand is deprecated, but insertText currently preserves the native
+ * textarea undo history, unlike assigning value or calling setRangeText.
+ */
 function insertAtCursor(element, start, end) {
 	element = document.getElementById(element);
-	if (document.selection) {
-		// IE
-		element.focus();
-		caretPos = document.selection.createRange().duplicate();
-		caretPos.text = start + caretPos.text + end;
-		if (caretPos.text.length == 0) {
-			caretPos.moveStart("character", -end.length);
-			caretPos.moveEnd("character", -end.length);
-			caretPos.select();
-		}
-		element.focus(caretPos);
-	} else if (element.selectionStart || element.selectionStart == '0') {
-		// MOZILLA
-		element.focus();
-		var startPos = element.selectionStart;
-		var endPos = element.selectionEnd;
-		var preTxt = element.value.substring(0, startPos);
-		var selTxt = element.value.substring(startPos, endPos) ;
-		var follTxt = element.value.substring(endPos, element.value.length);
-		var scrollPos = element.scrollTop;
-		element.value = preTxt + start + selTxt + end + follTxt;
-		if (element.setSelectionRange) {
-			if (selTxt.length == 0) {
-				element.setSelectionRange(startPos + start.length, startPos + start.length);
-			} else {
-				element.setSelectionRange(startPos, startPos + start.length + selTxt.length + end.length);
-			}
-		element.focus();
-		}
-		element.scrollTop = scrollPos;
-	} else {
-		element.value += start + end;
+	if (!element || element.disabled || element.readOnly) {
+		return;
 	}
+	element.focus();
+	var startPos = element.selectionStart;
+	var endPos = element.selectionEnd;
+	var selected = element.value.substring(startPos, endPos);
+	var replacement = start + selected + end;
+	var previousValue = element.value;
+	var scrollTop = element.scrollTop;
+	var scrollLeft = element.scrollLeft;
+	var inserted = false;
+	if (element.bbcodeHistory) {
+		element.bbcodeHistory.current = bbcodeEditorSnapshot(element);
+	}
+
+	try {
+		// Check the resulting value as some browsers return false on success.
+		document.execCommand('insertText', false, replacement);
+		inserted = element.value !== previousValue;
+	} catch (error) {
+		// Keep the toolbar usable when native editing commands are unavailable.
+	}
+	if (!inserted) {
+		bbcodeEnableFallbackHistory(element);
+		element.setRangeText(replacement, startPos, endPos, 'end');
+		element.dispatchEvent(new Event('input', { bubbles: true }));
+	}
+	if (selected.length === 0) {
+		element.setSelectionRange(startPos + start.length, startPos + start.length);
+	} else {
+		element.setSelectionRange(startPos, startPos + replacement.length);
+	}
+	element.scrollTop = scrollTop;
+	element.scrollLeft = scrollLeft;
+	bbcodeRememberFallbackEdit(element);
+}
+
+function bbcodeEditorSnapshot(element) {
+	return { value: element.value, start: element.selectionStart, end: element.selectionEnd };
+}
+
+/**
+ * Only browsers without insertText need a local history. Start with the value
+ * before the first fallback edit; earlier native edits remain outside it.
+ */
+function bbcodeEnableFallbackHistory(element) {
+	if (!element.bbcodeHistory) {
+		element.bbcodeHistory = { undo: [], redo: [], current: bbcodeEditorSnapshot(element) };
+	}
+}
+
+function bbcodeRememberFallbackEdit(element) {
+	var history = element.bbcodeHistory;
+	if (!history) {
+		return;
+	}
+	var next = bbcodeEditorSnapshot(element);
+	if (history.current.value !== next.value) {
+		history.undo.push(history.current);
+		if (history.undo.length > 100) {
+			history.undo.shift();
+		}
+		history.redo = [];
+	}
+	history.current = next;
+}
+
+function bbcodeFallbackUndo(element, redo) {
+	var history = element.bbcodeHistory;
+	if (!history) {
+		return false;
+	}
+	var source = redo ? history.redo : history.undo;
+	var destination = redo ? history.undo : history.redo;
+	if (source.length) {
+		destination.push(bbcodeEditorSnapshot(element));
+		var previous = source.pop();
+		element.value = previous.value;
+		element.setSelectionRange(previous.start, previous.end);
+		history.current = previous;
+		element.dispatchEvent(new Event('input', { bubbles: true }));
+	}
+	return true;
+}
+
+function plugin_bbcode_shortcuts() {
+	var element = document.getElementById('content');
+	if (!element || element.tagName !== 'TEXTAREA' || element.dataset.bbcodeShortcuts) {
+		return;
+	}
+	// This script also loads on pages without the BBCode editor.
+	if (!document.getElementById('bb_b') || !document.getElementById('bb_url')) {
+		return;
+	}
+	element.dataset.bbcodeShortcuts = 'true';
+	element.addEventListener('input', function () {
+		bbcodeRememberFallbackEdit(element);
+	});
+	element.addEventListener('beforeinput', function (event) {
+		if (element.disabled || element.readOnly || event.isComposing || !event.cancelable) {
+			return;
+		}
+		if (element.bbcodeHistory) {
+			element.bbcodeHistory.current = bbcodeEditorSnapshot(element);
+		}
+		if ((event.inputType === 'historyUndo' || event.inputType === 'historyRedo') &&
+			bbcodeFallbackUndo(element, event.inputType === 'historyRedo')) {
+			event.preventDefault();
+		}
+	});
+	element.addEventListener('keydown', function (event) {
+		if (event.defaultPrevented || element.disabled || element.readOnly ||
+			event.isComposing || event.keyCode === 229 || event.altKey ||
+			(event.getModifierState && event.getModifierState('AltGraph')) ||
+			!(event.ctrlKey || event.metaKey) || (event.ctrlKey && event.metaKey)) {
+			return;
+		}
+		var key = (event.key || '').toLowerCase();
+		// Physical key fallback for non-Latin layouts and older keyboards.
+		if (!/^[a-z]$/.test(key)) {
+			key = /^Key[A-Z]$/.test(event.code || '') ? event.code.slice(3).toLowerCase() :
+				String.fromCharCode(event.keyCode || 0).toLowerCase();
+		}
+		if ((key === 'z' || key === 'y') && element.bbcodeHistory) {
+			if (key === 'z' || !event.shiftKey) {
+				event.preventDefault();
+				bbcodeFallbackUndo(element, key === 'y' || event.shiftKey);
+			}
+			return;
+		}
+		var codes = { b: 'b', i: 'i', u: 'u', k: 'url' };
+		if (event.shiftKey || !Object.prototype.hasOwnProperty.call(codes, key)) {
+			return;
+		}
+		event.preventDefault();
+		if (!event.repeat) {
+			insBBCode(codes[key]);
+		}
+	});
+}
+
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', plugin_bbcode_shortcuts);
+} else {
+	plugin_bbcode_shortcuts();
 }
 
 // calling the function
