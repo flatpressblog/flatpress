@@ -37,7 +37,7 @@
         - ``article:author`` - based on the blog author ([#858](https://github.com/flatpressblog/flatpress/pull/858))
     - Dynamic Open Graph images ``og:image`` with a social media-friendly aspect ratio of 1.91:1 for posts and static pages. ([#939](https://github.com/flatpressblog/flatpress/pull/939))
         - ``og:image:alt`` is derived from the optional image captions.
-- BBCode plugin: update to version 2.0.4
+- BBCode plugin: update to version 2.1.0
     - The HTML button is only displayed if inline HTML is allowed in BBCode. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
     - Optional new tab for URLs/links ([#960](https://github.com/flatpressblog/flatpress/pull/960), [#961](https://github.com/flatpressblog/flatpress/pull/961), [#962](https://github.com/flatpressblog/flatpress/pull/962))
     - Shortcuts for Bold, Italic, Underline, and URLs ([#963](https://github.com/flatpressblog/flatpress/pull/963))
