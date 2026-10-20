@@ -62,4 +62,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'Le mot de passe doit contenir au moins 6 caractères et ne pas inclure d’espaces.',
 	'confirm_password' => 'Les mots de passe ne correspondent pas.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'Le compte ne peut pas être enregistré. Vérifiez les permissions des fichiers et réessayez.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'Ce nom de compte est déjà utilisé. Choisissez un autre nom.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'L’ancien compte ne peut pas être supprimé. Le changement de nom est annulé. Vérifiez les permissions.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'Les paramètres ne peuvent pas être enregistrés. Rechargez la page et vérifiez les paramètres du compte.';
 ?>

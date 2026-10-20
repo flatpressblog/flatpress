@@ -32,7 +32,7 @@ function io_write_file($filename, $data, $options = []) {
 	$len = strlen($data); $pos = 0;
 	while ($pos < $len) {
 		$n = fwrite($f, substr($data, $pos));
-		if ($n === false) {
+		if ($n === false || $n === 0) {
 			fclose($f); 
 			@unlink($tmp);
 			@umask($oldUmask);
@@ -52,7 +52,7 @@ function io_write_file($filename, $data, $options = []) {
 	}
 
 	$mv = @rename($tmp, $filename);
-	if (!$mv && is_file($tmp)) {
+	if (!$mv && empty($options ['preserve_existing']) && is_file($tmp)) {
 		@unlink($filename);
 		$mv = @rename($tmp, $filename) ?: (@copy($tmp, $filename) && @unlink($tmp));
 	}

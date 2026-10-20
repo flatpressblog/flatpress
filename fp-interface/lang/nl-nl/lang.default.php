@@ -198,4 +198,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'vr',
 	'za'
 );
+$lang ['login'] ['error'] ['cookie'] = 'Er is geen sessiecookie teruggestuurd. Sta cookies toe en laad de inlogpagina opnieuw. Laat sessies en HTTPS controleren als het probleem blijft bestaan.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'Het beveiligingstoken ontbreekt. Laad de inlogpagina opnieuw en probeer het nogmaals.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'Het beveiligingstoken is ongeldig of verlopen. Laad de inlogpagina opnieuw en probeer het nogmaals.';
+$lang ['login'] ['error'] ['session'] = 'De inlogsessie kon niet worden gestart. Neem contact op met de beheerder.';
+$lang ['login'] ['error'] ['storage'] = 'De beveiligingsgegevens voor het inloggen konden niet worden opgeslagen. Neem contact op met de beheerder.';
+$lang ['login'] ['error'] ['attempts'] = 'Te veel mislukte inlogpogingen. Probeer het over vijf minuten opnieuw.';
 ?>

@@ -116,20 +116,25 @@ function fp_setcookie($name, $value = '', $expires = 0) {
  * Also handles session timeout based on inactivity.
  */
 function sess_setup() {
+	$timeout_duration = 3600;
+	if (isset($GLOBALS ['fp_config'] ['auth'] ['session_timeout'])) {
+		$cfg = (int)$GLOBALS ['fp_config'] ['auth'] ['session_timeout'];
+		if ($cfg > 0) {
+			$timeout_duration = $cfg;
+		}
+	}
+	// Never adopt an unrelated, automatically started PHP session.
+	if (session_status() === PHP_SESSION_ACTIVE && session_name() !== SESS_COOKIE) {
+		return false;
+	}
 	if (session_status() === PHP_SESSION_NONE) {
 		// Activate strict mode to prevent session fixation attacks
 		ini_set('session.use_strict_mode', '1');
 
-		// Set session timeout duration (e.g., 3600 seconds = 60 minutes)
-		$timeout_duration = 3600;
-		// Override from config if set
-		if (isset($GLOBALS ['fp_config'] ['auth'] ['session_timeout'])) {
-			$cfg = (int)$GLOBALS ['fp_config'] ['auth'] ['session_timeout'];
-			if ($cfg > 0) {
-				$timeout_duration = $cfg;
-			}
-		}
 		ini_set('session.gc_maxlifetime', (string) $timeout_duration);
+		if (defined('SESSION_PATH') && SESSION_PATH !== '') {
+			session_save_path(SESSION_PATH);
+		}
 
 		// Optimize Garbage Collection (adjust to session load)
 		ini_set('session.gc_probability', '1');
@@ -153,21 +158,20 @@ function sess_setup() {
 		}
 
 		session_name(SESS_COOKIE);
-		session_start();
-
-		if (isset($_SESSION ['last_activity'])) {
-			// Check if the session has expired
-			if (time() - $_SESSION ['last_activity'] > $timeout_duration) {
-				// Session has expired, close it
-				sess_close();
-				// Stop further execution
-				return;
-			}
+		if (!@session_start()) {
+			return false;
 		}
-
-		// Update last activity timestamp
-		$_SESSION ['last_activity'] = time();
 	}
+	if (session_status() !== PHP_SESSION_ACTIVE) {
+		return false;
+	}
+	// Check inactivity even if another caller already started this session.
+	if (isset($_SESSION ['last_activity']) && time() - (int)$_SESSION ['last_activity'] > $timeout_duration) {
+		sess_close();
+		return sess_setup();
+	}
+	$_SESSION ['last_activity'] = time();
+	return true;
 }
 
 /**

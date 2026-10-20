@@ -39,7 +39,7 @@
  * @see config_save, config_load
  *     
  */
-function system_save($file, $array) {
+function system_save($file, $array, $options = []) {
 
 	$string = "<?php\n\n";
 
@@ -50,7 +50,7 @@ function system_save($file, $array) {
 
 	$string .= "\n?>";
 
-	return io_write_file($file, $string);
+	return io_write_file($file, $string, $options);
 }
 
 /**

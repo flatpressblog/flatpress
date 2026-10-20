@@ -30,7 +30,7 @@ class user_lister extends fs_filelister {
 	 * @return int Returns 0 if the file is a user profile.
 	 */
 	function _checkFile($directory, $file) {
-		if (fnmatch('*.php', $file)) {
+		if (fnmatch('*.php', $file) && is_valid_userid(basename($file, EXT))) {
 			// If the file is a PHP file, add it to the list
 			array_push($this->_list, basename($file, EXT));
 		}
@@ -70,6 +70,11 @@ function user_pwd($pwd) {
 function user_login($userid, $pwd) {
 	global $loggedin;
 	$loggedin = false;
+	if (!sess_setup()) {
+		$_SESSION ['login_error'] = 'session';
+		return false;
+	}
+	unset($_SESSION ['login_error']);
 
 	// Validate user ID
 	if (!is_valid_userid($userid)) {
@@ -97,13 +102,21 @@ function user_login($userid, $pwd) {
 		$_SESSION ['login_attempts'] [] = $now;
 		return false;
 	}
+	// Use the profile's canonical spelling (important on case-insensitive filesystems).
+	if (isset($user ['userid']) && is_string($user ['userid']) && is_valid_userid($user ['userid'])) {
+		$userid = $user ['userid'];
+	}
 
-	if (password_verify($pwd, $user ['password'])) {
-		sess_setup();
-		session_regenerate_id(true);
+	if (user_check_password($userid, $pwd, $user ['password'])) {
+		if (!session_regenerate_id(true)) {
+			$_SESSION ['login_error'] = 'session';
+			return false;
+		}
 
 		$_SESSION ['loggedin'] = true;
 		$_SESSION ['userid'] = $userid;
+		$_SESSION ['auth_fingerprint'] = hash('sha256', $user ['password']);
+		unset($_SESSION ['login_attempts'], $_SESSION ['last_login_attempt']);
 		return true;
 	}
 
@@ -118,7 +131,21 @@ function user_login($userid, $pwd) {
  * @return bool Returns `true` if the user is logged in, otherwise `false`.
  */
 function user_loggedin() {
-	return isset($_SESSION ['loggedin']) && $_SESSION ['loggedin'] === true;
+	if (session_status() !== PHP_SESSION_ACTIVE || session_name() !== SESS_COOKIE) {
+		return false;
+	}
+	if (empty($_SESSION ['loggedin']) || !isset($_SESSION ['userid']) || !is_string($_SESSION ['userid'])) {
+		return false;
+	}
+	$user = user_get($_SESSION ['userid']);
+	$fingerprint = $_SESSION ['auth_fingerprint'] ?? null;
+	if (!is_array($user) || !isset($user ['password']) || !is_string($fingerprint)
+		|| !hash_equals(hash('sha256', $user ['password']), $fingerprint)) {
+		// Also invalidate pre-fingerprint sessions and sessions of removed accounts.
+		unset($_SESSION ['loggedin'], $_SESSION ['userid'], $_SESSION ['auth_fingerprint']);
+		return false;
+	}
+	return $_SESSION ['loggedin'] === true;
 }
 
 /**
@@ -177,12 +204,137 @@ function is_valid_userid($userid) {
  * @return bool Returns `true` if the user was successfully saved, otherwise `false`.
  */
 function user_add($user) {
+	if (!isset($user ['userid'], $user ['password']) || !is_string($user ['userid'])
+		|| !is_valid_userid($user ['userid']) || !is_string($user ['password'])) {
+		return false;
+	}
 	// Check whether the password has already been hashed
 	if (!password_get_info($user ['password']) ['algo']) {
-		$user ['password'] = user_pwd($user ['password']);
+		try {
+			$user ['password'] = user_pwd($user ['password']);
+		} catch (Throwable $exception) {
+			return false;
+		}
+		if (!is_string($user ['password']) || $user ['password'] === '') {
+			return false;
+		}
 	}
 	// Saves the user data in a PHP file
-	return system_save(USERS_DIR . $user ['userid'] . '.php', compact('user'));
+	return system_save(USERS_DIR . $user ['userid'] . '.php', compact('user'), [
+		'preserve_existing' => true, 'invalidate_opcache' => true
+	]);
+}
+
+/**
+ * Update the current account without deleting it before its replacement is safe.
+ * The optional commit saves the associated configuration before removing the old name.
+ * @param string $userid
+ * @param array $user
+ * @param callable|null $commit
+ * @return string|null Localized error key, or null on success.
+ */
+function user_update($userid, $user, $commit = null) {
+	if (!is_string($userid) || !is_valid_userid($userid) || !isset($user ['userid'])
+		|| !is_string($user ['userid']) || !is_valid_userid($user ['userid'])) {
+		return 'account_save';
+	}
+	$lock = @fopen(USERS_DIR . '.accounts.lock', 'c+b');
+	if ($lock === false) {
+		return 'account_save';
+	}
+	try {
+		if (!flock($lock, LOCK_EX)) {
+			return 'account_save';
+		}
+		$original = user_get($userid);
+		if (!is_array($original)) {
+			return 'account_save';
+		}
+		$renamed = $userid !== $user ['userid'];
+		if ($renamed && file_exists(USERS_DIR . $user ['userid'] . '.php')) {
+			return 'account_exists';
+		}
+		if (!user_add($user)) {
+			return 'account_save';
+		}
+		if ($commit !== null && !$commit()) {
+			// Preserve the original login if the settings could not be committed.
+			if ($renamed) {
+				user_del($user ['userid']);
+			} else {
+				user_add($original);
+			}
+			return 'account_config';
+		}
+		if ($renamed && !user_del($userid)) {
+			user_del($user ['userid']);
+			return 'account_rename';
+		}
+		return null;
+	} finally {
+		flock($lock, LOCK_UN);
+		fclose($lock);
+	}
+}
+
+/**
+ * Check a real account's password under a persistent, per-account attempt lock.
+ * Changing the browser session must not reset the login limit.
+ * @param string $userid
+ * @param string $pwd
+ * @param string $hash
+ * @return bool
+ */
+function user_check_password($userid, $pwd, $hash) {
+	$file = USERS_DIR . '.login-' . hash('sha256', $userid) . '.php';
+	$lock = @fopen($file, 'c+b');
+	if ($lock === false) {
+		$_SESSION ['login_error'] = 'storage';
+		return false;
+	}
+	@chmod($file, 0600);
+	try {
+		if (!flock($lock, LOCK_EX)) {
+			$_SESSION ['login_error'] = 'storage';
+			return false;
+		}
+		$data = stream_get_contents($lock, 8192);
+		$prefix = "<?php exit; ?>\n";
+		$state = is_string($data) && strpos($data, $prefix) === 0 ? json_decode(substr($data, strlen($prefix)), true) : [];
+		if ($data === false || ($data !== '' && (!is_array($state) || !isset($state ['attempts']) || !is_array($state ['attempts'])))) {
+			$_SESSION ['login_error'] = 'storage';
+			return false;
+		}
+		$now = time();
+		$attempts = isset($state ['attempts']) && is_array($state ['attempts']) ? $state ['attempts'] : [];
+		$attempts = array_values(array_filter($attempts, function ($time) use ($now) {
+			return is_int($time) && $now - $time < 300;
+		}));
+		if (count($attempts) >= 5) {
+			$_SESSION ['login_error'] = 'attempts';
+			return false;
+		}
+		if ($attempts && $now - max($attempts) < 30) {
+			$_SESSION ['login_error'] = 'timeout';
+			return false;
+		}
+		$valid = password_verify($pwd, $hash);
+		if ($valid) {
+			$attempts = [];
+		} else {
+			$attempts [] = $now;
+		}
+		$encoded = $prefix . json_encode(['attempts' => $attempts]);
+		rewind($lock);
+		if (!ftruncate($lock, 0) || fwrite($lock, $encoded) !== strlen($encoded) || !fflush($lock)) {
+			$_SESSION ['login_error'] = 'storage';
+			return false;
+		}
+		return $valid;
+	} finally {
+		flock($lock, LOCK_UN);
+		fclose($lock);
+	}
 }
 
 /**
@@ -202,7 +354,11 @@ function user_del($userid) {
 
 	// Check if the file exists and delete it
 	if (file_exists($userfile)) {
-		return unlink($userfile);
+		$deleted = @unlink($userfile);
+		if ($deleted && function_exists('opcache_invalidate')) {
+			@opcache_invalidate($userfile, true);
+		}
+		return $deleted;
 	}
 
 	return false;

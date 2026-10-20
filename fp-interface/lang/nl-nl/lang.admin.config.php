@@ -63,4 +63,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'Het wachtwoord moet minstens 6 tekens bevatten en mag geen spaties bevatten.',
 	'confirm_password' => 'De wachtwoorden komen niet overeen.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'Het account kon niet worden opgeslagen. Controleer de bestandsrechten en probeer het opnieuw.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'Deze accountnaam is al in gebruik. Kies een andere naam.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'Het oude account kon niet worden verwijderd. De naamswijziging is geannuleerd. Controleer de bestandsrechten.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'De instellingen konden niet worden opgeslagen. Laad de pagina opnieuw en controleer je accountinstellingen.';
 ?>

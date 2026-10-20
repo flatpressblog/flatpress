@@ -25,16 +25,19 @@ function wp_nonce_field($action = -1) {
  * Echoes a hidden input field containing the referrer
  */
 function wp_referer_field() {
-	$ref = wp_specialchars($_SERVER ['REQUEST_URI']);
+	$uri = $GLOBALS ['RAW_REQUEST_URI'] ?? ($_SERVER ['REQUEST_URI'] ?? '');
+	$ref = htmlspecialchars(is_string($uri) ? $uri : '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 	echo '<input type="hidden" name="_wp_http_referer" value="' . $ref . '">';
 	if (wp_get_original_referer()) {
-		$original_ref = wp_specialchars(stripslashes(wp_get_original_referer()));
+		$original_ref = htmlspecialchars(stripslashes(wp_get_original_referer()), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 		echo '<input type="hidden" name="_wp_original_http_referer" value="' . $original_ref . '">';
 	}
 }
 
 function wp_original_referer_field() {
-	echo '<input type="hidden" name="_wp_original_http_referer" value="' . wp_specialchars(stripslashes($_SERVER ['REQUEST_URI'])) . '">';
+	$uri = $GLOBALS ['RAW_REQUEST_URI'] ?? ($_SERVER ['REQUEST_URI'] ?? '');
+	$ref = htmlspecialchars(stripslashes(is_string($uri) ? $uri : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+	echo '<input type="hidden" name="_wp_original_http_referer" value="' . $ref . '">';
 }
 
 function wp_get_referer() {
@@ -49,7 +52,7 @@ function wp_get_referer() {
 }
 
 function wp_get_original_referer() {
-	if (!empty($_REQUEST ['_wp_original_http_referer'])) {
+	if (!empty($_REQUEST ['_wp_original_http_referer']) && is_string($_REQUEST ['_wp_original_http_referer'])) {
 		return $_REQUEST ['_wp_original_http_referer'];
 	}
 	return false;

@@ -64,4 +64,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'Heslo musí obsahovat alespoň 6 znaků a nesmí obsahovat žádné mezery.',
 	'confirm_password' => 'Hesla se neshodují.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'Účet nelze uložit. Zkontrolujte oprávnění souborů a zkuste to znovu.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'Tento název účtu se již používá. Vyberte jiný název.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'Původní účet nelze odstranit. Přejmenování bylo zrušeno. Zkontrolujte oprávnění souborů.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'Nastavení nelze uložit. Znovu načtěte stránku a zkontrolujte nastavení účtu.';
 ?>

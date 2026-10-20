@@ -63,4 +63,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'A senha deve conter pelo menos 6 caracteres e não deve conter espaços.',
 	'confirm_password' => 'As senhas não são iguais.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'Não foi possível salvar a conta. Verifique as permissões dos arquivos e tente novamente.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'Esse nome de conta já está em uso. Escolha outro nome.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'Não foi possível excluir a conta antiga. A renomeação foi cancelada. Verifique as permissões.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'Não foi possível salvar as configurações. Recarregue a página e confira as configurações da conta.';
 ?>

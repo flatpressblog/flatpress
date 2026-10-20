@@ -198,4 +198,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Fr',
 	'Sø'
 );
+$lang ['login'] ['error'] ['cookie'] = 'Ingen sessionscookie blev modtaget. Tillad cookies, og genindlæs login-siden. Få sessioner og HTTPS kontrolleret, hvis problemet fortsætter.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'Sikkerhedstokenet mangler. Genindlæs login-siden, og prøv igen.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'Sikkerhedstokenet er ugyldigt eller udløbet. Genindlæs login-siden, og prøv igen.';
+$lang ['login'] ['error'] ['session'] = 'Login-sessionen kunne ikke startes. Kontakt administratoren.';
+$lang ['login'] ['error'] ['storage'] = 'Sikkerhedsdata til login kunne ikke gemmes. Kontakt administratoren.';
+$lang ['login'] ['error'] ['attempts'] = 'For mange mislykkede loginforsøg. Prøv igen om fem minutter.';
 ?>

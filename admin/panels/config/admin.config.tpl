@@ -1,4 +1,4 @@
-{include file="shared:errorlist.tpl"}
+{include file="shared:errorlist.tpl" escape_messages=true}
 
 {html_form}
 
@@ -49,7 +49,7 @@
 			<dd><input type="text" name="blogfooter" id="blogfooter" class="textinput" value="{$flatpress.footer|escape:"html"}"></dd>
 
 			<dt><label for="author">{$panelstrings.blogauthor}</label></dt>
-			<dd><input type="text" name="author" id="author" class="textinput" value="{$flatpress.author}"></dd>
+			<dd><input type="text" name="author" id="author" class="textinput" value="{$flatpress.author|escape:'html':'UTF-8':false}"></dd>
 
 			<dt><label for="www">{$panelstrings.blogurl}</label></dt>
 			{if isset($error) && isset($error.www) && !empty($error.www)}
@@ -65,7 +65,7 @@
 			{else}
 				{assign var=class value=""}
 			{/if}
-			<dd><input type="text" name="email" id="email" class="textinput{$class}" value="{$flatpress.email}"></dd>
+			<dd><input type="text" name="email" id="email" class="textinput{$class}" value="{$flatpress.email|escape:'html':'UTF-8':false}"></dd>
 
 			<dt><label>{$panelstrings.notifications}</label></dt>
 			<dd><label for="notify">
@@ -77,8 +77,8 @@
 			<dd><select name="startpage" id="startpage" class="textinput">
 				<option value=":NULL:">{$panelstrings.stdstartpage}</option>
 				{foreach from=$static_list key=staticid item=staticpage}
-					<option value="{$staticid}"{if $staticid == $fp_config.general.startpage} selected="selected"{/if}>
-						{$staticpage.subject}
+					<option value="{$staticid|escape:'html'}"{if $staticid == $fp_config.general.startpage} selected="selected"{/if}>
+						{$staticpage.subject|escape:'html'}
 					</option>
 				{/foreach}
 			</select></dd>
@@ -89,7 +89,7 @@
 			{else}
 				{assign var=class value=""}
 			{/if}
-			<dd><input type="text" name="maxentries" id="maxentries" class="smalltextinput{$class}" value="{$flatpress.maxentries}"></dd>
+			<dd><input type="text" name="maxentries" id="maxentries" class="smalltextinput{$class}" value="{$flatpress.maxentries|escape:'html'}"></dd>
 
 		</dl>
 
@@ -110,7 +110,7 @@
 			{else}
 				{assign var=class value=""}
 			{/if}
-			<dd><input type="text" name="timeoffset" id="timeoffset" class="smalltextinput{$class}" value="{$fp_config.locale.timeoffset}">
+			<dd><input type="text" name="timeoffset" id="timeoffset" class="smalltextinput{$class}" value="{$fp_config.locale.timeoffset|escape:'html'}">
 				<p class="text">{$panelstrings.hours}</p></dd>
 
 			<dt><label for="dateformat">{$panelstrings.dateformat}</label></dt>
@@ -120,8 +120,8 @@
 				{assign var=class value=""}
 			{/if}
 			<dd>
-				<p><input type="text" name="dateformat" id="dateformat" class="textinput{$class}" value="{$fp_config.locale.dateformat}"></p>
-				<p class="output">{$panelstrings.output}: {$smarty.now|date_format:$fp_config.locale.dateformat}</p>
+				<p><input type="text" name="dateformat" id="dateformat" class="textinput{$class}" value="{$fp_config.locale.dateformat|escape:'html':'UTF-8':false}"></p>
+				<p class="output">{$panelstrings.output}: {$smarty.now|date_format:$fp_config.locale.dateformat|escape:'html':'UTF-8':false}</p>
 			</dd>
 
 			<dt><label for="dateformatshort">{$panelstrings.dateformatshort}</label></dt>
@@ -131,8 +131,8 @@
 				{assign var=class value=""}
 			{/if}
 			<dd>
-				<p><input type="text" name="dateformatshort" id="dateformatshort" class="textinput{$class}" value="{$fp_config.locale.dateformatshort}"></p>
-				<p class="output">{$panelstrings.output}: {$smarty.now|date_format:$fp_config.locale.dateformatshort}</p>
+				<p><input type="text" name="dateformatshort" id="dateformatshort" class="textinput{$class}" value="{$fp_config.locale.dateformatshort|escape:'html':'UTF-8':false}"></p>
+				<p class="output">{$panelstrings.output}: {$smarty.now|date_format:$fp_config.locale.dateformatshort|escape:'html':'UTF-8':false}</p>
 			</dd>
 
 			<dt><label for="timeformat">{$panelstrings.timeformat}</label></dt>
@@ -142,19 +142,19 @@
 				{assign var=class value=""}
 			{/if}
 			<dd>
-				<p><input type="text" name="timeformat" id="timeformat" class="textinput{$class}" value="{$fp_config.locale.timeformat}"></p>
+				<p><input type="text" name="timeformat" id="timeformat" class="textinput{$class}" value="{$fp_config.locale.timeformat|escape:'html':'UTF-8':false}"></p>
 				{assign var=currentTime value=$smarty.now}
 				{assign var=timeDiff value=$fp_config.locale.timeoffset}
 				{assign var=TimeDiffUTC value=$currentTime+$timeDiff*3600}
-				<p class="output">{$panelstrings.output}: {$TimeDiffUTC|date_format:$fp_config.locale.timeformat}</p>
+				<p class="output">{$panelstrings.output}: {$TimeDiffUTC|date_format:$fp_config.locale.timeformat|escape:'html':'UTF-8':false}</p>
 			</dd>
 
 			<dt><label for="lang">{$panelstrings.langchoice}</label></dt>
 			<dd>
 				<select name="lang" id="lang" class="textinput">
 					{foreach from=$lang_list item=langsetts}
-						<option value="{$langsetts.locale}" {if $langsetts.locale == $fp_config.locale.lang} selected="selected"{/if}>
-							{$langsetts.id}
+						<option value="{$langsetts.locale|escape:'html'}" {if $langsetts.locale == $fp_config.locale.lang} selected="selected"{/if}>
+							{$langsetts.id|escape:'html'}
 						</option>
 					{/foreach}
 				</select>
@@ -164,8 +164,8 @@
 			<dd>
 				<select name="charset" id="charset" class="textinput">
 					{foreach from=$charset_list item=charset}
-						<option value="{$charset}" {if $charset == $fp_config.locale.charset} selected="selected"{/if}>
-							{$charset}
+						<option value="{$charset|escape:'html'}" {if $charset == $fp_config.locale.charset} selected="selected"{/if}>
+							{$charset|escape:'html'}
 						</option>
 					{/foreach}
 				</select>

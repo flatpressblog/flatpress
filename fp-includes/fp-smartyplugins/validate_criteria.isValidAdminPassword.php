@@ -13,18 +13,12 @@
  * @return bool True if the value is valid, false otherwise
  */
 function smarty_validate_criteria_isValidAdminPassword($value, $params) {
-	global $fp_config;
-	$localeCharset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
-
 	// Ensure value is a string
 	if (!is_string($value)) {
 		return false;
 	}
 
-	// Sanitize the input to prevent XSS vulnerabilities
-	$value = htmlspecialchars($value, ENT_QUOTES, $localeCharset);
-
-	// Password must be at least 6 characters long and not contain spaces
-	return strlen($value) >= 6 && strpos($value, ' ') === false;
+	// Passwords are opaque input: never HTML-encode or trim before hashing.
+	return strlen($value) >= 6 && strpos($value, "\0") === false && preg_match('/\s/', $value) === 0;
 }
 ?>

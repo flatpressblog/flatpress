@@ -198,4 +198,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Ol',
 	'Lr'
 );
+$lang ['login'] ['error'] ['cookie'] = 'Ez da saioaren cookierik jaso. Baimendu cookieak eta kargatu berriro saioa hasteko orria. Arazoak jarraitzen badu, eskatu saioak eta HTTPS egiaztatzeko.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'Segurtasun-tokena falta da. Kargatu berriro saioa hasteko orria eta saiatu berriro.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'Segurtasun-tokena baliogabea da edo iraungi da. Kargatu berriro saioa hasteko orria eta saiatu berriro.';
+$lang ['login'] ['error'] ['session'] = 'Ezin izan da saioa hasi. Jarri administratzailearekin harremanetan.';
+$lang ['login'] ['error'] ['storage'] = 'Ezin izan dira saioa hasteko segurtasun-datuak gorde. Jarri administratzailearekin harremanetan.';
+$lang ['login'] ['error'] ['attempts'] = 'Saioa hasteko huts egindako saiakera gehiegi. Saiatu berriro bost minutu barru.';
 ?>

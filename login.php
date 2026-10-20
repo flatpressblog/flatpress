@@ -7,11 +7,11 @@ $tpl = 'default.tpl';
 function sanitize_user($input) {
 	global $fp_config;
 	$charset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
-	return htmlspecialchars(trim($input ?? ''), ENT_QUOTES, $charset);
+	return is_string($input) ? htmlspecialchars(trim($input), ENT_QUOTES, $charset) : '';
 }
 
 function sanitize_pass($input) {
-	return trim($input ?? '');
+	return is_string($input) ? $input : '';
 }
 
 function login_validate() {
@@ -41,7 +41,9 @@ function login_validate() {
 	}
 
 	if (empty($error) && !user_login($user, $pass)) {
-		$error ['match'] = $lerr ['match'];
+		$reason = sess_remove('login_error');
+		$key = is_string($reason) && isset($lerr [$reason]) ? $reason : 'match';
+		$error [$key] = $lerr [$key];
 	}
 
 	if (!empty($error)) {
@@ -63,12 +65,11 @@ add_action('wp_head', 'login_head');
 
 function login_main() {
 	global $lang, $smarty;
+	$smarty->assign('user', isset($_POST ['user']) && is_string($_POST ['user']) ? $_POST ['user'] : '');
 
 	// Ensure session is started
-	if (session_status() === PHP_SESSION_NONE) {
-		session_start();
-	}
-	if (empty($_SESSION ['csrf_token'])) {
+	$sessionReady = sess_setup();
+	if ($sessionReady && (!isset($_SESSION ['csrf_token']) || !is_string($_SESSION ['csrf_token']) || strlen($_SESSION ['csrf_token']) !== 64)) {
 		// Generate CSRF token
 		$_SESSION ['csrf_token'] = bin2hex(random_bytes(32));
 	}
@@ -77,14 +78,17 @@ function login_main() {
 	utils_nocache_headers();
 
 	// Transfer token to Smarty
-	$smarty->assign('csrf_token', $_SESSION ['csrf_token']);
+	$smarty->assign('csrf_token', $_SESSION ['csrf_token'] ?? '');
 
 	// Initialize modifier functions
 	$smarty->registerPlugin('modifier', 'wp_specialchars', 'wp_specialchars');
 	$smarty->registerPlugin('modifier', 'function_exists', 'function_exists');
 	$smarty->registerPlugin('modifier', 'is_numeric', 'is_numeric');
 
-	if (user_loggedin()) {
+	if (!$sessionReady) {
+		$smarty->assign('error', ['session' => $lang ['login'] ['error'] ['session']]);
+		$content = SHARED_TPLS . 'login.tpl';
+	} elseif (user_loggedin()) {
 		if (isset($_GET ['do']) && ($_GET ['do'] == 'logout')) {
 			user_logout();
 
@@ -110,11 +114,18 @@ function login_main() {
 			//});
 
 			$content = (SHARED_TPLS . 'login_success.tpl');
-		} elseif (empty($_POST)) {
+		} elseif (($_SERVER ['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
 			$content = (SHARED_TPLS . 'login.tpl');
 		} else {
 			// CSRF token verification
-			if (!isset($_POST ['csrf_token']) || $_POST ['csrf_token'] !== $_SESSION ['csrf_token']) {
+			if (!isset($_COOKIE [SESS_COOKIE]) || !is_string($_COOKIE [SESS_COOKIE]) || $_COOKIE [SESS_COOKIE] === '') {
+				$smarty->assign('error', ['cookie' => $lang ['login'] ['error'] ['cookie']]);
+				$content = (SHARED_TPLS . 'login.tpl');
+			} elseif (!isset($_POST ['csrf_token'])) {
+				$smarty->assign('error', ['csrf_missing' => $lang ['login'] ['error'] ['csrf_missing']]);
+				$content = (SHARED_TPLS . 'login.tpl');
+			} elseif (!is_string($_POST ['csrf_token']) || !hash_equals($_SESSION ['csrf_token'], $_POST ['csrf_token'])) {
+				$smarty->assign('error', ['csrf_invalid' => $lang ['login'] ['error'] ['csrf_invalid']]);
 				$content = (SHARED_TPLS . 'login.tpl');
 			} elseif (login_validate()) {
 				// Validate after a POST and reset CSRF token after successful verification
@@ -125,7 +136,6 @@ function login_main() {
 				exit();
 			} else {
 				// Assign sanitized inputs here
-				$smarty->assign('user', $_POST ['user'] ?? '');
 				$content = (SHARED_TPLS . 'login.tpl');
 			}
 		}

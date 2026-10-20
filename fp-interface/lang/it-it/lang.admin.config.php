@@ -64,4 +64,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'La password deve contenere almeno 6 caratteri e non deve contenere spazi.',
 	'confirm_password' => 'Le password non corrispondono.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'Impossibile salvare l’account. Controlla i permessi dei file e riprova.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'Questo nome account è già in uso. Scegli un altro nome.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'Impossibile eliminare il vecchio account. La rinomina è stata annullata. Controlla i permessi.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'Impossibile salvare le impostazioni. Ricarica la pagina e controlla le impostazioni dell’account.';
 ?>

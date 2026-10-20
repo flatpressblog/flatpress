@@ -63,4 +63,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'パスワードは、スペース以外の英数6字以上で指定してください。',
 	'confirm_password' => 'パスワードが一致しません。'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'アカウントを保存できませんでした。ファイルのアクセス権を確認して、もう一度お試しください。';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'このアカウント名は既に使用されています。別の名前を選択してください。';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = '以前のアカウントを削除できませんでした。名前の変更は取り消されました。ファイルのアクセス権を確認してください。';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = '設定を保存できませんでした。ページを再読み込みしてアカウント設定を確認してください。';
 ?>

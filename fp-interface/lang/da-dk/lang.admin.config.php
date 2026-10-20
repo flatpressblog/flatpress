@@ -63,4 +63,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'Adgangskoden skal indeholde mindst 6 tegn og må ikke indeholde mellemrum.',
 	'confirm_password' => 'Adgangskoderne stemmer ikke overens.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'Kontoen kunne ikke gemmes. Kontrollér filrettighederne, og prøv igen.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'Kontonavnet er allerede i brug. Vælg et andet navn.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'Den gamle konto kunne ikke slettes. Omdøbningen blev annulleret. Kontrollér filrettighederne.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'Indstillingerne kunne ikke gemmes. Genindlæs siden, og kontrollér kontoindstillingerne.';
 ?>

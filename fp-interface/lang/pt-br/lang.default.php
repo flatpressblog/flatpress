@@ -198,4 +198,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Sex',
 	'Sab'
 );
+$lang ['login'] ['error'] ['cookie'] = 'Nenhum cookie de sessão foi recebido. Permita cookies e recarregue a página de login. Se o problema continuar, solicite a verificação das sessões e do HTTPS.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'O token de segurança está ausente. Recarregue a página de login e tente novamente.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'O token de segurança é inválido ou expirou. Recarregue a página de login e tente novamente.';
+$lang ['login'] ['error'] ['session'] = 'Não foi possível iniciar a sessão de login. Entre em contato com a administração.';
+$lang ['login'] ['error'] ['storage'] = 'Não foi possível salvar os dados de segurança do login. Entre em contato com a administração.';
+$lang ['login'] ['error'] ['attempts'] = 'Muitas tentativas de login malsucedidas. Tente novamente em cinco minutos.';
 ?>

@@ -199,4 +199,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'周六',
 	'周日'
 );
+$lang ['login'] ['error'] ['cookie'] = '未收到会话 Cookie。请允许 Cookie 并重新加载登录页面。如果问题仍然存在，请让管理员检查会话和 HTTPS 设置。';
+$lang ['login'] ['error'] ['csrf_missing'] = '缺少安全令牌。请重新加载登录页面后重试。';
+$lang ['login'] ['error'] ['csrf_invalid'] = '安全令牌无效或已过期。请重新加载登录页面后重试。';
+$lang ['login'] ['error'] ['session'] = '无法启动登录会话。请联系管理员。';
+$lang ['login'] ['error'] ['storage'] = '无法保存登录安全数据。请联系管理员。';
+$lang ['login'] ['error'] ['attempts'] = '登录失败次数过多。请在五分钟后重试。';
 ?>

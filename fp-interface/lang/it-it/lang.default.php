@@ -198,4 +198,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Ven',
 	'Sab'
 );
+$lang ['login'] ['error'] ['cookie'] = 'Nessun cookie di sessione ricevuto. Consenti i cookie e ricarica la pagina di accesso. Se il problema persiste, fai controllare le sessioni e HTTPS.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'Il token di sicurezza è mancante. Ricarica la pagina di accesso e riprova.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'Il token di sicurezza non è valido o è scaduto. Ricarica la pagina di accesso e riprova.';
+$lang ['login'] ['error'] ['session'] = 'Impossibile avviare la sessione di accesso. Contatta l’amministrazione.';
+$lang ['login'] ['error'] ['storage'] = 'Impossibile salvare i dati di sicurezza dell’accesso. Contatta l’amministrazione.';
+$lang ['login'] ['error'] ['attempts'] = 'Troppi tentativi di accesso falliti. Riprova tra cinque minuti.';
 ?>
