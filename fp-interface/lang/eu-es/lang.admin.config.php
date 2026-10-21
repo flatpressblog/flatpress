@@ -62,4 +62,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'Pasahitzak gutxienez 6 karaktere izan behar ditu eta ez du hutsunerik izan behar.',
 	'confirm_password' => 'Pasahitzak ez datoz bat.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'Ezin izan da kontua gorde. Egiaztatu fitxategien baimenak eta saiatu berriro.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'Kontu-izen hori erabiltzen ari da. Aukeratu beste izen bat.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'Ezin izan da aurreko kontua ezabatu. Izen-aldaketa bertan behera utzi da. Egiaztatu fitxategien baimenak.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'Ezin izan dira ezarpenak gorde. Kargatu berriro orria eta egiaztatu kontuaren ezarpenak.';
 ?>

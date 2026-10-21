@@ -1,18 +1,12 @@
-{include file="shared:errorlist.tpl"}
+{include file="shared:errorlist.tpl" escape_messages=true}
 
-<form id="login" method="post" action="{$smarty.const.BLOG_BASEURL}login.php" enctype="multipart/form-data">
+<form id="login" method="post" action="{$smarty.const.BLOG_BASEURL|escape:'html'}login.php" enctype="multipart/form-data">
 
-	<input type="hidden" name="csrf_token" value="{$csrf_token}">
+	<input type="hidden" name="csrf_token" value="{$csrf_token|escape:'html'}">
 
 	<fieldset><legend>{$lang.login.fieldset1}</legend>
 	<p><label for="user">{$lang.login.user}</label><br>
-	{if isset($error) && isset($error.user)}
-		<input autofocus {$error.user|notempty:'class="field-error"'} type="text" name="user" id="user" {if $smarty.post.user}value="{$smarty.post.user|wp_specialchars:true}"{/if}></p>
-	{elseif isset($smarty.post.user)}
-		<input autofocus type="text" name="user" id="user" {if $smarty.post.user}value="{$smarty.post.user|wp_specialchars:true}"{/if}></p>
-	{else}
-		<input autofocus type="text" name="user" id="user"></p>
-	{/if}
+		<input autofocus {if !empty($error.user)}class="field-error"{/if} type="text" name="user" id="user" value="{$user|default:''|escape:'html'}"></p>
 	<p><label for="pass">{$lang.login.pass}</label><br>
 	{if isset($error) && isset($error.pass)}
 		<input type="password" {$error.pass|notempty:'class="field-error"'} name="pass" id="pass"></p>

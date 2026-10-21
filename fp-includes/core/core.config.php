@@ -75,7 +75,7 @@ function config_save($conf_arr = null, $conffile = CONFIG_FILE) {
 	$arr = array(
 		'fp_config' => $conf_arr
 	);
-	return system_save($conffile, $arr);
+	return system_save($conffile, $arr, ['preserve_existing' => true, 'invalidate_opcache' => true]);
 }
 
 ?>

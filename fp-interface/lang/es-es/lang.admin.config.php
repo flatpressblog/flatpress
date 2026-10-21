@@ -63,4 +63,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'La contraseña debe contener al menos 6 caracteres y no debe contener espacios.',
 	'confirm_password' => 'Las contraseñas no coinciden.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'No se pudo guardar la cuenta. Revisa los permisos de los archivos e inténtalo de nuevo.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'Ese nombre de cuenta ya está en uso. Elige otro nombre.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'No se pudo eliminar la cuenta anterior. Se canceló el cambio de nombre. Revisa los permisos.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'No se pudieron guardar los ajustes. Recarga la página y revisa los ajustes de tu cuenta.';
 ?>

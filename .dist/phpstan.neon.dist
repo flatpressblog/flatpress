@@ -36,6 +36,7 @@ parameters:
     - COOKIE_HTTPONLY
     - SAMESITE_VALUE
     - SESS_COOKIE
+    - SESSION_PATH
     - USER
     - GMT
     - BBCODE_ALLOW_HTML

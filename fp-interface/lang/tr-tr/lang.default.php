@@ -193,4 +193,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Cum',
 	'Cmt'
 );
+$lang ['login'] ['error'] ['cookie'] = 'Oturum çerezi alınmadı. Çerezlere izin verip giriş sayfasını yeniden yükleyin. Sorun sürerse oturumların ve HTTPS ayarlarının kontrol edilmesini isteyin.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'Güvenlik belirteci eksik. Giriş sayfasını yeniden yükleyip tekrar deneyin.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'Güvenlik belirteci geçersiz veya süresi dolmuş. Giriş sayfasını yeniden yükleyip tekrar deneyin.';
+$lang ['login'] ['error'] ['session'] = 'Giriş oturumu başlatılamadı. Yöneticiyle iletişime geçin.';
+$lang ['login'] ['error'] ['storage'] = 'Giriş güvenlik verileri kaydedilemedi. Yöneticiyle iletişime geçin.';
+$lang ['login'] ['error'] ['attempts'] = 'Çok fazla başarısız giriş denemesi. Beş dakika sonra tekrar deneyin.';
 ?>

@@ -198,4 +198,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Pá',
 	'So'
 );
+$lang ['login'] ['error'] ['cookie'] = 'Nebyla přijata cookie relace. Povolte cookies a znovu načtěte přihlašovací stránku. Pokud problém trvá, nechte prověřit relace a HTTPS.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'Chybí bezpečnostní token. Znovu načtěte přihlašovací stránku a zkuste to znovu.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'Bezpečnostní token je neplatný nebo vypršel. Znovu načtěte přihlašovací stránku a zkuste to znovu.';
+$lang ['login'] ['error'] ['session'] = 'Přihlašovací relaci nelze spustit. Kontaktujte správce.';
+$lang ['login'] ['error'] ['storage'] = 'Bezpečnostní údaje přihlášení nelze uložit. Kontaktujte správce.';
+$lang ['login'] ['error'] ['attempts'] = 'Příliš mnoho neúspěšných pokusů o přihlášení. Zkuste to za pět minut.';
 ?>

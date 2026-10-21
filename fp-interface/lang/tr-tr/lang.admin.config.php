@@ -63,4 +63,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'Parola en az 6 karakter olmalı ve boşluk içermemelidir.',
 	'confirm_password' => 'Parolalar uyuşmuyor.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'Hesap kaydedilemedi. Dosya izinlerini kontrol edip tekrar deneyin.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'Bu hesap adı zaten kullanılıyor. Başka bir ad seçin.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'Eski hesap silinemedi. Yeniden adlandırma iptal edildi. Dosya izinlerini kontrol edin.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'Ayarlar kaydedilemedi. Sayfayı yeniden yükleyip hesap ayarlarını kontrol edin.';
 ?>

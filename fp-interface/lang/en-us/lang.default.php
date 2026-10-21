@@ -198,4 +198,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Fri',
 	'Sat'
 );
+$lang ['login'] ['error'] ['cookie'] = 'No session cookie was returned. Allow cookies and reload the login page. If this continues, ask the administrator to check sessions and HTTPS.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'The security token is missing. Reload the login page and try again.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'The security token is invalid or expired. Reload the login page and try again.';
+$lang ['login'] ['error'] ['session'] = 'The login session could not be started. Please contact the administrator.';
+$lang ['login'] ['error'] ['storage'] = 'Login security data could not be saved. Please contact the administrator.';
+$lang ['login'] ['error'] ['attempts'] = 'Too many failed login attempts. Please try again in five minutes.';
 ?>

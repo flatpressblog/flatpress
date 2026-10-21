@@ -63,4 +63,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'The password must contain at least 6 characters and must not contain any spaces.',
 	'confirm_password' => 'The passwords do not match.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'The account could not be saved. Check file permissions and try again.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'That account name is already in use. Choose a different name.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'The old account could not be removed. The rename was canceled. Check file permissions.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'The settings could not be saved. Reload the page and check your account settings.';
 ?>

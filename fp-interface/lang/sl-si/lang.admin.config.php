@@ -63,4 +63,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'Geslo mora vsebovati vsaj 6 znakov in ne sme vsebovati presledkov.',
 	'confirm_password' => 'Gesla se ne ujemajo.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'Računa ni mogoče shraniti. Preverite dovoljenja datotek in poskusite znova.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'To ime računa je že v uporabi. Izberite drugo ime.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'Starega računa ni mogoče izbrisati. Preimenovanje je bilo preklicano. Preverite dovoljenja datotek.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'Nastavitev ni mogoče shraniti. Znova naložite stran in preverite nastavitve računa.';
 ?>

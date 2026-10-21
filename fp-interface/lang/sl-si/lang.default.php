@@ -198,4 +198,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'pet',
 	'sob'
 );
+$lang ['login'] ['error'] ['cookie'] = 'Sejni piškotek ni bil prejet. Dovolite piškotke in znova naložite prijavno stran. Če težava ostaja, naj skrbnik preveri seje in HTTPS.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'Manjka varnostni žeton. Znova naložite prijavno stran in poskusite znova.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'Varnostni žeton ni veljaven ali je potekel. Znova naložite prijavno stran in poskusite znova.';
+$lang ['login'] ['error'] ['session'] = 'Prijavne seje ni mogoče začeti. Obrnite se na skrbnika.';
+$lang ['login'] ['error'] ['storage'] = 'Varnostnih podatkov prijave ni mogoče shraniti. Obrnite se na skrbnika.';
+$lang ['login'] ['error'] ['attempts'] = 'Preveč neuspešnih poskusov prijave. Poskusite znova čez pet minut.';
 ?>

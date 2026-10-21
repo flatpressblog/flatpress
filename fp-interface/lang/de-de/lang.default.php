@@ -198,4 +198,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Fr',
 	'Sa'
 );
+$lang ['login'] ['error'] ['cookie'] = 'Es wurde kein Sitzungscookie zurückgesendet. Erlaube Cookies und lade die Anmeldeseite neu. Bleibt das Problem bestehen, lasse Sessions und HTTPS prüfen.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'Das Sicherheitstoken fehlt. Lade die Anmeldeseite neu und versuche es erneut.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'Das Sicherheitstoken ist ungültig oder abgelaufen. Lade die Anmeldeseite neu und versuche es erneut.';
+$lang ['login'] ['error'] ['session'] = 'Die Anmeldesitzung konnte nicht gestartet werden. Bitte kontaktiere die Administration.';
+$lang ['login'] ['error'] ['storage'] = 'Die Sicherheitsdaten der Anmeldung konnten nicht gespeichert werden. Bitte kontaktiere die Administration.';
+$lang ['login'] ['error'] ['attempts'] = 'Zu viele fehlgeschlagene Anmeldeversuche. Versuche es in fünf Minuten erneut.';
 ?>

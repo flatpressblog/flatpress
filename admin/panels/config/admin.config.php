@@ -134,7 +134,7 @@ class admin_config_default extends AdminPanelActionValidated {
 				'isValidAdminPassword',
 				false,
 				false,
-				'trim'
+				'strval'
 			);
 			$this->validators[] = array(
 				'confirm_password',
@@ -142,7 +142,7 @@ class admin_config_default extends AdminPanelActionValidated {
 				'isValidAdminPassword',
 				false,
 				false,
-				'trim'
+				'strval'
 			);
 		}
 	}
@@ -162,12 +162,28 @@ class admin_config_default extends AdminPanelActionValidated {
 		global $fp_config, $lang;
 
 		$success = null;
+		$originalConfig = $fp_config;
 
 		// Sanitize all input data
 		$localeCharset = strtoupper($fp_config ['locale'] ['charset'] ?? 'UTF-8');
 		$postData = array_map(function ($value) use ($localeCharset) {
-			return htmlspecialchars($value, ENT_QUOTES, $localeCharset);
+			return is_string($value) ? htmlspecialchars($value, ENT_QUOTES, $localeCharset) : '';
 		}, $_POST);
+		// Passwords are opaque bytes; output escaping must never change the hash input.
+		$password = isset($_POST ['password']) && is_string($_POST ['password']) ? $_POST ['password'] : '';
+		$confirmation = isset($_POST ['confirm_password']) && is_string($_POST ['confirm_password']) ? $_POST ['confirm_password'] : '';
+		$passwordChanged = $password !== '' || $confirmation !== '';
+		if ($passwordChanged && ($password !== $confirmation || strlen($password) < 6 || strpos($password, "\0") !== false || preg_match('/\s/', $password) !== 0)) {
+			$key = $password !== $confirmation ? 'confirm_password' : 'password';
+			$this->smarty->assign('error', [$key => $lang ['admin'] ['config'] ['default'] ['error'] [$key]]);
+			return $this->onerror();
+		}
+		$current_user = $_SESSION ['userid'] ?? null;
+		$admin = is_string($current_user) ? user_get($current_user) : null;
+		if (!is_array($admin) || !isset($postData ['admin']) || !is_valid_userid($postData ['admin'])) {
+			$this->smarty->assign('error', ['admin' => $lang ['admin'] ['config'] ['default'] ['error'] ['account_save']]);
+			return $this->onerror();
+		}
 
 		// Load list of valid charsets for the current language
 		$validCharsets = $this->getCharsetList($postData ['lang']);
@@ -207,54 +223,29 @@ class admin_config_default extends AdminPanelActionValidated {
 			'lang' => $postData ['lang']
 		);
 
-		// Password and admin name logic
-		if (!empty($postData ['password']) || !empty($postData ['confirm_password'])) {
-			// Check password fields if one of the fields is filled
-			if ($postData ['password'] !== $postData ['confirm_password']) {
-				$error_message = isset($lang ['admin'] ['config'] ['default'] ['error'] ['confirm_password'])
-					? $lang ['admin'] ['config'] ['default'] ['error'] ['confirm_password']
-					: 'Passwords do not match.';
-				$this->smarty->assign('error', ['password' => $error_message]);
-				return $this->onerror();
-			}
-
-			$admin = user_get('admin') ?? [];
-			$current_user = isset($_SESSION ['userid']) ? $_SESSION ['userid'] : null;
-
-			// Update admin data
-			$admin ['userid'] = !empty($postData ['admin']) ? $postData ['admin'] : $admin ['userid'];
-			$admin ['password'] = user_pwd($postData ['password']);
-			$admin ['www'] = $postData ['www'];
-			$admin ['email'] = $postData ['email'];
-			user_add($admin);
-
-			// Check if the new admin name is different from the current logged-in user
-			if ($current_user && $current_user !== $postData ['admin']) {
-
-				// Delete the current user's file
-				if (user_del($current_user)) {
-					// Send logout info
-					$success = 2;
-				}
-			}
-		} else {
-			$current_user = isset($_SESSION ['userid']) ? $_SESSION ['userid'] : null;
-			if (is_string($current_user) && $current_user !== '') {
-				$admin = user_get($current_user);
-				if (is_array($admin)) {
-					$admin ['www'] = $postData ['www'];
-					$admin ['email'] = $postData ['email'];
-					user_add($admin);
-				}
-			}
+		$renamed = $current_user !== $postData ['admin'];
+		$admin ['userid'] = $postData ['admin'];
+		if ($passwordChanged) {
+			$admin ['password'] = user_pwd($password);
 		}
-
-		$config_saved = config_save();
-		if ($success === null) {
-			$success = $config_saved ? 1 : -1;
-		} elseif (!$config_saved) {
-			$success = -1;
+		$admin ['www'] = $postData ['www'];
+		$admin ['email'] = $postData ['email'];
+		$config_saved = false;
+		$error = user_update($current_user, $admin, function () use (&$config_saved) {
+			$config_saved = config_save();
+			return $config_saved;
+		});
+		if ($error !== null) {
+			$fp_config = $originalConfig;
+			if ($config_saved) {
+				config_save();
+			}
+			$this->smarty->assign('error', ['admin' => $lang ['admin'] ['config'] ['default'] ['error'] [$error]]);
+			return $this->onerror();
 		}
+		$_SESSION ['userid'] = $admin ['userid'];
+		$_SESSION ['auth_fingerprint'] = hash('sha256', $admin ['password']);
+		$success = $renamed ? 2 : 1;
 
 		if ($config_saved && function_exists('fp_setup_migration_mode') && fp_setup_migration_mode()) {
 			if (function_exists('fp_setup_migration_write_lockfile') && !fp_setup_migration_write_lockfile()) {

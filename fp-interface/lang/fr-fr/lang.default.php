@@ -193,4 +193,10 @@ $lang ['date'] ['weekday_abbr'] = array(
 	'Ven',
 	'Sam'
 );
+$lang ['login'] ['error'] ['cookie'] = 'Aucun cookie de session reçu. Autorisez les cookies et rechargez la page de connexion. Si le problème persiste, faites vérifier les sessions et HTTPS.';
+$lang ['login'] ['error'] ['csrf_missing'] = 'Le jeton de sécurité est manquant. Rechargez la page de connexion et réessayez.';
+$lang ['login'] ['error'] ['csrf_invalid'] = 'Le jeton de sécurité est invalide ou expiré. Rechargez la page de connexion et réessayez.';
+$lang ['login'] ['error'] ['session'] = 'La session de connexion ne peut pas démarrer. Contactez l’administration.';
+$lang ['login'] ['error'] ['storage'] = 'Les données de sécurité de connexion ne peuvent pas être enregistrées. Contactez l’administration.';
+$lang ['login'] ['error'] ['attempts'] = 'Trop de tentatives de connexion échouées. Réessayez dans cinq minutes.';
 ?>

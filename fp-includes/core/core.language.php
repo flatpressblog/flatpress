@@ -490,8 +490,10 @@ function fp_preserve_unrepresentable_chars_as_entities($text, $targetEncoding) {
  * Note:
  * - Ensure that text passed to Smarty templates matches the expected encoding to prevent double encoding issues.
  * - Supports FlatPress configurations and international applications with diverse character sets.
+ *
+ * @param bool $decode_entities Decode entities in plain text. Must be false for complete HTML/XML output.
  */
-function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, $decode_all_entities = false, $respect_target = false) {
+function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, $decode_all_entities = false, $respect_target = false, $decode_entities = true) {
 	global $fp_config;
 
 	// Only apply target character set from config if not explicitly specified
@@ -506,9 +508,9 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, 
 	$locale_lc = strtolower((string) $locale);
 
 	// Preserve numeric entities in legacy character sets, otherwise special characters will be lost.
-	if (strtolower($target_encoding) === 'utf-8' || $decode_all_entities) {
+	if ($decode_entities && (strtolower($target_encoding) === 'utf-8' || $decode_all_entities)) {
 		$text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-	} else {
+	} elseif ($decode_entities) {
 		$text = fp_decode_named_entities_only($text);
 	}
 
@@ -620,9 +622,9 @@ function fix_encoding_issues($text, $target_encoding = 'UTF-8', $locale = null, 
 	$text = @mb_convert_encoding($text, 'UTF-8', 'UTF-8');
 
 	// Decode HTML entities again after final conversion
-	if (strtolower($target_encoding) === 'utf-8' || $decode_all_entities) {
+	if ($decode_entities && (strtolower($target_encoding) === 'utf-8' || $decode_all_entities)) {
 		$text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-	} else {
+	} elseif ($decode_entities) {
 		$text = fp_decode_named_entities_only($text);
 	}
 
@@ -757,7 +759,9 @@ function fp_output_encoding_handler($buffer) {
 		$buffer = @mb_convert_encoding($buffer, 'UTF-8', $detect);
 	}
 	// Normalize UTF-8 (Mojibake, NBSP, quotes, dashes, etc.)
-	$fixed = fix_encoding_issues($buffer, 'UTF-8', $locale);
+	// This buffer already contains HTML/XML markup and escaped attributes.
+	// Decoding entities here would turn safe text back into executable markup.
+	$fixed = fix_encoding_issues($buffer, 'UTF-8', $locale, false, true, false);
 
 	// Always convert to target character set with entity fallback
 	if ($target !== 'utf-8') {

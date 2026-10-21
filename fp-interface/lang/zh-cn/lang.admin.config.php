@@ -63,4 +63,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => '密码必须至少包含 6 个非空格字符。',
 	'confirm_password' => '密码不匹配。'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = '无法保存账户。请检查文件权限后重试。';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = '此账户名已被使用。请选择其他名称。';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = '无法删除旧账户。重命名已取消。请检查文件权限。';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = '无法保存设置。请重新加载页面并检查账户设置。';
 ?>

@@ -64,4 +64,8 @@ $lang ['admin'] ['config'] ['default'] ['error'] = array(
 	'password' => 'Das Passwort muss mindestens 6 Zeichen und darf keine Leerzeichen enthalten.',
 	'confirm_password' => 'Die Passwörter stimmen nicht überein.'
 );
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_save'] = 'Das Konto konnte nicht gespeichert werden. Prüfe die Dateirechte und versuche es erneut.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_exists'] = 'Dieser Kontoname wird bereits verwendet. Wähle einen anderen Namen.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_rename'] = 'Das bisherige Konto konnte nicht gelöscht werden. Die Umbenennung wurde abgebrochen. Prüfe die Dateirechte.';
+$lang ['admin'] ['config'] ['default'] ['error'] ['account_config'] = 'Die Einstellungen konnten nicht gespeichert werden. Lade die Seite neu und prüfe deine Kontoeinstellungen.';
 ?>
