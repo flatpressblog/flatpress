@@ -21,7 +21,7 @@ if ($base === '') {
 if ($base !== '' && substr($base, -1) !== '/') {
 	$base .= '/';
 }
-echo wpautop(sprintf($l ['descr'], $base, $base . 'login.php'));
+echo wpautop(sprintf($l ['descr'], htmlspecialchars($base, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'), htmlspecialchars($base . 'login.php', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')));
 ?>
 
 </div>

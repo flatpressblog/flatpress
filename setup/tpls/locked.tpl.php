@@ -16,7 +16,7 @@ if ($base === '') {
 if ($base !== '' && substr($base, -1) !== '/') {
 	$base .= '/';
 }
-echo wpautop(sprintf($l ['descr'], LOCKFILE, $base, $base . 'setup.php'));
+echo wpautop(sprintf($l ['descr'], htmlspecialchars(LOCKFILE, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'), htmlspecialchars($base, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'), htmlspecialchars($base . 'setup.php', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')));
 ?>
 
 </div>

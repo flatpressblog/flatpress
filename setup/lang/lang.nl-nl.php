@@ -211,4 +211,16 @@ Je kunt ze hier invoegen. ([url=admin.php?p=static&action=write&page=privacy-pol
 
 Als je de CookieBanner plugin activeert, kunnen je bezoekers direct naar deze pagina gaan in het contactformulier en in de commentaarfunctie.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'De installatiesessie is niet beschikbaar. Schakel cookies in en laad de installatie opnieuw.';
+$lang ['err'] ['request'] = 'Het installatieformulier is ongeldig of verlopen. Laad de installatie opnieuw.';
+$lang ['err'] ['state'] = 'Een andere installatiesessie is actief of de status is ongeldig. Gebruik de oorspronkelijke browser. Als de sessie verloren is, herstel een back-up of begin in een schone installatiekopie; verwijder niet alleen de installatiemarkeringen.';
+$lang ['err'] ['account'] = 'Het beheerdersaccount kon niet worden opgeslagen of de gebruikersnaam bestaat al.';
+$lang ['err'] ['password_max'] = 'Het wachtwoord mag maximaal 72 bytes lang zijn.';
+$lang ['err'] ['permission_read'] = 'Het vereiste pad kan niet worden gelezen of doorzocht: %s';
+$lang ['err'] ['permission_write'] = 'Het vereiste gegevenspad is niet beschrijfbaar: %s';
+$lang ['err'] ['permission_chmod'] = 'De ingestelde rechten konden niet worden toegepast op %s. Controleer eigenaar, groepstoegang en hostinginstellingen.';
+$lang ['err'] ['permission_type'] = 'Het vereiste pad heeft een onjuist bestandstype: %s';
+$lang ['err'] ['permission_link'] = 'De installatie volgt geen symbolische koppelingen of omgeleide paden: %s';
 ?>

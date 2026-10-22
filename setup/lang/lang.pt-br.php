@@ -209,4 +209,16 @@ Você pode inseri-los aqui. ([url=admin.php?p=static&action=write&page=privacy-p
 
 Se você ativar o plug-in CookieBanner, seus visitantes poderão ir diretamente para essa página no formulário de contato e na função de comentários.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'A sessão de instalação não está disponível. Ative os cookies e recarregue a instalação.';
+$lang ['err'] ['request'] = 'O formulário de instalação é inválido ou expirou. Recarregue a instalação.';
+$lang ['err'] ['state'] = 'Outra sessão de instalação está ativa ou o estado é inválido. Use o navegador original. Se a sessão foi perdida, restaure um backup ou recomece em uma cópia limpa da instalação; não apague apenas os marcadores de instalação.';
+$lang ['err'] ['account'] = 'Não foi possível salvar a conta de administrador ou o nome de usuário já existe.';
+$lang ['err'] ['password_max'] = 'A senha não pode ultrapassar 72 bytes.';
+$lang ['err'] ['permission_read'] = 'Não é possível ler ou percorrer o caminho necessário: %s';
+$lang ['err'] ['permission_write'] = 'O caminho de dados necessário não permite gravação: %s';
+$lang ['err'] ['permission_chmod'] = 'Não foi possível aplicar as permissões configuradas a %s. Verifique proprietário, acesso do grupo e hospedagem.';
+$lang ['err'] ['permission_type'] = 'O caminho necessário tem um tipo de arquivo incorreto: %s';
+$lang ['err'] ['permission_link'] = 'A instalação não seguirá links simbólicos ou caminhos redirecionados: %s';
 ?>

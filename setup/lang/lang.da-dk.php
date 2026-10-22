@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Dansk
  */
 $lang ['setup'] = array(
@@ -215,4 +215,16 @@ Du kan indsætte dem her. ([url=admin.php?p=static&action=write&page=privacy-pol
 
 Hvis du aktiverer CookieBanner-pluginet, vil dine besøgende kunne gå direkte til denne side i kontaktformularen og i kommentarfunktionen.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'Installationssessionen er ikke tilgængelig. Aktivér cookies, og genindlæs installationen.';
+$lang ['err'] ['request'] = 'Installationsformularen er ugyldig eller udløbet. Genindlæs installationen og prøv igen.';
+$lang ['err'] ['state'] = 'En anden installationssession er aktiv, eller tilstanden er ugyldig. Brug den oprindelige browser. Hvis sessionen er tabt, gendan en sikkerhedskopi eller start i en ren installationskopi; slet ikke kun installationsmarkørerne.';
+$lang ['err'] ['account'] = 'Administratorkontoen kunne ikke gemmes, eller brugernavnet findes allerede.';
+$lang ['err'] ['password_max'] = 'Adgangskoden må højst fylde 72 byte.';
+$lang ['err'] ['permission_read'] = 'Den nødvendige sti kan ikke læses eller gennemgås: %s';
+$lang ['err'] ['permission_write'] = 'Den nødvendige datasti er ikke skrivbar: %s';
+$lang ['err'] ['permission_chmod'] = 'Kunne ikke indstille de konfigurerede rettigheder for %s. Kontrollér ejer, gruppeadgang og hostingindstillinger.';
+$lang ['err'] ['permission_type'] = 'Den nødvendige sti har forkert filtype: %s';
+$lang ['err'] ['permission_link'] = 'Installationen følger ikke symbolske links eller omdirigerede stier: %s';
 ?>

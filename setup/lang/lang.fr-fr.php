@@ -213,4 +213,16 @@ Vous pouvez les insérer à cet endroit. ([url=admin.php?p=static&amp;action=wri
 
 Si vous activez le plugin CookieBanner, le formulaire de contact et la fonction de commentaire permettront à vos visiteurs d’accéder directement à cette page.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'La session d’installation est indisponible. Activez les cookies et rechargez l’installation.';
+$lang ['err'] ['request'] = 'Le formulaire d’installation est invalide ou a expiré. Rechargez l’installation.';
+$lang ['err'] ['state'] = 'Une autre session d’installation est active ou l’état est invalide. Utilisez le navigateur initial. Si la session est perdue, restaurez une sauvegarde ou recommencez dans une copie d’installation vierge ; ne supprimez pas seulement les marqueurs d’installation.';
+$lang ['err'] ['account'] = 'Le compte administrateur n’a pas pu être enregistré ou le nom d’utilisateur existe déjà.';
+$lang ['err'] ['password_max'] = 'Le mot de passe ne doit pas dépasser 72 octets.';
+$lang ['err'] ['permission_read'] = 'Le chemin requis ne peut pas être lu ou parcouru : %s';
+$lang ['err'] ['permission_write'] = 'Le chemin de données requis n’est pas accessible en écriture : %s';
+$lang ['err'] ['permission_chmod'] = 'Impossible d’appliquer les permissions configurées à %s. Vérifiez le propriétaire, les accès du groupe et l’hébergement.';
+$lang ['err'] ['permission_type'] = 'Le chemin requis a un type de fichier incorrect : %s';
+$lang ['err'] ['permission_link'] = 'L’installation ne suivra pas de lien symbolique ni de chemin redirigé : %s';
 ?>

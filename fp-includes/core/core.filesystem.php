@@ -134,6 +134,9 @@ function fs_list_dirs($dir) {
  *
  */
 function fs_mkdir($dir, $mode = DIR_PERMISSIONS) {
+	if (defined('FP_SETUP_ACTIVE') && FP_SETUP_ACTIVE && function_exists('setup_filesystem')) {
+		return setup_filesystem()->ensure($dir, setup_path_mode($dir, true));
+	}
 	// Normalize path
 	$dir = rtrim($dir, "/\\");
 	if ($dir === '' || $dir === '.' ) {
@@ -388,7 +391,7 @@ function restore_chmods() {
 	return $files;
 }
 
-/*
+/**
  * open dir handle prevents directory deletion of php5 (and probably win)
  * thanks to cimangi <cimangi (at) yahoo (dot) it> for noticing and
  * giving a possible solution;

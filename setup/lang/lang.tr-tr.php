@@ -213,4 +213,16 @@ Bunları buraya ekleyebilirsiniz. ([url=admin.php?p=static&action=write&page=pri
 
 CookieBanner eklentisini etkinleştirirseniz, ziyaretçileriniz iletişim formunda ve yorum fonksiyonunda doğrudan bu sayfaya gidebilecektir.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'Kurulum oturumu kullanılamıyor. Çerezleri etkinleştirip kurulumu yeniden yükleyin.';
+$lang ['err'] ['request'] = 'Kurulum formu geçersiz veya süresi dolmuş. Kurulumu yeniden yükleyin.';
+$lang ['err'] ['state'] = 'Başka bir kurulum oturumu etkin veya durum geçersiz. İlk tarayıcıyı kullanın. Oturum kaybolduysa yedeği geri yükleyin veya temiz bir kurulum kopyasında yeniden başlayın; yalnızca kurulum işaretlerini silmeyin.';
+$lang ['err'] ['account'] = 'Yönetici hesabı kaydedilemedi veya kullanıcı adı zaten mevcut.';
+$lang ['err'] ['password_max'] = 'Parola 72 baytı aşmamalıdır.';
+$lang ['err'] ['permission_read'] = 'Gerekli yol okunamıyor veya taranamıyor: %s';
+$lang ['err'] ['permission_write'] = 'Gerekli veri yoluna yazılamıyor: %s';
+$lang ['err'] ['permission_chmod'] = '%s için yapılandırılmış izinler uygulanamadı. Sahipliği, grup erişimini ve barındırma ayarlarını kontrol edin.';
+$lang ['err'] ['permission_type'] = 'Gerekli yolun dosya türü yanlış: %s';
+$lang ['err'] ['permission_link'] = 'Kurulum sembolik bağlantıları veya yönlendirilmiş yolları izlemez: %s';
 ?>
