@@ -212,4 +212,16 @@ Hemen txerta ditzakezu. ([url=admin.php?p=static&action=write&page=privacy-polic
 
 CookieBanner plugina aktibatzen baduzu, zure bisitariek zuzenean joan ahal izango dira orrialde honetara harremanetarako formulariotik eta iruzkin editoreatik.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'Instalazio-saioa ez dago erabilgarri. Gaitu cookieak eta kargatu instalazioa berriro.';
+$lang ['err'] ['request'] = 'Instalazio-inprimakia baliogabea da edo iraungi da. Kargatu instalazioa berriro.';
+$lang ['err'] ['state'] = 'Beste instalazio-saio bat aktibo dago edo egoera baliogabea da. Erabili jatorrizko arakatzailea. Saioa galdu bada, leheneratu babeskopia bat edo hasi instalazio-kopia garbi batean; ez ezabatu instalazio-markatzaileak bakarrik.';
+$lang ['err'] ['account'] = 'Ezin izan da administratzailearen kontua gorde edo erabiltzaile-izena badago lehendik.';
+$lang ['err'] ['password_max'] = 'Pasahitzak gehienez 72 byte izan ditzake.';
+$lang ['err'] ['permission_read'] = 'Ezin da beharrezko bidea irakurri edo arakatu: %s';
+$lang ['err'] ['permission_write'] = 'Ezin da beharrezko datu-bidean idatzi: %s';
+$lang ['err'] ['permission_chmod'] = 'Ezin izan dira %s bidearen baimenak ezarri. Egiaztatu jabea, taldearen sarbidea eta ostalaritzaren ezarpenak.';
+$lang ['err'] ['permission_type'] = 'Beharrezko bideak fitxategi mota okerra du: %s';
+$lang ['err'] ['permission_link'] = 'Instalazioak ez ditu esteka sinbolikoak edo birbideratutako bideak jarraituko: %s';
 ?>

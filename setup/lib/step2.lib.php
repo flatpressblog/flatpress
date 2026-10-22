@@ -1,69 +1,33 @@
 <?php
 
-function check_step() {
-	global $lang;
-
-	$validate = validate();
-
-	if ($validate) {
-
-		$vl = & $lang ['samplecontent'];
-		entry_save(array(
-			'subject' => $vl ['entry'] ['subject'],
-			'content' => $vl ['entry'] ['content'],
-			'date' => date_time(),
-			'version' => system_ver(),
-			'author' => 'FlatPress'
-		));
-
-		if (!static_exists('menu')) {
-			static_save(array(
-				'subject' => $vl ['menu'] ['subject'],
-				'content' => $vl ['menu'] ['content'],
-				'date' => date_time(),
-				'version' => system_ver(),
-				'author' => 'FlatPress'
-			), 'menu');
-		}
-		if (!static_exists('bottommenu')) {
-			static_save(array(
-				'subject' => $vl ['bottommenu'] ['subject'],
-				'content' => $vl ['bottommenu'] ['content'],
-				'date' => date_time(),
-				'version' => system_ver(),
-				'author' => 'FlatPress'
-			), 'bottommenu');
-		}
-		if (!static_exists('about')) {
-			static_save(array(
-				'subject' => $vl ['about'] ['subject'],
-				'content' => $vl ['about'] ['content'],
-				'date' => date_time(),
-				'version' => system_ver(),
-				'author' => 'FlatPress'
-			), 'about');
-		}
-		if (!static_exists('legal-notice')) {
-			static_save(array(
-				'subject' => $vl ['legal-notice'] ['subject'],
-				'content' => $vl ['legal-notice'] ['content'],
-				'date' => date_time(),
-				'version' => system_ver(),
-				'author' => 'FlatPress'
-			), 'legal-notice');
-		}
-		if (!static_exists('privacy-policy')) {
-			static_save(array(
-				'subject' => $vl ['privacy-policy'] ['subject'],
-				'content' => $vl ['privacy-policy'] ['content'],
-				'date' => date_time(),
-				'version' => system_ver(),
-				'author' => 'FlatPress'
-			), 'privacy-policy');
+function setup_create_content() {
+	global $lang, $err, $fp_setup_state;
+	if (!validate()) {
+		return false;
+	}
+	$sample = $lang ['samplecontent'];
+	if (!isset($fp_setup_state['entry_date'])) {
+		// Stable across retries: later write failures must not duplicate the sample post.
+		if (!setup_checkpoint(['entry_date' => date_time()])) {
+			$err [] = $lang ['err'] ['writeerror'];
+			return false;
 		}
 	}
-
-	return $validate;
+	if (!is_int($fp_setup_state ['entry_date']) && !is_string($fp_setup_state ['entry_date'])) {
+		$err [] = $lang ['err'] ['state'];
+		return false;
+	}
+	$entry = entry_save(['subject' => $sample ['entry'] ['subject'], 'content' => $sample ['entry'] ['content'], 'date' => $fp_setup_state ['entry_date'], 'version' => system_ver(), 'author' => 'FlatPress']);
+	// entry_save returns a string ID on success and negative integers on failure.
+	if (!is_string($entry) || $entry === '') {
+		$err [] = $lang ['err'] ['writeerror']; return false;
+	}
+	foreach (['menu', 'bottommenu', 'about', 'legal-notice', 'privacy-policy'] as $id) {
+		if (!static_exists($id) && !static_save(['subject' => $sample [$id] ['subject'], 'content' => $sample [$id] ['content'], 'date' => date_time(), 'version' => system_ver(), 'author' => 'FlatPress'], $id)) {
+			$err [] = $lang ['err'] ['writeerror']; return false;
+		}
+	}
+	return true;
 }
 
 ?>

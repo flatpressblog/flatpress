@@ -213,4 +213,16 @@ Lahko jih vstavite tukaj. ([url=admin.php?p=static&action=write&page=privacy-pol
 
 Če aktivirate vtičnik CookieBanner, bodo lahko vaši obiskovalci v kontaktnem obrazcu in v funkciji za komentiranje prešli neposredno na to stran.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'Namestitvena seja ni na voljo. Omogočite piškotke in znova naložite namestitev.';
+$lang ['err'] ['request'] = 'Namestitveni obrazec ni veljaven ali je potekel. Znova naložite namestitev.';
+$lang ['err'] ['state'] = 'Druga namestitvena seja je aktivna ali pa je stanje neveljavno. Uporabite prvotni brskalnik. Če je seja izgubljena, obnovite varnostno kopijo ali začnite v čisti namestitveni kopiji; ne brišite samo namestitvenih označevalcev.';
+$lang ['err'] ['account'] = 'Skrbniškega računa ni bilo mogoče shraniti ali pa uporabniško ime že obstaja.';
+$lang ['err'] ['password_max'] = 'Geslo ne sme presegati 72 bajtov.';
+$lang ['err'] ['permission_read'] = 'Zahtevane poti ni mogoče brati ali pregledovati: %s';
+$lang ['err'] ['permission_write'] = 'Zahtevana podatkovna pot ni zapisljiva: %s';
+$lang ['err'] ['permission_chmod'] = 'Nastavljenih dovoljenj ni bilo mogoče uporabiti za %s. Preverite lastnika, skupinski dostop in nastavitve gostovanja.';
+$lang ['err'] ['permission_type'] = 'Zahtevana pot ima napačno vrsto datoteke: %s';
+$lang ['err'] ['permission_link'] = 'Namestitev ne sledi simbolnim povezavam ali preusmerjenim potem: %s';
 ?>

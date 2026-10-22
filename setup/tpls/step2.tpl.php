@@ -9,8 +9,8 @@ $setupBaseUrl = function_exists('fp_setup_baseurl_candidate') ? fp_setup_baseurl
 <h2><?php echo $l ['head']; ?></h2>
 <div class="errors">
 
-<input type="hidden" name="setupid" value="<?php echo $setupid; ?>">
-<input type="hidden" name="language" value="<?php echo $language; ?>">
+<input type="hidden" name="setupid" value="<?php echo htmlspecialchars($setupid, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+<input type="hidden" name="language" value="<?php echo htmlspecialchars($language, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
 <?php 
 	if ($err) {
@@ -19,7 +19,7 @@ $setupBaseUrl = function_exists('fp_setup_baseurl_candidate') ? fp_setup_baseurl
 <?php
 		foreach($err as $e) { 
 ?>
-	<li> <?php echo $e; ?> </li>
+	<li> <?php echo htmlspecialchars($e, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?> </li>
 <?php
 		}
 ?>

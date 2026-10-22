@@ -13,14 +13,15 @@
 
 <div class="post">
 
-<input type="hidden" name="setupid" value="<?php echo $setupid; ?>">
+<input type="hidden" name="setupid" value="<?php echo htmlspecialchars($setupid, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
 <?php 
 	echo wpautop(sprintf($l ['descr'], FP_CONTENT));
 
 	if ($err) {
-		 echo wpautop(sprintf($l ['descrw'], FP_CONTENT));
-	} 
+		print_err();
+		echo wpautop(sprintf($l ['descrw'], FP_CONTENT));
+	}
 ?>
 <div id="buttonbar">
 	<input type="submit" name="start" id="start" 

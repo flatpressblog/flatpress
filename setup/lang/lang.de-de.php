@@ -215,4 +215,16 @@ An dieser Stelle kannst du diese dann einfügen. ([url=admin.php?p=static&action
 
 Wenn du das CookieBanner Plugin aktivierst, wird im Kontaktformular und in der Kommentarfunktion deinen Besuchern es möglich sein, direkt zu dieser Seite zu gelangen.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'Die Setup-Sitzung ist nicht verfügbar. Aktiviere Cookies und lade das Setup erneut.';
+$lang ['err'] ['request'] = 'Das Setup-Formular ist ungültig oder abgelaufen. Lade das Setup erneut und versuche es noch einmal.';
+$lang ['err'] ['state'] = 'Eine andere Setup-Sitzung ist aktiv oder der Setup-Zustand ist ungültig. Verwende den ursprünglichen Browser. Bei verlorener Sitzung stelle eine Sicherung wieder her oder beginne in einer sauberen Installationskopie; lösche nicht nur die Installationsmarker.';
+$lang ['err'] ['account'] = 'Das Administratorkonto konnte nicht gespeichert werden oder der Benutzername existiert bereits.';
+$lang ['err'] ['password_max'] = 'Das Passwort darf höchstens 72 Byte lang sein.';
+$lang ['err'] ['permission_read'] = 'Erforderlicher Pfad ist nicht lesbar oder durchsuchbar: %s';
+$lang ['err'] ['permission_write'] = 'Erforderlicher Datenpfad ist nicht beschreibbar: %s';
+$lang ['err'] ['permission_chmod'] = 'Die konfigurierten Rechte konnten für %s nicht gesetzt werden. Prüfe Eigentümer, Gruppenzugriff und Hosting-Einstellungen.';
+$lang ['err'] ['permission_type'] = 'Erforderlicher Pfad hat den falschen Dateityp: %s';
+$lang ['err'] ['permission_link'] = 'Setup folgt keinem symbolischen Link oder umgeleiteten Pfad: %s';
 ?>

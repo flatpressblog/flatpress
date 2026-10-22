@@ -1,5 +1,43 @@
 <?php
 $err = array();
+require_once __DIR__ . '/permissions.lib.php';
+
+/**
+ * Persist the owner token before any installation mutation; fail closed on session storage errors. 
+ */
+function setup_session_persist($token) {
+	if (!@session_write_close()) {
+		return false;
+	}
+	$_SESSION = [];
+	if (!@session_start()) {
+		return false;
+	}
+	return setup_session_matches($token);
+}
+
+/**
+ * Read the session handler's freshly loaded data, independently of previous in-memory state.
+ */
+function setup_session_matches($token) {
+	return isset($_SESSION ['fp_setup_token']) && is_string($_SESSION ['fp_setup_token']) && hash_equals($token, $_SESSION ['fp_setup_token']);
+}
+
+/**
+ * Journal only public identifiers and hash fingerprints, never plaintext passwords.
+ */
+function setup_checkpoint($changes) {
+	global $fp_setup_state;
+	if (!is_array($fp_setup_state)) {
+		return false;
+	}
+	$next = array_merge($fp_setup_state, $changes);
+	if (!io_write_file(SETUPTEMP_FILE, json_encode($next), ['preserve_existing' => true, 'fsync' => true])) {
+		return false;
+	}
+	$fp_setup_state = $next;
+	return true;
+}
 
 function print_done_fail($label, $bool) {
 	echo "<li>", $label . ' <strong style="color: ' . (($bool) ? 'green;">DONE' : 'red;">FAILED') . '</strong><br>', "</li>\n";
@@ -25,103 +63,158 @@ function remove_checkfile() {
 
 function setupid() {
 	global $setupid;
-	if (isset($_POST ['setupid'])) {
-		$setupid = (string)$_POST ['setupid'];
-	} else {
-		$host = '';
-		if (isset($_SERVER ['HTTP_HOST']) && is_string($_SERVER ['HTTP_HOST'])) {
-			$host = $_SERVER ['HTTP_HOST'];
-		} elseif (isset($_SERVER ['SERVER_NAME']) && is_string($_SERVER ['SERVER_NAME'])) {
-			$host = $_SERVER ['SERVER_NAME'];
-		}
-		$setupid = system_generate_id(BLOG_BASEURL . $host);
+	$setupid = '';
+	if (session_status() !== PHP_SESSION_ACTIVE || session_name() !== SESS_COOKIE || !empty($GLOBALS ['fp_setup_cookie_error'])) {
+		return $setupid;
 	}
-
+	if (!isset($_SESSION ['fp_setup_token']) || !is_string($_SESSION ['fp_setup_token']) || !preg_match('/^[a-f0-9]{64}$/D', $_SESSION ['fp_setup_token'])) {
+		$_SESSION ['fp_setup_token'] = bin2hex(random_bytes(32));
+	}
+	$setupid = $_SESSION ['fp_setup_token'];
 	return $setupid;
 }
 
 function getstep(&$id) {
+	global $err, $lang, $fp_setup_state;
+	$id = 'locked';
+	if (is_file(LOCKFILE) && !is_link(LOCKFILE)) {
+		return 0;
+	}
+	$id = 'step1';
+	if (file_exists(LOCKFILE) || is_link(LOCKFILE)) {
+		setup_filesystem()->error('permission_type', LOCKFILE); return 1;
+	}
+	$token = setupid();
+	if ($token === '') {
+		$err [] = $lang ['err'] ['session']; return 1;
+	}
+	$isPost = ($_SERVER ['REQUEST_METHOD'] ?? 'GET') === 'POST';
+	if ($isPost && (!isset($_POST ['setupid']) || !is_string($_POST ['setupid']) || !hash_equals($token, $_POST ['setupid']))) {
+		$err [] = $lang ['err'] ['request'];
+		return 1;
+	}
+	if (!setup_session_persist($token)) {
+		$err [] = $lang ['err'] ['session'];
+		return 1;
+	}
+	$fs = setup_filesystem();
+	if (!$fs->safe(SETUPTEMP_FILE)) {
+		return 1;
+	}
+	// Read-only ownership check before changing any permissions or creating the mutex.
+	$state = ['token_hash' => hash('sha256', $token), 'step' => 1];
+	if (file_exists(SETUPTEMP_FILE)) {
+		$state = setup_read_state($token);
+		if ($state === false) {
+			return 1;
+		}
+	} elseif (setup_has_accounts()) {
+		$err [] = $lang ['err'] ['state']; return 1;
+	}
+	if (!$isPost) {
+		$id = 'step' . $state ['step']; return $state ['step'];
+	}
+	// One installation writer at a time, including the final lock transition.
+	if (!$fs->ensure(FP_CONTENT, DIR_PERMISSIONS) || !$fs->safe(FP_CONTENT . '.setup-install.lock')) {
+		return 1;
+	}
+	$lockPath = FP_CONTENT . '.setup-install.lock';
+	$lock = @fopen($lockPath, 'c+b');
+	if ($lock === false) {
+		$err [] = $lang ['err'] ['writeerror'];
+		return 1;
+	}
+	try {
+		if (!flock($lock, LOCK_EX | LOCK_NB)) {
+			$err [] = $lang ['err'] ['state'];
+			return 1;
+		}
+		if (!$fs->apply($lockPath, 0600, true)) {
+			return 1;
+		}
+		clearstatcache();
+		if (file_exists(LOCKFILE)) {
+			$id = 'locked';
+			return 0;
+		}
+		$state = ['token_hash' => hash('sha256', $token), 'step' => 1];
+		if (file_exists(SETUPTEMP_FILE)) {
+			$state = setup_read_state($token);
+			if ($state === false) {
+				return 1;
+			}
+		} elseif (setup_has_accounts()) {
+			$err [] = $lang ['err'] ['state'];
+			return 1;
+		}
+		$fp_setup_state = $state;
+		$i = $state ['step'];
+		$id = 'step' . $i;
+		if (!setup_checkpoint([])) {
+			$err [] = $lang ['err'] ['writeerror']; return $i;
+		}
+		if (!setup_data_preflight(true)) {
+			return $i;
+		}
+		if ($i === 1) {
+			require_once __DIR__ . '/step1.lib.php';
+			if (!setup_prepare_files()) {
+				return 1;
+			}
+			if (!setup_checkpoint(['step' => 2])) {
+				$err [] = $lang ['err'] ['writeerror'];
+				return 1;
+			}
+			$id = 'step2'; return 2;
+		}
+		require_once __DIR__ . '/step2.lib.php';
+		if (!setup_create_content()) {
+			return 2;
+		}
+		if (!setup_core_permissions() || !setup_data_preflight(true)) {
+			return 2;
+		}
+		// Keep the resumable state until the completion marker is durable.
+		if (!io_write_file(LOCKFILE, 'locked', ['preserve_existing' => true, 'fsync' => true])) {
+			$err [] = $lang ['err'] ['writeerror'];
+			return 2;
+		}
+		@unlink(SETUPTEMP_FILE);
+		unset($_SESSION ['fp_setup_token'], $_SESSION ['fp_setup_user'], $_SESSION ['fp_setup_entry'], $_SESSION ['fp_setup_blogid']);
+		$id = 'step3';
+		return 3;
+	} finally {
+		flock($lock, LOCK_UN);
+		fclose($lock);
+	}
+}
+
+function setup_read_state($token) {
 	global $err, $lang;
+	$raw = is_file(SETUPTEMP_FILE) ? @file_get_contents(SETUPTEMP_FILE, false, null, 0, 16385) : false;
+	$state = is_string($raw) && strlen($raw) <= 16384 ? json_decode($raw, true) : null;
+	if (!is_array($state) || !isset($state ['token_hash'], $state ['step']) || !is_string($state ['token_hash']) || !in_array($state ['step'], [1, 2], true) || !hash_equals(hash('sha256', $token), $state ['token_hash'])) {
+		$err [] = $lang ['err'] ['state'];
+		return false;
+	}
+	if ((isset($state['blogid']) && !is_string($state ['blogid'])) || (isset($state ['entry_date']) && !is_int($state ['entry_date'])) || (isset($state ['account']) && (!is_array($state ['account']) || !isset($state ['account'] ['userid_hash'], $state ['account'] ['fingerprint']) || !is_string($state ['account'] ['userid_hash']) || !is_string($state ['account'] ['fingerprint']) || !preg_match('/^[a-f0-9]{64}$/D', $state ['account'] ['userid_hash']) || !preg_match('/^[a-f0-9]{64}$/D', $state ['account'] ['fingerprint'])))) {
+		$err [] = $lang ['err'] ['state'];
+		return false;
+	}
+	return $state;
+}
 
-	$STEPS = array(
-		'locked',
-		'step1',
-		'step2',
-		'step3'
-	);
-	$MAXST = count($STEPS) - 1;
-
-	$i = 0;
-	$setupid = null;
-
-	if (!file_exists(LOCKFILE)) {
-
-		$setupid = setupid();
-
-		if (!$setupid) {
-			die($lang ['err'] ['setuprun1']);
-		}
-
-		if (!file_exists(SETUPTEMP_FILE)) {
-			if (empty($_POST)) {
-				$i = 0;
-			} else {
-				$i = 1;
-			}
-		} else {
-			$tmp = (string)io_load_file(SETUPTEMP_FILE);
-			$x = explode(',', $tmp, 2);
-			$tmp_setupid = isset($x [0]) ? (string)$x [0] : '';
-			if ($tmp_setupid !== $setupid) {
-				die($lang ['err'] ['setuprun2'] . SETUPTEMP_FILE . $lang ['err'] ['setuprun3']);
-			}
-			$i = isset($x [1]) ? (int)$x [1] : 0;
-		}
-
-		// Hardening: clamp out-of-range step indexes (e.g. if SETUPTEMP_FILE is corrupted)
-		if ($i < 0) {
-			$i = 0;
-		} elseif ($i > $MAXST) {
-			$i = $MAXST;
-		}
-
-		$libfile = __DIR__ . '/' . $STEPS [$i] . '.lib.php';
-		if (is_file($libfile)) {
-			include $libfile;
-		}
-
-		if (!function_exists('check_step')) :
-			/** @phpstan-ignore-next-line */
-			function check_step() {
-				return true;
-			}
-		endif;
-
-		if (check_step()) {
-			++$i;
-			if ($i >= $MAXST) {
-				// Ensure valid index for the final screen (step3)
-				$i = $MAXST;
-				fs_delete(SETUPTEMP_FILE);
-				io_write_file(LOCKFILE, "locked");
-			} else {
-				if ($i > 0 && !@io_write_file(SETUPTEMP_FILE, $setupid . "," . $i)) {
-					$err [] = $lang ['err'] ['writeerror'];
-				}
-			}
+function setup_has_accounts() {
+	foreach ((array)@glob(USERS_DIR . '*.php') as $file) {
+		if (is_string($file) && is_valid_userid(basename($file, '.php'))) {
+			return true;
 		}
 	}
-
-	if (!isset($STEPS [$i])) {
-		$i = 0;
-	}
-	$id = $STEPS [$i];
-
-	return $i;
+	return false;
 }
 
 function validate() {
-	global $lang, $err;
+	global $lang, $err, $fp_setup_state;
 
 	/**
 	 * Validate only when the step2 form was actually submitted.
@@ -129,32 +222,36 @@ function validate() {
 	 */
 	$required = array('fpuser', 'fppwd', 'fppwd2', 'email', 'www');
 	foreach ($required as $k) {
-		if (!array_key_exists($k, $_POST)) {
-			$err = array();
+		if (!isset($_POST [$k]) || !is_string($_POST [$k])) {
+			$err = array($lang ['err'] ['request']);
 			return false;
 		}
 	}
 
 	$err = array();
 
-	$fpuser = strip_tags((string)$_POST ['fpuser']);
-	$fppwd = (string)$_POST ['fppwd'];
-	$fppwd2 = (string)$_POST ['fppwd2'];
-	$email = strip_tags((string)$_POST ['email']);
-	$www = strip_tags((string)$_POST ['www']);
-	if (!(preg_match('/^[\w]+$/u', $fpuser))) {
+	$fpuser = $_POST ['fpuser'];
+	$fppwd = $_POST ['fppwd'];
+	$fppwd2 = $_POST ['fppwd2'];
+	$email = $_POST ['email'];
+	$www = $_POST ['www'];
+	if (!is_valid_userid($fpuser)) {
 		$err [] = $fpuser . $lang ['err'] ['fpuser2'];
 	}
-	if (strlen(trim(($fppwd))) < 6) {
+	if (strlen($fppwd) < 6 || preg_match('/\s|\x00/', $fppwd)) {
 		$err [] = $lang ['err'] ['fppwd'];
 	}
-	if (($fppwd) != ($fppwd2)) {
+	if (strlen($fppwd) > 72) {
+		$err [] = $lang ['err'] ['password_max'];
+	}
+	if ($fppwd !== $fppwd2) {
 		$err [] = $lang ['err'] ['fppwd2'];
 	}
-	if (!(preg_match('!@.*@|\.\.|\,|\;!', $email) || preg_match('!^.+\@(\[?)[a-zA-Z0-9\.\-]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$!', $email))) {
+	if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 		$err [] = $email . $lang ['err'] ['email'];
 	}
-	if (!(preg_match('!^http(s)?://[\w-]+\.[\w-]+(\S+)?$!i', $www) || preg_match('!^http(s)?://localhost!', $www))) {
+	$parts = @parse_url($www);
+	if (!is_array($parts) || !isset($parts ['scheme'], $parts ['host']) || !in_array(strtolower($parts ['scheme']), ['http', 'https'], true) || filter_var($www, FILTER_VALIDATE_URL) === false || preg_match('/[\s\x00-\x1f\x7f<>"\'`\\\\]/', $www) || isset($parts ['user']) || isset($parts ['pass']) || isset($parts ['query']) || isset($parts ['fragment'])) {
 		$err [] = $www . $lang ['err'] ['www'];
 	}
 	if ($www !== '' && substr($www, -1) !== '/') {
@@ -165,6 +262,7 @@ function validate() {
 
 	$user = array();
 	$fp_config ['general'] ['author'] = $user ['userid'] = $fpuser;
+	// Setup receives plaintext even when it happens to look like a password hash.
 	$user ['password'] = $fppwd;
 
 	$fp_config ['general'] ['www'] = $user ['www'] = $www;
@@ -196,13 +294,49 @@ function validate() {
 		return false;
 	}
 
-	$fp_config ['general'] ['blogid'] = system_generate_id(BLOG_ROOT . $user ['www'] . $user ['email'] . $user ['userid']);
-
-	config_save();
-
-	system_hashsalt_save();
-
-	user_add($user);
+	if (!setup_filesystem()->safe(USERS_DIR . $fpuser . '.php')) {
+		return false;
+	}
+	try {
+		$existing = user_get($fpuser);
+	} catch (Throwable $exception) {
+		$err [] = $lang ['err'] ['account'];
+		return false;
+	}
+	if ($existing !== null && (!isset($existing ['password']) || !is_string($existing ['password']))) {
+		$err [] = $lang ['err'] ['account'];
+		return false;
+	}
+	$account = $fp_setup_state['account'] ?? null;
+	if (($account !== null && (!is_array($account) || ($account ['userid_hash'] ?? null) !== hash('sha256', $fpuser))) || ($existing !== null && (!is_array($account) || !isset($account ['fingerprint']) || !is_string($account ['fingerprint']) || !hash_equals(hash('sha256', $existing ['password']), $account ['fingerprint']) || !password_verify($fppwd, $existing ['password'])))) {
+		$err [] = $lang ['err'] ['account'];
+		return false;
+	}
+	try {
+		$user ['password'] = $existing !== null ? $existing ['password'] : user_pwd($fppwd);
+	} catch (Throwable $exception) {
+		$err [] = $lang ['err'] ['account'];
+		return false;
+	}
+	if (!is_string($user ['password']) || $user ['password'] === '') {
+		$err [] = $lang ['err'] ['account'];
+		return false;
+	}
+	$blogid = $fp_setup_state ['blogid'] ?? system_generate_id(BLOG_ROOT . $user ['www'] . $user ['userid']);
+	if (!is_string($blogid) || !setup_checkpoint(['blogid' => $blogid, 'account' => ['userid_hash' => hash('sha256', $fpuser), 'fingerprint' => hash('sha256', $user ['password'])]])) {
+		$err [] = $lang ['err'] ['writeerror'];
+		return false;
+	}
+	$fp_config ['general'] ['blogid'] = $blogid;
+	if (!config_save() || (file_exists(HASHSALT_FILE) && !is_file(HASHSALT_FILE)) || !system_hashsalt_save()) {
+		$err [] = $lang ['err'] ['writeerror'];
+		return false;
+	}
+	if (!user_add($user)) {
+		$err [] = $lang ['err'] ['account'];
+		return false;
+	}
+	$_SESSION ['fp_setup_user'] = $fpuser;
 
 	return true;
 }
@@ -213,7 +347,7 @@ function print_err() {
 	if (!empty($err)) {
 		echo "<ul>";
 		foreach ($err as $val) {
-			echo "<li>" . $val . "</li>";
+			echo "<li>" . htmlspecialchars($val, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</li>";
 		}
 		echo "</ul>";
 	}

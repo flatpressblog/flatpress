@@ -215,4 +215,16 @@ $lang ['samplecontent'] ['privacy-policy'] ['content'] = '在某些国家/地区
 
 启用 CookieBanner 插件后，访问者可以通过联系表单或评论功能直接访问此页面。
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = '安装会话不可用。请启用 Cookie 并重新加载安装页面。';
+$lang ['err'] ['request'] = '安装表单无效或已过期。请重新加载安装页面。';
+$lang ['err'] ['state'] = '另一个安装会话正在进行，或安装状态无效。请使用原来的浏览器。如果会话已丢失，请恢复备份或在干净的安装副本中重新开始；不要只删除安装标记。';
+$lang ['err'] ['account'] = '无法保存管理员账户，或用户名已存在。';
+$lang ['err'] ['password_max'] = '密码不得超过 72 字节。';
+$lang ['err'] ['permission_read'] = '无法读取或遍历所需路径：%s';
+$lang ['err'] ['permission_write'] = '所需数据路径不可写：%s';
+$lang ['err'] ['permission_chmod'] = '无法为 %s 设置指定权限。请检查所有者、组访问权限和主机设置。';
+$lang ['err'] ['permission_type'] = '所需路径的文件类型不正确：%s';
+$lang ['err'] ['permission_link'] = '安装程序不会跟随符号链接或重定向路径：%s';
 ?>

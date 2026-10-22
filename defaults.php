@@ -136,7 +136,8 @@ define('BPT_SORT', SORT_DESC);
 define('RANDOM_HEX', bin2hex(random_bytes(18)));
 
 $fp_script_name = (string)($_SERVER ['SCRIPT_NAME'] ?? '/');
-define('BLOG_ROOT', ('/' === ($v = dirname($fp_script_name)) ? $v : $v . '/'));
+// dirname('/setup.php') can return '\\' on Windows. URLs always use forward slashes.
+define('BLOG_ROOT', rtrim(str_replace('\\', '/', dirname($fp_script_name)), '/') . '/');
 
 /**
  * APCu support

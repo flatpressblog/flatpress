@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * LangId: Czech
  */
 $lang ['setup'] = array(
@@ -211,4 +211,16 @@ Můžete je vložit zde. ([url=admin.php?p=static&action=write&page=privacy-poli
 
 Pokud aktivujete doplněk CookieBanner, budou moci vaši návštěvníci přejít přímo na tuto stránku v kontaktním formuláři a ve funkci komentáře.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'Relace instalace není dostupná. Povolte cookies a znovu načtěte instalaci.';
+$lang ['err'] ['request'] = 'Instalační formulář je neplatný nebo vypršel. Načtěte instalaci znovu.';
+$lang ['err'] ['state'] = 'Probíhá jiná relace instalace nebo je stav neplatný. Použijte původní prohlížeč. Při ztrátě relace obnovte zálohu nebo začněte v čisté kopii instalace; nemažte pouze instalační značky.';
+$lang ['err'] ['account'] = 'Účet správce nelze uložit nebo uživatelské jméno již existuje.';
+$lang ['err'] ['password_max'] = 'Heslo smí mít nejvýše 72 bajtů.';
+$lang ['err'] ['permission_read'] = 'Požadovanou cestu nelze číst nebo procházet: %s';
+$lang ['err'] ['permission_write'] = 'Požadovaná datová cesta není zapisovatelná: %s';
+$lang ['err'] ['permission_chmod'] = 'Nelze nastavit oprávnění pro %s. Zkontrolujte vlastníka, přístup skupiny a nastavení hostingu.';
+$lang ['err'] ['permission_type'] = 'Požadovaná cesta má nesprávný typ souboru: %s';
+$lang ['err'] ['permission_link'] = 'Instalace nebude následovat symbolický odkaz nebo přesměrovanou cestu: %s';
 ?>

@@ -212,4 +212,16 @@ You can insert them here. ([url=admin.php?p=static&action=write&page=privacy-pol
 
 If you activate the CookieBanner plugin, your visitors will be able to go directly to this page in the contact form and in the comment function.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'The setup session is unavailable. Enable cookies and reload setup.';
+$lang ['err'] ['request'] = 'The setup form is invalid or expired. Reload setup and try again.';
+$lang ['err'] ['state'] = 'Another setup session is active, or the setup state is invalid. Use the original browser. If its session is lost, restore a backup or restart in a clean installation copy; do not just delete installation markers.';
+$lang ['err'] ['account'] = 'The administrator account could not be saved, or the username already exists.';
+$lang ['err'] ['password_max'] = 'The password must not exceed 72 bytes.';
+$lang ['err'] ['permission_read'] = 'Required path is not readable or searchable: %s';
+$lang ['err'] ['permission_write'] = 'Required data path is not writable: %s';
+$lang ['err'] ['permission_chmod'] = 'Could not apply the configured permissions to %s. Check ownership, group access and hosting settings.';
+$lang ['err'] ['permission_type'] = 'Required path has the wrong file type: %s';
+$lang ['err'] ['permission_link'] = 'Setup will not follow a symbolic link or redirected path: %s';
 ?>

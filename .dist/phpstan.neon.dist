@@ -10,6 +10,8 @@ parameters:
     - phpstan-bootstrap.php
 
   dynamicConstantNames:
+    - FP_SETUP_ACTIVE
+    - FP_SETUP_REQUEST
     - ADMIN_PANEL
     - ADMIN_PANEL_ACTION
     - BASE_DIR

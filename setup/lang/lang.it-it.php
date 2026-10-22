@@ -212,4 +212,16 @@ Possono essere inseriti qui. ([url=admin.php?p=static&action=write&page=privacy-
 
 Se viene attivato il plugin CookieBanner, i visitatori del sito potranno accedere direttamente a questa pagina nel modulo di contatto e nella funzione dei commenti.
 ';
+
+// Setup validation and recovery messages.
+$lang ['err'] ['session'] = 'La sessione di installazione non è disponibile. Abilita i cookie e ricarica l’installazione.';
+$lang ['err'] ['request'] = 'Il modulo di installazione non è valido o è scaduto. Ricarica l’installazione.';
+$lang ['err'] ['state'] = 'Un’altra sessione di installazione è attiva o lo stato non è valido. Usa il browser originale. Se la sessione è persa, ripristina un backup o ricomincia in una copia pulita dell’installazione; non eliminare soltanto i marcatori di installazione.';
+$lang ['err'] ['account'] = 'Impossibile salvare l’account amministratore oppure il nome utente esiste già.';
+$lang ['err'] ['password_max'] = 'La password non deve superare 72 byte.';
+$lang ['err'] ['permission_read'] = 'Il percorso richiesto non è leggibile o accessibile: %s';
+$lang ['err'] ['permission_write'] = 'Il percorso dati richiesto non è scrivibile: %s';
+$lang ['err'] ['permission_chmod'] = 'Impossibile applicare i permessi configurati a %s. Verifica proprietario, accesso del gruppo e impostazioni dell’hosting.';
+$lang ['err'] ['permission_type'] = 'Il percorso richiesto ha un tipo di file errato: %s';
+$lang ['err'] ['permission_link'] = 'L’installazione non seguirà collegamenti simbolici o percorsi reindirizzati: %s';
 ?>

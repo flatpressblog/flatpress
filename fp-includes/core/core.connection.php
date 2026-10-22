@@ -1081,6 +1081,14 @@ function fp_setup_baseurl_candidate($root = null, $preferRequestHost = false) {
  * @return bool
  */
 function fp_setup_migration_mode() {
+	/**
+	 * An unfinished installation is not an administrator-requested location migration.
+	 * In particular, do not delete cache/compile artifacts before setup preflight.
+	 */
+	if ((defined('FP_SETUP_REQUEST') && FP_SETUP_REQUEST)
+		|| (defined('FP_CONTENT') && is_file(resolve_abspath(FP_CONTENT . 'settingup.lock')))) {
+		return false;
+	}
 	static $active = null;
 	if ($active !== null) {
 		return $active;

@@ -9,11 +9,16 @@
  * @return bool
  */
 function io_write_file($filename, $data, $options = []) {
-	$oldUmask = @umask(0);
+	$oldUmask = @umask(0077);
 	$dir = dirname($filename);
+	$setup = defined('FP_SETUP_ACTIVE') && FP_SETUP_ACTIVE && function_exists('setup_filesystem');
+	if ($setup && !setup_filesystem()->safe($filename)) {
+		@umask($oldUmask);
+		return false;
+	}
 
 	$options = is_array($options) ? $options : [];
-	$doFsync = !empty($options ['fsync']);
+	$doFsync = $setup || !empty($options ['fsync']);
 	$invalidateOpcache = !empty($options ['invalidate_opcache']);
 
 	if (!fs_mkdir($dir)) {
@@ -21,9 +26,16 @@ function io_write_file($filename, $data, $options = []) {
 		return false;
 	}
 
-	$tmp = $dir . '/.' . basename($filename) . '.' . bin2hex(random_bytes(6)) . '.tmp';
-	$f = @fopen($tmp, 'wb');
+	// PHP payloads retain a PHP extension while staged; never serve their source as .tmp.
+	$tmp = $dir . '/.' . basename($filename) . '.' . bin2hex(random_bytes(6)) . '.tmp' . (substr($filename, -4) === '.php' ? '.php' : '');
+	$f = @fopen($tmp, 'xb');
 	if (!$f) {
+		@umask($oldUmask);
+		return false;
+	}
+	if ($setup && !setup_filesystem()->apply($tmp, setup_path_mode($filename, false), true)) {
+		fclose($f);
+		@unlink($tmp);
 		@umask($oldUmask);
 		return false;
 	}
@@ -33,7 +45,7 @@ function io_write_file($filename, $data, $options = []) {
 	while ($pos < $len) {
 		$n = fwrite($f, substr($data, $pos));
 		if ($n === false || $n === 0) {
-			fclose($f); 
+			fclose($f);
 			@unlink($tmp);
 			@umask($oldUmask);
 			return false;
@@ -42,7 +54,7 @@ function io_write_file($filename, $data, $options = []) {
 	}
 	$ok = fflush($f);
 	if ($ok && $doFsync && function_exists('fsync')) {
-		@fsync($f);
+		$ok = @fsync($f);
 	}
 	fclose($f);
 	if (!$ok) {
@@ -52,7 +64,7 @@ function io_write_file($filename, $data, $options = []) {
 	}
 
 	$mv = @rename($tmp, $filename);
-	if (!$mv && empty($options ['preserve_existing']) && is_file($tmp)) {
+	if (!$mv && !$setup && empty($options ['preserve_existing']) && is_file($tmp)) {
 		@unlink($filename);
 		$mv = @rename($tmp, $filename) ?: (@copy($tmp, $filename) && @unlink($tmp));
 	}
@@ -62,7 +74,9 @@ function io_write_file($filename, $data, $options = []) {
 		return false;
 	}
 
-	@chmod($filename, FILE_PERMISSIONS);
+	if (!$setup) {
+		@chmod($filename, FILE_PERMISSIONS);
+	}
 	if ($invalidateOpcache && function_exists('opcache_invalidate')) {
 		@opcache_invalidate($filename, true);
 	}
