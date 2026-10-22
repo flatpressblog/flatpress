@@ -117,8 +117,12 @@ class FPSetupFilesystem {
 		 * with a read-only file; never make readable distribution files writable.
 		 */
 		$change = $this->windows() ? ($write && !$this->writable($path)) : ($old === false || ($old & 0777) !== $mode);
+		/**
+		 * Shared hosts may disable chmod or keep ownership outside the PHP worker.
+		 * In that case retain the existing/creation mode and require usable access.
+		 */
 		if ($change && !$this->chmod($path, $mode)) {
-			return $this->error('permission_chmod', $path);
+			return $this->access($path, $write);
 		}
 		clearstatcache(true, $path);
 		$actual = $this->mode($path);

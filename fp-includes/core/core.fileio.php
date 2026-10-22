@@ -74,7 +74,7 @@ function io_write_file($filename, $data, $options = []) {
 		return false;
 	}
 
-	if (!$setup) {
+	if (!$setup && function_exists('chmod')) {
 		@chmod($filename, FILE_PERMISSIONS);
 	}
 	if ($invalidateOpcache && function_exists('opcache_invalidate')) {
