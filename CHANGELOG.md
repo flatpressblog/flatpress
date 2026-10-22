@@ -16,6 +16,8 @@
 ### Security
 - An XSS vulnerability in the comment and contact forms has been fixed. ([#866](https://github.com/flatpressblog/flatpress/pull/866))
 - A security vulnerability that listed and disclosed unpublished drafts has been fixed. ([#936](https://github.com/flatpressblog/flatpress/pull/936))
+- Setup:
+    - Login, Account, and XSS Checks added ([#966](https://github.com/flatpressblog/flatpress/pull/966))
 
 ### Bugfixes
 - Public URL detection now separates backend and browser-visible scheme/port on TLS-terminating proxies and avoids leaking an internal port such as `:80` into HTTPS URLs. ([#948](https://github.com/flatpressblog/flatpress/pull/948))
@@ -85,8 +87,6 @@
 ### Security
 - BBCode plugin: update to version 2.0.4
     - An XSS vulnerability in the BBCode plugin has been fixed. ([#941](https://github.com/flatpressblog/flatpress/pull/941), [#945](https://github.com/flatpressblog/flatpress/pull/945))
-- Setup:
-    - Login, Account, and XSS Checks added ([#966](https://github.com/flatpressblog/flatpress/pull/966))
 
 ## Themes
 ### Changes
