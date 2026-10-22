@@ -122,7 +122,9 @@ if ($staticLang) {
 			if (file_exists($src) && !file_exists($dest)) {
 				$tmp = $dest . '.tmp';
 				@copy($src, $tmp);
-				@chmod($tmp, FILE_PERMISSIONS);
+				if (function_exists('chmod')) {
+					@chmod($tmp, FILE_PERMISSIONS);
+				}
 				@rename($tmp, $dest);
 			}
 		}
@@ -1958,7 +1960,9 @@ function plugin_newsletter_maybe_update_blocklist(bool $silent = false): void {
 	plugin_newsletter_rmw_file($local, function(array $_) use ($lines): array {
 		return $lines;
 	});
-	@chmod($local, FILE_PERMISSIONS);
+	if (function_exists('chmod')) {
+		@chmod($local, FILE_PERMISSIONS);
+	}
 
 	// Keep previous behaviour: do not clean subscribers on first download
 	if ($mode === 'initial') {

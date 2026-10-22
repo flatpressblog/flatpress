@@ -186,7 +186,6 @@ function user_get($userid = null) {
 	return null;
 }
 
-
 /**
  * Validates a user ID to ensure it contains only valid characters.
  *
@@ -292,7 +291,9 @@ function user_check_password($userid, $pwd, $hash) {
 		$_SESSION ['login_error'] = 'storage';
 		return false;
 	}
-	@chmod($file, 0600);
+	if (function_exists('chmod')) {
+		@chmod($file, 0600);
+	}
 	try {
 		if (!flock($lock, LOCK_EX)) {
 			$_SESSION ['login_error'] = 'storage';

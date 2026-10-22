@@ -19,7 +19,9 @@ function fp_admin_get_restricted_dir_perm(): int {
 
 function fp_admin_apply_restricted_file_permissions(string $path): void {
 	if (is_file($path)) {
-		@chmod($path, fp_admin_get_restricted_file_perm());
+		if (function_exists('chmod')) {
+			@chmod($path, fp_admin_get_restricted_file_perm());
+		}
 	}
 }
 
@@ -31,7 +33,9 @@ function fp_admin_apply_restricted_dir_permissions(string $dir): void {
 	$dirPerm = fp_admin_get_restricted_dir_perm();
 	$filePerm = fp_admin_get_restricted_file_perm();
 
-	@chmod($dir, $dirPerm);
+	if (function_exists('chmod')) {
+		@chmod($dir, $dirPerm);
+	}
 
 	$iterator = new RecursiveIteratorIterator(
 		new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS),
@@ -44,9 +48,13 @@ function fp_admin_apply_restricted_dir_permissions(string $dir): void {
 			continue;
 		}
 		if ($item->isDir()) {
-			@chmod($item->getPathname(), $dirPerm);
+			if (function_exists('chmod')) {
+				@chmod($item->getPathname(), $dirPerm);
+			}
 		} elseif ($item->isFile()) {
-			@chmod($item->getPathname(), $filePerm);
+			if (function_exists('chmod')) {
+				@chmod($item->getPathname(), $filePerm);
+			}
 		}
 	}
 }
@@ -90,7 +98,9 @@ function fp_admin_copy_dir_recursive(string $srcDir, string $dstDir): bool {
 		if (!@mkdir($dstDir, $dirPerm, true) && !is_dir($dstDir)) {
 			return false;
 		}
-		@chmod($dstDir, $dirPerm);
+		if (function_exists('chmod')) {
+			@chmod($dstDir, $dirPerm);
+		}
 	}
 
 	$iterator = new RecursiveIteratorIterator(
@@ -106,14 +116,18 @@ function fp_admin_copy_dir_recursive(string $srcDir, string $dstDir): bool {
 			if (!is_dir($target) && !@mkdir($target, $dirPerm, true) && !is_dir($target)) {
 				return false;
 			}
-			@chmod($target, $dirPerm);
+			if (function_exists('chmod')) {
+				@chmod($target, $dirPerm);
+			}
 			continue;
 		}
 
 		if (!@copy($item->getPathname(), $target)) {
 			return false;
 		}
-		@chmod($target, $filePerm);
+		if (function_exists('chmod')) {
+			@chmod($target, $filePerm);
+		}
 	}
 
 	return true;

@@ -1708,7 +1708,9 @@ class Smarty extends \Smarty\TemplateBase {
 					$opts = ['fsync' => false, 'invalidate_opcache' => true];
 				}
 				if (\io_write_file($_filepath, $_contents, $opts)) {
-					@chmod($_filepath, 0666 & ~umask());
+					if (function_exists('chmod')) {
+						@chmod($_filepath, 0666 & ~umask());
+					}
 					if (function_exists('opcache_invalidate')) {
 						@opcache_invalidate($_filepath, true);
 					}
@@ -1791,7 +1793,9 @@ class Smarty extends \Smarty\TemplateBase {
 			throw new Exception("unable to write file {$_filepath}");
 		}
 		// set file permissions
-		@chmod($_filepath, 0666 & ~umask());
+		if (function_exists('chmod')) {
+			@chmod($_filepath, 0666 & ~umask());
+		}
 		error_reporting($_error_reporting);
 		return true;
 	}

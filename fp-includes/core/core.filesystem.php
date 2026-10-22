@@ -144,7 +144,9 @@ function fs_mkdir($dir, $mode = DIR_PERMISSIONS) {
 	}
 	// Fast path: already exists
 	if (is_dir($dir)) {
-		@chmod($dir, $mode);
+		if (function_exists('chmod')) {
+			@chmod($dir, $mode);
+		}
 		return true;
 	}
 	$parent = dirname($dir);
@@ -160,12 +162,16 @@ function fs_mkdir($dir, $mode = DIR_PERMISSIONS) {
 	$attempts = 10;
 	while ($attempts-- > 0) {
 		if (@mkdir($dir, $mode)) {
-			@chmod($dir, $mode);
+			if (function_exists('chmod')) {
+				@chmod($dir, $mode);
+			}
 			return true;
 		}
 		// If another process created it in the meantime, accept it
 		if (is_dir($dir)) {
-			@chmod($dir, $mode);
+			if (function_exists('chmod')) {
+				@chmod($dir, $mode);
+			}
 			return true;
 		}
 		clearstatcache(true, $dir);
@@ -174,7 +180,9 @@ function fs_mkdir($dir, $mode = DIR_PERMISSIONS) {
 	}
 	// Final check
 	if (is_dir($dir)) {
-		@chmod($dir, $mode);
+		if (function_exists('chmod')) {
+			@chmod($dir, $mode);
+		}
 		return true;
 	}
 	return false;
@@ -339,7 +347,7 @@ class fs_chmodder extends fs_filelister {
 		}
 
 		// Attempt to apply permissions and log errors
-		if (!@chmod($path, $chmod_value)) {
+		if (!function_exists('chmod') || !@chmod($path, $chmod_value)) {
 			// If chmod fails, add the path to the list of failed items
 			//error_log("Failed to chmod $path to " . decoct($chmod_value));
 			array_push($this->_list, $path);
