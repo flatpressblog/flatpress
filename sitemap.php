@@ -2,7 +2,7 @@
 /**
  * Generates the XML sitemap for search engines.
  * Original author: Igor Kromin - https://www.igorkromin.net
- * Extended by: Tongara
+ * Extended by: Peter O'Hanlon (Tongara)
  *
  * Image discovery uses FlatPress' shared content-media resolver. The sitemap
  * remains Sitemap Protocol 0.9 and adds Google's image sitemap namespace.
