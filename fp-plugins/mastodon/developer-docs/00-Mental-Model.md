@@ -24,6 +24,8 @@ It maps FlatPress objects to Mastodon objects:
 
 Media export has one additional compatibility rule that developers must keep in mind: one Mastodon status may carry multiple images, or exactly one audio/video attachment, but not a mixed audio/video/image set. The plugin therefore collects all local media for change detection and diagnostics, then selects one exportable media family per status before upload: images first, otherwise one audio item, otherwise one video item with its poster sent only as an upload thumbnail.
 
+Entry body export first stops at the first case-insensitive `[more]` marker. The title, public entry link and hashtag footer still share the server budget; tags and media selection use the complete entry. Comments do not acquire this entry-only boundary. Existing mappings use it on the next actual update, without a forced migration.
+
 Status export has a similar budgeting rule: Mastodon counts each recognized URL as the instance's `characters_reserved_per_url` value, but sentence punctuation immediately after a link is normal text. Local text limiting therefore runs through `plugin_mastodon_status_text_url_spans()` before `plugin_mastodon_status_text_length()` and `plugin_mastodon_limit_status_text()` so a trailing comma or full stop cannot be hidden inside the URL placeholder budget.
 
 ```mermaid
@@ -35,7 +37,7 @@ flowchart LR
     Guards[sync.lock sync.guard.json rate-limit-windows.json]
     Notifications[Mastodon mention notifications]
     API[Mastodon API]
-    Sim[simulate_mastodon_plugin.php regression harness]
+    Sim[Distributed .ph_ regression harness]
     AdminUI[Mastodon admin settings and status UI]
 
     FP --> Hooks
@@ -65,7 +67,7 @@ flowchart LR
 
 Notification hints are intentionally a hint layer: they can import replies on old Mastodon threads quickly when `read:notifications` is authorized, while context rotation remains the bounded fallback. When `disable_remote_import` is enabled, notification hints and context rotation are skipped as local-write sources; FlatPress still exports local entries and comments to Mastodon.
 
-The admin UI follows the same direction gate. With one-way mode active it hides Mastodon-to-FlatPress import options, notification-scope hints and import-only/local-write counters, but the save handler preserves those hidden import settings so they come back unchanged if bidirectional synchronization is re-enabled. The one-way admin UI hides import-only controls, notification-scope hints and import-only/local-write counters while preserving hidden import settings on save.
+The one-way admin UI hides import-only controls, notification-scope hints and import-only/local-write counters. Its save handler preserves hidden import settings so they come back unchanged if bidirectional synchronization is re-enabled.
 
 Do not reason about a single function in isolation. The important question is usually:
 
@@ -85,7 +87,7 @@ For exported comments, the robust invariant is stronger: the `comment_deleted` h
 | Locks and guards        | Prevent concurrent or too frequent sync runs on shared hosting.         | `sync.lock`, `sync.guard.json`, `plugin_mastodon_sync_guard_active()`, `plugin_mastodon_sync_guard_mark()`.      |
 | Budgets                 | Avoid exhausting Mastodon or webhost limits.                            | `rate-limit-windows.json`, `plugin_mastodon_rate_limit_guard_start()`, `plugin_mastodon_rate_limit_acquire()`.   |
 | API transport           | HTTP requests, OAuth, status/media endpoints.                           | `plugin_mastodon_mastodon_json()`, `plugin_mastodon_http_request()`, `plugin_mastodon_http_request_multipart()`. |
-| Regression harness      | Executes real plugin code with simulated FlatPress/Mastodon boundaries. | `simulate_mastodon_plugin.php`.                                                                                  |
+| Regression harness      | Executes real plugin code with simulated FlatPress/Mastodon boundaries. | `fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_`.                                              |
 
 ## Change workflow
 
@@ -94,7 +96,7 @@ For exported comments, the robust invariant is stronger: the `comment_deleted` h
 3. Check implementing functions in `03-Function-Process-Matrix.md`.
 4. Check Mastodon endpoint/version/fallback behavior in `04-API-Compatibility.md`.
 5. Check the relevant regression tests in `05-Regression-Test-Matrix.md`.
-6. Run `php -l` on changed PHP files and `php simulate_mastodon_plugin.php`.
+6. Run `php -l` on changed PHP files and `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_`.
 7. For API changes, add or update at least one harness test that exercises the actual plugin path, not only a stub.
 
 ## What the simulation does and does not prove

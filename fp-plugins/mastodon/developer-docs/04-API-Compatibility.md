@@ -10,8 +10,41 @@ The current plugin implementation is best described as:
 | `>= 4.0.0` | Technical target. Core endpoints used by the plugin are available; newer capability fields may be missing and internal defaults apply.                          |
 | `>= 4.4.0` | Recommended for full documented delete/media-cleanup behavior because `delete_media` on status delete and `DELETE /api/v1/media/:id` are documented from 4.4.0. |
 | `>= 4.6.0` | Enables the privacy hardening `exclude_direct=true` for account-status imports when cached instance information or API version 10 confirms support.             |
-| Future 4.x | No hard upper bound is encoded. Continue checking official Mastodon API changelogs before changing endpoint behavior.                                           |
+| 5.0 nightly | The More path is simulated through 5.0.0-nightly.2026-10-22; no new API contract is required. This is not a live-server certification.                         |
 
+
+## More tag in entry exports
+
+Reviewed on October 25, 2026. This change targets Mastodon 4.0.0 through
+5.0.0-nightly.2026-10-22. It requires no new server capability:
+`plugin_mastodon_build_entry_status_text()` cuts the raw entry body at the first
+`[more]` marker before BBCode conversion, using case-insensitive matching.
+The instance character limit and reserved character count per URL still apply
+afterwards. A long teaser may therefore need further truncation. Without a
+marker, existing behavior is preserved; a marker at the beginning produces an
+empty entry body. The marker itself does not append an ellipsis.
+
+The title, public entry link and hashtag footer remain part of the status and
+still count towards its budget. Tags are extracted from the complete entry,
+and media selection also continues to use the complete entry. Stored content
+and its change-detection hash are not shortened. Comments, imports and ReadMore
+plugin settings remain independent. Previously synchronized entries use the
+new boundary on their next regular update; unchanged mappings are not migrated.
+
+The current official API contracts were reviewed:
+[instance information](https://docs.joinmastodon.org/methods/instance/) with
+`GET /api/v2/instance` available since 4.0.0,
+[status endpoints](https://docs.joinmastodon.org/methods/statuses/) with `status`
+on POST and PUT, and
+[instance configuration](https://docs.joinmastodon.org/entities/Instance/) with
+`configuration.statuses.max_characters` and `characters_reserved_per_url`.
+The existing [rate limits](https://docs.joinmastodon.org/api/rate-limits/) still
+apply; local More processing does not generate additional HTTP requests.
+
+The simulator checks cached limits for 4.0.0, 4.1.0, 4.4.0, 4.6.0 and
+5.0.0-nightly.2026-10-22, plus POST and PUT through the export coordinator.
+These are deterministic simulations, not evidence of live testing against
+every server version.
 
 ## Comment/reply synchronization gate compatibility
 
@@ -145,14 +178,18 @@ flowchart TD
     Start[Need OAuth scopes]
     Discovery[GET well-known OAuth server metadata]
     Profile{profile advertised?}
-    Stored{Existing app has stored scopes?}
+    Stored{Registered scopes stored?}
+    Existing{Existing client credentials without stored scopes?}
     UseProfile[profile read:statuses read:notifications write:statuses write:media]
     UseCompatible[read:accounts read:statuses read:notifications write:statuses write:media]
-    UseLegacy[stored legacy client scopes]
+    UseStored[Return stored registered scopes unchanged]
+    UseLegacy[Legacy read:accounts read:statuses write:statuses write:media]
 
     Start --> Stored
-    Stored -- existing legacy registration --> UseLegacy
-    Stored -- none/current --> Discovery
+    Stored -- yes --> UseStored
+    Stored -- no --> Existing
+    Existing -- yes --> UseLegacy
+    Existing -- no --> Discovery
     Discovery --> Profile
     Profile -- yes --> UseProfile
     Profile -- no or unavailable --> UseCompatible
@@ -163,7 +200,7 @@ flowchart TD
 ```mermaid
 flowchart TD
     Delete[Delete mapped Mastodon status]
-    Cap{Cached version known?}
+    Cap{Cached API-v4 capability; version fallback}
     Old[DELETE /api/v1/statuses/:id]
     New[DELETE /api/v1/statuses/:id?delete_media=1]
     Fail{400 405 422 or delete_media error?}
@@ -171,8 +208,8 @@ flowchart TD
     Done[Done or report failure]
 
     Delete --> Cap
-    Cap -- < 4.4.0 --> Old --> Done
-    Cap -- >= 4.4.0 --> New --> Fail
+    Cap -- unsupported --> Old --> Done
+    Cap -- supported --> New --> Fail
     Cap -- unknown --> New --> Fail
     Fail -- yes --> Retry --> Done
     Fail -- no --> Done
@@ -246,9 +283,9 @@ sequenceDiagram
 2. Prefer cached instance information for scheduled/deletion paths to avoid extra requests.
 3. Prefer machine-readable `api_versions[mastodon]` over complex human-readable version strings for capability decisions.
 4. Cache failed live instance-information lookups per PHP request and use defaults rather than repeating slow network calls.
-3. Avoid fallback retry loops that can exceed budgets.
-4. Preserve the first response metadata if the fallback response is returned to callers.
-5. Add tests for known old version, known current version and unknown version if all three branches exist.
+4. Avoid fallback retry loops that can exceed budgets.
+5. Preserve the first response metadata if the fallback response is returned to callers.
+6. Add tests for known old version, known current version and unknown version if all three branches exist.
 
 ### Changing media behavior
 

@@ -27,7 +27,7 @@ Use these starting points when the requested change is framed by behavior rather
 | "Disable comment/reply synchronization"                                | `01-Process-Map.md` P2b/P4/P4a/P6/P9/P10          | `02-State-Model.md` comment/reply gate lifecycle, `06-Process-Flow.md` gate diagrams, regression tests                                                                                                                                                 |
 | "Require visitor approval before exporting comments to Mastodon"       | `01-Process-Map.md` P2c/P6/P10                    | `02-State-Model.md` `comment_reply_optins`, direct path without CommentCenter, moderated pending-file lifecycle, rejection/orphan cleanup, authenticated grants, credential-deferred opt-ins, `06-Process-Flow.md` opt-in diagram and regression tests |
 | "Deletion is unsafe or incomplete"                                     | `01-Process-Map.md` P4/P9                         | Immediate tombstones, import-boundary fallback, remote-ID ownership, delete endpoint fallback and partial-sync tests                                                                                                                                   |
-| "State repair or diagnostics are needed"                               | `02-State-Model.md` maintenance sections          | Admin maintenance fieldset, `mastodon-state-cli.php`                                                                                                                                                                                                   |
+| "State repair or diagnostics are needed"                               | `02-State-Model.md` maintenance sections          | Dedicated admin maintenance page, `mastodon-state-cli.php`                                                                                                                                                                                             |
 | "Admin page reports stale or wrong state"                              | P12 and scheduler state                           | State summary and admin assignment tests                                                                                                                                                                                                               |
 | "Large sites are slow"                                                 | P1, budgets and scheduler state                   | Large-state and rate-limit tests                                                                                                                                                                                                                       |
 | "Mastodon API behavior changed"                                        | `04-API-Compatibility.md`                         | endpoint matrix, capability helpers, targeted tests                                                                                                                                                                                                    |
@@ -39,7 +39,7 @@ Use these starting points when the requested change is framed by behavior rather
 The plugin code should remain compatible with:
 
 - PHP 7.2 through PHP 8.5.
-- Smarty 4.x/5.x admin template usage, including Smarty 5.8.0.
+- Smarty 4.x/5.x admin template usage, including Smarty 5.8.5.
 - PHPStan Level 5 style expectations: normalize mixed arrays, avoid ambiguous return shapes where practical, and keep side effects explicit.
 - Shared hosting constraints: non-blocking locks, finite request budgets, finite media/delete windows, no unbounded background loops.
 
@@ -48,19 +48,28 @@ The plugin code should remain compatible with:
 Run the combined Mastodon plugin and simulator analysis from the FlatPress root:
 
 ```bash
-php -d memory_limit=3200M .dist/phpstan.phar analyse -c .dist/phpstan.neon.dist --level=5 --memory-limit=3200M fp-plugins/mastodon/plugin.mastodon.php simulate_mastodon_plugin.php
+php -d memory_limit=4800M .dist/phpstan.phar analyse -c .dist/phpstan.neon.dist --level=5 --memory-limit=4800M fp-plugins/mastodon/plugin.mastodon.php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_
 ```
 
-The distributed configuration checks the declared PHP 7.2 through 8.5 range and scans Smarty 5.8.0 types without analyzing Smarty core itself.
+The combined analysis exceeded 3200 MB in the verified PHP 8.5.5 Windows run;
+4800 MB was sufficient. `--debug --no-progress` may be added for serial analysis.
+
+The distributed configuration checks the declared PHP 7.2 through 8.5 range and scans Smarty 5.8.5 types without analyzing Smarty core itself.
 
 ## Simulation harness quick reference
 
-Run the full deterministic regression harness from the FlatPress root. The content-identical copy under `fp-plugins/mastodon/regression-test/` can also resolve the blog root when invoked directly:
+Run the distributed deterministic regression harness directly from the FlatPress root:
 
 ```bash
-php simulate_mastodon_plugin.php
 php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_
 ```
+
+The harness resolves the blog root three directories above its distributed location.
+An optional content-identical root copy named `simulate_mastodon_plugin.php` is
+supported, but is not shipped in this snapshot and is not required for analysis
+or the documentation checker. For browser use on servers that do not execute
+`.ph_` files, create that root `.php` copy temporarily and remove it afterwards.
+CLI commands below use the distributed file and require no copy.
 
 The harness copies the current FlatPress tree into an isolated temporary sandbox, excludes live `fp-content/content` by default, seeds deterministic fixtures, freezes the plugin clock around date-window-sensitive fixture groups, snapshots and restores mutable option fixtures, mocks Mastodon HTTP calls unless live auth is explicitly requested, and ends with a counter block containing `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]`, and `[SKIP]`.
 
@@ -75,14 +84,14 @@ The harness copies the current FlatPress tree into an isolated temporary sandbox
 
 ### Recommended commands
 
-| Use case                        | Command                                                                                                         |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Full local regression           | `php simulate_mastodon_plugin.php`                                                                              |
-| Browser/shared-hosting output   | `php simulate_mastodon_plugin.php --summary`                                                                    |
-| Environment-driven summary mode | `SIMULATE_MASTODON_SUMMARY=1 php simulate_mastodon_plugin.php`                                                  |
-| Explicit live-content smoke run | `php simulate_mastodon_plugin.php --include-live-content --summary`                                             |
-| Optional live credential smoke  | `php simulate_mastodon_plugin.php --live-auth --summary`                                                        |
-| CI large-state skip branch      | `CI=1 SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1 php -d memory_limit=128M simulate_mastodon_plugin.php --summary` |
+| Use case                        | Command                                                                                                                                             |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full local regression           | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_`                                                                              |
+| Browser/shared-hosting output   | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --summary`                                                                    |
+| Environment-driven summary mode | `SIMULATE_MASTODON_SUMMARY=1 php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_`                                                  |
+| Explicit live-content smoke run | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --include-live-content --summary`                                             |
+| Optional live credential smoke  | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --live-auth --summary`                                                        |
+| CI large-state skip branch      | `CI=1 SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1 php -d memory_limit=128M fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --summary` |
 
 ### Memory and CI behavior
 
@@ -96,7 +105,7 @@ After changing the plugin, the simulation harness or this documentation set, run
 php fp-plugins/mastodon/developer-docs/check-consistency.php
 ```
 
-The checker compares the regression matrix with `simulate_mastodon_plugin.php`, the function organigram with `plugin.mastodon.php`, URL-punctuation budgeting documentation, and the documented OAuth helper names with the current implementation.
+The checker validates harness summary/category counts, regression catalog entries, physical function-line references, local Markdown links, More coverage, URL-budget documentation and plugin helper names across this documentation set. It compares optional executable harness copies with the distributed `.ph_` source and accepts a snapshot without a root copy. Mermaid parsing/rendering requires a separate Mermaid runtime; this PHP checker does not validate Mermaid syntax.
 
 ## Current split-state guardrails
 

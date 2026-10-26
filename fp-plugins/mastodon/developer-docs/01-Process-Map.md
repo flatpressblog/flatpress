@@ -72,7 +72,7 @@ flowchart TD
 | P3  | Remote top-level status import                                                        | Content sync when `disable_remote_import` is off                                                                                                                                                 | Verifies account, pages statuses with Mastodon 4.6/API-v10 `exclude_direct` privacy hardening when confirmed, filters, converts HTML/media/tags, appends a `Status.url` source footer with `target="_blank"`, saves FlatPress entries. Existing-entry updates still obey `update_local_from_remote`.                                                                                | entries, entries_remote, last_remote_status_id, content_stats                           | Remote import, status-footer target, one-way-mode, content-window and `exclude_direct` fallback tests. |
 | P4  | Remote reply import                                                                   | Remote context pass when `disable_remote_import` is off and `disable_comment_reply_sync` is off                                                                                                  | Fetches context descendants, resolves parent comments, queues rechecks or tombstones.                                                                                                                                                                                                                                                                                               | comments, comments_remote, comment_tombstones, pending_comment_remote_rechecks          | Reply tree, self-reply, quote, comment-as-entry and one-way-mode tests.                                |
 | P4a | Notification reply hints                                                              | Content sync with `old_thread_reply_check`, `read:notifications`, `disable_remote_import` off and `disable_comment_reply_sync` off                                                               | Polls mention notifications, directly imports mapped-parent replies, and spends the same old-thread budget on unresolved notification contexts.                                                                                                                                                                                                                                     | last_remote_notification_id, comments_remote, old_thread_context_cursor                 | Notification hint, nested reply, shared-budget and one-way-mode tests.                                 |
-| P5  | Local entry export/update                                                             | Dirty entry or local candidate in manual/full sync                                                                                                                                               | Builds status text, validates media, creates or edits Mastodon status, writes mappings.                                                                                                                                                                                                                                                                                             | dirty_entries, entries, entries_remote, media signatures, content_stats                 | Local export, URL-budget, media reuse and update tests.                                                |
+| P5  | Local entry export/update                                                             | Dirty entry or local candidate in manual/full sync                                                                                                                                               | Cuts entry body at first [more], applies server/URL budgets, validates full-entry media, creates or edits status, writes mappings.                                                                                                                                                                                                                                                  | dirty_entries, entries, entries_remote, media signatures, content_stats                 | Local export, URL-budget, media reuse and update tests.                                                |
 | P6  | Local comment export/update                                                           | Dirty comment or local candidate under a mapped entry/comment while `disable_comment_reply_sync` is off and either a visitor opt-in marker or an authenticated FlatPress/admin author is present | Resolves reply target, builds reply text, creates/edits Mastodon reply, handles pending parents and fresh old-entry comments; unapproved visitor comments are skipped and stay local.                                                                                                                                                                                               | dirty_comments, comment_reply_optins, comments, comments_remote, pending flags          | Comment export, opt-in export guard, nested reply, dirty fresh-comment and pending parent tests.       |
 | P7  | Media export                                                                          | Local entry export/update                                                                                                                                                                        | Collects image/gallery/audio/video BBCode media, validates files, selects one Mastodon-compatible media family, uploads/polls/reuses/cleans up.                                                                                                                                                                                                                                     | entry media metadata, rate-limit-windows.json                                           | Media upload, AudioVideo, media-family selection, thumbnail, processing and cleanup tests.             |
 | P8  | Media import                                                                          | Remote status/reply import                                                                                                                                                                       | Downloads media via URL fallback order and builds FlatPress BBCode or AudioVideo tags.                                                                                                                                                                                                                                                                                              | imported entry/comment content, media files, captions                                   | Remote media import tests.                                                                             |
@@ -129,8 +129,8 @@ flowchart TD
     Relative{"Relative URL or configured blog-base match?"}
     Plain["Render plain author name"]
     Internal["Render author link without target"]
-    External["Render author link with target="_blank""]
-    Rel["rel="nofollow noopener noreferrer""]
+    External["Render author link with target=&quot;_blank&quot;"]
+    Rel["rel=&quot;nofollow noopener noreferrer&quot;"]
 
     Comment --> Empty
     Empty -- no --> Plain
@@ -172,7 +172,8 @@ flowchart TD
     Lock -- yes --> Guard
     Guard --> Profile
     Profile --> Remote
-    Remote --> Local
+    Remote -- success or import disabled --> Local
+    Remote -- failure --> Write
     Local --> Write
     Write --> Stop
 ```
@@ -229,7 +230,7 @@ Remote import must respect local deletion protection. A remote reply with a tomb
 flowchart TD
     Dirty[Dirty entry or comment]
     Parent{Reply target known?}
-    Text[Build Mastodon text with URL spans budget tags emoji]
+    Text["Entry: first [more], then server/URL budget; comment: normal reply text"]
     MediaPlan{Entry media plan}
     Upload[POST api v2 media]
     Poll[GET api v1 media id until ready]
@@ -238,25 +239,32 @@ flowchart TD
     Create[POST api v1 statuses]
     Update[PUT api v1 statuses id]
     Cleanup[DELETE unattached media on failure]
-    Mapping[Update state mappings signatures dirty flags]
+    Mapping[Update successful mappings signatures dirty flags]
+    Deferred[Keep unresolved comment dirty for retry]
+    WriteNeeded{New status or changed entry hash?}
+    Unchanged[Skip status write and clear stale dirty marker]
 
     Dirty --> Parent
-    Parent -- missing parent --> Mapping
+    Parent -- missing eligible parent --> Deferred
     Parent -- known or entry --> Text
     Text --> MediaPlan
     MediaPlan -- upload --> Upload --> Poll
     MediaPlan -- reuse --> Reuse
     MediaPlan -- description-only on >= 4.1 --> Attr
-    Poll --> Create
-    Reuse --> Update
-    Attr --> Update
+    Poll --> WriteNeeded
+    Reuse --> WriteNeeded
+    Attr --> WriteNeeded
+    MediaPlan -- no media --> WriteNeeded
+    WriteNeeded -- new --> Create
+    WriteNeeded -- mapped and changed --> Update
+    WriteNeeded -- mapped and unchanged --> Unchanged
     Create --> Mapping
     Update --> Mapping
     Create -- failure after upload --> Cleanup
     Update -- failure after upload --> Cleanup
 ```
 
-URL-aware text budgeting runs before the media plan. `plugin_mastodon_status_text_url_spans()` extracts only the Mastodon-countable URL core, so punctuation after `https://...` such as commas and full stops remains in the normal text budget instead of being hidden in `characters_reserved_per_url`.
+For entries, the first case-insensitive `[more]` limits only the body before BBCode conversion. Tags and media are still collected from the complete entry, and the title/link/tag suffixes still count against the server limit. Comments keep their existing text path. URL-aware text budgeting runs before the media plan. `plugin_mastodon_status_text_url_spans()` extracts only the Mastodon-countable URL core, so punctuation after `https://...` such as commas and full stops remains in the normal text budget instead of being hidden in `characters_reserved_per_url`.
 
 The media plan is one of the most important extension points. It compares attachment signatures and description signatures. If attachments did not change, the plugin can reuse remote media IDs. If only descriptions changed and the instance supports status `media_attributes` according to `api_versions[mastodon]` or the version fallback, it updates alt text without re-uploading. Otherwise it re-uploads.
 
@@ -287,7 +295,7 @@ flowchart TD
     Entries[Find missing local mapped entries]
     Comments[Find missing local mapped comments]
     RemoteMissing[Check remote mapped statuses]
-    Version{Known Mastodon version}
+    Version{Cached API-v4 capability; version fallback}
     Old[DELETE api v1 statuses id]
     New[DELETE api v1 statuses id delete_media=1]
     Retry{Legacy error 400 405 422 or delete_media message?}
@@ -308,8 +316,8 @@ flowchart TD
     Lock -- yes --> Entries --> Version
     Lock -- yes --> Comments --> Version
     Lock -- yes --> RemoteMissing --> Tombstone
-    Version -- < 4.4 --> Old
-    Version -- >= 4.4 --> New
+    Version -- unsupported --> Old
+    Version -- supported --> New
     Version -- unknown --> New
     New --> Retry
     Retry -- yes --> RetryOld
@@ -328,8 +336,8 @@ For Mastodon before 4.4.0, the status delete endpoint exists, but the optional `
 ```mermaid
 stateDiagram-v2
     [*] --> LocalManualSave
-    LocalManualSave --> DirtyEntry: entry saved
-    LocalManualSave --> DirtyComment: comment saved
+    LocalManualSave --> DirtyEntry: mapped local entry changed
+    LocalManualSave --> DirtyComment: eligible comment with export grant
     LocalManualDelete --> DeletionsPending: mapped entry/comment deleted
 
     [*] --> PluginOwnedImport
@@ -352,7 +360,7 @@ sequenceDiagram
     participant Mastodon
     participant State
 
-    Admin->>Plugin: register / authorize / verify / run sync
+    Admin->>Plugin: register new app, authorize and verify
     Plugin->>Mastodon: GET /.well-known/oauth-authorization-server
     Mastodon-->>Plugin: scopes_supported or 404
     Plugin->>Mastodon: POST /api/v1/apps
