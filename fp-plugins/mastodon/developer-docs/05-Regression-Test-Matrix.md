@@ -10,18 +10,18 @@ The nested script resolves the blog root three directories above its location.
 A content-identical root `simulate_mastodon_plugin.php` is optional, not a file
 shipped in this snapshot. Neither CLI regression nor documentation checks require it.
 
-Normal deterministic run verified for the current More-enabled implementation:
+Normal deterministic run verified for the current implementation, including mapped-entry deletion protection:
 
 ```text
 php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --summary
 Exit-code: 0
-[OK]: 278
+[OK]: 286
 [FAIL]: 0
 [WARN]: 0
 [SKIP]: 0
 ```
 
-Static `test_result()` calls found in the script: `279`.
+Static `test_result()` calls found in the script: `287`.
 One test is optional and only runs with `--live-auth`:
 
 ```text
@@ -34,9 +34,9 @@ The catalog below is generated from all static `test_result()` calls and therefo
 
 | Category                           | Static tests |
 | ---------------------------------- | ------------ |
-| Regular simulation tests           | 278          |
+| Regular simulation tests           | 286          |
 | Optional live/auth smoke           | 1            |
-| Total static `test_result()` calls | 279          |
+| Total static `test_result()` calls | 287          |
 
 ## What the harness proves well
 
@@ -83,6 +83,25 @@ The admin-assignment regression snapshots the normalized options returned by `pl
 When a FlatPress admin deletes a comment that originally came from a Mastodon reply (`source=remote`), the harness now treats that deletion as a local ignore decision. The comment-deleted hook must set `comment_tombstones`, remove the reverse `comments_remote` mapping and avoid queuing a Mastodon `DELETE` for a status that may belong to another account. Regression coverage verifies both the unchanged reply and the edited-remote-reply case so a later `/api/v1/statuses/:id/context` pass cannot re-create the local comment, and it preserves `source=local` ownership for already exported FlatPress comments seen again in the context response.
 
 The deletion-sync cleanup regression also builds a legacy pending state with a missing local `source=remote` comment. It must mark the remote status as locally ignored, clear the mapping, leave `deleted_remote_comments` unchanged and record no outbound `DELETE` request.
+
+## Locally deleted mapped entries
+
+Eight static regression groups use the real export/delete/import/deletion functions. They
+cover the exact normal manual reproduction, scheduled and full manual content runs, enabled
+remote updates with comment/reply synchronization enabled, direct file removal without the hook,
+matching hashes, remote-sourced entry
+mappings, disabled deletion synchronization, HTTP 500 with protected replay and successful
+retry, and an already missing remote status. The disabled-deletion case asserts no outbound
+DELETE and retained mappings. The successful cases assert one deletion counter increment,
+removed forward/reverse mappings, cleared pending work and no recreated entry.
+
+The replay includes remote media in changed-content cases: there must be no media download,
+remote write or immediate thread-context request. Skipped entries still advance the remote
+status cursor. A direct import-boundary assertion requires false with unchanged state and zero
+requests, including matching hashes. A version matrix covers 4.0.0, 4.3.0, 4.4.0, 4.5.0, 4.6.0 and
+5.0.0-nightly.2026-10-22, asserting the exact DELETE URL. An unknown-capability fixture asserts
+the legacy retry without the media parameter. Existing comment/reply, one-way, deletion cursor
+and descendant reconciliation tests remain part of the full run.
 
 ## Locally deleted exported comments and remote-ID ownership
 
@@ -426,3 +445,11 @@ comparison with the PHP control flow remains a separate review step.
 | 13993 | Mastodon widget uses a localized fallback avatar alt text for Mastodon 4.0-4.5 account payloads without avatar_description                                      |
 | 14012 | Mastodon widget hides incomplete local profile caches instead of falling back to remote avatar URLs                                                             |
 | 14037 | Mastodon widget is registered and translated in all FlatPress plugin language files                                                                             |
+| 14220 | Normal content sync preserves a deleted exported entry and its mapping until deletion sync removes the Mastodon status                                          |
+| 14228 | Scheduled and full content sync cannot resurrect deleted mapped entries even when remote updates are enabled                                                    |
+| 14235 | Entry import deletion protection precedes matching hashes and covers bypassed hooks and remote-sourced mappings                                                 |
+| 14240 | Disabling deletion sync preserves missing entry mappings without recreating local content or deleting remote statuses                                           |
+| 14245 | Failed remote entry deletion retains import protection and mapping ownership until a successful retry                                                           |
+| 14250 | Entry deletion after a protected content replay accepts an already missing Mastodon status                                                                      |
+| 14261 | Deleted entry replay and deletion remain compatible with Mastodon 4.0 through 5.0 nightly API capability gates                                                  |
+| 14266 | Protected entry deletion retains the legacy retry without delete_media when instance capability is unknown                                                      |

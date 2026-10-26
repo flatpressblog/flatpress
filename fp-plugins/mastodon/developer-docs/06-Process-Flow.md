@@ -540,6 +540,8 @@ flowchart TD
     Next{"Next top-level status?"}
     Filter{"Visibility, reblog/reply, sync window and source mapping allow import?"}
     SkipStatus["Aggregate skip reason"]
+    MissingEntry{"Remote ID maps to a missing local entry?"}
+    KeepDeleted["Skip import; preserve mapping for deletion sync"]
     Convert["Convert Mastodon HTML/media/tags to FlatPress markup"]
     StatusUrl["Read Status.url single-toot source link"]
     Footer["Append Mastodon source footer BBCode"]
@@ -565,7 +567,9 @@ flowchart TD
     Next -- "No more statuses" --> Done
     Next -- "Status available" --> Filter
     Filter -- "No" --> SkipStatus --> Next
-    Filter -- "Yes" --> Convert --> StatusUrl --> Footer --> Guard --> Save --> Ignore --> Map --> Next
+    Filter -- "Yes" --> MissingEntry
+    MissingEntry -- "Yes" --> KeepDeleted --> Next
+    MissingEntry -- "No" --> Convert --> StatusUrl --> Footer --> Guard --> Save --> Ignore --> Map --> Next
 ```
 
 The imported entry footer uses `Status.url`, which is the Mastodon single-status/toot URL, not the author `account.url`. `plugin_mastodon_imported_status_footer_bbcode()` adds `target="_blank"` and `rel="nofollow noopener noreferrer"` through FlatPress BBCode URL attributes; comment author links use the separate external-URL modifier path. The generated footer operation is <code>Append [url=... target=_blank rel=&quot;nofollow noopener noreferrer&quot;]Mastodon[/url]</code>.
@@ -1366,6 +1370,19 @@ sequenceDiagram
         Del->>State: Unlink stale remote mapping and queue dirty entry/comment for re-export
     end
 ```
+
+#### Entry deletion before the follow-up
+
+A mapped entry whose local file is missing must not enter HTML/media conversion or local
+writes. The import function returns false even if the remote status changed, its hash matches,
+remote updates are enabled, or the original delete hook was bypassed. It keeps the entry
+mapping and source intact. This check also prevents immediate context import from that status;
+known-thread rotation already excludes missing local entries.
+
+Skipped statuses returned by account-status paging still advance the content cursor. A successful content run schedules the delayed deletion follow-up only when deletion synchronization is enabled. The later deletion run consumes the preserved mapping with the existing version-aware
+DELETE helper. Success or an already missing status clears both mappings; failure retains
+them for retry. Disabled deletion sync leaves the local entry absent and remote status intact.
+See the eight entry-deletion regression groups in the regression matrix.
 
 ### 4.3 Manual full synchronization in the admin area
 

@@ -2686,9 +2686,11 @@ function plugin_mastodon_local_comment_export_grant_source($options, $comment, $
 	if (plugin_mastodon_local_comment_has_stored_reply_optin($comment)) {
 		return 'frontend';
 	}
-	// Do not grant from the current admin session alone: CommentCenter can publish visitor comments there.
-	// The stored comment itself must carry LOGGEDIN, otherwise a visitor opt-in state grant is required.
-	// This prevents moderated visitor comments without opt-in from being exported to Mastodon.
+	/**
+	 * Do not grant from the current admin session alone: CommentCenter can publish visitor comments there.
+	 * The stored comment itself must carry LOGGEDIN, otherwise a visitor opt-in state grant is required.
+	 * This prevents moderated visitor comments without opt-in from being exported to Mastodon.
+	 */
 	if (plugin_mastodon_comment_to_reply_optin_required($options) && plugin_mastodon_comment_to_reply_optin_submitted()) {
 		return 'frontend';
 	}
@@ -10017,9 +10019,9 @@ function plugin_mastodon_delete_media_attachment($options, $mediaId) {
 		return array('ok' => true, 'code' => 0, 'headers' => array(), 'body' => '', 'error' => 'unsupported_media_delete', 'skipped' => true);
 	}
 	$response = plugin_mastodon_mastodon_api($options, 'DELETE', '/api/v1/media/' . rawurlencode($mediaId), array(), true);
-	if ((isset($response['code']) ? (int) $response['code'] : 0) === 404) {
-		$response['ok'] = true;
-		$response['error'] = '';
+	if ((isset($response ['code']) ? (int) $response ['code'] : 0) === 404) {
+		$response ['ok'] = true;
+		$response ['error'] = '';
 	}
 	return $response;
 }
@@ -10035,10 +10037,10 @@ function plugin_mastodon_cleanup_uploaded_media($options, $mediaIds) {
 	$uniqueIds = array();
 	foreach ($mediaIds as $mediaId) {
 		$mediaId = trim((string) $mediaId);
-		if ($mediaId === '' || isset($uniqueIds[$mediaId])) {
+		if ($mediaId === '' || isset($uniqueIds [$mediaId])) {
 			continue;
 		}
-		$uniqueIds[$mediaId] = true;
+		$uniqueIds [$mediaId] = true;
 	}
 	$mediaIds = array_keys($uniqueIds);
 	$deleted = array();
@@ -10047,11 +10049,11 @@ function plugin_mastodon_cleanup_uploaded_media($options, $mediaIds) {
 	foreach ($mediaIds as $mediaId) {
 		plugin_mastodon_extend_time_limit(60);
 		$response = plugin_mastodon_delete_media_attachment($options, $mediaId);
-		if (!empty($response['ok'])) {
+		if (!empty($response ['ok'])) {
 			if (!empty($response['skipped'])) {
-				$skipped[] = $mediaId;
+				$skipped [] = $mediaId;
 			} else {
-				$deleted[] = $mediaId;
+				$deleted [] = $mediaId;
 			}
 			continue;
 		}
@@ -12078,8 +12080,10 @@ function plugin_mastodon_build_entry_status_text($entryId, $entry, $charLimit) {
 		$parts [] = $subject;
 	}
 	if ($content !== '') {
-		// [more] limits only the entry body; keep full content for tag metadata.
-		// Apply the existing instance/URL budget below even if the teaser is longer.
+		/**
+		 * [more] limits only the entry body; keep full content for tag metadata.
+		 * Apply the existing instance/URL budget below even if the teaser is longer.
+		 */
 		$morePosition = stripos($content, '[more]');
 		$bodyContent = $morePosition === false ? $content : substr($content, 0, $morePosition);
 		$body = plugin_mastodon_flatpress_to_mastodon($bodyContent);
@@ -12204,6 +12208,15 @@ function plugin_mastodon_import_remote_entry(&$options, &$state, $remoteStatus) 
 	$remoteId = isset($remoteStatus ['id']) ? (string) $remoteStatus ['id'] : '';
 	if ($remoteId === '' || !plugin_mastodon_remote_status_is_importable($remoteStatus)) {
 		return false;
+	}
+	// A retained entry mapping belongs to deletion reconciliation when its local file is gone.
+	// Check before media downloads and hash comparison, including legacy/manual deletions without a hook.
+	if (isset($state ['entries_remote'] [$remoteId])) {
+		$mappedLocalId = (string) $state ['entries_remote'] [$remoteId];
+		if (!entry_exists($mappedLocalId)) {
+			plugin_mastodon_log('Skipping remote status ' . $remoteId . ' because mapped local entry ' . $mappedLocalId . ' is missing; preserving its mapping for deletion synchronization');
+			return false;
+		}
 	}
 	$inReplyToRemoteId = isset($remoteStatus ['in_reply_to_id']) ? trim((string) $remoteStatus ['in_reply_to_id']) : '';
 	if (!plugin_mastodon_should_import_synced_comments_as_entries($options) && isset($state ['comments_remote'] [$remoteId]) && is_array($state ['comments_remote'] [$remoteId])) {

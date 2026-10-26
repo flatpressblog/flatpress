@@ -4,60 +4,60 @@
 
 ```mermaid
 flowchart TD
-    Request[Frontend request or admin action]
-    MaybeSync[plugin_mastodon_maybe_sync]
-    Admin[plugin_mastodon_admin_assign]
-    Head[plugin_mastodon_head]
-    Widget[Compact Mastodon profile widget]
-    ProfileCache[profile/profile.json and local avatar]
-    Css[res/mastodon.css versioned asset]
-    CommentTemplate[Leggero comment author links]
-    CommentAuthorLinks[External URL target decision]
-    RunSync[plugin_mastodon_run_sync]
-    RunDelete[plugin_mastodon_run_deletion_sync]
-    RemoteLocal[Remote to local import]
-    Notifications[Notification reply hints]
-    LocalRemote[Local to remote export]
-    Media[Media upload import cleanup]
-    State[state.json mappings dirty tombstones cursors]
-    Scheduler[scheduler-state.json compact summary]
-    API[Mastodon API]
-    Tests[Simulation regression harness]
+	Request[Frontend request or admin action]
+	MaybeSync[plugin_mastodon_maybe_sync]
+	Admin[plugin_mastodon_admin_assign]
+	Head[plugin_mastodon_head]
+	Widget[Compact Mastodon profile widget]
+	ProfileCache[profile/profile.json and local avatar]
+	Css[res/mastodon.css versioned asset]
+	CommentTemplate[Leggero comment author links]
+	CommentAuthorLinks[External URL target decision]
+	RunSync[plugin_mastodon_run_sync]
+	RunDelete[plugin_mastodon_run_deletion_sync]
+	RemoteLocal[Remote to local import]
+	Notifications[Notification reply hints]
+	LocalRemote[Local to remote export]
+	Media[Media upload import cleanup]
+	State[state.json mappings dirty tombstones cursors]
+	Scheduler[scheduler-state.json compact summary]
+	API[Mastodon API]
+	Tests[Simulation regression harness]
 
-    Request --> MaybeSync
-    Request --> Admin
-    Request --> Head
-    Request --> Widget
-    Request --> CommentTemplate
-    Head --> ProfileCache
-    Head --> Css
-    Widget --> ProfileCache
-    CommentTemplate --> CommentAuthorLinks
-    MaybeSync --> Scheduler
-    MaybeSync --> RunSync
-    MaybeSync --> RunDelete
-    Admin --> RunSync
-    Admin --> RunDelete
-    RunSync --> ProfileCache
-    RunSync --> RemoteLocal
-    RemoteLocal --> Notifications
-    RunSync --> LocalRemote
-    RemoteLocal --> Media
-    LocalRemote --> Media
-    RemoteLocal <--> State
-    LocalRemote <--> State
-    RunDelete <--> State
-    Media <--> API
-    RemoteLocal <--> API
-    Notifications <--> API
-    LocalRemote <--> API
-    RunDelete <--> API
-    Tests --> RunSync
-    Tests --> RunDelete
-    Tests --> Head
-    Tests --> Widget
-    Tests --> CommentAuthorLinks
-    Tests --> State
+	Request --> MaybeSync
+	Request --> Admin
+	Request --> Head
+	Request --> Widget
+	Request --> CommentTemplate
+	Head --> ProfileCache
+	Head --> Css
+	Widget --> ProfileCache
+	CommentTemplate --> CommentAuthorLinks
+	MaybeSync --> Scheduler
+	MaybeSync --> RunSync
+	MaybeSync --> RunDelete
+	Admin --> RunSync
+	Admin --> RunDelete
+	RunSync --> ProfileCache
+	RunSync --> RemoteLocal
+	RemoteLocal --> Notifications
+	RunSync --> LocalRemote
+	RemoteLocal --> Media
+	LocalRemote --> Media
+	RemoteLocal <--> State
+	LocalRemote <--> State
+	RunDelete <--> State
+	Media <--> API
+	RemoteLocal <--> API
+	Notifications <--> API
+	LocalRemote <--> API
+	RunDelete <--> API
+	Tests --> RunSync
+	Tests --> RunDelete
+	Tests --> Head
+	Tests --> Widget
+	Tests --> CommentAuthorLinks
+	Tests --> State
 ```
 
 ## Process catalog
@@ -93,27 +93,27 @@ For P2c, CommentCenter moderation is an explicit edge case: when a visitor sets 
 
 ```mermaid
 flowchart TD
-    Sync[plugin_mastodon_run_sync]
-    Verify[verify_credentials response]
-    Account[Public account fields display_name acct url avatar_static avatar_description]
-    CacheDir[fp-content/plugin_mastodon/profile/]
-    ProfileJson[profile.json without tokens or secrets]
-    Avatar[local avatar image]
-    Widget[plugin_mastodon_widget]
-    Complete{complete local cache?}
-    Render[subject Mastodon plus avatar name and handle]
-    Hide[return no widget]
+	Sync[plugin_mastodon_run_sync]
+	Verify[verify_credentials response]
+	Account[Public account fields display_name acct url avatar_static avatar_description]
+	CacheDir[fp-content/plugin_mastodon/profile/]
+	ProfileJson[profile.json without tokens or secrets]
+	Avatar[local avatar image]
+	Widget[plugin_mastodon_widget]
+	Complete{complete local cache?}
+	Render[subject Mastodon plus avatar name and handle]
+	Hide[return no widget]
 
-    Sync --> Verify
-    Verify --> Account
-    Account --> CacheDir
-    CacheDir --> ProfileJson
-    CacheDir --> Avatar
-    Widget --> ProfileJson
-    Widget --> Avatar
-    Widget --> Complete
-    Complete -- yes --> Render
-    Complete -- no --> Hide
+	Sync --> Verify
+	Verify --> Account
+	Account --> CacheDir
+	CacheDir --> ProfileJson
+	CacheDir --> Avatar
+	Widget --> ProfileJson
+	Widget --> Avatar
+	Widget --> Complete
+	Complete -- yes --> Render
+	Complete -- no --> Hide
 ```
 
 The widget callback never calls the Mastodon API and never downloads a remote avatar. Profile cache refresh is triggered at the start of scheduled/manual `plugin_mastodon_run_sync()` runs through account verification code that already talks to Mastodon, then the public cache stores only display name, account handle, profile URL, avatar metadata and alt-text data. This keeps normal CMS response time independent from the Mastodon instance and still refreshes the profile in pure export mode.
@@ -124,20 +124,20 @@ Imported Mastodon replies are stored as ordinary FlatPress comments. The author 
 
 ```mermaid
 flowchart TD
-    Comment["FlatPress comment author URL"]
-    Empty{"URL present?"}
-    Relative{"Relative URL or configured blog-base match?"}
-    Plain["Render plain author name"]
-    Internal["Render author link without target"]
-    External["Render author link with target=&quot;_blank&quot;"]
-    Rel["rel=&quot;nofollow noopener noreferrer&quot;"]
+	Comment["FlatPress comment author URL"]
+	Empty{"URL present?"}
+	Relative{"Relative URL or configured blog-base match?"}
+	Plain["Render plain author name"]
+	Internal["Render author link without target"]
+	External["Render author link with target=&quot;_blank&quot;"]
+	Rel["rel=&quot;nofollow noopener noreferrer&quot;"]
 
-    Comment --> Empty
-    Empty -- no --> Plain
-    Empty -- yes --> Relative
-    Relative -- yes --> Internal
-    Relative -- no --> External
-    External --> Rel
+	Comment --> Empty
+	Empty -- no --> Plain
+	Empty -- yes --> Relative
+	Relative -- yes --> Internal
+	Relative -- no --> External
+	External --> Rel
 ```
 
 Imported status source footer links are separate from comment author links: `plugin_mastodon_imported_status_footer_bbcode()` uses Mastodon `Status.url`, appends the single-toot source link to the FlatPress entry as BBCode and relies on the FlatPress BBCode URL renderer for `target="_blank"` plus `rel="nofollow noopener noreferrer"`.
@@ -148,34 +148,34 @@ The process intentionally limits new-tab behavior to absolute URLs outside the c
 
 ```mermaid
 flowchart TD
-    Start[Request or admin action]
-    Config{Instance URL and token available?}
-    TimeBasis[Stored UTC sync_time and UTC state timestamps]
-    Due{Due or forced?}
-    Cooldown{Scheduled cooldown active?}
-    Lock{sync.lock acquired?}
-    Guard[rate-limit guard start]
-    Profile[Refresh profile/avatar cache via verify_credentials]
-    Remote[Remote to local import]
-    Local[Local to remote export]
-    Write[Write state and scheduler summary]
-    Stop[Return result]
+	Start[Request or admin action]
+	Config{Instance URL and token available?}
+	TimeBasis[Stored UTC sync_time and UTC state timestamps]
+	Due{Due or forced?}
+	Cooldown{Scheduled cooldown active?}
+	Lock{sync.lock acquired?}
+	Guard[rate-limit guard start]
+	Profile[Refresh profile/avatar cache via verify_credentials]
+	Remote[Remote to local import]
+	Local[Local to remote export]
+	Write[Write state and scheduler summary]
+	Stop[Return result]
 
-    Start --> Config
-    Config -- no --> Write
-    Config -- yes --> TimeBasis --> Due
-    Due -- no --> Stop
-    Due -- yes --> Cooldown
-    Cooldown -- yes and not forced --> Stop
-    Cooldown -- no or forced --> Lock
-    Lock -- no --> Stop
-    Lock -- yes --> Guard
-    Guard --> Profile
-    Profile --> Remote
-    Remote -- success or import disabled --> Local
-    Remote -- failure --> Write
-    Local --> Write
-    Write --> Stop
+	Start --> Config
+	Config -- no --> Write
+	Config -- yes --> TimeBasis --> Due
+	Due -- no --> Stop
+	Due -- yes --> Cooldown
+	Cooldown -- yes and not forced --> Stop
+	Cooldown -- no or forced --> Lock
+	Lock -- no --> Stop
+	Lock -- yes --> Guard
+	Guard --> Profile
+	Profile --> Remote
+	Remote -- success or import disabled --> Local
+	Remote -- failure --> Write
+	Local --> Write
+	Write --> Stop
 ```
 
 Manual sync bypasses the daily due check and can request a full window, but it still uses `sync.lock`, request budgets, media/delete windows, the sync-time profile/avatar refresh and UTC state writes. The automatic due check treats stored `sync_time`, `last_run`, `last_deletion_run` and `deletions_not_before` as UTC so host or plugin changes to PHP's default timezone do not shift the daily 03:00-style FlatPress-local schedule. This matters on shared hosting: manual repair must not become unbounded.
@@ -184,84 +184,94 @@ Manual sync bypasses the daily due check and can request a full window, but it s
 
 ```mermaid
 flowchart TD
-    Verify[verify_credentials]
-    Pages[GET account statuses pages]
-    Direct[Optional exclude_direct=true when 4.6/API-v10 support is cached]
-    DirectFallback[Retry once without exclude_direct on compatible rejection]
-    Filter{Importable? public or unlisted within window}
-    Known{Known remote id?}
-    Entry[Import or update FlatPress entry]
-    Context[Fetch context for known threads]
-    Tombstone{Reply tombstoned?}
-    MissingLocal{Known source=local mapping but local file missing?}
-    Protect[Create local_deleted_pending_remote_delete tombstone]
-    Conflict{Remote ID already owned by another local comment?}
-    Desc[Import descendants as comments]
-    Recheck[Queue pending recheck if parent unavailable]
-    State[Update mappings stats last_remote_status_id]
+	Verify[verify_credentials]
+	Pages[GET account statuses pages]
+	Direct[Optional exclude_direct=true when 4.6/API-v10 support is cached]
+	DirectFallback[Retry once without exclude_direct on compatible rejection]
+	Filter{Importable? public or unlisted within window}
+	Known{Known remote id?}
+	MissingEntry{Mapped entry file missing?}
+	PreserveEntry[Skip entry import; preserve mapping for deletion sync]
+	Entry[Import or update FlatPress entry]
+	Context[Fetch context for known threads]
+	Tombstone{Reply tombstoned?}
+	MissingLocal{Known source=local mapping but local file missing?}
+	Protect[Create local_deleted_pending_remote_delete tombstone]
+	Conflict{Remote ID already owned by another local comment?}
+	Desc[Import descendants as comments]
+	Recheck[Queue pending recheck if parent unavailable]
+	State[Update mappings stats last_remote_status_id]
 
-    Verify --> Pages --> Direct
-    Direct --> Filter
-    Direct -- 400/405/422 rejection --> DirectFallback --> Filter
-    Filter -- no --> State
-    Filter -- yes --> Known
-    Known -- top-level --> Entry
-    Known -- thread target --> Context
-    Entry --> Context
-    Context --> Tombstone
-    Tombstone -- yes --> State
-    Tombstone -- no --> MissingLocal
-    MissingLocal -- yes --> Protect --> State
-    MissingLocal -- no --> Conflict
-    Conflict -- yes --> State
-    Conflict -- no --> Desc
-    Desc --> Recheck
-    Desc --> State
-    Recheck --> State
+	Verify --> Pages --> Direct
+	Direct --> Filter
+	Direct -- 400/405/422 rejection --> DirectFallback --> Filter
+	Filter -- no --> State
+	Filter -- yes --> Known
+	Known -- top-level --> MissingEntry
+	MissingEntry -- yes --> PreserveEntry --> State
+	MissingEntry -- no --> Entry
+	Known -- thread target --> Context
+	Entry --> Context
+	Context --> Tombstone
+	Tombstone -- yes --> State
+	Tombstone -- no --> MissingLocal
+	MissingLocal -- yes --> Protect --> State
+	MissingLocal -- no --> Conflict
+	Conflict -- yes --> State
+	Conflict -- no --> Desc
+	Desc --> Recheck
+	Desc --> State
+	Recheck --> State
 ```
 
 Remote import must respect local deletion protection. A remote reply with a tombstone must not be recreated as a FlatPress comment merely because it appears again in a context response. The import boundary also performs a targeted reverse-index lookup: when `comments_remote[remoteId]` refers to a missing `source=local` FlatPress comment, it loads only that entry's comment shard, creates `local_deleted_pending_remote_delete`, and skips the import. This defensive path covers legacy/manual file deletions that bypassed the normal hook without turning a partial content sync into a full-shard load.
 
 `comments_remote` is the authoritative one-to-one owner index for replies. A new mapping is rejected when the same remote ID already belongs to a different local comment; a legitimate remap of the same local comment to a new remote ID removes the obsolete reverse-index entry. When `disable_remote_import` is enabled, the whole Mastodon-to-FlatPress import family is skipped before account-status paging, context traversal or notification-hint imports can write local entries/comments. The local-to-remote export family remains active.
 
+For P3, check local existence through the retained entry reverse mapping before converting
+HTML/media or comparing hashes. A missing mapped entry must return false, preventing both a
+replacement entry and its immediate thread-context import. Keep the forward/reverse mapping,
+hash and source unchanged for P9. This also protects matching-hash, edited-status and
+bypassed-hook cases. Unmapped remote statuses still follow the normal new-entry import path.
+
 ## P5/P6/P7 — Local export and media lifecycle
 
 ```mermaid
 flowchart TD
-    Dirty[Dirty entry or comment]
-    Parent{Reply target known?}
-    Text["Entry: first [more], then server/URL budget; comment: normal reply text"]
-    MediaPlan{Entry media plan}
-    Upload[POST api v2 media]
-    Poll[GET api v1 media id until ready]
-    Reuse[Reuse existing media ids]
-    Attr[Use media_attributes if supported]
-    Create[POST api v1 statuses]
-    Update[PUT api v1 statuses id]
-    Cleanup[DELETE unattached media on failure]
-    Mapping[Update successful mappings signatures dirty flags]
-    Deferred[Keep unresolved comment dirty for retry]
-    WriteNeeded{New status or changed entry hash?}
-    Unchanged[Skip status write and clear stale dirty marker]
+	Dirty[Dirty entry or comment]
+	Parent{Reply target known?}
+	Text["Entry: first [more], then server/URL budget; comment: normal reply text"]
+	MediaPlan{Entry media plan}
+	Upload[POST api v2 media]
+	Poll[GET api v1 media id until ready]
+	Reuse[Reuse existing media ids]
+	Attr[Use media_attributes if supported]
+	Create[POST api v1 statuses]
+	Update[PUT api v1 statuses id]
+	Cleanup[DELETE unattached media on failure]
+	Mapping[Update successful mappings signatures dirty flags]
+	Deferred[Keep unresolved comment dirty for retry]
+	WriteNeeded{New status or changed entry hash?}
+	Unchanged[Skip status write and clear stale dirty marker]
 
-    Dirty --> Parent
-    Parent -- missing eligible parent --> Deferred
-    Parent -- known or entry --> Text
-    Text --> MediaPlan
-    MediaPlan -- upload --> Upload --> Poll
-    MediaPlan -- reuse --> Reuse
-    MediaPlan -- description-only on >= 4.1 --> Attr
-    Poll --> WriteNeeded
-    Reuse --> WriteNeeded
-    Attr --> WriteNeeded
-    MediaPlan -- no media --> WriteNeeded
-    WriteNeeded -- new --> Create
-    WriteNeeded -- mapped and changed --> Update
-    WriteNeeded -- mapped and unchanged --> Unchanged
-    Create --> Mapping
-    Update --> Mapping
-    Create -- failure after upload --> Cleanup
-    Update -- failure after upload --> Cleanup
+	Dirty --> Parent
+	Parent -- missing eligible parent --> Deferred
+	Parent -- known or entry --> Text
+	Text --> MediaPlan
+	MediaPlan -- upload --> Upload --> Poll
+	MediaPlan -- reuse --> Reuse
+	MediaPlan -- description-only on >= 4.1 --> Attr
+	Poll --> WriteNeeded
+	Reuse --> WriteNeeded
+	Attr --> WriteNeeded
+	MediaPlan -- no media --> WriteNeeded
+	WriteNeeded -- new --> Create
+	WriteNeeded -- mapped and changed --> Update
+	WriteNeeded -- mapped and unchanged --> Unchanged
+	Create --> Mapping
+	Update --> Mapping
+	Create -- failure after upload --> Cleanup
+	Update -- failure after upload --> Cleanup
 ```
 
 For entries, the first case-insensitive `[more]` limits only the body before BBCode conversion. Tags and media are still collected from the complete entry, and the title/link/tag suffixes still count against the server limit. Comments keep their existing text path. URL-aware text budgeting runs before the media plan. `plugin_mastodon_status_text_url_spans()` extracts only the Mastodon-countable URL core, so punctuation after `https://...` such as commas and full stops remains in the normal text budget instead of being hidden in `characters_reserved_per_url`.
@@ -282,71 +292,80 @@ This policy belongs in the export planner, not in the raw collector. The collect
 
 ```mermaid
 flowchart TD
-    LocalDelete[FlatPress comment_deleted hook]
-    Source{Mapping source}
-    Immediate[For source=local create tombstone immediately and preserve mapping]
-    Ignore[For source=remote create ignore tombstone and remove mapping]
-    Start[Scheduled follow-up or admin deletion sync]
-    Enabled{delete_sync_enabled?}
-    Pending{pending or forced?}
-    UtcCooldown[Parse deletions_not_before as UTC]
-    Due{due?}
-    Lock{sync.lock acquired?}
-    Entries[Find missing local mapped entries]
-    Comments[Find missing local mapped comments]
-    RemoteMissing[Check remote mapped statuses]
-    Version{Cached API-v4 capability; version fallback}
-    Old[DELETE api v1 statuses id]
-    New[DELETE api v1 statuses id delete_media=1]
-    Retry{Legacy error 400 405 422 or delete_media message?}
-    RetryOld[Retry DELETE without delete_media]
-    Tombstone[Write tombstone or queue descendants recheck]
-    State[Update cursors pending stats last_deletion_run UTC]
+	EntryDelete[FlatPress entry_deleted hook]
+	EntryPending[Preserve entry mapping and mark deletion pending]
+	LocalDelete[FlatPress comment_deleted hook]
+	Source{Mapping source}
+	Immediate[For source=local create tombstone immediately and preserve mapping]
+	Ignore[For source=remote create ignore tombstone and remove mapping]
+	Start[Scheduled follow-up or admin deletion sync]
+	Enabled{delete_sync_enabled?}
+	Pending{pending or forced?}
+	UtcCooldown[Parse deletions_not_before as UTC]
+	Due{due?}
+	Lock{sync.lock acquired?}
+	Entries[Find missing local mapped entries]
+	Comments[Find missing local mapped comments]
+	RemoteMissing[Check remote mapped statuses]
+	Version{Cached API-v4 capability; version fallback}
+	Old[DELETE api v1 statuses id]
+	New[DELETE api v1 statuses id delete_media=1]
+	Retry{Legacy error 400 405 422 or delete_media message?}
+	RetryOld[Retry DELETE without delete_media]
+	Tombstone[Write tombstone or queue descendants recheck]
+	State[Update cursors pending stats last_deletion_run UTC]
 
-    LocalDelete --> Source
-    Source -- local --> Immediate --> Start
-    Source -- remote --> Ignore --> State
-    Start --> Enabled
-    Enabled -- no --> State
-    Enabled -- yes --> Pending
-    Pending -- no and not forced --> State
-    Pending --> UtcCooldown --> Due
-    Due -- no --> State
-    Due -- yes --> Lock
-    Lock -- yes --> Entries --> Version
-    Lock -- yes --> Comments --> Version
-    Lock -- yes --> RemoteMissing --> Tombstone
-    Version -- unsupported --> Old
-    Version -- supported --> New
-    Version -- unknown --> New
-    New --> Retry
-    Retry -- yes --> RetryOld
-    Retry -- no --> Tombstone
-    Old --> Tombstone
-    RetryOld --> Tombstone
-    Tombstone --> State
+	EntryDelete --> EntryPending --> Start
+	LocalDelete --> Source
+	Source -- local --> Immediate --> Start
+	Source -- remote --> Ignore --> State
+	Start --> Enabled
+	Enabled -- no --> State
+	Enabled -- yes --> Pending
+	Pending -- no and not forced --> State
+	Pending --> UtcCooldown --> Due
+	Due -- no --> State
+	Due -- yes --> Lock
+	Lock -- yes --> Entries --> Version
+	Lock -- yes --> Comments --> Version
+	Lock -- yes --> RemoteMissing --> Tombstone
+	Version -- unsupported --> Old
+	Version -- supported --> New
+	Version -- unknown --> New
+	New --> Retry
+	Retry -- yes --> RetryOld
+	Retry -- no --> Tombstone
+	Old --> Tombstone
+	RetryOld --> Tombstone
+	Tombstone --> State
 ```
 
 For an exported `source=local` comment, `plugin_mastodon_on_comment_deleted()` creates the `local_deleted_pending_remote_delete` tombstone in the same hook transaction that marks deletion work pending. It deliberately preserves the mapping so deletion sync still knows which owned Mastodon reply to delete. Content sync may run first, but both the tombstone and the import-boundary fallback prevent a stale context response from recreating the FlatPress comment.
 
 For Mastodon before 4.4.0, the status delete endpoint exists, but the optional `delete_media` parameter is not documented. The plugin therefore omits it when the cached version is known to be older and retries without it for unknown-version legacy failures.
 
+A locally deleted mapped entry remains absent during intervening content syncs. P9 continues
+to delete its remote status, removing both entry mappings only after success or an already
+missing status response. Failed remote deletion retains the mapping and pending work for retry.
+With deletion sync disabled, content import still refuses to restore that missing entry; P9
+keeps its mapping and sends no DELETE. The existing start-date and cooldown gates are unchanged.
+
 ## P10 — Dirty tracking and remote-write guard
 
 ```mermaid
 stateDiagram-v2
-    [*] --> LocalManualSave
-    LocalManualSave --> DirtyEntry: mapped local entry changed
-    LocalManualSave --> DirtyComment: eligible comment with export grant
-    LocalManualDelete --> DeletionsPending: mapped entry/comment deleted
+	[*] --> LocalManualSave
+	LocalManualSave --> DirtyEntry: mapped local entry changed
+	LocalManualSave --> DirtyComment: eligible comment with export grant
+	LocalManualDelete --> DeletionsPending: mapped entry/comment deleted
 
-    [*] --> PluginOwnedImport
-    PluginOwnedImport --> Clean: remote-write guard active
-    Clean --> [*]
+	[*] --> PluginOwnedImport
+	PluginOwnedImport --> Clean: remote-write guard active
+	Clean --> [*]
 
-    DirtyEntry --> LocalToRemoteSync
-    DirtyComment --> LocalToRemoteSync
-    DeletionsPending --> DeletionSync
+	DirtyEntry --> LocalToRemoteSync
+	DirtyComment --> LocalToRemoteSync
+	DeletionsPending --> DeletionSync
 ```
 
 A remote import writes FlatPress files too. The remote-write guard prevents those plugin-owned writes from being treated as local user edits that would immediately export back to Mastodon.
@@ -355,22 +374,22 @@ A remote import writes FlatPress files too. The remote-write guard prevents thos
 
 ```mermaid
 sequenceDiagram
-    participant Admin
-    participant Plugin
-    participant Mastodon
-    participant State
+	participant Admin
+	participant Plugin
+	participant Mastodon
+	participant State
 
-    Admin->>Plugin: register new app, authorize and verify
-    Plugin->>Mastodon: GET /.well-known/oauth-authorization-server
-    Mastodon-->>Plugin: scopes_supported or 404
-    Plugin->>Mastodon: POST /api/v1/apps
-    Plugin->>Admin: authorization URL
-    Admin->>Plugin: authorization code
-    Plugin->>Mastodon: POST /oauth/token
-    Plugin->>Mastodon: GET /api/v1/accounts/verify_credentials
-    Plugin->>Mastodon: GET /api/v2/instance
-    Plugin->>State: store compact instance info and status
-    Plugin->>Admin: diagnostics rows and manual results
+	Admin->>Plugin: register new app, authorize and verify
+	Plugin->>Mastodon: GET /.well-known/oauth-authorization-server
+	Mastodon-->>Plugin: scopes_supported or 404
+	Plugin->>Mastodon: POST /api/v1/apps
+	Plugin->>Admin: authorization URL
+	Admin->>Plugin: authorization code
+	Plugin->>Mastodon: POST /oauth/token
+	Plugin->>Mastodon: GET /api/v1/accounts/verify_credentials
+	Plugin->>Mastodon: GET /api/v2/instance
+	Plugin->>State: store compact instance info and status
+	Plugin->>Admin: diagnostics rows and manual results
 ```
 
 Admin diagnostics should remain cheap enough for normal admin page loads while still showing enough information to diagnose missing credentials, stale state, companion plugin availability and last sync/deletion results.

@@ -24,7 +24,7 @@ This matrix links implementation functions to the process map. It is intentional
 | plugin_mastodon_build_entry_status_text                                                                                                                                                                                                                                                                                                                                          | P5                   | Builds Mastodon text from the entry body before the first [more], then applies the instance/URL budget.                                                    | Entry title, More-limited body, full-entry tags, URL budget, instance limits                       | Adds permalink and hashtag footer.                                                                                                                                                      | Text/tag/URL tests                                             |
 | plugin_mastodon_build_comment_status_text                                                                                                                                                                                                                                                                                                                                        | P6                   | Builds Mastodon reply text from FlatPress comment.                                                                                                         | Comment author/body, public comment URL                                                            | Localizes and converts text/emoji.                                                                                                                                                      | Comment export tests                                           |
 | plugin_mastodon_status_text_url_spans / plugin_mastodon_status_text_length / plugin_mastodon_limit_status_text                                                                                                                                                                                                                                                                   | P5/P6                | Apply Mastodon-compatible URL placeholder budgeting before truncating status text.                                                                         | Plain status text and `configuration.statuses.characters_reserved_per_url`                         | Treats trailing sentence punctuation as normal text so the server-side 500-character validator is not exceeded by URL-adjacent commas or full stops.                                    | URL punctuation-budget regression tests                        |
-| plugin_mastodon_import_remote_entry                                                                                                                                                                                                                                                                                                                                              | P3/P8                | Writes a remote top-level status as FlatPress entry.                                                                                                       | Remote status JSON                                                                                 | Writes entry, media, tags, mappings and the imported status source footer built from `Status.url`.                                                                                      | Remote entry import tests                                      |
+| plugin_mastodon_import_remote_entry                                                                                                                                                                                                                                                                                                                                              | P3/P8/P9             | Imports a remote entry unless its mapped local entry was deleted.                                                                                          | Remote status JSON                                                                                 | Writes entry, media, tags, mappings and the imported status source footer built from `Status.url`.                                                                                      | Remote entry import tests                                      |
 | plugin_mastodon_imported_status_footer_bbcode                                                                                                                                                                                                                                                                                                                                    | P3                   | Builds the imported Mastodon status source footer BBCode.                                                                                                  | Mastodon `Status.url`                                                                              | Emits `[url=... target=_blank rel="nofollow noopener noreferrer"]Mastodon[/url]` for the single toot/status.                                                                            | Status-footer target tests                                     |
 | plugin_mastodon_import_remote_comment / plugin_mastodon_protect_missing_local_exported_comment_by_remote_id                                                                                                                                                                                                                                                                      | P4/P8/P9             | Imports a remote reply only after enforcing local-deletion ownership.                                                                                      | Remote context descendant, `comments_remote`, targeted comment shard                               | Recreates a pending-delete tombstone for a missing `source=local` file and refuses stale import without loading all shards.                                                             | Partial-sync and bypass-hook tests                             |
 | plugin_mastodon_fetch_reply_notifications / plugin_mastodon_process_remote_reply_notifications                                                                                                                                                                                                                                                                                   | P4a                  | Polls mention notifications and prioritizes old-thread reply hints.                                                                                        | notifications API, last_remote_notification_id, comments_remote                                    | Directly imports mapped-parent replies or spends the old-thread context budget.                                                                                                         | Notification hint tests                                        |
@@ -44,41 +44,48 @@ This matrix links implementation functions to the process map. It is intentional
 
 CommentCenter compatibility is split deliberately: `plugin_mastodon_on_commentcenter_comment_logged()` records the visitor opt-in grant and portable pending-file basename while the comment is only pending; `plugin_mastodon_on_comment_saved()` finalizes that marker and queues the approved comment; `plugin_mastodon_on_commentcenter_comment_discarded()` removes grants for intentionally rejected pending records. `plugin_mastodon_state_prune_orphaned_pending_comment_reply_optins()` is a bounded fallback for files removed outside the normal CommentCenter action. With CommentCenter disabled, the direct `comment_saved` path remains sufficient.
 
+### Entry deletion ownership at the import boundary
+
+<code>plugin_mastodon_import_remote_entry()</code> also enforces P9 ownership: a reverse-mapped
+entry with no local file is skipped before HTML/media work or hash comparison. It leaves the
+mapping available to <code>plugin_mastodon_run_deletion_sync()</code>. This boundary check covers
+manual filesystem deletion without loading all comment shards or adding API requests.
+
 ## Function families
 
 ```mermaid
 flowchart TD
-    EntryPoints[Entry points admin scheduler hooks]
-    Config[Defaults config OAuth instance capabilities]
-    CommentReplyGate[Comment/reply synchronization gate]
-    CommentOptin[Visitor comment Mastodon opt-in]
-    State[State scheduler logging filesystem guards]
-    Text["Entry [more] boundary; URL budgets tags emoji BBCode HTML conversion"]
-    Media[Media extraction validation upload import cleanup]
-    API[HTTP transport Mastodon API wrappers]
-    Sync[Import export deletion orchestrators]
-    Notifications[Notification hint processing]
-    Admin[Admin diagnostics and Smarty assignment]
-    Widget[Local profile widget and profile cache]
+	EntryPoints[Entry points admin scheduler hooks]
+	Config[Defaults config OAuth instance capabilities]
+	CommentReplyGate[Comment/reply synchronization gate]
+	CommentOptin[Visitor comment Mastodon opt-in]
+	State[State scheduler logging filesystem guards]
+	Text["Entry [more] boundary; URL budgets tags emoji BBCode HTML conversion"]
+	Media[Media extraction validation upload import cleanup]
+	API[HTTP transport Mastodon API wrappers]
+	Sync[Import export deletion orchestrators]
+	Notifications[Notification hint processing]
+	Admin[Admin diagnostics and Smarty assignment]
+	Widget[Local profile widget and profile cache]
 
-    EntryPoints --> Sync
-    Config --> CommentReplyGate
-    CommentReplyGate --> Sync
-    CommentReplyGate --> State
-    CommentOptin --> State
-    CommentReplyGate --> Notifications
-    EntryPoints --> Admin
-    EntryPoints --> Widget
-    Sync --> State
-    Sync --> Text
-    Sync --> Media
-    Sync --> API
-    Sync --> Widget
-    Admin --> Config
-    Admin --> State
-    API --> Config
-    API --> Widget
-    Media --> API
+	EntryPoints --> Sync
+	Config --> CommentReplyGate
+	CommentReplyGate --> Sync
+	CommentReplyGate --> State
+	CommentOptin --> State
+	CommentReplyGate --> Notifications
+	EntryPoints --> Admin
+	EntryPoints --> Widget
+	Sync --> State
+	Sync --> Text
+	Sync --> Media
+	Sync --> API
+	Sync --> Widget
+	Admin --> Config
+	Admin --> State
+	API --> Config
+	API --> Widget
+	Media --> API
 ```
 
 ## Change impact examples
