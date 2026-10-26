@@ -14044,6 +14044,230 @@ $allOk = test_result(
 	))
 ) && $allOk;
 
+/**
+ * Exercise export -> local deletion -> content replay -> remote deletion with the real plugin.
+ * All content and requests belong to the simulator sandbox.
+ * @param array<string, mixed> $case
+ * @return array<string, mixed>
+ */
+function simulate_run_entry_deletion_replay_case($case = array()) {
+	$previousOptions = plugin_mastodon_get_options();
+	$hadTestNow = array_key_exists('plugin_mastodon_test_now', $GLOBALS);
+	$previousTestNow = $hadTestNow ? $GLOBALS ['plugin_mastodon_test_now'] : null;
+	$GLOBALS ['plugin_mastodon_test_now'] = strtotime('2036-06-15 12:00:00 UTC');
+	$options = plugin_mastodon_default_options();
+	$options ['instance_url'] = 'https://mastodon.example';
+	$options ['access_token'] = 'entry-deletion-fixture-token';
+	$options ['sync_time'] = '00:00';
+	$options ['disable_comment_reply_sync'] = !empty($case ['comments_enabled']) ? '0' : '1';
+	$options ['update_local_from_remote'] = !empty($case ['allow_updates']) ? '1' : '0';
+	$options ['delete_sync_enabled'] = !empty($case ['delete_disabled']) ? '0' : '1';
+	$version = isset($case ['version']) ? (string) $case ['version'] : '4.0.0';
+	$mode = isset($case ['mode']) ? (string) $case ['mode'] : 'normal';
+	plugin_mastodon_save_options($options);
+	plugin_mastodon_runtime_cache_clear();
+	plugin_mastodon_sync_guard_clear('content');
+	plugin_mastodon_sync_guard_clear('deletion');
+	plugin_mastodon_rate_limit_window_clear();
+	simulate_delete_recursive(ABS_PATH . FP_CONTENT . 'content');
+	@mkdir(ABS_PATH . FP_CONTENT . 'content', 0777, true);
+	plugin_mastodon_state_write(plugin_mastodon_default_state());
+
+	$base = $options ['instance_url'];
+	$remote = array(
+		'id' => '99001', 'visibility' => 'public', 'created_at' => '2036-06-15T10:00:00Z',
+		'content' => '<p>Entry deletion replay body</p>', 'url' => $base . '/@fixture/99001',
+		'account' => array('id' => 'acct1', 'acct' => 'fixture', 'display_name' => 'Fixture')
+	);
+	$success = function ($json) {
+		return array('ok' => true, 'code' => 200, 'body' => json_encode($json));
+	};
+	$statusesKey = 'GET ' . $base . '/api/v1/accounts/acct1/statuses?limit=40&exclude_reblogs=true&exclude_replies=true';
+	if ($version !== '' && version_compare($version, '4.6.0', '>=')) {
+		$statusesKey .= '&exclude_direct=true';
+	}
+	$deleteKey = 'DELETE ' . $base . '/api/v1/statuses/99001';
+	$useDeleteMedia = $version === '' || version_compare($version, '4.4.0', '>=');
+	$effectiveDeleteKey = $deleteKey . ($useDeleteMedia ? '?delete_media=1' : '');
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+		'GET ' . $base . '/api/v2/instance' => $success(array('version' => $version, 'configuration' => array('statuses' => array('max_characters' => 500)))),
+		'GET ' . $base . '/api/v1/accounts/verify_credentials' => $success(array('id' => 'acct1', 'username' => 'fixture')),
+		'GET ' . $base . '/api/v1/notifications?limit=30&types%5B%5D=mention' => $success(array()),
+		$statusesKey => $success(array()),
+		'POST ' . $base . '/api/v1/statuses' => $success($remote),
+		'GET ' . $base . '/api/v1/statuses/99001' => $success($remote),
+		$effectiveDeleteKey => $success(array())
+	);
+	$entry = array(
+		'version' => system_ver(), 'subject' => 'Original local subject',
+		'content' => 'Entry deletion replay body', 'author' => 'Fixture',
+		'date' => strtotime('2036-06-15 10:00:00 UTC')
+	);
+	$entryId = (string) entry_save($entry, null);
+	$initial = plugin_mastodon_run_sync(true, false);
+	$initialState = $initial ['state'];
+	$exported = !empty($initial ['ok']) && isset($initialState ['entries'] [$entryId] ['source'])
+		&& $initialState ['entries'] [$entryId] ['source'] === 'local'
+		&& (string) $initialState ['entries_remote'] ['99001'] === $entryId;
+	if (!empty($case ['bypass_hook'])) {
+		$file = entry_exists($entryId);
+		if ($file) {
+			unlink($file);
+			clearstatcache(true, $file);
+		}
+	} else {
+		entry_delete($entryId);
+	}
+	$state = plugin_mastodon_state_read(array());
+	$absentAfterDelete = !entry_exists($entryId);
+	if (!empty($case ['remote_source'])) {
+		$state ['entries'] [$entryId] ['source'] = 'remote';
+	}
+	if (!empty($case ['matching_hash'])) {
+		$expected = array(
+			'subject' => plugin_mastodon_guess_subject('Entry deletion replay body'),
+			'content' => "Entry deletion replay body\n" . plugin_mastodon_imported_status_footer_bbcode($remote ['url'])
+		);
+		$state ['entries'] [$entryId] ['hash'] = plugin_mastodon_entry_hash($expected);
+	} else {
+		// A replay with media must be rejected before the download path has any side effects.
+		$remote ['edited_at'] = '2036-06-15T11:00:00Z';
+		$remote ['media_attachments'] = array(array('id' => '99002', 'type' => 'image', 'url' => 'https://media.example/deleted-entry.jpg'));
+	}
+	$mappingBefore = $state ['entries'] [$entryId];
+	$state ['last_run'] = '';
+	plugin_mastodon_state_write($state);
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$GLOBALS ['plugin_mastodon_test_http_responses'] [$statusesKey] = $success(array($remote));
+	$content = $mode === 'scheduled' ? plugin_mastodon_run_sync(false) : plugin_mastodon_run_sync(true, $mode === 'full');
+	$contentState = $content ['state'];
+	$contentRequests = simulate_recorded_http_requests();
+	$noMediaOrWrites = true;
+	foreach ($contentRequests as $request) {
+		if ($request ['method'] !== 'GET' || strpos($request ['url'], 'media.example') !== false || strpos($request ['url'], '/context') !== false) {
+			$noMediaOrWrites = false;
+		}
+	}
+	$protected = !empty($content ['ok']) && !entry_exists($entryId)
+		&& $contentState ['entries'] [$entryId] === $mappingBefore
+		&& (string) $contentState ['entries_remote'] ['99001'] === $entryId
+		&& (string) $contentState ['last_remote_status_id'] === '99001'
+		&& $contentState ['content_stats'] ['imported_entries'] === 0
+		&& $contentState ['content_stats'] ['updated_entries'] === 0 && $noMediaOrWrites;
+	// Matching hashes must also return false, so callers cannot start context import for a deleted entry.
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$boundaryState = $contentState;
+	$boundaryResult = plugin_mastodon_import_remote_entry($options, $boundaryState, $remote);
+	$protected = $protected && $boundaryResult === false && $boundaryState === $contentState
+		&& simulate_recorded_http_requests() === array();
+	$retryProtected = true;
+	if (!empty($case ['retry'])) {
+		$GLOBALS ['plugin_mastodon_test_http_responses'] [$effectiveDeleteKey] = array('ok' => false, 'code' => 500, 'body' => '{"error":"temporary failure"}');
+		simulate_allow_pending_deletion_sync();
+		$failed = plugin_mastodon_run_deletion_sync(true);
+		$retryState = $failed ['state'];
+		$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+		$replayResult = plugin_mastodon_import_remote_entry($options, $retryState, $remote);
+		$retryProtected = empty($failed ['ok']) && !empty($retryState ['deletions_pending'])
+			&& $replayResult === false && !entry_exists($entryId)
+			&& $retryState ['entries'] [$entryId] === $mappingBefore
+			&& simulate_recorded_http_requests() === array();
+		plugin_mastodon_state_write($retryState);
+		$GLOBALS ['plugin_mastodon_test_http_responses'] [$effectiveDeleteKey] = $success(array());
+	}
+	if (!empty($case ['legacy_fallback'])) {
+		$GLOBALS ['plugin_mastodon_test_http_responses'] [$effectiveDeleteKey] = array('ok' => false, 'code' => 422, 'body' => '{"error":"unknown delete_media parameter"}');
+		$GLOBALS ['plugin_mastodon_test_http_responses'] [$deleteKey] = $success(array());
+	} elseif (!empty($case ['already_missing'])) {
+		$GLOBALS ['plugin_mastodon_test_http_responses'] [$effectiveDeleteKey] = array('ok' => false, 'code' => 404, 'body' => '{"error":"Record not found"}');
+	}
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	simulate_allow_pending_deletion_sync();
+	$deletion = plugin_mastodon_run_deletion_sync(true);
+	$after = $deletion ['state'];
+	$deleteRequests = array();
+	foreach (simulate_recorded_http_requests() as $request) {
+		if ($request ['method'] === 'DELETE') {
+			$deleteRequests [] = 'DELETE ' . $request ['url'];
+		}
+	}
+	$expectedDeletes = !empty($case ['legacy_fallback']) ? array($effectiveDeleteKey, $deleteKey) : array($effectiveDeleteKey);
+	$deleted = !empty($deletion ['ok']) && !entry_exists($entryId)
+		&& empty($after ['entries'] [$entryId]) && empty($after ['entries_remote'] ['99001'])
+		&& $after ['deletion_stats'] ['deleted_remote_entries'] === 1
+		&& empty($after ['deletions_pending']) && $deleteRequests === $expectedDeletes;
+	$disabledPreserved = !empty($deletion ['ok']) && !entry_exists($entryId)
+		&& isset($after ['entries'] [$entryId]) && $after ['entries'] [$entryId] === $mappingBefore
+		&& empty($after ['deletions_pending']) && $deleteRequests === array();
+	plugin_mastodon_save_options($previousOptions);
+	plugin_mastodon_runtime_cache_clear();
+	if ($hadTestNow) {
+		$GLOBALS ['plugin_mastodon_test_now'] = $previousTestNow;
+	} else {
+		unset($GLOBALS ['plugin_mastodon_test_now']);
+	}
+	return array(
+		'exported' => $exported, 'absent_after_delete' => $absentAfterDelete, 'protected' => $protected,
+		'deleted' => $deleted, 'disabled_preserved' => $disabledPreserved, 'retry_protected' => $retryProtected,
+		'delete_requests' => $deleteRequests, 'case' => $case,
+		'passed' => $exported && $absentAfterDelete && $protected && $retryProtected
+			&& (!empty($case ['delete_disabled']) ? $disabledPreserved : $deleted)
+	);
+}
+
+$entryReplayNormal = simulate_run_entry_deletion_replay_case();
+$allOk = test_result(
+	'Normal content sync preserves a deleted exported entry and its mapping until deletion sync removes the Mastodon status',
+	$entryReplayNormal ['passed'], json_encode($entryReplayNormal)
+) && $allOk;
+$entryReplayModes = array(
+	simulate_run_entry_deletion_replay_case(array('mode' => 'scheduled')),
+	simulate_run_entry_deletion_replay_case(array('mode' => 'full', 'allow_updates' => true, 'comments_enabled' => true))
+);
+$allOk = test_result(
+	'Scheduled and full content sync cannot resurrect deleted mapped entries even when remote updates are enabled',
+	$entryReplayModes [0] ['passed'] && $entryReplayModes [1] ['passed'], json_encode($entryReplayModes)
+) && $allOk;
+$entryReplayBypass = simulate_run_entry_deletion_replay_case(array('bypass_hook' => true, 'matching_hash' => true));
+$entryReplayBypassChanged = simulate_run_entry_deletion_replay_case(array('bypass_hook' => true));
+$entryReplayRemote = simulate_run_entry_deletion_replay_case(array('remote_source' => true));
+$allOk = test_result(
+	'Entry import deletion protection precedes matching hashes and covers bypassed hooks and remote-sourced mappings',
+	$entryReplayBypass ['passed'] && $entryReplayBypassChanged ['passed'] && $entryReplayRemote ['passed'], json_encode(array($entryReplayBypass, $entryReplayBypassChanged, $entryReplayRemote))
+) && $allOk;
+$entryReplayDisabled = simulate_run_entry_deletion_replay_case(array('delete_disabled' => true));
+$allOk = test_result(
+	'Disabling deletion sync preserves missing entry mappings without recreating local content or deleting remote statuses',
+	$entryReplayDisabled ['passed'], json_encode($entryReplayDisabled)
+) && $allOk;
+$entryReplayRetry = simulate_run_entry_deletion_replay_case(array('retry' => true));
+$allOk = test_result(
+	'Failed remote entry deletion retains import protection and mapping ownership until a successful retry',
+	$entryReplayRetry ['passed'], json_encode($entryReplayRetry)
+) && $allOk;
+$entryReplayMissing = simulate_run_entry_deletion_replay_case(array('already_missing' => true));
+$allOk = test_result(
+	'Entry deletion after a protected content replay accepts an already missing Mastodon status',
+	$entryReplayMissing ['passed'], json_encode($entryReplayMissing)
+) && $allOk;
+$entryReplayVersionResults = array();
+$entryReplayVersionsOk = true;
+foreach (array('4.0.0', '4.3.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-nightly.2026-10-22') as $entryReplayVersion) {
+	$entryReplayVersionResult = simulate_run_entry_deletion_replay_case(array('version' => $entryReplayVersion));
+	$entryReplayVersionsOk = $entryReplayVersionsOk && $entryReplayVersionResult ['passed'];
+	$entryReplayVersionResults [] = $entryReplayVersionResult;
+}
+$allOk = test_result(
+	'Deleted entry replay and deletion remain compatible with Mastodon 4.0 through 5.0 nightly API capability gates',
+	$entryReplayVersionsOk, json_encode($entryReplayVersionResults)
+) && $allOk;
+$entryReplayLegacy = simulate_run_entry_deletion_replay_case(array('version' => '', 'legacy_fallback' => true));
+$allOk = test_result(
+	'Protected entry deletion retains the legacy retry without delete_media when instance capability is unknown',
+	$entryReplayLegacy ['passed'], json_encode($entryReplayLegacy)
+) && $allOk;
+
 plugin_mastodon_save_options($schedulerOriginalOptions);
 
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();

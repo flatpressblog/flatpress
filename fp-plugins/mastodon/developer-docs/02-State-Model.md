@@ -134,6 +134,24 @@ When the deleted comment has `source=local`, the same hook immediately creates `
 
 Deletion sync also handles legacy or already-pending states where the local file is gone but the `source=remote` mapping still exists. If the parent entry still exists, the plugin writes the same tombstone reason (`local_deleted_imported_remote_ignored`) and removes the mapping without an outbound status `DELETE`; if the parent entry itself was removed because its remote status disappeared, the existing mirrored-content cleanup path may still remove the related remote-mirrored child mappings as part of the remote deletion workflow.
 
+### Locally deleted mapped entries
+
+A retained <code>entries_remote</code> reference to a missing local entry is a deletion decision,
+not permission to restore that entry from Mastodon. <code>plugin_mastodon_import_remote_entry()</code>
+checks local existence before content/media conversion and hash comparison and returns false
+without changing either mapping, its source or its hash. This covers entries originally
+exported from FlatPress and entries imported from the configured Mastodon account. It does
+not adopt the different external-reply comment ignore policy.
+
+The delete hook still marks deletion work pending. A successful content run schedules its later deletion follow-up only when deletion synchronization is enabled and advances the remote status cursor even when a mapped missing
+entry is skipped. A manual file removal is protected without requiring a prior hook or flag.
+If deletion sync is disabled, the missing entry stays absent and its mapping stays available
+for a later enabled deletion run. No schema change or new tombstone collection is needed.
+
+After a successful remote DELETE (or an already missing remote status response), deletion sync
+removes the forward and reverse entry mappings. A failed DELETE keeps both mappings and
+pending work, so an edited status replay cannot recreate the entry before the retry.
+
 ## State invariants
 
 1. `entries` and `entries_remote` must remain consistent in both directions.
@@ -148,6 +166,7 @@ Deletion sync also handles legacy or already-pending states where the local file
 10. Large `state.json` files must not be loaded during the ordinary fast scheduler path when `scheduler-state.json` is fresh.
 11. Every state write should refresh the compact scheduler state so admin and frontend checks remain cheap.
 12. `state.json` writes use compact JSON without `JSON_PRETTY_PRINT`; old pretty-printed files remain readable because both forms are ordinary JSON.
+13. A missing mapped entry must not be restored by remote import; retain its mapping unchanged until deletion reconciliation succeeds.
 
 ## Full-state write format
 
@@ -321,4 +340,3 @@ The admin page does not add one-way state. It only suppresses import-only contro
 | Remote-to-local sync            | Keep top-level status import active when one-way mode is off; skip context descendants and notification replies.         | Mastodon replies must not become FlatPress comments.                                 |
 | Deletion sync                   | Keep entry deletion reconciliation active; skip comment/reply mapping deletion and clear pending reply rechecks/cursors. | Existing mappings remain safe, but no comment/reply side effects run while disabled. |
 | Re-enabling the option          | Existing mappings are retained and can be used again by later sync runs.                                                 | The option is reversible and does not destroy synchronization history.               |
-

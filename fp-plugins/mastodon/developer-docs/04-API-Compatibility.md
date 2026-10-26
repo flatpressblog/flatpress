@@ -240,6 +240,23 @@ sequenceDiagram
     end
 ```
 
+## Deleted-entry replay compatibility
+
+The import protection is a local existence check and adds no endpoint, scope, capability field
+or request parameter. Regression fixtures exercise export, local deletion, blocked content
+replay and subsequent remote deletion for Mastodon 4.0.0, 4.3.0, 4.4.0, 4.5.0, 4.6.0 and
+5.0.0-nightly.2026-10-22. This is simulated API-contract coverage, not live certification
+against each release.
+
+The existing DELETE capability logic remains authoritative: versions below 4.4.0 omit
+<code>delete_media</code>; supported versions use it. Unknown capability still permits the
+existing retry without the parameter after a legacy rejection. The tests additionally cover
+a temporary server error followed by retry and an already missing remote status.
+The status cursor and account-status capability gates remain unchanged.
+
+Verified against the official [status deletion contract](https://docs.joinmastodon.org/methods/statuses/#delete):
+DELETE exists throughout the target range; the optional media parameter was added in 4.4.0.
+
 ## External documentation references
 
 - Mastodon instance API: https://docs.joinmastodon.org/methods/instance/

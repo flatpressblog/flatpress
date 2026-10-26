@@ -34,6 +34,21 @@ Use these starting points when the requested change is framed by behavior rather
 | "Comment author links open new tabs only for external URLs"            | `01-Process-Map.md` P14                           | `comments.tpl`, `modifier.is_external_url.php`, target-decision test including root-install same-host paths                                                                                                                                            |
 | "Imported status source links open the single toot in a new tab"       | `01-Process-Map.md` P3, `04-API-Compatibility.md` | `plugin_mastodon_imported_status_footer_bbcode()`, status-footer target tests                                                                                                                                                                          |
 
+## Deleted entry import protection
+
+A mapped FlatPress entry that no longer exists locally belongs to deletion reconciliation.
+The entry import boundary rejects its remote status before HTML/media conversion, hash comparison
+or local writes. It preserves the mapping and source for the later deletion run. This covers
+normal/full manual runs, automatic runs and file removals that bypassed the delete hook.
+See [the state invariant](02-State-Model.md#locally-deleted-mapped-entries) and
+[the regression cases](05-Regression-Test-Matrix.md#locally-deleted-mapped-entries).
+
+The normal manual action calls <code>plugin_mastodon_run_sync(true, false)</code>; the full
+manual action uses <code>plugin_mastodon_run_sync(true, true)</code>, and the scheduler uses
+<code>plugin_mastodon_run_sync(false)</code>. All three share the same entry import guard.
+Deletion is a separate follow-up, not part of the content import itself. A successful content
+run schedules that follow-up only when deletion synchronization is enabled.
+
 ## Compatibility target for maintainers
 
 The plugin code should remain compatible with:
