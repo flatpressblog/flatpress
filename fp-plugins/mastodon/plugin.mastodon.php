@@ -3,7 +3,7 @@
  * Plugin Name: Mastodon
  * Plugin URI: https://www.flatpress.org
  * Description: Synchronizes FlatPress entries and comments with Mastodon and provides a Mastodon profile widget. <a href="./fp-plugins/mastodon/doc_mastodon.txt" title="Instructions" target="_blank">[Instructions]</a>
- * Version: 2.8.2
+ * Version: 2.8.3
  * Author: FlatPress
  * Author URI: https://www.flatpress.org
  */
@@ -12078,7 +12078,11 @@ function plugin_mastodon_build_entry_status_text($entryId, $entry, $charLimit) {
 		$parts [] = $subject;
 	}
 	if ($content !== '') {
-		$body = plugin_mastodon_flatpress_to_mastodon($content);
+		// [more] limits only the entry body; keep full content for tag metadata.
+		// Apply the existing instance/URL budget below even if the teaser is longer.
+		$morePosition = stripos($content, '[more]');
+		$bodyContent = $morePosition === false ? $content : substr($content, 0, $morePosition);
+		$body = plugin_mastodon_flatpress_to_mastodon($bodyContent);
 		if ($body !== '') {
 			$parts [] = $body;
 		}

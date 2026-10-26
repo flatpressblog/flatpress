@@ -4009,6 +4009,80 @@ $allOk = test_result(
 	json_encode(array('raw_len' => $localLongStatusRawLength, 'mastodon_len' => $localLongStatusMastodonLength))
 ) && $allOk;
 
+// More is a body boundary, independent of the ReadMore companion's mode.
+$moreCases = array(
+	'first marker' => array('Intro[more]Hidden[more]Also hidden', 'Intro'),
+	'case insensitive' => array('Intro[MoRe]Hidden', 'Intro'),
+	'marker at start' => array('[more]Hidden', ''),
+	'marker at end' => array('Intro[more]', 'Intro'),
+	'no marker' => array('Complete body', 'Complete body'),
+	'formatted Unicode teaser' => array('[b]Grüße 😄[/b][more]Hidden', 'Grüße 😄'),
+	'not a marker' => array('Intro[moreish]Visible', 'Intro[moreish]Visible'),
+	'escaped marker' => array('Intro&#91;more&#93;Visible', 'Intro[more]Visible')
+);
+$moreCaseResults = array();
+$moreCasesOk = true;
+foreach ($moreCases as $moreLabel => $moreCase) {
+	$moreActual = plugin_mastodon_build_entry_status_text('', array('content' => $moreCase [0]), 500);
+	$moreCaseResults [$moreLabel] = $moreActual;
+	$moreCasesOk = $moreCasesOk && $moreActual === $moreCase [1];
+}
+$allOk = test_result(
+	'Entry More boundary handles first marker, empty teaser, Unicode and literal text',
+	$moreCasesOk,
+	json_encode($moreCaseResults)
+) && $allOk;
+
+$moreMetadataEntry = array(
+	'subject' => 'More teaser title',
+	'content' => '[b]Visible teaser[/b][more]Hidden body [tag]News, Neu[/tag] [img="images/mastodon-sim/single-image.jpg"]',
+	'date' => strtotime('2026-03-14 08:00:00 UTC')
+);
+$moreMetadataOriginal = $moreMetadataEntry;
+$moreMetadataId = 'entry260314-080000';
+$morePublicLinkFilter = function ($link) {
+	return 'https://example.org/more-teaser/';
+};
+add_filter('post_link', $morePublicLinkFilter, 9999);
+$moreMetadataLink = plugin_mastodon_public_url_for_mastodon(plugin_mastodon_public_entry_url($moreMetadataId, $moreMetadataEntry));
+$moreMetadataStatus = plugin_mastodon_build_entry_status_text($moreMetadataId, $moreMetadataEntry, 500);
+$moreMetadataMedia = plugin_mastodon_collect_local_entry_media($moreMetadataEntry);
+$allOk = test_result(
+	'Entry More boundary preserves title, permalink, tag footer and original entry data',
+	strpos($moreMetadataStatus, "More teaser title\n\nVisible teaser") === 0
+		&& strpos($moreMetadataStatus, 'Hidden body') === false
+		&& strpos($moreMetadataStatus, '[more]') === false
+		&& strpos($moreMetadataStatus, "\n#News #Neu") !== false
+		&& $moreMetadataLink !== '' && strpos($moreMetadataStatus, "\n" . $moreMetadataLink) !== false
+		&& count($moreMetadataMedia) === 1
+		&& $moreMetadataEntry === $moreMetadataOriginal,
+	$moreMetadataStatus
+) && $allOk;
+
+$moreBudgetResults = array();
+$moreBudgetOk = true;
+foreach (array(80, 500) as $moreCharLimit) {
+	foreach (array(false, true) as $moreWithTags) {
+		$moreLongEntry = array(
+			'subject' => 'Budget teaser',
+			'content' => str_repeat('Grüße https://example.org/very/long/path, ', 40)
+				. '[more]Hidden budget tail' . ($moreWithTags ? '[tag]News, Neu[/tag]' : '')
+		);
+		$moreLimitedStatus = plugin_mastodon_build_entry_status_text($moreMetadataId, $moreLongEntry, $moreCharLimit);
+		$moreLimitedLength = plugin_mastodon_status_text_length($moreLimitedStatus, plugin_mastodon_instance_url_reserved_length(plugin_mastodon_get_options()));
+		$moreBudgetResults [] = array('limit' => $moreCharLimit, 'length' => $moreLimitedLength, 'tags' => $moreWithTags);
+		$moreBudgetOk = $moreBudgetOk && $moreLimitedLength <= $moreCharLimit
+			&& strpos($moreLimitedStatus, 'Hidden budget tail') === false
+			&& strpos($moreLimitedStatus, '…') !== false;
+	}
+}
+$allOk = test_result(
+	'Entry More teaser still respects server character and URL budgets with and without tags',
+	$moreBudgetOk,
+	json_encode($moreBudgetResults)
+) && $allOk;
+remove_filter('post_link', $morePublicLinkFilter, 9999);
+
 $imageEntryId = 'entry260314-133022';
 $imageEntry = entry_parse($imageEntryId);
 $imageMedia = is_array($imageEntry) ? plugin_mastodon_collect_local_entry_media($imageEntry) : array();
@@ -6939,7 +7013,7 @@ plugin_mastodon_state_write(plugin_mastodon_default_state());
 $chronologyOlderEntry = array(
 	'version' => system_ver(),
 	'subject' => 'Chronology older FlatPress entry',
-	'content' => 'This older entry must be posted before the newer one during the same synchronization run.',
+	'content' => 'This older entry must be posted before the newer one during the same synchronization run.[more]Hidden chronology tail.',
 	'author' => 'Simulation',
 	'date' => strtotime('2026-03-20 08:00:00 UTC')
 );
@@ -6997,6 +7071,7 @@ $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
 $chronologyState = plugin_mastodon_state_read();
 $chronologyExportOk = plugin_mastodon_sync_local_to_remote($options, $chronologyState);
 $chronologyOrder = array();
+$chronologyMoreCreateOk = false;
 $chronologyListIds = array_keys(plugin_mastodon_list_local_entries());
 $chronologyOlderIndex = array_search($chronologyOlderEntryId, $chronologyListIds, true);
 $chronologyNewerIndex = array_search($chronologyNewerEntryId, $chronologyListIds, true);
@@ -7013,6 +7088,7 @@ if (simulate_recorded_http_requests() !== array()) {
 		$statusText = isset($parsed ['status']) ? (string) $parsed ['status'] : '';
 		if (strpos($statusText, 'Chronology older FlatPress entry') !== false) {
 			$chronologyOrder [] = 'older';
+			$chronologyMoreCreateOk = strpos($statusText, 'Hidden chronology tail') === false && strpos($statusText, '[more]') === false;
 		}
 		if (strpos($statusText, 'Chronology newer FlatPress entry') !== false) {
 			$chronologyOrder [] = 'newer';
@@ -7033,6 +7109,38 @@ $allOk = test_result(
 		),
 		'request_order' => $chronologyOrder
 	))
+) && $allOk;
+
+// Move the boundary on an already mapped entry: the next sync must edit it.
+$chronologyOlderEntry ['content'] = 'Updated teaser[more]Hidden updated chronology tail.';
+entry_save($chronologyOlderEntry, $chronologyOlderEntryId);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] ['PUT ' . $instanceUrl . '/api/v1/statuses/chronology-800'] = array(
+	'ok' => true, 'code' => 200,
+	'body' => json_encode(array('id' => 'chronology-800', 'edited_at' => '2026-03-22T08:00:00Z'))
+);
+plugin_mastodon_sync_local_to_remote($options, $chronologyState);
+$chronologyMoreMeta = plugin_mastodon_state_get_entry_meta($chronologyState, $chronologyOlderEntryId);
+$chronologyMoreUpdateCount = 0;
+$chronologyMoreUpdateText = '';
+foreach (simulate_recorded_http_requests() as $request) {
+	if (isset($request ['method'], $request ['url']) && $request ['method'] === 'PUT'
+		&& $request ['url'] === $instanceUrl . '/api/v1/statuses/chronology-800') {
+		$chronologyMoreUpdateCount++;
+		$parsed = array();
+		parse_str(isset($request ['body']) ? (string) $request ['body'] : '', $parsed);
+		$chronologyMoreUpdateText = isset($parsed ['status']) ? (string) $parsed ['status'] : '';
+	}
+}
+$allOk = test_result(
+	'Entry More boundary applies to status creation and mapped status updates',
+	$chronologyMoreCreateOk
+		&& isset($chronologyMoreMeta ['hash']) && $chronologyMoreMeta ['hash'] === plugin_mastodon_entry_hash($chronologyOlderEntry)
+		&& $chronologyMoreUpdateCount === 1
+		&& strpos($chronologyMoreUpdateText, 'Updated teaser') !== false
+		&& strpos($chronologyMoreUpdateText, 'Hidden updated chronology tail') === false
+		&& strpos($chronologyMoreUpdateText, '[more]') === false,
+	$chronologyMoreUpdateText
 ) && $allOk;
 
 entry_delete($chronologyOlderEntryId);
@@ -11528,6 +11636,34 @@ $allOk = test_result(
 		'instance_calls' => $syncCachedInstanceCalls,
 		'status_text' => $syncCachedStatusText
 	))
+) && $allOk;
+
+$moreVersionOptionsBefore = plugin_mastodon_get_options();
+$moreVersionResults = array();
+$moreVersionOk = true;
+foreach (array('4.0.0', '4.1.0', '4.4.0', '4.6.0', '5.0.0-nightly.2026-10-22') as $moreServerVersion) {
+	$moreVersionOptions = $moreVersionOptionsBefore;
+	plugin_mastodon_store_instance_document($moreVersionOptions, array(
+		'version' => $moreServerVersion,
+		'configuration' => array('statuses' => array('max_characters' => 180, 'characters_reserved_per_url' => 30))
+	));
+	plugin_mastodon_runtime_cache_clear();
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$moreVersionEntry = array('subject' => 'Version teaser', 'content' => str_repeat('Text https://example.org/path, ', 30) . '[more]Hidden version tail');
+	$moreVersionStatus = plugin_mastodon_build_entry_status_text('', $moreVersionEntry, plugin_mastodon_instance_character_limit(plugin_mastodon_get_options()));
+	$moreVersionLength = plugin_mastodon_status_text_length($moreVersionStatus, 30);
+	$moreVersionResults [$moreServerVersion] = $moreVersionLength;
+	$moreVersionOk = $moreVersionOk && $moreVersionLength <= 180
+		&& strpos($moreVersionStatus, 'Hidden version tail') === false
+		&& strpos($moreVersionStatus, '…') !== false
+		&& simulate_recorded_http_requests() === array();
+}
+plugin_mastodon_save_options($moreVersionOptionsBefore);
+plugin_mastodon_runtime_cache_clear();
+$allOk = test_result(
+	'Entry More export uses cached limits across Mastodon 4.0 through 5.0 nightly without extra requests',
+	$moreVersionOk,
+	json_encode($moreVersionResults)
 ) && $allOk;
 
 $remoteEntryManualCommentExport = simulate_run_remote_entry_local_comment_export_case(true);

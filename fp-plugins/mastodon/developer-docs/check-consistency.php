@@ -18,6 +18,10 @@ $regressionSimulationFallbackFile = $rootDir . '/fp-plugins/mastodon/regression-
 if (!is_file($regressionSimulationFile) && is_file($regressionSimulationFallbackFile)) {
 	$regressionSimulationFile = $regressionSimulationFallbackFile;
 }
+// The distributed .ph_ harness is sufficient; a root copy is optional.
+if (!is_file($simulationFile)) {
+	$simulationFile = $regressionSimulationFile;
+}
 $commentTemplateFile = $rootDir . '/fp-interface/themes/leggero/comments.tpl';
 $externalUrlModifierFile = $rootDir . '/fp-includes/fp-smartyplugins/modifier.is_external_url.php';
 $mentalModelDocFile = __DIR__ . '/00-Mental-Model.md';
@@ -88,7 +92,7 @@ function mastodon_docs_write_failure($message) {
 }
 
 function mastodon_docs_write_success() {
-	mastodon_docs_write_line('[OK] Mastodon developer documentation is consistent with plugin.mastodon.php and simulate_mastodon_plugin.php.', false);
+	mastodon_docs_write_line('[OK] Mastodon developer documentation is consistent with plugin.mastodon.php and the distributed simulation harness.', false);
 }
 
 function mastodon_docs_line_for_offset($content, $offset) {
@@ -152,47 +156,14 @@ function mastodon_docs_extract_function_declarations($content) {
 /**
  * Extract the function-line anchors used by 07-Function-Organigram.md.
  *
- * The organigram describes callable topology. Analyzer-only PHPStan directives
- * and the PHP 8.5 cURL close guard do not add, remove or move a callable, but
- * they expand the physical source by 1 or 3 lines. Treat that compatibility
- * scaffolding as line-neutral for the generated catalog while the callable
- * inventory itself is still extracted from the unmodified source above.
+ * Use physical source lines, including compatibility guards and analyzer
+ * directives, so developers can navigate directly to each declaration.
  *
  * @param string $content
  * @return array<string, int>
  */
 function mastodon_docs_extract_organigram_function_lines($content) {
-	$lines = explode("\n", mastodon_docs_normalize_line_endings($content));
-	$functions = array();
-	$logicalLine = 0;
-	$count = count($lines);
-
-	for ($index = 0; $index < $count; $index++) {
-		$trimmed = trim($lines [$index]);
-
-		$phpstanSuffix = ' resource arm as incompatible in ranged phpVersion analysis)';
-		if (strpos($trimmed, '// @phpstan-ignore argument.type (PHPStan 2.2.10 reports the PHP 7.x ') === 0
-			&& substr($trimmed, -strlen($phpstanSuffix)) === $phpstanSuffix) {
-			continue;
-		}
-
-		if ($trimmed === 'if (!is_php85_plus()) {'
-			&& isset($lines [$index + 1], $lines [$index + 2])
-			&& trim($lines [$index + 1]) === 'curl_close($ch);'
-			&& trim($lines [$index + 2]) === '}') {
-			$logicalLine++;
-			$index += 2;
-			continue;
-		}
-
-		$logicalLine++;
-		if (preg_match('/^[ \t]*function\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/', $lines [$index], $match)) {
-			$functions [(string) $match [1]] = $logicalLine;
-		}
-	}
-
-	ksort($functions, SORT_STRING);
-	return $functions;
+	return mastodon_docs_extract_functions($content);
 }
 
 function mastodon_docs_extract_organigram_functions($content) {
@@ -312,8 +283,11 @@ if ($pluginContent !== '' && $organigramDocContent !== '') {
 		}
 	}
 
-	if (!preg_match('/currently contains \*\*' . preg_quote((string) $totalCallableNames, '/') . '\*\* callable functions\/methods/', $organigramDocContent)) {
+	if (!preg_match('/\*\*' . preg_quote((string) $totalCallableNames, '/') . '\*\* distinct callable names/', $organigramDocContent)) {
 		$errors [] = 'Function organigram unique callable-name count is not ' . $totalCallableNames . '.';
+	}
+	if (!preg_match('/currently contains \*\*' . preg_quote((string) count($actualFunctionDeclarations), '/') . '\*\* named function\/method declarations/', $organigramDocContent)) {
+		$errors [] = 'Function organigram declaration count is not ' . count($actualFunctionDeclarations) . '.';
 	}
 	if (!preg_match('/- \*\*' . preg_quote((string) $topLevelFunctions, '/') . '\*\* top-level plugin functions/', $organigramDocContent)) {
 		$errors [] = 'Function organigram top-level count is not ' . $topLevelFunctions . '.';
@@ -405,7 +379,7 @@ $oneWayRequiredDocs = array(
 			'Admin UI direction gate',
 			'mastodon_remote_import_options_hidden marker',
 			'plugin_mastodon_companion_plugins_status() hides import-only helpers',
-			'regression-test simulator copy must stay content-identical to the root harness after CRLF/LF line-ending normalization',
+			'optional root `simulate_mastodon_plugin.php`',
 			'Unlink stale remote mapping and queue dirty_entries',
 			'Unlink stale remote mapping and queue dirty_comments'
 		)
@@ -933,7 +907,7 @@ $urlPunctuationBudgetRequiredDocs = array(
 		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
 		array(
 			'Mastodon rejects a post as over 500 characters when URLs are present',
-			'URL-punctuation budgeting documentation'
+			'URL-budget documentation'
 		)
 	)
 );
@@ -1012,7 +986,7 @@ $instanceCapabilityRequiredDocs = array(
 			'short instance timeout',
 			'plugin_mastodon_instance_supports_mastodon_api_v4()',
 			'plugin_mastodon_instance_supports_media_delete()',
-			'version-gated DELETE /api/v1/media/:id'
+			'Capability-gated DELETE /api/v1/media/:id'
 		)
 	),
 	'07-Function-Organigram.md' => array(
@@ -1204,6 +1178,85 @@ if ($externalUrlModifierContent !== '') {
 			$errors [] = 'External URL Smarty modifier missing required implementation snippet: ' . $requiredModifierSnippet;
 		}
 	}
+}
+
+// Check summaries as well as the detailed catalog: stale headline totals must fail.
+if ($simulationContent !== '' && $regressionDocContent !== '') {
+	$staticTests = mastodon_docs_extract_test_results($simulationContent);
+	$staticCount = count($staticTests);
+	$optionalName = 'Configured credentials verify (read-only smoke test)';
+	$optionalCount = isset($staticTests [$optionalName]) ? 1 : 0;
+	$regularCount = $staticCount - $optionalCount;
+	$summaryPatterns = array(
+		'/Static `test_result\(\)` calls found in the script:\s*`' . $staticCount . '`/' => 'static total',
+		'/^\[OK\]:\s*' . $regularCount . '\s*$/m' => 'normal-run OK total',
+		'/^\|\s*Regular simulation tests\s*\|\s*' . $regularCount . '\s*\|/m' => 'regular category total',
+		'/^\|\s*Optional live\/auth smoke\s*\|\s*' . $optionalCount . '\s*\|/m' => 'optional category total',
+		'/^\|\s*Total static `test_result\(\)` calls\s*\|\s*' . $staticCount . '\s*\|/m' => 'static category total'
+	);
+	foreach ($summaryPatterns as $pattern => $description) {
+		if (!preg_match($pattern, $regressionDocContent)) {
+			$errors [] = 'Regression harness summary has a stale or missing ' . $description . '.';
+		}
+	}
+}
+
+// Compare every optional executable copy against the distributed source.
+if (is_file($regressionSimulationFallbackFile)) {
+	$canonicalHarness = mastodon_docs_read_file($regressionSimulationFallbackFile, $errors);
+	foreach (array($rootDir . '/simulate_mastodon_plugin.php', $rootDir . '/fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.php') as $optionalCopy) {
+		if (is_file($optionalCopy)) {
+			$copyContent = mastodon_docs_read_file($optionalCopy, $errors);
+			if (mastodon_docs_normalize_line_endings($copyContent) !== mastodon_docs_normalize_line_endings($canonicalHarness)) {
+				$errors [] = 'Optional simulator copy differs from distributed .ph_ harness: ' . $optionalCopy;
+			}
+		}
+	}
+}
+
+// Review the entire Markdown set, not only the function organigram.
+$documentationFiles = glob(__DIR__ . '/*.md');
+$allPluginFunctions = mastodon_docs_extract_functions($pluginContent);
+if (is_array($documentationFiles)) {
+	foreach ($documentationFiles as $documentationFile) {
+		$docText = mastodon_docs_read_file($documentationFile, $errors);
+		$docName = basename($documentationFile);
+		$references = mastodon_docs_extract_backticked_function_references($docText);
+		foreach ($references as $functionName => $referenceLines) {
+			if (strpos($functionName, 'plugin_mastodon_') === 0 && !isset($allPluginFunctions [$functionName])) {
+				$errors [] = $docName . ' references unknown plugin helper ' . $functionName . '.';
+			}
+		}
+		$links = array();
+		if (preg_match_all('/\]\(([^)]+)\)/', $docText, $links)) {
+			foreach ($links [1] as $link) {
+				$link = trim((string) $link, "<> \t\r\n");
+				if ($link === '' || $link [0] === '#' || preg_match('/^[a-z][a-z0-9+.-]*:/i', $link)) {
+					continue;
+				}
+				$relativePath = rawurldecode(explode('#', $link, 2) [0]);
+				if ($relativePath !== '' && !is_file(__DIR__ . '/' . $relativePath)) {
+					$errors [] = $docName . ' links to a missing local file: ' . $relativePath;
+				}
+			}
+		}
+		if (strpos($docText, '```mermaid') !== false && substr_count($docText, '```') % 2 !== 0) {
+			$errors [] = $docName . ' has an unclosed fenced code block.';
+		}
+		if ($docName !== '02-State-Model.md' && strpos($docText, '[more]') === false && strpos($docText, 'More') === false) {
+			$errors [] = $docName . ' omits the entry More boundary.';
+		}
+	}
+}
+
+$readmeContent = mastodon_docs_read_file(__DIR__ . '/README.md', $errors);
+$phpstanConfig = mastodon_docs_read_file($rootDir . '/.dist/phpstan.neon.dist', $errors);
+if (preg_match('~smarty-([0-9]+\.[0-9]+\.[0-9]+)/src~', $phpstanConfig, $smartyMatch)
+	&& strpos($readmeContent, 'scans Smarty ' . $smartyMatch [1] . ' types') === false) {
+	$errors [] = 'README Smarty scan version differs from phpstan.neon.dist.';
+}
+if (strpos($readmeContent, 'fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_') === false) {
+	$errors [] = 'README must document the distributed simulator entry point.';
 }
 
 if ($errors !== array()) {
