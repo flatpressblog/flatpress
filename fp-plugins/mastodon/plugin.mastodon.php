@@ -596,6 +596,8 @@ function plugin_mastodon_default_state() {
 		'deletions_pending' => 0,
 		'deletions_pending_scope' => 'full',
 		'deletions_not_before' => '',
+		'deletion_retry_not_before' => '',
+		'local_entry_deletions' => array(),
 		'last_error' => '',
 		'last_remote_status_id' => '',
 		'last_remote_notification_id' => '',
@@ -4530,6 +4532,8 @@ function plugin_mastodon_scheduler_state_default() {
 		'deletions_pending' => 0,
 		'deletions_pending_scope' => $defaults ['deletions_pending_scope'],
 		'deletions_not_before' => '',
+		'deletion_retry_not_before' => '',
+		'local_entry_deletion_not_before' => '',
 		'last_error' => '',
 		'content_stats' => $defaults ['content_stats'],
 		'deletion_stats' => $defaults ['deletion_stats'],
@@ -4561,6 +4565,8 @@ function plugin_mastodon_scheduler_state_normalize($state) {
 	$normalized ['deletions_pending'] = !empty($normalized ['deletions_pending']) ? 1 : 0;
 	$normalized ['deletions_pending_scope'] = plugin_mastodon_normalize_deletions_pending_scope(isset($normalized ['deletions_pending_scope']) ? $normalized ['deletions_pending_scope'] : $defaults ['deletions_pending_scope']);
 	$normalized ['deletions_not_before'] = plugin_mastodon_parse_iso_datetime(isset($normalized ['deletions_not_before']) ? (string) $normalized ['deletions_not_before'] : '');
+	$normalized ['deletion_retry_not_before'] = plugin_mastodon_parse_iso_datetime(isset($normalized ['deletion_retry_not_before']) ? (string) $normalized ['deletion_retry_not_before'] : '');
+	$normalized ['local_entry_deletion_not_before'] = plugin_mastodon_parse_iso_datetime(isset($normalized ['local_entry_deletion_not_before']) ? (string) $normalized ['local_entry_deletion_not_before'] : '');
 	$normalized ['last_error'] = isset($normalized ['last_error']) ? (string) $normalized ['last_error'] : '';
 	$normalized ['source_state_signature'] = isset($normalized ['source_state_signature']) ? (string) $normalized ['source_state_signature'] : '';
 	$normalized ['updated_at'] = isset($normalized ['updated_at']) ? (string) $normalized ['updated_at'] : '';
@@ -4598,6 +4604,8 @@ function plugin_mastodon_scheduler_state_from_state($state) {
 		'deletions_pending' => $state ['deletions_pending'],
 		'deletions_pending_scope' => $state ['deletions_pending_scope'],
 		'deletions_not_before' => $state ['deletions_not_before'],
+		'deletion_retry_not_before' => $state ['deletion_retry_not_before'],
+		'local_entry_deletion_not_before' => plugin_mastodon_state_local_entry_deletion_deadline($state),
 		'last_error' => $state ['last_error'],
 		'content_stats' => $state ['content_stats'],
 		'deletion_stats' => $state ['deletion_stats']
@@ -4698,9 +4706,10 @@ function plugin_mastodon_scheduler_state_read() {
 /**
  * Persist the runtime state to disk.
  * @param array<string, mixed> $state
+ * @param bool $preserveLocalEntryDeletions
  * @return bool
  */
-function plugin_mastodon_state_write($state) {
+function plugin_mastodon_state_write($state, $preserveLocalEntryDeletions = false) {
 	plugin_mastodon_ensure_state_dir();
 	plugin_mastodon_state_write_error_clear();
 	$lockHandle = plugin_mastodon_state_write_lock_acquire();
@@ -4712,6 +4721,32 @@ function plugin_mastodon_state_write($state) {
 	$written = false;
 	try {
 		$state = plugin_mastodon_state_normalize($state);
+		if ($preserveLocalEntryDeletions && is_file(PLUGIN_MASTODON_STATE_FILE)) {
+			// A delete hook may have committed after this content run read its initial state.
+			$currentJson = @file_get_contents(PLUGIN_MASTODON_STATE_FILE);
+			$current = is_string($currentJson) ? json_decode($currentJson, true) : null;
+			if (!is_array($current)) {
+				plugin_mastodon_state_write_error_set('state_local_deletion_merge_failed');
+				return false;
+			}
+			$currentQueue = isset($current ['local_entry_deletions']) && is_array($current ['local_entry_deletions']) ? $current ['local_entry_deletions'] : array();
+			foreach ($currentQueue as $entryId => $deadline) {
+				$deadline = is_string($deadline) ? plugin_mastodon_parse_iso_datetime($deadline) : '';
+				if ($deadline === '' || empty($state ['entries'] [$entryId] ['remote_id']) || (string) $state ['entries'] [$entryId] ['remote_id'] !== (isset($current ['entries'] [$entryId] ['remote_id']) ? (string) $current ['entries'] [$entryId] ['remote_id'] : '') || entry_exists((string) $entryId)) {
+					continue;
+				}
+				if (empty($state ['local_entry_deletions'] [$entryId]) || strcmp($deadline, (string) $state ['local_entry_deletions'] [$entryId]) < 0) {
+					$state ['local_entry_deletions'] [(string) $entryId] = $deadline;
+				}
+			}
+			$currentRetry = plugin_mastodon_parse_iso_datetime(isset($current ['deletion_retry_not_before']) ? (string) $current ['deletion_retry_not_before'] : '');
+			if (strcmp($currentRetry, $state ['deletion_retry_not_before']) > 0) {
+				$state ['deletion_retry_not_before'] = $currentRetry;
+			}
+			if (plugin_mastodon_state_local_entry_deletion_deadline($state) !== '' && (!empty($state ['deletions_pending']) || !empty($current ['deletions_pending']))) {
+				plugin_mastodon_state_set_deletions_pending($state, true, 'full', plugin_mastodon_state_local_entry_deletion_deadline($state));
+			}
+		}
 		$shardWrite = plugin_mastodon_state_write_comment_shards($state);
 		if (empty($shardWrite ['ok'])) {
 			$error = !empty($shardWrite ['error']) ? (string) $shardWrite ['error'] : 'comment_shard_write_failed';
@@ -4788,6 +4823,15 @@ function plugin_mastodon_state_normalize($state) {
 	$state ['deletions_pending'] = !empty($state ['deletions_pending']) ? 1 : 0;
 	$state ['deletions_pending_scope'] = plugin_mastodon_normalize_deletions_pending_scope(isset($state ['deletions_pending_scope']) ? $state ['deletions_pending_scope'] : $defaults ['deletions_pending_scope']);
 	$state ['deletions_not_before'] = plugin_mastodon_parse_iso_datetime(isset($state ['deletions_not_before']) ? (string) $state ['deletions_not_before'] : '');
+	$state ['deletion_retry_not_before'] = plugin_mastodon_parse_iso_datetime(isset($state ['deletion_retry_not_before']) ? (string) $state ['deletion_retry_not_before'] : '');
+	$localEntryDeletions = isset($state ['local_entry_deletions']) && is_array($state ['local_entry_deletions']) ? $state ['local_entry_deletions'] : array();
+	$state ['local_entry_deletions'] = array();
+	foreach ($localEntryDeletions as $entryId => $deadline) {
+		$deadline = is_string($deadline) ? plugin_mastodon_parse_iso_datetime($deadline) : '';
+		if ($deadline !== '' && isset($state ['entries'] [$entryId]) && is_array($state ['entries'] [$entryId]) && !empty($state ['entries'] [$entryId] ['remote_id'])) {
+			$state ['local_entry_deletions'] [(string) $entryId] = $deadline;
+		}
+	}
 	$state ['last_error'] = isset($state ['last_error']) ? (string) $state ['last_error'] : '';
 	$state ['last_remote_status_id'] = isset($state ['last_remote_status_id']) ? (string) $state ['last_remote_status_id'] : '';
 	$state ['last_remote_notification_id'] = isset($state ['last_remote_notification_id']) ? (string) $state ['last_remote_notification_id'] : '';
@@ -5163,10 +5207,11 @@ function plugin_mastodon_state_write_last_error() {
  * Persist state and copy a failed write reason into the caller-visible last_error field.
  * @param array<string, mixed> $state
  * @param string $fallback
+ * @param bool $preserveLocalEntryDeletions
  * @return bool
  */
-function plugin_mastodon_state_write_with_last_error(&$state, $fallback = 'state_write_failed') {
-	$ok = plugin_mastodon_state_write($state);
+function plugin_mastodon_state_write_with_last_error(&$state, $fallback = 'state_write_failed', $preserveLocalEntryDeletions = false) {
+	$ok = plugin_mastodon_state_write($state, $preserveLocalEntryDeletions);
 	if ($ok) {
 		return true;
 	}
@@ -5362,6 +5407,7 @@ function plugin_mastodon_state_remove_entry_mapping(&$state, $localId) {
 	}
 	$remoteId = !empty($state ['entries'] [$localId] ['remote_id']) ? (string) $state ['entries'] [$localId] ['remote_id'] : '';
 	unset($state ['entries'] [$localId]);
+	unset($state ['local_entry_deletions'] [$localId]);
 	if ($remoteId !== '' && isset($state ['entries_remote'] [$remoteId]) && (string) $state ['entries_remote'] [$remoteId] === $localId) {
 		unset($state ['entries_remote'] [$remoteId]);
 	}
@@ -5630,6 +5676,10 @@ function plugin_mastodon_on_entry_saved($entryId, $entry, $oldEntry = array(), $
 		return;
 	}
 	$state = plugin_mastodon_state_read(array());
+	if (isset($state ['local_entry_deletions'] [$entryId])) {
+		unset($state ['local_entry_deletions'] [$entryId]);
+		plugin_mastodon_state_write($state);
+	}
 	$meta = plugin_mastodon_state_get_entry_meta($state, $entryId);
 	if (!empty($meta ['source']) && strtolower((string) $meta ['source']) === 'remote') {
 		return;
@@ -5678,7 +5728,7 @@ function plugin_mastodon_on_entry_deleted($entryId, $oldEntry = array()) {
 	$meta = plugin_mastodon_state_get_entry_meta($state, $entryId);
 	plugin_mastodon_state_remove_dirty_entry($state, $entryId);
 	if (!empty($meta ['remote_id'])) {
-		plugin_mastodon_state_set_deletions_pending($state, true, 'full', '');
+		plugin_mastodon_state_queue_local_entry_deletion($state, $entryId);
 		plugin_mastodon_state_write($state);
 	}
 }
@@ -6173,6 +6223,84 @@ function plugin_mastodon_state_set_pending_comment_remote_recheck(&$state, $entr
 }
 
 /**
+ * Return the earliest fixed local-entry deadline, also from a compact scheduler summary.
+ * @param array<string, mixed> $state
+ * @return string
+ */
+function plugin_mastodon_state_local_entry_deletion_deadline($state) {
+	if (!isset($state ['local_entry_deletions']) || !is_array($state ['local_entry_deletions'])) {
+		return plugin_mastodon_parse_iso_datetime(isset($state ['local_entry_deletion_not_before']) ? (string) $state ['local_entry_deletion_not_before'] : '');
+	}
+	$earliest = '';
+	foreach ($state ['local_entry_deletions'] as $deadline) {
+		$deadline = is_string($deadline) ? plugin_mastodon_parse_iso_datetime($deadline) : '';
+		if ($deadline !== '' && ($earliest === '' || strcmp($deadline, $earliest) < 0)) {
+			$earliest = $deadline;
+		}
+	}
+	return $earliest;
+}
+
+/**
+ * Record an entry deletion once. A second entry gets its own complete five-minute delay.
+ * @param array<string, mixed> $state
+ * @param string $entryId
+ * @param int|null $timestamp
+ * @return void
+ */
+function plugin_mastodon_state_queue_local_entry_deletion(&$state, $entryId, $timestamp = null) {
+	$entryId = trim((string) $entryId);
+	if ($entryId === '' || empty($state ['entries'] [$entryId] ['remote_id'])) {
+		return;
+	}
+	if (!isset($state ['local_entry_deletions']) || !is_array($state ['local_entry_deletions'])) {
+		$state ['local_entry_deletions'] = array();
+	}
+	if (isset($state ['local_entry_deletions'] [$entryId]) && is_string($state ['local_entry_deletions'] [$entryId]) && plugin_mastodon_parse_iso_datetime($state ['local_entry_deletions'] [$entryId]) !== '') {
+		return;
+	}
+	$timestamp = $timestamp === null ? time() : (int) $timestamp;
+	$state ['local_entry_deletions'] [$entryId] = gmdate('Y-m-d H:i:s', $timestamp + PLUGIN_MASTODON_COOLDOWN_TTL);
+	plugin_mastodon_state_set_deletions_pending($state, true, 'full', plugin_mastodon_state_local_entry_deletion_deadline($state));
+}
+
+/**
+ * Schedule a content follow-up without postponing fixed entry deadlines or retry backoff.
+ * @param array<string, mixed> $state
+ * @param bool $enabled
+ * @param int $timestamp
+ * @return void
+ */
+function plugin_mastodon_state_schedule_content_deletions(&$state, $enabled, $timestamp) {
+	$deadline = plugin_mastodon_state_local_entry_deletion_deadline($state);
+	if ($deadline === '') {
+		$deadline = gmdate('Y-m-d H:i:s', (int) $timestamp + PLUGIN_MASTODON_COOLDOWN_TTL);
+	}
+	plugin_mastodon_state_set_deletions_pending($state, $enabled, 'full', $deadline);
+}
+
+/**
+ * Select the next automatic job. Due fixed entry deletions precede a daily content run.
+ * @param array<string, string> $options
+ * @param array<string, mixed> $state
+ * @param int $timestamp
+ * @return string
+ */
+function plugin_mastodon_scheduled_job($options, $state, $timestamp) {
+	$localDeadline = plugin_mastodon_state_local_entry_deletion_deadline($state);
+	if (plugin_mastodon_should_run_deletion_sync($options) && $localDeadline !== '' && plugin_mastodon_parse_iso_timestamp($localDeadline) <= $timestamp && plugin_mastodon_deletion_sync_due($state, $timestamp)) {
+		return 'deletion';
+	}
+	if (plugin_mastodon_sync_due($options, $state, $timestamp)) {
+		return 'content';
+	}
+	if (plugin_mastodon_should_run_deletion_sync($options) && plugin_mastodon_deletion_sync_due($state, $timestamp)) {
+		return 'deletion';
+	}
+	return '';
+}
+
+/**
  * Update the runtime marker that tells the scheduler whether another deletion follow-up request is required.
  * @param array<string, mixed> $state
  * @param bool $pending
@@ -6196,10 +6324,18 @@ function plugin_mastodon_state_set_deletions_pending(&$state, $pending, $scope, 
  */
 function plugin_mastodon_deletion_sync_due($state, $timestamp = null) {
 	$state = is_array($state) ? $state : array();
-	if (empty($state ['deletions_pending'])) {
+	$localDeadline = plugin_mastodon_state_local_entry_deletion_deadline($state);
+	if (empty($state ['deletions_pending']) && $localDeadline === '') {
 		return false;
 	}
 	$timestamp = $timestamp === null ? time() : (int) $timestamp;
+	$retryNotBefore = plugin_mastodon_parse_iso_timestamp(isset($state ['deletion_retry_not_before']) ? (string) $state ['deletion_retry_not_before'] : '');
+	if ($retryNotBefore > $timestamp) {
+		return false;
+	}
+	if ($localDeadline !== '' && plugin_mastodon_parse_iso_timestamp($localDeadline) <= $timestamp) {
+		return true;
+	}
 	$notBefore = plugin_mastodon_parse_iso_datetime(isset($state ['deletions_not_before']) ? (string) $state ['deletions_not_before'] : '');
 	if ($notBefore === '' && !empty($state ['last_run'])) {
 		$lastRun = plugin_mastodon_parse_iso_timestamp((string) $state ['last_run']);
@@ -6322,6 +6458,10 @@ function plugin_mastodon_process_pending_comment_remote_rechecks($options, &$sta
 		$ancestorRemoteId = !empty($pendingRecheck ['ancestor_remote_id']) ? trim((string) $pendingRecheck ['ancestor_remote_id']) : '';
 		if ($entryId === '' || $commentId === '' || $remoteId === '') {
 			unset($state ['pending_comment_remote_rechecks'] [$commentKey]);
+			continue;
+		}
+		if (isset($state ['local_entry_deletions'] [$entryId]) && plugin_mastodon_parse_iso_timestamp((string) $state ['local_entry_deletions'] [$entryId]) > time()) {
+			$pendingRemaining = true;
 			continue;
 		}
 		$commentMeta = plugin_mastodon_state_get_comment_meta($state, $entryId, $commentId);
@@ -12209,11 +12349,14 @@ function plugin_mastodon_import_remote_entry(&$options, &$state, $remoteStatus) 
 	if ($remoteId === '' || !plugin_mastodon_remote_status_is_importable($remoteStatus)) {
 		return false;
 	}
-	// A retained entry mapping belongs to deletion reconciliation when its local file is gone.
-	// Check before media downloads and hash comparison, including legacy/manual deletions without a hook.
+	/**
+	 * A retained entry mapping belongs to deletion reconciliation when its local file is gone.
+	 * Check before media downloads and hash comparison, including legacy/manual deletions without a hook.
+	 */
 	if (isset($state ['entries_remote'] [$remoteId])) {
 		$mappedLocalId = (string) $state ['entries_remote'] [$remoteId];
 		if (!entry_exists($mappedLocalId)) {
+			plugin_mastodon_state_queue_local_entry_deletion($state, $mappedLocalId);
 			plugin_mastodon_log('Skipping remote status ' . $remoteId . ' because mapped local entry ' . $mappedLocalId . ' is missing; preserving its mapping for deletion synchronization');
 			return false;
 		}
@@ -13325,7 +13468,7 @@ function plugin_mastodon_sync_local_to_remote(&$options, &$state, $force = true)
 }
 
 /**
- * Run the deletion synchronization in a follow-up request after content sync completed.
+ * Run deletion synchronization when fixed entry deadlines or general follow-up work are due.
  * @param bool $force
  * @return array<string, mixed>
  */
@@ -13355,7 +13498,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 		plugin_mastodon_state_write($state);
 		return array('ok' => true, 'state' => $state, 'message' => 'deletion_sync_disabled');
 	}
-	if (!$force && empty($state ['deletions_pending'])) {
+	if (!$force && empty($state ['deletions_pending']) && plugin_mastodon_state_local_entry_deletion_deadline($state) === '') {
 		return array('ok' => true, 'state' => $state, 'message' => 'no_deletions_pending');
 	}
 	if (!plugin_mastodon_deletion_sync_due($state, time())) {
@@ -13387,7 +13530,7 @@ function plugin_mastodon_run_deletion_sync($force) {
 	$hadFailure = false;
 	$deletionInterrupted = false;
 	$childIndex = array();
-	$commentRecheckOnly = $syncCommentsAndReplies && plugin_mastodon_state_has_comment_recheck_scope($state) && !empty($state ['pending_comment_remote_rechecks']);
+	$commentRecheckOnly = $syncCommentsAndReplies && plugin_mastodon_state_local_entry_deletion_deadline($state) === '' && plugin_mastodon_state_has_comment_recheck_scope($state) && !empty($state ['pending_comment_remote_rechecks']);
 
 	if (!$commentRecheckOnly) {
 		$entryMappingKeys = isset($state ['entries']) && is_array($state ['entries']) ? array_keys($state ['entries']) : array();
@@ -13410,11 +13553,18 @@ function plugin_mastodon_run_deletion_sync($force) {
 				continue;
 			}
 			if (!plugin_mastodon_mapping_matches_sync_start($options, $meta, $localEntryId)) {
+				unset($state ['local_entry_deletions'] [$localEntryId]);
 				plugin_mastodon_log_skip('deletion_entry_before_sync_start', 'deletion entry mapping', 'deletion entry mappings', $localEntryId, 'because they are older than the configured sync start date');
 				continue;
 			}
 			$remoteId = (string) $meta ['remote_id'];
 			$localExists = (bool) entry_exists($localEntryId);
+			if ($localExists) {
+				unset($state ['local_entry_deletions'] [$localEntryId]);
+			} elseif (isset($state ['local_entry_deletions'] [$localEntryId]) && plugin_mastodon_parse_iso_timestamp((string) $state ['local_entry_deletions'] [$localEntryId]) > time()) {
+				// Even a forced/full sweep must not delete a newly queued entry early.
+				continue;
+			}
 			if (!$localExists) {
 				$deleted = plugin_mastodon_delete_status($options, $remoteId, true);
 				if (!empty($deleted ['ok']) || plugin_mastodon_status_missing_response($deleted)) {
@@ -13481,6 +13631,9 @@ function plugin_mastodon_run_deletion_sync($force) {
 
 			$commentCursorEntryId = plugin_mastodon_state_entry_id_from_comment_key($commentCursor);
 			foreach ($commentShardEntryIds as $commentShardEntryId) {
+				if (isset($state ['local_entry_deletions'] [$commentShardEntryId]) && plugin_mastodon_parse_iso_timestamp((string) $state ['local_entry_deletions'] [$commentShardEntryId]) > time()) {
+					continue;
+				}
 				if (plugin_mastodon_rate_limit_state_error() !== '') {
 					$deletionInterrupted = true;
 					break;
@@ -13659,7 +13812,11 @@ function plugin_mastodon_run_deletion_sync($force) {
 		$state ['last_deletion_run'] = gmdate('Y-m-d H:i:s', $deletionCompletionTimestamp);
 		$state ['deletion_cursor_entries'] = '';
 		$state ['deletion_cursor_comments'] = '';
-		plugin_mastodon_state_set_deletions_pending($state, $pendingCommentRechecksRemaining, $pendingCommentRechecksRemaining ? 'comment_rechecks' : 'full', gmdate('Y-m-d H:i:s', $deletionCompletionTimestamp + PLUGIN_MASTODON_COOLDOWN_TTL));
+		$state ['deletion_retry_not_before'] = '';
+		$localDeadline = plugin_mastodon_state_local_entry_deletion_deadline($state);
+		$pending = $pendingCommentRechecksRemaining || $localDeadline !== '';
+		$nextDeadline = $localDeadline !== '' ? $localDeadline : gmdate('Y-m-d H:i:s', $deletionCompletionTimestamp + PLUGIN_MASTODON_COOLDOWN_TTL);
+		plugin_mastodon_state_set_deletions_pending($state, $pending, $localDeadline !== '' ? 'full' : ($pendingCommentRechecksRemaining ? 'comment_rechecks' : 'full'), $nextDeadline);
 		$state ['last_error'] = '';
 		if ($pendingCommentRechecksRemaining) {
 			plugin_mastodon_log('Deletion synchronization completed with pending descendant reply rechecks');
@@ -13667,8 +13824,14 @@ function plugin_mastodon_run_deletion_sync($force) {
 			plugin_mastodon_log('Deletion synchronization completed successfully');
 		}
 	} else {
-		$deletionRetryNotBefore = gmdate('Y-m-d H:i:s', time() + PLUGIN_MASTODON_COOLDOWN_TTL);
-		if ($pendingCommentRechecksRemaining) {
+		$rateSummary = plugin_mastodon_rate_limit_guard_summary();
+		$remoteReset = plugin_mastodon_parse_iso_timestamp(isset($rateSummary ['remote_reset']) ? (string) $rateSummary ['remote_reset'] : '');
+		$retryTimestamp = max(time() + PLUGIN_MASTODON_COOLDOWN_TTL, $remoteReset, plugin_mastodon_parse_iso_timestamp(isset($state ['deletion_retry_not_before']) ? (string) $state ['deletion_retry_not_before'] : ''));
+		$deletionRetryNotBefore = gmdate('Y-m-d H:i:s', $retryTimestamp);
+		$state ['deletion_retry_not_before'] = $deletionRetryNotBefore;
+		if (plugin_mastodon_state_local_entry_deletion_deadline($state) !== '') {
+			plugin_mastodon_state_set_deletions_pending($state, true, 'full', $deletionRetryNotBefore);
+		} elseif ($pendingCommentRechecksRemaining) {
 			plugin_mastodon_state_set_deletions_pending($state, true, 'comment_rechecks', $deletionRetryNotBefore);
 		} else {
 			plugin_mastodon_state_set_deletions_pending($state, true, $commentRecheckOnly ? 'comment_rechecks' : 'full', $deletionRetryNotBefore);
@@ -13798,7 +13961,7 @@ function plugin_mastodon_run_sync($force, $fullWindow = null) {
 	if ($okRemote && $okLocal) {
 		$completionTimestamp = time();
 		$state ['last_run'] = gmdate('Y-m-d H:i:s', $completionTimestamp);
-		plugin_mastodon_state_set_deletions_pending($state, plugin_mastodon_should_run_deletion_sync($options), 'full', gmdate('Y-m-d H:i:s', $completionTimestamp + PLUGIN_MASTODON_COOLDOWN_TTL));
+		plugin_mastodon_state_schedule_content_deletions($state, plugin_mastodon_should_run_deletion_sync($options), $completionTimestamp);
 		$state ['last_error'] = '';
 		plugin_mastodon_log('Synchronization completed successfully');
 	} elseif ($state ['last_error'] === '') {
@@ -13806,7 +13969,7 @@ function plugin_mastodon_run_sync($force, $fullWindow = null) {
 		plugin_mastodon_log('Synchronization failed');
 	}
 
-	$stateWriteOk = plugin_mastodon_state_write_with_last_error($state, 'state_write_failed_after_sync');
+	$stateWriteOk = plugin_mastodon_state_write_with_last_error($state, 'state_write_failed_after_sync', true);
 	if (!$stateWriteOk && $okRemote && $okLocal) {
 		if ($state ['last_error'] === '') {
 			$state ['last_error'] = 'state_write_failed_after_sync';
@@ -13837,12 +14000,11 @@ function plugin_mastodon_maybe_sync() {
 		return;
 	}
 	$state = plugin_mastodon_scheduler_state_read();
-	if (plugin_mastodon_sync_due($options, $state, time())) {
-		plugin_mastodon_run_sync(false);
-		return;
-	}
-	if (!empty($state ['deletions_pending']) && plugin_mastodon_should_run_deletion_sync($options) && plugin_mastodon_deletion_sync_due($state, time())) {
+	$job = plugin_mastodon_scheduled_job($options, $state, time());
+	if ($job === 'deletion') {
 		plugin_mastodon_run_deletion_sync(false);
+	} elseif ($job === 'content') {
+		plugin_mastodon_run_sync(false);
 	}
 }
 add_action('init', 'plugin_mastodon_maybe_sync', 20);

@@ -23,27 +23,27 @@ The plugin keeps a compact scheduler layer and a full synchronization layer.
 
 ```mermaid
 flowchart TD
-    StateWrite["plugin_mastodon_state_write(runtime state)"]
-    Normalize["Normalize state"]
-    Partial{"Partial comment-shard working set?"}
-    GroupLoaded["Group loaded entry comments only"]
-    GroupAll["Group all comments"]
-    Preserve["Preserve untouched comment_shards metadata"]
-    WriteShards["Write changed state-comments/YY/MM/entry*.json via temp file + rename"]
-    ShardFailure["Return failure before state.json changes"]
-    MainPayload["Build compact main state with empty comments + comment_shards index"]
-    WriteMain["Write state.json"]
-    MainFailure["Return failure; shards remain repairable"]
-    Scheduler["Refresh scheduler-state.json"]
-    Cleanup["Full write only: remove stale comment shard files"]
+	StateWrite["plugin_mastodon_state_write(runtime state)"]
+	Normalize["Normalize state"]
+	Partial{"Partial comment-shard working set?"}
+	GroupLoaded["Group loaded entry comments only"]
+	GroupAll["Group all comments"]
+	Preserve["Preserve untouched comment_shards metadata"]
+	WriteShards["Write changed state-comments/YY/MM/entry*.json via temp file + rename"]
+	ShardFailure["Return failure before state.json changes"]
+	MainPayload["Build compact main state with empty comments + comment_shards index"]
+	WriteMain["Write state.json"]
+	MainFailure["Return failure; shards remain repairable"]
+	Scheduler["Refresh scheduler-state.json"]
+	Cleanup["Full write only: remove stale comment shard files"]
 
-    StateWrite --> Normalize --> Partial
-    Partial -->|yes| GroupLoaded --> Preserve --> WriteShards
-    Partial -->|no| GroupAll --> WriteShards
-    WriteShards -->|failure| ShardFailure
-    WriteShards -->|success| MainPayload --> WriteMain
-    WriteMain -->|failure| MainFailure
-    WriteMain -->|success| Scheduler --> Cleanup
+	StateWrite --> Normalize --> Partial
+	Partial -->|yes| GroupLoaded --> Preserve --> WriteShards
+	Partial -->|no| GroupAll --> WriteShards
+	WriteShards -->|failure| ShardFailure
+	WriteShards -->|success| MainPayload --> WriteMain
+	WriteMain -->|failure| MainFailure
+	WriteMain -->|success| Scheduler --> Cleanup
 ```
 
 Partial state reads are used when a caller knows the affected entry ids. The write path preserves
@@ -53,75 +53,75 @@ the synchronization lock.
 
 ```mermaid
 flowchart TD
-    Request["FlatPress request"]
-    Init["init hook: plugin_mastodon_maybe_sync"]
-    Options["Load Mastodon options"]
-    SchedulerRead["Read scheduler-state.json through FlatPress I/O"]
-    SchedulerStale{"Summary missing or stale?"}
-    FullStateForSummary["Load state.json only to rebuild compact summary"]
-    Due{"Content sync due?"}
-    DeleteDue{"Deletion sync due and deletions pending?"}
-    NoWork["Fast path: no Mastodon HTTP, no full state load"]
-    HeadCss["plugin_mastodon_head"]
-    CssAsset["Versioned res/mastodon.css link"]
-    Widget["plugin_mastodon_widget"]
-    ProfileCache["Read local profile cache and avatar only"]
-    WidgetComplete{"Complete local widget cache?"}
-    RenderWidget["Render compact Mastodon widget"]
-    HideWidget["Return no widget"]
-    ContentSync["plugin_mastodon_run_sync(false): main index, due/cooldown checks, lock and budgets"]
-    ProfileRefresh["Content run: profile refresh, selected shards, gated import then export"]
-    DeletionSync["plugin_mastodon_run_deletion_sync(false): due/cooldown checks, lock, budgets and shard cursors"]
-    StateWrite["Write compact state.json"]
-    SchedulerWrite["Write scheduler-state.json"]
-    RateWindow["Persist rate-limit-windows.json"]
-    Log["Append and rotate sync.log"]
+	Request["FlatPress request"]
+	Init["init hook: plugin_mastodon_maybe_sync"]
+	Options["Load Mastodon options"]
+	SchedulerRead["Read scheduler-state.json through FlatPress I/O"]
+	SchedulerStale{"Summary missing or stale?"}
+	FullStateForSummary["Load state.json only to rebuild compact summary"]
+	Due{"Content sync due?"}
+	DeleteDue{"Deletion sync due and deletions pending?"}
+	NoWork["Fast path: no Mastodon HTTP, no full state load"]
+	HeadCss["plugin_mastodon_head"]
+	CssAsset["Versioned res/mastodon.css link"]
+	Widget["plugin_mastodon_widget"]
+	ProfileCache["Read local profile cache and avatar only"]
+	WidgetComplete{"Complete local widget cache?"}
+	RenderWidget["Render compact Mastodon widget"]
+	HideWidget["Return no widget"]
+	ContentSync["plugin_mastodon_run_sync(false): main index, due/cooldown checks, lock and budgets"]
+	ProfileRefresh["Content run: profile refresh, selected shards, gated import then export"]
+	DeletionSync["plugin_mastodon_run_deletion_sync(false): due/cooldown checks, lock, budgets and shard cursors"]
+	StateWrite["Write compact state.json"]
+	SchedulerWrite["Write scheduler-state.json"]
+	RateWindow["Persist rate-limit-windows.json"]
+	Log["Append and rotate sync.log"]
 
-    Request --> Init --> Options --> SchedulerRead --> SchedulerStale
-    Request --> HeadCss --> ProfileCache
-    HeadCss --> CssAsset
-    Request --> Widget --> ProfileCache --> WidgetComplete
-    WidgetComplete -- "Yes" --> RenderWidget
-    WidgetComplete -- "No" --> HideWidget
-    SchedulerStale -- "Yes" --> FullStateForSummary --> SchedulerWrite --> Due
-    SchedulerStale -- "No" --> Due
-    Due -- "No" --> DeleteDue
-    DeleteDue -- "No" --> NoWork
-    Due -- "Yes" --> ContentSync --> ProfileRefresh
-    DeleteDue -- "Yes" --> DeletionSync
-    ProfileRefresh --> StateWrite --> SchedulerWrite --> RateWindow --> Log
-    DeletionSync --> StateWrite --> SchedulerWrite --> RateWindow --> Log
+	Request --> Init --> Options --> SchedulerRead --> SchedulerStale
+	Request --> HeadCss --> ProfileCache
+	HeadCss --> CssAsset
+	Request --> Widget --> ProfileCache --> WidgetComplete
+	WidgetComplete -- "Yes" --> RenderWidget
+	WidgetComplete -- "No" --> HideWidget
+	SchedulerStale -- "Yes" --> FullStateForSummary --> SchedulerWrite --> Due
+	SchedulerStale -- "No" --> Due
+	Due -- "No" --> DeleteDue
+	DeleteDue -- "No" --> NoWork
+	Due -- "Yes" --> ContentSync --> ProfileRefresh
+	DeleteDue -- "Yes" --> DeletionSync
+	ProfileRefresh --> StateWrite --> SchedulerWrite --> RateWindow --> Log
+	DeletionSync --> StateWrite --> SchedulerWrite --> RateWindow --> Log
 ```
 
 ### Compact profile widget cache flow
 
 ```mermaid
 flowchart TD
-    Sync["plugin_mastodon_run_sync scheduled/manual"]
-    Verify["verify_credentials account payload"]
-    PublicFields["display_name acct url avatar_static avatar_description"]
-    AvatarFetch["Download avatar with short timeout and MIME allow-list"]
-    ProfileDir["fp-content/plugin_mastodon/profile/"]
-    Json["profile.json public data only"]
-    Avatar["avatar.png/jpg/gif/webp"]
-    Widget["plugin_mastodon_widget"]
-    Stylesheet["plugin_mastodon_head loads res/mastodon.css through utils_asset_ver"]
-    LocalOnly{"JSON and local avatar valid?"}
-    Output["Widget: Mastodon, avatar, display name, @acct"]
-    Empty["No widget output"]
+	Sync["plugin_mastodon_run_sync scheduled/manual"]
+	Verify["verify_credentials account payload"]
+	PublicFields["display_name acct url avatar_static avatar_description"]
+	AvatarFetch["Download avatar with short timeout and MIME allow-list"]
+	ProfileDir["fp-content/plugin_mastodon/profile/"]
+	Json["profile.json public data only"]
+	Avatar["avatar.png/jpg/gif/webp"]
+	Widget["plugin_mastodon_widget"]
+	Stylesheet["plugin_mastodon_head loads res/mastodon.css through utils_asset_ver"]
+	LocalOnly{"JSON and local avatar valid?"}
+	Output["Widget: Mastodon, avatar, display name, @acct"]
+	Empty["No widget output"]
 
-    Sync --> Verify
-    Verify --> PublicFields
-    PublicFields --> AvatarFetch
-    AvatarFetch --> ProfileDir
-    ProfileDir --> Json
-    ProfileDir --> Avatar
-    Widget --> Json
-    Widget --> Avatar
-    Widget --> LocalOnly
-    LocalOnly -- yes --> Output
-    LocalOnly -- yes --> Stylesheet
-    LocalOnly -- no --> Empty
+	Sync --> Verify
+	Verify --> PublicFields
+	PublicFields --> AvatarFetch
+	AvatarFetch --> ProfileDir
+	ProfileDir --> Json
+	ProfileDir --> Avatar
+	Widget --> Json
+	Widget --> Avatar
+	Widget --> LocalOnly
+	LocalOnly -- yes --> Output
+	LocalOnly -- yes --> Stylesheet
+	LocalOnly -- no --> Empty
 ```
 
 The widget render path must remain local-cache-only. Cache refresh belongs to `plugin_mastodon_run_sync()` and account verification work that already talks to Mastodon; ordinary theme/sidebar rendering only reads the JSON and local avatar file. Scheduled, manual and one-way/export-only content syncs therefore check profile/avatar changes before import/export work, while `plugin_mastodon_head()` performs the equally cheap local-cache check and emits the versioned `res/mastodon.css` link when the widget can render. The widget HTML itself contains no inline stylesheet. Missing or incomplete data is treated as a clean "no widget" condition so CMS response time does not depend on Mastodon availability.
@@ -133,51 +133,51 @@ file IDs and Mastodon status IDs.
 
 ```mermaid
 flowchart TD
-    State["Runtime state from main state.json and loaded comment shards"]
+	State["Runtime state from main state.json and loaded comment shards"]
 
-    subgraph ForwardMaps["Forward mappings"]
-        Entries["entries[entry_id]<br/>local entry -> remote top-level status"]
-        Comments["comments[entry_id:comment_id]<br/>local comment -> remote reply status"]
-        RemoteMedia["remote_media / media signatures<br/>stored media IDs and alt-text state"]
-    end
+	subgraph ForwardMaps["Forward mappings"]
+		Entries["entries[entry_id]<br/>local entry -> remote top-level status"]
+		Comments["comments[entry_id:comment_id]<br/>local comment -> remote reply status"]
+		RemoteMedia["remote_media / media signatures<br/>stored media IDs and alt-text state"]
+	end
 
-    subgraph ReverseMaps["Reverse mappings"]
-        EntriesRemote["entries_remote[remote_status_id]<br/>remote status -> local entry"]
-        CommentsRemote["comments_remote[remote_status_id]<br/>remote reply -> local comment"]
-    end
+	subgraph ReverseMaps["Reverse mappings"]
+		EntriesRemote["entries_remote[remote_status_id]<br/>remote status -> local entry"]
+		CommentsRemote["comments_remote[remote_status_id]<br/>remote reply -> local comment"]
+	end
 
-    subgraph WorkQueues["Work queues and cursors"]
-        DirtyEntries["dirty_entries"]
-        DirtyComments["dirty_comments"]
-        CommentOptins["comment_reply_optins"]
-        PendingRechecks["pending_comment_remote_rechecks"]
-        EntryCursor["deletion_cursor_entries"]
-        CommentCursor["deletion_cursor_comments"]
-        OldThreadCursor["old_thread_context_cursor"]
-        NotificationCursor["last_remote_notification_id"]
-    end
+	subgraph WorkQueues["Work queues and cursors"]
+		DirtyEntries["dirty_entries"]
+		DirtyComments["dirty_comments"]
+		CommentOptins["comment_reply_optins"]
+		PendingRechecks["pending_comment_remote_rechecks"]
+		EntryCursor["deletion_cursor_entries"]
+		CommentCursor["deletion_cursor_comments"]
+		OldThreadCursor["old_thread_context_cursor"]
+		NotificationCursor["last_remote_notification_id"]
+	end
 
-    subgraph Safety["Safety and accounting"]
-        Tombstones["comment_tombstones"]
-        ProtectedDeletes["protected local deleted exported comments"]
-        ImportedIgnores["locally deleted imported remote replies"]
-        ContentStats["content_stats"]
-        DeletionStats["deletion_stats"]
-        LastError["last_error"]
-    end
+	subgraph Safety["Safety and accounting"]
+		Tombstones["comment_tombstones"]
+		ProtectedDeletes["protected local deleted exported comments"]
+		ImportedIgnores["locally deleted imported remote replies"]
+		ContentStats["content_stats"]
+		DeletionStats["deletion_stats"]
+		LastError["last_error"]
+	end
 
-    State --> ForwardMaps
-    State --> ReverseMaps
-    State --> WorkQueues
-    State --> Safety
-    Entries <--> EntriesRemote
-    Comments <--> CommentsRemote
-    DirtyEntries --> Entries
-    DirtyComments --> Comments
-    PendingRechecks --> CommentsRemote
-    Tombstones --> CommentsRemote
-    ImportedIgnores --> Tombstones
-    RemoteMedia --> Entries
+	State --> ForwardMaps
+	State --> ReverseMaps
+	State --> WorkQueues
+	State --> Safety
+	Entries <--> EntriesRemote
+	Comments <--> CommentsRemote
+	DirtyEntries --> Entries
+	DirtyComments --> Comments
+	PendingRechecks --> CommentsRemote
+	Tombstones --> CommentsRemote
+	ImportedIgnores --> Tombstones
+	RemoteMedia --> Entries
 ```
 
 ## Comment author link target decision
@@ -186,34 +186,34 @@ Imported Mastodon replies are rendered as FlatPress comments. The comment author
 
 ```mermaid
 flowchart TD
-    Url["Comment author URL"]
-    Present{"URL present?"}
-    Relative{"Relative or root-relative URL?"}
-    Parse["Parse absolute http(s) URL"]
-    BaseMatch{"Host/port match FlatPress base?"}
-    Subdir{"Non-root blog base and URL below it?"}
-    RootBase{"Blog base is domain root?"}
-    RootKnown{"Known FlatPress route, entry point, asset path, or existing static page?"}
-    SameTab["Render link without target"]
-    NewTab["Render link with target=&quot;_blank&quot;"]
-    Harden["Add rel=&quot;nofollow noopener noreferrer&quot;"]
-    Plain["Render name without link"]
+	Url["Comment author URL"]
+	Present{"URL present?"}
+	Relative{"Relative or root-relative URL?"}
+	Parse["Parse absolute http(s) URL"]
+	BaseMatch{"Host/port match FlatPress base?"}
+	Subdir{"Non-root blog base and URL below it?"}
+	RootBase{"Blog base is domain root?"}
+	RootKnown{"Known FlatPress route, entry point, asset path, or existing static page?"}
+	SameTab["Render link without target"]
+	NewTab["Render link with target=&quot;_blank&quot;"]
+	Harden["Add rel=&quot;nofollow noopener noreferrer&quot;"]
+	Plain["Render name without link"]
 
-    Url --> Present
-    Present -- no --> Plain
-    Present -- yes --> Relative
-    Relative -- yes --> SameTab
-    Relative -- no --> Parse
-    Parse --> BaseMatch
-    BaseMatch -- no --> NewTab
-    BaseMatch -- yes --> Subdir
-    Subdir -- yes --> SameTab
-    Subdir -- no --> RootBase
-    RootBase -- yes --> RootKnown
-    RootBase -- no --> NewTab
-    RootKnown -- yes --> SameTab
-    RootKnown -- no --> NewTab
-    NewTab --> Harden
+	Url --> Present
+	Present -- no --> Plain
+	Present -- yes --> Relative
+	Relative -- yes --> SameTab
+	Relative -- no --> Parse
+	Parse --> BaseMatch
+	BaseMatch -- no --> NewTab
+	BaseMatch -- yes --> Subdir
+	Subdir -- yes --> SameTab
+	Subdir -- no --> RootBase
+	RootBase -- yes --> RootKnown
+	RootBase -- no --> NewTab
+	RootKnown -- yes --> SameTab
+	RootKnown -- no --> NewTab
+	NewTab --> Harden
 ```
 
 Relative URL or configured blog-base match? Those URLs remain in the current tab because they stay inside the FlatPress blog. Absolute `http` or `https` URLs outside the configured blog base, including external Mastodon profile URLs, open in a new browser tab/window and receive `noopener`/`noreferrer`. When the configured blog base is the domain root, unknown same-host root paths are treated as external unless they match known FlatPress routes, FlatPress entry points, FlatPress-owned asset directories or an existing static page.
@@ -228,22 +228,22 @@ The admin page mirrors the same direction gate. In one-way mode it hides Mastodo
 
 ```mermaid
 flowchart TD
-    Open["Open Mastodon admin settings"]
-    OneWay{"disable_remote_import enabled?"}
-    Bi["Show import options, read:notifications hint and all counters"]
-    Hide["Hide import options, notification hint, import-only/local-write counters and import-only companion diagnostics"]
-    Marker["Submit mastodon_remote_import_options_hidden marker"]
-    Save["plugin_mastodon_admin_apply_save_post"]
-    Preserve{"Marker present from previous one-way page?"}
-    Keep["Preserve stored import options"]
-    Store["Save visible export, OAuth, instance, token, state and deletion settings"]
+	Open["Open Mastodon admin settings"]
+	OneWay{"disable_remote_import enabled?"}
+	Bi["Show import options, read:notifications hint and all counters"]
+	Hide["Hide import options, notification hint, import-only/local-write counters and import-only companion diagnostics"]
+	Marker["Submit mastodon_remote_import_options_hidden marker"]
+	Save["plugin_mastodon_admin_apply_save_post"]
+	Preserve{"Marker present from previous one-way page?"}
+	Keep["Preserve stored import options"]
+	Store["Save visible export, OAuth, instance, token, state and deletion settings"]
 
-    Open --> OneWay
-    OneWay -- "No" --> Bi --> Save
-    OneWay -- "Yes" --> Hide --> Marker --> Save
-    Save --> Preserve
-    Preserve -- "Yes" --> Keep --> Store
-    Preserve -- "No" --> Store
+	Open --> OneWay
+	OneWay -- "No" --> Bi --> Save
+	OneWay -- "Yes" --> Hide --> Marker --> Save
+	Save --> Preserve
+	Preserve -- "Yes" --> Keep --> Store
+	Preserve -- "No" --> Store
 ```
 
 ### 1.0a Comment/reply synchronization gate
@@ -252,20 +252,20 @@ The `disable_comment_reply_sync` option is checked before every comment/reply pr
 
 ```mermaid
 flowchart TD
-    Start["Sync or FlatPress comment hook"]
-    Gate{"disable_comment_reply_sync enabled?"}
-    EntrySync["Continue entry import/export/deletion logic"]
-    ClearDirty["Clear dirty_comments and pending reply rechecks/cursors where relevant"]
-    SkipLocal["Skip local comment export and comment deletion tombstones"]
-    SkipRemote["Skip Mastodon context descendants and notification replies"]
-    Allow["Gate off: normal comment/reply sync paths"]
+	Start["Sync or FlatPress comment hook"]
+	Gate{"disable_comment_reply_sync enabled?"}
+	EntrySync["Continue entry import/export/deletion logic"]
+	ClearDirty["Clear dirty_comments and pending reply rechecks/cursors where relevant"]
+	SkipLocal["Skip local comment export and comment deletion tombstones"]
+	SkipRemote["Skip Mastodon context descendants and notification replies"]
+	Allow["Gate off: normal comment/reply sync paths"]
 
-    Start --> Gate
-    Gate -- "Yes" --> EntrySync
-    Gate -- "Yes" --> ClearDirty
-    Gate -- "Yes, local hook/export" --> SkipLocal
-    Gate -- "Yes, remote import" --> SkipRemote
-    Gate -- "No" --> Allow
+	Start --> Gate
+	Gate -- "Yes" --> EntrySync
+	Gate -- "Yes" --> ClearDirty
+	Gate -- "Yes, local hook/export" --> SkipLocal
+	Gate -- "Yes, remote import" --> SkipRemote
+	Gate -- "No" --> Allow
 ```
 
 ### 1.0b Visitor opt-in for FlatPress comment-to-Mastodon reply export
@@ -276,59 +276,59 @@ With CommentCenter disabled, the normal `comment_saved` hook stores the grant di
 
 ```mermaid
 flowchart TD
-    Form["comment-form.tpl renders {comment_mastodon}"]
-    Hook["do_action('comment_mastodon') priority 1, accepted_args 0"]
-    Required{"comment/reply sync active?"}
-    Checkbox["Show checkbox and short notice; retain checked POST state"]
-    Silent["Render nothing"]
-    VisitorSubmit["Visitor submits FlatPress comment"]
-    Moderated{"CommentCenter active and holds for approval?"}
-    DirectSave["Normal FlatPress comment_save"]
-    CCLogged["commentcenter_comment_logged priority 10"]
-    PendingGrant["Store frontend grant plus pending_file basename"]
-    AdminDecision{"Admin approves pending comment?"}
-    CCDiscard["commentcenter_comment_discarded priority 10"]
-    RemovePending["Remove pending opt-in grant"]
-    Saved["comment_saved priority 10"]
-    Finalize["Clear pending_file but keep grant"]
-    AdminSubmit["Comment payload carries LOGGEDIN"]
-    Grant{"Grant source available or already stored?"}
-    StoreFrontend["Store comment_reply_optins[entry:comment] source=frontend"]
-    StoreAuth["Store comment_reply_optins[entry:comment] source=authenticated"]
-    LocalOnly["Store local comment only; no grant marker"]
-    Credentials{"instance URL and token complete?"}
-    Queue["Queue dirty_comments when entry/comment are exportable"]
-    Deferred["Keep grant only; later sync may export after credentials are completed"]
-    Prune{"Grant still has pending_file at sync?"}
-    PendingExists{"Pending file or final comment exists?"}
-    ExportGuard{"local comment export allowed?"}
-    PostReply["POST /api/v1/statuses with in_reply_to_id"]
-    SkipExport["Skip Mastodon reply export; keep comment local"]
+	Form["comment-form.tpl renders {comment_mastodon}"]
+	Hook["do_action('comment_mastodon') priority 1, accepted_args 0"]
+	Required{"comment/reply sync active?"}
+	Checkbox["Show checkbox and short notice; retain checked POST state"]
+	Silent["Render nothing"]
+	VisitorSubmit["Visitor submits FlatPress comment"]
+	Moderated{"CommentCenter active and holds for approval?"}
+	DirectSave["Normal FlatPress comment_save"]
+	CCLogged["commentcenter_comment_logged priority 10"]
+	PendingGrant["Store frontend grant plus pending_file basename"]
+	AdminDecision{"Admin approves pending comment?"}
+	CCDiscard["commentcenter_comment_discarded priority 10"]
+	RemovePending["Remove pending opt-in grant"]
+	Saved["comment_saved priority 10"]
+	Finalize["Clear pending_file but keep grant"]
+	AdminSubmit["Comment payload carries LOGGEDIN"]
+	Grant{"Grant source available or already stored?"}
+	StoreFrontend["Store comment_reply_optins[entry:comment] source=frontend"]
+	StoreAuth["Store comment_reply_optins[entry:comment] source=authenticated"]
+	LocalOnly["Store local comment only; no grant marker"]
+	Credentials{"instance URL and token complete?"}
+	Queue["Queue dirty_comments when entry/comment are exportable"]
+	Deferred["Keep grant only; later sync may export after credentials are completed"]
+	Prune{"Grant still has pending_file at sync?"}
+	PendingExists{"Pending file or final comment exists?"}
+	ExportGuard{"local comment export allowed?"}
+	PostReply["POST /api/v1/statuses with in_reply_to_id"]
+	SkipExport["Skip Mastodon reply export; keep comment local"]
 
-    Form --> Hook --> Required
-    Required -- "Yes" --> Checkbox --> VisitorSubmit
-    Required -- "No" --> Silent --> VisitorSubmit
-    VisitorSubmit --> Moderated
-    Moderated -- "No / CommentCenter disabled" --> DirectSave --> Saved
-    Moderated -- "Yes with checkbox" --> CCLogged --> PendingGrant --> AdminDecision
-    Moderated -- "Yes without checkbox" --> AdminDecision
-    AdminDecision -- "Approve" --> Saved
-    AdminDecision -- "Reject" --> CCDiscard --> RemovePending
-    AdminSubmit --> Saved
-    Saved --> Finalize --> Grant
-    Grant -- "Visitor checkbox checked or stored state grant" --> StoreFrontend --> Credentials
-    Grant -- "Stored LOGGEDIN marker" --> StoreAuth --> Credentials
-    Grant -- "No grant" --> LocalOnly --> ExportGuard
-    Credentials -- "Yes" --> Queue --> Prune
-    Credentials -- "No" --> Deferred --> Prune
-    Prune -- "No" --> ExportGuard
-    Prune -- "Yes" --> PendingExists
-    PendingExists -- "Final comment exists" --> Finalize
-    PendingExists -- "Pending file exists" --> ExportGuard
-    PendingExists -- "Neither exists" --> RemovePending
-    Finalize --> ExportGuard
-    ExportGuard -- "Stored grant or existing mapping" --> PostReply
-    ExportGuard -- "No grant for new visitor/admin-session comment" --> SkipExport
+	Form --> Hook --> Required
+	Required -- "Yes" --> Checkbox --> VisitorSubmit
+	Required -- "No" --> Silent --> VisitorSubmit
+	VisitorSubmit --> Moderated
+	Moderated -- "No / CommentCenter disabled" --> DirectSave --> Saved
+	Moderated -- "Yes with checkbox" --> CCLogged --> PendingGrant --> AdminDecision
+	Moderated -- "Yes without checkbox" --> AdminDecision
+	AdminDecision -- "Approve" --> Saved
+	AdminDecision -- "Reject" --> CCDiscard --> RemovePending
+	AdminSubmit --> Saved
+	Saved --> Finalize --> Grant
+	Grant -- "Visitor checkbox checked or stored state grant" --> StoreFrontend --> Credentials
+	Grant -- "Stored LOGGEDIN marker" --> StoreAuth --> Credentials
+	Grant -- "No grant" --> LocalOnly --> ExportGuard
+	Credentials -- "Yes" --> Queue --> Prune
+	Credentials -- "No" --> Deferred --> Prune
+	Prune -- "No" --> ExportGuard
+	Prune -- "Yes" --> PendingExists
+	PendingExists -- "Final comment exists" --> Finalize
+	PendingExists -- "Pending file exists" --> ExportGuard
+	PendingExists -- "Neither exists" --> RemovePending
+	Finalize --> ExportGuard
+	ExportGuard -- "Stored grant or existing mapping" --> PostReply
+	ExportGuard -- "No grant for new visitor/admin-session comment" --> SkipExport
 ```
 
 ### 1.1 FlatPress entry candidate selection and dirty decision
@@ -339,57 +339,57 @@ full sync intentionally scans all entries.
 
 ```mermaid
 flowchart TD
-    EntrySaved["FlatPress entry_save succeeded"]
-    Hook["entry_saved hook -> plugin_mastodon_on_entry_saved"]
-    Guard{"plugin-owned local-write guard active?"}
-    Mapping{"Entry already mapped to remote status?"}
-    Window{"Entry date inside automatic sync window?"}
-    Changed{"Hash or relevant media signature changed?"}
-    Dirty["Add or keep dirty_entries[entry_id]"]
-    ClearDirty["Clear stale dirty marker"]
-    Ignore["Do not mark dirty"]
-    Summary["Persist scheduler summary"]
+	EntrySaved["FlatPress entry_save succeeded"]
+	Hook["entry_saved hook -> plugin_mastodon_on_entry_saved"]
+	Guard{"plugin-owned local-write guard active?"}
+	Mapping{"Entry already mapped to remote status?"}
+	Window{"Entry date inside automatic sync window?"}
+	Changed{"Hash or relevant media signature changed?"}
+	Dirty["Add or keep dirty_entries[entry_id]"]
+	ClearDirty["Clear stale dirty marker"]
+	Ignore["Do not mark dirty"]
+	Summary["Persist scheduler summary"]
 
-    EntrySaved --> Hook --> Guard
-    Guard -- "Yes" --> Ignore --> Summary
-    Guard -- "No" --> Mapping
-    Mapping -- "Yes" --> Changed
-    Changed -- "Yes" --> Dirty --> Summary
-    Changed -- "No" --> ClearDirty --> Summary
-    Mapping -- "No" --> Window
-    Window -- "Yes" --> ClearDirty
-    Window -- "No" --> Ignore
+	EntrySaved --> Hook --> Guard
+	Guard -- "Yes" --> Ignore --> Summary
+	Guard -- "No" --> Mapping
+	Mapping -- "Yes" --> Changed
+	Changed -- "Yes" --> Dirty --> Summary
+	Changed -- "No" --> ClearDirty --> Summary
+	Mapping -- "No" --> Window
+	Window -- "Yes" --> ClearDirty
+	Window -- "No" --> Ignore
 ```
 
 ```mermaid
 flowchart TD
-    Start["plugin_mastodon_list_local_entries_for_sync"]
-    DirtyLookup["Build lookup from dirty_entries and dirty_comments<br/>dirty_comments only when comment/reply gate is off"]
-    CollectFiles["Collect canonical CONTENT_DIR/YY/MM/entry*.txt candidates<br/>full scan for force, scheduled 7/14/30-day months otherwise"]
-    AddDirty["Append all dirty_entries and allowed dirty_comments parents<br/>mandatory, no hard cap"]
-    NextFile["Next entry file"]
-    Force{"manual full sync force=true?"}
-    Dirty{"Entry ID in dirty lookup?"}
-    Window{"Entry ID date inside active content window?"}
-    SkipWithoutParse["Skip without entry_parse"]
-    Parse["entry_parse"]
-    Draft{"Draft category?"}
-    Add["Add to ordered export list"]
-    Sort["Sort by local item timestamp"]
-    Result["Return selected entries"]
+	Start["plugin_mastodon_list_local_entries_for_sync"]
+	DirtyLookup["Build lookup from dirty_entries and dirty_comments<br/>dirty_comments only when comment/reply gate is off"]
+	CollectFiles["Collect canonical CONTENT_DIR/YY/MM/entry*.txt candidates<br/>full scan for force, scheduled 7/14/30-day months otherwise"]
+	AddDirty["Append all dirty_entries and allowed dirty_comments parents<br/>mandatory, no hard cap"]
+	NextFile["Next entry file"]
+	Force{"manual full sync force=true?"}
+	Dirty{"Entry ID in dirty lookup?"}
+	Window{"Entry ID date inside active content window?"}
+	SkipWithoutParse["Skip without entry_parse"]
+	Parse["entry_parse"]
+	Draft{"Draft category?"}
+	Add["Add to ordered export list"]
+	Sort["Sort by local item timestamp"]
+	Result["Return selected entries"]
 
-    Start --> DirtyLookup --> CollectFiles --> AddDirty --> NextFile
-    NextFile --> Force
-    Force -- "Yes" --> Parse
-    Force -- "No" --> Dirty
-    Dirty -- "Yes" --> Parse
-    Dirty -- "No" --> Window
-    Window -- "Yes" --> Parse
-    Window -- "No" --> SkipWithoutParse --> NextFile
-    Parse --> Draft
-    Draft -- "Yes" --> NextFile
-    Draft -- "No" --> Add --> NextFile
-    NextFile --> Sort --> Result
+	Start --> DirtyLookup --> CollectFiles --> AddDirty --> NextFile
+	NextFile --> Force
+	Force -- "Yes" --> Parse
+	Force -- "No" --> Dirty
+	Dirty -- "Yes" --> Parse
+	Dirty -- "No" --> Window
+	Window -- "Yes" --> Parse
+	Window -- "No" --> SkipWithoutParse --> NextFile
+	Parse --> Draft
+	Draft -- "Yes" --> NextFile
+	Draft -- "No" --> Add --> NextFile
+	NextFile --> Sort --> Result
 ```
 
 The collector reads only canonical FlatPress `YY/MM/entry*.txt` files directly from month directories. Manual full syncs scan all canonical months. Scheduled/non-full syncs scan only months that can intersect the admin-selected 7/14/30-day active content window and then append every canonical parent entry from `dirty_entries` and `dirty_comments`. Dirty candidates are mandatory and intentionally have no simple three-item hard cap; a future throttle would need a persisted rotating cursor, logging and a full-sync bypass. Local comments are still evaluated later per selected parent entry via the comment-listing path, so entry-like files below comment storage must not inflate the local entry candidate set.
@@ -401,44 +401,44 @@ The export path builds text, tags, media IDs, and update metadata before it deci
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    participant Sync as plugin_mastodon_sync_local_to_remote
-    participant State as state.json
-    participant Text as Text and tag builder
-    participant Media as Media planner
-    participant API as Mastodon API
-    participant Cleanup as Best-effort cleanup
+	autonumber
+	participant Sync as plugin_mastodon_sync_local_to_remote
+	participant State as state.json
+	participant Text as Text and tag builder
+	participant Media as Media planner
+	participant API as Mastodon API
+	participant Cleanup as Best-effort cleanup
 
-    Sync->>State: Read entry mapping and dirty marker
-    Sync->>Text: plugin_mastodon_build_entry_status_text
-    Text-->>Sync: Title + body before first [more] + allowed suffixes within server/URL budget
-    Sync->>Media: collect, validate, and prepare media plan
-    Media-->>Sync: mode, selected full-entry media, reusable media_ids, media_attributes and signatures
+	Sync->>State: Read entry mapping and dirty marker
+	Sync->>Text: plugin_mastodon_build_entry_status_text
+	Text-->>Sync: Title + body before first [more] + allowed suffixes within server/URL budget
+	Sync->>Media: collect, validate, and prepare media plan
+	Media-->>Sync: mode, selected full-entry media, reusable media_ids, media_attributes and signatures
 
-    opt Media plan requires upload
-        Sync->>API: POST /api/v2/media for selected local files
-        Sync->>API: Poll GET /api/v1/media/:id when processing is pending
-    end
+	opt Media plan requires upload
+		Sync->>API: POST /api/v2/media for selected local files
+		Sync->>API: Poll GET /api/v1/media/:id when processing is pending
+	end
 
-    alt Required upload failed
-        Sync->>State: Keep mapping and dirty marker for retry, skip status write
-    else Media ready or no upload required
-        alt Existing remote_id and unchanged complete-entry hash
-            Sync->>State: Clear stale dirty marker and skip status PUT
-        else Existing remote_id and changed hash
-            Sync->>API: PUT /api/v1/statuses/:id with status, media_ids and optional media_attributes
-            API-->>Sync: Updated status JSON or failure
-        else New export
-            Sync->>API: POST /api/v1/statuses with status, visibility, language, media_ids
-            API-->>Sync: Created status JSON or failure
-        end
-        opt Status write succeeded
-            Sync->>State: Store mapping, media signatures and counters, clear dirty marker
-        end
-        opt Status write failed after new uploads
-            Sync->>Cleanup: Capability-gated DELETE /api/v1/media/:id for unattached media
-        end
-    end
+	alt Required upload failed
+		Sync->>State: Keep mapping and dirty marker for retry, skip status write
+	else Media ready or no upload required
+		alt Existing remote_id and unchanged complete-entry hash
+			Sync->>State: Clear stale dirty marker and skip status PUT
+		else Existing remote_id and changed hash
+			Sync->>API: PUT /api/v1/statuses/:id with status, media_ids and optional media_attributes
+			API-->>Sync: Updated status JSON or failure
+		else New export
+			Sync->>API: POST /api/v1/statuses with status, visibility, language, media_ids
+			API-->>Sync: Created status JSON or failure
+		end
+		opt Status write succeeded
+			Sync->>State: Store mapping, media signatures and counters, clear dirty marker
+		end
+		opt Status write failed after new uploads
+			Sync->>Cleanup: Capability-gated DELETE /api/v1/media/:id for unattached media
+		end
+	end
 ```
 
 ### 1.3 FlatPress comment and comment reply export
@@ -452,64 +452,64 @@ instead of scanning all old comment folders.
 
 ```mermaid
 flowchart TD
-    CommentSaved["FlatPress comment_save succeeded"]
-    Hook["comment_saved hook -> plugin_mastodon_on_comment_saved"]
-    Guard{"plugin-owned local-write guard active?"}
-    CommentGate{"disable_comment_reply_sync enabled?"}
-    SyncStart{"Comment matches sync_start_date?"}
-    EntryMapped{"Parent entry has remote status?"}
-    CommentMapped{"Comment already has remote status?"}
-    ActiveWindow{"Fresh comment inside active content window?"}
-    ParentLocal["Detect local parent comment"]
-    ParentPending{"Parent comment exists but export still pending?"}
-    DirtyComment["Add dirty_comments[entry_id:comment_id]"]
-    DirtyEntry["Queue dirty_entries[entry_id] so parent entry exports first"]
-    NoExport["Do not export yet"]
-    Persist["Persist scheduler summary"]
+	CommentSaved["FlatPress comment_save succeeded"]
+	Hook["comment_saved hook -> plugin_mastodon_on_comment_saved"]
+	Guard{"plugin-owned local-write guard active?"}
+	CommentGate{"disable_comment_reply_sync enabled?"}
+	SyncStart{"Comment matches sync_start_date?"}
+	EntryMapped{"Parent entry has remote status?"}
+	CommentMapped{"Comment already has remote status?"}
+	ActiveWindow{"Fresh comment inside active content window?"}
+	ParentLocal["Detect local parent comment"]
+	ParentPending{"Parent comment exists but export still pending?"}
+	DirtyComment["Add dirty_comments[entry_id:comment_id]"]
+	DirtyEntry["Queue dirty_entries[entry_id] so parent entry exports first"]
+	NoExport["Do not export yet"]
+	Persist["Persist scheduler summary"]
 
-    CommentSaved --> Hook --> Guard
-    Guard -- "Yes" --> NoExport --> Persist
-    Guard -- "No" --> CommentGate
-    CommentGate -- "Yes" --> NoExport
-    CommentGate -- "No" --> SyncStart
-    SyncStart -- "No" --> NoExport
-    SyncStart -- "Yes" --> EntryMapped
-    EntryMapped -- "No, parent is local and eligible" --> DirtyEntry --> Persist
-    EntryMapped -- "Yes" --> CommentMapped
-    CommentMapped -- "Yes, hash changed" --> DirtyComment --> Persist
-    CommentMapped -- "No" --> ActiveWindow
-    ActiveWindow -- "No" --> NoExport
-    ActiveWindow -- "Yes" --> ParentLocal --> ParentPending
-    ParentPending -- "Yes" --> DirtyComment
-    ParentPending -- "No" --> DirtyComment
+	CommentSaved --> Hook --> Guard
+	Guard -- "Yes" --> NoExport --> Persist
+	Guard -- "No" --> CommentGate
+	CommentGate -- "Yes" --> NoExport
+	CommentGate -- "No" --> SyncStart
+	SyncStart -- "No" --> NoExport
+	SyncStart -- "Yes" --> EntryMapped
+	EntryMapped -- "No, parent is local and eligible" --> DirtyEntry --> Persist
+	EntryMapped -- "Yes" --> CommentMapped
+	CommentMapped -- "Yes, hash changed" --> DirtyComment --> Persist
+	CommentMapped -- "No" --> ActiveWindow
+	ActiveWindow -- "No" --> NoExport
+	ActiveWindow -- "Yes" --> ParentLocal --> ParentPending
+	ParentPending -- "Yes" --> DirtyComment
+	ParentPending -- "No" --> DirtyComment
 ```
 
 ```mermaid
 flowchart TD
-    Candidate["Comment candidate selected for export"]
-    CommentGate{"disable_comment_reply_sync enabled?"}
-    EntryRemote{"Entry remote_id exists?"}
-    DetectParent["plugin_mastodon_detect_local_comment_parent_id"]
-    Resolve["plugin_mastodon_resolve_comment_reply_target"]
-    ParentRemote{"Parent comment remote_id exists?"}
-    Defer["Defer and retry later in this run"]
-    NoProgress{"No progress guard exhausted?"}
-    LogDeferred["Log deferred export and keep dirty marker"]
-    ReplyToParent["POST /api/v1/statuses in_reply_to_id=parent comment remote_id"]
-    ReplyToEntry["POST /api/v1/statuses in_reply_to_id=entry remote_id"]
-    Mapping["Store comments and comments_remote with parent_comment_id and in_reply_to_remote_id"]
-    ClearDirty["Clear dirty comment marker"]
+	Candidate["Comment candidate selected for export"]
+	CommentGate{"disable_comment_reply_sync enabled?"}
+	EntryRemote{"Entry remote_id exists?"}
+	DetectParent["plugin_mastodon_detect_local_comment_parent_id"]
+	Resolve["plugin_mastodon_resolve_comment_reply_target"]
+	ParentRemote{"Parent comment remote_id exists?"}
+	Defer["Defer and retry later in this run"]
+	NoProgress{"No progress guard exhausted?"}
+	LogDeferred["Log deferred export and keep dirty marker"]
+	ReplyToParent["POST /api/v1/statuses in_reply_to_id=parent comment remote_id"]
+	ReplyToEntry["POST /api/v1/statuses in_reply_to_id=entry remote_id"]
+	Mapping["Store comments and comments_remote with parent_comment_id and in_reply_to_remote_id"]
+	ClearDirty["Clear dirty comment marker"]
 
-    Candidate --> CommentGate
-    CommentGate -- "Yes" --> ClearDirty
-    CommentGate -- "No" --> EntryRemote
-    EntryRemote -- "No" --> LogDeferred
-    EntryRemote -- "Yes" --> DetectParent --> Resolve --> ParentRemote
-    ParentRemote -- "Yes" --> ReplyToParent --> Mapping --> ClearDirty
-    ParentRemote -- "No, parent pending" --> Defer --> NoProgress
-    NoProgress -- "No" --> DetectParent
-    NoProgress -- "Yes" --> LogDeferred
-    ParentRemote -- "No parent or top-level comment" --> ReplyToEntry --> Mapping
+	Candidate --> CommentGate
+	CommentGate -- "Yes" --> ClearDirty
+	CommentGate -- "No" --> EntryRemote
+	EntryRemote -- "No" --> LogDeferred
+	EntryRemote -- "Yes" --> DetectParent --> Resolve --> ParentRemote
+	ParentRemote -- "Yes" --> ReplyToParent --> Mapping --> ClearDirty
+	ParentRemote -- "No, parent pending" --> Defer --> NoProgress
+	NoProgress -- "No" --> DetectParent
+	NoProgress -- "Yes" --> LogDeferred
+	ParentRemote -- "No parent or top-level comment" --> ReplyToEntry --> Mapping
 ```
 
 ### 1.4 Mastodon top-level status to FlatPress entry
@@ -525,51 +525,51 @@ refresh has already verified the account and refreshed the local avatar/profile 
 
 ```mermaid
 flowchart TD
-    Start["plugin_mastodon_sync_remote_to_local()"]
-    Gate{"Remote import enabled?"}
-    Skip["Return: skip Mastodon-to-FlatPress import; FlatPress-to-Mastodon export remains active"]
-    Verify["GET /api/v1/accounts/verify_credentials"]
-    VerifyOk{"Account ID available?"}
-    Error["Set last_error and abort remote import"]
-    Capability["Read cached /api/v2/instance version and api_versions"]
-    Capable{"Mastodon >= 4.6.0 or API v10?"}
-    StatusNew["GET /api/v1/accounts/:id/statuses with exclude_direct=true"]
-    Reject{"Optional exclude_direct filter rejected?"}
-    StatusLegacy["GET /api/v1/accounts/:id/statuses without exclude_direct"]
-    StatusList["Account status page(s)"]
-    Next{"Next top-level status?"}
-    Filter{"Visibility, reblog/reply, sync window and source mapping allow import?"}
-    SkipStatus["Aggregate skip reason"]
-    MissingEntry{"Remote ID maps to a missing local entry?"}
-    KeepDeleted["Skip import; preserve mapping for deletion sync"]
-    Convert["Convert Mastodon HTML/media/tags to FlatPress markup"]
-    StatusUrl["Read Status.url single-toot source link"]
-    Footer["Append Mastodon source footer BBCode"]
-    Guard["Enter plugin-owned local-write guard"]
-    Save["entry_save imported entry"]
-    Ignore["entry_saved hook ignored by guard"]
-    Map["Store entries, entries_remote, last_remote_status_id and source metadata"]
-    Done["Remote-to-local status import complete"]
+	Start["plugin_mastodon_sync_remote_to_local()"]
+	Gate{"Remote import enabled?"}
+	Skip["Return: skip Mastodon-to-FlatPress import; FlatPress-to-Mastodon export remains active"]
+	Verify["GET /api/v1/accounts/verify_credentials"]
+	VerifyOk{"Account ID available?"}
+	Error["Set last_error and abort remote import"]
+	Capability["Read cached /api/v2/instance version and api_versions"]
+	Capable{"Mastodon >= 4.6.0 or API v10?"}
+	StatusNew["GET /api/v1/accounts/:id/statuses with exclude_direct=true"]
+	Reject{"Optional exclude_direct filter rejected?"}
+	StatusLegacy["GET /api/v1/accounts/:id/statuses without exclude_direct"]
+	StatusList["Account status page(s)"]
+	Next{"Next top-level status?"}
+	Filter{"Visibility, reblog/reply, sync window and source mapping allow import?"}
+	SkipStatus["Aggregate skip reason"]
+	MissingEntry{"Remote ID maps to a missing local entry?"}
+	KeepDeleted["Skip import; preserve mapping for deletion sync"]
+	Convert["Convert Mastodon HTML/media/tags to FlatPress markup"]
+	StatusUrl["Read Status.url single-toot source link"]
+	Footer["Append Mastodon source footer BBCode"]
+	Guard["Enter plugin-owned local-write guard"]
+	Save["entry_save imported entry"]
+	Ignore["entry_saved hook ignored by guard"]
+	Map["Store entries, entries_remote, last_remote_status_id and source metadata"]
+	Done["Remote-to-local status import complete"]
 
-    Start --> Gate
-    Gate -- "No: disable_remote_import" --> Skip
-    Gate -- "Yes" --> Verify
-    Verify --> VerifyOk
-    VerifyOk -- "No" --> Error
-    VerifyOk -- "Yes" --> Capability
-    Capability --> Capable
-    Capable -- "Yes" --> StatusNew --> Reject
-    Reject -- "Yes" --> StatusLegacy
-    Reject -- "No" --> StatusList
-    Capable -- "No" --> StatusLegacy
-    StatusLegacy --> StatusList
-    StatusList --> Next
-    Next -- "No more statuses" --> Done
-    Next -- "Status available" --> Filter
-    Filter -- "No" --> SkipStatus --> Next
-    Filter -- "Yes" --> MissingEntry
-    MissingEntry -- "Yes" --> KeepDeleted --> Next
-    MissingEntry -- "No" --> Convert --> StatusUrl --> Footer --> Guard --> Save --> Ignore --> Map --> Next
+	Start --> Gate
+	Gate -- "No: disable_remote_import" --> Skip
+	Gate -- "Yes" --> Verify
+	Verify --> VerifyOk
+	VerifyOk -- "No" --> Error
+	VerifyOk -- "Yes" --> Capability
+	Capability --> Capable
+	Capable -- "Yes" --> StatusNew --> Reject
+	Reject -- "Yes" --> StatusLegacy
+	Reject -- "No" --> StatusList
+	Capable -- "No" --> StatusLegacy
+	StatusLegacy --> StatusList
+	StatusList --> Next
+	Next -- "No more statuses" --> Done
+	Next -- "Status available" --> Filter
+	Filter -- "No" --> SkipStatus --> Next
+	Filter -- "Yes" --> MissingEntry
+	MissingEntry -- "Yes" --> KeepDeleted --> Next
+	MissingEntry -- "No" --> Convert --> StatusUrl --> Footer --> Guard --> Save --> Ignore --> Map --> Next
 ```
 
 The imported entry footer uses `Status.url`, which is the Mastodon single-status/toot URL, not the author `account.url`. `plugin_mastodon_imported_status_footer_bbcode()` adds `target="_blank"` and `rel="nofollow noopener noreferrer"` through FlatPress BBCode URL attributes; comment author links use the separate external-URL modifier path. The generated footer operation is <code>Append [url=... target=_blank rel=&quot;nofollow noopener noreferrer&quot;]Mastodon[/url]</code>.
@@ -581,51 +581,51 @@ walks descendants. This path must avoid resurrecting locally deleted comments, i
 
 ```mermaid
 flowchart TD
-    Enabled{"disable_remote_import or disable_comment_reply_sync enabled?"}
-    Skip["Skip context import"]
-    EntryMapped["Known imported entry mapping"]
-    FetchContext["GET /api/v1/statuses/:id/context"]
-    Descendants["Read descendants"]
-    BuildIndex["Build remote child index and lookup"]
-    NextReply["Next descendant reply"]
-    Importable{"Public/importable and inside sync-start window?"}
-    Tombstone{"comment_tombstone or protected local delete/ignore?"}
-    MissingExport{"comments_remote points to missing source=local file?"}
-    TargetedShard["Load only referenced shard and set local_deleted_pending_remote_delete"]
-    AlreadyMapped{"Already mapped to local comment?"}
-    PreserveSource["Update content/hash but preserve existing source ownership"]
-    Conflict{"Remote ID already owned by another local comment?"}
-    ParentKnown{"Parent is entry status or known/imported reply?"}
-    Pending["Keep pending for later pass or pending_comment_remote_rechecks"]
-    Quote{"quote_imported_reply_parent enabled?"}
-    AddQuote["Prepend FlatPress quote block"]
-    Import["plugin_mastodon_import_remote_comment"]
-    Guard["comment_save under local-write guard"]
-    Mapping["Store comments and comments_remote mapping"]
-    Recheck["Queue descendant rechecks when local/remote deletion changed thread"]
-    Progress{"Progress in this pass?"}
-    ForceImport["Force remaining import with unresolved parent reference only when safe"]
+	Enabled{"disable_remote_import or disable_comment_reply_sync enabled?"}
+	Skip["Skip context import"]
+	EntryMapped["Known imported entry mapping"]
+	FetchContext["GET /api/v1/statuses/:id/context"]
+	Descendants["Read descendants"]
+	BuildIndex["Build remote child index and lookup"]
+	NextReply["Next descendant reply"]
+	Importable{"Public/importable and inside sync-start window?"}
+	Tombstone{"comment_tombstone or protected local delete/ignore?"}
+	MissingExport{"comments_remote points to missing source=local file?"}
+	TargetedShard["Load only referenced shard and set local_deleted_pending_remote_delete"]
+	AlreadyMapped{"Already mapped to local comment?"}
+	PreserveSource["Update content/hash but preserve existing source ownership"]
+	Conflict{"Remote ID already owned by another local comment?"}
+	ParentKnown{"Parent is entry status or known/imported reply?"}
+	Pending["Keep pending for later pass or pending_comment_remote_rechecks"]
+	Quote{"quote_imported_reply_parent enabled?"}
+	AddQuote["Prepend FlatPress quote block"]
+	Import["plugin_mastodon_import_remote_comment"]
+	Guard["comment_save under local-write guard"]
+	Mapping["Store comments and comments_remote mapping"]
+	Recheck["Queue descendant rechecks when local/remote deletion changed thread"]
+	Progress{"Progress in this pass?"}
+	ForceImport["Force remaining import with unresolved parent reference only when safe"]
 
-    Enabled -- "Yes" --> Skip
-    Enabled -- "No" --> EntryMapped --> FetchContext --> Descendants --> BuildIndex --> NextReply
-    NextReply --> Importable
-    Importable -- "No" --> NextReply
-    Importable -- "Yes" --> Tombstone
-    Tombstone -- "Yes" --> NextReply
-    Tombstone -- "No" --> MissingExport
-    MissingExport -- "Yes" --> TargetedShard --> NextReply
-    MissingExport -- "No" --> AlreadyMapped
-    AlreadyMapped -- "Yes" --> PreserveSource --> Recheck --> NextReply
-    AlreadyMapped -- "No" --> Conflict
-    Conflict -- "Yes, reject" --> NextReply
-    Conflict -- "No" --> ParentKnown
-    ParentKnown -- "No" --> Pending --> Progress
-    ParentKnown -- "Yes" --> Quote
-    Quote -- "Yes" --> AddQuote --> Import
-    Quote -- "No" --> Import
-    Import --> Guard --> Mapping --> Recheck --> NextReply
-    Progress -- "Progress made" --> NextReply
-    Progress -- "No progress" --> ForceImport --> Guard
+	Enabled -- "Yes" --> Skip
+	Enabled -- "No" --> EntryMapped --> FetchContext --> Descendants --> BuildIndex --> NextReply
+	NextReply --> Importable
+	Importable -- "No" --> NextReply
+	Importable -- "Yes" --> Tombstone
+	Tombstone -- "Yes" --> NextReply
+	Tombstone -- "No" --> MissingExport
+	MissingExport -- "Yes" --> TargetedShard --> NextReply
+	MissingExport -- "No" --> AlreadyMapped
+	AlreadyMapped -- "Yes" --> PreserveSource --> Recheck --> NextReply
+	AlreadyMapped -- "No" --> Conflict
+	Conflict -- "Yes, reject" --> NextReply
+	Conflict -- "No" --> ParentKnown
+	ParentKnown -- "No" --> Pending --> Progress
+	ParentKnown -- "Yes" --> Quote
+	Quote -- "Yes" --> AddQuote --> Import
+	Quote -- "No" --> Import
+	Import --> Guard --> Mapping --> Recheck --> NextReply
+	Progress -- "Progress made" --> NextReply
+	Progress -- "No progress" --> ForceImport --> Guard
 ```
 
 ### 1.6 Notification reply-hint pass
@@ -637,31 +637,31 @@ admin-configured old-thread context budget that normal rotation would otherwise 
 
 ```mermaid
 flowchart TD
-    Start["Remote-to-local sync"]
-    ImportEnabled{"disable_remote_import and disable_comment_reply_sync off?"}
-    Scope{"old_thread_reply_check and read:notifications?"}
-    Fetch["GET /api/v1/notifications?types[]=mention&limit=30"]
-    Reply{"Notification status is a reply?"}
-    ParentKnown{"Parent remote id maps to entry/comment?"}
-    Direct["Import reply directly as FlatPress comment"]
-    Budget{"Context budget left?"}
-    Context["GET /api/v1/statuses/:id/context"]
-    ImportChain["Import ancestor chain below known entry"]
-    Rotate["Use remaining budget for normal old-thread rotation"]
-    Cursor["Advance last_remote_notification_id only after processed hints"]
+	Start["Remote-to-local sync"]
+	ImportEnabled{"disable_remote_import and disable_comment_reply_sync off?"}
+	Scope{"old_thread_reply_check and read:notifications?"}
+	Fetch["GET /api/v1/notifications?types[]=mention&limit=30"]
+	Reply{"Notification status is a reply?"}
+	ParentKnown{"Parent remote id maps to entry/comment?"}
+	Direct["Import reply directly as FlatPress comment"]
+	Budget{"Context budget left?"}
+	Context["GET /api/v1/statuses/:id/context"]
+	ImportChain["Import ancestor chain below known entry"]
+	Rotate["Use remaining budget for normal old-thread rotation"]
+	Cursor["Advance last_remote_notification_id only after processed hints"]
 
-    Start --> ImportEnabled
-    ImportEnabled -- "No" --> SkipHints["Skip reply hints and context rotation"]
-    ImportEnabled -- "Yes" --> Scope
-    Scope -- "No" --> Rotate
-    Scope -- "Yes" --> Fetch --> Reply
-    Reply -- "No" --> Cursor
-    Reply -- "Yes" --> ParentKnown
-    ParentKnown -- "Yes" --> Direct --> Cursor
-    ParentKnown -- "No" --> Budget
-    Budget -- "Yes" --> Context --> ImportChain --> Cursor
-    Budget -- "No" --> Rotate
-    Cursor --> Rotate
+	Start --> ImportEnabled
+	ImportEnabled -- "No" --> SkipHints["Skip reply hints and context rotation"]
+	ImportEnabled -- "Yes" --> Scope
+	Scope -- "No" --> Rotate
+	Scope -- "Yes" --> Fetch --> Reply
+	Reply -- "No" --> Cursor
+	Reply -- "Yes" --> ParentKnown
+	ParentKnown -- "Yes" --> Direct --> Cursor
+	ParentKnown -- "No" --> Budget
+	Budget -- "Yes" --> Context --> ImportChain --> Cursor
+	Budget -- "No" --> Rotate
+	Cursor --> Rotate
 ```
 
 ## 2. Text, URLs, tags, media, and companion plugins
@@ -677,32 +677,32 @@ remains normal text. Titles, public links and hashtag suffixes share the limit.
 
 ```mermaid
 flowchart TD
-    Entry["Complete FlatPress entry"]
-    MoreBoundary["Cut raw body at first case-insensitive [more]"]
-    Convert["Convert teaser BBCode, URLs and emoticons"]
-    Subject["Prepare entry title"]
-    Tags["Extract tags from complete entry when Tag is active"]
-    Link["Resolve public entry link"]
-    Join["Join title and teaser"]
-    Limits["Use instance max_characters and characters_reserved_per_url"]
-    UrlSpans["plugin_mastodon_status_text_url_spans:<br/>trim punctuation boundaries"]
-    Suffix["Reserve link and hashtag suffixes when existing policy allows"]
-    Truncate["plugin_mastodon_status_text_length and<br/>plugin_mastodon_limit_status_text within available budget"]
-    Result["Final entry status text"]
-    Comment["FlatPress comment"]
-    Reply["Existing localized author/body/comment-link builder"]
-    ReplyLimit["Existing URL-aware reply budget"]
-    Media["Collect and select media from complete entry"]
-    Hash["Hash complete stored entry content"]
+	Entry["Complete FlatPress entry"]
+	MoreBoundary["Cut raw body at first case-insensitive [more]"]
+	Convert["Convert teaser BBCode, URLs and emoticons"]
+	Subject["Prepare entry title"]
+	Tags["Extract tags from complete entry when Tag is active"]
+	Link["Resolve public entry link"]
+	Join["Join title and teaser"]
+	Limits["Use instance max_characters and characters_reserved_per_url"]
+	UrlSpans["plugin_mastodon_status_text_url_spans:<br/>trim punctuation boundaries"]
+	Suffix["Reserve link and hashtag suffixes when existing policy allows"]
+	Truncate["plugin_mastodon_status_text_length and<br/>plugin_mastodon_limit_status_text within available budget"]
+	Result["Final entry status text"]
+	Comment["FlatPress comment"]
+	Reply["Existing localized author/body/comment-link builder"]
+	ReplyLimit["Existing URL-aware reply budget"]
+	Media["Collect and select media from complete entry"]
+	Hash["Hash complete stored entry content"]
 
-    Entry --> MoreBoundary --> Convert --> Join
-    Entry --> Subject --> Join
-    Entry --> Tags --> Suffix
-    Entry --> Link --> Suffix
-    Join --> Limits --> UrlSpans --> Suffix --> Truncate --> Result
-    Entry --> Media
-    Entry --> Hash
-    Comment --> Reply --> ReplyLimit
+	Entry --> MoreBoundary --> Convert --> Join
+	Entry --> Subject --> Join
+	Entry --> Tags --> Suffix
+	Entry --> Link --> Suffix
+	Join --> Limits --> UrlSpans --> Suffix --> Truncate --> Result
+	Entry --> Media
+	Entry --> Hash
+	Comment --> Reply --> ReplyLimit
 ```
 
 An empty teaser does not restore the body after the marker. Without a marker,
@@ -717,20 +717,20 @@ structures into FlatPress markup and then appends imported media markup.
 
 ```mermaid
 flowchart LR
-    HTML["Mastodon status.content HTML"]
-    DOM["DOMDocument-based parsing with fallback cleanup"]
-    Blocks["p, br, blockquote, pre, code, ul, ol, li"]
-    Links["a tags -> FlatPress URL markup or plain URL"]
-    Mentions["mentions and hashtags preserved as text/links"]
-    Invisible["Mastodon invisible/ellipsis spans cleaned"]
-    Emoji["custom emoji shortcode/text handling"]
-    Cleanup["Final whitespace and round-trip cleanup"]
-    Media["Append imported media BBCode"]
-    Tags["Append [tag] metadata when Tag plugin is active"]
-    Result["FlatPress entry/comment content"]
+	HTML["Mastodon status.content HTML"]
+	DOM["DOMDocument-based parsing with fallback cleanup"]
+	Blocks["p, br, blockquote, pre, code, ul, ol, li"]
+	Links["a tags -> FlatPress URL markup or plain URL"]
+	Mentions["mentions and hashtags preserved as text/links"]
+	Invisible["Mastodon invisible/ellipsis spans cleaned"]
+	Emoji["custom emoji shortcode/text handling"]
+	Cleanup["Final whitespace and round-trip cleanup"]
+	Media["Append imported media BBCode"]
+	Tags["Append [tag] metadata when Tag plugin is active"]
+	Result["FlatPress entry/comment content"]
 
-    HTML --> DOM --> Blocks --> Links --> Mentions --> Invisible --> Emoji --> Cleanup
-    Cleanup --> Media --> Tags --> Result
+	HTML --> DOM --> Blocks --> Links --> Mentions --> Invisible --> Emoji --> Cleanup
+	Cleanup --> Media --> Tags --> Result
 ```
 
 ### 2.3 Local media collection, validation, and Mastodon media-family selection
@@ -743,43 +743,43 @@ per status.
 
 ```mermaid
 flowchart TD
-    EntryContent["FlatPress entry content"]
-    Collect["plugin_mastodon_collect_local_entry_media"]
-    Images["[img] and inline image BBCode"]
-    Galleries["[gallery] plus gallery captions"]
-    Audio["AudioVideo audio tags"]
-    Video["AudioVideo video tags and optional poster"]
-    Items["plugin_mastodon_prepare_entry_media_items"]
-    Mime["Guess MIME type and media type"]
-    Limits["Instance media limits from /api/v2/instance<br/>supported_mime_types, size limits, description_limit"]
-    Rules{"Uploadable file?"}
-    Reject["Skip item and log validation reason"]
-    Accepted["Validated local media candidates"]
-    Selector["plugin_mastodon_select_status_media_items"]
-    HasImages{"Any image candidates?"}
-    HasAudio{"Any audio candidates?"}
-    HasVideo{"Any video candidates?"}
-    NoMedia["No selected media"]
-    UseImages["Use images only<br/>up to max_media_attachments"]
-    UseAudio["Use exactly one audio"]
-    UseVideo["Use exactly one video<br/>poster remains thumbnail only"]
-    PlanInput["Input for media sync plan"]
+	EntryContent["FlatPress entry content"]
+	Collect["plugin_mastodon_collect_local_entry_media"]
+	Images["[img] and inline image BBCode"]
+	Galleries["[gallery] plus gallery captions"]
+	Audio["AudioVideo audio tags"]
+	Video["AudioVideo video tags and optional poster"]
+	Items["plugin_mastodon_prepare_entry_media_items"]
+	Mime["Guess MIME type and media type"]
+	Limits["Instance media limits from /api/v2/instance<br/>supported_mime_types, size limits, description_limit"]
+	Rules{"Uploadable file?"}
+	Reject["Skip item and log validation reason"]
+	Accepted["Validated local media candidates"]
+	Selector["plugin_mastodon_select_status_media_items"]
+	HasImages{"Any image candidates?"}
+	HasAudio{"Any audio candidates?"}
+	HasVideo{"Any video candidates?"}
+	NoMedia["No selected media"]
+	UseImages["Use images only<br/>up to max_media_attachments"]
+	UseAudio["Use exactly one audio"]
+	UseVideo["Use exactly one video<br/>poster remains thumbnail only"]
+	PlanInput["Input for media sync plan"]
 
-    EntryContent --> Collect
-    Collect --> Images --> Items
-    Collect --> Galleries --> Items
-    Collect --> Audio --> Items
-    Collect --> Video --> Items
-    Items --> Mime --> Limits --> Rules
-    Rules -- "No" --> Reject
-    Rules -- "Yes" --> Accepted --> Selector
-    Selector --> HasImages
-    HasImages -- "Yes" --> UseImages --> PlanInput
-    HasImages -- "No" --> HasAudio
-    HasAudio -- "Yes" --> UseAudio --> PlanInput
-    HasAudio -- "No" --> HasVideo
-    HasVideo -- "Yes" --> UseVideo --> PlanInput
-    HasVideo -- "No" --> NoMedia --> PlanInput
+	EntryContent --> Collect
+	Collect --> Images --> Items
+	Collect --> Galleries --> Items
+	Collect --> Audio --> Items
+	Collect --> Video --> Items
+	Items --> Mime --> Limits --> Rules
+	Rules -- "No" --> Reject
+	Rules -- "Yes" --> Accepted --> Selector
+	Selector --> HasImages
+	HasImages -- "Yes" --> UseImages --> PlanInput
+	HasImages -- "No" --> HasAudio
+	HasAudio -- "Yes" --> UseAudio --> PlanInput
+	HasAudio -- "No" --> HasVideo
+	HasVideo -- "Yes" --> UseVideo --> PlanInput
+	HasVideo -- "No" --> NoMedia --> PlanInput
 ```
 
 Selection priority is deterministic: images first, otherwise audio, otherwise video. Skipped
@@ -792,67 +792,67 @@ updated in place through `media_attributes`, or whether files must be uploaded a
 
 ```mermaid
 flowchart TD
-    Plan["plugin_mastodon_prepare_entry_media_sync_plan"]
-    Existing{"Existing remote_media metadata?"}
-    AttachmentSig{"Attachment file signature unchanged?"}
-    DescriptionSig{"Description signature unchanged?"}
-    SupportsAttrs{"Instance supports status media_attributes?"}
-    ReuseIDs["Reuse stored media_ids"]
-    ReuseWithAttrs["Reuse stored media_ids and send media_attributes on PUT"]
-    Reupload["Upload local files again"]
-    Upload["POST /api/v2/media with file, description, optional thumbnail"]
-    Poll{"Response 202 or media URL missing?"}
-    Wait["GET /api/v1/media/:id polling with media-type-aware attempts"]
-    StatusRequest["POST or PUT /api/v1/statuses"]
-    StatusOK{"Status create/update succeeded?"}
-    Cleanup["Best-effort DELETE /api/v1/media/:id for unattached uploads"]
-    Store["Store remote_media, attachment_signature, description_signature"]
+	Plan["plugin_mastodon_prepare_entry_media_sync_plan"]
+	Existing{"Existing remote_media metadata?"}
+	AttachmentSig{"Attachment file signature unchanged?"}
+	DescriptionSig{"Description signature unchanged?"}
+	SupportsAttrs{"Instance supports status media_attributes?"}
+	ReuseIDs["Reuse stored media_ids"]
+	ReuseWithAttrs["Reuse stored media_ids and send media_attributes on PUT"]
+	Reupload["Upload local files again"]
+	Upload["POST /api/v2/media with file, description, optional thumbnail"]
+	Poll{"Response 202 or media URL missing?"}
+	Wait["GET /api/v1/media/:id polling with media-type-aware attempts"]
+	StatusRequest["POST or PUT /api/v1/statuses"]
+	StatusOK{"Status create/update succeeded?"}
+	Cleanup["Best-effort DELETE /api/v1/media/:id for unattached uploads"]
+	Store["Store remote_media, attachment_signature, description_signature"]
 
-    Plan --> Existing
-    Existing -- "No" --> Reupload
-    Existing -- "Yes" --> AttachmentSig
-    AttachmentSig -- "Changed" --> Reupload
-    AttachmentSig -- "Unchanged" --> DescriptionSig
-    DescriptionSig -- "Unchanged" --> ReuseIDs --> StatusRequest
-    DescriptionSig -- "Changed" --> SupportsAttrs
-    SupportsAttrs -- "Yes" --> ReuseWithAttrs --> StatusRequest
-    SupportsAttrs -- "No" --> Reupload
-    Reupload --> Upload --> Poll
-    Ready{"Polling succeeded with media URL?"}
-    FailedUpload["Abort entry export; preserve mapping/dirty state"]
-    Poll -- "Yes" --> Wait --> Ready
-    Ready -- "Yes" --> StatusRequest
-    Ready -- "No" --> FailedUpload
-    Poll -- "No" --> StatusRequest
-    StatusRequest --> StatusOK
-    StatusOK -- "Yes" --> Store
-    StatusOK -- "No and new uploads exist" --> Cleanup
+	Plan --> Existing
+	Existing -- "No" --> Reupload
+	Existing -- "Yes" --> AttachmentSig
+	AttachmentSig -- "Changed" --> Reupload
+	AttachmentSig -- "Unchanged" --> DescriptionSig
+	DescriptionSig -- "Unchanged" --> ReuseIDs --> StatusRequest
+	DescriptionSig -- "Changed" --> SupportsAttrs
+	SupportsAttrs -- "Yes" --> ReuseWithAttrs --> StatusRequest
+	SupportsAttrs -- "No" --> Reupload
+	Reupload --> Upload --> Poll
+	Ready{"Polling succeeded with media URL?"}
+	FailedUpload["Abort entry export; preserve mapping/dirty state"]
+	Poll -- "Yes" --> Wait --> Ready
+	Ready -- "Yes" --> StatusRequest
+	Ready -- "No" --> FailedUpload
+	Poll -- "No" --> StatusRequest
+	StatusRequest --> StatusOK
+	StatusOK -- "Yes" --> Store
+	StatusOK -- "No and new uploads exist" --> Cleanup
 ```
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    participant Plugin as Mastodon Plugin
-    participant API as Mastodon API
-    participant State as state.json
+	autonumber
+	participant Plugin as Mastodon Plugin
+	participant API as Mastodon API
+	participant State as state.json
 
-    Plugin->>API: POST /api/v2/media
-    alt Media is processed synchronously
-        API-->>Plugin: 200 with media URL
-    else Media is processed asynchronously
-        API-->>Plugin: 202 with ID and pending URL
-        loop Until ready or attempts exhausted
-            Plugin->>API: GET /api/v1/media/:id
-            API-->>Plugin: 206 pending, 200 ready, or error
-        end
-    end
-    Plugin->>API: Only after media is ready: POST or PUT /api/v1/statuses with media_ids
-    alt Status write succeeds
-        Plugin->>State: Persist media IDs and signatures
-    else Status write fails after upload
-        Plugin->>API: DELETE /api/v1/media/:id for unattached uploads
-        Plugin->>State: Keep previous mapping/dirty marker for retry
-    end
+	Plugin->>API: POST /api/v2/media
+	alt Media is processed synchronously
+		API-->>Plugin: 200 with media URL
+	else Media is processed asynchronously
+		API-->>Plugin: 202 with ID and pending URL
+		loop Until ready or attempts exhausted
+			Plugin->>API: GET /api/v1/media/:id
+			API-->>Plugin: 206 pending, 200 ready, or error
+		end
+	end
+	Plugin->>API: Only after media is ready: POST or PUT /api/v1/statuses with media_ids
+	alt Status write succeeds
+		Plugin->>State: Persist media IDs and signatures
+	else Status write fails after upload
+		Plugin->>API: DELETE /api/v1/media/:id for unattached uploads
+		Plugin->>State: Keep previous mapping/dirty marker for retry
+	end
 ```
 
 ### 2.5 Mastodon media attachments to FlatPress media markup
@@ -862,31 +862,31 @@ directories before it emits BBCode for the matching companion renderer.
 
 ```mermaid
 flowchart TD
-    RemoteStatus["Remote Mastodon status"]
-    Attachments["media_attachments"]
-    Classify{"Attachment type"}
-    Image["image"]
-    Audio["audio"]
-    Video["video or gifv"]
-    URLFallback["Source URL fallback<br/>url -> remote_url -> preview_url when safe"]
-    Download["Download with media transfer timeout"]
-    Temp["Write to temporary plugin media directory"]
-    ImageStore["Move images to fp-content/images/mastodon/status-ID"]
-    AttachStore["Move audio/video to fp-content/attachs/mastodon/status-ID"]
-    Captions["Write .captions.conf for gallery descriptions"]
-    ImageMarkup{"Image count"}
-    ImgTag["Single [img] with width and title"]
-    GalleryTag["[gallery] with width and captions"]
-    AudioTag["AudioVideo audio player BBCode with controls/description"]
-    VideoTag["AudioVideo video player BBCode with controls/poster/description"]
-    Content["Append imported media BBCode to entry or comment"]
+	RemoteStatus["Remote Mastodon status"]
+	Attachments["media_attachments"]
+	Classify{"Attachment type"}
+	Image["image"]
+	Audio["audio"]
+	Video["video or gifv"]
+	URLFallback["Source URL fallback<br/>url -> remote_url -> preview_url when safe"]
+	Download["Download with media transfer timeout"]
+	Temp["Write to temporary plugin media directory"]
+	ImageStore["Move images to fp-content/images/mastodon/status-ID"]
+	AttachStore["Move audio/video to fp-content/attachs/mastodon/status-ID"]
+	Captions["Write .captions.conf for gallery descriptions"]
+	ImageMarkup{"Image count"}
+	ImgTag["Single [img] with width and title"]
+	GalleryTag["[gallery] with width and captions"]
+	AudioTag["AudioVideo audio player BBCode with controls/description"]
+	VideoTag["AudioVideo video player BBCode with controls/poster/description"]
+	Content["Append imported media BBCode to entry or comment"]
 
-    RemoteStatus --> Attachments --> Classify
-    Classify -- "image" --> Image --> URLFallback --> Download --> Temp --> ImageStore --> Captions --> ImageMarkup
-    ImageMarkup -- "one" --> ImgTag --> Content
-    ImageMarkup -- "many" --> GalleryTag --> Content
-    Classify -- "audio" --> Audio --> URLFallback --> Download --> Temp --> AttachStore --> AudioTag --> Content
-    Classify -- "video/gifv" --> Video --> URLFallback --> Download --> Temp --> AttachStore --> VideoTag --> Content
+	RemoteStatus --> Attachments --> Classify
+	Classify -- "image" --> Image --> URLFallback --> Download --> Temp --> ImageStore --> Captions --> ImageMarkup
+	ImageMarkup -- "one" --> ImgTag --> Content
+	ImageMarkup -- "many" --> GalleryTag --> Content
+	Classify -- "audio" --> Audio --> URLFallback --> Download --> Temp --> AttachStore --> AudioTag --> Content
+	Classify -- "video/gifv" --> Video --> URLFallback --> Download --> Temp --> AttachStore --> VideoTag --> Content
 ```
 
 ### 2.6 Tags and hashtags when the FlatPress Tag plugin is active
@@ -896,27 +896,27 @@ On import, plugin-generated footer noise is stripped while real remote hashtags 
 
 ```mermaid
 flowchart LR
-    subgraph FlatPress_to_Mastodon["FlatPress to Mastodon"]
-        FPEntry["Entry content with [tag] metadata"]
-        ExtractTags["Extract, normalize, deduplicate tags"]
-        StripTagBBCode["Remove [tag] markup from plain-text body"]
-        Footer["Build plugin-owned hashtag footer"]
-        StatusText["Append footer within status budget"]
-    end
+	subgraph FlatPress_to_Mastodon["FlatPress to Mastodon"]
+		FPEntry["Entry content with [tag] metadata"]
+		ExtractTags["Extract, normalize, deduplicate tags"]
+		StripTagBBCode["Remove [tag] markup from plain-text body"]
+		Footer["Build plugin-owned hashtag footer"]
+		StatusText["Append footer within status budget"]
+	end
 
-    subgraph Mastodon_to_FlatPress["Mastodon to FlatPress"]
-        RemoteStatus["Remote status with tags array and HTML content"]
-        ConvertHTML["Convert Mastodon HTML to FlatPress BBCode"]
-        StripFooter["Strip trailing footer generated by this plugin"]
-        Preserve["Preserve non-plugin hashtags inside text"]
-        BuildTagBBCode["Build [tag]tag1, tag2[/tag]"]
-        SaveEntry["Save FlatPress entry/comment content"]
-    end
+	subgraph Mastodon_to_FlatPress["Mastodon to FlatPress"]
+		RemoteStatus["Remote status with tags array and HTML content"]
+		ConvertHTML["Convert Mastodon HTML to FlatPress BBCode"]
+		StripFooter["Strip trailing footer generated by this plugin"]
+		Preserve["Preserve non-plugin hashtags inside text"]
+		BuildTagBBCode["Build [tag]tag1, tag2[/tag]"]
+		SaveEntry["Save FlatPress entry/comment content"]
+	end
 
-    FPEntry --> ExtractTags --> Footer --> StatusText
-    FPEntry --> StripTagBBCode --> StatusText
-    RemoteStatus --> ConvertHTML --> StripFooter --> Preserve --> SaveEntry
-    RemoteStatus --> BuildTagBBCode --> SaveEntry
+	FPEntry --> ExtractTags --> Footer --> StatusText
+	FPEntry --> StripTagBBCode --> StatusText
+	RemoteStatus --> ConvertHTML --> StripFooter --> Preserve --> SaveEntry
+	RemoteStatus --> BuildTagBBCode --> SaveEntry
 ```
 
 ### 2.7 Companion plugin dependency overview
@@ -929,33 +929,33 @@ descriptions.
 
 ```mermaid
 flowchart TD
-    MastodonPlugin["Mastodon plugin"]
-    Mode{"disable_remote_import enabled?"}
-    ImportedContent["Imported and synchronized content"]
-    ExportedContent["FlatPress-to-Mastodon export"]
-    BBCode["BBCode plugin"]
-    PhotoSwipe["PhotoSwipe plugin"]
-    AudioVideo["AudioVideo plugin"]
-    Tag["Tag plugin"]
-    Emoticons["Emoticons plugin"]
+	MastodonPlugin["Mastodon plugin"]
+	Mode{"disable_remote_import enabled?"}
+	ImportedContent["Imported and synchronized content"]
+	ExportedContent["FlatPress-to-Mastodon export"]
+	BBCode["BBCode plugin"]
+	PhotoSwipe["PhotoSwipe plugin"]
+	AudioVideo["AudioVideo plugin"]
+	Tag["Tag plugin"]
+	Emoticons["Emoticons plugin"]
 
-    MastodonPlugin --> Mode
-    Mode -->|"No: bidirectional"| ImportedContent
-    Mode -->|"Yes: one-way"| ExportedContent
+	MastodonPlugin --> Mode
+	Mode -->|"No: bidirectional"| ImportedContent
+	Mode -->|"Yes: one-way"| ExportedContent
 
-    BBCode -->|"Renders imported formatting, links, images, and galleries"| ImportedContent
-    PhotoSwipe -->|"Enhances imported image and gallery presentation"| ImportedContent
-    AudioVideo -->|"Renders imported audio/video attachments as HTML5 media players"| ImportedContent
-    Tag -->|"Bidirectional: FlatPress tags and Mastodon hashtags"| ImportedContent
-    Tag -->|"One-way: export FlatPress tags as hashtags"| ExportedContent
-    Emoticons -->|"Bidirectional: render imported emoji shortcodes"| ImportedContent
-    Emoticons -->|"One-way: export local shortcodes as Unicode emoji"| ExportedContent
+	BBCode -->|"Renders imported formatting, links, images, and galleries"| ImportedContent
+	PhotoSwipe -->|"Enhances imported image and gallery presentation"| ImportedContent
+	AudioVideo -->|"Renders imported audio/video attachments as HTML5 media players"| ImportedContent
+	Tag -->|"Bidirectional: FlatPress tags and Mastodon hashtags"| ImportedContent
+	Tag -->|"One-way: export FlatPress tags as hashtags"| ExportedContent
+	Emoticons -->|"Bidirectional: render imported emoji shortcodes"| ImportedContent
+	Emoticons -->|"One-way: export local shortcodes as Unicode emoji"| ExportedContent
 
-    MastodonPlugin -. "plugin_mastodon_bbcode_plugin_active" .-> BBCode
-    MastodonPlugin -. "plugin_mastodon_photoswipe_plugin_active" .-> PhotoSwipe
-    MastodonPlugin -. "plugin_mastodon_audiovideo_plugin_active" .-> AudioVideo
-    MastodonPlugin -. "plugin_mastodon_tag_plugin_active" .-> Tag
-    MastodonPlugin -. "plugin_mastodon_emoticons_plugin_active" .-> Emoticons
+	MastodonPlugin -. "plugin_mastodon_bbcode_plugin_active" .-> BBCode
+	MastodonPlugin -. "plugin_mastodon_photoswipe_plugin_active" .-> PhotoSwipe
+	MastodonPlugin -. "plugin_mastodon_audiovideo_plugin_active" .-> AudioVideo
+	MastodonPlugin -. "plugin_mastodon_tag_plugin_active" .-> Tag
+	MastodonPlugin -. "plugin_mastodon_emoticons_plugin_active" .-> Emoticons
 ```
 
 ## 3. Mastodon API endpoints, capabilities, and fallbacks
@@ -968,41 +968,41 @@ server.
 
 ```mermaid
 flowchart TD
-    Plugin["Mastodon plugin HTTP layer"]
+	Plugin["Mastodon plugin HTTP layer"]
 
-    subgraph OAuth["OAuth and account setup"]
-        Discovery["GET /.well-known/oauth-authorization-server"]
-        Apps["POST /api/v1/apps"]
-        Authorize["GET /oauth/authorize"]
-        Token["POST /oauth/token"]
-        Verify["GET /api/v1/accounts/verify_credentials"]
-        Notifications["GET /api/v1/notifications"]
-    end
+	subgraph OAuth["OAuth and account setup"]
+		Discovery["GET /.well-known/oauth-authorization-server"]
+		Apps["POST /api/v1/apps"]
+		Authorize["GET /oauth/authorize"]
+		Token["POST /oauth/token"]
+		Verify["GET /api/v1/accounts/verify_credentials"]
+		Notifications["GET /api/v1/notifications"]
+	end
 
-    subgraph Instance["Instance limits and capabilities"]
-        InstanceV2["GET /api/v2/instance"]
-    end
+	subgraph Instance["Instance limits and capabilities"]
+		InstanceV2["GET /api/v2/instance"]
+	end
 
-    subgraph Statuses["Statuses and contexts"]
-        AccountStatuses["GET /api/v1/accounts/:id/statuses"]
-        StatusGet["GET /api/v1/statuses/:id"]
-        Context["GET /api/v1/statuses/:id/context"]
-        StatusPost["POST /api/v1/statuses"]
-        StatusPut["PUT /api/v1/statuses/:id"]
-        StatusDelete["DELETE /api/v1/statuses/:id"]
-        StatusDeleteMedia["DELETE /api/v1/statuses/:id?delete_media=1"]
-    end
+	subgraph Statuses["Statuses and contexts"]
+		AccountStatuses["GET /api/v1/accounts/:id/statuses"]
+		StatusGet["GET /api/v1/statuses/:id"]
+		Context["GET /api/v1/statuses/:id/context"]
+		StatusPost["POST /api/v1/statuses"]
+		StatusPut["PUT /api/v1/statuses/:id"]
+		StatusDelete["DELETE /api/v1/statuses/:id"]
+		StatusDeleteMedia["DELETE /api/v1/statuses/:id?delete_media=1"]
+	end
 
-    subgraph Media["Media"]
-        MediaPost["POST /api/v2/media"]
-        MediaGet["GET /api/v1/media/:id"]
-        MediaDelete["DELETE /api/v1/media/:id"]
-    end
+	subgraph Media["Media"]
+		MediaPost["POST /api/v2/media"]
+		MediaGet["GET /api/v1/media/:id"]
+		MediaDelete["DELETE /api/v1/media/:id"]
+	end
 
-    Plugin --> OAuth
-    Plugin --> Instance
-    Plugin --> Statuses
-    Plugin --> Media
+	Plugin --> OAuth
+	Plugin --> Instance
+	Plugin --> Statuses
+	Plugin --> Media
 ```
 
 ### 3.2 Instance version and capability decisions
@@ -1016,36 +1016,36 @@ limit helpers do not repeat the same slow network call.
 
 ```mermaid
 flowchart TD
-    NeedCaps["Need limits or API capability"]
-    Cache["Read runtime, saved or APCu compact instance document"]
-    HasDoc{"Cached document usable?"}
-    Failed{"Failed lookup already cached<br/>for this PHP request?"}
-    Fetch["GET /api/v2/instance<br/>short instance timeout"]
-    OK{"Response OK?"}
-    Store["Store compact instance document"]
-    Negative["Set request-local failed marker"]
-    Defaults["Use internal defaults<br/>500 chars, 23 URL reserve, 4 media, 1500 desc limit"]
-    ApiVersion{"api_versions[mastodon] present?"}
-    ApiCaps["Use API version capability thresholds<br/>delete_media >= 4"]
-    Version["Parse normalized human version string"]
-    MediaAttrs{"version >= 4.1.0?"}
-    DeleteMedia{"version >= 4.4.0?"}
-    Unknown{"capability unknown?"}
-    Capabilities["Capability result for current request"]
+	NeedCaps["Need limits or API capability"]
+	Cache["Read runtime, saved or APCu compact instance document"]
+	HasDoc{"Cached document usable?"}
+	Failed{"Failed lookup already cached<br/>for this PHP request?"}
+	Fetch["GET /api/v2/instance<br/>short instance timeout"]
+	OK{"Response OK?"}
+	Store["Store compact instance document"]
+	Negative["Set request-local failed marker"]
+	Defaults["Use internal defaults<br/>500 chars, 23 URL reserve, 4 media, 1500 desc limit"]
+	ApiVersion{"api_versions[mastodon] present?"}
+	ApiCaps["Use API version capability thresholds<br/>delete_media >= 4"]
+	Version["Parse normalized human version string"]
+	MediaAttrs{"version >= 4.1.0?"}
+	DeleteMedia{"version >= 4.4.0?"}
+	Unknown{"capability unknown?"}
+	Capabilities["Capability result for current request"]
 
-    NeedCaps --> Cache --> HasDoc
-    HasDoc -- "Yes" --> ApiVersion
-    HasDoc -- "No" --> Failed
-    Failed -- "Yes" --> Defaults
-    Failed -- "No" --> Fetch --> OK
-    OK -- "Yes" --> Store --> ApiVersion
-    OK -- "No" --> Negative --> Defaults
-    Defaults --> Unknown
-    ApiVersion -- "Yes" --> ApiCaps --> Capabilities
-    ApiVersion -- "No" --> Version
-    Version --> MediaAttrs --> Capabilities
-    Version --> DeleteMedia --> Capabilities
-    Version --> Unknown --> Capabilities
+	NeedCaps --> Cache --> HasDoc
+	HasDoc -- "Yes" --> ApiVersion
+	HasDoc -- "No" --> Failed
+	Failed -- "Yes" --> Defaults
+	Failed -- "No" --> Fetch --> OK
+	OK -- "Yes" --> Store --> ApiVersion
+	OK -- "No" --> Negative --> Defaults
+	Defaults --> Unknown
+	ApiVersion -- "Yes" --> ApiCaps --> Capabilities
+	ApiVersion -- "No" --> Version
+	Version --> MediaAttrs --> Capabilities
+	Version --> DeleteMedia --> Capabilities
+	Version --> Unknown --> Capabilities
 ```
 
 ### 3.3 OAuth scope compatibility
@@ -1054,27 +1054,27 @@ The OAuth scope path prefers modern discovery when available, requests `read:not
 
 ```mermaid
 flowchart TD
-    Start["Build OAuth scopes"]
-    Discovery["GET /.well-known/oauth-authorization-server"]
-    DiscoveryOK{"Discovery document available?"}
-    ProfileSupported{"profile scope advertised?"}
-    Modern["Use profile + read:notifications scope set"]
-    Compatible["Use read:accounts + read:notifications scope set"]
-    Legacy["Use stored scopes, or legacy defaults for existing clients"]
-    Register["POST /api/v1/apps or use saved client"]
-    Authorize["GET /oauth/authorize"]
-    Token["POST /oauth/token"]
-    Verify["GET /api/v1/accounts/verify_credentials"]
+	Start["Build OAuth scopes"]
+	Discovery["GET /.well-known/oauth-authorization-server"]
+	DiscoveryOK{"Discovery document available?"}
+	ProfileSupported{"profile scope advertised?"}
+	Modern["Use profile + read:notifications scope set"]
+	Compatible["Use read:accounts + read:notifications scope set"]
+	Legacy["Use stored scopes, or legacy defaults for existing clients"]
+	Register["POST /api/v1/apps or use saved client"]
+	Authorize["GET /oauth/authorize"]
+	Token["POST /oauth/token"]
+	Verify["GET /api/v1/accounts/verify_credentials"]
 
-    Stored{"Stored registration scopes or legacy client credentials?"}
-    Start --> Stored
-    Stored -- "Yes" --> Legacy --> Register
-    Stored -- "No" --> Discovery --> DiscoveryOK
-    DiscoveryOK -- "Yes" --> ProfileSupported
-    ProfileSupported -- "Yes" --> Modern --> Register
-    ProfileSupported -- "No" --> Compatible --> Register
-    DiscoveryOK -- "No / 404 / failed" --> Compatible
-    Register --> Authorize --> Token --> Verify
+	Stored{"Stored registration scopes or legacy client credentials?"}
+	Start --> Stored
+	Stored -- "Yes" --> Legacy --> Register
+	Stored -- "No" --> Discovery --> DiscoveryOK
+	DiscoveryOK -- "Yes" --> ProfileSupported
+	ProfileSupported -- "Yes" --> Modern --> Register
+	ProfileSupported -- "No" --> Compatible --> Register
+	DiscoveryOK -- "No / 404 / failed" --> Compatible
+	Register --> Authorize --> Token --> Verify
 ```
 
 ### 3.4 Status deletion fallback for Mastodon before 4.4.0
@@ -1087,33 +1087,33 @@ server rejects the first request.
 
 ```mermaid
 flowchart TD
-    Delete["plugin_mastodon_delete_status(status_id, deleteMedia=true)"]
-    Version["plugin_mastodon_instance_supports_status_delete_media() → plugin_mastodon_instance_supports_mastodon_api_v4()"]
-    ApiOld{"api_versions[mastodon] available?"}
-    KnownOld{"Cached version says older than 4.4.0?"}
-    KnownNew{"API version >= 4 or version >= 4.4.0?"}
-    Unknown{"Capability unknown?"}
-    PlainFirst["DELETE /api/v1/statuses/:id"]
-    WithParam["DELETE /api/v1/statuses/:id?delete_media=1"]
-    Response{"Response OK or 404/410 handled by caller?"}
-    LegacyError{"400, 405, 422, or error mentioning delete_media?"}
-    RetryPlain["Retry once: DELETE /api/v1/statuses/:id"]
-    Return["Return final response to deletion sync"]
+	Delete["plugin_mastodon_delete_status(status_id, deleteMedia=true)"]
+	Version["plugin_mastodon_instance_supports_status_delete_media() → plugin_mastodon_instance_supports_mastodon_api_v4()"]
+	ApiOld{"api_versions[mastodon] available?"}
+	KnownOld{"Cached version says older than 4.4.0?"}
+	KnownNew{"API version >= 4 or version >= 4.4.0?"}
+	Unknown{"Capability unknown?"}
+	PlainFirst["DELETE /api/v1/statuses/:id"]
+	WithParam["DELETE /api/v1/statuses/:id?delete_media=1"]
+	Response{"Response OK or 404/410 handled by caller?"}
+	LegacyError{"400, 405, 422, or error mentioning delete_media?"}
+	RetryPlain["Retry once: DELETE /api/v1/statuses/:id"]
+	Return["Return final response to deletion sync"]
 
-    Delete --> Version
-    Version --> ApiOld
-    ApiOld -- "Below 4" --> PlainFirst --> Return
-    ApiOld -- "At least 4" --> WithParam
-    ApiOld -- "Unavailable" --> KnownOld
-    KnownOld -- "Yes" --> PlainFirst --> Return
-    KnownOld -- "No" --> KnownNew
-    KnownNew -- "Yes" --> WithParam --> Response
-    KnownNew -- "No" --> Unknown
-    Unknown -- "Yes" --> WithParam
-    Response -- "OK / non-legacy error" --> Return
-    Response -- "Failed" --> LegacyError
-    LegacyError -- "Yes" --> RetryPlain --> Return
-    LegacyError -- "No" --> Return
+	Delete --> Version
+	Version --> ApiOld
+	ApiOld -- "Below 4" --> PlainFirst --> Return
+	ApiOld -- "At least 4" --> WithParam
+	ApiOld -- "Unavailable" --> KnownOld
+	KnownOld -- "Yes" --> PlainFirst --> Return
+	KnownOld -- "No" --> KnownNew
+	KnownNew -- "Yes" --> WithParam --> Response
+	KnownNew -- "No" --> Unknown
+	Unknown -- "Yes" --> WithParam
+	Response -- "OK / non-legacy error" --> Return
+	Response -- "Failed" --> LegacyError
+	LegacyError -- "Yes" --> RetryPlain --> Return
+	LegacyError -- "No" --> Return
 ```
 
 ### 3.5 Unattached media cleanup capability gate
@@ -1122,30 +1122,30 @@ When media upload succeeds but the final status create/update fails, uploaded bu
 
 ```mermaid
 flowchart TD
-    Cleanup["plugin_mastodon_cleanup_uploaded_media(media_ids)"]
-    Gate["plugin_mastodon_instance_supports_media_delete() → plugin_mastodon_instance_supports_mastodon_api_v4()"]
-    ApiOld{"api_versions[mastodon] available?"}
-    VersionOld{"Cached version older than 4.4.0?"}
-    Supported{"API version >= 4 or version >= 4.4.0?"}
-    Unknown{"Capability unknown?"}
-    Skip["Mark cleanup skipped; no Mastodon request"]
-    Delete["DELETE /api/v1/media/:id"]
-    Gone{"Response OK or 404?"}
-    Success["Treat as cleaned up"]
-    Failure["Record cleanup failure"]
+	Cleanup["plugin_mastodon_cleanup_uploaded_media(media_ids)"]
+	Gate["plugin_mastodon_instance_supports_media_delete() → plugin_mastodon_instance_supports_mastodon_api_v4()"]
+	ApiOld{"api_versions[mastodon] available?"}
+	VersionOld{"Cached version older than 4.4.0?"}
+	Supported{"API version >= 4 or version >= 4.4.0?"}
+	Unknown{"Capability unknown?"}
+	Skip["Mark cleanup skipped; no Mastodon request"]
+	Delete["DELETE /api/v1/media/:id"]
+	Gone{"Response OK or 404?"}
+	Success["Treat as cleaned up"]
+	Failure["Record cleanup failure"]
 
-    Cleanup --> Gate --> ApiOld
-    ApiOld -- below 4 --> Skip
-    ApiOld -- at least 4 --> Delete
-    ApiOld -- unavailable --> VersionOld
-    VersionOld -- yes --> Skip
-    VersionOld -- no --> Supported
-    Supported -- yes --> Delete
-    Supported -- no --> Unknown
-    Unknown -- yes --> Delete
-    Delete --> Gone
-    Gone -- yes --> Success
-    Gone -- no --> Failure
+	Cleanup --> Gate --> ApiOld
+	ApiOld -- below 4 --> Skip
+	ApiOld -- at least 4 --> Delete
+	ApiOld -- unavailable --> VersionOld
+	VersionOld -- yes --> Skip
+	VersionOld -- no --> Supported
+	Supported -- yes --> Delete
+	Supported -- no --> Unknown
+	Unknown -- yes --> Delete
+	Delete --> Gone
+	Gone -- yes --> Success
+	Gone -- no --> Failure
 ```
 
 ### 3.6 Rate-limit and local budget guard
@@ -1155,26 +1155,26 @@ persistent cross-run windows.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Idle
-    Idle --> GuardStarted: plugin_mastodon_rate_limit_guard_start
-    GuardStarted --> RequestAllowed: general request budget available
-    RequestAllowed --> RequestAllowed: non-budgeted API request
-    RequestAllowed --> MediaWindow: POST /api/v2/media
-    RequestAllowed --> DeleteWindow: DELETE status or unreblog
-    RequestAllowed --> PageWindow: account statuses page fetch
-    MediaWindow --> RequestAllowed: under 24 uploads / 1800s
-    DeleteWindow --> RequestAllowed: under 24 deletes / 1800s
-    PageWindow --> RequestAllowed: under 300 pages / 900s
-    RequestAllowed --> RemoteLimit: HTTP 429 or X-RateLimit-Remaining <= 10
-    MediaWindow --> LocalLimit: media window exhausted
-    DeleteWindow --> LocalLimit: delete window exhausted
-    PageWindow --> LocalLimit: page window exhausted
-    RequestAllowed --> RunBudgetExhausted: 240 request budget exhausted
-    RemoteLimit --> GuardStopped: stop cleanly with state/log error
-    LocalLimit --> GuardStopped: stop cleanly with state/log error
-    RunBudgetExhausted --> GuardStopped: stop cleanly with state/log error
-    GuardStarted --> GuardStopped: plugin_mastodon_rate_limit_guard_stop
-    GuardStopped --> [*]
+	[*] --> Idle
+	Idle --> GuardStarted: plugin_mastodon_rate_limit_guard_start
+	GuardStarted --> RequestAllowed: general request budget available
+	RequestAllowed --> RequestAllowed: non-budgeted API request
+	RequestAllowed --> MediaWindow: POST /api/v2/media
+	RequestAllowed --> DeleteWindow: DELETE status or unreblog
+	RequestAllowed --> PageWindow: account statuses page fetch
+	MediaWindow --> RequestAllowed: under 24 uploads / 1800s
+	DeleteWindow --> RequestAllowed: under 24 deletes / 1800s
+	PageWindow --> RequestAllowed: under 300 pages / 900s
+	RequestAllowed --> RemoteLimit: HTTP 429 or X-RateLimit-Remaining <= 10
+	MediaWindow --> LocalLimit: media window exhausted
+	DeleteWindow --> LocalLimit: delete window exhausted
+	PageWindow --> LocalLimit: page window exhausted
+	RequestAllowed --> RunBudgetExhausted: 240 request budget exhausted
+	RemoteLimit --> GuardStopped: stop cleanly with state/log error
+	LocalLimit --> GuardStopped: stop cleanly with state/log error
+	RunBudgetExhausted --> GuardStopped: stop cleanly with state/log error
+	GuardStarted --> GuardStopped: plugin_mastodon_rate_limit_guard_stop
+	GuardStopped --> [*]
 ```
 
 ## 4. Scheduled and manual sync flows
@@ -1186,55 +1186,57 @@ configuration, active cooldowns, and a not-due scheduler summary all return quic
 
 ```mermaid
 flowchart TD
-    Init["init hook"]
-    Method{"Request method POST?"}
-    Options["Load plugin options"]
-    Configured{"Instance URL and access token configured?"}
-    Scheduler["Read scheduler-state.json"]
-    UtcDue["Build UTC target from stored sync_time"]
-    Due{"plugin_mastodon_sync_due?"}
-    GuardLookup["Read cooldown via FlatPress APCu wrapper and sync.guard.json"]
-    Cooldown{"Content sync cooldown active?"}
-    GuardClear["APCu/file guard clear uses matching FlatPress wrapper key"]
-    Invoke["run_sync(false): read main index, recheck credentials and UTC due time"]
-    Lock{"sync.lock acquired without blocking?"}
-    RateGuard["Start API rate/budget guard"]
-    FullState["Load selected comment-shard workset"]
-    Profile["Refresh local profile/avatar cache"]
-    Protect["Protect locally deleted exported comments in currently loaded shards"]
-    ImportGuard["Each remote reply import rechecks its reverse-indexed shard"]
-    Stats["Reset content_stats and last_error"]
-    RemoteToLocal["plugin_mastodon_sync_remote_to_local"]
-    LocalToRemote["plugin_mastodon_sync_local_to_remote"]
-    FlushSkips["Flush aggregated skip-log summaries"]
-    MarkDeletion{"Deletion sync enabled?"}
-    Success{"Remote phase and local phase succeeded?"}
-    KeepFailure["Preserve last_error and retryable work"]
-    Pending["Set deletions_pending and deletions_not_before as UTC"]
-    Write["Write state and scheduler summary"]
-    Release["Release lock and stop rate guard"]
-    End["Return to normal FlatPress request"]
+	Init["init hook"]
+	Method{"Request method POST?"}
+	Options["Load plugin options"]
+	Configured{"Instance URL and access token configured?"}
+	Scheduler["Read scheduler-state.json"]
+	UtcDue["Build UTC target from stored sync_time"]
+	Due{"plugin_mastodon_sync_due?"}
+	GuardLookup["Read cooldown via FlatPress APCu wrapper and sync.guard.json"]
+	Cooldown{"Content sync cooldown active?"}
+	GuardClear["APCu/file guard clear uses matching FlatPress wrapper key"]
+	Invoke["run_sync(false): read main index, recheck credentials and UTC due time"]
+	Lock{"sync.lock acquired without blocking?"}
+	RateGuard["Start API rate/budget guard"]
+	FullState["Load selected comment-shard workset"]
+	Profile["Refresh local profile/avatar cache"]
+	Protect["Protect locally deleted exported comments in currently loaded shards"]
+	ImportGuard["Each remote reply import rechecks its reverse-indexed shard"]
+	Stats["Reset content_stats and last_error"]
+	RemoteToLocal["plugin_mastodon_sync_remote_to_local"]
+	LocalToRemote["plugin_mastodon_sync_local_to_remote"]
+	FlushSkips["Flush aggregated skip-log summaries"]
+	MarkDeletion{"Deletion sync enabled?"}
+	Success{"Remote phase and local phase succeeded?"}
+	KeepFailure["Preserve last_error and retryable work"]
+	Pending["Schedule follow-up; preserve fixed entry deadlines and retry state"]
+	Write["Write state and scheduler summary"]
+	Release["Release lock and stop rate guard"]
+	End["Return to normal FlatPress request"]
 
-    Init --> Method
-    Method -- "Yes" --> End
-    Method -- "No" --> Options --> Configured
-    Configured -- "No" --> End
-    Configured -- "Yes" --> Scheduler --> UtcDue --> Due
-    Due -- "No" --> End
-    Due -- "Yes" --> Invoke --> GuardLookup --> Cooldown
-    Cooldown -- "Active" --> End
-    Cooldown -- "Clear" --> GuardClear --> Lock
-    Lock -- "No" --> End
-    Lock -- "Yes" --> RateGuard --> Stats --> Profile --> FullState --> Protect --> RemoteToLocal
-    RemoteToLocal --> ImportGuard
-    ImportGuard -- "Remote phase succeeded or import disabled" --> LocalToRemote --> FlushSkips
-    ImportGuard -- "Remote phase failed" --> FlushSkips
-    FlushSkips --> Success
-    Success -- "Yes: record last_run" --> MarkDeletion
-    Success -- "No" --> KeepFailure --> Write
-    MarkDeletion -- "Yes" --> Pending --> Write
-    MarkDeletion -- "No" --> Write
-    Write --> Release --> End
+	Init --> Method
+	Method -- "Yes" --> End
+	Method -- "No" --> Options --> Configured
+	Configured -- "No" --> End
+	Configured -- "Yes" --> Scheduler --> FixedDue{"Enabled fixed entry deletion due and retry barrier elapsed?"}
+	FixedDue -- "Yes" --> FixedDelete["Run deletion sync and return"] --> End
+	FixedDue -- "No" --> UtcDue --> Due
+	Due -- "No" --> End
+	Due -- "Yes" --> Invoke --> GuardLookup --> Cooldown
+	Cooldown -- "Active" --> End
+	Cooldown -- "Clear" --> GuardClear --> Lock
+	Lock -- "No" --> End
+	Lock -- "Yes" --> RateGuard --> Stats --> Profile --> FullState --> Protect --> RemoteToLocal
+	RemoteToLocal --> ImportGuard
+	ImportGuard -- "Remote phase succeeded or import disabled" --> LocalToRemote --> FlushSkips
+	ImportGuard -- "Remote phase failed" --> FlushSkips
+	FlushSkips --> Success
+	Success -- "Yes: record last_run" --> MarkDeletion
+	Success -- "No" --> KeepFailure --> Write
+	MarkDeletion -- "Yes" --> Pending --> Write
+	MarkDeletion -- "No" --> Write
+	Write --> Release --> End
 ```
 
 ### 4.2 Follow-up deletion synchronization
@@ -1247,128 +1249,128 @@ For a locally authored/exported `source=local` comment, `plugin_mastodon_on_comm
 
 ```mermaid
 flowchart TD
-    Hook["FlatPress comment_deleted hook"]
-    HookSource{"Mapped comment source?"}
-    HookLocal["source=local: tombstone now, preserve mapping, mark deletion pending"]
-    HookRemote["source=remote: ignore tombstone, remove mapping, no remote DELETE"]
-    Start["plugin_mastodon_run_deletion_sync"]
-    Options["Load options and main state without eager comment shards"]
-    Enabled{"Deletion sync enabled?"}
-    Pending{"Force or deletions_pending?"}
-    Due{"Deletion sync due?"}
-    Lock["Acquire sync.lock"]
-    RateGuard["Start API rate/budget guard"]
-    RecheckOnly{"Only pending descendant rechecks?"}
-    EntryLoop["Iterate entry mappings with cursor"]
-    EntryScope{"Mapping inside sync_start_date?"}
-    EntryLocal{"Local entry exists?"}
-    DeleteRemoteEntry["Delete remote entry status"]
-    EntryLookupWindow{"Remote lookup window allows check?"}
-    FetchRemoteEntry["GET /api/v1/statuses/:id"]
-    MissingRemoteEntry{"Remote entry missing 404/410?"}
-    RemoteImportEntry{"remote import enabled?"}
-    DeleteLocalEntry["entry_delete under local-write guard"]
-    UnlinkEntry["Unlink stale remote mapping and queue dirty_entries"]
-    CommentGate{"comment/reply sync enabled?"}
-    CommentLoop["Iterate comment mappings with cursor"]
-    CommentScope{"Mapping inside sync_start_date?"}
-    CommentLocal{"Local comment exists?"}
-    CommentSource{"comment source remote and entry still exists?"}
-    IgnoreRemoteComment["Set comment_tombstone and remove mapping without DELETE"]
-    DeleteRemoteComment["Delete remote comment status"]
-    QueueDesc["Queue descendant remote rechecks"]
-    CommentLookupWindow{"Remote lookup window allows check?"}
-    FetchRemoteComment["GET /api/v1/statuses/:id"]
-    MissingRemoteComment{"Remote comment missing 404/410?"}
-    RemoteImportComment{"remote import enabled?"}
-    DeleteLocalComment["comment_delete under local-write guard"]
-    UnlinkComment["Unlink stale remote mapping and queue dirty_comments"]
-    SkipComments["Skip comment/reply deletion follow-up and clear pending reply rechecks/cursors"]
-    ProcessRechecks["Process pending_comment_remote_rechecks"]
-    Complete{"Failures or rate limit?"}
-    ClearPending["Clear pending flags and cursors"]
-    Retry["Keep deletions_pending with cooldown"]
-    Write["Write state and scheduler summary"]
+	Hook["FlatPress comment_deleted hook"]
+	HookSource{"Mapped comment source?"}
+	HookLocal["source=local: tombstone now, preserve mapping, mark deletion pending"]
+	HookRemote["source=remote: ignore tombstone, remove mapping, no remote DELETE"]
+	Start["plugin_mastodon_run_deletion_sync"]
+	Options["Load options and main state without eager comment shards"]
+	Enabled{"Deletion sync enabled?"}
+	Pending{"Force or deletions_pending?"}
+	Due{"Deletion sync due?"}
+	Lock["Acquire sync.lock"]
+	RateGuard["Start API rate/budget guard"]
+	RecheckOnly{"Only pending descendant rechecks?"}
+	EntryLoop["Iterate entry mappings with cursor"]
+	EntryScope{"Mapping inside sync_start_date?"}
+	EntryLocal{"Local entry exists?"}
+	DeleteRemoteEntry["Delete remote entry status"]
+	EntryLookupWindow{"Remote lookup window allows check?"}
+	FetchRemoteEntry["GET /api/v1/statuses/:id"]
+	MissingRemoteEntry{"Remote entry missing 404/410?"}
+	RemoteImportEntry{"remote import enabled?"}
+	DeleteLocalEntry["entry_delete under local-write guard"]
+	UnlinkEntry["Unlink stale remote mapping and queue dirty_entries"]
+	CommentGate{"comment/reply sync enabled?"}
+	CommentLoop["Iterate comment mappings with cursor"]
+	CommentScope{"Mapping inside sync_start_date?"}
+	CommentLocal{"Local comment exists?"}
+	CommentSource{"comment source remote and entry still exists?"}
+	IgnoreRemoteComment["Set comment_tombstone and remove mapping without DELETE"]
+	DeleteRemoteComment["Delete remote comment status"]
+	QueueDesc["Queue descendant remote rechecks"]
+	CommentLookupWindow{"Remote lookup window allows check?"}
+	FetchRemoteComment["GET /api/v1/statuses/:id"]
+	MissingRemoteComment{"Remote comment missing 404/410?"}
+	RemoteImportComment{"remote import enabled?"}
+	DeleteLocalComment["comment_delete under local-write guard"]
+	UnlinkComment["Unlink stale remote mapping and queue dirty_comments"]
+	SkipComments["Skip comment/reply deletion follow-up and clear pending reply rechecks/cursors"]
+	ProcessRechecks["Process pending_comment_remote_rechecks"]
+	Complete{"Failures or rate limit?"}
+	ClearPending["Clear pending flags and cursors"]
+	Retry["Keep deletions_pending with cooldown"]
+	Write["Write state and scheduler summary"]
 
-    Hook --> HookSource
-    HookSource -- "local" --> HookLocal --> Start
-    HookSource -- "remote" --> HookRemote --> Write
-    Start --> Options --> Enabled
-    Enabled -- "No" --> ClearPending --> Write
-    Enabled -- "Yes" --> Pending
-    Pending -- "No" --> Write
-    Pending -- "Yes" --> Due
-    Due -- "No" --> Write
-    Due -- "Yes" --> Lock --> RateGuard --> RecheckOnly
-    RecheckOnly -- "No" --> EntryLoop
-    EntryLoop --> EntryScope
-    EntryScope -- "No" --> CommentGate
-    EntryScope -- "Yes" --> EntryLocal
-    EntryLocal -- "No" --> DeleteRemoteEntry --> CommentGate
-    EntryLocal -- "Yes" --> EntryLookupWindow
-    EntryLookupWindow -- "No" --> CommentGate
-    EntryLookupWindow -- "Yes" --> FetchRemoteEntry --> MissingRemoteEntry
-    MissingRemoteEntry -- "Yes" --> RemoteImportEntry
-    RemoteImportEntry -- "Yes" --> DeleteLocalEntry --> CommentGate
-    RemoteImportEntry -- "No" --> UnlinkEntry --> CommentGate
-    MissingRemoteEntry -- "No" --> CommentGate
-    CommentGate -- "No" --> SkipComments --> Complete
-    CommentGate -- "Yes" --> CommentLoop
-    CommentLoop --> CommentScope
-    CommentScope -- "No" --> ProcessRechecks
-    CommentScope -- "Yes" --> CommentLocal
-    CommentLocal -- "No" --> CommentSource
-    CommentSource -- "Yes" --> IgnoreRemoteComment --> ProcessRechecks
-    CommentSource -- "No" --> DeleteRemoteComment --> QueueDesc --> ProcessRechecks
-    CommentLocal -- "Yes" --> CommentLookupWindow
-    CommentLookupWindow -- "No" --> ProcessRechecks
-    CommentLookupWindow -- "Yes" --> FetchRemoteComment --> MissingRemoteComment
-    MissingRemoteComment -- "Yes" --> RemoteImportComment
-    RemoteImportComment -- "Yes" --> DeleteLocalComment --> QueueDesc --> ProcessRechecks
-    RemoteImportComment -- "No" --> UnlinkComment --> ProcessRechecks
-    MissingRemoteComment -- "No" --> ProcessRechecks
-    RecheckOnly -- "Yes" --> CommentGate
-    ProcessRechecks --> Complete
-    Complete -- "No failures" --> ClearPending --> Write
-    Complete -- "Failures or rate limit" --> Retry --> Write
+	Hook --> HookSource
+	HookSource -- "local" --> HookLocal --> Start
+	HookSource -- "remote" --> HookRemote --> Write
+	Start --> Options --> Enabled
+	Enabled -- "No" --> ClearPending --> Write
+	Enabled -- "Yes" --> Pending
+	Pending -- "No" --> Write
+	Pending -- "Yes" --> Due
+	Due -- "No" --> Write
+	Due -- "Yes" --> Lock --> RateGuard --> RecheckOnly
+	RecheckOnly -- "No" --> EntryLoop
+	EntryLoop --> EntryScope
+	EntryScope -- "No" --> CommentGate
+	EntryScope -- "Yes" --> EntryLocal
+	EntryLocal -- "No" --> DeleteRemoteEntry --> CommentGate
+	EntryLocal -- "Yes" --> EntryLookupWindow
+	EntryLookupWindow -- "No" --> CommentGate
+	EntryLookupWindow -- "Yes" --> FetchRemoteEntry --> MissingRemoteEntry
+	MissingRemoteEntry -- "Yes" --> RemoteImportEntry
+	RemoteImportEntry -- "Yes" --> DeleteLocalEntry --> CommentGate
+	RemoteImportEntry -- "No" --> UnlinkEntry --> CommentGate
+	MissingRemoteEntry -- "No" --> CommentGate
+	CommentGate -- "No" --> SkipComments --> Complete
+	CommentGate -- "Yes" --> CommentLoop
+	CommentLoop --> CommentScope
+	CommentScope -- "No" --> ProcessRechecks
+	CommentScope -- "Yes" --> CommentLocal
+	CommentLocal -- "No" --> CommentSource
+	CommentSource -- "Yes" --> IgnoreRemoteComment --> ProcessRechecks
+	CommentSource -- "No" --> DeleteRemoteComment --> QueueDesc --> ProcessRechecks
+	CommentLocal -- "Yes" --> CommentLookupWindow
+	CommentLookupWindow -- "No" --> ProcessRechecks
+	CommentLookupWindow -- "Yes" --> FetchRemoteComment --> MissingRemoteComment
+	MissingRemoteComment -- "Yes" --> RemoteImportComment
+	RemoteImportComment -- "Yes" --> DeleteLocalComment --> QueueDesc --> ProcessRechecks
+	RemoteImportComment -- "No" --> UnlinkComment --> ProcessRechecks
+	MissingRemoteComment -- "No" --> ProcessRechecks
+	RecheckOnly -- "Yes" --> CommentGate
+	ProcessRechecks --> Complete
+	Complete -- "No failures" --> ClearPending --> Write
+	Complete -- "Failures or rate limit" --> Retry --> Write
 ```
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    participant Hook as comment_deleted hook
-    participant Del as Deletion sync
-    participant State as state.json
-    participant Caps as Instance capability cache
-    participant API as Mastodon API
-    participant Core as FlatPress Core
+	autonumber
+	participant Hook as comment_deleted hook
+	participant Del as Deletion sync
+	participant State as state.json
+	participant Caps as Instance capability cache
+	participant API as Mastodon API
+	participant Core as FlatPress Core
 
-    Hook->>State: For deleted source=local comment set pending-delete tombstone and preserve mapping
-    Hook->>State: For deleted source=remote comment set ignore tombstone and remove mapping
-    Del->>State: Select mapped entry/comment whose local item disappeared
-    alt Missing comment was imported from remote and parent entry still exists
-        Del->>State: Set comment_tombstone and remove comments_remote mapping without DELETE
-    else Missing local object should be propagated remotely
-        Del->>Caps: Check cached support for status delete_media
-    alt Cached capability explicitly unsupported
-        Del->>API: DELETE /api/v1/statuses/:id
-    else Capability supported or unknown
-        Del->>API: DELETE /api/v1/statuses/:id?delete_media=1
-        alt Legacy-style rejection and no rate-limit stop
-            Del->>API: DELETE /api/v1/statuses/:id
-        end
-    end
-        API-->>Del: OK, 404/410 already gone, or failure
-        Del->>State: Update mapping/tombstone/cursor or keep pending for retry
-    end
+	Hook->>State: For deleted source=local comment set pending-delete tombstone and preserve mapping
+	Hook->>State: For deleted source=remote comment set ignore tombstone and remove mapping
+	Del->>State: Select mapped entry/comment whose local item disappeared
+	alt Missing comment was imported from remote and parent entry still exists
+		Del->>State: Set comment_tombstone and remove comments_remote mapping without DELETE
+	else Missing local object should be propagated remotely
+		Del->>Caps: Check cached support for status delete_media
+	alt Cached capability explicitly unsupported
+		Del->>API: DELETE /api/v1/statuses/:id
+	else Capability supported or unknown
+		Del->>API: DELETE /api/v1/statuses/:id?delete_media=1
+		alt Legacy-style rejection and no rate-limit stop
+			Del->>API: DELETE /api/v1/statuses/:id
+		end
+	end
+		API-->>Del: OK, 404/410 already gone, or failure
+		Del->>State: Update mapping/tombstone/cursor or keep pending for retry
+	end
 
-    Del->>API: GET /api/v1/statuses/:id for still-local mapped item
-    alt Remote missing and remote import enabled
-        Del->>Core: entry_delete/comment_delete under local-write guard
-        Del->>State: Queue descendant rechecks and tombstones when needed
-    else Remote missing and disable_remote_import enabled
-        Del->>State: Unlink stale remote mapping and queue dirty entry/comment for re-export
-    end
+	Del->>API: GET /api/v1/statuses/:id for still-local mapped item
+	alt Remote missing and remote import enabled
+		Del->>Core: entry_delete/comment_delete under local-write guard
+		Del->>State: Queue descendant rechecks and tombstones when needed
+	else Remote missing and disable_remote_import enabled
+		Del->>State: Unlink stale remote mapping and queue dirty entry/comment for re-export
+	end
 ```
 
 #### Entry deletion before the follow-up
@@ -1384,6 +1386,34 @@ DELETE helper. Success or an already missing status clears both mappings; failur
 them for retry. Disabled deletion sync leaves the local entry absent and remote status intact.
 See the eight entry-deletion regression groups in the regression matrix.
 
+#### Fixed entry deadlines and independent retries
+
+First local entry marking records a UTC deadline 300 seconds later. Content completion retains
+it. The compact scheduler sees the earliest entry deadline and the independent retry barrier.
+
+```mermaid
+flowchart TD
+	Hook["Local mapped entry deleted"] --> Queue["Record first per-entry deadline: marking plus 300s"]
+	Queue --> Content["Optional content runs preserve deadlines and newer committed markers"]
+	Content --> Request["Later eligible web request"]
+	Request --> Retry{"Deletion enabled and retry barrier elapsed?"}
+	Retry -- "No" --> Wait["Keep queued work"]
+	Retry -- "Yes" --> Due{"Fixed entry work due?"}
+	Due -- "No" --> Normal["Normal scheduler selection"]
+	Due -- "Yes" --> Delete["Deletion sync before daily content"]
+	Delete --> Each{"This entry due?"}
+	Each -- "No" --> Wait
+	Each -- "Yes" --> API["Existing version-aware budgeted DELETE"]
+	API --> Result{"Success or already missing?"}
+	Result -- "Yes" --> Remove["Remove mapping and deadline; keep other future work"]
+	Result -- "No" --> Backoff["Retain ownership; set retry/reset barrier"]
+	Backoff --> Wait
+```
+
+Forced calls still respect individual deadlines and retry backoff. Restoration cancels the old
+decision, while disabled deletion sync retains deadlines for later re-enabling. A five-minute
+deadline makes work eligible; a later web request and the existing lock/budgets are required.
+
 ### 4.3 Manual full synchronization in the admin area
 
 Manual admin runs are repair paths. They read the main state and load comment shards on demand; they can bypass the
@@ -1391,40 +1421,40 @@ scheduled due check, but they still use the lock, rate-limit guard, and persiste
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    actor Admin as FlatPress admin
-    participant AdminUI as Mastodon admin panel
-    participant Plugin as Mastodon Plugin
-    participant State as state.json
-    participant Core as FlatPress Core
-    participant API as Mastodon API
+	autonumber
+	actor Admin as FlatPress admin
+	participant AdminUI as Mastodon admin panel
+	participant Plugin as Mastodon Plugin
+	participant State as state.json
+	participant Core as FlatPress Core
+	participant API as Mastodon API
 
-    Admin->>AdminUI: Press Run now or Run full synchronization
-    AdminUI->>Plugin: plugin_mastodon_run_sync(true, fullWindow)
-    Plugin->>State: Load main state.json without eager comment shards
-    Plugin->>Plugin: Bypass scheduled due/cooldown because force=true
-    Plugin->>Plugin: Acquire sync.lock and start rate-limit guard
-    Plugin->>API: Verify credentials and fetch instance/status/context data
-    opt Remote import enabled and remote responses allow writes
-        Plugin->>Core: Import/update entries/comments under local-write guard
-    end
-    alt Full window requested
-        Plugin->>Plugin: Parse every local entry as repair path
-    else Manual non-full run
-        Plugin->>Plugin: Use configured window plus dirty candidates
-    end
-    Plugin->>API: Create/update statuses and replies
-    Plugin->>State: Update mappings, content_stats, scheduler summary
-    Plugin-->>AdminUI: Return result and diagnostics
+	Admin->>AdminUI: Press Run now or Run full synchronization
+	AdminUI->>Plugin: plugin_mastodon_run_sync(true, fullWindow)
+	Plugin->>State: Load main state.json without eager comment shards
+	Plugin->>Plugin: Bypass scheduled due/cooldown because force=true
+	Plugin->>Plugin: Acquire sync.lock and start rate-limit guard
+	Plugin->>API: Verify credentials and fetch instance/status/context data
+	opt Remote import enabled and remote responses allow writes
+		Plugin->>Core: Import/update entries/comments under local-write guard
+	end
+	alt Full window requested
+		Plugin->>Plugin: Parse every local entry as repair path
+	else Manual non-full run
+		Plugin->>Plugin: Use configured window plus dirty candidates
+	end
+	Plugin->>API: Create/update statuses and replies
+	Plugin->>State: Update mappings, content_stats, scheduler summary
+	Plugin-->>AdminUI: Return result and diagnostics
 
-    Admin->>AdminUI: Press Run deletion synchronization
-    AdminUI->>Plugin: plugin_mastodon_run_deletion_sync(true)
-    Plugin->>State: Load main state.json without eager comment shards
-    Plugin->>Plugin: Force bypasses pending/cooldown guard, but deletions_pending and not-before due check still apply
-    Plugin->>API: Delete remote statuses for local deletions with delete_media fallback
-    Plugin->>Core: If remote import is enabled, delete local objects under guard, otherwise unlink and queue re-export
-    Plugin->>State: Update tombstones, cursors, deletion_stats
-    Plugin-->>AdminUI: Return deletion result
+	Admin->>AdminUI: Press Run deletion synchronization
+	AdminUI->>Plugin: plugin_mastodon_run_deletion_sync(true)
+	Plugin->>State: Load main state.json without eager comment shards
+	Plugin->>Plugin: Force bypasses pending/cooldown guard, but deletions_pending and not-before due check still apply
+	Plugin->>API: Delete remote statuses for local deletions with delete_media fallback
+	Plugin->>Core: If remote import is enabled, delete local objects under guard, otherwise unlink and queue re-export
+	Plugin->>State: Update tombstones, cursors, deletion_stats
+	Plugin-->>AdminUI: Return deletion result
 ```
 
 ### 4.4 Admin UI diagnostics
@@ -1434,34 +1464,34 @@ credentials, stale instance information, rate-limit stops, and content/deletion 
 
 ```mermaid
 flowchart TD
-    AdminAssign["plugin_mastodon_admin_assign"]
-    Options["Load options and normalize instance URL"]
-    State["Compact scheduler summary with main-state fallback when stale"]
-    Scheduler["Load scheduler-state.json"]
-    Instance["Build instance info rows"]
-    OAuth["Evaluate registration, OAuth and scope status"]
-    Plugins["Detect companion plugin status"]
-    Content["Expose content_stats and last_run_local"]
-    Deletion["Expose deletion_stats, deletions_pending, last_deletion_run_local"]
-    Errors["Expose last_error and log hints"]
-    Template["admin.plugin.mastodon.tpl"]
+	AdminAssign["plugin_mastodon_admin_assign"]
+	Options["Load options and normalize instance URL"]
+	State["Compact scheduler summary with main-state fallback when stale"]
+	Scheduler["Load scheduler-state.json"]
+	Instance["Build instance info rows"]
+	OAuth["Evaluate registration, OAuth and scope status"]
+	Plugins["Detect companion plugin status"]
+	Content["Expose content_stats and last_run_local"]
+	Deletion["Expose deletion_stats, deletions_pending, last_deletion_run_local"]
+	Errors["Expose last_error and log hints"]
+	Template["admin.plugin.mastodon.tpl"]
 
-    AdminAssign --> Options
-    AdminAssign --> Scheduler --> State
-    Options --> Instance
-    Options --> OAuth
-    AdminAssign --> Plugins
-    State --> Content
-    State --> Deletion
-    State --> Errors
-    Scheduler --> Content
-    Scheduler --> Deletion
-    Instance --> Template
-    OAuth --> Template
-    Plugins --> Template
-    Content --> Template
-    Deletion --> Template
-    Errors --> Template
+	AdminAssign --> Options
+	AdminAssign --> Scheduler --> State
+	Options --> Instance
+	Options --> OAuth
+	AdminAssign --> Plugins
+	State --> Content
+	State --> Deletion
+	State --> Errors
+	Scheduler --> Content
+	Scheduler --> Deletion
+	Instance --> Template
+	OAuth --> Template
+	Plugins --> Template
+	Content --> Template
+	Deletion --> Template
+	Errors --> Template
 ```
 
 ## 5. Core post-success hooks, dirty tracking, and local-write guard
@@ -1472,61 +1502,61 @@ changes instead of rediscovering every old change by scanning the whole archive 
 
 ```mermaid
 flowchart TD
-    subgraph Core["FlatPress core"]
-        EntrySave["entry_save succeeds"]
-        EntrySaved["do_action entry_saved"]
-        EntryDelete["entry_delete succeeds"]
-        EntryDeleted["do_action entry_deleted"]
-        CommentSave["comment_save succeeds"]
-        CommentSaved["do_action comment_saved"]
-        CommentDelete["comment_delete succeeds"]
-        CommentDeleted["do_action comment_deleted"]
-    end
+	subgraph Core["FlatPress core"]
+		EntrySave["entry_save succeeds"]
+		EntrySaved["do_action entry_saved"]
+		EntryDelete["entry_delete succeeds"]
+		EntryDeleted["do_action entry_deleted"]
+		CommentSave["comment_save succeeds"]
+		CommentSaved["do_action comment_saved"]
+		CommentDelete["comment_delete succeeds"]
+		CommentDeleted["do_action comment_deleted"]
+	end
 
-    subgraph Plugin["Mastodon plugin hook handlers"]
-        Guard{"plugin_mastodon_local_write_guard_active?"}
-        EntryDirty["plugin_mastodon_on_entry_saved sets dirty_entries when needed"]
-        EntryDeletion["plugin_mastodon_on_entry_deleted sets deletions_pending when mapped"]
-        CommentDirty["plugin_mastodon_on_comment_saved sets dirty_comments or queues parent entry"]
-        CommentDeletion["plugin_mastodon_on_comment_deleted sets deletions_pending when mapped"]
-        StateWrite["Write compact state.json and scheduler-state.json"]
-        Stop["Ignore hook to avoid false dirty/deletion markers"]
-    end
+	subgraph Plugin["Mastodon plugin hook handlers"]
+		Guard{"plugin_mastodon_local_write_guard_active?"}
+		EntryDirty["plugin_mastodon_on_entry_saved sets dirty_entries when needed"]
+		EntryDeletion["plugin_mastodon_on_entry_deleted sets deletions_pending when mapped"]
+		CommentDirty["plugin_mastodon_on_comment_saved sets dirty_comments or queues parent entry"]
+		CommentDeletion["plugin_mastodon_on_comment_deleted sets deletions_pending when mapped"]
+		StateWrite["Write compact state.json and scheduler-state.json"]
+		Stop["Ignore hook to avoid false dirty/deletion markers"]
+	end
 
-    EntrySave --> EntrySaved --> Guard
-    EntryDelete --> EntryDeleted --> Guard
-    CommentSave --> CommentSaved --> Guard
-    CommentDelete --> CommentDeleted --> Guard
+	EntrySave --> EntrySaved --> Guard
+	EntryDelete --> EntryDeleted --> Guard
+	CommentSave --> CommentSaved --> Guard
+	CommentDelete --> CommentDeleted --> Guard
 
-    Guard -- "Yes, plugin-owned remote import/delete" --> Stop
-    Guard -- "No, local manual entry save" --> EntryDirty --> StateWrite
-    Guard -- "No, local manual entry deletion" --> EntryDeletion --> StateWrite
-    Guard -- "No, local manual comment save" --> CommentDirty --> StateWrite
-    Guard -- "No, local manual comment deletion" --> CommentDeletion --> StateWrite
+	Guard -- "Yes, plugin-owned remote import/delete" --> Stop
+	Guard -- "No, local manual entry save" --> EntryDirty --> StateWrite
+	Guard -- "No, local manual entry deletion" --> EntryDeletion --> StateWrite
+	Guard -- "No, local manual comment save" --> CommentDirty --> StateWrite
+	Guard -- "No, local manual comment deletion" --> CommentDeletion --> StateWrite
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> LocalManualChange
-    [*] --> PluginOwnedWrite
+	[*] --> LocalManualChange
+	[*] --> PluginOwnedWrite
 
-    LocalManualChange --> DirtyEntry: entry_saved mapped and changed
-    LocalManualChange --> DirtyComment: comment_saved mapped or parent pending
-    LocalManualChange --> DeletionPending: mapped entry/comment deleted
-    DirtyEntry --> ScheduledOrManualSync
-    DirtyComment --> ScheduledOrManualSync
-    DeletionPending --> FollowUpDeletionSync
+	LocalManualChange --> DirtyEntry: entry_saved mapped and changed
+	LocalManualChange --> DirtyComment: comment_saved mapped or parent pending
+	LocalManualChange --> DeletionPending: mapped entry/comment deleted
+	DirtyEntry --> ScheduledOrManualSync
+	DirtyComment --> ScheduledOrManualSync
+	DeletionPending --> FollowUpDeletionSync
 
-    PluginOwnedWrite --> GuardEntered: plugin_mastodon_local_write_guard_enter
-    GuardEntered --> CoreWrite: entry_save/comment_save/entry_delete/comment_delete
-    CoreWrite --> HookFired: FlatPress post-success hook fires
-    HookFired --> Ignored: guard active
-    Ignored --> GuardLeft: plugin_mastodon_local_write_guard_leave
-    GuardLeft --> AuthoritativeMappingUpdate
+	PluginOwnedWrite --> GuardEntered: plugin_mastodon_local_write_guard_enter
+	GuardEntered --> CoreWrite: entry_save/comment_save/entry_delete/comment_delete
+	CoreWrite --> HookFired: FlatPress post-success hook fires
+	HookFired --> Ignored: guard active
+	Ignored --> GuardLeft: plugin_mastodon_local_write_guard_leave
+	GuardLeft --> AuthoritativeMappingUpdate
 
-    ScheduledOrManualSync --> [*]
-    FollowUpDeletionSync --> [*]
-    AuthoritativeMappingUpdate --> [*]
+	ScheduledOrManualSync --> [*]
+	FollowUpDeletionSync --> [*]
+	AuthoritativeMappingUpdate --> [*]
 ```
 
 ## 6. Error handling and partial-failure strategy
@@ -1536,32 +1566,32 @@ rate-limit stops, missing remote objects, and state-write failures.
 
 ```mermaid
 flowchart TD
-    Operation["Sync operation"]
-    API["Mastodon API call"]
-    Response{"Response category"}
-    OK["OK: update mapping/statistics"]
-    Missing["404/410: treat remote object as missing where caller allows it"]
-    RemoteLimit["429 or X-RateLimit floor reached"]
-    LegacyFallback["Legacy compatibility fallback, e.g. retry delete without delete_media"]
-    HardFailure["Hard failure: keep dirty/pending marker"]
-    UploadFailure["Status failed after media upload"]
-    Cleanup["Best-effort cleanup uploaded media"]
-    StateWrite["Write compact state.json and scheduler summary"]
-    StateOK{"State write succeeded?"}
-    LastError["Set last_error and log diagnostics"]
-    Retry["Keep cooldown/pending marker for future run"]
+	Operation["Sync operation"]
+	API["Mastodon API call"]
+	Response{"Response category"}
+	OK["OK: update mapping/statistics"]
+	Missing["404/410: treat remote object as missing where caller allows it"]
+	RemoteLimit["429 or X-RateLimit floor reached"]
+	LegacyFallback["Legacy compatibility fallback, e.g. retry delete without delete_media"]
+	HardFailure["Hard failure: keep dirty/pending marker"]
+	UploadFailure["Status failed after media upload"]
+	Cleanup["Best-effort cleanup uploaded media"]
+	StateWrite["Write compact state.json and scheduler summary"]
+	StateOK{"State write succeeded?"}
+	LastError["Set last_error and log diagnostics"]
+	Retry["Keep cooldown/pending marker for future run"]
 
-    Operation --> API --> Response
-    Response -- "2xx" --> OK --> StateWrite
-    Response -- "404/410 in lookup/delete context" --> Missing --> StateWrite
-    Response -- "429 / local budget stop" --> RemoteLimit --> LastError --> Retry
-    Response -- "legacy delete_media rejection" --> LegacyFallback --> API
-    Response -- "other error" --> HardFailure --> LastError --> Retry
-    HardFailure --> UploadFailure
-    UploadFailure -- "new unattached uploads exist" --> Cleanup --> Retry
-    StateWrite --> StateOK
-    StateOK -- "Yes" --> Operation
-    StateOK -- "No" --> LastError
+	Operation --> API --> Response
+	Response -- "2xx" --> OK --> StateWrite
+	Response -- "404/410 in lookup/delete context" --> Missing --> StateWrite
+	Response -- "429 / local budget stop" --> RemoteLimit --> LastError --> Retry
+	Response -- "legacy delete_media rejection" --> LegacyFallback --> API
+	Response -- "other error" --> HardFailure --> LastError --> Retry
+	HardFailure --> UploadFailure
+	UploadFailure -- "new unattached uploads exist" --> Cleanup --> Retry
+	StateWrite --> StateOK
+	StateOK -- "Yes" --> Operation
+	StateOK -- "No" --> LastError
 ```
 
 ## 7. Simulation and regression-test architecture
@@ -1577,56 +1607,56 @@ copy. Mastodon HTTP is mocked unless optional live authentication is requested.
 
 ```mermaid
 flowchart TD
-    Script["Root or regression-test simulator entry point"]
-    SourceRoot{"defaults.php beside script?"}
-    RootFallback["Resolve FlatPress root three directories above regression-test copy"]
-    OutputMode{"--summary or SIMULATE_MASTODON_SUMMARY=1?"}
-    VerboseOutput["Verbose per-test details"]
-    SummaryOutput["Compact per-test details"]
-    SandboxPolicy{"Include live fp-content/content?"}
-    MinimalSandbox["Create sandbox without live fp-content/content"]
-    LiveSandbox["Explicit live-content smoke sandbox"]
-    EmptyContent["Create empty fp-content/content"]
-    CoreStubs["Load FlatPress includes and test helpers"]
-    Plugin["require fp-plugins/mastodon/plugin.mastodon.php"]
-    Fixtures["Create deterministic entries, comments, media files, options, and state fixtures"]
-    FixedClock["Freeze plugin_mastodon_test_now for date-window-sensitive fixture groups"]
-    ScopedOptions["Snapshot, override, and restore mutable admin option fixtures"]
-    HTTPQueue["Mock Mastodon HTTP response queue"]
-    GuardIsolation["Dirty-comment scheduled fixture clears content guard"]
-    RunSync["Call real plugin sync/deletion functions"]
-    Assertions["test_result / test_warn / test_skip assertions"]
-    CompactWrite["Assert state.json compact-write roundtrip"]
-    SmallState["Always-on 300x10 scheduler-state regression"]
-    MemoryGuard["Check memory before building 3000x10 state"]
-    CIRaise["CI: try to raise memory_limit to 384M"]
-    LargeState["Run 3000x10 scheduler-state regression"]
-    Warn["Shared-host low memory: emit WARN"]
-    Skip["CI cannot raise memory: emit SKIP"]
-    InspectState["Inspect state.json, scheduler-state.json, files, and captured API calls"]
-    FinalSummary["Always print Exit-code and OK/FAIL/WARN/SKIP counters"]
-    OptionalLive["Optional --live-auth credentials smoke test"]
-    Cleanup["Delete temporary sandbox"]
+	Script["Root or regression-test simulator entry point"]
+	SourceRoot{"defaults.php beside script?"}
+	RootFallback["Resolve FlatPress root three directories above regression-test copy"]
+	OutputMode{"--summary or SIMULATE_MASTODON_SUMMARY=1?"}
+	VerboseOutput["Verbose per-test details"]
+	SummaryOutput["Compact per-test details"]
+	SandboxPolicy{"Include live fp-content/content?"}
+	MinimalSandbox["Create sandbox without live fp-content/content"]
+	LiveSandbox["Explicit live-content smoke sandbox"]
+	EmptyContent["Create empty fp-content/content"]
+	CoreStubs["Load FlatPress includes and test helpers"]
+	Plugin["require fp-plugins/mastodon/plugin.mastodon.php"]
+	Fixtures["Create deterministic entries, comments, media files, options, and state fixtures"]
+	FixedClock["Freeze plugin_mastodon_test_now for date-window-sensitive fixture groups"]
+	ScopedOptions["Snapshot, override, and restore mutable admin option fixtures"]
+	HTTPQueue["Mock Mastodon HTTP response queue"]
+	GuardIsolation["Dirty-comment scheduled fixture clears content guard"]
+	RunSync["Call real plugin sync/deletion functions"]
+	Assertions["test_result / test_warn / test_skip assertions"]
+	CompactWrite["Assert state.json compact-write roundtrip"]
+	SmallState["Always-on 300x10 scheduler-state regression"]
+	MemoryGuard["Check memory before building 3000x10 state"]
+	CIRaise["CI: try to raise memory_limit to 384M"]
+	LargeState["Run 3000x10 scheduler-state regression"]
+	Warn["Shared-host low memory: emit WARN"]
+	Skip["CI cannot raise memory: emit SKIP"]
+	InspectState["Inspect state.json, scheduler-state.json, files, and captured API calls"]
+	FinalSummary["Always print Exit-code and OK/FAIL/WARN/SKIP counters"]
+	OptionalLive["Optional --live-auth credentials smoke test"]
+	Cleanup["Delete temporary sandbox"]
 
-    Script --> SourceRoot
-    SourceRoot -- "Yes" --> OutputMode
-    SourceRoot -- "No" --> RootFallback --> OutputMode
-    OutputMode -- "No" --> VerboseOutput --> SandboxPolicy
-    OutputMode -- "Yes" --> SummaryOutput --> SandboxPolicy
-    SandboxPolicy -- "default" --> MinimalSandbox --> EmptyContent --> CoreStubs
-    SandboxPolicy -- "--include-live-content or env flag" --> LiveSandbox --> CoreStubs
-    CoreStubs --> Plugin --> Fixtures
-    Fixtures --> FixedClock --> HTTPQueue --> RunSync --> Assertions
-    Fixtures --> ScopedOptions --> Assertions
-    Fixtures -. "APCu/file cooldown isolation" .-> GuardIsolation --> RunSync
-    Assertions --> CompactWrite --> SmallState --> MemoryGuard
-    MemoryGuard -- "enough memory" --> LargeState --> InspectState
-    MemoryGuard -- "CI + low limit" --> CIRaise
-    CIRaise -- "raised" --> LargeState
-    CIRaise -- "not raised" --> Skip --> InspectState
-    MemoryGuard -- "non-CI low limit" --> Warn --> InspectState
-    Assertions --> InspectState --> FinalSummary --> Cleanup
-    Script -. "only when explicitly requested" .-> OptionalLive
+	Script --> SourceRoot
+	SourceRoot -- "Yes" --> OutputMode
+	SourceRoot -- "No" --> RootFallback --> OutputMode
+	OutputMode -- "No" --> VerboseOutput --> SandboxPolicy
+	OutputMode -- "Yes" --> SummaryOutput --> SandboxPolicy
+	SandboxPolicy -- "default" --> MinimalSandbox --> EmptyContent --> CoreStubs
+	SandboxPolicy -- "--include-live-content or env flag" --> LiveSandbox --> CoreStubs
+	CoreStubs --> Plugin --> Fixtures
+	Fixtures --> FixedClock --> HTTPQueue --> RunSync --> Assertions
+	Fixtures --> ScopedOptions --> Assertions
+	Fixtures -. "APCu/file cooldown isolation" .-> GuardIsolation --> RunSync
+	Assertions --> CompactWrite --> SmallState --> MemoryGuard
+	MemoryGuard -- "enough memory" --> LargeState --> InspectState
+	MemoryGuard -- "CI + low limit" --> CIRaise
+	CIRaise -- "raised" --> LargeState
+	CIRaise -- "not raised" --> Skip --> InspectState
+	MemoryGuard -- "non-CI low limit" --> Warn --> InspectState
+	Assertions --> InspectState --> FinalSummary --> Cleanup
+	Script -. "only when explicitly requested" .-> OptionalLive
 ```
 
 The simulation sandbox deliberately excludes live `fp-content/content` in the default regression run. It still copies configuration and plugin files, creates an empty content directory, and then seeds deterministic fixtures. This prevents production-like 3000x10 blogs from spending most of the request copying and deleting live entries/comments before the first assertion. Explicit live-content smoke coverage remains available with `--include-live-content` or `SIMULATE_MASTODON_INCLUDE_LIVE_CONTENT=1`.
@@ -1643,33 +1673,33 @@ The exported-comment deletion-invariant regressions use an old entry outside the
 
 ```mermaid
 flowchart TD
-    Goal["Large FlatPress archive"]
-    OrdinaryRequest["Ordinary frontend GET"]
-    ScheduledRun["Scheduled content sync"]
-    DeletionRun["Follow-up deletion sync with UTC cooldown"]
-    ManualRun["Manual full admin sync"]
-    SchedulerOnly["Uses compact scheduler-state.json first"]
-    TargetedScan["Scans active window plus dirty entries/comments"]
-    FullStateNeeded["Read main mappings; traverse comment shards by cursor"]
-    FullRepair["Full repair scan remains available"]
-    Budgets["UTC due checks plus local budgets and Mastodon rate-limit headers stop safely"]
-    NoFalseDirty["Local-write guard prevents plugin-owned writes from becoming local dirty markers"]
-    DeleteInvariant["Immediate tombstone plus targeted import guard prevents stale reply resurrection"]
-    Compatibility["Mastodon >= 4.0.0 path with documented delete_media fallback for older than 4.4.0"]
+	Goal["Large FlatPress archive"]
+	OrdinaryRequest["Ordinary frontend GET"]
+	ScheduledRun["Scheduled content sync"]
+	DeletionRun["Follow-up deletion sync with UTC cooldown"]
+	ManualRun["Manual full admin sync"]
+	SchedulerOnly["Uses compact scheduler-state.json first"]
+	TargetedScan["Scans active window plus dirty entries/comments"]
+	FullStateNeeded["Read main mappings; traverse comment shards by cursor"]
+	FullRepair["Full repair scan remains available"]
+	Budgets["UTC due checks plus local budgets and Mastodon rate-limit headers stop safely"]
+	NoFalseDirty["Local-write guard prevents plugin-owned writes from becoming local dirty markers"]
+	DeleteInvariant["Immediate tombstone plus targeted import guard prevents stale reply resurrection"]
+	Compatibility["Mastodon >= 4.0.0 path with documented delete_media fallback for older than 4.4.0"]
 
-    Goal --> OrdinaryRequest --> SchedulerOnly
-    Goal --> ScheduledRun --> TargetedScan
-    Goal --> DeletionRun --> FullStateNeeded
-    Goal --> ManualRun --> FullRepair
-    ScheduledRun --> Budgets
-    DeletionRun --> Budgets
-    ManualRun --> Budgets
-    ScheduledRun --> NoFalseDirty
-    ScheduledRun --> DeleteInvariant
-    DeletionRun --> NoFalseDirty
-    DeletionRun --> DeleteInvariant
-    ManualRun --> NoFalseDirty
-    DeletionRun --> Compatibility
+	Goal --> OrdinaryRequest --> SchedulerOnly
+	Goal --> ScheduledRun --> TargetedScan
+	Goal --> DeletionRun --> FullStateNeeded
+	Goal --> ManualRun --> FullRepair
+	ScheduledRun --> Budgets
+	DeletionRun --> Budgets
+	ManualRun --> Budgets
+	ScheduledRun --> NoFalseDirty
+	ScheduledRun --> DeleteInvariant
+	DeletionRun --> NoFalseDirty
+	DeletionRun --> DeleteInvariant
+	ManualRun --> NoFalseDirty
+	DeletionRun --> Compatibility
 ```
 
 Key implications for developers:
@@ -1691,134 +1721,134 @@ Key implications for developers:
 
 ```mermaid
 flowchart TD
-    Caller["State mutation caller"]
-    Lock["Acquire state-write.lock"]
-    Shards["Write loaded per-entry comment shards"]
-    ShardFail["Shard write failed"]
-    Main["Write compact state.json"]
-    MainFail["Main write failed; repair can rebuild index from shards"]
-    Scheduler["Refresh scheduler-state.json"]
-    Release["Release state-write.lock"]
+	Caller["State mutation caller"]
+	Lock["Acquire state-write.lock"]
+	Shards["Write loaded per-entry comment shards"]
+	ShardFail["Shard write failed"]
+	Main["Write compact state.json"]
+	MainFail["Main write failed; repair can rebuild index from shards"]
+	Scheduler["Refresh scheduler-state.json"]
+	Release["Release state-write.lock"]
 
-    Caller --> Lock --> Shards
-    Shards -->|failure| ShardFail --> Release
-    Shards -->|success| Main
-    Main -->|failure| MainFail --> Release
-    Main -->|success| Scheduler --> Release
+	Caller --> Lock --> Shards
+	Shards -->|failure| ShardFail --> Release
+	Shards -->|success| Main
+	Main -->|failure| MainFail --> Release
+	Main -->|success| Scheduler --> Release
 ```
 
 ## Shard/cursor deletion synchronization
 
 ```mermaid
 flowchart TD
-    Start["Deletion sync after sync.lock"]
-    Entries["Process entry mappings by deletion_cursor_entries"]
-    Cursor["Read deletion_cursor_comments"]
-    ShardList["List comment shard entry ids"]
-    Skip["Skip shards before cursor entry"]
-    Load["Load one comment shard"]
-    ChildIndex["Build child index from loaded shard"]
-    Comments["Process comments after cursor"]
-    Unload{"Shard changed?"}
-    Drop["Unload unchanged shard from memory"]
-    Keep["Keep changed shard for final partial write"]
-    Rechecks["Load pending recheck shards"]
-    Write["Partial state write preserves unloaded shards"]
-    Start --> Entries --> Cursor --> ShardList --> Skip --> Load --> ChildIndex --> Comments --> Unload
-    Unload -- "no" --> Drop --> ShardList
-    Unload -- "yes" --> Keep --> ShardList
-    ShardList --> Rechecks --> Write
+	Start["Deletion sync after sync.lock"]
+	Entries["Process entry mappings by deletion_cursor_entries"]
+	Cursor["Read deletion_cursor_comments"]
+	ShardList["List comment shard entry ids"]
+	Skip["Skip shards before cursor entry"]
+	Load["Load one comment shard"]
+	ChildIndex["Build child index from loaded shard"]
+	Comments["Process comments after cursor"]
+	Unload{"Shard changed?"}
+	Drop["Unload unchanged shard from memory"]
+	Keep["Keep changed shard for final partial write"]
+	Rechecks["Load pending recheck shards"]
+	Write["Partial state write preserves unloaded shards"]
+	Start --> Entries --> Cursor --> ShardList --> Skip --> Load --> ChildIndex --> Comments --> Unload
+	Unload -- "no" --> Drop --> ShardList
+	Unload -- "yes" --> Keep --> ShardList
+	ShardList --> Rechecks --> Write
 ```
 
 ## Large legacy inline-comment migration
 
 ```mermaid
 flowchart TD
-    Read["state_read() prestats state.json"]
-    Check["Find top-level comments object"]
-    Lock["Acquire state-write.lock"]
-    Backup["Create state.json.migration-backup-*.json"]
-    Extract["Extract comments object without full state json_decode"]
-    Current["Buffer current entry comments"]
-    Existing["Read existing shard for same entry"]
-    Merge["Merge existing + current comments"]
-    Shard["Write per-entry comment shard via temp file + rename"]
-    Compact["Rewrite compact state.json with comments empty"]
-    Decode["Continue normal normalized state read"]
-    Fallback["Return legacy normalized state"]
+	Read["state_read() prestats state.json"]
+	Check["Find top-level comments object"]
+	Lock["Acquire state-write.lock"]
+	Backup["Create state.json.migration-backup-*.json"]
+	Extract["Extract comments object without full state json_decode"]
+	Current["Buffer current entry comments"]
+	Existing["Read existing shard for same entry"]
+	Merge["Merge existing + current comments"]
+	Shard["Write per-entry comment shard via temp file + rename"]
+	Compact["Rewrite compact state.json with comments empty"]
+	Decode["Continue normal normalized state read"]
+	Fallback["Return legacy normalized state"]
 
-    Read --> Check
-    Check -- "no inline comments" --> Decode
-    Check -- "inline comments present" --> Lock --> Backup
-    Backup -- "failure" --> Fallback
-    Backup -- "success" --> Extract --> Current --> Existing --> Merge --> Shard
-    Shard -- "failure" --> Fallback
-    Shard -- "success" --> Compact
-    Compact -- "failure" --> Fallback
-    Compact -- "success" --> Decode
+	Read --> Check
+	Check -- "no inline comments" --> Decode
+	Check -- "inline comments present" --> Lock --> Backup
+	Backup -- "failure" --> Fallback
+	Backup -- "success" --> Extract --> Current --> Existing --> Merge --> Shard
+	Shard -- "failure" --> Fallback
+	Shard -- "success" --> Compact
+	Compact -- "failure" --> Fallback
+	Compact -- "success" --> Decode
 ```
 
 ## Comment-shard diagnostics and repair
 
 ```mermaid
 flowchart TD
-    Start["plugin_mastodon_state_diagnose_comment_shards()"]
-    Files["Scan state-comments/YY/MM/*.json"]
-    Validate["Validate JSON, entry_id and count"]
-    Rebuild["Rebuild comment_shards.entries and comments_remote in memory"]
-    Compare["Compare rebuilt data with main state metadata"]
-    Report["Return ok/errors/warnings/stats"]
-    Repair{"Repair requested?"}
-    Lock["Acquire state-write.lock"]
-    Write["Write compact state.json with rebuilt indexes"]
-    Done["Return repair result"]
+	Start["plugin_mastodon_state_diagnose_comment_shards()"]
+	Files["Scan state-comments/YY/MM/*.json"]
+	Validate["Validate JSON, entry_id and count"]
+	Rebuild["Rebuild comment_shards.entries and comments_remote in memory"]
+	Compare["Compare rebuilt data with main state metadata"]
+	Report["Return ok/errors/warnings/stats"]
+	Repair{"Repair requested?"}
+	Lock["Acquire state-write.lock"]
+	Write["Write compact state.json with rebuilt indexes"]
+	Done["Return repair result"]
 
-    Start --> Files --> Validate --> Rebuild --> Compare --> Report --> Repair
-    Repair -- "no" --> Done
-    Repair -- "yes and no shard errors" --> Lock --> Write --> Done
+	Start --> Files --> Validate --> Rebuild --> Compare --> Report --> Repair
+	Repair -- "no" --> Done
+	Repair -- "yes and no shard errors" --> Lock --> Write --> Done
 ```
 
 ## Admin and CLI shard-maintenance entry points
 
 ```mermaid
 flowchart TD
-    AdminButton["Admin panel diagnose/repair buttons"]
-    CliScript["mastodon-state-cli.php diagnose|repair"]
-    Formatter["Build admin/CLI maintenance result"]
-    Diagnose["plugin_mastodon_state_diagnose_comment_shards()"]
-    Repair["plugin_mastodon_state_repair_comment_shards()"]
-    StateWrite["Under state-write.lock: write compact main payload and refresh scheduler summary"]
-    Output["Return web message or CLI exit code"]
+	AdminButton["Admin panel diagnose/repair buttons"]
+	CliScript["mastodon-state-cli.php diagnose|repair"]
+	Formatter["Build admin/CLI maintenance result"]
+	Diagnose["plugin_mastodon_state_diagnose_comment_shards()"]
+	Repair["plugin_mastodon_state_repair_comment_shards()"]
+	StateWrite["Under state-write.lock: write compact main payload and refresh scheduler summary"]
+	Output["Return web message or CLI exit code"]
 
-    AdminButton --> Formatter
-    CliScript --> Formatter
-    Formatter --> Diagnose
-    Formatter --> Repair
-    Repair --> StateWrite
-    Diagnose --> Output
-    StateWrite --> Output
+	AdminButton --> Formatter
+	CliScript --> Formatter
+	Formatter --> Diagnose
+	Formatter --> Repair
+	Repair --> StateWrite
+	Diagnose --> Output
+	StateWrite --> Output
 ```
 
 ## State-write failure propagation
 
 ```mermaid
 flowchart TD
-    Write["plugin_mastodon_state_write()"]
-    Failure{"Failure kind"}
-    Lock["state_write_lock_unavailable"]
-    Shard["comment_shard_write_failed"]
-    Json["state_json_encode_failed"]
-    Main["state_main_write_failed"]
-    Marker["plugin_mastodon_state_write_error_set()"]
-    Wrapper["plugin_mastodon_state_write_with_last_error()"]
-    LastError["runtime state last_error"]
+	Write["plugin_mastodon_state_write()"]
+	Failure{"Failure kind"}
+	Lock["state_write_lock_unavailable"]
+	Shard["comment_shard_write_failed"]
+	Json["state_json_encode_failed"]
+	Main["state_main_write_failed"]
+	Marker["plugin_mastodon_state_write_error_set()"]
+	Wrapper["plugin_mastodon_state_write_with_last_error()"]
+	LastError["runtime state last_error"]
 
-    Write --> Failure
-    Failure --> Lock --> Marker
-    Failure --> Shard --> Marker
-    Failure --> Json --> Marker
-    Failure --> Main --> Marker
-    Marker --> Wrapper --> LastError
+	Write --> Failure
+	Failure --> Lock --> Marker
+	Failure --> Shard --> Marker
+	Failure --> Json --> Marker
+	Failure --> Main --> Marker
+	Marker --> Wrapper --> LastError
 ```
 
 ## 9. Admin maintenance page separation
@@ -1827,52 +1857,52 @@ The regular Mastodon plugin page keeps configuration, authorization and manual s
 
 ```mermaid
 flowchart TD
-    Main["admin.plugin.mastodon.tpl"]
-    Button["State maintenance button"]
-    Maint["admin.plugin.mastodon.maintenance.tpl"]
-    PanelAlias["lang.* mastodon_maintenance panelstrings alias"]
-    ErrorList["shared:errorlist.tpl success/error messages"]
-    Lang["mastodon_lang fallback array"]
-    Diagnose["mastodon_diagnose_state"]
-    Repair["mastodon_repair_state"]
-    Result["Diagnostic result table"]
+	Main["admin.plugin.mastodon.tpl"]
+	Button["State maintenance button"]
+	Maint["admin.plugin.mastodon.maintenance.tpl"]
+	PanelAlias["lang.* mastodon_maintenance panelstrings alias"]
+	ErrorList["shared:errorlist.tpl success/error messages"]
+	Lang["mastodon_lang fallback array"]
+	Diagnose["mastodon_diagnose_state"]
+	Repair["mastodon_repair_state"]
+	Result["Diagnostic result table"]
 
-    Main --> Button
-    Button --> Maint
-    PanelAlias --> ErrorList
-    ErrorList --> Maint
-    Lang --> Main
-    Lang --> Maint
-    Maint --> Diagnose
-    Maint --> Repair
-    Diagnose --> Result
-    Repair --> Result
+	Main --> Button
+	Button --> Maint
+	PanelAlias --> ErrorList
+	ErrorList --> Maint
+	Lang --> Main
+	Lang --> Maint
+	Maint --> Diagnose
+	Maint --> Repair
+	Diagnose --> Result
+	Repair --> Result
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Admin
-    participant Core as FlatPress admin core
-    participant Main as Main settings template
-    participant Maint as Maintenance template
-    participant Plugin as plugin.mastodon.php
-    participant Panel as panelstrings.msgs
-    participant Lang as mastodon_lang
-    participant State as state.json + comment shards
+	participant Admin
+	participant Core as FlatPress admin core
+	participant Main as Main settings template
+	participant Maint as Maintenance template
+	participant Plugin as plugin.mastodon.php
+	participant Panel as panelstrings.msgs
+	participant Lang as mastodon_lang
+	participant State as state.json + comment shards
 
-    Admin->>Core: Open plugin or maintenance action
-    Core->>Panel: Read mastodon or mastodon_maintenance from lang.*.php
-    Panel-->>Core: Success/error messages for shared:errorlist.tpl
-    Core->>Plugin: Run plugin admin assignment
-    Plugin->>Lang: Assign localized maintenance strings plus fallbacks
-    Lang-->>Main: Safe labels for compact maintenance link
-    Main-->>Admin: Show compact maintenance link only
-    Admin->>Maint: Open dedicated maintenance page
-    Lang-->>Maint: Safe labels for headings, buttons and result table
-    Admin->>Plugin: Diagnose or repair
-    Plugin->>State: Validate metadata, shards and comments_remote
-    State-->>Plugin: Stats, warnings and errors
-    Plugin-->>Maint: Template-friendly result rows
-    Panel-->>Maint: Localized shared success/error message
-    Maint-->>Admin: Display result and back link
+	Admin->>Core: Open plugin or maintenance action
+	Core->>Panel: Read mastodon or mastodon_maintenance from lang.*.php
+	Panel-->>Core: Success/error messages for shared:errorlist.tpl
+	Core->>Plugin: Run plugin admin assignment
+	Plugin->>Lang: Assign localized maintenance strings plus fallbacks
+	Lang-->>Main: Safe labels for compact maintenance link
+	Main-->>Admin: Show compact maintenance link only
+	Admin->>Maint: Open dedicated maintenance page
+	Lang-->>Maint: Safe labels for headings, buttons and result table
+	Admin->>Plugin: Diagnose or repair
+	Plugin->>State: Validate metadata, shards and comments_remote
+	State-->>Plugin: Stats, warnings and errors
+	Plugin-->>Maint: Template-friendly result rows
+	Panel-->>Maint: Localized shared success/error message
+	Maint-->>Admin: Display result and back link
 ```

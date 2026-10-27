@@ -348,6 +348,10 @@ function simulate_allow_pending_deletion_sync() {
 	$state = plugin_mastodon_state_read();
 	if (!empty($state ['deletions_pending'])) {
 		$state ['deletions_not_before'] = gmdate('Y-m-d H:i:s', time() - 1);
+		$state ['deletion_retry_not_before'] = gmdate('Y-m-d H:i:s', time() - 1);
+		foreach (isset($state ['local_entry_deletions']) && is_array($state ['local_entry_deletions']) ? array_keys($state ['local_entry_deletions']) : array() as $entryId) {
+			$state ['local_entry_deletions'] [$entryId] = gmdate('Y-m-d H:i:s', time() - 1);
+		}
 		plugin_mastodon_state_write($state);
 	}
 }
@@ -10246,6 +10250,7 @@ $GLOBALS ['plugin_mastodon_test_http_responses'] = array(
 		'body' => json_encode(array('id' => '997'))
 	)
 );
+simulate_allow_pending_deletion_sync();
 $scheduledOldDeleteResult = plugin_mastodon_run_deletion_sync(false);
 $scheduledOldDeleteStateAfter = plugin_mastodon_state_read();
 $scheduledOldDeleteRequests = 0;
@@ -14266,6 +14271,245 @@ $entryReplayLegacy = simulate_run_entry_deletion_replay_case(array('version' => 
 $allOk = test_result(
 	'Protected entry deletion retains the legacy retry without delete_media when instance capability is unknown',
 	$entryReplayLegacy ['passed'], json_encode($entryReplayLegacy)
+) && $allOk;
+
+/**
+ * Run real hooks, all content modes, independent deadlines and failure/retry phases in the sandbox.
+ * @return array<string, bool>
+ */
+function simulate_fixed_entry_deadline_lifecycle() {
+	$previous = plugin_mastodon_get_options();
+	$options = plugin_mastodon_default_options();
+	$options ['instance_url'] = 'https://mastodon.example';
+	$options ['access_token'] = 'deadline-fixture';
+	$options ['instance_info_url'] = $options ['instance_url'];
+	$options ['instance_info_json'] = (string) json_encode(array('version' => '4.0.0'));
+	$options ['instance_info_fetched_at'] = gmdate('Y-m-d H:i:s');
+	$options ['disable_comment_reply_sync'] = '1';
+	$options ['sync_time'] = '00:00';
+	plugin_mastodon_save_options($options);
+	plugin_mastodon_runtime_cache_clear();
+	plugin_mastodon_sync_guard_clear('content');
+	plugin_mastodon_sync_guard_clear('deletion');
+	plugin_mastodon_rate_limit_window_clear();
+	simulate_delete_recursive(ABS_PATH . FP_CONTENT . 'content');
+	@mkdir(ABS_PATH . FP_CONTENT . 'content', 0777, true);
+	plugin_mastodon_state_write(plugin_mastodon_default_state());
+	$base = $options ['instance_url'];
+	$success = function ($json) { return array('ok' => true, 'code' => 200, 'body' => json_encode($json)); };
+	$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+		'GET ' . $base . '/api/v2/instance' => $success(array('version' => '4.0.0')),
+		'GET ' . $base . '/api/v1/accounts/verify_credentials' => $success(array('id' => 'deadline-account', 'username' => 'fixture')),
+		'GET ' . $base . '/api/v1/accounts/deadline-account/statuses?limit=40&exclude_reblogs=true&exclude_replies=true' => $success(array())
+	);
+	$ids = array();
+	$entries = array();
+	$state = plugin_mastodon_default_state();
+	for ($i = 0; $i < 3; $i++) {
+		$entry = array('version' => system_ver(), 'subject' => 'Deadline fixture ' . $i, 'content' => 'Local deletion deadline body', 'author' => 'Fixture', 'date' => time() - 120 + $i);
+		$id = (string) entry_save($entry, null);
+		$ids [] = $id;
+		$entries [] = $entry;
+		$remoteId = '9950' . $i;
+		plugin_mastodon_state_set_entry_mapping($state, $id, $remoteId, 'local', plugin_mastodon_entry_hash($entry), $base . '/@fixture/' . $remoteId, gmdate('Y-m-d H:i:s'));
+		$GLOBALS ['plugin_mastodon_test_http_responses'] ['DELETE ' . $base . '/api/v1/statuses/' . $remoteId] = $success(array());
+		$GLOBALS ['plugin_mastodon_test_http_responses'] ['GET ' . $base . '/api/v1/statuses/' . $remoteId] = $success(array('id' => $remoteId));
+	}
+	plugin_mastodon_state_write($state);
+	$hookStarted = time();
+	entry_delete($ids [0]);
+	entry_delete($ids [1]);
+	$state = plugin_mastodon_state_read(array());
+	$originalQueue = $state ['local_entry_deletions'];
+	$hookDeadline = plugin_mastodon_parse_iso_timestamp($originalQueue [$ids [0]]);
+	$hookOk = $hookDeadline >= $hookStarted + 300 && $hookDeadline <= time() + 300;
+	$state ['deletions_not_before'] = gmdate('Y-m-d H:i:s', time() - 1);
+	plugin_mastodon_state_write($state);
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$early = plugin_mastodon_run_deletion_sync(true);
+	$earlyDeletes = 0;
+	foreach (simulate_recorded_http_requests() as $request) {
+		if ($request ['method'] === 'DELETE') {
+			$earlyDeletes++;
+		}
+	}
+	$earlyOk = !empty($early ['ok']) && $early ['state'] ['local_entry_deletions'] === $originalQueue
+		&& !empty($early ['state'] ['deletions_pending']) && $earlyDeletes === 0;
+	$contentOk = true;
+	foreach (array('normal', 'full', 'scheduled') as $mode) {
+		$state = plugin_mastodon_state_read(array());
+		$state ['last_run'] = '';
+		plugin_mastodon_state_write($state);
+		plugin_mastodon_sync_guard_clear('content');
+		$result = $mode === 'scheduled' ? plugin_mastodon_run_sync(false) : plugin_mastodon_run_sync(true, $mode === 'full');
+		$contentOk = $contentOk && !empty($result ['ok']) && $result ['state'] ['local_entry_deletions'] === $originalQueue;
+	}
+	// Interleave a committed hook with an older content snapshot, then use the content writer.
+	$stale = plugin_mastodon_state_read(array());
+	entry_delete($ids [2]);
+	$fresh = plugin_mastodon_state_read(array());
+	$thirdDeadline = $fresh ['local_entry_deletions'] [$ids [2]];
+	$writeOk = plugin_mastodon_state_write($stale, true);
+	$merged = plugin_mastodon_state_read(array());
+	$mergeOk = $writeOk && isset($merged ['local_entry_deletions'] [$ids [2]]) && $merged ['local_entry_deletions'] [$ids [2]] === $thirdDeadline;
+	// Restoring a queued entry cancels its old decision; another deletion gets a new full delay.
+	$merged ['local_entry_deletions'] [$ids [2]] = gmdate('Y-m-d H:i:s', time() - 100);
+	plugin_mastodon_state_write($merged);
+	entry_save($entries [2], $ids [2]);
+	$restored = plugin_mastodon_state_read(array());
+	$restoreOk = empty($restored ['local_entry_deletions'] [$ids [2]]);
+	entry_delete($ids [2]);
+	$restored = plugin_mastodon_state_read(array());
+	$restoreOk = $restoreOk && plugin_mastodon_parse_iso_timestamp($restored ['local_entry_deletions'] [$ids [2]]) >= time() + 299;
+	$queue = $restored ['local_entry_deletions'];
+	$options ['delete_sync_enabled'] = '0';
+	plugin_mastodon_save_options($options);
+	$disabled = plugin_mastodon_run_sync(true, false);
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$disabledDelete = plugin_mastodon_run_deletion_sync(true);
+	$disabledOk = !empty($disabled ['ok']) && !empty($disabledDelete ['ok'])
+		&& $disabledDelete ['state'] ['local_entry_deletions'] === $queue && simulate_recorded_http_requests() === array();
+	$options ['delete_sync_enabled'] = '1';
+	plugin_mastodon_save_options($options);
+	$state = plugin_mastodon_state_read(array());
+	$state ['local_entry_deletions'] [$ids [0]] = gmdate('Y-m-d H:i:s', time() - 1);
+	$state ['deletions_pending'] = 0; // Re-enabling must find retained deadlines through the compact scheduler.
+	plugin_mastodon_state_write($state);
+	$summary = plugin_mastodon_scheduler_state_read();
+	$priorityOk = plugin_mastodon_scheduled_job($options, $summary, time()) === 'deletion';
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$first = plugin_mastodon_run_deletion_sync(false);
+	$firstRequests = simulate_recorded_http_requests();
+	$firstDeletes = array();
+	foreach ($firstRequests as $request) {
+		if ($request ['method'] === 'DELETE') {
+			$firstDeletes [] = $request ['url'];
+		}
+	}
+	$batchOk = !empty($first ['ok']) && $firstDeletes === array($base . '/api/v1/statuses/99500')
+		&& empty($first ['state'] ['entries'] [$ids [0]]) && count($first ['state'] ['local_entry_deletions']) === 2
+		&& !empty($first ['state'] ['deletions_pending']);
+	$state = $first ['state'];
+	$state ['local_entry_deletions'] [$ids [1]] = gmdate('Y-m-d H:i:s', time() - 1);
+	$state ['deletions_not_before'] = gmdate('Y-m-d H:i:s', time() - 1);
+	plugin_mastodon_state_write($state);
+	$fixedDue = $state ['local_entry_deletions'] [$ids [1]];
+	$deleteKey = 'DELETE ' . $base . '/api/v1/statuses/99501';
+	$GLOBALS ['plugin_mastodon_test_http_responses'] [$deleteKey] = array('ok' => false, 'code' => 500, 'body' => '{"error":"temporary failure"}');
+	$failed = plugin_mastodon_run_deletion_sync(true);
+	$retry = $failed ['state'] ['deletion_retry_not_before'];
+	$retryOk = empty($failed ['ok']) && plugin_mastodon_parse_iso_timestamp($retry) >= time() + 299
+		&& $failed ['state'] ['local_entry_deletions'] [$ids [1]] === $fixedDue;
+	$content = plugin_mastodon_run_sync(true, false);
+	$retryOk = $retryOk && !empty($content ['ok']) && $content ['state'] ['deletion_retry_not_before'] === $retry
+		&& !plugin_mastodon_deletion_sync_due($content ['state'], time());
+	$state = $content ['state'];
+	// A new deletion decision must not shorten a previous failed-delete retry barrier.
+	unset($state ['local_entry_deletions'] [$ids [2]]);
+	plugin_mastodon_state_write($state);
+	plugin_mastodon_on_entry_deleted($ids [2]);
+	$state = plugin_mastodon_state_read(array());
+	$retryOk = $retryOk && $state ['deletion_retry_not_before'] === $retry;
+	$state ['deletion_retry_not_before'] = gmdate('Y-m-d H:i:s', time() - 1);
+	plugin_mastodon_state_write($state);
+	$reset = time() + 1800;
+	$GLOBALS ['plugin_mastodon_test_http_responses'] [$deleteKey] = array('ok' => false, 'code' => 429, 'headers' => array('X-RateLimit-Remaining' => '0', 'X-RateLimit-Reset' => gmdate('c', $reset)), 'body' => '{"error":"rate limit"}');
+	$limited = plugin_mastodon_run_deletion_sync(true);
+	$rateOk = empty($limited ['ok']) && plugin_mastodon_parse_iso_timestamp($limited ['state'] ['deletion_retry_not_before']) >= $reset;
+	$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+	$blocked = plugin_mastodon_run_deletion_sync(true);
+	$rateOk = $rateOk && $blocked ['message'] === 'deletion_sync_wait' && simulate_recorded_http_requests() === array();
+	$GLOBALS ['plugin_mastodon_test_http_responses'] [$deleteKey] = $success(array());
+	simulate_allow_pending_deletion_sync();
+	$final = plugin_mastodon_run_deletion_sync(true);
+	$finishOk = !empty($final ['ok']) && empty($final ['state'] ['entries'])
+		&& empty($final ['state'] ['local_entry_deletions']) && empty($final ['state'] ['deletions_pending'])
+		&& $final ['state'] ['deletion_retry_not_before'] === '';
+	plugin_mastodon_save_options($previous);
+	plugin_mastodon_runtime_cache_clear();
+	return array('hook' => $hookOk, 'early' => $earlyOk, 'content_modes' => $contentOk, 'interleaving' => $mergeOk,
+		'restore' => $restoreOk, 'disabled' => $disabledOk, 'priority' => $priorityOk, 'batch' => $batchOk,
+		'retry' => $retryOk, 'rate_limit' => $rateOk, 'finish' => $finishOk);
+}
+
+$fixedTime = strtotime('2036-06-15 12:00:00 UTC');
+$fixedState = plugin_mastodon_default_state();
+$fixedState ['entries'] = array('entry360615-100000' => array('remote_id' => 'fixed-a'), 'entry360615-100001' => array('remote_id' => 'fixed-b'));
+plugin_mastodon_state_queue_local_entry_deletion($fixedState, 'entry360615-100000', $fixedTime);
+plugin_mastodon_state_queue_local_entry_deletion($fixedState, 'entry360615-100000', $fixedTime + 240);
+plugin_mastodon_state_queue_local_entry_deletion($fixedState, 'entry360615-100001', $fixedTime + 120);
+$allOk = test_result(
+	'Local entry deletion deadlines are fixed at five minutes per entry and repeated markings do not postpone them',
+	$fixedState ['local_entry_deletions'] ['entry360615-100000'] === gmdate('Y-m-d H:i:s', $fixedTime + 300)
+		&& $fixedState ['local_entry_deletions'] ['entry360615-100001'] === gmdate('Y-m-d H:i:s', $fixedTime + 420)
+		&& !plugin_mastodon_deletion_sync_due($fixedState, $fixedTime + 299)
+		&& plugin_mastodon_deletion_sync_due($fixedState, $fixedTime + 300),
+	json_encode($fixedState ['local_entry_deletions'])
+) && $allOk;
+$fixedQueue = $fixedState ['local_entry_deletions'];
+foreach (array(100, 250, 350, 1000) as $fixedOffset) {
+	plugin_mastodon_state_schedule_content_deletions($fixedState, true, $fixedTime + $fixedOffset);
+}
+$fixedOptions = plugin_mastodon_default_options();
+$fixedOptions ['sync_time'] = '00:00';
+$fixedState ['last_run'] = '';
+$fixedSummary = plugin_mastodon_scheduler_state_from_state($fixedState);
+$allOk = test_result(
+	'Repeated content scheduling preserves fixed entry deadlines and the compact scheduler prioritizes due deletions',
+	$fixedState ['local_entry_deletions'] === $fixedQueue
+		&& plugin_mastodon_scheduled_job($fixedOptions, $fixedSummary, $fixedTime + 299) === 'content'
+		&& plugin_mastodon_scheduled_job($fixedOptions, $fixedSummary, $fixedTime + 300) === 'deletion',
+	json_encode($fixedSummary)
+) && $allOk;
+$fixedState ['deletion_retry_not_before'] = gmdate('Y-m-d H:i:s', $fixedTime + 1200);
+plugin_mastodon_state_schedule_content_deletions($fixedState, true, $fixedTime + 500);
+unset($fixedState ['local_entry_deletions'] ['entry360615-100001']);
+plugin_mastodon_state_queue_local_entry_deletion($fixedState, 'entry360615-100001', $fixedTime + 600);
+$allOk = test_result(
+	'New entry deletion markings and content runs cannot bypass a persisted deletion retry deadline',
+	!plugin_mastodon_deletion_sync_due($fixedState, $fixedTime + 1199)
+		&& plugin_mastodon_deletion_sync_due($fixedState, $fixedTime + 1200)
+		&& plugin_mastodon_scheduler_state_from_state($fixedState) ['deletion_retry_not_before'] === gmdate('Y-m-d H:i:s', $fixedTime + 1200),
+	json_encode(array('retry' => $fixedState ['deletion_retry_not_before']))
+) && $allOk;
+$legacyFixed = plugin_mastodon_default_state();
+unset($legacyFixed ['local_entry_deletions'], $legacyFixed ['deletion_retry_not_before']);
+$legacyFixed ['deletions_pending'] = 1;
+$legacyFixed ['last_run'] = gmdate('Y-m-d H:i:s', $fixedTime);
+$legacyFixed = plugin_mastodon_state_normalize($legacyFixed);
+$badFixed = $fixedState;
+$badFixed ['local_entry_deletions'] ['not-mapped'] = gmdate('Y-m-d H:i:s', $fixedTime);
+$badFixed ['local_entry_deletions'] ['entry360615-100001'] = array('bad date');
+$badFixed = plugin_mastodon_state_normalize($badFixed);
+$allOk = test_result(
+	'Legacy deletion states keep their previous follow-up timing while malformed or orphaned fixed deadlines are discarded',
+	!plugin_mastodon_deletion_sync_due($legacyFixed, $fixedTime + 299)
+		&& plugin_mastodon_deletion_sync_due($legacyFixed, $fixedTime + 300)
+		&& $legacyFixed ['local_entry_deletions'] === array()
+		&& !isset($badFixed ['local_entry_deletions'] ['not-mapped'])
+		&& !isset($badFixed ['local_entry_deletions'] ['entry360615-100001']),
+	json_encode(array('legacy' => $legacyFixed ['local_entry_deletions'], 'valid_queue' => $badFixed ['local_entry_deletions']))
+) && $allOk;
+$fixedLifecycle = simulate_fixed_entry_deadline_lifecycle();
+$allOk = test_result(
+	'Real entry hooks and every content mode preserve fixed deadlines including an interleaved content-state write',
+	$fixedLifecycle ['hook'] && $fixedLifecycle ['content_modes'] && $fixedLifecycle ['interleaving'],
+	json_encode($fixedLifecycle)
+) && $allOk;
+$allOk = test_result(
+	'Deletion sweeps never remove a queued entry early and retain future entries after deleting a due entry',
+	$fixedLifecycle ['early'] && $fixedLifecycle ['priority'] && $fixedLifecycle ['batch'],
+	json_encode($fixedLifecycle)
+) && $allOk;
+$allOk = test_result(
+	'Restoring an entry resets its deletion decision and disabled deletion sync retains original deadlines for re-enabling',
+	$fixedLifecycle ['restore'] && $fixedLifecycle ['disabled'],
+	json_encode($fixedLifecycle)
+) && $allOk;
+$allOk = test_result(
+	'Entry deadline processing preserves failed-delete retries and Mastodon rate-limit resets through final successful cleanup',
+	$fixedLifecycle ['retry'] && $fixedLifecycle ['rate_limit'] && $fixedLifecycle ['finish'],
+	json_encode($fixedLifecycle)
 ) && $allOk;
 
 plugin_mastodon_save_options($schedulerOriginalOptions);

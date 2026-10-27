@@ -293,7 +293,7 @@ This policy belongs in the export planner, not in the raw collector. The collect
 ```mermaid
 flowchart TD
 	EntryDelete[FlatPress entry_deleted hook]
-	EntryPending[Preserve entry mapping and mark deletion pending]
+	EntryPending[Preserve mapping and first per-entry deadline: marking plus 300s]
 	LocalDelete[FlatPress comment_deleted hook]
 	Source{Mapping source}
 	Immediate[For source=local create tombstone immediately and preserve mapping]
@@ -301,10 +301,10 @@ flowchart TD
 	Start[Scheduled follow-up or admin deletion sync]
 	Enabled{delete_sync_enabled?}
 	Pending{pending or forced?}
-	UtcCooldown[Parse deletions_not_before as UTC]
+	UtcCooldown[Check fixed entry deadlines and independent retry barrier as UTC]
 	Due{due?}
 	Lock{sync.lock acquired?}
-	Entries[Find missing local mapped entries]
+	Entries[Find missing mapped entries; skip each future deadline]
 	Comments[Find missing local mapped comments]
 	RemoteMissing[Check remote mapped statuses]
 	Version{Cached API-v4 capability; version fallback}
@@ -348,7 +348,20 @@ A locally deleted mapped entry remains absent during intervening content syncs. 
 to delete its remote status, removing both entry mappings only after success or an already
 missing status response. Failed remote deletion retains the mapping and pending work for retry.
 With deletion sync disabled, content import still refuses to restore that missing entry; P9
-keeps its mapping and sends no DELETE. The existing start-date and cooldown gates are unchanged.
+keeps its mapping and sends no DELETE. The start-date gate, locks and request budgets remain in force; fixed entry deadlines and retry barriers govern the timing below.
+
+### Fixed entry timing and retry precedence
+
+The entry-delete hook records its first per-entry deadline once: marking plus 300 seconds.
+The defensive entry-import boundary also records a first observation when a delete hook was
+bypassed. P1/P2 content completion preserves these deadlines instead of postponing them.
+<code>plugin_mastodon_scheduled_job()</code> prioritizes due entry work subject to enabled
+deletion sync and retry backoff. Each P9 DELETE rechecks that particular entry deadline even
+for a forced run. Future entry shards and descendant rechecks stay deferred.
+
+Successful removal clears mapping and deadline together. Failed deletion retains ownership
+and records retry backoff separately, honoring a later server reset. Restoration cancels the
+old decision. A sync-start exclusion removes the queue marker without a remote delete.
 
 ## P10 — Dirty tracking and remote-write guard
 
