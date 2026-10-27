@@ -136,8 +136,8 @@ Deletion sync also handles legacy or already-pending states where the local file
 
 ### Locally deleted mapped entries
 
-A retained <code>entries_remote</code> reference to a missing local entry is a deletion decision,
-not permission to restore that entry from Mastodon. <code>plugin_mastodon_import_remote_entry()</code>
+A retained `entries_remote` reference to a missing local entry is a deletion decision,
+not permission to restore that entry from Mastodon. `plugin_mastodon_import_remote_entry()`
 checks local existence before content/media conversion and hash comparison and returns false
 without changing either mapping, its source or its hash. This covers entries originally
 exported from FlatPress and entries imported from the configured Mastodon account. It does
@@ -146,11 +146,49 @@ not adopt the different external-reply comment ignore policy.
 The delete hook still marks deletion work pending. A successful content run schedules its later deletion follow-up only when deletion synchronization is enabled and advances the remote status cursor even when a mapped missing
 entry is skipped. A manual file removal is protected without requiring a prior hook or flag.
 If deletion sync is disabled, the missing entry stays absent and its mapping stays available
-for a later enabled deletion run. No schema change or new tombstone collection is needed.
+for a later enabled deletion run. Entry ownership still uses the existing mappings; the
+optional deadline fields below extend version 5 without requiring a version migration.
 
 After a successful remote DELETE (or an already missing remote status response), deletion sync
 removes the forward and reverse entry mappings. A failed DELETE keeps both mappings and
 pending work, so an edited status replay cannot recreate the entry before the retry.
+
+### Fixed local-entry deletion deadlines
+
+The version-5 state gains optional additive fields; legacy files remain readable:
+
+| Field | Storage | Contract |
+| --- | --- | --- |
+| `local_entry_deletions` | Main state | Entry ID to fixed UTC deadline: first marking plus 300 seconds. Repeated marking does not change it. |
+| `local_entry_deletion_not_before` | Compact scheduler | Earliest queue deadline; no mapping/shard load in the fresh scheduler fast path. |
+| `deletion_retry_not_before` | Main state and scheduler | Retry lower bound independent of original entry deadlines; content and new delete hooks retain it. |
+| `deletions_not_before` | Existing main/scheduler field | General follow-up time. Content completion uses a fixed entry deadline when available, otherwise its existing completion-plus-300 policy. |
+
+Each entry retains its own deadline. The deletion loop skips future entries, their comment
+shards and descendant rechecks. Success or an already missing status removes mapping and
+deadline; restoration via entry-save or reconciliation cancels the marker. Normalization drops
+invalid dates and orphaned queue keys. Sync-start exclusions discard markers without deleting
+the excluded mappings.
+
+The entry-delete hook performs no network I/O. A defensive import observation records the first
+deadline for a missing mapped entry when the hook was bypassed. Missing legacy mappings with no
+recorded marking keep their existing sweep behavior until such an observation; historical
+deletion times are not invented. Comment-only tombstone/ignore policies remain separate.
+
+A successful content run retains original deadlines. Its state write merges missing-entry
+markers committed after its initial read under the existing state-write lock, preserving
+earlier deadlines and retry barriers. Ordinary successful deletion writes can still remove
+completed markers. This handles an interleaved delete hook without overwriting its decision.
+
+Failures preserve mappings and deadlines and set a separate retry barrier: at least the existing
+300-second retry delay, extended for a later observed Mastodon reset. Manual and automatic calls
+respect it. Success clears completed retry state, keeps future entry work pending and uses full
+scope while entry work remains. Disabling deletion sync clears ordinary pending flags but
+retains deadlines/retry state; re-enabling can schedule a due queue before another content run.
+
+Due fixed-entry work precedes the daily content job. When none is due, normal content/general
+deletion selection remains. Locks, per-run budgets, cross-run deletion windows and cooldown
+guards still apply.
 
 ## State invariants
 
@@ -198,34 +236,34 @@ Counters describe the last run; they are diagnostics, not authoritative mappings
 
 ```mermaid
 flowchart TD
-    LocalCreate[Local entry/comment saved]
-    Dirty[dirty_entries or dirty_comments]
-    Export[Local to remote export]
-    Map[entries/comments plus reverse maps]
-    LocalDelete[Local mapped object deleted]
-    ImportedRemoteDelete{comment source remote?}
-    IgnoreRemote[Ignore tombstone and remove reverse mapping]
-    ProtectLocal[Pending-delete tombstone and preserve mapping]
-    Pending[deletions_pending and not_before]
-    DeleteSync[Deletion sync]
-    Tombstone[comment_tombstones or mapping removal]
-    RemoteImport[Remote import]
-    MissingLocal{Known source=local file missing?}
-    Defensive[Targeted shard load and pending-delete tombstone]
-    Conflict{Remote ID already owned elsewhere?}
-    Guard[remote-write guard]
-    Clean[No dirty marker]
+	LocalCreate[Local entry/comment saved]
+	Dirty[dirty_entries or dirty_comments]
+	Export[Local to remote export]
+	Map[entries/comments plus reverse maps]
+	LocalDelete[Local mapped object deleted]
+	ImportedRemoteDelete{comment source remote?}
+	IgnoreRemote[Ignore tombstone and remove reverse mapping]
+	ProtectLocal[Pending-delete tombstone and preserve mapping]
+	Pending[deletions_pending and not_before]
+	DeleteSync[Deletion sync]
+	Tombstone[comment_tombstones or mapping removal]
+	RemoteImport[Remote import]
+	MissingLocal{Known source=local file missing?}
+	Defensive[Targeted shard load and pending-delete tombstone]
+	Conflict{Remote ID already owned elsewhere?}
+	Guard[remote-write guard]
+	Clean[No dirty marker]
 
-    LocalCreate --> Dirty --> Export --> Map
-    Map --> LocalDelete --> ImportedRemoteDelete
-    ImportedRemoteDelete -->|yes| IgnoreRemote --> Tombstone
-    ImportedRemoteDelete -->|no| ProtectLocal --> Pending --> DeleteSync --> Tombstone
-    RemoteImport --> MissingLocal
-    MissingLocal -->|yes| Defensive --> Tombstone
-    MissingLocal -->|no| Conflict
-    Conflict -->|yes reject| Tombstone
-    Conflict -->|no| Guard --> Map
-    Guard --> Clean
+	LocalCreate --> Dirty --> Export --> Map
+	Map --> LocalDelete --> ImportedRemoteDelete
+	ImportedRemoteDelete -->|yes| IgnoreRemote --> Tombstone
+	ImportedRemoteDelete -->|no| ProtectLocal --> Pending --> DeleteSync --> Tombstone
+	RemoteImport --> MissingLocal
+	MissingLocal -->|yes| Defensive --> Tombstone
+	MissingLocal -->|no| Conflict
+	Conflict -->|yes reject| Tombstone
+	Conflict -->|no| Guard --> Map
+	Guard --> Clean
 ```
 
 ## State ownership rules

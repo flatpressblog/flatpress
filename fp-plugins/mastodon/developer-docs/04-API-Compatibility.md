@@ -4,13 +4,13 @@
 
 The current plugin implementation is best described as:
 
-| Range      | Status                                                                                                                                                          |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `< 4.0.0`  | Not supported by the current documented plugin target because `/api/v2/instance` is the capability source and there is no `/api/v1/instance` API fallback.      |
-| `>= 4.0.0` | Technical target. Core endpoints used by the plugin are available; newer capability fields may be missing and internal defaults apply.                          |
-| `>= 4.4.0` | Recommended for full documented delete/media-cleanup behavior because `delete_media` on status delete and `DELETE /api/v1/media/:id` are documented from 4.4.0. |
-| `>= 4.6.0` | Enables the privacy hardening `exclude_direct=true` for account-status imports when cached instance information or API version 10 confirms support.             |
-| 5.0 nightly | The More path is simulated through 5.0.0-nightly.2026-10-22; no new API contract is required. This is not a live-server certification.                         |
+| Range       | Status                                                                                                                                                          |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `< 4.0.0`   | Not supported by the current documented plugin target because `/api/v2/instance` is the capability source and there is no `/api/v1/instance` API fallback.      |
+| `>= 4.0.0`  | Technical target. Core endpoints used by the plugin are available; newer capability fields may be missing and internal defaults apply.                          |
+| `>= 4.4.0`  | Recommended for full documented delete/media-cleanup behavior because `delete_media` on status delete and `DELETE /api/v1/media/:id` are documented from 4.4.0. |
+| `>= 4.6.0`  | Enables the privacy hardening `exclude_direct=true` for account-status imports when cached instance information or API version 10 confirms support.             |
+| 5.0 nightly | The More path is simulated through 5.0.0-nightly.2026-10-22; no new API contract is required. This is not a live-server certification.                          |
 
 
 ## More tag in entry exports
@@ -249,13 +249,25 @@ replay and subsequent remote deletion for Mastodon 4.0.0, 4.3.0, 4.4.0, 4.5.0, 4
 against each release.
 
 The existing DELETE capability logic remains authoritative: versions below 4.4.0 omit
-<code>delete_media</code>; supported versions use it. Unknown capability still permits the
+`delete_media`; supported versions use it. Unknown capability still permits the
 existing retry without the parameter after a legacy rejection. The tests additionally cover
 a temporary server error followed by retry and an already missing remote status.
 The status cursor and account-status capability gates remain unchanged.
 
 Verified against the official [status deletion contract](https://docs.joinmastodon.org/methods/statuses/#delete):
 DELETE exists throughout the target range; the optional media parameter was added in 4.4.0.
+
+## Fixed deadlines are local scheduling policy
+
+Five minutes from local entry deletion marking is a FlatPress policy, not an API prerequisite.
+No endpoint, request parameter or capability gate changes. The existing mocked Mastodon 4.0.0
+through 5.0.0-nightly.2026-10-22 deletion matrix and legacy delete-media fallback remain active.
+
+Eligibility never authorizes exceeding API budgets. HTTP 429 and other failures retain mapping
+ownership and fixed deadlines. The separate retry barrier uses the existing 300-second delay
+and a later observed server reset, so new local deletes/content completion cannot shorten it.
+The documented default delete limit is 30 operations per 30 minutes, independently of a local
+five-minute timer. See [Mastodon rate limits](https://docs.joinmastodon.org/api/rate-limits/).
 
 ## External documentation references
 

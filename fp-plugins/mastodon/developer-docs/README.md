@@ -49,6 +49,19 @@ manual action uses <code>plugin_mastodon_run_sync(true, true)</code>, and the sc
 Deletion is a separate follow-up, not part of the content import itself. A successful content
 run schedules that follow-up only when deletion synchronization is enabled.
 
+## Fixed local-entry deletion deadlines
+
+Each mapped entry gets a fixed UTC deadline at its first local deletion marking plus 300 seconds.
+Normal/full/automatic content runs preserve it. Later deletions receive their own complete delay.
+The automatic scheduler prioritizes due fixed-entry work before a new daily content job.
+Execution still requires a later eligible non-POST web request and enabled deletion sync.
+
+An independent retry barrier preserves failed-delete backoff and a later reported Mastodon reset.
+New delete hooks and content runs cannot shorten that barrier. Forced sweeps also respect each
+entry deadline. Restoring/saving an entry cancels its old decision; deleting it again starts a
+new deadline. Disabled deletion sync retains deadlines for re-enabling. The local delete request
+does not send an immediate outbound DELETE. See the state model and regression matrix below.
+
 ## Compatibility target for maintainers
 
 The plugin code should remain compatible with:

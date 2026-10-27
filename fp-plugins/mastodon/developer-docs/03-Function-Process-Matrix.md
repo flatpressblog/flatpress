@@ -46,10 +46,24 @@ CommentCenter compatibility is split deliberately: `plugin_mastodon_on_commentce
 
 ### Entry deletion ownership at the import boundary
 
-<code>plugin_mastodon_import_remote_entry()</code> also enforces P9 ownership: a reverse-mapped
+`plugin_mastodon_import_remote_entry()` also enforces P9 ownership: a reverse-mapped
 entry with no local file is skipped before HTML/media work or hash comparison. It leaves the
-mapping available to <code>plugin_mastodon_run_deletion_sync()</code>. This boundary check covers
+mapping available to `plugin_mastodon_run_deletion_sync()`. This boundary check covers
 manual filesystem deletion without loading all comment shards or adding API requests.
+
+### Fixed entry-deletion scheduling
+
+| Helper | Process | Contract |
+| --- | --- | --- |
+| `plugin_mastodon_state_queue_local_entry_deletion()`    | P9/P10 | Record first per-entry UTC deadline without resetting it.                         |
+| `plugin_mastodon_state_local_entry_deletion_deadline()` | P1/P9  | Read earliest queue deadline or compact scheduler scalar.                         |
+| `plugin_mastodon_state_schedule_content_deletions()`    | P1/P2  | Retain entry deadlines and retry barriers through content completion.             |
+| `plugin_mastodon_scheduled_job()`                       | P1/P9  | Choose due fixed-entry work before a daily content job, subject to retry backoff. |
+
+The content path passes an optional preservation flag through
+`plugin_mastodon_state_write_with_last_error()` to
+`plugin_mastodon_state_write()`. That write merges newer committed local-entry
+markers under the state-write lock. Successful deletion writes still remove completed markers.
 
 ## Function families
 

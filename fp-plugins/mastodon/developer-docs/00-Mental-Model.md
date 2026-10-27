@@ -31,37 +31,37 @@ Status export has a similar budgeting rule: Mastodon counts each recognized URL 
 
 ```mermaid
 flowchart LR
-    FP[FlatPress entries comments media tags]
-    Hooks[FlatPress post-success hooks]
-    State[state.json full mappings dirty flags tombstones notification cursor]
-    Scheduler[scheduler-state.json compact request summary]
-    Guards[sync.lock sync.guard.json rate-limit-windows.json]
-    Notifications[Mastodon mention notifications]
-    API[Mastodon API]
-    Sim[Distributed .ph_ regression harness]
-    AdminUI[Mastodon admin settings and status UI]
+	FP[FlatPress entries comments media tags]
+	Hooks[FlatPress post-success hooks]
+	State[state.json full mappings dirty flags tombstones notification cursor]
+	Scheduler[scheduler-state.json compact request summary]
+	Guards[sync.lock sync.guard.json rate-limit-windows.json]
+	Notifications[Mastodon mention notifications]
+	API[Mastodon API]
+	Sim[Distributed .ph_ regression harness]
+	AdminUI[Mastodon admin settings and status UI]
 
-    FP --> Hooks
-    Hooks --> State
-    State <--> Scheduler
-    State <--> Guards
-    State <--> API
-    API <--> Notifications
-    Notifications --> State
-    OneWay[disable_remote_import option]
-    CommentReplyGate[disable_comment_reply_sync option]
-    API <--> FP
-    OneWay --> State
-    OneWay --> AdminUI
-    OneWay -. blocks Mastodon-to-FlatPress writes .-> FP
-    CommentReplyGate --> State
-    CommentReplyGate --> AdminUI
-    CommentReplyGate -. blocks only comment/reply paths .-> Notifications
-    CommentReplyGate -. keeps entry sync active .-> API
-    AdminUI -. hides import-only controls and counters .-> FP
-    Sim --> FP
-    Sim --> State
-    Sim --> API
+	FP --> Hooks
+	Hooks --> State
+	State <--> Scheduler
+	State <--> Guards
+	State <--> API
+	API <--> Notifications
+	Notifications --> State
+	OneWay[disable_remote_import option]
+	CommentReplyGate[disable_comment_reply_sync option]
+	API <--> FP
+	OneWay --> State
+	OneWay --> AdminUI
+	OneWay -. blocks Mastodon-to-FlatPress writes .-> FP
+	CommentReplyGate --> State
+	CommentReplyGate --> AdminUI
+	CommentReplyGate -. blocks only comment/reply paths .-> Notifications
+	CommentReplyGate -. keeps entry sync active .-> API
+	AdminUI -. hides import-only controls and counters .-> FP
+	Sim --> FP
+	Sim --> State
+	Sim --> API
 ```
 
 ## The main rule
@@ -84,6 +84,12 @@ before hashes, media downloads or writes. This applies to both entry origins; un
 reply comments, mapped entries retain the existing mirrored-deletion policy. Turning deletion
 sync off keeps the missing entry and its mapping unchanged rather than restoring the entry.
 No entry tombstone or state migration is required.
+
+For entries, <code>local_entry_deletions</code> now stores an independent UTC deadline per local
+deletion marking. Content runs cannot postpone it, and the scheduler prioritizes due entry work.
+Only the earliest deadline is copied into the compact scheduler. The deletion loop checks each
+entry again, so a later deletion is never pulled forward by an earlier one.
+<code>deletion_retry_not_before</code> can postpone execution without changing original deadlines.
 
 ## Runtime layers
 
