@@ -42,7 +42,7 @@
 - BBCode plugin: update to version 2.1.0
     - The HTML button is only displayed if inline HTML is allowed in BBCode. ([#867](https://github.com/flatpressblog/flatpress/pull/867))
     - Optional new tab for URLs/links ([#960](https://github.com/flatpressblog/flatpress/pull/960), [#961](https://github.com/flatpressblog/flatpress/pull/961), [#962](https://github.com/flatpressblog/flatpress/pull/962))
-    - Shortcuts for Bold, Italic, Underline, and URLs ([#963](https://github.com/flatpressblog/flatpress/pull/963))
+    - Shortcuts for Bold, Italic, Underline, URLs, Strikethrough, Ordered list, Unordered list, Undo and Redo ([#963](https://github.com/flatpressblog/flatpress/pull/963), [#972](https://github.com/flatpressblog/flatpress/pull/972))
 - jQuery plugin update to version 2.2.2 ([#896](https://github.com/flatpressblog/flatpress/pull/896))<br><sub><i>Note: Edge Legacy, Internet Explorer 9–10, iOS 7+, and the Android browser on Android 4.0+ are no longer supported. If you need support for these legacy browsers, you must disable the jQuery plugin so that PhotoSwipe uses the older jQuery plugin 3.7.1 version.</i></sub>
     - includes jQuery 4.0.0 and jQueryUI 1.14.2
 - Archives plugin update to version 1.1.2 ([#896](https://github.com/flatpressblog/flatpress/pull/896))
