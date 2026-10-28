@@ -59,8 +59,11 @@ flowchart TD
 	SchedulerRead["Read scheduler-state.json through FlatPress I/O"]
 	SchedulerStale{"Summary missing or stale?"}
 	FullStateForSummary["Load state.json only to rebuild compact summary"]
+	SchedulerRebuild["Refresh compact scheduler summary"]
+	SelectJob["plugin_mastodon_scheduled_job"]
+	FixedDeleteDue{"Deletion enabled, fixed entry deadline due and retry barrier elapsed?"}
 	Due{"Content sync due?"}
-	DeleteDue{"Deletion sync due and deletions pending?"}
+	DeleteDue{"Deletion sync enabled and due?"}
 	NoWork["Fast path: no Mastodon HTTP, no full state load"]
 	HeadCss["plugin_mastodon_head"]
 	CssAsset["Versioned res/mastodon.css link"]
@@ -83,8 +86,11 @@ flowchart TD
 	Request --> Widget --> ProfileCache --> WidgetComplete
 	WidgetComplete -- "Yes" --> RenderWidget
 	WidgetComplete -- "No" --> HideWidget
-	SchedulerStale -- "Yes" --> FullStateForSummary --> SchedulerWrite --> Due
-	SchedulerStale -- "No" --> Due
+	SchedulerStale -- "Yes" --> FullStateForSummary --> SchedulerRebuild --> SelectJob
+	SchedulerStale -- "No" --> SelectJob
+	SelectJob --> FixedDeleteDue
+	FixedDeleteDue -- "Yes" --> DeletionSync
+	FixedDeleteDue -- "No" --> Due
 	Due -- "No" --> DeleteDue
 	DeleteDue -- "No" --> NoWork
 	Due -- "Yes" --> ContentSync --> ProfileRefresh
@@ -92,6 +98,12 @@ flowchart TD
 	ProfileRefresh --> StateWrite --> SchedulerWrite --> RateWindow --> Log
 	DeletionSync --> StateWrite --> SchedulerWrite --> RateWindow --> Log
 ```
+
+For eligible requests with configured credentials, `plugin_mastodon_scheduled_job()` checks
+due fixed entry deletions before the daily content job. This priority requires enabled deletion
+sync and an elapsed retry barrier. If no fixed entry deletion is eligible, content keeps its
+normal priority over general deletion follow-ups. The selected run still applies cooldowns,
+locks and request budgets; content runs do not postpone the original per-entry deadlines.
 
 ### Compact profile widget cache flow
 
