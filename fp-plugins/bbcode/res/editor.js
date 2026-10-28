@@ -100,6 +100,9 @@ function plugin_bbcode_shortcuts() {
 	if (!document.getElementById('bb_b') || !document.getElementById('bb_url')) {
 		return;
 	}
+	// iPadOS may identify itself as MacIntel; platform still selects Command.
+	var platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+	var apple = /Mac|iPhone|iPad|iPod/i.test(platform);
 	element.dataset.bbcodeShortcuts = 'true';
 	element.addEventListener('input', function () {
 		bbcodeRememberFallbackEdit(element);
@@ -111,16 +114,12 @@ function plugin_bbcode_shortcuts() {
 		if (element.bbcodeHistory) {
 			element.bbcodeHistory.current = bbcodeEditorSnapshot(element);
 		}
-		if ((event.inputType === 'historyUndo' || event.inputType === 'historyRedo') &&
-			bbcodeFallbackUndo(element, event.inputType === 'historyRedo')) {
+		if ((event.inputType === 'historyUndo' || event.inputType === 'historyRedo') && bbcodeFallbackUndo(element, event.inputType === 'historyRedo')) {
 			event.preventDefault();
 		}
 	});
 	element.addEventListener('keydown', function (event) {
-		if (event.defaultPrevented || element.disabled || element.readOnly ||
-			event.isComposing || event.keyCode === 229 || event.altKey ||
-			(event.getModifierState && event.getModifierState('AltGraph')) ||
-			!(event.ctrlKey || event.metaKey) || (event.ctrlKey && event.metaKey)) {
+		if (event.defaultPrevented || event.target !== element || document.activeElement !== element || element.disabled || element.readOnly || event.isComposing || event.keyCode === 229 || event.altKey || (event.getModifierState && event.getModifierState('AltGraph')) || (apple ? (!event.metaKey || event.ctrlKey) : (!event.ctrlKey || event.metaKey))) {
 			return;
 		}
 		var key = (event.key || '').toLowerCase();
@@ -136,8 +135,28 @@ function plugin_bbcode_shortcuts() {
 			}
 			return;
 		}
+		if (event.shiftKey) {
+			// Use number-row positions: Shift+7/8 produce layout-dependent symbols.
+			var digit = /^Digit[78]$/.test(event.code || '') ? event.code.slice(5) : '';
+			if (!event.code || event.code === 'Unidentified') {
+				// Legacy fallback only when a physical key code is unavailable.
+				digit = event.keyCode === 55 ? '7' : (event.keyCode === 56 ? '8' : '');
+				if (!digit && /^[78]$/.test(event.key || '')) {
+					digit = event.key;
+				}
+			}
+			var buttonId = digit === '7' ? 'bb_ol' : (digit === '8' ? 'bb_ul' : (key === 'x' ? 'bb_del' : ''));
+			var button = buttonId && document.getElementById(buttonId);
+			if (button && !button.disabled) {
+				event.preventDefault();
+				if (!event.repeat) {
+					button.click();
+				}
+			}
+			return;
+		}
 		var codes = { b: 'b', i: 'i', u: 'u', k: 'url' };
-		if (event.shiftKey || !Object.prototype.hasOwnProperty.call(codes, key)) {
+		if (!Object.prototype.hasOwnProperty.call(codes, key)) {
 			return;
 		}
 		event.preventDefault();
@@ -212,10 +231,12 @@ function tabKeyOverrider() {
 
 var bbcode_mode_trapTab = false;
 
-// took from
-// http://www.ajaxian.com/archives/handling-tabs-in-textareas
-// with the 'mode' thingie... I think I'll add more 'trapping' stuff like this for Ctrl+B (bold) etc. 
-// At this time we're just using the altkey function (which is not that bad anyway)
+/**
+ * took from
+ * http://www.ajaxian.com/archives/handling-tabs-in-textareas
+ * with the 'mode' thingie... I think I'll add more 'trapping' stuff like this for Ctrl+B (bold) etc. 
+ * At this time we're just using the altkey function (which is not that bad anyway)
+ */
 
 function checkTab(evt) {
 	if (evt.keyCode == Event.KEY_ESC) {
@@ -611,10 +632,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			const width = link.dataset.width || 800;
 			const height = link.dataset.height || 600;
 			window.open(
-				url,
-				'Popup',
-				`toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${width},height=${height}`
-			);
+				url, 'Popup', `toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${width},height=${height}`);
 		});
 	});
 });
