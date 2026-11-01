@@ -44,7 +44,36 @@ function mastodon_docs_read_file($file, &$errors) {
 		$errors [] = 'Unable to read file: ' . $file;
 		return '';
 	}
-	return $content;
+	return mastodon_docs_normalize_line_endings($content);
+}
+
+/**
+ * Read the literal module list from the loader without executing plugin code.
+ *
+ * @param string $pluginFile
+ * @param array<int, string> $errors
+ * @return array<string, string>
+ */
+function mastodon_docs_read_plugin_sources($pluginFile, &$errors) {
+	$main = mastodon_docs_read_file($pluginFile, $errors);
+	$sources = array('plugin.mastodon.php' => $main);
+	$matches = array();
+	preg_match_all("~^[ \t]*require_once __DIR__ \\. '/(inc/[a-z-]+\\.php)';$~m", $main, $matches);
+	foreach ($matches [1] as $relative) {
+		if (isset($sources [$relative])) {
+			$errors [] = 'Duplicate module include: ' . $relative;
+			continue;
+		}
+		$sources [$relative] = mastodon_docs_read_file(dirname($pluginFile) . '/' . $relative, $errors);
+	}
+	$moduleFiles = glob(dirname($pluginFile) . '/inc/*.php');
+	foreach (is_array($moduleFiles) ? $moduleFiles : array() as $moduleFile) {
+		$relative = 'inc/' . basename($moduleFile);
+		if (!isset($sources [$relative])) {
+			$errors [] = 'Module is not explicitly loaded: ' . $relative;
+		}
+	}
+	return $sources;
 }
 
 function mastodon_docs_normalize_line_endings($content) {
@@ -184,7 +213,7 @@ function mastodon_docs_extract_organigram_functions($content) {
 
 function mastodon_docs_extract_function_entries_without_description($content) {
 	$missing = array();
-	if (preg_match_all('/^-\s+`([A-Za-z_][A-Za-z0-9_]*)\(\)`\s+—\s+line\s+(\d+)(?:\s+—\s*(.*))?$/mu', $content, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+	if (preg_match_all('/^-\s+`([A-Za-z_][A-Za-z0-9_]*)\(\)`\s+—\s+line\s+(\d+)\s+in\s+`[^`]+`(?:\s+—\s*(.*))?$/mu', $content, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
 		foreach ($matches as $match) {
 			$name = (string) $match [1] [0];
 			$description = isset($match [3] [0]) ? trim((string) $match [3] [0]) : '';
@@ -207,7 +236,7 @@ function mastodon_docs_section_contains_described_function_entries($content, $he
 	}
 	$next = strpos($content, "\n## ", $position + strlen($heading));
 	$section = $next === false ? substr($content, $position) : substr($content, $position, $next - $position);
-	return preg_match('/^-\s+`[A-Za-z_][A-Za-z0-9_]*\(\)`\s+—\s+line\s+\d+\s+—\s+\S/mu', $section) === 1;
+	return preg_match('/^-\s+`[A-Za-z_][A-Za-z0-9_]*\(\)`\s+—\s+line\s+\d+\s+in\s+`[^`]+`\s+—\s+\S/mu', $section) === 1;
 }
 
 function mastodon_docs_extract_backticked_function_references($content) {
@@ -226,7 +255,11 @@ function mastodon_docs_extract_backticked_function_references($content) {
 	return $functions;
 }
 
-$pluginContent = mastodon_docs_read_file($pluginFile, $errors);
+$pluginSources = mastodon_docs_read_plugin_sources($pluginFile, $errors);
+// Media safety keeps its separate catalog in 08-Media-Safety.md.
+$catalogSources = $pluginSources;
+unset($catalogSources ['inc/media-safety.php']);
+$pluginContent = implode("\n", $catalogSources);
 $simulationContent = mastodon_docs_read_file($simulationFile, $errors);
 $regressionSimulationContent = mastodon_docs_read_file($regressionSimulationFile, $errors);
 $mentalModelDocContent = mastodon_docs_read_file($mentalModelDocFile, $errors);
@@ -265,10 +298,31 @@ if ($simulationContent !== '' && $regressionDocContent !== '') {
 }
 
 if ($pluginContent !== '' && $organigramDocContent !== '') {
-	$actualFunctions = mastodon_docs_extract_functions($pluginContent);
-	$actualFunctionDeclarations = mastodon_docs_extract_function_declarations($pluginContent);
-	$actualOrganigramFunctionLines = mastodon_docs_extract_organigram_function_lines($pluginContent);
+	$actualFunctions = array();
+	$actualFunctionDeclarations = array();
+	$actualFunctionFiles = array();
+	foreach ($catalogSources as $sourceFile => $sourceContent) {
+		foreach (mastodon_docs_extract_functions($sourceContent) as $name => $line) {
+			if (isset($actualFunctions [$name]) && strpos($name, 'plugin_mastodon_') === 0) {
+				$errors [] = 'Duplicate plugin function: ' . $name;
+			}
+			$actualFunctions [$name] = $line;
+			$actualFunctionFiles [$name] = $sourceFile;
+		}
+		$actualFunctionDeclarations = array_merge($actualFunctionDeclarations, mastodon_docs_extract_function_declarations($sourceContent));
+	}
+	$actualOrganigramFunctionLines = $actualFunctions;
 	$documentedFunctions = mastodon_docs_extract_organigram_functions($organigramDocContent);
+	$locations = array();
+	preg_match_all('/`([A-Za-z_][A-Za-z0-9_]*)\(\)`\s+—\s+line\s+(\d+)\s+in\s+`([^`]+)`/u', $organigramDocContent, $locations, PREG_SET_ORDER);
+	$documentedLocationNames = array();
+	foreach ($locations as $location) {
+		$name = $location [1];
+		$documentedLocationNames [$name] = true;
+		if (!isset($actualFunctionFiles [$name]) || $actualFunctionFiles [$name] !== $location [3]) {
+			$errors [] = 'Function organigram source-file mismatch for ' . $name . ': ' . $location [3];
+		}
+	}
 
 	$adminMethods = array('setup' => true, 'main' => true, 'onsubmit' => true);
 	$totalCallableNames = count($actualFunctions);
@@ -297,6 +351,9 @@ if ($pluginContent !== '' && $organigramDocContent !== '') {
 	}
 
 	foreach ($actualFunctions as $name => $line) {
+		if (!isset($documentedLocationNames [$name])) {
+			$errors [] = 'Function organigram missing source-file location: ' . $name;
+		}
 		if (!isset($documentedFunctions [$name])) {
 			$errors [] = 'Function organigram missing function: ' . $name;
 			continue;

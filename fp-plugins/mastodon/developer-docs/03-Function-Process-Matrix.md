@@ -143,3 +143,10 @@ The functions in `inc/media-safety.php` support imports, export preflight and
 instance refresh. Their complete function catalog and the division of transport
 and budget responsibilities are documented in
 [08-Media-Safety.md](08-Media-Safety.md).
+
+## Implementation files after modularization
+
+Function names and process assignments are preserved. See
+[09-Modularization.md](09-Modularization.md) for the `inc/*.php` ownership map and
+[07-Function-Organigram.md](07-Function-Organigram.md) for physical file/line
+references. The `[more]` text boundary does not change media selection.
