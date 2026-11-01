@@ -522,3 +522,13 @@ payload sizes. See [the fallback design](08-Media-Safety.md#export-without-curl-
 | 14692 | Multipart builder rejects missing files without exposing a partial body                                                                                         |
 | 14702 | Multipart builder honors the actual PHP memory limit before reading payloads                                                                                    |
 | 14720 | Multipart total cap includes file poster and framing before any large reads                                                                                     |
+
+## Loading checks after modularization
+
+The 321 regular simulator checks remain unchanged. In separate PHP processes,
+`regression-test/check-module-loading.ph_` also exercises the `frontend`, `admin`,
+`scoped`, `cwd`, `overrides`, and `repeat` cases. It checks callback availability,
+hook priorities/argument counts, admin classes, constant overrides, absence of
+output, and absence of runtime-file creation during loading. The main simulator
+already copies all of `inc` into its sandbox. The `[more]` text boundary and its
+existing regression coverage remain unchanged.

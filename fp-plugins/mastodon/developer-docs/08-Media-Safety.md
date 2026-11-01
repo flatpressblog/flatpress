@@ -5,9 +5,8 @@
 `plugin.mastodon.php` loads `inc/media-safety.php`. Bounded downloads with a shared
 budget were implemented first, followed by poster validation, automatic instance
 refresh and video metadata validation. Existing media-family rules, asynchronous
-uploads and the media API remain in place. The existing `[more]` boundary for
-entry exports is applied before media selection; media beyond that boundary
-is not additionally exported.
+uploads and the media API remain in place. The `[more]` boundary limits exported entry text. Media selection and tags still
+use the complete entry, including content after the marker.
 
 ## Import: streamed downloads
 
@@ -180,11 +179,13 @@ php -d memory_limit=4800M .dist/phpstan.phar analyse -c .dist/phpstan.neon.dist 
 php fp-plugins/mastodon/developer-docs/check-consistency.php
 ```
 
-The PHPStan configuration additionally scans `.setup/lib/permissions.lib.php`
-so the existing setup functions are discoverable. This developer analysis
-requires the complete source tree, including setup. The optional `.ph_`
-simulator must be passed explicitly as a file argument for its own static
-analysis; the normal project search discovers PHP files.
+On an installed instance, the renamed `.setup/` tree is excluded from analysis.
+Use a local configuration override to scan its permission helper; keep the
+shared configuration suitable for the visible `setup/` tree in the repository.
+See [the installed-instance PHPStan note](09-Modularization.md#phpstan-on-an-installed-instance).
+The developer analysis requires the complete source tree, including setup.
+The optional `.ph_` simulator must be passed explicitly as a file argument for
+its own static analysis; the normal project search discovers PHP files.
 Run the simulator and PHPStan sequentially: concurrent symbol discovery can
 otherwise select files from a temporary simulator copy that is removed before
 analysis finishes.

@@ -1,0 +1,101 @@
+<?php
+/**
+ * Isolated loader regression: no FlatPress configuration or credentials loaded.
+ * Run once per case: frontend, admin, scoped, cwd, overrides, repeat.
+ * PHP 7.2 through 8.5.
+ */
+if (PHP_SAPI !== 'cli') {
+	exit(2);
+}
+
+$case = isset($argv [1]) ? (string) $argv [1] : 'frontend';
+if (!in_array($case, array('frontend', 'admin', 'scoped', 'cwd', 'overrides', 'repeat'), true)) {
+	exit(2);
+}
+$GLOBALS ['mastodon_module_test_actions'] = array();
+$GLOBALS ['mastodon_module_test_widgets'] = array();
+$GLOBALS ['mastodon_module_test_panels'] = array();
+$GLOBALS ['mastodon_module_test_autoload'] = array();
+spl_autoload_register(function ($name) {
+	$GLOBALS ['mastodon_module_test_autoload'] [] = $name;
+});
+
+function add_action($hook, $callback, $priority = 10, $acceptedArgs = 1) {
+	$GLOBALS ['mastodon_module_test_actions'] [] = array($hook, $callback, $priority, $acceptedArgs);
+}
+
+function register_widget($id, $title, $callback) {
+	$GLOBALS ['mastodon_module_test_widgets'] [] = array($id, $title, $callback);
+}
+
+function admin_addpanelaction($panel, $action, $visible) {
+	$GLOBALS ['mastodon_module_test_panels'] [] = array($panel, $action, $visible);
+}
+
+function mastodon_module_test_scoped_load($file) {
+	require_once $file;
+}
+
+if ($case === 'admin') {
+	class AdminPanelAction {
+	}
+}
+
+$pluginFile = dirname(__DIR__) . '/plugin.mastodon.php';
+$unusedContent = __DIR__ . '/module-loading-unused-content/';
+define('FP_CONTENT', $unusedContent);
+if ($case === 'overrides') {
+	define('PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES', 12345);
+	define('PLUGIN_MASTODON_DEFAULT_SYNC_TIME', '07:13');
+}
+if ($case === 'cwd') {
+	chdir(__DIR__);
+}
+
+ob_start();
+if ($case === 'scoped') {
+	mastodon_module_test_scoped_load($pluginFile);
+} else {
+	require_once $pluginFile;
+}
+if ($case === 'repeat') {
+	require_once $pluginFile;
+	mastodon_module_test_scoped_load($pluginFile);
+}
+$output = ob_get_clean();
+
+$expectedActions = array(
+	array('wp_head', 'plugin_mastodon_head', 10, 1),
+	array('init', 'plugin_mastodon_maybe_sync', 20, 1),
+	array('comment_mastodon', 'plugin_mastodon_optin_comment_to_reply', 1, 0),
+	array('commentcenter_comment_logged', 'plugin_mastodon_on_commentcenter_comment_logged', 10, 4),
+	array('commentcenter_comment_discarded', 'plugin_mastodon_on_commentcenter_comment_discarded', 10, 4),
+	array('entry_saved', 'plugin_mastodon_on_entry_saved', 10, 4),
+	array('entry_deleted', 'plugin_mastodon_on_entry_deleted', 10, 2),
+	array('comment_saved', 'plugin_mastodon_on_comment_saved', 10, 5),
+	array('comment_deleted', 'plugin_mastodon_on_comment_deleted', 10, 3)
+);
+$ok = $output === '' && !file_exists($unusedContent)
+	&& $GLOBALS ['mastodon_module_test_actions'] === $expectedActions
+	&& $GLOBALS ['mastodon_module_test_widgets'] === array(array('mastodon', 'Mastodon', 'plugin_mastodon_widget'));
+foreach ($expectedActions as $action) {
+	$ok = is_callable($action [1]) && $ok;
+}
+$functions = get_defined_functions();
+$pluginFunctions = array_filter($functions ['user'], function ($name) {
+	return strpos($name, 'plugin_mastodon_') === 0;
+});
+$ok = count($pluginFunctions) === 470 && $ok;
+$ok = is_callable('plugin_mastodon_cli_comment_shard_maintenance') && $ok;
+$adminExpected = $case === 'admin';
+$ok = $GLOBALS ['mastodon_module_test_autoload'] === ($adminExpected ? array() : array('AdminPanelAction')) && $ok;
+$ok = class_exists('admin_plugin_mastodon', false) === $adminExpected
+	&& class_exists('admin_plugin_mastodon_maintenance', false) === $adminExpected && $ok;
+$expectedPanels = $adminExpected ? array(array('plugin', 'mastodon', true), array('plugin', 'mastodon_maintenance', false)) : array();
+$ok = $GLOBALS ['mastodon_module_test_panels'] === $expectedPanels && $ok;
+if ($case === 'overrides') {
+	$ok = PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES === 12345
+		&& PLUGIN_MASTODON_DEFAULT_SYNC_TIME === '07:13' && $ok;
+}
+echo ($ok ? '[OK] ' : '[FAIL] ') . 'Module loading: ' . $case . PHP_EOL;
+exit($ok ? 0 : 1);

@@ -283,7 +283,9 @@ function plugin_mastodon_probe_video($path) {
 		@unlink($errPath);
 		return array('available' => false);
 	}
-	$start = microtime(true); $exit = -1; $limited = false;
+	$start = microtime(true);
+	$exit = -1;
+	$limited = false;
 	fclose($pipes [0]);
 	do {
 		clearstatcache(true, $outPath);

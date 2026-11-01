@@ -15,6 +15,7 @@ It is written for developers who need to make safe changes without breaking sync
 7. [`06-Process-Flow.md`](06-Process-Flow.md) — Process Flows.
 8. [`07-Function-Organigram.md`](07-Function-Organigram.md) — Function Organization Chart.
 9. [`08-Media-Safety.md`](08-Media-Safety.md) — Bounded downloads, media preflight and instance freshness.
+10. [`09-Modularization.md`](09-Modularization.md) — Module boundaries, the central loader, and regression evidence.
 
 ## Change-oriented entry points
 
@@ -77,13 +78,16 @@ The plugin code should remain compatible with:
 Run the combined Mastodon plugin and simulator analysis from the FlatPress root:
 
 ```bash
-php -d memory_limit=4800M .dist/phpstan.phar analyse -c .dist/phpstan.neon.dist --level=5 --memory-limit=4800M fp-plugins/mastodon/plugin.mastodon.php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_
+php -d memory_limit=4800M .dist/phpstan.phar analyse -c .dist/phpstan.neon.dist --level=5 --memory-limit=4800M fp-plugins/mastodon/plugin.mastodon.php fp-plugins/mastodon/inc fp-plugins/mastodon/developer-docs/check-consistency.php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_
 ```
 
 The combined analysis exceeded 3200 MB in the verified PHP 8.5.5 Windows run;
 4800 MB was sufficient. `--debug --no-progress` may be added for serial analysis.
 
 The distributed configuration checks the declared PHP 7.2 through 8.5 range and scans Smarty 5.8.5 types without analyzing Smarty core itself.
+
+For installed instances with `.setup/`, use the local override described in
+[09-Modularization.md](09-Modularization.md#phpstan-on-an-installed-instance).
 
 ## Simulation harness quick reference
 
@@ -134,7 +138,7 @@ After changing the plugin, the simulation harness or this documentation set, run
 php fp-plugins/mastodon/developer-docs/check-consistency.php
 ```
 
-The checker validates harness summary/category counts, regression catalog entries, physical function-line references, local Markdown links, More coverage, URL-budget documentation and plugin helper names across this documentation set. It compares optional executable harness copies with the distributed `.ph_` source and accepts a snapshot without a root copy. Mermaid parsing/rendering requires a separate Mermaid runtime; this PHP checker does not validate Mermaid syntax.
+The checker validates harness summary/category counts, regression catalog entries, physical function-file/line references and the explicit module inventory, local Markdown links, More coverage, URL-budget documentation and plugin helper names across this documentation set. It compares optional executable harness copies with the distributed `.ph_` source and accepts a snapshot without a root copy. Mermaid parsing/rendering requires a separate Mermaid runtime; this PHP checker does not validate Mermaid syntax.
 
 ## Current split-state guardrails
 
