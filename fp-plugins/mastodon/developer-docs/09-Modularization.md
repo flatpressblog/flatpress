@@ -1,4 +1,4 @@
-# Mastodon Plugin Modularization in Snapshot 3512
+# Mastodon Plugin Modularization
 
 ## Entry point and loading behavior
 
@@ -108,7 +108,7 @@ parameters:
 ```
 
 Run PHPStan with `-c .dist/phpstan.neon` for that instance. The earlier full
-snapshot-3512 analysis passed after scanning this same hidden helper; it does
+analysis passed after scanning this same hidden helper; it does
 not require a permanent installed-only path in the shared configuration. No
 plugin function-body changes or diagnostic suppressions are needed. This
 follows PHPStan's [local configuration override workflow](https://phpstan.org/config-reference#multiple-files).
