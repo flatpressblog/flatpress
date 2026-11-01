@@ -406,3 +406,13 @@ sequenceDiagram
 ```
 
 Admin diagnostics should remain cheap enough for normal admin page loads while still showing enough information to diagnose missing credentials, stale state, companion plugin availability and last sync/deletion results.
+
+## Media path and instance refresh
+
+At the start of `plugin_mastodon_run_sync()`, the media budget is initialized
+and instance information is refreshed when due. The import path uses
+`plugin_mastodon_download_to_file()`; a primary download failure stops remote
+import before the cursor update. The export plan additionally validates posters
+and checks available video metadata through
+`plugin_mastodon_validate_video_metadata()`.
+See [media safety](08-Media-Safety.md) for limits and retry behavior.

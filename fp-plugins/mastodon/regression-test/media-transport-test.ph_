@@ -1,0 +1,57 @@
+<?php
+/** Local transport integration tests. Invoked by media-transport-test.py. */
+// The isolated fixture supplies its own limits; production defines them in plugin.mastodon.php.
+define('PLUGIN_MASTODON_DOWNLOAD_IMAGE_BYTES', 8);
+define('PLUGIN_MASTODON_DOWNLOAD_AV_BYTES', 8);
+define('PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES', 20);
+define('PLUGIN_MASTODON_DOWNLOAD_REQUESTS', 8);
+require dirname(__DIR__) . '/inc/media-safety.php';
+function is_php85_plus() {
+	return PHP_VERSION_ID >= 80500;
+}
+// Only the response-header adapter is supplied by this isolated transport fixture.
+function plugin_mastodon_parse_http_response_headers($lines) {
+	$result = array('code' => 0, 'headers' => array());
+	foreach ($lines as $line) {
+		if (preg_match('#^HTTP/\S+\s+(\d+)#', $line, $m)) {
+			$result = array('code' => (int) $m [1], 'headers' => array());
+		}
+		elseif (strpos($line, ':') !== false) {
+			list($k, $v) = explode(':', $line, 2);
+			$result ['headers'][strtolower(trim($k))] = trim($v);
+			}
+	}
+	return $result;
+}
+if (PHP_SAPI !== 'cli' || !isset($argv [1]) || !preg_match('#^http://127\.0\.0\.1:[0-9]+$#', $argv [1])) {
+	exit(2);
+}
+$base = $argv[1];
+$path = dirname(__DIR__, 3) . '/fp-content/cache/media-transport.part';
+$passed = 0;
+foreach (array(false, true) as $stream) {
+	$GLOBALS ['plugin_mastodon_test_download_stream'] = $stream;
+	foreach (array('exact', 'large', 'chunked', 'truncated', 'redirect', 'loop', 'total') as $case) {
+		plugin_mastodon_download_budget_start();
+		if ($case === 'total') {
+			plugin_mastodon_download_to_file($base . '/exact', array(), $path, 'video');
+			plugin_mastodon_download_to_file($base . '/exact', array(), $path, 'video');
+		}
+		$result = plugin_mastodon_download_to_file($base . '/' . ($case === 'total' ? 'exact' : $case), array(), $path, 'video');
+		$expected = in_array($case, array('exact', 'redirect'), true);
+		$ok = $result ['ok'] === $expected && $result ['body'] === '';
+		$ok = $ok && ($expected ? file_get_contents($path) === '12345678' : !is_file($path));
+		if ($case === 'total') {
+			$ok = $ok && $result['error'] === 'media_download_total_budget_exhausted';
+		}
+		echo ($ok ? '[OK] ' : '[FAIL] ') . ($stream ? 'stream ' : 'curl ') . $case . PHP_EOL;
+		if (!$ok) {
+			var_export($result);
+			exit(1);
+		}
+		$passed++;
+	}
+}
+@unlink($path);
+echo 'Transport checks: ' . $passed . ' passed' . PHP_EOL;
+?>

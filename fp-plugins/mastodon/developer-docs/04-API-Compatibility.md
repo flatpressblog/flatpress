@@ -331,3 +331,20 @@ five-minute timer. See [Mastodon rate limits](https://docs.joinmastodon.org/api/
 3. Never store access tokens, client secrets or authorization headers in `profile.json`.
 4. Keep the local avatar MIME allow-list conservative and reject SVG or unknown bodies.
 5. Add simulation coverage for missing cache, successful cache refresh, no-HTTP rendering, fallback alt text and all language files.
+
+## Media hardening in snapshot 3509
+
+Import budgets are local safety limits, separate from the upload limits reported
+by the target instance. Posters receive additional MIME, byte-size and pixel
+checks; videos receive dimension and frame-rate checks when ffprobe is available.
+Instance information is refreshed hourly during content runs. Failures retain
+the previous snapshot and impose a five-minute retry cooldown.
+See [08-Media-Safety.md](08-Media-Safety.md) for configuration, fallbacks and
+exact limits.
+
+## Local memory limits for outbound media
+
+Without cURL, instance-accepted uploads must also pass the PHP-memory and
+complete multipart-body checks described in
+[08-Media-Safety.md](08-Media-Safety.md#export-without-curl-memory-aware-multipart-fallback).
+Incoming PHP upload limits do not govern these outgoing requests.

@@ -3199,6 +3199,8 @@ function simulate_run_emoticon_export_sync_case($force) {
 simulate_seed_regression_fixtures();
 
 $GLOBALS ['plugin_mastodon_test_http_no_network'] = !simulate_request_flag('live-auth');
+// Synthetic media fixtures do not require an installed codec tool.
+$GLOBALS ['plugin_mastodon_test_video_metadata'] = array('available' => false);
 
 $allOk = true;
 
@@ -14515,6 +14517,208 @@ $allOk = test_result(
 plugin_mastodon_save_options($schedulerOriginalOptions);
 
 $GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+
+
+// Media safety: real plugin sink/planner/import coordinator with deterministic boundaries.
+$safetyOriginalOptions = plugin_mastodon_get_options();
+$allOk = test_result(
+	'Media download defaults are initialized centrally and exposed by the limit helper',
+	defined('PLUGIN_MASTODON_DOWNLOAD_IMAGE_BYTES') && PLUGIN_MASTODON_DOWNLOAD_IMAGE_BYTES === 16777216
+		&& defined('PLUGIN_MASTODON_DOWNLOAD_AV_BYTES') && PLUGIN_MASTODON_DOWNLOAD_AV_BYTES === 103809024
+		&& defined('PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES') && PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES === 536870912
+		&& defined('PLUGIN_MASTODON_DOWNLOAD_REQUESTS') && PLUGIN_MASTODON_DOWNLOAD_REQUESTS === 64
+		&& plugin_mastodon_download_limit('image') === PLUGIN_MASTODON_DOWNLOAD_IMAGE_BYTES
+		&& plugin_mastodon_download_limit('video') === PLUGIN_MASTODON_DOWNLOAD_AV_BYTES
+		&& plugin_mastodon_download_limit('total') === PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES
+		&& plugin_mastodon_download_limit('requests') === PLUGIN_MASTODON_DOWNLOAD_REQUESTS
+) && $allOk;
+$safetyPath = ABS_PATH . PLUGIN_MASTODON_STATE_DIR . 'media-safety.part';
+$safetyUrl = 'https://media-safety.example/file.mp4';
+$GLOBALS ['plugin_mastodon_test_download_limits'] = array('image' => 8, 'video' => 8, 'total' => 20, 'requests' => 4);
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array('GET ' . $safetyUrl => array('ok' => true, 'code' => 200, 'body' => '12345678'));
+plugin_mastodon_download_budget_start();
+$safetyExact = plugin_mastodon_media_download($safetyUrl, array(), $safetyPath, 'video');
+$allOk = test_result('Streamed media accepts the exact byte boundary and returns a path without a binary body', !empty($safetyExact ['ok']) && $safetyExact ['body'] === '' && file_get_contents($safetyPath) === '12345678') && $allOk;
+$GLOBALS ['plugin_mastodon_test_http_responses'] ['GET ' . $safetyUrl] ['body'] = '123456789';
+$safetyOver = plugin_mastodon_media_download($safetyUrl, array(), $safetyPath, 'video');
+$allOk = test_result('Streamed media rejects one byte over the per-file limit and removes partial files', empty($safetyOver ['ok']) && $safetyOver ['error'] === 'media_download_file_too_large' && !is_file($safetyPath)) && $allOk;
+$GLOBALS ['plugin_mastodon_test_http_responses'] ['GET ' . $safetyUrl] ['body'] = '1234';
+$safetyTotal = plugin_mastodon_media_download($safetyUrl, array(), $safetyPath, 'video');
+$allOk = test_result('Failed media attempts consume the shared byte budget and cannot exceed it on retry', empty($safetyTotal ['ok']) && $safetyTotal ['error'] === 'media_download_total_budget_exhausted' && !is_file($safetyPath)) && $allOk;
+plugin_mastodon_download_budget_start();
+$GLOBALS ['plugin_mastodon_test_download_limits'] ['requests'] = 1;
+plugin_mastodon_media_download($safetyUrl, array(), $safetyPath, 'video');
+$safetyCount = plugin_mastodon_media_download($safetyUrl, array(), $safetyPath, 'video');
+$allOk = test_result('Media request budget spans multiple downloads and blocks further requests', empty($safetyCount ['ok']) && $safetyCount ['error'] === 'media_download_total_budget_exhausted') && $allOk;
+$GLOBALS ['plugin_mastodon_test_download_limits'] ['requests'] = 4;
+plugin_mastodon_download_budget_start();
+$GLOBALS ['plugin_mastodon_test_http_responses'] ['GET ' . $safetyUrl] ['headers'] = array('content-length' => '8');
+$safetyTruncated = plugin_mastodon_media_download($safetyUrl, array(), $safetyPath, 'video');
+$allOk = test_result('Truncated media responses fail without publishing a partial file', empty($safetyTruncated ['ok']) && $safetyTruncated ['error'] === 'media_download_truncated' && !is_file($safetyPath)) && $allOk;
+plugin_mastodon_download_budget_start();
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array(
+ 'GET ' . $safetyUrl => array('ok' => false, 'code' => 302, 'headers' => array('location' => 'https://cdn-safety.example/file.mp4')),
+ 'GET https://cdn-safety.example/file.mp4' => array('ok' => true, 'code' => 200, 'body' => '1234')
+);
+$safetyRedirect = plugin_mastodon_media_download($safetyUrl, array('Authorization: Bearer fixture', 'Cookie: fixture=1'), $safetyPath, 'video');
+$safetyRequests = $GLOBALS ['plugin_mastodon_test_http_requests'];
+$allOk = test_result('Media redirects share request budgets and remove cross-origin credentials', !empty($safetyRedirect ['ok']) && count($safetyRequests) === 2 && $safetyRequests [1] ['headers'] === array()) && $allOk;
+$safetyInvalidUrl = plugin_mastodon_media_download('file:///etc/passwd', array(), $safetyPath, 'video');
+$allOk = test_result('Media downloads reject non-HTTP URLs before transport', empty($safetyInvalidUrl ['ok']) && $safetyInvalidUrl ['error'] === 'media_download_invalid_url') && $allOk;
+
+// A primary media failure must not mutate an existing published directory.
+plugin_mastodon_download_budget_start();
+$safetyExistingDir = ABS_PATH . ATTACHS_DIR . 'mastodon/status-media-safety-preserve';
+plugin_mastodon_media_prepare_directory($safetyExistingDir);
+file_put_contents($safetyExistingDir . '/old.mp4', 'old-media');
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array('GET ' . $safetyUrl => array('ok' => true, 'code' => 200, 'body' => '123456789'));
+$safetyOptions = plugin_mastodon_default_options();
+$safetyOptions ['instance_url'] = 'https://media-safety.example';
+$safetyOptions ['access_token'] = 'fixture-token';
+$safetyStatus = array('id' => 'media-safety-preserve', 'visibility' => 'public', 'content' => '<p>Media retry</p>', 'created_at' => '2026-10-31T12:00:00Z', 'media_attachments' => array(array('id' => 'media-safety-1', 'type' => 'video', 'url' => $safetyUrl)));
+$safetyBbcode = plugin_mastodon_build_imported_media_bbcode($safetyOptions, $safetyStatus);
+$allOk = test_result('Failed streamed imports preserve existing published media and expose a retryable error', $safetyBbcode === '' && file_get_contents($safetyExistingDir . '/old.mp4') === 'old-media' && $GLOBALS ['plugin_mastodon_media_import_error'] === 'media_download_file_too_large') && $allOk;
+plugin_mastodon_download_budget_start();
+$safetyState = plugin_mastodon_default_state();
+$safetyImported = plugin_mastodon_import_remote_entry($safetyOptions, $safetyState, $safetyStatus);
+$allOk = test_result('Failed media import does not create an entry or advance its mapping', $safetyImported === false && empty($safetyState ['entries_remote']) && $safetyState ['last_error'] === 'media_download_file_too_large') && $allOk;
+plugin_mastodon_download_budget_start();
+$GLOBALS ['plugin_mastodon_test_http_responses'] ['GET ' . $safetyUrl] ['body'] = '1234';
+$safetyImported = plugin_mastodon_import_remote_entry($safetyOptions, $safetyState, $safetyStatus);
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$safetyReplay = plugin_mastodon_import_remote_entry($safetyOptions, $safetyState, $safetyStatus);
+$allOk = test_result('Successful media imports resume after failure and unchanged replays consume no downloads', is_string($safetyImported) && $safetyImported !== '' && $safetyReplay === $safetyImported && count($GLOBALS ['plugin_mastodon_test_http_requests']) === 0) && $allOk;
+
+// Poster and video preflight use the real planner and real image metadata.
+$safetyLocal = ABS_PATH . ATTACHS_DIR . 'mastodon-sim/media-safety.mp4';
+file_put_contents($safetyLocal, '1234');
+$safetyPoster = ABS_PATH . IMAGES_DIR . 'mastodon-sim/video-poster.png';
+$safetyConfig = array('version' => '4.6.0', 'configuration' => array('media_attachments' => array('video_size_limit' => 1024, 'image_size_limit' => 1, 'image_matrix_limit' => 100, 'video_matrix_limit' => 2304000, 'video_frame_rate_limit' => 60, 'supported_mime_types' => array('video/mp4', 'image/png'))));
+$safetyOptions ['instance_info_url'] = $safetyOptions ['instance_url'];
+$safetyOptions ['instance_info_json'] = (string) json_encode($safetyConfig);
+plugin_mastodon_runtime_cache_set('instance_document', $safetyOptions ['instance_url'], $safetyConfig);
+$safetyItem = array('absolute_path' => $safetyLocal, 'media_type' => 'video', 'mime_type' => 'video/mp4', 'thumbnail_absolute_path' => $safetyPoster);
+$GLOBALS ['plugin_mastodon_test_video_metadata'] = array('available' => true, 'width' => 1920, 'height' => 1080, 'avg_frame_rate' => '30000/1001');
+$safetyPlan = plugin_mastodon_prepare_entry_media_items(array($safetyItem), 4, $safetyOptions);
+$allOk = test_result('Oversized video posters are omitted while valid videos remain exportable', count($safetyPlan ['items']) === 1 && empty($safetyPlan ['items'] [0] ['thumbnail_absolute_path'])) && $allOk;
+$safetyConfig ['configuration'] ['media_attachments'] ['image_size_limit'] = 1048576;
+plugin_mastodon_runtime_cache_set('instance_document', $safetyOptions ['instance_url'], $safetyConfig);
+$safetyPlan = plugin_mastodon_prepare_entry_media_items(array($safetyItem), 4, $safetyOptions);
+$allOk = test_result('Valid video posters survive MIME size and pixel preflight', count($safetyPlan ['items']) === 1 && !empty($safetyPlan ['items'] [0] ['thumbnail_absolute_path'])) && $allOk;
+$GLOBALS ['plugin_mastodon_test_video_metadata'] ['width'] = 3840;
+$GLOBALS ['plugin_mastodon_test_video_metadata'] ['height'] = 2160;
+$safetyVideo = plugin_mastodon_validate_local_media_item($safetyItem, $safetyOptions);
+$allOk = test_result('Video metadata rejects dimensions above the advertised instance matrix', !$safetyVideo ['ok'] && $safetyVideo ['reason'] === 'video_matrix_limit_exceeded') && $allOk;
+$GLOBALS ['plugin_mastodon_test_video_metadata'] = array('available' => true, 'width' => 1920, 'height' => 1080, 'r_frame_rate' => '121/1');
+$safetyVideo = plugin_mastodon_validate_local_media_item($safetyItem, $safetyOptions);
+$allOk = test_result('Video metadata rejects frame rates above the advertised instance limit', !$safetyVideo ['ok'] && $safetyVideo ['reason'] === 'video_frame_rate_limit_exceeded') && $allOk;
+$GLOBALS ['plugin_mastodon_test_video_metadata'] = array('available' => true, 'width' => 1920, 'height' => 1080, 'avg_frame_rate' => '0/0');
+$safetyVideo = plugin_mastodon_validate_local_media_item($safetyItem, $safetyOptions);
+$allOk = test_result('Video metadata rejects missing or invalid frame rates without division by zero', !$safetyVideo ['ok'] && $safetyVideo ['reason'] === 'video_metadata_invalid') && $allOk;
+$GLOBALS ['plugin_mastodon_test_video_metadata'] = array('available' => false);
+$safetyVideo = plugin_mastodon_validate_local_media_item($safetyItem, $safetyOptions);
+$allOk = test_result('Hosts without ffprobe retain server-validated video export', $safetyVideo ['ok']) && $allOk;
+
+// Freshness and error retry are independent of manual refresh.
+plugin_mastodon_rate_limit_guard_stop();
+$safetyOptions ['instance_info_fetched_at'] = gmdate('c');
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+plugin_mastodon_refresh_instance_if_due($safetyOptions);
+$allOk = test_result('Fresh instance information avoids a redundant synchronization request', count($GLOBALS ['plugin_mastodon_test_http_requests']) === 0) && $allOk;
+$safetyOptions ['instance_info_fetched_at'] = gmdate('c', time() - 7200);
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array('GET ' . $safetyOptions ['instance_url'] . '/api/v2/instance' => array('ok' => true, 'code' => 200, 'body' => json_encode($safetyConfig)));
+plugin_mastodon_refresh_instance_if_due($safetyOptions);
+$safetyStored = plugin_mastodon_get_options();
+$allOk = test_result('Stale instance information refreshes and persists its timestamp even when limits are unchanged', strtotime($safetyOptions ['instance_info_fetched_at']) > time() - 60 && strtotime($safetyStored ['instance_info_fetched_at']) > time() - 60) && $allOk;
+$safetyOptions ['instance_info_fetched_at'] = gmdate('c', time() - 7200);
+$GLOBALS ['plugin_mastodon_test_http_responses'] = array('GET ' . $safetyOptions ['instance_url'] . '/api/v2/instance' => array('ok' => false, 'code' => 503, 'body' => ''));
+$GLOBALS ['plugin_mastodon_test_http_requests'] = array();
+$safetySavedJson = $safetyOptions ['instance_info_json'];
+plugin_mastodon_refresh_instance_if_due($safetyOptions);
+plugin_mastodon_refresh_instance_if_due($safetyOptions);
+$allOk = test_result('Failed instance refresh preserves previous limits and respects the retry cooldown', $safetyOptions ['instance_info_json'] === $safetySavedJson && count($GLOBALS ['plugin_mastodon_test_http_requests']) === 1 && $safetyOptions ['instance_info_error_at'] !== '') && $allOk;
+unset($GLOBALS ['plugin_mastodon_test_download_limits']);
+plugin_mastodon_download_budget_start();
+plugin_mastodon_save_options($safetyOriginalOptions);
+
+// Multipart fallback: actual builder plus deterministic PHP-memory scenarios.
+$allOk = test_result(
+	'Multipart memory parser handles bytes K M G unlimited and invalid values',
+	plugin_mastodon_memory_limit_bytes('1024') === 1024.0
+		&& plugin_mastodon_memory_limit_bytes(' 64k ') === 65536.0
+		&& plugin_mastodon_memory_limit_bytes('128M') === 134217728.0
+		&& plugin_mastodon_memory_limit_bytes('1g') === 1073741824.0
+		&& plugin_mastodon_memory_limit_bytes('-1') === -1.0
+		&& plugin_mastodon_memory_limit_bytes('0') === 0.0
+		&& plugin_mastodon_memory_limit_bytes('invalid') === null
+) && $allOk;
+$allOk = test_result(
+	'Multipart memory preflight includes current usage copies and reserve at the exact boundary',
+	plugin_mastodon_multipart_memory_error(10485760, '64M', 16777216) === ''
+		&& plugin_mastodon_multipart_memory_error(10485761, '64M', 16777216) === 'multipart_memory_budget_exceeded'
+		&& plugin_mastodon_multipart_memory_error(10485760, '32M', 16777216) === 'multipart_memory_budget_exceeded'
+		&& plugin_mastodon_multipart_memory_error(10485760, '128M', 16777216) === ''
+) && $allOk;
+$allOk = test_result(
+	'Multipart unlimited PHP memory retains the local cap and unknown limits fail closed',
+	plugin_mastodon_multipart_memory_error(PLUGIN_MASTODON_MULTIPART_MAX_BYTES, '-1', 0) === ''
+		&& plugin_mastodon_multipart_memory_error(PLUGIN_MASTODON_MULTIPART_MAX_BYTES + 1, '-1', 0) === 'multipart_body_limit_exceeded'
+		&& plugin_mastodon_multipart_memory_error(1, 'unknown', 0) === 'multipart_memory_limit_unknown'
+		&& plugin_mastodon_multipart_memory_error(1, '0', 0) === 'multipart_memory_budget_exceeded'
+) && $allOk;
+$multipartDir = ABS_PATH . PLUGIN_MASTODON_STATE_DIR . 'multipart-fixtures';
+plugin_mastodon_media_prepare_directory($multipartDir);
+$multipartFile = $multipartDir . '/file.mp4';
+$multipartPoster = $multipartDir . '/poster.png';
+file_put_contents($multipartFile, "video\0bytes");
+file_put_contents($multipartPoster, 'poster-bytes');
+$multipartFields = array(
+	'file' => array('__file_path' => $multipartFile, '__mime_type' => 'video/mp4'),
+	'thumbnail' => array('__file_path' => $multipartPoster, '__mime_type' => 'image/png'),
+	'description' => 'Fixture description'
+);
+$multipartPrepared = plugin_mastodon_build_multipart_body($multipartFields, 'fixture-boundary');
+$allOk = test_result(
+	'Multipart builder preserves binary data poster text fields and closing boundary',
+	$multipartPrepared ['ok'] && substr_count($multipartPrepared ['body'], '--fixture-boundary') === 4
+		&& strpos($multipartPrepared ['body'], "video\0bytes") !== false
+		&& strpos($multipartPrepared ['body'], 'name="thumbnail"; filename="poster.png"') !== false
+		&& strpos($multipartPrepared ['body'], 'poster-bytes') !== false
+		&& strpos($multipartPrepared ['body'], 'Fixture description') !== false
+		&& substr($multipartPrepared ['body'], -strlen("--fixture-boundary--\r\n")) === "--fixture-boundary--\r\n"
+) && $allOk;
+$multipartMissing = plugin_mastodon_build_multipart_body(array('file' => array('__file_path' => $multipartDir . '/missing')), 'fixture');
+$allOk = test_result('Multipart builder rejects missing files without exposing a partial body', !$multipartMissing ['ok'] && $multipartMissing ['body'] === '' && $multipartMissing ['error'] === 'multipart_file_unreadable') && $allOk;
+$multipartOldMemory = (string) ini_get('memory_limit');
+$multipartLowMemory = (int) ceil(memory_get_usage(true) / 1048576) + 4;
+$multipartLowResult = array();
+try {
+	ini_set('memory_limit', $multipartLowMemory . 'M');
+	$multipartLowResult = plugin_mastodon_build_multipart_body($multipartFields, 'fixture');
+} finally {
+	ini_set('memory_limit', $multipartOldMemory);
+}
+$allOk = test_result('Multipart builder honors the actual PHP memory limit before reading payloads', !empty($multipartLowResult) && !$multipartLowResult ['ok'] && $multipartLowResult ['body'] === '' && $multipartLowResult ['error'] === 'multipart_memory_budget_exceeded') && $allOk;
+// Sparse fixtures exercise combined size accounting without reading large payloads.
+$multipartLargeA = $multipartDir . '/large-a.mp4';
+$multipartLargeB = $multipartDir . '/large-b.png';
+foreach (array($multipartLargeA, $multipartLargeB) as $multipartLargePath) {
+	$multipartHandle = fopen($multipartLargePath, 'wb');
+	ftruncate($multipartHandle, (int) floor(PLUGIN_MASTODON_MULTIPART_MAX_BYTES / 2));
+	fclose($multipartHandle);
+}
+try {
+	ini_set('memory_limit', '-1');
+	$multipartCombined = plugin_mastodon_build_multipart_body(array(
+		'file' => array('__file_path' => $multipartLargeA, '__mime_type' => 'video/mp4'),
+		'thumbnail' => array('__file_path' => $multipartLargeB, '__mime_type' => 'image/png')
+	), 'fixture');
+} finally {
+	ini_set('memory_limit', $multipartOldMemory);
+}
+$allOk = test_result('Multipart total cap includes file poster and framing before any large reads', !$multipartCombined ['ok'] && $multipartCombined ['body'] === '' && $multipartCombined ['error'] === 'multipart_body_limit_exceeded') && $allOk;
+plugin_mastodon_media_delete_tree($multipartDir);
 
 $exitCode = $allOk ? 0 : 2;
 simulate_print_final_summary($exitCode);

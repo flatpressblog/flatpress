@@ -14,6 +14,7 @@ It is written for developers who need to make safe changes without breaking sync
 6. [`05-Regression-Test-Matrix.md`](05-Regression-Test-Matrix.md) — what the simulation protects and what remains outside the harness.
 7. [`06-Process-Flow.md`](06-Process-Flow.md) — Process Flows.
 8. [`07-Function-Organigram.md`](07-Function-Organigram.md) — Function Organization Chart.
+9. [`08-Media-Safety.md`](08-Media-Safety.md) — Bounded downloads, media preflight and instance freshness.
 
 ## Change-oriented entry points
 
@@ -147,3 +148,11 @@ The Mastodon plugin documentation now covers the per-entry comment-shard model, 
 | Function ownership            | [`07-Function-Organigram.md`](07-Function-Organigram.md)       |
 
 The maintenance helpers are reachable from both the FlatPress admin panel and `fp-plugins/mastodon/mastodon-state-cli.php`.
+
+## Media validation and bounded downloads
+
+[08-Media-Safety.md](08-Media-Safety.md) describes import budgets, retry rules,
+poster and video metadata validation, and automatic instance-limit refresh.
+The additional local transport test is available as
+`regression-test/media-transport-test.py`. It exercises both real download
+transports without connecting to a Mastodon instance.
