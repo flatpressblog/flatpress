@@ -41,6 +41,7 @@ parameters:
     - SESSION_PATH
     - USER
     - GMT
+    # Plugins
     - BBCODE_ALLOW_HTML
     - BBCODE_ENABLE_COMMENTS
     - BBCODE_USE_EDITOR
@@ -52,8 +53,17 @@ parameters:
     - SEARCHBOX_BIG
     - PLUGIN_TAG_BL
     - PLUGIN_TAG_NOCACHE
+    - PLUGIN_MASTODON_MULTIPART_MAX_BYTES
+    - PLUGIN_MASTODON_MULTIPART_MEMORY_RESERVE
+    - PLUGIN_MASTODON_DOWNLOAD_IMAGE_BYTES
+    - PLUGIN_MASTODON_DOWNLOAD_AV_BYTES
+    - PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES
+    - PLUGIN_MASTODON_DOWNLOAD_REQUESTS
 
   # Scan for type resolution, but do not analyze
+  scanFiles:
+    - ../.setup/lib/permissions.lib.php
+
   scanDirectories:
     - ../fp-includes/smarty-5.8.5/src
     - ../fp-includes/fp-smartyplugins

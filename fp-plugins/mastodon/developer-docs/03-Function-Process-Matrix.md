@@ -53,12 +53,12 @@ manual filesystem deletion without loading all comment shards or adding API requ
 
 ### Fixed entry-deletion scheduling
 
-| Helper | Process | Contract |
-| --- | --- | --- |
-| `plugin_mastodon_state_queue_local_entry_deletion()`    | P9/P10 | Record first per-entry UTC deadline without resetting it.                         |
-| `plugin_mastodon_state_local_entry_deletion_deadline()` | P1/P9  | Read earliest queue deadline or compact scheduler scalar.                         |
-| `plugin_mastodon_state_schedule_content_deletions()`    | P1/P2  | Retain entry deadlines and retry barriers through content completion.             |
-| `plugin_mastodon_scheduled_job()`                       | P1/P9  | Choose due fixed-entry work before a daily content job, subject to retry backoff. |
+| Helper                                                  | Process | Contract                                                                          |
+| ------------------------------------------------------- | ------- | --------------------------------------------------------------------------------- |
+| `plugin_mastodon_state_queue_local_entry_deletion()`    | P9/P10  | Record first per-entry UTC deadline without resetting it.                         |
+| `plugin_mastodon_state_local_entry_deletion_deadline()` | P1/P9   | Read earliest queue deadline or compact scheduler scalar.                         |
+| `plugin_mastodon_state_schedule_content_deletions()`    | P1/P2   | Retain entry deadlines and retry barriers through content completion.             |
+| `plugin_mastodon_scheduled_job()`                       | P1/P9   | Choose due fixed-entry work before a daily content job, subject to retry backoff. |
 
 The content path passes an optional preservation flag through
 `plugin_mastodon_state_write_with_last_error()` to
@@ -136,3 +136,10 @@ flowchart TD
 | Avoid dynamic shapes that PHPStan Level 5 cannot follow without normalization.                     | Normalize arrays before reads; use clear guards for mixed values.       |
 | Keep Smarty-facing admin values as simple arrays/scalars.                                          | Maintains compatibility with Smarty 4.x/5.x templates.                  |
 | Add regression tests for any new long-lived state key.                                             | State bugs are often delayed until a later scheduled run.               |
+
+## Additional media helpers
+
+The functions in `inc/media-safety.php` support imports, export preflight and
+instance refresh. Their complete function catalog and the division of transport
+and budget responsibilities are documented in
+[08-Media-Safety.md](08-Media-Safety.md).

@@ -127,3 +127,11 @@ The simulation executes the real Mastodon plugin code against a local FlatPress-
 6. Find the implementation functions in `03-Function-Process-Matrix.md`.
 7. If Mastodon is contacted, check endpoint version and fallback behavior in `04-API-Compatibility.md`.
 8. Before changing code, identify at least one existing regression test or add one.
+
+## Media limits
+
+Media imports now stream into bounded temporary files and share a byte and
+request budget per content run. A primary download failure stops the import
+before advancing the cursor; unchanged successful imports are recognized on
+retry. Export posters and available video metadata are checked before upload.
+See [media safety](08-Media-Safety.md) for limits and hosting fallbacks.

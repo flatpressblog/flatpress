@@ -1216,7 +1216,14 @@ if (is_file($regressionSimulationFallbackFile)) {
 
 // Review the entire Markdown set, not only the function organigram.
 $documentationFiles = glob(__DIR__ . '/*.md');
-$allPluginFunctions = mastodon_docs_extract_functions($pluginContent);
+$mediaSafetyContent = mastodon_docs_read_file($rootDir . '/fp-plugins/mastodon/inc/media-safety.php', $errors);
+$allPluginFunctions = array_merge(mastodon_docs_extract_functions($pluginContent), mastodon_docs_extract_functions($mediaSafetyContent));
+$mediaSafetyDoc = mastodon_docs_read_file(__DIR__ . '/08-Media-Safety.md', $errors);
+foreach (mastodon_docs_extract_functions($mediaSafetyContent) as $helper => $helperLine) {
+	if (strpos($mediaSafetyDoc, '`' . $helper . '()`') === false) {
+		$errors [] = 'Media safety catalog missing function: ' . $helper;
+	}
+}
 if (is_array($documentationFiles)) {
 	foreach ($documentationFiles as $documentationFile) {
 		$docText = mastodon_docs_read_file($documentationFile, $errors);

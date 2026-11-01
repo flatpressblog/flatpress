@@ -157,12 +157,12 @@ pending work, so an edited status replay cannot recreate the entry before the re
 
 The version-5 state gains optional additive fields; legacy files remain readable:
 
-| Field | Storage | Contract |
-| --- | --- | --- |
-| `local_entry_deletions` | Main state | Entry ID to fixed UTC deadline: first marking plus 300 seconds. Repeated marking does not change it. |
-| `local_entry_deletion_not_before` | Compact scheduler | Earliest queue deadline; no mapping/shard load in the fresh scheduler fast path. |
-| `deletion_retry_not_before` | Main state and scheduler | Retry lower bound independent of original entry deadlines; content and new delete hooks retain it. |
-| `deletions_not_before` | Existing main/scheduler field | General follow-up time. Content completion uses a fixed entry deadline when available, otherwise its existing completion-plus-300 policy. |
+| Field                             | Storage                       | Contract                                                                                                                                  |
+| --------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `local_entry_deletions`           | Main state                    | Entry ID to fixed UTC deadline: first marking plus 300 seconds. Repeated marking does not change it.                                      |
+| `local_entry_deletion_not_before` | Compact scheduler             | Earliest queue deadline; no mapping/shard load in the fresh scheduler fast path.                                                          |
+| `deletion_retry_not_before`       | Main state and scheduler      | Retry lower bound independent of original entry deadlines; content and new delete hooks retain it.                                        |
+| `deletions_not_before`            | Existing main/scheduler field | General follow-up time. Content completion uses a fixed entry deadline when available, otherwise its existing completion-plus-300 policy. |
 
 Each entry retains its own deadline. The deletion loop skips future entries, their comment
 shards and descendant rechecks. Success or an already missing status removes mapping and
@@ -378,3 +378,15 @@ The admin page does not add one-way state. It only suppresses import-only contro
 | Remote-to-local sync            | Keep top-level status import active when one-way mode is off; skip context descendants and notification replies.         | Mastodon replies must not become FlatPress comments.                                 |
 | Deletion sync                   | Keep entry deletion reconciliation active; skip comment/reply mapping deletion and clear pending reply rechecks/cursors. | Existing mappings remain safe, but no comment/reply side effects run while disabled. |
 | Re-enabling the option          | Existing mappings are retained and can be used again by later sync runs.                                                 | The option is reversible and does not destroy synchronization history.               |
+
+## Media retries and instance freshness
+
+After a successful import, `entries[entryId].import_fingerprint` stores the
+SHA-1 of the JSON status. Downloads can be skipped only when the existing local
+`hash` is also unchanged. A failed primary download creates no mapping for that
+status and prevents `last_remote_status_id` from advancing.
+The budget and current media error marker are request-local, not new state
+files. `instance_info_fetched_at` is persisted after every successful refresh,
+even when limits are unchanged. `instance_info_error_at` controls the five-minute
+retry cooldown; the last known limits remain available.
+See [media safety](08-Media-Safety.md).

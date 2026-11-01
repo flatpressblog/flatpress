@@ -10,6 +10,7 @@
 
 defined('ABSPATH') or define('ABSPATH', dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR);
 defined('FP_CONTENT') or exit;
+require_once __DIR__ . '/inc/media-safety.php';
 
 if (!defined('PLUGIN_MASTODON_DIR')) {
 	define('PLUGIN_MASTODON_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
@@ -120,6 +121,26 @@ if (!defined('PLUGIN_MASTODON_STATE_FALLBACK_TTL')) {
 }
 if (!defined('PLUGIN_MASTODON_COOLDOWN_TTL')) {
 	define('PLUGIN_MASTODON_COOLDOWN_TTL', 300);
+}
+// Media download limits and per-content-run budgets.
+if (!defined('PLUGIN_MASTODON_DOWNLOAD_IMAGE_BYTES')) {
+	define('PLUGIN_MASTODON_DOWNLOAD_IMAGE_BYTES', 16777216);
+}
+if (!defined('PLUGIN_MASTODON_DOWNLOAD_AV_BYTES')) {
+	define('PLUGIN_MASTODON_DOWNLOAD_AV_BYTES', 103809024);
+}
+if (!defined('PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES')) {
+	define('PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES', 536870912);
+}
+if (!defined('PLUGIN_MASTODON_DOWNLOAD_REQUESTS')) {
+	define('PLUGIN_MASTODON_DOWNLOAD_REQUESTS', 64);
+}
+// Bound the in-memory multipart fallback used when cURL is unavailable.
+if (!defined('PLUGIN_MASTODON_MULTIPART_MAX_BYTES')) {
+	define('PLUGIN_MASTODON_MULTIPART_MAX_BYTES', 67108864);
+}
+if (!defined('PLUGIN_MASTODON_MULTIPART_MEMORY_RESERVE')) {
+	define('PLUGIN_MASTODON_MULTIPART_MEMORY_RESERVE', 8388608);
 }
 // Rate limit and budget guards
 if (!defined('PLUGIN_MASTODON_RUN_REQUEST_BUDGET')) {
@@ -496,18 +517,6 @@ function plugin_mastodon_store_instance_document($options, $document) {
 	$normalizedOptions ['instance_info_error'] = '';
 	$normalizedOptions ['instance_info_error_at'] = '';
 
-	$storedDocument = plugin_mastodon_saved_instance_document($normalizedOptions);
-	$changed = (
-		trim((string) (isset($options ['instance_info_url']) ? $options ['instance_info_url'] : '')) !== $instanceUrl
-		|| trim((string) (isset($options ['instance_info_json']) ? $options ['instance_info_json'] : '')) !== $json
-		|| $storedDocument !== $document
-	);
-	if (!$changed && trim((string) (isset($options ['instance_info_fetched_at']) ? $options ['instance_info_fetched_at'] : '')) !== '') {
-		plugin_mastodon_apcu_store('instance_document:' . sha1($instanceUrl), $document, 900);
-		plugin_mastodon_runtime_cache_set('instance_document', $instanceUrl, $document);
-		return true;
-	}
-
 	$result = plugin_mastodon_save_options($normalizedOptions);
 	if ($result) {
 		plugin_mastodon_apcu_store('instance_document:' . sha1($instanceUrl), $document, 900);
@@ -544,6 +553,7 @@ function plugin_mastodon_refresh_instance_information($options) {
 		$document = plugin_mastodon_compact_instance_document($response ['json']);
 		if ($document !== array()) {
 			plugin_mastodon_store_instance_document($options, $document);
+			plugin_mastodon_runtime_cache_set('instance_document_failed', plugin_mastodon_normalize_instance_url($options ['instance_url']), false);
 			$response ['json'] = $document;
 			return $response;
 		}
@@ -8619,6 +8629,12 @@ function plugin_mastodon_validate_local_media_item($item, $options) {
 	if ($limit > 0 && is_numeric($fileSize) && (int) $fileSize > $limit) {
 		return array('ok' => false, 'reason' => 'file_too_large:' . (int) $fileSize . '>' . $limit);
 	}
+	if ($mediaType === 'video' || $mediaType === 'gifv') {
+		$reason = plugin_mastodon_validate_video_metadata($filePath, plugin_mastodon_instance_configuration($options));
+		if ($reason !== '') {
+			return array('ok' => false, 'reason' => $reason);
+		}
+	}
 	return array('ok' => true, 'reason' => '');
 }
 
@@ -8986,6 +9002,19 @@ function plugin_mastodon_prepare_entry_media_items($mediaItems, $limit, $options
 			plugin_mastodon_log('Skipped local media attachment ' . $relativePath . ' before upload: ' . (isset($validation ['reason']) ? (string) $validation ['reason'] : 'unsupported'));
 			continue;
 		}
+		if (!empty($item ['thumbnail_absolute_path'])) {
+			$poster = array('absolute_path' => $item ['thumbnail_absolute_path'], 'media_type' => 'image');
+			$poster ['mime_type'] = plugin_mastodon_media_guess_mime_type((string) $item ['thumbnail_absolute_path']);
+			$posterValidation = plugin_mastodon_validate_local_media_item($poster, $options);
+			$size = @getimagesize((string) $poster ['absolute_path']);
+			$config = plugin_mastodon_instance_configuration($options);
+			$posterByteLimit = !empty($config ['media_attachments'] ['image_size_limit']) ? (int) $config ['media_attachments'] ['image_size_limit'] : 16777216;
+			$matrixLimit = isset($config ['media_attachments'] ['image_matrix_limit']) ? (int) $config ['media_attachments'] ['image_matrix_limit'] : 33177600;
+			if (empty($posterValidation ['ok']) || (float) @filesize((string) $poster ['absolute_path']) > $posterByteLimit || !is_array($size) || ($matrixLimit > 0 && (float) $size [0] * (float) $size [1] > $matrixLimit)) {
+				plugin_mastodon_log('Omitting invalid or oversized video poster; the server will generate a preview.');
+				unset($item ['thumbnail_absolute_path'], $item ['thumbnail_mime_type']);
+			} else { $item ['thumbnail_mime_type'] = $poster ['mime_type']; }
+		}
 		$prepared [] = $item;
 	}
 	$prepared = plugin_mastodon_select_status_media_items($prepared, $limit, $skipped);
@@ -9277,14 +9306,16 @@ function plugin_mastodon_status_media_attributes($remoteMedia, $mediaItems, $opt
 }
 
 /**
- * Download a remote media asset.
+ * Download a remote media asset into a bounded staging file.
  * @param string $url
  * @param array<int|string, string> $headers
+ * @param string $destination
+ * @param string $mediaType
  * @return array<string, mixed>
  */
-function plugin_mastodon_media_download($url, $headers) {
+function plugin_mastodon_media_download($url, $headers, $destination, $mediaType = 'video') {
 	plugin_mastodon_extend_time_limit(180);
-	return plugin_mastodon_http_request('GET', $url, is_array($headers) ? $headers : array(), '', '', 180);
+	return plugin_mastodon_download_to_file($url, is_array($headers) ? $headers : array(), $destination, $mediaType);
 }
 
 /**
@@ -9330,6 +9361,7 @@ function plugin_mastodon_remote_download_basename($attachment, $sourceUrl, $down
  * @return string
  */
 function plugin_mastodon_build_imported_media_bbcode(&$options, $remoteStatus) {
+	$GLOBALS ['plugin_mastodon_media_import_error'] = '';
 	$attachments = plugin_mastodon_remote_status_media_attachments($remoteStatus);
 	if (empty($attachments)) {
 		return '';
@@ -9344,6 +9376,8 @@ function plugin_mastodon_build_imported_media_bbcode(&$options, $remoteStatus) {
 	plugin_mastodon_media_delete_tree($tempRoot);
 	if (!plugin_mastodon_media_prepare_directory($tempImageDir) || !plugin_mastodon_media_prepare_directory($tempAttachDir)) {
 		plugin_mastodon_log('Unable to prepare temporary media directories for remote status ' . $remoteId);
+		$GLOBALS ['plugin_mastodon_media_import_error'] = 'media_download_open_failed';
+		plugin_mastodon_media_delete_tree($tempRoot);
 		return '';
 	}
 
@@ -9370,23 +9404,28 @@ function plugin_mastodon_build_imported_media_bbcode(&$options, $remoteStatus) {
 		$download = array('ok' => false, 'code' => 0, 'headers' => array(), 'body' => '', 'error' => 'missing_media_url');
 		foreach ($sourceUrls as $candidateUrl) {
 			$sourceUrl = (string) $candidateUrl;
-			$download = plugin_mastodon_media_download($sourceUrl, $downloadHeaders);
-			if (!empty($download ['ok']) && $download ['body'] !== '') {
+			$safeHeaders = plugin_mastodon_media_origin($sourceUrl) === plugin_mastodon_media_origin(isset($options ['instance_url']) ? $options ['instance_url'] : '') ? $downloadHeaders : array();
+			$download = plugin_mastodon_media_download($sourceUrl, $safeHeaders, $tempRoot . DIRECTORY_SEPARATOR . 'download.part', $type);
+			if (!empty($download ['ok']) && !empty($download ['path'])) {
 				break;
 			}
 			plugin_mastodon_log('Failed to download remote media candidate for status ' . $remoteId . ' from ' . $sourceUrl . ': ' . plugin_mastodon_response_error_message($download));
 		}
-		if (!$download ['ok'] || $download ['body'] === '') {
+		if (!$download ['ok'] || empty($download ['path'])) {
 			plugin_mastodon_log('Failed to download remote media for status ' . $remoteId . ' from all candidate URLs');
-			continue;
+			$GLOBALS ['plugin_mastodon_media_import_error'] = (string) $download ['error'];
+			plugin_mastodon_media_delete_tree($tempRoot);
+			return '';
 		}
 
 		if ($type === 'image') {
 			$imageIndex++;
 			$basename = plugin_mastodon_remote_download_basename($attachment, $sourceUrl, $download, $imageIndex, 'image');
-			if (!plugin_mastodon_io_write_file($tempImageDir . DIRECTORY_SEPARATOR . $basename, (string) $download ['body'])) {
+			if (!@rename((string) $download ['path'], $tempImageDir . DIRECTORY_SEPARATOR . $basename)) {
 				plugin_mastodon_log('Failed to store imported remote image file ' . $basename . ' for status ' . $remoteId);
-				continue;
+				$GLOBALS ['plugin_mastodon_media_import_error'] = 'media_download_write_failed';
+				plugin_mastodon_media_delete_tree($tempRoot);
+				return '';
 			}
 			$imageFiles [] = $basename;
 			$description = plugin_mastodon_remote_media_description($attachment);
@@ -9402,21 +9441,24 @@ function plugin_mastodon_build_imported_media_bbcode(&$options, $remoteStatus) {
 
 		$attachIndex++;
 		$basename = plugin_mastodon_remote_download_basename($attachment, $sourceUrl, $download, $attachIndex, $type);
-		if (!plugin_mastodon_io_write_file($tempAttachDir . DIRECTORY_SEPARATOR . $basename, (string) $download ['body'])) {
+		if (!@rename((string) $download ['path'], $tempAttachDir . DIRECTORY_SEPARATOR . $basename)) {
 			plugin_mastodon_log('Failed to store imported remote audio/video file ' . $basename . ' for status ' . $remoteId);
-			continue;
+			$GLOBALS ['plugin_mastodon_media_import_error'] = 'media_download_write_failed';
+			plugin_mastodon_media_delete_tree($tempRoot);
+			return '';
 		}
 
 		$posterRelative = '';
 		if ($type !== 'audio' && !empty($attachment ['preview_url']) && is_string($attachment ['preview_url'])) {
 			$posterUrl = trim((string) $attachment ['preview_url']);
 			if ($posterUrl !== '' && $posterUrl !== $sourceUrl) {
-				$posterDownload = plugin_mastodon_media_download($posterUrl, $downloadHeaders);
-				if (!empty($posterDownload ['ok']) && $posterDownload ['body'] !== '') {
+				$safeHeaders = plugin_mastodon_media_origin($posterUrl) === plugin_mastodon_media_origin(isset($options ['instance_url']) ? $options ['instance_url'] : '') ? $downloadHeaders : array();
+				$posterDownload = plugin_mastodon_media_download($posterUrl, $safeHeaders, $tempRoot . DIRECTORY_SEPARATOR . 'poster.part', 'image');
+				if (!empty($posterDownload ['ok']) && !empty($posterDownload ['path'])) {
 					$posterBase = preg_replace('/\.[A-Za-z0-9]{1,8}$/', '', $basename);
 					$posterExtension = plugin_mastodon_extension_from_mime_type(isset($posterDownload ['headers'] ['content-type']) ? (string) $posterDownload ['headers'] ['content-type'] : '', 'jpg');
 					$posterName = plugin_mastodon_safe_filename($posterBase . '-poster.' . $posterExtension);
-					if (plugin_mastodon_io_write_file($tempImageDir . DIRECTORY_SEPARATOR . $posterName, (string) $posterDownload ['body'])) {
+					if (@rename((string) $posterDownload ['path'], $tempImageDir . DIRECTORY_SEPARATOR . $posterName)) {
 						$posterRelative = 'images/mastodon/status-' . $remoteId . '/' . $posterName;
 					}
 				}
@@ -10098,25 +10140,12 @@ function plugin_mastodon_http_request_multipart($method, $url, $headers, $fields
 	}
 
 	$boundary = '----FlatPressMastodon' . md5(uniqid('', true));
-	$body = '';
-	foreach ($fields as $name => $value) {
-		$body .= '--' . $boundary . "\r\n";
-		if (is_array($value) && !empty($value ['__file_path'])) {
-			$filePath = $value ['__file_path'];
-			$fileName = isset($value ['__file_name']) ? $value ['__file_name'] : basename($filePath);
-			$mimeType = isset($value ['__mime_type']) ? $value ['__mime_type'] : plugin_mastodon_media_guess_mime_type($filePath);
-			$fileData = plugin_mastodon_io_read_file($filePath, plugin_mastodon_file_prestat($filePath));
-			if (!is_string($fileData)) {
-				return array('ok' => false, 'code' => 0, 'headers' => array(), 'body' => '', 'error' => 'Unable to read upload file');
-			}
-			$body .= 'Content-Disposition: form-data; name="' . addcslashes((string) $name, "\"\\") . '"; filename="' . addcslashes($fileName, "\"\\") . '"' . "\r\n";
-			$body .= 'Content-Type: ' . $mimeType . "\r\n\r\n";
-			$body .= $fileData . "\r\n";
-		} else {
-			$body .= 'Content-Disposition: form-data; name="' . addcslashes((string) $name, "\"\\") . '"' . "\r\n\r\n" . (is_scalar($value) ? (string) $value : '') . "\r\n";
-		}
+	$preparedBody = plugin_mastodon_build_multipart_body($fields, $boundary);
+	if (!$preparedBody ['ok']) {
+		return array('ok' => false, 'code' => 0, 'headers' => array(), 'body' => '', 'error' => $preparedBody ['error']);
 	}
-	$body .= '--' . $boundary . "--\r\n";
+	$body = $preparedBody ['body'];
+	unset($preparedBody);
 
 	$headers [] = 'Content-Type: multipart/form-data; boundary=' . $boundary;
 	$headers [] = 'Content-Length: ' . strlen($body);
@@ -12341,6 +12370,7 @@ function plugin_mastodon_imported_status_footer_bbcode($url) {
  * @return bool|string|array<string, mixed>
  */
 function plugin_mastodon_import_remote_entry(&$options, &$state, $remoteStatus) {
+	$GLOBALS ['plugin_mastodon_media_import_error'] = '';
 	if (!plugin_mastodon_should_import_remote_to_local($options)) {
 		plugin_mastodon_log('Skipping remote entry import because Mastodon-to-FlatPress import is disabled');
 		return false;
@@ -12372,12 +12402,25 @@ function plugin_mastodon_import_remote_entry(&$options, &$state, $remoteStatus) 
 		return false;
 	}
 
+	$importFingerprint = sha1((string) json_encode($remoteStatus));
+	if (isset($state ['entries_remote'] [$remoteId])) {
+		$existingId = (string) $state ['entries_remote'] [$remoteId];
+		$existingMeta = plugin_mastodon_state_get_entry_meta($state, $existingId);
+		$existingEntry = entry_parse($existingId);
+		if (is_array($existingEntry) && !empty($existingMeta ['import_fingerprint']) && $existingMeta ['import_fingerprint'] === $importFingerprint && !empty($existingMeta ['hash']) && $existingMeta ['hash'] === plugin_mastodon_entry_hash($existingEntry)) {
+			return $existingId;
+		}
+	}
 	$content = plugin_mastodon_mastodon_html_to_flatpress(isset($remoteStatus ['content']) ? $remoteStatus ['content'] : '');
 	$remoteTags = plugin_mastodon_remote_status_tags($remoteStatus);
 	if (plugin_mastodon_tag_plugin_active()) {
 		$content = plugin_mastodon_strip_trailing_mastodon_hashtag_footer($content, $remoteTags);
 	}
 	$mediaBbcode = plugin_mastodon_build_imported_media_bbcode($options, $remoteStatus);
+	if (!empty($GLOBALS ['plugin_mastodon_media_import_error'])) {
+		$state ['last_error'] = (string) $GLOBALS ['plugin_mastodon_media_import_error'];
+		return false;
+	}
 	if ($mediaBbcode !== '') {
 		$content = trim($content . $mediaBbcode);
 	}
@@ -12438,6 +12481,7 @@ function plugin_mastodon_import_remote_entry(&$options, &$state, $remoteStatus) 
 		}
 		if (is_string($result) && $result !== '') {
 			plugin_mastodon_state_set_entry_mapping($state, $result, $remoteId, 'remote', $hash, $url, $remoteUpdatedAt, plugin_mastodon_local_item_date_key($entry, $result), plugin_mastodon_remote_status_date_key($remoteStatus));
+			$state ['entries'] [$result] ['import_fingerprint'] = $importFingerprint;
 			$state ['content_stats'] ['updated_entries']++;
 			return $result;
 		}
@@ -12452,6 +12496,7 @@ function plugin_mastodon_import_remote_entry(&$options, &$state, $remoteStatus) 
 	}
 	if (is_string($result) && $result !== '') {
 		plugin_mastodon_state_set_entry_mapping($state, $result, $remoteId, 'remote', $hash, $url, $remoteUpdatedAt, plugin_mastodon_local_item_date_key($entry, $result), plugin_mastodon_remote_status_date_key($remoteStatus));
+		$state ['entries'] [$result] ['import_fingerprint'] = $importFingerprint;
 		$state ['content_stats'] ['imported_entries']++;
 		return $result;
 	}
@@ -13161,6 +13206,10 @@ function plugin_mastodon_sync_remote_to_local(&$options, &$state, $force = true)
 			continue;
 		}
 		$entryId = plugin_mastodon_import_remote_entry($options, $state, $status);
+		if (!empty($GLOBALS ['plugin_mastodon_media_import_error'])) {
+			$state ['last_error'] = (string) $GLOBALS ['plugin_mastodon_media_import_error'];
+			return false;
+		}
 		if (!$entryId) {
 			continue;
 		}
@@ -13935,6 +13984,8 @@ function plugin_mastodon_run_sync($force, $fullWindow = null) {
 	}
 
 	plugin_mastodon_rate_limit_guard_start('content_sync');
+	plugin_mastodon_download_budget_start();
+	plugin_mastodon_refresh_instance_if_due($options);
 	$orphanedPendingOptinsRemoved = plugin_mastodon_state_prune_orphaned_pending_comment_reply_optins($state);
 	if ($orphanedPendingOptinsRemoved > 0) {
 		plugin_mastodon_log('Removed ' . $orphanedPendingOptinsRemoved . ' orphaned CommentCenter Mastodon opt-in grant(s)');

@@ -1918,3 +1918,22 @@ sequenceDiagram
 	Panel-->>Maint: Localized shared success/error message
 	Maint-->>Admin: Display result and back link
 ```
+
+## Bounded media flow
+
+```mermaid
+flowchart TD
+  A[Content run] --> B[Initialize download budget]
+  B --> C[Refresh instance information when due]
+  C --> D[Check status and local fingerprint]
+  D --> E[Stream primary media into bounded temporary files]
+  E -->|Failure| F[Remove temporary files; stop import; retain cursor]
+  E -->|Success| G[Download optional poster within limits]
+  G --> H[Publish media and entry; update mapping]
+  C --> I[Prepare local export]
+  I --> J[Check file limits, posters and available video metadata]
+  J --> K[Existing upload and polling path]
+```
+
+This flow supplements the existing synchronization decisions.
+See [media safety](08-Media-Safety.md) for limits and the optional ffprobe dependency.
