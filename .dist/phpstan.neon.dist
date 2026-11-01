@@ -62,7 +62,7 @@ parameters:
 
   # Scan for type resolution, but do not analyze
   scanFiles:
-    - ../.setup/lib/permissions.lib.php
+    # ../.setup/lib/permissions.lib.php
 
   scanDirectories:
     - ../fp-includes/smarty-5.8.5/src
