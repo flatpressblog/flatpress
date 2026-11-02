@@ -89,61 +89,6 @@ One-way admin rendering is treated as part of the synchronization contract: admi
 
 For P2c, CommentCenter moderation is an explicit edge case: when a visitor sets the Mastodon opt-in but the comment is held for approval, `commentcenter_comment_logged` stores the `comment_reply_optins` grant immediately together with the pending-file basename. Later admin approval reaches `comment_saved`, clears the pending-file marker and queues the dirty comment from the stored grant. `commentcenter_comment_discarded` removes the grant after an intentional rejection, while a bounded sync-time prune removes stale pending grants only when neither the pending file nor a final FlatPress comment exists. With CommentCenter disabled, the normal `comment_saved` path stores the same grant directly. The active admin session itself is never treated as visitor consent.
 
-## P13 — Compact Mastodon profile widget
-
-```mermaid
-flowchart TD
-	Sync[plugin_mastodon_run_sync]
-	Verify[verify_credentials response]
-	Account[Public account fields display_name acct url avatar_static avatar_description]
-	CacheDir[fp-content/plugin_mastodon/profile/]
-	ProfileJson[profile.json without tokens or secrets]
-	Avatar[local avatar image]
-	Widget[plugin_mastodon_widget]
-	Complete{complete local cache?}
-	Render[subject Mastodon plus avatar name and handle]
-	Hide[return no widget]
-
-	Sync --> Verify
-	Verify --> Account
-	Account --> CacheDir
-	CacheDir --> ProfileJson
-	CacheDir --> Avatar
-	Widget --> ProfileJson
-	Widget --> Avatar
-	Widget --> Complete
-	Complete -- yes --> Render
-	Complete -- no --> Hide
-```
-
-The widget callback never calls the Mastodon API and never downloads a remote avatar. Profile cache refresh is triggered at the start of scheduled/manual `plugin_mastodon_run_sync()` runs through account verification code that already talks to Mastodon, then the public cache stores only display name, account handle, profile URL, avatar metadata and alt-text data. This keeps normal CMS response time independent from the Mastodon instance and still refreshes the profile in pure export mode.
-
-## P14 — Frontend comment author-link rendering
-
-Imported Mastodon replies are stored as ordinary FlatPress comments. The author name and author URL are stored separately: the name comes from the Mastodon account display data, while the URL remains the profile URL from `account.url`. The Leggero comment template therefore treats the URL as a normal comment author URL and delegates the external/internal decision to `modifier.is_external_url.php`.
-
-```mermaid
-flowchart TD
-	Comment["FlatPress comment author URL"]
-	Empty{"URL present?"}
-	Relative{"Relative URL or configured blog-base match?"}
-	Plain["Render plain author name"]
-	Internal["Render author link without target"]
-	External["Render author link with target=&quot;_blank&quot;"]
-	Rel["rel=&quot;nofollow noopener noreferrer&quot;"]
-
-	Comment --> Empty
-	Empty -- no --> Plain
-	Empty -- yes --> Relative
-	Relative -- yes --> Internal
-	Relative -- no --> External
-	External --> Rel
-```
-
-Imported status source footer links are separate from comment author links: `plugin_mastodon_imported_status_footer_bbcode()` uses Mastodon `Status.url`, appends the single-toot source link to the FlatPress entry as BBCode and relies on the FlatPress BBCode URL renderer for `target="_blank"` plus `rel="nofollow noopener noreferrer"`.
-
-The process intentionally limits new-tab behavior to absolute URLs outside the configured FlatPress blog base. Internal absolute links such as `https://blog.example/flatpress/entry...`, root-relative links and plain relative links keep the browser in the current tab. External Mastodon profile URLs receive `target="_blank"` and `rel="nofollow noopener noreferrer"`.
-
 ## P1/P2 — Scheduled and manual content synchronization
 
 ```mermaid
@@ -179,6 +124,16 @@ flowchart TD
 ```
 
 Manual sync bypasses the daily due check and can request a full window, but it still uses `sync.lock`, request budgets, media/delete windows, the sync-time profile/avatar refresh and UTC state writes. The automatic due check treats stored `sync_time`, `last_run`, `last_deletion_run` and `deletions_not_before` as UTC so host or plugin changes to PHP's default timezone do not shift the daily 03:00-style FlatPress-local schedule. This matters on shared hosting: manual repair must not become unbounded.
+
+The normal manual action calls `plugin_mastodon_run_sync(true, false)`; the full
+manual action uses `plugin_mastodon_run_sync(true, true)`, and the scheduler uses
+`plugin_mastodon_run_sync(false)`. All three share the same entry import guard.
+Deletion is a separate follow-up, not part of the content import itself. A successful content
+run schedules that follow-up only when deletion synchronization is enabled.
+
+At content-run startup, `plugin_mastodon_download_budget_start()` initializes
+the shared media budget and `plugin_mastodon_refresh_instance_if_due()` refreshes
+stale instance information. See [budgets and refresh policy](04-API-Compatibility.md#instance-information-and-limits).
 
 ## P3/P4 — Remote import and explicit one-way mode
 
@@ -234,6 +189,12 @@ replacement entry and its immediate thread-context import. Keep the forward/reve
 hash and source unchanged for P9. This also protects matching-hash, edited-status and
 bypassed-hook cases. Unmapped remote statuses still follow the normal new-entry import path.
 
+Media import (P8) uses `plugin_mastodon_download_to_file()`. A primary download
+failure stops remote import before the cursor update; optional poster failure
+does not invalidate the primary media. See
+[download safety](04-API-Compatibility.md#import-streamed-downloads) and
+[retry/cursor state](02-State-Model.md#media-retries-and-instance-freshness).
+
 ## P5/P6/P7 — Local export and media lifecycle
 
 ```mermaid
@@ -287,6 +248,16 @@ else if video exists: export exactly one video attachment, with poster as thumbn
 ```
 
 This policy belongs in the export planner, not in the raw collector. The collector still finds images, galleries, audio and video so diagnostics and change detection remain transparent. The planner then reduces the collected set to the one media family Mastodon will accept for a single status.
+
+Export preflight validates posters and checks available video metadata through
+`plugin_mastodon_validate_video_metadata()`.
+[API/media safety](04-API-Compatibility.md#export-poster-validation) defines
+limits and hosting fallbacks.
+
+Without a `[more]` marker, export keeps the complete body; a leading marker
+produces an empty body, and the marker adds no ellipsis. ReadMore plugin settings
+do not control this boundary. Unchanged mappings are not forcibly migrated.
+See [the text pipeline](06-Process-Flow.md#21-local-to-remote-status-text-pipeline).
 
 ## P9 — Deletion synchronization
 
@@ -355,7 +326,7 @@ keeps its mapping and sends no DELETE. The start-date gate, locks and request bu
 The entry-delete hook records its first per-entry deadline once: marking plus 300 seconds.
 The defensive entry-import boundary also records a first observation when a delete hook was
 bypassed. P1/P2 content completion preserves these deadlines instead of postponing them.
-<code>plugin_mastodon_scheduled_job()</code> prioritizes due entry work subject to enabled
+`plugin_mastodon_scheduled_job()` prioritizes due entry work subject to enabled
 deletion sync and retry backoff. Each P9 DELETE rechecks that particular entry deadline even
 for a forced run. Future entry shards and descendant rechecks stay deferred.
 
@@ -407,12 +378,67 @@ sequenceDiagram
 
 Admin diagnostics should remain cheap enough for normal admin page loads while still showing enough information to diagnose missing credentials, stale state, companion plugin availability and last sync/deletion results.
 
-## Media path and instance refresh
+### Dedicated maintenance UI
 
-At the start of `plugin_mastodon_run_sync()`, the media budget is initialized
-and instance information is refreshed when due. The import path uses
-`plugin_mastodon_download_to_file()`; a primary download failure stops remote
-import before the cursor update. The export plan additionally validates posters
-and checks available video metadata through
-`plugin_mastodon_validate_video_metadata()`.
-See [media safety](08-Media-Safety.md) for limits and retry behavior.
+Comment-shard diagnostics and repair are reachable from a separate admin action/template instead of being embedded directly in the main configuration form. This keeps the everyday plugin page readable while preserving the same repair primitives for the CLI and admin UI.
+
+| Surface              | Purpose                                               | Mutates state             |
+| -------------------- | ----------------------------------------------------- | ------------------------- |
+| Main admin page      | Configuration, authorization, manual sync and status. | Yes                       |
+| Maintenance page     | Comment-shard diagnostics and repair result display.  | Diagnose: no; repair: yes |
+| CLI maintenance tool | Scriptable diagnostics and repair for administrators. | Diagnose: no; repair: yes |
+
+## P13 — Compact Mastodon profile widget
+
+```mermaid
+flowchart TD
+	Sync[plugin_mastodon_run_sync]
+	Verify[verify_credentials response]
+	Account[Public account fields display_name acct url avatar_static avatar_description]
+	CacheDir[fp-content/plugin_mastodon/profile/]
+	ProfileJson[profile.json without tokens or secrets]
+	Avatar[local avatar image]
+	Widget[plugin_mastodon_widget]
+	Complete{complete local cache?}
+	Render[subject Mastodon plus avatar name and handle]
+	Hide[return no widget]
+
+	Sync --> Verify
+	Verify --> Account
+	Account --> CacheDir
+	CacheDir --> ProfileJson
+	CacheDir --> Avatar
+	Widget --> ProfileJson
+	Widget --> Avatar
+	Widget --> Complete
+	Complete -- yes --> Render
+	Complete -- no --> Hide
+```
+
+The widget callback never calls the Mastodon API and never downloads a remote avatar. Profile cache refresh is triggered at the start of scheduled/manual `plugin_mastodon_run_sync()` runs through account verification code that already talks to Mastodon, then the public cache stores only display name, account handle, profile URL, avatar metadata and alt-text data. This keeps normal CMS response time independent from the Mastodon instance and still refreshes the profile in pure export mode.
+
+## P14 — Frontend comment author-link rendering
+
+Imported Mastodon replies are stored as ordinary FlatPress comments. The author name and author URL are stored separately: the name comes from the Mastodon account display data, while the URL remains the profile URL from `account.url`. The Leggero comment template therefore treats the URL as a normal comment author URL and delegates the external/internal decision to `modifier.is_external_url.php`.
+
+```mermaid
+flowchart TD
+	Comment["FlatPress comment author URL"]
+	Empty{"URL present?"}
+	Relative{"Relative URL or configured blog-base match?"}
+	Plain["Render plain author name"]
+	Internal["Render author link without target"]
+	External["Render author link with target=&quot;_blank&quot;"]
+	Rel["rel=&quot;nofollow noopener noreferrer&quot;"]
+
+	Comment --> Empty
+	Empty -- no --> Plain
+	Empty -- yes --> Relative
+	Relative -- yes --> Internal
+	Relative -- no --> External
+	External --> Rel
+```
+
+Imported status source footer links are separate from comment author links: `plugin_mastodon_imported_status_footer_bbcode()` uses Mastodon `Status.url`, appends the single-toot source link to the FlatPress entry as BBCode and relies on the FlatPress BBCode URL renderer for `target="_blank"` plus `rel="nofollow noopener noreferrer"`.
+
+The process intentionally limits new-tab behavior to absolute URLs outside the configured FlatPress blog base. Internal absolute links such as `https://blog.example/flatpress/entry...`, root-relative links and plain relative links keep the browser in the current tab. External Mastodon profile URLs receive `target="_blank"` and `rel="nofollow noopener noreferrer"`.

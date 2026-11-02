@@ -3,14 +3,22 @@
 ## Harness model
 
 The distributed `fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_`
-loads the real Mastodon plugin from an isolated copy of the current FlatPress
-tree. The plugin code itself is not replaced. HTTP responses, fixture content,
-media files and selected FlatPress boundaries are controlled by the harness.
-The nested script resolves the blog root three directories above its location.
-A content-identical root `simulate_mastodon_plugin.php` is optional, not a file
-shipped in this snapshot. Neither CLI regression nor documentation checks require it.
+loads the real plugin from an isolated copy of the FlatPress tree. HTTP
+responses, fixture content, media and selected FlatPress boundaries are
+controlled by the harness. It resolves the root three directories above its
+location when `defaults.php` is not beside the script. An optional root
+`simulate_mastodon_plugin.php` or regression-directory executable `.php` copy
+must be content-identical after CRLF/LF normalization; neither is required.
+For browser use where `.ph_` files are not executed, create the root `.php`
+copy temporarily and remove it afterwards.
 
-Normal deterministic run verified for the current implementation, including mapped-entry deletion protection:
+The sandbox excludes live `fp-content/content` by default and seeds deterministic
+fixtures. The harness freezes the plugin clock around date-window-sensitive fixture groups,
+snapshots and restores mutable option fixtures, and mocks Mastodon HTTP unless
+live authentication is explicitly requested. Output modes keep the same assertions
+and always end with `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]` and `[SKIP]` counters.
+
+Recorded deterministic implementation result (not rerun by a documentation check):
 
 ```text
 php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --summary
@@ -22,11 +30,32 @@ Exit-code: 0
 ```
 
 Static `test_result()` calls found in the script: `322`.
-One test is optional and only runs with `--live-auth`:
+One authentication check is optional and runs only with `--live-auth`:
 
 ```text
 Configured credentials verify (read-only smoke test)
 ```
+
+### Simulation parameters
+
+| Parameter or query string                             | Environment variable                       | Description                                                                                                              |
+| ----------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `--summary` or `?summary=1`                           | `SIMULATE_MASTODON_SUMMARY=1`              | Prints compact per-test details for browser/shared-hosting runs while keeping all assertions.                            |
+| `--include-live-content` or `?include-live-content=1` | `SIMULATE_MASTODON_INCLUDE_LIVE_CONTENT=1` | Copies the source `fp-content/content` tree into the sandbox for explicit live-content smoke tests.                      |
+| `--live-auth` or `?live-auth=1`                       | —                                          | Enables the optional read-only credential smoke test and allows the harness to contact the configured Mastodon instance. |
+| —                                                     | `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1` | Prevents CI memory-limit raising so the large-state `[SKIP]` branch can be tested deterministically.                     |
+
+### Recommended commands
+
+| Use case                        | Command                                                                                                                                             |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full local regression           | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_`                                                                              |
+| Browser/shared-hosting output   | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --summary`                                                                    |
+| Environment-driven summary mode | `SIMULATE_MASTODON_SUMMARY=1 php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_`                                                  |
+| Explicit live-content smoke run | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --include-live-content --summary`                                             |
+| Optional live credential smoke  | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --live-auth --summary`                                                        |
+| CI large-state skip branch      | `CI=1 SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1 php -d memory_limit=128M fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --summary` |
+
 
 ## Category summary
 
@@ -40,7 +69,21 @@ The catalog below is generated from all static `test_result()` calls and therefo
 
 ## What the harness proves well
 
-The harness now also checks the real `comment_validate` filter chain with CommentCenter moderation, the direct save path with the CommentCenter filter explicitly removed, preservation of the checked Mastodon opt-in after unrelated validation errors, explicit hook priorities/argument counts, and cleanup of rejected or externally orphaned pending grants. The complete simulator remains green when CommentCenter is absent from the active plugin configuration; CommentCenter-specific assertions become not applicable while the direct FlatPress save path remains fully exercised. It also checks that imported Mastodon status footer links render with `target="_blank"` and `rel="nofollow noopener noreferrer"` while those BBCode attributes are stripped from outbound Mastodon text. It also checks URL-aware status budgeting at punctuation boundaries, so commas and full stops directly after links stay outside the fixed Mastodon URL placeholder. It also checks that advanced comment-shard maintenance controls are not embedded in the main settings template, are available from a dedicated maintenance template, that notification-based reply hints import old-thread replies before the slower rotation fallback, and that the central `disable_comment_reply_sync` gate disables FlatPress comment export, Mastodon reply import, reply-notification/context imports and reply deletion follow-ups while keeping entry synchronization active, that the optional `{comment_mastodon}` visitor opt-in is shown only while local comments may be exported, that FlatPress/admin comments with a stored `LOGGEDIN` marker export without a public visitor marker, that visitor opt-ins are persisted even before credentials are complete, that local visitor comments without a stored opt-in marker stay local even when saved during an admin session, and that opted-in visitor replies are not blocked by non-opted-in local parents, and that the optional explicit one-way mode blocks Mastodon-to-FlatPress imports while preserving FlatPress-to-Mastodon exports, keeps hidden import settings intact in the admin save path, hides import-only admin UI output, hides import-only companion-plugin diagnostics while keeping export helpers, re-exports local objects after remote deletion, and keeps locally deleted imported external Mastodon replies tombstoned even when the remote author edits the reply before the next content sync. It also verifies that Mastodon instance capability detection prefers machine-readable `api_versions[mastodon]`, handles nightly version strings, preserves compact `configuration.accounts` snapshots, loads the widget stylesheet through `plugin_mastodon_head()` as a versioned `res/mastodon.css` asset, refreshes the profile-widget cache during automatic and manual one-way sync paths, sends `exclude_direct=true` only when account-status support is known, retries without it for compatible-server rejections, ignores notification fallback payloads when the normal mention status is present, preserves long remote media descriptions, avoids repeated failed `/api/v2/instance` requests within one PHP request, keeps safe defaults when instance information is temporarily unavailable, version-gates unattached media cleanup deletes, and renders the compact Mastodon profile widget solely from a local public profile cache with a locally stored avatar.
+| Protected area                  | Coverage                                                                                                                                                                                                                                                                                                |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Visitor approval and moderation | Real `comment_validate` chain, direct saves with CommentCenter removed, retained checked POST state, hook priorities/signatures, rejected/orphaned grant cleanup; CommentCenter-specific cases become not applicable when disabled while direct saves remain exercised.                                 |
+| Export grants                   | `{comment_mastodon}` appears only when comments may be exported; stored `LOGGEDIN` comments get authenticated grants. Visitor opt-ins persist before credentials are complete; a current admin session alone does not approve a visitor comment. Opted-in children can bypass ineligible local parents. |
+| Comment/reply gate              | `disable_comment_reply_sync` blocks local comment export, remote replies, reply notifications/contexts and reply deletion follow-ups while keeping entry synchronization active.                                                                                                                        |
+| One-way mode                    | Blocks remote-created local writes while retaining local exports, hidden import preferences and export helper diagnostics; missing remote mappings queue local re-export.                                                                                                                               |
+| Reply deletion ownership        | Deleted imported replies remain tombstoned even after remote edits; exported local comments retain their owned remote ID for deletion.                                                                                                                                                                  |
+| Source and author links         | Imported status footers render with `target="_blank"` and `rel="nofollow noopener noreferrer"`; outbound status text strips those BBCode URL attributes. Comment author targets cover external, blog-relative and root-install routes.                                                                  |
+| Status length                   | URL-aware status budgeting at punctuation boundaries keeps adjacent commas and full stops outside the URL placeholder budget.                                                                                                                                                                           |
+| Maintenance UI                  | Shard controls live on a dedicated maintenance template rather than the main settings page.                                                                                                                                                                                                             |
+| Reply discovery                 | Notification hints precede context rotation; notification fallback payloads are ignored when a normal mention status is present.                                                                                                                                                                        |
+| Instance capabilities           | Machine-readable `api_versions[mastodon]` takes precedence; nightly strings and compact `configuration.accounts` snapshots are covered. Failed instance fetches are cached per request and safe defaults remain available.                                                                              |
+| Account privacy                 | `exclude_direct=true` is sent only with known support and retried without it for compatible server rejections.                                                                                                                                                                                          |
+| Media                           | Long remote descriptions survive import; unattached cleanup uses its version gate. Detailed download, upload and memory checks are covered below.                                                                                                                                                       |
+| Profile widget                  | Automatic/manual one-way sync refreshes cache; `plugin_mastodon_head()` loads versioned `res/mastodon.css`; rendering reads public local cache/avatar only.                                                                                                                                             |
 
 | Area                                     | What is real                                                                                                                 | What is simulated                                                               |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
@@ -66,9 +109,19 @@ Explicit live-content smoke coverage remains available with `--include-live-cont
 
 The simulation verifies that `state.json` is written as compact JSON, then runs a small always-on scheduler-state test (`300x10`) and a heavy `3000x10` test. The heavy test is guarded before the synthetic state is built, because creating the large PHP array and full JSON string can exceed 128 MiB shared-hosting limits. Non-CI low-memory runs emit `[WARN]`; CI runs first try to raise `memory_limit` to 384M and emit `[SKIP]` if that is not possible. A skipped or warned heavy test does not make the regression run fail, but the coverage should be repeated in a better-resourced environment. The skip branch can be exercised by setting `CI=1` and `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1` together with a low `memory_limit`.
 
+The small `300x10` test always runs. CI detection accepts `CI`,
+`GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL`, `BUILDKITE`, `CIRCLECI`,
+`TRAVIS`, `APPVEYOR`, `TEAMCITY_VERSION` and `TF_BUILD`.
+
 ## Scheduled-guard isolation policy
 
-The dirty-comment scheduled-run regression clears the `content` sync guard immediately before calling `plugin_mastodon_run_sync(false)`. This keeps the fixture independent from earlier cooldown tests on both file-backed and APCu-backed shared hosts; otherwise an APCu guard can survive sandbox directory cleanup and produce `sync_cooldown` before `dirty_comments` is exercised.
+The dirty-comment scheduled-run regression clears the `content` sync guard
+immediately before `plugin_mastodon_run_sync(false)`. An APCu guard can survive
+sandbox directory cleanup and produce `sync_cooldown` before the dirty path is
+exercised. The cooldown regression separately verifies that a marked guard is
+inactive after `plugin_mastodon_sync_guard_clear()`, covering both file and
+FlatPress-wrapper APCu keys.
+
 
 ## Date-window fixture isolation policy
 
@@ -156,6 +209,31 @@ fit within 80 or 500 characters. Cached instance data for Mastodon 4.0.0 through
 a limit of 180 without additional HTTP requests. The chronology test additionally
 checks the boundary through actual export paths with mocked POST and PUT calls.
 
+See [historical verification events](#historical-verification-events) for the
+original More/PHPStan audit and [static analysis setup](README.md#static-analysis)
+for current commands.
+
+## Additional media regressions
+
+27 new simulator groups cover byte and request budgets, failed downloads,
+redirect credentials, retries, posters, video metadata, and fresh, stale or
+failed instance refreshes. Another 14 real local transport checks exercise cURL
+and PHP streams outside this static `test_result()` catalog.
+See [media verification and evidence limitations](#media-verification-and-evidence-limitations)
+for prerequisites and the limitations of simulated ffprobe metadata.
+
+## Multipart memory preflight
+
+Seven simulation groups cover quantity parsing, exact memory boundaries,
+32/64/128 MiB configurations, unlimited and invalid limits, multipart binary
+and poster contents, missing files, an actual temporary reduction of PHP's
+memory limit, and combined file/poster/framing size using sparse fixtures.
+See [the fallback design](04-API-Compatibility.md#export-without-curl-memory-aware-multipart-fallback).
+
+## Historical verification events
+
+### More implementation analysis
+
 In the verified Windows run with PHP 8.5.5, the combined PHPStan Level 5 analysis
 of the plugin and simulator exceeded the previous 3200 MB recommendation.
 The limit was raised using `-d memory_limit=4800M` and `--memory-limit=4800M`
@@ -164,7 +242,7 @@ for this check; the configuration and rules were unchanged. The initial implemen
 checker use the distributed `.ph_` file directly, without requiring that copy. The regression test itself ran directly using the documented `.ph_`
 variant.
 
-## Documentation-checker regression coverage
+### Documentation-checker regression coverage
 
 The October 26, 2026 audit additionally exercised the checker in isolated copies
 of the documentation and source files. It accepted the distributed harness
@@ -174,27 +252,101 @@ the README, a missing local Markdown target, the wrong Smarty scan version, an
 incorrect physical function line, an incorrect declaration count and a drifting
 optional root harness. An inventory check confirmed descriptions for all 456
 distinct callable names across 459 named declarations. These 12 audit cases
-are separate from the 278 regular plugin simulation assertions above.
+are separate from the 278 regular plugin simulations in that October 26 event;
+they are not the current 321-test total.
 
-All 69 Mermaid blocks in this documentation set were also parsed and rendered
+All 69 Mermaid blocks in that historical documentation set were parsed and rendered
 with Mermaid 12.2.0. Rendering success checks syntax and SVG generation;
 comparison with the PHP control flow remains a separate review step.
 
-## Additional media regressions
+### Modularization verification
 
-27 new simulator groups cover byte and request budgets, failed downloads,
-redirect credentials, retries, posters, video metadata, and fresh, stale or
-failed instance refreshes. Another 14 real local transport checks exercise cURL
-and PHP streams outside this static `test_result()` catalog.
-See [08-Media-Safety.md](08-Media-Safety.md) for prerequisites and the limitations
-of simulated ffprobe metadata.
+Function names and signatures are preserved. At the modularization stages,
+all 476 existing named function and method declarations, including those in
+`media-safety.php`, matched the original source by SHA-256. The CRLF follow-up
+confirmed the same comparison after line-ending normalization. Subsequent
+formatting edits are outside that historical byte-for-byte comparison.
 
-## Multipart memory preflight
+The baseline and each of the three successive stages were checked with the full
+simulator: 321 OK, 0 FAIL, 0 WARN, and 0 SKIP in every run. The names, statuses,
+and order of all 321 checks match the baseline. The stages covered text/profile/
+admin, infrastructure/media, and finally state/synchronization.
 
-Seven additional groups exercise the real fallback body builder and its memory
-budget calculations, including exact boundaries, alternate PHP limits, a real
-runtime limit reduction, binary and poster fields, missing files, and combined
-payload sizes. See [the fallback design](08-Media-Safety.md#export-without-curl-memory-aware-multipart-fallback).
+Local runtime checks used Windows and PHP 8.5.5. The syntax target remains PHP
+7.2–8.5; templates and Smarty calls were not changed. These local checks do not
+constitute a complete PHP/Smarty/web-server matrix or a live Mastodon instance
+test. The complete regression and PHPStan results were obtained before the
+subsequent CRLF conversion; syntax and documentation consistency were checked
+again after that conversion.
+
+These are historical implementation checks, not a fresh full runtime test of
+this documentation redistribution. [Loading checks](#loading-checks-after-modularization)
+are separate from the 321 simulator assertions.
+
+## Loading checks after modularization
+
+The 321 regular simulator checks remain unchanged. In separate PHP processes,
+`regression-test/check-module-loading.ph_` also exercises the `frontend`, `admin`,
+`scoped`, `cwd`, `overrides`, and `repeat` cases. It checks callback availability,
+hook priorities/argument counts, admin classes, constant overrides, absence of
+output, and absence of runtime-file creation during loading. The main simulator
+already copies all of `inc` into its sandbox. The `[more]` text boundary and its
+existing regression coverage remain unchanged.
+
+```text
+php fp-plugins/mastodon/regression-test/check-module-loading.ph_ frontend
+php fp-plugins/mastodon/regression-test/check-module-loading.ph_ admin
+php fp-plugins/mastodon/regression-test/check-module-loading.ph_ scoped
+php fp-plugins/mastodon/regression-test/check-module-loading.ph_ cwd
+php fp-plugins/mastodon/regression-test/check-module-loading.ph_ overrides
+php fp-plugins/mastodon/regression-test/check-module-loading.ph_ repeat
+```
+
+These six isolated loader cases use no instance configuration. The `.ph_`
+extension keeps core/admin test stubs outside normal PHPStan symbol discovery.
+See [the module loading contract](03-Function-Process-Matrix.md#entry-point-and-loading-behavior).
+
+## Media verification and evidence limitations
+
+The following records the media-hardening implementation evidence, not a new
+application runtime test of this documentation reorganization.
+
+The baseline run passed 294 checks. The extended simulator has 321 regular
+checks; one additional authentication check remains explicitly optional.
+27 new groups cover media limits, failure and retry paths, posters, video
+metadata and instance refresh.
+
+`regression-test/media-transport-test.py` starts only a local HTTP test server
+and runs `media-transport-test.ph_`. Another 14 checks use real cURL and PHP
+stream downloads: the exact byte boundary, oversized responses, chunked
+responses, incomplete Content-Length, redirects, redirect loops and an exhausted
+total budget. Only the header adapter is supplied by this isolated transport
+fixture; no Mastodon credentials are loaded.
+
+```text
+python fp-plugins/mastodon/regression-test/media-transport-test.py --php <php.exe> --extension-dir <php/ext>
+php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --summary
+php -d memory_limit=4800M .dist/phpstan.phar analyse -c .dist/phpstan.neon.dist --memory-limit=4800M --debug --no-progress
+php fp-plugins/mastodon/developer-docs/check-consistency.php
+```
+
+On an installed instance, the renamed `.setup/` tree is excluded from analysis.
+Use a local configuration override to scan its permission helper; keep the
+shared configuration suitable for the visible `setup/` tree in the repository.
+See [the installed-instance PHPStan note](README.md#phpstan-on-an-installed-instance).
+The developer analysis requires the complete source tree, including setup.
+The optional `.ph_` simulator must be passed explicitly as a file argument for
+its own static analysis; the normal project search discovers PHP files.
+Run the simulator and PHPStan sequentially: concurrent symbol discovery can
+otherwise select files from a temporary simulator copy that is removed before
+analysis finishes.
+
+The recorded runtime checks used PHP 8.5.5; the PHPStan configuration describes PHP 7.2 through
+8.5. This does not replace a runtime matrix covering every PHP version.
+Video parameters are injected deterministically in the simulator. ffprobe was
+not installed on that test system: an actual codec/ffprobe run and uploads to
+a production Mastodon instance are outside this evidence. No specific nightly
+version is declared fully tested solely on the basis of its version name.
 
 ## Full static test catalog
 
@@ -522,13 +674,3 @@ payload sizes. See [the fallback design](08-Media-Safety.md#export-without-curl-
 | 14692 | Multipart builder rejects missing files without exposing a partial body                                                                                         |
 | 14702 | Multipart builder honors the actual PHP memory limit before reading payloads                                                                                    |
 | 14720 | Multipart total cap includes file poster and framing before any large reads                                                                                     |
-
-## Loading checks after modularization
-
-The 321 regular simulator checks remain unchanged. In separate PHP processes,
-`regression-test/check-module-loading.ph_` also exercises the `frontend`, `admin`,
-`scoped`, `cwd`, `overrides`, and `repeat` cases. It checks callback availability,
-hook priorities/argument counts, admin classes, constant overrides, absence of
-output, and absence of runtime-file creation during loading. The main simulator
-already copies all of `inc` into its sandbox. The `[more]` text boundary and its
-existing regression coverage remain unchanged.

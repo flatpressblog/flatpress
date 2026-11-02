@@ -722,6 +722,12 @@ the complete body follows the existing path. Long teasers are still truncated
 to the server budget; the marker itself does not append an ellipsis. Both POST
 and PUT use this builder when an actual entry create/update is needed.
 
+Comments, imports and ReadMore plugin settings remain independent. Previously
+synchronized unchanged mappings are not migrated: the boundary applies on the
+next actual update. The title, public entry link and hashtag footer still count
+against the server limit. See [API budgets](04-API-Compatibility.md#instance-derived-limits-and-internal-defaults)
+and [More regression coverage](05-Regression-Test-Matrix.md#more-tag-in-entry-exports).
+
 ### 2.2 Remote-to-local HTML and BBCode pipeline
 
 Remote Mastodon content arrives as HTML. The plugin converts only the safe and supported
@@ -900,6 +906,25 @@ flowchart TD
 	Classify -- "audio" --> Audio --> URLFallback --> Download --> Temp --> AttachStore --> AudioTag --> Content
 	Classify -- "video/gifv" --> Video --> URLFallback --> Download --> Temp --> AttachStore --> VideoTag --> Content
 ```
+
+### Bounded media flow
+
+```mermaid
+flowchart TD
+  A[Content run] --> B[Initialize download budget]
+  B --> C[Refresh instance information when due]
+  C --> D[Check status and local fingerprint]
+  D --> E[Stream primary media into bounded temporary files]
+  E -->|Failure| F[Remove temporary files; stop import; retain cursor]
+  E -->|Success| G[Download optional poster within limits]
+  G --> H[Publish media and entry; update mapping]
+  C --> I[Prepare local export]
+  I --> J[Check file limits, posters and available video metadata]
+  J --> K[Existing upload and polling path]
+```
+
+This flow supplements the existing synchronization decisions.
+See [media safety](04-API-Compatibility.md#media-safety-responsibilities) for limits and the optional ffprobe dependency.
 
 ### 2.6 Tags and hashtags when the FlatPress Tag plugin is active
 
@@ -1207,7 +1232,7 @@ flowchart TD
 	Due{"plugin_mastodon_sync_due?"}
 	GuardLookup["Read cooldown via FlatPress APCu wrapper and sync.guard.json"]
 	Cooldown{"Content sync cooldown active?"}
-	GuardClear["APCu/file guard clear uses matching FlatPress wrapper key"]
+	GuardMark["Mark content cooldown: scheduled_content_sync"]
 	Invoke["run_sync(false): read main index, recheck credentials and UTC due time"]
 	Lock{"sync.lock acquired without blocking?"}
 	RateGuard["Start API rate/budget guard"]
@@ -1234,10 +1259,12 @@ flowchart TD
 	Configured -- "Yes" --> Scheduler --> FixedDue{"Enabled fixed entry deletion due and retry barrier elapsed?"}
 	FixedDue -- "Yes" --> FixedDelete["Run deletion sync and return"] --> End
 	FixedDue -- "No" --> UtcDue --> Due
-	Due -- "No" --> End
+	Due -- "No" --> GeneralDeleteDue{"General deletion work enabled and due?"}
+	GeneralDeleteDue -- "Yes" --> FixedDelete
+	GeneralDeleteDue -- "No" --> End
 	Due -- "Yes" --> Invoke --> GuardLookup --> Cooldown
 	Cooldown -- "Active" --> End
-	Cooldown -- "Clear" --> GuardClear --> Lock
+	Cooldown -- "Clear" --> GuardMark --> Lock
 	Lock -- "No" --> End
 	Lock -- "Yes" --> RateGuard --> Stats --> Profile --> FullState --> Protect --> RemoteToLocal
 	RemoteToLocal --> ImportGuard
@@ -1268,9 +1295,10 @@ flowchart TD
 	Start["plugin_mastodon_run_deletion_sync"]
 	Options["Load options and main state without eager comment shards"]
 	Enabled{"Deletion sync enabled?"}
-	Pending{"Force or deletions_pending?"}
+	Pending{"Force, deletions_pending or an entry deletion deadline?"}
 	Due{"Deletion sync due?"}
-	Lock["Acquire sync.lock"]
+	LockOpen{"Open sync.lock succeeded?"}
+	Lock{"Acquire sync.lock without blocking?"}
 	RateGuard["Start API rate/budget guard"]
 	RecheckOnly{"Only pending descendant rechecks?"}
 	EntryLoop["Iterate entry mappings with cursor"]
@@ -1298,7 +1326,7 @@ flowchart TD
 	DeleteLocalComment["comment_delete under local-write guard"]
 	UnlinkComment["Unlink stale remote mapping and queue dirty_comments"]
 	SkipComments["Skip comment/reply deletion follow-up and clear pending reply rechecks/cursors"]
-	ProcessRechecks["Process pending_comment_remote_rechecks"]
+	ProcessRechecks["Process pending_comment_remote_rechecks; retain and skip each recheck with a future parent entry deadline"]
 	Complete{"Failures or rate limit?"}
 	ClearPending["Clear pending flags and cursors"]
 	Retry["Keep deletions_pending with cooldown"]
@@ -1310,15 +1338,25 @@ flowchart TD
 	Start --> Options --> Enabled
 	Enabled -- "No" --> ClearPending --> Write
 	Enabled -- "Yes" --> Pending
-	Pending -- "No" --> Write
+	Pending -- "No" --> Return["Return without starting deletion work"]
 	Pending -- "Yes" --> Due
-	Due -- "No" --> Write
-	Due -- "Yes" --> Lock --> RateGuard --> RecheckOnly
+	Due -- "No" --> Return
+	Due -- "Yes" --> Forced{"Forced run?"}
+	Forced -- "Yes" --> LockOpen
+	Forced -- "No" --> DeleteCooldown{"Deletion cooldown active?"}
+	DeleteCooldown -- "Yes" --> Return
+	DeleteCooldown -- "No" --> MarkDeleteGuard["Mark scheduled deletion cooldown"] --> LockOpen
+	LockOpen -- "No" --> LockError["Persist lock_open_failed and return"]
+	LockOpen -- "Yes" --> Lock
+	Lock -- "No" --> Return
+	Lock -- "Yes" --> RateGuard --> RecheckOnly
 	RecheckOnly -- "No" --> EntryLoop
 	EntryLoop --> EntryScope
 	EntryScope -- "No" --> CommentGate
 	EntryScope -- "Yes" --> EntryLocal
-	EntryLocal -- "No" --> DeleteRemoteEntry --> CommentGate
+	EntryLocal -- "No" --> EntryDeadline{"No individual entry deadline, or deadline reached?"}
+	EntryDeadline -- "No" --> KeepEntry["Preserve future entry deletion work"] --> CommentGate
+	EntryDeadline -- "Yes" --> DeleteRemoteEntry --> CommentGate
 	EntryLocal -- "Yes" --> EntryLookupWindow
 	EntryLookupWindow -- "No" --> CommentGate
 	EntryLookupWindow -- "Yes" --> FetchRemoteEntry --> MissingRemoteEntry
@@ -1328,7 +1366,9 @@ flowchart TD
 	MissingRemoteEntry -- "No" --> CommentGate
 	CommentGate -- "No" --> SkipComments --> Complete
 	CommentGate -- "Yes" --> CommentLoop
-	CommentLoop --> CommentScope
+	CommentLoop --> CommentDeadline{"Parent entry has future deletion deadline?"}
+	CommentDeadline -- "Yes" --> SkipFutureShard["Skip this parent shard; continue eligible comments"] --> ProcessRechecks
+	CommentDeadline -- "No" --> CommentScope
 	CommentScope -- "No" --> ProcessRechecks
 	CommentScope -- "Yes" --> CommentLocal
 	CommentLocal -- "No" --> CommentSource
@@ -1343,7 +1383,9 @@ flowchart TD
 	MissingRemoteComment -- "No" --> ProcessRechecks
 	RecheckOnly -- "Yes" --> CommentGate
 	ProcessRechecks --> Complete
-	Complete -- "No failures" --> ClearPending --> Write
+	Complete -- "No failures" --> Completed["Record completion; clear cursors and retry barrier"] --> Remaining{"Entry deletion deadlines or pending descendant rechecks remain?"}
+	Remaining -- "Yes" --> KeepPending["Preserve pending work and derive next deadline/scope"] --> Write
+	Remaining -- "No" --> ClearPending --> Write
 	Complete -- "Failures or rate limit" --> Retry --> Write
 ```
 
@@ -1426,6 +1468,31 @@ Forced calls still respect individual deadlines and retry backoff. Restoration c
 decision, while disabled deletion sync retains deadlines for later re-enabling. A five-minute
 deadline makes work eligible; a later web request and the existing lock/budgets are required.
 
+### Shard/cursor deletion synchronization
+
+```mermaid
+flowchart TD
+	Start["Deletion sync after sync.lock"]
+	Entries["Process entry mappings by deletion_cursor_entries"]
+	Cursor["Read deletion_cursor_comments"]
+	ShardList["List comment shard entry ids"]
+	Skip["Skip shards before cursor entry"]
+	Load["Load one comment shard"]
+	ChildIndex["Build child index from loaded shard"]
+	Comments["Process comments after cursor"]
+	Unload{"Shard changed?"}
+	Drop["Unload unchanged shard from memory"]
+	Keep["Keep changed shard for final partial write"]
+	Rechecks["Retain/skip rechecks with future parent entry deadlines; load only eligible recheck shards"]
+	Write["Partial state write preserves unloaded shards"]
+	Start --> Entries --> Cursor --> ShardList --> ShardDeadline{"Future entry deletion deadline?"}
+	ShardDeadline -- "yes: skip shard" --> ShardList
+	ShardDeadline -- "no" --> Skip --> Load --> ChildIndex --> Comments --> Unload
+	Unload -- "no" --> Drop --> ShardList
+	Unload -- "yes" --> Keep --> ShardList
+	ShardList --> Rechecks --> Write
+```
+
 ### 4.3 Manual full synchronization in the admin area
 
 Manual admin runs are repair paths. They read the main state and load comment shards on demand; they can bypass the
@@ -1462,7 +1529,7 @@ sequenceDiagram
 	Admin->>AdminUI: Press Run deletion synchronization
 	AdminUI->>Plugin: plugin_mastodon_run_deletion_sync(true)
 	Plugin->>State: Load main state.json without eager comment shards
-	Plugin->>Plugin: Force bypasses pending/cooldown guard, but deletions_pending and not-before due check still apply
+	Plugin->>Plugin: Force bypasses the early pending gate and cooldown guard; due requires pending work or an entry deadline and respects retry/term barriers
 	Plugin->>API: Delete remote statuses for local deletions with delete_media fallback
 	Plugin->>Core: If remote import is enabled, delete local objects under guard, otherwise unlink and queue re-export
 	Plugin->>State: Update tombstones, cursors, deletion_stats
@@ -1505,6 +1572,61 @@ flowchart TD
 	Deletion --> Template
 	Errors --> Template
 ```
+
+### 4.5 State persistence and legacy migration
+
+See [storage semantics](02-State-Model.md#split-comment-shard-model) and
+[legacy migration safety](02-State-Model.md#legacy-migration-safety).
+
+#### Split-state write serialization and legacy migration
+
+```mermaid
+flowchart TD
+	Caller["State mutation caller"]
+	Lock["Acquire state-write.lock"]
+	Shards["Write loaded per-entry comment shards"]
+	ShardFail["Shard write failed"]
+	Main["Write compact state.json"]
+	MainFail["Main write failed; repair can rebuild index from shards"]
+	Scheduler["Refresh scheduler-state.json"]
+	Release["Release state-write.lock"]
+
+	Caller --> Lock --> Shards
+	Shards -->|failure| ShardFail --> Release
+	Shards -->|success| Main
+	Main -->|failure| MainFail --> Release
+	Main -->|success| Scheduler --> Release
+```
+
+#### Large legacy inline-comment migration
+
+```mermaid
+flowchart TD
+	Read["state_read() prestats state.json"]
+	Check["Find top-level comments object"]
+	Lock["Acquire state-write.lock"]
+	Backup["Create state.json.migration-backup-*.json"]
+	Extract["Extract comments object without full state json_decode"]
+	Current["Buffer current entry comments"]
+	Existing["Read existing shard for same entry"]
+	Merge["Merge existing + current comments"]
+	Shard["Write per-entry comment shard via temp file + rename"]
+	Compact["Rewrite compact state.json with comments empty"]
+	Decode["Continue normal normalized state read"]
+	Fallback["Return legacy normalized state"]
+
+	Read --> Check
+	Check -- "no inline comments" --> Decode
+	Check -- "inline comments present" --> Lock --> Backup
+	Backup -- "failure" --> Fallback
+	Backup -- "success" --> Extract --> Current --> Existing --> Merge --> Shard
+	Shard -- "failure" --> Fallback
+	Shard -- "success" --> Compact
+	Compact -- "failure" --> Fallback
+	Compact -- "success" --> Decode
+```
+
+
 
 ## 5. Core post-success hooks, dirty tracking, and local-write guard
 
@@ -1606,80 +1728,44 @@ flowchart TD
 	StateOK -- "No" --> LastError
 ```
 
-## 7. Simulation and regression-test architecture
-
-The distributed `fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_`
-resolves the blog root three directories above its location when `defaults.php`
-is not beside the script, then copies the tree into an isolated sandbox and
-loads its real plugin code. An optional root `simulate_mastodon_plugin.php` or
-executable regression-directory `.php` copy must be content-identical after
-CRLF/LF normalization. The checker accepts the distributed `.ph_` file directly
-and compares optional copies when present. The snapshot does not ship a root
-copy. Mastodon HTTP is mocked unless optional live authentication is requested.
+### State-write failure propagation
 
 ```mermaid
 flowchart TD
-	Script["Root or regression-test simulator entry point"]
-	SourceRoot{"defaults.php beside script?"}
-	RootFallback["Resolve FlatPress root three directories above regression-test copy"]
-	OutputMode{"--summary or SIMULATE_MASTODON_SUMMARY=1?"}
-	VerboseOutput["Verbose per-test details"]
-	SummaryOutput["Compact per-test details"]
-	SandboxPolicy{"Include live fp-content/content?"}
-	MinimalSandbox["Create sandbox without live fp-content/content"]
-	LiveSandbox["Explicit live-content smoke sandbox"]
-	EmptyContent["Create empty fp-content/content"]
-	CoreStubs["Load FlatPress includes and test helpers"]
-	Plugin["require fp-plugins/mastodon/plugin.mastodon.php"]
-	Fixtures["Create deterministic entries, comments, media files, options, and state fixtures"]
-	FixedClock["Freeze plugin_mastodon_test_now for date-window-sensitive fixture groups"]
-	ScopedOptions["Snapshot, override, and restore mutable admin option fixtures"]
-	HTTPQueue["Mock Mastodon HTTP response queue"]
-	GuardIsolation["Dirty-comment scheduled fixture clears content guard"]
-	RunSync["Call real plugin sync/deletion functions"]
-	Assertions["test_result / test_warn / test_skip assertions"]
-	CompactWrite["Assert state.json compact-write roundtrip"]
-	SmallState["Always-on 300x10 scheduler-state regression"]
-	MemoryGuard["Check memory before building 3000x10 state"]
-	CIRaise["CI: try to raise memory_limit to 384M"]
-	LargeState["Run 3000x10 scheduler-state regression"]
-	Warn["Shared-host low memory: emit WARN"]
-	Skip["CI cannot raise memory: emit SKIP"]
-	InspectState["Inspect state.json, scheduler-state.json, files, and captured API calls"]
-	FinalSummary["Always print Exit-code and OK/FAIL/WARN/SKIP counters"]
-	OptionalLive["Optional --live-auth credentials smoke test"]
-	Cleanup["Delete temporary sandbox"]
+	Write["plugin_mastodon_state_write()"]
+	Failure{"Failure kind"}
+	Lock["state_write_lock_unavailable"]
+	Shard["comment_shard_write_failed"]
+	Json["state_json_encode_failed"]
+	Main["state_main_write_failed"]
+	Marker["plugin_mastodon_state_write_error_set()"]
+	Wrapper["plugin_mastodon_state_write_with_last_error()"]
+	LastError["runtime state last_error"]
 
-	Script --> SourceRoot
-	SourceRoot -- "Yes" --> OutputMode
-	SourceRoot -- "No" --> RootFallback --> OutputMode
-	OutputMode -- "No" --> VerboseOutput --> SandboxPolicy
-	OutputMode -- "Yes" --> SummaryOutput --> SandboxPolicy
-	SandboxPolicy -- "default" --> MinimalSandbox --> EmptyContent --> CoreStubs
-	SandboxPolicy -- "--include-live-content or env flag" --> LiveSandbox --> CoreStubs
-	CoreStubs --> Plugin --> Fixtures
-	Fixtures --> FixedClock --> HTTPQueue --> RunSync --> Assertions
-	Fixtures --> ScopedOptions --> Assertions
-	Fixtures -. "APCu/file cooldown isolation" .-> GuardIsolation --> RunSync
-	Assertions --> CompactWrite --> SmallState --> MemoryGuard
-	MemoryGuard -- "enough memory" --> LargeState --> InspectState
-	MemoryGuard -- "CI + low limit" --> CIRaise
-	CIRaise -- "raised" --> LargeState
-	CIRaise -- "not raised" --> Skip --> InspectState
-	MemoryGuard -- "non-CI low limit" --> Warn --> InspectState
-	Assertions --> InspectState --> FinalSummary --> Cleanup
-	Script -. "only when explicitly requested" .-> OptionalLive
+	Write --> Failure
+	Failure --> Lock --> Marker
+	Failure --> Shard --> Marker
+	Failure --> Json --> Marker
+	Failure --> Main --> Marker
+	Marker --> Wrapper --> LastError
 ```
 
-The simulation sandbox deliberately excludes live `fp-content/content` in the default regression run. It still copies configuration and plugin files, creates an empty content directory, and then seeds deterministic fixtures. This prevents production-like 3000x10 blogs from spending most of the request copying and deleting live entries/comments before the first assertion. Explicit live-content smoke coverage remains available with `--include-live-content` or `SIMULATE_MASTODON_INCLUDE_LIVE_CONTENT=1`.
+## 7. Simulation and regression-test architecture
 
-The output mode is independent of the assertions. Normal output keeps full details for one-file diagnostics. Summary output can be requested with `--summary` or `SIMULATE_MASTODON_SUMMARY=1`; it keeps the status and test name, but collapses verbose details to short text or JSON key summaries. Both output modes always end with the same counter block: `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]`, and `[SKIP]`.
+The simulator loads real plugin code in an isolated filesystem sandbox and
+mocks Mastodon HTTP unless live authentication is explicitly requested.
+[The regression matrix](05-Regression-Test-Matrix.md#harness-model) owns fixture
+isolation, invocation, output modes, memory policy and test evidence.
 
-The APCu cooldown regression verifies that a marked content guard is no longer active after `plugin_mastodon_sync_guard_clear()`; this catches mismatched FlatPress wrapper key usage on APCu-enabled shared hosts. The dirty-comment scheduled-run regression also clears the `content` guard immediately before its own non-forced `plugin_mastodon_run_sync(false)` call, so earlier cooldown assertions cannot survive through APCu and mask the `dirty_comments` export path as `sync_cooldown`. Date-window-sensitive comment-export fixtures freeze `$GLOBALS['plugin_mastodon_test_now']` to a fixed UTC instant and unset the hook after the related group, which keeps fixed FlatPress IDs and filenames reproducible without bypassing the scheduled-window code. The admin-assignment fixture similarly snapshots, overrides and restores the normalized plugin options so assertions for `old_thread_reply_check` and `delete_sync_enabled` cannot inherit state from earlier scenarios. The compact-state regression first verifies that legacy pretty-printed `state.json` files remain readable and that new `state.json` writes are compact JSON while preserving all mapping queues. The large `3000x10` scheduler-state regression is intentionally guarded before its synthetic state is built. On 128 MiB shared-hosting-style PHP limits, the large PHP array plus full JSON string can exhaust memory before the compact scheduler-state behavior is reached. The smaller `300x10` state test always runs; the heavy test runs when memory is sufficient, warns in low-memory non-CI environments, and is skipped in CI only after an attempted memory-limit raise fails. The CI skip branch can be tested deterministically with `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1`.
-
-The locally deleted imported remote reply tombstone regressions exercise both a normal context replay and an edited remote reply replay. They ensure `comment_tombstones` block re-import before hash comparison and that deletion sync treats legacy missing `source=remote` comments as local ignore decisions without outbound Mastodon `DELETE` requests.
-
-The exported-comment deletion-invariant regressions use an old entry outside the scheduled window and cover both `plugin_mastodon_run_sync(true, false)` and `plugin_mastodon_run_sync(false)`. They assert that the delete hook tombstones before content sync, the context response imports zero replacement comments and the original mapping remains available for deletion sync. A bypass-hook fixture proves the targeted import-boundary fallback, and a mapping fixture proves duplicate remote-ID rejection plus obsolete reverse-index cleanup during a legitimate remap.
+```mermaid
+flowchart TD
+    Script[Distributed simulator] --> Sandbox[Isolated filesystem and fixtures]
+    Sandbox --> Plugin[Load real plugin modules]
+    Plugin --> HTTP[Mocked Mastodon HTTP boundary]
+    HTTP --> Run[Run content and deletion paths]
+    Run --> Assert[Assert state files and captured requests]
+    Assert --> Summary[Status counters and cleanup]
+```
 
 ## 8. Operational guarantees and intentional behavior
 
@@ -1728,140 +1814,6 @@ Key implications for developers:
   falls back to plain `DELETE /api/v1/statuses/:id` for older Mastodon behavior.
 - Companion plugins improve rendering and feature completeness, but the Mastodon plugin still
   stores importable FlatPress markup even when a companion renderer is currently inactive.
-
-## Split-state write serialization and legacy migration
-
-```mermaid
-flowchart TD
-	Caller["State mutation caller"]
-	Lock["Acquire state-write.lock"]
-	Shards["Write loaded per-entry comment shards"]
-	ShardFail["Shard write failed"]
-	Main["Write compact state.json"]
-	MainFail["Main write failed; repair can rebuild index from shards"]
-	Scheduler["Refresh scheduler-state.json"]
-	Release["Release state-write.lock"]
-
-	Caller --> Lock --> Shards
-	Shards -->|failure| ShardFail --> Release
-	Shards -->|success| Main
-	Main -->|failure| MainFail --> Release
-	Main -->|success| Scheduler --> Release
-```
-
-## Shard/cursor deletion synchronization
-
-```mermaid
-flowchart TD
-	Start["Deletion sync after sync.lock"]
-	Entries["Process entry mappings by deletion_cursor_entries"]
-	Cursor["Read deletion_cursor_comments"]
-	ShardList["List comment shard entry ids"]
-	Skip["Skip shards before cursor entry"]
-	Load["Load one comment shard"]
-	ChildIndex["Build child index from loaded shard"]
-	Comments["Process comments after cursor"]
-	Unload{"Shard changed?"}
-	Drop["Unload unchanged shard from memory"]
-	Keep["Keep changed shard for final partial write"]
-	Rechecks["Load pending recheck shards"]
-	Write["Partial state write preserves unloaded shards"]
-	Start --> Entries --> Cursor --> ShardList --> Skip --> Load --> ChildIndex --> Comments --> Unload
-	Unload -- "no" --> Drop --> ShardList
-	Unload -- "yes" --> Keep --> ShardList
-	ShardList --> Rechecks --> Write
-```
-
-## Large legacy inline-comment migration
-
-```mermaid
-flowchart TD
-	Read["state_read() prestats state.json"]
-	Check["Find top-level comments object"]
-	Lock["Acquire state-write.lock"]
-	Backup["Create state.json.migration-backup-*.json"]
-	Extract["Extract comments object without full state json_decode"]
-	Current["Buffer current entry comments"]
-	Existing["Read existing shard for same entry"]
-	Merge["Merge existing + current comments"]
-	Shard["Write per-entry comment shard via temp file + rename"]
-	Compact["Rewrite compact state.json with comments empty"]
-	Decode["Continue normal normalized state read"]
-	Fallback["Return legacy normalized state"]
-
-	Read --> Check
-	Check -- "no inline comments" --> Decode
-	Check -- "inline comments present" --> Lock --> Backup
-	Backup -- "failure" --> Fallback
-	Backup -- "success" --> Extract --> Current --> Existing --> Merge --> Shard
-	Shard -- "failure" --> Fallback
-	Shard -- "success" --> Compact
-	Compact -- "failure" --> Fallback
-	Compact -- "success" --> Decode
-```
-
-## Comment-shard diagnostics and repair
-
-```mermaid
-flowchart TD
-	Start["plugin_mastodon_state_diagnose_comment_shards()"]
-	Files["Scan state-comments/YY/MM/*.json"]
-	Validate["Validate JSON, entry_id and count"]
-	Rebuild["Rebuild comment_shards.entries and comments_remote in memory"]
-	Compare["Compare rebuilt data with main state metadata"]
-	Report["Return ok/errors/warnings/stats"]
-	Repair{"Repair requested?"}
-	Lock["Acquire state-write.lock"]
-	Write["Write compact state.json with rebuilt indexes"]
-	Done["Return repair result"]
-
-	Start --> Files --> Validate --> Rebuild --> Compare --> Report --> Repair
-	Repair -- "no" --> Done
-	Repair -- "yes and no shard errors" --> Lock --> Write --> Done
-```
-
-## Admin and CLI shard-maintenance entry points
-
-```mermaid
-flowchart TD
-	AdminButton["Admin panel diagnose/repair buttons"]
-	CliScript["mastodon-state-cli.php diagnose|repair"]
-	Formatter["Build admin/CLI maintenance result"]
-	Diagnose["plugin_mastodon_state_diagnose_comment_shards()"]
-	Repair["plugin_mastodon_state_repair_comment_shards()"]
-	StateWrite["Under state-write.lock: write compact main payload and refresh scheduler summary"]
-	Output["Return web message or CLI exit code"]
-
-	AdminButton --> Formatter
-	CliScript --> Formatter
-	Formatter --> Diagnose
-	Formatter --> Repair
-	Repair --> StateWrite
-	Diagnose --> Output
-	StateWrite --> Output
-```
-
-## State-write failure propagation
-
-```mermaid
-flowchart TD
-	Write["plugin_mastodon_state_write()"]
-	Failure{"Failure kind"}
-	Lock["state_write_lock_unavailable"]
-	Shard["comment_shard_write_failed"]
-	Json["state_json_encode_failed"]
-	Main["state_main_write_failed"]
-	Marker["plugin_mastodon_state_write_error_set()"]
-	Wrapper["plugin_mastodon_state_write_with_last_error()"]
-	LastError["runtime state last_error"]
-
-	Write --> Failure
-	Failure --> Lock --> Marker
-	Failure --> Shard --> Marker
-	Failure --> Json --> Marker
-	Failure --> Main --> Marker
-	Marker --> Wrapper --> LastError
-```
 
 ## 9. Admin maintenance page separation
 
@@ -1919,21 +1871,43 @@ sequenceDiagram
 	Maint-->>Admin: Display result and back link
 ```
 
-## Bounded media flow
+### Admin and CLI shard-maintenance entry points
 
 ```mermaid
 flowchart TD
-  A[Content run] --> B[Initialize download budget]
-  B --> C[Refresh instance information when due]
-  C --> D[Check status and local fingerprint]
-  D --> E[Stream primary media into bounded temporary files]
-  E -->|Failure| F[Remove temporary files; stop import; retain cursor]
-  E -->|Success| G[Download optional poster within limits]
-  G --> H[Publish media and entry; update mapping]
-  C --> I[Prepare local export]
-  I --> J[Check file limits, posters and available video metadata]
-  J --> K[Existing upload and polling path]
+	AdminButton["Admin panel diagnose/repair buttons"]
+	CliScript["mastodon-state-cli.php diagnose|repair"]
+	Formatter["Build admin/CLI maintenance result"]
+	Diagnose["plugin_mastodon_state_diagnose_comment_shards()"]
+	Repair["plugin_mastodon_state_repair_comment_shards()"]
+	StateWrite["Under state-write.lock: write compact main payload and refresh scheduler summary"]
+	Output["Return web message or CLI exit code"]
+
+	AdminButton --> Formatter
+	CliScript --> Formatter
+	Formatter --> Diagnose
+	Formatter --> Repair
+	Repair --> StateWrite
+	Diagnose --> Output
+	StateWrite --> Output
 ```
 
-This flow supplements the existing synchronization decisions.
-See [media safety](08-Media-Safety.md) for limits and the optional ffprobe dependency.
+### Comment-shard diagnostics and repair
+
+```mermaid
+flowchart TD
+	Start["plugin_mastodon_state_diagnose_comment_shards()"]
+	Files["Scan state-comments/YY/MM/*.json"]
+	Validate["Validate JSON, entry_id and count"]
+	Rebuild["Rebuild comment_shards.entries and comments_remote in memory"]
+	Compare["Compare rebuilt data with main state metadata"]
+	Report["Return ok/errors/warnings/stats"]
+	Repair{"Repair requested?"}
+	Lock["Acquire state-write.lock"]
+	Write["Write compact state.json with rebuilt indexes"]
+	Done["Return repair result"]
+
+	Start --> Files --> Validate --> Rebuild --> Compare --> Report --> Repair
+	Repair -- "no" --> Done
+	Repair -- "yes and no shard errors" --> Lock --> Write --> Done
+```

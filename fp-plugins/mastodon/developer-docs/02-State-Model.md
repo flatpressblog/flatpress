@@ -10,10 +10,27 @@
 | `fp-content/plugin_mastodon/scheduler-state.json`               | Compact request-time status summary.                                                  | `plugin_mastodon_maybe_sync()`, admin diagnostics. | state writes and scheduler helpers.           |
 | `fp-content/plugin_mastodon/sync.lock`                          | Non-blocking file lock preventing concurrent content/deletion runs.                   | content and deletion orchestrators.                | Opened/locked by run functions.               |
 | `fp-content/plugin_mastodon/state-write.lock`                   | Short lock serializing multi-file state mutations outside and inside sync runs.       | state read/write and repair helpers.               | `plugin_mastodon_state_write_lock_acquire()`. |
-| `fp-plugins/mastodon/mastodon-state-cli.php`                    | Optional CLI entry point for read-only diagnostics or shard repair.                   | CLI operators on development/hosting shells.       | Invokes diagnostic or repair helpers only.    |
+| `fp-plugins/mastodon/mastodon-state-cli.php`                    | CLI diagnostics (legacy reads may migrate state) or explicit shard repair.            | CLI operators on development/hosting shells.       | Invokes diagnostic or repair helpers only.    |
 | `fp-content/plugin_mastodon/sync.guard.json`                    | File-backed cooldown guard; APCu uses the same key suffix through FlatPress wrappers. | scheduled content/deletion paths.                  | `plugin_mastodon_sync_guard_mark()`.          |
 | `fp-content/plugin_mastodon/rate-limit-windows.json`            | Persistent cross-run upload/delete/status-page budgets.                               | rate-limit guard.                                  | rate-limit guard.                             |
 | `fp-content/plugin_mastodon/sync.log`                           | Append-only operational log with bounded rotation.                                    | administrators and tests.                          | `plugin_mastodon_log()`.                      |
+| `fp-content/plugin_mastodon/profile/profile.json`               | Regenerable public account/avatar cache, separate from authoritative mappings.        | Head/widget cache readers.                         | Authenticated sync/account refresh.           |
+| `fp-content/plugin_mastodon/profile/avatar.*`                   | Locally served, validated avatar referenced by the public profile cache.              | Widget rendering.                                  | Profile refresh.                              |
+
+## Public profile cache lifecycle
+
+`profile/profile.json` stores `version`, `account_id`, `display_name`, `acct`,
+`username`, `profile_url`, `avatar_file`, `avatar_source_url`, `avatar_mime_type`,
+`avatar_bytes`, `avatar_description` and `fetched_at`. These public fields and
+the local avatar are regenerable cache artifacts. They are not synchronization
+mappings and contain no access token, client secret or authorization header.
+
+`plugin_mastodon_run_sync()` refreshes them through authenticated account work,
+including scheduled, manual and one-way/export-only runs. Cache refresh failure
+does not by itself decide the content-sync result. Rendering reads only a
+complete local cache and otherwise hides the widget; it makes no HTTP request.
+See [P13](01-Process-Map.md#p13--compact-mastodon-profile-widget) for rendering
+and CSS, and [API field sources](04-API-Compatibility.md#profile-widget-account-cache).
 
 ## Split comment-shard model
 
@@ -43,6 +60,38 @@ shards, then traverses entry/comment cursors and loads the required shards on de
 after acquiring the deletion lock; the scheduler fast path still uses `scheduler-state.json`
 and does not load comment shards.
 
+A short-lived `state-write.lock` serializes every main-state and shard mutation,
+including dirty hooks outside the long sync lock. Partial writes preserve
+unloaded shards.
+
+### Shard loading policy
+
+| Path                      | Comment-shard loading policy                                                                                |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Frontend due check        | No comment shards; uses `scheduler-state.json`.                                                             |
+| Scheduled content sync    | Initially loads active-window/dirty shards plus pending-recheck parent shards when comment sync is enabled. |
+| Dirty entry/comment hooks | Loads only the affected parent-entry shard.                                                                 |
+| Full local-to-remote sync | Iterates entries and loads each processed entry shard on demand.                                            |
+| Deletion sync             | Iterates comment shards by cursor and avoids loading all shards up front.                                   |
+| Full state diagnostics    | May still request a full state when explicitly needed by admin tooling.                                     |
+
+## Legacy migration safety
+
+The streaming legacy migration is intentionally narrow. It only handles the known Mastodon plugin state shape: a top-level JSON object with a high-volume top-level `comments` object. It does not attempt to be a general JSON parser for arbitrary files.
+
+Migration is fail-closed: if the migration backup, a shard write or the compact main-state write fails, the read path falls back to the legacy state instead of claiming success. Re-running the migration is safe because a later flush for the same entry merges already-written shard comments with the current legacy batch before replacing the shard.
+
+Very large states are inspected before ordinary `json_decode()`. The streaming
+path backs up the legacy state and extracts top-level comments into shards.
+Non-contiguous comment batches for one entry are merged with its existing shard
+before replacement, preventing overwrite loss.
+
+## UTC timestamp policy
+
+Scheduler and deletion due checks parse technical datetimes as UTC and write
+new timestamps with `gmdate()`. FlatPress `locale.timeoffset` applies only to
+admin-local display and FlatPress-local date keys.
+
 ## `state.json` fields
 
 | Field                           | Type                                         | Meaning                                                                                                                                          | Usually written by                                                                                                           | Usually read by                                                                                                           |
@@ -51,8 +100,10 @@ and does not load comment shards.
 | last_run                        | UTC datetime string                          | Last completed content sync timestamp.                                                                                                           | run_sync via `gmdate()`.                                                                                                     | scheduler-state summary and UTC due check.                                                                                |
 | last_deletion_run               | UTC datetime string                          | Last completed deletion sync timestamp.                                                                                                          | run_deletion_sync via `gmdate()`.                                                                                            | scheduler-state summary and admin display.                                                                                |
 | deletions_pending               | 0/1                                          | Whether follow-up deletion sync work exists.                                                                                                     | delete hooks, state_set_deletions_pending.                                                                                   | maybe_sync, run_deletion_sync.                                                                                            |
-| deletions_pending_scope         | full\entries\comments                        | Limits what deletion work is currently needed.                                                                                                   | state_set_deletions_pending.                                                                                                 | deletion sync candidate selection.                                                                                        |
+| deletions_pending_scope         | full / comment_rechecks                      | Limits what deletion work is currently needed.                                                                                                   | state_set_deletions_pending.                                                                                                 | deletion sync candidate selection.                                                                                        |
 | deletions_not_before            | UTC datetime string                          | Earliest follow-up deletion run time.                                                                                                            | state_set_deletions_pending.                                                                                                 | UTC deletion_sync_due cooldown.                                                                                           |
+| deletion_retry_not_before       | UTC datetime string                          | Retry lower bound retained independently of entry deadlines.                                                                                     | deletion failure handling                                                                                                    | scheduler and deletion sync                                                                                               |
+| local_entry_deletions           | map entryId -> UTC deadline                  | First local deletion marking plus 300 seconds, preserved through content runs.                                                                   | local delete hook/import guard                                                                                               | deletion sync and compact scheduler derivation                                                                            |
 | last_error                      | string                                       | Last operational error or rate-limit reason.                                                                                                     | sync and deletion paths.                                                                                                     | admin diagnostics, scheduler summary.                                                                                     |
 | last_remote_status_id           | string                                       | Newest seen imported remote top-level status.                                                                                                    | remote-to-local sync.                                                                                                        | next remote import since_id/max logic.                                                                                    |
 | last_remote_notification_id     | string                                       | Newest processed mention notification hint.                                                                                                      | notification hint pass.                                                                                                      | next notifications since_id logic.                                                                                        |
@@ -80,15 +131,16 @@ CommentCenter moderation stores pending visitor comments outside the normal Flat
 
 A mapped entry typically carries:
 
-| Key                                                              | Meaning                                                                                                           |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `remote_id`                                                      | Mastodon status ID for the local entry.                                                                           |
-| `hash`                                                           | Content hash used to skip unchanged local entries.                                                                |
-| `local_date_key` / `remote_date_key` / `remote_updated_at`       | Used for sync window decisions.                                                                                   |
-| `remote_media`                                                   | Stored remote media descriptors for the effective Mastodon media selection, used for reuse and cleanup decisions. |
-| `media_attachment_signature`                                     | Signature of the selected local status media files/paths/types, not every media tag found in the FlatPress entry. |
-| `media_description_signature`                                    | Signature of descriptions/alt text for the selected status media set.                                             |
-| `source` (`local` or `remote`)                                   | Indicates whether a local entry originated from Mastodon.                                                         |
+| Key                                                              | Meaning                                                                                                                          |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `remote_id`                                                      | Mastodon status ID for the local entry.                                                                                          |
+| `hash`                                                           | Content hash used to skip unchanged local entries.                                                                               |
+| `import_fingerprint`                                             | SHA-1 of the imported JSON status; together with the unchanged local `hash`, skips repeated downloads. Not a security guarantee. |
+| `local_date_key` / `remote_date_key` / `remote_updated_at`       | Used for sync window decisions.                                                                                                  |
+| `remote_media`                                                   | Stored remote media descriptors for the effective Mastodon media selection, used for reuse and cleanup decisions.                |
+| `media_attachment_signature`                                     | Signature of the selected local status media files/paths/types, not every media tag found in the FlatPress entry.                |
+| `media_description_signature`                                    | Signature of descriptions/alt text for the selected status media set.                                                            |
+| `source` (`local` or `remote`)                                   | Indicates whether a local entry originated from Mastodon.                                                                        |
 
 The media signatures are computed after `plugin_mastodon_select_status_media_items()` has reduced the collected media to one Mastodon-compatible family. For example, if an entry contains images, audio, and video, only the selected image set contributes to the stored media signatures and remote media descriptors. The raw FlatPress content hash still includes the content itself, so ignored media changes can still make the entry dirty, but they do not force an invalid mixed-media Mastodon status.
 
@@ -113,6 +165,11 @@ A mapped comment typically carries:
 `comment_reply_optins` is intentionally kept in the main state instead of rewriting FlatPress comment files or creating one file per comment. It is needed for public visitor approvals; authenticated FlatPress/admin comments are recognized from the stored comment payload. The marker is small, uses the same `entryId:commentId` key as comment mappings and can contain `entry_id`, `comment_id`, `granted_at`, `source` and an optional `pending_file` basename. Ordinary grants do not trigger filesystem checks. Only pending-file grants are checked by the bounded orphan pruner. If the visitor does not tick the checkbox, no error is shown: the comment remains local and the later local-to-remote export guard skips it.
 
 When a moderated comment is approved, `plugin_mastodon_state_finalize_comment_reply_optin()` clears `pending_file` while keeping the export grant. When a marked comment is successfully exported, `plugin_mastodon_state_set_comment_mapping()` copies the approval metadata into the durable comment mapping and the temporary marker is removed. Deleting a final comment or rejecting a pending CommentCenter record removes the marker. `plugin_mastodon_state_prune_orphaned_pending_comment_reply_optins()` provides a fallback for externally removed pending files and preserves the grant whenever the final FlatPress comment already exists.
+
+The opt-in checkbox remains checked when another validator redisplays the submitted form.
+Approval finalizes a pending grant; rejection or a later bounded sync prune removes orphaned pending grants.
+This lifecycle applies with or without CommentCenter; the frontend bridge and
+moderation events are illustrated in [the opt-in flow](06-Process-Flow.md#10b-visitor-opt-in-for-flatpress-comment-to-mastodon-reply-export).
 
 ### Tombstones and rechecks
 
@@ -206,6 +263,16 @@ guards still apply.
 12. `state.json` writes use compact JSON without `JSON_PRETTY_PRINT`; old pretty-printed files remain readable because both forms are ordinary JSON.
 13. A missing mapped entry must not be restored by remote import; retain its mapping unchanged until deletion reconciliation succeeds.
 
+## Compact scheduler fields
+
+`scheduler-state.json` is derived from the main state, not an independent
+mapping store. It carries `version`, `last_run`, `last_deletion_run`,
+`deletions_pending`, `deletions_pending_scope`, `deletions_not_before`,
+`deletion_retry_not_before`, `local_entry_deletion_not_before`, `last_error`,
+`content_stats`, `deletion_stats`, `source_state_signature` and `updated_at`.
+The signature detects a stale summary; the earliest entry deadline is a scalar,
+so an ordinary fresh due check needs no full mapping or shard load.
+
 ## Full-state write format
 
 `state.json` is intentionally written as compact JSON. This keeps the authoritative mapping state human-inspectable enough for diagnostics while avoiding the whitespace overhead of pretty-printed JSON on large installations. The read path still accepts legacy pretty-printed files without migration, and `scheduler-state.json` remains the small request-time summary that protects normal frontend requests from loading the full mapping state.
@@ -247,15 +314,18 @@ flowchart TD
 	Pending[deletions_pending and not_before]
 	DeleteSync[Deletion sync]
 	Tombstone[comment_tombstones or mapping removal]
-	RemoteImport[Remote import]
-	MissingLocal{Known source=local file missing?}
+	RemoteImport[Remote reply import]
+	MissingLocal{Known source=local comment file missing?}
 	Defensive[Targeted shard load and pending-delete tombstone]
 	Conflict{Remote ID already owned elsewhere?}
 	Guard[remote-write guard]
 	Clean[No dirty marker]
 
 	LocalCreate --> Dirty --> Export --> Map
-	Map --> LocalDelete --> ImportedRemoteDelete
+	Map --> LocalDelete --> ObjectKind{Entry or comment?}
+	ObjectKind -->|entry| EntryDeadline[Queue fixed entry deadline; preserve mapping; no comment tombstone]
+	EntryDeadline --> DeleteSync
+	ObjectKind -->|comment| ImportedRemoteDelete
 	ImportedRemoteDelete -->|yes| IgnoreRemote --> Tombstone
 	ImportedRemoteDelete -->|no| ProtectLocal --> Pending --> DeleteSync --> Tombstone
 	RemoteImport --> MissingLocal
@@ -268,15 +338,15 @@ flowchart TD
 
 ## State ownership rules
 
-| State area                         | Owner                                                                      | Do not update directly from                                                   |
-| ---------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `dirty_entries`                    | FlatPress entry hooks and explicit admin/full sync preparation             | Remote import helper unless the remote-write guard is intentionally bypassed. |
-| `dirty_comments`                   | FlatPress comment hooks and comment export preparation                     | Remote reply import.                                                          |
-| `entries` / `entries_remote`       | Mapping helpers only                                                       | Ad-hoc array writes in API wrappers.                                          |
-| `comments` / `comments_remote`     | Mapping helpers with remote-ID conflict checks                             | Text conversion, media helpers or direct reverse-index overwrite.             |
-| `comment_tombstones`               | Deletion sync, deletion-protection helpers and imported-reply local delete | Normal import unless explicitly preventing reimport.                          |
-| `pending_comment_remote_rechecks`  | Context import and deletion sync                                           | Pure text/media functions.                                                    |
-| `content_stats` / `deletion_stats` | Run orchestrators                                                          | Deep helper functions that cannot know the whole run result.                  |
+| State area                         | Owner                                                                                    | Do not update directly from                                                   |
+| ---------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `dirty_entries`                    | FlatPress entry hooks and explicit admin/full sync preparation                           | Remote import helper unless the remote-write guard is intentionally bypassed. |
+| `dirty_comments`                   | FlatPress comment hooks and comment export preparation                                   | Remote reply import.                                                          |
+| `entries` / `entries_remote`       | Mapping helpers only                                                                     | Ad-hoc array writes in API wrappers.                                          |
+| `comments` / `comments_remote`     | Mapping helpers with remote-ID conflict checks                                           | Text conversion, media helpers or direct reverse-index overwrite.             |
+| `comment_tombstones`               | Deletion sync, deletion-protection helpers and imported-reply local delete               | Normal import unless explicitly preventing reimport.                          |
+| `pending_comment_remote_rechecks`  | Context import and deletion sync                                                         | Pure text/media functions.                                                    |
+| `content_stats` / `deletion_stats` | Orchestrators initialize/persist; import, export and deletion/recheck helpers increment. | Unrelated rendering, formatting or transport helpers.                         |
 
 ## Failure-state policy
 
@@ -284,35 +354,6 @@ flowchart TD
 - A confirmed `404` or `410` for a remote status is treated as missing/deleted, not as a retryable transport failure.
 - A state-write failure after successful remote work is dangerous; callers should surface the error because mappings may not reflect remote side effects.
 - Budget/rate-limit blocks are intentional partial failures and should not be "fixed" by retry loops in lower-level helpers.
-
-## Completed Split-State Guardrails
-
-The split-state implementation now uses six additional guardrails:
-
-UTC timestamp guardrail: scheduler and deletion due checks parse stored state datetimes as UTC, write new technical state timestamps with `gmdate()`, and only apply the FlatPress `locale.timeoffset` when formatting admin-local values or building FlatPress-local date keys.
-
-- A short-lived `state-write.lock` serializes every `state.json` and comment-shard mutation, including FlatPress dirty hooks that run outside the long content/deletion sync lock.
-- Partial states carry internal loaded-shard markers. `plugin_mastodon_state_write()` updates only loaded comment shards and preserves unloaded shards.
-- Very large legacy inline-comment states are checked before normal `json_decode()`. When a top-level `comments` object is present, the migration path creates a backup, extracts that object, writes per-entry shards, then rewrites the compact main state without inline comments.
-- Non-contiguous legacy comments for the same entry are merged with an existing entry shard before the shard is rewritten, preventing overwrite loss.
-- `plugin_mastodon_state_diagnose_comment_shards()` and `plugin_mastodon_state_repair_comment_shards()` can validate and rebuild shard metadata plus the global `comments_remote` reverse index from shard files.
-
-### Shard loading policy
-
-| Path                      | Comment-shard loading policy                                              |
-| ------------------------- | ------------------------------------------------------------------------- |
-| Frontend due check        | No comment shards; uses `scheduler-state.json`.                           |
-| Scheduled content sync    | Loads only active-window and dirty parent-entry shards.                   |
-| Dirty entry/comment hooks | Loads only the affected parent-entry shard.                               |
-| Full local-to-remote sync | Iterates entries and loads each processed entry shard on demand.          |
-| Deletion sync             | Iterates comment shards by cursor and avoids loading all shards up front. |
-| Full state diagnostics    | May still request a full state when explicitly needed by admin tooling.   |
-
-### Legacy migration safety
-
-The streaming legacy migration is intentionally narrow. It only handles the known Mastodon plugin state shape: a top-level JSON object with a high-volume top-level `comments` object. It does not attempt to be a general JSON parser for arbitrary files.
-
-Migration is fail-closed: if the migration backup, a shard write or the compact main-state write fails, the read path falls back to the legacy state instead of claiming success. Re-running the migration is safe because a later flush for the same entry merges already-written shard comments with the current legacy batch before replacing the shard.
 
 ### State-write error marker
 
@@ -323,7 +364,7 @@ The state-write path now records the concrete request-local failure reason with
 acquisition, JSON encode or compact-main-state write is copied into the runtime
 `last_error` field before the caller reports failure.
 
-### Admin and CLI maintenance access
+## Comment-shard diagnostics and repair
 
 `plugin_mastodon_state_diagnose_comment_shards()` is available from the admin
 maintenance panel and from `fp-plugins/mastodon/mastodon-state-cli.php diagnose`.
@@ -332,23 +373,23 @@ triggered only by the admin repair button or `mastodon-state-cli.php repair`.
 Both entry points use the same diagnostics payload so web UI and CLI checks are
 machine-comparable.
 
-### Shard diagnostics and repair
+| Function                                          | Role                                                                 | Persistence behavior                                                                       |
+| ------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `plugin_mastodon_state_create_migration_backup()` | Copies legacy `state.json` before split migration.                   | Fails closed: no migration when backup creation fails.                                     |
+| `plugin_mastodon_state_diagnose_comment_shards()` | Scans shard files, metadata and `comments_remote`.                   | Reports errors and rebuilt maps; reading legacy state can trigger migration.               |
+| `plugin_mastodon_state_repair_comment_shards()`   | Rebuilds `comment_shards.entries` and `comments_remote` from shards. | Writes the compact main state under `state-write.lock` and refreshes scheduler-state.json. |
 
-| Function                                          | Role                                                                 | Persistence behavior                                         |
-| ------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `plugin_mastodon_state_create_migration_backup()` | Copies legacy `state.json` before split migration.                   | Fails closed: no migration when backup creation fails.       |
-| `plugin_mastodon_state_diagnose_comment_shards()` | Scans shard files, metadata and `comments_remote`.                   | Read-only; reports errors, warnings and rebuilt maps.        |
-| `plugin_mastodon_state_repair_comment_shards()`   | Rebuilds `comment_shards.entries` and `comments_remote` from shards. | Writes only the compact main state under `state-write.lock`. |
+The repair helper defaults to `$persist=false`: it returns diagnostics without
+persisting the repaired index. Repair persistence requires `$persist=true` and
+no diagnostic errors. Admin/CLI repair explicitly enables persistence. An implicit
+state read can still trigger migration even when repair persistence is disabled.
 
-## Dedicated maintenance UI
-
-Comment-shard diagnostics and repair are reachable from a separate admin action/template instead of being embedded directly in the main configuration form. This keeps the everyday plugin page readable while preserving the same repair primitives for the CLI and admin UI.
-
-| Surface              | Purpose                                               | Mutates state             |
-| -------------------- | ----------------------------------------------------- | ------------------------- |
-| Main admin page      | Configuration, authorization, manual sync and status. | Yes                       |
-| Maintenance page     | Comment-shard diagnostics and repair result display.  | Diagnose: no; repair: yes |
-| CLI maintenance tool | Scriptable diagnostics and repair for administrators. | Diagnose: no; repair: yes |
+Diagnostics with an explicit state inspect that state. Without an explicit state,
+diagnostics read the main state and can trigger legacy migration: a backup and
+comment shards are created and the main state is rewritten. Repair writes the
+compact main state under `state-write.lock` and refreshes `scheduler-state.json`. The [maintenance process](01-Process-Map.md#p11p12--oauth-capability-setup-and-admin-diagnostics)
+and [UI/CLI flows](06-Process-Flow.md#9-admin-maintenance-page-separation)
+describe access, templates and results.
 
 ## Explicit one-way mode state lifecycle
 
@@ -381,12 +422,24 @@ The admin page does not add one-way state. It only suppresses import-only contro
 
 ## Media retries and instance freshness
 
-After a successful import, `entries[entryId].import_fingerprint` stores the
-SHA-1 of the JSON status. Downloads can be skipped only when the existing local
-`hash` is also unchanged. A failed primary download creates no mapping for that
-status and prevents `last_remote_status_id` from advancing.
+A failed primary media download discards the temporary status directory.
+Previously published media for that status remain unchanged on this download
+failure. No entry is created or updated and no new mapping is written for the
+failed status. The import coordinator stops before advancing
+`last_remote_status_id`. Previously successful imports remain in place.
+A missing optional video poster does not prevent the primary import.
+
+`entries[entryId].import_fingerprint` is the SHA-1 of the JSON status, not a
+security guarantee. Together with the existing local `hash`, it prevents
+unchanged successful imports from consuming the download budget again on retry.
+Changed statuses or local content are checked normally. The existing publication
+path copies media directories; it is not a transaction spanning media, entry
+and state. Filesystem failures during that later publication stage are a
+separate concern.
+
 The budget and current media error marker are request-local, not new state
 files. `instance_info_fetched_at` is persisted after every successful refresh,
 even when limits are unchanged. `instance_info_error_at` controls the five-minute
 retry cooldown; the last known limits remain available.
-See [media safety](08-Media-Safety.md).
+See [download safety limits](04-API-Compatibility.md#import-streamed-downloads)
+and [instance freshness](04-API-Compatibility.md#instance-information-and-limits).

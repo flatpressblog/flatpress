@@ -41,6 +41,14 @@ This matrix links implementation functions to the process map. It is intentional
 | plugin_mastodon_state_comment_reply_optins / plugin_mastodon_state_set_comment_reply_optin / plugin_mastodon_state_finalize_comment_reply_optin / plugin_mastodon_state_prune_orphaned_pending_comment_reply_optins / plugin_mastodon_local_comment_from_authenticated_author / plugin_mastodon_local_comment_export_allowed / plugin_mastodon_local_comment_export_grant_source | P2c/P6/P10           | State-backed visitor opt-in plus stored-`LOGGEDIN` authenticated export grant, including credential-deferred and CommentCenter-pending saves.              | comment_reply_optins, optional pending-file basename, comments, dirty_comments                     | Allows new local comment exports only with an explicit visitor/authenticated grant or existing mapping; finalizes approved pending grants and removes rejected/orphaned pending grants. | Opt-in state/export-guard, CommentCenter E2E and cleanup tests |
 | plugin_mastodon_on_comment_saved/deleted                                                                                                                                                                                                                                                                                                                                         | P9/P10               | FlatPress core hook handlers for comment changes.                                                                                                          | state.json, remote-write guard                                                                     | Immediately tombstones deleted exported comments, preserves their mapping for remote deletion, or records imported replies as local ignores.                                            | Dirty/deletion and partial-sync tests                          |
 | plugin_mastodon_state_comment_mapping_conflict / plugin_mastodon_state_set_comment_mapping                                                                                                                                                                                                                                                                                       | P4/P6/P8/P9          | Enforces one-to-one ownership between a Mastodon reply ID and one local comment.                                                                           | `comments`, `comments_remote`, one targeted conflict shard                                         | Rejects conflicting owners and removes an obsolete reverse ID during a legitimate remap of the same local comment.                                                                      | Mapping conflict/remap tests                                   |
+| `plugin_mastodon_download_budget_start()`                                                                                                                                                                                                                                                                                                                                        | P1/P2/P8             | Reset byte/request counters and the import error marker.                                                                                                   | Request-local globals.                                                                             | Resets shared media budget once per content run.                                                                                                                                        | Run-budget reset tests.                                        |
+| `plugin_mastodon_download_limit()`                                                                                                                                                                                                                                                                                                                                               | P8                   | Read configured image/AV/total/request limits.                                                                                                             | Central conditional constants.                                                                     | No I/O; positive safety limits.                                                                                                                                                         | Download boundary tests.                                       |
+| `plugin_mastodon_download_write()`                                                                                                                                                                                                                                                                                                                                               | P8                   | Account for chunks and write within limits.                                                                                                                | Shared byte counter and staging file.                                                              | Counts rejected chunks; never writes an oversized chunk.                                                                                                                                | Exact/oversized/total-budget transport tests.                  |
+| `plugin_mastodon_media_origin()` / `plugin_mastodon_media_redirect()`                                                                                                                                                                                                                                                                                                            | P8                   | Validate HTTP(S) origins and resolve redirects.                                                                                                            | Media URLs.                                                                                        | Origin changes control credential stripping.                                                                                                                                            | Invalid URL and redirect credential tests.                     |
+| `plugin_mastodon_download_to_file()`                                                                                                                                                                                                                                                                                                                                             | P8                   | Stream bounded media downloads with explicit redirects.                                                                                                    | Staging files and shared run budget.                                                               | Removes partial files and returns path/empty body.                                                                                                                                      | cURL/stream transport and retry tests.                         |
+| `plugin_mastodon_probe_video()` / `plugin_mastodon_video_rate()` / `plugin_mastodon_validate_video_metadata()`                                                                                                                                                                                                                                                                   | P5/P7                | Probe/parse/check video dimensions and frame rate.                                                                                                         | Request-local metadata cache, advertised instance limits.                                          | Bounded optional local process; may reject video before upload.                                                                                                                         | Metadata fixture and unavailable-tool fallback tests.          |
+| `plugin_mastodon_refresh_instance_if_due()`                                                                                                                                                                                                                                                                                                                                      | P1/P2/P11            | Refresh missing/stale limits with failure cooldown.                                                                                                        | Cached instance options and request cache.                                                         | May call `/api/v2/instance` at content-run startup.                                                                                                                                     | Fresh/stale/error instance refresh tests.                      |
+| `plugin_mastodon_memory_limit_bytes()` / `plugin_mastodon_multipart_memory_error()` / `plugin_mastodon_build_multipart_body()`                                                                                                                                                                                                                                                   | P7/API               | Parse PHP limits and preflight/build the fallback request body.                                                                                            | PHP memory headroom, constants and local files.                                                    | Rejects incomplete/oversized bodies before HTTP transport.                                                                                                                              | Multipart memory preflight tests.                              |
 
 CommentCenter compatibility is split deliberately: `plugin_mastodon_on_commentcenter_comment_logged()` records the visitor opt-in grant and portable pending-file basename while the comment is only pending; `plugin_mastodon_on_comment_saved()` finalizes that marker and queues the approved comment; `plugin_mastodon_on_commentcenter_comment_discarded()` removes grants for intentionally rejected pending records. `plugin_mastodon_state_prune_orphaned_pending_comment_reply_optins()` is a bounded fallback for files removed outside the normal CommentCenter action. With CommentCenter disabled, the direct `comment_saved` path remains sufficient.
 
@@ -104,18 +112,31 @@ flowchart TD
 
 ## Change impact examples
 
-| Change area               | First functions to inspect                                                                                                             | State to inspect                                | Tests to inspect                                                      |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------------- |
-| Mastodon delete behavior  | `plugin_mastodon_delete_status()`, `plugin_mastodon_run_deletion_sync()`                                                               | `deletions_pending`, cursors, tombstones        | Delete fallback and deletion sync tests                               |
-| Media alt text update     | `plugin_mastodon_prepare_entry_media_sync_plan()`, `plugin_mastodon_status_media_attributes()`, `plugin_mastodon_update_status()`      | entry media signatures, `remote_media`          | Media reuse and description update tests                              |
-| Remote reply import       | `plugin_mastodon_import_remote_comment()`, `plugin_mastodon_protect_missing_local_exported_comment_by_remote_id()`                     | `comments_remote`, tombstones, pending rechecks | Partial-sync, reply tree and tombstone tests                          |
-| Comment mapping ownership | `plugin_mastodon_state_comment_mapping_conflict()`, `plugin_mastodon_state_set_comment_mapping()`                                      | `comments`, `comments_remote`                   | Conflict rejection and remap cleanup tests                            |
-| Scheduler performance     | `plugin_mastodon_maybe_sync()`, scheduler-state helpers                                                                                | `scheduler-state.json`, large `state.json`      | Compact scheduler/large state tests                                   |
-| OAuth scopes              | `plugin_mastodon_oauth_scopes()`, discovery helpers                                                                                    | options `oauth_registered_scopes`               | Scope discovery tests                                                 |
-| Profile widget            | `plugin_mastodon_widget()`, `plugin_mastodon_refresh_profile_cache_for_sync()`, `plugin_mastodon_refresh_profile_cache_from_account()` | `profile/profile.json`, local avatar file       | Widget cache/render/sync tests                                        |
-| Text conversion           | BBCode/HTML/text helper functions                                                                                                      | usually no state                                | HTML/BBCode/URL/tag/emoji tests                                       |
-| Entry More boundary       | `plugin_mastodon_build_entry_status_text()`                                                                                            | No new state; full-content hash is retained     | More boundary, suffix, budget, version-cache and POST/PUT regressions |
-| URL-adjacent punctuation  | `plugin_mastodon_status_text_url_spans()`, `plugin_mastodon_status_text_length()`, `plugin_mastodon_limit_status_text()`               | None                                            | URL punctuation-budget tests                                          |
+| Change area                  | First functions to inspect                                                                                                             | State to inspect                                | Tests to inspect                                                      |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------------- |
+| Mastodon delete behavior     | `plugin_mastodon_delete_status()`, `plugin_mastodon_run_deletion_sync()`                                                               | `deletions_pending`, cursors, tombstones        | Delete fallback and deletion sync tests                               |
+| Media alt text update        | `plugin_mastodon_prepare_entry_media_sync_plan()`, `plugin_mastodon_status_media_attributes()`, `plugin_mastodon_update_status()`      | entry media signatures, `remote_media`          | Media reuse and description update tests                              |
+| Remote reply import          | `plugin_mastodon_import_remote_comment()`, `plugin_mastodon_protect_missing_local_exported_comment_by_remote_id()`                     | `comments_remote`, tombstones, pending rechecks | Partial-sync, reply tree and tombstone tests                          |
+| Comment mapping ownership    | `plugin_mastodon_state_comment_mapping_conflict()`, `plugin_mastodon_state_set_comment_mapping()`                                      | `comments`, `comments_remote`                   | Conflict rejection and remap cleanup tests                            |
+| Scheduler performance        | `plugin_mastodon_maybe_sync()`, scheduler-state helpers                                                                                | `scheduler-state.json`, large `state.json`      | Compact scheduler/large state tests                                   |
+| OAuth scopes                 | `plugin_mastodon_oauth_scopes()`, discovery helpers                                                                                    | options `oauth_registered_scopes`               | Scope discovery tests                                                 |
+| Profile widget               | `plugin_mastodon_widget()`, `plugin_mastodon_refresh_profile_cache_for_sync()`, `plugin_mastodon_refresh_profile_cache_from_account()` | `profile/profile.json`, local avatar file       | Widget cache/render/sync tests                                        |
+| Text conversion              | BBCode/HTML/text helper functions                                                                                                      | usually no state                                | HTML/BBCode/URL/tag/emoji tests                                       |
+| Entry More boundary          | `plugin_mastodon_build_entry_status_text()`                                                                                            | No new state; full-content hash is retained     | More boundary, suffix, budget, version-cache and POST/PUT regressions |
+| URL-adjacent punctuation     | `plugin_mastodon_status_text_url_spans()`, `plugin_mastodon_status_text_length()`, `plugin_mastodon_limit_status_text()`               | None                                            | URL punctuation-budget tests                                          |
+| Comment shards and migration | `plugin_mastodon_state_load_comment_shard_into()`, `plugin_mastodon_state_write_comment_shards()`                                      | Shards, backup and `comments_remote`            | Partial-read, migration and repair tests.                             |
+| Admin/CLI maintenance        | `plugin_mastodon_admin_assign()`, `plugin_mastodon_cli_comment_shard_maintenance()`                                                    | Diagnostic result and repaired main index       | Maintenance UI/CLI tests.                                             |
+
+For bounded downloads, metadata, instance refresh and fallback uploads, use
+the media rows in the main matrix. [API/media rules](04-API-Compatibility.md#media-safety-responsibilities)
+define constraints; [the helper catalog](07-Function-Organigram.md#media-safety-helper-catalog)
+lists every media-safety function.
+
+
+The entry import boundary owns deleted-entry protection; a missing reverse-mapped
+local entry remains owned by deletion reconciliation. See
+[the ownership matrix](02-State-Model.md#state-ownership-rules) before changing
+queue or mapping helpers.
 
 ## Reading guidance
 
@@ -137,16 +158,55 @@ flowchart TD
 | Keep Smarty-facing admin values as simple arrays/scalars.                                          | Maintains compatibility with Smarty 4.x/5.x templates.                  |
 | Add regression tests for any new long-lived state key.                                             | State bugs are often delayed until a later scheduled run.               |
 
-## Additional media helpers
-
-The functions in `inc/media-safety.php` support imports, export preflight and
-instance refresh. Their complete function catalog and the division of transport
-and budget responsibilities are documented in
-[08-Media-Safety.md](08-Media-Safety.md).
-
 ## Implementation files after modularization
 
-Function names and process assignments are preserved. See
-[09-Modularization.md](09-Modularization.md) for the `inc/*.php` ownership map and
-[07-Function-Organigram.md](07-Function-Organigram.md) for physical file/line
-references. The `[more]` text boundary does not change media selection.
+The entry point and internal modules share one plugin lifecycle. The module
+map below complements the function/process matrix above. Names, signatures and
+process assignments were retained by the modularization. See
+[function counts and locations](07-Function-Organigram.md#function-count) and
+[historical modularization evidence](05-Regression-Test-Matrix.md#modularization-verification).
+
+### Entry point and loading behavior
+
+[`plugin.mastodon.php`](../plugin.mastodon.php) continues to define all existing
+plugin constants conditionally in its opening block. An explicit list of local
+`require_once` statements then loads the internal function modules. Hooks,
+the widget, and admin panel actions are registered only in the main file.
+
+The modules provide declarations. Loading them does not start synchronization,
+refresh caches, migrate state, or issue HTTP requests. Both admin classes are
+loaded through `inc/admin-actions.php` inside the original
+`class_exists('AdminPanelAction')` guard. This check remains after widget
+registration and does not introduce an additional autoload lookup. The CLI
+maintenance function remains available without the admin classes. No new
+autoloader or feature-specific lazy loading has been introduced.
+
+### Module responsibilities
+
+| File                                                | Responsibility                                                                                                    |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [`inc/text.php`](../inc/text.php)                   | Text, BBCode/HTML, URLs, tags, emoticons, character budgets, and status text builders.                            |
+| [`inc/profile.php`](../inc/profile.php)             | Head output, profile/avatar cache, and the widget. Rendering uses local data only.                                |
+| [`inc/admin.php`](../inc/admin.php)                 | Admin input handling, language strings, instance diagnostics, and Smarty assignments.                             |
+| [`inc/admin-actions.php`](../inc/admin-actions.php) | Both action classes, loaded conditionally at the original registration point.                                     |
+| [`inc/runtime.php`](../inc/runtime.php)             | Request cache, FlatPress configuration/time conversion, file I/O, APCu, logging, guards, and budgets.             |
+| [`inc/options.php`](../inc/options.php)             | Options, normalization, secrets, feature gates, and companion plugin detection.                                   |
+| [`inc/api.php`](../inc/api.php)                     | HTTP/multipart transport, OAuth, instance information, capabilities, and the status API.                          |
+| [`inc/media-safety.php`](../inc/media-safety.php)   | Existing bounded downloads, multipart memory checks, video metadata, and instance refresh. Retained unchanged.    |
+| [`inc/media.php`](../inc/media.php)                 | Media selection, validation, signatures, upload/polling, import, and cleanup.                                     |
+| [`inc/state.php`](../inc/state.php)                 | State, shards, mappings, write lock, migration, scheduler summary, and CLI maintenance.                           |
+| [`inc/local-events.php`](../inc/local-events.php)   | Local events, dirty tracking, feedback-loop protection, and comment opt-in/CommentCenter handling.                |
+| [`inc/deletion.php`](../inc/deletion.php)           | Deletion reconciliation and reply-descendant rechecks.                                                            |
+| [`inc/sync.php`](../inc/sync.php)                   | Content windows, local candidates, import/export, notifications, context rotation, and the scheduler entry point. |
+
+### Behavior boundaries for module changes
+
+The state-write lock, sync lock, budgets, caches and reference parameters are
+shared across modules. Moving a declaration must preserve its callers, guards
+and side effects. Splitting files alone does not demonstrate a performance
+improvement; OPcache remains optional.
+
+- The `[more]` text boundary leaves full-entry media, tags and change hashes intact; see [the text pipeline](06-Process-Flow.md#21-local-to-remote-status-text-pipeline).
+- The fresh scheduler fast path still uses compact state without a full mapping read; see [scheduler fields](02-State-Model.md#compact-scheduler-fields).
+- One-way mode, comment grants, tombstones and fixed deletion deadlines retain their state contracts; see [state ownership](02-State-Model.md#state-ownership-rules) and the associated lifecycle sections.
+- cURL/stream fallback, optional extensions and ffprobe keep their existing validation behavior; see [media safety](04-API-Compatibility.md#media-safety-responsibilities).
