@@ -1,4 +1,4 @@
-# 04 — API Endpoint and Version Documentation
+# 04 — API Compatibility, Limits and Media Safety
 
 ## Supported Mastodon range
 
@@ -12,26 +12,16 @@ The current plugin implementation is best described as:
 | `>= 4.6.0`  | Enables the privacy hardening `exclude_direct=true` for account-status imports when cached instance information or API version 10 confirms support.             |
 | 5.0 nightly | The More path is simulated through 5.0.0-nightly.2026-10-22; no new API contract is required. This is not a live-server certification.                          |
 
-
 ## More tag in entry exports
 
-Reviewed on October 25, 2026. This change targets Mastodon 4.0.0 through
-5.0.0-nightly.2026-10-22. It requires no new server capability:
-`plugin_mastodon_build_entry_status_text()` cuts the raw entry body at the first
-`[more]` marker before BBCode conversion, using case-insensitive matching.
-The instance character limit and reserved character count per URL still apply
-afterwards. A long teaser may therefore need further truncation. Without a
-marker, existing behavior is preserved; a marker at the beginning produces an
-empty entry body. The marker itself does not append an ellipsis.
+The local `[more]` boundary requires no new server capability or additional
+HTTP request. `configuration.statuses.max_characters` and
+`configuration.statuses.characters_reserved_per_url` still constrain the result.
+See [P5](01-Process-Map.md#p5p6p7--local-export-and-media-lifecycle),
+[the conversion pipeline](06-Process-Flow.md#21-local-to-remote-status-text-pipeline)
+and [More regressions](05-Regression-Test-Matrix.md#more-tag-in-entry-exports).
 
-The title, public entry link and hashtag footer remain part of the status and
-still count towards its budget. Tags are extracted from the complete entry,
-and media selection also continues to use the complete entry. Stored content
-and its change-detection hash are not shortened. Comments, imports and ReadMore
-plugin settings remain independent. Previously synchronized entries use the
-new boundary on their next regular update; unchanged mappings are not migrated.
-
-The current official API contracts were reviewed:
+The October 25, 2026 API review referenced:
 [instance information](https://docs.joinmastodon.org/methods/instance/) with
 `GET /api/v2/instance` available since 4.0.0,
 [status endpoints](https://docs.joinmastodon.org/methods/statuses/) with `status`
@@ -40,11 +30,6 @@ on POST and PUT, and
 `configuration.statuses.max_characters` and `characters_reserved_per_url`.
 The existing [rate limits](https://docs.joinmastodon.org/api/rate-limits/) still
 apply; local More processing does not generate additional HTTP requests.
-
-The simulator checks cached limits for 4.0.0, 4.1.0, 4.4.0, 4.6.0 and
-5.0.0-nightly.2026-10-22, plus POST and PUT through the export coordinator.
-These are deterministic simulations, not evidence of live testing against
-every server version.
 
 ## Comment/reply synchronization gate compatibility
 
@@ -86,7 +71,7 @@ The optional `{comment_mastodon}` checkbox, authenticated-author exception and `
 | Delete status           | DELETE | /api/v1/statuses/:id?delete_media=1     | status delete 0.0.0; `delete_media` 4.4.0, API v4 | write:statuses          | `api_versions[mastodon] >= 4` enables `delete_media`; lower API versions omit it; unknown support retries without it on legacy-style errors.                                                                                                               | plugin_mastodon_delete_status                                        |
 | Upload media            | POST   | /api/v2/media                           | 3.1.3; `thumbnail` parameter 3.2.0                | write:media             | No deprecated `/api/v1/media` upload fallback. Video posters are sent as upload thumbnails.                                                                                                                                                                | plugin_mastodon_upload_media_items                                   |
 | Poll media              | GET    | /api/v1/media/:id                       | 3.1.3                                             | write:media             | Media-type-aware polling and timeout windows.                                                                                                                                                                                                              | plugin_mastodon_wait_for_media_attachment                            |
-| Delete unattached media | DELETE | /api/v1/media/:id                       | 4.4.0, API v4                                     | write:media             | `api_versions[mastodon] >= 4` or version >= 4.4.0 enables cleanup; known older servers skip it; unknown support stays best-effort.                                                                                                                         | plugin_mastodon_delete_media_attachment                              |
+| Delete unattached media | DELETE | /api/v1/media/:id                       | 4.4.0, API v4                                     | write:media             | A present valid `api_versions[mastodon]` decides cleanup support (>= 4); only without it does version >= 4.4.0 apply; known older servers skip it; unknown support stays best-effort.                                                                      | plugin_mastodon_delete_media_attachment                              |
 
 ## Imported status source links
 
@@ -96,7 +81,11 @@ The footer is intentionally limited to the imported entry source link. Imported 
 
 ## Profile-widget account cache
 
-The compact Mastodon widget does not add a frontend API endpoint dependency. `plugin_mastodon_run_sync()` refreshes the profile/avatar cache via `GET /api/v1/accounts/verify_credentials` before content import/export work, including automatic scheduled runs, manual runs and explicit one-way/export-only mode. The cache stores only public fields in `fp-content/plugin_mastodon/profile/profile.json` and stores the downloaded avatar below `fp-content/plugin_mastodon/profile/`. Normal widget rendering reads only those local files and returns no widget when the cache or local avatar is incomplete. Its stylesheet is a local FlatPress asset, `fp-plugins/mastodon/res/mastodon.css`, emitted by `plugin_mastodon_head()` through `utils_asset_ver()` so frontend markup stays free of inline CSS.
+The widget cache reuses `GET /api/v1/accounts/verify_credentials`; it adds no
+frontend API endpoint dependency. The table identifies account response fields.
+[The state model](02-State-Model.md#public-profile-cache-lifecycle) owns persisted
+cache data; [P13](01-Process-Map.md#p13--compact-mastodon-profile-widget) owns
+refresh/rendering and versioned `res/mastodon.css` output.
 
 | Cached field    | Source account field                     | Runtime rule                                                                                                               |
 | --------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
@@ -104,12 +93,12 @@ The compact Mastodon widget does not add a frontend API endpoint dependency. `pl
 | Account handle  | `acct`, fallback `username`              | Stored without a leading `@`; rendered with one leading `@`.                                                               |
 | Profile link    | `url`, fallback configured instance/user | Only absolute HTTP(S) URLs are accepted.                                                                                   |
 | Avatar file     | `avatar_static`, fallback `avatar`       | Remote image is downloaded during refresh, MIME-checked and then served locally by FlatPress.                              |
-| Avatar alt text | `avatar_description`, localized fallback | Mastodon 4.6/API-v9 descriptions are used when present; older payloads get a fallback string.                              |
+| Avatar alt text | `avatar_description`, localized fallback | Uses avatar_description when present; otherwise a localized fallback, without an API-version gate.                         |
 | Refresh trigger | `verify_credentials` during `run_sync`   | The sync result is not decided solely by widget-cache refresh success; remote import may reuse the cached account payload. |
 
 ## Mastodon 4.6 account-status privacy hardening
 
-`plugin_mastodon_fetch_account_statuses()` now treats `exclude_direct=true` as an additive Mastodon 4.6/API-v10 capability. The parameter is sent only when cached `/api/v2/instance` data confirms Mastodon `>= 4.6.0` or `api_versions.mastodon >= 10`. If a compatible server or fork still rejects the parameter with a legacy-style client error, the same page request is retried once without `exclude_direct`. This keeps Mastodon `>= 4.0.0` instances compatible while reducing the chance that direct statuses enter the import path on current servers. The existing local `visibility` checks remain the final safety net.
+`plugin_mastodon_fetch_account_statuses()` now treats `exclude_direct=true` as an additive Mastodon 4.6/API-v10 capability. The parameter is sent only when the cached capability check confirms support. A present machine-readable API version takes precedence; only when it is absent does the helper fall back to Mastodon `>= 4.6.0`. If a compatible server or fork still rejects the parameter with a legacy-style client error, the same page request is retried once without `exclude_direct`. This keeps Mastodon `>= 4.0.0` instances compatible while reducing the chance that direct statuses enter the import path on current servers. The existing local `visibility` checks remain the final safety net.
 
 The compact instance snapshot also preserves `configuration.accounts.*` limits from Mastodon 4.6. They are currently informational because the plugin does not edit Mastodon profiles, but retaining them keeps admin diagnostics and future profile-related extensions deterministic.
 
@@ -143,31 +132,44 @@ The plugin reads `/api/v2/instance` with a short instance-information timeout an
 
 For status text length, `configuration.statuses.characters_reserved_per_url` is applied only to the URL entity that Mastodon will parse. `plugin_mastodon_status_text_url_spans()` intentionally leaves trailing sentence punctuation such as `,` or `.` outside the URL span, so those characters remain part of the normal text budget and the local export limit matches Mastodon server validation more closely.
 
+## Instance information and limits
+
+At the beginning of each content synchronization run, a missing instance snapshot
+or one at least an hour old is refreshed through `/api/v2/instance`. A fresh
+snapshot causes no additional request. The success timestamp is persisted even
+when the JSON is unchanged. Failures retain the last known limits; the next
+automatic attempt waits at least five minutes. A successful refresh clears the
+request-local failure cache. Manual refresh remains available. Ordinary page
+requests do not gain an additional forced instance lookup.
+
 ## Internal budgets and operational limits
 
-| Name                                              | Value   | Purpose                                                                                                                         |
-| ------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| PLUGIN_MASTODON_DEFAULT_SYNC_TIME                 | 03:00   | Default scheduled sync time.                                                                                                    |
-| PLUGIN_MASTODON_MAX_STATUS_PAGES                  | 5       | Maximum account-status pages imported in one remote pass.                                                                       |
-| Mastodon account-status page limit                | 40      | The plugin requests the API maximum for /api/v1/accounts/:id/statuses.                                                          |
-| PLUGIN_MASTODON_IMPORTED_MEDIA_WIDTH              | 320     | Width used in imported FlatPress image markup.                                                                                  |
-| PLUGIN_MASTODON_PROFILE_AVATAR_MAX_BYTES          | 5 MiB   | Maximum accepted downloaded profile avatar size for the local widget cache.                                                     |
-| PLUGIN_MASTODON_PROFILE_REQUEST_TIMEOUT           | 15s     | Short timeout for account/profile-cache refresh HTTP work.                                                                      |
-| PLUGIN_MASTODON_PENDING_COMMENT_RECHECK_LIMIT     | 3       | Remote reply recheck attempts per pending comment scope.                                                                        |
-| PLUGIN_MASTODON_OLD_THREAD_CONTEXT_ROTATION_LIMIT | 3       | Default old-thread context targets rotated per run; admin value clamps to 1-10.                                                 |
-| PLUGIN_MASTODON_NOTIFICATION_PAGE_LIMIT           | 30      | Safe Mastodon >= 4.0 notification page size used for mention hints.                                                             |
-| PLUGIN_MASTODON_STATE_FALLBACK_TTL                | 300s    | Fallback cache TTL for state-related helpers.                                                                                   |
-| PLUGIN_MASTODON_COOLDOWN_TTL                      | 300s    | File/APCu cooldown guard for scheduled sync paths; APCu access uses FlatPress `apcu_get`/`apcu_set`/`apcu_delete_key` wrappers. |
-| PLUGIN_MASTODON_RUN_REQUEST_BUDGET                | 240     | Per-run general Mastodon API request budget.                                                                                    |
-| PLUGIN_MASTODON_RUN_MEDIA_UPLOAD_BUDGET           | 24      | Per-run media upload budget.                                                                                                    |
-| PLUGIN_MASTODON_RUN_DELETE_BUDGET                 | 24      | Per-run remote status delete budget.                                                                                            |
-| PLUGIN_MASTODON_WINDOW_MEDIA_UPLOAD_TTL           | 1800s   | Persistent upload budget window.                                                                                                |
-| PLUGIN_MASTODON_WINDOW_DELETE_TTL                 | 1800s   | Persistent delete budget window.                                                                                                |
-| PLUGIN_MASTODON_WINDOW_STATUS_PAGE_BUDGET         | 300     | Cross-run status page budget.                                                                                                   |
-| PLUGIN_MASTODON_WINDOW_STATUS_PAGE_TTL            | 900s    | Persistent account-status paging budget window.                                                                                 |
-| PLUGIN_MASTODON_RATE_LIMIT_REMAINING_FLOOR        | 10      | Stop before the remote server's remaining quota is exhausted.                                                                   |
-| PLUGIN_MASTODON_LOG_MAX_BYTES                     | 1048576 | Rotate sync.log when it grows beyond 1 MiB.                                                                                     |
-| PLUGIN_MASTODON_LOG_ROTATE_FILES                  | 3       | Keep up to three rotated sync logs.                                                                                             |
+| Name                                              | Value         | Purpose                                                                                                                         |
+| ------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| PLUGIN_MASTODON_DEFAULT_SYNC_TIME                 | 03:00         | Default scheduled sync time.                                                                                                    |
+| PLUGIN_MASTODON_MAX_STATUS_PAGES                  | 5             | Maximum account-status pages imported in one remote pass.                                                                       |
+| Mastodon account-status page limit                | 40            | The plugin requests the API maximum for /api/v1/accounts/:id/statuses.                                                          |
+| PLUGIN_MASTODON_IMPORTED_MEDIA_WIDTH              | 320           | Width used in imported FlatPress image markup.                                                                                  |
+| PLUGIN_MASTODON_PROFILE_AVATAR_MAX_BYTES          | 5 MiB         | Maximum accepted downloaded profile avatar size for the local widget cache.                                                     |
+| PLUGIN_MASTODON_PROFILE_REQUEST_TIMEOUT           | 15s           | Short timeout for account/profile-cache refresh HTTP work.                                                                      |
+| PLUGIN_MASTODON_INSTANCE_REQUEST_TIMEOUT          | 15s           | Dedicated timeout for instance-information requests.                                                                            |
+| PLUGIN_MASTODON_PENDING_COMMENT_RECHECK_LIMIT     | 3             | Remote reply recheck attempts per pending comment scope.                                                                        |
+| PLUGIN_MASTODON_OLD_THREAD_CONTEXT_ROTATION_LIMIT | 3             | Default old-thread context targets rotated per run; admin value clamps to 1-10.                                                 |
+| PLUGIN_MASTODON_NOTIFICATION_PAGE_LIMIT           | 30            | Safe Mastodon >= 4.0 notification page size used for mention hints.                                                             |
+| PLUGIN_MASTODON_STATE_FALLBACK_TTL                | 300s          | Fallback cache TTL for state-related helpers.                                                                                   |
+| PLUGIN_MASTODON_COOLDOWN_TTL                      | 300s          | File/APCu cooldown guard for scheduled sync paths; APCu access uses FlatPress `apcu_get`/`apcu_set`/`apcu_delete_key` wrappers. |
+| PLUGIN_MASTODON_RUN_REQUEST_BUDGET                | 240           | Per-run general Mastodon API request budget.                                                                                    |
+| PLUGIN_MASTODON_RUN_MEDIA_UPLOAD_BUDGET           | 24            | Per-run media upload budget.                                                                                                    |
+| PLUGIN_MASTODON_RUN_DELETE_BUDGET                 | 24            | Per-run remote status delete budget.                                                                                            |
+| PLUGIN_MASTODON_WINDOW_MEDIA_UPLOAD_BUDGET        | 24 by default | Independent cross-run upload count; defaults to `PLUGIN_MASTODON_RUN_MEDIA_UPLOAD_BUDGET`, can be overridden before loading.    |
+| PLUGIN_MASTODON_WINDOW_MEDIA_UPLOAD_TTL           | 1800s         | Persistent upload budget window.                                                                                                |
+| PLUGIN_MASTODON_WINDOW_DELETE_BUDGET              | 24 by default | Independent cross-run delete count; defaults to `PLUGIN_MASTODON_RUN_DELETE_BUDGET`, can be overridden before loading.          |
+| PLUGIN_MASTODON_WINDOW_DELETE_TTL                 | 1800s         | Persistent delete budget window.                                                                                                |
+| PLUGIN_MASTODON_WINDOW_STATUS_PAGE_BUDGET         | 300           | Cross-run status page budget.                                                                                                   |
+| PLUGIN_MASTODON_WINDOW_STATUS_PAGE_TTL            | 900s          | Persistent account-status paging budget window.                                                                                 |
+| PLUGIN_MASTODON_RATE_LIMIT_REMAINING_FLOOR        | 10            | Stop before the remote server's remaining quota is exhausted.                                                                   |
+| PLUGIN_MASTODON_LOG_MAX_BYTES                     | 1048576       | Rotate sync.log when it grows beyond 1 MiB.                                                                                     |
+| PLUGIN_MASTODON_LOG_ROTATE_FILES                  | 3             | Keep up to three rotated sync logs.                                                                                             |
 
 ## API fallback diagrams
 
@@ -248,8 +250,9 @@ replay and subsequent remote deletion for Mastodon 4.0.0, 4.3.0, 4.4.0, 4.5.0, 4
 5.0.0-nightly.2026-10-22. This is simulated API-contract coverage, not live certification
 against each release.
 
-The existing DELETE capability logic remains authoritative: versions below 4.4.0 omit
-`delete_media`; supported versions use it. Unknown capability still permits the
+The existing DELETE capability logic remains authoritative: a present valid `api_versions[mastodon]` decides
+`delete_media` support (>= 4); only without it does the cached/stored version
+fallback use the 4.4.0 threshold. Unknown capability still permits the
 existing retry without the parameter after a legacy rejection. The tests additionally cover
 a temporary server error followed by retry and an already missing remote status.
 The status cursor and account-status capability gates remain unchanged.
@@ -282,18 +285,19 @@ five-minute timer. See [Mastodon rate limits](https://docs.joinmastodon.org/api/
 
 ## Capability sources
 
-| Capability                             | Source                                                                           | Unknown behavior                                                  |
-| -------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Status character limit                 | `/api/v2/instance` configuration                                                 | Use `500`.                                                        |
-| URL reserved length                    | `/api/v2/instance` configuration                                                 | Use `23`.                                                         |
-| Max media attachments                  | `/api/v2/instance` configuration                                                 | Use `4`.                                                          |
-| Media MIME/size support                | `/api/v2/instance` configuration                                                 | Validate conservatively; do not invent server limits.             |
-| Status `media_attributes` update       | Prefer `api_versions[mastodon]`; otherwise parsed version `>= 4.1.0`             | Treat as unsupported and re-upload when descriptions changed.     |
-| Status delete `delete_media` parameter | Prefer `api_versions[mastodon] >= 4`; otherwise cached/stored version `>= 4.4.0` | Try with parameter, retry without on known legacy-style failures. |
-| Unattached media cleanup delete        | Prefer `api_versions[mastodon] >= 4`; otherwise cached/stored version `>= 4.4.0` | Skip when known unsupported; unknown remains best-effort.         |
-| OAuth `profile` scope                  | OAuth discovery `scopes_supported`                                               | Fall back to compatible `read:accounts` scope set for new apps.   |
-| OAuth `read:notifications` scope       | Stored/current OAuth scope set                                                   | Skip notification hints and keep context rotation fallback.       |
-| Profile avatar description             | Account payload field `avatar_description`                                       | Use localized fallback alt text when absent.                      |
+| Capability                             | Source                                                                           | Unknown behavior                                                                    |
+| -------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Status character limit                 | `/api/v2/instance` configuration                                                 | Use `500`.                                                                          |
+| URL reserved length                    | `/api/v2/instance` configuration                                                 | Use `23`.                                                                           |
+| Max media attachments                  | `/api/v2/instance` configuration                                                 | Use `4`.                                                                            |
+| Media MIME/size support                | `/api/v2/instance` configuration                                                 | Validate conservatively; do not invent server limits.                               |
+| Account statuses `exclude_direct`      | Cached `api_versions[mastodon] >= 10`, otherwise Mastodon `>= 4.6.0`             | Omit when older/unknown; retry once without it on compatible 400/405/422 rejection. |
+| Status `media_attributes` update       | Prefer `api_versions[mastodon]`; otherwise parsed version `>= 4.1.0`             | Treat as unsupported and re-upload when descriptions changed.                       |
+| Status delete `delete_media` parameter | Prefer `api_versions[mastodon] >= 4`; otherwise cached/stored version `>= 4.4.0` | Try with parameter, retry without on known legacy-style failures.                   |
+| Unattached media cleanup delete        | Prefer `api_versions[mastodon] >= 4`; otherwise cached/stored version `>= 4.4.0` | Skip when known unsupported; unknown remains best-effort.                           |
+| OAuth `profile` scope                  | OAuth discovery `scopes_supported`                                               | Fall back to compatible `read:accounts` scope set for new apps.                     |
+| OAuth `read:notifications` scope       | Stored/current OAuth scope set                                                   | Skip notification hints and keep context rotation fallback.                         |
+| Profile avatar description             | Account payload field `avatar_description`                                       | Use localized fallback alt text when absent.                                        |
 
 ## API change playbooks
 
@@ -332,19 +336,142 @@ five-minute timer. See [Mastodon rate limits](https://docs.joinmastodon.org/api/
 4. Keep the local avatar MIME allow-list conservative and reject SVG or unknown bodies.
 5. Add simulation coverage for missing cache, successful cache refresh, no-HTTP rendering, fallback alt text and all language files.
 
-## Media hardening in snapshot 3509
+## Media safety responsibilities
 
-Import budgets are local safety limits, separate from the upload limits reported
-by the target instance. Posters receive additional MIME, byte-size and pixel
-checks; videos receive dimension and frame-rate checks when ffprobe is available.
-Instance information is refreshed hourly during content runs. Failures retain
-the previous snapshot and impose a five-minute retry cooldown.
-See [08-Media-Safety.md](08-Media-Safety.md) for configuration, fallbacks and
-exact limits.
+`plugin.mastodon.php` loads `inc/media-safety.php`. Bounded downloads with a shared
+budget were implemented first, followed by poster validation, automatic instance
+refresh and video metadata validation. Existing media-family rules, asynchronous
+uploads and the media API remain in place. The `[more]` boundary limits exported entry text. Media selection and tags still
+use the complete entry, including content after the marker.
 
-## Local memory limits for outbound media
+Instance upload limits, local download budgets, Mastodon API budgets and PHP
+memory limits are independent constraints. The download budget resets per
+content run; it does not replace the API guard or its persistent windows.
 
-Without cURL, instance-accepted uploads must also pass the PHP-memory and
-complete multipart-body checks described in
-[08-Media-Safety.md](08-Media-Safety.md#export-without-curl-memory-aware-multipart-fallback).
-Incoming PHP upload limits do not govern these outgoing requests.
+## Import: streamed downloads
+
+cURL writes through a write callback; the PHP stream fallback reads chunks of
+at most 65536 bytes. Both use the same bounded file writer. Production responses
+contain a file path and an empty `body`, never the complete media file in PHP
+memory. The importer moves the completed file into the status staging directory.
+
+| Limit                                    | Default                     | Configuration before loading the plugin |
+| ---------------------------------------- | --------------------------- | --------------------------------------- |
+| Image or poster per download             | 16777216 bytes (16 MiB)     | `PLUGIN_MASTODON_DOWNLOAD_IMAGE_BYTES`  |
+| Audio or video per download              | 103809024 bytes (99 MiB)    | `PLUGIN_MASTODON_DOWNLOAD_AV_BYTES`     |
+| Media response bytes per content run     | 536870912 bytes (512 MiB)   | `PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES`  |
+| Media requests per content run           | 64                          | `PLUGIN_MASTODON_DOWNLOAD_REQUESTS`     |
+| Redirects per download                   | At most 5 (6 HTTP requests) | Fixed                                   |
+| Download time window including redirects | 180 seconds                 | Fixed                                   |
+
+The four defaults are defined in the opening constants block of
+`plugin.mastodon.php`, each guarded by `if (!defined(...))`. Values defined
+before the plugin loads are preserved. `inc/media-safety.php` reads these
+constants without maintaining a second set of defaults. The isolated transport
+fixture defines its own small constants to exercise their use directly.
+The four configurable constants are listed in PHPStan's `dynamicConstantNames`,
+so the combined analysis does not confuse fixture values with production defaults.
+
+The four constants accept positive byte or request counts. These import limits
+are local safety limits, not a claim about every Mastodon instance's upload
+limits. Larger remote files can therefore be deliberately rejected. A file
+exactly at the size limit is accepted; one additional byte aborts the download.
+Failed candidates, retries and posters share the budget with every other media
+download in the content run. A received but rejected transport chunk still
+counts, so the counter can exceed the limit by that chunk. The rejected chunk
+is not written. A new content run resets the budget. No new global time budget
+is imposed across all 64 possible requests.
+
+Only HTTP/HTTPS URLs without embedded user information are allowed. Bearer tokens
+are sent only to the configured instance origin; redirects to other origins
+remove Authorization and Cookie headers. The plugin handles redirects explicitly,
+rather than enabling automatic redirects in cURL or the stream wrapper.
+Missing, empty, truncated or oversized responses leave no partial download file.
+When Content-Length is present and contains only decimal digits, it must match
+the number of bytes written. The helper does not compare non-numeric values;
+the underlying transport may reject malformed headers before this check.
+
+For publication failures, cursor handling and unchanged-import retries, see
+[the media state rules](02-State-Model.md#media-retries-and-instance-freshness).
+
+## Export: poster validation
+
+Before upload, a video poster is checked using its actual MIME type, file size
+and `getimagesize()`. The instance's `supported_mime_types`, `image_size_limit`
+and `image_matrix_limit` apply. If poster limits are not advertised, the
+fallbacks are 16 MiB and 33177600 pixels. An invalid or oversized poster is
+removed from the upload; a valid video remains exportable and Mastodon can
+generate its preview. The poster is still sent as `thumbnail` and does not
+count as a second status attachment.
+
+## Export: video metadata
+
+`ffprobe` is located through an absolute path in `PLUGIN_MASTODON_FFPROBE` or
+through PATH. The probe reads the first video stream, width, height,
+`avg_frame_rate` and `r_frame_rate`. Width multiplied by height is compared with
+`video_matrix_limit`; the larger valid frame rate is rounded down and checked
+against `video_frame_rate_limit`. Missing or invalid dimensions/frame rates,
+probe errors and exceeded limits cause the video to be skipped. Results are
+cached within the request by file path, modification time and size.
+
+The process allows only local `file,pipe` protocols, is terminated after ten
+seconds and has a monitored output threshold of 65536 bytes each for stdout
+and stderr. File sizes are checked every ten milliseconds; this threshold is
+not an operating-system-enforced hard write limit. Temporary probe files are
+removed afterwards.
+
+Without an executable ffprobe or process support, the existing server-validated
+video export remains available by default. Setting
+`PLUGIN_MASTODON_REQUIRE_VIDEO_METADATA=true` instead rejects the video with
+`video_metadata_unavailable`. An unknown instance limit is not replaced with
+an invented fixed video resolution or frame-rate limit. Audio retains MIME
+and byte-size validation without video-stream inspection. The new checks do
+not prove complete decodability or validate every codec; final media processing
+remains Mastodon's responsibility.
+
+## Export without cURL: memory-aware multipart fallback
+
+The cURL upload path continues to use file-backed uploads. Without cURL, the
+PHP HTTP stream still needs a complete multipart body in memory. The fallback
+now calls `plugin_mastodon_build_multipart_body()` before creating its HTTP
+context. The builder accounts for every file, optional poster, text field,
+header, delimiter and closing boundary before reading payload contents.
+
+| Setting                                    | Default                 | Purpose                                                                          |
+| ------------------------------------------ | ----------------------- | -------------------------------------------------------------------------------- |
+| `PLUGIN_MASTODON_MULTIPART_MAX_BYTES`      | 67108864 bytes (64 MiB) | Maximum complete fallback request body, including framing.                       |
+| `PLUGIN_MASTODON_MULTIPART_MEMORY_RESERVE` | 8388608 bytes (8 MiB)   | Headroom for other plugin work and the response; values below 8 MiB are clamped. |
+
+Both constants are defined conditionally in the opening block of
+`plugin.mastodon.php`. A finite PHP `memory_limit` must leave at least four
+times the complete estimated body size plus the reserve after subtracting
+`memory_get_usage(true)`. The check is repeated while building and before
+returning the body, so available headroom can shrink as the body grows.
+This is deliberately conservative and may reject a request that would fit
+under ideal allocation conditions. It does not increase PHP's memory limit.
+
+`plugin_mastodon_memory_limit_bytes()` accepts byte counts and K/M/G suffixes.
+`-1` disables the PHP-derived restriction, but the local body cap still applies.
+Unknown or malformed memory limits fail closed. `upload_max_filesize` and
+`post_max_size` are not used as outbound limits: they govern incoming uploads.
+Instance upload limits still apply earlier in the export plan. A file accepted
+by Mastodon may therefore be rejected locally when the fallback lacks memory.
+
+Files are read in chunks of at most 65536 bytes; no additional full-file string
+is retained. Regular-file type and size are checked again after opening, and
+short reads or growth beyond the planned size fail without returning a partial
+body. This is size-change detection, not a lock against same-size content edits.
+The final multipart body remains buffered; this change does not introduce a
+fully streaming HTTP upload transport. The reserve is not a hard limit on
+remote response size or a guarantee against unrelated allocations.
+
+Failures return an empty body and a specific error before sending the request:
+`multipart_body_limit_exceeded`, `multipart_memory_budget_exceeded`,
+`multipart_memory_limit_unknown`, `multipart_file_unreadable` or
+`multipart_file_changed`. Existing upload error handling receives these errors.
+PHPStan treats the two configurable constants as dynamic values.
+
+See [media verification and evidence limits](05-Regression-Test-Matrix.md#media-verification-and-evidence-limitations)
+for transport checks, metadata fixtures and commands, and
+[the media helper catalog](07-Function-Organigram.md#media-safety-helper-catalog)
+for implementation responsibilities.

@@ -9,13 +9,11 @@ It is written for developers who need to make safe changes without breaking sync
 1. [`00-Mental-Model.md`](00-Mental-Model.md) — one-page model and vocabulary.
 2. [`01-Process-Map.md`](01-Process-Map.md) — main process map and change-oriented process descriptions.
 3. [`02-State-Model.md`](02-State-Model.md) — state files, JSON fields, lifecycle and invariants.
-4. [`03-Function-Process-Matrix.md`](03-Function-Process-Matrix.md) — which functions implement which processes.
-5. [`04-API-Compatibility.md`](04-API-Compatibility.md) — Mastodon endpoints, versions, limits, fallbacks and budgets.
+4. [`03-Function-Process-Matrix.md`](03-Function-Process-Matrix.md) — Functions, processes, module responsibilities and the loading contract.
+5. [`04-API-Compatibility.md`](04-API-Compatibility.md) — Mastodon endpoints, versions, limits, budgets, safe media transfers and hosting fallbacks.
 6. [`05-Regression-Test-Matrix.md`](05-Regression-Test-Matrix.md) — what the simulation protects and what remains outside the harness.
 7. [`06-Process-Flow.md`](06-Process-Flow.md) — Process Flows.
 8. [`07-Function-Organigram.md`](07-Function-Organigram.md) — Function Organization Chart.
-9. [`08-Media-Safety.md`](08-Media-Safety.md) — Bounded downloads, media preflight and instance freshness.
-10. [`09-Modularization.md`](09-Modularization.md) — Module boundaries, the central loader, and regression evidence.
 
 ## Change-oriented entry points
 
@@ -36,33 +34,13 @@ Use these starting points when the requested change is framed by behavior rather
 | "Comment author links open new tabs only for external URLs"            | `01-Process-Map.md` P14                           | `comments.tpl`, `modifier.is_external_url.php`, target-decision test including root-install same-host paths                                                                                                                                            |
 | "Imported status source links open the single toot in a new tab"       | `01-Process-Map.md` P3, `04-API-Compatibility.md` | `plugin_mastodon_imported_status_footer_bbcode()`, status-footer target tests                                                                                                                                                                          |
 
-## Deleted entry import protection
+## Deletion safety
 
-A mapped FlatPress entry that no longer exists locally belongs to deletion reconciliation.
-The entry import boundary rejects its remote status before HTML/media conversion, hash comparison
-or local writes. It preserves the mapping and source for the later deletion run. This covers
-normal/full manual runs, automatic runs and file removals that bypassed the delete hook.
-See [the state invariant](02-State-Model.md#locally-deleted-mapped-entries) and
-[the regression cases](05-Regression-Test-Matrix.md#locally-deleted-mapped-entries).
-
-The normal manual action calls <code>plugin_mastodon_run_sync(true, false)</code>; the full
-manual action uses <code>plugin_mastodon_run_sync(true, true)</code>, and the scheduler uses
-<code>plugin_mastodon_run_sync(false)</code>. All three share the same entry import guard.
-Deletion is a separate follow-up, not part of the content import itself. A successful content
-run schedules that follow-up only when deletion synchronization is enabled.
-
-## Fixed local-entry deletion deadlines
-
-Each mapped entry gets a fixed UTC deadline at its first local deletion marking plus 300 seconds.
-Normal/full/automatic content runs preserve it. Later deletions receive their own complete delay.
-The automatic scheduler prioritizes due fixed-entry work before a new daily content job.
-Execution still requires a later eligible non-POST web request and enabled deletion sync.
-
-An independent retry barrier preserves failed-delete backoff and a later reported Mastodon reset.
-New delete hooks and content runs cannot shorten that barrier. Forced sweeps also respect each
-entry deadline. Restoring/saving an entry cancels its old decision; deleting it again starts a
-new deadline. Disabled deletion sync retains deadlines for re-enabling. The local delete request
-does not send an immediate outbound DELETE. See the state model and regression matrix below.
+Read [mapped-entry protection](02-State-Model.md#locally-deleted-mapped-entries)
+and [fixed entry deadlines](02-State-Model.md#fixed-local-entry-deletion-deadlines)
+before changing deletion behavior. [P1/P2](01-Process-Map.md#p1p2--scheduled-and-manual-content-synchronization)
+explains manual and automatic call variants; [regressions](05-Regression-Test-Matrix.md#locally-deleted-mapped-entries)
+protect the import/deletion boundary.
 
 ## Compatibility target for maintainers
 
@@ -86,49 +64,48 @@ The combined analysis exceeded 3200 MB in the verified PHP 8.5.5 Windows run;
 
 The distributed configuration checks the declared PHP 7.2 through 8.5 range and scans Smarty 5.8.5 types without analyzing Smarty core itself.
 
-For installed instances with `.setup/`, use the local override described in
-[09-Modularization.md](09-Modularization.md#phpstan-on-an-installed-instance).
+For installed instances with `.setup/`, use the local override below.
+
+### PHPStan on an installed instance
+
+After installation, `admin.php` attempts to rename `setup.php` to `.setup.php`
+and `setup/` to `.setup/`. Because `.setup/` is excluded from analysis, PHPStan
+can then report two `function.notFound` diagnostics for `setup_path_mode()` in
+`core.fileio.php` and `core.filesystem.php`. These are symbol-discovery diagnostics,
+not demonstrated PHP runtime defects. A full scan of the uninstalled repository
+can discover the function in the visible `setup/` directory.
+
+Keep the installed-only `scanFiles` entry commented out in the shared
+`phpstan.neon.dist`. For an installed instance, use a local `.dist/phpstan.neon`
+that is kept out of version control:
+
+```neon
+includes:
+    - phpstan.neon.dist
+
+parameters:
+    scanFiles:
+        - ../.setup/lib/permissions.lib.php
+```
+
+Run PHPStan with `-c .dist/phpstan.neon` for that instance. The earlier full
+analysis passed after scanning this same hidden helper; it does
+not require a permanent installed-only path in the shared configuration. No
+plugin function-body changes or diagnostic suppressions are needed. This
+follows PHPStan's [local configuration override workflow](https://phpstan.org/config-reference#multiple-files).
 
 ## Simulation harness quick reference
 
-Run the distributed deterministic regression harness directly from the FlatPress root:
+From the FlatPress root, run the distributed deterministic harness:
 
 ```bash
-php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_
+php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --summary
 ```
 
-The harness resolves the blog root three directories above its distributed location.
-An optional content-identical root copy named `simulate_mastodon_plugin.php` is
-supported, but is not shipped in this snapshot and is not required for analysis
-or the documentation checker. For browser use on servers that do not execute
-`.ph_` files, create that root `.php` copy temporarily and remove it afterwards.
-CLI commands below use the distributed file and require no copy.
-
-The harness copies the current FlatPress tree into an isolated temporary sandbox, excludes live `fp-content/content` by default, seeds deterministic fixtures, freezes the plugin clock around date-window-sensitive fixture groups, snapshots and restores mutable option fixtures, mocks Mastodon HTTP calls unless live auth is explicitly requested, and ends with a counter block containing `Exit-code`, `[OK]`, `[FAIL]`, `[WARN]`, and `[SKIP]`.
-
-### Simulation parameters
-
-| Parameter or query string                             | Environment variable                       | Description                                                                                                              |
-| ----------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `--summary` or `?summary=1`                           | `SIMULATE_MASTODON_SUMMARY=1`              | Prints compact per-test details for browser/shared-hosting runs while keeping all assertions.                            |
-| `--include-live-content` or `?include-live-content=1` | `SIMULATE_MASTODON_INCLUDE_LIVE_CONTENT=1` | Copies the source `fp-content/content` tree into the sandbox for explicit live-content smoke tests.                      |
-| `--live-auth` or `?live-auth=1`                       | —                                          | Enables the optional read-only credential smoke test and allows the harness to contact the configured Mastodon instance. |
-| —                                                     | `SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1` | Prevents CI memory-limit raising so the large-state `[SKIP]` branch can be tested deterministically.                     |
-
-### Recommended commands
-
-| Use case                        | Command                                                                                                                                             |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Full local regression           | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_`                                                                              |
-| Browser/shared-hosting output   | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --summary`                                                                    |
-| Environment-driven summary mode | `SIMULATE_MASTODON_SUMMARY=1 php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_`                                                  |
-| Explicit live-content smoke run | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --include-live-content --summary`                                             |
-| Optional live credential smoke  | `php fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --live-auth --summary`                                                        |
-| CI large-state skip branch      | `CI=1 SIMULATE_MASTODON_DISABLE_MEMORY_RAISE=1 php -d memory_limit=128M fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_ --summary` |
-
-### Memory and CI behavior
-
-The small `300x10` state regression always runs. The heavy `3000x10` state regression checks memory before building its large synthetic state. Non-CI low-memory runs emit `[WARN]`; CI runs first try to raise `memory_limit` to 384M and emit `[SKIP]` if that is not possible. CI detection accepts common variables such as `CI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL`, `BUILDKITE`, `CIRCLECI`, `TRAVIS`, `APPVEYOR`, `TEAMCITY_VERSION`, and `TF_BUILD`.
+See [simulation parameters](05-Regression-Test-Matrix.md#simulation-parameters),
+[recommended commands](05-Regression-Test-Matrix.md#recommended-commands)
+and [memory/CI policy](05-Regression-Test-Matrix.md#large-state-memory-policy).
+The distributed `.ph_` entry point is sufficient; an executable root copy is optional.
 
 ## Documentation consistency check
 
@@ -138,25 +115,25 @@ After changing the plugin, the simulation harness or this documentation set, run
 php fp-plugins/mastodon/developer-docs/check-consistency.php
 ```
 
-The checker validates harness summary/category counts, regression catalog entries, physical function-file/line references and the explicit module inventory, local Markdown links, More coverage, URL-budget documentation and plugin helper names across this documentation set. It compares optional executable harness copies with the distributed `.ph_` source and accepts a snapshot without a root copy. Mermaid parsing/rendering requires a separate Mermaid runtime; this PHP checker does not validate Mermaid syntax.
+The checker validates harness summary/category counts, regression catalog entries, physical function-file/line references and the explicit module inventory, local Markdown files and section anchors, canonical topic ownership, media-helper process mappings, More coverage, URL-budget documentation and plugin helper names across this documentation set. It compares optional executable harness copies with the distributed `.ph_` source and accepts a snapshot without a root copy. The module inventory is read without executing plugin code; missing/unlisted modules are rejected, and LF/CRLF inputs are normalized. Mermaid parsing/rendering requires a separate Mermaid runtime; this PHP checker does not validate Mermaid syntax.
 
 ## Current split-state guardrails
 
-The Mastodon plugin documentation now covers the per-entry comment-shard model, migration backup files, shard diagnostics/repair helpers, the exported-comment deletion invariant and the 128-MB simulation workflow. The most relevant entry points are:
-
-| Topic                         | Document                                                       |
-| ----------------------------- | -------------------------------------------------------------- |
-| State files and repair policy | [`02-State-Model.md`](02-State-Model.md)                       |
-| Regression coverage           | [`05-Regression-Test-Matrix.md`](05-Regression-Test-Matrix.md) |
-| Mermaid process flows         | [`06-Process-Flow.md`](06-Process-Flow.md)                     |
-| Function ownership            | [`07-Function-Organigram.md`](07-Function-Organigram.md)       |
-
-The maintenance helpers are reachable from both the FlatPress admin panel and `fp-plugins/mastodon/mastodon-state-cli.php`.
+For split-state storage, the exported-comment deletion invariant, migration
+backups and diagnostic/repair semantics, read
+[the state model](02-State-Model.md#split-comment-shard-model).
+[Process flows](06-Process-Flow.md#9-admin-maintenance-page-separation) show the
+admin and CLI entry points; [regression coverage](05-Regression-Test-Matrix.md)
+describes the protected cases.
 
 ## Media validation and bounded downloads
 
-[08-Media-Safety.md](08-Media-Safety.md) describes import budgets, retry rules,
-poster and video metadata validation, and automatic instance-limit refresh.
+[04-API-Compatibility.md](04-API-Compatibility.md#media-safety-responsibilities)
+describes import budgets, poster and video validation, instance-limit refresh
+and the multipart memory fallback. Import retry and cursor rules are in
+[the state model](02-State-Model.md#media-retries-and-instance-freshness);
+verification commands and limits are in
+[the regression matrix](05-Regression-Test-Matrix.md#media-verification-and-evidence-limitations).
 The additional local transport test is available as
 `regression-test/media-transport-test.py`. It exercises both real download
 transports without connecting to a Mastodon instance.

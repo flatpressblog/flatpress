@@ -18,6 +18,10 @@ The plugin, comprising the loader and internal modules (excluding the separate m
 
 The 457 top-level functions plus six class-method declarations total 463; the three shared method names account for the difference from 460 distinct names. Anonymous callbacks are outside this named catalog.
 
+Including the 13 functions in [the media safety appendix](#media-safety-helper-catalog),
+the full loaded plugin has 476 named declarations. The main catalog counts above
+exclude that separately checked appendix.
+
 The count above is derived from the current PHP source and verified by `developer-docs/check-consistency.php`.
 Duplicate admin method names such as `setup()`, `main()` and `onsubmit()` are implemented by separate admin action classes, while the generated catalog records the physical source line of the last declaration for each shared method name.
 
@@ -32,30 +36,14 @@ Duplicate admin method names such as `setup()`, `main()` and `onsubmit()` are im
 | Repair         | Admin and CLI maintenance can diagnose shard metadata and rebuild repairable indexes from shard files.                                   |
 | Profile widget | `plugin_mastodon_run_sync()` refreshes public profile/avatar cache; the frontend widget reads only local files and never calls Mastodon. |
 
-The callable catalog is generated from the explicit module list in `plugin.mastodon.php`. Each entry gives its physical line within the named module. `inc/media-safety.php` retains its separate catalog in `08-Media-Safety.md`.
+The callable catalog is generated from the explicit module list in `plugin.mastodon.php`. Each entry gives its physical line within the named module. `inc/media-safety.php` retains its separate catalog in [the media safety helper catalog](#media-safety-helper-catalog).
 
-## Mastodon API Endpoints
+## API boundaries
 
-| Endpoint                                      | Main helper/function area                     | Use                                                                                                                                                                                     |
-| --------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GET /.well-known/oauth-authorization-server` | `plugin_mastodon_oauth_server_metadata()`     | Discover OAuth scopes and prefer the narrow `profile` scope when available.                                                                                                             |
-| `POST /api/v1/apps`                           | `plugin_mastodon_register_app()`              | Register the FlatPress application with compatible scopes.                                                                                                                              |
-| `GET /oauth/authorize`                        | `plugin_mastodon_build_authorize_url()`       | Send the administrator to Mastodon OAuth authorization.                                                                                                                                 |
-| `POST /oauth/token`                           | `plugin_mastodon_exchange_code_for_token()`   | Exchange the authorization code for an access token.                                                                                                                                    |
-| `GET /api/v1/accounts/verify_credentials`     | `plugin_mastodon_verify_credentials()`        | Validate the configured account, cache account metadata and refresh the local profile-widget cache when avatar data is available.                                                       |
-| `GET /api/v1/accounts/:id/statuses`           | `plugin_mastodon_fetch_account_statuses()`    | Discover statuses already posted by the authenticated account; add `exclude_direct=true` when Mastodon 4.6/API v10 support is known and retry once without it on compatible rejections. |
-| `GET /api/v1/notifications`                   | `plugin_mastodon_fetch_reply_notifications()` | Prioritize mention notifications as old-thread reply hints.                                                                                                                             |
-| `GET /api/v1/statuses/:id/context`            | `plugin_mastodon_fetch_status_context()`      | Import replies and refresh known synchronized threads.                                                                                                                                  |
-| `GET /api/v1/statuses/:id`                    | `plugin_mastodon_fetch_status()`              | Verify one remote status or deletion target.                                                                                                                                            |
-| `POST /api/v1/statuses`                       | `plugin_mastodon_create_status()`             | Create entry/comment statuses.                                                                                                                                                          |
-| `PUT /api/v1/statuses/:id`                    | `plugin_mastodon_update_status()`             | Update changed entry/comment statuses when possible.                                                                                                                                    |
-| `DELETE /api/v1/statuses/:id`                 | `plugin_mastodon_delete_status()`             | Delete remote statuses; version-aware `delete_media` handling is centralized.                                                                                                           |
-| `GET /api/v2/instance`                        | `plugin_mastodon_instance_document()`         | Cache instance limits and feature support.                                                                                                                                              |
-| `POST /api/v2/media`                          | `plugin_mastodon_upload_media_items()`        | Upload media before final status creation/update.                                                                                                                                       |
-| `GET /api/v1/media/:id`                       | `plugin_mastodon_fetch_media_attachment()`    | Poll asynchronous media processing.                                                                                                                                                     |
-| `DELETE /api/v1/media/:id`                    | `plugin_mastodon_delete_media_attachment()`   | Clean up uploaded media when API v4 / Mastodon >= 4.4.0 is known or support is unknown.                                                                                                 |
-
-The local state split does not change these API boundaries. It changes how the plugin stores and loads local mappings before and after calling the same Mastodon API helpers.
+See [the endpoint matrix](04-API-Compatibility.md#endpoint-matrix) for methods,
+scopes, versions and fallbacks. Groups A–H below identify the implementing
+functions; [the change matrix](03-Function-Process-Matrix.md#change-impact-examples)
+connects feature changes to state and regression coverage.
 
 ## High-level call flow
 
@@ -71,14 +59,16 @@ flowchart TD
 	WidgetOut -- no --> Hide[return no widget]
 	Front --> Init[init hook: plugin_mastodon_maybe_sync]
 	Init --> Fast[read compact scheduler-state after request/configuration guards]
-	Fast --> Due{scheduled content sync due?}
+	Fast --> FixedDue{enabled fixed entry deletion due and retry barrier elapsed?}
+	FixedDue -- yes --> DeleteRun
+	FixedDue -- no --> Due{scheduled content sync due?}
 	Due -- yes --> Run[plugin_mastodon_run_sync false]
 	Due -- no --> DeleteDue{pending deletion enabled and due?}
 	DeleteDue -- yes --> DeleteRun[plugin_mastodon_run_deletion_sync false]
 	DeleteDue -- no --> End[return]
 	Run --> EmptyState[read main state with empty comment workset]
 	EmptyState --> ProfileRefresh[refresh profile/avatar cache via verify_credentials]
-	ProfileRefresh --> Workset[load scheduled/dirty/known-thread shards]
+	ProfileRefresh --> Workset[load scheduled/dirty shards plus pending-recheck shards when comment sync is enabled]
 	Workset --> OneWay{disable_remote_import enabled?}
 	OneWay -- no --> RemoteLocal[remote to local import; skip missing mapped entries]
 	OneWay -- yes --> SkipRemote[skip Mastodon-to-FlatPress import]
@@ -89,7 +79,7 @@ flowchart TD
 	LocalRemote --> Persist
 ```
 
-The public widget follows the same response-time rule: `plugin_mastodon_run_sync()` refreshes `fp-content/plugin_mastodon/profile/profile.json` and the local avatar during scheduled/manual syncs, while the widget itself only reads those local files and hides itself when the cache is incomplete. Scheduled requests must keep normal page rendering cheap. They therefore prefer `scheduler-state.json` and only enter full synchronization when the configured due checks pass. When `disable_remote_import` is enabled, the same run keeps the local-to-remote export path active but skips Mastodon-to-FlatPress import and thread refresh. The due checks treat stored `sync_time`, `last_run` and deletion cooldown values as UTC so PHP default timezone drift cannot shift the FlatPress-local admin schedule. In the current split-state stand the scheduled sync opens the main state without all comment shards, then loads only the entry shards selected by the automatic window, dirty queues and known-thread rotation.
+The public widget follows the same response-time rule: `plugin_mastodon_run_sync()` refreshes `fp-content/plugin_mastodon/profile/profile.json` and the local avatar during scheduled/manual syncs, while the widget itself only reads those local files and hides itself when the cache is incomplete. Scheduled requests must keep normal page rendering cheap. They therefore prefer `scheduler-state.json` and only enter full synchronization when the configured due checks pass. When `disable_remote_import` is enabled, the same run keeps the local-to-remote export path active but skips Mastodon-to-FlatPress import and thread refresh. The due checks treat stored `sync_time`, `last_run` and deletion cooldown values as UTC so PHP default timezone drift cannot shift the FlatPress-local admin schedule. In the current split-state stand the scheduled sync opens the main state without all comment shards, then initially loads shards selected by the automatic window and dirty queues, plus pending-recheck parent shards when comment sync is enabled. Later remote thread processing can load additional shards on demand.
 
 ### Local → remote export path
 
@@ -100,8 +90,11 @@ flowchart LR
 	Shards --> Build["Entry: first [more] then server budget; comments: normal text; media: full entry"]
 	Build --> Api[create or update changed Mastodon statuses]
 	Api --> State[update entries, comments_remote and changed shards]
-	State --> Write[atomic shard/main-state write with last_error support]
+	State --> Write[individual atomic file replacement with last_error support]
 ```
+
+Shard and main-state writes are not one transaction. If the main-state write fails,
+a shard may already have been updated.
 
 The export path is expected to behave the same for users as before the split-state change: changed FlatPress entries and comments are posted or updated on Mastodon. The implementation difference is that comment mappings are loaded entry-by-entry instead of as one monolithic `comments` array. Entry text stops at the first case-insensitive `[more]` before conversion; title/link/tag suffixes retain their budgets and media still uses the full entry. Status text budgeting uses `plugin_mastodon_status_text_url_spans()` before `plugin_mastodon_status_text_length()` and `plugin_mastodon_limit_status_text()`, so sentence punctuation directly after a URL is counted as normal text instead of being hidden inside the fixed Mastodon URL placeholder.
 
@@ -679,30 +672,12 @@ This group composes lower-level helpers into visible synchronization behavior. I
 
 | Step | Read                                                                                                    |
 | ---- | ------------------------------------------------------------------------------------------------------- |
-| 1    | Purpose, scope and API endpoint table to understand the external boundaries.                            |
+| 1    | Purpose and scope, then the linked API endpoint matrix for external boundaries.                         |
 | 2    | High-level call flow diagrams before reading individual functions.                                      |
 | 3    | Responsibility groups A–H for the subsystem you need to change.                                         |
 | 4    | `02-State-Model.md` for state format details before touching shard/write logic.                         |
 | 5    | `05-Regression-Test-Matrix.md` before changing sync, deletion, migration or admin maintenance behavior. |
 | 6    | Generated function catalog for current line numbers when editing code.                                  |
-
-## Current feature areas reflected in the function set
-
-| Feature area            | Functions to inspect first                                                                                                 | Why it matters                                                                          |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Configuration and OAuth | `plugin_mastodon_default_options()`, `plugin_mastodon_normalize_*()`, OAuth helpers                                        | Controls admin options, scopes, authorization and account verification.                 |
-| State and scheduler     | `plugin_mastodon_state_read()`, `plugin_mastodon_state_write_with_last_error()`, scheduler-state helpers                   | Keeps frontend requests cheap and sync state recoverable.                               |
-| Comment shards          | `plugin_mastodon_state_load_comment_shard_into()`, `plugin_mastodon_state_write_comment_shards()`, diagnose/repair helpers | Prevents the old monolithic comment state from dominating memory.                       |
-| Local export            | `plugin_mastodon_sync_local_to_remote()`, builders, hash/media helpers                                                     | Creates or updates Mastodon statuses from FlatPress entries/comments.                   |
-| Remote import           | `plugin_mastodon_sync_remote_to_local()`, remote context/import helpers                                                    | Imports remote replies and updates synchronized threads.                                |
-| Deletion reconciliation | `plugin_mastodon_run_deletion_sync()`, cursor helpers, delete API helper                                                   | Keeps local and remote deletions aligned without scanning everything at once.           |
-| Admin/CLI maintenance   | `plugin_mastodon_admin_assign()`, `plugin_mastodon_cli_comment_shard_maintenance()`                                        | Provides human-facing diagnostics and repair without cluttering the main settings page. |
-
-The entry import boundary also owns deleted-entry protection: a missing local entry named
-by the entry reverse index is skipped before media/hash/write work. The mapping remains
-owned by deletion reconciliation, including failed-delete retries and disabled-delete mode.
-This check is independent of the entry source and records a first deletion deadline through
-the queue helper without a global shard scan.
 
 ## Maintenance notes
 
@@ -1178,8 +1153,28 @@ The appendix is alphabetical and repeats every callable function/method with the
 - `plugin_mastodon_widget_lang_string()` — line 184 in `inc/profile.php` — Return localized public Mastodon widget strings with safe fallbacks.
 - `setup()` — line 85 in `inc/admin-actions.php` — Register the active Mastodon admin template and assign plugin data to Smarty.
 
-## Additional helper file
+## Media safety helper catalog
 
-The thirteen functions in `inc/media-safety.php` are documented in the separate
-[media helper catalog](08-Media-Safety.md#functions-in-the-new-helper-file).
-The counts and source-line anchors above refer to the main plugin file.
+All functions below are defined in `fp-plugins/mastodon/inc/media-safety.php`.
+The main catalog above covers 463 declarations across the other plugin modules
+and excludes these 13 functions. Together they cover 476 declarations. The
+appendix is checked separately and does not change the main catalog counts.
+
+| Function                                    | Responsibility                                            |
+| ------------------------------------------- | --------------------------------------------------------- |
+| `plugin_mastodon_download_budget_start()`   | Reset the run budget and import error marker.             |
+| `plugin_mastodon_download_limit()`          | Read local file, byte and request limits.                 |
+| `plugin_mastodon_download_write()`          | Account for transport chunks and write them completely.   |
+| `plugin_mastodon_media_origin()`            | Determine an allowed URL origin.                          |
+| `plugin_mastodon_media_redirect()`          | Resolve a redirect target.                                |
+| `plugin_mastodon_download_to_file()`        | Manage transport, redirects, deadlines and partial files. |
+| `plugin_mastodon_probe_video()`             | Run a bounded local ffprobe process and cache its result. |
+| `plugin_mastodon_video_rate()`              | Parse numeric or rational frame rates.                    |
+| `plugin_mastodon_validate_video_metadata()` | Validate video dimensions and frame rate.                 |
+| `plugin_mastodon_refresh_instance_if_due()` | Coordinate refresh and failure cooldown.                  |
+
+| Additional function                        | Responsibility                                                |
+| ------------------------------------------ | ------------------------------------------------------------- |
+| `plugin_mastodon_memory_limit_bytes()`     | Parse PHP memory quantities with PHP 7.2 compatibility.       |
+| `plugin_mastodon_multipart_memory_error()` | Check the complete body cap and remaining PHP memory.         |
+| `plugin_mastodon_build_multipart_body()`   | Preflight all parts and assemble a bounded multipart request. |

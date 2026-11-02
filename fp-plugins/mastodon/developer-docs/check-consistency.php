@@ -255,8 +255,46 @@ function mastodon_docs_extract_backticked_function_references($content) {
 	return $functions;
 }
 
+/** Return one Markdown section including its subsections, without executing code. */
+function mastodon_docs_section_text($content, $heading) {
+	$match = array();
+	if (!preg_match('/^' . preg_quote($heading, '/') . '[ 	]*\n/m', $content, $match, PREG_OFFSET_CAPTURE)) {
+		return '';
+	}
+	$start = $match [0] [1] + strlen($match [0] [0]);
+	$next = array();
+	if (preg_match('/^#{1,' . strspn($heading, '#') . '} /m', $content, $next, PREG_OFFSET_CAPTURE, $start)) {
+		return substr($content, $start, $next [0] [1] - $start);
+	}
+	return substr($content, $start);
+}
+
+/** Build GitHub-style heading anchors used by this English Markdown set. */
+function mastodon_docs_markdown_anchors($content) {
+	$anchors = array();
+	$counts = array();
+	$headings = array();
+	// Code blocks do not create Markdown heading anchors.
+	$content = preg_replace('/^```[^\n]*\n.*?^```[^\n]*$/ms', '', $content);
+	preg_match_all('/^#{1,6}[ 	]+(.+?)[ 	]*#*[ 	]*$/m', $content, $headings);
+	foreach ($headings [1] as $heading) {
+		$text = strip_tags($heading);
+		$text = function_exists('mb_strtolower') ? mb_strtolower($text, 'UTF-8') : strtolower($text);
+		$slug = str_replace(' ', '-', (string) preg_replace('/[^\p{L}\p{N}_ -]/u', '', $text));
+		$count = isset($counts [$slug]) ? $counts [$slug] : 0;
+		$counts [$slug] = $count + 1;
+		$anchors [$slug . ($count > 0 ? '-' . $count : '')] = true;
+	}
+	$explicit = array();
+	preg_match_all('/\b(?:id|name)=["\x27]([^"\x27]+)["\x27]/', $content, $explicit);
+	foreach ($explicit [1] as $anchor) {
+		$anchors [$anchor] = true;
+	}
+	return $anchors;
+}
+
 $pluginSources = mastodon_docs_read_plugin_sources($pluginFile, $errors);
-// Media safety keeps its separate catalog in 08-Media-Safety.md.
+// Media safety keeps a separately checked appendix in the function organigram.
 $catalogSources = $pluginSources;
 unset($catalogSources ['inc/media-safety.php']);
 $pluginContent = implode("\n", $catalogSources);
@@ -297,7 +335,9 @@ if ($simulationContent !== '' && $regressionDocContent !== '') {
 	}
 }
 
-if ($pluginContent !== '' && $organigramDocContent !== '') {
+$mainOrganigramDocContent = explode('## Media safety helper catalog', $organigramDocContent, 2) [0];
+
+if ($pluginContent !== '' && $mainOrganigramDocContent !== '') {
 	$actualFunctions = array();
 	$actualFunctionDeclarations = array();
 	$actualFunctionFiles = array();
@@ -312,9 +352,9 @@ if ($pluginContent !== '' && $organigramDocContent !== '') {
 		$actualFunctionDeclarations = array_merge($actualFunctionDeclarations, mastodon_docs_extract_function_declarations($sourceContent));
 	}
 	$actualOrganigramFunctionLines = $actualFunctions;
-	$documentedFunctions = mastodon_docs_extract_organigram_functions($organigramDocContent);
+	$documentedFunctions = mastodon_docs_extract_organigram_functions($mainOrganigramDocContent);
 	$locations = array();
-	preg_match_all('/`([A-Za-z_][A-Za-z0-9_]*)\(\)`\s+—\s+line\s+(\d+)\s+in\s+`([^`]+)`/u', $organigramDocContent, $locations, PREG_SET_ORDER);
+	preg_match_all('/`([A-Za-z_][A-Za-z0-9_]*)\(\)`\s+—\s+line\s+(\d+)\s+in\s+`([^`]+)`/u', $mainOrganigramDocContent, $locations, PREG_SET_ORDER);
 	$documentedLocationNames = array();
 	foreach ($locations as $location) {
 		$name = $location [1];
@@ -337,16 +377,16 @@ if ($pluginContent !== '' && $organigramDocContent !== '') {
 		}
 	}
 
-	if (!preg_match('/\*\*' . preg_quote((string) $totalCallableNames, '/') . '\*\* distinct callable names/', $organigramDocContent)) {
+	if (!preg_match('/\*\*' . preg_quote((string) $totalCallableNames, '/') . '\*\* distinct callable names/', $mainOrganigramDocContent)) {
 		$errors [] = 'Function organigram unique callable-name count is not ' . $totalCallableNames . '.';
 	}
-	if (!preg_match('/currently contains \*\*' . preg_quote((string) count($actualFunctionDeclarations), '/') . '\*\* named function\/method declarations/', $organigramDocContent)) {
+	if (!preg_match('/currently contains \*\*' . preg_quote((string) count($actualFunctionDeclarations), '/') . '\*\* named function\/method declarations/', $mainOrganigramDocContent)) {
 		$errors [] = 'Function organigram declaration count is not ' . count($actualFunctionDeclarations) . '.';
 	}
-	if (!preg_match('/- \*\*' . preg_quote((string) $topLevelFunctions, '/') . '\*\* top-level plugin functions/', $organigramDocContent)) {
+	if (!preg_match('/- \*\*' . preg_quote((string) $topLevelFunctions, '/') . '\*\* top-level plugin functions/', $mainOrganigramDocContent)) {
 		$errors [] = 'Function organigram top-level count is not ' . $topLevelFunctions . '.';
 	}
-	if (!preg_match('/- \*\*' . preg_quote((string) $adminMethodDeclarations, '/') . '\*\* admin action methods implemented with the shared method names/', $organigramDocContent)) {
+	if (!preg_match('/- \*\*' . preg_quote((string) $adminMethodDeclarations, '/') . '\*\* admin action methods implemented with the shared method names/', $mainOrganigramDocContent)) {
 		$errors [] = 'Function organigram admin action method count is not ' . $adminMethodDeclarations . '.';
 	}
 
@@ -371,7 +411,7 @@ if ($pluginContent !== '' && $organigramDocContent !== '') {
 		}
 	}
 
-	$functionEntriesWithoutDescription = mastodon_docs_extract_function_entries_without_description($organigramDocContent);
+	$functionEntriesWithoutDescription = mastodon_docs_extract_function_entries_without_description($mainOrganigramDocContent);
 	foreach ($functionEntriesWithoutDescription as $name => $lines) {
 		$errors [] = 'Function organigram entry for "' . $name . '" has no description on line(s): ' . implode(', ', $lines);
 	}
@@ -388,12 +428,12 @@ if ($pluginContent !== '' && $organigramDocContent !== '') {
 		'## Alphabetical appendix / Generated function catalog'
 	);
 	foreach ($requiredOrganigramSections as $heading) {
-		if (!mastodon_docs_section_contains_described_function_entries($organigramDocContent, $heading)) {
+		if (!mastodon_docs_section_contains_described_function_entries($mainOrganigramDocContent, $heading)) {
 			$errors [] = 'Function organigram section has no described function entries: ' . $heading;
 		}
 	}
 
-	$referencedFunctions = mastodon_docs_extract_backticked_function_references($organigramDocContent);
+	$referencedFunctions = mastodon_docs_extract_backticked_function_references($mainOrganigramDocContent);
 	foreach ($referencedFunctions as $name => $lines) {
 		if (!isset($actualFunctions [$name])) {
 			$errors [] = 'Function organigram references unknown function "' . $name . '" on line(s): ' . implode(', ', $lines);
@@ -436,7 +476,6 @@ $oneWayRequiredDocs = array(
 			'Admin UI direction gate',
 			'mastodon_remote_import_options_hidden marker',
 			'plugin_mastodon_companion_plugins_status() hides import-only helpers',
-			'optional root `simulate_mastodon_plugin.php`',
 			'Unlink stale remote mapping and queue dirty_entries',
 			'Unlink stale remote mapping and queue dirty_comments'
 		)
@@ -624,13 +663,6 @@ foreach ($commentReplyOptinRequiredDocs as $docName => $docData) {
 }
 
 $commentReplyOptinLifecycleRequiredDocs = array(
-	'00-Mental-Model.md' => array(
-		$mentalModelDocContent,
-		array(
-			'remains checked when another validator redisplays the submitted form',
-			'rejection or a later bounded sync prune removes orphaned pending grants'
-		)
-	),
 	'01-Process-Map.md' => array(
 		$processMapDocContent,
 		array(
@@ -642,6 +674,8 @@ $commentReplyOptinLifecycleRequiredDocs = array(
 	'02-State-Model.md' => array(
 		$stateModelDocContent,
 		array(
+			'remains checked when another validator redisplays the submitted form',
+			'rejection or a later bounded sync prune removes orphaned pending grants',
 			'pending_file',
 			'commentcenter_comment_discarded',
 			'bounded orphan pruner'
@@ -701,16 +735,10 @@ $guardIsolationRequiredDocs = array(
 		$regressionDocContent,
 		array(
 			'dirty-comment scheduled-run regression clears the `content` sync guard',
-			'APCu guard can survive sandbox directory cleanup'
+			'sandbox directory cleanup and produce `sync_cooldown`'
 		)
 	),
-	'06-Process-Flow.md' => array(
-		$flowDocContent,
-		array(
-			'Dirty-comment scheduled fixture clears content guard',
-			'earlier cooldown assertions cannot survive through APCu'
-		)
-	)
+
 );
 foreach ($guardIsolationRequiredDocs as $docName => $docData) {
 	$docContent = (string) $docData [0];
@@ -738,26 +766,22 @@ $fixtureIsolationRequiredDocs = array(
 	'README.md' => array(
 		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
 		array(
-			'freezes the plugin clock around date-window-sensitive fixture groups',
-			'snapshots and restores mutable option fixtures',
+			'05-Regression-Test-Matrix.md#simulation-parameters',
 			'regression-test/simulate_mastodon_plugin.ph_'
 		)
 	),
 	'05-Regression-Test-Matrix.md' => array(
 		$regressionDocContent,
 		array(
+			'freezes the plugin clock around date-window-sensitive fixture groups',
+			'snapshots and restores mutable option fixtures',
 			'Date-window fixture isolation policy',
 			'Mutable option fixture isolation policy',
 		)
 	),
 	'06-Process-Flow.md' => array(
 		$flowDocContent,
-		array(
-			'Freeze plugin_mastodon_test_now for date-window-sensitive fixture groups',
-			'Snapshot, override, and restore mutable admin option fixtures',
-			'cannot inherit state from earlier scenarios',
-			'Resolve FlatPress root three directories above regression-test copy'
-		)
+		array('05-Regression-Test-Matrix.md#harness-model')
 	)
 );
 foreach ($fixtureIsolationRequiredDocs as $docName => $docData) {
@@ -794,7 +818,6 @@ $importedRemoteReplyDeleteRequiredDocs = array(
 		array(
 			'locally deleted imported remote replies',
 			'comment source remote and entry still exists?',
-			'without outbound Mastodon `DELETE` requests',
 			'preserve existing source ownership'
 		)
 	)
@@ -1271,16 +1294,135 @@ if (is_file($regressionSimulationFallbackFile)) {
 	}
 }
 
+// Feature details are checked at their canonical owners after documentation consolidation.
+$documentationOwnershipRequiredDocs = array(
+	'README.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/README.md', $errors),
+		array('### PHPStan on an installed instance', 'scanFiles:',
+			'../.setup/lib/permissions.lib.php', '05-Regression-Test-Matrix.md#recommended-commands')
+	),
+	'02-State-Model.md' => array(
+		$stateModelDocContent,
+		array('## Public profile cache lifecycle', 'profile/profile.json', 'profile/avatar.*',
+			'## UTC timestamp policy', '## Compact scheduler fields', 'source_state_signature',
+			'local_entry_deletions', 'deletion_retry_not_before', 'import_fingerprint',
+			'avatar_source_url', 'avatar_mime_type', 'avatar_bytes', 'fetched_at')
+	),
+	'03-Function-Process-Matrix.md' => array(
+		mastodon_docs_read_file(__DIR__ . '/03-Function-Process-Matrix.md', $errors),
+		array('Comment shards and migration', 'Admin/CLI maintenance', 'P8', 'P7/API',
+			'### Entry point and loading behavior', '### Module responsibilities',
+			"class_exists('AdminPanelAction')", 'OPcache remains optional')
+	),
+	'04-API-Compatibility.md' => array(
+		$apiDocContent,
+		array('PLUGIN_MASTODON_WINDOW_MEDIA_UPLOAD_BUDGET', 'PLUGIN_MASTODON_WINDOW_DELETE_BUDGET',
+			'PLUGIN_MASTODON_INSTANCE_REQUEST_TIMEOUT', 'Account statuses `exclude_direct`',
+			'02-State-Model.md#public-profile-cache-lifecycle')
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array('### Simulation parameters', '### Recommended commands',
+			'content-identical after CRLF/LF normalization', '## Historical verification events',
+			'278 regular plugin simulations in that October 26 event',
+			'69 Mermaid blocks in that historical documentation set',
+			'check-module-loading.ph_ frontend', 'check-module-loading.ph_ repeat',
+			'### Modularization verification', 'SHA-256',
+			'Subsequent', 'formatting edits are outside that historical byte-for-byte comparison',
+			'The baseline and each of the three successive stages',
+			'complete regression and PHPStan results were obtained before')
+	),
+	'07-Function-Organigram.md' => array(
+		$organigramDocContent,
+		array('04-API-Compatibility.md#endpoint-matrix', '03-Function-Process-Matrix.md#change-impact-examples')
+	)
+);
+foreach ($documentationOwnershipRequiredDocs as $docName => $requirement) {
+	foreach ($requirement [1] as $snippet) {
+		if (strpos($requirement [0], $snippet) === false) {
+			$errors [] = $docName . ' missing canonical documentation snippet: ' . $snippet;
+		}
+	}
+}
+
+// The canonical module map must follow the actual explicit loader inventory.
+$moduleMapDoc = mastodon_docs_read_file(__DIR__ . '/03-Function-Process-Matrix.md', $errors);
+$moduleMapSection = mastodon_docs_section_text($moduleMapDoc, '### Module responsibilities');
+$mappedModules = array();
+$moduleRows = array();
+preg_match_all('/^\|\s*\[`(inc\/[^`]+)`\]/m', $moduleMapSection, $moduleRows);
+foreach ($moduleRows [1] as $moduleName) {
+	if (isset($mappedModules [$moduleName])) {
+		$errors [] = 'Module responsibility table duplicates module: ' . $moduleName;
+	}
+	$mappedModules [$moduleName] = true;
+	if (!isset($pluginSources [$moduleName])) {
+		$errors [] = 'Module responsibility table lists an unloaded module: ' . $moduleName;
+	}
+}
+foreach ($pluginSources as $moduleName => $source) {
+	if ($moduleName !== 'plugin.mastodon.php' && !isset($mappedModules [$moduleName])) {
+		$errors [] = 'Module responsibility table missing module: ' . $moduleName;
+	}
+}
+
+$stateFieldTable = mastodon_docs_section_text($stateModelDocContent, '## `state.json` fields');
+$entryMetadataTable = mastodon_docs_section_text($stateModelDocContent, '### Entry metadata in `entries`');
+foreach (array('local_entry_deletions', 'deletion_retry_not_before') as $field) {
+	if (!preg_match('/^\|\s*' . preg_quote($field, '/') . '\s*\|/m', $stateFieldTable)) {
+		$errors [] = 'Main state field table missing field: ' . $field;
+	}
+}
+if (!preg_match('/^\|\s*`import_fingerprint`\s*\|/m', $entryMetadataTable)) {
+	$errors [] = 'Entry metadata table missing import_fingerprint.';
+}
+
 // Review the entire Markdown set, not only the function organigram.
 $documentationFiles = glob(__DIR__ . '/*.md');
 $mediaSafetyContent = mastodon_docs_read_file($rootDir . '/fp-plugins/mastodon/inc/media-safety.php', $errors);
 $allPluginFunctions = array_merge(mastodon_docs_extract_functions($pluginContent), mastodon_docs_extract_functions($mediaSafetyContent));
-$mediaSafetyDoc = mastodon_docs_read_file(__DIR__ . '/08-Media-Safety.md', $errors);
+$mediaSafetySections = explode('## Media safety helper catalog', $organigramDocContent, 2);
+$mediaSafetyDoc = isset($mediaSafetySections [1]) ? $mediaSafetySections [1] : '';
+if ($mediaSafetyDoc === '') {
+	$errors [] = 'Function organigram missing media safety helper catalog.';
+}
+$functionProcessDoc = mastodon_docs_read_file(__DIR__ . '/03-Function-Process-Matrix.md', $errors);
 foreach (mastodon_docs_extract_functions($mediaSafetyContent) as $helper => $helperLine) {
+	if (strpos($functionProcessDoc, '`' . $helper . '()`') === false) {
+		$errors [] = 'Function/process matrix missing media safety helper: ' . $helper;
+	}
 	if (strpos($mediaSafetyDoc, '`' . $helper . '()`') === false) {
 		$errors [] = 'Media safety catalog missing function: ' . $helper;
 	}
 }
+$mediaSafetyRequiredDocs = array(
+	'04-API-Compatibility.md' => array(
+		$apiDocContent,
+		array('## Import: streamed downloads', '## Export: poster validation',
+			'## Instance information and limits', '## Export: video metadata',
+			'## Export without cURL: memory-aware multipart fallback',
+			'PLUGIN_MASTODON_DOWNLOAD_IMAGE_BYTES', 'PLUGIN_MASTODON_DOWNLOAD_AV_BYTES',
+			'PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES', 'PLUGIN_MASTODON_DOWNLOAD_REQUESTS',
+			'PLUGIN_MASTODON_MULTIPART_MAX_BYTES', 'PLUGIN_MASTODON_MULTIPART_MEMORY_RESERVE')
+	),
+	'02-State-Model.md' => array(
+		$stateModelDocContent,
+		array('## Media retries and instance freshness', 'import_fingerprint', 'last_remote_status_id')
+	),
+	'05-Regression-Test-Matrix.md' => array(
+		$regressionDocContent,
+		array('## Media verification and evidence limitations', 'media-transport-test.py',
+			'media-transport-test.ph_', 'ffprobe')
+	)
+);
+foreach ($mediaSafetyRequiredDocs as $docName => $requirement) {
+	foreach ($requirement [1] as $snippet) {
+		if (strpos($requirement [0], $snippet) === false) {
+			$errors [] = $docName . ' missing media safety documentation snippet: ' . $snippet;
+		}
+	}
+}
+$localAnchorCache = array();
 if (is_array($documentationFiles)) {
 	foreach ($documentationFiles as $documentationFile) {
 		$docText = mastodon_docs_read_file($documentationFile, $errors);
@@ -1295,12 +1437,25 @@ if (is_array($documentationFiles)) {
 		if (preg_match_all('/\]\(([^)]+)\)/', $docText, $links)) {
 			foreach ($links [1] as $link) {
 				$link = trim((string) $link, "<> \t\r\n");
-				if ($link === '' || $link [0] === '#' || preg_match('/^[a-z][a-z0-9+.-]*:/i', $link)) {
+				if ($link === '' || preg_match('/^[a-z][a-z0-9+.-]*:/i', $link)) {
 					continue;
 				}
-				$relativePath = rawurldecode(explode('#', $link, 2) [0]);
-				if ($relativePath !== '' && !is_file(__DIR__ . '/' . $relativePath)) {
+				$parts = explode('#', $link, 2);
+				$relativePath = rawurldecode($parts [0]);
+				$target = $relativePath === '' ? $documentationFile : __DIR__ . '/' . $relativePath;
+				if (!is_file($target)) {
 					$errors [] = $docName . ' links to a missing local file: ' . $relativePath;
+					continue;
+				}
+				if (isset($parts [1]) && $parts [1] !== '' && strtolower(pathinfo($target, PATHINFO_EXTENSION)) === 'md') {
+					if (!isset($localAnchorCache [$target])) {
+						$targetContent = mastodon_docs_read_file($target, $errors);
+						$localAnchorCache [$target] = mastodon_docs_markdown_anchors($targetContent);
+					}
+					$anchor = rawurldecode($parts [1]);
+					if (!isset($localAnchorCache [$target] [$anchor])) {
+						$errors [] = $docName . ' links to a missing local section: ' . $link;
+					}
 				}
 			}
 		}
@@ -1321,6 +1476,46 @@ if (preg_match('~smarty-([0-9]+\.[0-9]+\.[0-9]+)/src~', $phpstanConfig, $smartyM
 }
 if (strpos($readmeContent, 'fp-plugins/mastodon/regression-test/simulate_mastodon_plugin.ph_') === false) {
 	$errors [] = 'README must document the distributed simulator entry point.';
+}
+
+// Semantic guardrails for the installed-instance documentation audit.
+// These targeted claims/edges complement structural checks; they are not a proof of all prose.
+$semanticDocRules = array(
+	array('F01', '02-State-Model.md', array('diagnostics read the main state and can trigger legacy migration', 'refreshes `scheduler-state.json`'), array('Diagnostics are read-only', 'Writes only the compact main state')),
+	array('F02', '02-State-Model.md', array('full / comment_rechecks'), array('full\\entries\\comments')),
+	array('F03', '07-Function-Organigram.md', array('FixedDue -- yes --> DeleteRun', 'FixedDue -- no --> Due'), array('Fast --> Due{')),
+	array('F04', '06-Process-Flow.md', array('Cooldown -- "Clear" --> GuardMark --> Lock', 'Mark content cooldown: scheduled_content_sync'), array('GuardClear')),
+	array('F05', '06-Process-Flow.md', array('EntryDeadline -- "No" --> KeepEntry', 'EntryDeadline -- "Yes" --> DeleteRemoteEntry', 'Remaining -- "Yes" --> KeepPending', 'Remaining -- "No" --> ClearPending'), array('EntryLocal -- "No" --> DeleteRemoteEntry', 'Complete -- "No failures" --> ClearPending')),
+	array('F06', '07-Function-Organigram.md', array('Shard and main-state writes are not one transaction', 'individual atomic file replacement'), array('atomic shard/main-state write')),
+	array('F07', '04-API-Compatibility.md', array('A present machine-readable API version takes precedence', 'only when it is absent'), array('confirms Mastodon `>= 4.6.0` or')),
+	array('F08', '04-API-Compatibility.md', array('Content-Length is present and contains only decimal digits', 'helper does not compare non-numeric values'), array('When Content-Length is present, it must match')),
+	array('F09', '04-API-Compatibility.md', array('without an API-version gate'), array('Mastodon 4.6/API-v9')),
+);
+// Follow-up review: related summaries and missing control-flow branches.
+$followupDocRules = array(
+	array('R01', '02-State-Model.md', array('Repair persistence requires `$persist=true`', 'no diagnostic errors', 'legacy reads may migrate state'), array('read-only diagnostics')),
+	array('R02', '02-State-Model.md', array('ObjectKind -->|entry| EntryDeadline', 'ObjectKind -->|comment| ImportedRemoteDelete', 'no comment tombstone'), array('Map --> LocalDelete --> ImportedRemoteDelete')),
+	array('R03', '02-State-Model.md', array('Orchestrators initialize/persist; import, export and deletion/recheck helpers increment.'), array('Deep helper functions that cannot know the whole run result.')),
+	array('R04', '02-State-Model.md', array('pending-recheck parent shards when comment sync is enabled'), array('Loads only active-window and dirty parent-entry shards.')),
+	array('R04b', '07-Function-Organigram.md', array('Later remote thread processing can load additional shards on demand.', 'pending-recheck parent shards'), array('load scheduled/dirty/known-thread shards')),
+	array('R05', '06-Process-Flow.md', array('GeneralDeleteDue -- "Yes" --> FixedDelete', 'GeneralDeleteDue -- "No" --> End'), array('	Due -- "No" --> End')),
+	array('R06', '06-Process-Flow.md', array('Force, deletions_pending or an entry deletion deadline?', 'DeleteCooldown -- "Yes" --> Return', 'Lock -- "No" --> Return', 'LockOpen -- "No" --> LockError', 'due requires pending work or an entry deadline'), array('Force or deletions_pending?', 'Due -- "Yes" --> Lock --> RateGuard', 'but deletions_pending and not-before due check still apply')),
+	array('R07', '06-Process-Flow.md', array('CommentDeadline -- "Yes" --> SkipFutureShard', 'retain and skip each recheck with a future parent entry deadline', 'ShardDeadline -- "yes: skip shard" --> ShardList', 'load only eligible recheck shards'), array('CommentLoop --> CommentScope', 'ShardList --> Skip --> Load')),
+	array('R08', '04-API-Compatibility.md', array('only without it does version >= 4.4.0 apply', 'only when it is absent', 'only without it does the cached/stored version'), array('`api_versions[mastodon] >= 4` or version >= 4.4.0 enables cleanup', 'data confirms `api_versions.mastodon >= 10`')),
+);
+$semanticDocRules = array_merge($semanticDocRules, $followupDocRules);
+foreach ($semanticDocRules as $rule) {
+	$semanticText = mastodon_docs_read_file(__DIR__ . '/' . $rule [1], $errors);
+	foreach ($rule [2] as $requiredClaim) {
+		if (strpos($semanticText, $requiredClaim) === false) {
+			$errors [] = $rule [0] . ' ' . $rule [1] . ' missing audited semantic claim/edge: ' . $requiredClaim;
+		}
+	}
+	foreach ($rule [3] as $obsoleteClaim) {
+		if (strpos($semanticText, $obsoleteClaim) !== false) {
+			$errors [] = $rule [0] . ' ' . $rule [1] . ' retains contradicted claim/edge: ' . $obsoleteClaim;
+		}
+	}
 }
 
 if ($errors !== array()) {
