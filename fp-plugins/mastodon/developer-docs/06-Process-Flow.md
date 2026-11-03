@@ -1529,7 +1529,7 @@ sequenceDiagram
 	Admin->>AdminUI: Press Run deletion synchronization
 	AdminUI->>Plugin: plugin_mastodon_run_deletion_sync(true)
 	Plugin->>State: Load main state.json without eager comment shards
-	Plugin->>Plugin: Force bypasses the early pending gate and cooldown guard; due requires pending work or an entry deadline and respects retry/term barriers
+	Plugin->>Plugin: Force bypasses the early pending gate and cooldown guard, but due requires pending work or an entry deadline and respects retry/term barriers
 	Plugin->>API: Delete remote statuses for local deletions with delete_media fallback
 	Plugin->>Core: If remote import is enabled, delete local objects under guard, otherwise unlink and queue re-export
 	Plugin->>State: Update tombstones, cursors, deletion_stats
