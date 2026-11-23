@@ -572,7 +572,7 @@ class admin_uploader_default extends AdminPanelAction {
 		// Factor 2.5 = original + working copy + overhead, plus extra buffer.
 		$needed = ($pixels * $bytesPerPixel * 2.5) + (5 * 1024 * 1024);
 
-		return ($needed > 0 && $needed < $available);
+		return $needed < $available;
 	}
 
 	function remove_image_metadata($filepath, $ext) {

@@ -78,15 +78,14 @@ $expectedActions = array(
 $ok = $output === '' && !file_exists($unusedContent)
 	&& $GLOBALS ['mastodon_module_test_actions'] === $expectedActions
 	&& $GLOBALS ['mastodon_module_test_widgets'] === array(array('mastodon', 'Mastodon', 'plugin_mastodon_widget'));
-foreach ($expectedActions as $action) {
-	$ok = is_callable($action [1]) && $ok;
-}
 $functions = get_defined_functions();
 $pluginFunctions = array_filter($functions ['user'], function ($name) {
 	return strpos($name, 'plugin_mastodon_') === 0;
 });
 $ok = count($pluginFunctions) === 470 && $ok;
-$ok = is_callable('plugin_mastodon_cli_comment_shard_maintenance') && $ok;
+$expectedFunctions = array_column($expectedActions, 1);
+$expectedFunctions [] = 'plugin_mastodon_cli_comment_shard_maintenance';
+$ok = array_diff($expectedFunctions, $pluginFunctions) === array() && $ok;
 $adminExpected = $case === 'admin';
 $ok = $GLOBALS ['mastodon_module_test_autoload'] === ($adminExpected ? array() : array('AdminPanelAction')) && $ok;
 $ok = class_exists('admin_plugin_mastodon', false) === $adminExpected
@@ -94,8 +93,9 @@ $ok = class_exists('admin_plugin_mastodon', false) === $adminExpected
 $expectedPanels = $adminExpected ? array(array('plugin', 'mastodon', true), array('plugin', 'mastodon_maintenance', false)) : array();
 $ok = $GLOBALS ['mastodon_module_test_panels'] === $expectedPanels && $ok;
 if ($case === 'overrides') {
-	$ok = PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES === 12345
-		&& PLUGIN_MASTODON_DEFAULT_SYNC_TIME === '07:13' && $ok;
+	$constants = get_defined_constants();
+	$ok = $constants ['PLUGIN_MASTODON_DOWNLOAD_TOTAL_BYTES'] === 12345
+		&& $constants ['PLUGIN_MASTODON_DEFAULT_SYNC_TIME'] === '07:13' && $ok;
 }
 echo ($ok ? '[OK] ' : '[FAIL] ') . 'Module loading: ' . $case . PHP_EOL;
 exit($ok ? 0 : 1);
