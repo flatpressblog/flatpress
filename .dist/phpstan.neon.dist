@@ -2,7 +2,7 @@
 parameters:
   phpVersion:
     min: 70200 # PHP 7.2
-    max: 80500 # PHP 8.5
+    max: 80600 # PHP 8.6
   level: 5 # Medium level
 
   # Minimal Bootstrap (without Composer)
@@ -65,12 +65,12 @@ parameters:
     # ../.setup/lib/permissions.lib.php
 
   scanDirectories:
-    - ../fp-includes/smarty-5.8.5/src
+    - ../fp-includes/smarty-5.9.0/src
     - ../fp-includes/fp-smartyplugins
 
   excludePaths:
     analyse:
-      - ../fp-includes/smarty-5.8.5/**
+      - ../fp-includes/smarty-5.9.0/**
       - ../fp-content/compile/**
       - ../fp-content/cache/**
       - ../.setup.php (?)
@@ -83,12 +83,12 @@ parameters:
     # Ignore error “does not accept null” only in Smarty core
     - message: '#Property .* does not accept null#'
       paths:
-        - ../fp-includes/smarty-5.8.5/src/*.php
+        - ../fp-includes/smarty-5.9.0/src/*.php
 
     # Ignore error “Call to undefined method” only in Smarty core
     - message: '#Call to an undefined method Smarty_Internal_.*::.*#'
       paths:
-        - ../fp-includes/smarty-5.8.5/src/.*\.php
+        - ../fp-includes/smarty-5.9.0/src/.*\.php
 
   checkMissingVarTagTypehint: false
   reportUnmatchedIgnoredErrors: false
