@@ -7,7 +7,7 @@ This test plan is for the community test of **FlatPress 1.6.dev v1.0**.
 FlatPress 1.6.dev focuses on the changes made after FlatPress 1.5.1, especially:
 
 - the move to the 1.6 development line,
-- Smarty 5.8.4 and PHP 8.5 compatibility,
+- Smarty 5.9.0 and PHP 8.6 compatibility,
 - improved caching for feeds and widgets,
 - Location Migration Mode,
 - the new Tag, Audio and Video and Mastodon plugins,
@@ -189,7 +189,7 @@ Create clearly recognizable test data. Avoid real addresses, secrets, and person
 #### PHP and Smarty
 
 - [ ] Run the smoke test with at least one available PHP version.
-- [ ] Optional matrix: repeat with PHP 7.2, one current PHP 8.x version, and PHP 8.5.
+- [ ] Optional matrix: repeat with PHP 7.2, one current PHP 8.x version, and PHP 8.6.
 - [ ] Confirm that Smarty `5.8.4` is present in the tested snapshot.
 - [ ] Purge the theme and template cache.
 - [ ] Open the front end immediately after purging.
